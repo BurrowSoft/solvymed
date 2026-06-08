@@ -1,17 +1,20 @@
 {
   "expo": {
-    "name": "solvymed-53",
-    "slug": "solvymed-53",
+    "name": "SolvyMed",
+    "slug": "solvymed",
+    "owner": "burrowsoftmobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "solvymed53",
+    "scheme": "solvymed",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.burrowsoft.solvymed"
     },
     "android": {
+      "package": "com.burrowsoft.solvymed",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -31,12 +34,24 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#208AEF"
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/51017924-6d1c-4686-b8b3-543d5a7ba76f"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "51017924-6d1c-4686-b8b3-543d5a7ba76f"
+      }
     }
   }
 }
