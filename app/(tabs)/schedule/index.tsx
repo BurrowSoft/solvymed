@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { Appointment } from '@/lib/types';
 import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
-import { getAppointmentsByDate, updatePaymentStatus } from '@/lib/services';
+import { getAppointmentsByDate, updatePaymentStatus, getAppointmentCountsByWeek } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
 import { NewAppointmentModal } from '@/components/NewAppointmentModal';
 
@@ -82,7 +82,22 @@ function AppointmentBlock({ appt, onPress }: { appt: Appointment; onPress: () =>
   );
 }
 
-function AppointmentModal({ appt, onClose }: { appt: Appointment | null; onClose: () => void }) {
+function statusColor(status: Appointment['status']) {
+  switch (status) {
+    case 'confirmed': return Colors.primary;
+    case 'completed': return Colors.success;
+    case 'cancelled': return Colors.danger;
+    case 'blocked': return Colors.blocked;
+    default: return Colors.warning;
+  }
+}
+
+function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange }: {
+  appt: Appointment | null;
+  onClose: () => void;
+  onMarkPaid: (id: string) => void;
+  onStatusChange: (id: string, status: Appointment['status']) => void;
+}) {
   if (!appt) return null;
   const isBlocked = appt.status === 'blocked';
 
@@ -115,13 +130,18 @@ function AppointmentModal({ appt, onClose }: { appt: Appointment | null; onClose
               <View style={styles.modalRow}>
                 <View style={[styles.statusDot, { backgroundColor: appt.paymentStatus === 'paid' ? Colors.success : Colors.warning }]} />
                 <Text style={styles.modalMeta}>
-                  Private R$ {appt.paymentAmount?.toFixed(2)}
+                  {appt.paymentType === 'private' ? 'Private' : 'Insurance'}{appt.paymentAmount ? ` · R$ ${appt.paymentAmount.toFixed(2)}` : ''}
                 </Text>
-                <TouchableOpacity style={styles.chip}>
-                  <Text style={styles.chipText}>
-                    {appt.paymentStatus === 'paid' ? 'Paid' : 'Mark as paid'}
-                  </Text>
-                </TouchableOpacity>
+                {appt.paymentStatus !== 'paid' ? (
+                  <TouchableOpacity style={styles.chip} onPress={() => onMarkPaid(appt.id)}>
+                    <Text style={styles.chipText}>Mark as paid</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={[styles.chip, styles.chipPaid]}>
+                    <Ionicons name="checkmark" size={12} color={Colors.success} />
+                    <Text style={[styles.chipText, { color: Colors.success }]}>Paid</Text>
+                  </View>
+                )}
               </View>
             </>
           )}
@@ -131,8 +151,8 @@ function AppointmentModal({ appt, onClose }: { appt: Appointment | null; onClose
             {appt.date} · {appt.startTime} ({appt.durationMinutes} min)
           </Text>
           <View style={styles.statusRow}>
-            <View style={[styles.statusBadge, { backgroundColor: Colors.primaryLight }]}>
-              <Text style={[styles.statusBadgeText, { color: Colors.primaryDark }]}>
+            <View style={[styles.statusBadge, { backgroundColor: statusColor(appt.status) + '20' }]}>
+              <Text style={[styles.statusBadgeText, { color: statusColor(appt.status) }]}>
                 {isBlocked ? 'Blocked' : appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
               </Text>
             </View>
@@ -142,6 +162,37 @@ function AppointmentModal({ appt, onClose }: { appt: Appointment | null; onClose
           <Text style={styles.modalSectionTitle}>Details</Text>
           <Text style={styles.modalMeta}>{appt.consultationType}</Text>
           <Text style={styles.modalMeta}>{appt.type === 'online' ? 'Online' : 'In-Person'}</Text>
+
+          {!isBlocked && appt.status !== 'completed' && appt.status !== 'cancelled' && (
+            <>
+              <View style={styles.modalDivider} />
+              <View style={styles.statusActions}>
+                {appt.status === 'scheduled' && (
+                  <TouchableOpacity
+                    style={[styles.actionBtn, { backgroundColor: Colors.primaryLight }]}
+                    onPress={() => { onStatusChange(appt.id, 'confirmed'); onClose(); }}
+                  >
+                    <Ionicons name="checkmark-circle-outline" size={16} color={Colors.primary} />
+                    <Text style={[styles.actionBtnText, { color: Colors.primary }]}>Confirm</Text>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity
+                  style={[styles.actionBtn, { backgroundColor: Colors.success + '20' }]}
+                  onPress={() => { onStatusChange(appt.id, 'completed'); onClose(); }}
+                >
+                  <Ionicons name="checkmark-done-outline" size={16} color={Colors.success} />
+                  <Text style={[styles.actionBtnText, { color: Colors.success }]}>Complete</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.actionBtn, { backgroundColor: Colors.danger + '20' }]}
+                  onPress={() => { onStatusChange(appt.id, 'cancelled'); onClose(); }}
+                >
+                  <Ionicons name="close-circle-outline" size={16} color={Colors.danger} />
+                  <Text style={[styles.actionBtnText, { color: Colors.danger }]}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
         </Pressable>
       </Pressable>
     </Modal>
@@ -156,6 +207,7 @@ export default function ScheduleScreen() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(false);
   const [showNewAppt, setShowNewAppt] = useState(false);
+  const [weekCounts, setWeekCounts] = useState<Record<string, number>>({});
 
   const dateStr = fmt(selectedDate);
   const weekDates = getWeekDates(selectedDate);
@@ -178,10 +230,23 @@ export default function ScheduleScreen() {
 
   useEffect(() => { loadAppointments(); }, [loadAppointments]);
 
+  useEffect(() => {
+    if (!user || viewMode !== 'week') return;
+    const from = fmt(weekDates[0]);
+    const to = fmt(weekDates[6]);
+    getAppointmentCountsByWeek(user.id, from, to).then(setWeekCounts).catch(() => {});
+  }, [user, viewMode, fmt(weekDates[0])]);
+
   async function handleMarkPaid(apptId: string) {
     if (user) await updatePaymentStatus(apptId, 'paid');
     setAppointments(prev => prev.map(a => a.id === apptId ? { ...a, paymentStatus: 'paid' } : a));
     setSelectedAppt(prev => prev?.id === apptId ? { ...prev, paymentStatus: 'paid' } : prev);
+  }
+
+  async function handleStatusChange(apptId: string, status: Appointment['status']) {
+    if (user) await updateAppointmentStatus(apptId, status);
+    setAppointments(prev => prev.map(a => a.id === apptId ? { ...a, status } : a));
+    setSelectedAppt(prev => prev?.id === apptId ? { ...prev, status } : prev);
   }
 
   const dayAppointments = appointments;
@@ -234,17 +299,25 @@ export default function ScheduleScreen() {
       {viewMode === 'week' && (
         <View style={styles.weekRow}>
           {weekDates.map((d, i) => {
-            const isSelected = fmt(d) === dateStr;
-            const hasAppts = MOCK_APPOINTMENTS.some(a => a.date === fmt(d));
+            const dStr = fmt(d);
+            const isSelected = dStr === dateStr;
+            const isToday = dStr === fmt(new Date());
+            const count = user
+              ? (weekCounts[dStr] ?? 0)
+              : MOCK_APPOINTMENTS.filter(a => a.date === dStr && a.status !== 'blocked').length;
             return (
               <TouchableOpacity
                 key={i}
-                style={[styles.weekDay, isSelected && styles.weekDaySelected]}
+                style={[styles.weekDay, isSelected && styles.weekDaySelected, isToday && !isSelected && styles.weekDayToday]}
                 onPress={() => { setSelectedDate(d); setViewMode('day'); }}
               >
                 <Text style={[styles.weekDayName, isSelected && styles.weekDayTextSelected]}>{DAYS[d.getDay()]}</Text>
-                <Text style={[styles.weekDayNum, isSelected && styles.weekDayTextSelected]}>{d.getDate()}</Text>
-                {hasAppts && <View style={[styles.dot, isSelected && styles.dotSelected]} />}
+                <Text style={[styles.weekDayNum, isSelected && styles.weekDayTextSelected, isToday && !isSelected && { color: Colors.primary }]}>{d.getDate()}</Text>
+                {count > 0 ? (
+                  <View style={[styles.countBadge, isSelected && styles.countBadgeSelected]}>
+                    <Text style={[styles.countBadgeText, isSelected && styles.countBadgeTextSelected]}>{count}</Text>
+                  </View>
+                ) : <View style={styles.dotPlaceholder} />}
               </TouchableOpacity>
             );
           })}
@@ -281,7 +354,12 @@ export default function ScheduleScreen() {
         <Text style={styles.fabText}>New Appointment</Text>
       </TouchableOpacity>
 
-      <AppointmentModal appt={selectedAppt} onClose={() => setSelectedAppt(null)} />
+      <AppointmentModal
+        appt={selectedAppt}
+        onClose={() => setSelectedAppt(null)}
+        onMarkPaid={handleMarkPaid}
+        onStatusChange={handleStatusChange}
+      />
 
       <NewAppointmentModal
         visible={showNewAppt}
@@ -330,8 +408,12 @@ const styles = StyleSheet.create({
   weekDayName: { fontSize: 11, color: Colors.textSecondary, marginBottom: 2 },
   weekDayNum: { fontSize: 15, fontWeight: '600', color: Colors.textPrimary },
   weekDayTextSelected: { color: '#fff' },
-  dot: { width: 4, height: 4, borderRadius: 2, backgroundColor: Colors.primary, marginTop: 2 },
-  dotSelected: { backgroundColor: '#fff' },
+  weekDayToday: { borderWidth: 1, borderColor: Colors.primary },
+  countBadge: { minWidth: 16, height: 16, borderRadius: 8, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4, marginTop: 2 },
+  countBadgeSelected: { backgroundColor: '#fff' },
+  countBadgeText: { fontSize: 9, fontWeight: '700', color: '#fff' },
+  countBadgeTextSelected: { color: Colors.primary },
+  dotPlaceholder: { height: 16, marginTop: 2 },
   grid: { flex: 1 },
   hourRow: {
     height: HOUR_HEIGHT,
@@ -395,4 +477,8 @@ const styles = StyleSheet.create({
   statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
   statusBadgeText: { fontSize: 12, fontWeight: '600' },
   modalSectionTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
+  chipPaid: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  statusActions: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
+  actionBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, borderRadius: 10, minWidth: 80 },
+  actionBtnText: { fontSize: 13, fontWeight: '600' },
 });

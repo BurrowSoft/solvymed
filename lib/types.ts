@@ -60,3 +60,11 @@ export interface PrescriptionItem {
   frequency: string;
   duration: string;
 }
+
+export interface Professional {
+  id: string;
+  fullName: string;
+  email: string;
+  clinicName?: string;
+  specialty?: string;
+}

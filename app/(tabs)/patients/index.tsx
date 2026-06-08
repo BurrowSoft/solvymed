@@ -6,12 +6,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
-import { Patient, MedicalRecord } from '@/lib/types';
+import { Patient, MedicalRecord, Prescription } from '@/lib/types';
 import { MOCK_PATIENTS, MOCK_RECORDS } from '@/lib/mock-data';
-import { getPatients, getRecords } from '@/lib/services';
+import { getPatients, getRecords, updatePatient, getPrescriptions } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
 import { NewPatientModal } from '@/components/NewPatientModal';
 import { NewRecordModal } from '@/components/NewRecordModal';
+import { NewPrescriptionModal } from '@/components/NewPrescriptionModal';
 
 type PatientTab = 'info' | 'records' | 'prescriptions' | 'exams' | 'files';
 
@@ -33,18 +34,79 @@ function getAge(birthDate?: string) {
   return years;
 }
 
-function PatientDetail({ patient, onClose }: { patient: Patient; onClose: () => void }) {
+interface PatientDetailProps {
+  patient: Patient;
+  onClose: () => void;
+  onUpdate: (updated: Patient) => void;
+}
+
+function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<PatientTab>('info');
   const [records, setRecords] = useState<MedicalRecord[]>([]);
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
   const [showNewRecord, setShowNewRecord] = useState(false);
+  const [showNewPrescription, setShowNewPrescription] = useState(false);
+
+  // Edit mode state
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editName, setEditName] = useState(patient.fullName);
+  const [editPhone, setEditPhone] = useState(patient.phone ?? '');
+  const [editEmail, setEditEmail] = useState(patient.email ?? '');
+  const [editCpf, setEditCpf] = useState(patient.cpf ?? '');
+  const [editSex, setEditSex] = useState(patient.sex);
+  const [editBirthDate, setEditBirthDate] = useState(patient.birthDate ?? '');
+  const [editProfession, setEditProfession] = useState(patient.profession ?? '');
+
+  function enterEdit() {
+    setEditName(patient.fullName);
+    setEditPhone(patient.phone ?? '');
+    setEditEmail(patient.email ?? '');
+    setEditCpf(patient.cpf ?? '');
+    setEditSex(patient.sex);
+    setEditBirthDate(patient.birthDate ?? '');
+    setEditProfession(patient.profession ?? '');
+    setEditing(true);
+  }
+
+  async function saveEdit() {
+    setSaving(true);
+    const updates: Partial<Patient> = {
+      fullName: editName.trim(),
+      phone: editPhone.trim() || undefined,
+      email: editEmail.trim() || undefined,
+      cpf: editCpf.trim() || undefined,
+      sex: editSex,
+      birthDate: editBirthDate.trim() || undefined,
+      profession: editProfession.trim() || undefined,
+    };
+    try {
+      if (user) await updatePatient(patient.id, updates);
+      onUpdate({ ...patient, ...updates });
+      setEditing(false);
+    } catch {
+      // keep editing on failure
+    } finally {
+      setSaving(false);
+    }
+  }
 
   useEffect(() => {
-    if (!user) { setRecords(MOCK_RECORDS.filter(r => r.patientId === patient.id)); return; }
+    if (!user) {
+      setRecords(MOCK_RECORDS.filter(r => r.patientId === patient.id));
+      return;
+    }
     getRecords(patient.id).then(setRecords).catch(() => {
       setRecords(MOCK_RECORDS.filter(r => r.patientId === patient.id));
     });
   }, [patient.id, user]);
+
+  useEffect(() => {
+    if (activeTab !== 'prescriptions') return;
+    if (!user) { setPrescriptions([]); return; }
+    getPrescriptions(patient.id).then(setPrescriptions).catch(() => setPrescriptions([]));
+  }, [activeTab, patient.id, user]);
 
   return (
     <Modal visible animationType="slide" onRequestClose={onClose}>
@@ -55,9 +117,19 @@ function PatientDetail({ patient, onClose }: { patient: Patient; onClose: () => 
             <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.detailName} numberOfLines={1}>{patient.fullName}</Text>
-          <TouchableOpacity style={styles.moreBtn}>
-            <Ionicons name="ellipsis-vertical" size={20} color={Colors.textSecondary} />
-          </TouchableOpacity>
+          {editing ? (
+            <TouchableOpacity style={styles.saveEditBtn} onPress={saveEdit} disabled={saving}>
+              {saving
+                ? <ActivityIndicator size="small" color="#fff" />
+                : <Text style={styles.saveEditBtnText}>Save</Text>
+              }
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.editBtn} onPress={enterEdit}>
+              <Ionicons name="pencil-outline" size={16} color={Colors.primary} />
+              <Text style={styles.editBtnText}>Edit</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Tabs */}
@@ -65,7 +137,7 @@ function PatientDetail({ patient, onClose }: { patient: Patient; onClose: () => 
           {TABS.map(tab => (
             <TouchableOpacity
               key={tab.key}
-              onPress={() => setActiveTab(tab.key)}
+              onPress={() => { setActiveTab(tab.key); setEditing(false); }}
               style={[styles.tab, activeTab === tab.key && styles.tabActive]}
             >
               <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>
@@ -76,46 +148,89 @@ function PatientDetail({ patient, onClose }: { patient: Patient; onClose: () => 
         </ScrollView>
 
         <ScrollView style={styles.detailBody} showsVerticalScrollIndicator={false}>
+          {/* ── Patient Info Tab ── */}
           {activeTab === 'info' && (
             <View style={styles.section}>
               <View style={styles.avatarRow}>
                 <View style={styles.avatar}>
-                  <Ionicons name="person" size={32} color={Colors.textMuted} />
+                  <Text style={styles.avatarInitial}>{patient.fullName[0]?.toUpperCase()}</Text>
                 </View>
               </View>
+
               <Text style={styles.sectionTitle}>Personal Information</Text>
               <View style={styles.fieldGrid}>
                 <View style={styles.fieldFull}>
                   <Text style={styles.fieldLabel}>Full Name</Text>
-                  <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.fullName}</Text></View>
+                  {editing ? (
+                    <View style={styles.editInput}>
+                      <TextInput style={styles.editInputText} value={editName} onChangeText={setEditName} />
+                    </View>
+                  ) : (
+                    <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.fullName}</Text></View>
+                  )}
                 </View>
+
                 <View style={styles.fieldHalf}>
                   <Text style={styles.fieldLabel}>CPF</Text>
-                  <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.cpf ?? '—'}</Text></View>
+                  {editing ? (
+                    <View style={styles.editInput}>
+                      <TextInput style={styles.editInputText} value={editCpf} onChangeText={setEditCpf} placeholder="000.000.000-00" placeholderTextColor={Colors.textMuted} keyboardType="numeric" />
+                    </View>
+                  ) : (
+                    <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.cpf ?? '—'}</Text></View>
+                  )}
                 </View>
+
                 <View style={styles.fieldHalf}>
                   <Text style={styles.fieldLabel}>Sex</Text>
-                  <View style={styles.fieldBox}>
-                    <Text style={styles.fieldValue}>
-                      {patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : '—'}
-                    </Text>
-                  </View>
+                  {editing ? (
+                    <View style={styles.sexRow}>
+                      {(['male', 'female', 'other'] as const).map(s => (
+                        <TouchableOpacity key={s} onPress={() => setEditSex(editSex === s ? undefined : s)} style={[styles.sexPill, editSex === s && styles.sexPillActive]}>
+                          <Text style={[styles.sexPillText, editSex === s && styles.sexPillTextActive]}>{s[0].toUpperCase()}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  ) : (
+                    <View style={styles.fieldBox}>
+                      <Text style={styles.fieldValue}>
+                        {patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : '—'}
+                      </Text>
+                    </View>
+                  )}
                 </View>
+
                 <View style={styles.fieldHalf}>
                   <Text style={styles.fieldLabel}>Date of Birth</Text>
-                  <View style={styles.fieldBox}>
-                    <Text style={styles.fieldValue}>{patient.birthDate ?? '—'}</Text>
-                  </View>
+                  {editing ? (
+                    <View style={styles.editInput}>
+                      <TextInput style={styles.editInputText} value={editBirthDate} onChangeText={setEditBirthDate} placeholder="YYYY-MM-DD" placeholderTextColor={Colors.textMuted} />
+                    </View>
+                  ) : (
+                    <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.birthDate ?? '—'}</Text></View>
+                  )}
                 </View>
+
                 <View style={styles.fieldHalf}>
                   <Text style={styles.fieldLabel}>Age</Text>
                   <View style={styles.fieldBox}>
-                    <Text style={styles.fieldValue}>{getAge(patient.birthDate) ?? '—'} yrs</Text>
+                    <Text style={styles.fieldValue}>
+                      {getAge(editing ? editBirthDate : patient.birthDate) != null
+                        ? `${getAge(editing ? editBirthDate : patient.birthDate)} yrs`
+                        : '—'}
+                    </Text>
                   </View>
                 </View>
+
                 <View style={styles.fieldFull}>
                   <Text style={styles.fieldLabel}>Profession</Text>
-                  <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.profession ?? '—'}</Text></View>
+                  {editing ? (
+                    <View style={styles.editInput}>
+                      <TextInput style={styles.editInputText} value={editProfession} onChangeText={setEditProfession} placeholder="e.g. Engineer" placeholderTextColor={Colors.textMuted} />
+                    </View>
+                  ) : (
+                    <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.profession ?? '—'}</Text></View>
+                  )}
                 </View>
               </View>
 
@@ -123,21 +238,34 @@ function PatientDetail({ patient, onClose }: { patient: Patient; onClose: () => 
               <View style={styles.fieldGrid}>
                 <View style={styles.fieldFull}>
                   <Text style={styles.fieldLabel}>Email</Text>
-                  <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.email ?? '—'}</Text></View>
+                  {editing ? (
+                    <View style={styles.editInput}>
+                      <TextInput style={styles.editInputText} value={editEmail} onChangeText={setEditEmail} placeholder="email@example.com" placeholderTextColor={Colors.textMuted} keyboardType="email-address" autoCapitalize="none" />
+                    </View>
+                  ) : (
+                    <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.email ?? '—'}</Text></View>
+                  )}
                 </View>
                 <View style={styles.fieldFull}>
                   <Text style={styles.fieldLabel}>Phone</Text>
-                  <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.phone ?? '—'}</Text></View>
+                  {editing ? (
+                    <View style={styles.editInput}>
+                      <TextInput style={styles.editInputText} value={editPhone} onChangeText={setEditPhone} placeholder="+55 (11) 99999-9999" placeholderTextColor={Colors.textMuted} keyboardType="phone-pad" />
+                    </View>
+                  ) : (
+                    <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.phone ?? '—'}</Text></View>
+                  )}
                 </View>
               </View>
             </View>
           )}
 
+          {/* ── Records Tab ── */}
           {activeTab === 'records' && (
             <View style={styles.section}>
-              <TouchableOpacity style={styles.newRecordBtn} onPress={() => setShowNewRecord(true)}>
+              <TouchableOpacity style={styles.newItemBtn} onPress={() => setShowNewRecord(true)}>
                 <Ionicons name="add" size={16} color={Colors.primary} />
-                <Text style={styles.newRecordText}>New Record</Text>
+                <Text style={styles.newItemText}>New Record</Text>
               </TouchableOpacity>
               {records.length === 0 ? (
                 <View style={styles.emptyState}>
@@ -155,7 +283,7 @@ function PatientDetail({ patient, onClose }: { patient: Patient; onClose: () => 
                       </View>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.recordMeta}>By: Professional</Text>
-                        <Text style={styles.recordTime}>{record.time} · Free text record</Text>
+                        <Text style={styles.recordTime}>{record.date} · {record.time} · Free text</Text>
                       </View>
                     </View>
                     <Text style={styles.recordContent}>{record.content}</Text>
@@ -165,7 +293,44 @@ function PatientDetail({ patient, onClose }: { patient: Patient; onClose: () => 
             </View>
           )}
 
-          {(activeTab === 'prescriptions' || activeTab === 'exams' || activeTab === 'files') && (
+          {/* ── Prescriptions Tab ── */}
+          {activeTab === 'prescriptions' && (
+            <View style={styles.section}>
+              <TouchableOpacity style={styles.newItemBtn} onPress={() => setShowNewPrescription(true)}>
+                <Ionicons name="add" size={16} color={Colors.primary} />
+                <Text style={styles.newItemText}>New Prescription</Text>
+              </TouchableOpacity>
+              {prescriptions.length === 0 ? (
+                <View style={styles.emptyState}>
+                  <Ionicons name="document-outline" size={40} color={Colors.textMuted} />
+                  <Text style={styles.emptyText}>No prescriptions yet</Text>
+                </View>
+              ) : (
+                prescriptions.map(rx => (
+                  <View key={rx.id} style={styles.rxCard}>
+                    <View style={styles.rxHeader}>
+                      <Ionicons name="medical-outline" size={16} color={Colors.primary} />
+                      <Text style={styles.rxDate}>{rx.date}</Text>
+                      <View style={styles.rxBadge}>
+                        <Text style={styles.rxBadgeText}>{rx.medications.length} med{rx.medications.length !== 1 ? 's' : ''}</Text>
+                      </View>
+                    </View>
+                    {rx.medications.map((med, i) => (
+                      <View key={i} style={styles.medRow}>
+                        <Text style={styles.medName}>{med.name}</Text>
+                        <Text style={styles.medDetail}>
+                          {[med.dosage, med.frequency, med.duration].filter(Boolean).join(' · ')}
+                        </Text>
+                      </View>
+                    ))}
+                    {rx.notes ? <Text style={styles.rxNotes}>{rx.notes}</Text> : null}
+                  </View>
+                ))
+              )}
+            </View>
+          )}
+
+          {(activeTab === 'exams' || activeTab === 'files') && (
             <View style={styles.emptyState}>
               <Ionicons name="document-outline" size={40} color={Colors.textMuted} />
               <Text style={styles.emptyText}>No {activeTab} yet</Text>
@@ -181,6 +346,14 @@ function PatientDetail({ patient, onClose }: { patient: Patient; onClose: () => 
           patientName={patient.fullName}
           onClose={() => setShowNewRecord(false)}
           onSaved={(record) => setRecords(prev => [record, ...prev])}
+        />
+
+        <NewPrescriptionModal
+          visible={showNewPrescription}
+          patientId={patient.id}
+          patientName={patient.fullName}
+          onClose={() => setShowNewPrescription(false)}
+          onSaved={(rx) => setPrescriptions(prev => [rx, ...prev])}
         />
       </SafeAreaView>
     </Modal>
@@ -234,35 +407,58 @@ export default function PatientsScreen() {
             value={search}
             onChangeText={setSearch}
           />
+          {search.length > 0 && (
+            <TouchableOpacity onPress={() => setSearch('')}>
+              <Ionicons name="close-circle" size={16} color={Colors.textMuted} />
+            </TouchableOpacity>
+          )}
         </View>
-        <TouchableOpacity style={styles.filterBtn}>
-          <Ionicons name="options-outline" size={18} color={Colors.textSecondary} />
-          <Text style={styles.filterText}>Filter</Text>
-        </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={filtered}
-        keyExtractor={p => p.id}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.patientRow} onPress={() => setSelected(item)}>
-            <View style={styles.patientAvatar}>
-              <Text style={styles.patientInitial}>{item.fullName[0]}</Text>
+      {loading ? (
+        <ActivityIndicator style={{ marginTop: 40 }} color={Colors.primary} />
+      ) : (
+        <FlatList
+          data={filtered}
+          keyExtractor={p => p.id}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          ListEmptyComponent={() => (
+            <View style={styles.emptyState}>
+              <Ionicons name="people-outline" size={40} color={Colors.textMuted} />
+              <Text style={styles.emptyText}>No patients found</Text>
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.patientName}>{item.fullName}</Text>
-              {item.birthDate && (
-                <Text style={styles.patientMeta}>{getAge(item.birthDate)} yrs old</Text>
-              )}
-            </View>
-            <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
-          </TouchableOpacity>
-        )}
-      />
+          )}
+          renderItem={({ item }) => (
+            <TouchableOpacity style={styles.patientRow} onPress={() => setSelected(item)}>
+              <View style={styles.patientAvatar}>
+                <Text style={styles.patientInitial}>{item.fullName[0]?.toUpperCase()}</Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.patientName}>{item.fullName}</Text>
+                <Text style={styles.patientMeta}>
+                  {[
+                    item.birthDate && `${getAge(item.birthDate)} yrs`,
+                    item.phone,
+                  ].filter(Boolean).join(' · ')}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+            </TouchableOpacity>
+          )}
+        />
+      )}
 
-      {selected && <PatientDetail patient={selected} onClose={() => setSelected(null)} />}
+      {selected && (
+        <PatientDetail
+          patient={selected}
+          onClose={() => setSelected(null)}
+          onUpdate={(updated) => {
+            setPatients(prev => prev.map(p => p.id === updated.id ? updated : p));
+            setSelected(updated);
+          }}
+        />
+      )}
 
       <NewPatientModal
         visible={showNewPatient}
@@ -286,19 +482,24 @@ const styles = StyleSheet.create({
   searchRow: { flexDirection: 'row', gap: 8, padding: 12, backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.border },
   searchBox: { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.background, borderRadius: 10, paddingHorizontal: 10, gap: 6, height: 38 },
   searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary },
-  filterBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, backgroundColor: Colors.background, borderRadius: 10, height: 38 },
-  filterText: { fontSize: 13, color: Colors.textSecondary },
   separator: { height: 1, backgroundColor: Colors.border, marginLeft: 64 },
   patientRow: { flexDirection: 'row', alignItems: 'center', padding: 12, paddingHorizontal: 16, backgroundColor: Colors.surface, gap: 12 },
   patientAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
   patientInitial: { fontSize: 16, fontWeight: '700', color: Colors.primary },
   patientName: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
   patientMeta: { fontSize: 12, color: Colors.textSecondary, marginTop: 2 },
+  emptyState: { alignItems: 'center', paddingVertical: 60, gap: 10 },
+  emptyText: { fontSize: 14, color: Colors.textMuted },
+
+  // Detail screen
   detailContainer: { flex: 1, backgroundColor: Colors.background },
   detailHeader: { flexDirection: 'row', alignItems: 'center', padding: 12, backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.border, gap: 8 },
   backBtn: { padding: 4 },
   detailName: { flex: 1, fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
-  moreBtn: { padding: 4 },
+  editBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 16, backgroundColor: Colors.primaryLight },
+  editBtnText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
+  saveEditBtn: { backgroundColor: Colors.primary, paddingHorizontal: 12, paddingVertical: 5, borderRadius: 16, minWidth: 52, alignItems: 'center' },
+  saveEditBtnText: { fontSize: 13, color: '#fff', fontWeight: '600' },
   tabRow: { backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.border, maxHeight: 44 },
   tab: { paddingHorizontal: 14, paddingVertical: 10, borderBottomWidth: 2, borderBottomColor: 'transparent' },
   tabActive: { borderBottomColor: Colors.primary },
@@ -307,7 +508,8 @@ const styles = StyleSheet.create({
   detailBody: { flex: 1 },
   section: { padding: 16 },
   avatarRow: { alignItems: 'center', marginBottom: 16 },
-  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  avatarInitial: { fontSize: 28, fontWeight: '700', color: Colors.primary },
   sectionTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, marginBottom: 10 },
   fieldGrid: { gap: 10 },
   fieldFull: { gap: 4 },
@@ -315,8 +517,17 @@ const styles = StyleSheet.create({
   fieldLabel: { fontSize: 11, color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 },
   fieldBox: { backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10 },
   fieldValue: { fontSize: 14, color: Colors.textPrimary },
-  newRecordBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-end', marginBottom: 12, backgroundColor: Colors.primaryLight, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
-  newRecordText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
+  editInput: { borderWidth: 1.5, borderColor: Colors.primary, borderRadius: 8, paddingHorizontal: 12, height: 42, backgroundColor: Colors.surface, justifyContent: 'center' },
+  editInputText: { fontSize: 14, color: Colors.textPrimary },
+  sexRow: { flexDirection: 'row', gap: 6 },
+  sexPill: { flex: 1, alignItems: 'center', paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.background },
+  sexPillActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  sexPillText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '600' },
+  sexPillTextActive: { color: '#fff' },
+
+  // Records
+  newItemBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-end', marginBottom: 12, backgroundColor: Colors.primaryLight, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
+  newItemText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
   recordCard: { backgroundColor: Colors.surface, borderRadius: 10, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: Colors.border, gap: 8 },
   recordHeader: { flexDirection: 'row', gap: 10 },
   recordBadge: { width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' },
@@ -324,6 +535,15 @@ const styles = StyleSheet.create({
   recordMeta: { fontSize: 11, color: Colors.textMuted },
   recordTime: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
   recordContent: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
-  emptyState: { alignItems: 'center', paddingVertical: 60, gap: 10 },
-  emptyText: { fontSize: 14, color: Colors.textMuted },
+
+  // Prescriptions
+  rxCard: { backgroundColor: Colors.surface, borderRadius: 10, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: Colors.border, gap: 8 },
+  rxHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  rxDate: { flex: 1, fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
+  rxBadge: { backgroundColor: Colors.primaryLight, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
+  rxBadgeText: { fontSize: 11, color: Colors.primary, fontWeight: '600' },
+  medRow: { paddingLeft: 4, borderLeftWidth: 2, borderLeftColor: Colors.border, paddingVertical: 2 },
+  medName: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
+  medDetail: { fontSize: 12, color: Colors.textSecondary, marginTop: 1 },
+  rxNotes: { fontSize: 12, color: Colors.textMuted, fontStyle: 'italic', paddingTop: 4, borderTopWidth: 1, borderTopColor: Colors.border },
 });

@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Appointment, Patient, MedicalRecord, Prescription } from './types';
+import { Appointment, Patient, MedicalRecord, Prescription, PrescriptionItem, Professional } from './types';
 
 // ─── Appointments ────────────────────────────────────────────────────────────
 
@@ -25,6 +25,27 @@ export async function getAppointmentsByWeek(professionalId: string, from: string
     .order('start_time');
   if (error) throw error;
   return (data ?? []).map(toAppointment);
+}
+
+export async function getAppointmentCountsByWeek(
+  professionalId: string,
+  from: string,
+  to: string,
+): Promise<Record<string, number>> {
+  const { data, error } = await supabase
+    .from('appointments')
+    .select('date')
+    .eq('professional_id', professionalId)
+    .gte('date', from)
+    .lte('date', to)
+    .neq('status', 'blocked');
+  if (error) throw error;
+  const counts: Record<string, number> = {};
+  for (const row of data ?? []) {
+    const d = row.date as string;
+    counts[d] = (counts[d] ?? 0) + 1;
+  }
+  return counts;
 }
 
 export async function updateAppointmentStatus(id: string, status: Appointment['status']) {
@@ -229,5 +250,106 @@ function toRecord(row: Record<string, unknown>): MedicalRecord {
     time: row.time as string,
     content: row.content as string,
     createdAt: row.created_at as string,
+  };
+}
+
+// ─── Prescriptions ───────────────────────────────────────────────────────────
+
+export async function getPrescriptions(patientId: string) {
+  const { data, error } = await supabase
+    .from('prescriptions')
+    .select('*, prescription_items(*)')
+    .eq('patient_id', patientId)
+    .order('date', { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map(toPrescription);
+}
+
+export async function createPrescription(
+  patientId: string,
+  professionalId: string,
+  medications: PrescriptionItem[],
+  notes?: string,
+): Promise<Prescription> {
+  const date = new Date().toISOString().split('T')[0];
+  const { data: prescription, error: pError } = await supabase
+    .from('prescriptions')
+    .insert({ patient_id: patientId, professional_id: professionalId, date, notes: notes ?? null })
+    .select()
+    .single();
+  if (pError) throw pError;
+
+  if (medications.length > 0) {
+    const items = medications.map(m => ({
+      prescription_id: prescription.id,
+      name: m.name,
+      dosage: m.dosage,
+      frequency: m.frequency,
+      duration: m.duration,
+    }));
+    const { error: iError } = await supabase.from('prescription_items').insert(items);
+    if (iError) throw iError;
+  }
+
+  return { ...toPrescription(prescription), medications };
+}
+
+// ─── Professionals ───────────────────────────────────────────────────────────
+
+export async function getProfessional(id: string): Promise<Professional | null> {
+  const { data, error } = await supabase
+    .from('professionals')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  return toProfessional(data as Record<string, unknown>);
+}
+
+export async function upsertProfessional(
+  id: string,
+  email: string,
+  updates: Partial<Professional>,
+): Promise<Professional> {
+  const { data, error } = await supabase
+    .from('professionals')
+    .upsert({
+      id,
+      email,
+      full_name: updates.fullName ?? '',
+      clinic_name: updates.clinicName ?? null,
+      specialty: updates.specialty ?? null,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return toProfessional(data as Record<string, unknown>);
+}
+
+function toProfessional(row: Record<string, unknown>): Professional {
+  return {
+    id: row.id as string,
+    fullName: (row.full_name as string) ?? '',
+    email: (row.email as string) ?? '',
+    clinicName: row.clinic_name as string | undefined,
+    specialty: row.specialty as string | undefined,
+  };
+}
+
+function toPrescription(row: Record<string, unknown>): Prescription {
+  const items = (row.prescription_items as Record<string, unknown>[] | undefined) ?? [];
+  return {
+    id: row.id as string,
+    patientId: row.patient_id as string,
+    professionalId: row.professional_id as string,
+    date: row.date as string,
+    notes: row.notes as string | undefined,
+    medications: items.map(i => ({
+      name: i.name as string,
+      dosage: i.dosage as string,
+      frequency: i.frequency as string,
+      duration: i.duration as string,
+    })),
   };
 }
