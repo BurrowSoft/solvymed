@@ -1,8 +1,6 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { useRouter } from "next/navigation";
-import { useTransition } from "react";
 
 /** Language name written in the language itself. Add new locales here as needed. */
 export const LOCALE_NAMES: Record<string, string> = {
@@ -43,20 +41,28 @@ interface Props {
  */
 export function LanguageSelector({ locales, className = "" }: Props) {
   const currentLocale = useLocale();
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const locale = e.target.value;
-    document.cookie = `NEXT_LOCALE=${locale};max-age=31536000;path=/;SameSite=Lax`;
-    startTransition(() => router.refresh());
+    const newLocale = e.target.value;
+    document.cookie = `NEXT_LOCALE=${newLocale};max-age=31536000;path=/;SameSite=Lax`;
+
+    // Strip any locale prefix from the current path so the middleware can
+    // apply the new locale via redirect (router.refresh() doesn't follow redirects).
+    const path = window.location.pathname;
+    let bare = path;
+    for (const locale of locales) {
+      if (path === `/${locale}` || path.startsWith(`/${locale}/`)) {
+        bare = path.slice(`/${locale}`.length) || "/";
+        break;
+      }
+    }
+    window.location.href = bare;
   }
 
   return (
     <select
       value={currentLocale}
       onChange={handleChange}
-      disabled={isPending}
       aria-label="Select language"
       className={`rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm font-medium text-slate-700 shadow-sm cursor-pointer transition-opacity disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-1 ${className}`}
     >
