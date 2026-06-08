@@ -17,6 +17,7 @@ import { Appointment } from '@/lib/types';
 import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
 import { getAppointmentsByDate, updatePaymentStatus } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
+import { NewAppointmentModal } from '@/components/NewAppointmentModal';
 
 const HOUR_HEIGHT = 64;
 const START_HOUR = 7;
@@ -154,6 +155,7 @@ export default function ScheduleScreen() {
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showNewAppt, setShowNewAppt] = useState(false);
 
   const dateStr = fmt(selectedDate);
   const weekDates = getWeekDates(selectedDate);
@@ -274,12 +276,23 @@ export default function ScheduleScreen() {
       </ScrollView>
 
       {/* FAB */}
-      <TouchableOpacity style={styles.fab}>
+      <TouchableOpacity style={styles.fab} onPress={() => setShowNewAppt(true)}>
         <Ionicons name="add" size={28} color="#fff" />
         <Text style={styles.fabText}>New Appointment</Text>
       </TouchableOpacity>
 
       <AppointmentModal appt={selectedAppt} onClose={() => setSelectedAppt(null)} />
+
+      <NewAppointmentModal
+        visible={showNewAppt}
+        defaultDate={dateStr}
+        onClose={() => setShowNewAppt(false)}
+        onSaved={(appt) => {
+          if (appt.date === dateStr) {
+            setAppointments(prev => [...prev, appt].sort((a, b) => a.startTime.localeCompare(b.startTime)));
+          }
+        }}
+      />
     </SafeAreaView>
   );
 }

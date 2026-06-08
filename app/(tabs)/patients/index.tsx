@@ -10,6 +10,8 @@ import { Patient, MedicalRecord } from '@/lib/types';
 import { MOCK_PATIENTS, MOCK_RECORDS } from '@/lib/mock-data';
 import { getPatients, getRecords } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
+import { NewPatientModal } from '@/components/NewPatientModal';
+import { NewRecordModal } from '@/components/NewRecordModal';
 
 type PatientTab = 'info' | 'records' | 'prescriptions' | 'exams' | 'files';
 
@@ -35,6 +37,7 @@ function PatientDetail({ patient, onClose }: { patient: Patient; onClose: () => 
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<PatientTab>('info');
   const [records, setRecords] = useState<MedicalRecord[]>([]);
+  const [showNewRecord, setShowNewRecord] = useState(false);
 
   useEffect(() => {
     if (!user) { setRecords(MOCK_RECORDS.filter(r => r.patientId === patient.id)); return; }
@@ -132,7 +135,7 @@ function PatientDetail({ patient, onClose }: { patient: Patient; onClose: () => 
 
           {activeTab === 'records' && (
             <View style={styles.section}>
-              <TouchableOpacity style={styles.newRecordBtn}>
+              <TouchableOpacity style={styles.newRecordBtn} onPress={() => setShowNewRecord(true)}>
                 <Ionicons name="add" size={16} color={Colors.primary} />
                 <Text style={styles.newRecordText}>New Record</Text>
               </TouchableOpacity>
@@ -171,6 +174,14 @@ function PatientDetail({ patient, onClose }: { patient: Patient; onClose: () => 
 
           <View style={{ height: 40 }} />
         </ScrollView>
+
+        <NewRecordModal
+          visible={showNewRecord}
+          patientId={patient.id}
+          patientName={patient.fullName}
+          onClose={() => setShowNewRecord(false)}
+          onSaved={(record) => setRecords(prev => [record, ...prev])}
+        />
       </SafeAreaView>
     </Modal>
   );
@@ -182,6 +193,7 @@ export default function PatientsScreen() {
   const [selected, setSelected] = useState<Patient | null>(null);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showNewPatient, setShowNewPatient] = useState(false);
 
   const loadPatients = useCallback(async () => {
     if (!user) { setPatients(MOCK_PATIENTS); return; }
@@ -206,7 +218,7 @@ export default function PatientsScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Patients</Text>
-        <TouchableOpacity style={styles.addBtn}>
+        <TouchableOpacity style={styles.addBtn} onPress={() => setShowNewPatient(true)}>
           <Ionicons name="add" size={20} color={Colors.primary} />
           <Text style={styles.addBtnText}>Add</Text>
         </TouchableOpacity>
@@ -251,6 +263,12 @@ export default function PatientsScreen() {
       />
 
       {selected && <PatientDetail patient={selected} onClose={() => setSelected(null)} />}
+
+      <NewPatientModal
+        visible={showNewPatient}
+        onClose={() => setShowNewPatient(false)}
+        onSaved={(patient) => setPatients(prev => [patient, ...prev])}
+      />
     </SafeAreaView>
   );
 }
