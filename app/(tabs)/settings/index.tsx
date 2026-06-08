@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
+import { useAuth } from '@/lib/auth-context';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -39,6 +40,8 @@ const SETTINGS: SettingGroup[] = [
 ];
 
 export default function SettingsScreen() {
+  const { user, signOut } = useAuth();
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
@@ -53,7 +56,7 @@ export default function SettingsScreen() {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.profileName}>Dr. Professional</Text>
-            <Text style={styles.profileEmail}>professional@clinic.com</Text>
+            <Text style={styles.profileEmail}>{user?.email ?? 'Not signed in'}</Text>
           </View>
           <TouchableOpacity>
             <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
@@ -80,7 +83,7 @@ export default function SettingsScreen() {
           </View>
         ))}
 
-        <TouchableOpacity style={styles.signOutBtn}>
+        <TouchableOpacity style={styles.signOutBtn} onPress={signOut}>
           <Ionicons name="log-out-outline" size={18} color={Colors.danger} />
           <Text style={styles.signOutText}>Sign Out</Text>
         </TouchableOpacity>

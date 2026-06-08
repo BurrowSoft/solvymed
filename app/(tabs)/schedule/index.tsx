@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,15 @@ import {
   Modal,
   Linking,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { Appointment } from '@/lib/types';
 import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
+import { getAppointmentsByDate, updatePaymentStatus } from '@/lib/services';
+import { useAuth } from '@/lib/auth-context';
 
 const HOUR_HEIGHT = 64;
 const START_HOUR = 7;
@@ -145,14 +148,41 @@ function AppointmentModal({ appt, onClose }: { appt: Appointment | null; onClose
 }
 
 export default function ScheduleScreen() {
+  const { user } = useAuth();
   const [viewMode, setViewMode] = useState<ViewMode>('day');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const dateStr = fmt(selectedDate);
   const weekDates = getWeekDates(selectedDate);
 
-  const dayAppointments = MOCK_APPOINTMENTS.filter(a => a.date === dateStr);
+  const loadAppointments = useCallback(async () => {
+    if (!user) {
+      setAppointments(MOCK_APPOINTMENTS);
+      return;
+    }
+    setLoading(true);
+    try {
+      const data = await getAppointmentsByDate(user.id, dateStr);
+      setAppointments(data);
+    } catch {
+      setAppointments(MOCK_APPOINTMENTS.filter(a => a.date === dateStr));
+    } finally {
+      setLoading(false);
+    }
+  }, [user, dateStr]);
+
+  useEffect(() => { loadAppointments(); }, [loadAppointments]);
+
+  async function handleMarkPaid(apptId: string) {
+    if (user) await updatePaymentStatus(apptId, 'paid');
+    setAppointments(prev => prev.map(a => a.id === apptId ? { ...a, paymentStatus: 'paid' } : a));
+    setSelectedAppt(prev => prev?.id === apptId ? { ...prev, paymentStatus: 'paid' } : prev);
+  }
+
+  const dayAppointments = appointments;
 
   function navigate(dir: -1 | 1) {
     const d = new Date(selectedDate);

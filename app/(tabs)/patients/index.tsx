@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TextInput,
-  TouchableOpacity, Modal, Pressable, ScrollView,
+  TouchableOpacity, Modal, ScrollView, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
-import { Patient } from '@/lib/types';
+import { Patient, MedicalRecord } from '@/lib/types';
 import { MOCK_PATIENTS, MOCK_RECORDS } from '@/lib/mock-data';
+import { getPatients, getRecords } from '@/lib/services';
+import { useAuth } from '@/lib/auth-context';
 
 type PatientTab = 'info' | 'records' | 'prescriptions' | 'exams' | 'files';
 
@@ -30,8 +32,16 @@ function getAge(birthDate?: string) {
 }
 
 function PatientDetail({ patient, onClose }: { patient: Patient; onClose: () => void }) {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<PatientTab>('info');
-  const records = MOCK_RECORDS.filter(r => r.patientId === patient.id);
+  const [records, setRecords] = useState<MedicalRecord[]>([]);
+
+  useEffect(() => {
+    if (!user) { setRecords(MOCK_RECORDS.filter(r => r.patientId === patient.id)); return; }
+    getRecords(patient.id).then(setRecords).catch(() => {
+      setRecords(MOCK_RECORDS.filter(r => r.patientId === patient.id));
+    });
+  }, [patient.id, user]);
 
   return (
     <Modal visible animationType="slide" onRequestClose={onClose}>
@@ -167,12 +177,30 @@ function PatientDetail({ patient, onClose }: { patient: Patient; onClose: () => 
 }
 
 export default function PatientsScreen() {
+  const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<Patient | null>(null);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const filtered = MOCK_PATIENTS.filter(p =>
-    p.fullName.toLowerCase().includes(search.toLowerCase())
-  );
+  const loadPatients = useCallback(async () => {
+    if (!user) { setPatients(MOCK_PATIENTS); return; }
+    setLoading(true);
+    try {
+      const data = await getPatients(user.id, search || undefined);
+      setPatients(data);
+    } catch {
+      setPatients(MOCK_PATIENTS);
+    } finally {
+      setLoading(false);
+    }
+  }, [user, search]);
+
+  useEffect(() => { loadPatients(); }, [loadPatients]);
+
+  const filtered = user
+    ? patients
+    : MOCK_PATIENTS.filter(p => p.fullName.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>

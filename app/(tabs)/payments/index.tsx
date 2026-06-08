@@ -1,16 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
+import { Appointment } from '@/lib/types';
 import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
-
-const pending = MOCK_APPOINTMENTS.filter(a => a.paymentStatus === 'pending' && a.status !== 'blocked');
-const paid = MOCK_APPOINTMENTS.filter(a => a.paymentStatus === 'paid');
-const totalPending = pending.reduce((sum, a) => sum + (a.paymentAmount ?? 0), 0);
-const totalPaid = paid.reduce((sum, a) => sum + (a.paymentAmount ?? 0), 0);
+import { getPendingPayments, getPaidPayments, updatePaymentStatus } from '@/lib/services';
+import { useAuth } from '@/lib/auth-context';
 
 export default function PaymentsScreen() {
+  const { user } = useAuth();
+  const [pending, setPending] = useState<Appointment[]>([]);
+  const [paid, setPaid] = useState<Appointment[]>([]);
+
+  const load = useCallback(async () => {
+    if (!user) {
+      setPending(MOCK_APPOINTMENTS.filter(a => a.paymentStatus === 'pending' && a.status !== 'blocked'));
+      setPaid(MOCK_APPOINTMENTS.filter(a => a.paymentStatus === 'paid'));
+      return;
+    }
+    try {
+      const [p, d] = await Promise.all([getPendingPayments(user.id), getPaidPayments(user.id)]);
+      setPending(p);
+      setPaid(d);
+    } catch {
+      setPending(MOCK_APPOINTMENTS.filter(a => a.paymentStatus === 'pending' && a.status !== 'blocked'));
+      setPaid(MOCK_APPOINTMENTS.filter(a => a.paymentStatus === 'paid'));
+    }
+  }, [user]);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function handleMarkPaid(apptId: string) {
+    if (user) await updatePaymentStatus(apptId, 'paid');
+    const appt = pending.find(a => a.id === apptId);
+    if (appt) {
+      setPending(prev => prev.filter(a => a.id !== apptId));
+      setPaid(prev => [{ ...appt, paymentStatus: 'paid' }, ...prev]);
+    }
+  }
+
+  const totalPending = pending.reduce((sum, a) => sum + (a.paymentAmount ?? 0), 0);
+  const totalPaid = paid.reduce((sum, a) => sum + (a.paymentAmount ?? 0), 0);
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
@@ -53,7 +85,7 @@ export default function PaymentsScreen() {
               </View>
               <View style={styles.paymentRight}>
                 <Text style={styles.paymentAmount}>R$ {appt.paymentAmount?.toFixed(2)}</Text>
-                <TouchableOpacity style={styles.markPaidBtn}>
+                <TouchableOpacity style={styles.markPaidBtn} onPress={() => handleMarkPaid(appt.id)}>
                   <Text style={styles.markPaidText}>Mark paid</Text>
                 </TouchableOpacity>
               </View>
