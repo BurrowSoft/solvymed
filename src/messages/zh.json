@@ -1,0 +1,50 @@
+{
+  "banner": "网站正在建设中。应用程序已上线 — 立即下载开始使用。",
+  "getApp": "下载应用",
+  "hero": {
+    "badge": "应用已上线",
+    "line1": "您的整个诊所，",
+    "line2": "尽在掌中。",
+    "subtitle": "Solvymed将预约管理、患者档案、处方和付款整合在一款快速简洁的应用中，专为医疗专业人员设计。",
+    "appStore": "在App Store下载",
+    "googlePlay": "在Google Play获取",
+    "comingSoon": "下载链接即将推出。"
+  },
+  "highlights": {
+    "h1": "智能排程",
+    "h2": "1,000+患者",
+    "h3": "临床记录",
+    "h4": "电子处方",
+    "h5": "集成支付",
+    "h6": "诊所报告"
+  },
+  "features": {
+    "heading": "诊所所需的一切",
+    "sub": "专为希望减少行政工作、将更多时间用于患者的临床医生和独立从业者打造。",
+    "scheduling_title": "智能排程",
+    "scheduling_desc": "完整的日历视图，支持日、周、月模式。管理线下和在线预约，屏蔽时间段，并发送自动提醒。",
+    "patients_title": "患者管理",
+    "patients_desc": "包含个人信息、联系方式、预约历史和自定义标签的完整患者档案。可在整个患者库中搜索和筛选。",
+    "records_title": "临床记录",
+    "records_desc": "基于时间轴的富文本医疗笔记。记录每次就诊，追踪患者变化，并附加检查报告和文件 — 所有内容安全存储。",
+    "prescriptions_title": "电子处方",
+    "prescriptions_desc": "几秒内即可开具电子处方。维护个人药品库，自定义模板，并直接发送给患者。",
+    "payments_title": "集成支付",
+    "payments_desc": "直接通过应用收款。向患者发送付款链接，管理分期付款，追踪已付和待付的就诊记录。",
+    "analytics_title": "报告与分析",
+    "analytics_desc": "一目了然地了解您的诊所状况。收入报告、预约统计、患者增长 — 清晰的数据助您经营更好的诊所。"
+  },
+  "cta": {
+    "heading": "准备好简化您的诊所了吗？",
+    "sub": "应用已上线并随时可用 — 立即下载，几分钟内让您的诊所运转起来。网站即将上线。",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
+  },
+  "construction": {
+    "heading": "网站建设中",
+    "body": "本网站正在开发中。完整的Solvymed网站即将上线，届时将提供详细文档、定价和支持资源。在此期间，应用程序完全可用 — 立即下载并开始管理您的诊所。"
+  },
+  "footer": {
+    "copyright": "© 2026 Solvymed 版权所有。"
+  }
+}

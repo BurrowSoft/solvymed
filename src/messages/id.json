@@ -1,0 +1,50 @@
+{
+  "banner": "Website sedang dalam pembangunan. Aplikasi sudah tersedia — unduh sekarang dan mulailah.",
+  "getApp": "Unduh Aplikasi",
+  "hero": {
+    "badge": "Aplikasi tersedia sekarang",
+    "line1": "Seluruh praktik Anda,",
+    "line2": "di saku Anda.",
+    "subtitle": "Solvymed menyatukan jadwal, rekam medis, resep, dan pembayaran dalam satu aplikasi yang cepat dan bersih, dirancang untuk tenaga kesehatan profesional.",
+    "appStore": "Unduh di App Store",
+    "googlePlay": "Dapatkan di Google Play",
+    "comingSoon": "Tautan unduhan segera hadir."
+  },
+  "highlights": {
+    "h1": "Penjadwalan cerdas",
+    "h2": "1.000+ pasien",
+    "h3": "Rekam medis",
+    "h4": "Resep digital",
+    "h5": "Pembayaran terintegrasi",
+    "h6": "Laporan praktik"
+  },
+  "features": {
+    "heading": "Semua yang praktik Anda butuhkan",
+    "sub": "Dibuat untuk klinisi dan praktisi mandiri yang ingin lebih sedikit pekerjaan administratif dan lebih banyak waktu bersama pasien.",
+    "scheduling_title": "Penjadwalan Cerdas",
+    "scheduling_desc": "Tampilan kalender penuh dengan mode harian, mingguan, dan bulanan. Kelola janji temu tatap muka dan online, blokir waktu, dan kirim pengingat otomatis.",
+    "patients_title": "Manajemen Pasien",
+    "patients_desc": "Profil pasien lengkap dengan data pribadi, informasi kontak, riwayat janji, dan tag khusus. Cari dan filter di seluruh basis pasien Anda.",
+    "records_title": "Rekam Medis",
+    "records_desc": "Catatan medis berbasis garis waktu dengan teks kaya. Dokumentasikan setiap sesi, pantau perkembangan pasien, dan lampirkan pemeriksaan dan file — semuanya tersimpan dengan aman.",
+    "prescriptions_title": "Resep Digital",
+    "prescriptions_desc": "Terbitkan resep digital dalam hitungan detik. Kelola perpustakaan obat pribadi, sesuaikan template, dan kirimkan langsung ke pasien.",
+    "payments_title": "Pembayaran Terintegrasi",
+    "payments_desc": "Terima pembayaran langsung melalui aplikasi. Kirim tautan pembayaran ke pasien, kelola cicilan, dan lacak sesi yang sudah dibayar dan yang tertunda.",
+    "analytics_title": "Laporan & Analitik",
+    "analytics_desc": "Pahami praktik Anda sekilas. Laporan pendapatan, statistik janji temu, pertumbuhan pasien — wawasan yang jelas untuk klinik yang lebih baik."
+  },
+  "cta": {
+    "heading": "Siap menyederhanakan praktik Anda?",
+    "sub": "Aplikasi sudah siap — unduh sekarang dan jalankan praktik Anda dalam hitungan menit. Website segera hadir.",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
+  },
+  "construction": {
+    "heading": "Website sedang dalam pembangunan",
+    "body": "Website ini masih dalam pengembangan. Website lengkap Solvymed akan segera hadir dengan dokumentasi lengkap, harga, dan sumber daya dukungan. Sementara itu, aplikasi sudah beroperasi penuh — unduh dan mulailah mengelola praktik Anda hari ini."
+  },
+  "footer": {
+    "copyright": "© 2026 Solvymed. Hak cipta dilindungi."
+  }
+}

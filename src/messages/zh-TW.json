@@ -1,0 +1,50 @@
+{
+  "banner": "網站建設中。應用程式已上線 — 立即下載開始使用。",
+  "getApp": "下載應用程式",
+  "hero": {
+    "badge": "應用程式已上線",
+    "line1": "您的整個診所，",
+    "line2": "盡在掌中。",
+    "subtitle": "Solvymed將預約管理、患者病歷、處方和付款整合在一款快速整潔的應用程式中，專為醫療專業人員設計。",
+    "appStore": "在App Store下載",
+    "googlePlay": "在Google Play取得",
+    "comingSoon": "下載連結即將推出。"
+  },
+  "highlights": {
+    "h1": "智慧排程",
+    "h2": "1,000+患者",
+    "h3": "臨床記錄",
+    "h4": "電子處方",
+    "h5": "整合付款",
+    "h6": "診所報表"
+  },
+  "features": {
+    "heading": "診所所需的一切",
+    "sub": "專為希望減少行政工作、將更多時間用於患者的臨床醫師和獨立執業者打造。",
+    "scheduling_title": "智慧排程",
+    "scheduling_desc": "完整的日曆檢視，支援日、週、月模式。管理現場和線上預約，封鎖時段，並發送自動提醒。",
+    "patients_title": "患者管理",
+    "patients_desc": "包含個人資訊、聯絡方式、預約記錄和自訂標籤的完整患者檔案。可在整個患者庫中搜尋和篩選。",
+    "records_title": "臨床記錄",
+    "records_desc": "基於時間軸的富文本醫療筆記。記錄每次就診，追蹤患者變化，並附加檢查報告和檔案 — 所有內容安全儲存。",
+    "prescriptions_title": "電子處方",
+    "prescriptions_desc": "幾秒內即可開立電子處方。維護個人藥品庫，自訂範本，並直接發送給患者。",
+    "payments_title": "整合付款",
+    "payments_desc": "直接透過應用程式收款。向患者發送付款連結，管理分期付款，追蹤已付和待付的就診記錄。",
+    "analytics_title": "報表與分析",
+    "analytics_desc": "一目了然地瞭解您的診所狀況。收入報表、預約統計、患者成長 — 清晰的數據助您經營更好的診所。"
+  },
+  "cta": {
+    "heading": "準備好簡化您的診所了嗎？",
+    "sub": "應用程式已上線並隨時可用 — 立即下載，幾分鐘內讓您的診所運作起來。網站即將上線。",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
+  },
+  "construction": {
+    "heading": "網站建設中",
+    "body": "本網站正在開發中。完整的Solvymed網站即將上線，屆時將提供詳細文件、定價和支援資源。在此期間，應用程式完全可用 — 立即下載並開始管理您的診所。"
+  },
+  "footer": {
+    "copyright": "© 2026 Solvymed 版權所有。"
+  }
+}

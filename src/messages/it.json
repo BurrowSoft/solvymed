@@ -1,0 +1,50 @@
+{
+  "banner": "Sito in costruzione. L'app è già disponibile — scaricala subito e inizia.",
+  "getApp": "Scarica l'app",
+  "hero": {
+    "badge": "App disponibile ora",
+    "line1": "Tutto il tuo studio,",
+    "line2": "in tasca.",
+    "subtitle": "Solvymed riunisce agenda, cartelle cliniche, ricette e pagamenti in un'unica app veloce e ordinata, pensata per i professionisti della salute.",
+    "appStore": "Scarica su App Store",
+    "googlePlay": "Disponibile su Google Play",
+    "comingSoon": "Link per il download in arrivo."
+  },
+  "highlights": {
+    "h1": "Agenda intelligente",
+    "h2": "1.000+ pazienti",
+    "h3": "Cartelle cliniche",
+    "h4": "Ricette digitali",
+    "h5": "Pagamenti integrati",
+    "h6": "Report dello studio"
+  },
+  "features": {
+    "heading": "Tutto ciò di cui il tuo studio ha bisogno",
+    "sub": "Progettato per clinici e professionisti indipendenti che vogliono meno burocrazia e più tempo con i pazienti.",
+    "scheduling_title": "Agenda Intelligente",
+    "scheduling_desc": "Vista completa del calendario in modalità giornaliera, settimanale e mensile. Gestisci appuntamenti in presenza e online, blocca gli orari e invia promemoria automatici.",
+    "patients_title": "Gestione dei Pazienti",
+    "patients_desc": "Schede pazienti complete con dati personali, recapiti, storico degli appuntamenti e tag personalizzate. Cerca e filtra in tutta la tua base di pazienti.",
+    "records_title": "Cartelle Cliniche",
+    "records_desc": "Note mediche su linea temporale con testo formattato. Documenta ogni sessione, segui l'evoluzione del paziente e allega esami e file — tutto archiviato in sicurezza.",
+    "prescriptions_title": "Ricette Digitali",
+    "prescriptions_desc": "Emetti ricette digitali in pochi secondi. Mantieni una libreria personale di farmaci, personalizza i modelli e inviali direttamente ai pazienti.",
+    "payments_title": "Pagamenti Integrati",
+    "payments_desc": "Incassa i pagamenti direttamente dall'app. Invia link di pagamento ai pazienti, gestisci le rate e monitora le sessioni pagate e in sospeso.",
+    "analytics_title": "Report e Analisi",
+    "analytics_desc": "Comprendi il tuo studio in un colpo d'occhio. Report di fatturato, statistiche sugli appuntamenti, crescita dei pazienti — dati chiari per uno studio migliore."
+  },
+  "cta": {
+    "heading": "Pronto a semplificare il tuo studio?",
+    "sub": "L'app è online e pronta — scaricala ora e gestisci il tuo studio in pochi minuti. Il sito è in arrivo.",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
+  },
+  "construction": {
+    "heading": "Sito in costruzione",
+    "body": "Questo sito è in fase di sviluppo. Il sito completo di Solvymed sarà presto disponibile con documentazione dettagliata, prezzi e risorse di supporto. Nel frattempo, l'app è completamente operativa — scaricala e inizia a gestire il tuo studio oggi stesso."
+  },
+  "footer": {
+    "copyright": "© 2026 Solvymed. Tutti i diritti riservati."
+  }
+}

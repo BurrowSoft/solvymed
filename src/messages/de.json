@@ -1,0 +1,50 @@
+{
+  "banner": "Website im Aufbau. Die App ist bereits verfügbar — jetzt herunterladen und loslegen.",
+  "getApp": "App herunterladen",
+  "hero": {
+    "badge": "App jetzt verfügbar",
+    "line1": "Ihre gesamte Praxis,",
+    "line2": "in Ihrer Tasche.",
+    "subtitle": "Solvymed vereint Terminplanung, Patientenakten, Rezepte und Zahlungen in einer schnellen, übersichtlichen App – entwickelt für Gesundheitsfachleute.",
+    "appStore": "Im App Store laden",
+    "googlePlay": "Bei Google Play erhalten",
+    "comingSoon": "Download-Links folgen in Kürze."
+  },
+  "highlights": {
+    "h1": "Intelligente Terminplanung",
+    "h2": "1.000+ Patienten",
+    "h3": "Klinische Akten",
+    "h4": "Digitale Rezepte",
+    "h5": "Integrierte Zahlungen",
+    "h6": "Praxisberichte"
+  },
+  "features": {
+    "heading": "Alles, was Ihre Praxis braucht",
+    "sub": "Entwickelt für Kliniker und selbstständige Praktiker, die weniger Verwaltungsaufwand und mehr Zeit mit Patienten wollen.",
+    "scheduling_title": "Intelligente Terminplanung",
+    "scheduling_desc": "Vollständige Kalenderansicht in Tages-, Wochen- und Monatsmodi. Verwalten Sie Präsenz- und Online-Termine, blockieren Sie Zeiten und versenden Sie automatische Erinnerungen.",
+    "patients_title": "Patientenverwaltung",
+    "patients_desc": "Vollständige Patientenprofile mit persönlichen Daten, Kontaktinfo, Terminhistorie und benutzerdefinierten Tags. Suchen und filtern Sie in Ihrer gesamten Patientenbasis.",
+    "records_title": "Klinische Akten",
+    "records_desc": "Zeitlinienbasierte medizinische Notizen mit Richtext. Dokumentieren Sie jede Sitzung, verfolgen Sie die Entwicklung des Patienten und fügen Sie Untersuchungen und Dateien an – alles sicher gespeichert.",
+    "prescriptions_title": "Digitale Rezepte",
+    "prescriptions_desc": "Stellen Sie digitale Rezepte in Sekunden aus. Pflegen Sie eine persönliche Medikamentenbibliothek, passen Sie Vorlagen an und senden Sie diese direkt an Patienten.",
+    "payments_title": "Integrierte Zahlungen",
+    "payments_desc": "Kassieren Sie Zahlungen direkt über die App. Versenden Sie Zahlungslinks an Patienten, verwalten Sie Raten und verfolgen Sie bezahlte und ausstehende Sitzungen.",
+    "analytics_title": "Berichte & Analysen",
+    "analytics_desc": "Verstehen Sie Ihre Praxis auf einen Blick. Umsatzberichte, Terminstatistiken, Patientenwachstum – klare Einblicke für eine bessere Praxis."
+  },
+  "cta": {
+    "heading": "Bereit, Ihre Praxis zu vereinfachen?",
+    "sub": "Die App ist live und bereit – laden Sie sie jetzt herunter und haben Sie Ihre Praxis in Minuten am Laufen. Die Website folgt.",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
+  },
+  "construction": {
+    "heading": "Website im Aufbau",
+    "body": "Diese Website befindet sich im Aufbau. Die vollständige Solvymed-Website kommt bald mit ausführlicher Dokumentation, Preisen und Support-Ressourcen. In der Zwischenzeit ist die App vollständig einsatzbereit – laden Sie sie herunter und beginnen Sie noch heute, Ihre Praxis zu verwalten."
+  },
+  "footer": {
+    "copyright": "© 2026 Solvymed. Alle Rechte vorbehalten."
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "banner": "Site en cours de construction. L'app est déjà disponible — téléchargez-la maintenant.",
+  "getApp": "Télécharger l'app",
+  "hero": {
+    "badge": "App disponible maintenant",
+    "line1": "Toute votre pratique,",
+    "line2": "dans votre poche.",
+    "subtitle": "Solvymed réunit agenda, dossiers patients, ordonnances et paiements dans une seule application rapide et claire, pensée pour les professionnels de santé.",
+    "appStore": "Télécharger sur l'App Store",
+    "googlePlay": "Disponible sur Google Play",
+    "comingSoon": "Liens de téléchargement bientôt disponibles."
+  },
+  "highlights": {
+    "h1": "Agenda intelligente",
+    "h2": "1 000+ patients",
+    "h3": "Dossiers cliniques",
+    "h4": "Ordonnances numériques",
+    "h5": "Paiements intégrés",
+    "h6": "Rapports de cabinet"
+  },
+  "features": {
+    "heading": "Tout ce dont votre cabinet a besoin",
+    "sub": "Conçu pour les cliniciens et praticiens indépendants qui souhaitent moins d'administratif et plus de temps avec leurs patients.",
+    "scheduling_title": "Agenda Intelligente",
+    "scheduling_desc": "Vue complète du calendrier en modes journalier, hebdomadaire et mensuel. Gérez les rendez-vous en présentiel et en ligne, bloquez des créneaux et envoyez des rappels automatiques.",
+    "patients_title": "Gestion des Patients",
+    "patients_desc": "Fiches patients complètes avec données personnelles, coordonnées, historique des rendez-vous et étiquettes personnalisées. Recherchez et filtrez toute votre patientèle.",
+    "records_title": "Dossiers Cliniques",
+    "records_desc": "Notes médicales en ligne de temps avec texte enrichi. Documentez chaque séance, suivez l'évolution du patient et joignez examens et fichiers — le tout stocké en toute sécurité.",
+    "prescriptions_title": "Ordonnances Numériques",
+    "prescriptions_desc": "Rédigez des ordonnances numériques en quelques secondes. Maintenez une bibliothèque personnelle de médicaments, personnalisez vos modèles et envoyez-les directement aux patients.",
+    "payments_title": "Paiements Intégrés",
+    "payments_desc": "Encaissez les paiements directement via l'application. Envoyez des liens de paiement aux patients, gérez les échéances et suivez les séances payées et en attente.",
+    "analytics_title": "Rapports et Analyses",
+    "analytics_desc": "Comprenez votre cabinet d'un coup d'œil. Rapports de revenus, statistiques de rendez-vous, croissance de la patientèle — des données claires pour un meilleur cabinet."
+  },
+  "cta": {
+    "heading": "Prêt à simplifier votre cabinet ?",
+    "sub": "L'app est en ligne et opérationnelle — téléchargez-la maintenant et faites tourner votre cabinet en quelques minutes. Le site arrive bientôt.",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
+  },
+  "construction": {
+    "heading": "Site en cours de construction",
+    "body": "Ce site web est en cours de développement. Le site complet de Solvymed sera bientôt disponible avec une documentation détaillée, les tarifs et des ressources d'assistance. En attendant, l'application est entièrement opérationnelle — téléchargez-la et commencez à gérer votre cabinet dès aujourd'hui."
+  },
+  "footer": {
+    "copyright": "© 2026 Solvymed. Tous droits réservés."
+  }
+}

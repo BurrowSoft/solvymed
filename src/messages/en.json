@@ -1,0 +1,50 @@
+{
+  "banner": "Website under construction. The app is already live — download it now and get started.",
+  "getApp": "Get the App",
+  "hero": {
+    "badge": "App available now",
+    "line1": "Your entire practice,",
+    "line2": "in your pocket.",
+    "subtitle": "Solvymed brings scheduling, patient records, prescriptions, and payments together in one clean, fast app built for healthcare professionals.",
+    "appStore": "Download on the App Store",
+    "googlePlay": "Get it on Google Play",
+    "comingSoon": "Download links coming soon — check back shortly."
+  },
+  "highlights": {
+    "h1": "Smart scheduling",
+    "h2": "1,000+ patients",
+    "h3": "Clinical records",
+    "h4": "Digital prescriptions",
+    "h5": "Integrated payments",
+    "h6": "Practice reports"
+  },
+  "features": {
+    "heading": "Everything your practice needs",
+    "sub": "Built for clinicians and independent practitioners who want less admin work and more time with patients.",
+    "scheduling_title": "Smart Scheduling",
+    "scheduling_desc": "Full calendar view with daily, weekly, and monthly modes. Manage in-person and online appointments, block time, and send automated reminders.",
+    "patients_title": "Patient Management",
+    "patients_desc": "Complete patient profiles with personal data, contact info, appointment history, and custom tags. Search and filter across your entire patient base.",
+    "records_title": "Clinical Records",
+    "records_desc": "Timeline-based medical notes with rich text. Document each session, track patient evolution, and attach exams and files — all securely stored.",
+    "prescriptions_title": "Digital Prescriptions",
+    "prescriptions_desc": "Issue digital prescriptions in seconds. Maintain a personal medication library, customize templates, and send directly to patients.",
+    "payments_title": "Integrated Payments",
+    "payments_desc": "Collect payments directly through the app. Send payment links to patients, manage installments, and track paid and pending sessions.",
+    "analytics_title": "Reports & Analytics",
+    "analytics_desc": "Understand your practice at a glance. Revenue reports, appointment stats, patient growth — clear insights to help you run a better clinic."
+  },
+  "cta": {
+    "heading": "Ready to simplify your practice?",
+    "sub": "The app is live and ready — download it now and have your practice running in minutes. The website is on the way.",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
+  },
+  "construction": {
+    "heading": "Website under construction",
+    "body": "This website is a work in progress. The full Solvymed website is coming soon with detailed documentation, pricing, and support resources. In the meantime, the app is fully operational — download it and start managing your practice today."
+  },
+  "footer": {
+    "copyright": "© 2026 Solvymed. All rights reserved."
+  }
+}

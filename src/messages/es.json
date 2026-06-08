@@ -1,0 +1,50 @@
+{
+  "banner": "Sitio web en construcción. La app ya está disponible — descárgala ahora y empieza.",
+  "getApp": "Descargar la app",
+  "hero": {
+    "badge": "App disponible ahora",
+    "line1": "Toda tu consulta,",
+    "line2": "en tu bolsillo.",
+    "subtitle": "Solvymed reúne citas, historiales de pacientes, recetas y pagos en una sola app rápida y limpia, diseñada para profesionales de la salud.",
+    "appStore": "Descargar en App Store",
+    "googlePlay": "Obtener en Google Play",
+    "comingSoon": "Links de descarga próximamente."
+  },
+  "highlights": {
+    "h1": "Agenda inteligente",
+    "h2": "1.000+ pacientes",
+    "h3": "Historial clínico",
+    "h4": "Recetas digitales",
+    "h5": "Pagos integrados",
+    "h6": "Informes de consulta"
+  },
+  "features": {
+    "heading": "Todo lo que tu consulta necesita",
+    "sub": "Diseñado para clínicos y profesionales independientes que quieren menos papeleo y más tiempo con sus pacientes.",
+    "scheduling_title": "Agenda Inteligente",
+    "scheduling_desc": "Vista completa del calendario en modos diario, semanal y mensual. Gestiona citas presenciales y en línea, bloquea horarios y envía recordatorios automáticos.",
+    "patients_title": "Gestión de Pacientes",
+    "patients_desc": "Fichas completas con datos personales, contacto, historial de citas y etiquetas personalizadas. Busca y filtra toda tu base de pacientes.",
+    "records_title": "Historial Clínico",
+    "records_desc": "Notas médicas en línea de tiempo con texto enriquecido. Documenta cada sesión, sigue la evolución del paciente y adjunta exámenes y archivos — todo almacenado de forma segura.",
+    "prescriptions_title": "Recetas Digitales",
+    "prescriptions_desc": "Emite recetas digitales en segundos. Mantén una biblioteca personal de medicamentos, personaliza plantillas y envíalas directamente al paciente.",
+    "payments_title": "Pagos Integrados",
+    "payments_desc": "Cobra directamente desde la app. Envía enlaces de pago a los pacientes, gestiona cuotas y haz seguimiento de sesiones pagadas y pendientes.",
+    "analytics_title": "Informes y Analíticas",
+    "analytics_desc": "Entiende tu consulta de un vistazo. Informes de ingresos, estadísticas de citas y crecimiento de pacientes — datos claros para una clínica mejor."
+  },
+  "cta": {
+    "heading": "¿Listo para simplificar tu consulta?",
+    "sub": "La app está en marcha y lista — descárgala ahora y ten tu consulta funcionando en minutos. El sitio web está en camino.",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
+  },
+  "construction": {
+    "heading": "Sitio web en construcción",
+    "body": "Este sitio web está en desarrollo. El sitio completo de Solvymed llegará pronto con documentación detallada, precios y recursos de soporte. Mientras tanto, la app está completamente operativa — descárgala y empieza a gestionar tu consulta hoy."
+  },
+  "footer": {
+    "copyright": "© 2026 Solvymed. Todos los derechos reservados."
+  }
+}

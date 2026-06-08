@@ -1,0 +1,50 @@
+{
+  "banner": "Site em construção. O aplicativo já está no ar — baixe agora e comece a usar.",
+  "getApp": "Baixar o app",
+  "hero": {
+    "badge": "App disponível agora",
+    "line1": "Toda a sua clínica,",
+    "line2": "no seu bolso.",
+    "subtitle": "O Solvymed reúne agendamento, prontuários, prescrições e pagamentos em um único app rápido e organizado, feito para profissionais de saúde.",
+    "appStore": "Baixar na App Store",
+    "googlePlay": "Disponível no Google Play",
+    "comingSoon": "Links de download em breve."
+  },
+  "highlights": {
+    "h1": "Agendamento inteligente",
+    "h2": "1.000+ pacientes",
+    "h3": "Prontuários clínicos",
+    "h4": "Prescrições digitais",
+    "h5": "Pagamentos integrados",
+    "h6": "Relatórios da clínica"
+  },
+  "features": {
+    "heading": "Tudo o que sua clínica precisa",
+    "sub": "Desenvolvido para clínicos e profissionais independentes que querem menos burocracia e mais tempo com os pacientes.",
+    "scheduling_title": "Agendamento Inteligente",
+    "scheduling_desc": "Visualização completa da agenda em modos diário, semanal e mensal. Gerencie consultas presenciais e online, bloqueie horários e envie lembretes automáticos.",
+    "patients_title": "Gestão de Pacientes",
+    "patients_desc": "Fichas completas com dados pessoais, contato, histórico de consultas e tags personalizadas. Pesquise e filtre toda a sua base de pacientes.",
+    "records_title": "Prontuário Clínico",
+    "records_desc": "Anotações médicas em linha do tempo com texto rico. Documente cada sessão, acompanhe a evolução do paciente e anexe exames e arquivos — tudo armazenado com segurança.",
+    "prescriptions_title": "Prescrições Digitais",
+    "prescriptions_desc": "Emita prescrições digitais em segundos. Mantenha uma biblioteca pessoal de medicamentos, personalize modelos e envie diretamente ao paciente.",
+    "payments_title": "Pagamentos Integrados",
+    "payments_desc": "Receba pagamentos diretamente pelo app. Envie links de pagamento, gerencie parcelamentos e acompanhe sessões pagas e pendentes.",
+    "analytics_title": "Relatórios e Análises",
+    "analytics_desc": "Entenda sua clínica de relance. Relatórios financeiros, estatísticas de consultas e crescimento de pacientes — dados claros para uma clínica melhor."
+  },
+  "cta": {
+    "heading": "Pronto para simplificar sua clínica?",
+    "sub": "O app está no ar e pronto — baixe agora e tenha sua clínica funcionando em minutos. O site está a caminho.",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
+  },
+  "construction": {
+    "heading": "Site em construção",
+    "body": "Este site está em desenvolvimento. O site completo do Solvymed estará disponível em breve com documentação, preços e suporte detalhados. Enquanto isso, o app está totalmente funcional — baixe e comece a gerenciar sua clínica hoje."
+  },
+  "footer": {
+    "copyright": "© 2026 Solvymed. Todos os direitos reservados."
+  }
+}

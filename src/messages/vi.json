@@ -1,0 +1,50 @@
+{
+  "banner": "Trang web đang được xây dựng. Ứng dụng đã có mặt — tải xuống ngay và bắt đầu.",
+  "getApp": "Tải ứng dụng",
+  "hero": {
+    "badge": "Ứng dụng đã sẵn sàng",
+    "line1": "Toàn bộ phòng khám của bạn,",
+    "line2": "trong túi của bạn.",
+    "subtitle": "Solvymed kết hợp lịch hẹn, hồ sơ bệnh nhân, đơn thuốc và thanh toán vào một ứng dụng nhanh và gọn, được xây dựng cho các chuyên gia y tế.",
+    "appStore": "Tải về trên App Store",
+    "googlePlay": "Tải trên Google Play",
+    "comingSoon": "Liên kết tải xuống sắp có."
+  },
+  "highlights": {
+    "h1": "Lịch hẹn thông minh",
+    "h2": "Hơn 1.000 bệnh nhân",
+    "h3": "Hồ sơ lâm sàng",
+    "h4": "Đơn thuốc điện tử",
+    "h5": "Thanh toán tích hợp",
+    "h6": "Báo cáo phòng khám"
+  },
+  "features": {
+    "heading": "Tất cả những gì phòng khám của bạn cần",
+    "sub": "Được xây dựng cho các bác sĩ lâm sàng và người hành nghề độc lập muốn giảm công việc hành chính và dành nhiều thời gian hơn cho bệnh nhân.",
+    "scheduling_title": "Lịch Hẹn Thông Minh",
+    "scheduling_desc": "Chế độ xem lịch đầy đủ theo ngày, tuần và tháng. Quản lý các cuộc hẹn trực tiếp và trực tuyến, chặn thời gian và gửi nhắc nhở tự động.",
+    "patients_title": "Quản Lý Bệnh Nhân",
+    "patients_desc": "Hồ sơ bệnh nhân đầy đủ với thông tin cá nhân, liên hệ, lịch sử hẹn và thẻ tùy chỉnh. Tìm kiếm và lọc toàn bộ cơ sở bệnh nhân của bạn.",
+    "records_title": "Hồ Sơ Lâm Sàng",
+    "records_desc": "Ghi chú y tế theo dòng thời gian với văn bản định dạng. Ghi lại từng buổi khám, theo dõi diễn tiến của bệnh nhân và đính kèm xét nghiệm và tệp — tất cả được lưu trữ an toàn.",
+    "prescriptions_title": "Đơn Thuốc Điện Tử",
+    "prescriptions_desc": "Phát hành đơn thuốc điện tử trong vài giây. Duy trì thư viện thuốc cá nhân, tùy chỉnh mẫu và gửi trực tiếp cho bệnh nhân.",
+    "payments_title": "Thanh Toán Tích Hợp",
+    "payments_desc": "Thu thanh toán trực tiếp qua ứng dụng. Gửi liên kết thanh toán cho bệnh nhân, quản lý các đợt trả góp và theo dõi các buổi đã thanh toán và chưa thanh toán.",
+    "analytics_title": "Báo Cáo & Phân Tích",
+    "analytics_desc": "Hiểu phòng khám của bạn trong nháy mắt. Báo cáo doanh thu, thống kê cuộc hẹn, tăng trưởng bệnh nhân — thông tin chi tiết rõ ràng để điều hành phòng khám tốt hơn."
+  },
+  "cta": {
+    "heading": "Sẵn sàng đơn giản hóa phòng khám của bạn chưa?",
+    "sub": "Ứng dụng đã sẵn sàng — tải xuống ngay và để phòng khám của bạn hoạt động trong vài phút. Trang web đang trên đường.",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
+  },
+  "construction": {
+    "heading": "Trang web đang được xây dựng",
+    "body": "Trang web này đang được phát triển. Trang web đầy đủ của Solvymed sẽ sớm ra mắt với tài liệu chi tiết, bảng giá và tài nguyên hỗ trợ. Trong thời gian này, ứng dụng hoàn toàn hoạt động — tải xuống và bắt đầu quản lý phòng khám của bạn ngay hôm nay."
+  },
+  "footer": {
+    "copyright": "© 2026 Solvymed. Bảo lưu mọi quyền."
+  }
+}
