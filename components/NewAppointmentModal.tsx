@@ -6,8 +6,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
-import { Appointment, Patient } from '@/lib/types';
-import { createAppointment, updateAppointment, createRecurringAppointments, getPatients } from '@/lib/services';
+import { Appointment, Patient, Procedure } from '@/lib/types';
+import { createAppointment, updateAppointment, createRecurringAppointments, getPatients, getProcedures } from '@/lib/services';
 import { scheduleAppointmentReminder } from '@/lib/notifications';
 import { MOCK_PATIENTS } from '@/lib/mock-data';
 import { useAuth } from '@/lib/auth-context';
@@ -19,8 +19,8 @@ for (let h = 7; h < 21; h++) {
   }
 }
 
-const DURATIONS = [15, 30, 45, 60, 90];
-const CONSULTATION_TYPES = ['Consultation', 'Follow-up', 'Exam Review', 'Procedure', 'Emergency'];
+const DURATIONS = [15, 20, 30, 45, 50, 60, 90];
+const FALLBACK_TYPES = ['Consultation', 'Follow-up', 'Exam Review', 'Procedure', 'Emergency'];
 
 type RecurrenceMode = 'none' | 'weekly' | 'biweekly' | 'monthly';
 
@@ -45,6 +45,9 @@ export function NewAppointmentModal({
 }: Props) {
   const { user } = useAuth();
   const isEdit = !!editAppt;
+
+  // Procedures
+  const [procedures, setProcedures] = useState<Procedure[]>([]);
 
   // Patient picker
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -106,8 +109,10 @@ export function NewAppointmentModal({
     setError('');
     if (user) {
       getPatients(user.id).then(setPatients).catch(() => setPatients(MOCK_PATIENTS));
+      getProcedures(user.id).then(p => setProcedures(p.filter(x => x.active))).catch(() => {});
     } else {
       setPatients(MOCK_PATIENTS);
+      setProcedures([]);
     }
   }, [visible, user, defaultDate, editAppt?.id]);
 
@@ -338,17 +343,55 @@ export function NewAppointmentModal({
               </View>
 
               <Text style={styles.fieldLabel}>Consultation type</Text>
-              <View style={styles.pills}>
-                {CONSULTATION_TYPES.map(ct => (
-                  <TouchableOpacity
-                    key={ct}
-                    onPress={() => setConsultationType(ct)}
-                    style={[styles.pill, consultationType === ct && styles.pillActive]}
-                  >
-                    <Text style={[styles.pillText, consultationType === ct && styles.pillTextActive]}>{ct}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
+              {procedures.length > 0 ? (
+                <>
+                  <View style={styles.procedureList}>
+                    {procedures.map((p, i) => {
+                      const selected = consultationType === p.name;
+                      return (
+                        <TouchableOpacity
+                          key={p.id}
+                          style={[styles.procedureRow, selected && styles.procedureRowActive, i < procedures.length - 1 && styles.procedureRowBorder]}
+                          onPress={() => {
+                            setConsultationType(p.name);
+                            setDuration(p.durationMinutes);
+                            if (p.price != null) setAmount(p.price.toString());
+                            setPaymentType(p.paymentType);
+                          }}
+                        >
+                          <View style={{ flex: 1 }}>
+                            <Text style={[styles.procName, selected && styles.procNameActive]}>{p.name}</Text>
+                            <Text style={[styles.procMeta, selected && styles.procMetaActive]}>
+                              {p.durationMinutes} min{p.price != null ? ` · R$ ${p.price.toFixed(2)}` : ''}
+                            </Text>
+                          </View>
+                          {selected && <Ionicons name="checkmark-circle" size={18} color={Colors.primary} />}
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                  {!procedures.some(p => p.name === consultationType) && consultationType && (
+                    <View style={[styles.pill, styles.pillActive, { alignSelf: 'flex-start', marginTop: 6 }]}>
+                      <Text style={styles.pillTextActive}>{consultationType}</Text>
+                    </View>
+                  )}
+                </>
+              ) : (
+                <>
+                  <View style={styles.pills}>
+                    {FALLBACK_TYPES.map(ct => (
+                      <TouchableOpacity
+                        key={ct}
+                        onPress={() => setConsultationType(ct)}
+                        style={[styles.pill, consultationType === ct && styles.pillActive]}
+                      >
+                        <Text style={[styles.pillText, consultationType === ct && styles.pillTextActive]}>{ct}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  <Text style={styles.procHint}>Configure your procedures in Settings → My Procedures for quicker booking.</Text>
+                </>
+              )}
             </View>
 
             {/* ── Payment ── */}
@@ -505,6 +548,17 @@ const styles = StyleSheet.create({
   toggleOptText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
   toggleOptTextActive: { color: '#fff' },
   notesInput: { borderWidth: 1, borderColor: Colors.border, borderRadius: 10, padding: 12, fontSize: 14, color: Colors.textPrimary, minHeight: 88, backgroundColor: Colors.background },
+
+  // Procedure picker
+  procedureList: { borderWidth: 1, borderColor: Colors.border, borderRadius: 10, overflow: 'hidden' },
+  procedureRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 10, backgroundColor: Colors.background, gap: 10 },
+  procedureRowActive: { backgroundColor: Colors.primaryLight },
+  procedureRowBorder: { borderBottomWidth: 1, borderBottomColor: Colors.border },
+  procName: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary, marginBottom: 2 },
+  procNameActive: { color: Colors.primaryDark },
+  procMeta: { fontSize: 11, color: Colors.textSecondary },
+  procMetaActive: { color: Colors.primary },
+  procHint: { fontSize: 11, color: Colors.textMuted, marginTop: 4 },
 
   // Recurrence
   occurrencesRow: { gap: 8 },

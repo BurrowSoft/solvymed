@@ -14,7 +14,18 @@ export interface Patient {
   email?: string;
   phone?: string;
   tags?: string[];
+  photoUrl?: string;
   createdAt: string;
+}
+
+export interface Procedure {
+  id: string;
+  professionalId: string;
+  name: string;
+  durationMinutes: number;
+  price?: number;
+  paymentType: PaymentType;
+  active: boolean;
 }
 
 export interface Appointment {

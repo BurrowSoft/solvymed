@@ -9,6 +9,7 @@ import {
   Linking,
   Pressable,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,7 +18,7 @@ import { Appointment } from '@/lib/types';
 import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
 import {
   getAppointmentsByDate, updatePaymentStatus, updateAppointmentStatus,
-  getAppointmentCountsByWeek, getPatient,
+  getAppointmentCountsByWeek, getPatient, updateAppointment,
 } from '@/lib/services';
 import { cancelAppointmentReminder } from '@/lib/notifications';
 import { useAuth } from '@/lib/auth-context';
@@ -116,18 +117,49 @@ function statusColor(status: Appointment['status']) {
   }
 }
 
-function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit }: {
+function calcAge(birthDate: string): string {
+  const birth = new Date(birthDate);
+  const now = new Date();
+  let years = now.getFullYear() - birth.getFullYear();
+  let months = now.getMonth() - birth.getMonth();
+  let days = now.getDate() - birth.getDate();
+  if (days < 0) { months--; days += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+  if (months < 0) { years--; months += 12; }
+  const parts: string[] = [];
+  if (years > 0) parts.push(`${years} yr${years !== 1 ? 's' : ''}`);
+  if (months > 0) parts.push(`${months} mo`);
+  if (days > 0 || parts.length === 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
+  return parts.join(', ');
+}
+
+function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, onAmountUpdated }: {
   appt: Appointment | null;
   onClose: () => void;
   onMarkPaid: (id: string) => void;
   onStatusChange: (id: string, status: Appointment['status']) => void;
   onEdit: (appt: Appointment) => void;
+  onAmountUpdated: (id: string, amount: number) => void;
 }) {
   const [patientPhone, setPatientPhone] = React.useState<string | null>(null);
+  const [patientAge, setPatientAge] = React.useState<string | null>(null);
+  const [editingAmount, setEditingAmount] = React.useState(false);
+  const [amountValue, setAmountValue] = React.useState('');
+  const [displayAmount, setDisplayAmount] = React.useState<number | undefined>(undefined);
 
   React.useEffect(() => {
-    if (!appt?.patientId) { setPatientPhone(null); return; }
-    getPatient(appt.patientId).then(p => setPatientPhone(p.phone ?? null)).catch(() => setPatientPhone(null));
+    setDisplayAmount(appt?.paymentAmount);
+    setAmountValue(appt?.paymentAmount?.toString() ?? '');
+    setEditingAmount(false);
+  }, [appt?.id]);
+
+  React.useEffect(() => {
+    if (!appt?.patientId) { setPatientPhone(null); setPatientAge(null); return; }
+    getPatient(appt.patientId)
+      .then(p => {
+        setPatientPhone(p.phone ?? null);
+        setPatientAge(p.birthDate ? calcAge(p.birthDate) : null);
+      })
+      .catch(() => { setPatientPhone(null); setPatientAge(null); });
   }, [appt?.patientId]);
 
   if (!appt) return null;
@@ -158,6 +190,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit }:
           {!isBlocked && (
             <>
               <Text style={styles.modalPatient}>{appt.patientName}</Text>
+              {patientAge && <Text style={styles.modalPatientAge}>{patientAge}</Text>}
               <TouchableOpacity
                 style={styles.modalAction}
                 onPress={() => patientPhone && Linking.openURL(whatsappConfirmUrl(patientPhone, appt))}
@@ -190,9 +223,46 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit }:
 
               <View style={styles.modalRow}>
                 <View style={[styles.statusDot, { backgroundColor: appt.paymentStatus === 'paid' ? Colors.success : Colors.warning }]} />
-                <Text style={styles.modalMeta}>
-                  {appt.paymentType === 'private' ? 'Private' : 'Insurance'}{appt.paymentAmount ? ` · R$ ${appt.paymentAmount.toFixed(2)}` : ''}
-                </Text>
+                <Text style={styles.modalMeta}>{appt.paymentType === 'private' ? 'Private' : 'Insurance'}</Text>
+                {editingAmount ? (
+                  <View style={styles.amountEditRow}>
+                    <Text style={styles.modalMeta}>R$</Text>
+                    <TextInput
+                      style={styles.amountInput}
+                      value={amountValue}
+                      onChangeText={setAmountValue}
+                      keyboardType="decimal-pad"
+                      autoFocus
+                      selectTextOnFocus
+                    />
+                    <TouchableOpacity
+                      onPress={async () => {
+                        const v = parseFloat(amountValue);
+                        if (!isNaN(v)) {
+                          await updateAppointment(appt.id, { paymentAmount: v }).catch(() => {});
+                          setDisplayAmount(v);
+                          onAmountUpdated(appt.id, v);
+                        }
+                        setEditingAmount(false);
+                      }}
+                    >
+                      <Ionicons name="checkmark-circle" size={20} color={Colors.success} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setEditingAmount(false)}>
+                      <Ionicons name="close-circle" size={20} color={Colors.textMuted} />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.amountDisplay}
+                    onPress={() => { setAmountValue(displayAmount?.toString() ?? ''); setEditingAmount(true); }}
+                  >
+                    <Text style={styles.modalMeta}>
+                      {displayAmount != null ? `R$ ${displayAmount.toFixed(2)}` : 'Set amount'}
+                    </Text>
+                    <Ionicons name="pencil-outline" size={13} color={Colors.primary} />
+                  </TouchableOpacity>
+                )}
                 {appt.paymentStatus !== 'paid' ? (
                   <TouchableOpacity style={styles.chip} onPress={() => onMarkPaid(appt.id)}>
                     <Text style={styles.chipText}>Mark as paid</Text>
@@ -442,6 +512,7 @@ export default function ScheduleScreen() {
         onMarkPaid={handleMarkPaid}
         onStatusChange={handleStatusChange}
         onEdit={(appt) => { setSelectedAppt(null); setEditingAppt(appt); }}
+        onAmountUpdated={(id, amount) => setAppointments(prev => prev.map(a => a.id === id ? { ...a, paymentAmount: amount } : a))}
       />
 
       <NewAppointmentModal
@@ -581,6 +652,10 @@ const styles = StyleSheet.create({
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   modalTitle: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
   modalPatient: { fontSize: 16, fontWeight: '600', color: Colors.primary },
+  modalPatientAge: { fontSize: 12, color: Colors.textSecondary, marginTop: 1, marginBottom: 2 },
+  amountEditRow: { flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 },
+  amountInput: { borderWidth: 1, borderColor: Colors.border, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3, fontSize: 13, color: Colors.textPrimary, minWidth: 70 },
+  amountDisplay: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   modalAction: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   modalActionText: { fontSize: 14, color: Colors.primary },
   modalRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },

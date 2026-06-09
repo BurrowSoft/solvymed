@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Appointment, Patient, MedicalRecord, Prescription, PrescriptionItem, Professional, WorkingHours } from './types';
+import { Appointment, Patient, MedicalRecord, Prescription, PrescriptionItem, Professional, WorkingHours, Procedure } from './types';
 
 // ─── Appointments ────────────────────────────────────────────────────────────
 
@@ -323,6 +323,7 @@ function toPatient(row: Record<string, unknown>): Patient {
     email: row.email as string,
     phone: row.phone as string,
     tags: row.tags as string[],
+    photoUrl: (row.photo_url as string) || undefined,
     createdAt: row.created_at as string,
   };
 }
@@ -338,6 +339,19 @@ function fromPatient(p: Partial<Patient>) {
     email: p.email,
     phone: p.phone,
     tags: p.tags,
+    photo_url: p.photoUrl ?? null,
+  };
+}
+
+function toProcedure(row: Record<string, unknown>): Procedure {
+  return {
+    id: row.id as string,
+    professionalId: row.professional_id as string,
+    name: row.name as string,
+    durationMinutes: row.duration_minutes as number,
+    price: row.price != null ? Number(row.price) : undefined,
+    paymentType: row.payment_type as Procedure['paymentType'],
+    active: row.active as boolean,
   };
 }
 
@@ -444,6 +458,77 @@ function toProfessional(row: Record<string, unknown>): Professional {
     specialty: row.specialty as string | undefined,
     workingHours: (row.working_hours as WorkingHours | undefined) ?? undefined,
   };
+}
+
+// ─── Procedures ──────────────────────────────────────────────────────────────
+
+export async function getProcedures(professionalId: string): Promise<Procedure[]> {
+  const { data, error } = await supabase
+    .from('procedures')
+    .select('*')
+    .eq('professional_id', professionalId)
+    .order('sort_order')
+    .order('name');
+  if (error) throw error;
+  return (data ?? []).map(toProcedure);
+}
+
+export async function createProcedure(
+  data: Omit<Procedure, 'id'>,
+): Promise<Procedure> {
+  const { data: row, error } = await supabase
+    .from('procedures')
+    .insert({
+      professional_id: data.professionalId,
+      name: data.name,
+      duration_minutes: data.durationMinutes,
+      price: data.price ?? null,
+      payment_type: data.paymentType,
+      active: data.active,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return toProcedure(row);
+}
+
+export async function updateProcedure(
+  id: string,
+  updates: Partial<Omit<Procedure, 'id' | 'professionalId'>>,
+): Promise<void> {
+  const mapped: Record<string, unknown> = {};
+  if (updates.name !== undefined) mapped.name = updates.name;
+  if (updates.durationMinutes !== undefined) mapped.duration_minutes = updates.durationMinutes;
+  if (updates.price !== undefined) mapped.price = updates.price ?? null;
+  if (updates.paymentType !== undefined) mapped.payment_type = updates.paymentType;
+  if (updates.active !== undefined) mapped.active = updates.active;
+  const { error } = await supabase.from('procedures').update(mapped).eq('id', id);
+  if (error) throw error;
+}
+
+export async function deleteProcedure(id: string): Promise<void> {
+  const { error } = await supabase.from('procedures').delete().eq('id', id);
+  if (error) throw error;
+}
+
+// ─── Patient Photo ────────────────────────────────────────────────────────────
+
+export async function uploadPatientPhoto(
+  professionalId: string,
+  patientId: string,
+  uri: string,
+  mimeType = 'image/jpeg',
+): Promise<string> {
+  const ext = mimeType.split('/')[1]?.replace('jpeg', 'jpg') ?? 'jpg';
+  const path = `${professionalId}/${patientId}.${ext}`;
+  const response = await fetch(uri);
+  const blob = await response.blob();
+  const { error } = await supabase.storage
+    .from('patient-photos')
+    .upload(path, blob, { upsert: true, contentType: mimeType });
+  if (error) throw error;
+  const { data } = supabase.storage.from('patient-photos').getPublicUrl(path);
+  return `${data.publicUrl}?t=${Date.now()}`;
 }
 
 function toPrescription(row: Record<string, unknown>): Prescription {

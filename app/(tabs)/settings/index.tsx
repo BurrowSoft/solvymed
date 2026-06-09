@@ -9,6 +9,7 @@ import { Professional } from '@/lib/types';
 import { ProfileModal } from '@/components/ProfileModal';
 import { WorkingHoursModal } from '@/components/WorkingHoursModal';
 import { DocumentTemplatesModal } from '@/components/DocumentTemplatesModal';
+import { ProceduresModal } from '@/components/ProceduresModal';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -21,6 +22,7 @@ export default function SettingsScreen() {
   const [showProfile, setShowProfile] = useState(false);
   const [showWorkingHours, setShowWorkingHours] = useState(false);
   const [showDocumentTemplates, setShowDocumentTemplates] = useState(false);
+  const [showProcedures, setShowProcedures] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -33,6 +35,12 @@ export default function SettingsScreen() {
       items: [
         { label: 'My Profile', icon: 'person-outline', onPress: () => setShowProfile(true) },
         { label: 'My Clinic', icon: 'business-outline' },
+      ],
+    },
+    {
+      title: 'My Procedures',
+      items: [
+        { label: 'Manage Procedures', icon: 'list-outline', onPress: () => setShowProcedures(true) },
       ],
     },
     {
@@ -135,6 +143,14 @@ export default function SettingsScreen() {
         professional={professional}
         onClose={() => setShowDocumentTemplates(false)}
       />
+
+      {user && (
+        <ProceduresModal
+          visible={showProcedures}
+          professionalId={user.id}
+          onClose={() => setShowProcedures(false)}
+        />
+      )}
     </SafeAreaView>
   );
 }

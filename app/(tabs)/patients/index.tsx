@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TextInput,
-  TouchableOpacity, Modal, ScrollView, ActivityIndicator, Alert,
+  TouchableOpacity, Modal, ScrollView, ActivityIndicator, Alert, Image,
 } from 'react-native';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { Patient, MedicalRecord, Prescription, Appointment } from '@/lib/types';
 import { MOCK_PATIENTS, MOCK_RECORDS, MOCK_APPOINTMENTS } from '@/lib/mock-data';
-import { getPatients, getRecords, updatePatient, getPrescriptions, getPatientAppointments } from '@/lib/services';
+import { getPatients, getRecords, updatePatient, getPrescriptions, getPatientAppointments, uploadPatientPhoto } from '@/lib/services';
 import { getTemplate } from '@/lib/template-service';
 import { buildPrescriptionHtml } from '@/lib/pdf-utils';
 import { useAuth } from '@/lib/auth-context';
@@ -108,6 +109,36 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
     setEditTags(patient.tags ?? []);
     setTagInput('');
     setEditing(true);
+  }
+
+  const [photoUrl, setPhotoUrl] = useState<string | undefined>(patient.photoUrl);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  async function pickAndUploadPhoto() {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission needed', 'Allow photo library access to upload a patient photo.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+    if (result.canceled || !user) return;
+    const asset = result.assets[0];
+    setUploadingPhoto(true);
+    try {
+      const url = await uploadPatientPhoto(user.id, patient.id, asset.uri, asset.mimeType ?? 'image/jpeg');
+      await updatePatient(patient.id, { photoUrl: url });
+      setPhotoUrl(url);
+      onUpdate({ ...patient, photoUrl: url });
+    } catch {
+      Alert.alert('Upload failed', 'Make sure the "patient-photos" Storage bucket is created and public.');
+    } finally {
+      setUploadingPhoto(false);
+    }
   }
 
   function addTag() {
@@ -214,9 +245,21 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
           {activeTab === 'info' && (
             <View style={styles.section}>
               <View style={styles.avatarRow}>
-                <View style={styles.avatar}>
-                  <Text style={styles.avatarInitial}>{patient.fullName[0]?.toUpperCase()}</Text>
-                </View>
+                <TouchableOpacity onPress={pickAndUploadPhoto} disabled={uploadingPhoto} activeOpacity={0.8}>
+                  <View style={styles.avatar}>
+                    {photoUrl ? (
+                      <Image source={{ uri: photoUrl }} style={styles.avatarPhoto} />
+                    ) : (
+                      <Text style={styles.avatarInitial}>{patient.fullName[0]?.toUpperCase()}</Text>
+                    )}
+                    <View style={styles.avatarCameraBtn}>
+                      {uploadingPhoto
+                        ? <ActivityIndicator size="small" color="#fff" />
+                        : <Ionicons name="camera" size={12} color="#fff" />
+                      }
+                    </View>
+                  </View>
+                </TouchableOpacity>
               </View>
 
               <Text style={styles.sectionTitle}>Personal Information</Text>
@@ -575,7 +618,10 @@ export default function PatientsScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity style={styles.patientRow} onPress={() => setSelected(item)}>
               <View style={styles.patientAvatar}>
-                <Text style={styles.patientInitial}>{item.fullName[0]?.toUpperCase()}</Text>
+                {item.photoUrl
+                  ? <Image source={{ uri: item.photoUrl }} style={styles.patientPhoto} />
+                  : <Text style={styles.patientInitial}>{item.fullName[0]?.toUpperCase()}</Text>
+                }
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.patientName}>{item.fullName}</Text>
@@ -651,8 +697,11 @@ const styles = StyleSheet.create({
   detailBody: { flex: 1 },
   section: { padding: 16 },
   avatarRow: { alignItems: 'center', marginBottom: 16 },
-  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border, overflow: 'hidden' },
+  avatarPhoto: { width: 72, height: 72, borderRadius: 36 },
   avatarInitial: { fontSize: 28, fontWeight: '700', color: Colors.primary },
+  avatarCameraBtn: { position: 'absolute', bottom: 0, right: 0, width: 22, height: 22, borderRadius: 11, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: '#fff' },
+  patientPhoto: { width: 40, height: 40, borderRadius: 20 },
   sectionTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, marginBottom: 10 },
   fieldGrid: { gap: 10 },
   fieldFull: { gap: 4 },
