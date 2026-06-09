@@ -19,8 +19,12 @@ import { Appointment } from '@/lib/types';
 import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
 import {
   getAppointmentsByDate, updatePaymentStatus, updateAppointmentStatus,
-  getAppointmentCountsByWeek, getPatient, updateAppointment,
+  getAppointmentCountsByWeek, getPatient, updateAppointment, getProfessional,
 } from '@/lib/services';
+import { getTemplate } from '@/lib/template-service';
+import { buildInvoiceHtml } from '@/lib/pdf-utils';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 import { cancelAppointmentReminder } from '@/lib/notifications';
 import { useAuth } from '@/lib/auth-context';
 import { NewAppointmentModal } from '@/components/NewAppointmentModal';
@@ -133,6 +137,32 @@ function calcAge(birthDate: string): string {
   return parts.join(', ');
 }
 
+async function shareInvoice(appt: Appointment, professionalId: string) {
+  try {
+    const [patient, professional, template] = await Promise.all([
+      appt.patientId ? getPatient(appt.patientId).catch(() => null) : Promise.resolve(null),
+      getProfessional(professionalId),
+      getTemplate(professionalId, 'invoice').catch(() => null),
+    ]);
+    const fallbackPatient = { id: '', fullName: appt.patientName, createdAt: '' };
+    const fallbackTemplate = { professionalId, documentType: 'invoice' as const, primaryColor: '#208AEF', accentColor: '#E8F4FE' };
+    const html = buildInvoiceHtml(
+      patient ?? fallbackPatient,
+      appt,
+      professional ?? { id: professionalId, fullName: '', email: '' },
+      template ?? fallbackTemplate,
+    );
+    const { uri } = await Print.printToFileAsync({ html, base64: false });
+    if (await Sharing.isAvailableAsync()) {
+      await Sharing.shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: 'Share Invoice' });
+    } else {
+      await Print.printAsync({ html });
+    }
+  } catch {
+    // silent — user can retry
+  }
+}
+
 function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, onAmountUpdated }: {
   appt: Appointment | null;
   onClose: () => void;
@@ -141,11 +171,13 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
   onEdit: (appt: Appointment) => void;
   onAmountUpdated: (id: string, amount: number) => void;
 }) {
+  const { user } = useAuth();
   const [patientPhone, setPatientPhone] = React.useState<string | null>(null);
   const [patientAge, setPatientAge] = React.useState<string | null>(null);
   const [editingAmount, setEditingAmount] = React.useState(false);
   const [amountValue, setAmountValue] = React.useState('');
   const [displayAmount, setDisplayAmount] = React.useState<number | undefined>(undefined);
+  const [generatingInvoice, setGeneratingInvoice] = React.useState(false);
 
   React.useEffect(() => {
     setDisplayAmount(appt?.paymentAmount);
@@ -231,6 +263,23 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
               >
                 <Ionicons name="link-outline" size={16} color={Colors.primary} />
                 <Text style={styles.modalActionText}>Share payment link</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.modalAction}
+                disabled={generatingInvoice}
+                onPress={async () => {
+                  if (!user) return;
+                  setGeneratingInvoice(true);
+                  await shareInvoice(appt, user.id);
+                  setGeneratingInvoice(false);
+                }}
+              >
+                {generatingInvoice
+                  ? <ActivityIndicator size="small" color={Colors.primary} />
+                  : <Ionicons name="receipt-outline" size={16} color={Colors.primary} />
+                }
+                <Text style={styles.modalActionText}>Generate invoice PDF</Text>
               </TouchableOpacity>
 
               <View style={styles.modalRow}>

@@ -16,9 +16,10 @@ import {
   getPatients, getRecords, updatePatient, getPrescriptions,
   getPatientAppointments, uploadPatientPhoto,
   getPatientFiles, uploadPatientFile, deletePatientFile,
+  getProfessional,
 } from '@/lib/services';
 import { getTemplate } from '@/lib/template-service';
-import { buildPrescriptionHtml } from '@/lib/pdf-utils';
+import { buildPrescriptionHtml, buildMedicalHistoryHtml } from '@/lib/pdf-utils';
 import { useAuth } from '@/lib/auth-context';
 import { NewPatientModal } from '@/components/NewPatientModal';
 import { NewRecordModal } from '@/components/NewRecordModal';
@@ -275,6 +276,39 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
     }
   }
 
+  const [exportingHistory, setExportingHistory] = useState(false);
+
+  async function exportHistory() {
+    if (!user) return;
+    setExportingHistory(true);
+    try {
+      const [allRecords, allPrescriptions, professional, template] = await Promise.all([
+        getRecords(patient.id).catch(() => records),
+        getPrescriptions(patient.id).catch(() => prescriptions),
+        getProfessional(user.id),
+        getTemplate(user.id, 'medical_record').catch(() => null),
+      ]);
+      const fallbackTemplate = { professionalId: user.id, documentType: 'medical_record' as const, primaryColor: '#208AEF', accentColor: '#E8F4FE' };
+      const html = buildMedicalHistoryHtml(
+        patient,
+        allRecords,
+        allPrescriptions,
+        professional ?? { id: user.id, fullName: '', email: '' },
+        template ?? fallbackTemplate,
+      );
+      const { uri } = await Print.printToFileAsync({ html, base64: false });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: `${patient.fullName} — Medical History` });
+      } else {
+        await Print.printAsync({ html });
+      }
+    } catch {
+      Alert.alert('Error', 'Could not generate PDF. Please try again.');
+    } finally {
+      setExportingHistory(false);
+    }
+  }
+
   function formatFileSize(bytes: number) {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -298,10 +332,18 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
               }
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity style={styles.editBtn} onPress={enterEdit}>
-              <Ionicons name="pencil-outline" size={16} color={Colors.primary} />
-              <Text style={styles.editBtnText}>Edit</Text>
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              <TouchableOpacity style={styles.exportBtn} onPress={exportHistory} disabled={exportingHistory}>
+                {exportingHistory
+                  ? <ActivityIndicator size="small" color={Colors.primary} />
+                  : <Ionicons name="document-text-outline" size={16} color={Colors.primary} />
+                }
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.editBtn} onPress={enterEdit}>
+                <Ionicons name="pencil-outline" size={16} color={Colors.primary} />
+                <Text style={styles.editBtnText}>Edit</Text>
+              </TouchableOpacity>
+            </View>
           )}
         </View>
 
@@ -832,6 +874,7 @@ const styles = StyleSheet.create({
   backBtn: { padding: 4 },
   detailName: { flex: 1, fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
   editBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 16, backgroundColor: Colors.primaryLight },
+  exportBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
   editBtnText: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
   saveEditBtn: { backgroundColor: Colors.primary, paddingHorizontal: 12, paddingVertical: 5, borderRadius: 16, minWidth: 52, alignItems: 'center' },
   saveEditBtnText: { fontSize: 13, color: '#fff', fontWeight: '600' },
