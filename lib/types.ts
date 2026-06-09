@@ -78,3 +78,16 @@ export interface Professional {
   specialty?: string;
   workingHours?: WorkingHours;
 }
+
+export type DocumentType = 'prescription' | 'medical_record' | 'invoice';
+
+export interface DocumentTemplate {
+  id?: string;
+  professionalId: string;
+  documentType: DocumentType;
+  primaryColor: string;
+  accentColor: string;
+  logoUrl?: string;
+  headerText?: string;
+  footerText?: string;
+}

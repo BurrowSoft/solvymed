@@ -42,6 +42,12 @@
         {
           "color": "#208AEF"
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "SolvyMed uses your photo library to let you upload a clinic logo for document templates."
+        }
       ]
     ],
     "experiments": {

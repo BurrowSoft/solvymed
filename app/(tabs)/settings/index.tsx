@@ -8,6 +8,7 @@ import { getProfessional } from '@/lib/services';
 import { Professional } from '@/lib/types';
 import { ProfileModal } from '@/components/ProfileModal';
 import { WorkingHoursModal } from '@/components/WorkingHoursModal';
+import { DocumentTemplatesModal } from '@/components/DocumentTemplatesModal';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -19,6 +20,7 @@ export default function SettingsScreen() {
   const [professional, setProfessional] = useState<Professional | null>(null);
   const [showProfile, setShowProfile] = useState(false);
   const [showWorkingHours, setShowWorkingHours] = useState(false);
+  const [showDocumentTemplates, setShowDocumentTemplates] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -42,6 +44,7 @@ export default function SettingsScreen() {
         { label: 'Working Hours', icon: 'calendar-outline', onPress: () => setShowWorkingHours(true) },
         { label: 'Medical Records', icon: 'document-text-outline' },
         { label: 'Modules', icon: 'grid-outline' },
+        { label: 'Document Templates', icon: 'color-palette-outline', onPress: () => setShowDocumentTemplates(true) },
         { label: 'Documents', icon: 'folder-outline' },
       ],
     },
@@ -125,6 +128,12 @@ export default function SettingsScreen() {
         onSaved={() => {
           if (user) getProfessional(user.id).then(setProfessional).catch(() => {});
         }}
+      />
+
+      <DocumentTemplatesModal
+        visible={showDocumentTemplates}
+        professional={professional}
+        onClose={() => setShowDocumentTemplates(false)}
       />
     </SafeAreaView>
   );
