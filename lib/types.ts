@@ -43,6 +43,7 @@ export interface Appointment {
   paymentStatus: PaymentStatus;
   status: AppointmentStatus;
   notes?: string;
+  extraItems?: AppointmentExtraItem[];
   professionalId: string;
 }
 
@@ -86,8 +87,19 @@ export interface Professional {
   fullName: string;
   email: string;
   clinicName?: string;
+  clinicCnpj?: string;
+  clinicAddress?: string;
+  clinicCity?: string;
+  clinicState?: string;
+  clinicPhone?: string;
+  clinicWebsite?: string;
   specialty?: string;
   workingHours?: WorkingHours;
+}
+
+export interface AppointmentExtraItem {
+  name: string;
+  price?: number;
 }
 
 export interface PatientFile {

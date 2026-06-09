@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
@@ -10,6 +10,7 @@ import { ProfileModal } from '@/components/ProfileModal';
 import { WorkingHoursModal } from '@/components/WorkingHoursModal';
 import { DocumentTemplatesModal } from '@/components/DocumentTemplatesModal';
 import { ProceduresModal } from '@/components/ProceduresModal';
+import { MyClinicModal } from '@/components/MyClinicModal';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -23,18 +24,23 @@ export default function SettingsScreen() {
   const [showWorkingHours, setShowWorkingHours] = useState(false);
   const [showDocumentTemplates, setShowDocumentTemplates] = useState(false);
   const [showProcedures, setShowProcedures] = useState(false);
+  const [showMyClinic, setShowMyClinic] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     getProfessional(user.id).then(setProfessional).catch(() => {});
   }, [user]);
 
+  function comingSoon(label: string) {
+    return () => Alert.alert(label, 'This feature is coming soon.', [{ text: 'OK' }]);
+  }
+
   const SETTINGS: SettingGroup[] = [
     {
       title: 'Profile',
       items: [
         { label: 'My Profile', icon: 'person-outline', onPress: () => setShowProfile(true) },
-        { label: 'My Clinic', icon: 'business-outline' },
+        { label: 'My Clinic', icon: 'business-outline', onPress: () => setShowMyClinic(true) },
       ],
     },
     {
@@ -46,21 +52,21 @@ export default function SettingsScreen() {
     {
       title: 'Configuration',
       items: [
-        { label: 'Registrations', icon: 'list-outline' },
-        { label: 'Integrations', icon: 'link-outline' },
-        { label: 'Patient Data', icon: 'people-outline' },
+        { label: 'Registrations', icon: 'list-outline', onPress: comingSoon('Registrations') },
+        { label: 'Integrations', icon: 'link-outline', onPress: comingSoon('Integrations') },
+        { label: 'Patient Data', icon: 'people-outline', onPress: comingSoon('Patient Data') },
         { label: 'Working Hours', icon: 'calendar-outline', onPress: () => setShowWorkingHours(true) },
-        { label: 'Medical Records', icon: 'document-text-outline' },
-        { label: 'Modules', icon: 'grid-outline' },
+        { label: 'Medical Records', icon: 'document-text-outline', onPress: comingSoon('Medical Records') },
+        { label: 'Modules', icon: 'grid-outline', onPress: comingSoon('Modules') },
         { label: 'Document Templates', icon: 'color-palette-outline', onPress: () => setShowDocumentTemplates(true) },
-        { label: 'Documents', icon: 'folder-outline' },
+        { label: 'Documents', icon: 'folder-outline', onPress: comingSoon('Documents') },
       ],
     },
     {
       title: 'Support',
       items: [
-        { label: 'Help', icon: 'help-circle-outline' },
-        { label: 'About SolvyMed', icon: 'information-circle-outline' },
+        { label: 'Help', icon: 'help-circle-outline', onPress: comingSoon('Help') },
+        { label: 'About SolvyMed', icon: 'information-circle-outline', onPress: comingSoon('About SolvyMed') },
       ],
     },
   ];
@@ -151,6 +157,13 @@ export default function SettingsScreen() {
           onClose={() => setShowProcedures(false)}
         />
       )}
+
+      <MyClinicModal
+        visible={showMyClinic}
+        professional={professional}
+        onClose={() => setShowMyClinic(false)}
+        onSaved={(updated) => setProfessional(updated)}
+      />
     </SafeAreaView>
   );
 }

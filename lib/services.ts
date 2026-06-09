@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Appointment, Patient, MedicalRecord, Prescription, PrescriptionItem, Professional, WorkingHours, Procedure, PatientFile } from './types';
+import { Appointment, AppointmentExtraItem, Patient, MedicalRecord, Prescription, PrescriptionItem, Professional, WorkingHours, Procedure, PatientFile } from './types';
 
 // ─── Appointments ────────────────────────────────────────────────────────────
 
@@ -184,6 +184,7 @@ export async function updateAppointment(id: string, updates: Partial<Appointment
   if (updates.paymentStatus !== undefined) mapped.payment_status = updates.paymentStatus;
   if (updates.status !== undefined) mapped.status = updates.status;
   if (updates.notes !== undefined) mapped.notes = updates.notes || null;
+  if (updates.extraItems !== undefined) mapped.extra_items = updates.extraItems;
   const { error } = await supabase.from('appointments').update(mapped).eq('id', id);
   if (error) throw error;
 }
@@ -288,6 +289,7 @@ function toAppointment(row: Record<string, unknown>): Appointment {
     paymentStatus: row.payment_status as Appointment['paymentStatus'],
     status: row.status as Appointment['status'],
     notes: row.notes as string,
+    extraItems: Array.isArray(row.extra_items) ? (row.extra_items as AppointmentExtraItem[]) : [],
     professionalId: row.professional_id as string,
   };
 }
@@ -308,6 +310,7 @@ function fromAppointment(a: Omit<Appointment, 'id'>) {
     payment_status: a.paymentStatus,
     status: a.status,
     notes: a.notes,
+    extra_items: a.extraItems ?? [],
   };
 }
 
@@ -455,9 +458,30 @@ function toProfessional(row: Record<string, unknown>): Professional {
     fullName: (row.full_name as string) ?? '',
     email: (row.email as string) ?? '',
     clinicName: row.clinic_name as string | undefined,
+    clinicCnpj: row.clinic_cnpj as string | undefined,
+    clinicAddress: row.clinic_address as string | undefined,
+    clinicCity: row.clinic_city as string | undefined,
+    clinicState: row.clinic_state as string | undefined,
+    clinicPhone: row.clinic_phone as string | undefined,
+    clinicWebsite: row.clinic_website as string | undefined,
     specialty: row.specialty as string | undefined,
     workingHours: (row.working_hours as WorkingHours | undefined) ?? undefined,
   };
+}
+
+export async function updateProfessional(id: string, updates: Partial<Professional>): Promise<void> {
+  const mapped: Record<string, unknown> = {};
+  if (updates.fullName !== undefined) mapped.full_name = updates.fullName;
+  if (updates.clinicName !== undefined) mapped.clinic_name = updates.clinicName || null;
+  if (updates.clinicCnpj !== undefined) mapped.clinic_cnpj = updates.clinicCnpj || null;
+  if (updates.clinicAddress !== undefined) mapped.clinic_address = updates.clinicAddress || null;
+  if (updates.clinicCity !== undefined) mapped.clinic_city = updates.clinicCity || null;
+  if (updates.clinicState !== undefined) mapped.clinic_state = updates.clinicState || null;
+  if (updates.clinicPhone !== undefined) mapped.clinic_phone = updates.clinicPhone || null;
+  if (updates.clinicWebsite !== undefined) mapped.clinic_website = updates.clinicWebsite || null;
+  if (updates.specialty !== undefined) mapped.specialty = updates.specialty || null;
+  const { error } = await supabase.from('professionals').update(mapped).eq('id', id);
+  if (error) throw error;
 }
 
 // ─── Patient Files ────────────────────────────────────────────────────────────

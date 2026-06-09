@@ -6,7 +6,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
-import { Appointment, Patient, Procedure } from '@/lib/types';
+import { Appointment, AppointmentExtraItem, Patient, Procedure } from '@/lib/types';
 import { createAppointment, updateAppointment, createRecurringAppointments, getPatients, getProcedures } from '@/lib/services';
 import { scheduleAppointmentReminder } from '@/lib/notifications';
 import { MOCK_PATIENTS } from '@/lib/mock-data';
@@ -69,6 +69,10 @@ export function NewAppointmentModal({
   const [recurrence, setRecurrence] = useState<RecurrenceMode>('none');
   const [occurrences, setOccurrences] = useState('8');
 
+  const [extraItems, setExtraItems] = useState<AppointmentExtraItem[]>([]);
+  const [extraItemName, setExtraItemName] = useState('');
+  const [extraItemPrice, setExtraItemPrice] = useState('');
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -90,6 +94,7 @@ export function NewAppointmentModal({
       setPaymentType(editAppt.paymentType);
       setAmount(editAppt.paymentAmount?.toString() ?? '');
       setNotes(editAppt.notes ?? '');
+      setExtraItems(editAppt.extraItems ?? []);
       setRecurrence('none');
     } else {
       setPatientId('');
@@ -103,9 +108,12 @@ export function NewAppointmentModal({
       setPaymentType('private');
       setAmount('');
       setNotes('');
+      setExtraItems([]);
       setRecurrence('none');
       setOccurrences('8');
     }
+    setExtraItemName('');
+    setExtraItemPrice('');
     setError('');
     if (user) {
       getPatients(user.id).then(setPatients).catch(() => setPatients(MOCK_PATIENTS));
@@ -152,6 +160,7 @@ export function NewAppointmentModal({
       paymentStatus: editAppt?.paymentStatus ?? 'pending',
       status: editAppt?.status ?? 'scheduled',
       notes: notes.trim() || undefined,
+      extraItems: extraItems.length > 0 ? extraItems : undefined,
       professionalId: user?.id ?? '',
     };
 
@@ -445,6 +454,62 @@ export function NewAppointmentModal({
               />
             </View>
 
+            {/* ── Additional Items ── */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>
+                Additional Items <Text style={styles.optional}>(optional)</Text>
+              </Text>
+
+              {extraItems.map((item, i) => (
+                <View key={i} style={styles.extraItemRow}>
+                  <View style={{ flex: 1, gap: 1 }}>
+                    <Text style={styles.extraItemName}>{item.name}</Text>
+                    {item.price != null && (
+                      <Text style={styles.extraItemPrice}>R$ {item.price.toFixed(2)}</Text>
+                    )}
+                  </View>
+                  <TouchableOpacity onPress={() => setExtraItems(prev => prev.filter((_, j) => j !== i))}>
+                    <Ionicons name="close-circle" size={20} color={Colors.textMuted} />
+                  </TouchableOpacity>
+                </View>
+              ))}
+
+              <View style={styles.extraAddRow}>
+                <View style={[styles.inputBox, { flex: 2 }]}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Item name"
+                    placeholderTextColor={Colors.textMuted}
+                    value={extraItemName}
+                    onChangeText={setExtraItemName}
+                  />
+                </View>
+                <View style={[styles.inputBox, { flex: 1 }]}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="R$ 0.00"
+                    placeholderTextColor={Colors.textMuted}
+                    value={extraItemPrice}
+                    onChangeText={setExtraItemPrice}
+                    keyboardType="decimal-pad"
+                  />
+                </View>
+                <TouchableOpacity
+                  style={styles.extraAddBtn}
+                  onPress={() => {
+                    const name = extraItemName.trim();
+                    if (!name) return;
+                    const price = extraItemPrice ? parseFloat(extraItemPrice) : undefined;
+                    setExtraItems(prev => [...prev, { name, price: isNaN(price!) ? undefined : price }]);
+                    setExtraItemName('');
+                    setExtraItemPrice('');
+                  }}
+                >
+                  <Ionicons name="add" size={18} color={Colors.primary} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
             {/* ── Recurrence (create mode only) ── */}
             {!isEdit && (
               <View style={styles.section}>
@@ -559,6 +624,13 @@ const styles = StyleSheet.create({
   procMeta: { fontSize: 11, color: Colors.textSecondary },
   procMetaActive: { color: Colors.primary },
   procHint: { fontSize: 11, color: Colors.textMuted, marginTop: 4 },
+
+  // Extra items
+  extraItemRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  extraItemName: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
+  extraItemPrice: { fontSize: 11, color: Colors.textSecondary },
+  extraAddRow: { flexDirection: 'row', gap: 8, alignItems: 'center' },
+  extraAddBtn: { width: 44, height: 44, borderRadius: 10, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
 
   // Recurrence
   occurrencesRow: { gap: 8 },

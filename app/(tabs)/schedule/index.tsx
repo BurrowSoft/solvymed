@@ -10,6 +10,7 @@ import {
   Pressable,
   ActivityIndicator,
   TextInput,
+  Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -221,6 +222,17 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
                 </Text>
               </TouchableOpacity>
 
+              <TouchableOpacity
+                style={styles.modalAction}
+                onPress={() => {
+                  const link = `https://pay.solvymed.app/${appt.id}`;
+                  Share.share({ message: `Payment link for your appointment on ${appt.date} at ${appt.startTime}:\n${link}`, url: link });
+                }}
+              >
+                <Ionicons name="link-outline" size={16} color={Colors.primary} />
+                <Text style={styles.modalActionText}>Share payment link</Text>
+              </TouchableOpacity>
+
               <View style={styles.modalRow}>
                 <View style={[styles.statusDot, { backgroundColor: appt.paymentStatus === 'paid' ? Colors.success : Colors.warning }]} />
                 <Text style={styles.modalMeta}>{appt.paymentType === 'private' ? 'Private' : 'Insurance'}</Text>
@@ -293,6 +305,20 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
           <Text style={styles.modalSectionTitle}>Details</Text>
           <Text style={styles.modalMeta}>{appt.consultationType}</Text>
           <Text style={styles.modalMeta}>{appt.type === 'online' ? 'Online' : 'In-Person'}</Text>
+
+          {!isBlocked && appt.extraItems && appt.extraItems.length > 0 && (
+            <>
+              <Text style={[styles.modalSectionTitle, { marginTop: 4 }]}>Additional Items</Text>
+              {appt.extraItems.map((item, i) => (
+                <View key={i} style={styles.extraItemRow}>
+                  <Text style={[styles.modalMeta, { flex: 1 }]}>{item.name}</Text>
+                  {item.price != null && (
+                    <Text style={styles.modalMeta}>R$ {item.price.toFixed(2)}</Text>
+                  )}
+                </View>
+              ))}
+            </>
+          )}
 
           {!isBlocked && appt.notes ? (
             <>
@@ -769,4 +795,5 @@ const styles = StyleSheet.create({
   filterPillTextActive: { color: '#fff' },
   filterApplyBtn: { backgroundColor: Colors.primary, borderRadius: 12, paddingVertical: 13, alignItems: 'center', marginTop: 4 },
   filterApplyText: { fontSize: 15, fontWeight: '700', color: '#fff' },
+  extraItemRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 2 },
 });

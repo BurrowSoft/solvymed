@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
@@ -49,6 +49,7 @@ export default function PaymentsScreen() {
   const [paid, setPaid] = useState<Appointment[]>([]);
   const [revenue, setRevenue] = useState<{ month: string; paid: number; pending: number; count: number }[]>([]);
   const [showReport, setShowReport] = useState(false);
+  const [accountActive, setAccountActive] = useState(true);
 
   const load = useCallback(async () => {
     const { from, to } = getDateRange(filter);
@@ -118,6 +119,44 @@ export default function PaymentsScreen() {
       </ScrollView>
 
       <ScrollView contentContainerStyle={{ padding: 16, gap: 16 }} showsVerticalScrollIndicator={false}>
+        {/* Payment account card */}
+        <View style={styles.accountCard}>
+          <View style={styles.accountCardLeft}>
+            <View style={styles.accountIconWrap}>
+              <Ionicons name="card-outline" size={22} color={Colors.primary} />
+            </View>
+            <View style={{ gap: 2 }}>
+              <Text style={styles.accountTitle}>Payment Account</Text>
+              <View style={styles.accountStatusRow}>
+                <View style={[styles.accountDot, { backgroundColor: accountActive ? Colors.success : Colors.textMuted }]} />
+                <Text style={[styles.accountStatus, { color: accountActive ? Colors.success : Colors.textMuted }]}>
+                  {accountActive ? 'Active' : 'Inactive'}
+                </Text>
+              </View>
+            </View>
+          </View>
+          <TouchableOpacity
+            onPress={() => Alert.alert(
+              accountActive ? 'Deactivate account?' : 'Activate account?',
+              accountActive
+                ? 'Deactivating will prevent new payment links from being generated.'
+                : 'Activate to enable payment links.',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                  text: accountActive ? 'Deactivate' : 'Activate',
+                  style: accountActive ? 'destructive' : 'default',
+                  onPress: () => setAccountActive(v => !v),
+                },
+              ],
+            )}
+          >
+            <Text style={[styles.accountToggleText, { color: accountActive ? Colors.danger : Colors.primary }]}>
+              {accountActive ? 'Deactivate' : 'Activate'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Summary cards */}
         <View style={styles.row}>
           <View style={[styles.summaryCard, { borderLeftColor: Colors.warning }]}>
@@ -290,4 +329,12 @@ const styles = StyleSheet.create({
   reportBar: { flexDirection: 'row', height: 6, borderRadius: 3, backgroundColor: Colors.border, overflow: 'hidden' },
   reportBarFill: { backgroundColor: Colors.success, borderRadius: 3 },
   reportPending: { fontSize: 12, color: Colors.warning },
+  accountCard: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: Colors.surface, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border },
+  accountCardLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  accountIconWrap: { width: 40, height: 40, borderRadius: 10, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  accountTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
+  accountStatusRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  accountDot: { width: 7, height: 7, borderRadius: 4 },
+  accountStatus: { fontSize: 12, fontWeight: '600' },
+  accountToggleText: { fontSize: 13, fontWeight: '600' },
 });
