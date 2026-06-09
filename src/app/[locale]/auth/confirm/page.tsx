@@ -6,19 +6,45 @@ type ConfirmState = "loading" | "signup" | "recovery" | "unknown";
 
 export default function AuthConfirmPage() {
   const [state, setState] = useState<ConfirmState>("loading");
+  const [deepLink, setDeepLink] = useState("solvymed://");
+  const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
     const hash = window.location.hash.slice(1);
     const params = new URLSearchParams(hash);
     const type = params.get("type");
-    if (type === "signup") setState("signup");
-    else if (type === "recovery") setState("recovery");
-    else if (params.get("access_token")) setState("unknown");
-    else setState("unknown");
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token") ?? "";
+
+    if (!accessToken) {
+      setState("unknown");
+      return;
+    }
+
+    const link = `solvymed://?access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&type=${type ?? ""}`;
+    setDeepLink(link);
+
+    if (type === "signup") {
+      setState("signup");
+      setRedirecting(true);
+      const timer = setTimeout(() => {
+        window.location.href = link;
+      }, 1500);
+      return () => clearTimeout(timer);
+    } else if (type === "recovery") {
+      setState("recovery");
+      setRedirecting(true);
+      const timer = setTimeout(() => {
+        window.location.href = link;
+      }, 1500);
+      return () => clearTimeout(timer);
+    } else {
+      setState("unknown");
+    }
   }, []);
 
   const openApp = () => {
-    window.location.href = "solvymed://";
+    window.location.href = deepLink;
   };
 
   if (state === "loading") {
@@ -55,9 +81,16 @@ export default function AuthConfirmPage() {
             <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">
               Email confirmed!
             </h1>
-            <p className="mb-8 text-center text-slate-500">
-              Your SolvyMed account is ready. Open the app to sign in and start managing your clinic.
+            <p className="mb-6 text-center text-slate-500">
+              Your SolvyMed account is ready.
             </p>
+
+            {redirecting && (
+              <div className="mb-6 flex items-center justify-center gap-2 text-sm text-slate-400">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-teal-400 border-t-transparent" />
+                Opening SolvyMed&hellip;
+              </div>
+            )}
 
             <button
               onClick={openApp}
@@ -69,7 +102,7 @@ export default function AuthConfirmPage() {
               Open SolvyMed
             </button>
             <p className="text-center text-xs text-slate-400">
-              If the app doesn&apos;t open, make sure SolvyMed is installed on your device.
+              If the app doesn&apos;t open automatically, tap the button above.
             </p>
           </>
         )}
@@ -79,9 +112,17 @@ export default function AuthConfirmPage() {
             <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">
               Reset your password
             </h1>
-            <p className="mb-8 text-center text-slate-500">
+            <p className="mb-6 text-center text-slate-500">
               Open the SolvyMed app to set a new password for your account.
             </p>
+
+            {redirecting && (
+              <div className="mb-6 flex items-center justify-center gap-2 text-sm text-slate-400">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-teal-400 border-t-transparent" />
+                Opening SolvyMed&hellip;
+              </div>
+            )}
+
             <button
               onClick={openApp}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md shadow-teal-600/20 transition hover:bg-teal-700 active:scale-95"
