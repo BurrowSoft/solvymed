@@ -8,11 +8,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/lib/auth-context';
+import { t } from '@/lib/i18n';
+import { useLocale } from '@/lib/locale-context';
 import ForgotPasswordModal from '@/components/ForgotPasswordModal';
 
 export default function LoginScreen() {
   const { signIn, resendConfirmation } = useAuth();
   const router = useRouter();
+  // Subscribe to locale changes so t() results update when the user changes language
+  useLocale();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -25,7 +30,7 @@ export default function LoginScreen() {
 
   async function handleLogin() {
     if (!email || !password) {
-      setError('Please enter your email and password.');
+      setError(t('auth.signIn.fillFields'));
       return;
     }
     setLoading(true);
@@ -67,12 +72,12 @@ export default function LoginScreen() {
             <Text style={styles.logoLetter}>S</Text>
           </View>
           <Text style={styles.appName}>SolvyMed</Text>
-          <Text style={styles.tagline}>Clinic management, simplified</Text>
+          <Text style={styles.tagline}>{t('auth.tagline')}</Text>
         </View>
 
         {/* Form */}
         <View style={styles.form}>
-          <Text style={styles.formTitle}>Sign in</Text>
+          <Text style={styles.formTitle}>{t('auth.signIn.title')}</Text>
 
           {error && (
             <View style={styles.errorBox}>
@@ -86,9 +91,9 @@ export default function LoginScreen() {
               <View style={styles.warningContent}>
                 <Ionicons name="mail-outline" size={16} color="#92400E" style={{ marginTop: 1 }} />
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.warningTitle}>Email not confirmed</Text>
+                  <Text style={styles.warningTitle}>{t('auth.signIn.unconfirmedTitle')}</Text>
                   <Text style={styles.warningText}>
-                    Check your inbox at {unconfirmedEmail} and tap the confirmation link.
+                    {t('auth.signIn.unconfirmedBody', { email: unconfirmedEmail })}
                   </Text>
                 </View>
               </View>
@@ -100,7 +105,7 @@ export default function LoginScreen() {
               >
                 {resendLoading
                   ? <ActivityIndicator size="small" color="#92400E" />
-                  : <Text style={styles.resendBtnText}>Resend email</Text>
+                  : <Text style={styles.resendBtnText}>{t('auth.signIn.resend')}</Text>
                 }
               </TouchableOpacity>
             </View>
@@ -109,12 +114,12 @@ export default function LoginScreen() {
           {resendSent && (
             <View style={styles.successBox}>
               <Ionicons name="checkmark-circle-outline" size={16} color="#065F46" />
-              <Text style={styles.successText}>Confirmation email sent! Check your inbox.</Text>
+              <Text style={styles.successText}>{t('auth.signIn.resendSuccess')}</Text>
             </View>
           )}
 
           <View style={styles.field}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>{t('auth.signIn.emailLabel')}</Text>
             <View style={styles.inputBox}>
               <Ionicons name="mail-outline" size={18} color={Colors.textMuted} />
               <TextInput
@@ -131,7 +136,7 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.field}>
-            <Text style={styles.label}>Password</Text>
+            <Text style={styles.label}>{t('auth.signIn.passwordLabel')}</Text>
             <View style={styles.inputBox}>
               <Ionicons name="lock-closed-outline" size={18} color={Colors.textMuted} />
               <TextInput
@@ -161,19 +166,19 @@ export default function LoginScreen() {
           >
             {loading
               ? <ActivityIndicator color="#fff" />
-              : <Text style={styles.loginBtnText}>Sign in</Text>
+              : <Text style={styles.loginBtnText}>{t('auth.signIn.submit')}</Text>
             }
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.forgotBtn} onPress={() => setShowForgotPassword(true)}>
-            <Text style={styles.forgotText}>Forgot password?</Text>
+            <Text style={styles.forgotText}>{t('auth.signIn.forgotPassword')}</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.signUpRow}>
-          <Text style={styles.signUpHint}>Don't have an account? </Text>
+          <Text style={styles.signUpHint}>{t('auth.signIn.noAccount')} </Text>
           <TouchableOpacity onPress={() => router.push('/(auth)/signup')}>
-            <Text style={styles.signUpLink}>Sign up</Text>
+            <Text style={styles.signUpLink}>{t('auth.signIn.signUpLink')}</Text>
           </TouchableOpacity>
         </View>
 

@@ -150,7 +150,7 @@ function RootNavigator() {
   return (
     <>
       <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
-      <Stack key={`${locale}-${theme}`} screenOptions={{ headerShown: false }} />
+      <Stack key={theme} screenOptions={{ headerShown: false }} />
     </>
   );
 }

@@ -18,7 +18,11 @@ beforeEach(async () => {
 function makeAppt(offsetMinutes = 120, overrides: Partial<Appointment> = {}): Appointment {
   const now = new Date();
   const apptTime = new Date(now.getTime() + offsetMinutes * 60 * 1000);
-  const date = apptTime.toISOString().split('T')[0];
+  const date = [
+    apptTime.getFullYear(),
+    String(apptTime.getMonth() + 1).padStart(2, '0'),
+    String(apptTime.getDate()).padStart(2, '0'),
+  ].join('-');
   const h = String(apptTime.getHours()).padStart(2, '0');
   const m = String(apptTime.getMinutes()).padStart(2, '0');
   return {
