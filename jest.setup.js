@@ -89,6 +89,43 @@ jest.mock('expo-sharing', () => ({
   shareAsync: jest.fn().mockResolvedValue(undefined),
 }));
 
+// ─── react-native-safe-area-context ──────────────────────────────────────────
+
+jest.mock('react-native-safe-area-context', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    SafeAreaView: ({ children, ...props }) => React.createElement(View, props, children),
+    SafeAreaProvider: ({ children }) => React.createElement(React.Fragment, null, children),
+    useSafeAreaInsets: () => ({ top: 0, right: 0, bottom: 0, left: 0 }),
+    useSafeAreaFrame: () => ({ x: 0, y: 0, width: 390, height: 844 }),
+  };
+});
+
+// ─── expo-router (base stub — override per-test with jest.mock) ───────────────
+
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ back: jest.fn(), push: jest.fn(), replace: jest.fn() }),
+  useSegments: () => [],
+  usePathname: () => '/',
+  Redirect: () => null,
+  Stack: ({ children }) => {
+    const React = require('react');
+    const { View } = require('react-native');
+    return React.createElement(View, null, children);
+  },
+  Tabs: ({ children }) => {
+    const React = require('react');
+    const { View } = require('react-native');
+    return React.createElement(View, null, children);
+  },
+  Link: ({ children, ...props }) => {
+    const React = require('react');
+    const { TouchableOpacity } = require('react-native');
+    return React.createElement(TouchableOpacity, props, children);
+  },
+}));
+
 // ─── expo-font ────────────────────────────────────────────────────────────────
 
 jest.mock('expo-font', () => ({

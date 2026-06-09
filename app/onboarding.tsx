@@ -76,13 +76,17 @@ export default function OnboardingScreen() {
   const [index, setIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
 
-  async function confirmLanguage() {
-    await setLocale(selectedLocale);
+  function confirmLanguage() {
     setStep('slides');
   }
 
   async function finish() {
+    // Write onboarding_done BEFORE setLocale. setLocale changes the locale
+    // context which re-keys the Stack and remounts RootNavigator. If
+    // onboarding_done isn't saved yet when RootNavigator first reads it,
+    // the navigator routes back to /onboarding (the race condition).
     await AsyncStorage.setItem('onboarding_done', '1');
+    await setLocale(selectedLocale);
     router.replace('/(auth)/login');
   }
 

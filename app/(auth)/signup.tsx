@@ -153,6 +153,7 @@ export default function SignUpScreen() {
           </View>
 
           <TouchableOpacity
+            testID="signup-submit"
             style={[styles.signUpBtn, loading && { opacity: 0.7 }]}
             onPress={handleSignUp}
             disabled={loading}
