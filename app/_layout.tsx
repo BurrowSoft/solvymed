@@ -2,12 +2,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import { AppState, AppStateStatus, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import * as Linking from 'expo-linking';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthProvider, useAuth } from '@/lib/auth-context';
 import { LocaleProvider, useLocale } from '@/lib/locale-context';
 import { ThemeProvider, useTheme } from '@/lib/theme-context';
 import { scheduleRemindersForToday } from '@/lib/notifications';
 import { loadSettings } from '@/lib/app-settings';
+import { supabase } from '@/lib/supabase';
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -123,6 +125,24 @@ function RootNavigator() {
 // ─── RootLayout ───────────────────────────────────────────────────────────────
 
 export default function RootLayout() {
+  useEffect(() => {
+    function handleDeepLink(url: string | null) {
+      if (!url) return;
+      try {
+        const { queryParams } = Linking.parse(url);
+        const access = queryParams?.access_token as string | undefined;
+        const refresh = queryParams?.refresh_token as string | undefined;
+        if (access) {
+          supabase.auth.setSession({ access_token: access, refresh_token: refresh ?? '' }).catch(() => {});
+        }
+      } catch {}
+    }
+
+    Linking.getInitialURL().then(handleDeepLink).catch(() => {});
+    const sub = Linking.addEventListener('url', ({ url }) => handleDeepLink(url));
+    return () => sub.remove();
+  }, []);
+
   return (
     <ThemeProvider>
       <LocaleProvider>

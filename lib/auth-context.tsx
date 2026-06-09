@@ -10,6 +10,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
+  resendConfirmation: (email: string) => Promise<{ error: string | null }>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -19,6 +20,7 @@ const AuthContext = createContext<AuthContextType>({
   signIn: async () => ({ error: null }),
   signUp: async () => ({ error: null }),
   signOut: async () => {},
+  resendConfirmation: async () => ({ error: null }),
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -74,8 +76,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut();
   }
 
+  async function resendConfirmation(email: string) {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: { emailRedirectTo: 'https://www.solvymed.com/auth/confirm' },
+    });
+    return { error: error?.message ?? null };
+  }
+
   return (
-    <AuthContext.Provider value={{ session, user: session?.user ?? null, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ session, user: session?.user ?? null, loading, signIn, signUp, signOut, resendConfirmation }}>
       {children}
     </AuthContext.Provider>
   );

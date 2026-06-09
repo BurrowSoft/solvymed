@@ -10,13 +10,16 @@ import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/lib/auth-context';
 
 export default function LoginScreen() {
-  const { signIn } = useAuth();
+  const { signIn, resendConfirmation } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendSent, setResendSent] = useState(false);
 
   async function handleLogin() {
     if (!email || !password) {
@@ -25,9 +28,29 @@ export default function LoginScreen() {
     }
     setLoading(true);
     setError(null);
+    setUnconfirmedEmail(null);
+    setResendSent(false);
     const { error } = await signIn(email.trim(), password);
     setLoading(false);
-    if (error) setError(error);
+    if (error) {
+      if (error.toLowerCase().includes('not confirmed')) {
+        setUnconfirmedEmail(email.trim());
+      } else {
+        setError(error);
+      }
+    }
+  }
+
+  async function handleResend() {
+    if (!unconfirmedEmail) return;
+    setResendLoading(true);
+    const { error } = await resendConfirmation(unconfirmedEmail);
+    setResendLoading(false);
+    if (error) {
+      setError(error);
+    } else {
+      setResendSent(true);
+    }
   }
 
   return (
@@ -53,6 +76,38 @@ export default function LoginScreen() {
             <View style={styles.errorBox}>
               <Ionicons name="alert-circle-outline" size={16} color={Colors.danger} />
               <Text style={styles.errorText}>{error}</Text>
+            </View>
+          )}
+
+          {unconfirmedEmail && !resendSent && (
+            <View style={styles.warningBox}>
+              <View style={styles.warningContent}>
+                <Ionicons name="mail-outline" size={16} color="#92400E" style={{ marginTop: 1 }} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.warningTitle}>Email not confirmed</Text>
+                  <Text style={styles.warningText}>
+                    Check your inbox at {unconfirmedEmail} and tap the confirmation link.
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.resendBtn}
+                onPress={handleResend}
+                disabled={resendLoading}
+                testID="resend-btn"
+              >
+                {resendLoading
+                  ? <ActivityIndicator size="small" color="#92400E" />
+                  : <Text style={styles.resendBtnText}>Resend email</Text>
+                }
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {resendSent && (
+            <View style={styles.successBox}>
+              <Ionicons name="checkmark-circle-outline" size={16} color="#065F46" />
+              <Text style={styles.successText}>Confirmation email sent! Check your inbox.</Text>
             </View>
           )}
 
@@ -97,6 +152,7 @@ export default function LoginScreen() {
           </View>
 
           <TouchableOpacity
+            testID="signin-submit"
             style={[styles.loginBtn, loading && { opacity: 0.7 }]}
             onPress={handleLogin}
             disabled={loading}
@@ -167,4 +223,22 @@ const styles = StyleSheet.create({
   signUpHint: { fontSize: 14, color: Colors.textSecondary },
   signUpLink: { fontSize: 14, color: Colors.primary, fontWeight: '600' },
   footer: { textAlign: 'center', fontSize: 12, color: Colors.textMuted },
+  warningBox: {
+    backgroundColor: '#FFFBEB', borderWidth: 1, borderColor: '#FDE68A',
+    borderRadius: 8, padding: 12, gap: 10,
+  },
+  warningContent: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
+  warningTitle: { fontSize: 13, fontWeight: '600', color: '#92400E', marginBottom: 2 },
+  warningText: { fontSize: 12, color: '#92400E', lineHeight: 18 },
+  resendBtn: {
+    alignSelf: 'flex-end', paddingVertical: 6, paddingHorizontal: 14,
+    borderRadius: 6, backgroundColor: '#FEF3C7', borderWidth: 1, borderColor: '#FDE68A',
+  },
+  resendBtnText: { fontSize: 12, fontWeight: '600', color: '#92400E' },
+  successBox: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: '#F0FDF4', borderRadius: 8, padding: 12,
+    borderWidth: 1, borderColor: '#BBF7D0',
+  },
+  successText: { fontSize: 13, color: '#065F46', flex: 1 },
 });

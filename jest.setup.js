@@ -22,7 +22,10 @@ jest.mock('./lib/supabase', () => ({
       getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
       onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
       signInWithPassword: jest.fn().mockResolvedValue({ data: {}, error: null }),
+      signUp: jest.fn().mockResolvedValue({ data: {}, error: null }),
       signOut: jest.fn().mockResolvedValue({ error: null }),
+      resend: jest.fn().mockResolvedValue({ error: null }),
+      setSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
     },
     storage: {
       from: jest.fn(() => ({
@@ -124,6 +127,24 @@ jest.mock('expo-router', () => ({
     const { TouchableOpacity } = require('react-native');
     return React.createElement(TouchableOpacity, props, children);
   },
+}));
+
+// ─── expo-linking ─────────────────────────────────────────────────────────────
+
+jest.mock('expo-linking', () => ({
+  getInitialURL: jest.fn().mockResolvedValue(null),
+  addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+  parse: jest.fn((url) => {
+    try {
+      const u = new URL(url);
+      const queryParams: Record<string, string> = {};
+      u.searchParams.forEach((v, k) => { queryParams[k] = v; });
+      return { scheme: u.protocol.replace(':', ''), host: u.hostname, path: u.pathname, queryParams };
+    } catch {
+      return { scheme: null, host: null, path: null, queryParams: {} };
+    }
+  }),
+  createURL: jest.fn((path) => `solvymed://${path}`),
 }));
 
 // ─── expo-font ────────────────────────────────────────────────────────────────
