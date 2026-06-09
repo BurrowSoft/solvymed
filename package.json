@@ -21,6 +21,7 @@
     "@react-navigation/native": "^7.1.6",
     "@supabase/supabase-js": "^2.108.0",
     "expo": "~53.0.27",
+    "expo-asset": "~11.1.7",
     "expo-blur": "~14.1.5",
     "expo-constants": "~17.1.8",
     "expo-document-picker": "~13.1.6",
