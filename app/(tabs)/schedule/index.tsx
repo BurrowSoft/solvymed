@@ -15,9 +15,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { Appointment } from '@/lib/types';
 import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
-import { getAppointmentsByDate, updatePaymentStatus, getAppointmentCountsByWeek } from '@/lib/services';
+import { getAppointmentsByDate, updatePaymentStatus, getAppointmentCountsByWeek, getPatient } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
 import { NewAppointmentModal } from '@/components/NewAppointmentModal';
+import { BlockTimeModal } from '@/components/BlockTimeModal';
 
 const HOUR_HEIGHT = 64;
 const START_HOUR = 7;
@@ -82,6 +83,12 @@ function AppointmentBlock({ appt, onPress }: { appt: Appointment; onPress: () =>
   );
 }
 
+function whatsappUrl(phone: string) {
+  const digits = phone.replace(/\D/g, '');
+  const number = digits.startsWith('55') ? digits : `55${digits}`;
+  return `https://wa.me/${number}`;
+}
+
 function statusColor(status: Appointment['status']) {
   switch (status) {
     case 'confirmed': return Colors.primary;
@@ -98,6 +105,13 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange }: {
   onMarkPaid: (id: string) => void;
   onStatusChange: (id: string, status: Appointment['status']) => void;
 }) {
+  const [patientPhone, setPatientPhone] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (!appt?.patientId) { setPatientPhone(null); return; }
+    getPatient(appt.patientId).then(p => setPatientPhone(p.phone ?? null)).catch(() => setPatientPhone(null));
+  }, [appt?.patientId]);
+
   if (!appt) return null;
   const isBlocked = appt.status === 'blocked';
 
@@ -115,16 +129,25 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange }: {
           {!isBlocked && (
             <>
               <Text style={styles.modalPatient}>{appt.patientName}</Text>
-              <TouchableOpacity style={styles.modalAction}>
-                <Ionicons name="logo-whatsapp" size={16} color={Colors.primary} />
-                <Text style={styles.modalActionText}>Send WhatsApp message</Text>
+              <TouchableOpacity
+                style={styles.modalAction}
+                onPress={() => patientPhone && Linking.openURL(whatsappUrl(patientPhone))}
+                disabled={!patientPhone}
+              >
+                <Ionicons name="logo-whatsapp" size={16} color={patientPhone ? '#25D366' : Colors.textMuted} />
+                <Text style={[styles.modalActionText, !patientPhone && { color: Colors.textMuted }]}>
+                  {patientPhone ? 'Send WhatsApp message' : 'No phone — add in patient profile'}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.modalAction}
-                onPress={() => appt && Linking.openURL(`tel:${appt.patientId}`)}
+                onPress={() => patientPhone && Linking.openURL(`tel:${patientPhone}`)}
+                disabled={!patientPhone}
               >
-                <Ionicons name="call-outline" size={16} color={Colors.primary} />
-                <Text style={styles.modalActionText}>Call patient</Text>
+                <Ionicons name="call-outline" size={16} color={patientPhone ? Colors.primary : Colors.textMuted} />
+                <Text style={[styles.modalActionText, !patientPhone && { color: Colors.textMuted }]}>
+                  {patientPhone ? `Call ${patientPhone}` : 'No phone number'}
+                </Text>
               </TouchableOpacity>
 
               <View style={styles.modalRow}>
@@ -207,6 +230,7 @@ export default function ScheduleScreen() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(false);
   const [showNewAppt, setShowNewAppt] = useState(false);
+  const [showBlockTime, setShowBlockTime] = useState(false);
   const [weekCounts, setWeekCounts] = useState<Record<string, number>>({});
 
   const dateStr = fmt(selectedDate);
@@ -348,11 +372,17 @@ export default function ScheduleScreen() {
         <View style={{ height: 100 }} />
       </ScrollView>
 
-      {/* FAB */}
-      <TouchableOpacity style={styles.fab} onPress={() => setShowNewAppt(true)}>
-        <Ionicons name="add" size={28} color="#fff" />
-        <Text style={styles.fabText}>New Appointment</Text>
-      </TouchableOpacity>
+      {/* FAB group */}
+      <View style={styles.fabGroup}>
+        <TouchableOpacity style={styles.blockBtn} onPress={() => setShowBlockTime(true)}>
+          <Ionicons name="remove-circle-outline" size={15} color={Colors.textSecondary} />
+          <Text style={styles.blockBtnText}>Block time</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.fab} onPress={() => setShowNewAppt(true)}>
+          <Ionicons name="add" size={26} color="#fff" />
+          <Text style={styles.fabText}>New Appointment</Text>
+        </TouchableOpacity>
+      </View>
 
       <AppointmentModal
         appt={selectedAppt}
@@ -365,6 +395,17 @@ export default function ScheduleScreen() {
         visible={showNewAppt}
         defaultDate={dateStr}
         onClose={() => setShowNewAppt(false)}
+        onSaved={(appt) => {
+          if (appt.date === dateStr) {
+            setAppointments(prev => [...prev, appt].sort((a, b) => a.startTime.localeCompare(b.startTime)));
+          }
+        }}
+      />
+
+      <BlockTimeModal
+        visible={showBlockTime}
+        defaultDate={dateStr}
+        onClose={() => setShowBlockTime(false)}
         onSaved={(appt) => {
           if (appt.date === dateStr) {
             setAppointments(prev => [...prev, appt].sort((a, b) => a.startTime.localeCompare(b.startTime)));
@@ -435,10 +476,21 @@ const styles = StyleSheet.create({
   },
   apptText: { fontSize: 12, fontWeight: '600' },
   apptSubText: { fontSize: 11, color: Colors.textSecondary, marginTop: 1 },
-  fab: {
+  fabGroup: {
     position: 'absolute',
     bottom: 24,
     right: 16,
+    alignItems: 'flex-end',
+    gap: 8,
+  },
+  blockBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 4, elevation: 3,
+  },
+  blockBtnText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
+  fab: {
     backgroundColor: Colors.primary,
     flexDirection: 'row',
     alignItems: 'center',

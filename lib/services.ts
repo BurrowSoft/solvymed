@@ -147,25 +147,31 @@ export async function createRecord(record: Omit<MedicalRecord, 'id' | 'createdAt
 
 // ─── Payments ────────────────────────────────────────────────────────────────
 
-export async function getPendingPayments(professionalId: string) {
-  const { data, error } = await supabase
+export async function getPendingPayments(professionalId: string, from?: string, to?: string) {
+  let query = supabase
     .from('appointments')
     .select('*')
     .eq('professional_id', professionalId)
     .eq('payment_status', 'pending')
     .neq('status', 'blocked')
     .order('date');
+  if (from) query = query.gte('date', from);
+  if (to) query = query.lte('date', to);
+  const { data, error } = await query;
   if (error) throw error;
   return (data ?? []).map(toAppointment);
 }
 
-export async function getPaidPayments(professionalId: string) {
-  const { data, error } = await supabase
+export async function getPaidPayments(professionalId: string, from?: string, to?: string) {
+  let query = supabase
     .from('appointments')
     .select('*')
     .eq('professional_id', professionalId)
     .eq('payment_status', 'paid')
     .order('date', { ascending: false });
+  if (from) query = query.gte('date', from);
+  if (to) query = query.lte('date', to);
+  const { data, error } = await query;
   if (error) throw error;
   return (data ?? []).map(toAppointment);
 }

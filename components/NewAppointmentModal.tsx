@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal, View, Text, StyleSheet, ScrollView, TextInput,
   TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform,
@@ -6,8 +6,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
-import { Appointment } from '@/lib/types';
-import { createAppointment } from '@/lib/services';
+import { Appointment, Patient } from '@/lib/types';
+import { createAppointment, getPatients } from '@/lib/services';
+import { MOCK_PATIENTS } from '@/lib/mock-data';
 import { useAuth } from '@/lib/auth-context';
 
 const TIME_SLOTS: string[] = [];
@@ -29,7 +30,14 @@ interface Props {
 
 export function NewAppointmentModal({ visible, defaultDate, onClose, onSaved }: Props) {
   const { user } = useAuth();
+
+  // Patient picker
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [patientId, setPatientId] = useState('');
   const [patientName, setPatientName] = useState('');
+  const [patientSearch, setPatientSearch] = useState('');
+
+  // Appointment fields
   const [date, setDate] = useState(defaultDate);
   const [startTime, setStartTime] = useState('09:00');
   const [duration, setDuration] = useState(30);
@@ -45,8 +53,36 @@ export function NewAppointmentModal({ visible, defaultDate, onClose, onSaved }: 
   const endMinutes = h * 60 + m + duration;
   const endTime = `${String(Math.floor(endMinutes / 60)).padStart(2, '0')}:${String(endMinutes % 60).padStart(2, '0')}`;
 
-  function resetForm() {
+  useEffect(() => {
+    if (!visible) return;
+    setDate(defaultDate);
+    if (user) {
+      getPatients(user.id).then(setPatients).catch(() => setPatients(MOCK_PATIENTS));
+    } else {
+      setPatients(MOCK_PATIENTS);
+    }
+  }, [visible, user, defaultDate]);
+
+  const filteredPatients = patientSearch
+    ? patients.filter(p => p.fullName.toLowerCase().includes(patientSearch.toLowerCase()))
+    : patients.slice(0, 6);
+
+  function selectPatient(p: Patient) {
+    setPatientId(p.id);
+    setPatientName(p.fullName);
+    setPatientSearch('');
+  }
+
+  function clearPatient() {
+    setPatientId('');
     setPatientName('');
+    setPatientSearch('');
+  }
+
+  function resetForm() {
+    setPatientId('');
+    setPatientName('');
+    setPatientSearch('');
     setDate(defaultDate);
     setStartTime('09:00');
     setDuration(30);
@@ -59,13 +95,13 @@ export function NewAppointmentModal({ visible, defaultDate, onClose, onSaved }: 
   }
 
   async function handleSave() {
-    if (!patientName.trim()) { setError('Patient name is required'); return; }
+    if (!patientName.trim()) { setError('Select or enter a patient name'); return; }
     if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) { setError('Date must be YYYY-MM-DD'); return; }
     setError('');
     setSaving(true);
 
     const apptData: Omit<Appointment, 'id'> = {
-      patientId: '',
+      patientId: patientId || '',
       patientName: patientName.trim(),
       date,
       startTime,
@@ -117,22 +153,61 @@ export function NewAppointmentModal({ visible, defaultDate, onClose, onSaved }: 
           <ScrollView style={styles.body} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             {!!error && <Text style={styles.errorText}>{error}</Text>}
 
-            {/* Patient */}
+            {/* ── Patient ── */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Patient</Text>
-              <View style={styles.inputBox}>
-                <Ionicons name="person-outline" size={16} color={Colors.textMuted} />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Patient name"
-                  placeholderTextColor={Colors.textMuted}
-                  value={patientName}
-                  onChangeText={setPatientName}
-                />
-              </View>
+              {patientId ? (
+                <View style={styles.selectedRow}>
+                  <View style={styles.selectedAvatar}>
+                    <Text style={styles.selectedInitial}>{patientName[0]?.toUpperCase()}</Text>
+                  </View>
+                  <Text style={styles.selectedName} numberOfLines={1}>{patientName}</Text>
+                  <TouchableOpacity onPress={clearPatient}>
+                    <Ionicons name="close-circle" size={22} color={Colors.textMuted} />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <>
+                  <View style={styles.inputBox}>
+                    <Ionicons name="search-outline" size={16} color={Colors.textMuted} />
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Search or type patient name..."
+                      placeholderTextColor={Colors.textMuted}
+                      value={patientSearch || patientName}
+                      onChangeText={v => { setPatientSearch(v); setPatientName(v); }}
+                    />
+                    {(patientSearch || patientName) ? (
+                      <TouchableOpacity onPress={clearPatient}>
+                        <Ionicons name="close-circle" size={16} color={Colors.textMuted} />
+                      </TouchableOpacity>
+                    ) : null}
+                  </View>
+                  {filteredPatients.length > 0 && (
+                    <View style={styles.pickerList}>
+                      {filteredPatients.map((p, i) => (
+                        <TouchableOpacity
+                          key={p.id}
+                          style={[styles.pickerItem, i < filteredPatients.length - 1 && styles.pickerItemBorder]}
+                          onPress={() => selectPatient(p)}
+                        >
+                          <View style={styles.pickerAvatar}>
+                            <Text style={styles.pickerInitial}>{p.fullName[0]?.toUpperCase()}</Text>
+                          </View>
+                          <View style={{ flex: 1 }}>
+                            <Text style={styles.pickerName}>{p.fullName}</Text>
+                            {p.phone ? <Text style={styles.pickerPhone}>{p.phone}</Text> : null}
+                          </View>
+                          <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  )}
+                </>
+              )}
             </View>
 
-            {/* Date & Time */}
+            {/* ── Date & Time ── */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Date & Time</Text>
 
@@ -185,7 +260,7 @@ export function NewAppointmentModal({ visible, defaultDate, onClose, onSaved }: 
               </Text>
             </View>
 
-            {/* Details */}
+            {/* ── Details ── */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Details</Text>
 
@@ -221,7 +296,7 @@ export function NewAppointmentModal({ visible, defaultDate, onClose, onSaved }: 
               </View>
             </View>
 
-            {/* Payment */}
+            {/* ── Payment ── */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Payment</Text>
 
@@ -255,7 +330,7 @@ export function NewAppointmentModal({ visible, defaultDate, onClose, onSaved }: 
               </View>
             </View>
 
-            {/* Notes */}
+            {/* ── Notes ── */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>
                 Notes <Text style={styles.optional}>(optional)</Text>
@@ -297,6 +372,20 @@ const styles = StyleSheet.create({
   fieldLabel: { fontSize: 12, color: Colors.textSecondary, fontWeight: '500' },
   optional: { fontWeight: '400', color: Colors.textMuted, textTransform: 'none' },
   endTime: { fontWeight: '700', color: Colors.textPrimary },
+
+  // Patient picker
+  selectedRow: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: Colors.primaryLight, borderRadius: 10, padding: 10 },
+  selectedAvatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' },
+  selectedInitial: { fontSize: 15, fontWeight: '700', color: '#fff' },
+  selectedName: { flex: 1, fontSize: 14, fontWeight: '600', color: Colors.primaryDark },
+  pickerList: { borderWidth: 1, borderColor: Colors.border, borderRadius: 10, backgroundColor: Colors.surface, overflow: 'hidden' },
+  pickerItem: { flexDirection: 'row', alignItems: 'center', padding: 10, gap: 10 },
+  pickerItemBorder: { borderBottomWidth: 1, borderBottomColor: Colors.border },
+  pickerAvatar: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  pickerInitial: { fontSize: 13, fontWeight: '700', color: Colors.primary },
+  pickerName: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
+  pickerPhone: { fontSize: 11, color: Colors.textSecondary, marginTop: 1 },
+
   inputBox: {
     flexDirection: 'row', alignItems: 'center',
     borderWidth: 1, borderColor: Colors.border, borderRadius: 10,
@@ -305,31 +394,19 @@ const styles = StyleSheet.create({
   input: { flex: 1, fontSize: 14, color: Colors.textPrimary },
   currencyPrefix: { fontSize: 14, color: Colors.textSecondary, fontWeight: '600' },
   timeSlotsRow: { maxHeight: 44 },
-  timeSlot: {
-    paddingHorizontal: 12, paddingVertical: 7,
-    borderRadius: 8, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.background,
-  },
+  timeSlot: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.background },
   timeSlotActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
   timeSlotText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
   timeSlotTextActive: { color: '#fff' },
   pills: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  pill: {
-    paddingHorizontal: 14, paddingVertical: 7,
-    borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.background,
-  },
+  pill: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.background },
   pillActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
   pillText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
   pillTextActive: { color: '#fff' },
   toggle: { flexDirection: 'row', gap: 8 },
-  toggleOpt: {
-    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
-    paddingVertical: 10, borderRadius: 10, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.background,
-  },
+  toggleOpt: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, borderRadius: 10, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.background },
   toggleOptActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
   toggleOptText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
   toggleOptTextActive: { color: '#fff' },
-  notesInput: {
-    borderWidth: 1, borderColor: Colors.border, borderRadius: 10,
-    padding: 12, fontSize: 14, color: Colors.textPrimary, minHeight: 88, backgroundColor: Colors.background,
-  },
+  notesInput: { borderWidth: 1, borderColor: Colors.border, borderRadius: 10, padding: 12, fontSize: 14, color: Colors.textPrimary, minHeight: 88, backgroundColor: Colors.background },
 });

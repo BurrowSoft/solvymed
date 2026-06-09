@@ -8,26 +8,67 @@ import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
 import { getPendingPayments, getPaidPayments, updatePaymentStatus } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
 
+type DateFilter = 'week' | 'month' | 'last_month' | 'all';
+
+const FILTERS: { key: DateFilter; label: string }[] = [
+  { key: 'week', label: 'This week' },
+  { key: 'month', label: 'This month' },
+  { key: 'last_month', label: 'Last month' },
+  { key: 'all', label: 'All time' },
+];
+
+function fmt(d: Date) {
+  return d.toISOString().split('T')[0];
+}
+
+function getDateRange(filter: DateFilter): { from?: string; to?: string } {
+  const today = new Date();
+  if (filter === 'week') {
+    const start = new Date(today);
+    start.setDate(today.getDate() - today.getDay());
+    return { from: fmt(start), to: fmt(today) };
+  }
+  if (filter === 'month') {
+    return {
+      from: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`,
+      to: fmt(today),
+    };
+  }
+  if (filter === 'last_month') {
+    const lm = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const end = new Date(today.getFullYear(), today.getMonth(), 0);
+    return { from: fmt(lm), to: fmt(end) };
+  }
+  return {};
+}
+
 export default function PaymentsScreen() {
   const { user } = useAuth();
+  const [filter, setFilter] = useState<DateFilter>('month');
   const [pending, setPending] = useState<Appointment[]>([]);
   const [paid, setPaid] = useState<Appointment[]>([]);
 
   const load = useCallback(async () => {
+    const { from, to } = getDateRange(filter);
     if (!user) {
-      setPending(MOCK_APPOINTMENTS.filter(a => a.paymentStatus === 'pending' && a.status !== 'blocked'));
-      setPaid(MOCK_APPOINTMENTS.filter(a => a.paymentStatus === 'paid'));
+      const all = MOCK_APPOINTMENTS.filter(a => a.status !== 'blocked');
+      setPending(all.filter(a => a.paymentStatus === 'pending'));
+      setPaid(all.filter(a => a.paymentStatus === 'paid'));
       return;
     }
     try {
-      const [p, d] = await Promise.all([getPendingPayments(user.id), getPaidPayments(user.id)]);
+      const [p, d] = await Promise.all([
+        getPendingPayments(user.id, from, to),
+        getPaidPayments(user.id, from, to),
+      ]);
       setPending(p);
       setPaid(d);
     } catch {
-      setPending(MOCK_APPOINTMENTS.filter(a => a.paymentStatus === 'pending' && a.status !== 'blocked'));
-      setPaid(MOCK_APPOINTMENTS.filter(a => a.paymentStatus === 'paid'));
+      const all = MOCK_APPOINTMENTS.filter(a => a.status !== 'blocked');
+      setPending(all.filter(a => a.paymentStatus === 'pending'));
+      setPaid(all.filter(a => a.paymentStatus === 'paid'));
     }
-  }, [user]);
+  }, [user, filter]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -49,6 +90,26 @@ export default function PaymentsScreen() {
         <Text style={styles.headerTitle}>Payments</Text>
       </View>
 
+      {/* Date filter */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.filterRow}
+        contentContainerStyle={{ paddingHorizontal: 16, gap: 8, paddingVertical: 10 }}
+      >
+        {FILTERS.map(f => (
+          <TouchableOpacity
+            key={f.key}
+            onPress={() => setFilter(f.key)}
+            style={[styles.filterPill, filter === f.key && styles.filterPillActive]}
+          >
+            <Text style={[styles.filterPillText, filter === f.key && styles.filterPillTextActive]}>
+              {f.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
       <ScrollView contentContainerStyle={{ padding: 16, gap: 16 }} showsVerticalScrollIndicator={false}>
         {/* Summary cards */}
         <View style={styles.row}>
@@ -57,14 +118,14 @@ export default function PaymentsScreen() {
             <Text style={[styles.summaryAmount, { color: Colors.warning }]}>
               R$ {totalPending.toFixed(2)}
             </Text>
-            <Text style={styles.summaryCount}>{pending.length} appointment(s)</Text>
+            <Text style={styles.summaryCount}>{pending.length} appointment{pending.length !== 1 ? 's' : ''}</Text>
           </View>
           <View style={[styles.summaryCard, { borderLeftColor: Colors.success }]}>
             <Text style={styles.summaryLabel}>Received</Text>
             <Text style={[styles.summaryAmount, { color: Colors.success }]}>
               R$ {totalPaid.toFixed(2)}
             </Text>
-            <Text style={styles.summaryCount}>{paid.length} appointment(s)</Text>
+            <Text style={styles.summaryCount}>{paid.length} appointment{paid.length !== 1 ? 's' : ''}</Text>
           </View>
         </View>
 
@@ -84,7 +145,7 @@ export default function PaymentsScreen() {
                 <Text style={styles.paymentMeta}>{appt.consultationType}</Text>
               </View>
               <View style={styles.paymentRight}>
-                <Text style={styles.paymentAmount}>R$ {appt.paymentAmount?.toFixed(2)}</Text>
+                <Text style={styles.paymentAmount}>R$ {appt.paymentAmount?.toFixed(2) ?? '—'}</Text>
                 <TouchableOpacity style={styles.markPaidBtn} onPress={() => handleMarkPaid(appt.id)}>
                   <Text style={styles.markPaidText}>Mark paid</Text>
                 </TouchableOpacity>
@@ -94,24 +155,28 @@ export default function PaymentsScreen() {
         )}
 
         {/* Paid */}
-        <Text style={styles.sectionTitle}>Received</Text>
-        {paid.map(appt => (
-          <View key={appt.id} style={[styles.paymentCard, styles.paidCard]}>
-            <View style={styles.paymentInfo}>
-              <Text style={styles.paymentPatient}>{appt.patientName}</Text>
-              <Text style={styles.paymentMeta}>{appt.date} · {appt.startTime}</Text>
-            </View>
-            <View style={styles.paymentRight}>
-              <Text style={[styles.paymentAmount, { color: Colors.success }]}>
-                R$ {appt.paymentAmount?.toFixed(2)}
-              </Text>
-              <View style={styles.paidBadge}>
-                <Ionicons name="checkmark" size={12} color={Colors.success} />
-                <Text style={styles.paidBadgeText}>Paid</Text>
+        {paid.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Received</Text>
+            {paid.map(appt => (
+              <View key={appt.id} style={[styles.paymentCard, styles.paidCard]}>
+                <View style={styles.paymentInfo}>
+                  <Text style={styles.paymentPatient}>{appt.patientName}</Text>
+                  <Text style={styles.paymentMeta}>{appt.date} · {appt.startTime}</Text>
+                </View>
+                <View style={styles.paymentRight}>
+                  <Text style={[styles.paymentAmount, { color: Colors.success }]}>
+                    R$ {appt.paymentAmount?.toFixed(2) ?? '—'}
+                  </Text>
+                  <View style={styles.paidBadge}>
+                    <Ionicons name="checkmark" size={12} color={Colors.success} />
+                    <Text style={styles.paidBadgeText}>Paid</Text>
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
-        ))}
+            ))}
+          </>
+        )}
 
         <View style={{ height: 20 }} />
       </ScrollView>
@@ -126,6 +191,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
   headerTitle: { fontSize: 20, fontWeight: '700', color: Colors.textPrimary },
+  filterRow: { backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.border, maxHeight: 52 },
+  filterPill: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.background },
+  filterPillActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  filterPillText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
+  filterPillTextActive: { color: '#fff', fontWeight: '600' },
   row: { flexDirection: 'row', gap: 12 },
   summaryCard: {
     flex: 1, backgroundColor: Colors.surface, borderRadius: 12, padding: 14,
