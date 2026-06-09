@@ -61,10 +61,20 @@ export interface PrescriptionItem {
   duration: string;
 }
 
+export interface WorkingDay {
+  enabled: boolean;
+  start: string;
+  end: string;
+}
+
+export type WorkingHoursKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
+export type WorkingHours = Partial<Record<WorkingHoursKey, WorkingDay>>;
+
 export interface Professional {
   id: string;
   fullName: string;
   email: string;
   clinicName?: string;
   specialty?: string;
+  workingHours?: WorkingHours;
 }

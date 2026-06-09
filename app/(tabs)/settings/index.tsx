@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/auth-context';
 import { getProfessional } from '@/lib/services';
 import { Professional } from '@/lib/types';
 import { ProfileModal } from '@/components/ProfileModal';
+import { WorkingHoursModal } from '@/components/WorkingHoursModal';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -17,6 +18,7 @@ export default function SettingsScreen() {
   const { user, signOut } = useAuth();
   const [professional, setProfessional] = useState<Professional | null>(null);
   const [showProfile, setShowProfile] = useState(false);
+  const [showWorkingHours, setShowWorkingHours] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -37,7 +39,7 @@ export default function SettingsScreen() {
         { label: 'Registrations', icon: 'list-outline' },
         { label: 'Integrations', icon: 'link-outline' },
         { label: 'Patient Data', icon: 'people-outline' },
-        { label: 'Schedule', icon: 'calendar-outline' },
+        { label: 'Working Hours', icon: 'calendar-outline', onPress: () => setShowWorkingHours(true) },
         { label: 'Medical Records', icon: 'document-text-outline' },
         { label: 'Modules', icon: 'grid-outline' },
         { label: 'Documents', icon: 'folder-outline' },
@@ -114,6 +116,15 @@ export default function SettingsScreen() {
         visible={showProfile}
         onClose={() => setShowProfile(false)}
         onSaved={(prof) => setProfessional(prof)}
+      />
+
+      <WorkingHoursModal
+        visible={showWorkingHours}
+        professional={professional}
+        onClose={() => setShowWorkingHours(false)}
+        onSaved={() => {
+          if (user) getProfessional(user.id).then(setProfessional).catch(() => {});
+        }}
       />
     </SafeAreaView>
   );

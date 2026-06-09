@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { Appointment } from '@/lib/types';
 import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
-import { getPendingPayments, getPaidPayments, updatePaymentStatus } from '@/lib/services';
+import { getPendingPayments, getPaidPayments, updatePaymentStatus, getRevenueByMonth } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
 
 type DateFilter = 'week' | 'month' | 'last_month' | 'all';
@@ -47,6 +47,8 @@ export default function PaymentsScreen() {
   const [filter, setFilter] = useState<DateFilter>('month');
   const [pending, setPending] = useState<Appointment[]>([]);
   const [paid, setPaid] = useState<Appointment[]>([]);
+  const [revenue, setRevenue] = useState<{ month: string; paid: number; pending: number; count: number }[]>([]);
+  const [showReport, setShowReport] = useState(false);
 
   const load = useCallback(async () => {
     const { from, to } = getDateRange(filter);
@@ -71,6 +73,11 @@ export default function PaymentsScreen() {
   }, [user, filter]);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    if (!user) return;
+    getRevenueByMonth(user.id).then(setRevenue).catch(() => {});
+  }, [user]);
 
   async function handleMarkPaid(apptId: string) {
     if (user) await updatePaymentStatus(apptId, 'paid');
@@ -178,6 +185,49 @@ export default function PaymentsScreen() {
           </>
         )}
 
+        {/* Monthly report */}
+        {revenue.length > 0 && (
+          <>
+            <TouchableOpacity
+              style={styles.reportToggle}
+              onPress={() => setShowReport(v => !v)}
+            >
+              <Ionicons name="bar-chart-outline" size={16} color={Colors.primary} />
+              <Text style={styles.reportToggleText}>Monthly Report</Text>
+              <Ionicons
+                name={showReport ? 'chevron-up' : 'chevron-down'}
+                size={16}
+                color={Colors.textSecondary}
+                style={{ marginLeft: 'auto' }}
+              />
+            </TouchableOpacity>
+
+            {showReport && revenue.map(row => {
+              const total = row.paid + row.pending;
+              const barWidth = total > 0 ? row.paid / total : 0;
+              const [yr, mo] = row.month.split('-');
+              const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+              const label = `${MONTHS_SHORT[parseInt(mo, 10) - 1]} ${yr}`;
+              return (
+                <View key={row.month} style={styles.reportRow}>
+                  <View style={styles.reportRowHeader}>
+                    <Text style={styles.reportMonth}>{label}</Text>
+                    <Text style={styles.reportCount}>{row.count} appt{row.count !== 1 ? 's' : ''}</Text>
+                    <Text style={[styles.reportPaid, { marginLeft: 'auto' }]}>R$ {row.paid.toFixed(0)}</Text>
+                  </View>
+                  <View style={styles.reportBar}>
+                    <View style={[styles.reportBarFill, { flex: barWidth }]} />
+                    <View style={{ flex: 1 - barWidth }} />
+                  </View>
+                  {row.pending > 0 && (
+                    <Text style={styles.reportPending}>R$ {row.pending.toFixed(0)} pending</Text>
+                  )}
+                </View>
+              );
+            })}
+          </>
+        )}
+
         <View style={{ height: 20 }} />
       </ScrollView>
     </SafeAreaView>
@@ -223,4 +273,21 @@ const styles = StyleSheet.create({
   paidBadgeText: { fontSize: 12, color: Colors.success, fontWeight: '600' },
   emptyState: { alignItems: 'center', paddingVertical: 40, gap: 8 },
   emptyText: { fontSize: 14, color: Colors.textMuted },
+  reportToggle: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: Colors.surface, borderRadius: 12,
+    padding: 14, borderWidth: 1, borderColor: Colors.border,
+  },
+  reportToggleText: { fontSize: 14, fontWeight: '600', color: Colors.primary },
+  reportRow: {
+    backgroundColor: Colors.surface, borderRadius: 12, padding: 14,
+    borderWidth: 1, borderColor: Colors.border, gap: 8,
+  },
+  reportRowHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  reportMonth: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  reportCount: { fontSize: 12, color: Colors.textMuted },
+  reportPaid: { fontSize: 14, fontWeight: '700', color: Colors.success },
+  reportBar: { flexDirection: 'row', height: 6, borderRadius: 3, backgroundColor: Colors.border, overflow: 'hidden' },
+  reportBarFill: { backgroundColor: Colors.success, borderRadius: 3 },
+  reportPending: { fontSize: 12, color: Colors.warning },
 });

@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Appointment, Patient, MedicalRecord, Prescription, PrescriptionItem, Professional } from './types';
+import { Appointment, Patient, MedicalRecord, Prescription, PrescriptionItem, Professional, WorkingHours } from './types';
 
 // ─── Appointments ────────────────────────────────────────────────────────────
 
@@ -209,6 +209,38 @@ export async function createRecurringAppointments(
 
 // ─── Payments ────────────────────────────────────────────────────────────────
 
+export async function getRevenueByMonth(
+  professionalId: string,
+  monthsBack = 6,
+): Promise<{ month: string; paid: number; pending: number; count: number }[]> {
+  const from = new Date();
+  from.setMonth(from.getMonth() - monthsBack + 1);
+  from.setDate(1);
+  const fromStr = `${from.getFullYear()}-${String(from.getMonth() + 1).padStart(2, '0')}-01`;
+
+  const { data, error } = await supabase
+    .from('appointments')
+    .select('date, payment_amount, payment_status')
+    .eq('professional_id', professionalId)
+    .gte('date', fromStr)
+    .neq('status', 'blocked');
+  if (error) throw error;
+
+  const map: Record<string, { paid: number; pending: number; count: number }> = {};
+  for (const row of data ?? []) {
+    const month = (row.date as string).slice(0, 7);
+    if (!map[month]) map[month] = { paid: 0, pending: 0, count: 0 };
+    const amount = (row.payment_amount as number) ?? 0;
+    map[month].count++;
+    if (row.payment_status === 'paid') map[month].paid += amount;
+    else map[month].pending += amount;
+  }
+
+  return Object.entries(map)
+    .sort(([a], [b]) => b.localeCompare(a))
+    .map(([month, vals]) => ({ month, ...vals }));
+}
+
 export async function getPendingPayments(professionalId: string, from?: string, to?: string) {
   let query = supabase
     .from('appointments')
@@ -395,6 +427,14 @@ export async function upsertProfessional(
   return toProfessional(data as Record<string, unknown>);
 }
 
+export async function updateWorkingHours(professionalId: string, workingHours: WorkingHours) {
+  const { error } = await supabase
+    .from('professionals')
+    .update({ working_hours: workingHours })
+    .eq('id', professionalId);
+  if (error) throw error;
+}
+
 function toProfessional(row: Record<string, unknown>): Professional {
   return {
     id: row.id as string,
@@ -402,6 +442,7 @@ function toProfessional(row: Record<string, unknown>): Professional {
     email: (row.email as string) ?? '',
     clinicName: row.clinic_name as string | undefined,
     specialty: row.specialty as string | undefined,
+    workingHours: (row.working_hours as WorkingHours | undefined) ?? undefined,
   };
 }
 

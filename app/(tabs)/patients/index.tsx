@@ -69,6 +69,8 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
   const [editSex, setEditSex] = useState(patient.sex);
   const [editBirthDate, setEditBirthDate] = useState(patient.birthDate ?? '');
   const [editProfession, setEditProfession] = useState(patient.profession ?? '');
+  const [editTags, setEditTags] = useState<string[]>(patient.tags ?? []);
+  const [tagInput, setTagInput] = useState('');
 
   function enterEdit() {
     setEditName(patient.fullName);
@@ -78,7 +80,19 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
     setEditSex(patient.sex);
     setEditBirthDate(patient.birthDate ?? '');
     setEditProfession(patient.profession ?? '');
+    setEditTags(patient.tags ?? []);
+    setTagInput('');
     setEditing(true);
+  }
+
+  function addTag() {
+    const t = tagInput.trim();
+    if (t && !editTags.includes(t)) setEditTags(prev => [...prev, t]);
+    setTagInput('');
+  }
+
+  function removeTag(tag: string) {
+    setEditTags(prev => prev.filter(t => t !== tag));
   }
 
   async function saveEdit() {
@@ -91,6 +105,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
       sex: editSex,
       birthDate: editBirthDate.trim() || undefined,
       profession: editProfession.trim() || undefined,
+      tags: editTags.length > 0 ? editTags : undefined,
     };
     try {
       if (user) await updatePatient(patient.id, updates);
@@ -279,6 +294,48 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                   )}
                 </View>
               </View>
+
+              <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Tags</Text>
+              {editing ? (
+                <View style={{ gap: 8 }}>
+                  <View style={styles.tagsRow}>
+                    {editTags.map(tag => (
+                      <View key={tag} style={styles.tagChip}>
+                        <Text style={styles.tagChipText}>{tag}</Text>
+                        <TouchableOpacity onPress={() => removeTag(tag)}>
+                          <Ionicons name="close" size={12} color={Colors.primary} />
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </View>
+                  <View style={styles.tagInputRow}>
+                    <TextInput
+                      style={styles.tagInput}
+                      placeholder="Add tag..."
+                      placeholderTextColor={Colors.textMuted}
+                      value={tagInput}
+                      onChangeText={setTagInput}
+                      onSubmitEditing={addTag}
+                      returnKeyType="done"
+                    />
+                    <TouchableOpacity style={styles.tagAddBtn} onPress={addTag}>
+                      <Ionicons name="add" size={18} color={Colors.primary} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : (
+                (patient.tags ?? []).length > 0 ? (
+                  <View style={styles.tagsRow}>
+                    {(patient.tags ?? []).map(tag => (
+                      <View key={tag} style={styles.tagChipRead}>
+                        <Text style={styles.tagChipReadText}>{tag}</Text>
+                      </View>
+                    ))}
+                  </View>
+                ) : (
+                  <View style={styles.fieldBox}><Text style={styles.fieldValue}>No tags</Text></View>
+                )
+              )}
             </View>
           )}
 
@@ -578,6 +635,16 @@ const styles = StyleSheet.create({
   sexPillActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
   sexPillText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '600' },
   sexPillTextActive: { color: '#fff' },
+
+  // Tags
+  tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  tagChip: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Colors.primaryLight, borderWidth: 1, borderColor: Colors.primary + '40', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 14 },
+  tagChipText: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
+  tagChipRead: { backgroundColor: Colors.primaryLight, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 14 },
+  tagChipReadText: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
+  tagInputRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  tagInput: { flex: 1, height: 38, borderWidth: 1, borderColor: Colors.border, borderRadius: 8, paddingHorizontal: 10, fontSize: 13, color: Colors.textPrimary, backgroundColor: Colors.background },
+  tagAddBtn: { width: 38, height: 38, borderRadius: 8, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
 
   // Records
   newItemBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-end', marginBottom: 12, backgroundColor: Colors.primaryLight, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },

@@ -93,6 +93,18 @@ function whatsappUrl(phone: string) {
   return `https://wa.me/${number}`;
 }
 
+function whatsappConfirmUrl(phone: string, appt: Appointment) {
+  const digits = phone.replace(/\D/g, '');
+  const number = digits.startsWith('55') ? digits : `55${digits}`;
+  const msg =
+    `Hello ${appt.patientName}, your appointment is confirmed:\n` +
+    `Date: ${appt.date}\n` +
+    `Time: ${appt.startTime} (${appt.durationMinutes} min)\n` +
+    `Type: ${appt.consultationType}${appt.type === 'online' ? ' — Online' : ''}\n\n` +
+    `See you then!`;
+  return `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
+}
+
 function statusColor(status: Appointment['status']) {
   switch (status) {
     case 'confirmed': return Colors.primary;
@@ -147,14 +159,23 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit }:
               <Text style={styles.modalPatient}>{appt.patientName}</Text>
               <TouchableOpacity
                 style={styles.modalAction}
-                onPress={() => patientPhone && Linking.openURL(whatsappUrl(patientPhone))}
+                onPress={() => patientPhone && Linking.openURL(whatsappConfirmUrl(patientPhone, appt))}
                 disabled={!patientPhone}
               >
                 <Ionicons name="logo-whatsapp" size={16} color={patientPhone ? '#25D366' : Colors.textMuted} />
                 <Text style={[styles.modalActionText, !patientPhone && { color: Colors.textMuted }]}>
-                  {patientPhone ? 'Send WhatsApp message' : 'No phone — add in patient profile'}
+                  {patientPhone ? 'Send confirmation' : 'No phone — add in patient profile'}
                 </Text>
               </TouchableOpacity>
+              {patientPhone && (
+                <TouchableOpacity
+                  style={styles.modalAction}
+                  onPress={() => Linking.openURL(whatsappUrl(patientPhone))}
+                >
+                  <Ionicons name="chatbubble-outline" size={16} color={Colors.textSecondary} />
+                  <Text style={[styles.modalActionText, { color: Colors.textSecondary }]}>Open WhatsApp chat</Text>
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
                 style={styles.modalAction}
                 onPress={() => patientPhone && Linking.openURL(`tel:${patientPhone}`)}
