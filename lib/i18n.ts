@@ -315,6 +315,30 @@ const en = {
   'settings.security.autoLock.5min': '5 minutes',
   'settings.security.autoLock.15min': '15 minutes',
   'settings.security.autoLock.30min': '30 minutes',
+  'settings.security.changePassword': 'Change Password',
+
+  'auth.changePassword.title': 'Change Password',
+  'auth.changePassword.current': 'Current password',
+  'auth.changePassword.new': 'New password',
+  'auth.changePassword.confirm': 'Confirm new password',
+  'auth.changePassword.success': 'Password changed successfully!',
+  'auth.changePassword.sameError': 'New password must differ from your current password.',
+
+  'auth.forgotPassword.title': 'Reset your password',
+  'auth.forgotPassword.subtitle': "Enter your email and we'll send you a reset link.",
+  'auth.forgotPassword.send': 'Send reset link',
+  'auth.forgotPassword.sent': 'Check your email for a reset link.',
+  'auth.forgotPassword.backToLogin': 'Back to Sign in',
+
+  'auth.resetPassword.title': 'Set new password',
+  'auth.resetPassword.subtitle': 'Enter and confirm your new password below.',
+  'auth.resetPassword.submit': 'Set password',
+  'auth.resetPassword.success': 'Password updated! Signing you in…',
+
+  'auth.validation.allFields': 'Please fill in all fields.',
+  'auth.validation.passwordMatch': 'Passwords do not match.',
+  'auth.validation.passwordLength': 'Password must be at least 6 characters.',
+  'auth.validation.emailRequired': 'Please enter your email address.',
 
   'settings.group.financial': 'Financial',
   'settings.financial.paymentType': 'Default Payment Type',
@@ -629,6 +653,30 @@ const ptBR: typeof en = {
   'settings.security.autoLock.5min': '5 minutos',
   'settings.security.autoLock.15min': '15 minutos',
   'settings.security.autoLock.30min': '30 minutos',
+  'settings.security.changePassword': 'Alterar senha',
+
+  'auth.changePassword.title': 'Alterar senha',
+  'auth.changePassword.current': 'Senha atual',
+  'auth.changePassword.new': 'Nova senha',
+  'auth.changePassword.confirm': 'Confirmar nova senha',
+  'auth.changePassword.success': 'Senha alterada com sucesso!',
+  'auth.changePassword.sameError': 'A nova senha deve ser diferente da senha atual.',
+
+  'auth.forgotPassword.title': 'Redefinir senha',
+  'auth.forgotPassword.subtitle': 'Digite seu email e enviaremos um link de redefinição.',
+  'auth.forgotPassword.send': 'Enviar link de redefinição',
+  'auth.forgotPassword.sent': 'Verifique seu email para o link de redefinição.',
+  'auth.forgotPassword.backToLogin': 'Voltar para entrar',
+
+  'auth.resetPassword.title': 'Definir nova senha',
+  'auth.resetPassword.subtitle': 'Digite e confirme sua nova senha abaixo.',
+  'auth.resetPassword.submit': 'Definir senha',
+  'auth.resetPassword.success': 'Senha atualizada! Entrando…',
+
+  'auth.validation.allFields': 'Por favor, preencha todos os campos.',
+  'auth.validation.passwordMatch': 'As senhas não coincidem.',
+  'auth.validation.passwordLength': 'A senha deve ter pelo menos 6 caracteres.',
+  'auth.validation.emailRequired': 'Por favor, insira seu endereço de email.',
 
   'settings.group.financial': 'Financeiro',
   'settings.financial.paymentType': 'Tipo de pagamento padrão',
@@ -943,6 +991,30 @@ const frFR: typeof en = {
   'settings.security.autoLock.5min': '5 minutes',
   'settings.security.autoLock.15min': '15 minutes',
   'settings.security.autoLock.30min': '30 minutes',
+  'settings.security.changePassword': 'Changer le mot de passe',
+
+  'auth.changePassword.title': 'Changer le mot de passe',
+  'auth.changePassword.current': 'Mot de passe actuel',
+  'auth.changePassword.new': 'Nouveau mot de passe',
+  'auth.changePassword.confirm': 'Confirmer le nouveau mot de passe',
+  'auth.changePassword.success': 'Mot de passe modifié avec succès !',
+  'auth.changePassword.sameError': 'Le nouveau mot de passe doit être différent du mot de passe actuel.',
+
+  'auth.forgotPassword.title': 'Réinitialiser le mot de passe',
+  'auth.forgotPassword.subtitle': 'Entrez votre email et nous vous enverrons un lien de réinitialisation.',
+  'auth.forgotPassword.send': 'Envoyer le lien',
+  'auth.forgotPassword.sent': 'Vérifiez votre email pour le lien de réinitialisation.',
+  'auth.forgotPassword.backToLogin': 'Retour à la connexion',
+
+  'auth.resetPassword.title': 'Définir un nouveau mot de passe',
+  'auth.resetPassword.subtitle': 'Entrez et confirmez votre nouveau mot de passe ci-dessous.',
+  'auth.resetPassword.submit': 'Définir le mot de passe',
+  'auth.resetPassword.success': 'Mot de passe mis à jour ! Connexion en cours…',
+
+  'auth.validation.allFields': 'Veuillez remplir tous les champs.',
+  'auth.validation.passwordMatch': 'Les mots de passe ne correspondent pas.',
+  'auth.validation.passwordLength': 'Le mot de passe doit comporter au moins 6 caractères.',
+  'auth.validation.emailRequired': 'Veuillez saisir votre adresse email.',
 
   'settings.group.financial': 'Finances',
   'settings.financial.paymentType': 'Type de paiement par défaut',
@@ -1257,6 +1329,30 @@ const deDE: typeof en = {
   'settings.security.autoLock.5min': '5 Minuten',
   'settings.security.autoLock.15min': '15 Minuten',
   'settings.security.autoLock.30min': '30 Minuten',
+  'settings.security.changePassword': 'Passwort ändern',
+
+  'auth.changePassword.title': 'Passwort ändern',
+  'auth.changePassword.current': 'Aktuelles Passwort',
+  'auth.changePassword.new': 'Neues Passwort',
+  'auth.changePassword.confirm': 'Neues Passwort bestätigen',
+  'auth.changePassword.success': 'Passwort erfolgreich geändert!',
+  'auth.changePassword.sameError': 'Das neue Passwort muss sich vom aktuellen unterscheiden.',
+
+  'auth.forgotPassword.title': 'Passwort zurücksetzen',
+  'auth.forgotPassword.subtitle': 'Geben Sie Ihre E-Mail ein und wir senden Ihnen einen Reset-Link.',
+  'auth.forgotPassword.send': 'Reset-Link senden',
+  'auth.forgotPassword.sent': 'Überprüfen Sie Ihre E-Mail für den Reset-Link.',
+  'auth.forgotPassword.backToLogin': 'Zurück zur Anmeldung',
+
+  'auth.resetPassword.title': 'Neues Passwort festlegen',
+  'auth.resetPassword.subtitle': 'Geben Sie Ihr neues Passwort ein und bestätigen Sie es.',
+  'auth.resetPassword.submit': 'Passwort festlegen',
+  'auth.resetPassword.success': 'Passwort aktualisiert! Anmeldung läuft…',
+
+  'auth.validation.allFields': 'Bitte füllen Sie alle Felder aus.',
+  'auth.validation.passwordMatch': 'Die Passwörter stimmen nicht überein.',
+  'auth.validation.passwordLength': 'Das Passwort muss mindestens 6 Zeichen lang sein.',
+  'auth.validation.emailRequired': 'Bitte geben Sie Ihre E-Mail-Adresse ein.',
 
   'settings.group.financial': 'Finanzen',
   'settings.financial.paymentType': 'Standard-Zahlungsart',
@@ -1571,6 +1667,30 @@ const itIT: typeof en = {
   'settings.security.autoLock.5min': '5 minuti',
   'settings.security.autoLock.15min': '15 minuti',
   'settings.security.autoLock.30min': '30 minuti',
+  'settings.security.changePassword': 'Cambia password',
+
+  'auth.changePassword.title': 'Cambia password',
+  'auth.changePassword.current': 'Password attuale',
+  'auth.changePassword.new': 'Nuova password',
+  'auth.changePassword.confirm': 'Conferma nuova password',
+  'auth.changePassword.success': 'Password cambiata con successo!',
+  'auth.changePassword.sameError': 'La nuova password deve essere diversa da quella attuale.',
+
+  'auth.forgotPassword.title': 'Reimposta la password',
+  'auth.forgotPassword.subtitle': 'Inserisci la tua email e ti invieremo un link di reimpostazione.',
+  'auth.forgotPassword.send': 'Invia link',
+  'auth.forgotPassword.sent': 'Controlla la tua email per il link di reimpostazione.',
+  'auth.forgotPassword.backToLogin': "Torna all'accesso",
+
+  'auth.resetPassword.title': 'Imposta nuova password',
+  'auth.resetPassword.subtitle': 'Inserisci e conferma la tua nuova password qui sotto.',
+  'auth.resetPassword.submit': 'Imposta password',
+  'auth.resetPassword.success': 'Password aggiornata! Accesso in corso…',
+
+  'auth.validation.allFields': 'Si prega di compilare tutti i campi.',
+  'auth.validation.passwordMatch': 'Le password non corrispondono.',
+  'auth.validation.passwordLength': 'La password deve essere lunga almeno 6 caratteri.',
+  'auth.validation.emailRequired': "Inserisci il tuo indirizzo email.",
 
   'settings.group.financial': 'Finanziario',
   'settings.financial.paymentType': 'Tipo di pagamento predefinito',
@@ -1885,6 +2005,30 @@ const esES: typeof en = {
   'settings.security.autoLock.5min': '5 minutos',
   'settings.security.autoLock.15min': '15 minutos',
   'settings.security.autoLock.30min': '30 minutos',
+  'settings.security.changePassword': 'Cambiar contraseña',
+
+  'auth.changePassword.title': 'Cambiar contraseña',
+  'auth.changePassword.current': 'Contraseña actual',
+  'auth.changePassword.new': 'Nueva contraseña',
+  'auth.changePassword.confirm': 'Confirmar nueva contraseña',
+  'auth.changePassword.success': '¡Contraseña cambiada con éxito!',
+  'auth.changePassword.sameError': 'La nueva contraseña debe ser diferente a la actual.',
+
+  'auth.forgotPassword.title': 'Restablecer contraseña',
+  'auth.forgotPassword.subtitle': 'Ingresa tu email y te enviaremos un enlace de restablecimiento.',
+  'auth.forgotPassword.send': 'Enviar enlace',
+  'auth.forgotPassword.sent': 'Revisa tu email para el enlace de restablecimiento.',
+  'auth.forgotPassword.backToLogin': 'Volver a iniciar sesión',
+
+  'auth.resetPassword.title': 'Establecer nueva contraseña',
+  'auth.resetPassword.subtitle': 'Ingresa y confirma tu nueva contraseña a continuación.',
+  'auth.resetPassword.submit': 'Establecer contraseña',
+  'auth.resetPassword.success': '¡Contraseña actualizada! Iniciando sesión…',
+
+  'auth.validation.allFields': 'Por favor, complete todos los campos.',
+  'auth.validation.passwordMatch': 'Las contraseñas no coinciden.',
+  'auth.validation.passwordLength': 'La contraseña debe tener al menos 6 caracteres.',
+  'auth.validation.emailRequired': 'Por favor, ingrese su dirección de correo electrónico.',
 
   'settings.group.financial': 'Financiero',
   'settings.financial.paymentType': 'Tipo de pago predeterminado',
@@ -1950,4 +2094,8 @@ export function tRecordType(type: string): string {
   };
   const key = map[type];
   return key ? t(key) : type;
+}
+
+export function useTranslation() {
+  return { t };
 }

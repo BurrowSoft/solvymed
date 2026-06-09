@@ -85,6 +85,7 @@ function RootNavigator() {
   const router = useRouter();
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const [onboardingDone, setOnboardingDone] = useState(false);
+  const [pendingRecovery, setPendingRecovery] = useState<{ access: string; refresh: string } | null>(null);
   const { locale } = useLocale();
   const { theme } = useTheme();
 
@@ -96,18 +97,50 @@ function RootNavigator() {
   }, []);
 
   useEffect(() => {
+    function handleDeepLink(url: string | null) {
+      if (!url) return;
+      try {
+        const { queryParams } = Linking.parse(url);
+        const access = queryParams?.access_token as string | undefined;
+        const refresh = queryParams?.refresh_token as string | undefined;
+        const type = queryParams?.type as string | undefined;
+        if (!access) return;
+        if (type === 'recovery') {
+          setPendingRecovery({ access, refresh: refresh ?? '' });
+        } else {
+          supabase.auth.setSession({ access_token: access, refresh_token: refresh ?? '' }).catch(() => {});
+        }
+      } catch {}
+    }
+    Linking.getInitialURL().then(handleDeepLink).catch(() => {});
+    const sub = Linking.addEventListener('url', ({ url }) => handleDeepLink(url));
+    return () => sub.remove();
+  }, []);
+
+  useEffect(() => {
     if (loading || !onboardingChecked) return;
+
+    if (pendingRecovery) {
+      router.replace({
+        pathname: '/(auth)/reset-password',
+        params: { access_token: pendingRecovery.access, refresh_token: pendingRecovery.refresh },
+      } as never);
+      setPendingRecovery(null);
+      return;
+    }
+
     if (!onboardingDone) {
       router.replace('/onboarding');
       return;
     }
     const inAuth = segments[0] === '(auth)';
+    const inResetPassword = segments[1] === 'reset-password';
     if (!session && !inAuth) {
       router.replace('/(auth)/login');
-    } else if (session && inAuth) {
+    } else if (session && inAuth && !inResetPassword) {
       router.replace('/(tabs)/schedule/index');
     }
-  }, [session, loading, onboardingChecked, onboardingDone]);
+  }, [session, loading, onboardingChecked, onboardingDone, pendingRecovery]);
 
   useEffect(() => {
     if (!session) return;
@@ -125,24 +158,6 @@ function RootNavigator() {
 // ─── RootLayout ───────────────────────────────────────────────────────────────
 
 export default function RootLayout() {
-  useEffect(() => {
-    function handleDeepLink(url: string | null) {
-      if (!url) return;
-      try {
-        const { queryParams } = Linking.parse(url);
-        const access = queryParams?.access_token as string | undefined;
-        const refresh = queryParams?.refresh_token as string | undefined;
-        if (access) {
-          supabase.auth.setSession({ access_token: access, refresh_token: refresh ?? '' }).catch(() => {});
-        }
-      } catch {}
-    }
-
-    Linking.getInitialURL().then(handleDeepLink).catch(() => {});
-    const sub = Linking.addEventListener('url', ({ url }) => handleDeepLink(url));
-    return () => sub.remove();
-  }, []);
-
   return (
     <ThemeProvider>
       <LocaleProvider>

@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/lib/auth-context';
+import ForgotPasswordModal from '@/components/ForgotPasswordModal';
 
 export default function LoginScreen() {
   const { signIn, resendConfirmation } = useAuth();
@@ -20,6 +21,7 @@ export default function LoginScreen() {
   const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
   const [resendLoading, setResendLoading] = useState(false);
   const [resendSent, setResendSent] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   async function handleLogin() {
     if (!email || !password) {
@@ -163,7 +165,7 @@ export default function LoginScreen() {
             }
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.forgotBtn}>
+          <TouchableOpacity style={styles.forgotBtn} onPress={() => setShowForgotPassword(true)}>
             <Text style={styles.forgotText}>Forgot password?</Text>
           </TouchableOpacity>
         </View>
@@ -177,6 +179,11 @@ export default function LoginScreen() {
 
         <Text style={styles.footer}>SolvyMed by BurrowSoft</Text>
       </KeyboardAvoidingView>
+
+      <ForgotPasswordModal
+        visible={showForgotPassword}
+        onClose={() => setShowForgotPassword(false)}
+      />
     </SafeAreaView>
   );
 }

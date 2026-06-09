@@ -26,6 +26,8 @@ jest.mock('./lib/supabase', () => ({
       signOut: jest.fn().mockResolvedValue({ error: null }),
       resend: jest.fn().mockResolvedValue({ error: null }),
       setSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
+      updateUser: jest.fn().mockResolvedValue({ data: {}, error: null }),
+      resetPasswordForEmail: jest.fn().mockResolvedValue({ data: {}, error: null }),
     },
     storage: {
       from: jest.fn(() => ({
@@ -111,6 +113,7 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ back: jest.fn(), push: jest.fn(), replace: jest.fn() }),
   useSegments: () => [],
   usePathname: () => '/',
+  useLocalSearchParams: () => ({}),
   Redirect: () => null,
   Stack: ({ children }) => {
     const React = require('react');

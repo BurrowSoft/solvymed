@@ -15,7 +15,12 @@ jest.mock('expo-router', () => ({
 const mockSignIn = jest.fn();
 const mockResendConfirmation = jest.fn();
 jest.mock('../../lib/auth-context', () => ({
-  useAuth: () => ({ signIn: mockSignIn, resendConfirmation: mockResendConfirmation }),
+  useAuth: () => ({ signIn: mockSignIn, resendConfirmation: mockResendConfirmation, forgotPassword: jest.fn() }),
+}));
+
+jest.mock('../../lib/locale-context', () => ({
+  useLocale: () => ({ locale: 'en', setLocale: jest.fn() }),
+  LocaleProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

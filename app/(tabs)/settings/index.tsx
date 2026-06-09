@@ -22,6 +22,7 @@ import { NotificationSettingsModal } from '@/components/NotificationSettingsModa
 import { ThemePickerModal } from '@/components/ThemePickerModal';
 import { SecuritySettingsModal } from '@/components/SecuritySettingsModal';
 import { FinancialSettingsModal } from '@/components/FinancialSettingsModal';
+import ChangePasswordModal from '@/components/ChangePasswordModal';
 import { t } from '@/lib/i18n';
 import { useLocale } from '@/lib/locale-context';
 import { useTheme } from '@/lib/theme-context';
@@ -72,6 +73,7 @@ export default function SettingsScreen() {
   const [showThemePicker, setShowThemePicker] = useState(false);
   const [showSecurity, setShowSecurity] = useState(false);
   const [showFinancial, setShowFinancial] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -211,6 +213,11 @@ export default function SettingsScreen() {
           icon: 'lock-closed-outline',
           detail: autoLockDetail(settings),
           onPress: () => setShowSecurity(true),
+        },
+        {
+          label: t('settings.security.changePassword'),
+          icon: 'key-outline',
+          onPress: () => setShowChangePassword(true),
         },
       ],
     },
@@ -386,6 +393,10 @@ export default function SettingsScreen() {
         settings={settings}
         onClose={() => setShowFinancial(false)}
         onSave={(patch) => updateSettings(patch)}
+      />
+      <ChangePasswordModal
+        visible={showChangePassword}
+        onClose={() => setShowChangePassword(false)}
       />
     </SafeAreaView>
   );

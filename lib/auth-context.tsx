@@ -11,6 +11,8 @@ interface AuthContextType {
   signUp: (email: string, password: string, locale?: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   resendConfirmation: (email: string) => Promise<{ error: string | null }>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<{ error: string | null }>;
+  forgotPassword: (email: string, locale?: string) => Promise<{ error: string | null }>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -21,6 +23,8 @@ const AuthContext = createContext<AuthContextType>({
   signUp: async () => ({ error: null }),
   signOut: async () => {},
   resendConfirmation: async () => ({ error: null }),
+  changePassword: async () => ({ error: null }),
+  forgotPassword: async () => ({ error: null }),
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -89,8 +93,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error: error?.message ?? null };
   }
 
+  async function changePassword(currentPassword: string, newPassword: string) {
+    if (!session?.user?.email) return { error: 'Not authenticated' };
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email: session.user.email,
+      password: currentPassword,
+    });
+    if (authError) return { error: authError.message };
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    return { error: error?.message ?? null };
+  }
+
+  async function forgotPassword(email: string, locale?: string) {
+    const webLocale = !locale || locale === 'en' ? '' : `/${locale === 'pt-BR' ? 'pt-BR' : locale.split('-')[0]}`;
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `https://www.solvymed.com${webLocale}/auth/confirm`,
+    });
+    return { error: error?.message ?? null };
+  }
+
   return (
-    <AuthContext.Provider value={{ session, user: session?.user ?? null, loading, signIn, signUp, signOut, resendConfirmation }}>
+    <AuthContext.Provider value={{ session, user: session?.user ?? null, loading, signIn, signUp, signOut, resendConfirmation, changePassword, forgotPassword }}>
       {children}
     </AuthContext.Provider>
   );
