@@ -11,7 +11,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.burrowsoft.solvymed"
+      "bundleIdentifier": "com.burrowsoft.solvymed",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.burrowsoft.solvymed",
@@ -19,7 +22,10 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "versionCode": 5,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -48,7 +54,9 @@
         {
           "photosPermission": "SolvyMed uses your photo library to let you upload a clinic logo for document templates."
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-updates"
     ],
     "experiments": {
       "typedRoutes": true
