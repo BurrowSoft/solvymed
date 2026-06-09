@@ -1,4 +1,4 @@
-function detectLocale(): string {
+export function detectLocale(): string {
   try {
     const loc = Intl.DateTimeFormat().resolvedOptions().locale.toLowerCase();
     if (loc.startsWith('pt')) return 'pt-BR';

@@ -1,15 +1,30 @@
 import React, { useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
-  Dimensions, Animated,
+  Dimensions, Animated, ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import { useLocale } from '@/lib/locale-context';
+import { detectLocale } from '@/lib/i18n';
 
 const { width } = Dimensions.get('window');
+
+// ─── Language picker data ─────────────────────────────────────────────────────
+
+const LANGUAGES = [
+  { code: 'en',    flag: '🇬🇧', nativeName: 'English',              englishName: 'English' },
+  { code: 'pt-BR', flag: '🇧🇷', nativeName: 'Português',            englishName: 'Portuguese (Brazil)' },
+  { code: 'es-ES', flag: '🇪🇸', nativeName: 'Español',              englishName: 'Spanish' },
+  { code: 'fr-FR', flag: '🇫🇷', nativeName: 'Français',             englishName: 'French' },
+  { code: 'de-DE', flag: '🇩🇪', nativeName: 'Deutsch',              englishName: 'German' },
+  { code: 'it-IT', flag: '🇮🇹', nativeName: 'Italiano',             englishName: 'Italian' },
+];
+
+// ─── Onboarding slides ────────────────────────────────────────────────────────
 
 interface Slide {
   key: string;
@@ -31,7 +46,7 @@ const SLIDES: Slide[] = [
     key: 'schedule',
     icon: 'calendar-outline',
     title: 'Smart Scheduling',
-    body: 'View your day or week at a glance. Create appointments, block time slots, and get 15-minute reminders before each session.',
+    body: 'View your day or week at a glance. Create appointments, block time slots, and get reminders before each session.',
     color: '#7C3AED',
   },
   {
@@ -50,11 +65,21 @@ const SLIDES: Slide[] = [
   },
 ];
 
+// ─── Screen ───────────────────────────────────────────────────────────────────
+
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { setLocale } = useLocale();
   const listRef = useRef<FlatList>(null);
+  const [step, setStep] = useState<'language' | 'slides'>('language');
+  const [selectedLocale, setSelectedLocale] = useState(detectLocale());
   const [index, setIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
+
+  async function confirmLanguage() {
+    await setLocale(selectedLocale);
+    setStep('slides');
+  }
 
   async function finish() {
     await AsyncStorage.setItem('onboarding_done', '1');
@@ -69,6 +94,60 @@ export default function OnboardingScreen() {
       finish();
     }
   }
+
+  // ─── Language picker ────────────────────────────────────────────────────────
+
+  if (step === 'language') {
+    return (
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+        <View style={styles.langHeader}>
+          <View style={styles.globeCircle}>
+            <Ionicons name="globe-outline" size={36} color={Colors.primary} />
+          </View>
+          <Text style={styles.langTitle}>Choose your language</Text>
+          <Text style={styles.langSubtitle}>You can change this later in Settings</Text>
+        </View>
+
+        <ScrollView
+          style={styles.langList}
+          contentContainerStyle={styles.langListContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {LANGUAGES.map(lang => {
+            const selected = selectedLocale === lang.code;
+            return (
+              <TouchableOpacity
+                key={lang.code}
+                style={[styles.langRow, selected && styles.langRowSelected]}
+                onPress={() => setSelectedLocale(lang.code)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.langFlag}>{lang.flag}</Text>
+                <View style={styles.langNames}>
+                  <Text style={[styles.langNative, selected && { color: Colors.primary }]}>
+                    {lang.nativeName}
+                  </Text>
+                  <Text style={styles.langEnglish}>{lang.englishName}</Text>
+                </View>
+                {selected && (
+                  <Ionicons name="checkmark-circle" size={22} color={Colors.primary} />
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.continueBtn} onPress={confirmLanguage}>
+            <Text style={styles.continueBtnText}>Continue</Text>
+            <Ionicons name="arrow-forward" size={18} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // ─── Slides ─────────────────────────────────────────────────────────────────
 
   const slide = SLIDES[index];
 
@@ -103,7 +182,6 @@ export default function OnboardingScreen() {
         )}
       />
 
-      {/* Dots */}
       <View style={styles.dots}>
         {SLIDES.map((_, i) => (
           <View
@@ -118,7 +196,6 @@ export default function OnboardingScreen() {
         ))}
       </View>
 
-      {/* CTA */}
       <View style={styles.footer}>
         <TouchableOpacity
           style={[styles.nextBtn, { backgroundColor: slide.color }]}
@@ -140,14 +217,49 @@ export default function OnboardingScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.surface },
+
+  // Language picker
+  langHeader: { alignItems: 'center', paddingTop: 32, paddingHorizontal: 24, gap: 10, paddingBottom: 24 },
+  globeCircle: {
+    width: 72, height: 72, borderRadius: 36,
+    backgroundColor: Colors.primary + '15',
+    alignItems: 'center', justifyContent: 'center', marginBottom: 4,
+  },
+  langTitle: { fontSize: 24, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
+  langSubtitle: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center' },
+  langList: { flex: 1 },
+  langListContent: { paddingHorizontal: 20, paddingBottom: 8, gap: 8 },
+  langRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+    backgroundColor: Colors.background,
+    borderWidth: 1.5, borderColor: Colors.border,
+    borderRadius: 14, paddingHorizontal: 16, paddingVertical: 14,
+  },
+  langRowSelected: {
+    borderColor: Colors.primary,
+    backgroundColor: Colors.primary + '08',
+  },
+  langFlag: { fontSize: 28 },
+  langNames: { flex: 1, gap: 2 },
+  langNative: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
+  langEnglish: { fontSize: 13, color: Colors.textMuted },
+  continueBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 8, paddingVertical: 16, borderRadius: 16,
+    backgroundColor: Colors.primary,
+    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25, shadowRadius: 8, elevation: 4,
+  },
+  continueBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+
+  // Slides
   skipRow: { flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 20, paddingTop: 8 },
   skipBtn: { padding: 8 },
   skipText: { fontSize: 14, color: Colors.textSecondary, fontWeight: '500' },
   slide: { alignItems: 'center', justifyContent: 'center', padding: 32, gap: 24 },
   iconCircle: {
     width: 140, height: 140, borderRadius: 70,
-    alignItems: 'center', justifyContent: 'center',
-    marginBottom: 8,
+    alignItems: 'center', justifyContent: 'center', marginBottom: 8,
   },
   title: { fontSize: 26, fontWeight: '800', textAlign: 'center', letterSpacing: -0.5 },
   body: { fontSize: 15, color: Colors.textSecondary, textAlign: 'center', lineHeight: 24 },
