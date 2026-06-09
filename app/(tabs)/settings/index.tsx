@@ -11,21 +11,34 @@ import { WorkingHoursModal } from '@/components/WorkingHoursModal';
 import { DocumentTemplatesModal } from '@/components/DocumentTemplatesModal';
 import { ProceduresModal } from '@/components/ProceduresModal';
 import { MyClinicModal } from '@/components/MyClinicModal';
+import { LanguagePickerModal } from '@/components/LanguagePickerModal';
 import { t } from '@/lib/i18n';
+import { useLocale } from '@/lib/locale-context';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
-interface SettingItem { label: string; icon: IoniconName; onPress?: () => void; }
+interface SettingItem { label: string; icon: IoniconName; detail?: string; onPress?: () => void; }
 interface SettingGroup { title: string; items: SettingItem[]; }
+
+const LANGUAGE_NAMES: Record<string, string> = {
+  'pt-BR': 'Português',
+  'en': 'English',
+  'fr-FR': 'Français',
+  'de-DE': 'Deutsch',
+  'it-IT': 'Italiano',
+  'es-ES': 'Español',
+};
 
 export default function SettingsScreen() {
   const { user, signOut } = useAuth();
+  const { locale } = useLocale();
   const [professional, setProfessional] = useState<Professional | null>(null);
   const [showProfile, setShowProfile] = useState(false);
   const [showWorkingHours, setShowWorkingHours] = useState(false);
   const [showDocumentTemplates, setShowDocumentTemplates] = useState(false);
   const [showProcedures, setShowProcedures] = useState(false);
   const [showMyClinic, setShowMyClinic] = useState(false);
+  const [showLanguagePicker, setShowLanguagePicker] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -61,6 +74,17 @@ export default function SettingsScreen() {
         { label: t('settings.modules'), icon: 'grid-outline', onPress: comingSoon(t('settings.modules')) },
         { label: t('settings.documentTemplates'), icon: 'color-palette-outline', onPress: () => setShowDocumentTemplates(true) },
         { label: t('settings.documents'), icon: 'folder-outline', onPress: comingSoon(t('settings.documents')) },
+      ],
+    },
+    {
+      title: t('settings.group.language'),
+      items: [
+        {
+          label: t('settings.language'),
+          icon: 'language-outline',
+          detail: LANGUAGE_NAMES[locale] ?? locale,
+          onPress: () => setShowLanguagePicker(true),
+        },
       ],
     },
     {
@@ -115,6 +139,7 @@ export default function SettingsScreen() {
                     <Ionicons name={item.icon} size={18} color={Colors.primary} />
                   </View>
                   <Text style={styles.settingLabel}>{item.label}</Text>
+                  {item.detail ? <Text style={styles.settingDetail}>{item.detail}</Text> : null}
                   <Ionicons name="chevron-forward" size={16} color={item.onPress ? Colors.textMuted : Colors.border} />
                 </TouchableOpacity>
               ))}
@@ -165,6 +190,11 @@ export default function SettingsScreen() {
         onClose={() => setShowMyClinic(false)}
         onSaved={(updated) => setProfessional(updated)}
       />
+
+      <LanguagePickerModal
+        visible={showLanguagePicker}
+        onClose={() => setShowLanguagePicker(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -196,6 +226,7 @@ const styles = StyleSheet.create({
   settingRowBorder: { borderBottomWidth: 1, borderBottomColor: Colors.border },
   settingIcon: { width: 30, height: 30, borderRadius: 8, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
   settingLabel: { flex: 1, fontSize: 14, color: Colors.textPrimary },
+  settingDetail: { fontSize: 13, color: Colors.textSecondary, marginRight: 4 },
   signOutBtn: { flexDirection: 'row', alignItems: 'center', gap: 10, marginHorizontal: 16, padding: 14, backgroundColor: Colors.surface, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, marginBottom: 8 },
   signOutText: { fontSize: 14, fontWeight: '600', color: Colors.danger },
 });

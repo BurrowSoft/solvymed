@@ -3,6 +3,7 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthProvider, useAuth } from '@/lib/auth-context';
+import { LocaleProvider, useLocale } from '@/lib/locale-context';
 import { scheduleRemindersForToday } from '@/lib/notifications';
 
 function RootNavigator() {
@@ -38,18 +39,22 @@ function RootNavigator() {
     scheduleRemindersForToday(session.user.id).catch(() => {});
   }, [session]);
 
+  const { locale } = useLocale();
+
   return (
     <>
       <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack key={locale} screenOptions={{ headerShown: false }} />
     </>
   );
 }
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <RootNavigator />
-    </AuthProvider>
+    <LocaleProvider>
+      <AuthProvider>
+        <RootNavigator />
+      </AuthProvider>
+    </LocaleProvider>
   );
 }
