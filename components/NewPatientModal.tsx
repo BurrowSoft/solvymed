@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Modal, View, Text, StyleSheet, ScrollView, TextInput,
   TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform,
@@ -25,12 +25,41 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
   const [sex, setSex] = useState<'male' | 'female' | 'other' | undefined>();
   const [birthDate, setBirthDate] = useState('');
   const [profession, setProfession] = useState('');
+  const [countryCode, setCountryCode] = useState('+55');
+  const [showCountryPicker, setShowCountryPicker] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
+  const COUNTRY_CODES = [
+    { code: '+55', label: 'BR +55' },
+    { code: '+1', label: 'US +1' },
+    { code: '+351', label: 'PT +351' },
+    { code: '+44', label: 'UK +44' },
+    { code: '+34', label: 'ES +34' },
+    { code: '+49', label: 'DE +49' },
+    { code: '+33', label: 'FR +33' },
+    { code: '+39', label: 'IT +39' },
+    { code: '+54', label: 'AR +54' },
+  ];
+
+  const agePreview = useMemo(() => {
+    if (!birthDate.match(/^\d{4}-\d{2}-\d{2}$/)) return '';
+    const birth = new Date(birthDate);
+    if (isNaN(birth.getTime())) return '';
+    const now = new Date();
+    let years = now.getFullYear() - birth.getFullYear();
+    let months = now.getMonth() - birth.getMonth();
+    if (now.getDate() < birth.getDate()) months--;
+    if (months < 0) { years--; months += 12; }
+    if (years < 0) return '';
+    if (years === 0) return `${months} month${months !== 1 ? 's' : ''} old`;
+    return `${years} yr${years !== 1 ? 's' : ''}${months > 0 ? `, ${months} mo` : ''} old`;
+  }, [birthDate]);
+
   function resetForm() {
     setFullName(''); setPhone(''); setEmail(''); setCpf('');
-    setSex(undefined); setBirthDate(''); setProfession(''); setError('');
+    setSex(undefined); setBirthDate(''); setProfession('');
+    setCountryCode('+55'); setError('');
   }
 
   async function handleSave() {
@@ -40,7 +69,7 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
 
     const patientData = {
       fullName: fullName.trim(),
-      phone: phone.trim() || undefined,
+      phone: phone.trim() ? `${countryCode}${phone.trim()}` : undefined,
       email: email.trim() || undefined,
       cpf: cpf.trim() || undefined,
       sex,
@@ -143,6 +172,9 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
                       onChangeText={setBirthDate}
                     />
                   </View>
+                  {!!agePreview && (
+                    <Text style={styles.agePreview}>{agePreview}</Text>
+                  )}
                 </View>
               </View>
 
@@ -166,10 +198,17 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
               <View style={styles.field}>
                 <Text style={styles.fieldLabel}>Phone</Text>
                 <View style={styles.inputBox}>
-                  <Ionicons name="call-outline" size={16} color={Colors.textMuted} />
+                  <TouchableOpacity
+                    onPress={() => setShowCountryPicker(true)}
+                    style={styles.countryCodeBtn}
+                  >
+                    <Text style={styles.countryCodeText}>{countryCode}</Text>
+                    <Ionicons name="chevron-down" size={12} color={Colors.textMuted} />
+                  </TouchableOpacity>
+                  <View style={styles.countryDivider} />
                   <TextInput
                     style={styles.input}
-                    placeholder="+55 (11) 99999-9999"
+                    placeholder="(11) 99999-9999"
                     placeholderTextColor={Colors.textMuted}
                     value={phone}
                     onChangeText={setPhone}
@@ -199,6 +238,25 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
+
+      {/* Country code picker */}
+      <Modal visible={showCountryPicker} transparent animationType="fade" onRequestClose={() => setShowCountryPicker(false)}>
+        <TouchableOpacity style={styles.countryOverlay} activeOpacity={1} onPress={() => setShowCountryPicker(false)}>
+          <View style={styles.countrySheet}>
+            <Text style={styles.countrySheetTitle}>Select Country Code</Text>
+            {COUNTRY_CODES.map(({ code, label }) => (
+              <TouchableOpacity
+                key={code}
+                style={[styles.countryOption, countryCode === code && styles.countryOptionActive]}
+                onPress={() => { setCountryCode(code); setShowCountryPicker(false); }}
+              >
+                <Text style={[styles.countryOptionText, countryCode === code && { color: Colors.primary, fontWeight: '700' }]}>{label}</Text>
+                {countryCode === code && <Ionicons name="checkmark" size={16} color={Colors.primary} />}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </Modal>
   );
 }
@@ -235,4 +293,14 @@ const styles = StyleSheet.create({
   pillActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
   pillText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
   pillTextActive: { color: '#fff' },
+  agePreview: { fontSize: 12, color: Colors.primary, fontWeight: '600', marginTop: 4, marginLeft: 2 },
+  countryCodeBtn: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  countryCodeText: { fontSize: 14, color: Colors.textPrimary, fontWeight: '600' },
+  countryDivider: { width: 1, height: 20, backgroundColor: Colors.border, marginHorizontal: 4 },
+  countryOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' },
+  countrySheet: { backgroundColor: Colors.surface, borderRadius: 14, padding: 16, width: 260, gap: 4 },
+  countrySheetTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary, marginBottom: 8 },
+  countryOption: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10, paddingHorizontal: 8, borderRadius: 8 },
+  countryOptionActive: { backgroundColor: Colors.primaryLight },
+  countryOptionText: { fontSize: 14, color: Colors.textPrimary },
 });

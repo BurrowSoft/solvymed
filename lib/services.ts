@@ -76,13 +76,20 @@ export async function createAppointment(appt: Omit<Appointment, 'id'>) {
 
 // ─── Patients ────────────────────────────────────────────────────────────────
 
-export async function getPatients(professionalId: string, search?: string) {
+export async function getPatients(
+  professionalId: string,
+  search?: string,
+  opts?: { sex?: string; offset?: number; limit?: number },
+) {
+  const { sex, offset = 0, limit = 30 } = opts ?? {};
   let query = supabase
     .from('patients')
     .select('*')
     .eq('professional_id', professionalId)
-    .order('full_name');
+    .order('full_name')
+    .range(offset, offset + limit - 1);
   if (search) query = query.ilike('full_name', `%${search}%`);
+  if (sex) query = query.eq('sex', sex);
   const { data, error } = await query;
   if (error) throw error;
   return (data ?? []).map(toPatient);
@@ -116,6 +123,11 @@ export async function updatePatient(id: string, updates: Partial<Patient>) {
   if (error) throw error;
 }
 
+export async function deletePatient(id: string): Promise<void> {
+  const { error } = await supabase.from('patients').delete().eq('id', id);
+  if (error) throw error;
+}
+
 // ─── Medical Records ─────────────────────────────────────────────────────────
 
 export async function getRecords(patientId: string) {
@@ -138,6 +150,7 @@ export async function createRecord(record: Omit<MedicalRecord, 'id' | 'createdAt
       date: record.date,
       time: record.time,
       content: record.content,
+      record_type: record.recordType ?? 'Free text',
     })
     .select()
     .single();
@@ -186,6 +199,11 @@ export async function updateAppointment(id: string, updates: Partial<Appointment
   if (updates.notes !== undefined) mapped.notes = updates.notes || null;
   if (updates.extraItems !== undefined) mapped.extra_items = updates.extraItems;
   const { error } = await supabase.from('appointments').update(mapped).eq('id', id);
+  if (error) throw error;
+}
+
+export async function deleteAppointment(id: string): Promise<void> {
+  const { error } = await supabase.from('appointments').delete().eq('id', id);
   if (error) throw error;
 }
 
@@ -290,6 +308,7 @@ function toAppointment(row: Record<string, unknown>): Appointment {
     status: row.status as Appointment['status'],
     notes: row.notes as string,
     extraItems: Array.isArray(row.extra_items) ? (row.extra_items as AppointmentExtraItem[]) : [],
+    scheduledBy: row.scheduled_by as string | undefined,
     professionalId: row.professional_id as string,
   };
 }
@@ -366,6 +385,7 @@ function toRecord(row: Record<string, unknown>): MedicalRecord {
     date: row.date as string,
     time: row.time as string,
     content: row.content as string,
+    recordType: row.record_type as string | undefined,
     createdAt: row.created_at as string,
   };
 }

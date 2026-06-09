@@ -44,6 +44,7 @@ export interface Appointment {
   status: AppointmentStatus;
   notes?: string;
   extraItems?: AppointmentExtraItem[];
+  scheduledBy?: string;
   professionalId: string;
 }
 
@@ -54,6 +55,7 @@ export interface MedicalRecord {
   date: string;
   time: string;
   content: string;
+  recordType?: string;
   createdAt: string;
 }
 

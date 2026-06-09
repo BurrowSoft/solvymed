@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, FlatList, TextInput,
-  TouchableOpacity, Modal, ScrollView, ActivityIndicator, Alert, Image,
+  View, Text, StyleSheet, FlatList, TextInput, Linking,
+  TouchableOpacity, Modal, ScrollView, ActivityIndicator, Alert, Image, Pressable,
 } from 'react-native';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
@@ -16,7 +16,7 @@ import {
   getPatients, getRecords, updatePatient, getPrescriptions,
   getPatientAppointments, uploadPatientPhoto,
   getPatientFiles, uploadPatientFile, deletePatientFile,
-  getProfessional,
+  getProfessional, deletePatient,
 } from '@/lib/services';
 import { getTemplate } from '@/lib/template-service';
 import { buildPrescriptionHtml, buildMedicalHistoryHtml } from '@/lib/pdf-utils';
@@ -223,6 +223,13 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
   }, [patient.id, user]);
 
   useEffect(() => {
+    if (!user) return;
+    getProfessional(user.id)
+      .then(p => setProfessionalName(p?.fullName ?? ''))
+      .catch(() => {});
+  }, [user]);
+
+  useEffect(() => {
     if (activeTab !== 'files') return;
     if (!user) { setFiles([]); return; }
     setLoadingFiles(true);
@@ -277,6 +284,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
   }
 
   const [exportingHistory, setExportingHistory] = useState(false);
+  const [professionalName, setProfessionalName] = useState<string>('');
 
   async function exportHistory() {
     if (!user) return;
@@ -569,8 +577,8 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                         </Text>
                       </View>
                       <View style={{ flex: 1 }}>
-                        <Text style={styles.recordMeta}>By: Professional</Text>
-                        <Text style={styles.recordTime}>{record.date} · {record.time} · Free text</Text>
+                        <Text style={styles.recordMeta}>{professionalName ? `Dr. ${professionalName.split(' ')[0]}` : 'Unknown'}</Text>
+                        <Text style={styles.recordTime}>{record.date} · {record.time} · {record.recordType ?? 'Free text'}</Text>
                       </View>
                     </View>
                     <Text style={styles.recordContent}>{record.content}</Text>
@@ -733,32 +741,90 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
   );
 }
 
+const PAGE_SIZE = 30;
+
 export default function PatientsScreen() {
   const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<Patient | null>(null);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [showNewPatient, setShowNewPatient] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
+  const [filterSex, setFilterSex] = useState<'male' | 'female' | 'other' | ''>('');
+
+  const activeFilterCount = filterSex ? 1 : 0;
 
   const loadPatients = useCallback(async () => {
-    if (!user) { setPatients(MOCK_PATIENTS); return; }
+    if (!user) {
+      const mock = MOCK_PATIENTS.filter(p =>
+        !search || p.fullName.toLowerCase().includes(search.toLowerCase()),
+      );
+      setPatients(mock);
+      setHasMore(false);
+      return;
+    }
     setLoading(true);
     try {
-      const data = await getPatients(user.id, search || undefined);
+      const data = await getPatients(user.id, search || undefined, { sex: filterSex || undefined, offset: 0, limit: PAGE_SIZE });
       setPatients(data);
+      setHasMore(data.length === PAGE_SIZE);
     } catch {
       setPatients(MOCK_PATIENTS);
+      setHasMore(false);
     } finally {
       setLoading(false);
     }
-  }, [user, search]);
+  }, [user, search, filterSex]);
 
   useEffect(() => { loadPatients(); }, [loadPatients]);
 
-  const filtered = user
-    ? patients
-    : MOCK_PATIENTS.filter(p => p.fullName.toLowerCase().includes(search.toLowerCase()));
+  async function loadMore() {
+    if (!user || loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    try {
+      const data = await getPatients(user.id, search || undefined, { sex: filterSex || undefined, offset: patients.length, limit: PAGE_SIZE });
+      setPatients(prev => [...prev, ...data]);
+      setHasMore(data.length === PAGE_SIZE);
+    } catch {
+      // silently fail
+    } finally {
+      setLoadingMore(false);
+    }
+  }
+
+  function openPatientMenu(patient: Patient) {
+    Alert.alert(patient.fullName, '', [
+      {
+        text: 'Open profile',
+        onPress: () => setSelected(patient),
+      },
+      {
+        text: 'Delete patient',
+        style: 'destructive',
+        onPress: () => Alert.alert(
+          'Delete patient?',
+          'All their records will be permanently deleted.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Delete',
+              style: 'destructive',
+              onPress: async () => {
+                if (user) await deletePatient(patient.id).catch(() => {});
+                setPatients(prev => prev.filter(p => p.id !== patient.id));
+              },
+            },
+          ],
+        ),
+      },
+      { text: 'Cancel', style: 'cancel' },
+    ]);
+  }
+
+  const filtered = patients;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -771,7 +837,7 @@ export default function PatientsScreen() {
       </View>
 
       <View style={styles.searchRow}>
-        <View style={styles.searchBox}>
+        <View style={[styles.searchBox, { flex: 1 }]}>
           <Ionicons name="search-outline" size={16} color={Colors.textMuted} />
           <TextInput
             style={styles.searchInput}
@@ -786,6 +852,14 @@ export default function PatientsScreen() {
             </TouchableOpacity>
           )}
         </View>
+        <TouchableOpacity style={styles.filterBtn} onPress={() => setShowFilter(true)}>
+          <Ionicons name="filter-outline" size={18} color={activeFilterCount > 0 ? Colors.primary : Colors.textSecondary} />
+          {activeFilterCount > 0 && (
+            <View style={styles.filterBadge}>
+              <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
 
       {loading ? (
@@ -796,6 +870,9 @@ export default function PatientsScreen() {
           keyExtractor={p => p.id}
           contentContainerStyle={{ paddingBottom: 20 }}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.3}
+          ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 16 }} color={Colors.primary} /> : null}
           ListEmptyComponent={() => (
             <View style={styles.emptyState}>
               <Ionicons name="people-outline" size={40} color={Colors.textMuted} />
@@ -811,7 +888,12 @@ export default function PatientsScreen() {
                 }
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.patientName}>{item.fullName}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={styles.patientName}>{item.fullName}</Text>
+                  {item.phone && (
+                    <Ionicons name="logo-whatsapp" size={14} color="#25D366" />
+                  )}
+                </View>
                 <Text style={styles.patientMeta}>
                   {[
                     item.birthDate && `${getAge(item.birthDate)} yrs`,
@@ -819,7 +901,13 @@ export default function PatientsScreen() {
                   ].filter(Boolean).join(' · ')}
                 </Text>
               </View>
-              <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+              <TouchableOpacity
+                onPress={() => openPatientMenu(item)}
+                style={{ padding: 6 }}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Ionicons name="ellipsis-vertical" size={16} color={Colors.textMuted} />
+              </TouchableOpacity>
             </TouchableOpacity>
           )}
         />
@@ -841,6 +929,39 @@ export default function PatientsScreen() {
         onClose={() => setShowNewPatient(false)}
         onSaved={(patient) => setPatients(prev => [patient, ...prev])}
       />
+
+      {/* Filter sheet */}
+      <Modal visible={showFilter} transparent animationType="slide" onRequestClose={() => setShowFilter(false)}>
+        <Pressable style={styles.filterOverlay} onPress={() => setShowFilter(false)}>
+          <Pressable style={styles.filterSheet} onPress={e => e.stopPropagation()}>
+            <View style={styles.filterSheetHeader}>
+              <Text style={styles.filterSheetTitle}>Filters</Text>
+              {activeFilterCount > 0 && (
+                <TouchableOpacity onPress={() => setFilterSex('')}>
+                  <Text style={{ fontSize: 13, color: Colors.danger, fontWeight: '500' }}>Clear all</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <Text style={styles.filterLabel}>Sex</Text>
+            <View style={styles.filterPillRow}>
+              {([['', 'All'], ['male', 'Male'], ['female', 'Female'], ['other', 'Other']] as const).map(([val, label]) => (
+                <TouchableOpacity
+                  key={val}
+                  style={[styles.filterPill, filterSex === val && styles.filterPillActive]}
+                  onPress={() => setFilterSex(val)}
+                >
+                  <Text style={[styles.filterPillText, filterSex === val && styles.filterPillTextActive]}>{label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <TouchableOpacity style={styles.filterApplyBtn} onPress={() => setShowFilter(false)}>
+              <Text style={styles.filterApplyText}>Apply</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -855,8 +976,23 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 20, fontWeight: '700', color: Colors.textPrimary },
   addBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   addBtnText: { fontSize: 14, color: Colors.primary, fontWeight: '600' },
-  searchRow: { flexDirection: 'row', gap: 8, padding: 12, backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  searchBox: { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.background, borderRadius: 10, paddingHorizontal: 10, gap: 6, height: 38 },
+  searchRow: { flexDirection: 'row', gap: 8, padding: 12, backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.border, alignItems: 'center' },
+  searchBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.background, borderRadius: 10, paddingHorizontal: 10, gap: 6, height: 38 },
+  filterBtn: { padding: 6, position: 'relative' },
+  filterBadge: { position: 'absolute', top: 2, right: 2, width: 14, height: 14, borderRadius: 7, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' },
+  filterBadgeText: { fontSize: 8, color: '#fff', fontWeight: '700' },
+  filterOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  filterSheet: { backgroundColor: Colors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20, gap: 12 },
+  filterSheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  filterSheetTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
+  filterLabel: { fontSize: 12, color: Colors.textSecondary, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 },
+  filterPillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  filterPill: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.background },
+  filterPillActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  filterPillText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
+  filterPillTextActive: { color: '#fff' },
+  filterApplyBtn: { backgroundColor: Colors.primary, borderRadius: 12, paddingVertical: 14, alignItems: 'center', marginTop: 4 },
+  filterApplyText: { color: '#fff', fontWeight: '700', fontSize: 15 },
   searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary },
   separator: { height: 1, backgroundColor: Colors.border, marginLeft: 64 },
   patientRow: { flexDirection: 'row', alignItems: 'center', padding: 12, paddingHorizontal: 16, backgroundColor: Colors.surface, gap: 12 },

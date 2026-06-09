@@ -11,15 +11,16 @@ import {
   ActivityIndicator,
   TextInput,
   Share,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
-import { Appointment } from '@/lib/types';
+import { Appointment, Professional, WorkingHoursKey } from '@/lib/types';
 import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
 import {
   getAppointmentsByDate, updatePaymentStatus, updateAppointmentStatus,
-  getAppointmentCountsByWeek, getPatient, updateAppointment, getProfessional,
+  getAppointmentCountsByWeek, getPatient, updateAppointment, getProfessional, deleteAppointment,
 } from '@/lib/services';
 import { getTemplate } from '@/lib/template-service';
 import { buildInvoiceHtml } from '@/lib/pdf-utils';
@@ -68,6 +69,8 @@ function AppointmentBlock({ appt, onPress }: { appt: Appointment; onPress: () =>
   const height = Math.max((duration / 60) * HOUR_HEIGHT - 2, 28);
   const isBlocked = appt.status === 'blocked';
 
+  const color = isBlocked ? Colors.blocked : statusColor(appt.status);
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -76,19 +79,22 @@ function AppointmentBlock({ appt, onPress }: { appt: Appointment; onPress: () =>
         {
           top,
           height,
-          backgroundColor: isBlocked ? Colors.blockedBg : Colors.primaryLight,
-          borderLeftColor: isBlocked ? Colors.blocked : Colors.primary,
+          backgroundColor: color + '20',
+          borderLeftColor: color,
         },
       ]}
       activeOpacity={0.85}
     >
-      <Text style={[styles.apptText, { color: isBlocked ? Colors.textMuted : Colors.primaryDark }]} numberOfLines={1}>
+      <Text style={[styles.apptText, { color: isBlocked ? Colors.textMuted : color }]} numberOfLines={1}>
         {isBlocked ? `BLOCKED | ${appt.consultationType}` : appt.patientName}
       </Text>
       {!isBlocked && (
-        <Text style={styles.apptSubText} numberOfLines={1}>
-          {appt.consultationType} · {appt.type === 'online' ? 'Online' : 'In-Person'}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+          <Text style={[styles.apptSubText, { flex: 1 }]} numberOfLines={1}>
+            {appt.consultationType} · {appt.type === 'online' ? 'Online' : 'In-Person'}
+          </Text>
+          {!!appt.notes && <Ionicons name="bookmark" size={10} color={color} />}
+        </View>
       )}
     </TouchableOpacity>
   );
@@ -163,13 +169,14 @@ async function shareInvoice(appt: Appointment, professionalId: string) {
   }
 }
 
-function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, onAmountUpdated }: {
+function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, onAmountUpdated, onDelete }: {
   appt: Appointment | null;
   onClose: () => void;
   onMarkPaid: (id: string) => void;
   onStatusChange: (id: string, status: Appointment['status']) => void;
   onEdit: (appt: Appointment) => void;
   onAmountUpdated: (id: string, amount: number) => void;
+  onDelete: (id: string) => void;
 }) {
   const { user } = useAuth();
   const [patientPhone, setPatientPhone] = React.useState<string | null>(null);
@@ -214,6 +221,29 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
                   <Text style={styles.editApptBtnText}>Edit</Text>
                 </TouchableOpacity>
               )}
+              <TouchableOpacity
+                onPress={() => Alert.alert(
+                  'Appointment',
+                  '',
+                  [
+                    {
+                      text: 'Delete appointment',
+                      style: 'destructive',
+                      onPress: () => Alert.alert(
+                        'Delete appointment?',
+                        'This action cannot be undone.',
+                        [
+                          { text: 'Cancel', style: 'cancel' },
+                          { text: 'Delete', style: 'destructive', onPress: () => { onDelete(appt.id); onClose(); } },
+                        ],
+                      ),
+                    },
+                    { text: 'Cancel', style: 'cancel' },
+                  ],
+                )}
+              >
+                <Ionicons name="ellipsis-vertical" size={20} color={Colors.textSecondary} />
+              </TouchableOpacity>
               <TouchableOpacity onPress={onClose}>
                 <Ionicons name="close" size={22} color={Colors.textSecondary} />
               </TouchableOpacity>
@@ -354,6 +384,9 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
           <Text style={styles.modalSectionTitle}>Details</Text>
           <Text style={styles.modalMeta}>{appt.consultationType}</Text>
           <Text style={styles.modalMeta}>{appt.type === 'online' ? 'Online' : 'In-Person'}</Text>
+          {appt.scheduledBy ? (
+            <Text style={styles.modalMeta}>Scheduled by: {appt.scheduledBy}</Text>
+          ) : null}
 
           {!isBlocked && appt.extraItems && appt.extraItems.length > 0 && (
             <>
@@ -377,33 +410,26 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
             </>
           ) : null}
 
-          {!isBlocked && appt.status !== 'completed' && appt.status !== 'cancelled' && (
+          {!isBlocked && (
             <>
               <View style={styles.modalDivider} />
+              <Text style={styles.modalSectionTitle}>Status</Text>
               <View style={styles.statusActions}>
-                {appt.status === 'scheduled' && (
-                  <TouchableOpacity
-                    style={[styles.actionBtn, { backgroundColor: Colors.primaryLight }]}
-                    onPress={() => { onStatusChange(appt.id, 'confirmed'); onClose(); }}
-                  >
-                    <Ionicons name="checkmark-circle-outline" size={16} color={Colors.primary} />
-                    <Text style={[styles.actionBtnText, { color: Colors.primary }]}>Confirm</Text>
-                  </TouchableOpacity>
-                )}
-                <TouchableOpacity
-                  style={[styles.actionBtn, { backgroundColor: Colors.success + '20' }]}
-                  onPress={() => { onStatusChange(appt.id, 'completed'); onClose(); }}
-                >
-                  <Ionicons name="checkmark-done-outline" size={16} color={Colors.success} />
-                  <Text style={[styles.actionBtnText, { color: Colors.success }]}>Complete</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.actionBtn, { backgroundColor: Colors.danger + '20' }]}
-                  onPress={() => { onStatusChange(appt.id, 'cancelled'); onClose(); }}
-                >
-                  <Ionicons name="close-circle-outline" size={16} color={Colors.danger} />
-                  <Text style={[styles.actionBtnText, { color: Colors.danger }]}>Cancel</Text>
-                </TouchableOpacity>
+                {(['scheduled', 'confirmed', 'completed', 'cancelled'] as Appointment['status'][]).map(s => {
+                  const active = appt.status === s;
+                  const color = statusColor(s);
+                  return (
+                    <TouchableOpacity
+                      key={s}
+                      style={[styles.actionBtn, { backgroundColor: active ? color + '30' : Colors.background, borderWidth: 1, borderColor: active ? color : Colors.border }]}
+                      onPress={() => { if (!active) { onStatusChange(appt.id, s); onClose(); } }}
+                    >
+                      <Text style={[styles.actionBtnText, { color: active ? color : Colors.textSecondary, fontWeight: active ? '700' : '500' }]}>
+                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </>
           )}
@@ -428,6 +454,7 @@ export default function ScheduleScreen() {
   const [filterStatuses, setFilterStatuses] = useState<Set<Appointment['status']>>(new Set());
   const [filterType, setFilterType] = useState<'all' | 'in-person' | 'online'>('all');
   const [showFilter, setShowFilter] = useState(false);
+  const [professional, setProfessional] = useState<Professional | null>(null);
 
   const activeFilterCount = filterStatuses.size + (filterType !== 'all' ? 1 : 0);
 
@@ -466,6 +493,11 @@ export default function ScheduleScreen() {
   useEffect(() => { loadAppointments(); }, [loadAppointments]);
 
   useEffect(() => {
+    if (!user) return;
+    getProfessional(user.id).then(setProfessional).catch(() => {});
+  }, [user]);
+
+  useEffect(() => {
     if (!user || viewMode !== 'week') return;
     const from = fmt(weekDates[0]);
     const to = fmt(weekDates[6]);
@@ -485,11 +517,28 @@ export default function ScheduleScreen() {
     setSelectedAppt(prev => prev?.id === apptId ? { ...prev, status } : prev);
   }
 
+  async function handleDelete(apptId: string) {
+    if (user) await deleteAppointment(apptId).catch(() => {});
+    setAppointments(prev => prev.filter(a => a.id !== apptId));
+  }
+
   const dayAppointments = appointments.filter(a => {
     if (filterStatuses.size > 0 && !filterStatuses.has(a.status)) return false;
     if (filterType !== 'all' && a.type !== filterType) return false;
     return true;
   });
+
+  const DAY_KEYS: WorkingHoursKey[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+  function isOutsideWorkingHours(hour: number): boolean {
+    const wh = professional?.workingHours;
+    if (!wh) return false;
+    const key = DAY_KEYS[selectedDate.getDay()];
+    const day = wh[key];
+    if (!day || !day.enabled) return true;
+    const startH = parseInt(day.start.split(':')[0], 10);
+    const endH = parseInt(day.end.split(':')[0], 10);
+    return hour < startH || hour >= endH;
+  }
 
   function navigate(dir: -1 | 1) {
     const d = new Date(selectedDate);
@@ -525,6 +574,12 @@ export default function ScheduleScreen() {
                 <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
               </View>
             )}
+          </TouchableOpacity>
+          <TouchableOpacity onPress={loadAppointments} style={styles.todayBtn} disabled={loading}>
+            {loading
+              ? <ActivityIndicator size="small" color={Colors.primary} />
+              : <Ionicons name="refresh-outline" size={18} color={Colors.primary} />
+            }
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setSelectedDate(new Date())} style={styles.todayBtn}>
             <Ionicons name="today-outline" size={18} color={Colors.primary} />
@@ -578,12 +633,17 @@ export default function ScheduleScreen() {
       {/* Time grid */}
       <ScrollView style={styles.grid} showsVerticalScrollIndicator={false}>
         <View style={{ position: 'relative' }}>
-          {HOURS.map(hour => (
-            <View key={hour} style={styles.hourRow}>
-              <Text style={styles.hourLabel}>{String(hour).padStart(2, '0')}:00</Text>
-              <View style={styles.hourLine} />
-            </View>
-          ))}
+          {HOURS.map(hour => {
+            const dimmed = isOutsideWorkingHours(hour);
+            return (
+              <View key={hour} style={[styles.hourRow, dimmed && styles.hourRowDimmed]}>
+                <Text style={[styles.hourLabel, dimmed && styles.hourLabelDimmed]}>
+                  {String(hour).padStart(2, '0')}:00
+                </Text>
+                <View style={styles.hourLine} />
+              </View>
+            );
+          })}
 
           {/* Appointment blocks */}
           <View style={styles.apptLayer}>
@@ -595,6 +655,22 @@ export default function ScheduleScreen() {
               />
             ))}
           </View>
+        </View>
+
+        {/* Status legend */}
+        <View style={styles.legend}>
+          {([
+            { label: 'Scheduled', color: Colors.warning },
+            { label: 'Confirmed', color: Colors.primary },
+            { label: 'Completed', color: Colors.success },
+            { label: 'Cancelled', color: Colors.danger },
+            { label: 'Blocked', color: Colors.blocked },
+          ] as const).map(({ label, color }) => (
+            <View key={label} style={styles.legendItem}>
+              <View style={[styles.legendDot, { backgroundColor: color }]} />
+              <Text style={styles.legendLabel}>{label}</Text>
+            </View>
+          ))}
         </View>
         <View style={{ height: 100 }} />
       </ScrollView>
@@ -618,6 +694,7 @@ export default function ScheduleScreen() {
         onStatusChange={handleStatusChange}
         onEdit={(appt) => { setSelectedAppt(null); setEditingAppt(appt); }}
         onAmountUpdated={(id, amount) => setAppointments(prev => prev.map(a => a.id === id ? { ...a, paymentAmount: amount } : a))}
+        onDelete={handleDelete}
       />
 
       <NewAppointmentModal
@@ -753,6 +830,8 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   hourLabel: { width: 52, paddingLeft: 12, fontSize: 11, color: Colors.textMuted },
+  hourRowDimmed: { backgroundColor: '#F0F2F5' },
+  hourLabelDimmed: { color: Colors.border },
   hourLine: { flex: 1, height: 1, backgroundColor: Colors.border, marginTop: 7 },
   apptLayer: { position: 'absolute', left: 56, right: 8, top: 0 },
   apptBlock: {
@@ -766,6 +845,15 @@ const styles = StyleSheet.create({
   },
   apptText: { fontSize: 12, fontWeight: '600' },
   apptSubText: { fontSize: 11, color: Colors.textSecondary, marginTop: 1 },
+  legend: {
+    flexDirection: 'row', flexWrap: 'wrap', gap: 12,
+    paddingHorizontal: 16, paddingVertical: 12,
+    marginTop: 8,
+    borderTopWidth: 1, borderTopColor: Colors.border,
+  },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  legendDot: { width: 10, height: 10, borderRadius: 5 },
+  legendLabel: { fontSize: 11, color: Colors.textSecondary, fontWeight: '500' },
   fabGroup: {
     position: 'absolute',
     bottom: 24,

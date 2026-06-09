@@ -50,6 +50,7 @@ export default function PaymentsScreen() {
   const [revenue, setRevenue] = useState<{ month: string; paid: number; pending: number; count: number }[]>([]);
   const [showReport, setShowReport] = useState(false);
   const [accountActive, setAccountActive] = useState(true);
+  const [installmentLimit, setInstallmentLimit] = useState(12);
 
   const load = useCallback(async () => {
     const { from, to } = getDateRange(filter);
@@ -155,6 +156,36 @@ export default function PaymentsScreen() {
               {accountActive ? 'Deactivate' : 'Activate'}
             </Text>
           </TouchableOpacity>
+        </View>
+
+        {/* Installment limit card */}
+        <View style={styles.accountCard}>
+          <View style={styles.accountCardLeft}>
+            <View style={styles.accountIconWrap}>
+              <Ionicons name="layers-outline" size={22} color={Colors.primary} />
+            </View>
+            <View style={{ gap: 2 }}>
+              <Text style={styles.accountTitle}>Installment Limit</Text>
+              <Text style={[styles.accountStatus, { color: Colors.textSecondary }]}>
+                Max {installmentLimit === 1 ? '1 installment' : `${installmentLimit} installments`}
+              </Text>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <TouchableOpacity
+              onPress={() => setInstallmentLimit(v => Math.max(1, v - 1))}
+              style={styles.stepperBtn}
+            >
+              <Ionicons name="remove" size={16} color={Colors.textPrimary} />
+            </TouchableOpacity>
+            <Text style={styles.stepperValue}>{installmentLimit}x</Text>
+            <TouchableOpacity
+              onPress={() => setInstallmentLimit(v => Math.min(24, v + 1))}
+              style={styles.stepperBtn}
+            >
+              <Ionicons name="add" size={16} color={Colors.textPrimary} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Summary cards */}
@@ -337,4 +368,6 @@ const styles = StyleSheet.create({
   accountDot: { width: 7, height: 7, borderRadius: 4 },
   accountStatus: { fontSize: 12, fontWeight: '600' },
   accountToggleText: { fontSize: 13, fontWeight: '600' },
+  stepperBtn: { width: 30, height: 30, borderRadius: 15, backgroundColor: Colors.background, borderWidth: 1, borderColor: Colors.border, alignItems: 'center', justifyContent: 'center' },
+  stepperValue: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, minWidth: 28, textAlign: 'center' },
 });

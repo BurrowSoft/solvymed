@@ -26,9 +26,12 @@ function getCurrentDateTime() {
   };
 }
 
+const RECORD_TYPES = ['Free text', 'SOAP note', 'Follow-up', 'Surgical report', 'Referral'];
+
 export function NewRecordModal({ visible, patientId, patientName, onClose, onSaved }: Props) {
   const { user } = useAuth();
   const [content, setContent] = useState('');
+  const [recordType, setRecordType] = useState('Free text');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const { date, time } = useMemo(getCurrentDateTime, [visible]);
@@ -36,6 +39,7 @@ export function NewRecordModal({ visible, patientId, patientName, onClose, onSav
   function handleClose() {
     onClose();
     setContent('');
+    setRecordType('Free text');
     setError('');
   }
 
@@ -50,6 +54,7 @@ export function NewRecordModal({ visible, patientId, patientName, onClose, onSav
       date,
       time,
       content: content.trim(),
+      recordType,
     };
 
     try {
@@ -93,6 +98,18 @@ export function NewRecordModal({ visible, patientId, patientName, onClose, onSav
               <Text style={styles.metaText}>{date} at {time}</Text>
             </View>
 
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeScroll} contentContainerStyle={{ gap: 8, paddingRight: 8 }}>
+              {RECORD_TYPES.map(t => (
+                <TouchableOpacity
+                  key={t}
+                  style={[styles.typeChip, recordType === t && styles.typeChipActive]}
+                  onPress={() => setRecordType(t)}
+                >
+                  <Text style={[styles.typeChipText, recordType === t && styles.typeChipTextActive]}>{t}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
             {!!error && <Text style={styles.errorText}>{error}</Text>}
 
             <TextInput
@@ -124,8 +141,16 @@ const styles = StyleSheet.create({
   saveBtn: { backgroundColor: Colors.primary, paddingHorizontal: 16, paddingVertical: 7, borderRadius: 20, minWidth: 60, alignItems: 'center' },
   saveBtnText: { color: '#fff', fontWeight: '600', fontSize: 14 },
   body: { flex: 1, padding: 16 },
-  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 16 },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },
   metaText: { fontSize: 13, color: Colors.textMuted },
+  typeScroll: { marginBottom: 16 },
+  typeChip: {
+    paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20,
+    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.background,
+  },
+  typeChipActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  typeChipText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
+  typeChipTextActive: { color: '#fff' },
   errorText: { color: Colors.danger, fontSize: 13, marginBottom: 12 },
   contentInput: {
     fontSize: 15,
