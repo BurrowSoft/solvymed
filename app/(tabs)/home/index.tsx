@@ -12,9 +12,8 @@ import {
   getAppointmentsByDate, getPendingPayments, getPatients, getProfessional,
 } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
-
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+import { t, tn } from '@/lib/i18n';
+import { formatHomeDateHeader, formatCurrencyWhole, formatCurrency, formatDuration } from '@/lib/locale-utils';
 
 function fmt(d: Date) { return d.toISOString().split('T')[0]; }
 
@@ -29,9 +28,9 @@ function statusColor(status: Appointment['status']) {
 
 function greeting() {
   const h = new Date().getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 18) return 'Good afternoon';
-  return 'Good evening';
+  if (h < 12) return t('home.morning');
+  if (h < 18) return t('home.afternoon');
+  return t('home.evening');
 }
 
 export default function HomeScreen() {
@@ -90,8 +89,6 @@ export default function HomeScreen() {
   const completedToday = todayAppts.filter(a => a.status === 'completed').length;
   const pendingTotal = pendingPayments.reduce((s, a) => s + (a.paymentAmount ?? 0), 0);
 
-  const headerLabel = `${DAYS[today.getDay()]}, ${String(today.getDate()).padStart(2, '0')} ${MONTHS[today.getMonth()]} ${today.getFullYear()}`;
-
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
@@ -99,7 +96,7 @@ export default function HomeScreen() {
           <Text style={styles.greeting}>{greeting()},</Text>
           <Text style={styles.doctorName}>Dr. {doctorName.split(' ')[0]}</Text>
         </View>
-        <Text style={styles.headerDate}>{headerLabel}</Text>
+        <Text style={styles.headerDate}>{formatHomeDateHeader(today)}</Text>
       </View>
 
       {loading ? (
@@ -111,19 +108,19 @@ export default function HomeScreen() {
           <View style={styles.summaryRow}>
             <View style={[styles.summaryCard, { borderTopColor: Colors.primary }]}>
               <Text style={styles.summaryNum}>{todayAppts.length}</Text>
-              <Text style={styles.summaryLabel}>Today</Text>
+              <Text style={styles.summaryLabel}>{t('home.today')}</Text>
             </View>
             <View style={[styles.summaryCard, { borderTopColor: Colors.success }]}>
               <Text style={[styles.summaryNum, { color: Colors.success }]}>{completedToday}</Text>
-              <Text style={styles.summaryLabel}>Done</Text>
+              <Text style={styles.summaryLabel}>{t('home.done')}</Text>
             </View>
             <View style={[styles.summaryCard, { borderTopColor: Colors.warning }]}>
               <Text style={[styles.summaryNum, { color: Colors.warning }]}>{pendingPayments.length}</Text>
-              <Text style={styles.summaryLabel}>Unpaid</Text>
+              <Text style={styles.summaryLabel}>{t('home.unpaid')}</Text>
             </View>
             <TouchableOpacity style={[styles.summaryCard, { borderTopColor: Colors.danger }]} onPress={() => router.push('/(tabs)/payments/index')}>
-              <Text style={[styles.summaryNum, { color: Colors.danger, fontSize: 13 }]}>R${pendingTotal.toFixed(0)}</Text>
-              <Text style={styles.summaryLabel}>Pending R$</Text>
+              <Text style={[styles.summaryNum, { color: Colors.danger, fontSize: 13 }]}>{formatCurrencyWhole(pendingTotal)}</Text>
+              <Text style={styles.summaryLabel}>{t('home.pendingAmount')}</Text>
             </TouchableOpacity>
           </View>
 
@@ -133,34 +130,34 @@ export default function HomeScreen() {
               <View style={[styles.quickIcon, { backgroundColor: Colors.primaryLight }]}>
                 <Ionicons name="calendar-outline" size={20} color={Colors.primary} />
               </View>
-              <Text style={styles.quickLabel}>Schedule</Text>
+              <Text style={styles.quickLabel}>{t('tab.schedule')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/patients/index')}>
               <View style={[styles.quickIcon, { backgroundColor: '#F0FDF4' }]}>
                 <Ionicons name="people-outline" size={20} color={Colors.success} />
               </View>
-              <Text style={styles.quickLabel}>Patients</Text>
+              <Text style={styles.quickLabel}>{t('tab.patients')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/payments/index')}>
               <View style={[styles.quickIcon, { backgroundColor: '#FFFBEB' }]}>
                 <Ionicons name="card-outline" size={20} color={Colors.warning} />
               </View>
-              <Text style={styles.quickLabel}>Payments</Text>
+              <Text style={styles.quickLabel}>{t('tab.payments')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/settings/index')}>
               <View style={[styles.quickIcon, { backgroundColor: '#F5F3FF' }]}>
                 <Ionicons name="settings-outline" size={20} color="#7C3AED" />
               </View>
-              <Text style={styles.quickLabel}>Settings</Text>
+              <Text style={styles.quickLabel}>{t('tab.settings')}</Text>
             </TouchableOpacity>
           </View>
 
           {/* Today's appointments */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Today's Appointments</Text>
+              <Text style={styles.sectionTitle}>{t('home.todayAppointments')}</Text>
               <TouchableOpacity onPress={() => router.push('/(tabs)/schedule/index')}>
-                <Text style={styles.seeAll}>See all</Text>
+                <Text style={styles.seeAll}>{t('common.seeAll')}</Text>
               </TouchableOpacity>
             </View>
 
@@ -168,7 +165,7 @@ export default function HomeScreen() {
               <View style={styles.emptyCard}>
                 <Ionicons name="calendar-outline" size={32} color={Colors.textMuted} />
                 <Text style={styles.emptyText}>
-                  {todayAppts.length > 0 ? 'All appointments completed' : 'No appointments today'}
+                  {todayAppts.length > 0 ? t('home.allDone') : t('home.noAppointments')}
                 </Text>
               </View>
             ) : (
@@ -180,12 +177,12 @@ export default function HomeScreen() {
                 >
                   <View style={[styles.apptTimeBadge, { backgroundColor: statusColor(appt.status) + '18' }]}>
                     <Text style={[styles.apptTime, { color: statusColor(appt.status) }]}>{appt.startTime}</Text>
-                    <Text style={[styles.apptDur, { color: statusColor(appt.status) }]}>{appt.durationMinutes}m</Text>
+                    <Text style={[styles.apptDur, { color: statusColor(appt.status) }]}>{formatDuration(appt.durationMinutes)}</Text>
                   </View>
                   <View style={{ flex: 1, gap: 2 }}>
                     <Text style={styles.apptName} numberOfLines={1}>{appt.patientName}</Text>
                     <Text style={styles.apptType} numberOfLines={1}>
-                      {appt.consultationType} · {appt.type === 'online' ? 'Online' : 'In-Person'}
+                      {appt.consultationType} · {t(appt.type === 'online' ? 'apptType.online' : 'apptType.inPerson')}
                     </Text>
                   </View>
                   <View style={[styles.statusDot, { backgroundColor: statusColor(appt.status) }]} />
@@ -198,9 +195,9 @@ export default function HomeScreen() {
           {recentPatients.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Recent Patients</Text>
+                <Text style={styles.sectionTitle}>{t('home.recentPatients')}</Text>
                 <TouchableOpacity onPress={() => router.push('/(tabs)/patients/index')}>
-                  <Text style={styles.seeAll}>See all</Text>
+                  <Text style={styles.seeAll}>{t('common.seeAll')}</Text>
                 </TouchableOpacity>
               </View>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
@@ -226,8 +223,12 @@ export default function HomeScreen() {
               <View style={styles.pendingCalloutLeft}>
                 <Ionicons name="alert-circle-outline" size={22} color={Colors.warning} />
                 <View>
-                  <Text style={styles.pendingCalloutTitle}>{pendingPayments.length} pending payment{pendingPayments.length !== 1 ? 's' : ''}</Text>
-                  <Text style={styles.pendingCalloutSub}>R$ {pendingTotal.toFixed(2)} to collect</Text>
+                  <Text style={styles.pendingCalloutTitle}>
+                    {tn('home.pendingPayments', pendingPayments.length, { n: pendingPayments.length })}
+                  </Text>
+                  <Text style={styles.pendingCalloutSub}>
+                    {t('home.toCollect', { amount: formatCurrency(pendingTotal) })}
+                  </Text>
                 </View>
               </View>
               <Ionicons name="chevron-forward" size={18} color={Colors.warning} />

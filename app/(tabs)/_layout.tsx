@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
+import { t } from '@/lib/i18n';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -27,35 +28,35 @@ export default function TabLayout() {
       <Tabs.Screen
         name="home/index"
         options={{
-          title: 'Home',
+          title: t('tab.home'),
           tabBarIcon: ({ color }) => <TabIcon name="home-outline" color={color} />,
         }}
       />
       <Tabs.Screen
         name="schedule/index"
         options={{
-          title: 'Schedule',
+          title: t('tab.schedule'),
           tabBarIcon: ({ color }) => <TabIcon name="calendar-outline" color={color} />,
         }}
       />
       <Tabs.Screen
         name="patients/index"
         options={{
-          title: 'Patients',
+          title: t('tab.patients'),
           tabBarIcon: ({ color }) => <TabIcon name="people-outline" color={color} />,
         }}
       />
       <Tabs.Screen
         name="payments/index"
         options={{
-          title: 'Payments',
+          title: t('tab.payments'),
           tabBarIcon: ({ color }) => <TabIcon name="card-outline" color={color} />,
         }}
       />
       <Tabs.Screen
         name="settings/index"
         options={{
-          title: 'Settings',
+          title: t('tab.settings'),
           tabBarIcon: ({ color }) => <TabIcon name="settings-outline" color={color} />,
         }}
       />

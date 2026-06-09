@@ -9,6 +9,7 @@ import { Colors } from '@/constants/Colors';
 import { MedicalRecord } from '@/lib/types';
 import { createRecord } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
+import { t, tRecordType } from '@/lib/i18n';
 
 interface Props {
   visible: boolean;
@@ -44,7 +45,7 @@ export function NewRecordModal({ visible, patientId, patientName, onClose, onSav
   }
 
   async function handleSave() {
-    if (!content.trim()) { setError('Record content cannot be empty'); return; }
+    if (!content.trim()) { setError(t('records.contentRequired')); return; }
     setError('');
     setSaving(true);
 
@@ -66,7 +67,7 @@ export function NewRecordModal({ visible, patientId, patientName, onClose, onSav
       }
       handleClose();
     } catch {
-      setError('Failed to save record. Please try again.');
+      setError(t('records.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -81,13 +82,13 @@ export function NewRecordModal({ visible, patientId, patientName, onClose, onSav
               <Ionicons name="close" size={24} color={Colors.textSecondary} />
             </TouchableOpacity>
             <View style={styles.headerCenter}>
-              <Text style={styles.title}>New Record</Text>
+              <Text style={styles.title}>{t('records.newRecord')}</Text>
               <Text style={styles.subtitle}>{patientName}</Text>
             </View>
             <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={saving}>
               {saving
                 ? <ActivityIndicator size="small" color="#fff" />
-                : <Text style={styles.saveBtnText}>Save</Text>
+                : <Text style={styles.saveBtnText}>{t('common.save')}</Text>
               }
             </TouchableOpacity>
           </View>
@@ -99,13 +100,13 @@ export function NewRecordModal({ visible, patientId, patientName, onClose, onSav
             </View>
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeScroll} contentContainerStyle={{ gap: 8, paddingRight: 8 }}>
-              {RECORD_TYPES.map(t => (
+              {RECORD_TYPES.map(rt => (
                 <TouchableOpacity
-                  key={t}
-                  style={[styles.typeChip, recordType === t && styles.typeChipActive]}
-                  onPress={() => setRecordType(t)}
+                  key={rt}
+                  style={[styles.typeChip, recordType === rt && styles.typeChipActive]}
+                  onPress={() => setRecordType(rt)}
                 >
-                  <Text style={[styles.typeChipText, recordType === t && styles.typeChipTextActive]}>{t}</Text>
+                  <Text style={[styles.typeChipText, recordType === rt && styles.typeChipTextActive]}>{tRecordType(rt)}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -114,7 +115,7 @@ export function NewRecordModal({ visible, patientId, patientName, onClose, onSav
 
             <TextInput
               style={styles.contentInput}
-              placeholder="Write the medical record here..."
+              placeholder={t('records.contentPlaceholder')}
               placeholderTextColor={Colors.textMuted}
               value={content}
               onChangeText={setContent}

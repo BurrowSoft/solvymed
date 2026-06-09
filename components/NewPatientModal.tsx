@@ -9,6 +9,8 @@ import { Colors } from '@/constants/Colors';
 import { Patient } from '@/lib/types';
 import { createPatient } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
+import { t } from '@/lib/i18n';
+import { formatAge } from '@/lib/locale-utils';
 
 interface Props {
   visible: boolean;
@@ -44,16 +46,7 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
 
   const agePreview = useMemo(() => {
     if (!birthDate.match(/^\d{4}-\d{2}-\d{2}$/)) return '';
-    const birth = new Date(birthDate);
-    if (isNaN(birth.getTime())) return '';
-    const now = new Date();
-    let years = now.getFullYear() - birth.getFullYear();
-    let months = now.getMonth() - birth.getMonth();
-    if (now.getDate() < birth.getDate()) months--;
-    if (months < 0) { years--; months += 12; }
-    if (years < 0) return '';
-    if (years === 0) return `${months} month${months !== 1 ? 's' : ''} old`;
-    return `${years} yr${years !== 1 ? 's' : ''}${months > 0 ? `, ${months} mo` : ''} old`;
+    return formatAge(birthDate);
   }, [birthDate]);
 
   function resetForm() {
@@ -63,7 +56,7 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
   }
 
   async function handleSave() {
-    if (!fullName.trim()) { setError('Full name is required'); return; }
+    if (!fullName.trim()) { setError(t('patients.form.fullNameRequired')); return; }
     setError('');
     setSaving(true);
 
@@ -87,7 +80,7 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
       onClose();
       resetForm();
     } catch {
-      setError('Failed to save patient. Please try again.');
+      setError(t('patients.form.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -101,11 +94,11 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
             <TouchableOpacity onPress={() => { onClose(); resetForm(); }}>
               <Ionicons name="close" size={24} color={Colors.textSecondary} />
             </TouchableOpacity>
-            <Text style={styles.title}>New Patient</Text>
+            <Text style={styles.title}>{t('patients.form.title.new')}</Text>
             <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={saving}>
               {saving
                 ? <ActivityIndicator size="small" color="#fff" />
-                : <Text style={styles.saveBtnText}>Save</Text>
+                : <Text style={styles.saveBtnText}>{t('common.save')}</Text>
               }
             </TouchableOpacity>
           </View>
@@ -114,14 +107,14 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
             {!!error && <Text style={styles.errorText}>{error}</Text>}
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Personal Information</Text>
+              <Text style={styles.sectionTitle}>{t('patients.form.section.personal')}</Text>
 
               <View style={styles.field}>
-                <Text style={styles.fieldLabel}>Full Name <Text style={styles.required}>*</Text></Text>
+                <Text style={styles.fieldLabel}>{t('patients.form.fullName')} <Text style={styles.required}>*</Text></Text>
                 <View style={styles.inputBox}>
                   <TextInput
                     style={styles.input}
-                    placeholder="Full name"
+                    placeholder={t('patients.form.fullNamePlaceholder')}
                     placeholderTextColor={Colors.textMuted}
                     value={fullName}
                     onChangeText={setFullName}
@@ -130,11 +123,11 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
               </View>
 
               <View style={styles.field}>
-                <Text style={styles.fieldLabel}>CPF</Text>
+                <Text style={styles.fieldLabel}>{t('patients.form.cpf')}</Text>
                 <View style={styles.inputBox}>
                   <TextInput
                     style={styles.input}
-                    placeholder="000.000.000-00"
+                    placeholder={t('patients.form.cpfPlaceholder')}
                     placeholderTextColor={Colors.textMuted}
                     value={cpf}
                     onChangeText={setCpf}
@@ -144,7 +137,7 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
               </View>
 
               <View style={styles.field}>
-                <Text style={styles.fieldLabel}>Sex</Text>
+                <Text style={styles.fieldLabel}>{t('patients.form.sex')}</Text>
                 <View style={styles.pills}>
                   {(['male', 'female', 'other'] as const).map(s => (
                     <TouchableOpacity
@@ -153,7 +146,7 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
                       style={[styles.pill, sex === s && styles.pillActive]}
                     >
                       <Text style={[styles.pillText, sex === s && styles.pillTextActive]}>
-                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                        {t(`patients.form.${s}` as any)}
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -162,11 +155,11 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
 
               <View style={styles.row}>
                 <View style={[styles.field, { flex: 1 }]}>
-                  <Text style={styles.fieldLabel}>Date of Birth</Text>
+                  <Text style={styles.fieldLabel}>{t('patients.form.dob')}</Text>
                   <View style={styles.inputBox}>
                     <TextInput
                       style={styles.input}
-                      placeholder="YYYY-MM-DD"
+                      placeholder={t('patients.form.dobPlaceholder')}
                       placeholderTextColor={Colors.textMuted}
                       value={birthDate}
                       onChangeText={setBirthDate}
@@ -179,11 +172,11 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
               </View>
 
               <View style={styles.field}>
-                <Text style={styles.fieldLabel}>Profession</Text>
+                <Text style={styles.fieldLabel}>{t('patients.form.profession')}</Text>
                 <View style={styles.inputBox}>
                   <TextInput
                     style={styles.input}
-                    placeholder="e.g. Engineer, Teacher..."
+                    placeholder={t('patients.form.professionPlaceholder')}
                     placeholderTextColor={Colors.textMuted}
                     value={profession}
                     onChangeText={setProfession}
@@ -193,10 +186,10 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Contact</Text>
+              <Text style={styles.sectionTitle}>{t('patients.form.section.contact')}</Text>
 
               <View style={styles.field}>
-                <Text style={styles.fieldLabel}>Phone</Text>
+                <Text style={styles.fieldLabel}>{t('patients.form.phone')}</Text>
                 <View style={styles.inputBox}>
                   <TouchableOpacity
                     onPress={() => setShowCountryPicker(true)}
@@ -208,7 +201,7 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
                   <View style={styles.countryDivider} />
                   <TextInput
                     style={styles.input}
-                    placeholder="(11) 99999-9999"
+                    placeholder={t('patients.form.phonePlaceholder')}
                     placeholderTextColor={Colors.textMuted}
                     value={phone}
                     onChangeText={setPhone}
@@ -218,12 +211,12 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
               </View>
 
               <View style={styles.field}>
-                <Text style={styles.fieldLabel}>Email</Text>
+                <Text style={styles.fieldLabel}>{t('patients.form.email')}</Text>
                 <View style={styles.inputBox}>
                   <Ionicons name="mail-outline" size={16} color={Colors.textMuted} />
                   <TextInput
                     style={styles.input}
-                    placeholder="email@example.com"
+                    placeholder={t('patients.form.emailPlaceholder')}
                     placeholderTextColor={Colors.textMuted}
                     value={email}
                     onChangeText={setEmail}
@@ -243,7 +236,7 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
       <Modal visible={showCountryPicker} transparent animationType="fade" onRequestClose={() => setShowCountryPicker(false)}>
         <TouchableOpacity style={styles.countryOverlay} activeOpacity={1} onPress={() => setShowCountryPicker(false)}>
           <View style={styles.countrySheet}>
-            <Text style={styles.countrySheetTitle}>Select Country Code</Text>
+            <Text style={styles.countrySheetTitle}>{t('patients.form.selectCountry')}</Text>
             {COUNTRY_CODES.map(({ code, label }) => (
               <TouchableOpacity
                 key={code}

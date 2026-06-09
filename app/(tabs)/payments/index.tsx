@@ -7,14 +7,16 @@ import { Appointment } from '@/lib/types';
 import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
 import { getPendingPayments, getPaidPayments, updatePaymentStatus, getRevenueByMonth } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
+import { t, tn } from '@/lib/i18n';
+import { formatCurrency, formatCurrencyWhole, formatMonthYear } from '@/lib/locale-utils';
 
 type DateFilter = 'week' | 'month' | 'last_month' | 'all';
 
-const FILTERS: { key: DateFilter; label: string }[] = [
-  { key: 'week', label: 'This week' },
-  { key: 'month', label: 'This month' },
-  { key: 'last_month', label: 'Last month' },
-  { key: 'all', label: 'All time' },
+const FILTERS: { key: DateFilter; labelKey: string }[] = [
+  { key: 'week', labelKey: 'payments.filter.week' },
+  { key: 'month', labelKey: 'payments.filter.month' },
+  { key: 'last_month', labelKey: 'payments.filter.lastMonth' },
+  { key: 'all', labelKey: 'payments.filter.all' },
 ];
 
 function fmt(d: Date) {
@@ -96,7 +98,7 @@ export default function PaymentsScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Payments</Text>
+        <Text style={styles.headerTitle}>{t('payments.title')}</Text>
       </View>
 
       {/* Date filter */}
@@ -113,7 +115,7 @@ export default function PaymentsScreen() {
             style={[styles.filterPill, filter === f.key && styles.filterPillActive]}
           >
             <Text style={[styles.filterPillText, filter === f.key && styles.filterPillTextActive]}>
-              {f.label}
+              {t(f.labelKey as any)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -127,25 +129,23 @@ export default function PaymentsScreen() {
               <Ionicons name="card-outline" size={22} color={Colors.primary} />
             </View>
             <View style={{ gap: 2 }}>
-              <Text style={styles.accountTitle}>Payment Account</Text>
+              <Text style={styles.accountTitle}>{t('payments.account')}</Text>
               <View style={styles.accountStatusRow}>
                 <View style={[styles.accountDot, { backgroundColor: accountActive ? Colors.success : Colors.textMuted }]} />
                 <Text style={[styles.accountStatus, { color: accountActive ? Colors.success : Colors.textMuted }]}>
-                  {accountActive ? 'Active' : 'Inactive'}
+                  {accountActive ? t('payments.active') : t('payments.inactive')}
                 </Text>
               </View>
             </View>
           </View>
           <TouchableOpacity
             onPress={() => Alert.alert(
-              accountActive ? 'Deactivate account?' : 'Activate account?',
-              accountActive
-                ? 'Deactivating will prevent new payment links from being generated.'
-                : 'Activate to enable payment links.',
+              accountActive ? t('payments.deactivateTitle') : t('payments.activateTitle'),
+              accountActive ? t('payments.deactivateMessage') : t('payments.activateMessage'),
               [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('common.cancel'), style: 'cancel' },
                 {
-                  text: accountActive ? 'Deactivate' : 'Activate',
+                  text: accountActive ? t('payments.deactivate') : t('payments.activate'),
                   style: accountActive ? 'destructive' : 'default',
                   onPress: () => setAccountActive(v => !v),
                 },
@@ -153,7 +153,7 @@ export default function PaymentsScreen() {
             )}
           >
             <Text style={[styles.accountToggleText, { color: accountActive ? Colors.danger : Colors.primary }]}>
-              {accountActive ? 'Deactivate' : 'Activate'}
+              {accountActive ? t('payments.deactivate') : t('payments.activate')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -165,9 +165,9 @@ export default function PaymentsScreen() {
               <Ionicons name="layers-outline" size={22} color={Colors.primary} />
             </View>
             <View style={{ gap: 2 }}>
-              <Text style={styles.accountTitle}>Installment Limit</Text>
+              <Text style={styles.accountTitle}>{t('payments.installmentLimit')}</Text>
               <Text style={[styles.accountStatus, { color: Colors.textSecondary }]}>
-                Max {installmentLimit === 1 ? '1 installment' : `${installmentLimit} installments`}
+                {tn('payments.maxInstallments', installmentLimit, { n: installmentLimit })}
               </Text>
             </View>
           </View>
@@ -191,27 +191,27 @@ export default function PaymentsScreen() {
         {/* Summary cards */}
         <View style={styles.row}>
           <View style={[styles.summaryCard, { borderLeftColor: Colors.warning }]}>
-            <Text style={styles.summaryLabel}>Pending</Text>
+            <Text style={styles.summaryLabel}>{t('payments.pending')}</Text>
             <Text style={[styles.summaryAmount, { color: Colors.warning }]}>
-              R$ {totalPending.toFixed(2)}
+              {formatCurrency(totalPending)}
             </Text>
-            <Text style={styles.summaryCount}>{pending.length} appointment{pending.length !== 1 ? 's' : ''}</Text>
+            <Text style={styles.summaryCount}>{tn('payments.appointment', pending.length, { n: pending.length })}</Text>
           </View>
           <View style={[styles.summaryCard, { borderLeftColor: Colors.success }]}>
-            <Text style={styles.summaryLabel}>Received</Text>
+            <Text style={styles.summaryLabel}>{t('payments.received')}</Text>
             <Text style={[styles.summaryAmount, { color: Colors.success }]}>
-              R$ {totalPaid.toFixed(2)}
+              {formatCurrency(totalPaid)}
             </Text>
-            <Text style={styles.summaryCount}>{paid.length} appointment{paid.length !== 1 ? 's' : ''}</Text>
+            <Text style={styles.summaryCount}>{tn('payments.appointment', paid.length, { n: paid.length })}</Text>
           </View>
         </View>
 
         {/* Pending payments */}
-        <Text style={styles.sectionTitle}>Pending</Text>
+        <Text style={styles.sectionTitle}>{t('payments.pending')}</Text>
         {pending.length === 0 ? (
           <View style={styles.emptyState}>
             <Ionicons name="checkmark-circle-outline" size={40} color={Colors.success} />
-            <Text style={styles.emptyText}>All payments up to date</Text>
+            <Text style={styles.emptyText}>{t('payments.allUpToDate')}</Text>
           </View>
         ) : (
           pending.map(appt => (
@@ -222,9 +222,11 @@ export default function PaymentsScreen() {
                 <Text style={styles.paymentMeta}>{appt.consultationType}</Text>
               </View>
               <View style={styles.paymentRight}>
-                <Text style={styles.paymentAmount}>R$ {appt.paymentAmount?.toFixed(2) ?? '—'}</Text>
+                <Text style={styles.paymentAmount}>
+                  {appt.paymentAmount != null ? formatCurrency(appt.paymentAmount) : '—'}
+                </Text>
                 <TouchableOpacity style={styles.markPaidBtn} onPress={() => handleMarkPaid(appt.id)}>
-                  <Text style={styles.markPaidText}>Mark paid</Text>
+                  <Text style={styles.markPaidText}>{t('payments.markPaid')}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -234,7 +236,7 @@ export default function PaymentsScreen() {
         {/* Paid */}
         {paid.length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>Received</Text>
+            <Text style={styles.sectionTitle}>{t('payments.received')}</Text>
             {paid.map(appt => (
               <View key={appt.id} style={[styles.paymentCard, styles.paidCard]}>
                 <View style={styles.paymentInfo}>
@@ -243,11 +245,11 @@ export default function PaymentsScreen() {
                 </View>
                 <View style={styles.paymentRight}>
                   <Text style={[styles.paymentAmount, { color: Colors.success }]}>
-                    R$ {appt.paymentAmount?.toFixed(2) ?? '—'}
+                    {appt.paymentAmount != null ? formatCurrency(appt.paymentAmount) : '—'}
                   </Text>
                   <View style={styles.paidBadge}>
                     <Ionicons name="checkmark" size={12} color={Colors.success} />
-                    <Text style={styles.paidBadgeText}>Paid</Text>
+                    <Text style={styles.paidBadgeText}>{t('appt.paid')}</Text>
                   </View>
                 </View>
               </View>
@@ -263,7 +265,7 @@ export default function PaymentsScreen() {
               onPress={() => setShowReport(v => !v)}
             >
               <Ionicons name="bar-chart-outline" size={16} color={Colors.primary} />
-              <Text style={styles.reportToggleText}>Monthly Report</Text>
+              <Text style={styles.reportToggleText}>{t('payments.monthlyReport')}</Text>
               <Ionicons
                 name={showReport ? 'chevron-up' : 'chevron-down'}
                 size={16}
@@ -275,22 +277,19 @@ export default function PaymentsScreen() {
             {showReport && revenue.map(row => {
               const total = row.paid + row.pending;
               const barWidth = total > 0 ? row.paid / total : 0;
-              const [yr, mo] = row.month.split('-');
-              const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-              const label = `${MONTHS_SHORT[parseInt(mo, 10) - 1]} ${yr}`;
               return (
                 <View key={row.month} style={styles.reportRow}>
                   <View style={styles.reportRowHeader}>
-                    <Text style={styles.reportMonth}>{label}</Text>
-                    <Text style={styles.reportCount}>{row.count} appt{row.count !== 1 ? 's' : ''}</Text>
-                    <Text style={[styles.reportPaid, { marginLeft: 'auto' }]}>R$ {row.paid.toFixed(0)}</Text>
+                    <Text style={styles.reportMonth}>{formatMonthYear(row.month)}</Text>
+                    <Text style={styles.reportCount}>{tn('payments.appointment', row.count, { n: row.count })}</Text>
+                    <Text style={[styles.reportPaid, { marginLeft: 'auto' }]}>{formatCurrencyWhole(row.paid)}</Text>
                   </View>
                   <View style={styles.reportBar}>
                     <View style={[styles.reportBarFill, { flex: barWidth }]} />
                     <View style={{ flex: 1 - barWidth }} />
                   </View>
                   {row.pending > 0 && (
-                    <Text style={styles.reportPending}>R$ {row.pending.toFixed(0)} pending</Text>
+                    <Text style={styles.reportPending}>{t('payments.pendingReport', { amount: formatCurrencyWhole(row.pending) })}</Text>
                   )}
                 </View>
               );

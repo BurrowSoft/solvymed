@@ -11,6 +11,8 @@ import { createAppointment, updateAppointment, createRecurringAppointments, getP
 import { scheduleAppointmentReminder } from '@/lib/notifications';
 import { MOCK_PATIENTS } from '@/lib/mock-data';
 import { useAuth } from '@/lib/auth-context';
+import { t } from '@/lib/i18n';
+import { formatCurrency } from '@/lib/locale-utils';
 
 const TIME_SLOTS: string[] = [];
 for (let h = 7; h < 21; h++) {
@@ -24,11 +26,11 @@ const FALLBACK_TYPES = ['Consultation', 'Follow-up', 'Exam Review', 'Procedure',
 
 type RecurrenceMode = 'none' | 'weekly' | 'biweekly' | 'monthly';
 
-const RECURRENCE_OPTIONS: { key: RecurrenceMode; label: string }[] = [
-  { key: 'none', label: 'No repeat' },
-  { key: 'weekly', label: 'Weekly' },
-  { key: 'biweekly', label: 'Biweekly' },
-  { key: 'monthly', label: 'Monthly' },
+const RECURRENCE_OPTIONS: { key: RecurrenceMode; labelKey: string }[] = [
+  { key: 'none', labelKey: 'newAppt.noRepeat' },
+  { key: 'weekly', labelKey: 'newAppt.weekly' },
+  { key: 'biweekly', labelKey: 'newAppt.biweekly' },
+  { key: 'monthly', labelKey: 'newAppt.monthly' },
 ];
 
 interface Props {
@@ -141,8 +143,8 @@ export function NewAppointmentModal({
   }
 
   async function handleSave() {
-    if (!patientName.trim()) { setError('Select or enter a patient name'); return; }
-    if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) { setError('Date must be YYYY-MM-DD'); return; }
+    if (!patientName.trim()) { setError(t('newAppt.patientRequired')); return; }
+    if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) { setError(t('newAppt.dateInvalid')); return; }
     setError('');
     setSaving(true);
 
@@ -190,17 +192,17 @@ export function NewAppointmentModal({
         onClose();
       }
     } catch {
-      setError('Failed to save. Please try again.');
+      setError(t('newAppt.saveFailed'));
     } finally {
       setSaving(false);
     }
   }
 
   const saveBtnLabel = isEdit
-    ? 'Update'
+    ? t('common.update')
     : recurrence !== 'none'
-    ? `Save ×${parseInt(occurrences, 10) || 8}`
-    : 'Save';
+    ? t('newAppt.saveMultiple', { n: parseInt(occurrences, 10) || 8 })
+    : t('common.save');
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
@@ -210,7 +212,7 @@ export function NewAppointmentModal({
             <TouchableOpacity onPress={onClose}>
               <Ionicons name="close" size={24} color={Colors.textSecondary} />
             </TouchableOpacity>
-            <Text style={styles.title}>{isEdit ? 'Edit Appointment' : 'New Appointment'}</Text>
+            <Text style={styles.title}>{isEdit ? t('newAppt.title.edit') : t('newAppt.title.new')}</Text>
             <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={saving}>
               {saving
                 ? <ActivityIndicator size="small" color="#fff" />
@@ -224,7 +226,7 @@ export function NewAppointmentModal({
 
             {/* ── Patient ── */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Patient</Text>
+              <Text style={styles.sectionTitle}>{t('newAppt.patient')}</Text>
               {patientId ? (
                 <View style={styles.selectedRow}>
                   <View style={styles.selectedAvatar}>
@@ -241,7 +243,7 @@ export function NewAppointmentModal({
                     <Ionicons name="search-outline" size={16} color={Colors.textMuted} />
                     <TextInput
                       style={styles.input}
-                      placeholder="Search or type patient name..."
+                      placeholder={t('newAppt.patientPlaceholder')}
                       placeholderTextColor={Colors.textMuted}
                       value={patientSearch || patientName}
                       onChangeText={v => { setPatientSearch(v); setPatientName(v); }}
@@ -278,20 +280,20 @@ export function NewAppointmentModal({
 
             {/* ── Date & Time ── */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Date & Time</Text>
+              <Text style={styles.sectionTitle}>{t('newAppt.dateTime')}</Text>
 
               <View style={styles.inputBox}>
                 <Ionicons name="calendar-outline" size={16} color={Colors.textMuted} />
                 <TextInput
                   style={styles.input}
-                  placeholder="YYYY-MM-DD"
+                  placeholder={t('newAppt.datePlaceholder')}
                   placeholderTextColor={Colors.textMuted}
                   value={date}
                   onChangeText={setDate}
                 />
               </View>
 
-              <Text style={styles.fieldLabel}>Start time</Text>
+              <Text style={styles.fieldLabel}>{t('newAppt.time')}</Text>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -311,7 +313,7 @@ export function NewAppointmentModal({
                 ))}
               </ScrollView>
 
-              <Text style={styles.fieldLabel}>Duration</Text>
+              <Text style={styles.fieldLabel}>{t('newAppt.duration')}</Text>
               <View style={styles.pills}>
                 {DURATIONS.map(d => (
                   <TouchableOpacity
@@ -325,33 +327,33 @@ export function NewAppointmentModal({
               </View>
 
               <Text style={styles.fieldLabel}>
-                Ends at: <Text style={styles.endTime}>{endTime}</Text>
+                {t('newAppt.endsAt', { time: endTime })}
               </Text>
             </View>
 
             {/* ── Details ── */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Details</Text>
+              <Text style={styles.sectionTitle}>{t('appt.details')}</Text>
 
-              <Text style={styles.fieldLabel}>Type</Text>
+              <Text style={styles.fieldLabel}>{t('newAppt.type')}</Text>
               <View style={styles.toggle}>
                 <TouchableOpacity
                   style={[styles.toggleOpt, type === 'in-person' && styles.toggleOptActive]}
                   onPress={() => setType('in-person')}
                 >
                   <Ionicons name="business-outline" size={14} color={type === 'in-person' ? '#fff' : Colors.textSecondary} />
-                  <Text style={[styles.toggleOptText, type === 'in-person' && styles.toggleOptTextActive]}>In-Person</Text>
+                  <Text style={[styles.toggleOptText, type === 'in-person' && styles.toggleOptTextActive]}>{t('newAppt.inPerson')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.toggleOpt, type === 'online' && styles.toggleOptActive]}
                   onPress={() => setType('online')}
                 >
                   <Ionicons name="videocam-outline" size={14} color={type === 'online' ? '#fff' : Colors.textSecondary} />
-                  <Text style={[styles.toggleOptText, type === 'online' && styles.toggleOptTextActive]}>Online</Text>
+                  <Text style={[styles.toggleOptText, type === 'online' && styles.toggleOptTextActive]}>{t('newAppt.online')}</Text>
                 </TouchableOpacity>
               </View>
 
-              <Text style={styles.fieldLabel}>Consultation type</Text>
+              <Text style={styles.fieldLabel}>{t('newAppt.consultation')}</Text>
               {procedures.length > 0 ? (
                 <>
                   <View style={styles.procedureList}>
@@ -371,7 +373,7 @@ export function NewAppointmentModal({
                           <View style={{ flex: 1 }}>
                             <Text style={[styles.procName, selected && styles.procNameActive]}>{p.name}</Text>
                             <Text style={[styles.procMeta, selected && styles.procMetaActive]}>
-                              {p.durationMinutes} min{p.price != null ? ` · R$ ${p.price.toFixed(2)}` : ''}
+                              {p.durationMinutes} min{p.price != null ? ` · ${formatCurrency(p.price)}` : ''}
                             </Text>
                           </View>
                           {selected && <Ionicons name="checkmark-circle" size={18} color={Colors.primary} />}
@@ -398,32 +400,32 @@ export function NewAppointmentModal({
                       </TouchableOpacity>
                     ))}
                   </View>
-                  <Text style={styles.procHint}>Configure your procedures in Settings → My Procedures for quicker booking.</Text>
+                  <Text style={styles.procHint}>{t('newAppt.procedureHint')}</Text>
                 </>
               )}
             </View>
 
             {/* ── Payment ── */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Payment</Text>
+              <Text style={styles.sectionTitle}>{t('newAppt.payment')}</Text>
 
-              <Text style={styles.fieldLabel}>Type</Text>
+              <Text style={styles.fieldLabel}>{t('newAppt.type')}</Text>
               <View style={styles.toggle}>
                 <TouchableOpacity
                   style={[styles.toggleOpt, paymentType === 'private' && styles.toggleOptActive]}
                   onPress={() => setPaymentType('private')}
                 >
-                  <Text style={[styles.toggleOptText, paymentType === 'private' && styles.toggleOptTextActive]}>Private</Text>
+                  <Text style={[styles.toggleOptText, paymentType === 'private' && styles.toggleOptTextActive]}>{t('newAppt.private')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.toggleOpt, paymentType === 'insurance' && styles.toggleOptActive]}
                   onPress={() => setPaymentType('insurance')}
                 >
-                  <Text style={[styles.toggleOptText, paymentType === 'insurance' && styles.toggleOptTextActive]}>Insurance</Text>
+                  <Text style={[styles.toggleOptText, paymentType === 'insurance' && styles.toggleOptTextActive]}>{t('newAppt.insurance')}</Text>
                 </TouchableOpacity>
               </View>
 
-              <Text style={styles.fieldLabel}>Amount (R$)</Text>
+              <Text style={styles.fieldLabel}>{t('newAppt.amount')}</Text>
               <View style={styles.inputBox}>
                 <Text style={styles.currencyPrefix}>R$</Text>
                 <TextInput
@@ -440,11 +442,11 @@ export function NewAppointmentModal({
             {/* ── Notes ── */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>
-                Notes <Text style={styles.optional}>(optional)</Text>
+                {t('newAppt.notes')} <Text style={styles.optional}>{t('newAppt.optional')}</Text>
               </Text>
               <TextInput
                 style={styles.notesInput}
-                placeholder="Add notes about this appointment..."
+                placeholder={t('newAppt.notesPlaceholder')}
                 placeholderTextColor={Colors.textMuted}
                 value={notes}
                 onChangeText={setNotes}
@@ -457,7 +459,7 @@ export function NewAppointmentModal({
             {/* ── Additional Items ── */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>
-                Additional Items <Text style={styles.optional}>(optional)</Text>
+                {t('newAppt.additionalItems')} <Text style={styles.optional}>{t('newAppt.optional')}</Text>
               </Text>
 
               {extraItems.map((item, i) => (
@@ -478,7 +480,7 @@ export function NewAppointmentModal({
                 <View style={[styles.inputBox, { flex: 2 }]}>
                   <TextInput
                     style={styles.input}
-                    placeholder="Item name"
+                    placeholder={t('newAppt.itemName')}
                     placeholderTextColor={Colors.textMuted}
                     value={extraItemName}
                     onChangeText={setExtraItemName}
@@ -487,7 +489,7 @@ export function NewAppointmentModal({
                 <View style={[styles.inputBox, { flex: 1 }]}>
                   <TextInput
                     style={styles.input}
-                    placeholder="R$ 0.00"
+                    placeholder={t('newAppt.itemPrice')}
                     placeholderTextColor={Colors.textMuted}
                     value={extraItemPrice}
                     onChangeText={setExtraItemPrice}
@@ -513,7 +515,7 @@ export function NewAppointmentModal({
             {/* ── Recurrence (create mode only) ── */}
             {!isEdit && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Recurrence</Text>
+                <Text style={styles.sectionTitle}>{t('newAppt.recurrence')}</Text>
                 <View style={styles.pills}>
                   {RECURRENCE_OPTIONS.map(opt => (
                     <TouchableOpacity
@@ -522,7 +524,7 @@ export function NewAppointmentModal({
                       style={[styles.pill, recurrence === opt.key && styles.pillActive]}
                     >
                       <Text style={[styles.pillText, recurrence === opt.key && styles.pillTextActive]}>
-                        {opt.label}
+                        {t(opt.labelKey as any)}
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -530,7 +532,7 @@ export function NewAppointmentModal({
 
                 {recurrence !== 'none' && (
                   <View style={styles.occurrencesRow}>
-                    <Text style={styles.fieldLabel}>Number of appointments</Text>
+                    <Text style={styles.fieldLabel}>{t('newAppt.numberOfAppts')}</Text>
                     <View style={styles.occurrencesInput}>
                       <TouchableOpacity
                         onPress={() => setOccurrences(v => String(Math.max(2, (parseInt(v, 10) || 8) - 1)))}

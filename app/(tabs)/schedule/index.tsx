@@ -28,6 +28,11 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { cancelAppointmentReminder } from '@/lib/notifications';
 import { useAuth } from '@/lib/auth-context';
+import { t } from '@/lib/i18n';
+import {
+  formatScheduleDayHeader, formatScheduleWeekHeader,
+  formatWeekdayShort, formatCurrency, formatAgeLabel,
+} from '@/lib/locale-utils';
 import { NewAppointmentModal } from '@/components/NewAppointmentModal';
 import { BlockTimeModal } from '@/components/BlockTimeModal';
 import { AppointmentSearchModal } from '@/components/AppointmentSearchModal';
@@ -39,8 +44,6 @@ const HOURS = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => START_HOUR
 
 type ViewMode = 'day' | 'week';
 
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 function fmt(d: Date) {
   return d.toISOString().split('T')[0];
@@ -86,12 +89,12 @@ function AppointmentBlock({ appt, onPress }: { appt: Appointment; onPress: () =>
       activeOpacity={0.85}
     >
       <Text style={[styles.apptText, { color: isBlocked ? Colors.textMuted : color }]} numberOfLines={1}>
-        {isBlocked ? `BLOCKED | ${appt.consultationType}` : appt.patientName}
+        {isBlocked ? `${t('status.blocked').toUpperCase()} | ${appt.consultationType}` : appt.patientName}
       </Text>
       {!isBlocked && (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
           <Text style={[styles.apptSubText, { flex: 1 }]} numberOfLines={1}>
-            {appt.consultationType} · {appt.type === 'online' ? 'Online' : 'In-Person'}
+            {appt.consultationType} · {t(appt.type === 'online' ? 'apptType.online' : 'apptType.inPerson')}
           </Text>
           {!!appt.notes && <Ionicons name="bookmark" size={10} color={color} />}
         </View>
@@ -129,18 +132,7 @@ function statusColor(status: Appointment['status']) {
 }
 
 function calcAge(birthDate: string): string {
-  const birth = new Date(birthDate);
-  const now = new Date();
-  let years = now.getFullYear() - birth.getFullYear();
-  let months = now.getMonth() - birth.getMonth();
-  let days = now.getDate() - birth.getDate();
-  if (days < 0) { months--; days += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
-  if (months < 0) { years--; months += 12; }
-  const parts: string[] = [];
-  if (years > 0) parts.push(`${years} yr${years !== 1 ? 's' : ''}`);
-  if (months > 0) parts.push(`${months} mo`);
-  if (days > 0 || parts.length === 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
-  return parts.join(', ');
+  return formatAgeLabel(birthDate);
 }
 
 async function shareInvoice(appt: Appointment, professionalId: string) {
@@ -210,7 +202,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
       <Pressable style={styles.modalOverlay} onPress={onClose}>
         <Pressable style={styles.modalCard} onPress={() => {}}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Appointment</Text>
+            <Text style={styles.modalTitle}>{t('appt.title')}</Text>
             <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
               {!isBlocked && (
                 <TouchableOpacity
@@ -218,27 +210,27 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
                   style={styles.editApptBtn}
                 >
                   <Ionicons name="pencil-outline" size={14} color={Colors.primary} />
-                  <Text style={styles.editApptBtnText}>Edit</Text>
+                  <Text style={styles.editApptBtnText}>{t('common.edit')}</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity
                 onPress={() => Alert.alert(
-                  'Appointment',
+                  t('appt.title'),
                   '',
                   [
                     {
-                      text: 'Delete appointment',
+                      text: t('appt.delete'),
                       style: 'destructive',
                       onPress: () => Alert.alert(
-                        'Delete appointment?',
-                        'This action cannot be undone.',
+                        t('appt.deleteTitle'),
+                        t('appt.deleteMessage'),
                         [
-                          { text: 'Cancel', style: 'cancel' },
-                          { text: 'Delete', style: 'destructive', onPress: () => { onDelete(appt.id); onClose(); } },
+                          { text: t('common.cancel'), style: 'cancel' },
+                          { text: t('common.delete'), style: 'destructive', onPress: () => { onDelete(appt.id); onClose(); } },
                         ],
                       ),
                     },
-                    { text: 'Cancel', style: 'cancel' },
+                    { text: t('common.cancel'), style: 'cancel' },
                   ],
                 )}
               >
@@ -261,7 +253,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
               >
                 <Ionicons name="logo-whatsapp" size={16} color={patientPhone ? '#25D366' : Colors.textMuted} />
                 <Text style={[styles.modalActionText, !patientPhone && { color: Colors.textMuted }]}>
-                  {patientPhone ? 'Send confirmation' : 'No phone — add in patient profile'}
+                  {patientPhone ? t('appt.sendConfirmation') : t('appt.noPhoneAdd')}
                 </Text>
               </TouchableOpacity>
               {patientPhone && (
@@ -270,7 +262,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
                   onPress={() => Linking.openURL(whatsappUrl(patientPhone))}
                 >
                   <Ionicons name="chatbubble-outline" size={16} color={Colors.textSecondary} />
-                  <Text style={[styles.modalActionText, { color: Colors.textSecondary }]}>Open WhatsApp chat</Text>
+                  <Text style={[styles.modalActionText, { color: Colors.textSecondary }]}>{t('appt.openWhatsapp')}</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity
@@ -280,7 +272,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
               >
                 <Ionicons name="call-outline" size={16} color={patientPhone ? Colors.primary : Colors.textMuted} />
                 <Text style={[styles.modalActionText, !patientPhone && { color: Colors.textMuted }]}>
-                  {patientPhone ? `Call ${patientPhone}` : 'No phone number'}
+                  {patientPhone ? t('appt.call', { phone: patientPhone }) : t('appt.noPhone')}
                 </Text>
               </TouchableOpacity>
 
@@ -292,7 +284,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
                 }}
               >
                 <Ionicons name="link-outline" size={16} color={Colors.primary} />
-                <Text style={styles.modalActionText}>Share payment link</Text>
+                <Text style={styles.modalActionText}>{t('appt.sharePaymentLink')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -309,12 +301,12 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
                   ? <ActivityIndicator size="small" color={Colors.primary} />
                   : <Ionicons name="receipt-outline" size={16} color={Colors.primary} />
                 }
-                <Text style={styles.modalActionText}>Generate invoice PDF</Text>
+                <Text style={styles.modalActionText}>{t('appt.generateInvoice')}</Text>
               </TouchableOpacity>
 
               <View style={styles.modalRow}>
                 <View style={[styles.statusDot, { backgroundColor: appt.paymentStatus === 'paid' ? Colors.success : Colors.warning }]} />
-                <Text style={styles.modalMeta}>{appt.paymentType === 'private' ? 'Private' : 'Insurance'}</Text>
+                <Text style={styles.modalMeta}>{appt.paymentType === 'private' ? t('newAppt.private') : t('newAppt.insurance')}</Text>
                 {editingAmount ? (
                   <View style={styles.amountEditRow}>
                     <Text style={styles.modalMeta}>R$</Text>
@@ -349,19 +341,19 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
                     onPress={() => { setAmountValue(displayAmount?.toString() ?? ''); setEditingAmount(true); }}
                   >
                     <Text style={styles.modalMeta}>
-                      {displayAmount != null ? `R$ ${displayAmount.toFixed(2)}` : 'Set amount'}
+                      {displayAmount != null ? formatCurrency(displayAmount) : t('appt.setAmount')}
                     </Text>
                     <Ionicons name="pencil-outline" size={13} color={Colors.primary} />
                   </TouchableOpacity>
                 )}
                 {appt.paymentStatus !== 'paid' ? (
                   <TouchableOpacity style={styles.chip} onPress={() => onMarkPaid(appt.id)}>
-                    <Text style={styles.chipText}>Mark as paid</Text>
+                    <Text style={styles.chipText}>{t('appt.markPaid')}</Text>
                   </TouchableOpacity>
                 ) : (
                   <View style={[styles.chip, styles.chipPaid]}>
                     <Ionicons name="checkmark" size={12} color={Colors.success} />
-                    <Text style={[styles.chipText, { color: Colors.success }]}>Paid</Text>
+                    <Text style={[styles.chipText, { color: Colors.success }]}>{t('appt.paid')}</Text>
                   </View>
                 )}
               </View>
@@ -375,22 +367,22 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
           <View style={styles.statusRow}>
             <View style={[styles.statusBadge, { backgroundColor: statusColor(appt.status) + '20' }]}>
               <Text style={[styles.statusBadgeText, { color: statusColor(appt.status) }]}>
-                {isBlocked ? 'Blocked' : appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
+                {t((isBlocked ? 'status.blocked' : `status.${appt.status}`) as any)}
               </Text>
             </View>
           </View>
 
           <View style={styles.modalDivider} />
-          <Text style={styles.modalSectionTitle}>Details</Text>
+          <Text style={styles.modalSectionTitle}>{t('appt.details')}</Text>
           <Text style={styles.modalMeta}>{appt.consultationType}</Text>
-          <Text style={styles.modalMeta}>{appt.type === 'online' ? 'Online' : 'In-Person'}</Text>
+          <Text style={styles.modalMeta}>{t(appt.type === 'online' ? 'apptType.online' : 'apptType.inPerson')}</Text>
           {appt.scheduledBy ? (
-            <Text style={styles.modalMeta}>Scheduled by: {appt.scheduledBy}</Text>
+            <Text style={styles.modalMeta}>{t('appt.scheduledBy', { name: appt.scheduledBy })}</Text>
           ) : null}
 
           {!isBlocked && appt.extraItems && appt.extraItems.length > 0 && (
             <>
-              <Text style={[styles.modalSectionTitle, { marginTop: 4 }]}>Additional Items</Text>
+              <Text style={[styles.modalSectionTitle, { marginTop: 4 }]}>{t('appt.additionalItems')}</Text>
               {appt.extraItems.map((item, i) => (
                 <View key={i} style={styles.extraItemRow}>
                   <Text style={[styles.modalMeta, { flex: 1 }]}>{item.name}</Text>
@@ -405,7 +397,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
           {!isBlocked && appt.notes ? (
             <>
               <View style={styles.modalDivider} />
-              <Text style={styles.modalSectionTitle}>Notes</Text>
+              <Text style={styles.modalSectionTitle}>{t('appt.notes')}</Text>
               <Text style={styles.modalMeta}>{appt.notes}</Text>
             </>
           ) : null}
@@ -413,7 +405,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
           {!isBlocked && (
             <>
               <View style={styles.modalDivider} />
-              <Text style={styles.modalSectionTitle}>Status</Text>
+              <Text style={styles.modalSectionTitle}>{t('appt.status')}</Text>
               <View style={styles.statusActions}>
                 {(['scheduled', 'confirmed', 'completed', 'cancelled'] as Appointment['status'][]).map(s => {
                   const active = appt.status === s;
@@ -425,7 +417,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
                       onPress={() => { if (!active) { onStatusChange(appt.id, s); onClose(); } }}
                     >
                       <Text style={[styles.actionBtnText, { color: active ? color : Colors.textSecondary, fontWeight: active ? '700' : '500' }]}>
-                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                        {t(`status.${s}` as any)}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -547,8 +539,8 @@ export default function ScheduleScreen() {
   }
 
   const headerLabel = viewMode === 'day'
-    ? `${DAYS[selectedDate.getDay()].toUpperCase()} ${String(selectedDate.getDate()).padStart(2, '0')} ${MONTHS[selectedDate.getMonth()].toUpperCase()} ${selectedDate.getFullYear()}`
-    : `${DAYS[weekDates[0].getDay()]} ${weekDates[0].getDate()} - ${DAYS[weekDates[6].getDay()]} ${weekDates[6].getDate()}, ${MONTHS[weekDates[0].getMonth()]} ${weekDates[0].getFullYear()}`;
+    ? formatScheduleDayHeader(selectedDate)
+    : formatScheduleWeekHeader(weekDates[0], weekDates[6]);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -589,13 +581,13 @@ export default function ScheduleScreen() {
               onPress={() => setViewMode('day')}
               style={[styles.toggleBtn, viewMode === 'day' && styles.toggleActive]}
             >
-              <Text style={[styles.toggleText, viewMode === 'day' && styles.toggleTextActive]}>Day</Text>
+              <Text style={[styles.toggleText, viewMode === 'day' && styles.toggleTextActive]}>{t('schedule.day')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setViewMode('week')}
               style={[styles.toggleBtn, viewMode === 'week' && styles.toggleActive]}
             >
-              <Text style={[styles.toggleText, viewMode === 'week' && styles.toggleTextActive]}>Week</Text>
+              <Text style={[styles.toggleText, viewMode === 'week' && styles.toggleTextActive]}>{t('schedule.week')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -617,7 +609,7 @@ export default function ScheduleScreen() {
                 style={[styles.weekDay, isSelected && styles.weekDaySelected, isToday && !isSelected && styles.weekDayToday]}
                 onPress={() => { setSelectedDate(d); setViewMode('day'); }}
               >
-                <Text style={[styles.weekDayName, isSelected && styles.weekDayTextSelected]}>{DAYS[d.getDay()]}</Text>
+                <Text style={[styles.weekDayName, isSelected && styles.weekDayTextSelected]}>{formatWeekdayShort(d).toUpperCase().replace('.', '')}</Text>
                 <Text style={[styles.weekDayNum, isSelected && styles.weekDayTextSelected, isToday && !isSelected && { color: Colors.primary }]}>{d.getDate()}</Text>
                 {count > 0 ? (
                   <View style={[styles.countBadge, isSelected && styles.countBadgeSelected]}>
@@ -660,15 +652,15 @@ export default function ScheduleScreen() {
         {/* Status legend */}
         <View style={styles.legend}>
           {([
-            { label: 'Scheduled', color: Colors.warning },
-            { label: 'Confirmed', color: Colors.primary },
-            { label: 'Completed', color: Colors.success },
-            { label: 'Cancelled', color: Colors.danger },
-            { label: 'Blocked', color: Colors.blocked },
-          ] as const).map(({ label, color }) => (
-            <View key={label} style={styles.legendItem}>
+            { key: 'scheduled', color: Colors.warning },
+            { key: 'confirmed', color: Colors.primary },
+            { key: 'completed', color: Colors.success },
+            { key: 'cancelled', color: Colors.danger },
+            { key: 'blocked', color: Colors.blocked },
+          ] as const).map(({ key, color }) => (
+            <View key={key} style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: color }]} />
-              <Text style={styles.legendLabel}>{label}</Text>
+              <Text style={styles.legendLabel}>{t(`schedule.legend.${key}` as any)}</Text>
             </View>
           ))}
         </View>
@@ -679,11 +671,11 @@ export default function ScheduleScreen() {
       <View style={styles.fabGroup}>
         <TouchableOpacity style={styles.blockBtn} onPress={() => setShowBlockTime(true)}>
           <Ionicons name="remove-circle-outline" size={15} color={Colors.textSecondary} />
-          <Text style={styles.blockBtnText}>Block time</Text>
+          <Text style={styles.blockBtnText}>{t('schedule.blockTime')}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.fab} onPress={() => setShowNewAppt(true)}>
           <Ionicons name="add" size={26} color="#fff" />
-          <Text style={styles.fabText}>New Appointment</Text>
+          <Text style={styles.fabText}>{t('schedule.newAppointment')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -735,15 +727,15 @@ export default function ScheduleScreen() {
         <Pressable style={styles.filterOverlay} onPress={() => setShowFilter(false)}>
           <Pressable style={styles.filterSheet} onPress={e => e.stopPropagation()}>
             <View style={styles.filterHeader}>
-              <Text style={styles.filterTitle}>Filters</Text>
+              <Text style={styles.filterTitle}>{t('schedule.filters')}</Text>
               {activeFilterCount > 0 && (
                 <TouchableOpacity onPress={clearFilters}>
-                  <Text style={styles.filterClear}>Clear all</Text>
+                  <Text style={styles.filterClear}>{t('common.clear')}</Text>
                 </TouchableOpacity>
               )}
             </View>
 
-            <Text style={styles.filterLabel}>Status</Text>
+            <Text style={styles.filterLabel}>{t('schedule.status')}</Text>
             <View style={styles.filterPillRow}>
               {(['scheduled', 'confirmed', 'completed', 'cancelled'] as Appointment['status'][]).map(s => (
                 <TouchableOpacity
@@ -752,29 +744,29 @@ export default function ScheduleScreen() {
                   onPress={() => toggleStatus(s)}
                 >
                   <Text style={[styles.filterPillText, filterStatuses.has(s) && styles.filterPillTextActive]}>
-                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                    {t(`status.${s}` as any)}
                   </Text>
                 </TouchableOpacity>
               ))}
             </View>
 
-            <Text style={styles.filterLabel}>Type</Text>
+            <Text style={styles.filterLabel}>{t('schedule.type')}</Text>
             <View style={styles.filterPillRow}>
-              {(['all', 'in-person', 'online'] as const).map(t => (
+              {(['all', 'in-person', 'online'] as const).map(typeOpt => (
                 <TouchableOpacity
-                  key={t}
-                  style={[styles.filterPill, filterType === t && styles.filterPillActive]}
-                  onPress={() => setFilterType(t)}
+                  key={typeOpt}
+                  style={[styles.filterPill, filterType === typeOpt && styles.filterPillActive]}
+                  onPress={() => setFilterType(typeOpt)}
                 >
-                  <Text style={[styles.filterPillText, filterType === t && styles.filterPillTextActive]}>
-                    {t === 'all' ? 'All' : t === 'in-person' ? 'In-Person' : 'Online'}
+                  <Text style={[styles.filterPillText, filterType === typeOpt && styles.filterPillTextActive]}>
+                    {typeOpt === 'all' ? t('schedule.allTypes') : typeOpt === 'in-person' ? t('apptType.inPerson') : t('apptType.online')}
                   </Text>
                 </TouchableOpacity>
               ))}
             </View>
 
             <TouchableOpacity style={styles.filterApplyBtn} onPress={() => setShowFilter(false)}>
-              <Text style={styles.filterApplyText}>Apply</Text>
+              <Text style={styles.filterApplyText}>{t('common.apply')}</Text>
             </TouchableOpacity>
           </Pressable>
         </Pressable>

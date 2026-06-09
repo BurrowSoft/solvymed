@@ -9,6 +9,7 @@ import { Colors } from '@/constants/Colors';
 import { Professional } from '@/lib/types';
 import { updateProfessional } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
+import { t } from '@/lib/i18n';
 
 interface Props {
   visible: boolean;
@@ -71,20 +72,20 @@ export function MyClinicModal({ visible, professional, onClose, onSaved }: Props
             <TouchableOpacity onPress={onClose}>
               <Ionicons name="close" size={24} color={Colors.textSecondary} />
             </TouchableOpacity>
-            <Text style={styles.title}>My Clinic</Text>
+            <Text style={styles.title}>{t('clinic.title')}</Text>
             <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={saving}>
               {saving
                 ? <ActivityIndicator size="small" color="#fff" />
-                : <Text style={styles.saveBtnText}>Save</Text>
+                : <Text style={styles.saveBtnText}>{t('common.save')}</Text>
               }
             </TouchableOpacity>
           </View>
 
           <ScrollView style={styles.body} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Clinic Information</Text>
+              <Text style={styles.sectionTitle}>{t('clinic.infoSection')}</Text>
 
-              <Text style={styles.label}>Clinic Name</Text>
+              <Text style={styles.label}>{t('clinic.name')}</Text>
               <View style={styles.inputBox}>
                 <TextInput
                   style={styles.input}
@@ -95,7 +96,7 @@ export function MyClinicModal({ visible, professional, onClose, onSaved }: Props
                 />
               </View>
 
-              <Text style={styles.label}>CNPJ</Text>
+              <Text style={styles.label}>{t('clinic.cnpj')}</Text>
               <View style={styles.inputBox}>
                 <TextInput
                   style={styles.input}
@@ -107,7 +108,7 @@ export function MyClinicModal({ visible, professional, onClose, onSaved }: Props
                 />
               </View>
 
-              <Text style={styles.label}>Phone</Text>
+              <Text style={styles.label}>{t('clinic.phone')}</Text>
               <View style={styles.inputBox}>
                 <TextInput
                   style={styles.input}
@@ -119,7 +120,7 @@ export function MyClinicModal({ visible, professional, onClose, onSaved }: Props
                 />
               </View>
 
-              <Text style={styles.label}>Website</Text>
+              <Text style={styles.label}>{t('clinic.website')}</Text>
               <View style={styles.inputBox}>
                 <TextInput
                   style={styles.input}
@@ -134,9 +135,9 @@ export function MyClinicModal({ visible, professional, onClose, onSaved }: Props
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Address</Text>
+              <Text style={styles.sectionTitle}>{t('clinic.addressSection')}</Text>
 
-              <Text style={styles.label}>Street Address</Text>
+              <Text style={styles.label}>{t('clinic.address')}</Text>
               <View style={styles.inputBox}>
                 <TextInput
                   style={styles.input}
@@ -149,7 +150,7 @@ export function MyClinicModal({ visible, professional, onClose, onSaved }: Props
 
               <View style={styles.row}>
                 <View style={{ flex: 2 }}>
-                  <Text style={styles.label}>City</Text>
+                  <Text style={styles.label}>{t('clinic.city')}</Text>
                   <View style={styles.inputBox}>
                     <TextInput
                       style={styles.input}
@@ -161,7 +162,7 @@ export function MyClinicModal({ visible, professional, onClose, onSaved }: Props
                   </View>
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.label}>State</Text>
+                  <Text style={styles.label}>{t('clinic.state')}</Text>
                   <View style={styles.inputBox}>
                     <TextInput
                       style={styles.input}

@@ -21,19 +21,21 @@ import {
 import { getTemplate } from '@/lib/template-service';
 import { buildPrescriptionHtml, buildMedicalHistoryHtml } from '@/lib/pdf-utils';
 import { useAuth } from '@/lib/auth-context';
+import { t, tRecordType } from '@/lib/i18n';
+import { formatAge, formatCurrencyWhole, formatFileSize } from '@/lib/locale-utils';
 import { NewPatientModal } from '@/components/NewPatientModal';
 import { NewRecordModal } from '@/components/NewRecordModal';
 import { NewPrescriptionModal } from '@/components/NewPrescriptionModal';
 
 type PatientTab = 'info' | 'records' | 'prescriptions' | 'exams' | 'appointments' | 'files';
 
-const TABS: { key: PatientTab; label: string }[] = [
-  { key: 'info', label: 'Patient Info' },
-  { key: 'records', label: 'Records' },
-  { key: 'prescriptions', label: 'Prescriptions' },
-  { key: 'exams', label: 'Exams' },
-  { key: 'appointments', label: 'Appointments' },
-  { key: 'files', label: 'Files' },
+const TABS: { key: PatientTab; labelKey: string }[] = [
+  { key: 'info', labelKey: 'patients.tab.info' },
+  { key: 'records', labelKey: 'patients.tab.records' },
+  { key: 'prescriptions', labelKey: 'patients.tab.prescriptions' },
+  { key: 'exams', labelKey: 'patients.tab.exams' },
+  { key: 'appointments', labelKey: 'patients.tab.appointments' },
+  { key: 'files', labelKey: 'patients.tab.files' },
 ];
 
 async function sharePrescription(patient: Patient, rx: Prescription, professionalId: string) {
@@ -317,12 +319,6 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
     }
   }
 
-  function formatFileSize(bytes: number) {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  }
-
   return (
     <Modal visible animationType="slide" onRequestClose={onClose}>
       <SafeAreaView style={styles.detailContainer} edges={['top']}>
@@ -336,7 +332,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
             <TouchableOpacity style={styles.saveEditBtn} onPress={saveEdit} disabled={saving}>
               {saving
                 ? <ActivityIndicator size="small" color="#fff" />
-                : <Text style={styles.saveEditBtnText}>Save</Text>
+                : <Text style={styles.saveEditBtnText}>{t('common.save')}</Text>
               }
             </TouchableOpacity>
           ) : (
@@ -349,7 +345,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
               </TouchableOpacity>
               <TouchableOpacity style={styles.editBtn} onPress={enterEdit}>
                 <Ionicons name="pencil-outline" size={16} color={Colors.primary} />
-                <Text style={styles.editBtnText}>Edit</Text>
+                <Text style={styles.editBtnText}>{t('common.edit')}</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -364,7 +360,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
               style={[styles.tab, activeTab === tab.key && styles.tabActive]}
             >
               <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>
-                {tab.label}
+                {t(tab.labelKey as any)}
               </Text>
             </TouchableOpacity>
           ))}
@@ -394,7 +390,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
 
               {recentAppts.length > 0 && (
                 <View style={styles.timelineSection}>
-                  <Text style={styles.timelineTitle}>Recent Appointments</Text>
+                  <Text style={styles.timelineTitle}>{t('patients.recentAppts')}</Text>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.timelineScroll}>
                     {recentAppts.map(appt => (
                       <View key={appt.id} style={styles.timelineCard}>
@@ -402,7 +398,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                         <Text style={styles.timelineDate}>{appt.date.slice(5).replace('-', '/')}</Text>
                         <Text style={styles.timelineType} numberOfLines={1}>{appt.consultationType}</Text>
                         <Text style={[styles.timelineStatus, { color: apptStatusColor(appt.status) }]}>
-                          {appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
+                          {t(`status.${appt.status}` as any)}
                         </Text>
                       </View>
                     ))}
@@ -410,10 +406,10 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                 </View>
               )}
 
-              <Text style={styles.sectionTitle}>Personal Information</Text>
+              <Text style={styles.sectionTitle}>{t('patients.form.section.personal')}</Text>
               <View style={styles.fieldGrid}>
                 <View style={styles.fieldFull}>
-                  <Text style={styles.fieldLabel}>Full Name</Text>
+                  <Text style={styles.fieldLabel}>{t('patients.form.fullName')}</Text>
                   {editing ? (
                     <View style={styles.editInput}>
                       <TextInput style={styles.editInputText} value={editName} onChangeText={setEditName} />
@@ -424,7 +420,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                 </View>
 
                 <View style={styles.fieldHalf}>
-                  <Text style={styles.fieldLabel}>CPF</Text>
+                  <Text style={styles.fieldLabel}>{t('patients.form.cpf')}</Text>
                   {editing ? (
                     <View style={styles.editInput}>
                       <TextInput style={styles.editInputText} value={editCpf} onChangeText={setEditCpf} placeholder="000.000.000-00" placeholderTextColor={Colors.textMuted} keyboardType="numeric" />
@@ -435,26 +431,26 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                 </View>
 
                 <View style={styles.fieldHalf}>
-                  <Text style={styles.fieldLabel}>Sex</Text>
+                  <Text style={styles.fieldLabel}>{t('patients.form.sex')}</Text>
                   {editing ? (
                     <View style={styles.sexRow}>
                       {(['male', 'female', 'other'] as const).map(s => (
                         <TouchableOpacity key={s} onPress={() => setEditSex(editSex === s ? undefined : s)} style={[styles.sexPill, editSex === s && styles.sexPillActive]}>
-                          <Text style={[styles.sexPillText, editSex === s && styles.sexPillTextActive]}>{s[0].toUpperCase()}</Text>
+                          <Text style={[styles.sexPillText, editSex === s && styles.sexPillTextActive]}>{t(`patients.form.${s}` as any)[0]}</Text>
                         </TouchableOpacity>
                       ))}
                     </View>
                   ) : (
                     <View style={styles.fieldBox}>
                       <Text style={styles.fieldValue}>
-                        {patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : '—'}
+                        {patient.sex ? t(`patients.form.${patient.sex}` as any) : '—'}
                       </Text>
                     </View>
                   )}
                 </View>
 
                 <View style={styles.fieldHalf}>
-                  <Text style={styles.fieldLabel}>Date of Birth</Text>
+                  <Text style={styles.fieldLabel}>{t('patients.form.dob')}</Text>
                   {editing ? (
                     <View style={styles.editInput}>
                       <TextInput style={styles.editInputText} value={editBirthDate} onChangeText={setEditBirthDate} placeholder="YYYY-MM-DD" placeholderTextColor={Colors.textMuted} />
@@ -465,18 +461,18 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                 </View>
 
                 <View style={styles.fieldHalf}>
-                  <Text style={styles.fieldLabel}>Age</Text>
+                  <Text style={styles.fieldLabel}>{t('patients.ageField')}</Text>
                   <View style={styles.fieldBox}>
                     <Text style={styles.fieldValue}>
-                      {getAge(editing ? editBirthDate : patient.birthDate) != null
-                        ? `${getAge(editing ? editBirthDate : patient.birthDate)} yrs`
+                      {(editing ? editBirthDate : patient.birthDate)
+                        ? formatAge(editing ? editBirthDate : patient.birthDate!)
                         : '—'}
                     </Text>
                   </View>
                 </View>
 
                 <View style={styles.fieldFull}>
-                  <Text style={styles.fieldLabel}>Profession</Text>
+                  <Text style={styles.fieldLabel}>{t('patients.form.profession')}</Text>
                   {editing ? (
                     <View style={styles.editInput}>
                       <TextInput style={styles.editInputText} value={editProfession} onChangeText={setEditProfession} placeholder="e.g. Engineer" placeholderTextColor={Colors.textMuted} />
@@ -487,10 +483,10 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                 </View>
               </View>
 
-              <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Contact</Text>
+              <Text style={[styles.sectionTitle, { marginTop: 20 }]}>{t('patients.form.section.contact')}</Text>
               <View style={styles.fieldGrid}>
                 <View style={styles.fieldFull}>
-                  <Text style={styles.fieldLabel}>Email</Text>
+                  <Text style={styles.fieldLabel}>{t('patients.form.email')}</Text>
                   {editing ? (
                     <View style={styles.editInput}>
                       <TextInput style={styles.editInputText} value={editEmail} onChangeText={setEditEmail} placeholder="email@example.com" placeholderTextColor={Colors.textMuted} keyboardType="email-address" autoCapitalize="none" />
@@ -500,7 +496,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                   )}
                 </View>
                 <View style={styles.fieldFull}>
-                  <Text style={styles.fieldLabel}>Phone</Text>
+                  <Text style={styles.fieldLabel}>{t('patients.form.phone')}</Text>
                   {editing ? (
                     <View style={styles.editInput}>
                       <TextInput style={styles.editInputText} value={editPhone} onChangeText={setEditPhone} placeholder="+55 (11) 99999-9999" placeholderTextColor={Colors.textMuted} keyboardType="phone-pad" />
@@ -511,7 +507,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                 </View>
               </View>
 
-              <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Tags</Text>
+              <Text style={[styles.sectionTitle, { marginTop: 20 }]}>{t('patients.form.tags')}</Text>
               {editing ? (
                 <View style={{ gap: 8 }}>
                   <View style={styles.tagsRow}>
@@ -549,7 +545,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                     ))}
                   </View>
                 ) : (
-                  <View style={styles.fieldBox}><Text style={styles.fieldValue}>No tags</Text></View>
+                  <View style={styles.fieldBox}><Text style={styles.fieldValue}>{t('patients.noTags')}</Text></View>
                 )
               )}
             </View>
@@ -560,12 +556,12 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
             <View style={styles.section}>
               <TouchableOpacity style={styles.newItemBtn} onPress={() => setShowNewRecord(true)}>
                 <Ionicons name="add" size={16} color={Colors.primary} />
-                <Text style={styles.newItemText}>New Record</Text>
+                <Text style={styles.newItemText}>{t('records.newRecord')}</Text>
               </TouchableOpacity>
               {records.length === 0 ? (
                 <View style={styles.emptyState}>
                   <Ionicons name="document-text-outline" size={40} color={Colors.textMuted} />
-                  <Text style={styles.emptyText}>No records yet</Text>
+                  <Text style={styles.emptyText}>{t('records.noRecords')}</Text>
                 </View>
               ) : (
                 records.map(record => (
@@ -577,8 +573,8 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                         </Text>
                       </View>
                       <View style={{ flex: 1 }}>
-                        <Text style={styles.recordMeta}>{professionalName ? `Dr. ${professionalName.split(' ')[0]}` : 'Unknown'}</Text>
-                        <Text style={styles.recordTime}>{record.date} · {record.time} · {record.recordType ?? 'Free text'}</Text>
+                        <Text style={styles.recordMeta}>{professionalName ? `Dr. ${professionalName.split(' ')[0]}` : t('records.unknown')}</Text>
+                        <Text style={styles.recordTime}>{record.date} · {record.time} · {tRecordType(record.recordType ?? 'Free text')}</Text>
                       </View>
                     </View>
                     <Text style={styles.recordContent}>{record.content}</Text>
@@ -593,12 +589,12 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
             <View style={styles.section}>
               <TouchableOpacity style={styles.newItemBtn} onPress={() => setShowNewPrescription(true)}>
                 <Ionicons name="add" size={16} color={Colors.primary} />
-                <Text style={styles.newItemText}>New Prescription</Text>
+                <Text style={styles.newItemText}>{t('prescriptions.new')}</Text>
               </TouchableOpacity>
               {prescriptions.length === 0 ? (
                 <View style={styles.emptyState}>
                   <Ionicons name="document-outline" size={40} color={Colors.textMuted} />
-                  <Text style={styles.emptyText}>No prescriptions yet</Text>
+                  <Text style={styles.emptyText}>{t('prescriptions.noPrescriptions')}</Text>
                 </View>
               ) : (
                 prescriptions.map(rx => (
@@ -635,7 +631,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
           {activeTab === 'exams' && (
             <View style={styles.emptyState}>
               <Ionicons name="document-outline" size={40} color={Colors.textMuted} />
-              <Text style={styles.emptyText}>No exams yet</Text>
+              <Text style={styles.emptyText}>{t('patients.noExams')}</Text>
             </View>
           )}
 
@@ -647,7 +643,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                   ? <ActivityIndicator size="small" color={Colors.primary} />
                   : <Ionicons name="cloud-upload-outline" size={16} color={Colors.primary} />
                 }
-                <Text style={styles.newItemText}>{uploadingFile ? 'Uploading…' : 'Upload File'}</Text>
+                <Text style={styles.newItemText}>{uploadingFile ? t('files.uploading') : t('files.upload')}</Text>
               </TouchableOpacity>
 
               {loadingFiles ? (
@@ -655,8 +651,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
               ) : files.length === 0 ? (
                 <View style={styles.emptyState}>
                   <Ionicons name="folder-open-outline" size={40} color={Colors.textMuted} />
-                  <Text style={styles.emptyText}>No files yet</Text>
-                  <Text style={styles.emptySubText}>Upload PDFs, images, or other documents</Text>
+                  <Text style={styles.emptyText}>{t('files.noFiles')}</Text>
                 </View>
               ) : (
                 files.map(file => (
@@ -691,7 +686,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
               {patientAppts.length === 0 ? (
                 <View style={styles.emptyState}>
                   <Ionicons name="calendar-outline" size={40} color={Colors.textMuted} />
-                  <Text style={styles.emptyText}>No appointments yet</Text>
+                  <Text style={styles.emptyText}>{t('appts.noAppointments')}</Text>
                 </View>
               ) : (
                 patientAppts.map(appt => (
@@ -703,13 +698,13 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                     <View style={{ flex: 1, gap: 2 }}>
                       <Text style={styles.apptCardType}>{appt.consultationType}</Text>
                       <Text style={styles.apptCardMeta}>
-                        {appt.type === 'online' ? 'Online' : 'In-Person'}
-                        {appt.paymentAmount ? ` · R$ ${appt.paymentAmount.toFixed(0)}` : ''}
+                        {t(appt.type === 'online' ? 'apptType.online' : 'apptType.inPerson')}
+                        {appt.paymentAmount ? ` · ${formatCurrencyWhole(appt.paymentAmount)}` : ''}
                       </Text>
                     </View>
                     <View style={[styles.apptStatusBadge, { backgroundColor: apptStatusColor(appt.status) + '20' }]}>
                       <Text style={[styles.apptStatusText, { color: apptStatusColor(appt.status) }]}>
-                        {appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
+                        {t(`status.${appt.status}` as any)}
                       </Text>
                     </View>
                   </View>
@@ -798,19 +793,19 @@ export default function PatientsScreen() {
   function openPatientMenu(patient: Patient) {
     Alert.alert(patient.fullName, '', [
       {
-        text: 'Open profile',
+        text: t('patients.openProfile'),
         onPress: () => setSelected(patient),
       },
       {
-        text: 'Delete patient',
+        text: t('patients.deletePatient'),
         style: 'destructive',
         onPress: () => Alert.alert(
-          'Delete patient?',
-          'All their records will be permanently deleted.',
+          `${t('patients.deletePatient')}?`,
+          t('patients.deleteConfirm'),
           [
-            { text: 'Cancel', style: 'cancel' },
+            { text: t('common.cancel'), style: 'cancel' },
             {
-              text: 'Delete',
+              text: t('common.delete'),
               style: 'destructive',
               onPress: async () => {
                 if (user) await deletePatient(patient.id).catch(() => {});
@@ -820,7 +815,7 @@ export default function PatientsScreen() {
           ],
         ),
       },
-      { text: 'Cancel', style: 'cancel' },
+      { text: t('common.cancel'), style: 'cancel' },
     ]);
   }
 
@@ -829,10 +824,10 @@ export default function PatientsScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Patients</Text>
+        <Text style={styles.headerTitle}>{t('patients.title')}</Text>
         <TouchableOpacity style={styles.addBtn} onPress={() => setShowNewPatient(true)}>
           <Ionicons name="add" size={20} color={Colors.primary} />
-          <Text style={styles.addBtnText}>Add</Text>
+          <Text style={styles.addBtnText}>{t('patients.add')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -841,7 +836,7 @@ export default function PatientsScreen() {
           <Ionicons name="search-outline" size={16} color={Colors.textMuted} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search patient"
+            placeholder={t('patients.searchPlaceholder')}
             placeholderTextColor={Colors.textMuted}
             value={search}
             onChangeText={setSearch}
@@ -876,7 +871,7 @@ export default function PatientsScreen() {
           ListEmptyComponent={() => (
             <View style={styles.emptyState}>
               <Ionicons name="people-outline" size={40} color={Colors.textMuted} />
-              <Text style={styles.emptyText}>No patients found</Text>
+              <Text style={styles.emptyText}>{t('patients.noFound')}</Text>
             </View>
           )}
           renderItem={({ item }) => (
@@ -896,7 +891,7 @@ export default function PatientsScreen() {
                 </View>
                 <Text style={styles.patientMeta}>
                   {[
-                    item.birthDate && `${getAge(item.birthDate)} yrs`,
+                    item.birthDate && formatAge(item.birthDate),
                     item.phone,
                   ].filter(Boolean).join(' · ')}
                 </Text>
@@ -935,29 +930,34 @@ export default function PatientsScreen() {
         <Pressable style={styles.filterOverlay} onPress={() => setShowFilter(false)}>
           <Pressable style={styles.filterSheet} onPress={e => e.stopPropagation()}>
             <View style={styles.filterSheetHeader}>
-              <Text style={styles.filterSheetTitle}>Filters</Text>
+              <Text style={styles.filterSheetTitle}>{t('patients.filters')}</Text>
               {activeFilterCount > 0 && (
                 <TouchableOpacity onPress={() => setFilterSex('')}>
-                  <Text style={{ fontSize: 13, color: Colors.danger, fontWeight: '500' }}>Clear all</Text>
+                  <Text style={{ fontSize: 13, color: Colors.danger, fontWeight: '500' }}>{t('common.clear')}</Text>
                 </TouchableOpacity>
               )}
             </View>
 
-            <Text style={styles.filterLabel}>Sex</Text>
+            <Text style={styles.filterLabel}>{t('patients.filter.sex')}</Text>
             <View style={styles.filterPillRow}>
-              {([['', 'All'], ['male', 'Male'], ['female', 'Female'], ['other', 'Other']] as const).map(([val, label]) => (
+              {([
+                ['', 'patients.filter.all'],
+                ['male', 'patients.filter.male'],
+                ['female', 'patients.filter.female'],
+                ['other', 'patients.filter.other'],
+              ] as const).map(([val, labelKey]) => (
                 <TouchableOpacity
                   key={val}
                   style={[styles.filterPill, filterSex === val && styles.filterPillActive]}
                   onPress={() => setFilterSex(val)}
                 >
-                  <Text style={[styles.filterPillText, filterSex === val && styles.filterPillTextActive]}>{label}</Text>
+                  <Text style={[styles.filterPillText, filterSex === val && styles.filterPillTextActive]}>{t(labelKey as any)}</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
             <TouchableOpacity style={styles.filterApplyBtn} onPress={() => setShowFilter(false)}>
-              <Text style={styles.filterApplyText}>Apply</Text>
+              <Text style={styles.filterApplyText}>{t('common.apply')}</Text>
             </TouchableOpacity>
           </Pressable>
         </Pressable>

@@ -11,6 +11,7 @@ import { WorkingHoursModal } from '@/components/WorkingHoursModal';
 import { DocumentTemplatesModal } from '@/components/DocumentTemplatesModal';
 import { ProceduresModal } from '@/components/ProceduresModal';
 import { MyClinicModal } from '@/components/MyClinicModal';
+import { t } from '@/lib/i18n';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -32,52 +33,52 @@ export default function SettingsScreen() {
   }, [user]);
 
   function comingSoon(label: string) {
-    return () => Alert.alert(label, 'This feature is coming soon.', [{ text: 'OK' }]);
+    return () => Alert.alert(label, t('settings.comingSoon'), [{ text: 'OK' }]);
   }
 
   const SETTINGS: SettingGroup[] = [
     {
-      title: 'Profile',
+      title: t('settings.group.profile'),
       items: [
-        { label: 'My Profile', icon: 'person-outline', onPress: () => setShowProfile(true) },
-        { label: 'My Clinic', icon: 'business-outline', onPress: () => setShowMyClinic(true) },
+        { label: t('settings.myProfile'), icon: 'person-outline', onPress: () => setShowProfile(true) },
+        { label: t('settings.myClinic'), icon: 'business-outline', onPress: () => setShowMyClinic(true) },
       ],
     },
     {
-      title: 'My Procedures',
+      title: t('settings.group.procedures'),
       items: [
-        { label: 'Manage Procedures', icon: 'list-outline', onPress: () => setShowProcedures(true) },
+        { label: t('settings.procedures'), icon: 'list-outline', onPress: () => setShowProcedures(true) },
       ],
     },
     {
-      title: 'Configuration',
+      title: t('settings.group.configuration'),
       items: [
-        { label: 'Registrations', icon: 'list-outline', onPress: comingSoon('Registrations') },
-        { label: 'Integrations', icon: 'link-outline', onPress: comingSoon('Integrations') },
-        { label: 'Patient Data', icon: 'people-outline', onPress: comingSoon('Patient Data') },
-        { label: 'Working Hours', icon: 'calendar-outline', onPress: () => setShowWorkingHours(true) },
-        { label: 'Medical Records', icon: 'document-text-outline', onPress: comingSoon('Medical Records') },
-        { label: 'Modules', icon: 'grid-outline', onPress: comingSoon('Modules') },
-        { label: 'Document Templates', icon: 'color-palette-outline', onPress: () => setShowDocumentTemplates(true) },
-        { label: 'Documents', icon: 'folder-outline', onPress: comingSoon('Documents') },
+        { label: t('settings.registrations'), icon: 'list-outline', onPress: comingSoon(t('settings.registrations')) },
+        { label: t('settings.integrations'), icon: 'link-outline', onPress: comingSoon(t('settings.integrations')) },
+        { label: t('settings.patientData'), icon: 'people-outline', onPress: comingSoon(t('settings.patientData')) },
+        { label: t('settings.workingHours'), icon: 'calendar-outline', onPress: () => setShowWorkingHours(true) },
+        { label: t('settings.medicalRecords'), icon: 'document-text-outline', onPress: comingSoon(t('settings.medicalRecords')) },
+        { label: t('settings.modules'), icon: 'grid-outline', onPress: comingSoon(t('settings.modules')) },
+        { label: t('settings.documentTemplates'), icon: 'color-palette-outline', onPress: () => setShowDocumentTemplates(true) },
+        { label: t('settings.documents'), icon: 'folder-outline', onPress: comingSoon(t('settings.documents')) },
       ],
     },
     {
-      title: 'Support',
+      title: t('settings.group.support'),
       items: [
-        { label: 'Help', icon: 'help-circle-outline', onPress: comingSoon('Help') },
-        { label: 'About SolvyMed', icon: 'information-circle-outline', onPress: comingSoon('About SolvyMed') },
+        { label: t('settings.help'), icon: 'help-circle-outline', onPress: comingSoon(t('settings.help')) },
+        { label: t('settings.about'), icon: 'information-circle-outline', onPress: comingSoon(t('settings.about')) },
       ],
     },
   ];
 
-  const displayName = professional?.fullName || 'Dr. Professional';
-  const displaySpecialty = professional?.specialty || 'Complete your profile';
+  const displayName = professional?.fullName || t('settings.profilePlaceholder');
+  const displaySpecialty = professional?.specialty || t('settings.profileSubPlaceholder');
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Settings</Text>
+        <Text style={styles.headerTitle}>{t('settings.title')}</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -91,7 +92,7 @@ export default function SettingsScreen() {
           <View style={{ flex: 1 }}>
             <Text style={styles.profileName}>{displayName}</Text>
             <Text style={styles.profileEmail}>
-              {professional?.specialty ? professional.specialty : user?.email ?? 'Not signed in'}
+              {professional?.specialty ? professional.specialty : user?.email ?? displaySpecialty}
             </Text>
             {professional?.clinicName ? (
               <Text style={styles.profileClinic}>{professional.clinicName}</Text>
@@ -123,7 +124,7 @@ export default function SettingsScreen() {
 
         <TouchableOpacity style={styles.signOutBtn} onPress={signOut}>
           <Ionicons name="log-out-outline" size={18} color={Colors.danger} />
-          <Text style={styles.signOutText}>Sign Out</Text>
+          <Text style={styles.signOutText}>{t('settings.signOut')}</Text>
         </TouchableOpacity>
 
         <View style={{ height: 40 }} />
