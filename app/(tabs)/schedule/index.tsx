@@ -19,6 +19,7 @@ import {
   getAppointmentsByDate, updatePaymentStatus, updateAppointmentStatus,
   getAppointmentCountsByWeek, getPatient,
 } from '@/lib/services';
+import { cancelAppointmentReminder } from '@/lib/notifications';
 import { useAuth } from '@/lib/auth-context';
 import { NewAppointmentModal } from '@/components/NewAppointmentModal';
 import { BlockTimeModal } from '@/components/BlockTimeModal';
@@ -316,6 +317,7 @@ export default function ScheduleScreen() {
 
   async function handleStatusChange(apptId: string, status: Appointment['status']) {
     if (user) await updateAppointmentStatus(apptId, status);
+    if (status === 'cancelled') cancelAppointmentReminder(apptId).catch(() => {});
     setAppointments(prev => prev.map(a => a.id === apptId ? { ...a, status } : a));
     setSelectedAppt(prev => prev?.id === apptId ? { ...prev, status } : prev);
   }

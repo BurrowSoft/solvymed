@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { Appointment, Patient } from '@/lib/types';
 import { createAppointment, updateAppointment, createRecurringAppointments, getPatients } from '@/lib/services';
+import { scheduleAppointmentReminder } from '@/lib/notifications';
 import { MOCK_PATIENTS } from '@/lib/mock-data';
 import { useAuth } from '@/lib/auth-context';
 
@@ -158,6 +159,7 @@ export function NewAppointmentModal({
         const count = Math.max(1, parseInt(occurrences, 10) || 8);
         if (user) {
           const all = await createRecurringAppointments(apptData, recurrence, count);
+          for (const a of all) scheduleAppointmentReminder(a).catch(() => {});
           onSaved(all[0]);
         } else {
           onSaved({ ...apptData, id: Date.now().toString() });
@@ -166,6 +168,7 @@ export function NewAppointmentModal({
       } else {
         if (user) {
           const saved = await createAppointment(apptData);
+          scheduleAppointmentReminder(saved).catch(() => {});
           onSaved(saved);
         } else {
           onSaved({ ...apptData, id: Date.now().toString() });
