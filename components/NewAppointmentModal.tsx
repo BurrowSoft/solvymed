@@ -13,6 +13,7 @@ import { MOCK_PATIENTS } from '@/lib/mock-data';
 import { useAuth } from '@/lib/auth-context';
 import { t } from '@/lib/i18n';
 import { formatCurrency } from '@/lib/locale-utils';
+import { loadSettings } from '@/lib/app-settings';
 
 const TIME_SLOTS: string[] = [];
 for (let h = 7; h < 21; h++) {
@@ -104,15 +105,21 @@ export function NewAppointmentModal({
       setPatientSearch('');
       setDate(defaultDate);
       setStartTime('09:00');
-      setDuration(30);
-      setType('in-person');
       setConsultationType('Consultation');
-      setPaymentType('private');
       setAmount('');
       setNotes('');
       setExtraItems([]);
       setRecurrence('none');
       setOccurrences('8');
+      loadSettings().then(s => {
+        setDuration(s.defaultDurationMinutes);
+        setType(s.defaultApptType === 'online' ? 'online' : 'in-person');
+        setPaymentType(s.defaultPaymentType);
+      }).catch(() => {
+        setDuration(30);
+        setType('in-person');
+        setPaymentType('private');
+      });
     }
     setExtraItemName('');
     setExtraItemPrice('');

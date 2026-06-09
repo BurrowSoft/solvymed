@@ -1,10 +1,81 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { AppState, AppStateStatus, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthProvider, useAuth } from '@/lib/auth-context';
 import { LocaleProvider, useLocale } from '@/lib/locale-context';
+import { ThemeProvider, useTheme } from '@/lib/theme-context';
 import { scheduleRemindersForToday } from '@/lib/notifications';
+import { loadSettings } from '@/lib/app-settings';
+import { Colors } from '@/constants/Colors';
+import { Ionicons } from '@expo/vector-icons';
+
+// ─── AppLock ─────────────────────────────────────────────────────────────────
+
+function AppLock({ children }: { children: React.ReactNode }) {
+  const [locked, setLocked] = useState(false);
+  const backgroundedAt = useRef<number | null>(null);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', handleAppStateChange);
+    return () => sub.remove();
+  }, []);
+
+  async function handleAppStateChange(state: AppStateStatus) {
+    if (state === 'background' || state === 'inactive') {
+      backgroundedAt.current = Date.now();
+      return;
+    }
+    if (state === 'active' && backgroundedAt.current !== null) {
+      const elapsed = (Date.now() - backgroundedAt.current) / 1000 / 60;
+      backgroundedAt.current = null;
+      const settings = await loadSettings().catch(() => null);
+      if (!settings) return;
+      if (!settings.biometricLockEnabled) return;
+      if (settings.autoLockMinutes > 0 && elapsed < settings.autoLockMinutes) return;
+      setLocked(true);
+      tryBiometric();
+    }
+  }
+
+  async function tryBiometric() {
+    try {
+      const LocalAuth = require('expo-local-authentication');
+      const result = await LocalAuth.authenticateAsync({ promptMessage: 'Unlock SolvyMed' });
+      if (result.success) setLocked(false);
+    } catch {
+      setLocked(false);
+    }
+  }
+
+  if (locked) {
+    return (
+      <View style={lockStyles.screen}>
+        <Ionicons name="lock-closed" size={48} color={Colors.primary} />
+        <Text style={lockStyles.text}>SolvyMed is locked</Text>
+        <TouchableOpacity style={lockStyles.btn} onPress={tryBiometric}>
+          <Ionicons name="finger-print-outline" size={20} color="#fff" />
+          <Text style={lockStyles.btnText}>Unlock</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  return <>{children}</>;
+}
+
+const lockStyles = StyleSheet.create({
+  screen: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, backgroundColor: Colors.background },
+  text: { fontSize: 18, fontWeight: '600', color: Colors.textPrimary },
+  btn: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: Colors.primary, paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12,
+  },
+  btnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
+});
+
+// ─── RootNavigator ────────────────────────────────────────────────────────────
 
 function RootNavigator() {
   const { session, loading } = useAuth();
@@ -12,6 +83,8 @@ function RootNavigator() {
   const router = useRouter();
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const [onboardingDone, setOnboardingDone] = useState(false);
+  const { locale } = useLocale();
+  const { theme } = useTheme();
 
   useEffect(() => {
     AsyncStorage.getItem('onboarding_done').then(v => {
@@ -39,22 +112,26 @@ function RootNavigator() {
     scheduleRemindersForToday(session.user.id).catch(() => {});
   }, [session]);
 
-  const { locale } = useLocale();
-
   return (
     <>
-      <StatusBar style="dark" />
-      <Stack key={locale} screenOptions={{ headerShown: false }} />
+      <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
+      <Stack key={`${locale}-${theme}`} screenOptions={{ headerShown: false }} />
     </>
   );
 }
 
+// ─── RootLayout ───────────────────────────────────────────────────────────────
+
 export default function RootLayout() {
   return (
-    <LocaleProvider>
-      <AuthProvider>
-        <RootNavigator />
-      </AuthProvider>
-    </LocaleProvider>
+    <ThemeProvider>
+      <LocaleProvider>
+        <AuthProvider>
+          <AppLock>
+            <RootNavigator />
+          </AppLock>
+        </AuthProvider>
+      </LocaleProvider>
+    </ThemeProvider>
   );
 }

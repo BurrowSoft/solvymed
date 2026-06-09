@@ -1,19 +1,12 @@
-export const Colors = {
-  primary: '#208AEF',
-  primaryDark: '#1670CC',
-  primaryLight: '#E8F4FE',
-  background: '#F5F7FA',
-  surface: '#FFFFFF',
-  border: '#E5E9F0',
-  textPrimary: '#1A2138',
-  textSecondary: '#6B7A99',
-  textMuted: '#A0ABBE',
-  blocked: '#C8CDD8',
-  blockedBg: '#EDEFF4',
-  success: '#22C55E',
-  warning: '#F59E0B',
-  danger: '#EF4444',
-  tabBar: '#FFFFFF',
-  tabBarActive: '#208AEF',
-  tabBarInactive: '#A0ABBE',
-};
+import { THEMES, ThemeKey } from './themes';
+
+let _theme: ThemeKey = 'light';
+
+export function getAppTheme(): ThemeKey { return _theme; }
+
+export function setAppTheme(key: ThemeKey): void {
+  _theme = key;
+  Object.assign(Colors, THEMES[key]);
+}
+
+export const Colors = { ...THEMES.light };
