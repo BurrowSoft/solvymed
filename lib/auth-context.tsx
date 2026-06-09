@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
+import { upsertProfessional, getProfessional } from './services';
 
 interface AuthContextType {
   session: Session | null;
@@ -30,10 +31,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      if (session?.user) ensureProfessional(session.user.id, session.user.email ?? '');
     });
 
     return () => listener.subscription.unsubscribe();
   }, []);
+
+  async function ensureProfessional(id: string, email: string) {
+    try {
+      const existing = await getProfessional(id);
+      if (!existing) {
+        await upsertProfessional(id, email, {
+          fullName: email.split('@')[0],
+        });
+      }
+    } catch {
+      // Tables may not exist yet — silently ignore
+    }
+  }
 
   async function signIn(email: string, password: string) {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
