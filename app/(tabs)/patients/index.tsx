@@ -6,12 +6,17 @@ import {
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
-import { Patient, MedicalRecord, Prescription, Appointment } from '@/lib/types';
+import { Patient, MedicalRecord, Prescription, Appointment, PatientFile } from '@/lib/types';
 import { MOCK_PATIENTS, MOCK_RECORDS, MOCK_APPOINTMENTS } from '@/lib/mock-data';
-import { getPatients, getRecords, updatePatient, getPrescriptions, getPatientAppointments, uploadPatientPhoto } from '@/lib/services';
+import {
+  getPatients, getRecords, updatePatient, getPrescriptions,
+  getPatientAppointments, uploadPatientPhoto,
+  getPatientFiles, uploadPatientFile, deletePatientFile,
+} from '@/lib/services';
 import { getTemplate } from '@/lib/template-service';
 import { buildPrescriptionHtml } from '@/lib/pdf-utils';
 import { useAuth } from '@/lib/auth-context';
@@ -19,7 +24,7 @@ import { NewPatientModal } from '@/components/NewPatientModal';
 import { NewRecordModal } from '@/components/NewRecordModal';
 import { NewPrescriptionModal } from '@/components/NewPrescriptionModal';
 
-type PatientTab = 'info' | 'records' | 'prescriptions' | 'exams' | 'appointments';
+type PatientTab = 'info' | 'records' | 'prescriptions' | 'exams' | 'appointments' | 'files';
 
 const TABS: { key: PatientTab; label: string }[] = [
   { key: 'info', label: 'Patient Info' },
@@ -27,6 +32,7 @@ const TABS: { key: PatientTab; label: string }[] = [
   { key: 'prescriptions', label: 'Prescriptions' },
   { key: 'exams', label: 'Exams' },
   { key: 'appointments', label: 'Appointments' },
+  { key: 'files', label: 'Files' },
 ];
 
 async function sharePrescription(patient: Patient, rx: Prescription, professionalId: string) {
@@ -84,6 +90,10 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
   const [showNewRecord, setShowNewRecord] = useState(false);
   const [showNewPrescription, setShowNewPrescription] = useState(false);
   const [patientAppts, setPatientAppts] = useState<Appointment[]>([]);
+  const [recentAppts, setRecentAppts] = useState<Appointment[]>([]);
+  const [files, setFiles] = useState<PatientFile[]>([]);
+  const [loadingFiles, setLoadingFiles] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(false);
 
   // Edit mode state
   const [editing, setEditing] = useState(false);
@@ -201,6 +211,76 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
     });
   }, [activeTab, patient.id, user]);
 
+  useEffect(() => {
+    if (!user) {
+      setRecentAppts(MOCK_APPOINTMENTS.filter(a => a.patientId === patient.id).slice(0, 4));
+      return;
+    }
+    getPatientAppointments(patient.id)
+      .then(all => setRecentAppts(all.slice(0, 4)))
+      .catch(() => setRecentAppts([]));
+  }, [patient.id, user]);
+
+  useEffect(() => {
+    if (activeTab !== 'files') return;
+    if (!user) { setFiles([]); return; }
+    setLoadingFiles(true);
+    getPatientFiles(user.id, patient.id)
+      .then(setFiles)
+      .catch(() => setFiles([]))
+      .finally(() => setLoadingFiles(false));
+  }, [activeTab, patient.id, user]);
+
+  async function pickAndUploadFile() {
+    if (!user) return;
+    const result = await DocumentPicker.getDocumentAsync({ copyToCacheDirectory: true, multiple: false });
+    if (result.canceled) return;
+    const asset = result.assets[0];
+    setUploadingFile(true);
+    try {
+      await uploadPatientFile(user.id, patient.id, asset.uri, asset.name, asset.mimeType ?? 'application/octet-stream');
+      const updated = await getPatientFiles(user.id, patient.id);
+      setFiles(updated);
+    } catch {
+      Alert.alert('Upload failed', 'Make sure the "patient-files" Storage bucket is created and public.');
+    } finally {
+      setUploadingFile(false);
+    }
+  }
+
+  async function handleDeleteFile(file: PatientFile) {
+    Alert.alert('Delete file', `Remove "${file.name}"?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete', style: 'destructive',
+        onPress: async () => {
+          try {
+            await deletePatientFile(file.storagePath);
+            setFiles(prev => prev.filter(f => f.storagePath !== file.storagePath));
+          } catch {
+            Alert.alert('Error', 'Could not delete the file.');
+          }
+        },
+      },
+    ]);
+  }
+
+  async function handleShareFile(file: PatientFile) {
+    try {
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(file.url, { dialogTitle: file.name });
+      }
+    } catch {
+      Alert.alert('Error', 'Could not share the file.');
+    }
+  }
+
+  function formatFileSize(bytes: number) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
   return (
     <Modal visible animationType="slide" onRequestClose={onClose}>
       <SafeAreaView style={styles.detailContainer} edges={['top']}>
@@ -261,6 +341,24 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                   </View>
                 </TouchableOpacity>
               </View>
+
+              {recentAppts.length > 0 && (
+                <View style={styles.timelineSection}>
+                  <Text style={styles.timelineTitle}>Recent Appointments</Text>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.timelineScroll}>
+                    {recentAppts.map(appt => (
+                      <View key={appt.id} style={styles.timelineCard}>
+                        <View style={[styles.timelineDot, { backgroundColor: apptStatusColor(appt.status) }]} />
+                        <Text style={styles.timelineDate}>{appt.date.slice(5).replace('-', '/')}</Text>
+                        <Text style={styles.timelineType} numberOfLines={1}>{appt.consultationType}</Text>
+                        <Text style={[styles.timelineStatus, { color: apptStatusColor(appt.status) }]}>
+                          {appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
+                        </Text>
+                      </View>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
 
               <Text style={styles.sectionTitle}>Personal Information</Text>
               <View style={styles.fieldGrid}>
@@ -491,6 +589,53 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
             </View>
           )}
 
+          {/* ── Files Tab ── */}
+          {activeTab === 'files' && (
+            <View style={styles.section}>
+              <TouchableOpacity style={styles.newItemBtn} onPress={pickAndUploadFile} disabled={uploadingFile}>
+                {uploadingFile
+                  ? <ActivityIndicator size="small" color={Colors.primary} />
+                  : <Ionicons name="cloud-upload-outline" size={16} color={Colors.primary} />
+                }
+                <Text style={styles.newItemText}>{uploadingFile ? 'Uploading…' : 'Upload File'}</Text>
+              </TouchableOpacity>
+
+              {loadingFiles ? (
+                <ActivityIndicator style={{ marginTop: 40 }} color={Colors.primary} />
+              ) : files.length === 0 ? (
+                <View style={styles.emptyState}>
+                  <Ionicons name="folder-open-outline" size={40} color={Colors.textMuted} />
+                  <Text style={styles.emptyText}>No files yet</Text>
+                  <Text style={styles.emptySubText}>Upload PDFs, images, or other documents</Text>
+                </View>
+              ) : (
+                files.map(file => (
+                  <View key={file.storagePath} style={styles.fileCard}>
+                    <View style={styles.fileIcon}>
+                      <Ionicons
+                        name={file.mimeType.startsWith('image/') ? 'image-outline' : file.mimeType === 'application/pdf' ? 'document-text-outline' : 'document-outline'}
+                        size={22}
+                        color={Colors.primary}
+                      />
+                    </View>
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text style={styles.fileName} numberOfLines={1}>{file.name}</Text>
+                      <Text style={styles.fileMeta}>
+                        {formatFileSize(file.size)} · {file.createdAt.slice(0, 10)}
+                      </Text>
+                    </View>
+                    <TouchableOpacity style={styles.fileActionBtn} onPress={() => handleShareFile(file)}>
+                      <Ionicons name="share-outline" size={18} color={Colors.primary} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.fileActionBtn} onPress={() => handleDeleteFile(file)}>
+                      <Ionicons name="trash-outline" size={18} color={Colors.danger} />
+                    </TouchableOpacity>
+                  </View>
+                ))
+              )}
+            </View>
+          )}
+
           {activeTab === 'appointments' && (
             <View style={styles.section}>
               {patientAppts.length === 0 ? (
@@ -679,6 +824,7 @@ const styles = StyleSheet.create({
   patientMeta: { fontSize: 12, color: Colors.textSecondary, marginTop: 2 },
   emptyState: { alignItems: 'center', paddingVertical: 60, gap: 10 },
   emptyText: { fontSize: 14, color: Colors.textMuted },
+  emptySubText: { fontSize: 12, color: Colors.textMuted, textAlign: 'center' },
 
   // Detail screen
   detailContainer: { flex: 1, backgroundColor: Colors.background },
@@ -764,4 +910,21 @@ const styles = StyleSheet.create({
   apptCardMeta: { fontSize: 12, color: Colors.textSecondary },
   apptStatusBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
   apptStatusText: { fontSize: 11, fontWeight: '600' },
+
+  // Timeline strip
+  timelineSection: { marginBottom: 16 },
+  timelineTitle: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, marginBottom: 8 },
+  timelineScroll: { gap: 10, paddingRight: 4 },
+  timelineCard: { width: 100, backgroundColor: Colors.surface, borderRadius: 10, padding: 10, gap: 4, borderWidth: 1, borderColor: Colors.border },
+  timelineDot: { width: 8, height: 8, borderRadius: 4 },
+  timelineDate: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary },
+  timelineType: { fontSize: 11, color: Colors.textSecondary },
+  timelineStatus: { fontSize: 10, fontWeight: '600', textTransform: 'capitalize' },
+
+  // Files tab
+  fileCard: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: Colors.surface, borderRadius: 10, padding: 12, marginBottom: 8, borderWidth: 1, borderColor: Colors.border },
+  fileIcon: { width: 38, height: 38, borderRadius: 8, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  fileName: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
+  fileMeta: { fontSize: 11, color: Colors.textSecondary },
+  fileActionBtn: { padding: 6 },
 });

@@ -350,6 +350,24 @@ export default function ScheduleScreen() {
   const [showSearch, setShowSearch] = useState(false);
   const [editingAppt, setEditingAppt] = useState<Appointment | null>(null);
   const [weekCounts, setWeekCounts] = useState<Record<string, number>>({});
+  const [filterStatuses, setFilterStatuses] = useState<Set<Appointment['status']>>(new Set());
+  const [filterType, setFilterType] = useState<'all' | 'in-person' | 'online'>('all');
+  const [showFilter, setShowFilter] = useState(false);
+
+  const activeFilterCount = filterStatuses.size + (filterType !== 'all' ? 1 : 0);
+
+  function toggleStatus(s: Appointment['status']) {
+    setFilterStatuses(prev => {
+      const next = new Set(prev);
+      if (next.has(s)) next.delete(s); else next.add(s);
+      return next;
+    });
+  }
+
+  function clearFilters() {
+    setFilterStatuses(new Set());
+    setFilterType('all');
+  }
 
   const dateStr = fmt(selectedDate);
   const weekDates = getWeekDates(selectedDate);
@@ -392,7 +410,11 @@ export default function ScheduleScreen() {
     setSelectedAppt(prev => prev?.id === apptId ? { ...prev, status } : prev);
   }
 
-  const dayAppointments = appointments;
+  const dayAppointments = appointments.filter(a => {
+    if (filterStatuses.size > 0 && !filterStatuses.has(a.status)) return false;
+    if (filterType !== 'all' && a.type !== filterType) return false;
+    return true;
+  });
 
   function navigate(dir: -1 | 1) {
     const d = new Date(selectedDate);
@@ -420,6 +442,14 @@ export default function ScheduleScreen() {
         <View style={styles.headerActions}>
           <TouchableOpacity onPress={() => setShowSearch(true)} style={styles.todayBtn}>
             <Ionicons name="search-outline" size={18} color={Colors.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setShowFilter(true)} style={styles.todayBtn}>
+            <Ionicons name="filter-outline" size={18} color={activeFilterCount > 0 ? Colors.primary : Colors.textSecondary} />
+            {activeFilterCount > 0 && (
+              <View style={styles.filterBadge}>
+                <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
+              </View>
+            )}
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setSelectedDate(new Date())} style={styles.todayBtn}>
             <Ionicons name="today-outline" size={18} color={Colors.primary} />
@@ -547,6 +577,56 @@ export default function ScheduleScreen() {
           }
         }}
       />
+
+      {/* Filter sheet */}
+      <Modal visible={showFilter} transparent animationType="slide" onRequestClose={() => setShowFilter(false)}>
+        <Pressable style={styles.filterOverlay} onPress={() => setShowFilter(false)}>
+          <Pressable style={styles.filterSheet} onPress={e => e.stopPropagation()}>
+            <View style={styles.filterHeader}>
+              <Text style={styles.filterTitle}>Filters</Text>
+              {activeFilterCount > 0 && (
+                <TouchableOpacity onPress={clearFilters}>
+                  <Text style={styles.filterClear}>Clear all</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <Text style={styles.filterLabel}>Status</Text>
+            <View style={styles.filterPillRow}>
+              {(['scheduled', 'confirmed', 'completed', 'cancelled'] as Appointment['status'][]).map(s => (
+                <TouchableOpacity
+                  key={s}
+                  style={[styles.filterPill, filterStatuses.has(s) && styles.filterPillActive]}
+                  onPress={() => toggleStatus(s)}
+                >
+                  <Text style={[styles.filterPillText, filterStatuses.has(s) && styles.filterPillTextActive]}>
+                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <Text style={styles.filterLabel}>Type</Text>
+            <View style={styles.filterPillRow}>
+              {(['all', 'in-person', 'online'] as const).map(t => (
+                <TouchableOpacity
+                  key={t}
+                  style={[styles.filterPill, filterType === t && styles.filterPillActive]}
+                  onPress={() => setFilterType(t)}
+                >
+                  <Text style={[styles.filterPillText, filterType === t && styles.filterPillTextActive]}>
+                    {t === 'all' ? 'All' : t === 'in-person' ? 'In-Person' : 'Online'}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <TouchableOpacity style={styles.filterApplyBtn} onPress={() => setShowFilter(false)}>
+              <Text style={styles.filterApplyText}>Apply</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -674,4 +754,19 @@ const styles = StyleSheet.create({
   statusActions: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   actionBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, borderRadius: 10, minWidth: 80 },
   actionBtnText: { fontSize: 13, fontWeight: '600' },
+  filterBadge: { position: 'absolute', top: -2, right: -2, minWidth: 14, height: 14, borderRadius: 7, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 },
+  filterBadgeText: { fontSize: 8, fontWeight: '700', color: '#fff' },
+  filterOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  filterSheet: { backgroundColor: Colors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20, paddingBottom: 40, gap: 12 },
+  filterHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
+  filterTitle: { fontSize: 17, fontWeight: '700', color: Colors.textPrimary },
+  filterClear: { fontSize: 13, color: Colors.danger, fontWeight: '500' },
+  filterLabel: { fontSize: 12, fontWeight: '600', color: Colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.6 },
+  filterPillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  filterPill: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.surface },
+  filterPillActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  filterPillText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
+  filterPillTextActive: { color: '#fff' },
+  filterApplyBtn: { backgroundColor: Colors.primary, borderRadius: 12, paddingVertical: 13, alignItems: 'center', marginTop: 4 },
+  filterApplyText: { fontSize: 15, fontWeight: '700', color: '#fff' },
 });

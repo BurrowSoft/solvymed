@@ -90,6 +90,15 @@ export interface Professional {
   workingHours?: WorkingHours;
 }
 
+export interface PatientFile {
+  name: string;
+  storagePath: string;
+  url: string;
+  mimeType: string;
+  size: number;
+  createdAt: string;
+}
+
 export type DocumentType = 'prescription' | 'medical_record' | 'invoice';
 
 export interface DocumentTemplate {
