@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="{{ if eq (index .Data "locale") "pt-BR" }}pt-BR{{ else if eq (index .Data "locale") "es-ES" }}es{{ else if eq (index .Data "locale") "fr-FR" }}fr{{ else if eq (index .Data "locale") "de-DE" }}de{{ else if eq (index .Data "locale") "it-IT" }}it{{ else }}en{{ end }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SolvyMed</title>
+  <!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
+</head>
+<body style="margin:0;padding:0;background-color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+
+  <!-- Preheader (hidden preview text) -->
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
+    {{ if eq (index .Data "locale") "pt-BR" }}Confirme seu email para ativar sua conta SolvyMed.
+    {{ else if eq (index .Data "locale") "es-ES" }}Confirma tu correo electrónico para activar tu cuenta de SolvyMed.
+    {{ else if eq (index .Data "locale") "fr-FR" }}Confirmez votre adresse email pour activer votre compte SolvyMed.
+    {{ else if eq (index .Data "locale") "de-DE" }}Bestätigen Sie Ihre E-Mail-Adresse, um Ihr SolvyMed-Konto zu aktivieren.
+    {{ else if eq (index .Data "locale") "it-IT" }}Conferma la tua email per attivare il tuo account SolvyMed.
+    {{ else }}Confirm your email to activate your SolvyMed account.
+    {{ end }}
+    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+  </div>
+
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#f8fafc;">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+
+        <!-- Card -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="480" style="max-width:480px;width:100%;background-color:#ffffff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);overflow:hidden;">
+
+          <!-- Teal header bar -->
+          <tr>
+            <td style="background-color:#0d9488;padding:32px 40px 28px;text-align:center;">
+              <!-- Logo mark -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
+                <tr>
+                  <td style="width:56px;height:56px;background-color:rgba(255,255,255,0.15);border-radius:16px;text-align:center;vertical-align:middle;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:12px auto;">
+                      <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                  </td>
+                </tr>
+              </table>
+              <div style="margin-top:14px;font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-0.3px;">SolvyMed</div>
+              <div style="margin-top:4px;font-size:13px;color:rgba(255,255,255,0.75);">
+                {{ if eq (index .Data "locale") "pt-BR" }}Gestão de clínica simplificada
+                {{ else if eq (index .Data "locale") "es-ES" }}Gestión de consultorios simplificada
+                {{ else if eq (index .Data "locale") "fr-FR" }}Gestion de cabinet simplifiée
+                {{ else if eq (index .Data "locale") "de-DE" }}Praxisverwaltung leicht gemacht
+                {{ else if eq (index .Data "locale") "it-IT" }}Gestione dello studio semplificata
+                {{ else }}Clinic management, simplified
+                {{ end }}
+              </div>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:40px 40px 32px;">
+
+              <!-- Checkmark circle -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin-bottom:28px;">
+                <tr>
+                  <td style="width:64px;height:64px;background-color:#f0fdfa;border-radius:50%;text-align:center;vertical-align:middle;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:18px auto;">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Headline -->
+              <h1 style="margin:0 0 12px;font-size:24px;font-weight:800;color:#0f172a;text-align:center;letter-spacing:-0.5px;">
+                {{ if eq (index .Data "locale") "pt-BR" }}Confirme seu email
+                {{ else if eq (index .Data "locale") "es-ES" }}Confirma tu correo electrónico
+                {{ else if eq (index .Data "locale") "fr-FR" }}Confirmez votre adresse email
+                {{ else if eq (index .Data "locale") "de-DE" }}Bestätigen Sie Ihre E-Mail
+                {{ else if eq (index .Data "locale") "it-IT" }}Conferma la tua email
+                {{ else }}Confirm your email
+                {{ end }}
+              </h1>
+
+              <!-- Subtitle -->
+              <p style="margin:0 0 32px;font-size:15px;color:#64748b;text-align:center;line-height:1.6;">
+                {{ if eq (index .Data "locale") "pt-BR" }}Você está quase lá! Clique no botão abaixo para confirmar seu email e começar a usar o SolvyMed.
+                {{ else if eq (index .Data "locale") "es-ES" }}¡Ya casi está! Haz clic en el botón de abajo para confirmar tu correo electrónico y empezar a usar SolvyMed.
+                {{ else if eq (index .Data "locale") "fr-FR" }}Vous y êtes presque ! Cliquez sur le bouton ci-dessous pour confirmer votre adresse email et commencer à utiliser SolvyMed.
+                {{ else if eq (index .Data "locale") "de-DE" }}Fast geschafft! Klicken Sie auf die Schaltfläche unten, um Ihre E-Mail zu bestätigen und SolvyMed zu nutzen.
+                {{ else if eq (index .Data "locale") "it-IT" }}Ci sei quasi! Clicca sul pulsante qui sotto per confermare la tua email e iniziare a usare SolvyMed.
+                {{ else }}You're almost there! Click the button below to confirm your email and start using SolvyMed.
+                {{ end }}
+              </p>
+
+              <!-- CTA Button -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin:0 auto 32px;">
+                <tr>
+                  <td style="border-radius:12px;background-color:#0d9488;box-shadow:0 4px 12px rgba(13,148,136,0.3);">
+                    <a href="{{ .ConfirmationURL }}"
+                       style="display:inline-block;padding:16px 40px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:12px;letter-spacing:0.1px;">
+                      {{ if eq (index .Data "locale") "pt-BR" }}Confirmar email
+                      {{ else if eq (index .Data "locale") "es-ES" }}Confirmar correo electrónico
+                      {{ else if eq (index .Data "locale") "fr-FR" }}Confirmer l'adresse email
+                      {{ else if eq (index .Data "locale") "de-DE" }}E-Mail bestätigen
+                      {{ else if eq (index .Data "locale") "it-IT" }}Conferma email
+                      {{ else }}Confirm email
+                      {{ end }}
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Link expiry notice -->
+              <p style="margin:0 0 24px;font-size:12px;color:#94a3b8;text-align:center;">
+                {{ if eq (index .Data "locale") "pt-BR" }}Este link expira em 24 horas.
+                {{ else if eq (index .Data "locale") "es-ES" }}Este enlace caduca en 24 horas.
+                {{ else if eq (index .Data "locale") "fr-FR" }}Ce lien expire dans 24 heures.
+                {{ else if eq (index .Data "locale") "de-DE" }}Dieser Link läuft in 24 Stunden ab.
+                {{ else if eq (index .Data "locale") "it-IT" }}Questo link scade tra 24 ore.
+                {{ else }}This link expires in 24 hours.
+                {{ end }}
+              </p>
+
+              <!-- Divider -->
+              <hr style="border:none;border-top:1px solid #e2e8f0;margin:0 0 24px;">
+
+              <!-- Fallback link -->
+              <p style="margin:0 0 8px;font-size:12px;color:#94a3b8;text-align:center;">
+                {{ if eq (index .Data "locale") "pt-BR" }}Se o botão não funcionar, copie e cole este link no seu navegador:
+                {{ else if eq (index .Data "locale") "es-ES" }}Si el botón no funciona, copia y pega este enlace en tu navegador:
+                {{ else if eq (index .Data "locale") "fr-FR" }}Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :
+                {{ else if eq (index .Data "locale") "de-DE" }}Falls der Button nicht funktioniert, kopieren Sie diesen Link in Ihren Browser:
+                {{ else if eq (index .Data "locale") "it-IT" }}Se il pulsante non funziona, copia e incolla questo link nel tuo browser:
+                {{ else }}If the button doesn't work, copy and paste this link in your browser:
+                {{ end }}
+              </p>
+              <p style="margin:0;font-size:11px;text-align:center;word-break:break-all;">
+                <a href="{{ .ConfirmationURL }}" style="color:#0d9488;text-decoration:none;">{{ .ConfirmationURL }}</a>
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color:#f8fafc;padding:24px 40px;border-top:1px solid #e2e8f0;text-align:center;">
+              <p style="margin:0 0 8px;font-size:12px;color:#94a3b8;">
+                {{ if eq (index .Data "locale") "pt-BR" }}Se você não criou uma conta SolvyMed, pode ignorar este email com segurança.
+                {{ else if eq (index .Data "locale") "es-ES" }}Si no creaste una cuenta de SolvyMed, puedes ignorar este correo electrónico.
+                {{ else if eq (index .Data "locale") "fr-FR" }}Si vous n'avez pas créé de compte SolvyMed, vous pouvez ignorer cet e-mail.
+                {{ else if eq (index .Data "locale") "de-DE" }}Wenn Sie kein SolvyMed-Konto erstellt haben, können Sie diese E-Mail ignorieren.
+                {{ else if eq (index .Data "locale") "it-IT" }}Se non hai creato un account SolvyMed, puoi ignorare questa email.
+                {{ else }}If you didn't create a SolvyMed account, you can safely ignore this email.
+                {{ end }}
+              </p>
+              <p style="margin:0;font-size:11px;color:#cbd5e1;">
+                &copy; 2026 SolvyMed &mdash; BurrowSoft &middot;
+                <a href="https://www.solvymed.com" style="color:#0d9488;text-decoration:none;">solvymed.com</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!-- / Card -->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

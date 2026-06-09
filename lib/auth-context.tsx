@@ -68,7 +68,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: `https://www.solvymed.com${webLocale}/auth/confirm` },
+      options: {
+        emailRedirectTo: `https://www.solvymed.com${webLocale}/auth/confirm`,
+        data: { locale: locale ?? 'en' },
+      },
     });
     return { error: error?.message ?? null };
   }
