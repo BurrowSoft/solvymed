@@ -84,7 +84,7 @@ describe('SignUpScreen', () => {
     await render(<SignUpScreen />);
     await fillForm('  user@clinic.com  ', 'secret123', 'secret123');
     await submit();
-    expect(mockSignUp).toHaveBeenCalledWith('user@clinic.com', 'secret123');
+    expect(mockSignUp).toHaveBeenCalledWith('user@clinic.com', 'secret123', expect.any(String));
   });
 
   it('shows confirmation state after successful sign-up', async () => {

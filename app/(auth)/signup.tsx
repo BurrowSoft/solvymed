@@ -8,9 +8,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/lib/auth-context';
+import { useLocale } from '@/lib/locale-context';
 
 export default function SignUpScreen() {
   const { signUp } = useAuth();
+  const { locale } = useLocale();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,7 +37,7 @@ export default function SignUpScreen() {
     }
     setLoading(true);
     setError(null);
-    const { error } = await signUp(email.trim(), password);
+    const { error } = await signUp(email.trim(), password, locale);
     setLoading(false);
     if (error) {
       setError(error);

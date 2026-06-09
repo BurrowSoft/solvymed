@@ -8,7 +8,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, locale?: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   resendConfirmation: (email: string) => Promise<{ error: string | null }>;
 }
@@ -63,11 +63,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error: error?.message ?? null };
   }
 
-  async function signUp(email: string, password: string) {
+  async function signUp(email: string, password: string, locale?: string) {
+    const webLocale = !locale || locale === 'en' ? '' : `/${locale === 'pt-BR' ? 'pt-BR' : locale.split('-')[0]}`;
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: 'https://www.solvymed.com/auth/confirm' },
+      options: { emailRedirectTo: `https://www.solvymed.com${webLocale}/auth/confirm` },
     });
     return { error: error?.message ?? null };
   }
