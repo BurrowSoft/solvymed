@@ -15,10 +15,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { Appointment } from '@/lib/types';
 import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
-import { getAppointmentsByDate, updatePaymentStatus, getAppointmentCountsByWeek, getPatient } from '@/lib/services';
+import {
+  getAppointmentsByDate, updatePaymentStatus, updateAppointmentStatus,
+  getAppointmentCountsByWeek, getPatient,
+} from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
 import { NewAppointmentModal } from '@/components/NewAppointmentModal';
 import { BlockTimeModal } from '@/components/BlockTimeModal';
+import { AppointmentSearchModal } from '@/components/AppointmentSearchModal';
 
 const HOUR_HEIGHT = 64;
 const START_HOUR = 7;
@@ -99,11 +103,12 @@ function statusColor(status: Appointment['status']) {
   }
 }
 
-function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange }: {
+function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit }: {
   appt: Appointment | null;
   onClose: () => void;
   onMarkPaid: (id: string) => void;
   onStatusChange: (id: string, status: Appointment['status']) => void;
+  onEdit: (appt: Appointment) => void;
 }) {
   const [patientPhone, setPatientPhone] = React.useState<string | null>(null);
 
@@ -121,9 +126,20 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange }: {
         <Pressable style={styles.modalCard} onPress={() => {}}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Appointment</Text>
-            <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={22} color={Colors.textSecondary} />
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+              {!isBlocked && (
+                <TouchableOpacity
+                  onPress={() => { onClose(); onEdit(appt); }}
+                  style={styles.editApptBtn}
+                >
+                  <Ionicons name="pencil-outline" size={14} color={Colors.primary} />
+                  <Text style={styles.editApptBtnText}>Edit</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity onPress={onClose}>
+                <Ionicons name="close" size={22} color={Colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
           </View>
 
           {!isBlocked && (
@@ -186,6 +202,14 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange }: {
           <Text style={styles.modalMeta}>{appt.consultationType}</Text>
           <Text style={styles.modalMeta}>{appt.type === 'online' ? 'Online' : 'In-Person'}</Text>
 
+          {!isBlocked && appt.notes ? (
+            <>
+              <View style={styles.modalDivider} />
+              <Text style={styles.modalSectionTitle}>Notes</Text>
+              <Text style={styles.modalMeta}>{appt.notes}</Text>
+            </>
+          ) : null}
+
           {!isBlocked && appt.status !== 'completed' && appt.status !== 'cancelled' && (
             <>
               <View style={styles.modalDivider} />
@@ -231,6 +255,8 @@ export default function ScheduleScreen() {
   const [loading, setLoading] = useState(false);
   const [showNewAppt, setShowNewAppt] = useState(false);
   const [showBlockTime, setShowBlockTime] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [editingAppt, setEditingAppt] = useState<Appointment | null>(null);
   const [weekCounts, setWeekCounts] = useState<Record<string, number>>({});
 
   const dateStr = fmt(selectedDate);
@@ -299,6 +325,9 @@ export default function ScheduleScreen() {
           </TouchableOpacity>
         </View>
         <View style={styles.headerActions}>
+          <TouchableOpacity onPress={() => setShowSearch(true)} style={styles.todayBtn}>
+            <Ionicons name="search-outline" size={18} color={Colors.primary} />
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => setSelectedDate(new Date())} style={styles.todayBtn}>
             <Ionicons name="today-outline" size={18} color={Colors.primary} />
           </TouchableOpacity>
@@ -389,17 +418,29 @@ export default function ScheduleScreen() {
         onClose={() => setSelectedAppt(null)}
         onMarkPaid={handleMarkPaid}
         onStatusChange={handleStatusChange}
+        onEdit={(appt) => { setSelectedAppt(null); setEditingAppt(appt); }}
       />
 
       <NewAppointmentModal
-        visible={showNewAppt}
-        defaultDate={dateStr}
-        onClose={() => setShowNewAppt(false)}
+        visible={showNewAppt || !!editingAppt}
+        editAppt={editingAppt ?? undefined}
+        defaultDate={editingAppt?.date ?? dateStr}
+        onClose={() => { setShowNewAppt(false); setEditingAppt(null); }}
         onSaved={(appt) => {
+          setShowNewAppt(false);
           if (appt.date === dateStr) {
             setAppointments(prev => [...prev, appt].sort((a, b) => a.startTime.localeCompare(b.startTime)));
           }
         }}
+        onUpdated={(updated) => {
+          setEditingAppt(null);
+          setAppointments(prev => prev.map(a => a.id === updated.id ? updated : a));
+        }}
+      />
+
+      <AppointmentSearchModal
+        visible={showSearch}
+        onClose={() => setShowSearch(false)}
       />
 
       <BlockTimeModal
@@ -530,6 +571,8 @@ const styles = StyleSheet.create({
   statusBadgeText: { fontSize: 12, fontWeight: '600' },
   modalSectionTitle: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
   chipPaid: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  editApptBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Colors.primaryLight, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 14 },
+  editApptBtnText: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
   statusActions: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   actionBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, borderRadius: 10, minWidth: 80 },
   actionBtnText: { fontSize: 13, fontWeight: '600' },

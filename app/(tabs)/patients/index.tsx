@@ -6,23 +6,33 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
-import { Patient, MedicalRecord, Prescription } from '@/lib/types';
-import { MOCK_PATIENTS, MOCK_RECORDS } from '@/lib/mock-data';
-import { getPatients, getRecords, updatePatient, getPrescriptions } from '@/lib/services';
+import { Patient, MedicalRecord, Prescription, Appointment } from '@/lib/types';
+import { MOCK_PATIENTS, MOCK_RECORDS, MOCK_APPOINTMENTS } from '@/lib/mock-data';
+import { getPatients, getRecords, updatePatient, getPrescriptions, getPatientAppointments } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
 import { NewPatientModal } from '@/components/NewPatientModal';
 import { NewRecordModal } from '@/components/NewRecordModal';
 import { NewPrescriptionModal } from '@/components/NewPrescriptionModal';
 
-type PatientTab = 'info' | 'records' | 'prescriptions' | 'exams' | 'files';
+type PatientTab = 'info' | 'records' | 'prescriptions' | 'exams' | 'appointments';
 
 const TABS: { key: PatientTab; label: string }[] = [
   { key: 'info', label: 'Patient Info' },
   { key: 'records', label: 'Records' },
   { key: 'prescriptions', label: 'Prescriptions' },
   { key: 'exams', label: 'Exams' },
-  { key: 'files', label: 'Files' },
+  { key: 'appointments', label: 'Appointments' },
 ];
+
+function apptStatusColor(status: Appointment['status']) {
+  switch (status) {
+    case 'confirmed': return '#208AEF';
+    case 'completed': return '#22C55E';
+    case 'cancelled': return '#EF4444';
+    case 'blocked': return '#C8CDD8';
+    default: return '#F59E0B';
+  }
+}
 
 function getAge(birthDate?: string) {
   if (!birthDate) return null;
@@ -47,6 +57,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
   const [showNewRecord, setShowNewRecord] = useState(false);
   const [showNewPrescription, setShowNewPrescription] = useState(false);
+  const [patientAppts, setPatientAppts] = useState<Appointment[]>([]);
 
   // Edit mode state
   const [editing, setEditing] = useState(false);
@@ -106,6 +117,17 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
     if (activeTab !== 'prescriptions') return;
     if (!user) { setPrescriptions([]); return; }
     getPrescriptions(patient.id).then(setPrescriptions).catch(() => setPrescriptions([]));
+  }, [activeTab, patient.id, user]);
+
+  useEffect(() => {
+    if (activeTab !== 'appointments') return;
+    if (!user) {
+      setPatientAppts(MOCK_APPOINTMENTS.filter(a => a.patientId === patient.id));
+      return;
+    }
+    getPatientAppointments(patient.id).then(setPatientAppts).catch(() => {
+      setPatientAppts(MOCK_APPOINTMENTS.filter(a => a.patientId === patient.id));
+    });
   }, [activeTab, patient.id, user]);
 
   return (
@@ -330,10 +352,42 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
             </View>
           )}
 
-          {(activeTab === 'exams' || activeTab === 'files') && (
+          {activeTab === 'exams' && (
             <View style={styles.emptyState}>
               <Ionicons name="document-outline" size={40} color={Colors.textMuted} />
-              <Text style={styles.emptyText}>No {activeTab} yet</Text>
+              <Text style={styles.emptyText}>No exams yet</Text>
+            </View>
+          )}
+
+          {activeTab === 'appointments' && (
+            <View style={styles.section}>
+              {patientAppts.length === 0 ? (
+                <View style={styles.emptyState}>
+                  <Ionicons name="calendar-outline" size={40} color={Colors.textMuted} />
+                  <Text style={styles.emptyText}>No appointments yet</Text>
+                </View>
+              ) : (
+                patientAppts.map(appt => (
+                  <View key={appt.id} style={styles.apptCard}>
+                    <View style={styles.apptCardDate}>
+                      <Text style={styles.apptCardDateText}>{appt.date.slice(5).replace('-', '/')}</Text>
+                      <Text style={styles.apptCardTime}>{appt.startTime}</Text>
+                    </View>
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text style={styles.apptCardType}>{appt.consultationType}</Text>
+                      <Text style={styles.apptCardMeta}>
+                        {appt.type === 'online' ? 'Online' : 'In-Person'}
+                        {appt.paymentAmount ? ` · R$ ${appt.paymentAmount.toFixed(0)}` : ''}
+                      </Text>
+                    </View>
+                    <View style={[styles.apptStatusBadge, { backgroundColor: apptStatusColor(appt.status) + '20' }]}>
+                      <Text style={[styles.apptStatusText, { color: apptStatusColor(appt.status) }]}>
+                        {appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
+                      </Text>
+                    </View>
+                  </View>
+                ))
+              )}
             </View>
           )}
 
@@ -546,4 +600,18 @@ const styles = StyleSheet.create({
   medName: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
   medDetail: { fontSize: 12, color: Colors.textSecondary, marginTop: 1 },
   rxNotes: { fontSize: 12, color: Colors.textMuted, fontStyle: 'italic', paddingTop: 4, borderTopWidth: 1, borderTopColor: Colors.border },
+
+  // Appointments tab
+  apptCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    backgroundColor: Colors.surface, borderRadius: 10,
+    padding: 12, marginBottom: 8, borderWidth: 1, borderColor: Colors.border,
+  },
+  apptCardDate: { alignItems: 'center', minWidth: 44 },
+  apptCardDateText: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  apptCardTime: { fontSize: 11, color: Colors.textSecondary, marginTop: 2 },
+  apptCardType: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
+  apptCardMeta: { fontSize: 12, color: Colors.textSecondary },
+  apptStatusBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
+  apptStatusText: { fontSize: 11, fontWeight: '600' },
 });

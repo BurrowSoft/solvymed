@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { Appointment, Patient } from '@/lib/types';
-import { createAppointment, getPatients } from '@/lib/services';
+import { createAppointment, updateAppointment, createRecurringAppointments, getPatients } from '@/lib/services';
 import { MOCK_PATIENTS } from '@/lib/mock-data';
 import { useAuth } from '@/lib/auth-context';
 
@@ -21,15 +21,29 @@ for (let h = 7; h < 21; h++) {
 const DURATIONS = [15, 30, 45, 60, 90];
 const CONSULTATION_TYPES = ['Consultation', 'Follow-up', 'Exam Review', 'Procedure', 'Emergency'];
 
+type RecurrenceMode = 'none' | 'weekly' | 'biweekly' | 'monthly';
+
+const RECURRENCE_OPTIONS: { key: RecurrenceMode; label: string }[] = [
+  { key: 'none', label: 'No repeat' },
+  { key: 'weekly', label: 'Weekly' },
+  { key: 'biweekly', label: 'Biweekly' },
+  { key: 'monthly', label: 'Monthly' },
+];
+
 interface Props {
   visible: boolean;
   defaultDate: string;
+  editAppt?: Appointment;
   onClose: () => void;
   onSaved: (appt: Appointment) => void;
+  onUpdated?: (appt: Appointment) => void;
 }
 
-export function NewAppointmentModal({ visible, defaultDate, onClose, onSaved }: Props) {
+export function NewAppointmentModal({
+  visible, defaultDate, editAppt, onClose, onSaved, onUpdated,
+}: Props) {
   const { user } = useAuth();
+  const isEdit = !!editAppt;
 
   // Patient picker
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -46,6 +60,11 @@ export function NewAppointmentModal({ visible, defaultDate, onClose, onSaved }: 
   const [paymentType, setPaymentType] = useState<'private' | 'insurance'>('private');
   const [amount, setAmount] = useState('');
   const [notes, setNotes] = useState('');
+
+  // Recurrence (create mode only)
+  const [recurrence, setRecurrence] = useState<RecurrenceMode>('none');
+  const [occurrences, setOccurrences] = useState('8');
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -55,13 +74,41 @@ export function NewAppointmentModal({ visible, defaultDate, onClose, onSaved }: 
 
   useEffect(() => {
     if (!visible) return;
-    setDate(defaultDate);
+    if (editAppt) {
+      setPatientId(editAppt.patientId ?? '');
+      setPatientName(editAppt.patientName ?? '');
+      setPatientSearch('');
+      setDate(editAppt.date);
+      setStartTime(editAppt.startTime);
+      setDuration(editAppt.durationMinutes);
+      setType(editAppt.type);
+      setConsultationType(editAppt.consultationType);
+      setPaymentType(editAppt.paymentType);
+      setAmount(editAppt.paymentAmount?.toString() ?? '');
+      setNotes(editAppt.notes ?? '');
+      setRecurrence('none');
+    } else {
+      setPatientId('');
+      setPatientName('');
+      setPatientSearch('');
+      setDate(defaultDate);
+      setStartTime('09:00');
+      setDuration(30);
+      setType('in-person');
+      setConsultationType('Consultation');
+      setPaymentType('private');
+      setAmount('');
+      setNotes('');
+      setRecurrence('none');
+      setOccurrences('8');
+    }
+    setError('');
     if (user) {
       getPatients(user.id).then(setPatients).catch(() => setPatients(MOCK_PATIENTS));
     } else {
       setPatients(MOCK_PATIENTS);
     }
-  }, [visible, user, defaultDate]);
+  }, [visible, user, defaultDate, editAppt?.id]);
 
   const filteredPatients = patientSearch
     ? patients.filter(p => p.fullName.toLowerCase().includes(patientSearch.toLowerCase()))
@@ -77,21 +124,6 @@ export function NewAppointmentModal({ visible, defaultDate, onClose, onSaved }: 
     setPatientId('');
     setPatientName('');
     setPatientSearch('');
-  }
-
-  function resetForm() {
-    setPatientId('');
-    setPatientName('');
-    setPatientSearch('');
-    setDate(defaultDate);
-    setStartTime('09:00');
-    setDuration(30);
-    setType('in-person');
-    setConsultationType('Consultation');
-    setPaymentType('private');
-    setAmount('');
-    setNotes('');
-    setError('');
   }
 
   async function handleSave() {
@@ -111,41 +143,61 @@ export function NewAppointmentModal({ visible, defaultDate, onClose, onSaved }: 
       consultationType,
       paymentType,
       paymentAmount: amount ? parseFloat(amount) : undefined,
-      paymentStatus: 'pending',
-      status: 'scheduled',
+      paymentStatus: editAppt?.paymentStatus ?? 'pending',
+      status: editAppt?.status ?? 'scheduled',
       notes: notes.trim() || undefined,
       professionalId: user?.id ?? '',
     };
 
     try {
-      if (user) {
-        const saved = await createAppointment(apptData);
-        onSaved(saved);
+      if (isEdit && editAppt) {
+        if (user) await updateAppointment(editAppt.id, apptData);
+        onUpdated?.({ ...apptData, id: editAppt.id });
+        onClose();
+      } else if (!isEdit && recurrence !== 'none') {
+        const count = Math.max(1, parseInt(occurrences, 10) || 8);
+        if (user) {
+          const all = await createRecurringAppointments(apptData, recurrence, count);
+          onSaved(all[0]);
+        } else {
+          onSaved({ ...apptData, id: Date.now().toString() });
+        }
+        onClose();
       } else {
-        onSaved({ ...apptData, id: Date.now().toString() });
+        if (user) {
+          const saved = await createAppointment(apptData);
+          onSaved(saved);
+        } else {
+          onSaved({ ...apptData, id: Date.now().toString() });
+        }
+        onClose();
       }
-      onClose();
-      resetForm();
     } catch {
-      setError('Failed to save appointment. Please try again.');
+      setError('Failed to save. Please try again.');
     } finally {
       setSaving(false);
     }
   }
 
+  const saveBtnLabel = isEdit
+    ? 'Update'
+    : recurrence !== 'none'
+    ? `Save ×${parseInt(occurrences, 10) || 8}`
+    : 'Save';
+
   return (
-    <Modal visible={visible} animationType="slide" onRequestClose={() => { onClose(); resetForm(); }}>
+    <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <SafeAreaView style={styles.container} edges={['top']}>
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => { onClose(); resetForm(); }}>
+            <TouchableOpacity onPress={onClose}>
               <Ionicons name="close" size={24} color={Colors.textSecondary} />
             </TouchableOpacity>
-            <Text style={styles.title}>New Appointment</Text>
+            <Text style={styles.title}>{isEdit ? 'Edit Appointment' : 'New Appointment'}</Text>
             <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={saving}>
               {saving
                 ? <ActivityIndicator size="small" color="#fff" />
-                : <Text style={styles.saveBtnText}>Save</Text>
+                : <Text style={styles.saveBtnText}>{saveBtnLabel}</Text>
               }
             </TouchableOpacity>
           </View>
@@ -347,6 +399,47 @@ export function NewAppointmentModal({ visible, defaultDate, onClose, onSaved }: 
               />
             </View>
 
+            {/* ── Recurrence (create mode only) ── */}
+            {!isEdit && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Recurrence</Text>
+                <View style={styles.pills}>
+                  {RECURRENCE_OPTIONS.map(opt => (
+                    <TouchableOpacity
+                      key={opt.key}
+                      onPress={() => setRecurrence(opt.key)}
+                      style={[styles.pill, recurrence === opt.key && styles.pillActive]}
+                    >
+                      <Text style={[styles.pillText, recurrence === opt.key && styles.pillTextActive]}>
+                        {opt.label}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                {recurrence !== 'none' && (
+                  <View style={styles.occurrencesRow}>
+                    <Text style={styles.fieldLabel}>Number of appointments</Text>
+                    <View style={styles.occurrencesInput}>
+                      <TouchableOpacity
+                        onPress={() => setOccurrences(v => String(Math.max(2, (parseInt(v, 10) || 8) - 1)))}
+                        style={styles.occurrenceBtn}
+                      >
+                        <Ionicons name="remove" size={18} color={Colors.textSecondary} />
+                      </TouchableOpacity>
+                      <Text style={styles.occurrenceCount}>{parseInt(occurrences, 10) || 8}</Text>
+                      <TouchableOpacity
+                        onPress={() => setOccurrences(v => String(Math.min(52, (parseInt(v, 10) || 8) + 1)))}
+                        style={styles.occurrenceBtn}
+                      >
+                        <Ionicons name="add" size={18} color={Colors.textSecondary} />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+              </View>
+            )}
+
             <View style={{ height: 40 }} />
           </ScrollView>
         </KeyboardAvoidingView>
@@ -409,4 +502,10 @@ const styles = StyleSheet.create({
   toggleOptText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
   toggleOptTextActive: { color: '#fff' },
   notesInput: { borderWidth: 1, borderColor: Colors.border, borderRadius: 10, padding: 12, fontSize: 14, color: Colors.textPrimary, minHeight: 88, backgroundColor: Colors.background },
+
+  // Recurrence
+  occurrencesRow: { gap: 8 },
+  occurrencesInput: { flexDirection: 'row', alignItems: 'center', gap: 16, alignSelf: 'flex-start', backgroundColor: Colors.background, borderWidth: 1, borderColor: Colors.border, borderRadius: 10, paddingHorizontal: 4 },
+  occurrenceBtn: { padding: 10 },
+  occurrenceCount: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary, minWidth: 32, textAlign: 'center' },
 });

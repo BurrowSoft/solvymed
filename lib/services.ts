@@ -145,6 +145,68 @@ export async function createRecord(record: Omit<MedicalRecord, 'id' | 'createdAt
   return toRecord(data);
 }
 
+export async function getPatientAppointments(patientId: string) {
+  const { data, error } = await supabase
+    .from('appointments')
+    .select('*')
+    .eq('patient_id', patientId)
+    .order('date', { ascending: false })
+    .order('start_time', { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map(toAppointment);
+}
+
+export async function searchAppointments(professionalId: string, query: string) {
+  const { data, error } = await supabase
+    .from('appointments')
+    .select('*')
+    .eq('professional_id', professionalId)
+    .ilike('patient_name', `%${query}%`)
+    .neq('status', 'blocked')
+    .order('date', { ascending: false })
+    .limit(20);
+  if (error) throw error;
+  return (data ?? []).map(toAppointment);
+}
+
+export async function updateAppointment(id: string, updates: Partial<Appointment>) {
+  const mapped: Record<string, unknown> = {};
+  if (updates.patientId !== undefined) mapped.patient_id = updates.patientId || null;
+  if (updates.patientName !== undefined) mapped.patient_name = updates.patientName;
+  if (updates.date !== undefined) mapped.date = updates.date;
+  if (updates.startTime !== undefined) mapped.start_time = updates.startTime;
+  if (updates.endTime !== undefined) mapped.end_time = updates.endTime;
+  if (updates.durationMinutes !== undefined) mapped.duration_minutes = updates.durationMinutes;
+  if (updates.type !== undefined) mapped.type = updates.type;
+  if (updates.consultationType !== undefined) mapped.consultation_type = updates.consultationType;
+  if (updates.paymentType !== undefined) mapped.payment_type = updates.paymentType;
+  if (updates.paymentAmount !== undefined) mapped.payment_amount = updates.paymentAmount;
+  if (updates.paymentStatus !== undefined) mapped.payment_status = updates.paymentStatus;
+  if (updates.status !== undefined) mapped.status = updates.status;
+  if (updates.notes !== undefined) mapped.notes = updates.notes || null;
+  const { error } = await supabase.from('appointments').update(mapped).eq('id', id);
+  if (error) throw error;
+}
+
+export async function createRecurringAppointments(
+  baseAppt: Omit<Appointment, 'id'>,
+  recurrence: 'weekly' | 'biweekly' | 'monthly',
+  occurrences: number,
+): Promise<Appointment[]> {
+  const results: Appointment[] = [];
+  const [yr, mo, dy] = baseAppt.date.split('-').map(Number);
+  for (let i = 0; i < occurrences; i++) {
+    let d: Date;
+    if (recurrence === 'weekly') d = new Date(yr, mo - 1, dy + i * 7);
+    else if (recurrence === 'biweekly') d = new Date(yr, mo - 1, dy + i * 14);
+    else d = new Date(yr, mo - 1 + i, dy);
+    const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const saved = await createAppointment({ ...baseAppt, date: dateStr });
+    results.push(saved);
+  }
+  return results;
+}
+
 // ─── Payments ────────────────────────────────────────────────────────────────
 
 export async function getPendingPayments(professionalId: string, from?: string, to?: string) {
