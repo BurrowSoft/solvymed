@@ -46,5 +46,17 @@
   },
   "footer": {
     "copyright": "© 2026 Solvymed. Tutti i diritti riservati."
+  },
+  "confirm": {
+    "emailConfirmed": "Email confermata!",
+    "emailConfirmedSub": "Il tuo account SolvyMed è pronto.",
+    "opening": "Apertura di SolvyMed…",
+    "openApp": "Apri SolvyMed",
+    "openAppHint": "Se l'app non si apre automaticamente, tocca il pulsante sopra.",
+    "resetPassword": "Reimposta la password",
+    "resetPasswordSub": "Apri l'app SolvyMed per impostare una nuova password per il tuo account.",
+    "error": "Qualcosa è andato storto",
+    "errorSub": "Questo link potrebbe essere scaduto o già stato utilizzato. Prova a registrarti di nuovo nell'app.",
+    "backToHome": "Torna a Solvymed.com"
   }
 }
