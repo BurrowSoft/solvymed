@@ -39,6 +39,7 @@ import { AppointmentSearchModal } from '@/components/AppointmentSearchModal';
 import WhatsAppRemindersModal from '@/components/WhatsAppRemindersModal';
 
 const HOUR_HEIGHT = 64;
+const LINE_OFFSET = 11; // hourRow.paddingTop(4) + hourLine.marginTop(7) — aligns blocks to hour lines
 const START_HOUR = 7;
 const END_HOUR = 21;
 const HOURS = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => START_HOUR + i);
@@ -69,7 +70,7 @@ function getWeekDates(date: Date) {
 function AppointmentBlock({ appt, onPress }: { appt: Appointment; onPress: () => void }) {
   const startMin = timeToMinutes(appt.startTime) - START_HOUR * 60;
   const duration = appt.durationMinutes;
-  const top = (startMin / 60) * HOUR_HEIGHT;
+  const top = LINE_OFFSET + (startMin / 60) * HOUR_HEIGHT;
   const height = Math.max((duration / 60) * HOUR_HEIGHT - 2, 28);
   const isBlocked = appt.status === 'blocked';
 

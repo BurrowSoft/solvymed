@@ -90,6 +90,7 @@ export default function PaymentsScreen() {
       setPending(prev => prev.filter(a => a.id !== apptId));
       setPaid(prev => [{ ...appt, paymentStatus: 'paid' }, ...prev]);
     }
+    if (user) getRevenueByMonth(user.id).then(setRevenue).catch(() => {});
   }
 
   const totalPending = pending.reduce((sum, a) => sum + (a.paymentAmount ?? 0), 0);
@@ -102,12 +103,7 @@ export default function PaymentsScreen() {
       </View>
 
       {/* Date filter */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.filterRow}
-        contentContainerStyle={{ paddingHorizontal: 16, gap: 8, paddingVertical: 10 }}
-      >
+      <View style={styles.filterRow}>
         {FILTERS.map(f => (
           <TouchableOpacity
             key={f.key}
@@ -119,7 +115,7 @@ export default function PaymentsScreen() {
             </Text>
           </TouchableOpacity>
         ))}
-      </ScrollView>
+      </View>
 
       <ScrollView contentContainerStyle={{ padding: 16, gap: 16 }} showsVerticalScrollIndicator={false}>
         {/* Payment account card */}
@@ -310,11 +306,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
   headerTitle: { fontSize: 20, fontWeight: '700', color: Colors.textPrimary },
-  filterRow: { backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.border, maxHeight: 52 },
-  filterPill: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.background },
-  filterPillActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
-  filterPillText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
-  filterPillTextActive: { color: '#fff', fontWeight: '600' },
+  filterRow: { flexDirection: 'row', backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  filterPill: { flex: 1, alignItems: 'center', paddingVertical: 11, borderBottomWidth: 2, borderBottomColor: 'transparent' },
+  filterPillActive: { borderBottomColor: Colors.primary },
+  filterPillText: { fontSize: 12, color: Colors.textSecondary, fontWeight: '500', textAlign: 'center' },
+  filterPillTextActive: { color: Colors.primary, fontWeight: '700' },
   row: { flexDirection: 'row', gap: 12 },
   summaryCard: {
     flex: 1, backgroundColor: Colors.surface, borderRadius: 12, padding: 14,

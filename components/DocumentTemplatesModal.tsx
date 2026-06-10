@@ -127,14 +127,6 @@ export function DocumentTemplatesModal({ visible, professional, onClose }: Props
             </View>
           )}
 
-          <View style={styles.noteCard}>
-            <Ionicons name="information-circle-outline" size={16} color={Colors.primary} style={{ marginTop: 1 }} />
-            <Text style={styles.noteText}>
-              A logo requires the <Text style={{ fontWeight: '700' }}>document-logos</Text> Storage
-              bucket in your Supabase dashboard (Storage → New bucket, set to Public).
-            </Text>
-          </View>
-
           <View style={{ height: 40 }} />
         </ScrollView>
       </SafeAreaView>
