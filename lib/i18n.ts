@@ -174,6 +174,17 @@ const en = {
   'files.uploading': 'Uploading…',
   'files.downloadFailed': 'Could not open file.',
 
+  'exams.upload': 'Upload exam',
+  'exams.uploading': 'Uploading…',
+
+  'whatsapp.title': 'WhatsApp Reminders',
+  'whatsapp.subtitle': "Tomorrow's appointments",
+  'whatsapp.noAppts': 'No appointments scheduled for tomorrow.',
+  'whatsapp.sendAll': 'Send All',
+  'whatsapp.noPhone': 'No phone',
+  'whatsapp.sent': 'Sent',
+  'whatsapp.message': 'Olá {{name}}! Lembrete: sua consulta é amanhã às {{time}}. Responda para confirmar. — {{clinic}}',
+
   'appts.noAppointments': 'No appointments yet',
 
   'payments.title': 'Payments',
@@ -525,6 +536,17 @@ const ptBR: typeof en = {
   'files.upload': 'Enviar arquivo',
   'files.uploading': 'Enviando…',
   'files.downloadFailed': 'Não foi possível abrir o arquivo.',
+
+  'exams.upload': 'Enviar exame',
+  'exams.uploading': 'Enviando…',
+
+  'whatsapp.title': 'Lembretes WhatsApp',
+  'whatsapp.subtitle': 'Consultas de amanhã',
+  'whatsapp.noAppts': 'Nenhuma consulta agendada para amanhã.',
+  'whatsapp.sendAll': 'Enviar Todos',
+  'whatsapp.noPhone': 'Sem telefone',
+  'whatsapp.sent': 'Enviado',
+  'whatsapp.message': 'Olá {{name}}! Lembrete: sua consulta é amanhã às {{time}}. Responda para confirmar. — {{clinic}}',
 
   'appts.noAppointments': 'Nenhuma consulta ainda',
 
@@ -878,6 +900,17 @@ const frFR: typeof en = {
   'files.uploading': 'Téléchargement…',
   'files.downloadFailed': "Impossible d'ouvrir le fichier.",
 
+  'exams.upload': 'Télécharger un examen',
+  'exams.uploading': 'Téléchargement…',
+
+  'whatsapp.title': 'Rappels WhatsApp',
+  'whatsapp.subtitle': 'Rendez-vous de demain',
+  'whatsapp.noAppts': 'Aucun rendez-vous prévu pour demain.',
+  'whatsapp.sendAll': 'Envoyer tout',
+  'whatsapp.noPhone': 'Pas de téléphone',
+  'whatsapp.sent': 'Envoyé',
+  'whatsapp.message': 'Bonjour {{name}} ! Rappel : votre rendez-vous est demain à {{time}}. Répondez pour confirmer. — {{clinic}}',
+
   'appts.noAppointments': 'Pas encore de rendez-vous',
 
   'payments.title': 'Paiements',
@@ -1229,6 +1262,17 @@ const deDE: typeof en = {
   'files.upload': 'Datei hochladen',
   'files.uploading': 'Hochladen…',
   'files.downloadFailed': 'Datei konnte nicht geöffnet werden.',
+
+  'exams.upload': 'Untersuchung hochladen',
+  'exams.uploading': 'Hochladen…',
+
+  'whatsapp.title': 'WhatsApp-Erinnerungen',
+  'whatsapp.subtitle': 'Termine von morgen',
+  'whatsapp.noAppts': 'Keine Termine für morgen geplant.',
+  'whatsapp.sendAll': 'Alle senden',
+  'whatsapp.noPhone': 'Kein Telefon',
+  'whatsapp.sent': 'Gesendet',
+  'whatsapp.message': 'Hallo {{name}}! Erinnerung: Ihr Termin ist morgen um {{time}} Uhr. Bitte bestätigen. — {{clinic}}',
 
   'appts.noAppointments': 'Noch keine Termine',
 
@@ -1582,6 +1626,17 @@ const itIT: typeof en = {
   'files.uploading': 'Caricamento…',
   'files.downloadFailed': 'Impossibile aprire il file.',
 
+  'exams.upload': 'Carica esame',
+  'exams.uploading': 'Caricamento…',
+
+  'whatsapp.title': 'Promemoria WhatsApp',
+  'whatsapp.subtitle': 'Appuntamenti di domani',
+  'whatsapp.noAppts': 'Nessun appuntamento programmato per domani.',
+  'whatsapp.sendAll': 'Invia tutti',
+  'whatsapp.noPhone': 'Nessun telefono',
+  'whatsapp.sent': 'Inviato',
+  'whatsapp.message': 'Ciao {{name}}! Promemoria: il tuo appuntamento è domani alle {{time}}. Rispondi per confermare. — {{clinic}}',
+
   'appts.noAppointments': 'Nessun appuntamento ancora',
 
   'payments.title': 'Pagamenti',
@@ -1933,6 +1988,17 @@ const esES: typeof en = {
   'files.upload': 'Subir archivo',
   'files.uploading': 'Subiendo…',
   'files.downloadFailed': 'No se pudo abrir el archivo.',
+
+  'exams.upload': 'Subir examen',
+  'exams.uploading': 'Subiendo…',
+
+  'whatsapp.title': 'Recordatorios WhatsApp',
+  'whatsapp.subtitle': 'Citas de mañana',
+  'whatsapp.noAppts': 'No hay citas programadas para mañana.',
+  'whatsapp.sendAll': 'Enviar todo',
+  'whatsapp.noPhone': 'Sin teléfono',
+  'whatsapp.sent': 'Enviado',
+  'whatsapp.message': '¡Hola {{name}}! Recordatorio: su cita es mañana a las {{time}}. Responda para confirmar. — {{clinic}}',
 
   'appts.noAppointments': 'Sin citas aún',
 

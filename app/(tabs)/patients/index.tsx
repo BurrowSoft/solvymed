@@ -16,6 +16,7 @@ import {
   getPatients, getRecords, updatePatient, getPrescriptions,
   getPatientAppointments, uploadPatientPhoto,
   getPatientFiles, uploadPatientFile, deletePatientFile,
+  getPatientExams, uploadPatientExam, deletePatientExam,
   getProfessional, deletePatient,
 } from '@/lib/services';
 import { getTemplate } from '@/lib/template-service';
@@ -97,6 +98,9 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
   const [files, setFiles] = useState<PatientFile[]>([]);
   const [loadingFiles, setLoadingFiles] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [exams, setExams] = useState<PatientFile[]>([]);
+  const [loadingExams, setLoadingExams] = useState(false);
+  const [uploadingExam, setUploadingExam] = useState(false);
 
   // Edit mode state
   const [editing, setEditing] = useState(false);
@@ -241,6 +245,16 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
       .finally(() => setLoadingFiles(false));
   }, [activeTab, patient.id, user]);
 
+  useEffect(() => {
+    if (activeTab !== 'exams') return;
+    if (!user) { setExams([]); return; }
+    setLoadingExams(true);
+    getPatientExams(user.id, patient.id)
+      .then(setExams)
+      .catch(() => setExams([]))
+      .finally(() => setLoadingExams(false));
+  }, [activeTab, patient.id, user]);
+
   async function pickAndUploadFile() {
     if (!user) return;
     const result = await DocumentPicker.getDocumentAsync({ copyToCacheDirectory: true, multiple: false });
@@ -282,6 +296,50 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
       }
     } catch {
       Alert.alert('Error', 'Could not share the file.');
+    }
+  }
+
+  async function pickAndUploadExam() {
+    if (!user) return;
+    const result = await DocumentPicker.getDocumentAsync({ copyToCacheDirectory: true, multiple: false });
+    if (result.canceled) return;
+    const asset = result.assets[0];
+    setUploadingExam(true);
+    try {
+      await uploadPatientExam(user.id, patient.id, asset.uri, asset.name, asset.mimeType ?? 'application/octet-stream');
+      const updated = await getPatientExams(user.id, patient.id);
+      setExams(updated);
+    } catch {
+      Alert.alert('Upload failed', 'Make sure the "patient-files" Storage bucket is created and public.');
+    } finally {
+      setUploadingExam(false);
+    }
+  }
+
+  async function handleDeleteExam(file: PatientFile) {
+    Alert.alert('Delete exam', `Remove "${file.name}"?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete', style: 'destructive',
+        onPress: async () => {
+          try {
+            await deletePatientExam(file.storagePath);
+            setExams(prev => prev.filter(f => f.storagePath !== file.storagePath));
+          } catch {
+            Alert.alert('Error', 'Could not delete the exam.');
+          }
+        },
+      },
+    ]);
+  }
+
+  async function handleShareExam(file: PatientFile) {
+    try {
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(file.url, { dialogTitle: file.name });
+      }
+    } catch {
+      Alert.alert('Error', 'Could not share the exam.');
     }
   }
 
@@ -628,10 +686,49 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
             </View>
           )}
 
+          {/* ── Exams Tab ── */}
           {activeTab === 'exams' && (
-            <View style={styles.emptyState}>
-              <Ionicons name="document-outline" size={40} color={Colors.textMuted} />
-              <Text style={styles.emptyText}>{t('patients.noExams')}</Text>
+            <View style={styles.section}>
+              <TouchableOpacity style={styles.newItemBtn} onPress={pickAndUploadExam} disabled={uploadingExam}>
+                {uploadingExam
+                  ? <ActivityIndicator size="small" color={Colors.primary} />
+                  : <Ionicons name="cloud-upload-outline" size={16} color={Colors.primary} />
+                }
+                <Text style={styles.newItemText}>{uploadingExam ? t('exams.uploading' as any) : t('exams.upload' as any)}</Text>
+              </TouchableOpacity>
+
+              {loadingExams ? (
+                <ActivityIndicator style={{ marginTop: 40 }} color={Colors.primary} />
+              ) : exams.length === 0 ? (
+                <View style={styles.emptyState}>
+                  <Ionicons name="flask-outline" size={40} color={Colors.textMuted} />
+                  <Text style={styles.emptyText}>{t('patients.noExams')}</Text>
+                </View>
+              ) : (
+                exams.map(file => (
+                  <View key={file.storagePath} style={styles.fileCard}>
+                    <View style={styles.fileIcon}>
+                      <Ionicons
+                        name={file.mimeType.startsWith('image/') ? 'image-outline' : file.mimeType === 'application/pdf' ? 'document-text-outline' : 'flask-outline'}
+                        size={22}
+                        color={Colors.primary}
+                      />
+                    </View>
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text style={styles.fileName} numberOfLines={1}>{file.name}</Text>
+                      <Text style={styles.fileMeta}>
+                        {formatFileSize(file.size)} · {file.createdAt.slice(0, 10)}
+                      </Text>
+                    </View>
+                    <TouchableOpacity style={styles.fileActionBtn} onPress={() => handleShareExam(file)}>
+                      <Ionicons name="share-outline" size={18} color={Colors.primary} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.fileActionBtn} onPress={() => handleDeleteExam(file)}>
+                      <Ionicons name="trash-outline" size={18} color={Colors.danger} />
+                    </TouchableOpacity>
+                  </View>
+                ))
+              )}
             </View>
           )}
 

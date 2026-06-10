@@ -36,6 +36,7 @@ import {
 import { NewAppointmentModal } from '@/components/NewAppointmentModal';
 import { BlockTimeModal } from '@/components/BlockTimeModal';
 import { AppointmentSearchModal } from '@/components/AppointmentSearchModal';
+import WhatsAppRemindersModal from '@/components/WhatsAppRemindersModal';
 
 const HOUR_HEIGHT = 64;
 const START_HOUR = 7;
@@ -441,6 +442,7 @@ export default function ScheduleScreen() {
   const [showNewAppt, setShowNewAppt] = useState(false);
   const [showBlockTime, setShowBlockTime] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [showWhatsApp, setShowWhatsApp] = useState(false);
   const [editingAppt, setEditingAppt] = useState<Appointment | null>(null);
   const [weekCounts, setWeekCounts] = useState<Record<string, number>>({});
   const [filterStatuses, setFilterStatuses] = useState<Set<Appointment['status']>>(new Set());
@@ -556,6 +558,9 @@ export default function ScheduleScreen() {
           </TouchableOpacity>
         </View>
         <View style={styles.headerActions}>
+          <TouchableOpacity onPress={() => setShowWhatsApp(true)} style={styles.todayBtn}>
+            <Ionicons name="logo-whatsapp" size={18} color="#25D366" />
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => setShowSearch(true)} style={styles.todayBtn}>
             <Ionicons name="search-outline" size={18} color={Colors.primary} />
           </TouchableOpacity>
@@ -709,6 +714,11 @@ export default function ScheduleScreen() {
       <AppointmentSearchModal
         visible={showSearch}
         onClose={() => setShowSearch(false)}
+      />
+
+      <WhatsAppRemindersModal
+        visible={showWhatsApp}
+        onClose={() => setShowWhatsApp(false)}
       />
 
       <BlockTimeModal

@@ -555,6 +555,58 @@ export async function deletePatientFile(storagePath: string): Promise<void> {
   if (error) throw error;
 }
 
+// ─── Patient Exams ────────────────────────────────────────────────────────────
+// Stored in patient-files bucket under exams/ subfolder to avoid a second bucket.
+
+export async function getPatientExams(
+  professionalId: string,
+  patientId: string,
+): Promise<PatientFile[]> {
+  const folder = `${professionalId}/${patientId}/exams`;
+  const { data, error } = await supabase.storage
+    .from('patient-files')
+    .list(folder, { limit: 100, sortBy: { column: 'created_at', order: 'desc' } });
+  if (error) throw error;
+  return (data ?? [])
+    .filter(f => f.name && f.name !== '.emptyFolderPlaceholder')
+    .map(f => {
+      const path = `${folder}/${f.name}`;
+      const { data: urlData } = supabase.storage.from('patient-files').getPublicUrl(path);
+      return {
+        name: f.name,
+        storagePath: path,
+        url: urlData.publicUrl,
+        mimeType: (f.metadata?.['mimetype'] as string) ?? 'application/octet-stream',
+        size: (f.metadata?.['size'] as number) ?? 0,
+        createdAt: f.created_at ?? new Date().toISOString(),
+      };
+    });
+}
+
+export async function uploadPatientExam(
+  professionalId: string,
+  patientId: string,
+  uri: string,
+  name: string,
+  mimeType = 'application/octet-stream',
+): Promise<PatientFile> {
+  const folder = `${professionalId}/${patientId}/exams`;
+  const path = `${folder}/${name}`;
+  const response = await fetch(uri);
+  const blob = await response.blob();
+  const { error } = await supabase.storage
+    .from('patient-files')
+    .upload(path, blob, { upsert: true, contentType: mimeType });
+  if (error) throw error;
+  const { data } = supabase.storage.from('patient-files').getPublicUrl(path);
+  return { name, storagePath: path, url: data.publicUrl, mimeType, size: 0, createdAt: new Date().toISOString() };
+}
+
+export async function deletePatientExam(storagePath: string): Promise<void> {
+  const { error } = await supabase.storage.from('patient-files').remove([storagePath]);
+  if (error) throw error;
+}
+
 // ─── Procedures ──────────────────────────────────────────────────────────────
 
 export async function getProcedures(professionalId: string): Promise<Procedure[]> {
