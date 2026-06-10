@@ -412,6 +412,42 @@ const en = {
   'profile.photoPermissionTitle': 'Permission needed',
   'profile.photoPermission': 'Allow photo library access to update your profile picture.',
   'profile.photoUploadFailed': 'Failed to upload photo. Please try again.',
+
+  'wh.title': 'Working Hours',
+  'wh.hint': 'Set your regular working schedule.',
+  'wh.off': 'Off',
+  'wh.startTime': 'Start time',
+  'wh.endTime': 'End time',
+  'wh.day.mon': 'Monday',
+  'wh.day.tue': 'Tuesday',
+  'wh.day.wed': 'Wednesday',
+  'wh.day.thu': 'Thursday',
+  'wh.day.fri': 'Friday',
+  'wh.day.sat': 'Saturday',
+  'wh.day.sun': 'Sunday',
+
+  'consultType.consultation': 'Consultation',
+  'consultType.followUp': 'Follow-up',
+  'consultType.examReview': 'Exam Review',
+  'consultType.procedure': 'Procedure',
+  'consultType.emergency': 'Emergency',
+
+  'specialty.gp': 'General Practitioner',
+  'specialty.cardio': 'Cardiologist',
+  'specialty.derma': 'Dermatologist',
+  'specialty.ortho': 'Orthopedist',
+  'specialty.peds': 'Pediatrician',
+  'specialty.psych': 'Psychiatrist',
+  'specialty.neuro': 'Neurologist',
+  'specialty.gyno': 'Gynecologist',
+  'specialty.endo': 'Endocrinologist',
+  'specialty.ophtho': 'Ophthalmologist',
+
+  'schedule.blockedSlotTitle': 'Blocked time slot',
+  'schedule.blockedSlotMsg': 'This time slot is blocked. Create the appointment anyway?',
+  'schedule.overlapTitle': 'Time conflict',
+  'schedule.overlapMsg': 'This overlaps with {{name}} at {{time}}. Proceed anyway?',
+  'schedule.proceedAnyway': 'Proceed',
 };
 
 // ─── Portuguese (Brazil) ─────────────────────────────────────────────────────
@@ -809,6 +845,42 @@ const ptBR: typeof en = {
   'profile.photoPermissionTitle': 'Permissão necessária',
   'profile.photoPermission': 'Permita acesso à galeria para atualizar sua foto de perfil.',
   'profile.photoUploadFailed': 'Falha ao enviar foto. Tente novamente.',
+
+  'wh.title': 'Horário de Atendimento',
+  'wh.hint': 'Defina seu horário de atendimento regular.',
+  'wh.off': 'Folga',
+  'wh.startTime': 'Início',
+  'wh.endTime': 'Fim',
+  'wh.day.mon': 'Segunda-feira',
+  'wh.day.tue': 'Terça-feira',
+  'wh.day.wed': 'Quarta-feira',
+  'wh.day.thu': 'Quinta-feira',
+  'wh.day.fri': 'Sexta-feira',
+  'wh.day.sat': 'Sábado',
+  'wh.day.sun': 'Domingo',
+
+  'consultType.consultation': 'Consulta',
+  'consultType.followUp': 'Retorno',
+  'consultType.examReview': 'Análise de Exames',
+  'consultType.procedure': 'Procedimento',
+  'consultType.emergency': 'Emergência',
+
+  'specialty.gp': 'Clínico Geral',
+  'specialty.cardio': 'Cardiologista',
+  'specialty.derma': 'Dermatologista',
+  'specialty.ortho': 'Ortopedista',
+  'specialty.peds': 'Pediatra',
+  'specialty.psych': 'Psiquiatra',
+  'specialty.neuro': 'Neurologista',
+  'specialty.gyno': 'Ginecologista',
+  'specialty.endo': 'Endocrinologista',
+  'specialty.ophtho': 'Oftalmologista',
+
+  'schedule.blockedSlotTitle': 'Horário bloqueado',
+  'schedule.blockedSlotMsg': 'Este horário está bloqueado. Criar a consulta mesmo assim?',
+  'schedule.overlapTitle': 'Conflito de horário',
+  'schedule.overlapMsg': 'Esta consulta conflita com {{name}} às {{time}}. Prosseguir mesmo assim?',
+  'schedule.proceedAnyway': 'Prosseguir',
 };
 
 // ─── French ───────────────────────────────────────────────────────────────────
@@ -1206,6 +1278,42 @@ const frFR: typeof en = {
   'profile.photoPermissionTitle': 'Permission requise',
   'profile.photoPermission': "Autorisez l'accès à la bibliothèque de photos pour mettre à jour votre photo de profil.",
   'profile.photoUploadFailed': 'Échec du téléchargement de la photo. Veuillez réessayer.',
+
+  'wh.title': 'Horaires de travail',
+  'wh.hint': 'Définissez vos horaires de travail habituels.',
+  'wh.off': 'Repos',
+  'wh.startTime': 'Heure de début',
+  'wh.endTime': 'Heure de fin',
+  'wh.day.mon': 'Lundi',
+  'wh.day.tue': 'Mardi',
+  'wh.day.wed': 'Mercredi',
+  'wh.day.thu': 'Jeudi',
+  'wh.day.fri': 'Vendredi',
+  'wh.day.sat': 'Samedi',
+  'wh.day.sun': 'Dimanche',
+
+  'consultType.consultation': 'Consultation',
+  'consultType.followUp': 'Suivi',
+  'consultType.examReview': "Analyse d'examens",
+  'consultType.procedure': 'Procédure',
+  'consultType.emergency': 'Urgence',
+
+  'specialty.gp': 'Médecin généraliste',
+  'specialty.cardio': 'Cardiologue',
+  'specialty.derma': 'Dermatologue',
+  'specialty.ortho': 'Orthopédiste',
+  'specialty.peds': 'Pédiatre',
+  'specialty.psych': 'Psychiatre',
+  'specialty.neuro': 'Neurologue',
+  'specialty.gyno': 'Gynécologue',
+  'specialty.endo': 'Endocrinologue',
+  'specialty.ophtho': 'Ophtalmologue',
+
+  'schedule.blockedSlotTitle': 'Créneau bloqué',
+  'schedule.blockedSlotMsg': 'Ce créneau est bloqué. Créer le rendez-vous quand même ?',
+  'schedule.overlapTitle': 'Conflit de planning',
+  'schedule.overlapMsg': 'Cela chevauche {{name}} à {{time}}. Continuer quand même ?',
+  'schedule.proceedAnyway': 'Continuer',
 };
 
 // ─── German ───────────────────────────────────────────────────────────────────
@@ -1603,6 +1711,42 @@ const deDE: typeof en = {
   'profile.photoPermissionTitle': 'Berechtigung benötigt',
   'profile.photoPermission': 'Erlauben Sie den Zugriff auf die Fotobibliothek, um Ihr Profilbild zu aktualisieren.',
   'profile.photoUploadFailed': 'Foto konnte nicht hochgeladen werden. Bitte erneut versuchen.',
+
+  'wh.title': 'Arbeitszeiten',
+  'wh.hint': 'Legen Sie Ihre regulären Arbeitszeiten fest.',
+  'wh.off': 'Frei',
+  'wh.startTime': 'Startzeit',
+  'wh.endTime': 'Endzeit',
+  'wh.day.mon': 'Montag',
+  'wh.day.tue': 'Dienstag',
+  'wh.day.wed': 'Mittwoch',
+  'wh.day.thu': 'Donnerstag',
+  'wh.day.fri': 'Freitag',
+  'wh.day.sat': 'Samstag',
+  'wh.day.sun': 'Sonntag',
+
+  'consultType.consultation': 'Konsultation',
+  'consultType.followUp': 'Nachsorge',
+  'consultType.examReview': 'Untersuchungsauswertung',
+  'consultType.procedure': 'Eingriff',
+  'consultType.emergency': 'Notfall',
+
+  'specialty.gp': 'Allgemeinmediziner',
+  'specialty.cardio': 'Kardiologe',
+  'specialty.derma': 'Dermatologe',
+  'specialty.ortho': 'Orthopäde',
+  'specialty.peds': 'Kinderarzt',
+  'specialty.psych': 'Psychiater',
+  'specialty.neuro': 'Neurologe',
+  'specialty.gyno': 'Gynäkologe',
+  'specialty.endo': 'Endokrinologe',
+  'specialty.ophtho': 'Augenarzt',
+
+  'schedule.blockedSlotTitle': 'Blockierter Zeitslot',
+  'schedule.blockedSlotMsg': 'Dieser Zeitslot ist blockiert. Termin trotzdem erstellen?',
+  'schedule.overlapTitle': 'Zeitkonflikt',
+  'schedule.overlapMsg': 'Dies überschneidet sich mit {{name}} um {{time}}. Trotzdem fortfahren?',
+  'schedule.proceedAnyway': 'Fortfahren',
 };
 
 // ─── Italian ──────────────────────────────────────────────────────────────────
@@ -2000,6 +2144,42 @@ const itIT: typeof en = {
   'profile.photoPermissionTitle': 'Autorizzazione necessaria',
   'profile.photoPermission': 'Consenti accesso alla libreria foto per aggiornare la tua foto del profilo.',
   'profile.photoUploadFailed': 'Caricamento foto fallito. Riprova.',
+
+  'wh.title': 'Orari di lavoro',
+  'wh.hint': 'Imposta il tuo orario di lavoro regolare.',
+  'wh.off': 'Riposo',
+  'wh.startTime': 'Ora di inizio',
+  'wh.endTime': 'Ora di fine',
+  'wh.day.mon': 'Lunedì',
+  'wh.day.tue': 'Martedì',
+  'wh.day.wed': 'Mercoledì',
+  'wh.day.thu': 'Giovedì',
+  'wh.day.fri': 'Venerdì',
+  'wh.day.sat': 'Sabato',
+  'wh.day.sun': 'Domenica',
+
+  'consultType.consultation': 'Consulto',
+  'consultType.followUp': 'Follow-up',
+  'consultType.examReview': 'Revisione esami',
+  'consultType.procedure': 'Procedura',
+  'consultType.emergency': 'Emergenza',
+
+  'specialty.gp': 'Medico di base',
+  'specialty.cardio': 'Cardiologo',
+  'specialty.derma': 'Dermatologo',
+  'specialty.ortho': 'Ortopedico',
+  'specialty.peds': 'Pediatra',
+  'specialty.psych': 'Psichiatra',
+  'specialty.neuro': 'Neurologo',
+  'specialty.gyno': 'Ginecologo',
+  'specialty.endo': 'Endocrinologo',
+  'specialty.ophtho': 'Oculista',
+
+  'schedule.blockedSlotTitle': 'Fascia oraria bloccata',
+  'schedule.blockedSlotMsg': 'Questa fascia oraria è bloccata. Creare comunque l\'appuntamento?',
+  'schedule.overlapTitle': 'Conflitto di orario',
+  'schedule.overlapMsg': 'Si sovrappone a {{name}} alle {{time}}. Procedere comunque?',
+  'schedule.proceedAnyway': 'Procedi',
 };
 
 // ─── Spanish ──────────────────────────────────────────────────────────────────
@@ -2397,6 +2577,42 @@ const esES: typeof en = {
   'profile.photoPermissionTitle': 'Permiso necesario',
   'profile.photoPermission': 'Permite el acceso a la galería para actualizar tu foto de perfil.',
   'profile.photoUploadFailed': 'Error al subir la foto. Inténtalo de nuevo.',
+
+  'wh.title': 'Horario de atención',
+  'wh.hint': 'Establece tu horario de atención habitual.',
+  'wh.off': 'Libre',
+  'wh.startTime': 'Hora de inicio',
+  'wh.endTime': 'Hora de fin',
+  'wh.day.mon': 'Lunes',
+  'wh.day.tue': 'Martes',
+  'wh.day.wed': 'Miércoles',
+  'wh.day.thu': 'Jueves',
+  'wh.day.fri': 'Viernes',
+  'wh.day.sat': 'Sábado',
+  'wh.day.sun': 'Domingo',
+
+  'consultType.consultation': 'Consulta',
+  'consultType.followUp': 'Seguimiento',
+  'consultType.examReview': 'Revisión de exámenes',
+  'consultType.procedure': 'Procedimiento',
+  'consultType.emergency': 'Emergencia',
+
+  'specialty.gp': 'Médico general',
+  'specialty.cardio': 'Cardiólogo',
+  'specialty.derma': 'Dermatólogo',
+  'specialty.ortho': 'Ortopedista',
+  'specialty.peds': 'Pediatra',
+  'specialty.psych': 'Psiquiatra',
+  'specialty.neuro': 'Neurólogo',
+  'specialty.gyno': 'Ginecólogo',
+  'specialty.endo': 'Endocrinólogo',
+  'specialty.ophtho': 'Oftalmólogo',
+
+  'schedule.blockedSlotTitle': 'Horario bloqueado',
+  'schedule.blockedSlotMsg': 'Este horario está bloqueado. ¿Crear la cita de todos modos?',
+  'schedule.overlapTitle': 'Conflicto de horario',
+  'schedule.overlapMsg': 'Se superpone con {{name}} a las {{time}}. ¿Proceder de todos modos?',
+  'schedule.proceedAnyway': 'Proceder',
 };
 
 // ─── Registry ─────────────────────────────────────────────────────────────────
@@ -2459,6 +2675,19 @@ export function tRecordType(type: string): string {
   };
   const key = map[type];
   return key ? t(key) : type;
+}
+
+const CONSULT_TYPE_MAP: Record<string, keyof typeof en> = {
+  'Consultation': 'consultType.consultation',
+  'Follow-up': 'consultType.followUp',
+  'Exam Review': 'consultType.examReview',
+  'Procedure': 'consultType.procedure',
+  'Emergency': 'consultType.emergency',
+};
+
+export function tConsultType(name: string): string {
+  const key = CONSULT_TYPE_MAP[name];
+  return key ? t(key) : name;
 }
 
 export function useTranslation() {

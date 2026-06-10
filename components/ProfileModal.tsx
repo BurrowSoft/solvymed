@@ -12,11 +12,23 @@ import { getProfessional, upsertProfessional, uploadProfilePhoto } from '@/lib/s
 import { useAuth } from '@/lib/auth-context';
 import { t } from '@/lib/i18n';
 
-const SPECIALTIES = [
-  'General Practitioner', 'Cardiologist', 'Dermatologist', 'Orthopedist',
-  'Pediatrician', 'Psychiatrist', 'Neurologist', 'Gynecologist',
-  'Endocrinologist', 'Ophthalmologist',
+const SPECIALTIES: { key: string; i18nKey: string }[] = [
+  { key: 'General Practitioner', i18nKey: 'specialty.gp' },
+  { key: 'Cardiologist', i18nKey: 'specialty.cardio' },
+  { key: 'Dermatologist', i18nKey: 'specialty.derma' },
+  { key: 'Orthopedist', i18nKey: 'specialty.ortho' },
+  { key: 'Pediatrician', i18nKey: 'specialty.peds' },
+  { key: 'Psychiatrist', i18nKey: 'specialty.psych' },
+  { key: 'Neurologist', i18nKey: 'specialty.neuro' },
+  { key: 'Gynecologist', i18nKey: 'specialty.gyno' },
+  { key: 'Endocrinologist', i18nKey: 'specialty.endo' },
+  { key: 'Ophthalmologist', i18nKey: 'specialty.ophtho' },
 ];
+
+function tSpecialty(key: string): string {
+  const found = SPECIALTIES.find(s => s.key === key);
+  return found ? t(found.i18nKey as any) : key;
+}
 
 interface Props {
   visible: boolean;
@@ -186,20 +198,20 @@ export function ProfileModal({ visible, onClose, onSaved }: Props) {
                   >
                     <Ionicons name="medkit-outline" size={16} color={Colors.textMuted} />
                     <Text style={[styles.input, !specialty && { color: Colors.textMuted }]}>
-                      {specialty || t('profile.specialtyPlaceholder')}
+                      {specialty ? tSpecialty(specialty) : t('profile.specialtyPlaceholder')}
                     </Text>
                     <Ionicons name={showSpecialtyPicker ? 'chevron-up' : 'chevron-down'} size={16} color={Colors.textMuted} />
                   </TouchableOpacity>
                   {showSpecialtyPicker && (
                     <View style={styles.picker}>
-                      {SPECIALTIES.map(s => (
+                      {SPECIALTIES.map(({ key, i18nKey }) => (
                         <TouchableOpacity
-                          key={s}
-                          style={[styles.pickerItem, specialty === s && styles.pickerItemActive]}
-                          onPress={() => { setSpecialty(s); setShowSpecialtyPicker(false); }}
+                          key={key}
+                          style={[styles.pickerItem, specialty === key && styles.pickerItemActive]}
+                          onPress={() => { setSpecialty(key); setShowSpecialtyPicker(false); }}
                         >
-                          <Text style={[styles.pickerItemText, specialty === s && styles.pickerItemTextActive]}>{s}</Text>
-                          {specialty === s && <Ionicons name="checkmark" size={16} color={Colors.primary} />}
+                          <Text style={[styles.pickerItemText, specialty === key && styles.pickerItemTextActive]}>{t(i18nKey as any)}</Text>
+                          {specialty === key && <Ionicons name="checkmark" size={16} color={Colors.primary} />}
                         </TouchableOpacity>
                       ))}
                       <TouchableOpacity

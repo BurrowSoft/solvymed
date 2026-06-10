@@ -9,15 +9,16 @@ import { Colors } from '@/constants/Colors';
 import { WorkingDay, WorkingHours, WorkingHoursKey, Professional } from '@/lib/types';
 import { updateWorkingHours } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
+import { t } from '@/lib/i18n';
 
-const DAY_ENTRIES: { key: WorkingHoursKey; label: string; short: string }[] = [
-  { key: 'mon', label: 'Monday', short: 'Mon' },
-  { key: 'tue', label: 'Tuesday', short: 'Tue' },
-  { key: 'wed', label: 'Wednesday', short: 'Wed' },
-  { key: 'thu', label: 'Thursday', short: 'Thu' },
-  { key: 'fri', label: 'Friday', short: 'Fri' },
-  { key: 'sat', label: 'Saturday', short: 'Sat' },
-  { key: 'sun', label: 'Sunday', short: 'Sun' },
+const DAY_ENTRIES: { key: WorkingHoursKey; i18nKey: string; short: string }[] = [
+  { key: 'mon', i18nKey: 'wh.day.mon', short: 'Mo' },
+  { key: 'tue', i18nKey: 'wh.day.tue', short: 'Tu' },
+  { key: 'wed', i18nKey: 'wh.day.wed', short: 'We' },
+  { key: 'thu', i18nKey: 'wh.day.thu', short: 'Th' },
+  { key: 'fri', i18nKey: 'wh.day.fri', short: 'Fr' },
+  { key: 'sat', i18nKey: 'wh.day.sat', short: 'Sa' },
+  { key: 'sun', i18nKey: 'wh.day.sun', short: 'Su' },
 ];
 
 const TIME_OPTS: string[] = [];
@@ -98,11 +99,11 @@ export function WorkingHoursModal({ visible, professional, onClose, onSaved }: P
           <TouchableOpacity onPress={onClose}>
             <Ionicons name="close" size={24} color={Colors.textSecondary} />
           </TouchableOpacity>
-          <Text style={styles.title}>Working Hours</Text>
+          <Text style={styles.title}>{t('wh.title')}</Text>
           <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={saving}>
             {saving
               ? <ActivityIndicator size="small" color="#fff" />
-              : <Text style={styles.saveBtnText}>Save</Text>
+              : <Text style={styles.saveBtnText}>{t('common.save')}</Text>
             }
           </TouchableOpacity>
         </View>
@@ -110,40 +111,40 @@ export function WorkingHoursModal({ visible, professional, onClose, onSaved }: P
         <ScrollView style={styles.body} showsVerticalScrollIndicator={false}>
           <View style={styles.section}>
             <Text style={styles.hint}>
-              Set your regular working schedule. This helps you and your team know when you're available.
+              {t('wh.hint')}
             </Text>
           </View>
 
-          {DAY_ENTRIES.map(({ key, label }) => {
-            const day = schedule[key];
+          {DAY_ENTRIES.map((day) => {
+            const dayData = schedule[day.key];
             return (
-              <View key={key} style={styles.dayRow}>
+              <View key={day.key} style={styles.dayRow}>
                 <Switch
-                  value={day.enabled}
-                  onValueChange={() => toggleDay(key)}
+                  value={dayData.enabled}
+                  onValueChange={() => toggleDay(day.key)}
                   trackColor={{ false: Colors.border, true: Colors.primary + '80' }}
-                  thumbColor={day.enabled ? Colors.primary : Colors.textMuted}
+                  thumbColor={dayData.enabled ? Colors.primary : Colors.textMuted}
                 />
-                <Text style={[styles.dayLabel, !day.enabled && styles.dayLabelOff]}>{label}</Text>
+                <Text style={[styles.dayLabel, !dayData.enabled && styles.dayLabelOff]}>{t(day.i18nKey as any)}</Text>
 
-                {day.enabled ? (
+                {dayData.enabled ? (
                   <View style={styles.timeRow}>
                     <TouchableOpacity
                       style={styles.timeBtn}
-                      onPress={() => setPicker({ day: key, field: 'start' })}
+                      onPress={() => setPicker({ day: day.key, field: 'start' })}
                     >
-                      <Text style={styles.timeBtnText}>{day.start}</Text>
+                      <Text style={styles.timeBtnText}>{dayData.start}</Text>
                     </TouchableOpacity>
                     <Text style={styles.timeSep}>–</Text>
                     <TouchableOpacity
                       style={styles.timeBtn}
-                      onPress={() => setPicker({ day: key, field: 'end' })}
+                      onPress={() => setPicker({ day: day.key, field: 'end' })}
                     >
-                      <Text style={styles.timeBtnText}>{day.end}</Text>
+                      <Text style={styles.timeBtnText}>{dayData.end}</Text>
                     </TouchableOpacity>
                   </View>
                 ) : (
-                  <Text style={styles.offLabel}>Off</Text>
+                  <Text style={styles.offLabel}>{t('wh.off')}</Text>
                 )}
               </View>
             );
@@ -159,7 +160,7 @@ export function WorkingHoursModal({ visible, professional, onClose, onSaved }: P
               <Pressable style={styles.pickerSheet} onPress={() => {}}>
                 <View style={styles.pickerHeader}>
                   <Text style={styles.pickerTitle}>
-                    {picker.field === 'start' ? 'Start time' : 'End time'}
+                    {picker.field === 'start' ? t('wh.startTime') : t('wh.endTime')}
                   </Text>
                   <TouchableOpacity onPress={() => setPicker(null)}>
                     <Ionicons name="close" size={20} color={Colors.textSecondary} />
