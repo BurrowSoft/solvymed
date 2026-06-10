@@ -13,7 +13,7 @@ import {
 } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
 import { t, tn } from '@/lib/i18n';
-import { formatHomeDateHeader, formatCurrencyWhole, formatCurrency, formatDuration } from '@/lib/locale-utils';
+import { formatHomeDateHeader, formatCurrencyWhole, formatCurrency, formatDuration, formatTime } from '@/lib/locale-utils';
 
 function fmt(d: Date) { return d.toISOString().split('T')[0]; }
 
@@ -181,7 +181,7 @@ export default function HomeScreen() {
                   onPress={() => router.push('/(tabs)/schedule')}
                 >
                   <View style={[styles.apptTimeBadge, { backgroundColor: statusColor(appt.status) + '18' }]}>
-                    <Text style={[styles.apptTime, { color: statusColor(appt.status) }]}>{appt.startTime}</Text>
+                    <Text style={[styles.apptTime, { color: statusColor(appt.status) }]}>{formatTime(appt.startTime)}</Text>
                     <Text style={[styles.apptDur, { color: statusColor(appt.status) }]}>{formatDuration(appt.durationMinutes)}</Text>
                   </View>
                   <View style={{ flex: 1, gap: 2 }}>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -275,11 +275,15 @@ export default function SettingsScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <TouchableOpacity style={styles.profileCard} onPress={() => setShowProfile(true)}>
-          <View style={styles.profileAvatar}>
-            <Text style={styles.profileInitial}>
-              {displayName[0]?.toUpperCase() ?? 'D'}
-            </Text>
-          </View>
+          {professional?.photoUrl ? (
+            <Image source={{ uri: professional.photoUrl }} style={styles.profileAvatarImg} />
+          ) : (
+            <View style={styles.profileAvatar}>
+              <Text style={styles.profileInitial}>
+                {displayName[0]?.toUpperCase() ?? 'D'}
+              </Text>
+            </View>
+          )}
           <View style={{ flex: 1 }}>
             <Text style={styles.profileName}>{displayName}</Text>
             <Text style={styles.profileEmail}>
@@ -418,6 +422,7 @@ const styles = StyleSheet.create({
     width: 52, height: 52, borderRadius: 26,
     backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center',
   },
+  profileAvatarImg: { width: 52, height: 52, borderRadius: 26 },
   profileInitial: { fontSize: 22, fontWeight: '700', color: Colors.primary },
   profileName: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
   profileEmail: { fontSize: 13, color: Colors.textSecondary, marginTop: 2 },

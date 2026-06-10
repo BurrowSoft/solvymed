@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -31,7 +31,7 @@ import { useAuth } from '@/lib/auth-context';
 import { t } from '@/lib/i18n';
 import {
   formatScheduleDayHeader, formatScheduleWeekHeader,
-  formatWeekdayShort, formatCurrency, formatAgeLabel,
+  formatWeekdayShort, formatCurrency, formatAgeLabel, formatTime,
 } from '@/lib/locale-utils';
 import { NewAppointmentModal } from '@/components/NewAppointmentModal';
 import { BlockTimeModal } from '@/components/BlockTimeModal';
@@ -56,6 +56,47 @@ function timeToMinutes(time: string) {
   return h * 60 + m;
 }
 
+function computeLayout(appointments: Appointment[]): Record<string, { col: number; totalCols: number }> {
+  if (!appointments.length) return {};
+  const sorted = [...appointments].sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+
+  const groups: Appointment[][] = [];
+  let current: Appointment[] = [];
+  let groupEnd = 0;
+  for (const appt of sorted) {
+    const start = timeToMinutes(appt.startTime);
+    if (current.length === 0 || start < groupEnd) {
+      current.push(appt);
+      groupEnd = Math.max(groupEnd, start + appt.durationMinutes);
+    } else {
+      if (current.length) groups.push(current);
+      current = [appt];
+      groupEnd = start + appt.durationMinutes;
+    }
+  }
+  if (current.length) groups.push(current);
+
+  const result: Record<string, { col: number; totalCols: number }> = {};
+  for (const group of groups) {
+    if (group.length === 1) {
+      result[group[0].id] = { col: 0, totalCols: 1 };
+      continue;
+    }
+    const colEnds: number[] = [];
+    const cols: Record<string, number> = {};
+    for (const appt of group) {
+      const start = timeToMinutes(appt.startTime);
+      let col = colEnds.findIndex(end => end <= start);
+      if (col === -1) col = colEnds.length;
+      colEnds[col] = start + appt.durationMinutes;
+      cols[appt.id] = col;
+    }
+    const totalCols = colEnds.length;
+    for (const appt of group) result[appt.id] = { col: cols[appt.id], totalCols };
+  }
+  return result;
+}
+
 function getWeekDates(date: Date) {
   const day = date.getDay();
   const sunday = new Date(date);
@@ -67,12 +108,14 @@ function getWeekDates(date: Date) {
   });
 }
 
-function AppointmentBlock({ appt, onPress }: { appt: Appointment; onPress: () => void }) {
+function AppointmentBlock({ appt, onPress, col, totalCols }: { appt: Appointment; onPress: () => void; col: number; totalCols: number }) {
   const startMin = timeToMinutes(appt.startTime) - START_HOUR * 60;
   const duration = appt.durationMinutes;
   const top = LINE_OFFSET + (startMin / 60) * HOUR_HEIGHT;
-  const height = Math.max((duration / 60) * HOUR_HEIGHT - 2, 28);
+  const height = Math.max((duration / 60) * HOUR_HEIGHT, 28);
   const isBlocked = appt.status === 'blocked';
+  const colWidth = `${(100 / totalCols).toFixed(1)}%`;
+  const colLeft = `${((col / totalCols) * 100).toFixed(1)}%`;
 
   const color = isBlocked ? Colors.blocked : statusColor(appt.status);
 
@@ -84,6 +127,8 @@ function AppointmentBlock({ appt, onPress }: { appt: Appointment; onPress: () =>
         {
           top,
           height,
+          left: colLeft,
+          width: colWidth,
           backgroundColor: color + '20',
           borderLeftColor: color,
         },
@@ -91,7 +136,7 @@ function AppointmentBlock({ appt, onPress }: { appt: Appointment; onPress: () =>
       activeOpacity={0.85}
     >
       <Text style={[styles.apptText, { color: isBlocked ? Colors.textMuted : color }]} numberOfLines={1}>
-        {isBlocked ? `${t('status.blocked').toUpperCase()} | ${appt.consultationType}` : appt.patientName}
+        {isBlocked ? t('status.blocked').toUpperCase() : appt.patientName}
       </Text>
       {!isBlocked && (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
@@ -364,7 +409,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
 
           <View style={styles.modalDivider} />
           <Text style={styles.modalMeta}>
-            {appt.date} · {appt.startTime} ({appt.durationMinutes} min)
+            {appt.date} · {formatTime(appt.startTime)} ({appt.durationMinutes} min)
           </Text>
           <View style={styles.statusRow}>
             <View style={[styles.statusBadge, { backgroundColor: statusColor(appt.status) + '20' }]}>
@@ -523,6 +568,8 @@ export default function ScheduleScreen() {
     return true;
   });
 
+  const apptLayout = useMemo(() => computeLayout(dayAppointments), [dayAppointments]);
+
   const DAY_KEYS: WorkingHoursKey[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
   function isOutsideWorkingHours(hour: number): boolean {
     const wh = professional?.workingHours;
@@ -645,13 +692,18 @@ export default function ScheduleScreen() {
 
           {/* Appointment blocks */}
           <View style={styles.apptLayer}>
-            {dayAppointments.map(appt => (
-              <AppointmentBlock
-                key={appt.id}
-                appt={appt}
-                onPress={() => setSelectedAppt(appt)}
-              />
-            ))}
+            {dayAppointments.map(appt => {
+              const { col, totalCols } = apptLayout[appt.id] ?? { col: 0, totalCols: 1 };
+              return (
+                <AppointmentBlock
+                  key={appt.id}
+                  appt={appt}
+                  onPress={() => setSelectedAppt(appt)}
+                  col={col}
+                  totalCols={totalCols}
+                />
+              );
+            })}
           </View>
         </View>
 
@@ -839,8 +891,6 @@ const styles = StyleSheet.create({
   apptLayer: { position: 'absolute', left: 56, right: 8, top: 0 },
   apptBlock: {
     position: 'absolute',
-    left: 0,
-    right: 0,
     borderRadius: 6,
     borderLeftWidth: 3,
     paddingHorizontal: 8,

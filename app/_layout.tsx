@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { AppState, AppStateStatus, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { AppState, AppStateStatus, View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as Linking from 'expo-linking';
@@ -75,6 +75,24 @@ const lockStyles = StyleSheet.create({
     backgroundColor: Colors.primary, paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12,
   },
   btnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
+});
+
+// ─── SplashLoader ────────────────────────────────────────────────────────────
+
+function SplashLoader() {
+  return (
+    <View style={splashStyles.container}>
+      <Text style={splashStyles.logo}>S</Text>
+      <Text style={splashStyles.name}>SolvyMed</Text>
+      <ActivityIndicator color={Colors.primary} size="large" style={{ marginTop: 32 }} />
+    </View>
+  );
+}
+
+const splashStyles = StyleSheet.create({
+  container: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.background, gap: 4 },
+  logo: { fontSize: 52, fontWeight: '900', color: Colors.primary },
+  name: { fontSize: 22, fontWeight: '700', color: Colors.textPrimary, letterSpacing: 0.5 },
 });
 
 // ─── RootNavigator ────────────────────────────────────────────────────────────
@@ -159,6 +177,10 @@ function RootNavigator() {
     if (!session) return;
     scheduleRemindersForToday(session.user.id).catch(() => {});
   }, [session]);
+
+  if (loading || !onboardingChecked) {
+    return <SplashLoader />;
+  }
 
   return (
     <>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
@@ -53,13 +53,16 @@ export default function PaymentsScreen() {
   const [showReport, setShowReport] = useState(false);
   const [accountActive, setAccountActive] = useState(true);
   const [installmentLimit, setInstallmentLimit] = useState(12);
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
+    setLoading(true);
     const { from, to } = getDateRange(filter);
     if (!user) {
       const all = MOCK_APPOINTMENTS.filter(a => a.status !== 'blocked');
       setPending(all.filter(a => a.paymentStatus === 'pending'));
       setPaid(all.filter(a => a.paymentStatus === 'paid'));
+      setLoading(false);
       return;
     }
     try {
@@ -73,6 +76,8 @@ export default function PaymentsScreen() {
       const all = MOCK_APPOINTMENTS.filter(a => a.status !== 'blocked');
       setPending(all.filter(a => a.paymentStatus === 'pending'));
       setPaid(all.filter(a => a.paymentStatus === 'paid'));
+    } finally {
+      setLoading(false);
     }
   }, [user, filter]);
 
@@ -188,23 +193,33 @@ export default function PaymentsScreen() {
         <View style={styles.row}>
           <View style={[styles.summaryCard, { borderLeftColor: Colors.warning }]}>
             <Text style={styles.summaryLabel}>{t('payments.pending')}</Text>
-            <Text style={[styles.summaryAmount, { color: Colors.warning }]}>
-              {formatCurrency(totalPending)}
-            </Text>
+            {loading ? (
+              <ActivityIndicator size="small" color={Colors.warning} style={{ marginVertical: 4 }} />
+            ) : (
+              <Text style={[styles.summaryAmount, { color: Colors.warning }]}>
+                {formatCurrency(totalPending)}
+              </Text>
+            )}
             <Text style={styles.summaryCount}>{tn('payments.appointment', pending.length, { n: pending.length })}</Text>
           </View>
           <View style={[styles.summaryCard, { borderLeftColor: Colors.success }]}>
             <Text style={styles.summaryLabel}>{t('payments.received')}</Text>
-            <Text style={[styles.summaryAmount, { color: Colors.success }]}>
-              {formatCurrency(totalPaid)}
-            </Text>
+            {loading ? (
+              <ActivityIndicator size="small" color={Colors.success} style={{ marginVertical: 4 }} />
+            ) : (
+              <Text style={[styles.summaryAmount, { color: Colors.success }]}>
+                {formatCurrency(totalPaid)}
+              </Text>
+            )}
             <Text style={styles.summaryCount}>{tn('payments.appointment', paid.length, { n: paid.length })}</Text>
           </View>
         </View>
 
         {/* Pending payments */}
         <Text style={styles.sectionTitle}>{t('payments.pending')}</Text>
-        {pending.length === 0 ? (
+        {loading ? (
+          <ActivityIndicator size="large" color={Colors.primary} style={{ paddingVertical: 32 }} />
+        ) : pending.length === 0 ? (
           <View style={styles.emptyState}>
             <Ionicons name="checkmark-circle-outline" size={40} color={Colors.success} />
             <Text style={styles.emptyText}>{t('payments.allUpToDate')}</Text>
@@ -230,7 +245,7 @@ export default function PaymentsScreen() {
         )}
 
         {/* Paid */}
-        {paid.length > 0 && (
+        {!loading && paid.length > 0 && (
           <>
             <Text style={styles.sectionTitle}>{t('payments.received')}</Text>
             {paid.map(appt => (

@@ -34,6 +34,13 @@ export function formatCurrencyWhole(amount: number, currency = 'BRL'): string {
   }
 }
 
+export function formatTime(time: string): string {
+  const parts = time.split(':');
+  const h = parseInt(parts[0], 10);
+  const m = parts[1] ?? '00';
+  return `${h}:${m}`;
+}
+
 // ─── Date / Time ──────────────────────────────────────────────────────────────
 
 function parseDate(date: Date | string): Date {

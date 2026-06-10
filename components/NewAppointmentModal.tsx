@@ -1,19 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import {
   Modal, View, Text, StyleSheet, ScrollView, TextInput,
-  TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform,
+  TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { Appointment, AppointmentExtraItem, Patient, Procedure } from '@/lib/types';
-import { createAppointment, updateAppointment, createRecurringAppointments, getPatients, getProcedures } from '@/lib/services';
+import { createAppointment, updateAppointment, createRecurringAppointments, getPatients, getProcedures, getAppointmentsByDate } from '@/lib/services';
 import { scheduleAppointmentReminder } from '@/lib/notifications';
 import { MOCK_PATIENTS } from '@/lib/mock-data';
 import { useAuth } from '@/lib/auth-context';
 import { t } from '@/lib/i18n';
 import { formatCurrency } from '@/lib/locale-utils';
 import { loadSettings } from '@/lib/app-settings';
+
+function timeToMinutes(t: string) {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function overlapsRange(apptStart: string, apptDuration: number, newStart: number, newEnd: number) {
+  const aStart = timeToMinutes(apptStart);
+  const aEnd = aStart + apptDuration;
+  return newStart < aEnd && newEnd > aStart;
+}
 
 const TIME_SLOTS: string[] = [];
 for (let h = 7; h < 21; h++) {
@@ -149,12 +160,8 @@ export function NewAppointmentModal({
     setPatientSearch('');
   }
 
-  async function handleSave() {
-    if (!patientName.trim()) { setError(t('newAppt.patientRequired')); return; }
-    if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) { setError(t('newAppt.dateInvalid')); return; }
-    setError('');
+  async function doSave() {
     setSaving(true);
-
     const apptData: Omit<Appointment, 'id'> = {
       patientId: patientId || '',
       patientName: patientName.trim(),
@@ -203,6 +210,40 @@ export function NewAppointmentModal({
     } finally {
       setSaving(false);
     }
+  }
+
+  async function handleSave() {
+    if (!patientName.trim()) { setError(t('newAppt.patientRequired')); return; }
+    if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) { setError(t('newAppt.dateInvalid')); return; }
+    setError('');
+
+    if (user && !isEdit) {
+      try {
+        const existing = await getAppointmentsByDate(user.id, date);
+        const newStart = timeToMinutes(startTime);
+        const newEnd = newStart + duration;
+        const blockedConflict = existing.find(a => a.status === 'blocked' && overlapsRange(a.startTime, a.durationMinutes, newStart, newEnd));
+        const overlapConflict = !blockedConflict && existing.find(a => a.status !== 'blocked' && overlapsRange(a.startTime, a.durationMinutes, newStart, newEnd));
+
+        if (blockedConflict || overlapConflict) {
+          const conflictTitle = blockedConflict
+            ? t('schedule.blockedSlotTitle')
+            : t('schedule.overlapTitle');
+          const conflictMsg = blockedConflict
+            ? t('schedule.blockedSlotMsg')
+            : t('schedule.overlapMsg', { name: overlapConflict!.patientName, time: overlapConflict!.startTime });
+          Alert.alert(conflictTitle, conflictMsg, [
+            { text: t('common.cancel'), style: 'cancel' },
+            { text: t('schedule.proceedAnyway'), onPress: doSave },
+          ]);
+          return;
+        }
+      } catch {
+        // proceed without conflict check
+      }
+    }
+
+    await doSave();
   }
 
   const saveBtnLabel = isEdit
