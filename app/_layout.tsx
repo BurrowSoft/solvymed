@@ -144,10 +144,13 @@ function RootNavigator() {
       return;
     }
     const inAuth = segments[0] === '(auth)';
+    const inTabs = segments[0] === '(tabs)';
     const inResetPassword = segments[1] === 'reset-password';
     if (!session && !inAuth) {
       router.replace('/(auth)/login');
     } else if (session && inAuth && !inResetPassword) {
+      router.replace('/(tabs)/schedule');
+    } else if (session && !inAuth && !inTabs) {
       router.replace('/(tabs)/schedule');
     }
   }, [session, loading, onboardingChecked, onboardingDone, pendingRecovery]);
