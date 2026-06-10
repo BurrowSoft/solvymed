@@ -1,3 +1,4 @@
+import * as FileSystem from 'expo-file-system';
 import { supabase } from './supabase';
 import { DocumentTemplate, DocumentType } from './types';
 
@@ -78,12 +79,16 @@ export async function uploadLogo(
   const ext = mimeType.split('/')[1]?.replace('jpeg', 'jpg') ?? 'jpg';
   const path = `${professionalId}/${documentType}.${ext}`;
 
-  const response = await fetch(uri);
-  const blob = await response.blob();
+  const base64 = await FileSystem.readAsStringAsync(uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  const binaryStr = atob(base64);
+  const bytes = new Uint8Array(binaryStr.length);
+  for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
 
   const { error } = await supabase.storage
     .from('document-logos')
-    .upload(path, blob, { upsert: true, contentType: mimeType });
+    .upload(path, bytes, { upsert: true, contentType: mimeType });
 
   if (error) throw error;
 

@@ -1,3 +1,4 @@
+import * as FileSystem from 'expo-file-system';
 import { supabase } from './supabase';
 import { Appointment, AppointmentExtraItem, Patient, MedicalRecord, Prescription, PrescriptionItem, Professional, WorkingHours, Procedure, PatientFile } from './types';
 
@@ -457,6 +458,7 @@ export async function upsertProfessional(
       full_name: updates.fullName ?? '',
       clinic_name: updates.clinicName ?? null,
       specialty: updates.specialty ?? null,
+      ...(updates.photoUrl !== undefined ? { photo_url: updates.photoUrl } : {}),
     })
     .select()
     .single();
@@ -477,6 +479,7 @@ function toProfessional(row: Record<string, unknown>): Professional {
     id: row.id as string,
     fullName: (row.full_name as string) ?? '',
     email: (row.email as string) ?? '',
+    photoUrl: (row.photo_url as string) || undefined,
     clinicName: row.clinic_name as string | undefined,
     clinicCnpj: row.clinic_cnpj as string | undefined,
     clinicAddress: row.clinic_address as string | undefined,
@@ -500,6 +503,7 @@ export async function updateProfessional(id: string, updates: Partial<Profession
   if (updates.clinicPhone !== undefined) mapped.clinic_phone = updates.clinicPhone || null;
   if (updates.clinicWebsite !== undefined) mapped.clinic_website = updates.clinicWebsite || null;
   if (updates.specialty !== undefined) mapped.specialty = updates.specialty || null;
+  if (updates.photoUrl !== undefined) mapped.photo_url = updates.photoUrl || null;
   const { error } = await supabase.from('professionals').update(mapped).eq('id', id);
   if (error) throw error;
 }
@@ -660,6 +664,16 @@ export async function deleteProcedure(id: string): Promise<void> {
 
 // ─── Patient Photo ────────────────────────────────────────────────────────────
 
+async function uriToBytes(uri: string): Promise<Uint8Array> {
+  const base64 = await FileSystem.readAsStringAsync(uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  const binaryStr = atob(base64);
+  const bytes = new Uint8Array(binaryStr.length);
+  for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+  return bytes;
+}
+
 export async function uploadPatientPhoto(
   professionalId: string,
   patientId: string,
@@ -668,13 +682,28 @@ export async function uploadPatientPhoto(
 ): Promise<string> {
   const ext = mimeType.split('/')[1]?.replace('jpeg', 'jpg') ?? 'jpg';
   const path = `${professionalId}/${patientId}.${ext}`;
-  const response = await fetch(uri);
-  const blob = await response.blob();
+  const bytes = await uriToBytes(uri);
   const { error } = await supabase.storage
     .from('patient-photos')
-    .upload(path, blob, { upsert: true, contentType: mimeType });
+    .upload(path, bytes, { upsert: true, contentType: mimeType });
   if (error) throw error;
   const { data } = supabase.storage.from('patient-photos').getPublicUrl(path);
+  return `${data.publicUrl}?t=${Date.now()}`;
+}
+
+export async function uploadProfilePhoto(
+  professionalId: string,
+  uri: string,
+  mimeType = 'image/jpeg',
+): Promise<string> {
+  const ext = mimeType.split('/')[1]?.replace('jpeg', 'jpg') ?? 'jpg';
+  const path = `${professionalId}/avatar.${ext}`;
+  const bytes = await uriToBytes(uri);
+  const { error } = await supabase.storage
+    .from('profile-photos')
+    .upload(path, bytes, { upsert: true, contentType: mimeType });
+  if (error) throw error;
+  const { data } = supabase.storage.from('profile-photos').getPublicUrl(path);
   return `${data.publicUrl}?t=${Date.now()}`;
 }
 

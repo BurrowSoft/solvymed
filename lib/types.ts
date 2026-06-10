@@ -88,6 +88,7 @@ export interface Professional {
   id: string;
   fullName: string;
   email: string;
+  photoUrl?: string;
   clinicName?: string;
   clinicCnpj?: string;
   clinicAddress?: string;

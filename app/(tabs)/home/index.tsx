@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { Appointment, Patient, Professional } from '@/lib/types';
 import { MOCK_APPOINTMENTS, MOCK_PATIENTS } from '@/lib/mock-data';
@@ -76,6 +76,11 @@ export default function HomeScreen() {
 
   useEffect(() => { load(); }, [load]);
 
+  useFocusEffect(useCallback(() => {
+    if (!user) return;
+    getProfessional(user.id).then(setProfessional).catch(() => {});
+  }, [user]));
+
   const doctorName = professional?.fullName ?? user?.email?.split('@')[0] ?? 'Doctor';
   const upcomingAppts = todayAppts
     .filter(a => {
@@ -119,7 +124,7 @@ export default function HomeScreen() {
               <Text style={styles.summaryLabel}>{t('home.unpaid')}</Text>
             </View>
             <TouchableOpacity style={[styles.summaryCard, { borderTopColor: Colors.danger }]} onPress={() => router.push('/(tabs)/payments')}>
-              <Text style={[styles.summaryNum, { color: Colors.danger, fontSize: 13 }]}>{formatCurrencyWhole(pendingTotal)}</Text>
+              <Text style={[styles.summaryNum, { color: Colors.danger, fontSize: 13 }]}>{formatCurrency(pendingTotal)}</Text>
               <Text style={styles.summaryLabel}>{t('home.pendingAmount')}</Text>
             </TouchableOpacity>
           </View>
