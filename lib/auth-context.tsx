@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function signUp(email: string, password: string, locale?: string) {
     const webLocale = !locale || locale === 'en' ? '' : `/${locale === 'pt-BR' ? 'pt-BR' : locale.split('-')[0]}`;
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -77,6 +77,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         data: { locale: locale ?? 'en' },
       },
     });
+    if (!error && data.user?.identities?.length === 0) {
+      return { error: 'already_registered' };
+    }
     return { error: error?.message ?? null };
   }
 

@@ -378,6 +378,21 @@ const en = {
   'settings.data.exportFailed': 'Export failed. Please try again.',
   'settings.data.version': 'App Version',
   'settings.data.changelog': 'Changelog',
+
+  'onboarding.language.title': 'Choose your language',
+  'onboarding.language.subtitle': 'You can change this later in Settings',
+  'onboarding.language.continue': 'Continue',
+  'onboarding.skip': 'Skip',
+  'onboarding.next': 'Next',
+  'onboarding.getStarted': 'Get Started',
+  'onboarding.slide.welcome.title': 'Welcome to SolvyMed',
+  'onboarding.slide.welcome.body': 'Your complete clinic management solution. Manage appointments, patients, and payments — all in one place.',
+  'onboarding.slide.schedule.title': 'Smart Scheduling',
+  'onboarding.slide.schedule.body': 'View your day or week at a glance. Create appointments, block time slots, and get reminders before each session.',
+  'onboarding.slide.patients.title': 'Patient Records',
+  'onboarding.slide.patients.body': 'Keep full patient histories: medical records, prescriptions, appointments, and contact info — all organised and searchable.',
+  'onboarding.slide.payments.title': 'Payment Tracking',
+  'onboarding.slide.payments.body': 'Track private and insurance payments. See pending amounts, mark sessions as paid, and review your monthly revenue report.',
 };
 
 // ─── Portuguese (Brazil) ─────────────────────────────────────────────────────
@@ -741,6 +756,21 @@ const ptBR: typeof en = {
   'settings.data.exportFailed': 'Falha na exportação. Tente novamente.',
   'settings.data.version': 'Versão do app',
   'settings.data.changelog': 'Novidades',
+
+  'onboarding.language.title': 'Escolha seu idioma',
+  'onboarding.language.subtitle': 'Você pode alterar isso em Configurações',
+  'onboarding.language.continue': 'Continuar',
+  'onboarding.skip': 'Pular',
+  'onboarding.next': 'Próximo',
+  'onboarding.getStarted': 'Começar',
+  'onboarding.slide.welcome.title': 'Bem-vindo ao SolvyMed',
+  'onboarding.slide.welcome.body': 'Sua solução completa de gestão de clínica. Gerencie consultas, pacientes e pagamentos — tudo em um só lugar.',
+  'onboarding.slide.schedule.title': 'Agenda Inteligente',
+  'onboarding.slide.schedule.body': 'Visualize seu dia ou semana de relance. Crie consultas, bloqueie horários e receba lembretes antes de cada atendimento.',
+  'onboarding.slide.patients.title': 'Prontuários de Pacientes',
+  'onboarding.slide.patients.body': 'Mantenha históricos completos: prontuários, receituários, consultas e contatos — tudo organizado e pesquisável.',
+  'onboarding.slide.payments.title': 'Controle Financeiro',
+  'onboarding.slide.payments.body': 'Acompanhe pagamentos particulares e de planos. Veja valores pendentes, marque consultas como pagas e revise seu relatório mensal.',
 };
 
 // ─── French ───────────────────────────────────────────────────────────────────
@@ -1104,6 +1134,21 @@ const frFR: typeof en = {
   'settings.data.exportFailed': "Échec de l'export. Réessayez.",
   'settings.data.version': "Version de l'app",
   'settings.data.changelog': 'Nouveautés',
+
+  'onboarding.language.title': 'Choisissez votre langue',
+  'onboarding.language.subtitle': 'Vous pouvez modifier cela dans les Paramètres',
+  'onboarding.language.continue': 'Continuer',
+  'onboarding.skip': 'Ignorer',
+  'onboarding.next': 'Suivant',
+  'onboarding.getStarted': 'Commencer',
+  'onboarding.slide.welcome.title': 'Bienvenue sur SolvyMed',
+  'onboarding.slide.welcome.body': 'Votre solution complète de gestion de cabinet. Gérez les rendez-vous, les patients et les paiements — tout en un seul endroit.',
+  'onboarding.slide.schedule.title': 'Planification intelligente',
+  'onboarding.slide.schedule.body': "Visualisez votre journée ou semaine en un coup d'œil. Créez des rendez-vous, bloquez des créneaux et recevez des rappels.",
+  'onboarding.slide.patients.title': 'Dossiers patients',
+  'onboarding.slide.patients.body': 'Conservez les historiques complets : dossiers médicaux, ordonnances, rendez-vous et coordonnées — tout organisé et consultable.',
+  'onboarding.slide.payments.title': 'Suivi des paiements',
+  'onboarding.slide.payments.body': "Suivez les paiements privés et d'assurance. Consultez les montants en attente et passez en revue votre rapport mensuel.",
 };
 
 // ─── German ───────────────────────────────────────────────────────────────────
@@ -1467,6 +1512,21 @@ const deDE: typeof en = {
   'settings.data.exportFailed': 'Export fehlgeschlagen. Erneut versuchen.',
   'settings.data.version': 'App-Version',
   'settings.data.changelog': 'Neuigkeiten',
+
+  'onboarding.language.title': 'Sprache wählen',
+  'onboarding.language.subtitle': 'Sie können dies in den Einstellungen ändern',
+  'onboarding.language.continue': 'Weiter',
+  'onboarding.skip': 'Überspringen',
+  'onboarding.next': 'Weiter',
+  'onboarding.getStarted': 'Loslegen',
+  'onboarding.slide.welcome.title': 'Willkommen bei SolvyMed',
+  'onboarding.slide.welcome.body': 'Ihre vollständige Praxisverwaltungslösung. Verwalten Sie Termine, Patienten und Zahlungen — alles an einem Ort.',
+  'onboarding.slide.schedule.title': 'Clevere Terminplanung',
+  'onboarding.slide.schedule.body': 'Überblicken Sie Ihren Tag oder Ihre Woche auf einen Blick. Erstellen Sie Termine, blockieren Sie Zeitfenster und erhalten Sie Erinnerungen.',
+  'onboarding.slide.patients.title': 'Patientenakten',
+  'onboarding.slide.patients.body': 'Führen Sie vollständige Patientenhistorien: Krankenakten, Rezepte, Termine und Kontaktdaten — alles organisiert und durchsuchbar.',
+  'onboarding.slide.payments.title': 'Zahlungsverfolgung',
+  'onboarding.slide.payments.body': 'Verfolgen Sie private und Versicherungszahlungen. Sehen Sie ausstehende Beträge und überprüfen Sie Ihren Monatsbericht.',
 };
 
 // ─── Italian ──────────────────────────────────────────────────────────────────
@@ -1830,6 +1890,21 @@ const itIT: typeof en = {
   'settings.data.exportFailed': 'Esportazione fallita. Riprova.',
   'settings.data.version': 'Versione app',
   'settings.data.changelog': 'Novità',
+
+  'onboarding.language.title': 'Scegli la tua lingua',
+  'onboarding.language.subtitle': 'Puoi modificarlo nelle Impostazioni',
+  'onboarding.language.continue': 'Continua',
+  'onboarding.skip': 'Salta',
+  'onboarding.next': 'Avanti',
+  'onboarding.getStarted': 'Inizia',
+  'onboarding.slide.welcome.title': 'Benvenuto su SolvyMed',
+  'onboarding.slide.welcome.body': 'La tua soluzione completa per la gestione dello studio. Gestisci appuntamenti, pazienti e pagamenti — tutto in un unico posto.',
+  'onboarding.slide.schedule.title': 'Pianificazione intelligente',
+  'onboarding.slide.schedule.body': "Visualizza il tuo giorno o la settimana a colpo d'occhio. Crea appuntamenti, blocca fasce orarie e ricevi promemoria.",
+  'onboarding.slide.patients.title': 'Cartelle cliniche',
+  'onboarding.slide.patients.body': 'Conserva le storie complete dei pazienti: cartelle mediche, prescrizioni, appuntamenti e contatti — tutto organizzato e ricercabile.',
+  'onboarding.slide.payments.title': 'Monitoraggio pagamenti',
+  'onboarding.slide.payments.body': 'Tieni traccia dei pagamenti privati e assicurativi. Visualizza gli importi in sospeso e rivedi il tuo report mensile.',
 };
 
 // ─── Spanish ──────────────────────────────────────────────────────────────────
@@ -2193,6 +2268,21 @@ const esES: typeof en = {
   'settings.data.exportFailed': 'Error al exportar. Inténtalo de nuevo.',
   'settings.data.version': 'Versión de la app',
   'settings.data.changelog': 'Novedades',
+
+  'onboarding.language.title': 'Elige tu idioma',
+  'onboarding.language.subtitle': 'Puedes cambiarlo en Configuración',
+  'onboarding.language.continue': 'Continuar',
+  'onboarding.skip': 'Saltar',
+  'onboarding.next': 'Siguiente',
+  'onboarding.getStarted': 'Empezar',
+  'onboarding.slide.welcome.title': 'Bienvenido a SolvyMed',
+  'onboarding.slide.welcome.body': 'Tu solución completa de gestión de clínica. Gestiona citas, pacientes y pagos — todo en un solo lugar.',
+  'onboarding.slide.schedule.title': 'Programación inteligente',
+  'onboarding.slide.schedule.body': 'Visualiza tu día o semana de un vistazo. Crea citas, bloquea horarios y recibe recordatorios antes de cada sesión.',
+  'onboarding.slide.patients.title': 'Registros de pacientes',
+  'onboarding.slide.patients.body': 'Mantén historiales completos: registros médicos, recetas, citas e información de contacto — todo organizado y consultable.',
+  'onboarding.slide.payments.title': 'Control de pagos',
+  'onboarding.slide.payments.body': 'Controla los pagos privados y de seguros. Visualiza los importes pendientes y revisa tu informe mensual de ingresos.',
 };
 
 // ─── Registry ─────────────────────────────────────────────────────────────────
@@ -2207,6 +2297,17 @@ const translations: Record<string, typeof en> = {
 };
 
 // ─── Public API ───────────────────────────────────────────────────────────────
+
+export function tWith(key: keyof typeof en, locale: string, vars?: Record<string, string | number>): string {
+  const map = translations[locale] ?? en;
+  let str: string = map[key] ?? en[key] ?? key;
+  if (vars) {
+    for (const [k, v] of Object.entries(vars)) {
+      str = str.replace(new RegExp(`\\{\\{${k}\\}\\}`, 'g'), String(v));
+    }
+  }
+  return str;
+}
 
 export function t(key: keyof typeof en, vars?: Record<string, string | number>): string {
   const map = translations[_locale] ?? en;

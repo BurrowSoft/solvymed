@@ -130,7 +130,17 @@ function RootNavigator() {
     }
 
     if (!onboardingDone) {
-      router.replace('/onboarding');
+      // Re-read storage — finish() writes to AsyncStorage but doesn't update this
+      // component's local state. If the user just completed onboarding and then
+      // successfully signs in, session changes trigger this effect before
+      // onboardingDone reflects the persisted value.
+      AsyncStorage.getItem('onboarding_done').then(v => {
+        if (v) {
+          setOnboardingDone(true);
+        } else {
+          router.replace('/onboarding');
+        }
+      });
       return;
     }
     const inAuth = segments[0] === '(auth)';

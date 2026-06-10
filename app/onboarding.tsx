@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useLocale } from '@/lib/locale-context';
-import { detectLocale } from '@/lib/i18n';
+import { detectLocale, tWith } from '@/lib/i18n';
 
 const { width } = Dimensions.get('window');
 
@@ -26,43 +26,11 @@ const LANGUAGES = [
 
 // ─── Onboarding slides ────────────────────────────────────────────────────────
 
-interface Slide {
-  key: string;
-  icon: React.ComponentProps<typeof Ionicons>['name'];
-  title: string;
-  body: string;
-  color: string;
-}
-
-const SLIDES: Slide[] = [
-  {
-    key: 'welcome',
-    icon: 'heart-outline',
-    title: 'Welcome to SolvyMed',
-    body: 'Your complete clinic management solution. Manage appointments, patients, and payments — all in one place.',
-    color: Colors.primary,
-  },
-  {
-    key: 'schedule',
-    icon: 'calendar-outline',
-    title: 'Smart Scheduling',
-    body: 'View your day or week at a glance. Create appointments, block time slots, and get reminders before each session.',
-    color: '#7C3AED',
-  },
-  {
-    key: 'patients',
-    icon: 'people-outline',
-    title: 'Patient Records',
-    body: 'Keep full patient histories: medical records, prescriptions, appointments, and contact info — all organised and searchable.',
-    color: '#059669',
-  },
-  {
-    key: 'payments',
-    icon: 'cash-outline',
-    title: 'Payment Tracking',
-    body: 'Track private and insurance payments. See pending amounts, mark sessions as paid, and review your monthly revenue report.',
-    color: '#D97706',
-  },
+const SLIDES = [
+  { key: 'welcome',  icon: 'heart-outline' as const,   color: Colors.primary },
+  { key: 'schedule', icon: 'calendar-outline' as const, color: '#7C3AED' },
+  { key: 'patients', icon: 'people-outline' as const,   color: '#059669' },
+  { key: 'payments', icon: 'cash-outline' as const,     color: '#D97706' },
 ];
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
@@ -108,8 +76,8 @@ export default function OnboardingScreen() {
           <View style={styles.globeCircle}>
             <Ionicons name="globe-outline" size={36} color={Colors.primary} />
           </View>
-          <Text style={styles.langTitle}>Choose your language</Text>
-          <Text style={styles.langSubtitle}>You can change this later in Settings</Text>
+          <Text style={styles.langTitle}>{tWith('onboarding.language.title' as any, selectedLocale)}</Text>
+          <Text style={styles.langSubtitle}>{tWith('onboarding.language.subtitle' as any, selectedLocale)}</Text>
         </View>
 
         <ScrollView
@@ -143,7 +111,7 @@ export default function OnboardingScreen() {
 
         <View style={styles.footer}>
           <TouchableOpacity style={styles.continueBtn} onPress={confirmLanguage}>
-            <Text style={styles.continueBtnText}>Continue</Text>
+            <Text style={styles.continueBtnText}>{tWith('onboarding.language.continue' as any, selectedLocale)}</Text>
             <Ionicons name="arrow-forward" size={18} color="#fff" />
           </TouchableOpacity>
         </View>
@@ -159,7 +127,7 @@ export default function OnboardingScreen() {
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <View style={styles.skipRow}>
         <TouchableOpacity onPress={finish} style={styles.skipBtn}>
-          <Text style={styles.skipText}>Skip</Text>
+          <Text style={styles.skipText}>{tWith('onboarding.skip' as any, selectedLocale)}</Text>
         </TouchableOpacity>
       </View>
 
@@ -180,8 +148,12 @@ export default function OnboardingScreen() {
             <View style={[styles.iconCircle, { backgroundColor: item.color + '15' }]}>
               <Ionicons name={item.icon} size={72} color={item.color} />
             </View>
-            <Text style={[styles.title, { color: item.color }]}>{item.title}</Text>
-            <Text style={styles.body}>{item.body}</Text>
+            <Text style={[styles.title, { color: item.color }]}>
+              {tWith(`onboarding.slide.${item.key}.title` as any, selectedLocale)}
+            </Text>
+            <Text style={styles.body}>
+              {tWith(`onboarding.slide.${item.key}.body` as any, selectedLocale)}
+            </Text>
           </View>
         )}
       />
@@ -206,7 +178,7 @@ export default function OnboardingScreen() {
           onPress={next}
         >
           <Text style={styles.nextBtnText}>
-            {index === SLIDES.length - 1 ? 'Get Started' : 'Next'}
+            {tWith(index === SLIDES.length - 1 ? 'onboarding.getStarted' : 'onboarding.next' as any, selectedLocale)}
           </Text>
           <Ionicons
             name={index === SLIDES.length - 1 ? 'checkmark' : 'arrow-forward'}

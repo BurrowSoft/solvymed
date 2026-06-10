@@ -21,6 +21,7 @@ export default function SignUpScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
 
   async function handleSignUp() {
     if (!email || !password || !confirmPassword) {
@@ -39,7 +40,10 @@ export default function SignUpScreen() {
     setError(null);
     const { error } = await signUp(email.trim(), password, locale);
     setLoading(false);
-    if (error) {
+    if (error === 'already_registered') {
+      setAlreadyRegistered(true);
+      setSuccess(true);
+    } else if (error) {
       setError(error);
     } else {
       setSuccess(true);
@@ -53,12 +57,24 @@ export default function SignUpScreen() {
           <View style={styles.successIcon}>
             <Ionicons name="checkmark" size={36} color="#fff" />
           </View>
-          <Text style={styles.successTitle}>Check your email</Text>
-          <Text style={styles.successMessage}>
-            We've sent a confirmation link to{'\n'}
-            <Text style={styles.successEmail}>{email}</Text>
-            {'\n\n'}Click the link to activate your account, then sign in.
-          </Text>
+          {alreadyRegistered ? (
+            <>
+              <Text style={styles.successTitle}>Account exists</Text>
+              <Text style={styles.successMessage}>
+                <Text style={styles.successEmail}>{email}</Text>
+                {'\n\n'}An account with this email already exists. If it's not yet confirmed, check your inbox for the confirmation link or use Sign In to resend it.
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text style={styles.successTitle}>Check your email</Text>
+              <Text style={styles.successMessage}>
+                We've sent a confirmation link to{'\n'}
+                <Text style={styles.successEmail}>{email}</Text>
+                {'\n\n'}Click the link to activate your account, then sign in.
+              </Text>
+            </>
+          )}
           <TouchableOpacity style={styles.loginBtn} onPress={() => router.replace('/(auth)/login')}>
             <Text style={styles.loginBtnText}>Go to Sign In</Text>
           </TouchableOpacity>
