@@ -148,7 +148,7 @@ function RootNavigator() {
     if (!session && !inAuth) {
       router.replace('/(auth)/login');
     } else if (session && inAuth && !inResetPassword) {
-      router.replace('/(tabs)/schedule/index');
+      router.replace('/(tabs)/schedule');
     }
   }, [session, loading, onboardingChecked, onboardingDone, pendingRecovery]);
 

@@ -118,7 +118,7 @@ export default function HomeScreen() {
               <Text style={[styles.summaryNum, { color: Colors.warning }]}>{pendingPayments.length}</Text>
               <Text style={styles.summaryLabel}>{t('home.unpaid')}</Text>
             </View>
-            <TouchableOpacity style={[styles.summaryCard, { borderTopColor: Colors.danger }]} onPress={() => router.push('/(tabs)/payments/index')}>
+            <TouchableOpacity style={[styles.summaryCard, { borderTopColor: Colors.danger }]} onPress={() => router.push('/(tabs)/payments')}>
               <Text style={[styles.summaryNum, { color: Colors.danger, fontSize: 13 }]}>{formatCurrencyWhole(pendingTotal)}</Text>
               <Text style={styles.summaryLabel}>{t('home.pendingAmount')}</Text>
             </TouchableOpacity>
@@ -126,25 +126,25 @@ export default function HomeScreen() {
 
           {/* Quick actions */}
           <View style={styles.quickRow}>
-            <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/schedule/index')}>
+            <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/schedule')}>
               <View style={[styles.quickIcon, { backgroundColor: Colors.primaryLight }]}>
                 <Ionicons name="calendar-outline" size={20} color={Colors.primary} />
               </View>
               <Text style={styles.quickLabel}>{t('tab.schedule')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/patients/index')}>
+            <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/patients')}>
               <View style={[styles.quickIcon, { backgroundColor: '#F0FDF4' }]}>
                 <Ionicons name="people-outline" size={20} color={Colors.success} />
               </View>
               <Text style={styles.quickLabel}>{t('tab.patients')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/payments/index')}>
+            <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/payments')}>
               <View style={[styles.quickIcon, { backgroundColor: '#FFFBEB' }]}>
                 <Ionicons name="card-outline" size={20} color={Colors.warning} />
               </View>
               <Text style={styles.quickLabel}>{t('tab.payments')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/settings/index')}>
+            <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/settings')}>
               <View style={[styles.quickIcon, { backgroundColor: '#F5F3FF' }]}>
                 <Ionicons name="settings-outline" size={20} color="#7C3AED" />
               </View>
@@ -156,7 +156,7 @@ export default function HomeScreen() {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>{t('home.todayAppointments')}</Text>
-              <TouchableOpacity onPress={() => router.push('/(tabs)/schedule/index')}>
+              <TouchableOpacity onPress={() => router.push('/(tabs)/schedule')}>
                 <Text style={styles.seeAll}>{t('common.seeAll')}</Text>
               </TouchableOpacity>
             </View>
@@ -173,7 +173,7 @@ export default function HomeScreen() {
                 <TouchableOpacity
                   key={appt.id}
                   style={styles.apptCard}
-                  onPress={() => router.push('/(tabs)/schedule/index')}
+                  onPress={() => router.push('/(tabs)/schedule')}
                 >
                   <View style={[styles.apptTimeBadge, { backgroundColor: statusColor(appt.status) + '18' }]}>
                     <Text style={[styles.apptTime, { color: statusColor(appt.status) }]}>{appt.startTime}</Text>
@@ -196,7 +196,7 @@ export default function HomeScreen() {
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>{t('home.recentPatients')}</Text>
-                <TouchableOpacity onPress={() => router.push('/(tabs)/patients/index')}>
+                <TouchableOpacity onPress={() => router.push('/(tabs)/patients')}>
                   <Text style={styles.seeAll}>{t('common.seeAll')}</Text>
                 </TouchableOpacity>
               </View>
@@ -205,7 +205,7 @@ export default function HomeScreen() {
                   <TouchableOpacity
                     key={p.id}
                     style={styles.patientChip}
-                    onPress={() => router.push('/(tabs)/patients/index')}
+                    onPress={() => router.push('/(tabs)/patients')}
                   >
                     <View style={styles.patientChipAvatar}>
                       <Text style={styles.patientChipInitial}>{p.fullName[0]?.toUpperCase()}</Text>
@@ -219,7 +219,7 @@ export default function HomeScreen() {
 
           {/* Pending payments callout */}
           {pendingPayments.length > 0 && (
-            <TouchableOpacity style={styles.pendingCallout} onPress={() => router.push('/(tabs)/payments/index')}>
+            <TouchableOpacity style={styles.pendingCallout} onPress={() => router.push('/(tabs)/payments')}>
               <View style={styles.pendingCalloutLeft}>
                 <Ionicons name="alert-circle-outline" size={22} color={Colors.warning} />
                 <View>

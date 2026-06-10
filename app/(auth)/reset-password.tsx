@@ -49,7 +49,7 @@ export default function ResetPasswordScreen() {
       }
       setSuccess(true);
       setTimeout(() => {
-        router.replace('/(tabs)/schedule/index');
+        router.replace('/(tabs)/schedule');
       }, 1500);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Something went wrong');
