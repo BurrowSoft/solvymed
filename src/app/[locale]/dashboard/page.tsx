@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "@/components/SignOutButton";
+import { DashboardRefresh } from "@/components/DashboardRefresh";
 
 const EXPO_APK_URL =
   "https://expo.dev/accounts/burrowsoftmobile/projects/solvymed/builds/12e3fe6b-ffe3-4157-b8f7-81b46441be9a";
@@ -188,7 +189,10 @@ export default async function DashboardPage({
               Dashboard
             </span>
           </div>
-          <SignOutButton />
+          <div className="flex items-center gap-3">
+            <DashboardRefresh />
+            <SignOutButton />
+          </div>
         </div>
       </header>
 
