@@ -55,6 +55,9 @@ export default function PaymentsScreen() {
   const [accountActive, setAccountActive] = useState(true);
   const [installmentLimit, setInstallmentLimit] = useState(12);
   const [loading, setLoading] = useState(true);
+  const [expandedMonths, setExpandedMonths] = useState<Set<string>>(new Set());
+  const [monthAppts, setMonthAppts] = useState<Record<string, Appointment[]>>({});
+  const [loadingMonth, setLoadingMonth] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -120,6 +123,34 @@ export default function PaymentsScreen() {
         },
       ],
     );
+  }
+
+  async function handleToggleMonth(month: string) {
+    if (expandedMonths.has(month)) {
+      setExpandedMonths(prev => { const s = new Set(prev); s.delete(month); return s; });
+      return;
+    }
+    setExpandedMonths(prev => new Set(prev).add(month));
+    if (monthAppts[month] || !user) return;
+    setLoadingMonth(month);
+    try {
+      const [year, m] = month.split('-').map(Number);
+      const lastDay = new Date(year, m, 0).getDate();
+      const from = `${month}-01`;
+      const to = `${month}-${String(lastDay).padStart(2, '0')}`;
+      const [paidData, pendingData] = await Promise.all([
+        getPaidPayments(user.id, from, to),
+        getPendingPayments(user.id, from, to),
+      ]);
+      const all = [...paidData, ...pendingData].sort((a, b) =>
+        a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime)
+      );
+      setMonthAppts(prev => ({ ...prev, [month]: all }));
+    } catch {
+      setMonthAppts(prev => ({ ...prev, [month]: [] }));
+    } finally {
+      setLoadingMonth(null);
+    }
   }
 
   const totalPending = pending.reduce((sum, a) => sum + (a.paymentAmount ?? 0), 0);
@@ -321,19 +352,79 @@ export default function PaymentsScreen() {
             {showReport && revenue.map(row => {
               const total = row.paid + row.pending;
               const barWidth = total > 0 ? row.paid / total : 0;
+              const isExpanded = expandedMonths.has(row.month);
+              const isLoadingThis = loadingMonth === row.month;
+              const appts = monthAppts[row.month] ?? [];
               return (
                 <View key={row.month} style={styles.reportRow}>
-                  <View style={styles.reportRowHeader}>
+                  {/* Tappable header */}
+                  <TouchableOpacity
+                    style={styles.reportRowHeader}
+                    onPress={() => handleToggleMonth(row.month)}
+                    activeOpacity={0.7}
+                  >
                     <Text style={styles.reportMonth}>{formatMonthYear(row.month)}</Text>
                     <Text style={styles.reportCount}>{tn('payments.appointment', row.count, { n: row.count })}</Text>
-                    <Text style={[styles.reportPaid, { marginLeft: 'auto' }]}>{formatCurrencyWhole(row.paid)}</Text>
-                  </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginLeft: 'auto' }}>
+                      <Text style={styles.reportPaid}>{formatCurrencyWhole(row.paid)}</Text>
+                      <Ionicons
+                        name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                        size={14}
+                        color={Colors.textMuted}
+                      />
+                    </View>
+                  </TouchableOpacity>
+
+                  {/* Bar chart */}
                   <View style={styles.reportBar}>
                     <View style={[styles.reportBarFill, { flex: barWidth }]} />
                     <View style={{ flex: 1 - barWidth }} />
                   </View>
                   {row.pending > 0 && (
                     <Text style={styles.reportPending}>{t('payments.pendingReport', { amount: formatCurrencyWhole(row.pending) })}</Text>
+                  )}
+
+                  {/* Expanded appointment list */}
+                  {isExpanded && (
+                    <View style={styles.monthDetailWrap}>
+                      {isLoadingThis ? (
+                        <ActivityIndicator size="small" color={Colors.primary} style={{ paddingVertical: 12 }} />
+                      ) : appts.length === 0 ? (
+                        <Text style={styles.monthDetailEmpty}>{t('payments.allUpToDate')}</Text>
+                      ) : (
+                        appts.map((appt, i) => (
+                          <View
+                            key={appt.id}
+                            style={[styles.monthApptRow, i < appts.length - 1 && styles.monthApptRowBorder]}
+                          >
+                            <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
+                              <Text style={styles.monthApptName} numberOfLines={1}>{appt.patientName}</Text>
+                              <Text style={styles.monthApptMeta} numberOfLines={1}>
+                                {appt.date} · {formatTime(appt.startTime)} · {translateConsultType(appt.consultationType)}
+                              </Text>
+                            </View>
+                            <View style={{ alignItems: 'flex-end', gap: 2 }}>
+                              <Text style={[styles.monthApptAmount, { color: appt.paymentStatus === 'paid' ? Colors.success : Colors.warning }]}>
+                                {appt.paymentAmount != null ? formatCurrency(appt.paymentAmount) : '—'}
+                              </Text>
+                              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                                <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: appt.paymentStatus === 'paid' ? Colors.success : Colors.warning }} />
+                                <Text style={[styles.monthApptStatus, { color: appt.paymentStatus === 'paid' ? Colors.success : Colors.warning }]}>
+                                  {appt.paymentStatus === 'paid' ? t('appt.paid') : t('payments.pending')}
+                                </Text>
+                              </View>
+                            </View>
+                          </View>
+                        ))
+                      )}
+                      {/* Collapse button at bottom */}
+                      <TouchableOpacity
+                        style={styles.collapseRow}
+                        onPress={() => setExpandedMonths(prev => { const s = new Set(prev); s.delete(row.month); return s; })}
+                      >
+                        <Ionicons name="chevron-up" size={13} color={Colors.textMuted} />
+                      </TouchableOpacity>
+                    </View>
                   )}
                 </View>
               );
@@ -404,6 +495,20 @@ const styles = StyleSheet.create({
   reportBar: { flexDirection: 'row', height: 6, borderRadius: 3, backgroundColor: Colors.border, overflow: 'hidden' },
   reportBarFill: { backgroundColor: Colors.success, borderRadius: 3 },
   reportPending: { fontSize: 12, color: Colors.warning },
+  monthDetailWrap: {
+    marginTop: 4, borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 8, gap: 0,
+  },
+  monthDetailEmpty: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', paddingVertical: 8 },
+  monthApptRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8, gap: 10 },
+  monthApptRowBorder: { borderBottomWidth: 1, borderBottomColor: Colors.border },
+  monthApptName: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary },
+  monthApptMeta: { fontSize: 11, color: Colors.textSecondary },
+  monthApptAmount: { fontSize: 13, fontWeight: '700' },
+  monthApptStatus: { fontSize: 10, fontWeight: '600' },
+  collapseRow: {
+    marginTop: 6, paddingVertical: 6, alignItems: 'center',
+    borderTopWidth: 1, borderTopColor: Colors.border,
+  },
   accountCard: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: Colors.surface, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: Colors.border },
   accountCardLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   accountIconWrap: { width: 40, height: 40, borderRadius: 10, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
