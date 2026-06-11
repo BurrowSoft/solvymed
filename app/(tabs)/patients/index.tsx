@@ -18,7 +18,9 @@ import {
   getPatientFiles, uploadPatientFile, deletePatientFile,
   getPatientExams, uploadPatientExam, deletePatientExam,
   getProfessional, deletePatient, deleteRecord, deletePrescription,
+  generatePatientInvite, isPatientLinked,
 } from '@/lib/services';
+import { Share } from 'react-native';
 import { getTemplate } from '@/lib/template-service';
 import { buildPrescriptionHtml, buildMedicalHistoryHtml } from '@/lib/pdf-utils';
 import { useAuth } from '@/lib/auth-context';
@@ -112,6 +114,29 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
   const [exams, setExams] = useState<PatientFile[]>([]);
   const [loadingExams, setLoadingExams] = useState(false);
   const [uploadingExam, setUploadingExam] = useState(false);
+
+  // Invite / link state
+  const [inviteCode, setInviteCode] = useState<string | undefined>(patient.inviteCode);
+  const [isLinked, setIsLinked] = useState<boolean | null>(null);
+  const [generatingInvite, setGeneratingInvite] = useState(false);
+
+  useEffect(() => {
+    isPatientLinked(patient.id).then(setIsLinked).catch(() => setIsLinked(false));
+  }, [patient.id]);
+
+  async function handleGenerateInvite() {
+    setGeneratingInvite(true);
+    try {
+      const code = await generatePatientInvite(patient.id);
+      setInviteCode(code);
+    } catch {}
+    setGeneratingInvite(false);
+  }
+
+  async function handleShareInvite(code: string) {
+    const message = t('invite.shareMessage' as any).replace('{{code}}', code);
+    await Share.share({ message });
+  }
 
   // Edit mode state
   const [editing, setEditing] = useState(false);
@@ -499,6 +524,41 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                     </View>
                   </View>
                 </TouchableOpacity>
+              </View>
+
+              {/* ── App Connection Status ── */}
+              <View style={styles.inviteCard}>
+                <View style={styles.inviteStatusRow}>
+                  <View style={[styles.inviteDot, { backgroundColor: isLinked ? Colors.success : Colors.border }]} />
+                  <Text style={[styles.inviteStatusText, { color: isLinked ? Colors.success : Colors.textMuted }]}>
+                    {isLinked ? t('invite.linked' as any) : t('invite.notLinked' as any)}
+                  </Text>
+                </View>
+                {!isLinked && (
+                  inviteCode ? (
+                    <View style={styles.inviteCodeRow}>
+                      <Text style={styles.inviteCodeDisplay}>{inviteCode}</Text>
+                      <TouchableOpacity style={styles.inviteShareBtn} onPress={() => handleShareInvite(inviteCode)}>
+                        <Ionicons name="share-outline" size={16} color={Colors.primary} />
+                        <Text style={styles.inviteShareBtnText}>{t('invite.button' as any)}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={handleGenerateInvite} disabled={generatingInvite}>
+                        <Text style={styles.inviteRegenText}>{t('invite.regenerate' as any)}</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.inviteGenerateBtn}
+                      onPress={handleGenerateInvite}
+                      disabled={generatingInvite}
+                    >
+                      <Ionicons name="link-outline" size={15} color={Colors.primary} />
+                      <Text style={styles.inviteGenerateBtnText}>
+                        {generatingInvite ? t('invite.generating' as any) : t('invite.button' as any)}
+                      </Text>
+                    </TouchableOpacity>
+                  )
+                )}
               </View>
 
               {recentAppts.length > 0 && (
@@ -1283,6 +1343,30 @@ const makeStyles = () => StyleSheet.create({
   apptStatusText: { fontSize: 11, fontWeight: '600' },
 
   // Timeline strip
+  inviteCard: {
+    backgroundColor: Colors.surface, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
+    padding: 14, marginBottom: 16, gap: 10,
+  },
+  inviteStatusRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  inviteDot: { width: 8, height: 8, borderRadius: 4 },
+  inviteStatusText: { fontSize: 13, fontWeight: '600' },
+  inviteCodeRow: { gap: 8 },
+  inviteCodeDisplay: {
+    fontSize: 28, fontWeight: '800', color: Colors.primary, letterSpacing: 4,
+    textAlign: 'center', paddingVertical: 4,
+  },
+  inviteShareBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+    backgroundColor: Colors.primary, borderRadius: 10, paddingVertical: 10,
+  },
+  inviteShareBtnText: { fontSize: 14, fontWeight: '700', color: '#fff' },
+  inviteRegenText: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', textDecorationLine: 'underline' },
+  inviteGenerateBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+    borderWidth: 1.5, borderColor: Colors.primary, borderRadius: 10, paddingVertical: 10,
+  },
+  inviteGenerateBtnText: { fontSize: 14, fontWeight: '600', color: Colors.primary },
+
   timelineSection: { marginBottom: 16 },
   timelineTitle: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, marginBottom: 8 },
   timelineScroll: { gap: 10, paddingRight: 4 },

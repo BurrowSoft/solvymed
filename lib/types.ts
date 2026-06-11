@@ -17,6 +17,7 @@ export interface Patient {
   convenioType?: 'particular' | 'health_plan';
   tags?: string[];
   photoUrl?: string;
+  inviteCode?: string;
   createdAt: string;
 }
 

@@ -637,6 +637,20 @@ const en = {
   'patient.myRecords': 'My Records',
   'patient.myPrescriptions': 'My Prescriptions',
   'patient.noLink': 'Your account is not linked to a patient record. Contact your doctor.',
+  'patient.connectTitle': 'Connect to Your Doctor',
+  'patient.connectHint': 'Enter the 6-character code your doctor shared with you.',
+  'patient.connectPlaceholder': 'e.g. AB3K7Q',
+  'patient.connectBtn': 'Connect',
+  'patient.connectSuccess': 'Connected to {{name}}!',
+  'patient.connectInvalid': 'Invalid code. Please check with your doctor.',
+
+  'invite.button': 'Invite to App',
+  'invite.regenerate': 'New Code',
+  'invite.shareMessage': 'Download SolvyMed and enter code {{code}} to connect to my clinic.',
+  'invite.linked': 'Connected to app',
+  'invite.notLinked': 'Not connected',
+  'invite.hint': 'Share this code with your patient so they can link their account.',
+  'invite.generating': 'Generating…',
 };
 
 // ─── Portuguese (Brazil) ─────────────────────────────────────────────────────
@@ -1253,6 +1267,20 @@ const ptBR: typeof en = {
   'patient.myRecords': 'Meus Prontuários',
   'patient.myPrescriptions': 'Minhas Receitas',
   'patient.noLink': 'Sua conta não está vinculada a um registro de paciente. Contate seu médico.',
+  'patient.connectTitle': 'Conectar ao seu Médico',
+  'patient.connectHint': 'Digite o código de 6 caracteres que seu médico compartilhou com você.',
+  'patient.connectPlaceholder': 'Ex: AB3K7Q',
+  'patient.connectBtn': 'Conectar',
+  'patient.connectSuccess': 'Conectado a {{name}}!',
+  'patient.connectInvalid': 'Código inválido. Verifique com seu médico.',
+
+  'invite.button': 'Convidar para o App',
+  'invite.regenerate': 'Novo Código',
+  'invite.shareMessage': 'Baixe o SolvyMed e insira o código {{code}} para se conectar à minha clínica.',
+  'invite.linked': 'Conectado ao app',
+  'invite.notLinked': 'Não conectado',
+  'invite.hint': 'Compartilhe este código com seu paciente para que ele vincule a conta.',
+  'invite.generating': 'Gerando…',
 };
 
 // ─── French ───────────────────────────────────────────────────────────────────
@@ -1866,6 +1894,20 @@ const frFR: typeof en = {
   'patient.myRecords': 'Mes dossiers',
   'patient.myPrescriptions': 'Mes ordonnances',
   'patient.noLink': 'Votre compte n\'est pas lié à un dossier patient. Contactez votre médecin.',
+  'patient.connectTitle': 'Connectez-vous à votre médecin',
+  'patient.connectHint': 'Entrez le code à 6 caractères que votre médecin vous a partagé.',
+  'patient.connectPlaceholder': 'Ex : AB3K7Q',
+  'patient.connectBtn': 'Connecter',
+  'patient.connectSuccess': 'Connecté à {{name}} !',
+  'patient.connectInvalid': 'Code invalide. Vérifiez auprès de votre médecin.',
+
+  'invite.button': 'Inviter sur l\'app',
+  'invite.regenerate': 'Nouveau code',
+  'invite.shareMessage': 'Téléchargez SolvyMed et entrez le code {{code}} pour vous connecter à ma clinique.',
+  'invite.linked': 'Connecté à l\'app',
+  'invite.notLinked': 'Non connecté',
+  'invite.hint': 'Partagez ce code avec votre patient pour qu\'il lie son compte.',
+  'invite.generating': 'Génération…',
 };
 
 // ─── German ───────────────────────────────────────────────────────────────────
@@ -2479,6 +2521,20 @@ const deDE: typeof en = {
   'patient.myRecords': 'Meine Akten',
   'patient.myPrescriptions': 'Meine Rezepte',
   'patient.noLink': 'Ihr Konto ist nicht mit einer Patientenakte verknüpft. Kontaktieren Sie Ihren Arzt.',
+  'patient.connectTitle': 'Mit Ihrem Arzt verbinden',
+  'patient.connectHint': 'Geben Sie den 6-stelligen Code ein, den Ihr Arzt mit Ihnen geteilt hat.',
+  'patient.connectPlaceholder': 'z.B. AB3K7Q',
+  'patient.connectBtn': 'Verbinden',
+  'patient.connectSuccess': 'Mit {{name}} verbunden!',
+  'patient.connectInvalid': 'Ungültiger Code. Bitte wenden Sie sich an Ihren Arzt.',
+
+  'invite.button': 'Zur App einladen',
+  'invite.regenerate': 'Neuer Code',
+  'invite.shareMessage': 'Laden Sie SolvyMed herunter und geben Sie den Code {{code}} ein, um sich mit meiner Klinik zu verbinden.',
+  'invite.linked': 'Mit App verbunden',
+  'invite.notLinked': 'Nicht verbunden',
+  'invite.hint': 'Teilen Sie diesen Code mit Ihrem Patienten, damit er sein Konto verknüpfen kann.',
+  'invite.generating': 'Wird generiert…',
 };
 
 // ─── Italian ──────────────────────────────────────────────────────────────────
@@ -3092,6 +3148,20 @@ const itIT: typeof en = {
   'patient.myRecords': 'Le mie cartelle',
   'patient.myPrescriptions': 'Le mie prescrizioni',
   'patient.noLink': 'Il tuo account non è collegato a una cartella paziente. Contatta il tuo medico.',
+  'patient.connectTitle': 'Connettiti al tuo medico',
+  'patient.connectHint': 'Inserisci il codice a 6 caratteri che il tuo medico ha condiviso con te.',
+  'patient.connectPlaceholder': 'Es. AB3K7Q',
+  'patient.connectBtn': 'Connetti',
+  'patient.connectSuccess': 'Connesso a {{name}}!',
+  'patient.connectInvalid': 'Codice non valido. Verifica con il tuo medico.',
+
+  'invite.button': 'Invita sull\'app',
+  'invite.regenerate': 'Nuovo codice',
+  'invite.shareMessage': 'Scarica SolvyMed e inserisci il codice {{code}} per collegarti alla mia clinica.',
+  'invite.linked': 'Connesso all\'app',
+  'invite.notLinked': 'Non connesso',
+  'invite.hint': 'Condividi questo codice con il tuo paziente per collegare il suo account.',
+  'invite.generating': 'Generazione…',
 };
 
 // ─── Spanish ──────────────────────────────────────────────────────────────────
@@ -3705,6 +3775,20 @@ const esES: typeof en = {
   'patient.myRecords': 'Mis registros',
   'patient.myPrescriptions': 'Mis recetas',
   'patient.noLink': 'Tu cuenta no está vinculada a un registro de paciente. Contacta a tu médico.',
+  'patient.connectTitle': 'Conéctate a tu médico',
+  'patient.connectHint': 'Introduce el código de 6 caracteres que tu médico compartió contigo.',
+  'patient.connectPlaceholder': 'Ej. AB3K7Q',
+  'patient.connectBtn': 'Conectar',
+  'patient.connectSuccess': '¡Conectado a {{name}}!',
+  'patient.connectInvalid': 'Código inválido. Compruébalo con tu médico.',
+
+  'invite.button': 'Invitar a la app',
+  'invite.regenerate': 'Nuevo código',
+  'invite.shareMessage': 'Descarga SolvyMed e introduce el código {{code}} para conectarte a mi clínica.',
+  'invite.linked': 'Conectado a la app',
+  'invite.notLinked': 'No conectado',
+  'invite.hint': 'Comparte este código con tu paciente para que vincule su cuenta.',
+  'invite.generating': 'Generando…',
 };
 
 // ─── Registry ─────────────────────────────────────────────────────────────────

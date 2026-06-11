@@ -364,6 +364,7 @@ function toPatient(row: Record<string, unknown>): Patient {
     convenioType: (row.convenio_type as Patient['convenioType']) || undefined,
     tags: row.tags as string[],
     photoUrl: (row.photo_url as string) || undefined,
+    inviteCode: (row.invite_code as string) || undefined,
     createdAt: row.created_at as string,
   };
 }
@@ -732,6 +733,51 @@ export async function uploadProfilePhoto(
   if (error) throw error;
   const { data } = supabase.storage.from('profile-photos').getPublicUrl(path);
   return `${data.publicUrl}?t=${Date.now()}`;
+}
+
+// ─── Patient Invite Codes ─────────────────────────────────────────────────────
+
+function randomInviteCode(): string {
+  // Unambiguous chars: no 0/O or 1/I
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
+
+export async function generatePatientInvite(patientId: string): Promise<string> {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const code = randomInviteCode();
+    const { error } = await supabase
+      .from('patients')
+      .update({ invite_code: code })
+      .eq('id', patientId);
+    if (!error) return code;
+  }
+  throw new Error('Could not generate a unique invite code');
+}
+
+export async function isPatientLinked(patientId: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('user_roles')
+    .select('user_id')
+    .eq('linked_patient_id', patientId)
+    .maybeSingle();
+  return !!data;
+}
+
+export async function linkByInviteCode(
+  userId: string,
+  code: string,
+): Promise<{ patientId: string; patientName: string } | null> {
+  const { data } = await supabase
+    .from('patients')
+    .select('id, full_name')
+    .eq('invite_code', code.toUpperCase().trim())
+    .limit(1);
+  if (!data?.length) return null;
+  const patientId = data[0].id as string;
+  const patientName = data[0].full_name as string;
+  await setUserRole(userId, 'patient', patientId);
+  return { patientId, patientName };
 }
 
 // ─── User Roles ──────────────────────────────────────────────────────────────

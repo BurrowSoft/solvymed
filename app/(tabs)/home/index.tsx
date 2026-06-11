@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator,
-  Image, useWindowDimensions,
+  Alert, TextInput, Image, useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +15,7 @@ import {
 } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
 import { useRole } from '@/lib/role-context';
+import { linkByInviteCode } from '@/lib/services';
 import { t, tn } from '@/lib/i18n';
 import { formatHomeDateHeader, formatCurrencyWhole, formatCurrency, formatDuration, formatTime, translateConsultType } from '@/lib/locale-utils';
 import { useStyles } from '@/lib/use-styles';
@@ -44,7 +45,7 @@ function greeting() {
 export default function HomeScreen() {
   const styles = useStyles(makeStyles);
   const { user } = useAuth();
-  const { role, linkedPatientId } = useRole();
+  const { role, linkedPatientId, refresh: refreshRole } = useRole();
   const today = new Date();
   const dateStr = fmt(today);
 
@@ -60,6 +61,10 @@ export default function HomeScreen() {
   const [myAppts, setMyAppts] = useState<Appointment[]>([]);
   const [myRecords, setMyRecords] = useState<MedicalRecord[]>([]);
   const [myPrescriptions, setMyPrescriptions] = useState<Prescription[]>([]);
+
+  // Connect-to-clinic flow (unlinked patients)
+  const [connectCode, setConnectCode] = useState('');
+  const [connecting, setConnecting] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -109,6 +114,24 @@ export default function HomeScreen() {
   }, [user, dateStr]);
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
+
+  async function handleConnect() {
+    if (!user || !connectCode.trim()) return;
+    setConnecting(true);
+    try {
+      const result = await linkByInviteCode(user.id, connectCode.trim());
+      if (!result) {
+        Alert.alert('', t('patient.connectInvalid'));
+      } else {
+        await refreshRole(user.id);
+        Alert.alert('', t('patient.connectSuccess', { name: result.patientName }));
+      }
+    } catch {
+      Alert.alert('', t('patient.connectInvalid'));
+    } finally {
+      setConnecting(false);
+    }
+  }
 
   const { width } = useWindowDimensions();
   const showAvatar = width >= 360;
@@ -163,10 +186,35 @@ export default function HomeScreen() {
       {loading ? (
         <ActivityIndicator style={{ marginTop: 60 }} color={Colors.primary} />
       ) : role === 'patient' && !linkedPatientId ? (
-        <View style={styles.noLinkBox}>
-          <Ionicons name="link-outline" size={40} color={Colors.textMuted} />
-          <Text style={styles.noLinkText}>{t('patient.noLink')}</Text>
-        </View>
+        <ScrollView contentContainerStyle={{ padding: 24, gap: 20, paddingTop: 40 }} keyboardShouldPersistTaps="handled">
+          <View style={{ alignItems: 'center', gap: 12, marginBottom: 8 }}>
+            <View style={styles.connectIcon}>
+              <Ionicons name="link-outline" size={32} color={Colors.primary} />
+            </View>
+            <Text style={styles.connectTitle}>{t('patient.connectTitle')}</Text>
+            <Text style={styles.connectHint}>{t('patient.connectHint')}</Text>
+          </View>
+          <TextInput
+            style={styles.connectInput}
+            value={connectCode}
+            onChangeText={v => setConnectCode(v.toUpperCase())}
+            placeholder={t('patient.connectPlaceholder')}
+            placeholderTextColor={Colors.textMuted}
+            autoCapitalize="characters"
+            autoCorrect={false}
+            maxLength={6}
+          />
+          <TouchableOpacity
+            style={[styles.connectBtn, (connecting || !connectCode.trim()) && { opacity: 0.6 }]}
+            onPress={handleConnect}
+            disabled={connecting || !connectCode.trim()}
+          >
+            {connecting
+              ? <ActivityIndicator color="#fff" />
+              : <Text style={styles.connectBtnText}>{t('patient.connectBtn')}</Text>
+            }
+          </TouchableOpacity>
+        </ScrollView>
       ) : role === 'patient' ? (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, gap: 20, paddingBottom: 32 }}>
           {/* Next appointment */}
@@ -344,6 +392,25 @@ const makeStyles = () => StyleSheet.create({
   noLinkText: {
     fontSize: 14, color: Colors.textMuted, textAlign: 'center', lineHeight: 20,
   },
+  connectIcon: {
+    width: 72, height: 72, borderRadius: 36,
+    backgroundColor: `${Colors.primary}15`, alignItems: 'center', justifyContent: 'center',
+  },
+  connectTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, textAlign: 'center' },
+  connectHint: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 20 },
+  connectInput: {
+    backgroundColor: Colors.surface, borderWidth: 1.5, borderColor: Colors.border,
+    borderRadius: 14, paddingHorizontal: 16, height: 56,
+    fontSize: 22, fontWeight: '700', color: Colors.textPrimary, letterSpacing: 6,
+    textAlign: 'center',
+  },
+  connectBtn: {
+    backgroundColor: Colors.primary, height: 52, borderRadius: 14,
+    alignItems: 'center', justifyContent: 'center',
+    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25, shadowRadius: 8, elevation: 4,
+  },
+  connectBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
 
   summaryRow: { flexDirection: 'row', gap: 10 },
   summaryCard: {
