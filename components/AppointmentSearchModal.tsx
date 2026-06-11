@@ -10,6 +10,7 @@ import { Appointment } from '@/lib/types';
 import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
 import { searchAppointments } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
+import { t } from '@/lib/i18n';
 
 function statusColor(status: Appointment['status']) {
   switch (status) {
@@ -96,28 +97,28 @@ export function AppointmentSearchModal({ visible, onClose }: Props) {
             </View>
             <View style={styles.detailRow}>
               <Ionicons name={appt.type === 'online' ? 'videocam-outline' : 'business-outline'} size={15} color={Colors.textMuted} />
-              <Text style={styles.detailMeta}>{appt.type === 'online' ? 'Online' : 'In-Person'}</Text>
+              <Text style={styles.detailMeta}>{appt.type === 'online' ? t('apptType.online') : t('apptType.inPerson')}</Text>
             </View>
             <View style={styles.detailRow}>
               <Ionicons name="card-outline" size={15} color={Colors.textMuted} />
               <Text style={styles.detailMeta}>
-                {appt.paymentType === 'private' ? 'Private' : 'Insurance'}
+                {appt.paymentType === 'private' ? t('newAppt.private') : t('newAppt.insurance')}
                 {appt.paymentAmount ? ` · R$ ${appt.paymentAmount.toFixed(2)}` : ''}
                 {' · '}
                 <Text style={{ color: appt.paymentStatus === 'paid' ? Colors.success : Colors.warning }}>
-                  {appt.paymentStatus === 'paid' ? 'Paid' : 'Pending'}
+                  {appt.paymentStatus === 'paid' ? t('appt.paid') : t('payments.pending')}
                 </Text>
               </Text>
             </View>
             {appt.notes ? (
               <View style={styles.notesBox}>
-                <Text style={styles.notesLabel}>Notes</Text>
+                <Text style={styles.notesLabel}>{t('appt.notes')}</Text>
                 <Text style={styles.notesText}>{appt.notes}</Text>
               </View>
             ) : null}
             <View style={[styles.statusBadge, { backgroundColor: statusColor(appt.status) + '20', alignSelf: 'flex-start' }]}>
               <Text style={[styles.statusText, { color: statusColor(appt.status) }]}>
-                {appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
+                {t(`status.${appt.status}` as Parameters<typeof t>[0])}
               </Text>
             </View>
           </Pressable>
@@ -139,7 +140,7 @@ export function AppointmentSearchModal({ visible, onClose }: Props) {
             <TextInput
               ref={inputRef}
               style={styles.searchInput}
-              placeholder="Search by patient name..."
+              placeholder={t('search.placeholder')}
               placeholderTextColor={Colors.textMuted}
               value={query}
               onChangeText={setQuery}
@@ -157,13 +158,13 @@ export function AppointmentSearchModal({ visible, onClose }: Props) {
         {query.length === 0 && (
           <View style={styles.hint}>
             <Ionicons name="search-outline" size={44} color={Colors.textMuted} />
-            <Text style={styles.hintText}>Search across all appointments</Text>
-            <Text style={styles.hintSub}>Type a patient name to get started</Text>
+            <Text style={styles.hintText}>{t('search.hintTitle')}</Text>
+            <Text style={styles.hintSub}>{t('search.hintSub')}</Text>
           </View>
         )}
 
         {query.length === 1 && (
-          <Text style={styles.shortQuery}>Type at least 2 characters...</Text>
+          <Text style={styles.shortQuery}>{t('search.shortQuery')}</Text>
         )}
 
         {loading && query.length >= 2 && (
@@ -173,8 +174,8 @@ export function AppointmentSearchModal({ visible, onClose }: Props) {
         {!loading && results.length === 0 && query.length >= 2 && (
           <View style={styles.hint}>
             <Ionicons name="calendar-outline" size={44} color={Colors.textMuted} />
-            <Text style={styles.hintText}>No appointments found</Text>
-            <Text style={styles.hintSub}>Try a different name</Text>
+            <Text style={styles.hintText}>{t('search.noResultsTitle')}</Text>
+            <Text style={styles.hintSub}>{t('search.noResultsSub')}</Text>
           </View>
         )}
 
@@ -195,7 +196,7 @@ export function AppointmentSearchModal({ visible, onClose }: Props) {
               </View>
               <View style={[styles.statusBadge, { backgroundColor: statusColor(item.status) + '20' }]}>
                 <Text style={[styles.statusText, { color: statusColor(item.status) }]}>
-                  {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                  {t(`status.${item.status}` as Parameters<typeof t>[0])}
                 </Text>
               </View>
             </TouchableOpacity>

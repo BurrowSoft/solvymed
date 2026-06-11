@@ -9,6 +9,7 @@ import { Colors } from '@/constants/Colors';
 import { Prescription, PrescriptionItem } from '@/lib/types';
 import { createPrescription } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
+import { t } from '@/lib/i18n';
 
 interface MedEntry extends PrescriptionItem {
   _key: string;
@@ -54,7 +55,7 @@ export function NewPrescriptionModal({ visible, patientId, patientName, onClose,
 
   async function handleSave() {
     const filled = medications.filter(m => m.name.trim());
-    if (filled.length === 0) { setError('Add at least one medication'); return; }
+    if (filled.length === 0) { setError(t('rx.errorEmpty')); return; }
     setError('');
     setSaving(true);
 
@@ -81,7 +82,7 @@ export function NewPrescriptionModal({ visible, patientId, patientName, onClose,
       }
       handleClose();
     } catch {
-      setError('Failed to save prescription. Please try again.');
+      setError(t('rx.errorSave'));
     } finally {
       setSaving(false);
     }
@@ -96,13 +97,13 @@ export function NewPrescriptionModal({ visible, patientId, patientName, onClose,
               <Ionicons name="close" size={24} color={Colors.textSecondary} />
             </TouchableOpacity>
             <View style={styles.headerCenter}>
-              <Text style={styles.title}>New Prescription</Text>
+              <Text style={styles.title}>{t('rx.title')}</Text>
               <Text style={styles.subtitle}>{patientName}</Text>
             </View>
             <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={saving}>
               {saving
                 ? <ActivityIndicator size="small" color="#fff" />
-                : <Text style={styles.saveBtnText}>Save</Text>
+                : <Text style={styles.saveBtnText}>{t('common.save')}</Text>
               }
             </TouchableOpacity>
           </View>
@@ -112,10 +113,10 @@ export function NewPrescriptionModal({ visible, patientId, patientName, onClose,
 
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Medications</Text>
+                <Text style={styles.sectionTitle}>{t('rx.medications')}</Text>
                 <TouchableOpacity style={styles.addMedBtn} onPress={addMed}>
                   <Ionicons name="add" size={16} color={Colors.primary} />
-                  <Text style={styles.addMedText}>Add</Text>
+                  <Text style={styles.addMedText}>{t('common.add')}</Text>
                 </TouchableOpacity>
               </View>
 
@@ -131,11 +132,11 @@ export function NewPrescriptionModal({ visible, patientId, patientName, onClose,
                   </View>
 
                   <View style={styles.field}>
-                    <Text style={styles.fieldLabel}>Medication Name</Text>
+                    <Text style={styles.fieldLabel}>{t('rx.medName')}</Text>
                     <View style={styles.inputBox}>
                       <TextInput
                         style={styles.input}
-                        placeholder="e.g. Amoxicillin"
+                        placeholder={t('rx.medNamePlaceholder')}
                         placeholderTextColor={Colors.textMuted}
                         value={med.name}
                         onChangeText={v => updateMed(med._key, 'name', v)}
@@ -145,11 +146,11 @@ export function NewPrescriptionModal({ visible, patientId, patientName, onClose,
 
                   <View style={styles.threeCol}>
                     <View style={[styles.field, { flex: 1 }]}>
-                      <Text style={styles.fieldLabel}>Dosage</Text>
+                      <Text style={styles.fieldLabel}>{t('rx.dosage')}</Text>
                       <View style={styles.inputBox}>
                         <TextInput
                           style={styles.input}
-                          placeholder="500mg"
+                          placeholder={t('rx.dosagePlaceholder')}
                           placeholderTextColor={Colors.textMuted}
                           value={med.dosage}
                           onChangeText={v => updateMed(med._key, 'dosage', v)}
@@ -157,11 +158,11 @@ export function NewPrescriptionModal({ visible, patientId, patientName, onClose,
                       </View>
                     </View>
                     <View style={[styles.field, { flex: 1 }]}>
-                      <Text style={styles.fieldLabel}>Frequency</Text>
+                      <Text style={styles.fieldLabel}>{t('rx.frequency')}</Text>
                       <View style={styles.inputBox}>
                         <TextInput
                           style={styles.input}
-                          placeholder="3x/day"
+                          placeholder={t('rx.frequencyPlaceholder')}
                           placeholderTextColor={Colors.textMuted}
                           value={med.frequency}
                           onChangeText={v => updateMed(med._key, 'frequency', v)}
@@ -169,11 +170,11 @@ export function NewPrescriptionModal({ visible, patientId, patientName, onClose,
                       </View>
                     </View>
                     <View style={[styles.field, { flex: 1 }]}>
-                      <Text style={styles.fieldLabel}>Duration</Text>
+                      <Text style={styles.fieldLabel}>{t('rx.duration')}</Text>
                       <View style={styles.inputBox}>
                         <TextInput
                           style={styles.input}
-                          placeholder="7 days"
+                          placeholder={t('rx.durationPlaceholder')}
                           placeholderTextColor={Colors.textMuted}
                           value={med.duration}
                           onChangeText={v => updateMed(med._key, 'duration', v)}
@@ -187,11 +188,11 @@ export function NewPrescriptionModal({ visible, patientId, patientName, onClose,
 
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>
-                Notes <Text style={styles.optional}>(optional)</Text>
+                {t('rx.notes')} <Text style={styles.optional}>{t('newAppt.optional')}</Text>
               </Text>
               <TextInput
                 style={styles.notesInput}
-                placeholder="Additional instructions for the patient..."
+                placeholder={t('rx.notesPlaceholder')}
                 placeholderTextColor={Colors.textMuted}
                 value={notes}
                 onChangeText={setNotes}

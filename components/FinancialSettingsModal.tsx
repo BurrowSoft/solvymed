@@ -59,7 +59,7 @@ export function FinancialSettingsModal({ visible, settings, onClose, onSave }: P
               onChangeText={setFooter}
               multiline
               numberOfLines={4}
-              placeholder="e.g. Tax ID · Bank details · Thank you for your trust"
+              placeholder={t('settings.financial.footerPlaceholder')}
               placeholderTextColor={Colors.textMuted}
               textAlignVertical="top"
             />

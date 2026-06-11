@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { Procedure } from '@/lib/types';
 import { getProcedures, createProcedure, updateProcedure, deleteProcedure } from '@/lib/services';
+import { t } from '@/lib/i18n';
 
 const DURATIONS = [15, 20, 30, 45, 50, 60, 90, 120];
 
@@ -70,7 +71,7 @@ export function ProceduresModal({ visible, professionalId, onClose }: Props) {
 
   async function handleSave() {
     if (!form.name.trim()) {
-      Alert.alert('Required', 'Please enter a procedure name.');
+      Alert.alert(t('proc.requiredTitle'), t('proc.requiredMsg'));
       return;
     }
     setSaving(true);
@@ -96,7 +97,7 @@ export function ProceduresModal({ visible, professionalId, onClose }: Props) {
       setShowForm(false);
       loadProcedures();
     } catch {
-      Alert.alert('Error', 'Could not save procedure.');
+      Alert.alert(t('proc.errorTitle'), t('proc.errorMsg'));
     } finally {
       setSaving(false);
     }
@@ -104,12 +105,12 @@ export function ProceduresModal({ visible, professionalId, onClose }: Props) {
 
   function confirmDelete(p: Procedure) {
     Alert.alert(
-      'Delete procedure',
-      `Remove "${p.name}"? This won't affect existing appointments.`,
+      t('proc.deleteTitle'),
+      t('proc.deleteMsg', { name: p.name }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete', style: 'destructive',
+          text: t('common.delete'), style: 'destructive',
           onPress: () => deleteProcedure(p.id).then(loadProcedures).catch(() => {}),
         },
       ],
@@ -131,10 +132,10 @@ export function ProceduresModal({ visible, professionalId, onClose }: Props) {
           <TouchableOpacity onPress={onClose} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={styles.title}>My Procedures</Text>
+          <Text style={styles.title}>{t('proc.title')}</Text>
           <TouchableOpacity style={styles.addBtn} onPress={openAdd}>
             <Ionicons name="add" size={18} color="#fff" />
-            <Text style={styles.addBtnText}>Add</Text>
+            <Text style={styles.addBtnText}>{t('common.add')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -142,16 +143,13 @@ export function ProceduresModal({ visible, professionalId, onClose }: Props) {
           <ActivityIndicator style={{ marginTop: 40 }} color={Colors.primary} />
         ) : (
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Text style={styles.intro}>
-              Procedures appear as quick-select options when booking appointments,
-              automatically filling in duration, price, and payment type.
-            </Text>
+            <Text style={styles.intro}>{t('proc.intro')}</Text>
 
             {procedures.length === 0 ? (
               <View style={styles.emptyState}>
                 <Ionicons name="list-outline" size={48} color={Colors.textMuted} />
-                <Text style={styles.emptyTitle}>No procedures yet</Text>
-                <Text style={styles.emptyText}>Tap "Add" to create your first consultation type.</Text>
+                <Text style={styles.emptyTitle}>{t('proc.emptyTitle')}</Text>
+                <Text style={styles.emptyText}>{t('proc.emptyText')}</Text>
               </View>
             ) : (
               <>
@@ -172,7 +170,7 @@ export function ProceduresModal({ visible, professionalId, onClose }: Props) {
 
                 {inactive.length > 0 && (
                   <>
-                    <Text style={styles.sectionLabel}>Inactive</Text>
+                    <Text style={styles.sectionLabel}>{t('proc.inactive')}</Text>
                     <View style={styles.listCard}>
                       {inactive.map((p, i) => (
                         <ProcedureRow
@@ -200,24 +198,24 @@ export function ProceduresModal({ visible, professionalId, onClose }: Props) {
         <View style={styles.formOverlay}>
           <View style={styles.formSheet}>
             <View style={styles.formHeader}>
-              <Text style={styles.formTitle}>{editingId ? 'Edit Procedure' : 'New Procedure'}</Text>
+              <Text style={styles.formTitle}>{editingId ? t('proc.formTitle.edit') : t('proc.formTitle.new')}</Text>
               <TouchableOpacity onPress={() => setShowForm(false)}>
                 <Ionicons name="close" size={22} color={Colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-              <Text style={styles.formLabel}>Name *</Text>
+              <Text style={styles.formLabel}>{t('proc.labelName')}</Text>
               <TextInput
                 style={styles.formInput}
                 value={form.name}
                 onChangeText={v => setForm(f => ({ ...f, name: v }))}
-                placeholder="e.g. 1ª Consulta - Adulto"
+                placeholder={t('proc.namePlaceholder')}
                 placeholderTextColor={Colors.textMuted}
                 autoFocus
               />
 
-              <Text style={[styles.formLabel, { marginTop: 14 }]}>Duration</Text>
+              <Text style={[styles.formLabel, { marginTop: 14 }]}>{t('proc.labelDuration')}</Text>
               <View style={styles.durationPills}>
                 {DURATIONS.map(d => (
                   <TouchableOpacity
@@ -232,7 +230,7 @@ export function ProceduresModal({ visible, professionalId, onClose }: Props) {
                 ))}
               </View>
 
-              <Text style={[styles.formLabel, { marginTop: 14 }]}>Price (R$) — optional</Text>
+              <Text style={[styles.formLabel, { marginTop: 14 }]}>{t('proc.labelPrice')}</Text>
               <TextInput
                 style={styles.formInput}
                 value={form.price}
@@ -242,19 +240,19 @@ export function ProceduresModal({ visible, professionalId, onClose }: Props) {
                 keyboardType="decimal-pad"
               />
 
-              <Text style={[styles.formLabel, { marginTop: 14 }]}>Payment Type</Text>
+              <Text style={[styles.formLabel, { marginTop: 14 }]}>{t('proc.labelPaymentType')}</Text>
               <View style={styles.toggle}>
                 <TouchableOpacity
                   style={[styles.toggleOpt, form.paymentType === 'private' && styles.toggleActive]}
                   onPress={() => setForm(f => ({ ...f, paymentType: 'private' }))}
                 >
-                  <Text style={[styles.toggleText, form.paymentType === 'private' && styles.toggleTextActive]}>Private</Text>
+                  <Text style={[styles.toggleText, form.paymentType === 'private' && styles.toggleTextActive]}>{t('proc.private')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.toggleOpt, form.paymentType === 'insurance' && styles.toggleActive]}
                   onPress={() => setForm(f => ({ ...f, paymentType: 'insurance' }))}
                 >
-                  <Text style={[styles.toggleText, form.paymentType === 'insurance' && styles.toggleTextActive]}>Insurance</Text>
+                  <Text style={[styles.toggleText, form.paymentType === 'insurance' && styles.toggleTextActive]}>{t('proc.insurance')}</Text>
                 </TouchableOpacity>
               </View>
 
@@ -265,7 +263,7 @@ export function ProceduresModal({ visible, professionalId, onClose }: Props) {
               >
                 {saving
                   ? <ActivityIndicator size="small" color="#fff" />
-                  : <Text style={styles.saveBtnText}>{editingId ? 'Update' : 'Create'}</Text>
+                  : <Text style={styles.saveBtnText}>{editingId ? t('common.update') : t('proc.create')}</Text>
                 }
               </TouchableOpacity>
 
@@ -292,7 +290,7 @@ function ProcedureRow({ procedure: p, border, onEdit, onDelete, onToggle }: {
         <Text style={styles.rowMeta}>
           {p.durationMinutes} min
           {p.price != null ? ` · R$ ${p.price.toFixed(2)}` : ''}
-          {' · '}{p.paymentType === 'private' ? 'Private' : 'Insurance'}
+          {' · '}{p.paymentType === 'private' ? t('proc.private') : t('proc.insurance')}
         </Text>
       </View>
       <View style={styles.rowActions}>

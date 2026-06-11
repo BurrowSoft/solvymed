@@ -8,33 +8,34 @@ import { Colors } from '@/constants/Colors';
 import { Professional, DocumentType, DocumentTemplate } from '@/lib/types';
 import { getAllTemplates } from '@/lib/template-service';
 import { TemplateEditor } from './TemplateEditor';
+import { t } from '@/lib/i18n';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
 interface DocTypeInfo {
   key: DocumentType;
-  label: string;
-  description: string;
+  labelKey: Parameters<typeof t>[0];
+  descKey: Parameters<typeof t>[0];
   icon: IoniconName;
 }
 
 const DOC_TYPES: DocTypeInfo[] = [
   {
     key: 'prescription',
-    label: 'Prescription',
-    description: 'Medication prescriptions for patients',
+    labelKey: 'docTemplates.type.prescription',
+    descKey: 'docTemplates.type.prescriptionDesc',
     icon: 'medical-outline',
   },
   {
     key: 'medical_record',
-    label: 'Medical Record',
-    description: 'Clinical notes and consultation records',
+    labelKey: 'docTemplates.type.medicalRecord',
+    descKey: 'docTemplates.type.medicalRecordDesc',
     icon: 'document-text-outline',
   },
   {
     key: 'invoice',
-    label: 'Invoice',
-    description: 'Payment receipts and billing documents',
+    labelKey: 'docTemplates.type.invoice',
+    descKey: 'docTemplates.type.invoiceDesc',
     icon: 'receipt-outline',
   },
 ];
@@ -70,15 +71,12 @@ export function DocumentTemplatesModal({ visible, professional, onClose }: Props
           <TouchableOpacity onPress={onClose} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={styles.title}>Document Templates</Text>
+          <Text style={styles.title}>{t('settings.documentTemplates')}</Text>
           <View style={{ width: 40 }} />
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Text style={styles.intro}>
-            Customize the color palette and logo for each document type independently.
-            Changes apply to all future exported PDFs.
-          </Text>
+          <Text style={styles.intro}>{t('docTemplates.intro')}</Text>
 
           {loading ? (
             <ActivityIndicator style={{ marginTop: 40 }} color={Colors.primary} />
@@ -102,8 +100,8 @@ export function DocumentTemplatesModal({ visible, professional, onClose }: Props
                     </View>
 
                     <View style={{ flex: 1 }}>
-                      <Text style={styles.rowLabel}>{dt.label}</Text>
-                      <Text style={styles.rowDesc}>{dt.description}</Text>
+                      <Text style={styles.rowLabel}>{t(dt.labelKey)}</Text>
+                      <Text style={styles.rowDesc}>{t(dt.descKey)}</Text>
                     </View>
 
                     <View style={styles.rowRight}>
@@ -117,7 +115,7 @@ export function DocumentTemplatesModal({ visible, professional, onClose }: Props
                           )}
                         </View>
                       ) : (
-                        <Text style={styles.notConfigured}>Not set</Text>
+                        <Text style={styles.notConfigured}>{t('docTemplates.notSet')}</Text>
                       )}
                       <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
                     </View>

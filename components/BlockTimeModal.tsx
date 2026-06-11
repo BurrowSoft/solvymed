@@ -9,6 +9,7 @@ import { Colors } from '@/constants/Colors';
 import { Appointment } from '@/lib/types';
 import { createAppointment } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
+import { t } from '@/lib/i18n';
 
 const TIME_SLOTS: string[] = [];
 for (let h = 7; h < 21; h++) {
@@ -18,7 +19,14 @@ for (let h = 7; h < 21; h++) {
 }
 
 const DURATIONS = [15, 30, 45, 60, 90, 120, 180, 240];
-const REASON_PRESETS = ['Lunch break', 'Meeting', 'Personal', 'Off duty', 'Vacation', 'Training'];
+const REASON_PRESET_KEYS = [
+  'blockTime.preset.lunch',
+  'blockTime.preset.meeting',
+  'blockTime.preset.personal',
+  'blockTime.preset.offDuty',
+  'blockTime.preset.vacation',
+  'blockTime.preset.training',
+] as const;
 
 interface Props {
   visible: boolean;
@@ -56,7 +64,7 @@ export function BlockTimeModal({ visible, defaultDate, onClose, onSaved }: Props
   }
 
   async function handleSave() {
-    if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) { setError('Date must be YYYY-MM-DD'); return; }
+    if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) { setError(t('blockTime.errorDate')); return; }
     setError('');
     setSaving(true);
 
@@ -85,7 +93,7 @@ export function BlockTimeModal({ visible, defaultDate, onClose, onSaved }: Props
       onClose();
       resetForm();
     } catch {
-      setError('Failed to save. Please try again.');
+      setError(t('blockTime.errorSave'));
     } finally {
       setSaving(false);
     }
@@ -99,11 +107,11 @@ export function BlockTimeModal({ visible, defaultDate, onClose, onSaved }: Props
             <TouchableOpacity onPress={() => { onClose(); resetForm(); }}>
               <Ionicons name="close" size={24} color={Colors.textSecondary} />
             </TouchableOpacity>
-            <Text style={styles.title}>Block Time</Text>
+            <Text style={styles.title}>{t('block.title')}</Text>
             <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={saving}>
               {saving
                 ? <ActivityIndicator size="small" color="#fff" />
-                : <Text style={styles.saveBtnText}>Save</Text>
+                : <Text style={styles.saveBtnText}>{t('common.save')}</Text>
               }
             </TouchableOpacity>
           </View>
@@ -112,7 +120,7 @@ export function BlockTimeModal({ visible, defaultDate, onClose, onSaved }: Props
             {!!error && <Text style={styles.errorText}>{error}</Text>}
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Date & Time</Text>
+              <Text style={styles.sectionTitle}>{t('blockTime.sectionDateTime')}</Text>
 
               <View style={styles.inputBox}>
                 <Ionicons name="calendar-outline" size={16} color={Colors.textMuted} />
@@ -125,7 +133,7 @@ export function BlockTimeModal({ visible, defaultDate, onClose, onSaved }: Props
                 />
               </View>
 
-              <Text style={styles.fieldLabel}>Start time</Text>
+              <Text style={styles.fieldLabel}>{t('blockTime.startTime')}</Text>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -145,7 +153,7 @@ export function BlockTimeModal({ visible, defaultDate, onClose, onSaved }: Props
                 ))}
               </ScrollView>
 
-              <Text style={styles.fieldLabel}>Duration</Text>
+              <Text style={styles.fieldLabel}>{t('blockTime.duration')}</Text>
               <View style={styles.pills}>
                 {DURATIONS.map(d => (
                   <TouchableOpacity
@@ -161,31 +169,34 @@ export function BlockTimeModal({ visible, defaultDate, onClose, onSaved }: Props
               </View>
 
               <Text style={styles.fieldLabel}>
-                Ends at: <Text style={styles.endTime}>{endTime}</Text>
+                {t('blockTime.endsAt')} <Text style={styles.endTime}>{endTime}</Text>
               </Text>
             </View>
 
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>
-                Reason <Text style={styles.optional}>(optional)</Text>
+                {t('blockTime.reason')} <Text style={styles.optional}>{t('newAppt.optional')}</Text>
               </Text>
 
               <View style={styles.presets}>
-                {REASON_PRESETS.map(r => (
-                  <TouchableOpacity
-                    key={r}
-                    onPress={() => setReason(reason === r ? '' : r)}
-                    style={[styles.preset, reason === r && styles.presetActive]}
-                  >
-                    <Text style={[styles.presetText, reason === r && styles.presetTextActive]}>{r}</Text>
-                  </TouchableOpacity>
-                ))}
+                {REASON_PRESET_KEYS.map(key => {
+                  const label = t(key);
+                  return (
+                    <TouchableOpacity
+                      key={key}
+                      onPress={() => setReason(reason === label ? '' : label)}
+                      style={[styles.preset, reason === label && styles.presetActive]}
+                    >
+                      <Text style={[styles.presetText, reason === label && styles.presetTextActive]}>{label}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
 
               <View style={styles.inputBox}>
                 <TextInput
                   style={styles.input}
-                  placeholder="Or type a custom reason..."
+                  placeholder={t('blockTime.reasonCustomPlaceholder')}
                   placeholderTextColor={Colors.textMuted}
                   value={reason}
                   onChangeText={setReason}

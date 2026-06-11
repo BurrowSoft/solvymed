@@ -48,12 +48,16 @@ const LANGUAGE_NAMES: Record<string, string> = {
   'es-ES': 'Español',
 };
 
-const THEME_NAMES: Record<string, string> = {
-  light: 'Light',
-  dark: 'Dark',
-  warm: 'Warm',
-  ocean: 'Ocean',
-};
+function getThemeName(key: string): string {
+  const map: Record<string, Parameters<typeof t>[0]> = {
+    light: 'settings.theme.light',
+    dark: 'settings.theme.dark',
+    warm: 'settings.theme.warm',
+    ocean: 'settings.theme.ocean',
+  };
+  const tKey = map[key];
+  return tKey ? t(tKey) : key;
+}
 
 export default function SettingsScreen() {
   const { user, signOut } = useAuth();
@@ -106,7 +110,7 @@ export default function SettingsScreen() {
       await FileSystem.writeAsStringAsync(path, csv, { encoding: FileSystem.EncodingType.UTF8 });
 
       if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(path, { mimeType: 'text/csv', dialogTitle: 'Export Patients' });
+        await Sharing.shareAsync(path, { mimeType: 'text/csv', dialogTitle: t('settings.exportDialogTitle') });
       } else {
         Alert.alert('', t('settings.data.exportDone'));
       }
@@ -171,13 +175,13 @@ export default function SettingsScreen() {
         {
           label: t('settings.notifications.reminders'),
           icon: 'notifications-outline',
-          detail: settings.remindersEnabled ? leadDetail(settings) : 'Off',
+          detail: settings.remindersEnabled ? leadDetail(settings) : t('settings.off'),
           onPress: () => setShowNotifications(true),
         },
         {
           label: t('settings.notifications.dailySummary'),
           icon: 'sunny-outline',
-          detail: settings.dailySummaryEnabled ? 'On' : 'Off',
+          detail: settings.dailySummaryEnabled ? t('settings.on') : t('settings.off'),
           onPress: () => setShowNotifications(true),
         },
       ],
@@ -188,7 +192,7 @@ export default function SettingsScreen() {
         {
           label: t('settings.appearance.theme'),
           icon: 'color-palette-outline',
-          detail: THEME_NAMES[theme] ?? theme,
+          detail: getThemeName(theme),
           onPress: () => setShowThemePicker(true),
         },
         {
@@ -205,7 +209,7 @@ export default function SettingsScreen() {
         {
           label: t('settings.security.biometric'),
           icon: 'finger-print-outline',
-          detail: settings.biometricLockEnabled ? 'On' : 'Off',
+          detail: settings.biometricLockEnabled ? t('settings.on') : t('settings.off'),
           onPress: () => setShowSecurity(true),
         },
         {
