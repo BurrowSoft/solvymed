@@ -1,4 +1,5 @@
 import createMiddleware from "next-intl/middleware";
+import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 
@@ -25,8 +26,35 @@ const COUNTRY_LOCALE: Record<string, string> = {
 
 const intlMiddleware = createMiddleware(routing);
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
+
+  // Supabase session refresh
+  let response = NextResponse.next({ request: req });
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return req.cookies.getAll(); },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+          response = NextResponse.next({ request: req });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    },
+  );
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // Protect dashboard
+  if (pathname.includes("/dashboard") && !user) {
+    const segments = pathname.split("/");
+    const locale = (routing.locales as readonly string[]).includes(segments[1]) ? segments[1] : "en";
+    return NextResponse.redirect(new URL(`/${locale}/auth/login`, req.url));
+  }
 
   // First-visit geo-redirect
   const hasLocalePrefix = (routing.locales as readonly string[]).some(
@@ -49,7 +77,7 @@ export function middleware(req: NextRequest) {
     }
   }
 
-  // ?country=XX — inject x-burrowsoft-geo for detectCountry() simulation
+  // ?country=XX dev simulation
   const devCountry = searchParams.get("country");
   if (devCountry) {
     const intlRes = intlMiddleware(req);

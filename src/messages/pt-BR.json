@@ -58,5 +58,58 @@
     "error": "Algo deu errado",
     "errorSub": "Este link pode ter expirado ou já foi utilizado. Tente se cadastrar novamente no aplicativo.",
     "backToHome": "Voltar para Solvymed.com"
+  },
+  "auth": {
+    "login": {
+      "title": "Bem-vindo de volta",
+      "subtitle": "Entre na sua conta SolvyMed",
+      "email": "E-mail",
+      "password": "Senha",
+      "forgotPassword": "Esqueceu a senha?",
+      "submit": "Entrar",
+      "noAccount": "Não tem uma conta?",
+      "signUp": "Cadastrar",
+      "error": "E-mail ou senha inválidos. Tente novamente."
+    },
+    "signup": {
+      "title": "Crie sua conta",
+      "subtitle": "Comece a gerenciar seu consultório hoje",
+      "fullName": "Nome completo",
+      "email": "E-mail",
+      "password": "Senha",
+      "confirmPassword": "Confirmar senha",
+      "passwordMismatch": "As senhas não coincidem",
+      "submit": "Criar conta",
+      "hasAccount": "Já tem uma conta?",
+      "logIn": "Entrar",
+      "success": "Verifique seu e-mail",
+      "successSub": "Enviamos um link de confirmação para o seu e-mail. Abra-o para ativar sua conta.",
+      "error": "Não foi possível criar sua conta. Tente novamente."
+    },
+    "forgotPassword": {
+      "title": "Esqueceu sua senha?",
+      "subtitle": "Informe seu e-mail e enviaremos um link de redefinição.",
+      "email": "E-mail",
+      "submit": "Enviar link",
+      "backToLogin": "Voltar ao login",
+      "success": "Verifique seu e-mail",
+      "successSub": "Se existir uma conta com esse e-mail, você receberá um link em breve.",
+      "error": "Não foi possível enviar o e-mail. Tente novamente."
+    },
+    "resetPassword": {
+      "title": "Definir nova senha",
+      "subtitle": "Digite sua nova senha abaixo.",
+      "newPassword": "Nova senha",
+      "confirmPassword": "Confirmar nova senha",
+      "passwordMismatch": "As senhas não coincidem",
+      "submit": "Atualizar senha",
+      "success": "Senha atualizada",
+      "successSub": "Sua senha foi atualizada. Você já pode fazer login.",
+      "goToLogin": "Ir para o login",
+      "error": "Não foi possível atualizar a senha. O link pode ter expirado.",
+      "loading": "Validando seu link de redefinição…"
+    },
+    "logIn": "Entrar",
+    "backToHome": "Voltar ao início"
   }
 }

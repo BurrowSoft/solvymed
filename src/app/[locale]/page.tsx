@@ -1,6 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { LanguageSelector } from "@burrowsoft/shared";
+import { AppDownloadButtons } from "@/components/AppDownloadButtons";
+import { Link } from "@/i18n/navigation";
 
 const ALL_LOCALES = routing.locales as unknown as string[];
 
@@ -97,6 +99,12 @@ export default async function HomePage() {
               locales={ALL_LOCALES}
               className="text-xs border-slate-200 bg-white shadow-sm"
             />
+            <Link
+              href="/auth/login"
+              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 whitespace-nowrap"
+            >
+              {t("auth.logIn")}
+            </Link>
             <a
               href="#download"
               className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 whitespace-nowrap"
@@ -133,27 +141,9 @@ export default async function HomePage() {
               {t("hero.subtitle")}
             </p>
 
-            <div id="download" className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <a
-                href="#"
-                className="flex w-full items-center justify-center gap-3 rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-xl shadow-teal-900/40 transition hover:bg-teal-400 sm:w-auto"
-              >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6 shrink-0">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-                </svg>
-                {t("hero.appStore")}
-              </a>
-              <a
-                href="#"
-                className="flex w-full items-center justify-center gap-3 rounded-xl border-2 border-white/20 bg-white/10 px-8 py-4 text-lg font-bold text-white backdrop-blur-sm transition hover:bg-white/20 sm:w-auto"
-              >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6 shrink-0">
-                  <path d="M3.18 23.76c.31.17.67.19 1.01.08l11.7-6.76-2.46-2.46-10.25 9.14zM.54 1.96C.2 2.3 0 2.84 0 3.54v16.92c0 .7.2 1.24.54 1.58l.08.08 9.47-9.47v-.22L.62 1.88l-.08.08zM20.42 10.3l-2.67-1.54-2.75 2.75 2.75 2.75 2.68-1.55c.76-.44.76-1.15-.01-1.41zM4.19.16L15.89 6.92 13.43 9.38 3.18.24 4.19.16z" />
-                </svg>
-                {t("hero.googlePlay")}
-              </a>
+            <div id="download">
+              <AppDownloadButtons />
             </div>
-            <p className="mt-4 text-sm text-slate-400">{t("hero.comingSoon")}</p>
           </div>
         </section>
 
@@ -206,26 +196,7 @@ export default async function HomePage() {
               {t("cta.heading")}
             </h2>
             <p className="mb-10 text-slate-400">{t("cta.sub")}</p>
-            <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <a
-                href="#"
-                className="flex w-full items-center justify-center gap-3 rounded-xl bg-teal-500 px-8 py-4 text-base font-bold text-white shadow-lg transition hover:bg-teal-400 sm:w-auto"
-              >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-                </svg>
-                {t("cta.appStore")}
-              </a>
-              <a
-                href="#"
-                className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-600 bg-slate-800 px-8 py-4 text-base font-bold text-white transition hover:bg-slate-700 sm:w-auto"
-              >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0">
-                  <path d="M3.18 23.76c.31.17.67.19 1.01.08l11.7-6.76-2.46-2.46-10.25 9.14zM.54 1.96C.2 2.3 0 2.84 0 3.54v16.92c0 .7.2 1.24.54 1.58l.08.08 9.47-9.47v-.22L.62 1.88l-.08.08zM20.42 10.3l-2.67-1.54-2.75 2.75 2.75 2.75 2.68-1.55c.76-.44.76-1.15-.01-1.41zM4.19.16L15.89 6.92 13.43 9.38 3.18.24 4.19.16z" />
-                </svg>
-                {t("cta.googlePlay")}
-              </a>
-            </div>
+            <AppDownloadButtons />
           </div>
         </section>
 

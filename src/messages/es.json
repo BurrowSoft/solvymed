@@ -58,5 +58,58 @@
     "error": "Algo salió mal",
     "errorSub": "Este enlace puede haber expirado o ya fue utilizado. Intenta registrarte de nuevo desde la app.",
     "backToHome": "Volver a Solvymed.com"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your SolvyMed account",
+      "email": "Email address",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "error": "Invalid email or password. Please try again."
+    },
+    "signup": {
+      "title": "Create your account",
+      "subtitle": "Start managing your practice today",
+      "fullName": "Full name",
+      "email": "Email address",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "passwordMismatch": "Passwords do not match",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "logIn": "Log in",
+      "success": "Check your email",
+      "successSub": "We sent a confirmation link to your email. Open it to activate your account and get started.",
+      "error": "Could not create your account. Please try again."
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "subtitle": "Enter your email and we'll send you a reset link.",
+      "email": "Email address",
+      "submit": "Send reset link",
+      "backToLogin": "Back to login",
+      "success": "Check your email",
+      "successSub": "If an account exists for that email, you'll receive a reset link shortly.",
+      "error": "Could not send reset email. Please try again."
+    },
+    "resetPassword": {
+      "title": "Set new password",
+      "subtitle": "Enter your new password below.",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "passwordMismatch": "Passwords do not match",
+      "submit": "Update password",
+      "success": "Password updated",
+      "successSub": "Your password has been updated. You can now log in.",
+      "goToLogin": "Go to login",
+      "error": "Could not update password. The link may have expired.",
+      "loading": "Validating your reset link…"
+    },
+    "logIn": "Log in",
+    "backToHome": "Back to home"
   }
 }
