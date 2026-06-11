@@ -76,13 +76,6 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Construction banner */}
-      <div className="bg-amber-50 border-b border-amber-200">
-        <div className="mx-auto max-w-7xl px-4 py-2.5 text-center text-sm text-amber-800">
-          {t("banner")}
-        </div>
-      </div>
-
       {/* Navbar */}
       <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
@@ -101,7 +94,7 @@ export default async function HomePage() {
             />
             <Link
               href="/auth/login"
-              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 whitespace-nowrap"
+              className="rounded-lg border-2 border-teal-600 px-4 py-2 text-sm font-bold text-teal-700 transition-colors hover:bg-teal-50 whitespace-nowrap"
             >
               {t("auth.logIn")}
             </Link>
@@ -200,16 +193,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Under construction notice */}
-        <section className="border-t-4 border-amber-400 bg-amber-50 py-16">
-          <div className="mx-auto max-w-2xl px-4 text-center">
-            <div className="mb-4 text-5xl">🚧</div>
-            <h2 className="mb-3 text-2xl font-bold text-amber-900">
-              {t("construction.heading")}
-            </h2>
-            <p className="text-amber-700">{t("construction.body")}</p>
-          </div>
-        </section>
       </main>
 
       {/* Footer */}
