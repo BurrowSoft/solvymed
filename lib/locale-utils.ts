@@ -41,6 +41,19 @@ export function formatTime(time: string): string {
   return `${h}:${m}`;
 }
 
+const CONSULT_TYPE_KEYS: Record<string, string> = {
+  'Consultation': 'consultType.consultation',
+  'Follow-up': 'consultType.followUp',
+  'Exam Review': 'consultType.examReview',
+  'Procedure': 'consultType.procedure',
+  'Emergency': 'consultType.emergency',
+};
+
+export function translateConsultType(raw: string): string {
+  const key = CONSULT_TYPE_KEYS[raw];
+  return key ? t(key as any) : raw;
+}
+
 // ─── Date / Time ──────────────────────────────────────────────────────────────
 
 function parseDate(date: Date | string): Date {

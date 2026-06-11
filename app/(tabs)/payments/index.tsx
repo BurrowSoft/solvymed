@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,7 +9,7 @@ import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
 import { getPendingPayments, getPaidPayments, updatePaymentStatus, getRevenueByMonth } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
 import { t, tn } from '@/lib/i18n';
-import { formatCurrency, formatCurrencyWhole, formatMonthYear } from '@/lib/locale-utils';
+import { formatCurrency, formatCurrencyWhole, formatMonthYear, formatTime, translateConsultType } from '@/lib/locale-utils';
 
 type DateFilter = 'week' | 'month' | 'last_month' | 'all';
 
@@ -81,7 +82,7 @@ export default function PaymentsScreen() {
     }
   }, [user, filter]);
 
-  useEffect(() => { load(); }, [load]);
+  useFocusEffect(useCallback(() => { load(); }, [load]));
 
   useEffect(() => {
     if (!user) return;
@@ -229,8 +230,8 @@ export default function PaymentsScreen() {
             <View key={appt.id} style={styles.paymentCard}>
               <View style={styles.paymentInfo}>
                 <Text style={styles.paymentPatient}>{appt.patientName}</Text>
-                <Text style={styles.paymentMeta}>{appt.date} · {appt.startTime}</Text>
-                <Text style={styles.paymentMeta}>{appt.consultationType}</Text>
+                <Text style={styles.paymentMeta}>{appt.date} · {formatTime(appt.startTime)}</Text>
+                <Text style={styles.paymentMeta}>{translateConsultType(appt.consultationType)}</Text>
               </View>
               <View style={styles.paymentRight}>
                 <Text style={styles.paymentAmount}>
@@ -252,7 +253,7 @@ export default function PaymentsScreen() {
               <View key={appt.id} style={[styles.paymentCard, styles.paidCard]}>
                 <View style={styles.paymentInfo}>
                   <Text style={styles.paymentPatient}>{appt.patientName}</Text>
-                  <Text style={styles.paymentMeta}>{appt.date} · {appt.startTime}</Text>
+                  <Text style={styles.paymentMeta}>{appt.date} · {formatTime(appt.startTime)}</Text>
                 </View>
                 <View style={styles.paymentRight}>
                   <Text style={[styles.paymentAmount, { color: Colors.success }]}>

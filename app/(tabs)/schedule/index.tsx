@@ -31,7 +31,7 @@ import { useAuth } from '@/lib/auth-context';
 import { t } from '@/lib/i18n';
 import {
   formatScheduleDayHeader, formatScheduleWeekHeader,
-  formatWeekdayShort, formatCurrency, formatAgeLabel, formatTime,
+  formatWeekdayShort, formatCurrency, formatAgeLabel, formatTime, translateConsultType,
 } from '@/lib/locale-utils';
 import { NewAppointmentModal } from '@/components/NewAppointmentModal';
 import { BlockTimeModal } from '@/components/BlockTimeModal';
@@ -141,7 +141,7 @@ function AppointmentBlock({ appt, onPress, col, totalCols }: { appt: Appointment
       {!isBlocked && (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
           <Text style={[styles.apptSubText, { flex: 1 }]} numberOfLines={1}>
-            {appt.consultationType} · {t(appt.type === 'online' ? 'apptType.online' : 'apptType.inPerson')}
+            {translateConsultType(appt.consultationType)} · {t(appt.type === 'online' ? 'apptType.online' : 'apptType.inPerson')}
           </Text>
           {!!appt.notes && <Ionicons name="bookmark" size={10} color={color} />}
         </View>
@@ -162,8 +162,8 @@ function whatsappConfirmUrl(phone: string, appt: Appointment) {
   const msg =
     `Hello ${appt.patientName}, your appointment is confirmed:\n` +
     `Date: ${appt.date}\n` +
-    `Time: ${appt.startTime} (${appt.durationMinutes} min)\n` +
-    `Type: ${appt.consultationType}${appt.type === 'online' ? ' — Online' : ''}\n\n` +
+    `Time: ${formatTime(appt.startTime)} (${appt.durationMinutes} min)\n` +
+    `Type: ${translateConsultType(appt.consultationType)}${appt.type === 'online' ? ' — Online' : ''}\n\n` +
     `See you then!`;
   return `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
 }
@@ -421,7 +421,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
 
           <View style={styles.modalDivider} />
           <Text style={styles.modalSectionTitle}>{t('appt.details')}</Text>
-          <Text style={styles.modalMeta}>{appt.consultationType}</Text>
+          <Text style={styles.modalMeta}>{translateConsultType(appt.consultationType)}</Text>
           <Text style={styles.modalMeta}>{t(appt.type === 'online' ? 'apptType.online' : 'apptType.inPerson')}</Text>
           {appt.scheduledBy ? (
             <Text style={styles.modalMeta}>{t('appt.scheduledBy', { name: appt.scheduledBy })}</Text>

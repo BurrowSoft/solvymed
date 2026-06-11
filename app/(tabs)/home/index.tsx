@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator,
+  Image, useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,7 +14,7 @@ import {
 } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
 import { t, tn } from '@/lib/i18n';
-import { formatHomeDateHeader, formatCurrencyWhole, formatCurrency, formatDuration, formatTime } from '@/lib/locale-utils';
+import { formatHomeDateHeader, formatCurrencyWhole, formatCurrency, formatDuration, formatTime, translateConsultType } from '@/lib/locale-utils';
 
 function fmt(d: Date) { return d.toISOString().split('T')[0]; }
 
@@ -74,13 +75,10 @@ export default function HomeScreen() {
     }
   }, [user, dateStr]);
 
-  useEffect(() => { load(); }, [load]);
+  useFocusEffect(useCallback(() => { load(); }, [load]));
 
-  useFocusEffect(useCallback(() => {
-    if (!user) return;
-    getProfessional(user.id).then(setProfessional).catch(() => {});
-  }, [user]));
-
+  const { width } = useWindowDimensions();
+  const showAvatar = width >= 360;
   const doctorName = professional?.fullName ?? user?.email?.split('@')[0] ?? 'Doctor';
   const upcomingAppts = todayAppts
     .filter(a => {
@@ -97,9 +95,22 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <View>
-          <Text style={styles.greeting}>{greeting()},</Text>
-          <Text style={styles.doctorName}>Dr. {doctorName.split(' ')[0]}</Text>
+        <View style={styles.headerLeft}>
+          {showAvatar && (
+            <View style={styles.doctorAvatar}>
+              {professional?.photoUrl ? (
+                <Image source={{ uri: professional.photoUrl }} style={styles.doctorAvatarImg} />
+              ) : (
+                <Text style={styles.doctorAvatarInitial}>{doctorName[0]?.toUpperCase()}</Text>
+              )}
+            </View>
+          )}
+          <View style={{ minWidth: 0, flex: 1 }}>
+            <Text style={styles.greeting}>{greeting()},</Text>
+            <Text style={styles.doctorName} numberOfLines={1}>
+              Dr. {showAvatar ? doctorName : doctorName.split(' ')[0]}
+            </Text>
+          </View>
         </View>
         <Text style={styles.headerDate}>{formatHomeDateHeader(today)}</Text>
       </View>
@@ -187,7 +198,7 @@ export default function HomeScreen() {
                   <View style={{ flex: 1, gap: 2 }}>
                     <Text style={styles.apptName} numberOfLines={1}>{appt.patientName}</Text>
                     <Text style={styles.apptType} numberOfLines={1}>
-                      {appt.consultationType} · {t(appt.type === 'online' ? 'apptType.online' : 'apptType.inPerson')}
+                      {translateConsultType(appt.consultationType)} · {t(appt.type === 'online' ? 'apptType.online' : 'apptType.inPerson')}
                     </Text>
                   </View>
                   <View style={[styles.statusDot, { backgroundColor: statusColor(appt.status) }]} />
@@ -249,13 +260,20 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   header: {
-    flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between',
-    paddingHorizontal: 16, paddingVertical: 14,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 16, paddingVertical: 14, gap: 12,
     backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1, minWidth: 0 },
+  doctorAvatar: {
+    width: 42, height: 42, borderRadius: 21, flexShrink: 0,
+    backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
+  },
+  doctorAvatarImg: { width: 42, height: 42, borderRadius: 21 },
+  doctorAvatarInitial: { fontSize: 17, fontWeight: '700', color: Colors.primary },
   greeting: { fontSize: 12, color: Colors.textSecondary, fontWeight: '500' },
   doctorName: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary },
-  headerDate: { fontSize: 12, color: Colors.textMuted, fontWeight: '500' },
+  headerDate: { fontSize: 12, color: Colors.textMuted, fontWeight: '500', flexShrink: 0 },
 
   summaryRow: { flexDirection: 'row', gap: 10 },
   summaryCard: {

@@ -444,9 +444,9 @@ const en = {
   'specialty.ophtho': 'Ophthalmologist',
 
   'schedule.blockedSlotTitle': 'Blocked time slot',
-  'schedule.blockedSlotMsg': 'This time slot is blocked. Create the appointment anyway?',
+  'schedule.blockedSlotMsg': 'This slot is blocked from {{from}} to {{to}}. Create the appointment anyway?',
   'schedule.overlapTitle': 'Time conflict',
-  'schedule.overlapMsg': 'This overlaps with {{name}} at {{time}}. Proceed anyway?',
+  'schedule.overlapMsg': 'This overlaps with {{name}} at {{time}} ({{duration}}). Proceed anyway?',
   'schedule.proceedAnyway': 'Proceed',
 
   // ── Procedures modal ──────────────────────────────────────────────────────
@@ -956,9 +956,9 @@ const ptBR: typeof en = {
   'specialty.ophtho': 'Oftalmologista',
 
   'schedule.blockedSlotTitle': 'Horário bloqueado',
-  'schedule.blockedSlotMsg': 'Este horário está bloqueado. Criar a consulta mesmo assim?',
+  'schedule.blockedSlotMsg': 'Este horário está bloqueado das {{from}} às {{to}}. Criar a consulta mesmo assim?',
   'schedule.overlapTitle': 'Conflito de horário',
-  'schedule.overlapMsg': 'Esta consulta conflita com {{name}} às {{time}}. Prosseguir mesmo assim?',
+  'schedule.overlapMsg': 'Esta consulta conflita com {{name}} às {{time}} ({{duration}}). Prosseguir mesmo assim?',
   'schedule.proceedAnyway': 'Prosseguir',
 
   'proc.title': 'Meus Procedimentos',
@@ -1462,9 +1462,9 @@ const frFR: typeof en = {
   'specialty.ophtho': 'Ophtalmologue',
 
   'schedule.blockedSlotTitle': 'Créneau bloqué',
-  'schedule.blockedSlotMsg': 'Ce créneau est bloqué. Créer le rendez-vous quand même ?',
+  'schedule.blockedSlotMsg': 'Ce créneau est bloqué de {{from}} à {{to}}. Créer le rendez-vous quand même ?',
   'schedule.overlapTitle': 'Conflit de planning',
-  'schedule.overlapMsg': 'Cela chevauche {{name}} à {{time}}. Continuer quand même ?',
+  'schedule.overlapMsg': 'Cela chevauche {{name}} à {{time}} ({{duration}}). Continuer quand même ?',
   'schedule.proceedAnyway': 'Continuer',
 
   'proc.title': 'Mes procédures',
@@ -1968,9 +1968,9 @@ const deDE: typeof en = {
   'specialty.ophtho': 'Augenarzt',
 
   'schedule.blockedSlotTitle': 'Blockierter Zeitslot',
-  'schedule.blockedSlotMsg': 'Dieser Zeitslot ist blockiert. Termin trotzdem erstellen?',
+  'schedule.blockedSlotMsg': 'Dieser Slot ist von {{from}} bis {{to}} blockiert. Termin trotzdem erstellen?',
   'schedule.overlapTitle': 'Zeitkonflikt',
-  'schedule.overlapMsg': 'Dies überschneidet sich mit {{name}} um {{time}}. Trotzdem fortfahren?',
+  'schedule.overlapMsg': 'Dies überschneidet sich mit {{name}} um {{time}} ({{duration}}). Trotzdem fortfahren?',
   'schedule.proceedAnyway': 'Fortfahren',
 
   'proc.title': 'Meine Behandlungen',
@@ -2474,9 +2474,9 @@ const itIT: typeof en = {
   'specialty.ophtho': 'Oculista',
 
   'schedule.blockedSlotTitle': 'Fascia oraria bloccata',
-  'schedule.blockedSlotMsg': 'Questa fascia oraria è bloccata. Creare comunque l\'appuntamento?',
+  'schedule.blockedSlotMsg': 'Questa fascia è bloccata dalle {{from}} alle {{to}}. Creare comunque l\'appuntamento?',
   'schedule.overlapTitle': 'Conflitto di orario',
-  'schedule.overlapMsg': 'Si sovrappone a {{name}} alle {{time}}. Procedere comunque?',
+  'schedule.overlapMsg': 'Si sovrappone a {{name}} alle {{time}} ({{duration}}). Procedere comunque?',
   'schedule.proceedAnyway': 'Procedi',
 
   'proc.title': 'Le mie procedure',
@@ -2980,9 +2980,9 @@ const esES: typeof en = {
   'specialty.ophtho': 'Oftalmólogo',
 
   'schedule.blockedSlotTitle': 'Horario bloqueado',
-  'schedule.blockedSlotMsg': 'Este horario está bloqueado. ¿Crear la cita de todos modos?',
+  'schedule.blockedSlotMsg': 'Este horario está bloqueado de {{from}} a {{to}}. ¿Crear la cita de todos modos?',
   'schedule.overlapTitle': 'Conflicto de horario',
-  'schedule.overlapMsg': 'Se superpone con {{name}} a las {{time}}. ¿Proceder de todos modos?',
+  'schedule.overlapMsg': 'Se superpone con {{name}} a las {{time}} ({{duration}}). ¿Proceder de todos modos?',
   'schedule.proceedAnyway': 'Proceder',
 
   'proc.title': 'Mis procedimientos',

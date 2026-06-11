@@ -12,7 +12,7 @@ import { scheduleAppointmentReminder } from '@/lib/notifications';
 import { MOCK_PATIENTS } from '@/lib/mock-data';
 import { useAuth } from '@/lib/auth-context';
 import { t } from '@/lib/i18n';
-import { formatCurrency } from '@/lib/locale-utils';
+import { formatCurrency, formatTime, formatDuration, translateConsultType } from '@/lib/locale-utils';
 import { loadSettings } from '@/lib/app-settings';
 
 function timeToMinutes(t: string) {
@@ -229,9 +229,19 @@ export function NewAppointmentModal({
           const conflictTitle = blockedConflict
             ? t('schedule.blockedSlotTitle')
             : t('schedule.overlapTitle');
-          const conflictMsg = blockedConflict
-            ? t('schedule.blockedSlotMsg')
-            : t('schedule.overlapMsg', { name: overlapConflict!.patientName, time: overlapConflict!.startTime });
+          let conflictMsg: string;
+          if (blockedConflict) {
+            const bStart = formatTime(blockedConflict.startTime);
+            const bEndMins = timeToMinutes(blockedConflict.startTime) + blockedConflict.durationMinutes;
+            const bEnd = `${Math.floor(bEndMins / 60)}:${String(bEndMins % 60).padStart(2, '0')}`;
+            conflictMsg = t('schedule.blockedSlotMsg', { from: bStart, to: bEnd });
+          } else {
+            conflictMsg = t('schedule.overlapMsg', {
+              name: overlapConflict!.patientName,
+              time: formatTime(overlapConflict!.startTime),
+              duration: formatDuration(overlapConflict!.durationMinutes),
+            });
+          }
           Alert.alert(conflictTitle, conflictMsg, [
             { text: t('common.cancel'), style: 'cancel' },
             { text: t('schedule.proceedAnyway'), onPress: doSave },
@@ -355,7 +365,7 @@ export function NewAppointmentModal({
                     style={[styles.timeSlot, startTime === slot && styles.timeSlotActive]}
                   >
                     <Text style={[styles.timeSlotText, startTime === slot && styles.timeSlotTextActive]}>
-                      {slot}
+                      {formatTime(slot)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -375,7 +385,7 @@ export function NewAppointmentModal({
               </View>
 
               <Text style={styles.fieldLabel}>
-                {t('newAppt.endsAt', { time: endTime })}
+                {t('newAppt.endsAt', { time: formatTime(endTime) })}
               </Text>
             </View>
 
@@ -444,7 +454,7 @@ export function NewAppointmentModal({
                         onPress={() => setConsultationType(ct)}
                         style={[styles.pill, consultationType === ct && styles.pillActive]}
                       >
-                        <Text style={[styles.pillText, consultationType === ct && styles.pillTextActive]}>{ct}</Text>
+                        <Text style={[styles.pillText, consultationType === ct && styles.pillTextActive]}>{translateConsultType(ct)}</Text>
                       </TouchableOpacity>
                     ))}
                   </View>
