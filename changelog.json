@@ -1,0 +1,23 @@
+[
+  {
+    "version": "2.4.0",
+    "date": "2026-06-12",
+    "entries": [
+      { "type": "feature", "text": "User roles: Professional, Secretary, and Patient — each with tailored access" },
+      { "type": "feature", "text": "Patients can now sign up and link to their doctor's clinic via invite code" },
+      { "type": "feature", "text": "Patients can book appointments directly from their home screen" },
+      { "type": "feature", "text": "Doctors can send push notifications to all their patients at once" },
+      { "type": "feature", "text": "Electronic signature — draw and save your signature for prescriptions and records" },
+      { "type": "feature", "text": "Duplicate patient prevention — registering the same email now opens the existing record" },
+      { "type": "fix", "text": "Secretary role cannot access clinical records or financial settings" }
+    ]
+  },
+  {
+    "version": "2.3.0",
+    "date": "2026-06-11",
+    "entries": [
+      { "type": "feature", "text": "Theme changes apply instantly" },
+      { "type": "fix", "text": "Patient name cascades to appointments" }
+    ]
+  }
+]
