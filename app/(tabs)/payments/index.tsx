@@ -310,10 +310,14 @@ export default function PaymentsScreen() {
                   <Text style={styles.paymentMeta}>{appt.date} · {formatTime(appt.startTime)}</Text>
                 </View>
                 <View style={styles.paymentRight}>
+                  <Text style={[styles.paymentAmount, { color: Colors.success }]}>
+                    {appt.paymentAmount != null ? formatCurrency(appt.paymentAmount) : '—'}
+                  </Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                    <Text style={[styles.paymentAmount, { color: Colors.success }]}>
-                      {appt.paymentAmount != null ? formatCurrency(appt.paymentAmount) : '—'}
-                    </Text>
+                    <View style={styles.paidBadge}>
+                      <Ionicons name="checkmark" size={12} color={Colors.success} />
+                      <Text style={styles.paidBadgeText}>{t('appt.paid')}</Text>
+                    </View>
                     <TouchableOpacity
                       onPress={() => handleRevertPayment(appt.id)}
                       style={styles.revertBtn}
@@ -321,10 +325,6 @@ export default function PaymentsScreen() {
                     >
                       <Ionicons name="arrow-undo-outline" size={16} color={Colors.textMuted} />
                     </TouchableOpacity>
-                  </View>
-                  <View style={styles.paidBadge}>
-                    <Ionicons name="checkmark" size={12} color={Colors.success} />
-                    <Text style={styles.paidBadgeText}>{t('appt.paid')}</Text>
                   </View>
                 </View>
               </View>
@@ -334,7 +334,7 @@ export default function PaymentsScreen() {
 
         {/* Monthly report */}
         {revenue.length > 0 && (
-          <>
+          <View style={styles.reportContainer}>
             <TouchableOpacity
               style={styles.reportToggle}
               onPress={() => setShowReport(v => !v)}
@@ -349,14 +349,14 @@ export default function PaymentsScreen() {
               />
             </TouchableOpacity>
 
-            {showReport && revenue.map(row => {
+            {showReport && revenue.map((row, rowIdx) => {
               const total = row.paid + row.pending;
               const barWidth = total > 0 ? row.paid / total : 0;
               const isExpanded = expandedMonths.has(row.month);
               const isLoadingThis = loadingMonth === row.month;
               const appts = monthAppts[row.month] ?? [];
               return (
-                <View key={row.month} style={styles.reportRow}>
+                <View key={row.month} style={[styles.reportRow, rowIdx === 0 && styles.reportRowFirst]}>
                   {/* Tappable header */}
                   <TouchableOpacity
                     style={styles.reportRowHeader}
@@ -429,7 +429,7 @@ export default function PaymentsScreen() {
                 </View>
               );
             })}
-          </>
+          </View>
         )}
 
         <View style={{ height: 20 }} />
@@ -478,16 +478,20 @@ const styles = StyleSheet.create({
   paidBadgeText: { fontSize: 12, color: Colors.success, fontWeight: '600' },
   emptyState: { alignItems: 'center', paddingVertical: 40, gap: 8 },
   emptyText: { fontSize: 14, color: Colors.textMuted },
+  reportContainer: {
+    backgroundColor: Colors.surface, borderRadius: 12,
+    borderWidth: 1, borderColor: Colors.border, overflow: 'hidden',
+  },
   reportToggle: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
-    backgroundColor: Colors.surface, borderRadius: 12,
-    padding: 14, borderWidth: 1, borderColor: Colors.border,
+    padding: 14,
   },
   reportToggleText: { fontSize: 14, fontWeight: '600', color: Colors.primary },
   reportRow: {
-    backgroundColor: Colors.surface, borderRadius: 12, padding: 14,
-    borderWidth: 1, borderColor: Colors.border, gap: 8,
+    padding: 14, gap: 8,
+    borderTopWidth: 1, borderTopColor: Colors.border,
   },
+  reportRowFirst: { borderTopWidth: 0 },
   reportRowHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   reportMonth: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
   reportCount: { fontSize: 12, color: Colors.textMuted },
