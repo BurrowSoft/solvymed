@@ -22,6 +22,7 @@ import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
 import {
   getAppointmentsByDate, updatePaymentStatus, updateAppointmentStatus,
   getAppointmentCountsByWeek, getPatient, updateAppointment, getProfessional, deleteAppointment,
+  getPatientAppointments,
 } from '@/lib/services';
 import { getTemplate } from '@/lib/template-service';
 import { buildInvoiceHtml } from '@/lib/pdf-utils';
@@ -29,6 +30,7 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { cancelAppointmentReminder } from '@/lib/notifications';
 import { useAuth } from '@/lib/auth-context';
+import { useRole } from '@/lib/role-context';
 import { t, getLocale } from '@/lib/i18n';
 import {
   formatScheduleDayHeader, formatScheduleWeekHeader,
@@ -505,6 +507,8 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
 export default function ScheduleScreen() {
   const styles = useStyles(makeStyles);
   const { user } = useAuth();
+  const { role, linkedPatientId } = useRole();
+  const isPatient = role === 'patient';
   const [viewMode, setViewMode] = useState<ViewMode>('day');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
@@ -547,14 +551,19 @@ export default function ScheduleScreen() {
     }
     setLoading(true);
     try {
-      const data = await getAppointmentsByDate(user.id, dateStr);
+      let data: Appointment[];
+      if (isPatient && linkedPatientId) {
+        data = await getPatientAppointments(linkedPatientId, dateStr, dateStr);
+      } else {
+        data = await getAppointmentsByDate(user.id, dateStr);
+      }
       setAppointments(data);
     } catch {
-      setAppointments(MOCK_APPOINTMENTS.filter(a => a.date === dateStr));
+      setAppointments(isPatient ? [] : MOCK_APPOINTMENTS.filter(a => a.date === dateStr));
     } finally {
       setLoading(false);
     }
-  }, [user, dateStr]);
+  }, [user, dateStr, isPatient, linkedPatientId]);
 
   useFocusEffect(useCallback(() => { loadAppointments(); }, [loadAppointments]));
 
@@ -813,17 +822,19 @@ export default function ScheduleScreen() {
         <View style={{ height: 100 }} />
       </ScrollView>}
 
-      {/* FAB group */}
-      <View style={styles.fabGroup}>
-        <TouchableOpacity style={styles.blockBtn} onPress={() => setShowBlockTime(true)}>
-          <Ionicons name="remove-circle-outline" size={15} color={Colors.textSecondary} />
-          <Text style={styles.blockBtnText}>{t('schedule.blockTime')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.fab} onPress={() => setShowNewAppt(true)}>
-          <Ionicons name="add" size={26} color="#fff" />
-          <Text style={styles.fabText}>{t('schedule.newAppointment')}</Text>
-        </TouchableOpacity>
-      </View>
+      {/* FAB group — hidden for patients */}
+      {!isPatient && (
+        <View style={styles.fabGroup}>
+          <TouchableOpacity style={styles.blockBtn} onPress={() => setShowBlockTime(true)}>
+            <Ionicons name="remove-circle-outline" size={15} color={Colors.textSecondary} />
+            <Text style={styles.blockBtnText}>{t('schedule.blockTime')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.fab} onPress={() => setShowNewAppt(true)}>
+            <Ionicons name="add" size={26} color="#fff" />
+            <Text style={styles.fabText}>{t('schedule.newAppointment')}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <AppointmentModal
         appt={selectedAppt}

@@ -103,6 +103,13 @@ export interface Professional {
   workingHours?: WorkingHours;
 }
 
+export type UserRole = 'professional' | 'secretary' | 'patient';
+
+export interface UserRoleRecord {
+  role: UserRole;
+  linkedPatientId: string | null;
+}
+
 export interface AppointmentExtraItem {
   name: string;
   price?: number;

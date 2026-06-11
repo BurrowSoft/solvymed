@@ -8,7 +8,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string, locale?: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, locale?: string, role?: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   resendConfirmation: (email: string) => Promise<{ error: string | null }>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<{ error: string | null }>;
@@ -43,7 +43,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (session?.user) ensureProfessional(session.user.id, session.user.email ?? '');
+      if (session?.user) {
+        const role = session.user.user_metadata?.role ?? 'professional';
+        if (role === 'professional' || role === 'secretary') {
+          ensureProfessional(session.user.id, session.user.email ?? '');
+        }
+      }
     });
 
     return () => listener.subscription.unsubscribe();
@@ -67,14 +72,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error: error?.message ?? null };
   }
 
-  async function signUp(email: string, password: string, locale?: string) {
+  async function signUp(email: string, password: string, locale?: string, role?: string) {
     const webLocale = !locale || locale === 'en' ? '' : `/${locale === 'pt-BR' ? 'pt-BR' : locale.split('-')[0]}`;
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `https://www.solvymed.com${webLocale}/auth/confirm`,
-        data: { locale: locale ?? 'en' },
+        data: { locale: locale ?? 'en', role: role ?? 'professional' },
       },
     });
     if (!error && data.user?.identities?.length === 0) {

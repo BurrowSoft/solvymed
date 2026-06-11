@@ -1,6 +1,7 @@
 import * as FileSystem from 'expo-file-system';
+import { Platform } from 'react-native';
 import { supabase } from './supabase';
-import { Appointment, AppointmentExtraItem, Patient, MedicalRecord, Prescription, PrescriptionItem, Professional, WorkingHours, Procedure, PatientFile } from './types';
+import { Appointment, AppointmentExtraItem, Patient, MedicalRecord, Prescription, PrescriptionItem, Professional, WorkingHours, Procedure, PatientFile, UserRoleRecord } from './types';
 
 // ─── Appointments ────────────────────────────────────────────────────────────
 
@@ -170,13 +171,16 @@ export async function deleteRecord(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function getPatientAppointments(patientId: string) {
-  const { data, error } = await supabase
+export async function getPatientAppointments(patientId: string, from?: string, to?: string) {
+  let query = supabase
     .from('appointments')
     .select('*')
     .eq('patient_id', patientId)
-    .order('date', { ascending: false })
-    .order('start_time', { ascending: false });
+    .neq('status', 'blocked');
+  if (from) query = query.gte('date', from);
+  if (to) query = query.lte('date', to);
+  query = query.order('date').order('start_time');
+  const { data, error } = await query;
   if (error) throw error;
   return (data ?? []).map(toAppointment);
 }
@@ -728,6 +732,100 @@ export async function uploadProfilePhoto(
   if (error) throw error;
   const { data } = supabase.storage.from('profile-photos').getPublicUrl(path);
   return `${data.publicUrl}?t=${Date.now()}`;
+}
+
+// ─── User Roles ──────────────────────────────────────────────────────────────
+
+export async function getUserRole(userId: string): Promise<UserRoleRecord | null> {
+  const { data, error } = await supabase
+    .from('user_roles')
+    .select('role, linked_patient_id')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  return { role: data.role as UserRoleRecord['role'], linkedPatientId: (data.linked_patient_id as string) ?? null };
+}
+
+export async function setUserRole(
+  userId: string,
+  role: 'professional' | 'patient',
+  linkedPatientId?: string | null,
+): Promise<void> {
+  const { error } = await supabase
+    .from('user_roles')
+    .upsert({ user_id: userId, role, linked_patient_id: linkedPatientId ?? null });
+  if (error) throw error;
+}
+
+export async function linkPatientByEmail(userId: string, email: string): Promise<string | null> {
+  const { data } = await supabase
+    .from('patients')
+    .select('id')
+    .ilike('email', email.trim())
+    .limit(1);
+  const linkedPatientId = (data?.[0]?.id as string) ?? null;
+  await setUserRole(userId, 'patient', linkedPatientId);
+  return linkedPatientId;
+}
+
+// ─── Push Tokens ─────────────────────────────────────────────────────────────
+
+export async function registerPushToken(userId: string, token: string): Promise<void> {
+  const { error } = await supabase
+    .from('push_tokens')
+    .upsert({ user_id: userId, token, platform: Platform.OS, updated_at: new Date().toISOString() });
+  if (error) throw error;
+}
+
+export async function getPatientPushTokens(
+  professionalId: string,
+): Promise<{ token: string; patientName: string }[]> {
+  const { data: patients } = await supabase
+    .from('patients')
+    .select('id, full_name')
+    .eq('professional_id', professionalId);
+  if (!patients?.length) return [];
+
+  const patientIds = patients.map(p => p.id as string);
+  const { data: roles } = await supabase
+    .from('user_roles')
+    .select('user_id, linked_patient_id')
+    .in('linked_patient_id', patientIds);
+  if (!roles?.length) return [];
+
+  const userIds = roles.map(r => r.user_id as string);
+  const { data: tokens } = await supabase
+    .from('push_tokens')
+    .select('user_id, token')
+    .in('user_id', userIds);
+  if (!tokens?.length) return [];
+
+  return tokens.map(t => {
+    const role = roles.find(r => r.user_id === t.user_id);
+    const patient = patients.find(p => p.id === role?.linked_patient_id);
+    return { token: t.token as string, patientName: (patient?.full_name as string) ?? '' };
+  });
+}
+
+export async function sendPushNotifications(
+  tokens: string[],
+  title: string,
+  body: string,
+): Promise<number> {
+  if (!tokens.length) return 0;
+  const BATCH = 100;
+  let sent = 0;
+  for (let i = 0; i < tokens.length; i += BATCH) {
+    const batch = tokens.slice(i, i + BATCH).map(to => ({ to, title, body, sound: 'default' }));
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(batch),
+    });
+    sent += batch.length;
+  }
+  return sent;
 }
 
 function toPrescription(row: Record<string, unknown>): Prescription {

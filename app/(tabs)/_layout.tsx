@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { t } from '@/lib/i18n';
+import { useRole } from '@/lib/role-context';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -10,6 +11,11 @@ function TabIcon({ name, color }: { name: IoniconName; color: string }) {
 }
 
 export default function TabLayout() {
+  const { role } = useRole();
+  const isPatient = role === 'patient';
+  // Secretary: hides payments tab (billing is doctor-only in this setup)
+  const hidePayments = isPatient;
+
   return (
     <Tabs
       screenOptions={{
@@ -44,6 +50,7 @@ export default function TabLayout() {
         options={{
           title: t('tab.patients'),
           tabBarIcon: ({ color }) => <TabIcon name="people-outline" color={color} />,
+          href: isPatient ? null : undefined,
         }}
       />
       <Tabs.Screen
@@ -51,6 +58,7 @@ export default function TabLayout() {
         options={{
           title: t('tab.payments'),
           tabBarIcon: ({ color }) => <TabIcon name="card-outline" color={color} />,
+          href: hidePayments ? null : undefined,
         }}
       />
       <Tabs.Screen

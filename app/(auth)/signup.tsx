@@ -9,11 +9,13 @@ import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/lib/auth-context';
 import { useLocale } from '@/lib/locale-context';
+import { t } from '@/lib/i18n';
 
 export default function SignUpScreen() {
   const { signUp } = useAuth();
   const { locale } = useLocale();
   const router = useRouter();
+  const [selectedRole, setSelectedRole] = useState<'professional' | 'secretary' | 'patient'>('professional');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -38,7 +40,7 @@ export default function SignUpScreen() {
     }
     setLoading(true);
     setError(null);
-    const { error } = await signUp(email.trim(), password, locale);
+    const { error } = await signUp(email.trim(), password, locale, selectedRole);
     setLoading(false);
     if (error === 'already_registered') {
       setAlreadyRegistered(true);
@@ -106,6 +108,30 @@ export default function SignUpScreen() {
         {/* Form */}
         <View style={styles.form}>
           <Text style={styles.formTitle}>Create account</Text>
+
+          {/* Role picker */}
+          <View style={styles.roleList}>
+            {([
+              { key: 'professional', icon: 'medical-outline', label: t('role.doctor'), desc: t('role.doctorDesc') },
+              { key: 'secretary', icon: 'clipboard-outline', label: t('role.secretary'), desc: t('role.secretaryDesc') },
+              { key: 'patient', icon: 'person-outline', label: t('role.patient'), desc: t('role.patientDesc') },
+            ] as const).map(({ key, icon, label, desc }) => (
+              <TouchableOpacity
+                key={key}
+                style={[styles.roleBtn, selectedRole === key && styles.roleBtnActive]}
+                onPress={() => setSelectedRole(key)}
+              >
+                <Ionicons name={icon as any} size={20} color={selectedRole === key ? Colors.primary : Colors.textMuted} />
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.roleLabel, selectedRole === key && styles.roleLabelActive]}>{label}</Text>
+                  <Text style={styles.roleDesc}>{desc}</Text>
+                </View>
+                {selectedRole === key && (
+                  <Ionicons name="checkmark-circle" size={18} color={Colors.primary} />
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
 
           {error && (
             <View style={styles.errorBox}>
@@ -234,6 +260,17 @@ const styles = StyleSheet.create({
   loginRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
   loginHint: { fontSize: 14, color: Colors.textSecondary },
   loginLink: { fontSize: 14, color: Colors.primary, fontWeight: '600' },
+  roleList: { gap: 8 },
+  roleBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    paddingVertical: 12, paddingHorizontal: 14,
+    borderRadius: 12, borderWidth: 1.5, borderColor: Colors.border,
+    backgroundColor: Colors.surface,
+  },
+  roleBtnActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}10` },
+  roleLabel: { fontSize: 13, fontWeight: '600', color: Colors.textSecondary },
+  roleLabelActive: { color: Colors.primary },
+  roleDesc: { fontSize: 11, color: Colors.textMuted, marginTop: 1 },
   successContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32, gap: 20 },
   successIcon: {
     width: 72, height: 72, borderRadius: 36,

@@ -9,6 +9,7 @@ import * as Sharing from 'expo-sharing';
 import Constants from 'expo-constants';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/lib/auth-context';
+import { useRole } from '@/lib/role-context';
 import { getProfessional, getPatients, updateProfessional } from '@/lib/services';
 import { Professional } from '@/lib/types';
 import { ProfileModal } from '@/components/ProfileModal';
@@ -46,7 +47,7 @@ interface SettingItem {
   onPress?: () => void;
   destructive?: boolean;
 }
-interface SettingGroup { title: string; items: SettingItem[]; }
+interface SettingGroup { title: string; items: SettingItem[]; roles?: Array<'professional' | 'secretary' | 'patient'>; }
 
 const LANGUAGE_NAMES: Record<string, string> = {
   'pt-BR': 'Português',
@@ -71,6 +72,8 @@ function getThemeName(key: string): string {
 export default function SettingsScreen() {
   const styles = useStyles(makeStyles);
   const { user, signOut } = useAuth();
+  const { role } = useRole();
+  const isProfessional = role === 'professional';
   const { locale } = useLocale();
   const { theme, setTheme } = useTheme();
   const { settings, update: updateSettings } = useAppSettings();
@@ -245,6 +248,7 @@ export default function SettingsScreen() {
     },
     {
       title: t('settings.group.financial'),
+      roles: ['professional'],
       items: [
         {
           label: t('settings.financial.paymentType'),
@@ -289,6 +293,7 @@ export default function SettingsScreen() {
     },
     {
       title: t('settings.group.configuration'),
+      roles: ['professional'],
       items: [
         { label: t('settings.registrations'), icon: 'id-card-outline', onPress: () => setShowRegistrations(true) },
         { label: t('settings.integrations'), icon: 'link-outline', onPress: () => setShowIntegrations(true) },
@@ -335,7 +340,7 @@ export default function SettingsScreen() {
           <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
         </TouchableOpacity>
 
-        {SETTINGS.map(group => (
+        {SETTINGS.filter(g => !g.roles || !role || g.roles.includes(role as any)).map(group => (
           <View key={group.title} style={styles.group}>
             <Text style={styles.groupTitle}>{group.title}</Text>
             <View style={styles.groupCard}>

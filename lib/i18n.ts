@@ -609,6 +609,34 @@ const en = {
   'settings.signature.clearConfirm': 'Remove your saved signature?',
   'settings.signature.saved': 'Signature saved successfully.',
   'settings.signature.drawFirst': 'Please draw your signature first.',
+
+  'role.selectTitle': 'Who are you?',
+  'role.selectSubtitle': 'Choose your profile type to get the right experience.',
+  'role.doctor': 'Healthcare Professional',
+  'role.doctorDesc': 'Manage your clinic, patients and appointments.',
+  'role.patient': 'Patient',
+  'role.patientDesc': 'View your appointments and health records.',
+  'role.secretary': 'Secretary / Receptionist',
+  'role.secretaryDesc': 'Manage appointments and patients. No clinical access.',
+  'role.continue': 'Continue',
+
+  'mass.title': 'Send to Patients',
+  'mass.notifTitle': 'Notification Title',
+  'mass.notifTitlePlaceholder': 'e.g. New appointment available',
+  'mass.notifBody': 'Message',
+  'mass.notifBodyPlaceholder': 'Type your message here…',
+  'mass.send': 'Send Notification',
+  'mass.selectAll': 'All patients',
+  'mass.sent': 'Sent to {{n}} patient',
+  'mass.sent_plural': 'Sent to {{n}} patients',
+  'mass.noTokens': 'No patients have the app installed yet.',
+  'mass.titleRequired': 'Please enter a notification title.',
+
+  'patient.nextAppt': 'Next Appointment',
+  'patient.noAppt': 'No upcoming appointments',
+  'patient.myRecords': 'My Records',
+  'patient.myPrescriptions': 'My Prescriptions',
+  'patient.noLink': 'Your account is not linked to a patient record. Contact your doctor.',
 };
 
 // ─── Portuguese (Brazil) ─────────────────────────────────────────────────────
@@ -1197,6 +1225,34 @@ const ptBR: typeof en = {
   'settings.signature.clearConfirm': 'Remover sua assinatura salva?',
   'settings.signature.saved': 'Assinatura salva com sucesso.',
   'settings.signature.drawFirst': 'Por favor, desenhe sua assinatura primeiro.',
+
+  'role.selectTitle': 'Quem é você?',
+  'role.selectSubtitle': 'Escolha seu perfil para ter a experiência certa.',
+  'role.doctor': 'Profissional de Saúde',
+  'role.doctorDesc': 'Gerencie sua clínica, pacientes e consultas.',
+  'role.patient': 'Paciente',
+  'role.patientDesc': 'Veja suas consultas e registros de saúde.',
+  'role.secretary': 'Secretária / Recepcionista',
+  'role.secretaryDesc': 'Gerencie consultas e pacientes. Sem acesso clínico.',
+  'role.continue': 'Continuar',
+
+  'mass.title': 'Enviar para Pacientes',
+  'mass.notifTitle': 'Título da Notificação',
+  'mass.notifTitlePlaceholder': 'Ex: Nova consulta disponível',
+  'mass.notifBody': 'Mensagem',
+  'mass.notifBodyPlaceholder': 'Digite sua mensagem aqui…',
+  'mass.send': 'Enviar Notificação',
+  'mass.selectAll': 'Todos os pacientes',
+  'mass.sent': 'Enviado para {{n}} paciente',
+  'mass.sent_plural': 'Enviado para {{n}} pacientes',
+  'mass.noTokens': 'Nenhum paciente tem o app instalado ainda.',
+  'mass.titleRequired': 'Por favor, insira um título para a notificação.',
+
+  'patient.nextAppt': 'Próxima Consulta',
+  'patient.noAppt': 'Nenhuma consulta agendada',
+  'patient.myRecords': 'Meus Prontuários',
+  'patient.myPrescriptions': 'Minhas Receitas',
+  'patient.noLink': 'Sua conta não está vinculada a um registro de paciente. Contate seu médico.',
 };
 
 // ─── French ───────────────────────────────────────────────────────────────────
@@ -1782,6 +1838,34 @@ const frFR: typeof en = {
   'settings.signature.clearConfirm': 'Supprimer votre signature enregistrée ?',
   'settings.signature.saved': 'Signature enregistrée avec succès.',
   'settings.signature.drawFirst': 'Veuillez d\'abord dessiner votre signature.',
+
+  'role.selectTitle': 'Qui êtes-vous ?',
+  'role.selectSubtitle': 'Choisissez votre profil pour la bonne expérience.',
+  'role.doctor': 'Professionnel de santé',
+  'role.doctorDesc': 'Gérez votre clinique, vos patients et vos rendez-vous.',
+  'role.patient': 'Patient',
+  'role.patientDesc': 'Consultez vos rendez-vous et dossiers de santé.',
+  'role.secretary': 'Secrétaire / Réceptionniste',
+  'role.secretaryDesc': 'Gérez les rendez-vous et les patients. Sans accès clinique.',
+  'role.continue': 'Continuer',
+
+  'mass.title': 'Envoyer aux patients',
+  'mass.notifTitle': 'Titre de la notification',
+  'mass.notifTitlePlaceholder': 'Ex : Nouveau rendez-vous disponible',
+  'mass.notifBody': 'Message',
+  'mass.notifBodyPlaceholder': 'Tapez votre message ici…',
+  'mass.send': 'Envoyer la notification',
+  'mass.selectAll': 'Tous les patients',
+  'mass.sent': 'Envoyé à {{n}} patient',
+  'mass.sent_plural': 'Envoyé à {{n}} patients',
+  'mass.noTokens': 'Aucun patient n\'a encore l\'application installée.',
+  'mass.titleRequired': 'Veuillez entrer un titre de notification.',
+
+  'patient.nextAppt': 'Prochain rendez-vous',
+  'patient.noAppt': 'Aucun rendez-vous à venir',
+  'patient.myRecords': 'Mes dossiers',
+  'patient.myPrescriptions': 'Mes ordonnances',
+  'patient.noLink': 'Votre compte n\'est pas lié à un dossier patient. Contactez votre médecin.',
 };
 
 // ─── German ───────────────────────────────────────────────────────────────────
@@ -2367,6 +2451,34 @@ const deDE: typeof en = {
   'settings.signature.clearConfirm': 'Gespeicherte Unterschrift entfernen?',
   'settings.signature.saved': 'Unterschrift erfolgreich gespeichert.',
   'settings.signature.drawFirst': 'Bitte zuerst Unterschrift zeichnen.',
+
+  'role.selectTitle': 'Wer sind Sie?',
+  'role.selectSubtitle': 'Wählen Sie Ihr Profil für die richtige Erfahrung.',
+  'role.doctor': 'Medizinischer Fachmann',
+  'role.doctorDesc': 'Verwalten Sie Ihre Klinik, Patienten und Termine.',
+  'role.patient': 'Patient',
+  'role.patientDesc': 'Sehen Sie Ihre Termine und Gesundheitsakten.',
+  'role.secretary': 'Sekretärin / Rezeptionistin',
+  'role.secretaryDesc': 'Verwalten Sie Termine und Patienten. Kein klinischer Zugang.',
+  'role.continue': 'Weiter',
+
+  'mass.title': 'An Patienten senden',
+  'mass.notifTitle': 'Benachrichtigungstitel',
+  'mass.notifTitlePlaceholder': 'z.B. Neuer Termin verfügbar',
+  'mass.notifBody': 'Nachricht',
+  'mass.notifBodyPlaceholder': 'Geben Sie Ihre Nachricht ein…',
+  'mass.send': 'Benachrichtigung senden',
+  'mass.selectAll': 'Alle Patienten',
+  'mass.sent': 'Gesendet an {{n}} Patient',
+  'mass.sent_plural': 'Gesendet an {{n}} Patienten',
+  'mass.noTokens': 'Noch kein Patient hat die App installiert.',
+  'mass.titleRequired': 'Bitte geben Sie einen Benachrichtigungstitel ein.',
+
+  'patient.nextAppt': 'Nächster Termin',
+  'patient.noAppt': 'Keine bevorstehenden Termine',
+  'patient.myRecords': 'Meine Akten',
+  'patient.myPrescriptions': 'Meine Rezepte',
+  'patient.noLink': 'Ihr Konto ist nicht mit einer Patientenakte verknüpft. Kontaktieren Sie Ihren Arzt.',
 };
 
 // ─── Italian ──────────────────────────────────────────────────────────────────
@@ -2952,6 +3064,34 @@ const itIT: typeof en = {
   'settings.signature.clearConfirm': 'Rimuovere la firma salvata?',
   'settings.signature.saved': 'Firma salvata con successo.',
   'settings.signature.drawFirst': 'Per favore, disegna prima la tua firma.',
+
+  'role.selectTitle': 'Chi sei?',
+  'role.selectSubtitle': 'Scegli il tuo profilo per l\'esperienza giusta.',
+  'role.doctor': 'Professionista sanitario',
+  'role.doctorDesc': 'Gestisci la tua clinica, i pazienti e gli appuntamenti.',
+  'role.patient': 'Paziente',
+  'role.patientDesc': 'Visualizza i tuoi appuntamenti e le cartelle cliniche.',
+  'role.secretary': 'Segretaria / Receptionist',
+  'role.secretaryDesc': 'Gestisci appuntamenti e pazienti. Nessun accesso clinico.',
+  'role.continue': 'Continua',
+
+  'mass.title': 'Invia ai pazienti',
+  'mass.notifTitle': 'Titolo della notifica',
+  'mass.notifTitlePlaceholder': 'Es. Nuovo appuntamento disponibile',
+  'mass.notifBody': 'Messaggio',
+  'mass.notifBodyPlaceholder': 'Scrivi il tuo messaggio qui…',
+  'mass.send': 'Invia notifica',
+  'mass.selectAll': 'Tutti i pazienti',
+  'mass.sent': 'Inviato a {{n}} paziente',
+  'mass.sent_plural': 'Inviato a {{n}} pazienti',
+  'mass.noTokens': 'Nessun paziente ha ancora l\'app installata.',
+  'mass.titleRequired': 'Inserisci un titolo per la notifica.',
+
+  'patient.nextAppt': 'Prossimo appuntamento',
+  'patient.noAppt': 'Nessun appuntamento in programma',
+  'patient.myRecords': 'Le mie cartelle',
+  'patient.myPrescriptions': 'Le mie prescrizioni',
+  'patient.noLink': 'Il tuo account non è collegato a una cartella paziente. Contatta il tuo medico.',
 };
 
 // ─── Spanish ──────────────────────────────────────────────────────────────────
@@ -3537,6 +3677,34 @@ const esES: typeof en = {
   'settings.signature.clearConfirm': '¿Eliminar la firma guardada?',
   'settings.signature.saved': 'Firma guardada con éxito.',
   'settings.signature.drawFirst': 'Por favor, dibuja tu firma primero.',
+
+  'role.selectTitle': '¿Quién eres?',
+  'role.selectSubtitle': 'Elige tu perfil para la experiencia adecuada.',
+  'role.doctor': 'Profesional sanitario',
+  'role.doctorDesc': 'Gestiona tu clínica, pacientes y citas.',
+  'role.patient': 'Paciente',
+  'role.patientDesc': 'Consulta tus citas y registros de salud.',
+  'role.secretary': 'Secretaria / Recepcionista',
+  'role.secretaryDesc': 'Gestiona citas y pacientes. Sin acceso clínico.',
+  'role.continue': 'Continuar',
+
+  'mass.title': 'Enviar a pacientes',
+  'mass.notifTitle': 'Título de la notificación',
+  'mass.notifTitlePlaceholder': 'Ej. Nueva cita disponible',
+  'mass.notifBody': 'Mensaje',
+  'mass.notifBodyPlaceholder': 'Escribe tu mensaje aquí…',
+  'mass.send': 'Enviar notificación',
+  'mass.selectAll': 'Todos los pacientes',
+  'mass.sent': 'Enviado a {{n}} paciente',
+  'mass.sent_plural': 'Enviado a {{n}} pacientes',
+  'mass.noTokens': 'Ningún paciente tiene la app instalada aún.',
+  'mass.titleRequired': 'Por favor, introduce un título de notificación.',
+
+  'patient.nextAppt': 'Próxima cita',
+  'patient.noAppt': 'Sin citas próximas',
+  'patient.myRecords': 'Mis registros',
+  'patient.myPrescriptions': 'Mis recetas',
+  'patient.noLink': 'Tu cuenta no está vinculada a un registro de paciente. Contacta a tu médico.',
 };
 
 // ─── Registry ─────────────────────────────────────────────────────────────────

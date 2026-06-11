@@ -3,15 +3,28 @@ import { AppState, AppStateStatus, View, Text, StyleSheet, TouchableOpacity, Act
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as Linking from 'expo-linking';
+import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthProvider, useAuth } from '@/lib/auth-context';
 import { LocaleProvider, useLocale } from '@/lib/locale-context';
 import { ThemeProvider, useTheme } from '@/lib/theme-context';
+import { RoleProvider, useRole } from '@/lib/role-context';
 import { scheduleRemindersForToday } from '@/lib/notifications';
 import { loadSettings } from '@/lib/app-settings';
+import { registerPushToken } from '@/lib/services';
 import { supabase } from '@/lib/supabase';
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 
 // ─── AppLock ─────────────────────────────────────────────────────────────────
 
@@ -106,6 +119,7 @@ function RootNavigator() {
   const [pendingRecovery, setPendingRecovery] = useState<{ access: string; refresh: string } | null>(null);
   const { locale } = useLocale();
   const { theme } = useTheme();
+  const { refresh: refreshRole } = useRole();
 
   useEffect(() => {
     AsyncStorage.getItem('onboarding_done').then(v => {
@@ -175,8 +189,23 @@ function RootNavigator() {
 
   useEffect(() => {
     if (!session) return;
-    scheduleRemindersForToday(session.user.id).catch(() => {});
-  }, [session]);
+    const userId = session.user.id;
+    scheduleRemindersForToday(userId).catch(() => {});
+    refreshRole(userId).catch(() => {});
+    registerForPush(userId).catch(() => {});
+  }, [session?.user.id]);
+
+  async function registerForPush(userId: string) {
+    try {
+      const { status: existing } = await Notifications.getPermissionsAsync();
+      const status = existing === 'granted'
+        ? existing
+        : (await Notifications.requestPermissionsAsync()).status;
+      if (status !== 'granted') return;
+      const token = (await Notifications.getExpoPushTokenAsync()).data;
+      await registerPushToken(userId, token);
+    } catch {}
+  }
 
   if (loading || !onboardingChecked) {
     return <SplashLoader />;
@@ -197,9 +226,11 @@ export default function RootLayout() {
     <ThemeProvider>
       <LocaleProvider>
         <AuthProvider>
-          <AppLock>
-            <RootNavigator />
-          </AppLock>
+          <RoleProvider>
+            <AppLock>
+              <RootNavigator />
+            </AppLock>
+          </RoleProvider>
         </AuthProvider>
       </LocaleProvider>
     </ThemeProvider>

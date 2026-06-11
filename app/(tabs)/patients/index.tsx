@@ -22,6 +22,7 @@ import {
 import { getTemplate } from '@/lib/template-service';
 import { buildPrescriptionHtml, buildMedicalHistoryHtml } from '@/lib/pdf-utils';
 import { useAuth } from '@/lib/auth-context';
+import { useRole } from '@/lib/role-context';
 import { t, tRecordType } from '@/lib/i18n';
 import { formatAge, formatCurrencyWhole, formatFileSize } from '@/lib/locale-utils';
 import { NewPatientModal } from '@/components/NewPatientModal';
@@ -91,9 +92,13 @@ interface PatientDetailProps {
   onUpdate: (updated: Patient) => void;
 }
 
+const CLINICAL_TABS: PatientTab[] = ['records', 'prescriptions', 'exams'];
+
 function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
   const styles = useStyles(makeStyles);
   const { user } = useAuth();
+  const { role } = useRole();
+  const visibleTabs = role === 'secretary' ? TABS.filter(t => !CLINICAL_TABS.includes(t.key)) : TABS;
   const [activeTab, setActiveTab] = useState<PatientTab>('info');
   const [records, setRecords] = useState<MedicalRecord[]>([]);
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
@@ -461,7 +466,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
 
         {/* Tabs */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabRow} contentContainerStyle={{ paddingHorizontal: 16, gap: 4 }}>
-          {TABS.map(tab => (
+          {visibleTabs.map(tab => (
             <TouchableOpacity
               key={tab.key}
               onPress={() => { setActiveTab(tab.key); setEditing(false); }}

@@ -7,16 +7,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '@/constants/Colors';
-import { Appointment, Patient, Professional } from '@/lib/types';
+import { Appointment, MedicalRecord, Patient, Prescription, Professional } from '@/lib/types';
 import { MOCK_APPOINTMENTS, MOCK_PATIENTS } from '@/lib/mock-data';
 import {
   getAppointmentsByDate, getPendingPayments, getPatients, getProfessional,
+  getPatientAppointments, getRecords, getPrescriptions,
 } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
+import { useRole } from '@/lib/role-context';
 import { t, tn } from '@/lib/i18n';
 import { formatHomeDateHeader, formatCurrencyWhole, formatCurrency, formatDuration, formatTime, translateConsultType } from '@/lib/locale-utils';
 import { useStyles } from '@/lib/use-styles';
 import { ReportsModal } from '@/components/ReportsModal';
+import { MassMessageModal } from '@/components/MassMessageModal';
 
 function fmt(d: Date) { return d.toISOString().split('T')[0]; }
 
@@ -41,6 +44,7 @@ function greeting() {
 export default function HomeScreen() {
   const styles = useStyles(makeStyles);
   const { user } = useAuth();
+  const { role, linkedPatientId } = useRole();
   const today = new Date();
   const dateStr = fmt(today);
 
@@ -50,6 +54,12 @@ export default function HomeScreen() {
   const [recentPatients, setRecentPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
   const [showReports, setShowReports] = useState(false);
+  const [showMassMsg, setShowMassMsg] = useState(false);
+
+  // Patient-specific state
+  const [myAppts, setMyAppts] = useState<Appointment[]>([]);
+  const [myRecords, setMyRecords] = useState<MedicalRecord[]>([]);
+  const [myPrescriptions, setMyPrescriptions] = useState<Prescription[]>([]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -61,6 +71,23 @@ export default function HomeScreen() {
       setLoading(false);
       return;
     }
+
+    if (role === 'patient' && linkedPatientId) {
+      try {
+        const future = new Date(today); future.setMonth(future.getMonth() + 3);
+        const [appts, records, prescriptions] = await Promise.all([
+          getPatientAppointments(linkedPatientId, dateStr, fmt(future)),
+          getRecords(linkedPatientId),
+          getPrescriptions(linkedPatientId),
+        ]);
+        setMyAppts(appts);
+        setMyRecords(records);
+        setMyPrescriptions(prescriptions);
+      } catch {}
+      setLoading(false);
+      return;
+    }
+
     try {
       const [prof, appts, pending, patients] = await Promise.all([
         getProfessional(user.id),
@@ -120,14 +147,65 @@ export default function HomeScreen() {
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexShrink: 0 }}>
           <Text style={styles.headerDate}>{formatHomeDateHeader(today)}</Text>
-          <TouchableOpacity onPress={() => setShowReports(true)} style={styles.reportBtn}>
-            <Ionicons name="bar-chart-outline" size={18} color={Colors.primary} />
-          </TouchableOpacity>
+          {role === 'professional' && (
+            <TouchableOpacity onPress={() => setShowMassMsg(true)} style={styles.reportBtn}>
+              <Ionicons name="megaphone-outline" size={18} color={Colors.primary} />
+            </TouchableOpacity>
+          )}
+          {role !== 'patient' && (
+            <TouchableOpacity onPress={() => setShowReports(true)} style={styles.reportBtn}>
+              <Ionicons name="bar-chart-outline" size={18} color={Colors.primary} />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
       {loading ? (
         <ActivityIndicator style={{ marginTop: 60 }} color={Colors.primary} />
+      ) : role === 'patient' && !linkedPatientId ? (
+        <View style={styles.noLinkBox}>
+          <Ionicons name="link-outline" size={40} color={Colors.textMuted} />
+          <Text style={styles.noLinkText}>{t('patient.noLink')}</Text>
+        </View>
+      ) : role === 'patient' ? (
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, gap: 20, paddingBottom: 32 }}>
+          {/* Next appointment */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t('patient.nextAppt')}</Text>
+            {myAppts.length === 0 ? (
+              <View style={styles.emptyCard}>
+                <Ionicons name="calendar-outline" size={32} color={Colors.textMuted} />
+                <Text style={styles.emptyText}>{t('patient.noAppt')}</Text>
+              </View>
+            ) : (
+              myAppts.slice(0, 3).map(appt => (
+                <View key={appt.id} style={styles.apptCard}>
+                  <View style={[styles.apptTimeBadge, { backgroundColor: `${statusColor(appt.status)}18` }]}>
+                    <Text style={[styles.apptTime, { color: statusColor(appt.status) }]}>{appt.date}</Text>
+                    <Text style={[styles.apptDur, { color: statusColor(appt.status) }]}>{formatTime(appt.startTime)}</Text>
+                  </View>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={styles.apptName} numberOfLines={1}>{appt.consultationType}</Text>
+                    <Text style={styles.apptType}>{t(appt.type === 'online' ? 'apptType.online' : 'apptType.inPerson')}</Text>
+                  </View>
+                  <View style={[styles.statusDot, { backgroundColor: statusColor(appt.status) }]} />
+                </View>
+              ))
+            )}
+          </View>
+
+          {/* My records + prescriptions quick stats */}
+          <View style={styles.summaryRow}>
+            <View style={[styles.summaryCard, { borderTopColor: Colors.primary }]}>
+              <Text style={styles.summaryNum}>{myRecords.length}</Text>
+              <Text style={styles.summaryLabel}>{t('patient.myRecords')}</Text>
+            </View>
+            <View style={[styles.summaryCard, { borderTopColor: Colors.success }]}>
+              <Text style={styles.summaryNum}>{myPrescriptions.length}</Text>
+              <Text style={styles.summaryLabel}>{t('patient.myPrescriptions')}</Text>
+            </View>
+          </View>
+        </ScrollView>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, gap: 20, paddingBottom: 32 }}>
 
@@ -237,6 +315,7 @@ export default function HomeScreen() {
         </ScrollView>
       )}
       <ReportsModal visible={showReports} onClose={() => setShowReports(false)} />
+      <MassMessageModal visible={showMassMsg} onClose={() => setShowMassMsg(false)} />
     </SafeAreaView>
   );
 }
@@ -259,6 +338,12 @@ const makeStyles = () => StyleSheet.create({
   doctorName: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary },
   headerDate: { fontSize: 12, color: Colors.textMuted, fontWeight: '500' },
   reportBtn: { padding: 4 },
+  noLinkBox: {
+    flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 16,
+  },
+  noLinkText: {
+    fontSize: 14, color: Colors.textMuted, textAlign: 'center', lineHeight: 20,
+  },
 
   summaryRow: { flexDirection: 'row', gap: 10 },
   summaryCard: {
