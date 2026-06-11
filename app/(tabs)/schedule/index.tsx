@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useFocusEffect } from 'expo-router';
 import {
   View,
   Text,
@@ -28,7 +29,7 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { cancelAppointmentReminder } from '@/lib/notifications';
 import { useAuth } from '@/lib/auth-context';
-import { t } from '@/lib/i18n';
+import { t, getLocale } from '@/lib/i18n';
 import {
   formatScheduleDayHeader, formatScheduleWeekHeader,
   formatWeekdayShort, formatCurrency, formatAgeLabel, formatTime, translateConsultType,
@@ -37,6 +38,7 @@ import { NewAppointmentModal } from '@/components/NewAppointmentModal';
 import { BlockTimeModal } from '@/components/BlockTimeModal';
 import { AppointmentSearchModal } from '@/components/AppointmentSearchModal';
 import WhatsAppRemindersModal from '@/components/WhatsAppRemindersModal';
+import { useStyles } from '@/lib/use-styles';
 
 const HOUR_HEIGHT = 64;
 const LINE_OFFSET = 11; // hourRow.paddingTop(4) + hourLine.marginTop(7) — aligns blocks to hour lines
@@ -44,7 +46,7 @@ const START_HOUR = 7;
 const END_HOUR = 21;
 const HOURS = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => START_HOUR + i);
 
-type ViewMode = 'day' | 'week';
+type ViewMode = 'day' | 'week' | 'month';
 
 
 function fmt(d: Date) {
@@ -108,7 +110,20 @@ function getWeekDates(date: Date) {
   });
 }
 
+function getMonthDates(date: Date): (Date | null)[] {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const cells: (Date | null)[] = [];
+  for (let i = 0; i < firstDay.getDay(); i++) cells.push(null);
+  for (let d = 1; d <= lastDay.getDate(); d++) cells.push(new Date(year, month, d));
+  while (cells.length % 7 !== 0) cells.push(null);
+  return cells;
+}
+
 function AppointmentBlock({ appt, onPress, col, totalCols }: { appt: Appointment; onPress: () => void; col: number; totalCols: number }) {
+  const styles = useStyles(makeStyles);
   const startMin = timeToMinutes(appt.startTime) - START_HOUR * 60;
   const duration = appt.durationMinutes;
   const top = LINE_OFFSET + (startMin / 60) * HOUR_HEIGHT;
@@ -136,7 +151,7 @@ function AppointmentBlock({ appt, onPress, col, totalCols }: { appt: Appointment
       activeOpacity={0.85}
     >
       <Text style={[styles.apptText, { color: isBlocked ? Colors.textMuted : color }]} numberOfLines={1}>
-        {isBlocked ? t('status.blocked').toUpperCase() : appt.patientName}
+        {isBlocked ? (appt.notes ? `BLOCKED | ${appt.notes}` : t('status.blocked').toUpperCase()) : appt.patientName}
       </Text>
       {!isBlocked && (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
@@ -159,12 +174,13 @@ function whatsappUrl(phone: string) {
 function whatsappConfirmUrl(phone: string, appt: Appointment) {
   const digits = phone.replace(/\D/g, '');
   const number = digits.startsWith('55') ? digits : `55${digits}`;
-  const msg =
-    `Hello ${appt.patientName}, your appointment is confirmed:\n` +
-    `Date: ${appt.date}\n` +
-    `Time: ${formatTime(appt.startTime)} (${appt.durationMinutes} min)\n` +
-    `Type: ${translateConsultType(appt.consultationType)}${appt.type === 'online' ? ' — Online' : ''}\n\n` +
-    `See you then!`;
+  const typeStr = `${translateConsultType(appt.consultationType)}${appt.type === 'online' ? ' — Online' : ''}`;
+  const msg = (t('appt.confirmMessage' as any) as string)
+    .replace('{{name}}', appt.patientName.split(' ')[0])
+    .replace('{{date}}', appt.date)
+    .replace('{{time}}', formatTime(appt.startTime))
+    .replace('{{duration}}', String(appt.durationMinutes))
+    .replace('{{type}}', typeStr);
   return `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
 }
 
@@ -174,6 +190,8 @@ function statusColor(status: Appointment['status']) {
     case 'completed': return Colors.success;
     case 'cancelled': return Colors.danger;
     case 'blocked': return Colors.blocked;
+    case 'late': return Colors.late;
+    case 'absent': return Colors.absent;
     default: return Colors.warning;
   }
 }
@@ -208,7 +226,7 @@ async function shareInvoice(appt: Appointment, professionalId: string) {
   }
 }
 
-function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, onAmountUpdated, onDelete }: {
+function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, onAmountUpdated, onDelete, pixKey }: {
   appt: Appointment | null;
   onClose: () => void;
   onMarkPaid: (id: string) => void;
@@ -216,7 +234,9 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
   onEdit: (appt: Appointment) => void;
   onAmountUpdated: (id: string, amount: number) => void;
   onDelete: (id: string) => void;
+  pixKey?: string;
 }) {
+  const styles = useStyles(makeStyles);
   const { user } = useAuth();
   const [patientPhone, setPatientPhone] = React.useState<string | null>(null);
   const [patientAge, setPatientAge] = React.useState<string | null>(null);
@@ -291,8 +311,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
 
           {!isBlocked && (
             <>
-              <Text style={styles.modalPatient}>{appt.patientName}</Text>
-              {patientAge && <Text style={styles.modalPatientAge}>{patientAge}</Text>}
+              <Text style={styles.modalPatient}>{appt.patientName}{patientAge ? ` | ${patientAge}` : ''}</Text>
               <TouchableOpacity
                 style={styles.modalAction}
                 onPress={() => patientPhone && Linking.openURL(whatsappConfirmUrl(patientPhone, appt))}
@@ -327,7 +346,12 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
                 style={styles.modalAction}
                 onPress={() => {
                   const link = `https://pay.solvymed.app/${appt.id}`;
-                  Share.share({ message: `Payment link for your appointment on ${appt.date} at ${appt.startTime}:\n${link}`, url: link });
+                  let payMsg = (t('appt.paymentLinkMessage' as any) as string)
+                    .replace('{{date}}', appt.date)
+                    .replace('{{time}}', appt.startTime)
+                    .replace('{{link}}', link);
+                  if (pixKey && getLocale() === 'pt-BR') payMsg += `\n\nPix: ${pixKey}`;
+                  Share.share({ message: payMsg, url: link });
                 }}
               >
                 <Ionicons name="link-outline" size={16} color={Colors.primary} />
@@ -454,7 +478,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
               <View style={styles.modalDivider} />
               <Text style={styles.modalSectionTitle}>{t('appt.status')}</Text>
               <View style={styles.statusActions}>
-                {(['scheduled', 'confirmed', 'completed', 'cancelled'] as Appointment['status'][]).map(s => {
+                {(['scheduled', 'confirmed', 'completed', 'cancelled', 'late', 'absent'] as Appointment['status'][]).map(s => {
                   const active = appt.status === s;
                   const color = statusColor(s);
                   return (
@@ -479,6 +503,7 @@ function AppointmentModal({ appt, onClose, onMarkPaid, onStatusChange, onEdit, o
 }
 
 export default function ScheduleScreen() {
+  const styles = useStyles(makeStyles);
   const { user } = useAuth();
   const [viewMode, setViewMode] = useState<ViewMode>('day');
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -491,6 +516,7 @@ export default function ScheduleScreen() {
   const [showWhatsApp, setShowWhatsApp] = useState(false);
   const [editingAppt, setEditingAppt] = useState<Appointment | null>(null);
   const [weekCounts, setWeekCounts] = useState<Record<string, number>>({});
+  const [monthCounts, setMonthCounts] = useState<Record<string, number>>({});
   const [filterStatuses, setFilterStatuses] = useState<Set<Appointment['status']>>(new Set());
   const [filterType, setFilterType] = useState<'all' | 'in-person' | 'online'>('all');
   const [showFilter, setShowFilter] = useState(false);
@@ -530,7 +556,7 @@ export default function ScheduleScreen() {
     }
   }, [user, dateStr]);
 
-  useEffect(() => { loadAppointments(); }, [loadAppointments]);
+  useFocusEffect(useCallback(() => { loadAppointments(); }, [loadAppointments]));
 
   useEffect(() => {
     if (!user) return;
@@ -543,6 +569,17 @@ export default function ScheduleScreen() {
     const to = fmt(weekDates[6]);
     getAppointmentCountsByWeek(user.id, from, to).then(setWeekCounts).catch(() => {});
   }, [user, viewMode, fmt(weekDates[0])]);
+
+  const monthDates = useMemo(() => getMonthDates(selectedDate), [selectedDate.getFullYear(), selectedDate.getMonth()]);
+
+  useEffect(() => {
+    if (!user || viewMode !== 'month') return;
+    const nonNull = monthDates.filter((d): d is Date => d !== null);
+    if (!nonNull.length) return;
+    const from = fmt(nonNull[0]);
+    const to = fmt(nonNull[nonNull.length - 1]);
+    getAppointmentCountsByWeek(user.id, from, to).then(setMonthCounts).catch(() => {});
+  }, [user, viewMode, selectedDate.getFullYear(), selectedDate.getMonth()]);
 
   async function handleMarkPaid(apptId: string) {
     if (user) await updatePaymentStatus(apptId, 'paid');
@@ -584,13 +621,17 @@ export default function ScheduleScreen() {
 
   function navigate(dir: -1 | 1) {
     const d = new Date(selectedDate);
-    d.setDate(d.getDate() + (viewMode === 'day' ? dir : dir * 7));
+    if (viewMode === 'day') d.setDate(d.getDate() + dir);
+    else if (viewMode === 'week') d.setDate(d.getDate() + dir * 7);
+    else { d.setDate(1); d.setMonth(d.getMonth() + dir); }
     setSelectedDate(d);
   }
 
-  const headerLabel = viewMode === 'day'
-    ? formatScheduleDayHeader(selectedDate)
-    : formatScheduleWeekHeader(weekDates[0], weekDates[6]);
+  const headerLabel = viewMode === 'month'
+    ? selectedDate.toLocaleString(getLocale(), { month: 'long', year: 'numeric' })
+    : viewMode === 'day'
+      ? formatScheduleDayHeader(selectedDate)
+      : formatScheduleWeekHeader(weekDates[0], weekDates[6]);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -642,6 +683,12 @@ export default function ScheduleScreen() {
             >
               <Text style={[styles.toggleText, viewMode === 'week' && styles.toggleTextActive]}>{t('schedule.week')}</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setViewMode('month')}
+              style={[styles.toggleBtn, viewMode === 'month' && styles.toggleActive]}
+            >
+              <Text style={[styles.toggleText, viewMode === 'month' && styles.toggleTextActive]}>{t('schedule.month' as any)}</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -675,8 +722,47 @@ export default function ScheduleScreen() {
         </View>
       )}
 
+      {/* Month grid */}
+      {viewMode === 'month' && (
+        <ScrollView style={styles.grid} showsVerticalScrollIndicator={false}>
+          <View style={styles.monthDayNames}>
+            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
+              <Text key={i} style={styles.monthDayName}>{d}</Text>
+            ))}
+          </View>
+          <View style={styles.monthGrid}>
+            {monthDates.map((d, i) => {
+              if (!d) return <View key={`pad-${i}`} style={styles.monthCell} />;
+              const dStr = fmt(d);
+              const isToday = dStr === fmt(new Date());
+              const isSelected = dStr === dateStr;
+              const count = user
+                ? (monthCounts[dStr] ?? 0)
+                : MOCK_APPOINTMENTS.filter(a => a.date === dStr && a.status !== 'blocked').length;
+              return (
+                <TouchableOpacity
+                  key={dStr}
+                  style={[styles.monthCell, isSelected && styles.monthCellSelected, isToday && !isSelected && styles.monthCellToday]}
+                  onPress={() => { setSelectedDate(d); setViewMode('day'); }}
+                >
+                  <Text style={[styles.monthCellNum, isSelected && styles.monthCellNumSelected, isToday && !isSelected && { color: Colors.primary }]}>
+                    {d.getDate()}
+                  </Text>
+                  {count > 0 ? (
+                    <View style={[styles.monthCountBadge, isSelected && styles.monthCountBadgeSelected]}>
+                      <Text style={[styles.monthCountText, isSelected && styles.monthCountTextSelected]}>{count}</Text>
+                    </View>
+                  ) : <View style={{ height: 14 }} />}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+          <View style={{ height: 80 }} />
+        </ScrollView>
+      )}
+
       {/* Time grid */}
-      <ScrollView style={styles.grid} showsVerticalScrollIndicator={false}>
+      {viewMode !== 'month' && <ScrollView style={styles.grid} showsVerticalScrollIndicator={false}>
         <View style={{ position: 'relative' }}>
           {HOURS.map(hour => {
             const dimmed = isOutsideWorkingHours(hour);
@@ -714,6 +800,8 @@ export default function ScheduleScreen() {
             { key: 'confirmed', color: Colors.primary },
             { key: 'completed', color: Colors.success },
             { key: 'cancelled', color: Colors.danger },
+            { key: 'late', color: Colors.late },
+            { key: 'absent', color: Colors.absent },
             { key: 'blocked', color: Colors.blocked },
           ] as const).map(({ key, color }) => (
             <View key={key} style={styles.legendItem}>
@@ -723,7 +811,7 @@ export default function ScheduleScreen() {
           ))}
         </View>
         <View style={{ height: 100 }} />
-      </ScrollView>
+      </ScrollView>}
 
       {/* FAB group */}
       <View style={styles.fabGroup}>
@@ -745,6 +833,7 @@ export default function ScheduleScreen() {
         onEdit={(appt) => { setSelectedAppt(null); setEditingAppt(appt); }}
         onAmountUpdated={(id, amount) => setAppointments(prev => prev.map(a => a.id === id ? { ...a, paymentAmount: amount } : a))}
         onDelete={handleDelete}
+        pixKey={professional?.pixKey}
       />
 
       <NewAppointmentModal
@@ -800,7 +889,7 @@ export default function ScheduleScreen() {
 
             <Text style={styles.filterLabel}>{t('schedule.status')}</Text>
             <View style={styles.filterPillRow}>
-              {(['scheduled', 'confirmed', 'completed', 'cancelled'] as Appointment['status'][]).map(s => (
+              {(['scheduled', 'confirmed', 'completed', 'cancelled', 'late', 'absent'] as Appointment['status'][]).map(s => (
                 <TouchableOpacity
                   key={s}
                   style={[styles.filterPill, filterStatuses.has(s) && styles.filterPillActive]}
@@ -838,7 +927,7 @@ export default function ScheduleScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   header: {
     backgroundColor: Colors.surface,
@@ -986,4 +1075,16 @@ const styles = StyleSheet.create({
   filterApplyBtn: { backgroundColor: Colors.primary, borderRadius: 12, paddingVertical: 13, alignItems: 'center', marginTop: 4 },
   filterApplyText: { fontSize: 15, fontWeight: '700', color: '#fff' },
   extraItemRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 2 },
+  monthDayNames: { flexDirection: 'row', paddingHorizontal: 8, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  monthDayName: { flex: 1, textAlign: 'center', fontSize: 11, fontWeight: '700', color: Colors.textMuted, textTransform: 'uppercase' },
+  monthGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 4, paddingTop: 4 },
+  monthCell: { width: '14.28%', aspectRatio: 1, alignItems: 'center', justifyContent: 'center', padding: 4, borderRadius: 8 },
+  monthCellSelected: { backgroundColor: Colors.primary },
+  monthCellToday: { borderWidth: 1.5, borderColor: Colors.primary },
+  monthCellNum: { fontSize: 15, fontWeight: '600', color: Colors.textPrimary },
+  monthCellNumSelected: { color: '#fff' },
+  monthCountBadge: { marginTop: 2, minWidth: 16, height: 14, borderRadius: 7, backgroundColor: Colors.primary + '25', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 },
+  monthCountBadgeSelected: { backgroundColor: 'rgba(255,255,255,0.35)' },
+  monthCountText: { fontSize: 9, fontWeight: '700', color: Colors.primary },
+  monthCountTextSelected: { color: '#fff' },
 });

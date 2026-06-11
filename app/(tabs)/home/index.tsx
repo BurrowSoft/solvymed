@@ -15,6 +15,8 @@ import {
 import { useAuth } from '@/lib/auth-context';
 import { t, tn } from '@/lib/i18n';
 import { formatHomeDateHeader, formatCurrencyWhole, formatCurrency, formatDuration, formatTime, translateConsultType } from '@/lib/locale-utils';
+import { useStyles } from '@/lib/use-styles';
+import { ReportsModal } from '@/components/ReportsModal';
 
 function fmt(d: Date) { return d.toISOString().split('T')[0]; }
 
@@ -23,6 +25,8 @@ function statusColor(status: Appointment['status']) {
     case 'confirmed': return Colors.primary;
     case 'completed': return Colors.success;
     case 'cancelled': return Colors.danger;
+    case 'late': return Colors.late;
+    case 'absent': return Colors.absent;
     default: return Colors.warning;
   }
 }
@@ -35,6 +39,7 @@ function greeting() {
 }
 
 export default function HomeScreen() {
+  const styles = useStyles(makeStyles);
   const { user } = useAuth();
   const today = new Date();
   const dateStr = fmt(today);
@@ -44,6 +49,7 @@ export default function HomeScreen() {
   const [pendingPayments, setPendingPayments] = useState<Appointment[]>([]);
   const [recentPatients, setRecentPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showReports, setShowReports] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -112,7 +118,12 @@ export default function HomeScreen() {
             </Text>
           </View>
         </View>
-        <Text style={styles.headerDate}>{formatHomeDateHeader(today)}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+          <Text style={styles.headerDate}>{formatHomeDateHeader(today)}</Text>
+          <TouchableOpacity onPress={() => setShowReports(true)} style={styles.reportBtn}>
+            <Ionicons name="bar-chart-outline" size={18} color={Colors.primary} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {loading ? (
@@ -137,34 +148,6 @@ export default function HomeScreen() {
             <TouchableOpacity style={[styles.summaryCard, { borderTopColor: Colors.danger }]} onPress={() => router.push('/(tabs)/payments')}>
               <Text style={[styles.summaryNum, { color: Colors.danger, fontSize: 13 }]}>{formatCurrency(pendingTotal)}</Text>
               <Text style={styles.summaryLabel}>{t('home.pendingAmount')}</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Quick actions */}
-          <View style={styles.quickRow}>
-            <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/schedule')}>
-              <View style={[styles.quickIcon, { backgroundColor: Colors.primaryLight }]}>
-                <Ionicons name="calendar-outline" size={20} color={Colors.primary} />
-              </View>
-              <Text style={styles.quickLabel}>{t('tab.schedule')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/patients')}>
-              <View style={[styles.quickIcon, { backgroundColor: '#F0FDF4' }]}>
-                <Ionicons name="people-outline" size={20} color={Colors.success} />
-              </View>
-              <Text style={styles.quickLabel}>{t('tab.patients')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/payments')}>
-              <View style={[styles.quickIcon, { backgroundColor: '#FFFBEB' }]}>
-                <Ionicons name="card-outline" size={20} color={Colors.warning} />
-              </View>
-              <Text style={styles.quickLabel}>{t('tab.payments')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.quickBtn} onPress={() => router.push('/(tabs)/settings')}>
-              <View style={[styles.quickIcon, { backgroundColor: '#F5F3FF' }]}>
-                <Ionicons name="settings-outline" size={20} color="#7C3AED" />
-              </View>
-              <Text style={styles.quickLabel}>{t('tab.settings')}</Text>
             </TouchableOpacity>
           </View>
 
@@ -253,11 +236,12 @@ export default function HomeScreen() {
 
         </ScrollView>
       )}
+      <ReportsModal visible={showReports} onClose={() => setShowReports(false)} />
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -273,7 +257,8 @@ const styles = StyleSheet.create({
   doctorAvatarInitial: { fontSize: 17, fontWeight: '700', color: Colors.primary },
   greeting: { fontSize: 12, color: Colors.textSecondary, fontWeight: '500' },
   doctorName: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary },
-  headerDate: { fontSize: 12, color: Colors.textMuted, fontWeight: '500', flexShrink: 0 },
+  headerDate: { fontSize: 12, color: Colors.textMuted, fontWeight: '500' },
+  reportBtn: { padding: 4 },
 
   summaryRow: { flexDirection: 'row', gap: 10 },
   summaryCard: {
@@ -283,11 +268,6 @@ const styles = StyleSheet.create({
   },
   summaryNum: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary },
   summaryLabel: { fontSize: 10, color: Colors.textMuted, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.3 },
-
-  quickRow: { flexDirection: 'row', gap: 10 },
-  quickBtn: { flex: 1, alignItems: 'center', gap: 8 },
-  quickIcon: { width: 52, height: 52, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  quickLabel: { fontSize: 11, color: Colors.textSecondary, fontWeight: '600' },
 
   section: { gap: 10 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },

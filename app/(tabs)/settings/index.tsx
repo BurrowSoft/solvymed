@@ -9,7 +9,7 @@ import * as Sharing from 'expo-sharing';
 import Constants from 'expo-constants';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/lib/auth-context';
-import { getProfessional, getPatients } from '@/lib/services';
+import { getProfessional, getPatients, updateProfessional } from '@/lib/services';
 import { Professional } from '@/lib/types';
 import { ProfileModal } from '@/components/ProfileModal';
 import { WorkingHoursModal } from '@/components/WorkingHoursModal';
@@ -23,10 +23,18 @@ import { ThemePickerModal } from '@/components/ThemePickerModal';
 import { SecuritySettingsModal } from '@/components/SecuritySettingsModal';
 import { FinancialSettingsModal } from '@/components/FinancialSettingsModal';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
+import { AboutModal } from '@/components/AboutModal';
+import { ChangelogModal } from '@/components/ChangelogModal';
+import { ContactModal } from '@/components/ContactModal';
+import { HelpModal } from '@/components/HelpModal';
+import { ModulesModal } from '@/components/ModulesModal';
+import { IntegrationsModal } from '@/components/IntegrationsModal';
+import { RegistrationsModal } from '@/components/RegistrationsModal';
 import { t } from '@/lib/i18n';
 import { useLocale } from '@/lib/locale-context';
 import { useTheme } from '@/lib/theme-context';
 import { useAppSettings, AppSettings } from '@/lib/app-settings';
+import { useStyles } from '@/lib/use-styles';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -60,6 +68,7 @@ function getThemeName(key: string): string {
 }
 
 export default function SettingsScreen() {
+  const styles = useStyles(makeStyles);
   const { user, signOut } = useAuth();
   const { locale } = useLocale();
   const { theme, setTheme } = useTheme();
@@ -78,6 +87,13 @@ export default function SettingsScreen() {
   const [showSecurity, setShowSecurity] = useState(false);
   const [showFinancial, setShowFinancial] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
+  const [showChangelog, setShowChangelog] = useState(false);
+  const [showContact, setShowContact] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [showModules, setShowModules] = useState(false);
+  const [showIntegrations, setShowIntegrations] = useState(false);
+  const [showRegistrations, setShowRegistrations] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -252,19 +268,31 @@ export default function SettingsScreen() {
           onPress: handleExportCSV,
         },
         {
-          label: t('settings.data.version'),
+          label: t('settings.data.changelog'),
+          icon: 'list-circle-outline',
+          onPress: () => setShowChangelog(true),
+        },
+        {
+          label: t('settings.data.about'),
           icon: 'information-circle-outline',
-          detail: appVersion,
+          detail: `v${appVersion}`,
+          onPress: () => setShowAbout(true),
         },
       ],
     },
     {
       title: t('settings.group.configuration'),
       items: [
-        { label: t('settings.registrations'), icon: 'list-outline' },
-        { label: t('settings.integrations'), icon: 'link-outline' },
-        { label: t('settings.modules'), icon: 'grid-outline' },
-        { label: t('settings.help'), icon: 'help-circle-outline' },
+        { label: t('settings.registrations'), icon: 'id-card-outline', onPress: () => setShowRegistrations(true) },
+        { label: t('settings.integrations'), icon: 'link-outline', onPress: () => setShowIntegrations(true) },
+        { label: t('settings.modules'), icon: 'grid-outline', onPress: () => setShowModules(true) },
+      ],
+    },
+    {
+      title: t('settings.group.support'),
+      items: [
+        { label: t('settings.help'), icon: 'help-circle-outline', onPress: () => setShowHelp(true) },
+        { label: t('settings.contactUs'), icon: 'mail-outline', onPress: () => setShowContact(true) },
       ],
     },
   ];
@@ -399,18 +427,55 @@ export default function SettingsScreen() {
       <FinancialSettingsModal
         visible={showFinancial}
         settings={settings}
+        pixKey={professional?.pixKey}
         onClose={() => setShowFinancial(false)}
         onSave={(patch) => updateSettings(patch)}
+        onSavePixKey={async (key) => {
+          if (user) {
+            await updateProfessional(user.id, { pixKey: key }).catch(() => {});
+            setProfessional(prev => prev ? { ...prev, pixKey: key || undefined } : prev);
+          }
+        }}
       />
       <ChangePasswordModal
         visible={showChangePassword}
         onClose={() => setShowChangePassword(false)}
       />
+      <AboutModal
+        visible={showAbout}
+        onClose={() => setShowAbout(false)}
+      />
+      <ChangelogModal
+        visible={showChangelog}
+        onClose={() => setShowChangelog(false)}
+      />
+      <ContactModal
+        visible={showContact}
+        onClose={() => setShowContact(false)}
+        prefillName={professional?.fullName ?? ''}
+        prefillEmail={user?.email ?? ''}
+      />
+      <HelpModal
+        visible={showHelp}
+        onClose={() => setShowHelp(false)}
+      />
+      <ModulesModal
+        visible={showModules}
+        onClose={() => setShowModules(false)}
+      />
+      <IntegrationsModal
+        visible={showIntegrations}
+        onClose={() => setShowIntegrations(false)}
+      />
+      <RegistrationsModal
+        visible={showRegistrations}
+        onClose={() => setShowRegistrations(false)}
+      />
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   header: {
     paddingHorizontal: 16, paddingVertical: 14,

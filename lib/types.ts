@@ -1,5 +1,5 @@
 export type AppointmentType = 'online' | 'in-person';
-export type AppointmentStatus = 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'blocked';
+export type AppointmentStatus = 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'blocked' | 'late' | 'absent';
 export type PaymentType = 'private' | 'insurance';
 export type PaymentStatus = 'pending' | 'paid';
 
@@ -13,6 +13,8 @@ export interface Patient {
   profession?: string;
   email?: string;
   phone?: string;
+  emergencyPhone?: string;
+  convenioType?: 'particular' | 'health_plan';
   tags?: string[];
   photoUrl?: string;
   createdAt: string;
@@ -97,6 +99,7 @@ export interface Professional {
   clinicPhone?: string;
   clinicWebsite?: string;
   specialty?: string;
+  pixKey?: string;
   workingHours?: WorkingHours;
 }
 

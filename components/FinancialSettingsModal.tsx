@@ -4,22 +4,28 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
-import { t } from '@/lib/i18n';
+import { t, getLocale } from '@/lib/i18n';
 import { AppSettings } from '@/lib/app-settings';
+
+const isPtBR = getLocale() === 'pt-BR';
 
 interface Props {
   visible: boolean;
   settings: AppSettings;
+  pixKey?: string;
   onClose: () => void;
   onSave: (patch: Partial<AppSettings>) => void;
+  onSavePixKey?: (key: string) => void;
 }
 
-export function FinancialSettingsModal({ visible, settings, onClose, onSave }: Props) {
+export function FinancialSettingsModal({ visible, settings, pixKey, onClose, onSave, onSavePixKey }: Props) {
   const [paymentType, setPaymentType] = useState(settings.defaultPaymentType);
   const [footer, setFooter] = useState(settings.invoiceFooterText);
+  const [pixKeyValue, setPixKeyValue] = useState(pixKey ?? '');
 
   function handleSave() {
     onSave({ defaultPaymentType: paymentType, invoiceFooterText: footer });
+    if (isPtBR && onSavePixKey) onSavePixKey(pixKeyValue.trim());
     onClose();
   }
 
@@ -51,6 +57,21 @@ export function FinancialSettingsModal({ visible, settings, onClose, onSave }: P
                 </TouchableOpacity>
               ))}
             </View>
+
+            {isPtBR && (
+              <>
+                <Text style={styles.sectionLabel}>{t('settings.financial.pixKey' as any)}</Text>
+                <TextInput
+                  style={styles.textInput}
+                  value={pixKeyValue}
+                  onChangeText={setPixKeyValue}
+                  placeholder={t('settings.financial.pixKeyPlaceholder' as any)}
+                  placeholderTextColor={Colors.textMuted}
+                  autoCapitalize="none"
+                  keyboardType="default"
+                />
+              </>
+            )}
 
             <Text style={styles.sectionLabel}>{t('settings.financial.invoiceFooter')}</Text>
             <TextInput
@@ -107,6 +128,11 @@ const styles = StyleSheet.create({
   pillActive: { borderColor: Colors.primary, backgroundColor: Colors.primaryLight },
   pillText: { fontSize: 14, color: Colors.textSecondary, fontWeight: '500' },
   pillTextActive: { color: Colors.primary, fontWeight: '700' },
+  textInput: {
+    borderWidth: 1.5, borderColor: Colors.border, borderRadius: 10,
+    padding: 12, height: 46, fontSize: 14, color: Colors.textPrimary,
+    backgroundColor: Colors.background, marginBottom: 8,
+  },
   textArea: {
     borderWidth: 1.5, borderColor: Colors.border, borderRadius: 10,
     padding: 12, minHeight: 90, fontSize: 14, color: Colors.textPrimary,

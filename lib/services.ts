@@ -122,6 +122,12 @@ export async function updatePatient(id: string, updates: Partial<Patient>) {
     .update(fromPatient(updates as Patient))
     .eq('id', id);
   if (error) throw error;
+  if (updates.fullName) {
+    await supabase
+      .from('appointments')
+      .update({ patient_name: updates.fullName })
+      .eq('patient_id', id);
+  }
 }
 
 export async function deletePatient(id: string): Promise<void> {
@@ -157,6 +163,11 @@ export async function createRecord(record: Omit<MedicalRecord, 'id' | 'createdAt
     .single();
   if (error) throw error;
   return toRecord(data);
+}
+
+export async function deleteRecord(id: string): Promise<void> {
+  const { error } = await supabase.from('medical_records').delete().eq('id', id);
+  if (error) throw error;
 }
 
 export async function getPatientAppointments(patientId: string) {
@@ -345,6 +356,8 @@ function toPatient(row: Record<string, unknown>): Patient {
     profession: row.profession as string,
     email: row.email as string,
     phone: row.phone as string,
+    emergencyPhone: (row.emergency_phone as string) || undefined,
+    convenioType: (row.convenio_type as Patient['convenioType']) || undefined,
     tags: row.tags as string[],
     photoUrl: (row.photo_url as string) || undefined,
     createdAt: row.created_at as string,
@@ -361,6 +374,8 @@ function fromPatient(p: Partial<Patient>) {
     profession: p.profession,
     email: p.email,
     phone: p.phone,
+    emergency_phone: p.emergencyPhone ?? null,
+    convenio_type: p.convenioType ?? null,
     tags: p.tags,
     photo_url: p.photoUrl ?? null,
   };
@@ -432,6 +447,12 @@ export async function createPrescription(
   return { ...toPrescription(prescription), medications };
 }
 
+export async function deletePrescription(id: string): Promise<void> {
+  await supabase.from('prescription_items').delete().eq('prescription_id', id);
+  const { error } = await supabase.from('prescriptions').delete().eq('id', id);
+  if (error) throw error;
+}
+
 // ─── Professionals ───────────────────────────────────────────────────────────
 
 export async function getProfessional(id: string): Promise<Professional | null> {
@@ -488,6 +509,7 @@ function toProfessional(row: Record<string, unknown>): Professional {
     clinicPhone: row.clinic_phone as string | undefined,
     clinicWebsite: row.clinic_website as string | undefined,
     specialty: row.specialty as string | undefined,
+    pixKey: (row.pix_key as string) || undefined,
     workingHours: (row.working_hours as WorkingHours | undefined) ?? undefined,
   };
 }
@@ -504,6 +526,7 @@ export async function updateProfessional(id: string, updates: Partial<Profession
   if (updates.clinicWebsite !== undefined) mapped.clinic_website = updates.clinicWebsite || null;
   if (updates.specialty !== undefined) mapped.specialty = updates.specialty || null;
   if (updates.photoUrl !== undefined) mapped.photo_url = updates.photoUrl || null;
+  if (updates.pixKey !== undefined) mapped.pix_key = updates.pixKey || null;
   const { error } = await supabase.from('professionals').update(mapped).eq('id', id);
   if (error) throw error;
 }

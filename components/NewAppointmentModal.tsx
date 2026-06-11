@@ -13,6 +13,7 @@ import { MOCK_PATIENTS } from '@/lib/mock-data';
 import { useAuth } from '@/lib/auth-context';
 import { t } from '@/lib/i18n';
 import { formatCurrency, formatTime, formatDuration, translateConsultType } from '@/lib/locale-utils';
+import { useStyles } from '@/lib/use-styles';
 import { loadSettings } from '@/lib/app-settings';
 
 function timeToMinutes(t: string) {
@@ -57,6 +58,7 @@ interface Props {
 export function NewAppointmentModal({
   visible, defaultDate, editAppt, onClose, onSaved, onUpdated,
 }: Props) {
+  const styles = useStyles(makeStyles);
   const { user } = useAuth();
   const isEdit = !!editAppt;
 
@@ -152,6 +154,8 @@ export function NewAppointmentModal({
     setPatientId(p.id);
     setPatientName(p.fullName);
     setPatientSearch('');
+    if (p.convenioType === 'particular') setPaymentType('private');
+    else if (p.convenioType === 'health_plan') setPaymentType('insurance');
   }
 
   function clearPatient() {
@@ -619,7 +623,7 @@ export function NewAppointmentModal({
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',

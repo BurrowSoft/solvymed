@@ -17,7 +17,7 @@ import {
   getPatientAppointments, uploadPatientPhoto,
   getPatientFiles, uploadPatientFile, deletePatientFile,
   getPatientExams, uploadPatientExam, deletePatientExam,
-  getProfessional, deletePatient,
+  getProfessional, deletePatient, deleteRecord, deletePrescription,
 } from '@/lib/services';
 import { getTemplate } from '@/lib/template-service';
 import { buildPrescriptionHtml, buildMedicalHistoryHtml } from '@/lib/pdf-utils';
@@ -27,6 +27,7 @@ import { formatAge, formatCurrencyWhole, formatFileSize } from '@/lib/locale-uti
 import { NewPatientModal } from '@/components/NewPatientModal';
 import { NewRecordModal } from '@/components/NewRecordModal';
 import { NewPrescriptionModal } from '@/components/NewPrescriptionModal';
+import { useStyles } from '@/lib/use-styles';
 
 type PatientTab = 'info' | 'records' | 'prescriptions' | 'exams' | 'appointments' | 'files';
 
@@ -87,6 +88,7 @@ interface PatientDetailProps {
 }
 
 function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
+  const styles = useStyles(makeStyles);
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<PatientTab>('info');
   const [records, setRecords] = useState<MedicalRecord[]>([]);
@@ -114,6 +116,8 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
   const [editProfession, setEditProfession] = useState(patient.profession ?? '');
   const [editTags, setEditTags] = useState<string[]>(patient.tags ?? []);
   const [tagInput, setTagInput] = useState('');
+  const [editEmergencyPhone, setEditEmergencyPhone] = useState(patient.emergencyPhone ?? '');
+  const [editConvenioType, setEditConvenioType] = useState<Patient['convenioType']>(patient.convenioType);
 
   function enterEdit() {
     setEditName(patient.fullName);
@@ -125,6 +129,8 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
     setEditProfession(patient.profession ?? '');
     setEditTags(patient.tags ?? []);
     setTagInput('');
+    setEditEmergencyPhone(patient.emergencyPhone ?? '');
+    setEditConvenioType(patient.convenioType);
     setEditing(true);
   }
 
@@ -178,6 +184,8 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
       sex: editSex,
       birthDate: editBirthDate.trim() || undefined,
       profession: editProfession.trim() || undefined,
+      emergencyPhone: editEmergencyPhone.trim() || undefined,
+      convenioType: editConvenioType,
       tags: editTags.length > 0 ? editTags : undefined,
     };
     try {
@@ -270,6 +278,40 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
     } finally {
       setUploadingFile(false);
     }
+  }
+
+  function handleDeleteRecord(record: MedicalRecord) {
+    Alert.alert(t('common.delete'), t('records.deleteConfirm' as any), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.delete'), style: 'destructive',
+        onPress: async () => {
+          try {
+            if (user) await deleteRecord(record.id);
+            setRecords(prev => prev.filter(r => r.id !== record.id));
+          } catch {
+            Alert.alert('Error', 'Could not delete record.');
+          }
+        },
+      },
+    ]);
+  }
+
+  function handleDeletePrescription(rx: Prescription) {
+    Alert.alert(t('common.delete'), t('prescriptions.deleteConfirm' as any), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.delete'), style: 'destructive',
+        onPress: async () => {
+          try {
+            if (user) await deletePrescription(rx.id);
+            setPrescriptions(prev => prev.filter(p => p.id !== rx.id));
+          } catch {
+            Alert.alert('Error', 'Could not delete prescription.');
+          }
+        },
+      },
+    ]);
   }
 
   async function handleDeleteFile(file: PatientFile) {
@@ -401,10 +443,12 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                   : <Ionicons name="document-text-outline" size={16} color={Colors.primary} />
                 }
               </TouchableOpacity>
-              <TouchableOpacity style={styles.editBtn} onPress={enterEdit}>
-                <Ionicons name="pencil-outline" size={16} color={Colors.primary} />
-                <Text style={styles.editBtnText}>{t('common.edit')}</Text>
-              </TouchableOpacity>
+              {activeTab === 'info' && (
+                <TouchableOpacity style={styles.editBtn} onPress={enterEdit}>
+                  <Ionicons name="pencil-outline" size={16} color={Colors.primary} />
+                  <Text style={styles.editBtnText}>{t('common.edit')}</Text>
+                </TouchableOpacity>
+              )}
             </View>
           )}
         </View>
@@ -539,6 +583,29 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                     <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.profession ?? '—'}</Text></View>
                   )}
                 </View>
+
+                <View style={styles.fieldFull}>
+                  <Text style={styles.fieldLabel}>{t('patients.form.convenioType' as any)}</Text>
+                  {editing ? (
+                    <View style={styles.sexRow}>
+                      {(['particular', 'health_plan'] as const).map(cv => (
+                        <TouchableOpacity key={cv} onPress={() => setEditConvenioType(editConvenioType === cv ? undefined : cv)} style={[styles.sexPill, editConvenioType === cv && styles.sexPillActive]}>
+                          <Text style={[styles.sexPillText, editConvenioType === cv && styles.sexPillTextActive]}>
+                            {cv === 'particular' ? t('patients.form.particular' as any) : t('patients.form.healthPlan' as any)}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  ) : (
+                    <View style={styles.fieldBox}>
+                      <Text style={styles.fieldValue}>
+                        {patient.convenioType === 'particular' ? t('patients.form.particular' as any)
+                          : patient.convenioType === 'health_plan' ? t('patients.form.healthPlan' as any)
+                          : '—'}
+                      </Text>
+                    </View>
+                  )}
+                </View>
               </View>
 
               <Text style={[styles.sectionTitle, { marginTop: 20 }]}>{t('patients.form.section.contact')}</Text>
@@ -561,6 +628,16 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                     </View>
                   ) : (
                     <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.phone ?? '—'}</Text></View>
+                  )}
+                </View>
+                <View style={styles.fieldFull}>
+                  <Text style={styles.fieldLabel}>{t('patients.form.emergencyPhone' as any)}</Text>
+                  {editing ? (
+                    <View style={styles.editInput}>
+                      <TextInput style={styles.editInputText} value={editEmergencyPhone} onChangeText={setEditEmergencyPhone} placeholder="+55 (11) 99999-9999" placeholderTextColor={Colors.textMuted} keyboardType="phone-pad" />
+                    </View>
+                  ) : (
+                    <View style={styles.fieldBox}><Text style={styles.fieldValue}>{patient.emergencyPhone ?? '—'}</Text></View>
                   )}
                 </View>
               </View>
@@ -634,6 +711,9 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                         <Text style={styles.recordMeta}>{professionalName ? `Dr. ${professionalName.split(' ')[0]}` : t('records.unknown')}</Text>
                         <Text style={styles.recordTime}>{record.date} · {record.time} · {tRecordType(record.recordType ?? 'Free text')}</Text>
                       </View>
+                      <TouchableOpacity onPress={() => handleDeleteRecord(record)} style={styles.fileActionBtn}>
+                        <Ionicons name="trash-outline" size={16} color={Colors.danger} />
+                      </TouchableOpacity>
                     </View>
                     <Text style={styles.recordContent}>{record.content}</Text>
                   </View>
@@ -669,6 +749,9 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                       >
                         <Ionicons name="share-outline" size={14} color={Colors.primary} />
                         <Text style={styles.sharePdfText}>PDF</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => handleDeletePrescription(rx)} style={styles.fileActionBtn}>
+                        <Ionicons name="trash-outline" size={16} color={Colors.danger} />
                       </TouchableOpacity>
                     </View>
                     {rx.medications.map((med, i) => (
@@ -836,6 +919,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
 const PAGE_SIZE = 30;
 
 export default function PatientsScreen() {
+  const styles = useStyles(makeStyles);
   const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<Patient | null>(null);
@@ -1063,7 +1147,7 @@ export default function PatientsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
