@@ -1,13 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import {
   Modal, View, Text, StyleSheet, ScrollView, TextInput,
-  TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform,
+  TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { Patient } from '@/lib/types';
-import { createPatient } from '@/lib/services';
+import { createPatient, getPatientByEmail } from '@/lib/services';
 import { useAuth } from '@/lib/auth-context';
 import { t } from '@/lib/i18n';
 import { formatAge } from '@/lib/locale-utils';
@@ -16,9 +16,10 @@ interface Props {
   visible: boolean;
   onClose: () => void;
   onSaved: (patient: Patient) => void;
+  onOpenExisting?: (patient: Patient) => void;
 }
 
-export function NewPatientModal({ visible, onClose, onSaved }: Props) {
+export function NewPatientModal({ visible, onClose, onSaved, onOpenExisting }: Props) {
   const { user } = useAuth();
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
@@ -84,7 +85,29 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
       }
       onClose();
       resetForm();
-    } catch {
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code;
+      if (code === '23505' && email.trim() && user) {
+        const existing = await getPatientByEmail(user.id, email.trim());
+        if (existing) {
+          Alert.alert(
+            t('patients.form.duplicateTitle'),
+            t('patients.form.duplicateMsg', { name: existing.fullName }),
+            [
+              { text: t('common.cancel'), style: 'cancel' },
+              {
+                text: t('patients.form.viewExisting'),
+                onPress: () => {
+                  onClose();
+                  resetForm();
+                  onOpenExisting?.(existing);
+                },
+              },
+            ],
+          );
+          return;
+        }
+      }
       setError(t('patients.form.saveFailed'));
     } finally {
       setSaving(false);

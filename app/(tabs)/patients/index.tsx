@@ -1174,7 +1174,14 @@ export default function PatientsScreen() {
       <NewPatientModal
         visible={showNewPatient}
         onClose={() => setShowNewPatient(false)}
-        onSaved={(patient) => setPatients(prev => [patient, ...prev])}
+        onSaved={(patient) => setPatients(prev => {
+          if (prev.some(p => p.id === patient.id)) return prev;
+          return [patient, ...prev];
+        })}
+        onOpenExisting={(patient) => {
+          setShowNewPatient(false);
+          setSelected(patient);
+        }}
       />
 
       {/* Filter sheet */}

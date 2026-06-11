@@ -136,6 +136,27 @@ export async function deletePatient(id: string): Promise<void> {
   if (error) throw error;
 }
 
+export async function getPatientByEmail(professionalId: string, email: string): Promise<Patient | null> {
+  const { data } = await supabase
+    .from('patients')
+    .select('*')
+    .eq('professional_id', professionalId)
+    .ilike('email', email.trim())
+    .limit(1);
+  if (!data?.length) return null;
+  return toPatient(data[0]);
+}
+
+export async function getProfessionalForPatient(patientId: string): Promise<Professional | null> {
+  const { data } = await supabase
+    .from('patients')
+    .select('professional_id')
+    .eq('id', patientId)
+    .maybeSingle();
+  if (!data?.professional_id) return null;
+  return getProfessional(data.professional_id as string);
+}
+
 // ─── Medical Records ─────────────────────────────────────────────────────────
 
 export async function getRecords(patientId: string) {

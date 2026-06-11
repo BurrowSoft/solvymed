@@ -21,6 +21,7 @@ import { formatHomeDateHeader, formatCurrencyWhole, formatCurrency, formatDurati
 import { useStyles } from '@/lib/use-styles';
 import { ReportsModal } from '@/components/ReportsModal';
 import { MassMessageModal } from '@/components/MassMessageModal';
+import { BookAppointmentModal } from '@/components/BookAppointmentModal';
 
 function fmt(d: Date) { return d.toISOString().split('T')[0]; }
 
@@ -65,6 +66,7 @@ export default function HomeScreen() {
   // Connect-to-clinic flow (unlinked patients)
   const [connectCode, setConnectCode] = useState('');
   const [connecting, setConnecting] = useState(false);
+  const [showBookAppt, setShowBookAppt] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -253,6 +255,12 @@ export default function HomeScreen() {
               <Text style={styles.summaryLabel}>{t('patient.myPrescriptions')}</Text>
             </View>
           </View>
+
+          {/* Book appointment */}
+          <TouchableOpacity style={styles.bookBtn} onPress={() => setShowBookAppt(true)}>
+            <Ionicons name="calendar-outline" size={20} color="#fff" />
+            <Text style={styles.bookBtnText}>{t('book.title')}</Text>
+          </TouchableOpacity>
         </ScrollView>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, gap: 20, paddingBottom: 32 }}>
@@ -364,6 +372,14 @@ export default function HomeScreen() {
       )}
       <ReportsModal visible={showReports} onClose={() => setShowReports(false)} />
       <MassMessageModal visible={showMassMsg} onClose={() => setShowMassMsg(false)} />
+      {linkedPatientId && (
+        <BookAppointmentModal
+          visible={showBookAppt}
+          onClose={() => setShowBookAppt(false)}
+          patientId={linkedPatientId}
+          patientName={user?.email ?? ''}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -454,4 +470,12 @@ const makeStyles = () => StyleSheet.create({
   pendingCalloutLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   pendingCalloutTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
   pendingCalloutSub: { fontSize: 12, color: Colors.textSecondary, marginTop: 1 },
+
+  bookBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
+    backgroundColor: Colors.primary, borderRadius: 14, height: 52,
+    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25, shadowRadius: 8, elevation: 4,
+  },
+  bookBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
 });

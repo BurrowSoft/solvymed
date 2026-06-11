@@ -651,6 +651,21 @@ const en = {
   'invite.notLinked': 'Not connected',
   'invite.hint': 'Share this code with your patient so they can link their account.',
   'invite.generating': 'Generating…',
+
+  'patients.form.duplicateTitle': 'Patient Already Exists',
+  'patients.form.duplicateMsg': 'A patient with this email already exists: {{name}}',
+  'patients.form.viewExisting': 'View Existing',
+
+  'book.title': 'Book Appointment',
+  'book.selectDate': 'Select Date',
+  'book.selectTime': 'Select Time',
+  'book.noSlots': 'No available slots for this day',
+  'book.type': 'Consultation Type',
+  'book.typePlaceholder': 'e.g. First Consultation',
+  'book.notes': 'Notes',
+  'book.confirm': 'Confirm Booking',
+  'book.success': 'Appointment booked!',
+  'book.loading': 'Loading slots…',
 };
 
 // ─── Portuguese (Brazil) ─────────────────────────────────────────────────────
@@ -1281,6 +1296,21 @@ const ptBR: typeof en = {
   'invite.notLinked': 'Não conectado',
   'invite.hint': 'Compartilhe este código com seu paciente para que ele vincule a conta.',
   'invite.generating': 'Gerando…',
+
+  'patients.form.duplicateTitle': 'Paciente já existe',
+  'patients.form.duplicateMsg': 'Já existe um paciente com este e-mail: {{name}}',
+  'patients.form.viewExisting': 'Ver existente',
+
+  'book.title': 'Agendar Consulta',
+  'book.selectDate': 'Selecionar data',
+  'book.selectTime': 'Selecionar horário',
+  'book.noSlots': 'Sem horários disponíveis neste dia',
+  'book.type': 'Tipo de consulta',
+  'book.typePlaceholder': 'ex. Primeira Consulta',
+  'book.notes': 'Observações',
+  'book.confirm': 'Confirmar Agendamento',
+  'book.success': 'Consulta agendada!',
+  'book.loading': 'Carregando horários…',
 };
 
 // ─── French ───────────────────────────────────────────────────────────────────
@@ -1908,6 +1938,21 @@ const frFR: typeof en = {
   'invite.notLinked': 'Non connecté',
   'invite.hint': 'Partagez ce code avec votre patient pour qu\'il lie son compte.',
   'invite.generating': 'Génération…',
+
+  'patients.form.duplicateTitle': 'Patient déjà existant',
+  'patients.form.duplicateMsg': 'Un patient avec cet e-mail existe déjà : {{name}}',
+  'patients.form.viewExisting': "Voir l'existant",
+
+  'book.title': 'Prendre rendez-vous',
+  'book.selectDate': 'Choisir une date',
+  'book.selectTime': 'Choisir un horaire',
+  'book.noSlots': 'Aucun créneau disponible ce jour',
+  'book.type': 'Type de consultation',
+  'book.typePlaceholder': 'ex. Première consultation',
+  'book.notes': 'Notes',
+  'book.confirm': 'Confirmer le rendez-vous',
+  'book.success': 'Rendez-vous pris !',
+  'book.loading': 'Chargement des créneaux…',
 };
 
 // ─── German ───────────────────────────────────────────────────────────────────
@@ -2535,6 +2580,21 @@ const deDE: typeof en = {
   'invite.notLinked': 'Nicht verbunden',
   'invite.hint': 'Teilen Sie diesen Code mit Ihrem Patienten, damit er sein Konto verknüpfen kann.',
   'invite.generating': 'Wird generiert…',
+
+  'patients.form.duplicateTitle': 'Patient existiert bereits',
+  'patients.form.duplicateMsg': 'Ein Patient mit dieser E-Mail existiert bereits: {{name}}',
+  'patients.form.viewExisting': 'Vorhandenen anzeigen',
+
+  'book.title': 'Termin buchen',
+  'book.selectDate': 'Datum wählen',
+  'book.selectTime': 'Uhrzeit wählen',
+  'book.noSlots': 'Keine Termine an diesem Tag verfügbar',
+  'book.type': 'Beratungsart',
+  'book.typePlaceholder': 'z.B. Erstberatung',
+  'book.notes': 'Notizen',
+  'book.confirm': 'Termin bestätigen',
+  'book.success': 'Termin gebucht!',
+  'book.loading': 'Termine laden…',
 };
 
 // ─── Italian ──────────────────────────────────────────────────────────────────
@@ -3162,6 +3222,21 @@ const itIT: typeof en = {
   'invite.notLinked': 'Non connesso',
   'invite.hint': 'Condividi questo codice con il tuo paziente per collegare il suo account.',
   'invite.generating': 'Generazione…',
+
+  'patients.form.duplicateTitle': 'Paziente già esistente',
+  'patients.form.duplicateMsg': 'Esiste già un paziente con questa email: {{name}}',
+  'patients.form.viewExisting': 'Vedi esistente',
+
+  'book.title': 'Prenota appuntamento',
+  'book.selectDate': 'Seleziona data',
+  'book.selectTime': 'Seleziona orario',
+  'book.noSlots': 'Nessuno slot disponibile per questo giorno',
+  'book.type': 'Tipo di consulto',
+  'book.typePlaceholder': 'es. Prima visita',
+  'book.notes': 'Note',
+  'book.confirm': 'Conferma prenotazione',
+  'book.success': 'Appuntamento prenotato!',
+  'book.loading': 'Caricamento slot…',
 };
 
 // ─── Spanish ──────────────────────────────────────────────────────────────────
@@ -3789,6 +3864,21 @@ const esES: typeof en = {
   'invite.notLinked': 'No conectado',
   'invite.hint': 'Comparte este código con tu paciente para que vincule su cuenta.',
   'invite.generating': 'Generando…',
+
+  'patients.form.duplicateTitle': 'Paciente ya existe',
+  'patients.form.duplicateMsg': 'Ya existe un paciente con este correo: {{name}}',
+  'patients.form.viewExisting': 'Ver existente',
+
+  'book.title': 'Reservar cita',
+  'book.selectDate': 'Seleccionar fecha',
+  'book.selectTime': 'Seleccionar horario',
+  'book.noSlots': 'Sin horarios disponibles para este día',
+  'book.type': 'Tipo de consulta',
+  'book.typePlaceholder': 'ej. Primera consulta',
+  'book.notes': 'Notas',
+  'book.confirm': 'Confirmar reserva',
+  'book.success': '¡Cita reservada!',
+  'book.loading': 'Cargando horarios…',
 };
 
 // ─── Registry ─────────────────────────────────────────────────────────────────
