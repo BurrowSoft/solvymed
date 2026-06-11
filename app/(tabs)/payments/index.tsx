@@ -99,6 +99,29 @@ export default function PaymentsScreen() {
     if (user) getRevenueByMonth(user.id).then(setRevenue).catch(() => {});
   }
 
+  function handleRevertPayment(apptId: string) {
+    Alert.alert(
+      t('payments.revertTitle'),
+      t('payments.revertMessage'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('payments.revert'),
+          style: 'destructive',
+          onPress: async () => {
+            if (user) await updatePaymentStatus(apptId, 'pending');
+            const appt = paid.find(a => a.id === apptId);
+            if (appt) {
+              setPaid(prev => prev.filter(a => a.id !== apptId));
+              setPending(prev => [{ ...appt, paymentStatus: 'pending' }, ...prev]);
+            }
+            if (user) getRevenueByMonth(user.id).then(setRevenue).catch(() => {});
+          },
+        },
+      ],
+    );
+  }
+
   const totalPending = pending.reduce((sum, a) => sum + (a.paymentAmount ?? 0), 0);
   const totalPaid = paid.reduce((sum, a) => sum + (a.paymentAmount ?? 0), 0);
 
@@ -256,9 +279,18 @@ export default function PaymentsScreen() {
                   <Text style={styles.paymentMeta}>{appt.date} · {formatTime(appt.startTime)}</Text>
                 </View>
                 <View style={styles.paymentRight}>
-                  <Text style={[styles.paymentAmount, { color: Colors.success }]}>
-                    {appt.paymentAmount != null ? formatCurrency(appt.paymentAmount) : '—'}
-                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Text style={[styles.paymentAmount, { color: Colors.success }]}>
+                      {appt.paymentAmount != null ? formatCurrency(appt.paymentAmount) : '—'}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => handleRevertPayment(appt.id)}
+                      style={styles.revertBtn}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <Ionicons name="arrow-undo-outline" size={16} color={Colors.textMuted} />
+                    </TouchableOpacity>
+                  </View>
                   <View style={styles.paidBadge}>
                     <Ionicons name="checkmark" size={12} color={Colors.success} />
                     <Text style={styles.paidBadgeText}>{t('appt.paid')}</Text>
@@ -350,6 +382,7 @@ const styles = StyleSheet.create({
   paymentAmount: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
   markPaidBtn: { backgroundColor: Colors.primaryLight, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
   markPaidText: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
+  revertBtn: { width: 28, height: 28, borderRadius: 14, backgroundColor: Colors.border, alignItems: 'center', justifyContent: 'center' },
   paidBadge: { flexDirection: 'row', alignItems: 'center', gap: 3 },
   paidBadgeText: { fontSize: 12, color: Colors.success, fontWeight: '600' },
   emptyState: { alignItems: 'center', paddingVertical: 40, gap: 8 },
