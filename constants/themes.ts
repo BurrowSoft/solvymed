@@ -15,6 +15,8 @@ export interface ThemeColors {
   success: string;
   warning: string;
   danger: string;
+  late: string;
+  absent: string;
   tabBar: string;
   tabBarActive: string;
   tabBarInactive: string;
@@ -36,6 +38,8 @@ export const THEMES: Record<ThemeKey, ThemeColors> = {
     success: '#22C55E',
     warning: '#F59E0B',
     danger: '#EF4444',
+    late: '#F97316',
+    absent: '#8B5CF6',
     tabBar: '#FFFFFF',
     tabBarActive: '#208AEF',
     tabBarInactive: '#A0ABBE',
@@ -55,6 +59,8 @@ export const THEMES: Record<ThemeKey, ThemeColors> = {
     success: '#34D399',
     warning: '#FBBF24',
     danger: '#F87171',
+    late: '#FB923C',
+    absent: '#A78BFA',
     tabBar: '#1C2333',
     tabBarActive: '#4DA6FF',
     tabBarInactive: '#5A6B88',
@@ -74,6 +80,8 @@ export const THEMES: Record<ThemeKey, ThemeColors> = {
     success: '#3DAA62',
     warning: '#D97706',
     danger: '#DC2626',
+    late: '#EA580C',
+    absent: '#7C3AED',
     tabBar: '#FFFAF5',
     tabBarActive: '#E07B39',
     tabBarInactive: '#A88A74',
@@ -93,6 +101,8 @@ export const THEMES: Record<ThemeKey, ThemeColors> = {
     success: '#1CB87A',
     warning: '#F59E0B',
     danger: '#EF4444',
+    late: '#F97316',
+    absent: '#7C3AED',
     tabBar: '#FFFFFF',
     tabBarActive: '#0AAFA6',
     tabBarInactive: '#7AB3B1',

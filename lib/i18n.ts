@@ -600,6 +600,15 @@ const en = {
 
   'settings.financial.pixKey': 'Pix Key',
   'settings.financial.pixKeyPlaceholder': 'CPF, CNPJ, phone or email',
+
+  'settings.signature': 'Digital Signature',
+  'settings.signature.hint': 'Draw your signature in the box below. It will appear on prescriptions and medical records.',
+  'settings.signature.current': 'Current signature',
+  'settings.signature.redraw': 'Redraw',
+  'settings.signature.clear': 'Clear',
+  'settings.signature.clearConfirm': 'Remove your saved signature?',
+  'settings.signature.saved': 'Signature saved successfully.',
+  'settings.signature.drawFirst': 'Please draw your signature first.',
 };
 
 // ─── Portuguese (Brazil) ─────────────────────────────────────────────────────
@@ -1179,6 +1188,15 @@ const ptBR: typeof en = {
 
   'settings.financial.pixKey': 'Chave Pix',
   'settings.financial.pixKeyPlaceholder': 'CPF, CNPJ, telefone ou e-mail',
+
+  'settings.signature': 'Assinatura Digital',
+  'settings.signature.hint': 'Desenhe sua assinatura no campo abaixo. Ela aparecerá nas receitas e prontuários.',
+  'settings.signature.current': 'Assinatura atual',
+  'settings.signature.redraw': 'Redesenhar',
+  'settings.signature.clear': 'Apagar',
+  'settings.signature.clearConfirm': 'Remover sua assinatura salva?',
+  'settings.signature.saved': 'Assinatura salva com sucesso.',
+  'settings.signature.drawFirst': 'Por favor, desenhe sua assinatura primeiro.',
 };
 
 // ─── French ───────────────────────────────────────────────────────────────────
@@ -1755,6 +1773,15 @@ const frFR: typeof en = {
 
   'settings.financial.pixKey': 'Clé Pix',
   'settings.financial.pixKeyPlaceholder': 'CPF, CNPJ, téléphone ou e-mail',
+
+  'settings.signature': 'Signature numérique',
+  'settings.signature.hint': 'Dessinez votre signature dans le champ ci-dessous.',
+  'settings.signature.current': 'Signature actuelle',
+  'settings.signature.redraw': 'Redessiner',
+  'settings.signature.clear': 'Effacer',
+  'settings.signature.clearConfirm': 'Supprimer votre signature enregistrée ?',
+  'settings.signature.saved': 'Signature enregistrée avec succès.',
+  'settings.signature.drawFirst': 'Veuillez d\'abord dessiner votre signature.',
 };
 
 // ─── German ───────────────────────────────────────────────────────────────────
@@ -2331,6 +2358,15 @@ const deDE: typeof en = {
 
   'settings.financial.pixKey': 'Pix-Schlüssel',
   'settings.financial.pixKeyPlaceholder': 'CPF, CNPJ, Telefon oder E-Mail',
+
+  'settings.signature': 'Digitale Unterschrift',
+  'settings.signature.hint': 'Zeichnen Sie Ihre Unterschrift im Feld unten.',
+  'settings.signature.current': 'Aktuelle Unterschrift',
+  'settings.signature.redraw': 'Neu zeichnen',
+  'settings.signature.clear': 'Löschen',
+  'settings.signature.clearConfirm': 'Gespeicherte Unterschrift entfernen?',
+  'settings.signature.saved': 'Unterschrift erfolgreich gespeichert.',
+  'settings.signature.drawFirst': 'Bitte zuerst Unterschrift zeichnen.',
 };
 
 // ─── Italian ──────────────────────────────────────────────────────────────────
@@ -2907,6 +2943,15 @@ const itIT: typeof en = {
 
   'settings.financial.pixKey': 'Chiave Pix',
   'settings.financial.pixKeyPlaceholder': 'CPF, CNPJ, telefono o e-mail',
+
+  'settings.signature': 'Firma digitale',
+  'settings.signature.hint': 'Disegna la tua firma nel campo sottostante.',
+  'settings.signature.current': 'Firma attuale',
+  'settings.signature.redraw': 'Ridisegna',
+  'settings.signature.clear': 'Cancella',
+  'settings.signature.clearConfirm': 'Rimuovere la firma salvata?',
+  'settings.signature.saved': 'Firma salvata con successo.',
+  'settings.signature.drawFirst': 'Per favore, disegna prima la tua firma.',
 };
 
 // ─── Spanish ──────────────────────────────────────────────────────────────────
@@ -3483,6 +3528,15 @@ const esES: typeof en = {
 
   'settings.financial.pixKey': 'Clave Pix',
   'settings.financial.pixKeyPlaceholder': 'CPF, CNPJ, teléfono o correo',
+
+  'settings.signature': 'Firma digital',
+  'settings.signature.hint': 'Dibuja tu firma en el campo de abajo.',
+  'settings.signature.current': 'Firma actual',
+  'settings.signature.redraw': 'Redibujar',
+  'settings.signature.clear': 'Borrar',
+  'settings.signature.clearConfirm': '¿Eliminar la firma guardada?',
+  'settings.signature.saved': 'Firma guardada con éxito.',
+  'settings.signature.drawFirst': 'Por favor, dibuja tu firma primero.',
 };
 
 // ─── Registry ─────────────────────────────────────────────────────────────────

@@ -28,6 +28,7 @@ import { NewPatientModal } from '@/components/NewPatientModal';
 import { NewRecordModal } from '@/components/NewRecordModal';
 import { NewPrescriptionModal } from '@/components/NewPrescriptionModal';
 import { useStyles } from '@/lib/use-styles';
+import { loadSignature } from '@/components/SignatureSetupModal';
 
 type PatientTab = 'info' | 'records' | 'prescriptions' | 'exams' | 'appointments' | 'files';
 
@@ -40,16 +41,19 @@ const TABS: { key: PatientTab; labelKey: string }[] = [
   { key: 'files', labelKey: 'patients.tab.files' },
 ];
 
-async function sharePrescription(patient: Patient, rx: Prescription, professionalId: string) {
+async function sharePrescription(patient: Patient, rx: Prescription, professionalId: string, signerName?: string) {
   try {
-    const template = await getTemplate(professionalId, 'prescription').catch(() => null);
+    const [template, signature] = await Promise.all([
+      getTemplate(professionalId, 'prescription').catch(() => null),
+      loadSignature(),
+    ]);
     const fallbackTemplate = {
       professionalId,
       documentType: 'prescription' as const,
       primaryColor: '#208AEF',
       accentColor: '#E8F4FE',
     };
-    const html = buildPrescriptionHtml(patient, rx, template ?? fallbackTemplate);
+    const html = buildPrescriptionHtml(patient, rx, template ?? fallbackTemplate, signature ?? undefined, signerName);
     const { uri } = await Print.printToFileAsync({ html, base64: false });
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: 'Share Prescription' });
@@ -392,11 +396,12 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
     if (!user) return;
     setExportingHistory(true);
     try {
-      const [allRecords, allPrescriptions, professional, template] = await Promise.all([
+      const [allRecords, allPrescriptions, professional, template, signature] = await Promise.all([
         getRecords(patient.id).catch(() => records),
         getPrescriptions(patient.id).catch(() => prescriptions),
         getProfessional(user.id),
         getTemplate(user.id, 'medical_record').catch(() => null),
+        loadSignature(),
       ]);
       const fallbackTemplate = { professionalId: user.id, documentType: 'medical_record' as const, primaryColor: '#208AEF', accentColor: '#E8F4FE' };
       const html = buildMedicalHistoryHtml(
@@ -405,6 +410,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
         allPrescriptions,
         professional ?? { id: user.id, fullName: '', email: '' },
         template ?? fallbackTemplate,
+        signature ?? undefined,
       );
       const { uri } = await Print.printToFileAsync({ html, base64: false });
       if (await Sharing.isAvailableAsync()) {
@@ -745,7 +751,7 @@ function PatientDetail({ patient, onClose, onUpdate }: PatientDetailProps) {
                       </View>
                       <TouchableOpacity
                         style={styles.sharePdfBtn}
-                        onPress={() => sharePrescription(patient, rx, user?.id ?? '')}
+                        onPress={() => sharePrescription(patient, rx, user?.id ?? '', professionalName || undefined)}
                       >
                         <Ionicons name="share-outline" size={14} color={Colors.primary} />
                         <Text style={styles.sharePdfText}>PDF</Text>

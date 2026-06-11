@@ -10,6 +10,7 @@ import { getPendingPayments, getPaidPayments, updatePaymentStatus, getRevenueByM
 import { useAuth } from '@/lib/auth-context';
 import { t, tn } from '@/lib/i18n';
 import { formatCurrency, formatCurrencyWhole, formatMonthYear, formatTime, translateConsultType } from '@/lib/locale-utils';
+import { useStyles } from '@/lib/use-styles';
 
 type DateFilter = 'week' | 'month' | 'last_month' | 'all';
 
@@ -46,6 +47,7 @@ function getDateRange(filter: DateFilter): { from?: string; to?: string } {
 }
 
 export default function PaymentsScreen() {
+  const styles = useStyles(makeStyles);
   const { user } = useAuth();
   const [filter, setFilter] = useState<DateFilter>('month');
   const [pending, setPending] = useState<Appointment[]>([]);
@@ -438,7 +440,7 @@ export default function PaymentsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   header: {
     paddingHorizontal: 16, paddingVertical: 14,

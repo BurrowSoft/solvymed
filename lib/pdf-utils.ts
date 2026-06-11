@@ -5,12 +5,22 @@ export function buildDocumentHtml(opts: {
   subtitle: string;
   bodyHtml: string;
   template: DocumentTemplate;
+  signatureBase64?: string;
+  signerName?: string;
 }): string {
-  const { title, subtitle, bodyHtml, template } = opts;
+  const { title, subtitle, bodyHtml, template, signatureBase64, signerName } = opts;
   const logo = template.logoUrl
     ? `<img src="${template.logoUrl}" style="height:48px;max-width:160px;object-fit:contain;" />`
     : '';
   const footer = template.footerText || 'SolvyMed — Clinic Management';
+
+  const signatureBlock = signatureBase64 ? `
+    <div style="display:flex;justify-content:flex-end;margin-top:40px;">
+      <div style="text-align:center;min-width:180px;">
+        <img src="${signatureBase64}" style="max-height:64px;max-width:200px;object-fit:contain;display:block;margin:0 auto;" />
+        <div style="border-top:1px solid #A0ABBE;margin-top:6px;padding-top:6px;font-size:11px;color:#6B7A99;">${signerName ?? ''}</div>
+      </div>
+    </div>` : '';
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8">
   <style>
@@ -27,7 +37,7 @@ export function buildDocumentHtml(opts: {
     td { padding: 10px; font-size: 13px; border-bottom: 1px solid #E5E9F0; }
     tr:nth-child(even) td { background: ${template.accentColor}; }
     .notes-box { background: ${template.accentColor}; border-left: 3px solid ${template.primaryColor}; border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13px; color: #6B7A99; margin-top: 16px; }
-    .doc-footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #E5E9F0; font-size: 11px; color: #A0ABBE; text-align: center; }
+    .doc-footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid #E5E9F0; font-size: 11px; color: #A0ABBE; text-align: center; }
   </style></head><body>
   <div class="doc-header">
     <div>
@@ -37,6 +47,7 @@ export function buildDocumentHtml(opts: {
     ${logo}
   </div>
   ${bodyHtml}
+  ${signatureBlock}
   <div class="doc-footer">${footer}</div>
   </body></html>`;
 }
@@ -45,6 +56,8 @@ export function buildPrescriptionHtml(
   patient: Patient,
   rx: Prescription,
   template: DocumentTemplate,
+  signatureBase64?: string,
+  signerName?: string,
 ): string {
   const meds = rx.medications
     .map(
@@ -82,6 +95,8 @@ export function buildPrescriptionHtml(
     subtitle: template.headerText ?? patient.fullName,
     bodyHtml,
     template,
+    signatureBase64,
+    signerName,
   });
 }
 
@@ -168,6 +183,7 @@ export function buildMedicalHistoryHtml(
   prescriptions: Prescription[],
   professional: Professional,
   template: DocumentTemplate,
+  signatureBase64?: string,
 ): string {
   const ageStr = (() => {
     if (!patient.birthDate) return '';
@@ -236,5 +252,7 @@ export function buildMedicalHistoryHtml(
     subtitle: template.headerText ?? patient.fullName,
     bodyHtml,
     template,
+    signatureBase64,
+    signerName: professional.fullName || undefined,
   });
 }

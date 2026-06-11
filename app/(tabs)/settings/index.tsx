@@ -22,6 +22,7 @@ import { NotificationSettingsModal } from '@/components/NotificationSettingsModa
 import { ThemePickerModal } from '@/components/ThemePickerModal';
 import { SecuritySettingsModal } from '@/components/SecuritySettingsModal';
 import { FinancialSettingsModal } from '@/components/FinancialSettingsModal';
+import { SignatureSetupModal } from '@/components/SignatureSetupModal';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
 import { AboutModal } from '@/components/AboutModal';
 import { ChangelogModal } from '@/components/ChangelogModal';
@@ -92,6 +93,7 @@ export default function SettingsScreen() {
   const [showContact, setShowContact] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showModules, setShowModules] = useState(false);
+  const [showSignature, setShowSignature] = useState(false);
   const [showIntegrations, setShowIntegrations] = useState(false);
   const [showRegistrations, setShowRegistrations] = useState(false);
 
@@ -256,6 +258,11 @@ export default function SettingsScreen() {
           label: t('settings.financial.invoiceFooter'),
           icon: 'receipt-outline',
           onPress: () => setShowFinancial(true),
+        },
+        {
+          label: t('settings.signature' as any),
+          icon: 'pencil-outline',
+          onPress: () => setShowSignature(true),
         },
       ],
     },
@@ -436,6 +443,11 @@ export default function SettingsScreen() {
             setProfessional(prev => prev ? { ...prev, pixKey: key || undefined } : prev);
           }
         }}
+      />
+      <SignatureSetupModal
+        visible={showSignature}
+        onClose={() => setShowSignature(false)}
+        onSaved={() => {}}
       />
       <ChangePasswordModal
         visible={showChangePassword}

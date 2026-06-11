@@ -27,6 +27,8 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
   const [sex, setSex] = useState<'male' | 'female' | 'other' | undefined>();
   const [birthDate, setBirthDate] = useState('');
   const [profession, setProfession] = useState('');
+  const [emergencyPhone, setEmergencyPhone] = useState('');
+  const [convenioType, setConvenioType] = useState<'particular' | 'health_plan' | undefined>();
   const [countryCode, setCountryCode] = useState('+55');
   const [showCountryPicker, setShowCountryPicker] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -52,6 +54,7 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
   function resetForm() {
     setFullName(''); setPhone(''); setEmail(''); setCpf('');
     setSex(undefined); setBirthDate(''); setProfession('');
+    setEmergencyPhone(''); setConvenioType(undefined);
     setCountryCode('+55'); setError('');
   }
 
@@ -68,6 +71,8 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
       sex,
       birthDate: birthDate.trim() || undefined,
       profession: profession.trim() || undefined,
+      emergencyPhone: emergencyPhone.trim() || undefined,
+      convenioType,
     };
 
     try {
@@ -183,6 +188,23 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
                   />
                 </View>
               </View>
+
+              <View style={styles.field}>
+                <Text style={styles.fieldLabel}>{t('patients.form.convenioType' as any)}</Text>
+                <View style={styles.pills}>
+                  {(['particular', 'health_plan'] as const).map(cv => (
+                    <TouchableOpacity
+                      key={cv}
+                      onPress={() => setConvenioType(convenioType === cv ? undefined : cv)}
+                      style={[styles.pill, convenioType === cv && styles.pillActive]}
+                    >
+                      <Text style={[styles.pillText, convenioType === cv && styles.pillTextActive]}>
+                        {cv === 'particular' ? t('patients.form.particular' as any) : t('patients.form.healthPlan' as any)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
             </View>
 
             <View style={styles.section}>
@@ -222,6 +244,21 @@ export function NewPatientModal({ visible, onClose, onSaved }: Props) {
                     onChangeText={setEmail}
                     keyboardType="email-address"
                     autoCapitalize="none"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.field}>
+                <Text style={styles.fieldLabel}>{t('patients.form.emergencyPhone' as any)}</Text>
+                <View style={styles.inputBox}>
+                  <Ionicons name="alert-circle-outline" size={16} color={Colors.textMuted} />
+                  <TextInput
+                    style={styles.input}
+                    placeholder={t('patients.form.emergencyPhonePlaceholder' as any)}
+                    placeholderTextColor={Colors.textMuted}
+                    value={emergencyPhone}
+                    onChangeText={setEmergencyPhone}
+                    keyboardType="phone-pad"
                   />
                 </View>
               </View>
