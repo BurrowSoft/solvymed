@@ -28,6 +28,7 @@ export default async function PatientDetailPage({
     id: string; full_name: string; email?: string; phone?: string; cpf?: string;
     sex?: string; birth_date?: string; profession?: string; emergency_phone?: string;
     convenio_type?: string; invite_code?: string; created_at: string;
+    booking_blocked?: boolean;
   };
   const records = (recordsResult.data ?? []) as { id: string; date: string; time: string; content: string; record_type?: string; created_at: string }[];
   const prescriptions = (prescriptionsResult.data ?? []) as { id: string; date: string; notes?: string; prescription_items: { name: string; dosage: string; frequency: string; duration: string }[] }[];
@@ -48,11 +49,19 @@ export default async function PatientDetailPage({
 
       {/* Patient header */}
       <div className="mb-8 flex items-center gap-5">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-teal-100 text-xl font-bold text-teal-700">
+        <div className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full text-xl font-bold ${patient.booking_blocked ? "bg-red-100 text-red-600" : "bg-teal-100 text-teal-700"}`}>
           {initials}
         </div>
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">{patient.full_name}</h1>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-2xl font-extrabold text-slate-900">{patient.full_name}</h1>
+            {patient.booking_blocked && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-700">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3 w-3"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Booking blocked
+              </span>
+            )}
+          </div>
           <p className="text-sm text-slate-500 mt-0.5">
             {[patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null, age ? `${age} yrs` : null, patient.email].filter(Boolean).join(" · ")}
           </p>

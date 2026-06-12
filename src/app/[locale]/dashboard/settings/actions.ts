@@ -96,6 +96,25 @@ export async function toggleProcedure(id: string, active: boolean) {
   return { success: true };
 }
 
+export async function updateSchedulingRules(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const raw = (formData.get("max_concurrent_bookings") as string)?.trim();
+  const parsed = parseInt(raw);
+  const value = !raw || isNaN(parsed) || parsed <= 0 ? null : parsed;
+
+  const { error } = await supabase
+    .from("professionals")
+    .update({ max_concurrent_bookings: value })
+    .eq("id", user.id);
+
+  if (error) return { error: error.message };
+  revalidatePath("/dashboard/settings");
+  return { success: true };
+}
+
 export async function deleteProcedure(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

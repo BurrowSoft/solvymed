@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { createRecord, deleteRecord, createPrescription, deletePrescription, updatePatient, deletePatient } from "../actions";
+import { createRecord, deleteRecord, createPrescription, deletePrescription, updatePatient, deletePatient, toggleBookingBlock } from "../actions";
 
 type MedRecord = { id: string; date: string; time: string; content: string; record_type?: string; created_at: string };
 type RxItem = { name: string; dosage: string; frequency: string; duration: string };
@@ -12,6 +12,7 @@ type Patient = {
   id: string; full_name: string; email?: string; phone?: string; cpf?: string;
   sex?: string; birth_date?: string; profession?: string; emergency_phone?: string;
   convenio_type?: string; invite_code?: string; created_at: string;
+  booking_blocked?: boolean;
 };
 
 function Dialog({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
@@ -102,10 +103,17 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
 function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string }) {
   const [editing, setEditing] = useState(false);
   const [pending, startTransition] = useTransition();
+  const [blockPending, startBlockTransition] = useTransition();
   const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
   const prefix = locale === "en" ? "" : `/${locale}`;
+
+  function handleToggleBlock() {
+    startBlockTransition(async () => {
+      await toggleBookingBlock(patient.id, !patient.booking_blocked);
+    });
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -146,6 +154,17 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
   if (!editing) {
     return (
       <div>
+        {patient.booking_blocked && (
+          <div className="mb-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3.5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 h-5 w-5 shrink-0 text-red-600">
+              <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            <div>
+              <p className="text-sm font-bold text-red-700">Blocked from booking</p>
+              <p className="text-xs text-red-600 mt-0.5">This patient cannot request new appointments. Unblock after resolving the pending issue.</p>
+            </div>
+          </div>
+        )}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {fields.map(({ label, value }) => value ? (
             <div key={label} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
@@ -154,9 +173,20 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
             </div>
           ) : null)}
         </div>
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex flex-wrap gap-3">
           <button onClick={() => setEditing(true)} className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
             Edit Patient
+          </button>
+          <button
+            onClick={handleToggleBlock}
+            disabled={blockPending}
+            className={`rounded-xl border px-4 py-2.5 text-sm font-semibold transition disabled:opacity-60 ${
+              patient.booking_blocked
+                ? "border-green-200 text-green-700 hover:bg-green-50"
+                : "border-amber-200 text-amber-700 hover:bg-amber-50"
+            }`}
+          >
+            {blockPending ? "…" : patient.booking_blocked ? "Unblock bookings" : "Block bookings"}
           </button>
           <button onClick={handleDelete} disabled={pending} className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60">
             Delete Patient

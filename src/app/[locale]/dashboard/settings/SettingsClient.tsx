@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition, useState, useRef } from "react";
-import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure } from "./actions";
+import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules } from "./actions";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
 function Label({ children }: { children: React.ReactNode }) {
@@ -219,6 +219,48 @@ export function WorkingHoursForm({ workingHours }: { workingHours: WorkingHours 
               </div>
             );
           })}
+        </div>
+        <SaveRow pending={pending} saved={saved} />
+      </form>
+    </Card>
+  );
+}
+
+/* ─── Scheduling rules form ────────────────────────────────────── */
+export function SchedulingRulesForm({ maxConcurrent }: { maxConcurrent: number | null }) {
+  const [pending, start] = useTransition();
+  const [saved, setSaved] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    start(async () => {
+      await updateSchedulingRules(fd);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    });
+  }
+
+  return (
+    <Card title="Scheduling rules" description="Controls on how patients can book appointments">
+      <form onSubmit={handleSubmit}>
+        <div>
+          <Label>Max simultaneous active bookings per patient</Label>
+          <div className="flex items-center gap-4">
+            <input
+              name="max_concurrent_bookings"
+              type="number"
+              min="1"
+              max="20"
+              defaultValue={maxConcurrent ?? ""}
+              placeholder="Unlimited"
+              className="w-28 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-100 transition"
+            />
+            <p className="text-xs text-slate-400">Leave empty for unlimited. Recommended: 1–2.</p>
+          </div>
+          <p className="mt-2 text-xs text-slate-400">
+            Blocks new booking requests from a patient who already has this many active (tentative, confirmed, or scheduled) future appointments.
+          </p>
         </div>
         <SaveRow pending={pending} saved={saved} />
       </form>

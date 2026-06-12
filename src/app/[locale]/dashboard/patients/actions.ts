@@ -161,6 +161,23 @@ export async function createPrescription(patientId: string, formData: FormData) 
   return { success: true };
 }
 
+export async function toggleBookingBlock(patientId: string, blocked: boolean) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { error } = await supabase
+    .from("patients")
+    .update({ booking_blocked: blocked })
+    .eq("id", patientId)
+    .eq("professional_id", user.id);
+
+  if (error) return { error: error.message };
+  revalidatePath(`/dashboard/patients/${patientId}`);
+  revalidatePath("/dashboard/patients");
+  return { success: true };
+}
+
 export async function deletePrescription(id: string, patientId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
