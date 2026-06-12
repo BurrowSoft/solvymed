@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 
-type Role = "professional" | "secretary";
+type Role = "professional" | "secretary" | "patient";
 
 export default function SignupPage() {
   const t = useTranslations("auth");
@@ -18,6 +18,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<Role>("professional");
+  const [inviteCode, setInviteCode] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,13 +35,23 @@ export default function SignupPage() {
       return;
     }
 
+    if (role === "patient" && !inviteCode.trim()) {
+      setError("Please enter the invite code you received from your doctor.");
+      return;
+    }
+
     setLoading(true);
     const supabase = createClient();
     const { error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name: fullName, role, platform: "web" },
+        data: {
+          full_name: fullName,
+          role,
+          platform: "web",
+          ...(role === "patient" && inviteCode.trim() ? { invite_code: inviteCode.toUpperCase().trim() } : {}),
+        },
         emailRedirectTo: "https://www.solvymed.com/api/auth/callback",
       },
     });
@@ -109,7 +120,7 @@ export default function SignupPage() {
         {/* Role picker */}
         <div className="mb-6">
           <p className="mb-2 text-sm font-semibold text-slate-700">I am a…</p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <RoleCard
               selected={role === "professional"}
               onSelect={() => setRole("professional")}
@@ -118,8 +129,8 @@ export default function SignupPage() {
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
               }
-              label="Doctor / Professional"
-              description="Manage your clinic, patients and schedule"
+              label="Doctor"
+              description="Manage your clinic and patients"
             />
             <RoleCard
               selected={role === "secretary"}
@@ -131,10 +142,39 @@ export default function SignupPage() {
                 </svg>
               }
               label="Secretary"
-              description="Support a doctor's appointments and patients"
+              description="Support a doctor's schedule"
+            />
+            <RoleCard
+              selected={role === "patient"}
+              onSelect={() => setRole("patient")}
+              icon={
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+              }
+              label="Patient"
+              description="Access your consultations"
             />
           </div>
         </div>
+
+        {/* Invite code — patients only */}
+        {role === "patient" && (
+          <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4">
+            <label className="block text-sm font-semibold text-slate-700 mb-1">
+              Invite code
+            </label>
+            <input
+              type="text"
+              value={inviteCode}
+              onChange={(e) => setInviteCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6))}
+              placeholder="ABC123"
+              maxLength={6}
+              className="w-full rounded-xl border border-teal-200 bg-white px-4 py-3 text-base font-mono tracking-widest uppercase text-slate-900 placeholder:text-slate-400 placeholder:normal-case placeholder:tracking-normal focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+            />
+            <p className="mt-1.5 text-xs text-slate-500">Ask your doctor for their 6-character invite code</p>
+          </div>
+        )}
 
         {error && (
           <div className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 border border-red-200">
