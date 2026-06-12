@@ -27,6 +27,8 @@ export async function getAvailableSlots(
   date: string,
   durationMinutes = 30,
 ): Promise<TimeSlot[]> {
+  if (!professionalId) return [];
+
   // Get working hours
   const { data: profData } = await supabase
     .from('professionals')
@@ -98,6 +100,8 @@ export async function createTentativeBooking(opts: {
 
   if (error) {
     if (error.message?.includes('slot_taken')) throw new Error('slot_taken');
+    if (error.message?.includes('blocked from scheduling')) throw new Error('patient_blocked');
+    if (error.message?.includes('Max concurrent bookings reached')) throw new Error('max_bookings_reached');
     throw error;
   }
   const appointmentId = data as string;

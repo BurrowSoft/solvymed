@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput,
   ActivityIndicator, Alert,
@@ -8,10 +8,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { TimeSlot, getAvailableSlots, createTentativeBooking } from '@/lib/booking-service';
+import { getProfessionalProcedures, ProcedureSummary } from '@/lib/discovery-service';
 import { useAuth } from '@/lib/auth-context';
 import { useStyles } from '@/lib/use-styles';
 
-const DURATIONS = [30, 45, 60];
+const FALLBACK_DURATIONS = [30, 45, 60];
 const DAYS_AHEAD = 14;
 
 function fmt(d: Date) {
@@ -54,7 +55,26 @@ export default function BookScreen() {
   const [notes, setNotes] = useState('');
   const [booking, setBooking] = useState(false);
 
+  const [procedures, setProcedures] = useState<ProcedureSummary[]>([]);
+  const [loadingProcs, setLoadingProcs] = useState(true);
+  const [selectedProcedure, setSelectedProcedure] = useState<ProcedureSummary | null>(null);
+
   const days = buildDays();
+
+  // Load procedures for this professional
+  useEffect(() => {
+    if (!professionalId) return;
+    getProfessionalProcedures(professionalId)
+      .then(procs => {
+        setProcedures(procs);
+        if (procs.length > 0) {
+          setSelectedProcedure(procs[0]);
+          setDuration(procs[0].durationMinutes);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoadingProcs(false));
+  }, [professionalId]);
 
   const loadSlots = useCallback(async (date: string, dur: number) => {
     if (!professionalId) return;
@@ -70,10 +90,19 @@ export default function BookScreen() {
     }
   }, [professionalId]);
 
-  // Load slots when date or duration changes
-  React.useEffect(() => {
+  useEffect(() => {
     loadSlots(selectedDate, duration);
   }, [selectedDate, duration, loadSlots]);
+
+  function selectProcedure(proc: ProcedureSummary) {
+    setSelectedProcedure(proc);
+    setDuration(proc.durationMinutes);
+  }
+
+  function selectFallbackDuration(dur: number) {
+    setSelectedProcedure(null);
+    setDuration(dur);
+  }
 
   async function handleBook() {
     if (!selectedSlot || !user || !professionalId) return;
@@ -87,7 +116,8 @@ export default function BookScreen() {
         startTime: selectedSlot.start,
         endTime: selectedSlot.end,
         durationMinutes: duration,
-        consultationType: specialty || 'Consultation',
+        consultationType: selectedProcedure?.name || specialty || 'Consultation',
+        paymentType: selectedProcedure?.paymentType,
         notes: notes.trim() || undefined,
       });
       Alert.alert(
@@ -100,6 +130,16 @@ export default function BookScreen() {
       if (msg === 'slot_taken') {
         Alert.alert('Slot unavailable', 'This time was just booked. Please choose another slot.');
         loadSlots(selectedDate, duration);
+      } else if (msg === 'patient_blocked') {
+        Alert.alert(
+          'Booking unavailable',
+          'Your bookings with this professional are currently restricted. Please contact the clinic for assistance.',
+        );
+      } else if (msg === 'max_bookings_reached') {
+        Alert.alert(
+          'Limit reached',
+          'You already have the maximum number of active appointments with this professional.',
+        );
       } else {
         Alert.alert('Error', 'Could not send booking request. Please try again.');
       }
@@ -130,21 +170,53 @@ export default function BookScreen() {
           </View>
         </View>
 
-        {/* Duration picker */}
-        <Text style={styles.sectionLabel}>Session duration</Text>
-        <View style={styles.durationRow}>
-          {DURATIONS.map(d => (
-            <TouchableOpacity
-              key={d}
-              style={[styles.durationBtn, duration === d && styles.durationBtnActive]}
-              onPress={() => setDuration(d)}
-            >
-              <Text style={[styles.durationText, duration === d && styles.durationTextActive]}>
-                {d} min
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {/* Procedure / duration picker */}
+        {loadingProcs ? (
+          <View style={styles.slotsLoading}>
+            <ActivityIndicator color={Colors.primary} size="small" />
+          </View>
+        ) : procedures.length > 0 ? (
+          <>
+            <Text style={styles.sectionLabel}>Select procedure</Text>
+            <View style={styles.procedureList}>
+              {procedures.map(proc => {
+                const active = selectedProcedure?.id === proc.id;
+                return (
+                  <TouchableOpacity
+                    key={proc.id}
+                    style={[styles.procedureBtn, active && styles.procedureBtnActive]}
+                    onPress={() => selectProcedure(proc)}
+                  >
+                    <Text style={[styles.procedureName, active && styles.procedureNameActive]}>
+                      {proc.name}
+                    </Text>
+                    <Text style={[styles.procedureMeta, active && styles.procedureMetaActive]}>
+                      {proc.durationMinutes} min
+                      {proc.price ? ` · R$ ${proc.price.toFixed(2)}` : ''}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </>
+        ) : (
+          <>
+            <Text style={styles.sectionLabel}>Session duration</Text>
+            <View style={styles.durationRow}>
+              {FALLBACK_DURATIONS.map(d => (
+                <TouchableOpacity
+                  key={d}
+                  style={[styles.durationBtn, duration === d && styles.durationBtnActive]}
+                  onPress={() => selectFallbackDuration(d)}
+                >
+                  <Text style={[styles.durationText, duration === d && styles.durationTextActive]}>
+                    {d} min
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </>
+        )}
 
         {/* Date picker */}
         <Text style={styles.sectionLabel}>Pick a date</Text>
@@ -247,6 +319,17 @@ function makeStyles() {
     doctorName: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
     doctorSpec: { fontSize: 13, color: Colors.textSecondary, marginTop: 2 },
     sectionLabel: { fontSize: 14, fontWeight: '600', color: Colors.textSecondary, marginTop: 4 },
+    procedureList: { gap: 8 },
+    procedureBtn: {
+      paddingVertical: 11, paddingHorizontal: 14, borderRadius: 12,
+      borderWidth: 1.5, borderColor: Colors.border,
+      backgroundColor: Colors.surface,
+    },
+    procedureBtnActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}12` },
+    procedureName: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
+    procedureNameActive: { color: Colors.primary },
+    procedureMeta: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
+    procedureMetaActive: { color: `${Colors.primary}cc` },
     durationRow: { flexDirection: 'row', gap: 10 },
     durationBtn: {
       flex: 1, paddingVertical: 10, borderRadius: 10,

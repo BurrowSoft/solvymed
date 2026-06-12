@@ -1,6 +1,14 @@
 import { supabase } from './supabase';
 import { Clinic, ClinicProfessional } from './types';
 
+export type ProcedureSummary = {
+  id: string;
+  name: string;
+  durationMinutes: number;
+  price?: number;
+  paymentType: string;
+};
+
 export async function searchClinics(query?: string): Promise<Clinic[]> {
   let q = supabase
     .from('clinics')
@@ -131,6 +139,20 @@ export async function getProfessionalByPublicCode(
     professionalName: row.professional_name as string,
     specialty: (row.professional_specialty as string) || undefined,
   };
+}
+
+export async function getProfessionalProcedures(professionalId: string): Promise<ProcedureSummary[]> {
+  const { data, error } = await supabase.rpc('get_professional_procedures', {
+    p_professional_id: professionalId,
+  });
+  if (error) throw error;
+  return (data ?? []).map((row: Record<string, unknown>) => ({
+    id: row.id as string,
+    name: row.name as string,
+    durationMinutes: row.duration_minutes as number,
+    price: row.price != null ? Number(row.price) : undefined,
+    paymentType: row.payment_type as string,
+  }));
 }
 
 // ─── Mappers ─────────────────────────────────────────────────────────────────
