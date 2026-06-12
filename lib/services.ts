@@ -331,8 +331,8 @@ export async function getPaidPayments(professionalId: string, from?: string, to?
 function toAppointment(row: Record<string, unknown>): Appointment {
   return {
     id: row.id as string,
-    patientId: row.patient_id as string ?? '',
-    patientName: row.patient_name as string ?? '',
+    patientId: (row.patient_id as string) ?? '',
+    patientName: (row.patient_name as string) ?? '',
     date: row.date as string,
     startTime: row.start_time as string,
     endTime: row.end_time as string,
@@ -347,6 +347,10 @@ function toAppointment(row: Record<string, unknown>): Appointment {
     extraItems: Array.isArray(row.extra_items) ? (row.extra_items as AppointmentExtraItem[]) : [],
     scheduledBy: row.scheduled_by as string | undefined,
     professionalId: row.professional_id as string,
+    patientAuthId: (row.patient_auth_id as string) || undefined,
+    proposedDate: (row.proposed_date as string) || undefined,
+    proposedStartTime: (row.proposed_start_time as string) || undefined,
+    proposedEndTime: (row.proposed_end_time as string) || undefined,
   };
 }
 
@@ -536,6 +540,7 @@ function toProfessional(row: Record<string, unknown>): Professional {
     clinicWebsite: row.clinic_website as string | undefined,
     specialty: row.specialty as string | undefined,
     pixKey: (row.pix_key as string) || undefined,
+    publicInviteCode: (row.public_invite_code as string) || undefined,
     workingHours: (row.working_hours as WorkingHours | undefined) ?? undefined,
   };
 }
@@ -802,12 +807,86 @@ export async function linkByInviteCode(
 export async function getUserRole(userId: string): Promise<UserRoleRecord | null> {
   const { data, error } = await supabase
     .from('user_roles')
-    .select('role, linked_patient_id')
+    .select('role, linked_patient_id, invited_by_professional_id')
     .eq('user_id', userId)
     .maybeSingle();
   if (error) throw error;
   if (!data) return null;
-  return { role: data.role as UserRoleRecord['role'], linkedPatientId: (data.linked_patient_id as string) ?? null };
+  return {
+    role: data.role as UserRoleRecord['role'],
+    linkedPatientId: (data.linked_patient_id as string) ?? null,
+    invitedByProfessionalId: (data.invited_by_professional_id as string) ?? null,
+  };
+}
+
+export async function setInvitedByProfessional(userId: string, professionalId: string): Promise<void> {
+  const { error } = await supabase
+    .from('user_roles')
+    .upsert({ user_id: userId, role: 'patient', invited_by_professional_id: professionalId });
+  if (error) throw error;
+}
+
+// ─── Appointment Proposals ────────────────────────────────────────────────────
+
+export async function getTentativeAppointments(professionalId: string): Promise<Appointment[]> {
+  const { data, error } = await supabase
+    .from('appointments')
+    .select('*')
+    .eq('professional_id', professionalId)
+    .in('status', ['tentative', 'proposal'])
+    .order('date')
+    .order('start_time');
+  if (error) throw error;
+  return (data ?? []).map(toAppointment);
+}
+
+export async function confirmBooking(appointmentId: string): Promise<void> {
+  const { error } = await supabase
+    .from('appointments')
+    .update({ status: 'confirmed' })
+    .eq('id', appointmentId);
+  if (error) throw error;
+}
+
+export async function rejectBooking(appointmentId: string): Promise<void> {
+  const { error } = await supabase
+    .from('appointments')
+    .update({ status: 'rejected' })
+    .eq('id', appointmentId);
+  if (error) throw error;
+}
+
+export async function proposeNewTime(
+  appointmentId: string,
+  proposedDate: string,
+  proposedStart: string,
+  proposedEnd: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from('appointments')
+    .update({
+      status: 'proposal',
+      proposed_date: proposedDate,
+      proposed_start_time: proposedStart,
+      proposed_end_time: proposedEnd,
+    })
+    .eq('id', appointmentId);
+  if (error) throw error;
+}
+
+// ─── Professional Public Invite Code ─────────────────────────────────────────
+
+export async function generatePublicInviteCode(professionalId: string): Promise<string> {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const code = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    const { error } = await supabase
+      .from('professionals')
+      .update({ public_invite_code: code })
+      .eq('id', professionalId);
+    if (!error) return code;
+  }
+  throw new Error('Could not generate unique public invite code');
 }
 
 export async function setUserRole(

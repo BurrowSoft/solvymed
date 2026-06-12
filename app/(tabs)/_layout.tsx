@@ -54,6 +54,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="discover"
+        options={{
+          title: 'Discover',
+          tabBarIcon: ({ color }) => <TabIcon name="search-outline" color={color} />,
+          href: isPatient ? undefined : null,
+        }}
+      />
+      <Tabs.Screen
         name="payments/index"
         options={{
           title: t('tab.payments'),

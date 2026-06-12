@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image, Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,7 +10,7 @@ import Constants from 'expo-constants';
 import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/lib/auth-context';
 import { useRole } from '@/lib/role-context';
-import { getProfessional, getPatients, updateProfessional } from '@/lib/services';
+import { getProfessional, getPatients, updateProfessional, generatePublicInviteCode } from '@/lib/services';
 import { Professional } from '@/lib/types';
 import { ProfileModal } from '@/components/ProfileModal';
 import { WorkingHoursModal } from '@/components/WorkingHoursModal';
@@ -100,10 +100,31 @@ export default function SettingsScreen() {
   const [showIntegrations, setShowIntegrations] = useState(false);
   const [showRegistrations, setShowRegistrations] = useState(false);
 
+  const [generatingCode, setGeneratingCode] = useState(false);
+
   useEffect(() => {
     if (!user) return;
     getProfessional(user.id).then(setProfessional).catch(() => {});
   }, [user]);
+
+  async function handleGenerateCode() {
+    if (!user) return;
+    setGeneratingCode(true);
+    try {
+      const code = await generatePublicInviteCode(user.id);
+      setProfessional(prev => prev ? { ...prev, publicInviteCode: code } : prev);
+    } catch {
+      Alert.alert('Error', 'Could not generate invite code. Try again.');
+    } finally {
+      setGeneratingCode(false);
+    }
+  }
+
+  async function handleShareCode(code: string) {
+    await Share.share({
+      message: `Join my clinic on SolvyMed! Use my invite code: ${code}\n\nDownload: https://solvymed.com`,
+    });
+  }
 
   async function handleExportCSV() {
     if (!user) return;
@@ -340,6 +361,50 @@ export default function SettingsScreen() {
           <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
         </TouchableOpacity>
 
+        {/* Professional public invite code card */}
+        {isProfessional && (
+          <View style={styles.inviteCard}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <Ionicons name="qr-code-outline" size={18} color={Colors.primary} />
+              <Text style={styles.inviteCardTitle}>Your Patient Invite Code</Text>
+            </View>
+            <Text style={styles.inviteCardHint}>Share this code so patients can find and book with you.</Text>
+            {professional?.publicInviteCode ? (
+              <View style={styles.inviteCodeRow}>
+                <Text style={styles.inviteCodeText}>{professional.publicInviteCode}</Text>
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  <TouchableOpacity
+                    style={styles.inviteBtn}
+                    onPress={() => handleShareCode(professional.publicInviteCode!)}
+                  >
+                    <Ionicons name="share-outline" size={16} color={Colors.primary} />
+                    <Text style={styles.inviteBtnText}>Share</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.inviteBtn, { borderColor: Colors.textMuted }]}
+                    onPress={handleGenerateCode}
+                    disabled={generatingCode}
+                  >
+                    <Ionicons name="refresh-outline" size={16} color={Colors.textMuted} />
+                    <Text style={[styles.inviteBtnText, { color: Colors.textMuted }]}>New</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.generateCodeBtn}
+                onPress={handleGenerateCode}
+                disabled={generatingCode}
+              >
+                <Ionicons name="add-circle-outline" size={16} color="#fff" />
+                <Text style={{ color: '#fff', fontSize: 14, fontWeight: '600' }}>
+                  {generatingCode ? 'Generating…' : 'Generate Invite Code'}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+
         {SETTINGS.filter(g => !g.roles || !role || g.roles.includes(role as any)).map(group => (
           <View key={group.title} style={styles.group}>
             <Text style={styles.groupTitle}>{group.title}</Text>
@@ -513,6 +578,28 @@ const makeStyles = () => StyleSheet.create({
   profileName: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
   profileEmail: { fontSize: 13, color: Colors.textSecondary, marginTop: 2 },
   profileClinic: { fontSize: 12, color: Colors.textMuted, marginTop: 1 },
+  inviteCard: {
+    backgroundColor: Colors.surface, marginHorizontal: 16, marginBottom: 8,
+    borderRadius: 12, borderWidth: 1.5, borderColor: `${Colors.primary}40`,
+    padding: 14,
+  },
+  inviteCardTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+  inviteCardHint: { fontSize: 12, color: Colors.textSecondary, marginBottom: 10 },
+  inviteCodeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  inviteCodeText: {
+    fontSize: 24, fontWeight: '800', color: Colors.primary,
+    letterSpacing: 4, fontFamily: 'monospace',
+  },
+  inviteBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    borderWidth: 1.5, borderColor: Colors.primary,
+    borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6,
+  },
+  inviteBtnText: { fontSize: 13, fontWeight: '600', color: Colors.primary },
+  generateCodeBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+    backgroundColor: Colors.primary, borderRadius: 10, paddingVertical: 10,
+  },
   group: { marginHorizontal: 16, marginBottom: 16 },
   groupTitle: {
     fontSize: 11, fontWeight: '600', color: Colors.textMuted,

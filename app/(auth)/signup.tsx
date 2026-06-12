@@ -39,10 +39,6 @@ export default function SignUpScreen() {
       setError('Password must be at least 6 characters.');
       return;
     }
-    if (selectedRole === 'patient' && !inviteCode.trim()) {
-      setError('Please enter your invite code from your doctor.');
-      return;
-    }
     setLoading(true);
     setError(null);
     const { error } = await signUp(email.trim(), password, locale, selectedRole, inviteCode.trim() || undefined);
@@ -140,7 +136,7 @@ export default function SignUpScreen() {
 
           {selectedRole === 'patient' && (
             <View style={styles.field}>
-              <Text style={styles.label}>Invite code</Text>
+              <Text style={styles.label}>Invite code <Text style={{ fontWeight: '400', color: Colors.textMuted }}>(optional)</Text></Text>
               <View style={styles.inputBox}>
                 <Ionicons name="key-outline" size={18} color={Colors.textMuted} />
                 <TextInput
@@ -154,7 +150,7 @@ export default function SignUpScreen() {
                   maxLength={6}
                 />
               </View>
-              <Text style={styles.inviteHint}>Ask your doctor for their 6-character invite code</Text>
+              <Text style={styles.inviteHint}>Use a doctor's code to get linked automatically</Text>
             </View>
           )}
 

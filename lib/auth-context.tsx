@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
-import { upsertProfessional, getProfessional, linkByInviteCode, getUserRole } from './services';
+import { upsertProfessional, getProfessional, linkByInviteCode, getUserRole, setInvitedByProfessional } from './services';
+import { getProfessionalByPublicCode } from './discovery-service';
 
 interface AuthContextType {
   session: Session | null;
@@ -60,8 +61,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!inviteCode) return;
     try {
       const existing = await getUserRole(userId);
-      if (!existing) {
-        await linkByInviteCode(userId, inviteCode);
+      if (existing?.linkedPatientId || existing?.invitedByProfessionalId) return;
+      // Try patient invite code first
+      const linked = await linkByInviteCode(userId, inviteCode);
+      if (!linked) {
+        // Try professional public invite code
+        const prof = await getProfessionalByPublicCode(inviteCode);
+        if (prof) {
+          await setInvitedByProfessional(userId, prof.professionalId);
+        }
       }
     } catch {
       // silently ignore

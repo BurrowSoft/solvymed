@@ -13,6 +13,7 @@ import {
   getAppointmentsByDate, getPendingPayments, getPatients, getProfessional,
   getPatientAppointments, getRecords, getPrescriptions,
 } from '@/lib/services';
+import { getMyBookings, acceptProposal, declineProposal } from '@/lib/booking-service';
 import { useAuth } from '@/lib/auth-context';
 import { useRole } from '@/lib/role-context';
 import { linkByInviteCode } from '@/lib/services';
@@ -62,6 +63,7 @@ export default function HomeScreen() {
   const [myAppts, setMyAppts] = useState<Appointment[]>([]);
   const [myRecords, setMyRecords] = useState<MedicalRecord[]>([]);
   const [myPrescriptions, setMyPrescriptions] = useState<Prescription[]>([]);
+  const [myRequests, setMyRequests] = useState<Appointment[]>([]);
 
   // Connect-to-clinic flow (unlinked patients)
   const [connectCode, setConnectCode] = useState('');
@@ -79,17 +81,21 @@ export default function HomeScreen() {
       return;
     }
 
-    if (role === 'patient' && linkedPatientId) {
+    if (role === 'patient') {
       try {
         const future = new Date(today); future.setMonth(future.getMonth() + 3);
-        const [appts, records, prescriptions] = await Promise.all([
-          getPatientAppointments(linkedPatientId, dateStr, fmt(future)),
-          getRecords(linkedPatientId),
-          getPrescriptions(linkedPatientId),
-        ]);
-        setMyAppts(appts);
-        setMyRecords(records);
-        setMyPrescriptions(prescriptions);
+        const requests = await getMyBookings(user.id);
+        setMyRequests(requests.filter(b => ['tentative', 'proposal'].includes(b.status)));
+        if (linkedPatientId) {
+          const [appts, records, prescriptions] = await Promise.all([
+            getPatientAppointments(linkedPatientId, dateStr, fmt(future)),
+            getRecords(linkedPatientId),
+            getPrescriptions(linkedPatientId),
+          ]);
+          setMyAppts(appts.filter(a => !['tentative', 'proposal', 'rejected'].includes(a.status)));
+          setMyRecords(records);
+          setMyPrescriptions(prescriptions);
+        }
       } catch {}
       setLoading(false);
       return;
@@ -219,6 +225,64 @@ export default function HomeScreen() {
         </ScrollView>
       ) : role === 'patient' ? (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, gap: 20, paddingBottom: 32 }}>
+          {/* Pending / proposal requests */}
+          {myRequests.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Booking Requests</Text>
+              {myRequests.map(req => {
+                const isProposal = req.status === 'proposal';
+                return (
+                  <View key={req.id} style={[styles.apptCard, { borderLeftWidth: 3, borderLeftColor: isProposal ? Colors.warning : Colors.primary }]}>
+                    <View style={{ flex: 1, gap: 4 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        <Text style={styles.apptName}>{req.consultationType}</Text>
+                        <View style={[styles.statusDot, { backgroundColor: isProposal ? Colors.warning : Colors.primary }]} />
+                        <Text style={{ fontSize: 11, color: isProposal ? Colors.warning : Colors.primary, fontWeight: '600' }}>
+                          {isProposal ? 'New time proposed' : 'Pending'}
+                        </Text>
+                      </View>
+                      {isProposal && req.proposedDate ? (
+                        <Text style={{ fontSize: 12, color: Colors.textSecondary }}>
+                          Proposed: {req.proposedDate} {req.proposedStartTime}
+                        </Text>
+                      ) : (
+                        <Text style={{ fontSize: 12, color: Colors.textSecondary }}>
+                          {req.date} at {formatTime(req.startTime)}
+                        </Text>
+                      )}
+                      {isProposal && (
+                        <View style={{ flexDirection: 'row', gap: 8, marginTop: 4 }}>
+                          <TouchableOpacity
+                            style={[styles.connectBtn, { flex: 1, height: 36, backgroundColor: Colors.success }]}
+                            onPress={async () => {
+                              try {
+                                await acceptProposal(req.id);
+                                await load();
+                              } catch { Alert.alert('Error', 'Could not accept. Try again.'); }
+                            }}
+                          >
+                            <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>Accept</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={[styles.connectBtn, { flex: 1, height: 36, backgroundColor: Colors.danger }]}
+                            onPress={async () => {
+                              try {
+                                await declineProposal(req.id);
+                                await load();
+                              } catch { Alert.alert('Error', 'Could not decline. Try again.'); }
+                            }}
+                          >
+                            <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>Decline</Text>
+                          </TouchableOpacity>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+
           {/* Next appointment */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t('patient.nextAppt')}</Text>

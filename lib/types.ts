@@ -1,5 +1,7 @@
 export type AppointmentType = 'online' | 'in-person';
-export type AppointmentStatus = 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'blocked' | 'late' | 'absent';
+export type AppointmentStatus =
+  | 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'blocked' | 'late' | 'absent'
+  | 'tentative' | 'rejected' | 'proposal';
 export type PaymentType = 'private' | 'insurance';
 export type PaymentStatus = 'pending' | 'paid';
 
@@ -49,6 +51,33 @@ export interface Appointment {
   extraItems?: AppointmentExtraItem[];
   scheduledBy?: string;
   professionalId: string;
+  patientAuthId?: string;
+  proposedDate?: string;
+  proposedStartTime?: string;
+  proposedEndTime?: string;
+}
+
+export interface Clinic {
+  id: string;
+  professionalId: string;
+  name: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  country: string;
+  phone?: string;
+  lat?: number;
+  lng?: number;
+  createdAt: string;
+}
+
+export interface ClinicProfessional {
+  clinicId: string;
+  professionalId: string;
+  professionalName: string;
+  specialty?: string;
+  photoUrl?: string;
+  publicInviteCode?: string;
 }
 
 export interface MedicalRecord {
@@ -101,6 +130,7 @@ export interface Professional {
   clinicWebsite?: string;
   specialty?: string;
   pixKey?: string;
+  publicInviteCode?: string;
   workingHours?: WorkingHours;
 }
 
@@ -109,6 +139,7 @@ export type UserRole = 'professional' | 'secretary' | 'patient';
 export interface UserRoleRecord {
   role: UserRole;
   linkedPatientId: string | null;
+  invitedByProfessionalId: string | null;
 }
 
 export interface AppointmentExtraItem {

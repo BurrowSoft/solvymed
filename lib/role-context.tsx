@@ -5,6 +5,7 @@ import { UserRole } from './types';
 interface RoleContextType {
   role: UserRole | null;
   linkedPatientId: string | null;
+  invitedByProfessionalId: string | null;
   loading: boolean;
   needsRoleSelection: boolean;
   selectRole: (userId: string, email: string, role: UserRole) => Promise<void>;
@@ -14,6 +15,7 @@ interface RoleContextType {
 const RoleContext = createContext<RoleContextType>({
   role: null,
   linkedPatientId: null,
+  invitedByProfessionalId: null,
   loading: true,
   needsRoleSelection: false,
   selectRole: async () => {},
@@ -23,6 +25,7 @@ const RoleContext = createContext<RoleContextType>({
 export function RoleProvider({ children }: { children: React.ReactNode }) {
   const [role, setRole] = useState<UserRole | null>(null);
   const [linkedPatientId, setLinkedPatientId] = useState<string | null>(null);
+  const [invitedByProfessionalId, setInvitedByProfessionalId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [needsRoleSelection, setNeedsRoleSelection] = useState(false);
 
@@ -36,6 +39,7 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
       } else {
         setRole(record.role);
         setLinkedPatientId(record.linkedPatientId);
+        setInvitedByProfessionalId(record.invitedByProfessionalId);
         setNeedsRoleSelection(false);
       }
     } catch {
@@ -59,7 +63,7 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <RoleContext.Provider value={{ role, linkedPatientId, loading, needsRoleSelection, selectRole, refresh }}>
+    <RoleContext.Provider value={{ role, linkedPatientId, invitedByProfessionalId, loading, needsRoleSelection, selectRole, refresh }}>
       {children}
     </RoleContext.Provider>
   );
