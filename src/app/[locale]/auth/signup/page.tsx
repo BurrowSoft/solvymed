@@ -153,7 +153,7 @@ export default function SignupPage() {
                 </svg>
               }
               label="Patient"
-              description="Access your consultations"
+              description="Schedule and access your consultations"
             />
           </div>
         </div>
