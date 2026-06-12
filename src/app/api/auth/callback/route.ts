@@ -12,8 +12,8 @@ export async function GET(request: NextRequest) {
   // Collect cookies Supabase wants to set — we'll apply them to the final redirect response.
   // Using next/headers cookies() here would NOT attach to a manually-created NextResponse,
   // so we buffer them and apply explicitly instead.
-  type CookieTuple = { name: string; value: string; options: Record<string, unknown> };
-  const pendingCookies: CookieTuple[] = [];
+  // Spread options into the object so it matches NextResponse.cookies.set()'s object overload.
+  const pendingCookies: Array<Record<string, unknown> & { name: string; value: string }> = [];
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -21,7 +21,11 @@ export async function GET(request: NextRequest) {
     {
       cookies: {
         getAll: () => request.cookies.getAll(),
-        setAll: (cookies) => { pendingCookies.push(...cookies); },
+        setAll: (cookies) => {
+          cookies.forEach(({ name, value, options }) => {
+            pendingCookies.push({ name, value, ...(options ?? {}) });
+          });
+        },
       },
     },
   );
@@ -79,8 +83,7 @@ export async function GET(request: NextRequest) {
   }
 
   const response = NextResponse.redirect(redirectUrl);
-  pendingCookies.forEach(({ name, value, options }) =>
-    response.cookies.set(name, value, options as Parameters<typeof response.cookies.set>[2]),
-  );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  pendingCookies.forEach(({ name, value, ...rest }) => response.cookies.set(name, value, rest as any));
   return response;
 }
