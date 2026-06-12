@@ -1,0 +1,75 @@
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel } from "./SettingsClient";
+
+type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+type WorkingHours = Record<DayKey, { enabled: boolean; start: string; end: string }>;
+
+export default async function SettingsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
+
+  const [profResult, procsResult] = await Promise.all([
+    supabase
+      .from("professionals")
+      .select("full_name, specialty, clinic_name, clinic_cnpj, clinic_phone, clinic_website, clinic_address, clinic_city, clinic_state, working_hours")
+      .eq("id", user.id)
+      .single(),
+    supabase
+      .from("procedures")
+      .select("id, name, duration_minutes, price, payment_type, active")
+      .eq("professional_id", user.id)
+      .order("active", { ascending: false })
+      .order("name"),
+  ]);
+
+  const prof = profResult.data ?? {
+    full_name: "", specialty: null,
+    clinic_name: null, clinic_cnpj: null, clinic_phone: null,
+    clinic_website: null, clinic_address: null, clinic_city: null, clinic_state: null,
+    working_hours: null,
+  };
+
+  const procedures = (procsResult.data ?? []) as {
+    id: string; name: string; duration_minutes: number; price?: number; payment_type: string; active: boolean;
+  }[];
+
+  return (
+    <div className="p-6 lg:p-8 max-w-3xl">
+      <div className="mb-8">
+        <h1 className="text-2xl font-extrabold text-slate-900">Settings</h1>
+        <p className="text-sm text-slate-500 mt-0.5">Manage your profile, clinic, hours, and procedures</p>
+      </div>
+
+      <div className="space-y-6">
+        <ProfileForm
+          fullName={prof.full_name}
+          specialty={prof.specialty ?? undefined}
+        />
+
+        <ClinicForm
+          data={{
+            clinic_name: prof.clinic_name ?? undefined,
+            clinic_cnpj: prof.clinic_cnpj ?? undefined,
+            clinic_phone: prof.clinic_phone ?? undefined,
+            clinic_website: prof.clinic_website ?? undefined,
+            clinic_address: prof.clinic_address ?? undefined,
+            clinic_city: prof.clinic_city ?? undefined,
+            clinic_state: prof.clinic_state ?? undefined,
+          }}
+        />
+
+        <WorkingHoursForm workingHours={prof.working_hours as WorkingHours | null} />
+
+        <ProceduresPanel procedures={procedures} />
+      </div>
+    </div>
+  );
+}
