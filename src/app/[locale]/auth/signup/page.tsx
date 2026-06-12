@@ -6,6 +6,8 @@ import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 
+type Role = "professional" | "secretary";
+
 export default function SignupPage() {
   const t = useTranslations("auth");
   const params = useParams();
@@ -15,6 +17,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState<Role>("professional");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,8 +40,8 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        data: { full_name: fullName },
-        emailRedirectTo: "https://www.solvymed.com/en/auth/confirm",
+        data: { full_name: fullName, role, platform: "web" },
+        emailRedirectTo: "https://www.solvymed.com/api/auth/callback",
       },
     });
     setLoading(false);
@@ -54,7 +57,6 @@ export default function SignupPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
         <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100 text-center">
-          {/* Logo */}
           <div className="mb-6 flex justify-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 shadow-lg shadow-teal-600/20">
               <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
@@ -62,7 +64,6 @@ export default function SignupPage() {
               </svg>
             </div>
           </div>
-
           <div className="mb-6 flex justify-center">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-50">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
@@ -70,16 +71,9 @@ export default function SignupPage() {
               </svg>
             </div>
           </div>
-
-          <h1 className="mb-2 text-2xl font-extrabold text-slate-900">
-            {t("signup.success")}
-          </h1>
+          <h1 className="mb-2 text-2xl font-extrabold text-slate-900">{t("signup.success")}</h1>
           <p className="mb-8 text-slate-500">{t("signup.successSub")}</p>
-
-          <Link
-            href={localePath("/")}
-            className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-teal-600 transition-colors"
-          >
+          <Link href={localePath("/")} className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-teal-600 transition-colors">
             {t("backToHome")}
           </Link>
         </div>
@@ -90,12 +84,9 @@ export default function SignupPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100">
-        {/* Back to home */}
+        {/* Back */}
         <div className="mb-6">
-          <Link
-            href={localePath("/")}
-            className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-teal-600 transition-colors"
-          >
+          <Link href={localePath("/")} className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-teal-600 transition-colors">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
               <path d="M19 12H5M12 5l-7 7 7 7" />
             </svg>
@@ -112,12 +103,38 @@ export default function SignupPage() {
           </div>
         </div>
 
-        <h1 className="mb-1 text-center text-2xl font-extrabold text-slate-900">
-          {t("signup.title")}
-        </h1>
-        <p className="mb-8 text-center text-sm text-slate-500">
-          {t("signup.subtitle")}
-        </p>
+        <h1 className="mb-1 text-center text-2xl font-extrabold text-slate-900">{t("signup.title")}</h1>
+        <p className="mb-6 text-center text-sm text-slate-500">{t("signup.subtitle")}</p>
+
+        {/* Role picker */}
+        <div className="mb-6">
+          <p className="mb-2 text-sm font-semibold text-slate-700">I am a…</p>
+          <div className="grid grid-cols-2 gap-3">
+            <RoleCard
+              selected={role === "professional"}
+              onSelect={() => setRole("professional")}
+              icon={
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              }
+              label="Doctor / Professional"
+              description="Manage your clinic, patients and schedule"
+            />
+            <RoleCard
+              selected={role === "secretary"}
+              onSelect={() => setRole("secretary")}
+              icon={
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                  <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                  <line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
+                </svg>
+              }
+              label="Secretary"
+              description="Support a doctor's appointments and patients"
+            />
+          </div>
+        </div>
 
         {error && (
           <div className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 border border-red-200">
@@ -127,9 +144,7 @@ export default function SignupPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              {t("signup.fullName")}
-            </label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">{t("signup.fullName")}</label>
             <input
               type="text"
               required
@@ -140,9 +155,7 @@ export default function SignupPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              {t("signup.email")}
-            </label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">{t("signup.email")}</label>
             <input
               type="email"
               required
@@ -153,9 +166,7 @@ export default function SignupPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              {t("signup.password")}
-            </label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">{t("signup.password")}</label>
             <input
               type="password"
               required
@@ -166,9 +177,7 @@ export default function SignupPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              {t("signup.confirmPassword")}
-            </label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">{t("signup.confirmPassword")}</label>
             <input
               type="password"
               required
@@ -197,10 +206,7 @@ export default function SignupPage() {
 
         <p className="mt-6 text-center text-sm text-slate-500">
           {t("signup.hasAccount")}{" "}
-          <Link
-            href={localePath("/auth/login")}
-            className="font-semibold text-teal-600 hover:underline"
-          >
+          <Link href={localePath("/auth/login")} className="font-semibold text-teal-600 hover:underline">
             {t("signup.logIn")}
           </Link>
         </p>
@@ -208,10 +214,34 @@ export default function SignupPage() {
 
       <p className="mt-8 text-sm text-slate-400">
         SolvyMed by{" "}
-        <Link href={localePath("/")} className="text-teal-600 hover:underline">
-          BurrowSoft
-        </Link>
+        <Link href={localePath("/")} className="text-teal-600 hover:underline">BurrowSoft</Link>
       </p>
     </div>
+  );
+}
+
+function RoleCard({
+  selected, onSelect, icon, label, description,
+}: {
+  selected: boolean;
+  onSelect: () => void;
+  icon: React.ReactNode;
+  label: string;
+  description: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className={`flex flex-col items-center gap-2 rounded-2xl border-2 p-4 text-left transition-all ${
+        selected
+          ? "border-teal-500 bg-teal-50 shadow-sm"
+          : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+      }`}
+    >
+      <span className={selected ? "text-teal-600" : "text-slate-400"}>{icon}</span>
+      <span className={`text-sm font-bold leading-tight ${selected ? "text-teal-900" : "text-slate-700"}`}>{label}</span>
+      <span className={`text-xs leading-snug text-center ${selected ? "text-teal-700" : "text-slate-400"}`}>{description}</span>
+    </button>
   );
 }
