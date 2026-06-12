@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     {
       cookies: {
         getAll: () => request.cookies.getAll(),
-        setAll: (cookies) => pendingCookies.push(...cookies),
+        setAll: (cookies) => { pendingCookies.push(...cookies); },
       },
     },
   );
