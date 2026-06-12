@@ -34,7 +34,7 @@ export default async function SchedulePage({
   const today = new Date().toISOString().split("T")[0];
   const currentDate = dateParam ?? today;
 
-  const [apptsResult, patientsResult, tentativeBookings] = await Promise.all([
+  const [apptsResult, patientsResult, procsResult, tentativeBookings] = await Promise.all([
     supabase
       .from("appointments")
       .select("id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes")
@@ -46,6 +46,12 @@ export default async function SchedulePage({
       .select("id, full_name")
       .eq("professional_id", user.id)
       .order("full_name"),
+    supabase
+      .from("procedures")
+      .select("id, name, duration_minutes, price, payment_type")
+      .eq("professional_id", user.id)
+      .eq("active", true)
+      .order("name"),
     getTentativeBookings(),
   ]);
 
@@ -55,6 +61,7 @@ export default async function SchedulePage({
     payment_status: string; payment_amount?: number; notes?: string;
   }[];
   const patients = (patientsResult.data ?? []) as { id: string; full_name: string }[];
+  const procedures = (procsResult.data ?? []) as { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
 
   const regularAppts = appointments.filter(a => a.status !== "blocked");
   const blockedSlots = appointments.filter(a => a.status === "blocked");
@@ -69,7 +76,7 @@ export default async function SchedulePage({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <BlockTimeButton defaultDate={currentDate} />
-          <NewAppointmentButton patients={patients} defaultDate={currentDate} />
+          <NewAppointmentButton patients={patients} defaultDate={currentDate} procedures={procedures} />
         </div>
       </div>
 

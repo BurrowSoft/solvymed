@@ -5,6 +5,7 @@ import { useState, useTransition, useRef } from "react";
 import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime } from "./actions";
 
 type Patient = { id: string; full_name: string };
+type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
   id: string;
   patient_name: string;
@@ -147,11 +148,37 @@ export function DeleteAppointmentButton({ id }: { id: string }) {
   );
 }
 
-export function NewAppointmentButton({ patients, defaultDate }: { patients: Patient[]; defaultDate: string }) {
+export function NewAppointmentButton({ patients, defaultDate, procedures }: {
+  patients: Patient[];
+  defaultDate: string;
+  procedures: Procedure[];
+}) {
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
+  const [selectedProcName, setSelectedProcName] = useState("");
+  const [duration, setDuration] = useState("30");
+  const [paymentType, setPaymentType] = useState("private");
   const formRef = useRef<HTMLFormElement>(null);
+
+  function handleOpen() {
+    const first = procedures[0] ?? null;
+    setSelectedProcName(first?.name ?? "");
+    setDuration(String(first?.duration_minutes ?? 30));
+    setPaymentType(first?.payment_type ?? "private");
+    setError("");
+    setOpen(true);
+  }
+
+  function handleProcChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const name = e.target.value;
+    setSelectedProcName(name);
+    const proc = procedures.find(p => p.name === name);
+    if (proc) {
+      setDuration(String(proc.duration_minutes));
+      setPaymentType(proc.payment_type);
+    }
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -161,13 +188,12 @@ export function NewAppointmentButton({ patients, defaultDate }: { patients: Pati
       const result = await createAppointment(formData);
       if (result?.error) { setError(result.error); return; }
       setOpen(false);
-      formRef.current?.reset();
     });
   }
 
   return (
     <>
-      <button onClick={() => setOpen(true)} className="flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition shadow-sm">
+      <button onClick={handleOpen} className="flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition shadow-sm">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         New Appointment
       </button>
@@ -181,6 +207,28 @@ export function NewAppointmentButton({ patients, defaultDate }: { patients: Pati
               {patients.map(p => <option key={p.id} value={p.full_name} />)}
             </datalist>
           </div>
+
+          <div>
+            <FieldLabel>Procedure *</FieldLabel>
+            {procedures.length === 0 ? (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3 text-xs text-amber-700">
+                No procedures configured.{" "}
+                <a href="/dashboard/settings" className="font-semibold underline underline-offset-2">
+                  Add procedures in Settings
+                </a>{" "}
+                before scheduling.
+              </div>
+            ) : (
+              <Select name="consultation_type" value={selectedProcName} onChange={handleProcChange} required>
+                {procedures.map(p => (
+                  <option key={p.id} value={p.name}>
+                    {p.name}{p.price ? ` · R$ ${p.price.toFixed(2)}` : ""}
+                  </option>
+                ))}
+              </Select>
+            )}
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <FieldLabel>Date *</FieldLabel>
@@ -191,17 +239,18 @@ export function NewAppointmentButton({ patients, defaultDate }: { patients: Pati
               <Input name="start_time" type="time" required defaultValue="09:00" />
             </div>
           </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <FieldLabel>Duration (min)</FieldLabel>
-              <Select name="duration_minutes" defaultValue="30">
-                <option value="15">15 min</option>
-                <option value="30">30 min</option>
-                <option value="45">45 min</option>
-                <option value="60">60 min</option>
-                <option value="90">90 min</option>
-                <option value="120">120 min</option>
-              </Select>
+              <Input
+                name="duration_minutes"
+                type="number"
+                min="5"
+                max="480"
+                value={duration}
+                onChange={e => setDuration(e.target.value)}
+              />
             </div>
             <div>
               <FieldLabel>Type</FieldLabel>
@@ -211,31 +260,24 @@ export function NewAppointmentButton({ patients, defaultDate }: { patients: Pati
               </Select>
             </div>
           </div>
-          <div>
-            <FieldLabel>Consultation Type</FieldLabel>
-            <Select name="consultation_type">
-              <option value="Consultation">Consultation</option>
-              <option value="Follow-up">Follow-up</option>
-              <option value="Exam Review">Exam Review</option>
-              <option value="Procedure">Procedure</option>
-              <option value="Emergency">Emergency</option>
-            </Select>
-          </div>
+
           <div>
             <FieldLabel>Payment</FieldLabel>
-            <Select name="payment_type">
+            <Select name="payment_type" value={paymentType} onChange={e => setPaymentType(e.target.value)}>
               <option value="private">Private</option>
               <option value="insurance">Insurance</option>
             </Select>
           </div>
+
           <div>
             <FieldLabel>Notes</FieldLabel>
             <textarea name="notes" rows={2} placeholder="Optional notes…" className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
           </div>
+
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">Cancel</button>
-            <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
+            <button type="submit" disabled={pending || procedures.length === 0} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
               {pending ? "Saving…" : "Save Appointment"}
             </button>
           </div>
