@@ -61,8 +61,10 @@ export async function middleware(req: NextRequest) {
     (l) => l !== routing.defaultLocale && pathname.startsWith(`/${l}`)
   );
   const isApiOrAsset = /^\/(api|_next|favicon|.*\..*)/.test(pathname);
+  const ua = req.headers.get("user-agent") ?? "";
+  const isBot = /googlebot|bingbot|yandexbot|baiduspider|applebot|facebookexternalhit|twitterbot/i.test(ua);
 
-  if (!hasLocalePrefix && !isApiOrAsset && !req.cookies.has("NEXT_LOCALE")) {
+  if (!hasLocalePrefix && !isApiOrAsset && !req.cookies.has("NEXT_LOCALE") && !isBot) {
     const country =
       req.headers.get("x-vercel-ip-country") ??
       req.headers.get("cf-ipcountry") ??

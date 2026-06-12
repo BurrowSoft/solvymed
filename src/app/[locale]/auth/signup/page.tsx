@@ -35,11 +35,6 @@ export default function SignupPage() {
       return;
     }
 
-    if (role === "patient" && !inviteCode.trim()) {
-      setError("Please enter the invite code you received from your doctor.");
-      return;
-    }
-
     setLoading(true);
     const supabase = createClient();
     const { error: authError } = await supabase.auth.signUp({
@@ -162,7 +157,7 @@ export default function SignupPage() {
         {role === "patient" && (
           <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4">
             <label className="block text-sm font-semibold text-slate-700 mb-1">
-              Invite code
+              Invite code <span className="font-normal text-slate-400">(optional)</span>
             </label>
             <input
               type="text"
@@ -172,7 +167,7 @@ export default function SignupPage() {
               maxLength={6}
               className="w-full rounded-xl border border-teal-200 bg-white px-4 py-3 text-base font-mono tracking-widest uppercase text-slate-900 placeholder:text-slate-400 placeholder:normal-case placeholder:tracking-normal focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
-            <p className="mt-1.5 text-xs text-slate-500">Ask your doctor for their 6-character invite code</p>
+            <p className="mt-1.5 text-xs text-slate-500">Enter a doctor's code to get linked or highlighted automatically</p>
           </div>
         )}
 

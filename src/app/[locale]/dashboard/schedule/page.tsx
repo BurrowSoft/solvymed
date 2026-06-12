@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton } from "./ScheduleClient";
+import { BookingRequestsPanel } from "./BookingRequestsPanel";
+import { getTentativeBookings } from "./booking-actions";
 
 function statusBadge(status: string) {
   switch (status) {
@@ -32,7 +34,7 @@ export default async function SchedulePage({
   const today = new Date().toISOString().split("T")[0];
   const currentDate = dateParam ?? today;
 
-  const [apptsResult, patientsResult] = await Promise.all([
+  const [apptsResult, patientsResult, tentativeBookings] = await Promise.all([
     supabase
       .from("appointments")
       .select("id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes")
@@ -44,6 +46,7 @@ export default async function SchedulePage({
       .select("id, full_name")
       .eq("professional_id", user.id)
       .order("full_name"),
+    getTentativeBookings(),
   ]);
 
   const appointments = (apptsResult.data ?? []) as {
@@ -74,6 +77,9 @@ export default async function SchedulePage({
       <div className="mb-6 flex items-center gap-3">
         <ScheduleNav currentDate={currentDate} />
       </div>
+
+      {/* Booking Requests */}
+      <BookingRequestsPanel bookings={tentativeBookings as Parameters<typeof BookingRequestsPanel>[0]["bookings"]} />
 
       {/* Appointments */}
       {appointments.length === 0 ? (

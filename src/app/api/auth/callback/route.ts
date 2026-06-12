@@ -22,11 +22,34 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL("/dashboard", origin));
       }
 
-      if (role === "patient" && inviteCode) {
-        const { data: rpcData } = await supabase.rpc("patient_by_invite_code", { code: inviteCode });
-        if (rpcData?.length) {
+      if (role === "patient") {
+        if (inviteCode) {
+          // Try patient invite code (links to existing patient record)
+          const { data: patientData } = await supabase.rpc("patient_by_invite_code", { code: inviteCode });
+          if (patientData?.length) {
+            await supabase.from("user_roles").upsert(
+              { user_id: data.user.id, role: "patient", linked_patient_id: patientData[0].patient_id },
+              { onConflict: "user_id" }
+            );
+          } else {
+            // Try professional public invite code (highlights that doctor in discovery)
+            const { data: profData } = await supabase.rpc("professional_by_invite_code", { code: inviteCode });
+            if (profData?.length) {
+              await supabase.from("user_roles").upsert(
+                { user_id: data.user.id, role: "patient", invited_by_professional_id: profData[0].professional_id },
+                { onConflict: "user_id" }
+              );
+            } else {
+              // No match — register as patient without linking
+              await supabase.from("user_roles").upsert(
+                { user_id: data.user.id, role: "patient" },
+                { onConflict: "user_id" }
+              );
+            }
+          }
+        } else {
           await supabase.from("user_roles").upsert(
-            { user_id: data.user.id, role: "patient", linked_patient_id: rpcData[0].patient_id },
+            { user_id: data.user.id, role: "patient" },
             { onConflict: "user_id" }
           );
         }
