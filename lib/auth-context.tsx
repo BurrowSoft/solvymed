@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
-import { upsertProfessional, getProfessional } from './services';
+import { upsertProfessional, getProfessional, linkByInviteCode, getUserRole } from './services';
 
 interface AuthContextType {
   session: Session | null;
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string, locale?: string, role?: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, locale?: string, role?: string, inviteCode?: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   resendConfirmation: (email: string) => Promise<{ error: string | null }>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<{ error: string | null }>;
@@ -47,12 +47,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const role = session.user.user_metadata?.role ?? 'professional';
         if (role === 'professional' || role === 'secretary') {
           ensureProfessional(session.user.id, session.user.email ?? '');
+        } else if (role === 'patient') {
+          autoLinkPatient(session.user.id, session.user.user_metadata?.invite_code);
         }
       }
     });
 
     return () => listener.subscription.unsubscribe();
   }, []);
+
+  async function autoLinkPatient(userId: string, inviteCode?: string) {
+    if (!inviteCode) return;
+    try {
+      const existing = await getUserRole(userId);
+      if (!existing) {
+        await linkByInviteCode(userId, inviteCode);
+      }
+    } catch {
+      // silently ignore
+    }
+  }
 
   async function ensureProfessional(id: string, email: string) {
     try {
@@ -72,14 +86,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error: error?.message ?? null };
   }
 
-  async function signUp(email: string, password: string, locale?: string, role?: string) {
-    const webLocale = !locale || locale === 'en' ? '' : `/${locale === 'pt-BR' ? 'pt-BR' : locale.split('-')[0]}`;
+  async function signUp(email: string, password: string, locale?: string, role?: string, inviteCode?: string) {
+    const metadata: Record<string, string> = {
+      locale: locale ?? 'en',
+      role: role ?? 'professional',
+      platform: 'mobile',
+    };
+    if (inviteCode) metadata.invite_code = inviteCode.toUpperCase().trim();
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `https://www.solvymed.com${webLocale}/auth/confirm`,
-        data: { locale: locale ?? 'en', role: role ?? 'professional' },
+        emailRedirectTo: 'https://www.solvymed.com/auth/confirm',
+        data: metadata,
       },
     });
     if (!error && data.user?.identities?.length === 0) {

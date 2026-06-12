@@ -19,6 +19,7 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,9 +39,13 @@ export default function SignUpScreen() {
       setError('Password must be at least 6 characters.');
       return;
     }
+    if (selectedRole === 'patient' && !inviteCode.trim()) {
+      setError('Please enter your invite code from your doctor.');
+      return;
+    }
     setLoading(true);
     setError(null);
-    const { error } = await signUp(email.trim(), password, locale, selectedRole);
+    const { error } = await signUp(email.trim(), password, locale, selectedRole, inviteCode.trim() || undefined);
     setLoading(false);
     if (error === 'already_registered') {
       setAlreadyRegistered(true);
@@ -132,6 +137,26 @@ export default function SignUpScreen() {
               </TouchableOpacity>
             ))}
           </View>
+
+          {selectedRole === 'patient' && (
+            <View style={styles.field}>
+              <Text style={styles.label}>Invite code</Text>
+              <View style={styles.inputBox}>
+                <Ionicons name="key-outline" size={18} color={Colors.textMuted} />
+                <TextInput
+                  style={[styles.input, { textTransform: 'uppercase', letterSpacing: 2 }]}
+                  value={inviteCode}
+                  onChangeText={v => setInviteCode(v.toUpperCase())}
+                  placeholder="ABC123"
+                  placeholderTextColor={Colors.textMuted}
+                  autoCapitalize="characters"
+                  autoCorrect={false}
+                  maxLength={6}
+                />
+              </View>
+              <Text style={styles.inviteHint}>Ask your doctor for their 6-character invite code</Text>
+            </View>
+          )}
 
           {error && (
             <View style={styles.errorBox}>
@@ -271,6 +296,7 @@ const styles = StyleSheet.create({
   roleLabel: { fontSize: 13, fontWeight: '600', color: Colors.textSecondary },
   roleLabelActive: { color: Colors.primary },
   roleDesc: { fontSize: 11, color: Colors.textMuted, marginTop: 1 },
+  inviteHint: { fontSize: 11, color: Colors.textMuted, marginTop: 4 },
   successContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32, gap: 20 },
   successIcon: {
     width: 72, height: 72, borderRadius: 36,

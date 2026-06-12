@@ -789,14 +789,10 @@ export async function linkByInviteCode(
   userId: string,
   code: string,
 ): Promise<{ patientId: string; patientName: string } | null> {
-  const { data } = await supabase
-    .from('patients')
-    .select('id, full_name')
-    .eq('invite_code', code.toUpperCase().trim())
-    .limit(1);
+  const { data } = await supabase.rpc('patient_by_invite_code', { code });
   if (!data?.length) return null;
-  const patientId = data[0].id as string;
-  const patientName = data[0].full_name as string;
+  const patientId = data[0].patient_id as string;
+  const patientName = data[0].patient_name as string;
   await setUserRole(userId, 'patient', patientId);
   return { patientId, patientName };
 }
