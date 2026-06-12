@@ -113,7 +113,7 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const newStatus = e.target.value;
     setStatus(newStatus);
-    startTransition(() => updateAppointmentStatus(id, newStatus));
+    startTransition(async () => { await updateAppointmentStatus(id, newStatus); });
   }
 
   return (
@@ -135,7 +135,7 @@ export function DeleteAppointmentButton({ id }: { id: string }) {
 
   function handleDelete() {
     if (!confirm("Delete this appointment?")) return;
-    startTransition(() => deleteAppointment(id));
+    startTransition(async () => { await deleteAppointment(id); });
   }
 
   return (

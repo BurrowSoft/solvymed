@@ -54,7 +54,7 @@ export function MarkPaidButton({ id, amount }: { id: string; amount?: number }) 
   function handlePaid() {
     if (!amount && !inputVal) { setShowAmount(true); return; }
     const finalAmount = parseFloat(inputVal) || amount || 0;
-    startTransition(() => markPaid(id, finalAmount));
+    startTransition(async () => { await markPaid(id, finalAmount); });
   }
 
   if (showAmount) {
@@ -103,7 +103,7 @@ export function MarkUnpaidButton({ id }: { id: string }) {
     <button
       onClick={() => {
         if (!confirm("Revert this payment to pending?")) return;
-        startTransition(() => markUnpaid(id));
+        startTransition(async () => { await markUnpaid(id); });
       }}
       disabled={pending}
       className="rounded-lg bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-100 transition disabled:opacity-60"

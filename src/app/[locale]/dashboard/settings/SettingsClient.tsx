@@ -331,7 +331,7 @@ function ProcedureRow({ proc }: { proc: Procedure }) {
       </div>
       <div className="flex items-center gap-2 shrink-0">
         <button
-          onClick={() => start(() => toggleProcedure(proc.id, !proc.active))}
+          onClick={() => start(async () => { await toggleProcedure(proc.id, !proc.active); })}
           disabled={pending}
           title={proc.active ? "Disable" : "Enable"}
           className={`rounded-lg px-3 py-1 text-xs font-semibold transition disabled:opacity-60 ${proc.active ? "bg-slate-100 text-slate-600 hover:bg-slate-200" : "bg-teal-50 text-teal-700 hover:bg-teal-100"}`}
@@ -339,7 +339,7 @@ function ProcedureRow({ proc }: { proc: Procedure }) {
           {pending ? "…" : proc.active ? "Disable" : "Enable"}
         </button>
         <button
-          onClick={() => { if (confirm(`Delete "${proc.name}"?`)) start(() => deleteProcedure(proc.id)); }}
+          onClick={() => { if (confirm(`Delete "${proc.name}"?`)) start(async () => { await deleteProcedure(proc.id); }); }}
           disabled={pending}
           title="Delete"
           className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition disabled:opacity-60"

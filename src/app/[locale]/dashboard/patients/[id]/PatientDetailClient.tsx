@@ -246,7 +246,7 @@ function RecordsTab({ patientId, records }: { patientId: string; records: MedRec
 
   function handleDelete(id: string) {
     if (!confirm("Delete this record? This cannot be undone.")) return;
-    startTransition(() => deleteRecord(id, patientId));
+    startTransition(async () => { await deleteRecord(id, patientId); });
   }
 
   return (
@@ -342,7 +342,7 @@ function PrescriptionsTab({ patientId, prescriptions }: { patientId: string; pre
 
   function handleDelete(id: string) {
     if (!confirm("Delete this prescription?")) return;
-    startTransition(() => deletePrescription(id, patientId));
+    startTransition(async () => { await deletePrescription(id, patientId); });
   }
 
   return (
