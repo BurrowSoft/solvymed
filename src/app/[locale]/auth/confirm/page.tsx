@@ -16,6 +16,8 @@ export default async function AuthConfirmPage({
     return <ConfirmClient state="unknown" deepLink="solvymed://" />;
   }
 
+  // createClient() uses next/headers cookies() which correctly propagates
+  // session cookies through Server Component redirects (unlike Route Handlers).
   const supabase = await createClient();
   const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
@@ -27,16 +29,19 @@ export default async function AuthConfirmPage({
   const platform = data.user.user_metadata?.platform as string | undefined;
   const role = data.user.user_metadata?.role as string | undefined;
 
-  // Web signup: insert secretary role if needed, then redirect to dashboard
+  // Web signup: insert secretary role if needed, then go straight to dashboard.
+  // redirect() from next/navigation in a Server Component correctly carries the
+  // session cookies that were set via the cookie store above.
   if (platform === "web") {
     if (role === "secretary") {
       await supabase.from("user_roles").upsert(
         { user_id: data.user.id, role: "secretary" },
-        { onConflict: "user_id" }
+        { onConflict: "user_id" },
       );
     }
-    const prefix = locale === "en" ? "" : `/${locale}`;
-    redirect(`${prefix}/dashboard`);
+    // Redirect to /dashboard without a locale prefix — the middleware's
+    // geo-redirect will add the correct locale (e.g. /th/dashboard) automatically.
+    redirect("/dashboard");
   }
 
   // Mobile signup: pass tokens to client for deep-link redirect
