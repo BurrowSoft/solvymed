@@ -59,10 +59,12 @@ async function fetchAvailableSlots(
     p_date: date,
   });
 
-  const busyRanges = (busy ?? []).map((row: Record<string, unknown>) => ({
-    start: toMinutes(row.slot_start as string),
-    end: toMinutes(row.slot_end as string),
-  }));
+  const busyRanges: Array<{ start: number; end: number }> = (busy ?? []).map(
+    (row: Record<string, unknown>) => ({
+      start: toMinutes(row.slot_start as string),
+      end: toMinutes(row.slot_end as string),
+    }),
+  );
 
   const slots: TimeSlot[] = [];
   let cursor = dayStart;
