@@ -87,6 +87,7 @@ export function BookingClient({
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
 
+  const [consultType, setConsultType] = useState("");
   const [notes, setNotes] = useState("");
   const [booking, setBooking] = useState(false);
   const [error, setError] = useState("");
@@ -130,6 +131,7 @@ export function BookingClient({
         if (procs.length > 0) {
           setSelectedProcedure(procs[0]);
           setDuration(procs[0].durationMinutes);
+          setConsultType(procs[0].name);
         }
       } catch {
         // ignore
@@ -174,7 +176,7 @@ export function BookingClient({
         p_start_time: selectedSlot.start,
         p_end_time: selectedSlot.end,
         p_duration_minutes: duration,
-        p_consultation_type: selectedProcedure?.name || specialty || "Consultation",
+        p_consultation_type: consultType.trim() || specialty || "Consultation",
         p_payment_type: selectedProcedure?.paymentType ?? "private",
         p_notes: notes.trim() || null,
       });
@@ -286,7 +288,7 @@ export function BookingClient({
                     return (
                       <button
                         key={proc.id}
-                        onClick={() => { setSelectedProcedure(proc); setDuration(proc.durationMinutes); }}
+                        onClick={() => { setSelectedProcedure(proc); setDuration(proc.durationMinutes); setConsultType(proc.name); }}
                         className={`w-full text-left rounded-xl border-2 px-4 py-3 transition ${active ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
                       >
                         <p className={`font-semibold text-sm ${active ? "text-teal-800" : "text-slate-800"}`}>{proc.name}</p>
@@ -314,6 +316,20 @@ export function BookingClient({
                 </div>
               </div>
             )}
+
+            {/* Consultation type */}
+            <div>
+              <h2 className="text-sm font-bold text-slate-700 mb-2">
+                What is this appointment for? <span className="font-normal text-red-400">*</span>
+              </h2>
+              <input
+                type="text"
+                value={consultType}
+                onChange={(e) => setConsultType(e.target.value)}
+                placeholder="e.g. First visit, Follow-up, Annual check-up…"
+                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              />
+            </div>
 
             {/* Date strip */}
             <div>
@@ -378,7 +394,7 @@ export function BookingClient({
 
             <button
               onClick={handleBook}
-              disabled={!selectedSlot || booking}
+              disabled={!selectedSlot || !consultType.trim() || booking}
               className="w-full rounded-xl bg-teal-600 py-4 text-base font-bold text-white shadow-sm hover:bg-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {booking ? (
