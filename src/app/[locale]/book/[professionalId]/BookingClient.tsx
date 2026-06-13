@@ -10,6 +10,7 @@ type Procedure = { id: string; name: string; durationMinutes: number; price?: nu
 
 const FALLBACK_DURATIONS = [30, 45, 60];
 const DAYS_AHEAD = 14;
+const CONSULT_TYPES = ["Consultation", "Follow-up", "Exam Review", "Procedure", "Emergency"] as const;
 
 function buildDays() {
   return Array.from({ length: DAYS_AHEAD }, (_, i) => {
@@ -73,6 +74,16 @@ export function BookingClient({
   const prefix = locale === "en" ? "" : `/${locale}`;
   const days = buildDays();
 
+  function applyConsultType(name: string) {
+    if ((CONSULT_TYPES as readonly string[]).includes(name)) {
+      setConsultType(name);
+      setIsOther(false);
+    } else {
+      setConsultType(name);
+      setIsOther(true);
+    }
+  }
+
   // Working hours — fetched via SECURITY DEFINER RPC (patients can't read professionals table)
   const [workingHours, setWorkingHours] = useState<WorkingHours>({});
   const [loadingHours, setLoadingHours] = useState(true);
@@ -88,6 +99,7 @@ export function BookingClient({
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
 
   const [consultType, setConsultType] = useState("");
+  const [isOther, setIsOther] = useState(false);
   const [notes, setNotes] = useState("");
   const [booking, setBooking] = useState(false);
   const [error, setError] = useState("");
@@ -131,7 +143,7 @@ export function BookingClient({
         if (procs.length > 0) {
           setSelectedProcedure(procs[0]);
           setDuration(procs[0].durationMinutes);
-          setConsultType(procs[0].name);
+          applyConsultType(procs[0].name);
         }
       } catch {
         // ignore
@@ -288,7 +300,7 @@ export function BookingClient({
                     return (
                       <button
                         key={proc.id}
-                        onClick={() => { setSelectedProcedure(proc); setDuration(proc.durationMinutes); setConsultType(proc.name); }}
+                        onClick={() => { setSelectedProcedure(proc); setDuration(proc.durationMinutes); applyConsultType(proc.name); }}
                         className={`w-full text-left rounded-xl border-2 px-4 py-3 transition ${active ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
                       >
                         <p className={`font-semibold text-sm ${active ? "text-teal-800" : "text-slate-800"}`}>{proc.name}</p>
@@ -322,13 +334,38 @@ export function BookingClient({
               <h2 className="text-sm font-bold text-slate-700 mb-2">
                 What is this appointment for? <span className="font-normal text-red-400">*</span>
               </h2>
-              <input
-                type="text"
-                value={consultType}
-                onChange={(e) => setConsultType(e.target.value)}
-                placeholder="e.g. First visit, Follow-up, Annual check-up…"
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              />
+              <div className="flex flex-wrap gap-2">
+                {CONSULT_TYPES.map((type) => {
+                  const active = !isOther && consultType === type;
+                  return (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => { setConsultType(type); setIsOther(false); }}
+                      className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${active ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
+                    >
+                      {type}
+                    </button>
+                  );
+                })}
+                <button
+                  type="button"
+                  onClick={() => { setIsOther(true); setConsultType(""); }}
+                  className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${isOther ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
+                >
+                  Other
+                </button>
+              </div>
+              {isOther && (
+                <input
+                  type="text"
+                  value={consultType}
+                  onChange={(e) => setConsultType(e.target.value)}
+                  placeholder="Describe the appointment…"
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                  autoFocus
+                />
+              )}
             </div>
 
             {/* Date strip */}

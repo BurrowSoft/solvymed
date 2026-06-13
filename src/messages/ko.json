@@ -59,6 +59,11 @@
     "errorSub": "This link may have expired or already been used. Please try signing up again in the app.",
     "backToHome": "Back to Solvymed.com"
   },
+  "discover": {
+    "title": "예약하기",
+    "subtitle": "클리닉 이름, 도시, 의사 또는 전문 분야로 검색",
+    "recentDoctors": "최근 진료 의사"
+  },
   "auth": {
     "login": {
       "title": "Welcome back",

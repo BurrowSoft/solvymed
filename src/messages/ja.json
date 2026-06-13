@@ -59,6 +59,11 @@
     "errorSub": "This link may have expired or already been used. Please try signing up again in the app.",
     "backToHome": "Back to Solvymed.com"
   },
+  "discover": {
+    "title": "予約する",
+    "subtitle": "クリニック名、市区町村、医師または専門で検索",
+    "recentDoctors": "最近の医師"
+  },
   "auth": {
     "login": {
       "title": "Welcome back",

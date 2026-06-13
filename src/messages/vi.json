@@ -59,6 +59,11 @@
     "errorSub": "This link may have expired or already been used. Please try signing up again in the app.",
     "backToHome": "Back to Solvymed.com"
   },
+  "discover": {
+    "title": "Đặt Lịch Khám",
+    "subtitle": "Tìm theo tên phòng khám, thành phố, bác sĩ hoặc chuyên khoa",
+    "recentDoctors": "Bác Sĩ Gần Đây"
+  },
   "auth": {
     "login": {
       "title": "Welcome back",

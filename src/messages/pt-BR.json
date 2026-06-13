@@ -59,6 +59,11 @@
     "errorSub": "Este link pode ter expirado ou já foi utilizado. Tente se cadastrar novamente no aplicativo.",
     "backToHome": "Voltar para Solvymed.com"
   },
+  "discover": {
+    "title": "Agende uma Consulta",
+    "subtitle": "Busque por clínica, cidade, médico ou especialidade",
+    "recentDoctors": "Seus Médicos Recentes"
+  },
   "auth": {
     "login": {
       "title": "Bem-vindo de volta",

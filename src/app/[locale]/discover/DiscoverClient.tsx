@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import type { ClinicListing } from "./page";
 
@@ -11,11 +12,12 @@ const ClinicMap = dynamic(
   { ssr: false, loading: () => <div className="flex h-[480px] items-center justify-center rounded-2xl bg-slate-100 text-slate-400 text-sm">Loading map…</div> },
 );
 
-type Props = { clinics: ClinicListing[] };
+type Props = { clinics: ClinicListing[]; recentProfessionalIds?: string[] };
 
-export function DiscoverClient({ clinics }: Props) {
+export function DiscoverClient({ clinics, recentProfessionalIds = [] }: Props) {
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
+  const t = useTranslations("discover");
   const [search, setSearch] = useState("");
   const [view, setView] = useState<"list" | "map">("list");
   const [selected, setSelected] = useState<ClinicListing | null>(null);
@@ -74,8 +76,8 @@ export function DiscoverClient({ clinics }: Props) {
               Sign out
             </button>
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 mt-3 mb-1">Find a clinic</h1>
-          <p className="text-slate-500 text-sm mb-4">Search by clinic name, city, doctor, or specialty</p>
+          <h1 className="text-2xl font-extrabold text-slate-900 mt-3 mb-1">{t("title")}</h1>
+          <p className="text-slate-500 text-sm mb-4">{t("subtitle")}</p>
 
           {/* Search */}
           <div className="relative">
@@ -86,12 +88,51 @@ export function DiscoverClient({ clinics }: Props) {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search clinics, doctors, specialties…"
+              placeholder={t("subtitle")}
               className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-3 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
           </div>
         </div>
       </div>
+
+      {/* Recent Doctors */}
+      {recentProfessionalIds.length > 0 && (() => {
+        const recentDocs: { prof: ClinicListing["professionals"][0]; clinic: ClinicListing }[] = [];
+        for (const pid of recentProfessionalIds) {
+          for (const clinic of clinics) {
+            const prof = clinic.professionals.find((p) => p.id === pid);
+            if (prof) { recentDocs.push({ prof, clinic }); break; }
+          }
+          if (recentDocs.length === recentProfessionalIds.length) break;
+        }
+        if (!recentDocs.length) return null;
+        return (
+          <div className="border-b border-slate-100 bg-white px-4 py-4">
+            <div className="mx-auto max-w-3xl">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-3">{t("recentDoctors")}</p>
+              <div className="flex gap-3 overflow-x-auto pb-1">
+                {recentDocs.map(({ prof, clinic }) => (
+                  <button
+                    key={prof.id}
+                    onClick={() => {
+                      const prefix = locale === "en" ? "" : `/${locale}`;
+                      router.push(`${prefix}/book/${prof.id}?name=${encodeURIComponent(prof.name)}&specialty=${encodeURIComponent(prof.specialty ?? "")}&clinicName=${encodeURIComponent(clinic.name)}`);
+                    }}
+                    className="flex shrink-0 flex-col items-center gap-1.5 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-center hover:border-teal-300 hover:bg-teal-50 transition w-28"
+                  >
+                    <div className="h-10 w-10 rounded-full bg-teal-100 flex items-center justify-center text-teal-700 font-bold text-sm">
+                      {prof.name.charAt(0)}
+                    </div>
+                    <p className="text-xs font-semibold text-slate-800 leading-tight line-clamp-2">{prof.name.split(" ")[0]}</p>
+                    {prof.specialty && <p className="text-[10px] text-teal-600 leading-tight line-clamp-1">{prof.specialty}</p>}
+                    <p className="text-[10px] text-slate-400 leading-tight line-clamp-1">{clinic.name}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* View toggle + results */}
       <div className="mx-auto max-w-3xl px-4 py-4">

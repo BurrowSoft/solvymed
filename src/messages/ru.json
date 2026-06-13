@@ -59,6 +59,11 @@
     "errorSub": "This link may have expired or already been used. Please try signing up again in the app.",
     "backToHome": "Back to Solvymed.com"
   },
+  "discover": {
+    "title": "Записаться на приём",
+    "subtitle": "Поиск по клинике, городу, врачу или специализации",
+    "recentDoctors": "Ваши последние врачи"
+  },
   "auth": {
     "login": {
       "title": "Welcome back",

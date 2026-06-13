@@ -83,7 +83,7 @@ export default function PatientWelcomePage() {
           href={discoverPath}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-teal-600 px-6 py-3.5 text-base font-bold text-white shadow-md shadow-teal-600/20 transition hover:bg-teal-700 active:scale-95 mb-4"
         >
-          Find a clinic now
+          Book an Appointment
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>

@@ -59,6 +59,11 @@
     "errorSub": "Ce lien a peut-être expiré ou a déjà été utilisé. Veuillez vous inscrire à nouveau depuis l'app.",
     "backToHome": "Retour à Solvymed.com"
   },
+  "discover": {
+    "title": "Prendre un Rendez-vous",
+    "subtitle": "Rechercher par clinique, ville, médecin ou spécialité",
+    "recentDoctors": "Vos Médecins Récents"
+  },
   "auth": {
     "login": {
       "title": "Welcome back",

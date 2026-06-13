@@ -59,6 +59,11 @@
     "errorSub": "This link may have expired or already been used. Please try signing up again in the app.",
     "backToHome": "Back to Solvymed.com"
   },
+  "discover": {
+    "title": "จองการนัดหมาย",
+    "subtitle": "ค้นหาตามคลินิก เมือง แพทย์ หรือความเชี่ยวชาญ",
+    "recentDoctors": "แพทย์ล่าสุดของคุณ"
+  },
   "auth": {
     "login": {
       "title": "Welcome back",

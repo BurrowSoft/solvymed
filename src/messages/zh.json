@@ -59,6 +59,11 @@
     "errorSub": "This link may have expired or already been used. Please try signing up again in the app.",
     "backToHome": "Back to Solvymed.com"
   },
+  "discover": {
+    "title": "预约挂号",
+    "subtitle": "按诊所名称、城市、医生或专科搜索",
+    "recentDoctors": "您的近期医生"
+  },
   "auth": {
     "login": {
       "title": "Welcome back",

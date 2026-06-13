@@ -86,7 +86,7 @@ export function MyAppointmentsClient({
               href={`${prefix}/discover`}
               className="text-sm font-medium text-teal-600 hover:underline"
             >
-              Find a clinic
+              Book an Appointment
             </a>
             <button
               onClick={handleSignOut}
@@ -114,12 +114,12 @@ export function MyAppointmentsClient({
                 <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
               </svg>
               <p className="font-semibold text-slate-600">No upcoming appointments</p>
-              <p className="text-sm text-slate-400 mt-1 mb-5">Find a clinic and book your first visit</p>
+              <p className="text-sm text-slate-400 mt-1 mb-5">Book an appointment and start your healthcare journey</p>
               <a
                 href={`${prefix}/discover`}
                 className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition"
               >
-                Find a clinic
+                Book an Appointment
               </a>
             </div>
           ) : (
@@ -148,7 +148,7 @@ export function MyAppointmentsClient({
               href={`${prefix}/discover`}
               className="inline-block rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-teal-700 hover:bg-teal-50 transition"
             >
-              Find a clinic
+              Book an Appointment
             </a>
           </div>
         )}

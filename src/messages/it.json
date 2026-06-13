@@ -59,6 +59,11 @@
     "errorSub": "Questo link potrebbe essere scaduto o già stato utilizzato. Prova a registrarti di nuovo nell'app.",
     "backToHome": "Torna a Solvymed.com"
   },
+  "discover": {
+    "title": "Prenota un Appuntamento",
+    "subtitle": "Cerca per clinica, città, medico o specialità",
+    "recentDoctors": "I Tuoi Medici Recenti"
+  },
   "auth": {
     "login": {
       "title": "Welcome back",

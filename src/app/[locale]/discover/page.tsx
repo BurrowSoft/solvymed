@@ -22,10 +22,32 @@ export type ClinicListing = {
 
 export default async function DiscoverPage() {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  const { data: rows } = await supabase.rpc("get_public_clinics");
+  const [{ data: rows }, { data: recentRows }] = await Promise.all([
+    supabase.rpc("get_public_clinics"),
+    user
+      ? supabase
+          .from("appointments")
+          .select("professional_id")
+          .eq("patient_auth_id", user.id)
+          .not("status", "in", '("cancelled","rejected")')
+          .order("date", { ascending: false })
+          .limit(20)
+      : Promise.resolve({ data: null }),
+  ]);
 
-  // Group rows by clinic id
+  const seenProfIds = new Set<string>();
+  const recentProfessionalIds: string[] = [];
+  for (const row of recentRows ?? []) {
+    const pid = (row as { professional_id: string }).professional_id;
+    if (!seenProfIds.has(pid)) {
+      seenProfIds.add(pid);
+      recentProfessionalIds.push(pid);
+    }
+    if (recentProfessionalIds.length === 5) break;
+  }
+
   const clinicMap = new Map<string, ClinicListing>();
   for (const row of rows ?? []) {
     const r = row as Record<string, unknown>;
@@ -60,5 +82,5 @@ export default async function DiscoverPage() {
 
   const clinics = Array.from(clinicMap.values());
 
-  return <DiscoverClient clinics={clinics} />;
+  return <DiscoverClient clinics={clinics} recentProfessionalIds={recentProfessionalIds} />;
 }
