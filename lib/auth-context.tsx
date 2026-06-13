@@ -58,21 +58,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   async function autoLinkPatient(userId: string, inviteCode?: string) {
-    if (!inviteCode) return;
     try {
       const existing = await getUserRole(userId);
-      if (existing?.linkedPatientId || existing?.invitedByProfessionalId) return;
-      // Try patient invite code first
-      const linked = await linkByInviteCode(userId, inviteCode);
-      if (!linked) {
-        // Try professional public invite code
-        const prof = await getProfessionalByPublicCode(inviteCode);
-        if (prof) {
-          await setInvitedByProfessional(userId, prof.professionalId);
+
+      if (existing) {
+        // Row exists — only try to resolve a pending invite if not yet linked
+        if (inviteCode && !existing.linkedPatientId && !existing.invitedByProfessionalId) {
+          const linked = await linkByInviteCode(userId, inviteCode);
+          if (!linked) {
+            const prof = await getProfessionalByPublicCode(inviteCode);
+            if (prof) await setInvitedByProfessional(userId, prof.professionalId);
+          }
         }
+        return;
+      }
+
+      // No row yet — create the patient role record, then resolve invite if present
+      if (inviteCode) {
+        const linked = await linkByInviteCode(userId, inviteCode);
+        if (!linked) {
+          const prof = await getProfessionalByPublicCode(inviteCode);
+          if (prof) {
+            await setInvitedByProfessional(userId, prof.professionalId);
+          } else {
+            await setUserRole(userId, 'patient');
+          }
+        }
+      } else {
+        await setUserRole(userId, 'patient');
       }
     } catch {
-      // silently ignore
+      // silently ignore — network or RLS failure shouldn't break the app
     }
   }
 

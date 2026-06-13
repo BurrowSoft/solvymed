@@ -178,12 +178,14 @@ function RootNavigator() {
     const inAuth = segments[0] === '(auth)';
     const inTabs = segments[0] === '(tabs)';
     const inResetPassword = segments[1] === 'reset-password';
+    const isPatient = session?.user?.user_metadata?.role === 'patient';
+    const homeTab = isPatient ? '/(tabs)/discover' : '/(tabs)/schedule';
     if (!session && !inAuth) {
       router.replace('/(auth)/login');
     } else if (session && inAuth && !inResetPassword) {
-      router.replace('/(tabs)/schedule');
+      router.replace(homeTab as never);
     } else if (session && !inAuth && !inTabs) {
-      router.replace('/(tabs)/schedule');
+      router.replace(homeTab as never);
     }
   }, [session, loading, onboardingChecked, onboardingDone, pendingRecovery]);
 
