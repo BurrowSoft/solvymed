@@ -185,7 +185,7 @@ export default function HomeScreen() {
           <View style={{ minWidth: 0, flex: 1 }}>
             <Text style={styles.greeting}>{greeting()},</Text>
             <Text style={styles.doctorName} numberOfLines={1}>
-              Dr. {showAvatar ? doctorName : doctorName.split(' ')[0]}
+              {role !== 'patient' ? 'Dr. ' : ''}{showAvatar ? doctorName : doctorName.split(' ')[0]}
             </Text>
           </View>
         </View>

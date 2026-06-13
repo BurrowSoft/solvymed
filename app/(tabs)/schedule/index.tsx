@@ -22,8 +22,8 @@ import { MOCK_APPOINTMENTS } from '@/lib/mock-data';
 import {
   getAppointmentsByDate, updatePaymentStatus, updateAppointmentStatus,
   getAppointmentCountsByWeek, getPatient, updateAppointment, getProfessional, deleteAppointment,
-  getPatientAppointments,
 } from '@/lib/services';
+import { getMyBookings } from '@/lib/booking-service';
 import { getTemplate } from '@/lib/template-service';
 import { buildInvoiceHtml } from '@/lib/pdf-utils';
 import * as Print from 'expo-print';
@@ -552,8 +552,9 @@ export default function ScheduleScreen() {
     setLoading(true);
     try {
       let data: Appointment[];
-      if (isPatient && linkedPatientId) {
-        data = await getPatientAppointments(linkedPatientId, dateStr, dateStr);
+      if (isPatient) {
+        const all = await getMyBookings(user.id);
+        data = all.filter(a => a.date === dateStr);
       } else {
         data = await getAppointmentsByDate(user.id, dateStr);
       }
