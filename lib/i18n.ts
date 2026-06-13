@@ -672,6 +672,16 @@ const en = {
   'book.confirm': 'Confirm Booking',
   'book.success': 'Appointment booked!',
   'book.loading': 'Loading slots…',
+  'book.patientDetails': 'Your details',
+  'book.patientDetailsHint': 'This information helps the doctor prepare for your appointment.',
+  'book.fullNameLabel': 'Full name',
+  'book.fullNamePlaceholder': 'Your full name',
+  'book.emailLabel': 'Email',
+  'book.phoneLabel': 'Phone',
+  'book.phonePlaceholder': '+55 11 99999-9999',
+  'book.dobLabel': 'Date of birth',
+  'book.cpfLabel': 'CPF',
+  'book.cpfPlaceholder': '000.000.000-00',
 };
 
 // ─── Portuguese (Brazil) ─────────────────────────────────────────────────────
@@ -1323,6 +1333,16 @@ const ptBR: typeof en = {
   'book.confirm': 'Confirmar Agendamento',
   'book.success': 'Consulta agendada!',
   'book.loading': 'Carregando horários…',
+  'book.patientDetails': 'Seus dados',
+  'book.patientDetailsHint': 'Estas informações ajudam o médico a se preparar para a sua consulta.',
+  'book.fullNameLabel': 'Nome completo',
+  'book.fullNamePlaceholder': 'Seu nome completo',
+  'book.emailLabel': 'E-mail',
+  'book.phoneLabel': 'Telefone',
+  'book.phonePlaceholder': '+55 11 99999-9999',
+  'book.dobLabel': 'Data de nascimento',
+  'book.cpfLabel': 'CPF',
+  'book.cpfPlaceholder': '000.000.000-00',
 };
 
 // ─── French ───────────────────────────────────────────────────────────────────
@@ -1971,6 +1991,16 @@ const frFR: typeof en = {
   'book.confirm': 'Confirmer le rendez-vous',
   'book.success': 'Rendez-vous pris !',
   'book.loading': 'Chargement des créneaux…',
+  'book.patientDetails': 'Vos coordonnées',
+  'book.patientDetailsHint': 'Ces informations aident le médecin à préparer votre rendez-vous.',
+  'book.fullNameLabel': 'Nom complet',
+  'book.fullNamePlaceholder': 'Votre nom complet',
+  'book.emailLabel': 'E-mail',
+  'book.phoneLabel': 'Téléphone',
+  'book.phonePlaceholder': '+33 6 12 34 56 78',
+  'book.dobLabel': 'Date de naissance',
+  'book.cpfLabel': "Numéro d'identification",
+  'book.cpfPlaceholder': '000.000.000-00',
 };
 
 // ─── German ───────────────────────────────────────────────────────────────────
@@ -2619,6 +2649,16 @@ const deDE: typeof en = {
   'book.confirm': 'Termin bestätigen',
   'book.success': 'Termin gebucht!',
   'book.loading': 'Termine laden…',
+  'book.patientDetails': 'Ihre Angaben',
+  'book.patientDetailsHint': 'Diese Informationen helfen dem Arzt, sich auf Ihren Termin vorzubereiten.',
+  'book.fullNameLabel': 'Vollständiger Name',
+  'book.fullNamePlaceholder': 'Ihr vollständiger Name',
+  'book.emailLabel': 'E-Mail',
+  'book.phoneLabel': 'Telefon',
+  'book.phonePlaceholder': '+49 151 23456789',
+  'book.dobLabel': 'Geburtsdatum',
+  'book.cpfLabel': 'CPF',
+  'book.cpfPlaceholder': '000.000.000-00',
 };
 
 // ─── Italian ──────────────────────────────────────────────────────────────────
@@ -3267,6 +3307,16 @@ const itIT: typeof en = {
   'book.confirm': 'Conferma prenotazione',
   'book.success': 'Appuntamento prenotato!',
   'book.loading': 'Caricamento slot…',
+  'book.patientDetails': 'I tuoi dati',
+  'book.patientDetailsHint': 'Queste informazioni aiutano il medico a prepararsi per il tuo appuntamento.',
+  'book.fullNameLabel': 'Nome completo',
+  'book.fullNamePlaceholder': 'Il tuo nome completo',
+  'book.emailLabel': 'Email',
+  'book.phoneLabel': 'Telefono',
+  'book.phonePlaceholder': '+39 333 1234567',
+  'book.dobLabel': 'Data di nascita',
+  'book.cpfLabel': 'CPF',
+  'book.cpfPlaceholder': '000.000.000-00',
 };
 
 // ─── Spanish ──────────────────────────────────────────────────────────────────
@@ -3915,6 +3965,16 @@ const esES: typeof en = {
   'book.confirm': 'Confirmar reserva',
   'book.success': '¡Cita reservada!',
   'book.loading': 'Cargando horarios…',
+  'book.patientDetails': 'Tus datos',
+  'book.patientDetailsHint': 'Esta información ayuda al médico a prepararse para tu cita.',
+  'book.fullNameLabel': 'Nombre completo',
+  'book.fullNamePlaceholder': 'Tu nombre completo',
+  'book.emailLabel': 'Correo electrónico',
+  'book.phoneLabel': 'Teléfono',
+  'book.phonePlaceholder': '+34 612 345 678',
+  'book.dobLabel': 'Fecha de nacimiento',
+  'book.cpfLabel': 'CPF',
+  'book.cpfPlaceholder': '000.000.000-00',
 };
 
 // ─── Registry ─────────────────────────────────────────────────────────────────

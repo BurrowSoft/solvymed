@@ -12,6 +12,7 @@ import { getProfessionalProcedures, ProcedureSummary } from '@/lib/discovery-ser
 import { useAuth } from '@/lib/auth-context';
 import { useStyles } from '@/lib/use-styles';
 import { t } from '@/lib/i18n';
+import { supabase } from '@/lib/supabase';
 
 const FALLBACK_DURATIONS = [30, 45, 60];
 const DAYS_AHEAD = 14;
@@ -64,6 +65,30 @@ export default function BookScreen() {
   const [isOther, setIsOther] = useState(false);
   const [notes, setNotes] = useState('');
   const [booking, setBooking] = useState(false);
+
+  // Patient profile — pre-loaded from patient_profiles, editable before booking
+  const [patientFullName, setPatientFullName] = useState(user?.email?.split('@')[0] ?? '');
+  const [patientPhone, setPatientPhone] = useState('');
+  const [patientDob, setPatientDob] = useState('');
+  const [patientCpf, setPatientCpf] = useState('');
+
+  // Load existing profile to pre-fill the form
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from('patient_profiles')
+      .select('full_name, phone, birth_date, cpf')
+      .eq('user_id', user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!data) return;
+        if (data.full_name) setPatientFullName(data.full_name as string);
+        if (data.phone) setPatientPhone(data.phone as string);
+        if (data.birth_date) setPatientDob(data.birth_date as string);
+        if (data.cpf) setPatientCpf(data.cpf as string);
+      })
+      .catch(() => {});
+  }, [user]);
 
   const [procedures, setProcedures] = useState<ProcedureSummary[]>([]);
   const [loadingProcs, setLoadingProcs] = useState(true);
@@ -126,10 +151,23 @@ export default function BookScreen() {
     if (!selectedSlot || !user || !professionalId) return;
     setBooking(true);
     try {
+      // Persist patient profile before creating the booking
+      await supabase.from('patient_profiles').upsert(
+        {
+          user_id: user.id,
+          full_name: patientFullName.trim(),
+          email: user.email ?? null,
+          phone: patientPhone.trim() || null,
+          birth_date: patientDob || null,
+          cpf: patientCpf.trim() || null,
+        },
+        { onConflict: 'user_id' },
+      );
+
       await createTentativeBooking({
         professionalId,
         patientAuthId: user.id,
-        patientName: user.email?.split('@')[0] ?? 'Patient',
+        patientName: patientFullName.trim() || user.email?.split('@')[0] ?? 'Patient',
         date: selectedDate,
         startTime: selectedSlot.start,
         endTime: selectedSlot.end,
@@ -332,11 +370,68 @@ export default function BookScreen() {
           textAlignVertical="top"
         />
 
+        {/* Patient details */}
+        <View style={styles.profileCard}>
+          <Text style={styles.profileTitle}>{t('book.patientDetails')}</Text>
+          <Text style={styles.profileHint}>{t('book.patientDetailsHint')}</Text>
+
+          <Text style={styles.fieldLabel}>{t('book.fullNameLabel')} <Text style={styles.required}>*</Text></Text>
+          <TextInput
+            style={styles.fieldInput}
+            value={patientFullName}
+            onChangeText={setPatientFullName}
+            placeholder={t('book.fullNamePlaceholder')}
+            placeholderTextColor={Colors.textMuted}
+          />
+
+          <Text style={styles.fieldLabel}>{t('book.emailLabel')}</Text>
+          <TextInput
+            style={[styles.fieldInput, styles.fieldReadOnly]}
+            value={user?.email ?? ''}
+            editable={false}
+          />
+
+          <View style={styles.fieldRow}>
+            <View style={styles.fieldHalf}>
+              <Text style={styles.fieldLabel}>{t('book.phoneLabel')}</Text>
+              <TextInput
+                style={styles.fieldInput}
+                value={patientPhone}
+                onChangeText={setPatientPhone}
+                placeholder={t('book.phonePlaceholder')}
+                placeholderTextColor={Colors.textMuted}
+                keyboardType="phone-pad"
+              />
+            </View>
+            <View style={styles.fieldHalf}>
+              <Text style={styles.fieldLabel}>{t('book.dobLabel')}</Text>
+              <TextInput
+                style={styles.fieldInput}
+                value={patientDob}
+                onChangeText={setPatientDob}
+                placeholder="YYYY-MM-DD"
+                placeholderTextColor={Colors.textMuted}
+                keyboardType="numeric"
+              />
+            </View>
+          </View>
+
+          <Text style={styles.fieldLabel}>{t('book.cpfLabel')}</Text>
+          <TextInput
+            style={styles.fieldInput}
+            value={patientCpf}
+            onChangeText={setPatientCpf}
+            placeholder={t('book.cpfPlaceholder')}
+            placeholderTextColor={Colors.textMuted}
+            keyboardType="numeric"
+          />
+        </View>
+
         {/* Book button */}
         <TouchableOpacity
-          style={[styles.bookBtn, (!selectedSlot || !consultType.trim() || booking) && styles.bookBtnDisabled]}
+          style={[styles.bookBtn, (!selectedSlot || !consultType.trim() || !patientFullName.trim() || booking) && styles.bookBtnDisabled]}
           onPress={handleBook}
-          disabled={!selectedSlot || !consultType.trim() || booking}
+          disabled={!selectedSlot || !consultType.trim() || !patientFullName.trim() || booking}
         >
           {booking ? (
             <ActivityIndicator color="#fff" />
@@ -443,5 +538,20 @@ function makeStyles() {
       borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11,
       fontSize: 14, color: Colors.textPrimary,
     },
+    profileCard: {
+      borderRadius: 14, borderWidth: 1.5, borderColor: `${Colors.primary}40`,
+      backgroundColor: `${Colors.primary}08`, padding: 14, gap: 6,
+    },
+    profileTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
+    profileHint: { fontSize: 12, color: Colors.textMuted, marginBottom: 4 },
+    fieldLabel: { fontSize: 12, fontWeight: '600', color: Colors.textSecondary, marginTop: 4 },
+    fieldInput: {
+      backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+      borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10,
+      fontSize: 14, color: Colors.textPrimary,
+    },
+    fieldReadOnly: { backgroundColor: Colors.background, color: Colors.textMuted },
+    fieldRow: { flexDirection: 'row', gap: 10 },
+    fieldHalf: { flex: 1 },
   });
 }
