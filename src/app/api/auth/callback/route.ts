@@ -14,9 +14,8 @@ export async function GET(request: NextRequest) {
   }
 
   // Collect cookies Supabase wants to set — we'll apply them to the final redirect response.
-  // Using next/headers cookies() here would NOT attach to a manually-created NextResponse,
+  // next/headers cookies() would NOT attach to a manually-created NextResponse,
   // so we buffer them and apply explicitly instead.
-  // Spread options into the object so it matches NextResponse.cookies.set()'s object overload.
   const pendingCookies: Array<Record<string, unknown> & { name: string; value: string }> = [];
 
   const supabase = createServerClient(
@@ -34,21 +33,35 @@ export async function GET(request: NextRequest) {
     },
   );
 
-  // Exchange code (PKCE) or verify token hash (OTP / magic-link / email confirmation)
-  const { data, error } = code
-    ? await supabase.auth.exchangeCodeForSession(code)
-    : await supabase.auth.verifyOtp({ token_hash: tokenHash!, type });
+  // Use explicit if/else to avoid TypeScript union issues between
+  // exchangeCodeForSession (AuthResponse) and verifyOtp (AuthOtpResponse).
+  let sessionUser: { id: string; user_metadata: Record<string, unknown> } | null = null;
+  let sessionExists = false;
+
+  if (code) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error && data.session && data.user) {
+      sessionUser = data.user;
+      sessionExists = true;
+    }
+  } else if (tokenHash) {
+    const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
+    if (!error && data.session && data.user) {
+      sessionUser = data.user as typeof sessionUser;
+      sessionExists = true;
+    }
+  }
 
   let redirectUrl: URL;
 
-  if (!error && data.session && data.user) {
-    const meta = data.user.user_metadata ?? {};
+  if (sessionExists && sessionUser) {
+    const meta = sessionUser.user_metadata ?? {};
     const role = meta.role as string | undefined;
     const inviteCode = meta.invite_code as string | undefined;
 
     if (role === "secretary") {
       await supabase.from("user_roles").upsert(
-        { user_id: data.user.id, role: "secretary" },
+        { user_id: sessionUser.id, role: "secretary" },
         { onConflict: "user_id" },
       );
       redirectUrl = new URL("/dashboard", origin);
@@ -58,26 +71,26 @@ export async function GET(request: NextRequest) {
         const { data: patientData } = await supabase.rpc("patient_by_invite_code", { code: inviteCode });
         if (patientData?.length) {
           await supabase.from("user_roles").upsert(
-            { user_id: data.user.id, role: "patient", linked_patient_id: patientData[0].patient_id },
+            { user_id: sessionUser.id, role: "patient", linked_patient_id: patientData[0].patient_id },
             { onConflict: "user_id" },
           );
         } else {
           const { data: profData } = await supabase.rpc("professional_by_invite_code", { code: inviteCode });
           if (profData?.length) {
             await supabase.from("user_roles").upsert(
-              { user_id: data.user.id, role: "patient", invited_by_professional_id: profData[0].professional_id },
+              { user_id: sessionUser.id, role: "patient", invited_by_professional_id: profData[0].professional_id },
               { onConflict: "user_id" },
             );
           } else {
             await supabase.from("user_roles").upsert(
-              { user_id: data.user.id, role: "patient" },
+              { user_id: sessionUser.id, role: "patient" },
               { onConflict: "user_id" },
             );
           }
         }
       } else {
         await supabase.from("user_roles").upsert(
-          { user_id: data.user.id, role: "patient" },
+          { user_id: sessionUser.id, role: "patient" },
           { onConflict: "user_id" },
         );
       }
@@ -86,7 +99,7 @@ export async function GET(request: NextRequest) {
     } else {
       // professional (default)
       await supabase.from("user_roles").upsert(
-        { user_id: data.user.id, role: "professional" },
+        { user_id: sessionUser.id, role: "professional" },
         { onConflict: "user_id" },
       );
       redirectUrl = new URL("/auth/professional-welcome", origin);
