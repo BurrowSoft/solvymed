@@ -118,10 +118,12 @@ export function BookingClient({
 
   // Load procedures
   useEffect(() => {
-    const supabase = createClient();
-    supabase
-      .rpc("get_professional_procedures", { p_professional_id: professionalId })
-      .then(({ data }) => {
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase.rpc("get_professional_procedures", {
+          p_professional_id: professionalId,
+        });
         const procs: Procedure[] = (data ?? []).map((r: Record<string, unknown>) => ({
           id: r.id as string,
           name: r.name as string,
@@ -134,9 +136,12 @@ export function BookingClient({
           setSelectedProcedure(procs[0]);
           setDuration(procs[0].durationMinutes);
         }
-      })
-      .catch(() => {})
-      .finally(() => setLoadingProcs(false));
+      } catch {
+        // ignore network errors
+      } finally {
+        setLoadingProcs(false);
+      }
+    })();
   }, [professionalId]);
 
   // Load slots when date or duration changes
