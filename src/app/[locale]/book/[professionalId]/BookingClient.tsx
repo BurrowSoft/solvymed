@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { computeSlots, toMinutes } from "@/lib/slots";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
@@ -19,10 +20,10 @@ function buildDays() {
     return d.toISOString().split("T")[0];
   });
 }
-function dayLabel(dateStr: string) {
+function dayLabel(dateStr: string, locale: string, todayLabel: string) {
   const today = new Date().toISOString().split("T")[0];
-  if (dateStr === today) return "Today";
-  return new Date(dateStr + "T12:00:00").toLocaleDateString("en-US", {
+  if (dateStr === today) return todayLabel;
+  return new Date(dateStr + "T12:00:00").toLocaleDateString(locale, {
     weekday: "short", month: "short", day: "numeric",
   });
 }
@@ -71,6 +72,8 @@ export function BookingClient({
   locale: string;
 }) {
   const router = useRouter();
+  const t = useTranslations("book");
+  const tConsult = useTranslations("consultType");
   const prefix = locale === "en" ? "" : `/${locale}`;
   const days = buildDays();
 
@@ -195,14 +198,14 @@ export function BookingClient({
       if (rpcError) {
         const msg = rpcError.message ?? "";
         if (msg.includes("slot_taken")) {
-          setError("This slot was just taken. Please choose another time.");
+          setError(t("errorSlotTaken"));
           loadSlots(selectedDate, duration);
         } else if (msg.includes("blocked")) {
-          setError("Your bookings with this professional are currently restricted. Please contact the clinic.");
+          setError(t("errorBlocked"));
         } else if (msg.includes("Max concurrent")) {
-          setError("You already have the maximum number of active appointments with this professional.");
+          setError(t("errorMaxBookings"));
         } else {
-          setError("Could not send booking request. Please try again.");
+          setError(t("errorGeneric"));
         }
         return;
       }
@@ -210,7 +213,7 @@ export function BookingClient({
       setBookedDate(selectedDate);
       setBooked(true);
     } catch {
-      setError("Could not send booking request. Please try again.");
+      setError(t("errorGeneric"));
     } finally {
       setBooking(false);
     }
@@ -226,22 +229,22 @@ export function BookingClient({
               <polyline points="20 6 9 17 4 12"/>
             </svg>
           </div>
-          <h1 className="text-xl font-extrabold text-slate-900 mb-2">Request sent!</h1>
+          <h1 className="text-xl font-extrabold text-slate-900 mb-2">{t("successTitle")}</h1>
           <p className="text-slate-500 text-sm mb-1">
-            Your request for <strong>{dayLabel(bookedDate)}</strong> at <strong>{formatTime(bookedSlot!.start)}</strong> with <strong>{professionalName}</strong> has been submitted.
+            {t("successBody", { date: dayLabel(bookedDate, locale, t("today")), time: formatTime(bookedSlot!.start), doctor: professionalName })}
           </p>
-          <p className="text-slate-400 text-xs mb-8">The doctor will confirm or suggest a different time.</p>
+          <p className="text-slate-400 text-xs mb-8">{t("successHint")}</p>
           <button
             onClick={() => router.push(`${prefix}/my-appointments`)}
             className="w-full rounded-xl bg-teal-600 py-3 text-sm font-bold text-white hover:bg-teal-700 transition mb-3"
           >
-            View my appointments
+            {t("viewAppointments")}
           </button>
           <button
             onClick={() => router.push(`${prefix}/discover`)}
             className="w-full rounded-xl border border-slate-200 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition"
           >
-            Back to clinics
+            {t("backToClinics")}
           </button>
         </div>
       </div>
@@ -266,7 +269,7 @@ export function BookingClient({
                 <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
               </svg>
             </div>
-            <span className="font-bold text-slate-900">Book Appointment</span>
+            <span className="font-bold text-slate-900">{t("title")}</span>
           </div>
         </div>
       </header>
@@ -293,7 +296,7 @@ export function BookingClient({
             {/* Procedure picker */}
             {procedures.length > 0 ? (
               <div>
-                <h2 className="text-sm font-bold text-slate-700 mb-2">Select procedure</h2>
+                <h2 className="text-sm font-bold text-slate-700 mb-2">{t("selectProcedure")}</h2>
                 <div className="space-y-2">
                   {procedures.map((proc) => {
                     const active = selectedProcedure?.id === proc.id;
@@ -314,7 +317,7 @@ export function BookingClient({
               </div>
             ) : (
               <div>
-                <h2 className="text-sm font-bold text-slate-700 mb-2">Session duration</h2>
+                <h2 className="text-sm font-bold text-slate-700 mb-2">{t("sessionDuration")}</h2>
                 <div className="flex gap-2">
                   {FALLBACK_DURATIONS.map((d) => (
                     <button
@@ -332,11 +335,12 @@ export function BookingClient({
             {/* Consultation type */}
             <div>
               <h2 className="text-sm font-bold text-slate-700 mb-2">
-                What is this appointment for? <span className="font-normal text-red-400">*</span>
+                {t("appointmentFor")} <span className="font-normal text-red-400">*</span>
               </h2>
               <div className="flex flex-wrap gap-2">
                 {CONSULT_TYPES.map((type) => {
                   const active = !isOther && consultType === type;
+                  const labelKey = type === "Follow-up" ? "followUp" : type === "Exam Review" ? "examReview" : type.toLowerCase() as "consultation" | "procedure" | "emergency";
                   return (
                     <button
                       key={type}
@@ -344,7 +348,7 @@ export function BookingClient({
                       onClick={() => { setConsultType(type); setIsOther(false); }}
                       className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${active ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
                     >
-                      {type}
+                      {tConsult(labelKey)}
                     </button>
                   );
                 })}
@@ -353,7 +357,7 @@ export function BookingClient({
                   onClick={() => { setIsOther(true); setConsultType(""); }}
                   className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${isOther ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
                 >
-                  Other
+                  {t("other")}
                 </button>
               </div>
               {isOther && (
@@ -361,7 +365,7 @@ export function BookingClient({
                   type="text"
                   value={consultType}
                   onChange={(e) => setConsultType(e.target.value)}
-                  placeholder="Describe the appointment…"
+                  placeholder={t("otherPlaceholder")}
                   className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                   autoFocus
                 />
@@ -370,7 +374,7 @@ export function BookingClient({
 
             {/* Date strip */}
             <div>
-              <h2 className="text-sm font-bold text-slate-700 mb-2">Pick a date</h2>
+              <h2 className="text-sm font-bold text-slate-700 mb-2">{t("pickDate")}</h2>
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {days.map((day) => (
                   <button
@@ -378,7 +382,7 @@ export function BookingClient({
                     onClick={() => setSelectedDate(day)}
                     className={`shrink-0 rounded-xl border-2 px-3 py-2 text-xs font-semibold whitespace-nowrap transition ${selectedDate === day ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
                   >
-                    {dayLabel(day)}
+                    {dayLabel(day, locale, t("today"))}
                   </button>
                 ))}
               </div>
@@ -386,15 +390,15 @@ export function BookingClient({
 
             {/* Time slots */}
             <div>
-              <h2 className="text-sm font-bold text-slate-700 mb-2">Available times</h2>
+              <h2 className="text-sm font-bold text-slate-700 mb-2">{t("availableTimes")}</h2>
               {loadingSlots ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="h-5 w-5 animate-spin rounded-full border-2 border-teal-600 border-t-transparent" />
                 </div>
               ) : slots.length === 0 ? (
                 <div className="rounded-xl bg-slate-50 border border-slate-200 py-8 text-center">
-                  <p className="text-sm text-slate-500 font-medium">No available slots</p>
-                  <p className="text-xs text-slate-400 mt-1">Try a different date.</p>
+                  <p className="text-sm text-slate-500 font-medium">{t("noSlots")}</p>
+                  <p className="text-xs text-slate-400 mt-1">{t("tryDifferentDate")}</p>
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
@@ -413,11 +417,11 @@ export function BookingClient({
 
             {/* Notes */}
             <div>
-              <h2 className="text-sm font-bold text-slate-700 mb-2">Notes <span className="font-normal text-slate-400">(optional)</span></h2>
+              <h2 className="text-sm font-bold text-slate-700 mb-2">{t("notes")} <span className="font-normal text-slate-400">{t("notesOptional")}</span></h2>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Reason for visit, symptoms, questions for the doctor…"
+                placeholder={t("notesPlaceholder")}
                 rows={3}
                 className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
               />
@@ -437,14 +441,12 @@ export function BookingClient({
               {booking ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Sending…
+                  {t("sending")}
                 </span>
-              ) : "Send Booking Request"}
+              ) : t("sendRequest")}
             </button>
 
-            <p className="text-center text-xs text-slate-400 pb-8">
-              The doctor will confirm or suggest a different time. You'll be notified either way.
-            </p>
+            <p className="text-center text-xs text-slate-400 pb-8">{t("hint")}</p>
           </>
         )}
       </div>
