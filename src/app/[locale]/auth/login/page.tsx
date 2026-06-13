@@ -25,15 +25,23 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({
+    const { data: signInData, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     setLoading(false);
     if (authError) {
       setError(t("login.error"));
-    } else {
-      router.push(localePath("/dashboard"));
+    } else if (signInData.user) {
+      const { data: roleRow } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", signInData.user.id)
+        .maybeSingle();
+      const dest = roleRow?.role === "patient"
+        ? localePath("/auth/patient-welcome")
+        : localePath("/dashboard");
+      router.push(dest);
       router.refresh();
     }
   }

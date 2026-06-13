@@ -1,12 +1,18 @@
-import Link from "next/link";
+"use client";
 
-export default async function PatientWelcomePage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
+import { useParams, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+
+export default function PatientWelcomePage() {
+  const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
+  const router = useRouter();
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push(`${prefix}/auth/login`);
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
@@ -31,14 +37,14 @@ export default async function PatientWelcomePage({
 
         <h1 className="mb-2 text-2xl font-extrabold text-slate-900">You&apos;re all set!</h1>
         <p className="mb-2 text-slate-500">
-          Your account has been confirmed and linked to your doctor&apos;s clinic.
+          Your account has been confirmed.
         </p>
         <p className="mb-8 text-sm text-slate-400">
           Use the SolvyMed mobile app to view your appointments, prescriptions, and medical records.
         </p>
 
         {/* App download buttons */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-center mb-6">
           <a
             href="https://apps.apple.com/app/solvymed/id000000000"
             className="flex items-center justify-center gap-2.5 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition"
@@ -59,9 +65,12 @@ export default async function PatientWelcomePage({
           </a>
         </div>
 
-        <Link href={`${prefix}/`} className="mt-6 block text-sm text-slate-400 hover:text-teal-600 transition">
-          Back to home
-        </Link>
+        <button
+          onClick={handleSignOut}
+          className="text-sm text-slate-400 hover:text-teal-600 transition"
+        >
+          Sign out
+        </button>
       </div>
     </div>
   );
