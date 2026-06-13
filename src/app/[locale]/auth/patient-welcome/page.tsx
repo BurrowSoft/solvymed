@@ -12,8 +12,15 @@ export default function PatientWelcomePage() {
   const router = useRouter();
 
   const [count, setCount] = useState(COUNTDOWN);
+  const [email, setEmail] = useState<string | null>(null);
 
   const discoverPath = `${prefix}/discover`;
+
+  useEffect(() => {
+    createClient().auth.getUser().then(({ data }) => {
+      setEmail(data.user?.email ?? null);
+    });
+  }, []);
 
   useEffect(() => {
     if (count <= 0) {
@@ -53,6 +60,9 @@ export default function PatientWelcomePage() {
 
         <h1 className="mb-2 text-2xl font-extrabold text-slate-900">You&apos;re all set!</h1>
         <p className="mb-1 text-slate-500">Your account has been confirmed.</p>
+        {email && (
+          <p className="mb-1 text-sm font-medium text-slate-700">{email}</p>
+        )}
 
         {/* Countdown */}
         <p className="mb-6 text-sm text-slate-400">
