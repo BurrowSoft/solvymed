@@ -192,53 +192,36 @@ export function DiscoverClient({ clinics }: Props) {
                   </div>
                 </button>
 
-                {/* Expanded: full doctor list + book CTA */}
+                {/* Expanded: full doctor list + book buttons */}
                 {selected?.id === clinic.id && (
                   <div className="border-t border-slate-100 px-5 pb-5 pt-4">
                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-3">Healthcare providers</p>
-                    <div className="space-y-2 mb-4">
+                    <div className="space-y-2">
                       {clinic.professionals.map((p) => (
-                        <div key={p.id} className="flex items-center gap-3">
+                        <div key={p.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3">
                           {p.photoUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img src={p.photoUrl} alt={p.name} className="h-9 w-9 rounded-full object-cover" />
+                            <img src={p.photoUrl} alt={p.name} className="h-9 w-9 rounded-full object-cover shrink-0" />
                           ) : (
                             <div className="h-9 w-9 rounded-full bg-teal-100 flex items-center justify-center text-teal-700 font-bold text-sm shrink-0">
                               {p.name.charAt(0)}
                             </div>
                           )}
-                          <div className="min-w-0">
+                          <div className="min-w-0 flex-1">
                             <p className="text-sm font-semibold text-slate-800">{p.name}</p>
                             {p.specialty && <p className="text-xs text-slate-500">{p.specialty}</p>}
                           </div>
+                          <a
+                            href={`${locale === "en" ? "" : `/${locale}`}/book/${p.id}?name=${encodeURIComponent(p.name)}&specialty=${encodeURIComponent(p.specialty ?? "")}&clinicName=${encodeURIComponent(clinic.name)}`}
+                            className="shrink-0 flex items-center gap-1.5 rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-teal-700 transition"
+                          >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
+                              <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+                            </svg>
+                            Book
+                          </a>
                         </div>
                       ))}
-                    </div>
-
-                    {/* Book CTA */}
-                    <div className="rounded-xl bg-teal-50 p-4 text-center">
-                      <p className="text-sm font-semibold text-teal-800 mb-1">Book an appointment</p>
-                      <p className="text-xs text-teal-600 mb-3">Download the SolvyMed app to schedule with this clinic</p>
-                      <div className="flex justify-center gap-2">
-                        <a
-                          href="https://apps.apple.com/app/solvymed/id000000000"
-                          className="flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition"
-                        >
-                          <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5 shrink-0">
-                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                          </svg>
-                          App Store
-                        </a>
-                        <a
-                          href="https://play.google.com/store/apps/details?id=com.burrowsoft.solvymed"
-                          className="flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition"
-                        >
-                          <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5 shrink-0">
-                            <path d="M3.18 23.76c.31.17.67.19 1.01.08l11.7-6.76-2.46-2.46-10.25 9.14zM.54 1.96C.2 2.3 0 2.84 0 3.54v16.92c0 .7.2 1.24.54 1.58l.08.08 9.47-9.47v-.22L.62 1.88l-.08.08zM20.42 10.3l-2.67-1.54-2.75 2.75 2.75 2.75 2.68-1.55c.76-.44.76-1.15-.01-1.41zM4.19.16L15.89 6.92 13.43 9.38 3.18.24 4.19.16z"/>
-                          </svg>
-                          Google Play
-                        </a>
-                      </div>
                     </div>
                   </div>
                 )}
