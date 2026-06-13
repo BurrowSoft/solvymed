@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition, useState, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules } from "./actions";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
@@ -24,6 +25,7 @@ function Input({ name, defaultValue = "", placeholder, type = "text", required }
 }
 
 function SaveRow({ pending, saved }: { pending: boolean; saved: boolean }) {
+  const t = useTranslations("settings");
   return (
     <div className="mt-6 flex items-center gap-3">
       <button
@@ -31,9 +33,9 @@ function SaveRow({ pending, saved }: { pending: boolean; saved: boolean }) {
         disabled={pending}
         className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60 transition"
       >
-        {pending ? "Saving…" : "Save changes"}
+        {pending ? t("saving") : t("save")}
       </button>
-      {saved && <span className="text-sm font-semibold text-green-600">Saved!</span>}
+      {saved && <span className="text-sm font-semibold text-green-600">{t("saved")}</span>}
     </div>
   );
 }
@@ -52,6 +54,7 @@ function Card({ title, description, children }: { title: string; description?: s
 
 /* ─── Profile form ──────────────────────────────────────────────── */
 export function ProfileForm({ fullName, specialty }: { fullName: string; specialty?: string }) {
+  const t = useTranslations("settings");
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
 
@@ -66,16 +69,16 @@ export function ProfileForm({ fullName, specialty }: { fullName: string; special
   }
 
   return (
-    <Card title="Profile" description="Your name and specialty shown to patients">
+    <Card title={t("profileTitle")} description={t("profileSub")}>
       <form onSubmit={handleSubmit}>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <Label>Full name</Label>
-            <Input name="full_name" defaultValue={fullName} placeholder="Dr. Maria Santos" required />
+            <Label>{t("fullName")}</Label>
+            <Input name="full_name" defaultValue={fullName} placeholder={t("fullNamePlaceholder")} required />
           </div>
           <div>
-            <Label>Specialty</Label>
-            <Input name="specialty" defaultValue={specialty ?? ""} placeholder="Psychiatrist, Psychologist…" />
+            <Label>{t("specialty")}</Label>
+            <Input name="specialty" defaultValue={specialty ?? ""} placeholder={t("specialtyPlaceholder")} />
           </div>
         </div>
         <SaveRow pending={pending} saved={saved} />
@@ -91,6 +94,7 @@ type ClinicData = {
 };
 
 export function ClinicForm({ data }: { data: ClinicData }) {
+  const t = useTranslations("settings");
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
 
@@ -105,35 +109,35 @@ export function ClinicForm({ data }: { data: ClinicData }) {
   }
 
   return (
-    <Card title="Clinic" description="Business information for documents and receipts">
+    <Card title={t("clinicTitle")} description={t("clinicSub")}>
       <form onSubmit={handleSubmit}>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <Label>Clinic / practice name</Label>
-            <Input name="clinic_name" defaultValue={data.clinic_name ?? ""} placeholder="Clínica Bem-Estar" />
+            <Label>{t("clinicName")}</Label>
+            <Input name="clinic_name" defaultValue={data.clinic_name ?? ""} placeholder={t("clinicNamePlaceholder")} />
           </div>
           <div>
-            <Label>CNPJ</Label>
+            <Label>{t("cnpj")}</Label>
             <Input name="clinic_cnpj" defaultValue={data.clinic_cnpj ?? ""} placeholder="00.000.000/0001-00" />
           </div>
           <div>
-            <Label>Phone</Label>
+            <Label>{t("phone")}</Label>
             <Input name="clinic_phone" defaultValue={data.clinic_phone ?? ""} placeholder="(11) 3000-0000" />
           </div>
           <div>
-            <Label>Website</Label>
+            <Label>{t("website")}</Label>
             <Input name="clinic_website" defaultValue={data.clinic_website ?? ""} placeholder="www.example.com.br" />
           </div>
           <div className="sm:col-span-2">
-            <Label>Address</Label>
-            <Input name="clinic_address" defaultValue={data.clinic_address ?? ""} placeholder="Rua das Flores, 123 – Sala 4" />
+            <Label>{t("address")}</Label>
+            <Input name="clinic_address" defaultValue={data.clinic_address ?? ""} placeholder={t("addressPlaceholder")} />
           </div>
           <div>
-            <Label>City</Label>
+            <Label>{t("city")}</Label>
             <Input name="clinic_city" defaultValue={data.clinic_city ?? ""} placeholder="São Paulo" />
           </div>
           <div>
-            <Label>State</Label>
+            <Label>{t("state")}</Label>
             <Input name="clinic_state" defaultValue={data.clinic_state ?? ""} placeholder="SP" />
           </div>
         </div>
@@ -145,30 +149,33 @@ export function ClinicForm({ data }: { data: ClinicData }) {
 
 /* ─── Working hours form ────────────────────────────────────────── */
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
-const DAYS: { key: DayKey; label: string }[] = [
-  { key: "mon", label: "Monday" },
-  { key: "tue", label: "Tuesday" },
-  { key: "wed", label: "Wednesday" },
-  { key: "thu", label: "Thursday" },
-  { key: "fri", label: "Friday" },
-  { key: "sat", label: "Saturday" },
-  { key: "sun", label: "Sunday" },
-];
-
 type WorkingHours = Record<DayKey, { enabled: boolean; start: string; end: string }>;
+
+const DAY_KEYS: DayKey[] = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
 function defaultHours(): WorkingHours {
   const days = {} as WorkingHours;
-  for (const d of DAYS) {
-    days[d.key] = { enabled: d.key !== "sat" && d.key !== "sun", start: "08:00", end: "18:00" };
+  for (const key of DAY_KEYS) {
+    days[key] = { enabled: key !== "sat" && key !== "sun", start: "08:00", end: "18:00" };
   }
   return days;
 }
 
 export function WorkingHoursForm({ workingHours }: { workingHours: WorkingHours | null }) {
+  const t = useTranslations("settings");
+  const DAYS: { key: DayKey; label: string }[] = [
+    { key: "mon", label: t("mon") },
+    { key: "tue", label: t("tue") },
+    { key: "wed", label: t("wed") },
+    { key: "thu", label: t("thu") },
+    { key: "fri", label: t("fri") },
+    { key: "sat", label: t("sat") },
+    { key: "sun", label: t("sun") },
+  ];
+
   const hours: WorkingHours = workingHours ?? defaultHours();
   const [enabled, setEnabled] = useState<Record<DayKey, boolean>>(
-    Object.fromEntries(DAYS.map(d => [d.key, hours[d.key]?.enabled ?? false])) as Record<DayKey, boolean>
+    Object.fromEntries(DAY_KEYS.map(k => [k, hours[k]?.enabled ?? false])) as Record<DayKey, boolean>
   );
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
@@ -184,7 +191,7 @@ export function WorkingHoursForm({ workingHours }: { workingHours: WorkingHours 
   }
 
   return (
-    <Card title="Working hours" description="Days and times you're available for appointments">
+    <Card title={t("hoursTitle")} description={t("hoursSub")}>
       <form onSubmit={handleSubmit}>
         <div className="divide-y divide-slate-100">
           {DAYS.map(d => {
@@ -208,7 +215,7 @@ export function WorkingHoursForm({ workingHours }: { workingHours: WorkingHours 
                     defaultValue={h.start}
                     className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
                   />
-                  <span className="text-sm text-slate-400">to</span>
+                  <span className="text-sm text-slate-400">{t("to")}</span>
                   <input
                     type="time"
                     name={`${d.key}_end`}
@@ -228,6 +235,7 @@ export function WorkingHoursForm({ workingHours }: { workingHours: WorkingHours 
 
 /* ─── Scheduling rules form ────────────────────────────────────── */
 export function SchedulingRulesForm({ maxConcurrent }: { maxConcurrent: number | null }) {
+  const t = useTranslations("settings");
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
 
@@ -242,10 +250,10 @@ export function SchedulingRulesForm({ maxConcurrent }: { maxConcurrent: number |
   }
 
   return (
-    <Card title="Scheduling rules" description="Controls on how patients can book appointments">
+    <Card title={t("rulesTitle")} description={t("rulesSub")}>
       <form onSubmit={handleSubmit}>
         <div>
-          <Label>Max simultaneous active bookings per patient</Label>
+          <Label>{t("maxLabel")}</Label>
           <div className="flex items-center gap-4">
             <input
               name="max_concurrent_bookings"
@@ -253,14 +261,12 @@ export function SchedulingRulesForm({ maxConcurrent }: { maxConcurrent: number |
               min="1"
               max="20"
               defaultValue={maxConcurrent ?? ""}
-              placeholder="Unlimited"
+              placeholder={t("unlimited")}
               className="w-28 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-100 transition"
             />
-            <p className="text-xs text-slate-400">Leave empty for unlimited. Recommended: 1–2.</p>
+            <p className="text-xs text-slate-400">{t("maxHint1")}</p>
           </div>
-          <p className="mt-2 text-xs text-slate-400">
-            Blocks new booking requests from a patient who already has this many active (tentative, confirmed, or scheduled) future appointments.
-          </p>
+          <p className="mt-2 text-xs text-slate-400">{t("maxHint2")}</p>
         </div>
         <SaveRow pending={pending} saved={saved} />
       </form>
@@ -279,6 +285,7 @@ function formatBRL(n?: number) {
 }
 
 export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
+  const t = useTranslations("settings");
   const [showForm, setShowForm] = useState(false);
   const [pending, start] = useTransition();
   const [error, setError] = useState("");
@@ -297,10 +304,10 @@ export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
   }
 
   return (
-    <Card title="Procedures" description="Pre-configured consultation types with duration and pricing">
+    <Card title={t("proceduresTitle")} description={t("proceduresSub")}>
       <div className="space-y-2 mb-4">
         {procedures.length === 0 && !showForm && (
-          <p className="text-sm text-slate-400 py-4 text-center">No procedures yet. Add your first one below.</p>
+          <p className="text-sm text-slate-400 py-4 text-center">{t("noProcedures")}</p>
         )}
         {procedures.map(proc => (
           <ProcedureRow key={proc.id} proc={proc} />
@@ -309,29 +316,29 @@ export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
 
       {showForm ? (
         <form ref={formRef} onSubmit={handleCreate} className="rounded-xl border border-teal-100 bg-teal-50/40 p-4">
-          <p className="text-sm font-bold text-slate-900 mb-4">New procedure</p>
+          <p className="text-sm font-bold text-slate-900 mb-4">{t("newProcedure")}</p>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <Label>Name</Label>
-              <Input name="name" placeholder="Initial consultation, Follow-up…" required />
+              <Label>{t("procedureName")}</Label>
+              <Input name="name" placeholder={t("procedureNamePlaceholder")} required />
             </div>
             <div>
-              <Label>Duration (minutes)</Label>
+              <Label>{t("durationLabel")}</Label>
               <Input name="duration_minutes" type="number" defaultValue="60" placeholder="60" />
             </div>
             <div>
-              <Label>Price (R$)</Label>
+              <Label>{t("priceLabel")}</Label>
               <Input name="price" type="number" placeholder="0.00" />
             </div>
             <div className="sm:col-span-2">
-              <Label>Payment type</Label>
+              <Label>{t("paymentTypeLabel")}</Label>
               <select
                 name="payment_type"
                 defaultValue="private"
                 className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
               >
-                <option value="private">Private</option>
-                <option value="insurance">Insurance</option>
+                <option value="private">{t("private")}</option>
+                <option value="insurance">{t("insurance")}</option>
               </select>
             </div>
           </div>
@@ -339,11 +346,11 @@ export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
           <div className="mt-4 flex gap-2">
             <button type="submit" disabled={pending}
               className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60 transition">
-              {pending ? "Adding…" : "Add procedure"}
+              {pending ? t("adding") : t("addProcedure")}
             </button>
             <button type="button" onClick={() => { setShowForm(false); setError(""); }}
               className="rounded-xl px-4 py-2 text-sm font-semibold text-slate-500 hover:text-slate-700 transition">
-              Cancel
+              {t("cancel")}
             </button>
           </div>
         </form>
@@ -353,7 +360,7 @@ export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
           className="flex items-center gap-2 rounded-xl border border-dashed border-teal-300 px-4 py-2.5 text-sm font-semibold text-teal-600 hover:bg-teal-50 transition"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add procedure
+          {t("addProcedure")}
         </button>
       )}
     </Card>
@@ -361,6 +368,7 @@ export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
 }
 
 function ProcedureRow({ proc }: { proc: Procedure }) {
+  const t = useTranslations("settings");
   const [pending, start] = useTransition();
 
   return (
@@ -375,13 +383,13 @@ function ProcedureRow({ proc }: { proc: Procedure }) {
         <button
           onClick={() => start(async () => { await toggleProcedure(proc.id, !proc.active); })}
           disabled={pending}
-          title={proc.active ? "Disable" : "Enable"}
+          title={proc.active ? t("disable") : t("enable")}
           className={`rounded-lg px-3 py-1 text-xs font-semibold transition disabled:opacity-60 ${proc.active ? "bg-slate-100 text-slate-600 hover:bg-slate-200" : "bg-teal-50 text-teal-700 hover:bg-teal-100"}`}
         >
-          {pending ? "…" : proc.active ? "Disable" : "Enable"}
+          {pending ? "…" : proc.active ? t("disable") : t("enable")}
         </button>
         <button
-          onClick={() => { if (confirm(`Delete "${proc.name}"?`)) start(async () => { await deleteProcedure(proc.id); }); }}
+          onClick={() => { if (confirm(t("deleteConfirm", { name: proc.name }))) start(async () => { await deleteProcedure(proc.id); }); }}
           disabled={pending}
           title="Delete"
           className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition disabled:opacity-60"

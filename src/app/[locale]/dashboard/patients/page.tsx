@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { PatientSearch, NewPatientButton, PatientCard } from "./PatientsClient";
 
 export default async function PatientsPage({
@@ -12,7 +13,10 @@ export default async function PatientsPage({
   const { locale } = await params;
   const { q } = await searchParams;
 
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([
+    createClient(),
+    getTranslations("patients"),
+  ]);
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
 
@@ -24,7 +28,7 @@ export default async function PatientsPage({
 
   if (q) query = query.ilike("full_name", `%${q}%`);
 
-  const { data: patients, count } = await query;
+  const { data: patients } = await query;
   const totalCount = await supabase
     .from("patients")
     .select("*", { count: "exact", head: true })
@@ -35,14 +39,16 @@ export default async function PatientsPage({
     sex?: string; birth_date?: string; created_at: string;
   }[];
 
+  const total = totalCount.count ?? 0;
+
   return (
     <div className="p-6 lg:p-8 max-w-5xl">
       {/* Header */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">Patients</h1>
+          <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
           <p className="text-sm text-slate-500 mt-0.5">
-            {totalCount.count ?? 0} total{q ? ` · ${patientList.length} matching "${q}"` : ""}
+            {t("total", { n: total })}{q ? ` · ${t("matching", { n: patientList.length, q })}` : ""}
           </p>
         </div>
         <NewPatientButton locale={locale} />
@@ -62,8 +68,8 @@ export default async function PatientsPage({
               <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
           </div>
-          <p className="font-semibold text-slate-500">{q ? `No patients found for "${q}"` : "No patients yet"}</p>
-          {!q && <p className="text-sm text-slate-400 mt-1">Tap "New Patient" to add your first one.</p>}
+          <p className="font-semibold text-slate-500">{q ? t("noResults", { q }) : t("noPatients")}</p>
+          {!q && <p className="text-sm text-slate-400 mt-1">{t("noPatientsHint")}</p>}
         </div>
       ) : (
         <div className="space-y-2">

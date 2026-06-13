@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { createRecord, deleteRecord, createPrescription, deletePrescription, updatePatient, deletePatient, toggleBookingBlock } from "../actions";
 
 type MedRecord = { id: string; date: string; time: string; content: string; record_type?: string; created_at: string };
@@ -65,29 +66,30 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   appointments: Appt[];
   locale: string;
 }) {
+  const t = useTranslations("patientDetail");
   const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "appointments">("info");
   const TABS = [
-    { key: "info", label: "Info" },
-    { key: "records", label: `Records (${records.length})` },
-    { key: "prescriptions", label: `Prescriptions (${prescriptions.length})` },
-    { key: "appointments", label: `Appointments (${appointments.length})` },
-  ] as const;
+    { key: "info" as const, label: t("tabInfo") },
+    { key: "records" as const, label: t("tabRecords", { n: records.length }) },
+    { key: "prescriptions" as const, label: t("tabPrescriptions", { n: prescriptions.length }) },
+    { key: "appointments" as const, label: t("tabAppointments", { n: appointments.length }) },
+  ];
 
   return (
     <div>
       {/* Tab bar */}
       <div className="flex border-b border-slate-100 mb-6 overflow-x-auto">
-        {TABS.map(t => (
+        {TABS.map(tab_item => (
           <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
+            key={tab_item.key}
+            onClick={() => setTab(tab_item.key)}
             className={`shrink-0 px-4 py-3 text-sm font-semibold border-b-2 transition-colors ${
-              tab === t.key
+              tab === tab_item.key
                 ? "border-teal-600 text-teal-700"
                 : "border-transparent text-slate-500 hover:text-slate-700"
             }`}
           >
-            {t.label}
+            {tab_item.label}
           </button>
         ))}
       </div>
@@ -95,12 +97,13 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
       {tab === "info" && <PatientInfoTab patient={patient} locale={locale} />}
       {tab === "records" && <RecordsTab patientId={patient.id} records={records} />}
       {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} />}
-      {tab === "appointments" && <AppointmentsTab appointments={appointments} />}
+      {tab === "appointments" && <AppointmentsTab appointments={appointments} locale={locale} />}
     </div>
   );
 }
 
 function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string }) {
+  const t = useTranslations("patientDetail");
   const [editing, setEditing] = useState(false);
   const [pending, startTransition] = useTransition();
   const [blockPending, startBlockTransition] = useTransition();
@@ -127,7 +130,7 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
   }
 
   function handleDelete() {
-    if (!confirm(`Delete ${patient.full_name}? All records and prescriptions will be permanently deleted.`)) return;
+    if (!confirm(t("deletePatientConfirm", { name: patient.full_name }))) return;
     startTransition(async () => {
       await deletePatient(patient.id);
       router.push(`${prefix}/dashboard/patients`);
@@ -139,16 +142,16 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
     : null;
 
   const fields = [
-    { label: "Email", value: patient.email },
-    { label: "Phone", value: patient.phone },
-    { label: "CPF", value: patient.cpf },
-    { label: "Date of Birth", value: patient.birth_date ? `${patient.birth_date}${age ? ` (${age} yrs)` : ""}` : null },
-    { label: "Sex", value: patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null },
-    { label: "Profession", value: patient.profession },
-    { label: "Emergency Phone", value: patient.emergency_phone },
-    { label: "Insurance", value: patient.convenio_type === "health_plan" ? "Health Plan" : patient.convenio_type === "particular" ? "Private" : null },
-    { label: "Invite Code", value: patient.invite_code },
-    { label: "Patient since", value: new Date(patient.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) },
+    { label: t("email"), value: patient.email },
+    { label: t("phone"), value: patient.phone },
+    { label: t("cpf"), value: patient.cpf },
+    { label: t("dateOfBirth"), value: patient.birth_date ? `${patient.birth_date}${age ? ` (${age} ${t("yrs")})` : ""}` : null },
+    { label: t("sex"), value: patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null },
+    { label: t("profession"), value: patient.profession },
+    { label: t("emergencyPhone"), value: patient.emergency_phone },
+    { label: t("insurance"), value: patient.convenio_type === "health_plan" ? t("healthPlan") : patient.convenio_type === "particular" ? t("privateInsurance") : null },
+    { label: t("inviteCode"), value: patient.invite_code },
+    { label: t("patientSince"), value: new Date(patient.created_at).toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" }) },
   ];
 
   if (!editing) {
@@ -160,8 +163,8 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
               <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
             <div>
-              <p className="text-sm font-bold text-red-700">Blocked from booking</p>
-              <p className="text-xs text-red-600 mt-0.5">This patient cannot request new appointments. Unblock after resolving the pending issue.</p>
+              <p className="text-sm font-bold text-red-700">{t("blockedTitle")}</p>
+              <p className="text-xs text-red-600 mt-0.5">{t("blockedSub")}</p>
             </div>
           </div>
         )}
@@ -175,7 +178,7 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
         </div>
         <div className="mt-6 flex flex-wrap gap-3">
           <button onClick={() => setEditing(true)} className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
-            Edit Patient
+            {t("editPatient")}
           </button>
           <button
             onClick={handleToggleBlock}
@@ -186,10 +189,10 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
                 : "border-amber-200 text-amber-700 hover:bg-amber-50"
             }`}
           >
-            {blockPending ? "…" : patient.booking_blocked ? "Unblock bookings" : "Block bookings"}
+            {blockPending ? "…" : patient.booking_blocked ? t("unblockBookings") : t("blockBookings")}
           </button>
           <button onClick={handleDelete} disabled={pending} className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60">
-            Delete Patient
+            {t("deletePatient")}
           </button>
         </div>
       </div>
@@ -200,56 +203,56 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2">
-          <FieldLabel>Full Name *</FieldLabel>
+          <FieldLabel>{t("fullName")} *</FieldLabel>
           <Input name="full_name" required defaultValue={patient.full_name} />
         </div>
         <div>
-          <FieldLabel>Email</FieldLabel>
+          <FieldLabel>{t("email")}</FieldLabel>
           <Input name="email" type="email" defaultValue={patient.email ?? ""} />
         </div>
         <div>
-          <FieldLabel>Phone</FieldLabel>
+          <FieldLabel>{t("phone")}</FieldLabel>
           <Input name="phone" defaultValue={patient.phone ?? ""} />
         </div>
         <div>
-          <FieldLabel>CPF</FieldLabel>
+          <FieldLabel>{t("cpf")}</FieldLabel>
           <Input name="cpf" defaultValue={patient.cpf ?? ""} />
         </div>
         <div>
-          <FieldLabel>Date of Birth</FieldLabel>
+          <FieldLabel>{t("dateOfBirth")}</FieldLabel>
           <Input name="birth_date" type="date" defaultValue={patient.birth_date ?? ""} />
         </div>
         <div>
-          <FieldLabel>Sex</FieldLabel>
+          <FieldLabel>{t("sex")}</FieldLabel>
           <Select name="sex" defaultValue={patient.sex ?? ""}>
-            <option value="">Not specified</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
+            <option value="">{t("notSpecified")}</option>
+            <option value="male">{t("male")}</option>
+            <option value="female">{t("female")}</option>
+            <option value="other">{t("other")}</option>
           </Select>
         </div>
         <div>
-          <FieldLabel>Insurance Type</FieldLabel>
+          <FieldLabel>{t("insurance")}</FieldLabel>
           <Select name="convenio_type" defaultValue={patient.convenio_type ?? ""}>
-            <option value="">Not specified</option>
-            <option value="particular">Private</option>
-            <option value="health_plan">Health Plan</option>
+            <option value="">{t("notSpecified")}</option>
+            <option value="particular">{t("privateInsurance")}</option>
+            <option value="health_plan">{t("healthPlan")}</option>
           </Select>
         </div>
         <div className="col-span-2">
-          <FieldLabel>Profession</FieldLabel>
+          <FieldLabel>{t("profession")}</FieldLabel>
           <Input name="profession" defaultValue={patient.profession ?? ""} />
         </div>
         <div className="col-span-2">
-          <FieldLabel>Emergency Phone</FieldLabel>
+          <FieldLabel>{t("emergencyPhone")}</FieldLabel>
           <Input name="emergency_phone" defaultValue={patient.emergency_phone ?? ""} />
         </div>
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3 pt-2">
-        <button type="button" onClick={() => setEditing(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">Cancel</button>
+        <button type="button" onClick={() => setEditing(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
         <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
-          {pending ? "Saving…" : "Save Changes"}
+          {pending ? t("saving") : t("saveChanges")}
         </button>
       </div>
     </form>
@@ -257,6 +260,7 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
 }
 
 function RecordsTab({ patientId, records }: { patientId: string; records: MedRecord[] }) {
+  const t = useTranslations("patientDetail");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -275,23 +279,23 @@ function RecordsTab({ patientId, records }: { patientId: string; records: MedRec
   }
 
   function handleDelete(id: string) {
-    if (!confirm("Delete this record? This cannot be undone.")) return;
+    if (!confirm(t("deleteRecordConfirm"))) return;
     startTransition(async () => { await deleteRecord(id, patientId); });
   }
 
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-slate-500">{records.length} record{records.length !== 1 ? "s" : ""}</p>
+        <p className="text-sm text-slate-500">{t("records", { n: records.length })}</p>
         <button onClick={() => setOpen(true)} className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3.5 w-3.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          New Record
+          {t("newRecord")}
         </button>
       </div>
 
       {records.length === 0 ? (
         <div className="rounded-2xl border border-slate-100 bg-slate-50 p-10 text-center">
-          <p className="text-sm text-slate-400">No records yet</p>
+          <p className="text-sm text-slate-400">{t("noRecords")}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -314,27 +318,27 @@ function RecordsTab({ patientId, records }: { patientId: string; records: MedRec
         </div>
       )}
 
-      <Dialog open={open} onClose={() => setOpen(false)} title="New Medical Record">
+      <Dialog open={open} onClose={() => setOpen(false)} title={t("newRecord")}>
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <FieldLabel>Record Type</FieldLabel>
+            <FieldLabel>{t("recordType")}</FieldLabel>
             <Select name="record_type">
-              <option value="free_text">Free text</option>
-              <option value="soap">SOAP note</option>
-              <option value="follow_up">Follow-up</option>
-              <option value="surgical">Surgical report</option>
-              <option value="referral">Referral</option>
+              <option value="free_text">{t("freeText")}</option>
+              <option value="soap">{t("soapNote")}</option>
+              <option value="follow_up">{t("followUp")}</option>
+              <option value="surgical">{t("surgical")}</option>
+              <option value="referral">{t("referral")}</option>
             </Select>
           </div>
           <div>
-            <FieldLabel>Content *</FieldLabel>
-            <textarea name="content" required rows={6} placeholder="Write the medical record here…" className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
+            <FieldLabel>{t("content")} *</FieldLabel>
+            <textarea name="content" required rows={6} placeholder={t("contentPlaceholder")} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">Cancel</button>
+            <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
             <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
-              {pending ? "Saving…" : "Save Record"}
+              {pending ? t("saving") : t("saveRecord")}
             </button>
           </div>
         </form>
@@ -344,6 +348,7 @@ function RecordsTab({ patientId, records }: { patientId: string; records: MedRec
 }
 
 function PrescriptionsTab({ patientId, prescriptions }: { patientId: string; prescriptions: Rx[] }) {
+  const t = useTranslations("patientDetail");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -371,23 +376,23 @@ function PrescriptionsTab({ patientId, prescriptions }: { patientId: string; pre
   }
 
   function handleDelete(id: string) {
-    if (!confirm("Delete this prescription?")) return;
+    if (!confirm(t("deletePrescriptionConfirm"))) return;
     startTransition(async () => { await deletePrescription(id, patientId); });
   }
 
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-slate-500">{prescriptions.length} prescription{prescriptions.length !== 1 ? "s" : ""}</p>
+        <p className="text-sm text-slate-500">{t("prescriptions", { n: prescriptions.length })}</p>
         <button onClick={() => setOpen(true)} className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3.5 w-3.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          New Prescription
+          {t("newPrescription")}
         </button>
       </div>
 
       {prescriptions.length === 0 ? (
         <div className="rounded-2xl border border-slate-100 bg-slate-50 p-10 text-center">
-          <p className="text-sm text-slate-400">No prescriptions yet</p>
+          <p className="text-sm text-slate-400">{t("noPrescriptions")}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -413,41 +418,41 @@ function PrescriptionsTab({ patientId, prescriptions }: { patientId: string; pre
         </div>
       )}
 
-      <Dialog open={open} onClose={() => setOpen(false)} title="New Prescription">
+      <Dialog open={open} onClose={() => setOpen(false)} title={t("newPrescription")}>
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <FieldLabel>Medications</FieldLabel>
-              <button type="button" onClick={addMed} className="text-xs font-semibold text-teal-600 hover:text-teal-700">+ Add medication</button>
+              <FieldLabel>{t("medications")}</FieldLabel>
+              <button type="button" onClick={addMed} className="text-xs font-semibold text-teal-600 hover:text-teal-700">{t("addMedication")}</button>
             </div>
             <div className="space-y-3">
               {medications.map((_, i) => (
                 <div key={i} className="rounded-xl border border-slate-100 bg-slate-50 p-3 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-500">Medication {i + 1}</span>
+                    <span className="text-xs font-semibold text-slate-500">{t("medicationN", { n: i + 1 })}</span>
                     {medications.length > 1 && (
-                      <button type="button" onClick={() => removeMed(i)} className="text-xs text-red-500 hover:text-red-600">Remove</button>
+                      <button type="button" onClick={() => removeMed(i)} className="text-xs text-red-500 hover:text-red-600">{t("remove")}</button>
                     )}
                   </div>
-                  <Input name={`name_${i}`} placeholder="Medication name" />
+                  <Input name={`name_${i}`} placeholder={t("medicationName")} />
                   <div className="grid grid-cols-3 gap-2">
-                    <Input name={`dosage_${i}`} placeholder="Dosage" />
-                    <Input name={`frequency_${i}`} placeholder="Frequency" />
-                    <Input name={`duration_${i}`} placeholder="Duration" />
+                    <Input name={`dosage_${i}`} placeholder={t("dosage")} />
+                    <Input name={`frequency_${i}`} placeholder={t("frequency")} />
+                    <Input name={`duration_${i}`} placeholder={t("duration")} />
                   </div>
                 </div>
               ))}
             </div>
           </div>
           <div>
-            <FieldLabel>Notes (optional)</FieldLabel>
-            <textarea name="notes" rows={2} placeholder="Additional instructions…" className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
+            <FieldLabel>{t("notesOptional")}</FieldLabel>
+            <textarea name="notes" rows={2} placeholder={t("notesPlaceholder")} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">Cancel</button>
+            <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
             <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
-              {pending ? "Saving…" : "Save Prescription"}
+              {pending ? t("saving") : t("savePrescription")}
             </button>
           </div>
         </form>
@@ -456,7 +461,9 @@ function PrescriptionsTab({ patientId, prescriptions }: { patientId: string; pre
   );
 }
 
-function AppointmentsTab({ appointments }: { appointments: Appt[] }) {
+function AppointmentsTab({ appointments, locale }: { appointments: Appt[]; locale: string }) {
+  const t = useTranslations("patientDetail");
+
   function statusBadgeClass(status: string) {
     switch (status) {
       case "confirmed": return "bg-teal-100 text-teal-700";
@@ -471,14 +478,14 @@ function AppointmentsTab({ appointments }: { appointments: Appt[] }) {
     <div>
       {appointments.length === 0 ? (
         <div className="rounded-2xl border border-slate-100 bg-slate-50 p-10 text-center">
-          <p className="text-sm text-slate-400">No appointments yet</p>
+          <p className="text-sm text-slate-400">{t("noAppointments")}</p>
         </div>
       ) : (
         <div className="space-y-2">
           {appointments.map(appt => (
             <div key={appt.id} className="flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4">
               <div className="shrink-0 rounded-lg bg-teal-50 p-2 text-center min-w-[44px]">
-                <p className="text-xs font-bold text-teal-600 uppercase">{new Date(appt.date + "T12:00:00").toLocaleDateString("en-US", { month: "short" })}</p>
+                <p className="text-xs font-bold text-teal-600 uppercase">{new Date(appt.date + "T12:00:00").toLocaleDateString(locale, { month: "short" })}</p>
                 <p className="text-base font-extrabold text-slate-900 leading-tight">{new Date(appt.date + "T12:00:00").getDate()}</p>
               </div>
               <div className="flex-1 min-w-0">
@@ -488,7 +495,7 @@ function AppointmentsTab({ appointments }: { appointments: Appt[] }) {
               <div className="flex items-center gap-2 shrink-0">
                 <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${statusBadgeClass(appt.status)}`}>{appt.status}</span>
                 <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
-                  {appt.payment_status === "paid" ? "Paid" : "Pending"}
+                  {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}
                 </span>
               </div>
             </div>

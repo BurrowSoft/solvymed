@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { PeriodFilter, MarkPaidButton, MarkUnpaidButton } from "./PaymentsClient";
 
 type Period = "week" | "month" | "last_month" | "all";
@@ -41,7 +42,10 @@ export default async function PaymentsPage({
   const { period: periodParam } = await searchParams;
   const period: Period = (["week", "month", "last_month", "all"].includes(periodParam ?? "") ? periodParam : "month") as Period;
 
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([
+    createClient(),
+    getTranslations("paymentsPage"),
+  ]);
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
 
@@ -81,8 +85,8 @@ export default async function PaymentsPage({
     <div className="p-6 lg:p-8 max-w-5xl">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-extrabold text-slate-900">Payments</h1>
-        <p className="text-sm text-slate-500 mt-0.5">Track and manage consultation payments</p>
+        <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
+        <p className="text-sm text-slate-500 mt-0.5">{t("subtitle")}</p>
       </div>
 
       {/* Period filter */}
@@ -93,19 +97,19 @@ export default async function PaymentsPage({
       {/* Summary cards */}
       <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-orange-100 bg-orange-50 p-5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">Pending</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">{t("pendingLabel")}</p>
           <p className="mt-1 text-2xl font-extrabold text-orange-900">{formatBRL(totalPending)}</p>
-          <p className="text-xs text-orange-600">{pending.length} session{pending.length !== 1 ? "s" : ""}</p>
+          <p className="text-xs text-orange-600">{t("sessions", { n: pending.length })}</p>
         </div>
         <div className="rounded-2xl border border-green-100 bg-green-50 p-5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-green-600">Received</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-green-600">{t("receivedLabel")}</p>
           <p className="mt-1 text-2xl font-extrabold text-green-900">{formatBRL(totalPaid)}</p>
-          <p className="text-xs text-green-600">{paid.length} session{paid.length !== 1 ? "s" : ""}</p>
+          <p className="text-xs text-green-600">{t("sessions", { n: paid.length })}</p>
         </div>
         <div className="rounded-2xl border border-teal-100 bg-teal-50 p-5 col-span-2 sm:col-span-1">
-          <p className="text-xs font-semibold uppercase tracking-wide text-teal-600">Total</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-teal-600">{t("totalLabel")}</p>
           <p className="mt-1 text-2xl font-extrabold text-teal-900">{formatBRL(totalPending + totalPaid)}</p>
-          <p className="text-xs text-teal-600">{pending.length + paid.length} sessions</p>
+          <p className="text-xs text-teal-600">{t("sessions", { n: pending.length + paid.length })}</p>
         </div>
       </div>
 
@@ -114,11 +118,11 @@ export default async function PaymentsPage({
         <div>
           <h2 className="mb-3 text-base font-bold text-slate-900 flex items-center gap-2">
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-700">{pending.length}</span>
-            Pending
+            {t("pendingLabel")}
           </h2>
           {pending.length === 0 ? (
             <div className="rounded-2xl border border-slate-100 bg-white p-10 text-center">
-              <p className="text-sm text-slate-400">All paid up! 🎉</p>
+              <p className="text-sm text-slate-400">{t("allPaidUp")}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -131,7 +135,7 @@ export default async function PaymentsPage({
                       {p.payment_amount ? (
                         <p className="text-sm font-bold text-orange-600 mt-1">{formatBRL(p.payment_amount)}</p>
                       ) : (
-                        <p className="text-xs text-slate-400 mt-1">No amount set</p>
+                        <p className="text-xs text-slate-400 mt-1">{t("noAmountSet")}</p>
                       )}
                     </div>
                     <div className="shrink-0">
@@ -148,11 +152,11 @@ export default async function PaymentsPage({
         <div>
           <h2 className="mb-3 text-base font-bold text-slate-900 flex items-center gap-2">
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">{paid.length}</span>
-            Received
+            {t("receivedLabel")}
           </h2>
           {paid.length === 0 ? (
             <div className="rounded-2xl border border-slate-100 bg-white p-10 text-center">
-              <p className="text-sm text-slate-400">No paid sessions yet</p>
+              <p className="text-sm text-slate-400">{t("noPaidYet")}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -167,7 +171,7 @@ export default async function PaymentsPage({
                       ) : null}
                     </div>
                     <div className="flex flex-col items-end gap-2 shrink-0">
-                      <span className="text-xs font-semibold text-green-600">✓ Paid</span>
+                      <span className="text-xs font-semibold text-green-600">{t("paidBadge")}</span>
                       <MarkUnpaidButton id={p.id} />
                     </div>
                   </div>

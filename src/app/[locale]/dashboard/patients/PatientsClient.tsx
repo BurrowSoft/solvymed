@@ -2,6 +2,7 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useState, useTransition, useRef, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { createPatient, deletePatient } from "./actions";
 import Link from "next/link";
 
@@ -44,6 +45,7 @@ function Select({ children, ...props }: React.SelectHTMLAttributes<HTMLSelectEle
 }
 
 function PatientForm({ onSubmit, pending, error }: { onSubmit: (fd: FormData) => void; pending: boolean; error: string }) {
+  const t = useTranslations("patients");
   const formRef = useRef<HTMLFormElement>(null);
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -53,55 +55,55 @@ function PatientForm({ onSubmit, pending, error }: { onSubmit: (fd: FormData) =>
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2">
-          <FieldLabel>Full Name *</FieldLabel>
+          <FieldLabel>{t("fullName")} *</FieldLabel>
           <Input name="full_name" required placeholder="Patient's full name" />
         </div>
         <div>
-          <FieldLabel>Email</FieldLabel>
+          <FieldLabel>{t("email")}</FieldLabel>
           <Input name="email" type="email" placeholder="email@example.com" />
         </div>
         <div>
-          <FieldLabel>Phone</FieldLabel>
+          <FieldLabel>{t("phone")}</FieldLabel>
           <Input name="phone" placeholder="+55 11 99999-9999" />
         </div>
         <div>
-          <FieldLabel>CPF</FieldLabel>
+          <FieldLabel>{t("cpf")}</FieldLabel>
           <Input name="cpf" placeholder="000.000.000-00" />
         </div>
         <div>
-          <FieldLabel>Date of Birth</FieldLabel>
+          <FieldLabel>{t("dateOfBirth")}</FieldLabel>
           <Input name="birth_date" type="date" />
         </div>
         <div>
-          <FieldLabel>Sex</FieldLabel>
+          <FieldLabel>{t("sex")}</FieldLabel>
           <Select name="sex">
-            <option value="">Not specified</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
+            <option value="">{t("notSpecified")}</option>
+            <option value="male">{t("male")}</option>
+            <option value="female">{t("female")}</option>
+            <option value="other">{t("other")}</option>
           </Select>
         </div>
         <div>
-          <FieldLabel>Insurance Type</FieldLabel>
+          <FieldLabel>{t("insuranceType")}</FieldLabel>
           <Select name="convenio_type">
-            <option value="">Not specified</option>
-            <option value="particular">Private</option>
-            <option value="health_plan">Health Plan</option>
+            <option value="">{t("notSpecified")}</option>
+            <option value="particular">{t("private")}</option>
+            <option value="health_plan">{t("healthPlan")}</option>
           </Select>
         </div>
         <div className="col-span-2">
-          <FieldLabel>Profession</FieldLabel>
+          <FieldLabel>{t("profession")}</FieldLabel>
           <Input name="profession" placeholder="e.g. Engineer, Teacher…" />
         </div>
         <div className="col-span-2">
-          <FieldLabel>Emergency Phone</FieldLabel>
+          <FieldLabel>{t("emergencyPhone")}</FieldLabel>
           <Input name="emergency_phone" placeholder="+55 11 99999-9999" />
         </div>
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3 pt-2">
         <button type="submit" disabled={pending} className="w-full rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
-          {pending ? "Saving…" : "Save Patient"}
+          {pending ? t("saving") : t("savePatient")}
         </button>
       </div>
     </form>
@@ -109,6 +111,7 @@ function PatientForm({ onSubmit, pending, error }: { onSubmit: (fd: FormData) =>
 }
 
 export function PatientSearch({ defaultValue }: { defaultValue: string }) {
+  const t = useTranslations("patients");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -127,7 +130,7 @@ export function PatientSearch({ defaultValue }: { defaultValue: string }) {
       </svg>
       <input
         type="search"
-        placeholder="Search patients…"
+        placeholder={t("searchPlaceholder")}
         defaultValue={defaultValue}
         onChange={handleChange}
         className="w-full rounded-xl border border-slate-200 bg-white pl-9 pr-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
@@ -137,6 +140,7 @@ export function PatientSearch({ defaultValue }: { defaultValue: string }) {
 }
 
 export function NewPatientButton({ locale }: { locale: string }) {
+  const t = useTranslations("patients");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -154,9 +158,9 @@ export function NewPatientButton({ locale }: { locale: string }) {
     <>
       <button onClick={() => setOpen(true)} className="flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition shadow-sm">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        New Patient
+        {t("newPatient")}
       </button>
-      <Dialog open={open} onClose={() => setOpen(false)} title="New Patient">
+      <Dialog open={open} onClose={() => setOpen(false)} title={t("newPatient")}>
         <PatientForm onSubmit={handleSubmit} pending={pending} error={error} />
       </Dialog>
     </>
@@ -164,14 +168,14 @@ export function NewPatientButton({ locale }: { locale: string }) {
 }
 
 export function DeletePatientButton({ id }: { id: string }) {
+  const t = useTranslations("patients");
   const [pending, startTransition] = useTransition();
   const router = useRouter();
-  const prefix = "";
 
   function handleDelete(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm("Delete this patient and all their records? This cannot be undone.")) return;
+    if (!confirm(t("deleteConfirm"))) return;
     startTransition(async () => {
       await deletePatient(id);
       router.push("/dashboard/patients");
@@ -180,12 +184,13 @@ export function DeletePatientButton({ id }: { id: string }) {
 
   return (
     <button onClick={handleDelete} disabled={pending} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-red-600 border border-red-200 hover:bg-red-50 transition disabled:opacity-60">
-      {pending ? "Deleting…" : "Delete"}
+      {pending ? t("saving") : t("delete") ?? "Delete"}
     </button>
   );
 }
 
 export function PatientCard({ patient, locale }: { patient: Patient; locale: string }) {
+  const t = useTranslations("patients");
   const prefix = locale === "en" ? "" : `/${locale}`;
   const initials = patient.full_name.split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
   const age = patient.birth_date
@@ -200,7 +205,7 @@ export function PatientCard({ patient, locale }: { patient: Patient; locale: str
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-slate-900 truncate">{patient.full_name}</p>
         <p className="text-xs text-slate-500 truncate mt-0.5">
-          {[patient.email, age ? `${age} yrs` : null, patient.phone].filter(Boolean).join(" · ")}
+          {[patient.email, age ? `${age} ${t("yrs")}` : null, patient.phone].filter(Boolean).join(" · ")}
         </p>
       </div>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-300 group-hover:text-teal-400 transition shrink-0">
