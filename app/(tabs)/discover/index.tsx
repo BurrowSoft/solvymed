@@ -11,6 +11,10 @@ import { Colors } from '@/constants/Colors';
 import { Clinic } from '@/lib/types';
 import { searchClinics } from '@/lib/discovery-service';
 import { useStyles } from '@/lib/use-styles';
+import { useAuth } from '@/lib/auth-context';
+import { t } from '@/lib/i18n';
+import { supabase } from '@/lib/supabase';
+import { useRole } from '@/lib/role-context';
 
 function buildMapHtml(clinics: Clinic[]): string {
   const markers = clinics
@@ -36,13 +40,18 @@ ${markers}
 </script></body></html>`;
 }
 
+type RecentDoctor = { professionalId: string; professionalName: string; clinicId: string; clinicName: string; specialty?: string };
+
 export default function DiscoverScreen() {
   const styles = useStyles(makeStyles);
   const { height } = useWindowDimensions();
+  const { user } = useAuth();
+  const { role } = useRole();
   const [query, setQuery] = useState('');
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [recentDoctors, setRecentDoctors] = useState<RecentDoctor[]>([]);
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const load = useCallback(async (q = '') => {
@@ -57,7 +66,45 @@ export default function DiscoverScreen() {
     }
   }, []);
 
-  useFocusEffect(useCallback(() => { load(); }, [load]));
+  const loadRecentDoctors = useCallback(async () => {
+    if (!user || role === 'professional') return;
+    try {
+      const { data } = await supabase
+        .from('appointments')
+        .select('professional_id, consultation_type')
+        .eq('patient_auth_id', user.id)
+        .not('status', 'in', '("cancelled","rejected")')
+        .order('date', { ascending: false })
+        .limit(20);
+      if (!data?.length) return;
+
+      const allClinics = await searchClinics('');
+      const seen = new Set<string>();
+      const recent: RecentDoctor[] = [];
+      for (const row of data) {
+        const pid = row.professional_id as string;
+        if (seen.has(pid)) continue;
+        seen.add(pid);
+        for (const clinic of allClinics) {
+          const prof = clinic.professionals?.find((p: { id: string }) => p.id === pid);
+          if (prof) {
+            recent.push({
+              professionalId: pid,
+              professionalName: (prof as { id: string; name: string; specialty?: string }).name,
+              specialty: (prof as { id: string; name: string; specialty?: string }).specialty,
+              clinicId: clinic.id,
+              clinicName: clinic.name,
+            });
+            break;
+          }
+        }
+        if (recent.length === 5) break;
+      }
+      setRecentDoctors(recent);
+    } catch {}
+  }, [user, role]);
+
+  useFocusEffect(useCallback(() => { load(); loadRecentDoctors(); }, [load, loadRecentDoctors]));
 
   function handleSearch(text: string) {
     setQuery(text);
@@ -69,7 +116,7 @@ export default function DiscoverScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Find a Clinic</Text>
+        <Text style={styles.title}>{t('discover.title')}</Text>
         <TouchableOpacity
           style={[styles.mapToggle, showMap && styles.mapToggleActive]}
           onPress={() => setShowMap(v => !v)}
@@ -86,7 +133,7 @@ export default function DiscoverScreen() {
             style={styles.searchInput}
             value={query}
             onChangeText={handleSearch}
-            placeholder="Search by name or city…"
+            placeholder={t('discover.subtitle')}
             placeholderTextColor={Colors.textMuted}
             returnKeyType="search"
           />
@@ -97,6 +144,29 @@ export default function DiscoverScreen() {
           )}
         </View>
       </View>
+
+      {/* Recent Doctors */}
+      {recentDoctors.length > 0 && role !== 'professional' && (
+        <View style={styles.recentSection}>
+          <Text style={styles.recentTitle}>{t('discover.recentDoctors')}</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.recentList}>
+            {recentDoctors.map(doc => (
+              <TouchableOpacity
+                key={doc.professionalId}
+                style={styles.recentCard}
+                onPress={() => router.push({ pathname: '/(tabs)/discover/book', params: { professionalId: doc.professionalId, clinicId: doc.clinicId } })}
+              >
+                <View style={styles.recentAvatar}>
+                  <Ionicons name="person-outline" size={22} color={Colors.primary} />
+                </View>
+                <Text style={styles.recentName} numberOfLines={1}>{doc.professionalName}</Text>
+                {doc.specialty && <Text style={styles.recentSpecialty} numberOfLines={1}>{doc.specialty}</Text>}
+                <Text style={styles.recentClinic} numberOfLines={1}>{doc.clinicName}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
 
       {/* Map view */}
       {showMap && (
@@ -201,5 +271,21 @@ function makeStyles() {
     empty: { alignItems: 'center', paddingTop: 60, gap: 8 },
     emptyText: { fontSize: 16, fontWeight: '600', color: Colors.textSecondary },
     emptySubtext: { fontSize: 13, color: Colors.textMuted },
+    recentSection: { paddingBottom: 8 },
+    recentTitle: { fontSize: 14, fontWeight: '700', color: Colors.textSecondary, paddingHorizontal: 20, marginBottom: 8 },
+    recentList: { paddingHorizontal: 16, gap: 10 },
+    recentCard: {
+      width: 120, padding: 12, borderRadius: 14,
+      backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+      alignItems: 'center', gap: 4,
+    },
+    recentAvatar: {
+      width: 44, height: 44, borderRadius: 22,
+      backgroundColor: `${Colors.primary}15`,
+      alignItems: 'center', justifyContent: 'center', marginBottom: 4,
+    },
+    recentName: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center' },
+    recentSpecialty: { fontSize: 11, color: Colors.primary, textAlign: 'center' },
+    recentClinic: { fontSize: 11, color: Colors.textMuted, textAlign: 'center' },
   });
 }

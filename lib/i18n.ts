@@ -26,6 +26,7 @@ const en = {
   'tab.payments': 'Payments',
   'tab.settings': 'Settings',
 
+  'common.other': 'Other',
   'common.save': 'Save',
   'common.update': 'Update',
   'common.cancel': 'Cancel',
@@ -656,6 +657,11 @@ const en = {
   'patients.form.duplicateMsg': 'A patient with this email already exists: {{name}}',
   'patients.form.viewExisting': 'View Existing',
 
+  'book.appointmentFor': 'What is this appointment for?',
+  'book.appointmentForPlaceholder': 'Describe the appointment…',
+  'discover.title': 'Book an Appointment',
+  'discover.subtitle': 'Search by city, specialty or doctor name',
+  'discover.recentDoctors': 'Your Recent Doctors',
   'book.title': 'Book Appointment',
   'book.selectDate': 'Select Date',
   'book.selectTime': 'Select Time',
@@ -677,6 +683,7 @@ const ptBR: typeof en = {
   'tab.payments': 'Pagamentos',
   'tab.settings': 'Configurações',
 
+  'common.other': 'Outro',
   'common.save': 'Salvar',
   'common.update': 'Atualizar',
   'common.cancel': 'Cancelar',
@@ -1301,6 +1308,11 @@ const ptBR: typeof en = {
   'patients.form.duplicateMsg': 'Já existe um paciente com este e-mail: {{name}}',
   'patients.form.viewExisting': 'Ver existente',
 
+  'book.appointmentFor': 'Qual é o motivo da consulta?',
+  'book.appointmentForPlaceholder': 'Descreva o agendamento…',
+  'discover.title': 'Agendar Consulta',
+  'discover.subtitle': 'Buscar por cidade, especialidade ou médico',
+  'discover.recentDoctors': 'Seus Médicos Recentes',
   'book.title': 'Agendar Consulta',
   'book.selectDate': 'Selecionar data',
   'book.selectTime': 'Selecionar horário',
@@ -1322,6 +1334,7 @@ const frFR: typeof en = {
   'tab.payments': 'Paiements',
   'tab.settings': 'Paramètres',
 
+  'common.other': 'Autre',
   'common.save': 'Enregistrer',
   'common.update': 'Mettre à jour',
   'common.cancel': 'Annuler',
@@ -1943,6 +1956,11 @@ const frFR: typeof en = {
   'patients.form.duplicateMsg': 'Un patient avec cet e-mail existe déjà : {{name}}',
   'patients.form.viewExisting': "Voir l'existant",
 
+  'book.appointmentFor': 'Quel est le motif du rendez-vous ?',
+  'book.appointmentForPlaceholder': 'Décrivez le rendez-vous…',
+  'discover.title': 'Prendre un rendez-vous',
+  'discover.subtitle': 'Rechercher par ville, spécialité ou médecin',
+  'discover.recentDoctors': 'Vos médecins récents',
   'book.title': 'Prendre rendez-vous',
   'book.selectDate': 'Choisir une date',
   'book.selectTime': 'Choisir un horaire',
@@ -1964,6 +1982,7 @@ const deDE: typeof en = {
   'tab.payments': 'Zahlungen',
   'tab.settings': 'Einstellungen',
 
+  'common.other': 'Sonstiges',
   'common.save': 'Speichern',
   'common.update': 'Aktualisieren',
   'common.cancel': 'Abbrechen',
@@ -2585,6 +2604,11 @@ const deDE: typeof en = {
   'patients.form.duplicateMsg': 'Ein Patient mit dieser E-Mail existiert bereits: {{name}}',
   'patients.form.viewExisting': 'Vorhandenen anzeigen',
 
+  'book.appointmentFor': 'Wofür ist dieser Termin?',
+  'book.appointmentForPlaceholder': 'Termin beschreiben…',
+  'discover.title': 'Termin buchen',
+  'discover.subtitle': 'Nach Stadt, Fachrichtung oder Arzt suchen',
+  'discover.recentDoctors': 'Ihre letzten Ärzte',
   'book.title': 'Termin buchen',
   'book.selectDate': 'Datum wählen',
   'book.selectTime': 'Uhrzeit wählen',
@@ -2606,6 +2630,7 @@ const itIT: typeof en = {
   'tab.payments': 'Pagamenti',
   'tab.settings': 'Impostazioni',
 
+  'common.other': 'Altro',
   'common.save': 'Salva',
   'common.update': 'Aggiorna',
   'common.cancel': 'Annulla',
@@ -3227,6 +3252,11 @@ const itIT: typeof en = {
   'patients.form.duplicateMsg': 'Esiste già un paziente con questa email: {{name}}',
   'patients.form.viewExisting': 'Vedi esistente',
 
+  'book.appointmentFor': 'Per cosa è questo appuntamento?',
+  'book.appointmentForPlaceholder': "Descrivi l'appuntamento…",
+  'discover.title': 'Prenota un appuntamento',
+  'discover.subtitle': 'Cerca per città, specialità o medico',
+  'discover.recentDoctors': 'I tuoi medici recenti',
   'book.title': 'Prenota appuntamento',
   'book.selectDate': 'Seleziona data',
   'book.selectTime': 'Seleziona orario',
@@ -3248,6 +3278,7 @@ const esES: typeof en = {
   'tab.payments': 'Pagos',
   'tab.settings': 'Ajustes',
 
+  'common.other': 'Otro',
   'common.save': 'Guardar',
   'common.update': 'Actualizar',
   'common.cancel': 'Cancelar',
@@ -3869,6 +3900,11 @@ const esES: typeof en = {
   'patients.form.duplicateMsg': 'Ya existe un paciente con este correo: {{name}}',
   'patients.form.viewExisting': 'Ver existente',
 
+  'book.appointmentFor': '¿Para qué es esta cita?',
+  'book.appointmentForPlaceholder': 'Describe la cita…',
+  'discover.title': 'Reservar cita',
+  'discover.subtitle': 'Buscar por ciudad, especialidad o médico',
+  'discover.recentDoctors': 'Tus médicos recientes',
   'book.title': 'Reservar cita',
   'book.selectDate': 'Seleccionar fecha',
   'book.selectTime': 'Seleccionar horario',

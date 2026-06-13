@@ -11,9 +11,17 @@ import { TimeSlot, getAvailableSlots, createTentativeBooking } from '@/lib/booki
 import { getProfessionalProcedures, ProcedureSummary } from '@/lib/discovery-service';
 import { useAuth } from '@/lib/auth-context';
 import { useStyles } from '@/lib/use-styles';
+import { t } from '@/lib/i18n';
 
 const FALLBACK_DURATIONS = [30, 45, 60];
 const DAYS_AHEAD = 14;
+const CONSULT_TYPES = [
+  { value: 'Consultation', labelKey: 'consultType.consultation' },
+  { value: 'Follow-up', labelKey: 'consultType.followUp' },
+  { value: 'Exam Review', labelKey: 'consultType.examReview' },
+  { value: 'Procedure', labelKey: 'consultType.procedure' },
+  { value: 'Emergency', labelKey: 'consultType.emergency' },
+] as const;
 
 function fmt(d: Date) {
   return d.toISOString().split('T')[0];
@@ -53,6 +61,7 @@ export default function BookScreen() {
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [consultType, setConsultType] = useState('');
+  const [isOther, setIsOther] = useState(false);
   const [notes, setNotes] = useState('');
   const [booking, setBooking] = useState(false);
 
@@ -71,7 +80,7 @@ export default function BookScreen() {
         if (procs.length > 0) {
           setSelectedProcedure(procs[0]);
           setDuration(procs[0].durationMinutes);
-          setConsultType(procs[0].name);
+          applyConsultType(procs[0].name);
         }
       })
       .catch(() => {})
@@ -96,10 +105,16 @@ export default function BookScreen() {
     loadSlots(selectedDate, duration);
   }, [selectedDate, duration, loadSlots]);
 
+  function applyConsultType(name: string) {
+    const match = CONSULT_TYPES.find(c => c.value === name);
+    if (match) { setConsultType(name); setIsOther(false); }
+    else { setConsultType(name); setIsOther(true); }
+  }
+
   function selectProcedure(proc: ProcedureSummary) {
     setSelectedProcedure(proc);
     setDuration(proc.durationMinutes);
-    setConsultType(proc.name);
+    applyConsultType(proc.name);
   }
 
   function selectFallbackDuration(dur: number) {
@@ -223,15 +238,42 @@ export default function BookScreen() {
 
         {/* Consultation type */}
         <Text style={styles.sectionLabel}>
-          What is this appointment for? <Text style={styles.required}>*</Text>
+          {t('book.appointmentFor')} <Text style={styles.required}>*</Text>
         </Text>
-        <TextInput
-          style={styles.consultInput}
-          value={consultType}
-          onChangeText={setConsultType}
-          placeholder="e.g. First visit, Follow-up, Annual check-up…"
-          placeholderTextColor={Colors.textMuted}
-        />
+        <View style={styles.chipRow}>
+          {CONSULT_TYPES.map(({ value, labelKey }) => {
+            const active = !isOther && consultType === value;
+            return (
+              <TouchableOpacity
+                key={value}
+                style={[styles.chip, active && styles.chipActive]}
+                onPress={() => { setConsultType(value); setIsOther(false); }}
+              >
+                <Text style={[styles.chipText, active && styles.chipTextActive]}>
+                  {t(labelKey as any)}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+          <TouchableOpacity
+            style={[styles.chip, isOther && styles.chipActive]}
+            onPress={() => { setIsOther(true); setConsultType(''); }}
+          >
+            <Text style={[styles.chipText, isOther && styles.chipTextActive]}>
+              {t('common.other')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {isOther && (
+          <TextInput
+            style={styles.consultInput}
+            value={consultType}
+            onChangeText={setConsultType}
+            placeholder={t('book.appointmentForPlaceholder')}
+            placeholderTextColor={Colors.textMuted}
+            autoFocus
+          />
+        )}
 
         {/* Date picker */}
         <Text style={styles.sectionLabel}>Pick a date</Text>
@@ -388,6 +430,14 @@ function makeStyles() {
     bookBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
     hint: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', lineHeight: 18 },
     required: { color: '#ef4444' },
+    chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    chip: {
+      paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
+      borderWidth: 1.5, borderColor: Colors.border, backgroundColor: Colors.surface,
+    },
+    chipActive: { borderColor: Colors.primary, backgroundColor: `${Colors.primary}15` },
+    chipText: { fontSize: 13, fontWeight: '600', color: Colors.textSecondary },
+    chipTextActive: { color: Colors.primary },
     consultInput: {
       backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
       borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11,
