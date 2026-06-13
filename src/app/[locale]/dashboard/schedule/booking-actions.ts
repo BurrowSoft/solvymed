@@ -16,7 +16,76 @@ export async function getTentativeBookings() {
     .order("date")
     .order("start_time");
 
-  return data ?? [];
+  const bookings = data ?? [];
+
+  // Determine which patients are already linked to this doctor
+  const authIds = bookings
+    .map((b: Record<string, unknown>) => b.patient_auth_id as string)
+    .filter(Boolean);
+
+  let knownIds = new Set<string>();
+  if (authIds.length > 0) {
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("user_id")
+      .eq("invited_by_professional_id", user.id)
+      .in("user_id", authIds);
+    knownIds = new Set((roles ?? []).map((r: Record<string, unknown>) => r.user_id as string));
+  }
+
+  return bookings.map((b: Record<string, unknown>) => ({
+    ...b,
+    is_new_patient: b.patient_auth_id ? !knownIds.has(b.patient_auth_id as string) : false,
+  }));
+}
+
+export async function confirmBookingAndAddPatient(appointmentId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data: appt } = await supabase
+    .from("appointments")
+    .select("patient_name, patient_auth_id")
+    .eq("id", appointmentId)
+    .eq("professional_id", user.id)
+    .maybeSingle();
+
+  if (!appt) return { error: "Appointment not found" };
+
+  const { error } = await supabase
+    .from("appointments")
+    .update({ status: "confirmed" })
+    .eq("id", appointmentId)
+    .eq("professional_id", user.id);
+
+  if (error) return { error: error.message };
+
+  // Add patient record to this doctor's list
+  const { data: newPatient } = await supabase
+    .from("patients")
+    .insert({ full_name: appt.patient_name as string, professional_id: user.id })
+    .select("id")
+    .maybeSingle();
+
+  // Link the auth user → patient record so future bookings are recognised
+  if (newPatient && appt.patient_auth_id) {
+    await supabase.from("user_roles").upsert(
+      {
+        user_id: appt.patient_auth_id,
+        role: "patient",
+        linked_patient_id: newPatient.id,
+        invited_by_professional_id: user.id,
+      },
+      { onConflict: "user_id" },
+    );
+  }
+
+  await notifyPatient(supabase, appointmentId, "Appointment Confirmed", "Your appointment has been confirmed by the doctor.");
+
+  revalidatePath("/dashboard/schedule");
+  revalidatePath("/dashboard/patients");
+  return { error: null };
 }
 
 export async function confirmBooking(appointmentId: string) {

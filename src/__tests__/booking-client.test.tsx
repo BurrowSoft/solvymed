@@ -38,7 +38,8 @@ const WORKING_HOURS = {
   sun: { enabled: true, start: "09:00", end: "17:00" },
 };
 
-function setupMocks({ workingHours = WORKING_HOURS, busySlots = [], procedures = [], bookingError = null } = {}) {
+type ProcedureRow = { id: string; name: string; duration_minutes: number; price: number | null; payment_type: string };
+function setupMocks({ workingHours = WORKING_HOURS, busySlots = [] as unknown[], procedures = [] as ProcedureRow[], bookingError = null as { message: string } | null } = {}) {
   mockRpc.mockImplementation((fn: string) => {
     if (fn === "get_professional_working_hours") return Promise.resolve({ data: workingHours, error: null });
     if (fn === "get_professional_procedures") return Promise.resolve({ data: procedures, error: null });
