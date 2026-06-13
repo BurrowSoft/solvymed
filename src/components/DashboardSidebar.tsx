@@ -38,6 +38,11 @@ const HomeIcon = () => (
     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
   </svg>
 );
+const MapPinIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+  </svg>
+);
 const LogoIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
     <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
@@ -62,6 +67,7 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl }: Props) 
     { label: "Overview", path: "/dashboard", icon: <HomeIcon /> },
     { label: "Schedule", path: "/dashboard/schedule", icon: <CalendarIcon /> },
     { label: "Patients", path: "/dashboard/patients", icon: <UsersIcon /> },
+    { label: "Clinics", path: "/dashboard/clinics", icon: <MapPinIcon /> },
     { label: "Payments", path: "/dashboard/payments", icon: <CardIcon /> },
     { label: "Settings", path: "/dashboard/settings", icon: <GearIcon /> },
   ];
