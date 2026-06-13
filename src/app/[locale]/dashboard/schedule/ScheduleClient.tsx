@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useState, useTransition, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime } from "./actions";
 
 type Patient = { id: string; full_name: string };
@@ -69,13 +70,14 @@ function Select({ className = "", children, ...props }: React.SelectHTMLAttribut
 }
 
 export function ViewToggle({ currentView, currentDate }: { currentView: string; currentDate: string }) {
+  const t = useTranslations("schedule");
   const router = useRouter();
   const pathname = usePathname();
   const views = [
-    { id: "list", label: "List" },
-    { id: "day",  label: "Day" },
-    { id: "week", label: "Week" },
-    { id: "month", label: "Month" },
+    { id: "list", label: t("list") },
+    { id: "day",  label: t("day") },
+    { id: "week", label: t("week") },
+    { id: "month", label: t("month") },
   ];
   return (
     <div className="flex rounded-xl border border-slate-200 bg-white overflow-hidden text-xs font-semibold shadow-sm">
@@ -93,6 +95,7 @@ export function ViewToggle({ currentView, currentDate }: { currentView: string; 
 }
 
 export function ScheduleNav({ currentDate, currentView = "list" }: { currentDate: string; currentView?: string }) {
+  const t = useTranslations("schedule");
   const router = useRouter();
   const pathname = usePathname();
 
@@ -106,7 +109,7 @@ export function ScheduleNav({ currentDate, currentView = "list" }: { currentDate
     router.push(`${pathname}?date=${new Date().toISOString().split("T")[0]}&view=${currentView}`);
   }
 
-  const formatted = new Date(currentDate + "T12:00:00").toLocaleDateString("en-US", {
+  const formatted = new Date(currentDate + "T12:00:00").toLocaleDateString(undefined, {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
   const isToday = currentDate === new Date().toISOString().split("T")[0];
@@ -124,7 +127,7 @@ export function ScheduleNav({ currentDate, currentView = "list" }: { currentDate
       </button>
       {!isToday && (
         <button onClick={goToday} className="ml-2 rounded-xl border border-teal-200 bg-teal-50 px-3 py-2 text-xs font-semibold text-teal-700 hover:bg-teal-100 transition">
-          Today
+          {t("today")}
         </button>
       )}
     </div>
@@ -156,10 +159,11 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
 }
 
 export function DeleteAppointmentButton({ id }: { id: string }) {
+  const t = useTranslations("schedule");
   const [pending, startTransition] = useTransition();
 
   function handleDelete() {
-    if (!confirm("Delete this appointment?")) return;
+    if (!confirm(t("deleteConfirm"))) return;
     startTransition(async () => { await deleteAppointment(id); });
   }
 
@@ -177,6 +181,7 @@ export function NewAppointmentButton({ patients, defaultDate, procedures }: {
   defaultDate: string;
   procedures: Procedure[];
 }) {
+  const t = useTranslations("schedule");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -219,28 +224,28 @@ export function NewAppointmentButton({ patients, defaultDate, procedures }: {
     <>
       <button onClick={handleOpen} className="flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition shadow-sm">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        New Appointment
+        {t("newAppt")}
       </button>
 
-      <Dialog open={open} onClose={() => setOpen(false)} title="New Appointment">
+      <Dialog open={open} onClose={() => setOpen(false)} title={t("newAppt")}>
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <FieldLabel>Patient Name *</FieldLabel>
-            <Input name="patient_name" required list="patient-list" placeholder="Start typing a name…" />
+            <FieldLabel>{t("patientName")} *</FieldLabel>
+            <Input name="patient_name" required list="patient-list" placeholder={t("patientNamePlaceholder")} />
             <datalist id="patient-list">
               {patients.map(p => <option key={p.id} value={p.full_name} />)}
             </datalist>
           </div>
 
           <div>
-            <FieldLabel>Procedure *</FieldLabel>
+            <FieldLabel>{t("procedure")} *</FieldLabel>
             {procedures.length === 0 ? (
               <div className="rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3 text-xs text-amber-700">
-                No procedures configured.{" "}
+                {t("noProcedures")}{" "}
                 <a href="/dashboard/settings" className="font-semibold underline underline-offset-2">
-                  Add procedures in Settings
+                  {t("addProcSettings")}
                 </a>{" "}
-                before scheduling.
+                {t("beforeScheduling")}
               </div>
             ) : (
               <Select name="consultation_type" value={selectedProcName} onChange={handleProcChange} required>
@@ -255,18 +260,18 @@ export function NewAppointmentButton({ patients, defaultDate, procedures }: {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <FieldLabel>Date *</FieldLabel>
+              <FieldLabel>{t("date")} *</FieldLabel>
               <Input name="date" type="date" required defaultValue={defaultDate} />
             </div>
             <div>
-              <FieldLabel>Start Time *</FieldLabel>
+              <FieldLabel>{t("startTime")} *</FieldLabel>
               <Input name="start_time" type="time" required defaultValue="09:00" />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <FieldLabel>Duration (min)</FieldLabel>
+              <FieldLabel>{t("duration")}</FieldLabel>
               <Input
                 name="duration_minutes"
                 type="number"
@@ -277,32 +282,32 @@ export function NewAppointmentButton({ patients, defaultDate, procedures }: {
               />
             </div>
             <div>
-              <FieldLabel>Type</FieldLabel>
+              <FieldLabel>{t("type")}</FieldLabel>
               <Select name="type">
-                <option value="in-person">In-Person</option>
-                <option value="online">Online</option>
+                <option value="in-person">{t("inPerson")}</option>
+                <option value="online">{t("online")}</option>
               </Select>
             </div>
           </div>
 
           <div>
-            <FieldLabel>Payment</FieldLabel>
+            <FieldLabel>{t("payment")}</FieldLabel>
             <Select name="payment_type" value={paymentType} onChange={e => setPaymentType(e.target.value)}>
-              <option value="private">Private</option>
-              <option value="insurance">Insurance</option>
+              <option value="private">{t("private")}</option>
+              <option value="insurance">{t("insurance")}</option>
             </Select>
           </div>
 
           <div>
-            <FieldLabel>Notes</FieldLabel>
-            <textarea name="notes" rows={2} placeholder="Optional notes…" className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
+            <FieldLabel>{t("notes")}</FieldLabel>
+            <textarea name="notes" rows={2} placeholder={t("notesPlaceholder")} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
           </div>
 
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">Cancel</button>
+            <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
             <button type="submit" disabled={pending || procedures.length === 0} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
-              {pending ? "Saving…" : "Save Appointment"}
+              {pending ? t("saving") : t("saveAppt")}
             </button>
           </div>
         </form>
@@ -312,6 +317,7 @@ export function NewAppointmentButton({ patients, defaultDate, procedures }: {
 }
 
 export function BlockTimeButton({ defaultDate }: { defaultDate: string }) {
+  const t = useTranslations("schedule");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -333,40 +339,40 @@ export function BlockTimeButton({ defaultDate }: { defaultDate: string }) {
     <>
       <button onClick={() => setOpen(true)} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-        Block Time
+        {t("blockTime")}
       </button>
 
-      <Dialog open={open} onClose={() => setOpen(false)} title="Block Time">
+      <Dialog open={open} onClose={() => setOpen(false)} title={t("blockTime")}>
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <FieldLabel>Date *</FieldLabel>
+              <FieldLabel>{t("date")} *</FieldLabel>
               <Input name="date" type="date" required defaultValue={defaultDate} />
             </div>
             <div>
-              <FieldLabel>Start Time *</FieldLabel>
+              <FieldLabel>{t("startTime")} *</FieldLabel>
               <Input name="start_time" type="time" required defaultValue="12:00" />
             </div>
           </div>
           <div>
-            <FieldLabel>Duration</FieldLabel>
+            <FieldLabel>{t("duration")}</FieldLabel>
             <Select name="duration_minutes">
-              <option value="30">30 min</option>
-              <option value="60">1 hour</option>
-              <option value="90">1.5 hours</option>
-              <option value="120">2 hours</option>
-              <option value="240">4 hours</option>
+              <option value="30">{t("dur30")}</option>
+              <option value="60">{t("dur60")}</option>
+              <option value="90">{t("dur90")}</option>
+              <option value="120">{t("dur120")}</option>
+              <option value="240">{t("dur240")}</option>
             </Select>
           </div>
           <div>
-            <FieldLabel>Reason (optional)</FieldLabel>
-            <Input name="reason" placeholder="e.g. Lunch break, Meeting…" />
+            <FieldLabel>{t("reason")}</FieldLabel>
+            <Input name="reason" placeholder={t("reasonPlaceholder")} />
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">Cancel</button>
+            <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
             <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-slate-700 py-2.5 text-sm font-bold text-white hover:bg-slate-800 transition disabled:opacity-60">
-              {pending ? "Saving…" : "Block Time"}
+              {pending ? t("saving") : t("blockTime")}
             </button>
           </div>
         </form>

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, ViewToggle } from "./ScheduleClient";
 import { BookingRequestsPanel } from "./BookingRequestsPanel";
 import { getTentativeBookings } from "./booking-actions";
@@ -41,7 +42,10 @@ export default async function SchedulePage({
   const { locale } = await params;
   const { date: dateParam, view: viewParam } = await searchParams;
 
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([
+    createClient(),
+    getTranslations("schedule"),
+  ]);
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
 
@@ -91,8 +95,8 @@ export default async function SchedulePage({
       {/* Header */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">Schedule</h1>
-          <p className="text-sm text-slate-500 mt-0.5">{todayCount} appointment{todayCount !== 1 ? "s" : ""} today</p>
+          <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
+          <p className="text-sm text-slate-500 mt-0.5">{t("apptsToday", { count: todayCount })}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <ViewToggle currentView={view} currentDate={currentDate} />
@@ -117,8 +121,8 @@ export default async function SchedulePage({
                   <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
                 </svg>
               </div>
-              <p className="font-semibold text-slate-500">No appointments on this day</p>
-              <p className="text-sm text-slate-400 mt-1">Use the button above to schedule one.</p>
+              <p className="font-semibold text-slate-500">{t("noAppts")}</p>
+              <p className="text-sm text-slate-400 mt-1">{t("noApptHint")}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -141,14 +145,14 @@ export default async function SchedulePage({
                         <p className="font-bold text-slate-900 truncate">{appt.patient_name}</p>
                         <p className="text-sm text-slate-500 mt-0.5">
                           {appt.consultation_type}
-                          {appt.type === "online" && <span className="ml-2 rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600 font-semibold">Online</span>}
+                          {appt.type === "online" && <span className="ml-2 rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600 font-semibold">{t("onlineBadge")}</span>}
                         </p>
                         {appt.notes && <p className="text-xs text-slate-400 mt-1 truncate">{appt.notes}</p>}
                       </div>
                       <div className="shrink-0 flex items-center gap-2">
                         {appt.status !== "blocked" && <AppointmentStatusSelect id={appt.id} current={appt.status} />}
                         {appt.status === "blocked" && (
-                          <span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${statusBadge(appt.status)}`}>Blocked</span>
+                          <span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${statusBadge(appt.status)}`}>{t("blockedLabel")}</span>
                         )}
                         <DeleteAppointmentButton id={appt.id} />
                       </div>
@@ -156,7 +160,7 @@ export default async function SchedulePage({
                     {appt.status !== "blocked" && (
                       <div className="mt-2 flex items-center gap-3">
                         <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
-                          {appt.payment_status === "paid" ? "✓ Paid" : "⏳ Pending"}
+                          {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}
                           {appt.payment_amount ? ` · R$ ${appt.payment_amount.toFixed(2)}` : ""}
                         </span>
                       </div>
