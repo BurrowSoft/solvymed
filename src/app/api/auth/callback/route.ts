@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
   } else if (tokenHash) {
     const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
     if (!error && data.session && data.user) {
-      sessionUser = data.user as typeof sessionUser;
+      sessionUser = data.user as unknown as typeof sessionUser;
       sessionExists = true;
     }
   }
