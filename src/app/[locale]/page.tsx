@@ -1,8 +1,10 @@
 import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { LanguageSelector } from "@burrowsoft/shared";
 import { AppDownloadButtons } from "@/components/AppDownloadButtons";
 import { Link } from "@/i18n/navigation";
+import { createClient } from "@/lib/supabase/server";
 
 const ALL_LOCALES = routing.locales as unknown as string[];
 
@@ -56,6 +58,13 @@ const FEATURE_ICONS: Record<FeatureKey, React.ReactNode> = {
 const FEATURE_KEYS: FeatureKey[] = ["scheduling", "patients", "records", "prescriptions", "payments", "analytics"];
 
 export default async function HomePage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const role = user.user_metadata?.role as string | undefined;
+    redirect(role === "patient" ? "/discover" : "/dashboard");
+  }
+
   const t = await getTranslations();
 
   const features = FEATURE_KEYS.map((key) => ({
