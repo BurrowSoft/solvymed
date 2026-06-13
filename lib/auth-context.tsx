@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
-import { upsertProfessional, getProfessional, linkByInviteCode, getUserRole, setInvitedByProfessional } from './services';
+import { upsertProfessional, getProfessional, linkByInviteCode, getUserRole, setUserRole, setInvitedByProfessional } from './services';
 import { getProfessionalByPublicCode } from './discovery-service';
 
 interface AuthContextType {
