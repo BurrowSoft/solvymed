@@ -1,8 +1,22 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton } from "./ScheduleClient";
+import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, ViewToggle } from "./ScheduleClient";
 import { BookingRequestsPanel } from "./BookingRequestsPanel";
 import { getTentativeBookings } from "./booking-actions";
+import { CalendarView, type CalendarAppt } from "./CalendarView";
+
+function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
+function addDaysTo(dateStr: string, n: number) {
+  const d = new Date(dateStr + "T12:00:00");
+  d.setDate(d.getDate() + n);
+  return isoDate(d);
+}
+function getWeekStart(dateStr: string) {
+  const d = new Date(dateStr + "T12:00:00");
+  const dow = d.getDay();
+  d.setDate(d.getDate() - (dow === 0 ? 6 : dow - 1));
+  return isoDate(d);
+}
 
 function statusBadge(status: string) {
   switch (status) {
@@ -22,135 +36,146 @@ export default async function SchedulePage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ date?: string }>;
+  searchParams: Promise<{ date?: string; view?: string }>;
 }) {
   const { locale } = await params;
-  const { date: dateParam } = await searchParams;
+  const { date: dateParam, view: viewParam } = await searchParams;
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = isoDate(new Date());
   const currentDate = dateParam ?? today;
+  const view = (["list", "day", "week", "month"].includes(viewParam ?? "")) ? (viewParam as "list" | "day" | "week" | "month") : "list";
+
+  // Compute date range to fetch
+  let rangeStart = currentDate;
+  let rangeEnd = currentDate;
+  if (view === "week") {
+    rangeStart = getWeekStart(currentDate);
+    rangeEnd = addDaysTo(rangeStart, 6);
+  } else if (view === "month") {
+    const d = new Date(currentDate + "T12:00:00");
+    const firstDay = new Date(d.getFullYear(), d.getMonth(), 1);
+    const fdow = firstDay.getDay();
+    firstDay.setDate(firstDay.getDate() - (fdow === 0 ? 6 : fdow - 1));
+    rangeStart = isoDate(firstDay);
+    const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    const ldow = lastDay.getDay();
+    lastDay.setDate(lastDay.getDate() + (ldow === 0 ? 0 : 7 - ldow));
+    rangeEnd = isoDate(lastDay);
+  }
 
   const [apptsResult, patientsResult, procsResult, tentativeBookings] = await Promise.all([
     supabase
       .from("appointments")
-      .select("id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes")
+      .select("id, date, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes")
       .eq("professional_id", user.id)
-      .eq("date", currentDate)
+      .gte("date", rangeStart)
+      .lte("date", rangeEnd)
       .order("start_time"),
-    supabase
-      .from("patients")
-      .select("id, full_name")
-      .eq("professional_id", user.id)
-      .order("full_name"),
-    supabase
-      .from("procedures")
-      .select("id, name, duration_minutes, price, payment_type")
-      .eq("professional_id", user.id)
-      .eq("active", true)
-      .order("name"),
+    supabase.from("patients").select("id, full_name").eq("professional_id", user.id).order("full_name"),
+    supabase.from("procedures").select("id, name, duration_minutes, price, payment_type").eq("professional_id", user.id).eq("active", true).order("name"),
     getTentativeBookings(),
   ]);
 
-  const appointments = (apptsResult.data ?? []) as {
-    id: string; patient_name: string; start_time: string; end_time: string;
-    duration_minutes: number; status: string; type: string; consultation_type: string;
-    payment_status: string; payment_amount?: number; notes?: string;
-  }[];
+  const appointments = (apptsResult.data ?? []) as CalendarAppt[];
   const patients = (patientsResult.data ?? []) as { id: string; full_name: string }[];
   const procedures = (procsResult.data ?? []) as { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
 
-  const regularAppts = appointments.filter(a => a.status !== "blocked");
-  const blockedSlots = appointments.filter(a => a.status === "blocked");
+  const todayCount = appointments.filter(a => a.date === today && a.status !== "blocked").length;
 
   return (
-    <div className="p-6 lg:p-8 max-w-5xl">
+    <div className="p-6 lg:p-8 max-w-6xl">
       {/* Header */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">Schedule</h1>
-          <p className="text-sm text-slate-500 mt-0.5">{regularAppts.length} appointment{regularAppts.length !== 1 ? "s" : ""} scheduled</p>
+          <p className="text-sm text-slate-500 mt-0.5">{todayCount} appointment{todayCount !== 1 ? "s" : ""} today</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <ViewToggle currentView={view} currentDate={currentDate} />
           <BlockTimeButton defaultDate={currentDate} />
           <NewAppointmentButton patients={patients} defaultDate={currentDate} procedures={procedures} />
         </div>
       </div>
 
-      {/* Date Navigation */}
-      <div className="mb-6 flex items-center gap-3">
-        <ScheduleNav currentDate={currentDate} />
-      </div>
-
       {/* Booking Requests */}
       <BookingRequestsPanel bookings={tentativeBookings as Parameters<typeof BookingRequestsPanel>[0]["bookings"]} />
 
-      {/* Appointments */}
-      {appointments.length === 0 ? (
-        <div className="rounded-2xl border border-slate-100 bg-white p-12 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-50">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 text-slate-300">
-              <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
-            </svg>
+      {/* ── List view (current design) ── */}
+      {view === "list" && (
+        <>
+          <div className="mb-6 flex items-center gap-3">
+            <ScheduleNav currentDate={currentDate} currentView="list" />
           </div>
-          <p className="font-semibold text-slate-500">No appointments on this day</p>
-          <p className="text-sm text-slate-400 mt-1">Use the button above to schedule one.</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {appointments.map((appt) => (
-            <div
-              key={appt.id}
-              className={`group flex items-start gap-4 rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md ${
-                appt.status === "blocked" ? "border-slate-100 opacity-75" : "border-slate-100 hover:border-slate-200"
-              }`}
-            >
-              {/* Time */}
-              <div className="shrink-0 text-right min-w-[52px]">
-                <p className="text-sm font-bold text-slate-900">{appt.start_time?.slice(0, 5)}</p>
-                <p className="text-xs text-slate-400">{appt.end_time?.slice(0, 5)}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{appt.duration_minutes}m</p>
+          {appointments.length === 0 ? (
+            <div className="rounded-2xl border border-slate-100 bg-white p-12 text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-50">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 text-slate-300">
+                  <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+                </svg>
               </div>
-
-              {/* Divider */}
-              <div className={`mt-1 h-full w-0.5 self-stretch rounded-full ${appt.status === "blocked" ? "bg-slate-200" : "bg-teal-200"}`} style={{ minHeight: 40 }} />
-
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="font-bold text-slate-900 truncate">{appt.patient_name}</p>
-                    <p className="text-sm text-slate-500 mt-0.5">
-                      {appt.consultation_type}
-                      {appt.type === "online" && <span className="ml-2 rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600 font-semibold">Online</span>}
-                    </p>
-                    {appt.notes && <p className="text-xs text-slate-400 mt-1 truncate">{appt.notes}</p>}
+              <p className="font-semibold text-slate-500">No appointments on this day</p>
+              <p className="text-sm text-slate-400 mt-1">Use the button above to schedule one.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {appointments.map((appt) => (
+                <div
+                  key={appt.id}
+                  className={`group flex items-start gap-4 rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md ${
+                    appt.status === "blocked" ? "border-slate-100 opacity-75" : "border-slate-100 hover:border-slate-200"
+                  }`}
+                >
+                  <div className="shrink-0 text-right min-w-[52px]">
+                    <p className="text-sm font-bold text-slate-900">{appt.start_time?.slice(0, 5)}</p>
+                    <p className="text-xs text-slate-400">{appt.end_time?.slice(0, 5)}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{appt.duration_minutes}m</p>
                   </div>
-                  <div className="shrink-0 flex items-center gap-2">
+                  <div className={`mt-1 h-full w-0.5 self-stretch rounded-full ${appt.status === "blocked" ? "bg-slate-200" : "bg-teal-200"}`} style={{ minHeight: 40 }} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="font-bold text-slate-900 truncate">{appt.patient_name}</p>
+                        <p className="text-sm text-slate-500 mt-0.5">
+                          {appt.consultation_type}
+                          {appt.type === "online" && <span className="ml-2 rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600 font-semibold">Online</span>}
+                        </p>
+                        {appt.notes && <p className="text-xs text-slate-400 mt-1 truncate">{appt.notes}</p>}
+                      </div>
+                      <div className="shrink-0 flex items-center gap-2">
+                        {appt.status !== "blocked" && <AppointmentStatusSelect id={appt.id} current={appt.status} />}
+                        {appt.status === "blocked" && (
+                          <span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${statusBadge(appt.status)}`}>Blocked</span>
+                        )}
+                        <DeleteAppointmentButton id={appt.id} />
+                      </div>
+                    </div>
                     {appt.status !== "blocked" && (
-                      <AppointmentStatusSelect id={appt.id} current={appt.status} />
+                      <div className="mt-2 flex items-center gap-3">
+                        <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
+                          {appt.payment_status === "paid" ? "✓ Paid" : "⏳ Pending"}
+                          {appt.payment_amount ? ` · R$ ${appt.payment_amount.toFixed(2)}` : ""}
+                        </span>
+                      </div>
                     )}
-                    {appt.status === "blocked" && (
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${statusBadge(appt.status)}`}>Blocked</span>
-                    )}
-                    <DeleteAppointmentButton id={appt.id} />
                   </div>
                 </div>
-                {appt.status !== "blocked" && (
-                  <div className="mt-2 flex items-center gap-3">
-                    <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
-                      {appt.payment_status === "paid" ? "✓ Paid" : "⏳ Pending"}
-                      {appt.payment_amount ? ` · R$ ${appt.payment_amount.toFixed(2)}` : ""}
-                    </span>
-                  </div>
-                )}
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </>
+      )}
+
+      {/* ── Calendar views ── */}
+      {(view === "day" || view === "week" || view === "month") && (
+        <CalendarView
+          appointments={appointments}
+          currentDate={currentDate}
+          view={view}
+        />
       )}
     </div>
   );

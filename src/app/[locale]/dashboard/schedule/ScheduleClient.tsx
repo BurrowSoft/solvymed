@@ -68,18 +68,42 @@ function Select({ className = "", children, ...props }: React.SelectHTMLAttribut
   );
 }
 
-export function ScheduleNav({ currentDate }: { currentDate: string }) {
+export function ViewToggle({ currentView, currentDate }: { currentView: string; currentDate: string }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const views = [
+    { id: "list", label: "List" },
+    { id: "day",  label: "Day" },
+    { id: "week", label: "Week" },
+    { id: "month", label: "Month" },
+  ];
+  return (
+    <div className="flex rounded-xl border border-slate-200 bg-white overflow-hidden text-xs font-semibold shadow-sm">
+      {views.map((v, i) => (
+        <button
+          key={v.id}
+          onClick={() => router.push(`${pathname}?date=${currentDate}&view=${v.id}`)}
+          className={`px-3.5 py-2 transition ${i > 0 ? "border-l border-slate-200" : ""} ${currentView === v.id ? "bg-teal-600 text-white" : "text-slate-600 hover:bg-slate-50"}`}
+        >
+          {v.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export function ScheduleNav({ currentDate, currentView = "list" }: { currentDate: string; currentView?: string }) {
   const router = useRouter();
   const pathname = usePathname();
 
   function navigate(offset: number) {
     const d = new Date(currentDate + "T12:00:00");
     d.setDate(d.getDate() + offset);
-    router.push(`${pathname}?date=${d.toISOString().split("T")[0]}`);
+    router.push(`${pathname}?date=${d.toISOString().split("T")[0]}&view=${currentView}`);
   }
 
   function goToday() {
-    router.push(`${pathname}?date=${new Date().toISOString().split("T")[0]}`);
+    router.push(`${pathname}?date=${new Date().toISOString().split("T")[0]}&view=${currentView}`);
   }
 
   const formatted = new Date(currentDate + "T12:00:00").toLocaleDateString("en-US", {
