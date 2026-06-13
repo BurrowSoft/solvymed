@@ -23,20 +23,27 @@ export async function getTentativeBookings() {
     .map((b: Record<string, unknown>) => b.patient_auth_id as string)
     .filter(Boolean);
 
-  let knownIds = new Set<string>();
+  let knownMap = new Map<string, string | null>();
   if (authIds.length > 0) {
     const { data: roles } = await supabase
       .from("user_roles")
-      .select("user_id")
+      .select("user_id, linked_patient_id")
       .eq("invited_by_professional_id", user.id)
       .in("user_id", authIds);
-    knownIds = new Set((roles ?? []).map((r: Record<string, unknown>) => r.user_id as string));
+    for (const r of roles ?? []) {
+      knownMap.set(r.user_id as string, (r.linked_patient_id as string | null) ?? null);
+    }
   }
 
-  return bookings.map((b: Record<string, unknown>) => ({
-    ...b,
-    is_new_patient: b.patient_auth_id ? !knownIds.has(b.patient_auth_id as string) : false,
-  }));
+  return bookings.map((b: Record<string, unknown>) => {
+    const authId = b.patient_auth_id as string | null;
+    const isNew = authId ? !knownMap.has(authId) : false;
+    return {
+      ...b,
+      is_new_patient: isNew,
+      patient_id: authId && !isNew ? (knownMap.get(authId) ?? null) : null,
+    };
+  });
 }
 
 export async function confirmBookingAndAddPatient(appointmentId: string) {

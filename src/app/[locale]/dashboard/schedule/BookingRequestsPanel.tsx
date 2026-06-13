@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { confirmBooking, confirmBookingAndAddPatient, rejectBooking, proposeNewTime } from "./booking-actions";
 
 type Booking = {
   id: string;
   patient_name: string;
   patient_auth_id?: string | null;
+  patient_id?: string | null;
   date: string;
   start_time: string;
   end_time: string;
@@ -143,14 +145,24 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                   <p><span className="font-semibold">Consultation:</span> {b.consultation_type}</p>
                   <p><span className="font-semibold">Date:</span> {b.date} at {b.start_time.slice(0, 5)}–{b.end_time.slice(0, 5)}</p>
                   {b.notes && <p><span className="font-semibold">Notes:</span> {b.notes}</p>}
-                  <p>
-                    <span className="font-semibold">Status:</span>{" "}
-                    {b.is_new_patient ? (
-                      <span className="text-violet-600 font-semibold">Not yet in your patient list</span>
-                    ) : (
-                      <span className="text-teal-600 font-semibold">Existing patient</span>
+                  <div className="flex items-center justify-between gap-2 pt-1">
+                    <p>
+                      <span className="font-semibold">Status:</span>{" "}
+                      {b.is_new_patient ? (
+                        <span className="text-violet-600 font-semibold">Not yet in your patient list</span>
+                      ) : (
+                        <span className="text-teal-600 font-semibold">Existing patient</span>
+                      )}
+                    </p>
+                    {!b.is_new_patient && b.patient_id && (
+                      <Link
+                        href={`/dashboard/patients/${b.patient_id}`}
+                        className="rounded-lg bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700 hover:bg-teal-100"
+                      >
+                        View full profile →
+                      </Link>
                     )}
-                  </p>
+                  </div>
                 </div>
               )}
 
