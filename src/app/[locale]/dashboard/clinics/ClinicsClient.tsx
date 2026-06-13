@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { addClinic, deleteClinic } from "./actions";
 
 type Clinic = {
@@ -16,6 +17,7 @@ type Clinic = {
 };
 
 export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
+  const router = useRouter();
   const [clinics, setClinics] = useState(initial);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
@@ -32,7 +34,7 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
       } else {
         formRef.current?.reset();
         setShowForm(false);
-        // Optimistic: page will revalidate via server action
+        router.refresh();
       }
     });
   }

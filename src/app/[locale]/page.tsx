@@ -62,7 +62,17 @@ export default async function HomePage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (user) {
     const role = user.user_metadata?.role as string | undefined;
-    redirect(role === "patient" ? "/discover" : "/dashboard");
+    if (role === "patient") {
+      const today = new Date().toISOString().split("T")[0];
+      const { count } = await supabase
+        .from("appointments")
+        .select("id", { count: "exact", head: true })
+        .eq("patient_auth_id", user.id)
+        .gte("date", today)
+        .not("status", "in", '("cancelled","completed","blocked","rejected")');
+      redirect(count ? "/my-appointments" : "/discover");
+    }
+    redirect("/dashboard");
   }
 
   const t = await getTranslations();
