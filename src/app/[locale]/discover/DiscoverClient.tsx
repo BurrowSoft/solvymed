@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
+import { useParams, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import type { ClinicListing } from "./page";
 
 const ClinicMap = dynamic(
@@ -12,9 +14,18 @@ const ClinicMap = dynamic(
 type Props = { clinics: ClinicListing[] };
 
 export function DiscoverClient({ clinics }: Props) {
+  const { locale } = useParams<{ locale: string }>();
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [view, setView] = useState<"list" | "map">("list");
   const [selected, setSelected] = useState<ClinicListing | null>(null);
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    const prefix = locale === "en" ? "" : `/${locale}`;
+    router.push(`${prefix}/auth/login`);
+  }
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -42,13 +53,26 @@ export function DiscoverClient({ clinics }: Props) {
       {/* Header */}
       <div className="bg-white border-b border-slate-100 px-4 py-6">
         <div className="mx-auto max-w-3xl">
-          <div className="flex items-center gap-3 mb-1">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-600">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-              </svg>
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-600">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg>
+              </div>
+              <span className="text-lg font-extrabold text-slate-900">SolvyMed</span>
             </div>
-            <span className="text-lg font-extrabold text-slate-900">SolvyMed</span>
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              Sign out
+            </button>
           </div>
           <h1 className="text-2xl font-extrabold text-slate-900 mt-3 mb-1">Find a clinic</h1>
           <p className="text-slate-500 text-sm mb-4">Search by clinic name, city, doctor, or specialty</p>
