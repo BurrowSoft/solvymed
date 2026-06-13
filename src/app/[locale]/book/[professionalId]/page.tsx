@@ -2,9 +2,6 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { BookingClient } from "./BookingClient";
 
-type WorkingDayHours = { enabled: boolean; start: string; end: string };
-export type WorkingHours = Record<string, WorkingDayHours>;
-
 export default async function BookPage({
   params,
   searchParams,
@@ -17,30 +14,19 @@ export default async function BookPage({
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-
   if (!user) {
     const prefix = locale === "en" ? "" : `/${locale}`;
     redirect(`${prefix}/auth/login`);
   }
 
-  const { data: prof } = await supabase
-    .from("professionals")
-    .select("full_name, specialty, working_hours")
-    .eq("id", professionalId)
-    .maybeSingle();
-
-  if (!prof) {
-    const prefix = locale === "en" ? "" : `/${locale}`;
-    redirect(`${prefix}/discover`);
-  }
-
+  // Working hours are fetched client-side via get_professional_working_hours()
+  // SECURITY DEFINER RPC — cannot read professionals table directly as a patient (RLS).
   return (
     <BookingClient
       professionalId={professionalId}
-      professionalName={name || (prof.full_name as string) || "Doctor"}
-      specialty={specialty || (prof.specialty as string) || ""}
+      professionalName={name ?? "Doctor"}
+      specialty={specialty ?? ""}
       clinicName={clinicName}
-      workingHours={(prof.working_hours as WorkingHours) ?? {}}
       patientAuthId={user.id}
       patientEmail={user.email ?? ""}
       locale={locale}

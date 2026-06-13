@@ -211,15 +211,19 @@ export function DiscoverClient({ clinics }: Props) {
                             <p className="text-sm font-semibold text-slate-800">{p.name}</p>
                             {p.specialty && <p className="text-xs text-slate-500">{p.specialty}</p>}
                           </div>
-                          <a
-                            href={`${locale === "en" ? "" : `/${locale}`}/book/${p.id}?name=${encodeURIComponent(p.name)}&specialty=${encodeURIComponent(p.specialty ?? "")}&clinicName=${encodeURIComponent(clinic.name)}`}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const prefix = locale === "en" ? "" : `/${locale}`;
+                              router.push(`${prefix}/book/${p.id}?name=${encodeURIComponent(p.name)}&specialty=${encodeURIComponent(p.specialty ?? "")}&clinicName=${encodeURIComponent(clinic.name)}`);
+                            }}
                             className="shrink-0 flex items-center gap-1.5 rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-teal-700 transition"
                           >
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
                               <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
                             </svg>
                             Book
-                          </a>
+                          </button>
                         </div>
                       ))}
                     </div>

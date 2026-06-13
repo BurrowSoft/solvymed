@@ -3,22 +3,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import type { WorkingHours } from "./page";
+import { computeSlots, toMinutes } from "@/lib/slots";
+import type { WorkingHours, TimeSlot } from "@/lib/slots";
 
-type TimeSlot = { start: string; end: string };
 type Procedure = { id: string; name: string; durationMinutes: number; price?: number; paymentType: string };
 
-const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 const FALLBACK_DURATIONS = [30, 45, 60];
 const DAYS_AHEAD = 14;
 
-function toMinutes(t: string) {
-  const [h, m] = t.split(":").map(Number);
-  return h * 60 + m;
-}
-function fromMinutes(mins: number) {
-  return `${String(Math.floor(mins / 60)).padStart(2, "0")}:${String(mins % 60).padStart(2, "0")}`;
-}
 function buildDays() {
   return Array.from({ length: DAYS_AHEAD }, (_, i) => {
     const d = new Date();
@@ -40,42 +32,24 @@ function formatTime(t: string) {
   return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
 }
 
-async function fetchAvailableSlots(
+async function fetchSlots(
   professionalId: string,
   date: string,
   durationMinutes: number,
   workingHours: WorkingHours,
 ): Promise<TimeSlot[]> {
-  const dayKey = DAY_KEYS[new Date(date + "T12:00:00").getDay()];
-  const dayHours = workingHours[dayKey];
-  if (!dayHours?.enabled) return [];
-
-  const dayStart = toMinutes(dayHours.start);
-  const dayEnd = toMinutes(dayHours.end);
-
   const supabase = createClient();
   const { data: busy } = await supabase.rpc("get_busy_slots", {
     p_professional_id: professionalId,
     p_date: date,
   });
-
   const busyRanges: Array<{ start: number; end: number }> = (busy ?? []).map(
     (row: Record<string, unknown>) => ({
       start: toMinutes(row.slot_start as string),
       end: toMinutes(row.slot_end as string),
     }),
   );
-
-  const slots: TimeSlot[] = [];
-  let cursor = dayStart;
-  while (cursor + durationMinutes <= dayEnd) {
-    const slotEnd = cursor + durationMinutes;
-    if (!busyRanges.some((r) => cursor < r.end && slotEnd > r.start)) {
-      slots.push({ start: fromMinutes(cursor), end: fromMinutes(slotEnd) });
-    }
-    cursor += durationMinutes;
-  }
-  return slots;
+  return computeSlots(date, durationMinutes, workingHours, busyRanges);
 }
 
 export function BookingClient({
@@ -83,7 +57,6 @@ export function BookingClient({
   professionalName,
   specialty,
   clinicName,
-  workingHours,
   patientAuthId,
   patientEmail,
   locale,
@@ -92,7 +65,6 @@ export function BookingClient({
   professionalName: string;
   specialty: string;
   clinicName?: string;
-  workingHours: WorkingHours;
   patientAuthId: string;
   patientEmail: string;
   locale: string;
@@ -100,6 +72,10 @@ export function BookingClient({
   const router = useRouter();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const days = buildDays();
+
+  // Working hours — fetched via SECURITY DEFINER RPC (patients can't read professionals table)
+  const [workingHours, setWorkingHours] = useState<WorkingHours>({});
+  const [loadingHours, setLoadingHours] = useState(true);
 
   const [procedures, setProcedures] = useState<Procedure[]>([]);
   const [loadingProcs, setLoadingProcs] = useState(true);
@@ -115,8 +91,27 @@ export function BookingClient({
   const [booking, setBooking] = useState(false);
   const [error, setError] = useState("");
   const [booked, setBooked] = useState(false);
+  const [bookedSlot, setBookedSlot] = useState<TimeSlot | null>(null);
+  const [bookedDate, setBookedDate] = useState("");
 
-  // Load procedures
+  // Fetch working hours (SECURITY DEFINER bypasses patient RLS)
+  useEffect(() => {
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase.rpc("get_professional_working_hours", {
+          p_professional_id: professionalId,
+        });
+        if (data) setWorkingHours(data as WorkingHours);
+      } catch {
+        // stay empty — slots will show as unavailable
+      } finally {
+        setLoadingHours(false);
+      }
+    })();
+  }, [professionalId]);
+
+  // Fetch procedures
   useEffect(() => {
     (async () => {
       try {
@@ -137,20 +132,20 @@ export function BookingClient({
           setDuration(procs[0].durationMinutes);
         }
       } catch {
-        // ignore network errors
+        // ignore
       } finally {
         setLoadingProcs(false);
       }
     })();
   }, [professionalId]);
 
-  // Load slots when date or duration changes
+  // Load slots whenever date, duration, or working hours change
   const loadSlots = useCallback(
     async (date: string, dur: number) => {
       setLoadingSlots(true);
       setSelectedSlot(null);
       try {
-        const s = await fetchAvailableSlots(professionalId, date, dur, workingHours);
+        const s = await fetchSlots(professionalId, date, dur, workingHours);
         setSlots(s);
       } catch {
         setSlots([]);
@@ -162,8 +157,8 @@ export function BookingClient({
   );
 
   useEffect(() => {
-    loadSlots(selectedDate, duration);
-  }, [selectedDate, duration, loadSlots]);
+    if (!loadingHours) loadSlots(selectedDate, duration);
+  }, [selectedDate, duration, loadSlots, loadingHours]);
 
   async function handleBook() {
     if (!selectedSlot) return;
@@ -197,6 +192,8 @@ export function BookingClient({
         }
         return;
       }
+      setBookedSlot(selectedSlot);
+      setBookedDate(selectedDate);
       setBooked(true);
     } catch {
       setError("Could not send booking request. Please try again.");
@@ -217,9 +214,9 @@ export function BookingClient({
           </div>
           <h1 className="text-xl font-extrabold text-slate-900 mb-2">Request sent!</h1>
           <p className="text-slate-500 text-sm mb-1">
-            Your appointment request for <strong>{dayLabel(selectedDate)}</strong> at <strong>{formatTime(selectedSlot!.start)}</strong> has been sent to <strong>{professionalName}</strong>.
+            Your request for <strong>{dayLabel(bookedDate)}</strong> at <strong>{formatTime(bookedSlot!.start)}</strong> with <strong>{professionalName}</strong> has been submitted.
           </p>
-          <p className="text-slate-400 text-xs mb-8">The doctor will confirm or suggest a different time. You'll be notified either way.</p>
+          <p className="text-slate-400 text-xs mb-8">The doctor will confirm or suggest a different time.</p>
           <button
             onClick={() => router.push(`${prefix}/my-appointments`)}
             className="w-full rounded-xl bg-teal-600 py-3 text-sm font-bold text-white hover:bg-teal-700 transition mb-3"
@@ -236,6 +233,8 @@ export function BookingClient({
       </div>
     );
   }
+
+  const setupLoading = loadingHours || loadingProcs;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -271,131 +270,130 @@ export function BookingClient({
           </div>
         </div>
 
-        {/* Procedure picker */}
-        {loadingProcs ? (
-          <div className="flex items-center justify-center py-6">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-teal-600 border-t-transparent" />
-          </div>
-        ) : procedures.length > 0 ? (
-          <div>
-            <h2 className="text-sm font-bold text-slate-700 mb-2">Select procedure</h2>
-            <div className="space-y-2">
-              {procedures.map((proc) => {
-                const active = selectedProcedure?.id === proc.id;
-                return (
-                  <button
-                    key={proc.id}
-                    onClick={() => { setSelectedProcedure(proc); setDuration(proc.durationMinutes); }}
-                    className={`w-full text-left rounded-xl border-2 px-4 py-3 transition ${active ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
-                  >
-                    <p className={`font-semibold text-sm ${active ? "text-teal-800" : "text-slate-800"}`}>{proc.name}</p>
-                    <p className={`text-xs mt-0.5 ${active ? "text-teal-600" : "text-slate-400"}`}>
-                      {proc.durationMinutes} min
-                      {proc.price ? ` · R$ ${proc.price.toFixed(2)}` : ""}
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
+        {setupLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-teal-600 border-t-transparent" />
           </div>
         ) : (
-          <div>
-            <h2 className="text-sm font-bold text-slate-700 mb-2">Session duration</h2>
-            <div className="flex gap-2">
-              {FALLBACK_DURATIONS.map((d) => (
-                <button
-                  key={d}
-                  onClick={() => { setSelectedProcedure(null); setDuration(d); }}
-                  className={`flex-1 rounded-xl border-2 py-2.5 text-sm font-semibold transition ${duration === d ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
-                >
-                  {d} min
-                </button>
-              ))}
+          <>
+            {/* Procedure picker */}
+            {procedures.length > 0 ? (
+              <div>
+                <h2 className="text-sm font-bold text-slate-700 mb-2">Select procedure</h2>
+                <div className="space-y-2">
+                  {procedures.map((proc) => {
+                    const active = selectedProcedure?.id === proc.id;
+                    return (
+                      <button
+                        key={proc.id}
+                        onClick={() => { setSelectedProcedure(proc); setDuration(proc.durationMinutes); }}
+                        className={`w-full text-left rounded-xl border-2 px-4 py-3 transition ${active ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
+                      >
+                        <p className={`font-semibold text-sm ${active ? "text-teal-800" : "text-slate-800"}`}>{proc.name}</p>
+                        <p className={`text-xs mt-0.5 ${active ? "text-teal-600" : "text-slate-400"}`}>
+                          {proc.durationMinutes} min{proc.price ? ` · R$ ${proc.price.toFixed(2)}` : ""}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div>
+                <h2 className="text-sm font-bold text-slate-700 mb-2">Session duration</h2>
+                <div className="flex gap-2">
+                  {FALLBACK_DURATIONS.map((d) => (
+                    <button
+                      key={d}
+                      onClick={() => { setSelectedProcedure(null); setDuration(d); }}
+                      className={`flex-1 rounded-xl border-2 py-2.5 text-sm font-semibold transition ${duration === d ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
+                    >
+                      {d} min
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Date strip */}
+            <div>
+              <h2 className="text-sm font-bold text-slate-700 mb-2">Pick a date</h2>
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {days.map((day) => (
+                  <button
+                    key={day}
+                    onClick={() => setSelectedDate(day)}
+                    className={`shrink-0 rounded-xl border-2 px-3 py-2 text-xs font-semibold whitespace-nowrap transition ${selectedDate === day ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
+                  >
+                    {dayLabel(day)}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+
+            {/* Time slots */}
+            <div>
+              <h2 className="text-sm font-bold text-slate-700 mb-2">Available times</h2>
+              {loadingSlots ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-teal-600 border-t-transparent" />
+                </div>
+              ) : slots.length === 0 ? (
+                <div className="rounded-xl bg-slate-50 border border-slate-200 py-8 text-center">
+                  <p className="text-sm text-slate-500 font-medium">No available slots</p>
+                  <p className="text-xs text-slate-400 mt-1">Try a different date.</p>
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {slots.map((slot) => (
+                    <button
+                      key={slot.start}
+                      onClick={() => setSelectedSlot(slot)}
+                      className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${selectedSlot?.start === slot.start ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
+                    >
+                      {formatTime(slot.start)}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Notes */}
+            <div>
+              <h2 className="text-sm font-bold text-slate-700 mb-2">Notes <span className="font-normal text-slate-400">(optional)</span></h2>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Reason for visit, symptoms, questions for the doctor…"
+                rows={3}
+                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
+              />
+            </div>
+
+            {error && (
+              <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
+                {error}
+              </div>
+            )}
+
+            <button
+              onClick={handleBook}
+              disabled={!selectedSlot || booking}
+              className="w-full rounded-xl bg-teal-600 py-4 text-base font-bold text-white shadow-sm hover:bg-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {booking ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Sending…
+                </span>
+              ) : "Send Booking Request"}
+            </button>
+
+            <p className="text-center text-xs text-slate-400 pb-8">
+              The doctor will confirm or suggest a different time. You'll be notified either way.
+            </p>
+          </>
         )}
-
-        {/* Date strip */}
-        <div>
-          <h2 className="text-sm font-bold text-slate-700 mb-2">Pick a date</h2>
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {days.map((day) => (
-              <button
-                key={day}
-                onClick={() => setSelectedDate(day)}
-                className={`shrink-0 rounded-xl border-2 px-3 py-2 text-xs font-semibold whitespace-nowrap transition ${selectedDate === day ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
-              >
-                {dayLabel(day)}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Time slots */}
-        <div>
-          <h2 className="text-sm font-bold text-slate-700 mb-2">Available times</h2>
-          {loadingSlots ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-teal-600 border-t-transparent" />
-            </div>
-          ) : slots.length === 0 ? (
-            <div className="rounded-xl bg-slate-50 border border-slate-200 py-8 text-center">
-              <p className="text-sm text-slate-500 font-medium">No available slots</p>
-              <p className="text-xs text-slate-400 mt-1">This doctor is not available on this day. Try another date.</p>
-            </div>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {slots.map((slot) => (
-                <button
-                  key={slot.start}
-                  onClick={() => setSelectedSlot(slot)}
-                  className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${selectedSlot?.start === slot.start ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
-                >
-                  {formatTime(slot.start)}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Notes */}
-        <div>
-          <h2 className="text-sm font-bold text-slate-700 mb-2">Notes <span className="font-normal text-slate-400">(optional)</span></h2>
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Reason for visit, symptoms, questions for the doctor…"
-            rows={3}
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
-          />
-        </div>
-
-        {/* Error */}
-        {error && (
-          <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
-            {error}
-          </div>
-        )}
-
-        {/* Submit */}
-        <button
-          onClick={handleBook}
-          disabled={!selectedSlot || booking}
-          className="w-full rounded-xl bg-teal-600 py-4 text-base font-bold text-white shadow-sm shadow-teal-600/20 hover:bg-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {booking ? (
-            <span className="flex items-center justify-center gap-2">
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              Sending…
-            </span>
-          ) : (
-            "Send Booking Request"
-          )}
-        </button>
-
-        <p className="text-center text-xs text-slate-400 pb-8">
-          The doctor will confirm or suggest a different time. You'll be notified either way.
-        </p>
       </div>
     </div>
   );
