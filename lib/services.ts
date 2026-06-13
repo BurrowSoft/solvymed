@@ -874,6 +874,73 @@ export async function proposeNewTime(
   if (error) throw error;
 }
 
+export async function getTentativeAppointmentsWithNewPatient(
+  professionalId: string,
+): Promise<(Appointment & { isNewPatient: boolean })[]> {
+  const { data, error } = await supabase
+    .from('appointments')
+    .select('*')
+    .eq('professional_id', professionalId)
+    .in('status', ['tentative', 'proposal'])
+    .order('date')
+    .order('start_time');
+  if (error) throw error;
+
+  const rows = data ?? [];
+  const authIds = rows.map(b => b.patient_auth_id as string).filter(Boolean);
+
+  let knownIds = new Set<string>();
+  if (authIds.length > 0) {
+    const { data: roles } = await supabase
+      .from('user_roles')
+      .select('user_id')
+      .eq('invited_by_professional_id', professionalId)
+      .in('user_id', authIds);
+    knownIds = new Set((roles ?? []).map(r => r.user_id as string));
+  }
+
+  return rows.map(b => ({
+    ...toAppointment(b),
+    isNewPatient: b.patient_auth_id ? !knownIds.has(b.patient_auth_id as string) : false,
+  }));
+}
+
+export async function confirmBookingAndAddPatient(
+  appointmentId: string,
+  professionalId: string,
+): Promise<void> {
+  const { data: appt } = await supabase
+    .from('appointments')
+    .select('patient_name, patient_auth_id')
+    .eq('id', appointmentId)
+    .maybeSingle();
+  if (!appt) throw new Error('Appointment not found');
+
+  const { error } = await supabase
+    .from('appointments')
+    .update({ status: 'confirmed' })
+    .eq('id', appointmentId);
+  if (error) throw error;
+
+  const { data: newPatient } = await supabase
+    .from('patients')
+    .insert({ full_name: appt.patient_name as string, professional_id: professionalId })
+    .select('id')
+    .maybeSingle();
+
+  if (newPatient && appt.patient_auth_id) {
+    await supabase.from('user_roles').upsert(
+      {
+        user_id: appt.patient_auth_id,
+        role: 'patient',
+        linked_patient_id: newPatient.id,
+        invited_by_professional_id: professionalId,
+      },
+      { onConflict: 'user_id' },
+    );
+  }
+}
+
 // ─── Professional Public Invite Code ─────────────────────────────────────────
 
 export async function generatePublicInviteCode(professionalId: string): Promise<string> {

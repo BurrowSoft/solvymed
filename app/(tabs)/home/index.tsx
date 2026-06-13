@@ -12,6 +12,8 @@ import { MOCK_APPOINTMENTS, MOCK_PATIENTS } from '@/lib/mock-data';
 import {
   getAppointmentsByDate, getPendingPayments, getPatients, getProfessional,
   getPatientAppointments, getRecords, getPrescriptions,
+  getTentativeAppointmentsWithNewPatient, confirmBookingAndAddPatient,
+  confirmBooking, rejectBooking, proposeNewTime,
 } from '@/lib/services';
 import { getMyBookings, acceptProposal, declineProposal } from '@/lib/booking-service';
 import { useAuth } from '@/lib/auth-context';
@@ -65,6 +67,15 @@ export default function HomeScreen() {
   const [myPrescriptions, setMyPrescriptions] = useState<Prescription[]>([]);
   const [myRequests, setMyRequests] = useState<Appointment[]>([]);
 
+  // Doctor booking requests
+  const [bookingRequests, setBookingRequests] = useState<(Appointment & { isNewPatient: boolean })[]>([]);
+  const [proposeId, setProposeId] = useState<string | null>(null);
+  const [propDate, setPropDate] = useState('');
+  const [propStart, setPropStart] = useState('');
+  const [propEnd, setPropEnd] = useState('');
+  const [infoId, setInfoId] = useState<string | null>(null);
+  const [actionPending, setActionPending] = useState(false);
+
   // Connect-to-clinic flow (unlinked patients)
   const [connectCode, setConnectCode] = useState('');
   const [connecting, setConnecting] = useState(false);
@@ -102,16 +113,18 @@ export default function HomeScreen() {
     }
 
     try {
-      const [prof, appts, pending, patients] = await Promise.all([
+      const [prof, appts, pending, patients, requests] = await Promise.all([
         getProfessional(user.id),
         getAppointmentsByDate(user.id, dateStr),
         getPendingPayments(user.id),
         getPatients(user.id),
+        getTentativeAppointmentsWithNewPatient(user.id),
       ]);
       setProfessional(prof);
       setTodayAppts(appts.filter(a => a.status !== 'blocked'));
       setPendingPayments(pending);
       setRecentPatients(patients.slice(0, 5));
+      setBookingRequests(requests);
     } catch {
       setTodayAppts(MOCK_APPOINTMENTS.filter(a => a.date === dateStr && a.status !== 'blocked'));
       setPendingPayments(MOCK_APPOINTMENTS.filter(a => a.paymentStatus === 'pending' && a.status !== 'blocked'));
@@ -328,6 +341,184 @@ export default function HomeScreen() {
         </ScrollView>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, gap: 20, paddingBottom: 32 }}>
+
+          {/* Doctor booking requests */}
+          {bookingRequests.length > 0 && (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>
+                  Booking Requests{' '}
+                  <Text style={{ color: Colors.primary, fontWeight: '700' }}>({bookingRequests.length})</Text>
+                </Text>
+              </View>
+              {bookingRequests.map(req => (
+                <View key={req.id} style={[styles.apptCard, { flexDirection: 'column', gap: 8, alignItems: 'stretch' }]}>
+                  {/* Header row */}
+                  <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                        <Text style={styles.apptName}>{req.patientName}</Text>
+                        {req.isNewPatient && (
+                          <View style={{ backgroundColor: '#ede9fe', borderRadius: 10, paddingHorizontal: 7, paddingVertical: 2 }}>
+                            <Text style={{ fontSize: 10, fontWeight: '700', color: '#7c3aed' }}>New patient</Text>
+                          </View>
+                        )}
+                      </View>
+                      <Text style={styles.apptType}>{req.date} · {formatTime(req.startTime)}–{formatTime(req.endTime)}</Text>
+                      <Text style={styles.apptType}>{req.consultationType}</Text>
+                      {req.notes ? <Text style={{ fontSize: 11, color: Colors.textMuted, fontStyle: 'italic' }}>{req.notes}</Text> : null}
+                      {req.status === 'proposal' && (
+                        <View style={{ backgroundColor: '#fef9c3', borderRadius: 10, alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 3, marginTop: 2 }}>
+                          <Text style={{ fontSize: 11, fontWeight: '600', color: '#a16207' }}>Waiting for patient response</Text>
+                        </View>
+                      )}
+                    </View>
+                    {/* Patient info toggle */}
+                    <TouchableOpacity
+                      style={{ borderWidth: 1, borderColor: Colors.border, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, backgroundColor: Colors.surface }}
+                      onPress={() => setInfoId(infoId === req.id ? null : req.id)}
+                    >
+                      <Text style={{ fontSize: 11, fontWeight: '600', color: Colors.textSecondary }}>Info</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Patient info panel */}
+                  {infoId === req.id && (
+                    <View style={{ backgroundColor: Colors.background, borderRadius: 10, padding: 10, gap: 3 }}>
+                      <Text style={{ fontSize: 12, color: Colors.textSecondary }}><Text style={{ fontWeight: '600' }}>Name:</Text> {req.patientName}</Text>
+                      <Text style={{ fontSize: 12, color: Colors.textSecondary }}><Text style={{ fontWeight: '600' }}>Consultation:</Text> {req.consultationType}</Text>
+                      <Text style={{ fontSize: 12, color: Colors.textSecondary }}><Text style={{ fontWeight: '600' }}>Date:</Text> {req.date} at {formatTime(req.startTime)}–{formatTime(req.endTime)}</Text>
+                      {req.notes ? <Text style={{ fontSize: 12, color: Colors.textSecondary }}><Text style={{ fontWeight: '600' }}>Notes:</Text> {req.notes}</Text> : null}
+                      <Text style={{ fontSize: 12 }}>
+                        <Text style={{ fontWeight: '600', color: Colors.textSecondary }}>Status: </Text>
+                        {req.isNewPatient
+                          ? <Text style={{ color: '#7c3aed', fontWeight: '600' }}>Not yet in your patient list</Text>
+                          : <Text style={{ color: Colors.success, fontWeight: '600' }}>Existing patient</Text>}
+                      </Text>
+                    </View>
+                  )}
+
+                  {/* Action buttons — tentative only */}
+                  {req.status === 'tentative' && (
+                    <View style={{ flexDirection: 'row', gap: 8 }}>
+                      <TouchableOpacity
+                        disabled={actionPending}
+                        style={[styles.connectBtn, { flex: 1, height: 36, backgroundColor: Colors.primary }]}
+                        onPress={() => {
+                          if (req.isNewPatient) {
+                            Alert.alert(
+                              'Patient not in your list',
+                              `${req.patientName} is not yet in your patient list. Add them?`,
+                              [
+                                {
+                                  text: 'Confirm and Add Patient',
+                                  onPress: async () => {
+                                    setActionPending(true);
+                                    try { await confirmBookingAndAddPatient(req.id, req.professionalId); await load(); }
+                                    catch { Alert.alert('Error', 'Could not confirm. Try again.'); }
+                                    finally { setActionPending(false); }
+                                  },
+                                },
+                                {
+                                  text: 'Confirm only',
+                                  onPress: async () => {
+                                    setActionPending(true);
+                                    try { await confirmBooking(req.id); await load(); }
+                                    catch { Alert.alert('Error', 'Could not confirm. Try again.'); }
+                                    finally { setActionPending(false); }
+                                  },
+                                },
+                                { text: 'Cancel', style: 'cancel' },
+                              ],
+                            );
+                          } else {
+                            setActionPending(true);
+                            confirmBooking(req.id)
+                              .then(() => load())
+                              .catch(() => Alert.alert('Error', 'Could not confirm. Try again.'))
+                              .finally(() => setActionPending(false));
+                          }
+                        }}
+                      >
+                        <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>Confirm</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        disabled={actionPending}
+                        style={[styles.connectBtn, { flex: 1, height: 36, backgroundColor: Colors.warning }]}
+                        onPress={() => { setProposeId(proposeId === req.id ? null : req.id); setPropDate(''); setPropStart(''); setPropEnd(''); }}
+                      >
+                        <Text style={{ color: '#fff', fontSize: 12, fontWeight: '700' }}>Propose time</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        disabled={actionPending}
+                        style={[styles.connectBtn, { flex: 1, height: 36, backgroundColor: Colors.danger }]}
+                        onPress={() => {
+                          setActionPending(true);
+                          rejectBooking(req.id)
+                            .then(() => load())
+                            .catch(() => Alert.alert('Error', 'Could not reject. Try again.'))
+                            .finally(() => setActionPending(false));
+                        }}
+                      >
+                        <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>Reject</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+
+                  {/* Inline propose form */}
+                  {proposeId === req.id && (
+                    <View style={{ backgroundColor: '#fffbeb', borderRadius: 10, borderWidth: 1, borderColor: '#fde68a', padding: 10, gap: 8 }}>
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: '#92400e' }}>Propose a new time</Text>
+                      <TextInput
+                        style={styles.connectInput}
+                        value={propDate}
+                        onChangeText={setPropDate}
+                        placeholder="Date (YYYY-MM-DD)"
+                        placeholderTextColor={Colors.textMuted}
+                      />
+                      <View style={{ flexDirection: 'row', gap: 8 }}>
+                        <TextInput
+                          style={[styles.connectInput, { flex: 1 }]}
+                          value={propStart}
+                          onChangeText={setPropStart}
+                          placeholder="Start (HH:MM)"
+                          placeholderTextColor={Colors.textMuted}
+                        />
+                        <TextInput
+                          style={[styles.connectInput, { flex: 1 }]}
+                          value={propEnd}
+                          onChangeText={setPropEnd}
+                          placeholder="End (HH:MM)"
+                          placeholderTextColor={Colors.textMuted}
+                        />
+                      </View>
+                      <View style={{ flexDirection: 'row', gap: 8 }}>
+                        <TouchableOpacity
+                          disabled={actionPending || !propDate || !propStart || !propEnd}
+                          style={[styles.connectBtn, { flex: 1, height: 36, backgroundColor: Colors.warning, opacity: (!propDate || !propStart || !propEnd) ? 0.5 : 1 }]}
+                          onPress={() => {
+                            setActionPending(true);
+                            proposeNewTime(req.id, propDate, propStart, propEnd)
+                              .then(() => { setProposeId(null); return load(); })
+                              .catch(() => Alert.alert('Error', 'Could not propose time. Try again.'))
+                              .finally(() => setActionPending(false));
+                          }}
+                        >
+                          <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>Send</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[styles.connectBtn, { flex: 1, height: 36, backgroundColor: Colors.border }]}
+                          onPress={() => setProposeId(null)}
+                        >
+                          <Text style={{ color: Colors.textSecondary, fontSize: 13, fontWeight: '600' }}>Cancel</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  )}
+                </View>
+              ))}
+            </View>
+          )}
 
           {/* Summary row */}
           <View style={styles.summaryRow}>

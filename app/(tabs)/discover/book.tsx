@@ -52,6 +52,7 @@ export default function BookScreen() {
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
+  const [consultType, setConsultType] = useState('');
   const [notes, setNotes] = useState('');
   const [booking, setBooking] = useState(false);
 
@@ -70,6 +71,7 @@ export default function BookScreen() {
         if (procs.length > 0) {
           setSelectedProcedure(procs[0]);
           setDuration(procs[0].durationMinutes);
+          setConsultType(procs[0].name);
         }
       })
       .catch(() => {})
@@ -97,6 +99,7 @@ export default function BookScreen() {
   function selectProcedure(proc: ProcedureSummary) {
     setSelectedProcedure(proc);
     setDuration(proc.durationMinutes);
+    setConsultType(proc.name);
   }
 
   function selectFallbackDuration(dur: number) {
@@ -116,7 +119,7 @@ export default function BookScreen() {
         startTime: selectedSlot.start,
         endTime: selectedSlot.end,
         durationMinutes: duration,
-        consultationType: selectedProcedure?.name || specialty || 'Consultation',
+        consultationType: consultType.trim() || specialty || 'Consultation',
         paymentType: selectedProcedure?.paymentType,
         notes: notes.trim() || undefined,
       });
@@ -218,6 +221,18 @@ export default function BookScreen() {
           </>
         )}
 
+        {/* Consultation type */}
+        <Text style={styles.sectionLabel}>
+          What is this appointment for? <Text style={styles.required}>*</Text>
+        </Text>
+        <TextInput
+          style={styles.consultInput}
+          value={consultType}
+          onChangeText={setConsultType}
+          placeholder="e.g. First visit, Follow-up, Annual check-up…"
+          placeholderTextColor={Colors.textMuted}
+        />
+
         {/* Date picker */}
         <Text style={styles.sectionLabel}>Pick a date</Text>
         <ScrollView
@@ -277,9 +292,9 @@ export default function BookScreen() {
 
         {/* Book button */}
         <TouchableOpacity
-          style={[styles.bookBtn, (!selectedSlot || booking) && styles.bookBtnDisabled]}
+          style={[styles.bookBtn, (!selectedSlot || !consultType.trim() || booking) && styles.bookBtnDisabled]}
           onPress={handleBook}
-          disabled={!selectedSlot || booking}
+          disabled={!selectedSlot || !consultType.trim() || booking}
         >
           {booking ? (
             <ActivityIndicator color="#fff" />
@@ -372,5 +387,11 @@ function makeStyles() {
     bookBtnDisabled: { opacity: 0.5 },
     bookBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
     hint: { fontSize: 12, color: Colors.textMuted, textAlign: 'center', lineHeight: 18 },
+    required: { color: '#ef4444' },
+    consultInput: {
+      backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border,
+      borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11,
+      fontSize: 14, color: Colors.textPrimary,
+    },
   });
 }
