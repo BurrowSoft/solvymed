@@ -18,6 +18,17 @@ export default async function DashboardLayout({
     redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
   }
 
+  // Patients have no business in the professional dashboard — send them to their own page
+  const { data: roleRow } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user!.id)
+    .maybeSingle();
+
+  if (roleRow?.role === "patient") {
+    redirect(`/${locale === "en" ? "" : locale + "/"}auth/patient-welcome`);
+  }
+
   const { data: professional } = await supabase
     .from("professionals")
     .select("full_name, photo_url")

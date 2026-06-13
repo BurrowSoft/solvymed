@@ -1,11 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
+import type { EmailOtpType } from "@supabase/supabase-js";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
+  const tokenHash = searchParams.get("token_hash");
+  const type = (searchParams.get("type") ?? "signup") as EmailOtpType;
 
-  if (!code) {
+  // Must have either a PKCE code or an OTP token_hash
+  if (!code && !tokenHash) {
     return NextResponse.redirect(new URL("/", origin));
   }
 
@@ -30,11 +34,14 @@ export async function GET(request: NextRequest) {
     },
   );
 
-  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+  // Exchange code (PKCE) or verify token hash (OTP / magic-link / email confirmation)
+  const { data, error } = code
+    ? await supabase.auth.exchangeCodeForSession(code)
+    : await supabase.auth.verifyOtp({ token_hash: tokenHash!, type });
 
   let redirectUrl: URL;
 
-  if (!error && data.session) {
+  if (!error && data.session && data.user) {
     const meta = data.user.user_metadata ?? {};
     const role = meta.role as string | undefined;
     const inviteCode = meta.invite_code as string | undefined;
@@ -45,6 +52,7 @@ export async function GET(request: NextRequest) {
         { onConflict: "user_id" },
       );
       redirectUrl = new URL("/dashboard", origin);
+
     } else if (role === "patient") {
       if (inviteCode) {
         const { data: patientData } = await supabase.rpc("patient_by_invite_code", { code: inviteCode });
@@ -74,12 +82,18 @@ export async function GET(request: NextRequest) {
         );
       }
       redirectUrl = new URL("/auth/patient-welcome", origin);
+
     } else {
       // professional (default)
-      redirectUrl = new URL("/dashboard", origin);
+      await supabase.from("user_roles").upsert(
+        { user_id: data.user.id, role: "professional" },
+        { onConflict: "user_id" },
+      );
+      redirectUrl = new URL("/auth/professional-welcome", origin);
     }
   } else {
-    redirectUrl = new URL("/", origin);
+    // Auth failed — send to login so the user has a clear path forward
+    redirectUrl = new URL("/auth/login", origin);
   }
 
   const response = NextResponse.redirect(redirectUrl);
