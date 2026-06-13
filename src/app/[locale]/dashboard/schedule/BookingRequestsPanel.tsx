@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import { confirmBooking, confirmBookingAndAddPatient, rejectBooking, proposeNewTime } from "./booking-actions";
 
 type Booking = {
@@ -18,6 +19,14 @@ type Booking = {
   is_new_patient?: boolean;
 };
 
+type PatientProfile = {
+  full_name: string;
+  email?: string | null;
+  phone?: string | null;
+  birth_date?: string | null;
+  cpf?: string | null;
+};
+
 export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
   const [isPending, startTransition] = useTransition();
   const [proposalId, setProposalId] = useState<string | null>(null);
@@ -27,8 +36,26 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
 
   // new-patient confirmation dialog
   const [newPatientDialogId, setNewPatientDialogId] = useState<string | null>(null);
-  // patient info panel toggle
+  // patient info panel toggle + lazy-loaded profiles
   const [infoId, setInfoId] = useState<string | null>(null);
+  const [profiles, setProfiles] = useState<Record<string, PatientProfile | null>>({});
+  const [loadingProfile, setLoadingProfile] = useState<string | null>(null);
+
+  async function handleInfoToggle(b: Booking) {
+    const next = infoId === b.id ? null : b.id;
+    setInfoId(next);
+    if (next && b.patient_auth_id && !(b.id in profiles)) {
+      setLoadingProfile(b.id);
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("patient_profiles")
+        .select("full_name, email, phone, birth_date, cpf")
+        .eq("user_id", b.patient_auth_id)
+        .maybeSingle();
+      setProfiles(prev => ({ ...prev, [b.id]: data as PatientProfile | null }));
+      setLoadingProfile(null);
+    }
+  }
 
   if (!bookings.length) return null;
 
@@ -104,7 +131,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                 <div className="flex shrink-0 flex-col items-end gap-2">
                   {/* Patient Information toggle */}
                   <button
-                    onClick={() => setInfoId(infoId === b.id ? null : b.id)}
+                    onClick={() => handleInfoToggle(b)}
                     className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100"
                   >
                     Patient Information
@@ -140,29 +167,48 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
 
               {/* Patient info panel */}
               {infoId === b.id && (
-                <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 space-y-1">
-                  <p><span className="font-semibold">Name:</span> {b.patient_name}</p>
-                  <p><span className="font-semibold">Consultation:</span> {b.consultation_type}</p>
-                  <p><span className="font-semibold">Date:</span> {b.date} at {b.start_time.slice(0, 5)}–{b.end_time.slice(0, 5)}</p>
-                  {b.notes && <p><span className="font-semibold">Notes:</span> {b.notes}</p>}
-                  <div className="flex items-center justify-between gap-2 pt-1">
-                    <p>
-                      <span className="font-semibold">Status:</span>{" "}
-                      {b.is_new_patient ? (
-                        <span className="text-violet-600 font-semibold">Not yet in your patient list</span>
-                      ) : (
-                        <span className="text-teal-600 font-semibold">Existing patient</span>
-                      )}
-                    </p>
-                    {!b.is_new_patient && b.patient_id && (
-                      <Link
-                        href={`/dashboard/patients/${b.patient_id}`}
-                        className="rounded-lg bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700 hover:bg-teal-100"
-                      >
-                        View full profile →
-                      </Link>
-                    )}
-                  </div>
+                <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 space-y-2">
+                  {loadingProfile === b.id ? (
+                    <div className="flex items-center gap-2 py-2 text-xs text-slate-400">
+                      <span className="h-3 w-3 animate-spin rounded-full border-2 border-slate-300 border-t-teal-500" />
+                      Loading patient profile…
+                    </div>
+                  ) : (() => {
+                    const prof = profiles[b.id];
+                    return (
+                      <>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+                          <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">Name</span><br />{prof?.full_name || b.patient_name}</p>
+                          {prof?.email && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">Email</span><br />{prof.email}</p>}
+                          {prof?.phone && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">Phone</span><br />{prof.phone}</p>}
+                          {prof?.birth_date && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">Date of birth</span><br />{prof.birth_date}</p>}
+                          {prof?.cpf && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">CPF</span><br />{prof.cpf}</p>}
+                          {!prof && <p className="col-span-2 text-xs text-slate-400 italic">Patient has not completed their profile yet.</p>}
+                        </div>
+                        <div className="border-t border-slate-200 pt-2">
+                          <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">Consultation</span><br />{b.consultation_type} · {b.date} {b.start_time.slice(0, 5)}–{b.end_time.slice(0, 5)}</p>
+                          {b.notes && <p className="mt-1 text-slate-400 italic text-xs">{b.notes}</p>}
+                        </div>
+                        <div className="flex items-center justify-between gap-2 border-t border-slate-200 pt-2">
+                          <p className="text-xs">
+                            {b.is_new_patient ? (
+                              <span className="text-violet-600 font-semibold">Not yet in your patient list</span>
+                            ) : (
+                              <span className="text-teal-600 font-semibold">Existing patient</span>
+                            )}
+                          </p>
+                          {!b.is_new_patient && b.patient_id && (
+                            <Link
+                              href={`/dashboard/patients/${b.patient_id}`}
+                              className="rounded-lg bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700 hover:bg-teal-100"
+                            >
+                              View full profile →
+                            </Link>
+                          )}
+                        </div>
+                      </>
+                    );
+                  })()}
                 </div>
               )}
 

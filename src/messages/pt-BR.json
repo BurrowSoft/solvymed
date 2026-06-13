@@ -363,7 +363,17 @@
     "errorSlotTaken": "Este horário acabou de ser reservado. Escolha outro.",
     "errorBlocked": "Suas reservas com este profissional estão temporariamente restritas. Entre em contato com a clínica.",
     "errorMaxBookings": "Você já atingiu o número máximo de consultas com este profissional.",
-    "errorGeneric": "Não foi possível enviar a solicitação. Tente novamente."
+    "errorGeneric": "Não foi possível enviar a solicitação. Tente novamente.",
+    "patientDetails": "Seus dados",
+    "patientDetailsHint": "Estas informações ajudam o médico a se preparar para a sua consulta.",
+    "fullNameLabel": "Nome completo",
+    "fullNamePlaceholder": "Seu nome completo",
+    "emailLabel": "E-mail",
+    "phoneLabel": "Telefone",
+    "phonePlaceholder": "+55 11 99999-9999",
+    "dobLabel": "Data de nascimento",
+    "cpfLabel": "CPF",
+    "cpfPlaceholder": "000.000.000-00"
   },
   "discover": {
     "title": "Agende uma Consulta",

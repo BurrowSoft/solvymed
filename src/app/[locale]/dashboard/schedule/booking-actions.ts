@@ -68,10 +68,25 @@ export async function confirmBookingAndAddPatient(appointmentId: string) {
 
   if (error) return { error: error.message };
 
-  // Add patient record to this doctor's list
+  // Read shared patient profile to populate the per-professional patient record
+  const { data: profile } = appt.patient_auth_id
+    ? await supabase
+        .from("patient_profiles")
+        .select("full_name, email, phone, birth_date, cpf")
+        .eq("user_id", appt.patient_auth_id as string)
+        .maybeSingle()
+    : { data: null };
+
   const { data: newPatient } = await supabase
     .from("patients")
-    .insert({ full_name: appt.patient_name as string, professional_id: user.id })
+    .insert({
+      full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
+      professional_id: user.id,
+      email: (profile?.email as string | null) ?? undefined,
+      phone: (profile?.phone as string | null) ?? undefined,
+      birth_date: (profile?.birth_date as string | null) ?? undefined,
+      cpf: (profile?.cpf as string | null) ?? undefined,
+    })
     .select("id")
     .maybeSingle();
 

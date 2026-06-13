@@ -363,7 +363,17 @@
     "errorSlotTaken": "ช่วงเวลานี้ถูกจองแล้ว กรุณาเลือกเวลาอื่น",
     "errorBlocked": "การจองของคุณกับผู้เชี่ยวชาญนี้ถูกจำกัด กรุณาติดต่อคลินิก",
     "errorMaxBookings": "คุณถึงขีดจำกัดนัดหมายกับผู้เชี่ยวชาญนี้แล้ว",
-    "errorGeneric": "ไม่สามารถส่งคำขอได้ กรุณาลองอีกครั้ง"
+    "errorGeneric": "ไม่สามารถส่งคำขอได้ กรุณาลองอีกครั้ง",
+    "patientDetails": "ข้อมูลของคุณ",
+    "patientDetailsHint": "ข้อมูลนี้ช่วยให้แพทย์เตรียมพร้อมสำหรับการนัดหมายของคุณ",
+    "fullNameLabel": "ชื่อ-นามสกุล",
+    "fullNamePlaceholder": "ชื่อ-นามสกุลของคุณ",
+    "emailLabel": "อีเมล",
+    "phoneLabel": "โทรศัพท์",
+    "phonePlaceholder": "+66 81 234 5678",
+    "dobLabel": "วันเกิด",
+    "cpfLabel": "CPF",
+    "cpfPlaceholder": "000.000.000-00"
   },
   "discover": {
     "title": "จองการนัดหมาย",

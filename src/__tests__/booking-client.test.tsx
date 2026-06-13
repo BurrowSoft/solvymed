@@ -9,11 +9,66 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush, back: mockBack }),
 }));
 
+vi.mock("next-intl", () => ({
+  useTranslations: (ns: string) => (key: string, params?: Record<string, unknown>) => {
+    const translations: Record<string, string> = {
+      "book.title": "Book Appointment",
+      "book.selectProcedure": "Select procedure",
+      "book.sessionDuration": "Session duration",
+      "book.appointmentFor": "What is this appointment for?",
+      "book.other": "Other",
+      "book.otherPlaceholder": "Describe the appointment…",
+      "book.pickDate": "Pick a date",
+      "book.today": "Today",
+      "book.availableTimes": "Available times",
+      "book.noSlots": "No available slots",
+      "book.tryDifferentDate": "Try a different date.",
+      "book.notes": "Notes",
+      "book.notesOptional": "(optional)",
+      "book.notesPlaceholder": "Reason for visit, symptoms, questions for the doctor…",
+      "book.sendRequest": "Send Booking Request",
+      "book.sending": "Sending…",
+      "book.hint": "The doctor will confirm or suggest a different time.",
+      "book.successTitle": "Request sent!",
+      "book.successBody": params ? `Your request for ${params.date} at ${params.time} with ${params.doctor}` : "",
+      "book.successHint": "The doctor will confirm or suggest a different time.",
+      "book.viewAppointments": "View my appointments",
+      "book.backToClinics": "Back to clinics",
+      "book.errorSlotTaken": "This slot was just taken. Please choose another time.",
+      "book.errorBlocked": "Your bookings with this professional are currently restricted.",
+      "book.errorMaxBookings": "You already have the maximum number of active appointments with this professional.",
+      "book.errorGeneric": "Could not send booking request. Please try again.",
+      "book.patientDetails": "Your details",
+      "book.patientDetailsHint": "This information helps the doctor prepare for your appointment.",
+      "book.fullNameLabel": "Full name",
+      "book.fullNamePlaceholder": "Your full name",
+      "book.emailLabel": "Email",
+      "book.phoneLabel": "Phone",
+      "book.phonePlaceholder": "+55 11 99999-9999",
+      "book.dobLabel": "Date of birth",
+      "book.cpfLabel": "CPF",
+      "book.cpfPlaceholder": "000.000.000-00",
+      "consultType.consultation": "Consultation",
+      "consultType.followUp": "Follow-up",
+      "consultType.examReview": "Exam Review",
+      "consultType.procedure": "Procedure",
+      "consultType.emergency": "Emergency",
+    };
+    return translations[`${ns}.${key}`] ?? key;
+  },
+}));
+
 const mockRpc = vi.fn();
+const mockUpsert = vi.fn().mockResolvedValue({ error: null });
+const mockMaybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
 
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
     rpc: mockRpc,
+    from: (table: string) => ({
+      select: () => ({ eq: () => ({ maybeSingle: mockMaybeSingle }) }),
+      upsert: mockUpsert,
+    }),
   }),
 }));
 
@@ -54,6 +109,8 @@ describe("BookingClient", () => {
     mockPush.mockClear();
     mockBack.mockClear();
     mockRpc.mockClear();
+    mockUpsert.mockClear();
+    mockMaybeSingle.mockResolvedValue({ data: null, error: null });
   });
 
   it("shows doctor name and clinic in the header card", async () => {
@@ -81,13 +138,13 @@ describe("BookingClient", () => {
   it("shows procedure buttons when procedures are available", async () => {
     setupMocks({
       procedures: [
-        { id: "p1", name: "Consultation", duration_minutes: 30, price: null, payment_type: "private" },
-        { id: "p2", name: "Follow-up", duration_minutes: 20, price: null, payment_type: "private" },
+        { id: "p1", name: "General Visit", duration_minutes: 30, price: null, payment_type: "private" },
+        { id: "p2", name: "Follow-up Check", duration_minutes: 20, price: null, payment_type: "private" },
       ],
     });
     render(<BookingClient {...BASE_PROPS} />);
-    await waitFor(() => expect(screen.getByText("Consultation")).toBeInTheDocument());
-    expect(screen.getByText("Follow-up")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText("General Visit")).toBeInTheDocument());
+    expect(screen.getByText("Follow-up Check")).toBeInTheDocument();
   });
 
   it("shows time slots after setup loads", async () => {
@@ -107,6 +164,10 @@ describe("BookingClient", () => {
     setupMocks({ busySlots: [] });
     render(<BookingClient {...BASE_PROPS} />);
 
+    // Wait for consultation type chips and select one
+    await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
+    fireEvent.click(screen.getAllByText("Consultation")[0]);
+
     // Wait for a time slot to appear and click it
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
@@ -119,11 +180,10 @@ describe("BookingClient", () => {
   });
 
   it("shows slot_taken error when that error is returned", async () => {
-    setupMocks({
-      busySlots: [],
-      bookingError: { message: "slot_taken" },
-    });
+    setupMocks({ busySlots: [], bookingError: { message: "slot_taken" } });
     render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
+    fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
     await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
@@ -134,11 +194,10 @@ describe("BookingClient", () => {
   });
 
   it("shows max_bookings error when that error is returned", async () => {
-    setupMocks({
-      busySlots: [],
-      bookingError: { message: "Max concurrent bookings reached" },
-    });
+    setupMocks({ busySlots: [], bookingError: { message: "Max concurrent bookings reached" } });
     render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
+    fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
     await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
@@ -159,6 +218,8 @@ describe("BookingClient", () => {
   it("'View my appointments' navigates to /my-appointments after booking", async () => {
     setupMocks({ busySlots: [] });
     render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
+    fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
     await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
@@ -166,5 +227,64 @@ describe("BookingClient", () => {
     await waitFor(() => expect(screen.getByText("View my appointments")).toBeInTheDocument());
     fireEvent.click(screen.getByText("View my appointments"));
     expect(mockPush).toHaveBeenCalledWith("/my-appointments");
+  });
+
+  it("renders the patient details form section after setup loads", async () => {
+    setupMocks();
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByText("Your details")).toBeInTheDocument());
+    expect(screen.getByText("Full name")).toBeInTheDocument();
+    expect(screen.getByText("Email")).toBeInTheDocument();
+    expect(screen.getByText("Phone")).toBeInTheDocument();
+    expect(screen.getByText("Date of birth")).toBeInTheDocument();
+    expect(screen.getByText("CPF")).toBeInTheDocument();
+  });
+
+  it("pre-fills full name from email username when no profile exists", async () => {
+    setupMocks();
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByText("Your details")).toBeInTheDocument());
+    const nameInput = screen.getByPlaceholderText("Your full name");
+    expect((nameInput as HTMLInputElement).value).toBe("patient");
+  });
+
+  it("pre-fills form fields when patient profile is loaded from database", async () => {
+    mockMaybeSingle.mockResolvedValueOnce({
+      data: { full_name: "Maria Silva", phone: "11999887766", birth_date: "1990-05-15", cpf: "12345678901" },
+      error: null,
+    });
+    setupMocks();
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => {
+      const nameInput = screen.getByPlaceholderText("Your full name");
+      expect((nameInput as HTMLInputElement).value).toBe("Maria Silva");
+    });
+  });
+
+  it("disables Send button when full name is cleared", async () => {
+    setupMocks({ busySlots: [] });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
+    fireEvent.click(screen.getByText(/9:00/));
+    const nameInput = screen.getByPlaceholderText("Your full name");
+    fireEvent.change(nameInput, { target: { value: "" } });
+    await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
+  });
+
+  it("upserts patient profile before calling create_public_booking", async () => {
+    setupMocks({ busySlots: [] });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
+    fireEvent.click(screen.getAllByText("Consultation")[0]);
+    await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
+    fireEvent.click(screen.getByText(/9:00/));
+    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Request sent!")).toBeInTheDocument());
+    expect(mockUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({ user_id: "patient-1", email: "patient@example.com" }),
+      expect.objectContaining({ onConflict: "user_id" }),
+    );
+    expect(mockRpc).toHaveBeenCalledWith("create_public_booking", expect.any(Object));
   });
 });

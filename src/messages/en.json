@@ -363,7 +363,17 @@
     "errorSlotTaken": "This slot was just taken. Please choose another time.",
     "errorBlocked": "Your bookings with this professional are currently restricted. Please contact the clinic.",
     "errorMaxBookings": "You already have the maximum number of active appointments with this professional.",
-    "errorGeneric": "Could not send booking request. Please try again."
+    "errorGeneric": "Could not send booking request. Please try again.",
+    "patientDetails": "Your details",
+    "patientDetailsHint": "This information helps the doctor prepare for your appointment.",
+    "fullNameLabel": "Full name",
+    "fullNamePlaceholder": "Your full name",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone",
+    "phonePlaceholder": "+55 11 99999-9999",
+    "dobLabel": "Date of birth",
+    "cpfLabel": "CPF",
+    "cpfPlaceholder": "000.000.000-00"
   },
   "discover": {
     "title": "Book an Appointment",

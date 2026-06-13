@@ -363,7 +363,17 @@
     "errorSlotTaken": "この時間はたった今予約されました。別の時間を選んでください。",
     "errorBlocked": "このプロフェッショナルとの予約は現在制限されています。クリニックにお問い合わせください。",
     "errorMaxBookings": "このプロフェッショナルとの予約上限に達しました。",
-    "errorGeneric": "リクエストを送信できませんでした。再度お試しください。"
+    "errorGeneric": "リクエストを送信できませんでした。再度お試しください。",
+    "patientDetails": "お客様の情報",
+    "patientDetailsHint": "この情報は医師が診察の準備をするのに役立ちます。",
+    "fullNameLabel": "氏名",
+    "fullNamePlaceholder": "お名前（フルネーム）",
+    "emailLabel": "メール",
+    "phoneLabel": "電話番号",
+    "phonePlaceholder": "+81 90-1234-5678",
+    "dobLabel": "生年月日",
+    "cpfLabel": "CPF",
+    "cpfPlaceholder": "000.000.000-00"
   },
   "discover": {
     "title": "予約する",

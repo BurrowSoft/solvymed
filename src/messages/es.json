@@ -363,7 +363,17 @@
     "errorSlotTaken": "Este horario acaba de ser reservado. Elige otro.",
     "errorBlocked": "Tus reservas con este profesional están actualmente restringidas. Contacta la clínica.",
     "errorMaxBookings": "Ya has alcanzado el número máximo de citas con este profesional.",
-    "errorGeneric": "No se pudo enviar la solicitud. Inténtalo de nuevo."
+    "errorGeneric": "No se pudo enviar la solicitud. Inténtalo de nuevo.",
+    "patientDetails": "Tus datos",
+    "patientDetailsHint": "Esta información ayuda al médico a prepararse para tu cita.",
+    "fullNameLabel": "Nombre completo",
+    "fullNamePlaceholder": "Tu nombre completo",
+    "emailLabel": "Correo electrónico",
+    "phoneLabel": "Teléfono",
+    "phonePlaceholder": "+34 612 345 678",
+    "dobLabel": "Fecha de nacimiento",
+    "cpfLabel": "CPF",
+    "cpfPlaceholder": "000.000.000-00"
   },
   "discover": {
     "title": "Reservar una Cita",

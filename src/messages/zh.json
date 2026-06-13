@@ -363,7 +363,17 @@
     "errorSlotTaken": "该时段刚被预约，请选择其他时间。",
     "errorBlocked": "您与该医生的预约目前受限，请联系诊所。",
     "errorMaxBookings": "您已达到与该医生的最大预约数量。",
-    "errorGeneric": "无法发送请求，请重试。"
+    "errorGeneric": "无法发送请求，请重试。",
+    "patientDetails": "您的信息",
+    "patientDetailsHint": "这些信息有助于医生为您的预约做准备。",
+    "fullNameLabel": "姓名",
+    "fullNamePlaceholder": "您的姓名",
+    "emailLabel": "电子邮件",
+    "phoneLabel": "电话",
+    "phonePlaceholder": "+86 138 0000 0000",
+    "dobLabel": "出生日期",
+    "cpfLabel": "身份证号",
+    "cpfPlaceholder": "000.000.000-00"
   },
   "discover": {
     "title": "预约挂号",

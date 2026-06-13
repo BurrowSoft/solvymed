@@ -363,7 +363,17 @@
     "errorSlotTaken": "Ce créneau vient d'être pris. Veuillez en choisir un autre.",
     "errorBlocked": "Vos réservations avec ce professionnel sont actuellement restreintes. Veuillez contacter la clinique.",
     "errorMaxBookings": "Vous avez déjà atteint le nombre maximum de rendez-vous avec ce professionnel.",
-    "errorGeneric": "Impossible d'envoyer la demande. Veuillez réessayer."
+    "errorGeneric": "Impossible d'envoyer la demande. Veuillez réessayer.",
+    "patientDetails": "Vos coordonnées",
+    "patientDetailsHint": "Ces informations aident le médecin à préparer votre rendez-vous.",
+    "fullNameLabel": "Nom complet",
+    "fullNamePlaceholder": "Votre nom complet",
+    "emailLabel": "E-mail",
+    "phoneLabel": "Téléphone",
+    "phonePlaceholder": "+33 6 12 34 56 78",
+    "dobLabel": "Date de naissance",
+    "cpfLabel": "Numéro d'identification",
+    "cpfPlaceholder": "000.000.000-00"
   },
   "discover": {
     "title": "Prendre un Rendez-vous",

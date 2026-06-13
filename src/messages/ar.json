@@ -363,7 +363,17 @@
     "errorSlotTaken": "تم حجز هذا الوقت للتو. يرجى اختيار وقت آخر.",
     "errorBlocked": "حجوزاتك مع هذا المختص مقيدة حالياً. يرجى التواصل مع العيادة.",
     "errorMaxBookings": "لقد وصلت إلى الحد الأقصى من المواعيد مع هذا المختص.",
-    "errorGeneric": "تعذر إرسال الطلب. يرجى المحاولة مجدداً."
+    "errorGeneric": "تعذر إرسال الطلب. يرجى المحاولة مجدداً.",
+    "patientDetails": "بياناتك",
+    "patientDetailsHint": "تساعد هذه المعلومات الطبيب على الاستعداد لموعدك.",
+    "fullNameLabel": "الاسم الكامل",
+    "fullNamePlaceholder": "اسمك الكامل",
+    "emailLabel": "البريد الإلكتروني",
+    "phoneLabel": "الهاتف",
+    "phonePlaceholder": "+55 11 99999-9999",
+    "dobLabel": "تاريخ الميلاد",
+    "cpfLabel": "رقم التعريف",
+    "cpfPlaceholder": "000.000.000-00"
   },
   "discover": {
     "title": "احجز موعداً",

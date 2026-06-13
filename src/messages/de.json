@@ -363,7 +363,17 @@
     "errorSlotTaken": "Dieser Slot wurde gerade gebucht. Bitte wählen Sie einen anderen.",
     "errorBlocked": "Ihre Buchungen bei diesem Fachmann sind derzeit eingeschränkt. Bitte kontaktieren Sie die Klinik.",
     "errorMaxBookings": "Sie haben bereits die maximale Anzahl an Terminen mit diesem Fachmann erreicht.",
-    "errorGeneric": "Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut."
+    "errorGeneric": "Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+    "patientDetails": "Ihre Angaben",
+    "patientDetailsHint": "Diese Informationen helfen dem Arzt, sich auf Ihren Termin vorzubereiten.",
+    "fullNameLabel": "Vollständiger Name",
+    "fullNamePlaceholder": "Ihr vollständiger Name",
+    "emailLabel": "E-Mail",
+    "phoneLabel": "Telefon",
+    "phonePlaceholder": "+49 151 23456789",
+    "dobLabel": "Geburtsdatum",
+    "cpfLabel": "CPF",
+    "cpfPlaceholder": "000.000.000-00"
   },
   "discover": {
     "title": "Termin Buchen",

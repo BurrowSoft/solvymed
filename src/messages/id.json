@@ -363,7 +363,17 @@
     "errorSlotTaken": "Slot ini baru saja diambil. Pilih waktu lain.",
     "errorBlocked": "Pemesanan Anda dengan profesional ini sedang dibatasi. Hubungi klinik.",
     "errorMaxBookings": "Anda sudah mencapai batas maksimum janji dengan profesional ini.",
-    "errorGeneric": "Tidak dapat mengirim permintaan. Silakan coba lagi."
+    "errorGeneric": "Tidak dapat mengirim permintaan. Silakan coba lagi.",
+    "patientDetails": "Data Anda",
+    "patientDetailsHint": "Informasi ini membantu dokter mempersiapkan janji Anda.",
+    "fullNameLabel": "Nama lengkap",
+    "fullNamePlaceholder": "Nama lengkap Anda",
+    "emailLabel": "Email",
+    "phoneLabel": "Telepon",
+    "phonePlaceholder": "+62 812 3456 7890",
+    "dobLabel": "Tanggal lahir",
+    "cpfLabel": "CPF",
+    "cpfPlaceholder": "000.000.000-00"
   },
   "discover": {
     "title": "Buat Janji",

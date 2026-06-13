@@ -110,6 +110,34 @@ export function BookingClient({
   const [bookedSlot, setBookedSlot] = useState<TimeSlot | null>(null);
   const [bookedDate, setBookedDate] = useState("");
 
+  // Patient profile — pre-loaded from patient_profiles, editable before booking
+  const [patientFullName, setPatientFullName] = useState(patientEmail.split("@")[0]);
+  const [patientPhone, setPatientPhone] = useState("");
+  const [patientDob, setPatientDob] = useState("");
+  const [patientCpf, setPatientCpf] = useState("");
+  const [profileLoaded, setProfileLoaded] = useState(false);
+
+  // Load existing profile to pre-fill the form
+  useEffect(() => {
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase
+          .from("patient_profiles")
+          .select("full_name, email, phone, birth_date, cpf")
+          .eq("user_id", patientAuthId)
+          .maybeSingle();
+        if (data) {
+          if (data.full_name) setPatientFullName(data.full_name as string);
+          if (data.phone)     setPatientPhone(data.phone as string);
+          if (data.birth_date) setPatientDob(data.birth_date as string);
+          if (data.cpf)       setPatientCpf(data.cpf as string);
+        }
+      } catch { /* non-fatal */ }
+      setProfileLoaded(true);
+    })();
+  }, [patientAuthId]);
+
   // Fetch working hours (SECURITY DEFINER bypasses patient RLS)
   useEffect(() => {
     (async () => {
@@ -183,10 +211,23 @@ export function BookingClient({
     setError("");
     const supabase = createClient();
     try {
+      // Persist patient profile before creating the booking
+      await supabase.from("patient_profiles").upsert(
+        {
+          user_id: patientAuthId,
+          full_name: patientFullName.trim(),
+          email: patientEmail,
+          phone: patientPhone.trim() || null,
+          birth_date: patientDob || null,
+          cpf: patientCpf.trim() || null,
+        },
+        { onConflict: "user_id" },
+      );
+
       const { error: rpcError } = await supabase.rpc("create_public_booking", {
         p_professional_id: professionalId,
         p_patient_auth_id: patientAuthId,
-        p_patient_name: patientEmail.split("@")[0],
+        p_patient_name: patientFullName.trim() || patientEmail.split("@")[0],
         p_date: selectedDate,
         p_start_time: selectedSlot.start,
         p_end_time: selectedSlot.end,
@@ -427,6 +468,64 @@ export function BookingClient({
               />
             </div>
 
+            {/* Patient details */}
+            <div className="rounded-2xl border border-teal-100 bg-teal-50/40 p-5 space-y-3">
+              <div>
+                <h2 className="text-sm font-bold text-slate-700">{t("patientDetails")}</h2>
+                <p className="text-xs text-slate-400 mt-0.5">{t("patientDetailsHint")}</p>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">{t("fullNameLabel")} <span className="text-red-400">*</span></label>
+                <input
+                  type="text"
+                  value={patientFullName}
+                  onChange={e => setPatientFullName(e.target.value)}
+                  placeholder={t("fullNamePlaceholder")}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">{t("emailLabel")}</label>
+                <input
+                  type="email"
+                  value={patientEmail}
+                  readOnly
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-400 cursor-not-allowed"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">{t("phoneLabel")}</label>
+                  <input
+                    type="tel"
+                    value={patientPhone}
+                    onChange={e => setPatientPhone(e.target.value)}
+                    placeholder={t("phonePlaceholder")}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">{t("dobLabel")}</label>
+                  <input
+                    type="date"
+                    value={patientDob}
+                    onChange={e => setPatientDob(e.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">{t("cpfLabel")} <span className="text-slate-400 font-normal">({t("notesOptional")})</span></label>
+                <input
+                  type="text"
+                  value={patientCpf}
+                  onChange={e => setPatientCpf(e.target.value)}
+                  placeholder={t("cpfPlaceholder")}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                />
+              </div>
+            </div>
+
             {error && (
               <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
                 {error}
@@ -435,7 +534,7 @@ export function BookingClient({
 
             <button
               onClick={handleBook}
-              disabled={!selectedSlot || !consultType.trim() || booking}
+              disabled={!selectedSlot || !consultType.trim() || !patientFullName.trim() || booking}
               className="w-full rounded-xl bg-teal-600 py-4 text-base font-bold text-white shadow-sm hover:bg-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {booking ? (

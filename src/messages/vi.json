@@ -363,7 +363,17 @@
     "errorSlotTaken": "Khung giờ này vừa được đặt. Vui lòng chọn giờ khác.",
     "errorBlocked": "Lịch hẹn của bạn với chuyên gia này đang bị hạn chế. Vui lòng liên hệ phòng khám.",
     "errorMaxBookings": "Bạn đã đạt số lịch hẹn tối đa với chuyên gia này.",
-    "errorGeneric": "Không thể gửi yêu cầu. Vui lòng thử lại."
+    "errorGeneric": "Không thể gửi yêu cầu. Vui lòng thử lại.",
+    "patientDetails": "Thông tin của bạn",
+    "patientDetailsHint": "Thông tin này giúp bác sĩ chuẩn bị cho cuộc hẹn của bạn.",
+    "fullNameLabel": "Họ và tên",
+    "fullNamePlaceholder": "Họ và tên của bạn",
+    "emailLabel": "Email",
+    "phoneLabel": "Điện thoại",
+    "phonePlaceholder": "+84 90 123 4567",
+    "dobLabel": "Ngày sinh",
+    "cpfLabel": "CPF",
+    "cpfPlaceholder": "000.000.000-00"
   },
   "discover": {
     "title": "Đặt Lịch Khám",

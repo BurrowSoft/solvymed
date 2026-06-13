@@ -363,7 +363,17 @@
     "errorSlotTaken": "이 시간은 방금 예약되었습니다. 다른 시간을 선택해 주세요.",
     "errorBlocked": "이 전문가와의 예약이 현재 제한되어 있습니다. 클리닉에 문의해 주세요.",
     "errorMaxBookings": "이 전문가와의 최대 예약 수에 도달했습니다.",
-    "errorGeneric": "요청을 보낼 수 없습니다. 다시 시도해 주세요."
+    "errorGeneric": "요청을 보낼 수 없습니다. 다시 시도해 주세요.",
+    "patientDetails": "내 정보",
+    "patientDetailsHint": "이 정보는 의사가 진료를 준비하는 데 도움이 됩니다.",
+    "fullNameLabel": "성명",
+    "fullNamePlaceholder": "성명을 입력하세요",
+    "emailLabel": "이메일",
+    "phoneLabel": "전화번호",
+    "phonePlaceholder": "+82 10-1234-5678",
+    "dobLabel": "생년월일",
+    "cpfLabel": "CPF",
+    "cpfPlaceholder": "000.000.000-00"
   },
   "discover": {
     "title": "예약하기",

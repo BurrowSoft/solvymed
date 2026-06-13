@@ -363,7 +363,17 @@
     "errorSlotTaken": "Questo slot è appena stato prenotato. Scegline un altro.",
     "errorBlocked": "Le tue prenotazioni con questo professionista sono attualmente limitate. Contatta la clinica.",
     "errorMaxBookings": "Hai già raggiunto il numero massimo di appuntamenti con questo professionista.",
-    "errorGeneric": "Impossibile inviare la richiesta. Riprova."
+    "errorGeneric": "Impossibile inviare la richiesta. Riprova.",
+    "patientDetails": "I tuoi dati",
+    "patientDetailsHint": "Queste informazioni aiutano il medico a prepararsi per il tuo appuntamento.",
+    "fullNameLabel": "Nome completo",
+    "fullNamePlaceholder": "Il tuo nome completo",
+    "emailLabel": "Email",
+    "phoneLabel": "Telefono",
+    "phonePlaceholder": "+39 333 1234567",
+    "dobLabel": "Data di nascita",
+    "cpfLabel": "CPF",
+    "cpfPlaceholder": "000.000.000-00"
   },
   "discover": {
     "title": "Prenota un Appuntamento",
