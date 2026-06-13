@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, SchedulingRulesForm } from "./SettingsClient";
+import { ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, SchedulingRulesForm, BlockedPatientsPanel } from "./SettingsClient";
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 type WorkingHours = Record<DayKey, { enabled: boolean; start: string; end: string }>;
@@ -16,7 +16,7 @@ export default async function SettingsPage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
 
-  const [profResult, procsResult] = await Promise.all([
+  const [profResult, procsResult, blockedResult] = await Promise.all([
     supabase
       .from("professionals")
       .select("full_name, specialty, clinic_name, clinic_cnpj, clinic_phone, clinic_website, clinic_address, clinic_city, clinic_state, working_hours, max_concurrent_bookings")
@@ -28,6 +28,12 @@ export default async function SettingsPage({
       .eq("professional_id", user.id)
       .order("active", { ascending: false })
       .order("name"),
+    supabase
+      .from("patients")
+      .select("id, full_name, email, phone")
+      .eq("professional_id", user.id)
+      .eq("booking_blocked", true)
+      .order("full_name"),
   ]);
 
   const prof = profResult.data ?? {
@@ -39,6 +45,9 @@ export default async function SettingsPage({
 
   const procedures = (procsResult.data ?? []) as {
     id: string; name: string; duration_minutes: number; price?: number; payment_type: string; active: boolean;
+  }[];
+  const blockedPatients = (blockedResult.data ?? []) as {
+    id: string; full_name: string; email?: string; phone?: string;
   }[];
 
   return (
@@ -69,6 +78,8 @@ export default async function SettingsPage({
         <WorkingHoursForm workingHours={prof.working_hours as WorkingHours | null} />
 
         <SchedulingRulesForm maxConcurrent={(prof.max_concurrent_bookings as number | null) ?? null} />
+
+        <BlockedPatientsPanel patients={blockedPatients} locale={locale} />
 
         <ProceduresPanel procedures={procedures} />
       </div>

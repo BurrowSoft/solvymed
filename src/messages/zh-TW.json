@@ -296,7 +296,11 @@
     "deleteConfirm": "刪除「{name}」？",
     "save": "儲存變更",
     "saving": "儲存中…",
-    "saved": "已儲存！"
+    "saved": "已儲存！",
+    "blockedPatientsTitle": "已封鎖患者",
+    "blockedPatientsSub": "被禁止預約新門診的患者",
+    "noBlockedPatients": "目前沒有被封鎖的患者",
+    "unblock": "解除封鎖"
   },
   "clinics": {
     "title": "我的診所",

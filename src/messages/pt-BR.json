@@ -296,7 +296,11 @@
     "deleteConfirm": "Excluir \"{name}\"?",
     "save": "Salvar alterações",
     "saving": "Salvando…",
-    "saved": "Salvo!"
+    "saved": "Salvo!",
+    "blockedPatientsTitle": "Pacientes Bloqueados",
+    "blockedPatientsSub": "Pacientes impedidos de agendar novas consultas",
+    "noBlockedPatients": "Nenhum paciente bloqueado no momento",
+    "unblock": "Desbloquear"
   },
   "clinics": {
     "title": "Minhas Clínicas",

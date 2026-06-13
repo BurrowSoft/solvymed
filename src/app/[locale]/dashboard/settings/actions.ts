@@ -125,3 +125,20 @@ export async function deleteProcedure(id: string) {
   revalidatePath("/dashboard/settings");
   return { success: true };
 }
+
+export async function unblockPatient(patientId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { error } = await supabase
+    .from("patients")
+    .update({ booking_blocked: false })
+    .eq("id", patientId)
+    .eq("professional_id", user.id);
+
+  if (error) return { error: error.message };
+  revalidatePath("/dashboard/settings");
+  revalidatePath(`/dashboard/patients/${patientId}`);
+  return { success: true };
+}

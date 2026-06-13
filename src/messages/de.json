@@ -296,7 +296,11 @@
     "deleteConfirm": "\"{name}\" löschen?",
     "save": "Änderungen speichern",
     "saving": "Wird gespeichert…",
-    "saved": "Gespeichert!"
+    "saved": "Gespeichert!",
+    "blockedPatientsTitle": "Gesperrte Patienten",
+    "blockedPatientsSub": "Patienten, die keine neuen Termine buchen können",
+    "noBlockedPatients": "Derzeit keine gesperrten Patienten",
+    "unblock": "Entsperren"
   },
   "clinics": {
     "title": "Meine Kliniken",

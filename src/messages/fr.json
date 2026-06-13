@@ -296,7 +296,11 @@
     "deleteConfirm": "Supprimer \"{name}\" ?",
     "save": "Enregistrer les modifications",
     "saving": "Enregistrement…",
-    "saved": "Enregistré !"
+    "saved": "Enregistré !",
+    "blockedPatientsTitle": "Patients bloqués",
+    "blockedPatientsSub": "Patients bloqués pour la réservation de nouveaux rendez-vous",
+    "noBlockedPatients": "Aucun patient bloqué pour le moment",
+    "unblock": "Débloquer"
   },
   "clinics": {
     "title": "Mes Cliniques",

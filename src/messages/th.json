@@ -296,7 +296,11 @@
     "deleteConfirm": "ลบ \"{name}\"?",
     "save": "บันทึกการเปลี่ยนแปลง",
     "saving": "กำลังบันทึก…",
-    "saved": "บันทึกแล้ว!"
+    "saved": "บันทึกแล้ว!",
+    "blockedPatientsTitle": "ผู้ป่วยที่ถูกบล็อก",
+    "blockedPatientsSub": "ผู้ป่วยที่ถูกบล็อกจากการนัดหมายใหม่",
+    "noBlockedPatients": "ขณะนี้ไม่มีผู้ป่วยที่ถูกบล็อก",
+    "unblock": "ยกเลิกบล็อก"
   },
   "clinics": {
     "title": "คลินิกของฉัน",

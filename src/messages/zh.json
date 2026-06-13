@@ -296,7 +296,11 @@
     "deleteConfirm": "删除"{name}"？",
     "save": "保存更改",
     "saving": "保存中…",
-    "saved": "已保存！"
+    "saved": "已保存！",
+    "blockedPatientsTitle": "已拦截患者",
+    "blockedPatientsSub": "被禁止预约新门诊的患者",
+    "noBlockedPatients": "当前没有被拦截的患者",
+    "unblock": "解除拦截"
   },
   "clinics": {
     "title": "我的诊所",

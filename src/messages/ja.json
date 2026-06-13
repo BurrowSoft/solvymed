@@ -296,7 +296,11 @@
     "deleteConfirm": "「{name}」を削除しますか？",
     "save": "変更を保存",
     "saving": "保存中…",
-    "saved": "保存しました！"
+    "saved": "保存しました！",
+    "blockedPatientsTitle": "ブロック中の患者",
+    "blockedPatientsSub": "新しい予約ができないようにブロックされた患者",
+    "noBlockedPatients": "現在ブロック中の患者はいません",
+    "unblock": "ブロック解除"
   },
   "clinics": {
     "title": "マイクリニック",

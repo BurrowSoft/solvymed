@@ -296,7 +296,11 @@
     "deleteConfirm": "حذف \"{name}\"؟",
     "save": "حفظ التغييرات",
     "saving": "جارٍ الحفظ…",
-    "saved": "تم الحفظ!"
+    "saved": "تم الحفظ!",
+    "blockedPatientsTitle": "المرضى المحظورون",
+    "blockedPatientsSub": "المرضى الممنوعون من حجز مواعيد جديدة",
+    "noBlockedPatients": "لا يوجد مرضى محظورون حالياً",
+    "unblock": "رفع الحظر"
   },
   "clinics": {
     "title": "عياداتي",

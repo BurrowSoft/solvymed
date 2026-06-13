@@ -296,7 +296,11 @@
     "deleteConfirm": "\"{name}\"을(를) 삭제하시겠습니까?",
     "save": "변경 저장",
     "saving": "저장 중…",
-    "saved": "저장됨!"
+    "saved": "저장됨!",
+    "blockedPatientsTitle": "차단된 환자",
+    "blockedPatientsSub": "새 예약이 차단된 환자",
+    "noBlockedPatients": "현재 차단된 환자가 없습니다",
+    "unblock": "차단 해제"
   },
   "clinics": {
     "title": "내 클리닉",

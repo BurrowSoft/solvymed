@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface Props {
   locale: string;
@@ -12,6 +11,27 @@ interface Props {
   email: string;
   photoUrl?: string | null;
 }
+
+const LOCALES: { code: string; label: string; short: string }[] = [
+  { code: "en",    label: "English",           short: "EN" },
+  { code: "pt-BR", label: "Português (BR)",    short: "PT" },
+  { code: "fr",    label: "Français",           short: "FR" },
+  { code: "de",    label: "Deutsch",            short: "DE" },
+  { code: "it",    label: "Italiano",           short: "IT" },
+  { code: "es",    label: "Español",            short: "ES" },
+  { code: "ar",    label: "العربية",            short: "AR" },
+  { code: "id",    label: "Bahasa Indonesia",   short: "ID" },
+  { code: "ja",    label: "日本語",             short: "JA" },
+  { code: "ko",    label: "한국어",             short: "KO" },
+  { code: "ru",    label: "Русский",            short: "RU" },
+  { code: "th",    label: "ภาษาไทย",           short: "TH" },
+  { code: "vi",    label: "Tiếng Việt",         short: "VI" },
+  { code: "zh",    label: "中文 (简体)",         short: "ZH" },
+  { code: "zh-TW", label: "中文 (繁體)",        short: "TW" },
+];
+
+const ALL_LOCALE_CODES = LOCALES.map(l => l.code).join("|");
+const LOCALE_RE = new RegExp(`^/(${ALL_LOCALE_CODES})(/|$)`);
 
 const CalendarIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
@@ -48,6 +68,74 @@ const LogoIcon = () => (
     <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
   </svg>
 );
+const GlobeIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+    <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+  </svg>
+);
+
+function LanguageSwitcher({ locale }: { locale: string }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const current = LOCALES.find(l => l.code === locale) ?? LOCALES[0];
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  function switchLocale(newLocale: string) {
+    const pathWithoutLocale = pathname.replace(LOCALE_RE, "/");
+    const newPath = newLocale === "en" ? pathWithoutLocale : `/${newLocale}${pathWithoutLocale}`;
+    setOpen(false);
+    router.push(newPath);
+  }
+
+  return (
+    <div ref={ref} className="relative px-3 pb-2">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition"
+      >
+        <span className="text-slate-400"><GlobeIcon /></span>
+        <span className="flex-1 text-left">{current.label}</span>
+        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-500">{current.short}</span>
+      </button>
+
+      {open && (
+        <div className="absolute bottom-full left-3 right-3 mb-1 z-50 rounded-xl border border-slate-100 bg-white shadow-lg overflow-hidden">
+          <div className="max-h-60 overflow-y-auto py-1">
+            {LOCALES.map(loc => (
+              <button
+                key={loc.code}
+                onClick={() => switchLocale(loc.code)}
+                className={`flex w-full items-center gap-3 px-3 py-2 text-sm transition ${
+                  loc.code === locale
+                    ? "bg-teal-50 text-teal-700 font-semibold"
+                    : "text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                <span className="w-7 text-right text-[10px] font-bold text-slate-400">{loc.short}</span>
+                <span>{loc.label}</span>
+                {loc.code === locale && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="ml-auto h-3.5 w-3.5 text-teal-600">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function DashboardSidebar({ locale, firstName, email, photoUrl }: Props) {
   const pathname = usePathname();
@@ -163,6 +251,7 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl }: Props) 
         </div>
 
         <NavLinks />
+        <LanguageSwitcher locale={locale} />
         <UserPanel />
       </aside>
     </>

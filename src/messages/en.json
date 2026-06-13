@@ -296,7 +296,11 @@
     "deleteConfirm": "Delete \"{name}\"?",
     "save": "Save changes",
     "saving": "Saving…",
-    "saved": "Saved!"
+    "saved": "Saved!",
+    "blockedPatientsTitle": "Blocked Patients",
+    "blockedPatientsSub": "Patients blocked from booking new appointments",
+    "noBlockedPatients": "No patients are currently blocked",
+    "unblock": "Unblock"
   },
   "clinics": {
     "title": "My Clinics",

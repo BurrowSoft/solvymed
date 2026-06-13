@@ -2,7 +2,7 @@
 
 import { useTransition, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules } from "./actions";
+import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient } from "./actions";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
 function Label({ children }: { children: React.ReactNode }) {
@@ -362,6 +362,45 @@ export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           {t("addProcedure")}
         </button>
+      )}
+    </Card>
+  );
+}
+
+/* ─── Blocked patients panel ────────────────────────────────────── */
+type BlockedPatient = { id: string; full_name: string; email?: string; phone?: string };
+
+export function BlockedPatientsPanel({ patients, locale }: { patients: BlockedPatient[]; locale: string }) {
+  const t = useTranslations("settings");
+  const [pending, start] = useTransition();
+  const prefix = locale === "en" ? "" : `/${locale}`;
+
+  function handleUnblock(id: string) {
+    start(async () => { await unblockPatient(id); });
+  }
+
+  return (
+    <Card title={t("blockedPatientsTitle")} description={t("blockedPatientsSub")}>
+      {patients.length === 0 ? (
+        <p className="text-sm text-slate-400 py-4 text-center">{t("noBlockedPatients")}</p>
+      ) : (
+        <div className="space-y-2">
+          {patients.map(p => (
+            <div key={p.id} className="flex items-center justify-between gap-3 rounded-xl border border-red-100 bg-red-50/40 px-4 py-3">
+              <div className="min-w-0">
+                <a href={`${prefix}/dashboard/patients/${p.id}`} className="text-sm font-semibold text-slate-900 hover:text-teal-700 transition">{p.full_name}</a>
+                {p.email && <p className="text-xs text-slate-500 mt-0.5">{p.email}</p>}
+              </div>
+              <button
+                onClick={() => handleUnblock(p.id)}
+                disabled={pending}
+                className="shrink-0 rounded-lg border border-green-200 px-3 py-1.5 text-xs font-semibold text-green-700 hover:bg-green-50 transition disabled:opacity-60"
+              >
+                {t("unblock")}
+              </button>
+            </div>
+          ))}
+        </div>
       )}
     </Card>
   );

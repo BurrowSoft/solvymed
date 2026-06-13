@@ -296,7 +296,11 @@
     "deleteConfirm": "Xóa \"{name}\"?",
     "save": "Lưu thay đổi",
     "saving": "Đang lưu…",
-    "saved": "Đã lưu!"
+    "saved": "Đã lưu!",
+    "blockedPatientsTitle": "Bệnh nhân bị chặn",
+    "blockedPatientsSub": "Bệnh nhân bị chặn đặt lịch mới",
+    "noBlockedPatients": "Hiện không có bệnh nhân nào bị chặn",
+    "unblock": "Bỏ chặn"
   },
   "clinics": {
     "title": "Phòng khám của tôi",

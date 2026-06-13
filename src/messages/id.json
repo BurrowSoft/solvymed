@@ -296,7 +296,11 @@
     "deleteConfirm": "Hapus \"{name}\"?",
     "save": "Simpan perubahan",
     "saving": "Menyimpan…",
-    "saved": "Tersimpan!"
+    "saved": "Tersimpan!",
+    "blockedPatientsTitle": "Pasien Diblokir",
+    "blockedPatientsSub": "Pasien yang diblokir dari pemesanan janji baru",
+    "noBlockedPatients": "Tidak ada pasien yang diblokir saat ini",
+    "unblock": "Buka Blokir"
   },
   "clinics": {
     "title": "Klinik Saya",
