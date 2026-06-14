@@ -932,12 +932,23 @@ export async function getTentativeAppointmentsWithNewPatient(
 
   let knownIds = new Set<string>();
   if (authIds.length > 0) {
-    const { data: roles } = await supabase
-      .from('user_roles')
-      .select('user_id')
-      .eq('invited_by_professional_id', professionalId)
-      .in('user_id', authIds);
-    knownIds = new Set((roles ?? []).map(r => r.user_id as string));
+    const [{ data: roles }, { data: confirmed }] = await Promise.all([
+      supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('invited_by_professional_id', professionalId)
+        .in('user_id', authIds),
+      supabase
+        .from('appointments')
+        .select('patient_auth_id')
+        .eq('professional_id', professionalId)
+        .in('status', ['confirmed', 'completed'])
+        .in('patient_auth_id', authIds),
+    ]);
+    knownIds = new Set([
+      ...(roles ?? []).map(r => r.user_id as string),
+      ...(confirmed ?? []).map(a => a.patient_auth_id as string).filter(Boolean),
+    ]);
   }
 
   return rows.map(b => ({

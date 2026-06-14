@@ -56,7 +56,8 @@
         }
       ],
       "expo-asset",
-      "expo-updates"
+      "expo-updates",
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true

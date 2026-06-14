@@ -54,6 +54,10 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
       const patientId = await linkPatientByEmail(userId, email);
       setRole('patient');
       setLinkedPatientId(patientId);
+    } else if (selectedRole === 'secretary') {
+      await setUserRole(userId, 'secretary');
+      setRole('secretary');
+      setLinkedPatientId(null);
     } else {
       await setUserRole(userId, 'professional');
       setRole('professional');
