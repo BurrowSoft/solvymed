@@ -114,6 +114,7 @@ export function BookingClient({
   patientAuthId,
   patientEmail,
   locale,
+  initialManualProfile,
 }: {
   professionalId: string;
   professionalName: string;
@@ -122,6 +123,7 @@ export function BookingClient({
   patientAuthId: string;
   patientEmail: string;
   locale: string;
+  initialManualProfile?: { full_name: string | null; phone: string | null; birth_date: string | null; cpf: string | null } | null;
 }) {
   const router = useRouter();
   const t = useTranslations("book");
@@ -180,25 +182,33 @@ export function BookingClient({
           .select("full_name, email, phone, birth_date, cpf")
           .eq("user_id", patientAuthId)
           .maybeSingle();
-        if (data) {
-          if (data.full_name) setPatientFullName(data.full_name as string);
-          if (data.phone) {
-            const stored = data.phone as string;
-            const matched = COUNTRIES.find((c) => stored.startsWith(c.dialCode));
-            if (matched) {
-              setPhoneCountry(matched);
-              setPatientPhoneLocal(stored.slice(matched.dialCode.length));
-            } else {
-              setPatientPhoneLocal(stored);
-            }
+
+        const applyPhone = (stored: string) => {
+          const matched = COUNTRIES.find((c) => stored.startsWith(c.dialCode));
+          if (matched) {
+            setPhoneCountry(matched);
+            setPatientPhoneLocal(stored.slice(matched.dialCode.length));
+          } else {
+            setPatientPhoneLocal(stored);
           }
+        };
+
+        if (data?.full_name || data?.phone) {
+          if (data.full_name) setPatientFullName(data.full_name as string);
+          if (data.phone) applyPhone(data.phone as string);
           if (data.birth_date) setPatientDob(data.birth_date as string);
           if (data.cpf)        setPatientCpf(data.cpf as string);
+        } else if (initialManualProfile) {
+          // Patient was manually added as a walk-in before signing up — use that data
+          if (initialManualProfile.full_name) setPatientFullName(initialManualProfile.full_name);
+          if (initialManualProfile.phone) applyPhone(initialManualProfile.phone);
+          if (initialManualProfile.birth_date) setPatientDob(initialManualProfile.birth_date);
+          if (initialManualProfile.cpf) setPatientCpf(initialManualProfile.cpf);
         }
       } catch { /* non-fatal */ }
       setProfileLoaded(true);
     })();
-  }, [patientAuthId]);
+  }, [patientAuthId, initialManualProfile]);
 
   // Fetch working hours (SECURITY DEFINER bypasses patient RLS)
   useEffect(() => {

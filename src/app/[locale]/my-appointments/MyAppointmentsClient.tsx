@@ -67,6 +67,7 @@ export function MyAppointmentsClient({
   past: PatientAppointment[];
   userEmail: string;
 }) {
+  const t = useTranslations("myAppointments");
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
   const prefix = locale === "en" ? "" : `/${locale}`;
@@ -95,13 +96,13 @@ export function MyAppointmentsClient({
               href={`${prefix}/discover`}
               className="text-sm font-medium text-teal-600 hover:underline"
             >
-              Book an Appointment
+              {t("bookAppointment")}
             </a>
             <button
               onClick={handleSignOut}
               className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-500 hover:border-slate-300 hover:text-slate-700 transition"
             >
-              Sign out
+              {t("signOut")}
             </button>
           </div>
         </div>
@@ -110,25 +111,25 @@ export function MyAppointmentsClient({
       <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
         {/* Greeting */}
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">My Appointments</h1>
+          <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
           <p className="text-sm text-slate-400 mt-0.5">{userEmail}</p>
         </div>
 
         {/* Upcoming */}
         <section>
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">Upcoming</h2>
+          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">{t("upcoming")}</h2>
           {upcoming.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-white py-12 text-center">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-10 w-10 text-slate-300 mb-3">
                 <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
               </svg>
-              <p className="font-semibold text-slate-600">No upcoming appointments</p>
-              <p className="text-sm text-slate-400 mt-1 mb-5">Book an appointment and start your healthcare journey</p>
+              <p className="font-semibold text-slate-600">{t("noUpcoming")}</p>
+              <p className="text-sm text-slate-400 mt-1 mb-5">{t("noUpcomingSub")}</p>
               <a
                 href={`${prefix}/discover`}
                 className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition"
               >
-                Book an Appointment
+                {t("bookAppointment")}
               </a>
             </div>
           ) : (
@@ -141,7 +142,7 @@ export function MyAppointmentsClient({
         {/* Past */}
         {past.length > 0 && (
           <section>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">Recent history</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">{t("recentHistory")}</h2>
             <div className="space-y-3">
               {past.map((a) => <AppointmentCard key={a.id} appt={a} />)}
             </div>
@@ -151,13 +152,13 @@ export function MyAppointmentsClient({
         {/* CTA if no upcoming */}
         {upcoming.length === 0 && (
           <div className="rounded-2xl bg-teal-600 p-6 text-white text-center">
-            <p className="font-bold text-lg mb-1">Need a consultation?</p>
-            <p className="text-teal-100 text-sm mb-4">Browse clinics on the map and book online</p>
+            <p className="font-bold text-lg mb-1">{t("ctaTitle")}</p>
+            <p className="text-teal-100 text-sm mb-4">{t("ctaSub")}</p>
             <a
               href={`${prefix}/discover`}
               className="inline-block rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-teal-700 hover:bg-teal-50 transition"
             >
-              Book an Appointment
+              {t("bookAppointment")}
             </a>
           </div>
         )}

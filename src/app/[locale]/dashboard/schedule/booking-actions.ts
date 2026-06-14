@@ -84,25 +84,42 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
         .eq("user_id", appt.patient_auth_id as string)
         .maybeSingle();
 
-      const { data: newPatient } = await supabase
-        .from("patients")
-        .insert({
-          full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
-          professional_id: user.id,
-          email: (profile?.email as string | null) ?? undefined,
-          phone: (profile?.phone as string | null) ?? undefined,
-          birth_date: (profile?.birth_date as string | null) ?? undefined,
-          cpf: (profile?.cpf as string | null) ?? undefined,
-        })
-        .select("id")
-        .maybeSingle();
+      const patientEmail = (profile?.email as string | null) ?? null;
 
-      if (newPatient) {
+      // Check if this patient was manually added (walk-in) before they signed up
+      let linkedPatientId: string | null = null;
+      if (patientEmail) {
+        const { data: existingByEmail } = await supabase
+          .from("patients")
+          .select("id")
+          .eq("professional_id", user.id)
+          .eq("email", patientEmail)
+          .maybeSingle();
+        linkedPatientId = (existingByEmail?.id as string) ?? null;
+      }
+
+      if (!linkedPatientId) {
+        const { data: newPatient } = await supabase
+          .from("patients")
+          .insert({
+            full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
+            professional_id: user.id,
+            email: patientEmail ?? undefined,
+            phone: (profile?.phone as string | null) ?? undefined,
+            birth_date: (profile?.birth_date as string | null) ?? undefined,
+            cpf: (profile?.cpf as string | null) ?? undefined,
+          })
+          .select("id")
+          .maybeSingle();
+        linkedPatientId = (newPatient?.id as string) ?? null;
+      }
+
+      if (linkedPatientId) {
         await supabase.from("user_roles").upsert(
           {
             user_id: appt.patient_auth_id,
             role: "patient",
-            linked_patient_id: newPatient.id,
+            linked_patient_id: linkedPatientId,
             invited_by_professional_id: user.id,
           },
           { onConflict: "user_id" },
@@ -204,15 +221,13 @@ async function notifyPatient(
   const patientAuthId = appt?.patient_auth_id as string | null;
   if (!patientAuthId) return;
 
-  const { data: tokens } = await supabase
-    .from("push_tokens")
-    .select("token")
-    .eq("user_id", patientAuthId);
+  const { data } = await supabase.rpc("get_patient_push_tokens", { p_patient_auth_id: patientAuthId });
+  const tokens = (data ?? []).map((r: { token: string }) => r.token);
 
-  if (!tokens?.length) return;
+  if (!tokens.length) return;
 
-  const messages = tokens.map((t: Record<string, unknown>) => ({
-    to: t.token as string,
+  const messages = tokens.map((to: string) => ({
+    to,
     title,
     body,
     sound: "default",
