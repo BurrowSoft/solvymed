@@ -298,19 +298,9 @@ export async function acceptProposal(appointmentId: string) {
 
   if (!appt) return { error: "Appointment not found" };
 
-  const { error } = await supabase
-    .from("appointments")
-    .update({
-      status: "confirmed",
-      date: appt.proposed_date,
-      start_time: appt.proposed_start_time,
-      end_time: appt.proposed_end_time,
-      proposed_date: null,
-      proposed_start_time: null,
-      proposed_end_time: null,
-    })
-    .eq("id", appointmentId)
-    .eq("patient_auth_id", user.id);
+  const { error } = await supabase.rpc("accept_appointment_proposal", {
+    p_appointment_id: appointmentId,
+  });
 
   if (error) return { error: error.message };
 
@@ -332,11 +322,9 @@ export async function declineProposal(appointmentId: string) {
     .eq("patient_auth_id", user.id)
     .maybeSingle();
 
-  const { error } = await supabase
-    .from("appointments")
-    .update({ status: "cancelled", proposed_date: null, proposed_start_time: null, proposed_end_time: null })
-    .eq("id", appointmentId)
-    .eq("patient_auth_id", user.id);
+  const { error } = await supabase.rpc("decline_appointment_proposal", {
+    p_appointment_id: appointmentId,
+  });
 
   if (error) return { error: error.message };
 
