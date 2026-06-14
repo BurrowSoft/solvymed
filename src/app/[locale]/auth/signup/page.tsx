@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
@@ -11,13 +11,22 @@ type Role = "professional" | "secretary" | "patient";
 export default function SignupPage() {
   const t = useTranslations("auth");
   const params = useParams();
+  const searchParams = useSearchParams();
   const locale = (params.locale as string) ?? "en";
+
+  const joinProfId = searchParams.get("join") ?? "";
+  const urlRole = searchParams.get("role") as Role | null;
+  const isJoinFlow = !!joinProfId;
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<Role>("professional");
+  const [role, setRole] = useState<Role>(
+    urlRole === "patient" || urlRole === "secretary" || urlRole === "professional"
+      ? urlRole
+      : "professional",
+  );
   const [inviteCode, setInviteCode] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -45,7 +54,11 @@ export default function SignupPage() {
           full_name: fullName,
           role,
           platform: "web",
-          ...(role === "patient" && inviteCode.trim() ? { invite_code: inviteCode.toUpperCase().trim() } : {}),
+          ...(joinProfId
+            ? { join_professional_id: joinProfId, join_role: role }
+            : role === "patient" && inviteCode.trim()
+            ? { invite_code: inviteCode.toUpperCase().trim() }
+            : {}),
         },
         emailRedirectTo: "https://www.solvymed.com/api/auth/callback",
       },
@@ -116,7 +129,12 @@ export default function SignupPage() {
         <h1 className="mb-1 text-center text-2xl font-extrabold text-slate-900">{t("signup.title")}</h1>
         <p className="mb-6 text-center text-sm text-slate-500">{t("signup.subtitle")}</p>
 
-        {/* Role picker */}
+        {/* Role picker — hidden when joining via invite link */}
+        {isJoinFlow ? (
+          <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4 text-sm text-teal-700">
+            Joining as <span className="font-semibold capitalize">{role}</span> via invite link.
+          </div>
+        ) : (
         <div className="mb-6">
           <p className="mb-2 text-sm font-semibold text-slate-700">{t("signup.iAmA")}</p>
           <div className="grid grid-cols-3 gap-3">
@@ -156,9 +174,10 @@ export default function SignupPage() {
             />
           </div>
         </div>
+        )}
 
-        {/* Invite code — patients only */}
-        {role === "patient" && (
+        {/* Invite code — patients only, hidden when joining via link */}
+        {!isJoinFlow && role === "patient" && (
           <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4">
             <label className="block text-sm font-semibold text-slate-700 mb-1">
               {t("signup.inviteCode")} <span className="font-normal text-slate-400">{t("signup.inviteCodeOptional")}</span>

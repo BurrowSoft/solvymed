@@ -3,15 +3,32 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
+async function getEffectiveProfId(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+): Promise<string> {
+  const { data } = await supabase
+    .from("user_roles")
+    .select("role, invited_by_professional_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (data?.role === "secretary" && data?.invited_by_professional_id) {
+    return data.invited_by_professional_id as string;
+  }
+  return userId;
+}
+
 export async function getTentativeBookings() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+
   const { data } = await supabase
     .from("appointments")
     .select("*")
-    .eq("professional_id", user.id)
+    .eq("professional_id", effectiveProfId)
     .in("status", ["tentative", "proposal"])
     .order("date")
     .order("start_time");
@@ -28,7 +45,7 @@ export async function getTentativeBookings() {
     const { data: roles } = await supabase
       .from("user_roles")
       .select("user_id, linked_patient_id")
-      .eq("invited_by_professional_id", user.id)
+      .eq("invited_by_professional_id", effectiveProfId)
       .in("user_id", authIds);
     for (const r of roles ?? []) {
       knownMap.set(r.user_id as string, (r.linked_patient_id as string | null) ?? null);
@@ -51,11 +68,13 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+
   const { data: appt } = await supabase
     .from("appointments")
     .select("patient_name, patient_auth_id")
     .eq("id", appointmentId)
-    .eq("professional_id", user.id)
+    .eq("professional_id", effectiveProfId)
     .maybeSingle();
 
   if (!appt) return { error: "Appointment not found" };
@@ -64,7 +83,7 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
     .from("appointments")
     .update({ status: "confirmed" })
     .eq("id", appointmentId)
-    .eq("professional_id", user.id);
+    .eq("professional_id", effectiveProfId);
 
   if (error) return { error: error.message };
 
@@ -74,7 +93,7 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
       .from("user_roles")
       .select("linked_patient_id")
       .eq("user_id", appt.patient_auth_id as string)
-      .eq("invited_by_professional_id", user.id)
+      .eq("invited_by_professional_id", effectiveProfId)
       .maybeSingle();
 
     if (!existingRole?.linked_patient_id) {
@@ -92,7 +111,7 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
         const { data: existingByEmail } = await supabase
           .from("patients")
           .select("id")
-          .eq("professional_id", user.id)
+          .eq("professional_id", effectiveProfId)
           .eq("email", patientEmail)
           .maybeSingle();
         linkedPatientId = (existingByEmail?.id as string) ?? null;
@@ -103,7 +122,7 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
           .from("patients")
           .insert({
             full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
-            professional_id: user.id,
+            professional_id: effectiveProfId,
             email: patientEmail ?? undefined,
             phone: (profile?.phone as string | null) ?? undefined,
             birth_date: (profile?.birth_date as string | null) ?? undefined,
@@ -120,7 +139,7 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
             user_id: appt.patient_auth_id,
             role: "patient",
             linked_patient_id: linkedPatientId,
-            invited_by_professional_id: user.id,
+            invited_by_professional_id: effectiveProfId,
           },
           { onConflict: "user_id" },
         );
@@ -140,11 +159,13 @@ export async function confirmBooking(appointmentId: string, note?: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+
   const { error } = await supabase
     .from("appointments")
     .update({ status: "confirmed" })
     .eq("id", appointmentId)
-    .eq("professional_id", user.id);
+    .eq("professional_id", effectiveProfId);
 
   if (error) return { error: error.message };
 
@@ -160,11 +181,13 @@ export async function rejectBooking(appointmentId: string, note?: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+
   const { error } = await supabase
     .from("appointments")
     .update({ status: "rejected" })
     .eq("id", appointmentId)
-    .eq("professional_id", user.id);
+    .eq("professional_id", effectiveProfId);
 
   if (error) return { error: error.message };
 
@@ -185,11 +208,13 @@ export async function proposeNewTime(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+
   const { data: appt } = await supabase
     .from("appointments")
     .select("patient_name, patient_auth_id")
     .eq("id", appointmentId)
-    .eq("professional_id", user.id)
+    .eq("professional_id", effectiveProfId)
     .maybeSingle();
 
   const { error } = await supabase
@@ -201,7 +226,7 @@ export async function proposeNewTime(
       proposed_end_time: proposedEnd,
     })
     .eq("id", appointmentId)
-    .eq("professional_id", user.id);
+    .eq("professional_id", effectiveProfId);
 
   if (error) return { error: error.message };
 
@@ -211,7 +236,7 @@ export async function proposeNewTime(
       .from("user_roles")
       .select("linked_patient_id")
       .eq("user_id", appt.patient_auth_id as string)
-      .eq("invited_by_professional_id", user.id)
+      .eq("invited_by_professional_id", effectiveProfId)
       .maybeSingle();
 
     if (!existingRole?.linked_patient_id) {
@@ -226,7 +251,7 @@ export async function proposeNewTime(
       if (patientEmail) {
         const { data: existingByEmail } = await supabase
           .from("patients").select("id")
-          .eq("professional_id", user.id).eq("email", patientEmail).maybeSingle();
+          .eq("professional_id", effectiveProfId).eq("email", patientEmail).maybeSingle();
         linkedPatientId = (existingByEmail?.id as string) ?? null;
       }
       if (!linkedPatientId) {
@@ -234,7 +259,7 @@ export async function proposeNewTime(
           .from("patients")
           .insert({
             full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
-            professional_id: user.id,
+            professional_id: effectiveProfId,
             email: patientEmail ?? undefined,
             phone: (profile?.phone as string | null) ?? undefined,
             birth_date: (profile?.birth_date as string | null) ?? undefined,
@@ -245,7 +270,7 @@ export async function proposeNewTime(
       }
       if (linkedPatientId) {
         await supabase.from("user_roles").upsert(
-          { user_id: appt.patient_auth_id, role: "patient", linked_patient_id: linkedPatientId, invited_by_professional_id: user.id },
+          { user_id: appt.patient_auth_id, role: "patient", linked_patient_id: linkedPatientId, invited_by_professional_id: effectiveProfId },
           { onConflict: "user_id" },
         );
       }
@@ -365,7 +390,7 @@ async function notifyProfessional(
   title: string,
   body: string,
 ) {
-  const { data } = await supabase.rpc("get_professional_push_tokens", { p_professional_id: professionalId });
+  const { data } = await supabase.rpc("get_clinic_push_tokens", { p_professional_id: professionalId });
   const tokens = (data ?? []).map((r: { token: string }) => r.token);
   if (!tokens.length) return;
   await fetch("https://exp.host/--/api/v2/push/send", {

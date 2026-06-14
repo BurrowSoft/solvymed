@@ -49,6 +49,16 @@ export default async function SchedulePage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
 
+  const { data: userRoleData } = await supabase
+    .from("user_roles")
+    .select("role, invited_by_professional_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const effectiveProfId = userRoleData?.role === "secretary"
+    ? (userRoleData?.invited_by_professional_id as string | null) ?? user.id
+    : user.id;
+
   const today = isoDate(new Date());
   const currentDate = dateParam ?? today;
   const view = (["list", "day", "week", "month"].includes(viewParam ?? "")) ? (viewParam as "list" | "day" | "week" | "month") : "list";
@@ -75,12 +85,12 @@ export default async function SchedulePage({
     supabase
       .from("appointments")
       .select("id, date, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes")
-      .eq("professional_id", user.id)
+      .eq("professional_id", effectiveProfId)
       .gte("date", rangeStart)
       .lte("date", rangeEnd)
       .order("start_time"),
-    supabase.from("patients").select("id, full_name").eq("professional_id", user.id).order("full_name"),
-    supabase.from("procedures").select("id, name, duration_minutes, price, payment_type").eq("professional_id", user.id).eq("active", true).order("name"),
+    supabase.from("patients").select("id, full_name").eq("professional_id", effectiveProfId).order("full_name"),
+    supabase.from("procedures").select("id, name, duration_minutes, price, payment_type").eq("professional_id", effectiveProfId).eq("active", true).order("name"),
     getTentativeBookings(),
   ]);
 

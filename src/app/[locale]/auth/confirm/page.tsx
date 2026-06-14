@@ -28,11 +28,17 @@ export default async function AuthConfirmPage({
   const { access_token, refresh_token } = data.session;
   const platform = data.user.user_metadata?.platform as string | undefined;
   const role = data.user.user_metadata?.role as string | undefined;
+  const joinProfId = data.user.user_metadata?.join_professional_id as string | undefined;
+  const joinRole = data.user.user_metadata?.join_role as string | undefined;
 
-  // Web signup: insert secretary role if needed, then go straight to dashboard.
+  // Web signup: handle role setup, then redirect appropriately.
   // redirect() from next/navigation in a Server Component correctly carries the
   // session cookies that were set via the cookie store above.
   if (platform === "web") {
+    // If joining via invite link, complete the join flow on the /join page.
+    if (joinProfId) {
+      redirect(`/join/${joinProfId}?role=${joinRole ?? "patient"}`);
+    }
     if (role === "secretary") {
       await supabase.from("user_roles").upsert(
         { user_id: data.user.id, role: "secretary" },

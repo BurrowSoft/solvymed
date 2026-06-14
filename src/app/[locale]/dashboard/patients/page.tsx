@@ -20,10 +20,20 @@ export default async function PatientsPage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
 
+  const { data: userRoleData } = await supabase
+    .from("user_roles")
+    .select("role, invited_by_professional_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const effectiveProfId = userRoleData?.role === "secretary"
+    ? (userRoleData?.invited_by_professional_id as string | null) ?? user.id
+    : user.id;
+
   let query = supabase
     .from("patients")
     .select("id, full_name, email, phone, sex, birth_date, created_at")
-    .eq("professional_id", user.id)
+    .eq("professional_id", effectiveProfId)
     .order("full_name");
 
   if (q) query = query.ilike("full_name", `%${q}%`);
@@ -32,7 +42,7 @@ export default async function PatientsPage({
   const totalCount = await supabase
     .from("patients")
     .select("*", { count: "exact", head: true })
-    .eq("professional_id", user.id);
+    .eq("professional_id", effectiveProfId);
 
   const patientList = (patients ?? []) as {
     id: string; full_name: string; email?: string; phone?: string;

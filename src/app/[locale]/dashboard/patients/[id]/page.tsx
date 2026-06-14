@@ -15,8 +15,19 @@ export default async function PatientDetailPage({
 
   const prefix = locale === "en" ? "" : `/${locale}`;
 
+  const { data: userRoleData } = await supabase
+    .from("user_roles")
+    .select("role, invited_by_professional_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const isSecretary = userRoleData?.role === "secretary";
+  const effectiveProfId = isSecretary
+    ? (userRoleData?.invited_by_professional_id as string | null) ?? user.id
+    : user.id;
+
   const [patientResult, recordsResult, prescriptionsResult, apptsResult] = await Promise.all([
-    supabase.from("patients").select("*").eq("id", id).eq("professional_id", user.id).single(),
+    supabase.from("patients").select("*").eq("id", id).eq("professional_id", effectiveProfId).single(),
     supabase.from("medical_records").select("id, date, time, content, record_type, created_at").eq("patient_id", id).order("date", { ascending: false }).order("time", { ascending: false }),
     supabase.from("prescriptions").select("id, date, notes, prescription_items(name, dosage, frequency, duration)").eq("patient_id", id).order("date", { ascending: false }),
     supabase.from("appointments").select("id, date, start_time, consultation_type, status, payment_status").eq("patient_id", id).neq("status", "blocked").order("date", { ascending: false }).limit(50),
@@ -76,6 +87,7 @@ export default async function PatientDetailPage({
           prescriptions={prescriptions}
           appointments={appointments}
           locale={locale}
+          isSecretary={isSecretary}
         />
       </div>
     </div>

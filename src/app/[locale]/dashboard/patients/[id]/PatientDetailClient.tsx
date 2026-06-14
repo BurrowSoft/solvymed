@@ -59,21 +59,25 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
   appointments: Appt[];
   locale: string;
+  isSecretary?: boolean;
 }) {
   const t = useTranslations("patientDetail");
   const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "appointments">("info");
-  const TABS = [
+  const ALL_TABS = [
     { key: "info" as const, label: t("tabInfo") },
     { key: "records" as const, label: t("tabRecords", { n: records.length }) },
     { key: "prescriptions" as const, label: t("tabPrescriptions", { n: prescriptions.length }) },
     { key: "appointments" as const, label: t("tabAppointments", { n: appointments.length }) },
   ];
+  const TABS = ALL_TABS.filter(tb =>
+    !isSecretary || !["records", "prescriptions"].includes(tb.key),
+  );
 
   return (
     <div>
