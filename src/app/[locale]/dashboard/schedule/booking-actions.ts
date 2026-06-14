@@ -68,39 +68,47 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
 
   if (error) return { error: error.message };
 
-  // Read shared patient profile to populate the per-professional patient record
-  const { data: profile } = appt.patient_auth_id
-    ? await supabase
+  // Add to patient list only if not already linked to this professional
+  if (appt.patient_auth_id) {
+    const { data: existingRole } = await supabase
+      .from("user_roles")
+      .select("linked_patient_id")
+      .eq("user_id", appt.patient_auth_id as string)
+      .eq("invited_by_professional_id", user.id)
+      .maybeSingle();
+
+    if (!existingRole?.linked_patient_id) {
+      const { data: profile } = await supabase
         .from("patient_profiles")
         .select("full_name, email, phone, birth_date, cpf")
         .eq("user_id", appt.patient_auth_id as string)
-        .maybeSingle()
-    : { data: null };
+        .maybeSingle();
 
-  const { data: newPatient } = await supabase
-    .from("patients")
-    .insert({
-      full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
-      professional_id: user.id,
-      email: (profile?.email as string | null) ?? undefined,
-      phone: (profile?.phone as string | null) ?? undefined,
-      birth_date: (profile?.birth_date as string | null) ?? undefined,
-      cpf: (profile?.cpf as string | null) ?? undefined,
-    })
-    .select("id")
-    .maybeSingle();
+      const { data: newPatient } = await supabase
+        .from("patients")
+        .insert({
+          full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
+          professional_id: user.id,
+          email: (profile?.email as string | null) ?? undefined,
+          phone: (profile?.phone as string | null) ?? undefined,
+          birth_date: (profile?.birth_date as string | null) ?? undefined,
+          cpf: (profile?.cpf as string | null) ?? undefined,
+        })
+        .select("id")
+        .maybeSingle();
 
-  // Link the auth user → patient record so future bookings are recognised
-  if (newPatient && appt.patient_auth_id) {
-    await supabase.from("user_roles").upsert(
-      {
-        user_id: appt.patient_auth_id,
-        role: "patient",
-        linked_patient_id: newPatient.id,
-        invited_by_professional_id: user.id,
-      },
-      { onConflict: "user_id" },
-    );
+      if (newPatient) {
+        await supabase.from("user_roles").upsert(
+          {
+            user_id: appt.patient_auth_id,
+            role: "patient",
+            linked_patient_id: newPatient.id,
+            invited_by_professional_id: user.id,
+          },
+          { onConflict: "user_id" },
+        );
+      }
+    }
   }
 
   await notifyPatient(supabase, appointmentId, "Appointment Confirmed", note ? `Your appointment has been confirmed by the doctor. Note: ${note}` : "Your appointment has been confirmed by the doctor.");

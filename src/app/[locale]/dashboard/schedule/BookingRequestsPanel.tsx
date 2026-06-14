@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import { confirmBooking, confirmBookingAndAddPatient, rejectBooking, proposeNewTime } from "./booking-actions";
+import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime } from "./booking-actions";
 
 type Booking = {
   id: string;
@@ -62,11 +62,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
 
   function handleConfirmClick(b: Booking) {
     const note = notes[b.id] || undefined;
-    if (b.is_new_patient) {
-      startTransition(async () => { await confirmBookingAndAddPatient(b.id, note); });
-    } else {
-      startTransition(async () => { await confirmBooking(b.id, note); });
-    }
+    startTransition(async () => { await confirmBookingAndAddPatient(b.id, note); });
   }
 
   function handleReject(id: string) {
