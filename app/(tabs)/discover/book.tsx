@@ -393,7 +393,7 @@ export default function BookScreen() {
 
           <View style={styles.fieldRow}>
             <View style={styles.fieldHalf}>
-              <Text style={styles.fieldLabel}>{t('book.phoneLabel')}</Text>
+              <Text style={styles.fieldLabel}>{t('book.phoneLabel')} <Text style={styles.required}>*</Text></Text>
               <TextInput
                 style={styles.fieldInput}
                 value={patientPhone}
@@ -404,7 +404,7 @@ export default function BookScreen() {
               />
             </View>
             <View style={styles.fieldHalf}>
-              <Text style={styles.fieldLabel}>{t('book.dobLabel')}</Text>
+              <Text style={styles.fieldLabel}>{t('book.dobLabel')} <Text style={styles.required}>*</Text></Text>
               <TextInput
                 style={styles.fieldInput}
                 value={patientDob}
@@ -429,9 +429,9 @@ export default function BookScreen() {
 
         {/* Book button */}
         <TouchableOpacity
-          style={[styles.bookBtn, (!selectedSlot || !consultType.trim() || !patientFullName.trim() || booking) && styles.bookBtnDisabled]}
+          style={[styles.bookBtn, (!selectedSlot || !consultType.trim() || !patientFullName.trim() || !patientPhone.trim() || !patientDob || booking) && styles.bookBtnDisabled]}
           onPress={handleBook}
-          disabled={!selectedSlot || !consultType.trim() || !patientFullName.trim() || booking}
+          disabled={!selectedSlot || !consultType.trim() || !patientFullName.trim() || !patientPhone.trim() || !patientDob || booking}
         >
           {booking ? (
             <ActivityIndicator color="#fff" />
