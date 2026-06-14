@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { getTranslations } from "next-intl/server";
 
 export default async function JoinPage({
   params,
@@ -13,7 +14,10 @@ export default async function JoinPage({
   const { role = "patient" } = await searchParams;
   const prefix = locale === "en" ? "" : `/${locale}`;
 
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([
+    createClient(),
+    getTranslations("join"),
+  ]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -35,15 +39,13 @@ export default async function JoinPage({
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
         <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100 text-center">
-          <p className="text-slate-600 font-semibold mb-2">Invite link not found</p>
-          <p className="text-sm text-slate-400 mb-6">
-            This link may be invalid or has expired. Ask your doctor to share a new one.
-          </p>
+          <p className="text-slate-600 font-semibold mb-2">{t("notFound")}</p>
+          <p className="text-sm text-slate-400 mb-6">{t("notFoundDesc")}</p>
           <Link
             href={`${prefix}/`}
             className="text-teal-600 text-sm hover:underline"
           >
-            Go to home
+            {t("backToHome")}
           </Link>
         </div>
       </div>

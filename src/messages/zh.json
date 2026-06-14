@@ -467,7 +467,8 @@
       "inviteCodeOptional": "（可选）",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "输入医生的邀请码以自动连接",
-      "emailExists": "此邮箕已有账户。请登录。"
+      "emailExists": "此邮箕已有账户。请登录。",
+      "joiningAs": "通过邀请链接以 {role} 身份加入。"
     },
     "forgotPassword": {
       "title": "忘记密码？",
@@ -514,5 +515,10 @@
     "payments": "付款",
     "settings": "设置",
     "signOut": "退出登录"
+  },
+  "join": {
+    "notFound": "找不到邀请链接",
+    "notFoundDesc": "此链接可能无效或已过期。请联系您的医生分享新链接。",
+    "backToHome": "返回首页"
   }
 }

@@ -467,7 +467,8 @@
       "inviteCodeOptional": "(facultatif)",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Entrez le code du médecin pour être lié automatiquement",
-      "emailExists": "Un compte avec cet e-mail existe déjà. Veuillez vous connecter."
+      "emailExists": "Un compte avec cet e-mail existe déjà. Veuillez vous connecter.",
+      "joiningAs": "Inscription en tant que {role} via lien d'invitation."
     },
     "forgotPassword": {
       "title": "Mot de passe oublié ?",
@@ -514,5 +515,10 @@
     "payments": "Paiements",
     "settings": "Paramètres",
     "signOut": "Se déconnecter"
+  },
+  "join": {
+    "notFound": "Lien d'invitation introuvable",
+    "notFoundDesc": "Ce lien est peut-être invalide ou expiré. Demandez a votre médecin d'en partager un nouveau.",
+    "backToHome": "Aller à l'accueil"
   }
 }

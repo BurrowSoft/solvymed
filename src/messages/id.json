@@ -467,7 +467,8 @@
       "inviteCodeOptional": "(opsional)",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Masukkan kode dokter untuk terhubung secara otomatis",
-      "emailExists": "Akun dengan email ini sudah ada. Silakan masuk."
+      "emailExists": "Akun dengan email ini sudah ada. Silakan masuk.",
+      "joiningAs": "Bergabung sebagai {role} melalui tautan undangan."
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",
@@ -514,5 +515,10 @@
     "payments": "Pembayaran",
     "settings": "Pengaturan",
     "signOut": "Keluar"
+  },
+  "join": {
+    "notFound": "Tautan undangan tidak ditemukan",
+    "notFoundDesc": "Tautan ini mungkin tidak valid atau sudah kedaluwarsa. Minta dokter Anda untuk membagikan yang baru.",
+    "backToHome": "Ke halaman utama"
   }
 }

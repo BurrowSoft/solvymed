@@ -467,7 +467,8 @@
       "inviteCodeOptional": "(tùy chọn)",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Nhập mã của bác sĩ để kết nối tự động",
-      "emailExists": "Đã có tài khoản với email này. Vui lòng đăng nhập."
+      "emailExists": "Đã có tài khoản với email này. Vui lòng đăng nhập.",
+      "joiningAs": "Tham gia với tư cách {role} qua liên kết mời."
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",
@@ -514,5 +515,10 @@
     "payments": "Thanh toán",
     "settings": "Cài đặt",
     "signOut": "Đăng xuất"
+  },
+  "join": {
+    "notFound": "Không tìm thấy liên kết mời",
+    "notFoundDesc": "Liên kết này có thể không hợp lệ hoặc đã hết hạn. Hãy yêu cầu bác sĩ chia sẻ một liên kết mới.",
+    "backToHome": "Về trang chủ"
   }
 }

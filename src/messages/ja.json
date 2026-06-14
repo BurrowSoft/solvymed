@@ -467,7 +467,8 @@
       "inviteCodeOptional": "（任意）",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "医師のコードを入力して自動的に連携する",
-      "emailExists": "このメールアドレスのアカウントは既に存在します。サインインしてください。"
+      "emailExists": "このメールアドレスのアカウントは既に存在します。サインインしてください。",
+      "joiningAs": "招待リンクで{role}として参加します。"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",
@@ -514,5 +515,10 @@
     "payments": "支払い",
     "settings": "設定",
     "signOut": "ログアウト"
+  },
+  "join": {
+    "notFound": "招待リンクが見つかりません",
+    "notFoundDesc": "このリンクは無効または期限切れの可能性があります。医師に新しいリンクの共有を依頼してください。",
+    "backToHome": "ホームへ戻る"
   }
 }

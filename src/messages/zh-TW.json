@@ -467,7 +467,8 @@
       "inviteCodeOptional": "（可選）",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "輸入醫生的邀請碼以自動連結",
-      "emailExists": "此電子郵件已有帳戶。請登入。"
+      "emailExists": "此電子郵件已有帳戶。請登入。",
+      "joiningAs": "透過邀請連結以 {role} 身份加入。"
     },
     "forgotPassword": {
       "title": "忘記密碼？",
@@ -514,5 +515,10 @@
     "payments": "付款",
     "settings": "設定",
     "signOut": "登出"
+  },
+  "join": {
+    "notFound": "找不到邀請連結",
+    "notFoundDesc": "此連結可能無效或已過期。請聯繫您的醫生分享新的連結。",
+    "backToHome": "返回首頁"
   }
 }

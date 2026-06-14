@@ -132,7 +132,7 @@ export default function SignupPage() {
         {/* Role picker — hidden when joining via invite link */}
         {isJoinFlow ? (
           <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4 text-sm text-teal-700">
-            Joining as <span className="font-semibold capitalize">{role}</span> via invite link.
+            {t("signup.joiningAs", { role })}
           </div>
         ) : (
         <div className="mb-6">

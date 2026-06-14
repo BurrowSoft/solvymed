@@ -467,7 +467,8 @@
       "inviteCodeOptional": "(optional)",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Enter a doctor's code to get linked automatically",
-      "emailExists": "An account with this email already exists. Please sign in instead."
+      "emailExists": "An account with this email already exists. Please sign in instead.",
+      "joiningAs": "Joining as {role} via invite link."
     },
     "forgotPassword": {
       "title": "Forgot your password?",
@@ -514,5 +515,10 @@
     "payments": "Payments",
     "settings": "Settings",
     "signOut": "Sign out"
+  },
+  "join": {
+    "notFound": "Invite link not found",
+    "notFoundDesc": "This link may be invalid or has expired. Ask your doctor to share a new one.",
+    "backToHome": "Go to home"
   }
 }
