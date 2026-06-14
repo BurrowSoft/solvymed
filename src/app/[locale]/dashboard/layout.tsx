@@ -26,7 +26,7 @@ export default async function DashboardLayout({
     .maybeSingle();
 
   if (roleRow?.role === "patient") {
-    redirect(`/${locale === "en" ? "" : locale + "/"}auth/patient-welcome`);
+    redirect(`/${locale === "en" ? "" : locale + "/"}discover`);
   }
 
   const { data: professional } = await supabase
