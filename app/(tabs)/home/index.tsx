@@ -81,6 +81,7 @@ export default function HomeScreen() {
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
   const [infoId, setInfoId] = useState<string | null>(null);
+  const [bookingNotes, setBookingNotes] = useState<Record<string, string>>({});
   const [actionPending, setActionPending] = useState(false);
 
   // Connect-to-clinic flow (unlinked patients)
@@ -413,11 +414,12 @@ export default function HomeScreen() {
                         style={[styles.connectBtn, { flex: 1, height: 36, backgroundColor: Colors.primary }]}
                         onPress={async () => {
                           setActionPending(true);
+                          const note = bookingNotes[req.id] || undefined;
                           try {
                             if (req.isNewPatient) {
-                              await confirmBookingAndAddPatient(req.id, req.professionalId);
+                              await confirmBookingAndAddPatient(req.id, req.professionalId, note);
                             } else {
-                              await confirmBooking(req.id);
+                              await confirmBooking(req.id, note);
                             }
                             await load();
                           } catch {
@@ -446,7 +448,8 @@ export default function HomeScreen() {
                         style={[styles.connectBtn, { flex: 1, height: 36, backgroundColor: Colors.danger }]}
                         onPress={() => {
                           setActionPending(true);
-                          rejectBooking(req.id)
+                          const note = bookingNotes[req.id] || undefined;
+                          rejectBooking(req.id, note)
                             .then(() => load())
                             .catch(() => Alert.alert('', t('home.errReject')))
                             .finally(() => setActionPending(false));
@@ -455,6 +458,19 @@ export default function HomeScreen() {
                         <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>{t('home.reject')}</Text>
                       </TouchableOpacity>
                     </View>
+                  )}
+
+                  {/* Note to patient */}
+                  {req.status === 'tentative' && (
+                    <TextInput
+                      style={{ backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, fontSize: 13, color: Colors.textPrimary, minHeight: 48 }}
+                      value={bookingNotes[req.id] ?? ''}
+                      onChangeText={text => setBookingNotes(prev => ({ ...prev, [req.id]: text }))}
+                      placeholder="Note to patient (optional)"
+                      placeholderTextColor={Colors.textMuted}
+                      multiline
+                      textAlignVertical="top"
+                    />
                   )}
 
                   {/* Inline propose form */}
@@ -493,7 +509,8 @@ export default function HomeScreen() {
                           style={[styles.connectBtn, { flex: 1, height: 36, backgroundColor: Colors.warning, opacity: (!propDate || !propStart || !propEnd) ? 0.5 : 1 }]}
                           onPress={() => {
                             setActionPending(true);
-                            proposeNewTime(req.id, propDate, propStart, propEnd)
+                            const note = bookingNotes[req.id] || undefined;
+                            proposeNewTime(req.id, propDate, propStart, propEnd, note)
                               .then(() => { setProposeId(null); return load(); })
                               .catch(() => Alert.alert('', t('home.errPropose')))
                               .finally(() => setActionPending(false));

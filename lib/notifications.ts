@@ -113,19 +113,22 @@ export async function notifyNewTentativeBooking(professionalId: string, patientN
   await sendPush(tokens, 'New Booking Request', `${patientName} requested an appointment on ${date} at ${time}.`);
 }
 
-export async function notifyBookingConfirmed(patientAuthId: string, date: string, time: string) {
+export async function notifyBookingConfirmed(patientAuthId: string, date: string, time: string, note?: string) {
   const tokens = await getPatientTokens(patientAuthId);
-  await sendPush(tokens, 'Appointment Confirmed', `Your appointment on ${date} at ${time} has been confirmed.`);
+  const body = `Your appointment on ${date} at ${time} has been confirmed.${note ? ` Note: ${note}` : ''}`;
+  await sendPush(tokens, 'Appointment Confirmed', body);
 }
 
-export async function notifyBookingRejected(patientAuthId: string) {
+export async function notifyBookingRejected(patientAuthId: string, note?: string) {
   const tokens = await getPatientTokens(patientAuthId);
-  await sendPush(tokens, 'Booking Not Available', 'The doctor could not accept your booking request.');
+  const body = `The doctor could not accept your booking request.${note ? ` Note: ${note}` : ''}`;
+  await sendPush(tokens, 'Booking Not Available', body);
 }
 
-export async function notifyNewTimeProposed(patientAuthId: string, date: string, time: string) {
+export async function notifyNewTimeProposed(patientAuthId: string, date: string, time: string, note?: string) {
   const tokens = await getPatientTokens(patientAuthId);
-  await sendPush(tokens, 'New Time Proposed', `The doctor suggested a new time: ${date} at ${time}.`);
+  const body = `The doctor suggested a new time: ${date} at ${time}.${note ? ` Note: ${note}` : ''}`;
+  await sendPush(tokens, 'New Time Proposed', body);
 }
 
 export async function notifyPatientAcceptedProposal(professionalId: string, patientName: string, date: string, time: string) {

@@ -840,20 +840,51 @@ export async function getTentativeAppointments(professionalId: string): Promise<
   return (data ?? []).map(toAppointment);
 }
 
-export async function confirmBooking(appointmentId: string): Promise<void> {
+async function notifyPatientPush(patientAuthId: string, title: string, body: string) {
+  const { data: tokens } = await supabase
+    .from('push_tokens')
+    .select('token')
+    .eq('user_id', patientAuthId);
+  if (!tokens?.length) return;
+  await fetch('https://exp.host/--/api/v2/push/send', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify(tokens.map(t => ({ to: t.token as string, title, body, sound: 'default' }))),
+  }).catch(() => {});
+}
+
+export async function confirmBooking(appointmentId: string, note?: string): Promise<void> {
+  const { data: appt } = await supabase
+    .from('appointments')
+    .select('patient_auth_id, date, start_time')
+    .eq('id', appointmentId)
+    .maybeSingle();
   const { error } = await supabase
     .from('appointments')
     .update({ status: 'confirmed' })
     .eq('id', appointmentId);
   if (error) throw error;
+  if (appt?.patient_auth_id) {
+    const body = `Your appointment on ${appt.date} at ${(appt.start_time as string).slice(0, 5)} has been confirmed.${note ? ` Note: ${note}` : ''}`;
+    notifyPatientPush(appt.patient_auth_id as string, 'Appointment Confirmed', body).catch(() => {});
+  }
 }
 
-export async function rejectBooking(appointmentId: string): Promise<void> {
+export async function rejectBooking(appointmentId: string, note?: string): Promise<void> {
+  const { data: appt } = await supabase
+    .from('appointments')
+    .select('patient_auth_id')
+    .eq('id', appointmentId)
+    .maybeSingle();
   const { error } = await supabase
     .from('appointments')
     .update({ status: 'rejected' })
     .eq('id', appointmentId);
   if (error) throw error;
+  if (appt?.patient_auth_id) {
+    const body = `The doctor could not accept your booking request.${note ? ` Note: ${note}` : ''}`;
+    notifyPatientPush(appt.patient_auth_id as string, 'Booking Not Available', body).catch(() => {});
+  }
 }
 
 export async function proposeNewTime(
@@ -861,7 +892,13 @@ export async function proposeNewTime(
   proposedDate: string,
   proposedStart: string,
   proposedEnd: string,
+  note?: string,
 ): Promise<void> {
+  const { data: appt } = await supabase
+    .from('appointments')
+    .select('patient_auth_id')
+    .eq('id', appointmentId)
+    .maybeSingle();
   const { error } = await supabase
     .from('appointments')
     .update({
@@ -872,6 +909,10 @@ export async function proposeNewTime(
     })
     .eq('id', appointmentId);
   if (error) throw error;
+  if (appt?.patient_auth_id) {
+    const body = `The doctor suggested a new time: ${proposedDate} at ${proposedStart}.${note ? ` Note: ${note}` : ''}`;
+    notifyPatientPush(appt.patient_auth_id as string, 'New Time Proposed', body).catch(() => {});
+  }
 }
 
 export async function getTentativeAppointmentsWithNewPatient(
@@ -908,10 +949,11 @@ export async function getTentativeAppointmentsWithNewPatient(
 export async function confirmBookingAndAddPatient(
   appointmentId: string,
   professionalId: string,
+  note?: string,
 ): Promise<void> {
   const { data: appt } = await supabase
     .from('appointments')
-    .select('patient_name, patient_auth_id')
+    .select('patient_name, patient_auth_id, date, start_time')
     .eq('id', appointmentId)
     .maybeSingle();
   if (!appt) throw new Error('Appointment not found');
@@ -938,6 +980,11 @@ export async function confirmBookingAndAddPatient(
       },
       { onConflict: 'user_id' },
     );
+  }
+
+  if (appt.patient_auth_id) {
+    const body = `Your appointment on ${appt.date} at ${(appt.start_time as string).slice(0, 5)} has been confirmed.${note ? ` Note: ${note}` : ''}`;
+    notifyPatientPush(appt.patient_auth_id as string, 'Appointment Confirmed', body).catch(() => {});
   }
 }
 
