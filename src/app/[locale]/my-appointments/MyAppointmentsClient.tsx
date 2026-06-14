@@ -174,7 +174,7 @@ export function MyAppointmentsClient({
           <section>
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">{t("recentHistory")}</h2>
             <div className="space-y-3">
-              {past.map((a) => <AppointmentCard key={a.id} appt={a} />)}
+              {past.map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} />)}
             </div>
           </section>
         )}
