@@ -370,15 +370,27 @@
     "fullNamePlaceholder": "Nama lengkap Anda",
     "emailLabel": "Email",
     "phoneLabel": "Telepon",
-    "phonePlaceholder": "+62 812 3456 7890",
+    "phonePlaceholder": "812 3456 7890",
     "dobLabel": "Tanggal lahir",
     "cpfLabel": "CPF",
-    "cpfPlaceholder": "000.000.000-00"
+    "cpfPlaceholder": "000.000.000-00",
+    "durationMin": "{n} menit"
   },
   "discover": {
     "title": "Buat Janji",
     "subtitle": "Cari berdasarkan klinik, kota, dokter, atau spesialisasi",
-    "recentDoctors": "Dokter Terbaru Anda"
+    "recentDoctors": "Dokter Terbaru Anda",
+    "signOut": "Keluar",
+    "noClinicsFound": "Tidak ada klinik yang ditemukan",
+    "clinicsFound": "{n, plural, other {# klinik ditemukan}}",
+    "list": "Daftar",
+    "map": "Peta",
+    "noResults": "Tidak ada klinik yang cocok dengan pencarian Anda",
+    "clearSearch": "Hapus pencarian",
+    "healthcareProviders": "Penyedia layanan kesehatan",
+    "book": "Pesan",
+    "loadingMap": "Memuat peta…",
+    "viewDetails": "Lihat detail →"
   },
   "auth": {
     "login": {
@@ -405,7 +417,19 @@
       "logIn": "Log in",
       "success": "Check your email",
       "successSub": "We sent a confirmation link to your email. Open it to activate your account and get started.",
-      "error": "Could not create your account. Please try again."
+      "error": "Could not create your account. Please try again.",
+      "iAmA": "Saya adalah…",
+      "roleDoctor": "Dokter",
+      "roleDoctorDesc": "Kelola klinik dan pasien Anda",
+      "roleSecretary": "Sekretaris",
+      "roleSecretaryDesc": "Bantu jadwal dokter",
+      "rolePatient": "Pasien",
+      "rolePatientDesc": "Jadwalkan dan akses konsultasi Anda",
+      "inviteCode": "Kode undangan",
+      "inviteCodeOptional": "(opsional)",
+      "inviteCodePlaceholder": "ABC123",
+      "inviteCodeHint": "Masukkan kode dokter untuk terhubung secara otomatis",
+      "emailExists": "Akun dengan email ini sudah ada. Silakan masuk."
     },
     "forgotPassword": {
       "title": "Forgot your password?",

@@ -370,15 +370,27 @@
     "fullNamePlaceholder": "Tu nombre completo",
     "emailLabel": "Correo electrónico",
     "phoneLabel": "Teléfono",
-    "phonePlaceholder": "+34 612 345 678",
+    "phonePlaceholder": "612 345 678",
     "dobLabel": "Fecha de nacimiento",
     "cpfLabel": "CPF",
-    "cpfPlaceholder": "000.000.000-00"
+    "cpfPlaceholder": "000.000.000-00",
+    "durationMin": "{n} min"
   },
   "discover": {
     "title": "Reservar una Cita",
     "subtitle": "Buscar por clínica, ciudad, médico o especialidad",
-    "recentDoctors": "Tus Médicos Recientes"
+    "recentDoctors": "Tus Médicos Recientes",
+    "signOut": "Cerrar sesión",
+    "noClinicsFound": "No se encontraron clínicas",
+    "clinicsFound": "{n, plural, one {# clínica encontrada} other {# clínicas encontradas}}",
+    "list": "Lista",
+    "map": "Mapa",
+    "noResults": "Ninguna clínica coincide con su búsqueda",
+    "clearSearch": "Limpiar búsqueda",
+    "healthcareProviders": "Proveedores de salud",
+    "book": "Reservar",
+    "loadingMap": "Cargando mapa…",
+    "viewDetails": "Ver detalles →"
   },
   "auth": {
     "login": {
@@ -405,7 +417,19 @@
       "logIn": "Log in",
       "success": "Check your email",
       "successSub": "We sent a confirmation link to your email. Open it to activate your account and get started.",
-      "error": "Could not create your account. Please try again."
+      "error": "Could not create your account. Please try again.",
+      "iAmA": "Soy…",
+      "roleDoctor": "Médico",
+      "roleDoctorDesc": "Gestiona tu clínica y pacientes",
+      "roleSecretary": "Secretario/a",
+      "roleSecretaryDesc": "Apoya la agenda de un médico",
+      "rolePatient": "Paciente",
+      "rolePatientDesc": "Agenda y accede a tus consultas",
+      "inviteCode": "Código de invitación",
+      "inviteCodeOptional": "(opcional)",
+      "inviteCodePlaceholder": "ABC123",
+      "inviteCodeHint": "Introduce el código del médico para vincularte automáticamente",
+      "emailExists": "Ya existe una cuenta con este correo. Por favor, inicia sesión."
     },
     "forgotPassword": {
       "title": "Forgot your password?",

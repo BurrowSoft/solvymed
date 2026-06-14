@@ -370,15 +370,27 @@
     "fullNamePlaceholder": "您的姓名",
     "emailLabel": "電子郵件",
     "phoneLabel": "電話",
-    "phonePlaceholder": "+886 912 345 678",
+    "phonePlaceholder": "912 345 678",
     "dobLabel": "出生日期",
     "cpfLabel": "身份證號",
-    "cpfPlaceholder": "000.000.000-00"
+    "cpfPlaceholder": "000.000.000-00",
+    "durationMin": "{n} 分鐘"
   },
   "discover": {
     "title": "預約掛號",
     "subtitle": "依診所名稱、城市、醫生或專科搜尋",
-    "recentDoctors": "您的近期醫生"
+    "recentDoctors": "您的近期醫生",
+    "signOut": "登出",
+    "noClinicsFound": "未找到診所",
+    "clinicsFound": "{n, plural, other {找到 # 家診所}}",
+    "list": "列表",
+    "map": "地圖",
+    "noResults": "沒有診所符合您的搜尋",
+    "clearSearch": "清除搜尋",
+    "healthcareProviders": "醫療提供者",
+    "book": "預約",
+    "loadingMap": "正在載入地圖…",
+    "viewDetails": "查看詳情 →"
   },
   "auth": {
     "login": {
@@ -405,7 +417,19 @@
       "logIn": "Log in",
       "success": "Check your email",
       "successSub": "We sent a confirmation link to your email. Open it to activate your account and get started.",
-      "error": "Could not create your account. Please try again."
+      "error": "Could not create your account. Please try again.",
+      "iAmA": "我是…",
+      "roleDoctor": "醫生",
+      "roleDoctorDesc": "管理您的診所和患者",
+      "roleSecretary": "秘書",
+      "roleSecretaryDesc": "協助醫生的行程",
+      "rolePatient": "患者",
+      "rolePatientDesc": "預約並訪問您的躺詢",
+      "inviteCode": "邀請碼",
+      "inviteCodeOptional": "（可選）",
+      "inviteCodePlaceholder": "ABC123",
+      "inviteCodeHint": "輸入醫生的邀請碼以自動連結",
+      "emailExists": "此電子郵件已有帳戶。請登入。"
     },
     "forgotPassword": {
       "title": "Forgot your password?",

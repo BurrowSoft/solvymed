@@ -370,15 +370,27 @@
     "fullNamePlaceholder": "Seu nome completo",
     "emailLabel": "E-mail",
     "phoneLabel": "Telefone",
-    "phonePlaceholder": "+55 11 99999-9999",
+    "phonePlaceholder": "11 99999-9999",
     "dobLabel": "Data de nascimento",
     "cpfLabel": "CPF",
-    "cpfPlaceholder": "000.000.000-00"
+    "cpfPlaceholder": "000.000.000-00",
+    "durationMin": "{n} min"
   },
   "discover": {
     "title": "Agende uma Consulta",
     "subtitle": "Busque por clínica, cidade, médico ou especialidade",
-    "recentDoctors": "Seus Médicos Recentes"
+    "recentDoctors": "Seus Médicos Recentes",
+    "signOut": "Sair",
+    "noClinicsFound": "Nenhuma clínica encontrada",
+    "clinicsFound": "{n, plural, one {# clínica encontrada} other {# clínicas encontradas}}",
+    "list": "Lista",
+    "map": "Mapa",
+    "noResults": "Nenhuma clínica corresponde à sua pesquisa",
+    "clearSearch": "Limpar pesquisa",
+    "healthcareProviders": "Profissionais de saúde",
+    "book": "Agendar",
+    "loadingMap": "Carregando mapa…",
+    "viewDetails": "Ver detalhes →"
   },
   "auth": {
     "login": {
@@ -405,7 +417,19 @@
       "logIn": "Entrar",
       "success": "Verifique seu e-mail",
       "successSub": "Enviamos um link de confirmação para o seu e-mail. Abra-o para ativar sua conta.",
-      "error": "Não foi possível criar sua conta. Tente novamente."
+      "error": "Não foi possível criar sua conta. Tente novamente.",
+      "iAmA": "Eu sou…",
+      "roleDoctor": "Médico",
+      "roleDoctorDesc": "Gerencie sua clínica e pacientes",
+      "roleSecretary": "Secretário(a)",
+      "roleSecretaryDesc": "Apoio à agenda do médico",
+      "rolePatient": "Paciente",
+      "rolePatientDesc": "Agende e acesse suas consultas",
+      "inviteCode": "Código de convite",
+      "inviteCodeOptional": "(opcional)",
+      "inviteCodePlaceholder": "ABC123",
+      "inviteCodeHint": "Digite o código do médico para ser vinculado automaticamente",
+      "emailExists": "Já existe uma conta com este e-mail. Por favor, faça login."
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",

@@ -370,15 +370,27 @@
     "fullNamePlaceholder": "お名前（フルネーム）",
     "emailLabel": "メール",
     "phoneLabel": "電話番号",
-    "phonePlaceholder": "+81 90-1234-5678",
+    "phonePlaceholder": "90-1234-5678",
     "dobLabel": "生年月日",
     "cpfLabel": "CPF",
-    "cpfPlaceholder": "000.000.000-00"
+    "cpfPlaceholder": "000.000.000-00",
+    "durationMin": "{n}分"
   },
   "discover": {
     "title": "予約する",
     "subtitle": "クリニック名、市区町村、医師または専門で検索",
-    "recentDoctors": "最近の医師"
+    "recentDoctors": "最近の医師",
+    "signOut": "ログアウト",
+    "noClinicsFound": "クリニックが見つかりません",
+    "clinicsFound": "{n, plural, other {{n}件のクリニック}}",
+    "list": "リスト",
+    "map": "地図",
+    "noResults": "検索に一致するクリニックがありません",
+    "clearSearch": "検索をクリア",
+    "healthcareProviders": "医療提供者",
+    "book": "予約",
+    "loadingMap": "地図を読み込み中…",
+    "viewDetails": "詳細を見る →"
   },
   "auth": {
     "login": {
@@ -405,7 +417,19 @@
       "logIn": "Log in",
       "success": "Check your email",
       "successSub": "We sent a confirmation link to your email. Open it to activate your account and get started.",
-      "error": "Could not create your account. Please try again."
+      "error": "Could not create your account. Please try again.",
+      "iAmA": "私は…",
+      "roleDoctor": "医師",
+      "roleDoctorDesc": "クリニックと患者を管理する",
+      "roleSecretary": "秘書",
+      "roleSecretaryDesc": "医師のスケジュールをサポートする",
+      "rolePatient": "患者",
+      "rolePatientDesc": "診察の予約とアクセス",
+      "inviteCode": "招待コード",
+      "inviteCodeOptional": "（任意）",
+      "inviteCodePlaceholder": "ABC123",
+      "inviteCodeHint": "医師のコードを入力して自動的に連携する",
+      "emailExists": "このメールアドレスのアカウントは既に存在します。サインインしてください。"
     },
     "forgotPassword": {
       "title": "Forgot your password?",

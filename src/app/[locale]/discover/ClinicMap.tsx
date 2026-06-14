@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useTranslations } from "next-intl";
 import type { ClinicListing } from "./page";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export function ClinicMap({ clinics, onSelect }: Props) {
+  const t = useTranslations("discover");
   useEffect(() => {
     // Leaflet bundles its marker images relative to the JS file — fix for Next.js
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,7 +53,7 @@ export function ClinicMap({ clinics, onSelect }: Props) {
                 onClick={() => onSelect(clinic)}
                 className="text-teal-600 font-semibold hover:underline text-xs"
               >
-                View details →
+                {t("viewDetails")}
               </button>
             </div>
           </Popup>

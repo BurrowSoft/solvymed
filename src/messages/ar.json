@@ -370,15 +370,27 @@
     "fullNamePlaceholder": "اسمك الكامل",
     "emailLabel": "البريد الإلكتروني",
     "phoneLabel": "الهاتف",
-    "phonePlaceholder": "+55 11 99999-9999",
+    "phonePlaceholder": "رقم الهاتف",
     "dobLabel": "تاريخ الميلاد",
     "cpfLabel": "رقم التعريف",
-    "cpfPlaceholder": "000.000.000-00"
+    "cpfPlaceholder": "000.000.000-00",
+    "durationMin": "{n} دقيقة"
   },
   "discover": {
     "title": "احجز موعداً",
     "subtitle": "ابحث بالاسم أو المدينة أو الطبيب أو التخصص",
-    "recentDoctors": "أطباؤك الأخيرون"
+    "recentDoctors": "أطباؤك الأخيرون",
+    "signOut": "تسجيل الخروج",
+    "noClinicsFound": "لا توجد عيادات",
+    "clinicsFound": "{n, plural, other {# عيادة}}",
+    "list": "قائمة",
+    "map": "خريطة",
+    "noResults": "لا توجد عيادات تطابق بحثك",
+    "clearSearch": "مسح البحث",
+    "healthcareProviders": "مقدمو الرعاية الصحية",
+    "book": "احجز",
+    "loadingMap": "جارِي تحميل الخريطة…",
+    "viewDetails": "عرض التفاصيل →"
   },
   "auth": {
     "login": {
@@ -405,7 +417,19 @@
       "logIn": "Log in",
       "success": "Check your email",
       "successSub": "We sent a confirmation link to your email. Open it to activate your account and get started.",
-      "error": "Could not create your account. Please try again."
+      "error": "Could not create your account. Please try again.",
+      "iAmA": "أنا…",
+      "roleDoctor": "طبيب",
+      "roleDoctorDesc": "أدر عيادتك ومرضاك",
+      "roleSecretary": "سكرتير/ة",
+      "roleSecretaryDesc": "دعم جدول أعمال الطبيب",
+      "rolePatient": "مريض",
+      "rolePatientDesc": "احجز وصل إلى استشاراتك",
+      "inviteCode": "رمز الدعوة",
+      "inviteCodeOptional": "(اختياري)",
+      "inviteCodePlaceholder": "ABC123",
+      "inviteCodeHint": "أدخل رمز الطبيب للارتباط تلقائياً",
+      "emailExists": "يوجد حساب بهذا البريد الإلكتروني بالفعل. يرجى تسجيل الدخول."
     },
     "forgotPassword": {
       "title": "Forgot your password?",

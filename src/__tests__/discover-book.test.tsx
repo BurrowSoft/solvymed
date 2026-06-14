@@ -11,6 +11,28 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush, back: vi.fn(), refresh: vi.fn() }),
 }));
 
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string, params?: Record<string, unknown>) => {
+    const map: Record<string, string> = {
+      title: "Book an Appointment",
+      subtitle: "Search by clinic name, city, doctor, or specialty",
+      recentDoctors: "Your Recent Doctors",
+      signOut: "Sign out",
+      noClinicsFound: "No clinics found",
+      clinicsFound: params ? `${params.n} clinic${(params.n as number) === 1 ? "" : "s"} found` : "clinics found",
+      list: "List",
+      map: "Map",
+      noResults: "No clinics match your search",
+      clearSearch: "Clear search",
+      healthcareProviders: "Healthcare providers",
+      book: "Book",
+      loadingMap: "Loading map…",
+      viewDetails: "View details →",
+    };
+    return map[key] ?? key;
+  },
+}));
+
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
     auth: { signOut: mockSignOut },

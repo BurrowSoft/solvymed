@@ -57,7 +57,7 @@ export default function SignupPage() {
     } else if (signUpData.user?.identities?.length === 0) {
       // Supabase returns an empty identities array (no error) when the email is
       // already registered — avoid leaking "email exists" by pointing to login.
-      setError("An account with this email already exists. Please sign in instead.");
+      setError(t("signup.emailExists"));
     } else {
       setSuccess(true);
     }
@@ -118,7 +118,7 @@ export default function SignupPage() {
 
         {/* Role picker */}
         <div className="mb-6">
-          <p className="mb-2 text-sm font-semibold text-slate-700">I am a…</p>
+          <p className="mb-2 text-sm font-semibold text-slate-700">{t("signup.iAmA")}</p>
           <div className="grid grid-cols-3 gap-3">
             <RoleCard
               selected={role === "professional"}
@@ -128,8 +128,8 @@ export default function SignupPage() {
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
               }
-              label="Doctor"
-              description="Manage your clinic and patients"
+              label={t("signup.roleDoctor")}
+              description={t("signup.roleDoctorDesc")}
             />
             <RoleCard
               selected={role === "secretary"}
@@ -140,8 +140,8 @@ export default function SignupPage() {
                   <line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
                 </svg>
               }
-              label="Secretary"
-              description="Support a doctor's schedule"
+              label={t("signup.roleSecretary")}
+              description={t("signup.roleSecretaryDesc")}
             />
             <RoleCard
               selected={role === "patient"}
@@ -151,8 +151,8 @@ export default function SignupPage() {
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                 </svg>
               }
-              label="Patient"
-              description="Schedule and access your consultations"
+              label={t("signup.rolePatient")}
+              description={t("signup.rolePatientDesc")}
             />
           </div>
         </div>
@@ -161,17 +161,17 @@ export default function SignupPage() {
         {role === "patient" && (
           <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4">
             <label className="block text-sm font-semibold text-slate-700 mb-1">
-              Invite code <span className="font-normal text-slate-400">(optional)</span>
+              {t("signup.inviteCode")} <span className="font-normal text-slate-400">{t("signup.inviteCodeOptional")}</span>
             </label>
             <input
               type="text"
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6))}
-              placeholder="ABC123"
+              placeholder={t("signup.inviteCodePlaceholder")}
               maxLength={6}
               className="w-full rounded-xl border border-teal-200 bg-white px-4 py-3 text-base font-mono tracking-widest uppercase text-slate-900 placeholder:text-slate-400 placeholder:normal-case placeholder:tracking-normal focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
-            <p className="mt-1.5 text-xs text-slate-500">Enter a doctor's code to get linked or highlighted automatically</p>
+            <p className="mt-1.5 text-xs text-slate-500">{t("signup.inviteCodeHint")}</p>
           </div>
         )}
 

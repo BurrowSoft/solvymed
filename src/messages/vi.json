@@ -370,15 +370,27 @@
     "fullNamePlaceholder": "Họ và tên của bạn",
     "emailLabel": "Email",
     "phoneLabel": "Điện thoại",
-    "phonePlaceholder": "+84 90 123 4567",
+    "phonePlaceholder": "90 123 4567",
     "dobLabel": "Ngày sinh",
     "cpfLabel": "CPF",
-    "cpfPlaceholder": "000.000.000-00"
+    "cpfPlaceholder": "000.000.000-00",
+    "durationMin": "{n} phút"
   },
   "discover": {
     "title": "Đặt Lịch Khám",
     "subtitle": "Tìm theo tên phòng khám, thành phố, bác sĩ hoặc chuyên khoa",
-    "recentDoctors": "Bác Sĩ Gần Đây"
+    "recentDoctors": "Bác Sĩ Gần Đây",
+    "signOut": "Đăng xuất",
+    "noClinicsFound": "Không tìm thấy phòng khám",
+    "clinicsFound": "{n, plural, other {tìm thấy # phòng khám}}",
+    "list": "Danh sách",
+    "map": "Bản đồ",
+    "noResults": "Không có phòng khám nào phù hợp với tìm kiếm của bạn",
+    "clearSearch": "Xóa tìm kiếm",
+    "healthcareProviders": "Nhà cung cấp dịch vụ y tế",
+    "book": "Đặt lịch",
+    "loadingMap": "Đang tải bản đồ…",
+    "viewDetails": "Xem chi tiết →"
   },
   "auth": {
     "login": {
@@ -405,7 +417,19 @@
       "logIn": "Log in",
       "success": "Check your email",
       "successSub": "We sent a confirmation link to your email. Open it to activate your account and get started.",
-      "error": "Could not create your account. Please try again."
+      "error": "Could not create your account. Please try again.",
+      "iAmA": "Tôi là…",
+      "roleDoctor": "Bác sĩ",
+      "roleDoctorDesc": "Quản lý phòng khám và bệnh nhân",
+      "roleSecretary": "Thư ký",
+      "roleSecretaryDesc": "Hỗ trợ lịch của bác sĩ",
+      "rolePatient": "Bệnh nhân",
+      "rolePatientDesc": "Đặt lịch và truy cập tư vấn",
+      "inviteCode": "Mã mời",
+      "inviteCodeOptional": "(tùy chọn)",
+      "inviteCodePlaceholder": "ABC123",
+      "inviteCodeHint": "Nhập mã của bác sĩ để kết nối tự động",
+      "emailExists": "Đã có tài khoản với email này. Vui lòng đăng nhập."
     },
     "forgotPassword": {
       "title": "Forgot your password?",

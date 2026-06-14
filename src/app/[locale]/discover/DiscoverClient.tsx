@@ -7,9 +7,18 @@ import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import type { ClinicListing } from "./page";
 
+function MapLoadingFallback() {
+  const t = useTranslations("discover");
+  return (
+    <div className="flex h-[480px] items-center justify-center rounded-2xl bg-slate-100 text-slate-400 text-sm">
+      {t("loadingMap")}
+    </div>
+  );
+}
+
 const ClinicMap = dynamic(
   () => import("./ClinicMap").then((m) => ({ default: m.ClinicMap })),
-  { ssr: false, loading: () => <div className="flex h-[480px] items-center justify-center rounded-2xl bg-slate-100 text-slate-400 text-sm">Loading map…</div> },
+  { ssr: false, loading: MapLoadingFallback },
 );
 
 type Props = { clinics: ClinicListing[]; recentProfessionalIds?: string[] };
@@ -73,7 +82,7 @@ export function DiscoverClient({ clinics, recentProfessionalIds = [] }: Props) {
                 <polyline points="16 17 21 12 16 7" />
                 <line x1="21" y1="12" x2="9" y2="12" />
               </svg>
-              Sign out
+              {t("signOut")}
             </button>
           </div>
           <h1 className="text-2xl font-extrabold text-slate-900 mt-3 mb-1">{t("title")}</h1>
@@ -139,8 +148,8 @@ export function DiscoverClient({ clinics, recentProfessionalIds = [] }: Props) {
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-slate-500">
             {filtered.length === 0
-              ? "No clinics found"
-              : `${filtered.length} clinic${filtered.length === 1 ? "" : "s"} found`}
+              ? t("noClinicsFound")
+              : t("clinicsFound", { n: filtered.length })}
           </p>
           <div className="flex rounded-lg border border-slate-200 bg-white overflow-hidden text-sm">
             <button
@@ -151,7 +160,7 @@ export function DiscoverClient({ clinics, recentProfessionalIds = [] }: Props) {
                 <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
                 <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
               </svg>
-              List
+              {t("list")}
             </button>
             <button
               onClick={() => setView("map")}
@@ -161,7 +170,7 @@ export function DiscoverClient({ clinics, recentProfessionalIds = [] }: Props) {
                 <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
                 <line x1="8" y1="2" x2="8" y2="18" /><line x1="16" y1="6" x2="16" y2="22" />
               </svg>
-              Map
+              {t("map")}
             </button>
           </div>
         </div>
@@ -181,8 +190,8 @@ export function DiscoverClient({ clinics, recentProfessionalIds = [] }: Props) {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-10 w-10 mb-3 text-slate-300">
                   <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
                 </svg>
-                <p className="font-medium text-slate-500">No clinics match your search</p>
-                <button onClick={() => setSearch("")} className="mt-2 text-sm text-teal-600 hover:underline">Clear search</button>
+                <p className="font-medium text-slate-500">{t("noResults")}</p>
+                <button onClick={() => setSearch("")} className="mt-2 text-sm text-teal-600 hover:underline">{t("clearSearch")}</button>
               </div>
             )}
 
@@ -236,7 +245,7 @@ export function DiscoverClient({ clinics, recentProfessionalIds = [] }: Props) {
                 {/* Expanded: full doctor list + book buttons */}
                 {selected?.id === clinic.id && (
                   <div className="border-t border-slate-100 px-5 pb-5 pt-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-3">Healthcare providers</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-3">{t("healthcareProviders")}</p>
                     <div className="space-y-2">
                       {clinic.professionals.map((p) => (
                         <div key={p.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3">
@@ -263,7 +272,7 @@ export function DiscoverClient({ clinics, recentProfessionalIds = [] }: Props) {
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
                               <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
                             </svg>
-                            Book
+                            {t("book")}
                           </button>
                         </div>
                       ))}

@@ -30,7 +30,7 @@ vi.mock("next-intl", () => ({
       "book.sending": "Sending…",
       "book.hint": "The doctor will confirm or suggest a different time.",
       "book.successTitle": "Request sent!",
-      "book.successBody": params ? `Your request for ${params.date} at ${params.time} with ${params.doctor}` : "",
+      "book.successBody": "Your request for {date} at {time} with {doctor}",
       "book.successHint": "The doctor will confirm or suggest a different time.",
       "book.viewAppointments": "View my appointments",
       "book.backToClinics": "Back to clinics",
@@ -44,17 +44,20 @@ vi.mock("next-intl", () => ({
       "book.fullNamePlaceholder": "Your full name",
       "book.emailLabel": "Email",
       "book.phoneLabel": "Phone",
-      "book.phonePlaceholder": "+55 11 99999-9999",
+      "book.phonePlaceholder": "Phone number",
       "book.dobLabel": "Date of birth",
       "book.cpfLabel": "CPF",
       "book.cpfPlaceholder": "000.000.000-00",
+      "book.durationMin": "{n} min",
       "consultType.consultation": "Consultation",
       "consultType.followUp": "Follow-up",
       "consultType.examReview": "Exam Review",
       "consultType.procedure": "Procedure",
       "consultType.emergency": "Emergency",
     };
-    return translations[`${ns}.${key}`] ?? key;
+    const raw = translations[`${ns}.${key}`] ?? key;
+    if (!params) return raw;
+    return Object.entries(params).reduce((s, [k, v]) => s.replace(`{${k}}`, String(v)), raw);
   },
 }));
 
@@ -286,7 +289,7 @@ describe("BookingClient", () => {
     await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
     // Fill name and phone but not DOB → still disabled
     fireEvent.change(screen.getByPlaceholderText("Your full name"), { target: { value: "Maria" } });
-    fireEvent.change(screen.getByPlaceholderText("+55 11 99999-9999"), { target: { value: "11999887766" } });
+    fireEvent.change(screen.getByPlaceholderText("Phone number"), { target: { value: "11999887766" } });
     await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
   });
 

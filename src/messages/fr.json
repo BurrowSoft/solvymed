@@ -370,15 +370,27 @@
     "fullNamePlaceholder": "Votre nom complet",
     "emailLabel": "E-mail",
     "phoneLabel": "Téléphone",
-    "phonePlaceholder": "+33 6 12 34 56 78",
+    "phonePlaceholder": "6 12 34 56 78",
     "dobLabel": "Date de naissance",
     "cpfLabel": "Numéro d'identification",
-    "cpfPlaceholder": "000.000.000-00"
+    "cpfPlaceholder": "000.000.000-00",
+    "durationMin": "{n} min"
   },
   "discover": {
     "title": "Prendre un Rendez-vous",
     "subtitle": "Rechercher par clinique, ville, médecin ou spécialité",
-    "recentDoctors": "Vos Médecins Récents"
+    "recentDoctors": "Vos Médecins Récents",
+    "signOut": "Se déconnecter",
+    "noClinicsFound": "Aucune clinique trouvée",
+    "clinicsFound": "{n, plural, one {# clinique trouvée} other {# cliniques trouvées}}",
+    "list": "Liste",
+    "map": "Carte",
+    "noResults": "Aucune clinique ne correspond à votre recherche",
+    "clearSearch": "Effacer la recherche",
+    "healthcareProviders": "Professionnels de santé",
+    "book": "Réserver",
+    "loadingMap": "Chargement de la carte…",
+    "viewDetails": "Voir les détails →"
   },
   "auth": {
     "login": {
@@ -405,7 +417,19 @@
       "logIn": "Log in",
       "success": "Check your email",
       "successSub": "We sent a confirmation link to your email. Open it to activate your account and get started.",
-      "error": "Could not create your account. Please try again."
+      "error": "Could not create your account. Please try again.",
+      "iAmA": "Je suis…",
+      "roleDoctor": "Médecin",
+      "roleDoctorDesc": "Gérez votre cabinet et vos patients",
+      "roleSecretary": "Secrétaire",
+      "roleSecretaryDesc": "Assistez l'agenda d'un médecin",
+      "rolePatient": "Patient",
+      "rolePatientDesc": "Planifiez et accédez à vos consultations",
+      "inviteCode": "Code d'invitation",
+      "inviteCodeOptional": "(facultatif)",
+      "inviteCodePlaceholder": "ABC123",
+      "inviteCodeHint": "Entrez le code du médecin pour être lié automatiquement",
+      "emailExists": "Un compte avec cet e-mail existe déjà. Veuillez vous connecter."
     },
     "forgotPassword": {
       "title": "Forgot your password?",

@@ -10,6 +10,57 @@ import type { WorkingHours, TimeSlot } from "@/lib/slots";
 type Procedure = { id: string; name: string; durationMinutes: number; price?: number; paymentType: string };
 
 const FALLBACK_DURATIONS = [30, 45, 60];
+
+const COUNTRIES = [
+  { code: "TH", flag: "🇹🇭", dialCode: "+66" },
+  { code: "BR", flag: "🇧🇷", dialCode: "+55" },
+  { code: "US", flag: "🇺🇸", dialCode: "+1" },
+  { code: "GB", flag: "🇬🇧", dialCode: "+44" },
+  { code: "CN", flag: "🇨🇳", dialCode: "+86" },
+  { code: "TW", flag: "🇹🇼", dialCode: "+886" },
+  { code: "JP", flag: "🇯🇵", dialCode: "+81" },
+  { code: "KR", flag: "🇰🇷", dialCode: "+82" },
+  { code: "SG", flag: "🇸🇬", dialCode: "+65" },
+  { code: "ID", flag: "🇮🇩", dialCode: "+62" },
+  { code: "VN", flag: "🇻🇳", dialCode: "+84" },
+  { code: "IN", flag: "🇮🇳", dialCode: "+91" },
+  { code: "AU", flag: "🇦🇺", dialCode: "+61" },
+  { code: "DE", flag: "🇩🇪", dialCode: "+49" },
+  { code: "FR", flag: "🇫🇷", dialCode: "+33" },
+  { code: "ES", flag: "🇪🇸", dialCode: "+34" },
+  { code: "MX", flag: "🇲🇽", dialCode: "+52" },
+  { code: "AR", flag: "🇦🇷", dialCode: "+54" },
+  { code: "PT", flag: "🇵🇹", dialCode: "+351" },
+  { code: "IT", flag: "🇮🇹", dialCode: "+39" },
+  { code: "RU", flag: "🇷🇺", dialCode: "+7" },
+  { code: "SA", flag: "🇸🇦", dialCode: "+966" },
+  { code: "CA", flag: "🇨🇦", dialCode: "+1" },
+  { code: "NL", flag: "🇳🇱", dialCode: "+31" },
+  { code: "PL", flag: "🇵🇱", dialCode: "+48" },
+];
+
+const LOCALE_TO_COUNTRY: Record<string, string> = {
+  th: "TH", "pt-BR": "BR", en: "US", zh: "CN", "zh-TW": "TW",
+  es: "ES", fr: "FR", de: "DE", it: "IT", ja: "JP",
+  ko: "KR", ar: "SA", ru: "RU", id: "ID", vi: "VN",
+};
+
+function getDefaultCountry(locale: string) {
+  const code = LOCALE_TO_COUNTRY[locale] ?? "US";
+  return COUNTRIES.find((c) => c.code === code) ?? COUNTRIES[2];
+}
+
+function getDateFormat(locale: string): string {
+  try {
+    const parts = new Intl.DateTimeFormat(locale, { year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(2000, 0, 31));
+    return parts.map((p) => {
+      if (p.type === "year") return "YYYY";
+      if (p.type === "month") return "MM";
+      if (p.type === "day") return "DD";
+      return p.value;
+    }).join("");
+  } catch { return "YYYY-MM-DD"; }
+}
 const DAYS_AHEAD = 14;
 const CONSULT_TYPES = ["Consultation", "Follow-up", "Exam Review", "Procedure", "Emergency"] as const;
 
@@ -112,7 +163,8 @@ export function BookingClient({
 
   // Patient profile — pre-loaded from patient_profiles, editable before booking
   const [patientFullName, setPatientFullName] = useState(patientEmail.split("@")[0]);
-  const [patientPhone, setPatientPhone] = useState("");
+  const [phoneCountry, setPhoneCountry] = useState(() => getDefaultCountry(locale));
+  const [patientPhoneLocal, setPatientPhoneLocal] = useState("");
   const [patientDob, setPatientDob] = useState("");
   const [patientCpf, setPatientCpf] = useState("");
   const [profileLoaded, setProfileLoaded] = useState(false);
@@ -129,9 +181,18 @@ export function BookingClient({
           .maybeSingle();
         if (data) {
           if (data.full_name) setPatientFullName(data.full_name as string);
-          if (data.phone)     setPatientPhone(data.phone as string);
+          if (data.phone) {
+            const stored = data.phone as string;
+            const matched = COUNTRIES.find((c) => stored.startsWith(c.dialCode));
+            if (matched) {
+              setPhoneCountry(matched);
+              setPatientPhoneLocal(stored.slice(matched.dialCode.length));
+            } else {
+              setPatientPhoneLocal(stored);
+            }
+          }
           if (data.birth_date) setPatientDob(data.birth_date as string);
-          if (data.cpf)       setPatientCpf(data.cpf as string);
+          if (data.cpf)        setPatientCpf(data.cpf as string);
         }
       } catch { /* non-fatal */ }
       setProfileLoaded(true);
@@ -212,12 +273,15 @@ export function BookingClient({
     const supabase = createClient();
     try {
       // Persist patient profile before creating the booking
+      const fullPhone = patientPhoneLocal.trim()
+        ? `${phoneCountry.dialCode}${patientPhoneLocal.trim()}`
+        : null;
       await supabase.from("patient_profiles").upsert(
         {
           user_id: patientAuthId,
           full_name: patientFullName.trim(),
           email: patientEmail,
-          phone: patientPhone.trim() || null,
+          phone: fullPhone,
           birth_date: patientDob || null,
           cpf: patientCpf.trim() || null,
         },
@@ -366,7 +430,7 @@ export function BookingClient({
                       onClick={() => { setSelectedProcedure(null); setDuration(d); }}
                       className={`flex-1 rounded-xl border-2 py-2.5 text-sm font-semibold transition ${duration === d ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
                     >
-                      {d} min
+                      {t("durationMin", { n: d })}
                     </button>
                   ))}
                 </div>
@@ -493,26 +557,36 @@ export function BookingClient({
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-400 cursor-not-allowed"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">{t("phoneLabel")} <span className="text-red-400">*</span></label>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">{t("phoneLabel")} <span className="text-red-400">*</span></label>
+                <div className="flex gap-2">
+                  <select
+                    value={phoneCountry.code}
+                    onChange={(e) => setPhoneCountry(COUNTRIES.find((c) => c.code === e.target.value) ?? phoneCountry)}
+                    className="rounded-xl border border-slate-200 bg-white px-2 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 shrink-0"
+                  >
+                    {COUNTRIES.map((c) => (
+                      <option key={c.code} value={c.code}>{c.flag} {c.dialCode}</option>
+                    ))}
+                  </select>
                   <input
                     type="tel"
-                    value={patientPhone}
-                    onChange={e => setPatientPhone(e.target.value)}
+                    value={patientPhoneLocal}
+                    onChange={e => setPatientPhoneLocal(e.target.value)}
                     placeholder={t("phonePlaceholder")}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                    className="flex-1 min-w-0 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">{t("dobLabel")} <span className="text-red-400">*</span></label>
-                  <input
-                    type="date"
-                    value={patientDob}
-                    onChange={e => setPatientDob(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                  />
-                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">{t("dobLabel")} <span className="text-red-400">*</span></label>
+                <input
+                  type="date"
+                  value={patientDob}
+                  onChange={e => setPatientDob(e.target.value)}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                />
+                <p className="text-[10px] text-slate-400 mt-0.5">{getDateFormat(locale)}</p>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">{t("cpfLabel")} <span className="text-slate-400 font-normal">({t("notesOptional")})</span></label>
@@ -534,7 +608,7 @@ export function BookingClient({
 
             <button
               onClick={handleBook}
-              disabled={!selectedSlot || !consultType.trim() || !patientFullName.trim() || !patientPhone.trim() || !patientDob || booking}
+              disabled={!selectedSlot || !consultType.trim() || !patientFullName.trim() || !patientPhoneLocal.trim() || !patientDob || booking}
               className="w-full rounded-xl bg-teal-600 py-4 text-base font-bold text-white shadow-sm hover:bg-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {booking ? (

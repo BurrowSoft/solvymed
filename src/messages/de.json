@@ -370,15 +370,27 @@
     "fullNamePlaceholder": "Ihr vollständiger Name",
     "emailLabel": "E-Mail",
     "phoneLabel": "Telefon",
-    "phonePlaceholder": "+49 151 23456789",
+    "phonePlaceholder": "151 23456789",
     "dobLabel": "Geburtsdatum",
     "cpfLabel": "CPF",
-    "cpfPlaceholder": "000.000.000-00"
+    "cpfPlaceholder": "000.000.000-00",
+    "durationMin": "{n} Min."
   },
   "discover": {
     "title": "Termin Buchen",
     "subtitle": "Suche nach Klinik, Stadt, Arzt oder Fachgebiet",
-    "recentDoctors": "Ihre letzten Ärzte"
+    "recentDoctors": "Ihre letzten Ärzte",
+    "signOut": "Abmelden",
+    "noClinicsFound": "Keine Kliniken gefunden",
+    "clinicsFound": "{n, plural, one {# Klinik gefunden} other {# Kliniken gefunden}}",
+    "list": "Liste",
+    "map": "Karte",
+    "noResults": "Keine Kliniken entsprechen Ihrer Suche",
+    "clearSearch": "Suche löschen",
+    "healthcareProviders": "Gesundheitsdienstleister",
+    "book": "Buchen",
+    "loadingMap": "Karte wird geladen…",
+    "viewDetails": "Details anzeigen →"
   },
   "auth": {
     "login": {
@@ -405,7 +417,19 @@
       "logIn": "Log in",
       "success": "Check your email",
       "successSub": "We sent a confirmation link to your email. Open it to activate your account and get started.",
-      "error": "Could not create your account. Please try again."
+      "error": "Could not create your account. Please try again.",
+      "iAmA": "Ich bin…",
+      "roleDoctor": "Arzt",
+      "roleDoctorDesc": "Verwalten Sie Ihre Praxis und Patienten",
+      "roleSecretary": "Sekretär/in",
+      "roleSecretaryDesc": "Unterstützen Sie den Terminkalender eines Arztes",
+      "rolePatient": "Patient",
+      "rolePatientDesc": "Termine planen und Konsultationen einsehen",
+      "inviteCode": "Einladungscode",
+      "inviteCodeOptional": "(optional)",
+      "inviteCodePlaceholder": "ABC123",
+      "inviteCodeHint": "Geben Sie den Code des Arztes ein, um automatisch verknüpft zu werden",
+      "emailExists": "Ein Konto mit dieser E-Mail existiert bereits. Bitte melden Sie sich an."
     },
     "forgotPassword": {
       "title": "Forgot your password?",

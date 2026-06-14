@@ -370,15 +370,27 @@
     "fullNamePlaceholder": "您的姓名",
     "emailLabel": "电子邮件",
     "phoneLabel": "电话",
-    "phonePlaceholder": "+86 138 0000 0000",
+    "phonePlaceholder": "138 0000 0000",
     "dobLabel": "出生日期",
     "cpfLabel": "身份证号",
-    "cpfPlaceholder": "000.000.000-00"
+    "cpfPlaceholder": "000.000.000-00",
+    "durationMin": "{n} 分钟"
   },
   "discover": {
     "title": "预约挂号",
     "subtitle": "按诊所名称、城市、医生或专科搜索",
-    "recentDoctors": "您的近期医生"
+    "recentDoctors": "您的近期医生",
+    "signOut": "退出登录",
+    "noClinicsFound": "未找到诊所",
+    "clinicsFound": "{n, plural, other {找到 # 家诊所}}",
+    "list": "列表",
+    "map": "地图",
+    "noResults": "没有诊所符合您的搜索",
+    "clearSearch": "清除搜索",
+    "healthcareProviders": "医疗提供者",
+    "book": "预约",
+    "loadingMap": "正在加载地图…",
+    "viewDetails": "查看详情 →"
   },
   "auth": {
     "login": {
@@ -405,7 +417,19 @@
       "logIn": "Log in",
       "success": "Check your email",
       "successSub": "We sent a confirmation link to your email. Open it to activate your account and get started.",
-      "error": "Could not create your account. Please try again."
+      "error": "Could not create your account. Please try again.",
+      "iAmA": "我是…",
+      "roleDoctor": "医生",
+      "roleDoctorDesc": "管理您的诊所和患者",
+      "roleSecretary": "秘书",
+      "roleSecretaryDesc": "协助医生的日程安排",
+      "rolePatient": "患者",
+      "rolePatientDesc": "预约并访问您的和咨询",
+      "inviteCode": "邀请码",
+      "inviteCodeOptional": "（可选）",
+      "inviteCodePlaceholder": "ABC123",
+      "inviteCodeHint": "输入医生的邀请码以自动连接",
+      "emailExists": "此邮箕已有账户。请登录。"
     },
     "forgotPassword": {
       "title": "Forgot your password?",
