@@ -14,7 +14,7 @@ import {
   getAppointmentsByDate, getPendingPayments, getPatients, getProfessional,
   getPatientAppointments, getRecords, getPrescriptions,
   getTentativeAppointmentsWithNewPatient, confirmBookingAndAddPatient,
-  confirmBooking, rejectBooking, proposeNewTime,
+  rejectBooking, proposeNewTime,
 } from '@/lib/services';
 import { getMyBookings, acceptProposal, declineProposal } from '@/lib/booking-service';
 import { useAuth } from '@/lib/auth-context';
@@ -416,11 +416,7 @@ export default function HomeScreen() {
                           setActionPending(true);
                           const note = bookingNotes[req.id] || undefined;
                           try {
-                            if (req.isNewPatient) {
-                              await confirmBookingAndAddPatient(req.id, req.professionalId, note);
-                            } else {
-                              await confirmBooking(req.id, note);
-                            }
+                            await confirmBookingAndAddPatient(req.id, req.professionalId, note);
                             await load();
                           } catch {
                             Alert.alert('', t('home.errConfirm'));

@@ -964,25 +964,35 @@ export async function confirmBookingAndAddPatient(
     .eq('id', appointmentId);
   if (error) throw error;
 
-  const { data: newPatient } = await supabase
-    .from('patients')
-    .insert({ full_name: appt.patient_name as string, professional_id: professionalId })
-    .select('id')
-    .maybeSingle();
-
-  if (newPatient && appt.patient_auth_id) {
-    await supabase.from('user_roles').upsert(
-      {
-        user_id: appt.patient_auth_id,
-        role: 'patient',
-        linked_patient_id: newPatient.id,
-        invited_by_professional_id: professionalId,
-      },
-      { onConflict: 'user_id' },
-    );
-  }
-
+  // Add to patient list only if not already linked to this professional
   if (appt.patient_auth_id) {
+    const { data: existingRole } = await supabase
+      .from('user_roles')
+      .select('linked_patient_id')
+      .eq('user_id', appt.patient_auth_id as string)
+      .eq('invited_by_professional_id', professionalId)
+      .maybeSingle();
+
+    if (!existingRole?.linked_patient_id) {
+      const { data: newPatient } = await supabase
+        .from('patients')
+        .insert({ full_name: appt.patient_name as string, professional_id: professionalId })
+        .select('id')
+        .maybeSingle();
+
+      if (newPatient) {
+        await supabase.from('user_roles').upsert(
+          {
+            user_id: appt.patient_auth_id,
+            role: 'patient',
+            linked_patient_id: newPatient.id,
+            invited_by_professional_id: professionalId,
+          },
+          { onConflict: 'user_id' },
+        );
+      }
+    }
+
     const body = `Your appointment on ${appt.date} at ${(appt.start_time as string).slice(0, 5)} has been confirmed.${note ? ` Note: ${note}` : ''}`;
     notifyPatientPush(appt.patient_auth_id as string, 'Appointment Confirmed', body).catch(() => {});
   }
