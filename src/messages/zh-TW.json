@@ -300,7 +300,9 @@
     "blockedPatientsTitle": "已封鎖患者",
     "blockedPatientsSub": "被禁止預約新門診的患者",
     "noBlockedPatients": "目前沒有被封鎖的患者",
-    "unblock": "解除封鎖"
+    "unblock": "解除封鎖",
+    "pageTitle": "設定",
+    "pageSubtitle": "管理您的個人資料、診所、時間和程序"
   },
   "clinics": {
     "title": "我的診所",
@@ -456,5 +458,14 @@
     },
     "logIn": "Log in",
     "backToHome": "Back to home"
+  },
+  "nav": {
+    "overview": "總覽",
+    "schedule": "行程",
+    "patients": "患者",
+    "clinics": "診所",
+    "payments": "付款",
+    "settings": "設定",
+    "signOut": "登出"
   }
 }

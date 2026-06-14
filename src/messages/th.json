@@ -300,7 +300,9 @@
     "blockedPatientsTitle": "ผู้ป่วยที่ถูกบล็อก",
     "blockedPatientsSub": "ผู้ป่วยที่ถูกบล็อกจากการนัดหมายใหม่",
     "noBlockedPatients": "ขณะนี้ไม่มีผู้ป่วยที่ถูกบล็อก",
-    "unblock": "ยกเลิกบล็อก"
+    "unblock": "ยกเลิกบล็อก",
+    "pageTitle": "การตั้งค่า",
+    "pageSubtitle": "จัดการโปรไฟล์ คลินิก ชั่วโมง และขั้นตอนของคุณ"
   },
   "clinics": {
     "title": "คลินิกของฉัน",
@@ -456,5 +458,14 @@
     },
     "logIn": "Log in",
     "backToHome": "Back to home"
+  },
+  "nav": {
+    "overview": "ภาพรวม",
+    "schedule": "ตารางงาน",
+    "patients": "ผู้ป่วย",
+    "clinics": "คลินิก",
+    "payments": "การชำระเงิน",
+    "settings": "การตั้งค่า",
+    "signOut": "ออกจากระบบ"
   }
 }

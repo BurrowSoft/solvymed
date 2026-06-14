@@ -300,7 +300,9 @@
     "blockedPatientsTitle": "المرضى المحظورون",
     "blockedPatientsSub": "المرضى الممنوعون من حجز مواعيد جديدة",
     "noBlockedPatients": "لا يوجد مرضى محظورون حالياً",
-    "unblock": "رفع الحظر"
+    "unblock": "رفع الحظر",
+    "pageTitle": "الإعدادات",
+    "pageSubtitle": "أدر ملفك الشخصي والعيادة والأوقات والإجراءات"
   },
   "clinics": {
     "title": "عياداتي",
@@ -456,5 +458,14 @@
     },
     "logIn": "Log in",
     "backToHome": "Back to home"
+  },
+  "nav": {
+    "overview": "نظرة عامة",
+    "schedule": "الجدول الزمني",
+    "patients": "المرضى",
+    "clinics": "العيادات",
+    "payments": "المدفوعات",
+    "settings": "الإعدادات",
+    "signOut": "تسجيل الخروج"
   }
 }

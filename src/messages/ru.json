@@ -300,7 +300,9 @@
     "blockedPatientsTitle": "Заблокированные пациенты",
     "blockedPatientsSub": "Пациенты, которым запрещено бронировать новые записи",
     "noBlockedPatients": "Нет заблокированных пациентов",
-    "unblock": "Разблокировать"
+    "unblock": "Разблокировать",
+    "pageTitle": "Настройки",
+    "pageSubtitle": "Управляйте профилем, клиникой, часами работы и процедурами"
   },
   "clinics": {
     "title": "Мои клиники",
@@ -456,5 +458,14 @@
     },
     "logIn": "Log in",
     "backToHome": "Back to home"
+  },
+  "nav": {
+    "overview": "Обзор",
+    "schedule": "Расписание",
+    "patients": "Пациенты",
+    "clinics": "Клиники",
+    "payments": "Платежи",
+    "settings": "Настройки",
+    "signOut": "Выйти"
   }
 }

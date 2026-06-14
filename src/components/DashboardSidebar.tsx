@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useState, useRef, useEffect } from "react";
 
@@ -138,6 +139,7 @@ function LanguageSwitcher({ locale }: { locale: string }) {
 }
 
 export function DashboardSidebar({ locale, firstName, email, photoUrl }: Props) {
+  const t = useTranslations("nav");
   const pathname = usePathname();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
@@ -152,12 +154,12 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl }: Props) 
   };
 
   const navItems = [
-    { label: "Overview", path: "/dashboard", icon: <HomeIcon /> },
-    { label: "Schedule", path: "/dashboard/schedule", icon: <CalendarIcon /> },
-    { label: "Patients", path: "/dashboard/patients", icon: <UsersIcon /> },
-    { label: "Clinics", path: "/dashboard/clinics", icon: <MapPinIcon /> },
-    { label: "Payments", path: "/dashboard/payments", icon: <CardIcon /> },
-    { label: "Settings", path: "/dashboard/settings", icon: <GearIcon /> },
+    { label: t("overview"), path: "/dashboard", icon: <HomeIcon /> },
+    { label: t("schedule"), path: "/dashboard/schedule", icon: <CalendarIcon /> },
+    { label: t("patients"), path: "/dashboard/patients", icon: <UsersIcon /> },
+    { label: t("clinics"), path: "/dashboard/clinics", icon: <MapPinIcon /> },
+    { label: t("payments"), path: "/dashboard/payments", icon: <CardIcon /> },
+    { label: t("settings"), path: "/dashboard/settings", icon: <GearIcon /> },
   ];
 
   async function signOut() {
@@ -209,7 +211,7 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl }: Props) 
         <button
           onClick={signOut}
           disabled={signingOut}
-          title="Sign out"
+          title={t("signOut")}
           className="shrink-0 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-4 w-4">

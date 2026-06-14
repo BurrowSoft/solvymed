@@ -300,7 +300,9 @@
     "blockedPatientsTitle": "Pazienti bloccati",
     "blockedPatientsSub": "Pazienti bloccati dalla prenotazione di nuovi appuntamenti",
     "noBlockedPatients": "Nessun paziente bloccato al momento",
-    "unblock": "Sblocca"
+    "unblock": "Sblocca",
+    "pageTitle": "Impostazioni",
+    "pageSubtitle": "Gestisci il tuo profilo, studio, orari e procedure"
   },
   "clinics": {
     "title": "Le mie cliniche",
@@ -456,5 +458,14 @@
     },
     "logIn": "Log in",
     "backToHome": "Back to home"
+  },
+  "nav": {
+    "overview": "Panoramica",
+    "schedule": "Agenda",
+    "patients": "Pazienti",
+    "clinics": "Cliniche",
+    "payments": "Pagamenti",
+    "settings": "Impostazioni",
+    "signOut": "Esci"
   }
 }

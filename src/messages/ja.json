@@ -300,7 +300,9 @@
     "blockedPatientsTitle": "ブロック中の患者",
     "blockedPatientsSub": "新しい予約ができないようにブロックされた患者",
     "noBlockedPatients": "現在ブロック中の患者はいません",
-    "unblock": "ブロック解除"
+    "unblock": "ブロック解除",
+    "pageTitle": "設定",
+    "pageSubtitle": "プロフィール、クリニック、時間、手順を管理する"
   },
   "clinics": {
     "title": "マイクリニック",
@@ -456,5 +458,14 @@
     },
     "logIn": "Log in",
     "backToHome": "Back to home"
+  },
+  "nav": {
+    "overview": "ホーム",
+    "schedule": "スケジュール",
+    "patients": "患者",
+    "clinics": "クリニック",
+    "payments": "支払い",
+    "settings": "設定",
+    "signOut": "ログアウト"
   }
 }

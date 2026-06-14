@@ -300,7 +300,9 @@
     "blockedPatientsTitle": "Blocked Patients",
     "blockedPatientsSub": "Patients blocked from booking new appointments",
     "noBlockedPatients": "No patients are currently blocked",
-    "unblock": "Unblock"
+    "unblock": "Unblock",
+    "pageTitle": "Settings",
+    "pageSubtitle": "Manage your profile, clinic, hours, and procedures"
   },
   "clinics": {
     "title": "My Clinics",
@@ -456,5 +458,14 @@
     },
     "logIn": "Log in",
     "backToHome": "Back to home"
+  },
+  "nav": {
+    "overview": "Overview",
+    "schedule": "Schedule",
+    "patients": "Patients",
+    "clinics": "Clinics",
+    "payments": "Payments",
+    "settings": "Settings",
+    "signOut": "Sign out"
   }
 }

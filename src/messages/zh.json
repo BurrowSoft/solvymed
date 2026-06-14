@@ -300,7 +300,9 @@
     "blockedPatientsTitle": "已拦截患者",
     "blockedPatientsSub": "被禁止预约新门诊的患者",
     "noBlockedPatients": "当前没有被拦截的患者",
-    "unblock": "解除拦截"
+    "unblock": "解除拦截",
+    "pageTitle": "设置",
+    "pageSubtitle": "管理您的个人资料、诊所、时间和程序"
   },
   "clinics": {
     "title": "我的诊所",
@@ -456,5 +458,14 @@
     },
     "logIn": "Log in",
     "backToHome": "Back to home"
+  },
+  "nav": {
+    "overview": "总览",
+    "schedule": "日程",
+    "patients": "患者",
+    "clinics": "诊所",
+    "payments": "付款",
+    "settings": "设置",
+    "signOut": "退出登录"
   }
 }

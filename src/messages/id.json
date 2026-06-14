@@ -300,7 +300,9 @@
     "blockedPatientsTitle": "Pasien Diblokir",
     "blockedPatientsSub": "Pasien yang diblokir dari pemesanan janji baru",
     "noBlockedPatients": "Tidak ada pasien yang diblokir saat ini",
-    "unblock": "Buka Blokir"
+    "unblock": "Buka Blokir",
+    "pageTitle": "Pengaturan",
+    "pageSubtitle": "Kelola profil, klinik, jam kerja, dan prosedur Anda"
   },
   "clinics": {
     "title": "Klinik Saya",
@@ -456,5 +458,14 @@
     },
     "logIn": "Log in",
     "backToHome": "Back to home"
+  },
+  "nav": {
+    "overview": "Ringkasan",
+    "schedule": "Jadwal",
+    "patients": "Pasien",
+    "clinics": "Klinik",
+    "payments": "Pembayaran",
+    "settings": "Pengaturan",
+    "signOut": "Keluar"
   }
 }

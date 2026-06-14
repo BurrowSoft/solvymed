@@ -300,7 +300,9 @@
     "blockedPatientsTitle": "Gesperrte Patienten",
     "blockedPatientsSub": "Patienten, die keine neuen Termine buchen können",
     "noBlockedPatients": "Derzeit keine gesperrten Patienten",
-    "unblock": "Entsperren"
+    "unblock": "Entsperren",
+    "pageTitle": "Einstellungen",
+    "pageSubtitle": "Profil, Praxis, Öffnungszeiten und Verfahren verwalten"
   },
   "clinics": {
     "title": "Meine Kliniken",
@@ -456,5 +458,14 @@
     },
     "logIn": "Log in",
     "backToHome": "Back to home"
+  },
+  "nav": {
+    "overview": "Übersicht",
+    "schedule": "Zeitplan",
+    "patients": "Patienten",
+    "clinics": "Kliniken",
+    "payments": "Zahlungen",
+    "settings": "Einstellungen",
+    "signOut": "Abmelden"
   }
 }

@@ -300,7 +300,9 @@
     "blockedPatientsTitle": "차단된 환자",
     "blockedPatientsSub": "새 예약이 차단된 환자",
     "noBlockedPatients": "현재 차단된 환자가 없습니다",
-    "unblock": "차단 해제"
+    "unblock": "차단 해제",
+    "pageTitle": "설정",
+    "pageSubtitle": "프로필, 클리닉, 시간, 절차를 관리합니다"
   },
   "clinics": {
     "title": "내 클리닉",
@@ -456,5 +458,14 @@
     },
     "logIn": "Log in",
     "backToHome": "Back to home"
+  },
+  "nav": {
+    "overview": "홈",
+    "schedule": "일정",
+    "patients": "환자",
+    "clinics": "클리닉",
+    "payments": "결제",
+    "settings": "설정",
+    "signOut": "로그아웃"
   }
 }

@@ -300,7 +300,9 @@
     "blockedPatientsTitle": "Bệnh nhân bị chặn",
     "blockedPatientsSub": "Bệnh nhân bị chặn đặt lịch mới",
     "noBlockedPatients": "Hiện không có bệnh nhân nào bị chặn",
-    "unblock": "Bỏ chặn"
+    "unblock": "Bỏ chặn",
+    "pageTitle": "Cài đặt",
+    "pageSubtitle": "Quản lý hồ sơ, phòng khám, giờ làm việc và thủ thuật của bạn"
   },
   "clinics": {
     "title": "Phòng khám của tôi",
@@ -456,5 +458,14 @@
     },
     "logIn": "Log in",
     "backToHome": "Back to home"
+  },
+  "nav": {
+    "overview": "Tổng quan",
+    "schedule": "Lịch",
+    "patients": "Bệnh nhân",
+    "clinics": "Phòng khám",
+    "payments": "Thanh toán",
+    "settings": "Cài đặt",
+    "signOut": "Đăng xuất"
   }
 }

@@ -300,7 +300,9 @@
     "blockedPatientsTitle": "Pacientes Bloqueados",
     "blockedPatientsSub": "Pacientes impedidos de agendar novas consultas",
     "noBlockedPatients": "Nenhum paciente bloqueado no momento",
-    "unblock": "Desbloquear"
+    "unblock": "Desbloquear",
+    "pageTitle": "Configurações",
+    "pageSubtitle": "Gerencie seu perfil, clínica, horários e procedimentos"
   },
   "clinics": {
     "title": "Minhas Clínicas",
@@ -456,5 +458,14 @@
     },
     "logIn": "Entrar",
     "backToHome": "Voltar ao início"
+  },
+  "nav": {
+    "overview": "Visão geral",
+    "schedule": "Agenda",
+    "patients": "Pacientes",
+    "clinics": "Clínicas",
+    "payments": "Pagamentos",
+    "settings": "Configurações",
+    "signOut": "Sair"
   }
 }

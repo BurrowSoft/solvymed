@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, SchedulingRulesForm, BlockedPatientsPanel } from "./SettingsClient";
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
@@ -11,6 +12,7 @@ export default async function SettingsPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "settings" });
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -53,8 +55,8 @@ export default async function SettingsPage({
   return (
     <div className="p-6 lg:p-8 max-w-3xl">
       <div className="mb-8">
-        <h1 className="text-2xl font-extrabold text-slate-900">Settings</h1>
-        <p className="text-sm text-slate-500 mt-0.5">Manage your profile, clinic, hours, and procedures</p>
+        <h1 className="text-2xl font-extrabold text-slate-900">{t("pageTitle")}</h1>
+        <p className="text-sm text-slate-500 mt-0.5">{t("pageSubtitle")}</p>
       </div>
 
       <div className="space-y-6">
