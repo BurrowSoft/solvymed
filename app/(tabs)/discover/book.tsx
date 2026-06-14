@@ -167,7 +167,7 @@ export default function BookScreen() {
       await createTentativeBooking({
         professionalId,
         patientAuthId: user.id,
-        patientName: patientFullName.trim() || user.email?.split('@')[0] ?? 'Patient',
+        patientName: patientFullName.trim() || (user.email?.split('@')[0] ?? 'Patient'),
         date: selectedDate,
         startTime: selectedSlot.start,
         endTime: selectedSlot.end,
