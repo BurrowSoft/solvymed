@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { confirmBooking, confirmBookingAndAddPatient, rejectBooking, proposeNewTime } from "./booking-actions";
 
@@ -28,6 +29,7 @@ type PatientProfile = {
 };
 
 export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
+  const t = useTranslations("schedule");
   const [isPending, startTransition] = useTransition();
   const [proposalId, setProposalId] = useState<string | null>(null);
   const [propDate, setPropDate] = useState("");
@@ -95,7 +97,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
     <>
       <div className="mb-6">
         <h2 className="mb-3 text-base font-bold text-slate-800">
-          Booking Requests
+          {t("bookingRequests")}
           <span className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-teal-600 text-xs font-bold text-white">
             {bookings.length}
           </span>
@@ -110,7 +112,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                     <p className="font-semibold text-slate-900">{b.patient_name}</p>
                     {b.is_new_patient && (
                       <span className="rounded-full bg-violet-100 px-2 py-0.5 text-xs font-semibold text-violet-700">
-                        New patient
+                        {t("newPatient")}
                       </span>
                     )}
                   </div>
@@ -123,7 +125,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                   )}
                   {b.status === "proposal" && (
                     <span className="mt-1 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
-                      Waiting for patient response
+                      {t("waitingForResponse")}
                     </span>
                   )}
                 </div>
@@ -134,7 +136,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                     onClick={() => handleInfoToggle(b)}
                     className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100"
                   >
-                    Patient Information
+                    {t("patientInfo")}
                   </button>
 
                   {b.status === "tentative" && (
@@ -144,21 +146,21 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                         disabled={isPending}
                         className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50"
                       >
-                        Confirm
+                        {t("confirm")}
                       </button>
                       <button
                         onClick={() => setProposalId(proposalId === b.id ? null : b.id)}
                         disabled={isPending}
                         className="rounded-lg border border-amber-400 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-100 disabled:opacity-50"
                       >
-                        Propose new time
+                        {t("proposeNewTime")}
                       </button>
                       <button
                         onClick={() => handleReject(b.id)}
                         disabled={isPending}
                         className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"
                       >
-                        Reject
+                        {t("reject")}
                       </button>
                     </div>
                   )}
@@ -171,30 +173,30 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                   {loadingProfile === b.id ? (
                     <div className="flex items-center gap-2 py-2 text-xs text-slate-400">
                       <span className="h-3 w-3 animate-spin rounded-full border-2 border-slate-300 border-t-teal-500" />
-                      Loading patient profile…
+                      {t("loadingProfile")}
                     </div>
                   ) : (() => {
                     const prof = profiles[b.id];
                     return (
                       <>
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-                          <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">Name</span><br />{prof?.full_name || b.patient_name}</p>
-                          {prof?.email && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">Email</span><br />{prof.email}</p>}
-                          {prof?.phone && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">Phone</span><br />{prof.phone}</p>}
-                          {prof?.birth_date && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">Date of birth</span><br />{prof.birth_date}</p>}
-                          {prof?.cpf && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">CPF</span><br />{prof.cpf}</p>}
-                          {!prof && <p className="col-span-2 text-xs text-slate-400 italic">Patient has not completed their profile yet.</p>}
+                          <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoName")}</span><br />{prof?.full_name || b.patient_name}</p>
+                          {prof?.email && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoEmail")}</span><br />{prof.email}</p>}
+                          {prof?.phone && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoPhone")}</span><br />{prof.phone}</p>}
+                          {prof?.birth_date && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoDob")}</span><br />{prof.birth_date}</p>}
+                          {prof?.cpf && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoCpf")}</span><br />{prof.cpf}</p>}
+                          {!prof && <p className="col-span-2 text-xs text-slate-400 italic">{t("infoNoProfile")}</p>}
                         </div>
                         <div className="border-t border-slate-200 pt-2">
-                          <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">Consultation</span><br />{b.consultation_type} · {b.date} {b.start_time.slice(0, 5)}–{b.end_time.slice(0, 5)}</p>
+                          <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoConsultation")}</span><br />{b.consultation_type} · {b.date} {b.start_time.slice(0, 5)}–{b.end_time.slice(0, 5)}</p>
                           {b.notes && <p className="mt-1 text-slate-400 italic text-xs">{b.notes}</p>}
                         </div>
                         <div className="flex items-center justify-between gap-2 border-t border-slate-200 pt-2">
                           <p className="text-xs">
                             {b.is_new_patient ? (
-                              <span className="text-violet-600 font-semibold">Not yet in your patient list</span>
+                              <span className="text-violet-600 font-semibold">{t("notInList")}</span>
                             ) : (
-                              <span className="text-teal-600 font-semibold">Existing patient</span>
+                              <span className="text-teal-600 font-semibold">{t("existingPatient")}</span>
                             )}
                           </p>
                           {!b.is_new_patient && b.patient_id && (
@@ -202,7 +204,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                               href={`/dashboard/patients/${b.patient_id}`}
                               className="rounded-lg bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700 hover:bg-teal-100"
                             >
-                              View full profile →
+                              {t("viewProfile")}
                             </Link>
                           )}
                         </div>
@@ -215,10 +217,10 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
               {/* Propose-new-time form */}
               {proposalId === b.id && (
                 <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
-                  <p className="mb-2 text-xs font-semibold text-amber-800">Propose a new time</p>
+                  <p className="mb-2 text-xs font-semibold text-amber-800">{t("proposeFormTitle")}</p>
                   <div className="flex flex-wrap gap-2">
                     <div>
-                      <label className="block text-xs text-slate-600 mb-1">Date</label>
+                      <label className="block text-xs text-slate-600 mb-1">{t("proposeDate")}</label>
                       <input
                         type="date"
                         value={propDate}
@@ -227,7 +229,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-slate-600 mb-1">Start</label>
+                      <label className="block text-xs text-slate-600 mb-1">{t("proposeStart")}</label>
                       <input
                         type="time"
                         value={propStart}
@@ -236,7 +238,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-slate-600 mb-1">End</label>
+                      <label className="block text-xs text-slate-600 mb-1">{t("proposeEnd")}</label>
                       <input
                         type="time"
                         value={propEnd}
@@ -250,13 +252,13 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                         disabled={isPending || !propDate || !propStart || !propEnd}
                         className="rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-amber-600 disabled:opacity-50"
                       >
-                        Send
+                        {t("send")}
                       </button>
                       <button
                         onClick={() => setProposalId(null)}
                         className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50"
                       >
-                        Cancel
+                        {t("cancel")}
                       </button>
                     </div>
                   </div>
@@ -278,10 +280,10 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                   <line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
                 </svg>
               </div>
-              <h3 className="text-base font-bold text-slate-900">Patient not in your list</h3>
+              <h3 className="text-base font-bold text-slate-900">{t("dialogTitle")}</h3>
             </div>
             <p className="mb-5 text-sm text-slate-500">
-              <strong>{dialogBooking.patient_name}</strong> is not yet in your patient list. Would you like to add them while confirming this appointment?
+              {t("dialogBody", { name: dialogBooking.patient_name })}
             </p>
             <div className="flex flex-col gap-2">
               <button
@@ -289,20 +291,20 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                 disabled={isPending}
                 className="w-full rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50"
               >
-                Confirm and Add New Patient
+                {t("confirmAndAdd")}
               </button>
               <button
                 onClick={() => handleConfirmOnly(dialogBooking.id)}
                 disabled={isPending}
                 className="w-full rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50"
               >
-                Confirm only
+                {t("confirmOnly")}
               </button>
               <button
                 onClick={() => setNewPatientDialogId(null)}
                 className="w-full rounded-xl py-2.5 text-sm text-slate-400 hover:text-slate-600"
               >
-                Cancel
+                {t("cancel")}
               </button>
             </div>
           </div>

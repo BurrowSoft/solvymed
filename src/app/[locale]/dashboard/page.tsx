@@ -25,10 +25,23 @@ export default async function DashboardPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const [supabase, t] = await Promise.all([
+  const [supabase, t, tSchedule] = await Promise.all([
     createClient(),
     getTranslations("home"),
+    getTranslations("schedule"),
   ]);
+
+  const STATUS_LABELS: Record<string, string> = {
+    tentative: tSchedule("statusTentative"),
+    proposal: tSchedule("statusProposal"),
+    scheduled: tSchedule("statusScheduled"),
+    confirmed: tSchedule("statusConfirmed"),
+    completed: tSchedule("statusCompleted"),
+    cancelled: tSchedule("statusCancelled"),
+    late: tSchedule("statusLate"),
+    absent: tSchedule("statusAbsent"),
+    blocked: tSchedule("statusBlocked"),
+  };
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
@@ -157,7 +170,7 @@ export default async function DashboardPage({
                     <p className="truncate font-semibold text-slate-900 text-sm">{appt.patient_name}</p>
                     <p className="text-xs text-slate-500 truncate">{appt.consultation_type}</p>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${statusBadge(appt.status)}`}>{appt.status}</span>
+                  <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusBadge(appt.status)}`}>{STATUS_LABELS[appt.status] ?? appt.status}</span>
                 </div>
               ))}
             </div>
@@ -189,7 +202,7 @@ export default async function DashboardPage({
                     <p className="truncate font-semibold text-slate-900 text-sm">{appt.patient_name}</p>
                     <p className="text-xs text-slate-500">{appt.start_time?.slice(0, 5)} · {appt.consultation_type}</p>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${statusBadge(appt.status)}`}>{appt.status}</span>
+                  <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusBadge(appt.status)}`}>{STATUS_LABELS[appt.status] ?? appt.status}</span>
                 </div>
               ))}
             </div>

@@ -134,7 +134,14 @@ export function ScheduleNav({ currentDate, currentView = "list" }: { currentDate
   );
 }
 
+const STATUS_KEY: Record<string, string> = {
+  tentative: "statusTentative", proposal: "statusProposal", scheduled: "statusScheduled",
+  confirmed: "statusConfirmed", completed: "statusCompleted", cancelled: "statusCancelled",
+  late: "statusLate", absent: "statusAbsent", blocked: "statusBlocked",
+};
+
 export function AppointmentStatusSelect({ id, current }: { id: string; current: string }) {
+  const t = useTranslations("schedule");
   const [status, setStatus] = useState(current);
   const [pending, startTransition] = useTransition();
 
@@ -152,7 +159,7 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
       className={`rounded-full px-3 py-1 text-xs font-semibold border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500/20 ${statusBadge(status)}`}
     >
       {STATUS_OPTIONS.map(s => (
-        <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+        <option key={s} value={s}>{t(STATUS_KEY[s] ?? s)}</option>
       ))}
     </select>
   );

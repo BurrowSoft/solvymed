@@ -1,16 +1,17 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import type { PatientAppointment } from "./page";
 
-const STATUS_LABEL: Record<string, { label: string; color: string }> = {
-  tentative:  { label: "Pending",   color: "bg-amber-50 text-amber-600 border-amber-200" },
-  proposal:   { label: "Proposal",  color: "bg-blue-50 text-blue-600 border-blue-200" },
-  scheduled:  { label: "Scheduled", color: "bg-teal-50 text-teal-600 border-teal-200" },
-  confirmed:  { label: "Confirmed", color: "bg-teal-50 text-teal-700 border-teal-300" },
-  completed:  { label: "Done",      color: "bg-slate-50 text-slate-500 border-slate-200" },
-  cancelled:  { label: "Cancelled", color: "bg-red-50 text-red-500 border-red-200" },
+const STATUS_COLOR: Record<string, string> = {
+  tentative: "bg-amber-50 text-amber-600 border-amber-200",
+  proposal:  "bg-blue-50 text-blue-600 border-blue-200",
+  scheduled: "bg-teal-50 text-teal-600 border-teal-200",
+  confirmed: "bg-teal-50 text-teal-700 border-teal-300",
+  completed: "bg-slate-50 text-slate-500 border-slate-200",
+  cancelled: "bg-red-50 text-red-500 border-red-200",
 };
 
 function formatDate(dateStr: string) {
@@ -26,13 +27,21 @@ function formatTime(timeStr: string) {
   return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
 }
 
+const STATUS_KEY: Record<string, string> = {
+  tentative: "statusTentative", proposal: "statusProposal", scheduled: "statusScheduled",
+  confirmed: "statusConfirmed", completed: "statusCompleted", cancelled: "statusCancelled",
+  late: "statusLate", absent: "statusAbsent", blocked: "statusBlocked",
+};
+
 function AppointmentCard({ appt }: { appt: PatientAppointment }) {
-  const st = STATUS_LABEL[appt.status] ?? { label: appt.status, color: "bg-slate-50 text-slate-500 border-slate-200" };
+  const t = useTranslations("schedule");
+  const color = STATUS_COLOR[appt.status] ?? "bg-slate-50 text-slate-500 border-slate-200";
+  const label = STATUS_KEY[appt.status] ? t(STATUS_KEY[appt.status]) : appt.status;
   return (
     <div className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="font-bold text-slate-900">{appt.consultation_type || "Consultation"}</p>
+          <p className="font-bold text-slate-900">{appt.consultation_type}</p>
           <p className="text-sm text-slate-500 mt-0.5">
             {formatDate(appt.date)} · {formatTime(appt.start_time)} – {formatTime(appt.end_time)}
           </p>
@@ -41,8 +50,8 @@ function AppointmentCard({ appt }: { appt: PatientAppointment }) {
             <p className="mt-2 text-sm text-slate-600 italic">&ldquo;{appt.notes}&rdquo;</p>
           )}
         </div>
-        <span className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${st.color}`}>
-          {st.label}
+        <span className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${color}`}>
+          {label}
         </span>
       </div>
     </div>
