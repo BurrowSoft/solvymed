@@ -94,7 +94,15 @@ const WORKING_HOURS = {
 };
 
 type ProcedureRow = { id: string; name: string; duration_minutes: number; price: number | null; payment_type: string };
-function setupMocks({ workingHours = WORKING_HOURS, busySlots = [] as unknown[], procedures = [] as ProcedureRow[], bookingError = null as { message: string } | null } = {}) {
+type ProfileData = { full_name?: string; phone?: string; birth_date?: string; cpf?: string } | null;
+
+function setupMocks({
+  workingHours = WORKING_HOURS,
+  busySlots = [] as unknown[],
+  procedures = [] as ProcedureRow[],
+  bookingError = null as { message: string } | null,
+  profile = null as ProfileData,
+} = {}) {
   mockRpc.mockImplementation((fn: string) => {
     if (fn === "get_professional_working_hours") return Promise.resolve({ data: workingHours, error: null });
     if (fn === "get_professional_procedures") return Promise.resolve({ data: procedures, error: null });
@@ -102,7 +110,13 @@ function setupMocks({ workingHours = WORKING_HOURS, busySlots = [] as unknown[],
     if (fn === "create_public_booking") return Promise.resolve({ data: "appt-1", error: bookingError });
     return Promise.resolve({ data: null, error: null });
   });
+  if (profile !== null) {
+    mockMaybeSingle.mockResolvedValue({ data: profile, error: null });
+  }
 }
+
+// Profile that satisfies all three required fields
+const FULL_PROFILE: ProfileData = { full_name: "Test Patient", phone: "11999887766", birth_date: "1990-01-01" };
 
 describe("BookingClient", () => {
   beforeEach(() => {
@@ -161,7 +175,7 @@ describe("BookingClient", () => {
   });
 
   it("shows success screen after a successful booking", async () => {
-    setupMocks({ busySlots: [] });
+    setupMocks({ busySlots: [], profile: FULL_PROFILE });
     render(<BookingClient {...BASE_PROPS} />);
 
     // Wait for consultation type chips and select one
@@ -180,7 +194,7 @@ describe("BookingClient", () => {
   });
 
   it("shows slot_taken error when that error is returned", async () => {
-    setupMocks({ busySlots: [], bookingError: { message: "slot_taken" } });
+    setupMocks({ busySlots: [], bookingError: { message: "slot_taken" }, profile: FULL_PROFILE });
     render(<BookingClient {...BASE_PROPS} />);
     await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
     fireEvent.click(screen.getAllByText("Consultation")[0]);
@@ -194,7 +208,7 @@ describe("BookingClient", () => {
   });
 
   it("shows max_bookings error when that error is returned", async () => {
-    setupMocks({ busySlots: [], bookingError: { message: "Max concurrent bookings reached" } });
+    setupMocks({ busySlots: [], bookingError: { message: "Max concurrent bookings reached" }, profile: FULL_PROFILE });
     render(<BookingClient {...BASE_PROPS} />);
     await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
     fireEvent.click(screen.getAllByText("Consultation")[0]);
@@ -216,7 +230,7 @@ describe("BookingClient", () => {
   });
 
   it("'View my appointments' navigates to /my-appointments after booking", async () => {
-    setupMocks({ busySlots: [] });
+    setupMocks({ busySlots: [], profile: FULL_PROFILE });
     render(<BookingClient {...BASE_PROPS} />);
     await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
     fireEvent.click(screen.getAllByText("Consultation")[0]);
@@ -261,18 +275,23 @@ describe("BookingClient", () => {
     });
   });
 
-  it("disables Send button when full name is cleared", async () => {
+  it("disables Send button when required profile fields are missing", async () => {
     setupMocks({ busySlots: [] });
     render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
+    fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    const nameInput = screen.getByPlaceholderText("Your full name");
-    fireEvent.change(nameInput, { target: { value: "" } });
+    // All three required fields empty → button stays disabled
+    await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
+    // Fill name and phone but not DOB → still disabled
+    fireEvent.change(screen.getByPlaceholderText("Your full name"), { target: { value: "Maria" } });
+    fireEvent.change(screen.getByPlaceholderText("+55 11 99999-9999"), { target: { value: "11999887766" } });
     await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
   });
 
   it("upserts patient profile before calling create_public_booking", async () => {
-    setupMocks({ busySlots: [] });
+    setupMocks({ busySlots: [], profile: FULL_PROFILE });
     render(<BookingClient {...BASE_PROPS} />);
     await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
     fireEvent.click(screen.getAllByText("Consultation")[0]);

@@ -495,7 +495,7 @@ export function BookingClient({
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">{t("phoneLabel")}</label>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">{t("phoneLabel")} <span className="text-red-400">*</span></label>
                   <input
                     type="tel"
                     value={patientPhone}
@@ -505,7 +505,7 @@ export function BookingClient({
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">{t("dobLabel")}</label>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">{t("dobLabel")} <span className="text-red-400">*</span></label>
                   <input
                     type="date"
                     value={patientDob}
@@ -534,7 +534,7 @@ export function BookingClient({
 
             <button
               onClick={handleBook}
-              disabled={!selectedSlot || !consultType.trim() || !patientFullName.trim() || booking}
+              disabled={!selectedSlot || !consultType.trim() || !patientFullName.trim() || !patientPhone.trim() || !patientDob || booking}
               className="w-full rounded-xl bg-teal-600 py-4 text-base font-bold text-white shadow-sm hover:bg-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {booking ? (
