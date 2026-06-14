@@ -1,8 +1,10 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { acceptProposal, declineProposal } from "@/app/[locale]/dashboard/schedule/booking-actions";
 import type { PatientAppointment } from "./page";
 
 const STATUS_COLOR: Record<string, string> = {
@@ -33,18 +35,26 @@ const STATUS_KEY: Record<string, string> = {
   late: "statusLate", absent: "statusAbsent", blocked: "statusBlocked",
 };
 
-function AppointmentCard({ appt }: { appt: PatientAppointment }) {
+function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutate: () => void }) {
   const t = useTranslations("schedule");
+  const [pending, startTransition] = useTransition();
   const color = STATUS_COLOR[appt.status] ?? "bg-slate-50 text-slate-500 border-slate-200";
   const label = STATUS_KEY[appt.status] ? t(STATUS_KEY[appt.status]) : appt.status;
+  const isProposal = appt.status === "proposal" && !!appt.proposed_date;
+
   return (
     <div className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 p-5">
       <div className="flex items-start justify-between gap-3">
-        <div>
+        <div className="flex-1 min-w-0">
           <p className="font-bold text-slate-900">{appt.consultation_type}</p>
           <p className="text-sm text-slate-500 mt-0.5">
-            {formatDate(appt.date)} · {formatTime(appt.start_time)} – {formatTime(appt.end_time)}
+            {formatDate(isProposal ? appt.proposed_date! : appt.date)} · {formatTime(isProposal ? appt.proposed_start_time! : appt.start_time)} – {formatTime(isProposal ? appt.proposed_end_time! : appt.end_time)}
           </p>
+          {isProposal && (
+            <p className="text-xs text-slate-400 mt-0.5">
+              Originally: {formatDate(appt.date)} · {formatTime(appt.start_time)}
+            </p>
+          )}
           <p className="text-xs text-slate-400 mt-0.5 capitalize">{appt.type.replace("-", " ")}</p>
           {appt.notes && (
             <p className="mt-2 text-sm text-slate-600 italic">&ldquo;{appt.notes}&rdquo;</p>
@@ -54,6 +64,25 @@ function AppointmentCard({ appt }: { appt: PatientAppointment }) {
           {label}
         </span>
       </div>
+
+      {isProposal && (
+        <div className="flex gap-2 mt-4">
+          <button
+            disabled={pending}
+            onClick={() => startTransition(async () => { await acceptProposal(appt.id); onMutate(); })}
+            className="flex-1 rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50 transition"
+          >
+            ✓ Accept
+          </button>
+          <button
+            disabled={pending}
+            onClick={() => startTransition(async () => { await declineProposal(appt.id); onMutate(); })}
+            className="flex-1 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-300 hover:text-slate-800 disabled:opacity-50 transition"
+          >
+            ✕ Decline
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -71,6 +100,7 @@ export function MyAppointmentsClient({
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
   const prefix = locale === "en" ? "" : `/${locale}`;
+  const refresh = () => router.refresh();
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -134,7 +164,7 @@ export function MyAppointmentsClient({
             </div>
           ) : (
             <div className="space-y-3">
-              {upcoming.map((a) => <AppointmentCard key={a.id} appt={a} />)}
+              {upcoming.map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} />)}
             </div>
           )}
         </section>

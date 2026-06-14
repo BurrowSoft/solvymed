@@ -185,6 +185,13 @@ export async function proposeNewTime(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
+  const { data: appt } = await supabase
+    .from("appointments")
+    .select("patient_name, patient_auth_id")
+    .eq("id", appointmentId)
+    .eq("professional_id", user.id)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("appointments")
     .update({
@@ -198,9 +205,121 @@ export async function proposeNewTime(
 
   if (error) return { error: error.message };
 
+  // Add patient to patient list (same as confirm)
+  if (appt?.patient_auth_id) {
+    const { data: existingRole } = await supabase
+      .from("user_roles")
+      .select("linked_patient_id")
+      .eq("user_id", appt.patient_auth_id as string)
+      .eq("invited_by_professional_id", user.id)
+      .maybeSingle();
+
+    if (!existingRole?.linked_patient_id) {
+      const { data: profile } = await supabase
+        .from("patient_profiles")
+        .select("full_name, email, phone, birth_date, cpf")
+        .eq("user_id", appt.patient_auth_id as string)
+        .maybeSingle();
+
+      const patientEmail = (profile?.email as string | null) ?? null;
+      let linkedPatientId: string | null = null;
+      if (patientEmail) {
+        const { data: existingByEmail } = await supabase
+          .from("patients").select("id")
+          .eq("professional_id", user.id).eq("email", patientEmail).maybeSingle();
+        linkedPatientId = (existingByEmail?.id as string) ?? null;
+      }
+      if (!linkedPatientId) {
+        const { data: newPatient } = await supabase
+          .from("patients")
+          .insert({
+            full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
+            professional_id: user.id,
+            email: patientEmail ?? undefined,
+            phone: (profile?.phone as string | null) ?? undefined,
+            birth_date: (profile?.birth_date as string | null) ?? undefined,
+            cpf: (profile?.cpf as string | null) ?? undefined,
+          })
+          .select("id").maybeSingle();
+        linkedPatientId = (newPatient?.id as string) ?? null;
+      }
+      if (linkedPatientId) {
+        await supabase.from("user_roles").upsert(
+          { user_id: appt.patient_auth_id, role: "patient", linked_patient_id: linkedPatientId, invited_by_professional_id: user.id },
+          { onConflict: "user_id" },
+        );
+      }
+    }
+  }
+
   await notifyPatient(supabase, appointmentId, "New Time Proposed", note ? `The doctor proposed a new time: ${proposedDate} at ${proposedStart}. Note: ${note}` : `The doctor proposed a new time: ${proposedDate} at ${proposedStart}.`);
 
   revalidatePath("/dashboard/schedule");
+  revalidatePath("/dashboard/patients");
+  return { error: null };
+}
+
+export async function acceptProposal(appointmentId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data: appt } = await supabase
+    .from("appointments")
+    .select("proposed_date, proposed_start_time, proposed_end_time, professional_id, patient_name")
+    .eq("id", appointmentId)
+    .eq("patient_auth_id", user.id)
+    .maybeSingle();
+
+  if (!appt) return { error: "Appointment not found" };
+
+  const { error } = await supabase
+    .from("appointments")
+    .update({
+      status: "confirmed",
+      date: appt.proposed_date,
+      start_time: appt.proposed_start_time,
+      end_time: appt.proposed_end_time,
+      proposed_date: null,
+      proposed_start_time: null,
+      proposed_end_time: null,
+    })
+    .eq("id", appointmentId)
+    .eq("patient_auth_id", user.id);
+
+  if (error) return { error: error.message };
+
+  await notifyProfessional(supabase, appt.professional_id as string, "Proposal Accepted", `${appt.patient_name} accepted the new time: ${appt.proposed_date} at ${(appt.proposed_start_time as string).slice(0, 5)}.`);
+
+  revalidatePath("/my-appointments");
+  return { error: null };
+}
+
+export async function declineProposal(appointmentId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data: appt } = await supabase
+    .from("appointments")
+    .select("professional_id, patient_name")
+    .eq("id", appointmentId)
+    .eq("patient_auth_id", user.id)
+    .maybeSingle();
+
+  const { error } = await supabase
+    .from("appointments")
+    .update({ status: "cancelled", proposed_date: null, proposed_start_time: null, proposed_end_time: null })
+    .eq("id", appointmentId)
+    .eq("patient_auth_id", user.id);
+
+  if (error) return { error: error.message };
+
+  if (appt) {
+    await notifyProfessional(supabase, appt.professional_id as string, "Proposal Declined", `${appt.patient_name} declined the proposed time. The booking was cancelled.`);
+  }
+
+  revalidatePath("/my-appointments");
   return { error: null };
 }
 
@@ -237,5 +356,21 @@ async function notifyPatient(
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify(messages),
+  }).catch(() => {});
+}
+
+async function notifyProfessional(
+  supabase: Awaited<ReturnType<typeof import("@/lib/supabase/server").createClient>>,
+  professionalId: string,
+  title: string,
+  body: string,
+) {
+  const { data } = await supabase.rpc("get_professional_push_tokens", { p_professional_id: professionalId });
+  const tokens = (data ?? []).map((r: { token: string }) => r.token);
+  if (!tokens.length) return;
+  await fetch("https://exp.host/--/api/v2/push/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(tokens.map((to: string) => ({ to, title, body, sound: "default" }))),
   }).catch(() => {});
 }

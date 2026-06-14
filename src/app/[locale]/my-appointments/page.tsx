@@ -12,6 +12,9 @@ export type PatientAppointment = {
   type: string;
   notes: string | null;
   professional_id: string;
+  proposed_date: string | null;
+  proposed_start_time: string | null;
+  proposed_end_time: string | null;
 };
 
 export default async function MyAppointmentsPage() {
@@ -23,7 +26,7 @@ export default async function MyAppointmentsPage() {
 
   const { data: upcoming } = await supabase
     .from("appointments")
-    .select("id, date, start_time, end_time, status, consultation_type, type, notes, professional_id")
+    .select("id, date, start_time, end_time, status, consultation_type, type, notes, professional_id, proposed_date, proposed_start_time, proposed_end_time")
     .eq("patient_auth_id", user.id)
     .gte("date", today)
     .not("status", "in", '("cancelled","completed","blocked","rejected")')
@@ -32,7 +35,7 @@ export default async function MyAppointmentsPage() {
 
   const { data: past } = await supabase
     .from("appointments")
-    .select("id, date, start_time, end_time, status, consultation_type, type, notes, professional_id")
+    .select("id, date, start_time, end_time, status, consultation_type, type, notes, professional_id, proposed_date, proposed_start_time, proposed_end_time")
     .eq("patient_auth_id", user.id)
     .lt("date", today)
     .in("status", ["completed", "confirmed", "scheduled"])
