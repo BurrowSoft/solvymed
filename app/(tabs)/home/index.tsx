@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator,
   Alert, TextInput, Image, useWindowDimensions,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
@@ -73,6 +74,12 @@ export default function HomeScreen() {
   const [propDate, setPropDate] = useState('');
   const [propStart, setPropStart] = useState('');
   const [propEnd, setPropEnd] = useState('');
+  const [propDateObj, setPropDateObj] = useState(new Date());
+  const [propStartObj, setPropStartObj] = useState(new Date());
+  const [propEndObj, setPropEndObj] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
   const [infoId, setInfoId] = useState<string | null>(null);
   const [actionPending, setActionPending] = useState(false);
 
@@ -241,7 +248,7 @@ export default function HomeScreen() {
           {/* Pending / proposal requests */}
           {myRequests.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Booking Requests</Text>
+              <Text style={styles.sectionTitle}>{t('home.bookingRequests')}</Text>
               {myRequests.map(req => {
                 const isProposal = req.status === 'proposal';
                 return (
@@ -347,7 +354,7 @@ export default function HomeScreen() {
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>
-                  Booking Requests{' '}
+                  {t('home.bookingRequests')}{' '}
                   <Text style={{ color: Colors.primary, fontWeight: '700' }}>({bookingRequests.length})</Text>
                 </Text>
               </View>
@@ -360,7 +367,7 @@ export default function HomeScreen() {
                         <Text style={styles.apptName}>{req.patientName}</Text>
                         {req.isNewPatient && (
                           <View style={{ backgroundColor: '#ede9fe', borderRadius: 10, paddingHorizontal: 7, paddingVertical: 2 }}>
-                            <Text style={{ fontSize: 10, fontWeight: '700', color: '#7c3aed' }}>New patient</Text>
+                            <Text style={{ fontSize: 10, fontWeight: '700', color: '#7c3aed' }}>{t('home.newPatient')}</Text>
                           </View>
                         )}
                       </View>
@@ -369,7 +376,7 @@ export default function HomeScreen() {
                       {req.notes ? <Text style={{ fontSize: 11, color: Colors.textMuted, fontStyle: 'italic' }}>{req.notes}</Text> : null}
                       {req.status === 'proposal' && (
                         <View style={{ backgroundColor: '#fef9c3', borderRadius: 10, alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 3, marginTop: 2 }}>
-                          <Text style={{ fontSize: 11, fontWeight: '600', color: '#a16207' }}>Waiting for patient response</Text>
+                          <Text style={{ fontSize: 11, fontWeight: '600', color: '#a16207' }}>{t('home.waitingForResponse')}</Text>
                         </View>
                       )}
                     </View>
@@ -378,22 +385,22 @@ export default function HomeScreen() {
                       style={{ borderWidth: 1, borderColor: Colors.border, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, backgroundColor: Colors.surface }}
                       onPress={() => setInfoId(infoId === req.id ? null : req.id)}
                     >
-                      <Text style={{ fontSize: 11, fontWeight: '600', color: Colors.textSecondary }}>Info</Text>
+                      <Text style={{ fontSize: 11, fontWeight: '600', color: Colors.textSecondary }}>{t('home.info')}</Text>
                     </TouchableOpacity>
                   </View>
 
                   {/* Patient info panel */}
                   {infoId === req.id && (
                     <View style={{ backgroundColor: Colors.background, borderRadius: 10, padding: 10, gap: 3 }}>
-                      <Text style={{ fontSize: 12, color: Colors.textSecondary }}><Text style={{ fontWeight: '600' }}>Name:</Text> {req.patientName}</Text>
-                      <Text style={{ fontSize: 12, color: Colors.textSecondary }}><Text style={{ fontWeight: '600' }}>Consultation:</Text> {req.consultationType}</Text>
-                      <Text style={{ fontSize: 12, color: Colors.textSecondary }}><Text style={{ fontWeight: '600' }}>Date:</Text> {req.date} at {formatTime(req.startTime)}–{formatTime(req.endTime)}</Text>
-                      {req.notes ? <Text style={{ fontSize: 12, color: Colors.textSecondary }}><Text style={{ fontWeight: '600' }}>Notes:</Text> {req.notes}</Text> : null}
+                      <Text style={{ fontSize: 12, color: Colors.textSecondary }}><Text style={{ fontWeight: '600' }}>{t('home.infoName')}:</Text> {req.patientName}</Text>
+                      <Text style={{ fontSize: 12, color: Colors.textSecondary }}><Text style={{ fontWeight: '600' }}>{t('home.infoConsultation')}:</Text> {req.consultationType}</Text>
+                      <Text style={{ fontSize: 12, color: Colors.textSecondary }}><Text style={{ fontWeight: '600' }}>{t('home.infoDate')}:</Text> {req.date} at {formatTime(req.startTime)}–{formatTime(req.endTime)}</Text>
+                      {req.notes ? <Text style={{ fontSize: 12, color: Colors.textSecondary }}><Text style={{ fontWeight: '600' }}>{t('home.infoNotes')}:</Text> {req.notes}</Text> : null}
                       <Text style={{ fontSize: 12 }}>
-                        <Text style={{ fontWeight: '600', color: Colors.textSecondary }}>Status: </Text>
+                        <Text style={{ fontWeight: '600', color: Colors.textSecondary }}>{t('home.infoStatus')}: </Text>
                         {req.isNewPatient
-                          ? <Text style={{ color: '#7c3aed', fontWeight: '600' }}>Not yet in your patient list</Text>
-                          : <Text style={{ color: Colors.success, fontWeight: '600' }}>Existing patient</Text>}
+                          ? <Text style={{ color: '#7c3aed', fontWeight: '600' }}>{t('home.notInList')}</Text>
+                          : <Text style={{ color: Colors.success, fontWeight: '600' }}>{t('home.existingPatient')}</Text>}
                       </Text>
                     </View>
                   )}
@@ -404,50 +411,35 @@ export default function HomeScreen() {
                       <TouchableOpacity
                         disabled={actionPending}
                         style={[styles.connectBtn, { flex: 1, height: 36, backgroundColor: Colors.primary }]}
-                        onPress={() => {
-                          if (req.isNewPatient) {
-                            Alert.alert(
-                              'Patient not in your list',
-                              `${req.patientName} is not yet in your patient list. Add them?`,
-                              [
-                                {
-                                  text: 'Confirm and Add Patient',
-                                  onPress: async () => {
-                                    setActionPending(true);
-                                    try { await confirmBookingAndAddPatient(req.id, req.professionalId); await load(); }
-                                    catch { Alert.alert('Error', 'Could not confirm. Try again.'); }
-                                    finally { setActionPending(false); }
-                                  },
-                                },
-                                {
-                                  text: 'Confirm only',
-                                  onPress: async () => {
-                                    setActionPending(true);
-                                    try { await confirmBooking(req.id); await load(); }
-                                    catch { Alert.alert('Error', 'Could not confirm. Try again.'); }
-                                    finally { setActionPending(false); }
-                                  },
-                                },
-                                { text: 'Cancel', style: 'cancel' },
-                              ],
-                            );
-                          } else {
-                            setActionPending(true);
-                            confirmBooking(req.id)
-                              .then(() => load())
-                              .catch(() => Alert.alert('Error', 'Could not confirm. Try again.'))
-                              .finally(() => setActionPending(false));
+                        onPress={async () => {
+                          setActionPending(true);
+                          try {
+                            if (req.isNewPatient) {
+                              await confirmBookingAndAddPatient(req.id, req.professionalId);
+                            } else {
+                              await confirmBooking(req.id);
+                            }
+                            await load();
+                          } catch {
+                            Alert.alert('', t('home.errConfirm'));
+                          } finally {
+                            setActionPending(false);
                           }
                         }}
                       >
-                        <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>Confirm</Text>
+                        <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>{t('home.confirm')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         disabled={actionPending}
                         style={[styles.connectBtn, { flex: 1, height: 36, backgroundColor: Colors.warning }]}
-                        onPress={() => { setProposeId(proposeId === req.id ? null : req.id); setPropDate(''); setPropStart(''); setPropEnd(''); }}
+                        onPress={() => {
+                          setProposeId(proposeId === req.id ? null : req.id);
+                          setPropDate(''); setPropStart(''); setPropEnd('');
+                          setPropDateObj(new Date()); setPropStartObj(new Date()); setPropEndObj(new Date());
+                          setShowDatePicker(false); setShowStartPicker(false); setShowEndPicker(false);
+                        }}
                       >
-                        <Text style={{ color: '#fff', fontSize: 12, fontWeight: '700' }}>Propose time</Text>
+                        <Text style={{ color: '#fff', fontSize: 12, fontWeight: '700' }}>{t('home.proposeTime')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         disabled={actionPending}
@@ -456,11 +448,11 @@ export default function HomeScreen() {
                           setActionPending(true);
                           rejectBooking(req.id)
                             .then(() => load())
-                            .catch(() => Alert.alert('Error', 'Could not reject. Try again.'))
+                            .catch(() => Alert.alert('', t('home.errReject')))
                             .finally(() => setActionPending(false));
                         }}
                       >
-                        <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>Reject</Text>
+                        <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>{t('home.reject')}</Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -468,29 +460,32 @@ export default function HomeScreen() {
                   {/* Inline propose form */}
                   {proposeId === req.id && (
                     <View style={{ backgroundColor: '#fffbeb', borderRadius: 10, borderWidth: 1, borderColor: '#fde68a', padding: 10, gap: 8 }}>
-                      <Text style={{ fontSize: 12, fontWeight: '700', color: '#92400e' }}>Propose a new time</Text>
-                      <TextInput
-                        style={styles.connectInput}
-                        value={propDate}
-                        onChangeText={setPropDate}
-                        placeholder="Date (YYYY-MM-DD)"
-                        placeholderTextColor={Colors.textMuted}
-                      />
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: '#92400e' }}>{t('home.proposeNewTime')}</Text>
+                      <TouchableOpacity
+                        style={{ backgroundColor: Colors.surface, borderWidth: 1.5, borderColor: Colors.border, borderRadius: 10, paddingHorizontal: 12, height: 44, justifyContent: 'center' }}
+                        onPress={() => setShowDatePicker(true)}
+                      >
+                        <Text style={{ fontSize: 14, color: propDate ? Colors.textPrimary : Colors.textMuted }}>
+                          {propDate || t('home.pickDate')}
+                        </Text>
+                      </TouchableOpacity>
                       <View style={{ flexDirection: 'row', gap: 8 }}>
-                        <TextInput
-                          style={[styles.connectInput, { flex: 1 }]}
-                          value={propStart}
-                          onChangeText={setPropStart}
-                          placeholder="Start (HH:MM)"
-                          placeholderTextColor={Colors.textMuted}
-                        />
-                        <TextInput
-                          style={[styles.connectInput, { flex: 1 }]}
-                          value={propEnd}
-                          onChangeText={setPropEnd}
-                          placeholder="End (HH:MM)"
-                          placeholderTextColor={Colors.textMuted}
-                        />
+                        <TouchableOpacity
+                          style={{ flex: 1, backgroundColor: Colors.surface, borderWidth: 1.5, borderColor: Colors.border, borderRadius: 10, paddingHorizontal: 12, height: 44, justifyContent: 'center' }}
+                          onPress={() => setShowStartPicker(true)}
+                        >
+                          <Text style={{ fontSize: 14, color: propStart ? Colors.textPrimary : Colors.textMuted }}>
+                            {propStart || t('home.pickStart')}
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={{ flex: 1, backgroundColor: Colors.surface, borderWidth: 1.5, borderColor: Colors.border, borderRadius: 10, paddingHorizontal: 12, height: 44, justifyContent: 'center' }}
+                          onPress={() => setShowEndPicker(true)}
+                        >
+                          <Text style={{ fontSize: 14, color: propEnd ? Colors.textPrimary : Colors.textMuted }}>
+                            {propEnd || t('home.pickEnd')}
+                          </Text>
+                        </TouchableOpacity>
                       </View>
                       <View style={{ flexDirection: 'row', gap: 8 }}>
                         <TouchableOpacity
@@ -500,11 +495,11 @@ export default function HomeScreen() {
                             setActionPending(true);
                             proposeNewTime(req.id, propDate, propStart, propEnd)
                               .then(() => { setProposeId(null); return load(); })
-                              .catch(() => Alert.alert('Error', 'Could not propose time. Try again.'))
+                              .catch(() => Alert.alert('', t('home.errPropose')))
                               .finally(() => setActionPending(false));
                           }}
                         >
-                          <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>Send</Text>
+                          <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>{t('home.send')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                           style={[styles.connectBtn, { flex: 1, height: 36, backgroundColor: Colors.border }]}
@@ -513,6 +508,41 @@ export default function HomeScreen() {
                           <Text style={{ color: Colors.textSecondary, fontSize: 13, fontWeight: '600' }}>Cancel</Text>
                         </TouchableOpacity>
                       </View>
+                      {showDatePicker && (
+                        <DateTimePicker
+                          value={propDateObj}
+                          mode="date"
+                          display="default"
+                          onChange={(_, date) => {
+                            setShowDatePicker(false);
+                            if (date) { setPropDateObj(date); setPropDate(fmt(date)); }
+                          }}
+                        />
+                      )}
+                      {showStartPicker && (
+                        <DateTimePicker
+                          value={propStartObj}
+                          mode="time"
+                          display="default"
+                          is24Hour
+                          onChange={(_, date) => {
+                            setShowStartPicker(false);
+                            if (date) { setPropStartObj(date); setPropStart(date.toTimeString().slice(0, 5)); }
+                          }}
+                        />
+                      )}
+                      {showEndPicker && (
+                        <DateTimePicker
+                          value={propEndObj}
+                          mode="time"
+                          display="default"
+                          is24Hour
+                          onChange={(_, date) => {
+                            setShowEndPicker(false);
+                            if (date) { setPropEndObj(date); setPropEnd(date.toTimeString().slice(0, 5)); }
+                          }}
+                        />
+                      )}
                     </View>
                   )}
                 </View>
