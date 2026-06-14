@@ -46,7 +46,7 @@ export async function getTentativeBookings() {
   });
 }
 
-export async function confirmBookingAndAddPatient(appointmentId: string) {
+export async function confirmBookingAndAddPatient(appointmentId: string, note?: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
@@ -103,14 +103,14 @@ export async function confirmBookingAndAddPatient(appointmentId: string) {
     );
   }
 
-  await notifyPatient(supabase, appointmentId, "Appointment Confirmed", "Your appointment has been confirmed by the doctor.");
+  await notifyPatient(supabase, appointmentId, "Appointment Confirmed", note ? `Your appointment has been confirmed by the doctor. Note: ${note}` : "Your appointment has been confirmed by the doctor.");
 
   revalidatePath("/dashboard/schedule");
   revalidatePath("/dashboard/patients");
   return { error: null };
 }
 
-export async function confirmBooking(appointmentId: string) {
+export async function confirmBooking(appointmentId: string, note?: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
@@ -124,13 +124,13 @@ export async function confirmBooking(appointmentId: string) {
   if (error) return { error: error.message };
 
   // Notify patient via push
-  await notifyPatient(supabase, appointmentId, "Appointment Confirmed", "Your appointment has been confirmed by the doctor.");
+  await notifyPatient(supabase, appointmentId, "Appointment Confirmed", note ? `Your appointment has been confirmed by the doctor. Note: ${note}` : "Your appointment has been confirmed by the doctor.");
 
   revalidatePath("/dashboard/schedule");
   return { error: null };
 }
 
-export async function rejectBooking(appointmentId: string) {
+export async function rejectBooking(appointmentId: string, note?: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
@@ -143,7 +143,7 @@ export async function rejectBooking(appointmentId: string) {
 
   if (error) return { error: error.message };
 
-  await notifyPatient(supabase, appointmentId, "Booking Not Available", "The doctor could not accept your booking request.");
+  await notifyPatient(supabase, appointmentId, "Booking Not Available", note ? `The doctor could not accept your booking request. Note: ${note}` : "The doctor could not accept your booking request.");
 
   revalidatePath("/dashboard/schedule");
   return { error: null };
@@ -154,6 +154,7 @@ export async function proposeNewTime(
   proposedDate: string,
   proposedStart: string,
   proposedEnd: string,
+  note?: string,
 ) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -172,7 +173,7 @@ export async function proposeNewTime(
 
   if (error) return { error: error.message };
 
-  await notifyPatient(supabase, appointmentId, "New Time Proposed", `The doctor proposed a new time: ${proposedDate} at ${proposedStart}.`);
+  await notifyPatient(supabase, appointmentId, "New Time Proposed", note ? `The doctor proposed a new time: ${proposedDate} at ${proposedStart}. Note: ${note}` : `The doctor proposed a new time: ${proposedDate} at ${proposedStart}.`);
 
   revalidatePath("/dashboard/schedule");
   return { error: null };

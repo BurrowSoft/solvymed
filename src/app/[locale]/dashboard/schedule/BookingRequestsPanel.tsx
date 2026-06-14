@@ -36,6 +36,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
   const [propStart, setPropStart] = useState("");
   const [propEnd, setPropEnd] = useState("");
 
+  const [notes, setNotes] = useState<Record<string, string>>({});
   // patient info panel toggle + lazy-loaded profiles
   const [infoId, setInfoId] = useState<string | null>(null);
   const [profiles, setProfiles] = useState<Record<string, PatientProfile | null>>({});
@@ -60,21 +61,24 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
   if (!bookings.length) return null;
 
   function handleConfirmClick(b: Booking) {
+    const note = notes[b.id] || undefined;
     if (b.is_new_patient) {
-      startTransition(async () => { await confirmBookingAndAddPatient(b.id); });
+      startTransition(async () => { await confirmBookingAndAddPatient(b.id, note); });
     } else {
-      startTransition(async () => { await confirmBooking(b.id); });
+      startTransition(async () => { await confirmBooking(b.id, note); });
     }
   }
 
   function handleReject(id: string) {
-    startTransition(async () => { await rejectBooking(id); });
+    const note = notes[id] || undefined;
+    startTransition(async () => { await rejectBooking(id, note); });
   }
 
   function handleProposeSubmit(id: string) {
     if (!propDate || !propStart || !propEnd) return;
+    const note = notes[id] || undefined;
     startTransition(async () => {
-      await proposeNewTime(id, propDate, propStart, propEnd);
+      await proposeNewTime(id, propDate, propStart, propEnd, note);
       setProposalId(null);
     });
   }
@@ -149,6 +153,16 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                         {t("reject")}
                       </button>
                     </div>
+                  )}
+
+                  {b.status === "tentative" && (
+                    <textarea
+                      rows={2}
+                      placeholder="Note to patient (optional)"
+                      value={notes[b.id] ?? ""}
+                      onChange={e => setNotes(prev => ({ ...prev, [b.id]: e.target.value }))}
+                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
+                    />
                   )}
                 </div>
               </div>
