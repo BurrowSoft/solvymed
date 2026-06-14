@@ -41,7 +41,7 @@ export default async function AuthConfirmPage({
     }
     // Redirect to /dashboard without a locale prefix — the middleware's
     // geo-redirect will add the correct locale (e.g. /th/dashboard) automatically.
-    redirect("/dashboard");
+    redirect(role === "patient" ? "/discover" : "/dashboard");
   }
 
   // Mobile signup: pass tokens to client for deep-link redirect

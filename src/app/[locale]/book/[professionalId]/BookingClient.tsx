@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { computeSlots, toMinutes } from "@/lib/slots";
+import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
 
 type Procedure = { id: string; name: string; durationMinutes: number; price?: number; paymentType: string };
@@ -317,6 +318,12 @@ export function BookingClient({
       setBookedSlot(selectedSlot);
       setBookedDate(selectedDate);
       setBooked(true);
+      notifyProfessionalOfBooking(
+        professionalId,
+        patientFullName.trim() || patientEmail.split("@")[0],
+        selectedDate,
+        selectedSlot.start,
+      ).catch(() => {});
     } catch {
       setError(t("errorGeneric"));
     } finally {

@@ -36,8 +36,6 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
   const [propStart, setPropStart] = useState("");
   const [propEnd, setPropEnd] = useState("");
 
-  // new-patient confirmation dialog
-  const [newPatientDialogId, setNewPatientDialogId] = useState<string | null>(null);
   // patient info panel toggle + lazy-loaded profiles
   const [infoId, setInfoId] = useState<string | null>(null);
   const [profiles, setProfiles] = useState<Record<string, PatientProfile | null>>({});
@@ -63,20 +61,10 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
 
   function handleConfirmClick(b: Booking) {
     if (b.is_new_patient) {
-      setNewPatientDialogId(b.id);
+      startTransition(async () => { await confirmBookingAndAddPatient(b.id); });
     } else {
       startTransition(async () => { await confirmBooking(b.id); });
     }
-  }
-
-  function handleConfirmOnly(id: string) {
-    setNewPatientDialogId(null);
-    startTransition(async () => { await confirmBooking(id); });
-  }
-
-  function handleConfirmAndAdd(id: string) {
-    setNewPatientDialogId(null);
-    startTransition(async () => { await confirmBookingAndAddPatient(id); });
   }
 
   function handleReject(id: string) {
@@ -90,8 +78,6 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
       setProposalId(null);
     });
   }
-
-  const dialogBooking = newPatientDialogId ? bookings.find(b => b.id === newPatientDialogId) : null;
 
   return (
     <>
@@ -269,47 +255,6 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
         </div>
       </div>
 
-      {/* New-patient confirmation dialog */}
-      {dialogBooking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
-            <div className="mb-1 flex items-center gap-2">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-100">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-violet-600">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-                  <line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
-                </svg>
-              </div>
-              <h3 className="text-base font-bold text-slate-900">{t("dialogTitle")}</h3>
-            </div>
-            <p className="mb-5 text-sm text-slate-500">
-              {t("dialogBody", { name: dialogBooking.patient_name })}
-            </p>
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => handleConfirmAndAdd(dialogBooking.id)}
-                disabled={isPending}
-                className="w-full rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50"
-              >
-                {t("confirmAndAdd")}
-              </button>
-              <button
-                onClick={() => handleConfirmOnly(dialogBooking.id)}
-                disabled={isPending}
-                className="w-full rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50"
-              >
-                {t("confirmOnly")}
-              </button>
-              <button
-                onClick={() => setNewPatientDialogId(null)}
-                className="w-full rounded-xl py-2.5 text-sm text-slate-400 hover:text-slate-600"
-              >
-                {t("cancel")}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
