@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator,
+  View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity, ActivityIndicator,
   Alert, TextInput, Image, useWindowDimensions,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -245,7 +245,11 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </ScrollView>
       ) : role === 'patient' ? (
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, gap: 20, paddingBottom: 32 }}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ padding: 16, gap: 20, paddingBottom: 32 }}
+          refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
+        >
           {/* Pending / proposal requests */}
           {myRequests.length > 0 && (
             <View style={styles.section}>
@@ -348,7 +352,11 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </ScrollView>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, gap: 20, paddingBottom: 32 }}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ padding: 16, gap: 20, paddingBottom: 32 }}
+          refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
+        >
 
           {/* Doctor booking requests */}
           {bookingRequests.length > 0 && (
@@ -406,6 +414,19 @@ export default function HomeScreen() {
                     </View>
                   )}
 
+                  {/* Note to patient */}
+                  {req.status === 'tentative' && (
+                    <TextInput
+                      style={{ backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, fontSize: 13, color: Colors.textPrimary, minHeight: 48 }}
+                      value={bookingNotes[req.id] ?? ''}
+                      onChangeText={text => setBookingNotes(prev => ({ ...prev, [req.id]: text }))}
+                      placeholder={t('home.notePlaceholder')}
+                      placeholderTextColor={Colors.textMuted}
+                      multiline
+                      textAlignVertical="top"
+                    />
+                  )}
+
                   {/* Action buttons — tentative only */}
                   {req.status === 'tentative' && (
                     <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -454,19 +475,6 @@ export default function HomeScreen() {
                         <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>{t('home.reject')}</Text>
                       </TouchableOpacity>
                     </View>
-                  )}
-
-                  {/* Note to patient */}
-                  {req.status === 'tentative' && (
-                    <TextInput
-                      style={{ backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, fontSize: 13, color: Colors.textPrimary, minHeight: 48 }}
-                      value={bookingNotes[req.id] ?? ''}
-                      onChangeText={text => setBookingNotes(prev => ({ ...prev, [req.id]: text }))}
-                      placeholder="Note to patient (optional)"
-                      placeholderTextColor={Colors.textMuted}
-                      multiline
-                      textAlignVertical="top"
-                    />
                   )}
 
                   {/* Inline propose form */}
