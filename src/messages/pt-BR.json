@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "Site em construção. O aplicativo já está no ar — baixe agora e comece a usar.",
   "getApp": "Baixar o app",
   "hero": {
@@ -159,7 +159,10 @@
     "statusCancelled": "Cancelado",
     "statusLate": "Atrasado",
     "statusAbsent": "Ausente",
-    "statusBlocked": "Bloqueado"
+    "statusBlocked": "Bloqueado",
+    "dismiss": "Dispensar",
+    "statusRejected": "Rejeitado",
+    "notePlaceholder": "Nota para o paciente (opcional)"
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -412,7 +415,9 @@
     "dobLabel": "Data de nascimento",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n} min"
+    "durationMin": "{n} min",
+    "customTime": "Horário personalizado",
+    "orCustomTime": "Ou escolha um horário específico"
   },
   "discover": {
     "title": "Agende uma Consulta",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "Agende uma consulta e comece sua jornada de saúde",
     "recentHistory": "Histórico recente",
     "ctaTitle": "Precisa de uma consulta?",
-    "ctaSub": "Encontre clínicas no mapa e agende online"
+    "ctaSub": "Encontre clínicas no mapa e agende online",
+    "accept": "Aceitar",
+    "decline": "Recusar"
   },
   "nav": {
     "overview": "Visão geral",

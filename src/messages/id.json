@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "Website sedang dalam pembangunan. Aplikasi sudah tersedia — unduh sekarang dan mulailah.",
   "getApp": "Unduh Aplikasi",
   "hero": {
@@ -159,7 +159,10 @@
     "statusCancelled": "Dibatalkan",
     "statusLate": "Terlambat",
     "statusAbsent": "Tidak hadir",
-    "statusBlocked": "Diblokir"
+    "statusBlocked": "Diblokir",
+    "dismiss": "Abaikan",
+    "statusRejected": "Ditolak",
+    "notePlaceholder": "Catatan untuk pasien (opsional)"
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -412,7 +415,9 @@
     "dobLabel": "Tanggal lahir",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n} menit"
+    "durationMin": "{n} menit",
+    "customTime": "Waktu khusus",
+    "orCustomTime": "Atau pilih waktu khusus"
   },
   "discover": {
     "title": "Buat Janji",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "Buat janji dan mulai perjalanan kesehatan Anda",
     "recentHistory": "Riwayat terkini",
     "ctaTitle": "Butuh konsultasi?",
-    "ctaSub": "Temukan klinik di peta dan buat janji secara online"
+    "ctaSub": "Temukan klinik di peta dan buat janji secara online",
+    "accept": "Terima",
+    "decline": "Tolak"
   },
   "nav": {
     "overview": "Ringkasan",

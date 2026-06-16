@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "Website im Aufbau. Die App ist bereits verfügbar — jetzt herunterladen und loslegen.",
   "getApp": "App herunterladen",
   "hero": {
@@ -159,7 +159,10 @@
     "statusCancelled": "Abgesagt",
     "statusLate": "Verspätet",
     "statusAbsent": "Abwesend",
-    "statusBlocked": "Gesperrt"
+    "statusBlocked": "Gesperrt",
+    "dismiss": "Verwerfen",
+    "statusRejected": "Abgelehnt",
+    "notePlaceholder": "Notiz an den Patienten (optional)"
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -412,7 +415,9 @@
     "dobLabel": "Geburtsdatum",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n} Min."
+    "durationMin": "{n} Min.",
+    "customTime": "Benutzerdefinierte Zeit",
+    "orCustomTime": "Oder eigene Uhrzeit"
   },
   "discover": {
     "title": "Termin Buchen",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "Buchen Sie einen Termin und starten Sie Ihre Gesundheitsreise",
     "recentHistory": "Kürzliche Termine",
     "ctaTitle": "Brauchen Sie eine Beratung?",
-    "ctaSub": "Kliniken auf der Karte suchen und online buchen"
+    "ctaSub": "Kliniken auf der Karte suchen und online buchen",
+    "accept": "Akzeptieren",
+    "decline": "Ablehnen"
   },
   "nav": {
     "overview": "Übersicht",

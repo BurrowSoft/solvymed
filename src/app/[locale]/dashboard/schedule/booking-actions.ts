@@ -183,6 +183,13 @@ export async function rejectBooking(appointmentId: string, note?: string) {
 
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
 
+  const { data: appt } = await supabase
+    .from("appointments")
+    .select("patient_name, patient_auth_id")
+    .eq("id", appointmentId)
+    .eq("professional_id", effectiveProfId)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("appointments")
     .update({ status: "rejected" })
@@ -191,9 +198,57 @@ export async function rejectBooking(appointmentId: string, note?: string) {
 
   if (error) return { error: error.message };
 
+  // Add patient to patient list (same as confirm/propose)
+  if (appt?.patient_auth_id) {
+    const { data: existingRole } = await supabase
+      .from("user_roles")
+      .select("linked_patient_id")
+      .eq("user_id", appt.patient_auth_id as string)
+      .eq("invited_by_professional_id", effectiveProfId)
+      .maybeSingle();
+
+    if (!existingRole?.linked_patient_id) {
+      const { data: profile } = await supabase
+        .from("patient_profiles")
+        .select("full_name, email, phone, birth_date, cpf")
+        .eq("user_id", appt.patient_auth_id as string)
+        .maybeSingle();
+
+      const patientEmail = (profile?.email as string | null) ?? null;
+      let linkedPatientId: string | null = null;
+      if (patientEmail) {
+        const { data: existingByEmail } = await supabase
+          .from("patients").select("id")
+          .eq("professional_id", effectiveProfId).eq("email", patientEmail).maybeSingle();
+        linkedPatientId = (existingByEmail?.id as string) ?? null;
+      }
+      if (!linkedPatientId) {
+        const { data: newPatient } = await supabase
+          .from("patients")
+          .insert({
+            full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
+            professional_id: effectiveProfId,
+            email: patientEmail ?? undefined,
+            phone: (profile?.phone as string | null) ?? undefined,
+            birth_date: (profile?.birth_date as string | null) ?? undefined,
+            cpf: (profile?.cpf as string | null) ?? undefined,
+          })
+          .select("id").maybeSingle();
+        linkedPatientId = (newPatient?.id as string) ?? null;
+      }
+      if (linkedPatientId) {
+        await supabase.from("user_roles").upsert(
+          { user_id: appt.patient_auth_id, role: "patient", linked_patient_id: linkedPatientId, invited_by_professional_id: effectiveProfId },
+          { onConflict: "user_id" },
+        );
+      }
+    }
+  }
+
   await notifyPatient(supabase, appointmentId, "Booking Not Available", note ? `The doctor could not accept your booking request. Note: ${note}` : "The doctor could not accept your booking request.");
 
   revalidatePath("/dashboard/schedule");
+  revalidatePath("/dashboard/patients");
   return { error: null };
 }
 

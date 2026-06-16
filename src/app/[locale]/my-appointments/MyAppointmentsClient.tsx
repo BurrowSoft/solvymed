@@ -36,11 +36,16 @@ const STATUS_KEY: Record<string, string> = {
 };
 
 function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutate: () => void }) {
-  const t = useTranslations("schedule");
+  const t = useTranslations("myAppointments");
+  const tSchedule = useTranslations("schedule");
   const [pending, startTransition] = useTransition();
   const color = STATUS_COLOR[appt.status] ?? "bg-slate-50 text-slate-500 border-slate-200";
-  const label = STATUS_KEY[appt.status] ? t(STATUS_KEY[appt.status]) : appt.status;
-  const isProposal = appt.status === "proposal" && !!appt.proposed_date;
+  const label = STATUS_KEY[appt.status] ? tSchedule(STATUS_KEY[appt.status]) : appt.status;
+  const isProposal = appt.status === "proposal" && (!!appt.proposed_date || appt.scheduled_by === "professional");
+
+  const displayDate = (isProposal && appt.proposed_date) ? appt.proposed_date : appt.date;
+  const displayStart = (isProposal && appt.proposed_start_time) ? appt.proposed_start_time : appt.start_time;
+  const displayEnd = (isProposal && appt.proposed_end_time) ? appt.proposed_end_time : appt.end_time;
 
   return (
     <div className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 p-5">
@@ -48,9 +53,9 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
         <div className="flex-1 min-w-0">
           <p className="font-bold text-slate-900">{appt.consultation_type}</p>
           <p className="text-sm text-slate-500 mt-0.5">
-            {formatDate(isProposal ? appt.proposed_date! : appt.date)} · {formatTime(isProposal ? appt.proposed_start_time! : appt.start_time)} – {formatTime(isProposal ? appt.proposed_end_time! : appt.end_time)}
+            {formatDate(displayDate)} · {formatTime(displayStart)} – {formatTime(displayEnd)}
           </p>
-          {isProposal && (
+          {isProposal && appt.proposed_date && (
             <p className="text-xs text-slate-400 mt-0.5">
               Originally: {formatDate(appt.date)} · {formatTime(appt.start_time)}
             </p>
@@ -72,14 +77,14 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
             onClick={() => startTransition(async () => { await acceptProposal(appt.id); onMutate(); })}
             className="flex-1 rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50 transition"
           >
-            ✓ Accept
+            {t("accept")}
           </button>
           <button
             disabled={pending}
             onClick={() => startTransition(async () => { await declineProposal(appt.id); onMutate(); })}
             className="flex-1 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-300 hover:text-slate-800 disabled:opacity-50 transition"
           >
-            ✕ Decline
+            {t("decline")}
           </button>
         </div>
       )}

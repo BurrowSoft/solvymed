@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeSlots, toMinutes, fromMinutes } from "@/lib/slots";
+import { computeSlots, toMinutes, fromMinutes, filterPastSlots } from "@/lib/slots";
 import type { WorkingHours } from "@/lib/slots";
 
 // Wednesday 2025-01-08 (index 3 = wed)
@@ -116,5 +116,48 @@ describe("computeSlots", () => {
     slots.forEach((s) => {
       expect(toMinutes(s.end)).toBeLessThanOrEqual(toMinutes("17:00"));
     });
+  });
+});
+
+describe("filterPastSlots", () => {
+  const TODAY = new Date().toISOString().split("T")[0];
+  const FUTURE_DATE = "2099-01-01";
+  const slots = [
+    { start: "09:00", end: "09:30" },
+    { start: "09:30", end: "10:00" },
+    { start: "10:00", end: "10:30" },
+    { start: "10:30", end: "11:00" },
+  ];
+
+  it("returns all slots unchanged for a future date", () => {
+    expect(filterPastSlots(slots, FUTURE_DATE, toMinutes("11:00"))).toEqual(slots);
+  });
+
+  it("filters out past slots when date is today", () => {
+    const nowMins = toMinutes("09:45");  // 9:45 AM
+    const result = filterPastSlots(slots, TODAY, nowMins);
+    const starts = result.map(s => s.start);
+    expect(starts).not.toContain("09:00");
+    expect(starts).not.toContain("09:30");
+    expect(starts).toContain("10:00");
+    expect(starts).toContain("10:30");
+  });
+
+  it("returns empty array when all slots are in the past", () => {
+    const nowMins = toMinutes("23:00");
+    expect(filterPastSlots(slots, TODAY, nowMins)).toEqual([]);
+  });
+
+  it("returns all slots when now is before the first slot", () => {
+    const nowMins = toMinutes("08:00");
+    expect(filterPastSlots(slots, TODAY, nowMins)).toEqual(slots);
+  });
+
+  it("filters strictly (slot start must be AFTER now, not equal)", () => {
+    const nowMins = toMinutes("10:00");
+    const result = filterPastSlots(slots, TODAY, nowMins);
+    // 10:00 start is NOT > 10:00 now, so it should be filtered out
+    expect(result.map(s => s.start)).not.toContain("10:00");
+    expect(result.map(s => s.start)).toContain("10:30");
   });
 });

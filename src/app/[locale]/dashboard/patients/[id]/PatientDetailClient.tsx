@@ -154,7 +154,6 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
     { label: t("profession"), value: patient.profession },
     { label: t("emergencyPhone"), value: patient.emergency_phone },
     { label: t("insurance"), value: patient.convenio_type === "health_plan" ? t("healthPlan") : patient.convenio_type === "particular" ? t("privateInsurance") : null },
-    { label: t("inviteCode"), value: patient.invite_code },
     { label: t("patientSince"), value: new Date(patient.created_at).toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" }) },
   ];
 

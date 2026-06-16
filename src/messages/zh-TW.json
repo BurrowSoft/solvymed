@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "網站建設中。應用程式已上線 — 立即下載開始使用。",
   "getApp": "下載應用程式",
   "hero": {
@@ -159,7 +159,10 @@
     "statusCancelled": "已取消",
     "statusLate": "遲到",
     "statusAbsent": "缺席",
-    "statusBlocked": "已封鎖"
+    "statusBlocked": "已封鎖",
+    "dismiss": "忽略",
+    "statusRejected": "已拒絕",
+    "notePlaceholder": "患者備註（可選）"
   },
   "payments": {
     "thisWeek": "本週",
@@ -412,7 +415,9 @@
     "dobLabel": "出生日期",
     "cpfLabel": "身份證號",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n} 分鐘"
+    "durationMin": "{n} 分鐘",
+    "customTime": "自訂時間",
+    "orCustomTime": "或選擇自訂時間"
   },
   "discover": {
     "title": "預約掛號",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "立即預約，開始您的健康管理",
     "recentHistory": "近期紀錄",
     "ctaTitle": "需要諮詢嗎？",
-    "ctaSub": "在地圖上瀏覽診所並線上預約"
+    "ctaSub": "在地圖上瀏覽診所並線上預約",
+    "accept": "接受",
+    "decline": "拒絕"
   },
   "nav": {
     "overview": "總覽",

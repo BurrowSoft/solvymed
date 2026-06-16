@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "Sito in costruzione. L'app è già disponibile — scaricala subito e inizia.",
   "getApp": "Scarica l'app",
   "hero": {
@@ -159,7 +159,10 @@
     "statusCancelled": "Annullato",
     "statusLate": "In ritardo",
     "statusAbsent": "Assente",
-    "statusBlocked": "Bloccato"
+    "statusBlocked": "Bloccato",
+    "dismiss": "Ignora",
+    "statusRejected": "Rifiutato",
+    "notePlaceholder": "Nota per il paziente (opzionale)"
   },
   "payments": {
     "thisWeek": "Questa settimana",
@@ -412,7 +415,9 @@
     "dobLabel": "Data di nascita",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n} min"
+    "durationMin": "{n} min",
+    "customTime": "Orario personalizzato",
+    "orCustomTime": "O scegli un orario"
   },
   "discover": {
     "title": "Prenota un Appuntamento",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "Prenota un appuntamento e inizia il tuo percorso di salute",
     "recentHistory": "Cronologia recente",
     "ctaTitle": "Hai bisogno di una consulenza?",
-    "ctaSub": "Sfoglia le cliniche sulla mappa e prenota online"
+    "ctaSub": "Sfoglia le cliniche sulla mappa e prenota online",
+    "accept": "Accetta",
+    "decline": "Rifiuta"
   },
   "nav": {
     "overview": "Panoramica",

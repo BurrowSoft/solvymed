@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "เว็บไซต์อยู่ระหว่างการพัฒนา แอปพร้อมใช้งานแล้ว — ดาวน์โหลดได้เลยทันที",
   "getApp": "ดาวน์โหลดแอป",
   "hero": {
@@ -159,7 +159,10 @@
     "statusCancelled": "ยกเลิกแล้ว",
     "statusLate": "มาสาย",
     "statusAbsent": "ขาดนัด",
-    "statusBlocked": "ปิดตาราง"
+    "statusBlocked": "ปิดตาราง",
+    "dismiss": "ยกเลิก",
+    "statusRejected": "ถูกปฏิเสธ",
+    "notePlaceholder": "หมายเหตุถึงผู้ป่วย (ไม่บังคับ)"
   },
   "payments": {
     "thisWeek": "สัปดาห์นี้",
@@ -412,7 +415,9 @@
     "dobLabel": "วันเกิด",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n} นาที"
+    "durationMin": "{n} นาที",
+    "customTime": "เวลาที่กำหนดเอง",
+    "orCustomTime": "หรือเลือกเวลาเอง"
   },
   "discover": {
     "title": "จองการนัดหมาย",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "นัดหมายและเริ่มต้นการดูแลสุขภาพของคุณ",
     "recentHistory": "ประวัติล่าสุด",
     "ctaTitle": "ต้องการคำปรึกษาหรือไม่?",
-    "ctaSub": "ค้นหาคลินิกบนแผนที่และนัดหมายออนไลน์"
+    "ctaSub": "ค้นหาคลินิกบนแผนที่และนัดหมายออนไลน์",
+    "accept": "ยอมรับ",
+    "decline": "ปฏิเสธ"
   },
   "nav": {
     "overview": "ภาพรวม",

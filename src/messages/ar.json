@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "الموقع قيد الإنشاء. التطبيق متاح الآن — حمّله الآن وابدأ.",
   "getApp": "احصل على التطبيق",
   "hero": {
@@ -159,7 +159,10 @@
     "statusCancelled": "ملغى",
     "statusLate": "متأخر",
     "statusAbsent": "غائب",
-    "statusBlocked": "محجوب"
+    "statusBlocked": "محجوب",
+    "dismiss": "رفض",
+    "statusRejected": "مرفوض",
+    "notePlaceholder": "ملاحظة للمريض (اختياري)"
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",
@@ -412,7 +415,9 @@
     "dobLabel": "تاريخ الميلاد",
     "cpfLabel": "رقم التعريف",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n} دقيقة"
+    "durationMin": "{n} دقيقة",
+    "customTime": "وقت مخصص",
+    "orCustomTime": "أو اختر وقتاً مخصصاً"
   },
   "discover": {
     "title": "احجز موعداً",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "احجز موعداً وابدأ رحلتك الصحية",
     "recentHistory": "التاريخ الأخير",
     "ctaTitle": "هل تحتاج إلى استشارة؟",
-    "ctaSub": "تصفح العيادات على الخريطة واحجز عبر الإنترنت"
+    "ctaSub": "تصفح العيادات على الخريطة واحجز عبر الإنترنت",
+    "accept": "قبول",
+    "decline": "رفض"
   },
   "nav": {
     "overview": "نظرة عامة",

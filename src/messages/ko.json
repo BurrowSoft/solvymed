@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "웹사이트는 현재 구축 중입니다. 앱은 이미 출시되었습니다 — 지금 다운로드하세요.",
   "getApp": "앱 다운로드",
   "hero": {
@@ -159,7 +159,10 @@
     "statusCancelled": "취소됨",
     "statusLate": "지각",
     "statusAbsent": "결석",
-    "statusBlocked": "차단됨"
+    "statusBlocked": "차단됨",
+    "dismiss": "무시",
+    "statusRejected": "거절됨",
+    "notePlaceholder": "환자에게 메모 (선택사항)"
   },
   "payments": {
     "thisWeek": "이번 주",
@@ -412,7 +415,9 @@
     "dobLabel": "생년월일",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n}분"
+    "durationMin": "{n}분",
+    "customTime": "사용자 지정 시간",
+    "orCustomTime": "또는 시간 직접 선택"
   },
   "discover": {
     "title": "예약하기",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "예약을 하고 건강 관리를 시작하세요",
     "recentHistory": "최근 내역",
     "ctaTitle": "진료가 필요하신가요?",
-    "ctaSub": "지도에서 클리닉을 찾고 온라인으로 예약하세요"
+    "ctaSub": "지도에서 클리닉을 찾고 온라인으로 예약하세요",
+    "accept": "수락",
+    "decline": "거절"
   },
   "nav": {
     "overview": "홈",

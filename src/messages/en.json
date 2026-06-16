@@ -159,7 +159,10 @@
     "statusCancelled": "Cancelled",
     "statusLate": "Late",
     "statusAbsent": "Absent",
-    "statusBlocked": "Blocked"
+    "statusBlocked": "Blocked",
+    "dismiss": "Dismiss",
+    "statusRejected": "Rejected",
+    "notePlaceholder": "Note to patient (optional)"
   },
   "payments": {
     "thisWeek": "This week",
@@ -412,7 +415,9 @@
     "dobLabel": "Date of birth",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n} min"
+    "durationMin": "{n} min",
+    "customTime": "Custom time",
+    "orCustomTime": "Or pick a custom time"
   },
   "discover": {
     "title": "Book an Appointment",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "Book an appointment and start your healthcare journey",
     "recentHistory": "Recent history",
     "ctaTitle": "Need a consultation?",
-    "ctaSub": "Browse clinics on the map and book online"
+    "ctaSub": "Browse clinics on the map and book online",
+    "accept": "Accept",
+    "decline": "Decline"
   },
   "nav": {
     "overview": "Overview",

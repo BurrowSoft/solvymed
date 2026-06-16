@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "Sitio web en construcción. La app ya está disponible — descárgala ahora y empieza.",
   "getApp": "Descargar la app",
   "hero": {
@@ -159,7 +159,10 @@
     "statusCancelled": "Cancelado",
     "statusLate": "Tardío",
     "statusAbsent": "Ausente",
-    "statusBlocked": "Bloqueado"
+    "statusBlocked": "Bloqueado",
+    "dismiss": "Descartar",
+    "statusRejected": "Rechazado",
+    "notePlaceholder": "Nota para el paciente (opcional)"
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -412,7 +415,9 @@
     "dobLabel": "Fecha de nacimiento",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n} min"
+    "durationMin": "{n} min",
+    "customTime": "Hora personalizada",
+    "orCustomTime": "O elige una hora"
   },
   "discover": {
     "title": "Reservar una Cita",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "Reserve una cita y comience su viaje de salud",
     "recentHistory": "Historial reciente",
     "ctaTitle": "¿Necesita una consulta?",
-    "ctaSub": "Explore clínicas en el mapa y reserve en línea"
+    "ctaSub": "Explore clínicas en el mapa y reserve en línea",
+    "accept": "Aceptar",
+    "decline": "Rechazar"
   },
   "nav": {
     "overview": "Inicio",

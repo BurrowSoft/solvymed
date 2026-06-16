@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "Site en cours de construction. L'app est déjà disponible — téléchargez-la maintenant.",
   "getApp": "Télécharger l'app",
   "hero": {
@@ -159,7 +159,10 @@
     "statusCancelled": "Annulé",
     "statusLate": "En retard",
     "statusAbsent": "Absent",
-    "statusBlocked": "Bloqué"
+    "statusBlocked": "Bloqué",
+    "dismiss": "Ignorer",
+    "statusRejected": "Refusé",
+    "notePlaceholder": "Note au patient (facultatif)"
   },
   "payments": {
     "thisWeek": "Cette semaine",
@@ -412,7 +415,9 @@
     "dobLabel": "Date de naissance",
     "cpfLabel": "Numéro d'identification",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n} min"
+    "durationMin": "{n} min",
+    "customTime": "Heure personnalisée",
+    "orCustomTime": "Ou choisir une heure"
   },
   "discover": {
     "title": "Prendre un Rendez-vous",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "Prenez rendez-vous et commencez votre parcours de santé",
     "recentHistory": "Historique récent",
     "ctaTitle": "Besoin d'une consultation ?",
-    "ctaSub": "Parcourez les cliniques sur la carte et réservez en ligne"
+    "ctaSub": "Parcourez les cliniques sur la carte et réservez en ligne",
+    "accept": "Accepter",
+    "decline": "Refuser"
   },
   "nav": {
     "overview": "Accueil",

@@ -1,6 +1,41 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
+// Mock next-intl to avoid requiring NextIntlClientProvider
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const translations: Record<string, string> = {
+      bookingRequests: 'Booking Requests',
+      newPatient: 'New patient',
+      waitingForResponse: 'Waiting for patient response',
+      patientInfo: 'Patient Information',
+      confirm: 'Confirm',
+      proposeNewTime: 'Propose new time',
+      reject: 'Reject',
+      loadingProfile: 'Loading patient profile…',
+      infoName: 'Name',
+      infoEmail: 'Email',
+      infoPhone: 'Phone',
+      infoDob: 'Date of birth',
+      infoCpf: 'CPF',
+      infoNoProfile: 'patient has not completed their profile yet.',
+      infoConsultation: 'Consultation',
+      notInList: 'Not yet in your patient list',
+      existingPatient: 'Existing patient',
+      viewProfile: 'View full profile →',
+      proposeFormTitle: 'Propose a new time',
+      proposeDate: 'Date',
+      proposeStart: 'Start',
+      proposeEnd: 'End',
+      send: 'Send',
+      cancel: 'Cancel',
+      dismiss: 'Dismiss',
+      notePlaceholder: 'Note to patient (optional)',
+    };
+    return translations[key] ?? key;
+  },
+}));
+
 // Mock server actions before importing the component
 vi.mock('@/app/[locale]/dashboard/schedule/booking-actions', () => ({
   confirmBooking: vi.fn().mockResolvedValue(undefined),
@@ -25,12 +60,23 @@ import * as bookingActions from '@/app/[locale]/dashboard/schedule/booking-actio
 const TENTATIVE_BOOKING = {
   id: 'b1',
   patient_name: 'Maria Silva',
-  date: '2026-06-15',
+  date: '2030-01-15',
   start_time: '09:00:00',
   end_time: '10:00:00',
   consultation_type: 'Initial Consultation',
   status: 'tentative',
   notes: 'First visit',
+};
+
+const PAST_BOOKING = {
+  id: 'b-past',
+  patient_name: 'Ana Costa',
+  date: '2020-01-01',
+  start_time: '09:00:00',
+  end_time: '10:00:00',
+  consultation_type: 'Follow-up',
+  status: 'tentative',
+  notes: null,
 };
 
 const PROPOSAL_BOOKING = {
@@ -59,7 +105,7 @@ describe('BookingRequestsPanel', () => {
   it('renders patient name, date and time for a tentative booking', () => {
     render(<BookingRequestsPanel bookings={[TENTATIVE_BOOKING]} />);
     expect(screen.getByText('Maria Silva')).toBeInTheDocument();
-    expect(screen.getByText(/2026-06-15/)).toBeInTheDocument();
+    expect(screen.getByText(/2030-01-15/)).toBeInTheDocument();
     expect(screen.getByText('Initial Consultation')).toBeInTheDocument();
   });
 
@@ -147,5 +193,33 @@ describe('BookingRequestsPanel', () => {
     await waitFor(() => expect(screen.getByText(/patient has not completed/i)).toBeInTheDocument());
     fireEvent.click(toggleBtn);
     expect(screen.queryByText(/patient has not completed/i)).not.toBeInTheDocument();
+  });
+
+  it('renders obsolete card with reduced opacity indicator', () => {
+    render(<BookingRequestsPanel bookings={[PAST_BOOKING]} />);
+    // The card container should exist — we verify it renders without crashing
+    expect(screen.getByText('Ana Costa')).toBeInTheDocument();
+  });
+
+  it('shows Propose and Dismiss buttons (not Confirm/Reject) for obsolete cards', () => {
+    render(<BookingRequestsPanel bookings={[PAST_BOOKING]} />);
+    expect(screen.queryByRole('button', { name: 'Confirm' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Reject' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Propose new time' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Dismiss' })).toBeInTheDocument();
+  });
+
+  it('calls rejectBooking when Dismiss is clicked on an obsolete card', async () => {
+    render(<BookingRequestsPanel bookings={[PAST_BOOKING]} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
+    await waitFor(() => expect(bookingActions.rejectBooking).toHaveBeenCalledWith('b-past', undefined));
+  });
+
+  it('sorts non-obsolete cards before obsolete cards', () => {
+    const futureBooking = { ...TENTATIVE_BOOKING, id: 'b-future', date: '2030-01-01' };
+    render(<BookingRequestsPanel bookings={[PAST_BOOKING, futureBooking]} />);
+    const names = screen.getAllByText(/Maria Silva|Ana Costa/).map(el => el.textContent);
+    expect(names[0]).toBe('Maria Silva');  // future card first
+    expect(names[1]).toBe('Ana Costa');   // past card last
   });
 });

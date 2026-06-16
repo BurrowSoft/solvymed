@@ -13,6 +13,12 @@ export function fromMinutes(mins: number): string {
   return `${String(Math.floor(mins / 60)).padStart(2, "0")}:${String(mins % 60).padStart(2, "0")}`;
 }
 
+export function filterPastSlots(slots: TimeSlot[], date: string, nowMinutes: number): TimeSlot[] {
+  const today = new Date().toISOString().split("T")[0];
+  if (date !== today) return slots;
+  return slots.filter(s => toMinutes(s.start) > nowMinutes);
+}
+
 export function computeSlots(
   date: string,
   durationMinutes: number,

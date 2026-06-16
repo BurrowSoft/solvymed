@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "网站正在建设中。应用程序已上线 — 立即下载开始使用。",
   "getApp": "下载应用",
   "hero": {
@@ -159,7 +159,10 @@
     "statusCancelled": "已取消",
     "statusLate": "迟到",
     "statusAbsent": "缺席",
-    "statusBlocked": "已屏蔽"
+    "statusBlocked": "已屏蔽",
+    "dismiss": "忽略",
+    "statusRejected": "已拒绝",
+    "notePlaceholder": "患者备注（可选）"
   },
   "payments": {
     "thisWeek": "本周",
@@ -412,7 +415,9 @@
     "dobLabel": "出生日期",
     "cpfLabel": "身份证号",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n} 分钟"
+    "durationMin": "{n} 分钟",
+    "customTime": "自定义时间",
+    "orCustomTime": "或选择自定义时间"
   },
   "discover": {
     "title": "预约挂号",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "立即预约，开启您的健康之旅",
     "recentHistory": "近期记录",
     "ctaTitle": "需要就诊吗？",
-    "ctaSub": "在地图上浏览诊所并在线预约"
+    "ctaSub": "在地图上浏览诊所并在线预约",
+    "accept": "接受",
+    "decline": "拒绝"
   },
   "nav": {
     "overview": "总览",

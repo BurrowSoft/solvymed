@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "Trang web đang được xây dựng. Ứng dụng đã có mặt — tải xuống ngay và bắt đầu.",
   "getApp": "Tải ứng dụng",
   "hero": {
@@ -159,7 +159,10 @@
     "statusCancelled": "Đã hủy",
     "statusLate": "Trễ",
     "statusAbsent": "Vắng mặt",
-    "statusBlocked": "Đã chặn"
+    "statusBlocked": "Đã chặn",
+    "dismiss": "Bỏ qua",
+    "statusRejected": "Bị từ chối",
+    "notePlaceholder": "Ghi chú cho bệnh nhân (tùy chọn)"
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -412,7 +415,9 @@
     "dobLabel": "Ngày sinh",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n} phút"
+    "durationMin": "{n} phút",
+    "customTime": "Thời gian tùy chỉnh",
+    "orCustomTime": "Hoặc chọn giờ khác"
   },
   "discover": {
     "title": "Đặt Lịch Khám",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "Đặt lịch hẹn và bắt đầu hành trình sức khỏe của bạn",
     "recentHistory": "Lịch sử gần đây",
     "ctaTitle": "Cần tư vấn?",
-    "ctaSub": "Tìm phòng khám trên bản đồ và đặt lịch trực tuyến"
+    "ctaSub": "Tìm phòng khám trên bản đồ và đặt lịch trực tuyến",
+    "accept": "Chấp nhận",
+    "decline": "Từ chối"
   },
   "nav": {
     "overview": "Tổng quan",

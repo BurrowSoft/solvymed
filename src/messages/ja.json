@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "ウェブサイトは現在構築中です。アプリはすでに公開中 — 今すぐダウンロードして始めましょう。",
   "getApp": "アプリを入手",
   "hero": {
@@ -159,7 +159,10 @@
     "statusCancelled": "キャンセル済み",
     "statusLate": "遅刻",
     "statusAbsent": "欠席",
-    "statusBlocked": "ブロック済み"
+    "statusBlocked": "ブロック済み",
+    "dismiss": "却下",
+    "statusRejected": "拒否",
+    "notePlaceholder": "患者へのメモ（任意）"
   },
   "payments": {
     "thisWeek": "今週",
@@ -412,7 +415,9 @@
     "dobLabel": "生年月日",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
-    "durationMin": "{n}分"
+    "durationMin": "{n}分",
+    "customTime": "カスタム時間",
+    "orCustomTime": "または時間を指定する"
   },
   "discover": {
     "title": "予約する",
@@ -505,7 +510,9 @@
     "noUpcomingSub": "予約をして、健康管理を始めましょう",
     "recentHistory": "最近の履歴",
     "ctaTitle": "診察が必要ですか？",
-    "ctaSub": "地図でクリニックを探してオンライン予約"
+    "ctaSub": "地図でクリニックを探してオンライン予約",
+    "accept": "承諾する",
+    "decline": "断る"
   },
   "nav": {
     "overview": "ホーム",

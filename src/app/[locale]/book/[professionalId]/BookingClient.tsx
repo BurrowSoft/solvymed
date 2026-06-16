@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import { computeSlots, toMinutes } from "@/lib/slots";
+import { computeSlots, toMinutes, filterPastSlots } from "@/lib/slots";
 import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
 
@@ -65,6 +65,12 @@ function getDateFormat(locale: string): string {
 const DAYS_AHEAD = 14;
 const CONSULT_TYPES = ["Consultation", "Follow-up", "Exam Review", "Procedure", "Emergency"] as const;
 
+function addMins(hhmm: string, mins: number): string {
+  const [h, m] = hhmm.split(":").map(Number);
+  const total = h * 60 + m + mins;
+  return `${String(Math.floor(total / 60) % 24).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+}
+
 function buildDays() {
   return Array.from({ length: DAYS_AHEAD }, (_, i) => {
     const d = new Date();
@@ -103,7 +109,9 @@ async function fetchSlots(
       end: toMinutes(row.slot_end as string),
     }),
   );
-  return computeSlots(date, durationMinutes, workingHours, busyRanges);
+  const slots = computeSlots(date, durationMinutes, workingHours, busyRanges);
+  const now = new Date();
+  return filterPastSlots(slots, date, now.getHours() * 60 + now.getMinutes());
 }
 
 export function BookingClient({
@@ -154,6 +162,8 @@ export function BookingClient({
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
+  const [showCustomTime, setShowCustomTime] = useState(false);
+  const [customTimeValue, setCustomTimeValue] = useState("");
 
   const [consultType, setConsultType] = useState("");
   const [isOther, setIsOther] = useState(false);
@@ -527,12 +537,55 @@ export function BookingClient({
                   {slots.map((slot) => (
                     <button
                       key={slot.start}
-                      onClick={() => setSelectedSlot(slot)}
-                      className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${selectedSlot?.start === slot.start ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
+                      onClick={() => { setSelectedSlot(slot); setShowCustomTime(false); setCustomTimeValue(""); }}
+                      className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${selectedSlot?.start === slot.start && !showCustomTime ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
                     >
                       {formatTime(slot.start)}
                     </button>
                   ))}
+                </div>
+              )}
+            </div>
+
+            {/* Custom time */}
+            <div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowCustomTime(v => !v);
+                  if (showCustomTime) {
+                    setCustomTimeValue("");
+                    setSelectedSlot(null);
+                  }
+                }}
+                className="flex items-center gap-1.5 text-sm font-semibold text-teal-600 hover:text-teal-700 transition"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                  <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                </svg>
+                {t("orCustomTime")}
+              </button>
+              {showCustomTime && (
+                <div className="mt-2 flex items-center gap-3">
+                  <input
+                    type="time"
+                    value={customTimeValue}
+                    onChange={e => {
+                      const val = e.target.value;
+                      setCustomTimeValue(val);
+                      if (val) {
+                        setSelectedSlot({ start: val, end: addMins(val, duration) });
+                      } else {
+                        setSelectedSlot(null);
+                      }
+                    }}
+                    className="rounded-xl border-2 border-teal-500 bg-white px-4 py-2.5 text-sm font-semibold text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                  />
+                  {customTimeValue && (
+                    <span className="text-xs text-slate-400">
+                      {customTimeValue} → {addMins(customTimeValue, duration)}
+                    </span>
+                  )}
                 </div>
               )}
             </div>

@@ -60,6 +60,22 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
 
   if (!bookings.length) return null;
 
+  const now = new Date();
+  const todayStr = now.toISOString().split("T")[0];
+  const nowHHMM = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+
+  function isObsolete(b: Booking): boolean {
+    return b.date < todayStr || (b.date === todayStr && b.end_time.slice(0, 5) < nowHHMM);
+  }
+
+  const sortedBookings = [...bookings].sort((a, b) => {
+    const aObs = isObsolete(a) ? 1 : 0;
+    const bObs = isObsolete(b) ? 1 : 0;
+    if (aObs !== bObs) return aObs - bObs;
+    if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+    return a.start_time < b.start_time ? -1 : 1;
+  });
+
   function handleConfirmClick(b: Booking) {
     const note = notes[b.id] || undefined;
     startTransition(async () => { await confirmBookingAndAddPatient(b.id, note); });
@@ -90,8 +106,10 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
         </h2>
 
         <div className="flex flex-col gap-3">
-          {bookings.map(b => (
-            <div key={b.id} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          {sortedBookings.map(b => {
+            const obsolete = isObsolete(b);
+            return (
+            <div key={b.id} className={`rounded-xl border border-slate-200 bg-white p-4 shadow-sm${obsolete ? " opacity-45" : ""}`}>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -125,6 +143,25 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                     {t("patientInfo")}
                   </button>
 
+                  {obsolete ? (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setProposalId(proposalId === b.id ? null : b.id)}
+                        disabled={isPending}
+                        className="rounded-lg border border-amber-400 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-100 disabled:opacity-50"
+                      >
+                        {t("proposeNewTime")}
+                      </button>
+                      <button
+                        onClick={() => startTransition(async () => { await rejectBooking(b.id, undefined); })}
+                        disabled={isPending}
+                        className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 disabled:opacity-50"
+                      >
+                        {t("dismiss")}
+                      </button>
+                    </div>
+                  ) : (
+                    <>
                   {b.status === "tentative" && (
                     <div className="flex gap-2">
                       <button
@@ -154,11 +191,13 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                   {b.status === "tentative" && (
                     <textarea
                       rows={2}
-                      placeholder="Note to patient (optional)"
+                      placeholder={t("notePlaceholder")}
                       value={notes[b.id] ?? ""}
                       onChange={e => setNotes(prev => ({ ...prev, [b.id]: e.target.value }))}
                       className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
                     />
+                  )}
+                    </>
                   )}
                 </div>
               </div>
@@ -261,7 +300,8 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                 </div>
               )}
             </div>
-          ))}
+          );
+          })}
         </div>
       </div>
 
