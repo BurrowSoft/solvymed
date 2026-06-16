@@ -558,12 +558,12 @@ export function BookingClient({
                     setSelectedSlot(null);
                   }
                 }}
-                className="flex items-center gap-1.5 text-sm font-semibold text-teal-600 hover:text-teal-700 transition"
+                className={`flex items-center gap-1.5 text-sm font-semibold transition ${showCustomTime && customTimeValue ? "text-teal-800 underline underline-offset-2" : "text-teal-600 hover:text-teal-700"}`}
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
                   <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
                 </svg>
-                {t("orCustomTime")}
+                {showCustomTime && customTimeValue ? `${t("orCustomTime")}: ${customTimeValue} → ${addMins(customTimeValue, duration)}` : t("orCustomTime")}
               </button>
               {showCustomTime && (
                 <div className="mt-2 flex items-center gap-3">
