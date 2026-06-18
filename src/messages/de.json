@@ -534,4 +534,27 @@
     "body": "Bitte aktualisieren Sie die Seite, um die neueste Version von SolvyMed zu laden.",
     "reload": "Seite aktualisieren"
   }
+, "subscription": {
+    "planName": "SolvyMed Pro",
+    "perMonth": "Monat",
+    "planSubtitle": "Jederzeit kündbar. 15 Tage kostenlos für neue Konten.",
+    "feature1": "Unbegrenzte Termine und Planung",
+    "feature2": "Patientenakten, Rezepte und Befunde",
+    "feature3": "Umsatzberichte und Zahlungsverfolgung",
+    "feature4": "Automatische Terminerinnerungen",
+    "feature5": "Zugang für Ihre Sekretärinnen inklusive",
+    "payPix": "Mit Pix bezahlen",
+    "payPixSub": "Sofortige Zahlung via Pix",
+    "payCard": "Mit Karte abonnieren",
+    "payCardSub": "Visa, Mastercard, American Express",
+    "or": "oder",
+    "cancelAnytime": "Jederzeit kündbar. Keine Verpflichtungen.",
+    "successMessage": "Abonnement aktiviert! Willkommen bei SolvyMed Pro.",
+    "trialDaysLeft": "Sie haben noch {n} Tage in Ihrer kostenlosen Testphase.",
+    "trialExpired": "Ihre Testphase ist abgelaufen. Abonnieren Sie, um fortzufahren.",
+    "trialBannerPrefix": "Testphase:",
+    "trialBannerDay": "Tag übrig",
+    "trialBannerDays": "Tage übrig",
+    "trialBannerCta": "Jetzt abonnieren"
+  }
 }

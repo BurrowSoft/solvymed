@@ -534,4 +534,27 @@
     "body": "SolvyMedの最新バージョンを読み込むにはページを更新してください。",
     "reload": "ページを更新"
   }
+, "subscription": {
+    "planName": "SolvyMed Pro",
+    "perMonth": "月",
+    "planSubtitle": "いつでもキャンセル可能。新規アカウントは15日間無料トライアル。",
+    "feature1": "無制限の予約とスケジュール管理",
+    "feature2": "患者記録、処方箋、検査",
+    "feature3": "収益レポートと支払い追跡",
+    "feature4": "自動予約リマインダー",
+    "feature5": "受付スタッフのアクセス込み",
+    "payPix": "Pixで支払う",
+    "payPixSub": "Pixによる即時支払い",
+    "payCard": "カードで購読",
+    "payCardSub": "Visa、Mastercard、American Express",
+    "or": "または",
+    "cancelAnytime": "いつでもキャンセル可能。縛りなし。",
+    "successMessage": "購読が有効化されました！SolvyMed Proへようこそ。",
+    "trialDaysLeft": "無料トライアルの残り日数: {n}日",
+    "trialExpired": "無料トライアルが終了しました。続けるには購読してください。",
+    "trialBannerPrefix": "無料トライアル:",
+    "trialBannerDay": "日残り",
+    "trialBannerDays": "日残り",
+    "trialBannerCta": "今すぐ購読"
+  }
 }

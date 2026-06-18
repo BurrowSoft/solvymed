@@ -534,4 +534,27 @@
     "body": "Please refresh to load the latest version of SolvyMed.",
     "reload": "Refresh Page"
   }
+, "subscription": {
+    "planName": "SolvyMed Pro",
+    "perMonth": "month",
+    "planSubtitle": "Cancel anytime. 15-day free trial for new accounts.",
+    "feature1": "Unlimited appointments & scheduling",
+    "feature2": "Patient records, prescriptions & exams",
+    "feature3": "Revenue reports & payment tracking",
+    "feature4": "Automated appointment reminders",
+    "feature5": "Includes access for your secretaries",
+    "payPix": "Pay with Pix",
+    "payPixSub": "Instant payment, Brazil only",
+    "payCard": "Subscribe with Card",
+    "payCardSub": "Visa, Mastercard, American Express",
+    "or": "or",
+    "cancelAnytime": "Cancel anytime. No commitments.",
+    "successMessage": "Subscription activated! Welcome to SolvyMed Pro.",
+    "trialDaysLeft": "You have {n} days left in your free trial.",
+    "trialExpired": "Your free trial has ended. Subscribe to continue.",
+    "trialBannerPrefix": "Free trial:",
+    "trialBannerDay": "day left",
+    "trialBannerDays": "days left",
+    "trialBannerCta": "Subscribe Now"
+  }
 }

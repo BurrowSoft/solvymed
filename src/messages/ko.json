@@ -534,4 +534,27 @@
     "body": "SolvyMed의 최신 버전을 로드하려면 페이지를 새로 고침하세요.",
     "reload": "페이지 새로 고침"
   }
+, "subscription": {
+    "planName": "SolvyMed Pro",
+    "perMonth": "월",
+    "planSubtitle": "언제든지 취소 가능. 신규 계정은 15일 무료 체험.",
+    "feature1": "무제한 예약 및 일정 관리",
+    "feature2": "환자 기록, 처방전, 검사",
+    "feature3": "수익 보고서 및 결제 추적",
+    "feature4": "자동 예약 알림",
+    "feature5": "비서 접근 포함",
+    "payPix": "Pix로 결제",
+    "payPixSub": "Pix를 통한 즉시 결제",
+    "payCard": "카드로 구독",
+    "payCardSub": "Visa, Mastercard, American Express",
+    "or": "또는",
+    "cancelAnytime": "언제든지 취소 가능. 약정 없음.",
+    "successMessage": "구독이 활성화되었습니다! SolvyMed Pro에 오신 것을 환영합니다.",
+    "trialDaysLeft": "무료 체험 기간이 {n}일 남았습니다.",
+    "trialExpired": "무료 체험 기간이 종료되었습니다. 계속하려면 구독하세요.",
+    "trialBannerPrefix": "무료 체험:",
+    "trialBannerDay": "일 남음",
+    "trialBannerDays": "일 남음",
+    "trialBannerCta": "지금 구독"
+  }
 }

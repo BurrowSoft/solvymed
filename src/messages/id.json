@@ -534,4 +534,27 @@
     "body": "Muat ulang halaman untuk memuat versi terbaru SolvyMed.",
     "reload": "Muat Ulang Halaman"
   }
+, "subscription": {
+    "planName": "SolvyMed Pro",
+    "perMonth": "bulan",
+    "planSubtitle": "Batalkan kapan saja. 15 hari uji coba gratis untuk akun baru.",
+    "feature1": "Janji temu dan penjadwalan tak terbatas",
+    "feature2": "Rekam medis, resep, dan pemeriksaan",
+    "feature3": "Laporan pendapatan dan pelacakan pembayaran",
+    "feature4": "Pengingat janji temu otomatis",
+    "feature5": "Akses untuk sekretaris termasuk",
+    "payPix": "Bayar dengan Pix",
+    "payPixSub": "Pembayaran instan via Pix",
+    "payCard": "Berlangganan dengan Kartu",
+    "payCardSub": "Visa, Mastercard, American Express",
+    "or": "atau",
+    "cancelAnytime": "Batalkan kapan saja. Tanpa komitmen.",
+    "successMessage": "Langganan diaktifkan! Selamat datang di SolvyMed Pro.",
+    "trialDaysLeft": "Anda memiliki {n} hari tersisa dalam uji coba gratis.",
+    "trialExpired": "Uji coba gratis Anda telah berakhir. Berlangganan untuk melanjutkan.",
+    "trialBannerPrefix": "Uji coba gratis:",
+    "trialBannerDay": "hari tersisa",
+    "trialBannerDays": "hari tersisa",
+    "trialBannerCta": "Berlangganan Sekarang"
+  }
 }

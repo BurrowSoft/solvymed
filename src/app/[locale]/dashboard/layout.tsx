@@ -3,7 +3,9 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { ReloadButton } from "@/components/ReloadButton";
+import { TrialBanner } from "@/components/TrialBanner";
 import { getTranslations } from "next-intl/server";
+import { isAccessAllowed, trialDaysRemaining, type EffectiveSub } from "@/lib/subscription";
 
 function isVersionBelow(current: string, minimum: string): boolean {
   const parse = (v: string) => v.split(".").map(n => parseInt(n, 10) || 0);
@@ -65,6 +67,18 @@ export default async function DashboardLayout({
   }
   // ──────────────────────────────────────────────────────────────────────────
 
+  // ── Subscription gate ───────────────────────────────────────────────────────
+  const { data: subRows } = await supabase.rpc("get_effective_subscription", { p_user_id: user.id });
+  const sub = (subRows?.[0] ?? null) as EffectiveSub | null;
+
+  if (sub && !isAccessAllowed(sub)) {
+    redirect(`/${locale === "en" ? "" : locale + "/"}subscribe`);
+  }
+
+  const daysLeft = trialDaysRemaining(sub);
+  const showTrialBanner = daysLeft !== null && daysLeft <= 7;
+  // ──────────────────────────────────────────────────────────────────────────
+
   const { data: professional } = await supabase
     .from("professionals")
     .select("full_name, photo_url")
@@ -72,6 +86,17 @@ export default async function DashboardLayout({
     .maybeSingle();
 
   const firstName = professional?.full_name?.split(" ")[0] ?? user.email?.split("@")[0] ?? "Doctor";
+
+  let trialBannerLabels = { prefix: "", day: "day", days: "days", cta: "Subscribe" };
+  if (showTrialBanner) {
+    const t = await getTranslations({ locale, namespace: "subscription" });
+    trialBannerLabels = {
+      prefix: t("trialBannerPrefix"),
+      day: t("trialBannerDay"),
+      days: t("trialBannerDays"),
+      cta: t("trialBannerCta"),
+    };
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
@@ -81,11 +106,16 @@ export default async function DashboardLayout({
         email={user.email ?? ""}
         photoUrl={professional?.photo_url}
       />
-      <main className="flex-1 overflow-auto lg:pl-0 pt-0">
-        <div className="min-h-full">
-          {children}
-        </div>
-      </main>
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {showTrialBanner && (
+          <TrialBanner daysLeft={daysLeft!} locale={locale} labels={trialBannerLabels} />
+        )}
+        <main className="flex-1 overflow-auto lg:pl-0 pt-0">
+          <div className="min-h-full">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

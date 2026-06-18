@@ -534,4 +534,27 @@
     "body": "Atualize a página para carregar a versão mais recente do SolvyMed.",
     "reload": "Atualizar Página"
   }
+, "subscription": {
+    "planName": "SolvyMed Pro",
+    "perMonth": "mês",
+    "planSubtitle": "Cancele quando quiser. 15 dias de teste grátis para novas contas.",
+    "feature1": "Consultas e agendamentos ilimitados",
+    "feature2": "Prontuários, receitas e exames",
+    "feature3": "Relatórios de receita e controle de pagamentos",
+    "feature4": "Lembretes automáticos de consultas",
+    "feature5": "Acesso incluso para suas secretárias",
+    "payPix": "Pagar com Pix",
+    "payPixSub": "Pagamento instantâneo via Pix",
+    "payCard": "Assinar com Cartão",
+    "payCardSub": "Visa, Mastercard, American Express",
+    "or": "ou",
+    "cancelAnytime": "Cancele quando quiser. Sem fidelidade.",
+    "successMessage": "Assinatura ativada! Bem-vindo ao SolvyMed Pro.",
+    "trialDaysLeft": "Você tem {n} dias restantes no seu período de teste.",
+    "trialExpired": "Seu período de teste encerrou. Assine para continuar.",
+    "trialBannerPrefix": "Período de teste:",
+    "trialBannerDay": "dia restante",
+    "trialBannerDays": "dias restantes",
+    "trialBannerCta": "Assinar agora"
+  }
 }

@@ -534,4 +534,27 @@
     "body": "请刷新页面以加载最新版本的 SolvyMed。",
     "reload": "刷新页面"
   }
+, "subscription": {
+    "planName": "SolvyMed Pro",
+    "perMonth": "月",
+    "planSubtitle": "随时取消。新账户享受15天免费试用。",
+    "feature1": "无限预约和日程管理",
+    "feature2": "患者病历、处方和检查",
+    "feature3": "收入报告和付款跟踪",
+    "feature4": "自动预约提醒",
+    "feature5": "包含秘书访问权限",
+    "payPix": "使用Pix支付",
+    "payPixSub": "通过Pix即时支付",
+    "payCard": "使用卡片订阅",
+    "payCardSub": "Visa、Mastercard、美国运通",
+    "or": "或",
+    "cancelAnytime": "随时取消。无需承诺。",
+    "successMessage": "订阅已激活！欢迎使用SolvyMed Pro。",
+    "trialDaysLeft": "您的免费试用还剩{n}天。",
+    "trialExpired": "您的免费试用已结束。请订阅以继续使用。",
+    "trialBannerPrefix": "免费试用：",
+    "trialBannerDay": "天剩余",
+    "trialBannerDays": "天剩余",
+    "trialBannerCta": "立即订阅"
+  }
 }

@@ -534,4 +534,27 @@
     "body": "Aggiorna la pagina per caricare l'ultima versione di SolvyMed.",
     "reload": "Aggiorna pagina"
   }
+, "subscription": {
+    "planName": "SolvyMed Pro",
+    "perMonth": "mese",
+    "planSubtitle": "Annulla quando vuoi. 15 giorni di prova gratuita.",
+    "feature1": "Appuntamenti e pianificazione illimitati",
+    "feature2": "Cartelle cliniche, ricette ed esami",
+    "feature3": "Report sui ricavi e monitoraggio pagamenti",
+    "feature4": "Promemoria automatici degli appuntamenti",
+    "feature5": "Accesso incluso per le tue segretarie",
+    "payPix": "Paga con Pix",
+    "payPixSub": "Pagamento istantaneo via Pix",
+    "payCard": "Abbonati con carta",
+    "payCardSub": "Visa, Mastercard, American Express",
+    "or": "o",
+    "cancelAnytime": "Annulla quando vuoi. Nessun impegno.",
+    "successMessage": "Abbonamento attivato! Benvenuto in SolvyMed Pro.",
+    "trialDaysLeft": "Hai ancora {n} giorni nella tua prova gratuita.",
+    "trialExpired": "Il tuo periodo di prova è terminato. Abbonati per continuare.",
+    "trialBannerPrefix": "Prova gratuita:",
+    "trialBannerDay": "giorno rimasto",
+    "trialBannerDays": "giorni rimasti",
+    "trialBannerCta": "Abbonati ora"
+  }
 }

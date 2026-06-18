@@ -534,4 +534,27 @@
     "body": "Vui lòng tải lại trang để tải phiên bản mới nhất của SolvyMed.",
     "reload": "Tải lại trang"
   }
+, "subscription": {
+    "planName": "SolvyMed Pro",
+    "perMonth": "tháng",
+    "planSubtitle": "Hủy bất cứ lúc nào. Dùng thử miễn phí 15 ngày cho tài khoản mới.",
+    "feature1": "Lịch hẹn và lịch trình không giới hạn",
+    "feature2": "Hồ sơ bệnh nhân, đơn thuốc và xét nghiệm",
+    "feature3": "Báo cáo doanh thu và theo dõi thanh toán",
+    "feature4": "Nhắc nhở lịch hẹn tự động",
+    "feature5": "Quyền truy cập cho thư ký được tính gộp",
+    "payPix": "Thanh toán bằng Pix",
+    "payPixSub": "Thanh toán tức thì qua Pix",
+    "payCard": "Đăng ký bằng thẻ",
+    "payCardSub": "Visa, Mastercard, American Express",
+    "or": "hoặc",
+    "cancelAnytime": "Hủy bất cứ lúc nào. Không ràng buộc.",
+    "successMessage": "Đăng ký đã được kích hoạt! Chào mừng đến với SolvyMed Pro.",
+    "trialDaysLeft": "Bạn còn {n} ngày trong thời gian dùng thử miễn phí.",
+    "trialExpired": "Thời gian dùng thử miễn phí của bạn đã kết thúc. Đăng ký để tiếp tục.",
+    "trialBannerPrefix": "Dùng thử miễn phí:",
+    "trialBannerDay": "ngày còn lại",
+    "trialBannerDays": "ngày còn lại",
+    "trialBannerCta": "Đăng ký ngay"
+  }
 }

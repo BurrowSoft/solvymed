@@ -534,4 +534,27 @@
     "body": "Veuillez rafraîchir la page pour charger la dernière version de SolvyMed.",
     "reload": "Rafraîchir la page"
   }
+, "subscription": {
+    "planName": "SolvyMed Pro",
+    "perMonth": "mois",
+    "planSubtitle": "Résiliation à tout moment. 15 jours d'essai gratuit.",
+    "feature1": "Rendez-vous et planning illimités",
+    "feature2": "Dossiers patients, ordonnances et examens",
+    "feature3": "Rapports de revenus et suivi des paiements",
+    "feature4": "Rappels automatiques de rendez-vous",
+    "feature5": "Accès inclus pour vos secrétaires",
+    "payPix": "Payer avec Pix",
+    "payPixSub": "Paiement instantané via Pix",
+    "payCard": "S'abonner par carte",
+    "payCardSub": "Visa, Mastercard, American Express",
+    "or": "ou",
+    "cancelAnytime": "Résiliation à tout moment. Sans engagement.",
+    "successMessage": "Abonnement activé ! Bienvenue dans SolvyMed Pro.",
+    "trialDaysLeft": "Il vous reste {n} jours dans votre période d'essai.",
+    "trialExpired": "Votre période d'essai est terminée. Abonnez-vous pour continuer.",
+    "trialBannerPrefix": "Essai gratuit :",
+    "trialBannerDay": "jour restant",
+    "trialBannerDays": "jours restants",
+    "trialBannerCta": "S'abonner maintenant"
+  }
 }

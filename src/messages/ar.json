@@ -534,4 +534,27 @@
     "body": "يرجى تحديث الصفحة لتحميل أحدث إصدار من SolvyMed.",
     "reload": "تحديث الصفحة"
   }
+, "subscription": {
+    "planName": "SolvyMed Pro",
+    "perMonth": "شهر",
+    "planSubtitle": "إلغاء في أي وقت. تجربة مجانية 15 يومًا للحسابات الجديدة.",
+    "feature1": "مواعيد وجدولة غير محدودة",
+    "feature2": "سجلات المرضى والوصفات والفحوصات",
+    "feature3": "تقارير الإيرادات وتتبع المدفوعات",
+    "feature4": "تذكيرات مواعيد تلقائية",
+    "feature5": "وصول مضمن للسكرتيرات",
+    "payPix": "الدفع بـ Pix",
+    "payPixSub": "دفع فوري عبر Pix",
+    "payCard": "الاشتراك بالبطاقة",
+    "payCardSub": "Visa وMastercard وAmerican Express",
+    "or": "أو",
+    "cancelAnytime": "إلغاء في أي وقت. بدون التزامات.",
+    "successMessage": "تم تفعيل الاشتراك! مرحبًا بك في SolvyMed Pro.",
+    "trialDaysLeft": "تبقى لك {n} أيام في فترة التجربة المجانية.",
+    "trialExpired": "انتهت فترة التجربة المجانية. اشترك للمتابعة.",
+    "trialBannerPrefix": "فترة التجربة:",
+    "trialBannerDay": "يوم متبقي",
+    "trialBannerDays": "أيام متبقية",
+    "trialBannerCta": "اشترك الآن"
+  }
 }
