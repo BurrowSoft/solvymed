@@ -9,6 +9,7 @@ export interface EffectiveSub {
 export function isAccessAllowed(sub: EffectiveSub | null): boolean {
   if (!sub) return true; // fail-open
   const { subscription_status, trial_ends_at, current_period_end } = sub;
+  if (subscription_status === 'lifetime') return true;
   if (subscription_status === 'active') {
     return !current_period_end || new Date(current_period_end) > new Date();
   }
