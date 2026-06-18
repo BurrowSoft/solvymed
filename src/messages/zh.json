@@ -528,4 +528,10 @@
     "notFoundDesc": "此链接可能无效或已过期。请联系您的医生分享新链接。",
     "backToHome": "返回首页"
   }
+,
+  "versionGate": {
+    "title": "需要更新",
+    "body": "请刷新页面以加载最新版本的 SolvyMed。",
+    "reload": "刷新页面"
+  }
 }

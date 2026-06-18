@@ -528,4 +528,10 @@
     "notFoundDesc": "Questo link potrebbe essere non valido o scaduto. Chiedi al tuo medico di condividerne uno nuovo.",
     "backToHome": "Vai alla home"
   }
+,
+  "versionGate": {
+    "title": "Aggiornamento richiesto",
+    "body": "Aggiorna la pagina per caricare l'ultima versione di SolvyMed.",
+    "reload": "Aggiorna pagina"
+  }
 }

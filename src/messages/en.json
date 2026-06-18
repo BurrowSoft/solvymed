@@ -1,4 +1,4 @@
-{
+﻿{
   "banner": "Website under construction. The app is already live — download it now and get started.",
   "getApp": "Get the App",
   "hero": {
@@ -527,5 +527,11 @@
     "notFound": "Invite link not found",
     "notFoundDesc": "This link may be invalid or has expired. Ask your doctor to share a new one.",
     "backToHome": "Go to home"
+  }
+,
+  "versionGate": {
+    "title": "Update Required",
+    "body": "Please refresh to load the latest version of SolvyMed.",
+    "reload": "Refresh Page"
   }
 }

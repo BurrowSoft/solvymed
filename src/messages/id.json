@@ -528,4 +528,10 @@
     "notFoundDesc": "Tautan ini mungkin tidak valid atau sudah kedaluwarsa. Minta dokter Anda untuk membagikan yang baru.",
     "backToHome": "Ke halaman utama"
   }
+,
+  "versionGate": {
+    "title": "Pembaruan Diperlukan",
+    "body": "Muat ulang halaman untuk memuat versi terbaru SolvyMed.",
+    "reload": "Muat Ulang Halaman"
+  }
 }

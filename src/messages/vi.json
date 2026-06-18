@@ -528,4 +528,10 @@
     "notFoundDesc": "Liên kết này có thể không hợp lệ hoặc đã hết hạn. Hãy yêu cầu bác sĩ chia sẻ một liên kết mới.",
     "backToHome": "Về trang chủ"
   }
+,
+  "versionGate": {
+    "title": "Cần cập nhật",
+    "body": "Vui lòng tải lại trang để tải phiên bản mới nhất của SolvyMed.",
+    "reload": "Tải lại trang"
+  }
 }

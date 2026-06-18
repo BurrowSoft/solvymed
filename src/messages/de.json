@@ -528,4 +528,10 @@
     "notFoundDesc": "Dieser Link ist möglicherweise ungültig oder abgelaufen. Bitten Sie Ihren Arzt, einen neuen zu teilen.",
     "backToHome": "Zur Startseite"
   }
+,
+  "versionGate": {
+    "title": "Update erforderlich",
+    "body": "Bitte aktualisieren Sie die Seite, um die neueste Version von SolvyMed zu laden.",
+    "reload": "Seite aktualisieren"
+  }
 }
