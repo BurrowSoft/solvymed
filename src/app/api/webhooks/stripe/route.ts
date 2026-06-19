@@ -53,7 +53,8 @@ export async function POST(request: NextRequest) {
 
   if (event.type === "invoice.payment_failed") {
     const invoice = event.data.object as Stripe.Invoice;
-    const subId = invoice.subscription as string | null;
+    const subRef = invoice.parent?.subscription_details?.subscription;
+    const subId = typeof subRef === "string" ? subRef : subRef?.id ?? null;
     if (subId) {
       await db.from("professionals").update({
         subscription_status: "expired",
