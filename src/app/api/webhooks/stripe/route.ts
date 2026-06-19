@@ -44,9 +44,10 @@ export async function POST(request: NextRequest) {
     if (!userId) return NextResponse.json({ ok: true });
 
     const isActive = sub.status === "active" || sub.status === "trialing";
+    const periodEndTs = sub.items?.data?.[0]?.current_period_end;
     await db.from("professionals").update({
       subscription_status: isActive ? "active" : "expired",
-      current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+      current_period_end: periodEndTs ? new Date(periodEndTs * 1000).toISOString() : null,
     }).eq("subscription_id", sub.id);
   }
 
