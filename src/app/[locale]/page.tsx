@@ -99,11 +99,7 @@ export default async function HomePage() {
       <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-600">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-              </svg>
-            </div>
+            <img src="/solvymed_logo.png" alt="SolvyMed" className="h-8 w-8 rounded-lg" />
             <span className="text-xl font-bold tracking-tight text-slate-900">Solvymed</span>
           </div>
           <div className="flex items-center gap-3">

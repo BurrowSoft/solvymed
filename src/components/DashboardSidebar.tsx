@@ -246,9 +246,7 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl }: Props) 
       <aside className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-100 bg-white transition-transform duration-300 lg:static lg:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
         {/* Logo */}
         <div className="flex items-center gap-2.5 border-b border-slate-100 px-5 py-5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-600">
-            <LogoIcon />
-          </div>
+          <img src="/solvymed_logo.png" alt="SolvyMed" className="h-8 w-8 rounded-lg" />
           <span className="text-xl font-bold tracking-tight text-slate-900">Solvymed</span>
         </div>
 

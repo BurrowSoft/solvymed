@@ -82,6 +82,10 @@ export async function generateMetadata({
       description: "The all-in-one practice management app for healthcare professionals.",
     },
     robots: { index: true, follow: true },
+    icons: {
+      icon: "/solvymed_logo.png",
+      apple: "/solvymed_logo.png",
+    },
   };
 }
 
