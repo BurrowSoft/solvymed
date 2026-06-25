@@ -10,6 +10,11 @@ interface Props {
   autoRedirect?: boolean;
 }
 
+function isMobileDevice() {
+  if (typeof navigator === "undefined") return false;
+  return /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent);
+}
+
 export default function ConfirmClient({ state: initialState, deepLink, autoRedirect }: Props) {
   const t = useTranslations("confirm");
   const [redirecting, setRedirecting] = useState(false);
@@ -20,6 +25,11 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
   const [saveError, setSaveError] = useState("");
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [hashDeepLink, setHashDeepLink] = useState(deepLink);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    setIsDesktop(!isMobileDevice());
+  }, []);
 
   // Handle implicit-flow hash tokens (access_token in URL fragment).
   // The server component only sees ?code= query params; hash fragments are
@@ -54,10 +64,10 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
     if (state !== "signup") return;
     setRedirecting(true);
     const timer = setTimeout(() => {
-      window.location.href = hashDeepLink;
+      window.location.href = isDesktop ? "/dashboard" : hashDeepLink;
     }, 1500);
     return () => clearTimeout(timer);
-  }, [autoRedirect, state, hashDeepLink]);
+  }, [autoRedirect, state, hashDeepLink, isDesktop]);
 
   async function handleSetPassword(e: React.FormEvent) {
     e.preventDefault();
@@ -190,15 +200,23 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
         )}
 
         <button
-          onClick={() => { window.location.href = hashDeepLink; }}
+          onClick={() => { window.location.href = isDesktop ? "/dashboard" : hashDeepLink; }}
           className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md shadow-teal-600/20 transition hover:bg-teal-700 active:scale-95"
         >
-          <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0">
-            <path d="M3.18 23.76c.31.17.67.19 1.01.08l11.7-6.76-2.46-2.46-10.25 9.14zM.54 1.96C.2 2.3 0 2.84 0 3.54v16.92c0 .7.2 1.24.54 1.58l.08.08 9.47-9.47v-.22L.62 1.88l-.08.08zM20.42 10.3l-2.67-1.54-2.75 2.75 2.75 2.75 2.68-1.55c.76-.44.76-1.15-.01-1.41zM4.19.16L15.89 6.92 13.43 9.38 3.18.24 4.19.16z" />
-          </svg>
-          {t("openApp")}
+          {isDesktop ? (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 shrink-0">
+              <rect x="3" y="3" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0">
+              <path d="M3.18 23.76c.31.17.67.19 1.01.08l11.7-6.76-2.46-2.46-10.25 9.14zM.54 1.96C.2 2.3 0 2.84 0 3.54v16.92c0 .7.2 1.24.54 1.58l.08.08 9.47-9.47v-.22L.62 1.88l-.08.08zM20.42 10.3l-2.67-1.54-2.75 2.75 2.75 2.75 2.68-1.55c.76-.44.76-1.15-.01-1.41zM4.19.16L15.89 6.92 13.43 9.38 3.18.24 4.19.16z" />
+            </svg>
+          )}
+          {isDesktop ? "Open dashboard" : t("openApp")}
         </button>
-        <p className="text-center text-xs text-slate-400">{t("openAppHint")}</p>
+        <p className="text-center text-xs text-slate-400">
+          {isDesktop ? "You'll be redirected to your dashboard." : t("openAppHint")}
+        </p>
       </div>
       <Footer />
     </div>
@@ -208,11 +226,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
 function Logo() {
   return (
     <div className="mb-6 flex justify-center">
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 shadow-lg shadow-teal-600/20">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
-          <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-        </svg>
-      </div>
+      <img src="/solvymed_logo.png" alt="SolvyMed" className="h-14 w-14 rounded-2xl shadow-lg" />
     </div>
   );
 }
