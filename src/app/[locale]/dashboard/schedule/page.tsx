@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, ViewToggle } from "./ScheduleClient";
+import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, ViewToggle, PixQrButton } from "./ScheduleClient";
 import { BookingRequestsPanel } from "./BookingRequestsPanel";
 import { getTentativeBookings } from "./booking-actions";
 import { CalendarView, type CalendarAppt } from "./CalendarView";
@@ -81,7 +81,7 @@ export default async function SchedulePage({
     rangeEnd = isoDate(lastDay);
   }
 
-  const [apptsResult, patientsResult, procsResult, tentativeBookings] = await Promise.all([
+  const [apptsResult, patientsResult, procsResult, tentativeBookings, profResult] = await Promise.all([
     supabase
       .from("appointments")
       .select("id, date, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes")
@@ -92,7 +92,12 @@ export default async function SchedulePage({
     supabase.from("patients").select("id, full_name").eq("professional_id", effectiveProfId).order("full_name"),
     supabase.from("procedures").select("id, name, duration_minutes, price, payment_type").eq("professional_id", effectiveProfId).eq("active", true).order("name"),
     getTentativeBookings(),
+    supabase.from("professionals").select("pix_key, clinic_name, clinic_city").eq("id", effectiveProfId).maybeSingle(),
   ]);
+
+  const pixKey = (profResult.data?.pix_key as string | null) ?? null;
+  const clinicName = (profResult.data?.clinic_name as string | null) ?? "";
+  const clinicCity = (profResult.data?.clinic_city as string | null) ?? "";
 
   const appointments = (apptsResult.data ?? []) as CalendarAppt[];
   const patients = (patientsResult.data ?? []) as { id: string; full_name: string }[];
@@ -163,6 +168,14 @@ export default async function SchedulePage({
                         {appt.status !== "blocked" && <AppointmentStatusSelect id={appt.id} current={appt.status} />}
                         {appt.status === "blocked" && (
                           <span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${statusBadge(appt.status)}`}>{t("blockedLabel")}</span>
+                        )}
+                        {pixKey && appt.status !== "blocked" && (
+                          <PixQrButton
+                            pixKey={pixKey}
+                            clinicName={clinicName}
+                            clinicCity={clinicCity}
+                            amount={appt.payment_amount}
+                          />
                         )}
                         <DeleteAppointmentButton id={appt.id} />
                       </div>

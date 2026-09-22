@@ -91,6 +91,7 @@ export function ProfileForm({ fullName, specialty }: { fullName: string; special
 type ClinicData = {
   clinic_name?: string; clinic_cnpj?: string; clinic_phone?: string;
   clinic_website?: string; clinic_address?: string; clinic_city?: string; clinic_state?: string;
+  pix_key?: string;
 };
 
 export function ClinicForm({ data }: { data: ClinicData }) {
@@ -139,6 +140,10 @@ export function ClinicForm({ data }: { data: ClinicData }) {
           <div>
             <Label>{t("state")}</Label>
             <Input name="clinic_state" defaultValue={data.clinic_state ?? ""} placeholder="SP" />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>Chave Pix</Label>
+            <Input name="pix_key" defaultValue={data.pix_key ?? ""} placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória" />
           </div>
         </div>
         <SaveRow pending={pending} saved={saved} />

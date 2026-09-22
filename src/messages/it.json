@@ -57,7 +57,19 @@
     "resetPasswordSub": "Apri l'app SolvyMed per impostare una nuova password per il tuo account.",
     "error": "Qualcosa è andato storto",
     "errorSub": "Questo link potrebbe essere scaduto o già stato utilizzato. Prova a registrarti di nuovo nell'app.",
-    "backToHome": "Torna a Solvymed.com"
+    "backToHome": "Torna a Solvymed.com",
+    "setPasswordTitle": "Imposta nuova password",
+    "setPasswordSub": "Scegli una nuova password per il tuo account.",
+    "newPassword": "Nuova password",
+    "confirmPassword": "Conferma password",
+    "submitPassword": "Imposta password",
+    "saving": "Salvataggio…",
+    "updatedTitle": "Password aggiornata",
+    "updatedMessage": "La tua password è stata modificata. Ora puoi accedere con la tua nuova password.",
+    "matchError": "Le password non corrispondono.",
+    "lengthError": "La password deve essere lunga almeno 6 caratteri.",
+    "openDashboard": "Apri dashboard",
+    "dashboardHint": "Sarai reindirizzato alla tua dashboard."
   },
   "home": {
     "greetingMorning": "Buongiorno",

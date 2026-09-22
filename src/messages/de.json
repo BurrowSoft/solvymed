@@ -57,7 +57,19 @@
     "resetPasswordSub": "Öffnen Sie die SolvyMed-App, um ein neues Passwort für Ihr Konto festzulegen.",
     "error": "Etwas ist schiefgelaufen",
     "errorSub": "Dieser Link ist möglicherweise abgelaufen oder wurde bereits verwendet. Bitte registrieren Sie sich erneut in der App.",
-    "backToHome": "Zurück zu Solvymed.com"
+    "backToHome": "Zurück zu Solvymed.com",
+    "setPasswordTitle": "Neues Passwort festlegen",
+    "setPasswordSub": "Wählen Sie ein neues Passwort für Ihr Konto.",
+    "newPassword": "Neues Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "submitPassword": "Passwort festlegen",
+    "saving": "Speichern…",
+    "updatedTitle": "Passwort aktualisiert",
+    "updatedMessage": "Ihr Passwort wurde geändert. Sie können sich jetzt mit Ihrem neuen Passwort anmelden.",
+    "matchError": "Die Passwörter stimmen nicht überein.",
+    "lengthError": "Das Passwort muss mindestens 6 Zeichen lang sein.",
+    "openDashboard": "Dashboard öffnen",
+    "dashboardHint": "Sie werden zu Ihrem Dashboard weitergeleitet."
   },
   "home": {
     "greetingMorning": "Guten Morgen",

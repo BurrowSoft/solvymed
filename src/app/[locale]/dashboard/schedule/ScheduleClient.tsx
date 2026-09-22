@@ -4,6 +4,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useState, useTransition, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime } from "./actions";
+import { generatePixString, pixQrUrl } from "@/lib/pix";
 
 type Patient = { id: string; full_name: string };
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
@@ -383,6 +384,62 @@ export function BlockTimeButton({ defaultDate }: { defaultDate: string }) {
             </button>
           </div>
         </form>
+      </Dialog>
+    </>
+  );
+}
+
+export function PixQrButton({
+  pixKey,
+  clinicName,
+  clinicCity,
+  amount,
+}: {
+  pixKey: string;
+  clinicName: string;
+  clinicCity: string;
+  amount?: number;
+}) {
+  const [open, setOpen] = useState(false);
+  const pixStr = generatePixString(pixKey, clinicName, clinicCity, amount);
+  const qrUrl = pixQrUrl(pixStr);
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        title="Pix QR Code"
+        className="rounded-lg p-1.5 text-teal-500 hover:bg-teal-50 transition"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-4 w-4">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3" rx="0.5"/>
+          <rect x="19" y="14" width="2" height="2" rx="0.5"/><rect x="14" y="19" width="2" height="2" rx="0.5"/>
+          <rect x="18" y="18" width="3" height="3" rx="0.5"/>
+        </svg>
+      </button>
+
+      <Dialog open={open} onClose={() => setOpen(false)} title="Pix QR Code">
+        <div className="flex flex-col items-center gap-4">
+          <img src={qrUrl} alt="Pix QR Code" width={200} height={200} className="rounded-xl border border-slate-100" />
+          <div className="w-full">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1.5">Copia e Cola</p>
+            <div className="relative">
+              <textarea
+                readOnly
+                value={pixStr}
+                rows={3}
+                className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-xs text-slate-600 font-mono resize-none focus:outline-none"
+              />
+              <button
+                onClick={() => navigator.clipboard.writeText(pixStr)}
+                className="absolute top-2 right-2 rounded-lg bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition"
+              >
+                Copiar
+              </button>
+            </div>
+          </div>
+        </div>
       </Dialog>
     </>
   );

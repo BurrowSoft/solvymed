@@ -57,7 +57,19 @@
     "resetPasswordSub": "Open the SolvyMed app to set a new password for your account.",
     "error": "Something went wrong",
     "errorSub": "This link may have expired or already been used. Please try signing up again in the app.",
-    "backToHome": "Back to Solvymed.com"
+    "backToHome": "Back to Solvymed.com",
+    "setPasswordTitle": "ตั้งรหัสผ่านใหม่",
+    "setPasswordSub": "เลือกรหัสผ่านใหม่สำหรับบัญชีของคุณ",
+    "newPassword": "รหัสผ่านใหม่",
+    "confirmPassword": "ยืนยันรหัสผ่าน",
+    "submitPassword": "ตั้งรหัสผ่าน",
+    "saving": "กำลังบันทึก…",
+    "updatedTitle": "อัปเดตรหัสผ่านแล้ว",
+    "updatedMessage": "รหัสผ่านของคุณถูกเปลี่ยนแล้ว ตอนนี้คุณสามารถเข้าสู่ระบบด้วยรหัสผ่านใหม่ได้",
+    "matchError": "รหัสผ่านไม่ตรงกัน",
+    "lengthError": "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร",
+    "openDashboard": "เปิดแดชบอร์ด",
+    "dashboardHint": "คุณจะถูกเปลี่ยนเส้นทางไปยังแดชบอร์ดของคุณ"
   },
   "home": {
     "greetingMorning": "สวัสดีตอนเช้า",

@@ -47,36 +47,40 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
     const supabase = createClient();
     supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }).then(({ error }) => {
       if (error) return;
-      if (type === "recovery") {
-        setState("recovery");
-      } else {
-        // Signup confirmation via implicit flow — build deep link and redirect
-        const link = `solvymed://?access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&type=signup`;
-        setHashDeepLink(link);
-        setState("signup");
-      }
+      const link = `solvymed://?access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&type=${type ?? "signup"}`;
+      setHashDeepLink(link);
+      setState(type === "recovery" ? "recovery" : "signup");
     });
   }, [initialState]);
 
-  // Auto-redirect for signup state
+  // Auto-redirect for signup state (desktop → dashboard, mobile → app)
   useEffect(() => {
-    if (!autoRedirect && state !== "signup") return;
     if (state !== "signup") return;
     setRedirecting(true);
     const timer = setTimeout(() => {
       window.location.href = isDesktop ? "/dashboard" : hashDeepLink;
     }, 1500);
     return () => clearTimeout(timer);
-  }, [autoRedirect, state, hashDeepLink, isDesktop]);
+  }, [state, hashDeepLink, isDesktop]);
+
+  // Auto-redirect mobile users to app for password recovery
+  useEffect(() => {
+    if (state !== "recovery" || isDesktop) return;
+    setRedirecting(true);
+    const timer = setTimeout(() => {
+      window.location.href = hashDeepLink;
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [state, isDesktop, hashDeepLink]);
 
   async function handleSetPassword(e: React.FormEvent) {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setSaveError("Passwords do not match.");
+      setSaveError(t("matchError"));
       return;
     }
     if (password.length < 6) {
-      setSaveError("Password must be at least 6 characters.");
+      setSaveError(t("lengthError"));
       return;
     }
     setSaving(true);
@@ -108,6 +112,37 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
   }
 
   if (state === "recovery") {
+    // Mobile: redirect to app — show opening UI while timer fires
+    if (!isDesktop) {
+      return (
+        <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100">
+            <Logo />
+            <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("resetPassword")}</h1>
+            <p className="mb-6 text-center text-slate-500">{t("resetPasswordSub")}</p>
+            {redirecting && (
+              <div className="mb-6 flex items-center justify-center gap-2 text-sm text-slate-400">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-teal-400 border-t-transparent" />
+                {t("opening")}
+              </div>
+            )}
+            <button
+              onClick={() => { window.location.href = hashDeepLink; }}
+              className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md shadow-teal-600/20 transition hover:bg-teal-700 active:scale-95"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0">
+                <path d="M3.18 23.76c.31.17.67.19 1.01.08l11.7-6.76-2.46-2.46-10.25 9.14zM.54 1.96C.2 2.3 0 2.84 0 3.54v16.92c0 .7.2 1.24.54 1.58l.08.08 9.47-9.47v-.22L.62 1.88l-.08.08zM20.42 10.3l-2.67-1.54-2.75 2.75 2.75 2.75 2.68-1.55c.76-.44.76-1.15-.01-1.41zM4.19.16L15.89 6.92 13.43 9.38 3.18.24 4.19.16z" />
+              </svg>
+              {t("openApp")}
+            </button>
+            <p className="text-center text-xs text-slate-400">{t("openAppHint")}</p>
+          </div>
+          <Footer />
+        </div>
+      );
+    }
+
+    // Desktop: show password form
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
         <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100">
@@ -121,19 +156,19 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
                   </svg>
                 </div>
               </div>
-              <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">Password updated</h1>
-              <p className="mb-8 text-center text-slate-500">Your password has been changed. You can now sign in with your new password.</p>
+              <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("updatedTitle")}</h1>
+              <p className="mb-8 text-center text-slate-500">{t("updatedMessage")}</p>
               <a href="/" className="flex w-full items-center justify-center rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md shadow-teal-600/20 transition hover:bg-teal-700">
                 {t("backToHome")}
               </a>
             </>
           ) : (
             <>
-              <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">Set new password</h1>
-              <p className="mb-6 text-center text-slate-500">Choose a new password for your account.</p>
+              <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("setPasswordTitle")}</h1>
+              <p className="mb-6 text-center text-slate-500">{t("setPasswordSub")}</p>
               <form onSubmit={handleSetPassword} className="space-y-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">New password</label>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">{t("newPassword")}</label>
                   <input
                     type="password"
                     value={password}
@@ -141,11 +176,10 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
                     required
                     minLength={6}
                     className="w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-900 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
-                    placeholder="Min. 6 characters"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Confirm password</label>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">{t("confirmPassword")}</label>
                   <input
                     type="password"
                     value={confirmPassword}
@@ -153,7 +187,6 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
                     required
                     minLength={6}
                     className="w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-900 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
-                    placeholder="Repeat password"
                   />
                 </div>
                 {saveError && <p className="text-sm text-red-500">{saveError}</p>}
@@ -162,7 +195,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
                   disabled={saving}
                   className="flex w-full items-center justify-center rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md shadow-teal-600/20 transition hover:bg-teal-700 disabled:opacity-60"
                 >
-                  {saving ? "Saving…" : "Set password"}
+                  {saving ? t("saving") : t("submitPassword")}
                 </button>
               </form>
             </>
@@ -212,10 +245,10 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
               <path d="M3.18 23.76c.31.17.67.19 1.01.08l11.7-6.76-2.46-2.46-10.25 9.14zM.54 1.96C.2 2.3 0 2.84 0 3.54v16.92c0 .7.2 1.24.54 1.58l.08.08 9.47-9.47v-.22L.62 1.88l-.08.08zM20.42 10.3l-2.67-1.54-2.75 2.75 2.75 2.75 2.68-1.55c.76-.44.76-1.15-.01-1.41zM4.19.16L15.89 6.92 13.43 9.38 3.18.24 4.19.16z" />
             </svg>
           )}
-          {isDesktop ? "Open dashboard" : t("openApp")}
+          {isDesktop ? t("openDashboard") : t("openApp")}
         </button>
         <p className="text-center text-xs text-slate-400">
-          {isDesktop ? "You'll be redirected to your dashboard." : t("openAppHint")}
+          {isDesktop ? t("dashboardHint") : t("openAppHint")}
         </p>
       </div>
       <Footer />

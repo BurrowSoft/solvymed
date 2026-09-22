@@ -57,7 +57,19 @@
     "resetPasswordSub": "Open the SolvyMed app to set a new password for your account.",
     "error": "Something went wrong",
     "errorSub": "This link may have expired or already been used. Please try signing up again in the app.",
-    "backToHome": "Back to Solvymed.com"
+    "backToHome": "Back to Solvymed.com",
+    "setPasswordTitle": "Đặt mật khẩu mới",
+    "setPasswordSub": "Chọn mật khẩu mới cho tài khoản của bạn.",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "submitPassword": "Đặt mật khẩu",
+    "saving": "Đang lưu…",
+    "updatedTitle": "Đã cập nhật mật khẩu",
+    "updatedMessage": "Mật khẩu của bạn đã được thay đổi. Bây giờ bạn có thể đăng nhập bằng mật khẩu mới.",
+    "matchError": "Mật khẩu không khớp.",
+    "lengthError": "Mật khẩu phải có ít nhất 6 ký tự.",
+    "openDashboard": "Mở bảng điều khiển",
+    "dashboardHint": "Bạn sẽ được chuyển hướng đến bảng điều khiển."
   },
   "home": {
     "greetingMorning": "Chào buổi sáng",

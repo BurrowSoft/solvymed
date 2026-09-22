@@ -57,7 +57,19 @@
     "resetPasswordSub": "Open the SolvyMed app to set a new password for your account.",
     "error": "Something went wrong",
     "errorSub": "This link may have expired or already been used. Please try signing up again in the app.",
-    "backToHome": "Back to Solvymed.com"
+    "backToHome": "Back to Solvymed.com",
+    "setPasswordTitle": "新しいパスワードを設定",
+    "setPasswordSub": "アカウントの新しいパスワードを選択してください。",
+    "newPassword": "新しいパスワード",
+    "confirmPassword": "パスワードを確認",
+    "submitPassword": "パスワードを設定",
+    "saving": "保存中…",
+    "updatedTitle": "パスワードが更新されました",
+    "updatedMessage": "パスワードが変更されました。新しいパスワードでサインインできるようになりました。",
+    "matchError": "パスワードが一致しません。",
+    "lengthError": "パスワードは6文字以上である必要があります。",
+    "openDashboard": "ダッシュボードを開く",
+    "dashboardHint": "ダッシュボードにリダイレクトされます。"
   },
   "home": {
     "greetingMorning": "おはようございます",

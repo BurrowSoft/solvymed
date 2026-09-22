@@ -57,7 +57,19 @@
     "resetPasswordSub": "Open the SolvyMed app to set a new password for your account.",
     "error": "Something went wrong",
     "errorSub": "This link may have expired or already been used. Please try signing up again in the app.",
-    "backToHome": "Back to Solvymed.com"
+    "backToHome": "Back to Solvymed.com",
+    "setPasswordTitle": "設定新密碼",
+    "setPasswordSub": "為您的帳戶選擇一個新密碼。",
+    "newPassword": "新密碼",
+    "confirmPassword": "確認密碼",
+    "submitPassword": "設定密碼",
+    "saving": "儲存中…",
+    "updatedTitle": "密碼已更新",
+    "updatedMessage": "您的密碼已更改。您現在可以使用新密碼登入。",
+    "matchError": "兩次輸入的密碼不相符。",
+    "lengthError": "密碼至少需要6個字元。",
+    "openDashboard": "開啟儀表板",
+    "dashboardHint": "您將被重新導向至儀表板。"
   },
   "home": {
     "greetingMorning": "早上好",

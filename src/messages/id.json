@@ -57,7 +57,19 @@
     "resetPasswordSub": "Open the SolvyMed app to set a new password for your account.",
     "error": "Something went wrong",
     "errorSub": "This link may have expired or already been used. Please try signing up again in the app.",
-    "backToHome": "Back to Solvymed.com"
+    "backToHome": "Back to Solvymed.com",
+    "setPasswordTitle": "Tetapkan kata sandi baru",
+    "setPasswordSub": "Pilih kata sandi baru untuk akun Anda.",
+    "newPassword": "Kata sandi baru",
+    "confirmPassword": "Konfirmasi kata sandi",
+    "submitPassword": "Tetapkan kata sandi",
+    "saving": "Menyimpan…",
+    "updatedTitle": "Kata sandi diperbarui",
+    "updatedMessage": "Kata sandi Anda telah diubah. Sekarang Anda dapat masuk dengan kata sandi baru.",
+    "matchError": "Kata sandi tidak cocok.",
+    "lengthError": "Kata sandi harus minimal 6 karakter.",
+    "openDashboard": "Buka dasbor",
+    "dashboardHint": "Anda akan diarahkan ke dasbor Anda."
   },
   "home": {
     "greetingMorning": "Selamat pagi",

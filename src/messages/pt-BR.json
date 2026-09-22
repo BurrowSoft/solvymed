@@ -57,7 +57,19 @@
     "resetPasswordSub": "Abra o aplicativo SolvyMed para definir uma nova senha para sua conta.",
     "error": "Algo deu errado",
     "errorSub": "Este link pode ter expirado ou já foi utilizado. Tente se cadastrar novamente no aplicativo.",
-    "backToHome": "Voltar para Solvymed.com"
+    "backToHome": "Voltar para Solvymed.com",
+    "setPasswordTitle": "Definir nova senha",
+    "setPasswordSub": "Escolha uma nova senha para a sua conta.",
+    "newPassword": "Nova senha",
+    "confirmPassword": "Confirmar senha",
+    "submitPassword": "Definir senha",
+    "saving": "Salvando…",
+    "updatedTitle": "Senha atualizada",
+    "updatedMessage": "Sua senha foi alterada. Você já pode entrar com sua nova senha.",
+    "matchError": "As senhas não coincidem.",
+    "lengthError": "A senha deve ter pelo menos 6 caracteres.",
+    "openDashboard": "Abrir painel",
+    "dashboardHint": "Você será redirecionado para o painel."
   },
   "home": {
     "greetingMorning": "Bom dia",

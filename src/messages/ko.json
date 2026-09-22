@@ -57,7 +57,19 @@
     "resetPasswordSub": "Open the SolvyMed app to set a new password for your account.",
     "error": "Something went wrong",
     "errorSub": "This link may have expired or already been used. Please try signing up again in the app.",
-    "backToHome": "Back to Solvymed.com"
+    "backToHome": "Back to Solvymed.com",
+    "setPasswordTitle": "새 비밀번호 설정",
+    "setPasswordSub": "계정의 새 비밀번호를 선택하세요.",
+    "newPassword": "새 비밀번호",
+    "confirmPassword": "비밀번호 확인",
+    "submitPassword": "비밀번호 설정",
+    "saving": "저장 중…",
+    "updatedTitle": "비밀번호 업데이트됨",
+    "updatedMessage": "비밀번호가 변경되었습니다. 이제 새 비밀번호로 로그인할 수 있습니다.",
+    "matchError": "비밀번호가 일치하지 않습니다.",
+    "lengthError": "비밀번호는 최소 6자 이상이어야 합니다.",
+    "openDashboard": "대시보드 열기",
+    "dashboardHint": "대시보드로 리디렉션됩니다."
   },
   "home": {
     "greetingMorning": "좋은 아침이에요",

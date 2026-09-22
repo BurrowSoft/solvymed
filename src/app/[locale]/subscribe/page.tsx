@@ -110,40 +110,14 @@ export default async function SubscribePage({
 
             {/* Payment buttons */}
             <div className="flex flex-col gap-3">
-              {isBrazil ? (
-                <>
-                  <SubscribeButton
-                    provider="asaas"
-                    locale={locale}
-                    label={t("payPix")}
-                    sublabel={t("payPixSub")}
-                    userName={userName}
-                    userEmail={userEmail}
-                  />
-                  <div className="relative flex items-center gap-2">
-                    <div className="flex-1 border-t border-slate-200" />
-                    <span className="text-xs text-slate-400">{t("or")}</span>
-                    <div className="flex-1 border-t border-slate-200" />
-                  </div>
-                  <SubscribeButton
-                    provider="stripe"
-                    locale={locale}
-                    label={t("payCard")}
-                    sublabel={t("payCardSub")}
-                    userName={userName}
-                    userEmail={userEmail}
-                  />
-                </>
-              ) : (
-                <SubscribeButton
-                  provider="stripe"
-                  locale={locale}
-                  label={t("payCard")}
-                  sublabel={t("payCardSub")}
-                  userName={userName}
-                  userEmail={userEmail}
-                />
-              )}
+              <SubscribeButton
+                provider="stripe"
+                locale={locale}
+                label={t("payCard")}
+                sublabel={t("payCardSub")}
+                userName={userName}
+                userEmail={userEmail}
+              />
             </div>
 
             <p className="text-center text-xs text-slate-400">{t("cancelAnytime")}</p>

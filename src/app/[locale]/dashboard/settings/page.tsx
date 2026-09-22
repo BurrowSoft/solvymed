@@ -21,7 +21,7 @@ export default async function SettingsPage({
   const [profResult, procsResult, blockedResult] = await Promise.all([
     supabase
       .from("professionals")
-      .select("full_name, specialty, clinic_name, clinic_cnpj, clinic_phone, clinic_website, clinic_address, clinic_city, clinic_state, working_hours, max_concurrent_bookings")
+      .select("full_name, specialty, clinic_name, clinic_cnpj, clinic_phone, clinic_website, clinic_address, clinic_city, clinic_state, pix_key, working_hours, max_concurrent_bookings")
       .eq("id", user.id)
       .single(),
     supabase
@@ -42,7 +42,7 @@ export default async function SettingsPage({
     full_name: "", specialty: null,
     clinic_name: null, clinic_cnpj: null, clinic_phone: null,
     clinic_website: null, clinic_address: null, clinic_city: null, clinic_state: null,
-    working_hours: null, max_concurrent_bookings: null,
+    pix_key: null, working_hours: null, max_concurrent_bookings: null,
   };
 
   const procedures = (procsResult.data ?? []) as {
@@ -74,6 +74,7 @@ export default async function SettingsPage({
             clinic_address: prof.clinic_address ?? undefined,
             clinic_city: prof.clinic_city ?? undefined,
             clinic_state: prof.clinic_state ?? undefined,
+            pix_key: (prof as { pix_key?: string | null }).pix_key ?? undefined,
           }}
         />
 
