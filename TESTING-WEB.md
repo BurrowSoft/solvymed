@@ -17,8 +17,8 @@ is in the table below.
 
 | Feature | Branch | Flows | Status | Last run |
 |---|---|---|---|---|
-| Patient self-rescheduling | `feat/patient-rescheduling` | `e2e/01-patient-request-reschedule.spec.ts`, `e2e/02-doctor-respond-reschedule.spec.ts` | 🟢 GREEN — re-verified against `b488b54` | 2026-09-23 |
-| Patient self-rescheduling (decline path) | `feat/patient-rescheduling` | `e2e/03-doctor-decline-reschedule.spec.ts` | 🟢 GREEN — self-contained, doesn't need 01/02 to run first | 2026-09-23 |
+| Patient self-rescheduling | `feat/patient-rescheduling` | `e2e/01-patient-request-reschedule.spec.ts`, `e2e/02-doctor-respond-reschedule.spec.ts` | 🟢 GREEN — re-verified post migrations 027–033 | 2026-09-23 |
+| Patient self-rescheduling (decline path) | `feat/patient-rescheduling` | `e2e/03-doctor-decline-reschedule.spec.ts` | 🟢 GREEN — self-contained, doesn't need 01/02 to run first; re-verified post migrations 027–033 | 2026-09-23 |
 
 ## Talking to the other agents
 
@@ -327,6 +327,22 @@ reload after every action** — only where there's already a real
 client-side signal (like a dialog closing) that the mutation has
 completed; otherwise a plain generous wait is the safer default, as
 proven by `02-` never needing a reload at all.
+
+### Re-verification after migrations 027–033 applied to the live database
+
+The mobile tester applied all 7 pending migrations to the shared Supabase
+project (`npx supabase db push`), including two more revisions to
+`accept_patient_reschedule` beyond the one reviewed above: `029` (lock
+ordering) and `031` (repeats the stale-proposed-time check after the
+advisory lock is acquired, closing a window where a slow accept could
+land on an already-expired proposal). Read `031`'s final version before
+re-running rather than assuming "signature unchanged" was enough: the
+`p_acting_as_professional` parameter still defaults to `NULL` and the
+non-secretary call path is untouched, and the stale check only rejects
+proposals whose time has already passed — irrelevant to these flows since
+they always propose a next-day slot. Ran all 3 specs against the live
+(now fully migrated) database to confirm rather than rely on that
+read-through alone: all green, no behavior change observed.
 
 ## testIDs added
 
