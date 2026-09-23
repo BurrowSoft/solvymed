@@ -116,6 +116,7 @@ function RescheduleDialog({
             <button
               key={day}
               data-testid="reschedule-day-chip"
+              aria-pressed={selectedDate === day}
               onClick={() => setSelectedDate(day)}
               className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold border transition ${
                 selectedDate === day
@@ -141,6 +142,7 @@ function RescheduleDialog({
               <button
                 key={slot.start}
                 data-testid="reschedule-slot-chip"
+                aria-pressed={selectedSlot?.start === slot.start}
                 onClick={() => setSelectedSlot(slot)}
                 className={`rounded-lg px-3 py-2 text-sm font-semibold border transition ${
                   selectedSlot?.start === slot.start

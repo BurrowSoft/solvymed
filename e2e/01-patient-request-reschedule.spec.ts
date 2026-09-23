@@ -59,5 +59,5 @@ test("patient requests a reschedule on a confirmed appointment", async ({ page }
   const updatedCard = page
     .getByTestId("appointment-card")
     .filter({ hasText: dateTimeLine });
-  await expect(updatedCard.getByTestId("appointment-status-badge")).toHaveText("Reschedule Pending", { timeout: 15_000 });
+  await expect(updatedCard).toHaveAttribute("data-status", "proposal", { timeout: 15_000 });
 });
