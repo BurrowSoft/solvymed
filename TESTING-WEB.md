@@ -17,7 +17,7 @@ is in the table below.
 
 | Feature | Branch | Flows | Status | Last run |
 |---|---|---|---|---|
-| Patient self-rescheduling | `feat/patient-rescheduling` | `e2e/01-patient-request-reschedule.spec.ts`, `e2e/02-doctor-respond-reschedule.spec.ts` | 🟢 GREEN — both pass against seeded accounts | 2026-09-23 |
+| Patient self-rescheduling | `feat/patient-rescheduling` | `e2e/01-patient-request-reschedule.spec.ts`, `e2e/02-doctor-respond-reschedule.spec.ts` | 🟢 GREEN — re-verified against `0708535` | 2026-09-23 |
 
 ## Talking to the other agents
 
@@ -190,6 +190,31 @@ themselves:
   separate "the RPC/RLS layer is wrong" from "the UI/test just hasn't
   caught up yet" — this is what let each of the three issues above get
   diagnosed correctly instead of guessed at.
+
+### Re-verification against `0708535` (Copilot-findings commit)
+
+The developer agent pushed `0708535` (translation strings for the dialog
++ panel, an `end-datetime` fix to `canReschedule`, decline guards, a
+zero-duration guard) after the green light above and reasonably guessed a
+re-run wasn't needed since testIDs were untouched. Re-ran anyway — the
+merge gate rule is "actually run," not "assessed as low-risk," and an
+independent check is the point of having a separate tester agent.
+
+First attempt (immediately after clearing `.next` and restarting the dev
+server) failed in a new way: the reschedule dialog got stuck on "Sending…"
+for the full 30s test timeout, never closing. Before assuming a
+regression, checked the database directly — the mutation *had* landed
+(the appointment's time had actually changed to the requested slot, and
+the doctor-accept spec that ran right after found and accepted a pending
+request fine). So the server action succeeded; the client just never
+observed the response in time. Re-ran twice more against the now-warm
+server (no cache clear) and both passed cleanly in normal time (~22s each,
+consistent with every prior successful run). Conclusion: first-hit compile
+latency on a freshly-cleared `next dev` cache, same category as the
+router.refresh() race above, not a regression from `0708535` — logged here
+rather than silently dismissed, since "stuck on Sending forever" is a
+real-looking failure mode and future runs hitting it after a cache clear
+shouldn't cause alarm.
 
 ## What's covered
 
