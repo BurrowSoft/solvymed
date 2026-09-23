@@ -447,15 +447,10 @@ export async function acceptRescheduleRequest(appointmentId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  // Fetch proposed times before the RPC so we can notify the patient
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("proposed_date, proposed_start_time, patient_auth_id")
-    .eq("id", appointmentId)
-    .maybeSingle();
-
-  // Atomic overlap check + update via SECURITY DEFINER RPC
-  const { error } = await supabase.rpc("accept_patient_reschedule", {
+  // Atomic overlap check + update via SECURITY DEFINER RPC.
+  // RPC returns notification fields so we never pre-fetch from the client
+  // (pre-fetch is a spoofing surface: data can change between read and accept).
+  const { data: rpcData, error } = await supabase.rpc("accept_patient_reschedule", {
     p_appointment_id: appointmentId,
   });
 
@@ -465,11 +460,16 @@ export async function acceptRescheduleRequest(appointmentId: string) {
     return { error: error.message };
   }
 
+  const row = Array.isArray(rpcData) && rpcData.length > 0 ? rpcData[0] as Record<string, unknown> : null;
+  const newDate = row?.out_new_date as string | undefined;
+  const newStart = row?.out_new_start_time as string | undefined;
   await notifyPatient(
     supabase,
     appointmentId,
     "Reschedule Confirmed",
-    `Your appointment has been rescheduled to ${appt.proposed_date} at ${(appt.proposed_start_time as string).slice(0, 5)}.`,
+    newDate && newStart
+      ? `Your appointment has been rescheduled to ${newDate} at ${newStart.slice(0, 5)}.`
+      : "Your reschedule request has been confirmed.",
   );
 
   revalidatePath("/dashboard/schedule");
@@ -492,7 +492,7 @@ export async function declineRescheduleRequest(appointmentId: string) {
 
   if (!appt) return { error: "Appointment not found" };
 
-  const { error } = await supabase
+  const { data: updateData, error } = await supabase
     .from("appointments")
     .update({
       status: "confirmed",
@@ -504,16 +504,20 @@ export async function declineRescheduleRequest(appointmentId: string) {
     .eq("id", appointmentId)
     .eq("professional_id", effectiveProfId)
     .eq("status", "proposal")
-    .eq("scheduled_by", "patient");
+    .eq("scheduled_by", "patient")
+    .select("id");
 
   if (error) return { error: error.message };
 
-  await notifyPatient(
-    supabase,
-    appointmentId,
-    "Reschedule Request Declined",
-    "The doctor could not accommodate your reschedule request. Your original appointment time remains confirmed — no action needed.",
-  );
+  // Only notify when a row was actually updated (guard against concurrent declines)
+  if (updateData && updateData.length > 0) {
+    await notifyPatient(
+      supabase,
+      appointmentId,
+      "Reschedule Request Declined",
+      "The doctor could not accommodate your reschedule request. Your original appointment time remains confirmed — no action needed.",
+    );
+  }
 
   revalidatePath("/dashboard/schedule");
   return { error: null };
@@ -526,6 +530,8 @@ export async function getAvailableSlotsForDate(
 ) {
   if (!durationMinutes || durationMinutes <= 0) return [];
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
 
   const { data: profData } = await supabase.rpc("get_professional_working_hours", {
     p_professional_id: professionalId,

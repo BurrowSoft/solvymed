@@ -177,7 +177,8 @@
     "notePlaceholder": "Catatan untuk pasien (opsional)",
     "rescheduleRequested": "Penjadwalan ulang diminta",
     "accept": "Terima",
-    "decline": "Tolak"
+    "decline": "Tolak",
+    "slotTakenAlert": "Slot tersebut tidak lagi tersedia. Harap tolak dan biarkan pasien memilih waktu lain."
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -534,7 +535,10 @@
     "rescheduleNoSlots": "Tidak ada slot tersedia hari ini.",
     "rescheduleSend": "Kirim Permintaan Penjadwalan Ulang",
     "rescheduleSending": "Mengirim…",
-    "reschedulePending": "Penjadwalan Ulang Tertunda"
+    "reschedulePending": "Penjadwalan Ulang Tertunda",
+    "rescheduleRequestedLabel": "Permintaan penjadwalan ulang: {date} · {time}",
+    "rescheduleButton": "Minta penjadwalan ulang",
+    "closeDialog": "Tutup"
   },
   "nav": {
     "overview": "Ringkasan",
@@ -549,14 +553,13 @@
     "notFound": "Tautan undangan tidak ditemukan",
     "notFoundDesc": "Tautan ini mungkin tidak valid atau sudah kedaluwarsa. Minta dokter Anda untuk membagikan yang baru.",
     "backToHome": "Ke halaman utama"
-  }
-,
+  },
   "versionGate": {
     "title": "Pembaruan Diperlukan",
     "body": "Muat ulang halaman untuk memuat versi terbaru SolvyMed.",
     "reload": "Muat Ulang Halaman"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "bulan",
     "planSubtitle": "Batalkan kapan saja. 15 hari uji coba gratis untuk akun baru.",

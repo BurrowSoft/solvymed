@@ -74,6 +74,7 @@ function RescheduleDialog({
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<{ start: string; end: string } | null>(null);
   const [pending, startTransition] = useTransition();
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const seqRef = useRef(0);
   const loadSlots = useCallback(async (date: string) => {
@@ -96,10 +97,17 @@ function RescheduleDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4" onClick={onClose}>
-      <div data-testid="reschedule-dialog" className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onClick={e => e.stopPropagation()}>
+      <div
+        data-testid="reschedule-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reschedule-dialog-heading"
+        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold text-slate-900">{t("rescheduleTitle")}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+          <h2 id="reschedule-dialog-heading" className="text-base font-bold text-slate-900">{t("rescheduleTitle")}</h2>
+          <button onClick={onClose} aria-label={t("closeDialog")} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
         </div>
 
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">{t("rescheduleSelectDate")}</p>
@@ -151,15 +159,20 @@ function RescheduleDialog({
           data-testid="reschedule-submit-button"
           onClick={() => {
             if (!selectedSlot) return;
+            setSubmitError(null);
             startTransition(async () => {
               const result = await requestReschedule(appt.id, selectedDate, selectedSlot.start, selectedSlot.end);
               if (!result.error) { onSuccess(); }
+              else { setSubmitError(result.error); }
             });
           }}
           className="w-full rounded-xl bg-teal-600 py-3 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50 transition"
         >
           {pending ? t("rescheduleSending") : t("rescheduleSend")}
         </button>
+        {submitError && (
+          <p role="alert" className="mt-2 text-sm text-red-600 text-center">{submitError}</p>
+        )}
       </div>
     </div>
   );
@@ -199,7 +212,7 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
           )}
           {isPatientReschedule && appt.proposed_date && (
             <p className="text-xs text-blue-500 mt-0.5 font-medium">
-              Reschedule requested: {formatDate(appt.proposed_date)} · {formatTime(appt.proposed_start_time!)}
+              {t("rescheduleRequestedLabel", { date: formatDate(appt.proposed_date), time: formatTime(appt.proposed_start_time!) })}
             </p>
           )}
           <p className="text-xs text-slate-400 mt-0.5 capitalize">{appt.type.replace("-", " ")}</p>
@@ -240,7 +253,7 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
             data-testid="reschedule-request-button"
             className="text-sm font-medium text-slate-500 hover:text-slate-700 transition"
           >
-            Request reschedule
+            {t("rescheduleButton")}
           </button>
         </div>
       )}

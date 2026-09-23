@@ -177,7 +177,8 @@
     "notePlaceholder": "ملاحظة للمريض (اختياري)",
     "rescheduleRequested": "تم طلب إعادة الجدولة",
     "accept": "قبول",
-    "decline": "رفض"
+    "decline": "رفض",
+    "slotTakenAlert": "هذا الموعد لم يعد متاحًا. يرجى الرفض وترك المريض يختار وقتًا آخر."
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",
@@ -534,7 +535,10 @@
     "rescheduleNoSlots": "لا توجد مواعيد متاحة في هذا اليوم.",
     "rescheduleSend": "إرسال طلب إعادة الجدولة",
     "rescheduleSending": "جارٍ الإرسال…",
-    "reschedulePending": "إعادة الجدولة قيد الانتظار"
+    "reschedulePending": "إعادة الجدولة قيد الانتظار",
+    "rescheduleRequestedLabel": "طلب تغيير الموعد: {date} · {time}",
+    "rescheduleButton": "طلب تغيير الموعد",
+    "closeDialog": "إغلاق"
   },
   "nav": {
     "overview": "نظرة عامة",
@@ -549,14 +553,13 @@
     "notFound": "رابط الدعوة غير موجود",
     "notFoundDesc": "قد يكون هذا الرابط غير صالح أو منتهي الصلاحية. اطلب من طبيبك مشاركة رابط جديد.",
     "backToHome": "الذهاب إلى الرئيسية"
-  }
-,
+  },
   "versionGate": {
     "title": "تحديث مطلوب",
     "body": "يرجى تحديث الصفحة لتحميل أحدث إصدار من SolvyMed.",
     "reload": "تحديث الصفحة"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "شهر",
     "planSubtitle": "إلغاء في أي وقت. تجربة مجانية 15 يومًا للحسابات الجديدة.",

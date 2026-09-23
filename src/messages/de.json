@@ -177,7 +177,8 @@
     "notePlaceholder": "Notiz an den Patienten (optional)",
     "rescheduleRequested": "Terminverschiebung angefordert",
     "accept": "Annehmen",
-    "decline": "Ablehnen"
+    "decline": "Ablehnen",
+    "slotTakenAlert": "Dieser Termin ist nicht mehr verfügbar. Bitte ablehnen und den Patienten einen anderen Termin wählen lassen."
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -534,7 +535,10 @@
     "rescheduleNoSlots": "Keine freien Slots an diesem Tag.",
     "rescheduleSend": "Verschiebungsanfrage senden",
     "rescheduleSending": "Wird gesendet…",
-    "reschedulePending": "Verschiebung ausstehend"
+    "reschedulePending": "Verschiebung ausstehend",
+    "rescheduleRequestedLabel": "Terminverschiebung angefragt: {date} · {time}",
+    "rescheduleButton": "Verschiebung beantragen",
+    "closeDialog": "Schließen"
   },
   "nav": {
     "overview": "Übersicht",
@@ -549,14 +553,13 @@
     "notFound": "Einladungslink nicht gefunden",
     "notFoundDesc": "Dieser Link ist möglicherweise ungültig oder abgelaufen. Bitten Sie Ihren Arzt, einen neuen zu teilen.",
     "backToHome": "Zur Startseite"
-  }
-,
+  },
   "versionGate": {
     "title": "Update erforderlich",
     "body": "Bitte aktualisieren Sie die Seite, um die neueste Version von SolvyMed zu laden.",
     "reload": "Seite aktualisieren"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "Monat",
     "planSubtitle": "Jederzeit kündbar. 15 Tage kostenlos für neue Konten.",

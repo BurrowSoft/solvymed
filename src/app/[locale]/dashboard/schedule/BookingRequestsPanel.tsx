@@ -21,6 +21,7 @@ type Booking = {
   scheduled_by?: string | null;
   proposed_date?: string | null;
   proposed_start_time?: string | null;
+  proposed_end_time?: string | null;
 };
 
 type PatientProfile = {
@@ -68,7 +69,10 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
   const nowHHMM = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
   function isObsolete(b: Booking): boolean {
-    return b.date < todayStr || (b.date === todayStr && b.end_time.slice(0, 5) < nowHHMM);
+    const isPatientProposal = b.status === "proposal" && b.scheduled_by === "patient";
+    const checkDate = isPatientProposal && b.proposed_date ? b.proposed_date : b.date;
+    const checkEnd  = isPatientProposal && b.proposed_end_time ? b.proposed_end_time : b.end_time;
+    return checkDate < todayStr || (checkDate === todayStr && checkEnd.slice(0, 5) < nowHHMM);
   }
 
   const sortedBookings = [...bookings].sort((a, b) => {
@@ -216,7 +220,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                         onClick={() => startTransition(async () => {
                           const result = await acceptRescheduleRequest(b.id);
                           if (result.error === "slot_taken") {
-                            alert("That slot is no longer available. Please decline and let the patient choose another time.");
+                            alert(t("slotTakenAlert"));
                           }
                         })}
                         disabled={isPending}

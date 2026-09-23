@@ -177,7 +177,8 @@
     "notePlaceholder": "患者へのメモ（任意）",
     "rescheduleRequested": "変更リクエスト送信済み",
     "accept": "承認",
-    "decline": "拒否"
+    "decline": "拒否",
+    "slotTakenAlert": "そのスロットはもう利用できません。拒否して患者に別の時間を選んでもらってください。"
   },
   "payments": {
     "thisWeek": "今週",
@@ -534,7 +535,10 @@
     "rescheduleNoSlots": "この日は空きがありません。",
     "rescheduleSend": "変更リクエストを送る",
     "rescheduleSending": "送信中…",
-    "reschedulePending": "変更リクエスト中"
+    "reschedulePending": "変更リクエスト中",
+    "rescheduleRequestedLabel": "再スケジュール済み: {date} · {time}",
+    "rescheduleButton": "再スケジュールをリクエスト",
+    "closeDialog": "閉じる"
   },
   "nav": {
     "overview": "ホーム",
@@ -549,14 +553,13 @@
     "notFound": "招待リンクが見つかりません",
     "notFoundDesc": "このリンクは無効または期限切れの可能性があります。医師に新しいリンクの共有を依頼してください。",
     "backToHome": "ホームへ戻る"
-  }
-,
+  },
   "versionGate": {
     "title": "アップデートが必要です",
     "body": "SolvyMedの最新バージョンを読み込むにはページを更新してください。",
     "reload": "ページを更新"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "月",
     "planSubtitle": "いつでもキャンセル可能。新規アカウントは15日間無料トライアル。",

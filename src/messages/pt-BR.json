@@ -177,7 +177,8 @@
     "notePlaceholder": "Nota para o paciente (opcional)",
     "rescheduleRequested": "Remarcação solicitada",
     "accept": "Aceitar",
-    "decline": "Recusar"
+    "decline": "Recusar",
+    "slotTakenAlert": "Esse horário não está mais disponível. Por favor, recuse e deixe o paciente escolher outro horário."
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -534,7 +535,10 @@
     "rescheduleNoSlots": "Nenhum horário disponível neste dia.",
     "rescheduleSend": "Enviar solicitação de remarcação",
     "rescheduleSending": "Enviando…",
-    "reschedulePending": "Remarcação pendente"
+    "reschedulePending": "Remarcação pendente",
+    "rescheduleRequestedLabel": "Reagendamento solicitado: {date} · {time}",
+    "rescheduleButton": "Solicitar reagendamento",
+    "closeDialog": "Fechar"
   },
   "nav": {
     "overview": "Visão geral",
@@ -549,14 +553,13 @@
     "notFound": "Link de convite não encontrado",
     "notFoundDesc": "Este link pode ser inválido ou ter expirado. Peça ao seu médico para compartilhar um novo.",
     "backToHome": "Ir para o início"
-  }
-,
+  },
   "versionGate": {
     "title": "Atualização Necessária",
     "body": "Atualize a página para carregar a versão mais recente do SolvyMed.",
     "reload": "Atualizar Página"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "mês",
     "planSubtitle": "Cancele quando quiser. 15 dias de teste grátis para novas contas.",

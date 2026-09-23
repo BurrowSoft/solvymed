@@ -177,7 +177,8 @@
     "notePlaceholder": "Ghi chú cho bệnh nhân (tùy chọn)",
     "rescheduleRequested": "Đã yêu cầu đổi lịch",
     "accept": "Chấp nhận",
-    "decline": "Từ chối"
+    "decline": "Từ chối",
+    "slotTakenAlert": "Không còn trống khủng giờ này nữa. Vui lòng từ chối và để bệnh nhân chọn thời gian khác."
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -534,7 +535,10 @@
     "rescheduleNoSlots": "Không có khung giờ trống cho ngày này.",
     "rescheduleSend": "Gửi yêu cầu đổi lịch",
     "rescheduleSending": "Đang gửi…",
-    "reschedulePending": "Đang chờ đổi lịch"
+    "reschedulePending": "Đang chờ đổi lịch",
+    "rescheduleRequestedLabel": "Yêu cầu đổi lịch: {date} · {time}",
+    "rescheduleButton": "Yêu cầu đổi lịch",
+    "closeDialog": "Đóng"
   },
   "nav": {
     "overview": "Tổng quan",
@@ -549,14 +553,13 @@
     "notFound": "Không tìm thấy liên kết mời",
     "notFoundDesc": "Liên kết này có thể không hợp lệ hoặc đã hết hạn. Hãy yêu cầu bác sĩ chia sẻ một liên kết mới.",
     "backToHome": "Về trang chủ"
-  }
-,
+  },
   "versionGate": {
     "title": "Cần cập nhật",
     "body": "Vui lòng tải lại trang để tải phiên bản mới nhất của SolvyMed.",
     "reload": "Tải lại trang"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "tháng",
     "planSubtitle": "Hủy bất cứ lúc nào. Dùng thử miễn phí 15 ngày cho tài khoản mới.",

@@ -16,7 +16,7 @@ export function requireEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
     throw new Error(
-      `Missing env var ${name} — pass test credentials via --env or a .env.e2e file (see TESTING-WEB.md).`
+      `Missing env var ${name} — export it or source .env.e2e before running the suite (see TESTING-WEB.md).`
     );
   }
   return value;
