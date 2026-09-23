@@ -17,7 +17,7 @@ is in the table below.
 
 | Feature | Branch | Flows | Status | Last run |
 |---|---|---|---|---|
-| Patient self-rescheduling | `feat/patient-rescheduling` | `e2e/patient-request-reschedule.spec.ts`, `e2e/doctor-respond-reschedule.spec.ts` | 🔴 PENDING — written, not yet executed (blocked on shared test account credentials, see below) | — |
+| Patient self-rescheduling | `feat/patient-rescheduling` | `e2e/patient-request-reschedule.spec.ts`, `e2e/doctor-respond-reschedule.spec.ts` | 🔴 FAILING — real bug found, see below | 2026-09-23 |
 
 ## Talking to the other agents
 
@@ -68,42 +68,67 @@ in CI).
 
 ## Status as of 2026-09-23
 
-**Flows written, harness verified, not yet run end-to-end.** One blocker
-remains:
+**Ran for real against seeded accounts. Found a real, reproducible bug —
+not a test/seed-data problem.** Credentials were provided by the mobile
+tester (`e2e-test-patient+…@burrowsoft.com` / `e2e-test-doctor+…@burrowsoft.com`,
+seeded with working hours every day 09:00–18:00 and one confirmed
+appointment for 2026-09-26). With those in `.env.e2e`:
 
-- **Test accounts — blocked.** No seeded patient/professional accounts
-  exist in the shared Supabase project, and no seed SQL exists in either
-  repo. Per the user (relayed via the mobile tester agent), throwaway
-  accounts may be created directly in the shared project, and the mobile
-  tester (`d1`) started creating one shared pair (`e2e-test-patient@…` /
-  `e2e-test-doctor@…`, pre-confirmed via the Supabase admin API, plus one
-  seeded confirmed appointment between them) so both testers use the same
-  pair instead of multiplying test rows. That attempt is currently stuck:
-  `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` looks malformed/invalid (the
-  admin API 401s), so no accounts exist yet. `d1` has flagged this to the
-  user directly. Once real credentials land, fill them into `.env.e2e`
-  (see `.env.e2e.example`) as `PATIENT_EMAIL` / `PATIENT_PASSWORD` /
-  `DOCTOR_EMAIL` / `DOCTOR_PASSWORD` and re-run.
+- `patient-request-reschedule.spec.ts` **fails**: logs in, opens
+  `/my-appointments`, finds the confirmed appointment, opens the reschedule
+  dialog — then every day shows "No available slots for this day.", even
+  though the professional has 09:00–18:00 hours every day and no
+  conflicting bookings on the date tried.
+- `doctor-respond-reschedule.spec.ts` **fails as a downstream consequence**:
+  there's never a pending reschedule request to accept, since the patient
+  can never submit one.
 
-What *has* been verified on this machine, so the remaining gap is narrowly
-"needs real credentials," not "needs debugging":
+**Root cause (confirmed, not guessed)** — isolated by calling the
+Supabase REST API directly as each test account (bypassing the UI) to
+narrow down where the empty result came from:
 
-- `@playwright/test` + the Chromium binary are installed
-  (`npx playwright install chromium` completed).
-- `npm run test:e2e` was run against a live `next dev` instance with dummy
-  credentials (`PATIENT_EMAIL=nonexistent@example.com` etc.). Both specs
-  navigated to `/auth/login`, resolved `login-email`/`login-password`/
-  `login-submit` via `data-testid`, submitted, and failed cleanly on the
-  post-login `toHaveURL` assertion (stayed on `/auth/login`, as expected
-  for bad credentials) — confirming the harness, selectors, and
-  `webServer` auto-start all work end-to-end up to the auth boundary.
-- The locale-redirect behavior documented above was confirmed for real:
-  `GET /en/auth/login` → `307` → `/auth/login`.
+`getAvailableSlotsForDate` in
+[`booking-actions.ts:521-527`](src/app/%5Blocale%5D/dashboard/schedule/booking-actions.ts#L521-L527)
+reads the professional's `working_hours` with a direct table query:
 
-Not yet exercised: anything past login (both specs stop at the credential
-check above). Treat the first real run as a shakeout: slot-loading waits
-and the day/slot chip selection are best-guess pending a real run against
-seeded availability data.
+```ts
+const { data: profData } = await supabase
+  .from("professionals")
+  .select("working_hours")
+  .eq("id", professionalId)
+  .maybeSingle();
+```
+
+This runs as the **patient's** session (this function is called from the
+patient-facing `RescheduleDialog`). Confirmed via REST: signed in as the
+doctor, `GET /professionals?id=eq.<doctor-id>&select=working_hours` returns
+the row with correct data (`enabled: true` all 7 days). Signed in as the
+patient, the *identical* query against the *same* professional row returns
+`[]` — RLS on `professionals` doesn't allow a patient to read another
+user's `working_hours` this way. So `profData` is always `null` for a
+patient, `wh` defaults to `{}`, `dayHours` is `undefined`, and the function
+returns `[]` unconditionally — for every patient, every professional, every
+day. `get_busy_slots` (the other data source in the same function) *is* a
+security-definer RPC and returns correctly regardless of caller.
+
+The fix is already established elsewhere in this codebase: the *original*
+booking flow at
+[`book/[professionalId]/BookingClient.tsx:228`](src/app/%5Blocale%5D/book/%5BprofessionalId%5D/BookingClient.tsx#L228)
+reads working hours the same way a patient needs to, via
+`supabase.rpc("get_professional_working_hours", { p_professional_id })` —
+a security-definer RPC that presumably already exists for this exact
+purpose. `getAvailableSlotsForDate` should call that RPC instead of
+querying `professionals` directly. Flagged to the developer agent with
+this diagnosis; not fixing it myself since it's outside the tester role,
+but re-run is one `npm run test:e2e` away once it's patched — the flows
+themselves needed no changes to reach this failure.
+
+What *has* been verified end-to-end on this machine:
+- `@playwright/test` + Chromium installed and working.
+- Login, locale-redirect (`GET /en/auth/login` → `307` → `/auth/login`),
+  and both specs' selectors all resolve correctly through `data-testid` —
+  the failure is purely the app's RLS/data-access bug above, not the test
+  harness.
 
 ## What's covered
 
