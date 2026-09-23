@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import type React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { AppointmentStatusSelect, DeleteAppointmentButton } from "./ScheduleClient";
 
@@ -20,9 +19,6 @@ export type CalendarAppt = {
   notes?: string;
 };
 
-// HOUR_H/FIRST_H/LAST_H drive the grid's Tailwind classes below (h-16 = HOUR_H,
-// h-[896px] = HOURS.length * HOUR_H) — Tailwind needs literal class names, so
-// those can't be computed from these constants; update both together.
 const HOUR_H = 64;
 const FIRST_H = 7;
 const LAST_H = 21;
@@ -131,7 +127,7 @@ function TimeGrid({
       <div className="shrink-0 w-14 border-r border-slate-100 bg-white">
         {showHeaders && <div className="h-12 border-b border-slate-100" />}
         {HOURS.map(h => (
-          <div key={h} className="relative border-b border-slate-100 h-16">
+          <div key={h} style={{ height: HOUR_H }} className="relative border-b border-slate-100">
             <span className="absolute -top-2.5 right-2 text-[10px] font-medium text-slate-400 select-none">
               {String(h).padStart(2, "0")}:00
             </span>
@@ -157,17 +153,17 @@ function TimeGrid({
                 </button>
               </div>
             )}
-            <div className="relative h-[896px]">
+            <div className="relative" style={{ height: HOURS.length * HOUR_H }}>
               {/* Grid lines */}
               {HOURS.map((_, i) => (
-                <div key={i} className="calendar-time-line border-b border-slate-100" style={{ '--line-top': `${(i + 1) * HOUR_H}px` } as React.CSSProperties} />
+                <div key={i} className="absolute w-full border-b border-slate-100" style={{ top: (i + 1) * HOUR_H }} />
               ))}
               {HOURS.map((_, i) => (
-                <div key={`h${i}`} className="calendar-time-line border-b border-slate-50" style={{ '--line-top': `${i * HOUR_H + HOUR_H / 2}px` } as React.CSSProperties} />
+                <div key={`h${i}`} className="absolute w-full border-b border-slate-50" style={{ top: i * HOUR_H + HOUR_H / 2 }} />
               ))}
               {/* Now line */}
               {isToday && showNow && (
-                <div className="calendar-now-line" style={{ '--now-top': `${nowTop}px` } as React.CSSProperties}>
+                <div className="absolute left-0 right-0 z-20 pointer-events-none flex items-center" style={{ top: nowTop }}>
                   <div className="w-2.5 h-2.5 rounded-full bg-teal-500 shrink-0 -ml-1" />
                   <div className="flex-1 h-px bg-teal-500" />
                 </div>
@@ -180,8 +176,8 @@ function TimeGrid({
                 return (
                   <button
                     key={appt.id}
-                    className={`calendar-appt-block rounded-r-lg px-1.5 py-1 text-left overflow-hidden cursor-pointer transition hover:brightness-95 hover:shadow-md ${blockStyle(appt.status)}`}
-                    style={{ '--appt-top': `${Math.max(top, 0)}px`, '--appt-height': `${height}px` } as React.CSSProperties}
+                    style={{ top: Math.max(top, 0), height, left: 3, right: 3 }}
+                    className={`absolute rounded-r-lg px-1.5 py-1 text-left overflow-hidden cursor-pointer transition hover:brightness-95 hover:shadow-md ${blockStyle(appt.status)}`}
                     onClick={() => onSelect(appt)}
                   >
                     <p className="text-[11px] font-bold leading-tight truncate">{appt.patient_name}</p>
@@ -327,7 +323,7 @@ export function CalendarView({
       {/* Calendar body */}
       <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
         {(view === "day" || view === "week") && (
-          <div className="overflow-y-auto max-h-[calc(100vh-330px)]">
+          <div className="overflow-y-auto" style={{ maxHeight: "calc(100vh - 330px)" }}>
             <TimeGrid
               days={view === "day" ? [currentDate] : getWeekDays(currentDate)}
               appointments={appointments}

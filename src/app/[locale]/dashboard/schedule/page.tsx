@@ -153,7 +153,7 @@ export default async function SchedulePage({
                     <p className="text-xs text-slate-400">{appt.end_time?.slice(0, 5)}</p>
                     <p className="text-xs text-slate-400 mt-0.5">{appt.duration_minutes}m</p>
                   </div>
-                  <div className={`mt-1 h-full w-0.5 self-stretch rounded-full min-h-10 ${appt.status === "blocked" ? "bg-slate-200" : "bg-teal-200"}`} />
+                  <div className={`mt-1 h-full w-0.5 self-stretch rounded-full ${appt.status === "blocked" ? "bg-slate-200" : "bg-teal-200"}`} style={{ minHeight: 40 }} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">

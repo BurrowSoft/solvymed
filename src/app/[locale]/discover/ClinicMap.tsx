@@ -34,7 +34,8 @@ export function ClinicMap({ clinics, onSelect }: Props) {
     <MapContainer
       center={center}
       zoom={zoom}
-      className="clinic-map rounded-2xl z-0"
+      style={{ height: "100%", width: "100%", minHeight: 480 }}
+      className="rounded-2xl z-0"
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

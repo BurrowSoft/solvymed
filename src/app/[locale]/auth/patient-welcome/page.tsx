@@ -6,10 +6,6 @@ import { createClient } from "@/lib/supabase/client";
 
 const COUNTDOWN = 5;
 
-// Width classes for each remaining-seconds value (COUNTDOWN..0). Must stay in
-// sync with COUNTDOWN — Tailwind needs the full literal class names in source.
-const PROGRESS_WIDTH_CLASS = ["w-0", "w-1/5", "w-2/5", "w-3/5", "w-4/5", "w-full"];
-
 export default function PatientWelcomePage() {
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
@@ -78,7 +74,8 @@ export default function PatientWelcomePage() {
         {/* Progress bar */}
         <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
           <div
-            className={`h-full rounded-full bg-teal-500 transition-all duration-1000 ease-linear ${PROGRESS_WIDTH_CLASS[COUNTDOWN - count]}`}
+            className="h-full rounded-full bg-teal-500 transition-all duration-1000 ease-linear"
+            style={{ width: `${((COUNTDOWN - count) / COUNTDOWN) * 100}%` }}
           />
         </div>
 
