@@ -95,7 +95,7 @@ function RescheduleDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4" onClick={onClose}>
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onClick={e => e.stopPropagation()}>
+      <div data-testid="reschedule-dialog" className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-bold text-slate-900">Request Reschedule</h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
@@ -106,6 +106,7 @@ function RescheduleDialog({
           {days.map(day => (
             <button
               key={day}
+              data-testid="reschedule-day-chip"
               onClick={() => setSelectedDate(day)}
               className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold border transition ${
                 selectedDate === day
@@ -130,6 +131,7 @@ function RescheduleDialog({
             {slots.map(slot => (
               <button
                 key={slot.start}
+                data-testid="reschedule-slot-chip"
                 onClick={() => setSelectedSlot(slot)}
                 className={`rounded-lg px-3 py-2 text-sm font-semibold border transition ${
                   selectedSlot?.start === slot.start
@@ -145,6 +147,7 @@ function RescheduleDialog({
 
         <button
           disabled={!selectedSlot || pending}
+          data-testid="reschedule-submit-button"
           onClick={() => {
             if (!selectedSlot) return;
             startTransition(async () => {
@@ -181,7 +184,7 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
 
   return (
     <>
-    <div className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 p-5">
+    <div data-testid="appointment-card" data-status={appt.status} className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <p className="font-bold text-slate-900">{appt.consultation_type}</p>
@@ -204,7 +207,7 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
           )}
         </div>
         <div className="flex flex-col items-end gap-2">
-          <span className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${color}`}>
+          <span data-testid="appointment-status-badge" className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${color}`}>
             {isPatientReschedule ? "Reschedule Pending" : label}
           </span>
         </div>
@@ -233,6 +236,7 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
         <div className="mt-3 pt-3 border-t border-slate-100">
           <button
             onClick={() => setShowReschedule(true)}
+            data-testid="reschedule-request-button"
             className="text-sm font-medium text-slate-500 hover:text-slate-700 transition"
           >
             Request reschedule
