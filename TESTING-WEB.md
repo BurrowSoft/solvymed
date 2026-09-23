@@ -19,7 +19,8 @@ is in the table below.
 |---|---|---|---|---|
 | Patient self-rescheduling | `feat/patient-rescheduling` (✅ merged to master 2026-09-23) | `e2e/01-patient-request-reschedule.spec.ts`, `e2e/02-doctor-respond-reschedule.spec.ts` | 🟢 GREEN — re-verified post migrations 027–033 | 2026-09-23 |
 | Patient self-rescheduling (decline path) | `feat/patient-rescheduling` (✅ merged to master 2026-09-23) | `e2e/03-doctor-decline-reschedule.spec.ts` | 🟢 GREEN — self-contained, doesn't need 01/02 to run first; re-verified post migrations 027–033 | 2026-09-23 |
-| CSS extraction (pure refactor, no logic changes) | `refactor/css-extract` (PR #2) | `e2e/01`–`03` (regression) + manual visual check of the 5 refactored pages | 🟢 GREEN — see "CSS refactor visual verification" below | 2026-09-24 |
+| CSS extraction (pure refactor, no logic changes) | `refactor/css-extract` (PR #2 — merged, then reverted: merged before a fresh Copilot review landed on the final commit) | `e2e/01`–`03` (regression) + manual visual check of the 5 refactored pages | 🟢 GREEN — see "CSS refactor visual verification" below (content re-verified against `8f6be7a`) | 2026-09-24 |
+| CSS extraction — re-land | `refactor/css-extract-redo` (PR #4, commit `15407f6`) | `e2e/01-03` | 🟢 GREEN — fresh run against this exact commit, not carried over from PR #2 | 2026-09-24 |
 
 ## Talking to the other agents
 
@@ -443,6 +444,36 @@ layout-dependent interactions like clicking a day/slot chip). First
 attempt showed 2 failures — same cold-dev-server-after-cache-clear pattern
 documented earlier in this file, not a regression: two clean 3/3 runs
 followed on the warm server.
+
+### Re-verification: PR #2 → reverted → re-landed as PR #4
+
+PR #2 merged, then got reverted — it landed before a fresh Copilot review
+covered the final commit, so the user pulled it back via GitHub's revert.
+The developer re-landed the same change on a clean branch,
+`refactor/css-extract-redo` (PR #4). Asked to re-run rather than carry the
+old green light forward, which is the right call — a revert means the
+gate that mattered was never actually satisfied for the commit that's
+about to ship. Verified the "identical content" claim myself rather than
+taking it as given: diffed PR #4's commit (`15407f6`) against PR #2's
+(`8f6be7a`) for the 5 refactored files — one line differs, a comment added
+above `CalendarView.tsx`'s `HOUR_H`/`FIRST_H`/`LAST_H` constants
+explaining why they can't drive the Tailwind classes directly. No
+functional or visual difference, so the earlier visual verification above
+still holds; only re-ran the E2E suite (`npm run test:e2e`, as asked)
+against this exact commit rather than redoing the screenshots too.
+
+First `npm run test:e2e` attempt: 3 failures, including an unusual
+`net::ERR_ABORTED` navigating to `/dashboard/schedule`. Before concluding
+anything, checked the DB directly and the failure snapshot: the seeded
+appointment was sitting in `proposal`/"Reschedule Pending" — leftover from
+this run's own first spec failing to complete cleanly (likely the same
+cold-server first-hit pattern, compounded this time by three specs
+failing in the same run without a chance to self-clean). A second run's
+specs 02/03 self-healed it back to `confirmed` (accept, then a fresh
+decline cycle) despite 01 still failing on stale state. Cleared state and
+ran twice more on the now-warm server: both 3/3 clean. Recorded as its own
+row rather than overwriting PR #2's, so the "reverted" history stays
+visible.
 
 ## iOS — open question
 
