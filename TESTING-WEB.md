@@ -17,7 +17,7 @@ is in the table below.
 
 | Feature | Branch | Flows | Status | Last run |
 |---|---|---|---|---|
-| Patient self-rescheduling | `feat/patient-rescheduling` | `e2e/01-patient-request-reschedule.spec.ts`, `e2e/02-doctor-respond-reschedule.spec.ts` | 🟢 GREEN — re-verified against `0708535` | 2026-09-23 |
+| Patient self-rescheduling | `feat/patient-rescheduling` | `e2e/01-patient-request-reschedule.spec.ts`, `e2e/02-doctor-respond-reschedule.spec.ts` | 🟢 GREEN — re-verified against `8e0b60a` | 2026-09-23 |
 
 ## Talking to the other agents
 
@@ -216,7 +216,29 @@ rather than silently dismissed, since "stuck on Sending forever" is a
 real-looking failure mode and future runs hitting it after a cache clear
 shouldn't cause alarm.
 
-## What's covered
+### Re-verification against `8e0b60a` (auth guard, ARIA, error UI)
+
+Reviewed the diff first this time before running (auth check in
+`getAvailableSlotsForDate`, RPC-returned notification fields in
+`acceptRescheduleRequest`, `isObsolete` fix for patient proposals in
+`BookingRequestsPanel`, error state + ARIA attrs in `RescheduleDialog`,
+plus a copyedit to this suite's own `e2e/helpers/login.ts` error message)
+— all `data-testid`s were untouched and the new error/ARIA markup only
+renders conditionally, so didn't expect selector breakage.
+
+First full-suite run failed both specs (state-dependent: `02-` failing
+was a downstream consequence of `01-` failing). Re-running `01-` alone
+immediately after, with no other change, passed cleanly — so not a
+deterministic regression. Two more full fresh runs both passed (~46s,
+~48s). Best guess: a `git pull` landed 19 changed files (including all 15
+locale JSON files) while the dev server was still running, and Fast
+Refresh hit a transient inconsistent-reload state on that first request
+after the pull — consistent with the dev-server flakiness already seen
+twice above, not a code regression. Flagging the "ran once, failed, reran
+clean" pattern explicitly rather than treating either the failure or the
+pass as automatically definitive: if this shows up again in a way that
+correlates with something other than "right after a pull," that's worth
+revisiting as a real bug.
 
 Feature: patient-initiated appointment rescheduling (`feat/patient-rescheduling`).
 
