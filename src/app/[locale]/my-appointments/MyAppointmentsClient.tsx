@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useState, useTransition, useCallback, useEffect } from "react";
+import { useState, useTransition, useCallback, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { acceptProposal, declineProposal, requestReschedule, getAvailableSlotsForDate } from "@/app/[locale]/dashboard/schedule/booking-actions";
@@ -37,13 +37,17 @@ const STATUS_KEY: Record<string, string> = {
 
 const DAYS_AHEAD = 14;
 
+function localDateStr(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 function buildDays() {
   const days: string[] = [];
   const today = new Date();
   for (let i = 1; i <= DAYS_AHEAD; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() + i);
-    days.push(d.toISOString().split("T")[0]);
+    days.push(localDateStr(d));
   }
   return days;
 }
@@ -70,7 +74,9 @@ function RescheduleDialog({
   const [selectedSlot, setSelectedSlot] = useState<{ start: string; end: string } | null>(null);
   const [pending, startTransition] = useTransition();
 
+  const seqRef = useRef(0);
   const loadSlots = useCallback(async (date: string) => {
+    const seq = ++seqRef.current;
     setLoadingSlots(true);
     setSelectedSlot(null);
     try {
@@ -80,9 +86,9 @@ function RescheduleDialog({
         return (eh * 60 + em) - (sh * 60 + sm);
       })();
       const result = await getAvailableSlotsForDate(appt.professional_id, date, dur || 30);
-      setSlots(result);
-    } catch { setSlots([]); }
-    finally { setLoadingSlots(false); }
+      if (seq === seqRef.current) setSlots(result);
+    } catch { if (seq === seqRef.current) setSlots([]); }
+    finally { if (seq === seqRef.current) setLoadingSlots(false); }
   }, [appt]);
 
   useEffect(() => { loadSlots(selectedDate); }, [selectedDate, loadSlots]);
@@ -165,7 +171,9 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
   const label = STATUS_KEY[appt.status] ? tSchedule(STATUS_KEY[appt.status]) : appt.status;
   const isProfProposal = appt.status === "proposal" && appt.scheduled_by !== "patient" && (!!appt.proposed_date || appt.scheduled_by === "professional");
   const isPatientReschedule = appt.status === "proposal" && appt.scheduled_by === "patient";
-  const canReschedule = (appt.status === "confirmed" || appt.status === "scheduled") && !isPatientReschedule;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const apptDate = new Date(appt.date + "T00:00:00");
+  const canReschedule = (appt.status === "confirmed" || appt.status === "scheduled") && !isPatientReschedule && apptDate >= today;
 
   const displayDate = (isProfProposal && appt.proposed_date) ? appt.proposed_date : appt.date;
   const displayStart = (isProfProposal && appt.proposed_start_time) ? appt.proposed_start_time : appt.start_time;
