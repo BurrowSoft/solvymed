@@ -178,7 +178,8 @@
     "rescheduleRequested": "Reprogrammation demandée",
     "accept": "Accepter",
     "decline": "Refuser",
-    "slotTakenAlert": "Ce créneau n’est plus disponible. Veuillez refuser et laisser le patient choisir un autre horaire."
+    "slotTakenAlert": "Ce créneau n’est plus disponible. Veuillez refuser et laisser le patient choisir un autre horaire.",
+    "pastProposalAlert": "L'heure proposée est déjà passée. Veuillez refuser pour que le patient puisse choisir un nouveau créneau."
   },
   "payments": {
     "thisWeek": "Cette semaine",

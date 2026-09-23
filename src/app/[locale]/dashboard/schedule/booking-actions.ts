@@ -96,7 +96,9 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
       .eq("invited_by_professional_id", effectiveProfId)
       .maybeSingle();
 
-    if (!existingRole?.linked_patient_id) {
+    let linkedPatientId: string | null = (existingRole?.linked_patient_id as string) ?? null;
+
+    if (!linkedPatientId) {
       const { data: profile } = await supabase
         .from("patient_profiles")
         .select("full_name, email, phone, birth_date, cpf")
@@ -106,7 +108,6 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
       const patientEmail = (profile?.email as string | null) ?? null;
 
       // Check if this patient was manually added (walk-in) before they signed up
-      let linkedPatientId: string | null = null;
       if (patientEmail) {
         const { data: existingByEmail } = await supabase
           .from("patients")
@@ -144,6 +145,16 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
           { onConflict: "user_id" },
         );
       }
+    }
+
+    // Populate patient_id so the patient can find this appointment via getPatientAppointments
+    // (which queries by patient_id). Public bookings start with patient_id = null.
+    if (linkedPatientId) {
+      await supabase
+        .from("appointments")
+        .update({ patient_id: linkedPatientId })
+        .eq("id", appointmentId)
+        .is("patient_id", null);
     }
   }
 
@@ -447,16 +458,22 @@ export async function acceptRescheduleRequest(appointmentId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+
   // Atomic overlap check + update via SECURITY DEFINER RPC.
   // RPC returns notification fields so we never pre-fetch from the client
   // (pre-fetch is a spoofing surface: data can change between read and accept).
+  // Pass p_acting_as_professional when the caller is a secretary so the RPC can
+  // verify delegation and check the appointment against the correct professional.
   const { data: rpcData, error } = await supabase.rpc("accept_patient_reschedule", {
     p_appointment_id: appointmentId,
+    ...(effectiveProfId !== user.id ? { p_acting_as_professional: effectiveProfId } : {}),
   });
 
   if (error) {
     if (error.message?.includes("slot_taken")) return { error: "slot_taken" };
     if (error.message?.includes("appointment_not_found_or_not_pending")) return { error: "Appointment not found" };
+    if (error.message?.includes("proposed_time_expired")) return { error: "proposed_time_expired" };
     return { error: error.message };
   }
 

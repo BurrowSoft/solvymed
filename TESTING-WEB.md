@@ -18,6 +18,7 @@ is in the table below.
 | Feature | Branch | Flows | Status | Last run |
 |---|---|---|---|---|
 | Patient self-rescheduling | `feat/patient-rescheduling` | `e2e/01-patient-request-reschedule.spec.ts`, `e2e/02-doctor-respond-reschedule.spec.ts` | 🟢 GREEN — re-verified against `8e0b60a` | 2026-09-23 |
+| Patient self-rescheduling (decline path) | `feat/patient-rescheduling` | `e2e/03-doctor-decline-reschedule.spec.ts` | 🟡 WRITTEN — spec added (Copilot finding PRRT_kwDOS0VOSc6lAFwF), not yet run; spec 01+02 must run first so there is a reschedulable appointment in state | — |
 
 ## Talking to the other agents
 

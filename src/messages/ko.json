@@ -178,7 +178,8 @@
     "rescheduleRequested": "일정 변경 요청됨",
     "accept": "수락",
     "decline": "거절",
-    "slotTakenAlert": "해당 슬롯은 더 이상 사용할 수 없습니다. 거절하고 환자가 다른 시간을 선택하도록 하세요."
+    "slotTakenAlert": "해당 슬롯은 더 이상 사용할 수 없습니다. 거절하고 환자가 다른 시간을 선택하도록 하세요.",
+    "pastProposalAlert": "제안된 시간이 이미 지났습니다. 환자가 새 슬롯을 요청할 수 있도록 거절해 주세요."
   },
   "payments": {
     "thisWeek": "이번 주",

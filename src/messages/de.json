@@ -178,7 +178,8 @@
     "rescheduleRequested": "Terminverschiebung angefordert",
     "accept": "Annehmen",
     "decline": "Ablehnen",
-    "slotTakenAlert": "Dieser Termin ist nicht mehr verfügbar. Bitte ablehnen und den Patienten einen anderen Termin wählen lassen."
+    "slotTakenAlert": "Dieser Termin ist nicht mehr verfügbar. Bitte ablehnen und den Patienten einen anderen Termin wählen lassen.",
+    "pastProposalAlert": "Der vorgeschlagene Zeitpunkt ist abgelaufen. Bitte ablehnen, damit der Patient einen neuen Termin anfordern kann."
   },
   "payments": {
     "thisWeek": "Diese Woche",

@@ -221,6 +221,8 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                           const result = await acceptRescheduleRequest(b.id);
                           if (result.error === "slot_taken") {
                             alert(t("slotTakenAlert"));
+                          } else if (result.error === "proposed_time_expired") {
+                            alert(t("pastProposalAlert"));
                           }
                         })}
                         disabled={isPending}

@@ -178,7 +178,8 @@
     "rescheduleRequested": "Reprogramación solicitada",
     "accept": "Aceptar",
     "decline": "Rechazar",
-    "slotTakenAlert": "Ese horario ya no está disponible. Por favor, rejácelo y deje que el paciente elija otro horario."
+    "slotTakenAlert": "Ese horario ya no está disponible. Por favor, rechácelo y deje que el paciente elija otro horario.",
+    "pastProposalAlert": "El horario propuesto ya pasó. Por favor, rechácelo para que el paciente pueda solicitar uno nuevo."
   },
   "payments": {
     "thisWeek": "Esta semana",

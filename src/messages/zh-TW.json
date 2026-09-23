@@ -178,7 +178,8 @@
     "rescheduleRequested": "已申請改期",
     "accept": "接受",
     "decline": "拒絕",
-    "slotTakenAlert": "該時段已無法使用。請拒絕並讓患者選擇其他時間。"
+    "slotTakenAlert": "該時段已無法使用。請拒絕並讓患者選擇其他時間。",
+    "pastProposalAlert": "提議的時間已過。請拒絕以便患者重新選擇時間。"
   },
   "payments": {
     "thisWeek": "本週",

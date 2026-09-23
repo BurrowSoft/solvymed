@@ -178,7 +178,8 @@
     "rescheduleRequested": "Reschedule Requested",
     "accept": "Accept",
     "decline": "Decline",
-    "slotTakenAlert": "That slot is no longer available. Please decline and let the patient choose another time."
+    "slotTakenAlert": "That slot is no longer available. Please decline and let the patient choose another time.",
+    "pastProposalAlert": "The proposed time has already passed. Please decline so the patient can request a new slot."
   },
   "payments": {
     "thisWeek": "This week",

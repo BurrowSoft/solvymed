@@ -178,7 +178,8 @@
     "rescheduleRequested": "Đã yêu cầu đổi lịch",
     "accept": "Chấp nhận",
     "decline": "Từ chối",
-    "slotTakenAlert": "Không còn trống khủng giờ này nữa. Vui lòng từ chối và để bệnh nhân chọn thời gian khác."
+    "slotTakenAlert": "Không còn trống khung giờ này nữa. Vui lòng từ chối và để bệnh nhân chọn thời gian khác.",
+    "pastProposalAlert": "Thời gian đề xuất đã qua. Vui lòng từ chối để bệnh nhân có thể chọn khung giờ mới."
   },
   "payments": {
     "thisWeek": "Tuần này",

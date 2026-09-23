@@ -178,7 +178,8 @@
     "rescheduleRequested": "Riprogrammazione richiesta",
     "accept": "Accetta",
     "decline": "Rifiuta",
-    "slotTakenAlert": "Questo slot non è più disponibile. Rifiuta e lascia che il paziente scelga un altro orario."
+    "slotTakenAlert": "Questo slot non è più disponibile. Rifiuta e lascia che il paziente scelga un altro orario.",
+    "pastProposalAlert": "L'orario proposto è già passato. Rifiuta così il paziente può richiedere un nuovo slot."
   },
   "payments": {
     "thisWeek": "Questa settimana",

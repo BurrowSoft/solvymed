@@ -178,7 +178,8 @@
     "rescheduleRequested": "Penjadwalan ulang diminta",
     "accept": "Terima",
     "decline": "Tolak",
-    "slotTakenAlert": "Slot tersebut tidak lagi tersedia. Harap tolak dan biarkan pasien memilih waktu lain."
+    "slotTakenAlert": "Slot tersebut tidak lagi tersedia. Harap tolak dan biarkan pasien memilih waktu lain.",
+    "pastProposalAlert": "Waktu yang diusulkan sudah berlalu. Harap tolak agar pasien dapat meminta slot baru."
   },
   "payments": {
     "thisWeek": "Minggu ini",
