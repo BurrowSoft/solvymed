@@ -545,7 +545,7 @@ export async function getAvailableSlotsForDate(
   date: string,
   durationMinutes: number,
 ) {
-  if (!durationMinutes || durationMinutes <= 0) return [];
+  if (!durationMinutes || durationMinutes <= 0 || !Number.isInteger(durationMinutes) || durationMinutes > 480) return [];
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];

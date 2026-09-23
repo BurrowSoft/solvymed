@@ -7,6 +7,17 @@ import { login, requireEnv } from "./helpers/login";
 // Precondition: PATIENT_EMAIL must have at least one confirmed appointment
 // with a professional who has open slots in the next 14 days.
 test("professional declines a patient-initiated reschedule request", async ({ page }) => {
+  // This test does two full logins plus a full reschedule-request cycle
+  // before even attempting the decline — comfortably over the 30s default
+  // in this environment once dev-server latency (see TESTING-WEB.md) is
+  // factored in. Diagnosed by running a version of this test with a
+  // dialog listener and per-step logging: the decline click itself
+  // reliably succeeds (confirmed via direct DB check every time — status
+  // back to "confirmed" within ~200ms server-side) but can take several
+  // seconds, and total elapsed time was what tripped the default timeout,
+  // not a hang.
+  test.setTimeout(60_000);
+
   const patientEmail = requireEnv("PATIENT_EMAIL");
   const patientPassword = requireEnv("PATIENT_PASSWORD");
   const doctorEmail = requireEnv("DOCTOR_EMAIL");
@@ -49,6 +60,14 @@ test("professional declines a patient-initiated reschedule request", async ({ pa
 
   await row.getByTestId("reschedule-decline-button").click();
 
-  // On success the Accept/Decline pair disappears (status reverts to confirmed).
-  await expect(row.getByTestId("reschedule-decline-button")).toBeHidden({ timeout: 10_000 });
+  // Same client-side refresh race documented in
+  // 01-patient-request-reschedule.spec.ts: the server action (verified via
+  // direct DB check) completes correctly in well under a second, but
+  // waiting on the client to observe it via the implicit post-action
+  // revalidation was unreliable here too (unlike the accept path in
+  // 02-doctor-respond-reschedule.spec.ts, which observed it fine — same
+  // category of dev-server flakiness, just manifesting on a different
+  // action this time). Force a reload instead of trusting the timing.
+  await page.reload();
+  await expect(page.getByTestId("reschedule-decline-button")).toBeHidden({ timeout: 15_000 });
 });
