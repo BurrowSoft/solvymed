@@ -391,6 +391,182 @@ export async function declineProposal(appointmentId: string) {
   return { error: null };
 }
 
+export async function requestReschedule(
+  appointmentId: string,
+  newDate: string,
+  newStartTime: string,
+  newEndTime: string,
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data: appt } = await supabase
+    .from("appointments")
+    .select("professional_id, patient_name")
+    .eq("id", appointmentId)
+    .eq("patient_auth_id", user.id)
+    .maybeSingle();
+
+  if (!appt) return { error: "Appointment not found" };
+
+  const { error } = await supabase
+    .from("appointments")
+    .update({
+      status: "proposal",
+      scheduled_by: "patient",
+      proposed_date: newDate,
+      proposed_start_time: newStartTime,
+      proposed_end_time: newEndTime,
+    })
+    .eq("id", appointmentId)
+    .eq("patient_auth_id", user.id);
+
+  if (error) return { error: error.message };
+
+  await notifyProfessional(
+    supabase,
+    appt.professional_id as string,
+    "Reschedule Requested",
+    `${appt.patient_name} requested to reschedule to ${newDate} at ${newStartTime.slice(0, 5)}.`,
+  );
+
+  revalidatePath("/my-appointments");
+  return { error: null };
+}
+
+export async function acceptRescheduleRequest(appointmentId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+
+  const { data: appt } = await supabase
+    .from("appointments")
+    .select("proposed_date, proposed_start_time, proposed_end_time, patient_auth_id, patient_name")
+    .eq("id", appointmentId)
+    .eq("professional_id", effectiveProfId)
+    .maybeSingle();
+
+  if (!appt) return { error: "Appointment not found" };
+
+  const { error } = await supabase
+    .from("appointments")
+    .update({
+      status: "confirmed",
+      date: appt.proposed_date,
+      start_time: appt.proposed_start_time,
+      end_time: appt.proposed_end_time,
+      scheduled_by: null,
+      proposed_date: null,
+      proposed_start_time: null,
+      proposed_end_time: null,
+    })
+    .eq("id", appointmentId)
+    .eq("professional_id", effectiveProfId);
+
+  if (error) return { error: error.message };
+
+  await notifyPatient(
+    supabase,
+    appointmentId,
+    "Reschedule Confirmed",
+    `Your appointment has been rescheduled to ${appt.proposed_date} at ${(appt.proposed_start_time as string).slice(0, 5)}.`,
+  );
+
+  revalidatePath("/dashboard/schedule");
+  return { error: null };
+}
+
+export async function declineRescheduleRequest(appointmentId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+
+  const { data: appt } = await supabase
+    .from("appointments")
+    .select("patient_auth_id")
+    .eq("id", appointmentId)
+    .eq("professional_id", effectiveProfId)
+    .maybeSingle();
+
+  if (!appt) return { error: "Appointment not found" };
+
+  const { error } = await supabase
+    .from("appointments")
+    .update({
+      status: "confirmed",
+      scheduled_by: null,
+      proposed_date: null,
+      proposed_start_time: null,
+      proposed_end_time: null,
+    })
+    .eq("id", appointmentId)
+    .eq("professional_id", effectiveProfId);
+
+  if (error) return { error: error.message };
+
+  await notifyPatient(
+    supabase,
+    appointmentId,
+    "Reschedule Declined",
+    "The doctor could not accommodate your reschedule request. Your original appointment remains confirmed.",
+  );
+
+  revalidatePath("/dashboard/schedule");
+  return { error: null };
+}
+
+export async function getAvailableSlotsForDate(
+  professionalId: string,
+  date: string,
+  durationMinutes: number,
+) {
+  const supabase = await createClient();
+
+  const { data: profData } = await supabase
+    .from("professionals")
+    .select("working_hours")
+    .eq("id", professionalId)
+    .maybeSingle();
+
+  const wh = (profData?.working_hours ?? {}) as Record<string, { enabled: boolean; start: string; end: string }>;
+  const dayKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  const dayKey = dayKeys[new Date(date + "T12:00:00").getDay()];
+  const dayHours = wh[dayKey];
+  if (!dayHours?.enabled) return [];
+
+  const toMin = (t: string) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+  const fromMin = (n: number) => `${String(Math.floor(n / 60)).padStart(2, "0")}:${String(n % 60).padStart(2, "0")}`;
+
+  const dayStart = toMin(dayHours.start);
+  const dayEnd = toMin(dayHours.end);
+
+  const { data: busy } = await supabase.rpc("get_busy_slots", {
+    p_professional_id: professionalId,
+    p_date: date,
+  });
+
+  const busyRanges = (busy ?? []).map((r: Record<string, unknown>) => ({
+    start: toMin(r.slot_start as string),
+    end: toMin(r.slot_end as string),
+  }));
+
+  const slots: { start: string; end: string }[] = [];
+  let cursor = dayStart;
+  while (cursor + durationMinutes <= dayEnd) {
+    const slotEnd = cursor + durationMinutes;
+    if (!busyRanges.some((r: { start: number; end: number }) => cursor < r.end && slotEnd > r.start)) {
+      slots.push({ start: fromMin(cursor), end: fromMin(slotEnd) });
+    }
+    cursor += durationMinutes;
+  }
+  return slots;
+}
+
 // ─── Push helper ─────────────────────────────────────────────────────────────
 
 async function notifyPatient(

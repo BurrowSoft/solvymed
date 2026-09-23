@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime } from "./booking-actions";
+import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest } from "./booking-actions";
 
 type Booking = {
   id: string;
@@ -18,6 +18,9 @@ type Booking = {
   status: string;
   notes?: string | null;
   is_new_patient?: boolean;
+  scheduled_by?: string | null;
+  proposed_date?: string | null;
+  proposed_start_time?: string | null;
 };
 
 type PatientProfile = {
@@ -127,10 +130,20 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                   {b.notes && (
                     <p className="mt-1 text-xs text-slate-400 italic">{b.notes}</p>
                   )}
-                  {b.status === "proposal" && (
+                  {b.status === "proposal" && b.scheduled_by !== "patient" && (
                     <span className="mt-1 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
                       {t("waitingForResponse")}
                     </span>
+                  )}
+                  {b.status === "proposal" && b.scheduled_by === "patient" && (
+                    <span className="mt-1 inline-block rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                      Reschedule Requested
+                    </span>
+                  )}
+                  {b.status === "proposal" && b.scheduled_by === "patient" && b.proposed_date && (
+                    <p className="mt-1 text-xs text-slate-500">
+                      Requested: {b.proposed_date} {b.proposed_start_time?.slice(0, 5)}
+                    </p>
                   )}
                 </div>
 
@@ -196,6 +209,24 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                       onChange={e => setNotes(prev => ({ ...prev, [b.id]: e.target.value }))}
                       className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
                     />
+                  )}
+                  {b.status === "proposal" && b.scheduled_by === "patient" && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => startTransition(async () => { await acceptRescheduleRequest(b.id); })}
+                        disabled={isPending}
+                        className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => startTransition(async () => { await declineRescheduleRequest(b.id); })}
+                        disabled={isPending}
+                        className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"
+                      >
+                        Decline
+                      </button>
+                    </div>
                   )}
                     </>
                   )}
