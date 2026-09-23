@@ -160,7 +160,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                     {t("patientInfo")}
                   </button>
 
-                  {obsolete ? (
+                  {obsolete && !(b.status === "proposal" && b.scheduled_by === "patient") ? (
                     <div className="flex gap-2">
                       <button
                         onClick={() => setProposalId(proposalId === b.id ? null : b.id)}
