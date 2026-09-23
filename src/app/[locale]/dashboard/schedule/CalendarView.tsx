@@ -20,6 +20,9 @@ export type CalendarAppt = {
   notes?: string;
 };
 
+// HOUR_H/FIRST_H/LAST_H drive the grid's Tailwind classes below (h-16 = HOUR_H,
+// h-[896px] = HOURS.length * HOUR_H) — Tailwind needs literal class names, so
+// those can't be computed from these constants; update both together.
 const HOUR_H = 64;
 const FIRST_H = 7;
 const LAST_H = 21;
