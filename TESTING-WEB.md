@@ -17,8 +17,8 @@ is in the table below.
 
 | Feature | Branch | Flows | Status | Last run |
 |---|---|---|---|---|
-| Patient self-rescheduling | `feat/patient-rescheduling` | `e2e/01-patient-request-reschedule.spec.ts`, `e2e/02-doctor-respond-reschedule.spec.ts` | 🟢 GREEN — re-verified against `8e0b60a` | 2026-09-23 |
-| Patient self-rescheduling (decline path) | `feat/patient-rescheduling` | `e2e/03-doctor-decline-reschedule.spec.ts` | 🟡 WRITTEN — spec added (Copilot finding PRRT_kwDOS0VOSc6lAFwF), not yet run; spec 01+02 must run first so there is a reschedulable appointment in state | — |
+| Patient self-rescheduling | `feat/patient-rescheduling` | `e2e/01-patient-request-reschedule.spec.ts`, `e2e/02-doctor-respond-reschedule.spec.ts` | 🟢 GREEN — re-verified against `b488b54` | 2026-09-23 |
+| Patient self-rescheduling (decline path) | `feat/patient-rescheduling` | `e2e/03-doctor-decline-reschedule.spec.ts` | 🟢 GREEN — self-contained, doesn't need 01/02 to run first | 2026-09-23 |
 
 ## Talking to the other agents
 
@@ -241,6 +241,8 @@ pass as automatically definitive: if this shows up again in a way that
 correlates with something other than "right after a pull," that's worth
 revisiting as a real bug.
 
+## What's covered
+
 Feature: patient-initiated appointment rescheduling (`feat/patient-rescheduling`).
 
 - `e2e/helpers/login.ts` — shared login helper (`/auth/login` →
@@ -256,12 +258,14 @@ Feature: patient-initiated appointment rescheduling (`feat/patient-rescheduling`
   accepts it, verifies the accept/decline buttons disappear from that row.
   Must run after the patient spec (numeric filename prefixes enforce
   this — see "Test-harness issues found and fixed" above).
+- `e2e/03-doctor-decline-reschedule.spec.ts` — self-contained (creates its
+  own pending request as the patient, then declines it as the
+  professional in the same test) so it doesn't depend on `01`/`02` having
+  run first. See "Re-verification against `b488b54`" above for why it
+  waits rather than reloads after the decline click.
 
 Not covered yet (documented, not silently skipped — same gaps as the
 mobile flows, kept in sync deliberately):
-- Decline path on the professional side (same shape as accept, second
-  flow — didn't want to duplicate before the accept flow has run once for
-  real).
 - The slot-taken race on accept (`acceptRescheduleRequest` returning
   `error: "slot_taken"`, which triggers a native `alert()` in
   `BookingRequestsPanel.tsx`). Playwright auto-dismisses native dialogs, so
@@ -280,6 +284,49 @@ mobile flows, kept in sync deliberately):
 - Booking the initial confirmed appointment: both flows assume one already
   exists for the test patient/professional pair (seed data precondition —
   see "Test accounts" above), rather than driving the booking flow first.
+
+### Re-verification against `b488b54`: migrations 027/028 question, decline-path spec
+
+The developer asked whether the E2E specs break with migrations 027/028
+(`accept_patient_reschedule` secretary-delegation two-arg overload, plus
+dropping the old single-arg one) committed but **not yet applied** to the
+live database. Verified by reading `booking-actions.ts`'s
+`acceptRescheduleRequest`: it only adds the `p_acting_as_professional` arg
+when `effectiveProfId !== user.id` (i.e. the caller is a secretary acting
+for someone else). Neither test account is a secretary, so the RPC is
+always called with just `p_appointment_id` — the same shape the *old*
+single-arg overload (migration 026, still live) expects. Ran all three
+specs against `b488b54` to confirm empirically rather than trust the
+read-through alone: all pass. **Answer: no, the specs don't need 027/028
+applied**, because the code path they exercise doesn't touch the
+secretary-delegation branch.
+
+Also reviewed and ran the new `03-doctor-decline-reschedule.spec.ts`
+(added by the developer for Copilot finding `PRRT_kwDOS0VOSc6lAFwF`,
+decline-path coverage that didn't exist before). First run failed with
+the decline button stuck `disabled` forever — looked identical to the
+router.refresh() race from `01-`, so applied the same fix (`page.reload()`
+before the final assertion). That made it *worse*: the very next run
+failed with the button still `visible` after reload, even though a direct
+DB check showed the decline had actually succeeded. Root cause: unlike in
+`01-`, where `dialog.toBeHidden()` is a real signal tied to the mutation's
+promise resolving (`onSuccess()` only fires after `await
+requestReschedule(...)` settles), there's no equivalent signal for the
+decline button — `row.click()` resolves as soon as the click event
+dispatches, not once the async transition it kicked off finishes.
+Reloading immediately after just races the in-flight mutation and can
+catch a stale pre-mutation snapshot. Fix: reverted the reload, went back
+to a plain `toBeHidden()` wait matching `02-`'s accept assertion (which
+has been reliable on every run this session) with a longer timeout, and
+bumped the test's overall timeout to 60s since this spec does two full
+logins plus a complete reschedule-request cycle before it even attempts
+the decline, comfortably over the 30s default once dev-server latency is
+factored in. Confirmed stable: 2 isolated runs + 1 full 3-spec run, all
+green. Lesson for future specs in this suite: **don't reflexively add a
+reload after every action** — only where there's already a real
+client-side signal (like a dialog closing) that the mutation has
+completed; otherwise a plain generous wait is the safer default, as
+proven by `02-` never needing a reload at all.
 
 ## testIDs added
 

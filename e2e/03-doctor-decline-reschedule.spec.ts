@@ -60,14 +60,16 @@ test("professional declines a patient-initiated reschedule request", async ({ pa
 
   await row.getByTestId("reschedule-decline-button").click();
 
-  // Same client-side refresh race documented in
-  // 01-patient-request-reschedule.spec.ts: the server action (verified via
-  // direct DB check) completes correctly in well under a second, but
-  // waiting on the client to observe it via the implicit post-action
-  // revalidation was unreliable here too (unlike the accept path in
-  // 02-doctor-respond-reschedule.spec.ts, which observed it fine — same
-  // category of dev-server flakiness, just manifesting on a different
-  // action this time). Force a reload instead of trusting the timing.
-  await page.reload();
-  await expect(page.getByTestId("reschedule-decline-button")).toBeHidden({ timeout: 15_000 });
+  // Deliberately NOT reloading here (tried that first — see git history):
+  // a reload immediately after click() races the in-flight server action,
+  // since Playwright's click() resolves once the click event dispatches,
+  // not once the async transition it kicked off has settled. A reload at
+  // that point can catch a pre-mutation snapshot and fail even though the
+  // mutation goes on to succeed a moment later (confirmed via direct DB
+  // check). The plain wait below mirrors
+  // 02-doctor-respond-reschedule.spec.ts's accept assertion, which has been
+  // reliable across every run this session — same mechanism (implicit
+  // post-action revalidation), just needs to be given time rather than
+  // interrupted.
+  await expect(row.getByTestId("reschedule-decline-button")).toBeHidden({ timeout: 15_000 });
 });
