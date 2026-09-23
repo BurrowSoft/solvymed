@@ -520,13 +520,11 @@ export async function getAvailableSlotsForDate(
 ) {
   const supabase = await createClient();
 
-  const { data: profData } = await supabase
-    .from("professionals")
-    .select("working_hours")
-    .eq("id", professionalId)
-    .maybeSingle();
+  const { data: profData } = await supabase.rpc("get_professional_working_hours", {
+    p_professional_id: professionalId,
+  });
 
-  const wh = (profData?.working_hours ?? {}) as Record<string, { enabled: boolean; start: string; end: string }>;
+  const wh = (profData ?? {}) as Record<string, { enabled: boolean; start: string; end: string }>;
   const dayKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
   const dayKey = dayKeys[new Date(date + "T12:00:00").getDay()];
   const dayHours = wh[dayKey];
