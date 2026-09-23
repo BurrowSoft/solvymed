@@ -213,7 +213,12 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                   {b.status === "proposal" && b.scheduled_by === "patient" && (
                     <div className="flex gap-2">
                       <button
-                        onClick={() => startTransition(async () => { await acceptRescheduleRequest(b.id); })}
+                        onClick={() => startTransition(async () => {
+                          const result = await acceptRescheduleRequest(b.id);
+                          if (result.error === "slot_taken") {
+                            alert("That slot is no longer available. Please decline and let the patient choose another time.");
+                          }
+                        })}
                         disabled={isPending}
                         className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50"
                       >

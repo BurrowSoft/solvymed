@@ -410,19 +410,22 @@ export async function requestReschedule(
 
   if (!appt) return { error: "Appointment not found" };
 
-  const { error } = await supabase
-    .from("appointments")
-    .update({
-      status: "proposal",
-      scheduled_by: "patient",
-      proposed_date: newDate,
-      proposed_start_time: newStartTime,
-      proposed_end_time: newEndTime,
-    })
-    .eq("id", appointmentId)
-    .eq("patient_auth_id", user.id);
+  // Use SECURITY DEFINER RPC — the patient UPDATE RLS policy only permits
+  // rows already in tentative/proposal, so a direct update on a confirmed
+  // appointment would be silently dropped.
+  const { error } = await supabase.rpc("request_appointment_reschedule", {
+    p_appointment_id: appointmentId,
+    p_proposed_date: newDate,
+    p_proposed_start: newStartTime,
+    p_proposed_end: newEndTime,
+  });
 
-  if (error) return { error: error.message };
+  if (error) {
+    if (error.message?.includes("appointment_not_found_or_not_reschedulable")) {
+      return { error: "Appointment cannot be rescheduled" };
+    }
+    return { error: error.message };
+  }
 
   await notifyProfessional(
     supabase,
@@ -440,33 +443,23 @@ export async function acceptRescheduleRequest(appointmentId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
-
+  // Fetch proposed times before the RPC so we can notify the patient
   const { data: appt } = await supabase
     .from("appointments")
-    .select("proposed_date, proposed_start_time, proposed_end_time, patient_auth_id, patient_name")
+    .select("proposed_date, proposed_start_time, patient_auth_id")
     .eq("id", appointmentId)
-    .eq("professional_id", effectiveProfId)
     .maybeSingle();
 
-  if (!appt) return { error: "Appointment not found" };
+  // Atomic overlap check + update via SECURITY DEFINER RPC
+  const { error } = await supabase.rpc("accept_patient_reschedule", {
+    p_appointment_id: appointmentId,
+  });
 
-  const { error } = await supabase
-    .from("appointments")
-    .update({
-      status: "confirmed",
-      date: appt.proposed_date,
-      start_time: appt.proposed_start_time,
-      end_time: appt.proposed_end_time,
-      scheduled_by: null,
-      proposed_date: null,
-      proposed_start_time: null,
-      proposed_end_time: null,
-    })
-    .eq("id", appointmentId)
-    .eq("professional_id", effectiveProfId);
-
-  if (error) return { error: error.message };
+  if (error) {
+    if (error.message?.includes("slot_taken")) return { error: "slot_taken" };
+    if (error.message?.includes("appointment_not_found_or_not_pending")) return { error: "Appointment not found" };
+    return { error: error.message };
+  }
 
   await notifyPatient(
     supabase,
@@ -512,8 +505,8 @@ export async function declineRescheduleRequest(appointmentId: string) {
   await notifyPatient(
     supabase,
     appointmentId,
-    "Reschedule Declined",
-    "The doctor could not accommodate your reschedule request. Your original appointment remains confirmed.",
+    "Reschedule Request Declined",
+    "The doctor could not accommodate your reschedule request. Your original appointment time remains confirmed — no action needed.",
   );
 
   revalidatePath("/dashboard/schedule");
