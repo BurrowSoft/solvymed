@@ -2,9 +2,13 @@ import { test, expect } from "@playwright/test";
 import { login, requireEnv } from "./helpers/login";
 
 // Mirrors the mobile Maestro flow .maestro/doctor-respond-reschedule.yaml.
-// Precondition: run patient-request-reschedule.spec.ts (or otherwise have a
-// pending patient-initiated reschedule request) against the same
-// professional as DOCTOR_EMAIL first — this flow does not create one itself.
+// Precondition: 01-patient-request-reschedule.spec.ts must run first in the
+// same invocation (or otherwise leave a pending patient-initiated
+// reschedule request against the same professional as DOCTOR_EMAIL) — this
+// flow does not create one itself. The 01-/02- filename prefixes exist
+// specifically to force that order under playwright.config.ts's
+// workers: 1 / fullyParallel: false (Playwright otherwise collects spec
+// files alphabetically, which used to run this one first and fail).
 test("professional accepts a patient-initiated reschedule request", async ({ page }) => {
   const email = requireEnv("DOCTOR_EMAIL");
   const password = requireEnv("DOCTOR_PASSWORD");
