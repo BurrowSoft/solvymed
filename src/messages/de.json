@@ -174,7 +174,12 @@
     "statusBlocked": "Gesperrt",
     "dismiss": "Verwerfen",
     "statusRejected": "Abgelehnt",
-    "notePlaceholder": "Notiz an den Patienten (optional)"
+    "notePlaceholder": "Notiz an den Patienten (optional)",
+    "rescheduleRequested": "Terminverschiebung angefordert",
+    "accept": "Annehmen",
+    "decline": "Ablehnen",
+    "slotTakenAlert": "Dieser Termin ist nicht mehr verfügbar. Bitte ablehnen und den Patienten einen anderen Termin wählen lassen.",
+    "pastProposalAlert": "Der vorgeschlagene Zeitpunkt ist abgelaufen. Bitte ablehnen, damit der Patient einen neuen Termin anfordern kann."
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -524,7 +529,17 @@
     "ctaTitle": "Brauchen Sie eine Beratung?",
     "ctaSub": "Kliniken auf der Karte suchen und online buchen",
     "accept": "Akzeptieren",
-    "decline": "Ablehnen"
+    "decline": "Ablehnen",
+    "rescheduleTitle": "Termin verschieben",
+    "rescheduleSelectDate": "Neues Datum wählen",
+    "rescheduleSelectTime": "Uhrzeit wählen",
+    "rescheduleNoSlots": "Keine freien Slots an diesem Tag.",
+    "rescheduleSend": "Verschiebungsanfrage senden",
+    "rescheduleSending": "Wird gesendet…",
+    "reschedulePending": "Verschiebung ausstehend",
+    "rescheduleRequestedLabel": "Terminverschiebung angefragt: {date} · {time}",
+    "rescheduleButton": "Verschiebung beantragen",
+    "closeDialog": "Schließen"
   },
   "nav": {
     "overview": "Übersicht",
@@ -539,14 +554,13 @@
     "notFound": "Einladungslink nicht gefunden",
     "notFoundDesc": "Dieser Link ist möglicherweise ungültig oder abgelaufen. Bitten Sie Ihren Arzt, einen neuen zu teilen.",
     "backToHome": "Zur Startseite"
-  }
-,
+  },
   "versionGate": {
     "title": "Update erforderlich",
     "body": "Bitte aktualisieren Sie die Seite, um die neueste Version von SolvyMed zu laden.",
     "reload": "Seite aktualisieren"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "Monat",
     "planSubtitle": "Jederzeit kündbar. 15 Tage kostenlos für neue Konten.",

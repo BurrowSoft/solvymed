@@ -174,7 +174,12 @@
     "statusBlocked": "Bloccato",
     "dismiss": "Ignora",
     "statusRejected": "Rifiutato",
-    "notePlaceholder": "Nota per il paziente (opzionale)"
+    "notePlaceholder": "Nota per il paziente (opzionale)",
+    "rescheduleRequested": "Riprogrammazione richiesta",
+    "accept": "Accetta",
+    "decline": "Rifiuta",
+    "slotTakenAlert": "Questo slot non è più disponibile. Rifiuta e lascia che il paziente scelga un altro orario.",
+    "pastProposalAlert": "L'orario proposto è già passato. Rifiuta così il paziente può richiedere un nuovo slot."
   },
   "payments": {
     "thisWeek": "Questa settimana",
@@ -524,7 +529,17 @@
     "ctaTitle": "Hai bisogno di una consulenza?",
     "ctaSub": "Sfoglia le cliniche sulla mappa e prenota online",
     "accept": "Accetta",
-    "decline": "Rifiuta"
+    "decline": "Rifiuta",
+    "rescheduleTitle": "Richiedi riprogrammazione",
+    "rescheduleSelectDate": "Seleziona una nuova data",
+    "rescheduleSelectTime": "Seleziona un orario",
+    "rescheduleNoSlots": "Nessuno slot disponibile per questo giorno.",
+    "rescheduleSend": "Invia richiesta di riprogrammazione",
+    "rescheduleSending": "Invio in corso…",
+    "reschedulePending": "Riprogrammazione in attesa",
+    "rescheduleRequestedLabel": "Riprogrammazione richiesta: {date} · {time}",
+    "rescheduleButton": "Richiedi riprogrammazione",
+    "closeDialog": "Chiudi"
   },
   "nav": {
     "overview": "Panoramica",
@@ -539,14 +554,13 @@
     "notFound": "Link d'invito non trovato",
     "notFoundDesc": "Questo link potrebbe essere non valido o scaduto. Chiedi al tuo medico di condividerne uno nuovo.",
     "backToHome": "Vai alla home"
-  }
-,
+  },
   "versionGate": {
     "title": "Aggiornamento richiesto",
     "body": "Aggiorna la pagina per caricare l'ultima versione di SolvyMed.",
     "reload": "Aggiorna pagina"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "mese",
     "planSubtitle": "Annulla quando vuoi. 15 giorni di prova gratuita.",

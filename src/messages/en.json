@@ -174,7 +174,12 @@
     "statusBlocked": "Blocked",
     "dismiss": "Dismiss",
     "statusRejected": "Rejected",
-    "notePlaceholder": "Note to patient (optional)"
+    "notePlaceholder": "Note to patient (optional)",
+    "rescheduleRequested": "Reschedule Requested",
+    "accept": "Accept",
+    "decline": "Decline",
+    "slotTakenAlert": "That slot is no longer available. Please decline and let the patient choose another time.",
+    "pastProposalAlert": "The proposed time has already passed. Please decline so the patient can request a new slot."
   },
   "payments": {
     "thisWeek": "This week",
@@ -524,7 +529,17 @@
     "ctaTitle": "Need a consultation?",
     "ctaSub": "Browse clinics on the map and book online",
     "accept": "Accept",
-    "decline": "Decline"
+    "decline": "Decline",
+    "rescheduleTitle": "Request Reschedule",
+    "rescheduleSelectDate": "Select a new date",
+    "rescheduleSelectTime": "Select a time",
+    "rescheduleNoSlots": "No available slots for this day.",
+    "rescheduleSend": "Send Reschedule Request",
+    "rescheduleSending": "Sending…",
+    "reschedulePending": "Reschedule Pending",
+    "rescheduleRequestedLabel": "Reschedule requested: {date} · {time}",
+    "rescheduleButton": "Request reschedule",
+    "closeDialog": "Close"
   },
   "nav": {
     "overview": "Overview",
@@ -539,14 +554,13 @@
     "notFound": "Invite link not found",
     "notFoundDesc": "This link may be invalid or has expired. Ask your doctor to share a new one.",
     "backToHome": "Go to home"
-  }
-,
+  },
   "versionGate": {
     "title": "Update Required",
     "body": "Please refresh to load the latest version of SolvyMed.",
     "reload": "Refresh Page"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "month",
     "planSubtitle": "Cancel anytime. 15-day free trial for new accounts.",

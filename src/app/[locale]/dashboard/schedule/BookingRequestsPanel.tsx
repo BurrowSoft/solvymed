@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime } from "./booking-actions";
+import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest } from "./booking-actions";
 
 type Booking = {
   id: string;
@@ -18,6 +18,10 @@ type Booking = {
   status: string;
   notes?: string | null;
   is_new_patient?: boolean;
+  scheduled_by?: string | null;
+  proposed_date?: string | null;
+  proposed_start_time?: string | null;
+  proposed_end_time?: string | null;
 };
 
 type PatientProfile = {
@@ -65,7 +69,10 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
   const nowHHMM = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
   function isObsolete(b: Booking): boolean {
-    return b.date < todayStr || (b.date === todayStr && b.end_time.slice(0, 5) < nowHHMM);
+    const isPatientProposal = b.status === "proposal" && b.scheduled_by === "patient";
+    const checkDate = isPatientProposal && b.proposed_date ? b.proposed_date : b.date;
+    const checkEnd  = isPatientProposal && b.proposed_end_time ? b.proposed_end_time : b.end_time;
+    return checkDate < todayStr || (checkDate === todayStr && checkEnd.slice(0, 5) < nowHHMM);
   }
 
   const sortedBookings = [...bookings].sort((a, b) => {
@@ -109,7 +116,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
           {sortedBookings.map(b => {
             const obsolete = isObsolete(b);
             return (
-            <div key={b.id} className={`rounded-xl border border-slate-200 bg-white p-4 shadow-sm${obsolete ? " opacity-45" : ""}`}>
+            <div key={b.id} data-testid="booking-request-row" className={`rounded-xl border border-slate-200 bg-white p-4 shadow-sm${obsolete ? " opacity-45" : ""}`}>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -127,10 +134,20 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                   {b.notes && (
                     <p className="mt-1 text-xs text-slate-400 italic">{b.notes}</p>
                   )}
-                  {b.status === "proposal" && (
+                  {b.status === "proposal" && b.scheduled_by !== "patient" && (
                     <span className="mt-1 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
                       {t("waitingForResponse")}
                     </span>
+                  )}
+                  {b.status === "proposal" && b.scheduled_by === "patient" && (
+                    <span className="mt-1 inline-block rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                      {t("rescheduleRequested")}
+                    </span>
+                  )}
+                  {b.status === "proposal" && b.scheduled_by === "patient" && b.proposed_date && (
+                    <p className="mt-1 text-xs text-slate-500">
+                      Requested: {b.proposed_date} {b.proposed_start_time?.slice(0, 5)}
+                    </p>
                   )}
                 </div>
 
@@ -143,7 +160,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                     {t("patientInfo")}
                   </button>
 
-                  {obsolete ? (
+                  {obsolete && !(b.status === "proposal" && b.scheduled_by === "patient") ? (
                     <div className="flex gap-2">
                       <button
                         onClick={() => setProposalId(proposalId === b.id ? null : b.id)}
@@ -196,6 +213,33 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                       onChange={e => setNotes(prev => ({ ...prev, [b.id]: e.target.value }))}
                       className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
                     />
+                  )}
+                  {b.status === "proposal" && b.scheduled_by === "patient" && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => startTransition(async () => {
+                          const result = await acceptRescheduleRequest(b.id);
+                          if (result.error === "slot_taken") {
+                            alert(t("slotTakenAlert"));
+                          } else if (result.error === "proposed_time_expired") {
+                            alert(t("pastProposalAlert"));
+                          }
+                        })}
+                        disabled={isPending}
+                        data-testid="reschedule-accept-button"
+                        className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50"
+                      >
+                        {t("accept")}
+                      </button>
+                      <button
+                        onClick={() => startTransition(async () => { await declineRescheduleRequest(b.id); })}
+                        disabled={isPending}
+                        data-testid="reschedule-decline-button"
+                        className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"
+                      >
+                        {t("decline")}
+                      </button>
+                    </div>
                   )}
                     </>
                   )}

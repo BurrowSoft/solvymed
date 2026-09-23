@@ -174,7 +174,12 @@
     "statusBlocked": "Заблокировано",
     "dismiss": "Отклонить",
     "statusRejected": "Отклонено",
-    "notePlaceholder": "Заметка пациенту (необязательно)"
+    "notePlaceholder": "Заметка пациенту (необязательно)",
+    "rescheduleRequested": "Запрос на перенос",
+    "accept": "Принять",
+    "decline": "Отклонить",
+    "slotTakenAlert": "Этот слот больше недоступен. Пожалуйста, отклоните запрос и предложите пациенту выбрать другое время.",
+    "pastProposalAlert": "Предложенное время уже прошло. Отклоните запрос, чтобы пациент мог выбрать новое время."
   },
   "payments": {
     "thisWeek": "На этой неделе",
@@ -524,7 +529,17 @@
     "ctaTitle": "Нужна консультация?",
     "ctaSub": "Ищите клиники на карте и записывайтесь онлайн",
     "accept": "Принять",
-    "decline": "Отклонить"
+    "decline": "Отклонить",
+    "rescheduleTitle": "Запросить перенос",
+    "rescheduleSelectDate": "Выберите новую дату",
+    "rescheduleSelectTime": "Выберите время",
+    "rescheduleNoSlots": "Нет доступных слотов на этот день.",
+    "rescheduleSend": "Отправить запрос на перенос",
+    "rescheduleSending": "Отправка…",
+    "reschedulePending": "Перенос ожидает подтверждения",
+    "rescheduleRequestedLabel": "Перенос запрошен: {date} · {time}",
+    "rescheduleButton": "Запросить перенос",
+    "closeDialog": "Закрыть"
   },
   "nav": {
     "overview": "Обзор",
@@ -539,14 +554,13 @@
     "notFound": "Ссылка приглашения не найдена",
     "notFoundDesc": "Эта ссылка недействительна или устарела. Попросите врача поделиться новой.",
     "backToHome": "На главную"
-  }
-,
+  },
   "versionGate": {
     "title": "Требуется обновление",
     "body": "Обновите страницу, чтобы загрузить последнюю версию SolvyMed.",
     "reload": "Обновить страницу"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "мес",
     "planSubtitle": "Отмена в любое время. 15 дней бесплатного пробного периода.",

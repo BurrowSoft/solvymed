@@ -174,7 +174,12 @@
     "statusBlocked": "Bloqué",
     "dismiss": "Ignorer",
     "statusRejected": "Refusé",
-    "notePlaceholder": "Note au patient (facultatif)"
+    "notePlaceholder": "Note au patient (facultatif)",
+    "rescheduleRequested": "Reprogrammation demandée",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "slotTakenAlert": "Ce créneau n’est plus disponible. Veuillez refuser et laisser le patient choisir un autre horaire.",
+    "pastProposalAlert": "L'heure proposée est déjà passée. Veuillez refuser pour que le patient puisse choisir un nouveau créneau."
   },
   "payments": {
     "thisWeek": "Cette semaine",
@@ -524,7 +529,17 @@
     "ctaTitle": "Besoin d'une consultation ?",
     "ctaSub": "Parcourez les cliniques sur la carte et réservez en ligne",
     "accept": "Accepter",
-    "decline": "Refuser"
+    "decline": "Refuser",
+    "rescheduleTitle": "Reprogrammer",
+    "rescheduleSelectDate": "Sélectionner une nouvelle date",
+    "rescheduleSelectTime": "Sélectionner une heure",
+    "rescheduleNoSlots": "Aucun créneau disponible ce jour.",
+    "rescheduleSend": "Envoyer la demande",
+    "rescheduleSending": "Envoi en cours…",
+    "reschedulePending": "Reprogrammation en attente",
+    "rescheduleRequestedLabel": "Report demandé : {date} · {time}",
+    "rescheduleButton": "Demander un report",
+    "closeDialog": "Fermer"
   },
   "nav": {
     "overview": "Accueil",
@@ -539,14 +554,13 @@
     "notFound": "Lien d'invitation introuvable",
     "notFoundDesc": "Ce lien est peut-être invalide ou expiré. Demandez a votre médecin d'en partager un nouveau.",
     "backToHome": "Aller à l'accueil"
-  }
-,
+  },
   "versionGate": {
     "title": "Mise à jour requise",
     "body": "Veuillez rafraîchir la page pour charger la dernière version de SolvyMed.",
     "reload": "Rafraîchir la page"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "mois",
     "planSubtitle": "Résiliation à tout moment. 15 jours d'essai gratuit.",

@@ -174,7 +174,12 @@
     "statusBlocked": "已屏蔽",
     "dismiss": "忽略",
     "statusRejected": "已拒绝",
-    "notePlaceholder": "患者备注（可选）"
+    "notePlaceholder": "患者备注（可选）",
+    "rescheduleRequested": "已申请改期",
+    "accept": "接受",
+    "decline": "拒绝",
+    "slotTakenAlert": "该时间段已不可用。请拒绝并让患者选择其他时间。",
+    "pastProposalAlert": "提议的时间已过。请拒绝以便患者重新选择时间。"
   },
   "payments": {
     "thisWeek": "本周",
@@ -524,7 +529,17 @@
     "ctaTitle": "需要就诊吗？",
     "ctaSub": "在地图上浏览诊所并在线预约",
     "accept": "接受",
-    "decline": "拒绝"
+    "decline": "拒绝",
+    "rescheduleTitle": "申请改期",
+    "rescheduleSelectDate": "选择新日期",
+    "rescheduleSelectTime": "选择时间",
+    "rescheduleNoSlots": "该日期没有可用时段。",
+    "rescheduleSend": "发送改期申请",
+    "rescheduleSending": "发送中…",
+    "reschedulePending": "改期等待确认",
+    "rescheduleRequestedLabel": "改期请求：{date} · {time}",
+    "rescheduleButton": "请求改期",
+    "closeDialog": "关闭"
   },
   "nav": {
     "overview": "总览",
@@ -539,14 +554,13 @@
     "notFound": "找不到邀请链接",
     "notFoundDesc": "此链接可能无效或已过期。请联系您的医生分享新链接。",
     "backToHome": "返回首页"
-  }
-,
+  },
   "versionGate": {
     "title": "需要更新",
     "body": "请刷新页面以加载最新版本的 SolvyMed。",
     "reload": "刷新页面"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "月",
     "planSubtitle": "随时取消。新账户享受15天免费试用。",

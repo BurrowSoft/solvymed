@@ -174,7 +174,12 @@
     "statusBlocked": "ブロック済み",
     "dismiss": "却下",
     "statusRejected": "拒否",
-    "notePlaceholder": "患者へのメモ（任意）"
+    "notePlaceholder": "患者へのメモ（任意）",
+    "rescheduleRequested": "変更リクエスト送信済み",
+    "accept": "承認",
+    "decline": "拒否",
+    "slotTakenAlert": "そのスロットはもう利用できません。拒否して患者に別の時間を選んでもらってください。",
+    "pastProposalAlert": "提案された時間はすでに過ぎています。患者が新しいスロットを選べるよう、拒否してください。"
   },
   "payments": {
     "thisWeek": "今週",
@@ -524,7 +529,17 @@
     "ctaTitle": "診察が必要ですか？",
     "ctaSub": "地図でクリニックを探してオンライン予約",
     "accept": "承諾する",
-    "decline": "断る"
+    "decline": "断る",
+    "rescheduleTitle": "予約変更リクエスト",
+    "rescheduleSelectDate": "新しい日付を選択",
+    "rescheduleSelectTime": "時間を選択",
+    "rescheduleNoSlots": "この日は空きがありません。",
+    "rescheduleSend": "変更リクエストを送る",
+    "rescheduleSending": "送信中…",
+    "reschedulePending": "変更リクエスト中",
+    "rescheduleRequestedLabel": "再スケジュールリクエスト: {date} · {time}",
+    "rescheduleButton": "再スケジュールをリクエスト",
+    "closeDialog": "閉じる"
   },
   "nav": {
     "overview": "ホーム",
@@ -539,14 +554,13 @@
     "notFound": "招待リンクが見つかりません",
     "notFoundDesc": "このリンクは無効または期限切れの可能性があります。医師に新しいリンクの共有を依頼してください。",
     "backToHome": "ホームへ戻る"
-  }
-,
+  },
   "versionGate": {
     "title": "アップデートが必要です",
     "body": "SolvyMedの最新バージョンを読み込むにはページを更新してください。",
     "reload": "ページを更新"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "月",
     "planSubtitle": "いつでもキャンセル可能。新規アカウントは15日間無料トライアル。",

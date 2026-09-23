@@ -174,7 +174,12 @@
     "statusBlocked": "محجوب",
     "dismiss": "رفض",
     "statusRejected": "مرفوض",
-    "notePlaceholder": "ملاحظة للمريض (اختياري)"
+    "notePlaceholder": "ملاحظة للمريض (اختياري)",
+    "rescheduleRequested": "تم طلب إعادة الجدولة",
+    "accept": "قبول",
+    "decline": "رفض",
+    "slotTakenAlert": "هذا الموعد لم يعد متاحًا. يرجى الرفض وترك المريض يختار وقتًا آخر.",
+    "pastProposalAlert": "انتهى وقت الموعد المقترح. يرجى الرفض حتى يتمكن المريض من طلب موعد جديد."
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",
@@ -524,7 +529,17 @@
     "ctaTitle": "هل تحتاج إلى استشارة؟",
     "ctaSub": "تصفح العيادات على الخريطة واحجز عبر الإنترنت",
     "accept": "قبول",
-    "decline": "رفض"
+    "decline": "رفض",
+    "rescheduleTitle": "طلب إعادة جدولة",
+    "rescheduleSelectDate": "اختر تاريخاً جديداً",
+    "rescheduleSelectTime": "اختر وقتاً",
+    "rescheduleNoSlots": "لا توجد مواعيد متاحة في هذا اليوم.",
+    "rescheduleSend": "إرسال طلب إعادة الجدولة",
+    "rescheduleSending": "جارٍ الإرسال…",
+    "reschedulePending": "إعادة الجدولة قيد الانتظار",
+    "rescheduleRequestedLabel": "طلب تغيير الموعد: {date} · {time}",
+    "rescheduleButton": "طلب تغيير الموعد",
+    "closeDialog": "إغلاق"
   },
   "nav": {
     "overview": "نظرة عامة",
@@ -539,14 +554,13 @@
     "notFound": "رابط الدعوة غير موجود",
     "notFoundDesc": "قد يكون هذا الرابط غير صالح أو منتهي الصلاحية. اطلب من طبيبك مشاركة رابط جديد.",
     "backToHome": "الذهاب إلى الرئيسية"
-  }
-,
+  },
   "versionGate": {
     "title": "تحديث مطلوب",
     "body": "يرجى تحديث الصفحة لتحميل أحدث إصدار من SolvyMed.",
     "reload": "تحديث الصفحة"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "شهر",
     "planSubtitle": "إلغاء في أي وقت. تجربة مجانية 15 يومًا للحسابات الجديدة.",

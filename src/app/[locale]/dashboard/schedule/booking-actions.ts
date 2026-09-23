@@ -96,7 +96,9 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
       .eq("invited_by_professional_id", effectiveProfId)
       .maybeSingle();
 
-    if (!existingRole?.linked_patient_id) {
+    let linkedPatientId: string | null = (existingRole?.linked_patient_id as string) ?? null;
+
+    if (!linkedPatientId) {
       const { data: profile } = await supabase
         .from("patient_profiles")
         .select("full_name, email, phone, birth_date, cpf")
@@ -106,7 +108,6 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
       const patientEmail = (profile?.email as string | null) ?? null;
 
       // Check if this patient was manually added (walk-in) before they signed up
-      let linkedPatientId: string | null = null;
       if (patientEmail) {
         const { data: existingByEmail } = await supabase
           .from("patients")
@@ -144,6 +145,16 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
           { onConflict: "user_id" },
         );
       }
+    }
+
+    // Populate patient_id so the patient can find this appointment via getPatientAppointments
+    // (which queries by patient_id). Public bookings start with patient_id = null.
+    if (linkedPatientId) {
+      await supabase
+        .from("appointments")
+        .update({ patient_id: linkedPatientId })
+        .eq("id", appointmentId)
+        .is("patient_id", null);
     }
   }
 
@@ -389,6 +400,192 @@ export async function declineProposal(appointmentId: string) {
 
   revalidatePath("/my-appointments");
   return { error: null };
+}
+
+// SQL migrations for the RPCs called below (request_appointment_reschedule,
+// accept_patient_reschedule) live in the mobile repo at
+// solvymed-mobile/apps/solvymed/supabase/migrations/025_* and 026_*.
+// Both repos share the same Supabase project.
+export async function requestReschedule(
+  appointmentId: string,
+  newDate: string,
+  newStartTime: string,
+  newEndTime: string,
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data: appt } = await supabase
+    .from("appointments")
+    .select("professional_id, patient_name")
+    .eq("id", appointmentId)
+    .eq("patient_auth_id", user.id)
+    .maybeSingle();
+
+  if (!appt) return { error: "Appointment not found" };
+
+  // Use SECURITY DEFINER RPC — the patient UPDATE RLS policy only permits
+  // rows already in tentative/proposal, so a direct update on a confirmed
+  // appointment would be silently dropped.
+  const { error } = await supabase.rpc("request_appointment_reschedule", {
+    p_appointment_id: appointmentId,
+    p_proposed_date: newDate,
+    p_proposed_start: newStartTime,
+    p_proposed_end: newEndTime,
+  });
+
+  if (error) {
+    if (error.message?.includes("appointment_not_found_or_not_reschedulable")) {
+      return { error: "Appointment cannot be rescheduled" };
+    }
+    return { error: error.message };
+  }
+
+  await notifyProfessional(
+    supabase,
+    appt.professional_id as string,
+    "Reschedule Requested",
+    `${appt.patient_name} requested to reschedule to ${newDate} at ${newStartTime.slice(0, 5)}.`,
+  );
+
+  revalidatePath("/my-appointments");
+  return { error: null };
+}
+
+export async function acceptRescheduleRequest(appointmentId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+
+  // Atomic overlap check + update via SECURITY DEFINER RPC.
+  // RPC returns notification fields so we never pre-fetch from the client
+  // (pre-fetch is a spoofing surface: data can change between read and accept).
+  // Pass p_acting_as_professional when the caller is a secretary so the RPC can
+  // verify delegation and check the appointment against the correct professional.
+  const { data: rpcData, error } = await supabase.rpc("accept_patient_reschedule", {
+    p_appointment_id: appointmentId,
+    ...(effectiveProfId !== user.id ? { p_acting_as_professional: effectiveProfId } : {}),
+  });
+
+  if (error) {
+    if (error.message?.includes("slot_taken")) return { error: "slot_taken" };
+    if (error.message?.includes("appointment_not_found_or_not_pending")) return { error: "Appointment not found" };
+    if (error.message?.includes("proposed_time_expired")) return { error: "proposed_time_expired" };
+    return { error: error.message };
+  }
+
+  const row = Array.isArray(rpcData) && rpcData.length > 0 ? rpcData[0] as Record<string, unknown> : null;
+  const newDate = row?.out_new_date as string | undefined;
+  const newStart = row?.out_new_start_time as string | undefined;
+  await notifyPatient(
+    supabase,
+    appointmentId,
+    "Reschedule Confirmed",
+    newDate && newStart
+      ? `Your appointment has been rescheduled to ${newDate} at ${newStart.slice(0, 5)}.`
+      : "Your reschedule request has been confirmed.",
+  );
+
+  revalidatePath("/dashboard/schedule");
+  return { error: null };
+}
+
+export async function declineRescheduleRequest(appointmentId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+
+  const { data: appt } = await supabase
+    .from("appointments")
+    .select("patient_auth_id")
+    .eq("id", appointmentId)
+    .eq("professional_id", effectiveProfId)
+    .maybeSingle();
+
+  if (!appt) return { error: "Appointment not found" };
+
+  const { data: updateData, error } = await supabase
+    .from("appointments")
+    .update({
+      status: "confirmed",
+      scheduled_by: null,
+      proposed_date: null,
+      proposed_start_time: null,
+      proposed_end_time: null,
+    })
+    .eq("id", appointmentId)
+    .eq("professional_id", effectiveProfId)
+    .eq("status", "proposal")
+    .eq("scheduled_by", "patient")
+    .select("id");
+
+  if (error) return { error: error.message };
+
+  // Only notify when a row was actually updated (guard against concurrent declines)
+  if (updateData && updateData.length > 0) {
+    await notifyPatient(
+      supabase,
+      appointmentId,
+      "Reschedule Request Declined",
+      "The doctor could not accommodate your reschedule request. Your original appointment time remains confirmed — no action needed.",
+    );
+  }
+
+  revalidatePath("/dashboard/schedule");
+  return { error: null };
+}
+
+export async function getAvailableSlotsForDate(
+  professionalId: string,
+  date: string,
+  durationMinutes: number,
+) {
+  if (!durationMinutes || durationMinutes <= 0 || !Number.isInteger(durationMinutes) || durationMinutes > 480) return [];
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data: profData } = await supabase.rpc("get_professional_working_hours", {
+    p_professional_id: professionalId,
+  });
+
+  const wh = (profData ?? {}) as Record<string, { enabled: boolean; start: string; end: string }>;
+  const dayKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  const dayKey = dayKeys[new Date(date + "T12:00:00").getDay()];
+  const dayHours = wh[dayKey];
+  if (!dayHours?.enabled) return [];
+
+  const toMin = (t: string) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+  const fromMin = (n: number) => `${String(Math.floor(n / 60)).padStart(2, "0")}:${String(n % 60).padStart(2, "0")}`;
+
+  const dayStart = toMin(dayHours.start);
+  const dayEnd = toMin(dayHours.end);
+
+  const { data: busy } = await supabase.rpc("get_busy_slots", {
+    p_professional_id: professionalId,
+    p_date: date,
+  });
+
+  const busyRanges = (busy ?? []).map((r: Record<string, unknown>) => ({
+    start: toMin(r.slot_start as string),
+    end: toMin(r.slot_end as string),
+  }));
+
+  const slots: { start: string; end: string }[] = [];
+  let cursor = dayStart;
+  while (cursor + durationMinutes <= dayEnd) {
+    const slotEnd = cursor + durationMinutes;
+    if (!busyRanges.some((r: { start: number; end: number }) => cursor < r.end && slotEnd > r.start)) {
+      slots.push({ start: fromMin(cursor), end: fromMin(slotEnd) });
+    }
+    cursor += durationMinutes;
+  }
+  return slots;
 }
 
 // ─── Push helper ─────────────────────────────────────────────────────────────

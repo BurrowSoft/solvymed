@@ -174,7 +174,12 @@
     "statusBlocked": "Bloqueado",
     "dismiss": "Descartar",
     "statusRejected": "Rechazado",
-    "notePlaceholder": "Nota para el paciente (opcional)"
+    "notePlaceholder": "Nota para el paciente (opcional)",
+    "rescheduleRequested": "Reprogramación solicitada",
+    "accept": "Aceptar",
+    "decline": "Rechazar",
+    "slotTakenAlert": "Ese horario ya no está disponible. Por favor, rechácelo y deje que el paciente elija otro horario.",
+    "pastProposalAlert": "El horario propuesto ya pasó. Por favor, rechácelo para que el paciente pueda solicitar uno nuevo."
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -524,7 +529,17 @@
     "ctaTitle": "¿Necesita una consulta?",
     "ctaSub": "Explore clínicas en el mapa y reserve en línea",
     "accept": "Aceptar",
-    "decline": "Rechazar"
+    "decline": "Rechazar",
+    "rescheduleTitle": "Solicitar reprogramación",
+    "rescheduleSelectDate": "Seleccionar nueva fecha",
+    "rescheduleSelectTime": "Seleccionar hora",
+    "rescheduleNoSlots": "No hay horarios disponibles para este día.",
+    "rescheduleSend": "Enviar solicitud de reprogramación",
+    "rescheduleSending": "Enviando…",
+    "reschedulePending": "Reprogramación pendiente",
+    "rescheduleRequestedLabel": "Reprogramación solicitada: {date} · {time}",
+    "rescheduleButton": "Solicitar reprogramación",
+    "closeDialog": "Cerrar"
   },
   "nav": {
     "overview": "Inicio",
@@ -539,14 +554,13 @@
     "notFound": "Enlace de invitación no encontrado",
     "notFoundDesc": "Este enlace puede ser inválido o haber caducado. Pide a tu médico que comparta uno nuevo.",
     "backToHome": "Ir al inicio"
-  }
-,
+  },
   "versionGate": {
     "title": "Actualización requerida",
     "body": "Recarga la página para cargar la última versión de SolvyMed.",
     "reload": "Recargar página"
-  }
-, "subscription": {
+  },
+  "subscription": {
     "planName": "SolvyMed Pro",
     "perMonth": "mes",
     "planSubtitle": "Cancela cuando quieras. 15 días de prueba gratis.",
