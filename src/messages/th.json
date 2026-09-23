@@ -174,7 +174,10 @@
     "statusBlocked": "ปิดตาราง",
     "dismiss": "ยกเลิก",
     "statusRejected": "ถูกปฏิเสธ",
-    "notePlaceholder": "หมายเหตุถึงผู้ป่วย (ไม่บังคับ)"
+    "notePlaceholder": "หมายเหตุถึงผู้ป่วย (ไม่บังคับ)",
+    "rescheduleRequested": "ขอนัดใหม่แล้ว",
+    "accept": "ยอมรับ",
+    "decline": "ปฏิเสธ"
   },
   "payments": {
     "thisWeek": "สัปดาห์นี้",
@@ -524,7 +527,14 @@
     "ctaTitle": "ต้องการคำปรึกษาหรือไม่?",
     "ctaSub": "ค้นหาคลินิกบนแผนที่และนัดหมายออนไลน์",
     "accept": "ยอมรับ",
-    "decline": "ปฏิเสธ"
+    "decline": "ปฏิเสธ",
+    "rescheduleTitle": "ขอนัดใหม่",
+    "rescheduleSelectDate": "เลือกวันใหม่",
+    "rescheduleSelectTime": "เลือกเวลา",
+    "rescheduleNoSlots": "ไม่มีช่วงเวลาว่างในวันนี้",
+    "rescheduleSend": "ส่งคำขอนัดใหม่",
+    "rescheduleSending": "กำลังส่ง…",
+    "reschedulePending": "รอการยืนยัน"
   },
   "nav": {
     "overview": "ภาพรวม",

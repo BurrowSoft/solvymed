@@ -174,7 +174,10 @@
     "statusBlocked": "محجوب",
     "dismiss": "رفض",
     "statusRejected": "مرفوض",
-    "notePlaceholder": "ملاحظة للمريض (اختياري)"
+    "notePlaceholder": "ملاحظة للمريض (اختياري)",
+    "rescheduleRequested": "تم طلب إعادة الجدولة",
+    "accept": "قبول",
+    "decline": "رفض"
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",
@@ -524,7 +527,14 @@
     "ctaTitle": "هل تحتاج إلى استشارة؟",
     "ctaSub": "تصفح العيادات على الخريطة واحجز عبر الإنترنت",
     "accept": "قبول",
-    "decline": "رفض"
+    "decline": "رفض",
+    "rescheduleTitle": "طلب إعادة جدولة",
+    "rescheduleSelectDate": "اختر تاريخاً جديداً",
+    "rescheduleSelectTime": "اختر وقتاً",
+    "rescheduleNoSlots": "لا توجد مواعيد متاحة في هذا اليوم.",
+    "rescheduleSend": "إرسال طلب إعادة الجدولة",
+    "rescheduleSending": "جارٍ الإرسال…",
+    "reschedulePending": "إعادة الجدولة قيد الانتظار"
   },
   "nav": {
     "overview": "نظرة عامة",

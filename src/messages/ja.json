@@ -174,7 +174,10 @@
     "statusBlocked": "ブロック済み",
     "dismiss": "却下",
     "statusRejected": "拒否",
-    "notePlaceholder": "患者へのメモ（任意）"
+    "notePlaceholder": "患者へのメモ（任意）",
+    "rescheduleRequested": "変更リクエスト送信済み",
+    "accept": "承認",
+    "decline": "拒否"
   },
   "payments": {
     "thisWeek": "今週",
@@ -524,7 +527,14 @@
     "ctaTitle": "診察が必要ですか？",
     "ctaSub": "地図でクリニックを探してオンライン予約",
     "accept": "承諾する",
-    "decline": "断る"
+    "decline": "断る",
+    "rescheduleTitle": "予約変更リクエスト",
+    "rescheduleSelectDate": "新しい日付を選択",
+    "rescheduleSelectTime": "時間を選択",
+    "rescheduleNoSlots": "この日は空きがありません。",
+    "rescheduleSend": "変更リクエストを送る",
+    "rescheduleSending": "送信中…",
+    "reschedulePending": "変更リクエスト中"
   },
   "nav": {
     "overview": "ホーム",

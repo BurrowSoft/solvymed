@@ -174,7 +174,10 @@
     "statusBlocked": "Gesperrt",
     "dismiss": "Verwerfen",
     "statusRejected": "Abgelehnt",
-    "notePlaceholder": "Notiz an den Patienten (optional)"
+    "notePlaceholder": "Notiz an den Patienten (optional)",
+    "rescheduleRequested": "Terminverschiebung angefordert",
+    "accept": "Annehmen",
+    "decline": "Ablehnen"
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -524,7 +527,14 @@
     "ctaTitle": "Brauchen Sie eine Beratung?",
     "ctaSub": "Kliniken auf der Karte suchen und online buchen",
     "accept": "Akzeptieren",
-    "decline": "Ablehnen"
+    "decline": "Ablehnen",
+    "rescheduleTitle": "Termin verschieben",
+    "rescheduleSelectDate": "Neues Datum wählen",
+    "rescheduleSelectTime": "Uhrzeit wählen",
+    "rescheduleNoSlots": "Keine freien Slots an diesem Tag.",
+    "rescheduleSend": "Verschiebungsanfrage senden",
+    "rescheduleSending": "Wird gesendet…",
+    "reschedulePending": "Verschiebung ausstehend"
   },
   "nav": {
     "overview": "Übersicht",

@@ -391,6 +391,10 @@ export async function declineProposal(appointmentId: string) {
   return { error: null };
 }
 
+// SQL migrations for the RPCs called below (request_appointment_reschedule,
+// accept_patient_reschedule) live in the mobile repo at
+// solvymed-mobile/apps/solvymed/supabase/migrations/025_* and 026_*.
+// Both repos share the same Supabase project.
 export async function requestReschedule(
   appointmentId: string,
   newDate: string,
@@ -498,7 +502,9 @@ export async function declineRescheduleRequest(appointmentId: string) {
       proposed_end_time: null,
     })
     .eq("id", appointmentId)
-    .eq("professional_id", effectiveProfId);
+    .eq("professional_id", effectiveProfId)
+    .eq("status", "proposal")
+    .eq("scheduled_by", "patient");
 
   if (error) return { error: error.message };
 
@@ -518,6 +524,7 @@ export async function getAvailableSlotsForDate(
   date: string,
   durationMinutes: number,
 ) {
+  if (!durationMinutes || durationMinutes <= 0) return [];
   const supabase = await createClient();
 
   const { data: profData } = await supabase.rpc("get_professional_working_hours", {

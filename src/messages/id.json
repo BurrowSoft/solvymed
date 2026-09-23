@@ -174,7 +174,10 @@
     "statusBlocked": "Diblokir",
     "dismiss": "Abaikan",
     "statusRejected": "Ditolak",
-    "notePlaceholder": "Catatan untuk pasien (opsional)"
+    "notePlaceholder": "Catatan untuk pasien (opsional)",
+    "rescheduleRequested": "Penjadwalan ulang diminta",
+    "accept": "Terima",
+    "decline": "Tolak"
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -524,7 +527,14 @@
     "ctaTitle": "Butuh konsultasi?",
     "ctaSub": "Temukan klinik di peta dan buat janji secara online",
     "accept": "Terima",
-    "decline": "Tolak"
+    "decline": "Tolak",
+    "rescheduleTitle": "Minta Penjadwalan Ulang",
+    "rescheduleSelectDate": "Pilih tanggal baru",
+    "rescheduleSelectTime": "Pilih waktu",
+    "rescheduleNoSlots": "Tidak ada slot tersedia hari ini.",
+    "rescheduleSend": "Kirim Permintaan Penjadwalan Ulang",
+    "rescheduleSending": "Mengirim…",
+    "reschedulePending": "Penjadwalan Ulang Tertunda"
   },
   "nav": {
     "overview": "Ringkasan",

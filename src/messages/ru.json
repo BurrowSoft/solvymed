@@ -174,7 +174,10 @@
     "statusBlocked": "Заблокировано",
     "dismiss": "Отклонить",
     "statusRejected": "Отклонено",
-    "notePlaceholder": "Заметка пациенту (необязательно)"
+    "notePlaceholder": "Заметка пациенту (необязательно)",
+    "rescheduleRequested": "Запрос на перенос",
+    "accept": "Принять",
+    "decline": "Отклонить"
   },
   "payments": {
     "thisWeek": "На этой неделе",
@@ -524,7 +527,14 @@
     "ctaTitle": "Нужна консультация?",
     "ctaSub": "Ищите клиники на карте и записывайтесь онлайн",
     "accept": "Принять",
-    "decline": "Отклонить"
+    "decline": "Отклонить",
+    "rescheduleTitle": "Запросить перенос",
+    "rescheduleSelectDate": "Выберите новую дату",
+    "rescheduleSelectTime": "Выберите время",
+    "rescheduleNoSlots": "Нет доступных слотов на этот день.",
+    "rescheduleSend": "Отправить запрос на перенос",
+    "rescheduleSending": "Отправка…",
+    "reschedulePending": "Перенос ожидает подтверждения"
   },
   "nav": {
     "overview": "Обзор",

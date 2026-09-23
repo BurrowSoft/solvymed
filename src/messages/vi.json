@@ -174,7 +174,10 @@
     "statusBlocked": "Đã chặn",
     "dismiss": "Bỏ qua",
     "statusRejected": "Bị từ chối",
-    "notePlaceholder": "Ghi chú cho bệnh nhân (tùy chọn)"
+    "notePlaceholder": "Ghi chú cho bệnh nhân (tùy chọn)",
+    "rescheduleRequested": "Đã yêu cầu đổi lịch",
+    "accept": "Chấp nhận",
+    "decline": "Từ chối"
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -524,7 +527,14 @@
     "ctaTitle": "Cần tư vấn?",
     "ctaSub": "Tìm phòng khám trên bản đồ và đặt lịch trực tuyến",
     "accept": "Chấp nhận",
-    "decline": "Từ chối"
+    "decline": "Từ chối",
+    "rescheduleTitle": "Yêu cầu đổi lịch",
+    "rescheduleSelectDate": "Chọn ngày mới",
+    "rescheduleSelectTime": "Chọn giờ",
+    "rescheduleNoSlots": "Không có khung giờ trống cho ngày này.",
+    "rescheduleSend": "Gửi yêu cầu đổi lịch",
+    "rescheduleSending": "Đang gửi…",
+    "reschedulePending": "Đang chờ đổi lịch"
   },
   "nav": {
     "overview": "Tổng quan",

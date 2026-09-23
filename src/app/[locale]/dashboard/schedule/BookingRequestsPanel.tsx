@@ -137,7 +137,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                   )}
                   {b.status === "proposal" && b.scheduled_by === "patient" && (
                     <span className="mt-1 inline-block rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
-                      Reschedule Requested
+                      {t("rescheduleRequested")}
                     </span>
                   )}
                   {b.status === "proposal" && b.scheduled_by === "patient" && b.proposed_date && (
@@ -223,7 +223,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                         data-testid="reschedule-accept-button"
                         className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50"
                       >
-                        Accept
+                        {t("accept")}
                       </button>
                       <button
                         onClick={() => startTransition(async () => { await declineRescheduleRequest(b.id); })}
@@ -231,7 +231,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                         data-testid="reschedule-decline-button"
                         className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"
                       >
-                        Decline
+                        {t("decline")}
                       </button>
                     </div>
                   )}

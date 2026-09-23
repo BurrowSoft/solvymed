@@ -67,6 +67,7 @@ function RescheduleDialog({
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  const t = useTranslations("myAppointments");
   const days = buildDays();
   const [selectedDate, setSelectedDate] = useState(days[0]);
   const [slots, setSlots] = useState<{ start: string; end: string }[]>([]);
@@ -97,11 +98,11 @@ function RescheduleDialog({
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4" onClick={onClose}>
       <div data-testid="reschedule-dialog" className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold text-slate-900">Request Reschedule</h2>
+          <h2 className="text-base font-bold text-slate-900">{t("rescheduleTitle")}</h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
         </div>
 
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Select a new date</p>
+        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">{t("rescheduleSelectDate")}</p>
         <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
           {days.map(day => (
             <button
@@ -119,13 +120,13 @@ function RescheduleDialog({
           ))}
         </div>
 
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Select a time</p>
+        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">{t("rescheduleSelectTime")}</p>
         {loadingSlots ? (
           <div className="flex justify-center py-6">
             <span className="h-5 w-5 animate-spin rounded-full border-2 border-slate-200 border-t-teal-600" />
           </div>
         ) : slots.length === 0 ? (
-          <p className="text-sm text-slate-400 text-center py-4">No available slots for this day.</p>
+          <p className="text-sm text-slate-400 text-center py-4">{t("rescheduleNoSlots")}</p>
         ) : (
           <div className="flex flex-wrap gap-2 mb-4">
             {slots.map(slot => (
@@ -157,7 +158,7 @@ function RescheduleDialog({
           }}
           className="w-full rounded-xl bg-teal-600 py-3 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50 transition"
         >
-          {pending ? "Sending…" : "Send Reschedule Request"}
+          {pending ? t("rescheduleSending") : t("rescheduleSend")}
         </button>
       </div>
     </div>
@@ -174,9 +175,9 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
   const label = STATUS_KEY[appt.status] ? tSchedule(STATUS_KEY[appt.status]) : appt.status;
   const isProfProposal = appt.status === "proposal" && appt.scheduled_by !== "patient" && (!!appt.proposed_date || appt.scheduled_by === "professional");
   const isPatientReschedule = appt.status === "proposal" && appt.scheduled_by === "patient";
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const apptDate = new Date(appt.date + "T00:00:00");
-  const canReschedule = (appt.status === "confirmed" || appt.status === "scheduled") && !isPatientReschedule && apptDate >= today;
+  const now = new Date();
+  const apptEndDateTime = new Date(`${appt.date}T${appt.end_time}`);
+  const canReschedule = (appt.status === "confirmed" || appt.status === "scheduled") && !isPatientReschedule && apptEndDateTime > now;
 
   const displayDate = (isProfProposal && appt.proposed_date) ? appt.proposed_date : appt.date;
   const displayStart = (isProfProposal && appt.proposed_start_time) ? appt.proposed_start_time : appt.start_time;
@@ -208,7 +209,7 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
         </div>
         <div className="flex flex-col items-end gap-2">
           <span data-testid="appointment-status-badge" className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${color}`}>
-            {isPatientReschedule ? "Reschedule Pending" : label}
+            {isPatientReschedule ? t("reschedulePending") : label}
           </span>
         </div>
       </div>

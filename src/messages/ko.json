@@ -174,7 +174,10 @@
     "statusBlocked": "차단됨",
     "dismiss": "무시",
     "statusRejected": "거절됨",
-    "notePlaceholder": "환자에게 메모 (선택사항)"
+    "notePlaceholder": "환자에게 메모 (선택사항)",
+    "rescheduleRequested": "일정 변경 요청됨",
+    "accept": "수락",
+    "decline": "거절"
   },
   "payments": {
     "thisWeek": "이번 주",
@@ -524,7 +527,14 @@
     "ctaTitle": "진료가 필요하신가요?",
     "ctaSub": "지도에서 클리닉을 찾고 온라인으로 예약하세요",
     "accept": "수락",
-    "decline": "거절"
+    "decline": "거절",
+    "rescheduleTitle": "일정 변경 요청",
+    "rescheduleSelectDate": "새 날짜 선택",
+    "rescheduleSelectTime": "시간 선택",
+    "rescheduleNoSlots": "이 날 사용 가능한 시간이 없습니다.",
+    "rescheduleSend": "일정 변경 요청 보내기",
+    "rescheduleSending": "전송 중…",
+    "reschedulePending": "일정 변경 대기 중"
   },
   "nav": {
     "overview": "홈",

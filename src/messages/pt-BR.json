@@ -174,7 +174,10 @@
     "statusBlocked": "Bloqueado",
     "dismiss": "Dispensar",
     "statusRejected": "Rejeitado",
-    "notePlaceholder": "Nota para o paciente (opcional)"
+    "notePlaceholder": "Nota para o paciente (opcional)",
+    "rescheduleRequested": "Remarcação solicitada",
+    "accept": "Aceitar",
+    "decline": "Recusar"
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -524,7 +527,14 @@
     "ctaTitle": "Precisa de uma consulta?",
     "ctaSub": "Encontre clínicas no mapa e agende online",
     "accept": "Aceitar",
-    "decline": "Recusar"
+    "decline": "Recusar",
+    "rescheduleTitle": "Solicitar remarcação",
+    "rescheduleSelectDate": "Selecione uma nova data",
+    "rescheduleSelectTime": "Selecione um horário",
+    "rescheduleNoSlots": "Nenhum horário disponível neste dia.",
+    "rescheduleSend": "Enviar solicitação de remarcação",
+    "rescheduleSending": "Enviando…",
+    "reschedulePending": "Remarcação pendente"
   },
   "nav": {
     "overview": "Visão geral",

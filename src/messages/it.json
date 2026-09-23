@@ -174,7 +174,10 @@
     "statusBlocked": "Bloccato",
     "dismiss": "Ignora",
     "statusRejected": "Rifiutato",
-    "notePlaceholder": "Nota per il paziente (opzionale)"
+    "notePlaceholder": "Nota per il paziente (opzionale)",
+    "rescheduleRequested": "Riprogrammazione richiesta",
+    "accept": "Accetta",
+    "decline": "Rifiuta"
   },
   "payments": {
     "thisWeek": "Questa settimana",
@@ -524,7 +527,14 @@
     "ctaTitle": "Hai bisogno di una consulenza?",
     "ctaSub": "Sfoglia le cliniche sulla mappa e prenota online",
     "accept": "Accetta",
-    "decline": "Rifiuta"
+    "decline": "Rifiuta",
+    "rescheduleTitle": "Richiedi riprogrammazione",
+    "rescheduleSelectDate": "Seleziona una nuova data",
+    "rescheduleSelectTime": "Seleziona un orario",
+    "rescheduleNoSlots": "Nessuno slot disponibile per questo giorno.",
+    "rescheduleSend": "Invia richiesta di riprogrammazione",
+    "rescheduleSending": "Invio in corso…",
+    "reschedulePending": "Riprogrammazione in attesa"
   },
   "nav": {
     "overview": "Panoramica",
