@@ -17,7 +17,7 @@ is in the table below.
 
 | Feature | Branch | Flows | Status | Last run |
 |---|---|---|---|---|
-| Patient self-rescheduling | `feat/patient-rescheduling` | `e2e/patient-request-reschedule.spec.ts`, `e2e/doctor-respond-reschedule.spec.ts` | 🔴 FAILING — real bug found, see below | 2026-09-23 |
+| Patient self-rescheduling | `feat/patient-rescheduling` | `e2e/01-patient-request-reschedule.spec.ts`, `e2e/02-doctor-respond-reschedule.spec.ts` | 🟢 GREEN — both pass against seeded accounts | 2026-09-23 |
 
 ## Talking to the other agents
 
@@ -37,6 +37,17 @@ Known so far from that channel:
   each minting our own — see "Test accounts" below.
 - No seed SQL / fixture data exists in either repo's `supabase/migrations`
   for test accounts — confirmed by the developer agent when asked.
+- **Commit author convention**: all three agents commit into the *same*
+  git checkout, so per-repo `git config user.*` is shared state — setting
+  it as "mine" silently changes what every other agent's commits look like
+  too (learned this the hard way: set it locally, mobile tester pointed out
+  the checkout is shared, reverted it back to the `BurrowSoft
+  <support@burrowsoft.com>` baseline). Use `git commit --author="..."`
+  per-commit instead. Convention in use: `Claude Sonnet 4.6 (developer)
+  <noreply@anthropic.com>` for the developer agent, `Claude Sonnet 5
+  (web-tester) <noreply@anthropic.com>` for this one — presumably
+  `(android-tester)` or similar for mobile, confirm in `TESTING.md`/
+  `DEVELOPING.md` if it matters to you.
 
 ## Tool choice: Playwright
 
@@ -68,20 +79,33 @@ in CI).
 
 ## Status as of 2026-09-23
 
-**Ran for real against seeded accounts. Found a real, reproducible bug —
-not a test/seed-data problem.** Credentials were provided by the mobile
-tester (`e2e-test-patient+…@burrowsoft.com` / `e2e-test-doctor+…@burrowsoft.com`,
-seeded with working hours every day 09:00–18:00 and one confirmed
-appointment for 2026-09-26). With those in `.env.e2e`:
+**🟢 Both flows pass end-to-end against the seeded accounts.** Along the
+way this run surfaced one real app bug (fixed by the developer agent) and
+two test-harness issues (fixed here) — full trail below since the
+diagnosis is worth keeping, not just the final green result.
 
-- `patient-request-reschedule.spec.ts` **fails**: logs in, opens
-  `/my-appointments`, finds the confirmed appointment, opens the reschedule
-  dialog — then every day shows "No available slots for this day.", even
-  though the professional has 09:00–18:00 hours every day and no
-  conflicting bookings on the date tried.
-- `doctor-respond-reschedule.spec.ts` **fails as a downstream consequence**:
-  there's never a pending reschedule request to accept, since the patient
-  can never submit one.
+Credentials were provided by the mobile tester
+(`e2e-test-patient+…@burrowsoft.com` / `e2e-test-doctor+…@burrowsoft.com`,
+seeded with working hours every day 09:00–18:00 and one confirmed
+appointment). With those in `.env.e2e`:
+
+```
+Running 2 tests using 1 worker
+  ok 1 [chromium] › e2e\01-patient-request-reschedule.spec.ts (21.3s)
+  ok 2 [chromium] › e2e\02-doctor-respond-reschedule.spec.ts (19.2s)
+  2 passed (42.6s)
+```
+
+### App bug found and fixed: RLS blocked slot lookup
+
+First run failed 100% of the time before the fix below — not a
+test/seed-data problem. `patient-request-reschedule.spec.ts` logged in,
+opened `/my-appointments`, found the confirmed appointment, opened the
+reschedule dialog — then every day showed "No available slots for this
+day.", even though the professional has 09:00–18:00 hours every day and no
+conflicting bookings on the date tried. `doctor-respond-reschedule.spec.ts`
+failed as a downstream consequence: there was never a pending reschedule
+request to accept.
 
 **Root cause (confirmed, not guessed)** — isolated by calling the
 Supabase REST API directly as each test account (bypassing the UI) to
@@ -111,24 +135,61 @@ returns `[]` unconditionally — for every patient, every professional, every
 day. `get_busy_slots` (the other data source in the same function) *is* a
 security-definer RPC and returns correctly regardless of caller.
 
-The fix is already established elsewhere in this codebase: the *original*
+The fix was already established elsewhere in this codebase: the *original*
 booking flow at
 [`book/[professionalId]/BookingClient.tsx:228`](src/app/%5Blocale%5D/book/%5BprofessionalId%5D/BookingClient.tsx#L228)
 reads working hours the same way a patient needs to, via
 `supabase.rpc("get_professional_working_hours", { p_professional_id })` —
-a security-definer RPC that presumably already exists for this exact
-purpose. `getAvailableSlotsForDate` should call that RPC instead of
-querying `professionals` directly. Flagged to the developer agent with
-this diagnosis; not fixing it myself since it's outside the tester role,
-but re-run is one `npm run test:e2e` away once it's patched — the flows
-themselves needed no changes to reach this failure.
+a security-definer RPC that already existed for this exact purpose.
+Flagged to the developer agent with this diagnosis rather than fixing it
+myself (outside the tester role) — they patched `getAvailableSlotsForDate`
+to call that same RPC in commit `39b1ff6`. Re-run after pulling that commit
+got past the slot-lookup step immediately, confirming the diagnosis.
 
-What *has* been verified end-to-end on this machine:
+### Test-harness issues found and fixed (not app bugs)
+
+Two more failures showed up after the RLS fix — both traced to the test
+suite itself via direct RPC/REST calls that proved the backend was
+behaving correctly in each case, so neither was "fixed" by touching app
+code:
+
+1. **Spec file execution order.** `playwright.config.ts` uses `workers: 1`
+   / `fullyParallel: false` so both specs run in one worker, in the order
+   Playwright collects them — alphabetically by default. That put
+   `doctor-respond-reschedule.spec.ts` *before*
+   `patient-request-reschedule.spec.ts`, so the doctor flow never found a
+   pending request (the patient flow that creates one hadn't run yet).
+   Fixed by prefixing the filenames `01-`/`02-` to force the intended
+   order; documented inline in `02-doctor-respond-reschedule.spec.ts`.
+2. **Reschedule-badge assertion raced `router.refresh()`.** After
+   submitting a reschedule request, the UI relies on a client-side
+   `router.refresh()` to show the "Reschedule Pending" badge. Waiting on
+   that (even at 15–30s) was unreliable against `next dev` — confirmed
+   this wasn't a real bug by calling `request_appointment_reschedule` via
+   REST directly (instant, correct) and by restarting the dev server fresh
+   (`.next` cleared, new port) and reproducing the same client-side delay
+   anyway, ruling out stale dev-server state as the cause too. Most likely
+   explanation is plain `next dev` compile/re-render latency on a route
+   that isn't hit often, which a production build wouldn't have — but
+   since it *was* reproducible here, the test was changed to force a hard
+   `page.reload()` before the final assertion instead of trusting the
+   client transition's timing. This also required re-locating the card
+   after reload by its date/time text rather than by "has a
+   reschedule-request-button" (that filter stops matching the instant the
+   request succeeds, since the button disappears once the appointment is
+   no longer reschedulable).
+
+What's been verified end-to-end on this machine, beyond the two spec runs
+themselves:
 - `@playwright/test` + Chromium installed and working.
 - Login, locale-redirect (`GET /en/auth/login` → `307` → `/auth/login`),
-  and both specs' selectors all resolve correctly through `data-testid` —
-  the failure is purely the app's RLS/data-access bug above, not the test
-  harness.
+  and every selector in both specs resolve correctly through
+  `data-testid`.
+- Ground-truth checks via direct Supabase REST calls (as each test
+  account, bypassing the UI/Next.js entirely) at multiple points, to
+  separate "the RPC/RLS layer is wrong" from "the UI/test just hasn't
+  caught up yet" — this is what let each of the three issues above get
+  diagnosed correctly instead of guessed at.
 
 ## What's covered
 
@@ -138,13 +199,15 @@ Feature: patient-initiated appointment rescheduling (`feat/patient-rescheduling`
   `/discover` or `/dashboard` redirect), plus an `requireEnv` guard so
   missing credentials fail fast with a clear message instead of a
   confusing selector timeout.
-- `e2e/patient-request-reschedule.spec.ts` — patient opens
+- `e2e/01-patient-request-reschedule.spec.ts` — patient opens
   `/my-appointments`, finds a confirmed appointment with a reschedule
-  button, requests a new slot, verifies the dialog closes and the card's
-  status badge flips to "Reschedule Pending".
-- `e2e/doctor-respond-reschedule.spec.ts` — professional opens
+  button, requests a new slot, reloads, and verifies the card's status
+  badge flips to "Reschedule Pending".
+- `e2e/02-doctor-respond-reschedule.spec.ts` — professional opens
   `/dashboard/schedule`, finds the incoming patient-initiated request row,
   accepts it, verifies the accept/decline buttons disappear from that row.
+  Must run after the patient spec (numeric filename prefixes enforce
+  this — see "Test-harness issues found and fixed" above).
 
 Not covered yet (documented, not silently skipped — same gaps as the
 mobile flows, kept in sync deliberately):
@@ -206,8 +269,16 @@ set -a; source .env.e2e; set +a
 npm run test:e2e
 
 # or target one flow, with UI mode for debugging:
-npm run test:e2e:ui -- e2e/patient-request-reschedule.spec.ts
+npm run test:e2e:ui -- e2e/01-patient-request-reschedule.spec.ts
 ```
+
+Each run consumes the single seeded appointment (moves it to a new
+date/time via the accept step). Re-running the suite is safe — the patient
+spec just picks whatever day/slot is first available from wherever the
+appointment currently sits — but don't run `01-` and `02-` against a
+*fresh* seed out of order (e.g. via `--grep` or running one file directly)
+without either running `01-` first or otherwise leaving a pending
+patient-initiated request for `02-` to find.
 
 By default `playwright.config.ts` starts `npm run dev` itself and waits for
 it to come up (`reuseExistingServer: true`, so it'll happily attach to a
