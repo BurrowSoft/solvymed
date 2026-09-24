@@ -53,11 +53,11 @@ export default function FeedbackPage() {
       <AuthPageShell>
         <AuthCard centered>
           <IconBadge>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="icon-status">
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </IconBadge>
-          <h1 className="mb-2 text-2xl font-extrabold text-slate-900">Thank you!</h1>
+          <h1 className="auth-heading">Thank you!</h1>
           <p className="mb-8 text-slate-500">Your feedback helps us improve SolvyMed for everyone.</p>
           <Link href={localePath("/")} className="text-sm font-semibold text-teal-600 hover:underline">
             Back to home
@@ -72,7 +72,7 @@ export default function FeedbackPage() {
       <AuthCard>
         {/* Back */}
         <div className="mb-6">
-          <Link href={localePath("/")} className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-teal-600 transition-colors">
+          <Link href={localePath("/")} className="back-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
               <path d="M19 12H5M12 5l-7 7 7 7" />
             </svg>
@@ -88,7 +88,7 @@ export default function FeedbackPage() {
         </p>
 
         {error && (
-          <div className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 border border-red-200">
+          <div className="error-banner">
             {error}
           </div>
         )}
@@ -118,7 +118,7 @@ export default function FeedbackPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="field-label">
               Name <span className="text-slate-400 font-normal">(optional)</span>
             </label>
             <input
@@ -126,12 +126,12 @@ export default function FeedbackPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Your name"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              className="text-input"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="field-label">
               Email <span className="text-red-500">*</span>
             </label>
             <input
@@ -141,12 +141,12 @@ export default function FeedbackPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your@email.com"
               autoComplete="email"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              className="text-input"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="field-label">
               Message <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -155,7 +155,7 @@ export default function FeedbackPage() {
               onChange={(e) => setMessage(e.target.value)}
               rows={4}
               placeholder="Tell us what you think, what's missing, or what we could do better..."
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
+              className="text-input resize-none"
             />
           </div>
 
@@ -166,7 +166,7 @@ export default function FeedbackPage() {
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <span className="spinner-white" />
                 Sending…
               </span>
             ) : (
@@ -176,7 +176,7 @@ export default function FeedbackPage() {
         </form>
       </AuthCard>
 
-      <p className="mt-8 text-sm text-slate-400">SolvyMed by BurrowSoft</p>
+      <p className="auth-footer-text">SolvyMed by BurrowSoft</p>
     </AuthPageShell>
   );
 }

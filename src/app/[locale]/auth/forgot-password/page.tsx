@@ -48,13 +48,13 @@ export default function ForgotPasswordPage() {
           <Logo />
 
           <IconBadge>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon-status">
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
               <polyline points="22,6 12,13 2,6" />
             </svg>
           </IconBadge>
 
-          <h1 className="mb-2 text-2xl font-extrabold text-slate-900">
+          <h1 className="auth-heading">
             {t("forgotPassword.success")}
           </h1>
           <p className="mb-8 text-slate-500">{t("forgotPassword.successSub")}</p>
@@ -77,7 +77,7 @@ export default function ForgotPasswordPage() {
         <div className="mb-6">
           <Link
             href={localePath("/auth/login")}
-            className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-teal-600 transition-colors"
+            className="back-link"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
               <path d="M19 12H5M12 5l-7 7 7 7" />
@@ -96,14 +96,14 @@ export default function ForgotPasswordPage() {
         </p>
 
         {error && (
-          <div className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 border border-red-200">
+          <div className="error-banner">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="field-label">
               {t("forgotPassword.email")}
             </label>
             <input
@@ -112,7 +112,7 @@ export default function ForgotPasswordPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              className="text-input"
             />
           </div>
 
@@ -123,7 +123,7 @@ export default function ForgotPasswordPage() {
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <span className="spinner-white" />
                 {t("forgotPassword.submit")}
               </span>
             ) : (
@@ -133,9 +133,9 @@ export default function ForgotPasswordPage() {
         </form>
       </AuthCard>
 
-      <p className="mt-8 text-sm text-slate-400">
+      <p className="auth-footer-text">
         SolvyMed by{" "}
-        <Link href={localePath("/")} className="text-teal-600 hover:underline">
+        <Link href={localePath("/")} className="link-teal">
           BurrowSoft
         </Link>
       </p>
