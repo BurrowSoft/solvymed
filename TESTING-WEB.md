@@ -21,7 +21,8 @@ is in the table below.
 | Patient self-rescheduling (decline path) | `feat/patient-rescheduling` (✅ merged to master 2026-09-23) | `e2e/03-doctor-decline-reschedule.spec.ts` | 🟢 GREEN — self-contained, doesn't need 01/02 to run first; re-verified post migrations 027–033 | 2026-09-23 |
 | CSS extraction (pure refactor, no logic changes) | `refactor/css-extract` (PR #2 — merged, then reverted: merged before a fresh Copilot review landed on the final commit) | `e2e/01`–`03` (regression) + manual visual check of the 5 refactored pages | 🟢 GREEN — see "CSS refactor visual verification" below (content re-verified against `8f6be7a`) | 2026-09-24 |
 | CSS extraction — re-land | `refactor/css-extract-redo` (PR #4 — ✅ merged to master 2026-09-24, commit `15407f6`) | `e2e/01-03` | 🟢 GREEN — fresh run against this exact commit, not carried over from PR #2 | 2026-09-24 |
-| CSS dedupe (shared AuthPageShell/AuthCard/Logo/BrandMark/IconBadge components) | `refactor/css-dedupe-classnames` (PR #5, commit `89a2ee8`) | `e2e/01-03` (regression) + manual check of 12 of 13 listed states live, remainder backed by diff review (see caveats below) | 🟢 GREEN — see "PR #5 visual verification" below | 2026-09-24 |
+| CSS dedupe (shared AuthPageShell/AuthCard/Logo/BrandMark/IconBadge components) | `refactor/css-dedupe-classnames` (PR #5 — ✅ merged to master 2026-09-24, commit `89a2ee8`) | `e2e/01-03` (regression) + manual check of 12 of 13 listed states live, remainder backed by diff review (see caveats below) | 🟢 GREEN — see "PR #5 visual verification" below | 2026-09-24 |
+| CSS dedupe — utility classes (field-label/text-input/error-banner/spinner-white/link-teal/back-link/auth-heading/auth-footer-text/icon-status) | `refactor/css-dedupe-utilities` (PR #6, commit `0759d6e`) | `e2e/01-03` (regression, 2 clean runs) + spot-check of all 9 classes across 4 representative pages | 🟢 GREEN — see "PR #6 verification" below | 2026-09-24 |
 
 ## Talking to the other agents
 
@@ -557,7 +558,42 @@ before touching the no-hash state. Worth knowing if this project ever
 writes a real E2E spec for password reset: don't visit the no-token state
 before the token state in the same context.
 
-## iOS — open question
+## PR #6 verification (`refactor/css-dedupe-utilities`)
+
+Follow-up to PR #5: 9 named CSS classes (`field-label`, `text-input`,
+`error-banner`, `spinner-white`, `link-teal`, `back-link`, `auth-heading`,
+`auth-footer-text`, `icon-status`) replacing duplicated utility-class
+strings across the same auth-page cluster plus `BookingClient`'s status
+icon/spinner. Read the full diff (all 10 files) before running anything:
+every one of the 9 classes is defined in `globals.css` via Tailwind's
+`@apply` directive, and every usage site swaps in the class name for the
+*exact* utility string the class was defined from — verified each
+substitution matches its `@apply` definition, not just "looks about
+right." This makes the risk profile meaningfully lower than PR #5:
+`@apply` is a build-time CSS compilation, so the rendered output is
+provably identical regardless of which component uses the class — not a
+runtime-computed value like the CSS-custom-property work in the original
+`css-extract` refactor.
+
+**Live verification, precisely scoped this time** (see the PR #5 lesson
+above about summary-row precision): ran the E2E suite twice, both clean
+3/3. Spot-checked all 9 classes across 4 pages via direct navigation and
+one triggered error state — login (form + `error-banner` via bad
+credentials), signup (form), forgot-password (success state:
+`icon-status`, `auth-heading`, `auth-footer-text`, `link-teal`),
+account/delete (form, including the `text-input resize-none` compound
+class on the textarea). All pixel-identical to the equivalent PR #5
+screenshots, as expected for a pure class-name swap.
+
+**Not live-checked, by design**: `BookingClient`'s confirmation screen —
+the only two classes it uses (`icon-status`, `spinner-white`) are both
+already covered by the spot-check above on other pages, and `@apply`
+guarantees identical output regardless of usage site. Reaching that
+screen live means driving the full booking flow (procedure selection,
+slot picking, contact form, submit) and creating a real tentative booking
+in the shared test data for close to zero marginal verification value.
+Skipped deliberately, not overlooked — noting explicitly per the PR #5
+lesson rather than letting the summary row imply full live coverage.
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
 directly, but worth noting here since browser E2E doesn't have the native
