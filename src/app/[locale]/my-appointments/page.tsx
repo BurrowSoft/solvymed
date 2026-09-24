@@ -25,9 +25,15 @@ export default async function MyAppointmentsPage() {
 
   const { data: userRoleData } = await supabase
     .from("user_roles")
-    .select("invited_by_professional_id, linked_patient_id")
+    .select("role, invited_by_professional_id, linked_patient_id")
     .eq("user_id", user.id)
     .maybeSingle();
+
+  if (!userRoleData?.role && user.user_metadata?.role === "patient") {
+    // Pending patient (invite code never resolved) — no linked doctor yet,
+    // send to the retry form instead of rendering an empty appointments page.
+    redirect("/auth/invite-required");
+  }
 
   let myProfessionalId = (userRoleData?.invited_by_professional_id as string | null) ?? null;
   if (!myProfessionalId && userRoleData?.linked_patient_id) {

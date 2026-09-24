@@ -174,10 +174,11 @@ export default function SignupPage() {
         {/* Invite code — patients only, hidden when joining via link */}
         {!isJoinFlow && role === "patient" && (
           <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4">
-            <label className="block text-sm font-semibold text-slate-700 mb-1">
+            <label htmlFor="signup-invite-code" className="block text-sm font-semibold text-slate-700 mb-1">
               {t("signup.inviteCode")} <span className="text-red-500">*</span>
             </label>
             <input
+              id="signup-invite-code"
               type="text"
               required
               form="signup-form"

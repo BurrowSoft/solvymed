@@ -122,8 +122,9 @@ export default function InviteRequiredPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="field-label">{t("inviteRequired.codeLabel")}</label>
+            <label htmlFor="invite-required-code" className="field-label">{t("inviteRequired.codeLabel")}</label>
             <input
+              id="invite-required-code"
               type="text"
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6))}
