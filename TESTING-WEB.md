@@ -27,6 +27,8 @@ is in the table below.
 | ↳ round 2 (RPC fixes, invite-required retry form, dashboard allowlist guard) | same PR, commit `6e168e5` | `e2e/01-03` (regression, blocked) + retry-form guard test + dashboard-lockout reproduction | 🔴 **NEW, MORE SEVERE BUG: doctor accounts fully locked out of /dashboard** — see "PR #7 round 2" below | 2026-09-24 |
 | ↳ round 3 (self-heal fix for missing `user_roles` rows) | same PR, commit `a80071b` | `e2e/01-03` (regression, 2 clean runs) + doctor self-heal reproduction + graceful-degradation check | 🟢 **GREEN** — see "PR #7 round 3" below | 2026-09-24 |
 | ↳ round 4 (Copilot findings: verified self-heal, invite-attach metadata gate) | same PR, commit `c10796a` | `e2e/01-03` (regression, 2nd clean run) + doctor login regression + invite-required metadata-gate test | 🟢 **GREEN — recommend this as the merge commit** — see "PR #7 round 4" below | 2026-09-24 |
+| ↳ round 5 (invite-attach race + silent upsert-failure fix) | same PR, commit `1b449fb` | typecheck + all-locale string check + `e2e/01-03` (regression, 2 clean runs after a `.next` corruption blip) | 🟢 GREEN — narrow fix, only reachable on the still-untestable successful-link path (see round 1's note); verified by code review + regression | 2026-09-24 |
+| ↳ round 6 (upsert-error checks in original confirm flows + root-page redirect fix) | same PR, commit `37a01c4` | `e2e/01-03` (regression, clean) + root-page redirect regression (linked patient + doctor) | 🟢 **GREEN — recommend this as the merge commit instead of round 4** — see "PR #7 round 6" below | 2026-09-24 |
 
 ## Talking to the other agents
 
@@ -884,6 +886,61 @@ prior round. Adjusted the test plan around this rather than skip it:
 **Merge gate: clear on my end for `c10796a`. Recommend this as the actual
 merge commit**, per web dev's own suggestion — it's the one Copilot's
 being asked to confirm against.
+
+## PR #7 round 5 (`1b449fb`) — invite-attach race fix, 🟢 GREEN
+
+Small, scoped: `ignoreDuplicates: true` added to the retry form's upsert
+(a losing concurrent request — double-click, second tab — now no-ops
+instead of overwriting whatever the winning request wrote), plus the
+upsert's `error` is now actually checked before navigating to
+`patient-welcome` (previously ignored entirely — a write failure would
+silently still show success). Verified `linkFailed` exists in all 15
+locale files. Ran `npm run typecheck` independently — clean.
+
+This fix only matters on the successful-link path, which — same as every
+prior round — needs a genuinely role-less, patient-metadata account to
+reach, still blocked by the malformed service-role key. Verified by code
+review (sound: `ON CONFLICT DO NOTHING` semantics are the right fix for
+this exact race, and the error check is a straightforward gate). Ran
+`e2e/01-03` as the regression check: 2 clean runs after one `.next`
+build-cache corruption blip (a recurring infra quirk in this environment,
+documented earlier — not code-related, fixed by clearing `.next` and
+restarting).
+
+## PR #7 round 6 (`37a01c4`) — upsert-error checks + root-page fix, 🟢 GREEN
+
+Two more Copilot findings on code outside this round's own diff, caught on
+a re-scan: (1) the two *original* confirmation entry points
+(`api/auth/callback/route.ts`, `auth/confirm/page.tsx`) had the same
+silently-ignored-upsert-error bug round 5 fixed in the retry form —
+`linked` was hardcoded `true` right after the upsert call regardless of
+whether it actually succeeded. Now `linked = !upsertError` in both places.
+(2) Root `page.tsx`'s patient redirect went straight to `/my-appointments`
+based on `user_metadata.role` alone, with no check for the pending/
+role-less case — could land a patient whose invite never resolved on a
+page with no retry CTA and nothing to look at. Now mirrors the exact
+pattern already proven in `dashboard/layout.tsx` and `auth/login/page.tsx`:
+checks `user_roles`, redirects to `/auth/invite-required` if there's no
+persisted role.
+
+**Live-tested:**
+- Root page's *existing* branch (patient with a real linked role,
+  visiting `/` directly) still correctly lands on `/my-appointments` —
+  confirmed with the real test patient account.
+- Doctor login regression: still reaches `/dashboard`.
+- `e2e/01-03`: clean 3/3.
+
+**Not independently live-tested, same reason as every round-5/6-adjacent
+case:** the *new* root-page branch (`metaRole === "patient"` with no
+persisted role → `/auth/invite-required`) needs the same unavailable
+account shape. The two upsert-error-check changes are the same
+one-line pattern already verified correct in round 5's identical fix to
+the retry form — not re-derived from scratch, just confirmed consistent.
+
+**Merge gate: clear on my end for `37a01c4`. This supersedes round 4 as
+the recommended merge commit** — it's a strict superset (round 4 +
+5 + 6's fixes), and per web dev's message this is the one Copilot's final
+confirmation is being requested against.
 
 ## iOS — open question
 
