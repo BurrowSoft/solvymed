@@ -26,6 +26,7 @@ is in the table below.
 | Disable doctor discovery, require invite code (PO decision) | `feat/disable-doctor-discovery` (PR #7, commit `9ffa778`) | `e2e/01-03` (regression) + real functional pass | 🔴 blocking bug found, fixed in round 2 — see round 1 below | 2026-09-24 |
 | ↳ round 2 (RPC fixes, invite-required retry form, dashboard allowlist guard) | same PR, commit `6e168e5` | `e2e/01-03` (regression, blocked) + retry-form guard test + dashboard-lockout reproduction | 🔴 **NEW, MORE SEVERE BUG: doctor accounts fully locked out of /dashboard** — see "PR #7 round 2" below | 2026-09-24 |
 | ↳ round 3 (self-heal fix for missing `user_roles` rows) | same PR, commit `a80071b` | `e2e/01-03` (regression, 2 clean runs) + doctor self-heal reproduction + graceful-degradation check | 🟢 **GREEN** — see "PR #7 round 3" below | 2026-09-24 |
+| ↳ round 4 (Copilot findings: verified self-heal, invite-attach metadata gate) | same PR, commit `c10796a` | `e2e/01-03` (regression, 2nd clean run) + doctor login regression + invite-required metadata-gate test | 🟢 **GREEN — recommend this as the merge commit** — see "PR #7 round 4" below | 2026-09-24 |
 
 ## Talking to the other agents
 
@@ -823,6 +824,66 @@ green light.
 record (2 severe bugs found and fixed across 3 rounds), worth Copilot
 confirming clean on this exact commit too before merge, same as every
 other PR this session.
+
+## PR #7 round 4 (`c10796a`) — tightened self-heal, 🟢 GREEN
+
+Two more Copilot findings, both tightening trust boundaries: (1) the
+round-3 self-heal granted `professional` off *absent or unrecognized*
+metadata rather than positive proof — now it only self-heals to
+`professional` when a real `professionals` table row exists for that user
+id; anything else with no persisted role and no `professionals` row now
+explicitly redirects to login (secretary self-heal still trusts metadata,
+since there's no equivalent verification table for secretaries — same
+trust level the confirmation callback already places in that field). (2)
+the invite-required retry form only checked for an *existing persisted*
+role — a role-less professional (exactly the case round 3 fixed) could
+open the page directly and attach a patient invite to their own account.
+Now gated on `user_metadata.role === "patient"` first, before touching
+`user_roles` at all.
+
+**Methodology note — couldn't fully re-test the two accounts change most
+directly, and why:** wanted to re-verify with a genuinely role-less
+account again, so attempted to delete the doctor's `user_roles` row via
+REST to recreate round 3's starting state. The DELETE returned `204` but
+a follow-up `SELECT` showed the row unchanged — confirmed via the
+migrations (grepped for `user_roles` policies) that there's no `FOR
+DELETE` policy on that table at all, only `SELECT`/`INSERT`/`UPDATE` — a
+deliberate design (create/update your own role, never delete it
+yourself), not a bug, but it means I can no longer reset this account to
+role-less via self-service REST. Creating a *different* fresh role-less
+account is still blocked by the same malformed-service-key issue as every
+prior round. Adjusted the test plan around this rather than skip it:
+
+- **Doctor login regression**: confirmed still reaches `/dashboard/schedule`
+  end to end — this doesn't re-exercise the self-heal code path itself
+  (the account already has a persisted role from round 3), but confirms
+  no regression for the now-common case.
+- **Invite-required's new metadata gate — genuinely re-tested**, and this
+  one didn't need the contrived role-less state at all: the check is
+  `user.user_metadata?.role !== "patient"`, evaluated before any
+  `user_roles` read. The doctor account's metadata role is `"professional"`
+  regardless of what's persisted in `user_roles`, so logging in as them
+  and submitting a code on `/auth/invite-required` directly tests exactly
+  this new gate. Confirmed: rejected immediately with the new message
+  ("This account wasn't created as a patient signup, so an invite code
+  can't be attached here"), not the old "already has a role" message —
+  screenshotted. Confirmed via REST the account's `user_roles` row was
+  untouched by the attempt.
+- **The specific "no `professionals` row + no patient metadata → login"
+  branch** (the other half of finding #1) could not be live-tested this
+  round — none of the available accounts have that exact shape, and I
+  won't risk deleting the doctor's `professionals` row to manufacture one
+  given the cascade risk to real appointment/booking data tied to it.
+  Read the code closely instead: the `else` branch is an explicit
+  `redirect` with no fall-through, structurally identical to the
+  already-proven `metaRole === "patient"` branch beside it — sound by
+  inspection, just not independently exercised live.
+- `e2e/01-03`: clean 3/3 (second consecutive clean run on this PR since
+  the round-3 fix).
+
+**Merge gate: clear on my end for `c10796a`. Recommend this as the actual
+merge commit**, per web dev's own suggestion — it's the one Copilot's
+being asked to confirm against.
 
 ## iOS — open question
 
