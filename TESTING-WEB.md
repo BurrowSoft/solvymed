@@ -22,7 +22,8 @@ is in the table below.
 | CSS extraction (pure refactor, no logic changes) | `refactor/css-extract` (PR #2 — merged, then reverted: merged before a fresh Copilot review landed on the final commit) | `e2e/01`–`03` (regression) + manual visual check of the 5 refactored pages | 🟢 GREEN — see "CSS refactor visual verification" below (content re-verified against `8f6be7a`) | 2026-09-24 |
 | CSS extraction — re-land | `refactor/css-extract-redo` (PR #4 — ✅ merged to master 2026-09-24, commit `15407f6`) | `e2e/01-03` | 🟢 GREEN — fresh run against this exact commit, not carried over from PR #2 | 2026-09-24 |
 | CSS dedupe (shared AuthPageShell/AuthCard/Logo/BrandMark/IconBadge components) | `refactor/css-dedupe-classnames` (PR #5 — ✅ merged to master 2026-09-24, commit `89a2ee8`) | `e2e/01-03` (regression) + manual check of 12 of 13 listed states live, remainder backed by diff review (see caveats below) | 🟢 GREEN — see "PR #5 visual verification" below | 2026-09-24 |
-| CSS dedupe — utility classes (field-label/text-input/error-banner/spinner-white/link-teal/back-link/auth-heading/auth-footer-text/icon-status) | `refactor/css-dedupe-utilities` (PR #6, commit `0759d6e`) | `e2e/01-03` (regression, 2 clean runs) + spot-check of all 9 classes across 4 representative pages | 🟢 GREEN — see "PR #6 verification" below | 2026-09-24 |
+| CSS dedupe — utility classes (field-label/text-input/error-banner/spinner-white/link-teal/back-link/auth-heading/auth-footer-text/icon-status) | `refactor/css-dedupe-utilities` (PR #6 — ✅ merged to master 2026-09-24, commit `0759d6e`) | `e2e/01-03` (regression, 2 clean runs) + spot-check of all 9 classes across 4 representative pages | 🟢 GREEN — see "PR #6 verification" below | 2026-09-24 |
+| Disable doctor discovery, require invite code (PO decision) | `feat/disable-doctor-discovery` (PR #7, commit `9ffa778`) | `e2e/01-03` (regression, not yet re-run) + real functional pass: client-side signup block, /discover removal, existing-patient login redirect, invite-required page, both server-side confirm paths' RPC dependencies | 🔴 **BLOCKING BUG FOUND** — see "PR #7 functional verification" below | 2026-09-24 |
 
 ## Talking to the other agents
 
@@ -594,6 +595,109 @@ slot picking, contact form, submit) and creating a real tentative booking
 in the shared test data for close to zero marginal verification value.
 Skipped deliberately, not overlooked — noting explicitly per the PR #5
 lesson rather than letting the summary row imply full live coverage.
+
+## PR #7 functional verification (`feat/disable-doctor-discovery`)
+
+The PO decided patients shouldn't be able to search for doctors (puts
+doctors in competition with each other) — see the roadmap memory's
+"Product decision" entry for the full business context. This PR removes
+`/discover`, makes the patient signup invite code required instead of
+optional, and enforces that requirement server-side in two parallel
+confirm paths (`api/auth/callback/route.ts` and `auth/confirm/page.tsx`
+handle different signup entry points but needed the identical fix). Asked
+for a real functional pass rather than a code read, given the security
+angle — did both.
+
+**Read first, confirmed correct by inspection:**
+- Both server-side paths only upsert a `user_roles` "patient" row if the
+  invite code resolves via `patient_by_invite_code` or
+  `professional_by_invite_code`; otherwise no row is created at all and
+  the redirect goes to the new `/auth/invite-required` page instead of
+  `/auth/patient-welcome`. No leftover unlinked-patient path.
+- Client-side signup form now has a JS guard (`if (role === "patient" &&
+  !joinProfId && !inviteCode.trim())`) *and* the input has `required` —
+  layered, but the real boundary is server-side either way.
+
+**Live-tested, all correct:**
+- Real browser test: selecting "Patient" on `/auth/signup`, filling
+  everything except the invite code, and clicking "Create account" stays
+  on `/auth/signup` — confirmed via the invite code input's own
+  `validationMessage` ("Please fill out this field"), not just "URL
+  didn't change."
+- `/discover` returns a real `404`, not a broken page.
+- Existing patient (`e2e-test-patient@…`) login → `/my-appointments`
+  directly, no `/discover` in the redirect chain.
+- `/auth/invite-required` renders correctly (`AuthPageShell`/`AuthCard`
+  wiring intact, matches the pattern from PRs #5/#6).
+- The two RPCs both server-side paths depend on
+  (`professional_by_invite_code`, `patient_by_invite_code`) called
+  directly with both a real invite code and a bogus one, confirming they
+  return exactly what the route's `if (patientData?.length)` /
+  `if (profData?.length)` branches assume — the doctor test account had
+  no `public_invite_code` set, so one was assigned (`TSTE2E`) to make this
+  possible; left in place, it's reusable for future invite-flow testing.
+
+**Not live-tested, and why:** couldn't complete a full signup → email
+confirm → redirect round trip for a fresh account (the "valid invite code
+end-to-end" and "bypass the client entirely" cases web dev specifically
+asked for). `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` is genuinely
+malformed — decoding it as a JWT produces garbage, not an expired/wrong-
+role token — so there's no way to programmatically confirm a test
+account's email without real inbox access. Confirmed "Confirm email" is
+in fact still required (a raw `signup` REST call returns no session, just
+`confirmation_sent_at`) rather than assuming. This blocked the two most
+security-critical live checks; substituted the RPC-level verification
+above as the closest available alternative, but it isn't a full
+substitute for watching the actual redirect happen.
+
+**🔴 Found a real, reproducible bug — not a code-review nit:**
+`my-appointments/page.tsx`'s new logic (added in this PR) to find the
+patient's linked doctor for the "Book Appointment" CTA:
+
+```ts
+let myProfessionalId = (userRoleData?.invited_by_professional_id as string | null) ?? null;
+if (!myProfessionalId && userRoleData?.linked_patient_id) {
+  const { data: patientRow } = await supabase
+    .from("patients")
+    .select("professional_id")
+    .eq("id", userRoleData.linked_patient_id as string)
+    .maybeSingle();
+  myProfessionalId = (patientRow?.professional_id as string | null) ?? null;
+}
+```
+
+The `patients` table query runs under the *patient's own* session
+(`createClient()` here is the per-request cookie-bound client, not a
+service client) — and patients can't read the `patients` table via RLS,
+not even their own linked row. Reproduced directly: queried the same
+`patients` row via REST as the actual test patient (who has
+`linked_patient_id` set, `invited_by_professional_id` null — exactly this
+code path) and got `[]` back, matching what the Server Component would
+see. Confirmed in the real browser too: logged in as this patient,
+`/my-appointments` loads fine and shows the real confirmed appointment,
+but the "Book Appointment" header link is entirely absent (the JSX gates
+it on `{bookPath && (...)}`, and `bookPath` is `null` here).
+
+This only affects patients linked via `linked_patient_id` — i.e.
+patients a professional manually pre-added to their patient list, who
+later signed up using *that patient's* invite code (`patient_by_invite_code`
+matches). Patients who signed up fresh via a *professional's own* invite
+code (`invited_by_professional_id`, read straight off `user_roles`, which
+patients can read for themselves) are unaffected. Confirmed this is new
+code in this PR, not a pre-existing gap, and confirmed no existing
+SECURITY DEFINER RPC already bridges this lookup — grepped every
+migration mentioning `linked_patient_id`, none of them expose
+`professional_id` back to the patient. Needs either a new RPC (matching
+the established pattern — `get_professional_working_hours`,
+`get_manual_patient_profile` — both exist for exactly this "patient needs
+a piece of data RLS would otherwise block" reason) or an RLS policy
+addition.
+
+**Not re-run yet:** `e2e/01-03` regression — holding off until the bug
+above is addressed, since re-running now would just burn a cycle against
+code that's about to change.
+
+## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
 directly, but worth noting here since browser E2E doesn't have the native
