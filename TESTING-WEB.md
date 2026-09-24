@@ -31,7 +31,8 @@ is in the table below.
 | ↳ round 6 (upsert-error checks in original confirm flows + root-page redirect fix) | same PR, commit `37a01c4` | `e2e/01-03` (regression, clean) + root-page redirect regression (linked patient + doctor) | 🟢 **GREEN — recommend this as the merge commit instead of round 4** — see "PR #7 round 6" below | 2026-09-24 |
 | ↳ round 7 (my-appointments direct-access guard + label a11y fixes) | same PR, commit `5adbcac` | typecheck + `e2e/01-03` (regression, clean) + real accessibility test (label-click-focuses-input, not just DOM presence) | 🟢 GREEN — see "PR #7 round 7" below | 2026-09-24 |
 | ↳ round 8 (privilege-escalation fix: removed client-controlled secretary self-heal) | same PR, commit `bfbb71d` | typecheck + `e2e/01-03` (regression, clean 3/3 after a `.next` corruption blip) + doctor self-heal regression + code review of the deleted branch | 🟢 **GREEN — recommend this as the merge commit instead of round 7** — see "PR #7 round 8" below | 2026-09-25 |
-| ↳ round 9 (consistency fix: guard original confirm flows against role overwrite) | same PR, commit `7e3ea04` | code review only (narrow, same pattern as an already-proven guard) | 🟢 **GREEN — recommend this as the merge commit instead of round 8** — see "PR #7 round 9" below | 2026-09-25 |
+| ↳ round 9 (consistency fix: guard original confirm flows against role overwrite) | same PR, commit `7e3ea04` | code review only (narrow, same pattern as an already-proven guard) | 🟢 GREEN — see "PR #7 round 9" below | 2026-09-25 |
+| ↳ round 10 (root-page redirect ordering fix: persisted role before metadata) | same PR, commit `00f4914` | typecheck + `e2e/01-03` (regression, clean 3/3) + real metadata-tampering reproduction of the exact bug precondition | 🟢 **GREEN — recommend this as the merge commit instead of round 9** — see "PR #7 round 10" below | 2026-09-25 |
 
 ## Talking to the other agents
 
@@ -1081,6 +1082,57 @@ already covers the reschedule flows this PR could plausibly have affected.
 commit**, superseding round 8 — narrow consistency fix, same reasoning
 pattern as round 5's invite-attach fix (also code-review-only, also a
 proven pattern applied to a missed spot).
+
+## PR #7 round 10 (`00f4914`) — root-page redirect ordering fix, 🟢 GREEN
+
+Copilot finding, narrow: `page.tsx` (root landing) checked
+`user_metadata.role === "patient"` *first*, and only used the persisted
+`user_roles` row as a truthy flag inside that branch — so a
+professional/secretary whose client-writable metadata happened to say
+`"patient"` would get routed to `/my-appointments` instead of `/dashboard`.
+Reordered to check the persisted role first: `roleRow?.role === "patient"`
+→ `/my-appointments`; no persisted role at all + metadata says patient →
+`/auth/invite-required`; otherwise `/dashboard`. Same persisted-role-first
+pattern already used everywhere else in this PR (`dashboard/layout.tsx`,
+`auth/login`, `subscribe`).
+
+**This one I could actually live-test properly**, unlike round 8 — the bug
+here didn't depend on having a role-less account; it reproduced on *any*
+account whose metadata and persisted role disagreed, which I can safely
+and reversibly manufacture on an account that already has a persisted
+role. Recorded the doctor account's exact `user_metadata` first
+(`role: "professional"`, rest unchanged), then via the Supabase Auth REST
+API (`PUT /auth/v1/user` with the doctor's own access token — the same
+mechanism `supabase.auth.updateUser()` uses client-side, i.e. faithfully
+reproducing the actual attack vector) set `role: "patient"` in their
+metadata while their `user_roles` row still says `professional`. Logged in
+as the doctor through the real login form and visited `/`: landed on
+`/dashboard`, confirming persisted role now wins regardless of tampered
+metadata — this is precisely the bug Copilot flagged, and it's fixed.
+Restored the doctor's metadata to the exact recorded original immediately
+after (verified by re-fetching it — byte-for-byte match) before running
+anything else.
+
+**Also live-tested:** `npm run typecheck` clean; `e2e/01-03` clean 3/3
+(fresh run after the metadata was restored, confirming no side effects
+from the tamper/restore cycle on the account's normal behavior).
+
+**Infra note:** hit the `.next` corruption pattern a third time this PR
+partway through this round (`MODULE_NOT_FOUND: ./vendor-chunks/@supabase.js`
+this time, different symptom, same root cause) — happened to land while
+the doctor's metadata was mid-tamper. Restored the metadata first (before
+touching the server at all), then killed the process, force-killed
+anything left on port 3000, `rm -rf .next`, restarted, and re-ran the full
+tamper → test → restore cycle clean. Worth noting for whoever owns this
+next: prioritizing the data-safety cleanup (metadata restore) over the
+infra fix when both are needed at once is the right order — a stuck dev
+server is fully recoverable, a stale tampered account is a live gap until
+it's fixed.
+
+**Merge gate: clear on my end for `00f4914`. Recommend this as the merge
+commit**, superseding round 9. This is the last Copilot finding I'm aware
+of as of this write-up; if it comes back clean, this PR should be ready to
+merge.
 
 ## iOS — open question
 
