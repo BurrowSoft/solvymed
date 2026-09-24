@@ -180,6 +180,7 @@ export default function SignupPage() {
             <input
               type="text"
               required
+              form="signup-form"
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6))}
               placeholder={t("signup.inviteCodePlaceholder")}
@@ -196,7 +197,7 @@ export default function SignupPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form id="signup-form" onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="field-label">{t("signup.fullName")}</label>
             <input

@@ -512,6 +512,7 @@
       "codeInvalid": "That code doesn't match a doctor or patient record. Double-check it with your doctor.",
       "submit": "Continue",
       "submitting": "Checking…",
+      "alreadyHasRole": "This account already has a role and can't be linked as a patient. Sign out and use a different account.",
       "backToSignup": "Use a different account"
     }
   },

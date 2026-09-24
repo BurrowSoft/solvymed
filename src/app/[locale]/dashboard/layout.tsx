@@ -34,7 +34,7 @@ export default async function DashboardLayout({
   // Only professionals/secretaries belong in this dashboard — allowlist rather
   // than excluding "patient", so an authenticated session with no role at all
   // (e.g. mid-signup, invite not yet resolved) can't fall through to it.
-  const { data: roleRow } = await supabase
+  let { data: roleRow } = await supabase
     .from("user_roles")
     .select("role")
     .eq("user_id", user!.id)
@@ -43,7 +43,26 @@ export default async function DashboardLayout({
   if (roleRow?.role === "patient") {
     redirect(`/${locale === "en" ? "" : locale + "/"}my-appointments`);
   }
-  if (roleRow?.role !== "professional" && roleRow?.role !== "secretary") {
+  if (!roleRow) {
+    const metaRole = user!.user_metadata?.role as string | undefined;
+    if (metaRole === "patient") {
+      // Signed up intending to be a patient, invite code never resolved —
+      // send back to the retry form, not a login dead end.
+      redirect(`/${locale === "en" ? "" : locale + "/"}auth/invite-required`);
+    }
+    // No persisted role, but not a pending-patient case either — this is a
+    // real professional/secretary account whose user_roles row is missing
+    // for some other reason (e.g. seeded outside the normal signup flow).
+    // Self-heal rather than lock them out, mirroring what the confirmation
+    // callback does for a fresh professional signup.
+    const healedRole = metaRole === "secretary" ? "secretary" : "professional";
+    await supabase.from("user_roles").upsert(
+      { user_id: user!.id, role: healedRole },
+      { onConflict: "user_id" },
+    );
+    roleRow = { role: healedRole };
+  }
+  if (roleRow.role !== "professional" && roleRow.role !== "secretary") {
     redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
   }
 

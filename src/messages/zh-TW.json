@@ -512,6 +512,7 @@
       "codeInvalid": "該邀請碼與任何醫生或患者都不符，請向您的醫生核實。",
       "submit": "繼續",
       "submitting": "正在驗證…",
+      "alreadyHasRole": "該帳戶已擁有角色，無法作為患者關聯。請登出並使用其他帳戶。",
       "backToSignup": "使用其他帳戶"
     }
   },

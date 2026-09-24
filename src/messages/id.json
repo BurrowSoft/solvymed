@@ -512,6 +512,7 @@
       "codeInvalid": "Kode ini tidak cocok dengan dokter atau pasien mana pun. Periksa kembali dengan dokter Anda.",
       "submit": "Lanjutkan",
       "submitting": "Memeriksa…",
+      "alreadyHasRole": "Akun ini sudah memiliki peran dan tidak dapat ditautkan sebagai pasien. Keluar dan gunakan akun lain.",
       "backToSignup": "Gunakan akun lain"
     }
   },

@@ -512,6 +512,7 @@
       "codeInvalid": "Mã này không khớp với bác sĩ hoặc bệnh nhân nào. Vui lòng kiểm tra lại với bác sĩ của bạn.",
       "submit": "Tiếp tục",
       "submitting": "Đang kiểm tra…",
+      "alreadyHasRole": "Tài khoản này đã có vai trò và không thể liên kết làm bệnh nhân. Hãy đăng xuất và dùng tài khoản khác.",
       "backToSignup": "Dùng tài khoản khác"
     }
   },

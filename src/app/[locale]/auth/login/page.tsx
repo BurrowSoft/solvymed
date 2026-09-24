@@ -41,8 +41,13 @@ export default function LoginPage() {
         .select("role")
         .eq("user_id", signInData.user.id)
         .maybeSingle();
+      // No persisted role but signed up intending to be a patient (invite
+      // code never resolved) — send back to the retry form, not /dashboard.
+      const metaRole = signInData.user.user_metadata?.role as string | undefined;
       const dest = roleRow?.role === "patient"
         ? localePath("/my-appointments")
+        : !roleRow?.role && metaRole === "patient"
+        ? localePath("/auth/invite-required")
         : localePath("/dashboard");
       router.push(dest);
       router.refresh();

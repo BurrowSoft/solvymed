@@ -512,6 +512,7 @@
       "codeInvalid": "该邀请码与任何医生或患者都不匹配，请向您的医生核实。",
       "submit": "继续",
       "submitting": "正在验证…",
+      "alreadyHasRole": "该账户已拥有角色，无法作为患者关联。请退出登录并使用其他账户。",
       "backToSignup": "使用其他账户"
     }
   },

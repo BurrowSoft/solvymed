@@ -512,6 +512,7 @@
       "codeInvalid": "Dieser Code entspricht keinem Arzt oder Patienten. Prüfen Sie ihn mit Ihrem Arzt.",
       "submit": "Weiter",
       "submitting": "Wird geprüft…",
+      "alreadyHasRole": "Dieses Konto hat bereits eine Rolle und kann nicht als Patient verknüpft werden. Melden Sie sich ab und verwenden Sie ein anderes Konto.",
       "backToSignup": "Anderes Konto verwenden"
     }
   },

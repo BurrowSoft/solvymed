@@ -512,6 +512,7 @@
       "codeInvalid": "Ese código no corresponde a ningún médico o paciente. Verifícalo con tu médico.",
       "submit": "Continuar",
       "submitting": "Verificando…",
+      "alreadyHasRole": "Esta cuenta ya tiene un rol y no se puede vincular como paciente. Cierra sesión y usa otra cuenta.",
       "backToSignup": "Usar otra cuenta"
     }
   },

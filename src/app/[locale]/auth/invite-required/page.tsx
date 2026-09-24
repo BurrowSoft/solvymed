@@ -36,6 +36,21 @@ export default function InviteRequiredPage() {
       return;
     }
 
+    // This page is reachable by any authenticated user, not just the
+    // role-less accounts coming from a failed invite confirmation — refuse
+    // to attach a code if this account already has a role, rather than
+    // silently overwriting a professional/secretary/already-linked patient.
+    const { data: existingRole } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (existingRole?.role) {
+      setLoading(false);
+      setError(t("inviteRequired.alreadyHasRole"));
+      return;
+    }
+
     const { data: patientData } = await supabase.rpc("patient_by_invite_code", { code });
     if (patientData?.length) {
       await supabase.from("user_roles").upsert(
