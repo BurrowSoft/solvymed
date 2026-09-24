@@ -5,6 +5,10 @@ import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { AuthPageShell } from "@/components/AuthPageShell";
+import { AuthCard } from "@/components/AuthCard";
+import { BrandMark } from "@/components/BrandMark";
+import { IconBadge } from "@/components/IconBadge";
 
 type PageState = "loading" | "form" | "success" | "error";
 
@@ -81,22 +85,14 @@ export default function ResetPasswordPage() {
 
   if (pageState === "success") {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100 text-center">
-          <div className="mb-6 flex justify-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 shadow-lg shadow-teal-600/20">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-              </svg>
-            </div>
-          </div>
-          <div className="mb-6 flex justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-50">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            </div>
-          </div>
+      <AuthPageShell>
+        <AuthCard centered>
+          <BrandMark />
+          <IconBadge>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </IconBadge>
           <h1 className="mb-2 text-2xl font-extrabold text-slate-900">
             {t("resetPassword.success")}
           </h1>
@@ -107,22 +103,16 @@ export default function ResetPasswordPage() {
           >
             {t("resetPassword.goToLogin")}
           </Link>
-        </div>
-      </div>
+        </AuthCard>
+      </AuthPageShell>
     );
   }
 
   if (pageState === "error") {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100 text-center">
-          <div className="mb-6 flex justify-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 shadow-lg shadow-teal-600/20">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-              </svg>
-            </div>
-          </div>
+      <AuthPageShell>
+        <AuthCard centered>
+          <BrandMark />
           <h1 className="mb-2 text-2xl font-extrabold text-slate-900">
             {t("resetPassword.error")}
           </h1>
@@ -133,22 +123,15 @@ export default function ResetPasswordPage() {
           >
             {t("forgotPassword.title")}
           </Link>
-        </div>
-      </div>
+        </AuthCard>
+      </AuthPageShell>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100">
-        {/* Logo */}
-        <div className="mb-6 flex justify-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 shadow-lg shadow-teal-600/20">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-            </svg>
-          </div>
-        </div>
+    <AuthPageShell>
+      <AuthCard>
+        <BrandMark />
 
         <h1 className="mb-1 text-center text-2xl font-extrabold text-slate-900">
           {t("resetPassword.title")}
@@ -206,7 +189,7 @@ export default function ResetPasswordPage() {
             )}
           </button>
         </form>
-      </div>
+      </AuthCard>
 
       <p className="mt-8 text-sm text-slate-400">
         SolvyMed by{" "}
@@ -214,6 +197,6 @@ export default function ResetPasswordPage() {
           BurrowSoft
         </Link>
       </p>
-    </div>
+    </AuthPageShell>
   );
 }

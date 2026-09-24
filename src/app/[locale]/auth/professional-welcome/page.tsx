@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
+import { AuthPageShell } from "@/components/AuthPageShell";
+import { AuthCard } from "@/components/AuthCard";
+import { BrandMark } from "@/components/BrandMark";
+import { IconBadge } from "@/components/IconBadge";
 
 const COUNTDOWN = 5;
 
@@ -27,25 +31,15 @@ export default function ProfessionalWelcomePage() {
   }, [count, dashboardPath, router]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100 text-center">
-        {/* Logo */}
-        <div className="mb-6 flex justify-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 shadow-lg shadow-teal-600/20">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-            </svg>
-          </div>
-        </div>
+    <AuthPageShell>
+      <AuthCard centered>
+        <BrandMark />
 
-        {/* Animated checkmark */}
-        <div className="mb-6 flex justify-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-50">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          </div>
-        </div>
+        <IconBadge>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </IconBadge>
 
         <h1 className="mb-2 text-2xl font-extrabold text-slate-900">You&apos;re all set!</h1>
         <p className="mb-1 text-slate-500">Your account has been confirmed. Welcome to SolvyMed.</p>
@@ -73,12 +67,12 @@ export default function ProfessionalWelcomePage() {
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </Link>
-      </div>
+      </AuthCard>
 
       <p className="mt-8 text-sm text-slate-400">
         SolvyMed by{" "}
         <a href="/" className="text-teal-600 hover:underline">BurrowSoft</a>
       </p>
-    </div>
+    </AuthPageShell>
   );
 }

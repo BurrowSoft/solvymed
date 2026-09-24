@@ -5,6 +5,11 @@ import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { AuthPageShell } from "@/components/AuthPageShell";
+import { AuthCard } from "@/components/AuthCard";
+import { Logo } from "@/components/Logo";
+import { BrandMark } from "@/components/BrandMark";
+import { IconBadge } from "@/components/IconBadge";
 
 export default function ForgotPasswordPage() {
   const t = useTranslations("auth");
@@ -38,21 +43,16 @@ export default function ForgotPasswordPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100 text-center">
-          {/* Logo */}
-          <div className="mb-6 flex justify-center">
-            <img src="/solvymed_logo.png" alt="SolvyMed" className="h-14 w-14 rounded-2xl shadow-lg" />
-          </div>
+      <AuthPageShell>
+        <AuthCard centered>
+          <Logo />
 
-          <div className="mb-6 flex justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-50">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                <polyline points="22,6 12,13 2,6" />
-              </svg>
-            </div>
-          </div>
+          <IconBadge>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+          </IconBadge>
 
           <h1 className="mb-2 text-2xl font-extrabold text-slate-900">
             {t("forgotPassword.success")}
@@ -65,14 +65,14 @@ export default function ForgotPasswordPage() {
           >
             {t("forgotPassword.backToLogin")}
           </Link>
-        </div>
-      </div>
+        </AuthCard>
+      </AuthPageShell>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100">
+    <AuthPageShell>
+      <AuthCard>
         {/* Back to login */}
         <div className="mb-6">
           <Link
@@ -86,14 +86,7 @@ export default function ForgotPasswordPage() {
           </Link>
         </div>
 
-        {/* Logo */}
-        <div className="mb-6 flex justify-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 shadow-lg shadow-teal-600/20">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-            </svg>
-          </div>
-        </div>
+        <BrandMark />
 
         <h1 className="mb-1 text-center text-2xl font-extrabold text-slate-900">
           {t("forgotPassword.title")}
@@ -138,7 +131,7 @@ export default function ForgotPasswordPage() {
             )}
           </button>
         </form>
-      </div>
+      </AuthCard>
 
       <p className="mt-8 text-sm text-slate-400">
         SolvyMed by{" "}
@@ -146,6 +139,6 @@ export default function ForgotPasswordPage() {
           BurrowSoft
         </Link>
       </p>
-    </div>
+    </AuthPageShell>
   );
 }
