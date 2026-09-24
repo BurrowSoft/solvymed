@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
+import { AuthPageShell } from "@/components/AuthPageShell";
 
 export default async function JoinPage({
   params,
@@ -37,7 +38,7 @@ export default async function JoinPage({
 
   if (!prof) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
+      <AuthPageShell>
         <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100 text-center">
           <p className="text-slate-600 font-semibold mb-2">{t("notFound")}</p>
           <p className="text-sm text-slate-400 mb-6">{t("notFoundDesc")}</p>
@@ -48,7 +49,7 @@ export default async function JoinPage({
             {t("backToHome")}
           </Link>
         </div>
-      </div>
+      </AuthPageShell>
     );
   }
 

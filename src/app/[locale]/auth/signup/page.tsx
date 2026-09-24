@@ -5,6 +5,11 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { AuthPageShell } from "@/components/AuthPageShell";
+import { AuthCard } from "@/components/AuthCard";
+import { Logo } from "@/components/Logo";
+import { BrandMark } from "@/components/BrandMark";
+import { IconBadge } from "@/components/IconBadge";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -78,31 +83,27 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100 text-center">
-          <div className="mb-6 flex justify-center">
-            <img src="/solvymed_logo.png" alt="SolvyMed" className="h-14 w-14 rounded-2xl shadow-lg" />
-          </div>
-          <div className="mb-6 flex justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-50">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            </div>
-          </div>
+      <AuthPageShell>
+        <AuthCard centered>
+          <Logo />
+          <IconBadge>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </IconBadge>
           <h1 className="mb-2 text-2xl font-extrabold text-slate-900">{t("signup.success")}</h1>
           <p className="mb-8 text-slate-500">{t("signup.successSub")}</p>
           <Link href={localePath("/")} className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-teal-600 transition-colors">
             {t("backToHome")}
           </Link>
-        </div>
-      </div>
+        </AuthCard>
+      </AuthPageShell>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100">
+    <AuthPageShell>
+      <AuthCard>
         {/* Back */}
         <div className="mb-6">
           <Link href={localePath("/")} className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-teal-600 transition-colors">
@@ -113,14 +114,7 @@ export default function SignupPage() {
           </Link>
         </div>
 
-        {/* Logo */}
-        <div className="mb-6 flex justify-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 shadow-lg shadow-teal-600/20">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-            </svg>
-          </div>
-        </div>
+        <BrandMark />
 
         <h1 className="mb-1 text-center text-2xl font-extrabold text-slate-900">{t("signup.title")}</h1>
         <p className="mb-6 text-center text-sm text-slate-500">{t("signup.subtitle")}</p>
@@ -264,13 +258,13 @@ export default function SignupPage() {
             {t("signup.logIn")}
           </Link>
         </p>
-      </div>
+      </AuthCard>
 
       <p className="mt-8 text-sm text-slate-400">
         SolvyMed by{" "}
         <Link href={localePath("/")} className="text-teal-600 hover:underline">BurrowSoft</Link>
       </p>
-    </div>
+    </AuthPageShell>
   );
 }
 

@@ -5,6 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { AuthPageShell } from "@/components/AuthPageShell";
+import { AuthCard } from "@/components/AuthCard";
+import { Logo } from "@/components/Logo";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
@@ -47,8 +50,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100">
+    <AuthPageShell>
+      <AuthCard>
         {/* Back to home */}
         <div className="mb-6">
           <Link
@@ -62,10 +65,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        {/* Logo */}
-        <div className="mb-6 flex justify-center">
-          <img src="/solvymed_logo.png" alt="SolvyMed" className="h-14 w-14 rounded-2xl shadow-lg" />
-        </div>
+        <Logo />
 
         <h1 className="mb-1 text-center text-2xl font-extrabold text-slate-900">
           {t("login.title")}
@@ -144,7 +144,7 @@ export default function LoginPage() {
             {t("login.signUp")}
           </Link>
         </p>
-      </div>
+      </AuthCard>
 
       <p className="mt-8 text-sm text-slate-400">
         SolvyMed by{" "}
@@ -152,6 +152,6 @@ export default function LoginPage() {
           BurrowSoft
         </Link>
       </p>
-    </div>
+    </AuthPageShell>
   );
 }

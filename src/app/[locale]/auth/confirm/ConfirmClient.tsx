@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { AuthPageShell } from "@/components/AuthPageShell";
+import { AuthCard } from "@/components/AuthCard";
+import { Logo } from "@/components/Logo";
+import { IconBadge } from "@/components/IconBadge";
 
 interface Props {
   state: "signup" | "recovery" | "unknown";
@@ -97,17 +101,17 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
 
   if (state === "unknown") {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100">
+      <AuthPageShell>
+        <AuthCard>
           <Logo />
           <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("error")}</h1>
           <p className="mb-8 text-center text-slate-500">{t("errorSub")}</p>
           <a href="/" className="flex w-full items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-6 py-4 text-base font-semibold text-slate-700 transition hover:bg-slate-100">
             {t("backToHome")}
           </a>
-        </div>
+        </AuthCard>
         <Footer />
-      </div>
+      </AuthPageShell>
     );
   }
 
@@ -115,8 +119,8 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
     // Mobile: redirect to app — show opening UI while timer fires
     if (!isDesktop) {
       return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100">
+        <AuthPageShell>
+          <AuthCard>
             <Logo />
             <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("resetPassword")}</h1>
             <p className="mb-6 text-center text-slate-500">{t("resetPasswordSub")}</p>
@@ -136,26 +140,24 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
               {t("openApp")}
             </button>
             <p className="text-center text-xs text-slate-400">{t("openAppHint")}</p>
-          </div>
+          </AuthCard>
           <Footer />
-        </div>
+        </AuthPageShell>
       );
     }
 
     // Desktop: show password form
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100">
+      <AuthPageShell>
+        <AuthCard>
           <Logo />
           {saveSuccess ? (
             <>
-              <div className="mb-6 flex justify-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-50">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-              </div>
+              <IconBadge>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </IconBadge>
               <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("updatedTitle")}</h1>
               <p className="mb-8 text-center text-slate-500">{t("updatedMessage")}</p>
               <a href="/" className="flex w-full items-center justify-center rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md shadow-teal-600/20 transition hover:bg-teal-700">
@@ -200,26 +202,24 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
               </form>
             </>
           )}
-        </div>
+        </AuthCard>
         <Footer />
-      </div>
+      </AuthPageShell>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100">
+    <AuthPageShell>
+      <AuthCard>
         <Logo />
 
         {state === "signup" && (
           <>
-            <div className="mb-6 flex justify-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-50">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              </div>
-            </div>
+            <IconBadge>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </IconBadge>
             <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("emailConfirmed")}</h1>
             <p className="mb-6 text-center text-slate-500">{t("emailConfirmedSub")}</p>
           </>
@@ -250,17 +250,9 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
         <p className="text-center text-xs text-slate-400">
           {isDesktop ? t("dashboardHint") : t("openAppHint")}
         </p>
-      </div>
+      </AuthCard>
       <Footer />
-    </div>
-  );
-}
-
-function Logo() {
-  return (
-    <div className="mb-6 flex justify-center">
-      <img src="/solvymed_logo.png" alt="SolvyMed" className="h-14 w-14 rounded-2xl shadow-lg" />
-    </div>
+    </AuthPageShell>
   );
 }
 
