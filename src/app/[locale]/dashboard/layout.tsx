@@ -50,13 +50,15 @@ export default async function DashboardLayout({
       // send back to the retry form, not a login dead end.
       redirect(`/${locale === "en" ? "" : locale + "/"}auth/invite-required`);
     }
-    // No persisted role — don't self-heal off metadata alone (an absent or
-    // unrecognized role is not proof of anything). Only auto-repair the one
-    // verified case: a real professionals-table row exists for this user
-    // but its user_roles row is missing (e.g. seeded outside the normal
-    // signup flow). Secretary self-heal still relies on metadata since
-    // there's no equivalent verification table, matching the trust the
-    // confirmation callback already places in that same metadata field.
+    // No persisted role — don't self-heal off metadata alone. user_metadata
+    // is client-writable (supabase.auth.updateUser()), so trusting it here
+    // would let any authenticated account (including a role-less pending
+    // patient) self-provision access by just setting role: "secretary" and
+    // visiting this page. Only auto-repair the one case with independent,
+    // server-owned proof: a real professionals-table row exists for this
+    // user but its user_roles row is missing (e.g. seeded outside the
+    // normal signup flow). There's no equivalent verification table for
+    // secretaries, so that case isn't self-healed — falls through to login.
     const { data: profRow } = await supabase
       .from("professionals")
       .select("id")
@@ -68,12 +70,6 @@ export default async function DashboardLayout({
         { onConflict: "user_id" },
       );
       roleRow = { role: "professional" };
-    } else if (metaRole === "secretary") {
-      await supabase.from("user_roles").upsert(
-        { user_id: user!.id, role: "secretary" },
-        { onConflict: "user_id" },
-      );
-      roleRow = { role: "secretary" };
     } else {
       redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
     }
