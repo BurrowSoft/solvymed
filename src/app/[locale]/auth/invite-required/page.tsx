@@ -64,20 +64,33 @@ export default function InviteRequiredPage() {
 
     const { data: patientData } = await supabase.rpc("patient_by_invite_code", { code });
     if (patientData?.length) {
-      await supabase.from("user_roles").upsert(
+      // ignoreDuplicates: a concurrent request (double-click, second tab)
+      // that already created this row wins rather than being silently
+      // overwritten — this request just confirms the outcome instead.
+      const { error: upsertError } = await supabase.from("user_roles").upsert(
         { user_id: user.id, role: "patient", linked_patient_id: patientData[0].patient_id },
-        { onConflict: "user_id" },
+        { onConflict: "user_id", ignoreDuplicates: true },
       );
+      setLoading(false);
+      if (upsertError) {
+        setError(t("inviteRequired.linkFailed"));
+        return;
+      }
       router.push(`${prefix}/auth/patient-welcome`);
       return;
     }
 
     const { data: profData } = await supabase.rpc("professional_by_invite_code", { code });
     if (profData?.length) {
-      await supabase.from("user_roles").upsert(
+      const { error: upsertError } = await supabase.from("user_roles").upsert(
         { user_id: user.id, role: "patient", invited_by_professional_id: profData[0].professional_id },
-        { onConflict: "user_id" },
+        { onConflict: "user_id", ignoreDuplicates: true },
       );
+      setLoading(false);
+      if (upsertError) {
+        setError(t("inviteRequired.linkFailed"));
+        return;
+      }
       router.push(`${prefix}/auth/patient-welcome`);
       return;
     }

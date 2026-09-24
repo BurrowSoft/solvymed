@@ -514,6 +514,7 @@
       "submitting": "Vérification…",
       "alreadyHasRole": "Ce compte a déjà un rôle et ne peut pas être associé en tant que patient. Déconnectez-vous et utilisez un autre compte.",
       "notPendingPatient": "Ce compte n'a pas été créé comme une inscription patient, un code d'invitation ne peut donc pas y être associé.",
+      "linkFailed": "Une erreur s'est produite lors de la liaison de votre compte. Veuillez réessayer.",
       "backToSignup": "Utiliser un autre compte"
     }
   },
