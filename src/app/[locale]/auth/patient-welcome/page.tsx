@@ -51,12 +51,12 @@ export default function PatientWelcomePage() {
         <BrandMark />
 
         <IconBadge>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="icon-status">
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </IconBadge>
 
-        <h1 className="mb-2 text-2xl font-extrabold text-slate-900">You&apos;re all set!</h1>
+        <h1 className="auth-heading">You&apos;re all set!</h1>
         <p className="mb-1 text-slate-500">Your account has been confirmed.</p>
         {email && (
           <p className="mb-1 text-sm font-medium text-slate-700">{email}</p>

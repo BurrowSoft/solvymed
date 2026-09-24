@@ -89,11 +89,11 @@ export default function ResetPasswordPage() {
         <AuthCard centered>
           <BrandMark />
           <IconBadge>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="icon-status">
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </IconBadge>
-          <h1 className="mb-2 text-2xl font-extrabold text-slate-900">
+          <h1 className="auth-heading">
             {t("resetPassword.success")}
           </h1>
           <p className="mb-8 text-slate-500">{t("resetPassword.successSub")}</p>
@@ -113,7 +113,7 @@ export default function ResetPasswordPage() {
       <AuthPageShell>
         <AuthCard centered>
           <BrandMark />
-          <h1 className="mb-2 text-2xl font-extrabold text-slate-900">
+          <h1 className="auth-heading">
             {t("resetPassword.error")}
           </h1>
           <p className="mb-8 text-slate-500">{t("resetPassword.error")}</p>
@@ -141,14 +141,14 @@ export default function ResetPasswordPage() {
         </p>
 
         {error && (
-          <div className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 border border-red-200">
+          <div className="error-banner">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="field-label">
               {t("resetPassword.newPassword")}
             </label>
             <input
@@ -157,11 +157,11 @@ export default function ResetPasswordPage() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               autoComplete="new-password"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              className="text-input"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="field-label">
               {t("resetPassword.confirmPassword")}
             </label>
             <input
@@ -170,7 +170,7 @@ export default function ResetPasswordPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               autoComplete="new-password"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              className="text-input"
             />
           </div>
 
@@ -181,7 +181,7 @@ export default function ResetPasswordPage() {
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <span className="spinner-white" />
                 {t("resetPassword.submit")}
               </span>
             ) : (
@@ -191,9 +191,9 @@ export default function ResetPasswordPage() {
         </form>
       </AuthCard>
 
-      <p className="mt-8 text-sm text-slate-400">
+      <p className="auth-footer-text">
         SolvyMed by{" "}
-        <Link href={localePath("/")} className="text-teal-600 hover:underline">
+        <Link href={localePath("/")} className="link-teal">
           BurrowSoft
         </Link>
       </p>

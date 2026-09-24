@@ -50,3 +50,42 @@
   width: 100%;
   min-height: 480px;
 }
+
+/* Auth-family pages (login, signup, forgot/reset-password, account delete,
+   feedback, confirm, welcome screens) — shared form/typography/status
+   styling repeated across every one of them. */
+.field-label {
+  @apply block text-sm font-medium text-slate-700 mb-1;
+}
+
+.text-input {
+  @apply w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20;
+}
+
+.error-banner {
+  @apply mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 border border-red-200;
+}
+
+.spinner-white {
+  @apply h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent;
+}
+
+.link-teal {
+  @apply text-teal-600 hover:underline;
+}
+
+.back-link {
+  @apply flex items-center gap-1.5 text-sm text-slate-500 hover:text-teal-600 transition-colors;
+}
+
+.auth-heading {
+  @apply mb-2 text-2xl font-extrabold text-slate-900;
+}
+
+.auth-footer-text {
+  @apply mt-8 text-sm text-slate-400;
+}
+
+.icon-status {
+  @apply h-8 w-8 text-teal-600;
+}

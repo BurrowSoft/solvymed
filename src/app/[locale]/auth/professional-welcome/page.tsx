@@ -36,12 +36,12 @@ export default function ProfessionalWelcomePage() {
         <BrandMark />
 
         <IconBadge>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="icon-status">
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </IconBadge>
 
-        <h1 className="mb-2 text-2xl font-extrabold text-slate-900">You&apos;re all set!</h1>
+        <h1 className="auth-heading">You&apos;re all set!</h1>
         <p className="mb-1 text-slate-500">Your account has been confirmed. Welcome to SolvyMed.</p>
 
         {/* Countdown */}
@@ -69,9 +69,9 @@ export default function ProfessionalWelcomePage() {
         </Link>
       </AuthCard>
 
-      <p className="mt-8 text-sm text-slate-400">
+      <p className="auth-footer-text">
         SolvyMed by{" "}
-        <a href="/" className="text-teal-600 hover:underline">BurrowSoft</a>
+        <a href="/" className="link-teal">BurrowSoft</a>
       </p>
     </AuthPageShell>
   );

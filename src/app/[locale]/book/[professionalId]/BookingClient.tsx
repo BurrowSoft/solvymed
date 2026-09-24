@@ -357,7 +357,7 @@ export function BookingClient({
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
         <div className="w-full max-w-md rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 p-8 text-center">
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-teal-50">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="icon-status">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
           </div>
@@ -683,7 +683,7 @@ export function BookingClient({
             >
               {booking ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <span className="spinner-white" />
                   {t("sending")}
                 </span>
               ) : t("sendRequest")}

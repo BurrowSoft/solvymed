@@ -56,7 +56,7 @@ export default function LoginPage() {
         <div className="mb-6">
           <Link
             href={localePath("/")}
-            className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-teal-600 transition-colors"
+            className="back-link"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
               <path d="M19 12H5M12 5l-7 7 7 7" />
@@ -75,14 +75,14 @@ export default function LoginPage() {
         </p>
 
         {error && (
-          <div className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 border border-red-200">
+          <div className="error-banner">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="field-label">
               {t("login.email")}
             </label>
             <input
@@ -92,7 +92,7 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
               data-testid="login-email"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              className="text-input"
             />
           </div>
           <div>
@@ -114,7 +114,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               data-testid="login-password"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              className="text-input"
             />
           </div>
 
@@ -126,7 +126,7 @@ export default function LoginPage() {
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <span className="spinner-white" />
                 {t("login.submit")}
               </span>
             ) : (
@@ -146,9 +146,9 @@ export default function LoginPage() {
         </p>
       </AuthCard>
 
-      <p className="mt-8 text-sm text-slate-400">
+      <p className="auth-footer-text">
         SolvyMed by{" "}
-        <Link href={localePath("/")} className="text-teal-600 hover:underline">
+        <Link href={localePath("/")} className="link-teal">
           BurrowSoft
         </Link>
       </p>

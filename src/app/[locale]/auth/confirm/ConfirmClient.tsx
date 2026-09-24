@@ -154,7 +154,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
           {saveSuccess ? (
             <>
               <IconBadge>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="icon-status">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </IconBadge>
@@ -216,7 +216,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
         {state === "signup" && (
           <>
             <IconBadge>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-teal-600">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="icon-status">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </IconBadge>
@@ -258,9 +258,9 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
 
 function Footer() {
   return (
-    <p className="mt-8 text-sm text-slate-400">
+    <p className="auth-footer-text">
       SolvyMed by{" "}
-      <a href="/" className="text-teal-600 hover:underline">BurrowSoft</a>
+      <a href="/" className="link-teal">BurrowSoft</a>
     </p>
   );
 }
