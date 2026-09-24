@@ -47,6 +47,18 @@ export default async function AuthConfirmPage({
       );
     }
     if (role === "patient") {
+      // Refuse to touch an existing role — matches the guard on the
+      // invite-required retry form. An onConflict upsert would otherwise
+      // silently overwrite an existing professional/secretary/already-
+      // linked-patient row if this handler ever ran for such an account.
+      const { data: existingRole } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", data.user.id)
+        .maybeSingle();
+      if (existingRole?.role) {
+        redirect(existingRole.role === "patient" ? "/my-appointments" : "/dashboard");
+      }
       // Same invite-required rule as /api/auth/callback — no doctor to link
       // to without a code, so no patient role gets created.
       let linked = false;
