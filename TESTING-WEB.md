@@ -29,7 +29,9 @@ is in the table below.
 | ↳ round 4 (Copilot findings: verified self-heal, invite-attach metadata gate) | same PR, commit `c10796a` | `e2e/01-03` (regression, 2nd clean run) + doctor login regression + invite-required metadata-gate test | 🟢 **GREEN — recommend this as the merge commit** — see "PR #7 round 4" below | 2026-09-24 |
 | ↳ round 5 (invite-attach race + silent upsert-failure fix) | same PR, commit `1b449fb` | typecheck + all-locale string check + `e2e/01-03` (regression, 2 clean runs after a `.next` corruption blip) | 🟢 GREEN — narrow fix, only reachable on the still-untestable successful-link path (see round 1's note); verified by code review + regression | 2026-09-24 |
 | ↳ round 6 (upsert-error checks in original confirm flows + root-page redirect fix) | same PR, commit `37a01c4` | `e2e/01-03` (regression, clean) + root-page redirect regression (linked patient + doctor) | 🟢 **GREEN — recommend this as the merge commit instead of round 4** — see "PR #7 round 6" below | 2026-09-24 |
-| ↳ round 7 (my-appointments direct-access guard + label a11y fixes) | same PR, commit `5adbcac` | typecheck + `e2e/01-03` (regression, clean) + real accessibility test (label-click-focuses-input, not just DOM presence) | 🟢 **GREEN — recommend this as the merge commit instead of round 6** — see "PR #7 round 7" below | 2026-09-24 |
+| ↳ round 7 (my-appointments direct-access guard + label a11y fixes) | same PR, commit `5adbcac` | typecheck + `e2e/01-03` (regression, clean) + real accessibility test (label-click-focuses-input, not just DOM presence) | 🟢 GREEN — see "PR #7 round 7" below | 2026-09-24 |
+| ↳ round 8 (privilege-escalation fix: removed client-controlled secretary self-heal) | same PR, commit `bfbb71d` | typecheck + `e2e/01-03` (regression, clean 3/3 after a `.next` corruption blip) + doctor self-heal regression + code review of the deleted branch | 🟢 **GREEN — recommend this as the merge commit instead of round 7** — see "PR #7 round 8" below | 2026-09-25 |
+| ↳ round 9 (consistency fix: guard original confirm flows against role overwrite) | same PR, commit `7e3ea04` | code review only (narrow, same pattern as an already-proven guard) | 🟢 **GREEN — recommend this as the merge commit instead of round 8** — see "PR #7 round 9" below | 2026-09-25 |
 
 ## Talking to the other agents
 
@@ -977,6 +979,108 @@ missed.
 **Merge gate: clear on my end for `5adbcac`. Recommend this as the merge
 commit**, superseding round 6 — narrowly scoped as described, nothing
 else changed.
+
+## PR #7 round 8 (`bfbb71d`) — privilege-escalation fix, 🟢 GREEN
+
+Copilot caught a genuine privilege-escalation hole in `dashboard/layout.tsx`'s
+self-heal logic (added round 3): `user_metadata` is client-writable via
+`supabase.auth.updateUser()`, and the secretary self-heal branch trusted it
+directly with no independent verification — unlike the professional
+self-heal, which only fires after confirming a real `professionals` table
+row exists. Any authenticated account, including a role-less pending
+patient, could set `role: "secretary"` in their own metadata and
+self-provision `/dashboard` access just by visiting it. Fixed by deleting
+the branch entirely — there's no equivalent verification table for
+secretaries, so the only safe answer is not to self-heal it. A secretary
+with a genuinely missing `user_roles` row now falls through to
+`/auth/login` unverified, same as anyone else.
+
+**Verified by code review (high confidence — this is a deletion, not a new
+conditional):** diffed `5adbcac..bfbb71d` on `dashboard/layout.tsx` and
+confirmed the `else if (metaRole === "secretary") { ...upsert... }` branch
+is completely gone, replaced with a comment explaining why. There's no
+remaining code path anywhere in the file that writes a role based on
+`user_metadata` alone — the only self-heal left is the professional one,
+gated on a real `professionals` row.
+
+**Live-tested:**
+- Doctor login (the professional self-heal path, untouched by this fix) —
+  confirmed still reaches `/dashboard` cleanly, both in isolation and as
+  part of a full clean `e2e/01-03` run.
+- `npm run typecheck`: clean. `e2e/01-03`: 3/3 clean (see note below — the
+  first attempt hit a `.next` corruption blip, not a regression).
+
+**Deliberately not attempted — metadata-tampering test on the patient
+account:** web dev asked if I could simulate a patient setting their own
+metadata to `role: "secretary"` and confirm they still can't reach
+`/dashboard`. I considered this but decided against actually doing it, for
+a reason specific to this fix rather than the usual service-role-key
+limitation: my only patient account already has a *persisted* `user_roles`
+row (`role: "patient"`). `dashboard/layout.tsx` checks `roleRow?.role`
+first and redirects patients to `/my-appointments` **before** the code ever
+reaches the self-heal block — so tampering with that account's metadata
+would test persisted-role-priority (a real but different property), not
+the actual vulnerability, which only ever existed for accounts with **no**
+persisted role. I don't have a role-less account to test with (confirmed
+back in round 4: `user_roles` has no `DELETE` policy, so neither test
+account can be reset to role-less), and manufacturing one by stripping the
+doctor's real `professionals` data isn't something I'm willing to do to a
+shared seed account. Given the fix is a clean deletion of the only
+metadata-trusting code path, code review already answers the question with
+high confidence; a live test here would've added risk (real, if reversible,
+tampering with the patient account's metadata) without actually exercising
+the vulnerable precondition. Flagging this transparently rather than
+skipping it silently.
+
+**`.next` corruption note:** the first `e2e/01-03` attempt this round hit
+the same recurring corruption pattern documented earlier in this PR
+(`ENOENT: routes-manifest.json` / `app-paths-manifest.json`) after a fresh
+`rm -rf .next` + restart — some requests during the cold compile raced the
+manifest write and the dev server never recovered on its own. Killed the
+process, force-killed anything still on port 3000, `rm -rf .next`,
+restarted clean, then hit a second, unrelated snag: leftover
+"Reschedule Pending" state on the shared test appointment from an earlier
+interrupted run (spec 01 timed out waiting for a request button that
+wasn't there because a request was already pending). Cleared it by running
+spec 02 alone (accepts the pending request, returning the appointment to
+`confirmed`), then re-ran `01-03` fresh — clean 3/3. Neither issue is an
+app bug; both are shared-environment/test-state artifacts, now documented
+here for whichever agent hits them next.
+
+**Merge gate: clear on my end for `bfbb71d`. Recommend this as the merge
+commit**, superseding round 7 — this is the fix for the most severe finding
+in the PR so far and code review gives it unusually high confidence.
+
+## PR #7 round 9 (`7e3ea04`) — guard original confirm flows against role overwrite, 🟢 GREEN
+
+Consistency fix per web dev: the invite-required retry form already refused
+to touch an account with an existing `user_roles` row (added round 4), but
+the two *original* confirmation entry points —
+`api/auth/callback/route.ts` and `auth/confirm/page.tsx` — didn't have the
+same guard. Without it, an `onConflict` upsert on either path could
+silently overwrite an existing professional/secretary/already-linked-patient
+role if the handler ever ran again for such an account. Both now check for
+an existing `user_roles` row first and redirect based on it
+(`/my-appointments` if already patient, `/dashboard` otherwise) instead of
+proceeding to the invite-code upsert.
+
+**Verified by code review only, high confidence:** diffed `bfbb71d..7e3ea04`
+on both files. The added guard is the identical `existingRole` check +
+early-return pattern already live and reasoned-about in
+`auth/invite-required/page.tsx` since round 4 — narrow, 2-file change, no
+new logic shape introduced. Not independently live-tested for the same
+reason as almost every edge case in this PR: exercising it needs a fresh
+signup/confirmation flow, which needs a working `SUPABASE_SERVICE_ROLE_KEY`
+to create test accounts — still malformed, unfixed all PR. Didn't re-run
+`e2e/01-03` for this round specifically since the change is confined to
+signup/confirmation code paths the permanent suite doesn't touch (it uses
+pre-existing, already-authenticated accounts) — round 8's clean 3/3 run
+already covers the reschedule flows this PR could plausibly have affected.
+
+**Merge gate: clear on my end for `7e3ea04`. Recommend this as the merge
+commit**, superseding round 8 — narrow consistency fix, same reasoning
+pattern as round 5's invite-attach fix (also code-review-only, also a
+proven pattern applied to a missed spot).
 
 ## iOS — open question
 
