@@ -23,6 +23,22 @@ export default async function MyAppointmentsPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
 
+  const { data: userRoleData } = await supabase
+    .from("user_roles")
+    .select("invited_by_professional_id, linked_patient_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  let myProfessionalId = (userRoleData?.invited_by_professional_id as string | null) ?? null;
+  if (!myProfessionalId && userRoleData?.linked_patient_id) {
+    const { data: patientRow } = await supabase
+      .from("patients")
+      .select("professional_id")
+      .eq("id", userRoleData.linked_patient_id as string)
+      .maybeSingle();
+    myProfessionalId = (patientRow?.professional_id as string | null) ?? null;
+  }
+
   const today = new Date().toISOString().split("T")[0];
 
   const { data: upcoming } = await supabase
@@ -48,6 +64,7 @@ export default async function MyAppointmentsPage() {
       upcoming={upcoming ?? []}
       past={past ?? []}
       userEmail={user.email ?? ""}
+      myProfessionalId={myProfessionalId}
     />
   );
 }

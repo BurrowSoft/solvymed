@@ -417,7 +417,6 @@
     "successBody": "Ihre Anfrage für {date} um {time} bei {doctor} wurde übermittelt.",
     "successHint": "Der Arzt bestätigt oder schlägt eine andere Zeit vor.",
     "viewAppointments": "Meine Termine anzeigen",
-    "backToClinics": "Zurück zu den Kliniken",
     "errorSlotTaken": "Dieser Slot wurde gerade gebucht. Bitte wählen Sie einen anderen.",
     "errorBlocked": "Ihre Buchungen bei diesem Fachmann sind derzeit eingeschränkt. Bitte kontaktieren Sie die Klinik.",
     "errorMaxBookings": "Sie haben bereits die maximale Anzahl an Terminen mit diesem Fachmann erreicht.",
@@ -435,22 +434,6 @@
     "durationMin": "{n} Min.",
     "customTime": "Benutzerdefinierte Zeit",
     "orCustomTime": "Oder eigene Uhrzeit"
-  },
-  "discover": {
-    "title": "Termin Buchen",
-    "subtitle": "Suche nach Klinik, Stadt, Arzt oder Fachgebiet",
-    "recentDoctors": "Ihre letzten Ärzte",
-    "signOut": "Abmelden",
-    "noClinicsFound": "Keine Kliniken gefunden",
-    "clinicsFound": "{n, plural, one {# Klinik gefunden} other {# Kliniken gefunden}}",
-    "list": "Liste",
-    "map": "Karte",
-    "noResults": "Keine Kliniken entsprechen Ihrer Suche",
-    "clearSearch": "Suche löschen",
-    "healthcareProviders": "Gesundheitsdienstleister",
-    "book": "Buchen",
-    "loadingMap": "Karte wird geladen…",
-    "viewDetails": "Details anzeigen →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "Patient",
       "rolePatientDesc": "Termine planen und Konsultationen einsehen",
       "inviteCode": "Einladungscode",
-      "inviteCodeOptional": "(optional)",
+      "inviteCodeRequired": "Ein Einladungscode ist erforderlich",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Geben Sie den Code des Arztes ein, um automatisch verknüpft zu werden",
       "emailExists": "Ein Konto mit dieser E-Mail existiert bereits. Bitte melden Sie sich an.",

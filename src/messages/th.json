@@ -417,7 +417,6 @@
     "successBody": "คำขอของคุณสำหรับ {date} เวลา {time} กับ {doctor} ถูกส่งแล้ว",
     "successHint": "แพทย์จะยืนยันหรือเสนอเวลาอื่น",
     "viewAppointments": "ดูนัดหมายของฉัน",
-    "backToClinics": "กลับไปที่คลินิก",
     "errorSlotTaken": "ช่วงเวลานี้ถูกจองแล้ว กรุณาเลือกเวลาอื่น",
     "errorBlocked": "การจองของคุณกับผู้เชี่ยวชาญนี้ถูกจำกัด กรุณาติดต่อคลินิก",
     "errorMaxBookings": "คุณถึงขีดจำกัดนัดหมายกับผู้เชี่ยวชาญนี้แล้ว",
@@ -435,22 +434,6 @@
     "durationMin": "{n} นาที",
     "customTime": "เวลาที่กำหนดเอง",
     "orCustomTime": "หรือเลือกเวลาเอง"
-  },
-  "discover": {
-    "title": "จองการนัดหมาย",
-    "subtitle": "ค้นหาตามคลินิก เมือง แพทย์ หรือความเชี่ยวชาญ",
-    "recentDoctors": "แพทย์ล่าสุดของคุณ",
-    "signOut": "ออกจากระบบ",
-    "noClinicsFound": "ไม่พบคลินิก",
-    "clinicsFound": "{n, plural, other {พบ # คลินิก}}",
-    "list": "รายการ",
-    "map": "แผนที่",
-    "noResults": "ไม่มีคลินิกที่ตรงกับการค้นหาของคุณ",
-    "clearSearch": "ล้างการค้นหา",
-    "healthcareProviders": "ผู้ให้บริการสุขภาพ",
-    "book": "จอง",
-    "loadingMap": "กำลังโหลดแผนที่…",
-    "viewDetails": "ดูรายละเอียด →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "ผู้ป่วย",
       "rolePatientDesc": "นัดหมายและเข้าถึงการปรึกษาของคุณ",
       "inviteCode": "รหัสเชิญ",
-      "inviteCodeOptional": "(ไม่บังคับ)",
+      "inviteCodeRequired": "จำเป็นต้องมีรหัสเชิญ",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "ใส่รหัสแพทย์เพื่อเชื่อมโยงอัตโนมัติ",
       "emailExists": "มีบัญชีที่ใช้อีเมลนี้อยู่แล้ว กรุณาลงชื่อเข้าใช้",

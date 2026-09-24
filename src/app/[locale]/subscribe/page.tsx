@@ -25,7 +25,7 @@ export default async function SubscribePage({
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (roleRow?.role === "patient") redirect(`/${locale === "en" ? "" : locale + "/"}discover`);
+  if (roleRow?.role === "patient") redirect(`/${locale === "en" ? "" : locale + "/"}my-appointments`);
 
   // Fetch effective subscription
   const { data: subRows } = await supabase.rpc("get_effective_subscription", { p_user_id: user.id });

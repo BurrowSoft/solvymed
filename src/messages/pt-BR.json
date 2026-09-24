@@ -417,7 +417,6 @@
     "successBody": "Sua solicitação para {date} às {time} com {doctor} foi enviada.",
     "successHint": "O médico confirmará ou sugerirá outro horário.",
     "viewAppointments": "Ver minhas consultas",
-    "backToClinics": "Voltar para clínicas",
     "errorSlotTaken": "Este horário acabou de ser reservado. Escolha outro.",
     "errorBlocked": "Suas reservas com este profissional estão temporariamente restritas. Entre em contato com a clínica.",
     "errorMaxBookings": "Você já atingiu o número máximo de consultas com este profissional.",
@@ -435,22 +434,6 @@
     "durationMin": "{n} min",
     "customTime": "Horário personalizado",
     "orCustomTime": "Ou escolha um horário específico"
-  },
-  "discover": {
-    "title": "Agende uma Consulta",
-    "subtitle": "Busque por clínica, cidade, médico ou especialidade",
-    "recentDoctors": "Seus Médicos Recentes",
-    "signOut": "Sair",
-    "noClinicsFound": "Nenhuma clínica encontrada",
-    "clinicsFound": "{n, plural, one {# clínica encontrada} other {# clínicas encontradas}}",
-    "list": "Lista",
-    "map": "Mapa",
-    "noResults": "Nenhuma clínica corresponde à sua pesquisa",
-    "clearSearch": "Limpar pesquisa",
-    "healthcareProviders": "Profissionais de saúde",
-    "book": "Agendar",
-    "loadingMap": "Carregando mapa…",
-    "viewDetails": "Ver detalhes →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "Paciente",
       "rolePatientDesc": "Agende e acesse suas consultas",
       "inviteCode": "Código de convite",
-      "inviteCodeOptional": "(opcional)",
+      "inviteCodeRequired": "É necessário um código de convite",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Digite o código do médico para ser vinculado automaticamente",
       "emailExists": "Já existe uma conta com este e-mail. Por favor, faça login.",

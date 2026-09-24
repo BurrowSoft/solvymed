@@ -417,7 +417,6 @@
     "successBody": "Your request for {date} at {time} with {doctor} has been submitted.",
     "successHint": "The doctor will confirm or suggest a different time.",
     "viewAppointments": "View my appointments",
-    "backToClinics": "Back to clinics",
     "errorSlotTaken": "This slot was just taken. Please choose another time.",
     "errorBlocked": "Your bookings with this professional are currently restricted. Please contact the clinic.",
     "errorMaxBookings": "You already have the maximum number of active appointments with this professional.",
@@ -435,22 +434,6 @@
     "durationMin": "{n} min",
     "customTime": "Custom time",
     "orCustomTime": "Or pick a custom time"
-  },
-  "discover": {
-    "title": "Book an Appointment",
-    "subtitle": "Search by clinic name, city, doctor, or specialty",
-    "recentDoctors": "Your Recent Doctors",
-    "signOut": "Sign out",
-    "noClinicsFound": "No clinics found",
-    "clinicsFound": "{n, plural, one {# clinic found} other {# clinics found}}",
-    "list": "List",
-    "map": "Map",
-    "noResults": "No clinics match your search",
-    "clearSearch": "Clear search",
-    "healthcareProviders": "Healthcare providers",
-    "book": "Book",
-    "loadingMap": "Loading map…",
-    "viewDetails": "View details →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "Patient",
       "rolePatientDesc": "Schedule and access your consultations",
       "inviteCode": "Invite code",
-      "inviteCodeOptional": "(optional)",
+      "inviteCodeRequired": "An invite code is required",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Enter a doctor's code to get linked automatically",
       "emailExists": "An account with this email already exists. Please sign in instead.",

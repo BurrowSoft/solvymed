@@ -30,6 +30,7 @@ export default async function AuthConfirmPage({
   const role = data.user.user_metadata?.role as string | undefined;
   const joinProfId = data.user.user_metadata?.join_professional_id as string | undefined;
   const joinRole = data.user.user_metadata?.join_role as string | undefined;
+  const inviteCode = data.user.user_metadata?.invite_code as string | undefined;
 
   // Web signup: handle role setup, then redirect appropriately.
   // redirect() from next/navigation in a Server Component correctly carries the
@@ -45,9 +46,34 @@ export default async function AuthConfirmPage({
         { onConflict: "user_id" },
       );
     }
+    if (role === "patient") {
+      // Same invite-required rule as /api/auth/callback — no doctor to link
+      // to without a code, so no patient role gets created.
+      let linked = false;
+      if (inviteCode) {
+        const { data: patientData } = await supabase.rpc("patient_by_invite_code", { code: inviteCode });
+        if (patientData?.length) {
+          await supabase.from("user_roles").upsert(
+            { user_id: data.user.id, role: "patient", linked_patient_id: patientData[0].patient_id },
+            { onConflict: "user_id" },
+          );
+          linked = true;
+        } else {
+          const { data: profData } = await supabase.rpc("professional_by_invite_code", { code: inviteCode });
+          if (profData?.length) {
+            await supabase.from("user_roles").upsert(
+              { user_id: data.user.id, role: "patient", invited_by_professional_id: profData[0].professional_id },
+              { onConflict: "user_id" },
+            );
+            linked = true;
+          }
+        }
+      }
+      redirect(linked ? "/auth/patient-welcome" : "/auth/invite-required");
+    }
     // Redirect to /dashboard without a locale prefix — the middleware's
     // geo-redirect will add the correct locale (e.g. /th/dashboard) automatically.
-    redirect(role === "patient" ? "/discover" : "/dashboard");
+    redirect("/dashboard");
   }
 
   // Mobile signup: pass tokens to client for deep-link redirect

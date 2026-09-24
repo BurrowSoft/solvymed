@@ -417,7 +417,6 @@
     "successBody": "Permintaan Anda untuk {date} pukul {time} dengan {doctor} telah dikirim.",
     "successHint": "Dokter akan mengonfirmasi atau menyarankan waktu lain.",
     "viewAppointments": "Lihat janji saya",
-    "backToClinics": "Kembali ke klinik",
     "errorSlotTaken": "Slot ini baru saja diambil. Pilih waktu lain.",
     "errorBlocked": "Pemesanan Anda dengan profesional ini sedang dibatasi. Hubungi klinik.",
     "errorMaxBookings": "Anda sudah mencapai batas maksimum janji dengan profesional ini.",
@@ -435,22 +434,6 @@
     "durationMin": "{n} menit",
     "customTime": "Waktu khusus",
     "orCustomTime": "Atau pilih waktu khusus"
-  },
-  "discover": {
-    "title": "Buat Janji",
-    "subtitle": "Cari berdasarkan klinik, kota, dokter, atau spesialisasi",
-    "recentDoctors": "Dokter Terbaru Anda",
-    "signOut": "Keluar",
-    "noClinicsFound": "Tidak ada klinik yang ditemukan",
-    "clinicsFound": "{n, plural, other {# klinik ditemukan}}",
-    "list": "Daftar",
-    "map": "Peta",
-    "noResults": "Tidak ada klinik yang cocok dengan pencarian Anda",
-    "clearSearch": "Hapus pencarian",
-    "healthcareProviders": "Penyedia layanan kesehatan",
-    "book": "Pesan",
-    "loadingMap": "Memuat peta…",
-    "viewDetails": "Lihat detail →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "Pasien",
       "rolePatientDesc": "Jadwalkan dan akses konsultasi Anda",
       "inviteCode": "Kode undangan",
-      "inviteCodeOptional": "(opsional)",
+      "inviteCodeRequired": "Kode undangan diperlukan",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Masukkan kode dokter untuk terhubung secara otomatis",
       "emailExists": "Akun dengan email ini sudah ada. Silakan masuk.",

@@ -417,7 +417,6 @@
     "successBody": "Yêu cầu của bạn cho {date} lúc {time} với {doctor} đã được gửi.",
     "successHint": "Bác sĩ sẽ xác nhận hoặc đề xuất thời gian khác.",
     "viewAppointments": "Xem lịch hẹn của tôi",
-    "backToClinics": "Quay lại danh sách phòng khám",
     "errorSlotTaken": "Khung giờ này vừa được đặt. Vui lòng chọn giờ khác.",
     "errorBlocked": "Lịch hẹn của bạn với chuyên gia này đang bị hạn chế. Vui lòng liên hệ phòng khám.",
     "errorMaxBookings": "Bạn đã đạt số lịch hẹn tối đa với chuyên gia này.",
@@ -435,22 +434,6 @@
     "durationMin": "{n} phút",
     "customTime": "Thời gian tùy chỉnh",
     "orCustomTime": "Hoặc chọn giờ khác"
-  },
-  "discover": {
-    "title": "Đặt Lịch Khám",
-    "subtitle": "Tìm theo tên phòng khám, thành phố, bác sĩ hoặc chuyên khoa",
-    "recentDoctors": "Bác Sĩ Gần Đây",
-    "signOut": "Đăng xuất",
-    "noClinicsFound": "Không tìm thấy phòng khám",
-    "clinicsFound": "{n, plural, other {tìm thấy # phòng khám}}",
-    "list": "Danh sách",
-    "map": "Bản đồ",
-    "noResults": "Không có phòng khám nào phù hợp với tìm kiếm của bạn",
-    "clearSearch": "Xóa tìm kiếm",
-    "healthcareProviders": "Nhà cung cấp dịch vụ y tế",
-    "book": "Đặt lịch",
-    "loadingMap": "Đang tải bản đồ…",
-    "viewDetails": "Xem chi tiết →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "Bệnh nhân",
       "rolePatientDesc": "Đặt lịch và truy cập tư vấn",
       "inviteCode": "Mã mời",
-      "inviteCodeOptional": "(tùy chọn)",
+      "inviteCodeRequired": "Cần có mã mời",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Nhập mã của bác sĩ để kết nối tự động",
       "emailExists": "Đã có tài khoản với email này. Vui lòng đăng nhập.",

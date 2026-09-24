@@ -39,7 +39,7 @@ export default async function DashboardLayout({
     .maybeSingle();
 
   if (roleRow?.role === "patient") {
-    redirect(`/${locale === "en" ? "" : locale + "/"}discover`);
+    redirect(`/${locale === "en" ? "" : locale + "/"}my-appointments`);
   }
 
   // ── Version gate (doctors + secretaries only) ──────────────────────────────

@@ -417,7 +417,6 @@
     "successBody": "Votre demande pour le {date} à {time} avec {doctor} a été soumise.",
     "successHint": "Le médecin confirmera ou proposera un autre créneau.",
     "viewAppointments": "Voir mes rendez-vous",
-    "backToClinics": "Retour aux cliniques",
     "errorSlotTaken": "Ce créneau vient d'être pris. Veuillez en choisir un autre.",
     "errorBlocked": "Vos réservations avec ce professionnel sont actuellement restreintes. Veuillez contacter la clinique.",
     "errorMaxBookings": "Vous avez déjà atteint le nombre maximum de rendez-vous avec ce professionnel.",
@@ -435,22 +434,6 @@
     "durationMin": "{n} min",
     "customTime": "Heure personnalisée",
     "orCustomTime": "Ou choisir une heure"
-  },
-  "discover": {
-    "title": "Prendre un Rendez-vous",
-    "subtitle": "Rechercher par clinique, ville, médecin ou spécialité",
-    "recentDoctors": "Vos Médecins Récents",
-    "signOut": "Se déconnecter",
-    "noClinicsFound": "Aucune clinique trouvée",
-    "clinicsFound": "{n, plural, one {# clinique trouvée} other {# cliniques trouvées}}",
-    "list": "Liste",
-    "map": "Carte",
-    "noResults": "Aucune clinique ne correspond à votre recherche",
-    "clearSearch": "Effacer la recherche",
-    "healthcareProviders": "Professionnels de santé",
-    "book": "Réserver",
-    "loadingMap": "Chargement de la carte…",
-    "viewDetails": "Voir les détails →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "Patient",
       "rolePatientDesc": "Planifiez et accédez à vos consultations",
       "inviteCode": "Code d'invitation",
-      "inviteCodeOptional": "(facultatif)",
+      "inviteCodeRequired": "Un code d'invitation est requis",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Entrez le code du médecin pour être lié automatiquement",
       "emailExists": "Un compte avec cet e-mail existe déjà. Veuillez vous connecter.",

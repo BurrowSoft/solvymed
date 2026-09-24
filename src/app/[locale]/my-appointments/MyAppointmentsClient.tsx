@@ -275,16 +275,19 @@ export function MyAppointmentsClient({
   upcoming,
   past,
   userEmail,
+  myProfessionalId,
 }: {
   upcoming: PatientAppointment[];
   past: PatientAppointment[];
   userEmail: string;
+  myProfessionalId: string | null;
 }) {
   const t = useTranslations("myAppointments");
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const refresh = () => router.refresh();
+  const bookPath = myProfessionalId ? `${prefix}/book/${myProfessionalId}` : null;
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -306,12 +309,14 @@ export function MyAppointmentsClient({
             <span className="text-lg font-bold text-slate-900">Solvymed</span>
           </div>
           <div className="flex items-center gap-3">
-            <a
-              href={`${prefix}/discover`}
-              className="text-sm font-medium text-teal-600 hover:underline"
-            >
-              {t("bookAppointment")}
-            </a>
+            {bookPath && (
+              <a
+                href={bookPath}
+                className="text-sm font-medium text-teal-600 hover:underline"
+              >
+                {t("bookAppointment")}
+              </a>
+            )}
             <button
               onClick={handleSignOut}
               className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-500 hover:border-slate-300 hover:text-slate-700 transition"
@@ -339,12 +344,14 @@ export function MyAppointmentsClient({
               </svg>
               <p className="font-semibold text-slate-600">{t("noUpcoming")}</p>
               <p className="text-sm text-slate-400 mt-1 mb-5">{t("noUpcomingSub")}</p>
-              <a
-                href={`${prefix}/discover`}
-                className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition"
-              >
-                {t("bookAppointment")}
-              </a>
+              {bookPath && (
+                <a
+                  href={bookPath}
+                  className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition"
+                >
+                  {t("bookAppointment")}
+                </a>
+              )}
             </div>
           ) : (
             <div className="space-y-3">
@@ -364,12 +371,12 @@ export function MyAppointmentsClient({
         )}
 
         {/* CTA if no upcoming */}
-        {upcoming.length === 0 && (
+        {upcoming.length === 0 && bookPath && (
           <div className="rounded-2xl bg-teal-600 p-6 text-white text-center">
             <p className="font-bold text-lg mb-1">{t("ctaTitle")}</p>
             <p className="text-teal-100 text-sm mb-4">{t("ctaSub")}</p>
             <a
-              href={`${prefix}/discover`}
+              href={bookPath}
               className="inline-block rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-teal-700 hover:bg-teal-50 transition"
             >
               {t("bookAppointment")}

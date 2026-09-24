@@ -42,7 +42,7 @@ export default function LoginPage() {
         .eq("user_id", signInData.user.id)
         .maybeSingle();
       const dest = roleRow?.role === "patient"
-        ? localePath("/discover")
+        ? localePath("/my-appointments")
         : localePath("/dashboard");
       router.push(dest);
       router.refresh();

@@ -417,7 +417,6 @@
     "successBody": "تم إرسال طلبك ليوم {date} الساعة {time} مع {doctor}.",
     "successHint": "سيقوم الطبيب بالتأكيد أو اقتراح وقت آخر.",
     "viewAppointments": "عرض مواعيدي",
-    "backToClinics": "العودة إلى العيادات",
     "errorSlotTaken": "تم حجز هذا الوقت للتو. يرجى اختيار وقت آخر.",
     "errorBlocked": "حجوزاتك مع هذا المختص مقيدة حالياً. يرجى التواصل مع العيادة.",
     "errorMaxBookings": "لقد وصلت إلى الحد الأقصى من المواعيد مع هذا المختص.",
@@ -435,22 +434,6 @@
     "durationMin": "{n} دقيقة",
     "customTime": "وقت مخصص",
     "orCustomTime": "أو اختر وقتاً مخصصاً"
-  },
-  "discover": {
-    "title": "احجز موعداً",
-    "subtitle": "ابحث بالاسم أو المدينة أو الطبيب أو التخصص",
-    "recentDoctors": "أطباؤك الأخيرون",
-    "signOut": "تسجيل الخروج",
-    "noClinicsFound": "لا توجد عيادات",
-    "clinicsFound": "{n, plural, other {# عيادة}}",
-    "list": "قائمة",
-    "map": "خريطة",
-    "noResults": "لا توجد عيادات تطابق بحثك",
-    "clearSearch": "مسح البحث",
-    "healthcareProviders": "مقدمو الرعاية الصحية",
-    "book": "احجز",
-    "loadingMap": "جارِي تحميل الخريطة…",
-    "viewDetails": "عرض التفاصيل →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "مريض",
       "rolePatientDesc": "احجز وصل إلى استشاراتك",
       "inviteCode": "رمز الدعوة",
-      "inviteCodeOptional": "(اختياري)",
+      "inviteCodeRequired": "رمز الدعوة مطلوب",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "أدخل رمز الطبيب للارتباط تلقائياً",
       "emailExists": "يوجد حساب بهذا البريد الإلكتروني بالفعل. يرجى تسجيل الدخول.",

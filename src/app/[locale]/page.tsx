@@ -63,14 +63,7 @@ export default async function HomePage() {
   if (user) {
     const role = user.user_metadata?.role as string | undefined;
     if (role === "patient") {
-      const today = new Date().toISOString().split("T")[0];
-      const { count } = await supabase
-        .from("appointments")
-        .select("id", { count: "exact", head: true })
-        .eq("patient_auth_id", user.id)
-        .gte("date", today)
-        .not("status", "in", '("cancelled","completed","blocked","rejected")');
-      redirect(count ? "/my-appointments" : "/discover");
+      redirect("/my-appointments");
     }
     redirect("/dashboard");
   }

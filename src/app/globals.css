@@ -44,13 +44,6 @@
   top: var(--line-top);
 }
 
-/* Discover page clinic map (Leaflet MapContainer) */
-.clinic-map {
-  height: 100%;
-  width: 100%;
-  min-height: 480px;
-}
-
 /* Auth-family pages (login, signup, forgot/reset-password, account delete,
    feedback, confirm, welcome screens) — shared form/typography/status
    styling repeated across every one of them. */

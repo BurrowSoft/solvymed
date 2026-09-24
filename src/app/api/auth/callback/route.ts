@@ -67,6 +67,11 @@ export async function GET(request: NextRequest) {
       redirectUrl = new URL("/dashboard", origin);
 
     } else if (role === "patient") {
+      // An invite code is required for patients — without one there's no doctor
+      // to link them to, so they don't get a patient role at all (see
+      // /auth/invite-required, which explains why and sends them back to sign up
+      // with a code).
+      let linked = false;
       if (inviteCode) {
         const { data: patientData } = await supabase.rpc("patient_by_invite_code", { code: inviteCode });
         if (patientData?.length) {
@@ -74,6 +79,7 @@ export async function GET(request: NextRequest) {
             { user_id: sessionUser.id, role: "patient", linked_patient_id: patientData[0].patient_id },
             { onConflict: "user_id" },
           );
+          linked = true;
         } else {
           const { data: profData } = await supabase.rpc("professional_by_invite_code", { code: inviteCode });
           if (profData?.length) {
@@ -81,20 +87,13 @@ export async function GET(request: NextRequest) {
               { user_id: sessionUser.id, role: "patient", invited_by_professional_id: profData[0].professional_id },
               { onConflict: "user_id" },
             );
-          } else {
-            await supabase.from("user_roles").upsert(
-              { user_id: sessionUser.id, role: "patient" },
-              { onConflict: "user_id" },
-            );
+            linked = true;
           }
         }
-      } else {
-        await supabase.from("user_roles").upsert(
-          { user_id: sessionUser.id, role: "patient" },
-          { onConflict: "user_id" },
-        );
       }
-      redirectUrl = new URL("/auth/patient-welcome", origin);
+      redirectUrl = linked
+        ? new URL("/auth/patient-welcome", origin)
+        : new URL("/auth/invite-required", origin);
 
     } else {
       // professional (default)
