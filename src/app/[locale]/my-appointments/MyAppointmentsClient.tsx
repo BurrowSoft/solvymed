@@ -276,18 +276,26 @@ export function MyAppointmentsClient({
   past,
   userEmail,
   myProfessionalId,
+  myProfessionalMeta,
 }: {
   upcoming: PatientAppointment[];
   past: PatientAppointment[];
   userEmail: string;
   myProfessionalId: string | null;
+  myProfessionalMeta: { name: string; specialty: string; clinicName?: string } | null;
 }) {
   const t = useTranslations("myAppointments");
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const refresh = () => router.refresh();
-  const bookPath = myProfessionalId ? `${prefix}/book/${myProfessionalId}` : null;
+  const bookPath = (() => {
+    if (!myProfessionalId) return null;
+    const params = new URLSearchParams({ name: myProfessionalMeta?.name ?? "Doctor" });
+    if (myProfessionalMeta?.specialty) params.set("specialty", myProfessionalMeta.specialty);
+    if (myProfessionalMeta?.clinicName) params.set("clinicName", myProfessionalMeta.clinicName);
+    return `${prefix}/book/${myProfessionalId}?${params.toString()}`;
+  })();
 
   async function handleSignOut() {
     const supabase = createClient();

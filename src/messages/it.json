@@ -499,7 +499,16 @@
       "loading": "Validazione del tuo link…"
     },
     "logIn": "Accedi",
-    "backToHome": "Torna alla home"
+    "backToHome": "Torna alla home",
+    "patientWelcome": {
+      "countdown": "Ti stiamo portando ai tuoi appuntamenti tra {count, plural, one {# secondo} other {# secondi}}…",
+      "goToAppointments": "Vai ai miei appuntamenti"
+    },
+    "inviteRequired": {
+      "heading": "È richiesto un codice invito",
+      "body": "Il tuo account è stato creato, ma i pazienti SolvyMed possono accedere solo tramite un codice invito del proprio medico. Chiedi il codice invito al tuo medico e registrati di nuovo con quello.",
+      "backToSignup": "Torna alla registrazione"
+    }
   },
   "myAppointments": {
     "title": "I miei appuntamenti",

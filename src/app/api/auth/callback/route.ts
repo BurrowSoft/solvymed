@@ -58,8 +58,15 @@ export async function GET(request: NextRequest) {
     const meta = sessionUser.user_metadata ?? {};
     const role = meta.role as string | undefined;
     const inviteCode = meta.invite_code as string | undefined;
+    const joinProfId = meta.join_professional_id as string | undefined;
+    const joinRole = meta.join_role as string | undefined;
 
-    if (role === "secretary") {
+    if (joinProfId) {
+      // Signed up via a doctor's direct join link — the /join page does the
+      // actual role/link setup itself, same as the mobile-facing confirm flow.
+      redirectUrl = new URL(`/join/${joinProfId}?role=${joinRole ?? "patient"}`, origin);
+
+    } else if (role === "secretary") {
       await supabase.from("user_roles").upsert(
         { user_id: sessionUser.id, role: "secretary" },
         { onConflict: "user_id" },
@@ -91,9 +98,15 @@ export async function GET(request: NextRequest) {
           }
         }
       }
-      redirectUrl = linked
-        ? new URL("/auth/patient-welcome", origin)
-        : new URL("/auth/invite-required", origin);
+      if (linked) {
+        redirectUrl = new URL("/auth/patient-welcome", origin);
+      } else {
+        // No valid invite — don't leave an authenticated, role-less session
+        // sitting around (it would fall through dashboard's guard, which
+        // only special-cases "patient", not "no role").
+        await supabase.auth.signOut();
+        redirectUrl = new URL("/auth/invite-required", origin);
+      }
 
     } else {
       // professional (default)

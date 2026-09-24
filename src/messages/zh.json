@@ -499,7 +499,16 @@
       "loading": "正在验证您的重置链接…"
     },
     "logIn": "登录",
-    "backToHome": "返回首页"
+    "backToHome": "返回首页",
+    "patientWelcome": {
+      "countdown": "{count}秒后将带您前往预约页面…",
+      "goToAppointments": "前往我的预约"
+    },
+    "inviteRequired": {
+      "heading": "需要邀请码",
+      "body": "您的账户已创建，但 SolvyMed 患者只能通过医生的邀请码加入。请向您的医生索取邀请码，然后使用该邀请码重新注册。",
+      "backToSignup": "返回注册"
+    }
   },
   "myAppointments": {
     "title": "我的预约",

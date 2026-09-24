@@ -499,7 +499,16 @@
       "loading": "リセットリンクを確認中…"
     },
     "logIn": "ログイン",
-    "backToHome": "ホームに戻る"
+    "backToHome": "ホームに戻る",
+    "patientWelcome": {
+      "countdown": "{count}秒後に予約一覧に移動します…",
+      "goToAppointments": "予約一覧へ"
+    },
+    "inviteRequired": {
+      "heading": "招待コードが必要です",
+      "body": "アカウントは作成されましたが、SolvyMedの患者は医師からの招待コードでのみ参加できます。医師に招待コードを尋ねて、そのコードで再度登録してください。",
+      "backToSignup": "登録に戻る"
+    }
   },
   "myAppointments": {
     "title": "予約一覧",

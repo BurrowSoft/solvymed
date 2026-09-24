@@ -499,7 +499,16 @@
       "loading": "جارٍ التحقق من رابطك…"
     },
     "logIn": "تسجيل الدخول",
-    "backToHome": "العودة للرئيسية"
+    "backToHome": "العودة للرئيسية",
+    "patientWelcome": {
+      "countdown": "سنأخذك إلى مواعيدك خلال {count, plural, one {# ثانية} other {# ثوانٍ}}…",
+      "goToAppointments": "الذهاب إلى مواعيدي"
+    },
+    "inviteRequired": {
+      "heading": "رمز الدعوة مطلوب",
+      "body": "تم إنشاء حسابك، لكن مرضى SolvyMed يمكنهم الانضمام فقط برمز دعوة من طبيبهم. اطلب رمز الدعوة من طبيبك، ثم سجّل مرة أخرى باستخدامه.",
+      "backToSignup": "العودة إلى التسجيل"
+    }
   },
   "myAppointments": {
     "title": "مواعيدي",

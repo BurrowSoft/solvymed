@@ -31,7 +31,9 @@ export default async function DashboardLayout({
     redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
   }
 
-  // Patients have no business in the professional dashboard — send them to their own page
+  // Only professionals/secretaries belong in this dashboard — allowlist rather
+  // than excluding "patient", so an authenticated session with no role at all
+  // (e.g. mid-signup, invite not yet resolved) can't fall through to it.
   const { data: roleRow } = await supabase
     .from("user_roles")
     .select("role")
@@ -40,6 +42,9 @@ export default async function DashboardLayout({
 
   if (roleRow?.role === "patient") {
     redirect(`/${locale === "en" ? "" : locale + "/"}my-appointments`);
+  }
+  if (roleRow?.role !== "professional" && roleRow?.role !== "secretary") {
+    redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
   }
 
   // ── Version gate (doctors + secretaries only) ──────────────────────────────

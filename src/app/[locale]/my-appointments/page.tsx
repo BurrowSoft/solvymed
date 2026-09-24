@@ -31,12 +31,35 @@ export default async function MyAppointmentsPage() {
 
   let myProfessionalId = (userRoleData?.invited_by_professional_id as string | null) ?? null;
   if (!myProfessionalId && userRoleData?.linked_patient_id) {
+    // NOTE: patients cannot read the patients table via RLS (confirmed —
+    // this always returns null for that case, even for the patient's own
+    // linked row). Needs a SECURITY DEFINER RPC on the mobile/migrations
+    // side, same pattern as get_manual_patient_profile. Tracked separately;
+    // until then, invited_by_professional_id-linked patients (the normal
+    // signup-with-code path) work fine, this only affects patients linked
+    // via a pre-existing record a professional added manually.
     const { data: patientRow } = await supabase
       .from("patients")
       .select("professional_id")
       .eq("id", userRoleData.linked_patient_id as string)
       .maybeSingle();
     myProfessionalId = (patientRow?.professional_id as string | null) ?? null;
+  }
+
+  let myProfessionalMeta: { name: string; specialty: string; clinicName?: string } | null = null;
+  if (myProfessionalId) {
+    const { data: profRow } = await supabase
+      .from("professionals")
+      .select("full_name, specialty, clinic_name")
+      .eq("user_id", myProfessionalId)
+      .maybeSingle();
+    if (profRow) {
+      myProfessionalMeta = {
+        name: (profRow.full_name as string | null) ?? "Doctor",
+        specialty: (profRow.specialty as string | null) ?? "",
+        clinicName: (profRow.clinic_name as string | null) ?? undefined,
+      };
+    }
   }
 
   const today = new Date().toISOString().split("T")[0];
@@ -65,6 +88,7 @@ export default async function MyAppointmentsPage() {
       past={past ?? []}
       userEmail={user.email ?? ""}
       myProfessionalId={myProfessionalId}
+      myProfessionalMeta={myProfessionalMeta}
     />
   );
 }

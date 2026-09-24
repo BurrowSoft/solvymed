@@ -1,12 +1,14 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { IconBadge } from "@/components/IconBadge";
 
 export default function InviteRequiredPage() {
+  const t = useTranslations("auth");
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const router = useRouter();
@@ -27,18 +29,16 @@ export default function InviteRequiredPage() {
           </svg>
         </IconBadge>
 
-        <h1 className="auth-heading">An invite code is needed</h1>
+        <h1 className="auth-heading">{t("inviteRequired.heading")}</h1>
         <p className="mb-8 text-slate-500">
-          Your account was created, but SolvyMed patients can only join through an
-          invite code from their doctor. Ask your doctor for their invite code,
-          then sign up again with it.
+          {t("inviteRequired.body")}
         </p>
 
         <button
           onClick={handleSignOut}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-teal-600 px-6 py-3.5 text-base font-bold text-white shadow-md shadow-teal-600/20 transition hover:bg-teal-700 active:scale-95"
         >
-          Back to sign up
+          {t("inviteRequired.backToSignup")}
         </button>
       </AuthCard>
     </AuthPageShell>

@@ -499,7 +499,16 @@
       "loading": "Zurücksetz-Link wird validiert…"
     },
     "logIn": "Anmelden",
-    "backToHome": "Zur Startseite"
+    "backToHome": "Zur Startseite",
+    "patientWelcome": {
+      "countdown": "Sie werden in {count, plural, one {# Sekunde} other {# Sekunden}} zu Ihren Terminen weitergeleitet…",
+      "goToAppointments": "Zu meinen Terminen"
+    },
+    "inviteRequired": {
+      "heading": "Ein Einladungscode wird benötigt",
+      "body": "Ihr Konto wurde erstellt, aber SolvyMed-Patienten können nur mit einem Einladungscode ihres Arztes beitreten. Bitten Sie Ihren Arzt um den Einladungscode und melden Sie sich damit erneut an.",
+      "backToSignup": "Zurück zur Anmeldung"
+    }
   },
   "myAppointments": {
     "title": "Meine Termine",

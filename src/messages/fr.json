@@ -499,7 +499,16 @@
       "loading": "Validation de votre lien…"
     },
     "logIn": "Se connecter",
-    "backToHome": "Retour à l'accueil"
+    "backToHome": "Retour à l'accueil",
+    "patientWelcome": {
+      "countdown": "Nous vous redirigeons vers vos rendez-vous dans {count, plural, one {# seconde} other {# secondes}}…",
+      "goToAppointments": "Aller à mes rendez-vous"
+    },
+    "inviteRequired": {
+      "heading": "Un code d'invitation est nécessaire",
+      "body": "Votre compte a été créé, mais les patients SolvyMed ne peuvent rejoindre la plateforme qu'avec un code d'invitation de leur médecin. Demandez le code d'invitation à votre médecin, puis réinscrivez-vous avec ce code.",
+      "backToSignup": "Retour à l'inscription"
+    }
   },
   "myAppointments": {
     "title": "Mes rendez-vous",

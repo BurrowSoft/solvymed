@@ -499,7 +499,16 @@
       "loading": "Đang xác thực liên kết của bạn…"
     },
     "logIn": "Đăng nhập",
-    "backToHome": "Về trang chủ"
+    "backToHome": "Về trang chủ",
+    "patientWelcome": {
+      "countdown": "Đang đưa bạn đến lịch hẹn trong {count} giây…",
+      "goToAppointments": "Đến lịch hẹn của tôi"
+    },
+    "inviteRequired": {
+      "heading": "Cần có mã mời",
+      "body": "Tài khoản của bạn đã được tạo, nhưng bệnh nhân SolvyMed chỉ có thể tham gia bằng mã mời từ bác sĩ của họ. Hãy xin mã mời từ bác sĩ, sau đó đăng ký lại với mã đó.",
+      "backToSignup": "Quay lại đăng ký"
+    }
   },
   "myAppointments": {
     "title": "Lịch hẹn của tôi",

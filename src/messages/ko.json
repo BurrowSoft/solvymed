@@ -499,7 +499,16 @@
       "loading": "재설정 링크 확인 중…"
     },
     "logIn": "로그인",
-    "backToHome": "홈으로 돌아가기"
+    "backToHome": "홈으로 돌아가기",
+    "patientWelcome": {
+      "countdown": "{count}초 후 예약 목록으로 이동합니다…",
+      "goToAppointments": "내 예약으로 이동"
+    },
+    "inviteRequired": {
+      "heading": "초대 코드가 필요합니다",
+      "body": "계정은 생성되었지만, SolvyMed 환자는 의사의 초대 코드를 통해서만 가입할 수 있습니다. 의사에게 초대 코드를 요청한 후 다시 가입해 주세요.",
+      "backToSignup": "가입으로 돌아가기"
+    }
   },
   "myAppointments": {
     "title": "내 예약",

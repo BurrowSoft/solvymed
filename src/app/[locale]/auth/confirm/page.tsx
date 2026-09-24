@@ -69,6 +69,12 @@ export default async function AuthConfirmPage({
           }
         }
       }
+      if (!linked) {
+        // No valid invite — don't leave an authenticated, role-less session
+        // sitting around (it would fall through dashboard's guard, which
+        // only special-cases "patient", not "no role").
+        await supabase.auth.signOut();
+      }
       redirect(linked ? "/auth/patient-welcome" : "/auth/invite-required");
     }
     // Redirect to /dashboard without a locale prefix — the middleware's

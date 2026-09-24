@@ -499,7 +499,16 @@
       "loading": "Memvalidasi tautan reset Anda…"
     },
     "logIn": "Masuk",
-    "backToHome": "Kembali ke beranda"
+    "backToHome": "Kembali ke beranda",
+    "patientWelcome": {
+      "countdown": "Mengarahkan Anda ke janji temu dalam {count} detik…",
+      "goToAppointments": "Ke Janji Temu Saya"
+    },
+    "inviteRequired": {
+      "heading": "Kode undangan diperlukan",
+      "body": "Akun Anda telah dibuat, tetapi pasien SolvyMed hanya dapat bergabung melalui kode undangan dari dokter mereka. Minta kode undangan dari dokter Anda, lalu daftar lagi dengan kode tersebut.",
+      "backToSignup": "Kembali ke pendaftaran"
+    }
   },
   "myAppointments": {
     "title": "Janji Saya",
