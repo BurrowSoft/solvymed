@@ -23,7 +23,8 @@ is in the table below.
 | CSS extraction — re-land | `refactor/css-extract-redo` (PR #4 — ✅ merged to master 2026-09-24, commit `15407f6`) | `e2e/01-03` | 🟢 GREEN — fresh run against this exact commit, not carried over from PR #2 | 2026-09-24 |
 | CSS dedupe (shared AuthPageShell/AuthCard/Logo/BrandMark/IconBadge components) | `refactor/css-dedupe-classnames` (PR #5 — ✅ merged to master 2026-09-24, commit `89a2ee8`) | `e2e/01-03` (regression) + manual check of 12 of 13 listed states live, remainder backed by diff review (see caveats below) | 🟢 GREEN — see "PR #5 visual verification" below | 2026-09-24 |
 | CSS dedupe — utility classes (field-label/text-input/error-banner/spinner-white/link-teal/back-link/auth-heading/auth-footer-text/icon-status) | `refactor/css-dedupe-utilities` (PR #6 — ✅ merged to master 2026-09-24, commit `0759d6e`) | `e2e/01-03` (regression, 2 clean runs) + spot-check of all 9 classes across 4 representative pages | 🟢 GREEN — see "PR #6 verification" below | 2026-09-24 |
-| Disable doctor discovery, require invite code (PO decision) | `feat/disable-doctor-discovery` (PR #7, commit `9ffa778`) | `e2e/01-03` (regression, not yet re-run) + real functional pass: client-side signup block, /discover removal, existing-patient login redirect, invite-required page, both server-side confirm paths' RPC dependencies | 🔴 **BLOCKING BUG FOUND** — see "PR #7 functional verification" below | 2026-09-24 |
+| Disable doctor discovery, require invite code (PO decision) | `feat/disable-doctor-discovery` (PR #7, commit `9ffa778`) | `e2e/01-03` (regression) + real functional pass | 🔴 blocking bug found, fixed in round 2 — see round 1 below | 2026-09-24 |
+| ↳ round 2 (RPC fixes, invite-required retry form, dashboard allowlist guard) | same PR, commit `6e168e5` | `e2e/01-03` (regression, blocked) + retry-form guard test + dashboard-lockout reproduction | 🔴 **NEW, MORE SEVERE BUG: doctor accounts fully locked out of /dashboard** — see "PR #7 round 2" below | 2026-09-24 |
 
 ## Talking to the other agents
 
@@ -696,6 +697,79 @@ addition.
 **Not re-run yet:** `e2e/01-03` regression — holding off until the bug
 above is addressed, since re-running now would just burn a cycle against
 code that's about to change.
+
+## PR #7 round 2 (`6e168e5`) — RPC fixes, retry form, dashboard guard
+
+Web dev's round-2 commit fixed the `linked_patient_id` bridge (now calls
+new RPCs `get_linked_professional_id` / `get_professional_public_info`
+instead of a direct `patients` table query), added an interactive retry
+form on `/auth/invite-required` (any authenticated user can enter a
+corrected code without re-signing-up), tightened `dashboard/layout.tsx`'s
+patient-exclusion into an explicit professional/secretary allowlist, and
+fixed a join-link routing gap in `api/auth/callback/route.ts`. Re-read
+every changed file against the diff before testing, same as round 1.
+
+**Cross-repo dependency check — the two new RPCs don't exist yet.** Before
+testing the fix, checked whether mob dev's migrations (060–066, on mobile
+PR #5) are actually applied to the shared DB, rather than assuming. They
+aren't: `get_linked_professional_id` and `get_professional_public_info`
+both return `PGRST202` (function not found), and `get_public_clinics` is
+still fully callable with the anon key — the backend lockdown from the
+original audit is still open. The web code is correct, but until these
+migrations land, the round-1 "Book Appointment" bug isn't actually fixed
+end-to-end — it'll just fail with an RPC-not-found error instead of a
+silent RLS-blocked empty result, same visible symptom (missing CTA).
+Flagged to web dev; this is a mob-dev-side blocker, not a web PR defect.
+
+**Live-tested, correct:**
+- `e2e/helpers/login.ts`'s fix (`/my-appointments` instead of `/discover`
+  in the wait-for regex) works — confirmed via the existing-patient login
+  test.
+- The retry form's new "already has a role" guard: logged in as the
+  existing linked patient (who already has `role: patient,
+  linked_patient_id` set), navigated directly to `/auth/invite-required`,
+  submitted the valid `TSTE2E` code — correctly refused with "This account
+  already has a role and can't be linked as a patient," and confirmed via
+  REST that their `user_roles` row was untouched by the attempt.
+- Could not test the retry form's *successful* linking path — needs a
+  genuinely role-less authenticated account, which needs a fresh
+  email-confirmed signup, blocked by the same malformed service-role-key
+  issue as round 1. The form's logic was read closely instead: it's
+  session-driven (`supabase.auth.getUser()`), not dependent on how the
+  user arrived at the page, so the mechanism itself should work for any
+  qualifying account — just not independently confirmed live.
+
+**🔴 Found a new, more severe bug — reproduced live on a clean server,
+twice:** the `e2e-test-doctor` account is now completely locked out of
+`/dashboard`. Login "succeeds" (form submits with no error), then
+immediately bounces back to `/auth/login`. Root cause: this account has a
+`professionals` row and `user_metadata.role: "professional"`, but *no row
+in `user_roles` at all* — confirmed via direct REST query, empty result.
+It was seeded via the Supabase admin API early in the project and never
+went through the normal signup → callback flow that upserts `user_roles`.
+The **old** guard (`if role === "patient" redirect`) let this account
+through by accident, since a null role isn't `"patient"`. The **new**
+allowlist (`if role !== "professional" && role !== "secretary" redirect
+to login`) is more correct in spirit — but for any account whose
+`user_roles` row is missing for *any* reason, professional or not, it now
+bounces to a login dead-end instead of letting them in or offering a
+recovery path. This isn't just a test-account artifact: any real
+professional whose `user_roles` row never got created (partial migration,
+an older signup path, admin-created account, anything) would hit the same
+wall — more severe than the CTA bug from round 1, since it fully blocks
+the professional dashboard rather than hiding one button. It also meant
+E2E test cleanup couldn't go through the doctor UI at all this round; had
+to accept a leftover reschedule proposal via a direct RPC call instead.
+
+Caught web dev mid-edit on this exact file, already drafting a fix (a
+`metaRole === "patient"` branch routing to `/auth/invite-required`) —
+checked it against the actual doctor account's `user_metadata.role`
+before reporting rather than assuming it would help: it's `"professional"`,
+not `"patient"`, so that specific branch doesn't cover this case as
+drafted. Flagged directly and immediately given they were actively working
+on the exact file. Holding this row until a fix lands and I can do a fresh
+pass — this is the second severe issue in two rounds on this PR, worth a
+careful full re-test rather than a spot-check next time too.
 
 ## iOS — open question
 
