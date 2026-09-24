@@ -20,7 +20,8 @@ is in the table below.
 | Patient self-rescheduling | `feat/patient-rescheduling` (✅ merged to master 2026-09-23) | `e2e/01-patient-request-reschedule.spec.ts`, `e2e/02-doctor-respond-reschedule.spec.ts` | 🟢 GREEN — re-verified post migrations 027–033 | 2026-09-23 |
 | Patient self-rescheduling (decline path) | `feat/patient-rescheduling` (✅ merged to master 2026-09-23) | `e2e/03-doctor-decline-reschedule.spec.ts` | 🟢 GREEN — self-contained, doesn't need 01/02 to run first; re-verified post migrations 027–033 | 2026-09-23 |
 | CSS extraction (pure refactor, no logic changes) | `refactor/css-extract` (PR #2 — merged, then reverted: merged before a fresh Copilot review landed on the final commit) | `e2e/01`–`03` (regression) + manual visual check of the 5 refactored pages | 🟢 GREEN — see "CSS refactor visual verification" below (content re-verified against `8f6be7a`) | 2026-09-24 |
-| CSS extraction — re-land | `refactor/css-extract-redo` (PR #4, commit `15407f6`) | `e2e/01-03` | 🟢 GREEN — fresh run against this exact commit, not carried over from PR #2 | 2026-09-24 |
+| CSS extraction — re-land | `refactor/css-extract-redo` (PR #4 — ✅ merged to master 2026-09-24, commit `15407f6`) | `e2e/01-03` | 🟢 GREEN — fresh run against this exact commit, not carried over from PR #2 | 2026-09-24 |
+| CSS dedupe (shared AuthPageShell/AuthCard/Logo/BrandMark/IconBadge components) | `refactor/css-dedupe-classnames` (PR #5, commit `89a2ee8`) | `e2e/01-03` (regression) + manual check of all 13 reachable states across 10 auth-family pages | 🟢 GREEN — see "PR #5 visual verification" below | 2026-09-24 |
 
 ## Talking to the other agents
 
@@ -474,6 +475,87 @@ decline cycle) despite 01 still failing on stale state. Cleared state and
 ran twice more on the now-warm server: both 3/3 clean. Recorded as its own
 row rather than overwriting PR #2's, so the "reverted" history stays
 visible.
+
+## PR #5 visual verification (`refactor/css-dedupe-classnames`)
+
+Extracts 5 shared components (`AuthPageShell`, `AuthCard`, `Logo`,
+`BrandMark`, `IconBadge`) and migrates 10 auth-family pages to use them —
+pure markup consolidation, developer says no visual/behavioral change
+intended. Read every touched page's diff before running anything: each is
+a mechanical swap of the same inline `<div className="...">` wrapper for
+the equivalent shared component, with the exact same JSX nested inside
+every conditional branch (confirmed for all 4 states of
+`ConfirmClient.tsx`, all 3 states of `reset-password`, both states of
+`signup`, and every other touched file). Two different logo treatments
+exist (`Logo` = img-based, `BrandMark` = SVG on teal) and the diff
+correctly keeps them distinct per page rather than collapsing into one.
+Because this is pure JSX restructuring (unlike the earlier CSS-extract
+refactor, which recomputed pixel values through Tailwind arbitrary
+values/CSS custom properties), a single clean "after" render per state is
+enough to confirm correct wiring — no paired before/after pixel diff
+needed this time.
+
+**E2E regression**: `01`/`02`/`03` against `89a2ee8` (`login.tsx` is one of
+the touched files). 4 runs: clean, 1-failure-cold-start (known pattern),
+clean, then one run failed both `01` and `03` on an already-warm server
+with no cold-start explanation available — DB showed the appointment
+already `proposal`/"Reschedule Pending" at the very start of that run,
+before spec `01` had done anything. Re-verified twice more from a
+confirmed-clean starting state: both 3/3 clean. Logged rather than
+hand-waved away, since it doesn't fit the usual cold-start pattern, but
+not chased further given the touched-file diff has zero logic changes
+relevant to the reschedule flow.
+
+**Visual check — 13 states across 10 pages**, captured via direct
+navigation against a running `next dev`:
+
+| Page | State | Result |
+|---|---|---|
+| `/auth/login` | form | ✅ |
+| `/auth/signup` | form | ✅ |
+| `/auth/forgot-password` | form | ✅ |
+| `/auth/forgot-password` | success | ✅ (`Logo` + `IconBadge` wired correctly) |
+| `/auth/reset-password` | form (valid token) | ✅ |
+| `/auth/reset-password` | error (no token) | ✅ |
+| `/auth/confirm` | unknown (no code) | ✅ |
+| `/auth/patient-welcome` | — | ✅ pixel-identical to prior verification |
+| `/auth/professional-welcome` | — | ✅ pixel-identical to prior verification |
+| `/feedback` | form | ✅ |
+| `/join/[professionalId]` | 404 | ✅ (`max-w-sm` card correctly kept distinct from `AuthCard`'s `max-w-md`) |
+| `/join/[professionalId]` | valid | ⚠️ not verified — see below |
+| `/account/delete` | form | ✅ (`Logo`, not `BrandMark`, matching the diff) |
+
+Not verified, with reasons (relied on the diff review instead, which
+already confirms these are unchanged JSX):
+- **`/join/[professionalId]` valid state** — not a refactor issue, a test-
+  data gap: the page queries `professionals` on `user_id`, and the doctor
+  test account's id didn't match under that column (unrelated to this PR
+  — the query itself wasn't touched).
+- **`/auth/confirm` signup/recovery states** — require a real Supabase
+  auth `code` from an actual signup/recovery email; not practical to
+  fabricate safely.
+- **`/auth/reset-password` success state** — reaching it means actually
+  submitting a new password for the test account, which would break its
+  known credentials for every other E2E spec. Skipped deliberately.
+- **`/auth/signup` success state** — reaching it means actually creating
+  a new account. Skipped to avoid stray test accounts.
+- **`/account/delete` done state** — reaching it means actually
+  submitting an account-deletion request against the test account.
+  Skipped — too destructive to trigger for real.
+
+**Found and fixed a test-methodology bug, not an app bug**: the
+`reset-password` form-state screenshot initially came back identical to
+the error state. Isolated with a dedicated diagnostic spec: visiting
+`/auth/reset-password` with no token *first*, in the same browser
+context, leaves the Supabase client such that a *later* visit with a
+valid access-token hash silently fails `setSession()` — reproduced
+directly (hash-first works, hash-after-no-hash-visit doesn't). Confirmed
+this is pre-existing and unrelated to this PR (the page's session
+`useEffect` is byte-identical in the diff, only the wrapper JSX changed).
+Fixed by capturing the form-state screenshot in a fresh browser context
+before touching the no-hash state. Worth knowing if this project ever
+writes a real E2E spec for password reset: don't visit the no-token state
+before the token state in the same context.
 
 ## iOS — open question
 
