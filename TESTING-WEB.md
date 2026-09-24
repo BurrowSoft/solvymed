@@ -29,6 +29,7 @@ is in the table below.
 | ↳ round 4 (Copilot findings: verified self-heal, invite-attach metadata gate) | same PR, commit `c10796a` | `e2e/01-03` (regression, 2nd clean run) + doctor login regression + invite-required metadata-gate test | 🟢 **GREEN — recommend this as the merge commit** — see "PR #7 round 4" below | 2026-09-24 |
 | ↳ round 5 (invite-attach race + silent upsert-failure fix) | same PR, commit `1b449fb` | typecheck + all-locale string check + `e2e/01-03` (regression, 2 clean runs after a `.next` corruption blip) | 🟢 GREEN — narrow fix, only reachable on the still-untestable successful-link path (see round 1's note); verified by code review + regression | 2026-09-24 |
 | ↳ round 6 (upsert-error checks in original confirm flows + root-page redirect fix) | same PR, commit `37a01c4` | `e2e/01-03` (regression, clean) + root-page redirect regression (linked patient + doctor) | 🟢 **GREEN — recommend this as the merge commit instead of round 4** — see "PR #7 round 6" below | 2026-09-24 |
+| ↳ round 7 (my-appointments direct-access guard + label a11y fixes) | same PR, commit `5adbcac` | typecheck + `e2e/01-03` (regression, clean) + real accessibility test (label-click-focuses-input, not just DOM presence) | 🟢 **GREEN — recommend this as the merge commit instead of round 6** — see "PR #7 round 7" below | 2026-09-24 |
 
 ## Talking to the other agents
 
@@ -941,6 +942,41 @@ the retry form — not re-derived from scratch, just confirmed consistent.
 the recommended merge commit** — it's a strict superset (round 4 +
 5 + 6's fixes), and per web dev's message this is the one Copilot's final
 confirmation is being requested against.
+
+## PR #7 round 7 (`5adbcac`) — my-appointments guard + a11y fixes, 🟢 GREEN
+
+Narrowly scoped, matching web dev's description: (1) `my-appointments/page.tsx`
+was the one direct-access route missing the pending-patient guard every
+other entry point (`/`, `/dashboard`, `/auth/login`) already had — a
+role-less patient-metadata account could open it directly and see an
+empty appointments page with no way back to the retry form. Now checks
+`userRoleData?.role` and redirects to `/auth/invite-required` if missing,
+same pattern as everywhere else. (2) the invite-code `<label>`s on
+`/auth/signup` and `/auth/invite-required` weren't associated with their
+`<input>`s via `htmlFor`/`id` — now they are.
+
+**Live-tested, both genuinely verifiable this round — no infra
+limitation:**
+- Accessibility fix: real test, not just checking the DOM has matching
+  `for`/`id` attributes — clicked each `<label>` and asserted the
+  associated `<input>` actually received focus (the real behavioral proof
+  a screen reader / label click depends on). Both pass on
+  `/auth/signup` (role: patient selected first) and
+  `/auth/invite-required`.
+- `my-appointments`'s *existing* behavior (normal linked patient landing
+  there via login) still works — confirmed with the real test patient.
+- `npm run typecheck`: clean. `e2e/01-03`: clean 3/3.
+
+**Still not independently live-tested:** the new guard's actual redirect
+branch, for the same reason as every prior round — needs a role-less,
+patient-metadata account, still blocked by the malformed service-role
+key. Verified by code review: identical one-line pattern to the guards
+already proven correct in rounds 3/4/6, applied to a route that had been
+missed.
+
+**Merge gate: clear on my end for `5adbcac`. Recommend this as the merge
+commit**, superseding round 6 — narrowly scoped as described, nothing
+else changed.
 
 ## iOS — open question
 
