@@ -82,19 +82,19 @@ export async function GET(request: NextRequest) {
       if (inviteCode) {
         const { data: patientData } = await supabase.rpc("patient_by_invite_code", { code: inviteCode });
         if (patientData?.length) {
-          await supabase.from("user_roles").upsert(
+          const { error: upsertError } = await supabase.from("user_roles").upsert(
             { user_id: sessionUser.id, role: "patient", linked_patient_id: patientData[0].patient_id },
             { onConflict: "user_id" },
           );
-          linked = true;
+          linked = !upsertError;
         } else {
           const { data: profData } = await supabase.rpc("professional_by_invite_code", { code: inviteCode });
           if (profData?.length) {
-            await supabase.from("user_roles").upsert(
+            const { error: upsertError } = await supabase.from("user_roles").upsert(
               { user_id: sessionUser.id, role: "patient", invited_by_professional_id: profData[0].professional_id },
               { onConflict: "user_id" },
             );
-            linked = true;
+            linked = !upsertError;
           }
         }
       }

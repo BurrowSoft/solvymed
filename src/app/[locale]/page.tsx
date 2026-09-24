@@ -61,9 +61,16 @@ export default async function HomePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (user) {
-    const role = user.user_metadata?.role as string | undefined;
-    if (role === "patient") {
-      redirect("/my-appointments");
+    const metaRole = user.user_metadata?.role as string | undefined;
+    if (metaRole === "patient") {
+      const { data: roleRow } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      // Pending patient (invite code never resolved) — no linked doctor yet,
+      // so /my-appointments would just show an empty page with no retry CTA.
+      redirect(roleRow?.role ? "/my-appointments" : "/auth/invite-required");
     }
     redirect("/dashboard");
   }
