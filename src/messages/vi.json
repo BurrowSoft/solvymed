@@ -506,8 +506,13 @@
     },
     "inviteRequired": {
       "heading": "Cần có mã mời",
-      "body": "Tài khoản của bạn đã được tạo, nhưng bệnh nhân SolvyMed chỉ có thể tham gia bằng mã mời từ bác sĩ của họ. Hãy xin mã mời từ bác sĩ, sau đó đăng ký lại với mã đó.",
-      "backToSignup": "Quay lại đăng ký"
+      "body": "Tài khoản của bạn đã được tạo, nhưng bệnh nhân SolvyMed cần mã mời từ bác sĩ để tiếp tục. Hãy xin mã mời từ bác sĩ và nhập bên dưới.",
+      "codeLabel": "Mã mời",
+      "codeRequired": "Nhập mã mời",
+      "codeInvalid": "Mã này không khớp với bác sĩ hoặc bệnh nhân nào. Vui lòng kiểm tra lại với bác sĩ của bạn.",
+      "submit": "Tiếp tục",
+      "submitting": "Đang kiểm tra…",
+      "backToSignup": "Dùng tài khoản khác"
     }
   },
   "myAppointments": {

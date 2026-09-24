@@ -506,8 +506,13 @@
     },
     "inviteRequired": {
       "heading": "Kode undangan diperlukan",
-      "body": "Akun Anda telah dibuat, tetapi pasien SolvyMed hanya dapat bergabung melalui kode undangan dari dokter mereka. Minta kode undangan dari dokter Anda, lalu daftar lagi dengan kode tersebut.",
-      "backToSignup": "Kembali ke pendaftaran"
+      "body": "Akun Anda telah dibuat, tetapi pasien SolvyMed memerlukan kode undangan dari dokter mereka untuk melanjutkan. Minta kode undangan dari dokter Anda, lalu masukkan di bawah ini.",
+      "codeLabel": "Kode undangan",
+      "codeRequired": "Masukkan kode undangan",
+      "codeInvalid": "Kode ini tidak cocok dengan dokter atau pasien mana pun. Periksa kembali dengan dokter Anda.",
+      "submit": "Lanjutkan",
+      "submitting": "Memeriksa…",
+      "backToSignup": "Gunakan akun lain"
     }
   },
   "myAppointments": {

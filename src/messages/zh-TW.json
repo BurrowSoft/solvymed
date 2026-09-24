@@ -506,8 +506,13 @@
     },
     "inviteRequired": {
       "heading": "需要邀請碼",
-      "body": "您的帳戶已建立，但 SolvyMed 患者只能透過醫生的邀請碼加入。請向您的醫生索取邀請碼，然後使用該邀請碼重新註冊。",
-      "backToSignup": "返回註冊"
+      "body": "您的帳戶已建立，但 SolvyMed 患者需要醫生提供的邀請碼才能繼續。請向您的醫生索取邀請碼，並在下方輸入。",
+      "codeLabel": "邀請碼",
+      "codeRequired": "請輸入邀請碼",
+      "codeInvalid": "該邀請碼與任何醫生或患者都不符，請向您的醫生核實。",
+      "submit": "繼續",
+      "submitting": "正在驗證…",
+      "backToSignup": "使用其他帳戶"
     }
   },
   "myAppointments": {

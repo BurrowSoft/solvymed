@@ -506,8 +506,13 @@
     },
     "inviteRequired": {
       "heading": "É necessário um código de convite",
-      "body": "Sua conta foi criada, mas os pacientes do SolvyMed só podem entrar por meio de um código de convite do médico. Peça o código de convite ao seu médico e cadastre-se novamente com ele.",
-      "backToSignup": "Voltar ao cadastro"
+      "body": "Sua conta foi criada, mas os pacientes do SolvyMed precisam de um código de convite do médico para continuar. Peça o código ao seu médico e digite-o abaixo.",
+      "codeLabel": "Código de convite",
+      "codeRequired": "Digite um código de convite",
+      "codeInvalid": "Esse código não corresponde a nenhum médico ou paciente. Confirme com seu médico.",
+      "submit": "Continuar",
+      "submitting": "Verificando…",
+      "backToSignup": "Usar outra conta"
     }
   },
   "myAppointments": {

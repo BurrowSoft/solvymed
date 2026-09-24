@@ -31,28 +31,23 @@ export default async function MyAppointmentsPage() {
 
   let myProfessionalId = (userRoleData?.invited_by_professional_id as string | null) ?? null;
   if (!myProfessionalId && userRoleData?.linked_patient_id) {
-    // NOTE: patients cannot read the patients table via RLS (confirmed —
-    // this always returns null for that case, even for the patient's own
-    // linked row). Needs a SECURITY DEFINER RPC on the mobile/migrations
-    // side, same pattern as get_manual_patient_profile. Tracked separately;
-    // until then, invited_by_professional_id-linked patients (the normal
-    // signup-with-code path) work fine, this only affects patients linked
-    // via a pre-existing record a professional added manually.
-    const { data: patientRow } = await supabase
-      .from("patients")
-      .select("professional_id")
-      .eq("id", userRoleData.linked_patient_id as string)
-      .maybeSingle();
-    myProfessionalId = (patientRow?.professional_id as string | null) ?? null;
+    // Patients can't read the patients table directly via RLS, even their own
+    // linked row — get_linked_professional_id() is a SECURITY DEFINER RPC that
+    // bridges linked_patient_id -> patients.professional_id for the caller only.
+    const { data: linkedProfId } = await supabase.rpc("get_linked_professional_id");
+    myProfessionalId = (linkedProfId as string | null) ?? null;
   }
 
+  // Patients can't read the professionals table directly via RLS
+  // (book/[professionalId]/page.tsx documents the same limitation for
+  // working hours) — get_professional_public_info() is the matching
+  // SECURITY DEFINER RPC for display info.
   let myProfessionalMeta: { name: string; specialty: string; clinicName?: string } | null = null;
   if (myProfessionalId) {
-    const { data: profRow } = await supabase
-      .from("professionals")
-      .select("full_name, specialty, clinic_name")
-      .eq("user_id", myProfessionalId)
+    const { data: profRowRaw } = await supabase
+      .rpc("get_professional_public_info", { p_professional_id: myProfessionalId })
       .maybeSingle();
+    const profRow = profRowRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null } | null;
     if (profRow) {
       myProfessionalMeta = {
         name: (profRow.full_name as string | null) ?? "Doctor",

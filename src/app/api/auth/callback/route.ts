@@ -98,15 +98,14 @@ export async function GET(request: NextRequest) {
           }
         }
       }
-      if (linked) {
-        redirectUrl = new URL("/auth/patient-welcome", origin);
-      } else {
-        // No valid invite — don't leave an authenticated, role-less session
-        // sitting around (it would fall through dashboard's guard, which
-        // only special-cases "patient", not "no role").
-        await supabase.auth.signOut();
-        redirectUrl = new URL("/auth/invite-required", origin);
-      }
+      redirectUrl = linked
+        ? new URL("/auth/patient-welcome", origin)
+        : new URL("/auth/invite-required", origin);
+      // No valid invite doesn't sign the session out — the account already
+      // exists (can't re-signup with the same email), so /auth/invite-required
+      // keeps them signed in and offers a retry form to attach a valid code.
+      // dashboard/layout.tsx's allowlist guard is what actually keeps a
+      // role-less session out of the professional dashboard.
 
     } else {
       // professional (default)

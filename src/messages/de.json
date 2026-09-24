@@ -506,8 +506,13 @@
     },
     "inviteRequired": {
       "heading": "Ein Einladungscode wird benötigt",
-      "body": "Ihr Konto wurde erstellt, aber SolvyMed-Patienten können nur mit einem Einladungscode ihres Arztes beitreten. Bitten Sie Ihren Arzt um den Einladungscode und melden Sie sich damit erneut an.",
-      "backToSignup": "Zurück zur Anmeldung"
+      "body": "Ihr Konto wurde erstellt, aber SolvyMed-Patienten benötigen einen Einladungscode ihres Arztes, um fortzufahren. Bitten Sie Ihren Arzt um den Code und geben Sie ihn unten ein.",
+      "codeLabel": "Einladungscode",
+      "codeRequired": "Geben Sie einen Einladungscode ein",
+      "codeInvalid": "Dieser Code entspricht keinem Arzt oder Patienten. Prüfen Sie ihn mit Ihrem Arzt.",
+      "submit": "Weiter",
+      "submitting": "Wird geprüft…",
+      "backToSignup": "Anderes Konto verwenden"
     }
   },
   "myAppointments": {

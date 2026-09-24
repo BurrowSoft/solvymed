@@ -506,8 +506,13 @@
     },
     "inviteRequired": {
       "heading": "An invite code is needed",
-      "body": "Your account was created, but SolvyMed patients can only join through an invite code from their doctor. Ask your doctor for their invite code, then sign up again with it.",
-      "backToSignup": "Back to sign up"
+      "body": "Your account was created, but SolvyMed patients need an invite code from their doctor to continue. Ask your doctor for their invite code and enter it below.",
+      "codeLabel": "Invite code",
+      "codeRequired": "Enter an invite code",
+      "codeInvalid": "That code doesn't match a doctor or patient record. Double-check it with your doctor.",
+      "submit": "Continue",
+      "submitting": "Checking…",
+      "backToSignup": "Use a different account"
     }
   },
   "myAppointments": {
