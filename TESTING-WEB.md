@@ -25,6 +25,7 @@ is in the table below.
 | CSS dedupe — utility classes (field-label/text-input/error-banner/spinner-white/link-teal/back-link/auth-heading/auth-footer-text/icon-status) | `refactor/css-dedupe-utilities` (PR #6 — ✅ merged to master 2026-09-24, commit `0759d6e`) | `e2e/01-03` (regression, 2 clean runs) + spot-check of all 9 classes across 4 representative pages | 🟢 GREEN — see "PR #6 verification" below | 2026-09-24 |
 | Disable doctor discovery, require invite code (PO decision) | `feat/disable-doctor-discovery` (PR #7, commit `9ffa778`) | `e2e/01-03` (regression) + real functional pass | 🔴 blocking bug found, fixed in round 2 — see round 1 below | 2026-09-24 |
 | ↳ round 2 (RPC fixes, invite-required retry form, dashboard allowlist guard) | same PR, commit `6e168e5` | `e2e/01-03` (regression, blocked) + retry-form guard test + dashboard-lockout reproduction | 🔴 **NEW, MORE SEVERE BUG: doctor accounts fully locked out of /dashboard** — see "PR #7 round 2" below | 2026-09-24 |
+| ↳ round 3 (self-heal fix for missing `user_roles` rows) | same PR, commit `a80071b` | `e2e/01-03` (regression, 2 clean runs) + doctor self-heal reproduction + graceful-degradation check | 🟢 **GREEN** — see "PR #7 round 3" below | 2026-09-24 |
 
 ## Talking to the other agents
 
@@ -770,6 +771,58 @@ drafted. Flagged directly and immediately given they were actively working
 on the exact file. Holding this row until a fix lands and I can do a fresh
 pass — this is the second severe issue in two rounds on this PR, worth a
 careful full re-test rather than a spot-check next time too.
+
+## PR #7 round 3 (`a80071b`) — self-heal fix, 🟢 GREEN
+
+Web dev's fix: `dashboard/layout.tsx`'s guard now self-heals a missing
+`user_roles` row instead of bouncing it. If there's no row at all: a
+`user_metadata.role === "patient"` case still correctly routes to
+`/auth/invite-required` (can't assume patient linkage without a resolved
+code); anything else upserts a `professional`/`secretary` role (based on
+metadata, default professional) and lets the request continue, mirroring
+what the confirmation callback already does for a fresh signup. Read the
+diff closely before testing — confirmed the reassignment (`let roleRow`,
+falls through to the existing allowlist check afterward with the healed
+value) actually takes effect rather than just logging/upserting and still
+redirecting.
+
+**Live-tested, confirmed:**
+- Reset check: confirmed via REST the doctor account still had zero
+  `user_roles` rows going into this test (hadn't been touched since round
+  2's failure) — a genuinely unhealed case, not something already fixed by
+  a side effect.
+- Doctor login → `/dashboard` → `/dashboard/schedule`: works end-to-end
+  now, screenshotted. Confirmed via REST immediately after that a
+  `user_roles` row was actually created (`role: "professional"`) — this is
+  a permanent fix for the account, not a per-request workaround.
+- `e2e/01-03` regression: 2 clean 3/3 runs (patient reschedule request,
+  doctor accept, doctor decline) — the doctor-dependent specs 02/03 that
+  were completely blocked in round 2 now pass normally.
+- Cross-repo RPC status: mob dev clarified migrations 060–066 are staged
+  on their PR branch, not deployed — `PGRST202` on the two new RPCs is
+  *expected* right now, not a defect on either side; resolves once that PR
+  merges and migrates. Verified the specific claim that mattered for my
+  green light — "UI degrades gracefully, no crash, just falls back to no
+  CTA" — live: logged in as the patient, `/my-appointments` renders fully
+  and correctly (appointment card, status, reschedule button all present),
+  no Next.js error overlay, only the header "Book Appointment" link is
+  silently absent, exactly as described. Re-verifying the actual CTA
+  linking behavior is a follow-up once PR #5 (mobile) merges and its
+  migrations are live — noting here so it isn't forgotten, not blocking
+  this PR on it.
+
+**Also noticed, not blocking:** web dev has further proactive consistency
+commits in progress uncommitted in the shared checkout as of this pass
+(applying the same `metaRole === "patient"` → `/auth/invite-required`
+pattern to `subscribe/page.tsx`, matching what's already correct in
+`dashboard/layout.tsx` and `auth/login/page.tsx`) — minor hardening, not a
+response to anything I found this round, didn't block finalizing this
+green light.
+
+**Merge gate: clear on my end for `a80071b`.** Given this PR's track
+record (2 severe bugs found and fixed across 3 rounds), worth Copilot
+confirming clean on this exact commit too before merge, same as every
+other PR this session.
 
 ## iOS — open question
 
