@@ -513,6 +513,7 @@
       "submit": "Continuer",
       "submitting": "Vérification…",
       "alreadyHasRole": "Ce compte a déjà un rôle et ne peut pas être associé en tant que patient. Déconnectez-vous et utilisez un autre compte.",
+      "notPendingPatient": "Ce compte n'a pas été créé comme une inscription patient, un code d'invitation ne peut donc pas y être associé.",
       "backToSignup": "Utiliser un autre compte"
     }
   },

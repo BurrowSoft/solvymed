@@ -513,6 +513,7 @@
       "submit": "继续",
       "submitting": "正在验证…",
       "alreadyHasRole": "该账户已拥有角色，无法作为患者关联。请退出登录并使用其他账户。",
+      "notPendingPatient": "该账户并非以患者身份注册，因此无法在此关联邀请码。",
       "backToSignup": "使用其他账户"
     }
   },

@@ -513,6 +513,7 @@
       "submit": "Tiếp tục",
       "submitting": "Đang kiểm tra…",
       "alreadyHasRole": "Tài khoản này đã có vai trò và không thể liên kết làm bệnh nhân. Hãy đăng xuất và dùng tài khoản khác.",
+      "notPendingPatient": "Tài khoản này không được tạo dưới dạng đăng ký bệnh nhân, nên không thể liên kết mã mời tại đây.",
       "backToSignup": "Dùng tài khoản khác"
     }
   },

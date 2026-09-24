@@ -37,9 +37,20 @@ export default function InviteRequiredPage() {
     }
 
     // This page is reachable by any authenticated user, not just the
-    // role-less accounts coming from a failed invite confirmation — refuse
-    // to attach a code if this account already has a role, rather than
-    // silently overwriting a professional/secretary/already-linked patient.
+    // role-less accounts coming from a failed invite confirmation. Two
+    // checks before touching user_roles at all:
+    // 1. This account must have actually signed up intending to be a
+    //    patient — a role-less professional/secretary (the case
+    //    dashboard/layout.tsx self-heals) must not be able to attach a
+    //    patient invite here just because their user_roles row happens
+    //    to be missing too.
+    if (user.user_metadata?.role !== "patient") {
+      setLoading(false);
+      setError(t("inviteRequired.notPendingPatient"));
+      return;
+    }
+    // 2. Refuse to attach a code if this account already has a persisted
+    //    role, rather than silently overwriting an already-linked patient.
     const { data: existingRole } = await supabase
       .from("user_roles")
       .select("role")

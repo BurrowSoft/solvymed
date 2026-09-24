@@ -50,17 +50,33 @@ export default async function DashboardLayout({
       // send back to the retry form, not a login dead end.
       redirect(`/${locale === "en" ? "" : locale + "/"}auth/invite-required`);
     }
-    // No persisted role, but not a pending-patient case either — this is a
-    // real professional/secretary account whose user_roles row is missing
-    // for some other reason (e.g. seeded outside the normal signup flow).
-    // Self-heal rather than lock them out, mirroring what the confirmation
-    // callback does for a fresh professional signup.
-    const healedRole = metaRole === "secretary" ? "secretary" : "professional";
-    await supabase.from("user_roles").upsert(
-      { user_id: user!.id, role: healedRole },
-      { onConflict: "user_id" },
-    );
-    roleRow = { role: healedRole };
+    // No persisted role — don't self-heal off metadata alone (an absent or
+    // unrecognized role is not proof of anything). Only auto-repair the one
+    // verified case: a real professionals-table row exists for this user
+    // but its user_roles row is missing (e.g. seeded outside the normal
+    // signup flow). Secretary self-heal still relies on metadata since
+    // there's no equivalent verification table, matching the trust the
+    // confirmation callback already places in that same metadata field.
+    const { data: profRow } = await supabase
+      .from("professionals")
+      .select("id")
+      .eq("id", user!.id)
+      .maybeSingle();
+    if (profRow) {
+      await supabase.from("user_roles").upsert(
+        { user_id: user!.id, role: "professional" },
+        { onConflict: "user_id" },
+      );
+      roleRow = { role: "professional" };
+    } else if (metaRole === "secretary") {
+      await supabase.from("user_roles").upsert(
+        { user_id: user!.id, role: "secretary" },
+        { onConflict: "user_id" },
+      );
+      roleRow = { role: "secretary" };
+    } else {
+      redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
+    }
   }
   if (roleRow.role !== "professional" && roleRow.role !== "secretary") {
     redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);

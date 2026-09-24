@@ -513,6 +513,7 @@
       "submit": "Continuar",
       "submitting": "Verificando…",
       "alreadyHasRole": "Esta cuenta ya tiene un rol y no se puede vincular como paciente. Cierra sesión y usa otra cuenta.",
+      "notPendingPatient": "Esta cuenta no se creó como un registro de paciente, así que aquí no se puede vincular un código de invitación.",
       "backToSignup": "Usar otra cuenta"
     }
   },

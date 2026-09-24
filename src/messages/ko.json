@@ -513,6 +513,7 @@
       "submit": "계속",
       "submitting": "확인 중…",
       "alreadyHasRole": "이 계정에는 이미 역할이 있어 환자로 연결할 수 없습니다. 로그아웃 후 다른 계정을 사용하세요.",
+      "notPendingPatient": "이 계정은 환자로 가입되지 않았으므로 여기서 초대 코드를 연결할 수 없습니다.",
       "backToSignup": "다른 계정 사용"
     }
   },
