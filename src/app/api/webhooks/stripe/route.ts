@@ -30,11 +30,18 @@ export async function POST(request: NextRequest) {
     const userId = session.metadata?.user_id ?? session.client_reference_id;
     const subId = session.subscription as string | null;
     if (!userId) return NextResponse.json({ ok: true });
+    // Deliberately doesn't touch current_period_end — Stripe webhooks are
+    // at-least-once delivery, and a replay of this event after
+    // customer.subscription.updated already set the real period end would
+    // null it back out. A null current_period_end with status "active"
+    // reads as unlimited access in isAccessAllowed(), so this isn't just
+    // stale data, it's an open-ended free-access hole on every replay.
+    // subscription.updated (which Stripe sends right after checkout
+    // completes for a new subscription) owns this field exclusively.
     await db.from("professionals").update({
       subscription_status: "active",
       subscription_provider: "stripe",
       subscription_id: subId,
-      current_period_end: null, // will be set by subscription.updated
     }).eq("id", userId);
   }
 
