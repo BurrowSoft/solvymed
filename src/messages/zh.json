@@ -591,6 +591,12 @@
     "trialBannerPrefix": "免费试用：",
     "trialBannerDay": "天剩余",
     "trialBannerDays": "天剩余",
-    "trialBannerCta": "立即订阅"
+    "trialBannerCta": "立即订阅",
+    "errorAlreadySubscribed": "您已经订阅。",
+    "errorWrongRole": "只有专业人士才能订阅。",
+    "errorCheckFailed": "无法验证您的订阅状态，请重试。",
+    "errorGeneric": "无法启动结账流程，请重试。",
+    "errorNetwork": "网络错误，请重试。",
+    "errorPaymentLinkFailed": "您的订阅已创建，但我们无法加载支付链接。请查看您的邮箱或联系支持团队。"
   }
 }

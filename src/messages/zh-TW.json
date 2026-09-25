@@ -591,6 +591,12 @@
     "trialBannerPrefix": "免費試用：",
     "trialBannerDay": "天剩餘",
     "trialBannerDays": "天剩餘",
-    "trialBannerCta": "立即訂閱"
+    "trialBannerCta": "立即訂閱",
+    "errorAlreadySubscribed": "您已經訂閱。",
+    "errorWrongRole": "只有專業人士才能訂閱。",
+    "errorCheckFailed": "無法驗證您的訂閱狀態，請重試。",
+    "errorGeneric": "無法啟動結帳流程，請重試。",
+    "errorNetwork": "網路錯誤，請重試。",
+    "errorPaymentLinkFailed": "您的訂閱已建立，但我們無法載入付款連結。請查看您的電子郵件或聯絡支援團隊。"
   }
 }

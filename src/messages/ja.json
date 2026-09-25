@@ -591,6 +591,12 @@
     "trialBannerPrefix": "無料トライアル:",
     "trialBannerDay": "日残り",
     "trialBannerDays": "日残り",
-    "trialBannerCta": "今すぐ購読"
+    "trialBannerCta": "今すぐ購読",
+    "errorAlreadySubscribed": "すでに登録済みです。",
+    "errorWrongRole": "専門家のみが登録できます。",
+    "errorCheckFailed": "サブスクリプションの状態を確認できませんでした。もう一度お試しください。",
+    "errorGeneric": "決済を開始できませんでした。もう一度お試しください。",
+    "errorNetwork": "ネットワークエラーです。もう一度お試しください。",
+    "errorPaymentLinkFailed": "サブスクリプションは作成されましたが、支払いリンクを読み込めませんでした。メールをご確認いただくか、サポートにお問い合わせください。"
   }
 }

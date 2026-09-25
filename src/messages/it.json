@@ -591,6 +591,12 @@
     "trialBannerPrefix": "Prova gratuita:",
     "trialBannerDay": "giorno rimasto",
     "trialBannerDays": "giorni rimasti",
-    "trialBannerCta": "Abbonati ora"
+    "trialBannerCta": "Abbonati ora",
+    "errorAlreadySubscribed": "Hai già un abbonamento attivo.",
+    "errorWrongRole": "Solo i professionisti possono abbonarsi.",
+    "errorCheckFailed": "Impossibile verificare lo stato dell'abbonamento. Riprova.",
+    "errorGeneric": "Impossibile avviare il pagamento. Riprova.",
+    "errorNetwork": "Errore di rete. Riprova.",
+    "errorPaymentLinkFailed": "Il tuo abbonamento è stato creato, ma non siamo riusciti a caricare il link di pagamento. Controlla la tua email o contatta l'assistenza."
   }
 }

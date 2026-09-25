@@ -591,6 +591,12 @@
     "trialBannerPrefix": "무료 체험:",
     "trialBannerDay": "일 남음",
     "trialBannerDays": "일 남음",
-    "trialBannerCta": "지금 구독"
+    "trialBannerCta": "지금 구독",
+    "errorAlreadySubscribed": "이미 구독 중입니다.",
+    "errorWrongRole": "전문가만 구독할 수 있습니다.",
+    "errorCheckFailed": "구독 상태를 확인할 수 없습니다. 다시 시도해 주세요.",
+    "errorGeneric": "결제를 시작할 수 없습니다. 다시 시도해 주세요.",
+    "errorNetwork": "네트워크 오류입니다. 다시 시도해 주세요.",
+    "errorPaymentLinkFailed": "구독이 생성되었지만 결제 링크를 불러올 수 없습니다. 이메일을 확인하거나 지원팀에 문의하세요."
   }
 }

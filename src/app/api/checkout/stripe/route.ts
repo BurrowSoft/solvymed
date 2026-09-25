@@ -24,10 +24,10 @@ export async function POST(request: NextRequest) {
     .eq("user_id", user.id)
     .maybeSingle();
   if (roleError) {
-    return NextResponse.json({ error: "Could not verify account role" }, { status: 503 });
+    return NextResponse.json({ error: "Could not verify account role", code: "check_failed" }, { status: 503 });
   }
   if (roleRow?.role && roleRow.role !== "professional") {
-    return NextResponse.json({ error: "Only professionals can subscribe" }, { status: 403 });
+    return NextResponse.json({ error: "Only professionals can subscribe", code: "wrong_role" }, { status: 403 });
   }
 
   // /subscribe redirects an already-active user away from this button, but
@@ -41,11 +41,11 @@ export async function POST(request: NextRequest) {
     // Fail closed — a lookup error must never be treated the same as "no
     // subscription found", or a transient failure lets an already-paying
     // professional create a second one.
-    return NextResponse.json({ error: "Could not verify subscription status" }, { status: 503 });
+    return NextResponse.json({ error: "Could not verify subscription status", code: "check_failed" }, { status: 503 });
   }
   const sub = (subRows?.[0] ?? null) as EffectiveSub | null;
   if (sub?.subscription_status === "active" && isAccessAllowed(sub)) {
-    return NextResponse.json({ error: "Already subscribed" }, { status: 409 });
+    return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
   }
 
   const origin = request.headers.get("origin") ?? process.env.NEXT_PUBLIC_APP_URL ?? "";
@@ -93,6 +93,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: session.url });
   } catch (err) {
     console.error("Stripe checkout error", err);
-    return NextResponse.json({ error: "Checkout failed" }, { status: 500 });
+    return NextResponse.json({ error: "Checkout failed", code: "checkout_failed" }, { status: 500 });
   }
 }

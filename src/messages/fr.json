@@ -591,6 +591,12 @@
     "trialBannerPrefix": "Essai gratuit :",
     "trialBannerDay": "jour restant",
     "trialBannerDays": "jours restants",
-    "trialBannerCta": "S'abonner maintenant"
+    "trialBannerCta": "S'abonner maintenant",
+    "errorAlreadySubscribed": "Vous êtes déjà abonné.",
+    "errorWrongRole": "Seuls les professionnels peuvent s'abonner.",
+    "errorCheckFailed": "Impossible de vérifier votre statut d'abonnement. Réessayez.",
+    "errorGeneric": "Impossible de démarrer le paiement. Réessayez.",
+    "errorNetwork": "Erreur réseau. Réessayez.",
+    "errorPaymentLinkFailed": "Votre abonnement a été créé, mais nous n'avons pas pu charger le lien de paiement. Vérifiez votre e-mail ou contactez le support."
   }
 }

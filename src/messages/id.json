@@ -591,6 +591,12 @@
     "trialBannerPrefix": "Uji coba gratis:",
     "trialBannerDay": "hari tersisa",
     "trialBannerDays": "hari tersisa",
-    "trialBannerCta": "Berlangganan Sekarang"
+    "trialBannerCta": "Berlangganan Sekarang",
+    "errorAlreadySubscribed": "Anda sudah berlangganan.",
+    "errorWrongRole": "Hanya profesional yang dapat berlangganan.",
+    "errorCheckFailed": "Tidak dapat memverifikasi status langganan Anda. Silakan coba lagi.",
+    "errorGeneric": "Tidak dapat memulai checkout. Silakan coba lagi.",
+    "errorNetwork": "Kesalahan jaringan. Silakan coba lagi.",
+    "errorPaymentLinkFailed": "Langganan Anda telah dibuat, tetapi kami tidak dapat memuat tautan pembayaran. Silakan periksa email Anda atau hubungi dukungan."
   }
 }

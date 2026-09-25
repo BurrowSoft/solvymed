@@ -591,6 +591,12 @@
     "trialBannerPrefix": "فترة التجربة:",
     "trialBannerDay": "يوم متبقي",
     "trialBannerDays": "أيام متبقية",
-    "trialBannerCta": "اشترك الآن"
+    "trialBannerCta": "اشترك الآن",
+    "errorAlreadySubscribed": "أنت مشترك بالفعل.",
+    "errorWrongRole": "يمكن للمحترفين فقط الاشتراك.",
+    "errorCheckFailed": "تعذر التحقق من حالة اشتراكك. يرجى المحاولة مرة أخرى.",
+    "errorGeneric": "تعذر بدء الدفع. يرجى المحاولة مرة أخرى.",
+    "errorNetwork": "خطأ في الشبكة. يرجى المحاولة مرة أخرى.",
+    "errorPaymentLinkFailed": "تم إنشاء اشتراكك، لكن تعذّر تحميل رابط الدفع. يرجى مراجعة بريدك الإلكتروني أو التواصل مع الدعم."
   }
 }

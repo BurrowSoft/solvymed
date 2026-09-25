@@ -591,6 +591,12 @@
     "trialBannerPrefix": "Período de prueba:",
     "trialBannerDay": "día restante",
     "trialBannerDays": "días restantes",
-    "trialBannerCta": "Suscribirse ahora"
+    "trialBannerCta": "Suscribirse ahora",
+    "errorAlreadySubscribed": "Ya tienes una suscripción activa.",
+    "errorWrongRole": "Solo los profesionales pueden suscribirse.",
+    "errorCheckFailed": "No se pudo verificar tu estado de suscripción. Inténtalo de nuevo.",
+    "errorGeneric": "No se pudo iniciar el proceso de pago. Inténtalo de nuevo.",
+    "errorNetwork": "Error de red. Inténtalo de nuevo.",
+    "errorPaymentLinkFailed": "Tu suscripción se creó, pero no pudimos cargar el enlace de pago. Revisa tu correo o contacta con soporte."
   }
 }

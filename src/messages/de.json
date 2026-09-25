@@ -591,6 +591,12 @@
     "trialBannerPrefix": "Testphase:",
     "trialBannerDay": "Tag übrig",
     "trialBannerDays": "Tage übrig",
-    "trialBannerCta": "Jetzt abonnieren"
+    "trialBannerCta": "Jetzt abonnieren",
+    "errorAlreadySubscribed": "Sie sind bereits abonniert.",
+    "errorWrongRole": "Nur Fachkräfte können abonnieren.",
+    "errorCheckFailed": "Ihr Abonnementstatus konnte nicht überprüft werden. Bitte versuchen Sie es erneut.",
+    "errorGeneric": "Der Bezahlvorgang konnte nicht gestartet werden. Bitte versuchen Sie es erneut.",
+    "errorNetwork": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
+    "errorPaymentLinkFailed": "Ihr Abonnement wurde erstellt, aber der Zahlungslink konnte nicht geladen werden. Bitte prüfen Sie Ihre E-Mail oder kontaktieren Sie den Support."
   }
 }

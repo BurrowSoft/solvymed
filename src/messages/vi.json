@@ -591,6 +591,12 @@
     "trialBannerPrefix": "Dùng thử miễn phí:",
     "trialBannerDay": "ngày còn lại",
     "trialBannerDays": "ngày còn lại",
-    "trialBannerCta": "Đăng ký ngay"
+    "trialBannerCta": "Đăng ký ngay",
+    "errorAlreadySubscribed": "Bạn đã đăng ký rồi.",
+    "errorWrongRole": "Chỉ chuyên gia mới có thể đăng ký.",
+    "errorCheckFailed": "Không thể xác minh trạng thái đăng ký của bạn. Vui lòng thử lại.",
+    "errorGeneric": "Không thể bắt đầu thanh toán. Vui lòng thử lại.",
+    "errorNetwork": "Lỗi mạng. Vui lòng thử lại.",
+    "errorPaymentLinkFailed": "Gói đăng ký của bạn đã được tạo, nhưng chúng tôi không thể tải liên kết thanh toán. Vui lòng kiểm tra email hoặc liên hệ bộ phận hỗ trợ."
   }
 }

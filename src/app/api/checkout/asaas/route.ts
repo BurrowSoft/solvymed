@@ -34,10 +34,10 @@ export async function POST(request: NextRequest) {
     .eq("user_id", user.id)
     .maybeSingle();
   if (roleError) {
-    return NextResponse.json({ error: "Could not verify account role" }, { status: 503 });
+    return NextResponse.json({ error: "Could not verify account role", code: "check_failed" }, { status: 503 });
   }
   if (roleRow?.role && roleRow.role !== "professional") {
-    return NextResponse.json({ error: "Only professionals can subscribe" }, { status: 403 });
+    return NextResponse.json({ error: "Only professionals can subscribe", code: "wrong_role" }, { status: 403 });
   }
 
   // Same reasoning as the Stripe checkout route: this route is directly
@@ -47,11 +47,11 @@ export async function POST(request: NextRequest) {
   const { data: subRows, error: subError } = await supabase.rpc("get_effective_subscription", { p_user_id: user.id });
   if (subError) {
     // Fail closed — see the matching comment in the Stripe route.
-    return NextResponse.json({ error: "Could not verify subscription status" }, { status: 503 });
+    return NextResponse.json({ error: "Could not verify subscription status", code: "check_failed" }, { status: 503 });
   }
   const effectiveSub = (subRows?.[0] ?? null) as EffectiveSub | null;
   if (effectiveSub?.subscription_status === "active" && isAccessAllowed(effectiveSub)) {
-    return NextResponse.json({ error: "Already subscribed" }, { status: 409 });
+    return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
   }
 
   const { name, email } = await request.json().catch(() => ({}));
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     // 1. Create or retrieve customer
     const searchRes = await asaas(`/customers?email=${encodeURIComponent(user.email ?? email ?? "")}`, "GET");
     if (!searchRes.ok) {
-      return NextResponse.json({ error: "Could not reach Asaas" }, { status: 503 });
+      return NextResponse.json({ error: "Could not reach Asaas", code: "checkout_failed" }, { status: 503 });
     }
     let customerId: string;
     if (searchRes.data?.data?.length) {
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         externalReference: user.id,
       });
       if (!customerRes.ok || !customerRes.data?.id) {
-        return NextResponse.json({ error: "Could not create Asaas customer", detail: customerRes.data }, { status: 502 });
+        return NextResponse.json({ error: "Could not create Asaas customer", code: "checkout_failed", detail: customerRes.data }, { status: 502 });
       }
       customerId = customerRes.data.id;
     }
@@ -88,10 +88,10 @@ export async function POST(request: NextRequest) {
     // proceed to create a second paid subscription on an Asaas outage.
     const existingSubsRes = await asaas(`/subscriptions?customer=${customerId}&status=ACTIVE`, "GET");
     if (!existingSubsRes.ok) {
-      return NextResponse.json({ error: "Could not verify existing Asaas subscriptions" }, { status: 503 });
+      return NextResponse.json({ error: "Could not verify existing Asaas subscriptions", code: "check_failed" }, { status: 503 });
     }
     if (existingSubsRes.data?.data?.length) {
-      return NextResponse.json({ error: "Already subscribed" }, { status: 409 });
+      return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
     }
 
     // 2. Create subscription (first charge is PIX, recurring is BOLETO or PIX)
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!subRes.ok || !subRes.data?.id) {
-      return NextResponse.json({ error: "Asaas subscription creation failed", detail: subRes.data }, { status: 500 });
+      return NextResponse.json({ error: "Asaas subscription creation failed", code: "checkout_failed", detail: subRes.data }, { status: 500 });
     }
     const sub = subRes.data;
 
@@ -125,6 +125,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         subscriptionId: sub.id,
         error: "Subscription created, but we couldn't load the payment link. Please check your email or contact support.",
+        code: "payment_link_failed",
       });
     }
     const firstPayment = paymentsRes.data?.data?.[0];
@@ -133,6 +134,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: paymentUrl, subscriptionId: sub.id });
   } catch (err) {
     console.error("Asaas checkout error", err);
-    return NextResponse.json({ error: "Checkout failed" }, { status: 500 });
+    return NextResponse.json({ error: "Checkout failed", code: "checkout_failed" }, { status: 500 });
   }
 }
