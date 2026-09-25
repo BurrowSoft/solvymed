@@ -30,6 +30,11 @@ export async function POST(request: NextRequest) {
     const userId = session.metadata?.user_id ?? session.client_reference_id;
     const subId = session.subscription as string | null;
     if (!userId) return NextResponse.json({ ok: true });
+    // Card checkouts complete as "paid", but an async method completes the
+    // session as "unpaid" before any money moves. Record nothing until
+    // it's actually paid. The subscription.* handler below still sets
+    // everything once Stripe reports the subscription active.
+    if (session.payment_status !== "paid") return NextResponse.json({ ok: true });
     // subscription_status and current_period_end are deliberately NOT
     // written here — they're owned exclusively by the
     // customer.subscription.updated/deleted handler below (which Stripe
@@ -63,7 +68,7 @@ export async function POST(request: NextRequest) {
     const isActive = sub.status === "active" || sub.status === "trialing";
     const periodEndTs = sub.items?.data?.[0]?.current_period_end;
 
-    const update: Record<string, unknown> = { subscription_id: sub.id };
+    const update: Record<string, unknown> = { subscription_id: sub.id, subscription_provider: "stripe" };
     if (isActive) {
       // Never mark active without a real period end in the same write —
       // isAccessAllowed() reads "active" + null current_period_end as
