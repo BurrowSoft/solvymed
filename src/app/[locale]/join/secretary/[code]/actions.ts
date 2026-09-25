@@ -5,7 +5,7 @@ import { normalizeSecretaryCode } from "@/lib/secretary";
 
 // Stable codes the page maps through next-intl. The RPCs return these as
 // their error message text (migration 088).
-const KNOWN_ERRORS = ["invite_invalid", "account_is_patient", "account_is_professional", "already_in_a_clinic", "team_limit_reached"] as const;
+const KNOWN_ERRORS = ["invite_invalid", "account_is_patient", "account_is_professional", "account_not_secretary", "already_in_a_clinic", "team_limit_reached"] as const;
 
 function errorCode(message: string | undefined): string {
   return KNOWN_ERRORS.find((c) => message?.includes(c)) ?? "generic";

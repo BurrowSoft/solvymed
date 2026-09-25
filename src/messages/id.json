@@ -712,6 +712,7 @@
     "closed": "Tutup",
     "notSet": "Belum diatur",
     "leaveTitle": "Keluar dari klinik",
-    "leaveSub": "Berhenti bekerja untuk dokter ini. Anda dapat bergabung ke klinik lain dengan undangan baru."
+    "leaveSub": "Berhenti bekerja untuk dokter ini. Anda dapat bergabung ke klinik lain dengan undangan baru.",
+    "accountNotSecretary": "Akun ini tidak dapat menerima undangan sekretaris. Gunakan akun terpisah yang dibuat dari tautan undangan."
   }
 }

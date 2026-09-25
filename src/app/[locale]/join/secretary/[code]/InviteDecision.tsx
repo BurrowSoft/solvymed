@@ -9,6 +9,7 @@ const ERROR_KEY: Record<string, string> = {
   invite_invalid: "inviteInvalid",
   account_is_patient: "accountIsPatient",
   account_is_professional: "accountIsProfessional",
+  account_not_secretary: "accountNotSecretary",
   already_in_a_clinic: "alreadyInClinic",
   team_limit_reached: "teamLimitReachedInvitee",
 };

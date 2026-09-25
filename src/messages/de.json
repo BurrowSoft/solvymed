@@ -712,6 +712,7 @@
     "closed": "Geschlossen",
     "notSet": "Noch nicht eingerichtet",
     "leaveTitle": "Praxis verlassen",
-    "leaveSub": "Nicht mehr für diese Praxis arbeiten. Mit einer neuen Einladung können Sie einer anderen Praxis beitreten."
+    "leaveSub": "Nicht mehr für diese Praxis arbeiten. Mit einer neuen Einladung können Sie einer anderen Praxis beitreten.",
+    "accountNotSecretary": "Dieses Konto kann keine Einladung ins Praxisteam annehmen. Nutzen Sie ein eigenes Konto, das über den Einladungslink erstellt wird."
   }
 }

@@ -712,6 +712,7 @@
     "closed": "Fechado",
     "notSet": "Ainda não configurado",
     "leaveTitle": "Sair da clínica",
-    "leaveSub": "Deixar de trabalhar para este médico. Você pode entrar em outra clínica com um novo convite."
+    "leaveSub": "Deixar de trabalhar para este médico. Você pode entrar em outra clínica com um novo convite.",
+    "accountNotSecretary": "Esta conta não pode aceitar um convite para a equipe. Use uma conta separada criada pelo link de convite."
   }
 }
