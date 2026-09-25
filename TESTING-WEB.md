@@ -1717,6 +1717,36 @@ received" success screen shows the submitted email, then verified via
 REST that a real row landed with `status: "pending"` and the correct
 `email`/`reason`. Cleaned up the test row after. 🟢 Works as described.
 
+## Opus review — propose→accept fix (`e841bd3`), 🟢 both branches confirmed
+
+Web dev's fix for the gap found earlier this pass: accept/decline actions
+added directly to `pending-confirmation`'s request list for proposal-status
+rows, reusing `acceptProposal`/`declineProposal` unchanged. Ran the exact
+walkthrough live, both directions:
+
+- **Accept:** pending patient requests → doctor proposes a new time →
+  patient logs in, sees "New time proposed" with Accept/Decline buttons on
+  `pending-confirmation` → clicks Accept → redirected to
+  `/auth/patient-welcome` → verified via REST that `linked_patient_id` is
+  now set. Matches the described behavior exactly (accepting links the
+  patient the same way a doctor's direct confirm does).
+- **Decline:** same setup, patient clicks Decline instead → stays on
+  `pending-confirmation`, confirmed via REST `linked_patient_id` is still
+  null (correctly *not* linked).
+
+One transient failure on the first attempt at the accept test (timed out
+clicking "Propose new time" on a freshly-restarted server) — the decline
+test's identical code path passed cleanly in the same run, and a solo
+retry of the accept test passed too, so this was the familiar cold-start
+compile latency on this route's first hit, not a real issue.
+
+This closes out the propose→accept gap — the one item I'd called a
+blocker. No remaining known bugs; the "not yet covered" items from the
+migration-live section above (friendly error messages, the open-patient
+link beyond a code review, and push notifications) are still genuinely
+untested, not confirmed-fine — flagging that distinction rather than
+calling this fully green across the board.
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
