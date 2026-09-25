@@ -44,7 +44,7 @@ function Select({ children, ...props }: React.SelectHTMLAttributes<HTMLSelectEle
   );
 }
 
-function PatientForm({ onSubmit, pending, error }: { onSubmit: (fd: FormData) => void; pending: boolean; error: string }) {
+function PatientForm({ onSubmit, pending, error, id }: { onSubmit: (fd: FormData) => void; pending: boolean; error: string; id?: string }) {
   const t = useTranslations("patients");
   const formRef = useRef<HTMLFormElement>(null);
   function handleSubmit(e: React.FormEvent) {
@@ -52,7 +52,7 @@ function PatientForm({ onSubmit, pending, error }: { onSubmit: (fd: FormData) =>
     onSubmit(new FormData(formRef.current!));
   }
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+    <form ref={formRef} id={id} onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2">
           <FieldLabel>{t("fullName")} *</FieldLabel>
@@ -139,6 +139,8 @@ export function PatientSearch({ defaultValue }: { defaultValue: string }) {
   );
 }
 
+const NEW_PATIENT_FORM_ID = "new-patient-form";
+
 export function NewPatientButton({ locale }: { locale: string }) {
   const t = useTranslations("patients");
   const [open, setOpen] = useState(false);
@@ -146,14 +148,18 @@ export function NewPatientButton({ locale }: { locale: string }) {
   const [error, setError] = useState("");
   const [matches, setMatches] = useState<PatientMatch[] | null>(null);
   const [existing, setExisting] = useState<{ id: string; full_name: string } | null>(null);
-  const lastSubmit = useRef<FormData | null>(null);
+  // Set by "Create anyway" for the very next submit only.
+  const forceNext = useRef(false);
   const prefix = locale === "en" ? "" : `/${locale}`;
 
   function submit(formData: FormData) {
     setError("");
     setMatches(null);
     setExisting(null);
-    lastSubmit.current = formData;
+    if (forceNext.current) {
+      formData.set("force", "1");
+      forceNext.current = false;
+    }
     startTransition(async () => {
       const result = await createPatient(formData);
       if ("success" in result) {
@@ -170,12 +176,17 @@ export function NewPatientButton({ locale }: { locale: string }) {
     });
   }
 
+  // Submits the form as it is NOW (the user may have edited it after seeing
+  // the match), not a snapshot of the earlier attempt. requestSubmit also
+  // re-runs the form's own validation.
   function createAnyway() {
-    if (!lastSubmit.current) return;
-    const fd = new FormData();
-    lastSubmit.current.forEach((v, k) => fd.append(k, v));
-    fd.set("force", "1");
-    submit(fd);
+    const form = document.getElementById(NEW_PATIENT_FORM_ID) as HTMLFormElement | null;
+    if (!form) return;
+    // An invalid form never reaches submit(), which would leave the force
+    // flag set for the user's next ordinary save.
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    forceNext.current = true;
+    form.requestSubmit();
   }
 
   function close() {
@@ -221,7 +232,7 @@ export function NewPatientButton({ locale }: { locale: string }) {
             {t("openPatient")}
           </Link>
         )}
-        <PatientForm onSubmit={submit} pending={pending} error={error} />
+        <PatientForm id={NEW_PATIENT_FORM_ID} onSubmit={submit} pending={pending} error={error} />
       </Dialog>
     </>
   );
