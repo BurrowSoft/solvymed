@@ -297,7 +297,11 @@
     "savePrescription": "Rezept speichern",
     "noAppointments": "Noch keine Termine",
     "paidLabel": "Bezahlt",
-    "pendingLabel": "Ausstehend"
+    "pendingLabel": "Ausstehend",
+    "generateCode": "Code generieren",
+    "copyCode": "Kopieren",
+    "codeCopied": "Kopiert!",
+    "regenerateCode": "Neu generieren"
   },
   "settings": {
     "profileTitle": "Profil",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "Derzeit keine gesperrten Patienten",
     "unblock": "Entsperren",
     "pageTitle": "Einstellungen",
-    "pageSubtitle": "Profil, Praxis, Öffnungszeiten und Verfahren verwalten"
+    "pageSubtitle": "Profil, Praxis, Öffnungszeiten und Verfahren verwalten",
+    "inviteCodeTitle": "Ihr Einladungscode",
+    "inviteCodeSub": "Teilen Sie diesen Code, damit Patienten ihr Konto mit Ihnen verknüpfen können",
+    "generateCode": "Code generieren",
+    "regenerate": "Neu generieren",
+    "copy": "Kopieren",
+    "copied": "Kopiert!"
   },
   "clinics": {
     "title": "Meine Kliniken",
@@ -515,15 +525,23 @@
       "alreadyHasRole": "Dieses Konto hat bereits eine Rolle und kann nicht als Patient verknüpft werden. Melden Sie sich ab und verwenden Sie ein anderes Konto.",
       "notPendingPatient": "Dieses Konto wurde nicht als Patientenregistrierung erstellt, daher kann hier kein Einladungscode zugeordnet werden.",
       "linkFailed": "Beim Verknüpfen Ihres Kontos ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
-      "backToSignup": "Anderes Konto verwenden"
+      "backToSignup": "Anderes Konto verwenden",
+      "tooManyAttempts": "Zu viele Versuche. Bitte warten Sie einen Moment, bevor Sie es erneut versuchen.",
+      "alreadyInvitedByAnother": "Ihr Konto ist bereits mit einem anderen Arzt verbunden."
     },
     "pendingConfirmation": {
       "loading": "Status wird geprüft…",
       "heading": "Warten auf Ihren Arzt",
-      "body": "Sie sind verknüpft, aber Ihr Arzt muss Ihr Konto noch bestätigen, bevor Sie buchen können.",
-      "bodyWithDoctor": "Sie sind mit {name} verknüpft, der/die Ihr Konto noch bestätigen muss, bevor Sie buchen können.",
+      "body": "Sie sind verknüpft, aber Ihr Arzt muss Ihr Konto noch bestätigen. In der Zwischenzeit können Sie einen Termin anfragen.",
+      "bodyWithDoctor": "Sie sind mit {name} verknüpft, der/die Ihr Konto noch bestätigen muss. In der Zwischenzeit können Sie einen Termin anfragen.",
       "checking": "Wird geprüft…",
-      "checkAgain": "Erneut prüfen"
+      "checkAgain": "Erneut prüfen",
+      "requestAppointment": "Termin anfragen",
+      "yourRequests": "Ihre Anfragen",
+      "statusTentative": "Bestätigung ausstehend",
+      "statusProposal": "Neue Zeit vorgeschlagen",
+      "accept": "Annehmen",
+      "decline": "Ablehnen"
     }
   },
   "myAppointments": {

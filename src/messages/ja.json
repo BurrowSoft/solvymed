@@ -297,7 +297,11 @@
     "savePrescription": "処方箋を保存",
     "noAppointments": "まだ予約がありません",
     "paidLabel": "支払済",
-    "pendingLabel": "未払い"
+    "pendingLabel": "未払い",
+    "generateCode": "コードを生成",
+    "copyCode": "コピー",
+    "codeCopied": "コピーしました!",
+    "regenerateCode": "再生成"
   },
   "settings": {
     "profileTitle": "プロフィール",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "現在ブロック中の患者はいません",
     "unblock": "ブロック解除",
     "pageTitle": "設定",
-    "pageSubtitle": "プロフィール、クリニック、時間、手順を管理する"
+    "pageSubtitle": "プロフィール、クリニック、時間、手順を管理する",
+    "inviteCodeTitle": "あなたの招待コード",
+    "inviteCodeSub": "このコードを共有すると、患者があなたにアカウントを連携できます",
+    "generateCode": "コードを生成",
+    "regenerate": "再生成",
+    "copy": "コピー",
+    "copied": "コピーしました!"
   },
   "clinics": {
     "title": "マイクリニック",
@@ -515,15 +525,23 @@
       "alreadyHasRole": "このアカウントには既に役割が設定されているため、患者として連携できません。サインアウトして別のアカウントを使用してください。",
       "notPendingPatient": "このアカウントは患者としての登録ではないため、ここで招待コードを連携することはできません。",
       "linkFailed": "アカウントの連携中にエラーが発生しました。もう一度お試しください。",
-      "backToSignup": "別のアカウントを使う"
+      "backToSignup": "別のアカウントを使う",
+      "tooManyAttempts": "試行回数が多すぎます。しばらくしてからもう一度お試しください。",
+      "alreadyInvitedByAnother": "あなたのアカウントはすでに別の医師と連携しています。"
     },
     "pendingConfirmation": {
       "loading": "状況を確認しています…",
       "heading": "医師の確認を待っています",
-      "body": "連携は完了していますが、予約する前に医師によるアカウントの確認が必要です。",
-      "bodyWithDoctor": "{name}と連携していますが、予約する前に医師によるアカウントの確認が必要です。",
+      "body": "連携済みですが、担当医がまだアカウントを確認していません。その間に予約をリクエストできます。",
+      "bodyWithDoctor": "{name}と連携済みですが、まだアカウントを確認していません。その間に予約をリクエストできます。",
       "checking": "確認中…",
-      "checkAgain": "再確認する"
+      "checkAgain": "再確認する",
+      "requestAppointment": "予約をリクエスト",
+      "yourRequests": "リクエスト状況",
+      "statusTentative": "確認待ち",
+      "statusProposal": "新しい日時が提案されました",
+      "accept": "承認",
+      "decline": "辞退"
     }
   },
   "myAppointments": {

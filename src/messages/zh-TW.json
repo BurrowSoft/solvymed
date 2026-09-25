@@ -297,7 +297,11 @@
     "savePrescription": "儲存處方",
     "noAppointments": "暫無預約",
     "paidLabel": "已付款",
-    "pendingLabel": "待付款"
+    "pendingLabel": "待付款",
+    "generateCode": "產生邀請碼",
+    "copyCode": "複製",
+    "codeCopied": "已複製！",
+    "regenerateCode": "重新產生"
   },
   "settings": {
     "profileTitle": "個人資料",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "目前沒有被封鎖的患者",
     "unblock": "解除封鎖",
     "pageTitle": "設定",
-    "pageSubtitle": "管理您的個人資料、診所、時間和程序"
+    "pageSubtitle": "管理您的個人資料、診所、時間和程序",
+    "inviteCodeTitle": "您的邀請碼",
+    "inviteCodeSub": "分享此碼，讓患者將帳戶與您關聯",
+    "generateCode": "產生邀請碼",
+    "regenerate": "重新產生",
+    "copy": "複製",
+    "copied": "已複製！"
   },
   "clinics": {
     "title": "我的診所",
@@ -515,15 +525,23 @@
       "alreadyHasRole": "該帳戶已擁有角色，無法作為患者關聯。請登出並使用其他帳戶。",
       "notPendingPatient": "該帳戶並非以患者身分註冊，因此無法在此關聯邀請碼。",
       "linkFailed": "關聯您的帳戶時發生錯誤，請重試。",
-      "backToSignup": "使用其他帳戶"
+      "backToSignup": "使用其他帳戶",
+      "tooManyAttempts": "嘗試次數過多，請稍後再試。",
+      "alreadyInvitedByAnother": "您的帳戶已與另一位醫生關聯。"
     },
     "pendingConfirmation": {
       "loading": "正在檢查您的狀態…",
       "heading": "正在等待醫生確認",
-      "body": "您已關聯，但醫生仍需確認您的帳戶後才能預約。",
-      "bodyWithDoctor": "您已關聯至{name}，對方仍需確認您的帳戶後才能預約。",
+      "body": "您已關聯，但醫生仍需確認您的帳戶。在此期間您可以申請預約。",
+      "bodyWithDoctor": "您已與{name}關聯，對方仍需確認您的帳戶。在此期間您可以申請預約。",
       "checking": "正在檢查…",
-      "checkAgain": "重新檢查"
+      "checkAgain": "重新檢查",
+      "requestAppointment": "申請預約",
+      "yourRequests": "您的申請",
+      "statusTentative": "等待確認",
+      "statusProposal": "已提議新時間",
+      "accept": "接受",
+      "decline": "拒絕"
     }
   },
   "myAppointments": {

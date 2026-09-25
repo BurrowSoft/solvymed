@@ -297,7 +297,11 @@
     "savePrescription": "Enregistrer l'ordonnance",
     "noAppointments": "Aucun rendez-vous pour l'instant",
     "paidLabel": "Payé",
-    "pendingLabel": "En attente"
+    "pendingLabel": "En attente",
+    "generateCode": "Générer un code",
+    "copyCode": "Copier",
+    "codeCopied": "Copié !",
+    "regenerateCode": "Régénérer"
   },
   "settings": {
     "profileTitle": "Profil",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "Aucun patient bloqué pour le moment",
     "unblock": "Débloquer",
     "pageTitle": "Paramètres",
-    "pageSubtitle": "Gérez votre profil, cabinet, horaires et procédures"
+    "pageSubtitle": "Gérez votre profil, cabinet, horaires et procédures",
+    "inviteCodeTitle": "Votre code d'invitation",
+    "inviteCodeSub": "Partagez ce code pour que les patients lient leur compte au vôtre",
+    "generateCode": "Générer un code",
+    "regenerate": "Régénérer",
+    "copy": "Copier",
+    "copied": "Copié !"
   },
   "clinics": {
     "title": "Mes Cliniques",
@@ -515,15 +525,23 @@
       "alreadyHasRole": "Ce compte a déjà un rôle et ne peut pas être associé en tant que patient. Déconnectez-vous et utilisez un autre compte.",
       "notPendingPatient": "Ce compte n'a pas été créé comme une inscription patient, un code d'invitation ne peut donc pas y être associé.",
       "linkFailed": "Une erreur s'est produite lors de la liaison de votre compte. Veuillez réessayer.",
-      "backToSignup": "Utiliser un autre compte"
+      "backToSignup": "Utiliser un autre compte",
+      "tooManyAttempts": "Trop de tentatives. Veuillez patienter avant de réessayer.",
+      "alreadyInvitedByAnother": "Votre compte est déjà connecté à un autre médecin."
     },
     "pendingConfirmation": {
       "loading": "Vérification de votre statut…",
       "heading": "En attente de votre médecin",
-      "body": "Vous êtes lié, mais votre médecin doit encore confirmer votre compte avant que vous puissiez réserver.",
-      "bodyWithDoctor": "Vous êtes lié à {name}, qui doit encore confirmer votre compte avant que vous puissiez réserver.",
+      "body": "Vous êtes lié(e), mais votre médecin doit encore confirmer votre compte. En attendant, vous pouvez demander un rendez-vous.",
+      "bodyWithDoctor": "Vous êtes lié(e) à {name}, qui doit encore confirmer votre compte. En attendant, vous pouvez demander un rendez-vous.",
       "checking": "Vérification…",
-      "checkAgain": "Vérifier à nouveau"
+      "checkAgain": "Vérifier à nouveau",
+      "requestAppointment": "Demander un rendez-vous",
+      "yourRequests": "Vos demandes",
+      "statusTentative": "En attente de confirmation",
+      "statusProposal": "Nouvel horaire proposé",
+      "accept": "Accepter",
+      "decline": "Refuser"
     }
   },
   "myAppointments": {

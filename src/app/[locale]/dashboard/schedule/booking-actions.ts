@@ -2,6 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { computeSlots, toMinutes, getDayHours } from "@/lib/slots";
+import type { WorkingHours } from "@/lib/slots";
+import { sendExpoPush } from "@/lib/push";
 
 async function getEffectiveProfId(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -35,20 +38,23 @@ export async function getTentativeBookings() {
 
   const bookings = data ?? [];
 
-  // Determine which patients are already linked to this doctor
+  // Determine which patients are already linked to this doctor. Direct
+  // user_roles reads for other users' rows are RLS-blocked (own-row-only
+  // policy), so this goes through a SECURITY DEFINER RPC instead — see
+  // mob dev's migration (get_known_patients). Returns the linked
+  // patients-table id when there is one, otherwise the id tied to an
+  // earlier appointment with this professional.
   const authIds = bookings
     .map((b: Record<string, unknown>) => b.patient_auth_id as string)
     .filter(Boolean);
 
-  let knownMap = new Map<string, string | null>();
+  let knownMap = new Map<string, string>();
   if (authIds.length > 0) {
-    const { data: roles } = await supabase
-      .from("user_roles")
-      .select("user_id, linked_patient_id")
-      .eq("invited_by_professional_id", effectiveProfId)
-      .in("user_id", authIds);
-    for (const r of roles ?? []) {
-      knownMap.set(r.user_id as string, (r.linked_patient_id as string | null) ?? null);
+    const { data: known } = await supabase.rpc("get_known_patients", {
+      p_patient_auth_ids: authIds,
+    });
+    for (const row of (known ?? []) as Array<{ patient_auth_id: string; patient_id: string }>) {
+      knownMap.set(row.patient_auth_id, row.patient_id);
     }
   }
 
@@ -63,99 +69,25 @@ export async function getTentativeBookings() {
   });
 }
 
+// For tentative (patient-originated) booking requests only. Confirming and
+// linking the patient record now happens server-side in one RPC call — see
+// mob dev's migration 075 (_link_patient_account, shared with
+// accept_appointment_proposal). Doctor-created appointments that don't need
+// patient-linking go through the plain confirmBooking() below instead.
 export async function confirmBookingAndAddPatient(appointmentId: string, note?: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const { error } = await supabase.rpc("confirm_and_link_patient", {
+    p_appointment_id: appointmentId,
+  });
 
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("patient_name, patient_auth_id")
-    .eq("id", appointmentId)
-    .eq("professional_id", effectiveProfId)
-    .maybeSingle();
-
-  if (!appt) return { error: "Appointment not found" };
-
-  const { error } = await supabase
-    .from("appointments")
-    .update({ status: "confirmed" })
-    .eq("id", appointmentId)
-    .eq("professional_id", effectiveProfId);
-
-  if (error) return { error: error.message };
-
-  // Add to patient list only if not already linked to this professional
-  if (appt.patient_auth_id) {
-    const { data: existingRole } = await supabase
-      .from("user_roles")
-      .select("linked_patient_id")
-      .eq("user_id", appt.patient_auth_id as string)
-      .eq("invited_by_professional_id", effectiveProfId)
-      .maybeSingle();
-
-    let linkedPatientId: string | null = (existingRole?.linked_patient_id as string) ?? null;
-
-    if (!linkedPatientId) {
-      const { data: profile } = await supabase
-        .from("patient_profiles")
-        .select("full_name, email, phone, birth_date, cpf")
-        .eq("user_id", appt.patient_auth_id as string)
-        .maybeSingle();
-
-      const patientEmail = (profile?.email as string | null) ?? null;
-
-      // Check if this patient was manually added (walk-in) before they signed up
-      if (patientEmail) {
-        const { data: existingByEmail } = await supabase
-          .from("patients")
-          .select("id")
-          .eq("professional_id", effectiveProfId)
-          .eq("email", patientEmail)
-          .maybeSingle();
-        linkedPatientId = (existingByEmail?.id as string) ?? null;
-      }
-
-      if (!linkedPatientId) {
-        const { data: newPatient } = await supabase
-          .from("patients")
-          .insert({
-            full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
-            professional_id: effectiveProfId,
-            email: patientEmail ?? undefined,
-            phone: (profile?.phone as string | null) ?? undefined,
-            birth_date: (profile?.birth_date as string | null) ?? undefined,
-            cpf: (profile?.cpf as string | null) ?? undefined,
-          })
-          .select("id")
-          .maybeSingle();
-        linkedPatientId = (newPatient?.id as string) ?? null;
-      }
-
-      if (linkedPatientId) {
-        await supabase.from("user_roles").upsert(
-          {
-            user_id: appt.patient_auth_id,
-            role: "patient",
-            linked_patient_id: linkedPatientId,
-            invited_by_professional_id: effectiveProfId,
-          },
-          { onConflict: "user_id" },
-        );
-      }
+  if (error) {
+    if (error.message?.includes("appointment_not_confirmable")) {
+      return { error: "This request can no longer be confirmed" };
     }
-
-    // Populate patient_id so the patient can find this appointment via getPatientAppointments
-    // (which queries by patient_id). Public bookings start with patient_id = null.
-    if (linkedPatientId) {
-      await supabase
-        .from("appointments")
-        .update({ patient_id: linkedPatientId })
-        .eq("id", appointmentId)
-        .is("patient_id", null);
-    }
+    return { error: error.message };
   }
 
   await notifyPatient(supabase, appointmentId, "Appointment Confirmed", note ? `Your appointment has been confirmed by the doctor. Note: ${note}` : "Your appointment has been confirmed by the doctor.");
@@ -194,13 +126,6 @@ export async function rejectBooking(appointmentId: string, note?: string) {
 
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
 
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("patient_name, patient_auth_id")
-    .eq("id", appointmentId)
-    .eq("professional_id", effectiveProfId)
-    .maybeSingle();
-
   const { error } = await supabase
     .from("appointments")
     .update({ status: "rejected" })
@@ -209,53 +134,8 @@ export async function rejectBooking(appointmentId: string, note?: string) {
 
   if (error) return { error: error.message };
 
-  // Add patient to patient list (same as confirm/propose)
-  if (appt?.patient_auth_id) {
-    const { data: existingRole } = await supabase
-      .from("user_roles")
-      .select("linked_patient_id")
-      .eq("user_id", appt.patient_auth_id as string)
-      .eq("invited_by_professional_id", effectiveProfId)
-      .maybeSingle();
-
-    if (!existingRole?.linked_patient_id) {
-      const { data: profile } = await supabase
-        .from("patient_profiles")
-        .select("full_name, email, phone, birth_date, cpf")
-        .eq("user_id", appt.patient_auth_id as string)
-        .maybeSingle();
-
-      const patientEmail = (profile?.email as string | null) ?? null;
-      let linkedPatientId: string | null = null;
-      if (patientEmail) {
-        const { data: existingByEmail } = await supabase
-          .from("patients").select("id")
-          .eq("professional_id", effectiveProfId).eq("email", patientEmail).maybeSingle();
-        linkedPatientId = (existingByEmail?.id as string) ?? null;
-      }
-      if (!linkedPatientId) {
-        const { data: newPatient } = await supabase
-          .from("patients")
-          .insert({
-            full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
-            professional_id: effectiveProfId,
-            email: patientEmail ?? undefined,
-            phone: (profile?.phone as string | null) ?? undefined,
-            birth_date: (profile?.birth_date as string | null) ?? undefined,
-            cpf: (profile?.cpf as string | null) ?? undefined,
-          })
-          .select("id").maybeSingle();
-        linkedPatientId = (newPatient?.id as string) ?? null;
-      }
-      if (linkedPatientId) {
-        await supabase.from("user_roles").upsert(
-          { user_id: appt.patient_auth_id, role: "patient", linked_patient_id: linkedPatientId, invited_by_professional_id: effectiveProfId },
-          { onConflict: "user_id" },
-        );
-      }
-    }
-  }
-
+  // A rejected request never becomes an appointment — don't create a patient
+  // record for it. Linking only happens on accept/confirm, server-side.
   await notifyPatient(supabase, appointmentId, "Booking Not Available", note ? `The doctor could not accept your booking request. Note: ${note}` : "The doctor could not accept your booking request.");
 
   revalidatePath("/dashboard/schedule");
@@ -276,13 +156,6 @@ export async function proposeNewTime(
 
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
 
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("patient_name, patient_auth_id")
-    .eq("id", appointmentId)
-    .eq("professional_id", effectiveProfId)
-    .maybeSingle();
-
   const { error } = await supabase
     .from("appointments")
     .update({
@@ -296,53 +169,9 @@ export async function proposeNewTime(
 
   if (error) return { error: error.message };
 
-  // Add patient to patient list (same as confirm)
-  if (appt?.patient_auth_id) {
-    const { data: existingRole } = await supabase
-      .from("user_roles")
-      .select("linked_patient_id")
-      .eq("user_id", appt.patient_auth_id as string)
-      .eq("invited_by_professional_id", effectiveProfId)
-      .maybeSingle();
-
-    if (!existingRole?.linked_patient_id) {
-      const { data: profile } = await supabase
-        .from("patient_profiles")
-        .select("full_name, email, phone, birth_date, cpf")
-        .eq("user_id", appt.patient_auth_id as string)
-        .maybeSingle();
-
-      const patientEmail = (profile?.email as string | null) ?? null;
-      let linkedPatientId: string | null = null;
-      if (patientEmail) {
-        const { data: existingByEmail } = await supabase
-          .from("patients").select("id")
-          .eq("professional_id", effectiveProfId).eq("email", patientEmail).maybeSingle();
-        linkedPatientId = (existingByEmail?.id as string) ?? null;
-      }
-      if (!linkedPatientId) {
-        const { data: newPatient } = await supabase
-          .from("patients")
-          .insert({
-            full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
-            professional_id: effectiveProfId,
-            email: patientEmail ?? undefined,
-            phone: (profile?.phone as string | null) ?? undefined,
-            birth_date: (profile?.birth_date as string | null) ?? undefined,
-            cpf: (profile?.cpf as string | null) ?? undefined,
-          })
-          .select("id").maybeSingle();
-        linkedPatientId = (newPatient?.id as string) ?? null;
-      }
-      if (linkedPatientId) {
-        await supabase.from("user_roles").upsert(
-          { user_id: appt.patient_auth_id, role: "patient", linked_patient_id: linkedPatientId, invited_by_professional_id: effectiveProfId },
-          { onConflict: "user_id" },
-        );
-      }
-    }
-  }
-
+  // A proposal isn't a confirmed appointment yet — don't create a patient
+  // record until the patient accepts (accept_appointment_proposal links via
+  // the same shared _link_patient_account() as confirm_and_link_patient).
   await notifyPatient(supabase, appointmentId, "New Time Proposed", note ? `The doctor proposed a new time: ${proposedDate} at ${proposedStart}. Note: ${note}` : `The doctor proposed a new time: ${proposedDate} at ${proposedStart}.`);
 
   revalidatePath("/dashboard/schedule");
@@ -554,17 +383,11 @@ export async function getAvailableSlotsForDate(
     p_professional_id: professionalId,
   });
 
-  const wh = (profData ?? {}) as Record<string, { enabled: boolean; start: string; end: string }>;
-  const dayKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-  const dayKey = dayKeys[new Date(date + "T12:00:00").getDay()];
-  const dayHours = wh[dayKey];
-  if (!dayHours?.enabled) return [];
+  const wh = (profData ?? {}) as WorkingHours;
 
-  const toMin = (t: string) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
-  const fromMin = (n: number) => `${String(Math.floor(n / 60)).padStart(2, "0")}:${String(n % 60).padStart(2, "0")}`;
-
-  const dayStart = toMin(dayHours.start);
-  const dayEnd = toMin(dayHours.end);
+  // Short-circuit before the get_busy_slots round trip for a closed day —
+  // computeSlots would return [] anyway, but only after paying for the RPC.
+  if (!getDayHours(date, wh)?.enabled) return [];
 
   const { data: busy } = await supabase.rpc("get_busy_slots", {
     p_professional_id: professionalId,
@@ -572,19 +395,11 @@ export async function getAvailableSlotsForDate(
   });
 
   const busyRanges = (busy ?? []).map((r: Record<string, unknown>) => ({
-    start: toMin(r.slot_start as string),
-    end: toMin(r.slot_end as string),
+    start: toMinutes(r.slot_start as string),
+    end: toMinutes(r.slot_end as string),
   }));
 
-  const slots: { start: string; end: string }[] = [];
-  let cursor = dayStart;
-  while (cursor + durationMinutes <= dayEnd) {
-    const slotEnd = cursor + durationMinutes;
-    if (!busyRanges.some((r: { start: number; end: number }) => cursor < r.end && slotEnd > r.start)) {
-      slots.push({ start: fromMin(cursor), end: fromMin(slotEnd) });
-    }
-    cursor += durationMinutes;
-  }
+  const slots = computeSlots(date, durationMinutes, wh, busyRanges);
   return slots;
 }
 
@@ -607,21 +422,7 @@ async function notifyPatient(
 
   const { data } = await supabase.rpc("get_patient_push_tokens", { p_patient_auth_id: patientAuthId });
   const tokens = (data ?? []).map((r: { token: string }) => r.token);
-
-  if (!tokens.length) return;
-
-  const messages = tokens.map((to: string) => ({
-    to,
-    title,
-    body,
-    sound: "default",
-  }));
-
-  await fetch("https://exp.host/--/api/v2/push/send", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify(messages),
-  }).catch(() => {});
+  await sendExpoPush(tokens, title, body);
 }
 
 async function notifyProfessional(
@@ -632,10 +433,5 @@ async function notifyProfessional(
 ) {
   const { data } = await supabase.rpc("get_clinic_push_tokens", { p_professional_id: professionalId });
   const tokens = (data ?? []).map((r: { token: string }) => r.token);
-  if (!tokens.length) return;
-  await fetch("https://exp.host/--/api/v2/push/send", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify(tokens.map((to: string) => ({ to, title, body, sound: "default" }))),
-  }).catch(() => {});
+  await sendExpoPush(tokens, title, body);
 }

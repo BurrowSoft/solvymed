@@ -297,7 +297,11 @@
     "savePrescription": "Salva Ricetta",
     "noAppointments": "Nessun appuntamento ancora",
     "paidLabel": "Pagato",
-    "pendingLabel": "In sospeso"
+    "pendingLabel": "In sospeso",
+    "generateCode": "Genera codice",
+    "copyCode": "Copia",
+    "codeCopied": "Copiato!",
+    "regenerateCode": "Rigenera"
   },
   "settings": {
     "profileTitle": "Profilo",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "Nessun paziente bloccato al momento",
     "unblock": "Sblocca",
     "pageTitle": "Impostazioni",
-    "pageSubtitle": "Gestisci il tuo profilo, studio, orari e procedure"
+    "pageSubtitle": "Gestisci il tuo profilo, studio, orari e procedure",
+    "inviteCodeTitle": "Il tuo codice invito",
+    "inviteCodeSub": "Condividi questo codice per far collegare i pazienti al tuo account",
+    "generateCode": "Genera codice",
+    "regenerate": "Rigenera",
+    "copy": "Copia",
+    "copied": "Copiato!"
   },
   "clinics": {
     "title": "Le mie cliniche",
@@ -515,15 +525,23 @@
       "alreadyHasRole": "Questo account ha già un ruolo e non può essere collegato come paziente. Esci e usa un altro account.",
       "notPendingPatient": "Questo account non è stato creato come registrazione paziente, quindi qui non è possibile associare un codice invito.",
       "linkFailed": "Si è verificato un errore durante il collegamento del tuo account. Riprova.",
-      "backToSignup": "Usa un altro account"
+      "backToSignup": "Usa un altro account",
+      "tooManyAttempts": "Troppi tentativi. Attendi un momento prima di riprovare.",
+      "alreadyInvitedByAnother": "Il tuo account è già collegato a un altro medico."
     },
     "pendingConfirmation": {
       "loading": "Verifica dello stato…",
       "heading": "In attesa del tuo medico",
-      "body": "Sei collegato, ma il tuo medico deve ancora confermare il tuo account prima che tu possa prenotare.",
-      "bodyWithDoctor": "Sei collegato a {name}, che deve ancora confermare il tuo account prima che tu possa prenotare.",
+      "body": "Sei collegato/a, ma il tuo medico deve ancora confermare il tuo account. Nel frattempo puoi richiedere un appuntamento.",
+      "bodyWithDoctor": "Sei collegato/a a {name}, che deve ancora confermare il tuo account. Nel frattempo puoi richiedere un appuntamento.",
       "checking": "Verifica in corso…",
-      "checkAgain": "Verifica di nuovo"
+      "checkAgain": "Verifica di nuovo",
+      "requestAppointment": "Richiedi un appuntamento",
+      "yourRequests": "Le tue richieste",
+      "statusTentative": "In attesa di conferma",
+      "statusProposal": "Nuovo orario proposto",
+      "accept": "Accetta",
+      "decline": "Rifiuta"
     }
   },
   "myAppointments": {

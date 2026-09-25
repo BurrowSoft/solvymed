@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import { computeSlots, toMinutes, filterPastSlots } from "@/lib/slots";
+import { computeSlots, toMinutes, filterPastSlots, toLocalDateString } from "@/lib/slots";
 import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
 
@@ -75,11 +75,11 @@ function buildDays() {
   return Array.from({ length: DAYS_AHEAD }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() + i);
-    return d.toISOString().split("T")[0];
+    return toLocalDateString(d);
   });
 }
 function dayLabel(dateStr: string, locale: string, todayLabel: string) {
-  const today = new Date().toISOString().split("T")[0];
+  const today = toLocalDateString(new Date());
   if (dateStr === today) return todayLabel;
   return new Date(dateStr + "T12:00:00").toLocaleDateString(locale, {
     weekday: "short", month: "short", day: "numeric",

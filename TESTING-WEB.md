@@ -1406,6 +1406,347 @@ testable — same caveat as rounds 11-14 throughout: the patient
 invite-code linking flow itself still isn't independently live-tested,
 blocked on the service-role-key infra gap, not on anything in the code.
 
+## Opus review — Phase 1, master audit (2026-09-25)
+
+User-driven team task: a full review and test pass across both repos ahead
+of `refactor/opus-review` (web dev's PR #8, broad code-review pass). My
+job: test `master` as it stands, thoroughly, across every role/flow, plus
+direct REST/RLS authorization probing. Bugs go to web dev for PR #8;
+DB/RPC/RLS issues also go to mob dev.
+
+**Unblocked this session's biggest limitation:** the real
+`SUPABASE_SERVICE_ROLE_KEY` (mob dev's mobile worktree `.env`, confirmed a
+genuinely valid `service_role` JWT — the old one in this repo's `.env.local`
+was a placeholder) means fresh, pre-confirmed test accounts are finally
+possible. Built a real end-to-end mechanism rather than a shortcut: submit
+the actual signup form via Playwright (exercises real client validation +
+the real `supabase.auth.signUp()` call), then use the admin API to
+`generate_link` a magic-link `hashed_token` for that just-created
+(unconfirmed) account and feed it straight to
+`/api/auth/callback?token_hash=...&type=magiclink` — this drives the real
+confirmation route logic exactly as a clicked email link would, just
+skipping the need to read an actual inbox. Tested in an isolated worktree
+(`solvymed-master-test`, port 3001) so I didn't disturb web dev's live
+`refactor/opus-review` checkout.
+
+**Verified end-to-end for the first time this PR cycle (all 🟢, real
+accounts, real confirmation, real DB-state checks via REST):**
+- Patient signup with a valid **patient invite code**
+  (`link_patient_by_invite_code`) → immediately fully linked
+  (`patient-welcome` → `my-appointments`, `linked_patient_id` correct).
+- Patient signup with a valid **doctor's public code**
+  (`link_by_professional_public_code`) → lands on `pending-confirmation`,
+  correct DB state (`invited_by_professional_id` set, no
+  `linked_patient_id`). "Check again" correctly no-ops while still
+  pending, and correctly proceeds to `patient-welcome` once linked
+  (doctor-side confirmation itself is mobile-only per mob dev, so this
+  tests the web reaction to that state change, not the confirm RPC).
+- Patient signup with an **invalid/non-resolving code** → `invite-required`,
+  correct error path.
+- **Professional signup** → `professional-welcome` → `dashboard`, correct
+  role persisted.
+- **Secretary signup** → straight to `dashboard` (no dedicated welcome
+  page — confirmed intentional, not a missing page), correct role
+  persisted, no crash on `/dashboard/patients` with no attached
+  professional yet.
+
+**Finding — reported to web dev + mob dev, not yet fixed:** neither
+`patients.invite_code` nor `professionals.public_invite_code` (migrations
+010, 013) has a default, trigger, or any generation mechanism anywhere in
+either repo — confirmed by creating a patient through the real dashboard
+"New Patient" form and checking `invite_code` via REST: `null`. Mob dev
+confirmed mobile generates both client-side (`Math.random`, not
+server-side) but **web has no equivalent UI at all** — a web-only doctor
+currently has no way to ever obtain a code to hand a patient. Mob dev is
+adding shared server-side generator RPCs
+(`generate_patient_invite_code`, `generate_public_invite_code`) for both
+apps to call. Bypassed via the service key to keep testing the linking
+mechanics above; this doesn't block them, but blocks the feature being
+usable by a real web-only doctor until the UI exists.
+
+**RLS/authorization probing (direct REST, bypassing the UI entirely):**
+- 🟢 Patient reading `patients`/`professionals`/`appointments`/`user_roles`
+  tables without ID filters: RLS correctly scopes every table to the
+  caller's own rows (empty or self-only results, no cross-user leakage
+  found).
+- 🟢 Professional reading `patients` without a `professional_id` filter:
+  correctly scoped to their own patients only, no cross-professional
+  leakage.
+- 🟢 Anon (apikey only, no user JWT) reading `patients`/`appointments`:
+  empty results, correctly blocked.
+- 🟢 Patient PATCHing their own appointment `status` directly (bypassing
+  the reschedule-request flow): blocked by RLS (403).
+- 🟢 Patient PATCHing their own `user_roles.role` to `"professional"`:
+  blocked with an explicit, well-designed error — "direct role change
+  from patient is not permitted" (a real server-side check, not just
+  RLS).
+- 🟢 Patient POSTing an appointment with a different `patient_auth_id`
+  (booking as someone else): blocked by RLS (403).
+- 🔴 **Confirmed independently (mob dev found this first): a
+  professional can self-grant an active subscription via a direct PATCH**
+  to `/rest/v1/professionals` — `subscription_status: "active"` +
+  `current_period_end` set to any future date, no RLS restriction, no
+  billing provider check, 200 success. Full premium access forever,
+  bypassing Stripe/Asaas entirely. Reproduced live on the shared doctor
+  test account, then immediately restored it to `subscription_status:
+  "trial"` / `current_period_end: null`. Not re-reporting as new — mob
+  dev already has this on their list — documenting here since it's now
+  independently confirmed reachable from the web side too.
+
+**Cleaned up:** all `e2e-test-opus-*` auth accounts and `Opus`-labelled
+patient records deleted; shared doctor test account's
+`public_invite_code`/`subscription_status` reset to their pre-test values.
+
+**Not yet covered (large remaining surface, flagged transparently rather
+than claimed done):** deep CRUD coverage per role (schedule, patients,
+records, prescriptions, payments, settings), secretary permission
+boundaries in depth, cross-cutting concerns (double-submit, back-button
+after redirect, expired session, very long inputs) beyond what's already
+spot-checked incidentally, and re-probing mob dev's other RLS findings
+(reschedule self-accept, broad anon RPC access) once their migration
+lands. Continuing in a follow-up pass; this section will grow rather than
+restart.
+
+## Opus review — PR #8 (`refactor/opus-review`), commits through `0ac2786`
+
+Web dev's broad code-review pass across the whole repo (correctness,
+security, data integrity, swallowed errors, performance, duplication).
+Tested in a second isolated worktree (also `solvymed-master-test`,
+switched between branches via detached checkout) to avoid the `.next`
+corruption that hit repeatedly when running a dev server against the
+shared checkout while web dev was actively pushing to it — confirmed the
+correlation again this round, worth remembering as standing practice.
+
+**`416b4ad` — Asaas webhook fail-closed fix, 🟢 live-verified:** the
+previous code skipped token verification entirely when
+`ASAAS_WEBHOOK_TOKEN` wasn't configured, meaning any unauthenticated POST
+could activate or expire an arbitrary user's subscription
+(`externalReference` is caller-supplied JSON, not cryptographically tied
+to Asaas). Tested all three reachable states directly against the running
+server: correct token → 200 `{"ok":true}`; wrong token → 401
+`Unauthorized`; missing token header → 401. The one path not
+independently live-tested is the token-*unconfigured* case (would need a
+server restart with the env var unset) — relying on code review there,
+which is a trivial, unambiguous one-line fail-closed check, not worth the
+restart given the token-comparison logic itself is already proven correct
+in both directions.
+
+**`9c7ca73` — UTC→local date fix, 🟢 live-verified:** `.toISOString().split("T")[0]`
+is always UTC; used for "now"/"today" it silently returned the wrong
+calendar date for most of the world for part of every day (booking
+strip's "Today" label, past-slot filtering, doctor schedule's "Today"
+button, booking-requests obsolete-cutoff). New `toLocalDateString()`
+helper applied consistently everywhere that pattern was used for "now",
+while correctly *not* touching the noon-anchored
+`new Date(dateStr + "T12:00:00")` pattern used for date arithmetic on an
+already-known string (different, legitimate use). `npx vitest run
+src/__tests__/slots.test.ts`: 18/18 passed.
+
+**`4195523` — booking-actions dedupe, 🟢 verified both by diff comparison
+and live regression:** two independent extractions in the same commit.
+`ensurePatientLinked()` consolidates an identical ~50-line block that was
+duplicated 3x (confirm/reject/propose) — diffed the extracted function
+against all three original blocks line-by-line, confirmed faithful (the
+only per-call difference, `fallbackName`, is correctly parameterized).
+`getAvailableSlotsForDate()` now calls the shared `computeSlots()` instead
+of reimplementing the same loop inline — compared both implementations
+directly, confirmed byte-for-byte identical algorithm (same day-key
+lookup, same enabled check, same cursor loop, same busy-range overlap
+condition). Ran the full `e2e/01-03` suite against this commit since it's
+core, everyday scheduling logic: clean 3/3.
+
+**`f374580` — push-notification consolidation, 🟢 GREEN (code review):**
+three near-identical Expo push senders (two in booking-actions.ts, one in
+notify-action.ts) each had a bare `.catch(() => {})` that silently
+swallowed failures — a broken push pipeline would have been completely
+invisible. Extracted to `lib/push.ts`'s `sendExpoPush()`, which now logs
+non-2xx responses and thrown errors via `console.error` while still not
+throwing (push staying best-effort, not blocking the action it's attached
+to, is unchanged). Straightforward, low-risk dedup. Full live verification
+(a real push actually reaching a real device) needs registered push
+tokens and is more mob dev's/mobile testing's territory — flagged as a
+migration-live-pass item per their list (`get_clinic_push_tokens`).
+
+**`752dd8a` — parallelized patient list/count queries, 🟢 GREEN (code
+review):** two independent queries (same filter, different projection)
+converted from sequential `await`s to `Promise.all` — genuinely
+independent, no shared state, safe.
+
+**`086aef7` — pending patient can request an appointment, 🟢
+live-verified end-to-end, real bug fix (not just polish):** per mob dev's
+DB review, a public-code pending patient already gets a
+`patient_connections` row and *can* call `create_public_booking` today —
+but `/auth/pending-confirmation` only offered a status poll with no way
+to reach the booking page, and its own copy said outright that booking
+wasn't possible yet. Added a "Request an appointment" CTA to
+`/book/<invited_by_professional_id>` (already access-controlled only by
+requiring a session, not by link-state — pre-existing, previously-noted
+design, not new) plus a list of the patient's existing tentative/proposal
+requests. Tested for real: signed up a fresh patient with a doctor's
+public code, landed on pending-confirmation, clicked through the new CTA,
+filled out and submitted a real booking request (reason, date, slot,
+phone, DOB — all client-required fields), then confirmed server-side via
+REST that a real `appointments` row now exists for that patient. Genuinely
+works.
+
+**`0ac2786` — locale-format pending-request dates/times, 🟢 GREEN (code
+review):** the new request list from `086aef7` rendered raw
+`YYYY-MM-DD`/24h `HH:MM` regardless of locale; now uses
+`toLocaleDateString`/`toLocaleTimeString`, matching the pattern already
+used in `MyAppointmentsClient`. Small, low-risk, consistent with existing
+conventions.
+
+**`bbabeb1` — renamed `get_known_patients` RPC, restores "open patient"
+link:** not yet independently testable — the renamed RPC
+(`get_known_patient_auth_ids` → `get_known_patients`, now returning
+`(patient_auth_id, patient_id)` pairs instead of a bare id set) is part of
+mob dev's migrations 073-081, not live yet. Reviewed the diff: the new
+`Map`-based lookup and `patient_id` field addition look correct by
+inspection, matches the stated RPC contract. On the list for the
+migration-live pass (mob dev's own item: "'Open patient' link on a
+returning patient's booking request").
+
+**`542d1f3` — removed superseded `subscription.sql`:** DB/migration
+housekeeping per mob dev, not web application code — nothing to test on
+this side.
+
+**Cleaned up:** all `e2e-test-opus-*` accounts, the orphaned test
+appointment left behind after deleting one of those accounts, and the
+doctor test account's `public_invite_code` reset to null.
+
+**Still pending the migration-live ping (mob dev's list):** invite-code
+generation UI (not built yet either — see Phase 1 section above), doctor
+confirming a pending patient via `confirm_and_link_patient` (no duplicate
+records), the "open patient" link (`bbabeb1`, above), friendly errors for
+`too_many_attempts`/`already_invited_by_another_professional`,
+logged-out RPC probes + subscription self-grant now denied, and
+new-booking pushes actually reaching a doctor device.
+
+## Opus review — PR #8, migration-live pass (2026-09-25)
+
+Mob dev's migrations 073-081 landed on prod (behavioral suite passing,
+security advisors 0 anon-callable functions, was 29). This is the real
+end-to-end pass on everything that was blocked all PR — genuine fresh
+accounts, real invite codes, real linking. Tested in the same isolated
+worktree, PR #8 tip through `a25a15a` at the time, then re-checked three
+more small fixes that landed during this pass (`db2eac5`, `8253481`,
+`3616e04` — all reviewed by code inspection only, straightforward and
+low-risk: a perf short-circuit for closed schedule days, hiding the
+invite-code card from secretaries since `generatePublicInviteCode` has no
+delegated-professional concept, and a locale-prefix fix on the restored
+"View full profile" link).
+
+**🟢 Subscription self-grant — now denied.** Re-ran the exact PATCH that
+succeeded earlier this PR (`subscription_status: "active"` + far-future
+`current_period_end` as the doctor's own JWT): now `400`, `"subscription
+fields can only be changed by the billing system"`. Real fix, real
+server-side enforcement, not just an RLS tweak — confirmed with a clean,
+intentional error message rather than a generic RLS denial.
+
+**🟢 Anon RPC probes — all denied.** Called
+`link_patient_by_invite_code`, `link_by_professional_public_code`,
+`confirm_and_link_patient`, `get_known_patients`, `get_clinic_push_tokens`,
+and `get_professional_public_info` with the anon key only (no user JWT):
+every one now `401 permission denied for function ...`. Matches mob dev's
+"0 anon-callable functions" claim, confirmed directly rather than taken
+on faith.
+
+**🟢 Invite-code generation UI — both places work.** Live-tested via real
+Playwright interaction, not the service-key bypass this PR relied on
+until now: doctor's Settings page generates their own
+`public_invite_code`, verified the displayed code matches what's actually
+persisted via REST; separately, a patient detail page generates that
+patient's `invite_code`, same verification. This closes the gap flagged
+in the Phase 1 section above — codes can now genuinely be created by a
+web-only doctor.
+
+**🟢 Direct-confirm linking loop — real, no duplicates.** Full live
+sequence: patient signs up with the doctor's real (UI-generated) public
+code → lands pending → requests an appointment via the CTA → doctor opens
+the request on `/dashboard/schedule` and clicks Confirm directly →
+verified via REST that `linked_patient_id` is now set on the patient's
+`user_roles` row and that exactly one `patients` table record exists for
+them (not zero, not two) — confirms `confirm_and_link_patient` (the
+`9c388a0` rewrite) does what it claims, including the duplicate-record
+fix that rewrite specifically called out.
+
+**🔴 Found: a pending patient has no way to accept a doctor's proposed
+time.** This is the "propose → accept" branch mob dev specifically asked
+about, and it doesn't work. Reproduced live: same setup as the confirm
+loop above, but the doctor clicks "Propose new time" instead of
+"Confirm" — that part works fine, the request correctly flips to
+`proposal` status and `pending-confirmation`'s request list correctly
+shows the new date/time. But there is no way forward from there:
+`acceptProposal` (the actual accept action) only exists in
+`MyAppointmentsClient.tsx`, and `/my-appointments` redirects a
+still-pending patient straight back to `/auth/pending-confirmation` —
+correct behavior for the general case, but it makes the one page with an
+accept button unreachable for exactly the patient who'd need it here.
+`pending-confirmation`'s own request list is read-only, no action
+attached. Reported to web dev with two possible fixes (give
+pending-confirmation its own accept/decline actions, or carve out an
+exception in the my-appointments redirect for an actionable proposal) —
+their call which fits the architecture better. Not tested further pending
+a fix; the direct-confirm branch above is unaffected by this and remains
+solid.
+
+**Not yet covered from mob dev's full checklist:** friendly error
+messages for `too_many_attempts`/`already_invited_by_another_professional`
+(would need to actually trigger rate-limiting or a conflicting invite,
+not yet attempted), the "open patient" link on a returning patient's
+request (code-reviewed only via `bbabeb1`/`3616e04`, not live-clicked),
+the deletion-request form's public-only-accepts-`pending` restriction,
+and new-booking pushes actually reaching a doctor device (needs
+registered push tokens, more mobile-testing territory).
+
+**Cleaned up:** all `e2e-test-opus-*` accounts and patient records,
+including several stale booking-request appointments that accumulated
+from failed test-iteration attempts (bad selectors, not app bugs) before
+the confirm-loop test was made robust — doctor account's
+`public_invite_code` reset to null, `subscription_status` untouched this
+round (never mutated, only probed and correctly rejected).
+
+## Opus review — deletion-request form, real submit confirmed
+
+Per mob dev's request (`deletion_requests` now only accepts
+`status='pending'` from the public, and the form already sends that
+explicitly — worth proving with a real submit, not just a code read).
+Filled and submitted the actual form at `/account/delete` (email +
+optional reason, no auth required by design), confirmed the "Request
+received" success screen shows the submitted email, then verified via
+REST that a real row landed with `status: "pending"` and the correct
+`email`/`reason`. Cleaned up the test row after. 🟢 Works as described.
+
+## Opus review — propose→accept fix (`e841bd3`), 🟢 both branches confirmed
+
+Web dev's fix for the gap found earlier this pass: accept/decline actions
+added directly to `pending-confirmation`'s request list for proposal-status
+rows, reusing `acceptProposal`/`declineProposal` unchanged. Ran the exact
+walkthrough live, both directions:
+
+- **Accept:** pending patient requests → doctor proposes a new time →
+  patient logs in, sees "New time proposed" with Accept/Decline buttons on
+  `pending-confirmation` → clicks Accept → redirected to
+  `/auth/patient-welcome` → verified via REST that `linked_patient_id` is
+  now set. Matches the described behavior exactly (accepting links the
+  patient the same way a doctor's direct confirm does).
+- **Decline:** same setup, patient clicks Decline instead → stays on
+  `pending-confirmation`, confirmed via REST `linked_patient_id` is still
+  null (correctly *not* linked).
+
+One transient failure on the first attempt at the accept test (timed out
+clicking "Propose new time" on a freshly-restarted server) — the decline
+test's identical code path passed cleanly in the same run, and a solo
+retry of the accept test passed too, so this was the familiar cold-start
+compile latency on this route's first hit, not a real issue.
+
+This closes out the propose→accept gap — the one item I'd called a
+blocker. No remaining known bugs; the "not yet covered" items from the
+migration-live section above (friendly error messages, the open-patient
+link beyond a code review, and push notifications) are still genuinely
+untested, not confirmed-fine — flagging that distinction rather than
+calling this fully green across the board.
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
