@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
         const { error: acceptError } = await supabase.rpc("accept_secretary_invite", { p_code: secretaryCode });
         if (acceptError) console.error("Secretary invite accept failed at confirmation:", acceptError.message);
       }
-      redirectUrl = new URL("/dashboard", origin);
+      redirectUrl = new URL(`${localePrefix}/dashboard`, origin);
 
     } else if (role === "patient") {
       // Refuse to touch an existing role — matches the guard on the
@@ -159,7 +159,7 @@ export async function GET(request: NextRequest) {
       } else {
         // dashboard/layout.tsx routes every persisted role (and fails
         // closed on a lookup error).
-        redirectUrl = new URL("/dashboard", origin);
+        redirectUrl = new URL(`${localePrefix}/dashboard`, origin);
       }
     }
   } else {
