@@ -93,10 +93,13 @@ export function InviteCodeCard({ code: initialCode }: { code?: string }) {
   const [code, setCode] = useState(initialCode ?? null);
   const [pending, start] = useTransition();
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState("");
 
   function handleGenerate() {
+    setError("");
     start(async () => {
       const result = await generatePublicInviteCode();
+      if (result.error) { setError(result.error); return; }
       if (result.code) setCode(result.code);
     });
   }
@@ -142,6 +145,7 @@ export function InviteCodeCard({ code: initialCode }: { code?: string }) {
           {pending ? t("saving") : t("generateCode")}
         </button>
       )}
+      {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
     </Card>
   );
 }

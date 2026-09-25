@@ -119,10 +119,13 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
   const [inviteCode, setInviteCode] = useState(patient.invite_code ?? null);
   const [codePending, startCodeTransition] = useTransition();
   const [codeCopied, setCodeCopied] = useState(false);
+  const [codeError, setCodeError] = useState("");
 
   function handleGenerateCode() {
+    setCodeError("");
     startCodeTransition(async () => {
       const result = await generatePatientInviteCode(patient.id);
+      if (result.error) { setCodeError(result.error); return; }
       if (result.code) setInviteCode(result.code);
     });
   }
@@ -214,6 +217,7 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
               {codePending ? "…" : t("generateCode")}
             </button>
           )}
+          {codeError && <p className="mt-2 text-xs text-red-600">{codeError}</p>}
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {fields.map(({ label, value }) => value ? (
