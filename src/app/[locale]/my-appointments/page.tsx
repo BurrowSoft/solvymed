@@ -34,6 +34,10 @@ export default async function MyAppointmentsPage() {
     // send to the retry form instead of rendering an empty appointments page.
     redirect("/auth/invite-required");
   }
+  if (userRoleData?.role && userRoleData.role !== "patient") {
+    // Professional/secretary landed here directly — this page is patient-only.
+    redirect("/dashboard");
+  }
 
   let myProfessionalId = (userRoleData?.invited_by_professional_id as string | null) ?? null;
   if (!myProfessionalId && userRoleData?.linked_patient_id) {
