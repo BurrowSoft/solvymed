@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getEffectiveProfId } from "@/lib/effectiveProfId";
+import { getEffectiveProfId, isProfessionalRole } from "@/lib/effectiveProfId";
 
 export type PatientMatch = { id: string; full_name: string; phone: string | null; birth_date: string | null };
 
@@ -151,6 +151,9 @@ export async function createRecord(patientId: string, formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
+  // not a boundary, since these actions are directly callable.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
 
   const content = (formData.get("content") as string)?.trim();
   if (!content) return { error: "Record content is required" };
@@ -174,6 +177,9 @@ export async function deleteRecord(id: string, patientId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
+  // not a boundary, since these actions are directly callable.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
 
   const { error } = await supabase.from("medical_records").delete().eq("id", id).eq("professional_id", user.id);
   if (error) return { error: error.message };
@@ -185,6 +191,9 @@ export async function createPrescription(patientId: string, formData: FormData) 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
+  // not a boundary, since these actions are directly callable.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
 
   const notes = (formData.get("notes") as string)?.trim() || null;
   const date = new Date().toISOString().split("T")[0];
@@ -262,6 +271,9 @@ export async function deletePrescription(id: string, patientId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
+  // not a boundary, since these actions are directly callable.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
 
   await supabase.from("prescription_items").delete().eq("prescription_id", id);
   const { error } = await supabase.from("prescriptions").delete().eq("id", id).eq("professional_id", user.id);
