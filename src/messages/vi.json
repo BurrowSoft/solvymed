@@ -179,7 +179,9 @@
     "accept": "Chấp nhận",
     "decline": "Từ chối",
     "slotTakenAlert": "Không còn trống khung giờ này nữa. Vui lòng từ chối và để bệnh nhân chọn thời gian khác.",
-    "pastProposalAlert": "Thời gian đề xuất đã qua. Vui lòng từ chối để bệnh nhân có thể chọn khung giờ mới."
+    "pastProposalAlert": "Thời gian đề xuất đã qua. Vui lòng từ chối để bệnh nhân có thể chọn khung giờ mới.",
+    "useBookingCard": "Hãy dùng thẻ yêu cầu đặt lịch để xác nhận, từ chối hoặc đề xuất giờ khác cho yêu cầu này.",
+    "genericError": "Đã xảy ra lỗi. Vui lòng thử lại."
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -191,7 +193,9 @@
     "confirm": "Xác nhận",
     "cancel": "Hủy",
     "amountPlaceholder": "Số tiền",
-    "revertConfirm": "Hoàn nguyên khoản thanh toán này về chờ xử lý?"
+    "revertConfirm": "Hoàn nguyên khoản thanh toán này về chờ xử lý?",
+    "errorInvalidAmount": "Vui lòng nhập số tiền hợp lệ.",
+    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
   },
   "paymentsPage": {
     "title": "Thanh toán",

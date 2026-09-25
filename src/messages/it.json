@@ -179,7 +179,9 @@
     "accept": "Accetta",
     "decline": "Rifiuta",
     "slotTakenAlert": "Questo slot non è più disponibile. Rifiuta e lascia che il paziente scelga un altro orario.",
-    "pastProposalAlert": "L'orario proposto è già passato. Rifiuta così il paziente può richiedere un nuovo slot."
+    "pastProposalAlert": "L'orario proposto è già passato. Rifiuta così il paziente può richiedere un nuovo slot.",
+    "useBookingCard": "Usa la scheda della richiesta di appuntamento per confermare, rifiutare o proporre un orario.",
+    "genericError": "Qualcosa è andato storto. Riprova."
   },
   "payments": {
     "thisWeek": "Questa settimana",
@@ -191,7 +193,9 @@
     "confirm": "Conferma",
     "cancel": "Annulla",
     "amountPlaceholder": "Importo €",
-    "revertConfirm": "Riportare questo pagamento a in sospeso?"
+    "revertConfirm": "Riportare questo pagamento a in sospeso?",
+    "errorInvalidAmount": "Inserisci un importo valido.",
+    "errorGeneric": "Qualcosa è andato storto. Riprova."
   },
   "paymentsPage": {
     "title": "Pagamenti",

@@ -179,7 +179,9 @@
     "accept": "Terima",
     "decline": "Tolak",
     "slotTakenAlert": "Slot tersebut tidak lagi tersedia. Harap tolak dan biarkan pasien memilih waktu lain.",
-    "pastProposalAlert": "Waktu yang diusulkan sudah berlalu. Harap tolak agar pasien dapat meminta slot baru."
+    "pastProposalAlert": "Waktu yang diusulkan sudah berlalu. Harap tolak agar pasien dapat meminta slot baru.",
+    "useBookingCard": "Gunakan kartu permintaan janji temu untuk mengonfirmasi, menolak, atau mengusulkan waktu baru untuk permintaan ini.",
+    "genericError": "Terjadi kesalahan. Silakan coba lagi."
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -191,7 +193,9 @@
     "confirm": "Konfirmasi",
     "cancel": "Batal",
     "amountPlaceholder": "Jumlah",
-    "revertConfirm": "Kembalikan pembayaran ini ke tertunda?"
+    "revertConfirm": "Kembalikan pembayaran ini ke tertunda?",
+    "errorInvalidAmount": "Silakan masukkan jumlah yang valid.",
+    "errorGeneric": "Terjadi kesalahan. Silakan coba lagi."
   },
   "paymentsPage": {
     "title": "Pembayaran",

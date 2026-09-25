@@ -132,6 +132,8 @@
     "saveAppt": "Save Appointment",
     "saving": "Saving…",
     "deleteConfirm": "Delete this appointment?",
+    "useBookingCard": "Use the booking request card to confirm, reject, or propose a time for this request",
+    "genericError": "Something went wrong. Please try again.",
     "onlineBadge": "Online",
     "paidLabel": "✓ Paid",
     "pendingLabel": "⏳ Pending",
@@ -191,7 +193,9 @@
     "confirm": "Confirm",
     "cancel": "Cancel",
     "amountPlaceholder": "Amount R$",
-    "revertConfirm": "Revert this payment to pending?"
+    "revertConfirm": "Revert this payment to pending?",
+    "errorInvalidAmount": "Please enter a valid amount.",
+    "errorGeneric": "Something went wrong. Please try again."
   },
   "paymentsPage": {
     "title": "Payments",

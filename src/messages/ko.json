@@ -179,7 +179,9 @@
     "accept": "수락",
     "decline": "거절",
     "slotTakenAlert": "해당 슬롯은 더 이상 사용할 수 없습니다. 거절하고 환자가 다른 시간을 선택하도록 하세요.",
-    "pastProposalAlert": "제안된 시간이 이미 지났습니다. 환자가 새 슬롯을 요청할 수 있도록 거절해 주세요."
+    "pastProposalAlert": "제안된 시간이 이미 지났습니다. 환자가 새 슬롯을 요청할 수 있도록 거절해 주세요.",
+    "useBookingCard": "이 요청을 수락, 거절하거나 새 시간을 제안하려면 예약 요청 카드를 사용하세요.",
+    "genericError": "문제가 발생했습니다. 다시 시도해 주세요."
   },
   "payments": {
     "thisWeek": "이번 주",
@@ -191,7 +193,9 @@
     "confirm": "확인",
     "cancel": "취소",
     "amountPlaceholder": "금액",
-    "revertConfirm": "이 결제를 미결제로 되돌리시겠습니까?"
+    "revertConfirm": "이 결제를 미결제로 되돌리시겠습니까?",
+    "errorInvalidAmount": "유효한 금액을 입력하세요.",
+    "errorGeneric": "문제가 발생했습니다. 다시 시도해 주세요."
   },
   "paymentsPage": {
     "title": "결제",

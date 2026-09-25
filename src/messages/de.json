@@ -179,7 +179,9 @@
     "accept": "Annehmen",
     "decline": "Ablehnen",
     "slotTakenAlert": "Dieser Termin ist nicht mehr verfügbar. Bitte ablehnen und den Patienten einen anderen Termin wählen lassen.",
-    "pastProposalAlert": "Der vorgeschlagene Zeitpunkt ist abgelaufen. Bitte ablehnen, damit der Patient einen neuen Termin anfordern kann."
+    "pastProposalAlert": "Der vorgeschlagene Zeitpunkt ist abgelaufen. Bitte ablehnen, damit der Patient einen neuen Termin anfordern kann.",
+    "useBookingCard": "Verwenden Sie die Terminanfragekarte, um diese Anfrage zu bestätigen, abzulehnen oder eine neue Zeit vorzuschlagen.",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -191,7 +193,9 @@
     "confirm": "Bestätigen",
     "cancel": "Abbrechen",
     "amountPlaceholder": "Betrag €",
-    "revertConfirm": "Diese Zahlung auf ausstehend zurücksetzen?"
+    "revertConfirm": "Diese Zahlung auf ausstehend zurücksetzen?",
+    "errorInvalidAmount": "Bitte geben Sie einen gültigen Betrag ein.",
+    "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
   },
   "paymentsPage": {
     "title": "Zahlungen",

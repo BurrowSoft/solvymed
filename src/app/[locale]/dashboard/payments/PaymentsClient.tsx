@@ -9,6 +9,11 @@ function formatBRL(n: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
 }
 
+const ERROR_CODE_KEY: Record<string, string> = {
+  invalid_amount: "errorInvalidAmount",
+  generic: "errorGeneric",
+};
+
 export function PeriodFilter({ current }: { current: string }) {
   const t = useTranslations("payments");
   const router = useRouter();
@@ -61,7 +66,7 @@ export function MarkPaidButton({ id, amount }: { id: string; amount?: number }) 
     setError("");
     startTransition(async () => {
       const result = await markPaid(id, finalAmount);
-      if (result?.error) setError(result.error);
+      if (result?.error) setError(t((ERROR_CODE_KEY[result.code ?? ""] ?? "errorGeneric") as Parameters<typeof t>[0]));
     });
   }
 

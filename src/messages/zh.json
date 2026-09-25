@@ -179,7 +179,9 @@
     "accept": "接受",
     "decline": "拒绝",
     "slotTakenAlert": "该时间段已不可用。请拒绝并让患者选择其他时间。",
-    "pastProposalAlert": "提议的时间已过。请拒绝以便患者重新选择时间。"
+    "pastProposalAlert": "提议的时间已过。请拒绝以便患者重新选择时间。",
+    "useBookingCard": "请使用预约请求卡来确认、拒绝或为此请求提议新时间。",
+    "genericError": "出现问题，请重试。"
   },
   "payments": {
     "thisWeek": "本周",
@@ -191,7 +193,9 @@
     "confirm": "确认",
     "cancel": "取消",
     "amountPlaceholder": "金额",
-    "revertConfirm": "将此付款恢复为待付款状态？"
+    "revertConfirm": "将此付款恢复为待付款状态？",
+    "errorInvalidAmount": "请输入有效金额。",
+    "errorGeneric": "出现问题，请重试。"
   },
   "paymentsPage": {
     "title": "付款",
