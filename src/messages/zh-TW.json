@@ -713,6 +713,7 @@
     "notSet": "尚未設定",
     "leaveTitle": "離開診所",
     "leaveSub": "不再為這位醫師工作。你可以憑新的邀請加入其他診所。",
-    "accountNotSecretary": "此帳戶無法接受祕書邀請。請使用透過邀請連結建立的另一個帳戶。"
+    "accountNotSecretary": "此帳戶無法接受祕書邀請。請使用透過邀請連結建立的另一個帳戶。",
+    "teamResendConfirm": "要向 {email} 傳送新邀請嗎？先前分享的邀請碼將失效。"
   }
 }

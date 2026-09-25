@@ -713,6 +713,7 @@
     "notSet": "Chưa thiết lập",
     "leaveTitle": "Rời phòng khám",
     "leaveSub": "Ngừng làm việc cho bác sĩ này. Bạn có thể tham gia phòng khám khác bằng lời mời mới.",
-    "accountNotSecretary": "Tài khoản này không thể nhận lời mời làm thư ký. Hãy dùng tài khoản riêng được tạo từ liên kết mời."
+    "accountNotSecretary": "Tài khoản này không thể nhận lời mời làm thư ký. Hãy dùng tài khoản riêng được tạo từ liên kết mời.",
+    "teamResendConfirm": "Gửi lời mời mới tới {email}? Mã bạn đã chia sẻ trước đó sẽ không còn dùng được."
   }
 }

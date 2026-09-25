@@ -713,6 +713,7 @@
     "notSet": "Non ancora configurato",
     "leaveTitle": "Lascia lo studio",
     "leaveSub": "Smetti di lavorare per questo medico. Potrai unirti a un altro studio con un nuovo invito.",
-    "accountNotSecretary": "Questo account non può accettare un invito in segreteria. Usa un account separato creato dal link di invito."
+    "accountNotSecretary": "Questo account non può accettare un invito in segreteria. Usa un account separato creato dal link di invito.",
+    "teamResendConfirm": "Inviare un nuovo invito a {email}? Il codice condiviso in precedenza smetterà di funzionare."
   }
 }

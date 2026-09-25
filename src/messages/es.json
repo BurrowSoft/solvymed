@@ -713,6 +713,7 @@
     "notSet": "Aún sin configurar",
     "leaveTitle": "Salir de la clínica",
     "leaveSub": "Dejar de trabajar para este médico. Puedes unirte a otra clínica con una nueva invitación.",
-    "accountNotSecretary": "Esta cuenta no puede aceptar una invitación al equipo. Usa una cuenta aparte creada desde el enlace de invitación."
+    "accountNotSecretary": "Esta cuenta no puede aceptar una invitación al equipo. Usa una cuenta aparte creada desde el enlace de invitación.",
+    "teamResendConfirm": "¿Enviar una nueva invitación a {email}? El código que compartiste antes dejará de funcionar."
   }
 }

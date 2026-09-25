@@ -713,6 +713,7 @@
     "notSet": "Pas encore configuré",
     "leaveTitle": "Quitter le cabinet",
     "leaveSub": "Ne plus travailler pour ce médecin. Vous pourrez rejoindre un autre cabinet avec une nouvelle invitation.",
-    "accountNotSecretary": "Ce compte ne peut pas accepter une invitation de secrétaire. Utilisez un compte distinct créé depuis le lien d'invitation."
+    "accountNotSecretary": "Ce compte ne peut pas accepter une invitation de secrétaire. Utilisez un compte distinct créé depuis le lien d'invitation.",
+    "teamResendConfirm": "Envoyer une nouvelle invitation à {email} ? Le code partagé précédemment ne fonctionnera plus."
   }
 }

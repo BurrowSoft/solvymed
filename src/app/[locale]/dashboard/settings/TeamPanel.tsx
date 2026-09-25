@@ -133,7 +133,7 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
                 <div className="flex shrink-0 gap-3">
                   <button
                     type="button"
-                    onClick={() => invite(inv.email)}
+                    onClick={() => { if (window.confirm(t("teamResendConfirm", { email: inv.email }))) invite(inv.email); }}
                     disabled={pending}
                     className="text-sm font-semibold text-teal-600 hover:text-teal-700 disabled:opacity-60"
                   >

@@ -713,6 +713,7 @@
     "notSet": "Belum diatur",
     "leaveTitle": "Keluar dari klinik",
     "leaveSub": "Berhenti bekerja untuk dokter ini. Anda dapat bergabung ke klinik lain dengan undangan baru.",
-    "accountNotSecretary": "Akun ini tidak dapat menerima undangan sekretaris. Gunakan akun terpisah yang dibuat dari tautan undangan."
+    "accountNotSecretary": "Akun ini tidak dapat menerima undangan sekretaris. Gunakan akun terpisah yang dibuat dari tautan undangan.",
+    "teamResendConfirm": "Kirim undangan baru ke {email}? Kode yang Anda bagikan sebelumnya tidak akan berlaku lagi."
   }
 }

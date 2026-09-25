@@ -713,6 +713,7 @@
     "notSet": "Not set up yet",
     "leaveTitle": "Leave clinic",
     "leaveSub": "Stop working for this doctor. You can join another clinic with a new invite.",
-    "accountNotSecretary": "This account can't accept a secretary invite. Use a separate account created from the invite link."
+    "accountNotSecretary": "This account can't accept a secretary invite. Use a separate account created from the invite link.",
+    "teamResendConfirm": "Send a new invite to {email}? The code you shared before will stop working."
   }
 }
