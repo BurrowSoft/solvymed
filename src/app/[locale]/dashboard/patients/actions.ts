@@ -2,44 +2,108 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getEffectiveProfId, isProfessionalRole } from "@/lib/effectiveProfId";
 
-export async function createPatient(formData: FormData) {
+export type PatientMatch = { id: string; full_name: string; phone: string | null; birth_date: string | null };
+
+export type CreatePatientResult =
+  | { success: true }
+  | { error: string; code: "generic" | "name_required" }
+  // Possible duplicates found before saving. The user chooses "Open
+  // existing" or "Create anyway" (resubmits with force=1).
+  | { error: string; code: "possible_match"; matches: PatientMatch[] }
+  // A real duplicate (unique CPF or email). Nothing was saved.
+  | { error: string; code: "already_registered"; existing: { id: string; full_name: string } | null };
+
+export async function createPatient(formData: FormData): Promise<CreatePatientResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "Unauthorized", code: "generic" };
+  // A secretary manages their doctor's patients, not their own (empty) id.
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const fullName = (formData.get("full_name") as string)?.trim();
-  if (!fullName) return { error: "Full name is required" };
+  if (!fullName) return { error: "Full name is required", code: "name_required" };
 
   const email = (formData.get("email") as string)?.trim().toLowerCase() || null;
+  const phone = (formData.get("phone") as string)?.trim() || null;
+  const cpf = (formData.get("cpf") as string)?.trim() || null;
+  const birthDate = (formData.get("birth_date") as string) || null;
+  const force = formData.get("force") === "1";
 
-  // Duplicate email check
+  // Email must be unique per doctor.
   if (email) {
     const { data: existing } = await supabase
       .from("patients")
       .select("id, full_name")
-      .eq("professional_id", user.id)
+      .eq("professional_id", effectiveProfId)
       .ilike("email", email)
       .limit(1);
-    if (existing?.length) return { error: `A patient with this email already exists: ${existing[0].full_name}` };
+    if (existing?.length) {
+      return { error: "Already registered", code: "already_registered", existing: existing[0] as { id: string; full_name: string } };
+    }
+  }
+
+  // Warn about likely duplicates (same phone digits, or same name + birth
+  // date) before creating another record. This is a convenience, not a
+  // boundary: if the lookup fails, creation goes ahead, and the unique CPF
+  // index still stops true duplicates. It returns no clinical fields.
+  if (!force) {
+    const { data: similar, error: similarError } = await supabase.rpc("find_similar_patients", {
+      p_name: fullName,
+      p_phone: phone,
+      p_birth_date: birthDate,
+      p_cpf: cpf,
+    });
+    if (!similarError && Array.isArray(similar) && similar.length > 0) {
+      const matches = (similar as PatientMatch[]).map(({ id, full_name, phone, birth_date }) => ({ id, full_name, phone, birth_date }));
+      return { error: "Possible match", code: "possible_match", matches };
+    }
   }
 
   const { error } = await supabase.from("patients").insert({
-    professional_id: user.id,
+    professional_id: effectiveProfId,
     full_name: fullName,
     email,
-    phone: (formData.get("phone") as string)?.trim() || null,
-    cpf: (formData.get("cpf") as string)?.trim() || null,
+    phone,
+    cpf,
     sex: (formData.get("sex") as string) || null,
-    birth_date: (formData.get("birth_date") as string) || null,
+    birth_date: birthDate,
     profession: (formData.get("profession") as string)?.trim() || null,
     emergency_phone: (formData.get("emergency_phone") as string)?.trim() || null,
     convenio_type: (formData.get("convenio_type") as string) || null,
   });
 
   if (error) {
-    if (error.code === "23505") return { error: "A patient with this email already exists." };
-    return { error: error.message };
+    if (error.code === "23505") {
+      // A unique CPF (patients_professional_cpf_key) or email collision.
+      // Look the existing patient up so the user can open it.
+      let existing: { id: string; full_name: string } | null = null;
+      if (cpf) {
+        // The RPC can also return name/phone matches, so pick the row whose
+        // CPF is the one that collided, not just the first result.
+        const digits = (v: string | null | undefined) => (v ?? "").replace(/\D/g, "");
+        const { data } = await supabase.rpc("find_similar_patients", { p_name: fullName, p_cpf: cpf });
+        const hit = Array.isArray(data)
+          ? (data as (PatientMatch & { cpf?: string | null })[]).find((m) => digits(m.cpf) === digits(cpf))
+          : undefined;
+        if (hit) existing = { id: hit.id, full_name: hit.full_name };
+      }
+      // An email collision (e.g. two creates racing past the pre-check
+      // above): look the patient up by the same normalized email.
+      if (!existing && email) {
+        const { data } = await supabase
+          .from("patients")
+          .select("id, full_name")
+          .eq("professional_id", effectiveProfId)
+          .ilike("email", email)
+          .limit(1);
+        if (data?.length) existing = data[0] as { id: string; full_name: string };
+      }
+      return { error: "Already registered", code: "already_registered", existing };
+    }
+    return { error: error.message, code: "generic" };
   }
   revalidatePath("/dashboard/patients");
   return { success: true };
@@ -49,6 +113,9 @@ export async function updatePatient(id: string, formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // A secretary manages their doctor's patients, not their own (empty) id.
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   const fullName = (formData.get("full_name") as string)?.trim();
   if (!fullName) return { error: "Full name is required" };
@@ -63,7 +130,7 @@ export async function updatePatient(id: string, formData: FormData) {
     profession: (formData.get("profession") as string)?.trim() || null,
     emergency_phone: (formData.get("emergency_phone") as string)?.trim() || null,
     convenio_type: (formData.get("convenio_type") as string) || null,
-  }).eq("id", id).eq("professional_id", user.id);
+  }).eq("id", id).eq("professional_id", effectiveProfId);
 
   if (error) return { error: error.message };
   revalidatePath(`/dashboard/patients/${id}`);
@@ -75,8 +142,11 @@ export async function deletePatient(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // A secretary manages their doctor's patients, not their own (empty) id.
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
-  const { error } = await supabase.from("patients").delete().eq("id", id).eq("professional_id", user.id);
+  const { error } = await supabase.from("patients").delete().eq("id", id).eq("professional_id", effectiveProfId);
   if (error) return { error: error.message };
   revalidatePath("/dashboard/patients");
   return { success: true };
@@ -86,6 +156,9 @@ export async function createRecord(patientId: string, formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
+  // not a boundary, since these actions are directly callable.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
 
   const content = (formData.get("content") as string)?.trim();
   if (!content) return { error: "Record content is required" };
@@ -109,6 +182,9 @@ export async function deleteRecord(id: string, patientId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
+  // not a boundary, since these actions are directly callable.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
 
   const { error } = await supabase.from("medical_records").delete().eq("id", id).eq("professional_id", user.id);
   if (error) return { error: error.message };
@@ -120,6 +196,9 @@ export async function createPrescription(patientId: string, formData: FormData) 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
+  // not a boundary, since these actions are directly callable.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
 
   const notes = (formData.get("notes") as string)?.trim() || null;
   const date = new Date().toISOString().split("T")[0];
@@ -165,12 +244,15 @@ export async function toggleBookingBlock(patientId: string, blocked: boolean) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // A secretary manages their doctor's patients, not their own (empty) id.
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   const { error } = await supabase
     .from("patients")
     .update({ booking_blocked: blocked })
     .eq("id", patientId)
-    .eq("professional_id", user.id);
+    .eq("professional_id", effectiveProfId);
 
   if (error) return { error: error.message };
   revalidatePath(`/dashboard/patients/${patientId}`);
@@ -194,6 +276,9 @@ export async function deletePrescription(id: string, patientId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
+  // not a boundary, since these actions are directly callable.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
 
   await supabase.from("prescription_items").delete().eq("prescription_id", id);
   const { error } = await supabase.from("prescriptions").delete().eq("id", id).eq("professional_id", user.id);

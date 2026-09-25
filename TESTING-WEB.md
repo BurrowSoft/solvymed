@@ -2193,6 +2193,209 @@ configuration. The test-mode portal is enabled and works, as above.
 
 **Merge gate: 🟢 for `d72ecd4`.**
 
+## PR #13 (`feat/secretary-accounts`) — secretary accounts + server-only roles, 🟢 at `f58dc76`
+
+**Scope: this entry covers exactly `f58dc76`.** Both suites ran green on
+it: 13/13, the 9 secretary tests plus the 4 signup-regression tests. The
+signup suite was also green on `c7c763c`. The run was against the live DB
+with migration 088 live, in an isolated worktree on port 3001.
+- **Accounts:** all throwaways.
+- **Confirming signups:** the signup form hardcodes the production
+  callback URL. So each UI signup was confirmed through this app's own
+  `/api/auth/callback`, with a real `token_hash` from the admin
+  `generate_link` API. The real callback code runs.
+- **Doctor-only actions:** called directly by replaying real server
+  actions. The action ids come from the dev bundle, with the same
+  multipart encoding the client uses. Positive control: the doctor's
+  replay of `updateProfile` works.
+
+**🟢 (1) Invite → signup → linked.**
+- **Invite:** the doctor invites an email from Settings → Team. The code
+  (`S-XXXXXXXX`) is shown once, with **Copy code**, **Copy link** and
+  **WhatsApp**. The WhatsApp text carries
+  `/join/secretary/<code>?email=<invitee>`.
+- **Signed out:** the link shows "You've been invited as a secretary" →
+  **Create account** → signup. The page says "Joining as a secretary via
+  invite link.", the email is pre-filled and `readonly`, and there's no
+  role picker.
+- **After confirming:** the user lands on `/dashboard`. `user_roles` is
+  `secretary` with `invited_by_professional_id` = the doctor, and no
+  `professionals` row is created for them.
+
+**🟢 (2) A linked secretary sees the doctor's real data.**
+- **Home:** "Good evening, Opus 👋" (their own name, no "Dr."). No
+  **Monthly Revenue** card. The doctor's appointment is listed.
+- **Sidebar:** no **Clinics** link. Opening `/dashboard/clinics` directly
+  redirects to Settings.
+- **Schedule and Patients:** show the doctor's appointment and patients.
+- **Patient detail:** tabs are **Info | Appointments** only. No Records
+  or Prescriptions, and the seeded clinical note isn't on the page.
+- **Payments:** only the **Pending** card; no Received or Total card.
+  **Mark Paid** sets `payment_status: paid` in the DB.
+- **Create, edit:** a secretary-created patient belongs to the doctor
+  (`professional_id`), with `created_by` = the secretary. Its detail shows
+  "Opus Secone Tester (secretary)" to both the secretary and the doctor;
+  a doctor-created patient shows none. Edit saves.
+
+**🟢 (3) Secretary settings are read-only, and every doctor-only write is
+refused, even when called directly.**
+- **Settings:** "You work for Opus Maindoc at Opus Clinic Test.", "Only
+  the doctor can change these.", no profile inputs, no Team card, and
+  **Leave Opus Maindoc's clinic** is shown.
+- **Regenerate:** the secretary's **Regenerate** changes the *doctor's*
+  `public_invite_code` and doesn't create a professionals row for the
+  secretary.
+- **Direct server actions, with the secretary's session:**
+  - `updateClinic`, `updateWorkingHours` and `createProcedure` return
+    "Only the doctor can change these settings".
+  - `addClinic` returns "Only the doctor can manage clinics".
+  - `createRecord` and `createPrescription` return "Only the doctor can
+    manage clinical records".
+  - `updateProfile` showed no refusal text in the part of the response I
+    logged, but the DB proves it was refused: afterwards the doctor's
+    name, clinic and hours are unchanged, there's no professionals row for
+    the secretary, and no hack procedure, clinic, record or prescription
+    exists.
+- **Straight at PostgREST with the secretary's JWT:**
+  - Reading `medical_records` or `prescriptions` for the doctor's patient
+    returns `[]`.
+  - Inserting a `medical_record` returns 403.
+  - A PATCH to the doctor's `professionals` row changes 0 rows.
+  - `patients` is readable, as intended.
+
+**🟢 (4) `/join/secretary/<code>` while signed in.**
+- **Patient:** "This is a patient account…". The test patient was linked
+  to a doctor first, so it has a real role row.
+- **Doctor:** "This is a doctor account…".
+- **Linked secretary:** "You already work for Opus Maindoc's clinic.
+  Leave it in Settings…".
+- **Unlinked secretary with a different email:** "Invite not valid". The
+  invite is bound to its email.
+- **Garbled URLs never return 5xx.** `S-%21%21%21` shows "Invite not
+  valid". Malformed %-encodings (`%E0%A4%A`, `%ZZ`) get Next's own 404,
+  and double-encoded ones get a 400, before the page runs. So the page's
+  `decodeURIComponent` guard is unreachable in practice, and those users
+  see a plain 404 or 400 rather than the friendly message. Minor, not
+  blocking.
+
+**🟢 (5) Team management.**
+- **Limit:** with 1 member and 2 pending, the invite input is disabled and
+  "Your team is full (3)…" is shown.
+- **Resend:** asks "Send a new invite to <email>? The code you shared
+  before will stop working." (`8ddf5fb`) and issues a new code. The old
+  code shows "Invite not valid" to the invitee.
+- **Decline:** the invitee's **Decline** shows "You declined this invite."
+  and the account stays unlinked.
+- **Revoke:** frees the slot, and the input is enabled again.
+- **Remove:** the removed secretary's `/dashboard` goes to
+  `/auth/not-connected`.
+- **Typed codes:** on Not connected, a typed code works without "S-" and
+  in lowercase, and also as `s-…`. Both go to Accept, and then the
+  secretary is relinked.
+- **Leave clinic:** goes to `/auth/not-connected`, with the link cleared.
+
+**🟢 (6) Lapsed doctor subscription.**
+- **Secretary:** `/dashboard`, and even `/subscribe`, go to
+  `/auth/clinic-inactive` ("Opus Maindoc's SolvyMed subscription is
+  inactive…"). They never see the paywall.
+- **Doctor:** gets `/subscribe` as before.
+- **Restored:** once the subscription is restored, the secretary is back
+  on the dashboard.
+
+**🟢 (7) Duplicate patients.**
+- **Same name and phone:** "Possible match…" with **Open existing** and
+  **Create anyway**. **Create anyway** creates the second record.
+- **Same CPF:** first shows the possible-match prompt. **Create anyway**
+  then gives "Opus Seed Patient is already registered." and **Open
+  patient**, and nothing is created. The link points at the patient who
+  actually holds that CPF, not the same-name duplicate (`f58dc76`).
+
+**🟢 (8) Signup regression, now that `user_roles` is server-only (088).**
+- **New doctor** (UI signup, confirmed): `/dashboard` with "Dr. …";
+  `user_roles` is `professional`; `professionals` is `trial` with a
+  future `trial_ends_at`.
+- **New patient via `/join/<doctor's public code>`:** "Joining as patient
+  via invite link." → `/auth/pending-confirmation`; role `patient` and
+  `invited_by_professional_id` = that doctor.
+- **New patient with a typed patient invite code:**
+  `/auth/patient-welcome`; role `patient` and `linked_patient_id` = that
+  patient record.
+- **The user's own session can't write `user_roles`:** PATCH, POST and
+  DELETE all return **403** (42501), and the role is unchanged.
+- **Existing doctor login:** still reaches the dashboard.
+
+**🟢 Locale and sidebar** (`bc9e2f6`, `2cae89f`).
+- **Sign-out:** from `/pt-BR/auth/not-connected` lands on `/pt-BR`, and so
+  does the sidebar sign-out from `/pt-BR/dashboard`.
+- **Sidebar label:** the secretary is shown by name with no "Dr.", in
+  pt-BR too.
+
+**Copy note (pt-BR and es), for UX, not blocking.** The secretary-facing
+wording is gender-neutral: "equipe de secretaria" / "equipo de
+secretaría", "Essa pessoa…", "E-mail de quem vai entrar na equipe". The
+*doctor*, though, is masculine throughout:
+- pt-BR: "Peça ao seu médico", "Um médico convidou você", "Peça que ele
+  libere", "Somente o médico pode…", "conta de médico".
+- es: "Pide a tu médico", "Solo el médico…".
+- Both: "convidar a si mesmo" / "invitarte a ti mismo".
+
+Whether "neutral" was meant to cover the doctor too is UX's call.
+
+**Found along the way, not part of #13.**
+- **Unreadable auth rows:** Supabase Auth's admin "list users" returns 500
+  for 8 `auth.users` rows, around the ones created Aug 29–30 ("Database
+  error finding users"). Any page that includes them fails, so every
+  page size of 50 or more fails. I sent this to mob dev with a query to
+  find NULL token columns, and changed nothing.
+- **Correction to the #11 entry:** because of this, my earlier leftover
+  sweeps for #11 and #12 silently listed 0 users. There were 2 leftover
+  `e2e-test-opus-pr11-*` accounts after all, from a run killed by a
+  timeout. They're deleted now. The in-run cleanups, which delete by id,
+  were unaffected.
+
+**Cleaned up.**
+- 0 `e2e-test-opus-*` accounts left: swept in pages of 10, which skips the
+  broken page. That includes 8 from killed #13 runs and the 2 #11 ones.
+- 0 `Opus*` patients or professionals left.
+- The shared doctor wasn't used: still `trial`, code `M2WBHY`, and no
+  secretaries.
+
+**Merge gate: 🟢 for `f58dc76`.**
+
+**Addendum: 🟢 re-confirmed at `33f73d4`.** The two commits on top,
+`a35776f` (the doctor is gender-neutral in all locales) and `33f73d4`
+(three French strings), change only `src/messages/*.json`; I checked the
+diff. No code changed, so the 13/13 run above carries over.
+
+**Spot-check, rendered live in pt-BR and es:**
+- **Signup note:** "Trabalha na secretaria? Peça um link de convite à
+  clínica onde você trabalha." / "¿Trabajas en secretaría? Pide un enlace
+  de invitación a la clínica donde trabajas."
+- **Signed-out `/join/secretary/<code>`:** "Você recebeu um convite para a
+  equipe da secretaria" / "Tienes una invitación al equipo de secretaría".
+- **Doctor account on an invite:** "Esta é uma conta profissional…" /
+  "Esta es una cuenta profesional…".
+- **Not connected:** the title renders, and the body asks "à clínica onde
+  você trabalha" / "a la clínica donde trabajas".
+- **Team, invite your own email:** "Você não pode usar seu próprio
+  e-mail." / "No puedes usar tu propio correo."
+- **Secretary's Settings:** "Somente a conta principal da clínica pode
+  alterar isto." / "Solo la cuenta principal de la clínica puede cambiar
+  esto.", plus **Sair da clínica** / **Salir de la clínica**, and "Deixar
+  esta clínica…" / "Dejar esta clínica…".
+
+**String review.** I scanned pt-BR and es for masculine references to the
+doctor in the secretary, signup, settings and patient strings. None are
+left in the #13 copy. Two pre-existing patient-signup strings are still
+masculine, "Médico" (the role label) and "código do médico" / "código del
+médico" (the invite-code hint), but #13 didn't touch them. **French**
+(`33f73d4`, checked in the JSON, not rendered): "mon secrétariat",
+"Cette personne…", "E-mail de la personne invitée".
+
+Clean-up: the 3 throwaway accounts are deleted.
+
+**Merge gate: 🟢 for `33f73d4`.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo

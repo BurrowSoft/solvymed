@@ -14,6 +14,8 @@ type Patient = {
   sex?: string; birth_date?: string; profession?: string; emergency_phone?: string;
   convenio_type?: string; invite_code?: string; created_at: string;
   booking_blocked?: boolean;
+  // Set by a server trigger on insert (migration 088); can't be forged.
+  professional_id?: string; created_by?: string | null; created_by_name?: string | null;
 };
 
 function Dialog({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
@@ -177,6 +179,17 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
     { label: t("emergencyPhone"), value: patient.emergency_phone },
     { label: t("insurance"), value: patient.convenio_type === "health_plan" ? t("healthPlan") : patient.convenio_type === "particular" ? t("privateInsurance") : null },
     { label: t("patientSince"), value: new Date(patient.created_at).toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" }) },
+    // Only when someone other than the doctor (i.e. a secretary) added
+    // the patient.
+    {
+      label: t("addedBy"),
+      value: patient.created_by && patient.created_by !== patient.professional_id && patient.created_by_name
+        ? t("addedBySecretary", {
+            name: patient.created_by_name,
+            date: new Date(patient.created_at).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" }),
+          })
+        : null,
+    },
   ];
 
   if (!editing) {

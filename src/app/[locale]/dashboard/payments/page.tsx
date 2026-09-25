@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { PeriodFilter, MarkPaidButton, MarkUnpaidButton } from "./PaymentsClient";
@@ -48,6 +49,11 @@ export default async function PaymentsPage({
   ]);
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
+  // A secretary works their doctor's payments (view, mark paid), not their
+  // own (empty) id.
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
+  const isSecretary = effectiveProfId !== user.id;
 
   const { from, to } = getDateRange(period);
 
@@ -55,7 +61,7 @@ export default async function PaymentsPage({
     supabase
       .from("appointments")
       .select("id, patient_name, date, start_time, consultation_type, payment_amount, payment_type")
-      .eq("professional_id", user.id)
+      .eq("professional_id", effectiveProfId)
       .eq("payment_status", "pending")
       .neq("status", "blocked")
       .neq("status", "cancelled")
@@ -65,7 +71,7 @@ export default async function PaymentsPage({
     supabase
       .from("appointments")
       .select("id, patient_name, date, start_time, consultation_type, payment_amount, payment_type")
-      .eq("professional_id", user.id)
+      .eq("professional_id", effectiveProfId)
       .eq("payment_status", "paid")
       .gte("date", from)
       .lte("date", to)
@@ -101,16 +107,21 @@ export default async function PaymentsPage({
           <p className="mt-1 text-2xl font-extrabold text-orange-900">{formatBRL(totalPending)}</p>
           <p className="text-xs text-orange-600">{t("sessions", { n: pending.length })}</p>
         </div>
-        <div className="rounded-2xl border border-green-100 bg-green-50 p-5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-green-600">{t("receivedLabel")}</p>
-          <p className="mt-1 text-2xl font-extrabold text-green-900">{formatBRL(totalPaid)}</p>
-          <p className="text-xs text-green-600">{t("sessions", { n: paid.length })}</p>
-        </div>
-        <div className="rounded-2xl border border-teal-100 bg-teal-50 p-5 col-span-2 sm:col-span-1">
-          <p className="text-xs font-semibold uppercase tracking-wide text-teal-600">{t("totalLabel")}</p>
-          <p className="mt-1 text-2xl font-extrabold text-teal-900">{formatBRL(totalPending + totalPaid)}</p>
-          <p className="text-xs text-teal-600">{t("sessions", { n: pending.length + paid.length })}</p>
-        </div>
+        {/* Received/total sums are the practice's revenue: doctor only. */}
+        {!isSecretary && (
+          <>
+            <div className="rounded-2xl border border-green-100 bg-green-50 p-5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-green-600">{t("receivedLabel")}</p>
+              <p className="mt-1 text-2xl font-extrabold text-green-900">{formatBRL(totalPaid)}</p>
+              <p className="text-xs text-green-600">{t("sessions", { n: paid.length })}</p>
+            </div>
+            <div className="rounded-2xl border border-teal-100 bg-teal-50 p-5 col-span-2 sm:col-span-1">
+              <p className="text-xs font-semibold uppercase tracking-wide text-teal-600">{t("totalLabel")}</p>
+              <p className="mt-1 text-2xl font-extrabold text-teal-900">{formatBRL(totalPending + totalPaid)}</p>
+              <p className="text-xs text-teal-600">{t("sessions", { n: pending.length + paid.length })}</p>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">

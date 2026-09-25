@@ -34,6 +34,10 @@ export default async function SubscribePage({
     redirect(`/${locale === "en" ? "" : locale + "/"}auth/pending-confirmation`);
   }
   if (roleRow?.role === "patient") redirect(`/${locale === "en" ? "" : locale + "/"}my-appointments`);
+  // A secretary never sees the paywall: they can't pay for their doctor's
+  // subscription. The dashboard layout routes them (working, not connected,
+  // or "subscription inactive").
+  if (roleRow?.role === "secretary") redirect(`/${locale === "en" ? "" : locale + "/"}dashboard`);
   if (!roleRow?.role && user.user_metadata?.role === "patient") {
     // Pending patient (invite code never resolved) — don't let them into the
     // professional subscription flow, send back to the retry form.

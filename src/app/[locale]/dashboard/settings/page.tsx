@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, SchedulingRulesForm, BlockedPatientsPanel, InviteCodeCard } from "./SettingsClient";
+import { TeamPanel, type TeamRow } from "./TeamPanel";
+import { SecretarySettings } from "./SecretarySettings";
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 type WorkingHours = Record<DayKey, { enabled: boolean; start: string; end: string }>;
@@ -18,19 +20,27 @@ export default async function SettingsPage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
 
-  // generatePublicInviteCode() operates on the caller's own professionals
-  // row (SECURITY DEFINER using auth.uid() internally) — it has no concept
-  // of "generate for my delegating professional". A secretary calling it
-  // would target their own (nonexistent) professional identity, not their
-  // doctor's, so the card is hidden for them rather than shown broken.
   const { data: userRoleData } = await supabase
     .from("user_roles")
-    .select("role")
+    .select("role, invited_by_professional_id")
     .eq("user_id", user.id)
     .maybeSingle();
-  const isSecretary = userRoleData?.role === "secretary";
 
-  const [profResult, procsResult, blockedResult] = await Promise.all([
+  // A secretary gets their own view: the doctor's practice read-only via
+  // RPCs, never the editable forms below (which would write under the
+  // secretary's own id, and whose actions refuse them anyway).
+  if (userRoleData?.role === "secretary" && userRoleData.invited_by_professional_id) {
+    return (
+      <div className="p-6 lg:p-8 max-w-3xl">
+        <div className="mb-8">
+          <h1 className="text-2xl font-extrabold text-slate-900">{t("pageTitle")}</h1>
+        </div>
+        <SecretarySettings supabase={supabase} doctorId={userRoleData.invited_by_professional_id as string} locale={locale} />
+      </div>
+    );
+  }
+
+  const [profResult, procsResult, blockedResult, teamResult] = await Promise.all([
     supabase
       .from("professionals")
       .select("full_name, specialty, clinic_name, clinic_cnpj, clinic_phone, clinic_website, clinic_address, clinic_city, clinic_state, pix_key, working_hours, max_concurrent_bookings, public_invite_code")
@@ -48,6 +58,7 @@ export default async function SettingsPage({
       .eq("professional_id", user.id)
       .eq("booking_blocked", true)
       .order("full_name"),
+    supabase.rpc("list_my_team"),
   ]);
 
   // A failed load must not fall through to the blank defaults below: the
@@ -75,6 +86,7 @@ export default async function SettingsPage({
   const blockedPatients = (blockedResult.data ?? []) as {
     id: string; full_name: string; email?: string; phone?: string;
   }[];
+  const teamRows = (Array.isArray(teamResult.data) ? teamResult.data : []) as TeamRow[];
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl">
@@ -89,9 +101,9 @@ export default async function SettingsPage({
           specialty={prof.specialty ?? undefined}
         />
 
-        {!isSecretary && (
-          <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} />
-        )}
+        <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} />
+
+        <TeamPanel rows={teamRows} loadFailed={!!teamResult.error} />
 
         <ClinicForm
           data={{

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import { Logo } from "@/components/Logo";
 export default function LoginPage() {
   const t = useTranslations("auth");
   const params = useParams();
+  const searchParams = useSearchParams();
   const locale = (params.locale as string) ?? "en";
   const router = useRouter();
 
@@ -57,6 +58,11 @@ export default function LoginPage() {
       } else {
         dest = localePath("/dashboard");
       }
+      // A secretary invite link sends signed-out visitors here with
+      // ?next=<that invite>. Only that exact shape is honored, never an
+      // arbitrary URL, so this can't become an open redirect.
+      const next = searchParams.get("next");
+      if (next && /^(\/[a-zA-Z-]{2,5})?\/join\/secretary\/S-[A-Z0-9]+$/.test(next)) dest = next;
       router.push(dest);
       router.refresh();
     }

@@ -36,22 +36,19 @@ export default async function AuthConfirmPage({
   // session cookies that were set via the cookie store above.
   if (platform === "web") {
     if (role === "secretary") {
-      // user_metadata is client-writable — refuse to overwrite an existing
-      // role, same guard as api/auth/callback/route.ts and the patient
-      // branch below.
-      const { data: existingSecretaryRole, error: secretaryRoleLookupError } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", data.user.id)
-        .maybeSingle();
-      // A failed lookup must fail closed, not be treated as "no existing
-      // role" — same reasoning as api/auth/callback/route.ts.
-      if (!secretaryRoleLookupError && !existingSecretaryRole?.role) {
-        await supabase.from("user_roles").upsert(
-          { user_id: data.user.id, role: "secretary" },
-          { onConflict: "user_id" },
-        );
+      // Server-only linking, same as api/auth/callback/route.ts: the row
+      // exists from signup (handle_new_user), and accept_secretary_invite
+      // attaches it to the doctor with this user's session, refusing
+      // patient and professional accounts itself. On failure the row stays
+      // unlinked and the dashboard shows "Not connected".
+      const secretaryCode = data.user.user_metadata?.secretary_invite_code as string | undefined;
+      if (secretaryCode) {
+        const { error: acceptError } = await supabase.rpc("accept_secretary_invite", { p_code: secretaryCode });
+        if (acceptError) console.error("Secretary invite accept failed at confirmation:", acceptError.message);
       }
+      // Stay in the signup's locale; the dashboard routes linked vs "Not
+      // connected".
+      redirect(`${prefix}/dashboard`);
     }
     if (role === "patient") {
       // Refuse to touch an existing role — matches the guard on the

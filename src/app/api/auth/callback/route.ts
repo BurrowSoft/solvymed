@@ -71,30 +71,20 @@ export async function GET(request: NextRequest) {
     const inviteCode = meta.invite_code as string | undefined;
 
     if (role === "secretary") {
-      // user_metadata is client-writable (supabase.auth.updateUser()) — an
-      // existing patient or professional could set role="secretary" on
-      // their own account, then trigger this callback again via any
-      // legitimate magic-link/OTP flow for their own email, silently
-      // overwriting their real role. Refuse to touch an existing role,
-      // same guard the patient branch already has below.
-      const { data: existingRole, error: roleLookupError } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", sessionUser.id)
-        .maybeSingle();
-      // A failed lookup must never be treated the same as "no existing
-      // role" — that would reopen exactly the escalation path this guard
-      // exists to close. Fail closed: skip the upsert on any error.
-      if (!roleLookupError && !existingRole?.role) {
-        await supabase.from("user_roles").upsert(
-          { user_id: sessionUser.id, role: "secretary" },
-          { onConflict: "user_id" },
-        );
+      // Linking is server-only; there's no client-side user_roles write
+      // anymore. handle_new_user created the row at signup (role secretary,
+      // no link), and accept_secretary_invite attaches it to the doctor,
+      // keyed on this session's auth.uid() and email. The RPC itself
+      // refuses patient and professional accounts, so client-writable
+      // metadata can't change anyone's role here. If it fails (the invite
+      // was revoked or expired meanwhile), the row just stays unlinked, and
+      // dashboard/layout.tsx shows "Not connected" with a code field.
+      const secretaryCode = meta.secretary_invite_code as string | undefined;
+      if (secretaryCode) {
+        const { error: acceptError } = await supabase.rpc("accept_secretary_invite", { p_code: secretaryCode });
+        if (acceptError) console.error("Secretary invite accept failed at confirmation:", acceptError.message);
       }
-      // dashboard/layout.tsx re-derives the correct destination from the
-      // persisted role either way, so this is safe even when the upsert
-      // above was skipped for an account that already has a different role.
-      redirectUrl = new URL("/dashboard", origin);
+      redirectUrl = new URL(`${localePrefix}/dashboard`, origin);
 
     } else if (role === "patient") {
       // Refuse to touch an existing role — matches the guard on the
@@ -153,27 +143,23 @@ export async function GET(request: NextRequest) {
       }
 
     } else {
-      // professional (default) — same guard as the secretary branch above:
-      // this is the fallback for any role value that isn't exactly
-      // "secretary" or "patient" (including missing/malformed metadata),
-      // so it's the easiest of the three to trigger by accident, not just
-      // by deliberate tampering.
+      // professional (default). user_roles is server-only (migration 088):
+      // handle_new_user creates the professional row at signup, and the
+      // client can no longer write it at all, so this branch only reads.
+      // A session with no row at all is, in practice, a patient mid-signup,
+      // so it goes to the invite-code form rather than getting a role
+      // written for it.
       const { data: existingRole, error: roleLookupError } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", sessionUser.id)
         .maybeSingle();
-      if (roleLookupError) {
-        // Fail closed — same reasoning as the secretary branch above.
-        redirectUrl = new URL("/dashboard", origin);
-      } else if (!existingRole?.role) {
-        await supabase.from("user_roles").upsert(
-          { user_id: sessionUser.id, role: "professional" },
-          { onConflict: "user_id" },
-        );
-        redirectUrl = new URL("/auth/professional-welcome", origin);
+      if (!roleLookupError && !existingRole?.role) {
+        redirectUrl = new URL(`${localePrefix}/auth/invite-required`, origin);
       } else {
-        redirectUrl = new URL("/dashboard", origin);
+        // dashboard/layout.tsx routes every persisted role (and fails
+        // closed on a lookup error).
+        redirectUrl = new URL(`${localePrefix}/dashboard`, origin);
       }
     }
   } else {
