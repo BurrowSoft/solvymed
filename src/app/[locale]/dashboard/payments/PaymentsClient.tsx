@@ -3,11 +3,16 @@
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTransition, useCallback, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { markPaid, markUnpaid, setPaymentAmount } from "./actions";
+import { markPaid, markUnpaid } from "./actions";
 
 function formatBRL(n: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
 }
+
+const ERROR_CODE_KEY: Record<string, string> = {
+  invalid_amount: "errorInvalidAmount",
+  generic: "errorGeneric",
+};
 
 export function PeriodFilter({ current }: { current: string }) {
   const t = useTranslations("payments");
@@ -52,50 +57,61 @@ export function MarkPaidButton({ id, amount }: { id: string; amount?: number }) 
   const [pending, startTransition] = useTransition();
   const [showAmount, setShowAmount] = useState(false);
   const [inputVal, setInputVal] = useState(amount?.toString() ?? "");
+  const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handlePaid() {
     if (!amount && !inputVal) { setShowAmount(true); return; }
     const finalAmount = parseFloat(inputVal) || amount || 0;
-    startTransition(async () => { await markPaid(id, finalAmount); });
+    setError("");
+    startTransition(async () => {
+      const result = await markPaid(id, finalAmount);
+      if (result?.error) setError(t((ERROR_CODE_KEY[result.code ?? ""] ?? "errorGeneric") as Parameters<typeof t>[0]));
+    });
   }
 
   if (showAmount) {
     return (
-      <div className="flex items-center gap-2">
-        <input
-          ref={inputRef}
-          type="number"
-          min="0"
-          step="0.01"
-          value={inputVal}
-          onChange={e => setInputVal(e.target.value)}
-          placeholder={t("amountPlaceholder")}
-          className="w-28 rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
-          autoFocus
-        />
-        <button
-          onClick={handlePaid}
-          disabled={pending}
-          className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-green-700 transition disabled:opacity-60"
-        >
-          {pending ? "…" : t("confirm")}
-        </button>
-        <button onClick={() => setShowAmount(false)} className="rounded-lg px-2 py-1.5 text-xs text-slate-400 hover:text-slate-600">
-          {t("cancel")}
-        </button>
+      <div className="flex flex-col items-start gap-1">
+        <div className="flex items-center gap-2">
+          <input
+            ref={inputRef}
+            type="number"
+            min="0"
+            step="0.01"
+            value={inputVal}
+            onChange={e => setInputVal(e.target.value)}
+            placeholder={t("amountPlaceholder")}
+            className="w-28 rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
+            autoFocus
+          />
+          <button
+            onClick={handlePaid}
+            disabled={pending}
+            className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-green-700 transition disabled:opacity-60"
+          >
+            {pending ? "…" : t("confirm")}
+          </button>
+          <button onClick={() => setShowAmount(false)} className="rounded-lg px-2 py-1.5 text-xs text-slate-400 hover:text-slate-600">
+            {t("cancel")}
+          </button>
+        </div>
+        {error && <p className="text-xs text-red-600">{error}</p>}
       </div>
     );
   }
 
   return (
-    <button
-      onClick={handlePaid}
-      disabled={pending}
-      className="rounded-lg bg-green-50 border border-green-200 px-3 py-1.5 text-xs font-bold text-green-700 hover:bg-green-100 transition disabled:opacity-60"
-    >
-      {pending ? "…" : t("markPaid")}
-    </button>
+    <div className="flex flex-col items-start gap-1">
+      <button
+        onClick={handlePaid}
+        disabled={pending}
+        className="rounded-lg bg-green-50 border border-green-200 px-3 py-1.5 text-xs font-bold text-green-700 hover:bg-green-100 transition disabled:opacity-60"
+      >
+        {pending ? "…" : t("markPaid")}
+      </button>
+      {error && <p className="text-xs text-red-600">{error}</p>}
+    </div>
   );
 }
 

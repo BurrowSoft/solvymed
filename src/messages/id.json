@@ -179,7 +179,11 @@
     "accept": "Terima",
     "decline": "Tolak",
     "slotTakenAlert": "Slot tersebut tidak lagi tersedia. Harap tolak dan biarkan pasien memilih waktu lain.",
-    "pastProposalAlert": "Waktu yang diusulkan sudah berlalu. Harap tolak agar pasien dapat meminta slot baru."
+    "pastProposalAlert": "Waktu yang diusulkan sudah berlalu. Harap tolak agar pasien dapat meminta slot baru.",
+    "useBookingCard": "Gunakan kartu permintaan janji temu untuk mengonfirmasi, menolak, atau mengusulkan waktu baru untuk permintaan ini.",
+    "genericError": "Terjadi kesalahan. Silakan coba lagi.",
+    "missingFieldsError": "Harap isi semua kolom yang wajib diisi.",
+    "pastMidnightError": "Waktu dan durasi ini akan melewati tengah malam."
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -191,7 +195,9 @@
     "confirm": "Konfirmasi",
     "cancel": "Batal",
     "amountPlaceholder": "Jumlah",
-    "revertConfirm": "Kembalikan pembayaran ini ke tertunda?"
+    "revertConfirm": "Kembalikan pembayaran ini ke tertunda?",
+    "errorInvalidAmount": "Silakan masukkan jumlah yang valid.",
+    "errorGeneric": "Terjadi kesalahan. Silakan coba lagi."
   },
   "paymentsPage": {
     "title": "Pembayaran",
@@ -369,6 +375,7 @@
     "regenerate": "Buat ulang",
     "copy": "Salin",
     "copied": "Disalin!",
+    "copyLink": "Salin tautan",
     "loadError": "Tidak dapat memuat pengaturan Anda. Silakan muat ulang halaman. Jika masalah berlanjut, hubungi dukungan."
   },
   "clinics": {
@@ -397,7 +404,9 @@
     "noMapPin": "Tidak ada pin peta — tambahkan alamat untuk muncul di peta",
     "empty": "Belum ada klinik",
     "emptySubtitle": "Tambahkan klinik Anda agar pasien dapat menemukan Anda",
-    "addFirst": "Tambahkan klinik pertama Anda"
+    "addFirst": "Tambahkan klinik pertama Anda",
+    "nameRequiredError": "Nama klinik wajib diisi.",
+    "genericError": "Terjadi kesalahan. Silakan coba lagi."
   },
   "consultType": {
     "consultation": "Konsultasi",
@@ -580,7 +589,11 @@
   "join": {
     "notFound": "Tautan undangan tidak ditemukan",
     "notFoundDesc": "Tautan ini mungkin tidak valid atau sudah kedaluwarsa. Minta dokter Anda untuk membagikan yang baru.",
-    "backToHome": "Ke halaman utama"
+    "backToHome": "Ke halaman utama",
+    "linkFailed": "Tidak dapat menyelesaikan tautan ini",
+    "linkFailedDesc": "Terjadi kesalahan saat menghubungkan akun Anda. Silakan coba lagi atau hubungi dukungan.",
+    "tooManyAttempts": "Terlalu banyak percobaan. Harap tunggu sebentar sebelum mencoba lagi.",
+    "alreadyInvitedByAnother": "Akun Anda sudah terhubung dengan dokter lain."
   },
   "versionGate": {
     "title": "Pembaruan Diperlukan",
@@ -608,6 +621,12 @@
     "trialBannerPrefix": "Uji coba gratis:",
     "trialBannerDay": "hari tersisa",
     "trialBannerDays": "hari tersisa",
-    "trialBannerCta": "Berlangganan Sekarang"
+    "trialBannerCta": "Berlangganan Sekarang",
+    "errorAlreadySubscribed": "Anda sudah berlangganan.",
+    "errorWrongRole": "Hanya profesional yang dapat berlangganan.",
+    "errorCheckFailed": "Tidak dapat memverifikasi status langganan Anda. Silakan coba lagi.",
+    "errorGeneric": "Tidak dapat memulai checkout. Silakan coba lagi.",
+    "errorNetwork": "Kesalahan jaringan. Silakan coba lagi.",
+    "errorPaymentLinkFailed": "Langganan Anda telah dibuat, tetapi kami tidak dapat memuat tautan pembayaran. Silakan periksa email Anda atau hubungi dukungan."
   }
 }

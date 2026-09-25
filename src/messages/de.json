@@ -179,7 +179,11 @@
     "accept": "Annehmen",
     "decline": "Ablehnen",
     "slotTakenAlert": "Dieser Termin ist nicht mehr verfügbar. Bitte ablehnen und den Patienten einen anderen Termin wählen lassen.",
-    "pastProposalAlert": "Der vorgeschlagene Zeitpunkt ist abgelaufen. Bitte ablehnen, damit der Patient einen neuen Termin anfordern kann."
+    "pastProposalAlert": "Der vorgeschlagene Zeitpunkt ist abgelaufen. Bitte ablehnen, damit der Patient einen neuen Termin anfordern kann.",
+    "useBookingCard": "Verwenden Sie die Terminanfragekarte, um diese Anfrage zu bestätigen, abzulehnen oder eine neue Zeit vorzuschlagen.",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "missingFieldsError": "Bitte füllen Sie alle Pflichtfelder aus.",
+    "pastMidnightError": "Diese Uhrzeit und Dauer würden über Mitternacht hinausgehen."
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -191,7 +195,9 @@
     "confirm": "Bestätigen",
     "cancel": "Abbrechen",
     "amountPlaceholder": "Betrag €",
-    "revertConfirm": "Diese Zahlung auf ausstehend zurücksetzen?"
+    "revertConfirm": "Diese Zahlung auf ausstehend zurücksetzen?",
+    "errorInvalidAmount": "Bitte geben Sie einen gültigen Betrag ein.",
+    "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
   },
   "paymentsPage": {
     "title": "Zahlungen",
@@ -369,6 +375,7 @@
     "regenerate": "Neu generieren",
     "copy": "Kopieren",
     "copied": "Kopiert!",
+    "copyLink": "Link kopieren",
     "loadError": "Ihre Einstellungen konnten nicht geladen werden. Bitte laden Sie die Seite neu. Wenn das Problem weiterhin besteht, wenden Sie sich an den Support."
   },
   "clinics": {
@@ -397,7 +404,9 @@
     "noMapPin": "Kein Kartenpin — fügen Sie eine Adresse hinzu, um auf der Karte zu erscheinen",
     "empty": "Noch keine Kliniken",
     "emptySubtitle": "Fügen Sie Ihre Klinik hinzu, damit Patienten Sie finden können",
-    "addFirst": "Erste Klinik hinzufügen"
+    "addFirst": "Erste Klinik hinzufügen",
+    "nameRequiredError": "Der Name der Klinik ist erforderlich.",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
   },
   "consultType": {
     "consultation": "Beratung",
@@ -580,7 +589,11 @@
   "join": {
     "notFound": "Einladungslink nicht gefunden",
     "notFoundDesc": "Dieser Link ist möglicherweise ungültig oder abgelaufen. Bitten Sie Ihren Arzt, einen neuen zu teilen.",
-    "backToHome": "Zur Startseite"
+    "backToHome": "Zur Startseite",
+    "linkFailed": "Dieser Link konnte nicht abgeschlossen werden",
+    "linkFailedDesc": "Beim Verknüpfen Ihres Kontos ist ein Fehler aufgetreten. Versuchen Sie es erneut oder kontaktieren Sie den Support.",
+    "tooManyAttempts": "Zu viele Versuche. Bitte warten Sie einen Moment, bevor Sie es erneut versuchen.",
+    "alreadyInvitedByAnother": "Ihr Konto ist bereits mit einem anderen Arzt verbunden."
   },
   "versionGate": {
     "title": "Update erforderlich",
@@ -608,6 +621,12 @@
     "trialBannerPrefix": "Testphase:",
     "trialBannerDay": "Tag übrig",
     "trialBannerDays": "Tage übrig",
-    "trialBannerCta": "Jetzt abonnieren"
+    "trialBannerCta": "Jetzt abonnieren",
+    "errorAlreadySubscribed": "Sie sind bereits abonniert.",
+    "errorWrongRole": "Nur Fachkräfte können abonnieren.",
+    "errorCheckFailed": "Ihr Abonnementstatus konnte nicht überprüft werden. Bitte versuchen Sie es erneut.",
+    "errorGeneric": "Der Bezahlvorgang konnte nicht gestartet werden. Bitte versuchen Sie es erneut.",
+    "errorNetwork": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
+    "errorPaymentLinkFailed": "Ihr Abonnement wurde erstellt, aber der Zahlungslink konnte nicht geladen werden. Bitte prüfen Sie Ihre E-Mail oder kontaktieren Sie den Support."
   }
 }

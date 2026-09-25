@@ -179,7 +179,11 @@
     "accept": "Chấp nhận",
     "decline": "Từ chối",
     "slotTakenAlert": "Không còn trống khung giờ này nữa. Vui lòng từ chối và để bệnh nhân chọn thời gian khác.",
-    "pastProposalAlert": "Thời gian đề xuất đã qua. Vui lòng từ chối để bệnh nhân có thể chọn khung giờ mới."
+    "pastProposalAlert": "Thời gian đề xuất đã qua. Vui lòng từ chối để bệnh nhân có thể chọn khung giờ mới.",
+    "useBookingCard": "Hãy dùng thẻ yêu cầu đặt lịch để xác nhận, từ chối hoặc đề xuất giờ khác cho yêu cầu này.",
+    "genericError": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "missingFieldsError": "Vui lòng điền đầy đủ các trường bắt buộc.",
+    "pastMidnightError": "Thời gian và thời lượng này sẽ vượt quá nửa đêm."
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -191,7 +195,9 @@
     "confirm": "Xác nhận",
     "cancel": "Hủy",
     "amountPlaceholder": "Số tiền",
-    "revertConfirm": "Hoàn nguyên khoản thanh toán này về chờ xử lý?"
+    "revertConfirm": "Hoàn nguyên khoản thanh toán này về chờ xử lý?",
+    "errorInvalidAmount": "Vui lòng nhập số tiền hợp lệ.",
+    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
   },
   "paymentsPage": {
     "title": "Thanh toán",
@@ -369,6 +375,7 @@
     "regenerate": "Tạo lại",
     "copy": "Sao chép",
     "copied": "Đã sao chép!",
+    "copyLink": "Sao chép liên kết",
     "loadError": "Không thể tải cài đặt của bạn. Vui lòng tải lại trang. Nếu sự cố vẫn tiếp diễn, hãy liên hệ bộ phận hỗ trợ."
   },
   "clinics": {
@@ -397,7 +404,9 @@
     "noMapPin": "Không có ghim bản đồ — thêm địa chỉ để xuất hiện trên bản đồ",
     "empty": "Chưa có phòng khám nào",
     "emptySubtitle": "Thêm phòng khám của bạn để bệnh nhân có thể tìm thấy bạn",
-    "addFirst": "Thêm phòng khám đầu tiên của bạn"
+    "addFirst": "Thêm phòng khám đầu tiên của bạn",
+    "nameRequiredError": "Tên phòng khám là bắt buộc.",
+    "genericError": "Đã xảy ra lỗi. Vui lòng thử lại."
   },
   "consultType": {
     "consultation": "Tư vấn",
@@ -580,7 +589,11 @@
   "join": {
     "notFound": "Không tìm thấy liên kết mời",
     "notFoundDesc": "Liên kết này có thể không hợp lệ hoặc đã hết hạn. Hãy yêu cầu bác sĩ chia sẻ một liên kết mới.",
-    "backToHome": "Về trang chủ"
+    "backToHome": "Về trang chủ",
+    "linkFailed": "Không thể hoàn tất liên kết này",
+    "linkFailedDesc": "Đã có lỗi khi liên kết tài khoản của bạn. Vui lòng thử lại hoặc liên hệ bộ phận hỗ trợ.",
+    "tooManyAttempts": "Quá nhiều lần thử. Vui lòng đợi một chút rồi thử lại.",
+    "alreadyInvitedByAnother": "Tài khoản của bạn đã được liên kết với một bác sĩ khác."
   },
   "versionGate": {
     "title": "Cần cập nhật",
@@ -608,6 +621,12 @@
     "trialBannerPrefix": "Dùng thử miễn phí:",
     "trialBannerDay": "ngày còn lại",
     "trialBannerDays": "ngày còn lại",
-    "trialBannerCta": "Đăng ký ngay"
+    "trialBannerCta": "Đăng ký ngay",
+    "errorAlreadySubscribed": "Bạn đã đăng ký rồi.",
+    "errorWrongRole": "Chỉ chuyên gia mới có thể đăng ký.",
+    "errorCheckFailed": "Không thể xác minh trạng thái đăng ký của bạn. Vui lòng thử lại.",
+    "errorGeneric": "Không thể bắt đầu thanh toán. Vui lòng thử lại.",
+    "errorNetwork": "Lỗi mạng. Vui lòng thử lại.",
+    "errorPaymentLinkFailed": "Gói đăng ký của bạn đã được tạo, nhưng chúng tôi không thể tải liên kết thanh toán. Vui lòng kiểm tra email hoặc liên hệ bộ phận hỗ trợ."
   }
 }

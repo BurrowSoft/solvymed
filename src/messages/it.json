@@ -179,7 +179,11 @@
     "accept": "Accetta",
     "decline": "Rifiuta",
     "slotTakenAlert": "Questo slot non è più disponibile. Rifiuta e lascia che il paziente scelga un altro orario.",
-    "pastProposalAlert": "L'orario proposto è già passato. Rifiuta così il paziente può richiedere un nuovo slot."
+    "pastProposalAlert": "L'orario proposto è già passato. Rifiuta così il paziente può richiedere un nuovo slot.",
+    "useBookingCard": "Usa la scheda della richiesta di appuntamento per confermare, rifiutare o proporre un orario.",
+    "genericError": "Qualcosa è andato storto. Riprova.",
+    "missingFieldsError": "Compila tutti i campi obbligatori.",
+    "pastMidnightError": "Questo orario e questa durata supererebbero la mezzanotte."
   },
   "payments": {
     "thisWeek": "Questa settimana",
@@ -191,7 +195,9 @@
     "confirm": "Conferma",
     "cancel": "Annulla",
     "amountPlaceholder": "Importo €",
-    "revertConfirm": "Riportare questo pagamento a in sospeso?"
+    "revertConfirm": "Riportare questo pagamento a in sospeso?",
+    "errorInvalidAmount": "Inserisci un importo valido.",
+    "errorGeneric": "Qualcosa è andato storto. Riprova."
   },
   "paymentsPage": {
     "title": "Pagamenti",
@@ -369,6 +375,7 @@
     "regenerate": "Rigenera",
     "copy": "Copia",
     "copied": "Copiato!",
+    "copyLink": "Copia link",
     "loadError": "Impossibile caricare le impostazioni. Aggiorna la pagina. Se il problema persiste, contatta l'assistenza."
   },
   "clinics": {
@@ -397,7 +404,9 @@
     "noMapPin": "Nessun segnaposto — aggiungi un indirizzo per apparire sulla mappa",
     "empty": "Nessuna clinica ancora",
     "emptySubtitle": "Aggiungi la tua clinica per permettere ai pazienti di trovarti",
-    "addFirst": "Aggiungi la tua prima clinica"
+    "addFirst": "Aggiungi la tua prima clinica",
+    "nameRequiredError": "Il nome della clinica è obbligatorio.",
+    "genericError": "Qualcosa è andato storto. Riprova."
   },
   "consultType": {
     "consultation": "Consulenza",
@@ -580,7 +589,11 @@
   "join": {
     "notFound": "Link d'invito non trovato",
     "notFoundDesc": "Questo link potrebbe essere non valido o scaduto. Chiedi al tuo medico di condividerne uno nuovo.",
-    "backToHome": "Vai alla home"
+    "backToHome": "Vai alla home",
+    "linkFailed": "Impossibile completare questo link",
+    "linkFailedDesc": "Si è verificato un problema durante il collegamento del tuo account. Riprova o contatta l'assistenza.",
+    "tooManyAttempts": "Troppi tentativi. Attendi un momento prima di riprovare.",
+    "alreadyInvitedByAnother": "Il tuo account è già collegato a un altro medico."
   },
   "versionGate": {
     "title": "Aggiornamento richiesto",
@@ -608,6 +621,12 @@
     "trialBannerPrefix": "Prova gratuita:",
     "trialBannerDay": "giorno rimasto",
     "trialBannerDays": "giorni rimasti",
-    "trialBannerCta": "Abbonati ora"
+    "trialBannerCta": "Abbonati ora",
+    "errorAlreadySubscribed": "Hai già un abbonamento attivo.",
+    "errorWrongRole": "Solo i professionisti possono abbonarsi.",
+    "errorCheckFailed": "Impossibile verificare lo stato dell'abbonamento. Riprova.",
+    "errorGeneric": "Impossibile avviare il pagamento. Riprova.",
+    "errorNetwork": "Errore di rete. Riprova.",
+    "errorPaymentLinkFailed": "Il tuo abbonamento è stato creato, ma non siamo riusciti a caricare il link di pagamento. Controlla la tua email o contatta l'assistenza."
   }
 }

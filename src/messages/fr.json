@@ -179,7 +179,11 @@
     "accept": "Accepter",
     "decline": "Refuser",
     "slotTakenAlert": "Ce créneau n’est plus disponible. Veuillez refuser et laisser le patient choisir un autre horaire.",
-    "pastProposalAlert": "L'heure proposée est déjà passée. Veuillez refuser pour que le patient puisse choisir un nouveau créneau."
+    "pastProposalAlert": "L'heure proposée est déjà passée. Veuillez refuser pour que le patient puisse choisir un nouveau créneau.",
+    "useBookingCard": "Utilisez la carte de demande de rendez-vous pour confirmer, refuser ou proposer un horaire.",
+    "genericError": "Une erreur s'est produite. Réessayez.",
+    "missingFieldsError": "Veuillez remplir tous les champs obligatoires.",
+    "pastMidnightError": "Cet horaire et cette durée dépasseraient minuit."
   },
   "payments": {
     "thisWeek": "Cette semaine",
@@ -191,7 +195,9 @@
     "confirm": "Confirmer",
     "cancel": "Annuler",
     "amountPlaceholder": "Montant €",
-    "revertConfirm": "Remettre ce paiement en attente ?"
+    "revertConfirm": "Remettre ce paiement en attente ?",
+    "errorInvalidAmount": "Veuillez saisir un montant valide.",
+    "errorGeneric": "Une erreur s'est produite. Réessayez."
   },
   "paymentsPage": {
     "title": "Paiements",
@@ -369,6 +375,7 @@
     "regenerate": "Régénérer",
     "copy": "Copier",
     "copied": "Copié !",
+    "copyLink": "Copier le lien",
     "loadError": "Impossible de charger vos paramètres. Actualisez la page. Si le problème persiste, contactez le support."
   },
   "clinics": {
@@ -397,7 +404,9 @@
     "noMapPin": "Pas de repère sur la carte — ajoutez une adresse pour apparaître sur la carte",
     "empty": "Pas encore de cliniques",
     "emptySubtitle": "Ajoutez votre clinique pour que les patients puissent vous trouver",
-    "addFirst": "Ajouter votre première clinique"
+    "addFirst": "Ajouter votre première clinique",
+    "nameRequiredError": "Le nom de la clinique est obligatoire.",
+    "genericError": "Une erreur s'est produite. Réessayez."
   },
   "consultType": {
     "consultation": "Consultation",
@@ -580,7 +589,11 @@
   "join": {
     "notFound": "Lien d'invitation introuvable",
     "notFoundDesc": "Ce lien est peut-être invalide ou expiré. Demandez a votre médecin d'en partager un nouveau.",
-    "backToHome": "Aller à l'accueil"
+    "backToHome": "Aller à l'accueil",
+    "linkFailed": "Impossible de finaliser ce lien",
+    "linkFailedDesc": "Un problème est survenu lors de la liaison de votre compte. Réessayez ou contactez le support.",
+    "tooManyAttempts": "Trop de tentatives. Veuillez patienter avant de réessayer.",
+    "alreadyInvitedByAnother": "Votre compte est déjà connecté à un autre médecin."
   },
   "versionGate": {
     "title": "Mise à jour requise",
@@ -608,6 +621,12 @@
     "trialBannerPrefix": "Essai gratuit :",
     "trialBannerDay": "jour restant",
     "trialBannerDays": "jours restants",
-    "trialBannerCta": "S'abonner maintenant"
+    "trialBannerCta": "S'abonner maintenant",
+    "errorAlreadySubscribed": "Vous êtes déjà abonné.",
+    "errorWrongRole": "Seuls les professionnels peuvent s'abonner.",
+    "errorCheckFailed": "Impossible de vérifier votre statut d'abonnement. Réessayez.",
+    "errorGeneric": "Impossible de démarrer le paiement. Réessayez.",
+    "errorNetwork": "Erreur réseau. Réessayez.",
+    "errorPaymentLinkFailed": "Votre abonnement a été créé, mais nous n'avons pas pu charger le lien de paiement. Vérifiez votre e-mail ou contactez le support."
   }
 }
