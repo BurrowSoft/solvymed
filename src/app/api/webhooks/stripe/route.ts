@@ -59,62 +59,100 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ ok: true });
 }
 
-// Writes the subscription's CURRENT state as Stripe reports it now, never
-// the event payload. Stripe doesn't guarantee delivery order, so a late or
-// retried event (e.g. "created" arriving after a cancellation) carries a
-// stale snapshot. Trusting it re-granted access until the old period end.
-// Fetching live state makes event order irrelevant.
-async function syncSubscription(db: ReturnType<typeof adminClient>, subId: string) {
-  let sub: Stripe.Subscription;
-  try {
-    sub = await stripe.subscriptions.retrieve(subId);
-  } catch (err) {
-    // Non-2xx so Stripe retries. Never fall back to the event payload.
-    console.error(`Stripe webhook: could not retrieve subscription ${subId}`, err);
-    return NextResponse.json({ error: "Could not fetch subscription" }, { status: 500 });
-  }
+type DesiredState =
+  | { kind: "skip" }
+  | { kind: "active"; userId: string; subId: string; periodEnd: string }
+  | { kind: "expired"; userId: string; subId: string };
 
+// Only active/trialing grant access. incomplete (checkout not paid),
+// incomplete_expired, canceled and unpaid never do. past_due is cut
+// immediately too: by the time a renewal fails, Stripe has already moved
+// current_period_end to the NEW period's end, so "keep access until period
+// end" would hand out a free month if the retries never succeed. A
+// successful retry flips it back to active, and access returns.
+function desiredState(sub: Stripe.Subscription): DesiredState {
   const userId = sub.metadata?.user_id;
-  if (!userId) return NextResponse.json({ ok: true });
-
-  // Only active/trialing grant access. incomplete (checkout not paid),
-  // incomplete_expired, canceled and unpaid never do. past_due is cut
-  // immediately too: by the time a renewal fails, Stripe has already moved
-  // current_period_end to the NEW period's end, so "keep access until
-  // period end" would hand out a free month if the retries never succeed.
-  // A successful retry flips it back to active, and access returns.
-  const isActive = sub.status === "active" || sub.status === "trialing";
-
-  if (isActive) {
+  if (!userId) return { kind: "skip" };
+  if (sub.status === "active" || sub.status === "trialing") {
     const periodEndTs = sub.items?.data?.[0]?.current_period_end;
-    // Never mark active without a real period end in the same write —
-    // isAccessAllowed() reads "active" + null current_period_end as
-    // unlimited access.
-    if (!periodEndTs) return NextResponse.json({ ok: true });
-    // Matched by user_id (from subscription metadata), not subscription_id:
-    // a resubscribe's event can arrive before checkout.session.completed
-    // has stored the new id. A genuinely active subscription owns the row.
-    const { error } = await db.from("professionals").update({
-      subscription_provider: "stripe",
-      subscription_id: sub.id,
-      subscription_status: "active",
-      current_period_end: new Date(periodEndTs * 1000).toISOString(),
-    }).eq("id", userId);
-    if (error) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
-    return NextResponse.json({ ok: true });
+    // Never mark active without a real period end — isAccessAllowed() reads
+    // "active" + null current_period_end as unlimited access.
+    if (!periodEndTs) return { kind: "skip" };
+    return { kind: "active", userId, subId: sub.id, periodEnd: new Date(periodEndTs * 1000).toISOString() };
   }
+  return { kind: "expired", userId, subId: sub.id };
+}
 
-  // A dead subscription may only expire the row if it's the one stored (or
-  // nothing is stored yet). Otherwise a late event for an old, cancelled
-  // subscription would expire the newer one the professional resubscribed
-  // with. Enforced in the UPDATE's own WHERE, not a separate read.
-  const { error } = await db.from("professionals").update({
-    subscription_provider: "stripe",
-    subscription_id: sub.id,
-    subscription_status: "expired",
-  })
-    .eq("id", userId)
-    .or(`subscription_id.is.null,subscription_id.eq.${sub.id}`);
-  if (error) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
-  return NextResponse.json({ ok: true });
+function sameState(a: DesiredState, b: DesiredState): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+// Writes the subscription's CURRENT state as Stripe reports it, never the
+// event payload: Stripe doesn't guarantee delivery order, and a late event
+// (e.g. "created" arriving after a cancellation) carries a stale snapshot
+// that re-granted access until the old period end.
+//
+// Reading live state alone isn't enough under concurrency: two deliveries
+// can each read, then write in the opposite order, leaving the older
+// read's state on the row (either re-granting access after a cancellation,
+// or locking out a successful payment retry). So after writing, re-read,
+// and write again if Stripe moved on, until a read matches what was
+// written. The last write to the row is then always followed by its
+// handler reading that same state from Stripe, so once events stop
+// arriving, the row matches Stripe. No lock or version column needed.
+async function syncSubscription(db: ReturnType<typeof adminClient>, subId: string) {
+  let written: DesiredState | null = null;
+  for (let round = 0; round < 3; round++) {
+    let sub: Stripe.Subscription;
+    try {
+      sub = await stripe.subscriptions.retrieve(subId);
+    } catch (err) {
+      // Non-2xx so Stripe retries. Never fall back to the event payload.
+      console.error(`Stripe webhook: could not retrieve subscription ${subId}`, err);
+      return NextResponse.json({ error: "Could not fetch subscription" }, { status: 500 });
+    }
+
+    const desired = desiredState(sub);
+    if (desired.kind === "skip") return NextResponse.json({ ok: true });
+    if (written && sameState(written, desired)) return NextResponse.json({ ok: true });
+
+    if (desired.kind === "active") {
+      // Matched by user_id (from subscription metadata), not subscription_id:
+      // a resubscribe's event can arrive before its id is stored. A genuinely
+      // active subscription owns the row.
+      const { data, error } = await db.from("professionals").update({
+        subscription_provider: "stripe",
+        subscription_id: desired.subId,
+        subscription_status: "active",
+        current_period_end: desired.periodEnd,
+      }).eq("id", desired.userId).select("id");
+      if (error) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
+      if (!data?.length) {
+        // No professionals row for this user. Retrying can't create one, so
+        // don't make Stripe retry for days. Log it loudly instead.
+        console.error(`Stripe webhook: active subscription ${desired.subId} but no professionals row for ${desired.userId}`);
+        return NextResponse.json({ ok: true });
+      }
+    } else {
+      // A dead subscription may only expire the row if it's the one stored
+      // (or nothing is stored yet). Otherwise a late event for an old,
+      // cancelled subscription would expire the newer one the professional
+      // resubscribed with. Enforced in the UPDATE's own WHERE.
+      const { data, error } = await db.from("professionals").update({
+        subscription_provider: "stripe",
+        subscription_id: desired.subId,
+        subscription_status: "expired",
+      })
+        .eq("id", desired.userId)
+        .or(`subscription_id.is.null,subscription_id.eq.${desired.subId}`)
+        .select("id");
+      if (error) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
+      // 0 rows: the row belongs to a different (newer) subscription, or
+      // doesn't exist. Either way this subscription has nothing to change.
+      if (!data?.length) return NextResponse.json({ ok: true });
+    }
+    written = desired;
+  }
+  // Stripe kept changing across every round. Let Stripe retry later.
+  return NextResponse.json({ error: "Subscription state still changing" }, { status: 500 });
 }
