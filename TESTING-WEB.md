@@ -2055,14 +2055,14 @@ the Subscription.
 
 **Merge gate: 🟢 for `b2c24bb`.**
 
-## PR #12 (`feat/failed-payment-portal`) — failed payment, Customer Portal, trial rule, 🟢 at `b2d9d9b`
+## PR #12 (`feat/failed-payment-portal`) — failed payment, Customer Portal, trial rule, 🟢 at `d72ecd4`
 
-**Scope: this entry covers exactly `b2d9d9b`.** The full suite (7 tests)
-ran green on it. The previous HEAD, `926387f`, was 6/6 before (8) and (9)
-were added. An earlier run on `e562b33` found one bug, now fixed (see
+**Scope: this entry covers exactly `d72ecd4`.** The full suite (8 tests)
+ran green on it. Earlier HEADs also ran the full suite green: `b2d9d9b`
+7/7 and `926387f` 6/6, before (8)–(11) were added. An earlier run on `e562b33` found one bug, now fixed (see
 below). The method is the same as #11: Stripe test mode with real test
 keys, real objects, and real events fetched with `events.list`, signed
-with `STRIPE_WEBHOOK_SECRET` and delivered to a local server on `b2d9d9b`.
+with `STRIPE_WEBHOOK_SECRET` and delivered to a local server on `d72ecd4`.
 Failed renewals and expiries use Stripe **test clocks**. All test
 accounts were throwaways.
 
@@ -2144,6 +2144,19 @@ classifier).
 - **(8d) Terminal events never take over:** a late `deleted` event for
   another, cancelled sub leaves the row tracking the pending one.
 
+**🟢 (10) Stale DB "active" with an unknown stored id** (`f33bb34`). The
+row says `active` with a future period end, but the stored id isn't known
+to Stripe. Checkout returns **200**, so Stripe decides when an id is
+stored, not the stale DB status.
+
+**🟢 (11) Lifetime is never touched** (`f33bb34`, `d72ecd4`).
+- **Checkout:** a `lifetime` professional gets `409 already_subscribed`.
+- **Webhooks:** real events for a new *active* sub (created and paid),
+  then its *deleted* event, then a pending *incomplete* sub's events, all
+  carrying this user's id. After each, the row is byte-identical:
+  `lifetime`, no `subscription_id` or provider written, and no takeover.
+- **Access:** the dashboard stays reachable.
+
 **🟢 Bug found on `e562b33`, fixed in `c77744b`: an unknown stored
 subscription id locked the professional out for good.**
 - **Before:** with `subscription_id` set to an id Stripe doesn't know,
@@ -2178,7 +2191,7 @@ configuration. The test-mode portal is enabled and works, as above.
 - The shared doctor wasn't used and is still `trial` with no
   subscription.
 
-**Merge gate: 🟢 for `b2d9d9b`.**
+**Merge gate: 🟢 for `d72ecd4`.**
 
 ## iOS — open question
 
