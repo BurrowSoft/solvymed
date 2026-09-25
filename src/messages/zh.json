@@ -609,8 +609,6 @@
     "feature3": "收入报告和付款跟踪",
     "feature4": "自动预约提醒",
     "feature5": "包含秘书访问权限",
-    "payPix": "使用Pix支付",
-    "payPixSub": "通过Pix即时支付",
     "payCard": "使用卡片订阅",
     "payCardSub": "Visa、Mastercard、美国运通",
     "or": "或",
@@ -626,7 +624,6 @@
     "errorWrongRole": "只有专业人士才能订阅。",
     "errorCheckFailed": "无法验证您的订阅状态，请重试。",
     "errorGeneric": "无法启动结账流程，请重试。",
-    "errorNetwork": "网络错误，请重试。",
-    "errorPaymentLinkFailed": "您的订阅已创建，但我们无法加载支付链接。请查看您的邮箱或联系支持团队。"
+    "errorNetwork": "网络错误，请重试。"
   }
 }

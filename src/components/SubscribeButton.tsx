@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 
 interface Props {
-  provider: "stripe" | "asaas";
   locale: string;
   label: string;
   sublabel?: string;
@@ -17,10 +16,9 @@ const ERROR_CODE_KEY: Record<string, string> = {
   wrong_role: "errorWrongRole",
   check_failed: "errorCheckFailed",
   checkout_failed: "errorGeneric",
-  payment_link_failed: "errorPaymentLinkFailed",
 };
 
-export function SubscribeButton({ provider, locale, label, sublabel, userName, userEmail }: Props) {
+export function SubscribeButton({ locale, label, sublabel, userName, userEmail }: Props) {
   const t = useTranslations("subscription");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,8 +32,7 @@ export function SubscribeButton({ provider, locale, label, sublabel, userName, u
     setLoading(true);
     setError(null);
     try {
-      const endpoint = provider === "stripe" ? "/api/checkout/stripe" : "/api/checkout/asaas";
-      const res = await fetch(endpoint, {
+      const res = await fetch("/api/checkout/stripe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ locale, name: userName, email: userEmail }),
@@ -43,11 +40,6 @@ export function SubscribeButton({ provider, locale, label, sublabel, userName, u
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
-      } else if (data.subscriptionId) {
-        // A subscription was actually created (Asaas payment-link lookup
-        // can fail after the fact) — the customer will be charged, so this
-        // is not the same situation as checkout never starting.
-        setError(messageFor(data.code, "errorPaymentLinkFailed"));
       } else {
         setError(messageFor(data.code, "errorGeneric"));
       }

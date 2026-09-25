@@ -50,7 +50,6 @@ export default async function SubscribePage({
 
   const daysLeft = trialDaysRemaining(sub);
   const plan = getPlanPrice(locale);
-  const isBrazil = plan.provider === "asaas";
 
   const { data: professional } = await supabase
     .from("professionals")
@@ -122,7 +121,6 @@ export default async function SubscribePage({
             {/* Payment buttons */}
             <div className="flex flex-col gap-3">
               <SubscribeButton
-                provider="stripe"
                 locale={locale}
                 label={t("payCard")}
                 sublabel={t("payCardSub")}

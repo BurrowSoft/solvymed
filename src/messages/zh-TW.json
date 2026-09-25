@@ -609,8 +609,6 @@
     "feature3": "收入報告和付款追蹤",
     "feature4": "自動預約提醒",
     "feature5": "包含秘書存取權限",
-    "payPix": "使用Pix付款",
-    "payPixSub": "透過Pix即時付款",
     "payCard": "使用卡片訂閱",
     "payCardSub": "Visa、Mastercard、American Express",
     "or": "或",
@@ -626,7 +624,6 @@
     "errorWrongRole": "只有專業人士才能訂閱。",
     "errorCheckFailed": "無法驗證您的訂閱狀態，請重試。",
     "errorGeneric": "無法啟動結帳流程，請重試。",
-    "errorNetwork": "網路錯誤，請重試。",
-    "errorPaymentLinkFailed": "您的訂閱已建立，但我們無法載入付款連結。請查看您的電子郵件或聯絡支援團隊。"
+    "errorNetwork": "網路錯誤，請重試。"
   }
 }

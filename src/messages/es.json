@@ -609,8 +609,6 @@
     "feature3": "Informes de ingresos y seguimiento de pagos",
     "feature4": "Recordatorios automáticos de citas",
     "feature5": "Acceso incluido para tus secretarias",
-    "payPix": "Pagar con Pix",
-    "payPixSub": "Pago instantáneo vía Pix",
     "payCard": "Suscribirse con tarjeta",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "o",
@@ -626,7 +624,6 @@
     "errorWrongRole": "Solo los profesionales pueden suscribirse.",
     "errorCheckFailed": "No se pudo verificar tu estado de suscripción. Inténtalo de nuevo.",
     "errorGeneric": "No se pudo iniciar el proceso de pago. Inténtalo de nuevo.",
-    "errorNetwork": "Error de red. Inténtalo de nuevo.",
-    "errorPaymentLinkFailed": "Tu suscripción se creó, pero no pudimos cargar el enlace de pago. Revisa tu correo o contacta con soporte."
+    "errorNetwork": "Error de red. Inténtalo de nuevo."
   }
 }

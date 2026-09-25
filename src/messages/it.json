@@ -609,8 +609,6 @@
     "feature3": "Report sui ricavi e monitoraggio pagamenti",
     "feature4": "Promemoria automatici degli appuntamenti",
     "feature5": "Accesso incluso per le tue segretarie",
-    "payPix": "Paga con Pix",
-    "payPixSub": "Pagamento istantaneo via Pix",
     "payCard": "Abbonati con carta",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "o",
@@ -626,7 +624,6 @@
     "errorWrongRole": "Solo i professionisti possono abbonarsi.",
     "errorCheckFailed": "Impossibile verificare lo stato dell'abbonamento. Riprova.",
     "errorGeneric": "Impossibile avviare il pagamento. Riprova.",
-    "errorNetwork": "Errore di rete. Riprova.",
-    "errorPaymentLinkFailed": "Il tuo abbonamento è stato creato, ma non siamo riusciti a caricare il link di pagamento. Controlla la tua email o contatta l'assistenza."
+    "errorNetwork": "Errore di rete. Riprova."
   }
 }

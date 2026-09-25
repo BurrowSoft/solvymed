@@ -609,8 +609,6 @@
     "feature3": "Rapports de revenus et suivi des paiements",
     "feature4": "Rappels automatiques de rendez-vous",
     "feature5": "Accès inclus pour vos secrétaires",
-    "payPix": "Payer avec Pix",
-    "payPixSub": "Paiement instantané via Pix",
     "payCard": "S'abonner par carte",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "ou",
@@ -626,7 +624,6 @@
     "errorWrongRole": "Seuls les professionnels peuvent s'abonner.",
     "errorCheckFailed": "Impossible de vérifier votre statut d'abonnement. Réessayez.",
     "errorGeneric": "Impossible de démarrer le paiement. Réessayez.",
-    "errorNetwork": "Erreur réseau. Réessayez.",
-    "errorPaymentLinkFailed": "Votre abonnement a été créé, mais nous n'avons pas pu charger le lien de paiement. Vérifiez votre e-mail ou contactez le support."
+    "errorNetwork": "Erreur réseau. Réessayez."
   }
 }

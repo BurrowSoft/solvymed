@@ -27,7 +27,7 @@ export function trialDaysRemaining(sub: EffectiveSub | null): number | null {
 }
 
 /** BRL pricing for Brazilian locale, USD for everyone else */
-export function getPlanPrice(locale: string): { amount: string; currency: string; provider: 'asaas' | 'stripe' } {
-  if (locale === 'pt-BR') return { amount: 'R$ 89', currency: 'BRL', provider: 'asaas' };
-  return { amount: '$19', currency: 'USD', provider: 'stripe' };
+export function getPlanPrice(locale: string): { amount: string; currency: string } {
+  if (locale === 'pt-BR') return { amount: 'R$ 89', currency: 'BRL' };
+  return { amount: '$19', currency: 'USD' };
 }
