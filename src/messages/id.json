@@ -375,7 +375,8 @@
     "regenerate": "Buat ulang",
     "copy": "Salin",
     "copied": "Disalin!",
-    "copyLink": "Salin tautan"
+    "copyLink": "Salin tautan",
+    "loadError": "Tidak dapat memuat pengaturan Anda. Silakan muat ulang halaman. Jika masalah berlanjut, hubungi dukungan."
   },
   "clinics": {
     "title": "Klinik Saya",

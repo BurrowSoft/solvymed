@@ -375,7 +375,8 @@
     "regenerate": "Rigenera",
     "copy": "Copia",
     "copied": "Copiato!",
-    "copyLink": "Copia link"
+    "copyLink": "Copia link",
+    "loadError": "Impossibile caricare le impostazioni. Aggiorna la pagina. Se il problema persiste, contatta l'assistenza."
   },
   "clinics": {
     "title": "Le mie cliniche",

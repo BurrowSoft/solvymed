@@ -375,7 +375,8 @@
     "regenerate": "Régénérer",
     "copy": "Copier",
     "copied": "Copié !",
-    "copyLink": "Copier le lien"
+    "copyLink": "Copier le lien",
+    "loadError": "Impossible de charger vos paramètres. Actualisez la page. Si le problème persiste, contactez le support."
   },
   "clinics": {
     "title": "Mes Cliniques",

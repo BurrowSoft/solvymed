@@ -375,7 +375,8 @@
     "regenerate": "Gerar novo",
     "copy": "Copiar",
     "copied": "Copiado!",
-    "copyLink": "Copiar link"
+    "copyLink": "Copiar link",
+    "loadError": "Não foi possível carregar suas configurações. Atualize a página. Se o problema continuar, entre em contato com o suporte."
   },
   "clinics": {
     "title": "Minhas Clínicas",

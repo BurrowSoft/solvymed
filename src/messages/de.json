@@ -375,7 +375,8 @@
     "regenerate": "Neu generieren",
     "copy": "Kopieren",
     "copied": "Kopiert!",
-    "copyLink": "Link kopieren"
+    "copyLink": "Link kopieren",
+    "loadError": "Ihre Einstellungen konnten nicht geladen werden. Bitte laden Sie die Seite neu. Wenn das Problem weiterhin besteht, wenden Sie sich an den Support."
   },
   "clinics": {
     "title": "Meine Kliniken",

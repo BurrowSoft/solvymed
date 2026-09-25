@@ -1852,6 +1852,58 @@ deleted. The shared doctor is at baseline: `subscription_status` is
 **Merge gate: 🟢 for `6b58a1e`.** The only caveat is the webhook
 internals above, which are reviewed but not live-verified.
 
+## PR #10 (`fix/settings-load-failure`) — Settings load-failure hotfix, 🟢 at `cb6e257`
+
+**Background.** `professionals.pix_key` was missing on prod, so web
+Settings' professionals query errored for every doctor. `.single()` then
+fell through to blank, editable defaults, and saving Profile or Hours from
+that state would overwrite real data. Mob dev's migration 084 adds the
+column. This PR makes a failed load show an error with no forms, and
+switches to `.maybeSingle()` so a genuinely missing row still gets the
+blank forms. Tested on `cb6e257`, against the live DB with 084 applied.
+
+**🟢 Normal load, shared doctor, read-only.** Settings shows the real
+`full_name` ("E2E Test Doctor") in the name input and the real invite code
+(`M2WBHY`), with no error banner. Nothing was saved on the shared account.
+
+**🟢 Forced load error.** I edited my local copy of `page.tsx` to also
+select a nonexistent column, then loaded Settings. It showed "Couldn't load
+your settings…", with zero `<form>` elements and no `full_name` input, so
+there is nothing to save over. The edit was reverted straight after
+(`git checkout`, clean diff) and never committed.
+
+**🟢 Professional with no `professionals` row.** On a throwaway
+professional, I deleted its `professionals` row via the service key
+first. Settings rendered blank forms with no error banner. Saving the
+Profile form with a name created the row (`updateProfile` upserts), and
+REST shows the saved `full_name`.
+
+**🟢 Pix QR on a pending payment (084 unblocks this).** On a throwaway
+professional, I set `pix_key`, `clinic_name` and `clinic_city`, then
+seeded a confirmed appointment for today with `payment_status: pending`
+and `payment_amount: 150`. In the schedule list view the row shows the
+"Pix QR Code" button, and clicking it opens the QR image.
+
+**Test environment note.** The first normal-load attempt bounced to
+`/auth/login` right after a successful login. That's consistent with the
+Supabase latency spikes seen all day, where the page's server-side
+`getUser()` times out and is treated as signed-out. The doctor's
+credentials were valid, and it passed on re-run.
+
+**Cleaned up.** No `e2e-test-opus-*` accounts are left, and throwaway
+appointments were deleted. The shared doctor is unchanged: same
+`full_name`, `trial`, code `M2WBHY`.
+
+**Merge gate: 🟢 for `cb6e257`.**
+
+**Addendum: 🟢 re-confirmed at `6ef6334`**, the merge with master after #9
+landed, which combines #9's copy-link `SettingsClient.tsx` with #10's
+`page.tsx`. The diff against master is only `page.tsx` plus one
+`settings.loadError` key per locale, and all 15 locales still have
+`copy`, `copyLink` and `loadError`. The shared doctor's Settings loads
+the real name and code `M2WBHY`, with both **Copy** and **Copy link**
+present (read-only, nothing saved). A forced select error (local edit,
+reverted) still shows the error banner with no forms.
 
 ## iOS — open question
 

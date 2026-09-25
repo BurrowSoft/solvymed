@@ -375,7 +375,8 @@
     "regenerate": "Tạo lại",
     "copy": "Sao chép",
     "copied": "Đã sao chép!",
-    "copyLink": "Sao chép liên kết"
+    "copyLink": "Sao chép liên kết",
+    "loadError": "Không thể tải cài đặt của bạn. Vui lòng tải lại trang. Nếu sự cố vẫn tiếp diễn, hãy liên hệ bộ phận hỗ trợ."
   },
   "clinics": {
     "title": "Phòng khám của tôi",
