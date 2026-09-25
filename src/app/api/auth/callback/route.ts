@@ -84,12 +84,15 @@ export async function GET(request: NextRequest) {
       // legitimate magic-link/OTP flow for their own email, silently
       // overwriting their real role. Refuse to touch an existing role,
       // same guard the patient branch already has below.
-      const { data: existingRole } = await supabase
+      const { data: existingRole, error: roleLookupError } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", sessionUser.id)
         .maybeSingle();
-      if (!existingRole?.role) {
+      // A failed lookup must never be treated the same as "no existing
+      // role" — that would reopen exactly the escalation path this guard
+      // exists to close. Fail closed: skip the upsert on any error.
+      if (!roleLookupError && !existingRole?.role) {
         await supabase.from("user_roles").upsert(
           { user_id: sessionUser.id, role: "secretary" },
           { onConflict: "user_id" },
@@ -162,12 +165,15 @@ export async function GET(request: NextRequest) {
       // "secretary" or "patient" (including missing/malformed metadata),
       // so it's the easiest of the three to trigger by accident, not just
       // by deliberate tampering.
-      const { data: existingRole } = await supabase
+      const { data: existingRole, error: roleLookupError } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", sessionUser.id)
         .maybeSingle();
-      if (!existingRole?.role) {
+      if (roleLookupError) {
+        // Fail closed — same reasoning as the secretary branch above.
+        redirectUrl = new URL("/dashboard", origin);
+      } else if (!existingRole?.role) {
         await supabase.from("user_roles").upsert(
           { user_id: sessionUser.id, role: "professional" },
           { onConflict: "user_id" },
