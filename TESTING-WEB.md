@@ -32,7 +32,8 @@ is in the table below.
 | ↳ round 7 (my-appointments direct-access guard + label a11y fixes) | same PR, commit `5adbcac` | typecheck + `e2e/01-03` (regression, clean) + real accessibility test (label-click-focuses-input, not just DOM presence) | 🟢 GREEN — see "PR #7 round 7" below | 2026-09-24 |
 | ↳ round 8 (privilege-escalation fix: removed client-controlled secretary self-heal) | same PR, commit `bfbb71d` | typecheck + `e2e/01-03` (regression, clean 3/3 after a `.next` corruption blip) + doctor self-heal regression + code review of the deleted branch | 🟢 **GREEN — recommend this as the merge commit instead of round 7** — see "PR #7 round 8" below | 2026-09-25 |
 | ↳ round 9 (consistency fix: guard original confirm flows against role overwrite) | same PR, commit `7e3ea04` | code review only (narrow, same pattern as an already-proven guard) | 🟢 GREEN — see "PR #7 round 9" below | 2026-09-25 |
-| ↳ round 10 (root-page redirect ordering fix: persisted role before metadata) | same PR, commit `00f4914` | typecheck + `e2e/01-03` (regression, clean 3/3) + real metadata-tampering reproduction of the exact bug precondition | 🟢 **GREEN — recommend this as the merge commit instead of round 9** — see "PR #7 round 10" below | 2026-09-25 |
+| ↳ round 10 (root-page redirect ordering fix: persisted role before metadata) | same PR, commit `00f4914` | typecheck + `e2e/01-03` (regression, clean 3/3) + real metadata-tampering reproduction of the exact bug precondition | 🟢 GREEN — see "PR #7 round 10" below | 2026-09-25 |
+| ↳ round 11 (invite-linking rebuild on mob dev's new RPC/confirmation model) | same PR, commits `3d1ee98`..`1daad5a` (rebuild `0104398` + eligibility/error-propagation fix `1daad5a`) | typecheck + `e2e/01-03` (regression, clean 3/3) + live test of the one reachable new guard (professional at `/my-appointments` → `/dashboard`) + full code review of the 3-state routing rebuild across 6 entry points | 🟡 **GREEN for what's testable now — new linking RPCs themselves still blocked on mob dev's migrations deploying** — see "PR #7 round 11" below | 2026-09-25 |
 
 ## Talking to the other agents
 
@@ -1133,6 +1134,103 @@ it's fixed.
 commit**, superseding round 9. This is the last Copilot finding I'm aware
 of as of this write-up; if it comes back clean, this PR should be ready to
 merge.
+
+## PR #7 round 11 (`3d1ee98`..`1daad5a`) — invite-linking rebuild, 🟡 GREEN for what's testable
+
+Real architecture change, not a patch: mob dev's PR #5 review cycle revoked
+the RPCs this PR's invite-linking depended on
+(`patient_by_invite_code`, `professional_by_invite_code`) and introduced a
+confirmation-based linking model instead — `link_patient_by_invite_code`
+(a patient invite code: immediate full link) and
+`link_by_professional_public_code` (a doctor's public code: sets a
+*pending* state via `invited_by_professional_id`, doctor must call
+`confirm_and_link_patient` before the patient is fully connected via
+`linked_patient_id`). Every role-branching route now handles 3 states
+instead of 2: no role / pending-confirmation / fully-linked. New page:
+`/auth/pending-confirmation`, with a manual "check again" button
+(`get_linked_professional_id()`).
+
+**Reviewed in three parts:**
+1. `3d1ee98` (checkpoint before the rebuild) — added the same
+   non-patient-role guard `dashboard/layout.tsx` already had, to
+   `my-appointments/page.tsx`, in reverse. Fully subsumed by `0104398`'s
+   final version of the same file — reviewed as part of the rebuild, not
+   separately.
+2. `0104398` (the rebuild itself) — diffed against `00f4914` (last commit I
+   tested) across all 6 role-branching entry points
+   (`page.tsx`/root, `auth/login`, `dashboard/layout.tsx`,
+   `subscribe/page.tsx`, `my-appointments/page.tsx`,
+   `api/auth/callback/route.ts` + `auth/confirm/page.tsx` in lockstep as
+   always). Every one applies the identical 3-check pattern in the same
+   order (`linked_patient_id` → fully linked; `invited_by_professional_id`
+   alone → pending; anything else falls through to the prior 2-state
+   logic) — consistent, no route missed. Confirmed `linked_patient_id`
+   is checked *before* `invited_by_professional_id` everywhere, which is
+   the right priority even in a hypothetical future where both end up set
+   simultaneously post-confirmation. Also checked: `AuthCard`'s `centered`
+   prop (used by the new page) already exists; all 15 locale files got the
+   same 6 new `pendingConfirmation.*` keys with real (not copy-pasted)
+   translations — spot-checked `pt-BR` and `ja` against the keys actually
+   referenced in the new page.
+3. `1daad5a` — two fixes: (a) both invite-code RPC calls in
+   `confirm/page.tsx` and `api/auth/callback/route.ts` were destructuring
+   only `data`, silently discarding `error` — a transient RPC failure
+   would have looked identical to "code doesn't match anything" and
+   cascaded into calling the *second* RPC too. Now checks `error` after
+   each call and redirects to `/auth/invite-required` without the
+   cascade. (b) `invite-required/page.tsx`'s eligibility gate reordered to
+   check the persisted role (`existingRole?.role === "professional" |
+   "secretary"`) before the client-writable `user_metadata.role` check —
+   not a security fix (the old order still rejected such accounts, just
+   with a less accurate error message: "already has a role" instead of
+   "not a pending patient"), but the right call given this PR's round-8/10
+   lesson about not trusting metadata first. Comment in the diff notes the
+   *actual* authorization boundary is server-side now (migrations 070/071,
+   mob dev's), which reject non-eligible callers inside the RPCs
+   themselves regardless of what this client-side check shows.
+
+**Live-tested — the one guard reachable without the new RPCs:** the
+`my-appointments` professional/secretary guard doesn't depend on any new
+RPC, only the existing `user_roles.role` column, so I could test it for
+real: logged in as the doctor account and navigated directly to
+`/my-appointments` — redirected to `/dashboard` as expected.
+
+**Not independently live-testable, same limitation stated explicitly by
+web dev up front:** the new linking RPCs themselves
+(`link_patient_by_invite_code`, `link_by_professional_public_code`,
+`confirm_and_link_patient`) and therefore the `pending-confirmation` page's
+actual content and the 3-state routing's `pending` branch specifically —
+mob dev's migrations for these aren't deployed to the shared DB yet
+(expect `PGRST202` same as every prior "successful invite-link" gap in
+this PR). Once they land, this needs a real end-to-end pass: signup with
+each code type, doctor confirmation, the pending page's "check again"
+button, and the 3-state routing exercised for real rather than by
+inspection.
+
+**Also live-tested:** `npm run typecheck` clean (run twice — once after
+`0104398`, once after `1daad5a`); `e2e/01-03` clean 3/3 on a fresh server
+(none of these routes are on the reschedule flows' path, so this is a
+regression check, not direct coverage).
+
+**Infra note — worth flagging explicitly:** hit the `.next` corruption
+pattern repeatedly this round, more than any prior round (at least 4
+times), closely correlated with `git pull`ing web dev's pushes while my
+dev server was live and watching the working directory — a pull mid-run
+seems to reliably trigger it now. One retry of `e2e/03` even failed with a
+*different*, unrelated-looking error ("no available slots for the
+selected day") that turned out to just be collateral damage from the
+server already being in a half-corrupted state at the time — a full
+kill+`rm -rf .next`+restart made it disappear on the very next run, and
+working-hours/appointment-density data checked out fine via direct REST,
+ruling out a real slot-availability bug. Documenting this correlation in
+case it helps whoever's chasing `.next` corruption next: **kill and
+restart the dev server after every pull, don't just trust
+`reuseExistingServer`.**
+
+**Merge gate: not applicable yet — this round doesn't stand alone.**
+Everything reviewable right now is sound; the round isn't closeable until
+mob dev's migrations deploy and I can run the actual linking flows. Not
+recommending a merge commit for PR #7 as a whole until that pass happens.
 
 ## iOS — open question
 
