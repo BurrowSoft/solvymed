@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { computeSlots, toMinutes, fromMinutes, filterPastSlots, toLocalDateString } from "@/lib/slots";
 import type { WorkingHours } from "@/lib/slots";
 
@@ -33,6 +33,28 @@ describe("fromMinutes", () => {
   it("is the inverse of toMinutes", () => {
     expect(fromMinutes(toMinutes("10:45"))).toBe("10:45");
     expect(fromMinutes(toMinutes("08:15"))).toBe("08:15");
+  });
+});
+
+describe("toLocalDateString", () => {
+  it("formats a date using its local calendar components", () => {
+    expect(toLocalDateString(new Date(2025, 0, 8, 12, 0))).toBe("2025-01-08");
+    expect(toLocalDateString(new Date(2025, 11, 31, 12, 0))).toBe("2025-12-31");
+  });
+
+  it("pads single-digit month and day", () => {
+    expect(toLocalDateString(new Date(2025, 2, 5, 12, 0))).toBe("2025-03-05");
+  });
+
+  it("stays on the local calendar day near midnight, unlike toISOString", () => {
+    // Late evening local time: in any UTC+ timezone, .toISOString() would
+    // roll this over to the next UTC day — toLocalDateString must not,
+    // since the Date constructor's args here are local-time components.
+    expect(toLocalDateString(new Date(2025, 0, 8, 23, 45))).toBe("2025-01-08");
+
+    // Early morning local time: in any UTC- timezone, .toISOString() would
+    // roll this back to the previous UTC day.
+    expect(toLocalDateString(new Date(2025, 0, 8, 0, 15))).toBe("2025-01-08");
   });
 });
 
@@ -120,7 +142,21 @@ describe("computeSlots", () => {
 });
 
 describe("filterPastSlots", () => {
-  const TODAY = toLocalDateString(new Date());
+  // Pinned to a fixed, explicit local date — not derived from
+  // toLocalDateString(new Date()), which would make these tests pass even
+  // if filterPastSlots' internal "today" regressed back to a UTC-based
+  // computation (both sides would drift together). The pinned instant is
+  // near a UTC day boundary (23:30 local) specifically so that a regression
+  // would actually surface as a mismatch in most timezones.
+  const TODAY = "2025-01-08";
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2025, 0, 8, 23, 30));
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   const FUTURE_DATE = "2099-01-01";
   const slots = [
     { start: "09:00", end: "09:30" },
