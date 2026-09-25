@@ -374,7 +374,8 @@
     "generateCode": "生成邀请码",
     "regenerate": "重新生成",
     "copy": "复制",
-    "copied": "已复制！"
+    "copied": "已复制！",
+    "copyLink": "复制链接"
   },
   "clinics": {
     "title": "我的诊所",
@@ -587,7 +588,9 @@
     "notFoundDesc": "此链接可能无效或已过期。请联系您的医生分享新链接。",
     "backToHome": "返回首页",
     "linkFailed": "无法完成此链接",
-    "linkFailedDesc": "关联您的账户时出现问题，请重试或联系支持团队。"
+    "linkFailedDesc": "关联您的账户时出现问题，请重试或联系支持团队。",
+    "tooManyAttempts": "尝试次数过多，请稍后再试。",
+    "alreadyInvitedByAnother": "您的账户已与另一位医生关联。"
   },
   "versionGate": {
     "title": "需要更新",

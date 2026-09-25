@@ -374,7 +374,8 @@
     "generateCode": "코드 생성",
     "regenerate": "재생성",
     "copy": "복사",
-    "copied": "복사됨!"
+    "copied": "복사됨!",
+    "copyLink": "링크 복사"
   },
   "clinics": {
     "title": "내 클리닉",
@@ -587,7 +588,9 @@
     "notFoundDesc": "이 링크는 유효하지 않거나 만료되었을 수 있습니다. 의사에게 새 링크를 공유해 달라고 요청하세요.",
     "backToHome": "홈으로 이동",
     "linkFailed": "이 링크를 완료할 수 없습니다",
-    "linkFailedDesc": "계정 연결 중 문제가 발생했습니다. 다시 시도하거나 지원팀에 문의하세요."
+    "linkFailedDesc": "계정 연결 중 문제가 발생했습니다. 다시 시도하거나 지원팀에 문의하세요.",
+    "tooManyAttempts": "시도 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
+    "alreadyInvitedByAnother": "계정이 이미 다른 의사와 연결되어 있습니다."
   },
   "versionGate": {
     "title": "업데이트 필요",

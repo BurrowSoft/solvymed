@@ -374,7 +374,8 @@
     "generateCode": "Genera codice",
     "regenerate": "Rigenera",
     "copy": "Copia",
-    "copied": "Copiato!"
+    "copied": "Copiato!",
+    "copyLink": "Copia link"
   },
   "clinics": {
     "title": "Le mie cliniche",
@@ -587,7 +588,9 @@
     "notFoundDesc": "Questo link potrebbe essere non valido o scaduto. Chiedi al tuo medico di condividerne uno nuovo.",
     "backToHome": "Vai alla home",
     "linkFailed": "Impossibile completare questo link",
-    "linkFailedDesc": "Si è verificato un problema durante il collegamento del tuo account. Riprova o contatta l'assistenza."
+    "linkFailedDesc": "Si è verificato un problema durante il collegamento del tuo account. Riprova o contatta l'assistenza.",
+    "tooManyAttempts": "Troppi tentativi. Attendi un momento prima di riprovare.",
+    "alreadyInvitedByAnother": "Il tuo account è già collegato a un altro medico."
   },
   "versionGate": {
     "title": "Aggiornamento richiesto",

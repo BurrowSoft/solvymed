@@ -374,7 +374,8 @@
     "generateCode": "Générer un code",
     "regenerate": "Régénérer",
     "copy": "Copier",
-    "copied": "Copié !"
+    "copied": "Copié !",
+    "copyLink": "Copier le lien"
   },
   "clinics": {
     "title": "Mes Cliniques",
@@ -587,7 +588,9 @@
     "notFoundDesc": "Ce lien est peut-être invalide ou expiré. Demandez a votre médecin d'en partager un nouveau.",
     "backToHome": "Aller à l'accueil",
     "linkFailed": "Impossible de finaliser ce lien",
-    "linkFailedDesc": "Un problème est survenu lors de la liaison de votre compte. Réessayez ou contactez le support."
+    "linkFailedDesc": "Un problème est survenu lors de la liaison de votre compte. Réessayez ou contactez le support.",
+    "tooManyAttempts": "Trop de tentatives. Veuillez patienter avant de réessayer.",
+    "alreadyInvitedByAnother": "Votre compte est déjà connecté à un autre médecin."
   },
   "versionGate": {
     "title": "Mise à jour requise",

@@ -374,7 +374,8 @@
     "generateCode": "Tạo mã",
     "regenerate": "Tạo lại",
     "copy": "Sao chép",
-    "copied": "Đã sao chép!"
+    "copied": "Đã sao chép!",
+    "copyLink": "Sao chép liên kết"
   },
   "clinics": {
     "title": "Phòng khám của tôi",
@@ -587,7 +588,9 @@
     "notFoundDesc": "Liên kết này có thể không hợp lệ hoặc đã hết hạn. Hãy yêu cầu bác sĩ chia sẻ một liên kết mới.",
     "backToHome": "Về trang chủ",
     "linkFailed": "Không thể hoàn tất liên kết này",
-    "linkFailedDesc": "Đã có lỗi khi liên kết tài khoản của bạn. Vui lòng thử lại hoặc liên hệ bộ phận hỗ trợ."
+    "linkFailedDesc": "Đã có lỗi khi liên kết tài khoản của bạn. Vui lòng thử lại hoặc liên hệ bộ phận hỗ trợ.",
+    "tooManyAttempts": "Quá nhiều lần thử. Vui lòng đợi một chút rồi thử lại.",
+    "alreadyInvitedByAnother": "Tài khoản của bạn đã được liên kết với một bác sĩ khác."
   },
   "versionGate": {
     "title": "Cần cập nhật",

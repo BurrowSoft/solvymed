@@ -374,7 +374,8 @@
     "generateCode": "Code generieren",
     "regenerate": "Neu generieren",
     "copy": "Kopieren",
-    "copied": "Kopiert!"
+    "copied": "Kopiert!",
+    "copyLink": "Link kopieren"
   },
   "clinics": {
     "title": "Meine Kliniken",
@@ -587,7 +588,9 @@
     "notFoundDesc": "Dieser Link ist möglicherweise ungültig oder abgelaufen. Bitten Sie Ihren Arzt, einen neuen zu teilen.",
     "backToHome": "Zur Startseite",
     "linkFailed": "Dieser Link konnte nicht abgeschlossen werden",
-    "linkFailedDesc": "Beim Verknüpfen Ihres Kontos ist ein Fehler aufgetreten. Versuchen Sie es erneut oder kontaktieren Sie den Support."
+    "linkFailedDesc": "Beim Verknüpfen Ihres Kontos ist ein Fehler aufgetreten. Versuchen Sie es erneut oder kontaktieren Sie den Support.",
+    "tooManyAttempts": "Zu viele Versuche. Bitte warten Sie einen Moment, bevor Sie es erneut versuchen.",
+    "alreadyInvitedByAnother": "Ihr Konto ist bereits mit einem anderen Arzt verbunden."
   },
   "versionGate": {
     "title": "Update erforderlich",

@@ -374,7 +374,8 @@
     "generateCode": "Gerar código",
     "regenerate": "Gerar novo",
     "copy": "Copiar",
-    "copied": "Copiado!"
+    "copied": "Copiado!",
+    "copyLink": "Copiar link"
   },
   "clinics": {
     "title": "Minhas Clínicas",
@@ -587,7 +588,9 @@
     "notFoundDesc": "Este link pode ser inválido ou ter expirado. Peça ao seu médico para compartilhar um novo.",
     "backToHome": "Ir para o início",
     "linkFailed": "Não foi possível concluir este link",
-    "linkFailedDesc": "Algo deu errado ao vincular sua conta. Tente novamente ou entre em contato com o suporte."
+    "linkFailedDesc": "Algo deu errado ao vincular sua conta. Tente novamente ou entre em contato com o suporte.",
+    "tooManyAttempts": "Muitas tentativas. Aguarde um pouco antes de tentar novamente.",
+    "alreadyInvitedByAnother": "Sua conta já está conectada a outro médico."
   },
   "versionGate": {
     "title": "Atualização Necessária",

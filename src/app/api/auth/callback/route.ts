@@ -69,15 +69,8 @@ export async function GET(request: NextRequest) {
     const meta = sessionUser.user_metadata ?? {};
     const role = meta.role as string | undefined;
     const inviteCode = meta.invite_code as string | undefined;
-    const joinProfId = meta.join_professional_id as string | undefined;
-    const joinRole = meta.join_role as string | undefined;
 
-    if (joinProfId) {
-      // Signed up via a doctor's direct join link — the /join page does the
-      // actual role/link setup itself, same as the mobile-facing confirm flow.
-      redirectUrl = new URL(`${localePrefix}/join/${joinProfId}?role=${joinRole ?? "patient"}`, origin);
-
-    } else if (role === "secretary") {
+    if (role === "secretary") {
       // user_metadata is client-writable (supabase.auth.updateUser()) — an
       // existing patient or professional could set role="secretary" on
       // their own account, then trigger this callback again via any

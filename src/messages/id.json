@@ -374,7 +374,8 @@
     "generateCode": "Buat kode",
     "regenerate": "Buat ulang",
     "copy": "Salin",
-    "copied": "Disalin!"
+    "copied": "Disalin!",
+    "copyLink": "Salin tautan"
   },
   "clinics": {
     "title": "Klinik Saya",
@@ -587,7 +588,9 @@
     "notFoundDesc": "Tautan ini mungkin tidak valid atau sudah kedaluwarsa. Minta dokter Anda untuk membagikan yang baru.",
     "backToHome": "Ke halaman utama",
     "linkFailed": "Tidak dapat menyelesaikan tautan ini",
-    "linkFailedDesc": "Terjadi kesalahan saat menghubungkan akun Anda. Silakan coba lagi atau hubungi dukungan."
+    "linkFailedDesc": "Terjadi kesalahan saat menghubungkan akun Anda. Silakan coba lagi atau hubungi dukungan.",
+    "tooManyAttempts": "Terlalu banyak percobaan. Harap tunggu sebentar sebelum mencoba lagi.",
+    "alreadyInvitedByAnother": "Akun Anda sudah terhubung dengan dokter lain."
   },
   "versionGate": {
     "title": "Pembaruan Diperlukan",

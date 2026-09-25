@@ -374,7 +374,8 @@
     "generateCode": "產生邀請碼",
     "regenerate": "重新產生",
     "copy": "複製",
-    "copied": "已複製！"
+    "copied": "已複製！",
+    "copyLink": "複製連結"
   },
   "clinics": {
     "title": "我的診所",
@@ -587,7 +588,9 @@
     "notFoundDesc": "此連結可能無效或已過期。請聯繫您的醫生分享新的連結。",
     "backToHome": "返回首頁",
     "linkFailed": "無法完成此連結",
-    "linkFailedDesc": "關聯您的帳戶時發生問題，請重試或聯絡支援團隊。"
+    "linkFailedDesc": "關聯您的帳戶時發生問題，請重試或聯絡支援團隊。",
+    "tooManyAttempts": "嘗試次數過多，請稍後再試。",
+    "alreadyInvitedByAnother": "您的帳戶已與另一位醫生關聯。"
   },
   "versionGate": {
     "title": "需要更新",

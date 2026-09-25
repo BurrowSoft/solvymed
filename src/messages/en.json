@@ -374,7 +374,8 @@
     "noBlockedPatients": "No patients are currently blocked",
     "unblock": "Unblock",
     "pageTitle": "Settings",
-    "pageSubtitle": "Manage your profile, clinic, hours, and procedures"
+    "pageSubtitle": "Manage your profile, clinic, hours, and procedures",
+    "copyLink": "Copy link"
   },
   "clinics": {
     "title": "My Clinics",
@@ -587,7 +588,9 @@
     "notFoundDesc": "This link may be invalid or has expired. Ask your doctor to share a new one.",
     "linkFailed": "Couldn't complete this link",
     "linkFailedDesc": "Something went wrong linking your account. Please try again or contact support.",
-    "backToHome": "Go to home"
+    "backToHome": "Go to home",
+    "tooManyAttempts": "Too many attempts. Please wait a while before trying again.",
+    "alreadyInvitedByAnother": "Your account is already connected to a different doctor."
   },
   "versionGate": {
     "title": "Update Required",
