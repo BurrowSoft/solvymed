@@ -60,6 +60,13 @@ export default async function JoinPage({
   if (existingRole?.role === "patient" && existingRole.invited_by_professional_id) {
     redirect(`${prefix}/auth/pending-confirmation`);
   }
+  // Any other persisted role — including "patient" with neither link field
+  // set, an already-provisioned but unlinked account — must never reach the
+  // RPC below. Matches api/auth/callback/route.ts and auth/confirm/page.tsx:
+  // a persisted role, once set, is never attached to a new doctor here.
+  if (existingRole?.role) {
+    redirect(`${prefix}/dashboard`);
+  }
 
   // Same RPC the manual invite-code form (auth/invite-required) and the
   // signup callback use — it owns the professionals lookup, the user_roles
