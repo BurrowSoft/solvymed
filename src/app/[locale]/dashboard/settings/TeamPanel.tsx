@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "./SettingsClient";
 import { createSecretaryInvite, revokeSecretaryInvite, removeSecretary } from "./team-actions";
@@ -33,6 +33,7 @@ type Created = { code: string; email: string };
 // creating it; "Resend" creates a fresh one for the same email.
 export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: boolean }) {
   const t = useTranslations("secretary");
+  const router = useRouter();
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const [email, setEmail] = useState("");
@@ -59,6 +60,7 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
       }
       setCreated({ code: result.code, email: targetEmail.trim().toLowerCase() });
       setEmail("");
+      router.refresh();
     });
   }
 
@@ -68,6 +70,7 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
     start(async () => {
       const result = await revokeSecretaryInvite(id);
       if (!result.ok) setError(t(ERROR_KEY[result.code] ?? "genericError"));
+      else router.refresh();
     });
   }
 
@@ -77,6 +80,7 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
     start(async () => {
       const result = await removeSecretary(row.id);
       if (!result.ok) setError(t(ERROR_KEY[result.code] ?? "genericError"));
+      else router.refresh();
     });
   }
 
