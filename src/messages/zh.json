@@ -403,7 +403,9 @@
     "noMapPin": "无地图标记 — 添加地址以在地图上显示",
     "empty": "暂无诊所",
     "emptySubtitle": "添加您的诊所以便患者找到您",
-    "addFirst": "添加您的第一家诊所"
+    "addFirst": "添加您的第一家诊所",
+    "nameRequiredError": "诊所名称为必填项。",
+    "genericError": "出现问题，请重试。"
   },
   "consultType": {
     "consultation": "门诊",

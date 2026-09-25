@@ -21,10 +21,10 @@ async function geocode(address: string, city: string, country: string) {
 export async function addClinic(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "Unauthorized", code: "generic" };
 
   const name = (formData.get("name") as string)?.trim();
-  if (!name) return { error: "Clinic name is required" };
+  if (!name) return { error: "Clinic name is required", code: "name_required" };
 
   const address = (formData.get("address") as string)?.trim() || null;
   const city    = (formData.get("city")    as string)?.trim() || null;
@@ -52,7 +52,7 @@ export async function addClinic(formData: FormData) {
     .select("id")
     .single();
 
-  if (error) return { error: error.message };
+  if (error) return { error: error.message, code: "generic" };
 
   // Link the creating doctor as a member of the clinic. These two inserts
   // aren't atomic (no RPC wraps them in a transaction) — if this one fails,
@@ -72,7 +72,7 @@ export async function addClinic(formData: FormData) {
       // only the original link error visible.
       console.error(`Orphaned clinic ${clinic.id}: link insert failed (${linkError.message}) and cleanup delete also failed (${cleanupError.message})`);
     }
-    return { error: linkError.message };
+    return { error: linkError.message, code: "generic" };
   }
 
   revalidatePath("/dashboard/clinics");
@@ -82,7 +82,7 @@ export async function addClinic(formData: FormData) {
 export async function deleteClinic(clinicId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "Unauthorized", code: "generic" };
 
   const { error } = await supabase
     .from("clinics")
@@ -90,7 +90,7 @@ export async function deleteClinic(clinicId: string) {
     .eq("id", clinicId)
     .eq("professional_id", user.id); // owner-only guard
 
-  if (error) return { error: error.message };
+  if (error) return { error: error.message, code: "generic" };
   revalidatePath("/dashboard/clinics");
   return { success: true };
 }

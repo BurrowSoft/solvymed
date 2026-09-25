@@ -403,7 +403,9 @@
     "noMapPin": "Không có ghim bản đồ — thêm địa chỉ để xuất hiện trên bản đồ",
     "empty": "Chưa có phòng khám nào",
     "emptySubtitle": "Thêm phòng khám của bạn để bệnh nhân có thể tìm thấy bạn",
-    "addFirst": "Thêm phòng khám đầu tiên của bạn"
+    "addFirst": "Thêm phòng khám đầu tiên của bạn",
+    "nameRequiredError": "Tên phòng khám là bắt buộc.",
+    "genericError": "Đã xảy ra lỗi. Vui lòng thử lại."
   },
   "consultType": {
     "consultation": "Tư vấn",

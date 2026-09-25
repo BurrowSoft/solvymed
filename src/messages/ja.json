@@ -403,7 +403,9 @@
     "noMapPin": "地図ピンなし — 住所を追加して地図に表示させましょう",
     "empty": "クリニックがまだありません",
     "emptySubtitle": "クリニックを追加して患者に見つけてもらいましょう",
-    "addFirst": "最初のクリニックを追加する"
+    "addFirst": "最初のクリニックを追加する",
+    "nameRequiredError": "クリニック名は必須です。",
+    "genericError": "問題が発生しました。もう一度お試しください。"
   },
   "consultType": {
     "consultation": "診察",

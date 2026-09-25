@@ -17,6 +17,15 @@ type Clinic = {
   lng?: number | null;
 };
 
+const ERROR_CODE_KEY: Record<string, string> = {
+  name_required: "nameRequiredError",
+  generic: "genericError",
+};
+
+function errorMessage(t: (key: string) => string, code: string | undefined): string {
+  return t(ERROR_CODE_KEY[code ?? ""] ?? "genericError");
+}
+
 export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
   const t = useTranslations("clinics");
   const router = useRouter();
@@ -32,7 +41,7 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
     startTransition(async () => {
       const result = await addClinic(formData);
       if (result.error) {
-        setError(result.error);
+        setError(errorMessage(t, result.code));
       } else {
         formRef.current?.reset();
         setShowForm(false);

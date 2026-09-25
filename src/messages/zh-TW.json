@@ -403,7 +403,9 @@
     "noMapPin": "無地圖標記 — 新增地址以在地圖上顯示",
     "empty": "暫無診所",
     "emptySubtitle": "新增您的診所以便患者找到您",
-    "addFirst": "新增您的第一家診所"
+    "addFirst": "新增您的第一家診所",
+    "nameRequiredError": "診所名稱為必填項目。",
+    "genericError": "發生問題，請重試。"
   },
   "consultType": {
     "consultation": "門診",

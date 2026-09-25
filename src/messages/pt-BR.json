@@ -403,7 +403,9 @@
     "noMapPin": "Sem localização no mapa — adicione um endereço para aparecer no mapa",
     "empty": "Nenhuma clínica ainda",
     "emptySubtitle": "Adicione sua clínica para que os pacientes possam encontrá-lo",
-    "addFirst": "Adicionar sua primeira clínica"
+    "addFirst": "Adicionar sua primeira clínica",
+    "nameRequiredError": "O nome da clínica é obrigatório.",
+    "genericError": "Algo deu errado. Tente novamente."
   },
   "consultType": {
     "consultation": "Consulta",

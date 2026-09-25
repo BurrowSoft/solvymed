@@ -403,7 +403,9 @@
     "noMapPin": "Nessun segnaposto — aggiungi un indirizzo per apparire sulla mappa",
     "empty": "Nessuna clinica ancora",
     "emptySubtitle": "Aggiungi la tua clinica per permettere ai pazienti di trovarti",
-    "addFirst": "Aggiungi la tua prima clinica"
+    "addFirst": "Aggiungi la tua prima clinica",
+    "nameRequiredError": "Il nome della clinica è obbligatorio.",
+    "genericError": "Qualcosa è andato storto. Riprova."
   },
   "consultType": {
     "consultation": "Consulenza",

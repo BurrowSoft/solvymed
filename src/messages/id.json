@@ -403,7 +403,9 @@
     "noMapPin": "Tidak ada pin peta — tambahkan alamat untuk muncul di peta",
     "empty": "Belum ada klinik",
     "emptySubtitle": "Tambahkan klinik Anda agar pasien dapat menemukan Anda",
-    "addFirst": "Tambahkan klinik pertama Anda"
+    "addFirst": "Tambahkan klinik pertama Anda",
+    "nameRequiredError": "Nama klinik wajib diisi.",
+    "genericError": "Terjadi kesalahan. Silakan coba lagi."
   },
   "consultType": {
     "consultation": "Konsultasi",

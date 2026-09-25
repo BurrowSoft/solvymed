@@ -403,7 +403,9 @@
     "noMapPin": "지도 핀 없음 — 주소를 추가하여 지도에 표시하세요",
     "empty": "아직 클리닉이 없습니다",
     "emptySubtitle": "환자가 찾을 수 있도록 클리닉을 추가하세요",
-    "addFirst": "첫 번째 클리닉 추가"
+    "addFirst": "첫 번째 클리닉 추가",
+    "nameRequiredError": "클리닉 이름은 필수입니다.",
+    "genericError": "문제가 발생했습니다. 다시 시도해 주세요."
   },
   "consultType": {
     "consultation": "진료",

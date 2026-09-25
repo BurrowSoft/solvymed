@@ -403,7 +403,9 @@
     "noMapPin": "Kein Kartenpin — fügen Sie eine Adresse hinzu, um auf der Karte zu erscheinen",
     "empty": "Noch keine Kliniken",
     "emptySubtitle": "Fügen Sie Ihre Klinik hinzu, damit Patienten Sie finden können",
-    "addFirst": "Erste Klinik hinzufügen"
+    "addFirst": "Erste Klinik hinzufügen",
+    "nameRequiredError": "Der Name der Klinik ist erforderlich.",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
   },
   "consultType": {
     "consultation": "Beratung",
