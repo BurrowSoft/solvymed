@@ -37,19 +37,31 @@ export default function InviteRequiredPage() {
     }
 
     // This page is reachable by any authenticated user, not just the
-    // role-less accounts coming from a failed invite confirmation. The real
-    // authorization boundary is server-side: both linking RPCs reject any
-    // caller whose user_roles row has role IN ('professional', 'secretary')
-    // (migrations 070/071) — deliberately NOT a professionals-table check,
-    // since a professionals row isn't a reliable signal (legacy pre-071
-    // accounts got one regardless of role). This client-side check mirrors
-    // that same user_roles logic as a UX nicety, not the actual boundary.
-    const { data: existingRole } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .maybeSingle();
+    // role-less accounts coming from a failed invite confirmation. This
+    // client-side check is a UX nicety, not the real authorization boundary
+    // (that's server-side, in the linking RPCs — see message to mob dev re:
+    // the RPCs' own guard needing the same professionals-row check, since a
+    // role-less professional bypasses a user_roles.role-only guard there
+    // too). A missing user_roles row is deliberately NOT treated as "safe to
+    // proceed": a role-less account could be a legitimate pending patient
+    // (first invite attempt, no row yet) OR a professional/secretary whose
+    // row was never written, and user_metadata.role is client-writable so it
+    // can't disambiguate them. The professionals-table check below is an
+    // imperfect but conservative second signal — it can false-positive on a
+    // rare legacy pre-071 patient who also has a stray professionals row
+    // (they'd see an error and need support to fix the underlying data),
+    // but that's a safer failure mode than silently letting a professional
+    // attach a patient invite code.
+    const [{ data: existingRole }, { data: professionalRow }] = await Promise.all([
+      supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle(),
+      supabase.from("professionals").select("id").eq("id", user.id).maybeSingle(),
+    ]);
     if (existingRole?.role === "professional" || existingRole?.role === "secretary") {
+      setLoading(false);
+      setError(t("inviteRequired.notPendingPatient"));
+      return;
+    }
+    if (!existingRole?.role && professionalRow) {
       setLoading(false);
       setError(t("inviteRequired.notPendingPatient"));
       return;

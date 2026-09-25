@@ -25,6 +25,7 @@ export default async function AuthConfirmPage({
     return <ConfirmClient state="unknown" deepLink="solvymed://" />;
   }
 
+  const prefix = locale === "en" ? "" : `/${locale}`;
   const { access_token, refresh_token } = data.session;
   const platform = data.user.user_metadata?.platform as string | undefined;
   const role = data.user.user_metadata?.role as string | undefined;
@@ -56,15 +57,15 @@ export default async function AuthConfirmPage({
         .eq("user_id", data.user.id)
         .maybeSingle();
       if (existingRole?.role === "patient" && existingRole.linked_patient_id) {
-        redirect("/my-appointments");
+        redirect(`${prefix}/my-appointments`);
       }
       if (existingRole?.role === "patient" && existingRole.invited_by_professional_id) {
         // Linked to a doctor's "orbit" but not yet confirmed —
         // patient_connections doesn't exist until the doctor confirms.
-        redirect("/auth/pending-confirmation");
+        redirect(`${prefix}/auth/pending-confirmation`);
       }
       if (existingRole?.role) {
-        redirect("/dashboard");
+        redirect(`${prefix}/dashboard`);
       }
       // Two distinct code types, tried in sequence: a patient invite code
       // (tied to a specific pre-existing patient record — link is
@@ -82,18 +83,18 @@ export default async function AuthConfirmPage({
           // fail the same way. invite-required still keeps the session
           // alive either way, so the destination is the same, but the two
           // failure modes shouldn't be conflated in the code.
-          redirect("/auth/invite-required");
+          redirect(`${prefix}/auth/invite-required`);
         }
         if (fullyLinked) {
-          redirect("/auth/patient-welcome");
+          redirect(`${prefix}/auth/patient-welcome`);
         }
         const { data: profId, error: profLinkError } = await supabase.rpc("link_by_professional_public_code", { p_public_code: inviteCode });
         if (profLinkError) {
-          redirect("/auth/invite-required");
+          redirect(`${prefix}/auth/invite-required`);
         }
-        redirect(profId ? "/auth/pending-confirmation" : "/auth/invite-required");
+        redirect(profId ? `${prefix}/auth/pending-confirmation` : `${prefix}/auth/invite-required`);
       }
-      redirect("/auth/invite-required");
+      redirect(`${prefix}/auth/invite-required`);
     }
     // Redirect to /dashboard without a locale prefix — the middleware's
     // geo-redirect will add the correct locale (e.g. /th/dashboard) automatically.

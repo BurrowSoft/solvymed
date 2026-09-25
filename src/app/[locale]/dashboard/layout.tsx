@@ -34,7 +34,7 @@ export default async function DashboardLayout({
   // Only professionals/secretaries belong in this dashboard — allowlist rather
   // than excluding "patient", so an authenticated session with no role at all
   // (e.g. mid-signup, invite not yet resolved) can't fall through to it.
-  let { data: roleRow } = await supabase
+  const { data: roleRow } = await supabase
     .from("user_roles")
     .select("role, invited_by_professional_id, linked_patient_id")
     .eq("user_id", user!.id)
@@ -57,29 +57,18 @@ export default async function DashboardLayout({
       // send back to the retry form, not a login dead end.
       redirect(`/${locale === "en" ? "" : locale + "/"}auth/invite-required`);
     }
-    // No persisted role — don't self-heal off metadata alone. user_metadata
-    // is client-writable (supabase.auth.updateUser()), so trusting it here
-    // would let any authenticated account (including a role-less pending
-    // patient) self-provision access by just setting role: "secretary" and
-    // visiting this page. Only auto-repair the one case with independent,
-    // server-owned proof: a real professionals-table row exists for this
-    // user but its user_roles row is missing (e.g. seeded outside the
-    // normal signup flow). There's no equivalent verification table for
-    // secretaries, so that case isn't self-healed — falls through to login.
-    const { data: profRow } = await supabase
-      .from("professionals")
-      .select("id")
-      .eq("id", user!.id)
-      .maybeSingle();
-    if (profRow) {
-      await supabase.from("user_roles").upsert(
-        { user_id: user!.id, role: "professional" },
-        { onConflict: "user_id" },
-      );
-      roleRow = { role: "professional", invited_by_professional_id: null, linked_patient_id: null };
-    } else {
-      redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
-    }
+    // No persisted role — no self-heal. A professionals-table row was tried
+    // as "proof" of a real professional, but that's unsound: legacy
+    // pre-071 signups can have a professionals row regardless of role, so
+    // a patient with client-writable user_metadata.role set to
+    // "professional" could satisfy that check and self-provision a
+    // persisted professional role. There's no server-owned signal that
+    // reliably distinguishes "a real professional whose user_roles row is
+    // missing" from "any other role-less account" with the current data
+    // model, so this falls through to login rather than guessing. A
+    // legitimate professional with a missing row needs a real data fix
+    // (backfill/migration), not an app-layer auto-repair.
+    redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
   }
   if (roleRow.role !== "professional" && roleRow.role !== "secretary") {
     redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
