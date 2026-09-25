@@ -29,11 +29,15 @@ export default async function JoinPage({
     );
   }
 
-  // Verify professional exists
+  // Verify professional exists. professionals.id is the professional's own
+  // user id (matches every other query against this table) — this was the
+  // only place using the nonexistent column "user_id", which meant every
+  // visit here showed "not found" regardless of whether the professional
+  // was real (found by web test).
   const { data: prof } = await supabase
     .from("professionals")
     .select("full_name, clinic_name")
-    .eq("user_id", professionalId)
+    .eq("id", professionalId)
     .maybeSingle();
 
   if (!prof) {
