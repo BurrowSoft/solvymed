@@ -23,7 +23,15 @@ export default async function SecretaryInvitePage({
   const { locale, code: rawCode } = await params;
   const { email } = await searchParams;
   const prefix = locale === "en" ? "" : `/${locale}`;
-  const code = normalizeSecretaryCode(decodeURIComponent(rawCode));
+  // rawCode is untrusted URL input: malformed %-encoding makes
+  // decodeURIComponent throw, which must show "invalid invite", not a 500.
+  let decoded = "";
+  try {
+    decoded = decodeURIComponent(rawCode);
+  } catch {
+    decoded = "";
+  }
+  const code = normalizeSecretaryCode(decoded);
   const t = await getTranslations({ locale, namespace: "secretary" });
 
   const message = (title: string, body: string) => (
