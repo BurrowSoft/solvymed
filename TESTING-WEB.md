@@ -1706,6 +1706,17 @@ the confirm-loop test was made robust — doctor account's
 `public_invite_code` reset to null, `subscription_status` untouched this
 round (never mutated, only probed and correctly rejected).
 
+## Opus review — deletion-request form, real submit confirmed
+
+Per mob dev's request (`deletion_requests` now only accepts
+`status='pending'` from the public, and the form already sends that
+explicitly — worth proving with a real submit, not just a code read).
+Filled and submitted the actual form at `/account/delete` (email +
+optional reason, no auth required by design), confirmed the "Request
+received" success screen shows the submitted email, then verified via
+REST that a real row landed with `status: "pending"` and the correct
+`email`/`reason`. Cleaned up the test row after. 🟢 Works as described.
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
