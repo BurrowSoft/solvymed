@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isAccessAllowed, type EffectiveSub } from "@/lib/subscription";
 
 const ASAAS_BASE = "https://api.asaas.com/v3";
 const ASAAS_API_KEY = process.env.ASAAS_API_KEY!;
@@ -22,6 +23,16 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Same reasoning as the Stripe checkout route: this route is directly
+  // callable regardless of the /subscribe page's redirect-away logic, and
+  // previously created a brand new Asaas subscription unconditionally,
+  // even for a professional who already has an active one.
+  const { data: subRows } = await supabase.rpc("get_effective_subscription", { p_user_id: user.id });
+  const sub = (subRows?.[0] ?? null) as EffectiveSub | null;
+  if (sub?.subscription_status === "active" && isAccessAllowed(sub)) {
+    return NextResponse.json({ error: "Already subscribed" }, { status: 409 });
+  }
 
   const { name, email } = await request.json().catch(() => ({}));
 

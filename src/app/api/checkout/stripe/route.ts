@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@/lib/supabase/server";
+import { isAccessAllowed, type EffectiveSub } from "@/lib/subscription";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-05-27.dahlia" });
 
@@ -10,6 +11,18 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // /subscribe redirects an already-active user away from this button, but
+  // that's a page-level convenience, not a boundary — this route is
+  // directly callable (bookmark, back button, double-click racing the
+  // redirect) and previously created a brand new Stripe subscription
+  // regardless of an existing one, leaving the professional billed twice
+  // with only the most recently webhook-processed subscription tracked.
+  const { data: subRows } = await supabase.rpc("get_effective_subscription", { p_user_id: user.id });
+  const sub = (subRows?.[0] ?? null) as EffectiveSub | null;
+  if (sub?.subscription_status === "active" && isAccessAllowed(sub)) {
+    return NextResponse.json({ error: "Already subscribed" }, { status: 409 });
+  }
 
   const origin = request.headers.get("origin") ?? process.env.NEXT_PUBLIC_APP_URL ?? "";
   const locale = (await request.json().catch(() => ({}))).locale ?? "en";
