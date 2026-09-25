@@ -2362,6 +2362,40 @@ Whether "neutral" was meant to cover the doctor too is UX's call.
 
 **Merge gate: 🟢 for `f58dc76`.**
 
+**Addendum: 🟢 re-confirmed at `33f73d4`.** The two commits on top,
+`a35776f` (the doctor is gender-neutral in all locales) and `33f73d4`
+(three French strings), change only `src/messages/*.json`; I checked the
+diff. No code changed, so the 13/13 run above carries over.
+
+**Spot-check, rendered live in pt-BR and es:**
+- **Signup note:** "Trabalha na secretaria? Peça um link de convite à
+  clínica onde você trabalha." / "¿Trabajas en secretaría? Pide un enlace
+  de invitación a la clínica donde trabajas."
+- **Signed-out `/join/secretary/<code>`:** "Você recebeu um convite para a
+  equipe da secretaria" / "Tienes una invitación al equipo de secretaría".
+- **Doctor account on an invite:** "Esta é uma conta profissional…" /
+  "Esta es una cuenta profesional…".
+- **Not connected:** the title renders, and the body asks "à clínica onde
+  você trabalha" / "a la clínica donde trabajas".
+- **Team, invite your own email:** "Você não pode usar seu próprio
+  e-mail." / "No puedes usar tu propio correo."
+- **Secretary's Settings:** "Somente a conta principal da clínica pode
+  alterar isto." / "Solo la cuenta principal de la clínica puede cambiar
+  esto.", plus **Sair da clínica** / **Salir de la clínica**, and "Deixar
+  esta clínica…" / "Dejar esta clínica…".
+
+**String review.** I scanned pt-BR and es for masculine references to the
+doctor in the secretary, signup, settings and patient strings. None are
+left in the #13 copy. Two pre-existing patient-signup strings are still
+masculine, "Médico" (the role label) and "código do médico" / "código del
+médico" (the invite-code hint), but #13 didn't touch them. **French**
+(`33f73d4`, checked in the JSON, not rendered): "mon secrétariat",
+"Cette personne…", "E-mail de la personne invitée".
+
+Clean-up: the 3 throwaway accounts are deleted.
+
+**Merge gate: 🟢 for `33f73d4`.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
