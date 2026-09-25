@@ -114,8 +114,19 @@ export async function POST(request: NextRequest) {
     }
     const sub = subRes.data;
 
-    // 3. Fetch the first payment's PIX link
+    // 3. Fetch the first payment's PIX link. The subscription already
+    // exists at this point (the customer will be charged) — a failure
+    // here is a distinct situation from checkout never starting, so it's
+    // reported with subscriptionId still present rather than as a plain
+    // failure, letting the client tell the two apart.
     const paymentsRes = await asaas(`/subscriptions/${sub.id}/payments`, "GET");
+    if (!paymentsRes.ok) {
+      console.error(`Asaas subscription ${sub.id} created but payment lookup failed`, paymentsRes.data);
+      return NextResponse.json({
+        subscriptionId: sub.id,
+        error: "Subscription created, but we couldn't load the payment link. Please check your email or contact support.",
+      });
+    }
     const firstPayment = paymentsRes.data?.data?.[0];
     const paymentUrl = firstPayment?.invoiceUrl ?? null;
 

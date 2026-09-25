@@ -28,8 +28,13 @@ export function SubscribeButton({ provider, locale, label, sublabel, userName, u
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+      } else if (data.subscriptionId) {
+        // A subscription was actually created (Asaas payment-link lookup
+        // can fail after the fact) — the customer will be charged, so this
+        // is not the same situation as checkout never starting.
+        setError(data.error ?? "Your subscription was created, but we couldn't load the payment link. Please check your email or contact support.");
       } else {
-        setError("Could not initiate checkout. Please try again.");
+        setError(data.error ?? "Could not initiate checkout. Please try again.");
       }
     } catch {
       setError("Network error. Please try again.");

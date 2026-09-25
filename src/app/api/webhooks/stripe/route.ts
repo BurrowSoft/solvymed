@@ -47,7 +47,15 @@ export async function POST(request: NextRequest) {
     }).eq("id", userId);
   }
 
-  if (event.type === "customer.subscription.updated" || event.type === "customer.subscription.deleted") {
+  if (
+    event.type === "customer.subscription.created" ||
+    event.type === "customer.subscription.updated" ||
+    event.type === "customer.subscription.deleted"
+  ) {
+    // Stripe sends "created" (not "updated") for a brand new subscription —
+    // without handling it here too, checkout.session.completed no longer
+    // writing subscription_status itself (see above) meant a new
+    // subscriber's status/period_end would never get set at all.
     const sub = event.data.object as Stripe.Subscription;
     const userId = sub.metadata?.user_id;
     if (!userId) return NextResponse.json({ ok: true });
