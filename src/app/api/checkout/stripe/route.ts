@@ -64,6 +64,43 @@ export async function POST(request: NextRequest) {
     : routing.defaultLocale;
   const plan = getPlanPrice(locale);
 
+  // Collapses concurrent duplicate requests (double-click racing the
+  // redirect, a retried request) into the same Checkout Session. Scoped to
+  // a short window so a legitimate resubscribe after cancellation gets a
+  // fresh session. The locale is in the key because Stripe rejects a reused
+  // key whose parameters differ (currency, URLs). Everything derived from
+  // time below comes from the window start, not Date.now(), for the same
+  // reason.
+  const WINDOW_MS = 10 * 60 * 1000;
+  const windowStart = Math.floor(Date.now() / WINDOW_MS) * WINDOW_MS;
+  const idempotencyKey = `checkout-stripe-${user.id}-${locale}-${windowStart / WINDOW_MS}`;
+  // 70 min after the window start = 60-70 min from now, inside Stripe's
+  // allowed 30 min to 24 h.
+  const expiresAt = Math.floor(windowStart / 1000) + 70 * 60;
+
+  // At most one payable Checkout Session per professional. Two open ones
+  // (an abandoned tab, a retry in a later window, a language switch) can
+  // both be completed, leaving the professional billed twice. Expire any
+  // of theirs still open before creating a new one. Sessions now live at
+  // most ~70 min, so looking back 2 h covers every one that can still be
+  // open. A session tagged with this request's own key is left alone: it's
+  // the one Stripe will hand back for this key.
+  try {
+    for await (const open of stripe.checkout.sessions.list({
+      status: "open",
+      created: { gte: Math.floor(Date.now() / 1000) - 2 * 60 * 60 },
+      limit: 100,
+    })) {
+      if (open.client_reference_id === user.id && open.metadata?.checkout_key !== idempotencyKey) {
+        await stripe.checkout.sessions.expire(open.id);
+      }
+    }
+  } catch (err) {
+    // Fail closed: proceeding could leave a second payable session open.
+    console.error("Stripe checkout: could not expire open sessions", err);
+    return NextResponse.json({ error: "Could not verify open checkouts", code: "check_failed" }, { status: 503 });
+  }
+
   try {
     const session = await stripe.checkout.sessions.create(
       {
@@ -88,22 +125,13 @@ export async function POST(request: NextRequest) {
         // and an active subscription with a null period end reads as
         // unlimited access.
         subscription_data: { metadata: { user_id: user.id } },
-        metadata: { user_id: user.id },
+        metadata: { user_id: user.id, checkout_key: idempotencyKey },
         success_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?success=1`,
         cancel_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?cancelled=1`,
         client_reference_id: user.id,
+        expires_at: expiresAt,
       },
-      {
-        // Collapses concurrent duplicate requests (double-click racing the
-        // redirect, a retried request) into the same Checkout Session
-        // instead of creating two. Scoped to a short window since a
-        // legitimate resubscribe after cancellation should get a fresh
-        // session, not be blocked by an old key. The locale is part of the
-        // key: Stripe rejects a reused key whose parameters differ, so
-        // switching language (and so currency and URLs) within the window
-        // would otherwise fail checkout outright.
-        idempotencyKey: `checkout-stripe-${user.id}-${locale}-${Math.floor(Date.now() / (10 * 60 * 1000))}`,
-      },
+      { idempotencyKey },
     );
 
     return NextResponse.json({ url: session.url });
