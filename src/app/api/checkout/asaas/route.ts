@@ -36,7 +36,10 @@ export async function POST(request: NextRequest) {
   if (roleError) {
     return NextResponse.json({ error: "Could not verify account role", code: "check_failed" }, { status: 503 });
   }
-  if (roleRow?.role && roleRow.role !== "professional") {
+  if (roleRow?.role !== "professional") {
+    // Exact match — see the matching comment in the Stripe route for why
+    // "has a role and it isn't professional" wrongly let a role-less
+    // account through.
     return NextResponse.json({ error: "Only professionals can subscribe", code: "wrong_role" }, { status: 403 });
   }
 

@@ -26,7 +26,13 @@ export async function POST(request: NextRequest) {
   if (roleError) {
     return NextResponse.json({ error: "Could not verify account role", code: "check_failed" }, { status: 503 });
   }
-  if (roleRow?.role && roleRow.role !== "professional") {
+  if (roleRow?.role !== "professional") {
+    // Exact match, not "has a role and it isn't professional" — the
+    // previous check let a role-less authenticated account straight
+    // through (roleRow?.role is falsy, so the whole condition was false).
+    // A role-less caller could still complete a real Stripe charge, but
+    // there's no guarantee a professionals row exists for the webhook to
+    // activate against.
     return NextResponse.json({ error: "Only professionals can subscribe", code: "wrong_role" }, { status: 403 });
   }
 
