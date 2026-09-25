@@ -2,11 +2,25 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getEffectiveProfId } from "@/lib/effectiveProfId";
+
+// Duration is already bounded to 480 (8h), but that alone doesn't stop a
+// late start_time from producing an end time past midnight (e.g. 23:00 +
+// 480min = "31:00", not a storable/valid time). Returns null when the
+// slot would cross into the next day.
+function computeEndTime(startTime: string, durationMinutes: number): string | null {
+  const [h, m] = startTime.split(":").map(Number);
+  if (!Number.isInteger(h) || !Number.isInteger(m) || h < 0 || h > 23 || m < 0 || m > 59) return null;
+  const endTotal = h * 60 + m + durationMinutes;
+  if (endTotal > 24 * 60) return null;
+  return `${String(Math.floor(endTotal / 60) % 24).padStart(2, "0")}:${String(endTotal % 60).padStart(2, "0")}`;
+}
 
 export async function createAppointment(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
 
   const patientName = formData.get("patient_name") as string;
   const date = formData.get("date") as string;
@@ -21,22 +35,21 @@ export async function createAppointment(formData: FormData) {
 
   const parsedDuration = parseInt(durationStr);
   const duration = Number.isInteger(parsedDuration) && parsedDuration > 0 && parsedDuration <= 480 ? parsedDuration : 30;
-  const [h, m] = startTime.split(":").map(Number);
-  const endTotal = h * 60 + m + duration;
-  const endTime = `${String(Math.floor(endTotal / 60)).padStart(2, "0")}:${String(endTotal % 60).padStart(2, "0")}`;
+  const endTime = computeEndTime(startTime, duration);
+  if (!endTime) return { error: "This time and duration would run past midnight" };
 
   // Find patient_id by name (best-effort match)
   const { data: patients } = await supabase
     .from("patients")
     .select("id")
-    .eq("professional_id", user.id)
+    .eq("professional_id", effectiveProfId)
     .ilike("full_name", patientName.trim())
     .limit(1);
 
   const patientId = patients?.[0]?.id ?? null;
 
   const { error } = await supabase.from("appointments").insert({
-    professional_id: user.id,
+    professional_id: effectiveProfId,
     patient_id: patientId,
     patient_name: patientName.trim(),
     date,
@@ -78,6 +91,7 @@ export async function updateAppointmentStatus(id: string, status: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
 
   // The tentative/proposal exclusion is enforced in the same atomic write
   // as the update itself (not a separate read-then-write, which would be
@@ -88,7 +102,7 @@ export async function updateAppointmentStatus(id: string, status: string) {
     .from("appointments")
     .update({ status })
     .eq("id", id)
-    .eq("professional_id", user.id)
+    .eq("professional_id", effectiveProfId)
     .not("status", "in", '("tentative","proposal")')
     .select("id");
 
@@ -105,12 +119,13 @@ export async function deleteAppointment(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
 
   const { error } = await supabase
     .from("appointments")
     .delete()
     .eq("id", id)
-    .eq("professional_id", user.id);
+    .eq("professional_id", effectiveProfId);
 
   if (error) return { error: error.message };
   revalidatePath("/dashboard/schedule");
@@ -121,6 +136,7 @@ export async function blockTime(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
 
   const date = formData.get("date") as string;
   const startTime = formData.get("start_time") as string;
@@ -131,12 +147,11 @@ export async function blockTime(formData: FormData) {
 
   const parsedDuration = parseInt(durationStr);
   const duration = Number.isInteger(parsedDuration) && parsedDuration > 0 && parsedDuration <= 480 ? parsedDuration : 60;
-  const [h, m] = startTime.split(":").map(Number);
-  const endTotal = h * 60 + m + duration;
-  const endTime = `${String(Math.floor(endTotal / 60)).padStart(2, "0")}:${String(endTotal % 60).padStart(2, "0")}`;
+  const endTime = computeEndTime(startTime, duration);
+  if (!endTime) return { error: "This time and duration would run past midnight" };
 
   const { error } = await supabase.from("appointments").insert({
-    professional_id: user.id,
+    professional_id: effectiveProfId,
     patient_id: null,
     patient_name: reason || "Blocked",
     date,
