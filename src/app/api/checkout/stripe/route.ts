@@ -81,16 +81,13 @@ export async function POST(request: NextRequest) {
   // At most one payable Checkout Session per professional. Two open ones
   // (an abandoned tab, a retry in a later window, a language switch) can
   // both be completed, leaving the professional billed twice. Expire any
-  // of theirs still open before creating a new one. Sessions now live at
-  // most ~70 min, so looking back 2 h covers every one that can still be
-  // open. A session tagged with this request's own key is left alone: it's
+  // of theirs still open before creating a new one. No created-date filter:
+  // sessions from before expires_at was set live up to Stripe's default
+  // 24 h, and "open" already excludes anything older, so the list stays
+  // small. A session tagged with this request's own key is left alone: it's
   // the one Stripe will hand back for this key.
   try {
-    for await (const open of stripe.checkout.sessions.list({
-      status: "open",
-      created: { gte: Math.floor(Date.now() / 1000) - 2 * 60 * 60 },
-      limit: 100,
-    })) {
+    for await (const open of stripe.checkout.sessions.list({ status: "open", limit: 100 })) {
       if (open.client_reference_id === user.id && open.metadata?.checkout_key !== idempotencyKey) {
         await stripe.checkout.sessions.expire(open.id);
       }
