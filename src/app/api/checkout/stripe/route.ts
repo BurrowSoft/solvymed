@@ -12,6 +12,24 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  // This route only checked authentication, not role — a patient or
+  // secretary could initiate a real Stripe charge under their own identity
+  // for a feature meant only for professionals (get_effective_subscription
+  // resolves a secretary's DELEGATED professional's subscription, but the
+  // checkout below would still bill and tag the secretary's own user_id,
+  // so the webhook could never activate the actual owning account).
+  const { data: roleRow, error: roleError } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (roleError) {
+    return NextResponse.json({ error: "Could not verify account role" }, { status: 503 });
+  }
+  if (roleRow?.role && roleRow.role !== "professional") {
+    return NextResponse.json({ error: "Only professionals can subscribe" }, { status: 403 });
+  }
+
   // /subscribe redirects an already-active user away from this button, but
   // that's a page-level convenience, not a boundary — this route is
   // directly callable (bookmark, back button, double-click racing the

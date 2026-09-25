@@ -16,13 +16,29 @@ async function asaas(path: string, method: string, body?: unknown) {
     },
     body: body ? JSON.stringify(body) : undefined,
   });
-  return res.json();
+  const json = await res.json().catch(() => null);
+  return { ok: res.ok, data: json };
 }
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Same reasoning as the Stripe checkout route: only authentication was
+  // checked, not role — a patient or secretary could initiate a real
+  // charge under their own identity for a professionals-only feature.
+  const { data: roleRow, error: roleError } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (roleError) {
+    return NextResponse.json({ error: "Could not verify account role" }, { status: 503 });
+  }
+  if (roleRow?.role && roleRow.role !== "professional") {
+    return NextResponse.json({ error: "Only professionals can subscribe" }, { status: 403 });
+  }
 
   // Same reasoning as the Stripe checkout route: this route is directly
   // callable regardless of the /subscribe page's redirect-away logic, and
@@ -43,16 +59,22 @@ export async function POST(request: NextRequest) {
   try {
     // 1. Create or retrieve customer
     const searchRes = await asaas(`/customers?email=${encodeURIComponent(user.email ?? email ?? "")}`, "GET");
+    if (!searchRes.ok) {
+      return NextResponse.json({ error: "Could not reach Asaas" }, { status: 503 });
+    }
     let customerId: string;
-    if (searchRes?.data?.length) {
-      customerId = searchRes.data[0].id;
+    if (searchRes.data?.data?.length) {
+      customerId = searchRes.data.data[0].id;
     } else {
-      const customer = await asaas("/customers", "POST", {
+      const customerRes = await asaas("/customers", "POST", {
         name: name ?? user.email,
         email: user.email ?? email,
         externalReference: user.id,
       });
-      customerId = customer.id;
+      if (!customerRes.ok || !customerRes.data?.id) {
+        return NextResponse.json({ error: "Could not create Asaas customer", detail: customerRes.data }, { status: 502 });
+      }
+      customerId = customerRes.data.id;
     }
 
     // 1b. Narrow (not eliminate — still a check-then-create race under true
@@ -60,8 +82,15 @@ export async function POST(request: NextRequest) {
     // requests both reading the same Postgres row above) the window for a
     // double-click or duplicate tab: bail if this customer already has an
     // active/pending Asaas subscription rather than creating a second one.
-    const existingSubs = await asaas(`/subscriptions?customer=${customerId}&status=ACTIVE`, "GET");
-    if (existingSubs?.data?.length) {
+    // Fail closed on a non-2xx response instead of treating it as "no
+    // existing subscriptions" — the parsed body of an error response
+    // normally has no .data array, so this would otherwise silently
+    // proceed to create a second paid subscription on an Asaas outage.
+    const existingSubsRes = await asaas(`/subscriptions?customer=${customerId}&status=ACTIVE`, "GET");
+    if (!existingSubsRes.ok) {
+      return NextResponse.json({ error: "Could not verify existing Asaas subscriptions" }, { status: 503 });
+    }
+    if (existingSubsRes.data?.data?.length) {
       return NextResponse.json({ error: "Already subscribed" }, { status: 409 });
     }
 
@@ -70,7 +99,7 @@ export async function POST(request: NextRequest) {
     nextDue.setDate(nextDue.getDate() + 1);
     const nextDueDate = nextDue.toISOString().split("T")[0];
 
-    const sub = await asaas("/subscriptions", "POST", {
+    const subRes = await asaas("/subscriptions", "POST", {
       customer: customerId,
       billingType: "PIX",
       cycle: "MONTHLY",
@@ -80,13 +109,14 @@ export async function POST(request: NextRequest) {
       externalReference: user.id,
     });
 
-    if (!sub.id) {
-      return NextResponse.json({ error: "Asaas subscription creation failed", detail: sub }, { status: 500 });
+    if (!subRes.ok || !subRes.data?.id) {
+      return NextResponse.json({ error: "Asaas subscription creation failed", detail: subRes.data }, { status: 500 });
     }
+    const sub = subRes.data;
 
     // 3. Fetch the first payment's PIX link
-    const payments = await asaas(`/subscriptions/${sub.id}/payments`, "GET");
-    const firstPayment = payments?.data?.[0];
+    const paymentsRes = await asaas(`/subscriptions/${sub.id}/payments`, "GET");
+    const firstPayment = paymentsRes.data?.data?.[0];
     const paymentUrl = firstPayment?.invoiceUrl ?? null;
 
     return NextResponse.json({ url: paymentUrl, subscriptionId: sub.id });
