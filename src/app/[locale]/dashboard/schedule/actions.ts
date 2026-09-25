@@ -19,7 +19,8 @@ export async function createAppointment(formData: FormData) {
 
   if (!patientName || !date || !startTime) return { error: "Missing required fields" };
 
-  const duration = parseInt(durationStr) || 30;
+  const parsedDuration = parseInt(durationStr);
+  const duration = Number.isInteger(parsedDuration) && parsedDuration > 0 && parsedDuration <= 480 ? parsedDuration : 30;
   const [h, m] = startTime.split(":").map(Number);
   const endTotal = h * 60 + m + duration;
   const endTime = `${String(Math.floor(endTotal / 60)).padStart(2, "0")}:${String(endTotal % 60).padStart(2, "0")}`;
@@ -56,7 +57,14 @@ export async function createAppointment(formData: FormData) {
   return { success: true };
 }
 
+const VALID_APPOINTMENT_STATUSES = [
+  "scheduled", "tentative", "proposal", "confirmed",
+  "completed", "cancelled", "rejected", "blocked", "late", "absent",
+];
+
 export async function updateAppointmentStatus(id: string, status: string) {
+  if (!VALID_APPOINTMENT_STATUSES.includes(status)) return { error: "Invalid status" };
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
@@ -100,7 +108,8 @@ export async function blockTime(formData: FormData) {
 
   if (!date || !startTime) return { error: "Missing required fields" };
 
-  const duration = parseInt(durationStr) || 60;
+  const parsedDuration = parseInt(durationStr);
+  const duration = Number.isInteger(parsedDuration) && parsedDuration > 0 && parsedDuration <= 480 ? parsedDuration : 60;
   const [h, m] = startTime.split(":").map(Number);
   const endTotal = h * 60 + m + duration;
   const endTime = `${String(Math.floor(endTotal / 60)).padStart(2, "0")}:${String(endTotal % 60).padStart(2, "0")}`;
