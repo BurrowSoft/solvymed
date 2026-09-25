@@ -18,6 +18,18 @@ export default async function SettingsPage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
 
+  // generatePublicInviteCode() operates on the caller's own professionals
+  // row (SECURITY DEFINER using auth.uid() internally) — it has no concept
+  // of "generate for my delegating professional". A secretary calling it
+  // would target their own (nonexistent) professional identity, not their
+  // doctor's, so the card is hidden for them rather than shown broken.
+  const { data: userRoleData } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const isSecretary = userRoleData?.role === "secretary";
+
   const [profResult, procsResult, blockedResult] = await Promise.all([
     supabase
       .from("professionals")
@@ -65,7 +77,9 @@ export default async function SettingsPage({
           specialty={prof.specialty ?? undefined}
         />
 
-        <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} />
+        {!isSecretary && (
+          <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} />
+        )}
 
         <ClinicForm
           data={{
