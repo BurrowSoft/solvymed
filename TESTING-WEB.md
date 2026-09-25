@@ -1406,6 +1406,107 @@ testable — same caveat as rounds 11-14 throughout: the patient
 invite-code linking flow itself still isn't independently live-tested,
 blocked on the service-role-key infra gap, not on anything in the code.
 
+## Opus review — Phase 1, master audit (2026-09-25)
+
+User-driven team task: a full review and test pass across both repos ahead
+of `refactor/opus-review` (web dev's PR #8, broad code-review pass). My
+job: test `master` as it stands, thoroughly, across every role/flow, plus
+direct REST/RLS authorization probing. Bugs go to web dev for PR #8;
+DB/RPC/RLS issues also go to mob dev.
+
+**Unblocked this session's biggest limitation:** the real
+`SUPABASE_SERVICE_ROLE_KEY` (mob dev's mobile worktree `.env`, confirmed a
+genuinely valid `service_role` JWT — the old one in this repo's `.env.local`
+was a placeholder) means fresh, pre-confirmed test accounts are finally
+possible. Built a real end-to-end mechanism rather than a shortcut: submit
+the actual signup form via Playwright (exercises real client validation +
+the real `supabase.auth.signUp()` call), then use the admin API to
+`generate_link` a magic-link `hashed_token` for that just-created
+(unconfirmed) account and feed it straight to
+`/api/auth/callback?token_hash=...&type=magiclink` — this drives the real
+confirmation route logic exactly as a clicked email link would, just
+skipping the need to read an actual inbox. Tested in an isolated worktree
+(`solvymed-master-test`, port 3001) so I didn't disturb web dev's live
+`refactor/opus-review` checkout.
+
+**Verified end-to-end for the first time this PR cycle (all 🟢, real
+accounts, real confirmation, real DB-state checks via REST):**
+- Patient signup with a valid **patient invite code**
+  (`link_patient_by_invite_code`) → immediately fully linked
+  (`patient-welcome` → `my-appointments`, `linked_patient_id` correct).
+- Patient signup with a valid **doctor's public code**
+  (`link_by_professional_public_code`) → lands on `pending-confirmation`,
+  correct DB state (`invited_by_professional_id` set, no
+  `linked_patient_id`). "Check again" correctly no-ops while still
+  pending, and correctly proceeds to `patient-welcome` once linked
+  (doctor-side confirmation itself is mobile-only per mob dev, so this
+  tests the web reaction to that state change, not the confirm RPC).
+- Patient signup with an **invalid/non-resolving code** → `invite-required`,
+  correct error path.
+- **Professional signup** → `professional-welcome` → `dashboard`, correct
+  role persisted.
+- **Secretary signup** → straight to `dashboard` (no dedicated welcome
+  page — confirmed intentional, not a missing page), correct role
+  persisted, no crash on `/dashboard/patients` with no attached
+  professional yet.
+
+**Finding — reported to web dev + mob dev, not yet fixed:** neither
+`patients.invite_code` nor `professionals.public_invite_code` (migrations
+010, 013) has a default, trigger, or any generation mechanism anywhere in
+either repo — confirmed by creating a patient through the real dashboard
+"New Patient" form and checking `invite_code` via REST: `null`. Mob dev
+confirmed mobile generates both client-side (`Math.random`, not
+server-side) but **web has no equivalent UI at all** — a web-only doctor
+currently has no way to ever obtain a code to hand a patient. Mob dev is
+adding shared server-side generator RPCs
+(`generate_patient_invite_code`, `generate_public_invite_code`) for both
+apps to call. Bypassed via the service key to keep testing the linking
+mechanics above; this doesn't block them, but blocks the feature being
+usable by a real web-only doctor until the UI exists.
+
+**RLS/authorization probing (direct REST, bypassing the UI entirely):**
+- 🟢 Patient reading `patients`/`professionals`/`appointments`/`user_roles`
+  tables without ID filters: RLS correctly scopes every table to the
+  caller's own rows (empty or self-only results, no cross-user leakage
+  found).
+- 🟢 Professional reading `patients` without a `professional_id` filter:
+  correctly scoped to their own patients only, no cross-professional
+  leakage.
+- 🟢 Anon (apikey only, no user JWT) reading `patients`/`appointments`:
+  empty results, correctly blocked.
+- 🟢 Patient PATCHing their own appointment `status` directly (bypassing
+  the reschedule-request flow): blocked by RLS (403).
+- 🟢 Patient PATCHing their own `user_roles.role` to `"professional"`:
+  blocked with an explicit, well-designed error — "direct role change
+  from patient is not permitted" (a real server-side check, not just
+  RLS).
+- 🟢 Patient POSTing an appointment with a different `patient_auth_id`
+  (booking as someone else): blocked by RLS (403).
+- 🔴 **Confirmed independently (mob dev found this first): a
+  professional can self-grant an active subscription via a direct PATCH**
+  to `/rest/v1/professionals` — `subscription_status: "active"` +
+  `current_period_end` set to any future date, no RLS restriction, no
+  billing provider check, 200 success. Full premium access forever,
+  bypassing Stripe/Asaas entirely. Reproduced live on the shared doctor
+  test account, then immediately restored it to `subscription_status:
+  "trial"` / `current_period_end: null`. Not re-reporting as new — mob
+  dev already has this on their list — documenting here since it's now
+  independently confirmed reachable from the web side too.
+
+**Cleaned up:** all `e2e-test-opus-*` auth accounts and `Opus`-labelled
+patient records deleted; shared doctor test account's
+`public_invite_code`/`subscription_status` reset to their pre-test values.
+
+**Not yet covered (large remaining surface, flagged transparently rather
+than claimed done):** deep CRUD coverage per role (schedule, patients,
+records, prescriptions, payments, settings), secretary permission
+boundaries in depth, cross-cutting concerns (double-submit, back-button
+after redirect, expired session, very long inputs) beyond what's already
+spot-checked incidentally, and re-probing mob dev's other RLS findings
+(reschedule self-accept, broad anon RPC access) once their migration
+lands. Continuing in a follow-up pass; this section will grow rather than
+restart.
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
