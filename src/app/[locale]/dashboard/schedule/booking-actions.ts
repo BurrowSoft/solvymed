@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { computeSlots, toMinutes } from "@/lib/slots";
+import type { WorkingHours } from "@/lib/slots";
 
 async function getEffectiveProfId(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -16,6 +18,79 @@ async function getEffectiveProfId(
     return data.invited_by_professional_id as string;
   }
   return userId;
+}
+
+// Finds the patients-table row this appointment's patient_auth_id maps to
+// for effectiveProfId, creating one (and linking user_roles) if this is
+// their first appointment with this professional. Shared by every action
+// that can be the first professional-side touchpoint for a public booking
+// (confirm, reject, propose) — they all need the same walk-in/existing/new
+// resolution so the patient shows up in the patient list either way.
+async function ensurePatientLinked(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  effectiveProfId: string,
+  patientAuthId: string,
+  fallbackName: string,
+): Promise<string | null> {
+  const { data: existingRole } = await supabase
+    .from("user_roles")
+    .select("linked_patient_id")
+    .eq("user_id", patientAuthId)
+    .eq("invited_by_professional_id", effectiveProfId)
+    .maybeSingle();
+
+  const existingLinkedId = (existingRole?.linked_patient_id as string) ?? null;
+  if (existingLinkedId) return existingLinkedId;
+
+  const { data: profile } = await supabase
+    .from("patient_profiles")
+    .select("full_name, email, phone, birth_date, cpf")
+    .eq("user_id", patientAuthId)
+    .maybeSingle();
+
+  const patientEmail = (profile?.email as string | null) ?? null;
+  let linkedPatientId: string | null = null;
+
+  // Check if this patient was manually added (walk-in) before they signed up
+  if (patientEmail) {
+    const { data: existingByEmail } = await supabase
+      .from("patients")
+      .select("id")
+      .eq("professional_id", effectiveProfId)
+      .eq("email", patientEmail)
+      .maybeSingle();
+    linkedPatientId = (existingByEmail?.id as string) ?? null;
+  }
+
+  if (!linkedPatientId) {
+    const { data: newPatient } = await supabase
+      .from("patients")
+      .insert({
+        full_name: (profile?.full_name as string | null) || fallbackName,
+        professional_id: effectiveProfId,
+        email: patientEmail ?? undefined,
+        phone: (profile?.phone as string | null) ?? undefined,
+        birth_date: (profile?.birth_date as string | null) ?? undefined,
+        cpf: (profile?.cpf as string | null) ?? undefined,
+      })
+      .select("id")
+      .maybeSingle();
+    linkedPatientId = (newPatient?.id as string) ?? null;
+  }
+
+  if (linkedPatientId) {
+    await supabase.from("user_roles").upsert(
+      {
+        user_id: patientAuthId,
+        role: "patient",
+        linked_patient_id: linkedPatientId,
+        invited_by_professional_id: effectiveProfId,
+      },
+      { onConflict: "user_id" },
+    );
+  }
+
+  return linkedPatientId;
 }
 
 export async function getTentativeBookings() {
@@ -89,63 +164,12 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
 
   // Add to patient list only if not already linked to this professional
   if (appt.patient_auth_id) {
-    const { data: existingRole } = await supabase
-      .from("user_roles")
-      .select("linked_patient_id")
-      .eq("user_id", appt.patient_auth_id as string)
-      .eq("invited_by_professional_id", effectiveProfId)
-      .maybeSingle();
-
-    let linkedPatientId: string | null = (existingRole?.linked_patient_id as string) ?? null;
-
-    if (!linkedPatientId) {
-      const { data: profile } = await supabase
-        .from("patient_profiles")
-        .select("full_name, email, phone, birth_date, cpf")
-        .eq("user_id", appt.patient_auth_id as string)
-        .maybeSingle();
-
-      const patientEmail = (profile?.email as string | null) ?? null;
-
-      // Check if this patient was manually added (walk-in) before they signed up
-      if (patientEmail) {
-        const { data: existingByEmail } = await supabase
-          .from("patients")
-          .select("id")
-          .eq("professional_id", effectiveProfId)
-          .eq("email", patientEmail)
-          .maybeSingle();
-        linkedPatientId = (existingByEmail?.id as string) ?? null;
-      }
-
-      if (!linkedPatientId) {
-        const { data: newPatient } = await supabase
-          .from("patients")
-          .insert({
-            full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
-            professional_id: effectiveProfId,
-            email: patientEmail ?? undefined,
-            phone: (profile?.phone as string | null) ?? undefined,
-            birth_date: (profile?.birth_date as string | null) ?? undefined,
-            cpf: (profile?.cpf as string | null) ?? undefined,
-          })
-          .select("id")
-          .maybeSingle();
-        linkedPatientId = (newPatient?.id as string) ?? null;
-      }
-
-      if (linkedPatientId) {
-        await supabase.from("user_roles").upsert(
-          {
-            user_id: appt.patient_auth_id,
-            role: "patient",
-            linked_patient_id: linkedPatientId,
-            invited_by_professional_id: effectiveProfId,
-          },
-          { onConflict: "user_id" },
-        );
-      }
-    }
+    const linkedPatientId = await ensurePatientLinked(
+      supabase,
+      effectiveProfId,
+      appt.patient_auth_id as string,
+      appt.patient_name as string,
+    );
 
     // Populate patient_id so the patient can find this appointment via getPatientAppointments
     // (which queries by patient_id). Public bookings start with patient_id = null.
@@ -211,49 +235,7 @@ export async function rejectBooking(appointmentId: string, note?: string) {
 
   // Add patient to patient list (same as confirm/propose)
   if (appt?.patient_auth_id) {
-    const { data: existingRole } = await supabase
-      .from("user_roles")
-      .select("linked_patient_id")
-      .eq("user_id", appt.patient_auth_id as string)
-      .eq("invited_by_professional_id", effectiveProfId)
-      .maybeSingle();
-
-    if (!existingRole?.linked_patient_id) {
-      const { data: profile } = await supabase
-        .from("patient_profiles")
-        .select("full_name, email, phone, birth_date, cpf")
-        .eq("user_id", appt.patient_auth_id as string)
-        .maybeSingle();
-
-      const patientEmail = (profile?.email as string | null) ?? null;
-      let linkedPatientId: string | null = null;
-      if (patientEmail) {
-        const { data: existingByEmail } = await supabase
-          .from("patients").select("id")
-          .eq("professional_id", effectiveProfId).eq("email", patientEmail).maybeSingle();
-        linkedPatientId = (existingByEmail?.id as string) ?? null;
-      }
-      if (!linkedPatientId) {
-        const { data: newPatient } = await supabase
-          .from("patients")
-          .insert({
-            full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
-            professional_id: effectiveProfId,
-            email: patientEmail ?? undefined,
-            phone: (profile?.phone as string | null) ?? undefined,
-            birth_date: (profile?.birth_date as string | null) ?? undefined,
-            cpf: (profile?.cpf as string | null) ?? undefined,
-          })
-          .select("id").maybeSingle();
-        linkedPatientId = (newPatient?.id as string) ?? null;
-      }
-      if (linkedPatientId) {
-        await supabase.from("user_roles").upsert(
-          { user_id: appt.patient_auth_id, role: "patient", linked_patient_id: linkedPatientId, invited_by_professional_id: effectiveProfId },
-          { onConflict: "user_id" },
-        );
-      }
-    }
+    await ensurePatientLinked(supabase, effectiveProfId, appt.patient_auth_id as string, appt.patient_name as string);
   }
 
   await notifyPatient(supabase, appointmentId, "Booking Not Available", note ? `The doctor could not accept your booking request. Note: ${note}` : "The doctor could not accept your booking request.");
@@ -298,49 +280,7 @@ export async function proposeNewTime(
 
   // Add patient to patient list (same as confirm)
   if (appt?.patient_auth_id) {
-    const { data: existingRole } = await supabase
-      .from("user_roles")
-      .select("linked_patient_id")
-      .eq("user_id", appt.patient_auth_id as string)
-      .eq("invited_by_professional_id", effectiveProfId)
-      .maybeSingle();
-
-    if (!existingRole?.linked_patient_id) {
-      const { data: profile } = await supabase
-        .from("patient_profiles")
-        .select("full_name, email, phone, birth_date, cpf")
-        .eq("user_id", appt.patient_auth_id as string)
-        .maybeSingle();
-
-      const patientEmail = (profile?.email as string | null) ?? null;
-      let linkedPatientId: string | null = null;
-      if (patientEmail) {
-        const { data: existingByEmail } = await supabase
-          .from("patients").select("id")
-          .eq("professional_id", effectiveProfId).eq("email", patientEmail).maybeSingle();
-        linkedPatientId = (existingByEmail?.id as string) ?? null;
-      }
-      if (!linkedPatientId) {
-        const { data: newPatient } = await supabase
-          .from("patients")
-          .insert({
-            full_name: (profile?.full_name as string | null) || (appt.patient_name as string),
-            professional_id: effectiveProfId,
-            email: patientEmail ?? undefined,
-            phone: (profile?.phone as string | null) ?? undefined,
-            birth_date: (profile?.birth_date as string | null) ?? undefined,
-            cpf: (profile?.cpf as string | null) ?? undefined,
-          })
-          .select("id").maybeSingle();
-        linkedPatientId = (newPatient?.id as string) ?? null;
-      }
-      if (linkedPatientId) {
-        await supabase.from("user_roles").upsert(
-          { user_id: appt.patient_auth_id, role: "patient", linked_patient_id: linkedPatientId, invited_by_professional_id: effectiveProfId },
-          { onConflict: "user_id" },
-        );
-      }
-    }
+    await ensurePatientLinked(supabase, effectiveProfId, appt.patient_auth_id as string, appt.patient_name as string);
   }
 
   await notifyPatient(supabase, appointmentId, "New Time Proposed", note ? `The doctor proposed a new time: ${proposedDate} at ${proposedStart}. Note: ${note}` : `The doctor proposed a new time: ${proposedDate} at ${proposedStart}.`);
@@ -554,17 +494,7 @@ export async function getAvailableSlotsForDate(
     p_professional_id: professionalId,
   });
 
-  const wh = (profData ?? {}) as Record<string, { enabled: boolean; start: string; end: string }>;
-  const dayKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-  const dayKey = dayKeys[new Date(date + "T12:00:00").getDay()];
-  const dayHours = wh[dayKey];
-  if (!dayHours?.enabled) return [];
-
-  const toMin = (t: string) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
-  const fromMin = (n: number) => `${String(Math.floor(n / 60)).padStart(2, "0")}:${String(n % 60).padStart(2, "0")}`;
-
-  const dayStart = toMin(dayHours.start);
-  const dayEnd = toMin(dayHours.end);
+  const wh = (profData ?? {}) as WorkingHours;
 
   const { data: busy } = await supabase.rpc("get_busy_slots", {
     p_professional_id: professionalId,
@@ -572,19 +502,11 @@ export async function getAvailableSlotsForDate(
   });
 
   const busyRanges = (busy ?? []).map((r: Record<string, unknown>) => ({
-    start: toMin(r.slot_start as string),
-    end: toMin(r.slot_end as string),
+    start: toMinutes(r.slot_start as string),
+    end: toMinutes(r.slot_end as string),
   }));
 
-  const slots: { start: string; end: string }[] = [];
-  let cursor = dayStart;
-  while (cursor + durationMinutes <= dayEnd) {
-    const slotEnd = cursor + durationMinutes;
-    if (!busyRanges.some((r: { start: number; end: number }) => cursor < r.end && slotEnd > r.start)) {
-      slots.push({ start: fromMin(cursor), end: fromMin(slotEnd) });
-    }
-    cursor += durationMinutes;
-  }
+  const slots = computeSlots(date, durationMinutes, wh, busyRanges);
   return slots;
 }
 
