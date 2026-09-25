@@ -32,18 +32,26 @@ export default async function JoinPage({
   // `role` is never read from a URL/query param here — only the persisted
   // user_roles row, same guard principle as api/auth/callback/route.ts and
   // auth/invite-required/page.tsx: never touch an existing role.
-  const { data: existingRole, error: roleLookupError } = await supabase
-    .from("user_roles")
-    .select("role, linked_patient_id, invited_by_professional_id")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const [{ data: existingRole, error: roleLookupError }, { data: professionalRow, error: professionalLookupError }] = await Promise.all([
+    supabase.from("user_roles").select("role, linked_patient_id, invited_by_professional_id").eq("user_id", user.id).maybeSingle(),
+    supabase.from("professionals").select("id").eq("id", user.id).maybeSingle(),
+  ]);
 
-  if (roleLookupError) {
+  if (roleLookupError || professionalLookupError) {
     // Fail closed — a lookup error must never be treated as "no existing
-    // role", or it reopens the overwrite this guard exists to close.
+    // role"/"no professionals row", or it reopens the overwrite this guard
+    // exists to close.
     redirect(`${prefix}/dashboard`);
   }
   if (existingRole?.role === "professional" || existingRole?.role === "secretary") {
+    redirect(`${prefix}/dashboard`);
+  }
+  // A role-less account can still own a professionals row (e.g. signup
+  // completed but role setup never finished) — user_roles.role alone can't
+  // tell them apart from a genuinely pending patient. Same second signal
+  // auth/invite-required/page.tsx uses: without it, this account could fall
+  // through to the RPC below and get linked as a patient.
+  if (!existingRole?.role && professionalRow) {
     redirect(`${prefix}/dashboard`);
   }
   if (existingRole?.role === "patient" && existingRole.linked_patient_id) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition, useState, useRef } from "react";
+import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient, generatePublicInviteCode } from "./actions";
 
@@ -90,6 +91,8 @@ export function ProfileForm({ fullName, specialty }: { fullName: string; special
 /* ─── Invite code card ──────────────────────────────────────────── */
 export function InviteCodeCard({ code: initialCode }: { code?: string }) {
   const t = useTranslations("settings");
+  const { locale } = useParams<{ locale: string }>();
+  const prefix = locale === "en" ? "" : `/${locale}`;
   const [code, setCode] = useState(initialCode ?? null);
   const [pending, start] = useTransition();
   const [copied, setCopied] = useState(false);
@@ -115,7 +118,7 @@ export function InviteCodeCard({ code: initialCode }: { code?: string }) {
 
   function handleCopyLink() {
     if (!code) return;
-    navigator.clipboard.writeText(`${window.location.origin}/join/${code}`).then(() => {
+    navigator.clipboard.writeText(`${window.location.origin}${prefix}/join/${code}`).then(() => {
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2000);
     }).catch(() => {});
