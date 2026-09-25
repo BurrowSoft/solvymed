@@ -89,11 +89,16 @@ export async function POST(request: NextRequest) {
     // existing subscriptions" — the parsed body of an error response
     // normally has no .data array, so this would otherwise silently
     // proceed to create a second paid subscription on an Asaas outage.
-    const existingSubsRes = await asaas(`/subscriptions?customer=${customerId}&status=ACTIVE`, "GET");
+    // No status filter in the request — a subscription whose first PIX
+    // payment hasn't been paid yet is "PENDING", not "ACTIVE", and would
+    // otherwise be invisible to this check while still being a real,
+    // about-to-be-charged subscription.
+    const existingSubsRes = await asaas(`/subscriptions?customer=${customerId}`, "GET");
     if (!existingSubsRes.ok) {
       return NextResponse.json({ error: "Could not verify existing Asaas subscriptions", code: "check_failed" }, { status: 503 });
     }
-    if (existingSubsRes.data?.data?.length) {
+    const existingSubs = (existingSubsRes.data?.data ?? []) as Array<{ status?: string }>;
+    if (existingSubs.some((s) => s.status === "ACTIVE" || s.status === "PENDING")) {
       return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
     }
 
