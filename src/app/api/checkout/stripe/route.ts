@@ -18,7 +18,13 @@ export async function POST(request: NextRequest) {
   // redirect) and previously created a brand new Stripe subscription
   // regardless of an existing one, leaving the professional billed twice
   // with only the most recently webhook-processed subscription tracked.
-  const { data: subRows } = await supabase.rpc("get_effective_subscription", { p_user_id: user.id });
+  const { data: subRows, error: subError } = await supabase.rpc("get_effective_subscription", { p_user_id: user.id });
+  if (subError) {
+    // Fail closed — a lookup error must never be treated the same as "no
+    // subscription found", or a transient failure lets an already-paying
+    // professional create a second one.
+    return NextResponse.json({ error: "Could not verify subscription status" }, { status: 503 });
+  }
   const sub = (subRows?.[0] ?? null) as EffectiveSub | null;
   if (sub?.subscription_status === "active" && isAccessAllowed(sub)) {
     return NextResponse.json({ error: "Already subscribed" }, { status: 409 });
@@ -28,25 +34,43 @@ export async function POST(request: NextRequest) {
   const locale = (await request.json().catch(() => ({}))).locale ?? "en";
 
   try {
-    const session = await stripe.checkout.sessions.create({
-      mode: "subscription",
-      payment_method_types: ["card"],
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            unit_amount: PRICE_USD_CENTS,
-            recurring: { interval: "month" },
-            product_data: { name: "SolvyMed Pro" },
+    const session = await stripe.checkout.sessions.create(
+      {
+        mode: "subscription",
+        payment_method_types: ["card"],
+        line_items: [
+          {
+            price_data: {
+              currency: "usd",
+              unit_amount: PRICE_USD_CENTS,
+              recurring: { interval: "month" },
+              product_data: { name: "SolvyMed Pro" },
+            },
+            quantity: 1,
           },
-          quantity: 1,
-        },
-      ],
-      metadata: { user_id: user.id },
-      success_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?success=1`,
-      cancel_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?cancelled=1`,
-      client_reference_id: user.id,
-    });
+        ],
+        // Session metadata is NOT copied to the resulting Subscription object
+        // by Stripe — subscription_data.metadata is the only way the
+        // webhook's customer.subscription.* handlers (which receive the
+        // Subscription, not the Session) can resolve which professional this
+        // belongs to. Without this, current_period_end could never be set,
+        // and an active subscription with a null period end reads as
+        // unlimited access.
+        subscription_data: { metadata: { user_id: user.id } },
+        metadata: { user_id: user.id },
+        success_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?success=1`,
+        cancel_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?cancelled=1`,
+        client_reference_id: user.id,
+      },
+      {
+        // Collapses concurrent duplicate requests (double-click racing the
+        // redirect, a retried request) into the same Checkout Session
+        // instead of creating two. Scoped to a short window since a
+        // legitimate resubscribe after cancellation should get a fresh
+        // session, not be blocked by an old key.
+        idempotencyKey: `checkout-stripe-${user.id}-${Math.floor(Date.now() / (10 * 60 * 1000))}`,
+      },
+    );
 
     return NextResponse.json({ url: session.url });
   } catch (err) {

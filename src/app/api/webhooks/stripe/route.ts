@@ -30,16 +30,18 @@ export async function POST(request: NextRequest) {
     const userId = session.metadata?.user_id ?? session.client_reference_id;
     const subId = session.subscription as string | null;
     if (!userId) return NextResponse.json({ ok: true });
-    // Deliberately doesn't touch current_period_end — Stripe webhooks are
-    // at-least-once delivery, and a replay of this event after
-    // customer.subscription.updated already set the real period end would
-    // null it back out. A null current_period_end with status "active"
-    // reads as unlimited access in isAccessAllowed(), so this isn't just
-    // stale data, it's an open-ended free-access hole on every replay.
-    // subscription.updated (which Stripe sends right after checkout
-    // completes for a new subscription) owns this field exclusively.
+    // subscription_status and current_period_end are deliberately NOT
+    // written here — they're owned exclusively by the
+    // customer.subscription.updated/deleted handler below (which Stripe
+    // sends right after checkout completes for a new subscription, now
+    // reliably matchable by user_id thanks to subscription_data.metadata
+    // on the checkout route). Splitting subscription state across two
+    // handlers is what caused the earlier replay bugs: a replayed
+    // checkout.session.completed after cancellation could reactivate
+    // status="active" with no way to know the subscription was since
+    // cancelled. This handler only records bookkeeping fields that are
+    // safe to set unconditionally on every delivery.
     await db.from("professionals").update({
-      subscription_status: "active",
       subscription_provider: "stripe",
       subscription_id: subId,
     }).eq("id", userId);
@@ -52,14 +54,26 @@ export async function POST(request: NextRequest) {
 
     const isActive = sub.status === "active" || sub.status === "trialing";
     const periodEndTs = sub.items?.data?.[0]?.current_period_end;
-    const update: Record<string, unknown> = { subscription_status: isActive ? "active" : "expired" };
-    // Only write current_period_end when Stripe actually gave us one. isAccessAllowed()
-    // ignores this field for any non-"active" status, so there's nothing to clear on
-    // cancellation/expiry — and forcing it to null while still active (e.g. an
-    // unexpected empty items array) would reopen the exact unlimited-access gap the
-    // checkout.session.completed handler above was fixed to avoid.
-    if (periodEndTs) update.current_period_end = new Date(periodEndTs * 1000).toISOString();
-    await db.from("professionals").update(update).eq("subscription_id", sub.id);
+
+    const update: Record<string, unknown> = { subscription_id: sub.id };
+    if (isActive) {
+      // Never mark active without a real period end in the same write —
+      // isAccessAllowed() reads "active" + null current_period_end as
+      // unlimited access, so if Stripe's payload is ever missing it (an
+      // empty items array on an active subscription would be abnormal,
+      // but not writing anything is safer than guessing), skip the whole
+      // update rather than risk it.
+      if (!periodEndTs) return NextResponse.json({ ok: true });
+      update.subscription_status = "active";
+      update.current_period_end = new Date(periodEndTs * 1000).toISOString();
+    } else {
+      update.subscription_status = "expired";
+    }
+    // Matched by user_id (from subscription metadata), not subscription_id —
+    // Stripe doesn't guarantee delivery order, and matching by
+    // subscription_id would silently no-op if this event arrives before
+    // checkout.session.completed has stored it.
+    await db.from("professionals").update(update).eq("id", userId);
   }
 
   if (event.type === "invoice.payment_failed") {

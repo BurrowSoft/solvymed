@@ -28,9 +28,13 @@ export async function POST(request: NextRequest) {
   // callable regardless of the /subscribe page's redirect-away logic, and
   // previously created a brand new Asaas subscription unconditionally,
   // even for a professional who already has an active one.
-  const { data: subRows } = await supabase.rpc("get_effective_subscription", { p_user_id: user.id });
-  const sub = (subRows?.[0] ?? null) as EffectiveSub | null;
-  if (sub?.subscription_status === "active" && isAccessAllowed(sub)) {
+  const { data: subRows, error: subError } = await supabase.rpc("get_effective_subscription", { p_user_id: user.id });
+  if (subError) {
+    // Fail closed — see the matching comment in the Stripe route.
+    return NextResponse.json({ error: "Could not verify subscription status" }, { status: 503 });
+  }
+  const effectiveSub = (subRows?.[0] ?? null) as EffectiveSub | null;
+  if (effectiveSub?.subscription_status === "active" && isAccessAllowed(effectiveSub)) {
     return NextResponse.json({ error: "Already subscribed" }, { status: 409 });
   }
 
@@ -49,6 +53,16 @@ export async function POST(request: NextRequest) {
         externalReference: user.id,
       });
       customerId = customer.id;
+    }
+
+    // 1b. Narrow (not eliminate — still a check-then-create race under true
+    // concurrency, but this is a real DB round-trip apart, unlike the two
+    // requests both reading the same Postgres row above) the window for a
+    // double-click or duplicate tab: bail if this customer already has an
+    // active/pending Asaas subscription rather than creating a second one.
+    const existingSubs = await asaas(`/subscriptions?customer=${customerId}&status=ACTIVE`, "GET");
+    if (existingSubs?.data?.length) {
+      return NextResponse.json({ error: "Already subscribed" }, { status: 409 });
     }
 
     // 2. Create subscription (first charge is PIX, recurring is BOLETO or PIX)
