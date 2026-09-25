@@ -34,7 +34,8 @@ is in the table below.
 | ↳ round 9 (consistency fix: guard original confirm flows against role overwrite) | same PR, commit `7e3ea04` | code review only (narrow, same pattern as an already-proven guard) | 🟢 GREEN — see "PR #7 round 9" below | 2026-09-25 |
 | ↳ round 10 (root-page redirect ordering fix: persisted role before metadata) | same PR, commit `00f4914` | typecheck + `e2e/01-03` (regression, clean 3/3) + real metadata-tampering reproduction of the exact bug precondition | 🟢 GREEN — see "PR #7 round 10" below | 2026-09-25 |
 | ↳ round 11 (invite-linking rebuild on mob dev's new RPC/confirmation model) | same PR, commits `3d1ee98`..`1daad5a` (rebuild `0104398` + eligibility/error-propagation fix `1daad5a`) | typecheck + `e2e/01-03` (regression, clean 3/3) + live test of the one reachable new guard (professional at `/my-appointments` → `/dashboard`) + full code review of the 3-state routing rebuild across 6 entry points | 🟡 GREEN for what's testable then — see "PR #7 round 11" below | 2026-09-25 |
-| ↳ round 12 (migrations 060-071 now live: closed role-less-professional self-heal gap, locale-prefix fix) | same PR, commit `f713a70` | typecheck + `e2e/01-03` (regression, clean 3/3) + doctor login regression + live RPC probing confirming `link_patient_by_invite_code`/`link_by_professional_public_code` are genuinely deployed + code review of the self-heal removal and invite-required hardening | 🟡 **GREEN for what's testable — full end-to-end linking flow still not exercisable from the web app alone, see round 12 below for why** | 2026-09-25 |
+| ↳ round 12 (migrations 060-071 now live: closed role-less-professional self-heal gap, locale-prefix fix) | same PR, commit `f713a70` | typecheck + `e2e/01-03` (regression, clean 3/3) + doctor login regression + live RPC probing confirming `link_patient_by_invite_code`/`link_by_professional_public_code` are genuinely deployed + code review of the self-heal removal and invite-required hardening | 🟡 GREEN for what's testable — see round 12 below | 2026-09-25 |
+| ↳ round 13 (remaining locale-prefix misses: callback route, root page, my-appointments) | same PR, commit `d941823` | typecheck + `e2e/01-03` (regression, clean 3/3) + 2 live tests confirming the fix actually works (non-English prefix survives the redirect chain, both authenticated and not) | 🟢 **GREEN — recommend this as the merge commit for what's currently testable** — see "PR #7 round 13" below | 2026-09-25 |
 
 ## Talking to the other agents
 
@@ -1315,6 +1316,50 @@ a whole still isn't closeable** — same reason as round 11, now with a
 sharper picture of exactly what's missing for a true end-to-end pass.
 Waiting on web dev's answer to the scope question above before deciding
 what "full" testing even means here.
+
+## PR #7 round 13 (`d941823`) — remaining locale-prefix misses, 🟢 GREEN
+
+Copilot's fresh review (triggered on `f713a70`, which touched
+`dashboard/layout.tsx` and `invite-required/page.tsx`) surfaced 3 more
+instances of the same locale-prefix bug class in code that hadn't changed
+in that round, so it hadn't been re-flagged until this pass: root
+`page.tsx`, `my-appointments/page.tsx`, and `api/auth/callback/route.ts`.
+Mechanical fix, same pattern as everywhere else in this PR — except the
+callback route needed a different mechanism, since it's a Route Handler
+with no `[locale]` URL segment to read from. It derives locale from the
+`NEXT_LOCALE` cookie instead, falling back to the default locale if unset
+or invalid.
+
+**Didn't just take the cookie approach on faith — traced it through
+`middleware.ts`:** the custom geo-redirect logic only sets `NEXT_LOCALE`
+on a narrow first-visit path (unprefixed URL, cookie not already set, geo
+locale ≠ en), which on its own would NOT keep the cookie in sync with a
+user who navigates straight to a prefixed URL like `/pt-BR/auth/signup`
+without ever hitting `/`. But `routing.ts` has no `localeCookie: false`
+override, so next-intl's own `createMiddleware(routing)` call (which runs
+on every request that isn't caught by an earlier branch) applies its
+default behavior of writing `NEXT_LOCALE` to match whatever locale segment
+the current request resolved to — so the cookie does stay in sync with
+the last locale-prefixed page visited, confirming the fix's assumption is
+sound rather than just plausible-sounding.
+
+**Live-tested, not just code-reviewed:** logged in as the linked patient,
+visited `/pt-BR` (no session cookie needed to establish `NEXT_LOCALE` —
+just visiting the prefixed URL itself is enough per the mechanism above),
+and confirmed the redirect landed on `/pt-BR/my-appointments`, not the
+bare `/my-appointments`. Separately, cleared cookies and visited
+`/pt-BR/my-appointments` unauthenticated — redirected to
+`/pt-BR/auth/login`, confirming the unauthenticated branch's fix too.
+Both real reproductions of the bug class, not just diff inspection.
+
+**Also live-tested:** `npm run typecheck` clean; `e2e/01-03` clean 3/3.
+
+**Merge gate: clear on my end for `d941823`.** This closes out every
+locale-prefix instance Copilot has found across this PR's history.
+Recommending it as the merge commit for whatever's currently mergeable —
+though as with round 11/12, the PR as a whole still isn't fully
+end-to-end tested pending web dev's answer on the doctor-side
+confirmation UI scope question.
 
 ## iOS — open question
 
