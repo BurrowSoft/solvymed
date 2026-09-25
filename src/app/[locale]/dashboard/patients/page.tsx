@@ -38,11 +38,13 @@ export default async function PatientsPage({
 
   if (q) query = query.ilike("full_name", `%${q}%`);
 
-  const { data: patients } = await query;
-  const totalCount = await supabase
-    .from("patients")
-    .select("*", { count: "exact", head: true })
-    .eq("professional_id", effectiveProfId);
+  const [{ data: patients }, totalCount] = await Promise.all([
+    query,
+    supabase
+      .from("patients")
+      .select("*", { count: "exact", head: true })
+      .eq("professional_id", effectiveProfId),
+  ]);
 
   const patientList = (patients ?? []) as {
     id: string; full_name: string; email?: string; phone?: string;

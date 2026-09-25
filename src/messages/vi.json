@@ -301,7 +301,11 @@
     "savePrescription": "Lưu đơn thuốc",
     "noAppointments": "Chưa có lịch hẹn",
     "paidLabel": "Đã thanh toán",
-    "pendingLabel": "Chờ thanh toán"
+    "pendingLabel": "Chờ thanh toán",
+    "generateCode": "Tạo mã",
+    "copyCode": "Sao chép",
+    "codeCopied": "Đã sao chép!",
+    "regenerateCode": "Tạo lại"
   },
   "settings": {
     "profileTitle": "Hồ sơ",
@@ -362,7 +366,13 @@
     "noBlockedPatients": "Hiện không có bệnh nhân nào bị chặn",
     "unblock": "Bỏ chặn",
     "pageTitle": "Cài đặt",
-    "pageSubtitle": "Quản lý hồ sơ, phòng khám, giờ làm việc và thủ thuật của bạn"
+    "pageSubtitle": "Quản lý hồ sơ, phòng khám, giờ làm việc và thủ thuật của bạn",
+    "inviteCodeTitle": "Mã mời của bạn",
+    "inviteCodeSub": "Chia sẻ mã này để bệnh nhân liên kết tài khoản với bạn",
+    "generateCode": "Tạo mã",
+    "regenerate": "Tạo lại",
+    "copy": "Sao chép",
+    "copied": "Đã sao chép!"
   },
   "clinics": {
     "title": "Phòng khám của tôi",
@@ -519,15 +529,23 @@
       "alreadyHasRole": "Tài khoản này đã có vai trò và không thể liên kết làm bệnh nhân. Hãy đăng xuất và dùng tài khoản khác.",
       "notPendingPatient": "Tài khoản này không được tạo dưới dạng đăng ký bệnh nhân, nên không thể liên kết mã mời tại đây.",
       "linkFailed": "Đã xảy ra lỗi khi liên kết tài khoản của bạn. Vui lòng thử lại.",
-      "backToSignup": "Dùng tài khoản khác"
+      "backToSignup": "Dùng tài khoản khác",
+      "tooManyAttempts": "Quá nhiều lần thử. Vui lòng đợi một chút rồi thử lại.",
+      "alreadyInvitedByAnother": "Tài khoản của bạn đã được liên kết với một bác sĩ khác."
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",
       "heading": "Đang chờ bác sĩ của bạn",
-      "body": "Bạn đã được liên kết, nhưng bác sĩ của bạn vẫn cần xác nhận tài khoản trước khi bạn có thể đặt lịch.",
-      "bodyWithDoctor": "Bạn đã được liên kết với {name}, người vẫn cần xác nhận tài khoản của bạn trước khi bạn có thể đặt lịch.",
+      "body": "Bạn đã được liên kết, nhưng bác sĩ vẫn cần xác nhận tài khoản của bạn. Trong thời gian chờ, bạn có thể yêu cầu đặt lịch hẹn.",
+      "bodyWithDoctor": "Bạn đã liên kết với {name}, người vẫn cần xác nhận tài khoản của bạn. Trong thời gian chờ, bạn có thể yêu cầu đặt lịch hẹn.",
       "checking": "Đang kiểm tra…",
-      "checkAgain": "Kiểm tra lại"
+      "checkAgain": "Kiểm tra lại",
+      "requestAppointment": "Yêu cầu đặt lịch hẹn",
+      "yourRequests": "Yêu cầu của bạn",
+      "statusTentative": "Đang chờ xác nhận",
+      "statusProposal": "Đã đề xuất giờ mới",
+      "accept": "Chấp nhận",
+      "decline": "Từ chối"
     }
   },
   "myAppointments": {

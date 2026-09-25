@@ -2,7 +2,7 @@
 
 import { useTransition, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient } from "./actions";
+import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient, generatePublicInviteCode } from "./actions";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
 function Label({ children }: { children: React.ReactNode }) {
@@ -83,6 +83,69 @@ export function ProfileForm({ fullName, specialty }: { fullName: string; special
         </div>
         <SaveRow pending={pending} saved={saved} />
       </form>
+    </Card>
+  );
+}
+
+/* ─── Invite code card ──────────────────────────────────────────── */
+export function InviteCodeCard({ code: initialCode }: { code?: string }) {
+  const t = useTranslations("settings");
+  const [code, setCode] = useState(initialCode ?? null);
+  const [pending, start] = useTransition();
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState("");
+
+  function handleGenerate() {
+    setError("");
+    start(async () => {
+      const result = await generatePublicInviteCode();
+      if (result.error) { setError(result.error); return; }
+      if (result.code) setCode(result.code);
+    });
+  }
+
+  function handleCopy() {
+    if (!code) return;
+    navigator.clipboard.writeText(code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {});
+  }
+
+  return (
+    <Card title={t("inviteCodeTitle")} description={t("inviteCodeSub")}>
+      {code ? (
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-lg font-bold tracking-widest text-slate-900">
+            {code}
+          </span>
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+          >
+            {copied ? t("copied") : t("copy")}
+          </button>
+          <button
+            type="button"
+            onClick={handleGenerate}
+            disabled={pending}
+            className="text-sm font-semibold text-teal-600 hover:text-teal-700 transition disabled:opacity-60"
+          >
+            {pending ? t("saving") : t("regenerate")}
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={handleGenerate}
+          disabled={pending}
+          className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60 transition"
+        >
+          {pending ? t("saving") : t("generateCode")}
+        </button>
+      )}
+      {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
     </Card>
   );
 }

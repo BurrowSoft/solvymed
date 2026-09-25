@@ -2,9 +2,11 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest } from "./booking-actions";
+import { toLocalDateString } from "@/lib/slots";
 
 type Booking = {
   id: string;
@@ -34,6 +36,8 @@ type PatientProfile = {
 
 export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
   const t = useTranslations("schedule");
+  const { locale } = useParams<{ locale: string }>();
+  const prefix = locale === "en" ? "" : `/${locale}`;
   const [isPending, startTransition] = useTransition();
   const [proposalId, setProposalId] = useState<string | null>(null);
   const [propDate, setPropDate] = useState("");
@@ -65,7 +69,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
   if (!bookings.length) return null;
 
   const now = new Date();
-  const todayStr = now.toISOString().split("T")[0];
+  const todayStr = toLocalDateString(now);
   const nowHHMM = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
   function isObsolete(b: Booking): boolean {
@@ -280,7 +284,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                           </p>
                           {!b.is_new_patient && b.patient_id && (
                             <Link
-                              href={`/dashboard/patients/${b.patient_id}`}
+                              href={`${prefix}/dashboard/patients/${b.patient_id}`}
                               className="rounded-lg bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700 hover:bg-teal-100"
                             >
                               {t("viewProfile")}

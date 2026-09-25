@@ -301,7 +301,11 @@
     "savePrescription": "Guardar Receta",
     "noAppointments": "Aún no hay citas",
     "paidLabel": "Pagado",
-    "pendingLabel": "Pendiente"
+    "pendingLabel": "Pendiente",
+    "generateCode": "Generar código",
+    "copyCode": "Copiar",
+    "codeCopied": "¡Copiado!",
+    "regenerateCode": "Regenerar"
   },
   "settings": {
     "profileTitle": "Perfil",
@@ -362,7 +366,13 @@
     "noBlockedPatients": "No hay pacientes bloqueados actualmente",
     "unblock": "Desbloquear",
     "pageTitle": "Configuración",
-    "pageSubtitle": "Gestiona tu perfil, clínica, horarios y procedimientos"
+    "pageSubtitle": "Gestiona tu perfil, clínica, horarios y procedimientos",
+    "inviteCodeTitle": "Tu código de invitación",
+    "inviteCodeSub": "Comparte este código para que los pacientes vinculen su cuenta contigo",
+    "generateCode": "Generar código",
+    "regenerate": "Regenerar",
+    "copy": "Copiar",
+    "copied": "¡Copiado!"
   },
   "clinics": {
     "title": "Mis Clínicas",
@@ -519,15 +529,23 @@
       "alreadyHasRole": "Esta cuenta ya tiene un rol y no se puede vincular como paciente. Cierra sesión y usa otra cuenta.",
       "notPendingPatient": "Esta cuenta no se creó como un registro de paciente, así que aquí no se puede vincular un código de invitación.",
       "linkFailed": "Ocurrió un error al vincular tu cuenta. Inténtalo de nuevo.",
-      "backToSignup": "Usar otra cuenta"
+      "backToSignup": "Usar otra cuenta",
+      "tooManyAttempts": "Demasiados intentos. Espera un momento antes de volver a intentarlo.",
+      "alreadyInvitedByAnother": "Tu cuenta ya está conectada con otro médico."
     },
     "pendingConfirmation": {
       "loading": "Verificando tu estado…",
       "heading": "Esperando a tu médico",
-      "body": "Estás vinculado, pero tu médico aún debe confirmar tu cuenta antes de que puedas reservar.",
-      "bodyWithDoctor": "Estás vinculado a {name}, quien aún debe confirmar tu cuenta antes de que puedas reservar.",
+      "body": "Estás vinculado/a, pero tu médico aún debe confirmar tu cuenta. Mientras tanto, puedes solicitar una cita.",
+      "bodyWithDoctor": "Estás vinculado/a con {name}, quien aún debe confirmar tu cuenta. Mientras tanto, puedes solicitar una cita.",
       "checking": "Verificando…",
-      "checkAgain": "Verificar de nuevo"
+      "checkAgain": "Verificar de nuevo",
+      "requestAppointment": "Solicitar una cita",
+      "yourRequests": "Tus solicitudes",
+      "statusTentative": "Esperando confirmación",
+      "statusProposal": "Nuevo horario propuesto",
+      "accept": "Aceptar",
+      "decline": "Rechazar"
     }
   },
   "myAppointments": {

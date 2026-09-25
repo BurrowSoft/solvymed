@@ -89,7 +89,11 @@ export default function InviteRequiredPage() {
     const { data: fullyLinked, error: linkError } = await supabase.rpc("link_patient_by_invite_code", { p_code: code });
     if (linkError) {
       setLoading(false);
-      setError(t("inviteRequired.linkFailed"));
+      setError(
+        linkError.message?.includes("too_many_attempts")
+          ? t("inviteRequired.tooManyAttempts")
+          : t("inviteRequired.linkFailed"),
+      );
       return;
     }
     if (fullyLinked) {
@@ -100,7 +104,13 @@ export default function InviteRequiredPage() {
     const { data: profId, error: profLinkError } = await supabase.rpc("link_by_professional_public_code", { p_public_code: code });
     if (profLinkError) {
       setLoading(false);
-      setError(t("inviteRequired.linkFailed"));
+      setError(
+        profLinkError.message?.includes("too_many_attempts")
+          ? t("inviteRequired.tooManyAttempts")
+          : profLinkError.message?.includes("already_invited_by_another_professional")
+          ? t("inviteRequired.alreadyInvitedByAnother")
+          : t("inviteRequired.linkFailed"),
+      );
       return;
     }
     if (profId) {

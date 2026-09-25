@@ -301,7 +301,11 @@
     "savePrescription": "Simpan Resep",
     "noAppointments": "Belum ada janji",
     "paidLabel": "Dibayar",
-    "pendingLabel": "Tertunda"
+    "pendingLabel": "Tertunda",
+    "generateCode": "Buat kode",
+    "copyCode": "Salin",
+    "codeCopied": "Disalin!",
+    "regenerateCode": "Buat ulang"
   },
   "settings": {
     "profileTitle": "Profil",
@@ -362,7 +366,13 @@
     "noBlockedPatients": "Tidak ada pasien yang diblokir saat ini",
     "unblock": "Buka Blokir",
     "pageTitle": "Pengaturan",
-    "pageSubtitle": "Kelola profil, klinik, jam kerja, dan prosedur Anda"
+    "pageSubtitle": "Kelola profil, klinik, jam kerja, dan prosedur Anda",
+    "inviteCodeTitle": "Kode undangan Anda",
+    "inviteCodeSub": "Bagikan kode ini agar pasien dapat menghubungkan akun mereka dengan Anda",
+    "generateCode": "Buat kode",
+    "regenerate": "Buat ulang",
+    "copy": "Salin",
+    "copied": "Disalin!"
   },
   "clinics": {
     "title": "Klinik Saya",
@@ -519,15 +529,23 @@
       "alreadyHasRole": "Akun ini sudah memiliki peran dan tidak dapat ditautkan sebagai pasien. Keluar dan gunakan akun lain.",
       "notPendingPatient": "Akun ini tidak dibuat sebagai pendaftaran pasien, jadi kode undangan tidak dapat ditautkan di sini.",
       "linkFailed": "Terjadi kesalahan saat menautkan akun Anda. Silakan coba lagi.",
-      "backToSignup": "Gunakan akun lain"
+      "backToSignup": "Gunakan akun lain",
+      "tooManyAttempts": "Terlalu banyak percobaan. Harap tunggu sebentar sebelum mencoba lagi.",
+      "alreadyInvitedByAnother": "Akun Anda sudah terhubung dengan dokter lain."
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",
       "heading": "Menunggu dokter Anda",
-      "body": "Anda sudah tertaut, tetapi dokter Anda masih perlu mengonfirmasi akun Anda sebelum Anda dapat membuat janji temu.",
-      "bodyWithDoctor": "Anda tertaut dengan {name}, yang masih perlu mengonfirmasi akun Anda sebelum Anda dapat membuat janji temu.",
+      "body": "Anda sudah terhubung, tetapi dokter masih perlu mengonfirmasi akun Anda. Sementara itu, Anda dapat meminta janji temu.",
+      "bodyWithDoctor": "Anda terhubung dengan {name}, yang masih perlu mengonfirmasi akun Anda. Sementara itu, Anda dapat meminta janji temu.",
       "checking": "Memeriksa…",
-      "checkAgain": "Periksa lagi"
+      "checkAgain": "Periksa lagi",
+      "requestAppointment": "Minta janji temu",
+      "yourRequests": "Permintaan Anda",
+      "statusTentative": "Menunggu konfirmasi",
+      "statusProposal": "Waktu baru diusulkan",
+      "accept": "Terima",
+      "decline": "Tolak"
     }
   },
   "myAppointments": {

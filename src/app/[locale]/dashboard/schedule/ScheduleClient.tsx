@@ -5,6 +5,7 @@ import { useState, useTransition, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime } from "./actions";
 import { generatePixString, pixQrUrl } from "@/lib/pix";
+import { toLocalDateString } from "@/lib/slots";
 
 type Patient = { id: string; full_name: string };
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
@@ -103,17 +104,17 @@ export function ScheduleNav({ currentDate, currentView = "list" }: { currentDate
   function navigate(offset: number) {
     const d = new Date(currentDate + "T12:00:00");
     d.setDate(d.getDate() + offset);
-    router.push(`${pathname}?date=${d.toISOString().split("T")[0]}&view=${currentView}`);
+    router.push(`${pathname}?date=${toLocalDateString(d)}&view=${currentView}`);
   }
 
   function goToday() {
-    router.push(`${pathname}?date=${new Date().toISOString().split("T")[0]}&view=${currentView}`);
+    router.push(`${pathname}?date=${toLocalDateString(new Date())}&view=${currentView}`);
   }
 
   const formatted = new Date(currentDate + "T12:00:00").toLocaleDateString(undefined, {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
-  const isToday = currentDate === new Date().toISOString().split("T")[0];
+  const isToday = currentDate === toLocalDateString(new Date());
 
   return (
     <div className="flex items-center gap-2">

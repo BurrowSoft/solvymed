@@ -301,7 +301,11 @@
     "savePrescription": "처방전 저장",
     "noAppointments": "아직 예약이 없습니다",
     "paidLabel": "결제됨",
-    "pendingLabel": "미결제"
+    "pendingLabel": "미결제",
+    "generateCode": "코드 생성",
+    "copyCode": "복사",
+    "codeCopied": "복사됨!",
+    "regenerateCode": "재생성"
   },
   "settings": {
     "profileTitle": "프로필",
@@ -362,7 +366,13 @@
     "noBlockedPatients": "현재 차단된 환자가 없습니다",
     "unblock": "차단 해제",
     "pageTitle": "설정",
-    "pageSubtitle": "프로필, 클리닉, 시간, 절차를 관리합니다"
+    "pageSubtitle": "프로필, 클리닉, 시간, 절차를 관리합니다",
+    "inviteCodeTitle": "내 초대 코드",
+    "inviteCodeSub": "이 코드를 공유하면 환자가 계정을 연결할 수 있습니다",
+    "generateCode": "코드 생성",
+    "regenerate": "재생성",
+    "copy": "복사",
+    "copied": "복사됨!"
   },
   "clinics": {
     "title": "내 클리닉",
@@ -519,15 +529,23 @@
       "alreadyHasRole": "이 계정에는 이미 역할이 있어 환자로 연결할 수 없습니다. 로그아웃 후 다른 계정을 사용하세요.",
       "notPendingPatient": "이 계정은 환자로 가입되지 않았으므로 여기서 초대 코드를 연결할 수 없습니다.",
       "linkFailed": "계정 연결 중 오류가 발생했습니다. 다시 시도해 주세요.",
-      "backToSignup": "다른 계정 사용"
+      "backToSignup": "다른 계정 사용",
+      "tooManyAttempts": "시도 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
+      "alreadyInvitedByAnother": "계정이 이미 다른 의사와 연결되어 있습니다."
     },
     "pendingConfirmation": {
       "loading": "상태 확인 중…",
       "heading": "의사 확인 대기 중",
-      "body": "연결은 완료되었지만, 예약하려면 의사가 계정을 확인해야 합니다.",
-      "bodyWithDoctor": "{name}와 연결되었지만, 예약하려면 의사가 계정을 확인해야 합니다.",
+      "body": "연결되었지만 담당 의사가 아직 계정을 확인하지 않았습니다. 그동안 예약을 요청할 수 있습니다.",
+      "bodyWithDoctor": "{name}님과 연결되었지만 아직 계정을 확인하지 않았습니다. 그동안 예약을 요청할 수 있습니다.",
       "checking": "확인 중…",
-      "checkAgain": "다시 확인"
+      "checkAgain": "다시 확인",
+      "requestAppointment": "예약 요청하기",
+      "yourRequests": "내 요청 내역",
+      "statusTentative": "확인 대기 중",
+      "statusProposal": "새 시간 제안됨",
+      "accept": "수락",
+      "decline": "거절"
     }
   },
   "myAppointments": {

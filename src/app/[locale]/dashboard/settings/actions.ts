@@ -127,6 +127,18 @@ export async function deleteProcedure(id: string) {
   return { success: true };
 }
 
+export async function generatePublicInviteCode() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data, error } = await supabase.rpc("generate_public_invite_code");
+  if (error) return { error: error.message };
+
+  revalidatePath("/dashboard/settings");
+  return { code: data as string };
+}
+
 export async function unblockPatient(patientId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

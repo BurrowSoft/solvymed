@@ -178,6 +178,18 @@ export async function toggleBookingBlock(patientId: string, blocked: boolean) {
   return { success: true };
 }
 
+export async function generatePatientInviteCode(patientId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data, error } = await supabase.rpc("generate_patient_invite_code", { p_patient_id: patientId });
+  if (error) return { error: error.message };
+
+  revalidatePath(`/dashboard/patients/${patientId}`);
+  return { code: data as string };
+}
+
 export async function deletePrescription(id: string, patientId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

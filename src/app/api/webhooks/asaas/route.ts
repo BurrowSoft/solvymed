@@ -9,9 +9,18 @@ function adminClient() {
 }
 
 export async function POST(request: NextRequest) {
-  // Optional token verification
+  // Token verification is the only thing standing between this endpoint and
+  // anyone on the internet being able to activate or expire an arbitrary
+  // user's subscription (externalReference is caller-supplied JSON, not
+  // cryptographically tied to Asaas). It must never be optional: if the env
+  // var isn't configured, fail closed rather than silently accepting every
+  // unauthenticated request.
+  if (!process.env.ASAAS_WEBHOOK_TOKEN) {
+    console.error("ASAAS_WEBHOOK_TOKEN is not configured — rejecting webhook");
+    return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });
+  }
   const token = request.headers.get("asaas-access-token");
-  if (process.env.ASAAS_WEBHOOK_TOKEN && token !== process.env.ASAAS_WEBHOOK_TOKEN) {
+  if (token !== process.env.ASAAS_WEBHOOK_TOKEN) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

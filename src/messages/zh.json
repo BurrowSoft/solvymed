@@ -301,7 +301,11 @@
     "savePrescription": "保存处方",
     "noAppointments": "暂无预约",
     "paidLabel": "已付款",
-    "pendingLabel": "待付款"
+    "pendingLabel": "待付款",
+    "generateCode": "生成邀请码",
+    "copyCode": "复制",
+    "codeCopied": "已复制！",
+    "regenerateCode": "重新生成"
   },
   "settings": {
     "profileTitle": "个人资料",
@@ -362,7 +366,13 @@
     "noBlockedPatients": "当前没有被拦截的患者",
     "unblock": "解除拦截",
     "pageTitle": "设置",
-    "pageSubtitle": "管理您的个人资料、诊所、时间和程序"
+    "pageSubtitle": "管理您的个人资料、诊所、时间和程序",
+    "inviteCodeTitle": "您的邀请码",
+    "inviteCodeSub": "分享此码，让患者将账户与您关联",
+    "generateCode": "生成邀请码",
+    "regenerate": "重新生成",
+    "copy": "复制",
+    "copied": "已复制！"
   },
   "clinics": {
     "title": "我的诊所",
@@ -519,15 +529,23 @@
       "alreadyHasRole": "该账户已拥有角色，无法作为患者关联。请退出登录并使用其他账户。",
       "notPendingPatient": "该账户并非以患者身份注册，因此无法在此关联邀请码。",
       "linkFailed": "关联您的账户时出错，请重试。",
-      "backToSignup": "使用其他账户"
+      "backToSignup": "使用其他账户",
+      "tooManyAttempts": "尝试次数过多，请稍后再试。",
+      "alreadyInvitedByAnother": "您的账户已与另一位医生关联。"
     },
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",
       "heading": "正在等待医生确认",
-      "body": "您已关联，但医生仍需确认您的账户后才能预约。",
-      "bodyWithDoctor": "您已关联至{name}，对方仍需确认您的账户后才能预约。",
+      "body": "您已关联，但医生仍需确认您的账户。在此期间您可以申请预约。",
+      "bodyWithDoctor": "您已与{name}关联，对方仍需确认您的账户。在此期间您可以申请预约。",
       "checking": "正在检查…",
-      "checkAgain": "重新检查"
+      "checkAgain": "重新检查",
+      "requestAppointment": "申请预约",
+      "yourRequests": "您的申请",
+      "statusTentative": "等待确认",
+      "statusProposal": "已提议新时间",
+      "accept": "接受",
+      "decline": "拒绝"
     }
   },
   "myAppointments": {
