@@ -520,10 +520,14 @@
     "pendingConfirmation": {
       "loading": "Verifica dello stato…",
       "heading": "In attesa del tuo medico",
-      "body": "Sei collegato, ma il tuo medico deve ancora confermare il tuo account prima che tu possa prenotare.",
-      "bodyWithDoctor": "Sei collegato a {name}, che deve ancora confermare il tuo account prima che tu possa prenotare.",
+      "body": "Sei collegato/a, ma il tuo medico deve ancora confermare il tuo account. Nel frattempo puoi richiedere un appuntamento.",
+      "bodyWithDoctor": "Sei collegato/a a {name}, che deve ancora confermare il tuo account. Nel frattempo puoi richiedere un appuntamento.",
       "checking": "Verifica in corso…",
-      "checkAgain": "Verifica di nuovo"
+      "checkAgain": "Verifica di nuovo",
+      "requestAppointment": "Richiedi un appuntamento",
+      "yourRequests": "Le tue richieste",
+      "statusTentative": "In attesa di conferma",
+      "statusProposal": "Nuovo orario proposto"
     }
   },
   "myAppointments": {

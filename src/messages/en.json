@@ -520,10 +520,14 @@
     "pendingConfirmation": {
       "loading": "Checking your status…",
       "heading": "Waiting for your doctor",
-      "body": "You're linked, but your doctor still needs to confirm your account before you can book.",
-      "bodyWithDoctor": "You're linked to {name}, who still needs to confirm your account before you can book.",
+      "body": "You're linked, but your doctor still needs to confirm your account. You can request an appointment in the meantime.",
+      "bodyWithDoctor": "You're linked to {name}, who still needs to confirm your account. You can request an appointment in the meantime.",
       "checking": "Checking…",
-      "checkAgain": "Check again"
+      "checkAgain": "Check again",
+      "requestAppointment": "Request an appointment",
+      "yourRequests": "Your requests",
+      "statusTentative": "Awaiting confirmation",
+      "statusProposal": "New time proposed"
     }
   },
   "myAppointments": {

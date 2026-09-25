@@ -520,10 +520,14 @@
     "pendingConfirmation": {
       "loading": "Vérification de votre statut…",
       "heading": "En attente de votre médecin",
-      "body": "Vous êtes lié, mais votre médecin doit encore confirmer votre compte avant que vous puissiez réserver.",
-      "bodyWithDoctor": "Vous êtes lié à {name}, qui doit encore confirmer votre compte avant que vous puissiez réserver.",
+      "body": "Vous êtes lié(e), mais votre médecin doit encore confirmer votre compte. En attendant, vous pouvez demander un rendez-vous.",
+      "bodyWithDoctor": "Vous êtes lié(e) à {name}, qui doit encore confirmer votre compte. En attendant, vous pouvez demander un rendez-vous.",
       "checking": "Vérification…",
-      "checkAgain": "Vérifier à nouveau"
+      "checkAgain": "Vérifier à nouveau",
+      "requestAppointment": "Demander un rendez-vous",
+      "yourRequests": "Vos demandes",
+      "statusTentative": "En attente de confirmation",
+      "statusProposal": "Nouvel horaire proposé"
     }
   },
   "myAppointments": {

@@ -520,10 +520,14 @@
     "pendingConfirmation": {
       "loading": "상태 확인 중…",
       "heading": "의사 확인 대기 중",
-      "body": "연결은 완료되었지만, 예약하려면 의사가 계정을 확인해야 합니다.",
-      "bodyWithDoctor": "{name}와 연결되었지만, 예약하려면 의사가 계정을 확인해야 합니다.",
+      "body": "연결되었지만 담당 의사가 아직 계정을 확인하지 않았습니다. 그동안 예약을 요청할 수 있습니다.",
+      "bodyWithDoctor": "{name}님과 연결되었지만 아직 계정을 확인하지 않았습니다. 그동안 예약을 요청할 수 있습니다.",
       "checking": "확인 중…",
-      "checkAgain": "다시 확인"
+      "checkAgain": "다시 확인",
+      "requestAppointment": "예약 요청하기",
+      "yourRequests": "내 요청 내역",
+      "statusTentative": "확인 대기 중",
+      "statusProposal": "새 시간 제안됨"
     }
   },
   "myAppointments": {

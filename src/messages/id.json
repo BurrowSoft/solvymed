@@ -520,10 +520,14 @@
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",
       "heading": "Menunggu dokter Anda",
-      "body": "Anda sudah tertaut, tetapi dokter Anda masih perlu mengonfirmasi akun Anda sebelum Anda dapat membuat janji temu.",
-      "bodyWithDoctor": "Anda tertaut dengan {name}, yang masih perlu mengonfirmasi akun Anda sebelum Anda dapat membuat janji temu.",
+      "body": "Anda sudah terhubung, tetapi dokter masih perlu mengonfirmasi akun Anda. Sementara itu, Anda dapat meminta janji temu.",
+      "bodyWithDoctor": "Anda terhubung dengan {name}, yang masih perlu mengonfirmasi akun Anda. Sementara itu, Anda dapat meminta janji temu.",
       "checking": "Memeriksa…",
-      "checkAgain": "Periksa lagi"
+      "checkAgain": "Periksa lagi",
+      "requestAppointment": "Minta janji temu",
+      "yourRequests": "Permintaan Anda",
+      "statusTentative": "Menunggu konfirmasi",
+      "statusProposal": "Waktu baru diusulkan"
     }
   },
   "myAppointments": {

@@ -520,10 +520,14 @@
     "pendingConfirmation": {
       "loading": "Status wird geprüft…",
       "heading": "Warten auf Ihren Arzt",
-      "body": "Sie sind verknüpft, aber Ihr Arzt muss Ihr Konto noch bestätigen, bevor Sie buchen können.",
-      "bodyWithDoctor": "Sie sind mit {name} verknüpft, der/die Ihr Konto noch bestätigen muss, bevor Sie buchen können.",
+      "body": "Du bist verknüpft, aber dein Arzt muss dein Konto noch bestätigen. In der Zwischenzeit kannst du einen Termin anfragen.",
+      "bodyWithDoctor": "Du bist mit {name} verknüpft, der/die dein Konto noch bestätigen muss. In der Zwischenzeit kannst du einen Termin anfragen.",
       "checking": "Wird geprüft…",
-      "checkAgain": "Erneut prüfen"
+      "checkAgain": "Erneut prüfen",
+      "requestAppointment": "Termin anfragen",
+      "yourRequests": "Deine Anfragen",
+      "statusTentative": "Bestätigung ausstehend",
+      "statusProposal": "Neue Zeit vorgeschlagen"
     }
   },
   "myAppointments": {

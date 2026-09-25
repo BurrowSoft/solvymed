@@ -520,10 +520,14 @@
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",
       "heading": "Đang chờ bác sĩ của bạn",
-      "body": "Bạn đã được liên kết, nhưng bác sĩ của bạn vẫn cần xác nhận tài khoản trước khi bạn có thể đặt lịch.",
-      "bodyWithDoctor": "Bạn đã được liên kết với {name}, người vẫn cần xác nhận tài khoản của bạn trước khi bạn có thể đặt lịch.",
+      "body": "Bạn đã được liên kết, nhưng bác sĩ vẫn cần xác nhận tài khoản của bạn. Trong thời gian chờ, bạn có thể yêu cầu đặt lịch hẹn.",
+      "bodyWithDoctor": "Bạn đã liên kết với {name}, người vẫn cần xác nhận tài khoản của bạn. Trong thời gian chờ, bạn có thể yêu cầu đặt lịch hẹn.",
       "checking": "Đang kiểm tra…",
-      "checkAgain": "Kiểm tra lại"
+      "checkAgain": "Kiểm tra lại",
+      "requestAppointment": "Yêu cầu đặt lịch hẹn",
+      "yourRequests": "Yêu cầu của bạn",
+      "statusTentative": "Đang chờ xác nhận",
+      "statusProposal": "Đã đề xuất giờ mới"
     }
   },
   "myAppointments": {

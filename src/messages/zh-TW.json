@@ -520,10 +520,14 @@
     "pendingConfirmation": {
       "loading": "正在檢查您的狀態…",
       "heading": "正在等待醫生確認",
-      "body": "您已關聯，但醫生仍需確認您的帳戶後才能預約。",
-      "bodyWithDoctor": "您已關聯至{name}，對方仍需確認您的帳戶後才能預約。",
+      "body": "您已關聯，但醫生仍需確認您的帳戶。在此期間您可以申請預約。",
+      "bodyWithDoctor": "您已與{name}關聯，對方仍需確認您的帳戶。在此期間您可以申請預約。",
       "checking": "正在檢查…",
-      "checkAgain": "重新檢查"
+      "checkAgain": "重新檢查",
+      "requestAppointment": "申請預約",
+      "yourRequests": "您的申請",
+      "statusTentative": "等待確認",
+      "statusProposal": "已提議新時間"
     }
   },
   "myAppointments": {

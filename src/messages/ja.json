@@ -520,10 +520,14 @@
     "pendingConfirmation": {
       "loading": "状況を確認しています…",
       "heading": "医師の確認を待っています",
-      "body": "連携は完了していますが、予約する前に医師によるアカウントの確認が必要です。",
-      "bodyWithDoctor": "{name}と連携していますが、予約する前に医師によるアカウントの確認が必要です。",
+      "body": "連携済みですが、担当医がまだアカウントを確認していません。その間に予約をリクエストできます。",
+      "bodyWithDoctor": "{name}と連携済みですが、まだアカウントを確認していません。その間に予約をリクエストできます。",
       "checking": "確認中…",
-      "checkAgain": "再確認する"
+      "checkAgain": "再確認する",
+      "requestAppointment": "予約をリクエスト",
+      "yourRequests": "リクエスト状況",
+      "statusTentative": "確認待ち",
+      "statusProposal": "新しい日時が提案されました"
     }
   },
   "myAppointments": {

@@ -520,10 +520,14 @@
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",
       "heading": "正在等待医生确认",
-      "body": "您已关联，但医生仍需确认您的账户后才能预约。",
-      "bodyWithDoctor": "您已关联至{name}，对方仍需确认您的账户后才能预约。",
+      "body": "您已关联，但医生仍需确认您的账户。在此期间您可以申请预约。",
+      "bodyWithDoctor": "您已与{name}关联，对方仍需确认您的账户。在此期间您可以申请预约。",
       "checking": "正在检查…",
-      "checkAgain": "重新检查"
+      "checkAgain": "重新检查",
+      "requestAppointment": "申请预约",
+      "yourRequests": "您的申请",
+      "statusTentative": "等待确认",
+      "statusProposal": "已提议新时间"
     }
   },
   "myAppointments": {
