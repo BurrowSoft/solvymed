@@ -84,11 +84,12 @@ export async function POST(request: NextRequest) {
   // of theirs still open before creating a new one. No created-date filter:
   // sessions from before expires_at was set live up to Stripe's default
   // 24 h, and "open" already excludes anything older, so the list stays
-  // small. A session tagged with this request's own key is left alone: it's
-  // the one Stripe will hand back for this key.
+  // small. Sessions from this request's own key family (see below) are left
+  // alone: one of them is the session this request will hand back.
+  const isOwnKey = (k: string | undefined) => k === idempotencyKey || !!k?.startsWith(`${idempotencyKey}-r`);
   try {
     for await (const open of stripe.checkout.sessions.list({ status: "open", limit: 100 })) {
-      if (open.client_reference_id === user.id && open.metadata?.checkout_key !== idempotencyKey) {
+      if (open.client_reference_id === user.id && !isOwnKey(open.metadata?.checkout_key)) {
         await stripe.checkout.sessions.expire(open.id);
       }
     }
@@ -98,8 +99,31 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Could not verify open checkouts", code: "check_failed" }, { status: 503 });
   }
 
+  // A key can replay a session that's since been expired. Example: en, then
+  // pt-BR (which expires the en session), then en again in the same window.
+  // Stripe replays the ORIGINAL cached create response, which still says
+  // "open", so the session is re-read, and if it's no longer open the next
+  // key in a fixed sequence is tried (key, key-r1, key-r2, ...). The
+  // sequence is deterministic, so concurrent double-clicks still walk the
+  // same keys and collapse into one session.
   try {
-    const session = await stripe.checkout.sessions.create(
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const key = attempt === 0 ? idempotencyKey : `${idempotencyKey}-r${attempt}`;
+      const created = await createSession(key, user.id);
+      const current = await stripe.checkout.sessions.retrieve(created.id);
+      if (current.status === "open" && current.url) {
+        return NextResponse.json({ url: current.url });
+      }
+    }
+    console.error(`Stripe checkout: no open session after 5 keys for ${user.id}`);
+    return NextResponse.json({ error: "Checkout failed", code: "checkout_failed" }, { status: 500 });
+  } catch (err) {
+    console.error("Stripe checkout error", err);
+    return NextResponse.json({ error: "Checkout failed", code: "checkout_failed" }, { status: 500 });
+  }
+
+  function createSession(key: string, userId: string) {
+    return stripe.checkout.sessions.create(
       {
         mode: "subscription",
         payment_method_types: ["card"],
@@ -121,19 +145,14 @@ export async function POST(request: NextRequest) {
         // belongs to. Without this, current_period_end could never be set,
         // and an active subscription with a null period end reads as
         // unlimited access.
-        subscription_data: { metadata: { user_id: user.id } },
-        metadata: { user_id: user.id, checkout_key: idempotencyKey },
+        subscription_data: { metadata: { user_id: userId } },
+        metadata: { user_id: userId, checkout_key: key },
         success_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?success=1`,
         cancel_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?cancelled=1`,
-        client_reference_id: user.id,
+        client_reference_id: userId,
         expires_at: expiresAt,
       },
-      { idempotencyKey },
+      { idempotencyKey: key },
     );
-
-    return NextResponse.json({ url: session.url });
-  } catch (err) {
-    console.error("Stripe checkout error", err);
-    return NextResponse.json({ error: "Checkout failed", code: "checkout_failed" }, { status: 500 });
   }
 }
