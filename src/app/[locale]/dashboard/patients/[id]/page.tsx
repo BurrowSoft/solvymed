@@ -26,10 +26,18 @@ export default async function PatientDetailPage({
     ? (userRoleData?.invited_by_professional_id as string | null) ?? user.id
     : user.id;
 
+  // Records and prescriptions are doctor-only. RLS already denies them to
+  // a secretary, but the page doesn't even ask, so clinical content can
+  // never reach a secretary's browser through these props.
+  const noRows = Promise.resolve({ data: [] as never[] });
   const [patientResult, recordsResult, prescriptionsResult, apptsResult] = await Promise.all([
     supabase.from("patients").select("*").eq("id", id).eq("professional_id", effectiveProfId).single(),
-    supabase.from("medical_records").select("id, date, time, content, record_type, created_at").eq("patient_id", id).order("date", { ascending: false }).order("time", { ascending: false }),
-    supabase.from("prescriptions").select("id, date, notes, prescription_items(name, dosage, frequency, duration)").eq("patient_id", id).order("date", { ascending: false }),
+    isSecretary
+      ? noRows
+      : supabase.from("medical_records").select("id, date, time, content, record_type, created_at").eq("patient_id", id).order("date", { ascending: false }).order("time", { ascending: false }),
+    isSecretary
+      ? noRows
+      : supabase.from("prescriptions").select("id, date, notes, prescription_items(name, dosage, frequency, duration)").eq("patient_id", id).order("date", { ascending: false }),
     supabase.from("appointments").select("id, date, start_time, consultation_type, status, payment_status").eq("patient_id", id).neq("status", "blocked").order("date", { ascending: false }).limit(50),
   ]);
 
