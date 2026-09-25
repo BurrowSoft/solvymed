@@ -417,7 +417,6 @@
     "successBody": "您与 {doctor} 在 {date} {time} 的预约请求已提交。",
     "successHint": "医生将确认或建议其他时间。",
     "viewAppointments": "查看我的预约",
-    "backToClinics": "返回诊所列表",
     "errorSlotTaken": "该时段刚被预约，请选择其他时间。",
     "errorBlocked": "您与该医生的预约目前受限，请联系诊所。",
     "errorMaxBookings": "您已达到与该医生的最大预约数量。",
@@ -435,22 +434,6 @@
     "durationMin": "{n} 分钟",
     "customTime": "自定义时间",
     "orCustomTime": "或选择自定义时间"
-  },
-  "discover": {
-    "title": "预约挂号",
-    "subtitle": "按诊所名称、城市、医生或专科搜索",
-    "recentDoctors": "您的近期医生",
-    "signOut": "退出登录",
-    "noClinicsFound": "未找到诊所",
-    "clinicsFound": "{n, plural, other {找到 # 家诊所}}",
-    "list": "列表",
-    "map": "地图",
-    "noResults": "没有诊所符合您的搜索",
-    "clearSearch": "清除搜索",
-    "healthcareProviders": "医疗提供者",
-    "book": "预约",
-    "loadingMap": "正在加载地图…",
-    "viewDetails": "查看详情 →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "患者",
       "rolePatientDesc": "预约并访问您的和咨询",
       "inviteCode": "邀请码",
-      "inviteCodeOptional": "（可选）",
+      "inviteCodeRequired": "需要邀请码",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "输入医生的邀请码以自动连接",
       "emailExists": "此邮箕已有账户。请登录。",
@@ -516,7 +499,32 @@
       "loading": "正在验证您的重置链接…"
     },
     "logIn": "登录",
-    "backToHome": "返回首页"
+    "backToHome": "返回首页",
+    "patientWelcome": {
+      "countdown": "{count}秒后将带您前往预约页面…",
+      "goToAppointments": "前往我的预约"
+    },
+    "inviteRequired": {
+      "heading": "需要邀请码",
+      "body": "您的账户已创建，但 SolvyMed 患者需要医生提供的邀请码才能继续。请向您的医生索取邀请码，并在下方输入。",
+      "codeLabel": "邀请码",
+      "codeRequired": "请输入邀请码",
+      "codeInvalid": "该邀请码与任何医生或患者都不匹配，请向您的医生核实。",
+      "submit": "继续",
+      "submitting": "正在验证…",
+      "alreadyHasRole": "该账户已拥有角色，无法作为患者关联。请退出登录并使用其他账户。",
+      "notPendingPatient": "该账户并非以患者身份注册，因此无法在此关联邀请码。",
+      "linkFailed": "关联您的账户时出错，请重试。",
+      "backToSignup": "使用其他账户"
+    },
+    "pendingConfirmation": {
+      "loading": "正在检查您的状态…",
+      "heading": "正在等待医生确认",
+      "body": "您已关联，但医生仍需确认您的账户后才能预约。",
+      "bodyWithDoctor": "您已关联至{name}，对方仍需确认您的账户后才能预约。",
+      "checking": "正在检查…",
+      "checkAgain": "重新检查"
+    }
   },
   "myAppointments": {
     "title": "我的预约",

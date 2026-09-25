@@ -417,7 +417,6 @@
     "successBody": "Yêu cầu của bạn cho {date} lúc {time} với {doctor} đã được gửi.",
     "successHint": "Bác sĩ sẽ xác nhận hoặc đề xuất thời gian khác.",
     "viewAppointments": "Xem lịch hẹn của tôi",
-    "backToClinics": "Quay lại danh sách phòng khám",
     "errorSlotTaken": "Khung giờ này vừa được đặt. Vui lòng chọn giờ khác.",
     "errorBlocked": "Lịch hẹn của bạn với chuyên gia này đang bị hạn chế. Vui lòng liên hệ phòng khám.",
     "errorMaxBookings": "Bạn đã đạt số lịch hẹn tối đa với chuyên gia này.",
@@ -435,22 +434,6 @@
     "durationMin": "{n} phút",
     "customTime": "Thời gian tùy chỉnh",
     "orCustomTime": "Hoặc chọn giờ khác"
-  },
-  "discover": {
-    "title": "Đặt Lịch Khám",
-    "subtitle": "Tìm theo tên phòng khám, thành phố, bác sĩ hoặc chuyên khoa",
-    "recentDoctors": "Bác Sĩ Gần Đây",
-    "signOut": "Đăng xuất",
-    "noClinicsFound": "Không tìm thấy phòng khám",
-    "clinicsFound": "{n, plural, other {tìm thấy # phòng khám}}",
-    "list": "Danh sách",
-    "map": "Bản đồ",
-    "noResults": "Không có phòng khám nào phù hợp với tìm kiếm của bạn",
-    "clearSearch": "Xóa tìm kiếm",
-    "healthcareProviders": "Nhà cung cấp dịch vụ y tế",
-    "book": "Đặt lịch",
-    "loadingMap": "Đang tải bản đồ…",
-    "viewDetails": "Xem chi tiết →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "Bệnh nhân",
       "rolePatientDesc": "Đặt lịch và truy cập tư vấn",
       "inviteCode": "Mã mời",
-      "inviteCodeOptional": "(tùy chọn)",
+      "inviteCodeRequired": "Cần có mã mời",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Nhập mã của bác sĩ để kết nối tự động",
       "emailExists": "Đã có tài khoản với email này. Vui lòng đăng nhập.",
@@ -516,7 +499,32 @@
       "loading": "Đang xác thực liên kết của bạn…"
     },
     "logIn": "Đăng nhập",
-    "backToHome": "Về trang chủ"
+    "backToHome": "Về trang chủ",
+    "patientWelcome": {
+      "countdown": "Đang đưa bạn đến lịch hẹn trong {count} giây…",
+      "goToAppointments": "Đến lịch hẹn của tôi"
+    },
+    "inviteRequired": {
+      "heading": "Cần có mã mời",
+      "body": "Tài khoản của bạn đã được tạo, nhưng bệnh nhân SolvyMed cần mã mời từ bác sĩ để tiếp tục. Hãy xin mã mời từ bác sĩ và nhập bên dưới.",
+      "codeLabel": "Mã mời",
+      "codeRequired": "Nhập mã mời",
+      "codeInvalid": "Mã này không khớp với bác sĩ hoặc bệnh nhân nào. Vui lòng kiểm tra lại với bác sĩ của bạn.",
+      "submit": "Tiếp tục",
+      "submitting": "Đang kiểm tra…",
+      "alreadyHasRole": "Tài khoản này đã có vai trò và không thể liên kết làm bệnh nhân. Hãy đăng xuất và dùng tài khoản khác.",
+      "notPendingPatient": "Tài khoản này không được tạo dưới dạng đăng ký bệnh nhân, nên không thể liên kết mã mời tại đây.",
+      "linkFailed": "Đã xảy ra lỗi khi liên kết tài khoản của bạn. Vui lòng thử lại.",
+      "backToSignup": "Dùng tài khoản khác"
+    },
+    "pendingConfirmation": {
+      "loading": "Đang kiểm tra trạng thái của bạn…",
+      "heading": "Đang chờ bác sĩ của bạn",
+      "body": "Bạn đã được liên kết, nhưng bác sĩ của bạn vẫn cần xác nhận tài khoản trước khi bạn có thể đặt lịch.",
+      "bodyWithDoctor": "Bạn đã được liên kết với {name}, người vẫn cần xác nhận tài khoản của bạn trước khi bạn có thể đặt lịch.",
+      "checking": "Đang kiểm tra…",
+      "checkAgain": "Kiểm tra lại"
+    }
   },
   "myAppointments": {
     "title": "Lịch hẹn của tôi",

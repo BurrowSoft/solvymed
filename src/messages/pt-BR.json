@@ -417,7 +417,6 @@
     "successBody": "Sua solicitação para {date} às {time} com {doctor} foi enviada.",
     "successHint": "O médico confirmará ou sugerirá outro horário.",
     "viewAppointments": "Ver minhas consultas",
-    "backToClinics": "Voltar para clínicas",
     "errorSlotTaken": "Este horário acabou de ser reservado. Escolha outro.",
     "errorBlocked": "Suas reservas com este profissional estão temporariamente restritas. Entre em contato com a clínica.",
     "errorMaxBookings": "Você já atingiu o número máximo de consultas com este profissional.",
@@ -435,22 +434,6 @@
     "durationMin": "{n} min",
     "customTime": "Horário personalizado",
     "orCustomTime": "Ou escolha um horário específico"
-  },
-  "discover": {
-    "title": "Agende uma Consulta",
-    "subtitle": "Busque por clínica, cidade, médico ou especialidade",
-    "recentDoctors": "Seus Médicos Recentes",
-    "signOut": "Sair",
-    "noClinicsFound": "Nenhuma clínica encontrada",
-    "clinicsFound": "{n, plural, one {# clínica encontrada} other {# clínicas encontradas}}",
-    "list": "Lista",
-    "map": "Mapa",
-    "noResults": "Nenhuma clínica corresponde à sua pesquisa",
-    "clearSearch": "Limpar pesquisa",
-    "healthcareProviders": "Profissionais de saúde",
-    "book": "Agendar",
-    "loadingMap": "Carregando mapa…",
-    "viewDetails": "Ver detalhes →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "Paciente",
       "rolePatientDesc": "Agende e acesse suas consultas",
       "inviteCode": "Código de convite",
-      "inviteCodeOptional": "(opcional)",
+      "inviteCodeRequired": "É necessário um código de convite",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Digite o código do médico para ser vinculado automaticamente",
       "emailExists": "Já existe uma conta com este e-mail. Por favor, faça login.",
@@ -516,7 +499,32 @@
       "loading": "Validando seu link de redefinição…"
     },
     "logIn": "Entrar",
-    "backToHome": "Voltar ao início"
+    "backToHome": "Voltar ao início",
+    "patientWelcome": {
+      "countdown": "Levando você para seus agendamentos em {count, plural, one {# segundo} other {# segundos}}…",
+      "goToAppointments": "Ir para Meus Agendamentos"
+    },
+    "inviteRequired": {
+      "heading": "É necessário um código de convite",
+      "body": "Sua conta foi criada, mas os pacientes do SolvyMed precisam de um código de convite do médico para continuar. Peça o código ao seu médico e digite-o abaixo.",
+      "codeLabel": "Código de convite",
+      "codeRequired": "Digite um código de convite",
+      "codeInvalid": "Esse código não corresponde a nenhum médico ou paciente. Confirme com seu médico.",
+      "submit": "Continuar",
+      "submitting": "Verificando…",
+      "alreadyHasRole": "Esta conta já possui uma função e não pode ser vinculada como paciente. Saia e use outra conta.",
+      "notPendingPatient": "Esta conta não foi criada como um cadastro de paciente, então um código de convite não pode ser vinculado aqui.",
+      "linkFailed": "Ocorreu um erro ao vincular sua conta. Tente novamente.",
+      "backToSignup": "Usar outra conta"
+    },
+    "pendingConfirmation": {
+      "loading": "Verificando seu status…",
+      "heading": "Aguardando seu médico",
+      "body": "Você está vinculado, mas seu médico ainda precisa confirmar sua conta antes que você possa agendar.",
+      "bodyWithDoctor": "Você está vinculado a {name}, que ainda precisa confirmar sua conta antes que você possa agendar.",
+      "checking": "Verificando…",
+      "checkAgain": "Verificar novamente"
+    }
   },
   "myAppointments": {
     "title": "Minhas Consultas",

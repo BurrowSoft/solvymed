@@ -2,14 +2,14 @@ import { Page, expect } from "@playwright/test";
 
 /**
  * Logs in via the /auth/login form and waits for the post-login redirect
- * (patients land on /discover, professionals on /dashboard).
+ * (patients land on /my-appointments, professionals on /dashboard).
  */
 export async function login(page: Page, email: string, password: string) {
   await page.goto("/auth/login");
   await page.getByTestId("login-email").fill(email);
   await page.getByTestId("login-password").fill(password);
   await page.getByTestId("login-submit").click();
-  await expect(page).toHaveURL(/\/(discover|dashboard)/, { timeout: 15_000 });
+  await expect(page).toHaveURL(/\/(my-appointments|dashboard)/, { timeout: 15_000 });
 }
 
 export function requireEnv(name: string): string {

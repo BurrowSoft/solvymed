@@ -417,7 +417,6 @@
     "successBody": "您與 {doctor} 在 {date} {time} 的預約請求已提交。",
     "successHint": "醫生將確認或建議其他時間。",
     "viewAppointments": "查看我的預約",
-    "backToClinics": "返回診所列表",
     "errorSlotTaken": "該時段剛被預約，請選擇其他時間。",
     "errorBlocked": "您與該醫生的預約目前受限，請聯絡診所。",
     "errorMaxBookings": "您已達到與該醫生的最大預約數量。",
@@ -435,22 +434,6 @@
     "durationMin": "{n} 分鐘",
     "customTime": "自訂時間",
     "orCustomTime": "或選擇自訂時間"
-  },
-  "discover": {
-    "title": "預約掛號",
-    "subtitle": "依診所名稱、城市、醫生或專科搜尋",
-    "recentDoctors": "您的近期醫生",
-    "signOut": "登出",
-    "noClinicsFound": "未找到診所",
-    "clinicsFound": "{n, plural, other {找到 # 家診所}}",
-    "list": "列表",
-    "map": "地圖",
-    "noResults": "沒有診所符合您的搜尋",
-    "clearSearch": "清除搜尋",
-    "healthcareProviders": "醫療提供者",
-    "book": "預約",
-    "loadingMap": "正在載入地圖…",
-    "viewDetails": "查看詳情 →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "患者",
       "rolePatientDesc": "預約並訪問您的躺詢",
       "inviteCode": "邀請碼",
-      "inviteCodeOptional": "（可選）",
+      "inviteCodeRequired": "需要邀請碼",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "輸入醫生的邀請碼以自動連結",
       "emailExists": "此電子郵件已有帳戶。請登入。",
@@ -516,7 +499,32 @@
       "loading": "正在驗證您的重設連結…"
     },
     "logIn": "登入",
-    "backToHome": "返回首頁"
+    "backToHome": "返回首頁",
+    "patientWelcome": {
+      "countdown": "{count}秒後將帶您前往預約頁面…",
+      "goToAppointments": "前往我的預約"
+    },
+    "inviteRequired": {
+      "heading": "需要邀請碼",
+      "body": "您的帳戶已建立，但 SolvyMed 患者需要醫生提供的邀請碼才能繼續。請向您的醫生索取邀請碼，並在下方輸入。",
+      "codeLabel": "邀請碼",
+      "codeRequired": "請輸入邀請碼",
+      "codeInvalid": "該邀請碼與任何醫生或患者都不符，請向您的醫生核實。",
+      "submit": "繼續",
+      "submitting": "正在驗證…",
+      "alreadyHasRole": "該帳戶已擁有角色，無法作為患者關聯。請登出並使用其他帳戶。",
+      "notPendingPatient": "該帳戶並非以患者身分註冊，因此無法在此關聯邀請碼。",
+      "linkFailed": "關聯您的帳戶時發生錯誤，請重試。",
+      "backToSignup": "使用其他帳戶"
+    },
+    "pendingConfirmation": {
+      "loading": "正在檢查您的狀態…",
+      "heading": "正在等待醫生確認",
+      "body": "您已關聯，但醫生仍需確認您的帳戶後才能預約。",
+      "bodyWithDoctor": "您已關聯至{name}，對方仍需確認您的帳戶後才能預約。",
+      "checking": "正在檢查…",
+      "checkAgain": "重新檢查"
+    }
   },
   "myAppointments": {
     "title": "我的預約",

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
@@ -15,6 +16,7 @@ const COUNTDOWN = 5;
 const PROGRESS_WIDTH_CLASS = ["w-0", "w-1/5", "w-2/5", "w-3/5", "w-4/5", "w-full"];
 
 export default function PatientWelcomePage() {
+  const t = useTranslations("auth");
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const router = useRouter();
@@ -22,22 +24,23 @@ export default function PatientWelcomePage() {
   const [count, setCount] = useState(COUNTDOWN);
   const [email, setEmail] = useState<string | null>(null);
 
-  const discoverPath = `${prefix}/discover`;
+  const myAppointmentsPath = `${prefix}/my-appointments`;
 
   useEffect(() => {
-    createClient().auth.getUser().then(({ data }) => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
       setEmail(data.user?.email ?? null);
     });
   }, []);
 
   useEffect(() => {
     if (count <= 0) {
-      router.push(discoverPath);
+      router.push(myAppointmentsPath);
       return;
     }
     const t = setTimeout(() => setCount((c) => c - 1), 1000);
     return () => clearTimeout(t);
-  }, [count, discoverPath, router]);
+  }, [count, myAppointmentsPath, router]);
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -64,9 +67,7 @@ export default function PatientWelcomePage() {
 
         {/* Countdown */}
         <p className="mb-6 text-sm text-slate-400">
-          Taking you to find a clinic in{" "}
-          <span className="font-semibold tabular-nums text-teal-600">{count}</span>
-          {count === 1 ? " second" : " seconds"}…
+          {t("patientWelcome.countdown", { count })}
         </p>
 
         {/* Progress bar */}
@@ -77,10 +78,10 @@ export default function PatientWelcomePage() {
         </div>
 
         <a
-          href={discoverPath}
+          href={myAppointmentsPath}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-teal-600 px-6 py-3.5 text-base font-bold text-white shadow-md shadow-teal-600/20 transition hover:bg-teal-700 active:scale-95 mb-4"
         >
-          Book an Appointment
+          {t("patientWelcome.goToAppointments")}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>

@@ -38,12 +38,25 @@ export default function LoginPage() {
     } else if (signInData.user) {
       const { data: roleRow } = await supabase
         .from("user_roles")
-        .select("role")
+        .select("role, invited_by_professional_id, linked_patient_id")
         .eq("user_id", signInData.user.id)
         .maybeSingle();
-      const dest = roleRow?.role === "patient"
-        ? localePath("/discover")
-        : localePath("/dashboard");
+      const metaRole = signInData.user.user_metadata?.role as string | undefined;
+      let dest: string;
+      if (roleRow?.role === "patient" && roleRow.linked_patient_id) {
+        dest = localePath("/my-appointments");
+      } else if (roleRow?.role === "patient" && roleRow.invited_by_professional_id) {
+        // Linked to a doctor's "orbit" but not yet confirmed.
+        dest = localePath("/auth/pending-confirmation");
+      } else if (roleRow?.role) {
+        dest = localePath("/dashboard");
+      } else if (metaRole === "patient") {
+        // No persisted role but signed up intending to be a patient (invite
+        // code never resolved) — send back to the retry form, not /dashboard.
+        dest = localePath("/auth/invite-required");
+      } else {
+        dest = localePath("/dashboard");
+      }
       router.push(dest);
       router.refresh();
     }

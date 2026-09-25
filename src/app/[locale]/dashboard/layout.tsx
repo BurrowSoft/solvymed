@@ -31,15 +31,47 @@ export default async function DashboardLayout({
     redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
   }
 
-  // Patients have no business in the professional dashboard — send them to their own page
+  // Only professionals/secretaries belong in this dashboard — allowlist rather
+  // than excluding "patient", so an authenticated session with no role at all
+  // (e.g. mid-signup, invite not yet resolved) can't fall through to it.
   const { data: roleRow } = await supabase
     .from("user_roles")
-    .select("role")
+    .select("role, invited_by_professional_id, linked_patient_id")
     .eq("user_id", user!.id)
     .maybeSingle();
 
+  if (roleRow?.role === "patient" && roleRow.linked_patient_id) {
+    redirect(`/${locale === "en" ? "" : locale + "/"}my-appointments`);
+  }
+  if (roleRow?.role === "patient" && roleRow.invited_by_professional_id) {
+    // Linked to a doctor's "orbit" but not yet confirmed.
+    redirect(`/${locale === "en" ? "" : locale + "/"}auth/pending-confirmation`);
+  }
   if (roleRow?.role === "patient") {
-    redirect(`/${locale === "en" ? "" : locale + "/"}discover`);
+    redirect(`/${locale === "en" ? "" : locale + "/"}my-appointments`);
+  }
+  if (!roleRow) {
+    const metaRole = user!.user_metadata?.role as string | undefined;
+    if (metaRole === "patient") {
+      // Signed up intending to be a patient, invite code never resolved —
+      // send back to the retry form, not a login dead end.
+      redirect(`/${locale === "en" ? "" : locale + "/"}auth/invite-required`);
+    }
+    // No persisted role — no self-heal. A professionals-table row was tried
+    // as "proof" of a real professional, but that's unsound: legacy
+    // pre-071 signups can have a professionals row regardless of role, so
+    // a patient with client-writable user_metadata.role set to
+    // "professional" could satisfy that check and self-provision a
+    // persisted professional role. There's no server-owned signal that
+    // reliably distinguishes "a real professional whose user_roles row is
+    // missing" from "any other role-less account" with the current data
+    // model, so this falls through to login rather than guessing. A
+    // legitimate professional with a missing row needs a real data fix
+    // (backfill/migration), not an app-layer auto-repair.
+    redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
+  }
+  if (roleRow.role !== "professional" && roleRow.role !== "secretary") {
+    redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
   }
 
   // ── Version gate (doctors + secretaries only) ──────────────────────────────

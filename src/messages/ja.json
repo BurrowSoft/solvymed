@@ -417,7 +417,6 @@
     "successBody": "{date} {time} の {doctor} へのリクエストが送信されました。",
     "successHint": "医師が確認または別の時間を提案します。",
     "viewAppointments": "予約を確認",
-    "backToClinics": "クリニック一覧に戻る",
     "errorSlotTaken": "この時間はたった今予約されました。別の時間を選んでください。",
     "errorBlocked": "このプロフェッショナルとの予約は現在制限されています。クリニックにお問い合わせください。",
     "errorMaxBookings": "このプロフェッショナルとの予約上限に達しました。",
@@ -435,22 +434,6 @@
     "durationMin": "{n}分",
     "customTime": "カスタム時間",
     "orCustomTime": "または時間を指定する"
-  },
-  "discover": {
-    "title": "予約する",
-    "subtitle": "クリニック名、市区町村、医師または専門で検索",
-    "recentDoctors": "最近の医師",
-    "signOut": "ログアウト",
-    "noClinicsFound": "クリニックが見つかりません",
-    "clinicsFound": "{n, plural, other {{n}件のクリニック}}",
-    "list": "リスト",
-    "map": "地図",
-    "noResults": "検索に一致するクリニックがありません",
-    "clearSearch": "検索をクリア",
-    "healthcareProviders": "医療提供者",
-    "book": "予約",
-    "loadingMap": "地図を読み込み中…",
-    "viewDetails": "詳細を見る →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "患者",
       "rolePatientDesc": "診察の予約とアクセス",
       "inviteCode": "招待コード",
-      "inviteCodeOptional": "（任意）",
+      "inviteCodeRequired": "招待コードが必要です",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "医師のコードを入力して自動的に連携する",
       "emailExists": "このメールアドレスのアカウントは既に存在します。サインインしてください。",
@@ -516,7 +499,32 @@
       "loading": "リセットリンクを確認中…"
     },
     "logIn": "ログイン",
-    "backToHome": "ホームに戻る"
+    "backToHome": "ホームに戻る",
+    "patientWelcome": {
+      "countdown": "{count}秒後に予約一覧に移動します…",
+      "goToAppointments": "予約一覧へ"
+    },
+    "inviteRequired": {
+      "heading": "招待コードが必要です",
+      "body": "アカウントは作成されましたが、SolvyMedの患者が続けるには医師からの招待コードが必要です。医師に招待コードを尋ね、以下に入力してください。",
+      "codeLabel": "招待コード",
+      "codeRequired": "招待コードを入力してください",
+      "codeInvalid": "そのコードは医師または患者のレコードと一致しません。医師に確認してください。",
+      "submit": "続ける",
+      "submitting": "確認中…",
+      "alreadyHasRole": "このアカウントには既に役割が設定されているため、患者として連携できません。サインアウトして別のアカウントを使用してください。",
+      "notPendingPatient": "このアカウントは患者としての登録ではないため、ここで招待コードを連携することはできません。",
+      "linkFailed": "アカウントの連携中にエラーが発生しました。もう一度お試しください。",
+      "backToSignup": "別のアカウントを使う"
+    },
+    "pendingConfirmation": {
+      "loading": "状況を確認しています…",
+      "heading": "医師の確認を待っています",
+      "body": "連携は完了していますが、予約する前に医師によるアカウントの確認が必要です。",
+      "bodyWithDoctor": "{name}と連携していますが、予約する前に医師によるアカウントの確認が必要です。",
+      "checking": "確認中…",
+      "checkAgain": "再確認する"
+    }
   },
   "myAppointments": {
     "title": "予約一覧",

@@ -417,7 +417,6 @@
     "successBody": "Votre demande pour le {date} à {time} avec {doctor} a été soumise.",
     "successHint": "Le médecin confirmera ou proposera un autre créneau.",
     "viewAppointments": "Voir mes rendez-vous",
-    "backToClinics": "Retour aux cliniques",
     "errorSlotTaken": "Ce créneau vient d'être pris. Veuillez en choisir un autre.",
     "errorBlocked": "Vos réservations avec ce professionnel sont actuellement restreintes. Veuillez contacter la clinique.",
     "errorMaxBookings": "Vous avez déjà atteint le nombre maximum de rendez-vous avec ce professionnel.",
@@ -435,22 +434,6 @@
     "durationMin": "{n} min",
     "customTime": "Heure personnalisée",
     "orCustomTime": "Ou choisir une heure"
-  },
-  "discover": {
-    "title": "Prendre un Rendez-vous",
-    "subtitle": "Rechercher par clinique, ville, médecin ou spécialité",
-    "recentDoctors": "Vos Médecins Récents",
-    "signOut": "Se déconnecter",
-    "noClinicsFound": "Aucune clinique trouvée",
-    "clinicsFound": "{n, plural, one {# clinique trouvée} other {# cliniques trouvées}}",
-    "list": "Liste",
-    "map": "Carte",
-    "noResults": "Aucune clinique ne correspond à votre recherche",
-    "clearSearch": "Effacer la recherche",
-    "healthcareProviders": "Professionnels de santé",
-    "book": "Réserver",
-    "loadingMap": "Chargement de la carte…",
-    "viewDetails": "Voir les détails →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "Patient",
       "rolePatientDesc": "Planifiez et accédez à vos consultations",
       "inviteCode": "Code d'invitation",
-      "inviteCodeOptional": "(facultatif)",
+      "inviteCodeRequired": "Un code d'invitation est requis",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Entrez le code du médecin pour être lié automatiquement",
       "emailExists": "Un compte avec cet e-mail existe déjà. Veuillez vous connecter.",
@@ -516,7 +499,32 @@
       "loading": "Validation de votre lien…"
     },
     "logIn": "Se connecter",
-    "backToHome": "Retour à l'accueil"
+    "backToHome": "Retour à l'accueil",
+    "patientWelcome": {
+      "countdown": "Nous vous redirigeons vers vos rendez-vous dans {count, plural, one {# seconde} other {# secondes}}…",
+      "goToAppointments": "Aller à mes rendez-vous"
+    },
+    "inviteRequired": {
+      "heading": "Un code d'invitation est nécessaire",
+      "body": "Votre compte a été créé, mais les patients SolvyMed ont besoin d'un code d'invitation de leur médecin pour continuer. Demandez le code à votre médecin et saisissez-le ci-dessous.",
+      "codeLabel": "Code d'invitation",
+      "codeRequired": "Saisissez un code d'invitation",
+      "codeInvalid": "Ce code ne correspond à aucun médecin ni patient. Vérifiez-le auprès de votre médecin.",
+      "submit": "Continuer",
+      "submitting": "Vérification…",
+      "alreadyHasRole": "Ce compte a déjà un rôle et ne peut pas être associé en tant que patient. Déconnectez-vous et utilisez un autre compte.",
+      "notPendingPatient": "Ce compte n'a pas été créé comme une inscription patient, un code d'invitation ne peut donc pas y être associé.",
+      "linkFailed": "Une erreur s'est produite lors de la liaison de votre compte. Veuillez réessayer.",
+      "backToSignup": "Utiliser un autre compte"
+    },
+    "pendingConfirmation": {
+      "loading": "Vérification de votre statut…",
+      "heading": "En attente de votre médecin",
+      "body": "Vous êtes lié, mais votre médecin doit encore confirmer votre compte avant que vous puissiez réserver.",
+      "bodyWithDoctor": "Vous êtes lié à {name}, qui doit encore confirmer votre compte avant que vous puissiez réserver.",
+      "checking": "Vérification…",
+      "checkAgain": "Vérifier à nouveau"
+    }
   },
   "myAppointments": {
     "title": "Mes rendez-vous",

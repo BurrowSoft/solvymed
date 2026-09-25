@@ -22,7 +22,21 @@ is in the table below.
 | CSS extraction (pure refactor, no logic changes) | `refactor/css-extract` (PR #2 — merged, then reverted: merged before a fresh Copilot review landed on the final commit) | `e2e/01`–`03` (regression) + manual visual check of the 5 refactored pages | 🟢 GREEN — see "CSS refactor visual verification" below (content re-verified against `8f6be7a`) | 2026-09-24 |
 | CSS extraction — re-land | `refactor/css-extract-redo` (PR #4 — ✅ merged to master 2026-09-24, commit `15407f6`) | `e2e/01-03` | 🟢 GREEN — fresh run against this exact commit, not carried over from PR #2 | 2026-09-24 |
 | CSS dedupe (shared AuthPageShell/AuthCard/Logo/BrandMark/IconBadge components) | `refactor/css-dedupe-classnames` (PR #5 — ✅ merged to master 2026-09-24, commit `89a2ee8`) | `e2e/01-03` (regression) + manual check of 12 of 13 listed states live, remainder backed by diff review (see caveats below) | 🟢 GREEN — see "PR #5 visual verification" below | 2026-09-24 |
-| CSS dedupe — utility classes (field-label/text-input/error-banner/spinner-white/link-teal/back-link/auth-heading/auth-footer-text/icon-status) | `refactor/css-dedupe-utilities` (PR #6, commit `0759d6e`) | `e2e/01-03` (regression, 2 clean runs) + spot-check of all 9 classes across 4 representative pages | 🟢 GREEN — see "PR #6 verification" below | 2026-09-24 |
+| CSS dedupe — utility classes (field-label/text-input/error-banner/spinner-white/link-teal/back-link/auth-heading/auth-footer-text/icon-status) | `refactor/css-dedupe-utilities` (PR #6 — ✅ merged to master 2026-09-24, commit `0759d6e`) | `e2e/01-03` (regression, 2 clean runs) + spot-check of all 9 classes across 4 representative pages | 🟢 GREEN — see "PR #6 verification" below | 2026-09-24 |
+| Disable doctor discovery, require invite code (PO decision) | `feat/disable-doctor-discovery` (PR #7, commit `9ffa778`) | `e2e/01-03` (regression) + real functional pass | 🔴 blocking bug found, fixed in round 2 — see round 1 below | 2026-09-24 |
+| ↳ round 2 (RPC fixes, invite-required retry form, dashboard allowlist guard) | same PR, commit `6e168e5` | `e2e/01-03` (regression, blocked) + retry-form guard test + dashboard-lockout reproduction | 🔴 **NEW, MORE SEVERE BUG: doctor accounts fully locked out of /dashboard** — see "PR #7 round 2" below | 2026-09-24 |
+| ↳ round 3 (self-heal fix for missing `user_roles` rows) | same PR, commit `a80071b` | `e2e/01-03` (regression, 2 clean runs) + doctor self-heal reproduction + graceful-degradation check | 🟢 **GREEN** — see "PR #7 round 3" below | 2026-09-24 |
+| ↳ round 4 (Copilot findings: verified self-heal, invite-attach metadata gate) | same PR, commit `c10796a` | `e2e/01-03` (regression, 2nd clean run) + doctor login regression + invite-required metadata-gate test | 🟢 **GREEN — recommend this as the merge commit** — see "PR #7 round 4" below | 2026-09-24 |
+| ↳ round 5 (invite-attach race + silent upsert-failure fix) | same PR, commit `1b449fb` | typecheck + all-locale string check + `e2e/01-03` (regression, 2 clean runs after a `.next` corruption blip) | 🟢 GREEN — narrow fix, only reachable on the still-untestable successful-link path (see round 1's note); verified by code review + regression | 2026-09-24 |
+| ↳ round 6 (upsert-error checks in original confirm flows + root-page redirect fix) | same PR, commit `37a01c4` | `e2e/01-03` (regression, clean) + root-page redirect regression (linked patient + doctor) | 🟢 **GREEN — recommend this as the merge commit instead of round 4** — see "PR #7 round 6" below | 2026-09-24 |
+| ↳ round 7 (my-appointments direct-access guard + label a11y fixes) | same PR, commit `5adbcac` | typecheck + `e2e/01-03` (regression, clean) + real accessibility test (label-click-focuses-input, not just DOM presence) | 🟢 GREEN — see "PR #7 round 7" below | 2026-09-24 |
+| ↳ round 8 (privilege-escalation fix: removed client-controlled secretary self-heal) | same PR, commit `bfbb71d` | typecheck + `e2e/01-03` (regression, clean 3/3 after a `.next` corruption blip) + doctor self-heal regression + code review of the deleted branch | 🟢 **GREEN — recommend this as the merge commit instead of round 7** — see "PR #7 round 8" below | 2026-09-25 |
+| ↳ round 9 (consistency fix: guard original confirm flows against role overwrite) | same PR, commit `7e3ea04` | code review only (narrow, same pattern as an already-proven guard) | 🟢 GREEN — see "PR #7 round 9" below | 2026-09-25 |
+| ↳ round 10 (root-page redirect ordering fix: persisted role before metadata) | same PR, commit `00f4914` | typecheck + `e2e/01-03` (regression, clean 3/3) + real metadata-tampering reproduction of the exact bug precondition | 🟢 GREEN — see "PR #7 round 10" below | 2026-09-25 |
+| ↳ round 11 (invite-linking rebuild on mob dev's new RPC/confirmation model) | same PR, commits `3d1ee98`..`1daad5a` (rebuild `0104398` + eligibility/error-propagation fix `1daad5a`) | typecheck + `e2e/01-03` (regression, clean 3/3) + live test of the one reachable new guard (professional at `/my-appointments` → `/dashboard`) + full code review of the 3-state routing rebuild across 6 entry points | 🟡 GREEN for what's testable then — see "PR #7 round 11" below | 2026-09-25 |
+| ↳ round 12 (migrations 060-071 now live: closed role-less-professional self-heal gap, locale-prefix fix) | same PR, commit `f713a70` | typecheck + `e2e/01-03` (regression, clean 3/3) + doctor login regression + live RPC probing confirming `link_patient_by_invite_code`/`link_by_professional_public_code` are genuinely deployed + code review of the self-heal removal and invite-required hardening | 🟡 GREEN for what's testable — see round 12 below | 2026-09-25 |
+| ↳ round 13 (remaining locale-prefix misses: callback route, root page, my-appointments) | same PR, commit `d941823` | typecheck + `e2e/01-03` (regression, clean 3/3) + 2 live tests confirming the fix actually works (non-English prefix survives the redirect chain, both authenticated and not) | 🟢 GREEN — see "PR #7 round 13" below | 2026-09-25 |
+| ↳ round 14 (last locale-prefix miss: join-flow redirect) | same PR, commit `615a3c2` | typecheck + `e2e/01-03` (regression, clean 3/3) + code review (same already-proven `localePrefix` mechanism from round 13, one-line application) | 🟢 **GREEN — recommend this as the merge commit for what's currently testable** — see "PR #7 round 14" below | 2026-09-25 |
 
 ## Talking to the other agents
 
@@ -594,6 +608,805 @@ slot picking, contact form, submit) and creating a real tentative booking
 in the shared test data for close to zero marginal verification value.
 Skipped deliberately, not overlooked — noting explicitly per the PR #5
 lesson rather than letting the summary row imply full live coverage.
+
+## PR #7 functional verification (`feat/disable-doctor-discovery`)
+
+The PO decided patients shouldn't be able to search for doctors (puts
+doctors in competition with each other) — see the roadmap memory's
+"Product decision" entry for the full business context. This PR removes
+`/discover`, makes the patient signup invite code required instead of
+optional, and enforces that requirement server-side in two parallel
+confirm paths (`api/auth/callback/route.ts` and `auth/confirm/page.tsx`
+handle different signup entry points but needed the identical fix). Asked
+for a real functional pass rather than a code read, given the security
+angle — did both.
+
+**Read first, confirmed correct by inspection:**
+- Both server-side paths only upsert a `user_roles` "patient" row if the
+  invite code resolves via `patient_by_invite_code` or
+  `professional_by_invite_code`; otherwise no row is created at all and
+  the redirect goes to the new `/auth/invite-required` page instead of
+  `/auth/patient-welcome`. No leftover unlinked-patient path.
+- Client-side signup form now has a JS guard (`if (role === "patient" &&
+  !joinProfId && !inviteCode.trim())`) *and* the input has `required` —
+  layered, but the real boundary is server-side either way.
+
+**Live-tested, all correct:**
+- Real browser test: selecting "Patient" on `/auth/signup`, filling
+  everything except the invite code, and clicking "Create account" stays
+  on `/auth/signup` — confirmed via the invite code input's own
+  `validationMessage` ("Please fill out this field"), not just "URL
+  didn't change."
+- `/discover` returns a real `404`, not a broken page.
+- Existing patient (`e2e-test-patient@…`) login → `/my-appointments`
+  directly, no `/discover` in the redirect chain.
+- `/auth/invite-required` renders correctly (`AuthPageShell`/`AuthCard`
+  wiring intact, matches the pattern from PRs #5/#6).
+- The two RPCs both server-side paths depend on
+  (`professional_by_invite_code`, `patient_by_invite_code`) called
+  directly with both a real invite code and a bogus one, confirming they
+  return exactly what the route's `if (patientData?.length)` /
+  `if (profData?.length)` branches assume — the doctor test account had
+  no `public_invite_code` set, so one was assigned (`TSTE2E`) to make this
+  possible; left in place, it's reusable for future invite-flow testing.
+
+**Not live-tested, and why:** couldn't complete a full signup → email
+confirm → redirect round trip for a fresh account (the "valid invite code
+end-to-end" and "bypass the client entirely" cases web dev specifically
+asked for). `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` is genuinely
+malformed — decoding it as a JWT produces garbage, not an expired/wrong-
+role token — so there's no way to programmatically confirm a test
+account's email without real inbox access. Confirmed "Confirm email" is
+in fact still required (a raw `signup` REST call returns no session, just
+`confirmation_sent_at`) rather than assuming. This blocked the two most
+security-critical live checks; substituted the RPC-level verification
+above as the closest available alternative, but it isn't a full
+substitute for watching the actual redirect happen.
+
+**🔴 Found a real, reproducible bug — not a code-review nit:**
+`my-appointments/page.tsx`'s new logic (added in this PR) to find the
+patient's linked doctor for the "Book Appointment" CTA:
+
+```ts
+let myProfessionalId = (userRoleData?.invited_by_professional_id as string | null) ?? null;
+if (!myProfessionalId && userRoleData?.linked_patient_id) {
+  const { data: patientRow } = await supabase
+    .from("patients")
+    .select("professional_id")
+    .eq("id", userRoleData.linked_patient_id as string)
+    .maybeSingle();
+  myProfessionalId = (patientRow?.professional_id as string | null) ?? null;
+}
+```
+
+The `patients` table query runs under the *patient's own* session
+(`createClient()` here is the per-request cookie-bound client, not a
+service client) — and patients can't read the `patients` table via RLS,
+not even their own linked row. Reproduced directly: queried the same
+`patients` row via REST as the actual test patient (who has
+`linked_patient_id` set, `invited_by_professional_id` null — exactly this
+code path) and got `[]` back, matching what the Server Component would
+see. Confirmed in the real browser too: logged in as this patient,
+`/my-appointments` loads fine and shows the real confirmed appointment,
+but the "Book Appointment" header link is entirely absent (the JSX gates
+it on `{bookPath && (...)}`, and `bookPath` is `null` here).
+
+This only affects patients linked via `linked_patient_id` — i.e.
+patients a professional manually pre-added to their patient list, who
+later signed up using *that patient's* invite code (`patient_by_invite_code`
+matches). Patients who signed up fresh via a *professional's own* invite
+code (`invited_by_professional_id`, read straight off `user_roles`, which
+patients can read for themselves) are unaffected. Confirmed this is new
+code in this PR, not a pre-existing gap, and confirmed no existing
+SECURITY DEFINER RPC already bridges this lookup — grepped every
+migration mentioning `linked_patient_id`, none of them expose
+`professional_id` back to the patient. Needs either a new RPC (matching
+the established pattern — `get_professional_working_hours`,
+`get_manual_patient_profile` — both exist for exactly this "patient needs
+a piece of data RLS would otherwise block" reason) or an RLS policy
+addition.
+
+**Not re-run yet:** `e2e/01-03` regression — holding off until the bug
+above is addressed, since re-running now would just burn a cycle against
+code that's about to change.
+
+## PR #7 round 2 (`6e168e5`) — RPC fixes, retry form, dashboard guard
+
+Web dev's round-2 commit fixed the `linked_patient_id` bridge (now calls
+new RPCs `get_linked_professional_id` / `get_professional_public_info`
+instead of a direct `patients` table query), added an interactive retry
+form on `/auth/invite-required` (any authenticated user can enter a
+corrected code without re-signing-up), tightened `dashboard/layout.tsx`'s
+patient-exclusion into an explicit professional/secretary allowlist, and
+fixed a join-link routing gap in `api/auth/callback/route.ts`. Re-read
+every changed file against the diff before testing, same as round 1.
+
+**Cross-repo dependency check — the two new RPCs don't exist yet.** Before
+testing the fix, checked whether mob dev's migrations (060–066, on mobile
+PR #5) are actually applied to the shared DB, rather than assuming. They
+aren't: `get_linked_professional_id` and `get_professional_public_info`
+both return `PGRST202` (function not found), and `get_public_clinics` is
+still fully callable with the anon key — the backend lockdown from the
+original audit is still open. The web code is correct, but until these
+migrations land, the round-1 "Book Appointment" bug isn't actually fixed
+end-to-end — it'll just fail with an RPC-not-found error instead of a
+silent RLS-blocked empty result, same visible symptom (missing CTA).
+Flagged to web dev; this is a mob-dev-side blocker, not a web PR defect.
+
+**Live-tested, correct:**
+- `e2e/helpers/login.ts`'s fix (`/my-appointments` instead of `/discover`
+  in the wait-for regex) works — confirmed via the existing-patient login
+  test.
+- The retry form's new "already has a role" guard: logged in as the
+  existing linked patient (who already has `role: patient,
+  linked_patient_id` set), navigated directly to `/auth/invite-required`,
+  submitted the valid `TSTE2E` code — correctly refused with "This account
+  already has a role and can't be linked as a patient," and confirmed via
+  REST that their `user_roles` row was untouched by the attempt.
+- Could not test the retry form's *successful* linking path — needs a
+  genuinely role-less authenticated account, which needs a fresh
+  email-confirmed signup, blocked by the same malformed service-role-key
+  issue as round 1. The form's logic was read closely instead: it's
+  session-driven (`supabase.auth.getUser()`), not dependent on how the
+  user arrived at the page, so the mechanism itself should work for any
+  qualifying account — just not independently confirmed live.
+
+**🔴 Found a new, more severe bug — reproduced live on a clean server,
+twice:** the `e2e-test-doctor` account is now completely locked out of
+`/dashboard`. Login "succeeds" (form submits with no error), then
+immediately bounces back to `/auth/login`. Root cause: this account has a
+`professionals` row and `user_metadata.role: "professional"`, but *no row
+in `user_roles` at all* — confirmed via direct REST query, empty result.
+It was seeded via the Supabase admin API early in the project and never
+went through the normal signup → callback flow that upserts `user_roles`.
+The **old** guard (`if role === "patient" redirect`) let this account
+through by accident, since a null role isn't `"patient"`. The **new**
+allowlist (`if role !== "professional" && role !== "secretary" redirect
+to login`) is more correct in spirit — but for any account whose
+`user_roles` row is missing for *any* reason, professional or not, it now
+bounces to a login dead-end instead of letting them in or offering a
+recovery path. This isn't just a test-account artifact: any real
+professional whose `user_roles` row never got created (partial migration,
+an older signup path, admin-created account, anything) would hit the same
+wall — more severe than the CTA bug from round 1, since it fully blocks
+the professional dashboard rather than hiding one button. It also meant
+E2E test cleanup couldn't go through the doctor UI at all this round; had
+to accept a leftover reschedule proposal via a direct RPC call instead.
+
+Caught web dev mid-edit on this exact file, already drafting a fix (a
+`metaRole === "patient"` branch routing to `/auth/invite-required`) —
+checked it against the actual doctor account's `user_metadata.role`
+before reporting rather than assuming it would help: it's `"professional"`,
+not `"patient"`, so that specific branch doesn't cover this case as
+drafted. Flagged directly and immediately given they were actively working
+on the exact file. Holding this row until a fix lands and I can do a fresh
+pass — this is the second severe issue in two rounds on this PR, worth a
+careful full re-test rather than a spot-check next time too.
+
+## PR #7 round 3 (`a80071b`) — self-heal fix, 🟢 GREEN
+
+Web dev's fix: `dashboard/layout.tsx`'s guard now self-heals a missing
+`user_roles` row instead of bouncing it. If there's no row at all: a
+`user_metadata.role === "patient"` case still correctly routes to
+`/auth/invite-required` (can't assume patient linkage without a resolved
+code); anything else upserts a `professional`/`secretary` role (based on
+metadata, default professional) and lets the request continue, mirroring
+what the confirmation callback already does for a fresh signup. Read the
+diff closely before testing — confirmed the reassignment (`let roleRow`,
+falls through to the existing allowlist check afterward with the healed
+value) actually takes effect rather than just logging/upserting and still
+redirecting.
+
+**Live-tested, confirmed:**
+- Reset check: confirmed via REST the doctor account still had zero
+  `user_roles` rows going into this test (hadn't been touched since round
+  2's failure) — a genuinely unhealed case, not something already fixed by
+  a side effect.
+- Doctor login → `/dashboard` → `/dashboard/schedule`: works end-to-end
+  now, screenshotted. Confirmed via REST immediately after that a
+  `user_roles` row was actually created (`role: "professional"`) — this is
+  a permanent fix for the account, not a per-request workaround.
+- `e2e/01-03` regression: 2 clean 3/3 runs (patient reschedule request,
+  doctor accept, doctor decline) — the doctor-dependent specs 02/03 that
+  were completely blocked in round 2 now pass normally.
+- Cross-repo RPC status: mob dev clarified migrations 060–066 are staged
+  on their PR branch, not deployed — `PGRST202` on the two new RPCs is
+  *expected* right now, not a defect on either side; resolves once that PR
+  merges and migrates. Verified the specific claim that mattered for my
+  green light — "UI degrades gracefully, no crash, just falls back to no
+  CTA" — live: logged in as the patient, `/my-appointments` renders fully
+  and correctly (appointment card, status, reschedule button all present),
+  no Next.js error overlay, only the header "Book Appointment" link is
+  silently absent, exactly as described. Re-verifying the actual CTA
+  linking behavior is a follow-up once PR #5 (mobile) merges and its
+  migrations are live — noting here so it isn't forgotten, not blocking
+  this PR on it.
+
+**Also noticed, not blocking:** web dev has further proactive consistency
+commits in progress uncommitted in the shared checkout as of this pass
+(applying the same `metaRole === "patient"` → `/auth/invite-required`
+pattern to `subscribe/page.tsx`, matching what's already correct in
+`dashboard/layout.tsx` and `auth/login/page.tsx`) — minor hardening, not a
+response to anything I found this round, didn't block finalizing this
+green light.
+
+**Merge gate: clear on my end for `a80071b`.** Given this PR's track
+record (2 severe bugs found and fixed across 3 rounds), worth Copilot
+confirming clean on this exact commit too before merge, same as every
+other PR this session.
+
+## PR #7 round 4 (`c10796a`) — tightened self-heal, 🟢 GREEN
+
+Two more Copilot findings, both tightening trust boundaries: (1) the
+round-3 self-heal granted `professional` off *absent or unrecognized*
+metadata rather than positive proof — now it only self-heals to
+`professional` when a real `professionals` table row exists for that user
+id; anything else with no persisted role and no `professionals` row now
+explicitly redirects to login (secretary self-heal still trusts metadata,
+since there's no equivalent verification table for secretaries — same
+trust level the confirmation callback already places in that field). (2)
+the invite-required retry form only checked for an *existing persisted*
+role — a role-less professional (exactly the case round 3 fixed) could
+open the page directly and attach a patient invite to their own account.
+Now gated on `user_metadata.role === "patient"` first, before touching
+`user_roles` at all.
+
+**Methodology note — couldn't fully re-test the two accounts change most
+directly, and why:** wanted to re-verify with a genuinely role-less
+account again, so attempted to delete the doctor's `user_roles` row via
+REST to recreate round 3's starting state. The DELETE returned `204` but
+a follow-up `SELECT` showed the row unchanged — confirmed via the
+migrations (grepped for `user_roles` policies) that there's no `FOR
+DELETE` policy on that table at all, only `SELECT`/`INSERT`/`UPDATE` — a
+deliberate design (create/update your own role, never delete it
+yourself), not a bug, but it means I can no longer reset this account to
+role-less via self-service REST. Creating a *different* fresh role-less
+account is still blocked by the same malformed-service-key issue as every
+prior round. Adjusted the test plan around this rather than skip it:
+
+- **Doctor login regression**: confirmed still reaches `/dashboard/schedule`
+  end to end — this doesn't re-exercise the self-heal code path itself
+  (the account already has a persisted role from round 3), but confirms
+  no regression for the now-common case.
+- **Invite-required's new metadata gate — genuinely re-tested**, and this
+  one didn't need the contrived role-less state at all: the check is
+  `user.user_metadata?.role !== "patient"`, evaluated before any
+  `user_roles` read. The doctor account's metadata role is `"professional"`
+  regardless of what's persisted in `user_roles`, so logging in as them
+  and submitting a code on `/auth/invite-required` directly tests exactly
+  this new gate. Confirmed: rejected immediately with the new message
+  ("This account wasn't created as a patient signup, so an invite code
+  can't be attached here"), not the old "already has a role" message —
+  screenshotted. Confirmed via REST the account's `user_roles` row was
+  untouched by the attempt.
+- **The specific "no `professionals` row + no patient metadata → login"
+  branch** (the other half of finding #1) could not be live-tested this
+  round — none of the available accounts have that exact shape, and I
+  won't risk deleting the doctor's `professionals` row to manufacture one
+  given the cascade risk to real appointment/booking data tied to it.
+  Read the code closely instead: the `else` branch is an explicit
+  `redirect` with no fall-through, structurally identical to the
+  already-proven `metaRole === "patient"` branch beside it — sound by
+  inspection, just not independently exercised live.
+- `e2e/01-03`: clean 3/3 (second consecutive clean run on this PR since
+  the round-3 fix).
+
+**Merge gate: clear on my end for `c10796a`. Recommend this as the actual
+merge commit**, per web dev's own suggestion — it's the one Copilot's
+being asked to confirm against.
+
+## PR #7 round 5 (`1b449fb`) — invite-attach race fix, 🟢 GREEN
+
+Small, scoped: `ignoreDuplicates: true` added to the retry form's upsert
+(a losing concurrent request — double-click, second tab — now no-ops
+instead of overwriting whatever the winning request wrote), plus the
+upsert's `error` is now actually checked before navigating to
+`patient-welcome` (previously ignored entirely — a write failure would
+silently still show success). Verified `linkFailed` exists in all 15
+locale files. Ran `npm run typecheck` independently — clean.
+
+This fix only matters on the successful-link path, which — same as every
+prior round — needs a genuinely role-less, patient-metadata account to
+reach, still blocked by the malformed service-role key. Verified by code
+review (sound: `ON CONFLICT DO NOTHING` semantics are the right fix for
+this exact race, and the error check is a straightforward gate). Ran
+`e2e/01-03` as the regression check: 2 clean runs after one `.next`
+build-cache corruption blip (a recurring infra quirk in this environment,
+documented earlier — not code-related, fixed by clearing `.next` and
+restarting).
+
+## PR #7 round 6 (`37a01c4`) — upsert-error checks + root-page fix, 🟢 GREEN
+
+Two more Copilot findings on code outside this round's own diff, caught on
+a re-scan: (1) the two *original* confirmation entry points
+(`api/auth/callback/route.ts`, `auth/confirm/page.tsx`) had the same
+silently-ignored-upsert-error bug round 5 fixed in the retry form —
+`linked` was hardcoded `true` right after the upsert call regardless of
+whether it actually succeeded. Now `linked = !upsertError` in both places.
+(2) Root `page.tsx`'s patient redirect went straight to `/my-appointments`
+based on `user_metadata.role` alone, with no check for the pending/
+role-less case — could land a patient whose invite never resolved on a
+page with no retry CTA and nothing to look at. Now mirrors the exact
+pattern already proven in `dashboard/layout.tsx` and `auth/login/page.tsx`:
+checks `user_roles`, redirects to `/auth/invite-required` if there's no
+persisted role.
+
+**Live-tested:**
+- Root page's *existing* branch (patient with a real linked role,
+  visiting `/` directly) still correctly lands on `/my-appointments` —
+  confirmed with the real test patient account.
+- Doctor login regression: still reaches `/dashboard`.
+- `e2e/01-03`: clean 3/3.
+
+**Not independently live-tested, same reason as every round-5/6-adjacent
+case:** the *new* root-page branch (`metaRole === "patient"` with no
+persisted role → `/auth/invite-required`) needs the same unavailable
+account shape. The two upsert-error-check changes are the same
+one-line pattern already verified correct in round 5's identical fix to
+the retry form — not re-derived from scratch, just confirmed consistent.
+
+**Merge gate: clear on my end for `37a01c4`. This supersedes round 4 as
+the recommended merge commit** — it's a strict superset (round 4 +
+5 + 6's fixes), and per web dev's message this is the one Copilot's final
+confirmation is being requested against.
+
+## PR #7 round 7 (`5adbcac`) — my-appointments guard + a11y fixes, 🟢 GREEN
+
+Narrowly scoped, matching web dev's description: (1) `my-appointments/page.tsx`
+was the one direct-access route missing the pending-patient guard every
+other entry point (`/`, `/dashboard`, `/auth/login`) already had — a
+role-less patient-metadata account could open it directly and see an
+empty appointments page with no way back to the retry form. Now checks
+`userRoleData?.role` and redirects to `/auth/invite-required` if missing,
+same pattern as everywhere else. (2) the invite-code `<label>`s on
+`/auth/signup` and `/auth/invite-required` weren't associated with their
+`<input>`s via `htmlFor`/`id` — now they are.
+
+**Live-tested, both genuinely verifiable this round — no infra
+limitation:**
+- Accessibility fix: real test, not just checking the DOM has matching
+  `for`/`id` attributes — clicked each `<label>` and asserted the
+  associated `<input>` actually received focus (the real behavioral proof
+  a screen reader / label click depends on). Both pass on
+  `/auth/signup` (role: patient selected first) and
+  `/auth/invite-required`.
+- `my-appointments`'s *existing* behavior (normal linked patient landing
+  there via login) still works — confirmed with the real test patient.
+- `npm run typecheck`: clean. `e2e/01-03`: clean 3/3.
+
+**Still not independently live-tested:** the new guard's actual redirect
+branch, for the same reason as every prior round — needs a role-less,
+patient-metadata account, still blocked by the malformed service-role
+key. Verified by code review: identical one-line pattern to the guards
+already proven correct in rounds 3/4/6, applied to a route that had been
+missed.
+
+**Merge gate: clear on my end for `5adbcac`. Recommend this as the merge
+commit**, superseding round 6 — narrowly scoped as described, nothing
+else changed.
+
+## PR #7 round 8 (`bfbb71d`) — privilege-escalation fix, 🟢 GREEN
+
+Copilot caught a genuine privilege-escalation hole in `dashboard/layout.tsx`'s
+self-heal logic (added round 3): `user_metadata` is client-writable via
+`supabase.auth.updateUser()`, and the secretary self-heal branch trusted it
+directly with no independent verification — unlike the professional
+self-heal, which only fires after confirming a real `professionals` table
+row exists. Any authenticated account, including a role-less pending
+patient, could set `role: "secretary"` in their own metadata and
+self-provision `/dashboard` access just by visiting it. Fixed by deleting
+the branch entirely — there's no equivalent verification table for
+secretaries, so the only safe answer is not to self-heal it. A secretary
+with a genuinely missing `user_roles` row now falls through to
+`/auth/login` unverified, same as anyone else.
+
+**Verified by code review (high confidence — this is a deletion, not a new
+conditional):** diffed `5adbcac..bfbb71d` on `dashboard/layout.tsx` and
+confirmed the `else if (metaRole === "secretary") { ...upsert... }` branch
+is completely gone, replaced with a comment explaining why. There's no
+remaining code path anywhere in the file that writes a role based on
+`user_metadata` alone — the only self-heal left is the professional one,
+gated on a real `professionals` row.
+
+**Live-tested:**
+- Doctor login (the professional self-heal path, untouched by this fix) —
+  confirmed still reaches `/dashboard` cleanly, both in isolation and as
+  part of a full clean `e2e/01-03` run.
+- `npm run typecheck`: clean. `e2e/01-03`: 3/3 clean (see note below — the
+  first attempt hit a `.next` corruption blip, not a regression).
+
+**Deliberately not attempted — metadata-tampering test on the patient
+account:** web dev asked if I could simulate a patient setting their own
+metadata to `role: "secretary"` and confirm they still can't reach
+`/dashboard`. I considered this but decided against actually doing it, for
+a reason specific to this fix rather than the usual service-role-key
+limitation: my only patient account already has a *persisted* `user_roles`
+row (`role: "patient"`). `dashboard/layout.tsx` checks `roleRow?.role`
+first and redirects patients to `/my-appointments` **before** the code ever
+reaches the self-heal block — so tampering with that account's metadata
+would test persisted-role-priority (a real but different property), not
+the actual vulnerability, which only ever existed for accounts with **no**
+persisted role. I don't have a role-less account to test with (confirmed
+back in round 4: `user_roles` has no `DELETE` policy, so neither test
+account can be reset to role-less), and manufacturing one by stripping the
+doctor's real `professionals` data isn't something I'm willing to do to a
+shared seed account. Given the fix is a clean deletion of the only
+metadata-trusting code path, code review already answers the question with
+high confidence; a live test here would've added risk (real, if reversible,
+tampering with the patient account's metadata) without actually exercising
+the vulnerable precondition. Flagging this transparently rather than
+skipping it silently.
+
+**`.next` corruption note:** the first `e2e/01-03` attempt this round hit
+the same recurring corruption pattern documented earlier in this PR
+(`ENOENT: routes-manifest.json` / `app-paths-manifest.json`) after a fresh
+`rm -rf .next` + restart — some requests during the cold compile raced the
+manifest write and the dev server never recovered on its own. Killed the
+process, force-killed anything still on port 3000, `rm -rf .next`,
+restarted clean, then hit a second, unrelated snag: leftover
+"Reschedule Pending" state on the shared test appointment from an earlier
+interrupted run (spec 01 timed out waiting for a request button that
+wasn't there because a request was already pending). Cleared it by running
+spec 02 alone (accepts the pending request, returning the appointment to
+`confirmed`), then re-ran `01-03` fresh — clean 3/3. Neither issue is an
+app bug; both are shared-environment/test-state artifacts, now documented
+here for whichever agent hits them next.
+
+**Merge gate: clear on my end for `bfbb71d`. Recommend this as the merge
+commit**, superseding round 7 — this is the fix for the most severe finding
+in the PR so far and code review gives it unusually high confidence.
+
+## PR #7 round 9 (`7e3ea04`) — guard original confirm flows against role overwrite, 🟢 GREEN
+
+Consistency fix per web dev: the invite-required retry form already refused
+to touch an account with an existing `user_roles` row (added round 4), but
+the two *original* confirmation entry points —
+`api/auth/callback/route.ts` and `auth/confirm/page.tsx` — didn't have the
+same guard. Without it, an `onConflict` upsert on either path could
+silently overwrite an existing professional/secretary/already-linked-patient
+role if the handler ever ran again for such an account. Both now check for
+an existing `user_roles` row first and redirect based on it
+(`/my-appointments` if already patient, `/dashboard` otherwise) instead of
+proceeding to the invite-code upsert.
+
+**Verified by code review only, high confidence:** diffed `bfbb71d..7e3ea04`
+on both files. The added guard is the identical `existingRole` check +
+early-return pattern already live and reasoned-about in
+`auth/invite-required/page.tsx` since round 4 — narrow, 2-file change, no
+new logic shape introduced. Not independently live-tested for the same
+reason as almost every edge case in this PR: exercising it needs a fresh
+signup/confirmation flow, which needs a working `SUPABASE_SERVICE_ROLE_KEY`
+to create test accounts — still malformed, unfixed all PR. Didn't re-run
+`e2e/01-03` for this round specifically since the change is confined to
+signup/confirmation code paths the permanent suite doesn't touch (it uses
+pre-existing, already-authenticated accounts) — round 8's clean 3/3 run
+already covers the reschedule flows this PR could plausibly have affected.
+
+**Merge gate: clear on my end for `7e3ea04`. Recommend this as the merge
+commit**, superseding round 8 — narrow consistency fix, same reasoning
+pattern as round 5's invite-attach fix (also code-review-only, also a
+proven pattern applied to a missed spot).
+
+## PR #7 round 10 (`00f4914`) — root-page redirect ordering fix, 🟢 GREEN
+
+Copilot finding, narrow: `page.tsx` (root landing) checked
+`user_metadata.role === "patient"` *first*, and only used the persisted
+`user_roles` row as a truthy flag inside that branch — so a
+professional/secretary whose client-writable metadata happened to say
+`"patient"` would get routed to `/my-appointments` instead of `/dashboard`.
+Reordered to check the persisted role first: `roleRow?.role === "patient"`
+→ `/my-appointments`; no persisted role at all + metadata says patient →
+`/auth/invite-required`; otherwise `/dashboard`. Same persisted-role-first
+pattern already used everywhere else in this PR (`dashboard/layout.tsx`,
+`auth/login`, `subscribe`).
+
+**This one I could actually live-test properly**, unlike round 8 — the bug
+here didn't depend on having a role-less account; it reproduced on *any*
+account whose metadata and persisted role disagreed, which I can safely
+and reversibly manufacture on an account that already has a persisted
+role. Recorded the doctor account's exact `user_metadata` first
+(`role: "professional"`, rest unchanged), then via the Supabase Auth REST
+API (`PUT /auth/v1/user` with the doctor's own access token — the same
+mechanism `supabase.auth.updateUser()` uses client-side, i.e. faithfully
+reproducing the actual attack vector) set `role: "patient"` in their
+metadata while their `user_roles` row still says `professional`. Logged in
+as the doctor through the real login form and visited `/`: landed on
+`/dashboard`, confirming persisted role now wins regardless of tampered
+metadata — this is precisely the bug Copilot flagged, and it's fixed.
+Restored the doctor's metadata to the exact recorded original immediately
+after (verified by re-fetching it — byte-for-byte match) before running
+anything else.
+
+**Also live-tested:** `npm run typecheck` clean; `e2e/01-03` clean 3/3
+(fresh run after the metadata was restored, confirming no side effects
+from the tamper/restore cycle on the account's normal behavior).
+
+**Infra note:** hit the `.next` corruption pattern a third time this PR
+partway through this round (`MODULE_NOT_FOUND: ./vendor-chunks/@supabase.js`
+this time, different symptom, same root cause) — happened to land while
+the doctor's metadata was mid-tamper. Restored the metadata first (before
+touching the server at all), then killed the process, force-killed
+anything left on port 3000, `rm -rf .next`, restarted, and re-ran the full
+tamper → test → restore cycle clean. Worth noting for whoever owns this
+next: prioritizing the data-safety cleanup (metadata restore) over the
+infra fix when both are needed at once is the right order — a stuck dev
+server is fully recoverable, a stale tampered account is a live gap until
+it's fixed.
+
+**Merge gate: clear on my end for `00f4914`. Recommend this as the merge
+commit**, superseding round 9. This is the last Copilot finding I'm aware
+of as of this write-up; if it comes back clean, this PR should be ready to
+merge.
+
+## PR #7 round 11 (`3d1ee98`..`1daad5a`) — invite-linking rebuild, 🟡 GREEN for what's testable
+
+Real architecture change, not a patch: mob dev's PR #5 review cycle revoked
+the RPCs this PR's invite-linking depended on
+(`patient_by_invite_code`, `professional_by_invite_code`) and introduced a
+confirmation-based linking model instead — `link_patient_by_invite_code`
+(a patient invite code: immediate full link) and
+`link_by_professional_public_code` (a doctor's public code: sets a
+*pending* state via `invited_by_professional_id`, doctor must call
+`confirm_and_link_patient` before the patient is fully connected via
+`linked_patient_id`). Every role-branching route now handles 3 states
+instead of 2: no role / pending-confirmation / fully-linked. New page:
+`/auth/pending-confirmation`, with a manual "check again" button
+(`get_linked_professional_id()`).
+
+**Reviewed in three parts:**
+1. `3d1ee98` (checkpoint before the rebuild) — added the same
+   non-patient-role guard `dashboard/layout.tsx` already had, to
+   `my-appointments/page.tsx`, in reverse. Fully subsumed by `0104398`'s
+   final version of the same file — reviewed as part of the rebuild, not
+   separately.
+2. `0104398` (the rebuild itself) — diffed against `00f4914` (last commit I
+   tested) across all 6 role-branching entry points
+   (`page.tsx`/root, `auth/login`, `dashboard/layout.tsx`,
+   `subscribe/page.tsx`, `my-appointments/page.tsx`,
+   `api/auth/callback/route.ts` + `auth/confirm/page.tsx` in lockstep as
+   always). Every one applies the identical 3-check pattern in the same
+   order (`linked_patient_id` → fully linked; `invited_by_professional_id`
+   alone → pending; anything else falls through to the prior 2-state
+   logic) — consistent, no route missed. Confirmed `linked_patient_id`
+   is checked *before* `invited_by_professional_id` everywhere, which is
+   the right priority even in a hypothetical future where both end up set
+   simultaneously post-confirmation. Also checked: `AuthCard`'s `centered`
+   prop (used by the new page) already exists; all 15 locale files got the
+   same 6 new `pendingConfirmation.*` keys with real (not copy-pasted)
+   translations — spot-checked `pt-BR` and `ja` against the keys actually
+   referenced in the new page.
+3. `1daad5a` — two fixes: (a) both invite-code RPC calls in
+   `confirm/page.tsx` and `api/auth/callback/route.ts` were destructuring
+   only `data`, silently discarding `error` — a transient RPC failure
+   would have looked identical to "code doesn't match anything" and
+   cascaded into calling the *second* RPC too. Now checks `error` after
+   each call and redirects to `/auth/invite-required` without the
+   cascade. (b) `invite-required/page.tsx`'s eligibility gate reordered to
+   check the persisted role (`existingRole?.role === "professional" |
+   "secretary"`) before the client-writable `user_metadata.role` check —
+   not a security fix (the old order still rejected such accounts, just
+   with a less accurate error message: "already has a role" instead of
+   "not a pending patient"), but the right call given this PR's round-8/10
+   lesson about not trusting metadata first. Comment in the diff notes the
+   *actual* authorization boundary is server-side now (migrations 070/071,
+   mob dev's), which reject non-eligible callers inside the RPCs
+   themselves regardless of what this client-side check shows.
+
+**Live-tested — the one guard reachable without the new RPCs:** the
+`my-appointments` professional/secretary guard doesn't depend on any new
+RPC, only the existing `user_roles.role` column, so I could test it for
+real: logged in as the doctor account and navigated directly to
+`/my-appointments` — redirected to `/dashboard` as expected.
+
+**Not independently live-testable, same limitation stated explicitly by
+web dev up front:** the new linking RPCs themselves
+(`link_patient_by_invite_code`, `link_by_professional_public_code`,
+`confirm_and_link_patient`) and therefore the `pending-confirmation` page's
+actual content and the 3-state routing's `pending` branch specifically —
+mob dev's migrations for these aren't deployed to the shared DB yet
+(expect `PGRST202` same as every prior "successful invite-link" gap in
+this PR). Once they land, this needs a real end-to-end pass: signup with
+each code type, doctor confirmation, the pending page's "check again"
+button, and the 3-state routing exercised for real rather than by
+inspection.
+
+**Also live-tested:** `npm run typecheck` clean (run twice — once after
+`0104398`, once after `1daad5a`); `e2e/01-03` clean 3/3 on a fresh server
+(none of these routes are on the reschedule flows' path, so this is a
+regression check, not direct coverage).
+
+**Infra note — worth flagging explicitly:** hit the `.next` corruption
+pattern repeatedly this round, more than any prior round (at least 4
+times), closely correlated with `git pull`ing web dev's pushes while my
+dev server was live and watching the working directory — a pull mid-run
+seems to reliably trigger it now. One retry of `e2e/03` even failed with a
+*different*, unrelated-looking error ("no available slots for the
+selected day") that turned out to just be collateral damage from the
+server already being in a half-corrupted state at the time — a full
+kill+`rm -rf .next`+restart made it disappear on the very next run, and
+working-hours/appointment-density data checked out fine via direct REST,
+ruling out a real slot-availability bug. Documenting this correlation in
+case it helps whoever's chasing `.next` corruption next: **kill and
+restart the dev server after every pull, don't just trust
+`reuseExistingServer`.**
+
+**Merge gate: not applicable yet — this round doesn't stand alone.**
+Everything reviewable right now is sound; the round isn't closeable until
+mob dev's migrations deploy and I can run the actual linking flows. Not
+recommending a merge commit for PR #7 as a whole until that pass happens.
+
+## PR #7 round 12 (`f713a70`) — migrations live, self-heal gap closed, 🟡 GREEN for what's testable
+
+Mob dev's migrations 060-071 are now live in prod. Verified this directly
+rather than trusting it secondhand: called `link_patient_by_invite_code`
+and `link_by_professional_public_code` via REST with deliberately invalid
+codes — both responded correctly (`false` / `invalid_public_code`
+respectively) instead of the `PGRST202` I'd gotten every time before this
+round. Real deployment, not a schema-cache fluke.
+
+**`f713a70`'s two fixes, both code-reviewed, high confidence:**
+- **Locale-prefix fix** in `auth/confirm/page.tsx`: the patient-flow
+  redirects (`/my-appointments`, `/auth/pending-confirmation`,
+  `/dashboard`, `/auth/invite-required`, `/auth/patient-welcome`) were all
+  missing the `${prefix}` every other redirect in this PR already uses for
+  non-English locales — a non-English patient completing signup would've
+  landed on the English-URL version of the page instead of their own
+  locale. Straightforward, mechanical, matches the existing pattern
+  exactly.
+- **Removed `dashboard/layout.tsx`'s professional self-heal entirely** (the
+  one I verified as sound back in round 3/4). Reason: the
+  professionals-table check it relied on turned out to be an unsound
+  signal — legacy pre-071 accounts can have a `professionals` row
+  regardless of their actual role, so a patient with client-writable
+  `user_metadata.role` set to `"professional"` could in principle satisfy
+  that check too, if they also happened to have a stray professionals row,
+  and self-provision a persisted professional role via the upsert. There's
+  no way to distinguish "a real professional whose `user_roles` row is
+  missing" from that case with the current data model, so a role-less
+  account now always falls through to `/auth/login`, full stop — a
+  legitimate professional in that state needs a real data fix, not an
+  app-layer guess. `invite-required/page.tsx` got the same hardening in
+  parallel (added a `professionals`-table cross-check alongside the
+  existing `user_roles.role` check, rejecting role-less-but-has-a-
+  professionals-row accounts too) — this one really is defense-in-depth,
+  since the doc comment is explicit that the actual boundary lives
+  server-side in the linking RPCs now.
+- This doesn't create a regression for the existing doctor test account: it
+  already has a persisted `user_roles` row (written back in round 3, before
+  `DELETE` on `user_roles` was confirmed blocked), so it never re-enters
+  the removed code path at all — confirmed with a live login regression
+  test, clean.
+
+**What I could and couldn't test given migrations are live:**
+
+The good news — the two linking RPCs respond correctly and the routing
+logic around them is sound by inspection. The bad news — I still can't
+exercise the actual "patient enters a code and gets linked" flow
+end-to-end, for two separate reasons, neither of which is new this round:
+
+1. **No fresh, role-less test account.** Creating one needs either a real
+   signup completed through email confirmation (I have no inbox to read
+   a confirmation link from) or an admin-created pre-confirmed account
+   (needs `SUPABASE_SERVICE_ROLE_KEY`, which has been malformed all PR —
+   checked again this round, still not a valid JWT). This is the same
+   long-standing gap, independent of mob dev's migrations — migrations
+   deploying doesn't unblock it.
+2. **No web UI to get or use a doctor's side of either code type**, as far
+   as I can find. Grepped the whole `dashboard/` tree: `patients/[id]` has
+   an `invite_code` field in its type definition but it's never rendered
+   anywhere in the JSX — a doctor has no way to see or share a patient
+   record's invite code from the web app. There's also no "public code"
+   display anywhere, and `confirm_and_link_patient` (the doctor-confirms-a-
+   pending-patient RPC) has zero call sites in this repo — only mentioned
+   in comments. Probed it directly too: it exists, but with a different
+   parameter (`p_appointment_id`, per the RPC's own error hint) than what
+   the comments describe (`p_patient_auth_id`) — worth double-checking
+   with mob dev, since if the web app were ever meant to call this
+   directly, the assumed signature is wrong. **Asked web dev directly:
+   is the doctor-side of this (generating/sharing a code, confirming a
+   pending patient) mobile-only / out of scope for this web PR, or a
+   missing piece?** That answer determines whether "full end-to-end from
+   the web app alone" is even a coherent goal for this PR.
+
+**Also live-tested:** `npm run typecheck` clean; `e2e/01-03` + doctor login
+regression, all clean 4/4 on a fresh server (restarted after the pull,
+per the round 11 lesson — no `.next` corruption this time).
+
+**Merge gate: code review clear for `f713a70`'s own changes, but PR #7 as
+a whole still isn't closeable** — same reason as round 11, now with a
+sharper picture of exactly what's missing for a true end-to-end pass.
+Waiting on web dev's answer to the scope question above before deciding
+what "full" testing even means here.
+
+## PR #7 round 13 (`d941823`) — remaining locale-prefix misses, 🟢 GREEN
+
+Copilot's fresh review (triggered on `f713a70`, which touched
+`dashboard/layout.tsx` and `invite-required/page.tsx`) surfaced 3 more
+instances of the same locale-prefix bug class in code that hadn't changed
+in that round, so it hadn't been re-flagged until this pass: root
+`page.tsx`, `my-appointments/page.tsx`, and `api/auth/callback/route.ts`.
+Mechanical fix, same pattern as everywhere else in this PR — except the
+callback route needed a different mechanism, since it's a Route Handler
+with no `[locale]` URL segment to read from. It derives locale from the
+`NEXT_LOCALE` cookie instead, falling back to the default locale if unset
+or invalid.
+
+**Didn't just take the cookie approach on faith — traced it through
+`middleware.ts`:** the custom geo-redirect logic only sets `NEXT_LOCALE`
+on a narrow first-visit path (unprefixed URL, cookie not already set, geo
+locale ≠ en), which on its own would NOT keep the cookie in sync with a
+user who navigates straight to a prefixed URL like `/pt-BR/auth/signup`
+without ever hitting `/`. But `routing.ts` has no `localeCookie: false`
+override, so next-intl's own `createMiddleware(routing)` call (which runs
+on every request that isn't caught by an earlier branch) applies its
+default behavior of writing `NEXT_LOCALE` to match whatever locale segment
+the current request resolved to — so the cookie does stay in sync with
+the last locale-prefixed page visited, confirming the fix's assumption is
+sound rather than just plausible-sounding.
+
+**Live-tested, not just code-reviewed:** logged in as the linked patient,
+visited `/pt-BR` (no session cookie needed to establish `NEXT_LOCALE` —
+just visiting the prefixed URL itself is enough per the mechanism above),
+and confirmed the redirect landed on `/pt-BR/my-appointments`, not the
+bare `/my-appointments`. Separately, cleared cookies and visited
+`/pt-BR/my-appointments` unauthenticated — redirected to
+`/pt-BR/auth/login`, confirming the unauthenticated branch's fix too.
+Both real reproductions of the bug class, not just diff inspection.
+
+**Also live-tested:** `npm run typecheck` clean; `e2e/01-03` clean 3/3.
+
+**Merge gate: clear on my end for `d941823`.** This closes out every
+locale-prefix instance Copilot has found across this PR's history.
+Recommending it as the merge commit for whatever's currently mergeable.
+
+**Addendum — scope question from round 12 resolved:** mob dev confirmed
+the doctor-side UI (invite code display, `confirm_and_link_patient`) is
+mobile-only by design for this PR cycle, not a web-repo gap — nothing
+missing on this side. Also confirmed `confirm_and_link_patient`'s real
+parameter is `p_appointment_id` (looks up the patient internally), not
+`p_patient_auth_id` as the stale comments said; no web call sites, so
+nothing to fix here either way. This narrows what "full end-to-end from
+the web app" even means: the web side's job is patient enters a code →
+immediate link or `/auth/pending-confirmation` → (confirmation happens on
+mobile, outside my scope) → patient returns, clicks "check again" → sees
+linked. That's still not independently live-testable by me — same
+`SUPABASE_SERVICE_ROLE_KEY` blocker as ever, now explicitly confirmed by
+mob dev as a known, unresolved infra gap on both repos (needs the user to
+either provide a valid key or temporarily disable confirm-email), not
+something fixable from inside either PR.
+
+## PR #7 round 14 (`615a3c2`) — last locale-prefix miss, 🟢 GREEN
+
+One more Copilot catch on the re-review of `d941823`: the doctor's direct
+join-link redirect (`/join/[professionalId]`, the `joinProfId` branch in
+`api/auth/callback/route.ts`) was still missing `localePrefix` — it's a
+separate code path from the patient invite-code flow (signup via a
+doctor's join link goes straight to `/join/{id}` to complete role/link
+setup there, same as the mobile-facing confirm flow), so it wasn't
+touched by round 13's fix to the other branches in that same function.
+One-line change, same `localePrefix` variable round 13 already traced
+through `middleware.ts` and live-verified.
+
+**Not separately live-tested:** exercising the `joinProfId` branch needs a
+signup that actually went through a doctor's join link
+(`user_metadata.join_professional_id` set at signup time) — not something
+reachable from my existing accounts without a fresh signup, same
+service-role-key limitation as everything else requiring a new account.
+Given it's a mechanical one-line application of a mechanism already
+proven sound in round 13 (same variable, same redirect pattern, no new
+logic), code review is high-confidence here without forcing a live
+reproduction that isn't cheaply reachable.
+
+**Live-tested:** `npm run typecheck` clean; `e2e/01-03` clean 3/3.
+
+**Merge gate: clear on my end for `615a3c2`.** This is the last
+locale-prefix instance found across the whole PR, as far as either of us
+is aware. Recommending it as the merge commit for what's currently
+testable — same caveat as rounds 11-14 throughout: the patient
+invite-code linking flow itself still isn't independently live-tested,
+blocked on the service-role-key infra gap, not on anything in the code.
+
+## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
 directly, but worth noting here since browser E2E doesn't have the native

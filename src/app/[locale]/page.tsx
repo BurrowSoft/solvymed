@@ -57,22 +57,37 @@ const FEATURE_ICONS: Record<FeatureKey, React.ReactNode> = {
 
 const FEATURE_KEYS: FeatureKey[] = ["scheduling", "patients", "records", "prescriptions", "payments", "analytics"];
 
-export default async function HomePage() {
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const prefix = locale === "en" ? "" : `/${locale}`;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (user) {
-    const role = user.user_metadata?.role as string | undefined;
-    if (role === "patient") {
-      const today = new Date().toISOString().split("T")[0];
-      const { count } = await supabase
-        .from("appointments")
-        .select("id", { count: "exact", head: true })
-        .eq("patient_auth_id", user.id)
-        .gte("date", today)
-        .not("status", "in", '("cancelled","completed","blocked","rejected")');
-      redirect(count ? "/my-appointments" : "/discover");
+    // Persisted role is authoritative — user_metadata is client-writable, so
+    // it only decides routing for the one case with no persisted role yet
+    // (a pending patient whose invite never resolved).
+    const { data: roleRow } = await supabase
+      .from("user_roles")
+      .select("role, invited_by_professional_id, linked_patient_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (roleRow?.role === "patient" && roleRow.linked_patient_id) {
+      redirect(`${prefix}/my-appointments`);
     }
-    redirect("/dashboard");
+    if (roleRow?.role === "patient" && roleRow.invited_by_professional_id) {
+      redirect(`${prefix}/auth/pending-confirmation`);
+    }
+    if (roleRow?.role === "patient") {
+      redirect(`${prefix}/my-appointments`);
+    }
+    if (!roleRow?.role && user.user_metadata?.role === "patient") {
+      redirect(`${prefix}/auth/invite-required`);
+    }
+    redirect(`${prefix}/dashboard`);
   }
 
   const t = await getTranslations();

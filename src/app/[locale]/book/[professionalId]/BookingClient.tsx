@@ -368,15 +368,9 @@ export function BookingClient({
           <p className="text-slate-400 text-xs mb-8">{t("successHint")}</p>
           <button
             onClick={() => router.push(`${prefix}/my-appointments`)}
-            className="w-full rounded-xl bg-teal-600 py-3 text-sm font-bold text-white hover:bg-teal-700 transition mb-3"
+            className="w-full rounded-xl bg-teal-600 py-3 text-sm font-bold text-white hover:bg-teal-700 transition"
           >
             {t("viewAppointments")}
-          </button>
-          <button
-            onClick={() => router.push(`${prefix}/discover`)}
-            className="w-full rounded-xl border border-slate-200 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition"
-          >
-            {t("backToClinics")}
           </button>
         </div>
       </div>

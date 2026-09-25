@@ -417,7 +417,6 @@
     "successBody": "تم إرسال طلبك ليوم {date} الساعة {time} مع {doctor}.",
     "successHint": "سيقوم الطبيب بالتأكيد أو اقتراح وقت آخر.",
     "viewAppointments": "عرض مواعيدي",
-    "backToClinics": "العودة إلى العيادات",
     "errorSlotTaken": "تم حجز هذا الوقت للتو. يرجى اختيار وقت آخر.",
     "errorBlocked": "حجوزاتك مع هذا المختص مقيدة حالياً. يرجى التواصل مع العيادة.",
     "errorMaxBookings": "لقد وصلت إلى الحد الأقصى من المواعيد مع هذا المختص.",
@@ -435,22 +434,6 @@
     "durationMin": "{n} دقيقة",
     "customTime": "وقت مخصص",
     "orCustomTime": "أو اختر وقتاً مخصصاً"
-  },
-  "discover": {
-    "title": "احجز موعداً",
-    "subtitle": "ابحث بالاسم أو المدينة أو الطبيب أو التخصص",
-    "recentDoctors": "أطباؤك الأخيرون",
-    "signOut": "تسجيل الخروج",
-    "noClinicsFound": "لا توجد عيادات",
-    "clinicsFound": "{n, plural, other {# عيادة}}",
-    "list": "قائمة",
-    "map": "خريطة",
-    "noResults": "لا توجد عيادات تطابق بحثك",
-    "clearSearch": "مسح البحث",
-    "healthcareProviders": "مقدمو الرعاية الصحية",
-    "book": "احجز",
-    "loadingMap": "جارِي تحميل الخريطة…",
-    "viewDetails": "عرض التفاصيل →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "مريض",
       "rolePatientDesc": "احجز وصل إلى استشاراتك",
       "inviteCode": "رمز الدعوة",
-      "inviteCodeOptional": "(اختياري)",
+      "inviteCodeRequired": "رمز الدعوة مطلوب",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "أدخل رمز الطبيب للارتباط تلقائياً",
       "emailExists": "يوجد حساب بهذا البريد الإلكتروني بالفعل. يرجى تسجيل الدخول.",
@@ -516,7 +499,32 @@
       "loading": "جارٍ التحقق من رابطك…"
     },
     "logIn": "تسجيل الدخول",
-    "backToHome": "العودة للرئيسية"
+    "backToHome": "العودة للرئيسية",
+    "patientWelcome": {
+      "countdown": "سنأخذك إلى مواعيدك خلال {count, plural, one {# ثانية} other {# ثوانٍ}}…",
+      "goToAppointments": "الذهاب إلى مواعيدي"
+    },
+    "inviteRequired": {
+      "heading": "رمز الدعوة مطلوب",
+      "body": "تم إنشاء حسابك، لكن مرضى SolvyMed يحتاجون إلى رمز دعوة من طبيبهم للمتابعة. اطلب الرمز من طبيبك وأدخله أدناه.",
+      "codeLabel": "رمز الدعوة",
+      "codeRequired": "أدخل رمز دعوة",
+      "codeInvalid": "هذا الرمز لا يطابق أي طبيب أو مريض. تحقق منه مع طبيبك.",
+      "submit": "متابعة",
+      "submitting": "جارٍ التحقق…",
+      "alreadyHasRole": "هذا الحساب لديه دور بالفعل ولا يمكن ربطه كمريض. سجّل الخروج واستخدم حسابًا آخر.",
+      "notPendingPatient": "لم يتم إنشاء هذا الحساب كتسجيل مريض، لذا لا يمكن ربط رمز دعوة به هنا.",
+      "linkFailed": "حدث خطأ أثناء ربط حسابك. يرجى المحاولة مرة أخرى.",
+      "backToSignup": "استخدام حساب آخر"
+    },
+    "pendingConfirmation": {
+      "loading": "جارٍ التحقق من حالتك…",
+      "heading": "بانتظار طبيبك",
+      "body": "تم ربطك، لكن طبيبك ما زال بحاجة إلى تأكيد حسابك قبل أن تتمكن من الحجز.",
+      "bodyWithDoctor": "أنت مرتبط بـ {name}، الذي ما زال بحاجة إلى تأكيد حسابك قبل أن تتمكن من الحجز.",
+      "checking": "جارٍ التحقق…",
+      "checkAgain": "تحقق مرة أخرى"
+    }
   },
   "myAppointments": {
     "title": "مواعيدي",

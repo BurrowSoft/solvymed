@@ -417,7 +417,6 @@
     "successBody": "Your request for {date} at {time} with {doctor} has been submitted.",
     "successHint": "The doctor will confirm or suggest a different time.",
     "viewAppointments": "View my appointments",
-    "backToClinics": "Back to clinics",
     "errorSlotTaken": "This slot was just taken. Please choose another time.",
     "errorBlocked": "Your bookings with this professional are currently restricted. Please contact the clinic.",
     "errorMaxBookings": "You already have the maximum number of active appointments with this professional.",
@@ -435,22 +434,6 @@
     "durationMin": "{n} min",
     "customTime": "Custom time",
     "orCustomTime": "Or pick a custom time"
-  },
-  "discover": {
-    "title": "Book an Appointment",
-    "subtitle": "Search by clinic name, city, doctor, or specialty",
-    "recentDoctors": "Your Recent Doctors",
-    "signOut": "Sign out",
-    "noClinicsFound": "No clinics found",
-    "clinicsFound": "{n, plural, one {# clinic found} other {# clinics found}}",
-    "list": "List",
-    "map": "Map",
-    "noResults": "No clinics match your search",
-    "clearSearch": "Clear search",
-    "healthcareProviders": "Healthcare providers",
-    "book": "Book",
-    "loadingMap": "Loading map…",
-    "viewDetails": "View details →"
   },
   "auth": {
     "login": {
@@ -486,7 +469,7 @@
       "rolePatient": "Patient",
       "rolePatientDesc": "Schedule and access your consultations",
       "inviteCode": "Invite code",
-      "inviteCodeOptional": "(optional)",
+      "inviteCodeRequired": "An invite code is required",
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Enter a doctor's code to get linked automatically",
       "emailExists": "An account with this email already exists. Please sign in instead.",
@@ -516,7 +499,32 @@
       "loading": "Validating your reset link…"
     },
     "logIn": "Log in",
-    "backToHome": "Back to home"
+    "backToHome": "Back to home",
+    "patientWelcome": {
+      "countdown": "Taking you to your appointments in {count, plural, one {# second} other {# seconds}}…",
+      "goToAppointments": "Go to My Appointments"
+    },
+    "inviteRequired": {
+      "heading": "An invite code is needed",
+      "body": "Your account was created, but SolvyMed patients need an invite code from their doctor to continue. Ask your doctor for their invite code and enter it below.",
+      "codeLabel": "Invite code",
+      "codeRequired": "Enter an invite code",
+      "codeInvalid": "That code doesn't match a doctor or patient record. Double-check it with your doctor.",
+      "submit": "Continue",
+      "submitting": "Checking…",
+      "alreadyHasRole": "This account already has a role and can't be linked as a patient. Sign out and use a different account.",
+      "notPendingPatient": "This account wasn't created as a patient signup, so an invite code can't be attached here.",
+      "linkFailed": "Something went wrong linking your account. Please try again.",
+      "backToSignup": "Use a different account"
+    },
+    "pendingConfirmation": {
+      "loading": "Checking your status…",
+      "heading": "Waiting for your doctor",
+      "body": "You're linked, but your doctor still needs to confirm your account before you can book.",
+      "bodyWithDoctor": "You're linked to {name}, who still needs to confirm your account before you can book.",
+      "checking": "Checking…",
+      "checkAgain": "Check again"
+    }
   },
   "myAppointments": {
     "title": "My Appointments",

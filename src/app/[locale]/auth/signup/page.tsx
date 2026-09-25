@@ -49,6 +49,11 @@ export default function SignupPage() {
       return;
     }
 
+    if (role === "patient" && !joinProfId && !inviteCode.trim()) {
+      setError(t("signup.inviteCodeRequired"));
+      return;
+    }
+
     setLoading(true);
     const supabase = createClient();
     const { data: signUpData, error: authError } = await supabase.auth.signUp({
@@ -169,11 +174,14 @@ export default function SignupPage() {
         {/* Invite code — patients only, hidden when joining via link */}
         {!isJoinFlow && role === "patient" && (
           <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4">
-            <label className="block text-sm font-semibold text-slate-700 mb-1">
-              {t("signup.inviteCode")} <span className="font-normal text-slate-400">{t("signup.inviteCodeOptional")}</span>
+            <label htmlFor="signup-invite-code" className="block text-sm font-semibold text-slate-700 mb-1">
+              {t("signup.inviteCode")} <span className="text-red-500">*</span>
             </label>
             <input
+              id="signup-invite-code"
               type="text"
+              required
+              form="signup-form"
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6))}
               placeholder={t("signup.inviteCodePlaceholder")}
@@ -190,7 +198,7 @@ export default function SignupPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form id="signup-form" onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="field-label">{t("signup.fullName")}</label>
             <input
