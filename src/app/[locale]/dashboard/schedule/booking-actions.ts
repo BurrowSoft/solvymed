@@ -41,25 +41,30 @@ export async function getTentativeBookings() {
   // Determine which patients are already linked to this doctor. Direct
   // user_roles reads for other users' rows are RLS-blocked (own-row-only
   // policy), so this goes through a SECURITY DEFINER RPC instead — see
-  // mob dev's migration (get_known_patient_auth_ids).
+  // mob dev's migration (get_known_patients). Returns the linked
+  // patients-table id when there is one, otherwise the id tied to an
+  // earlier appointment with this professional.
   const authIds = bookings
     .map((b: Record<string, unknown>) => b.patient_auth_id as string)
     .filter(Boolean);
 
-  let knownIds = new Set<string>();
+  let knownMap = new Map<string, string>();
   if (authIds.length > 0) {
-    const { data: known } = await supabase.rpc("get_known_patient_auth_ids", {
+    const { data: known } = await supabase.rpc("get_known_patients", {
       p_patient_auth_ids: authIds,
     });
-    knownIds = new Set((known ?? []) as string[]);
+    for (const row of (known ?? []) as Array<{ patient_auth_id: string; patient_id: string }>) {
+      knownMap.set(row.patient_auth_id, row.patient_id);
+    }
   }
 
   return bookings.map((b: Record<string, unknown>) => {
     const authId = b.patient_auth_id as string | null;
-    const isNew = authId ? !knownIds.has(authId) : false;
+    const isNew = authId ? !knownMap.has(authId) : false;
     return {
       ...b,
       is_new_patient: isNew,
+      patient_id: authId && !isNew ? (knownMap.get(authId) ?? null) : null,
     };
   });
 }
