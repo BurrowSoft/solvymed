@@ -561,7 +561,9 @@
   "join": {
     "notFound": "Không tìm thấy liên kết mời",
     "notFoundDesc": "Liên kết này có thể không hợp lệ hoặc đã hết hạn. Hãy yêu cầu bác sĩ chia sẻ một liên kết mới.",
-    "backToHome": "Về trang chủ"
+    "backToHome": "Về trang chủ",
+    "linkFailed": "Không thể hoàn tất liên kết này",
+    "linkFailedDesc": "Đã có lỗi khi liên kết tài khoản của bạn. Vui lòng thử lại hoặc liên hệ bộ phận hỗ trợ."
   },
   "versionGate": {
     "title": "Cần cập nhật",

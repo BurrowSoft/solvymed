@@ -561,7 +561,9 @@
   "join": {
     "notFound": "Lien d'invitation introuvable",
     "notFoundDesc": "Ce lien est peut-être invalide ou expiré. Demandez a votre médecin d'en partager un nouveau.",
-    "backToHome": "Aller à l'accueil"
+    "backToHome": "Aller à l'accueil",
+    "linkFailed": "Impossible de finaliser ce lien",
+    "linkFailedDesc": "Un problème est survenu lors de la liaison de votre compte. Réessayez ou contactez le support."
   },
   "versionGate": {
     "title": "Mise à jour requise",

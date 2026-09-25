@@ -561,7 +561,9 @@
   "join": {
     "notFound": "找不到邀请链接",
     "notFoundDesc": "此链接可能无效或已过期。请联系您的医生分享新链接。",
-    "backToHome": "返回首页"
+    "backToHome": "返回首页",
+    "linkFailed": "无法完成此链接",
+    "linkFailedDesc": "关联您的账户时出现问题，请重试或联系支持团队。"
   },
   "versionGate": {
     "title": "需要更新",

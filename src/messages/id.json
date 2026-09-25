@@ -561,7 +561,9 @@
   "join": {
     "notFound": "Tautan undangan tidak ditemukan",
     "notFoundDesc": "Tautan ini mungkin tidak valid atau sudah kedaluwarsa. Minta dokter Anda untuk membagikan yang baru.",
-    "backToHome": "Ke halaman utama"
+    "backToHome": "Ke halaman utama",
+    "linkFailed": "Tidak dapat menyelesaikan tautan ini",
+    "linkFailedDesc": "Terjadi kesalahan saat menghubungkan akun Anda. Silakan coba lagi atau hubungi dukungan."
   },
   "versionGate": {
     "title": "Pembaruan Diperlukan",

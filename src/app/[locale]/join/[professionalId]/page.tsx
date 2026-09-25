@@ -73,7 +73,12 @@ export default async function JoinPage({
 
   if (role === "secretary") {
     if (!existingRole?.role) {
-      await supabase.from("user_roles").upsert(
+      // The user_roles INSERT/UPDATE policies reject any client write that
+      // sets invited_by_professional_id to a non-null value, from any page
+      // — per mob dev, this means the secretary-join flow has never
+      // actually worked (confirmed, not specific to this code). Surface
+      // that instead of redirecting to /dashboard as if it succeeded.
+      const { error: secretaryLinkError } = await supabase.from("user_roles").upsert(
         {
           user_id: user.id,
           role: "secretary",
@@ -81,6 +86,19 @@ export default async function JoinPage({
         },
         { onConflict: "user_id" },
       );
+      if (secretaryLinkError) {
+        return (
+          <AuthPageShell>
+            <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100 text-center">
+              <p className="text-slate-600 font-semibold mb-2">{t("linkFailed")}</p>
+              <p className="text-sm text-slate-400 mb-6">{t("linkFailedDesc")}</p>
+              <Link href={`${prefix}/`} className="text-teal-600 text-sm hover:underline">
+                {t("backToHome")}
+              </Link>
+            </div>
+          </AuthPageShell>
+        );
+      }
     }
     redirect(`${prefix}/dashboard`);
   }
@@ -136,7 +154,9 @@ export default async function JoinPage({
     }
 
     if (linkedPatientId) {
-      await supabase.from("user_roles").upsert(
+      // Same policy as the secretary branch above rejects this too — it
+      // also sets invited_by_professional_id to a non-null value.
+      const { error: patientLinkError } = await supabase.from("user_roles").upsert(
         {
           user_id: user.id,
           role: "patient",
@@ -145,6 +165,19 @@ export default async function JoinPage({
         },
         { onConflict: "user_id" },
       );
+      if (patientLinkError) {
+        return (
+          <AuthPageShell>
+            <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100 text-center">
+              <p className="text-slate-600 font-semibold mb-2">{t("linkFailed")}</p>
+              <p className="text-sm text-slate-400 mb-6">{t("linkFailedDesc")}</p>
+              <Link href={`${prefix}/`} className="text-teal-600 text-sm hover:underline">
+                {t("backToHome")}
+              </Link>
+            </div>
+          </AuthPageShell>
+        );
+      }
     }
   }
 

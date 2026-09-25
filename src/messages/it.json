@@ -561,7 +561,9 @@
   "join": {
     "notFound": "Link d'invito non trovato",
     "notFoundDesc": "Questo link potrebbe essere non valido o scaduto. Chiedi al tuo medico di condividerne uno nuovo.",
-    "backToHome": "Vai alla home"
+    "backToHome": "Vai alla home",
+    "linkFailed": "Impossibile completare questo link",
+    "linkFailedDesc": "Si è verificato un problema durante il collegamento del tuo account. Riprova o contatta l'assistenza."
   },
   "versionGate": {
     "title": "Aggiornamento richiesto",

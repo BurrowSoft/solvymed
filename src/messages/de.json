@@ -561,7 +561,9 @@
   "join": {
     "notFound": "Einladungslink nicht gefunden",
     "notFoundDesc": "Dieser Link ist möglicherweise ungültig oder abgelaufen. Bitten Sie Ihren Arzt, einen neuen zu teilen.",
-    "backToHome": "Zur Startseite"
+    "backToHome": "Zur Startseite",
+    "linkFailed": "Dieser Link konnte nicht abgeschlossen werden",
+    "linkFailedDesc": "Beim Verknüpfen Ihres Kontos ist ein Fehler aufgetreten. Versuchen Sie es erneut oder kontaktieren Sie den Support."
   },
   "versionGate": {
     "title": "Update erforderlich",

@@ -561,6 +561,8 @@
   "join": {
     "notFound": "Invite link not found",
     "notFoundDesc": "This link may be invalid or has expired. Ask your doctor to share a new one.",
+    "linkFailed": "Couldn't complete this link",
+    "linkFailedDesc": "Something went wrong linking your account. Please try again or contact support.",
     "backToHome": "Go to home"
   },
   "versionGate": {

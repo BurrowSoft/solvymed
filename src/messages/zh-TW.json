@@ -561,7 +561,9 @@
   "join": {
     "notFound": "找不到邀請連結",
     "notFoundDesc": "此連結可能無效或已過期。請聯繫您的醫生分享新的連結。",
-    "backToHome": "返回首頁"
+    "backToHome": "返回首頁",
+    "linkFailed": "無法完成此連結",
+    "linkFailedDesc": "關聯您的帳戶時發生問題，請重試或聯絡支援團隊。"
   },
   "versionGate": {
     "title": "需要更新",
