@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { isProfessionalRole } from "@/lib/effectiveProfId";
 
 async function geocode(address: string, city: string, country: string) {
   try {
@@ -22,6 +23,8 @@ export async function addClinic(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
+  // Doctor-only: a secretary may view but never edit these.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinics", code: "generic" };
 
   const name = (formData.get("name") as string)?.trim();
   if (!name) return { error: "Clinic name is required", code: "name_required" };
@@ -83,6 +86,8 @@ export async function deleteClinic(clinicId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
+  // Doctor-only: a secretary may view but never edit these.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinics", code: "generic" };
 
   const { error } = await supabase
     .from("clinics")

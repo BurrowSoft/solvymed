@@ -2,11 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { isProfessionalRole, getEffectiveProfId } from "@/lib/effectiveProfId";
 
 export async function updateProfile(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Doctor-only: a secretary may view but never edit these.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can change these settings" };
 
   const { error } = await supabase.from("professionals").upsert({
     id: user.id,
@@ -25,6 +28,8 @@ export async function updateClinic(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Doctor-only: a secretary may view but never edit these.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can change these settings" };
 
   const { error } = await supabase.from("professionals").update({
     clinic_name: (formData.get("clinic_name") as string)?.trim() || null,
@@ -48,6 +53,8 @@ export async function updateWorkingHours(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Doctor-only: a secretary may view but never edit these.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can change these settings" };
 
   const workingHours: Record<string, { enabled: boolean; start: string; end: string }> = {};
   for (const day of DAY_KEYS) {
@@ -68,6 +75,8 @@ export async function createProcedure(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Doctor-only: a secretary may view but never edit these.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can change these settings" };
 
   const name = (formData.get("name") as string)?.trim();
   if (!name) return { error: "Name is required" };
@@ -90,6 +99,8 @@ export async function toggleProcedure(id: string, active: boolean) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Doctor-only: a secretary may view but never edit these.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can change these settings" };
 
   const { error } = await supabase.from("procedures").update({ active }).eq("id", id).eq("professional_id", user.id);
   if (error) return { error: error.message };
@@ -101,6 +112,8 @@ export async function updateSchedulingRules(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Doctor-only: a secretary may view but never edit these.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can change these settings" };
 
   const raw = (formData.get("max_concurrent_bookings") as string)?.trim();
   const parsed = parseInt(raw);
@@ -120,6 +133,8 @@ export async function deleteProcedure(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Doctor-only: a secretary may view but never edit these.
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can change these settings" };
 
   const { error } = await supabase.from("procedures").delete().eq("id", id).eq("professional_id", user.id);
   if (error) return { error: error.message };
@@ -143,12 +158,15 @@ export async function unblockPatient(patientId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // Patient management: a secretary acts on their doctor's patients.
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   const { error } = await supabase
     .from("patients")
     .update({ booking_blocked: false })
     .eq("id", patientId)
-    .eq("professional_id", user.id);
+    .eq("professional_id", effectiveProfId);
 
   if (error) return { error: error.message };
   revalidatePath("/dashboard/settings");
