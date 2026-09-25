@@ -539,7 +539,9 @@
       "requestAppointment": "Request an appointment",
       "yourRequests": "Your requests",
       "statusTentative": "Awaiting confirmation",
-      "statusProposal": "New time proposed"
+      "statusProposal": "New time proposed",
+      "accept": "Accept",
+      "decline": "Decline"
     }
   },
   "myAppointments": {

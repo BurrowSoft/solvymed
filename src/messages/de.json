@@ -539,7 +539,9 @@
       "requestAppointment": "Termin anfragen",
       "yourRequests": "Ihre Anfragen",
       "statusTentative": "Bestätigung ausstehend",
-      "statusProposal": "Neue Zeit vorgeschlagen"
+      "statusProposal": "Neue Zeit vorgeschlagen",
+      "accept": "Annehmen",
+      "decline": "Ablehnen"
     }
   },
   "myAppointments": {

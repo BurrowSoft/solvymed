@@ -539,7 +539,9 @@
       "requestAppointment": "예약 요청하기",
       "yourRequests": "내 요청 내역",
       "statusTentative": "확인 대기 중",
-      "statusProposal": "새 시간 제안됨"
+      "statusProposal": "새 시간 제안됨",
+      "accept": "수락",
+      "decline": "거절"
     }
   },
   "myAppointments": {

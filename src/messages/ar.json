@@ -539,7 +539,9 @@
       "requestAppointment": "طلب موعد",
       "yourRequests": "طلباتك",
       "statusTentative": "بانتظار التأكيد",
-      "statusProposal": "تم اقتراح موعد جديد"
+      "statusProposal": "تم اقتراح موعد جديد",
+      "accept": "قبول",
+      "decline": "رفض"
     }
   },
   "myAppointments": {

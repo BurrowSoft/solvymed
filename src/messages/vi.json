@@ -539,7 +539,9 @@
       "requestAppointment": "Yêu cầu đặt lịch hẹn",
       "yourRequests": "Yêu cầu của bạn",
       "statusTentative": "Đang chờ xác nhận",
-      "statusProposal": "Đã đề xuất giờ mới"
+      "statusProposal": "Đã đề xuất giờ mới",
+      "accept": "Chấp nhận",
+      "decline": "Từ chối"
     }
   },
   "myAppointments": {

@@ -539,7 +539,9 @@
       "requestAppointment": "Minta janji temu",
       "yourRequests": "Permintaan Anda",
       "statusTentative": "Menunggu konfirmasi",
-      "statusProposal": "Waktu baru diusulkan"
+      "statusProposal": "Waktu baru diusulkan",
+      "accept": "Terima",
+      "decline": "Tolak"
     }
   },
   "myAppointments": {

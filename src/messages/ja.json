@@ -539,7 +539,9 @@
       "requestAppointment": "予約をリクエスト",
       "yourRequests": "リクエスト状況",
       "statusTentative": "確認待ち",
-      "statusProposal": "新しい日時が提案されました"
+      "statusProposal": "新しい日時が提案されました",
+      "accept": "承認",
+      "decline": "辞退"
     }
   },
   "myAppointments": {

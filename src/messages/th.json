@@ -539,7 +539,9 @@
       "requestAppointment": "ขอนัดหมาย",
       "yourRequests": "คำขอของคุณ",
       "statusTentative": "รอการยืนยัน",
-      "statusProposal": "มีการเสนอเวลาใหม่"
+      "statusProposal": "มีการเสนอเวลาใหม่",
+      "accept": "ยอมรับ",
+      "decline": "ปฏิเสธ"
     }
   },
   "myAppointments": {

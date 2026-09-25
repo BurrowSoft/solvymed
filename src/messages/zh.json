@@ -539,7 +539,9 @@
       "requestAppointment": "申请预约",
       "yourRequests": "您的申请",
       "statusTentative": "等待确认",
-      "statusProposal": "已提议新时间"
+      "statusProposal": "已提议新时间",
+      "accept": "接受",
+      "decline": "拒绝"
     }
   },
   "myAppointments": {

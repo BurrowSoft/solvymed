@@ -539,7 +539,9 @@
       "requestAppointment": "Solicitar una cita",
       "yourRequests": "Tus solicitudes",
       "statusTentative": "Esperando confirmación",
-      "statusProposal": "Nuevo horario propuesto"
+      "statusProposal": "Nuevo horario propuesto",
+      "accept": "Aceptar",
+      "decline": "Rechazar"
     }
   },
   "myAppointments": {

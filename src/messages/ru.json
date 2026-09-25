@@ -539,7 +539,9 @@
       "requestAppointment": "Запросить приём",
       "yourRequests": "Ваши запросы",
       "statusTentative": "Ожидает подтверждения",
-      "statusProposal": "Предложено новое время"
+      "statusProposal": "Предложено новое время",
+      "accept": "Принять",
+      "decline": "Отклонить"
     }
   },
   "myAppointments": {

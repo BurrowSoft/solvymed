@@ -539,7 +539,9 @@
       "requestAppointment": "Solicitar uma consulta",
       "yourRequests": "Suas solicitações",
       "statusTentative": "Aguardando confirmação",
-      "statusProposal": "Novo horário proposto"
+      "statusProposal": "Novo horário proposto",
+      "accept": "Aceitar",
+      "decline": "Recusar"
     }
   },
   "myAppointments": {

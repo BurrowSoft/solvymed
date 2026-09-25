@@ -539,7 +539,9 @@
       "requestAppointment": "Demander un rendez-vous",
       "yourRequests": "Vos demandes",
       "statusTentative": "En attente de confirmation",
-      "statusProposal": "Nouvel horaire proposé"
+      "statusProposal": "Nouvel horaire proposé",
+      "accept": "Accepter",
+      "decline": "Refuser"
     }
   },
   "myAppointments": {
