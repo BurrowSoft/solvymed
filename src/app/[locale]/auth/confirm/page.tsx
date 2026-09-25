@@ -75,11 +75,22 @@ export default async function AuthConfirmPage({
       // dashboard/layout.tsx's allowlist guard is what actually keeps a
       // role-less session out of the professional dashboard.
       if (inviteCode) {
-        const { data: fullyLinked } = await supabase.rpc("link_patient_by_invite_code", { p_code: inviteCode });
+        const { data: fullyLinked, error: linkError } = await supabase.rpc("link_patient_by_invite_code", { p_code: inviteCode });
+        if (linkError) {
+          // A transient/RPC failure isn't the same as "this code doesn't
+          // match anything" — don't cascade into a second call that will
+          // fail the same way. invite-required still keeps the session
+          // alive either way, so the destination is the same, but the two
+          // failure modes shouldn't be conflated in the code.
+          redirect("/auth/invite-required");
+        }
         if (fullyLinked) {
           redirect("/auth/patient-welcome");
         }
-        const { data: profId } = await supabase.rpc("link_by_professional_public_code", { p_public_code: inviteCode });
+        const { data: profId, error: profLinkError } = await supabase.rpc("link_by_professional_public_code", { p_public_code: inviteCode });
+        if (profLinkError) {
+          redirect("/auth/invite-required");
+        }
         redirect(profId ? "/auth/pending-confirmation" : "/auth/invite-required");
       }
       redirect("/auth/invite-required");

@@ -98,12 +98,21 @@ export async function GET(request: NextRequest) {
         // immediate, patient_connections created server-side) or a doctor's
         // public code (sets invited_by_professional_id, pending until the
         // doctor confirms).
-        const { data: fullyLinked } = await supabase.rpc("link_patient_by_invite_code", { p_code: inviteCode });
-        if (fullyLinked) {
+        const { data: fullyLinked, error: linkError } = await supabase.rpc("link_patient_by_invite_code", { p_code: inviteCode });
+        if (linkError) {
+          // A transient/RPC failure isn't the same as "this code doesn't
+          // match anything" — don't cascade into a second call that will
+          // fail the same way. invite-required still keeps the session
+          // alive either way, so the destination is the same, but the two
+          // failure modes shouldn't be conflated in the code.
+          redirectUrl = new URL("/auth/invite-required", origin);
+        } else if (fullyLinked) {
           redirectUrl = new URL("/auth/patient-welcome", origin);
         } else {
-          const { data: profId } = await supabase.rpc("link_by_professional_public_code", { p_public_code: inviteCode });
-          redirectUrl = profId
+          const { data: profId, error: profLinkError } = await supabase.rpc("link_by_professional_public_code", { p_public_code: inviteCode });
+          redirectUrl = profLinkError
+            ? new URL("/auth/invite-required", origin)
+            : profId
             ? new URL("/auth/pending-confirmation", origin)
             : new URL("/auth/invite-required", origin);
         }

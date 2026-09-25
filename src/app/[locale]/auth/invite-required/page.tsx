@@ -37,25 +37,31 @@ export default function InviteRequiredPage() {
     }
 
     // This page is reachable by any authenticated user, not just the
-    // role-less accounts coming from a failed invite confirmation. Two
-    // checks before touching user_roles at all:
-    // 1. This account must have actually signed up intending to be a
-    //    patient — a role-less professional/secretary (the case
-    //    dashboard/layout.tsx self-heals) must not be able to attach a
-    //    patient invite here just because their user_roles row happens
-    //    to be missing too.
-    if (user.user_metadata?.role !== "patient") {
-      setLoading(false);
-      setError(t("inviteRequired.notPendingPatient"));
-      return;
-    }
-    // 2. Refuse to attach a code if this account already has a persisted
-    //    role, rather than silently overwriting an already-linked patient.
+    // role-less accounts coming from a failed invite confirmation. The real
+    // authorization boundary is server-side: both linking RPCs reject any
+    // caller whose user_roles row has role IN ('professional', 'secretary')
+    // (migrations 070/071) — deliberately NOT a professionals-table check,
+    // since a professionals row isn't a reliable signal (legacy pre-071
+    // accounts got one regardless of role). This client-side check mirrors
+    // that same user_roles logic as a UX nicety, not the actual boundary.
     const { data: existingRole } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
       .maybeSingle();
+    if (existingRole?.role === "professional" || existingRole?.role === "secretary") {
+      setLoading(false);
+      setError(t("inviteRequired.notPendingPatient"));
+      return;
+    }
+    if (user.user_metadata?.role !== "patient") {
+      setLoading(false);
+      setError(t("inviteRequired.notPendingPatient"));
+      return;
+    }
+    // Refuse to attach a code if this account already has a persisted role
+    // at all (including an already-linked patient), rather than silently
+    // overwriting it.
     if (existingRole?.role) {
       setLoading(false);
       setError(t("inviteRequired.alreadyHasRole"));
