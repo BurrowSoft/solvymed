@@ -169,7 +169,8 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
     setSigningOut(true);
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/");
+    // Land on the home page in the language the user was in.
+    router.push(prefix || "/");
     router.refresh();
   }
 
@@ -208,7 +209,7 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-slate-900">Dr. {firstName}</p>
+          <p className="truncate text-sm font-semibold text-slate-900">{isSecretary ? firstName : `Dr. ${firstName}`}</p>
           <p className="truncate text-xs text-slate-400">{email}</p>
         </div>
         <button
