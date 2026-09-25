@@ -45,12 +45,14 @@ export default async function AuthConfirmPage({
       // user_metadata is client-writable — refuse to overwrite an existing
       // role, same guard as api/auth/callback/route.ts and the patient
       // branch below.
-      const { data: existingSecretaryRole } = await supabase
+      const { data: existingSecretaryRole, error: secretaryRoleLookupError } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", data.user.id)
         .maybeSingle();
-      if (!existingSecretaryRole?.role) {
+      // A failed lookup must fail closed, not be treated as "no existing
+      // role" — same reasoning as api/auth/callback/route.ts.
+      if (!secretaryRoleLookupError && !existingSecretaryRole?.role) {
         await supabase.from("user_roles").upsert(
           { user_id: data.user.id, role: "secretary" },
           { onConflict: "user_id" },

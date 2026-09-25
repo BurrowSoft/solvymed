@@ -59,11 +59,17 @@ export default async function JoinPage({
   // more directly attacker-controlled than user_metadata elsewhere. Refuse
   // to touch an existing role in either branch below, same principle as
   // api/auth/callback/route.ts and auth/confirm/page.tsx.
-  const { data: existingRole } = await supabase
+  const { data: existingRole, error: roleLookupError } = await supabase
     .from("user_roles")
     .select("role, linked_patient_id")
     .eq("user_id", user.id)
     .maybeSingle();
+
+  if (roleLookupError) {
+    // Fail closed — a lookup error must never be treated as "no existing
+    // role", or it reopens the overwrite this guard exists to close.
+    redirect(`${prefix}/dashboard`);
+  }
 
   if (role === "secretary") {
     if (!existingRole?.role) {
