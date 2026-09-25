@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { computeSlots, toMinutes } from "@/lib/slots";
+import { computeSlots, toMinutes, getDayHours } from "@/lib/slots";
 import type { WorkingHours } from "@/lib/slots";
 import { sendExpoPush } from "@/lib/push";
 
@@ -384,6 +384,10 @@ export async function getAvailableSlotsForDate(
   });
 
   const wh = (profData ?? {}) as WorkingHours;
+
+  // Short-circuit before the get_busy_slots round trip for a closed day —
+  // computeSlots would return [] anyway, but only after paying for the RPC.
+  if (!getDayHours(date, wh)?.enabled) return [];
 
   const { data: busy } = await supabase.rpc("get_busy_slots", {
     p_professional_id: professionalId,

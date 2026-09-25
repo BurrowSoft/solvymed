@@ -28,14 +28,18 @@ export function filterPastSlots(slots: TimeSlot[], date: string, nowMinutes: num
   return slots.filter(s => toMinutes(s.start) > nowMinutes);
 }
 
+export function getDayHours(date: string, workingHours: WorkingHours): WorkingDayHours | undefined {
+  const dayKey = DAY_KEYS[new Date(date + "T12:00:00").getDay()];
+  return workingHours[dayKey];
+}
+
 export function computeSlots(
   date: string,
   durationMinutes: number,
   workingHours: WorkingHours,
   busyRanges: Array<{ start: number; end: number }>,
 ): TimeSlot[] {
-  const dayKey = DAY_KEYS[new Date(date + "T12:00:00").getDay()];
-  const dayHours = workingHours[dayKey];
+  const dayHours = getDayHours(date, workingHours);
   if (!dayHours?.enabled) return [];
 
   const dayStart = toMinutes(dayHours.start);
