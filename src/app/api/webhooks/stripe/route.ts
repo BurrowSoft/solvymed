@@ -130,12 +130,13 @@ async function syncSubscription(db: ReturnType<typeof adminClient>, subId: strin
         subscription_id: desired.subId,
         subscription_status: "active",
         current_period_end: desired.periodEnd,
-      }).eq("id", desired.userId).select("id");
+      }).eq("id", desired.userId).neq("subscription_status", "lifetime").select("id");
       if (error) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
       if (!data?.length) {
-        // No professionals row for this user. Retrying can't create one, so
+        // No professionals row for this user, or it has lifetime access
+        // (which Stripe never changes). Retrying can't change either, so
         // don't make Stripe retry for days. Log it loudly instead.
-        console.error(`Stripe webhook: active subscription ${desired.subId} but no professionals row for ${desired.userId}`);
+        console.error(`Stripe webhook: active subscription ${desired.subId} matched no non-lifetime professionals row for ${desired.userId}`);
         return NextResponse.json({ ok: true });
       }
     } else {
@@ -152,6 +153,7 @@ async function syncSubscription(db: ReturnType<typeof adminClient>, subId: strin
       })
         .eq("id", desired.userId)
         .or(`subscription_id.is.null,subscription_id.eq.${desired.subId}`)
+        .neq("subscription_status", "lifetime")
         .select("id");
       if (idError) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
       if (!owned?.length) {
@@ -175,7 +177,8 @@ async function syncSubscription(db: ReturnType<typeof adminClient>, subId: strin
       // once active expires the row when it dies.
       let expire = db.from("professionals").update({ subscription_status: "expired" })
         .eq("id", desired.userId)
-        .eq("subscription_id", desired.subId);
+        .eq("subscription_id", desired.subId)
+        .neq("subscription_status", "lifetime");
       if (desired.neverActive) expire = expire.neq("subscription_status", "trial");
       const { error: statusError } = await expire;
       if (statusError) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
@@ -210,7 +213,7 @@ async function takeOverFromDeadSubscription(
   const { data: swapped, error: swapError } = await db.from("professionals").update({
     subscription_provider: "stripe",
     subscription_id: newSubId,
-  }).eq("id", userId).eq("subscription_id", storedId).select("id");
+  }).eq("id", userId).eq("subscription_id", storedId).neq("subscription_status", "lifetime").select("id");
   if (swapError) return "error";
   return swapped?.length ? "took" : "kept";
 }
