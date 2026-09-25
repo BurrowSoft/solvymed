@@ -632,5 +632,16 @@
     "portalError": "无法打开银行卡管理，请重试。",
     "errorPaymentFailed": "您上次的付款失败了。请更新银行卡，而不是开始新的订阅。",
     "paymentActivating": "已收到付款。正在恢复您的访问权限，请稍后刷新此页面。"
+  },
+  "secretary": {
+    "notConnectedTitle": "尚未连接到诊所",
+    "notConnectedBody": "请向与你合作的医生索取秘书邀请链接，或输入对方给你的邀请码。",
+    "codeLabel": "邀请码",
+    "codeRequired": "请输入邀请码。",
+    "continue": "继续",
+    "signOut": "退出登录",
+    "clinicInactiveTitle": "订阅未激活",
+    "clinicInactiveBody": "{name}的 SolvyMed 订阅未激活。续订后即可恢复访问。",
+    "clinicInactiveBodyGeneric": "你所在诊所的 SolvyMed 订阅未激活。续订后即可恢复访问。"
   }
 }

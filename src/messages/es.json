@@ -632,5 +632,16 @@
     "portalError": "No se pudo abrir la gestión de la tarjeta. Inténtalo de nuevo.",
     "errorPaymentFailed": "Tu último pago falló. Actualiza tu tarjeta en lugar de iniciar una nueva suscripción.",
     "paymentActivating": "Pago recibido. Tu acceso se está restableciendo. Actualiza esta página en un momento."
+  },
+  "secretary": {
+    "notConnectedTitle": "Aún no estás conectada a una clínica",
+    "notConnectedBody": "Pide al médico con quien trabajas un enlace de invitación de secretaria o introduce el código que te dio.",
+    "codeLabel": "Código de invitación",
+    "codeRequired": "Introduce el código de invitación.",
+    "continue": "Continuar",
+    "signOut": "Cerrar sesión",
+    "clinicInactiveTitle": "Suscripción inactiva",
+    "clinicInactiveBody": "La suscripción a SolvyMed de {name} está inactiva. El acceso se restablecerá cuando se renueve.",
+    "clinicInactiveBodyGeneric": "La suscripción a SolvyMed de tu clínica está inactiva. El acceso se restablecerá cuando se renueve."
   }
 }

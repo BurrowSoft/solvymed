@@ -632,5 +632,16 @@
     "portalError": "Não foi possível abrir o gerenciamento do cartão. Tente novamente.",
     "errorPaymentFailed": "Seu último pagamento falhou. Atualize seu cartão em vez de iniciar uma nova assinatura.",
     "paymentActivating": "Pagamento recebido. Seu acesso está sendo restaurado. Atualize esta página em instantes."
+  },
+  "secretary": {
+    "notConnectedTitle": "Ainda não conectado a uma clínica",
+    "notConnectedBody": "Peça ao médico com quem você trabalha um link de convite de secretária ou digite o código que ele enviou.",
+    "codeLabel": "Código de convite",
+    "codeRequired": "Digite o código de convite.",
+    "continue": "Continuar",
+    "signOut": "Sair",
+    "clinicInactiveTitle": "Assinatura inativa",
+    "clinicInactiveBody": "A assinatura do SolvyMed de {name} está inativa. O acesso volta assim que ela for renovada.",
+    "clinicInactiveBodyGeneric": "A assinatura do SolvyMed da sua clínica está inativa. O acesso volta assim que ela for renovada."
   }
 }

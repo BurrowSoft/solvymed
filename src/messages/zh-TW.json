@@ -632,5 +632,16 @@
     "portalError": "無法開啟信用卡管理，請重試。",
     "errorPaymentFailed": "您上次的付款失敗了。請更新信用卡，而不是開始新的訂閱。",
     "paymentActivating": "已收到付款。正在恢復您的存取權限，請稍後重新整理此頁面。"
+  },
+  "secretary": {
+    "notConnectedTitle": "尚未連接到診所",
+    "notConnectedBody": "請向與你合作的醫師索取祕書邀請連結，或輸入對方給你的邀請碼。",
+    "codeLabel": "邀請碼",
+    "codeRequired": "請輸入邀請碼。",
+    "continue": "繼續",
+    "signOut": "登出",
+    "clinicInactiveTitle": "訂閱未啟用",
+    "clinicInactiveBody": "{name}的 SolvyMed 訂閱未啟用。續訂後即可恢復存取。",
+    "clinicInactiveBodyGeneric": "你所在診所的 SolvyMed 訂閱未啟用。續訂後即可恢復存取。"
   }
 }

@@ -632,5 +632,16 @@
     "portalError": "Không thể mở trang quản lý thẻ. Vui lòng thử lại.",
     "errorPaymentFailed": "Lần thanh toán gần nhất đã thất bại. Hãy cập nhật thẻ thay vì bắt đầu gói đăng ký mới.",
     "paymentActivating": "Đã nhận thanh toán. Quyền truy cập của bạn đang được khôi phục, vui lòng tải lại trang sau giây lát."
+  },
+  "secretary": {
+    "notConnectedTitle": "Chưa được kết nối với phòng khám",
+    "notConnectedBody": "Hãy xin bác sĩ mà bạn làm việc cùng một liên kết mời thư ký, hoặc nhập mã họ đã gửi.",
+    "codeLabel": "Mã mời",
+    "codeRequired": "Vui lòng nhập mã mời.",
+    "continue": "Tiếp tục",
+    "signOut": "Đăng xuất",
+    "clinicInactiveTitle": "Gói đăng ký không hoạt động",
+    "clinicInactiveBody": "Gói đăng ký SolvyMed của {name} không hoạt động. Quyền truy cập sẽ trở lại khi được gia hạn.",
+    "clinicInactiveBodyGeneric": "Gói đăng ký SolvyMed của phòng khám bạn không hoạt động. Quyền truy cập sẽ trở lại khi được gia hạn."
   }
 }

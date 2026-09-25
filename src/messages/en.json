@@ -632,5 +632,16 @@
     "portalError": "Could not open card management. Please try again.",
     "errorPaymentFailed": "Your last payment failed. Update your card instead of starting a new subscription.",
     "paymentActivating": "Payment received. Your access is being restored, so refresh this page in a moment."
+  },
+  "secretary": {
+    "notConnectedTitle": "Not connected to a clinic yet",
+    "notConnectedBody": "Ask the doctor you work with for a secretary invite link, or enter the code they gave you.",
+    "codeLabel": "Invite code",
+    "codeRequired": "Enter the invite code.",
+    "continue": "Continue",
+    "signOut": "Sign out",
+    "clinicInactiveTitle": "Subscription inactive",
+    "clinicInactiveBody": "{name}'s SolvyMed subscription is inactive. Access resumes once it's renewed.",
+    "clinicInactiveBodyGeneric": "Your clinic's SolvyMed subscription is inactive. Access resumes once it's renewed."
   }
 }

@@ -632,5 +632,16 @@
     "portalError": "Die Kartenverwaltung konnte nicht geöffnet werden. Bitte versuchen Sie es erneut.",
     "errorPaymentFailed": "Ihre letzte Zahlung ist fehlgeschlagen. Aktualisieren Sie Ihre Karte, statt ein neues Abonnement abzuschließen.",
     "paymentActivating": "Zahlung erhalten. Ihr Zugang wird wiederhergestellt. Aktualisieren Sie diese Seite gleich."
+  },
+  "secretary": {
+    "notConnectedTitle": "Noch mit keiner Praxis verbunden",
+    "notConnectedBody": "Bitten Sie die Ärztin oder den Arzt, für die bzw. den Sie arbeiten, um einen Einladungslink für Sekretariate, oder geben Sie den erhaltenen Code ein.",
+    "codeLabel": "Einladungscode",
+    "codeRequired": "Geben Sie den Einladungscode ein.",
+    "continue": "Weiter",
+    "signOut": "Abmelden",
+    "clinicInactiveTitle": "Abonnement inaktiv",
+    "clinicInactiveBody": "Das SolvyMed-Abonnement von {name} ist inaktiv. Der Zugang ist wieder möglich, sobald es verlängert wird.",
+    "clinicInactiveBodyGeneric": "Das SolvyMed-Abonnement Ihrer Praxis ist inaktiv. Der Zugang ist wieder möglich, sobald es verlängert wird."
   }
 }

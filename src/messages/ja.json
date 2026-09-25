@@ -632,5 +632,16 @@
     "portalError": "カード管理を開けませんでした。もう一度お試しください。",
     "errorPaymentFailed": "前回のお支払いに失敗しました。新しいサブスクリプションを開始する代わりに、カード情報を更新してください。",
     "paymentActivating": "お支払いを受け付けました。アクセスを復元しています。しばらくしてからこのページを更新してください。"
+  },
+  "secretary": {
+    "notConnectedTitle": "まだクリニックに接続されていません",
+    "notConnectedBody": "一緒に働く医師に受付スタッフ用の招待リンクを依頼するか、受け取ったコードを入力してください。",
+    "codeLabel": "招待コード",
+    "codeRequired": "招待コードを入力してください。",
+    "continue": "続ける",
+    "signOut": "ログアウト",
+    "clinicInactiveTitle": "サブスクリプションが無効です",
+    "clinicInactiveBody": "{name}さんのSolvyMedサブスクリプションが無効になっています。更新されるとアクセスが再開されます。",
+    "clinicInactiveBodyGeneric": "クリニックのSolvyMedサブスクリプションが無効になっています。更新されるとアクセスが再開されます。"
   }
 }

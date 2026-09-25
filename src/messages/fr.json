@@ -632,5 +632,16 @@
     "portalError": "Impossible d'ouvrir la gestion de la carte. Réessayez.",
     "errorPaymentFailed": "Votre dernier paiement a échoué. Mettez à jour votre carte au lieu de démarrer un nouvel abonnement.",
     "paymentActivating": "Paiement reçu. Votre accès est en cours de rétablissement. Actualisez cette page dans un instant."
+  },
+  "secretary": {
+    "notConnectedTitle": "Pas encore connecté(e) à un cabinet",
+    "notConnectedBody": "Demandez au médecin avec qui vous travaillez un lien d'invitation de secrétaire, ou saisissez le code qu'il vous a donné.",
+    "codeLabel": "Code d'invitation",
+    "codeRequired": "Saisissez le code d'invitation.",
+    "continue": "Continuer",
+    "signOut": "Se déconnecter",
+    "clinicInactiveTitle": "Abonnement inactif",
+    "clinicInactiveBody": "L'abonnement SolvyMed de {name} est inactif. L'accès reprendra dès son renouvellement.",
+    "clinicInactiveBodyGeneric": "L'abonnement SolvyMed de votre cabinet est inactif. L'accès reprendra dès son renouvellement."
   }
 }

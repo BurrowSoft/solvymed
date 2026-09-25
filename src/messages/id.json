@@ -632,5 +632,16 @@
     "portalError": "Tidak dapat membuka pengelolaan kartu. Silakan coba lagi.",
     "errorPaymentFailed": "Pembayaran terakhir Anda gagal. Perbarui kartu Anda alih-alih memulai langganan baru.",
     "paymentActivating": "Pembayaran diterima. Akses Anda sedang dipulihkan, silakan muat ulang halaman ini sebentar lagi."
+  },
+  "secretary": {
+    "notConnectedTitle": "Belum terhubung ke klinik",
+    "notConnectedBody": "Minta tautan undangan sekretaris dari dokter tempat Anda bekerja, atau masukkan kode yang diberikan.",
+    "codeLabel": "Kode undangan",
+    "codeRequired": "Masukkan kode undangan.",
+    "continue": "Lanjutkan",
+    "signOut": "Keluar",
+    "clinicInactiveTitle": "Langganan tidak aktif",
+    "clinicInactiveBody": "Langganan SolvyMed milik {name} tidak aktif. Akses akan pulih setelah diperpanjang.",
+    "clinicInactiveBodyGeneric": "Langganan SolvyMed klinik Anda tidak aktif. Akses akan pulih setelah diperpanjang."
   }
 }

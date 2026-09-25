@@ -632,5 +632,16 @@
     "portalError": "Impossibile aprire la gestione della carta. Riprova.",
     "errorPaymentFailed": "Il tuo ultimo pagamento non è andato a buon fine. Aggiorna la carta invece di avviare un nuovo abbonamento.",
     "paymentActivating": "Pagamento ricevuto. Il tuo accesso è in fase di ripristino. Aggiorna questa pagina tra poco."
+  },
+  "secretary": {
+    "notConnectedTitle": "Non ancora collegato/a a uno studio",
+    "notConnectedBody": "Chiedi al medico con cui lavori un link di invito per la segreteria, oppure inserisci il codice che ti ha dato.",
+    "codeLabel": "Codice di invito",
+    "codeRequired": "Inserisci il codice di invito.",
+    "continue": "Continua",
+    "signOut": "Esci",
+    "clinicInactiveTitle": "Abbonamento non attivo",
+    "clinicInactiveBody": "L'abbonamento SolvyMed di {name} non è attivo. L'accesso riprenderà al rinnovo.",
+    "clinicInactiveBodyGeneric": "L'abbonamento SolvyMed del tuo studio non è attivo. L'accesso riprenderà al rinnovo."
   }
 }

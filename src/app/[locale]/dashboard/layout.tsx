@@ -73,6 +73,12 @@ export default async function DashboardLayout({
   if (roleRow.role !== "professional" && roleRow.role !== "secretary") {
     redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
   }
+  const isSecretary = roleRow.role === "secretary";
+  // A secretary whose link is NULL (never accepted, removed, or left) has
+  // no practice to work in. The DB-owned row is the signal, not metadata.
+  if (isSecretary && !roleRow.invited_by_professional_id) {
+    redirect(`/${locale === "en" ? "" : locale + "/"}auth/not-connected`);
+  }
 
   // ── Version gate (doctors + secretaries only) ──────────────────────────────
   const { data: appConfig } = await supabase
@@ -104,11 +110,15 @@ export default async function DashboardLayout({
   const sub = (subRows?.[0] ?? null) as EffectiveSub | null;
 
   if (sub && !isAccessAllowed(sub)) {
-    redirect(`/${locale === "en" ? "" : locale + "/"}subscribe`);
+    // get_effective_subscription resolves a linked secretary to their
+    // doctor's subscription. A secretary can't pay for it, so they never see
+    // the paywall, just a note that the doctor's subscription is inactive.
+    redirect(`/${locale === "en" ? "" : locale + "/"}${isSecretary ? "auth/clinic-inactive" : "subscribe"}`);
   }
 
   const daysLeft = trialDaysRemaining(sub);
-  const showTrialBanner = daysLeft !== null && daysLeft <= 7;
+  // The trial banner's CTA is Subscribe, which a secretary can't use.
+  const showTrialBanner = !isSecretary && daysLeft !== null && daysLeft <= 7;
   // ──────────────────────────────────────────────────────────────────────────
 
   const { data: professional } = await supabase
@@ -137,6 +147,7 @@ export default async function DashboardLayout({
         firstName={firstName}
         email={user.email ?? ""}
         photoUrl={professional?.photo_url}
+        isSecretary={isSecretary}
       />
       <div className="flex flex-1 flex-col overflow-hidden">
         {showTrialBanner && (

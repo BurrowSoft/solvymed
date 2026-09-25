@@ -11,6 +11,7 @@ interface Props {
   firstName: string;
   email: string;
   photoUrl?: string | null;
+  isSecretary?: boolean;
 }
 
 const LOCALES: { code: string; label: string; short: string }[] = [
@@ -138,7 +139,7 @@ function LanguageSwitcher({ locale }: { locale: string }) {
   );
 }
 
-export function DashboardSidebar({ locale, firstName, email, photoUrl }: Props) {
+export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecretary = false }: Props) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const router = useRouter();
@@ -160,7 +161,9 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl }: Props) 
     { label: t("clinics"), path: "/dashboard/clinics", icon: <MapPinIcon /> },
     { label: t("payments"), path: "/dashboard/payments", icon: <CardIcon /> },
     { label: t("settings"), path: "/dashboard/settings", icon: <GearIcon /> },
-  ];
+    // Managing clinic locations is doctor-only; a secretary sees the clinic
+    // read-only in Settings.
+  ].filter(item => !(isSecretary && item.path === "/dashboard/clinics"));
 
   async function signOut() {
     setSigningOut(true);
