@@ -21,79 +21,6 @@ async function getEffectiveProfId(
   return userId;
 }
 
-// Finds the patients-table row this appointment's patient_auth_id maps to
-// for effectiveProfId, creating one (and linking user_roles) if this is
-// their first appointment with this professional. Shared by every action
-// that can be the first professional-side touchpoint for a public booking
-// (confirm, reject, propose) — they all need the same walk-in/existing/new
-// resolution so the patient shows up in the patient list either way.
-async function ensurePatientLinked(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  effectiveProfId: string,
-  patientAuthId: string,
-  fallbackName: string,
-): Promise<string | null> {
-  const { data: existingRole } = await supabase
-    .from("user_roles")
-    .select("linked_patient_id")
-    .eq("user_id", patientAuthId)
-    .eq("invited_by_professional_id", effectiveProfId)
-    .maybeSingle();
-
-  const existingLinkedId = (existingRole?.linked_patient_id as string) ?? null;
-  if (existingLinkedId) return existingLinkedId;
-
-  const { data: profile } = await supabase
-    .from("patient_profiles")
-    .select("full_name, email, phone, birth_date, cpf")
-    .eq("user_id", patientAuthId)
-    .maybeSingle();
-
-  const patientEmail = (profile?.email as string | null) ?? null;
-  let linkedPatientId: string | null = null;
-
-  // Check if this patient was manually added (walk-in) before they signed up
-  if (patientEmail) {
-    const { data: existingByEmail } = await supabase
-      .from("patients")
-      .select("id")
-      .eq("professional_id", effectiveProfId)
-      .eq("email", patientEmail)
-      .maybeSingle();
-    linkedPatientId = (existingByEmail?.id as string) ?? null;
-  }
-
-  if (!linkedPatientId) {
-    const { data: newPatient } = await supabase
-      .from("patients")
-      .insert({
-        full_name: (profile?.full_name as string | null) || fallbackName,
-        professional_id: effectiveProfId,
-        email: patientEmail ?? undefined,
-        phone: (profile?.phone as string | null) ?? undefined,
-        birth_date: (profile?.birth_date as string | null) ?? undefined,
-        cpf: (profile?.cpf as string | null) ?? undefined,
-      })
-      .select("id")
-      .maybeSingle();
-    linkedPatientId = (newPatient?.id as string) ?? null;
-  }
-
-  if (linkedPatientId) {
-    await supabase.from("user_roles").upsert(
-      {
-        user_id: patientAuthId,
-        role: "patient",
-        linked_patient_id: linkedPatientId,
-        invited_by_professional_id: effectiveProfId,
-      },
-      { onConflict: "user_id" },
-    );
-  }
-
-  return linkedPatientId;
-}
-
 export async function getTentativeBookings() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -111,76 +38,51 @@ export async function getTentativeBookings() {
 
   const bookings = data ?? [];
 
-  // Determine which patients are already linked to this doctor
+  // Determine which patients are already linked to this doctor. Direct
+  // user_roles reads for other users' rows are RLS-blocked (own-row-only
+  // policy), so this goes through a SECURITY DEFINER RPC instead — see
+  // mob dev's migration (get_known_patient_auth_ids).
   const authIds = bookings
     .map((b: Record<string, unknown>) => b.patient_auth_id as string)
     .filter(Boolean);
 
-  let knownMap = new Map<string, string | null>();
+  let knownIds = new Set<string>();
   if (authIds.length > 0) {
-    const { data: roles } = await supabase
-      .from("user_roles")
-      .select("user_id, linked_patient_id")
-      .eq("invited_by_professional_id", effectiveProfId)
-      .in("user_id", authIds);
-    for (const r of roles ?? []) {
-      knownMap.set(r.user_id as string, (r.linked_patient_id as string | null) ?? null);
-    }
+    const { data: known } = await supabase.rpc("get_known_patient_auth_ids", {
+      p_patient_auth_ids: authIds,
+    });
+    knownIds = new Set((known ?? []) as string[]);
   }
 
   return bookings.map((b: Record<string, unknown>) => {
     const authId = b.patient_auth_id as string | null;
-    const isNew = authId ? !knownMap.has(authId) : false;
+    const isNew = authId ? !knownIds.has(authId) : false;
     return {
       ...b,
       is_new_patient: isNew,
-      patient_id: authId && !isNew ? (knownMap.get(authId) ?? null) : null,
     };
   });
 }
 
+// For tentative (patient-originated) booking requests only. Confirming and
+// linking the patient record now happens server-side in one RPC call — see
+// mob dev's migration 075 (_link_patient_account, shared with
+// accept_appointment_proposal). Doctor-created appointments that don't need
+// patient-linking go through the plain confirmBooking() below instead.
 export async function confirmBookingAndAddPatient(appointmentId: string, note?: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const { error } = await supabase.rpc("confirm_and_link_patient", {
+    p_appointment_id: appointmentId,
+  });
 
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("patient_name, patient_auth_id")
-    .eq("id", appointmentId)
-    .eq("professional_id", effectiveProfId)
-    .maybeSingle();
-
-  if (!appt) return { error: "Appointment not found" };
-
-  const { error } = await supabase
-    .from("appointments")
-    .update({ status: "confirmed" })
-    .eq("id", appointmentId)
-    .eq("professional_id", effectiveProfId);
-
-  if (error) return { error: error.message };
-
-  // Add to patient list only if not already linked to this professional
-  if (appt.patient_auth_id) {
-    const linkedPatientId = await ensurePatientLinked(
-      supabase,
-      effectiveProfId,
-      appt.patient_auth_id as string,
-      appt.patient_name as string,
-    );
-
-    // Populate patient_id so the patient can find this appointment via getPatientAppointments
-    // (which queries by patient_id). Public bookings start with patient_id = null.
-    if (linkedPatientId) {
-      await supabase
-        .from("appointments")
-        .update({ patient_id: linkedPatientId })
-        .eq("id", appointmentId)
-        .is("patient_id", null);
+  if (error) {
+    if (error.message?.includes("appointment_not_confirmable")) {
+      return { error: "This request can no longer be confirmed" };
     }
+    return { error: error.message };
   }
 
   await notifyPatient(supabase, appointmentId, "Appointment Confirmed", note ? `Your appointment has been confirmed by the doctor. Note: ${note}` : "Your appointment has been confirmed by the doctor.");
@@ -219,13 +121,6 @@ export async function rejectBooking(appointmentId: string, note?: string) {
 
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
 
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("patient_name, patient_auth_id")
-    .eq("id", appointmentId)
-    .eq("professional_id", effectiveProfId)
-    .maybeSingle();
-
   const { error } = await supabase
     .from("appointments")
     .update({ status: "rejected" })
@@ -234,11 +129,8 @@ export async function rejectBooking(appointmentId: string, note?: string) {
 
   if (error) return { error: error.message };
 
-  // Add patient to patient list (same as confirm/propose)
-  if (appt?.patient_auth_id) {
-    await ensurePatientLinked(supabase, effectiveProfId, appt.patient_auth_id as string, appt.patient_name as string);
-  }
-
+  // A rejected request never becomes an appointment — don't create a patient
+  // record for it. Linking only happens on accept/confirm, server-side.
   await notifyPatient(supabase, appointmentId, "Booking Not Available", note ? `The doctor could not accept your booking request. Note: ${note}` : "The doctor could not accept your booking request.");
 
   revalidatePath("/dashboard/schedule");
@@ -259,13 +151,6 @@ export async function proposeNewTime(
 
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
 
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("patient_name, patient_auth_id")
-    .eq("id", appointmentId)
-    .eq("professional_id", effectiveProfId)
-    .maybeSingle();
-
   const { error } = await supabase
     .from("appointments")
     .update({
@@ -279,11 +164,9 @@ export async function proposeNewTime(
 
   if (error) return { error: error.message };
 
-  // Add patient to patient list (same as confirm)
-  if (appt?.patient_auth_id) {
-    await ensurePatientLinked(supabase, effectiveProfId, appt.patient_auth_id as string, appt.patient_name as string);
-  }
-
+  // A proposal isn't a confirmed appointment yet — don't create a patient
+  // record until the patient accepts (accept_appointment_proposal links via
+  // the same shared _link_patient_account() as confirm_and_link_patient).
   await notifyPatient(supabase, appointmentId, "New Time Proposed", note ? `The doctor proposed a new time: ${proposedDate} at ${proposedStart}. Note: ${note}` : `The doctor proposed a new time: ${proposedDate} at ${proposedStart}.`);
 
   revalidatePath("/dashboard/schedule");
