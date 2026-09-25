@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient as createServerClient } from "@supabase/supabase-js";
+import { retrieveSubscriptionOrNull } from "@/lib/stripeBilling";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-05-27.dahlia" });
 
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
 type DesiredState =
   | { kind: "skip" }
   | { kind: "active"; userId: string; subId: string; periodEnd: string }
-  | { kind: "expired"; userId: string; subId: string; neverActive: boolean };
+  | { kind: "expired"; userId: string; subId: string; neverActive: boolean; terminal: boolean };
 
 // Only active/trialing grant access. incomplete (checkout not paid),
 // incomplete_expired, canceled and unpaid never do. past_due is cut
@@ -83,7 +84,8 @@ function desiredState(sub: Stripe.Subscription): DesiredState {
   // incomplete / incomplete_expired: the first payment never succeeded, so
   // this subscription was never active.
   const neverActive = sub.status === "incomplete" || sub.status === "incomplete_expired";
-  return { kind: "expired", userId, subId: sub.id, neverActive };
+  const terminal = sub.status === "canceled" || sub.status === "incomplete_expired";
+  return { kind: "expired", userId, subId: sub.id, neverActive, terminal };
 }
 
 function sameState(a: DesiredState, b: DesiredState): boolean {
@@ -152,9 +154,18 @@ async function syncSubscription(db: ReturnType<typeof adminClient>, subId: strin
         .or(`subscription_id.is.null,subscription_id.eq.${desired.subId}`)
         .select("id");
       if (idError) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
-      // 0 rows: the row belongs to a different (newer) subscription, or
-      // doesn't exist. Either way this subscription has nothing to change.
-      if (!owned?.length) return NextResponse.json({ ok: true });
+      if (!owned?.length) {
+        // The row tracks a different subscription (or doesn't exist). A dead
+        // one never takes over: it's a late event for an old subscription.
+        // But a still-pending one (e.g. incomplete) must take over when the
+        // stored one is itself dead or unknown to Stripe. Otherwise it's
+        // never tracked, and checkout, seeing only the dead id, would allow
+        // yet another subscription.
+        if (desired.terminal) return NextResponse.json({ ok: true });
+        const took = await takeOverFromDeadSubscription(db, desired.userId, desired.subId);
+        if (took === "error") return NextResponse.json({ error: "Could not reconcile subscription" }, { status: 500 });
+        if (took === "kept") return NextResponse.json({ ok: true });
+      }
 
       // Then the status, pinned to this subscription id so a concurrent
       // resubscribe that changed the row in between isn't expired. A
@@ -173,4 +184,33 @@ async function syncSubscription(db: ReturnType<typeof adminClient>, subId: strin
   }
   // Stripe kept changing across every round. Let Stripe retry later.
   return NextResponse.json({ error: "Subscription state still changing" }, { status: 500 });
+}
+
+// Swaps the row's stored subscription for newSubId, but only if the stored
+// one is dead (canceled / incomplete_expired) or unknown to Stripe. A
+// stored subscription that's still live or recoverable keeps the row. The
+// swap is pinned to the old id, so a concurrent change to the row wins.
+async function takeOverFromDeadSubscription(
+  db: ReturnType<typeof adminClient>,
+  userId: string,
+  newSubId: string,
+): Promise<"took" | "kept" | "error"> {
+  const { data: row, error } = await db.from("professionals").select("subscription_id").eq("id", userId).maybeSingle();
+  if (error) return "error";
+  const storedId = row?.subscription_id as string | null | undefined;
+  if (!row || !storedId || storedId === newSubId) return "kept";
+  let stored: Stripe.Subscription | null;
+  try {
+    stored = await retrieveSubscriptionOrNull(storedId);
+  } catch (err) {
+    console.error(`Stripe webhook: could not retrieve stored subscription ${storedId}`, err);
+    return "error";
+  }
+  if (stored && stored.status !== "canceled" && stored.status !== "incomplete_expired") return "kept";
+  const { data: swapped, error: swapError } = await db.from("professionals").update({
+    subscription_provider: "stripe",
+    subscription_id: newSubId,
+  }).eq("id", userId).eq("subscription_id", storedId).select("id");
+  if (swapError) return "error";
+  return swapped?.length ? "took" : "kept";
 }
