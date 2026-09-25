@@ -63,7 +63,15 @@ export async function addClinic(formData: FormData) {
     .insert({ clinic_id: clinic.id, professional_id: user.id });
 
   if (linkError) {
-    await supabase.from("clinics").delete().eq("id", clinic.id);
+    const { error: cleanupError } = await supabase.from("clinics").delete().eq("id", clinic.id);
+    if (cleanupError) {
+      // The compensating delete itself isn't guaranteed either — without a
+      // real transaction/RPC there's no way to make this fully atomic from
+      // here. Log distinctly so an orphaned clinic (id in the log) can be
+      // found and cleaned up manually, rather than silently leaving it with
+      // only the original link error visible.
+      console.error(`Orphaned clinic ${clinic.id}: link insert failed (${linkError.message}) and cleanup delete also failed (${cleanupError.message})`);
+    }
     return { error: linkError.message };
   }
 
