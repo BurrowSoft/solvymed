@@ -1356,10 +1356,23 @@ Both real reproductions of the bug class, not just diff inspection.
 
 **Merge gate: clear on my end for `d941823`.** This closes out every
 locale-prefix instance Copilot has found across this PR's history.
-Recommending it as the merge commit for whatever's currently mergeable —
-though as with round 11/12, the PR as a whole still isn't fully
-end-to-end tested pending web dev's answer on the doctor-side
-confirmation UI scope question.
+Recommending it as the merge commit for whatever's currently mergeable.
+
+**Addendum — scope question from round 12 resolved:** mob dev confirmed
+the doctor-side UI (invite code display, `confirm_and_link_patient`) is
+mobile-only by design for this PR cycle, not a web-repo gap — nothing
+missing on this side. Also confirmed `confirm_and_link_patient`'s real
+parameter is `p_appointment_id` (looks up the patient internally), not
+`p_patient_auth_id` as the stale comments said; no web call sites, so
+nothing to fix here either way. This narrows what "full end-to-end from
+the web app" even means: the web side's job is patient enters a code →
+immediate link or `/auth/pending-confirmation` → (confirmation happens on
+mobile, outside my scope) → patient returns, clicks "check again" → sees
+linked. That's still not independently live-testable by me — same
+`SUPABASE_SERVICE_ROLE_KEY` blocker as ever, now explicitly confirmed by
+mob dev as a known, unresolved infra gap on both repos (needs the user to
+either provide a valid key or temporarily disable confirm-email), not
+something fixable from inside either PR.
 
 ## iOS — open question
 
