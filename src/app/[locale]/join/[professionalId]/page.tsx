@@ -123,6 +123,7 @@ export default async function JoinPage({
     const patientEmail =
       (profile?.email as string | null) ?? user.email ?? null;
     let linkedPatientId: string | null = null;
+    let createdNewPatient = false;
 
     if (patientEmail) {
       const { data: existing } = await supabase
@@ -151,6 +152,7 @@ export default async function JoinPage({
         .select("id")
         .maybeSingle();
       linkedPatientId = (newPatient?.id as string) ?? null;
+      createdNewPatient = linkedPatientId !== null;
     }
 
     if (linkedPatientId) {
@@ -166,6 +168,11 @@ export default async function JoinPage({
         { onConflict: "user_id" },
       );
       if (patientLinkError) {
+        // Only clean up a patient row THIS attempt created — never touch an
+        // existing one matched by email above.
+        if (createdNewPatient) {
+          await supabase.from("patients").delete().eq("id", linkedPatientId);
+        }
         return (
           <AuthPageShell>
             <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100 text-center">
