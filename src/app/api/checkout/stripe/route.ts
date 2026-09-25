@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@/lib/supabase/server";
 import { isAccessAllowed, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
+import { findUnpaidStripeSubscription } from "@/lib/stripeBilling";
 import { routing } from "@/i18n/routing";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-05-27.dahlia" });
@@ -51,6 +52,20 @@ export async function POST(request: NextRequest) {
   const sub = (subRows?.[0] ?? null) as EffectiveSub | null;
   if (sub?.subscription_status === "active" && isAccessAllowed(sub)) {
     return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
+  }
+
+  // A failed renewal is stored as "expired", so the check above lets it
+  // through, but Stripe is still retrying that subscription. A new checkout
+  // would create a second one, and if the retry also succeeds the
+  // professional pays twice. They must fix the card on the existing
+  // subscription (the Customer Portal) instead.
+  try {
+    if (await findUnpaidStripeSubscription(sub)) {
+      return NextResponse.json({ error: "Last payment failed", code: "payment_failed" }, { status: 409 });
+    }
+  } catch (err) {
+    console.error("Stripe checkout: could not check stored subscription", err);
+    return NextResponse.json({ error: "Could not verify subscription status", code: "check_failed" }, { status: 503 });
   }
 
   // The DB only learns about a new subscription from the webhook. Between a

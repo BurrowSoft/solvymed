@@ -16,6 +16,7 @@ const ERROR_CODE_KEY: Record<string, string> = {
   wrong_role: "errorWrongRole",
   check_failed: "errorCheckFailed",
   checkout_failed: "errorGeneric",
+  payment_failed: "errorPaymentFailed",
 };
 
 export function SubscribeButton({ locale, label, sublabel, userName, userEmail }: Props) {
