@@ -145,24 +145,48 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
   const t = useTranslations("schedule");
   const [status, setStatus] = useState(current);
   const [pending, startTransition] = useTransition();
+  const [error, setError] = useState("");
+
+  // A tentative/proposal request must go through the booking request card
+  // (confirm/reject/propose), which links the patient and notifies them —
+  // this plain status control can't do either. Show it as a static badge
+  // instead of an interactive control the server would reject anyway.
+  if (current === "tentative" || current === "proposal") {
+    return (
+      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusBadge(current)}`}>
+        {t(STATUS_KEY[current] ?? current)}
+      </span>
+    );
+  }
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const newStatus = e.target.value;
+    const previous = status;
     setStatus(newStatus);
-    startTransition(async () => { await updateAppointmentStatus(id, newStatus); });
+    setError("");
+    startTransition(async () => {
+      const result = await updateAppointmentStatus(id, newStatus);
+      if (result?.error) {
+        setStatus(previous);
+        setError(t(result.code === "use_booking_card" ? "useBookingCard" : "genericError"));
+      }
+    });
   }
 
   return (
-    <select
-      value={status}
-      onChange={handleChange}
-      disabled={pending}
-      className={`rounded-full px-3 py-1 text-xs font-semibold border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500/20 ${statusBadge(status)}`}
-    >
-      {STATUS_OPTIONS.map(s => (
-        <option key={s} value={s}>{t(STATUS_KEY[s] ?? s)}</option>
-      ))}
-    </select>
+    <div className="flex flex-col items-end gap-1">
+      <select
+        value={status}
+        onChange={handleChange}
+        disabled={pending}
+        className={`rounded-full px-3 py-1 text-xs font-semibold border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500/20 ${statusBadge(status)}`}
+      >
+        {STATUS_OPTIONS.map(s => (
+          <option key={s} value={s}>{t(STATUS_KEY[s] ?? s)}</option>
+        ))}
+      </select>
+      {error && <p className="text-xs text-red-600 text-right max-w-[160px]">{error}</p>}
+    </div>
   );
 }
 

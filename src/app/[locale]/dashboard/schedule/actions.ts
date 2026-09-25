@@ -63,11 +63,33 @@ const VALID_APPOINTMENT_STATUSES = [
 ];
 
 export async function updateAppointmentStatus(id: string, status: string) {
-  if (!VALID_APPOINTMENT_STATUSES.includes(status)) return { error: "Invalid status" };
+  // Returns a stable code (not raw text) — the caller renders it through
+  // next-intl.
+  if (!VALID_APPOINTMENT_STATUSES.includes(status)) return { error: "Invalid status", code: "generic" };
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "Unauthorized", code: "generic" };
+
+  // A tentative/proposal booking request needs confirmBookingAndAddPatient,
+  // rejectBooking, or proposeNewTime (booking-actions.ts) — those own
+  // calling confirm_and_link_patient / notifying the patient, which this
+  // plain status write does not. Reported by mob dev: mobile hit the exact
+  // same bug via its own generic status control — a doctor confirming a
+  // request through the wrong control flipped status without linking the
+  // patient, leaving them stuck on "waiting for your doctor" with no
+  // notification either. AppointmentStatusSelect (ScheduleClient.tsx)
+  // renders for every non-blocked appointment, including tentative/proposal
+  // rows in the plain list view, so this path is reachable the same way.
+  const { data: current } = await supabase
+    .from("appointments")
+    .select("status")
+    .eq("id", id)
+    .eq("professional_id", user.id)
+    .maybeSingle();
+  if (current?.status === "tentative" || current?.status === "proposal") {
+    return { error: "Use the booking request card to confirm, reject, or propose a time for this request", code: "use_booking_card" };
+  }
 
   const { error } = await supabase
     .from("appointments")
@@ -75,7 +97,7 @@ export async function updateAppointmentStatus(id: string, status: string) {
     .eq("id", id)
     .eq("professional_id", user.id);
 
-  if (error) return { error: error.message };
+  if (error) return { error: error.message, code: "generic" };
   revalidatePath("/dashboard/schedule");
   return { success: true };
 }
