@@ -630,6 +630,7 @@
     "updateCard": "Aggiorna carta",
     "portalUnavailable": "Al momento non è possibile aprire la gestione della carta. Contatta support@solvymed.com.",
     "portalError": "Impossibile aprire la gestione della carta. Riprova.",
-    "errorPaymentFailed": "Il tuo ultimo pagamento non è andato a buon fine. Aggiorna la carta invece di avviare un nuovo abbonamento."
+    "errorPaymentFailed": "Il tuo ultimo pagamento non è andato a buon fine. Aggiorna la carta invece di avviare un nuovo abbonamento.",
+    "paymentActivating": "Pagamento ricevuto. Il tuo accesso è in fase di ripristino. Aggiorna questa pagina tra poco."
   }
 }

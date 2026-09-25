@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { SubscribeButton } from "@/components/SubscribeButton";
 import { UpdateCardButton } from "@/components/UpdateCardButton";
 import { isAccessAllowed, trialDaysRemaining, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
-import { findUnpaidStripeSubscription } from "@/lib/stripeBilling";
+import { retrieveStoredStripeSubscription, isLive, needsCardFix } from "@/lib/stripeBilling";
 
 export default async function SubscribePage({
   params,
@@ -57,9 +57,17 @@ export default async function SubscribePage({
   // cost a Stripe call. If the lookup fails, the normal page shows, and the
   // checkout route still refuses a second subscription (fails closed).
   let paymentFailed = false;
+  // Stripe already reports the subscription live (e.g. back from the
+  // portal after fixing the card), but the webhook hasn't updated the row
+  // yet. Say so instead of offering a checkout the route would refuse.
+  let activating = false;
   if (sub && !isAccessAllowed(sub)) {
     try {
-      paymentFailed = !!(await findUnpaidStripeSubscription(sub));
+      const stored = await retrieveStoredStripeSubscription(sub);
+      if (stored) {
+        activating = isLive(stored);
+        paymentFailed = needsCardFix(stored);
+      }
     } catch (err) {
       console.error("Subscribe page: could not check Stripe subscription status", err);
     }
@@ -112,7 +120,12 @@ export default async function SubscribePage({
             {t("paymentFailed")}
           </div>
         )}
-        {!paymentFailed && (daysLeft === 0 || (sub && sub.subscription_status === "expired")) && sp.success !== "1" && (
+        {activating && sp.success !== "1" && (
+          <div className="mb-6 rounded-xl bg-green-50 border border-green-200 p-4 text-center text-sm text-green-800 font-medium">
+            {t("paymentActivating")}
+          </div>
+        )}
+        {!paymentFailed && !activating && (daysLeft === 0 || (sub && sub.subscription_status === "expired")) && sp.success !== "1" && (
           <div className="mb-6 rounded-xl bg-red-50 border border-red-200 p-4 text-center text-sm text-red-800 font-medium">
             {t("trialExpired")}
           </div>
@@ -142,7 +155,7 @@ export default async function SubscribePage({
 
             {/* Payment buttons */}
             <div className="flex flex-col gap-3">
-              {paymentFailed ? (
+              {activating ? null : paymentFailed ? (
                 // Fix the card on the existing subscription. Never offer a
                 // new checkout here: Stripe is still retrying the old one.
                 roleRow?.role === "professional" ? (

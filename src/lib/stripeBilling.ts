@@ -44,8 +44,3 @@ export function isLive(live: Stripe.Subscription): boolean {
 export function needsCardFix(live: Stripe.Subscription): boolean {
   return !isLive(live) && live.status !== "canceled" && live.status !== "incomplete_expired";
 }
-
-export async function findUnpaidStripeSubscription(sub: EffectiveSub | null): Promise<Stripe.Subscription | null> {
-  const live = await retrieveStoredStripeSubscription(sub);
-  return live && needsCardFix(live) ? live : null;
-}

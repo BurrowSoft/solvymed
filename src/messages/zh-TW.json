@@ -630,6 +630,7 @@
     "updateCard": "更新信用卡",
     "portalUnavailable": "目前無法開啟信用卡管理。請聯絡 support@solvymed.com。",
     "portalError": "無法開啟信用卡管理，請重試。",
-    "errorPaymentFailed": "您上次的付款失敗了。請更新信用卡，而不是開始新的訂閱。"
+    "errorPaymentFailed": "您上次的付款失敗了。請更新信用卡，而不是開始新的訂閱。",
+    "paymentActivating": "已收到付款。正在恢復您的存取權限，請稍後重新整理此頁面。"
   }
 }

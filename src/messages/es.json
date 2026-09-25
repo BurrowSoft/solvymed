@@ -630,6 +630,7 @@
     "updateCard": "Actualizar tarjeta",
     "portalUnavailable": "No pudimos abrir la gestión de la tarjeta en este momento. Contacta con support@solvymed.com.",
     "portalError": "No se pudo abrir la gestión de la tarjeta. Inténtalo de nuevo.",
-    "errorPaymentFailed": "Tu último pago falló. Actualiza tu tarjeta en lugar de iniciar una nueva suscripción."
+    "errorPaymentFailed": "Tu último pago falló. Actualiza tu tarjeta en lugar de iniciar una nueva suscripción.",
+    "paymentActivating": "Pago recibido. Tu acceso se está restableciendo. Actualiza esta página en un momento."
   }
 }

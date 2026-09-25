@@ -630,6 +630,7 @@
     "updateCard": "Cập nhật thẻ",
     "portalUnavailable": "Hiện không thể mở trang quản lý thẻ. Vui lòng liên hệ support@solvymed.com.",
     "portalError": "Không thể mở trang quản lý thẻ. Vui lòng thử lại.",
-    "errorPaymentFailed": "Lần thanh toán gần nhất đã thất bại. Hãy cập nhật thẻ thay vì bắt đầu gói đăng ký mới."
+    "errorPaymentFailed": "Lần thanh toán gần nhất đã thất bại. Hãy cập nhật thẻ thay vì bắt đầu gói đăng ký mới.",
+    "paymentActivating": "Đã nhận thanh toán. Quyền truy cập của bạn đang được khôi phục, vui lòng tải lại trang sau giây lát."
   }
 }

@@ -630,6 +630,7 @@
     "updateCard": "Mettre à jour la carte",
     "portalUnavailable": "Impossible d'ouvrir la gestion de la carte pour le moment. Contactez support@solvymed.com.",
     "portalError": "Impossible d'ouvrir la gestion de la carte. Réessayez.",
-    "errorPaymentFailed": "Votre dernier paiement a échoué. Mettez à jour votre carte au lieu de démarrer un nouvel abonnement."
+    "errorPaymentFailed": "Votre dernier paiement a échoué. Mettez à jour votre carte au lieu de démarrer un nouvel abonnement.",
+    "paymentActivating": "Paiement reçu. Votre accès est en cours de rétablissement. Actualisez cette page dans un instant."
   }
 }

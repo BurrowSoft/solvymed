@@ -630,6 +630,7 @@
     "updateCard": "Perbarui kartu",
     "portalUnavailable": "Saat ini pengelolaan kartu tidak dapat dibuka. Silakan hubungi support@solvymed.com.",
     "portalError": "Tidak dapat membuka pengelolaan kartu. Silakan coba lagi.",
-    "errorPaymentFailed": "Pembayaran terakhir Anda gagal. Perbarui kartu Anda alih-alih memulai langganan baru."
+    "errorPaymentFailed": "Pembayaran terakhir Anda gagal. Perbarui kartu Anda alih-alih memulai langganan baru.",
+    "paymentActivating": "Pembayaran diterima. Akses Anda sedang dipulihkan, silakan muat ulang halaman ini sebentar lagi."
   }
 }
