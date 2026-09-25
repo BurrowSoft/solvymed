@@ -53,6 +53,32 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
   }
 
+  // The DB only learns about a new subscription from the webhook. Between a
+  // successful payment and that delivery (seconds normally, hours if
+  // deliveries are failing and being retried), the check above still sees
+  // no subscription, and the success page still shows the Subscribe
+  // button, so a second checkout could charge twice. Ask Stripe directly:
+  // any recently completed, paid checkout of this professional's whose
+  // subscription is live blocks a new one.
+  try {
+    for await (const done of stripe.checkout.sessions.list({
+      status: "complete",
+      created: { gte: Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60 },
+      limit: 100,
+    })) {
+      if (done.client_reference_id !== user.id || done.payment_status !== "paid" || !done.subscription) continue;
+      const doneSubId = typeof done.subscription === "string" ? done.subscription : done.subscription.id;
+      const live = await stripe.subscriptions.retrieve(doneSubId);
+      if (live.status === "active" || live.status === "trialing") {
+        return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
+      }
+    }
+  } catch (err) {
+    // Fail closed, same as the DB check above.
+    console.error("Stripe checkout: could not check completed checkouts", err);
+    return NextResponse.json({ error: "Could not verify subscription status", code: "check_failed" }, { status: 503 });
+  }
+
   const origin = request.headers.get("origin") ?? process.env.NEXT_PUBLIC_APP_URL ?? "";
   // The client only picks a locale, never an amount: the price comes from
   // the fixed getPlanPrice table. The locale is also interpolated into the
