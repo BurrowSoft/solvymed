@@ -1507,6 +1507,121 @@ spot-checked incidentally, and re-probing mob dev's other RLS findings
 lands. Continuing in a follow-up pass; this section will grow rather than
 restart.
 
+## Opus review — PR #8 (`refactor/opus-review`), commits through `0ac2786`
+
+Web dev's broad code-review pass across the whole repo (correctness,
+security, data integrity, swallowed errors, performance, duplication).
+Tested in a second isolated worktree (also `solvymed-master-test`,
+switched between branches via detached checkout) to avoid the `.next`
+corruption that hit repeatedly when running a dev server against the
+shared checkout while web dev was actively pushing to it — confirmed the
+correlation again this round, worth remembering as standing practice.
+
+**`416b4ad` — Asaas webhook fail-closed fix, 🟢 live-verified:** the
+previous code skipped token verification entirely when
+`ASAAS_WEBHOOK_TOKEN` wasn't configured, meaning any unauthenticated POST
+could activate or expire an arbitrary user's subscription
+(`externalReference` is caller-supplied JSON, not cryptographically tied
+to Asaas). Tested all three reachable states directly against the running
+server: correct token → 200 `{"ok":true}`; wrong token → 401
+`Unauthorized`; missing token header → 401. The one path not
+independently live-tested is the token-*unconfigured* case (would need a
+server restart with the env var unset) — relying on code review there,
+which is a trivial, unambiguous one-line fail-closed check, not worth the
+restart given the token-comparison logic itself is already proven correct
+in both directions.
+
+**`9c7ca73` — UTC→local date fix, 🟢 live-verified:** `.toISOString().split("T")[0]`
+is always UTC; used for "now"/"today" it silently returned the wrong
+calendar date for most of the world for part of every day (booking
+strip's "Today" label, past-slot filtering, doctor schedule's "Today"
+button, booking-requests obsolete-cutoff). New `toLocalDateString()`
+helper applied consistently everywhere that pattern was used for "now",
+while correctly *not* touching the noon-anchored
+`new Date(dateStr + "T12:00:00")` pattern used for date arithmetic on an
+already-known string (different, legitimate use). `npx vitest run
+src/__tests__/slots.test.ts`: 18/18 passed.
+
+**`4195523` — booking-actions dedupe, 🟢 verified both by diff comparison
+and live regression:** two independent extractions in the same commit.
+`ensurePatientLinked()` consolidates an identical ~50-line block that was
+duplicated 3x (confirm/reject/propose) — diffed the extracted function
+against all three original blocks line-by-line, confirmed faithful (the
+only per-call difference, `fallbackName`, is correctly parameterized).
+`getAvailableSlotsForDate()` now calls the shared `computeSlots()` instead
+of reimplementing the same loop inline — compared both implementations
+directly, confirmed byte-for-byte identical algorithm (same day-key
+lookup, same enabled check, same cursor loop, same busy-range overlap
+condition). Ran the full `e2e/01-03` suite against this commit since it's
+core, everyday scheduling logic: clean 3/3.
+
+**`f374580` — push-notification consolidation, 🟢 GREEN (code review):**
+three near-identical Expo push senders (two in booking-actions.ts, one in
+notify-action.ts) each had a bare `.catch(() => {})` that silently
+swallowed failures — a broken push pipeline would have been completely
+invisible. Extracted to `lib/push.ts`'s `sendExpoPush()`, which now logs
+non-2xx responses and thrown errors via `console.error` while still not
+throwing (push staying best-effort, not blocking the action it's attached
+to, is unchanged). Straightforward, low-risk dedup. Full live verification
+(a real push actually reaching a real device) needs registered push
+tokens and is more mob dev's/mobile testing's territory — flagged as a
+migration-live-pass item per their list (`get_clinic_push_tokens`).
+
+**`752dd8a` — parallelized patient list/count queries, 🟢 GREEN (code
+review):** two independent queries (same filter, different projection)
+converted from sequential `await`s to `Promise.all` — genuinely
+independent, no shared state, safe.
+
+**`086aef7` — pending patient can request an appointment, 🟢
+live-verified end-to-end, real bug fix (not just polish):** per mob dev's
+DB review, a public-code pending patient already gets a
+`patient_connections` row and *can* call `create_public_booking` today —
+but `/auth/pending-confirmation` only offered a status poll with no way
+to reach the booking page, and its own copy said outright that booking
+wasn't possible yet. Added a "Request an appointment" CTA to
+`/book/<invited_by_professional_id>` (already access-controlled only by
+requiring a session, not by link-state — pre-existing, previously-noted
+design, not new) plus a list of the patient's existing tentative/proposal
+requests. Tested for real: signed up a fresh patient with a doctor's
+public code, landed on pending-confirmation, clicked through the new CTA,
+filled out and submitted a real booking request (reason, date, slot,
+phone, DOB — all client-required fields), then confirmed server-side via
+REST that a real `appointments` row now exists for that patient. Genuinely
+works.
+
+**`0ac2786` — locale-format pending-request dates/times, 🟢 GREEN (code
+review):** the new request list from `086aef7` rendered raw
+`YYYY-MM-DD`/24h `HH:MM` regardless of locale; now uses
+`toLocaleDateString`/`toLocaleTimeString`, matching the pattern already
+used in `MyAppointmentsClient`. Small, low-risk, consistent with existing
+conventions.
+
+**`bbabeb1` — renamed `get_known_patients` RPC, restores "open patient"
+link:** not yet independently testable — the renamed RPC
+(`get_known_patient_auth_ids` → `get_known_patients`, now returning
+`(patient_auth_id, patient_id)` pairs instead of a bare id set) is part of
+mob dev's migrations 073-081, not live yet. Reviewed the diff: the new
+`Map`-based lookup and `patient_id` field addition look correct by
+inspection, matches the stated RPC contract. On the list for the
+migration-live pass (mob dev's own item: "'Open patient' link on a
+returning patient's booking request").
+
+**`542d1f3` — removed superseded `subscription.sql`:** DB/migration
+housekeeping per mob dev, not web application code — nothing to test on
+this side.
+
+**Cleaned up:** all `e2e-test-opus-*` accounts, the orphaned test
+appointment left behind after deleting one of those accounts, and the
+doctor test account's `public_invite_code` reset to null.
+
+**Still pending the migration-live ping (mob dev's list):** invite-code
+generation UI (not built yet either — see Phase 1 section above), doctor
+confirming a pending patient via `confirm_and_link_patient` (no duplicate
+records), the "open patient" link (`bbabeb1`, above), friendly errors for
+`too_many_attempts`/`already_invited_by_another_professional`,
+logged-out RPC probes + subscription self-grant now denied, and
+new-booking pushes actually reaching a doctor device.
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
