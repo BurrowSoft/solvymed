@@ -55,7 +55,8 @@ export default async function SchedulePage({
     .eq("user_id", user.id)
     .maybeSingle();
 
-  const effectiveProfId = userRoleData?.role === "secretary"
+  const isSecretary = userRoleData?.role === "secretary";
+  const effectiveProfId = isSecretary
     ? (userRoleData?.invited_by_professional_id as string | null) ?? user.id
     : user.id;
 
@@ -92,12 +93,21 @@ export default async function SchedulePage({
     supabase.from("patients").select("id, full_name").eq("professional_id", effectiveProfId).order("full_name"),
     supabase.from("procedures").select("id, name, duration_minutes, price, payment_type").eq("professional_id", effectiveProfId).eq("active", true).order("name"),
     getTentativeBookings(),
-    supabase.from("professionals").select("pix_key, clinic_name, clinic_city").eq("id", effectiveProfId).maybeSingle(),
+    // Pix QR details. A secretary can't read the doctor's professionals row
+    // (RLS), so they come from get_my_clinic(), which returns pix_key and
+    // clinic_city from migration 089. A professional reads their own row.
+    isSecretary
+      ? supabase.rpc("get_my_clinic")
+      : supabase.from("professionals").select("pix_key, clinic_name, clinic_city").eq("id", effectiveProfId).maybeSingle(),
   ]);
 
-  const pixKey = (profResult.data?.pix_key as string | null) ?? null;
-  const clinicName = (profResult.data?.clinic_name as string | null) ?? "";
-  const clinicCity = (profResult.data?.clinic_city as string | null) ?? "";
+  type PixSource = { pix_key?: string | null; clinic_name?: string | null; clinic_city?: string | null } | null;
+  const pixSource = (isSecretary
+    ? (Array.isArray(profResult.data) ? profResult.data[0] : null)
+    : profResult.data) as PixSource;
+  const pixKey = pixSource?.pix_key ?? null;
+  const clinicName = pixSource?.clinic_name ?? "";
+  const clinicCity = pixSource?.clinic_city ?? "";
 
   const appointments = (apptsResult.data ?? []) as CalendarAppt[];
   const patients = (patientsResult.data ?? []) as { id: string; full_name: string }[];
