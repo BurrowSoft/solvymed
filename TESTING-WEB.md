@@ -1747,95 +1747,111 @@ link beyond a code review, and push notifications) are still genuinely
 untested, not confirmed-fine — flagging that distinction rather than
 calling this fully green across the board.
 
-## Opus review — PR #9 (`review/phase1-service-routes`), through `3791e50`
+## Opus review — PR #9 (`review/phase1-service-routes`), 🟢 at `6b58a1e`
 
-Phase 1 of the whole-app review: every web API route and server action
-using service-role/privileged writes, focused on auth, validation, and
-idempotency. Independent of PR #8 (built off master directly). 27 commits
-across security, payments (Stripe/Asaas), schedule validation, clinics,
-and i18n. Tested in an isolated worktree, same pattern as PR #8 (avoids
-the `.next` corruption from concurrent git activity in a shared
-checkout — confirmed again this round, now a settled team practice).
+**Scope: this entry covers exactly `6b58a1e`,** the PR's current HEAD at
+the time of testing. That's 37 commits over `origin/master`: 36 non-merge,
+including one earlier tester docs commit. It replaces my earlier entry,
+which was scoped to `3791e50` and tested the since-removed
+`/join/[professionalId]` route.
 
-**🟢 Checkout role-guard, live-tested.** Logged in as the patient test
-account, called `POST /api/checkout/stripe` and `POST
-/api/checkout/asaas` directly (`page.request`, real session cookies —
-these are real Route Handlers, unlike Server Actions, so directly
-callable). Both return `403` with `code: "wrong_role"`, before any
-Stripe/Asaas API call. Matches `123cfb3`'s fix exactly.
+PR #9 is phase 1 of the whole-app review: every web API route and server
+action that does privileged writes, checked for auth, validation and
+idempotency. Tested in an isolated worktree on `6b58a1e`, against the live
+DB with migrations through 084.
 
-**🟢 Already-subscribed guard, live-tested.** Set the doctor test
-account's `subscription_status` to `"active"` with a far-future
-`current_period_end` via the service key, called `/api/checkout/stripe`
-as that account: `409`, `code: "already_subscribed"`. Restored the
-account immediately after. Matches `3be1b6b`'s fix.
+**🟢 `/join/[code]`: live-tested against a real public code, all branches.**
+The route was rebuilt in `274f7e0`/`0ea7629`/`bd2d644` to take the
+doctor's public invite code instead of a professional id.
+- **Signed out:** visiting `/join/<code>` redirects to signup with the code
+  pre-filled and the role locked to patient ("Joining as patient via
+  invite link"). After signup and a real confirmation through
+  `/api/auth/callback`, the user lands on `/auth/pending-confirmation`.
+  REST confirms `role=patient`, `invited_by_professional_id` = that
+  doctor, and no `linked_patient_id`.
+- **Signed in, no role yet:** a confirmed patient-metadata account with no
+  role visits `/join/<code>`, gets linked through
+  `link_by_professional_public_code`, and lands on pending-confirmation.
+  REST shows the right doctor.
+- **Already-linked patient:** redirected to `/my-appointments`. Role and
+  `linked_patient_id` unchanged.
+- **Doctor:** redirected to `/dashboard`. Role still `professional`, and no
+  `linked_patient_id` or `invited_by_professional_id` written.
+- **Bogus code, and an old `/join/<professional uuid>` link:** both show
+  "Invite link not found". An unknown code returns NULL now that
+  migration 083 is live. REST confirms no `user_roles` row was created.
 
-**🟢 Join-page role-overwrite guard, live-tested (after a real bug found
-mid-pass).** Logged in as the doctor, visited `/join/<own-id>` with no
-`?role=` param (defaults to `"patient"` — the exact case `783fe9c`
-describes: a professional visiting any join link with no special params
-would previously be silently converted into a patient). Redirected
-cleanly to `/dashboard`; confirmed via REST that `role` is still
-`"professional"` and `linked_patient_id` is still null.
+**🟢 Settings "Copy link": live-tested.**
+- On a throwaway professional in pt-BR: **Gerar código** persists a code,
+  and **Copiar link** copies `…/pt-BR/join/<that code>`. The locale prefix
+  comes from `0ea7629`.
+- On the shared doctor in `en`, after migration 084 went live: Settings
+  shows the real code (`M2WBHY`), and **Copy link** copies
+  `…/join/M2WBHY`. This check was read-only; no form was saved on the
+  shared account.
 
-This didn't work on the first attempt — found a genuine, pre-existing
-bug blocking it: the professional-existence lookup at the top of
-`join/[professionalId]/page.tsx` used
-`.eq("user_id", professionalId)`, but `professionals` has no `user_id`
-column (confirmed via direct REST: `42703 column professionals.user_id
-does not exist`) — only `id`. Every visit to any `/join/{id}` link
-showed "Invite link not found" regardless of whether the professional
-was real, meaning none of PR #9's carefully-added role guards in this
-file were reachable in practice. Not introduced by this PR — none of its
-27 commits touch that line — reported to web dev, fixed same-session in
-`3791e50` (`.eq("id", professionalId)`, matching every other
-professionals-table query in the codebase). Re-tested after the fix:
-confirmed working as above.
+**🟢 Checkout guards: live-tested.**
+- A patient calling `POST /api/checkout/stripe` or `/api/checkout/asaas`
+  gets `403 wrong_role` on both, before any provider call.
+- A professional with `subscription_status: active` and a future
+  `current_period_end` gets `409 already_subscribed`. The doctor's
+  subscription fields were restored straight after.
 
-**🟢 Appointment-status validation, code-reviewed, high confidence.**
-Read `actions.ts`'s `updateAppointmentStatus` and
-`VALID_APPOINTMENT_STATUSES` (`79daffd`/`0259e95`) directly: the
-tentative/proposal/rejected exclusion is enforced in the update's own
-`.not("status", "in", '("tentative","proposal")')` WHERE clause — a
-single atomic statement, not a separate read-then-write, correctly
-closing the TOCTOU race the second commit specifically called out. The
-client-side guard (`ScheduleClient.tsx`'s `AppointmentStatusSelect`)
-renders a static badge instead of the interactive dropdown for exactly
-those two statuses — read the component directly, matches the commit
-description exactly, no drift. Not separately live-tested (the code is
-simple and unambiguous enough that a click-through would only confirm
-what's already clear from reading it), but I'd flag this at high
-confidence rather than "untested."
+**🟢 Tentative requests vs the plain status dropdown: live-tested.** I
+seeded a tentative appointment for today and opened the doctor's
+`/dashboard/schedule` list view. The row renders, and no status `<select>`
+on the page holds `tentative`, so the row gets the static badge rather
+than the dropdown. On the server side, `updateAppointmentStatus`'s
+exclusion is an atomic `.not("status","in",'("tentative","proposal")')`
+in the update's own WHERE clause (`79daffd`/`0259e95`), confirmed by
+reading the code.
 
-**Code-reviewed only, not live-tested — Stripe/Asaas webhook internals
-(`6b73d8e`, `a6c4d2`, `532b64b`, `d0b36eb`).** Deliberately did not
-attempt to simulate real Stripe/Asaas webhook payloads — too risky
-without a confirmed-test-mode key and proper signing, and this repo's
-`STRIPE_SECRET_KEY` didn't match either the `sk_test_`/`sk_live_`
-prefix pattern on inspection, so I couldn't rule out it being closer to
-live than test. Reviewed the logic directly instead: the
-`current_period_end`-nulling fix (only `subscription.updated` writes it
-now, `checkout.session.completed` no longer touches `subscription_status`
-at all) is a clean split with the stated invariant (`"active"` never set
-without a real period-end in the same write) enforced by construction,
-not just convention. The Checkout Session `subscription_data.metadata`
-gap (Stripe's real, well-known gotcha — Session metadata isn't copied to
-the Subscription object) is a legitimate, correctly-diagnosed fix. The
-Asaas PENDING-status fix (`d0b36eb`) is small and clearly correct. All
-of this is exactly the kind of fix that needs either a real Stripe CLI
-webhook-trigger session against a test-mode key, or mob dev's DB-level
-behavioral suite, to verify for real — flagging it as reviewed, not
-verified, rather than claiming more than I checked.
+**Code-reviewed only, not live-tested: Stripe/Asaas webhook internals**
+(`6b73d8e`, `a6c4d23`, `532b64b`, `5147cf9`, `d0b36eb`). These can't be
+exercised from here: `STRIPE_SECRET_KEY` in this environment is a
+placeholder (a read-only `/v1/account` call returns 401), and the Stripe
+CLI isn't installed. On reading, the logic is sound:
+- `subscription.created`/`updated` now own `subscription_status` and
+  `current_period_end` together, and `checkout.session.completed` no
+  longer writes status, so "active" can never be written without a real
+  period end.
+- `subscription_data.metadata` fixes the real Stripe gotcha where Session
+  metadata isn't copied to the Subscription.
+- The Asaas routes now fail closed on non-2xx responses and treat
+  PENDING the same as ACTIVE.
 
-**Not yet covered:** the clinic-insert-rollback fix (`1096fa1`/`44e803`),
-i18n error-message localization (`e6d5785`/`3d2d2bc`), and the remaining
-smaller role-lookup-error-fails-closed guards (`68a3f3b`/`96cee1f`) — all
-reviewed briefly by reading the diffs, all straightforward and
-low-risk, but not independently exercised.
+These need a real test-mode key before they can be verified, and that key
+has to come from the user.
 
-**Cleaned up:** doctor test account's `subscription_status`/
-`current_period_end`/`public_invite_code` all confirmed back to their
-clean baseline (`trial`/`null`/`null`) via REST.
+**Also code-reviewed, low-risk:**
+- Localized error codes for schedule create/block-time (`1a63d55`),
+  clinics (`6b58a1e`) and payments (`3d2d2bc`).
+- The clinic-insert compensating delete (`1096fa1`/`44e803d`).
+- The role-lookup-error fail-closed guards (`68a3f3b`/`96cee1f`).
+
+**Found during this pass, not part of #9:**
+- `professionals.pix_key` didn't exist on prod, so the web Settings query
+  errored for every doctor and rendered blank, editable forms. Saving
+  Profile or Hours from that state would overwrite real data. Mob dev
+  fixed the DB in migration 084, which is live and confirmed above. Web
+  dev fixed the page in PR #10, which gets its own entry.
+- The shared doctor's password was reset by the mobile tester, which
+  caused some mid-session login failures. My local `.env.e2e` has been
+  updated.
+
+**Test environment note:** Supabase auth latency from this machine spiked
+to 4–16s, with some connection timeouts, partway through this pass. The
+failures in that window were all login waits; each check passed on
+re-run with longer waits. None of them were app issues.
+
+**Cleaned up:** all `e2e-test-opus-*` accounts and seeded appointments are
+deleted. The shared doctor is at baseline: `subscription_status` is
+`trial`, `current_period_end` is null, and it keeps its real
+`public_invite_code`.
+
+**Merge gate: 🟢 for `6b58a1e`.** The only caveat is the webhook
+internals above, which are reviewed but not live-verified.
+
 
 ## iOS — open question
 
