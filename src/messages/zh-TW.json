@@ -368,7 +368,8 @@
     "generateCode": "產生邀請碼",
     "regenerate": "重新產生",
     "copy": "複製",
-    "copied": "已複製！"
+    "copied": "已複製！",
+    "loadError": "無法載入您的設定。請重新整理頁面。如果問題持續發生，請聯絡客服。"
   },
   "clinics": {
     "title": "我的診所",

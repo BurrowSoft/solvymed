@@ -368,7 +368,8 @@
     "generateCode": "Genera codice",
     "regenerate": "Rigenera",
     "copy": "Copia",
-    "copied": "Copiato!"
+    "copied": "Copiato!",
+    "loadError": "Impossibile caricare le impostazioni. Aggiorna la pagina. Se il problema persiste, contatta l'assistenza."
   },
   "clinics": {
     "title": "Le mie cliniche",

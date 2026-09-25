@@ -368,7 +368,8 @@
     "generateCode": "Generar código",
     "regenerate": "Regenerar",
     "copy": "Copiar",
-    "copied": "¡Copiado!"
+    "copied": "¡Copiado!",
+    "loadError": "No se pudo cargar tu configuración. Actualiza la página. Si el problema continúa, contacta con soporte."
   },
   "clinics": {
     "title": "Mis Clínicas",

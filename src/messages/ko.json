@@ -368,7 +368,8 @@
     "generateCode": "코드 생성",
     "regenerate": "재생성",
     "copy": "복사",
-    "copied": "복사됨!"
+    "copied": "복사됨!",
+    "loadError": "설정을 불러오지 못했습니다. 페이지를 새로고침해 주세요. 문제가 계속되면 고객지원에 문의하세요."
   },
   "clinics": {
     "title": "내 클리닉",

@@ -368,7 +368,8 @@
     "generateCode": "Générer un code",
     "regenerate": "Régénérer",
     "copy": "Copier",
-    "copied": "Copié !"
+    "copied": "Copié !",
+    "loadError": "Impossible de charger vos paramètres. Actualisez la page. Si le problème persiste, contactez le support."
   },
   "clinics": {
     "title": "Mes Cliniques",

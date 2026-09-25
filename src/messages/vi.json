@@ -368,7 +368,8 @@
     "generateCode": "Tạo mã",
     "regenerate": "Tạo lại",
     "copy": "Sao chép",
-    "copied": "Đã sao chép!"
+    "copied": "Đã sao chép!",
+    "loadError": "Không thể tải cài đặt của bạn. Vui lòng tải lại trang. Nếu sự cố vẫn tiếp diễn, hãy liên hệ bộ phận hỗ trợ."
   },
   "clinics": {
     "title": "Phòng khám của tôi",

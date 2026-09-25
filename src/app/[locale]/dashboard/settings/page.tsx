@@ -35,7 +35,7 @@ export default async function SettingsPage({
       .from("professionals")
       .select("full_name, specialty, clinic_name, clinic_cnpj, clinic_phone, clinic_website, clinic_address, clinic_city, clinic_state, pix_key, working_hours, max_concurrent_bookings, public_invite_code")
       .eq("id", user.id)
-      .single(),
+      .maybeSingle(),
     supabase
       .from("procedures")
       .select("id, name, duration_minutes, price, payment_type, active")
@@ -49,6 +49,18 @@ export default async function SettingsPage({
       .eq("booking_blocked", true)
       .order("full_name"),
   ]);
+
+  // A failed load must not fall through to the blank defaults below: the
+  // forms would render empty and saving one overwrites the real row. Only a
+  // missing row (new professional, data null with no error) gets defaults.
+  if (profResult.error) {
+    return (
+      <div className="p-6 lg:p-8 max-w-3xl">
+        <h1 className="text-2xl font-extrabold text-slate-900">{t("pageTitle")}</h1>
+        <div className="error-banner mt-6">{t("loadError")}</div>
+      </div>
+    );
+  }
 
   const prof = profResult.data ?? {
     full_name: "", specialty: null,

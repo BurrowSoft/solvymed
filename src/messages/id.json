@@ -368,7 +368,8 @@
     "generateCode": "Buat kode",
     "regenerate": "Buat ulang",
     "copy": "Salin",
-    "copied": "Disalin!"
+    "copied": "Disalin!",
+    "loadError": "Tidak dapat memuat pengaturan Anda. Silakan muat ulang halaman. Jika masalah berlanjut, hubungi dukungan."
   },
   "clinics": {
     "title": "Klinik Saya",

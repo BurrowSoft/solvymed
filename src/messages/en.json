@@ -368,7 +368,8 @@
     "noBlockedPatients": "No patients are currently blocked",
     "unblock": "Unblock",
     "pageTitle": "Settings",
-    "pageSubtitle": "Manage your profile, clinic, hours, and procedures"
+    "pageSubtitle": "Manage your profile, clinic, hours, and procedures",
+    "loadError": "Couldn't load your settings. Please refresh the page. If this keeps happening, contact support."
   },
   "clinics": {
     "title": "My Clinics",
