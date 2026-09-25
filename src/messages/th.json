@@ -238,7 +238,16 @@
     "savePatient": "บันทึกผู้ป่วย",
     "saving": "กำลังบันทึก…",
     "deleteConfirm": "ลบผู้ป่วยนี้และระเบียนทั้งหมด? ไม่สามารถเลิกทำได้",
-    "yrs": "ปี"
+    "yrs": "ปี",
+    "alreadyRegistered": "{name} ลงทะเบียนไว้แล้ว",
+    "alreadyRegisteredGeneric": "ผู้ป่วยรายนี้ลงทะเบียนไว้แล้ว",
+    "nameRequired": "กรุณากรอกชื่อ-นามสกุล",
+    "saveError": "ไม่สามารถบันทึกผู้ป่วยได้ กรุณาลองใหม่อีกครั้ง",
+    "possibleMatchTitle": "อาจซ้ำกัน: คนนี้คือผู้ป่วยที่คุณมีอยู่แล้วหรือไม่?",
+    "bornOn": "เกิดวันที่ {date}",
+    "openExisting": "เปิดรายการที่มีอยู่",
+    "createAnyway": "สร้างต่อไป",
+    "openPatient": "เปิดผู้ป่วย"
   },
   "patientDetail": {
     "tabInfo": "ข้อมูล",
@@ -307,7 +316,9 @@
     "generateCode": "สร้างรหัส",
     "copyCode": "คัดลอก",
     "codeCopied": "คัดลอกแล้ว!",
-    "regenerateCode": "สร้างใหม่"
+    "regenerateCode": "สร้างใหม่",
+    "addedBy": "เพิ่มโดย",
+    "addedBySecretary": "{name} (เลขานุการ), {date}"
   },
   "settings": {
     "profileTitle": "โปรไฟล์",

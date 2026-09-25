@@ -238,7 +238,16 @@
     "savePatient": "Lưu bệnh nhân",
     "saving": "Đang lưu…",
     "deleteConfirm": "Xóa bệnh nhân này và tất cả hồ sơ? Không thể hoàn tác.",
-    "yrs": "tuổi"
+    "yrs": "tuổi",
+    "alreadyRegistered": "{name} đã được đăng ký.",
+    "alreadyRegisteredGeneric": "Bệnh nhân này đã được đăng ký.",
+    "nameRequired": "Vui lòng nhập họ tên đầy đủ.",
+    "saveError": "Không thể lưu bệnh nhân. Vui lòng thử lại.",
+    "possibleMatchTitle": "Có thể trùng: đây có phải người bạn đã có hồ sơ?",
+    "bornOn": "sinh ngày {date}",
+    "openExisting": "Mở hồ sơ có sẵn",
+    "createAnyway": "Vẫn tạo mới",
+    "openPatient": "Mở bệnh nhân"
   },
   "patientDetail": {
     "tabInfo": "Thông tin",
@@ -307,7 +316,9 @@
     "generateCode": "Tạo mã",
     "copyCode": "Sao chép",
     "codeCopied": "Đã sao chép!",
-    "regenerateCode": "Tạo lại"
+    "regenerateCode": "Tạo lại",
+    "addedBy": "Được thêm bởi",
+    "addedBySecretary": "{name} (thư ký), {date}"
   },
   "settings": {
     "profileTitle": "Hồ sơ",

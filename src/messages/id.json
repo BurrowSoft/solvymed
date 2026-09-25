@@ -238,7 +238,16 @@
     "savePatient": "Simpan Pasien",
     "saving": "Menyimpan…",
     "deleteConfirm": "Hapus pasien ini dan semua datanya? Tindakan ini tidak dapat dibatalkan.",
-    "yrs": "th"
+    "yrs": "th",
+    "alreadyRegistered": "{name} sudah terdaftar.",
+    "alreadyRegisteredGeneric": "Pasien ini sudah terdaftar.",
+    "nameRequired": "Nama lengkap wajib diisi.",
+    "saveError": "Tidak dapat menyimpan pasien. Silakan coba lagi.",
+    "possibleMatchTitle": "Kemungkinan sama: apakah ini pasien yang sudah Anda miliki?",
+    "bornOn": "lahir {date}",
+    "openExisting": "Buka yang ada",
+    "createAnyway": "Tetap buat",
+    "openPatient": "Buka pasien"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -307,7 +316,9 @@
     "generateCode": "Buat kode",
     "copyCode": "Salin",
     "codeCopied": "Disalin!",
-    "regenerateCode": "Buat ulang"
+    "regenerateCode": "Buat ulang",
+    "addedBy": "Ditambahkan oleh",
+    "addedBySecretary": "{name} (sekretaris), {date}"
   },
   "settings": {
     "profileTitle": "Profil",

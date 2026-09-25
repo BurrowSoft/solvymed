@@ -238,7 +238,16 @@
     "savePatient": "保存患者",
     "saving": "保存中…",
     "deleteConfirm": "删除此患者及其所有记录？此操作无法撤销。",
-    "yrs": "岁"
+    "yrs": "岁",
+    "alreadyRegistered": "{name} 已登记。",
+    "alreadyRegisteredGeneric": "该患者已登记。",
+    "nameRequired": "姓名为必填项。",
+    "saveError": "无法保存患者，请重试。",
+    "possibleMatchTitle": "可能重复：这是你已登记的患者吗？",
+    "bornOn": "出生于 {date}",
+    "openExisting": "打开已有记录",
+    "createAnyway": "仍然创建",
+    "openPatient": "打开患者"
   },
   "patientDetail": {
     "tabInfo": "信息",
@@ -307,7 +316,9 @@
     "generateCode": "生成邀请码",
     "copyCode": "复制",
     "codeCopied": "已复制！",
-    "regenerateCode": "重新生成"
+    "regenerateCode": "重新生成",
+    "addedBy": "添加人",
+    "addedBySecretary": "{name}（秘书），{date}"
   },
   "settings": {
     "profileTitle": "个人资料",

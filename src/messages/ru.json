@@ -238,7 +238,16 @@
     "savePatient": "Сохранить пациента",
     "saving": "Сохранение…",
     "deleteConfirm": "Удалить этого пациента и все записи? Это действие нельзя отменить.",
-    "yrs": "лет"
+    "yrs": "лет",
+    "alreadyRegistered": "{name} уже зарегистрирован(а).",
+    "alreadyRegisteredGeneric": "Этот пациент уже зарегистрирован.",
+    "nameRequired": "Укажите полное имя.",
+    "saveError": "Не удалось сохранить пациента. Попробуйте снова.",
+    "possibleMatchTitle": "Возможное совпадение: этот пациент у вас уже есть?",
+    "bornOn": "дата рождения {date}",
+    "openExisting": "Открыть существующего",
+    "createAnyway": "Всё равно создать",
+    "openPatient": "Открыть пациента"
   },
   "patientDetail": {
     "tabInfo": "Инфо",
@@ -307,7 +316,9 @@
     "generateCode": "Создать код",
     "copyCode": "Копировать",
     "codeCopied": "Скопировано!",
-    "regenerateCode": "Создать новый"
+    "regenerateCode": "Создать новый",
+    "addedBy": "Добавил(а)",
+    "addedBySecretary": "{name} (секретарь), {date}"
   },
   "settings": {
     "profileTitle": "Профиль",

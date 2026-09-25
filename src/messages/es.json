@@ -238,7 +238,16 @@
     "savePatient": "Guardar Paciente",
     "saving": "Guardando…",
     "deleteConfirm": "¿Eliminar este paciente y todos sus registros? Esta acción no se puede deshacer.",
-    "yrs": "años"
+    "yrs": "años",
+    "alreadyRegistered": "{name} ya está registrado/a.",
+    "alreadyRegisteredGeneric": "Este paciente ya está registrado.",
+    "nameRequired": "El nombre completo es obligatorio.",
+    "saveError": "No se pudo guardar el paciente. Inténtalo de nuevo.",
+    "possibleMatchTitle": "Posible coincidencia: ¿es alguien que ya tienes registrado?",
+    "bornOn": "nacido/a el {date}",
+    "openExisting": "Abrir existente",
+    "createAnyway": "Crear de todos modos",
+    "openPatient": "Abrir paciente"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -307,7 +316,9 @@
     "generateCode": "Generar código",
     "copyCode": "Copiar",
     "codeCopied": "¡Copiado!",
-    "regenerateCode": "Regenerar"
+    "regenerateCode": "Regenerar",
+    "addedBy": "Añadido por",
+    "addedBySecretary": "{name} (secretaria), {date}"
   },
   "settings": {
     "profileTitle": "Perfil",

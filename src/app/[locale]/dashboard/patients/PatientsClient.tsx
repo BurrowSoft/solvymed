@@ -3,7 +3,7 @@
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useState, useTransition, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { createPatient, deletePatient } from "./actions";
+import { createPatient, deletePatient, type PatientMatch } from "./actions";
 import Link from "next/link";
 
 type Patient = {
@@ -144,15 +144,69 @@ export function NewPatientButton({ locale }: { locale: string }) {
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
+  const [matches, setMatches] = useState<PatientMatch[] | null>(null);
+  const [existing, setExisting] = useState<{ id: string; full_name: string } | null>(null);
+  const lastSubmit = useRef<FormData | null>(null);
+  const prefix = locale === "en" ? "" : `/${locale}`;
 
-  function handleSubmit(formData: FormData) {
+  function submit(formData: FormData) {
     setError("");
+    setMatches(null);
+    setExisting(null);
+    lastSubmit.current = formData;
     startTransition(async () => {
       const result = await createPatient(formData);
-      if (result?.error) { setError(result.error); return; }
-      setOpen(false);
+      if ("success" in result) {
+        setOpen(false);
+        return;
+      }
+      if (result.code === "possible_match") { setMatches(result.matches); return; }
+      if (result.code === "already_registered") {
+        setExisting(result.existing);
+        setError(result.existing ? t("alreadyRegistered", { name: result.existing.full_name }) : t("alreadyRegisteredGeneric"));
+        return;
+      }
+      setError(t(result.code === "name_required" ? "nameRequired" : "saveError"));
     });
   }
+
+  function createAnyway() {
+    if (!lastSubmit.current) return;
+    const fd = new FormData();
+    lastSubmit.current.forEach((v, k) => fd.append(k, v));
+    fd.set("force", "1");
+    submit(fd);
+  }
+
+  function close() {
+    setOpen(false);
+    setError("");
+    setMatches(null);
+    setExisting(null);
+  }
+
+  const matchPanel = matches && (
+    <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
+      <p className="mb-2 text-sm font-semibold text-amber-900">{t("possibleMatchTitle")}</p>
+      <ul className="mb-3 space-y-1.5">
+        {matches.map((m) => (
+          <li key={m.id} className="flex items-center justify-between gap-3 text-sm text-amber-900">
+            <span>
+              {m.full_name}
+              {m.birth_date ? ` · ${t("bornOn", { date: new Date(m.birth_date + "T12:00:00").toLocaleDateString(locale) })}` : ""}
+              {m.phone ? ` · ${m.phone}` : ""}
+            </span>
+            <Link href={`${prefix}/dashboard/patients/${m.id}`} className="shrink-0 font-semibold text-teal-700 hover:underline">
+              {t("openExisting")}
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <button type="button" onClick={createAnyway} disabled={pending} className="text-sm font-semibold text-amber-900 underline disabled:opacity-60">
+        {t("createAnyway")}
+      </button>
+    </div>
+  );
 
   return (
     <>
@@ -160,8 +214,14 @@ export function NewPatientButton({ locale }: { locale: string }) {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         {t("newPatient")}
       </button>
-      <Dialog open={open} onClose={() => setOpen(false)} title={t("newPatient")}>
-        <PatientForm onSubmit={handleSubmit} pending={pending} error={error} />
+      <Dialog open={open} onClose={close} title={t("newPatient")}>
+        {matchPanel}
+        {existing && (
+          <Link href={`${prefix}/dashboard/patients/${existing.id}`} className="mb-3 inline-block text-sm font-semibold text-teal-700 hover:underline">
+            {t("openPatient")}
+          </Link>
+        )}
+        <PatientForm onSubmit={submit} pending={pending} error={error} />
       </Dialog>
     </>
   );

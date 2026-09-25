@@ -238,7 +238,16 @@
     "savePatient": "حفظ المريض",
     "saving": "جارٍ الحفظ…",
     "deleteConfirm": "حذف هذا المريض وجميع سجلاته؟ لا يمكن التراجع عن هذا الإجراء.",
-    "yrs": "سنة"
+    "yrs": "سنة",
+    "alreadyRegistered": "{name} مسجّل بالفعل.",
+    "alreadyRegisteredGeneric": "هذا المريض مسجّل بالفعل.",
+    "nameRequired": "الاسم الكامل مطلوب.",
+    "saveError": "تعذّر حفظ المريض. يرجى المحاولة مرة أخرى.",
+    "possibleMatchTitle": "تطابق محتمل: هل هذا شخص مسجّل لديك بالفعل؟",
+    "bornOn": "مولود في {date}",
+    "openExisting": "فتح الموجود",
+    "createAnyway": "إنشاء على أي حال",
+    "openPatient": "فتح المريض"
   },
   "patientDetail": {
     "tabInfo": "معلومات",
@@ -307,7 +316,9 @@
     "generateCode": "إنشاء رمز",
     "copyCode": "نسخ",
     "codeCopied": "تم النسخ!",
-    "regenerateCode": "إعادة إنشاء"
+    "regenerateCode": "إعادة إنشاء",
+    "addedBy": "أضافه",
+    "addedBySecretary": "{name} (سكرتير)، {date}"
   },
   "settings": {
     "profileTitle": "الملف الشخصي",

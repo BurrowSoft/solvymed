@@ -238,7 +238,16 @@
     "savePatient": "Patienten speichern",
     "saving": "Wird gespeichert…",
     "deleteConfirm": "Diesen Patienten und alle Daten löschen? Dies kann nicht rückgängig gemacht werden.",
-    "yrs": "J."
+    "yrs": "J.",
+    "alreadyRegistered": "{name} ist bereits erfasst.",
+    "alreadyRegisteredGeneric": "Diese Person ist bereits erfasst.",
+    "nameRequired": "Der vollständige Name ist erforderlich.",
+    "saveError": "Die Person konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+    "possibleMatchTitle": "Mögliche Übereinstimmung: Ist das jemand, der bereits erfasst ist?",
+    "bornOn": "geb. {date}",
+    "openExisting": "Vorhandenen öffnen",
+    "createAnyway": "Trotzdem anlegen",
+    "openPatient": "Patient öffnen"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -307,7 +316,9 @@
     "generateCode": "Code generieren",
     "copyCode": "Kopieren",
     "codeCopied": "Kopiert!",
-    "regenerateCode": "Neu generieren"
+    "regenerateCode": "Neu generieren",
+    "addedBy": "Hinzugefügt von",
+    "addedBySecretary": "{name} (Sekretariat), {date}"
   },
   "settings": {
     "profileTitle": "Profil",

@@ -238,7 +238,16 @@
     "savePatient": "Save Patient",
     "saving": "Saving…",
     "deleteConfirm": "Delete this patient and all their records? This cannot be undone.",
-    "yrs": "yrs"
+    "yrs": "yrs",
+    "alreadyRegistered": "{name} is already registered.",
+    "alreadyRegisteredGeneric": "This patient is already registered.",
+    "nameRequired": "Full name is required.",
+    "saveError": "Couldn't save the patient. Please try again.",
+    "possibleMatchTitle": "Possible match: is this someone you already have?",
+    "bornOn": "born {date}",
+    "openExisting": "Open existing",
+    "createAnyway": "Create anyway",
+    "openPatient": "Open patient"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -307,7 +316,9 @@
     "savePrescription": "Save Prescription",
     "noAppointments": "No appointments yet",
     "paidLabel": "Paid",
-    "pendingLabel": "Pending"
+    "pendingLabel": "Pending",
+    "addedBy": "Added by",
+    "addedBySecretary": "{name} (secretary), {date}"
   },
   "settings": {
     "profileTitle": "Profile",

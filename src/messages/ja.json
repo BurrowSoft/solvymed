@@ -238,7 +238,16 @@
     "savePatient": "患者を保存",
     "saving": "保存中…",
     "deleteConfirm": "この患者とすべての記録を削除しますか？この操作は元に戻せません。",
-    "yrs": "歳"
+    "yrs": "歳",
+    "alreadyRegistered": "{name}さんはすでに登録されています。",
+    "alreadyRegisteredGeneric": "この患者はすでに登録されています。",
+    "nameRequired": "氏名は必須です。",
+    "saveError": "患者を保存できませんでした。もう一度お試しください。",
+    "possibleMatchTitle": "一致する可能性があります：すでに登録済みの方ではありませんか？",
+    "bornOn": "{date}生まれ",
+    "openExisting": "既存の患者を開く",
+    "createAnyway": "このまま作成",
+    "openPatient": "患者を開く"
   },
   "patientDetail": {
     "tabInfo": "情報",
@@ -307,7 +316,9 @@
     "generateCode": "コードを生成",
     "copyCode": "コピー",
     "codeCopied": "コピーしました!",
-    "regenerateCode": "再生成"
+    "regenerateCode": "再生成",
+    "addedBy": "登録者",
+    "addedBySecretary": "{name}（受付スタッフ）、{date}"
   },
   "settings": {
     "profileTitle": "プロフィール",

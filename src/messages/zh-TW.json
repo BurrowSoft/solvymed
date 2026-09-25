@@ -238,7 +238,16 @@
     "savePatient": "儲存患者",
     "saving": "儲存中…",
     "deleteConfirm": "刪除此患者及其所有記錄？此操作無法撤銷。",
-    "yrs": "歲"
+    "yrs": "歲",
+    "alreadyRegistered": "{name} 已登記。",
+    "alreadyRegisteredGeneric": "此病患已登記。",
+    "nameRequired": "姓名為必填項目。",
+    "saveError": "無法儲存病患，請重試。",
+    "possibleMatchTitle": "可能重複：這是你已登記的病患嗎？",
+    "bornOn": "出生於 {date}",
+    "openExisting": "開啟既有紀錄",
+    "createAnyway": "仍要建立",
+    "openPatient": "開啟病患"
   },
   "patientDetail": {
     "tabInfo": "資訊",
@@ -307,7 +316,9 @@
     "generateCode": "產生邀請碼",
     "copyCode": "複製",
     "codeCopied": "已複製！",
-    "regenerateCode": "重新產生"
+    "regenerateCode": "重新產生",
+    "addedBy": "新增者",
+    "addedBySecretary": "{name}（祕書），{date}"
   },
   "settings": {
     "profileTitle": "個人資料",
