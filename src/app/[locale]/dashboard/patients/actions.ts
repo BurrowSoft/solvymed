@@ -81,8 +81,13 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
       // Look the existing patient up so the user can open it.
       let existing: { id: string; full_name: string } | null = null;
       if (cpf) {
+        // The RPC can also return name/phone matches, so pick the row whose
+        // CPF is the one that collided, not just the first result.
+        const digits = (v: string | null | undefined) => (v ?? "").replace(/\D/g, "");
         const { data } = await supabase.rpc("find_similar_patients", { p_name: fullName, p_cpf: cpf });
-        const hit = Array.isArray(data) ? (data as PatientMatch[])[0] : undefined;
+        const hit = Array.isArray(data)
+          ? (data as (PatientMatch & { cpf?: string | null })[]).find((m) => digits(m.cpf) === digits(cpf))
+          : undefined;
         if (hit) existing = { id: hit.id, full_name: hit.full_name };
       }
       // An email collision (e.g. two creates racing past the pre-check
