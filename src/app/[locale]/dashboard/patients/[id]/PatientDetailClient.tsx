@@ -3,7 +3,7 @@
 import { useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { createRecord, deleteRecord, createPrescription, deletePrescription, updatePatient, deletePatient, toggleBookingBlock } from "../actions";
+import { createRecord, deleteRecord, createPrescription, deletePrescription, updatePatient, deletePatient, toggleBookingBlock, generatePatientInviteCode } from "../actions";
 
 type MedRecord = { id: string; date: string; time: string; content: string; record_type?: string; created_at: string };
 type RxItem = { name: string; dosage: string; frequency: string; duration: string };
@@ -116,6 +116,25 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
   const router = useRouter();
   const prefix = locale === "en" ? "" : `/${locale}`;
 
+  const [inviteCode, setInviteCode] = useState(patient.invite_code ?? null);
+  const [codePending, startCodeTransition] = useTransition();
+  const [codeCopied, setCodeCopied] = useState(false);
+
+  function handleGenerateCode() {
+    startCodeTransition(async () => {
+      const result = await generatePatientInviteCode(patient.id);
+      if (result.code) setInviteCode(result.code);
+    });
+  }
+
+  function handleCopyCode() {
+    if (!inviteCode) return;
+    navigator.clipboard.writeText(inviteCode).then(() => {
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    }).catch(() => {});
+  }
+
   function handleToggleBlock() {
     startBlockTransition(async () => {
       await toggleBookingBlock(patient.id, !patient.booking_blocked);
@@ -171,6 +190,31 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
             </div>
           </div>
         )}
+        <div className="mb-5 rounded-xl border border-slate-100 bg-slate-50 p-4">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{t("inviteCode")}</p>
+          {inviteCode ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-base font-bold tracking-widest text-slate-900">
+                {inviteCode}
+              </span>
+              <button type="button" onClick={handleCopyCode} className="text-sm font-semibold text-slate-500 hover:text-slate-700 transition">
+                {codeCopied ? t("codeCopied") : t("copyCode")}
+              </button>
+              <button type="button" onClick={handleGenerateCode} disabled={codePending} className="text-sm font-semibold text-teal-600 hover:text-teal-700 transition disabled:opacity-60">
+                {codePending ? "…" : t("regenerateCode")}
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleGenerateCode}
+              disabled={codePending}
+              className="rounded-lg bg-teal-600 px-3.5 py-2 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60"
+            >
+              {codePending ? "…" : t("generateCode")}
+            </button>
+          )}
+        </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {fields.map(({ label, value }) => value ? (
             <div key={label} className="rounded-xl border border-slate-100 bg-slate-50 p-4">

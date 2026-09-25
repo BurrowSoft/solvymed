@@ -297,7 +297,11 @@
     "savePrescription": "Simpan Resep",
     "noAppointments": "Belum ada janji",
     "paidLabel": "Dibayar",
-    "pendingLabel": "Tertunda"
+    "pendingLabel": "Tertunda",
+    "generateCode": "Buat kode",
+    "copyCode": "Salin",
+    "codeCopied": "Disalin!",
+    "regenerateCode": "Buat ulang"
   },
   "settings": {
     "profileTitle": "Profil",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "Tidak ada pasien yang diblokir saat ini",
     "unblock": "Buka Blokir",
     "pageTitle": "Pengaturan",
-    "pageSubtitle": "Kelola profil, klinik, jam kerja, dan prosedur Anda"
+    "pageSubtitle": "Kelola profil, klinik, jam kerja, dan prosedur Anda",
+    "inviteCodeTitle": "Kode undangan Anda",
+    "inviteCodeSub": "Bagikan kode ini agar pasien dapat menghubungkan akun mereka dengan Anda",
+    "generateCode": "Buat kode",
+    "regenerate": "Buat ulang",
+    "copy": "Salin",
+    "copied": "Disalin!"
   },
   "clinics": {
     "title": "Klinik Saya",

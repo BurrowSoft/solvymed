@@ -297,7 +297,11 @@
     "savePrescription": "儲存處方",
     "noAppointments": "暫無預約",
     "paidLabel": "已付款",
-    "pendingLabel": "待付款"
+    "pendingLabel": "待付款",
+    "generateCode": "產生邀請碼",
+    "copyCode": "複製",
+    "codeCopied": "已複製！",
+    "regenerateCode": "重新產生"
   },
   "settings": {
     "profileTitle": "個人資料",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "目前沒有被封鎖的患者",
     "unblock": "解除封鎖",
     "pageTitle": "設定",
-    "pageSubtitle": "管理您的個人資料、診所、時間和程序"
+    "pageSubtitle": "管理您的個人資料、診所、時間和程序",
+    "inviteCodeTitle": "您的邀請碼",
+    "inviteCodeSub": "分享此碼，讓患者將帳戶與您關聯",
+    "generateCode": "產生邀請碼",
+    "regenerate": "重新產生",
+    "copy": "複製",
+    "copied": "已複製！"
   },
   "clinics": {
     "title": "我的診所",

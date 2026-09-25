@@ -297,7 +297,11 @@
     "savePrescription": "บันทึกใบสั่งยา",
     "noAppointments": "ยังไม่มีนัดหมาย",
     "paidLabel": "ชำระแล้ว",
-    "pendingLabel": "รอชำระ"
+    "pendingLabel": "รอชำระ",
+    "generateCode": "สร้างรหัส",
+    "copyCode": "คัดลอก",
+    "codeCopied": "คัดลอกแล้ว!",
+    "regenerateCode": "สร้างใหม่"
   },
   "settings": {
     "profileTitle": "โปรไฟล์",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "ขณะนี้ไม่มีผู้ป่วยที่ถูกบล็อก",
     "unblock": "ยกเลิกบล็อก",
     "pageTitle": "การตั้งค่า",
-    "pageSubtitle": "จัดการโปรไฟล์ คลินิก ชั่วโมง และขั้นตอนของคุณ"
+    "pageSubtitle": "จัดการโปรไฟล์ คลินิก ชั่วโมง และขั้นตอนของคุณ",
+    "inviteCodeTitle": "รหัสเชิญของคุณ",
+    "inviteCodeSub": "แชร์รหัสนี้เพื่อให้ผู้ป่วยเชื่อมโยงบัญชีกับคุณ",
+    "generateCode": "สร้างรหัส",
+    "regenerate": "สร้างใหม่",
+    "copy": "คัดลอก",
+    "copied": "คัดลอกแล้ว!"
   },
   "clinics": {
     "title": "คลินิกของฉัน",

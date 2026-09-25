@@ -297,7 +297,11 @@
     "savePrescription": "処方箋を保存",
     "noAppointments": "まだ予約がありません",
     "paidLabel": "支払済",
-    "pendingLabel": "未払い"
+    "pendingLabel": "未払い",
+    "generateCode": "コードを生成",
+    "copyCode": "コピー",
+    "codeCopied": "コピーしました!",
+    "regenerateCode": "再生成"
   },
   "settings": {
     "profileTitle": "プロフィール",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "現在ブロック中の患者はいません",
     "unblock": "ブロック解除",
     "pageTitle": "設定",
-    "pageSubtitle": "プロフィール、クリニック、時間、手順を管理する"
+    "pageSubtitle": "プロフィール、クリニック、時間、手順を管理する",
+    "inviteCodeTitle": "あなたの招待コード",
+    "inviteCodeSub": "このコードを共有すると、患者があなたにアカウントを連携できます",
+    "generateCode": "コードを生成",
+    "regenerate": "再生成",
+    "copy": "コピー",
+    "copied": "コピーしました!"
   },
   "clinics": {
     "title": "マイクリニック",

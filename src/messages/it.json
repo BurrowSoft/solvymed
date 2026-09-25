@@ -297,7 +297,11 @@
     "savePrescription": "Salva Ricetta",
     "noAppointments": "Nessun appuntamento ancora",
     "paidLabel": "Pagato",
-    "pendingLabel": "In sospeso"
+    "pendingLabel": "In sospeso",
+    "generateCode": "Genera codice",
+    "copyCode": "Copia",
+    "codeCopied": "Copiato!",
+    "regenerateCode": "Rigenera"
   },
   "settings": {
     "profileTitle": "Profilo",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "Nessun paziente bloccato al momento",
     "unblock": "Sblocca",
     "pageTitle": "Impostazioni",
-    "pageSubtitle": "Gestisci il tuo profilo, studio, orari e procedure"
+    "pageSubtitle": "Gestisci il tuo profilo, studio, orari e procedure",
+    "inviteCodeTitle": "Il tuo codice invito",
+    "inviteCodeSub": "Condividi questo codice per far collegare i pazienti al tuo account",
+    "generateCode": "Genera codice",
+    "regenerate": "Rigenera",
+    "copy": "Copia",
+    "copied": "Copiato!"
   },
   "clinics": {
     "title": "Le mie cliniche",

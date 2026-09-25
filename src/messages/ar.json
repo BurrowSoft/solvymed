@@ -297,7 +297,11 @@
     "savePrescription": "حفظ الوصفة",
     "noAppointments": "لا توجد مواعيد بعد",
     "paidLabel": "مدفوع",
-    "pendingLabel": "معلق"
+    "pendingLabel": "معلق",
+    "generateCode": "إنشاء رمز",
+    "copyCode": "نسخ",
+    "codeCopied": "تم النسخ!",
+    "regenerateCode": "إعادة إنشاء"
   },
   "settings": {
     "profileTitle": "الملف الشخصي",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "لا يوجد مرضى محظورون حالياً",
     "unblock": "رفع الحظر",
     "pageTitle": "الإعدادات",
-    "pageSubtitle": "أدر ملفك الشخصي والعيادة والأوقات والإجراءات"
+    "pageSubtitle": "أدر ملفك الشخصي والعيادة والأوقات والإجراءات",
+    "inviteCodeTitle": "رمز الدعوة الخاص بك",
+    "inviteCodeSub": "شارك هذا الرمز ليتمكن المرضى من ربط حسابهم بك",
+    "generateCode": "إنشاء رمز",
+    "regenerate": "إعادة إنشاء",
+    "copy": "نسخ",
+    "copied": "تم النسخ!"
   },
   "clinics": {
     "title": "عياداتي",

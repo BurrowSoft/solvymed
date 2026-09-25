@@ -297,7 +297,11 @@
     "savePrescription": "Salvar Receita",
     "noAppointments": "Nenhuma consulta ainda",
     "paidLabel": "Pago",
-    "pendingLabel": "Pendente"
+    "pendingLabel": "Pendente",
+    "generateCode": "Gerar código",
+    "copyCode": "Copiar",
+    "codeCopied": "Copiado!",
+    "regenerateCode": "Gerar novo"
   },
   "settings": {
     "profileTitle": "Perfil",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "Nenhum paciente bloqueado no momento",
     "unblock": "Desbloquear",
     "pageTitle": "Configurações",
-    "pageSubtitle": "Gerencie seu perfil, clínica, horários e procedimentos"
+    "pageSubtitle": "Gerencie seu perfil, clínica, horários e procedimentos",
+    "inviteCodeTitle": "Seu código de convite",
+    "inviteCodeSub": "Compartilhe este código para que os pacientes vinculem a conta a você",
+    "generateCode": "Gerar código",
+    "regenerate": "Gerar novo",
+    "copy": "Copiar",
+    "copied": "Copiado!"
   },
   "clinics": {
     "title": "Minhas Clínicas",

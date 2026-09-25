@@ -297,7 +297,11 @@
     "savePrescription": "처방전 저장",
     "noAppointments": "아직 예약이 없습니다",
     "paidLabel": "결제됨",
-    "pendingLabel": "미결제"
+    "pendingLabel": "미결제",
+    "generateCode": "코드 생성",
+    "copyCode": "복사",
+    "codeCopied": "복사됨!",
+    "regenerateCode": "재생성"
   },
   "settings": {
     "profileTitle": "프로필",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "현재 차단된 환자가 없습니다",
     "unblock": "차단 해제",
     "pageTitle": "설정",
-    "pageSubtitle": "프로필, 클리닉, 시간, 절차를 관리합니다"
+    "pageSubtitle": "프로필, 클리닉, 시간, 절차를 관리합니다",
+    "inviteCodeTitle": "내 초대 코드",
+    "inviteCodeSub": "이 코드를 공유하면 환자가 계정을 연결할 수 있습니다",
+    "generateCode": "코드 생성",
+    "regenerate": "재생성",
+    "copy": "복사",
+    "copied": "복사됨!"
   },
   "clinics": {
     "title": "내 클리닉",

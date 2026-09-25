@@ -297,7 +297,11 @@
     "savePrescription": "保存处方",
     "noAppointments": "暂无预约",
     "paidLabel": "已付款",
-    "pendingLabel": "待付款"
+    "pendingLabel": "待付款",
+    "generateCode": "生成邀请码",
+    "copyCode": "复制",
+    "codeCopied": "已复制！",
+    "regenerateCode": "重新生成"
   },
   "settings": {
     "profileTitle": "个人资料",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "当前没有被拦截的患者",
     "unblock": "解除拦截",
     "pageTitle": "设置",
-    "pageSubtitle": "管理您的个人资料、诊所、时间和程序"
+    "pageSubtitle": "管理您的个人资料、诊所、时间和程序",
+    "inviteCodeTitle": "您的邀请码",
+    "inviteCodeSub": "分享此码，让患者将账户与您关联",
+    "generateCode": "生成邀请码",
+    "regenerate": "重新生成",
+    "copy": "复制",
+    "copied": "已复制！"
   },
   "clinics": {
     "title": "我的诊所",

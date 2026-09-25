@@ -297,7 +297,11 @@
     "savePrescription": "Сохранить рецепт",
     "noAppointments": "Приёмов пока нет",
     "paidLabel": "Оплачено",
-    "pendingLabel": "Ожидает"
+    "pendingLabel": "Ожидает",
+    "generateCode": "Создать код",
+    "copyCode": "Копировать",
+    "codeCopied": "Скопировано!",
+    "regenerateCode": "Создать новый"
   },
   "settings": {
     "profileTitle": "Профиль",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "Нет заблокированных пациентов",
     "unblock": "Разблокировать",
     "pageTitle": "Настройки",
-    "pageSubtitle": "Управляйте профилем, клиникой, часами работы и процедурами"
+    "pageSubtitle": "Управляйте профилем, клиникой, часами работы и процедурами",
+    "inviteCodeTitle": "Ваш пригласительный код",
+    "inviteCodeSub": "Поделитесь этим кодом, чтобы пациенты могли привязать аккаунт к вам",
+    "generateCode": "Создать код",
+    "regenerate": "Создать новый",
+    "copy": "Копировать",
+    "copied": "Скопировано!"
   },
   "clinics": {
     "title": "Мои клиники",

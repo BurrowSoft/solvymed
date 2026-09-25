@@ -297,7 +297,11 @@
     "savePrescription": "Enregistrer l'ordonnance",
     "noAppointments": "Aucun rendez-vous pour l'instant",
     "paidLabel": "Payé",
-    "pendingLabel": "En attente"
+    "pendingLabel": "En attente",
+    "generateCode": "Générer un code",
+    "copyCode": "Copier",
+    "codeCopied": "Copié !",
+    "regenerateCode": "Régénérer"
   },
   "settings": {
     "profileTitle": "Profil",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "Aucun patient bloqué pour le moment",
     "unblock": "Débloquer",
     "pageTitle": "Paramètres",
-    "pageSubtitle": "Gérez votre profil, cabinet, horaires et procédures"
+    "pageSubtitle": "Gérez votre profil, cabinet, horaires et procédures",
+    "inviteCodeTitle": "Votre code d'invitation",
+    "inviteCodeSub": "Partagez ce code pour que les patients lient leur compte au vôtre",
+    "generateCode": "Générer un code",
+    "regenerate": "Régénérer",
+    "copy": "Copier",
+    "copied": "Copié !"
   },
   "clinics": {
     "title": "Mes Cliniques",

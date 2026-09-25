@@ -297,7 +297,11 @@
     "savePrescription": "Rezept speichern",
     "noAppointments": "Noch keine Termine",
     "paidLabel": "Bezahlt",
-    "pendingLabel": "Ausstehend"
+    "pendingLabel": "Ausstehend",
+    "generateCode": "Code generieren",
+    "copyCode": "Kopieren",
+    "codeCopied": "Kopiert!",
+    "regenerateCode": "Neu generieren"
   },
   "settings": {
     "profileTitle": "Profil",
@@ -358,7 +362,13 @@
     "noBlockedPatients": "Derzeit keine gesperrten Patienten",
     "unblock": "Entsperren",
     "pageTitle": "Einstellungen",
-    "pageSubtitle": "Profil, Praxis, Öffnungszeiten und Verfahren verwalten"
+    "pageSubtitle": "Profil, Praxis, Öffnungszeiten und Verfahren verwalten",
+    "inviteCodeTitle": "Dein Einladungscode",
+    "inviteCodeSub": "Teile diesen Code, damit Patienten ihr Konto mit dir verknüpfen können",
+    "generateCode": "Code generieren",
+    "regenerate": "Neu generieren",
+    "copy": "Kopieren",
+    "copied": "Kopiert!"
   },
   "clinics": {
     "title": "Meine Kliniken",
