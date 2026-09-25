@@ -670,7 +670,7 @@
     "alreadyInClinic": "Vous travaillez déjà pour un autre cabinet. Quittez-le dans les Paramètres avant d'accepter une autre invitation.",
     "inviteTitle": "Invitation de secrétaire",
     "inviteBody": "{name} vous invite à être secrétaire de {clinic}.",
-    "inviteBodyNoClinic": "{name} vous invite à être son/sa secrétaire.",
+    "inviteBodyNoClinic": "{name} vous invite à rejoindre son secrétariat.",
     "accept": "Accepter",
     "decline": "Refuser",
     "inviteDeclined": "Vous avez refusé cette invitation.",

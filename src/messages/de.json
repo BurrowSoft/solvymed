@@ -505,8 +505,8 @@
       "inviteCodeHint": "Geben Sie den Code des Arztes ein, um automatisch verknüpft zu werden",
       "emailExists": "Ein Konto mit dieser E-Mail existiert bereits. Bitte melden Sie sich an.",
       "joiningAs": "Beitreten als {role} über Einladungslink.",
-      "joiningAsSecretary": "Registrierung als Sekretariat über einen Einladungslink.",
-      "secretaryNeedsInvite": "Sekretariat? Bitten Sie Ihre Ärztin oder Ihren Arzt um einen Einladungslink."
+      "joiningAsSecretary": "Registrierung für das Praxisteam über einen Einladungslink.",
+      "secretaryNeedsInvite": "Im Praxisteam tätig? Bitten Sie Ihre Ärztin oder Ihren Arzt um einen Einladungslink."
     },
     "forgotPassword": {
       "title": "Passwort vergessen?",
@@ -659,7 +659,7 @@
     "backToHome": "Zur Startseite",
     "inviteInvalidTitle": "Einladung ungültig",
     "inviteInvalid": "Diese Einladung ist nicht mehr gültig. Bitten Sie die Ärztin oder den Arzt um eine neue.",
-    "invitedTitle": "Sie wurden als Sekretariat eingeladen",
+    "invitedTitle": "Sie wurden ins Praxisteam eingeladen",
     "invitedBody": "Eine Ärztin oder ein Arzt lädt Sie ein, auf SolvyMed Termine und Patienten der Praxis mitzuverwalten. Erstellen Sie ein Konto, um anzunehmen.",
     "createAccount": "Konto erstellen",
     "haveAccountLogIn": "Schon ein Konto? Anmelden",
@@ -670,7 +670,7 @@
     "alreadyInClinic": "Sie arbeiten bereits für eine andere Praxis. Verlassen Sie sie in den Einstellungen, bevor Sie eine andere Einladung annehmen.",
     "inviteTitle": "Einladung ins Sekretariat",
     "inviteBody": "{name} lädt Sie ins Sekretariat von {clinic} ein.",
-    "inviteBodyNoClinic": "{name} lädt Sie als Sekretariat ein.",
+    "inviteBodyNoClinic": "{name} lädt Sie ins Praxisteam ein.",
     "accept": "Annehmen",
     "decline": "Ablehnen",
     "inviteDeclined": "Sie haben diese Einladung abgelehnt.",
