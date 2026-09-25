@@ -363,8 +363,8 @@
     "unblock": "Entsperren",
     "pageTitle": "Einstellungen",
     "pageSubtitle": "Profil, Praxis, Öffnungszeiten und Verfahren verwalten",
-    "inviteCodeTitle": "Dein Einladungscode",
-    "inviteCodeSub": "Teile diesen Code, damit Patienten ihr Konto mit dir verknüpfen können",
+    "inviteCodeTitle": "Ihr Einladungscode",
+    "inviteCodeSub": "Teilen Sie diesen Code, damit Patienten ihr Konto mit Ihnen verknüpfen können",
     "generateCode": "Code generieren",
     "regenerate": "Neu generieren",
     "copy": "Kopieren",
@@ -526,18 +526,18 @@
       "notPendingPatient": "Dieses Konto wurde nicht als Patientenregistrierung erstellt, daher kann hier kein Einladungscode zugeordnet werden.",
       "linkFailed": "Beim Verknüpfen Ihres Kontos ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
       "backToSignup": "Anderes Konto verwenden",
-      "tooManyAttempts": "Zu viele Versuche. Bitte warte einen Moment, bevor du es erneut versuchst.",
-      "alreadyInvitedByAnother": "Dein Konto ist bereits mit einem anderen Arzt verbunden."
+      "tooManyAttempts": "Zu viele Versuche. Bitte warten Sie einen Moment, bevor Sie es erneut versuchen.",
+      "alreadyInvitedByAnother": "Ihr Konto ist bereits mit einem anderen Arzt verbunden."
     },
     "pendingConfirmation": {
       "loading": "Status wird geprüft…",
       "heading": "Warten auf Ihren Arzt",
-      "body": "Du bist verknüpft, aber dein Arzt muss dein Konto noch bestätigen. In der Zwischenzeit kannst du einen Termin anfragen.",
-      "bodyWithDoctor": "Du bist mit {name} verknüpft, der/die dein Konto noch bestätigen muss. In der Zwischenzeit kannst du einen Termin anfragen.",
+      "body": "Sie sind verknüpft, aber Ihr Arzt muss Ihr Konto noch bestätigen. In der Zwischenzeit können Sie einen Termin anfragen.",
+      "bodyWithDoctor": "Sie sind mit {name} verknüpft, der/die Ihr Konto noch bestätigen muss. In der Zwischenzeit können Sie einen Termin anfragen.",
       "checking": "Wird geprüft…",
       "checkAgain": "Erneut prüfen",
       "requestAppointment": "Termin anfragen",
-      "yourRequests": "Deine Anfragen",
+      "yourRequests": "Ihre Anfragen",
       "statusTentative": "Bestätigung ausstehend",
       "statusProposal": "Neue Zeit vorgeschlagen"
     }
