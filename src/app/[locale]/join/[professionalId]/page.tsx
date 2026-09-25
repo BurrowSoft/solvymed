@@ -55,24 +55,39 @@ export default async function JoinPage({
 
   const clinicName = (prof.clinic_name as string | null) ?? (prof.full_name as string);
 
+  // `role` is a raw URL query param here, not server-derived metadata — even
+  // more directly attacker-controlled than user_metadata elsewhere. Refuse
+  // to touch an existing role in either branch below, same principle as
+  // api/auth/callback/route.ts and auth/confirm/page.tsx.
+  const { data: existingRole } = await supabase
+    .from("user_roles")
+    .select("role, linked_patient_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
   if (role === "secretary") {
-    await supabase.from("user_roles").upsert(
-      {
-        user_id: user.id,
-        role: "secretary",
-        invited_by_professional_id: professionalId,
-      },
-      { onConflict: "user_id" },
-    );
+    if (!existingRole?.role) {
+      await supabase.from("user_roles").upsert(
+        {
+          user_id: user.id,
+          role: "secretary",
+          invited_by_professional_id: professionalId,
+        },
+        { onConflict: "user_id" },
+      );
+    }
     redirect(`${prefix}/dashboard`);
   }
 
-  // Patient join
-  const { data: existingRole } = await supabase
-    .from("user_roles")
-    .select("linked_patient_id")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  // Patient join. Without this check, a professional or secretary visiting
+  // /join/{professionalId} with no explicit ?role= param (defaults to
+  // "patient") would have their own account silently converted into a
+  // patient tied to a different professional's practice — the previous
+  // check here only guarded against re-linking an already-linked patient,
+  // not against overwriting an unrelated existing role entirely.
+  if (existingRole?.role === "professional" || existingRole?.role === "secretary") {
+    redirect(`${prefix}/dashboard`);
+  }
 
   if (!existingRole?.linked_patient_id) {
     const { data: profile } = await supabase
