@@ -143,27 +143,22 @@ export async function GET(request: NextRequest) {
       }
 
     } else {
-      // professional (default). user_metadata is client-writable, so an
-      // existing account must never have its role overwritten here. This is
-      // the fallback for any role value that isn't exactly "secretary" or
-      // "patient" (including missing/malformed metadata), so it's the
-      // easiest branch to trigger by accident, not just by tampering.
+      // professional (default). user_roles is server-only (migration 088):
+      // handle_new_user creates the professional row at signup, and the
+      // client can no longer write it at all, so this branch only reads.
+      // A session with no row at all is, in practice, a patient mid-signup,
+      // so it goes to the invite-code form rather than getting a role
+      // written for it.
       const { data: existingRole, error: roleLookupError } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", sessionUser.id)
         .maybeSingle();
-      if (roleLookupError) {
-        // Fail closed: a failed lookup must never be treated as "no
-        // existing role", or it reopens the overwrite this guard prevents.
-        redirectUrl = new URL("/dashboard", origin);
-      } else if (!existingRole?.role) {
-        await supabase.from("user_roles").upsert(
-          { user_id: sessionUser.id, role: "professional" },
-          { onConflict: "user_id" },
-        );
-        redirectUrl = new URL("/auth/professional-welcome", origin);
+      if (!roleLookupError && !existingRole?.role) {
+        redirectUrl = new URL(`${localePrefix}/auth/invite-required`, origin);
       } else {
+        // dashboard/layout.tsx routes every persisted role (and fails
+        // closed on a lookup error).
         redirectUrl = new URL("/dashboard", origin);
       }
     }
