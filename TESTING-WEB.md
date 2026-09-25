@@ -1905,6 +1905,156 @@ the real name and code `M2WBHY`, with both **Copy** and **Copy link**
 present (read-only, nothing saved). A forced select error (local edit,
 reverted) still shows the error banner with no forms.
 
+## PR #11 (`feat/stripe-brl-billing`) — Stripe BRL billing, Asaas removed, 🟢 at `b2c24bb`
+
+**Scope: this entry covers exactly `b2c24bb`,** the PR's HEAD at the time
+of testing. The full suite (11 tests) ran green on `b2c24bb`, and also on
+`dace24d` just before it. Earlier HEADs (`c6f1b69`, `e8b219f`) were tested
+as they came in; the one bug found there is fixed (see below).
+
+**How this was tested.** Everything used Stripe **test mode** with the
+real test keys, against the live DB, in an isolated worktree on port 3001.
+- **Checkout is real.** The app's own `/api/checkout/stripe` creates the
+  session, and Playwright pays on Stripe's hosted page.
+- **Webhooks are real events.** I fetch each Stripe event with
+  `events.list` and sign it with `STRIPE_WEBHOOK_SECRET` via
+  `generateTestHeaderString`, exactly as Stripe does. Then I POST it to the
+  local `/api/webhooks/stripe` in Stripe's own order.
+- **Tools.** No Stripe CLI was needed. All test accounts were throwaway
+  professionals and patients.
+
+**🟢 Pricing and checkout (UX/PM plan 1, 3, 5).**
+- **pt-BR:** `/pt-BR/subscribe` shows **R$ 89** and **"Cartão de
+  crédito"**, with no Pix anywhere. The session is `brl`, 8900, and
+  `payment_method_types: ["card"]`.
+  - Paying with `4242…` gives a paid session, and the subscription and
+    invoice are both BRL 8900.
+  - After the webhooks, the row is `active`, provider `stripe`, with the
+    right `subscription_id`. `current_period_end` equals Stripe's
+    `items[0].current_period_end` to the second.
+  - `/pt-BR/dashboard` opens.
+- **Brazilian test card** (`4000 0007 6000 0002`, card country `BR`):
+  charged BRL 8900 on the Thai account, and the flow succeeds end to end
+  the same way.
+- **en:** shows **$19** and "Visa, Mastercard, American Express". The
+  session is `usd`, 1900, card only, and the flow succeeds end to end.
+- **Redirects:** `success_url` and `cancel_url` use the locale prefix
+  (`/pt-BR/subscribe?success=1`, `/subscribe?success=1`).
+- **Junk locale:** a locale like `"../../evil"` falls back to `en`, so the
+  session is USD and the URLs have no prefix.
+- **Email:** it's pinned. `customer_email` equals the account email, and
+  the hosted page shows it as plain text, not an editable field.
+
+**🟢 Cancellation (plan 2).**
+- **Cancel at period end:** with `cancel_at_period_end: true`, the real
+  `customer.subscription.updated` leaves the row `active` with the same
+  `current_period_end`, and the dashboard still opens.
+- **Period end:** simulated by an immediate cancel. The real
+  `customer.subscription.deleted` sets `expired`, and `/pt-BR/dashboard`
+  redirects to `/pt-BR/subscribe`.
+
+**🟢 Abandoned or unpaid checkout doesn't activate (plan 4).**
+- A session that was opened and then expired
+  (`checkout.session.expired` delivered) leaves the row untouched at
+  trial, with no ids written.
+- A `checkout.session.completed` with `payment_status: "unpaid"` (the
+  async-method shape) writes nothing.
+
+**🟢 Webhook ordering, replay and concurrency (live-state sync, `6f654dd` +
+`3859ab8`).**
+- **Replays:** the real `checkout.session.completed` replayed while
+  active changes nothing. Replayed after expiry, it stays `expired`.
+- **Stale `customer.subscription.created` after deletion stays
+  `expired`.** This was the free-access gap I reproduced on master during
+  the #9 retro-check, and it's now closed.
+- **Resubscribe:** after resubscribing as sub B, late events for the old
+  sub A (deleted, created, completed) leave B `active`, with B's id and
+  period end unchanged.
+- **Concurrency:** a stale `updated` (payload says active), `deleted` and
+  `created` for a just-cancelled sub, delivered at the same time with
+  `Promise.all`, all return 200 and the row ends `expired`.
+- **Unknown subscription:** an event for a nonexistent sub id returns
+  **500**, so Stripe retries, and nothing is written.
+- **Failed renewal** (Stripe test clock; the renewal charge fails and
+  Stripe marks it `past_due`): the real `invoice.payment_failed` sets
+  `expired` immediately, as designed.
+
+**🟢 Checkout guards.**
+- **Wrong role:** a patient gets `403 wrong_role`.
+- **Already subscribed:** an active professional gets
+  `409 already_subscribed`.
+- **Paid, webhook not yet delivered (`dace24d`/`b2c24bb`):** after a real
+  paid checkout, with no webhook delivered and the row still `trial`, a
+  second checkout returns **409 already_subscribed** and no new session is
+  opened. This is the live proof the email-scoped completed-session
+  lookup works. After that sub is cancelled, a new checkout is allowed
+  (200).
+- **At most one payable session (`e8b219f`):**
+  - The same locale twice returns the same URL, sequentially and
+    concurrently.
+  - en, then pt-BR: the en session is `expired` and only pt-BR is open.
+- **Language switch (bug found on `e8b219f`, fixed in `8fd4de2`):**
+  en → pt-BR → en inside one 10-min window used to replay the cached, and
+  already expired, en session, and the sweep also expired pt-BR, leaving 0
+  payable sessions. Now it returns a fresh open session, with exactly 1
+  open at every step.
+
+**🟢 Asaas removed, legal pages.**
+- `/api/checkout/asaas` and `/api/webhooks/asaas` return 404 on both GET
+  and POST.
+- `/privacy`, `/terms`, `/pt-BR/privacy` and `/pt-BR/terms` mention Stripe
+  and never Asaas.
+
+**Also closes out PR #9's webhook internals.** Those were code-reviewed
+only in the #9 entry, for lack of a key. They were retro-verified on master
+(`170da19`) with the same signed-event method, 6/6:
+- a bad signature is rejected;
+- `created` sets active with the real period end;
+- a replayed `completed` keeps status and period end;
+- an active `updated` with no period end is ignored;
+- `deleted` sets expired;
+- a replay after cancel doesn't reactivate.
+
+A real hosted checkout confirmed `subscription_data.metadata.user_id` on
+the Subscription.
+
+**Minor findings, not blocking:**
+- **Toggle limit.** After 11 language switches within one 10-min window,
+  the 12th returns 500 `checkout_failed` with 0 open sessions: the
+  `key-r1…r4` family is used up, and the sweep has already expired the
+  last one. It self-heals when the window rolls over. The first 11 steps
+  each held exactly 1 open session.
+- **Trial cut short.** A trial user whose *first* subscription dies before
+  any active state was stored goes `trial` → `expired` and loses the rest
+  of the trial, because the dead-sub write matches `subscription_id IS
+  NULL`. That's hard to hit with card-only Checkout, since subs are
+  created active. Product question: should a dead sub on a never-paid row
+  leave the trial alone?
+- **Known issues in the PR:**
+  - The open-session sweep is account-wide (only in-progress sessions,
+    ~70 min).
+  - `past_due` isn't blocked from starting a second checkout; that's
+    covered by the upcoming failed-payment PR's 409 while past_due.
+
+**Not verifiable from here; needs the user:**
+- **Stripe → deployed endpoint delivery:** the dashboard endpoint's URL,
+  subscribed event types and signing secret on the deployed app. Locally
+  I sign with the same `whsec_`, but that doesn't prove Stripe reaches
+  prod.
+- **Customer Portal:** isn't enabled yet.
+- **Account activation:** the Stripe account isn't activated yet
+  (`charges_enabled: false`). That's fine for test mode, but required
+  before live.
+
+**Cleaned up.**
+- All `e2e-test-opus-*` accounts are deleted: 0 left.
+- 0 leftover test customers; 0 active subscriptions in the test account.
+- The test clock is deleted.
+- The shared doctor wasn't used, and is still `trial` with no
+  subscription fields.
+
+**Merge gate: 🟢 for `b2c24bb`.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
