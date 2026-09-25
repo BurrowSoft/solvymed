@@ -4,14 +4,23 @@ import type { EffectiveSub } from "@/lib/subscription";
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-05-27.dahlia" });
 
 /**
- * The stored Stripe subscription, if Stripe currently reports it as
- * past_due or unpaid (a renewal failed and Stripe is retrying, or has given
- * up). The DB stores these as plain "expired", which can't tell them apart
- * from an ended trial, so this asks Stripe. Throws on Stripe errors; callers
- * decide whether to fail closed.
+ * The professional's stored Stripe subscription as Stripe reports it now,
+ * or null if none is stored. The DB can lag Stripe (it only changes when a
+ * webhook lands), and it stores both a failed renewal and an ended trial as
+ * plain "expired", so callers that need the truth ask Stripe. Throws on
+ * Stripe errors; callers decide whether to fail closed.
  */
-export async function findUnpaidStripeSubscription(sub: EffectiveSub | null): Promise<Stripe.Subscription | null> {
+export async function retrieveStoredStripeSubscription(sub: EffectiveSub | null): Promise<Stripe.Subscription | null> {
   if (!sub || sub.subscription_provider !== "stripe" || !sub.subscription_id) return null;
-  const live = await stripe.subscriptions.retrieve(sub.subscription_id);
-  return live.status === "past_due" || live.status === "unpaid" ? live : null;
+  return stripe.subscriptions.retrieve(sub.subscription_id);
+}
+
+/** A renewal failed: Stripe is retrying (past_due) or has given up (unpaid). */
+export function isPaymentFailed(live: Stripe.Subscription): boolean {
+  return live.status === "past_due" || live.status === "unpaid";
+}
+
+export async function findUnpaidStripeSubscription(sub: EffectiveSub | null): Promise<Stripe.Subscription | null> {
+  const live = await retrieveStoredStripeSubscription(sub);
+  return live && isPaymentFailed(live) ? live : null;
 }

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@/lib/supabase/server";
 import { isAccessAllowed, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
-import { findUnpaidStripeSubscription } from "@/lib/stripeBilling";
+import { retrieveStoredStripeSubscription } from "@/lib/stripeBilling";
 import { routing } from "@/i18n/routing";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-05-27.dahlia" });
@@ -54,14 +54,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
   }
 
-  // A failed renewal is stored as "expired", so the check above lets it
-  // through, but Stripe is still retrying that subscription. A new checkout
-  // would create a second one, and if the retry also succeeds the
-  // professional pays twice. They must fix the card on the existing
-  // subscription (the Customer Portal) instead.
+  // The DB row can lag Stripe, and it stores a failed renewal as plain
+  // "expired", so ask Stripe about the stored subscription directly. Only a
+  // terminal one (canceled, incomplete_expired) may be replaced by a new
+  // checkout:
+  // - active/trialing: already paying, even if the webhook hasn't landed
+  //   yet (e.g. a retry just succeeded while the row still says expired).
+  // - past_due/unpaid/incomplete/paused: Stripe still holds this
+  //   subscription and may yet collect on it. A second one would bill
+  //   twice, so the fix is the card on the existing subscription (portal).
   try {
-    if (await findUnpaidStripeSubscription(sub)) {
-      return NextResponse.json({ error: "Last payment failed", code: "payment_failed" }, { status: 409 });
+    const stored = await retrieveStoredStripeSubscription(sub);
+    if (stored) {
+      if (stored.status === "active" || stored.status === "trialing") {
+        return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
+      }
+      if (stored.status !== "canceled" && stored.status !== "incomplete_expired") {
+        return NextResponse.json({ error: "Last payment failed", code: "payment_failed" }, { status: 409 });
+      }
     }
   } catch (err) {
     console.error("Stripe checkout: could not check stored subscription", err);
