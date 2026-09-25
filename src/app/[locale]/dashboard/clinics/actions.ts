@@ -54,10 +54,18 @@ export async function addClinic(formData: FormData) {
 
   if (error) return { error: error.message };
 
-  // Link the creating doctor as a member of the clinic
-  await supabase
+  // Link the creating doctor as a member of the clinic. These two inserts
+  // aren't atomic (no RPC wraps them in a transaction) — if this one fails,
+  // compensate by deleting the clinic row rather than leaving an orphaned
+  // clinic with no owner link and reporting success anyway.
+  const { error: linkError } = await supabase
     .from("clinic_professionals")
     .insert({ clinic_id: clinic.id, professional_id: user.id });
+
+  if (linkError) {
+    await supabase.from("clinics").delete().eq("id", clinic.id);
+    return { error: linkError.message };
+  }
 
   revalidatePath("/dashboard/clinics");
   return { success: true };
