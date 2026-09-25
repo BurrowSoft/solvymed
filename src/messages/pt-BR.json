@@ -181,7 +181,9 @@
     "slotTakenAlert": "Esse horário não está mais disponível. Por favor, recuse e deixe o paciente escolher outro horário.",
     "pastProposalAlert": "O horário proposto já passou. Por favor, recuse para que o paciente possa solicitar um novo horário.",
     "useBookingCard": "Use o card de solicitação de agendamento para confirmar, rejeitar ou propor um horário.",
-    "genericError": "Algo deu errado. Tente novamente."
+    "genericError": "Algo deu errado. Tente novamente.",
+    "missingFieldsError": "Preencha todos os campos obrigatórios.",
+    "pastMidnightError": "Esse horário e duração ultrapassariam a meia-noite."
   },
   "payments": {
     "thisWeek": "Esta semana",

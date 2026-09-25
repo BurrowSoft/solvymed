@@ -134,6 +134,8 @@
     "deleteConfirm": "Delete this appointment?",
     "useBookingCard": "Use the booking request card to confirm, reject, or propose a time for this request",
     "genericError": "Something went wrong. Please try again.",
+    "missingFieldsError": "Please fill in all required fields.",
+    "pastMidnightError": "This time and duration would run past midnight.",
     "onlineBadge": "Online",
     "paidLabel": "✓ Paid",
     "pendingLabel": "⏳ Pending",

@@ -181,7 +181,9 @@
     "slotTakenAlert": "該時段已無法使用。請拒絕並讓患者選擇其他時間。",
     "pastProposalAlert": "提議的時間已過。請拒絕以便患者重新選擇時間。",
     "useBookingCard": "請使用預約請求卡來確認、拒絕或為此請求提議新時間。",
-    "genericError": "發生問題，請重試。"
+    "genericError": "發生問題，請重試。",
+    "missingFieldsError": "請填寫所有必填欄位。",
+    "pastMidnightError": "此時間和時長將超過午夜。"
   },
   "payments": {
     "thisWeek": "本週",

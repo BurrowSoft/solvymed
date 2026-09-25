@@ -181,7 +181,9 @@
     "slotTakenAlert": "Slot tersebut tidak lagi tersedia. Harap tolak dan biarkan pasien memilih waktu lain.",
     "pastProposalAlert": "Waktu yang diusulkan sudah berlalu. Harap tolak agar pasien dapat meminta slot baru.",
     "useBookingCard": "Gunakan kartu permintaan janji temu untuk mengonfirmasi, menolak, atau mengusulkan waktu baru untuk permintaan ini.",
-    "genericError": "Terjadi kesalahan. Silakan coba lagi."
+    "genericError": "Terjadi kesalahan. Silakan coba lagi.",
+    "missingFieldsError": "Harap isi semua kolom yang wajib diisi.",
+    "pastMidnightError": "Waktu dan durasi ini akan melewati tengah malam."
   },
   "payments": {
     "thisWeek": "Minggu ini",

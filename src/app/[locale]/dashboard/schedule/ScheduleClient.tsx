@@ -142,6 +142,17 @@ const STATUS_KEY: Record<string, string> = {
   late: "statusLate", absent: "statusAbsent", blocked: "statusBlocked",
 };
 
+const ACTION_ERROR_KEY: Record<string, string> = {
+  use_booking_card: "useBookingCard",
+  missing_fields: "missingFieldsError",
+  past_midnight: "pastMidnightError",
+  generic: "genericError",
+};
+
+function actionErrorMessage(t: (key: string) => string, code: string | undefined): string {
+  return t(ACTION_ERROR_KEY[code ?? ""] ?? "genericError");
+}
+
 export function AppointmentStatusSelect({ id, current }: { id: string; current: string }) {
   const t = useTranslations("schedule");
   const [status, setStatus] = useState(current);
@@ -169,7 +180,7 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
       const result = await updateAppointmentStatus(id, newStatus);
       if (result?.error) {
         setStatus(previous);
-        setError(t(result.code === "use_booking_card" ? "useBookingCard" : "genericError"));
+        setError(actionErrorMessage(t, result.code));
       }
     });
   }
@@ -248,7 +259,7 @@ export function NewAppointmentButton({ patients, defaultDate, procedures }: {
     setError("");
     startTransition(async () => {
       const result = await createAppointment(formData);
-      if (result?.error) { setError(result.error); return; }
+      if (result?.error) { setError(actionErrorMessage(t, result.code)); return; }
       setOpen(false);
     });
   }
@@ -362,7 +373,7 @@ export function BlockTimeButton({ defaultDate }: { defaultDate: string }) {
     setError("");
     startTransition(async () => {
       const result = await blockTime(formData);
-      if (result?.error) { setError(result.error); return; }
+      if (result?.error) { setError(actionErrorMessage(t, result.code)); return; }
       setOpen(false);
       formRef.current?.reset();
     });

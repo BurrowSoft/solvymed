@@ -181,7 +181,9 @@
     "slotTakenAlert": "Ce créneau n’est plus disponible. Veuillez refuser et laisser le patient choisir un autre horaire.",
     "pastProposalAlert": "L'heure proposée est déjà passée. Veuillez refuser pour que le patient puisse choisir un nouveau créneau.",
     "useBookingCard": "Utilisez la carte de demande de rendez-vous pour confirmer, refuser ou proposer un horaire.",
-    "genericError": "Une erreur s'est produite. Réessayez."
+    "genericError": "Une erreur s'est produite. Réessayez.",
+    "missingFieldsError": "Veuillez remplir tous les champs obligatoires.",
+    "pastMidnightError": "Cet horaire et cette durée dépasseraient minuit."
   },
   "payments": {
     "thisWeek": "Cette semaine",

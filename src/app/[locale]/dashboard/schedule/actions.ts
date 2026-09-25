@@ -21,9 +21,9 @@ function computeEndTime(startTime: string, durationMinutes: number): string | nu
 export async function createAppointment(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "Unauthorized", code: "generic" };
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
-  if (!effectiveProfId) return { error: "Could not verify account" };
+  if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const patientName = formData.get("patient_name") as string;
   const date = formData.get("date") as string;
@@ -34,12 +34,12 @@ export async function createAppointment(formData: FormData) {
   const paymentType = (formData.get("payment_type") as string) || "private";
   const notes = formData.get("notes") as string;
 
-  if (!patientName || !date || !startTime) return { error: "Missing required fields" };
+  if (!patientName || !date || !startTime) return { error: "Missing required fields", code: "missing_fields" };
 
   const parsedDuration = parseInt(durationStr);
   const duration = Number.isInteger(parsedDuration) && parsedDuration > 0 && parsedDuration <= 480 ? parsedDuration : 30;
   const endTime = computeEndTime(startTime, duration);
-  if (!endTime) return { error: "This time and duration would run past midnight" };
+  if (!endTime) return { error: "This time and duration would run past midnight", code: "past_midnight" };
 
   // Find patient_id by name (best-effort match)
   const { data: patients } = await supabase
@@ -68,7 +68,7 @@ export async function createAppointment(formData: FormData) {
     scheduled_by: "professional",
   });
 
-  if (error) return { error: error.message };
+  if (error) return { error: error.message, code: "generic" };
   revalidatePath("/dashboard/schedule");
   return { success: true };
 }
@@ -122,9 +122,9 @@ export async function updateAppointmentStatus(id: string, status: string) {
 export async function deleteAppointment(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "Unauthorized", code: "generic" };
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
-  if (!effectiveProfId) return { error: "Could not verify account" };
+  if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const { error } = await supabase
     .from("appointments")
@@ -132,7 +132,7 @@ export async function deleteAppointment(id: string) {
     .eq("id", id)
     .eq("professional_id", effectiveProfId);
 
-  if (error) return { error: error.message };
+  if (error) return { error: error.message, code: "generic" };
   revalidatePath("/dashboard/schedule");
   return { success: true };
 }
@@ -140,21 +140,21 @@ export async function deleteAppointment(id: string) {
 export async function blockTime(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "Unauthorized", code: "generic" };
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
-  if (!effectiveProfId) return { error: "Could not verify account" };
+  if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const date = formData.get("date") as string;
   const startTime = formData.get("start_time") as string;
   const durationStr = formData.get("duration_minutes") as string;
   const reason = formData.get("reason") as string;
 
-  if (!date || !startTime) return { error: "Missing required fields" };
+  if (!date || !startTime) return { error: "Missing required fields", code: "missing_fields" };
 
   const parsedDuration = parseInt(durationStr);
   const duration = Number.isInteger(parsedDuration) && parsedDuration > 0 && parsedDuration <= 480 ? parsedDuration : 60;
   const endTime = computeEndTime(startTime, duration);
-  if (!endTime) return { error: "This time and duration would run past midnight" };
+  if (!endTime) return { error: "This time and duration would run past midnight", code: "past_midnight" };
 
   const { error } = await supabase.from("appointments").insert({
     professional_id: effectiveProfId,
@@ -172,7 +172,7 @@ export async function blockTime(formData: FormData) {
     scheduled_by: "professional",
   });
 
-  if (error) return { error: error.message };
+  if (error) return { error: error.message, code: "generic" };
   revalidatePath("/dashboard/schedule");
   return { success: true };
 }
