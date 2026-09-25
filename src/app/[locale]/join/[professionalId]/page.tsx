@@ -61,7 +61,7 @@ export default async function JoinPage({
   // api/auth/callback/route.ts and auth/confirm/page.tsx.
   const { data: existingRole, error: roleLookupError } = await supabase
     .from("user_roles")
-    .select("role, linked_patient_id")
+    .select("role, linked_patient_id, invited_by_professional_id")
     .eq("user_id", user.id)
     .maybeSingle();
 
@@ -111,6 +111,16 @@ export default async function JoinPage({
   // not against overwriting an unrelated existing role entirely.
   if (existingRole?.role === "professional" || existingRole?.role === "secretary") {
     redirect(`${prefix}/dashboard`);
+  }
+
+  // A pending patient (role: "patient", invited_by_professional_id set to
+  // a DIFFERENT doctor, not yet linked_patient_id) falls through
+  // "!linked_patient_id" the same as a role-less account — without this
+  // check they'd be silently reassigned to whichever doctor's join link
+  // they visit next, overwriting invited_by_professional_id. Match
+  // invite-required/page.tsx's principle: never touch an existing role.
+  if (existingRole?.role === "patient" && existingRole.invited_by_professional_id && !existingRole.linked_patient_id) {
+    redirect(`${prefix}/auth/pending-confirmation`);
   }
 
   if (!existingRole?.linked_patient_id) {
