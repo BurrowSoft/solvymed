@@ -3,47 +3,26 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
-interface Props {
-  locale: string;
-  label: string;
-  sublabel?: string;
-  userName?: string;
-  userEmail?: string;
-}
-
-const ERROR_CODE_KEY: Record<string, string> = {
-  already_subscribed: "errorAlreadySubscribed",
-  wrong_role: "errorWrongRole",
-  check_failed: "errorCheckFailed",
-  checkout_failed: "errorGeneric",
-  payment_failed: "errorPaymentFailed",
-};
-
-export function SubscribeButton({ locale, label, sublabel, userName, userEmail }: Props) {
+export function UpdateCardButton({ locale }: { locale: string }) {
   const t = useTranslations("subscription");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  function messageFor(code: string | undefined, fallbackKey: string): string {
-    const key = (code && ERROR_CODE_KEY[code]) ?? fallbackKey;
-    return t(key as Parameters<typeof t>[0]);
-  }
 
   async function handleClick() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/checkout/stripe", {
+      const res = await fetch("/api/billing/portal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locale, name: userName, email: userEmail }),
+        body: JSON.stringify({ locale }),
       });
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
-      } else {
-        setError(messageFor(data.code, "errorGeneric"));
+        return;
       }
+      setError(t(data.code === "portal_unavailable" ? "portalUnavailable" : "portalError"));
     } catch {
       setError(t("errorNetwork"));
     } finally {
@@ -58,9 +37,8 @@ export function SubscribeButton({ locale, label, sublabel, userName, userEmail }
         disabled={loading}
         className="w-full rounded-xl bg-teal-600 px-6 py-3.5 text-sm font-bold text-white shadow hover:bg-teal-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        {loading ? "…" : label}
+        {loading ? "…" : t("updateCard")}
       </button>
-      {sublabel && <p className="text-center text-xs text-slate-400">{sublabel}</p>}
       {error && <p className="text-center text-xs text-red-500">{error}</p>}
     </div>
   );

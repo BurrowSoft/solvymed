@@ -624,6 +624,13 @@
     "errorWrongRole": "Solo i professionisti possono abbonarsi.",
     "errorCheckFailed": "Impossibile verificare lo stato dell'abbonamento. Riprova.",
     "errorGeneric": "Impossibile avviare il pagamento. Riprova.",
-    "errorNetwork": "Errore di rete. Riprova."
+    "errorNetwork": "Errore di rete. Riprova.",
+    "paymentFailed": "Il tuo ultimo pagamento non è andato a buon fine. Aggiorna la carta per continuare.",
+    "paymentFailedAskOwner": "L'ultimo pagamento dello studio non è andato a buon fine. Chiedi al titolare dell'account di aggiornare la carta.",
+    "updateCard": "Aggiorna carta",
+    "portalUnavailable": "Al momento non è possibile aprire la gestione della carta. Contatta support@solvymed.com.",
+    "portalError": "Impossibile aprire la gestione della carta. Riprova.",
+    "errorPaymentFailed": "Il tuo ultimo pagamento non è andato a buon fine. Aggiorna la carta invece di avviare un nuovo abbonamento.",
+    "paymentActivating": "Pagamento ricevuto. Il tuo accesso è in fase di ripristino. Aggiorna questa pagina tra poco."
   }
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@/lib/supabase/server";
 import { isAccessAllowed, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
+import { retrieveStoredStripeSubscription, isLive, needsCardFix } from "@/lib/stripeBilling";
 import { routing } from "@/i18n/routing";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-05-27.dahlia" });
@@ -49,8 +50,40 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Could not verify subscription status", code: "check_failed" }, { status: 503 });
   }
   const sub = (subRows?.[0] ?? null) as EffectiveSub | null;
-  if (sub?.subscription_status === "active" && isAccessAllowed(sub)) {
+  // Lifetime access never needs a subscription, and paying for one could
+  // only put that access at risk.
+  if (sub?.subscription_status === "lifetime") {
     return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
+  }
+
+  // When a Stripe subscription is stored, Stripe decides, not the DB row:
+  // the row lags Stripe (it only changes when a webhook lands), stores a
+  // failed renewal as plain "expired", and can hold an id Stripe doesn't
+  // know (e.g. written with test keys, now running on live keys). Only a
+  // terminal subscription (canceled, incomplete_expired) or an unknown id
+  // may be replaced by a new checkout:
+  // - active/trialing: already paying, even if the webhook hasn't landed
+  //   yet (e.g. a retry just succeeded while the row still says expired).
+  // - past_due/unpaid/incomplete/paused: Stripe still holds this
+  //   subscription and may yet collect on it. A second one would bill
+  //   twice, so the fix is the card on the existing subscription (portal).
+  // With no Stripe id stored at all (e.g. access granted by hand), the DB
+  // status is all there is.
+  const hasStoredStripeId = sub?.subscription_provider === "stripe" && !!sub.subscription_id;
+  if (!hasStoredStripeId && sub?.subscription_status === "active" && isAccessAllowed(sub)) {
+    return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
+  }
+  try {
+    const stored = await retrieveStoredStripeSubscription(sub);
+    if (stored && isLive(stored)) {
+      return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
+    }
+    if (stored && needsCardFix(stored)) {
+      return NextResponse.json({ error: "Last payment failed", code: "payment_failed" }, { status: 409 });
+    }
+  } catch (err) {
+    console.error("Stripe checkout: could not check stored subscription", err);
+    return NextResponse.json({ error: "Could not verify subscription status", code: "check_failed" }, { status: 503 });
   }
 
   // The DB only learns about a new subscription from the webhook. Between a

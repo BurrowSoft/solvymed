@@ -624,6 +624,13 @@
     "errorWrongRole": "Solo los profesionales pueden suscribirse.",
     "errorCheckFailed": "No se pudo verificar tu estado de suscripción. Inténtalo de nuevo.",
     "errorGeneric": "No se pudo iniciar el proceso de pago. Inténtalo de nuevo.",
-    "errorNetwork": "Error de red. Inténtalo de nuevo."
+    "errorNetwork": "Error de red. Inténtalo de nuevo.",
+    "paymentFailed": "Tu último pago falló. Actualiza tu tarjeta para continuar.",
+    "paymentFailedAskOwner": "El último pago de la clínica falló. Pide al titular de la cuenta que actualice la tarjeta.",
+    "updateCard": "Actualizar tarjeta",
+    "portalUnavailable": "No pudimos abrir la gestión de la tarjeta en este momento. Contacta con support@solvymed.com.",
+    "portalError": "No se pudo abrir la gestión de la tarjeta. Inténtalo de nuevo.",
+    "errorPaymentFailed": "Tu último pago falló. Actualiza tu tarjeta en lugar de iniciar una nueva suscripción.",
+    "paymentActivating": "Pago recibido. Tu acceso se está restableciendo. Actualiza esta página en un momento."
   }
 }

@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { SubscribeButton } from "@/components/SubscribeButton";
+import { UpdateCardButton } from "@/components/UpdateCardButton";
 import { isAccessAllowed, trialDaysRemaining, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
+import { retrieveStoredStripeSubscription, isLive, needsCardFix } from "@/lib/stripeBilling";
 
 export default async function SubscribePage({
   params,
@@ -48,6 +50,29 @@ export default async function SubscribePage({
     if (allowed) redirect(`/${locale === "en" ? "" : locale + "/"}dashboard`);
   }
 
+  // A failed renewal is stored as "expired", same as an ended trial. Ask
+  // Stripe so the doctor sees "your payment failed" with a way to fix the
+  // card, instead of a trial paywall and a button that would start a second
+  // subscription. Only checked when access is denied, so active users never
+  // cost a Stripe call. If the lookup fails, the normal page shows, and the
+  // checkout route still refuses a second subscription (fails closed).
+  let paymentFailed = false;
+  // Stripe already reports the subscription live (e.g. back from the
+  // portal after fixing the card), but the webhook hasn't updated the row
+  // yet. Say so instead of offering a checkout the route would refuse.
+  let activating = false;
+  if (sub && !isAccessAllowed(sub)) {
+    try {
+      const stored = await retrieveStoredStripeSubscription(sub);
+      if (stored) {
+        activating = isLive(stored);
+        paymentFailed = needsCardFix(stored);
+      }
+    } catch (err) {
+      console.error("Subscribe page: could not check Stripe subscription status", err);
+    }
+  }
+
   const daysLeft = trialDaysRemaining(sub);
   const plan = getPlanPrice(locale);
 
@@ -90,7 +115,17 @@ export default async function SubscribePage({
             {t("trialDaysLeft", { n: daysLeft })}
           </div>
         )}
-        {(daysLeft === 0 || (sub && sub.subscription_status === "expired")) && sp.success !== "1" && (
+        {paymentFailed && sp.success !== "1" && (
+          <div className="mb-6 rounded-xl bg-red-50 border border-red-200 p-4 text-center text-sm text-red-800 font-medium">
+            {t("paymentFailed")}
+          </div>
+        )}
+        {activating && sp.success !== "1" && (
+          <div className="mb-6 rounded-xl bg-green-50 border border-green-200 p-4 text-center text-sm text-green-800 font-medium">
+            {t("paymentActivating")}
+          </div>
+        )}
+        {!paymentFailed && !activating && (daysLeft === 0 || (sub && sub.subscription_status === "expired")) && sp.success !== "1" && (
           <div className="mb-6 rounded-xl bg-red-50 border border-red-200 p-4 text-center text-sm text-red-800 font-medium">
             {t("trialExpired")}
           </div>
@@ -120,13 +155,23 @@ export default async function SubscribePage({
 
             {/* Payment buttons */}
             <div className="flex flex-col gap-3">
-              <SubscribeButton
-                locale={locale}
-                label={t("payCard")}
-                sublabel={t("payCardSub")}
-                userName={userName}
-                userEmail={userEmail}
-              />
+              {activating ? null : paymentFailed ? (
+                // Fix the card on the existing subscription. Never offer a
+                // new checkout here: Stripe is still retrying the old one.
+                roleRow?.role === "professional" ? (
+                  <UpdateCardButton locale={locale} />
+                ) : (
+                  <p className="text-center text-sm text-slate-500">{t("paymentFailedAskOwner")}</p>
+                )
+              ) : (
+                <SubscribeButton
+                  locale={locale}
+                  label={t("payCard")}
+                  sublabel={t("payCardSub")}
+                  userName={userName}
+                  userEmail={userEmail}
+                />
+              )}
             </div>
 
             <p className="text-center text-xs text-slate-400">{t("cancelAnytime")}</p>
