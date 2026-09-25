@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeSlots, toMinutes, fromMinutes, filterPastSlots } from "@/lib/slots";
+import { computeSlots, toMinutes, fromMinutes, filterPastSlots, toLocalDateString } from "@/lib/slots";
 import type { WorkingHours } from "@/lib/slots";
 
 // Wednesday 2025-01-08 (index 3 = wed)
@@ -120,7 +120,7 @@ describe("computeSlots", () => {
 });
 
 describe("filterPastSlots", () => {
-  const TODAY = new Date().toISOString().split("T")[0];
+  const TODAY = toLocalDateString(new Date());
   const FUTURE_DATE = "2099-01-01";
   const slots = [
     { start: "09:00", end: "09:30" },

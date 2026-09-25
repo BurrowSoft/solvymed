@@ -13,8 +13,17 @@ export function fromMinutes(mins: number): string {
   return `${String(Math.floor(mins / 60)).padStart(2, "0")}:${String(mins % 60).padStart(2, "0")}`;
 }
 
+/**
+ * Calendar date in the caller's local timezone, as YYYY-MM-DD.
+ * Deliberately not `.toISOString().split("T")[0]`, which is UTC and can be
+ * off by a day from the caller's actual wall-clock date.
+ */
+export function toLocalDateString(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 export function filterPastSlots(slots: TimeSlot[], date: string, nowMinutes: number): TimeSlot[] {
-  const today = new Date().toISOString().split("T")[0];
+  const today = toLocalDateString(new Date());
   if (date !== today) return slots;
   return slots.filter(s => toMinutes(s.start) > nowMinutes);
 }

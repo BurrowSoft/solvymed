@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest } from "./booking-actions";
+import { toLocalDateString } from "@/lib/slots";
 
 type Booking = {
   id: string;
@@ -65,7 +66,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
   if (!bookings.length) return null;
 
   const now = new Date();
-  const todayStr = now.toISOString().split("T")[0];
+  const todayStr = toLocalDateString(now);
   const nowHHMM = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
   function isObsolete(b: Booking): boolean {
