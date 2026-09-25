@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 type DesiredState =
   | { kind: "skip" }
   | { kind: "active"; userId: string; subId: string; periodEnd: string }
-  | { kind: "expired"; userId: string; subId: string };
+  | { kind: "expired"; userId: string; subId: string; neverActive: boolean };
 
 // Only active/trialing grant access. incomplete (checkout not paid),
 // incomplete_expired, canceled and unpaid never do. past_due is cut
@@ -80,7 +80,10 @@ function desiredState(sub: Stripe.Subscription): DesiredState {
     if (!periodEndTs) return { kind: "skip" };
     return { kind: "active", userId, subId: sub.id, periodEnd: new Date(periodEndTs * 1000).toISOString() };
   }
-  return { kind: "expired", userId, subId: sub.id };
+  // incomplete / incomplete_expired: the first payment never succeeded, so
+  // this subscription was never active.
+  const neverActive = sub.status === "incomplete" || sub.status === "incomplete_expired";
+  return { kind: "expired", userId, subId: sub.id, neverActive };
 }
 
 function sameState(a: DesiredState, b: DesiredState): boolean {
@@ -138,17 +141,23 @@ async function syncSubscription(db: ReturnType<typeof adminClient>, subId: strin
       // (or nothing is stored yet). Otherwise a late event for an old,
       // cancelled subscription would expire the newer one the professional
       // resubscribed with. Enforced in the UPDATE's own WHERE.
-      const { data, error } = await db.from("professionals").update({
+      let expire = db.from("professionals").update({
         subscription_provider: "stripe",
         subscription_id: desired.subId,
         subscription_status: "expired",
       })
         .eq("id", desired.userId)
-        .or(`subscription_id.is.null,subscription_id.eq.${desired.subId}`)
-        .select("id");
+        .or(`subscription_id.is.null,subscription_id.eq.${desired.subId}`);
+      // A subscription that was never active must not end a running trial:
+      // the professional keeps the trial until its original trial_ends_at
+      // (no extra days, so nothing to abuse). Only a subscription that was
+      // once active expires the row when it dies.
+      if (desired.neverActive) expire = expire.neq("subscription_status", "trial");
+      const { data, error } = await expire.select("id");
       if (error) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
-      // 0 rows: the row belongs to a different (newer) subscription, or
-      // doesn't exist. Either way this subscription has nothing to change.
+      // 0 rows: the row belongs to a different (newer) subscription, is a
+      // trial protected by the rule above, or doesn't exist. Either way this
+      // subscription has nothing to change.
       if (!data?.length) return NextResponse.json({ ok: true });
     }
     written = desired;
