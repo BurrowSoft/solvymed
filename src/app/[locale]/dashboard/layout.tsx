@@ -127,7 +127,11 @@ export default async function DashboardLayout({
     .eq("id", user.id)
     .maybeSingle();
 
-  const firstName = professional?.full_name?.split(" ")[0] ?? user.email?.split("@")[0] ?? "Doctor";
+  // A secretary has no professionals row: use the name they signed up with.
+  const ownName = isSecretary
+    ? (user.user_metadata?.full_name as string | undefined)?.trim()
+    : professional?.full_name;
+  const firstName = ownName?.split(" ")[0] || user.email?.split("@")[0] || "Doctor";
 
   let trialBannerLabels = { prefix: "", day: "day", days: "days", cta: "Subscribe" };
   if (showTrialBanner) {

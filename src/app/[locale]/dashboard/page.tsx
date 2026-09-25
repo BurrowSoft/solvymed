@@ -93,7 +93,11 @@ export default async function DashboardPage({
   const patientCount = patientCountResult.count ?? 0;
   const monthRevenue = (monthRevenueResult.data ?? []) as { payment_amount: number }[];
 
-  const firstName = professional?.full_name?.split(" ")[0] ?? user.email?.split("@")[0] ?? "Doctor";
+  // A secretary has no professionals row: use the name they signed up with.
+  const ownName = isSecretary
+    ? (user.user_metadata?.full_name as string | undefined)?.trim()
+    : professional?.full_name;
+  const firstName = ownName?.split(" ")[0] || user.email?.split("@")[0] || "Doctor";
   const totalPending = pendingPayments.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
   const totalRevenue = monthRevenue.reduce((s, r) => s + (r.payment_amount ?? 0), 0);
   const todayFormatted = new Date().toLocaleDateString(locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
@@ -104,7 +108,7 @@ export default async function DashboardPage({
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 md:text-3xl">
-            {greeting}, Dr. {firstName} 👋
+            {greeting}, {isSecretary ? firstName : `Dr. ${firstName}`} 👋
           </h1>
           <p className="mt-1 text-sm text-slate-500">
             {todayFormatted}{professional?.specialty ? ` · ${professional.specialty}` : ""}
