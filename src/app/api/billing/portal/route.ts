@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { stripe } from "@/lib/stripeBilling";
+import { stripe, retrieveSubscriptionOrNull } from "@/lib/stripeBilling";
 import { routing } from "@/i18n/routing";
 
 // Opens the Stripe Customer Portal so a professional can update the card on
@@ -42,10 +42,11 @@ export async function POST(request: NextRequest) {
 
   let customerId: string;
   try {
-    const live = await stripe.subscriptions.retrieve(prof.subscription_id as string);
-    // Defensive: the stored id should always be this professional's own
-    // subscription, but never open a portal for someone else's customer.
-    if (live.metadata?.user_id !== user.id) {
+    const live = await retrieveSubscriptionOrNull(prof.subscription_id as string);
+    // Unknown to Stripe (e.g. a test-mode id under live keys), or not this
+    // professional's own subscription: nothing to manage. Never open a
+    // portal for someone else's customer.
+    if (!live || live.metadata?.user_id !== user.id) {
       return NextResponse.json({ error: "No subscription to manage", code: "no_subscription" }, { status: 404 });
     }
     customerId = typeof live.customer === "string" ? live.customer : live.customer.id;

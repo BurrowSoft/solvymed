@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@/lib/supabase/server";
 import { isAccessAllowed, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
-import { retrieveStoredStripeSubscription } from "@/lib/stripeBilling";
+import { retrieveStoredStripeSubscription, isLive, needsCardFix } from "@/lib/stripeBilling";
 import { routing } from "@/i18n/routing";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-05-27.dahlia" });
@@ -65,13 +65,11 @@ export async function POST(request: NextRequest) {
   //   twice, so the fix is the card on the existing subscription (portal).
   try {
     const stored = await retrieveStoredStripeSubscription(sub);
-    if (stored) {
-      if (stored.status === "active" || stored.status === "trialing") {
-        return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
-      }
-      if (stored.status !== "canceled" && stored.status !== "incomplete_expired") {
-        return NextResponse.json({ error: "Last payment failed", code: "payment_failed" }, { status: 409 });
-      }
+    if (stored && isLive(stored)) {
+      return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
+    }
+    if (stored && needsCardFix(stored)) {
+      return NextResponse.json({ error: "Last payment failed", code: "payment_failed" }, { status: 409 });
     }
   } catch (err) {
     console.error("Stripe checkout: could not check stored subscription", err);
