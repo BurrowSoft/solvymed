@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
     if (joinProfId) {
       // Signed up via a doctor's direct join link — the /join page does the
       // actual role/link setup itself, same as the mobile-facing confirm flow.
-      redirectUrl = new URL(`/join/${joinProfId}?role=${joinRole ?? "patient"}`, origin);
+      redirectUrl = new URL(`${localePrefix}/join/${joinProfId}?role=${joinRole ?? "patient"}`, origin);
 
     } else if (role === "secretary") {
       await supabase.from("user_roles").upsert(
