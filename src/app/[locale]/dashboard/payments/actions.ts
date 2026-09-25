@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getEffectiveProfId } from "@/lib/effectiveProfId";
 
 function isValidAmount(amount: number): boolean {
   return Number.isFinite(amount) && amount >= 0 && amount <= 1_000_000;
@@ -17,6 +18,8 @@ export async function markPaid(id: string, amount?: number) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const update: Record<string, unknown> = { payment_status: "paid" };
   if (amount !== undefined) update.payment_amount = amount;
@@ -25,7 +28,7 @@ export async function markPaid(id: string, amount?: number) {
     .from("appointments")
     .update(update)
     .eq("id", id)
-    .eq("professional_id", user.id);
+    .eq("professional_id", effectiveProfId);
 
   if (error) return { error: error.message, code: "generic" };
   revalidatePath("/dashboard/payments");
@@ -36,12 +39,14 @@ export async function markUnpaid(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const { error } = await supabase
     .from("appointments")
     .update({ payment_status: "pending" })
     .eq("id", id)
-    .eq("professional_id", user.id);
+    .eq("professional_id", effectiveProfId);
 
   if (error) return { error: error.message, code: "generic" };
   revalidatePath("/dashboard/payments");
@@ -54,12 +59,14 @@ export async function setPaymentAmount(id: string, amount: number) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const { error } = await supabase
     .from("appointments")
     .update({ payment_amount: amount })
     .eq("id", id)
-    .eq("professional_id", user.id);
+    .eq("professional_id", effectiveProfId);
 
   if (error) return { error: error.message, code: "generic" };
   revalidatePath("/dashboard/payments");

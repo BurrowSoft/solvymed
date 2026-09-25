@@ -2,11 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getEffectiveProfId } from "@/lib/effectiveProfId";
 
 export async function createPatient(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // A secretary manages their doctor's patients, not their own (empty) id.
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   const fullName = (formData.get("full_name") as string)?.trim();
   if (!fullName) return { error: "Full name is required" };
@@ -18,14 +22,14 @@ export async function createPatient(formData: FormData) {
     const { data: existing } = await supabase
       .from("patients")
       .select("id, full_name")
-      .eq("professional_id", user.id)
+      .eq("professional_id", effectiveProfId)
       .ilike("email", email)
       .limit(1);
     if (existing?.length) return { error: `A patient with this email already exists: ${existing[0].full_name}` };
   }
 
   const { error } = await supabase.from("patients").insert({
-    professional_id: user.id,
+    professional_id: effectiveProfId,
     full_name: fullName,
     email,
     phone: (formData.get("phone") as string)?.trim() || null,
@@ -49,6 +53,9 @@ export async function updatePatient(id: string, formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // A secretary manages their doctor's patients, not their own (empty) id.
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   const fullName = (formData.get("full_name") as string)?.trim();
   if (!fullName) return { error: "Full name is required" };
@@ -63,7 +70,7 @@ export async function updatePatient(id: string, formData: FormData) {
     profession: (formData.get("profession") as string)?.trim() || null,
     emergency_phone: (formData.get("emergency_phone") as string)?.trim() || null,
     convenio_type: (formData.get("convenio_type") as string) || null,
-  }).eq("id", id).eq("professional_id", user.id);
+  }).eq("id", id).eq("professional_id", effectiveProfId);
 
   if (error) return { error: error.message };
   revalidatePath(`/dashboard/patients/${id}`);
@@ -75,8 +82,11 @@ export async function deletePatient(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // A secretary manages their doctor's patients, not their own (empty) id.
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
-  const { error } = await supabase.from("patients").delete().eq("id", id).eq("professional_id", user.id);
+  const { error } = await supabase.from("patients").delete().eq("id", id).eq("professional_id", effectiveProfId);
   if (error) return { error: error.message };
   revalidatePath("/dashboard/patients");
   return { success: true };
@@ -165,12 +175,15 @@ export async function toggleBookingBlock(patientId: string, blocked: boolean) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  // A secretary manages their doctor's patients, not their own (empty) id.
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   const { error } = await supabase
     .from("patients")
     .update({ booking_blocked: blocked })
     .eq("id", patientId)
-    .eq("professional_id", user.id);
+    .eq("professional_id", effectiveProfId);
 
   if (error) return { error: error.message };
   revalidatePath(`/dashboard/patients/${patientId}`);

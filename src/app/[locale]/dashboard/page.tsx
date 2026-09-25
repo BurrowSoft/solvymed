@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
@@ -60,6 +61,11 @@ export default async function DashboardPage({
       ? t("greetingAfternoon")
       : t("greetingEvening");
 
+  // A secretary sees their doctor's practice, not their own (empty) id.
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) redirect(`${prefix}/auth/login`);
+  const isSecretary = effectiveProfId !== user.id;
+
   const [
     professionalResult,
     todayApptsResult,
@@ -68,12 +74,16 @@ export default async function DashboardPage({
     patientCountResult,
     monthRevenueResult,
   ] = await Promise.all([
+    // The greeting is for the viewer, so this stays the caller's own row.
     supabase.from("professionals").select("full_name, specialty, photo_url").eq("id", user.id).maybeSingle(),
-    supabase.from("appointments").select("id, patient_name, start_time, end_time, status, consultation_type").eq("professional_id", user.id).eq("date", today).neq("status", "blocked").order("start_time"),
-    supabase.from("appointments").select("patient_name, date, start_time, consultation_type, status").eq("professional_id", user.id).gt("date", today).lte("date", nextWeekStr).neq("status", "blocked").order("date").order("start_time").limit(8),
-    supabase.from("appointments").select("patient_name, payment_amount, date").eq("professional_id", user.id).eq("payment_status", "pending").neq("status", "blocked").neq("status", "cancelled"),
-    supabase.from("patients").select("*", { count: "exact", head: true }).eq("professional_id", user.id),
-    supabase.from("appointments").select("payment_amount").eq("professional_id", user.id).eq("payment_status", "paid").gte("date", monthStart).lte("date", today),
+    supabase.from("appointments").select("id, patient_name, start_time, end_time, status, consultation_type").eq("professional_id", effectiveProfId).eq("date", today).neq("status", "blocked").order("start_time"),
+    supabase.from("appointments").select("patient_name, date, start_time, consultation_type, status").eq("professional_id", effectiveProfId).gt("date", today).lte("date", nextWeekStr).neq("status", "blocked").order("date").order("start_time").limit(8),
+    supabase.from("appointments").select("patient_name, payment_amount, date").eq("professional_id", effectiveProfId).eq("payment_status", "pending").neq("status", "blocked").neq("status", "cancelled"),
+    supabase.from("patients").select("*", { count: "exact", head: true }).eq("professional_id", effectiveProfId),
+    // Revenue is doctor-only, so a secretary never fetches it.
+    isSecretary
+      ? Promise.resolve({ data: [] as { payment_amount: number }[] })
+      : supabase.from("appointments").select("payment_amount").eq("professional_id", effectiveProfId).eq("payment_status", "paid").gte("date", monthStart).lte("date", today),
   ]);
 
   const professional = professionalResult.data;
@@ -132,14 +142,16 @@ export default async function DashboardPage({
           <p className="mt-1 text-3xl font-extrabold text-slate-900">{patientCount}</p>
         </Link>
 
-        <Link href={`${prefix}/dashboard/payments`} className="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-green-200 hover:shadow-md transition-all">
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-green-50">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-green-600"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          </div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("statRevenue")}</p>
-          <p className="mt-1 text-2xl font-extrabold text-slate-900">{formatBRL(totalRevenue)}</p>
-          <p className="text-xs text-slate-400">{t("thisMonth")}</p>
-        </Link>
+        {!isSecretary && (
+          <Link href={`${prefix}/dashboard/payments`} className="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-green-200 hover:shadow-md transition-all">
+            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-green-50">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-green-600"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("statRevenue")}</p>
+            <p className="mt-1 text-2xl font-extrabold text-slate-900">{formatBRL(totalRevenue)}</p>
+            <p className="text-xs text-slate-400">{t("thisMonth")}</p>
+          </Link>
+        )}
       </div>
 
       {/* Today's Schedule + Upcoming */}
