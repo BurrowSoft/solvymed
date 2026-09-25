@@ -35,7 +35,8 @@ is in the table below.
 | ↳ round 10 (root-page redirect ordering fix: persisted role before metadata) | same PR, commit `00f4914` | typecheck + `e2e/01-03` (regression, clean 3/3) + real metadata-tampering reproduction of the exact bug precondition | 🟢 GREEN — see "PR #7 round 10" below | 2026-09-25 |
 | ↳ round 11 (invite-linking rebuild on mob dev's new RPC/confirmation model) | same PR, commits `3d1ee98`..`1daad5a` (rebuild `0104398` + eligibility/error-propagation fix `1daad5a`) | typecheck + `e2e/01-03` (regression, clean 3/3) + live test of the one reachable new guard (professional at `/my-appointments` → `/dashboard`) + full code review of the 3-state routing rebuild across 6 entry points | 🟡 GREEN for what's testable then — see "PR #7 round 11" below | 2026-09-25 |
 | ↳ round 12 (migrations 060-071 now live: closed role-less-professional self-heal gap, locale-prefix fix) | same PR, commit `f713a70` | typecheck + `e2e/01-03` (regression, clean 3/3) + doctor login regression + live RPC probing confirming `link_patient_by_invite_code`/`link_by_professional_public_code` are genuinely deployed + code review of the self-heal removal and invite-required hardening | 🟡 GREEN for what's testable — see round 12 below | 2026-09-25 |
-| ↳ round 13 (remaining locale-prefix misses: callback route, root page, my-appointments) | same PR, commit `d941823` | typecheck + `e2e/01-03` (regression, clean 3/3) + 2 live tests confirming the fix actually works (non-English prefix survives the redirect chain, both authenticated and not) | 🟢 **GREEN — recommend this as the merge commit for what's currently testable** — see "PR #7 round 13" below | 2026-09-25 |
+| ↳ round 13 (remaining locale-prefix misses: callback route, root page, my-appointments) | same PR, commit `d941823` | typecheck + `e2e/01-03` (regression, clean 3/3) + 2 live tests confirming the fix actually works (non-English prefix survives the redirect chain, both authenticated and not) | 🟢 GREEN — see "PR #7 round 13" below | 2026-09-25 |
+| ↳ round 14 (last locale-prefix miss: join-flow redirect) | same PR, commit `615a3c2` | typecheck + `e2e/01-03` (regression, clean 3/3) + code review (same already-proven `localePrefix` mechanism from round 13, one-line application) | 🟢 **GREEN — recommend this as the merge commit for what's currently testable** — see "PR #7 round 14" below | 2026-09-25 |
 
 ## Talking to the other agents
 
@@ -1373,6 +1374,37 @@ linked. That's still not independently live-testable by me — same
 mob dev as a known, unresolved infra gap on both repos (needs the user to
 either provide a valid key or temporarily disable confirm-email), not
 something fixable from inside either PR.
+
+## PR #7 round 14 (`615a3c2`) — last locale-prefix miss, 🟢 GREEN
+
+One more Copilot catch on the re-review of `d941823`: the doctor's direct
+join-link redirect (`/join/[professionalId]`, the `joinProfId` branch in
+`api/auth/callback/route.ts`) was still missing `localePrefix` — it's a
+separate code path from the patient invite-code flow (signup via a
+doctor's join link goes straight to `/join/{id}` to complete role/link
+setup there, same as the mobile-facing confirm flow), so it wasn't
+touched by round 13's fix to the other branches in that same function.
+One-line change, same `localePrefix` variable round 13 already traced
+through `middleware.ts` and live-verified.
+
+**Not separately live-tested:** exercising the `joinProfId` branch needs a
+signup that actually went through a doctor's join link
+(`user_metadata.join_professional_id` set at signup time) — not something
+reachable from my existing accounts without a fresh signup, same
+service-role-key limitation as everything else requiring a new account.
+Given it's a mechanical one-line application of a mechanism already
+proven sound in round 13 (same variable, same redirect pattern, no new
+logic), code review is high-confidence here without forcing a live
+reproduction that isn't cheaply reachable.
+
+**Live-tested:** `npm run typecheck` clean; `e2e/01-03` clean 3/3.
+
+**Merge gate: clear on my end for `615a3c2`.** This is the last
+locale-prefix instance found across the whole PR, as far as either of us
+is aware. Recommending it as the merge commit for what's currently
+testable — same caveat as rounds 11-14 throughout: the patient
+invite-code linking flow itself still isn't independently live-tested,
+blocked on the service-role-key infra gap, not on anything in the code.
 
 ## iOS — open question
 
