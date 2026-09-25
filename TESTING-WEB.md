@@ -2055,6 +2055,131 @@ the Subscription.
 
 **Merge gate: 🟢 for `b2c24bb`.**
 
+## PR #12 (`feat/failed-payment-portal`) — failed payment, Customer Portal, trial rule, 🟢 at `b2d9d9b`
+
+**Scope: this entry covers exactly `b2d9d9b`.** The full suite (7 tests)
+ran green on it. The previous HEAD, `926387f`, was 6/6 before (8) and (9)
+were added. An earlier run on `e562b33` found one bug, now fixed (see
+below). The method is the same as #11: Stripe test mode with real test
+keys, real objects, and real events fetched with `events.list`, signed
+with `STRIPE_WEBHOOK_SECRET` and delivered to a local server on `b2d9d9b`.
+Failed renewals and expiries use Stripe **test clocks**. All test
+accounts were throwaways.
+
+**🟢 (1) Failed-payment UI.** A professional's subscription goes to
+`past_due` for real: a test-clock renewal against a card whose charges
+fail, then the real `invoice.payment_failed` sets the row to `expired`.
+- **`/subscribe`:** shows "Your last payment failed. Update your card to
+  continue." and an **Update card** button. There's no "Subscribe with
+  Card" and no "Your free trial has ended".
+- **`/pt-BR/subscribe`:** shows "Seu último pagamento falhou…" and
+  **Atualizar cartão**, with no "Assinar com Cartão".
+
+**🟢 (2) Customer Portal and recovery.**
+- **Portal:** clicking **Update card** lands on `billing.stripe.com`.
+  The portal shows this professional's subscription and email.
+- **Recovery:** after the card fix (new default card, open invoice paid),
+  the real `invoice.paid` and subscription events set the row back to
+  `active`, with the *new* period end (+1 month).
+- **(9) Webhook lag after the fix** (`b2d9d9b`): Stripe is already
+  `active`, but the row still says `expired`. `/subscribe` shows "Payment
+  received. Your access is being restored…" with no payment buttons, no
+  trial-ended text and no payment-failed text.
+- **Access:** once the webhook lands, `/subscribe` redirects to the
+  dashboard.
+- **Not automated:** the card entry itself was done through the API, the
+  same state change the portal makes. I didn't script Stripe's portal
+  form.
+
+**🟢 (3) Checkout refuses a second subscription.**
+- **Past due:** `payment_failed`, 409.
+- **Paid but webhook pending (3b):** Stripe says `active` while the row
+  still says `expired`, and checkout returns
+  **`409 already_subscribed`**.
+- **Cancelled (3c, terminal):** checkout is allowed again, 200.
+
+**🟢 (4) Portal guards on `/api/billing/portal`.**
+
+| Caller | Result |
+|---|---|
+| Signed out | 401 |
+| Patient | 403 `wrong_role` |
+| Secretary (role set on a throwaway) | 403 `wrong_role` |
+| Professional with no subscription | 404 `no_subscription` |
+| Professional whose stored id is *another user's* live subscription | 404 `no_subscription` |
+
+The last row means the portal is never opened for someone else's
+customer.
+
+**🟢 (5) UX trial rule, never-active first subscription.**
+- **Pending:** a trial professional's first subscription is `incomplete`
+  (the first charge failed). The row stays `trial` with the same
+  `trial_ends_at`, and the pending sub's id is recorded (`926387f`). A new
+  checkout returns `409 payment_failed` while it's pending.
+- **Expired:** after 25 h on a test clock it's `incomplete_expired`, all
+  real events are delivered, and the row is still `trial` with the same
+  `trial_ends_at`. Checkout is then allowed, 200.
+- **Contrast:** a subscription that *was* active and is then cancelled
+  mid-trial sets `expired`, per UX's rule.
+
+**🟢 (6) Regression.** A plain ended trial still shows "Your free trial
+has ended" plus Subscribe. There's no payment-failed banner and no Update
+card, and checkout returns 200.
+
+**🟢 (7) Ended trial with a pending `incomplete` sub** (`c77744b`, shared
+classifier).
+- **Page:** shows the payment-failed banner and Update card, with no
+  Subscribe.
+- **Checkout:** `409 payment_failed`.
+- **Portal:** 200 (`billing.stripe.com`).
+
+**🟢 (8) A new pending sub takes over only from a dead one** (`7074ad4`).
+- **(8a) Stored sub cancelled:** a new `incomplete` sub takes over the
+  row. Checkout then returns `409 payment_failed` and the page shows the
+  payment-failed UI, so a third subscription can't be started.
+- **(8b) Stored id unknown to Stripe:** a new `incomplete` sub takes
+  over.
+- **(8c) Stored sub live and `active`:** a new `incomplete` sub does
+  **not** take over. The row is unchanged: still `active` on the old sub.
+- **(8d) Terminal events never take over:** a late `deleted` event for
+  another, cancelled sub leaves the row tracking the pending one.
+
+**🟢 Bug found on `e562b33`, fixed in `c77744b`: an unknown stored
+subscription id locked the professional out for good.**
+- **Before:** with `subscription_id` set to an id Stripe doesn't know,
+  checkout and the portal both returned 503 `check_failed` on every
+  attempt. `/subscribe` still showed Subscribe, so the doctor could never
+  pay.
+- **Why it matters:** that's the state every row written with test keys
+  will be in once prod switches to live keys.
+- **Now:** Stripe's `resource_missing` means "no usable subscription".
+  Subscribe shows, checkout returns 200, and the portal returns 404
+  `no_subscription`. Other Stripe errors still fail closed (reviewed in
+  code).
+
+**Known issues, listed in the PR, not blocking:**
+- **Pending sub during a live trial.** A professional *still in trial*
+  with a pending `incomplete` sub gets `409 payment_failed` on checkout,
+  but `/subscribe` doesn't show the Update card UI while access is
+  allowed. They wait until the sub expires (~23 h). It's close to
+  unreachable with card-only Checkout, which doesn't leave incomplete
+  subs.
+- **Checkout-scan scope.** Carried from #11: the open-session sweep in the
+  checkout route is account-wide.
+
+**Needs the user, unverified from here:** Stripe delivery to the deployed
+webhook endpoint (URL, events, secret), and live-mode Customer Portal
+configuration. The test-mode portal is enabled and works, as above.
+
+**Cleaned up.**
+- All `e2e-test-opus-*` accounts are deleted: 0 left.
+- 0 active subscriptions and 0 test clocks in the Stripe test account.
+  That includes 3 leftover #11 clocks, deleted now.
+- The shared doctor wasn't used and is still `trial` with no
+  subscription.
+
+**Merge gate: 🟢 for `b2d9d9b`.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
