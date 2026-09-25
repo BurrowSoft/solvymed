@@ -52,10 +52,14 @@ export async function POST(request: NextRequest) {
 
     const isActive = sub.status === "active" || sub.status === "trialing";
     const periodEndTs = sub.items?.data?.[0]?.current_period_end;
-    await db.from("professionals").update({
-      subscription_status: isActive ? "active" : "expired",
-      current_period_end: periodEndTs ? new Date(periodEndTs * 1000).toISOString() : null,
-    }).eq("subscription_id", sub.id);
+    const update: Record<string, unknown> = { subscription_status: isActive ? "active" : "expired" };
+    // Only write current_period_end when Stripe actually gave us one. isAccessAllowed()
+    // ignores this field for any non-"active" status, so there's nothing to clear on
+    // cancellation/expiry — and forcing it to null while still active (e.g. an
+    // unexpected empty items array) would reopen the exact unlimited-access gap the
+    // checkout.session.completed handler above was fixed to avoid.
+    if (periodEndTs) update.current_period_end = new Date(periodEndTs * 1000).toISOString();
+    await db.from("professionals").update(update).eq("subscription_id", sub.id);
   }
 
   if (event.type === "invoice.payment_failed") {
