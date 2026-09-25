@@ -46,6 +46,9 @@ export default async function AuthConfirmPage({
         const { error: acceptError } = await supabase.rpc("accept_secretary_invite", { p_code: secretaryCode });
         if (acceptError) console.error("Secretary invite accept failed at confirmation:", acceptError.message);
       }
+      // Stay in the signup's locale; the dashboard routes linked vs "Not
+      // connected".
+      redirect(`${prefix}/dashboard`);
     }
     if (role === "patient") {
       // Refuse to touch an existing role — matches the guard on the
