@@ -609,8 +609,6 @@
     "feature3": "수익 보고서 및 결제 추적",
     "feature4": "자동 예약 알림",
     "feature5": "비서 접근 포함",
-    "payPix": "Pix로 결제",
-    "payPixSub": "Pix를 통한 즉시 결제",
     "payCard": "카드로 구독",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "또는",
@@ -626,7 +624,6 @@
     "errorWrongRole": "전문가만 구독할 수 있습니다.",
     "errorCheckFailed": "구독 상태를 확인할 수 없습니다. 다시 시도해 주세요.",
     "errorGeneric": "결제를 시작할 수 없습니다. 다시 시도해 주세요.",
-    "errorNetwork": "네트워크 오류입니다. 다시 시도해 주세요.",
-    "errorPaymentLinkFailed": "구독이 생성되었지만 결제 링크를 불러올 수 없습니다. 이메일을 확인하거나 지원팀에 문의하세요."
+    "errorNetwork": "네트워크 오류입니다. 다시 시도해 주세요."
   }
 }

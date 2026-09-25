@@ -609,8 +609,6 @@
     "feature3": "Umsatzberichte und Zahlungsverfolgung",
     "feature4": "Automatische Terminerinnerungen",
     "feature5": "Zugang für Ihre Sekretärinnen inklusive",
-    "payPix": "Mit Pix bezahlen",
-    "payPixSub": "Sofortige Zahlung via Pix",
     "payCard": "Mit Karte abonnieren",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "oder",
@@ -626,7 +624,6 @@
     "errorWrongRole": "Nur Fachkräfte können abonnieren.",
     "errorCheckFailed": "Ihr Abonnementstatus konnte nicht überprüft werden. Bitte versuchen Sie es erneut.",
     "errorGeneric": "Der Bezahlvorgang konnte nicht gestartet werden. Bitte versuchen Sie es erneut.",
-    "errorNetwork": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
-    "errorPaymentLinkFailed": "Ihr Abonnement wurde erstellt, aber der Zahlungslink konnte nicht geladen werden. Bitte prüfen Sie Ihre E-Mail oder kontaktieren Sie den Support."
+    "errorNetwork": "Netzwerkfehler. Bitte versuchen Sie es erneut."
   }
 }

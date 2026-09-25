@@ -609,10 +609,8 @@
     "feature3": "Relatórios de receita e controle de pagamentos",
     "feature4": "Lembretes automáticos de consultas",
     "feature5": "Acesso incluso para suas secretárias",
-    "payPix": "Pagar com Pix",
-    "payPixSub": "Pagamento instantâneo via Pix",
     "payCard": "Assinar com Cartão",
-    "payCardSub": "Visa, Mastercard, American Express",
+    "payCardSub": "Cartão de crédito",
     "or": "ou",
     "cancelAnytime": "Cancele quando quiser. Sem fidelidade.",
     "successMessage": "Assinatura ativada! Bem-vindo ao SolvyMed Pro.",
@@ -626,7 +624,6 @@
     "errorWrongRole": "Somente profissionais podem assinar.",
     "errorCheckFailed": "Não foi possível verificar o status da sua assinatura. Tente novamente.",
     "errorGeneric": "Não foi possível iniciar o checkout. Tente novamente.",
-    "errorNetwork": "Erro de rede. Tente novamente.",
-    "errorPaymentLinkFailed": "Sua assinatura foi criada, mas não conseguimos carregar o link de pagamento. Verifique seu e-mail ou entre em contato com o suporte."
+    "errorNetwork": "Erro de rede. Tente novamente."
   }
 }

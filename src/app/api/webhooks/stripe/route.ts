@@ -27,24 +27,17 @@ export async function POST(request: NextRequest) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const userId = session.metadata?.user_id ?? session.client_reference_id;
-    const subId = session.subscription as string | null;
-    if (!userId) return NextResponse.json({ ok: true });
-    // subscription_status and current_period_end are deliberately NOT
-    // written here — they're owned exclusively by the
-    // customer.subscription.updated/deleted handler below (which Stripe
-    // sends right after checkout completes for a new subscription, now
-    // reliably matchable by user_id thanks to subscription_data.metadata
-    // on the checkout route). Splitting subscription state across two
-    // handlers is what caused the earlier replay bugs: a replayed
-    // checkout.session.completed after cancellation could reactivate
-    // status="active" with no way to know the subscription was since
-    // cancelled. This handler only records bookkeeping fields that are
-    // safe to set unconditionally on every delivery.
-    await db.from("professionals").update({
-      subscription_provider: "stripe",
-      subscription_id: subId,
-    }).eq("id", userId);
+    const subRef = session.subscription;
+    const subId = typeof subRef === "string" ? subRef : subRef?.id ?? null;
+    // Card checkouts complete as "paid", but an async method completes the
+    // session as "unpaid" before any money moves. Record nothing until
+    // it's actually paid.
+    if (session.payment_status !== "paid" || !subId) return NextResponse.json({ ok: true });
+    // Same live-state sync as the subscription events, never a direct write
+    // from this payload: a late or replayed checkout for an old subscription
+    // must not put that old id back on the row (a later event for it would
+    // then pass the dead-subscription guard and expire the live one).
+    return syncSubscription(db, subId);
   }
 
   if (
@@ -52,48 +45,114 @@ export async function POST(request: NextRequest) {
     event.type === "customer.subscription.updated" ||
     event.type === "customer.subscription.deleted"
   ) {
-    // Stripe sends "created" (not "updated") for a brand new subscription —
-    // without handling it here too, checkout.session.completed no longer
-    // writing subscription_status itself (see above) meant a new
-    // subscriber's status/period_end would never get set at all.
     const sub = event.data.object as Stripe.Subscription;
-    const userId = sub.metadata?.user_id;
-    if (!userId) return NextResponse.json({ ok: true });
-
-    const isActive = sub.status === "active" || sub.status === "trialing";
-    const periodEndTs = sub.items?.data?.[0]?.current_period_end;
-
-    const update: Record<string, unknown> = { subscription_id: sub.id };
-    if (isActive) {
-      // Never mark active without a real period end in the same write —
-      // isAccessAllowed() reads "active" + null current_period_end as
-      // unlimited access, so if Stripe's payload is ever missing it (an
-      // empty items array on an active subscription would be abnormal,
-      // but not writing anything is safer than guessing), skip the whole
-      // update rather than risk it.
-      if (!periodEndTs) return NextResponse.json({ ok: true });
-      update.subscription_status = "active";
-      update.current_period_end = new Date(periodEndTs * 1000).toISOString();
-    } else {
-      update.subscription_status = "expired";
-    }
-    // Matched by user_id (from subscription metadata), not subscription_id —
-    // Stripe doesn't guarantee delivery order, and matching by
-    // subscription_id would silently no-op if this event arrives before
-    // checkout.session.completed has stored it.
-    await db.from("professionals").update(update).eq("id", userId);
+    return syncSubscription(db, sub.id);
   }
 
   if (event.type === "invoice.payment_failed") {
     const invoice = event.data.object as Stripe.Invoice;
     const subRef = invoice.parent?.subscription_details?.subscription;
     const subId = typeof subRef === "string" ? subRef : subRef?.id ?? null;
-    if (subId) {
-      await db.from("professionals").update({
-        subscription_status: "expired",
-      }).eq("subscription_id", subId);
-    }
+    if (subId) return syncSubscription(db, subId);
   }
 
   return NextResponse.json({ ok: true });
+}
+
+type DesiredState =
+  | { kind: "skip" }
+  | { kind: "active"; userId: string; subId: string; periodEnd: string }
+  | { kind: "expired"; userId: string; subId: string };
+
+// Only active/trialing grant access. incomplete (checkout not paid),
+// incomplete_expired, canceled and unpaid never do. past_due is cut
+// immediately too: by the time a renewal fails, Stripe has already moved
+// current_period_end to the NEW period's end, so "keep access until period
+// end" would hand out a free month if the retries never succeed. A
+// successful retry flips it back to active, and access returns.
+function desiredState(sub: Stripe.Subscription): DesiredState {
+  const userId = sub.metadata?.user_id;
+  if (!userId) return { kind: "skip" };
+  if (sub.status === "active" || sub.status === "trialing") {
+    const periodEndTs = sub.items?.data?.[0]?.current_period_end;
+    // Never mark active without a real period end — isAccessAllowed() reads
+    // "active" + null current_period_end as unlimited access.
+    if (!periodEndTs) return { kind: "skip" };
+    return { kind: "active", userId, subId: sub.id, periodEnd: new Date(periodEndTs * 1000).toISOString() };
+  }
+  return { kind: "expired", userId, subId: sub.id };
+}
+
+function sameState(a: DesiredState, b: DesiredState): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+// Writes the subscription's CURRENT state as Stripe reports it, never the
+// event payload: Stripe doesn't guarantee delivery order, and a late event
+// (e.g. "created" arriving after a cancellation) carries a stale snapshot
+// that re-granted access until the old period end.
+//
+// Reading live state alone isn't enough under concurrency: two deliveries
+// can each read, then write in the opposite order, leaving the older
+// read's state on the row (either re-granting access after a cancellation,
+// or locking out a successful payment retry). So after writing, re-read,
+// and write again if Stripe moved on, until a read matches what was
+// written. The last write to the row is then always followed by its
+// handler reading that same state from Stripe, so once events stop
+// arriving, the row matches Stripe. No lock or version column needed.
+async function syncSubscription(db: ReturnType<typeof adminClient>, subId: string) {
+  let written: DesiredState | null = null;
+  for (let round = 0; round < 3; round++) {
+    let sub: Stripe.Subscription;
+    try {
+      sub = await stripe.subscriptions.retrieve(subId);
+    } catch (err) {
+      // Non-2xx so Stripe retries. Never fall back to the event payload.
+      console.error(`Stripe webhook: could not retrieve subscription ${subId}`, err);
+      return NextResponse.json({ error: "Could not fetch subscription" }, { status: 500 });
+    }
+
+    const desired = desiredState(sub);
+    if (desired.kind === "skip") return NextResponse.json({ ok: true });
+    if (written && sameState(written, desired)) return NextResponse.json({ ok: true });
+
+    if (desired.kind === "active") {
+      // Matched by user_id (from subscription metadata), not subscription_id:
+      // a resubscribe's event can arrive before its id is stored. A genuinely
+      // active subscription owns the row.
+      const { data, error } = await db.from("professionals").update({
+        subscription_provider: "stripe",
+        subscription_id: desired.subId,
+        subscription_status: "active",
+        current_period_end: desired.periodEnd,
+      }).eq("id", desired.userId).select("id");
+      if (error) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
+      if (!data?.length) {
+        // No professionals row for this user. Retrying can't create one, so
+        // don't make Stripe retry for days. Log it loudly instead.
+        console.error(`Stripe webhook: active subscription ${desired.subId} but no professionals row for ${desired.userId}`);
+        return NextResponse.json({ ok: true });
+      }
+    } else {
+      // A dead subscription may only expire the row if it's the one stored
+      // (or nothing is stored yet). Otherwise a late event for an old,
+      // cancelled subscription would expire the newer one the professional
+      // resubscribed with. Enforced in the UPDATE's own WHERE.
+      const { data, error } = await db.from("professionals").update({
+        subscription_provider: "stripe",
+        subscription_id: desired.subId,
+        subscription_status: "expired",
+      })
+        .eq("id", desired.userId)
+        .or(`subscription_id.is.null,subscription_id.eq.${desired.subId}`)
+        .select("id");
+      if (error) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
+      // 0 rows: the row belongs to a different (newer) subscription, or
+      // doesn't exist. Either way this subscription has nothing to change.
+      if (!data?.length) return NextResponse.json({ ok: true });
+    }
+    written = desired;
+  }
+  // Stripe kept changing across every round. Let Stripe retry later.
+  return NextResponse.json({ error: "Subscription state still changing" }, { status: 500 });
 }

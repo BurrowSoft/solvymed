@@ -609,8 +609,6 @@
     "feature3": "収益レポートと支払い追跡",
     "feature4": "自動予約リマインダー",
     "feature5": "受付スタッフのアクセス込み",
-    "payPix": "Pixで支払う",
-    "payPixSub": "Pixによる即時支払い",
     "payCard": "カードで購読",
     "payCardSub": "Visa、Mastercard、American Express",
     "or": "または",
@@ -626,7 +624,6 @@
     "errorWrongRole": "専門家のみが登録できます。",
     "errorCheckFailed": "サブスクリプションの状態を確認できませんでした。もう一度お試しください。",
     "errorGeneric": "決済を開始できませんでした。もう一度お試しください。",
-    "errorNetwork": "ネットワークエラーです。もう一度お試しください。",
-    "errorPaymentLinkFailed": "サブスクリプションは作成されましたが、支払いリンクを読み込めませんでした。メールをご確認いただくか、サポートにお問い合わせください。"
+    "errorNetwork": "ネットワークエラーです。もう一度お試しください。"
   }
 }

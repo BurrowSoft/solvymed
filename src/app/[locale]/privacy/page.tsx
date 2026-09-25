@@ -53,7 +53,7 @@ export default async function PrivacyPage({
 
             <h3>3.4 Payment information</h3>
             <p>
-              Subscription payments are processed by <strong>Stripe</strong> (global) and <strong>Asaas</strong> (Brazil).
+              Subscription payments are processed by <strong>Stripe</strong>.
               We do not store your full card number, CVV, or banking details. We only retain a payment provider
               reference ID and your subscription status.
             </p>
@@ -80,8 +80,7 @@ export default async function PrivacyPage({
             <p>We share data only with the following service providers, strictly to operate the platform:</p>
             <ul>
               <li><strong>Supabase</strong> — database, authentication, and file storage (servers in the US/EU).</li>
-              <li><strong>Stripe</strong> — payment processing for global subscriptions.</li>
-              <li><strong>Asaas</strong> — payment processing for Brazilian subscriptions (Pix / boleto).</li>
+              <li><strong>Stripe</strong> — payment processing for subscriptions.</li>
               <li><strong>Expo</strong> — push notification delivery service.</li>
             </ul>
             <p>

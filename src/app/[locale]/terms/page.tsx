@@ -68,7 +68,7 @@ export default async function TermsPage({
             <p>
               Access to professional features of SolvyMed requires an active paid subscription.
               Subscription fees are charged in advance on a monthly or annual basis, depending on
-              the plan selected. Payments are processed by Stripe (global) or Asaas (Brazil).
+              the plan selected. Payments are processed by Stripe.
             </p>
             <p>
               Subscriptions renew automatically unless cancelled before the next billing date.

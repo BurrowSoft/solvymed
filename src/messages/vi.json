@@ -609,8 +609,6 @@
     "feature3": "Báo cáo doanh thu và theo dõi thanh toán",
     "feature4": "Nhắc nhở lịch hẹn tự động",
     "feature5": "Quyền truy cập cho thư ký được tính gộp",
-    "payPix": "Thanh toán bằng Pix",
-    "payPixSub": "Thanh toán tức thì qua Pix",
     "payCard": "Đăng ký bằng thẻ",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "hoặc",
@@ -626,7 +624,6 @@
     "errorWrongRole": "Chỉ chuyên gia mới có thể đăng ký.",
     "errorCheckFailed": "Không thể xác minh trạng thái đăng ký của bạn. Vui lòng thử lại.",
     "errorGeneric": "Không thể bắt đầu thanh toán. Vui lòng thử lại.",
-    "errorNetwork": "Lỗi mạng. Vui lòng thử lại.",
-    "errorPaymentLinkFailed": "Gói đăng ký của bạn đã được tạo, nhưng chúng tôi không thể tải liên kết thanh toán. Vui lòng kiểm tra email hoặc liên hệ bộ phận hỗ trợ."
+    "errorNetwork": "Lỗi mạng. Vui lòng thử lại."
   }
 }

@@ -609,8 +609,6 @@
     "feature3": "Laporan pendapatan dan pelacakan pembayaran",
     "feature4": "Pengingat janji temu otomatis",
     "feature5": "Akses untuk sekretaris termasuk",
-    "payPix": "Bayar dengan Pix",
-    "payPixSub": "Pembayaran instan via Pix",
     "payCard": "Berlangganan dengan Kartu",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "atau",
@@ -626,7 +624,6 @@
     "errorWrongRole": "Hanya profesional yang dapat berlangganan.",
     "errorCheckFailed": "Tidak dapat memverifikasi status langganan Anda. Silakan coba lagi.",
     "errorGeneric": "Tidak dapat memulai checkout. Silakan coba lagi.",
-    "errorNetwork": "Kesalahan jaringan. Silakan coba lagi.",
-    "errorPaymentLinkFailed": "Langganan Anda telah dibuat, tetapi kami tidak dapat memuat tautan pembayaran. Silakan periksa email Anda atau hubungi dukungan."
+    "errorNetwork": "Kesalahan jaringan. Silakan coba lagi."
   }
 }
