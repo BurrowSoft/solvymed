@@ -57,9 +57,17 @@ export async function createAppointment(formData: FormData) {
   return { success: true };
 }
 
+// tentative/proposal/rejected are deliberately excluded — those are
+// workflow-only statuses owned by confirmBookingAndAddPatient,
+// rejectBooking, and proposeNewTime (booking-actions.ts), which also
+// handle confirm_and_link_patient / notifying the patient. This generic
+// action must never be able to set OR move an appointment out of one of
+// those states, or a booking request can be confirmed without linking the
+// patient (reported by mob dev: mobile hit the identical bug through its
+// own generic status control) or an ordinary appointment can be pushed
+// into a fake booking-request state with no real request behind it.
 const VALID_APPOINTMENT_STATUSES = [
-  "scheduled", "tentative", "proposal", "confirmed",
-  "completed", "cancelled", "rejected", "blocked", "late", "absent",
+  "scheduled", "confirmed", "completed", "cancelled", "blocked", "late", "absent",
 ];
 
 export async function updateAppointmentStatus(id: string, status: string) {
@@ -71,33 +79,24 @@ export async function updateAppointmentStatus(id: string, status: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
 
-  // A tentative/proposal booking request needs confirmBookingAndAddPatient,
-  // rejectBooking, or proposeNewTime (booking-actions.ts) — those own
-  // calling confirm_and_link_patient / notifying the patient, which this
-  // plain status write does not. Reported by mob dev: mobile hit the exact
-  // same bug via its own generic status control — a doctor confirming a
-  // request through the wrong control flipped status without linking the
-  // patient, leaving them stuck on "waiting for your doctor" with no
-  // notification either. AppointmentStatusSelect (ScheduleClient.tsx)
-  // renders for every non-blocked appointment, including tentative/proposal
-  // rows in the plain list view, so this path is reachable the same way.
-  const { data: current } = await supabase
-    .from("appointments")
-    .select("status")
-    .eq("id", id)
-    .eq("professional_id", user.id)
-    .maybeSingle();
-  if (current?.status === "tentative" || current?.status === "proposal") {
-    return { error: "Use the booking request card to confirm, reject, or propose a time for this request", code: "use_booking_card" };
-  }
-
-  const { error } = await supabase
+  // The tentative/proposal exclusion is enforced in the same atomic write
+  // as the update itself (not a separate read-then-write, which would be
+  // a TOCTOU race against a concurrent booking-card action) — a 0-row
+  // result means either no such appointment for this professional, or it
+  // was in a workflow-only status.
+  const { data, error } = await supabase
     .from("appointments")
     .update({ status })
     .eq("id", id)
-    .eq("professional_id", user.id);
+    .eq("professional_id", user.id)
+    .not("status", "in", '("tentative","proposal")')
+    .select("id");
 
   if (error) return { error: error.message, code: "generic" };
+  if (!data || data.length === 0) {
+    return { error: "Use the booking request card to confirm, reject, or propose a time for this request", code: "use_booking_card" };
+  }
+
   revalidatePath("/dashboard/schedule");
   return { success: true };
 }
