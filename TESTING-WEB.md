@@ -1896,6 +1896,15 @@ appointments were deleted. The shared doctor is unchanged: same
 
 **Merge gate: 🟢 for `cb6e257`.**
 
+**Addendum: 🟢 re-confirmed at `6ef6334`**, the merge with master after #9
+landed, which combines #9's copy-link `SettingsClient.tsx` with #10's
+`page.tsx`. The diff against master is only `page.tsx` plus one
+`settings.loadError` key per locale, and all 15 locales still have
+`copy`, `copyLink` and `loadError`. The shared doctor's Settings loads
+the real name and code `M2WBHY`, with both **Copy** and **Copy link**
+present (read-only, nothing saved). A forced select error (local edit,
+reverted) still shows the error banner with no forms.
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
