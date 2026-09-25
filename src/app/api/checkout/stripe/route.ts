@@ -59,11 +59,15 @@ export async function POST(request: NextRequest) {
   // no subscription, and the success page still shows the Subscribe
   // button, so a second checkout could charge twice. Ask Stripe directly:
   // any recently completed, paid checkout of this professional's whose
-  // subscription is live blocks a new one.
+  // subscription is live blocks a new one. Scoped by the checkout email,
+  // which createSession below pins to the account email, so this is per
+  // professional rather than a scan of every sale. The client_reference_id
+  // check still decides ownership.
   try {
     for await (const done of stripe.checkout.sessions.list({
       status: "complete",
       created: { gte: Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60 },
+      ...(user.email ? { customer_details: { email: user.email } } : {}),
       limit: 100,
     })) {
       if (done.client_reference_id !== user.id || done.payment_status !== "paid" || !done.subscription) continue;
@@ -135,7 +139,7 @@ export async function POST(request: NextRequest) {
   try {
     for (let attempt = 0; attempt < 5; attempt++) {
       const key = attempt === 0 ? idempotencyKey : `${idempotencyKey}-r${attempt}`;
-      const created = await createSession(key, user.id);
+      const created = await createSession(key, user.id, user.email);
       const current = await stripe.checkout.sessions.retrieve(created.id);
       if (current.status === "open" && current.url) {
         return NextResponse.json({ url: current.url });
@@ -148,7 +152,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Checkout failed", code: "checkout_failed" }, { status: 500 });
   }
 
-  function createSession(key: string, userId: string) {
+  function createSession(key: string, userId: string, email: string | undefined) {
     return stripe.checkout.sessions.create(
       {
         mode: "subscription",
@@ -176,6 +180,9 @@ export async function POST(request: NextRequest) {
         success_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?success=1`,
         cancel_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?cancelled=1`,
         client_reference_id: userId,
+        // Pinned (read-only in Checkout) so completed sessions can be looked
+        // up per professional by email in the already-subscribed guard.
+        ...(email ? { customer_email: email } : {}),
         expires_at: expiresAt,
       },
       { idempotencyKey: key },
