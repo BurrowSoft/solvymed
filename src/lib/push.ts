@@ -16,6 +16,15 @@ export async function sendExpoPush(tokens: string[], title: string, body: string
     });
     if (!res.ok) {
       console.error(`Expo push send failed: ${res.status} ${await res.text().catch(() => "")}`);
+      return;
+    }
+    // Expo returns 200 for the request itself even when individual tickets
+    // failed (e.g. DeviceNotRegistered) — those are only visible in the
+    // response body, not the HTTP status.
+    const json = await res.json().catch(() => null) as { data?: Array<{ status: string; message?: string; details?: unknown }> } | null;
+    const failedTickets = (json?.data ?? []).filter((t) => t.status === "error");
+    if (failedTickets.length) {
+      console.error("Expo push ticket errors", failedTickets);
     }
   } catch (err) {
     console.error("Expo push send threw", err);
