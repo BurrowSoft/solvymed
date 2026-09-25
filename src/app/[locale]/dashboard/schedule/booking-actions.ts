@@ -13,6 +13,7 @@ export async function getTentativeBookings() {
   if (!user) return [];
 
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return [];
 
   const { data } = await supabase
     .from("appointments")
@@ -89,6 +90,7 @@ export async function confirmBooking(appointmentId: string, note?: string) {
   if (!user) return { error: "Unauthorized" };
 
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   const { error } = await supabase
     .from("appointments")
@@ -111,6 +113,7 @@ export async function rejectBooking(appointmentId: string, note?: string) {
   if (!user) return { error: "Unauthorized" };
 
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   const { error } = await supabase
     .from("appointments")
@@ -141,6 +144,7 @@ export async function proposeNewTime(
   if (!user) return { error: "Unauthorized" };
 
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   const { error } = await supabase
     .from("appointments")
@@ -274,6 +278,7 @@ export async function acceptRescheduleRequest(appointmentId: string) {
   if (!user) return { error: "Unauthorized" };
 
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   // Atomic overlap check + update via SECURITY DEFINER RPC.
   // RPC returns notification fields so we never pre-fetch from the client
@@ -314,6 +319,7 @@ export async function declineRescheduleRequest(appointmentId: string) {
   if (!user) return { error: "Unauthorized" };
 
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   const { data: appt } = await supabase
     .from("appointments")
