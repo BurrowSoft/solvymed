@@ -10,6 +10,10 @@ import { IconBadge } from "@/components/IconBadge";
 
 type ProfessionalInfo = { name: string; specialty: string; clinicName?: string } | null;
 type PendingRequest = { id: string; date: string; start_time: string; status: string };
+type AppointmentRow = {
+  id: string; date: string; start_time: string; status: string;
+  proposed_date: string | null; proposed_start_time: string | null;
+};
 
 export default function PendingConfirmationPage() {
   const t = useTranslations("auth");
@@ -60,7 +64,7 @@ export default function PendingConfirmationPage() {
         supabase.rpc("get_professional_public_info", { p_professional_id: profId }).maybeSingle(),
         supabase
           .from("appointments")
-          .select("id, date, start_time, status")
+          .select("id, date, start_time, status, proposed_date, proposed_start_time")
           .eq("patient_auth_id", user.id)
           .eq("professional_id", profId)
           .in("status", ["tentative", "proposal"])
@@ -74,7 +78,15 @@ export default function PendingConfirmationPage() {
         specialty: profRow.specialty ?? "",
         clinicName: profRow.clinic_name ?? undefined,
       } : null);
-      setRequests((apptRows ?? []) as PendingRequest[]);
+      // For a proposal, the doctor's suggested new time lives in
+      // proposed_date/proposed_start_time — date/start_time still hold the
+      // patient's original request until it's accepted.
+      setRequests(((apptRows ?? []) as AppointmentRow[]).map((r) => ({
+        id: r.id,
+        status: r.status,
+        date: r.status === "proposal" && r.proposed_date ? r.proposed_date : r.date,
+        start_time: r.status === "proposal" && r.proposed_start_time ? r.proposed_start_time : r.start_time,
+      })));
       setLoading(false);
     }
     load();
