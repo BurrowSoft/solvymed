@@ -12,8 +12,10 @@ function computeEndTime(startTime: string, durationMinutes: number): string | nu
   const [h, m] = startTime.split(":").map(Number);
   if (!Number.isInteger(h) || !Number.isInteger(m) || h < 0 || h > 23 || m < 0 || m > 59) return null;
   const endTotal = h * 60 + m + durationMinutes;
-  if (endTotal > 24 * 60) return null;
-  return `${String(Math.floor(endTotal / 60) % 24).padStart(2, "0")}:${String(endTotal % 60).padStart(2, "0")}`;
+  // >= not > — exactly 24:00 wraps to "00:00", which is earlier than the
+  // same-day start_time and would break time ordering in slot/overlap math.
+  if (endTotal >= 24 * 60) return null;
+  return `${String(Math.floor(endTotal / 60)).padStart(2, "0")}:${String(endTotal % 60).padStart(2, "0")}`;
 }
 
 export async function createAppointment(formData: FormData) {
@@ -21,6 +23,7 @@ export async function createAppointment(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   const patientName = formData.get("patient_name") as string;
   const date = formData.get("date") as string;
@@ -92,6 +95,7 @@ export async function updateAppointmentStatus(id: string, status: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   // The tentative/proposal exclusion is enforced in the same atomic write
   // as the update itself (not a separate read-then-write, which would be
@@ -120,6 +124,7 @@ export async function deleteAppointment(id: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   const { error } = await supabase
     .from("appointments")
@@ -137,6 +142,7 @@ export async function blockTime(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
 
   const date = formData.get("date") as string;
   const startTime = formData.get("start_time") as string;
