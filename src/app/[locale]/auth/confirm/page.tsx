@@ -29,23 +29,29 @@ export default async function AuthConfirmPage({
   const { access_token, refresh_token } = data.session;
   const platform = data.user.user_metadata?.platform as string | undefined;
   const role = data.user.user_metadata?.role as string | undefined;
-  const joinProfId = data.user.user_metadata?.join_professional_id as string | undefined;
-  const joinRole = data.user.user_metadata?.join_role as string | undefined;
   const inviteCode = data.user.user_metadata?.invite_code as string | undefined;
 
   // Web signup: handle role setup, then redirect appropriately.
   // redirect() from next/navigation in a Server Component correctly carries the
   // session cookies that were set via the cookie store above.
   if (platform === "web") {
-    // If joining via invite link, complete the join flow on the /join page.
-    if (joinProfId) {
-      redirect(`/join/${joinProfId}?role=${joinRole ?? "patient"}`);
-    }
     if (role === "secretary") {
-      await supabase.from("user_roles").upsert(
-        { user_id: data.user.id, role: "secretary" },
-        { onConflict: "user_id" },
-      );
+      // user_metadata is client-writable — refuse to overwrite an existing
+      // role, same guard as api/auth/callback/route.ts and the patient
+      // branch below.
+      const { data: existingSecretaryRole, error: secretaryRoleLookupError } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", data.user.id)
+        .maybeSingle();
+      // A failed lookup must fail closed, not be treated as "no existing
+      // role" — same reasoning as api/auth/callback/route.ts.
+      if (!secretaryRoleLookupError && !existingSecretaryRole?.role) {
+        await supabase.from("user_roles").upsert(
+          { user_id: data.user.id, role: "secretary" },
+          { onConflict: "user_id" },
+        );
+      }
     }
     if (role === "patient") {
       // Refuse to touch an existing role — matches the guard on the

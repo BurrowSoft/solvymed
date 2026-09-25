@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isAccessAllowed, type EffectiveSub } from "@/lib/subscription";
 
 const ASAAS_BASE = "https://api.asaas.com/v3";
 const ASAAS_API_KEY = process.env.ASAAS_API_KEY!;
@@ -15,7 +16,8 @@ async function asaas(path: string, method: string, body?: unknown) {
     },
     body: body ? JSON.stringify(body) : undefined,
   });
-  return res.json();
+  const json = await res.json().catch(() => null);
+  return { ok: res.ok, data: json };
 }
 
 export async function POST(request: NextRequest) {
@@ -23,21 +25,81 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  // Same reasoning as the Stripe checkout route: only authentication was
+  // checked, not role — a patient or secretary could initiate a real
+  // charge under their own identity for a professionals-only feature.
+  const { data: roleRow, error: roleError } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (roleError) {
+    return NextResponse.json({ error: "Could not verify account role", code: "check_failed" }, { status: 503 });
+  }
+  if (roleRow?.role !== "professional") {
+    // Exact match — see the matching comment in the Stripe route for why
+    // "has a role and it isn't professional" wrongly let a role-less
+    // account through.
+    return NextResponse.json({ error: "Only professionals can subscribe", code: "wrong_role" }, { status: 403 });
+  }
+
+  // Same reasoning as the Stripe checkout route: this route is directly
+  // callable regardless of the /subscribe page's redirect-away logic, and
+  // previously created a brand new Asaas subscription unconditionally,
+  // even for a professional who already has an active one.
+  const { data: subRows, error: subError } = await supabase.rpc("get_effective_subscription", { p_user_id: user.id });
+  if (subError) {
+    // Fail closed — see the matching comment in the Stripe route.
+    return NextResponse.json({ error: "Could not verify subscription status", code: "check_failed" }, { status: 503 });
+  }
+  const effectiveSub = (subRows?.[0] ?? null) as EffectiveSub | null;
+  if (effectiveSub?.subscription_status === "active" && isAccessAllowed(effectiveSub)) {
+    return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
+  }
+
   const { name, email } = await request.json().catch(() => ({}));
 
   try {
     // 1. Create or retrieve customer
     const searchRes = await asaas(`/customers?email=${encodeURIComponent(user.email ?? email ?? "")}`, "GET");
+    if (!searchRes.ok) {
+      return NextResponse.json({ error: "Could not reach Asaas", code: "checkout_failed" }, { status: 503 });
+    }
     let customerId: string;
-    if (searchRes?.data?.length) {
-      customerId = searchRes.data[0].id;
+    if (searchRes.data?.data?.length) {
+      customerId = searchRes.data.data[0].id;
     } else {
-      const customer = await asaas("/customers", "POST", {
+      const customerRes = await asaas("/customers", "POST", {
         name: name ?? user.email,
         email: user.email ?? email,
         externalReference: user.id,
       });
-      customerId = customer.id;
+      if (!customerRes.ok || !customerRes.data?.id) {
+        return NextResponse.json({ error: "Could not create Asaas customer", code: "checkout_failed", detail: customerRes.data }, { status: 502 });
+      }
+      customerId = customerRes.data.id;
+    }
+
+    // 1b. Narrow (not eliminate — still a check-then-create race under true
+    // concurrency, but this is a real DB round-trip apart, unlike the two
+    // requests both reading the same Postgres row above) the window for a
+    // double-click or duplicate tab: bail if this customer already has an
+    // active/pending Asaas subscription rather than creating a second one.
+    // Fail closed on a non-2xx response instead of treating it as "no
+    // existing subscriptions" — the parsed body of an error response
+    // normally has no .data array, so this would otherwise silently
+    // proceed to create a second paid subscription on an Asaas outage.
+    // No status filter in the request — a subscription whose first PIX
+    // payment hasn't been paid yet is "PENDING", not "ACTIVE", and would
+    // otherwise be invisible to this check while still being a real,
+    // about-to-be-charged subscription.
+    const existingSubsRes = await asaas(`/subscriptions?customer=${customerId}`, "GET");
+    if (!existingSubsRes.ok) {
+      return NextResponse.json({ error: "Could not verify existing Asaas subscriptions", code: "check_failed" }, { status: 503 });
+    }
+    const existingSubs = (existingSubsRes.data?.data ?? []) as Array<{ status?: string }>;
+    if (existingSubs.some((s) => s.status === "ACTIVE" || s.status === "PENDING")) {
+      return NextResponse.json({ error: "Already subscribed", code: "already_subscribed" }, { status: 409 });
     }
 
     // 2. Create subscription (first charge is PIX, recurring is BOLETO or PIX)
@@ -45,7 +107,7 @@ export async function POST(request: NextRequest) {
     nextDue.setDate(nextDue.getDate() + 1);
     const nextDueDate = nextDue.toISOString().split("T")[0];
 
-    const sub = await asaas("/subscriptions", "POST", {
+    const subRes = await asaas("/subscriptions", "POST", {
       customer: customerId,
       billingType: "PIX",
       cycle: "MONTHLY",
@@ -55,18 +117,31 @@ export async function POST(request: NextRequest) {
       externalReference: user.id,
     });
 
-    if (!sub.id) {
-      return NextResponse.json({ error: "Asaas subscription creation failed", detail: sub }, { status: 500 });
+    if (!subRes.ok || !subRes.data?.id) {
+      return NextResponse.json({ error: "Asaas subscription creation failed", code: "checkout_failed", detail: subRes.data }, { status: 500 });
     }
+    const sub = subRes.data;
 
-    // 3. Fetch the first payment's PIX link
-    const payments = await asaas(`/subscriptions/${sub.id}/payments`, "GET");
-    const firstPayment = payments?.data?.[0];
+    // 3. Fetch the first payment's PIX link. The subscription already
+    // exists at this point (the customer will be charged) — a failure
+    // here is a distinct situation from checkout never starting, so it's
+    // reported with subscriptionId still present rather than as a plain
+    // failure, letting the client tell the two apart.
+    const paymentsRes = await asaas(`/subscriptions/${sub.id}/payments`, "GET");
+    if (!paymentsRes.ok) {
+      console.error(`Asaas subscription ${sub.id} created but payment lookup failed`, paymentsRes.data);
+      return NextResponse.json({
+        subscriptionId: sub.id,
+        error: "Subscription created, but we couldn't load the payment link. Please check your email or contact support.",
+        code: "payment_link_failed",
+      });
+    }
+    const firstPayment = paymentsRes.data?.data?.[0];
     const paymentUrl = firstPayment?.invoiceUrl ?? null;
 
     return NextResponse.json({ url: paymentUrl, subscriptionId: sub.id });
   } catch (err) {
     console.error("Asaas checkout error", err);
-    return NextResponse.json({ error: "Checkout failed" }, { status: 500 });
+    return NextResponse.json({ error: "Checkout failed", code: "checkout_failed" }, { status: 500 });
   }
 }

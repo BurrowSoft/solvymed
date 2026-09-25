@@ -179,7 +179,11 @@
     "accept": "수락",
     "decline": "거절",
     "slotTakenAlert": "해당 슬롯은 더 이상 사용할 수 없습니다. 거절하고 환자가 다른 시간을 선택하도록 하세요.",
-    "pastProposalAlert": "제안된 시간이 이미 지났습니다. 환자가 새 슬롯을 요청할 수 있도록 거절해 주세요."
+    "pastProposalAlert": "제안된 시간이 이미 지났습니다. 환자가 새 슬롯을 요청할 수 있도록 거절해 주세요.",
+    "useBookingCard": "이 요청을 수락, 거절하거나 새 시간을 제안하려면 예약 요청 카드를 사용하세요.",
+    "genericError": "문제가 발생했습니다. 다시 시도해 주세요.",
+    "missingFieldsError": "필수 항목을 모두 입력해 주세요.",
+    "pastMidnightError": "이 시간과 소요 시간은 자정을 넘깁니다."
   },
   "payments": {
     "thisWeek": "이번 주",
@@ -191,7 +195,9 @@
     "confirm": "확인",
     "cancel": "취소",
     "amountPlaceholder": "금액",
-    "revertConfirm": "이 결제를 미결제로 되돌리시겠습니까?"
+    "revertConfirm": "이 결제를 미결제로 되돌리시겠습니까?",
+    "errorInvalidAmount": "유효한 금액을 입력하세요.",
+    "errorGeneric": "문제가 발생했습니다. 다시 시도해 주세요."
   },
   "paymentsPage": {
     "title": "결제",
@@ -368,7 +374,8 @@
     "generateCode": "코드 생성",
     "regenerate": "재생성",
     "copy": "복사",
-    "copied": "복사됨!"
+    "copied": "복사됨!",
+    "copyLink": "링크 복사"
   },
   "clinics": {
     "title": "내 클리닉",
@@ -396,7 +403,9 @@
     "noMapPin": "지도 핀 없음 — 주소를 추가하여 지도에 표시하세요",
     "empty": "아직 클리닉이 없습니다",
     "emptySubtitle": "환자가 찾을 수 있도록 클리닉을 추가하세요",
-    "addFirst": "첫 번째 클리닉 추가"
+    "addFirst": "첫 번째 클리닉 추가",
+    "nameRequiredError": "클리닉 이름은 필수입니다.",
+    "genericError": "문제가 발생했습니다. 다시 시도해 주세요."
   },
   "consultType": {
     "consultation": "진료",
@@ -579,7 +588,11 @@
   "join": {
     "notFound": "초대 링크를 찾을 수 없습니다",
     "notFoundDesc": "이 링크는 유효하지 않거나 만료되었을 수 있습니다. 의사에게 새 링크를 공유해 달라고 요청하세요.",
-    "backToHome": "홈으로 이동"
+    "backToHome": "홈으로 이동",
+    "linkFailed": "이 링크를 완료할 수 없습니다",
+    "linkFailedDesc": "계정 연결 중 문제가 발생했습니다. 다시 시도하거나 지원팀에 문의하세요.",
+    "tooManyAttempts": "시도 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
+    "alreadyInvitedByAnother": "계정이 이미 다른 의사와 연결되어 있습니다."
   },
   "versionGate": {
     "title": "업데이트 필요",
@@ -607,6 +620,12 @@
     "trialBannerPrefix": "무료 체험:",
     "trialBannerDay": "일 남음",
     "trialBannerDays": "일 남음",
-    "trialBannerCta": "지금 구독"
+    "trialBannerCta": "지금 구독",
+    "errorAlreadySubscribed": "이미 구독 중입니다.",
+    "errorWrongRole": "전문가만 구독할 수 있습니다.",
+    "errorCheckFailed": "구독 상태를 확인할 수 없습니다. 다시 시도해 주세요.",
+    "errorGeneric": "결제를 시작할 수 없습니다. 다시 시도해 주세요.",
+    "errorNetwork": "네트워크 오류입니다. 다시 시도해 주세요.",
+    "errorPaymentLinkFailed": "구독이 생성되었지만 결제 링크를 불러올 수 없습니다. 이메일을 확인하거나 지원팀에 문의하세요."
   }
 }

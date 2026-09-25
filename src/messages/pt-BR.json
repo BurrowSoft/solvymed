@@ -179,7 +179,11 @@
     "accept": "Aceitar",
     "decline": "Recusar",
     "slotTakenAlert": "Esse horário não está mais disponível. Por favor, recuse e deixe o paciente escolher outro horário.",
-    "pastProposalAlert": "O horário proposto já passou. Por favor, recuse para que o paciente possa solicitar um novo horário."
+    "pastProposalAlert": "O horário proposto já passou. Por favor, recuse para que o paciente possa solicitar um novo horário.",
+    "useBookingCard": "Use o card de solicitação de agendamento para confirmar, rejeitar ou propor um horário.",
+    "genericError": "Algo deu errado. Tente novamente.",
+    "missingFieldsError": "Preencha todos os campos obrigatórios.",
+    "pastMidnightError": "Esse horário e duração ultrapassariam a meia-noite."
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -191,7 +195,9 @@
     "confirm": "Confirmar",
     "cancel": "Cancelar",
     "amountPlaceholder": "Valor R$",
-    "revertConfirm": "Reverter este pagamento para pendente?"
+    "revertConfirm": "Reverter este pagamento para pendente?",
+    "errorInvalidAmount": "Informe um valor válido.",
+    "errorGeneric": "Algo deu errado. Tente novamente."
   },
   "paymentsPage": {
     "title": "Pagamentos",
@@ -368,7 +374,8 @@
     "generateCode": "Gerar código",
     "regenerate": "Gerar novo",
     "copy": "Copiar",
-    "copied": "Copiado!"
+    "copied": "Copiado!",
+    "copyLink": "Copiar link"
   },
   "clinics": {
     "title": "Minhas Clínicas",
@@ -396,7 +403,9 @@
     "noMapPin": "Sem localização no mapa — adicione um endereço para aparecer no mapa",
     "empty": "Nenhuma clínica ainda",
     "emptySubtitle": "Adicione sua clínica para que os pacientes possam encontrá-lo",
-    "addFirst": "Adicionar sua primeira clínica"
+    "addFirst": "Adicionar sua primeira clínica",
+    "nameRequiredError": "O nome da clínica é obrigatório.",
+    "genericError": "Algo deu errado. Tente novamente."
   },
   "consultType": {
     "consultation": "Consulta",
@@ -579,7 +588,11 @@
   "join": {
     "notFound": "Link de convite não encontrado",
     "notFoundDesc": "Este link pode ser inválido ou ter expirado. Peça ao seu médico para compartilhar um novo.",
-    "backToHome": "Ir para o início"
+    "backToHome": "Ir para o início",
+    "linkFailed": "Não foi possível concluir este link",
+    "linkFailedDesc": "Algo deu errado ao vincular sua conta. Tente novamente ou entre em contato com o suporte.",
+    "tooManyAttempts": "Muitas tentativas. Aguarde um pouco antes de tentar novamente.",
+    "alreadyInvitedByAnother": "Sua conta já está conectada a outro médico."
   },
   "versionGate": {
     "title": "Atualização Necessária",
@@ -607,6 +620,12 @@
     "trialBannerPrefix": "Período de teste:",
     "trialBannerDay": "dia restante",
     "trialBannerDays": "dias restantes",
-    "trialBannerCta": "Assinar agora"
+    "trialBannerCta": "Assinar agora",
+    "errorAlreadySubscribed": "Você já está inscrito.",
+    "errorWrongRole": "Somente profissionais podem assinar.",
+    "errorCheckFailed": "Não foi possível verificar o status da sua assinatura. Tente novamente.",
+    "errorGeneric": "Não foi possível iniciar o checkout. Tente novamente.",
+    "errorNetwork": "Erro de rede. Tente novamente.",
+    "errorPaymentLinkFailed": "Sua assinatura foi criada, mas não conseguimos carregar o link de pagamento. Verifique seu e-mail ou entre em contato com o suporte."
   }
 }

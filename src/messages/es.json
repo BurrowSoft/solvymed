@@ -179,7 +179,11 @@
     "accept": "Aceptar",
     "decline": "Rechazar",
     "slotTakenAlert": "Ese horario ya no está disponible. Por favor, rechácelo y deje que el paciente elija otro horario.",
-    "pastProposalAlert": "El horario propuesto ya pasó. Por favor, rechácelo para que el paciente pueda solicitar uno nuevo."
+    "pastProposalAlert": "El horario propuesto ya pasó. Por favor, rechácelo para que el paciente pueda solicitar uno nuevo.",
+    "useBookingCard": "Usa la tarjeta de solicitud de cita para confirmar, rechazar o proponer un horario.",
+    "genericError": "Algo salió mal. Inténtalo de nuevo.",
+    "missingFieldsError": "Completa todos los campos obligatorios.",
+    "pastMidnightError": "Esta hora y duración pasarían de la medianoche."
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -191,7 +195,9 @@
     "confirm": "Confirmar",
     "cancel": "Cancelar",
     "amountPlaceholder": "Monto",
-    "revertConfirm": "¿Revertir este pago a pendiente?"
+    "revertConfirm": "¿Revertir este pago a pendiente?",
+    "errorInvalidAmount": "Introduce un importe válido.",
+    "errorGeneric": "Algo salió mal. Inténtalo de nuevo."
   },
   "paymentsPage": {
     "title": "Pagos",
@@ -368,7 +374,8 @@
     "generateCode": "Generar código",
     "regenerate": "Regenerar",
     "copy": "Copiar",
-    "copied": "¡Copiado!"
+    "copied": "¡Copiado!",
+    "copyLink": "Copiar enlace"
   },
   "clinics": {
     "title": "Mis Clínicas",
@@ -396,7 +403,9 @@
     "noMapPin": "Sin marcador en el mapa — agrega una dirección para aparecer en el mapa",
     "empty": "Aún no hay clínicas",
     "emptySubtitle": "Agrega tu clínica para que los pacientes puedan encontrarte",
-    "addFirst": "Agregar tu primera clínica"
+    "addFirst": "Agregar tu primera clínica",
+    "nameRequiredError": "El nombre de la clínica es obligatorio.",
+    "genericError": "Algo salió mal. Inténtalo de nuevo."
   },
   "consultType": {
     "consultation": "Consulta",
@@ -579,7 +588,11 @@
   "join": {
     "notFound": "Enlace de invitación no encontrado",
     "notFoundDesc": "Este enlace puede ser inválido o haber caducado. Pide a tu médico que comparta uno nuevo.",
-    "backToHome": "Ir al inicio"
+    "backToHome": "Ir al inicio",
+    "linkFailed": "No se pudo completar este enlace",
+    "linkFailedDesc": "Algo salió mal al vincular tu cuenta. Inténtalo de nuevo o contacta con soporte.",
+    "tooManyAttempts": "Demasiados intentos. Espera un momento antes de volver a intentarlo.",
+    "alreadyInvitedByAnother": "Tu cuenta ya está conectada con otro médico."
   },
   "versionGate": {
     "title": "Actualización requerida",
@@ -607,6 +620,12 @@
     "trialBannerPrefix": "Período de prueba:",
     "trialBannerDay": "día restante",
     "trialBannerDays": "días restantes",
-    "trialBannerCta": "Suscribirse ahora"
+    "trialBannerCta": "Suscribirse ahora",
+    "errorAlreadySubscribed": "Ya tienes una suscripción activa.",
+    "errorWrongRole": "Solo los profesionales pueden suscribirse.",
+    "errorCheckFailed": "No se pudo verificar tu estado de suscripción. Inténtalo de nuevo.",
+    "errorGeneric": "No se pudo iniciar el proceso de pago. Inténtalo de nuevo.",
+    "errorNetwork": "Error de red. Inténtalo de nuevo.",
+    "errorPaymentLinkFailed": "Tu suscripción se creó, pero no pudimos cargar el enlace de pago. Revisa tu correo o contacta con soporte."
   }
 }

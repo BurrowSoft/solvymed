@@ -179,7 +179,11 @@
     "accept": "接受",
     "decline": "拒绝",
     "slotTakenAlert": "该时间段已不可用。请拒绝并让患者选择其他时间。",
-    "pastProposalAlert": "提议的时间已过。请拒绝以便患者重新选择时间。"
+    "pastProposalAlert": "提议的时间已过。请拒绝以便患者重新选择时间。",
+    "useBookingCard": "请使用预约请求卡来确认、拒绝或为此请求提议新时间。",
+    "genericError": "出现问题，请重试。",
+    "missingFieldsError": "请填写所有必填字段。",
+    "pastMidnightError": "此时间和时长将超过午夜。"
   },
   "payments": {
     "thisWeek": "本周",
@@ -191,7 +195,9 @@
     "confirm": "确认",
     "cancel": "取消",
     "amountPlaceholder": "金额",
-    "revertConfirm": "将此付款恢复为待付款状态？"
+    "revertConfirm": "将此付款恢复为待付款状态？",
+    "errorInvalidAmount": "请输入有效金额。",
+    "errorGeneric": "出现问题，请重试。"
   },
   "paymentsPage": {
     "title": "付款",
@@ -368,7 +374,8 @@
     "generateCode": "生成邀请码",
     "regenerate": "重新生成",
     "copy": "复制",
-    "copied": "已复制！"
+    "copied": "已复制！",
+    "copyLink": "复制链接"
   },
   "clinics": {
     "title": "我的诊所",
@@ -396,7 +403,9 @@
     "noMapPin": "无地图标记 — 添加地址以在地图上显示",
     "empty": "暂无诊所",
     "emptySubtitle": "添加您的诊所以便患者找到您",
-    "addFirst": "添加您的第一家诊所"
+    "addFirst": "添加您的第一家诊所",
+    "nameRequiredError": "诊所名称为必填项。",
+    "genericError": "出现问题，请重试。"
   },
   "consultType": {
     "consultation": "门诊",
@@ -579,7 +588,11 @@
   "join": {
     "notFound": "找不到邀请链接",
     "notFoundDesc": "此链接可能无效或已过期。请联系您的医生分享新链接。",
-    "backToHome": "返回首页"
+    "backToHome": "返回首页",
+    "linkFailed": "无法完成此链接",
+    "linkFailedDesc": "关联您的账户时出现问题，请重试或联系支持团队。",
+    "tooManyAttempts": "尝试次数过多，请稍后再试。",
+    "alreadyInvitedByAnother": "您的账户已与另一位医生关联。"
   },
   "versionGate": {
     "title": "需要更新",
@@ -607,6 +620,12 @@
     "trialBannerPrefix": "免费试用：",
     "trialBannerDay": "天剩余",
     "trialBannerDays": "天剩余",
-    "trialBannerCta": "立即订阅"
+    "trialBannerCta": "立即订阅",
+    "errorAlreadySubscribed": "您已经订阅。",
+    "errorWrongRole": "只有专业人士才能订阅。",
+    "errorCheckFailed": "无法验证您的订阅状态，请重试。",
+    "errorGeneric": "无法启动结账流程，请重试。",
+    "errorNetwork": "网络错误，请重试。",
+    "errorPaymentLinkFailed": "您的订阅已创建，但我们无法加载支付链接。请查看您的邮箱或联系支持团队。"
   }
 }

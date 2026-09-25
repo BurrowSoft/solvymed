@@ -179,7 +179,11 @@
     "accept": "接受",
     "decline": "拒絕",
     "slotTakenAlert": "該時段已無法使用。請拒絕並讓患者選擇其他時間。",
-    "pastProposalAlert": "提議的時間已過。請拒絕以便患者重新選擇時間。"
+    "pastProposalAlert": "提議的時間已過。請拒絕以便患者重新選擇時間。",
+    "useBookingCard": "請使用預約請求卡來確認、拒絕或為此請求提議新時間。",
+    "genericError": "發生問題，請重試。",
+    "missingFieldsError": "請填寫所有必填欄位。",
+    "pastMidnightError": "此時間和時長將超過午夜。"
   },
   "payments": {
     "thisWeek": "本週",
@@ -191,7 +195,9 @@
     "confirm": "確認",
     "cancel": "取消",
     "amountPlaceholder": "金額",
-    "revertConfirm": "將此付款恢復為待付款狀態？"
+    "revertConfirm": "將此付款恢復為待付款狀態？",
+    "errorInvalidAmount": "請輸入有效金額。",
+    "errorGeneric": "發生問題，請重試。"
   },
   "paymentsPage": {
     "title": "付款",
@@ -368,7 +374,8 @@
     "generateCode": "產生邀請碼",
     "regenerate": "重新產生",
     "copy": "複製",
-    "copied": "已複製！"
+    "copied": "已複製！",
+    "copyLink": "複製連結"
   },
   "clinics": {
     "title": "我的診所",
@@ -396,7 +403,9 @@
     "noMapPin": "無地圖標記 — 新增地址以在地圖上顯示",
     "empty": "暫無診所",
     "emptySubtitle": "新增您的診所以便患者找到您",
-    "addFirst": "新增您的第一家診所"
+    "addFirst": "新增您的第一家診所",
+    "nameRequiredError": "診所名稱為必填項目。",
+    "genericError": "發生問題，請重試。"
   },
   "consultType": {
     "consultation": "門診",
@@ -579,7 +588,11 @@
   "join": {
     "notFound": "找不到邀請連結",
     "notFoundDesc": "此連結可能無效或已過期。請聯繫您的醫生分享新的連結。",
-    "backToHome": "返回首頁"
+    "backToHome": "返回首頁",
+    "linkFailed": "無法完成此連結",
+    "linkFailedDesc": "關聯您的帳戶時發生問題，請重試或聯絡支援團隊。",
+    "tooManyAttempts": "嘗試次數過多，請稍後再試。",
+    "alreadyInvitedByAnother": "您的帳戶已與另一位醫生關聯。"
   },
   "versionGate": {
     "title": "需要更新",
@@ -607,6 +620,12 @@
     "trialBannerPrefix": "免費試用：",
     "trialBannerDay": "天剩餘",
     "trialBannerDays": "天剩餘",
-    "trialBannerCta": "立即訂閱"
+    "trialBannerCta": "立即訂閱",
+    "errorAlreadySubscribed": "您已經訂閱。",
+    "errorWrongRole": "只有專業人士才能訂閱。",
+    "errorCheckFailed": "無法驗證您的訂閱狀態，請重試。",
+    "errorGeneric": "無法啟動結帳流程，請重試。",
+    "errorNetwork": "網路錯誤，請重試。",
+    "errorPaymentLinkFailed": "您的訂閱已建立，但我們無法載入付款連結。請查看您的電子郵件或聯絡支援團隊。"
   }
 }

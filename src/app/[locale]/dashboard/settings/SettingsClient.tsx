@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition, useState, useRef } from "react";
+import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient, generatePublicInviteCode } from "./actions";
 
@@ -90,9 +91,12 @@ export function ProfileForm({ fullName, specialty }: { fullName: string; special
 /* ─── Invite code card ──────────────────────────────────────────── */
 export function InviteCodeCard({ code: initialCode }: { code?: string }) {
   const t = useTranslations("settings");
+  const { locale } = useParams<{ locale: string }>();
+  const prefix = locale === "en" ? "" : `/${locale}`;
   const [code, setCode] = useState(initialCode ?? null);
   const [pending, start] = useTransition();
   const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const [error, setError] = useState("");
 
   function handleGenerate() {
@@ -112,6 +116,14 @@ export function InviteCodeCard({ code: initialCode }: { code?: string }) {
     }).catch(() => {});
   }
 
+  function handleCopyLink() {
+    if (!code) return;
+    navigator.clipboard.writeText(`${window.location.origin}${prefix}/join/${code}`).then(() => {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    }).catch(() => {});
+  }
+
   return (
     <Card title={t("inviteCodeTitle")} description={t("inviteCodeSub")}>
       {code ? (
@@ -125,6 +137,13 @@ export function InviteCodeCard({ code: initialCode }: { code?: string }) {
             className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
           >
             {copied ? t("copied") : t("copy")}
+          </button>
+          <button
+            type="button"
+            onClick={handleCopyLink}
+            className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+          >
+            {linkCopied ? t("copied") : t("copyLink")}
           </button>
           <button
             type="button"

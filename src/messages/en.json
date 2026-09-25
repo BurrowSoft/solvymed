@@ -132,6 +132,10 @@
     "saveAppt": "Save Appointment",
     "saving": "Saving…",
     "deleteConfirm": "Delete this appointment?",
+    "useBookingCard": "Use the booking request card to confirm, reject, or propose a time for this request",
+    "genericError": "Something went wrong. Please try again.",
+    "missingFieldsError": "Please fill in all required fields.",
+    "pastMidnightError": "This time and duration would run past midnight.",
     "onlineBadge": "Online",
     "paidLabel": "✓ Paid",
     "pendingLabel": "⏳ Pending",
@@ -191,7 +195,9 @@
     "confirm": "Confirm",
     "cancel": "Cancel",
     "amountPlaceholder": "Amount R$",
-    "revertConfirm": "Revert this payment to pending?"
+    "revertConfirm": "Revert this payment to pending?",
+    "errorInvalidAmount": "Please enter a valid amount.",
+    "errorGeneric": "Something went wrong. Please try again."
   },
   "paymentsPage": {
     "title": "Payments",
@@ -368,7 +374,8 @@
     "noBlockedPatients": "No patients are currently blocked",
     "unblock": "Unblock",
     "pageTitle": "Settings",
-    "pageSubtitle": "Manage your profile, clinic, hours, and procedures"
+    "pageSubtitle": "Manage your profile, clinic, hours, and procedures",
+    "copyLink": "Copy link"
   },
   "clinics": {
     "title": "My Clinics",
@@ -396,7 +403,9 @@
     "noMapPin": "No map pin — add an address to appear on the map",
     "empty": "No clinics yet",
     "emptySubtitle": "Add your clinic so patients can find you",
-    "addFirst": "Add your first clinic"
+    "addFirst": "Add your first clinic",
+    "nameRequiredError": "Clinic name is required.",
+    "genericError": "Something went wrong. Please try again."
   },
   "consultType": {
     "consultation": "Consultation",
@@ -579,7 +588,11 @@
   "join": {
     "notFound": "Invite link not found",
     "notFoundDesc": "This link may be invalid or has expired. Ask your doctor to share a new one.",
-    "backToHome": "Go to home"
+    "linkFailed": "Couldn't complete this link",
+    "linkFailedDesc": "Something went wrong linking your account. Please try again or contact support.",
+    "backToHome": "Go to home",
+    "tooManyAttempts": "Too many attempts. Please wait a while before trying again.",
+    "alreadyInvitedByAnother": "Your account is already connected to a different doctor."
   },
   "versionGate": {
     "title": "Update Required",
@@ -601,6 +614,12 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "or",
     "cancelAnytime": "Cancel anytime. No commitments.",
+    "errorAlreadySubscribed": "You're already subscribed.",
+    "errorWrongRole": "Only professionals can subscribe.",
+    "errorCheckFailed": "Could not verify your subscription status. Please try again.",
+    "errorGeneric": "Could not initiate checkout. Please try again.",
+    "errorNetwork": "Network error. Please try again.",
+    "errorPaymentLinkFailed": "Your subscription was created, but we couldn't load the payment link. Please check your email or contact support.",
     "successMessage": "Subscription activated! Welcome to SolvyMed Pro.",
     "trialDaysLeft": "You have {n} days left in your free trial.",
     "trialExpired": "Your free trial has ended. Subscribe to continue.",

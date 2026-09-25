@@ -69,19 +69,31 @@ export async function GET(request: NextRequest) {
     const meta = sessionUser.user_metadata ?? {};
     const role = meta.role as string | undefined;
     const inviteCode = meta.invite_code as string | undefined;
-    const joinProfId = meta.join_professional_id as string | undefined;
-    const joinRole = meta.join_role as string | undefined;
 
-    if (joinProfId) {
-      // Signed up via a doctor's direct join link — the /join page does the
-      // actual role/link setup itself, same as the mobile-facing confirm flow.
-      redirectUrl = new URL(`${localePrefix}/join/${joinProfId}?role=${joinRole ?? "patient"}`, origin);
-
-    } else if (role === "secretary") {
-      await supabase.from("user_roles").upsert(
-        { user_id: sessionUser.id, role: "secretary" },
-        { onConflict: "user_id" },
-      );
+    if (role === "secretary") {
+      // user_metadata is client-writable (supabase.auth.updateUser()) — an
+      // existing patient or professional could set role="secretary" on
+      // their own account, then trigger this callback again via any
+      // legitimate magic-link/OTP flow for their own email, silently
+      // overwriting their real role. Refuse to touch an existing role,
+      // same guard the patient branch already has below.
+      const { data: existingRole, error: roleLookupError } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", sessionUser.id)
+        .maybeSingle();
+      // A failed lookup must never be treated the same as "no existing
+      // role" — that would reopen exactly the escalation path this guard
+      // exists to close. Fail closed: skip the upsert on any error.
+      if (!roleLookupError && !existingRole?.role) {
+        await supabase.from("user_roles").upsert(
+          { user_id: sessionUser.id, role: "secretary" },
+          { onConflict: "user_id" },
+        );
+      }
+      // dashboard/layout.tsx re-derives the correct destination from the
+      // persisted role either way, so this is safe even when the upsert
+      // above was skipped for an account that already has a different role.
       redirectUrl = new URL("/dashboard", origin);
 
     } else if (role === "patient") {
@@ -141,12 +153,28 @@ export async function GET(request: NextRequest) {
       }
 
     } else {
-      // professional (default)
-      await supabase.from("user_roles").upsert(
-        { user_id: sessionUser.id, role: "professional" },
-        { onConflict: "user_id" },
-      );
-      redirectUrl = new URL("/auth/professional-welcome", origin);
+      // professional (default) — same guard as the secretary branch above:
+      // this is the fallback for any role value that isn't exactly
+      // "secretary" or "patient" (including missing/malformed metadata),
+      // so it's the easiest of the three to trigger by accident, not just
+      // by deliberate tampering.
+      const { data: existingRole, error: roleLookupError } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", sessionUser.id)
+        .maybeSingle();
+      if (roleLookupError) {
+        // Fail closed — same reasoning as the secretary branch above.
+        redirectUrl = new URL("/dashboard", origin);
+      } else if (!existingRole?.role) {
+        await supabase.from("user_roles").upsert(
+          { user_id: sessionUser.id, role: "professional" },
+          { onConflict: "user_id" },
+        );
+        redirectUrl = new URL("/auth/professional-welcome", origin);
+      } else {
+        redirectUrl = new URL("/dashboard", origin);
+      }
     }
   } else {
     // Auth failed — send to login so the user has a clear path forward

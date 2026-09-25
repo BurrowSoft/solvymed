@@ -19,20 +19,19 @@ export default function SignupPage() {
   const searchParams = useSearchParams();
   const locale = (params.locale as string) ?? "en";
 
-  const joinProfId = searchParams.get("join") ?? "";
-  const urlRole = searchParams.get("role") as Role | null;
-  const isJoinFlow = !!joinProfId;
+  // /join/[code] redirects unauthenticated visitors here with the doctor's
+  // public invite code — treated exactly like a manually-typed code (same
+  // metadata field, same linking RPCs downstream), just pre-filled and with
+  // the role locked to patient instead of picked.
+  const joinCode = (searchParams.get("join") ?? "").toUpperCase();
+  const isJoinFlow = !!joinCode;
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<Role>(
-    urlRole === "patient" || urlRole === "secretary" || urlRole === "professional"
-      ? urlRole
-      : "professional",
-  );
-  const [inviteCode, setInviteCode] = useState("");
+  const [role, setRole] = useState<Role>(isJoinFlow ? "patient" : "professional");
+  const [inviteCode, setInviteCode] = useState(joinCode);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,7 +48,7 @@ export default function SignupPage() {
       return;
     }
 
-    if (role === "patient" && !joinProfId && !inviteCode.trim()) {
+    if (role === "patient" && !inviteCode.trim()) {
       setError(t("signup.inviteCodeRequired"));
       return;
     }
@@ -64,9 +63,7 @@ export default function SignupPage() {
           full_name: fullName,
           role,
           platform: "web",
-          ...(joinProfId
-            ? { join_professional_id: joinProfId, join_role: role }
-            : role === "patient" && inviteCode.trim()
+          ...(role === "patient" && inviteCode.trim()
             ? { invite_code: inviteCode.toUpperCase().trim() }
             : {}),
         },
@@ -127,7 +124,7 @@ export default function SignupPage() {
         {/* Role picker — hidden when joining via invite link */}
         {isJoinFlow ? (
           <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4 text-sm text-teal-700">
-            {t("signup.joiningAs", { role })}
+            {t("signup.joiningAs", { role: "patient" })}
           </div>
         ) : (
         <div className="mb-6">
