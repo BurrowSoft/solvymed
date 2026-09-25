@@ -33,7 +33,8 @@ is in the table below.
 | ↳ round 8 (privilege-escalation fix: removed client-controlled secretary self-heal) | same PR, commit `bfbb71d` | typecheck + `e2e/01-03` (regression, clean 3/3 after a `.next` corruption blip) + doctor self-heal regression + code review of the deleted branch | 🟢 **GREEN — recommend this as the merge commit instead of round 7** — see "PR #7 round 8" below | 2026-09-25 |
 | ↳ round 9 (consistency fix: guard original confirm flows against role overwrite) | same PR, commit `7e3ea04` | code review only (narrow, same pattern as an already-proven guard) | 🟢 GREEN — see "PR #7 round 9" below | 2026-09-25 |
 | ↳ round 10 (root-page redirect ordering fix: persisted role before metadata) | same PR, commit `00f4914` | typecheck + `e2e/01-03` (regression, clean 3/3) + real metadata-tampering reproduction of the exact bug precondition | 🟢 GREEN — see "PR #7 round 10" below | 2026-09-25 |
-| ↳ round 11 (invite-linking rebuild on mob dev's new RPC/confirmation model) | same PR, commits `3d1ee98`..`1daad5a` (rebuild `0104398` + eligibility/error-propagation fix `1daad5a`) | typecheck + `e2e/01-03` (regression, clean 3/3) + live test of the one reachable new guard (professional at `/my-appointments` → `/dashboard`) + full code review of the 3-state routing rebuild across 6 entry points | 🟡 **GREEN for what's testable now — new linking RPCs themselves still blocked on mob dev's migrations deploying** — see "PR #7 round 11" below | 2026-09-25 |
+| ↳ round 11 (invite-linking rebuild on mob dev's new RPC/confirmation model) | same PR, commits `3d1ee98`..`1daad5a` (rebuild `0104398` + eligibility/error-propagation fix `1daad5a`) | typecheck + `e2e/01-03` (regression, clean 3/3) + live test of the one reachable new guard (professional at `/my-appointments` → `/dashboard`) + full code review of the 3-state routing rebuild across 6 entry points | 🟡 GREEN for what's testable then — see "PR #7 round 11" below | 2026-09-25 |
+| ↳ round 12 (migrations 060-071 now live: closed role-less-professional self-heal gap, locale-prefix fix) | same PR, commit `f713a70` | typecheck + `e2e/01-03` (regression, clean 3/3) + doctor login regression + live RPC probing confirming `link_patient_by_invite_code`/`link_by_professional_public_code` are genuinely deployed + code review of the self-heal removal and invite-required hardening | 🟡 **GREEN for what's testable — full end-to-end linking flow still not exercisable from the web app alone, see round 12 below for why** | 2026-09-25 |
 
 ## Talking to the other agents
 
@@ -1231,6 +1232,89 @@ restart the dev server after every pull, don't just trust
 Everything reviewable right now is sound; the round isn't closeable until
 mob dev's migrations deploy and I can run the actual linking flows. Not
 recommending a merge commit for PR #7 as a whole until that pass happens.
+
+## PR #7 round 12 (`f713a70`) — migrations live, self-heal gap closed, 🟡 GREEN for what's testable
+
+Mob dev's migrations 060-071 are now live in prod. Verified this directly
+rather than trusting it secondhand: called `link_patient_by_invite_code`
+and `link_by_professional_public_code` via REST with deliberately invalid
+codes — both responded correctly (`false` / `invalid_public_code`
+respectively) instead of the `PGRST202` I'd gotten every time before this
+round. Real deployment, not a schema-cache fluke.
+
+**`f713a70`'s two fixes, both code-reviewed, high confidence:**
+- **Locale-prefix fix** in `auth/confirm/page.tsx`: the patient-flow
+  redirects (`/my-appointments`, `/auth/pending-confirmation`,
+  `/dashboard`, `/auth/invite-required`, `/auth/patient-welcome`) were all
+  missing the `${prefix}` every other redirect in this PR already uses for
+  non-English locales — a non-English patient completing signup would've
+  landed on the English-URL version of the page instead of their own
+  locale. Straightforward, mechanical, matches the existing pattern
+  exactly.
+- **Removed `dashboard/layout.tsx`'s professional self-heal entirely** (the
+  one I verified as sound back in round 3/4). Reason: the
+  professionals-table check it relied on turned out to be an unsound
+  signal — legacy pre-071 accounts can have a `professionals` row
+  regardless of their actual role, so a patient with client-writable
+  `user_metadata.role` set to `"professional"` could in principle satisfy
+  that check too, if they also happened to have a stray professionals row,
+  and self-provision a persisted professional role via the upsert. There's
+  no way to distinguish "a real professional whose `user_roles` row is
+  missing" from that case with the current data model, so a role-less
+  account now always falls through to `/auth/login`, full stop — a
+  legitimate professional in that state needs a real data fix, not an
+  app-layer guess. `invite-required/page.tsx` got the same hardening in
+  parallel (added a `professionals`-table cross-check alongside the
+  existing `user_roles.role` check, rejecting role-less-but-has-a-
+  professionals-row accounts too) — this one really is defense-in-depth,
+  since the doc comment is explicit that the actual boundary lives
+  server-side in the linking RPCs now.
+- This doesn't create a regression for the existing doctor test account: it
+  already has a persisted `user_roles` row (written back in round 3, before
+  `DELETE` on `user_roles` was confirmed blocked), so it never re-enters
+  the removed code path at all — confirmed with a live login regression
+  test, clean.
+
+**What I could and couldn't test given migrations are live:**
+
+The good news — the two linking RPCs respond correctly and the routing
+logic around them is sound by inspection. The bad news — I still can't
+exercise the actual "patient enters a code and gets linked" flow
+end-to-end, for two separate reasons, neither of which is new this round:
+
+1. **No fresh, role-less test account.** Creating one needs either a real
+   signup completed through email confirmation (I have no inbox to read
+   a confirmation link from) or an admin-created pre-confirmed account
+   (needs `SUPABASE_SERVICE_ROLE_KEY`, which has been malformed all PR —
+   checked again this round, still not a valid JWT). This is the same
+   long-standing gap, independent of mob dev's migrations — migrations
+   deploying doesn't unblock it.
+2. **No web UI to get or use a doctor's side of either code type**, as far
+   as I can find. Grepped the whole `dashboard/` tree: `patients/[id]` has
+   an `invite_code` field in its type definition but it's never rendered
+   anywhere in the JSX — a doctor has no way to see or share a patient
+   record's invite code from the web app. There's also no "public code"
+   display anywhere, and `confirm_and_link_patient` (the doctor-confirms-a-
+   pending-patient RPC) has zero call sites in this repo — only mentioned
+   in comments. Probed it directly too: it exists, but with a different
+   parameter (`p_appointment_id`, per the RPC's own error hint) than what
+   the comments describe (`p_patient_auth_id`) — worth double-checking
+   with mob dev, since if the web app were ever meant to call this
+   directly, the assumed signature is wrong. **Asked web dev directly:
+   is the doctor-side of this (generating/sharing a code, confirming a
+   pending patient) mobile-only / out of scope for this web PR, or a
+   missing piece?** That answer determines whether "full end-to-end from
+   the web app alone" is even a coherent goal for this PR.
+
+**Also live-tested:** `npm run typecheck` clean; `e2e/01-03` + doctor login
+regression, all clean 4/4 on a fresh server (restarted after the pull,
+per the round 11 lesson — no `.next` corruption this time).
+
+**Merge gate: code review clear for `f713a70`'s own changes, but PR #7 as
+a whole still isn't closeable** — same reason as round 11, now with a
+sharper picture of exactly what's missing for a true end-to-end pass.
+Waiting on web dev's answer to the scope question above before deciding
+what "full" testing even means here.
 
 ## iOS — open question
 
