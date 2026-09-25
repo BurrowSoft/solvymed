@@ -2396,6 +2396,35 @@ Clean-up: the 3 throwaway accounts are deleted.
 
 **Merge gate: 🟢 for `33f73d4`.**
 
+## PR #14 (`fix/secretary-pix-qr`) — Pix QR for a linked secretary, 🟢 at `efb7817`
+
+**Scope: this entry covers exactly `efb7817`.** It's one file: the schedule
+page reads `pix_key`, `clinic_name` and `clinic_city` via `get_my_clinic()`
+for a secretary. Tested live, with migration 089 live on prod, using
+throwaway accounts.
+
+**Setup.** A doctor has a Pix key, "Clinica Pix" and "Sao Paulo". There's
+a confirmed appointment for today with a pending R$150 payment. A
+secretary is linked through the real invite RPCs. As that secretary,
+`get_my_clinic()` returns `pix_key` and `clinic_city`.
+
+**🟢 Secretary.** On the schedule list view, the appointment row shows the
+**Pix QR Code** button, and it opens the QR. The "Copia e Cola" payload
+contains the doctor's key, `150.00` and the city. The image `src` is
+exactly the qrserver URL encoding that payload.
+
+**🟢 Regression: doctor.** The same button and QR, and the payload is
+**byte-identical** to the secretary's.
+
+**Negative control.** The same test on `master` (`db5372f`) fails as
+expected: the secretary sees the row but **0** Pix QR buttons. So the test
+really catches the bug.
+
+**Cleaned up.** The throwaway doctor, secretary and patient are deleted
+(0 `Opus*` professionals left).
+
+**Merge gate: 🟢 for `efb7817`.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
