@@ -1622,6 +1622,90 @@ records), the "open patient" link (`bbabeb1`, above), friendly errors for
 logged-out RPC probes + subscription self-grant now denied, and
 new-booking pushes actually reaching a doctor device.
 
+## Opus review — PR #8, migration-live pass (2026-09-25)
+
+Mob dev's migrations 073-081 landed on prod (behavioral suite passing,
+security advisors 0 anon-callable functions, was 29). This is the real
+end-to-end pass on everything that was blocked all PR — genuine fresh
+accounts, real invite codes, real linking. Tested in the same isolated
+worktree, PR #8 tip through `a25a15a` at the time, then re-checked three
+more small fixes that landed during this pass (`db2eac5`, `8253481`,
+`3616e04` — all reviewed by code inspection only, straightforward and
+low-risk: a perf short-circuit for closed schedule days, hiding the
+invite-code card from secretaries since `generatePublicInviteCode` has no
+delegated-professional concept, and a locale-prefix fix on the restored
+"View full profile" link).
+
+**🟢 Subscription self-grant — now denied.** Re-ran the exact PATCH that
+succeeded earlier this PR (`subscription_status: "active"` + far-future
+`current_period_end` as the doctor's own JWT): now `400`, `"subscription
+fields can only be changed by the billing system"`. Real fix, real
+server-side enforcement, not just an RLS tweak — confirmed with a clean,
+intentional error message rather than a generic RLS denial.
+
+**🟢 Anon RPC probes — all denied.** Called
+`link_patient_by_invite_code`, `link_by_professional_public_code`,
+`confirm_and_link_patient`, `get_known_patients`, `get_clinic_push_tokens`,
+and `get_professional_public_info` with the anon key only (no user JWT):
+every one now `401 permission denied for function ...`. Matches mob dev's
+"0 anon-callable functions" claim, confirmed directly rather than taken
+on faith.
+
+**🟢 Invite-code generation UI — both places work.** Live-tested via real
+Playwright interaction, not the service-key bypass this PR relied on
+until now: doctor's Settings page generates their own
+`public_invite_code`, verified the displayed code matches what's actually
+persisted via REST; separately, a patient detail page generates that
+patient's `invite_code`, same verification. This closes the gap flagged
+in the Phase 1 section above — codes can now genuinely be created by a
+web-only doctor.
+
+**🟢 Direct-confirm linking loop — real, no duplicates.** Full live
+sequence: patient signs up with the doctor's real (UI-generated) public
+code → lands pending → requests an appointment via the CTA → doctor opens
+the request on `/dashboard/schedule` and clicks Confirm directly →
+verified via REST that `linked_patient_id` is now set on the patient's
+`user_roles` row and that exactly one `patients` table record exists for
+them (not zero, not two) — confirms `confirm_and_link_patient` (the
+`9c388a0` rewrite) does what it claims, including the duplicate-record
+fix that rewrite specifically called out.
+
+**🔴 Found: a pending patient has no way to accept a doctor's proposed
+time.** This is the "propose → accept" branch mob dev specifically asked
+about, and it doesn't work. Reproduced live: same setup as the confirm
+loop above, but the doctor clicks "Propose new time" instead of
+"Confirm" — that part works fine, the request correctly flips to
+`proposal` status and `pending-confirmation`'s request list correctly
+shows the new date/time. But there is no way forward from there:
+`acceptProposal` (the actual accept action) only exists in
+`MyAppointmentsClient.tsx`, and `/my-appointments` redirects a
+still-pending patient straight back to `/auth/pending-confirmation` —
+correct behavior for the general case, but it makes the one page with an
+accept button unreachable for exactly the patient who'd need it here.
+`pending-confirmation`'s own request list is read-only, no action
+attached. Reported to web dev with two possible fixes (give
+pending-confirmation its own accept/decline actions, or carve out an
+exception in the my-appointments redirect for an actionable proposal) —
+their call which fits the architecture better. Not tested further pending
+a fix; the direct-confirm branch above is unaffected by this and remains
+solid.
+
+**Not yet covered from mob dev's full checklist:** friendly error
+messages for `too_many_attempts`/`already_invited_by_another_professional`
+(would need to actually trigger rate-limiting or a conflicting invite,
+not yet attempted), the "open patient" link on a returning patient's
+request (code-reviewed only via `bbabeb1`/`3616e04`, not live-clicked),
+the deletion-request form's public-only-accepts-`pending` restriction,
+and new-booking pushes actually reaching a doctor device (needs
+registered push tokens, more mobile-testing territory).
+
+**Cleaned up:** all `e2e-test-opus-*` accounts and patient records,
+including several stale booking-request appointments that accumulated
+from failed test-iteration attempts (bad selectors, not app bugs) before
+the confirm-loop test was made robust — doctor account's
+`public_invite_code` reset to null, `subscription_status` untouched this
+round (never mutated, only probed and correctly rejected).
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
