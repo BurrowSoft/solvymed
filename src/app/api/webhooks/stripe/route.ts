@@ -141,24 +141,33 @@ async function syncSubscription(db: ReturnType<typeof adminClient>, subId: strin
       // (or nothing is stored yet). Otherwise a late event for an old,
       // cancelled subscription would expire the newer one the professional
       // resubscribed with. Enforced in the UPDATE's own WHERE.
-      let expire = db.from("professionals").update({
+      // First record which Stripe subscription the row tracks, even when its
+      // status must not change (trial rule below): the checkout guard reads
+      // this id to refuse a second checkout while a pending one exists.
+      const { data: owned, error: idError } = await db.from("professionals").update({
         subscription_provider: "stripe",
         subscription_id: desired.subId,
-        subscription_status: "expired",
       })
         .eq("id", desired.userId)
-        .or(`subscription_id.is.null,subscription_id.eq.${desired.subId}`);
-      // A subscription that was never active must not end a running trial:
+        .or(`subscription_id.is.null,subscription_id.eq.${desired.subId}`)
+        .select("id");
+      if (idError) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
+      // 0 rows: the row belongs to a different (newer) subscription, or
+      // doesn't exist. Either way this subscription has nothing to change.
+      if (!owned?.length) return NextResponse.json({ ok: true });
+
+      // Then the status, pinned to this subscription id so a concurrent
+      // resubscribe that changed the row in between isn't expired. A
+      // subscription that was never active must not end a running trial:
       // the professional keeps the trial until its original trial_ends_at
       // (no extra days, so nothing to abuse). Only a subscription that was
       // once active expires the row when it dies.
+      let expire = db.from("professionals").update({ subscription_status: "expired" })
+        .eq("id", desired.userId)
+        .eq("subscription_id", desired.subId);
       if (desired.neverActive) expire = expire.neq("subscription_status", "trial");
-      const { data, error } = await expire.select("id");
-      if (error) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
-      // 0 rows: the row belongs to a different (newer) subscription, is a
-      // trial protected by the rule above, or doesn't exist. Either way this
-      // subscription has nothing to change.
-      if (!data?.length) return NextResponse.json({ ok: true });
+      const { error: statusError } = await expire;
+      if (statusError) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
     }
     written = desired;
   }
