@@ -85,6 +85,17 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
         const hit = Array.isArray(data) ? (data as PatientMatch[])[0] : undefined;
         if (hit) existing = { id: hit.id, full_name: hit.full_name };
       }
+      // An email collision (e.g. two creates racing past the pre-check
+      // above): look the patient up by the same normalized email.
+      if (!existing && email) {
+        const { data } = await supabase
+          .from("patients")
+          .select("id, full_name")
+          .eq("professional_id", effectiveProfId)
+          .ilike("email", email)
+          .limit(1);
+        if (data?.length) existing = data[0] as { id: string; full_name: string };
+      }
       return { error: "Already registered", code: "already_registered", existing };
     }
     return { error: error.message, code: "generic" };
