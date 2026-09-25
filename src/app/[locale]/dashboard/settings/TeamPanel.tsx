@@ -192,6 +192,7 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t("teamEmailPlaceholder")}
+          aria-label={t("teamEmailPlaceholder")}
           disabled={full || pending}
           className="w-full flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-100 disabled:opacity-60"
         />
