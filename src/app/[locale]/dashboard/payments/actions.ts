@@ -3,7 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
+function isValidAmount(amount: number): boolean {
+  return Number.isFinite(amount) && amount >= 0 && amount <= 1_000_000;
+}
+
 export async function markPaid(id: string, amount?: number) {
+  if (amount !== undefined && !isValidAmount(amount)) return { error: "Invalid amount" };
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
@@ -39,6 +45,8 @@ export async function markUnpaid(id: string) {
 }
 
 export async function setPaymentAmount(id: string, amount: number) {
+  if (!isValidAmount(amount)) return { error: "Invalid amount" };
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
