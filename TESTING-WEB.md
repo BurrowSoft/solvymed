@@ -1747,6 +1747,96 @@ link beyond a code review, and push notifications) are still genuinely
 untested, not confirmed-fine — flagging that distinction rather than
 calling this fully green across the board.
 
+## Opus review — PR #9 (`review/phase1-service-routes`), through `3791e50`
+
+Phase 1 of the whole-app review: every web API route and server action
+using service-role/privileged writes, focused on auth, validation, and
+idempotency. Independent of PR #8 (built off master directly). 27 commits
+across security, payments (Stripe/Asaas), schedule validation, clinics,
+and i18n. Tested in an isolated worktree, same pattern as PR #8 (avoids
+the `.next` corruption from concurrent git activity in a shared
+checkout — confirmed again this round, now a settled team practice).
+
+**🟢 Checkout role-guard, live-tested.** Logged in as the patient test
+account, called `POST /api/checkout/stripe` and `POST
+/api/checkout/asaas` directly (`page.request`, real session cookies —
+these are real Route Handlers, unlike Server Actions, so directly
+callable). Both return `403` with `code: "wrong_role"`, before any
+Stripe/Asaas API call. Matches `123cfb3`'s fix exactly.
+
+**🟢 Already-subscribed guard, live-tested.** Set the doctor test
+account's `subscription_status` to `"active"` with a far-future
+`current_period_end` via the service key, called `/api/checkout/stripe`
+as that account: `409`, `code: "already_subscribed"`. Restored the
+account immediately after. Matches `3be1b6b`'s fix.
+
+**🟢 Join-page role-overwrite guard, live-tested (after a real bug found
+mid-pass).** Logged in as the doctor, visited `/join/<own-id>` with no
+`?role=` param (defaults to `"patient"` — the exact case `783fe9c`
+describes: a professional visiting any join link with no special params
+would previously be silently converted into a patient). Redirected
+cleanly to `/dashboard`; confirmed via REST that `role` is still
+`"professional"` and `linked_patient_id` is still null.
+
+This didn't work on the first attempt — found a genuine, pre-existing
+bug blocking it: the professional-existence lookup at the top of
+`join/[professionalId]/page.tsx` used
+`.eq("user_id", professionalId)`, but `professionals` has no `user_id`
+column (confirmed via direct REST: `42703 column professionals.user_id
+does not exist`) — only `id`. Every visit to any `/join/{id}` link
+showed "Invite link not found" regardless of whether the professional
+was real, meaning none of PR #9's carefully-added role guards in this
+file were reachable in practice. Not introduced by this PR — none of its
+27 commits touch that line — reported to web dev, fixed same-session in
+`3791e50` (`.eq("id", professionalId)`, matching every other
+professionals-table query in the codebase). Re-tested after the fix:
+confirmed working as above.
+
+**🟢 Appointment-status validation, code-reviewed, high confidence.**
+Read `actions.ts`'s `updateAppointmentStatus` and
+`VALID_APPOINTMENT_STATUSES` (`79daffd`/`0259e95`) directly: the
+tentative/proposal/rejected exclusion is enforced in the update's own
+`.not("status", "in", '("tentative","proposal")')` WHERE clause — a
+single atomic statement, not a separate read-then-write, correctly
+closing the TOCTOU race the second commit specifically called out. The
+client-side guard (`ScheduleClient.tsx`'s `AppointmentStatusSelect`)
+renders a static badge instead of the interactive dropdown for exactly
+those two statuses — read the component directly, matches the commit
+description exactly, no drift. Not separately live-tested (the code is
+simple and unambiguous enough that a click-through would only confirm
+what's already clear from reading it), but I'd flag this at high
+confidence rather than "untested."
+
+**Code-reviewed only, not live-tested — Stripe/Asaas webhook internals
+(`6b73d8e`, `a6c4d2`, `532b64b`, `d0b36eb`).** Deliberately did not
+attempt to simulate real Stripe/Asaas webhook payloads — too risky
+without a confirmed-test-mode key and proper signing, and this repo's
+`STRIPE_SECRET_KEY` didn't match either the `sk_test_`/`sk_live_`
+prefix pattern on inspection, so I couldn't rule out it being closer to
+live than test. Reviewed the logic directly instead: the
+`current_period_end`-nulling fix (only `subscription.updated` writes it
+now, `checkout.session.completed` no longer touches `subscription_status`
+at all) is a clean split with the stated invariant (`"active"` never set
+without a real period-end in the same write) enforced by construction,
+not just convention. The Checkout Session `subscription_data.metadata`
+gap (Stripe's real, well-known gotcha — Session metadata isn't copied to
+the Subscription object) is a legitimate, correctly-diagnosed fix. The
+Asaas PENDING-status fix (`d0b36eb`) is small and clearly correct. All
+of this is exactly the kind of fix that needs either a real Stripe CLI
+webhook-trigger session against a test-mode key, or mob dev's DB-level
+behavioral suite, to verify for real — flagging it as reviewed, not
+verified, rather than claiming more than I checked.
+
+**Not yet covered:** the clinic-insert-rollback fix (`1096fa1`/`44e803`),
+i18n error-message localization (`e6d5785`/`3d2d2bc`), and the remaining
+smaller role-lookup-error-fails-closed guards (`68a3f3b`/`96cee1f`) — all
+reviewed briefly by reading the diffs, all straightforward and
+low-risk, but not independently exercised.
+
+**Cleaned up:** doctor test account's `subscription_status`/
+`current_period_end`/`public_invite_code` all confirmed back to their
+clean baseline (`trial`/`null`/`null`) via REST.
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
