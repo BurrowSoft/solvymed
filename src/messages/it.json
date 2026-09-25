@@ -516,6 +516,14 @@
       "notPendingPatient": "Questo account non è stato creato come registrazione paziente, quindi qui non è possibile associare un codice invito.",
       "linkFailed": "Si è verificato un errore durante il collegamento del tuo account. Riprova.",
       "backToSignup": "Usa un altro account"
+    },
+    "pendingConfirmation": {
+      "loading": "Verifica dello stato…",
+      "heading": "In attesa del tuo medico",
+      "body": "Sei collegato, ma il tuo medico deve ancora confermare il tuo account prima che tu possa prenotare.",
+      "bodyWithDoctor": "Sei collegato a {name}, che deve ancora confermare il tuo account prima che tu possa prenotare.",
+      "checking": "Verifica in corso…",
+      "checkAgain": "Verifica di nuovo"
     }
   },
   "myAppointments": {

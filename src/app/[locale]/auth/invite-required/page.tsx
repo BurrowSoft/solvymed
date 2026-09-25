@@ -62,36 +62,31 @@ export default function InviteRequiredPage() {
       return;
     }
 
-    const { data: patientData } = await supabase.rpc("patient_by_invite_code", { code });
-    if (patientData?.length) {
-      // ignoreDuplicates: a concurrent request (double-click, second tab)
-      // that already created this row wins rather than being silently
-      // overwritten — this request just confirms the outcome instead.
-      const { error: upsertError } = await supabase.from("user_roles").upsert(
-        { user_id: user.id, role: "patient", linked_patient_id: patientData[0].patient_id },
-        { onConflict: "user_id", ignoreDuplicates: true },
-      );
+    // Two distinct code types, tried in sequence: a patient invite code
+    // (tied to a specific pre-existing patient record — link is immediate,
+    // the RPC creates patient_connections server-side) or a doctor's public
+    // code (sets invited_by_professional_id, pending until the doctor
+    // confirms via confirm_and_link_patient). Both RPCs own the user_roles
+    // write themselves now — atomic, no client-side race to handle.
+    const { data: fullyLinked, error: linkError } = await supabase.rpc("link_patient_by_invite_code", { p_code: code });
+    if (linkError) {
       setLoading(false);
-      if (upsertError) {
-        setError(t("inviteRequired.linkFailed"));
-        return;
-      }
+      setError(t("inviteRequired.linkFailed"));
+      return;
+    }
+    if (fullyLinked) {
       router.push(`${prefix}/auth/patient-welcome`);
       return;
     }
 
-    const { data: profData } = await supabase.rpc("professional_by_invite_code", { code });
-    if (profData?.length) {
-      const { error: upsertError } = await supabase.from("user_roles").upsert(
-        { user_id: user.id, role: "patient", invited_by_professional_id: profData[0].professional_id },
-        { onConflict: "user_id", ignoreDuplicates: true },
-      );
+    const { data: profId, error: profLinkError } = await supabase.rpc("link_by_professional_public_code", { p_public_code: code });
+    if (profLinkError) {
       setLoading(false);
-      if (upsertError) {
-        setError(t("inviteRequired.linkFailed"));
-        return;
-      }
-      router.push(`${prefix}/auth/patient-welcome`);
+      setError(t("inviteRequired.linkFailed"));
+      return;
+    }
+    if (profId) {
+      router.push(`${prefix}/auth/pending-confirmation`);
       return;
     }
 

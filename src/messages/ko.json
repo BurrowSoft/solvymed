@@ -516,6 +516,14 @@
       "notPendingPatient": "이 계정은 환자로 가입되지 않았으므로 여기서 초대 코드를 연결할 수 없습니다.",
       "linkFailed": "계정 연결 중 오류가 발생했습니다. 다시 시도해 주세요.",
       "backToSignup": "다른 계정 사용"
+    },
+    "pendingConfirmation": {
+      "loading": "상태 확인 중…",
+      "heading": "의사 확인 대기 중",
+      "body": "연결은 완료되었지만, 예약하려면 의사가 계정을 확인해야 합니다.",
+      "bodyWithDoctor": "{name}와 연결되었지만, 예약하려면 의사가 계정을 확인해야 합니다.",
+      "checking": "확인 중…",
+      "checkAgain": "다시 확인"
     }
   },
   "myAppointments": {

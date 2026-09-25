@@ -516,6 +516,14 @@
       "notPendingPatient": "This account wasn't created as a patient signup, so an invite code can't be attached here.",
       "linkFailed": "Something went wrong linking your account. Please try again.",
       "backToSignup": "Use a different account"
+    },
+    "pendingConfirmation": {
+      "loading": "Checking your status…",
+      "heading": "Waiting for your doctor",
+      "body": "You're linked, but your doctor still needs to confirm your account before you can book.",
+      "bodyWithDoctor": "You're linked to {name}, who still needs to confirm your account before you can book.",
+      "checking": "Checking…",
+      "checkAgain": "Check again"
     }
   },
   "myAppointments": {

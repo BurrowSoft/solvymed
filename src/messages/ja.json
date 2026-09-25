@@ -516,6 +516,14 @@
       "notPendingPatient": "このアカウントは患者としての登録ではないため、ここで招待コードを連携することはできません。",
       "linkFailed": "アカウントの連携中にエラーが発生しました。もう一度お試しください。",
       "backToSignup": "別のアカウントを使う"
+    },
+    "pendingConfirmation": {
+      "loading": "状況を確認しています…",
+      "heading": "医師の確認を待っています",
+      "body": "連携は完了していますが、予約する前に医師によるアカウントの確認が必要です。",
+      "bodyWithDoctor": "{name}と連携していますが、予約する前に医師によるアカウントの確認が必要です。",
+      "checking": "確認中…",
+      "checkAgain": "再確認する"
     }
   },
   "myAppointments": {

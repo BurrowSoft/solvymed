@@ -516,6 +516,14 @@
       "notPendingPatient": "Tài khoản này không được tạo dưới dạng đăng ký bệnh nhân, nên không thể liên kết mã mời tại đây.",
       "linkFailed": "Đã xảy ra lỗi khi liên kết tài khoản của bạn. Vui lòng thử lại.",
       "backToSignup": "Dùng tài khoản khác"
+    },
+    "pendingConfirmation": {
+      "loading": "Đang kiểm tra trạng thái của bạn…",
+      "heading": "Đang chờ bác sĩ của bạn",
+      "body": "Bạn đã được liên kết, nhưng bác sĩ của bạn vẫn cần xác nhận tài khoản trước khi bạn có thể đặt lịch.",
+      "bodyWithDoctor": "Bạn đã được liên kết với {name}, người vẫn cần xác nhận tài khoản của bạn trước khi bạn có thể đặt lịch.",
+      "checking": "Đang kiểm tra…",
+      "checkAgain": "Kiểm tra lại"
     }
   },
   "myAppointments": {

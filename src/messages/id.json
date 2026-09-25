@@ -516,6 +516,14 @@
       "notPendingPatient": "Akun ini tidak dibuat sebagai pendaftaran pasien, jadi kode undangan tidak dapat ditautkan di sini.",
       "linkFailed": "Terjadi kesalahan saat menautkan akun Anda. Silakan coba lagi.",
       "backToSignup": "Gunakan akun lain"
+    },
+    "pendingConfirmation": {
+      "loading": "Memeriksa status Anda…",
+      "heading": "Menunggu dokter Anda",
+      "body": "Anda sudah tertaut, tetapi dokter Anda masih perlu mengonfirmasi akun Anda sebelum Anda dapat membuat janji temu.",
+      "bodyWithDoctor": "Anda tertaut dengan {name}, yang masih perlu mengonfirmasi akun Anda sebelum Anda dapat membuat janji temu.",
+      "checking": "Memeriksa…",
+      "checkAgain": "Periksa lagi"
     }
   },
   "myAppointments": {

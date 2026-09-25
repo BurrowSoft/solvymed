@@ -36,10 +36,17 @@ export default async function DashboardLayout({
   // (e.g. mid-signup, invite not yet resolved) can't fall through to it.
   let { data: roleRow } = await supabase
     .from("user_roles")
-    .select("role")
+    .select("role, invited_by_professional_id, linked_patient_id")
     .eq("user_id", user!.id)
     .maybeSingle();
 
+  if (roleRow?.role === "patient" && roleRow.linked_patient_id) {
+    redirect(`/${locale === "en" ? "" : locale + "/"}my-appointments`);
+  }
+  if (roleRow?.role === "patient" && roleRow.invited_by_professional_id) {
+    // Linked to a doctor's "orbit" but not yet confirmed.
+    redirect(`/${locale === "en" ? "" : locale + "/"}auth/pending-confirmation`);
+  }
   if (roleRow?.role === "patient") {
     redirect(`/${locale === "en" ? "" : locale + "/"}my-appointments`);
   }
@@ -69,7 +76,7 @@ export default async function DashboardLayout({
         { user_id: user!.id, role: "professional" },
         { onConflict: "user_id" },
       );
-      roleRow = { role: "professional" };
+      roleRow = { role: "professional", invited_by_professional_id: null, linked_patient_id: null };
     } else {
       redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
     }

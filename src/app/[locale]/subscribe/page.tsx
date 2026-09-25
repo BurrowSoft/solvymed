@@ -21,10 +21,16 @@ export default async function SubscribePage({
 
   const { data: roleRow } = await supabase
     .from("user_roles")
-    .select("role")
+    .select("role, invited_by_professional_id, linked_patient_id")
     .eq("user_id", user.id)
     .maybeSingle();
 
+  if (roleRow?.role === "patient" && roleRow.linked_patient_id) {
+    redirect(`/${locale === "en" ? "" : locale + "/"}my-appointments`);
+  }
+  if (roleRow?.role === "patient" && roleRow.invited_by_professional_id) {
+    redirect(`/${locale === "en" ? "" : locale + "/"}auth/pending-confirmation`);
+  }
   if (roleRow?.role === "patient") redirect(`/${locale === "en" ? "" : locale + "/"}my-appointments`);
   if (!roleRow?.role && user.user_metadata?.role === "patient") {
     // Pending patient (invite code never resolved) — don't let them into the

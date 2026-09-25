@@ -66,9 +66,15 @@ export default async function HomePage() {
     // (a pending patient whose invite never resolved).
     const { data: roleRow } = await supabase
       .from("user_roles")
-      .select("role")
+      .select("role, invited_by_professional_id, linked_patient_id")
       .eq("user_id", user.id)
       .maybeSingle();
+    if (roleRow?.role === "patient" && roleRow.linked_patient_id) {
+      redirect("/my-appointments");
+    }
+    if (roleRow?.role === "patient" && roleRow.invited_by_professional_id) {
+      redirect("/auth/pending-confirmation");
+    }
     if (roleRow?.role === "patient") {
       redirect("/my-appointments");
     }

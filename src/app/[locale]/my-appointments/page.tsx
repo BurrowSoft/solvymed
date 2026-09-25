@@ -34,6 +34,11 @@ export default async function MyAppointmentsPage() {
     // send to the retry form instead of rendering an empty appointments page.
     redirect("/auth/invite-required");
   }
+  if (userRoleData?.role === "patient" && userRoleData.invited_by_professional_id && !userRoleData.linked_patient_id) {
+    // Linked to a doctor's "orbit" but not yet confirmed — no
+    // patient_connections yet, so there's nothing to book or show here.
+    redirect("/auth/pending-confirmation");
+  }
   if (userRoleData?.role && userRoleData.role !== "patient") {
     // Professional/secretary landed here directly — this page is patient-only.
     redirect("/dashboard");

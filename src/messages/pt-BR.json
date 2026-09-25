@@ -516,6 +516,14 @@
       "notPendingPatient": "Esta conta não foi criada como um cadastro de paciente, então um código de convite não pode ser vinculado aqui.",
       "linkFailed": "Ocorreu um erro ao vincular sua conta. Tente novamente.",
       "backToSignup": "Usar outra conta"
+    },
+    "pendingConfirmation": {
+      "loading": "Verificando seu status…",
+      "heading": "Aguardando seu médico",
+      "body": "Você está vinculado, mas seu médico ainda precisa confirmar sua conta antes que você possa agendar.",
+      "bodyWithDoctor": "Você está vinculado a {name}, que ainda precisa confirmar sua conta antes que você possa agendar.",
+      "checking": "Verificando…",
+      "checkAgain": "Verificar novamente"
     }
   },
   "myAppointments": {

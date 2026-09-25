@@ -516,6 +516,14 @@
       "notPendingPatient": "Dieses Konto wurde nicht als Patientenregistrierung erstellt, daher kann hier kein Einladungscode zugeordnet werden.",
       "linkFailed": "Beim Verknüpfen Ihres Kontos ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
       "backToSignup": "Anderes Konto verwenden"
+    },
+    "pendingConfirmation": {
+      "loading": "Status wird geprüft…",
+      "heading": "Warten auf Ihren Arzt",
+      "body": "Sie sind verknüpft, aber Ihr Arzt muss Ihr Konto noch bestätigen, bevor Sie buchen können.",
+      "bodyWithDoctor": "Sie sind mit {name} verknüpft, der/die Ihr Konto noch bestätigen muss, bevor Sie buchen können.",
+      "checking": "Wird geprüft…",
+      "checkAgain": "Erneut prüfen"
     }
   },
   "myAppointments": {

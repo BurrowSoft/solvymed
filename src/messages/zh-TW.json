@@ -516,6 +516,14 @@
       "notPendingPatient": "該帳戶並非以患者身分註冊，因此無法在此關聯邀請碼。",
       "linkFailed": "關聯您的帳戶時發生錯誤，請重試。",
       "backToSignup": "使用其他帳戶"
+    },
+    "pendingConfirmation": {
+      "loading": "正在檢查您的狀態…",
+      "heading": "正在等待醫生確認",
+      "body": "您已關聯，但醫生仍需確認您的帳戶後才能預約。",
+      "bodyWithDoctor": "您已關聯至{name}，對方仍需確認您的帳戶後才能預約。",
+      "checking": "正在檢查…",
+      "checkAgain": "重新檢查"
     }
   },
   "myAppointments": {

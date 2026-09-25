@@ -75,54 +75,49 @@ export async function GET(request: NextRequest) {
 
     } else if (role === "patient") {
       // Refuse to touch an existing role — matches the guard on the
-      // invite-required retry form. An onConflict upsert below would
-      // otherwise silently overwrite an existing professional/secretary/
-      // already-linked-patient row if this handler ever ran for such an
-      // account.
+      // invite-required retry form. The linking RPCs below own writing
+      // user_roles now (see link_patient_by_invite_code /
+      // link_by_professional_public_code), so this only reads.
       const { data: existingRole } = await supabase
         .from("user_roles")
-        .select("role")
+        .select("role, invited_by_professional_id, linked_patient_id")
         .eq("user_id", sessionUser.id)
         .maybeSingle();
 
-      if (existingRole?.role) {
-        redirectUrl = existingRole.role === "patient"
-          ? new URL("/my-appointments", origin)
-          : new URL("/dashboard", origin);
+      if (existingRole?.role === "patient" && existingRole.linked_patient_id) {
+        redirectUrl = new URL("/my-appointments", origin);
+      } else if (existingRole?.role === "patient" && existingRole.invited_by_professional_id) {
+        // Linked to a doctor's "orbit" but not yet confirmed — patient_connections
+        // doesn't exist until the doctor calls confirm_and_link_patient.
+        redirectUrl = new URL("/auth/pending-confirmation", origin);
+      } else if (existingRole?.role) {
+        redirectUrl = new URL("/dashboard", origin);
+      } else if (inviteCode) {
+        // Two distinct code types, tried in sequence: a patient invite code
+        // (tied to a specific pre-existing patient record — link is
+        // immediate, patient_connections created server-side) or a doctor's
+        // public code (sets invited_by_professional_id, pending until the
+        // doctor confirms).
+        const { data: fullyLinked } = await supabase.rpc("link_patient_by_invite_code", { p_code: inviteCode });
+        if (fullyLinked) {
+          redirectUrl = new URL("/auth/patient-welcome", origin);
+        } else {
+          const { data: profId } = await supabase.rpc("link_by_professional_public_code", { p_public_code: inviteCode });
+          redirectUrl = profId
+            ? new URL("/auth/pending-confirmation", origin)
+            : new URL("/auth/invite-required", origin);
+        }
       } else {
         // An invite code is required for patients — without one there's no
         // doctor to link them to, so they don't get a patient role at all
         // (see /auth/invite-required, which explains why and sends them
-        // back to sign up with a code).
-        let linked = false;
-        if (inviteCode) {
-          const { data: patientData } = await supabase.rpc("patient_by_invite_code", { code: inviteCode });
-          if (patientData?.length) {
-            const { error: upsertError } = await supabase.from("user_roles").upsert(
-              { user_id: sessionUser.id, role: "patient", linked_patient_id: patientData[0].patient_id },
-              { onConflict: "user_id" },
-            );
-            linked = !upsertError;
-          } else {
-            const { data: profData } = await supabase.rpc("professional_by_invite_code", { code: inviteCode });
-            if (profData?.length) {
-              const { error: upsertError } = await supabase.from("user_roles").upsert(
-                { user_id: sessionUser.id, role: "patient", invited_by_professional_id: profData[0].professional_id },
-                { onConflict: "user_id" },
-              );
-              linked = !upsertError;
-            }
-          }
-        }
-        redirectUrl = linked
-          ? new URL("/auth/patient-welcome", origin)
-          : new URL("/auth/invite-required", origin);
-        // No valid invite doesn't sign the session out — the account
-        // already exists (can't re-signup with the same email), so
-        // /auth/invite-required keeps them signed in and offers a retry
-        // form to attach a valid code. dashboard/layout.tsx's allowlist
-        // guard is what actually keeps a role-less session out of the
-        // professional dashboard.
+        // back to sign up with a code). No valid invite doesn't sign the
+        // session out — the account already exists (can't re-signup with
+        // the same email), so /auth/invite-required keeps them signed in
+        // and offers a retry form to attach a valid code.
+        // dashboard/layout.tsx's allowlist guard is what actually keeps a
+        // role-less session out of the professional dashboard.
+        redirectUrl = new URL("/auth/invite-required", origin);
       }
 
     } else {

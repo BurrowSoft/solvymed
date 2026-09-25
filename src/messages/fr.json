@@ -516,6 +516,14 @@
       "notPendingPatient": "Ce compte n'a pas été créé comme une inscription patient, un code d'invitation ne peut donc pas y être associé.",
       "linkFailed": "Une erreur s'est produite lors de la liaison de votre compte. Veuillez réessayer.",
       "backToSignup": "Utiliser un autre compte"
+    },
+    "pendingConfirmation": {
+      "loading": "Vérification de votre statut…",
+      "heading": "En attente de votre médecin",
+      "body": "Vous êtes lié, mais votre médecin doit encore confirmer votre compte avant que vous puissiez réserver.",
+      "bodyWithDoctor": "Vous êtes lié à {name}, qui doit encore confirmer votre compte avant que vous puissiez réserver.",
+      "checking": "Vérification…",
+      "checkAgain": "Vérifier à nouveau"
     }
   },
   "myAppointments": {
