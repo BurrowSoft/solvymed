@@ -41,7 +41,7 @@ function SaveRow({ pending, saved }: { pending: boolean; saved: boolean }) {
   );
 }
 
-function Card({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
+export function Card({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
       <div className="mb-5">
@@ -100,10 +100,14 @@ export function InviteCodeCard({ code: initialCode }: { code?: string }) {
   const [error, setError] = useState("");
 
   function handleGenerate() {
+    // Regenerating replaces the code the doctor (or a secretary) has
+    // already handed out, so confirm first. The very first code needs no
+    // confirmation.
+    if (code && !window.confirm(t("regenerateConfirm"))) return;
     setError("");
     start(async () => {
       const result = await generatePublicInviteCode();
-      if (result.error) { setError(result.error); return; }
+      if (result.error) { setError(t("regenerateError")); return; }
       if (result.code) setCode(result.code);
     });
   }
