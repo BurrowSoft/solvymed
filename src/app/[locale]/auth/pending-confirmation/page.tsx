@@ -8,6 +8,19 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { IconBadge } from "@/components/IconBadge";
 
+function formatDate(dateStr: string) {
+  return new Date(dateStr + "T00:00:00").toLocaleDateString(undefined, {
+    weekday: "short", month: "short", day: "numeric",
+  });
+}
+
+function formatTime(timeStr: string) {
+  const [h, m] = timeStr.split(":");
+  const d = new Date();
+  d.setHours(Number(h), Number(m));
+  return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+}
+
 type ProfessionalInfo = { name: string; specialty: string; clinicName?: string } | null;
 type PendingRequest = { id: string; date: string; start_time: string; status: string };
 type AppointmentRow = {
@@ -165,7 +178,7 @@ export default function PendingConfirmationPage() {
             <ul className="space-y-1.5">
               {requests.map((r) => (
                 <li key={r.id} className="text-sm text-slate-600">
-                  {r.date} · {r.start_time.slice(0, 5)}
+                  {formatDate(r.date)} · {formatTime(r.start_time)}
                   <span className="ml-2 text-xs text-slate-400">
                     {r.status === "proposal" ? t("pendingConfirmation.statusProposal") : t("pendingConfirmation.statusTentative")}
                   </span>
