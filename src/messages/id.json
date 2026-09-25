@@ -624,6 +624,12 @@
     "errorWrongRole": "Hanya profesional yang dapat berlangganan.",
     "errorCheckFailed": "Tidak dapat memverifikasi status langganan Anda. Silakan coba lagi.",
     "errorGeneric": "Tidak dapat memulai checkout. Silakan coba lagi.",
-    "errorNetwork": "Kesalahan jaringan. Silakan coba lagi."
+    "errorNetwork": "Kesalahan jaringan. Silakan coba lagi.",
+    "paymentFailed": "Pembayaran terakhir Anda gagal. Perbarui kartu Anda untuk melanjutkan.",
+    "paymentFailedAskOwner": "Pembayaran terakhir klinik gagal. Minta pemilik akun untuk memperbarui kartu.",
+    "updateCard": "Perbarui kartu",
+    "portalUnavailable": "Saat ini pengelolaan kartu tidak dapat dibuka. Silakan hubungi support@solvymed.com.",
+    "portalError": "Tidak dapat membuka pengelolaan kartu. Silakan coba lagi.",
+    "errorPaymentFailed": "Pembayaran terakhir Anda gagal. Perbarui kartu Anda alih-alih memulai langganan baru."
   }
 }

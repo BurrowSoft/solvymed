@@ -624,6 +624,12 @@
     "errorWrongRole": "전문가만 구독할 수 있습니다.",
     "errorCheckFailed": "구독 상태를 확인할 수 없습니다. 다시 시도해 주세요.",
     "errorGeneric": "결제를 시작할 수 없습니다. 다시 시도해 주세요.",
-    "errorNetwork": "네트워크 오류입니다. 다시 시도해 주세요."
+    "errorNetwork": "네트워크 오류입니다. 다시 시도해 주세요.",
+    "paymentFailed": "마지막 결제에 실패했습니다. 계속하려면 카드를 업데이트하세요.",
+    "paymentFailedAskOwner": "병원의 마지막 결제에 실패했습니다. 계정 소유자에게 카드 업데이트를 요청하세요.",
+    "updateCard": "카드 업데이트",
+    "portalUnavailable": "지금은 카드 관리를 열 수 없습니다. support@solvymed.com로 문의해 주세요.",
+    "portalError": "카드 관리를 열 수 없습니다. 다시 시도해 주세요.",
+    "errorPaymentFailed": "마지막 결제에 실패했습니다. 새 구독을 시작하는 대신 카드를 업데이트하세요."
   }
 }

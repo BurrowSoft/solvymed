@@ -624,6 +624,12 @@
     "errorWrongRole": "只有專業人士才能訂閱。",
     "errorCheckFailed": "無法驗證您的訂閱狀態，請重試。",
     "errorGeneric": "無法啟動結帳流程，請重試。",
-    "errorNetwork": "網路錯誤，請重試。"
+    "errorNetwork": "網路錯誤，請重試。",
+    "paymentFailed": "您上次的付款失敗了。請更新您的信用卡以繼續使用。",
+    "paymentFailedAskOwner": "診所上次的付款失敗了。請聯絡帳戶擁有者更新信用卡。",
+    "updateCard": "更新信用卡",
+    "portalUnavailable": "目前無法開啟信用卡管理。請聯絡 support@solvymed.com。",
+    "portalError": "無法開啟信用卡管理，請重試。",
+    "errorPaymentFailed": "您上次的付款失敗了。請更新信用卡，而不是開始新的訂閱。"
   }
 }

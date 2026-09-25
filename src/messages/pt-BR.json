@@ -624,6 +624,12 @@
     "errorWrongRole": "Somente profissionais podem assinar.",
     "errorCheckFailed": "Não foi possível verificar o status da sua assinatura. Tente novamente.",
     "errorGeneric": "Não foi possível iniciar o checkout. Tente novamente.",
-    "errorNetwork": "Erro de rede. Tente novamente."
+    "errorNetwork": "Erro de rede. Tente novamente.",
+    "paymentFailed": "Seu último pagamento falhou. Atualize seu cartão para continuar.",
+    "paymentFailedAskOwner": "O último pagamento da clínica falhou. Peça ao titular da conta para atualizar o cartão.",
+    "updateCard": "Atualizar cartão",
+    "portalUnavailable": "Não foi possível abrir o gerenciamento do cartão agora. Entre em contato com support@solvymed.com.",
+    "portalError": "Não foi possível abrir o gerenciamento do cartão. Tente novamente.",
+    "errorPaymentFailed": "Seu último pagamento falhou. Atualize seu cartão em vez de iniciar uma nova assinatura."
   }
 }

@@ -624,6 +624,12 @@
     "errorWrongRole": "Chỉ chuyên gia mới có thể đăng ký.",
     "errorCheckFailed": "Không thể xác minh trạng thái đăng ký của bạn. Vui lòng thử lại.",
     "errorGeneric": "Không thể bắt đầu thanh toán. Vui lòng thử lại.",
-    "errorNetwork": "Lỗi mạng. Vui lòng thử lại."
+    "errorNetwork": "Lỗi mạng. Vui lòng thử lại.",
+    "paymentFailed": "Lần thanh toán gần nhất đã thất bại. Hãy cập nhật thẻ để tiếp tục.",
+    "paymentFailedAskOwner": "Lần thanh toán gần nhất của phòng khám đã thất bại. Hãy nhờ chủ tài khoản cập nhật thẻ.",
+    "updateCard": "Cập nhật thẻ",
+    "portalUnavailable": "Hiện không thể mở trang quản lý thẻ. Vui lòng liên hệ support@solvymed.com.",
+    "portalError": "Không thể mở trang quản lý thẻ. Vui lòng thử lại.",
+    "errorPaymentFailed": "Lần thanh toán gần nhất đã thất bại. Hãy cập nhật thẻ thay vì bắt đầu gói đăng ký mới."
   }
 }

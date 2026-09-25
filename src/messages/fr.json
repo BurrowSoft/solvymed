@@ -624,6 +624,12 @@
     "errorWrongRole": "Seuls les professionnels peuvent s'abonner.",
     "errorCheckFailed": "Impossible de vérifier votre statut d'abonnement. Réessayez.",
     "errorGeneric": "Impossible de démarrer le paiement. Réessayez.",
-    "errorNetwork": "Erreur réseau. Réessayez."
+    "errorNetwork": "Erreur réseau. Réessayez.",
+    "paymentFailed": "Votre dernier paiement a échoué. Mettez à jour votre carte pour continuer.",
+    "paymentFailedAskOwner": "Le dernier paiement du cabinet a échoué. Demandez au titulaire du compte de mettre à jour la carte.",
+    "updateCard": "Mettre à jour la carte",
+    "portalUnavailable": "Impossible d'ouvrir la gestion de la carte pour le moment. Contactez support@solvymed.com.",
+    "portalError": "Impossible d'ouvrir la gestion de la carte. Réessayez.",
+    "errorPaymentFailed": "Votre dernier paiement a échoué. Mettez à jour votre carte au lieu de démarrer un nouvel abonnement."
   }
 }

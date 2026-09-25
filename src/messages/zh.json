@@ -624,6 +624,12 @@
     "errorWrongRole": "只有专业人士才能订阅。",
     "errorCheckFailed": "无法验证您的订阅状态，请重试。",
     "errorGeneric": "无法启动结账流程，请重试。",
-    "errorNetwork": "网络错误，请重试。"
+    "errorNetwork": "网络错误，请重试。",
+    "paymentFailed": "您上次的付款失败了。请更新您的银行卡以继续使用。",
+    "paymentFailedAskOwner": "诊所上次的付款失败了。请联系账户所有者更新银行卡。",
+    "updateCard": "更新银行卡",
+    "portalUnavailable": "目前无法打开银行卡管理。请联系 support@solvymed.com。",
+    "portalError": "无法打开银行卡管理，请重试。",
+    "errorPaymentFailed": "您上次的付款失败了。请更新银行卡，而不是开始新的订阅。"
   }
 }

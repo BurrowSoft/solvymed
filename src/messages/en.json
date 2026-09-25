@@ -624,6 +624,12 @@
     "trialBannerPrefix": "Free trial:",
     "trialBannerDay": "day left",
     "trialBannerDays": "days left",
-    "trialBannerCta": "Subscribe Now"
+    "trialBannerCta": "Subscribe Now",
+    "paymentFailed": "Your last payment failed. Update your card to continue.",
+    "paymentFailedAskOwner": "Your clinic's last payment failed. Ask the account owner to update the card.",
+    "updateCard": "Update card",
+    "portalUnavailable": "We couldn't open card management right now. Please contact support@solvymed.com.",
+    "portalError": "Could not open card management. Please try again.",
+    "errorPaymentFailed": "Your last payment failed. Update your card instead of starting a new subscription."
   }
 }

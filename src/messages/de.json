@@ -624,6 +624,12 @@
     "errorWrongRole": "Nur Fachkräfte können abonnieren.",
     "errorCheckFailed": "Ihr Abonnementstatus konnte nicht überprüft werden. Bitte versuchen Sie es erneut.",
     "errorGeneric": "Der Bezahlvorgang konnte nicht gestartet werden. Bitte versuchen Sie es erneut.",
-    "errorNetwork": "Netzwerkfehler. Bitte versuchen Sie es erneut."
+    "errorNetwork": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
+    "paymentFailed": "Ihre letzte Zahlung ist fehlgeschlagen. Aktualisieren Sie Ihre Karte, um fortzufahren.",
+    "paymentFailedAskOwner": "Die letzte Zahlung der Praxis ist fehlgeschlagen. Bitten Sie den Kontoinhaber, die Karte zu aktualisieren.",
+    "updateCard": "Karte aktualisieren",
+    "portalUnavailable": "Die Kartenverwaltung konnte gerade nicht geöffnet werden. Bitte wenden Sie sich an support@solvymed.com.",
+    "portalError": "Die Kartenverwaltung konnte nicht geöffnet werden. Bitte versuchen Sie es erneut.",
+    "errorPaymentFailed": "Ihre letzte Zahlung ist fehlgeschlagen. Aktualisieren Sie Ihre Karte, statt ein neues Abonnement abzuschließen."
   }
 }
