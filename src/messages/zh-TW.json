@@ -484,8 +484,6 @@
       "iAmA": "我是…",
       "roleDoctor": "醫生",
       "roleDoctorDesc": "管理您的診所和患者",
-      "roleSecretary": "秘書",
-      "roleSecretaryDesc": "協助醫生的行程",
       "rolePatient": "患者",
       "rolePatientDesc": "預約並訪問您的躺詢",
       "inviteCode": "邀請碼",
@@ -493,7 +491,9 @@
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "輸入醫生的邀請碼以自動連結",
       "emailExists": "此電子郵件已有帳戶。請登入。",
-      "joiningAs": "透過邀請連結以 {role} 身份加入。"
+      "joiningAs": "透過邀請連結以 {role} 身份加入。",
+      "joiningAsSecretary": "透過邀請連結以祕書身分註冊。",
+      "secretaryNeedsInvite": "你是祕書？請向你的醫師索取邀請連結。"
     },
     "forgotPassword": {
       "title": "忘記密碼？",
@@ -642,6 +642,26 @@
     "signOut": "登出",
     "clinicInactiveTitle": "訂閱未啟用",
     "clinicInactiveBody": "{name}的 SolvyMed 訂閱未啟用。續訂後即可恢復存取。",
-    "clinicInactiveBodyGeneric": "你所在診所的 SolvyMed 訂閱未啟用。續訂後即可恢復存取。"
+    "clinicInactiveBodyGeneric": "你所在診所的 SolvyMed 訂閱未啟用。續訂後即可恢復存取。",
+    "backToHome": "返回首頁",
+    "inviteInvalidTitle": "邀請無效",
+    "inviteInvalid": "此邀請已失效。請向醫師索取新的邀請。",
+    "invitedTitle": "你被邀請成為祕書",
+    "invitedBody": "一位醫師邀請你在 SolvyMed 上協助管理診所的預約與病患。建立帳戶即可接受邀請。",
+    "createAccount": "建立帳戶",
+    "haveAccountLogIn": "已有帳戶？登入",
+    "cannotAcceptTitle": "無法接受此邀請",
+    "accountIsPatient": "這是病患帳戶。祕書邀請需要另外的祕書帳戶。",
+    "accountIsProfessional": "這是醫師帳戶。祕書邀請需要另外的祕書帳戶。",
+    "alreadyInClinicNamed": "你已在{name}的診所工作。請先在設定中離開該診所，再接受其他邀請。",
+    "alreadyInClinic": "你已在其他診所工作。請先在設定中離開該診所，再接受其他邀請。",
+    "inviteTitle": "祕書邀請",
+    "inviteBody": "{name}邀請你擔任{clinic}的祕書。",
+    "inviteBodyNoClinic": "{name}邀請你擔任祕書。",
+    "accept": "接受",
+    "decline": "拒絕",
+    "inviteDeclined": "你已拒絕此邀請。",
+    "teamLimitReachedInvitee": "該醫師的團隊已滿。請先請對方騰出名額。",
+    "genericError": "發生問題，請重試。"
   }
 }

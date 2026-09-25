@@ -484,8 +484,6 @@
       "iAmA": "I am a…",
       "roleDoctor": "Doctor",
       "roleDoctorDesc": "Manage your clinic and patients",
-      "roleSecretary": "Secretary",
-      "roleSecretaryDesc": "Support a doctor's schedule",
       "rolePatient": "Patient",
       "rolePatientDesc": "Schedule and access your consultations",
       "inviteCode": "Invite code",
@@ -493,7 +491,9 @@
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Enter a doctor's code to get linked automatically",
       "emailExists": "An account with this email already exists. Please sign in instead.",
-      "joiningAs": "Joining as {role} via invite link."
+      "joiningAs": "Joining as {role} via invite link.",
+      "joiningAsSecretary": "Joining as a secretary via invite link.",
+      "secretaryNeedsInvite": "Secretary? Ask your doctor for an invite link."
     },
     "forgotPassword": {
       "title": "Forgot your password?",
@@ -642,6 +642,26 @@
     "signOut": "Sign out",
     "clinicInactiveTitle": "Subscription inactive",
     "clinicInactiveBody": "{name}'s SolvyMed subscription is inactive. Access resumes once it's renewed.",
-    "clinicInactiveBodyGeneric": "Your clinic's SolvyMed subscription is inactive. Access resumes once it's renewed."
+    "clinicInactiveBodyGeneric": "Your clinic's SolvyMed subscription is inactive. Access resumes once it's renewed.",
+    "backToHome": "Go to home",
+    "inviteInvalidTitle": "Invite not valid",
+    "inviteInvalid": "This invite is no longer valid. Ask the doctor for a new one.",
+    "invitedTitle": "You've been invited as a secretary",
+    "invitedBody": "A doctor invited you to help run their clinic's schedule and patients on SolvyMed. Create your account to accept.",
+    "createAccount": "Create account",
+    "haveAccountLogIn": "Already have an account? Log in",
+    "cannotAcceptTitle": "Can't accept this invite",
+    "accountIsPatient": "This is a patient account. Secretary invites need a separate secretary account.",
+    "accountIsProfessional": "This is a doctor account. Secretary invites need a separate secretary account.",
+    "alreadyInClinicNamed": "You already work for {name}'s clinic. Leave it in Settings before accepting another invite.",
+    "alreadyInClinic": "You already work for another clinic. Leave it in Settings before accepting another invite.",
+    "inviteTitle": "Secretary invite",
+    "inviteBody": "{name} invited you to be the secretary of {clinic}.",
+    "inviteBodyNoClinic": "{name} invited you to be their secretary.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "inviteDeclined": "You declined this invite.",
+    "teamLimitReachedInvitee": "This doctor's team is full. Ask them to free a spot first.",
+    "genericError": "Something went wrong. Please try again."
   }
 }

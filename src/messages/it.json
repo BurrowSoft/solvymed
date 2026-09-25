@@ -484,8 +484,6 @@
       "iAmA": "Sono…",
       "roleDoctor": "Medico",
       "roleDoctorDesc": "Gestisci il tuo studio e i pazienti",
-      "roleSecretary": "Segretario/a",
-      "roleSecretaryDesc": "Supporta l'agenda di un medico",
       "rolePatient": "Paziente",
       "rolePatientDesc": "Pianifica e accedi alle tue consultazioni",
       "inviteCode": "Codice invito",
@@ -493,7 +491,9 @@
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Inserisci il codice del medico per essere collegato automaticamente",
       "emailExists": "Esiste già un account con questa e-mail. Effettua il login.",
-      "joiningAs": "Accesso come {role} tramite link d'invito."
+      "joiningAs": "Accesso come {role} tramite link d'invito.",
+      "joiningAsSecretary": "Ti stai registrando in segreteria tramite link di invito.",
+      "secretaryNeedsInvite": "Lavori in segreteria? Chiedi al tuo medico un link di invito."
     },
     "forgotPassword": {
       "title": "Password dimenticata?",
@@ -642,6 +642,26 @@
     "signOut": "Esci",
     "clinicInactiveTitle": "Abbonamento non attivo",
     "clinicInactiveBody": "L'abbonamento SolvyMed di {name} non è attivo. L'accesso riprenderà al rinnovo.",
-    "clinicInactiveBodyGeneric": "L'abbonamento SolvyMed del tuo studio non è attivo. L'accesso riprenderà al rinnovo."
+    "clinicInactiveBodyGeneric": "L'abbonamento SolvyMed del tuo studio non è attivo. L'accesso riprenderà al rinnovo.",
+    "backToHome": "Vai alla home",
+    "inviteInvalidTitle": "Invito non valido",
+    "inviteInvalid": "Questo invito non è più valido. Chiedine uno nuovo al medico.",
+    "invitedTitle": "Sei stato/a invitato/a come segretario/a",
+    "invitedBody": "Un medico ti ha invitato ad aiutarlo a gestire agenda e pazienti del suo studio su SolvyMed. Crea il tuo account per accettare.",
+    "createAccount": "Crea account",
+    "haveAccountLogIn": "Hai già un account? Accedi",
+    "cannotAcceptTitle": "Impossibile accettare questo invito",
+    "accountIsPatient": "Questo è un account paziente. Gli inviti per la segreteria richiedono un account di segreteria separato.",
+    "accountIsProfessional": "Questo è un account medico. Gli inviti per la segreteria richiedono un account di segreteria separato.",
+    "alreadyInClinicNamed": "Lavori già per lo studio di {name}. Lascialo dalle Impostazioni prima di accettare un altro invito.",
+    "alreadyInClinic": "Lavori già per un altro studio. Lascialo dalle Impostazioni prima di accettare un altro invito.",
+    "inviteTitle": "Invito per la segreteria",
+    "inviteBody": "{name} ti ha invitato a lavorare in segreteria per {clinic}.",
+    "inviteBodyNoClinic": "{name} ti ha invitato a lavorare nella sua segreteria.",
+    "accept": "Accetta",
+    "decline": "Rifiuta",
+    "inviteDeclined": "Hai rifiutato questo invito.",
+    "teamLimitReachedInvitee": "Il team di questo medico è al completo. Chiedigli prima di liberare un posto.",
+    "genericError": "Qualcosa è andato storto. Riprova."
   }
 }

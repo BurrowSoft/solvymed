@@ -484,8 +484,6 @@
       "iAmA": "我是…",
       "roleDoctor": "医生",
       "roleDoctorDesc": "管理您的诊所和患者",
-      "roleSecretary": "秘书",
-      "roleSecretaryDesc": "协助医生的日程安排",
       "rolePatient": "患者",
       "rolePatientDesc": "预约并访问您的和咨询",
       "inviteCode": "邀请码",
@@ -493,7 +491,9 @@
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "输入医生的邀请码以自动连接",
       "emailExists": "此邮箕已有账户。请登录。",
-      "joiningAs": "通过邀请链接以 {role} 身份加入。"
+      "joiningAs": "通过邀请链接以 {role} 身份加入。",
+      "joiningAsSecretary": "通过邀请链接以秘书身份注册。",
+      "secretaryNeedsInvite": "你是秘书？请向你的医生索取邀请链接。"
     },
     "forgotPassword": {
       "title": "忘记密码？",
@@ -642,6 +642,26 @@
     "signOut": "退出登录",
     "clinicInactiveTitle": "订阅未激活",
     "clinicInactiveBody": "{name}的 SolvyMed 订阅未激活。续订后即可恢复访问。",
-    "clinicInactiveBodyGeneric": "你所在诊所的 SolvyMed 订阅未激活。续订后即可恢复访问。"
+    "clinicInactiveBodyGeneric": "你所在诊所的 SolvyMed 订阅未激活。续订后即可恢复访问。",
+    "backToHome": "返回首页",
+    "inviteInvalidTitle": "邀请无效",
+    "inviteInvalid": "此邀请已失效。请向医生索取新的邀请。",
+    "invitedTitle": "你被邀请成为秘书",
+    "invitedBody": "一位医生邀请你在 SolvyMed 上帮忙管理诊所的预约和患者。创建账户即可接受邀请。",
+    "createAccount": "创建账户",
+    "haveAccountLogIn": "已有账户？登录",
+    "cannotAcceptTitle": "无法接受此邀请",
+    "accountIsPatient": "这是患者账户。秘书邀请需要单独的秘书账户。",
+    "accountIsProfessional": "这是医生账户。秘书邀请需要单独的秘书账户。",
+    "alreadyInClinicNamed": "你已在{name}的诊所工作。请先在设置中离开该诊所，再接受其他邀请。",
+    "alreadyInClinic": "你已在其他诊所工作。请先在设置中离开该诊所，再接受其他邀请。",
+    "inviteTitle": "秘书邀请",
+    "inviteBody": "{name}邀请你担任{clinic}的秘书。",
+    "inviteBodyNoClinic": "{name}邀请你担任秘书。",
+    "accept": "接受",
+    "decline": "拒绝",
+    "inviteDeclined": "你已拒绝此邀请。",
+    "teamLimitReachedInvitee": "该医生的团队已满。请先让对方腾出名额。",
+    "genericError": "出现问题，请重试。"
   }
 }

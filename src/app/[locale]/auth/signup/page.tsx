@@ -10,6 +10,7 @@ import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
+import { normalizeSecretaryCode } from "@/lib/secretary";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -26,11 +27,20 @@ export default function SignupPage() {
   const joinCode = (searchParams.get("join") ?? "").toUpperCase();
   const isJoinFlow = !!joinCode;
 
+  // Secretaries can only sign up through a doctor's invite:
+  // /join/secretary/<code> sends signed-out invitees here with the code
+  // and, from the doctor's share link, their email. The role is locked to
+  // secretary, and the email is locked when the link carried one. That lock
+  // is UX only: the server matches the email on accept.
+  const secretaryCode = isJoinFlow ? "" : normalizeSecretaryCode(searchParams.get("secretary") ?? "");
+  const isSecretaryFlow = !!secretaryCode;
+  const lockedEmail = isSecretaryFlow ? (searchParams.get("email") ?? "").trim() : "";
+
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(lockedEmail);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<Role>(isJoinFlow ? "patient" : "professional");
+  const [role, setRole] = useState<Role>(isJoinFlow ? "patient" : isSecretaryFlow ? "secretary" : "professional");
   const [inviteCode, setInviteCode] = useState(joinCode);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -65,6 +75,11 @@ export default function SignupPage() {
           platform: "web",
           ...(role === "patient" && inviteCode.trim()
             ? { invite_code: inviteCode.toUpperCase().trim() }
+            : {}),
+          // Accepted server-side after email confirmation
+          // (accept_secretary_invite, with the new user's own session).
+          ...(role === "secretary" && isSecretaryFlow
+            ? { secretary_invite_code: secretaryCode }
             : {}),
         },
         emailRedirectTo: "https://www.solvymed.com/api/auth/callback",
@@ -126,10 +141,14 @@ export default function SignupPage() {
           <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4 text-sm text-teal-700">
             {t("signup.joiningAs", { role: "patient" })}
           </div>
+        ) : isSecretaryFlow ? (
+          <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4 text-sm text-teal-700">
+            {t("signup.joiningAsSecretary")}
+          </div>
         ) : (
         <div className="mb-6">
           <p className="mb-2 text-sm font-semibold text-slate-700">{t("signup.iAmA")}</p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <RoleCard
               selected={role === "professional"}
               onSelect={() => setRole("professional")}
@@ -140,18 +159,6 @@ export default function SignupPage() {
               }
               label={t("signup.roleDoctor")}
               description={t("signup.roleDoctorDesc")}
-            />
-            <RoleCard
-              selected={role === "secretary"}
-              onSelect={() => setRole("secretary")}
-              icon={
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-                  <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                  <line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
-                </svg>
-              }
-              label={t("signup.roleSecretary")}
-              description={t("signup.roleSecretaryDesc")}
             />
             <RoleCard
               selected={role === "patient"}
@@ -165,6 +172,7 @@ export default function SignupPage() {
               description={t("signup.rolePatientDesc")}
             />
           </div>
+          <p className="mt-3 text-center text-xs text-slate-500">{t("signup.secretaryNeedsInvite")}</p>
         </div>
         )}
 
@@ -214,8 +222,9 @@ export default function SignupPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              readOnly={!!lockedEmail}
               autoComplete="email"
-              className="text-input"
+              className={`text-input${lockedEmail ? " bg-slate-50 text-slate-500" : ""}`}
             />
           </div>
           <div>

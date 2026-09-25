@@ -484,8 +484,6 @@
       "iAmA": "Eu sou…",
       "roleDoctor": "Médico",
       "roleDoctorDesc": "Gerencie sua clínica e pacientes",
-      "roleSecretary": "Secretário(a)",
-      "roleSecretaryDesc": "Apoio à agenda do médico",
       "rolePatient": "Paciente",
       "rolePatientDesc": "Agende e acesse suas consultas",
       "inviteCode": "Código de convite",
@@ -493,7 +491,9 @@
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Digite o código do médico para ser vinculado automaticamente",
       "emailExists": "Já existe uma conta com este e-mail. Por favor, faça login.",
-      "joiningAs": "Entrando como {role} via link de convite."
+      "joiningAs": "Entrando como {role} via link de convite.",
+      "joiningAsSecretary": "Entrando como secretária por link de convite.",
+      "secretaryNeedsInvite": "Secretária? Peça ao seu médico um link de convite."
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",
@@ -642,6 +642,26 @@
     "signOut": "Sair",
     "clinicInactiveTitle": "Assinatura inativa",
     "clinicInactiveBody": "A assinatura do SolvyMed de {name} está inativa. O acesso volta assim que ela for renovada.",
-    "clinicInactiveBodyGeneric": "A assinatura do SolvyMed da sua clínica está inativa. O acesso volta assim que ela for renovada."
+    "clinicInactiveBodyGeneric": "A assinatura do SolvyMed da sua clínica está inativa. O acesso volta assim que ela for renovada.",
+    "backToHome": "Ir para o início",
+    "inviteInvalidTitle": "Convite inválido",
+    "inviteInvalid": "Este convite não é mais válido. Peça um novo ao médico.",
+    "invitedTitle": "Você foi convidada como secretária",
+    "invitedBody": "Um médico convidou você para ajudar a cuidar da agenda e dos pacientes da clínica no SolvyMed. Crie sua conta para aceitar.",
+    "createAccount": "Criar conta",
+    "haveAccountLogIn": "Já tem conta? Entrar",
+    "cannotAcceptTitle": "Não é possível aceitar este convite",
+    "accountIsPatient": "Esta é uma conta de paciente. Convites de secretária exigem uma conta de secretária separada.",
+    "accountIsProfessional": "Esta é uma conta de médico. Convites de secretária exigem uma conta de secretária separada.",
+    "alreadyInClinicNamed": "Você já trabalha para a clínica de {name}. Saia dela em Configurações antes de aceitar outro convite.",
+    "alreadyInClinic": "Você já trabalha para outra clínica. Saia dela em Configurações antes de aceitar outro convite.",
+    "inviteTitle": "Convite de secretária",
+    "inviteBody": "{name} convidou você para ser secretária de {clinic}.",
+    "inviteBodyNoClinic": "{name} convidou você para ser secretária.",
+    "accept": "Aceitar",
+    "decline": "Recusar",
+    "inviteDeclined": "Você recusou este convite.",
+    "teamLimitReachedInvitee": "A equipe deste médico está completa. Peça que ele libere uma vaga primeiro.",
+    "genericError": "Algo deu errado. Tente novamente."
   }
 }

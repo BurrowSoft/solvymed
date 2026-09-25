@@ -71,29 +71,19 @@ export async function GET(request: NextRequest) {
     const inviteCode = meta.invite_code as string | undefined;
 
     if (role === "secretary") {
-      // user_metadata is client-writable (supabase.auth.updateUser()) — an
-      // existing patient or professional could set role="secretary" on
-      // their own account, then trigger this callback again via any
-      // legitimate magic-link/OTP flow for their own email, silently
-      // overwriting their real role. Refuse to touch an existing role,
-      // same guard the patient branch already has below.
-      const { data: existingRole, error: roleLookupError } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", sessionUser.id)
-        .maybeSingle();
-      // A failed lookup must never be treated the same as "no existing
-      // role" — that would reopen exactly the escalation path this guard
-      // exists to close. Fail closed: skip the upsert on any error.
-      if (!roleLookupError && !existingRole?.role) {
-        await supabase.from("user_roles").upsert(
-          { user_id: sessionUser.id, role: "secretary" },
-          { onConflict: "user_id" },
-        );
+      // Linking is server-only; there's no client-side user_roles write
+      // anymore. handle_new_user created the row at signup (role secretary,
+      // no link), and accept_secretary_invite attaches it to the doctor,
+      // keyed on this session's auth.uid() and email. The RPC itself
+      // refuses patient and professional accounts, so client-writable
+      // metadata can't change anyone's role here. If it fails (the invite
+      // was revoked or expired meanwhile), the row just stays unlinked, and
+      // dashboard/layout.tsx shows "Not connected" with a code field.
+      const secretaryCode = meta.secretary_invite_code as string | undefined;
+      if (secretaryCode) {
+        const { error: acceptError } = await supabase.rpc("accept_secretary_invite", { p_code: secretaryCode });
+        if (acceptError) console.error("Secretary invite accept failed at confirmation:", acceptError.message);
       }
-      // dashboard/layout.tsx re-derives the correct destination from the
-      // persisted role either way, so this is safe even when the upsert
-      // above was skipped for an account that already has a different role.
       redirectUrl = new URL("/dashboard", origin);
 
     } else if (role === "patient") {
@@ -153,18 +143,19 @@ export async function GET(request: NextRequest) {
       }
 
     } else {
-      // professional (default) — same guard as the secretary branch above:
-      // this is the fallback for any role value that isn't exactly
-      // "secretary" or "patient" (including missing/malformed metadata),
-      // so it's the easiest of the three to trigger by accident, not just
-      // by deliberate tampering.
+      // professional (default). user_metadata is client-writable, so an
+      // existing account must never have its role overwritten here. This is
+      // the fallback for any role value that isn't exactly "secretary" or
+      // "patient" (including missing/malformed metadata), so it's the
+      // easiest branch to trigger by accident, not just by tampering.
       const { data: existingRole, error: roleLookupError } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", sessionUser.id)
         .maybeSingle();
       if (roleLookupError) {
-        // Fail closed — same reasoning as the secretary branch above.
+        // Fail closed: a failed lookup must never be treated as "no
+        // existing role", or it reopens the overwrite this guard prevents.
         redirectUrl = new URL("/dashboard", origin);
       } else if (!existingRole?.role) {
         await supabase.from("user_roles").upsert(

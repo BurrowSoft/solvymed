@@ -484,8 +484,6 @@
       "iAmA": "Ich bin…",
       "roleDoctor": "Arzt",
       "roleDoctorDesc": "Verwalten Sie Ihre Praxis und Patienten",
-      "roleSecretary": "Sekretär/in",
-      "roleSecretaryDesc": "Unterstützen Sie den Terminkalender eines Arztes",
       "rolePatient": "Patient",
       "rolePatientDesc": "Termine planen und Konsultationen einsehen",
       "inviteCode": "Einladungscode",
@@ -493,7 +491,9 @@
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Geben Sie den Code des Arztes ein, um automatisch verknüpft zu werden",
       "emailExists": "Ein Konto mit dieser E-Mail existiert bereits. Bitte melden Sie sich an.",
-      "joiningAs": "Beitreten als {role} über Einladungslink."
+      "joiningAs": "Beitreten als {role} über Einladungslink.",
+      "joiningAsSecretary": "Registrierung als Sekretariat über einen Einladungslink.",
+      "secretaryNeedsInvite": "Sekretariat? Bitten Sie Ihre Ärztin oder Ihren Arzt um einen Einladungslink."
     },
     "forgotPassword": {
       "title": "Passwort vergessen?",
@@ -642,6 +642,26 @@
     "signOut": "Abmelden",
     "clinicInactiveTitle": "Abonnement inaktiv",
     "clinicInactiveBody": "Das SolvyMed-Abonnement von {name} ist inaktiv. Der Zugang ist wieder möglich, sobald es verlängert wird.",
-    "clinicInactiveBodyGeneric": "Das SolvyMed-Abonnement Ihrer Praxis ist inaktiv. Der Zugang ist wieder möglich, sobald es verlängert wird."
+    "clinicInactiveBodyGeneric": "Das SolvyMed-Abonnement Ihrer Praxis ist inaktiv. Der Zugang ist wieder möglich, sobald es verlängert wird.",
+    "backToHome": "Zur Startseite",
+    "inviteInvalidTitle": "Einladung ungültig",
+    "inviteInvalid": "Diese Einladung ist nicht mehr gültig. Bitten Sie die Ärztin oder den Arzt um eine neue.",
+    "invitedTitle": "Sie wurden als Sekretariat eingeladen",
+    "invitedBody": "Eine Ärztin oder ein Arzt lädt Sie ein, auf SolvyMed Termine und Patienten der Praxis mitzuverwalten. Erstellen Sie ein Konto, um anzunehmen.",
+    "createAccount": "Konto erstellen",
+    "haveAccountLogIn": "Schon ein Konto? Anmelden",
+    "cannotAcceptTitle": "Einladung kann nicht angenommen werden",
+    "accountIsPatient": "Dies ist ein Patientenkonto. Für Sekretariatseinladungen ist ein eigenes Sekretariatskonto nötig.",
+    "accountIsProfessional": "Dies ist ein Arztkonto. Für Sekretariatseinladungen ist ein eigenes Sekretariatskonto nötig.",
+    "alreadyInClinicNamed": "Sie arbeiten bereits für die Praxis von {name}. Verlassen Sie sie in den Einstellungen, bevor Sie eine andere Einladung annehmen.",
+    "alreadyInClinic": "Sie arbeiten bereits für eine andere Praxis. Verlassen Sie sie in den Einstellungen, bevor Sie eine andere Einladung annehmen.",
+    "inviteTitle": "Einladung ins Sekretariat",
+    "inviteBody": "{name} lädt Sie ins Sekretariat von {clinic} ein.",
+    "inviteBodyNoClinic": "{name} lädt Sie als Sekretariat ein.",
+    "accept": "Annehmen",
+    "decline": "Ablehnen",
+    "inviteDeclined": "Sie haben diese Einladung abgelehnt.",
+    "teamLimitReachedInvitee": "Das Team dieser Praxis ist voll. Bitten Sie zuerst um einen freien Platz.",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
   }
 }

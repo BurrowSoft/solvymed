@@ -484,8 +484,6 @@
       "iAmA": "أنا…",
       "roleDoctor": "طبيب",
       "roleDoctorDesc": "أدر عيادتك ومرضاك",
-      "roleSecretary": "سكرتير/ة",
-      "roleSecretaryDesc": "دعم جدول أعمال الطبيب",
       "rolePatient": "مريض",
       "rolePatientDesc": "احجز وصل إلى استشاراتك",
       "inviteCode": "رمز الدعوة",
@@ -493,7 +491,9 @@
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "أدخل رمز الطبيب للارتباط تلقائياً",
       "emailExists": "يوجد حساب بهذا البريد الإلكتروني بالفعل. يرجى تسجيل الدخول.",
-      "joiningAs": "الانضمام بصفة {role} عبر رابط الدعوة."
+      "joiningAs": "الانضمام بصفة {role} عبر رابط الدعوة.",
+      "joiningAsSecretary": "الانضمام كسكرتير عبر رابط دعوة.",
+      "secretaryNeedsInvite": "سكرتير؟ اطلب من طبيبك رابط دعوة."
     },
     "forgotPassword": {
       "title": "نسيت كلمة المرور؟",
@@ -642,6 +642,26 @@
     "signOut": "تسجيل الخروج",
     "clinicInactiveTitle": "الاشتراك غير نشط",
     "clinicInactiveBody": "اشتراك SolvyMed الخاص بـ {name} غير نشط. سيعود الوصول بمجرد تجديده.",
-    "clinicInactiveBodyGeneric": "اشتراك SolvyMed الخاص بعيادتك غير نشط. سيعود الوصول بمجرد تجديده."
+    "clinicInactiveBodyGeneric": "اشتراك SolvyMed الخاص بعيادتك غير نشط. سيعود الوصول بمجرد تجديده.",
+    "backToHome": "الذهاب إلى الصفحة الرئيسية",
+    "inviteInvalidTitle": "الدعوة غير صالحة",
+    "inviteInvalid": "لم تعد هذه الدعوة صالحة. اطلب دعوة جديدة من الطبيب.",
+    "invitedTitle": "تمت دعوتك كسكرتير",
+    "invitedBody": "دعاك طبيب لمساعدته في إدارة مواعيد ومرضى عيادته على SolvyMed. أنشئ حسابك للقبول.",
+    "createAccount": "إنشاء حساب",
+    "haveAccountLogIn": "لديك حساب بالفعل؟ سجّل الدخول",
+    "cannotAcceptTitle": "لا يمكن قبول هذه الدعوة",
+    "accountIsPatient": "هذا حساب مريض. تتطلب دعوات السكرتارية حساب سكرتير منفصلاً.",
+    "accountIsProfessional": "هذا حساب طبيب. تتطلب دعوات السكرتارية حساب سكرتير منفصلاً.",
+    "alreadyInClinicNamed": "أنت تعمل بالفعل لدى عيادة {name}. اتركها من الإعدادات قبل قبول دعوة أخرى.",
+    "alreadyInClinic": "أنت تعمل بالفعل لدى عيادة أخرى. اتركها من الإعدادات قبل قبول دعوة أخرى.",
+    "inviteTitle": "دعوة سكرتارية",
+    "inviteBody": "دعاك {name} لتكون سكرتيرًا في {clinic}.",
+    "inviteBodyNoClinic": "دعاك {name} لتكون سكرتيره.",
+    "accept": "قبول",
+    "decline": "رفض",
+    "inviteDeclined": "لقد رفضت هذه الدعوة.",
+    "teamLimitReachedInvitee": "فريق هذا الطبيب مكتمل. اطلب منه إفراغ مكان أولاً.",
+    "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
   }
 }

@@ -484,8 +484,6 @@
       "iAmA": "Je suis…",
       "roleDoctor": "Médecin",
       "roleDoctorDesc": "Gérez votre cabinet et vos patients",
-      "roleSecretary": "Secrétaire",
-      "roleSecretaryDesc": "Assistez l'agenda d'un médecin",
       "rolePatient": "Patient",
       "rolePatientDesc": "Planifiez et accédez à vos consultations",
       "inviteCode": "Code d'invitation",
@@ -493,7 +491,9 @@
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Entrez le code du médecin pour être lié automatiquement",
       "emailExists": "Un compte avec cet e-mail existe déjà. Veuillez vous connecter.",
-      "joiningAs": "Inscription en tant que {role} via lien d'invitation."
+      "joiningAs": "Inscription en tant que {role} via lien d'invitation.",
+      "joiningAsSecretary": "Inscription en tant que secrétaire via un lien d'invitation.",
+      "secretaryNeedsInvite": "Secrétaire ? Demandez un lien d'invitation à votre médecin."
     },
     "forgotPassword": {
       "title": "Mot de passe oublié ?",
@@ -642,6 +642,26 @@
     "signOut": "Se déconnecter",
     "clinicInactiveTitle": "Abonnement inactif",
     "clinicInactiveBody": "L'abonnement SolvyMed de {name} est inactif. L'accès reprendra dès son renouvellement.",
-    "clinicInactiveBodyGeneric": "L'abonnement SolvyMed de votre cabinet est inactif. L'accès reprendra dès son renouvellement."
+    "clinicInactiveBodyGeneric": "L'abonnement SolvyMed de votre cabinet est inactif. L'accès reprendra dès son renouvellement.",
+    "backToHome": "Aller à l'accueil",
+    "inviteInvalidTitle": "Invitation non valide",
+    "inviteInvalid": "Cette invitation n'est plus valide. Demandez-en une nouvelle au médecin.",
+    "invitedTitle": "Vous êtes invité(e) comme secrétaire",
+    "invitedBody": "Un médecin vous invite à l'aider à gérer l'agenda et les patients de son cabinet sur SolvyMed. Créez votre compte pour accepter.",
+    "createAccount": "Créer un compte",
+    "haveAccountLogIn": "Vous avez déjà un compte ? Connectez-vous",
+    "cannotAcceptTitle": "Impossible d'accepter cette invitation",
+    "accountIsPatient": "Ce compte est un compte patient. Les invitations de secrétaire nécessitent un compte secrétaire distinct.",
+    "accountIsProfessional": "Ce compte est un compte médecin. Les invitations de secrétaire nécessitent un compte secrétaire distinct.",
+    "alreadyInClinicNamed": "Vous travaillez déjà pour le cabinet de {name}. Quittez-le dans les Paramètres avant d'accepter une autre invitation.",
+    "alreadyInClinic": "Vous travaillez déjà pour un autre cabinet. Quittez-le dans les Paramètres avant d'accepter une autre invitation.",
+    "inviteTitle": "Invitation de secrétaire",
+    "inviteBody": "{name} vous invite à être secrétaire de {clinic}.",
+    "inviteBodyNoClinic": "{name} vous invite à être son/sa secrétaire.",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "inviteDeclined": "Vous avez refusé cette invitation.",
+    "teamLimitReachedInvitee": "L'équipe de ce médecin est complète. Demandez-lui de libérer une place d'abord.",
+    "genericError": "Une erreur s'est produite. Réessayez."
   }
 }

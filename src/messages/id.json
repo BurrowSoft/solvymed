@@ -484,8 +484,6 @@
       "iAmA": "Saya adalah…",
       "roleDoctor": "Dokter",
       "roleDoctorDesc": "Kelola klinik dan pasien Anda",
-      "roleSecretary": "Sekretaris",
-      "roleSecretaryDesc": "Bantu jadwal dokter",
       "rolePatient": "Pasien",
       "rolePatientDesc": "Jadwalkan dan akses konsultasi Anda",
       "inviteCode": "Kode undangan",
@@ -493,7 +491,9 @@
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "Masukkan kode dokter untuk terhubung secara otomatis",
       "emailExists": "Akun dengan email ini sudah ada. Silakan masuk.",
-      "joiningAs": "Bergabung sebagai {role} melalui tautan undangan."
+      "joiningAs": "Bergabung sebagai {role} melalui tautan undangan.",
+      "joiningAsSecretary": "Mendaftar sebagai sekretaris melalui tautan undangan.",
+      "secretaryNeedsInvite": "Sekretaris? Minta tautan undangan dari dokter Anda."
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",
@@ -642,6 +642,26 @@
     "signOut": "Keluar",
     "clinicInactiveTitle": "Langganan tidak aktif",
     "clinicInactiveBody": "Langganan SolvyMed milik {name} tidak aktif. Akses akan pulih setelah diperpanjang.",
-    "clinicInactiveBodyGeneric": "Langganan SolvyMed klinik Anda tidak aktif. Akses akan pulih setelah diperpanjang."
+    "clinicInactiveBodyGeneric": "Langganan SolvyMed klinik Anda tidak aktif. Akses akan pulih setelah diperpanjang.",
+    "backToHome": "Ke beranda",
+    "inviteInvalidTitle": "Undangan tidak valid",
+    "inviteInvalid": "Undangan ini sudah tidak berlaku. Minta undangan baru dari dokter.",
+    "invitedTitle": "Anda diundang sebagai sekretaris",
+    "invitedBody": "Seorang dokter mengundang Anda untuk membantu mengelola jadwal dan pasien kliniknya di SolvyMed. Buat akun untuk menerima.",
+    "createAccount": "Buat akun",
+    "haveAccountLogIn": "Sudah punya akun? Masuk",
+    "cannotAcceptTitle": "Tidak dapat menerima undangan ini",
+    "accountIsPatient": "Ini akun pasien. Undangan sekretaris memerlukan akun sekretaris terpisah.",
+    "accountIsProfessional": "Ini akun dokter. Undangan sekretaris memerlukan akun sekretaris terpisah.",
+    "alreadyInClinicNamed": "Anda sudah bekerja untuk klinik {name}. Keluar dari klinik itu di Pengaturan sebelum menerima undangan lain.",
+    "alreadyInClinic": "Anda sudah bekerja untuk klinik lain. Keluar dari klinik itu di Pengaturan sebelum menerima undangan lain.",
+    "inviteTitle": "Undangan sekretaris",
+    "inviteBody": "{name} mengundang Anda menjadi sekretaris di {clinic}.",
+    "inviteBodyNoClinic": "{name} mengundang Anda menjadi sekretarisnya.",
+    "accept": "Terima",
+    "decline": "Tolak",
+    "inviteDeclined": "Anda menolak undangan ini.",
+    "teamLimitReachedInvitee": "Tim dokter ini sudah penuh. Minta dokter mengosongkan satu tempat terlebih dahulu.",
+    "genericError": "Terjadi kesalahan. Silakan coba lagi."
   }
 }

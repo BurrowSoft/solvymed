@@ -484,8 +484,6 @@
       "iAmA": "私は…",
       "roleDoctor": "医師",
       "roleDoctorDesc": "クリニックと患者を管理する",
-      "roleSecretary": "秘書",
-      "roleSecretaryDesc": "医師のスケジュールをサポートする",
       "rolePatient": "患者",
       "rolePatientDesc": "診察の予約とアクセス",
       "inviteCode": "招待コード",
@@ -493,7 +491,9 @@
       "inviteCodePlaceholder": "ABC123",
       "inviteCodeHint": "医師のコードを入力して自動的に連携する",
       "emailExists": "このメールアドレスのアカウントは既に存在します。サインインしてください。",
-      "joiningAs": "招待リンクで{role}として参加します。"
+      "joiningAs": "招待リンクで{role}として参加します。",
+      "joiningAsSecretary": "招待リンクから受付スタッフとして登録します。",
+      "secretaryNeedsInvite": "受付スタッフの方は、医師に招待リンクを依頼してください。"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",
@@ -642,6 +642,26 @@
     "signOut": "ログアウト",
     "clinicInactiveTitle": "サブスクリプションが無効です",
     "clinicInactiveBody": "{name}さんのSolvyMedサブスクリプションが無効になっています。更新されるとアクセスが再開されます。",
-    "clinicInactiveBodyGeneric": "クリニックのSolvyMedサブスクリプションが無効になっています。更新されるとアクセスが再開されます。"
+    "clinicInactiveBodyGeneric": "クリニックのSolvyMedサブスクリプションが無効になっています。更新されるとアクセスが再開されます。",
+    "backToHome": "ホームへ",
+    "inviteInvalidTitle": "無効な招待",
+    "inviteInvalid": "この招待はもう有効ではありません。医師に新しい招待を依頼してください。",
+    "invitedTitle": "受付スタッフとして招待されました",
+    "invitedBody": "医師があなたを、SolvyMedでクリニックの予約と患者の管理を手伝うスタッフとして招待しました。承諾するにはアカウントを作成してください。",
+    "createAccount": "アカウントを作成",
+    "haveAccountLogIn": "アカウントをお持ちですか？ログイン",
+    "cannotAcceptTitle": "この招待は承諾できません",
+    "accountIsPatient": "これは患者アカウントです。受付スタッフの招待には別の受付スタッフ用アカウントが必要です。",
+    "accountIsProfessional": "これは医師アカウントです。受付スタッフの招待には別の受付スタッフ用アカウントが必要です。",
+    "alreadyInClinicNamed": "すでに{name}さんのクリニックで働いています。別の招待を承諾する前に、設定からそのクリニックを離れてください。",
+    "alreadyInClinic": "すでに別のクリニックで働いています。別の招待を承諾する前に、設定からそのクリニックを離れてください。",
+    "inviteTitle": "受付スタッフへの招待",
+    "inviteBody": "{name}さんから{clinic}の受付スタッフとして招待されました。",
+    "inviteBodyNoClinic": "{name}さんから受付スタッフとして招待されました。",
+    "accept": "承諾する",
+    "decline": "辞退する",
+    "inviteDeclined": "この招待を辞退しました。",
+    "teamLimitReachedInvitee": "この医師のチームは満員です。先に枠を空けてもらってください。",
+    "genericError": "問題が発生しました。もう一度お試しください。"
   }
 }
