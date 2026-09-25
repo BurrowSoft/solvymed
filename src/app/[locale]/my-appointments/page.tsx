@@ -18,10 +18,16 @@ export type PatientAppointment = {
   scheduled_by: string | null;
 };
 
-export default async function MyAppointmentsPage() {
+export default async function MyAppointmentsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const prefix = locale === "en" ? "" : `/${locale}`;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/auth/login");
+  if (!user) redirect(`${prefix}/auth/login`);
 
   const { data: userRoleData } = await supabase
     .from("user_roles")
@@ -32,16 +38,16 @@ export default async function MyAppointmentsPage() {
   if (!userRoleData?.role && user.user_metadata?.role === "patient") {
     // Pending patient (invite code never resolved) — no linked doctor yet,
     // send to the retry form instead of rendering an empty appointments page.
-    redirect("/auth/invite-required");
+    redirect(`${prefix}/auth/invite-required`);
   }
   if (userRoleData?.role === "patient" && userRoleData.invited_by_professional_id && !userRoleData.linked_patient_id) {
     // Linked to a doctor's "orbit" but not yet confirmed — no
     // patient_connections yet, so there's nothing to book or show here.
-    redirect("/auth/pending-confirmation");
+    redirect(`${prefix}/auth/pending-confirmation`);
   }
   if (userRoleData?.role && userRoleData.role !== "patient") {
     // Professional/secretary landed here directly — this page is patient-only.
-    redirect("/dashboard");
+    redirect(`${prefix}/dashboard`);
   }
 
   let myProfessionalId = (userRoleData?.invited_by_professional_id as string | null) ?? null;

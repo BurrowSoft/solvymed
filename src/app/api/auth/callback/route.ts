@@ -1,12 +1,23 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
+import { routing } from "@/i18n/routing";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
   const tokenHash = searchParams.get("token_hash");
   const type = (searchParams.get("type") ?? "signup") as EmailOtpType;
+
+  // No [locale] segment here (this is a Route Handler, not a page under
+  // [locale]), so the only signal for which locale the signup happened in
+  // is the NEXT_LOCALE cookie next-intl's own middleware keeps in sync with
+  // whatever locale-prefixed page the user was last on.
+  const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
+  const locale = (routing.locales as readonly string[]).includes(cookieLocale ?? "")
+    ? (cookieLocale as string)
+    : routing.defaultLocale;
+  const localePrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
 
   // Must have either a PKCE code or an OTP token_hash
   if (!code && !tokenHash) {
@@ -85,13 +96,13 @@ export async function GET(request: NextRequest) {
         .maybeSingle();
 
       if (existingRole?.role === "patient" && existingRole.linked_patient_id) {
-        redirectUrl = new URL("/my-appointments", origin);
+        redirectUrl = new URL(`${localePrefix}/my-appointments`, origin);
       } else if (existingRole?.role === "patient" && existingRole.invited_by_professional_id) {
         // Linked to a doctor's "orbit" but not yet confirmed — patient_connections
         // doesn't exist until the doctor calls confirm_and_link_patient.
-        redirectUrl = new URL("/auth/pending-confirmation", origin);
+        redirectUrl = new URL(`${localePrefix}/auth/pending-confirmation`, origin);
       } else if (existingRole?.role) {
-        redirectUrl = new URL("/dashboard", origin);
+        redirectUrl = new URL(`${localePrefix}/dashboard`, origin);
       } else if (inviteCode) {
         // Two distinct code types, tried in sequence: a patient invite code
         // (tied to a specific pre-existing patient record — link is
@@ -105,16 +116,16 @@ export async function GET(request: NextRequest) {
           // fail the same way. invite-required still keeps the session
           // alive either way, so the destination is the same, but the two
           // failure modes shouldn't be conflated in the code.
-          redirectUrl = new URL("/auth/invite-required", origin);
+          redirectUrl = new URL(`${localePrefix}/auth/invite-required`, origin);
         } else if (fullyLinked) {
-          redirectUrl = new URL("/auth/patient-welcome", origin);
+          redirectUrl = new URL(`${localePrefix}/auth/patient-welcome`, origin);
         } else {
           const { data: profId, error: profLinkError } = await supabase.rpc("link_by_professional_public_code", { p_public_code: inviteCode });
           redirectUrl = profLinkError
-            ? new URL("/auth/invite-required", origin)
+            ? new URL(`${localePrefix}/auth/invite-required`, origin)
             : profId
-            ? new URL("/auth/pending-confirmation", origin)
-            : new URL("/auth/invite-required", origin);
+            ? new URL(`${localePrefix}/auth/pending-confirmation`, origin)
+            : new URL(`${localePrefix}/auth/invite-required`, origin);
         }
       } else {
         // An invite code is required for patients — without one there's no
@@ -126,7 +137,7 @@ export async function GET(request: NextRequest) {
         // and offers a retry form to attach a valid code.
         // dashboard/layout.tsx's allowlist guard is what actually keeps a
         // role-less session out of the professional dashboard.
-        redirectUrl = new URL("/auth/invite-required", origin);
+        redirectUrl = new URL(`${localePrefix}/auth/invite-required`, origin);
       }
 
     } else {

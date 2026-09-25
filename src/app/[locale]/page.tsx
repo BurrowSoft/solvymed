@@ -57,7 +57,13 @@ const FEATURE_ICONS: Record<FeatureKey, React.ReactNode> = {
 
 const FEATURE_KEYS: FeatureKey[] = ["scheduling", "patients", "records", "prescriptions", "payments", "analytics"];
 
-export default async function HomePage() {
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const prefix = locale === "en" ? "" : `/${locale}`;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (user) {
@@ -70,18 +76,18 @@ export default async function HomePage() {
       .eq("user_id", user.id)
       .maybeSingle();
     if (roleRow?.role === "patient" && roleRow.linked_patient_id) {
-      redirect("/my-appointments");
+      redirect(`${prefix}/my-appointments`);
     }
     if (roleRow?.role === "patient" && roleRow.invited_by_professional_id) {
-      redirect("/auth/pending-confirmation");
+      redirect(`${prefix}/auth/pending-confirmation`);
     }
     if (roleRow?.role === "patient") {
-      redirect("/my-appointments");
+      redirect(`${prefix}/my-appointments`);
     }
     if (!roleRow?.role && user.user_metadata?.role === "patient") {
-      redirect("/auth/invite-required");
+      redirect(`${prefix}/auth/invite-required`);
     }
-    redirect("/dashboard");
+    redirect(`${prefix}/dashboard`);
   }
 
   const t = await getTranslations();
