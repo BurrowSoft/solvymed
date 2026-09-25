@@ -340,7 +340,6 @@ export function BookingClient({
       setBooked(true);
       notifyProfessionalOfBooking(
         professionalId,
-        patientFullName.trim() || patientEmail.split("@")[0],
         selectedDate,
         selectedSlot.start,
       ).catch(() => {});
