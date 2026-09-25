@@ -525,7 +525,9 @@
       "alreadyHasRole": "Esta conta já possui uma função e não pode ser vinculada como paciente. Saia e use outra conta.",
       "notPendingPatient": "Esta conta não foi criada como um cadastro de paciente, então um código de convite não pode ser vinculado aqui.",
       "linkFailed": "Ocorreu um erro ao vincular sua conta. Tente novamente.",
-      "backToSignup": "Usar outra conta"
+      "backToSignup": "Usar outra conta",
+      "tooManyAttempts": "Muitas tentativas. Aguarde um pouco antes de tentar novamente.",
+      "alreadyInvitedByAnother": "Sua conta já está conectada a outro médico."
     },
     "pendingConfirmation": {
       "loading": "Verificando seu status…",

@@ -525,6 +525,8 @@
       "alreadyHasRole": "This account already has a role and can't be linked as a patient. Sign out and use a different account.",
       "notPendingPatient": "This account wasn't created as a patient signup, so an invite code can't be attached here.",
       "linkFailed": "Something went wrong linking your account. Please try again.",
+      "tooManyAttempts": "Too many attempts. Please wait a while before trying again.",
+      "alreadyInvitedByAnother": "Your account is already connected to a different doctor.",
       "backToSignup": "Use a different account"
     },
     "pendingConfirmation": {

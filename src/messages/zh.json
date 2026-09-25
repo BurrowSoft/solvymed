@@ -525,7 +525,9 @@
       "alreadyHasRole": "该账户已拥有角色，无法作为患者关联。请退出登录并使用其他账户。",
       "notPendingPatient": "该账户并非以患者身份注册，因此无法在此关联邀请码。",
       "linkFailed": "关联您的账户时出错，请重试。",
-      "backToSignup": "使用其他账户"
+      "backToSignup": "使用其他账户",
+      "tooManyAttempts": "尝试次数过多，请稍后再试。",
+      "alreadyInvitedByAnother": "您的账户已与另一位医生关联。"
     },
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",

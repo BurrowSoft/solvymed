@@ -525,7 +525,9 @@
       "alreadyHasRole": "Akun ini sudah memiliki peran dan tidak dapat ditautkan sebagai pasien. Keluar dan gunakan akun lain.",
       "notPendingPatient": "Akun ini tidak dibuat sebagai pendaftaran pasien, jadi kode undangan tidak dapat ditautkan di sini.",
       "linkFailed": "Terjadi kesalahan saat menautkan akun Anda. Silakan coba lagi.",
-      "backToSignup": "Gunakan akun lain"
+      "backToSignup": "Gunakan akun lain",
+      "tooManyAttempts": "Terlalu banyak percobaan. Harap tunggu sebentar sebelum mencoba lagi.",
+      "alreadyInvitedByAnother": "Akun Anda sudah terhubung dengan dokter lain."
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",

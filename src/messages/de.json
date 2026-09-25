@@ -525,7 +525,9 @@
       "alreadyHasRole": "Dieses Konto hat bereits eine Rolle und kann nicht als Patient verknüpft werden. Melden Sie sich ab und verwenden Sie ein anderes Konto.",
       "notPendingPatient": "Dieses Konto wurde nicht als Patientenregistrierung erstellt, daher kann hier kein Einladungscode zugeordnet werden.",
       "linkFailed": "Beim Verknüpfen Ihres Kontos ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
-      "backToSignup": "Anderes Konto verwenden"
+      "backToSignup": "Anderes Konto verwenden",
+      "tooManyAttempts": "Zu viele Versuche. Bitte warte einen Moment, bevor du es erneut versuchst.",
+      "alreadyInvitedByAnother": "Dein Konto ist bereits mit einem anderen Arzt verbunden."
     },
     "pendingConfirmation": {
       "loading": "Status wird geprüft…",

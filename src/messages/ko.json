@@ -525,7 +525,9 @@
       "alreadyHasRole": "이 계정에는 이미 역할이 있어 환자로 연결할 수 없습니다. 로그아웃 후 다른 계정을 사용하세요.",
       "notPendingPatient": "이 계정은 환자로 가입되지 않았으므로 여기서 초대 코드를 연결할 수 없습니다.",
       "linkFailed": "계정 연결 중 오류가 발생했습니다. 다시 시도해 주세요.",
-      "backToSignup": "다른 계정 사용"
+      "backToSignup": "다른 계정 사용",
+      "tooManyAttempts": "시도 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
+      "alreadyInvitedByAnother": "계정이 이미 다른 의사와 연결되어 있습니다."
     },
     "pendingConfirmation": {
       "loading": "상태 확인 중…",
