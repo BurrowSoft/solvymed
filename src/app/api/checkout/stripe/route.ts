@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@/lib/supabase/server";
-import { isAccessAllowed, type EffectiveSub } from "@/lib/subscription";
+import { isAccessAllowed, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
+import { routing } from "@/i18n/routing";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-05-27.dahlia" });
-
-const PRICE_USD_CENTS = 1900; // $19.00
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -55,7 +54,15 @@ export async function POST(request: NextRequest) {
   }
 
   const origin = request.headers.get("origin") ?? process.env.NEXT_PUBLIC_APP_URL ?? "";
-  const locale = (await request.json().catch(() => ({}))).locale ?? "en";
+  // The client only picks a locale, never an amount: the price comes from
+  // the fixed getPlanPrice table. The locale is also interpolated into the
+  // redirect URLs below, so anything that isn't a real app locale falls
+  // back to the default.
+  const requestedLocale = (await request.json().catch(() => ({}))).locale;
+  const locale = (routing.locales as readonly string[]).includes(requestedLocale)
+    ? (requestedLocale as string)
+    : routing.defaultLocale;
+  const plan = getPlanPrice(locale);
 
   try {
     const session = await stripe.checkout.sessions.create(
@@ -65,8 +72,8 @@ export async function POST(request: NextRequest) {
         line_items: [
           {
             price_data: {
-              currency: "usd",
-              unit_amount: PRICE_USD_CENTS,
+              currency: plan.currency,
+              unit_amount: plan.unitAmount,
               recurring: { interval: "month" },
               product_data: { name: "SolvyMed Pro" },
             },
@@ -91,8 +98,11 @@ export async function POST(request: NextRequest) {
         // redirect, a retried request) into the same Checkout Session
         // instead of creating two. Scoped to a short window since a
         // legitimate resubscribe after cancellation should get a fresh
-        // session, not be blocked by an old key.
-        idempotencyKey: `checkout-stripe-${user.id}-${Math.floor(Date.now() / (10 * 60 * 1000))}`,
+        // session, not be blocked by an old key. The locale is part of the
+        // key: Stripe rejects a reused key whose parameters differ, so
+        // switching language (and so currency and URLs) within the window
+        // would otherwise fail checkout outright.
+        idempotencyKey: `checkout-stripe-${user.id}-${locale}-${Math.floor(Date.now() / (10 * 60 * 1000))}`,
       },
     );
 

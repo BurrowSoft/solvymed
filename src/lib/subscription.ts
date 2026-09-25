@@ -26,8 +26,12 @@ export function trialDaysRemaining(sub: EffectiveSub | null): number | null {
   return Math.ceil(ms / (1000 * 60 * 60 * 24));
 }
 
-/** BRL pricing for Brazilian locale, USD for everyone else */
-export function getPlanPrice(locale: string): { amount: string; currency: string } {
-  if (locale === 'pt-BR') return { amount: 'R$ 89', currency: 'BRL' };
-  return { amount: '$19', currency: 'USD' };
+/**
+ * BRL pricing for Brazilian locale, USD for everyone else. Single source for
+ * both the displayed price and what Stripe charges (unitAmount, in the
+ * currency's minor unit), so the two can't drift apart.
+ */
+export function getPlanPrice(locale: string): { amount: string; currency: 'brl' | 'usd'; unitAmount: number } {
+  if (locale === 'pt-BR') return { amount: 'R$ 89', currency: 'brl', unitAmount: 8900 };
+  return { amount: '$19', currency: 'usd', unitAmount: 1900 };
 }
