@@ -39,7 +39,9 @@ describe("closeFailureCode", () => {
     expect(closeFailureCode({ kind: "cancel", subId: "sub_1" }, null)).toBe("cancelled_not_closed");
     expect(closeFailureCode({ kind: "ended", subId: "sub_1" }, null)).toBe("cancelled_not_closed");
     expect(closeFailureCode({ kind: "none" }, null)).toBe("generic");
-    expect(closeFailureCode({ kind: "cancel", subId: "sub_1" }, "subscription_active")).toBe("subscription_active");
+    // A cancelled subscription is reported even if the guard also fired.
+    expect(closeFailureCode({ kind: "cancel", subId: "sub_1" }, "subscription_active")).toBe("cancelled_not_closed");
+    expect(closeFailureCode({ kind: "none" }, "subscription_active")).toBe("subscription_active");
   });
 
   it("a retry after a cancel skips Stripe: the subscription is already over", () => {
