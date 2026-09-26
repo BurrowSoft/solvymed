@@ -323,7 +323,10 @@ export function BookingClient({
       });
       if (rpcError) {
         const msg = rpcError.message ?? "";
-        if (msg.includes("slot_taken")) {
+        if (msg.includes("patient_archived")) {
+          // The clinic archived this patient's record there.
+          setError(t("errorArchived"));
+        } else if (msg.includes("slot_taken")) {
           setError(t("errorSlotTaken"));
           loadSlots(selectedDate, duration);
         } else if (msg.includes("blocked")) {

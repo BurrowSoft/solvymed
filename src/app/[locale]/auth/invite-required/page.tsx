@@ -92,6 +92,8 @@ export default function InviteRequiredPage() {
       setError(
         linkError.message?.includes("too_many_attempts")
           ? t("inviteRequired.tooManyAttempts")
+          : linkError.message?.includes("patient_archived")
+          ? t("inviteRequired.archived")
           : t("inviteRequired.linkFailed"),
       );
       return;
@@ -107,6 +109,8 @@ export default function InviteRequiredPage() {
       setError(
         profLinkError.message?.includes("too_many_attempts")
           ? t("inviteRequired.tooManyAttempts")
+          : profLinkError.message?.includes("patient_archived")
+          ? t("inviteRequired.archived")
           : profLinkError.message?.includes("already_invited_by_another_professional")
           ? t("inviteRequired.alreadyInvitedByAnother")
           : t("inviteRequired.linkFailed"),
