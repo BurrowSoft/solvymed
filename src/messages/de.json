@@ -758,5 +758,28 @@
     "step1": "Laden Sie SolvyMed auf Ihr Smartphone herunter.",
     "step2": "Öffnen Sie die App, tippen Sie auf <b>Registrieren</b>, wählen Sie <b>Patient</b> und geben Sie dann den Code oben als <b>Einladungscode</b> ein.",
     "step3": "Sie haben bereits ein Konto? Öffnen Sie den Tab <b>Startseite</b> und geben Sie den Code unter <b>Mit Ihrem Arzt verbinden</b> ein."
+  },
+  "accountDelete": {
+    "backToHome": "Zur Startseite",
+    "title": "Konto löschen",
+    "intro": "Senden Sie uns Ihre Anfrage unten. Wir bearbeiten sie innerhalb von 30 Tagen und bestätigen per E-Mail.",
+    "whatHappensTitle": "Was mit Ihren Daten geschieht",
+    "professionals": "<b>Ärztinnen, Ärzte und Therapeuten:</b> Die Patientenakten Ihrer Patienten müssen gesetzlich 20 Jahre aufbewahrt werden. Deshalb schließen wir Ihr Konto und bewahren die Akten sicher auf, statt sie zu löschen.",
+    "patients": "<b>Patientinnen und Patienten:</b> Wir löschen Ihr Konto. Die Unterlagen, die Ihre Praxis über Sie führt, verbleiben bei der Praxis; wenden Sie sich dazu an die Praxis.",
+    "emailLabel": "E-Mail-Adresse",
+    "emailPlaceholder": "ihre@email.com",
+    "reasonLabel": "Grund",
+    "optional": "(optional)",
+    "reasonPlaceholder": "Sagen Sie uns, warum Sie gehen …",
+    "submit": "Kontolöschung beantragen",
+    "submitting": "Wird gesendet …",
+    "preferEmail": "Lieber per E-Mail?",
+    "emailSupport": "Support kontaktieren",
+    "closeSubject": "Mein Konto schließen",
+    "doneTitle": "Anfrage erhalten",
+    "doneBody": "Wir haben Ihre Anfrage für <b>{email}</b> erhalten.",
+    "doneSub": "Wir bearbeiten sie innerhalb von 30 Tagen und bestätigen per E-Mail.",
+    "errorEmailRequired": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
+    "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut oder schreiben Sie an {email}."
   }
 }

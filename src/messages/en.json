@@ -758,5 +758,28 @@
     "step1": "Download SolvyMed on your phone.",
     "step2": "Open the app, tap <b>Sign up</b>, choose <b>Patient</b>, then enter the code above in <b>Invite code</b>.",
     "step3": "Already have an account? Open the <b>Home</b> tab and enter the code under <b>Connect to Your Doctor</b>."
+  },
+  "accountDelete": {
+    "backToHome": "Back to home",
+    "title": "Delete your account",
+    "intro": "Send us your request below. We'll process it within 30 days and confirm by email.",
+    "whatHappensTitle": "What happens to your data",
+    "professionals": "<b>Healthcare professionals:</b> by law, your patients' medical records must be kept for 20 years, so we close your account and keep the records secure instead of deleting them.",
+    "patients": "<b>Patients:</b> we delete your account. The records your clinic keeps about you stay with the clinic; contact the clinic about them.",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "your@email.com",
+    "reasonLabel": "Reason",
+    "optional": "(optional)",
+    "reasonPlaceholder": "Tell us why you're leaving…",
+    "submit": "Request account deletion",
+    "submitting": "Submitting…",
+    "preferEmail": "Prefer email?",
+    "emailSupport": "Email support",
+    "closeSubject": "Close my account",
+    "doneTitle": "Request received",
+    "doneBody": "We've received your request for <b>{email}</b>.",
+    "doneSub": "We'll process it within 30 days and confirm by email.",
+    "errorEmailRequired": "Please enter your email address.",
+    "errorGeneric": "Something went wrong. Please try again or email {email}."
   }
 }

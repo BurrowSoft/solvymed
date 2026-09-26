@@ -2,11 +2,13 @@
 
 import { createClient } from "@/lib/supabase/server";
 
+// Records a public account-deletion request (RLS: clients can only insert
+// a pending row). Returns stable codes; the page shows translated copy.
 export async function requestAccountDeletion(formData: FormData) {
   const email = (formData.get("email") as string)?.trim().toLowerCase();
   const reason = (formData.get("reason") as string)?.trim() || null;
 
-  if (!email) return { error: "Email is required." };
+  if (!email) return { error: "email_required" as const };
 
   const supabase = await createClient();
 
@@ -17,7 +19,7 @@ export async function requestAccountDeletion(formData: FormData) {
     status: "pending",
   });
 
-  if (error) return { error: "Something went wrong. Please try again or email support@burrowsoft.com" };
+  if (error) return { error: "generic" as const };
 
   return { success: true };
 }
