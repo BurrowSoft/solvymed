@@ -104,7 +104,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
 
   if (state === "unknown") {
     return (
-      <AuthPageShell>
+      <AuthPageShell languageSwitcher={false}>
         <AuthCard>
           <Logo />
           <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("error")}</h1>
@@ -122,7 +122,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
     // Mobile: redirect to app — show opening UI while timer fires
     if (!isDesktop) {
       return (
-        <AuthPageShell>
+        <AuthPageShell languageSwitcher={false}>
           <AuthCard>
             <Logo />
             <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("resetPassword")}</h1>
@@ -151,7 +151,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
 
     // Desktop: show password form
     return (
-      <AuthPageShell>
+      <AuthPageShell languageSwitcher={false}>
         <AuthCard>
           <Logo />
           {saveSuccess ? (
@@ -212,7 +212,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
   }
 
   return (
-    <AuthPageShell>
+    <AuthPageShell languageSwitcher={false}>
       <AuthCard>
         <Logo />
 
