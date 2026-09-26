@@ -83,6 +83,7 @@ export default async function PrivacyPage({
               <li><strong>Vercel</strong> — website hosting (server processing in Brazil, São Paulo region).</li>
               <li><strong>Stripe</strong> — payment processing for subscriptions.</li>
               <li><strong>Expo</strong> — push notification delivery service.</li>
+              <li><strong>Resend</strong> — transactional email (account confirmations and password resets) (USA).</li>
             </ul>
             <p>
               We may disclose information if required by law, court order, or to protect the rights and safety
@@ -104,10 +105,11 @@ export default async function PrivacyPage({
 
           <Section title="7. Data Retention">
             <p>
-              Medical records (clinical notes, prescriptions, exams, files and appointment history) are kept
-              for at least 20 years, as required by Brazilian law for patient records, even if a patient is
-              archived or an account is closed. They can be corrected, but not deleted. Other account data is
-              kept while the account is active.
+              Medical records (clinical notes, prescriptions and exam files) are kept for at least 20 years,
+              as required by Brazilian law for patient records. A patient with medical records cannot be
+              deleted, only archived, and an account that holds medical records is closed by our support team
+              rather than deleted, so the records are kept. Other account data is kept while the account is
+              active.
             </p>
             <p>
               You may request deletion of your account at any time by contacting us; medical records are kept
