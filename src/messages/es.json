@@ -338,7 +338,7 @@
     "archivePatient": "Archivar registro",
     "archiveTitle": "¿Archivar a {name}?",
     "archiveBody": "Los registros archivados no aparecen en las listas, la búsqueda ni la agenda. El historial se conserva y puedes restaurarlo en cualquier momento.",
-    "archiveUpcoming": "{n, plural, one {Se cancelará # cita próxima.} other {Se cancelarán # citas próximas.}}",
+    "archiveUpcoming": "{n, plural, =0 {No se cancelará ninguna cita próxima.} one {Se cancelará # cita próxima.} other {Se cancelarán # citas próximas.}}",
     "archiveConfirm": "Archivar",
     "archiveError": "No se pudo archivar el registro. Inténtalo de nuevo.",
     "archivedSub": "Los registros archivados no pueden recibir nuevas citas, notas clínicas ni recetas.",

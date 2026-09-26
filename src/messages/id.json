@@ -338,7 +338,7 @@
     "archivePatient": "Arsipkan rekam medis",
     "archiveTitle": "Arsipkan {name}?",
     "archiveBody": "Rekam medis yang diarsipkan disembunyikan dari daftar, pencarian, dan jadwal. Riwayat tetap disimpan dan dapat dipulihkan kapan saja.",
-    "archiveUpcoming": "{n, plural, other {# janji temu mendatang akan dibatalkan.}}",
+    "archiveUpcoming": "{n, plural, =0 {Tidak ada janji temu mendatang yang dibatalkan.} other {# janji temu mendatang akan dibatalkan.}}",
     "archiveConfirm": "Arsipkan",
     "archiveError": "Tidak dapat mengarsipkan rekam medis. Silakan coba lagi.",
     "archivedSub": "Rekam medis yang diarsipkan tidak dapat menerima janji temu, catatan, atau resep baru.",

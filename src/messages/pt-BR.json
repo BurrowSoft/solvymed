@@ -338,7 +338,7 @@
     "archivePatient": "Arquivar cadastro",
     "archiveTitle": "Arquivar {name}?",
     "archiveBody": "Cadastros arquivados ficam ocultos das listas, da busca e da agenda. O histórico é mantido e você pode restaurar a qualquer momento.",
-    "archiveUpcoming": "{n, plural, one {# consulta futura será cancelada.} other {# consultas futuras serão canceladas.}}",
+    "archiveUpcoming": "{n, plural, =0 {Nenhuma consulta futura será cancelada.} one {# consulta futura será cancelada.} other {# consultas futuras serão canceladas.}}",
     "archiveConfirm": "Arquivar",
     "archiveError": "Não foi possível arquivar o cadastro. Tente novamente.",
     "archivedSub": "Cadastros arquivados não recebem novas consultas, registros ou receitas.",

@@ -338,7 +338,7 @@
     "archivePatient": "Archivia scheda",
     "archiveTitle": "Archiviare {name}?",
     "archiveBody": "Le schede archiviate sono nascoste da elenchi, ricerca e agenda. Lo storico viene conservato e puoi ripristinarle in qualsiasi momento.",
-    "archiveUpcoming": "{n, plural, one {# appuntamento futuro verrà annullato.} other {# appuntamenti futuri verranno annullati.}}",
+    "archiveUpcoming": "{n, plural, =0 {Nessun appuntamento futuro verrà annullato.} one {# appuntamento futuro verrà annullato.} other {# appuntamenti futuri verranno annullati.}}",
     "archiveConfirm": "Archivia",
     "archiveError": "Impossibile archiviare la scheda. Riprova.",
     "archivedSub": "Le schede archiviate non possono ricevere nuovi appuntamenti, note cliniche o prescrizioni.",
