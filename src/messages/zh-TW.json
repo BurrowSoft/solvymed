@@ -72,7 +72,7 @@
     "updatedTitle": "密碼已更新",
     "updatedMessage": "您的密碼已更改。您現在可以使用新密碼登入。",
     "matchError": "兩次輸入的密碼不相符。",
-    "lengthError": "密碼至少需要6個字元。",
+    "lengthError": "密碼至少需要{min}個字元。",
     "openDashboard": "開啟儀表板",
     "dashboardHint": "您將被重新導向至儀表板。"
   },
@@ -475,6 +475,7 @@
     "professionalFallback": "專業人員"
   },
   "auth": {
+    "passwordTooShort": "密碼至少需要{min}個字元。",
     "login": {
       "title": "歡迎回來",
       "subtitle": "登入您的 SolvyMed 帳戶",

@@ -72,7 +72,7 @@
     "updatedTitle": "Đã cập nhật mật khẩu",
     "updatedMessage": "Mật khẩu của bạn đã được thay đổi. Bây giờ bạn có thể đăng nhập bằng mật khẩu mới.",
     "matchError": "Mật khẩu không khớp.",
-    "lengthError": "Mật khẩu phải có ít nhất 6 ký tự.",
+    "lengthError": "Mật khẩu phải có ít nhất {min} ký tự.",
     "openDashboard": "Mở bảng điều khiển",
     "dashboardHint": "Bạn sẽ được chuyển hướng đến bảng điều khiển."
   },
@@ -475,6 +475,7 @@
     "professionalFallback": "Chuyên gia"
   },
   "auth": {
+    "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
     "login": {
       "title": "Chào mừng trở lại",
       "subtitle": "Đăng nhập vào tài khoản SolvyMed của bạn",

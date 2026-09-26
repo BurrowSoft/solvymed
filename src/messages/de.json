@@ -72,7 +72,7 @@
     "updatedTitle": "Passwort aktualisiert",
     "updatedMessage": "Ihr Passwort wurde geändert. Sie können sich jetzt mit Ihrem neuen Passwort anmelden.",
     "matchError": "Die Passwörter stimmen nicht überein.",
-    "lengthError": "Das Passwort muss mindestens 6 Zeichen lang sein.",
+    "lengthError": "Das Passwort muss mindestens {min} Zeichen lang sein.",
     "openDashboard": "Dashboard öffnen",
     "dashboardHint": "Sie werden zu Ihrem Dashboard weitergeleitet."
   },
@@ -475,6 +475,7 @@
     "professionalFallback": "Gesundheitsfachkraft"
   },
   "auth": {
+    "passwordTooShort": "Das Passwort muss mindestens {min} Zeichen lang sein.",
     "login": {
       "title": "Willkommen zurück",
       "subtitle": "Melden Sie sich bei Ihrem SolvyMed-Konto an",

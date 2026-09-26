@@ -72,7 +72,7 @@
     "updatedTitle": "Senha atualizada",
     "updatedMessage": "Sua senha foi alterada. Você já pode entrar com sua nova senha.",
     "matchError": "As senhas não coincidem.",
-    "lengthError": "A senha deve ter pelo menos 6 caracteres.",
+    "lengthError": "A senha deve ter pelo menos {min} caracteres.",
     "openDashboard": "Abrir painel",
     "dashboardHint": "Você será redirecionado para o painel."
   },
@@ -475,6 +475,7 @@
     "professionalFallback": "Profissional"
   },
   "auth": {
+    "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",
     "login": {
       "title": "Que bom ter você de volta",
       "subtitle": "Entre na sua conta SolvyMed",

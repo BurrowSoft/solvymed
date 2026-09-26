@@ -72,7 +72,7 @@
     "updatedTitle": "Mot de passe mis à jour",
     "updatedMessage": "Votre mot de passe a été modifié. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
     "matchError": "Les mots de passe ne correspondent pas.",
-    "lengthError": "Le mot de passe doit comporter au moins 6 caractères.",
+    "lengthError": "Le mot de passe doit comporter au moins {min} caractères.",
     "openDashboard": "Ouvrir le tableau de bord",
     "dashboardHint": "Vous serez redirigé vers votre tableau de bord."
   },
@@ -475,6 +475,7 @@
     "professionalFallback": "Professionnel(le)"
   },
   "auth": {
+    "passwordTooShort": "Le mot de passe doit comporter au moins {min} caractères.",
     "login": {
       "title": "Bienvenue",
       "subtitle": "Connectez-vous à votre compte SolvyMed",
