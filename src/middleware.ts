@@ -56,10 +56,12 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/auth/login`, req.url));
   }
 
-  // First-visit geo-redirect
-  const hasLocalePrefix = (routing.locales as readonly string[]).some(
-    (l) => l !== routing.defaultLocale && pathname.startsWith(`/${l}`)
-  );
+  // First-visit geo-redirect. Only for paths with no locale segment at all:
+  // an explicit /en/... (the default locale, e.g. from an email link) must
+  // not get a second prefix (/th/en/... is a 404). Matching the whole first
+  // segment also stops /id from matching paths like /identity.
+  const firstSegment = pathname.split("/")[1] ?? "";
+  const hasLocalePrefix = (routing.locales as readonly string[]).includes(firstSegment);
   const isApiOrAsset = /^\/(api|_next|favicon|.*\..*)/.test(pathname);
   const ua = req.headers.get("user-agent") ?? "";
   const isBot = /googlebot|bingbot|yandexbot|baiduspider|applebot|facebookexternalhit|twitterbot/i.test(ua);

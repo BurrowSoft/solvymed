@@ -31,7 +31,9 @@ export default function ForgotPasswordPage() {
     const supabase = createClient();
     const { error: authError } = await supabase.auth.resetPasswordForEmail(
       email,
-      { redirectTo: "https://www.solvymed.com/en/auth/reset-password" }
+      // Keep the user's language. The locale is explicit even for en, so a
+      // fresh browser (no NEXT_LOCALE cookie) isn't geo-redirected elsewhere.
+      { redirectTo: `https://www.solvymed.com/${locale}/auth/reset-password` }
     );
     setLoading(false);
     if (authError) {

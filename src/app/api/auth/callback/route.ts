@@ -10,12 +10,18 @@ export async function GET(request: NextRequest) {
   const type = (searchParams.get("type") ?? "signup") as EmailOtpType;
 
   // No [locale] segment here (this is a Route Handler, not a page under
-  // [locale]), so the only signal for which locale the signup happened in
-  // is the NEXT_LOCALE cookie next-intl's own middleware keeps in sync with
-  // whatever locale-prefixed page the user was last on.
+  // [locale]). The signup form puts its locale on the confirmation link
+  // (?locale=), which survives opening the email in another browser, e.g.
+  // a phone's mail app. Older links without it fall back to the NEXT_LOCALE
+  // cookie next-intl's middleware keeps for this browser.
+  const isLocale = (v: string | null | undefined): v is string =>
+    (routing.locales as readonly string[]).includes(v ?? "");
+  const paramLocale = searchParams.get("locale");
   const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
-  const locale = (routing.locales as readonly string[]).includes(cookieLocale ?? "")
-    ? (cookieLocale as string)
+  const locale = isLocale(paramLocale)
+    ? paramLocale
+    : isLocale(cookieLocale)
+    ? cookieLocale
     : routing.defaultLocale;
   const localePrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
 
@@ -164,11 +170,15 @@ export async function GET(request: NextRequest) {
     }
   } else {
     // Auth failed — send to login so the user has a clear path forward
-    redirectUrl = new URL("/auth/login", origin);
+    redirectUrl = new URL(`${localePrefix}/auth/login`, origin);
   }
 
   const response = NextResponse.redirect(redirectUrl);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   pendingCookies.forEach(({ name, value, ...rest }) => response.cookies.set(name, value, rest as any));
+  // Pin the language for this browser. en pages are unprefixed, and without
+  // the cookie the middleware's first-visit geo-redirect would move a
+  // fresh browser to its country's locale.
+  response.cookies.set("NEXT_LOCALE", locale, { maxAge: 60 * 60 * 24 * 365, path: "/", sameSite: "lax" });
   return response;
 }
