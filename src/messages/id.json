@@ -513,7 +513,7 @@
       "joiningAs": "Bergabung sebagai {role} melalui tautan undangan.",
       "joiningAsSecretary": "Mendaftar sebagai sekretaris melalui tautan undangan.",
       "secretaryNeedsInvite": "Sekretaris? Minta tautan undangan dari dokter Anda.",
-      "secretaryEmailMismatch": "Email ini tidak cocok dengan undangan. Gunakan alamat email yang menerima undangan."
+      "secretaryEmailMismatch": "Email ini tidak cocok dengan undangan, atau undangan sudah tidak berlaku. Periksa email Anda atau minta tautan baru ke klinik."
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",

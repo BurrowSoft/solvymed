@@ -513,7 +513,7 @@
       "joiningAs": "招待リンクで{role}として参加します。",
       "joiningAsSecretary": "招待リンクから受付スタッフとして登録します。",
       "secretaryNeedsInvite": "受付スタッフの方は、医師に招待リンクを依頼してください。",
-      "secretaryEmailMismatch": "このメールアドレスは招待と一致しません。招待が送られたメールアドレスを使用してください。"
+      "secretaryEmailMismatch": "このメールアドレスは招待と一致しないか、招待の有効期限が切れています。メールアドレスを確認するか、クリニックに新しいリンクを依頼してください。"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",

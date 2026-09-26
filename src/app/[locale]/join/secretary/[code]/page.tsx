@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
-import { normalizeSecretaryCode } from "@/lib/secretary";
+import { isWellFormedSecretaryCode, normalizeSecretaryCode } from "@/lib/secretary";
 import { InviteDecision } from "./InviteDecision";
 import { InviteHint } from "./InviteHint";
 
@@ -44,7 +44,9 @@ export default async function SecretaryInvitePage({
     </AuthPageShell>
   );
 
-  if (!code) return message(t("inviteInvalidTitle"), t("inviteInvalid"));
+  // A code without the invite shape can't be real: say so, rather than
+  // offering a signup that would end in an unlinked account.
+  if (!code || !isWellFormedSecretaryCode(code)) return message(t("inviteInvalidTitle"), t("inviteInvalid"));
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -57,14 +59,7 @@ export default async function SecretaryInvitePage({
         <AuthCard centered>
           <h1 className="auth-heading">{t("invitedTitle")}</h1>
           <p className="mb-6 text-slate-500">{t("invitedBody")}</p>
-          <InviteHint code={code} />
-          <Link
-            href={signupHref}
-            className="mb-4 block w-full rounded-xl bg-teal-600 px-6 py-3.5 text-base font-bold text-white shadow-md transition hover:bg-teal-700"
-          >
-            {t("createAccount")}
-          </Link>
-          <Link href={loginHref} className="text-sm text-teal-600 hover:underline">{t("haveAccountLogIn")}</Link>
+          <InviteHint code={code} signupHref={signupHref} loginHref={loginHref} homeHref={`${prefix}/`} />
         </AuthCard>
       </AuthPageShell>
     );

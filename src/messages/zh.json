@@ -513,7 +513,7 @@
       "joiningAs": "通过邀请链接以 {role} 身份加入。",
       "joiningAsSecretary": "通过邀请链接以秘书身份注册。",
       "secretaryNeedsInvite": "你是秘书？请向你的医生索取邀请链接。",
-      "secretaryEmailMismatch": "该邮箱与邀请不匹配。请使用接收邀请的邮箱地址。"
+      "secretaryEmailMismatch": "该邮箱与邀请不匹配，或邀请已失效。请检查邮箱，或向诊所索取新的链接。"
     },
     "forgotPassword": {
       "title": "忘记密码？",

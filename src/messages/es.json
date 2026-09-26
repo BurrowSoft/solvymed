@@ -513,7 +513,7 @@
       "joiningAs": "Uniéndose como {role} mediante enlace de invitación.",
       "joiningAsSecretary": "Te unes al equipo de secretaría mediante un enlace de invitación.",
       "secretaryNeedsInvite": "¿Trabajas en secretaría? Pide un enlace de invitación a la clínica donde trabajas.",
-      "secretaryEmailMismatch": "Este correo no coincide con la invitación. Usa el correo al que se envió la invitación."
+      "secretaryEmailMismatch": "Este correo no coincide con la invitación, o la invitación ya no es válida. Revisa el correo o pide un nuevo enlace a la clínica."
     },
     "forgotPassword": {
       "title": "¿Olvidaste tu contraseña?",

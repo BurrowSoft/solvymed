@@ -33,7 +33,10 @@ export default function SignupPage() {
   // the URL (older links carried ?email=, now ignored); before signing up
   // it's checked against the invite, and the server matches it again on
   // accept, which is the real boundary.
-  const secretaryCode = isJoinFlow ? "" : normalizeSecretaryCode(searchParams.get("secretary") ?? "");
+  // A malformed ?secretary= can't be a real invite, so it doesn't start a
+  // secretary signup (that would only create an unlinked account).
+  const rawSecretaryCode = isJoinFlow ? "" : normalizeSecretaryCode(searchParams.get("secretary") ?? "");
+  const secretaryCode = isWellFormedSecretaryCode(rawSecretaryCode) ? rawSecretaryCode : "";
   const isSecretaryFlow = !!secretaryCode;
 
   const [fullName, setFullName] = useState("");
@@ -68,18 +71,16 @@ export default function SignupPage() {
 
     // Catch a wrong email before the account exists, not after the
     // confirmation email when accepting fails. BROWSER ONLY (see migration
-    // 093's header): the RPC is rate-limited per client IP. Any other error
-    // lets signup go ahead, since the accept-time check still applies.
-    if (role === "secretary" && isSecretaryFlow && isWellFormedSecretaryCode(secretaryCode)) {
+    // 093's header): the RPC is rate-limited per client IP. `false` also
+    // means the invite is no longer open (this page is reachable directly,
+    // e.g. from a bookmark), so the message covers both. Any error,
+    // too_many_attempts included, lets signup go ahead: the accept-time
+    // email check is the real boundary.
+    if (isSecretaryFlow) {
       const { data: matches, error: matchError } = await supabase.rpc("secretary_invite_email_matches", {
         p_code: secretaryCode,
         p_email: email,
       });
-      if (matchError?.message?.includes("too_many_attempts")) {
-        setLoading(false);
-        setError(t("inviteRequired.tooManyAttempts"));
-        return;
-      }
       if (!matchError && matches === false) {
         setLoading(false);
         setError(t("signup.secretaryEmailMismatch"));

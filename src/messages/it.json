@@ -513,7 +513,7 @@
       "joiningAs": "Accesso come {role} tramite link d'invito.",
       "joiningAsSecretary": "Ti stai registrando in segreteria tramite link di invito.",
       "secretaryNeedsInvite": "Lavori in segreteria? Chiedi un link di invito al tuo studio.",
-      "secretaryEmailMismatch": "Questa email non corrisponde all'invito. Usa l'indirizzo a cui è stato inviato l'invito."
+      "secretaryEmailMismatch": "Questa email non corrisponde all'invito, oppure l'invito non è più valido. Controlla l'email o chiedi un nuovo link allo studio."
     },
     "forgotPassword": {
       "title": "Password dimenticata?",

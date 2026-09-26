@@ -513,7 +513,7 @@
       "joiningAs": "Joining as {role} via invite link.",
       "joiningAsSecretary": "Joining as a secretary via invite link.",
       "secretaryNeedsInvite": "Secretary? Ask your doctor for an invite link.",
-      "secretaryEmailMismatch": "This email doesn't match the invitation. Use the email address the invitation was sent to."
+      "secretaryEmailMismatch": "This email doesn't match the invitation, or the invitation is no longer valid. Check the email, or ask the clinic for a new link."
     },
     "forgotPassword": {
       "title": "Forgot your password?",

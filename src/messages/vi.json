@@ -513,7 +513,7 @@
       "joiningAs": "Tham gia với tư cách {role} qua liên kết mời.",
       "joiningAsSecretary": "Đăng ký làm thư ký qua liên kết mời.",
       "secretaryNeedsInvite": "Bạn là thư ký? Hãy xin bác sĩ một liên kết mời.",
-      "secretaryEmailMismatch": "Email này không khớp với lời mời. Hãy dùng địa chỉ email đã nhận lời mời."
+      "secretaryEmailMismatch": "Email này không khớp với lời mời, hoặc lời mời không còn hiệu lực. Hãy kiểm tra email hoặc xin phòng khám một liên kết mới."
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",

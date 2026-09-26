@@ -513,7 +513,7 @@
       "joiningAs": "Entrando como {role} via link de convite.",
       "joiningAsSecretary": "Entrando na equipe de secretaria por link de convite.",
       "secretaryNeedsInvite": "Trabalha na secretaria? Peça um link de convite à clínica onde você trabalha.",
-      "secretaryEmailMismatch": "Este e-mail não corresponde ao convite. Use o e-mail para o qual o convite foi enviado."
+      "secretaryEmailMismatch": "Este e-mail não corresponde ao convite, ou o convite não é mais válido. Confira o e-mail ou peça um novo link à clínica."
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",
