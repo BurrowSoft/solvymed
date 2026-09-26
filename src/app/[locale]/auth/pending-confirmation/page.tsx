@@ -31,6 +31,8 @@ type AppointmentRow = {
 
 export default function PendingConfirmationPage() {
   const t = useTranslations("auth");
+  // signOut lives in the top-level myAppointments namespace, not under auth.
+  const tMyAppts = useTranslations("myAppointments");
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const router = useRouter();
@@ -87,7 +89,9 @@ export default function PendingConfirmationPage() {
 
     const profRow = profRowRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null } | null;
     setProfessional(profRow ? {
-      name: profRow.full_name ?? "Doctor",
+      // No hard-coded (English, gendered) fallback: without a name the page
+      // uses the generic, name-free text below.
+      name: profRow.full_name?.trim() ?? "",
       specialty: profRow.specialty ?? "",
       clinicName: profRow.clinic_name ?? undefined,
     } : null);
@@ -184,7 +188,7 @@ export default function PendingConfirmationPage() {
 
         <h1 className="auth-heading">{t("pendingConfirmation.heading")}</h1>
         <p className="mb-1 text-slate-500">
-          {professional
+          {professional?.name
             ? t("pendingConfirmation.bodyWithDoctor", { name: professional.name })
             : t("pendingConfirmation.body")}
         </p>
@@ -262,7 +266,7 @@ export default function PendingConfirmationPage() {
           onClick={handleSignOut}
           className="text-sm text-slate-400 hover:text-teal-600 transition"
         >
-          {t("myAppointments.signOut")}
+          {tMyAppts("signOut")}
         </button>
       </AuthCard>
     </AuthPageShell>
