@@ -4026,6 +4026,17 @@ English on pt-BR pages. That's pre-existing, not from #34.
 **CI at `29cf23c`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `29cf23c`, review clean.**
+
+**Prod addendum (`33ea7f5`, real time ~12:04 BRT):**
+- **Doctor and secretary:** "Boa tarde, sábado 26". The schedule defaults
+  to the 26th, and the week and month views highlight 26.
+- **Payments:** "this week" is Mon 21 to Sun 27.
+- **Record time:** shows HH:MM (`12:04`).
+- **Practice set to `Asia/Bangkok`:** "Boa noite" (22:04 there), then
+  reset.
+- **Bangkok browser:** the month grid starts on 31 Aug.
+- **Patient:** today's appointment is under Próximas.
+
 ## PR #36 (`fix/account-delete-intake`) — /account/delete inserts from the browser, 🟢 (pre-100 scope) at `9f28b3c`, review clean
 
 **Scope: exactly `9f28b3c`.** The form inserts into `deletion_requests`
@@ -4065,6 +4076,27 @@ test rows were deleted afterwards.
 
 **Merge gate: 🟢 for `9f28b3c` (pre-100 behaviour), review clean.** The
 post-100 checks are recorded here as a prod addendum once 100 is live.
+
+**Prod addendum, after migration 100** (`335a118` live, pt-BR,
+`@example.invalid`):
+- **🟢 Status `new`:** three submits of the same email, each from a fresh
+  browser context, each get 201 and "Solicitação recebida". The rows are
+  stored with status **`new`** (it was `pending` before 100).
+- **🟢 Rate limit:** the **4th** submit of that email the same day gets
+  REST 400 `too_many_attempts`. The page shows "Já recebemos várias
+  solicitações. Tente de novo amanhã ou escreva para
+  support@solvymed.com." and stays on the form.
+- **🟢 Invalid email:** `a@b` passes the browser's own `type=email` check,
+  gets REST 400 `invalid_email`, and shows "Informe um endereço de e-mail
+  válido."
+- **Not verifiable here:**
+  - **Support alert email:** I have no inbox access. Mob dev's own E2E
+    insert alerted support. My 4 accepted submits (1 from an aborted
+    first run) sent 4 alerts.
+  - **"Two IPs each get their own limit":** I only have one IP. Two
+    browser contexts from the same IP share the per-email limit, as
+    shown above.
+- **Cleanup:** the 4 test rows went to mob dev for deletion.
 
 ## iOS — open question
 
