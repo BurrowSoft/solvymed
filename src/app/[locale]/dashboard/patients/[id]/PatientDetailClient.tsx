@@ -128,9 +128,13 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
 
 function PatientInfoTab({ patient, locale, isArchived, canDelete }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean }) {
   const t = useTranslations("patientDetail");
-  // Archive codes from the server become translated copy, never raw codes.
+  // Server codes become translated copy, never raw codes or database text.
   const errorText = (e: string) =>
-    e === "patient_archived" ? t("archivedNoNew") : e === "patient_has_clinical_history" ? t("deleteHasHistory") : e;
+    e === "patient_archived" ? t("archivedNoNew")
+    : e === "patient_has_clinical_history" ? t("deleteHasHistory")
+    : e === "name_required" ? t("nameRequired")
+    : e === "unauthorized" ? t("sessionError")
+    : t("genericError");
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -402,7 +406,12 @@ function useClinicalErrorText() {
       case "content_required": return t("contentRequired");
       case "record_not_found":
       case "prescription_not_found": return t("entryNotFound");
-      default: return e;
+      case "medication_required": return t("medicationRequired");
+      case "not_doctor": return t("notDoctorError");
+      case "unauthorized": return t("sessionError");
+      // Anything else (check_failed, generic, or a raw database message
+      // from actionError's fallback) is never shown as-is.
+      default: return t("genericError");
     }
   };
 }

@@ -366,7 +366,12 @@
     "editPrescriptionTitle": "Edit prescription",
     "lockedError": "This entry can no longer be changed. Add a correction instead.",
     "contentRequired": "Please enter the content.",
-    "entryNotFound": "This entry no longer exists. Reload the page."
+    "entryNotFound": "This entry no longer exists. Reload the page.",
+    "medicationRequired": "Add at least one medication.",
+    "notDoctorError": "Only the doctor can manage clinical records.",
+    "sessionError": "Your session has expired. Please sign in again.",
+    "nameRequired": "Please enter the patient's full name.",
+    "genericError": "Something went wrong. Please try again."
   },
   "settings": {
     "profileTitle": "Profile",

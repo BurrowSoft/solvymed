@@ -366,7 +366,12 @@
     "editPrescriptionTitle": "処方を編集",
     "lockedError": "この項目はもう変更できません。代わりに訂正を追加してください。",
     "contentRequired": "内容を入力してください。",
-    "entryNotFound": "この項目は存在しません。ページを再読み込みしてください。"
+    "entryNotFound": "この項目は存在しません。ページを再読み込みしてください。",
+    "medicationRequired": "薬を1つ以上追加してください。",
+    "notDoctorError": "診療記録を管理できるのは医療者のみです。",
+    "sessionError": "セッションの有効期限が切れました。もう一度ログインしてください。",
+    "nameRequired": "患者の氏名を入力してください。",
+    "genericError": "問題が発生しました。もう一度お試しください。"
   },
   "settings": {
     "profileTitle": "プロフィール",

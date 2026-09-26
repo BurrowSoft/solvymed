@@ -117,13 +117,13 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
 export async function updatePatient(id: string, formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "unauthorized" };
   // A secretary manages their doctor's patients, not their own (empty) id.
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
-  if (!effectiveProfId) return { error: "Could not verify account" };
+  if (!effectiveProfId) return { error: "check_failed" };
 
   const fullName = (formData.get("full_name") as string)?.trim();
-  if (!fullName) return { error: "Full name is required" };
+  if (!fullName) return { error: "name_required" };
 
   const { error } = await supabase.from("patients").update({
     full_name: fullName,
@@ -146,10 +146,10 @@ export async function updatePatient(id: string, formData: FormData) {
 export async function deletePatient(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "unauthorized" };
   // A secretary manages their doctor's patients, not their own (empty) id.
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
-  if (!effectiveProfId) return { error: "Could not verify account" };
+  if (!effectiveProfId) return { error: "check_failed" };
 
   const { error } = await supabase.from("patients").delete().eq("id", id).eq("professional_id", effectiveProfId);
   if (error) {
@@ -239,13 +239,13 @@ export async function restorePatient(patientId: string): Promise<RestoreResult> 
 export async function createRecord(patientId: string, formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "unauthorized" };
   // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
   // not a boundary, since these actions are directly callable.
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const content = (formData.get("content") as string)?.trim();
-  if (!content) return { error: "Record content is required" };
+  if (!content) return { error: "content_required" };
 
   // The practice's date and time, not the server's (UTC).
   const now = new Date();
@@ -268,8 +268,8 @@ export async function createRecord(patientId: string, formData: FormData) {
 export async function updateRecord(id: string, patientId: string, formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
+  if (!user) return { error: "unauthorized" };
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const content = (formData.get("content") as string)?.trim();
   if (!content) return { error: "content_required" };
@@ -289,8 +289,8 @@ export async function updateRecord(id: string, patientId: string, formData: Form
 export async function addRecordCorrection(recordId: string, patientId: string, formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
+  if (!user) return { error: "unauthorized" };
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const content = (formData.get("content") as string)?.trim();
   const reason = (formData.get("reason") as string)?.trim();
@@ -310,10 +310,10 @@ export async function addRecordCorrection(recordId: string, patientId: string, f
 export async function deleteRecord(id: string, patientId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "unauthorized" };
   // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
   // not a boundary, since these actions are directly callable.
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const { error } = await supabase.from("medical_records").delete().eq("id", id).eq("professional_id", user.id);
   if (error) return { error: actionError(error.message) };
@@ -324,10 +324,10 @@ export async function deleteRecord(id: string, patientId: string) {
 export async function createPrescription(patientId: string, formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "unauthorized" };
   // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
   // not a boundary, since these actions are directly callable.
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const notes = (formData.get("notes") as string)?.trim() || null;
   const date = clinicDate();
@@ -344,7 +344,7 @@ export async function createPrescription(patientId: string, formData: FormData) 
 
   if (items.length === 0) {
     await supabase.from("prescriptions").delete().eq("id", prescription.id);
-    return { error: "Add at least one medication" };
+    return { error: "medication_required" };
   }
 
   const { error: iError } = await supabase.from("prescription_items").insert(items);
@@ -357,10 +357,10 @@ export async function createPrescription(patientId: string, formData: FormData) 
 export async function toggleBookingBlock(patientId: string, blocked: boolean) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "unauthorized" };
   // A secretary manages their doctor's patients, not their own (empty) id.
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
-  if (!effectiveProfId) return { error: "Could not verify account" };
+  if (!effectiveProfId) return { error: "check_failed" };
 
   const { error } = await supabase
     .from("patients")
@@ -377,7 +377,7 @@ export async function toggleBookingBlock(patientId: string, blocked: boolean) {
 export async function generatePatientInviteCode(patientId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "unauthorized" };
 
   const { data, error } = await supabase.rpc("generate_patient_invite_code", { p_patient_id: patientId });
   if (error) return { error: actionError(error.message) };
@@ -389,10 +389,10 @@ export async function generatePatientInviteCode(patientId: string) {
 export async function deletePrescription(id: string, patientId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
+  if (!user) return { error: "unauthorized" };
   // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
   // not a boundary, since these actions are directly callable.
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   // The items go first; stop if that's refused (e.g. clinical_record_locked
   // after 24 hours) instead of trying the prescription anyway.
@@ -427,11 +427,11 @@ function parseMedications(formData: FormData) {
 export async function updatePrescription(id: string, patientId: string, formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
+  if (!user) return { error: "unauthorized" };
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const meds = parseMedications(formData);
-  if (meds.length === 0) return { error: "Add at least one medication" };
+  if (meds.length === 0) return { error: "medication_required" };
   const notes = (formData.get("notes") as string)?.trim() || null;
 
   const { error: pError } = await supabase.from("prescriptions").update({ notes }).eq("id", id).eq("professional_id", user.id);
@@ -455,12 +455,12 @@ export async function updatePrescription(id: string, patientId: string, formData
 export async function addPrescriptionCorrection(prescriptionId: string, patientId: string, formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Unauthorized" };
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
+  if (!user) return { error: "unauthorized" };
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const meds = parseMedications(formData);
   const reason = (formData.get("reason") as string)?.trim();
-  if (meds.length === 0) return { error: "Add at least one medication" };
+  if (meds.length === 0) return { error: "medication_required" };
   if (!reason) return { error: "reason_required" };
 
   const { error } = await supabase.rpc("add_prescription_correction", {

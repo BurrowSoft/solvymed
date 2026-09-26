@@ -366,7 +366,12 @@
     "editPrescriptionTitle": "Sửa đơn thuốc",
     "lockedError": "Mục này không thể thay đổi nữa. Hãy thêm đính chính.",
     "contentRequired": "Vui lòng nhập nội dung.",
-    "entryNotFound": "Mục này không còn tồn tại. Hãy tải lại trang."
+    "entryNotFound": "Mục này không còn tồn tại. Hãy tải lại trang.",
+    "medicationRequired": "Hãy thêm ít nhất một loại thuốc.",
+    "notDoctorError": "Chỉ chuyên gia mới có thể quản lý hồ sơ lâm sàng.",
+    "sessionError": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+    "nameRequired": "Vui lòng nhập họ tên đầy đủ của bệnh nhân.",
+    "genericError": "Đã xảy ra lỗi. Vui lòng thử lại."
   },
   "settings": {
     "profileTitle": "Hồ sơ",

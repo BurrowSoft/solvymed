@@ -366,7 +366,12 @@
     "editPrescriptionTitle": "Rezept bearbeiten",
     "lockedError": "Dieser Eintrag kann nicht mehr geändert werden. Fügen Sie stattdessen eine Korrektur hinzu.",
     "contentRequired": "Bitte geben Sie den Inhalt ein.",
-    "entryNotFound": "Dieser Eintrag existiert nicht mehr. Bitte laden Sie die Seite neu."
+    "entryNotFound": "Dieser Eintrag existiert nicht mehr. Bitte laden Sie die Seite neu.",
+    "medicationRequired": "Fügen Sie mindestens ein Medikament hinzu.",
+    "notDoctorError": "Nur die behandelnde Fachkraft kann klinische Einträge verwalten.",
+    "sessionError": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+    "nameRequired": "Bitte geben Sie den vollständigen Namen des Patienten ein.",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
   },
   "settings": {
     "profileTitle": "Profil",
