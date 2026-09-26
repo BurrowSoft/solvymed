@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useState, useTransition, useRef, useCallback } from "react";
+import { useState, useTransition, useRef, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { createPatient, restorePatient, type PatientMatch } from "./actions";
 import Link from "next/link";
+import { dropQueryParam } from "@/lib/dropQueryParam";
 
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
@@ -158,6 +159,8 @@ const NEW_PATIENT_FORM_ID = "new-patient-form";
 export function NewPatientButton({ locale, autoOpen = false }: { locale: string; autoOpen?: boolean }) {
   const t = useTranslations("patients");
   const [open, setOpen] = useState(autoOpen);
+  // Opened from the setup checklist (?new=1): drop the parameter once shown.
+  useEffect(() => { if (autoOpen) dropQueryParam("new"); }, [autoOpen]);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [matches, setMatches] = useState<PatientMatch[] | null>(null);

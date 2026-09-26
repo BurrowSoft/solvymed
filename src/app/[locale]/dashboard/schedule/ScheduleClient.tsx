@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime } from "./actions";
 import { generatePixString, pixQrUrl } from "@/lib/pix";
 import { toLocalDateString } from "@/lib/slots";
+import { dropQueryParam } from "@/lib/dropQueryParam";
 import { formatBRL } from "@/lib/money";
 
 type Patient = { id: string; full_name: string };
@@ -250,7 +251,10 @@ export function NewAppointmentButton({ patients, defaultDate, procedures, label,
   }
 
   useEffect(() => {
-    if (autoOpen) handleOpen();
+    if (autoOpen) {
+      handleOpen();
+      dropQueryParam("new");
+    }
     // Only on arrival.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
