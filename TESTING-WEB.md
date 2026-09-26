@@ -3242,6 +3242,55 @@ masked hint.
 
 **Merge gate: 🟢 for `047f7a6`, review clean.**
 
+## PR #25 (`fix/account-delete-page`) — delete-account page, 🟢 at `15b358a`, review clean
+
+**Scope: exactly `15b358a`.** This covers the public `/account/delete`
+request form:
+- **The note:** the false "records will be erased" warning is replaced
+  by a note that separates professionals and patients.
+- **Support address:** the support mailto moves to `support@solvymed.com`.
+- **Translation:** the page is translated into 15 locales.
+
+Tested live on the Vercel preview, using the bypass header on preview
+requests only.
+
+**🟢 All 15 locales render.**
+- **Locales:** pt-BR, en (unprefixed), es, de, fr, it, ja, ko, zh, zh-TW,
+  ru, ar, th, vi and id each return 200 with a translated title, e.g.
+  "Excluir sua conta", "Konto löschen" or "حذف حسابك".
+- **Content:** there are no missing keys, no `burrowsoft.com`, and no
+  "erased and cannot be recovered".
+- **Note:** it reads, for example, "Profissionais de saúde: por lei, os
+  prontuários … 20 anos…" or "Healthcare professionals: by law … 20
+  years".
+- **Mailto:** `support@solvymed.com` with a localized subject in every
+  locale, e.g. "Encerrar minha conta", "Close my account", "Cerrar mi
+  cuenta" or "Mein Konto schließen".
+- **RTL:** ar renders `dir=rtl`.
+- **Labels:** in pt-BR and ar, clicking a label focuses its field
+  (`delete-email`, `delete-reason`).
+
+**🟢 Submit (pt-BR and de).**
+- **Confirmation:** "Solicitação recebida — Recebemos sua solicitação
+  para **<email>**." and "Anfrage erhalten — Wir haben Ihre Anfrage für
+  **<email>** erhalten." The email is in bold.
+- **Database:** each submit creates one `deletion_requests` row with
+  status `pending`, the reason stored and `processed_at` null. Both test
+  rows were deleted afterwards.
+- **Blank email:** a whitespace-only email with the client `required`
+  removed returns the server's `email_required`, shown as "Informe seu
+  e-mail.". The `generic` error copy is code-verified only.
+
+**Review: Claude `/code-review` (code reviewer), clean at `15b358a`.**
+
+**FOLLOW-UP:** nothing alerts support when a request lands. Mob dev owns
+this: a webhook, edge function and email, probably with S-01. The 20-year
+wording is to be re-aligned with the privacy-policy rewrite.
+
+**CI at `15b358a`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `15b358a`, review clean.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
