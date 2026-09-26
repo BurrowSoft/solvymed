@@ -821,7 +821,7 @@
     "working": "Veuillez patienter…",
     "errorStripe": "Nous n'avons pas pu annuler votre abonnement, votre compte n'a donc pas été fermé. Réessayez ou écrivez à support@solvymed.com.",
     "errorSubscription": "Votre abonnement est toujours actif. Réessayez dans une minute.",
-    "errorCancelledNotClosed": "Votre abonnement a été annulé, mais votre compte n'a pas été fermé. Veuillez réessayer. Si le problème persiste, écrivez à support@solvymed.com.",
+    "errorCancelledNotClosed": "Votre abonnement a été annulé, mais nous n'avons pas pu finaliser la fermeture de votre compte. Vous ne serez plus débité. Veuillez réessayer ou écrire à support@solvymed.com.",
     "errorGeneric": "Votre compte n'a pas été fermé. Veuillez réessayer.",
     "pushClosedTitle": "Cabinet fermé",
     "pushClosedBody": "Votre cabinet a fermé son compte SolvyMed. Vos rendez-vous à venir sont annulés. Pour obtenir une copie de votre dossier, écrivez à support@solvymed.com.",

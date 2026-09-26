@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import Stripe from "stripe";
 import { createClient as createSupabaseClient, type SupabaseClient } from "@supabase/supabase-js";
 import { getTranslations } from "next-intl/server";
@@ -162,43 +162,48 @@ export async function POST(request: NextRequest) {
   // purge. Secretaries and patients have none of these.
   if (prof) await removeProfessionalImages(userId);
 
-  // 4. Notices. Best-effort: the account is already closed.
+  // 4. Notices, after the response is sent: they can never delay or fail
+  // the close, which is already done. Best-effort, code-only logs.
   const plan = planClosureNotices(rows);
-  if (plan.linkedPatients.length || plan.cancelledAppointments.length) {
-    const t = await getTranslations({ locale, namespace: "accountClose" });
-    const admin = adminClient();
-    const ids = [...new Set([...plan.linkedPatients, ...plan.cancelledAppointments.map((a) => a.patientAuthId)])];
-    const { data: tokenRows } = await admin.from("push_tokens").select("user_id, token").in("user_id", ids);
-    const tokenOf = new Map((tokenRows ?? []).map((r: { user_id: string; token: string }) => [r.user_id, r.token]));
-    const pushes: Promise<void>[] = [];
-    for (const id of plan.linkedPatients) {
-      const token = tokenOf.get(id);
-      if (token) pushes.push(sendExpoPush([token], t("pushClosedTitle"), t("pushClosedBody")));
-    }
-    for (const a of plan.cancelledAppointments) {
-      const token = tokenOf.get(a.patientAuthId);
-      if (token) {
-        pushes.push(sendExpoPush([token], t("pushCancelledTitle"), t("pushCancelledBody", { date: a.date, time: a.startTime.slice(0, 5) })));
+  if (plan.linkedPatients.length || plan.cancelledAppointments.length) after(async () => {
+    try {
+      const t = await getTranslations({ locale, namespace: "accountClose" });
+      const admin = adminClient();
+      const ids = [...new Set([...plan.linkedPatients, ...plan.cancelledAppointments.map((a) => a.patientAuthId)])];
+      const { data: tokenRows } = await admin.from("push_tokens").select("user_id, token").in("user_id", ids);
+      const tokenOf = new Map((tokenRows ?? []).map((r: { user_id: string; token: string }) => [r.user_id, r.token]));
+      const pushes: Promise<void>[] = [];
+      for (const id of plan.linkedPatients) {
+        const token = tokenOf.get(id);
+        if (token) pushes.push(sendExpoPush([token], t("pushClosedTitle"), t("pushClosedBody")));
       }
-    }
-    if (plan.linkedPatients.length) {
-      pushes.push(
-        fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/notify-clinic-closed`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ patient_auth_ids: plan.linkedPatients }),
-        })
-          .then((res) => {
-            if (!res.ok) console.error("Account close: notify-clinic-closed failed", res.status);
+      for (const a of plan.cancelledAppointments) {
+        const token = tokenOf.get(a.patientAuthId);
+        if (token) {
+          pushes.push(sendExpoPush([token], t("pushCancelledTitle"), t("pushCancelledBody", { date: a.date, time: a.startTime.slice(0, 5) })));
+        }
+      }
+      if (plan.linkedPatients.length) {
+        pushes.push(
+          fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/notify-clinic-closed`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ patient_auth_ids: plan.linkedPatients }),
           })
-          .catch((err) => console.error("Account close: notify-clinic-closed threw", errorCode(err))),
-      );
+            .then((res) => {
+              if (!res.ok) console.error("Account close: notify-clinic-closed failed", res.status);
+            })
+            .catch((err) => console.error("Account close: notify-clinic-closed threw", errorCode(err))),
+        );
+      }
+      await Promise.all(pushes);
+    } catch (err) {
+      console.error("Account close: notices failed", errorCode(err));
     }
-    await Promise.all(pushes);
-  }
+  });
 
   return NextResponse.json({ outcome });
 }

@@ -821,7 +821,7 @@
     "working": "Please wait…",
     "errorStripe": "We couldn't cancel your subscription, so your account was not closed. Please try again, or contact support@solvymed.com.",
     "errorSubscription": "Your subscription is still active. Please try again in a minute.",
-    "errorCancelledNotClosed": "Your subscription was cancelled, but your account wasn't closed. Please try again. If it keeps failing, contact support@solvymed.com.",
+    "errorCancelledNotClosed": "Your subscription was cancelled, but we couldn't finish closing your account. You won't be charged again. Please try again, or contact support@solvymed.com.",
     "errorGeneric": "Your account was not closed. Please try again.",
     "pushClosedTitle": "Clinic closed",
     "pushClosedBody": "Your clinic has closed its SolvyMed account. Your upcoming appointments are cancelled. For a copy of your records, contact support@solvymed.com.",

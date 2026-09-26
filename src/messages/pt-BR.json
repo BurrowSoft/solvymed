@@ -821,7 +821,7 @@
     "working": "Aguarde…",
     "errorStripe": "Não foi possível cancelar sua assinatura, então sua conta não foi encerrada. Tente de novo ou fale com support@solvymed.com.",
     "errorSubscription": "Sua assinatura ainda está ativa. Tente de novo em um minuto.",
-    "errorCancelledNotClosed": "Sua assinatura foi cancelada, mas sua conta não foi encerrada. Tente de novo. Se o erro continuar, fale com support@solvymed.com.",
+    "errorCancelledNotClosed": "Sua assinatura foi cancelada, mas não conseguimos concluir o encerramento da sua conta. Você não será cobrado novamente. Tente de novo ou fale com support@solvymed.com.",
     "errorGeneric": "Sua conta não foi encerrada. Tente de novo.",
     "pushClosedTitle": "Clínica encerrada",
     "pushClosedBody": "Sua clínica encerrou a conta no SolvyMed. Suas consultas futuras foram canceladas. Para obter uma cópia do seu prontuário, fale com support@solvymed.com.",

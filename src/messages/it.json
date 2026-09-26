@@ -821,7 +821,7 @@
     "working": "Attendi…",
     "errorStripe": "Non è stato possibile annullare il tuo abbonamento, quindi il tuo account non è stato chiuso. Riprova o scrivi a support@solvymed.com.",
     "errorSubscription": "Il tuo abbonamento è ancora attivo. Riprova tra un minuto.",
-    "errorCancelledNotClosed": "Il tuo abbonamento è stato annullato, ma il tuo account non è stato chiuso. Riprova. Se il problema persiste, scrivi a support@solvymed.com.",
+    "errorCancelledNotClosed": "Il tuo abbonamento è stato annullato, ma non siamo riusciti a completare la chiusura del tuo account. Non ti verrà addebitato altro. Riprova o scrivi a support@solvymed.com.",
     "errorGeneric": "Il tuo account non è stato chiuso. Riprova.",
     "pushClosedTitle": "Studio chiuso",
     "pushClosedBody": "Il tuo studio ha chiuso il suo account SolvyMed. I tuoi appuntamenti futuri sono stati annullati. Per una copia della tua cartella, scrivi a support@solvymed.com.",

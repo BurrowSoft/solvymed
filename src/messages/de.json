@@ -821,7 +821,7 @@
     "working": "Bitte warten…",
     "errorStripe": "Ihr Abonnement konnte nicht gekündigt werden, daher wurde Ihr Konto nicht geschlossen. Bitte versuchen Sie es erneut oder schreiben Sie an support@solvymed.com.",
     "errorSubscription": "Ihr Abonnement ist noch aktiv. Bitte versuchen Sie es in einer Minute erneut.",
-    "errorCancelledNotClosed": "Ihr Abonnement wurde gekündigt, aber Ihr Konto wurde nicht geschlossen. Bitte versuchen Sie es erneut. Wenn der Fehler bleibt, schreiben Sie an support@solvymed.com.",
+    "errorCancelledNotClosed": "Ihr Abonnement wurde gekündigt, aber wir konnten die Schließung Ihres Kontos nicht abschließen. Es wird Ihnen nichts mehr berechnet. Bitte versuchen Sie es erneut oder schreiben Sie an support@solvymed.com.",
     "errorGeneric": "Ihr Konto wurde nicht geschlossen. Bitte versuchen Sie es erneut.",
     "pushClosedTitle": "Praxis geschlossen",
     "pushClosedBody": "Ihre Praxis hat ihr SolvyMed-Konto geschlossen. Ihre anstehenden Termine wurden abgesagt. Eine Kopie Ihrer Akte erhalten Sie über support@solvymed.com.",

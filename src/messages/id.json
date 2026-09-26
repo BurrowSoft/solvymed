@@ -821,7 +821,7 @@
     "working": "Mohon tunggu…",
     "errorStripe": "Langganan Anda tidak dapat dibatalkan, jadi akun Anda belum ditutup. Coba lagi atau hubungi support@solvymed.com.",
     "errorSubscription": "Langganan Anda masih aktif. Coba lagi dalam satu menit.",
-    "errorCancelledNotClosed": "Langganan Anda sudah dibatalkan, tetapi akun Anda belum ditutup. Coba lagi. Jika terus gagal, hubungi support@solvymed.com.",
+    "errorCancelledNotClosed": "Langganan Anda sudah dibatalkan, tetapi kami belum bisa menyelesaikan penutupan akun Anda. Anda tidak akan ditagih lagi. Coba lagi atau hubungi support@solvymed.com.",
     "errorGeneric": "Akun Anda belum ditutup. Coba lagi.",
     "pushClosedTitle": "Klinik ditutup",
     "pushClosedBody": "Klinik Anda telah menutup akun SolvyMed-nya. Janji temu mendatang Anda dibatalkan. Untuk salinan rekam medis, hubungi support@solvymed.com.",
