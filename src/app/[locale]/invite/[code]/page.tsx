@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AppDownloadButtons } from "@/components/AppDownloadButtons";
 
@@ -13,14 +14,28 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "invitePage" });
   // The URL carries a personal invite code: keep it out of search engines,
   // and give link previews neutral text (no code, not the homepage's).
+  // A page-level openGraph/twitter replaces the layout's whole object, so
+  // the site-wide fields are repeated here.
   return {
     title: t("metaTitle"),
     description: t("sub"),
     robots: { index: false, follow: false },
     alternates: { canonical: null },
-    openGraph: { title: t("heading"), description: t("sub") },
+    openGraph: {
+      type: "website",
+      siteName: "Solvymed",
+      locale: locale.replace("-", "_"),
+      title: t("heading"),
+      description: t("sub"),
+    },
+    twitter: { card: "summary", title: t("heading"), description: t("sub") },
   };
 }
+
+// Current codes are 6 characters (migration 075); older codes may still be
+// out there in shared links, so accept 4–12 letters or digits and 404 the
+// rest instead of echoing arbitrary text back as "your invite code".
+const INVITE_CODE = /^[A-Za-z0-9]{4,12}$/;
 
 export default async function InvitePage({
   params,
@@ -28,6 +43,7 @@ export default async function InvitePage({
   params: Promise<{ locale: string; code: string }>;
 }) {
   const { locale, code } = await params;
+  if (!INVITE_CODE.test(code)) notFound();
   const t = await getTranslations({ locale, namespace: "invitePage" });
   const upperCode = code.toUpperCase();
   const bold = (chunks: React.ReactNode) => <strong>{chunks}</strong>;
