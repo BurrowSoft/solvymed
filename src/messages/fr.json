@@ -495,7 +495,7 @@
     "customTime": "Heure personnalisée",
     "orCustomTime": "Ou choisir une heure",
     "professionalFallback": "Professionnel(le)",
-    "errorArchived": "Cette clinique n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter la clinique."
+    "errorArchived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet."
   },
   "auth": {
     "passwordTooShort": "Le mot de passe doit comporter au moins {min} caractères.",
@@ -582,7 +582,7 @@
       "backToSignup": "Utiliser un autre compte",
       "tooManyAttempts": "Trop de tentatives. Veuillez patienter avant de réessayer.",
       "alreadyInvitedByAnother": "Votre compte est déjà rattaché à un autre cabinet.",
-      "archived": "Cette clinique n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter la clinique."
+      "archived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet."
     },
     "pendingConfirmation": {
       "loading": "Vérification de votre statut…",

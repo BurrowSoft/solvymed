@@ -495,7 +495,7 @@
     "customTime": "Orario personalizzato",
     "orCustomTime": "O scegli un orario",
     "professionalFallback": "Professionista",
-    "errorArchived": "Questa clinica non accetta nuove prenotazioni per il tuo account. Contatta la clinica."
+    "errorArchived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio."
   },
   "auth": {
     "passwordTooShort": "La password deve essere lunga almeno {min} caratteri.",
@@ -582,7 +582,7 @@
       "backToSignup": "Usa un altro account",
       "tooManyAttempts": "Troppi tentativi. Attendi un momento prima di riprovare.",
       "alreadyInvitedByAnother": "Il tuo account è già collegato a un altro studio.",
-      "archived": "Questa clinica non accetta nuove prenotazioni per il tuo account. Contatta la clinica."
+      "archived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio."
     },
     "pendingConfirmation": {
       "loading": "Verifica dello stato…",
