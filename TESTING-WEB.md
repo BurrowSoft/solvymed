@@ -3367,6 +3367,53 @@ subscription is touched.
 **Merge gate: 🟢 for `1caa406`, review clean.** After the merge, confirm
 prod shows `::gru1::`.
 
+**Prod addendum (`67df2c9`):**
+- **Region:** `sin1::gru1` on pages, `/api/billing/portal` and a server
+  action.
+- **Stripe webhook:** a signed TEST `customer.created` to
+  `https://www.solvymed.com/api/webhooks/stripe` returns 200
+  `{"ok":true}`, and a bad signature returns 400.
+- **Smoke:** login, the dashboard, a patient page and a record save all
+  pass.
+
+## PR #28 (`fix/privacy-facts`) — /privacy factual fixes, 🟢 at `aa4251d`, review clean
+
+**Scope: exactly `aa4251d`.** This is English-only text in
+`privacy/page.tsx`. The diff against master touches only the lines
+below.
+
+Checked live on the preview at `/privacy` and `/pt-BR/privacy`, with prod
+alongside as the "before":
+- **Last updated:** "September 26, 2026" (prod: June 18, 2026).
+- **Section 5, Data Sharing:**
+  - Supabase: "servers in Brazil, São Paulo region" (prod: "US/EU").
+  - New line, Vercel: "server processing in Brazil, São Paulo region".
+  - New line, Resend: "transactional email … (USA)".
+  - No "US/EU" remains.
+- **Section 7, Retention:** UX's final text.
+  - Medical records (clinical notes, prescriptions and exam files) are
+    kept for at least 20 years.
+  - A patient with records can only be archived.
+  - An account holding records is closed by support rather than deleted.
+  - Other account data is kept while the account is active.
+  - This matches what 094 and 096 enforce.
+- **Section 8:** the "right to be forgotten" bullet adds "except medical
+  records, which are kept as described in section 7."
+
+**Review: Claude `/code-review` (code reviewer), clean at `aa4251d`.**
+
+**FOLLOW-UP, for the privacy-policy rewrite:**
+- **Section 6:** it says only professionals access their patients'
+  records, but linked secretaries now do too.
+- **Transfers:** Stripe and Expo (US) aren't marked as international
+  transfers.
+- **Language:** the policy and the terms are English-only in every
+  locale.
+
+**CI at `aa4251d`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `aa4251d`, review clean.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
