@@ -473,7 +473,7 @@ accept it.
 | A-7 | Signup validation | Mismatched passwords, a weak password and an email that's already registered each show a clear error, not a crash. |
 | A-7b ⏳ | Password minimum is **8**, approved by the user | Test on signup *and* on reset-password (A-9). **7 characters is rejected with a translated message**, pt-BR and en, and no account or password change happens. 8 characters is accepted. Also check the server: Supabase Auth's minimum password length is 8, so a 7-character password sent straight to the Auth API is refused too, not just by the form. |
 | A-8 📱 | Login and logout | Wrong credentials show an error. The right ones route by role: doctor → `/dashboard`, patient → `/my-appointments` or `pending-confirmation`, secretary → `/dashboard`, or `not-connected` / `clinic-inactive`. Sign-out lands on the current locale's home. |
-| A-9 | Forgot password → reset | Requesting a reset shows a neutral "if the account exists" message. Following the reset link (a `token_hash` via the callback) lets you set a new password, and the new one logs in. |
+| A-9 | Forgot password → reset | Requesting a reset shows a neutral "if the account exists" message. The email link goes to `/auth/reset-password` with `access_token` and `refresh_token` **in the URL hash**; the page calls `setSession`, then `updateUser`. It does **not** go through `/api/auth/callback`. The new password saves, the old one stops working, and the new one logs in. Check the page and its messages in pt-BR and en. **Local test recipe:** get a recovery `hashed_token` from the admin `generate_link` API (`type: recovery`), exchange it with `verifyOtp` (`type: recovery`) for a session, then open `/<locale>/auth/reset-password#access_token=…&refresh_token=…&type=recovery`. **Open issue to confirm at RC:** `forgot-password` hard-codes `redirectTo` to `https://www.solvymed.com/en/auth/reset-password`, so pt-BR users land on the English page. |
 | A-10 | `/join/<bogus>`, signed in and signed out | Signed out, it redirects to signup. Signed in, it shows "Este link pode ser inválido…". There's no 5xx. |
 | A-11 | Session expiry | With cookies cleared, a protected page redirects to login and there's no blank page. |
 
@@ -517,8 +517,8 @@ accept it.
 | ID | Flow | Expected result |
 |---|---|---|
 | D-1 📱 | Pending patient | `/auth/pending-confirmation` shows the clinic wording and the doctor's name, "Solicitar uma consulta" and "Sair". Once the doctor confirms, the patient reaches `/my-appointments`. |
-| D-2 🤖📱 | Book, `/book/<id>` | The header shows the real doctor name, or the translated "Profissional", never "Doctor". Slots come from the doctor's hours. The request becomes tentative in the doctor's schedule. |
-| D-3 📱 | My appointments | Upcoming and past appointments are listed correctly. The Book link opens `/book` for their doctor. |
+| D-2 🤖📱 | Book, `/book/<professionalId>` (the route My appointments and the pending page link to, optionally with `?name=`, `specialty=` and `clinicName=`) | The header shows the real doctor name, from `get_professional_public_info` (merged in #16), or the translated "Profissional", never "Doctor". Slots come from the doctor's hours. The request becomes tentative in the doctor's schedule. |
+| D-3 📱 | My appointments | Upcoming and past appointments are listed correctly. The Book link opens `/book/<professionalId>` for their doctor, and there's no `?name=Doctor` in it. |
 | D-4 | Reschedule | A patient's request shows for the doctor, who can approve or decline it. When the doctor proposes a new time, the patient can accept or decline it. Both sides see the final state. |
 | D-5 | Close account (`/account/delete`, or archive once built) | A deletion request is recorded and a confirmation shown. **This needs rechecking once the archive/close-account feature ships.** |
 
@@ -544,6 +544,7 @@ accept it.
 | F-3 📱 | Accessibility spot-check | Form inputs have labels or accessible names, dialogs trap focus and close with Esc, and tab order is sane on login, signup, book and subscribe. |
 | F-4 | Errors | Console: no uncaught errors on the main pages. Server log: no 5xx during the run. |
 | F-5 | Version gate (`app_config`) | Doctors and secretaries below the minimum version see the gate; others don't. |
+| F-6 | Unit tests (`npx vitest run`) on the RC SHA | **All green.** As of 2026-09-26, master has 18 pre-existing failures: `BookingRequestsPanel.test.tsx` doesn't mock `useParams`, and vitest also picks up the Playwright `e2e/` specs. That makes this ❌ until the follow-up fix lands, because "all green" means nothing until then. |
 
 ### G. Launch features (⏳ placeholders, filled in as each one ships)
 
