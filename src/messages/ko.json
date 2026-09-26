@@ -53,7 +53,8 @@
     "copyright": "© 2026 Solvymed. All rights reserved.",
     "privacy": "개인정보처리방침",
     "terms": "서비스 약관",
-    "legal": "법적 고지"
+    "legal": "법적 고지",
+    "languageLabel": "언어"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -192,7 +193,8 @@
     "genericError": "문제가 발생했습니다. 다시 시도해 주세요.",
     "missingFieldsError": "필수 항목을 모두 입력해 주세요.",
     "pastMidnightError": "이 시간과 소요 시간은 자정을 넘깁니다.",
-    "patientArchivedError": "이 차트는 보관되어 있습니다. 예약하려면 환자 메뉴에서 복원하세요."
+    "patientArchivedError": "이 차트는 보관되어 있습니다. 예약하려면 환자 메뉴에서 복원하세요.",
+    "moreCount": "+{n}개 더"
   },
   "payments": {
     "thisWeek": "이번 주",

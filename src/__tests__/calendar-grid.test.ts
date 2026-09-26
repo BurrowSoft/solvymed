@@ -1,5 +1,25 @@
 import { afterEach, describe, it, expect } from "vitest";
-import { addDaysTo, getMonthGrid, getWeekDays } from "@/app/[locale]/dashboard/schedule/CalendarView";
+import { addDaysTo, calendarHeaderLabel, getMonthGrid, getWeekDays, weekdayLabels } from "@/app/[locale]/dashboard/schedule/CalendarView";
+
+describe("calendar labels follow the page's language", () => {
+  it("names the weekdays, Monday first", () => {
+    expect(weekdayLabels("en")).toEqual(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
+    expect(weekdayLabels("pt-BR")[0].toLowerCase()).toMatch(/^seg/);
+    expect(weekdayLabels("pt-BR")[6].toLowerCase()).toMatch(/^dom/);
+  });
+
+  it("formats the day, week and month headers", () => {
+    const week = getWeekDays("2026-09-30");
+    expect(calendarHeaderLabel("en", "month", "2026-09-15", [])).toBe("September 2026");
+    expect(calendarHeaderLabel("pt-BR", "month", "2026-09-15", []).toLowerCase()).toContain("setembro");
+    expect(calendarHeaderLabel("pt-BR", "day", "2026-09-27", []).toLowerCase()).toContain("domingo");
+    // A week across two months keeps both.
+    const en = calendarHeaderLabel("en", "week", "2026-09-30", week);
+    expect(en).toContain("Sep 28");
+    expect(en).toContain("Oct 4");
+    expect(calendarHeaderLabel("pt-BR", "week", "2026-09-30", week).toLowerCase()).toContain("out");
+  });
+});
 
 // The calendar runs in the browser's zone. toISOString() is UTC, so for a
 // browser east of UTC (Thailand) local midnight used to be the previous

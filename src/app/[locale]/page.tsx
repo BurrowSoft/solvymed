@@ -122,6 +122,7 @@ export default async function HomePage({
             <LanguageSelector
               locales={ALL_LOCALES}
               className="text-xs border-slate-200 bg-white shadow-sm"
+              ariaLabel={t("footer.languageLabel")}
             />
             <Link
               href="/auth/login"

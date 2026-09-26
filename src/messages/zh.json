@@ -53,7 +53,8 @@
     "copyright": "© 2026 Solvymed 版权所有。",
     "privacy": "隐私政策",
     "terms": "服务条款",
-    "legal": "法律信息"
+    "legal": "法律信息",
+    "languageLabel": "语言"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -192,7 +193,8 @@
     "genericError": "出现问题，请重试。",
     "missingFieldsError": "请填写所有必填字段。",
     "pastMidnightError": "此时间和时长将超过午夜。",
-    "patientArchivedError": "此档案已归档。请在“患者”中恢复后再预约。"
+    "patientArchivedError": "此档案已归档。请在“患者”中恢复后再预约。",
+    "moreCount": "另外 {n} 个"
   },
   "payments": {
     "thisWeek": "本周",

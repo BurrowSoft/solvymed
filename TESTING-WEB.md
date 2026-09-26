@@ -4527,6 +4527,74 @@ secretary (throwaways, deleted afterwards; nothing submitted):
 **Merge gate: 🟢 for `083d593`, review clean.** This commit also carries
 the #32 prod addendum and the #41/#42 S-01 gate addendum above.
 
+## PR #45 (`fix/sentry-scrub-urls-in-text`) — URLs in error text cut to path, storage file names masked, 🟢 at `e843b09`, review clean
+
+**Scope: exactly `e843b09`.** `sentryScrub` now also rewrites absolute
+URLs inside free text (error and breadcrumb messages).
+- **URLs:** each is reduced to its path, with invite codes redacted and
+  the query and fragment dropped.
+- **Storage objects:** the last segment of a `/storage/v1/object/…` or
+  `/storage/v1/render/image/…` path, the file name, becomes `[file]`.
+
+The unit tests cover it. I also checked it live, the same way as #31:
+Playwright intercepted the browser SDK's envelope on the preview and
+answered it locally, so nothing reached Sentry. The thrown error contained
+a signed storage URL, an image-render URL and a secretary join link with
+`?email=` and `#frag`. The message sent was:
+
+> `b45 check: fetch failed https://…supabase.co/storage/v1/object/sign/patient-files/doc-uuid/pat-uuid/[file] then https://…supabase.co/storage/v1/render/image/public/profile-photos/doc-uuid/[file] and https://www.solvymed.com/pt-BR/join/secretary/[code]`
+
+**🟢 Nothing leaked** anywhere in the envelope: not the signing token, the
+patient-looking file names (`exame-maria-silva.pdf`,
+`foto-joao-souza.jpg`), `width=200`, the invite code, the email or the
+fragment.
+
+**Review: Claude `/code-review` (code reviewer), clean at `e843b09`.**
+
+**CI at `e843b09`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `e843b09`, review clean.**
+## PR #44 (`i18n/calendar-labels`) — localized calendar, switcher label, BRL format, 🟢 at `63e0192`, review clean
+
+**Scope: exactly `63e0192`.** This localizes CalendarView (titles, the
+Monday-first weekday row, "Today", "+N more", the popup date and the
+Paid/Pending/Blocked labels) and the language switcher's `aria-label`.
+The last commit formats money as BRL (`R$ 150,00`) in the popup, the list
+line and the procedure picker. It fixes my #34 FOLLOW-UP.
+
+Tested on the preview in pt-BR, en and ar with a throwaway doctor who has
+5 entries on 15 Oct 2026 (paid, pending and a blocked slot), deleted
+afterwards.
+
+**🟢 Switcher `aria-label`:** "Idioma", "Language", "اللغة".
+
+**🟢 Week view (`?date=2026-10-15&view=week`).**
+- **Title:** "12 – 18 de out. de 2026", "Oct 12 – 18, 2026" and "12–18
+  أكتوبر 2026".
+- **Weekdays:** seg.…dom., Mon…Sun and الاثنين…الأحد (Monday first).
+- **Today button:** Hoje, Today and اليوم.
+
+**🟢 Month view.**
+- **Title:** "outubro de 2026", "October 2026" and "أكتوبر 2026".
+- **Weekday row:** localized, Monday first.
+- **Overflow line:** "+2 mais", "+2 more" and "+2 أخرى".
+- **Popup:** the date is "qui., 15 de out." / "Thu, Oct 15" / "الخميس، 15
+  أكتوبر". Payment shows as "✓ Pago · R$ 150,00" / "⏳ Pendente", with the
+  en/ar equivalents. The blocked slot shows "Bloqueado", "Blocked" or
+  "محجوب", and the status options are translated.
+
+**🟢 BRL format** (`63e0192`) in all three locales: the popup, the list
+lines and the procedure picker show `R$ 150,00`, not the `R$ 150.00`
+seen at `da5820a`.
+
+**🟢 Bangkok browser:** October 2026 still starts on Mon 28 Sep (28, 29,
+30, 1…), 35 cells, with the title "outubro de 2026". No shift.
+
+**Review: Claude `/code-review` (code reviewer), clean at `63e0192`.**
+
+**CI at `63e0192`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `63e0192`, review clean.**
 ## PR #46 (`feat/turnstile-dormant`) — Cloudflare Turnstile shipped dormant, 🟢 at `d1461c3`, review clean
 
 **Scope: exactly `d1461c3`.** Turnstile on sign-up, sign-in and password

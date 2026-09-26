@@ -3,8 +3,10 @@
 import { useState } from "react";
 import type React from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { AppointmentStatusSelect, DeleteAppointmentButton } from "./ScheduleClient";
 import { toLocalDateString } from "@/lib/slots";
+import { formatBRL } from "@/lib/money";
 
 export type CalendarAppt = {
   id: string;
@@ -28,7 +30,25 @@ const HOUR_H = 64;
 const FIRST_H = 7;
 const LAST_H = 21;
 const HOURS = Array.from({ length: LAST_H - FIRST_H }, (_, i) => i + FIRST_H);
-const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+// Short weekday names, Monday first, in the page's language (2024-01-01 was
+// a Monday; formatted in UTC so the day can't shift).
+export function weekdayLabels(locale: string): string[] {
+  const fmt = new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "UTC" });
+  return Array.from({ length: 7 }, (_, i) => fmt.format(new Date(Date.UTC(2024, 0, 1 + i))));
+}
+
+// The calendar header: a day, a Monday–Sunday range, or a month, localized.
+export function calendarHeaderLabel(locale: string, view: "day" | "week" | "month", currentDate: string, weekDays: string[]): string {
+  const at = (d: string) => new Date(d + "T12:00:00Z");
+  if (view === "day") {
+    return new Intl.DateTimeFormat(locale, { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(at(currentDate));
+  }
+  if (view === "week") {
+    return new Intl.DateTimeFormat(locale, { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
+      .formatRange(at(weekDays[0]), at(weekDays[6]));
+  }
+  return new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "UTC" }).format(at(currentDate));
+}
 
 // Every Date here is a local calendar day, so it's formatted with local
 // getters: toISOString() is UTC, and for a browser east of UTC local
@@ -121,6 +141,7 @@ function TimeGrid({
   onDayClick?: (day: string) => void;
   showHeaders: boolean;
 }) {
+  const weekdays = weekdayLabels(useLocale());
   const byDay = new Map<string, CalendarAppt[]>();
   for (const day of days) byDay.set(day, appointments.filter(a => a.date === day));
 
@@ -152,7 +173,7 @@ function TimeGrid({
           <div key={day} className="relative flex-1 min-w-[110px] border-r border-slate-100 last:border-r-0">
             {showHeaders && (
               <div className={`h-12 flex flex-col items-center justify-center border-b ${isToday ? "bg-teal-50 border-teal-100" : "bg-white border-slate-100"}`}>
-                <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{WEEKDAYS[ci]}</span>
+                <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{weekdays[ci]}</span>
                 <button
                   className={`mt-0.5 text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center transition ${isToday ? "bg-teal-600 text-white" : "text-slate-700 hover:bg-slate-100"}`}
                   onClick={() => onDayClick?.(day)}
@@ -219,12 +240,14 @@ function MonthGrid({
   onSelect: (a: CalendarAppt) => void;
   onDayClick: (day: string) => void;
 }) {
+  const weekdays = weekdayLabels(useLocale());
+  const t = useTranslations("schedule");
   const grid = getMonthGrid(currentDate);
   const currentMonth = new Date(currentDate + "T12:00:00").getMonth();
   return (
     <div>
       <div className="grid grid-cols-7 border-b border-slate-100">
-        {WEEKDAYS.map(d => (
+        {weekdays.map(d => (
           <div key={d} className="py-2 text-center text-[10px] font-bold uppercase tracking-wide text-slate-400">{d}</div>
         ))}
       </div>
@@ -257,7 +280,7 @@ function MonthGrid({
                     </button>
                   ))}
                   {dayAppts.length > 3 && (
-                    <p className="text-[10px] text-slate-400 pl-1">+{dayAppts.length - 3} more</p>
+                    <p className="text-[10px] text-slate-400 pl-1">{t("moreCount", { n: dayAppts.length - 3 })}</p>
                   )}
                 </div>
               </div>
@@ -284,6 +307,8 @@ export function CalendarView({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const locale = useLocale();
+  const t = useTranslations("schedule");
   const [selected, setSelected] = useState<CalendarAppt | null>(null);
 
   function go(date: string, v = view) {
@@ -301,18 +326,7 @@ export function CalendarView({
     else { const d = new Date(currentDate + "T12:00:00"); d.setMonth(d.getMonth() + 1); go(isoDate(d)); }
   }
 
-  const headerLabel = (() => {
-    if (view === "day") return new Date(currentDate + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
-    if (view === "week") {
-      const days = getWeekDays(currentDate);
-      const f = new Date(days[0] + "T12:00:00");
-      const l = new Date(days[6] + "T12:00:00");
-      return f.getMonth() === l.getMonth()
-        ? `${f.toLocaleDateString("en-US", { month: "long" })} ${f.getDate()}–${l.getDate()}, ${f.getFullYear()}`
-        : `${f.toLocaleDateString("en-US", { month: "short", day: "numeric" })} – ${l.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
-    }
-    return new Date(currentDate + "T12:00:00").toLocaleDateString("en-US", { month: "long", year: "numeric" });
-  })();
+  const headerLabel = calendarHeaderLabel(locale, view, currentDate, getWeekDays(currentDate));
 
   return (
     <div>
@@ -326,7 +340,7 @@ export function CalendarView({
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-600"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
         {currentDate !== today && (
-          <button onClick={() => go(today)} className="rounded-xl border border-teal-200 bg-teal-50 px-3 py-2 text-xs font-semibold text-teal-700 hover:bg-teal-100 transition">Today</button>
+          <button onClick={() => go(today)} className="rounded-xl border border-teal-200 bg-teal-50 px-3 py-2 text-xs font-semibold text-teal-700 hover:bg-teal-100 transition">{t("today")}</button>
         )}
       </div>
 
@@ -371,7 +385,7 @@ export function CalendarView({
             <div className="space-y-1.5 mb-4">
               <div className="flex items-center gap-2 text-xs text-slate-600">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 text-slate-400 shrink-0"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                {new Date(selected.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+                {new Date(selected.date + "T12:00:00").toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" })}
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-600">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 text-slate-400 shrink-0"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -380,14 +394,14 @@ export function CalendarView({
               {selected.payment_amount != null && (
                 <div className={`flex items-center gap-2 text-xs font-semibold ${selected.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 shrink-0"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                  {selected.payment_status === "paid" ? "✓ Paid" : "⏳ Pending"} · R$ {selected.payment_amount.toFixed(2)}
+                  {selected.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")} · {formatBRL(selected.payment_amount)}
                 </div>
               )}
               {selected.notes && <p className="text-[11px] text-slate-400 italic pl-5">{selected.notes}</p>}
             </div>
             <div className="flex items-center justify-between pt-3 border-t border-slate-100">
               {selected.status === "blocked"
-                ? <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">Blocked</span>
+                ? <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">{t("blockedLabel")}</span>
                 : <AppointmentStatusSelect id={selected.id} current={selected.status} />
               }
               <DeleteAppointmentButton id={selected.id} />
