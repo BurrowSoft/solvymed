@@ -2630,6 +2630,37 @@ dependencies other sessions' servers run on. CI's clean `npm ci` covers it.
 
 **Merge gate: 🟢 for `48f81c9`.**
 
+**Addendum: 🟢 at `380932f`.** Two commits on top of `48f81c9`:
+- **`eb47acb` merges master (#21) in.** I checked it: the #19, #20 and #21
+  entries are intact and in order, with no conflict markers.
+- **`380932f` fixes a test that only passed before 9 a.m.**
+  `booking-client.test.tsx` clicks today's 9:00 slot, which the page
+  hides once 9:00 local time has passed. The fix pins `Date` only
+  (`toFake: ["Date"]`, 2030-01-14 06:00), so the real timers `waitFor`
+  uses keep running. They're restored after each test.
+
+| | Local time | Tests |
+|---|---|---|
+| master `81101fe` (control) | 09:59 | **6 failed**, all in `booking-client` |
+| #20 `380932f` | 10:00 | **78/78 passed** |
+
+CI run `36213290674` at `380932f` is green on both jobs (Typecheck and
+unit tests, and advisory Lint).
+
+**Review: Claude `/code-review high` at `380932f`** (Copilot quota
+exhausted). 9 findings were posted as inline PR comments. None is a
+correctness bug; the notable ones:
+- `cancel-in-progress: true` also cancels `master` push runs, so
+  back-to-back merges leave a merge commit with no CI result.
+- Lint is fully non-gating in two places.
+
+The rest are small: annotation caps, ESLint ignores for generated dirs, the
+two lint switches not linked, a duplicate `npm ci`, split `beforeEach`
+hooks, and actions pinned to tags. The first finding, the gate being scoped
+to an old SHA, is resolved by this addendum. **Review status: not yet
+clean.** It's waiting on web dev's fixes or answers; I'll re-run it on the
+new HEAD.
+
 ## PR #21 (`hotfix/auth-links-locale`) — password reset 404 on prod; auth emails keep the language, 🟢 at `ce40aef`
 
 **Scope: exactly `ce40aef`.** This is the hotfix for the prod reset 404
