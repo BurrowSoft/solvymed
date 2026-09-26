@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { routing } from "@/i18n/routing";
+import { isFirstConfirmation } from "@/lib/firstConfirmation";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
@@ -59,7 +60,7 @@ export async function GET(request: NextRequest) {
 
   // Use explicit if/else to avoid TypeScript union issues between
   // exchangeCodeForSession (AuthResponse) and verifyOtp (AuthOtpResponse).
-  let sessionUser: { id: string; user_metadata: Record<string, unknown> } | null = null;
+  let sessionUser: { id: string; user_metadata: Record<string, unknown>; confirmed_at?: string | null; email_confirmed_at?: string | null } | null = null;
   let sessionExists = false;
 
   if (code) {
@@ -169,6 +170,10 @@ export async function GET(request: NextRequest) {
         .maybeSingle();
       if (!roleLookupError && !existingRole?.role) {
         redirectUrl = new URL(`${localePrefix}/auth/invite-required`, origin);
+      } else if (existingRole?.role === "professional" && isFirstConfirmation(sessionUser, searchParams.get("type"))) {
+        // The link that just confirmed a new professional: the one-time
+        // welcome (first-run spec §1). Later logins go to the dashboard.
+        redirectUrl = new URL(`${localePrefix}/auth/professional-welcome`, origin);
       } else {
         // dashboard/layout.tsx routes every persisted role (and fails
         // closed on a lookup error).
