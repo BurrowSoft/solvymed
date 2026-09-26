@@ -801,7 +801,7 @@
     "doneSub": "La elaboreremo entro 30 giorni e te lo confermeremo via email.",
     "errorEmailRequired": "Inserisci il tuo indirizzo email.",
     "errorGeneric": "Qualcosa è andato storto. Riprova o scrivi a {email}.",
-    "errorTooManyAttempts": "Abbiamo già ricevuto diverse richieste per questa email. Riprova domani o scrivi a {email}.",
+    "errorTooManyAttempts": "Abbiamo già ricevuto diverse richieste. Riprova domani o scrivi a {email}.",
     "errorInvalidEmail": "Inserisci un indirizzo email valido."
   }
 }

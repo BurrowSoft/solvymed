@@ -801,7 +801,7 @@
     "doneSub": "We'll process it within 30 days and confirm by email.",
     "errorEmailRequired": "Please enter your email address.",
     "errorGeneric": "Something went wrong. Please try again or email {email}.",
-    "errorTooManyAttempts": "We've received several requests for this email already. Please try again tomorrow, or email {email}.",
+    "errorTooManyAttempts": "We've received several requests already. Please try again tomorrow, or email {email}.",
     "errorInvalidEmail": "Please enter a valid email address."
   }
 }

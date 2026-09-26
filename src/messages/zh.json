@@ -801,7 +801,7 @@
     "doneSub": "我们会在 30 天内处理，并通过邮件确认。",
     "errorEmailRequired": "请输入您的电子邮箱。",
     "errorGeneric": "出错了。请重试，或发送邮件至 {email}。",
-    "errorTooManyAttempts": "我们已收到此邮箱的多次请求。请明天再试，或发送邮件至 {email}。",
+    "errorTooManyAttempts": "我们已收到多次请求。请明天再试，或发送邮件至 {email}。",
     "errorInvalidEmail": "请输入有效的邮箱地址。"
   }
 }
