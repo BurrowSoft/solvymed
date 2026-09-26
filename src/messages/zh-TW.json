@@ -366,7 +366,12 @@
     "editPrescriptionTitle": "編輯處方",
     "lockedError": "此項目已無法變更。請改為新增更正。",
     "contentRequired": "請輸入內容。",
-    "entryNotFound": "此項目已不存在。請重新整理頁面。"
+    "entryNotFound": "此項目已不存在。請重新整理頁面。",
+    "medicationRequired": "請至少新增一種藥物。",
+    "notDoctorError": "只有專業人員可以管理臨床紀錄。",
+    "sessionError": "工作階段已過期，請重新登入。",
+    "nameRequired": "請輸入病患全名。",
+    "genericError": "發生錯誤，請再試一次。"
   },
   "settings": {
     "profileTitle": "個人資料",

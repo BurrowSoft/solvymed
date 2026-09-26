@@ -366,7 +366,12 @@
     "editPrescriptionTitle": "编辑处方",
     "lockedError": "此条目已无法更改。请改为添加更正。",
     "contentRequired": "请输入内容。",
-    "entryNotFound": "此条目已不存在。请刷新页面。"
+    "entryNotFound": "此条目已不存在。请刷新页面。",
+    "medicationRequired": "请至少添加一种药物。",
+    "notDoctorError": "只有专业人员可以管理临床记录。",
+    "sessionError": "会话已过期，请重新登录。",
+    "nameRequired": "请输入患者全名。",
+    "genericError": "出现问题，请重试。"
   },
   "settings": {
     "profileTitle": "个人资料",

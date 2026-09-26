@@ -366,7 +366,12 @@
     "editPrescriptionTitle": "Modifier l'ordonnance",
     "lockedError": "Cette entrée ne peut plus être modifiée. Ajoutez plutôt une correction.",
     "contentRequired": "Veuillez saisir le contenu.",
-    "entryNotFound": "Cette entrée n'existe plus. Rechargez la page."
+    "entryNotFound": "Cette entrée n'existe plus. Rechargez la page.",
+    "medicationRequired": "Ajoutez au moins un médicament.",
+    "notDoctorError": "Seul le professionnel peut gérer les dossiers cliniques.",
+    "sessionError": "Votre session a expiré. Veuillez vous reconnecter.",
+    "nameRequired": "Veuillez saisir le nom complet du patient.",
+    "genericError": "Une erreur s'est produite. Veuillez réessayer."
   },
   "settings": {
     "profileTitle": "Profil",

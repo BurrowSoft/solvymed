@@ -366,7 +366,12 @@
     "editPrescriptionTitle": "Ubah resep",
     "lockedError": "Entri ini tidak dapat diubah lagi. Tambahkan koreksi sebagai gantinya.",
     "contentRequired": "Masukkan isi.",
-    "entryNotFound": "Entri ini sudah tidak ada. Muat ulang halaman."
+    "entryNotFound": "Entri ini sudah tidak ada. Muat ulang halaman.",
+    "medicationRequired": "Tambahkan setidaknya satu obat.",
+    "notDoctorError": "Hanya tenaga profesional yang dapat mengelola catatan klinis.",
+    "sessionError": "Sesi Anda sudah berakhir. Silakan masuk lagi.",
+    "nameRequired": "Masukkan nama lengkap pasien.",
+    "genericError": "Terjadi kesalahan. Coba lagi."
   },
   "settings": {
     "profileTitle": "Profil",
