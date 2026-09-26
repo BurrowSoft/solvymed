@@ -721,5 +721,14 @@
     "leaveSub": "この医師のもとでの勤務をやめます。新しい招待で別のクリニックに参加できます。",
     "accountNotSecretary": "このアカウントでは受付スタッフの招待を承諾できません。招待リンクから作成した別のアカウントをご利用ください。",
     "teamResendConfirm": "{email}に新しい招待を送りますか？以前に共有したコードは使えなくなります。"
+  },
+  "invitePage": {
+    "metaTitle": "招待",
+    "heading": "SolvyMed への招待",
+    "sub": "クリニックから SolvyMed への招待が届いています。",
+    "codeLabel": "招待コード",
+    "step1": "スマートフォンに SolvyMed をダウンロードします。",
+    "step2": "アプリを開いて <b>Create account</b> をタップし、<b>Patient</b> を選んで、上のコードを <b>Invite code</b> に入力します。",
+    "step3": "すでにアカウントをお持ちの場合は、<b>Home</b> タブを開き、<b>Connect to Your Doctor</b> にコードを入力してください。"
   }
 }

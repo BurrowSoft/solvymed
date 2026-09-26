@@ -721,5 +721,14 @@
     "leaveSub": "Deixar esta clínica. Você pode entrar em outra clínica com um novo convite.",
     "accountNotSecretary": "Esta conta não pode aceitar um convite para a equipe. Use uma conta separada criada pelo link de convite.",
     "teamResendConfirm": "Enviar um novo convite para {email}? O código compartilhado antes deixará de funcionar."
+  },
+  "invitePage": {
+    "metaTitle": "Seu convite",
+    "heading": "Seu convite para o SolvyMed",
+    "sub": "Sua clínica convidou você para se conectar no SolvyMed.",
+    "codeLabel": "Seu código de convite",
+    "step1": "Baixe o SolvyMed no seu celular.",
+    "step2": "Abra o app, toque em <b>Criar conta</b>, escolha <b>Paciente</b> e digite o código acima em <b>Código de convite</b>.",
+    "step3": "Já tem uma conta? Abra a aba <b>Início</b> e digite o código em <b>Conectar ao seu Médico</b>."
   }
 }

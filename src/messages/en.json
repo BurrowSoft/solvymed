@@ -721,5 +721,14 @@
     "leaveSub": "Stop working for this doctor. You can join another clinic with a new invite.",
     "accountNotSecretary": "This account can't accept a secretary invite. Use a separate account created from the invite link.",
     "teamResendConfirm": "Send a new invite to {email}? The code you shared before will stop working."
+  },
+  "invitePage": {
+    "metaTitle": "Your invitation",
+    "heading": "You're invited to SolvyMed",
+    "sub": "Your clinic has invited you to connect on SolvyMed.",
+    "codeLabel": "Your invite code",
+    "step1": "Download SolvyMed on your phone.",
+    "step2": "Open the app, tap <b>Create account</b>, choose <b>Patient</b> and enter the code above as your <b>Invite code</b>.",
+    "step3": "Already have an account? Open the <b>Home</b> tab and enter the code under <b>Connect to Your Doctor</b>."
   }
 }

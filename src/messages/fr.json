@@ -721,5 +721,14 @@
     "leaveSub": "Quitter ce cabinet. Vous pourrez rejoindre un autre cabinet avec une nouvelle invitation.",
     "accountNotSecretary": "Ce compte ne peut pas accepter une invitation de secrétaire. Utilisez un compte distinct créé depuis le lien d'invitation.",
     "teamResendConfirm": "Envoyer une nouvelle invitation à {email} ? Le code partagé précédemment ne fonctionnera plus."
+  },
+  "invitePage": {
+    "metaTitle": "Votre invitation",
+    "heading": "Votre invitation à SolvyMed",
+    "sub": "Votre clinique vous invite à vous connecter sur SolvyMed.",
+    "codeLabel": "Votre code d'invitation",
+    "step1": "Téléchargez SolvyMed sur votre téléphone.",
+    "step2": "Ouvrez l'app, touchez <b>Créer un compte</b>, choisissez <b>Patient</b> et saisissez le code ci-dessus dans <b>Code d'invitation</b>.",
+    "step3": "Vous avez déjà un compte ? Ouvrez l'onglet <b>Accueil</b> et saisissez le code sous <b>Connectez-vous à votre médecin</b>."
   }
 }

@@ -1,17 +1,23 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { iosAppLink, playStoreUrl } from "@/lib/appStores";
 
 describe("playStoreUrl", () => {
   it("links the Play listing with install attribution", () => {
     expect(playStoreUrl("landing")).toBe(
-      "https://play.google.com/store/apps/details?id=com.burrowsoft.solvymed&referrer=utm_source%3Dsolvymed_web%26utm_medium%3Dlanding",
+      "https://play.google.com/store/apps/details?id=com.burrowsoft.solvymed&referrer=utm_source%3Dsolvymed_web%26utm_medium%3Dweb%26utm_campaign%3Dlanding",
     );
   });
 });
 
 describe("iosAppLink", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it("is 'coming soon' when unset, empty or not a URL", () => {
-    expect(iosAppLink("landing", undefined)).toEqual({ mode: "soon" });
+    // Explicitly unset, so a locally configured value can't leak in.
+    vi.stubEnv("NEXT_PUBLIC_IOS_APP_URL", undefined);
+    expect(iosAppLink("landing")).toEqual({ mode: "soon" });
     expect(iosAppLink("landing", "")).toEqual({ mode: "soon" });
     expect(iosAppLink("landing", "not a url")).toEqual({ mode: "soon" });
   });
@@ -36,5 +42,6 @@ describe("iosAppLink", () => {
     expect(iosAppLink("landing", "https://evil.example/join/x")).toEqual({ mode: "soon" });
     expect(iosAppLink("landing", "http://testflight.apple.com/join/x")).toEqual({ mode: "soon" });
     expect(iosAppLink("landing", "https://testflight.apple.com/v1/app/x")).toEqual({ mode: "soon" });
+    expect(iosAppLink("landing", "https://testflight.apple.com/join/")).toEqual({ mode: "soon" });
   });
 });

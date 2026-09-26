@@ -1,10 +1,15 @@
-export const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.burrowsoft.solvymed";
+const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.burrowsoft.solvymed";
+
+// The page a store button sits on, recorded as install attribution.
+export type StoreMedium = "landing" | "invite";
 
 // Play listing link with install attribution: Play passes `referrer` to the
 // app's Install Referrer API, so installs can be traced to the page that
 // sent them (e.g. "landing", "invite").
-export function playStoreUrl(medium: string): string {
-  const referrer = `utm_source=solvymed_web&utm_medium=${medium}`;
+export function playStoreUrl(medium: StoreMedium): string {
+  // Play Console groups installs by utm_source and utm_campaign, so the page
+  // goes in utm_campaign.
+  const referrer = `utm_source=solvymed_web&utm_medium=web&utm_campaign=${medium}`;
   return `${PLAY_STORE_URL}&referrer=${encodeURIComponent(referrer)}`;
 }
 
@@ -16,7 +21,7 @@ export type IosLink =
 // Config-driven, so moving from "coming soon" to TestFlight to the App Store
 // needs no code change: set NEXT_PUBLIC_IOS_APP_URL in Vercel and redeploy.
 // Anything that isn't an https TestFlight or App Store URL counts as unset.
-export function iosAppLink(medium: string, raw = process.env.NEXT_PUBLIC_IOS_APP_URL): IosLink {
+export function iosAppLink(medium: StoreMedium, raw = process.env.NEXT_PUBLIC_IOS_APP_URL): IosLink {
   let url: URL;
   try {
     url = new URL((raw ?? "").trim());
@@ -25,7 +30,7 @@ export function iosAppLink(medium: string, raw = process.env.NEXT_PUBLIC_IOS_APP
   }
   if (url.protocol !== "https:") return { mode: "soon" };
   // TestFlight links can't carry attribution parameters.
-  if (url.hostname === "testflight.apple.com" && url.pathname.startsWith("/join/")) {
+  if (url.hostname === "testflight.apple.com" && /^\/join\/[A-Za-z0-9]+$/.test(url.pathname)) {
     return { mode: "beta", url: url.toString() };
   }
   if (url.hostname === "apps.apple.com") {

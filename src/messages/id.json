@@ -721,5 +721,14 @@
     "leaveSub": "Berhenti bekerja untuk dokter ini. Anda dapat bergabung ke klinik lain dengan undangan baru.",
     "accountNotSecretary": "Akun ini tidak dapat menerima undangan sekretaris. Gunakan akun terpisah yang dibuat dari tautan undangan.",
     "teamResendConfirm": "Kirim undangan baru ke {email}? Kode yang Anda bagikan sebelumnya tidak akan berlaku lagi."
+  },
+  "invitePage": {
+    "metaTitle": "Undangan",
+    "heading": "Undangan ke SolvyMed",
+    "sub": "Klinik Anda mengundang Anda untuk terhubung di SolvyMed.",
+    "codeLabel": "Kode undangan Anda",
+    "step1": "Unduh SolvyMed di ponsel Anda.",
+    "step2": "Buka aplikasi, ketuk <b>Create account</b>, pilih <b>Patient</b>, lalu masukkan kode di atas pada <b>Invite code</b>.",
+    "step3": "Sudah punya akun? Buka tab <b>Home</b> dan masukkan kode di <b>Connect to Your Doctor</b>."
   }
 }

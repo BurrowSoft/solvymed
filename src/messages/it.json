@@ -721,5 +721,14 @@
     "leaveSub": "Lascia questo studio. Potrai unirti a un altro studio con un nuovo invito.",
     "accountNotSecretary": "Questo account non può accettare un invito in segreteria. Usa un account separato creato dal link di invito.",
     "teamResendConfirm": "Inviare un nuovo invito a {email}? Il codice condiviso in precedenza smetterà di funzionare."
+  },
+  "invitePage": {
+    "metaTitle": "Il tuo invito",
+    "heading": "Il tuo invito a SolvyMed",
+    "sub": "La tua clinica ti invita a collegarti su SolvyMed.",
+    "codeLabel": "Il tuo codice invito",
+    "step1": "Scarica SolvyMed sul tuo telefono.",
+    "step2": "Apri l'app, tocca <b>Crea account</b>, scegli <b>Paziente</b> e inserisci il codice qui sopra in <b>Codice invito</b>.",
+    "step3": "Hai già un account? Apri la scheda <b>Home</b> e inserisci il codice in <b>Connettiti al tuo medico</b>."
   }
 }
