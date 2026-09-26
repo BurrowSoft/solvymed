@@ -71,7 +71,9 @@ export default async function MyAppointmentsPage({
     const profRow = profRowRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null } | null;
     if (profRow) {
       myProfessionalMeta = {
-        name: (profRow.full_name as string | null) ?? "Doctor",
+        // No hard-coded English "Doctor": /book resolves the name itself and
+        // has a translated fallback.
+        name: (profRow.full_name as string | null)?.trim() ?? "",
         specialty: (profRow.specialty as string | null) ?? "",
         clinicName: (profRow.clinic_name as string | null) ?? undefined,
       };
