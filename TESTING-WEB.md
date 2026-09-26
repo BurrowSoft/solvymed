@@ -3414,6 +3414,86 @@ alongside as the "before":
 
 **Merge gate: 🟢 for `aa4251d`, review clean.**
 
+## PR #29 (`feat/record-corrections`) — 24-hour correction rule, 🟢 at `63379ac`, review clean
+
+**Scope: exactly `63379ac`.** This ships in lockstep with mobile #19.
+- **097:** the corrections migration.
+- **098:** a hotfix. 097's `_clinical_row_editable` returned NULL
+  whenever `app.retention_purge` was unset, so the lock never fired.
+  I found this live on prod on the first run: a doctor PATCHed and
+  DELETEd a 30-hour-old record, and the service role updated any
+  clinical row. Mob dev fixed it in 098.
+
+**Tested live on the preview, after 098 was live.**
+- **Test data:** a throwaway doctor with patients, records and
+  prescriptions seeded through the doctor's JWT. The ">24h" rows were
+  inserted with a backdated `created_at`. Old prescriptions were created
+  fresh, given their items, then backdated by the author.
+- **Cleanup:** 097 intentionally makes clinical rows undeletable except
+  by a retention purge, so mob dev purges the throwaways on request.
+
+**🟢 1. New record, as the author.**
+- **Buttons:** it shows "Editar" and "Excluir".
+- **Edit:** the "Editar registro" dialog saves the new content.
+- **Delete:** it asks "Excluir este registro? Esta ação não pode ser
+  desfeita." and removes the row.
+
+**🟢 2. Record older than 24h.**
+- **Buttons:** only "Adicionar correção".
+- **Dialog:** "Corrigir registro", prefilled with the original text.
+- **Blank reason:** "Informe um motivo." (with the client `required`
+  removed), and no raw code.
+- **With a reason:** the original is struck through, followed by
+  "Corrigido em 26 de set. de 2026 por Dra Opus Pr29: erro de digitação",
+  then the correction with its "Correção" badge.
+- **Database:** the correction row has `corrects_id`, the reason and
+  `created_by_name`.
+- **Nesting:** a fresh correction offers Editar/Excluir, since it's under
+  24h old. Correcting a correction needs it to be over 24h old, so that
+  case is code-verified only.
+
+**🟢 3. Prescriptions.**
+- **New prescription, 3 medications:** Edit with the middle row removed
+  leaves the form as Med Um 1mg and Med Tres 3mg, with no value shifting.
+  The DB holds exactly those 2 items, with no duplicates.
+- **Prescription older than 24h:** only "Adicionar correção".
+  - **Prefilled:** Amoxicilina and Dipirona.
+  - **Saved correction:** Amoxicilina 875mg and Dipirona 1g, with the
+    reason "dose errada".
+  - **Trail:** the original's items are struck through, with "Corrigido
+    em … por …: dose errada".
+
+**🟢 4. Stale page.**
+- **Setup:** the edit dialog was opened on a record 23h54m old (Editar is
+  still offered before 23h55m). I waited until it was past 24h, then
+  saved.
+- **Result:** "Este registro não pode mais ser alterado. Adicione uma
+  correção." shows, with no raw code, and the DB content is unchanged.
+
+**🟢 Lock at the DB, with 098.** Every direct REST write to a row older
+than 24h returns 400 `clinical_record_locked`:
+- doctor-JWT PATCH;
+- service-role PATCH;
+- doctor-JWT DELETE;
+- DELETE of an old prescription's items.
+
+**🟢 5. Archived patient, copy and privacy.**
+- **Archived patient:** their record shows no Editar, Excluir or
+  Adicionar correção.
+- **es:** "Editar", "Eliminar", "Añadir corrección", "Corregido el 26 sept
+  2026 por …" and "Corrección".
+- **Privacy §7:** `/privacy` has the new paragraph ("After 24 hours, a
+  clinical note or prescription can no longer be edited or deleted…").
+
+**Review: Claude `/code-review` (code reviewer), clean at `63379ac`.**
+
+**FOLLOW-UP:** none web-side. The prod lock bug was DB-side and is fixed
+by 098 (mob dev added a flag-never-set test).
+
+**CI at `63379ac`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `63379ac`, review clean. 097 and 098 are live.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
