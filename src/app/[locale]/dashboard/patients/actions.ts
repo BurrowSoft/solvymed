@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId, isProfessionalRole } from "@/lib/effectiveProfId";
 import { sendExpoPush } from "@/lib/push";
+import { actionError } from "@/lib/dbErrors";
 
 // archived_at is set for an archived match, so the warning can offer
 // Restore instead of creating a second record for the same person.
@@ -135,7 +136,7 @@ export async function updatePatient(id: string, formData: FormData) {
     convenio_type: (formData.get("convenio_type") as string) || null,
   }).eq("id", id).eq("professional_id", effectiveProfId);
 
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${id}`);
   revalidatePath("/dashboard/patients");
   return { success: true };
@@ -155,7 +156,7 @@ export async function deletePatient(id: string) {
     // (records, prescriptions or files); the UI offers Archive instead, but
     // its preview can be stale.
     if (error.message?.includes("patient_has_clinical_history")) return { error: "patient_has_clinical_history" };
-    return { error: error.message };
+    return { error: actionError(error.message) };
   }
   revalidatePath("/dashboard/patients");
   return { success: true };
@@ -269,7 +270,7 @@ export async function deleteRecord(id: string, patientId: string) {
   if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
 
   const { error } = await supabase.from("medical_records").delete().eq("id", id).eq("professional_id", user.id);
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
 }
@@ -316,7 +317,7 @@ export async function createPrescription(patientId: string, formData: FormData) 
   }
 
   const { error: iError } = await supabase.from("prescription_items").insert(items);
-  if (iError) return { error: iError.message };
+  if (iError) return { error: actionError(iError.message) };
 
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
@@ -336,7 +337,7 @@ export async function toggleBookingBlock(patientId: string, blocked: boolean) {
     .eq("id", patientId)
     .eq("professional_id", effectiveProfId);
 
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
   revalidatePath("/dashboard/patients");
   return { success: true };
@@ -348,7 +349,7 @@ export async function generatePatientInviteCode(patientId: string) {
   if (!user) return { error: "Unauthorized" };
 
   const { data, error } = await supabase.rpc("generate_patient_invite_code", { p_patient_id: patientId });
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
 
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { code: data as string };
@@ -364,7 +365,7 @@ export async function deletePrescription(id: string, patientId: string) {
 
   await supabase.from("prescription_items").delete().eq("prescription_id", id);
   const { error } = await supabase.from("prescriptions").delete().eq("id", id).eq("professional_id", user.id);
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
 }

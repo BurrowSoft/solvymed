@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
+import { knownDbError } from "@/lib/dbErrors";
 
 // Duration is already bounded to 480 (8h), but that alone doesn't stop a
 // late start_time from producing an end time past midnight (e.g. 23:00 +
@@ -76,7 +77,7 @@ export async function createAppointment(formData: FormData) {
 
   if (error) {
     if (error.message?.includes("patient_archived")) return { error: "Patient is archived", code: "patient_archived" };
-    return { error: error.message, code: "generic" };
+    return { error: error.message, code: knownDbError(error.message) ?? "generic" };
   }
   revalidatePath("/dashboard/schedule");
   return { success: true };
@@ -119,7 +120,7 @@ export async function updateAppointmentStatus(id: string, status: string) {
     .not("status", "in", '("tentative","proposal")')
     .select("id");
 
-  if (error) return { error: error.message, code: "generic" };
+  if (error) return { error: error.message, code: knownDbError(error.message) ?? "generic" };
   if (!data || data.length === 0) {
     return { error: "Use the booking request card to confirm, reject, or propose a time for this request", code: "use_booking_card" };
   }
@@ -141,7 +142,7 @@ export async function deleteAppointment(id: string) {
     .eq("id", id)
     .eq("professional_id", effectiveProfId);
 
-  if (error) return { error: error.message, code: "generic" };
+  if (error) return { error: error.message, code: knownDbError(error.message) ?? "generic" };
   revalidatePath("/dashboard/schedule");
   return { success: true };
 }
@@ -181,7 +182,7 @@ export async function blockTime(formData: FormData) {
     scheduled_by: "professional",
   });
 
-  if (error) return { error: error.message, code: "generic" };
+  if (error) return { error: error.message, code: knownDbError(error.message) ?? "generic" };
   revalidatePath("/dashboard/schedule");
   return { success: true };
 }
