@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
   // Must have either a PKCE code or an OTP token_hash
   if (!code && !tokenHash) {
-    return NextResponse.redirect(new URL("/", origin));
+    return NextResponse.redirect(new URL(localePrefix || "/", origin));
   }
 
   // Collect cookies Supabase wants to set — we'll apply them to the final redirect response.
