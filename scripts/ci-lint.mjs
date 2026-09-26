@@ -3,8 +3,8 @@
 // annotations, with path:line:col in the text since GitHub annotates only
 // ~10 per type) and totalled in the job summary, and the runner exits 0.
 // Anything else (ESLint failing to load or run, a bug in this script)
-// exits non-zero, so the step goes red and a crash can't pass as findings.
-// To make lint gating later: exit 1 when errors > 0, and remove
+// exits non-zero, so the "Lint" check goes red and a crash can't pass as
+// findings. To make lint gating later: exit 1 when errors > 0, and remove
 // eslint.ignoreDuringBuilds in next.config.ts.
 import { appendFileSync } from "node:fs";
 import { relative } from "node:path";
@@ -15,7 +15,13 @@ const escapeProperty = (s) => escapeData(s).replace(/:/g, "%3A").replace(/,/g, "
 
 function summary(text) {
   console.log(text);
-  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${text}\n`);
+  if (!process.env.GITHUB_STEP_SUMMARY) return;
+  try {
+    appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${text}\n`);
+  } catch (err) {
+    // A failed summary write isn't a lint failure; the log has the totals.
+    console.error("Couldn't write the job summary:", err);
+  }
 }
 
 async function main() {
@@ -27,8 +33,8 @@ async function main() {
   for (const file of results) {
     errors += file.errorCount;
     warnings += file.warningCount;
+    const path = relative(process.cwd(), file.filePath).split("\\").join("/");
     for (const m of file.messages) {
-      const path = relative(process.cwd(), file.filePath).split("\\").join("/");
       const line = m.line ?? 1;
       const col = m.column ?? 1;
       const level = m.severity === 2 ? "error" : "warning";
