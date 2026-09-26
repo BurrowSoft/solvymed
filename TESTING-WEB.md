@@ -545,7 +545,7 @@ accept it.
 | D-2 🤖📱 | Book, `/book/<professionalId>` (the route My appointments and the pending page link to, optionally with `?name=`, `specialty=` and `clinicName=`) | The header shows the real doctor name, from `get_professional_public_info` (merged in #16), or the translated "Profissional", never "Doctor". Slots come from the doctor's hours. The request becomes tentative in the doctor's schedule. |
 | D-3 📱 | My appointments | Upcoming and past appointments are listed correctly. The Book link opens `/book/<professionalId>` for their doctor, and there's no `?name=Doctor` in it. |
 | D-4 | Reschedule | A patient's request shows for the doctor, who can approve or decline it. When the doctor proposes a new time, the patient can accept or decline it. Both sides see the final state. |
-| D-5 | Account deletion request (`/account/delete`, #25) | In all 15 locales, the page shows the "what happens to your data" note: professionals' records are kept for 20 years, and patients' accounts are deleted while the clinic keeps its records. There's no "erased and cannot be recovered" wording. The mailto goes to `support@solvymed.com` with a localized subject. A submit records a **pending** `deletion_requests` row and shows the translated confirmation with the email in bold. **Enforced today:** a doctor with clinical history can't be deleted. The gate is 095's `delete_my_account` refusal (`patient_has_clinical_history`), backed by 094's delete trigger; support closes the account. A patient can delete their account even when a clinic archived their record (096). **Still ⏳:** close-account (mob dev), and the support alert when a request lands (mob dev, S-01). |
+| D-5 | Account deletion request (`/account/delete`, #25) | In all 15 locales, the page shows the "what happens to your data" note: professionals' records are kept for 20 years, and patients' accounts are deleted while the clinic keeps its records. There's no "erased and cannot be recovered" wording. The mailto goes to `support@solvymed.com` with a localized subject. A submit records a **pending** `deletion_requests` row and shows the translated confirmation with the email in bold. **Enforced today:** a doctor with clinical history can't be deleted. The gate is 095's `delete_my_account` refusal (`patient_has_clinical_history`), backed by 094's delete trigger; support closes the account. A patient can delete their account even when a clinic archived their record (096). **Since migration 100 (#36):** rows are stored as `new` and each accepted request emails the **real support inbox**. There's a limit of 3 per email and 10 per IP per day, and `too_many_attempts`/`invalid_email` show translated messages. **Since 101 (#38):** the row stores the page's `locale`. **Test-submit rule (user, via UX, 2026-09-26):** every test submit uses an obviously-test email (`e2e-…@burrowsoft.com` or `…@example.invalid`) **and** a reason starting with `[TEST]`, so the owner can ignore it at a glance. Keep submits to the minimum, and have mob dev delete the rows. **Still ⏳:** close-account (#32, migration 102). |
 
 ### E. Secretary (all 🤖 from #13 unless noted)
 
@@ -4098,6 +4098,39 @@ post-100 checks are recorded here as a prod addendum once 100 is live.
     browser contexts from the same IP share the per-email limit, as
     shown above.
 - **Cleanup:** the 4 test rows went to mob dev for deletion.
+
+## PR #38 (`feat/deletion-request-locale`) — deletion requests carry the page locale, 🟢 at `77ade20`, review clean
+
+**Scope: exactly `77ade20`.** `/account/delete` sends the page's locale
+with the insert; migration 101 (`deletion_requests.locale`) is live.
+
+Tested live on the preview with **2 submits only**, per the `[TEST]` rule:
+`@example.invalid` emails and reasons starting with `[TEST]`.
+
+**🟢 pt-BR:** from `/pt-BR/account/delete`, the browser's REST POST body
+includes `"locale":"pt-BR"`, and the page shows "Solicitação recebida".
+The row is stored with `locale='pt-BR'`, status `new` and the `[TEST]`
+reason.
+
+**🟢 en (unprefixed):** from `/account/delete` with `NEXT_LOCALE=en`, the
+POST includes `"locale":"en"`, and the page shows "Request received". The
+row is stored with `locale='en'`.
+
+**Not run:** the code reviewer suggested `/ja/account/delete` →
+`'ja'`. I kept to the two-request limit, and `en` also covers the
+unprefixed default locale. The mechanism is the same for every locale.
+- **Alert subject:** that it starts with "[TEST] " is pending the user's
+  inbox check.
+- **Cleanup:** the 2 test rows went to mob dev for deletion.
+
+**Also in this commit:** checklist row D-5 now records the `[TEST]`
+test-submit rule, plus what migrations 100 and 101 enforce.
+
+**Review: Claude `/code-review` (code reviewer), clean at `77ade20`.**
+
+**CI at `77ade20`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `77ade20`, review clean.**
 
 ## iOS — open question
 
