@@ -437,7 +437,10 @@
     "copyLink": "Copy link",
     "loadError": "Couldn't load your settings. Please refresh the page. If this keeps happening, contact support.",
     "regenerateConfirm": "Codes and links you've already shared will stop working. Generate a new code?",
-    "regenerateError": "Couldn't generate a new code. Please try again."
+    "regenerateError": "Couldn't generate a new code. Please try again.",
+    "showSetup": "Show setup checklist",
+    "registration": "Professional registration",
+    "registrationPlaceholder": "e.g. CRM 12345/SP"
   },
   "clinics": {
     "title": "My Clinics",
@@ -861,5 +864,34 @@
     "pushClosedBody": "Your clinic has closed its SolvyMed account. Your upcoming appointments are cancelled. For a copy of your records, contact support@solvymed.com.",
     "pushCancelledTitle": "Appointment cancelled",
     "pushCancelledBody": "Your appointment on {date} at {time} has been cancelled by the clinic."
+  },
+  "setup": {
+    "title": "Set up your clinic",
+    "progress": "{done} of 6",
+    "hide": "Hide",
+    "profile": "Complete your profile",
+    "profileCta": "Complete profile",
+    "hours": "Set your working hours",
+    "hoursCta": "Set hours",
+    "procedure": "Add your first procedure",
+    "procedureCta": "Add procedure",
+    "patient": "Add your first patient",
+    "patientCta": "Add patient",
+    "appointment": "Book your first appointment",
+    "appointmentCta": "Book appointment",
+    "invite": "Invite your patients",
+    "inviteCta": "Share invite link",
+    "alsoUseful": "Also useful",
+    "pix": "Add your Pix key",
+    "secretary": "Invite your team",
+    "ready": "Your clinic is ready 🎉",
+    "gotIt": "Got it"
+  },
+  "onboarding": {
+    "secretaryWelcome": "You're now part of {clinic}'s team. You can manage the schedule, patients and payments. Medical records stay private to the professional.",
+    "patientConnected": "You're connected to {clinic}.",
+    "bookAppointment": "Book an appointment",
+    "dismiss": "Dismiss",
+    "gotIt": "Got it"
   }
 }

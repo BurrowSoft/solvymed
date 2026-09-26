@@ -2,6 +2,7 @@
 
 import { useTransition, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { markInviteShared } from "@/lib/setupActions";
 import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient, generatePublicInviteCode } from "./actions";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
@@ -40,9 +41,10 @@ function SaveRow({ pending, saved }: { pending: boolean; saved: boolean }) {
   );
 }
 
-export function Card({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
+// `id` is an anchor the setup checklist links to (e.g. /dashboard/settings#hours).
+export function Card({ title, description, children, id }: { title: string; description?: string; children: React.ReactNode; id?: string }) {
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+    <div id={id} className="scroll-mt-6 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
       <div className="mb-5">
         <h2 className="text-base font-bold text-slate-900">{title}</h2>
         {description && <p className="text-sm text-slate-500 mt-0.5">{description}</p>}
@@ -53,7 +55,7 @@ export function Card({ title, description, children }: { title: string; descript
 }
 
 /* ─── Profile form ──────────────────────────────────────────────── */
-export function ProfileForm({ fullName, specialty }: { fullName: string; specialty?: string }) {
+export function ProfileForm({ fullName, specialty, registration }: { fullName: string; specialty?: string; registration?: string }) {
   const t = useTranslations("settings");
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
@@ -69,7 +71,7 @@ export function ProfileForm({ fullName, specialty }: { fullName: string; special
   }
 
   return (
-    <Card title={t("profileTitle")} description={t("profileSub")}>
+    <Card id="profile" title={t("profileTitle")} description={t("profileSub")}>
       <form onSubmit={handleSubmit}>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
@@ -79,6 +81,11 @@ export function ProfileForm({ fullName, specialty }: { fullName: string; special
           <div>
             <Label>{t("specialty")}</Label>
             <Input name="specialty" defaultValue={specialty ?? ""} placeholder={t("specialtyPlaceholder")} />
+          </div>
+          {/* The council registration shown on documents (e.g. CRM 12345/SP). Optional. */}
+          <div className="sm:col-span-2">
+            <Label>{t("registration")}</Label>
+            <Input name="professional_registration" defaultValue={registration ?? ""} placeholder={t("registrationPlaceholder")} />
           </div>
         </div>
         <SaveRow pending={pending} saved={saved} />
@@ -122,6 +129,8 @@ export function InviteCodeCard({ code: initialCode }: { code?: string }) {
     // Unprefixed: the patient's own browser language decides (UX rule for
     // links shared with patients).
     navigator.clipboard.writeText(`${window.location.origin}/join/${code}`).then(() => {
+      // Setup checklist item 6 (best-effort).
+      markInviteShared().catch(() => {});
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2000);
     }).catch(() => {});
@@ -195,7 +204,7 @@ export function ClinicForm({ data }: { data: ClinicData }) {
   }
 
   return (
-    <Card title={t("clinicTitle")} description={t("clinicSub")}>
+    <Card id="clinic" title={t("clinicTitle")} description={t("clinicSub")}>
       <form onSubmit={handleSubmit}>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
@@ -281,7 +290,7 @@ export function WorkingHoursForm({ workingHours }: { workingHours: WorkingHours 
   }
 
   return (
-    <Card title={t("hoursTitle")} description={t("hoursSub")}>
+    <Card id="hours" title={t("hoursTitle")} description={t("hoursSub")}>
       <form onSubmit={handleSubmit}>
         <div className="divide-y divide-slate-100">
           {DAYS.map(d => {
@@ -394,7 +403,7 @@ export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
   }
 
   return (
-    <Card title={t("proceduresTitle")} description={t("proceduresSub")}>
+    <Card id="procedures" title={t("proceduresTitle")} description={t("proceduresSub")}>
       <div className="space-y-2 mb-4">
         {procedures.length === 0 && !showForm && (
           <p className="text-sm text-slate-400 py-4 text-center">{t("noProcedures")}</p>

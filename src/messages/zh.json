@@ -437,7 +437,10 @@
     "copyLink": "复制链接",
     "loadError": "无法加载您的设置。请刷新页面。如果问题持续出现，请联系客服。",
     "regenerateConfirm": "你已分享的邀请码和链接将失效。要生成新的邀请码吗？",
-    "regenerateError": "无法生成新的邀请码，请重试。"
+    "regenerateError": "无法生成新的邀请码，请重试。",
+    "showSetup": "显示设置清单",
+    "registration": "执业注册号",
+    "registrationPlaceholder": "例如 CRM 12345/SP"
   },
   "clinics": {
     "title": "我的诊所",
@@ -861,5 +864,34 @@
     "pushClosedBody": "您的诊所已关闭其 SolvyMed 账户。您的后续预约已取消。如需病历副本，请联系 support@solvymed.com。",
     "pushCancelledTitle": "预约已取消",
     "pushCancelledBody": "您在 {date} {time} 的预约已被诊所取消。"
+  },
+  "setup": {
+    "title": "设置您的诊所",
+    "progress": "{done}/6",
+    "hide": "隐藏",
+    "profile": "完善个人资料",
+    "profileCta": "完善资料",
+    "hours": "设置工作时间",
+    "hoursCta": "设置时间",
+    "procedure": "添加第一个诊疗项目",
+    "procedureCta": "添加项目",
+    "patient": "添加第一位患者",
+    "patientCta": "添加患者",
+    "appointment": "预约第一位患者",
+    "appointmentCta": "新建预约",
+    "invite": "邀请您的患者",
+    "inviteCta": "分享邀请链接",
+    "alsoUseful": "其他建议",
+    "pix": "添加 Pix 密钥",
+    "secretary": "邀请您的团队",
+    "ready": "您的诊所已准备就绪 🎉",
+    "gotIt": "知道了"
+  },
+  "onboarding": {
+    "secretaryWelcome": "您已加入 {clinic} 团队。您可以管理日程、患者和付款。病历仅对专业人员可见。",
+    "patientConnected": "您已连接到 {clinic}。",
+    "bookAppointment": "预约",
+    "dismiss": "关闭",
+    "gotIt": "知道了"
   }
 }

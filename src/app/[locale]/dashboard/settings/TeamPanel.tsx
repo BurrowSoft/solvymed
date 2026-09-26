@@ -95,7 +95,7 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
   }
 
   return (
-    <Card title={t("teamTitle")} description={t("teamSub")}>
+    <Card id="team" title={t("teamTitle")} description={t("teamSub")}>
       {loadFailed && <div className="error-banner mb-4">{t("teamLoadError")}</div>}
 
       {members.length > 0 && (

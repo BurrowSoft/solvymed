@@ -437,7 +437,10 @@
     "copyLink": "링크 복사",
     "loadError": "설정을 불러오지 못했습니다. 페이지를 새로고침해 주세요. 문제가 계속되면 고객지원에 문의하세요.",
     "regenerateConfirm": "이미 공유한 코드와 링크는 더 이상 작동하지 않습니다. 새 코드를 생성할까요?",
-    "regenerateError": "새 코드를 생성하지 못했습니다. 다시 시도해 주세요."
+    "regenerateError": "새 코드를 생성하지 못했습니다. 다시 시도해 주세요.",
+    "showSetup": "설정 체크리스트 보기",
+    "registration": "면허 번호",
+    "registrationPlaceholder": "예: CRM 12345/SP"
   },
   "clinics": {
     "title": "내 클리닉",
@@ -861,5 +864,34 @@
     "pushClosedBody": "이용하시던 진료소가 SolvyMed 계정을 폐쇄했습니다. 예정된 예약은 취소되었습니다. 진료 기록 사본은 support@solvymed.com으로 요청하세요.",
     "pushCancelledTitle": "예약 취소",
     "pushCancelledBody": "{date} {time} 예약이 진료소에 의해 취소되었습니다."
+  },
+  "setup": {
+    "title": "진료소 설정하기",
+    "progress": "6개 중 {done}개",
+    "hide": "숨기기",
+    "profile": "프로필 완성하기",
+    "profileCta": "프로필 작성",
+    "hours": "진료 시간 설정하기",
+    "hoursCta": "시간 설정",
+    "procedure": "첫 진료 항목 추가하기",
+    "procedureCta": "항목 추가",
+    "patient": "첫 환자 추가하기",
+    "patientCta": "환자 추가",
+    "appointment": "첫 예약 잡기",
+    "appointmentCta": "예약 잡기",
+    "invite": "환자 초대하기",
+    "inviteCta": "초대 링크 공유",
+    "alsoUseful": "함께 하면 좋아요",
+    "pix": "Pix 키 추가",
+    "secretary": "팀 초대하기",
+    "ready": "진료소 준비가 끝났습니다 🎉",
+    "gotIt": "확인"
+  },
+  "onboarding": {
+    "secretaryWelcome": "이제 {clinic} 팀의 일원입니다. 예약, 환자, 결제를 관리할 수 있습니다. 진료 기록은 담당 전문가만 볼 수 있습니다.",
+    "patientConnected": "{clinic}에 연결되었습니다.",
+    "bookAppointment": "예약하기",
+    "dismiss": "닫기",
+    "gotIt": "확인"
   }
 }

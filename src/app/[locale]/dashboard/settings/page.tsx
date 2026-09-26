@@ -4,6 +4,8 @@ import { getTranslations } from "next-intl/server";
 import { ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, SchedulingRulesForm, BlockedPatientsPanel, InviteCodeCard } from "./SettingsClient";
 import { TeamPanel, type TeamRow } from "./TeamPanel";
 import { SecretarySettings } from "./SecretarySettings";
+import { ShowSetupRow } from "./ShowSetupRow";
+import { getSetupProgress } from "@/lib/setup";
 import { CloseAccountPanel, type ClosurePreview } from "./CloseAccountPanel";
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
@@ -54,7 +56,7 @@ export default async function SettingsPage({
   const [profResult, procsResult, blockedResult, teamResult] = await Promise.all([
     supabase
       .from("professionals")
-      .select("full_name, specialty, clinic_name, clinic_cnpj, clinic_phone, clinic_website, clinic_address, clinic_city, clinic_state, pix_key, working_hours, max_concurrent_bookings, public_invite_code")
+      .select("full_name, specialty, professional_registration, clinic_name, clinic_cnpj, clinic_phone, clinic_website, clinic_address, clinic_city, clinic_state, pix_key, working_hours, max_concurrent_bookings, public_invite_code")
       .eq("id", user.id)
       .maybeSingle(),
     supabase
@@ -72,6 +74,9 @@ export default async function SettingsPage({
       .order("full_name"),
     supabase.rpc("list_my_team"),
   ]);
+  // "Show setup checklist": only when the doctor hid it before finishing.
+  const setupProgress = await getSetupProgress(supabase);
+  const offerShowSetup = !!setupProgress && setupProgress.setup_hidden && !setupProgress.completed_ack && setupProgress.done_count < 6;
 
   // A failed load must not fall through to the blank defaults below: the
   // forms would render empty and saving one overwrites the real row. Only a
@@ -86,7 +91,7 @@ export default async function SettingsPage({
   }
 
   const prof = profResult.data ?? {
-    full_name: "", specialty: null,
+    full_name: "", specialty: null, professional_registration: null,
     clinic_name: null, clinic_cnpj: null, clinic_phone: null,
     clinic_website: null, clinic_address: null, clinic_city: null, clinic_state: null,
     pix_key: null, working_hours: null, max_concurrent_bookings: null, public_invite_code: null,
@@ -108,9 +113,12 @@ export default async function SettingsPage({
       </div>
 
       <div className="space-y-6">
+        {offerShowSetup && <ShowSetupRow />}
+
         <ProfileForm
           fullName={prof.full_name}
           specialty={prof.specialty ?? undefined}
+          registration={(prof as { professional_registration?: string | null }).professional_registration ?? undefined}
         />
 
         <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} />

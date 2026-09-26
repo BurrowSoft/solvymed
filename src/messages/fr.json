@@ -437,7 +437,10 @@
     "copyLink": "Copier le lien",
     "loadError": "Impossible de charger vos paramètres. Actualisez la page. Si le problème persiste, contactez le support.",
     "regenerateConfirm": "Les codes et liens déjà partagés ne fonctionneront plus. Générer un nouveau code ?",
-    "regenerateError": "Impossible de générer un nouveau code. Réessayez."
+    "regenerateError": "Impossible de générer un nouveau code. Réessayez.",
+    "showSetup": "Afficher la liste de configuration",
+    "registration": "Numéro d'inscription professionnelle",
+    "registrationPlaceholder": "ex. : CRM 12345/SP"
   },
   "clinics": {
     "title": "Mes Cliniques",
@@ -861,5 +864,34 @@
     "pushClosedBody": "Votre cabinet a fermé son compte SolvyMed. Vos rendez-vous à venir sont annulés. Pour obtenir une copie de votre dossier, écrivez à support@solvymed.com.",
     "pushCancelledTitle": "Rendez-vous annulé",
     "pushCancelledBody": "Votre rendez-vous du {date} à {time} a été annulé par le cabinet."
+  },
+  "setup": {
+    "title": "Configurez votre cabinet",
+    "progress": "{done} sur 6",
+    "hide": "Masquer",
+    "profile": "Complétez votre profil",
+    "profileCta": "Compléter le profil",
+    "hours": "Définissez vos horaires",
+    "hoursCta": "Définir les horaires",
+    "procedure": "Ajoutez votre premier acte",
+    "procedureCta": "Ajouter un acte",
+    "patient": "Ajoutez votre premier patient",
+    "patientCta": "Ajouter un patient",
+    "appointment": "Prenez votre premier rendez-vous",
+    "appointmentCta": "Prendre rendez-vous",
+    "invite": "Invitez vos patients",
+    "inviteCta": "Partager le lien d'invitation",
+    "alsoUseful": "Également utile",
+    "pix": "Ajoutez votre clé Pix",
+    "secretary": "Invitez votre équipe",
+    "ready": "Votre cabinet est prêt 🎉",
+    "gotIt": "Compris"
+  },
+  "onboarding": {
+    "secretaryWelcome": "Vous faites maintenant partie de l'équipe de {clinic}. Vous pouvez gérer l'agenda, les patients et les paiements. Les dossiers médicaux restent privés au professionnel.",
+    "patientConnected": "Votre compte est connecté à {clinic}.",
+    "bookAppointment": "Prendre rendez-vous",
+    "dismiss": "Fermer",
+    "gotIt": "Compris"
   }
 }
