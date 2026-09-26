@@ -635,7 +635,18 @@
       "expiredBody": "请在登录页面重新获取链接。",
       "goToSignIn": "前往登录"
     },
-    "captchaFailed": "请完成验证后重试。"
+    "captchaFailed": "请完成验证后重试。",
+    "errors": {
+      "wrongCredentials": "邮箱或密码错误。",
+      "emailNotConfirmed": "请先确认您的邮箱：点击我们发送给您的链接。",
+      "rateLimited": "尝试次数过多。请稍等几分钟后重试。",
+      "weakPassword": "此密码太弱。请至少使用 {min} 个字符。",
+      "samePassword": "新密码必须与当前密码不同。",
+      "accountClosed": "此账户已关闭或被暂停。如需帮助，请联系 support@solvymed.com。",
+      "linkExpired": "此链接已过期或已被使用。请重新获取。",
+      "network": "无网络连接。请检查网络后重试。",
+      "generic": "出现问题，请重试。"
+    }
   },
   "myAppointments": {
     "title": "我的预约",

@@ -7,7 +7,8 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
 import { IconBadge } from "@/components/IconBadge";
-import { MIN_PASSWORD_LENGTH, isWeakPasswordError } from "@/lib/password";
+import { MIN_PASSWORD_LENGTH } from "@/lib/password";
+import { useAuthErrorText } from "@/lib/useAuthErrorText";
 
 interface Props {
   state: "signup" | "recovery" | "unknown";
@@ -22,6 +23,7 @@ function isMobileDevice() {
 
 export default function ConfirmClient({ state: initialState, deepLink, autoRedirect }: Props) {
   const t = useTranslations("confirm");
+  const authErrorText = useAuthErrorText();
   const [redirecting, setRedirecting] = useState(false);
   const [state, setState] = useState(initialState);
   const [password, setPassword] = useState("");
@@ -93,10 +95,9 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
     const supabase = createClient();
     const { error } = await supabase.auth.updateUser({ password });
     setSaving(false);
-    if (isWeakPasswordError(error)) {
-      setSaveError(t("lengthError", { min: MIN_PASSWORD_LENGTH }));
-    } else if (error) {
-      setSaveError(error.message);
+    if (error) {
+      // The approved line for the error code, never the raw message.
+      setSaveError(authErrorText(error) ?? t("error"));
     } else {
       setSaveSuccess(true);
     }

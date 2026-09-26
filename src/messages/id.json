@@ -635,7 +635,18 @@
       "expiredBody": "Minta tautan baru dari halaman masuk.",
       "goToSignIn": "Ke halaman masuk"
     },
-    "captchaFailed": "Selesaikan verifikasi lalu coba lagi."
+    "captchaFailed": "Selesaikan verifikasi lalu coba lagi.",
+    "errors": {
+      "wrongCredentials": "Email atau kata sandi salah.",
+      "emailNotConfirmed": "Konfirmasi email Anda terlebih dahulu: ketuk tautan yang kami kirim.",
+      "rateLimited": "Terlalu banyak percobaan. Tunggu beberapa menit lalu coba lagi.",
+      "weakPassword": "Kata sandi ini terlalu lemah. Gunakan minimal {min} karakter.",
+      "samePassword": "Kata sandi baru harus berbeda dari kata sandi saat ini.",
+      "accountClosed": "Akun ini telah ditutup atau ditangguhkan. Jika butuh bantuan, hubungi support@solvymed.com.",
+      "linkExpired": "Tautan ini sudah kedaluwarsa atau sudah digunakan. Minta tautan baru.",
+      "network": "Tidak ada koneksi. Periksa internet Anda lalu coba lagi.",
+      "generic": "Terjadi kesalahan. Coba lagi."
+    }
   },
   "myAppointments": {
     "title": "Janji Saya",

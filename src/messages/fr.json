@@ -635,7 +635,18 @@
       "expiredBody": "Demandez-en un nouveau depuis la page de connexion.",
       "goToSignIn": "Aller à la connexion"
     },
-    "captchaFailed": "Veuillez terminer la vérification et réessayer."
+    "captchaFailed": "Veuillez terminer la vérification et réessayer.",
+    "errors": {
+      "wrongCredentials": "E-mail ou mot de passe incorrect.",
+      "emailNotConfirmed": "Confirmez d'abord votre e-mail : touchez le lien que nous vous avons envoyé.",
+      "rateLimited": "Trop de tentatives. Patientez quelques minutes et réessayez.",
+      "weakPassword": "Ce mot de passe est trop faible. Utilisez au moins {min} caractères.",
+      "samePassword": "Le nouveau mot de passe doit être différent du mot de passe actuel.",
+      "accountClosed": "Ce compte a été fermé ou suspendu. Pour obtenir de l'aide, écrivez à support@solvymed.com.",
+      "linkExpired": "Ce lien a expiré ou a déjà été utilisé. Demandez-en un nouveau.",
+      "network": "Pas de connexion. Vérifiez votre accès à Internet et réessayez.",
+      "generic": "Une erreur s'est produite. Veuillez réessayer."
+    }
   },
   "myAppointments": {
     "title": "Mes rendez-vous",

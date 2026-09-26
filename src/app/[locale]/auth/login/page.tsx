@@ -8,10 +8,12 @@ import Link from "next/link";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
-import { TurnstileWidget, turnstileEnabled, isCaptchaError } from "@/components/TurnstileWidget";
+import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
+import { useAuthErrorText } from "@/lib/useAuthErrorText";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
+  const authErrorText = useAuthErrorText();
   const params = useParams();
   const searchParams = useSearchParams();
   const locale = (params.locale as string) ?? "en";
@@ -45,10 +47,8 @@ export default function LoginPage() {
     setLoading(false);
     // A token is single-use: get a fresh one for the next attempt.
     if (turnstileEnabled) setCaptchaReset((n) => n + 1);
-    if (isCaptchaError(authError)) {
-      setError(t("captchaFailed"));
-    } else if (authError) {
-      setError(t("login.error"));
+    if (authError) {
+      setError(authErrorText(authError) ?? t("errors.generic"));
     } else if (signInData.user) {
       const { data: roleRow } = await supabase
         .from("user_roles")

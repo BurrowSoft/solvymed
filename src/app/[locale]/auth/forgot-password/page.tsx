@@ -10,10 +10,12 @@ import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
-import { TurnstileWidget, turnstileEnabled, isCaptchaError } from "@/components/TurnstileWidget";
+import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
+import { useAuthErrorText } from "@/lib/useAuthErrorText";
 
 export default function ForgotPasswordPage() {
   const t = useTranslations("auth");
+  const authErrorText = useAuthErrorText();
   const params = useParams();
   const locale = (params.locale as string) ?? "en";
 
@@ -54,10 +56,8 @@ export default function ForgotPasswordPage() {
     );
     setLoading(false);
     if (turnstileEnabled) setCaptchaReset((n) => n + 1);
-    if (isCaptchaError(authError)) {
-      setError(t("captchaFailed"));
-    } else if (authError) {
-      setError(t("forgotPassword.error"));
+    if (authError) {
+      setError(authErrorText(authError) ?? t("errors.generic"));
     } else {
       setSuccess(true);
     }

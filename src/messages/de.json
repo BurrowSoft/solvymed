@@ -635,7 +635,18 @@
       "expiredBody": "Fordern Sie auf der Anmeldeseite einen neuen an.",
       "goToSignIn": "Zur Anmeldung"
     },
-    "captchaFailed": "Bitte schließen Sie die Überprüfung ab und versuchen Sie es erneut."
+    "captchaFailed": "Bitte schließen Sie die Überprüfung ab und versuchen Sie es erneut.",
+    "errors": {
+      "wrongCredentials": "E-Mail oder Passwort ist falsch.",
+      "emailNotConfirmed": "Bestätigen Sie zuerst Ihre E-Mail-Adresse: Tippen Sie auf den Link, den wir Ihnen gesendet haben.",
+      "rateLimited": "Zu viele Versuche. Warten Sie ein paar Minuten und versuchen Sie es erneut.",
+      "weakPassword": "Dieses Passwort ist zu schwach. Verwenden Sie mindestens {min} Zeichen.",
+      "samePassword": "Das neue Passwort muss sich vom aktuellen unterscheiden.",
+      "accountClosed": "Dieses Konto wurde geschlossen oder gesperrt. Wenn Sie Hilfe brauchen, schreiben Sie an support@solvymed.com.",
+      "linkExpired": "Dieser Link ist abgelaufen oder wurde bereits verwendet. Fordern Sie einen neuen an.",
+      "network": "Keine Verbindung. Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+      "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    }
   },
   "myAppointments": {
     "title": "Meine Termine",

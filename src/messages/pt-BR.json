@@ -635,7 +635,18 @@
       "expiredBody": "Solicite um novo na página de login.",
       "goToSignIn": "Ir para o login"
     },
-    "captchaFailed": "Conclua a verificação e tente novamente."
+    "captchaFailed": "Conclua a verificação e tente novamente.",
+    "errors": {
+      "wrongCredentials": "E-mail ou senha incorretos.",
+      "emailNotConfirmed": "Confirme seu e-mail primeiro: toque no link que enviamos para sua caixa de entrada.",
+      "rateLimited": "Muitas tentativas. Aguarde alguns minutos e tente novamente.",
+      "weakPassword": "Esta senha é muito fraca. Use pelo menos {min} caracteres.",
+      "samePassword": "A nova senha deve ser diferente da senha atual.",
+      "accountClosed": "Esta conta foi encerrada ou suspensa. Se precisar de ajuda, fale com support@solvymed.com.",
+      "linkExpired": "Este link expirou ou já foi usado. Solicite um novo.",
+      "network": "Sem conexão. Verifique sua internet e tente novamente.",
+      "generic": "Algo deu errado. Tente novamente."
+    }
   },
   "myAppointments": {
     "title": "Minhas Consultas",

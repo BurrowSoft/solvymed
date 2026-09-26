@@ -635,7 +635,18 @@
       "expiredBody": "로그인 페이지에서 새 링크를 요청하세요.",
       "goToSignIn": "로그인으로 이동"
     },
-    "captchaFailed": "확인을 완료한 뒤 다시 시도하세요."
+    "captchaFailed": "확인을 완료한 뒤 다시 시도하세요.",
+    "errors": {
+      "wrongCredentials": "이메일 또는 비밀번호가 올바르지 않습니다.",
+      "emailNotConfirmed": "먼저 이메일을 확인하세요. 보내 드린 링크를 누르세요.",
+      "rateLimited": "시도 횟수가 너무 많습니다. 몇 분 후 다시 시도하세요.",
+      "weakPassword": "비밀번호가 너무 약합니다. {min}자 이상 사용하세요.",
+      "samePassword": "새 비밀번호는 현재 비밀번호와 달라야 합니다.",
+      "accountClosed": "이 계정은 폐쇄되었거나 정지되었습니다. 도움이 필요하면 support@solvymed.com으로 문의하세요.",
+      "linkExpired": "링크가 만료되었거나 이미 사용되었습니다. 새 링크를 요청하세요.",
+      "network": "연결되지 않았습니다. 인터넷 연결을 확인한 뒤 다시 시도하세요.",
+      "generic": "문제가 발생했습니다. 다시 시도하세요."
+    }
   },
   "myAppointments": {
     "title": "내 예약",
