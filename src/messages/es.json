@@ -72,7 +72,7 @@
     "updatedTitle": "Contraseña actualizada",
     "updatedMessage": "Tu contraseña ha sido cambiada. Ahora puedes iniciar sesión con tu nueva contraseña.",
     "matchError": "Las contraseñas no coinciden.",
-    "lengthError": "La contraseña debe tener al menos 6 caracteres.",
+    "lengthError": "La contraseña debe tener al menos {min} caracteres.",
     "openDashboard": "Abrir panel",
     "dashboardHint": "Serás redirigido a tu panel."
   },
@@ -475,6 +475,7 @@
     "professionalFallback": "Profesional"
   },
   "auth": {
+    "passwordTooShort": "La contraseña debe tener al menos {min} caracteres.",
     "login": {
       "title": "Qué bueno verte de nuevo",
       "subtitle": "Inicia sesión en tu cuenta SolvyMed",

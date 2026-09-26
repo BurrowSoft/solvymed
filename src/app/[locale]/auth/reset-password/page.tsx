@@ -9,6 +9,7 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
+import { MIN_PASSWORD_LENGTH, isWeakPasswordError } from "@/lib/password";
 
 type PageState = "loading" | "form" | "success" | "error";
 
@@ -59,6 +60,11 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     setError("");
 
+    if (newPassword.length < MIN_PASSWORD_LENGTH) {
+      setError(t("passwordTooShort", { min: MIN_PASSWORD_LENGTH }));
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       setError(t("resetPassword.passwordMismatch"));
       return;
@@ -71,7 +77,9 @@ export default function ResetPasswordPage() {
     });
     setLoading(false);
 
-    if (updateError) {
+    if (isWeakPasswordError(updateError)) {
+      setError(t("passwordTooShort", { min: MIN_PASSWORD_LENGTH }));
+    } else if (updateError) {
       setError(t("resetPassword.error"));
     } else {
       setPageState("success");

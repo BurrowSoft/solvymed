@@ -11,6 +11,7 @@ import { Logo } from "@/components/Logo";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 import { isWellFormedSecretaryCode, normalizeSecretaryCode } from "@/lib/secretary";
+import { MIN_PASSWORD_LENGTH, isWeakPasswordError } from "@/lib/password";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -55,6 +56,11 @@ export default function SignupPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setError(t("passwordTooShort", { min: MIN_PASSWORD_LENGTH }));
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError(t("signup.passwordMismatch"));
@@ -112,7 +118,9 @@ export default function SignupPage() {
     });
     setLoading(false);
 
-    if (authError) {
+    if (isWeakPasswordError(authError)) {
+      setError(t("passwordTooShort", { min: MIN_PASSWORD_LENGTH }));
+    } else if (authError) {
       setError(t("signup.error"));
     } else if (signUpData.user?.identities?.length === 0) {
       // Supabase returns an empty identities array (no error) when the email is

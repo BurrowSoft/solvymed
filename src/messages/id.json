@@ -72,7 +72,7 @@
     "updatedTitle": "Kata sandi diperbarui",
     "updatedMessage": "Kata sandi Anda telah diubah. Sekarang Anda dapat masuk dengan kata sandi baru.",
     "matchError": "Kata sandi tidak cocok.",
-    "lengthError": "Kata sandi harus minimal 6 karakter.",
+    "lengthError": "Kata sandi harus minimal {min} karakter.",
     "openDashboard": "Buka dasbor",
     "dashboardHint": "Anda akan diarahkan ke dasbor Anda."
   },
@@ -475,6 +475,7 @@
     "professionalFallback": "Tenaga profesional"
   },
   "auth": {
+    "passwordTooShort": "Kata sandi harus minimal {min} karakter.",
     "login": {
       "title": "Selamat datang kembali",
       "subtitle": "Masuk ke akun SolvyMed Anda",

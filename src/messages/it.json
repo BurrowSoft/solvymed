@@ -72,7 +72,7 @@
     "updatedTitle": "Password aggiornata",
     "updatedMessage": "La tua password è stata modificata. Ora puoi accedere con la tua nuova password.",
     "matchError": "Le password non corrispondono.",
-    "lengthError": "La password deve essere lunga almeno 6 caratteri.",
+    "lengthError": "La password deve essere lunga almeno {min} caratteri.",
     "openDashboard": "Apri dashboard",
     "dashboardHint": "Sarai reindirizzato alla tua dashboard."
   },
@@ -475,6 +475,7 @@
     "professionalFallback": "Professionista"
   },
   "auth": {
+    "passwordTooShort": "La password deve essere lunga almeno {min} caratteri.",
     "login": {
       "title": "Bentornato",
       "subtitle": "Accedi al tuo account SolvyMed",

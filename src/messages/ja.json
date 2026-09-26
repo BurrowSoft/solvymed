@@ -72,7 +72,7 @@
     "updatedTitle": "パスワードが更新されました",
     "updatedMessage": "パスワードが変更されました。新しいパスワードでサインインできるようになりました。",
     "matchError": "パスワードが一致しません。",
-    "lengthError": "パスワードは6文字以上である必要があります。",
+    "lengthError": "パスワードは{min}文字以上である必要があります。",
     "openDashboard": "ダッシュボードを開く",
     "dashboardHint": "ダッシュボードにリダイレクトされます。"
   },
@@ -475,6 +475,7 @@
     "professionalFallback": "担当者"
   },
   "auth": {
+    "passwordTooShort": "パスワードは{min}文字以上である必要があります。",
     "login": {
       "title": "おかえりなさい",
       "subtitle": "SolvyMedアカウントにサインインする",
