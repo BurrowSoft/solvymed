@@ -53,7 +53,8 @@
     "copyright": "© 2026 Solvymed. Bảo lưu mọi quyền.",
     "privacy": "Chính sách quyền riêng tư",
     "terms": "Điều khoản dịch vụ",
-    "legal": "Thông tin pháp lý"
+    "legal": "Thông tin pháp lý",
+    "languageLabel": "Ngôn ngữ"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -192,7 +193,8 @@
     "genericError": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "missingFieldsError": "Vui lòng điền đầy đủ các trường bắt buộc.",
     "pastMidnightError": "Thời gian và thời lượng này sẽ vượt quá nửa đêm.",
-    "patientArchivedError": "Hồ sơ này đã được lưu trữ. Hãy khôi phục trong mục Bệnh nhân để đặt lịch hẹn."
+    "patientArchivedError": "Hồ sơ này đã được lưu trữ. Hãy khôi phục trong mục Bệnh nhân để đặt lịch hẹn.",
+    "moreCount": "+{n} nữa"
   },
   "payments": {
     "thisWeek": "Tuần này",

@@ -53,7 +53,8 @@
     "copyright": "© 2026 Solvymed 版權所有。",
     "privacy": "隱私權政策",
     "terms": "服務條款",
-    "legal": "法律資訊"
+    "legal": "法律資訊",
+    "languageLabel": "語言"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -192,7 +193,8 @@
     "genericError": "發生問題，請重試。",
     "missingFieldsError": "請填寫所有必填欄位。",
     "pastMidnightError": "此時間和時長將超過午夜。",
-    "patientArchivedError": "此病歷已封存。請在「病患」中還原後再預約。"
+    "patientArchivedError": "此病歷已封存。請在「病患」中還原後再預約。",
+    "moreCount": "另外 {n} 個"
   },
   "payments": {
     "thisWeek": "本週",

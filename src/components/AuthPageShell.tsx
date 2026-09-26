@@ -1,4 +1,5 @@
 import { LanguageSelector } from "@burrowsoft/shared";
+import { useTranslations } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { LegalLinks } from "./LegalLinks";
 
@@ -14,13 +15,14 @@ export function AuthPageShell({
   children: React.ReactNode;
   languageSwitcher?: boolean;
 }) {
+  const tFooter = useTranslations("footer");
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
       {children}
       <div className="mt-6 mb-8 flex flex-wrap items-center justify-center gap-4">
         <LegalLinks />
         {languageSwitcher && (
-          <LanguageSelector locales={ALL_LOCALES} className="text-xs border-slate-200 shadow-sm" />
+          <LanguageSelector locales={ALL_LOCALES} className="text-xs border-slate-200 shadow-sm" ariaLabel={tFooter("languageLabel")} />
         )}
       </div>
     </div>
