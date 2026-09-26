@@ -502,7 +502,7 @@
       "inviteCode": "초대 코드",
       "inviteCodeRequired": "초대 코드가 필요합니다",
       "inviteCodePlaceholder": "ABC123",
-      "inviteCodeHint": "의사 코드를 입력하여 자동으로 연결합니다",
+      "inviteCodeHint": "초대 코드를 입력하세요",
       "emailExists": "이 이메일로 이미 계정이 존재합니다. 로그인해 주세요.",
       "joiningAs": "초대 링크를 통해 {role}(으)로 가입합니다.",
       "joiningAsSecretary": "초대 링크로 비서로 가입합니다.",

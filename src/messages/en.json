@@ -502,7 +502,7 @@
       "inviteCode": "Invite code",
       "inviteCodeRequired": "An invite code is required",
       "inviteCodePlaceholder": "ABC123",
-      "inviteCodeHint": "Enter a doctor's code to get linked automatically",
+      "inviteCodeHint": "Enter your invite code",
       "emailExists": "An account with this email already exists. Please sign in instead.",
       "joiningAs": "Joining as {role} via invite link.",
       "joiningAsSecretary": "Joining as a secretary via invite link.",

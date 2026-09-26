@@ -502,7 +502,7 @@
       "inviteCode": "Mã mời",
       "inviteCodeRequired": "Cần có mã mời",
       "inviteCodePlaceholder": "ABC123",
-      "inviteCodeHint": "Nhập mã của bác sĩ để kết nối tự động",
+      "inviteCodeHint": "Nhập mã mời",
       "emailExists": "Đã có tài khoản với email này. Vui lòng đăng nhập.",
       "joiningAs": "Tham gia với tư cách {role} qua liên kết mời.",
       "joiningAsSecretary": "Đăng ký làm thư ký qua liên kết mời.",

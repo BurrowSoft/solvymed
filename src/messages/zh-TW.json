@@ -502,7 +502,7 @@
       "inviteCode": "邀請碼",
       "inviteCodeRequired": "需要邀請碼",
       "inviteCodePlaceholder": "ABC123",
-      "inviteCodeHint": "輸入醫生的邀請碼以自動連結",
+      "inviteCodeHint": "輸入邀請碼",
       "emailExists": "此電子郵件已有帳戶。請登入。",
       "joiningAs": "透過邀請連結以 {role} 身份加入。",
       "joiningAsSecretary": "透過邀請連結以祕書身分註冊。",

@@ -502,7 +502,7 @@
       "inviteCode": "รหัสเชิญ",
       "inviteCodeRequired": "จำเป็นต้องมีรหัสเชิญ",
       "inviteCodePlaceholder": "ABC123",
-      "inviteCodeHint": "ใส่รหัสแพทย์เพื่อเชื่อมโยงอัตโนมัติ",
+      "inviteCodeHint": "ใส่รหัสเชิญ",
       "emailExists": "มีบัญชีที่ใช้อีเมลนี้อยู่แล้ว กรุณาลงชื่อเข้าใช้",
       "joiningAs": "เข้าร่วมในฐานะ {role} ผ่านลิงก์เชิญ",
       "joiningAsSecretary": "สมัครเป็นเลขานุการผ่านลิงก์คำเชิญ",
