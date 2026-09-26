@@ -20,8 +20,9 @@ function PlayIcon() {
 }
 
 const BUTTON = "flex items-center justify-center gap-3 rounded-xl px-8 py-4 text-lg font-bold";
-const PRIMARY = "bg-teal-500 text-white shadow-xl shadow-teal-900/40";
-const PRIMARY_HOVER = "transition hover:bg-teal-400";
+// teal-700: white 18px bold text needs 4.5:1 (WCAG AA); teal-500 is ~2.5:1.
+const PRIMARY = "bg-teal-700 text-white shadow-xl shadow-teal-900/40";
+const PRIMARY_HOVER = "transition hover:bg-teal-800";
 // Outlined buttons; their colours depend on the background they sit on.
 const SECONDARY = {
   dark: "border-2 border-white/20 bg-white/10 text-white backdrop-blur-sm",
