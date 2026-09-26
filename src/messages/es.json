@@ -617,6 +617,13 @@
       "statusProposal": "Nuevo horario propuesto",
       "accept": "Aceptar",
       "decline": "Rechazar"
+    },
+    "professionalWelcome": {
+      "title": "¡Te damos la bienvenida a SolvyMed, {firstName}!",
+      "titleNoName": "¡Te damos la bienvenida a SolvyMed!",
+      "body": "Configuremos tu clínica en unos pocos pasos para que puedas agendar tu primera cita.",
+      "startSetup": "Empezar configuración",
+      "skip": "Ahora no"
     }
   },
   "myAppointments": {
@@ -696,7 +703,10 @@
     "portalUnavailable": "No pudimos abrir la gestión de la tarjeta en este momento. Contacta con support@solvymed.com.",
     "portalError": "No se pudo abrir la gestión de la tarjeta. Inténtalo de nuevo.",
     "errorPaymentFailed": "Tu último pago falló. Actualiza tu tarjeta en lugar de iniciar una nueva suscripción.",
-    "paymentActivating": "Pago recibido. Tu acceso se está restableciendo. Actualiza esta página en un momento."
+    "paymentActivating": "Pago recibido. Tu acceso se está restableciendo. Actualiza esta página en un momento.",
+    "chipDays": "Prueba gratis: quedan {n} días · Ver plan",
+    "chipUrgentDays": "Prueba gratis: quedan {n} días · Suscribirse",
+    "chipLastDay": "Prueba gratis: último día · Suscribirse"
   },
   "secretary": {
     "notConnectedTitle": "Tu cuenta aún no está conectada a una clínica",
@@ -800,7 +810,19 @@
     "doneBody": "Hemos recibido tu solicitud para <b>{email}</b>.",
     "doneSub": "La procesaremos en un plazo de 30 días y te lo confirmaremos por correo.",
     "errorEmailRequired": "Introduce tu correo electrónico.",
-    "errorGeneric": "Algo salió mal. Inténtalo de nuevo o escribe a {email}."
+    "errorGeneric": "Algo salió mal. Inténtalo de nuevo o escribe a {email}.",
+    "errorTooManyAttempts": "Ya recibimos varias solicitudes. Inténtalo de nuevo mañana o escribe a {email}.",
+    "errorInvalidEmail": "Introduce una dirección de correo válida."
+  },
+  "firstRun": {
+    "scheduleEmptyTitle": "Aún no hay citas.",
+    "scheduleEmptyBody": "Agenda tu primera cita o comparte tu enlace de invitación para que los pacientes puedan solicitar una.",
+    "bookAppointment": "Agendar una cita",
+    "shareInviteLink": "Compartir enlace de invitación",
+    "linkCopied": "¡Enlace copiado!",
+    "paymentsEmptyTitle": "Aún no hay pagos.",
+    "paymentsEmptyBody": "Los pagos de tus citas aparecerán aquí.",
+    "setYourPrices": "Definir tus precios"
   },
   "accountClose": {
     "titleClose": "Cerrar cuenta",

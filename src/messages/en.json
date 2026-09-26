@@ -617,6 +617,13 @@
       "statusProposal": "New time proposed",
       "accept": "Accept",
       "decline": "Decline"
+    },
+    "professionalWelcome": {
+      "title": "Welcome to SolvyMed, {firstName}!",
+      "titleNoName": "Welcome to SolvyMed!",
+      "body": "Let's set up your clinic in a few quick steps, so you can book your first appointment.",
+      "startSetup": "Start setup",
+      "skip": "Skip for now"
     }
   },
   "myAppointments": {
@@ -696,7 +703,10 @@
     "portalUnavailable": "We couldn't open card management right now. Please contact support@solvymed.com.",
     "portalError": "Could not open card management. Please try again.",
     "errorPaymentFailed": "Your last payment failed. Update your card instead of starting a new subscription.",
-    "paymentActivating": "Payment received. Your access is being restored, so refresh this page in a moment."
+    "paymentActivating": "Payment received. Your access is being restored, so refresh this page in a moment.",
+    "chipDays": "Free trial: {n} days left · See plan",
+    "chipUrgentDays": "Free trial: {n} days left · Subscribe",
+    "chipLastDay": "Free trial: last day · Subscribe"
   },
   "secretary": {
     "notConnectedTitle": "Not connected to a clinic yet",
@@ -800,7 +810,19 @@
     "doneBody": "We've received your request for <b>{email}</b>.",
     "doneSub": "We'll process it within 30 days and confirm by email.",
     "errorEmailRequired": "Please enter your email address.",
-    "errorGeneric": "Something went wrong. Please try again or email {email}."
+    "errorGeneric": "Something went wrong. Please try again or email {email}.",
+    "errorTooManyAttempts": "We've received several requests already. Please try again tomorrow, or email {email}.",
+    "errorInvalidEmail": "Please enter a valid email address."
+  },
+  "firstRun": {
+    "scheduleEmptyTitle": "No appointments yet.",
+    "scheduleEmptyBody": "Book your first appointment, or share your invite link so patients can request one.",
+    "bookAppointment": "Book an appointment",
+    "shareInviteLink": "Share invite link",
+    "linkCopied": "Link copied!",
+    "paymentsEmptyTitle": "No payments yet.",
+    "paymentsEmptyBody": "Payments from your appointments will appear here.",
+    "setYourPrices": "Set your prices"
   },
   "accountClose": {
     "titleClose": "Close account",

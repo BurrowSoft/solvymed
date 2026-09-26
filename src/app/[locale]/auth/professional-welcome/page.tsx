@@ -1,34 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 
-const COUNTDOWN = 5;
-
-// Width classes for each remaining-seconds value (COUNTDOWN..0). Must stay in
-// sync with COUNTDOWN — Tailwind needs the full literal class names in source.
-const PROGRESS_WIDTH_CLASS = ["w-0", "w-1/5", "w-2/5", "w-3/5", "w-4/5", "w-full"];
-
+// Shown once, right after a professional confirms their email (first-run
+// spec §1). "Start setup" opens the dashboard with the setup checklist
+// expanded; "Skip for now" opens it with the checklist collapsed.
 export default function ProfessionalWelcomePage() {
-  const router = useRouter();
+  const t = useTranslations("auth.professionalWelcome");
   const { locale } = useParams<{ locale: string }>();
   const dashboardPath = locale === "en" ? "/dashboard" : `/${locale}/dashboard`;
-
-  const [count, setCount] = useState(COUNTDOWN);
+  const [firstName, setFirstName] = useState("");
 
   useEffect(() => {
-    if (count <= 0) {
-      router.push(dashboardPath);
-      return;
-    }
-    const t = setTimeout(() => setCount((c) => c - 1), 1000);
-    return () => clearTimeout(t);
-  }, [count, dashboardPath, router]);
+    createClient().auth.getUser().then(({ data: { user } }) => {
+      const full = (user?.user_metadata?.full_name as string | undefined)?.trim();
+      if (full) setFirstName(full.split(/\s+/)[0]);
+    }).catch(() => {});
+  }, []);
 
   return (
     <AuthPageShell>
@@ -41,38 +37,22 @@ export default function ProfessionalWelcomePage() {
           </svg>
         </IconBadge>
 
-        <h1 className="auth-heading">You&apos;re all set!</h1>
-        <p className="mb-1 text-slate-500">Your account has been confirmed. Welcome to SolvyMed.</p>
-
-        {/* Countdown */}
-        <p className="mb-8 text-sm text-slate-400">
-          Redirecting to your dashboard in{" "}
-          <span className="font-semibold tabular-nums text-teal-600">{count}</span>
-          {count === 1 ? " second" : " seconds"}…
-        </p>
-
-        {/* Progress bar */}
-        <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-          <div
-            className={`h-full rounded-full bg-teal-500 transition-all duration-1000 ease-linear ${PROGRESS_WIDTH_CLASS[COUNTDOWN - count]}`}
-          />
-        </div>
+        <h1 className="auth-heading">{firstName ? t("title", { firstName }) : t("titleNoName")}</h1>
+        <p className="mb-8 text-slate-500">{t("body")}</p>
 
         <Link
-          href={dashboardPath}
+          href={`${dashboardPath}?setup=1`}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-teal-600 px-6 py-3.5 text-base font-bold text-white shadow-md shadow-teal-600/20 transition hover:bg-teal-700 active:scale-95"
         >
-          Go to dashboard now
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+          {t("startSetup")}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 rtl:rotate-180">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </Link>
+        <Link href={dashboardPath} className="mt-4 inline-block text-sm font-semibold text-slate-500 transition hover:text-teal-700">
+          {t("skip")}
+        </Link>
       </AuthCard>
-
-      <p className="auth-footer-text">
-        SolvyMed by{" "}
-        <a href="/" className="link-teal">BurrowSoft</a>
-      </p>
     </AuthPageShell>
   );
 }

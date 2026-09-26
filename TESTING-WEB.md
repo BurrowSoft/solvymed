@@ -434,6 +434,201 @@ it to come up (`reuseExistingServer: true`, so it'll happily attach to a
 different environment (e.g. a deployed preview) instead — doing so skips
 the auto-started dev server.
 
+## Release regression checklist (web) — 1.3.0 launch
+
+This is a re-runnable checklist of every main web flow, for the release
+candidate (RC) before 1.3.0, the Brazil paid-marketing launch. Run it
+top to bottom on the RC's exact SHA, then log the run in the table at the
+end. **Any ❌ blocks the release** unless UX/PM and the user explicitly
+accept it.
+
+### How to run it
+
+- **Target:** the RC build on the environment it will ship to. That's the
+  local `next build && next start` on the RC SHA, plus the deployed
+  preview if there is one. Record the SHA in the run log.
+- **Two locales for every item: pt-BR (`/pt-BR/...`) and en (unprefixed).**
+  pt-BR is the launch market and gets the full pass. en gets the same
+  items but only needs to be spot-checked for layout and copy.
+  - **Locale gotcha:** unprefixed URLs follow the `NEXT_LOCALE` cookie.
+    Test en in a fresh browser context, or after switching with the
+    language picker.
+- **Viewports: desktop Chrome, 1280×720, for everything.** Mobile gets the
+  items marked 📱, on Chromium with Pixel 7 emulation and WebKit with
+  iPhone 14 emulation. On mobile, check:
+  - nothing overflows horizontally;
+  - dialogs fit the screen and can be closed;
+  - the sidebar or menu can be reached;
+  - tap targets are usable.
+- **Accounts:**
+  - Throwaway `e2e-test-opus-*` accounts, created through the admin API
+    or the real signup. Doctors get a trial automatically.
+  - Signups are confirmed through this app's own `/api/auth/callback`,
+    using a `token_hash` from the admin `generate_link` API. The signup
+    form hardcodes the prod redirect.
+  - The shared doctor (`ca44892c…`) is **read-only**. Never save forms on
+    it.
+- **Stripe:** test mode for this checklist. The live-mode charge is
+  separate; see L-1 at the end.
+- **Harnesses:** the specs I used for #11–#16 are kept outside the repo.
+  Items marked 🤖 were already automated there and can be re-run; the
+  rest are manual or semi-manual.
+- **Clean-up after every run:** delete throwaway users, Stripe
+  customers, test clocks and open sessions. When sweeping users, list
+  them with `per_page=10`. Larger pages 500 because of the 8 broken
+  `auth.users` rows, until they're fixed. Also restore the shared doctor
+  if it was touched.
+
+### A. Public pages and auth (signed out)
+
+| ID | Flow | Expected result |
+|---|---|---|
+| A-1 📱 | Landing `/`, `/pt-BR` | It renders with no console errors. The CTAs lead to signup and login, and the language picker switches locale and keeps the page. |
+| A-2 | `/privacy`, `/terms` in pt-BR and en | Both render. Payments are described as **Stripe only**, with no Asaas. |
+| A-3 🤖📱 | Doctor signup (`/auth/signup`, default role) | The role label is "Profissional de saúde". Submitting shows "Verifique seu e-mail". After confirming, you land on `/dashboard` with "Dr. <first name>"; `user_roles` is `professional`, and `professionals` is `trial` with a future `trial_ends_at`. |
+| A-4 🤖 | Patient signup via `/join/<doctor's public code>` | It redirects to signup with "Entrando como … via link de convite" and the role locked. After confirming you land on `/auth/pending-confirmation`, which names the doctor; `invited_by_professional_id` is set. |
+| A-5 🤖 | Patient signup with a typed patient invite code | The Patient role shows the code field, with the hint "Digite o código de convite". After confirming you land on `/auth/patient-welcome`, with `linked_patient_id` set. |
+| A-6 | Patient signup with an invalid or no code | `/auth/invite-required` shows clinic wording. Retrying with a valid code links the account. A bogus code shows the "doesn't match" message. |
+| A-7 | Signup validation | Mismatched passwords, a weak password and an email that's already registered each show a clear error, not a crash. |
+| A-7b | Password minimum is **8** (#18) | **Web form:** on signup, reset-password and a secretary invite signup, **7 characters is rejected** with "A senha deve ter pelo menos 8 caracteres." (pt-BR) / the en equivalent. There's no `/auth/v1/signup` or password-update call, and no account or change. 8 characters works. An existing account with a 6-character password still logs in. **Server part, still ⏳:** Supabase Auth's minimum stays **6** until mobile 1.3.0 is on Play (UX decision, 2026-09-26). Once mob dev raises it to 8, a 7-character password sent straight to the Auth API must be refused too. Until then, this half is ❌ at RC per the G rule, unless UX waives it for the web launch. |
+| A-8 📱 | Login and logout | Wrong credentials show an error. The right ones route by role: doctor → `/dashboard`, patient → `/my-appointments` or `pending-confirmation`, secretary → `/dashboard`, or `not-connected` / `clinic-inactive`. Sign-out lands on the current locale's home. |
+| A-9 | Forgot password → reset | Requesting a reset shows a neutral "if the account exists" message. The email link goes to `/auth/reset-password` with `access_token` and `refresh_token` **in the URL hash**; the page calls `setSession`, then `updateUser`. It does **not** go through `/api/auth/callback`. The new password saves, the old one stops working, and the new one logs in. Check the page and its messages in pt-BR and en. **Local test recipe:** get a recovery `hashed_token` from the admin `generate_link` API (`type: recovery`), exchange it with `verifyOtp` (`type: recovery`) for a session, then open `/<locale>/auth/reset-password#access_token=…&refresh_token=…&type=recovery`. **Open issue to confirm at RC:** `forgot-password` hard-codes `redirectTo` to `https://www.solvymed.com/en/auth/reset-password`, so pt-BR users land on the English page. |
+| A-10 | `/join/<bogus>`, signed in and signed out | Signed out, it redirects to signup. Signed in, it shows "Este link pode ser inválido…". There's no 5xx. |
+| A-11 | Session expiry | With cookies cleared, a protected page redirects to login and there's no blank page. |
+| A-12 | Auth links keep the language (#21) | A reset requested in pt-BR emails `/pt-BR/auth/reset-password`; opened in a **fresh** browser, even from another country, it shows the pt-BR form and the new password works. A signup confirmation carries `?locale=` and lands on the pt-BR page with `NEXT_LOCALE` pinned. `/en/…` links never 404. **Check that en links end in English**: at `76476e9`, `/en/…` landed in the geo locale. |
+| A-13 | Reset link shape | The reset request sends **no `code_challenge`** (implicit flow), so the email link returns `#access_token…&type=recovery` and works in any browser, such as a phone's mail app. A legacy `?code=` link works in the requesting browser; in any other browser it fails gracefully with "O link pode ter expirado". |
+| A-14 | Mobile-origin links, `/auth/confirm` | Unprefixed `/auth/confirm#access_token…&type=recovery` geo-redirects (302) to `/<cc>/auth/confirm` **with the fragment kept**, and the set-password form completes the reset. `/pt-BR/auth/confirm` does the same in pt-BR. Both verified on prod on 2026-09-26. |
+| A-15 ⏳ | S-01: `token_hash` links (send-email hook, 1.3.0) | **Web-origin links:** `/api/auth/callback?token_hash&type&locale` verifies server-side and lands on the right locale page. For reset that's `/<locale>/auth/reset-password`, with a session. **Mobile-origin links on desktop:** `/<locale>/auth/confirm?token_hash&type` shows "Open in the app" / "Continue in the browser", and the browser path completes the confirm or reset. **Scanner safety:** a plain GET of either confirm URL does **not** consume the token (no verify on page load), and a real click afterwards still works. **Fallbacks:** old `#access_token` and `?code=` links still work. **Password reset, a pre-A-15 BLOCKER** (the code reviewer, 2026-09-26): a recovery email link → `/auth/reset-password`, a new password works, and the old one no longer does. Today a `type=recovery` `token_hash` through `/api/auth/callback` logs the user in and lands on `/dashboard`, with no way to set a password; found live in the #35 run. Also check the recovery link never lands on `/auth/professional-welcome`. |
+
+### B. Doctor
+
+| ID | Flow | Expected result |
+|---|---|---|
+| B-1 📱 | Dashboard home | The greeting reads "Dr. <name>". Today's and upcoming appointments are listed, and the pending-payments and patient counts are right. The Monthly Revenue card matches the paid appointments. |
+| B-2 📱 | Schedule: create an appointment | The new appointment appears in the list, day and week views. Overlapping a blocked slot is refused with a localized error. |
+| B-3 | Schedule: block time | The block shows as blocked and patients can't book over it. |
+| B-4 | Schedule: status changes | confirmed → completed or cancelled persists after reload. Tentative and proposal rows show a badge, with no status dropdown. |
+| B-5 | Schedule: propose a new time to a patient | The appointment becomes a proposal. The patient sees it in My appointments and can accept or decline (see D-4). |
+| B-6 🤖 | Schedule: Pix QR on a confirmed, unpaid appointment | The Pix QR button opens the QR. "Copia e Cola" contains the key, the amount and the city, and the image encodes the same payload. |
+| B-7 📱 | Patients: list, search, create, edit, delete or archive (#18, migration 094) | CRUD persists. Patient detail shows Info, Records, Prescriptions and Appointments. **Delete** is offered only to a patient with **no clinical history** and asks for confirmation. A patient with a record or prescription shows only **"Arquivar cadastro"**. The archive confirm states the number of upcoming appointments that will be cancelled ("Nenhuma consulta futura…" / "N consultas futuras…"), and they are cancelled. Archived patients disappear from the list, search, the dashboard count and the New-appointment picker, and appear under **"Arquivados (n)"**. The banner reads "Arquivado em … por …", with Restaurar; restore also works from the duplicate warning. No raw `patient_archived`/`patient_has_clinical_history` codes appear anywhere (schedule create by name, re-activation, patient booking). |
+| B-7b 📱 | Clinical records: the 24-hour rule (#29, migrations 097 and 098) | **Under 24h, by the author:** Editar/Excluir on records and prescriptions; Edit saves; removing a middle medication row keeps the other rows' values. **Over 24h:** only "Adicionar correção", and a reason is required ("Informe um motivo."). The original is struck through, with "Corrigido em … por …: <reason>", and the correction is badged. **DB enforced:** a direct REST PATCH/DELETE of an older-than-24h row returns `clinical_record_locked`, for the doctor's JWT **and** the service role, and so does deleting an old prescription's items. **Stale page:** saving after the cutoff shows "Este registro não pode mais ser alterado. Adicione uma correção." An archived patient has no clinical actions. |
+| B-7c | Clinical dates follow the practice's time zone. **Launch-blocking** (UX, 2026-09-26: the code reviewer's finding and design) | **Design under test:** every record, prescription and correction gets its `date`/`time` **stamped server-side** by a DB trigger, in the practice's time zone (`professionals.time_zone`, default `America/Sao_Paulo`). The client's value is ignored; neither app has a date picker. `date`/`time` are **immutable on UPDATE**. **When:** after that fix is on prod. The bug is already confirmed by code analysis, so it isn't reproduced first. ❌ blocks the launch. **1. Any hour, fixture practices.** Use one throwaway practice with `time_zone = Pacific/Kiritimati` (UTC+14) and one with `Pacific/Pago_Pago` (UTC−11), and the browser deliberately in another zone (e.g. `Asia/Bangkok`). Create a **record**, a **prescription** and a **correction** in each, through the UI **and** through REST sending a deliberately wrong `date`/`time`. Each stored `date` must equal `(now() AT TIME ZONE tz)::date`, and `time` the local time, whatever the client sent. The chart and any export or PDF show that date. **2. Immutable.** A REST PATCH of `date`/`time` on the author's own entry **within 24h** is ignored: the row is unchanged, and editing the content still works. **3. Real spot check, default zone.** A practice on the default `America/Sao_Paulo`, at about **23:30 BRT** (02:30 UTC the next day): a record, prescription and correction show **today's Brazil date**, not tomorrow's, in the chart, the export and the stored columns. Clock-mocked unit tests in the fix PR are the backup, and this run is the final proof. |
+| B-8 🤖 | Patients: duplicate warnings | A same name and phone shows "Possível duplicidade…" with Open existing / Create anyway. A same CPF, after Create anyway, shows "já está cadastrado(a)" plus Open patient, which points at the CPF owner. |
+| B-9 | Records and prescriptions | Adding and deleting a record works. A prescription with at least 1 medication saves, and the PDF or print view renders. With no medication it's refused. |
+| B-10 | Patient invite code, from the patient detail | Generating a code shows it. A patient who signs up with it gets linked (A-5). |
+| B-11 | Booking block | Blocking a patient stops them booking. They appear in Settings → Blocked patients, and unblocking works. |
+| B-12 📱 | Payments | This week, this month, last month and all time each filter correctly. Mark Paid moves an appointment to Received and updates the totals; Mark Unpaid reverses it; setting an amount persists. |
+| B-13 | Settings: profile, clinic, hours, procedures, scheduling rules, Pix key | Each form saves, and the change shows after reload. An error loading Settings shows the banner and no forms. |
+| B-14 | Settings: public invite code | Generate; Regenerate asks to confirm; Copy code and Copy link (`…/pt-BR/join/<code>`) work. |
+| B-15 | Clinics | Adding a clinic geocodes it or saves without coordinates. Deleting asks for confirmation. |
+| B-16 | Feedback, `/feedback` | Submitting stores it and shows a thank-you. |
+
+### C. Subscription and billing (Stripe test mode)
+
+| ID | Flow | Expected result |
+|---|---|---|
+| C-1 🤖📱 | pt-BR subscribe | The page shows **R$ 89/mês** and "Cartão de crédito", with no Pix. Checkout is BRL 8900, card only. A 4242 card and the BR card `4000 0007 6000 0002` both succeed. After the webhook, the row is `active` with a real `current_period_end`, and the dashboard opens. |
+| C-2 🤖 | en subscribe | $19 USD, card only, and it succeeds. |
+| C-3 🤖 | Abandoned or unpaid checkout | It never activates the subscription. |
+| C-4 🤖 | Second checkout | It's refused: `409 already_subscribed`, both while active and before the webhook lands. Switching language within the 10-min window still hands back a payable session. |
+| C-5 🤖 | Cancel at period end | Access continues. When the subscription is deleted or expires, the row is `expired` and `/dashboard` goes to `/subscribe`. |
+| C-6 🤖 | Failed renewal (test clock) | The row is `expired`. `/subscribe` shows "Seu último pagamento falhou" and **Atualizar cartão**, not Subscribe. Checkout returns `409 payment_failed`. |
+| C-7 🤖 | Customer Portal | Update card opens `billing.stripe.com` for this customer. After the card is fixed, "Pagamento recebido…" shows until the webhook lands, then access comes back. |
+| C-8 🤖 | Trial rule | A first sub that never goes active (incomplete → incomplete_expired) leaves the trial and `trial_ends_at` unchanged. |
+| C-9 | Trial banner and expiry | In the last 7 days of the trial the banner shows. When it expires, `/subscribe` shows "Seu período de teste encerrou…" plus Subscribe. |
+
+### D. Patient
+
+| ID | Flow | Expected result |
+|---|---|---|
+| D-1 📱 | Pending patient | `/auth/pending-confirmation` shows the clinic wording and the doctor's name, "Solicitar uma consulta" and "Sair". Once the doctor confirms, the patient reaches `/my-appointments`. |
+| D-2 🤖📱 | Book, `/book/<professionalId>` (the route My appointments and the pending page link to, optionally with `?name=`, `specialty=` and `clinicName=`) | The header shows the real doctor name, from `get_professional_public_info` (merged in #16), or the translated "Profissional", never "Doctor". Slots come from the doctor's hours. The request becomes tentative in the doctor's schedule. |
+| D-3 📱 | My appointments | Upcoming and past appointments are listed correctly. The Book link opens `/book/<professionalId>` for their doctor, and there's no `?name=Doctor` in it. |
+| D-4 | Reschedule | A patient's request shows for the doctor, who can approve or decline it. When the doctor proposes a new time, the patient can accept or decline it. Both sides see the final state. |
+| D-5 | Account deletion request (`/account/delete`, #25) | In all 15 locales, the page shows the "what happens to your data" note: professionals' records are kept for 20 years, and patients' accounts are deleted while the clinic keeps its records. There's no "erased and cannot be recovered" wording. The mailto goes to `support@solvymed.com` with a localized subject. A submit records a `new` row (the form sends `pending`; intake stores `new`) and shows the translated confirmation with the email in bold. **Enforced today:** a doctor with clinical history can't be deleted. The gate is 095's `delete_my_account` refusal (`patient_has_clinical_history`), backed by 094's delete trigger; support closes the account. A patient can delete their account even when a clinic archived their record (096). **Since migration 100 (#36):** rows are stored as `new` and each accepted request emails the **real support inbox**. There's a limit of 3 per email and 10 per IP per day, and `too_many_attempts`/`invalid_email` show translated messages. **Since 101 (#38):** the row stores the page's `locale`. **Test-submit rule (user, via UX, 2026-09-26):** every test submit uses an obviously-test email (`e2e-…@burrowsoft.com` or `…@example.invalid`) **and** a reason starting with `[TEST]`, so the owner can ignore it at a glance. Keep submits to the minimum, and have mob dev delete the rows. **Still ⏳:** close-account (#32, migration 102). |
+
+### E. Secretary (all 🤖 from #13 unless noted)
+
+| ID | Flow | Expected result |
+|---|---|---|
+| E-1 | Invite, then signup | Team → Invite shows the code once, with Copy code, Copy link and WhatsApp. The signed-out link leads to signup, with the role and email locked. After confirming, the secretary lands on `/dashboard`, linked to the doctor. |
+| E-2 📱 | What a secretary sees | The doctor's real schedule, patients and pending payments; Mark Paid works; patients can be created, edited and deleted. The greeting has no "Dr.". Not shown: revenue, Received/Total, Records/Prescriptions tabs, Clinics. |
+| E-3 | Read-only Settings | "Somente a conta principal da clínica…". Regenerate changes the doctor's code; Leave clinic works. |
+| E-4 | Server-side refusal | Doctor-only actions called directly are refused. Through REST, records and prescriptions read `[]` and inserts return 403. |
+| E-5 | Team management | The limit is 3, counting pending invites. Resend asks to confirm and invalidates the old code; Decline, Revoke and Remove each lead to `not-connected`. Typed codes work with or without "S-"; Leave clinic works. |
+| E-6 | `/join/secretary/<code>` edge cases | A patient or doctor account, an already-linked secretary and an invite for a different email each show a clear message. A garbled code never gives a 5xx. |
+| E-7 | Doctor's subscription lapsed | The secretary sees `/auth/clinic-inactive` and never `/subscribe`. |
+| E-8 | Secretary Pix QR (#14) | Same result as B-6, as the secretary. |
+
+### F. Cross-cutting
+
+| ID | Check | Expected result |
+|---|---|---|
+| F-1 | Roles are server-only | The user's own session gets 403 on any write to `user_roles`. |
+| F-2 | Copy | pt-BR is gender-neutral for the doctor and the patient ("a clínica", "profissional"). No raw i18n keys are visible on any page; grep the body for `\w+\.\w+\.\w+` patterns. |
+| F-3 📱 | Accessibility spot-check | Form inputs have labels or accessible names, dialogs trap focus and close with Esc, and tab order is sane on login, signup, book and subscribe. |
+| F-4 | Errors | Console: no uncaught errors on the main pages. Server log: no 5xx during the run. |
+| F-5 | Version gate (`app_config`) | Doctors and secretaries below the minimum version see the gate; others don't. |
+| F-6 | Unit tests (`npx vitest run`) on the RC SHA | **All green.** As of 2026-09-26, master has 18 pre-existing failures: `BookingRequestsPanel.test.tsx` doesn't mock `useParams`, and vitest also picks up the Playwright `e2e/` specs. That makes this ❌ until the follow-up fix lands, because "all green" means nothing until then. **Update: fixed by #19, merged at `07c7452`, which runs 78/78; CI (#20) enforces it on every PR.** |
+| F-7 | Vercel env scoping, a **launch gate** | **Previews never have live Stripe keys.** Once prod has the live `sk_live_`/`whsec_` keys, every Preview-scoped Stripe var must still be a **test** key. Check by names and scopes only (`vercel env ls`); never print values. On a preview, a checkout must show Stripe's **test-mode** banner. **Until this is confirmed, don't run any checkout on a preview.** The Supabase `NEXT_PUBLIC_*` vars and `SENTRY_AUTH_TOKEN` are Preview-scoped: on 2026-09-26 they were Production-only, so every preview's middleware crashed (`MIDDLEWARE_INVOCATION_FAILED`). |
+| F-8 | Preview is really reachable | Using the bypass header `x-vercel-protection-bypass` from the git-ignored `VERCEL_AUTOMATION_BYPASS_SECRET` (never printed), the preview serves **the app**, not Vercel's login page and not a 500. Check the page content, not just the HTTP status: an SSO redirect also ends in a 200. |
+| F-S1 | Sentry: the server event arrives scrubbed. **HARD pre-launch** (UX, 2026-09-26). The user runs it with UX, since it needs Sentry UI access. | On a preview built from master, `GET /api/sentry-check` (preview-only; 404 on prod). In Sentry (org `burrowsoft`, project `solvymed-web`, environment `preview`), the event must show: the message `sentry-check: test error for [email], CPF [cpf], phone [phone]`; a request with the **path only** plus the method (no query, headers, cookies or body); no `nextjs` context and no spans; and a user that is absent or holds only an id. The same envelope was captured locally at #31 `279ea4f` and passed; this check confirms it in Sentry itself. The stack's source-context lines show the test route's literal fake email, CPF and phone. That's the route's code, not a scrubber leak, unless the #31 follow-up has removed it. ❌ blocks the launch. |
+| F-S2 | Sentry: the stack resolves. **HARD pre-launch.** The user runs it with UX. | The same event's stack trace points to `src/app/api/sentry-check/route.ts` (readable source, not minified). This needs the replaced `SENTRY_AUTH_TOKEN`: the build log must show the source-map upload succeeding, with no `Invalid token (401)`. `*.js.map` must still not be served publicly (403/404), with no `sourceMappingURL` in the chunks. ❌ blocks the launch. |
+
+### G. Launch features (⏳ placeholders, filled in as each one ships)
+
+Each ⏳ item becomes a normal row, with a PR number and exact expected
+text, once that feature is merged. **An item still marked ⏳ at RC time
+counts as ❌** unless UX/PM has dropped the feature from 1.3.0.
+
+| ID | Flow | Expected result (draft) |
+|---|---|---|
+| G-1 ⏳📱 | First run: welcome page | A new doctor's first login shows the translated welcome page in pt-BR and en. It's shown once; returning later doesn't show it again. |
+| G-2 ⏳📱 | First run: setup checklist | Every step deep-links to the right screen: profile, hours, procedures, Pix key, invite a patient, and so on. A step ticks off once it's actually done (check this from the DB state, not just the click). It's shown to **doctors only**; a secretary or patient never sees it, even via its URL. |
+| G-3 ⏳ | First run: empty states | Each empty list (schedule, patients, payments, team, My appointments) shows a helpful translated empty state with a next-step link. None are blank. |
+| G-4 ⏳📱 | Trial chip | It shows the days left. At **≤3 days it turns amber**, and on the last day it's still correct, with no off-by-one in UTC. It's hidden for active, lifetime and secretary accounts. |
+| G-5 ⏳ | One-time cards | Each one-time card shows until it's dismissed. Once dismissed, it stays dismissed after reload, sign-out and sign-in, and on another browser if that's stored per account. |
+| G-6 ⏳📱 | LGPD consent banner | It shows on first visit, signed out and signed in. **Declining really blocks marketing tracking:** in the Network tab, no analytics or ads pixels or requests fire and no tracking cookies are set, before consent and after declining. Accepting enables them. The choice persists, and can be changed later from a link (footer or privacy page). Only the necessary cookies are set before a choice is made. |
+| G-7 | Sentry (#31): errors only, PII scrubbed | **Payload** (checked locally, re-runnable without Sentry access): intercept the browser SDK's envelopes in Playwright, and for the server run `NEXT_PUBLIC_SENTRY_DSN=http://public@127.0.0.1:9999/1 VERCEL_ENV=preview` against a local sink. Messages mask emails, CPFs and phones. `request` is URL and method only, with **no query string** anywhere (including every breadcrumb URL). There's no user beyond an id; no extra, spans, replay or `nextjs` context; no console breadcrumbs; and stack-frame context lines are masked, with no frame vars. `*.js.map` is not served publicly: 403 on prod, 404 on previews, and chunks carry no `sourceMappingURL`. Re-check after `SENTRY_AUTH_TOKEN` is replaced (uploads on). `/api/sentry-check` returns 500 on a preview and 404 on prod. **Live in Sentry:** see F-S1/F-S2 (the user with UX). |
+| G-8 ⏳ | Privacy and terms: data retention | **Facts corrected in #28** (prod since `d2565c3`), matching what's enforced: records are kept 20 years; a patient with records can only be archived; an account with records is closed by support; the right-to-be-forgotten exception; Supabase and Vercel in São Paulo; Resend, Stripe, Expo and Sentry listed. #29 added the 24h correction paragraph to §7. **Still ⏳:** the lawyer-reviewed rewrite. It adds §6a "who can see data inside a clinic" (secretaries), international transfers (LGPD art. 33), pt-BR and en as the authoritative versions, and translated pages. Until then `/privacy` and `/terms` are English-only in every locale. |
+| G-9 | Legal links and consent (#27) | Every auth page (login, signup, forgot/reset, join, join/secretary, invite, account/delete) and the landing footer show a `nav[aria-label]` with Privacy and Terms links in the page's locale. At 375px, and in ar RTL, nothing overflows. Signup shows "Ao criar uma conta, você concorda com os Termos de Uso e a Política de Privacidade." above the submit button, with both links opening in a new tab. |
+| G-10 | Language detection and switcher (#30) | **First visit, no cookie, unprefixed URL:** the browser's language wins, and the country is the fallback, then en. A pt-BR browser from a TH IP → `/pt-BR`; th from BR → `/th`; `pl` → the country's language, then en. The auto pick is stored for **30 days**; a switcher pick for 365. An existing `NEXT_LOCALE` cookie always wins. `/en/…` pins en. `/pt/…` and case variants 308 to `/pt-BR/…`, keeping the query. Bots get no redirect. **Switcher:** on the auth pages it keeps `?secretary`, `?email` and `?next`. There's **no switcher** on `/auth/confirm` or `/auth/reset-password`. **Test note:** on Vercel the real IP country always applies, and `?country=` doesn't affect detection, so test other countries on a local server with `x-vercel-ip-country`. |
+| G-11 | Server region (#26) | `x-vercel-id` on prod shows `::gru1::` for pages, route handlers (`/api/billing/portal`, `/api/webhooks/stripe`) and server actions. A signed TEST Stripe event to the prod webhook returns 200 `{"ok":true}`, and a bad signature returns 400. |
+| G-12 | Invite and join privacy (#23, #24) | `X-Robots-Tag: noindex, nofollow` is sent on `/invite/*`, `/join/*`, and signup/login URLs carrying `secretary`, `join`, `email` or `next`. Invalid codes return 404, or "Convite inválido" for secretary codes. Share links have no `?email=`, and old `?email=` links ignore it. The masked hint ("Este convite é para e2***@…") is fetched in the browser only. A stale or resent code shows "Convite inválido" with no signup, and the mismatch copy covers "or the invitation is no longer valid". Vercel Analytics URLs are redacted: an allowlist of params, and the fragment dropped. |
+
+### H. The ad visitor path (paid-traffic simulation, pt-BR, phone)
+
+This is the exact path a paid-marketing visitor takes. Run it on
+**Pixel 7 and iPhone 14 emulation**, in pt-BR, in a **fresh browser
+context**, with no cookies and no `NEXT_LOCALE`.
+
+| ID | Step | Expected result |
+|---|---|---|
+| H-1 📱⏳ | Open `/pt-BR/?utm_source=facebook&utm_medium=paid&utm_campaign=launch_br&utm_content=test` | The landing page renders in pt-BR, the LGPD banner shows (G-6), and nothing overflows. **With marketing consent accepted:** the `utm_*` values and `document.referrer` are captured into **first-party client storage** (a cookie or localStorage; note which one web dev chose). **With consent declined or not yet given:** nothing is captured. |
+| H-2 📱 | CTA → signup | The signup opens in pt-BR with the doctor role by default ("Profissional de saúde") and the form usable on a phone keyboard. The UTM attribution is still there. |
+| H-3 📱 | Sign up → "Verifique seu e-mail" → confirm, via the callback `token_hash` | The visitor lands on the dashboard in **pt-BR**, not en. |
+| H-4 📱 | First run | The welcome page (G-1) and the setup checklist (G-2) show. The first step's deep link works on the phone. The trial chip (G-4) shows about 15 days. |
+| H-5 ⏳ | Attribution check (**pending**: `signup_attribution` and the UTM capture don't exist yet, so this can't run until measurement ships; an item still ⏳ at RC counts as ❌ per the G rule) | **Consent accepted:** after signup, the server-owned table **`signup_attribution`**, keyed on `user_id`, has the `utm_*` values and referrer from H-1, checked through REST with the service role. It must **not** be in auth `user_metadata`, which the client can write. **Consent declined:** no `signup_attribution` row (or an empty one, per the design), no marketing event fires, and the signup still works. **Tamper checks:** the user's own session can't insert, update or read another user's `signup_attribution` row through REST, which should return 403 or `[]`. Forged `utm_*` values can't be written for someone else's `user_id`. |
+
+### L-1. Live-mode Stripe check on production (at release time, with the user)
+
+Only with the user present, and only after the live keys, the webhook
+endpoint and the Customer Portal are configured in live mode:
+1. A throwaway professional subscribes on prod in pt-BR with a **real
+   card**. The charge is **R$ 89,00**.
+2. Stripe's **real** webhook delivery to the prod endpoint makes the row
+   `active`, and the dashboard opens.
+3. Cancel the subscription in the Customer Portal, then **refund** the
+   charge in the Stripe dashboard. Access ends as designed.
+4. Record the Stripe object ids, delete the throwaway account, and
+   confirm the refund landed.
+
+### Run log
+
+| Date | RC SHA | Env | Locales / viewports | Result | Notes / ❌ items |
+|---|---|---|---|---|---|
+| | | | | | |
+
 ## CSS refactor visual verification (PR #2, `refactor/css-extract`)
 
 Pure style refactor — every `style=` attribute across 5 files (patient-
@@ -2523,6 +2718,55 @@ and ar, and nothing else in `src/messages`; I checked the diff.
 - **Parsing:** all 15 files parse with 26 namespaces, and es and pt-BR are
   unchanged.
 
+## Production auth-link check (2026-09-26, www.solvymed.com)
+
+Run against **production** with real Supabase email links, built with the
+admin `generate_link` API and followed through GoTrue's real `/verify`
+endpoint, on throwaway `e2e-test-opus-prodredir-*` accounts.
+
+**Fixed tonight: the Supabase redirect allow-list.** Before, it only
+allowed `https://www.solvymed.com/*/auth/confirm`, so Supabase dropped any
+other `redirect_to` and fell back to the Site URL. Mob dev added
+`https://www.solvymed.com/**`. Checked after the change:
+
+| `redirect_to` | `/verify` now redirects to |
+|---|---|
+| `/api/auth/callback` (signup) | `/api/auth/callback#…` ✅ |
+| `/en/auth/reset-password` | `/en/auth/reset-password#…` ✅ (but see the 404 below) |
+| `/pt-BR/auth/reset-password` | `/pt-BR/auth/reset-password#…` ✅ |
+| `/auth/reset-password` | `/auth/reset-password#…` ✅ |
+| `https://example.com/…` (control, not allowed) | `https://www.solvymed.com#…`, the home page |
+
+The control shows the fallback that affected the callback and reset links
+before the fix. Email verification itself succeeded, but the user landed on
+the home page, so **`/api/auth/callback` never ran on prod**. That's where
+patient invite-code linking and secretary invite acceptance happen, so
+those never completed from an email link. The affected real accounts can't
+be counted now: prod was cleaned to test fixtures tonight, with the user's
+approval.
+
+**❌ Still broken on master: password reset returns a 404.**
+- `forgot-password` hard-codes
+  `redirectTo: https://www.solvymed.com/en/auth/reset-password`.
+- Prod's locale middleware picks the locale from the **visitor's
+  location**, not the browser, and rewrites `/en/auth/reset-password` to
+  `/<country>/en/auth/reset-password`, which is a **404**. It did this for
+  browser locales en-US, pt-BR and th-TH (`/th/en/…` from this machine).
+- `/pt-BR/auth/reset-password` works **end to end on prod**: the form
+  loads, the hash tokens survive, "Senha atualizada", the new password
+  logs in and the old one is refused.
+- Unprefixed `/auth/reset-password` works, but opens in the location's
+  language.
+- The fix is in #18 (pt-BR goes to `/pt-BR/…`, en goes unprefixed). I've
+  suggested shipping it as a hotfix ahead of #18, which is waiting on the
+  archive migration.
+
+**Not verified end to end: signup confirmation.** The real signup email
+uses PKCE (`?code=`), which is tied to the signing-up browser. An
+admin-generated link uses the implicit flow (a hash), which the callback
+doesn't read. So only the allow-list side is proven here. Re-check A-3 at
+RC with a real inbox.
+
 ## PR #16 (`fix/pending-signout-and-book-name`) — two pre-existing display bugs, 🟢 at `63201e2`
 
 **Scope: this entry covers exactly `63201e2`.** These are the two bugs I
@@ -3715,6 +3959,285 @@ before this one, as expected.
 **CI at `81a0584`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `81a0584`, review clean.**
+
+**Prod addendum (`5712d37`):** client events (`env=production`) are
+masked, and a `?email=…&q=…` page leaks nothing. There are no query
+strings, user, spans or replay. `/api/sentry-check` returns 404, and
+`.map` files aren't served.
+
+## PR #34 (`fix/local-record-dates`) — "today" is the practice's day, 🟢 at `29cf23c`, review clean
+
+**Scope: exactly `29cf23c`.** Server-side "today" is computed in the
+practice's time zone (`professionals.time_zone`, or `get_my_clinic()` for
+a secretary; São Paulo fallback). The calendar's today/Today button and
+the month grid are fixed, and record time shows as HH:MM. Migration 099
+went live during testing.
+
+**How it was tested.** The fix is JS-side, so I ran `29cf23c` locally with
+the **Node clock shifted** by a `--require` preload, and the browser clock
+pinned to the same instant (`page.clock.install`). Supabase keeps real
+time.
+- **Why backward:** shifting forward makes fresh auth tokens look
+  expired, so the instants are in the recent past.
+- **The instants:** Friday 25 Sept 23:30 BRT (02:30Z on the 26th),
+  Saturday 26 at 00:30 BRT, and Sunday 20 at 23:30 BRT.
+- **Where:** an isolated clone. The worktree's shared `node_modules`
+  lacks `@sentry/nextjs` since #31.
+- **Test data:** a throwaway doctor with appointments on 14, 20, 21, 25
+  and 26 Sept, a secretary, and a linked patient account.
+
+**🟢 Friday 23:30 BRT** (UTC is already the 26th). Same result for the
+doctor and the secretary:
+- **Dashboard:** "Boa noite", "sexta-feira, 25 de setembro de 2026", and
+  the Today list is the 25th.
+- **Schedule:** opens on the 25th, "1 consulta hoje".
+- **Calendar:** the week and month views highlight **25**. "Today" clicked
+  from 1 Sept goes to `?date=2026-09-25`.
+- **Payments "this week":** Mon 21 to Sun 27, R$ 750.
+- **Patient My appointments:** the 25th is still under **Próximas**.
+
+**🟢 Saturday 00:30 BRT:** the date is "sábado, 26", with "Boa noite", and
+the Today list is the 26th. The month view highlights 26. For the
+patient, the 25th moves to Histórico.
+
+**🟢 Sunday 20 at 23:30 BRT** (the old bug): payments "this week" is **Mon
+14 to Sun 20** (R$ 250), not the next week. The dashboard shows "domingo,
+20", and the month view highlights 20.
+
+**🟢 Practice time zone (099).** I set my throwaway practice to
+`Asia/Bangkok` via the service role, then reset it. At the same instant
+the doctor **and** the secretary both get "Bom dia", "sábado, 26 de
+setembro", and a schedule defaulting to the 26th.
+
+**🟢 Month grid east of UTC.** With the browser in `Asia/Bangkok`,
+September 2026 starts on **31 Aug** (Mon), then 1, 2, 3…, with 35 cells
+and no shift.
+
+**🟢 HH:MM.** A new record shows `2026-09-26 11:44` in the chart, with no
+seconds. It's stored by 099's trigger at the real server time, so the
+record-date-after-21:00 proof is B-7c's real-time run.
+
+**Review: Claude `/code-review` (code reviewer), clean at `29cf23c`.**
+
+**FOLLOW-UP:** in CalendarView, the month title ("September 2026"), the
+weekday headers (MON, TUE…) and the "Today" button are hard-coded
+English on pt-BR pages. That's pre-existing, not from #34.
+
+**CI at `29cf23c`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `29cf23c`, review clean.**
+
+**Prod addendum (`33ea7f5`, real time ~12:04 BRT):**
+- **Doctor and secretary:** "Boa tarde, sábado 26". The schedule defaults
+  to the 26th, and the week and month views highlight 26.
+- **Payments:** "this week" is Mon 21 to Sun 27.
+- **Record time:** shows HH:MM (`12:04`).
+- **Practice set to `Asia/Bangkok`:** "Boa noite" (22:04 there), then
+  reset.
+- **Bangkok browser:** the month grid starts on 31 Aug.
+- **Patient:** today's appointment is under Próximas.
+
+## PR #36 (`fix/account-delete-intake`) — /account/delete inserts from the browser, 🟢 (pre-100 scope) at `9f28b3c`, review clean
+
+**Scope: exactly `9f28b3c`.** The form inserts into `deletion_requests`
+directly from the browser, so migration 100's per-IP rate limit sees the
+visitor. The old `requestAccountDeletion` server action is removed.
+Migration 100's errors are translated. It merges **before** 100, per the
+code reviewer, because current RLS already allows the browser insert.
+
+Tested live on the preview, pt-BR, with `@example.invalid` emails. The
+test rows were deleted afterwards.
+
+**🟢 Anonymous submit:**
+- **Confirmation:** "Solicitação recebida — Recebemos sua solicitação
+  para <email>."
+- **Network:** exactly one **direct Supabase REST** `POST
+  /rest/v1/deletion_requests` (201, no `select`) and **no server-action
+  POST**.
+- **Row:** status `pending`, with the reason.
+
+**🟢 Signed in** (a throwaway doctor): the same confirmation, a direct REST
+201, and the row stored.
+
+**🟢 Blank email** (whitespace, with the client `required` removed):
+"Informe seu e-mail.", and no REST POST is made.
+
+**⏳ After migration 100 goes live, to check on prod:**
+- the row gets status `new`;
+- support receives the alert email;
+- the 4th request for the same email within a day shows the new
+  "several requests" line;
+- an invalid email shows "invalid email";
+- two different browsers or IPs each get their own limit.
+
+**Review: Claude `/code-review` (code reviewer), clean at `9f28b3c`.**
+
+**CI at `9f28b3c`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `9f28b3c` (pre-100 behaviour), review clean.** The
+post-100 checks are recorded here as a prod addendum once 100 is live.
+
+**Prod addendum, after migration 100** (`335a118` live, pt-BR,
+`@example.invalid`):
+- **🟢 Status `new`:** three submits of the same email, each from a fresh
+  browser context, each get 201 and "Solicitação recebida". The rows are
+  stored with status **`new`** (it was `pending` before 100).
+- **🟢 Rate limit:** the **4th** submit of that email the same day gets
+  REST 400 `too_many_attempts`. The page shows "Já recebemos várias
+  solicitações. Tente de novo amanhã ou escreva para
+  support@solvymed.com." and stays on the form.
+- **🟢 Invalid email:** `a@b` passes the browser's own `type=email` check,
+  gets REST 400 `invalid_email`, and shows "Informe um endereço de e-mail
+  válido."
+- **Not verifiable here:**
+  - **Support alert email:** sent (Resend accepted, `alert_sent_at` set);
+    inbox delivery pending the user's check. Mob dev saw status `new` and
+    `alert_sent_at` set on all 4 test rows (1 from an aborted first run)
+    when deleting them.
+  - **"Two IPs each get their own limit":** I only have one IP. Two
+    browser contexts from the same IP share the per-email limit, as
+    shown above.
+- **Cleanup:** the 4 test rows went to mob dev for deletion.
+
+## PR #38 (`feat/deletion-request-locale`) — deletion requests carry the page locale, 🟢 at `77ade20`, review clean
+
+**Scope: exactly `77ade20`.** `/account/delete` sends the page's locale
+with the insert; migration 101 (`deletion_requests.locale`) is live.
+
+Tested live on the preview with **2 submits only**, per the `[TEST]` rule:
+`@example.invalid` emails and reasons starting with `[TEST]`.
+
+**🟢 pt-BR:** from `/pt-BR/account/delete`, the browser's REST POST body
+includes `"locale":"pt-BR"`, and the page shows "Solicitação recebida".
+The row is stored with `locale='pt-BR'`, status `new` and the `[TEST]`
+reason.
+
+**🟢 en (unprefixed):** from `/account/delete` with `NEXT_LOCALE=en`, the
+POST includes `"locale":"en"`, and the page shows "Request received". The
+row is stored with `locale='en'`.
+
+**Not run:** the code reviewer suggested `/ja/account/delete` →
+`'ja'`. I kept to the two-request limit, and `en` also covers the
+unprefixed default locale. The mechanism is the same for every locale.
+- **Alert subject:** that it starts with "[TEST] " is pending the user's
+  inbox check.
+- **Cleanup:** the 2 test rows went to mob dev for deletion.
+
+**Also in this commit:** checklist row D-5 now records the `[TEST]`
+test-submit rule, plus what migrations 100 and 101 enforce.
+
+**Review: Claude `/code-review` (code reviewer), clean at `77ade20`.**
+
+**CI at `77ade20`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `77ade20`, review clean.**
+## PR #35 (`feat/first-run`) — first-run part 1, 🟢 at `e38114d`, review clean
+
+**Scope: exactly `e38114d`.** It covers:
+- the welcome page, plus a new professional's first confirmation now
+  routing to it (my finding at `bc215ba`, fixed here);
+- the Schedule and Payments empty states;
+- the trial chip replacing the TrialBanner;
+- copied share links without a locale segment (UX rule).
+
+Tested live on the preview, pt-BR, with throwaway accounts, all deleted
+afterwards.
+
+**🟢 1. Welcome page and routing.**
+- **Real flow:** a UI signup as Profissional, then the confirmation link
+  via `/api/auth/callback`, lands on **`/pt-BR/auth/professional-welcome`**.
+  It shows "Boas-vindas ao SolvyMed, Joana!", the body copy, "Começar
+  configuração" and "Agora não", with no countdown.
+- **Buttons:** Start setup → `/pt-BR/dashboard?setup=1`; Skip →
+  `/pt-BR/dashboard`.
+- **Later logins:** a second login (password) goes to `/pt-BR/dashboard`.
+- **Callback matrix** (`redirect: manual`, reading `Location`):
+  - a doctor's link within 10 min of confirmation → welcome;
+  - the same doctor **after 11 min** → `/dashboard`;
+  - recovery links → `/dashboard`, never the welcome page, before or
+    after;
+  - secretary → `/dashboard`;
+  - linked patient → `/my-appointments`;
+  - pending patient → `/auth/pending-confirmation`.
+- **Not covered:** the PKCE `?code=` confirmation (it needs a real inbox
+  in the signing-up browser); that path is code-reviewed.
+
+**🟢 2. Schedule empty state (List view).**
+- **Copy:** "Nenhuma consulta ainda." with its body, plus "Marcar
+  consulta" (which opens the new-appointment dialog) and "Compartilhar
+  link de convite".
+- **Share, before an invite code exists:** it's a link to Settings.
+- **Share, with a code:** it copies `…/join/<code>` with **no locale**,
+  and shows "Link copiado!".
+- **Settings → Copiar link:** also `…/join/<code>`, with no locale.
+
+**🟢 Team invite links.**
+- **Secretary link:** Copiar link gives `…/join/secretary/<code>`, and the
+  WhatsApp text "Convite para a equipe da minha secretaria no SolvyMed:
+  …/join/secretary/<code>", both with no locale.
+- **In an en browser:** the secretary link shows "You've been invited as a
+  secretary", and the patient link lands on `/auth/signup?join=…` with
+  `lang=en`.
+
+**🟢 3. Payments empty state.**
+- **Doctor:** "Nenhum pagamento ainda." with its body; "Definir seus
+  preços" goes to `/pt-BR/dashboard/settings`.
+- **Secretary:** the empty states show, with no "Definir seus preços", no
+  Share button and no chip.
+
+**🟢 4. Trial chip**, the same on Home, Schedule and Patients, linking to
+`/pt-BR/subscribe`:
+- **+10 days:** neutral (slate), "Teste grátis: faltam 10 dias · Ver
+  plano".
+- **+3 days:** **amber**, "faltam 3 dias · Assinar".
+- **+12 hours:** **red**, "Teste grátis: último dia · Assinar".
+- **Active subscription:** no chip.
+- **The old TrialBanner:** gone.
+
+**🟢 #34 in the merged tree:** the schedule still defaults to today in
+Brazil ("sábado, 26 de setembro de 2026").
+
+**Review: Claude `/code-review` (code reviewer), clean at `e38114d`.**
+
+**Observation (not #35):** a `type=recovery` token_hash sent through
+`/api/auth/callback` logs the user in and lands on `/dashboard`, not
+`/auth/reset-password`. Real reset emails don't use this route today;
+re-check with A-15 (S-01 `token_hash` links).
+
+**CI at `e38114d`:** Vercel ✅. **"Typecheck and unit tests" has not run on
+this head** (only the Vercel checks are listed). It's required, so it must
+go green before merge.
+
+**Merge gate: 🟢 for `e38114d`, review clean, pending the required CI
+check.** Merged as `b51c1ff`, after master was merged in (`f87053a`, the
+code reviewer's clean head), with CI green.
+
+**Prod addendum (`b51c1ff`, www.solvymed.com):**
+- **Welcome:** a real UI signup plus confirmation lands on
+  `/pt-BR/auth/professional-welcome` ("Boas-vindas ao SolvyMed, Joana!",
+  no countdown). Start setup → `/dashboard?setup=1`; Skip → `/dashboard`.
+- **Other routes:** a second login → `/dashboard`, and a recovery link via
+  the callback → `/dashboard`, not the welcome page. The recovery fix is
+  tracked under A-15.
+- **Schedule empty state:** "Share" goes to Settings when there's no code;
+  with a code it copies `…/join/<code>` with **no locale** ("Link
+  copiado!"). Settings "Copiar link" is the same.
+- **Team links:** the secretary link and WhatsApp text are
+  `…/join/secretary/<code>`, with no locale. Opened in an en browser, they
+  show English, and the patient link goes to `/auth/signup?join=…` with
+  `lang=en`.
+- **Payments empty state:** "Definir seus preços" → Settings. A secretary
+  gets no Set-prices or Share button and no chip.
+- **Chip:** +12h is **red**, "Teste grátis: último dia · Assinar". An active
+  subscription shows **no chip**. A brand-new doctor shows the neutral
+  "faltam 15 dias · Ver plano" on Home, Schedule and Patients, and the
+  old banner is gone.
+- **#34:** the schedule still defaults to the Brazil date.
+- **Harness note:** in one of the two specs, the lookup of the new user
+  ran before prod finished the signup, so its chip PATCHes didn't apply
+  and it kept the default 15-day trial. The second spec used a pre-made
+  doctor, and its chip results are the ones above. The orphaned account
+  was deleted.
 
 ## iOS — open question
 

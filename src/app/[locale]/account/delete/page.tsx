@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { requestAccountDeletion } from "./actions";
+import { createClient } from "@/lib/supabase/client";
+import { deletionRequestError, deletionRequestRow } from "@/lib/deletionRequest";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { IconBadge } from "@/components/IconBadge";
@@ -34,13 +35,23 @@ export default function AccountDeletePage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const fd = new FormData();
-    fd.set("email", email);
-    fd.set("reason", reason);
-    const result = await requestAccountDeletion(fd);
+    const row = deletionRequestRow(email, reason, locale);
+    if (!row.email) {
+      setLoading(false);
+      setError(t("errorEmailRequired"));
+      return;
+    }
+    // From the browser, so the rate limit sees this visitor's IP
+    // (lib/deletionRequest.ts). RLS only allows inserting a pending row.
+    const { error: insertError } = await createClient().from("deletion_requests").insert(row);
     setLoading(false);
-    if (result?.error) {
-      setError(t(result.error === "email_required" ? "errorEmailRequired" : "errorGeneric", { email: SUPPORT_EMAIL }));
+    if (insertError) {
+      const code = deletionRequestError(insertError.message);
+      setError(
+        code === "too_many_attempts" ? t("errorTooManyAttempts", { email: SUPPORT_EMAIL })
+        : code === "invalid_email" ? t("errorInvalidEmail")
+        : t("errorGeneric", { email: SUPPORT_EMAIL }),
+      );
     } else {
       setDone(true);
     }

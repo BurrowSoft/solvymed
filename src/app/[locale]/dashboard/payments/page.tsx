@@ -2,7 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import Link from "next/link";
 import { PeriodFilter, MarkPaidButton, MarkUnpaidButton } from "./PaymentsClient";
+import { clinicDate, getClinicTimeZone, previousMonthRange, weekRange } from "@/lib/clinicTime";
 
 type Period = "week" | "month" | "last_month" | "all";
 
@@ -10,25 +12,12 @@ function formatBRL(n: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
 }
 
-function getDateRange(period: Period): { from: string; to: string } {
-  const now = new Date();
-  const today = now.toISOString().split("T")[0];
-
-  if (period === "week") {
-    const mon = new Date(now);
-    mon.setDate(now.getDate() - now.getDay() + 1);
-    const sun = new Date(mon);
-    sun.setDate(mon.getDate() + 6);
-    return { from: mon.toISOString().split("T")[0], to: sun.toISOString().split("T")[0] };
-  }
-  if (period === "month") {
-    return { from: `${today.slice(0, 7)}-01`, to: today };
-  }
-  if (period === "last_month") {
-    const d = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const last = new Date(now.getFullYear(), now.getMonth(), 0);
-    return { from: d.toISOString().split("T")[0], to: last.toISOString().split("T")[0] };
-  }
+// Ranges on the practice's calendar, not the server's (UTC).
+function getDateRange(period: Period, timeZone: string): { from: string; to: string } {
+  const today = clinicDate(new Date(), timeZone);
+  if (period === "week") return weekRange(today);
+  if (period === "month") return { from: `${today.slice(0, 7)}-01`, to: today };
+  if (period === "last_month") return previousMonthRange(today);
   return { from: "2000-01-01", to: today };
 }
 
@@ -43,9 +32,10 @@ export default async function PaymentsPage({
   const { period: periodParam } = await searchParams;
   const period: Period = (["week", "month", "last_month", "all"].includes(periodParam ?? "") ? periodParam : "month") as Period;
 
-  const [supabase, t] = await Promise.all([
+  const [supabase, t, tFirstRun] = await Promise.all([
     createClient(),
     getTranslations("paymentsPage"),
+    getTranslations("firstRun"),
   ]);
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
@@ -55,7 +45,8 @@ export default async function PaymentsPage({
   if (!effectiveProfId) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
   const isSecretary = effectiveProfId !== user.id;
 
-  const { from, to } = getDateRange(period);
+  const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
+  const { from, to } = getDateRange(period, timeZone);
 
   const [pendingResult, paidResult] = await Promise.all([
     supabase
@@ -83,6 +74,41 @@ export default async function PaymentsPage({
     consultation_type: string; payment_amount?: number; payment_type: string;
   }[];
   const paid = (paidResult.data ?? []) as typeof pending;
+
+  // No payment of any period yet: the first-run empty state instead of two
+  // empty columns. Only checked when the chosen period itself is empty.
+  if (pending.length === 0 && paid.length === 0) {
+    const { count, error: countError } = await supabase
+      .from("appointments")
+      .select("id", { count: "exact", head: true })
+      .eq("professional_id", effectiveProfId)
+      .in("payment_status", ["pending", "paid"])
+      .neq("status", "blocked");
+    if (!countError && (count ?? 0) === 0) {
+      const prefix = locale === "en" ? "" : `/${locale}`;
+      return (
+        <div className="p-6 lg:p-8 max-w-5xl">
+          <div className="mb-6">
+            <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
+            <p className="text-sm text-slate-500 mt-0.5">{t("subtitle")}</p>
+          </div>
+          <div className="rounded-2xl border border-slate-100 bg-white p-12 text-center">
+            <p className="font-semibold text-slate-700">{tFirstRun("paymentsEmptyTitle")}</p>
+            <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">{tFirstRun("paymentsEmptyBody")}</p>
+            {/* Prices live in the doctor's settings, which a secretary can't edit. */}
+            {!isSecretary && (
+              <Link
+                href={`${prefix}/dashboard/settings`}
+                className="mt-6 inline-flex items-center justify-center rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-teal-700"
+              >
+                {tFirstRun("setYourPrices")}
+              </Link>
+            )}
+          </div>
+        </div>
+      );
+    }
+  }
 
   const totalPending = pending.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
   const totalPaid = paid.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
