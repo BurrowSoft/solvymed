@@ -41,11 +41,11 @@ describe("/api/auth/callback with a one-time token", () => {
     expect(createServerClient).not.toHaveBeenCalled();
   });
 
-  it("keeps en unprefixed and defaults the type to signup", async () => {
+  it("keeps en unprefixed and never guesses a missing type", async () => {
     const res = await get("/api/auth/callback?token_hash=xyz&locale=en");
     const to = new URL(res.headers.get("location")!);
     expect(to.pathname).toBe("/auth/verify");
-    expect(to.searchParams.get("type")).toBe("signup");
+    expect(to.searchParams.has("type")).toBe(false);
     expect(createServerClient).not.toHaveBeenCalled();
   });
 });

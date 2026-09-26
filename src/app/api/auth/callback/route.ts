@@ -50,7 +50,8 @@ export async function GET(request: NextRequest) {
   if (!code && tokenHash) {
     const verifyUrl = new URL(`${localePrefix}/auth/verify`, origin);
     verifyUrl.searchParams.set("token_hash", tokenHash);
-    verifyUrl.searchParams.set("type", type ?? "signup");
+    // Passed on as-is: the verify page whitelists it and never guesses one.
+    if (type) verifyUrl.searchParams.set("type", type);
     const res = pinLocale(NextResponse.redirect(verifyUrl));
     // The token is in the URL: keep it out of the verify page's referrers.
     res.headers.set("Referrer-Policy", "no-referrer");

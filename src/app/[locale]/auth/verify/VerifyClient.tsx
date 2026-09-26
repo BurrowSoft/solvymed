@@ -10,10 +10,10 @@ import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 import { MIN_PASSWORD_LENGTH } from "@/lib/password";
+import { otpTypeFor } from "@/lib/otpType";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import ConfirmClient from "../confirm/ConfirmClient";
 
-const OTP_TYPES: EmailOtpType[] = ["signup", "invite", "magiclink", "recovery", "email_change", "email"];
 
 type State = "ready" | "working" | "expired" | "resetDone";
 
@@ -28,7 +28,7 @@ export function VerifyClient({ locale, tokenHash, type, appHandoff = false }: {
 }) {
   const t = useTranslations("auth");
   const localePath = (path: string) => (locale === "en" ? path : `/${locale}${path}`);
-  const otpType = (OTP_TYPES as string[]).includes(type) ? (type as EmailOtpType) : null;
+  const otpType = otpTypeFor(type);
   const [state, setState] = useState<State>(tokenHash && otpType ? "ready" : "expired");
   const [appDeepLink, setAppDeepLink] = useState<string | null>(null);
 
@@ -177,7 +177,10 @@ function RecoveryForm({ tokenHash, state, setState, loginHref }: {
     }
     const { data: { user } } = await supabase.auth.getUser();
     const platform = user?.user_metadata?.platform as string | undefined;
-    setAppAccount(!!platform && platform !== "web");
+    const isApp = !!platform && platform !== "web";
+    // An app account signs in in the app: don't leave a browser session behind.
+    if (isApp) await supabase.auth.signOut().catch(() => {});
+    setAppAccount(isApp);
     setState("resetDone");
   }
 

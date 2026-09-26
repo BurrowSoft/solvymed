@@ -21,5 +21,5 @@ export default async function VerifyPage({
   const { token_hash: tokenHash, type } = await searchParams;
   // appHandoff: an account created in the app goes back to the app after the
   // click (email links for every client land here via /api/auth/callback).
-  return <VerifyClient locale={locale} tokenHash={tokenHash ?? null} type={type ?? "signup"} appHandoff />;
+  return <VerifyClient locale={locale} tokenHash={tokenHash ?? null} type={type ?? ""} appHandoff />;
 }

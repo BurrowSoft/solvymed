@@ -27,7 +27,7 @@ export default async function AuthConfirmPage({
   // links first and would burn the token. Same click-to-verify page as
   // /auth/verify; an app account is then handed back to the app.
   if (!code && tokenHash) {
-    return <VerifyClient locale={locale} tokenHash={tokenHash} type={type ?? "signup"} appHandoff />;
+    return <VerifyClient locale={locale} tokenHash={tokenHash} type={type ?? ""} appHandoff />;
   }
 
   if (!code) {
