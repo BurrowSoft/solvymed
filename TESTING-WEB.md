@@ -2425,6 +2425,59 @@ really catches the bug.
 
 **Merge gate: 🟢 for `efb7817`.**
 
+## PR #15 (`fix/neutral-copy-sweep`) — gender-neutral copy + Team input label, 🟢 at `74f599b`
+
+**Scope: this entry covers exactly `74f599b`.** The diff against master is
+`src/messages/*.json` plus one `aria-label` in `TeamPanel.tsx`; I checked
+it. The rendering checks ran on `5f279fb`. `74f599b` only changes `ar.json`,
+which I checked parses and has the same 26 namespaces as `en`. Pages were
+rendered live in **pt-BR and es** with throwaway accounts.
+
+**🟢 Rendered, and neutral in both locales:**
+- **Login title:** "Que bom ter você de volta" / "Qué bueno verte de
+  nuevo".
+- **Signup:** the role label "Profissional de saúde" / "Profesional de la
+  salud". With Patient selected, the hint is "Digite o código de convite" /
+  "Introduce el código de invitación".
+- **`/auth/invite-required`:** "…precisam de um código de convite da
+  clínica… Peça o código à sua clínica…" / "…código de invitación de su
+  clínica… Pide el código a tu clínica…".
+- **`/auth/pending-confirmation`:** "Aguardando a confirmação da clínica" /
+  "Esperando la confirmación de la clínica". With the name known: "Você
+  está vinculado(a) a {name}…" / "Estás vinculado/a con {name}…".
+- **`/book/<id>`:** the notes placeholder is "Motivo da visita, sintomas,
+  perguntas para a consulta…" / "Motivo de la visita, síntomas, preguntas
+  para la consulta…". The details hint is "Estas informações ajudam a
+  preparar a sua consulta." / "Esta información ayuda a preparar tu cita.".
+- **Bogus `/join/<code>`, signed in:** "Este link pode ser inválido ou ter
+  expirado. Peça à sua clínica…" / "Este enlace puede ser inválido o haber
+  caducado. Pide a tu clínica…". Signed out, it redirects to signup, as
+  designed.
+- **`/subscribe?success=1`:** "Assinatura ativada! Boas-vindas ao SolvyMed
+  Pro." / "¡Suscripción activada! Te damos la bienvenida a SolvyMed Pro.".
+- **Team email input:** has an accessible name. `getByRole('textbox',
+  { name })` finds it by "E-mail de quem vai entrar na equipe" / "Correo
+  de la persona invitada".
+
+**Checked in the JSON only:** the `/book` "A clínica confirmará…" hint and
+the success hint. They only show once a slot is picked, and the test doctor
+had no working hours.
+
+**Found along the way, both pre-existing on master and not from #15:**
+- **`/auth/pending-confirmation` sign-out label.** It renders the raw key
+  **`auth.myAppointments.signOut`** in every locale, English included.
+  The page calls `t("myAppointments.signOut")` inside the `auth`
+  namespace, but the string lives at the top level
+  (`myAppointments.signOut`). It's been there since `e841bd3`.
+- **`/book/<id>` header.** It shows **"D Doctor"** for a pending patient:
+  `page.tsx` falls back to a hard-coded English `name ?? "Doctor"` when
+  the name lookup returns nothing.
+
+**Cleaned up.** All throwaway doctors and patients are deleted.
+
+**Merge gate: 🟢 for `74f599b`.** The two findings above are follow-ups,
+not blockers for this copy PR.
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
