@@ -617,6 +617,13 @@
       "statusProposal": "Neue Zeit vorgeschlagen",
       "accept": "Annehmen",
       "decline": "Ablehnen"
+    },
+    "professionalWelcome": {
+      "title": "Willkommen bei SolvyMed, {firstName}!",
+      "titleNoName": "Willkommen bei SolvyMed!",
+      "body": "Richten wir Ihre Praxis in wenigen Schritten ein, damit Sie Ihren ersten Termin vergeben können.",
+      "startSetup": "Einrichtung starten",
+      "skip": "Später"
     }
   },
   "myAppointments": {
@@ -696,7 +703,10 @@
     "portalUnavailable": "Die Kartenverwaltung konnte gerade nicht geöffnet werden. Bitte wenden Sie sich an support@solvymed.com.",
     "portalError": "Die Kartenverwaltung konnte nicht geöffnet werden. Bitte versuchen Sie es erneut.",
     "errorPaymentFailed": "Ihre letzte Zahlung ist fehlgeschlagen. Aktualisieren Sie Ihre Karte, statt ein neues Abonnement abzuschließen.",
-    "paymentActivating": "Zahlung erhalten. Ihr Zugang wird wiederhergestellt. Aktualisieren Sie diese Seite gleich."
+    "paymentActivating": "Zahlung erhalten. Ihr Zugang wird wiederhergestellt. Aktualisieren Sie diese Seite gleich.",
+    "chipDays": "Kostenlose Testphase: noch {n} Tage · Tarif ansehen",
+    "chipUrgentDays": "Kostenlose Testphase: noch {n} Tage · Abonnieren",
+    "chipLastDay": "Kostenlose Testphase: letzter Tag · Abonnieren"
   },
   "secretary": {
     "notConnectedTitle": "Noch mit keiner Praxis verbunden",
@@ -801,5 +811,15 @@
     "doneSub": "Wir bearbeiten sie innerhalb von 30 Tagen und bestätigen per E-Mail.",
     "errorEmailRequired": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
     "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut oder schreiben Sie an {email}."
+  },
+  "firstRun": {
+    "scheduleEmptyTitle": "Noch keine Termine.",
+    "scheduleEmptyBody": "Vergeben Sie Ihren ersten Termin oder teilen Sie Ihren Einladungslink, damit Patienten einen anfragen können.",
+    "bookAppointment": "Termin vergeben",
+    "shareInviteLink": "Einladungslink teilen",
+    "linkCopied": "Link kopiert!",
+    "paymentsEmptyTitle": "Noch keine Zahlungen.",
+    "paymentsEmptyBody": "Zahlungen aus Ihren Terminen erscheinen hier.",
+    "setYourPrices": "Preise festlegen"
   }
 }

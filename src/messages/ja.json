@@ -617,6 +617,13 @@
       "statusProposal": "新しい日時が提案されました",
       "accept": "承認",
       "decline": "辞退"
+    },
+    "professionalWelcome": {
+      "title": "SolvyMed へようこそ、{firstName} さん!",
+      "titleNoName": "SolvyMed へようこそ!",
+      "body": "いくつかの簡単なステップで診療所を設定し、最初の予約を入れましょう。",
+      "startSetup": "設定を始める",
+      "skip": "あとで"
     }
   },
   "myAppointments": {
@@ -696,7 +703,10 @@
     "portalUnavailable": "現在カード管理を開けません。support@solvymed.com までお問い合わせください。",
     "portalError": "カード管理を開けませんでした。もう一度お試しください。",
     "errorPaymentFailed": "前回のお支払いに失敗しました。新しいサブスクリプションを開始する代わりに、カード情報を更新してください。",
-    "paymentActivating": "お支払いを受け付けました。アクセスを復元しています。しばらくしてからこのページを更新してください。"
+    "paymentActivating": "お支払いを受け付けました。アクセスを復元しています。しばらくしてからこのページを更新してください。",
+    "chipDays": "無料トライアル: 残り {n} 日 · プランを見る",
+    "chipUrgentDays": "無料トライアル: 残り {n} 日 · 登録する",
+    "chipLastDay": "無料トライアル: 最終日 · 登録する"
   },
   "secretary": {
     "notConnectedTitle": "まだクリニックに接続されていません",
@@ -801,5 +811,15 @@
     "doneSub": "30日以内に処理し、メールでお知らせします。",
     "errorEmailRequired": "メールアドレスを入力してください。",
     "errorGeneric": "問題が発生しました。もう一度お試しいただくか、{email} までご連絡ください。"
+  },
+  "firstRun": {
+    "scheduleEmptyTitle": "まだ予約はありません。",
+    "scheduleEmptyBody": "最初の予約を入れるか、招待リンクを共有して患者から予約をリクエストしてもらいましょう。",
+    "bookAppointment": "予約を入れる",
+    "shareInviteLink": "招待リンクを共有",
+    "linkCopied": "リンクをコピーしました!",
+    "paymentsEmptyTitle": "まだ支払いはありません。",
+    "paymentsEmptyBody": "予約の支払いはここに表示されます。",
+    "setYourPrices": "料金を設定"
   }
 }

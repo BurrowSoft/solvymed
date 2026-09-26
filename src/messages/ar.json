@@ -617,6 +617,13 @@
       "statusProposal": "تم اقتراح موعد جديد",
       "accept": "قبول",
       "decline": "رفض"
+    },
+    "professionalWelcome": {
+      "title": "مرحبًا بك في SolvyMed، {firstName}!",
+      "titleNoName": "مرحبًا بك في SolvyMed!",
+      "body": "لنجهّز عيادتك في خطوات قليلة وسريعة، لتتمكن من حجز موعدك الأول.",
+      "startSetup": "بدء الإعداد",
+      "skip": "لاحقًا"
     }
   },
   "myAppointments": {
@@ -696,7 +703,10 @@
     "portalUnavailable": "تعذّر فتح إدارة البطاقة الآن. يرجى التواصل مع support@solvymed.com.",
     "portalError": "تعذّر فتح إدارة البطاقة. يرجى المحاولة مرة أخرى.",
     "errorPaymentFailed": "فشلت عملية الدفع الأخيرة. حدّث بطاقتك بدلاً من بدء اشتراك جديد.",
-    "paymentActivating": "تم استلام الدفعة. تتم استعادة وصولك، يرجى تحديث هذه الصفحة بعد قليل."
+    "paymentActivating": "تم استلام الدفعة. تتم استعادة وصولك، يرجى تحديث هذه الصفحة بعد قليل.",
+    "chipDays": "تجربة مجانية: {n} يوم متبقٍ · عرض الخطة",
+    "chipUrgentDays": "تجربة مجانية: {n} يوم متبقٍ · اشترك",
+    "chipLastDay": "تجربة مجانية: اليوم الأخير · اشترك"
   },
   "secretary": {
     "notConnectedTitle": "لم يتم ربطك بعيادة بعد",
@@ -801,5 +811,15 @@
     "doneSub": "سنعالجه خلال 30 يومًا ونؤكّد ذلك عبر البريد الإلكتروني.",
     "errorEmailRequired": "يُرجى إدخال بريدك الإلكتروني.",
     "errorGeneric": "حدث خطأ ما. حاول مرة أخرى أو راسلنا على {email}."
+  },
+  "firstRun": {
+    "scheduleEmptyTitle": "لا توجد مواعيد بعد.",
+    "scheduleEmptyBody": "احجز موعدك الأول، أو شارك رابط الدعوة ليتمكن المرضى من طلب موعد.",
+    "bookAppointment": "حجز موعد",
+    "shareInviteLink": "مشاركة رابط الدعوة",
+    "linkCopied": "نُسخ الرابط!",
+    "paymentsEmptyTitle": "لا توجد مدفوعات بعد.",
+    "paymentsEmptyBody": "ستظهر هنا مدفوعات مواعيدك.",
+    "setYourPrices": "تحديد أسعارك"
   }
 }

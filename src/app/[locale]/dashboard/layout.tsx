@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { ReloadButton } from "@/components/ReloadButton";
-import { TrialBanner } from "@/components/TrialBanner";
+import { TrialChip, trialChipMessage } from "@/components/TrialChip";
 import { getTranslations } from "next-intl/server";
 import { isAccessAllowed, trialDaysRemaining, type EffectiveSub } from "@/lib/subscription";
 
@@ -117,8 +117,9 @@ export default async function DashboardLayout({
   }
 
   const daysLeft = trialDaysRemaining(sub);
-  // The trial banner's CTA is Subscribe, which a secretary can't use.
-  const showTrialBanner = !isSecretary && daysLeft !== null && daysLeft <= 7;
+  // The one trial indicator, for the whole trial (first-run spec §4). A
+  // doctor only: its link is Subscribe, which a secretary can't use.
+  const showTrialChip = !isSecretary && daysLeft !== null && daysLeft >= 1;
   // ──────────────────────────────────────────────────────────────────────────
 
   const { data: professional } = await supabase
@@ -133,15 +134,11 @@ export default async function DashboardLayout({
     : professional?.full_name;
   const firstName = ownName?.split(" ")[0] || user.email?.split("@")[0] || "Doctor";
 
-  let trialBannerLabels = { prefix: "", day: "day", days: "days", cta: "Subscribe" };
-  if (showTrialBanner) {
+  let trialChipText = "";
+  if (showTrialChip) {
     const t = await getTranslations({ locale, namespace: "subscription" });
-    trialBannerLabels = {
-      prefix: t("trialBannerPrefix"),
-      day: t("trialBannerDay"),
-      days: t("trialBannerDays"),
-      cta: t("trialBannerCta"),
-    };
+    const { key, n } = trialChipMessage(daysLeft!);
+    trialChipText = t(key, { n });
   }
 
   return (
@@ -154,8 +151,10 @@ export default async function DashboardLayout({
         isSecretary={isSecretary}
       />
       <div className="flex flex-1 flex-col overflow-hidden">
-        {showTrialBanner && (
-          <TrialBanner daysLeft={daysLeft!} locale={locale} labels={trialBannerLabels} />
+        {showTrialChip && (
+          <div className="flex justify-end px-4 pt-3 lg:px-8">
+            <TrialChip daysLeft={daysLeft!} locale={locale} text={trialChipText} />
+          </div>
         )}
         <main className="flex-1 overflow-auto lg:pl-0 pt-0">
           <div className="min-h-full">

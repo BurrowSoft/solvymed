@@ -617,6 +617,13 @@
       "statusProposal": "Đã đề xuất giờ mới",
       "accept": "Chấp nhận",
       "decline": "Từ chối"
+    },
+    "professionalWelcome": {
+      "title": "Chào mừng đến với SolvyMed, {firstName}!",
+      "titleNoName": "Chào mừng đến với SolvyMed!",
+      "body": "Hãy thiết lập phòng khám của bạn trong vài bước nhanh để đặt lịch hẹn đầu tiên.",
+      "startSetup": "Bắt đầu thiết lập",
+      "skip": "Để sau"
     }
   },
   "myAppointments": {
@@ -696,7 +703,10 @@
     "portalUnavailable": "Hiện không thể mở trang quản lý thẻ. Vui lòng liên hệ support@solvymed.com.",
     "portalError": "Không thể mở trang quản lý thẻ. Vui lòng thử lại.",
     "errorPaymentFailed": "Lần thanh toán gần nhất đã thất bại. Hãy cập nhật thẻ thay vì bắt đầu gói đăng ký mới.",
-    "paymentActivating": "Đã nhận thanh toán. Quyền truy cập của bạn đang được khôi phục, vui lòng tải lại trang sau giây lát."
+    "paymentActivating": "Đã nhận thanh toán. Quyền truy cập của bạn đang được khôi phục, vui lòng tải lại trang sau giây lát.",
+    "chipDays": "Dùng thử miễn phí: còn {n} ngày · Xem gói",
+    "chipUrgentDays": "Dùng thử miễn phí: còn {n} ngày · Đăng ký",
+    "chipLastDay": "Dùng thử miễn phí: ngày cuối · Đăng ký"
   },
   "secretary": {
     "notConnectedTitle": "Chưa được kết nối với phòng khám",
@@ -801,5 +811,15 @@
     "doneSub": "Chúng tôi sẽ xử lý trong vòng 30 ngày và xác nhận qua email.",
     "errorEmailRequired": "Vui lòng nhập địa chỉ email.",
     "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại hoặc gửi email tới {email}."
+  },
+  "firstRun": {
+    "scheduleEmptyTitle": "Chưa có lịch hẹn nào.",
+    "scheduleEmptyBody": "Đặt lịch hẹn đầu tiên, hoặc chia sẻ liên kết mời để bệnh nhân có thể gửi yêu cầu đặt lịch.",
+    "bookAppointment": "Đặt lịch hẹn",
+    "shareInviteLink": "Chia sẻ liên kết mời",
+    "linkCopied": "Đã sao chép liên kết!",
+    "paymentsEmptyTitle": "Chưa có khoản thanh toán nào.",
+    "paymentsEmptyBody": "Các khoản thanh toán từ lịch hẹn của bạn sẽ hiển thị ở đây.",
+    "setYourPrices": "Đặt giá dịch vụ"
   }
 }

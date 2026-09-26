@@ -5,6 +5,7 @@ import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSe
 import { BookingRequestsPanel } from "./BookingRequestsPanel";
 import { getTentativeBookings } from "./booking-actions";
 import { CalendarView, type CalendarAppt } from "./CalendarView";
+import { ShareInviteLinkButton } from "@/components/ShareInviteLinkButton";
 
 function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
 function addDaysTo(dateStr: string, n: number) {
@@ -42,9 +43,10 @@ export default async function SchedulePage({
   const { locale } = await params;
   const { date: dateParam, view: viewParam } = await searchParams;
 
-  const [supabase, t] = await Promise.all([
+  const [supabase, t, tFirstRun] = await Promise.all([
     createClient(),
     getTranslations("schedule"),
+    getTranslations("firstRun"),
   ]);
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
@@ -82,7 +84,7 @@ export default async function SchedulePage({
     rangeEnd = isoDate(lastDay);
   }
 
-  const [apptsResult, patientsResult, procsResult, tentativeBookings, profResult] = await Promise.all([
+  const [apptsResult, patientsResult, procsResult, tentativeBookings, profResult, anyApptResult] = await Promise.all([
     supabase
       .from("appointments")
       .select("id, date, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes")
@@ -99,7 +101,9 @@ export default async function SchedulePage({
     // clinic_city from migration 089. A professional reads their own row.
     isSecretary
       ? supabase.rpc("get_my_clinic")
-      : supabase.from("professionals").select("pix_key, clinic_name, clinic_city").eq("id", effectiveProfId).maybeSingle(),
+      : supabase.from("professionals").select("pix_key, clinic_name, clinic_city, public_invite_code").eq("id", effectiveProfId).maybeSingle(),
+    // Whether the practice has any appointment at all (first-run empty state).
+    supabase.from("appointments").select("id", { count: "exact", head: true }).eq("professional_id", effectiveProfId).neq("status", "blocked"),
   ]);
 
   type PixSource = { pix_key?: string | null; clinic_name?: string | null; clinic_city?: string | null } | null;
@@ -109,6 +113,10 @@ export default async function SchedulePage({
   const pixKey = pixSource?.pix_key ?? null;
   const clinicName = pixSource?.clinic_name ?? "";
   const clinicCity = pixSource?.clinic_city ?? "";
+  // The doctor's public invite code, for "Share invite link" (not for a secretary).
+  const inviteCode = isSecretary ? null : ((profResult.data as { public_invite_code?: string | null } | null)?.public_invite_code ?? null);
+  // No appointment ever: the first-run empty state instead of "nothing on this day".
+  const noAppointmentsEver = !anyApptResult.error && (anyApptResult.count ?? 0) === 0;
 
   const appointments = (apptsResult.data ?? []) as CalendarAppt[];
   const patients = (patientsResult.data ?? []) as { id: string; full_name: string }[];
@@ -140,7 +148,21 @@ export default async function SchedulePage({
           <div className="mb-6 flex items-center gap-3">
             <ScheduleNav currentDate={currentDate} currentView="list" />
           </div>
-          {appointments.length === 0 ? (
+          {noAppointmentsEver ? (
+            <div className="rounded-2xl border border-slate-100 bg-white p-12 text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-teal-50">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 text-teal-500">
+                  <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+                </svg>
+              </div>
+              <p className="font-semibold text-slate-700">{tFirstRun("scheduleEmptyTitle")}</p>
+              <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">{tFirstRun("scheduleEmptyBody")}</p>
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                <NewAppointmentButton patients={patients} defaultDate={currentDate} procedures={procedures} label={tFirstRun("bookAppointment")} />
+                {!isSecretary && <ShareInviteLinkButton code={inviteCode} />}
+              </div>
+            </div>
+          ) : appointments.length === 0 ? (
             <div className="rounded-2xl border border-slate-100 bg-white p-12 text-center">
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-50">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 text-slate-300">

@@ -221,10 +221,12 @@ export function DeleteAppointmentButton({ id }: { id: string }) {
   );
 }
 
-export function NewAppointmentButton({ patients, defaultDate, procedures }: {
+export function NewAppointmentButton({ patients, defaultDate, procedures, label }: {
   patients: Patient[];
   defaultDate: string;
   procedures: Procedure[];
+  // The button's text; the dialog title stays "New appointment".
+  label?: string;
 }) {
   const t = useTranslations("schedule");
   const [open, setOpen] = useState(false);
@@ -269,7 +271,7 @@ export function NewAppointmentButton({ patients, defaultDate, procedures }: {
     <>
       <button onClick={handleOpen} className="flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition shadow-sm">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        {t("newAppt")}
+        {label ?? t("newAppt")}
       </button>
 
       <Dialog open={open} onClose={() => setOpen(false)} title={t("newAppt")}>

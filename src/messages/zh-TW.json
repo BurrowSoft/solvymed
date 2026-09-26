@@ -617,6 +617,13 @@
       "statusProposal": "已提議新時間",
       "accept": "接受",
       "decline": "拒絕"
+    },
+    "professionalWelcome": {
+      "title": "歡迎使用 SolvyMed，{firstName}！",
+      "titleNoName": "歡迎使用 SolvyMed！",
+      "body": "只需幾個簡單步驟即可設定您的診所，然後預約第一位病患。",
+      "startSetup": "開始設定",
+      "skip": "稍後再說"
     }
   },
   "myAppointments": {
@@ -696,7 +703,10 @@
     "portalUnavailable": "目前無法開啟信用卡管理。請聯絡 support@solvymed.com。",
     "portalError": "無法開啟信用卡管理，請重試。",
     "errorPaymentFailed": "您上次的付款失敗了。請更新信用卡，而不是開始新的訂閱。",
-    "paymentActivating": "已收到付款。正在恢復您的存取權限，請稍後重新整理此頁面。"
+    "paymentActivating": "已收到付款。正在恢復您的存取權限，請稍後重新整理此頁面。",
+    "chipDays": "免費試用：剩餘 {n} 天 · 查看方案",
+    "chipUrgentDays": "免費試用：剩餘 {n} 天 · 立即訂閱",
+    "chipLastDay": "免費試用：最後一天 · 立即訂閱"
   },
   "secretary": {
     "notConnectedTitle": "尚未連接到診所",
@@ -801,5 +811,15 @@
     "doneSub": "我們會在 30 天內處理，並以電子郵件確認。",
     "errorEmailRequired": "請輸入您的電子郵件。",
     "errorGeneric": "發生錯誤。請再試一次，或寄信至 {email}。"
+  },
+  "firstRun": {
+    "scheduleEmptyTitle": "還沒有預約。",
+    "scheduleEmptyBody": "預約您的第一位病患，或分享邀請連結讓病患提出預約申請。",
+    "bookAppointment": "新增預約",
+    "shareInviteLink": "分享邀請連結",
+    "linkCopied": "連結已複製！",
+    "paymentsEmptyTitle": "還沒有付款紀錄。",
+    "paymentsEmptyBody": "您預約的付款紀錄將顯示在這裡。",
+    "setYourPrices": "設定價格"
   }
 }
