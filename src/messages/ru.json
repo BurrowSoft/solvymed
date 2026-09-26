@@ -466,7 +466,8 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n} мин",
     "customTime": "Своё время",
-    "orCustomTime": "Или выбрать своё время"
+    "orCustomTime": "Или выбрать своё время",
+    "professionalFallback": "Специалист"
   },
   "auth": {
     "login": {

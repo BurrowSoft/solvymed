@@ -2504,6 +2504,75 @@ and ar, and nothing else in `src/messages`; I checked the diff.
 - **Parsing:** all 15 files parse with 26 namespaces, and es and pt-BR are
   unchanged.
 
+## PR #16 (`fix/pending-signout-and-book-name`) — two pre-existing display bugs, 🟢 at `63201e2`
+
+**Scope: this entry covers exactly `63201e2`.** These are the two bugs I
+reported in the #15 entry. Tested live with throwaway doctors and pending
+patients (linked through `link_by_professional_public_code`), in en, pt-BR
+and es.
+
+**🟢 1. `/auth/pending-confirmation`.**
+- **Sign-out label:** the button reads **"Sign out"** in en and **"Sair"**
+  in pt-BR, found by role and name. The raw key
+  `auth.myAppointments.signOut` is gone.
+- **With a known professional:** the body names them ("…vinculado(a) a
+  Opus Bookdoc…").
+- **With a nameless professional** (`full_name` = ""): the generic "Sua
+  conta está vinculada, mas a clínica ainda precisa confirmá-la…". There's
+  no "Doctor", and no dangling "vinculado(a) a ,".
+
+**🟢 2. `/book/<id>`.**
+- **No `?name=`, as a pending patient:** the header shows the real "Opus
+  Bookdoc · Psicologia" from `get_professional_public_info`, in en, pt-BR
+  and es.
+- **From the pending page's "Solicitar uma consulta" link:** it carries
+  `?name=`, and shows the same correct name and specialty.
+- **No info available:** for a random UUID, for a real but *unrelated*
+  professional, and for a nameless one, the header shows the translated
+  fallback. That's **"Professional"** in a fresh en session and
+  **"Profissional"** in pt-BR, never "Doctor".
+
+**Not covered:** the "from My appointments" entry point (step 3's first
+half). It needs a fully linked patient with appointments. It uses the same
+page and header code, and the pending-link entry point passed.
+
+**Test note:** unprefixed (en) URLs follow the `NEXT_LOCALE` cookie. After
+visiting a pt-BR page the "en" page renders in pt-BR, so I checked the en
+fallback in a fresh browser context.
+
+**Cleaned up.** All throwaway accounts are deleted.
+
+**Merge gate: 🟢 for `63201e2`.**
+
+**Addendum: 🟢 at `8369aa1`.** `42b89f7` stops My appointments injecting
+`?name=Doctor`. `8369aa1` changes the German fallback to
+"Gesundheitsfachkraft". This closes the entry point I couldn't cover
+above. The patients were **fully linked** through
+`generate_patient_invite_code` and `link_patient_by_invite_code`, so role
+`patient` with a `linked_patient_id`.
+- **Nameless doctor** (`full_name` = ""): the Book link on
+  `/my-appointments` has **no `name=`** (`/book/<id>?`). The header shows
+  the translated fallback: "Professional" (en), "Profissional" (pt-BR),
+  "Gesundheitsfachkraft" (de). Never "Doctor".
+- **Named doctor:** the link carries `?name=Opus+Named+Doc`, and the header
+  shows it in en, pt-BR and de.
+- **Nit, not blocking:** when there's no name, the link ends in a bare `?`
+  (empty query string). It's harmless.
+
+Cleaned up: the 4 throwaway accounts are deleted. **Merge gate: 🟢 for
+`8369aa1`.**
+
+**Addendum: 🟢 at `017d02a`.** Two small commits; I reviewed the diffs.
+- **Repeated query params (`4dd0510`):**
+  `/book/<id>?name=Alpha&name=Beta&specialty=S1&specialty=S2` returns HTTP
+  200. The header shows the first values, "Alpha · S1", and there are 0
+  page errors.
+- **No dangling "?" (`017d02a`):** for a nameless doctor, the My
+  appointments Book link is now exactly `/book/<id>`.
+
+Cleaned up: the 2 throwaway accounts are deleted. **Merge gate: 🟢 for
+`017d02a`.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo

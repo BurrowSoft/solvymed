@@ -466,7 +466,8 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n}분",
     "customTime": "사용자 지정 시간",
-    "orCustomTime": "또는 시간 직접 선택"
+    "orCustomTime": "또는 시간 직접 선택",
+    "professionalFallback": "담당 전문가"
   },
   "auth": {
     "login": {

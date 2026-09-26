@@ -466,7 +466,8 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n} min",
     "customTime": "Heure personnalisée",
-    "orCustomTime": "Ou choisir une heure"
+    "orCustomTime": "Ou choisir une heure",
+    "professionalFallback": "Professionnel(le)"
   },
   "auth": {
     "login": {

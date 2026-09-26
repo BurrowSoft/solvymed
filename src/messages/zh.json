@@ -466,7 +466,8 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n} 分钟",
     "customTime": "自定义时间",
-    "orCustomTime": "或选择自定义时间"
+    "orCustomTime": "或选择自定义时间",
+    "professionalFallback": "专业人员"
   },
   "auth": {
     "login": {
