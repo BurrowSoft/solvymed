@@ -2718,6 +2718,37 @@ new HEAD.
   - The gate-SHA finding is resolved by this addendum.
 - **Review status: not clean** (2 real, 2 trivial).
 
+**Addendum: CI 🟢 at `80fee99`; review round 4 not clean.**
+- **What changed:** `80fee99` answers round 3.
+  - The runner now **exits 0 on findings and non-zero on any crash**:
+    ESLint is imported inside the try, and there's no
+    `continue-on-error`.
+  - The `node --check` step is removed as redundant.
+  - Findings print as `::warning` with `path:line:col` in the text, and
+    the escaping is fixed.
+  - The stray `.gitignore` line is gone.
+- **CI:** run `36215570827` is green (checkout and setup, `npm ci`,
+  typecheck, tests 78/78, and Lint (advisory) reporting 35 errors and 17
+  warnings). The steps now differ from what the header of this entry
+  describes.
+- **Review round 4: Claude `/code-review high` at `80fee99`.** 8 findings
+  were posted inline.
+  - **Real:**
+    - The typecheck runs `tsc` without `next typegen`, so Next's route
+      and page types aren't checked: a bad `params` type passes CI and
+      only fails `next build`.
+    - `actions/checkout` and `setup-node` v4.4.0 run on GitHub's
+      deprecated Node 20 action runtime.
+  - **By design, with a cheap improvement:** a lint crash now fails the
+    single job, under the "Typecheck and unit tests" name. A separate
+    "Lint" job would attribute it correctly.
+  - **Nits:** the annotation cap, where the ~10 shown are arbitrary; the
+    test-clock design (pass `now` into the helpers); the catch block
+    mislabelling a failed summary write; and a path recomputed per
+    message.
+  - The gate-SHA finding is resolved by this addendum.
+- **Review status: not clean** (2 real).
+
 ## PR #21 (`hotfix/auth-links-locale`) — password reset 404 on prod; auth emails keep the language, 🟢 at `ce40aef`
 
 **Scope: exactly `ce40aef`.** This is the hotfix for the prod reset 404
