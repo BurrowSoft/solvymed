@@ -50,7 +50,10 @@
     "body": "Website ini masih dalam pengembangan. Website lengkap Solvymed akan segera hadir dengan dokumentasi lengkap, harga, dan sumber daya dukungan. Sementara itu, aplikasi sudah beroperasi penuh — unduh dan mulailah mengelola praktik Anda hari ini."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. Hak cipta dilindungi."
+    "copyright": "© 2026 Solvymed. Hak cipta dilindungi.",
+    "privacy": "Kebijakan Privasi",
+    "terms": "Ketentuan Layanan",
+    "legal": "Informasi hukum"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -537,7 +540,8 @@
       "joiningAs": "Bergabung sebagai {role} melalui tautan undangan.",
       "joiningAsSecretary": "Mendaftar sebagai sekretaris melalui tautan undangan.",
       "secretaryNeedsInvite": "Sekretaris? Minta tautan undangan dari dokter Anda.",
-      "secretaryEmailMismatch": "Email ini tidak cocok dengan undangan, atau undangan sudah tidak berlaku. Periksa email Anda atau minta tautan baru ke klinik."
+      "secretaryEmailMismatch": "Email ini tidak cocok dengan undangan, atau undangan sudah tidak berlaku. Periksa email Anda atau minta tautan baru ke klinik.",
+      "consent": "Dengan membuat akun, Anda menyetujui <terms>Ketentuan Layanan</terms> dan <privacy>Kebijakan Privasi</privacy>."
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",

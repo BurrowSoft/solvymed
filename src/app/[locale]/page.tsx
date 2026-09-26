@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { LanguageSelector } from "@burrowsoft/shared";
 import { AppDownloadButtons } from "@/components/AppDownloadButtons";
+import { LegalLinks } from "@/components/LegalLinks";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -238,6 +239,7 @@ export default async function HomePage({
               <span className="text-sm font-semibold">Solvymed</span>
             </div>
             <p className="text-sm text-slate-400">{t("footer.copyright")}</p>
+            <LegalLinks />
             <a
               href="mailto:support@solvymed.com"
               className="text-sm text-slate-400 transition hover:text-teal-600"

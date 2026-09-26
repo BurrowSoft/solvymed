@@ -50,7 +50,10 @@
     "body": "이 웹사이트는 현재 개발 중입니다. 상세 문서, 가격 및 지원 리소스를 갖춘 Solvymed 전체 웹사이트가 곧 공개됩니다. 그동안 앱은 완전히 사용 가능합니다 — 다운로드하고 오늘부터 진료 관리를 시작하세요."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. All rights reserved."
+    "copyright": "© 2026 Solvymed. All rights reserved.",
+    "privacy": "개인정보처리방침",
+    "terms": "서비스 약관",
+    "legal": "법적 고지"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -537,7 +540,8 @@
       "joiningAs": "초대 링크를 통해 {role}(으)로 가입합니다.",
       "joiningAsSecretary": "초대 링크로 비서로 가입합니다.",
       "secretaryNeedsInvite": "비서이신가요? 의사에게 초대 링크를 요청하세요.",
-      "secretaryEmailMismatch": "이 이메일이 초대와 일치하지 않거나 초대가 더 이상 유효하지 않습니다. 이메일을 확인하거나 클리닉에 새 링크를 요청하세요."
+      "secretaryEmailMismatch": "이 이메일이 초대와 일치하지 않거나 초대가 더 이상 유효하지 않습니다. 이메일을 확인하거나 클리닉에 새 링크를 요청하세요.",
+      "consent": "계정을 만들면 <terms>서비스 약관</terms> 및 <privacy>개인정보처리방침</privacy>에 동의하는 것으로 간주됩니다."
     },
     "forgotPassword": {
       "title": "비밀번호를 잊으셨나요?",

@@ -282,6 +282,18 @@ export default function SignupPage() {
             />
           </div>
 
+          {/* Consent to the Terms and Privacy Policy by creating the account. */}
+          <p className="text-center text-xs text-slate-500">
+            {t.rich("signup.consent", {
+              terms: (chunks) => (
+                <Link href={localePath("/terms")} target="_blank" className="font-semibold text-teal-600 hover:underline">{chunks}</Link>
+              ),
+              privacy: (chunks) => (
+                <Link href={localePath("/privacy")} target="_blank" className="font-semibold text-teal-600 hover:underline">{chunks}</Link>
+              ),
+            })}
+          </p>
+
           <button
             type="submit"
             disabled={loading}

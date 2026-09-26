@@ -50,7 +50,10 @@
     "body": "このウェブサイトは現在開発中です。詳細なドキュメント、料金プラン、サポートリソースを揃えたSolvymedの完全版サイトが間もなく公開されます。それまでの間、アプリは完全に稼働しています — ダウンロードして今日からクリニック管理を始めましょう。"
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. 無断転載禁止。"
+    "copyright": "© 2026 Solvymed. 無断転載禁止。",
+    "privacy": "プライバシーポリシー",
+    "terms": "利用規約",
+    "legal": "法的情報"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -537,7 +540,8 @@
       "joiningAs": "招待リンクで{role}として参加します。",
       "joiningAsSecretary": "招待リンクから受付スタッフとして登録します。",
       "secretaryNeedsInvite": "受付スタッフの方は、医師に招待リンクを依頼してください。",
-      "secretaryEmailMismatch": "このメールアドレスは招待と一致しないか、招待の有効期限が切れています。メールアドレスを確認するか、クリニックに新しいリンクを依頼してください。"
+      "secretaryEmailMismatch": "このメールアドレスは招待と一致しないか、招待の有効期限が切れています。メールアドレスを確認するか、クリニックに新しいリンクを依頼してください。",
+      "consent": "アカウントを作成すると、<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",
