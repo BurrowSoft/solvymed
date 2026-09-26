@@ -3457,6 +3457,78 @@ rewrite, where pt-BR and en are authoritative.
 
 **Merge gate: 🟢 for `9271345`, review clean.**
 
+## PR #31 (`feat/sentry`) — Sentry, errors only, PII scrubbed, 🟢 at `279ea4f`, review clean
+
+**Scope: exactly `279ea4f`.** Settings: errors only (`tracesSampleRate:
+0`), no Session Replay, `sendDefaultPii: false`, and `sentryScrub` on
+every event and breadcrumb.
+
+**How it was tested without Sentry UI access.** I didn't use another
+agent's Sentry token.
+- **Browser:** Playwright intercepted every envelope the browser SDK
+  sends on the preview and answered it locally, so nothing reached
+  Sentry.
+- **Server:** I ran `279ea4f` locally, in an isolated scratch clone with
+  its own `npm ci`, with `NEXT_PUBLIC_SENTRY_DSN` pointing at a local
+  listener and `VERCEL_ENV=preview`. The server SDK runs `beforeSend`
+  in-process, so the captured envelope is exactly what Sentry would
+  receive.
+
+**🟢 Server event** (`GET /api/sentry-check?email=x@y.com&q=Maria` with a
+cookie and a custom user-agent; the route returns 500).
+- **Message:** "sentry-check: test error for [email], CPF [cpf], phone
+  [phone]".
+- **Request:** `{"url":"http://localhost:3000/api/sentry-check","method":"GET"}`,
+  with no "?", no cookie and no user-agent.
+- **Other fields:** no user, tags, extra or spans. The contexts are os,
+  runtime, device, app, culture, cloud_resource and trace, with **no
+  `nextjs`**.
+- **Planted values:** "x@y.com", "Maria", the cookie and the UA appear
+  nowhere in the capture.
+
+**🟢 Client events** (preview, logged in as a throwaway doctor). I
+triggered a thrown error, an unhandled rejection, and an error on a page
+loaded with `?email=x%40y.com&q=Maria`, after planting PII in a console
+log, a fetch query and a `pushState` URL.
+- **Messages:** masked, e.g. "client-check [email] CPF [cpf] phone
+  [phone]".
+- **URLs:** `request.url` and every breadcrumb URL have no query string.
+  "x@y.com" and "Maria" appear nowhere, and neither does any planted
+  value.
+- **Breadcrumbs:** console breadcrumbs are dropped.
+- **Other fields:** the contexts are `culture` and `trace` only; no
+  spans, user or extra; no replay. Session envelopes carry no PII.
+
+**🟢 No public source maps.** Six chunks each return 200 with no
+`sourceMappingURL`, and `*.js.map` returns 404.
+
+**🟢 Other checks.**
+- **Test route:** preview `/api/sentry-check` returns 500 with an empty
+  body; prod returns 404 (before the merge).
+- **Privacy:** `/privacy` shows the Sentry (USA) row.
+
+**Not verifiable here, so it moves to the launch checklist:** that the
+event actually arrives in Sentry (F-S1), and that stacks resolve once
+`SENTRY_AUTH_TOKEN` is replaced (F-S2). Both need Sentry UI access; the
+user runs them with UX.
+
+**Review: Claude `/code-review` (code reviewer), clean at `279ea4f`.**
+
+**FOLLOW-UP:**
+- **Fake PII in the source context.** The server event's stack frames
+  carry source context lines, and one of them is the test route's own
+  `throw`, containing the literal fake email, CPF and phone. That's code,
+  not runtime data. But whoever runs F-S1 in the Sentry UI will see them
+  unmasked and may read it as a scrubber failure. Build the test string
+  at runtime, or mask `context_line`/`pre_context`/`post_context` in
+  `scrubEvent`.
+- **11-digit phone.** A phone written as 11 plain digits is masked as
+  `[cpf]`, not `[phone]`. It's still masked.
+
+**CI at `279ea4f`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `279ea4f`, review clean.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
