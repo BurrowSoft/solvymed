@@ -32,13 +32,23 @@ export default function ResetPasswordPage() {
     const params = new URLSearchParams(hash);
     const accessToken = params.get("access_token");
     const refreshToken = params.get("refresh_token") ?? "";
+    const supabase = createClient();
 
     if (!accessToken) {
+      // A PKCE link (?code=), e.g. an email sent before reset requests
+      // switched to the implicit flow. The browser client exchanges the
+      // code while initializing, which getSession() waits for; that only
+      // works in the browser that requested the reset.
+      if (new URLSearchParams(window.location.search).get("code")) {
+        supabase.auth.getSession().then(({ data }) => {
+          setPageState(data.session ? "form" : "error");
+        });
+        return;
+      }
       setPageState("error");
       return;
     }
 
-    const supabase = createClient();
     supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
       .then(({ error }) => {
         if (error) {
