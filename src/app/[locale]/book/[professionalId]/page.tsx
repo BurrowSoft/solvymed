@@ -8,10 +8,16 @@ export default async function BookPage({
   searchParams,
 }: {
   params: Promise<{ locale: string; professionalId: string }>;
-  searchParams: Promise<{ name?: string; specialty?: string; clinicName?: string }>;
+  searchParams: Promise<{ name?: string | string[]; specialty?: string | string[]; clinicName?: string | string[] }>;
 }) {
   const { locale, professionalId } = await params;
-  const { name, specialty, clinicName } = await searchParams;
+  // A repeated query param (?name=a&name=b) arrives as an array, so take
+  // the first value rather than calling string methods on an array.
+  const sp = await searchParams;
+  const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+  const name = first(sp.name);
+  const specialty = first(sp.specialty);
+  const clinicName = first(sp.clinicName);
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
