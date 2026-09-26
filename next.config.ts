@@ -34,6 +34,8 @@ export default withSentryConfig(withNextIntl(nextConfig), {
   project: process.env.SENTRY_PROJECT,
   authToken: process.env.SENTRY_AUTH_TOKEN,
   silent: !process.env.CI,
+  // No build telemetry to Sentry: only runtime errors, scrubbed, are sent.
+  telemetry: false,
   widenClientFileUpload: true,
   sourcemaps: { deleteSourcemapsAfterUpload: true },
   webpack: { treeshake: { removeDebugLogging: true } },
