@@ -3131,6 +3131,117 @@ passes.
 
 **Merge gate: 🟢 for `fd02c10`, review clean.**
 
+## PR #18 (`feat/patient-archive`) — patient archive + 8-char passwords, 🟢 at `047f7a6`, review clean
+
+**Scope: exactly `047f7a6`.** This is the rebase onto master after #24.
+Migrations 094 (archive) and 096 (the detach fix) are live on prod.
+
+**Tested live on the Vercel preview (pt-BR).**
+- **Bypass header:** only on preview requests; the secret is never
+  logged.
+- **Test data:** throwaway `e2e-test-opus-*` doctors, patients, patient
+  accounts and a secretary, all deleted afterwards. Seeded clinical rows
+  are removed first, since 094 intentionally refuses to delete a doctor
+  whose patients have history.
+
+**🟢 1. Delete vs Archive.**
+- **Patient with a record:** "Arquivar cadastro" is shown, with no Delete.
+- **Patient with no history:** both are shown. Delete asks "Excluir …?
+  Esta ação não pode ser desfeita." and the row is gone.
+
+**🟢 2. Archive confirm and effects.**
+- **Confirm text:** "Nenhuma consulta futura será cancelada." for a
+  patient with none. "2 consultas futuras serão canceladas." for one with
+  a confirmed appointment plus a pending request from their linked app
+  account.
+- **Cancellation:** after archiving, both are cancelled. Past requests are
+  left alone, by design.
+- **Banner:** "Arquivado em 26 de set. de 2026 por Dra Opus Pr18" appears
+  without a reload, in about 3.5 s via `router.refresh`.
+- **Hidden actions:** Archive, Delete, New record and New prescription.
+- **Push:** the linked account had no push token, so the cancellation
+  notification wasn't observable. It's code-reviewed only.
+
+**🟢 3. Lists and pickers.**
+- **Lists:** Patients and search hide both archived patients. The chips
+  read "Ativos (1)" and "Arquivados (2)". `?archived=1` lists them, with
+  the "Arquivado em … por …" label.
+- **Dashboard:** the patient count is 1, the active patient only.
+- **New appointment:** the datalist offers only the active patient.
+
+**🟢 4. Restore.**
+- **From the banner:** the banner clears without a reload and
+  `archived_at` is NULL.
+- **From the duplicate warning:** the new-patient form with an archived
+  person's name and phone shows the match with the "Arquivado" badge,
+  Restaurar and "Criar mesmo assim". Restaurar restores it and lands on
+  the patient page, with no second record created.
+
+**🟢 5. No raw codes.** No
+`patient_archived`/`patient_has_clinical_history` was found on any page
+visited.
+- **Schedule, by name:** creating an appointment for a name matching only
+  an archived patient shows "Este cadastro está arquivado. Restaure-o em
+  Pacientes para agendar uma consulta." No row is created.
+- **Schedule, re-activation:** re-activating a cancelled appointment of an
+  archived patient shows the same copy. The select reverts, and the DB
+  stays `cancelled`.
+- **Patient app account booking:** booking at the clinic that archived
+  them shows "Esta clínica não está aceitando novos agendamentos para a
+  sua conta…". The RPC returns `patient_archived`.
+- **Booking requests:** only the propose path could be exercised live, and
+  it doesn't raise `patient_archived`; see FOLLOW-UP.
+  - Archiving cancels every upcoming request, so no future pending
+    request can exist for an archived patient.
+  - A past one shows no Confirm button, so the Confirm → alert path is
+    code-verified only.
+
+**🟢 6. Secretary.** A secretary can archive and restore. The banner reads
+"Arquivado em … por Sec Opus Ana".
+
+**🟢 7. Passwords.**
+- **Signup, 7 characters:** "A senha deve ter pelo menos 8 caracteres.",
+  with no `/auth/v1/signup` call.
+- **Signup, 8 characters:** the account is created ("Verifique seu
+  e-mail").
+- **Reset via a real recovery token:** 7 characters gives the same
+  message, with no update call. 8 characters works (password grant OK).
+- **Existing 6-character password:** still logs in, to `/pt-BR/dashboard`.
+  The Supabase minimum stays 6 until mobile 1.3.0 is on Play, per UX.
+
+**🟢 #24 + #18 together (secretary signup).** The join page shows the
+masked hint.
+- **7 characters:** the length error, with no RPC and no signup.
+- **8 characters, wrong email:** the mismatch copy, from the matches RPC
+  only, with no account.
+- **8 characters, right email:** matches, then signup, and the account is
+  created.
+
+**DB findings from this run** (mob dev):
+- **094 blocked patient-account deletion.** It failed when a past active
+  appointment pointed at an archived record: the `ON DELETE SET NULL`
+  tripped the trigger. Fixed by 096, and re-verified live: the delete
+  now succeeds and `patient_auth_id` becomes NULL.
+- **Doctor accounts with clinical history can't be deleted.** This is
+  intended (records are retained for 20 years); close-account will
+  handle it.
+
+**Review: Claude `/code-review` (code reviewer), clean at `047f7a6`.**
+
+**FOLLOW-UP:**
+- **Propose to an archived patient:** a doctor can still send "Propor novo
+  horário" on an archived patient's past request. It succeeded live and
+  set `proposed_date`. 094 lets it through because `date` doesn't change,
+  but the patient's accept would then be refused.
+- **Accept on `my-appointments`:** it ignores `acceptProposal` errors, so
+  a refused accept is silent. This is pre-existing; a past-dated proposal
+  shows no Accept button, so it wasn't reachable live.
+- **Push on archive:** not observable without a device token.
+
+**CI at `047f7a6`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `047f7a6`, review clean.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
