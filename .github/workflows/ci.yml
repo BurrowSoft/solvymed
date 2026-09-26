@@ -36,6 +36,10 @@ jobs:
       # checks the same things `next build` does, locally and here.
       - run: npm run typecheck
       - run: npm test
+        env:
+          # Our users and schedules are in Brazil; in UTC the timezone and
+          # day-boundary regression tests couldn't fail.
+          TZ: America/Sao_Paulo
 
   lint:
     # Advisory: scripts/ci-lint.mjs reports findings (annotations and a
