@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
-// get_account_closure_preview() (migration 101).
+// get_account_closure_preview() (migration 102).
 export type ClosurePreview = {
   role: "professional" | "secretary" | "patient";
   has_clinical_history: boolean;
