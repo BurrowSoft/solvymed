@@ -11,7 +11,17 @@ type ScrubbableEvent = {
   exception?: { values?: { value?: string }[] };
   transaction?: string;
   breadcrumbs?: Breadcrumb[];
+  contexts?: Record<string, Record<string, unknown> | undefined>;
+  tags?: Record<string, unknown>;
+  logentry?: { message?: string; params?: unknown[]; [key: string]: unknown };
+  spans?: unknown[];
 };
+
+// Contexts kept as they are: environment facts only. Everything else is
+// dropped, e.g. "nextjs" (request_path carries the raw query string).
+const SAFE_CONTEXTS = ["os", "runtime", "browser", "device", "app", "culture", "cloud_resource"];
+// The trace context keeps its ids and status; its data can hold URLs.
+const SAFE_TRACE_KEYS = ["trace_id", "span_id", "parent_span_id", "op", "status", "origin"];
 
 // Strict PII scrubbing for Sentry (the org is US-hosted, so this is the real
 // safeguard). Errors keep what's needed to debug them (stack, route,
@@ -36,7 +46,9 @@ function scrubUrl(url: string | undefined): string | undefined {
   const absolute = /^https?:\/\//.test(url);
   const redacted = redactAnalyticsUrl(absolute ? url : `https://x.invalid${url.startsWith("/") ? "" : "/"}${url}`);
   if (!redacted) return undefined;
-  return absolute ? redacted : redacted.replace("https://x.invalid", "");
+  // Path only: no query string at all (search terms, emails, invite data).
+  const pathOnly = redacted.split("?")[0];
+  return absolute ? pathOnly : pathOnly.replace("https://x.invalid", "");
 }
 
 // Returns the same (mutated) event object, typed as passed in, so it fits
@@ -53,6 +65,33 @@ export function scrubEvent<T extends object>(input: T): T {
     if (ex.value) ex.value = scrubText(ex.value);
   }
   if (event.transaction) event.transaction = scrubUrl(event.transaction) ?? event.transaction;
+  if (event.contexts) {
+    const contexts: NonNullable<ScrubbableEvent["contexts"]> = {};
+    for (const key of SAFE_CONTEXTS) {
+      if (event.contexts[key]) contexts[key] = event.contexts[key];
+    }
+    const trace = event.contexts.trace;
+    if (trace) {
+      contexts.trace = {};
+      for (const key of SAFE_TRACE_KEYS) {
+        if (trace[key] !== undefined) contexts.trace[key] = trace[key];
+      }
+    }
+    event.contexts = contexts;
+  }
+  if (event.tags) {
+    for (const [key, value] of Object.entries(event.tags)) {
+      if (typeof value !== "string") continue;
+      event.tags[key] = /^(https?:\/\/|\/)/.test(value) ? (scrubUrl(value) ?? "[url]") : scrubText(value);
+    }
+  }
+  if (event.logentry) {
+    event.logentry = { message: event.logentry.message ? scrubText(event.logentry.message) : undefined };
+  }
+  // Spans (transactions) carry full URLs, including Supabase REST filters
+  // with patient names. Tracing is off, and any span that still arrives is
+  // dropped.
+  delete event.spans;
   event.breadcrumbs = (event.breadcrumbs ?? [])
     .map((b) => scrubBreadcrumb(b))
     .filter((b): b is Breadcrumb => b !== null);

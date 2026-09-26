@@ -35,7 +35,7 @@ describe("scrubEvent", () => {
 
     const out = scrubEvent(event);
     expect(out.request).toEqual({
-      url: "https://www.solvymed.com/pt-BR/dashboard/patients?q=%5Bredacted%5D",
+      url: "https://www.solvymed.com/pt-BR/dashboard/patients",
       method: "POST",
     });
     expect(out.user).toEqual({ id: "u-1" });
@@ -53,6 +53,46 @@ describe("scrubEvent", () => {
     expect(out.request?.url).toBe("https://www.solvymed.com/pt-BR/invite/[code]");
     expect(out.transaction).toBe("/pt-BR/join/secretary/[code]");
   });
+
+  it("keeps no query string, invite code or email anywhere in a server error", () => {
+    const event = {
+      type: undefined,
+      request: { url: "https://www.solvymed.com/pt-BR/auth/signup?email=ana%40gmail.com&secretary=S-ABCD2345", method: "GET" },
+      transaction: "/pt-BR/invite/AB12CD",
+      contexts: {
+        // What onRequestError attaches: the raw path, query included.
+        nextjs: { request_path: "/pt-BR/dashboard/patients?q=Maria%20Silva", router_kind: "App Router" },
+        trace: { trace_id: "t1", span_id: "s1", op: "http.server", data: { "url.full": "https://x/?q=Maria" } },
+        os: { name: "Linux" },
+        runtime: { name: "node", version: "v22" },
+      },
+      tags: { url: "/pt-BR/join/AB12CD?email=ana%40gmail.com", note: "for ana@gmail.com", level: 3 },
+      logentry: { message: "lookup %s", params: ["Maria Silva"] },
+      breadcrumbs: [{ category: "navigation", data: { from: "/invite/AB12CD", to: "/pt-BR/dashboard/patients?q=Maria" } }],
+    } as unknown as ErrorEvent;
+
+    const out = scrubEvent(event);
+    const json = JSON.stringify(out);
+    for (const leak of ["Maria", "ana", "gmail", "AB12CD", "S-ABCD2345", "?", "url.full"]) {
+      expect(json).not.toContain(leak);
+    }
+    expect(out.contexts).toEqual({
+      trace: { trace_id: "t1", span_id: "s1", op: "http.server" },
+      os: { name: "Linux" },
+      runtime: { name: "node", version: "v22" },
+    });
+    expect(out.request?.url).toBe("https://www.solvymed.com/pt-BR/auth/signup");
+    expect(out.tags).toEqual({ url: "/pt-BR/join/[code]", note: "for [email]", level: 3 });
+  });
+
+  it("drops spans, which carry full request URLs", () => {
+    const event = {
+      type: "transaction",
+      spans: [{ description: "GET https://db.supabase.co/rest/v1/patients?full_name=ilike.%25Maria%25", data: { "url.query": "full_name=ilike.%Maria%" } }],
+    } as unknown as ErrorEvent;
+    const out = scrubEvent(event) as unknown as { spans?: unknown };
+    expect(out.spans).toBeUndefined();
+  });
 });
 
 describe("scrubBreadcrumb", () => {
@@ -65,6 +105,6 @@ describe("scrubBreadcrumb", () => {
       category: "fetch",
       data: { url: "/rest/v1/patients?email=eq.ana%40gmail.com", method: "GET", status_code: 200, body: "x" },
     });
-    expect(out?.data).toEqual({ url: "/rest/v1/patients?email=%5Bredacted%5D", method: "GET", status_code: 200 });
+    expect(out?.data).toEqual({ url: "/rest/v1/patients", method: "GET", status_code: 200 });
   });
 });

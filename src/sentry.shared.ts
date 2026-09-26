@@ -8,8 +8,9 @@ import { scrubBreadcrumb, scrubEvent } from "@/lib/sentryScrub";
 export const sentryOptions = {
   sendDefaultPii: false,
   environment: process.env.NEXT_PUBLIC_VERCEL_ENV ?? process.env.VERCEL_ENV ?? "development",
-  // Light performance sampling; transactions are scrubbed too.
-  tracesSampleRate: 0.1,
+  // No performance tracing: spans carry full URLs (query strings, Supabase
+  // REST filters with patient names). Errors only.
+  tracesSampleRate: 0,
   beforeSend: (event) => scrubEvent(event),
   beforeSendTransaction: (event) => scrubEvent(event),
   beforeBreadcrumb: (crumb) => scrubBreadcrumb(crumb),
