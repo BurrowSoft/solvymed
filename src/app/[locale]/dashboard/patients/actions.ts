@@ -256,7 +256,51 @@ export async function createRecord(patientId: string, formData: FormData) {
     record_type: (formData.get("record_type") as string) || "free_text",
   });
 
-  if (error) return { error: error.message?.includes("patient_archived") ? "patient_archived" : error.message };
+  if (error) return { error: actionError(error.message) };
+  revalidatePath(`/dashboard/patients/${patientId}`);
+  return { success: true };
+}
+
+// Author-only, within 24 hours of creation (migration 097 enforces it and
+// raises clinical_record_locked otherwise; after that, add a correction).
+export async function updateRecord(id: string, patientId: string, formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
+
+  const content = (formData.get("content") as string)?.trim();
+  if (!content) return { error: "content_required" };
+
+  const { error } = await supabase
+    .from("medical_records")
+    .update({ content, record_type: (formData.get("record_type") as string) || "free_text" })
+    .eq("id", id)
+    .eq("professional_id", user.id);
+  if (error) return { error: actionError(error.message) };
+  revalidatePath(`/dashboard/patients/${patientId}`);
+  return { success: true };
+}
+
+// After the 24-hour window: a correction row (the original is kept and
+// shown struck through). Reason required.
+export async function addRecordCorrection(recordId: string, patientId: string, formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
+
+  const content = (formData.get("content") as string)?.trim();
+  const reason = (formData.get("reason") as string)?.trim();
+  if (!content) return { error: "content_required" };
+  if (!reason) return { error: "reason_required" };
+
+  const { error } = await supabase.rpc("add_record_correction", {
+    p_record_id: recordId,
+    p_content: content,
+    p_reason: reason,
+  });
+  if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
 }
@@ -292,24 +336,9 @@ export async function createPrescription(patientId: string, formData: FormData) 
     .select()
     .single();
 
-  if (pError) return { error: pError.message?.includes("patient_archived") ? "patient_archived" : pError.message };
+  if (pError) return { error: actionError(pError.message) };
 
-  // Parse medications from form (name_0, dosage_0, frequency_0, duration_0, ...)
-  const items: { prescription_id: string; name: string; dosage: string; frequency: string; duration: string }[] = [];
-  let i = 0;
-  while (formData.get(`name_${i}`) !== null) {
-    const name = (formData.get(`name_${i}`) as string)?.trim();
-    if (name) {
-      items.push({
-        prescription_id: prescription.id,
-        name,
-        dosage: (formData.get(`dosage_${i}`) as string)?.trim() || "",
-        frequency: (formData.get(`frequency_${i}`) as string)?.trim() || "",
-        duration: (formData.get(`duration_${i}`) as string)?.trim() || "",
-      });
-    }
-    i++;
-  }
+  const items = parseMedications(formData).map((m) => ({ ...m, prescription_id: prescription.id }));
 
   if (items.length === 0) {
     await supabase.from("prescriptions").delete().eq("id", prescription.id);
@@ -363,8 +392,81 @@ export async function deletePrescription(id: string, patientId: string) {
   // not a boundary, since these actions are directly callable.
   if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
 
-  await supabase.from("prescription_items").delete().eq("prescription_id", id);
+  // The items go first; stop if that's refused (e.g. clinical_record_locked
+  // after 24 hours) instead of trying the prescription anyway.
+  const { error: iError } = await supabase.from("prescription_items").delete().eq("prescription_id", id);
+  if (iError) return { error: actionError(iError.message) };
   const { error } = await supabase.from("prescriptions").delete().eq("id", id).eq("professional_id", user.id);
+  if (error) return { error: actionError(error.message) };
+  revalidatePath(`/dashboard/patients/${patientId}`);
+  return { success: true };
+}
+
+// Medications from the form (name_0, dosage_0, frequency_0, duration_0, …),
+// skipping rows without a name.
+function parseMedications(formData: FormData) {
+  const items: { name: string; dosage: string; frequency: string; duration: string }[] = [];
+  for (let i = 0; formData.get(`name_${i}`) !== null; i++) {
+    const name = (formData.get(`name_${i}`) as string)?.trim();
+    if (!name) continue;
+    items.push({
+      name,
+      dosage: (formData.get(`dosage_${i}`) as string)?.trim() || "",
+      frequency: (formData.get(`frequency_${i}`) as string)?.trim() || "",
+      duration: (formData.get(`duration_${i}`) as string)?.trim() || "",
+    });
+  }
+  return items;
+}
+
+// Author-only, within 24 hours (097). The medications are replaced: new
+// rows are inserted first and the old ones removed only after that
+// succeeds, so a failure never leaves the prescription without items.
+export async function updatePrescription(id: string, patientId: string, formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
+
+  const meds = parseMedications(formData);
+  if (meds.length === 0) return { error: "Add at least one medication" };
+  const notes = (formData.get("notes") as string)?.trim() || null;
+
+  const { error: pError } = await supabase.from("prescriptions").update({ notes }).eq("id", id).eq("professional_id", user.id);
+  if (pError) return { error: actionError(pError.message) };
+
+  const { data: oldItems, error: oError } = await supabase.from("prescription_items").select("id").eq("prescription_id", id);
+  if (oError) return { error: actionError(oError.message) };
+  const { error: iError } = await supabase.from("prescription_items").insert(meds.map((m) => ({ ...m, prescription_id: id })));
+  if (iError) return { error: actionError(iError.message) };
+  const oldIds = (oldItems ?? []).map((r) => r.id as string);
+  if (oldIds.length > 0) {
+    const { error: dError } = await supabase.from("prescription_items").delete().in("id", oldIds);
+    if (dError) return { error: actionError(dError.message) };
+  }
+  revalidatePath(`/dashboard/patients/${patientId}`);
+  return { success: true };
+}
+
+// After the 24-hour window: a corrected prescription (notes + medications)
+// that references the original, with a required reason.
+export async function addPrescriptionCorrection(prescriptionId: string, patientId: string, formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
+
+  const meds = parseMedications(formData);
+  const reason = (formData.get("reason") as string)?.trim();
+  if (meds.length === 0) return { error: "Add at least one medication" };
+  if (!reason) return { error: "reason_required" };
+
+  const { error } = await supabase.rpc("add_prescription_correction", {
+    p_prescription_id: prescriptionId,
+    p_notes: (formData.get("notes") as string)?.trim() || null,
+    p_items: meds,
+    p_reason: reason,
+  });
   if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };

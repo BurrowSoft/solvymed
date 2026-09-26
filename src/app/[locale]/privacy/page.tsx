@@ -113,6 +113,12 @@ export default async function PrivacyPage({
               active.
             </p>
             <p>
+              After 24 hours, a clinical note or prescription can no longer be edited or deleted. It can be
+              corrected, and each correction is kept with its date, author and reason. Files removed from a
+              patient&apos;s chart after 24 hours are hidden, not deleted, and are kept for the legal retention
+              period.
+            </p>
+            <p>
               You may request deletion of your account at any time by contacting us; medical records are kept
               as described above.
             </p>

@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { PatientTabs, ArchivedBanner } from "./PatientDetailClient";
+import { PatientTabs, ArchivedBanner, type MedRecord, type Rx } from "./PatientDetailClient";
 import { getArchivePreview } from "../actions";
 
 export default async function PatientDetailPage({
@@ -36,10 +36,10 @@ export default async function PatientDetailPage({
     supabase.from("patients").select("*").eq("id", id).eq("professional_id", effectiveProfId).single(),
     isSecretary
       ? noRows
-      : supabase.from("medical_records").select("id, date, time, content, record_type, created_at").eq("patient_id", id).order("date", { ascending: false }).order("time", { ascending: false }),
+      : supabase.from("medical_records").select("id, date, time, content, record_type, created_at, created_by, created_by_name, corrects_id, correction_reason").eq("patient_id", id).order("date", { ascending: false }).order("time", { ascending: false }),
     isSecretary
       ? noRows
-      : supabase.from("prescriptions").select("id, date, notes, prescription_items(name, dosage, frequency, duration)").eq("patient_id", id).order("date", { ascending: false }),
+      : supabase.from("prescriptions").select("id, date, notes, created_at, created_by, created_by_name, corrects_id, correction_reason, prescription_items(name, dosage, frequency, duration)").eq("patient_id", id).order("date", { ascending: false }),
     supabase.from("appointments").select("id, date, start_time, consultation_type, status, payment_status").eq("patient_id", id).neq("status", "blocked").order("date", { ascending: false }).limit(50),
     // Whether Delete is offered at all (only without clinical history).
     // Null on error: Delete stays hidden and Archive is always available.
@@ -57,8 +57,8 @@ export default async function PatientDetailPage({
     archived_at?: string | null; archived_by_name?: string | null;
   };
   const isArchived = !!patient.archived_at;
-  const records = (recordsResult.data ?? []) as { id: string; date: string; time: string; content: string; record_type?: string; created_at: string }[];
-  const prescriptions = (prescriptionsResult.data ?? []) as { id: string; date: string; notes?: string; prescription_items: { name: string; dosage: string; frequency: string; duration: string }[] }[];
+  const records = (recordsResult.data ?? []) as MedRecord[];
+  const prescriptions = (prescriptionsResult.data ?? []) as Rx[];
   const appointments = (apptsResult.data ?? []) as { id: string; date: string; start_time: string; consultation_type: string; status: string; payment_status: string }[];
 
   const initials = patient.full_name.split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
@@ -114,6 +114,7 @@ export default async function PatientDetailPage({
           locale={locale}
           isSecretary={isSecretary}
           isArchived={isArchived}
+          currentUserId={user.id}
           canDelete={preview?.hasClinicalHistory === false}
         />
       </div>
