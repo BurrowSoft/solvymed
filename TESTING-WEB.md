@@ -3457,6 +3457,87 @@ rewrite, where pt-BR and en are authoritative.
 
 **Merge gate: 🟢 for `9271345`, review clean.**
 
+**Prod addendum (`9a458c4`):** the invite page, the auth pages and the
+signup consent line all show the legal links in pt-BR, en, es and ar.
+
+## PR #30 (`feat/locale-detection`) — browser-language detection + auth-page switcher, 🟢 at `beb83e0`, review clean
+
+**Scope: exactly `beb83e0`.** That's `b4a5083` plus the code reviewer's
+fix: no switcher on `/auth/confirm` or `/auth/reset-password`, and the
+switcher no longer carries the `#fragment`.
+
+**How it was tested.** The preview can only test country TH.
+- **Preview:** raw requests with manual redirects, under the bypass
+  header. My real country (TH, from Thailand) always applies there.
+  Vercel overwrites an injected `x-vercel-ip-country`, and `?country=`
+  doesn't feed first-visit detection (it runs after that block).
+- **Local:** for BR/US/no-country cases, `next dev` on `beb83e0`, where
+  the country header is honoured.
+- **Browser:** Playwright for the switcher and the layout.
+
+**🟢 1. Browser vs country.**
+- **pt-BR browser in TH** (preview): 302 → `/pt-BR`, including a deep
+  link that keeps `?next=`.
+- **th browser in BR** (local): → `/th`.
+- **Other tags:** pt-PT → pt-BR; zh-Hant and zh-HK → zh-TW; zh-CN → zh.
+  `en-US` first with pt-BR second stays en (200, no redirect). `pt;q=0,
+  es` → es.
+
+**🟢 2. Fallbacks.**
+- **No Accept-Language:** → the country's language (th on the preview,
+  pt-BR in BR locally).
+- **Unsupported `pl`:** → th in TH and pt-BR in BR; en in US or with no
+  country. `pl,es;q=0.5` → es. `*` → the country.
+
+**🟢 3. Cookie and `/en`.**
+- **Existing cookie wins over a pt-BR browser:** `NEXT_LOCALE=es` → es,
+  and `NEXT_LOCALE=en` → stays en.
+- **`/en/auth/login` with a pt-BR browser:** 307 → `/auth/login`, pinning
+  `NEXT_LOCALE=en`.
+- **Cookie lifetime:** an auto pick sets `Max-Age=2592000` (30 days); a
+  manual pick in the switcher lasts 365 days.
+
+**🟢 4. Aliases.**
+- `/pt` → 308 `/pt-BR`.
+- `/pt/auth/login?x=1` → 308 `/pt-BR/auth/login?x=1`.
+- `/PT-br/auth/login` → 308 `/pt-BR/auth/login`.
+- `/zh-tw` → 308 `/zh-TW`.
+- `/identity` isn't treated as an alias (404, as before).
+
+**🟢 5. Bots (Googlebot, no Accept-Language).** Prefixed URLs (`/pt-BR/…`,
+`/es`) return 200 with no redirect. Unprefixed `/` returns 200 in en and
+doesn't redirect, even from BR. That's the same as before: bots skip
+detection entirely, so the PR body's "the country decides as before" is
+inaccurate, but the behaviour is unchanged.
+
+**🟢 6. Switcher.**
+- **Signup:** `/pt-BR/auth/signup?secretary=S-…&email=…` → es keeps both
+  params; → en also keeps them.
+- **Login:** `?next=` survives a switch to fr.
+- **One-time-link pages:** `/auth/confirm` and `/auth/reset-password` show
+  no switcher. A real recovery link sets the new password successfully.
+
+**🟢 7. 375 px layout (pt-BR, ar, de).** Checked on login, signup and
+join/secretary.
+- **Overflow:** none.
+- **Wrapping:** the switcher sits on its own row under the legal links in
+  pt-BR and de. In ar (RTL) they share a row, and the screenshot looks
+  right.
+
+**Review: Claude `/code-review` (code reviewer), clean at `beb83e0`.**
+
+**FOLLOW-UP:**
+- **Test instructions:** the PR body says to use `?country=XX` to simulate
+  a country, but it doesn't affect first-visit detection (the preview
+  sends TH regardless, and locally `/?country=BR` stays en). Use a local
+  server with `x-vercel-ip-country`, or unit tests.
+- **Accessibility:** the switcher's `aria-label` is a hard-coded "Select
+  language" in every locale.
+
+**CI at `beb83e0`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `beb83e0`, review clean.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
