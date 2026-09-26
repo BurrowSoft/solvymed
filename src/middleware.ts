@@ -95,7 +95,15 @@ export async function middleware(req: NextRequest) {
     return res;
   }
 
-  return intlMiddleware(req);
+  const intlRes = intlMiddleware(req);
+  // An explicit /en/... is a language choice (e.g. an email link). next-intl
+  // strips it to the unprefixed URL but only writes NEXT_LOCALE when the
+  // browser's language differs, so without this a fresh browser would hit
+  // the geo-redirect above on the next request and lose English.
+  if (firstSegment === routing.defaultLocale) {
+    intlRes.cookies.set("NEXT_LOCALE", routing.defaultLocale, { maxAge: 60 * 60 * 24 * 365, path: "/", sameSite: "lax" });
+  }
+  return intlRes;
 }
 
 export const config = {

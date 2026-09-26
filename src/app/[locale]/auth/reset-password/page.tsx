@@ -34,17 +34,10 @@ export default function ResetPasswordPage() {
     const refreshToken = params.get("refresh_token") ?? "";
     const supabase = createClient();
 
+    // Only a recovery link's own tokens open the form, never an existing
+    // session. Older PKCE links (?code=) never worked on this page; they show
+    // the error state, which offers to request a new link.
     if (!accessToken) {
-      // A PKCE link (?code=), e.g. an email sent before reset requests
-      // switched to the implicit flow. The browser client exchanges the
-      // code while initializing, which getSession() waits for; that only
-      // works in the browser that requested the reset.
-      if (new URLSearchParams(window.location.search).get("code")) {
-        supabase.auth.getSession().then(({ data }) => {
-          setPageState(data.session ? "form" : "error");
-        });
-        return;
-      }
       setPageState("error");
       return;
     }
