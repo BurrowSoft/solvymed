@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import ConfirmClient from "./ConfirmClient";
+import { isFirstConfirmation } from "@/lib/firstConfirmation";
 
 export default async function AuthConfirmPage({
   params,
@@ -98,6 +99,11 @@ export default async function AuthConfirmPage({
         redirect(profId ? `${prefix}/auth/pending-confirmation` : `${prefix}/auth/invite-required`);
       }
       redirect(`${prefix}/auth/invite-required`);
+    }
+    // A professional's email confirmation: the one-time welcome (first-run
+    // spec §1), in the signup's locale.
+    if (isFirstConfirmation(data.user, type)) {
+      redirect(`${prefix}/auth/professional-welcome`);
     }
     // Redirect to /dashboard without a locale prefix — the middleware's
     // geo-redirect will add the correct locale (e.g. /th/dashboard) automatically.

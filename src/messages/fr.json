@@ -617,6 +617,13 @@
       "statusProposal": "Nouvel horaire proposé",
       "accept": "Accepter",
       "decline": "Refuser"
+    },
+    "professionalWelcome": {
+      "title": "Bienvenue sur SolvyMed, {firstName} !",
+      "titleNoName": "Bienvenue sur SolvyMed !",
+      "body": "Configurons votre cabinet en quelques étapes rapides, pour que vous puissiez fixer votre premier rendez-vous.",
+      "startSetup": "Commencer la configuration",
+      "skip": "Plus tard"
     }
   },
   "myAppointments": {
@@ -696,7 +703,10 @@
     "portalUnavailable": "Impossible d'ouvrir la gestion de la carte pour le moment. Contactez support@solvymed.com.",
     "portalError": "Impossible d'ouvrir la gestion de la carte. Réessayez.",
     "errorPaymentFailed": "Votre dernier paiement a échoué. Mettez à jour votre carte au lieu de démarrer un nouvel abonnement.",
-    "paymentActivating": "Paiement reçu. Votre accès est en cours de rétablissement. Actualisez cette page dans un instant."
+    "paymentActivating": "Paiement reçu. Votre accès est en cours de rétablissement. Actualisez cette page dans un instant.",
+    "chipDays": "Essai gratuit : {n} jours restants · Voir l'offre",
+    "chipUrgentDays": "Essai gratuit : {n} jours restants · S'abonner",
+    "chipLastDay": "Essai gratuit : dernier jour · S'abonner"
   },
   "secretary": {
     "notConnectedTitle": "Pas encore connecté(e) à un cabinet",
@@ -803,5 +813,15 @@
     "errorGeneric": "Une erreur s'est produite. Réessayez ou écrivez à {email}.",
     "errorTooManyAttempts": "Nous avons déjà reçu plusieurs demandes. Réessayez demain ou écrivez à {email}.",
     "errorInvalidEmail": "Veuillez saisir une adresse e-mail valide."
+  },
+  "firstRun": {
+    "scheduleEmptyTitle": "Aucun rendez-vous pour l'instant.",
+    "scheduleEmptyBody": "Fixez votre premier rendez-vous, ou partagez votre lien d'invitation pour que les patients puissent en demander un.",
+    "bookAppointment": "Fixer un rendez-vous",
+    "shareInviteLink": "Partager le lien d'invitation",
+    "linkCopied": "Lien copié !",
+    "paymentsEmptyTitle": "Aucun paiement pour l'instant.",
+    "paymentsEmptyBody": "Les paiements de vos rendez-vous apparaîtront ici.",
+    "setYourPrices": "Définir vos tarifs"
   }
 }

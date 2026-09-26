@@ -617,6 +617,13 @@
       "statusProposal": "Novo horário proposto",
       "accept": "Aceitar",
       "decline": "Recusar"
+    },
+    "professionalWelcome": {
+      "title": "Boas-vindas ao SolvyMed, {firstName}!",
+      "titleNoName": "Boas-vindas ao SolvyMed!",
+      "body": "Vamos configurar sua clínica em poucos passos, para você marcar sua primeira consulta.",
+      "startSetup": "Começar configuração",
+      "skip": "Agora não"
     }
   },
   "myAppointments": {
@@ -696,7 +703,10 @@
     "portalUnavailable": "Não foi possível abrir o gerenciamento do cartão agora. Entre em contato com support@solvymed.com.",
     "portalError": "Não foi possível abrir o gerenciamento do cartão. Tente novamente.",
     "errorPaymentFailed": "Seu último pagamento falhou. Atualize seu cartão em vez de iniciar uma nova assinatura.",
-    "paymentActivating": "Pagamento recebido. Seu acesso está sendo restaurado. Atualize esta página em instantes."
+    "paymentActivating": "Pagamento recebido. Seu acesso está sendo restaurado. Atualize esta página em instantes.",
+    "chipDays": "Teste grátis: faltam {n} dias · Ver plano",
+    "chipUrgentDays": "Teste grátis: faltam {n} dias · Assinar",
+    "chipLastDay": "Teste grátis: último dia · Assinar"
   },
   "secretary": {
     "notConnectedTitle": "Sua conta ainda não está conectada a uma clínica",
@@ -803,5 +813,15 @@
     "errorGeneric": "Algo deu errado. Tente novamente ou escreva para {email}.",
     "errorTooManyAttempts": "Já recebemos várias solicitações. Tente de novo amanhã ou escreva para {email}.",
     "errorInvalidEmail": "Informe um endereço de e-mail válido."
+  },
+  "firstRun": {
+    "scheduleEmptyTitle": "Nenhuma consulta ainda.",
+    "scheduleEmptyBody": "Marque sua primeira consulta ou compartilhe seu link de convite para que pacientes possam solicitar uma.",
+    "bookAppointment": "Marcar consulta",
+    "shareInviteLink": "Compartilhar link de convite",
+    "linkCopied": "Link copiado!",
+    "paymentsEmptyTitle": "Nenhum pagamento ainda.",
+    "paymentsEmptyBody": "Os pagamentos das suas consultas aparecerão aqui.",
+    "setYourPrices": "Definir seus preços"
   }
 }

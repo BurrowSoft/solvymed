@@ -617,6 +617,13 @@
       "statusProposal": "已提议新时间",
       "accept": "接受",
       "decline": "拒绝"
+    },
+    "professionalWelcome": {
+      "title": "欢迎使用 SolvyMed，{firstName}！",
+      "titleNoName": "欢迎使用 SolvyMed！",
+      "body": "只需几个简单步骤即可设置您的诊所，然后预约第一位患者。",
+      "startSetup": "开始设置",
+      "skip": "以后再说"
     }
   },
   "myAppointments": {
@@ -696,7 +703,10 @@
     "portalUnavailable": "目前无法打开银行卡管理。请联系 support@solvymed.com。",
     "portalError": "无法打开银行卡管理，请重试。",
     "errorPaymentFailed": "您上次的付款失败了。请更新银行卡，而不是开始新的订阅。",
-    "paymentActivating": "已收到付款。正在恢复您的访问权限，请稍后刷新此页面。"
+    "paymentActivating": "已收到付款。正在恢复您的访问权限，请稍后刷新此页面。",
+    "chipDays": "免费试用：剩余 {n} 天 · 查看方案",
+    "chipUrgentDays": "免费试用：剩余 {n} 天 · 立即订阅",
+    "chipLastDay": "免费试用：最后一天 · 立即订阅"
   },
   "secretary": {
     "notConnectedTitle": "尚未连接到诊所",
@@ -803,5 +813,15 @@
     "errorGeneric": "出错了。请重试，或发送邮件至 {email}。",
     "errorTooManyAttempts": "我们已收到多次请求。请明天再试，或发送邮件至 {email}。",
     "errorInvalidEmail": "请输入有效的邮箱地址。"
+  },
+  "firstRun": {
+    "scheduleEmptyTitle": "还没有预约。",
+    "scheduleEmptyBody": "预约您的第一位患者，或分享邀请链接让患者提交预约请求。",
+    "bookAppointment": "新建预约",
+    "shareInviteLink": "分享邀请链接",
+    "linkCopied": "链接已复制！",
+    "paymentsEmptyTitle": "还没有付款记录。",
+    "paymentsEmptyBody": "您预约的付款记录将显示在这里。",
+    "setYourPrices": "设置价格"
   }
 }

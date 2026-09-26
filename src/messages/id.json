@@ -617,6 +617,13 @@
       "statusProposal": "Waktu baru diusulkan",
       "accept": "Terima",
       "decline": "Tolak"
+    },
+    "professionalWelcome": {
+      "title": "Selamat datang di SolvyMed, {firstName}!",
+      "titleNoName": "Selamat datang di SolvyMed!",
+      "body": "Mari siapkan klinik Anda dalam beberapa langkah singkat, agar Anda bisa membuat janji temu pertama.",
+      "startSetup": "Mulai penyiapan",
+      "skip": "Nanti saja"
     }
   },
   "myAppointments": {
@@ -696,7 +703,10 @@
     "portalUnavailable": "Saat ini pengelolaan kartu tidak dapat dibuka. Silakan hubungi support@solvymed.com.",
     "portalError": "Tidak dapat membuka pengelolaan kartu. Silakan coba lagi.",
     "errorPaymentFailed": "Pembayaran terakhir Anda gagal. Perbarui kartu Anda alih-alih memulai langganan baru.",
-    "paymentActivating": "Pembayaran diterima. Akses Anda sedang dipulihkan, silakan muat ulang halaman ini sebentar lagi."
+    "paymentActivating": "Pembayaran diterima. Akses Anda sedang dipulihkan, silakan muat ulang halaman ini sebentar lagi.",
+    "chipDays": "Uji coba gratis: sisa {n} hari · Lihat paket",
+    "chipUrgentDays": "Uji coba gratis: sisa {n} hari · Berlangganan",
+    "chipLastDay": "Uji coba gratis: hari terakhir · Berlangganan"
   },
   "secretary": {
     "notConnectedTitle": "Belum terhubung ke klinik",
@@ -803,5 +813,15 @@
     "errorGeneric": "Terjadi kesalahan. Coba lagi atau kirim email ke {email}.",
     "errorTooManyAttempts": "Kami sudah menerima beberapa permintaan. Coba lagi besok, atau kirim email ke {email}.",
     "errorInvalidEmail": "Masukkan alamat email yang valid."
+  },
+  "firstRun": {
+    "scheduleEmptyTitle": "Belum ada janji temu.",
+    "scheduleEmptyBody": "Buat janji temu pertama Anda, atau bagikan tautan undangan agar pasien bisa mengajukan janji temu.",
+    "bookAppointment": "Buat janji temu",
+    "shareInviteLink": "Bagikan tautan undangan",
+    "linkCopied": "Tautan disalin!",
+    "paymentsEmptyTitle": "Belum ada pembayaran.",
+    "paymentsEmptyBody": "Pembayaran dari janji temu Anda akan muncul di sini.",
+    "setYourPrices": "Atur harga Anda"
   }
 }

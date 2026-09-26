@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import Link from "next/link";
 import { PeriodFilter, MarkPaidButton, MarkUnpaidButton } from "./PaymentsClient";
 import { clinicDate, getClinicTimeZone, previousMonthRange, weekRange } from "@/lib/clinicTime";
 
@@ -31,9 +32,10 @@ export default async function PaymentsPage({
   const { period: periodParam } = await searchParams;
   const period: Period = (["week", "month", "last_month", "all"].includes(periodParam ?? "") ? periodParam : "month") as Period;
 
-  const [supabase, t] = await Promise.all([
+  const [supabase, t, tFirstRun] = await Promise.all([
     createClient(),
     getTranslations("paymentsPage"),
+    getTranslations("firstRun"),
   ]);
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
@@ -72,6 +74,41 @@ export default async function PaymentsPage({
     consultation_type: string; payment_amount?: number; payment_type: string;
   }[];
   const paid = (paidResult.data ?? []) as typeof pending;
+
+  // No payment of any period yet: the first-run empty state instead of two
+  // empty columns. Only checked when the chosen period itself is empty.
+  if (pending.length === 0 && paid.length === 0) {
+    const { count, error: countError } = await supabase
+      .from("appointments")
+      .select("id", { count: "exact", head: true })
+      .eq("professional_id", effectiveProfId)
+      .in("payment_status", ["pending", "paid"])
+      .neq("status", "blocked");
+    if (!countError && (count ?? 0) === 0) {
+      const prefix = locale === "en" ? "" : `/${locale}`;
+      return (
+        <div className="p-6 lg:p-8 max-w-5xl">
+          <div className="mb-6">
+            <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
+            <p className="text-sm text-slate-500 mt-0.5">{t("subtitle")}</p>
+          </div>
+          <div className="rounded-2xl border border-slate-100 bg-white p-12 text-center">
+            <p className="font-semibold text-slate-700">{tFirstRun("paymentsEmptyTitle")}</p>
+            <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">{tFirstRun("paymentsEmptyBody")}</p>
+            {/* Prices live in the doctor's settings, which a secretary can't edit. */}
+            {!isSecretary && (
+              <Link
+                href={`${prefix}/dashboard/settings`}
+                className="mt-6 inline-flex items-center justify-center rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-teal-700"
+              >
+                {tFirstRun("setYourPrices")}
+              </Link>
+            )}
+          </div>
+        </div>
+      );
+    }
+  }
 
   const totalPending = pending.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
   const totalPaid = paid.reduce((s, p) => s + (p.payment_amount ?? 0), 0);

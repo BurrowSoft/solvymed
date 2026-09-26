@@ -617,6 +617,13 @@
       "statusProposal": "Nuovo orario proposto",
       "accept": "Accetta",
       "decline": "Rifiuta"
+    },
+    "professionalWelcome": {
+      "title": "Benvenuto su SolvyMed, {firstName}!",
+      "titleNoName": "Benvenuto su SolvyMed!",
+      "body": "Configuriamo il tuo studio in pochi passaggi, così potrai fissare il tuo primo appuntamento.",
+      "startSetup": "Inizia la configurazione",
+      "skip": "Più tardi"
     }
   },
   "myAppointments": {
@@ -696,7 +703,10 @@
     "portalUnavailable": "Al momento non è possibile aprire la gestione della carta. Contatta support@solvymed.com.",
     "portalError": "Impossibile aprire la gestione della carta. Riprova.",
     "errorPaymentFailed": "Il tuo ultimo pagamento non è andato a buon fine. Aggiorna la carta invece di avviare un nuovo abbonamento.",
-    "paymentActivating": "Pagamento ricevuto. Il tuo accesso è in fase di ripristino. Aggiorna questa pagina tra poco."
+    "paymentActivating": "Pagamento ricevuto. Il tuo accesso è in fase di ripristino. Aggiorna questa pagina tra poco.",
+    "chipDays": "Prova gratuita: {n} giorni rimasti · Vedi il piano",
+    "chipUrgentDays": "Prova gratuita: {n} giorni rimasti · Abbonati",
+    "chipLastDay": "Prova gratuita: ultimo giorno · Abbonati"
   },
   "secretary": {
     "notConnectedTitle": "Non ancora collegato/a a uno studio",
@@ -803,5 +813,15 @@
     "errorGeneric": "Qualcosa è andato storto. Riprova o scrivi a {email}.",
     "errorTooManyAttempts": "Abbiamo già ricevuto diverse richieste. Riprova domani o scrivi a {email}.",
     "errorInvalidEmail": "Inserisci un indirizzo email valido."
+  },
+  "firstRun": {
+    "scheduleEmptyTitle": "Ancora nessun appuntamento.",
+    "scheduleEmptyBody": "Fissa il tuo primo appuntamento o condividi il tuo link di invito, così i pazienti potranno richiederne uno.",
+    "bookAppointment": "Fissa un appuntamento",
+    "shareInviteLink": "Condividi il link di invito",
+    "linkCopied": "Link copiato!",
+    "paymentsEmptyTitle": "Ancora nessun pagamento.",
+    "paymentsEmptyBody": "I pagamenti dei tuoi appuntamenti appariranno qui.",
+    "setYourPrices": "Imposta i tuoi prezzi"
   }
 }

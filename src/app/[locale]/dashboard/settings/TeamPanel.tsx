@@ -35,7 +35,6 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
   const t = useTranslations("secretary");
   const router = useRouter();
   const { locale } = useParams<{ locale: string }>();
-  const prefix = locale === "en" ? "" : `/${locale}`;
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [created, setCreated] = useState<Created | null>(null);
@@ -48,9 +47,10 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
 
   // No email in the link: URLs end up in history, logs and referrers. The
   // invite page shows a masked hint instead, and the server matches the
-  // email on accept.
+  // email on accept. Unprefixed, like every link shared with someone else:
+  // the recipient's own browser language decides.
   const shareLink = (c: Created) =>
-    `${window.location.origin}${prefix}/join/secretary/${encodeURIComponent(c.code)}`;
+    `${window.location.origin}/join/secretary/${encodeURIComponent(c.code)}`;
 
   function invite(targetEmail: string) {
     setError("");
