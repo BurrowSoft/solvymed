@@ -7,6 +7,7 @@ import { getTentativeBookings } from "./booking-actions";
 import { CalendarView, type CalendarAppt } from "./CalendarView";
 import { ShareInviteLinkButton } from "@/components/ShareInviteLinkButton";
 import { clinicDate, getClinicTimeZone } from "@/lib/clinicTime";
+import { formatBRL } from "@/lib/money";
 
 function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
 function addDaysTo(dateStr: string, n: number) {
@@ -220,7 +221,7 @@ export default async function SchedulePage({
                       <div className="mt-2 flex items-center gap-3">
                         <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
                           {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}
-                          {appt.payment_amount ? ` · R$ ${appt.payment_amount.toFixed(2)}` : ""}
+                          {appt.payment_amount ? ` · ${formatBRL(appt.payment_amount)}` : ""}
                         </span>
                       </div>
                     )}

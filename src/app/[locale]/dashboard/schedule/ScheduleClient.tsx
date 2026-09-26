@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime } from "./actions";
 import { generatePixString, pixQrUrl } from "@/lib/pix";
 import { toLocalDateString } from "@/lib/slots";
+import { formatBRL } from "@/lib/money";
 
 type Patient = { id: string; full_name: string };
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
@@ -298,7 +299,7 @@ export function NewAppointmentButton({ patients, defaultDate, procedures, label 
               <Select name="consultation_type" value={selectedProcName} onChange={handleProcChange} required>
                 {procedures.map(p => (
                   <option key={p.id} value={p.name}>
-                    {p.name}{p.price ? ` · R$ ${p.price.toFixed(2)}` : ""}
+                    {p.name}{p.price ? ` · ${formatBRL(p.price)}` : ""}
                   </option>
                 ))}
               </Select>

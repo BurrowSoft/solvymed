@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { AppointmentStatusSelect, DeleteAppointmentButton } from "./ScheduleClient";
 import { toLocalDateString } from "@/lib/slots";
+import { formatBRL } from "@/lib/money";
 
 export type CalendarAppt = {
   id: string;
@@ -393,7 +394,7 @@ export function CalendarView({
               {selected.payment_amount != null && (
                 <div className={`flex items-center gap-2 text-xs font-semibold ${selected.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 shrink-0"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                  {selected.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")} · R$ {selected.payment_amount.toFixed(2)}
+                  {selected.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")} · {formatBRL(selected.payment_amount)}
                 </div>
               )}
               {selected.notes && <p className="text-[11px] text-slate-400 italic pl-5">{selected.notes}</p>}
