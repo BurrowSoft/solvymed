@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getTranslations } from "next-intl/server";
 import { BookingClient } from "./BookingClient";
 
 export default async function BookPage({
@@ -27,14 +28,28 @@ export default async function BookPage({
   });
   const initialManualProfile = (manualData as Array<{ full_name: string | null; phone: string | null; birth_date: string | null; cpf: string | null }> | null)?.[0] ?? null;
 
+  // The header shows who the booking is with. Look it up server-side
+  // (SECURITY DEFINER; a patient can't read professionals directly) rather
+  // than relying on the ?name= link param, which is missing or empty on
+  // some entry points. The param stays a fallback, and a translated neutral
+  // label replaces the old hard-coded English "Doctor".
+  const [{ data: profRaw }, t] = await Promise.all([
+    supabase.rpc("get_professional_public_info", { p_professional_id: professionalId }).maybeSingle(),
+    getTranslations({ locale, namespace: "book" }),
+  ]);
+  const prof = profRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null } | null;
+  const displayName = prof?.full_name?.trim() || name?.trim() || t("professionalFallback");
+  const displaySpecialty = prof?.specialty?.trim() || specialty || "";
+  const displayClinic = prof?.clinic_name?.trim() || clinicName || undefined;
+
   // Working hours are fetched client-side via get_professional_working_hours()
   // SECURITY DEFINER RPC — cannot read professionals table directly as a patient (RLS).
   return (
     <BookingClient
       professionalId={professionalId}
-      professionalName={name ?? "Doctor"}
-      specialty={specialty ?? ""}
-      clinicName={clinicName}
+      professionalName={displayName}
+      specialty={displaySpecialty}
+      clinicName={displayClinic}
       patientAuthId={user.id}
       patientEmail={user.email ?? ""}
       locale={locale}

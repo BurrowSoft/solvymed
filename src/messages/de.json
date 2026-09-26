@@ -466,7 +466,8 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n} Min.",
     "customTime": "Benutzerdefinierte Zeit",
-    "orCustomTime": "Oder eigene Uhrzeit"
+    "orCustomTime": "Oder eigene Uhrzeit",
+    "professionalFallback": "Praxis"
   },
   "auth": {
     "login": {

@@ -466,7 +466,8 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n}分",
     "customTime": "カスタム時間",
-    "orCustomTime": "または時間を指定する"
+    "orCustomTime": "または時間を指定する",
+    "professionalFallback": "担当者"
   },
   "auth": {
     "login": {
