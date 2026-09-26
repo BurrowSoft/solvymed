@@ -4,6 +4,10 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  // Lint is advisory for now (existing findings; CI reports them without
+  // gating). Without this, `next build` would fail on lint errors now that
+  // ESLint is installed. Type errors still fail the build.
+  eslint: { ignoreDuringBuilds: true },
   async headers() {
     return [
       {
