@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { createClient } from "@/lib/supabase/client";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import Link from "next/link";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
@@ -28,10 +28,21 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const supabase = createClient();
+    // Implicit flow for the recovery email only. The app's default browser
+    // client uses PKCE, whose link returns ?code= that can only be
+    // exchanged in the browser that asked (the verifier is stored there),
+    // so a link opened in a phone's mail app would fail. Implicit links
+    // return #access_token=…, which the reset page reads in any browser.
+    const supabase = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { auth: { flowType: "implicit", persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } },
+    );
     const { error: authError } = await supabase.auth.resetPasswordForEmail(
       email,
-      { redirectTo: "https://www.solvymed.com/en/auth/reset-password" }
+      // Keep the user's language. The locale is explicit even for en, so a
+      // fresh browser (no NEXT_LOCALE cookie) isn't geo-redirected elsewhere.
+      { redirectTo: `https://www.solvymed.com/${locale}/auth/reset-password` }
     );
     setLoading(false);
     if (authError) {

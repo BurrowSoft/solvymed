@@ -56,10 +56,12 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/auth/login`, req.url));
   }
 
-  // First-visit geo-redirect
-  const hasLocalePrefix = (routing.locales as readonly string[]).some(
-    (l) => l !== routing.defaultLocale && pathname.startsWith(`/${l}`)
-  );
+  // First-visit geo-redirect. Only for paths with no locale segment at all:
+  // an explicit /en/... (the default locale, e.g. from an email link) must
+  // not get a second prefix (/th/en/... is a 404). Matching the whole first
+  // segment also stops /id from matching paths like /identity.
+  const firstSegment = pathname.split("/")[1] ?? "";
+  const hasLocalePrefix = (routing.locales as readonly string[]).includes(firstSegment);
   const isApiOrAsset = /^\/(api|_next|favicon|.*\..*)/.test(pathname);
   const ua = req.headers.get("user-agent") ?? "";
   const isBot = /googlebot|bingbot|yandexbot|baiduspider|applebot|facebookexternalhit|twitterbot/i.test(ua);
@@ -93,7 +95,15 @@ export async function middleware(req: NextRequest) {
     return res;
   }
 
-  return intlMiddleware(req);
+  const intlRes = intlMiddleware(req);
+  // An explicit /en/... is a language choice (e.g. an email link). next-intl
+  // strips it to the unprefixed URL but only writes NEXT_LOCALE when the
+  // browser's language differs, so without this a fresh browser would hit
+  // the geo-redirect above on the next request and lose English.
+  if (firstSegment === routing.defaultLocale) {
+    intlRes.cookies.set("NEXT_LOCALE", routing.defaultLocale, { maxAge: 60 * 60 * 24 * 365, path: "/", sameSite: "lax" });
+  }
+  return intlRes;
 }
 
 export const config = {
