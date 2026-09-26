@@ -571,11 +571,11 @@ context**, with no cookies and no `NEXT_LOCALE`.
 
 | ID | Step | Expected result |
 |---|---|---|
-| H-1 📱 | Open `/pt-BR/?utm_source=facebook&utm_medium=paid&utm_campaign=launch_br&utm_content=test` | The landing page renders in pt-BR, the LGPD banner shows (G-6), and nothing overflows. **With marketing consent accepted:** the `utm_*` values and `document.referrer` are captured into **first-party client storage** (a cookie or localStorage; note which one web dev chose). **With consent declined or not yet given:** nothing is captured. |
+| H-1 📱⏳ | Open `/pt-BR/?utm_source=facebook&utm_medium=paid&utm_campaign=launch_br&utm_content=test` | The landing page renders in pt-BR, the LGPD banner shows (G-6), and nothing overflows. **With marketing consent accepted:** the `utm_*` values and `document.referrer` are captured into **first-party client storage** (a cookie or localStorage; note which one web dev chose). **With consent declined or not yet given:** nothing is captured. |
 | H-2 📱 | CTA → signup | The signup opens in pt-BR with the doctor role by default ("Profissional de saúde") and the form usable on a phone keyboard. The UTM attribution is still there. |
 | H-3 📱 | Sign up → "Verifique seu e-mail" → confirm, via the callback `token_hash` | The visitor lands on the dashboard in **pt-BR**, not en. |
 | H-4 📱 | First run | The welcome page (G-1) and the setup checklist (G-2) show. The first step's deep link works on the phone. The trial chip (G-4) shows about 15 days. |
-| H-5 | Attribution check | **Consent accepted:** after signup, the server-owned table **`signup_attribution`**, keyed on `user_id`, has the `utm_*` values and referrer from H-1, checked through REST with the service role. It must **not** be in auth `user_metadata`, which the client can write. **Consent declined:** no `signup_attribution` row (or an empty one, per the design), no marketing event fires, and the signup still works. **Tamper checks:** the user's own session can't insert, update or read another user's `signup_attribution` row through REST, which should return 403 or `[]`. Forged `utm_*` values can't be written for someone else's `user_id`. |
+| H-5 ⏳ | Attribution check (**pending**: `signup_attribution` and the UTM capture don't exist yet, so this can't run until measurement ships; an item still ⏳ at RC counts as ❌ per the G rule) | **Consent accepted:** after signup, the server-owned table **`signup_attribution`**, keyed on `user_id`, has the `utm_*` values and referrer from H-1, checked through REST with the service role. It must **not** be in auth `user_metadata`, which the client can write. **Consent declined:** no `signup_attribution` row (or an empty one, per the design), no marketing event fires, and the signup still works. **Tamper checks:** the user's own session can't insert, update or read another user's `signup_attribution` row through REST, which should return 403 or `[]`. Forged `utm_*` values can't be written for someone else's `user_id`. |
 
 ### L-1. Live-mode Stripe check on production (at release time, with the user)
 
@@ -2684,6 +2684,55 @@ and ar, and nothing else in `src/messages`; I checked the diff.
   Arabic "هذا السجل".
 - **Parsing:** all 15 files parse with 26 namespaces, and es and pt-BR are
   unchanged.
+
+## Production auth-link check (2026-09-26, www.solvymed.com)
+
+Run against **production** with real Supabase email links, built with the
+admin `generate_link` API and followed through GoTrue's real `/verify`
+endpoint, on throwaway `e2e-test-opus-prodredir-*` accounts.
+
+**Fixed tonight: the Supabase redirect allow-list.** Before, it only
+allowed `https://www.solvymed.com/*/auth/confirm`, so Supabase dropped any
+other `redirect_to` and fell back to the Site URL. Mob dev added
+`https://www.solvymed.com/**`. Checked after the change:
+
+| `redirect_to` | `/verify` now redirects to |
+|---|---|
+| `/api/auth/callback` (signup) | `/api/auth/callback#…` ✅ |
+| `/en/auth/reset-password` | `/en/auth/reset-password#…` ✅ (but see the 404 below) |
+| `/pt-BR/auth/reset-password` | `/pt-BR/auth/reset-password#…` ✅ |
+| `/auth/reset-password` | `/auth/reset-password#…` ✅ |
+| `https://example.com/…` (control, not allowed) | `https://www.solvymed.com#…`, the home page |
+
+The control shows the fallback that affected the callback and reset links
+before the fix. Email verification itself succeeded, but the user landed on
+the home page, so **`/api/auth/callback` never ran on prod**. That's where
+patient invite-code linking and secretary invite acceptance happen, so
+those never completed from an email link. The affected real accounts can't
+be counted now: prod was cleaned to test fixtures tonight, with the user's
+approval.
+
+**❌ Still broken on master: password reset returns a 404.**
+- `forgot-password` hard-codes
+  `redirectTo: https://www.solvymed.com/en/auth/reset-password`.
+- Prod's locale middleware picks the locale from the **visitor's
+  location**, not the browser, and rewrites `/en/auth/reset-password` to
+  `/<country>/en/auth/reset-password`, which is a **404**. It did this for
+  browser locales en-US, pt-BR and th-TH (`/th/en/…` from this machine).
+- `/pt-BR/auth/reset-password` works **end to end on prod**: the form
+  loads, the hash tokens survive, "Senha atualizada", the new password
+  logs in and the old one is refused.
+- Unprefixed `/auth/reset-password` works, but opens in the location's
+  language.
+- The fix is in #18 (pt-BR goes to `/pt-BR/…`, en goes unprefixed). I've
+  suggested shipping it as a hotfix ahead of #18, which is waiting on the
+  archive migration.
+
+**Not verified end to end: signup confirmation.** The real signup email
+uses PKCE (`?code=`), which is tied to the signing-up browser. An
+admin-generated link uses the implicit flow (a hash), which the callback
+doesn't read. So only the allow-list side is proven here. Re-check A-3 at
+RC with a real inbox.
 
 ## iOS — open question
 
