@@ -35,7 +35,7 @@ export default function AccountDeletePage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const row = deletionRequestRow(email, reason);
+    const row = deletionRequestRow(email, reason, locale);
     if (!row.email) {
       setLoading(false);
       setError(t("errorEmailRequired"));
