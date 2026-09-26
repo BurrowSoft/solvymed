@@ -1,6 +1,6 @@
 // Strips personal data from URLs before they reach Vercel Analytics:
-// invite and join codes in paths, invite codes and emails in query strings,
-// and the whole fragment (password-reset links carry #access_token=…).
+// invite and join codes in paths, every query value that isn't known to be
+// safe, and the whole fragment (password-reset links carry #access_token=…).
 // Returns a same-origin URL string, or null to drop the event if the URL
 // can't be parsed.
 
@@ -11,7 +11,15 @@ const CODE_PATHS = [
   /^((?:\/[A-Za-z-]+)?\/invite\/)[^/]+/,
 ];
 
-const SENSITIVE_PARAMS = ["email", "secretary", "join", "code", "token", "token_hash"];
+// Query values are redacted unless the key is on this list. An allowlist,
+// because params keep appearing that carry personal data (search terms with
+// patient names or CPFs, ?next= holding an invite path, emails, codes,
+// tokens), and a blocklist misses the next one. Keys stay visible, so the
+// route shape is still analysable.
+const SAFE_PARAMS = new Set([
+  "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
+  "date", "week", "view", "tab", "archived", "locale", "country",
+]);
 
 export function redactAnalyticsUrl(raw: string): string | null {
   let url: URL;
@@ -26,8 +34,8 @@ export function redactAnalyticsUrl(raw: string): string | null {
       break;
     }
   }
-  for (const key of SENSITIVE_PARAMS) {
-    if (url.searchParams.has(key)) url.searchParams.set(key, "[redacted]");
+  for (const key of new Set(url.searchParams.keys())) {
+    if (!SAFE_PARAMS.has(key)) url.searchParams.set(key, "[redacted]");
   }
   url.hash = "";
   return url.toString();

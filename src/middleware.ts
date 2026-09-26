@@ -29,8 +29,11 @@ const intlMiddleware = createMiddleware(routing);
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
 
-  // Supabase session refresh
-  let response = NextResponse.next({ request: req });
+  // Supabase session refresh. The refreshed auth cookies must reach the
+  // browser on whichever response this middleware finally returns (the
+  // next-intl response, a redirect…), not on a response that's thrown away,
+  // or a rotated refresh token is never saved and the session can drop.
+  const refreshedCookies: { name: string; value: string; options?: Parameters<NextResponse["cookies"]["set"]>[2] }[] = [];
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -38,22 +41,24 @@ export async function middleware(req: NextRequest) {
       cookies: {
         getAll() { return req.cookies.getAll(); },
         setAll(cookiesToSet) {
+          // Also visible to the rest of this request (server components).
           cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
-          response = NextResponse.next({ request: req });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
+          refreshedCookies.push(...cookiesToSet);
         },
       },
     },
   );
   const { data: { user } } = await supabase.auth.getUser();
+  const withAuthCookies = (res: NextResponse) => {
+    refreshedCookies.forEach(({ name, value, options }) => res.cookies.set(name, value, options));
+    return res;
+  };
 
   // Protect dashboard
   if (pathname.includes("/dashboard") && !user) {
     const segments = pathname.split("/");
     const locale = (routing.locales as readonly string[]).includes(segments[1]) ? segments[1] : "en";
-    return NextResponse.redirect(new URL(`/${locale}/auth/login`, req.url));
+    return withAuthCookies(NextResponse.redirect(new URL(`/${locale}/auth/login`, req.url)));
   }
 
   // First-visit geo-redirect. Only for paths with no locale segment at all:
@@ -68,6 +73,7 @@ export async function middleware(req: NextRequest) {
   const isPersonalLink = /^(?:\/[A-Za-z-]+)?\/(?:invite|join)(?:\/|$)/.test(pathname);
   // Applied to every response below.
   const finalize = (res: NextResponse) => {
+    withAuthCookies(res);
     if (isPersonalLink) res.headers.set("X-Robots-Tag", "noindex, nofollow");
     // An explicit /en/... is a language choice (e.g. an email link).
     // next-intl strips it to the unprefixed URL but only writes NEXT_LOCALE
