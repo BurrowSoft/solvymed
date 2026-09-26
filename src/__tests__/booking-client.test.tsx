@@ -122,18 +122,18 @@ function setupMocks({
 const FULL_PROFILE: ProfileData = { full_name: "Test Patient", phone: "11999887766", birth_date: "1990-01-01" };
 
 describe("BookingClient", () => {
-  // The booking page hides today's slots that have already started, so the
-  // 9:00 slot these tests click only exists before 9 a.m. Pin the clock to an
-  // early-morning time (faking Date only, so waitFor's timers still run).
-  beforeEach(() => {
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(new Date(2030, 0, 14, 6, 0, 0));
-  });
   afterEach(() => {
     vi.useRealTimers();
   });
 
   beforeEach(() => {
+    // The booking page hides today's slots that have already started, so
+    // the 9:00 slot these tests click only exists before 9 a.m. Pin the
+    // clock to an early-morning time (faking Date only, so waitFor's timers
+    // still run).
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2030, 0, 14, 6, 0, 0));
+
     mockPush.mockClear();
     mockBack.mockClear();
     mockRpc.mockClear();

@@ -8,7 +8,11 @@ const compat = new FlatCompat({ baseDirectory: dirname(fileURLToPath(import.meta
 
 export default [
   {
-    ignores: [".next/**", "node_modules/**", "playwright-report/**", "test-results/**", "next-env.d.ts"],
+    // Flat config doesn't read .gitignore; keep generated output out.
+    ignores: [
+      ".next/**", "node_modules/**", "out/**", "build/**", "coverage/**", ".vercel/**",
+      "playwright-report/**", "test-results/**", "eslint-report.json", "next-env.d.ts",
+    ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];

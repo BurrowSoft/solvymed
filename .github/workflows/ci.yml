@@ -10,7 +10,9 @@ permissions:
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # Superseded PR runs are cancelled; master runs never are, so every merge
+  # commit gets its own CI result.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   test:
@@ -18,8 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           # Matches the Vercel project's Node.js version (24.x).
           node-version: 24
@@ -28,19 +30,22 @@ jobs:
       - run: npm run typecheck
       - run: npm test
 
-  lint:
-    name: Lint (advisory)
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      # Reported, not gating, until the existing findings are cleaned up:
-      # the step may fail, the job stays green, and the findings still show
-      # as annotations.
-      - run: npm run lint
+      # Lint is advisory until the existing findings are cleaned up: it may
+      # fail without failing the job. To make it gating, remove this
+      # continue-on-error AND eslint.ignoreDuringBuilds in next.config.ts
+      # together. GitHub shows only ~10 errors + 10 warnings as annotations,
+      # so the totals go to the job summary.
+      - name: Lint (advisory)
+        if: always()
         continue-on-error: true
+        run: |
+          npx eslint . -f json -o eslint-report.json || true
+          node -e '
+            const r = require("./eslint-report.json");
+            const e = r.reduce((n, f) => n + f.errorCount, 0);
+            const w = r.reduce((n, f) => n + f.warningCount, 0);
+            const s = `### Lint (advisory)\n\n${e} errors, ${w} warnings\n`;
+            require("fs").appendFileSync(process.env.GITHUB_STEP_SUMMARY, s);
+            console.log(s);
+          '
+          npm run lint
