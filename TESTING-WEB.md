@@ -9,6 +9,23 @@ repos).
 
 ## Merge gate
 
+**Current gate (since 2026-09-26), all three required on the exact HEAD being merged:**
+1. **Code review:** web tester (never the PR's author) runs Claude
+   `/code-review high <PR#> --comment` on the HEAD. Only blocking findings
+   (correctness, security, data loss, crash, real UX break) must be fixed;
+   the rest are tagged follow-up. Re-rounds review only the changed code.
+   Record it here as "review: Claude /code-review, clean at `<SHA>`".
+2. **Web tester's 🟢** in this file, scoped to that SHA (a docs-only
+   addendum on top is fine).
+3. **CI:** the required "Typecheck and unit tests" check is green (branch
+   protection enforces it).
+
+GitHub Copilot review is **retired** (user decision, 2026-09-26), so
+don't request `@copilot`. Mentions of Copilot in the entries below are
+historical records of how those PRs were reviewed.
+
+Merging to `master` deploys to production (www.solvymed.com).
+
 **Do not merge a feature branch until its row below says 🟢.** A row only
 gets 🟢 after its Playwright flow(s) have actually been *run* against a real
 browser and passed — not just written. If a feature has no row yet, its E2E
