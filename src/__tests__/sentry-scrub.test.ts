@@ -9,6 +9,15 @@ describe("scrubText", () => {
     expect(scrubText("call +55 11 99999-1234")).toBe("call [phone]");
   });
 
+  it("cuts URLs inside free text down to their path", () => {
+    expect(scrubText("fetch failed: https://www.solvymed.com/pt-BR/dashboard/patients?q=Maria%20Silva#x (500)"))
+      .toBe("fetch failed: https://www.solvymed.com/pt-BR/dashboard/patients (500)");
+    expect(scrubText("GET https://x.supabase.co/rest/v1/patients?full_name=ilike.%25Maria%25&cpf=eq.12345678900 failed"))
+      .toBe("GET https://x.supabase.co/rest/v1/patients failed");
+    expect(scrubText("opened https://www.solvymed.com/pt-BR/invite/AB12CD from mail"))
+      .toBe("opened https://www.solvymed.com/pt-BR/invite/[code] from mail");
+  });
+
   it("keeps ordinary error text", () => {
     expect(scrubText('duplicate key value violates unique constraint "patients_professional_cpf_key"')).toBe(
       'duplicate key value violates unique constraint "patients_professional_cpf_key"',

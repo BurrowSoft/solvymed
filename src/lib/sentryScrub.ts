@@ -44,8 +44,17 @@ const CPF = /\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g;
 // Phone-like runs: 8+ digits, optionally with +, spaces, dots, dashes, parens.
 const PHONE = /\+?\(?\d[\d\s().-]{7,}\d/g;
 
+// Absolute URLs inside free text (error messages, breadcrumb messages).
+const URL_IN_TEXT = /https?:\/\/[^\s"'<>`)\]]+/g;
+
 export function scrubText(text: string): string {
-  return text.replace(EMAIL, "[email]").replace(CPF, "[cpf]").replace(PHONE, "[phone]");
+  // URLs first, cut down to their path (no query or fragment, invite codes
+  // redacted), before the digit patterns below could mangle them.
+  return text
+    .replace(URL_IN_TEXT, (url) => scrubUrl(url) ?? "[url]")
+    .replace(EMAIL, "[email]")
+    .replace(CPF, "[cpf]")
+    .replace(PHONE, "[phone]");
 }
 
 function scrubUrl(url: string | undefined): string | undefined {
