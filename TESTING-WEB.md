@@ -2661,6 +2661,30 @@ to an old SHA, is resolved by this addendum. **Review status: not yet
 clean.** It's waiting on web dev's fixes or answers; I'll re-run it on the
 new HEAD.
 
+**Addendum: CI 🟢 at `4d1f66d`; review not clean.**
+- **What changed:** `4d1f66d` answered all 9 round-1 threads. CI is now a
+  single "Typecheck and unit tests" job, with lint as an advisory
+  **step** inside it that reports totals in the job summary. Actions are
+  pinned to SHAs, and concurrency cancels only PR runs.
+- **CI:** run `36214247909` is green. `npm ci`, typecheck, the tests
+  (78/78) and the Lint (advisory) step all pass, and lint still reports
+  54 problems (35 errors, 19 warnings). There's no separate "Lint
+  (advisory)" check any more.
+- **Review round 2: Claude `/code-review high` at `4d1f66d`** (Copilot
+  quota exhausted). **6 new findings** were posted inline, three of them
+  real:
+  - The concurrency group still loses a *queued* master run when a third
+    merge lands (GitHub keeps one pending run per group), so group pushes
+    by SHA.
+  - `|| true` masks an ESLint crash (exit 2) as a green step with no
+    findings.
+  - `if: always()` runs lint after a failed `npm ci`, where `npx eslint`
+    would fetch ESLint 10.
+  - Also: ESLint runs twice; the synced `packages/shared` copy gets
+    linted; and this entry described the old two-check layout, which this
+    addendum fixes.
+- **Review status: not clean.** I'll re-run it on the next HEAD.
+
 ## PR #21 (`hotfix/auth-links-locale`) — password reset 404 on prod; auth emails keep the language, 🟢 at `ce40aef`
 
 **Scope: exactly `ce40aef`.** This is the hotfix for the prod reset 404
