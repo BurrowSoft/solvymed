@@ -99,7 +99,7 @@ export default function ResetPasswordPage() {
 
   if (pageState === "success") {
     return (
-      <AuthPageShell>
+      <AuthPageShell languageSwitcher={false}>
         <AuthCard centered>
           <BrandMark />
           <IconBadge>
@@ -124,7 +124,7 @@ export default function ResetPasswordPage() {
 
   if (pageState === "error") {
     return (
-      <AuthPageShell>
+      <AuthPageShell languageSwitcher={false}>
         <AuthCard centered>
           <BrandMark />
           <h1 className="auth-heading">
@@ -143,7 +143,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <AuthPageShell>
+    <AuthPageShell languageSwitcher={false}>
       <AuthCard>
         <BrandMark />
 

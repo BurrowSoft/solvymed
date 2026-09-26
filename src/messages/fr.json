@@ -50,7 +50,10 @@
     "body": "Ce site web est en cours de développement. Le site complet de Solvymed sera bientôt disponible avec une documentation détaillée, les tarifs et des ressources d'assistance. En attendant, l'application est entièrement opérationnelle — téléchargez-la et commencez à gérer votre cabinet dès aujourd'hui."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. Tous droits réservés."
+    "copyright": "© 2026 Solvymed. Tous droits réservés.",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "legal": "Mentions légales"
   },
   "confirm": {
     "emailConfirmed": "Email confirmé !",
@@ -553,7 +556,8 @@
       "joiningAs": "Inscription en tant que {role} via lien d'invitation.",
       "joiningAsSecretary": "Inscription en tant que secrétaire via un lien d'invitation.",
       "secretaryNeedsInvite": "Secrétaire ? Demandez un lien d'invitation au cabinet où vous travaillez.",
-      "secretaryEmailMismatch": "Cet e-mail ne correspond pas à l'invitation, ou l'invitation n'est plus valide. Vérifiez l'e-mail ou demandez un nouveau lien au cabinet."
+      "secretaryEmailMismatch": "Cet e-mail ne correspond pas à l'invitation, ou l'invitation n'est plus valide. Vérifiez l'e-mail ou demandez un nouveau lien au cabinet.",
+      "consent": "En créant un compte, vous acceptez les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>."
     },
     "forgotPassword": {
       "title": "Mot de passe oublié ?",

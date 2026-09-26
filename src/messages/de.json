@@ -50,7 +50,10 @@
     "body": "Diese Website befindet sich im Aufbau. Die vollständige Solvymed-Website kommt bald mit ausführlicher Dokumentation, Preisen und Support-Ressourcen. In der Zwischenzeit ist die App vollständig einsatzbereit – laden Sie sie herunter und beginnen Sie noch heute, Ihre Praxis zu verwalten."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. Alle Rechte vorbehalten."
+    "copyright": "© 2026 Solvymed. Alle Rechte vorbehalten.",
+    "privacy": "Datenschutzerklärung",
+    "terms": "Nutzungsbedingungen",
+    "legal": "Rechtliches"
   },
   "confirm": {
     "emailConfirmed": "E-Mail bestätigt!",
@@ -553,7 +556,8 @@
       "joiningAs": "Beitreten als {role} über Einladungslink.",
       "joiningAsSecretary": "Registrierung für das Praxisteam über einen Einladungslink.",
       "secretaryNeedsInvite": "Im Praxisteam tätig? Bitten Sie Ihre Praxis um einen Einladungslink.",
-      "secretaryEmailMismatch": "Diese E-Mail-Adresse passt nicht zur Einladung, oder die Einladung ist nicht mehr gültig. Prüfen Sie die Adresse oder bitten Sie die Praxis um einen neuen Link."
+      "secretaryEmailMismatch": "Diese E-Mail-Adresse passt nicht zur Einladung, oder die Einladung ist nicht mehr gültig. Prüfen Sie die Adresse oder bitten Sie die Praxis um einen neuen Link.",
+      "consent": "Mit der Erstellung eines Kontos stimmen Sie den <terms>Nutzungsbedingungen</terms> und der <privacy>Datenschutzerklärung</privacy> zu."
     },
     "forgotPassword": {
       "title": "Passwort vergessen?",

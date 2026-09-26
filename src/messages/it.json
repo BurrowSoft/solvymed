@@ -50,7 +50,10 @@
     "body": "Questo sito è in fase di sviluppo. Il sito completo di Solvymed sarà presto disponibile con documentazione dettagliata, prezzi e risorse di supporto. Nel frattempo, l'app è completamente operativa — scaricala e inizia a gestire il tuo studio oggi stesso."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. Tutti i diritti riservati."
+    "copyright": "© 2026 Solvymed. Tutti i diritti riservati.",
+    "privacy": "Informativa sulla privacy",
+    "terms": "Termini di servizio",
+    "legal": "Note legali"
   },
   "confirm": {
     "emailConfirmed": "Email confermata!",
@@ -553,7 +556,8 @@
       "joiningAs": "Accesso come {role} tramite link d'invito.",
       "joiningAsSecretary": "Ti stai registrando in segreteria tramite link di invito.",
       "secretaryNeedsInvite": "Lavori in segreteria? Chiedi un link di invito al tuo studio.",
-      "secretaryEmailMismatch": "Questa email non corrisponde all'invito, oppure l'invito non è più valido. Controlla l'email o chiedi un nuovo link allo studio."
+      "secretaryEmailMismatch": "Questa email non corrisponde all'invito, oppure l'invito non è più valido. Controlla l'email o chiedi un nuovo link allo studio.",
+      "consent": "Creando un account, accetti i <terms>Termini di servizio</terms> e l'<privacy>Informativa sulla privacy</privacy>."
     },
     "forgotPassword": {
       "title": "Password dimenticata?",

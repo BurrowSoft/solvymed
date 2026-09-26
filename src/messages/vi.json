@@ -50,7 +50,10 @@
     "body": "Trang web này đang được phát triển. Trang web đầy đủ của Solvymed sẽ sớm ra mắt với tài liệu chi tiết, bảng giá và tài nguyên hỗ trợ. Trong thời gian này, ứng dụng hoàn toàn hoạt động — tải xuống và bắt đầu quản lý phòng khám của bạn ngay hôm nay."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. Bảo lưu mọi quyền."
+    "copyright": "© 2026 Solvymed. Bảo lưu mọi quyền.",
+    "privacy": "Chính sách quyền riêng tư",
+    "terms": "Điều khoản dịch vụ",
+    "legal": "Thông tin pháp lý"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -553,7 +556,8 @@
       "joiningAs": "Tham gia với tư cách {role} qua liên kết mời.",
       "joiningAsSecretary": "Đăng ký làm thư ký qua liên kết mời.",
       "secretaryNeedsInvite": "Bạn là thư ký? Hãy xin bác sĩ một liên kết mời.",
-      "secretaryEmailMismatch": "Email này không khớp với lời mời, hoặc lời mời không còn hiệu lực. Hãy kiểm tra email hoặc xin phòng khám một liên kết mới."
+      "secretaryEmailMismatch": "Email này không khớp với lời mời, hoặc lời mời không còn hiệu lực. Hãy kiểm tra email hoặc xin phòng khám một liên kết mới.",
+      "consent": "Khi tạo tài khoản, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>."
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",

@@ -50,7 +50,10 @@
     "body": "Este site está em desenvolvimento. O site completo do Solvymed estará disponível em breve com documentação, preços e suporte detalhados. Enquanto isso, o app está totalmente funcional — baixe e comece a gerenciar sua clínica hoje."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. Todos os direitos reservados."
+    "copyright": "© 2026 Solvymed. Todos os direitos reservados.",
+    "privacy": "Política de Privacidade",
+    "terms": "Termos de Uso",
+    "legal": "Informações legais"
   },
   "confirm": {
     "emailConfirmed": "Email confirmado!",
@@ -553,7 +556,8 @@
       "joiningAs": "Entrando como {role} via link de convite.",
       "joiningAsSecretary": "Entrando na equipe de secretaria por link de convite.",
       "secretaryNeedsInvite": "Trabalha na secretaria? Peça um link de convite à clínica onde você trabalha.",
-      "secretaryEmailMismatch": "Este e-mail não corresponde ao convite, ou o convite não é mais válido. Confira o e-mail ou peça um novo link à clínica."
+      "secretaryEmailMismatch": "Este e-mail não corresponde ao convite, ou o convite não é mais válido. Confira o e-mail ou peça um novo link à clínica.",
+      "consent": "Ao criar uma conta, você concorda com os <terms>Termos de Uso</terms> e a <privacy>Política de Privacidade</privacy>."
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",

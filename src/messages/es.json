@@ -50,7 +50,10 @@
     "body": "Este sitio web está en desarrollo. El sitio completo de Solvymed llegará pronto con documentación detallada, precios y recursos de soporte. Mientras tanto, la app está completamente operativa — descárgala y empieza a gestionar tu consulta hoy."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. Todos los derechos reservados."
+    "copyright": "© 2026 Solvymed. Todos los derechos reservados.",
+    "privacy": "Política de privacidad",
+    "terms": "Términos del servicio",
+    "legal": "Información legal"
   },
   "confirm": {
     "emailConfirmed": "¡Correo confirmado!",
@@ -553,7 +556,8 @@
       "joiningAs": "Uniéndose como {role} mediante enlace de invitación.",
       "joiningAsSecretary": "Te unes al equipo de secretaría mediante un enlace de invitación.",
       "secretaryNeedsInvite": "¿Trabajas en secretaría? Pide un enlace de invitación a la clínica donde trabajas.",
-      "secretaryEmailMismatch": "Este correo no coincide con la invitación, o la invitación ya no es válida. Revisa el correo o pide un nuevo enlace a la clínica."
+      "secretaryEmailMismatch": "Este correo no coincide con la invitación, o la invitación ya no es válida. Revisa el correo o pide un nuevo enlace a la clínica.",
+      "consent": "Al crear una cuenta, aceptas los <terms>Términos del servicio</terms> y la <privacy>Política de privacidad</privacy>."
     },
     "forgotPassword": {
       "title": "¿Olvidaste tu contraseña?",

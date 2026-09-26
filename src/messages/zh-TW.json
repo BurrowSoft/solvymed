@@ -50,7 +50,10 @@
     "body": "本網站正在開發中。完整的Solvymed網站即將上線，屆時將提供詳細文件、定價和支援資源。在此期間，應用程式完全可用 — 立即下載並開始管理您的診所。"
   },
   "footer": {
-    "copyright": "© 2026 Solvymed 版權所有。"
+    "copyright": "© 2026 Solvymed 版權所有。",
+    "privacy": "隱私權政策",
+    "terms": "服務條款",
+    "legal": "法律資訊"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -553,7 +556,8 @@
       "joiningAs": "透過邀請連結以 {role} 身份加入。",
       "joiningAsSecretary": "透過邀請連結以祕書身分註冊。",
       "secretaryNeedsInvite": "你是祕書？請向你的醫師索取邀請連結。",
-      "secretaryEmailMismatch": "此電子郵件與邀請不符，或邀請已失效。請檢查電子郵件，或向診所索取新的連結。"
+      "secretaryEmailMismatch": "此電子郵件與邀請不符，或邀請已失效。請檢查電子郵件，或向診所索取新的連結。",
+      "consent": "建立帳戶即表示您同意<terms>服務條款</terms>與<privacy>隱私權政策</privacy>。"
     },
     "forgotPassword": {
       "title": "忘記密碼？",

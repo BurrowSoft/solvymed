@@ -2,32 +2,25 @@ import createMiddleware from "next-intl/middleware";
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
+import { canonicalLocalePath, pickLocale } from "./lib/localeDetect";
 
-const COUNTRY_LOCALE: Record<string, string> = {
-  TH: "th",
-  ES: "es", MX: "es", AR: "es", CO: "es", CL: "es", PE: "es", VE: "es",
-  UY: "es", PY: "es", BO: "es", EC: "es", CR: "es", PA: "es", DO: "es",
-  GT: "es", HN: "es", SV: "es", NI: "es", CU: "es",
-  BR: "pt-BR", PT: "pt-BR",
-  FR: "fr", BE: "fr", CH: "fr", LU: "fr", MC: "fr",
-  JP: "ja",
-  CN: "zh",
-  TW: "zh-TW", HK: "zh-TW", MO: "zh-TW",
-  SA: "ar", AE: "ar", EG: "ar", KW: "ar", QA: "ar",
-  BH: "ar", OM: "ar", JO: "ar", LB: "ar", MA: "ar",
-  DZ: "ar", TN: "ar", LY: "ar", IQ: "ar", SY: "ar", YE: "ar",
-  DE: "de", AT: "de",
-  ID: "id",
-  KR: "ko",
-  IT: "it",
-  VN: "vi",
-  RU: "ru", UA: "ru", KZ: "ru", BY: "ru",
-};
+// Automatic language guesses (browser language, country, an /en/ link) are
+// remembered for 30 days, so a wrong first guess doesn't stick for a year.
+// An explicit pick in the language switcher keeps its own 1-year cookie.
+const AUTO_LOCALE_MAX_AGE = 60 * 60 * 24 * 30;
 
 const intlMiddleware = createMiddleware(routing);
 
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
+
+  // /pt/… and odd casing (/pt-br/…, /zh-tw/…) → the real locale prefix.
+  const canonical = canonicalLocalePath(pathname, routing.locales);
+  if (canonical) {
+    const url = req.nextUrl.clone();
+    url.pathname = canonical;
+    return NextResponse.redirect(url, { status: 308 });
+  }
 
   // Supabase session refresh. The refreshed auth cookies must reach the
   // browser on whichever response this middleware finally returns (the
@@ -85,26 +78,34 @@ export async function middleware(req: NextRequest) {
     // when the browser's language differs, so without this a fresh browser
     // would hit the geo-redirect on the next request and lose English.
     if (firstSegment === routing.defaultLocale) {
-      res.cookies.set("NEXT_LOCALE", routing.defaultLocale, { maxAge: 60 * 60 * 24 * 365, path: "/", sameSite: "lax" });
+      res.cookies.set("NEXT_LOCALE", routing.defaultLocale, { maxAge: AUTO_LOCALE_MAX_AGE, path: "/", sameSite: "lax" });
     }
     return res;
   };
   const ua = req.headers.get("user-agent") ?? "";
   const isBot = /googlebot|bingbot|yandexbot|baiduspider|applebot|facebookexternalhit|twitterbot/i.test(ua);
 
+  // First visit to an unprefixed URL: the browser's language wins when we
+  // support it; the country is only the fallback (lib/localeDetect).
   if (!hasLocalePrefix && !isApiOrAsset && !req.cookies.has("NEXT_LOCALE") && !isBot) {
-    const country =
-      req.headers.get("x-vercel-ip-country") ??
-      req.headers.get("cf-ipcountry") ??
-      "US";
-    const locale = COUNTRY_LOCALE[country] ?? "en";
-    if (locale !== "en") {
+    const locale = pickLocale({
+      acceptLanguage: req.headers.get("accept-language"),
+      country: req.headers.get("x-vercel-ip-country") ?? req.headers.get("cf-ipcountry"),
+      supported: routing.locales,
+      defaultLocale: routing.defaultLocale,
+    });
+    if (locale !== routing.defaultLocale) {
       const url = req.nextUrl.clone();
-      url.pathname = `/${locale}${pathname}`;
+      url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
       const res = NextResponse.redirect(url, { status: 302 });
-      res.cookies.set("NEXT_LOCALE", locale, { maxAge: 60 * 60 * 24 * 365, path: "/", sameSite: "lax" });
+      res.cookies.set("NEXT_LOCALE", locale, { maxAge: AUTO_LOCALE_MAX_AGE, path: "/", sameSite: "lax" });
       return finalize(res);
     }
+    // English: no redirect (en is unprefixed), but pin it so next-intl's
+    // own negotiation agrees on the next request.
+    const res = finalize(intlMiddleware(req));
+    res.cookies.set("NEXT_LOCALE", routing.defaultLocale, { maxAge: AUTO_LOCALE_MAX_AGE, path: "/", sameSite: "lax" });
+    return res;
   }
 
   // ?country=XX dev simulation

@@ -50,7 +50,10 @@
     "body": "本网站正在开发中。完整的Solvymed网站即将上线，届时将提供详细文档、定价和支持资源。在此期间，应用程序完全可用 — 立即下载并开始管理您的诊所。"
   },
   "footer": {
-    "copyright": "© 2026 Solvymed 版权所有。"
+    "copyright": "© 2026 Solvymed 版权所有。",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "legal": "法律信息"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -553,7 +556,8 @@
       "joiningAs": "通过邀请链接以 {role} 身份加入。",
       "joiningAsSecretary": "通过邀请链接以秘书身份注册。",
       "secretaryNeedsInvite": "你是秘书？请向你的医生索取邀请链接。",
-      "secretaryEmailMismatch": "该邮箱与邀请不匹配，或邀请已失效。请检查邮箱，或向诊所索取新的链接。"
+      "secretaryEmailMismatch": "该邮箱与邀请不匹配，或邀请已失效。请检查邮箱，或向诊所索取新的链接。",
+      "consent": "创建账户即表示您同意<terms>服务条款</terms>和<privacy>隐私政策</privacy>。"
     },
     "forgotPassword": {
       "title": "忘记密码？",

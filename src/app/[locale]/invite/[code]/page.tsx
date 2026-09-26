@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AppDownloadButtons } from "@/components/AppDownloadButtons";
+import { LegalLinks } from "@/components/LegalLinks";
 
 // The patient invite link the app shares (solvymed.com/invite/<code>). The
 // steps name the app's own labels verbatim (mobile lib/i18n.ts).
@@ -71,6 +72,7 @@ export default async function InvitePage({
 
         <AppDownloadButtons medium="invite" tone="light" stacked showOpenApp={false} />
       </div>
+      <LegalLinks className="mt-6" />
     </div>
   );
 }
