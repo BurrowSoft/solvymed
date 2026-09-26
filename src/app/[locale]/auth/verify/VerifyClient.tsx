@@ -9,7 +9,8 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
-import { MIN_PASSWORD_LENGTH, isWeakPasswordError } from "@/lib/password";
+import { MIN_PASSWORD_LENGTH } from "@/lib/password";
+import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import ConfirmClient from "../confirm/ConfirmClient";
 
 const OTP_TYPES: EmailOtpType[] = ["signup", "invite", "magiclink", "recovery", "email_change", "email"];
@@ -127,6 +128,7 @@ function RecoveryForm({ tokenHash, state, setState, loginHref }: {
   loginHref: string;
 }) {
   const t = useTranslations("auth");
+  const authErrorText = useAuthErrorText();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
@@ -156,7 +158,7 @@ function RecoveryForm({ tokenHash, state, setState, loginHref }: {
     const { error: updateError } = await supabase.auth.updateUser({ password });
     if (updateError) {
       setState("ready");
-      setError(isWeakPasswordError(updateError) ? t("passwordTooShort", { min: MIN_PASSWORD_LENGTH }) : t("resetPassword.error"));
+      setError(authErrorText(updateError) ?? t("errors.generic"));
       return;
     }
     setState("resetDone");

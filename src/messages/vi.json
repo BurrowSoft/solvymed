@@ -637,7 +637,18 @@
       "expiredBody": "Hãy yêu cầu liên kết mới từ trang đăng nhập.",
       "goToSignIn": "Đến trang đăng nhập"
     },
-    "captchaFailed": "Vui lòng hoàn tất bước xác minh rồi thử lại."
+    "captchaFailed": "Vui lòng hoàn tất bước xác minh rồi thử lại.",
+    "errors": {
+      "wrongCredentials": "Email hoặc mật khẩu không đúng.",
+      "emailNotConfirmed": "Hãy xác nhận email trước: nhấn vào liên kết chúng tôi đã gửi cho bạn.",
+      "rateLimited": "Bạn đã thử quá nhiều lần. Hãy đợi vài phút rồi thử lại.",
+      "weakPassword": "Mật khẩu này quá yếu. Hãy dùng ít nhất {min} ký tự.",
+      "samePassword": "Mật khẩu mới phải khác mật khẩu hiện tại.",
+      "accountClosed": "Tài khoản này đã bị đóng hoặc tạm ngưng. Nếu cần hỗ trợ, hãy liên hệ support@solvymed.com.",
+      "linkExpired": "Liên kết này đã hết hạn hoặc đã được sử dụng. Hãy yêu cầu liên kết mới.",
+      "network": "Không có kết nối. Hãy kiểm tra internet rồi thử lại.",
+      "generic": "Đã xảy ra lỗi. Vui lòng thử lại."
+    }
   },
   "myAppointments": {
     "title": "Lịch hẹn của tôi",

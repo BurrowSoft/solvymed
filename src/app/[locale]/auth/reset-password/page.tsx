@@ -9,12 +9,14 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
-import { MIN_PASSWORD_LENGTH, isWeakPasswordError } from "@/lib/password";
+import { MIN_PASSWORD_LENGTH } from "@/lib/password";
+import { useAuthErrorText } from "@/lib/useAuthErrorText";
 
 type PageState = "loading" | "form" | "success" | "error";
 
 export default function ResetPasswordPage() {
   const t = useTranslations("auth");
+  const authErrorText = useAuthErrorText();
   const params = useParams();
   const locale = (params.locale as string) ?? "en";
   const router = useRouter();
@@ -77,10 +79,8 @@ export default function ResetPasswordPage() {
     });
     setLoading(false);
 
-    if (isWeakPasswordError(updateError)) {
-      setError(t("passwordTooShort", { min: MIN_PASSWORD_LENGTH }));
-    } else if (updateError) {
-      setError(t("resetPassword.error"));
+    if (updateError) {
+      setError(authErrorText(updateError) ?? t("errors.generic"));
     } else {
       setPageState("success");
     }

@@ -11,13 +11,15 @@ import { Logo } from "@/components/Logo";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 import { isWellFormedSecretaryCode, normalizeSecretaryCode } from "@/lib/secretary";
-import { MIN_PASSWORD_LENGTH, isWeakPasswordError } from "@/lib/password";
-import { TurnstileWidget, turnstileEnabled, isCaptchaError } from "@/components/TurnstileWidget";
+import { MIN_PASSWORD_LENGTH } from "@/lib/password";
+import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
+import { useAuthErrorText } from "@/lib/useAuthErrorText";
 
 type Role = "professional" | "secretary" | "patient";
 
 export default function SignupPage() {
   const t = useTranslations("auth");
+  const authErrorText = useAuthErrorText();
   const params = useParams();
   const searchParams = useSearchParams();
   const locale = (params.locale as string) ?? "en";
@@ -129,12 +131,8 @@ export default function SignupPage() {
     setLoading(false);
     if (turnstileEnabled) setCaptchaReset((n) => n + 1);
 
-    if (isCaptchaError(authError)) {
-      setError(t("captchaFailed"));
-    } else if (isWeakPasswordError(authError)) {
-      setError(t("passwordTooShort", { min: MIN_PASSWORD_LENGTH }));
-    } else if (authError) {
-      setError(t("signup.error"));
+    if (authError) {
+      setError(authErrorText(authError) ?? t("errors.generic"));
     } else if (signUpData.user?.identities?.length === 0) {
       // Supabase returns an empty identities array (no error) when the email is
       // already registered — avoid leaking "email exists" by pointing to login.
