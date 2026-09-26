@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MyAppointmentsClient } from "./MyAppointmentsClient";
+import { clinicDate } from "@/lib/clinicTime";
 
 export type PatientAppointment = {
   id: string;
@@ -80,7 +81,10 @@ export default async function MyAppointmentsPage({
     }
   }
 
-  const today = new Date().toISOString().split("T")[0];
+  // Brazil's date, not the server's (UTC): the patient's appointments are
+  // at a practice whose zone defaults to São Paulo. (A patient can't read
+  // the practice's row, so its own zone isn't used here.)
+  const today = clinicDate();
 
   const { data: upcoming } = await supabase
     .from("appointments")
