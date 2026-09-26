@@ -2964,6 +2964,91 @@ correctness, security, data-loss, crash or a real UX break.
 
 **Merge gate: 🟢 for `11ecf2f`, review clean.**
 
+## PR #23 (`fix/invite-join-privacy`) — privacy part A, 🟢 at `e39ccf3`, review clean
+
+**Scope: exactly `e39ccf3`.**
+- **Indexing:** invite and join links are never indexed, and neither
+  are the signup and login URLs they hand off to.
+- **Validation:** invite codes are validated.
+- **Share previews:** the invite page gets its own twitter and OG tags.
+- **Analytics:** Vercel Analytics URLs are redacted before sending.
+- **Sessions:** the middleware now saves refreshed Supabase session
+  cookies.
+
+**Tested live on the Vercel preview**, using the automation bypass
+header (the secret is never logged), with a throwaway
+`e2e-test-opus-pr13-*` doctor that has since been deleted.
+
+**🟢 X-Robots-Tag.** It is `noindex, nofollow` on:
+- `/invite/<code>` and `/join/<code>`, both prefixed and on the
+  unprefixed 302 geo-redirects;
+- `/pt-BR/join/<code>` (307 → `signup?join=`);
+- `/join/secretary/<code>?email=`;
+- `/auth/signup?secretary=…&email=…`, `/auth/signup?join=…` and
+  `/auth/login?next=…`.
+
+Plain `/auth/login`, `/auth/signup` and `/pt-BR` keep plain `noindex`.
+
+**🟢 Invite code validation.** `/pt-BR/invite/AB12CD-` and
+`/pt-BR/invite/A` return 404.
+
+**🟢 Share previews.** On `/pt-BR/invite/<code>`, og:title and
+twitter:title are both "Seu convite para o SolvyMed". og:site_name,
+og:locale `pt_BR` and twitter:card `summary` are present.
+
+**🟢 Analytics redaction.** The preview sends no `/_vercel/insights`
+beacons, so I checked redaction by running the branch's
+`redactAnalyticsUrl` on real URLs rather than by catching the payload.
+- **Paths:** invite, join and join/secretary codes become `[code]`.
+- **Fragment:** `#access_token` on reset links is dropped.
+- **Query strings:** now an allowlist. Only utm_*, date, week, view, tab,
+  archived, locale and country keep their values; every other value
+  becomes `[redacted]`.
+- **My round 1 BLOCKING cases now pass**, all covered by unit tests:
+  - `?next=/pt-BR/join/secretary/S-…`;
+  - `?q=Maria Silva`;
+  - `?q=123.456.789-00`.
+- **Bad input:** a URL that can't be parsed drops the event.
+
+**🟢 Session refresh cookies.** I sent requests with a real session
+whose access token had expired 120 s earlier.
+- **Pages:** `/pt-BR/dashboard`, `/pt-BR/dashboard/settings`,
+  `/pt-BR/invite/<code>` and `/pt-BR` (307 → dashboard).
+- **Result:** every response now carries `Set-Cookie: sb-<ref>-auth-token`
+  with a **new refresh token and a new access token**. Each new access
+  token is valid (`/auth/v1/user` returns 200).
+- **Cookie attributes:** Path=/, Max-Age 400 days, SameSite=lax.
+- **At `a23ce60`** the same requests returned no Set-Cookie at all.
+- **Bogus refresh token:** a request to `/pt-BR/dashboard` gets 307 →
+  `/pt-BR/auth/login`, and the auth cookie is cleared.
+- **Harmless:** on `/pt-BR`, the page's own redirect for logged-in users
+  sends the auth and `NEXT_LOCALE` cookies twice, carrying the same
+  valid session.
+
+**Review: Claude `/code-review high`, clean at `e39ccf3`** (Copilot quota
+exhausted).
+- **Round 1, `a23ce60`:** 7 inline comments.
+  - 2 BLOCKING: `next` and `q` reached Analytics unredacted.
+  - FOLLOW-UP: the middleware dropped the refreshed cookies; the 404 is
+    bare English; login and signup URLs had plain noindex; beforeSend
+    was re-created on each render; OG fields are duplicated.
+- **Round 2, `9ac1944`..`e39ccf3`, changed code only:**
+  - Both BLOCKING items are fixed with the allowlist.
+  - The cookie fix covers every return path: the dashboard-guard
+    redirect, the geo-redirect, `?country=`, and the next-intl
+    response.
+  - Login and signup now get noindex, and beforeSend is a stable
+    module-level function.
+  - No new findings.
+
+**FOLLOW-UP (reasons in the resolved threads):**
+- **404:** `notFound()` shows the bare English page.
+- **OG:** the invite page's OG fields duplicate the layout's.
+
+**CI at `e39ccf3`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `e39ccf3`, review clean.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
