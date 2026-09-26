@@ -634,7 +634,8 @@
       "expiredTitle": "Este enlace caducó",
       "expiredBody": "Solicita uno nuevo desde la página de inicio de sesión.",
       "goToSignIn": "Ir al inicio de sesión"
-    }
+    },
+    "captchaFailed": "Completa la verificación e inténtalo de nuevo."
   },
   "myAppointments": {
     "title": "Mis citas",

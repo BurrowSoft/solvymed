@@ -634,7 +634,8 @@
       "expiredTitle": "このリンクは期限切れです",
       "expiredBody": "ログインページから新しいリンクをリクエストしてください。",
       "goToSignIn": "ログインへ"
-    }
+    },
+    "captchaFailed": "確認を完了してから、もう一度お試しください。"
   },
   "myAppointments": {
     "title": "予約一覧",

@@ -634,7 +634,8 @@
       "expiredTitle": "此連結已過期",
       "expiredBody": "請在登入頁面重新取得連結。",
       "goToSignIn": "前往登入"
-    }
+    },
+    "captchaFailed": "請完成驗證後再試一次。"
   },
   "myAppointments": {
     "title": "我的預約",

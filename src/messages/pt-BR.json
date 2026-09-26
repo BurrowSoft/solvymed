@@ -634,7 +634,8 @@
       "expiredTitle": "Este link expirou",
       "expiredBody": "Solicite um novo na página de login.",
       "goToSignIn": "Ir para o login"
-    }
+    },
+    "captchaFailed": "Conclua a verificação e tente novamente."
   },
   "myAppointments": {
     "title": "Minhas Consultas",
