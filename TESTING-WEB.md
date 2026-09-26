@@ -415,6 +415,154 @@ it to come up (`reuseExistingServer: true`, so it'll happily attach to a
 different environment (e.g. a deployed preview) instead — doing so skips
 the auto-started dev server.
 
+## Release regression checklist (web) — 1.3.0 launch
+
+This is a re-runnable checklist of every main web flow, for the release
+candidate (RC) before 1.3.0, the Brazil paid-marketing launch. Run it
+top to bottom on the RC's exact SHA, then log the run in the table at the
+end. **Any ❌ blocks the release** unless UX/PM and the user explicitly
+accept it.
+
+### How to run it
+
+- **Target:** the RC build on the environment it will ship to. That's the
+  local `next build && next start` on the RC SHA, plus the deployed
+  preview if there is one. Record the SHA in the run log.
+- **Two locales for every item: pt-BR (`/pt-BR/...`) and en (unprefixed).**
+  pt-BR is the launch market and gets the full pass. en gets the same
+  items but only needs to be spot-checked for layout and copy.
+  - **Locale gotcha:** unprefixed URLs follow the `NEXT_LOCALE` cookie.
+    Test en in a fresh browser context, or after switching with the
+    language picker.
+- **Viewports: desktop Chrome, 1280×720, for everything.** Mobile gets the
+  items marked 📱, on Chromium with Pixel 7 emulation and WebKit with
+  iPhone 14 emulation. On mobile, check:
+  - nothing overflows horizontally;
+  - dialogs fit the screen and can be closed;
+  - the sidebar or menu can be reached;
+  - tap targets are usable.
+- **Accounts:**
+  - Throwaway `e2e-test-opus-*` accounts, created through the admin API
+    or the real signup. Doctors get a trial automatically.
+  - Signups are confirmed through this app's own `/api/auth/callback`,
+    using a `token_hash` from the admin `generate_link` API. The signup
+    form hardcodes the prod redirect.
+  - The shared doctor (`ca44892c…`) is **read-only**. Never save forms on
+    it.
+- **Stripe:** test mode for this checklist. The live-mode charge is
+  separate; see L-1 at the end.
+- **Harnesses:** the specs I used for #11–#16 are kept outside the repo.
+  Items marked 🤖 were already automated there and can be re-run; the
+  rest are manual or semi-manual.
+- **Clean-up after every run:** delete throwaway users, Stripe
+  customers, test clocks and open sessions. When sweeping users, list
+  them with `per_page=10`. Larger pages 500 because of the 8 broken
+  `auth.users` rows, until they're fixed. Also restore the shared doctor
+  if it was touched.
+
+### A. Public pages and auth (signed out)
+
+| ID | Flow | Expected result |
+|---|---|---|
+| A-1 📱 | Landing `/`, `/pt-BR` | It renders with no console errors. The CTAs lead to signup and login, and the language picker switches locale and keeps the page. |
+| A-2 | `/privacy`, `/terms` in pt-BR and en | Both render. Payments are described as **Stripe only**, with no Asaas. |
+| A-3 🤖📱 | Doctor signup (`/auth/signup`, default role) | The role label is "Profissional de saúde". Submitting shows "Verifique seu e-mail". After confirming, you land on `/dashboard` with "Dr. <first name>"; `user_roles` is `professional`, and `professionals` is `trial` with a future `trial_ends_at`. |
+| A-4 🤖 | Patient signup via `/join/<doctor's public code>` | It redirects to signup with "Entrando como … via link de convite" and the role locked. After confirming you land on `/auth/pending-confirmation`, which names the doctor; `invited_by_professional_id` is set. |
+| A-5 🤖 | Patient signup with a typed patient invite code | The Patient role shows the code field, with the hint "Digite o código de convite". After confirming you land on `/auth/patient-welcome`, with `linked_patient_id` set. |
+| A-6 | Patient signup with an invalid or no code | `/auth/invite-required` shows clinic wording. Retrying with a valid code links the account. A bogus code shows the "doesn't match" message. |
+| A-7 | Signup validation | Mismatched passwords, a weak password and an email that's already registered each show a clear error, not a crash. |
+| A-8 📱 | Login and logout | Wrong credentials show an error. The right ones route by role: doctor → `/dashboard`, patient → `/my-appointments` or `pending-confirmation`, secretary → `/dashboard`, or `not-connected` / `clinic-inactive`. Sign-out lands on the current locale's home. |
+| A-9 | Forgot password → reset | Requesting a reset shows a neutral "if the account exists" message. Following the reset link (a `token_hash` via the callback) lets you set a new password, and the new one logs in. |
+| A-10 | `/join/<bogus>`, signed in and signed out | Signed out, it redirects to signup. Signed in, it shows "Este link pode ser inválido…". There's no 5xx. |
+| A-11 | Session expiry | With cookies cleared, a protected page redirects to login and there's no blank page. |
+
+### B. Doctor
+
+| ID | Flow | Expected result |
+|---|---|---|
+| B-1 📱 | Dashboard home | The greeting reads "Dr. <name>". Today's and upcoming appointments are listed, and the pending-payments and patient counts are right. The Monthly Revenue card matches the paid appointments. |
+| B-2 📱 | Schedule: create an appointment | The new appointment appears in the list, day and week views. Overlapping a blocked slot is refused with a localized error. |
+| B-3 | Schedule: block time | The block shows as blocked and patients can't book over it. |
+| B-4 | Schedule: status changes | confirmed → completed or cancelled persists after reload. Tentative and proposal rows show a badge, with no status dropdown. |
+| B-5 | Schedule: propose a new time to a patient | The appointment becomes a proposal. The patient sees it in My appointments and can accept or decline (see D-4). |
+| B-6 🤖 | Schedule: Pix QR on a confirmed, unpaid appointment | The Pix QR button opens the QR. "Copia e Cola" contains the key, the amount and the city, and the image encodes the same payload. |
+| B-7 📱 | Patients: list, search, create, edit, delete | CRUD persists. Delete asks for confirmation. Patient detail shows Info, Records, Prescriptions and Appointments. |
+| B-8 🤖 | Patients: duplicate warnings | A same name and phone shows "Possível duplicidade…" with Open existing / Create anyway. A same CPF, after Create anyway, shows "já está cadastrado(a)" plus Open patient, which points at the CPF owner. |
+| B-9 | Records and prescriptions | Adding and deleting a record works. A prescription with at least 1 medication saves, and the PDF or print view renders. With no medication it's refused. |
+| B-10 | Patient invite code, from the patient detail | Generating a code shows it. A patient who signs up with it gets linked (A-5). |
+| B-11 | Booking block | Blocking a patient stops them booking. They appear in Settings → Blocked patients, and unblocking works. |
+| B-12 📱 | Payments | This week, this month, last month and all time each filter correctly. Mark Paid moves an appointment to Received and updates the totals; Mark Unpaid reverses it; setting an amount persists. |
+| B-13 | Settings: profile, clinic, hours, procedures, scheduling rules, Pix key | Each form saves, and the change shows after reload. An error loading Settings shows the banner and no forms. |
+| B-14 | Settings: public invite code | Generate; Regenerate asks to confirm; Copy code and Copy link (`…/pt-BR/join/<code>`) work. |
+| B-15 | Clinics | Adding a clinic geocodes it or saves without coordinates. Deleting asks for confirmation. |
+| B-16 | Feedback, `/feedback` | Submitting stores it and shows a thank-you. |
+
+### C. Subscription and billing (Stripe test mode)
+
+| ID | Flow | Expected result |
+|---|---|---|
+| C-1 🤖📱 | pt-BR subscribe | The page shows **R$ 89/mês** and "Cartão de crédito", with no Pix. Checkout is BRL 8900, card only. A 4242 card and the BR card `4000 0007 6000 0002` both succeed. After the webhook, the row is `active` with a real `current_period_end`, and the dashboard opens. |
+| C-2 🤖 | en subscribe | $19 USD, card only, and it succeeds. |
+| C-3 🤖 | Abandoned or unpaid checkout | It never activates the subscription. |
+| C-4 🤖 | Second checkout | It's refused: `409 already_subscribed`, both while active and before the webhook lands. Switching language within the 10-min window still hands back a payable session. |
+| C-5 🤖 | Cancel at period end | Access continues. When the subscription is deleted or expires, the row is `expired` and `/dashboard` goes to `/subscribe`. |
+| C-6 🤖 | Failed renewal (test clock) | The row is `expired`. `/subscribe` shows "Seu último pagamento falhou" and **Atualizar cartão**, not Subscribe. Checkout returns `409 payment_failed`. |
+| C-7 🤖 | Customer Portal | Update card opens `billing.stripe.com` for this customer. After the card is fixed, "Pagamento recebido…" shows until the webhook lands, then access comes back. |
+| C-8 🤖 | Trial rule | A first sub that never goes active (incomplete → incomplete_expired) leaves the trial and `trial_ends_at` unchanged. |
+| C-9 | Trial banner and expiry | In the last 7 days of the trial the banner shows. When it expires, `/subscribe` shows "Seu período de teste encerrou…" plus Subscribe. |
+
+### D. Patient
+
+| ID | Flow | Expected result |
+|---|---|---|
+| D-1 📱 | Pending patient | `/auth/pending-confirmation` shows the clinic wording and the doctor's name, "Solicitar uma consulta" and "Sair". Once the doctor confirms, the patient reaches `/my-appointments`. |
+| D-2 🤖📱 | Book, `/book/<id>` | The header shows the real doctor name, or the translated "Profissional", never "Doctor". Slots come from the doctor's hours. The request becomes tentative in the doctor's schedule. |
+| D-3 📱 | My appointments | Upcoming and past appointments are listed correctly. The Book link opens `/book` for their doctor. |
+| D-4 | Reschedule | A patient's request shows for the doctor, who can approve or decline it. When the doctor proposes a new time, the patient can accept or decline it. Both sides see the final state. |
+| D-5 | Close account (`/account/delete`, or archive once built) | A deletion request is recorded and a confirmation shown. **This needs rechecking once the archive/close-account feature ships.** |
+
+### E. Secretary (all 🤖 from #13 unless noted)
+
+| ID | Flow | Expected result |
+|---|---|---|
+| E-1 | Invite, then signup | Team → Invite shows the code once, with Copy code, Copy link and WhatsApp. The signed-out link leads to signup, with the role and email locked. After confirming, the secretary lands on `/dashboard`, linked to the doctor. |
+| E-2 📱 | What a secretary sees | The doctor's real schedule, patients and pending payments; Mark Paid works; patients can be created, edited and deleted. The greeting has no "Dr.". Not shown: revenue, Received/Total, Records/Prescriptions tabs, Clinics. |
+| E-3 | Read-only Settings | "Somente a conta principal da clínica…". Regenerate changes the doctor's code; Leave clinic works. |
+| E-4 | Server-side refusal | Doctor-only actions called directly are refused. Through REST, records and prescriptions read `[]` and inserts return 403. |
+| E-5 | Team management | The limit is 3, counting pending invites. Resend asks to confirm and invalidates the old code; Decline, Revoke and Remove each lead to `not-connected`. Typed codes work with or without "S-"; Leave clinic works. |
+| E-6 | `/join/secretary/<code>` edge cases | A patient or doctor account, an already-linked secretary and an invite for a different email each show a clear message. A garbled code never gives a 5xx. |
+| E-7 | Doctor's subscription lapsed | The secretary sees `/auth/clinic-inactive` and never `/subscribe`. |
+| E-8 | Secretary Pix QR (#14) | Same result as B-6, as the secretary. |
+
+### F. Cross-cutting
+
+| ID | Check | Expected result |
+|---|---|---|
+| F-1 | Roles are server-only | The user's own session gets 403 on any write to `user_roles`. |
+| F-2 | Copy | pt-BR is gender-neutral for the doctor and the patient ("a clínica", "profissional"). No raw i18n keys are visible on any page; grep the body for `\w+\.\w+\.\w+` patterns. |
+| F-3 📱 | Accessibility spot-check | Form inputs have labels or accessible names, dialogs trap focus and close with Esc, and tab order is sane on login, signup, book and subscribe. |
+| F-4 | Errors | Console: no uncaught errors on the main pages. Server log: no 5xx during the run. |
+| F-5 | Version gate (`app_config`) | Doctors and secretaries below the minimum version see the gate; others don't. |
+
+### L-1. Live-mode Stripe check on production (at release time, with the user)
+
+Only with the user present, and only after the live keys, the webhook
+endpoint and the Customer Portal are configured in live mode:
+1. A throwaway professional subscribes on prod in pt-BR with a **real
+   card**. The charge is **R$ 89,00**.
+2. Stripe's **real** webhook delivery to the prod endpoint makes the row
+   `active`, and the dashboard opens.
+3. Cancel the subscription in the Customer Portal, then **refund** the
+   charge in the Stripe dashboard. Access ends as designed.
+4. Record the Stripe object ids, delete the throwaway account, and
+   confirm the refund landed.
+
+### Run log
+
+| Date | RC SHA | Env | Locales / viewports | Result | Notes / ❌ items |
+|---|---|---|---|---|---|
+| | | | | | |
+
 ## CSS refactor visual verification (PR #2, `refactor/css-extract`)
 
 Pure style refactor — every `style=` attribute across 5 files (patient-
