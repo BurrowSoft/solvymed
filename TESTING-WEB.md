@@ -3960,6 +3960,46 @@ before this one, as expected.
 
 **Merge gate: 🟢 for `81a0584`, review clean.**
 
+## PR #36 (`fix/account-delete-intake`) — /account/delete inserts from the browser, 🟢 (pre-100 scope) at `9f28b3c`, review clean
+
+**Scope: exactly `9f28b3c`.** The form inserts into `deletion_requests`
+directly from the browser, so migration 100's per-IP rate limit sees the
+visitor. The old `requestAccountDeletion` server action is removed.
+Migration 100's errors are translated. It merges **before** 100, per the
+code reviewer, because current RLS already allows the browser insert.
+
+Tested live on the preview, pt-BR, with `@example.invalid` emails. The
+test rows were deleted afterwards.
+
+**🟢 Anonymous submit:**
+- **Confirmation:** "Solicitação recebida — Recebemos sua solicitação
+  para <email>."
+- **Network:** exactly one **direct Supabase REST** `POST
+  /rest/v1/deletion_requests` (201, no `select`) and **no server-action
+  POST**.
+- **Row:** status `pending`, with the reason.
+
+**🟢 Signed in** (a throwaway doctor): the same confirmation, a direct REST
+201, and the row stored.
+
+**🟢 Blank email** (whitespace, with the client `required` removed):
+"Informe seu e-mail.", and no REST POST is made.
+
+**⏳ After migration 100 goes live, to check on prod:**
+- the row gets status `new`;
+- support receives the alert email;
+- the 4th request for the same email within a day shows the new
+  "several requests" line;
+- an invalid email shows "invalid email";
+- two different browsers or IPs each get their own limit.
+
+**Review: Claude `/code-review` (code reviewer), clean at `9f28b3c`.**
+
+**CI at `9f28b3c`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `9f28b3c` (pre-100 behaviour), review clean.** The
+post-100 checks are recorded here as a prod addendum once 100 is live.
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
