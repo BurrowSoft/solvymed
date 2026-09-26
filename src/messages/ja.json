@@ -800,6 +800,8 @@
     "doneBody": "<b>{email}</b> のリクエストを受け付けました。",
     "doneSub": "30日以内に処理し、メールでお知らせします。",
     "errorEmailRequired": "メールアドレスを入力してください。",
-    "errorGeneric": "問題が発生しました。もう一度お試しいただくか、{email} までご連絡ください。"
+    "errorGeneric": "問題が発生しました。もう一度お試しいただくか、{email} までご連絡ください。",
+    "errorTooManyAttempts": "すでに複数のリクエストを受け付けています。明日もう一度お試しいただくか、{email} までご連絡ください。",
+    "errorInvalidEmail": "有効なメールアドレスを入力してください。"
   }
 }

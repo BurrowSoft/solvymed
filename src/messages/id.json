@@ -800,6 +800,8 @@
     "doneBody": "Kami telah menerima permintaan untuk <b>{email}</b>.",
     "doneSub": "Kami akan memprosesnya dalam 30 hari dan mengonfirmasi lewat email.",
     "errorEmailRequired": "Masukkan alamat email Anda.",
-    "errorGeneric": "Terjadi kesalahan. Coba lagi atau kirim email ke {email}."
+    "errorGeneric": "Terjadi kesalahan. Coba lagi atau kirim email ke {email}.",
+    "errorTooManyAttempts": "Kami sudah menerima beberapa permintaan. Coba lagi besok, atau kirim email ke {email}.",
+    "errorInvalidEmail": "Masukkan alamat email yang valid."
   }
 }

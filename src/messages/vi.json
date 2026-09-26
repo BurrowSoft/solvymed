@@ -800,6 +800,8 @@
     "doneBody": "Chúng tôi đã nhận yêu cầu cho <b>{email}</b>.",
     "doneSub": "Chúng tôi sẽ xử lý trong vòng 30 ngày và xác nhận qua email.",
     "errorEmailRequired": "Vui lòng nhập địa chỉ email.",
-    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại hoặc gửi email tới {email}."
+    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại hoặc gửi email tới {email}.",
+    "errorTooManyAttempts": "Chúng tôi đã nhận được nhiều yêu cầu. Vui lòng thử lại vào ngày mai hoặc gửi email đến {email}.",
+    "errorInvalidEmail": "Vui lòng nhập địa chỉ email hợp lệ."
   }
 }

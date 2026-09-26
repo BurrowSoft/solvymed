@@ -800,6 +800,8 @@
     "doneBody": "Wir haben Ihre Anfrage für <b>{email}</b> erhalten.",
     "doneSub": "Wir bearbeiten sie innerhalb von 30 Tagen und bestätigen per E-Mail.",
     "errorEmailRequired": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
-    "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut oder schreiben Sie an {email}."
+    "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut oder schreiben Sie an {email}.",
+    "errorTooManyAttempts": "Es sind bereits mehrere Anfragen eingegangen. Bitte versuchen Sie es morgen erneut oder schreiben Sie an {email}.",
+    "errorInvalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein."
   }
 }
