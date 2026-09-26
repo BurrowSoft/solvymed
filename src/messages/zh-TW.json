@@ -624,6 +624,16 @@
       "body": "只需幾個簡單步驟即可設定您的診所，然後預約第一位病患。",
       "startSetup": "開始設定",
       "skip": "稍後再說"
+    },
+    "verify": {
+      "confirmTitle": "確認您的電子郵件",
+      "confirmBody": "點選「繼續」完成建立您的 SolvyMed 帳戶。",
+      "otherTitle": "馬上就好",
+      "otherBody": "點選「繼續」完成。",
+      "continue": "繼續",
+      "expiredTitle": "此連結已過期",
+      "expiredBody": "請在登入頁面重新取得連結。",
+      "goToSignIn": "前往登入"
     }
   },
   "myAppointments": {

@@ -624,6 +624,16 @@
       "body": "Richten wir Ihre Praxis in wenigen Schritten ein, damit Sie Ihren ersten Termin vergeben können.",
       "startSetup": "Einrichtung starten",
       "skip": "Später"
+    },
+    "verify": {
+      "confirmTitle": "Bestätigen Sie Ihre E-Mail-Adresse",
+      "confirmBody": "Tippen Sie auf Weiter, um Ihr SolvyMed-Konto fertig einzurichten.",
+      "otherTitle": "Fast geschafft",
+      "otherBody": "Tippen Sie auf Weiter, um abzuschließen.",
+      "continue": "Weiter",
+      "expiredTitle": "Dieser Link ist abgelaufen",
+      "expiredBody": "Fordern Sie auf der Anmeldeseite einen neuen an.",
+      "goToSignIn": "Zur Anmeldung"
     }
   },
   "myAppointments": {

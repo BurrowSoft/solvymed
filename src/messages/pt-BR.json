@@ -624,6 +624,16 @@
       "body": "Vamos configurar sua clínica em poucos passos, para você marcar sua primeira consulta.",
       "startSetup": "Começar configuração",
       "skip": "Agora não"
+    },
+    "verify": {
+      "confirmTitle": "Confirme seu e-mail",
+      "confirmBody": "Toque em Continuar para concluir a criação da sua conta SolvyMed.",
+      "otherTitle": "Quase lá",
+      "otherBody": "Toque em Continuar para concluir.",
+      "continue": "Continuar",
+      "expiredTitle": "Este link expirou",
+      "expiredBody": "Solicite um novo na página de login.",
+      "goToSignIn": "Ir para o login"
     }
   },
   "myAppointments": {
