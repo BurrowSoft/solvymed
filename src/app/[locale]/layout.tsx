@@ -9,7 +9,7 @@ import {
   Noto_Sans_KR,
   Noto_Sans_Arabic,
 } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
+import { PrivacyAnalytics } from "@/components/PrivacyAnalytics";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
@@ -111,7 +111,7 @@ export default async function LocaleLayout({
       <body className="font-[family-name:var(--font-inter,ui-sans-serif)] min-h-screen bg-white text-slate-900 antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
-          <Analytics />
+          <PrivacyAnalytics />
         </NextIntlClientProvider>
       </body>
     </html>

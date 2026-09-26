@@ -63,6 +63,21 @@ export async function middleware(req: NextRequest) {
   const firstSegment = pathname.split("/")[1] ?? "";
   const hasLocalePrefix = (routing.locales as readonly string[]).includes(firstSegment);
   const isApiOrAsset = /^\/(api|_next|favicon|.*\..*)/.test(pathname);
+  // Invite and join URLs carry personal codes (and, in old secretary links,
+  // an email): never index them, whatever the page's own metadata says.
+  const isPersonalLink = /^(?:\/[A-Za-z-]+)?\/(?:invite|join)(?:\/|$)/.test(pathname);
+  // Applied to every response below.
+  const finalize = (res: NextResponse) => {
+    if (isPersonalLink) res.headers.set("X-Robots-Tag", "noindex, nofollow");
+    // An explicit /en/... is a language choice (e.g. an email link).
+    // next-intl strips it to the unprefixed URL but only writes NEXT_LOCALE
+    // when the browser's language differs, so without this a fresh browser
+    // would hit the geo-redirect on the next request and lose English.
+    if (firstSegment === routing.defaultLocale) {
+      res.cookies.set("NEXT_LOCALE", routing.defaultLocale, { maxAge: 60 * 60 * 24 * 365, path: "/", sameSite: "lax" });
+    }
+    return res;
+  };
   const ua = req.headers.get("user-agent") ?? "";
   const isBot = /googlebot|bingbot|yandexbot|baiduspider|applebot|facebookexternalhit|twitterbot/i.test(ua);
 
@@ -77,7 +92,7 @@ export async function middleware(req: NextRequest) {
       url.pathname = `/${locale}${pathname}`;
       const res = NextResponse.redirect(url, { status: 302 });
       res.cookies.set("NEXT_LOCALE", locale, { maxAge: 60 * 60 * 24 * 365, path: "/", sameSite: "lax" });
-      return res;
+      return finalize(res);
     }
   }
 
@@ -85,25 +100,17 @@ export async function middleware(req: NextRequest) {
   const devCountry = searchParams.get("country");
   if (devCountry) {
     const intlRes = intlMiddleware(req);
-    if (intlRes.status >= 300 && intlRes.status < 400) return intlRes;
+    if (intlRes.status >= 300 && intlRes.status < 400) return finalize(intlRes);
     const newHeaders = new Headers(req.headers);
     newHeaders.set("x-burrowsoft-geo", devCountry.toUpperCase());
     const res = NextResponse.next({ request: { headers: newHeaders } });
     intlRes.headers.forEach((value, key) => {
       if (key === "set-cookie") res.headers.append(key, value);
     });
-    return res;
+    return finalize(res);
   }
 
-  const intlRes = intlMiddleware(req);
-  // An explicit /en/... is a language choice (e.g. an email link). next-intl
-  // strips it to the unprefixed URL but only writes NEXT_LOCALE when the
-  // browser's language differs, so without this a fresh browser would hit
-  // the geo-redirect above on the next request and lose English.
-  if (firstSegment === routing.defaultLocale) {
-    intlRes.cookies.set("NEXT_LOCALE", routing.defaultLocale, { maxAge: 60 * 60 * 24 * 365, path: "/", sameSite: "lax" });
-  }
-  return intlRes;
+  return finalize(intlMiddleware(req));
 }
 
 export const config = {
