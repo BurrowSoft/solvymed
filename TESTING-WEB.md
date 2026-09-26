@@ -471,6 +471,7 @@ accept it.
 | A-5 🤖 | Patient signup with a typed patient invite code | The Patient role shows the code field, with the hint "Digite o código de convite". After confirming you land on `/auth/patient-welcome`, with `linked_patient_id` set. |
 | A-6 | Patient signup with an invalid or no code | `/auth/invite-required` shows clinic wording. Retrying with a valid code links the account. A bogus code shows the "doesn't match" message. |
 | A-7 | Signup validation | Mismatched passwords, a weak password and an email that's already registered each show a clear error, not a crash. |
+| A-7b ⏳ | Password minimum is **8**, approved by the user | Test on signup *and* on reset-password (A-9). **7 characters is rejected with a translated message**, pt-BR and en, and no account or password change happens. 8 characters is accepted. Also check the server: Supabase Auth's minimum password length is 8, so a 7-character password sent straight to the Auth API is refused too, not just by the form. |
 | A-8 📱 | Login and logout | Wrong credentials show an error. The right ones route by role: doctor → `/dashboard`, patient → `/my-appointments` or `pending-confirmation`, secretary → `/dashboard`, or `not-connected` / `clinic-inactive`. Sign-out lands on the current locale's home. |
 | A-9 | Forgot password → reset | Requesting a reset shows a neutral "if the account exists" message. Following the reset link (a `token_hash` via the callback) lets you set a new password, and the new one logs in. |
 | A-10 | `/join/<bogus>`, signed in and signed out | Signed out, it redirects to signup. Signed in, it shows "Este link pode ser inválido…". There's no 5xx. |
@@ -569,11 +570,11 @@ context**, with no cookies and no `NEXT_LOCALE`.
 
 | ID | Step | Expected result |
 |---|---|---|
-| H-1 📱 | Open `/pt-BR/?utm_source=facebook&utm_medium=paid&utm_campaign=launch_br&utm_content=test` | The landing page renders in pt-BR, the LGPD banner shows (G-6), and nothing overflows. The UTM params survive, i.e. they're kept for attribution (cookie, storage or signup metadata, whatever the design is). Record where they end up. |
+| H-1 📱 | Open `/pt-BR/?utm_source=facebook&utm_medium=paid&utm_campaign=launch_br&utm_content=test` | The landing page renders in pt-BR, the LGPD banner shows (G-6), and nothing overflows. **With marketing consent accepted:** the `utm_*` values and `document.referrer` are captured into **first-party client storage** (a cookie or localStorage; note which one web dev chose). **With consent declined or not yet given:** nothing is captured. |
 | H-2 📱 | CTA → signup | The signup opens in pt-BR with the doctor role by default ("Profissional de saúde") and the form usable on a phone keyboard. The UTM attribution is still there. |
 | H-3 📱 | Sign up → "Verifique seu e-mail" → confirm, via the callback `token_hash` | The visitor lands on the dashboard in **pt-BR**, not en. |
 | H-4 📱 | First run | The welcome page (G-1) and the setup checklist (G-2) show. The first step's deep link works on the phone. The trial chip (G-4) shows about 15 days. |
-| H-5 | Attribution check | The new account, or the analytics event, carries the UTM values from H-1, if consent was accepted. With consent declined, **no** marketing event fires, but the signup still works. |
+| H-5 | Attribution check | **Consent accepted:** after signup, the server-owned table **`signup_attribution`**, keyed on `user_id`, has the `utm_*` values and referrer from H-1, checked through REST with the service role. It must **not** be in auth `user_metadata`, which the client can write. **Consent declined:** no `signup_attribution` row (or an empty one, per the design), no marketing event fires, and the signup still works. **Tamper checks:** the user's own session can't insert, update or read another user's `signup_attribution` row through REST, which should return 403 or `[]`. Forged `utm_*` values can't be written for someone else's `user_id`. |
 
 ### L-1. Live-mode Stripe check on production (at release time, with the user)
 
