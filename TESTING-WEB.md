@@ -2573,6 +2573,27 @@ Cleaned up: the 4 throwaway accounts are deleted. **Merge gate: 🟢 for
 Cleaned up: the 2 throwaway accounts are deleted. **Merge gate: 🟢 for
 `017d02a`.**
 
+## PR #19 (`fix/unit-suite-green`) — unit suite green, 🟢 at `d054422`
+
+**Scope: exactly `d054422`.** The diff is two files, +10 lines:
+- a `next/navigation` mock (`useParams` and `useRouter`) in
+  `BookingRequestsPanel.test.tsx`;
+- `include: ['src/**/*.test.{ts,tsx}']` in `vitest.config.ts`, so vitest
+  no longer collects the Playwright `e2e/` specs.
+
+I checked the diff for `.skip`, `.only`, `xit`, `xdescribe` or `todo`, and
+for any removed `it`, `test` or `describe`: **there are none**.
+
+| | Test files | Tests |
+|---|---|---|
+| master `1bc3f56` (control) | 4 failed, 4 passed (8) | **18 failed**, 60 passed (78) |
+| PR #19 `d054422` | 5 passed (5) | **78 passed (78)** |
+
+It's the same 78 unit tests, all passing now, with nothing skipped. Once
+this merges, checklist F-6 can go green.
+
+**Merge gate: 🟢 for `d054422`.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
