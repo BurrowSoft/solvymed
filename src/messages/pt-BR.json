@@ -8,7 +8,12 @@
     "subtitle": "O Solvymed reúne agendamento, prontuários, prescrições e pagamentos em um único app rápido e organizado, feito para profissionais de saúde.",
     "appStore": "Baixar na App Store",
     "googlePlay": "Disponível no Google Play",
-    "comingSoon": "Links de download em breve."
+    "comingSoon": "Links de download em breve.",
+    "soon": "Em breve",
+    "appStoreComingSoon": "Em breve na App Store",
+    "openApp": "Abrir o app",
+    "iosBeta": "Beta para iPhone – instale pelo TestFlight",
+    "iosBetaHint": "Requer o app TestFlight gratuito da Apple"
   },
   "highlights": {
     "h1": "Agendamento inteligente",
@@ -45,7 +50,10 @@
     "body": "Este site está em desenvolvimento. O site completo do Solvymed estará disponível em breve com documentação, preços e suporte detalhados. Enquanto isso, o app está totalmente funcional — baixe e comece a gerenciar sua clínica hoje."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. Todos os direitos reservados."
+    "copyright": "© 2026 Solvymed. Todos os direitos reservados.",
+    "privacy": "Política de Privacidade",
+    "terms": "Termos de Uso",
+    "legal": "Informações legais"
   },
   "confirm": {
     "emailConfirmed": "Email confirmado!",
@@ -67,7 +75,7 @@
     "updatedTitle": "Senha atualizada",
     "updatedMessage": "Sua senha foi alterada. Você já pode entrar com sua nova senha.",
     "matchError": "As senhas não coincidem.",
-    "lengthError": "A senha deve ter pelo menos 6 caracteres.",
+    "lengthError": "A senha deve ter pelo menos {min} caracteres.",
     "openDashboard": "Abrir painel",
     "dashboardHint": "Você será redirecionado para o painel."
   },
@@ -183,7 +191,8 @@
     "useBookingCard": "Use o card de solicitação de agendamento para confirmar, rejeitar ou propor um horário.",
     "genericError": "Algo deu errado. Tente novamente.",
     "missingFieldsError": "Preencha todos os campos obrigatórios.",
-    "pastMidnightError": "Esse horário e duração ultrapassariam a meia-noite."
+    "pastMidnightError": "Esse horário e duração ultrapassariam a meia-noite.",
+    "patientArchivedError": "Este cadastro está arquivado. Restaure-o em Pacientes para agendar uma consulta."
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -247,7 +256,16 @@
     "bornOn": "nascido(a) em {date}",
     "openExisting": "Abrir existente",
     "createAnyway": "Criar mesmo assim",
-    "openPatient": "Abrir paciente"
+    "openPatient": "Abrir paciente",
+    "archivedTitle": "Pacientes arquivados",
+    "activeChip": "Ativos ({n})",
+    "archivedChip": "Arquivados ({n})",
+    "noArchived": "Nenhum paciente arquivado",
+    "archivedBadge": "Arquivado",
+    "restore": "Restaurar",
+    "restoreError": "Não foi possível restaurar o cadastro. Tente novamente.",
+    "archivedOn": "Arquivado em {date}",
+    "archivedOnBy": "Arquivado em {date} por {name}"
   },
   "patientDetail": {
     "tabInfo": "Informações",
@@ -318,7 +336,35 @@
     "codeCopied": "Copiado!",
     "regenerateCode": "Gerar novo",
     "addedBy": "Adicionado por",
-    "addedBySecretary": "{name} (secretaria), {date}"
+    "addedBySecretary": "{name} (secretaria), {date}",
+    "allPatients": "Todos os pacientes",
+    "archivePatient": "Arquivar cadastro",
+    "archiveTitle": "Arquivar {name}?",
+    "archiveBody": "Cadastros arquivados ficam ocultos das listas, da busca e da agenda. O histórico é mantido e você pode restaurar a qualquer momento.",
+    "archiveUpcoming": "{n, plural, =0 {Nenhuma consulta futura será cancelada.} one {# consulta futura será cancelada.} other {# consultas futuras serão canceladas.}}",
+    "archiveConfirm": "Arquivar",
+    "archiveError": "Não foi possível arquivar o cadastro. Tente novamente.",
+    "archivedSub": "Cadastros arquivados não recebem novas consultas, registros ou receitas.",
+    "archivedNoNew": "Este cadastro está arquivado. Restaure-o para adicionar novos registros.",
+    "deleteNoHistoryConfirm": "Excluir {name}? Esta ação não pode ser desfeita.",
+    "deleteHasHistory": "Este cadastro agora tem histórico clínico e não pode ser excluído. Arquive-o em vez disso.",
+    "deleteError": "Não foi possível excluir o cadastro. Tente novamente.",
+    "editEntry": "Editar",
+    "deleteEntry": "Excluir",
+    "addCorrection": "Adicionar correção",
+    "correctionReason": "Motivo da correção",
+    "correctionReasonPlaceholder": "ex.: dose errada, erro de digitação no diagnóstico",
+    "reasonRequired": "Informe um motivo.",
+    "correctedOnBy": "Corrigido em {date} por {name}: {reason}",
+    "correctedOn": "Corrigido em {date}: {reason}",
+    "correctionLabel": "Correção",
+    "correctRecordTitle": "Corrigir registro",
+    "correctPrescriptionTitle": "Corrigir receita",
+    "editRecordTitle": "Editar registro",
+    "editPrescriptionTitle": "Editar receita",
+    "lockedError": "Este registro não pode mais ser alterado. Adicione uma correção.",
+    "contentRequired": "Informe o conteúdo.",
+    "entryNotFound": "Este registro não existe mais. Recarregue a página."
   },
   "settings": {
     "profileTitle": "Perfil",
@@ -466,9 +512,12 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n} min",
     "customTime": "Horário personalizado",
-    "orCustomTime": "Ou escolha um horário específico"
+    "orCustomTime": "Ou escolha um horário específico",
+    "professionalFallback": "Profissional",
+    "errorArchived": "Esta clínica não está aceitando novos agendamentos para a sua conta. Entre em contato com a clínica."
   },
   "auth": {
+    "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",
     "login": {
       "title": "Que bom ter você de volta",
       "subtitle": "Entre na sua conta SolvyMed",
@@ -506,7 +555,9 @@
       "emailExists": "Já existe uma conta com este e-mail. Por favor, faça login.",
       "joiningAs": "Entrando como {role} via link de convite.",
       "joiningAsSecretary": "Entrando na equipe de secretaria por link de convite.",
-      "secretaryNeedsInvite": "Trabalha na secretaria? Peça um link de convite à clínica onde você trabalha."
+      "secretaryNeedsInvite": "Trabalha na secretaria? Peça um link de convite à clínica onde você trabalha.",
+      "secretaryEmailMismatch": "Este e-mail não corresponde ao convite, ou o convite não é mais válido. Confira o e-mail ou peça um novo link à clínica.",
+      "consent": "Ao criar uma conta, você concorda com os <terms>Termos de Uso</terms> e a <privacy>Política de Privacidade</privacy>."
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",
@@ -550,7 +601,8 @@
       "linkFailed": "Ocorreu um erro ao vincular sua conta. Tente novamente.",
       "backToSignup": "Usar outra conta",
       "tooManyAttempts": "Muitas tentativas. Aguarde um pouco antes de tentar novamente.",
-      "alreadyInvitedByAnother": "Sua conta já está conectada a outra clínica."
+      "alreadyInvitedByAnother": "Sua conta já está conectada a outra clínica.",
+      "archived": "Esta clínica não está aceitando novos agendamentos para a sua conta. Entre em contato com a clínica."
     },
     "pendingConfirmation": {
       "loading": "Verificando seu status…",
@@ -714,6 +766,40 @@
     "leaveTitle": "Sair da clínica",
     "leaveSub": "Deixar esta clínica. Você pode entrar em outra clínica com um novo convite.",
     "accountNotSecretary": "Esta conta não pode aceitar um convite para a equipe. Use uma conta separada criada pelo link de convite.",
-    "teamResendConfirm": "Enviar um novo convite para {email}? O código compartilhado antes deixará de funcionar."
+    "teamResendConfirm": "Enviar um novo convite para {email}? O código compartilhado antes deixará de funcionar.",
+    "inviteFrom": "Convite de {clinic}",
+    "inviteFor": "Este convite é para {email}. Cadastre-se com esse e-mail."
+  },
+  "invitePage": {
+    "metaTitle": "Seu convite",
+    "heading": "Seu convite para o SolvyMed",
+    "sub": "Sua clínica convidou você para se conectar no SolvyMed.",
+    "codeLabel": "Seu código de convite",
+    "step1": "Baixe o SolvyMed no seu celular.",
+    "step2": "Abra o app, toque em <b>Cadastre-se</b>, escolha <b>Paciente</b> e depois digite o código acima em <b>Código de convite</b>.",
+    "step3": "Já tem uma conta? Abra a aba <b>Início</b> e digite o código em <b>Conectar ao seu Médico</b>."
+  },
+  "accountDelete": {
+    "backToHome": "Voltar ao início",
+    "title": "Excluir sua conta",
+    "intro": "Envie sua solicitação abaixo. Vamos processá-la em até 30 dias e confirmar por e-mail.",
+    "whatHappensTitle": "O que acontece com seus dados",
+    "professionals": "<b>Profissionais de saúde:</b> por lei, os prontuários dos seus pacientes precisam ser guardados por 20 anos, então encerramos sua conta e mantemos os prontuários em segurança, em vez de excluí-los.",
+    "patients": "<b>Pacientes:</b> excluímos sua conta. Os registros que sua clínica mantém sobre você continuam com a clínica; fale com ela sobre eles.",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "seu@email.com",
+    "reasonLabel": "Motivo",
+    "optional": "(opcional)",
+    "reasonPlaceholder": "Conte por que está saindo…",
+    "submit": "Solicitar exclusão da conta",
+    "submitting": "Enviando…",
+    "preferEmail": "Prefere e-mail?",
+    "emailSupport": "Falar com o suporte",
+    "closeSubject": "Encerrar minha conta",
+    "doneTitle": "Solicitação recebida",
+    "doneBody": "Recebemos sua solicitação para <b>{email}</b>.",
+    "doneSub": "Vamos processá-la em até 30 dias e confirmar por e-mail.",
+    "errorEmailRequired": "Informe seu e-mail.",
+    "errorGeneric": "Algo deu errado. Tente novamente ou escreva para {email}."
   }
 }

@@ -8,7 +8,12 @@
     "subtitle": "Solvymedは予約管理、患者記録、処方箋、支払いをひとつの高速で使いやすいアプリにまとめました。医療専門家のために設計されています。",
     "appStore": "App Storeでダウンロード",
     "googlePlay": "Google Playで入手",
-    "comingSoon": "ダウンロードリンクは近日公開予定。"
+    "comingSoon": "ダウンロードリンクは近日公開予定。",
+    "soon": "近日公開",
+    "appStoreComingSoon": "App Store で近日公開",
+    "openApp": "アプリを開く",
+    "iosBeta": "iPhone ベータ版 – TestFlight でインストール",
+    "iosBetaHint": "Apple の無料アプリ TestFlight が必要です"
   },
   "highlights": {
     "h1": "スマート予約管理",
@@ -45,7 +50,10 @@
     "body": "このウェブサイトは現在開発中です。詳細なドキュメント、料金プラン、サポートリソースを揃えたSolvymedの完全版サイトが間もなく公開されます。それまでの間、アプリは完全に稼働しています — ダウンロードして今日からクリニック管理を始めましょう。"
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. 無断転載禁止。"
+    "copyright": "© 2026 Solvymed. 無断転載禁止。",
+    "privacy": "プライバシーポリシー",
+    "terms": "利用規約",
+    "legal": "法的情報"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -67,7 +75,7 @@
     "updatedTitle": "パスワードが更新されました",
     "updatedMessage": "パスワードが変更されました。新しいパスワードでサインインできるようになりました。",
     "matchError": "パスワードが一致しません。",
-    "lengthError": "パスワードは6文字以上である必要があります。",
+    "lengthError": "パスワードは{min}文字以上である必要があります。",
     "openDashboard": "ダッシュボードを開く",
     "dashboardHint": "ダッシュボードにリダイレクトされます。"
   },
@@ -183,7 +191,8 @@
     "useBookingCard": "この予約リクエストの確定・拒否・時間の再提案には、予約リクエストカードをご利用ください。",
     "genericError": "問題が発生しました。もう一度お試しください。",
     "missingFieldsError": "必須項目をすべて入力してください。",
-    "pastMidnightError": "この時間と所要時間では深夜0時を超えてしまいます。"
+    "pastMidnightError": "この時間と所要時間では深夜0時を超えてしまいます。",
+    "patientArchivedError": "このカルテはアーカイブ済みです。予約するには「患者」で復元してください。"
   },
   "payments": {
     "thisWeek": "今週",
@@ -247,7 +256,16 @@
     "bornOn": "{date}生まれ",
     "openExisting": "既存の患者を開く",
     "createAnyway": "このまま作成",
-    "openPatient": "患者を開く"
+    "openPatient": "患者を開く",
+    "archivedTitle": "アーカイブ済みのカルテ",
+    "activeChip": "有効 ({n})",
+    "archivedChip": "アーカイブ済み ({n})",
+    "noArchived": "アーカイブ済みのカルテはありません",
+    "archivedBadge": "アーカイブ済み",
+    "restore": "復元",
+    "restoreError": "カルテを復元できませんでした。もう一度お試しください。",
+    "archivedOn": "{date} にアーカイブ",
+    "archivedOnBy": "{date} に {name} がアーカイブ"
   },
   "patientDetail": {
     "tabInfo": "情報",
@@ -318,7 +336,35 @@
     "codeCopied": "コピーしました!",
     "regenerateCode": "再生成",
     "addedBy": "登録者",
-    "addedBySecretary": "{name}（受付スタッフ）、{date}"
+    "addedBySecretary": "{name}（受付スタッフ）、{date}",
+    "allPatients": "すべてのカルテ",
+    "archivePatient": "カルテをアーカイブ",
+    "archiveTitle": "{name} をアーカイブしますか？",
+    "archiveBody": "アーカイブしたカルテは一覧、検索、予約から非表示になります。履歴は保持され、いつでも復元できます。",
+    "archiveUpcoming": "{n, plural, =0 {キャンセルされる今後の予約はありません。} other {今後の予約 # 件がキャンセルされます。}}",
+    "archiveConfirm": "アーカイブ",
+    "archiveError": "カルテをアーカイブできませんでした。もう一度お試しください。",
+    "archivedSub": "アーカイブ済みのカルテには、新しい予約・記録・処方を追加できません。",
+    "archivedNoNew": "このカルテはアーカイブ済みです。新しい項目を追加するには復元してください。",
+    "deleteNoHistoryConfirm": "{name} を削除しますか？この操作は取り消せません。",
+    "deleteHasHistory": "このカルテには診療履歴があるため削除できません。代わりにアーカイブしてください。",
+    "deleteError": "カルテを削除できませんでした。もう一度お試しください。",
+    "editEntry": "編集",
+    "deleteEntry": "削除",
+    "addCorrection": "訂正を追加",
+    "correctionReason": "訂正の理由",
+    "correctionReasonPlaceholder": "例: 用量の誤り、診断名の入力ミス",
+    "reasonRequired": "理由を入力してください。",
+    "correctedOnBy": "{date} に {name} が訂正: {reason}",
+    "correctedOn": "{date} に訂正: {reason}",
+    "correctionLabel": "訂正",
+    "correctRecordTitle": "記録を訂正",
+    "correctPrescriptionTitle": "処方を訂正",
+    "editRecordTitle": "記録を編集",
+    "editPrescriptionTitle": "処方を編集",
+    "lockedError": "この項目はもう変更できません。代わりに訂正を追加してください。",
+    "contentRequired": "内容を入力してください。",
+    "entryNotFound": "この項目は存在しません。ページを再読み込みしてください。"
   },
   "settings": {
     "profileTitle": "プロフィール",
@@ -466,9 +512,12 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n}分",
     "customTime": "カスタム時間",
-    "orCustomTime": "または時間を指定する"
+    "orCustomTime": "または時間を指定する",
+    "professionalFallback": "担当者",
+    "errorArchived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。"
   },
   "auth": {
+    "passwordTooShort": "パスワードは{min}文字以上である必要があります。",
     "login": {
       "title": "おかえりなさい",
       "subtitle": "SolvyMedアカウントにサインインする",
@@ -506,7 +555,9 @@
       "emailExists": "このメールアドレスのアカウントは既に存在します。サインインしてください。",
       "joiningAs": "招待リンクで{role}として参加します。",
       "joiningAsSecretary": "招待リンクから受付スタッフとして登録します。",
-      "secretaryNeedsInvite": "受付スタッフの方は、医師に招待リンクを依頼してください。"
+      "secretaryNeedsInvite": "受付スタッフの方は、医師に招待リンクを依頼してください。",
+      "secretaryEmailMismatch": "このメールアドレスは招待と一致しないか、招待の有効期限が切れています。メールアドレスを確認するか、クリニックに新しいリンクを依頼してください。",
+      "consent": "アカウントを作成すると、<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",
@@ -550,7 +601,8 @@
       "linkFailed": "アカウントの連携中にエラーが発生しました。もう一度お試しください。",
       "backToSignup": "別のアカウントを使う",
       "tooManyAttempts": "試行回数が多すぎます。しばらくしてからもう一度お試しください。",
-      "alreadyInvitedByAnother": "あなたのアカウントはすでに別の医師と連携しています。"
+      "alreadyInvitedByAnother": "あなたのアカウントはすでに別の医師と連携しています。",
+      "archived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。"
     },
     "pendingConfirmation": {
       "loading": "状況を確認しています…",
@@ -714,6 +766,40 @@
     "leaveTitle": "クリニックを離れる",
     "leaveSub": "この医師のもとでの勤務をやめます。新しい招待で別のクリニックに参加できます。",
     "accountNotSecretary": "このアカウントでは受付スタッフの招待を承諾できません。招待リンクから作成した別のアカウントをご利用ください。",
-    "teamResendConfirm": "{email}に新しい招待を送りますか？以前に共有したコードは使えなくなります。"
+    "teamResendConfirm": "{email}に新しい招待を送りますか？以前に共有したコードは使えなくなります。",
+    "inviteFrom": "{clinic} からの招待",
+    "inviteFor": "この招待は {email} 宛てです。このメールアドレスで登録してください。"
+  },
+  "invitePage": {
+    "metaTitle": "招待",
+    "heading": "SolvyMed への招待",
+    "sub": "クリニックから SolvyMed への招待が届いています。",
+    "codeLabel": "招待コード",
+    "step1": "スマートフォンに SolvyMed をダウンロードします。",
+    "step2": "アプリを開いて <b>Sign up</b> をタップし、<b>Patient</b> を選んでから、上のコードを <b>Invite code</b> に入力します。",
+    "step3": "すでにアカウントをお持ちの場合は、<b>Home</b> タブを開き、<b>Connect to Your Doctor</b> にコードを入力してください。"
+  },
+  "accountDelete": {
+    "backToHome": "ホームに戻る",
+    "title": "アカウントの削除",
+    "intro": "以下からリクエストを送信してください。30日以内に処理し、メールでお知らせします。",
+    "whatHappensTitle": "データの取り扱い",
+    "professionals": "<b>医療従事者の方:</b> 法律により患者さんの診療記録は20年間保存する必要があるため、記録を削除せずに安全に保管したうえでアカウントを閉鎖します。",
+    "patients": "<b>患者さん:</b> アカウントを削除します。クリニックが保有するあなたの記録はクリニックに残ります。記録についてはクリニックにお問い合わせください。",
+    "emailLabel": "メールアドレス",
+    "emailPlaceholder": "your@email.com",
+    "reasonLabel": "理由",
+    "optional": "（任意）",
+    "reasonPlaceholder": "退会の理由をお聞かせください…",
+    "submit": "アカウントの削除をリクエスト",
+    "submitting": "送信中…",
+    "preferEmail": "メールをご希望ですか？",
+    "emailSupport": "サポートにメール",
+    "closeSubject": "アカウントを閉鎖",
+    "doneTitle": "リクエストを受け付けました",
+    "doneBody": "<b>{email}</b> のリクエストを受け付けました。",
+    "doneSub": "30日以内に処理し、メールでお知らせします。",
+    "errorEmailRequired": "メールアドレスを入力してください。",
+    "errorGeneric": "問題が発生しました。もう一度お試しいただくか、{email} までご連絡ください。"
   }
 }

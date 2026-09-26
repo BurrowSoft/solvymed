@@ -11,7 +11,7 @@ export default async function PrivacyPage({
         <div className="mb-10">
           <span className="text-3xl font-black text-teal-600">S</span>
           <h1 className="mt-4 text-3xl font-extrabold text-slate-900">Privacy Policy</h1>
-          <p className="mt-2 text-sm text-slate-500">Last updated: June 18, 2026</p>
+          <p className="mt-2 text-sm text-slate-500">Last updated: September 26, 2026</p>
         </div>
 
         <div className="prose prose-slate max-w-none">
@@ -79,9 +79,11 @@ export default async function PrivacyPage({
           <Section title="5. Data Sharing">
             <p>We share data only with the following service providers, strictly to operate the platform:</p>
             <ul>
-              <li><strong>Supabase</strong> — database, authentication, and file storage (servers in the US/EU).</li>
+              <li><strong>Supabase</strong> — database, authentication, and file storage (servers in Brazil, São Paulo region).</li>
+              <li><strong>Vercel</strong> — website hosting (server processing in Brazil, São Paulo region).</li>
               <li><strong>Stripe</strong> — payment processing for subscriptions.</li>
               <li><strong>Expo</strong> — push notification delivery service.</li>
+              <li><strong>Resend</strong> — transactional email (account confirmations and password resets) (USA).</li>
             </ul>
             <p>
               We may disclose information if required by law, court order, or to protect the rights and safety
@@ -103,9 +105,21 @@ export default async function PrivacyPage({
 
           <Section title="7. Data Retention">
             <p>
-              We retain your account data for as long as your account is active. Patient records entered by
-              a professional are retained until the professional requests deletion. You may request deletion
-              of your account and associated data at any time by contacting us.
+              Medical records (clinical notes, prescriptions and exam files) are kept for at least 20 years,
+              as required by Brazilian law for patient records. A patient with medical records cannot be
+              deleted, only archived, and an account that holds medical records is closed by our support team
+              rather than deleted, so the records are kept. Other account data is kept while the account is
+              active.
+            </p>
+            <p>
+              After 24 hours, a clinical note or prescription can no longer be edited or deleted. It can be
+              corrected, and each correction is kept with its date, author and reason. Files removed from a
+              patient&apos;s chart after 24 hours are hidden, not deleted, and are kept for the legal retention
+              period.
+            </p>
+            <p>
+              You may request deletion of your account at any time by contacting us; medical records are kept
+              as described above.
             </p>
           </Section>
 
@@ -117,7 +131,7 @@ export default async function PrivacyPage({
             <ul>
               <li>Access the personal data we hold about you.</li>
               <li>Correct inaccurate or incomplete data.</li>
-              <li>Request deletion of your data (&quot;right to be forgotten&quot;).</li>
+              <li>Request deletion of your data (&quot;right to be forgotten&quot;), except medical records, which are kept as described in section 7.</li>
               <li>Request a portable copy of your data.</li>
               <li>Withdraw consent at any time.</li>
               <li>Lodge a complaint with your national data protection authority.</li>

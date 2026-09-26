@@ -8,7 +8,12 @@
     "subtitle": "Solvymed kết hợp lịch hẹn, hồ sơ bệnh nhân, đơn thuốc và thanh toán vào một ứng dụng nhanh và gọn, được xây dựng cho các chuyên gia y tế.",
     "appStore": "Tải về trên App Store",
     "googlePlay": "Tải trên Google Play",
-    "comingSoon": "Liên kết tải xuống sắp có."
+    "comingSoon": "Liên kết tải xuống sắp có.",
+    "soon": "Sắp ra mắt",
+    "appStoreComingSoon": "Sắp có trên App Store",
+    "openApp": "Mở ứng dụng",
+    "iosBeta": "Bản beta cho iPhone – cài qua TestFlight",
+    "iosBetaHint": "Cần ứng dụng TestFlight miễn phí của Apple"
   },
   "highlights": {
     "h1": "Lịch hẹn thông minh",
@@ -45,7 +50,10 @@
     "body": "Trang web này đang được phát triển. Trang web đầy đủ của Solvymed sẽ sớm ra mắt với tài liệu chi tiết, bảng giá và tài nguyên hỗ trợ. Trong thời gian này, ứng dụng hoàn toàn hoạt động — tải xuống và bắt đầu quản lý phòng khám của bạn ngay hôm nay."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. Bảo lưu mọi quyền."
+    "copyright": "© 2026 Solvymed. Bảo lưu mọi quyền.",
+    "privacy": "Chính sách quyền riêng tư",
+    "terms": "Điều khoản dịch vụ",
+    "legal": "Thông tin pháp lý"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -67,7 +75,7 @@
     "updatedTitle": "Đã cập nhật mật khẩu",
     "updatedMessage": "Mật khẩu của bạn đã được thay đổi. Bây giờ bạn có thể đăng nhập bằng mật khẩu mới.",
     "matchError": "Mật khẩu không khớp.",
-    "lengthError": "Mật khẩu phải có ít nhất 6 ký tự.",
+    "lengthError": "Mật khẩu phải có ít nhất {min} ký tự.",
     "openDashboard": "Mở bảng điều khiển",
     "dashboardHint": "Bạn sẽ được chuyển hướng đến bảng điều khiển."
   },
@@ -183,7 +191,8 @@
     "useBookingCard": "Hãy dùng thẻ yêu cầu đặt lịch để xác nhận, từ chối hoặc đề xuất giờ khác cho yêu cầu này.",
     "genericError": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "missingFieldsError": "Vui lòng điền đầy đủ các trường bắt buộc.",
-    "pastMidnightError": "Thời gian và thời lượng này sẽ vượt quá nửa đêm."
+    "pastMidnightError": "Thời gian và thời lượng này sẽ vượt quá nửa đêm.",
+    "patientArchivedError": "Hồ sơ này đã được lưu trữ. Hãy khôi phục trong mục Bệnh nhân để đặt lịch hẹn."
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -247,7 +256,16 @@
     "bornOn": "sinh ngày {date}",
     "openExisting": "Mở hồ sơ có sẵn",
     "createAnyway": "Vẫn tạo mới",
-    "openPatient": "Mở bệnh nhân"
+    "openPatient": "Mở bệnh nhân",
+    "archivedTitle": "Hồ sơ đã lưu trữ",
+    "activeChip": "Đang hoạt động ({n})",
+    "archivedChip": "Đã lưu trữ ({n})",
+    "noArchived": "Không có hồ sơ nào đã lưu trữ",
+    "archivedBadge": "Đã lưu trữ",
+    "restore": "Khôi phục",
+    "restoreError": "Không thể khôi phục hồ sơ. Vui lòng thử lại.",
+    "archivedOn": "Lưu trữ ngày {date}",
+    "archivedOnBy": "Lưu trữ ngày {date} bởi {name}"
   },
   "patientDetail": {
     "tabInfo": "Thông tin",
@@ -318,7 +336,35 @@
     "codeCopied": "Đã sao chép!",
     "regenerateCode": "Tạo lại",
     "addedBy": "Được thêm bởi",
-    "addedBySecretary": "{name} (thư ký), {date}"
+    "addedBySecretary": "{name} (thư ký), {date}",
+    "allPatients": "Tất cả hồ sơ",
+    "archivePatient": "Lưu trữ hồ sơ",
+    "archiveTitle": "Lưu trữ hồ sơ {name}?",
+    "archiveBody": "Hồ sơ đã lưu trữ sẽ bị ẩn khỏi danh sách, tìm kiếm và lịch hẹn. Lịch sử vẫn được giữ lại và có thể khôi phục bất cứ lúc nào.",
+    "archiveUpcoming": "{n, plural, =0 {Không có lịch hẹn sắp tới nào bị hủy.} other {# lịch hẹn sắp tới sẽ bị hủy.}}",
+    "archiveConfirm": "Lưu trữ",
+    "archiveError": "Không thể lưu trữ hồ sơ. Vui lòng thử lại.",
+    "archivedSub": "Không thể thêm lịch hẹn, ghi chép hoặc đơn thuốc mới cho hồ sơ đã lưu trữ.",
+    "archivedNoNew": "Hồ sơ này đã được lưu trữ. Hãy khôi phục để thêm mục mới.",
+    "deleteNoHistoryConfirm": "Xóa {name}? Không thể hoàn tác thao tác này.",
+    "deleteHasHistory": "Hồ sơ này hiện đã có lịch sử khám và không thể xóa. Hãy lưu trữ thay vì xóa.",
+    "deleteError": "Không thể xóa hồ sơ. Vui lòng thử lại.",
+    "editEntry": "Sửa",
+    "deleteEntry": "Xóa",
+    "addCorrection": "Thêm đính chính",
+    "correctionReason": "Lý do đính chính",
+    "correctionReasonPlaceholder": "vd.: sai liều, gõ nhầm chẩn đoán",
+    "reasonRequired": "Vui lòng nhập lý do.",
+    "correctedOnBy": "Đính chính ngày {date} bởi {name}: {reason}",
+    "correctedOn": "Đính chính ngày {date}: {reason}",
+    "correctionLabel": "Đính chính",
+    "correctRecordTitle": "Đính chính ghi chép",
+    "correctPrescriptionTitle": "Đính chính đơn thuốc",
+    "editRecordTitle": "Sửa ghi chép",
+    "editPrescriptionTitle": "Sửa đơn thuốc",
+    "lockedError": "Mục này không thể thay đổi nữa. Hãy thêm đính chính.",
+    "contentRequired": "Vui lòng nhập nội dung.",
+    "entryNotFound": "Mục này không còn tồn tại. Hãy tải lại trang."
   },
   "settings": {
     "profileTitle": "Hồ sơ",
@@ -466,9 +512,12 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n} phút",
     "customTime": "Thời gian tùy chỉnh",
-    "orCustomTime": "Hoặc chọn giờ khác"
+    "orCustomTime": "Hoặc chọn giờ khác",
+    "professionalFallback": "Chuyên gia",
+    "errorArchived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám."
   },
   "auth": {
+    "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
     "login": {
       "title": "Chào mừng trở lại",
       "subtitle": "Đăng nhập vào tài khoản SolvyMed của bạn",
@@ -506,7 +555,9 @@
       "emailExists": "Đã có tài khoản với email này. Vui lòng đăng nhập.",
       "joiningAs": "Tham gia với tư cách {role} qua liên kết mời.",
       "joiningAsSecretary": "Đăng ký làm thư ký qua liên kết mời.",
-      "secretaryNeedsInvite": "Bạn là thư ký? Hãy xin bác sĩ một liên kết mời."
+      "secretaryNeedsInvite": "Bạn là thư ký? Hãy xin bác sĩ một liên kết mời.",
+      "secretaryEmailMismatch": "Email này không khớp với lời mời, hoặc lời mời không còn hiệu lực. Hãy kiểm tra email hoặc xin phòng khám một liên kết mới.",
+      "consent": "Khi tạo tài khoản, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>."
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",
@@ -550,7 +601,8 @@
       "linkFailed": "Đã xảy ra lỗi khi liên kết tài khoản của bạn. Vui lòng thử lại.",
       "backToSignup": "Dùng tài khoản khác",
       "tooManyAttempts": "Quá nhiều lần thử. Vui lòng đợi một chút rồi thử lại.",
-      "alreadyInvitedByAnother": "Tài khoản của bạn đã được liên kết với một bác sĩ khác."
+      "alreadyInvitedByAnother": "Tài khoản của bạn đã được liên kết với một bác sĩ khác.",
+      "archived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám."
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",
@@ -714,6 +766,40 @@
     "leaveTitle": "Rời phòng khám",
     "leaveSub": "Ngừng làm việc cho bác sĩ này. Bạn có thể tham gia phòng khám khác bằng lời mời mới.",
     "accountNotSecretary": "Tài khoản này không thể nhận lời mời làm thư ký. Hãy dùng tài khoản riêng được tạo từ liên kết mời.",
-    "teamResendConfirm": "Gửi lời mời mới tới {email}? Mã bạn đã chia sẻ trước đó sẽ không còn dùng được."
+    "teamResendConfirm": "Gửi lời mời mới tới {email}? Mã bạn đã chia sẻ trước đó sẽ không còn dùng được.",
+    "inviteFrom": "Lời mời từ {clinic}",
+    "inviteFor": "Lời mời này dành cho {email}. Hãy đăng ký bằng email đó."
+  },
+  "invitePage": {
+    "metaTitle": "Lời mời",
+    "heading": "Lời mời tham gia SolvyMed",
+    "sub": "Phòng khám của bạn mời bạn kết nối trên SolvyMed.",
+    "codeLabel": "Mã mời của bạn",
+    "step1": "Tải SolvyMed về điện thoại.",
+    "step2": "Mở ứng dụng, chạm <b>Sign up</b>, chọn <b>Patient</b>, rồi nhập mã ở trên vào <b>Invite code</b>.",
+    "step3": "Đã có tài khoản? Mở thẻ <b>Home</b> và nhập mã ở mục <b>Connect to Your Doctor</b>."
+  },
+  "accountDelete": {
+    "backToHome": "Về trang chủ",
+    "title": "Xóa tài khoản",
+    "intro": "Gửi yêu cầu của bạn bên dưới. Chúng tôi sẽ xử lý trong vòng 30 ngày và xác nhận qua email.",
+    "whatHappensTitle": "Dữ liệu của bạn sẽ ra sao",
+    "professionals": "<b>Nhân viên y tế:</b> theo luật, hồ sơ bệnh án của bệnh nhân phải được lưu giữ 20 năm, vì vậy chúng tôi đóng tài khoản của bạn và lưu giữ hồ sơ an toàn thay vì xóa.",
+    "patients": "<b>Bệnh nhân:</b> chúng tôi xóa tài khoản của bạn. Hồ sơ mà phòng khám lưu về bạn vẫn ở phòng khám; hãy liên hệ phòng khám nếu cần.",
+    "emailLabel": "Địa chỉ email",
+    "emailPlaceholder": "your@email.com",
+    "reasonLabel": "Lý do",
+    "optional": "(không bắt buộc)",
+    "reasonPlaceholder": "Cho chúng tôi biết lý do bạn rời đi…",
+    "submit": "Yêu cầu xóa tài khoản",
+    "submitting": "Đang gửi…",
+    "preferEmail": "Bạn thích dùng email hơn?",
+    "emailSupport": "Gửi email cho bộ phận hỗ trợ",
+    "closeSubject": "Đóng tài khoản của tôi",
+    "doneTitle": "Đã nhận yêu cầu",
+    "doneBody": "Chúng tôi đã nhận yêu cầu cho <b>{email}</b>.",
+    "doneSub": "Chúng tôi sẽ xử lý trong vòng 30 ngày và xác nhận qua email.",
+    "errorEmailRequired": "Vui lòng nhập địa chỉ email.",
+    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại hoặc gửi email tới {email}."
   }
 }

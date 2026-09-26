@@ -90,7 +90,8 @@ export default async function SchedulePage({
       .gte("date", rangeStart)
       .lte("date", rangeEnd)
       .order("start_time"),
-    supabase.from("patients").select("id, full_name").eq("professional_id", effectiveProfId).order("full_name"),
+    // Archived patients aren't offered for new appointments.
+    supabase.from("patients").select("id, full_name").eq("professional_id", effectiveProfId).is("archived_at", null).order("full_name"),
     supabase.from("procedures").select("id, name, duration_minutes, price, payment_type").eq("professional_id", effectiveProfId).eq("active", true).order("name"),
     getTentativeBookings(),
     // Pix QR details. A secretary can't read the doctor's professionals row

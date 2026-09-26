@@ -8,7 +8,12 @@
     "subtitle": "Solvymed将预约管理、患者档案、处方和付款整合在一款快速简洁的应用中，专为医疗专业人员设计。",
     "appStore": "在App Store下载",
     "googlePlay": "在Google Play获取",
-    "comingSoon": "下载链接即将推出。"
+    "comingSoon": "下载链接即将推出。",
+    "soon": "即将推出",
+    "appStoreComingSoon": "即将登陆 App Store",
+    "openApp": "打开应用",
+    "iosBeta": "iPhone 测试版 – 通过 TestFlight 安装",
+    "iosBetaHint": "需要 Apple 免费的 TestFlight 应用"
   },
   "highlights": {
     "h1": "智能排程",
@@ -45,7 +50,10 @@
     "body": "本网站正在开发中。完整的Solvymed网站即将上线，届时将提供详细文档、定价和支持资源。在此期间，应用程序完全可用 — 立即下载并开始管理您的诊所。"
   },
   "footer": {
-    "copyright": "© 2026 Solvymed 版权所有。"
+    "copyright": "© 2026 Solvymed 版权所有。",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "legal": "法律信息"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -67,7 +75,7 @@
     "updatedTitle": "密码已更新",
     "updatedMessage": "您的密码已更改。您现在可以使用新密码登录。",
     "matchError": "两次输入的密码不匹配。",
-    "lengthError": "密码至少需要6个字符。",
+    "lengthError": "密码至少需要{min}个字符。",
     "openDashboard": "打开仪表板",
     "dashboardHint": "您将被重定向到您的仪表板。"
   },
@@ -183,7 +191,8 @@
     "useBookingCard": "请使用预约请求卡来确认、拒绝或为此请求提议新时间。",
     "genericError": "出现问题，请重试。",
     "missingFieldsError": "请填写所有必填字段。",
-    "pastMidnightError": "此时间和时长将超过午夜。"
+    "pastMidnightError": "此时间和时长将超过午夜。",
+    "patientArchivedError": "此档案已归档。请在“患者”中恢复后再预约。"
   },
   "payments": {
     "thisWeek": "本周",
@@ -247,7 +256,16 @@
     "bornOn": "出生于 {date}",
     "openExisting": "打开已有记录",
     "createAnyway": "仍然创建",
-    "openPatient": "打开患者"
+    "openPatient": "打开患者",
+    "archivedTitle": "已归档的档案",
+    "activeChip": "有效 ({n})",
+    "archivedChip": "已归档 ({n})",
+    "noArchived": "没有已归档的档案",
+    "archivedBadge": "已归档",
+    "restore": "恢复",
+    "restoreError": "无法恢复档案，请重试。",
+    "archivedOn": "{date} 归档",
+    "archivedOnBy": "{date} 由 {name} 归档"
   },
   "patientDetail": {
     "tabInfo": "信息",
@@ -318,7 +336,35 @@
     "codeCopied": "已复制！",
     "regenerateCode": "重新生成",
     "addedBy": "添加人",
-    "addedBySecretary": "{name}（秘书），{date}"
+    "addedBySecretary": "{name}（秘书），{date}",
+    "allPatients": "全部档案",
+    "archivePatient": "归档档案",
+    "archiveTitle": "归档 {name}？",
+    "archiveBody": "已归档的档案不会出现在列表、搜索和日程中。历史记录会保留，可随时恢复。",
+    "archiveUpcoming": "{n, plural, =0 {不会取消任何即将到来的预约。} other {将取消 # 个即将到来的预约。}}",
+    "archiveConfirm": "归档",
+    "archiveError": "无法归档档案，请重试。",
+    "archivedSub": "已归档的档案不能添加新的预约、病历或处方。",
+    "archivedNoNew": "此档案已归档。请先恢复再添加新内容。",
+    "deleteNoHistoryConfirm": "删除 {name}？此操作无法撤销。",
+    "deleteHasHistory": "此档案现已有临床记录，无法删除。请改为归档。",
+    "deleteError": "无法删除档案，请重试。",
+    "editEntry": "编辑",
+    "deleteEntry": "删除",
+    "addCorrection": "添加更正",
+    "correctionReason": "更正原因",
+    "correctionReasonPlaceholder": "例如：剂量错误、诊断中的笔误",
+    "reasonRequired": "请输入原因。",
+    "correctedOnBy": "{date} 由 {name} 更正：{reason}",
+    "correctedOn": "{date} 更正：{reason}",
+    "correctionLabel": "更正",
+    "correctRecordTitle": "更正病历",
+    "correctPrescriptionTitle": "更正处方",
+    "editRecordTitle": "编辑病历",
+    "editPrescriptionTitle": "编辑处方",
+    "lockedError": "此条目已无法更改。请改为添加更正。",
+    "contentRequired": "请输入内容。",
+    "entryNotFound": "此条目已不存在。请刷新页面。"
   },
   "settings": {
     "profileTitle": "个人资料",
@@ -466,9 +512,12 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n} 分钟",
     "customTime": "自定义时间",
-    "orCustomTime": "或选择自定义时间"
+    "orCustomTime": "或选择自定义时间",
+    "professionalFallback": "专业人员",
+    "errorArchived": "该诊所目前不接受您账户的新预约。请联系诊所。"
   },
   "auth": {
+    "passwordTooShort": "密码至少需要{min}个字符。",
     "login": {
       "title": "欢迎回来",
       "subtitle": "登录您的 SolvyMed 账户",
@@ -506,7 +555,9 @@
       "emailExists": "此邮箕已有账户。请登录。",
       "joiningAs": "通过邀请链接以 {role} 身份加入。",
       "joiningAsSecretary": "通过邀请链接以秘书身份注册。",
-      "secretaryNeedsInvite": "你是秘书？请向你的医生索取邀请链接。"
+      "secretaryNeedsInvite": "你是秘书？请向你的医生索取邀请链接。",
+      "secretaryEmailMismatch": "该邮箱与邀请不匹配，或邀请已失效。请检查邮箱，或向诊所索取新的链接。",
+      "consent": "创建账户即表示您同意<terms>服务条款</terms>和<privacy>隐私政策</privacy>。"
     },
     "forgotPassword": {
       "title": "忘记密码？",
@@ -550,7 +601,8 @@
       "linkFailed": "关联您的账户时出错，请重试。",
       "backToSignup": "使用其他账户",
       "tooManyAttempts": "尝试次数过多，请稍后再试。",
-      "alreadyInvitedByAnother": "您的账户已与另一位医生关联。"
+      "alreadyInvitedByAnother": "您的账户已与另一位医生关联。",
+      "archived": "该诊所目前不接受您账户的新预约。请联系诊所。"
     },
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",
@@ -714,6 +766,40 @@
     "leaveTitle": "离开诊所",
     "leaveSub": "不再为这位医生工作。你可以凭新的邀请加入其他诊所。",
     "accountNotSecretary": "此账户无法接受秘书邀请。请使用通过邀请链接创建的单独账户。",
-    "teamResendConfirm": "要向 {email} 发送新邀请吗？之前分享的邀请码将失效。"
+    "teamResendConfirm": "要向 {email} 发送新邀请吗？之前分享的邀请码将失效。",
+    "inviteFrom": "来自 {clinic} 的邀请",
+    "inviteFor": "此邀请发给 {email}。请使用该邮箱注册。"
+  },
+  "invitePage": {
+    "metaTitle": "邀请",
+    "heading": "SolvyMed 邀请",
+    "sub": "您的诊所邀请您在 SolvyMed 上建立连接。",
+    "codeLabel": "您的邀请码",
+    "step1": "在手机上下载 SolvyMed。",
+    "step2": "打开应用，点击 <b>Sign up</b>，选择 <b>Patient</b>，然后在 <b>Invite code</b> 中输入上方的邀请码。",
+    "step3": "已有账户？打开 <b>Home</b> 标签页，在 <b>Connect to Your Doctor</b> 中输入邀请码。"
+  },
+  "accountDelete": {
+    "backToHome": "返回首页",
+    "title": "删除账户",
+    "intro": "请在下方提交申请。我们会在 30 天内处理，并通过邮件确认。",
+    "whatHappensTitle": "您的数据会如何处理",
+    "professionals": "<b>医疗专业人员：</b>根据法律，您患者的病历必须保存 20 年，因此我们会关闭您的账户并安全保存病历，而不是删除它们。",
+    "patients": "<b>患者：</b>我们会删除您的账户。诊所保存的有关您的记录仍由诊所保管；如有疑问请联系诊所。",
+    "emailLabel": "电子邮箱",
+    "emailPlaceholder": "your@email.com",
+    "reasonLabel": "原因",
+    "optional": "（选填）",
+    "reasonPlaceholder": "请告诉我们您离开的原因…",
+    "submit": "申请删除账户",
+    "submitting": "正在提交…",
+    "preferEmail": "更喜欢用邮件？",
+    "emailSupport": "联系支持团队",
+    "closeSubject": "关闭我的账户",
+    "doneTitle": "申请已收到",
+    "doneBody": "我们已收到 <b>{email}</b> 的申请。",
+    "doneSub": "我们会在 30 天内处理，并通过邮件确认。",
+    "errorEmailRequired": "请输入您的电子邮箱。",
+    "errorGeneric": "出错了。请重试，或发送邮件至 {email}。"
   }
 }

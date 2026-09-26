@@ -9,6 +9,7 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
+import { MIN_PASSWORD_LENGTH, isWeakPasswordError } from "@/lib/password";
 
 type PageState = "loading" | "form" | "success" | "error";
 
@@ -33,12 +34,18 @@ export default function ResetPasswordPage() {
     const accessToken = params.get("access_token");
     const refreshToken = params.get("refresh_token") ?? "";
 
+    // Only a recovery link's own tokens open the form, never an existing
+    // session. Older PKCE links (?code=) never worked on this page; they show
+    // the error state, which offers to request a new link. The check comes
+    // before creating the client, so a stale link doesn't initialize it (and
+    // e.g. consume a ?code=) and break a newer link in the same browser.
     if (!accessToken) {
       setPageState("error");
       return;
     }
 
     const supabase = createClient();
+
     supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
       .then(({ error }) => {
         if (error) {
@@ -53,6 +60,11 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     setError("");
 
+    if (newPassword.length < MIN_PASSWORD_LENGTH) {
+      setError(t("passwordTooShort", { min: MIN_PASSWORD_LENGTH }));
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       setError(t("resetPassword.passwordMismatch"));
       return;
@@ -65,7 +77,9 @@ export default function ResetPasswordPage() {
     });
     setLoading(false);
 
-    if (updateError) {
+    if (isWeakPasswordError(updateError)) {
+      setError(t("passwordTooShort", { min: MIN_PASSWORD_LENGTH }));
+    } else if (updateError) {
       setError(t("resetPassword.error"));
     } else {
       setPageState("success");
@@ -85,7 +99,7 @@ export default function ResetPasswordPage() {
 
   if (pageState === "success") {
     return (
-      <AuthPageShell>
+      <AuthPageShell languageSwitcher={false}>
         <AuthCard centered>
           <BrandMark />
           <IconBadge>
@@ -110,7 +124,7 @@ export default function ResetPasswordPage() {
 
   if (pageState === "error") {
     return (
-      <AuthPageShell>
+      <AuthPageShell languageSwitcher={false}>
         <AuthCard centered>
           <BrandMark />
           <h1 className="auth-heading">
@@ -129,7 +143,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <AuthPageShell>
+    <AuthPageShell languageSwitcher={false}>
       <AuthCard>
         <BrandMark />
 

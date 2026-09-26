@@ -8,7 +8,12 @@
     "subtitle": "Solvymed riunisce agenda, cartelle cliniche, ricette e pagamenti in un'unica app veloce e ordinata, pensata per i professionisti della salute.",
     "appStore": "Scarica su App Store",
     "googlePlay": "Disponibile su Google Play",
-    "comingSoon": "Link per il download in arrivo."
+    "comingSoon": "Link per il download in arrivo.",
+    "soon": "Presto",
+    "appStoreComingSoon": "Presto disponibile sull'App Store",
+    "openApp": "Apri l'app",
+    "iosBeta": "Beta per iPhone – installala con TestFlight",
+    "iosBetaHint": "Richiede l'app gratuita TestFlight di Apple"
   },
   "highlights": {
     "h1": "Agenda intelligente",
@@ -45,7 +50,10 @@
     "body": "Questo sito è in fase di sviluppo. Il sito completo di Solvymed sarà presto disponibile con documentazione dettagliata, prezzi e risorse di supporto. Nel frattempo, l'app è completamente operativa — scaricala e inizia a gestire il tuo studio oggi stesso."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. Tutti i diritti riservati."
+    "copyright": "© 2026 Solvymed. Tutti i diritti riservati.",
+    "privacy": "Informativa sulla privacy",
+    "terms": "Termini di servizio",
+    "legal": "Note legali"
   },
   "confirm": {
     "emailConfirmed": "Email confermata!",
@@ -67,7 +75,7 @@
     "updatedTitle": "Password aggiornata",
     "updatedMessage": "La tua password è stata modificata. Ora puoi accedere con la tua nuova password.",
     "matchError": "Le password non corrispondono.",
-    "lengthError": "La password deve essere lunga almeno 6 caratteri.",
+    "lengthError": "La password deve essere lunga almeno {min} caratteri.",
     "openDashboard": "Apri dashboard",
     "dashboardHint": "Sarai reindirizzato alla tua dashboard."
   },
@@ -183,7 +191,8 @@
     "useBookingCard": "Usa la scheda della richiesta di appuntamento per confermare, rifiutare o proporre un orario.",
     "genericError": "Qualcosa è andato storto. Riprova.",
     "missingFieldsError": "Compila tutti i campi obbligatori.",
-    "pastMidnightError": "Questo orario e questa durata supererebbero la mezzanotte."
+    "pastMidnightError": "Questo orario e questa durata supererebbero la mezzanotte.",
+    "patientArchivedError": "Questa scheda è archiviata. Ripristinala in Pazienti per fissare un appuntamento."
   },
   "payments": {
     "thisWeek": "Questa settimana",
@@ -247,7 +256,16 @@
     "bornOn": "nato/a il {date}",
     "openExisting": "Apri esistente",
     "createAnyway": "Crea comunque",
-    "openPatient": "Apri paziente"
+    "openPatient": "Apri paziente",
+    "archivedTitle": "Schede archiviate",
+    "activeChip": "Attive ({n})",
+    "archivedChip": "Archiviate ({n})",
+    "noArchived": "Nessuna scheda archiviata",
+    "archivedBadge": "Archiviata",
+    "restore": "Ripristina",
+    "restoreError": "Impossibile ripristinare la scheda. Riprova.",
+    "archivedOn": "Archiviata il {date}",
+    "archivedOnBy": "Archiviata il {date} da {name}"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -318,7 +336,35 @@
     "codeCopied": "Copiato!",
     "regenerateCode": "Rigenera",
     "addedBy": "Aggiunto da",
-    "addedBySecretary": "{name} (segreteria), {date}"
+    "addedBySecretary": "{name} (segreteria), {date}",
+    "allPatients": "Tutte le schede",
+    "archivePatient": "Archivia scheda",
+    "archiveTitle": "Archiviare {name}?",
+    "archiveBody": "Le schede archiviate sono nascoste da elenchi, ricerca e agenda. Lo storico viene conservato e puoi ripristinarle in qualsiasi momento.",
+    "archiveUpcoming": "{n, plural, =0 {Nessun appuntamento futuro verrà annullato.} one {# appuntamento futuro verrà annullato.} other {# appuntamenti futuri verranno annullati.}}",
+    "archiveConfirm": "Archivia",
+    "archiveError": "Impossibile archiviare la scheda. Riprova.",
+    "archivedSub": "Le schede archiviate non possono ricevere nuovi appuntamenti, note cliniche o prescrizioni.",
+    "archivedNoNew": "Questa scheda è archiviata. Ripristinala per aggiungere nuove voci.",
+    "deleteNoHistoryConfirm": "Eliminare {name}? L'operazione non può essere annullata.",
+    "deleteHasHistory": "Questa scheda ora ha uno storico clinico e non può essere eliminata. Archiviala invece.",
+    "deleteError": "Impossibile eliminare la scheda. Riprova.",
+    "editEntry": "Modifica",
+    "deleteEntry": "Elimina",
+    "addCorrection": "Aggiungi correzione",
+    "correctionReason": "Motivo della correzione",
+    "correctionReasonPlaceholder": "es. dosaggio errato, errore di battitura nella diagnosi",
+    "reasonRequired": "Inserisci un motivo.",
+    "correctedOnBy": "Corretto il {date} da {name}: {reason}",
+    "correctedOn": "Corretto il {date}: {reason}",
+    "correctionLabel": "Correzione",
+    "correctRecordTitle": "Correggi nota",
+    "correctPrescriptionTitle": "Correggi prescrizione",
+    "editRecordTitle": "Modifica nota",
+    "editPrescriptionTitle": "Modifica prescrizione",
+    "lockedError": "Questa voce non può più essere modificata. Aggiungi invece una correzione.",
+    "contentRequired": "Inserisci il contenuto.",
+    "entryNotFound": "Questa voce non esiste più. Ricarica la pagina."
   },
   "settings": {
     "profileTitle": "Profilo",
@@ -466,9 +512,12 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n} min",
     "customTime": "Orario personalizzato",
-    "orCustomTime": "O scegli un orario"
+    "orCustomTime": "O scegli un orario",
+    "professionalFallback": "Professionista",
+    "errorArchived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio."
   },
   "auth": {
+    "passwordTooShort": "La password deve essere lunga almeno {min} caratteri.",
     "login": {
       "title": "Bentornato",
       "subtitle": "Accedi al tuo account SolvyMed",
@@ -506,7 +555,9 @@
       "emailExists": "Esiste già un account con questa e-mail. Effettua il login.",
       "joiningAs": "Accesso come {role} tramite link d'invito.",
       "joiningAsSecretary": "Ti stai registrando in segreteria tramite link di invito.",
-      "secretaryNeedsInvite": "Lavori in segreteria? Chiedi un link di invito al tuo studio."
+      "secretaryNeedsInvite": "Lavori in segreteria? Chiedi un link di invito al tuo studio.",
+      "secretaryEmailMismatch": "Questa email non corrisponde all'invito, oppure l'invito non è più valido. Controlla l'email o chiedi un nuovo link allo studio.",
+      "consent": "Creando un account, accetti i <terms>Termini di servizio</terms> e l'<privacy>Informativa sulla privacy</privacy>."
     },
     "forgotPassword": {
       "title": "Password dimenticata?",
@@ -550,7 +601,8 @@
       "linkFailed": "Si è verificato un errore durante il collegamento del tuo account. Riprova.",
       "backToSignup": "Usa un altro account",
       "tooManyAttempts": "Troppi tentativi. Attendi un momento prima di riprovare.",
-      "alreadyInvitedByAnother": "Il tuo account è già collegato a un altro studio."
+      "alreadyInvitedByAnother": "Il tuo account è già collegato a un altro studio.",
+      "archived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio."
     },
     "pendingConfirmation": {
       "loading": "Verifica dello stato…",
@@ -714,6 +766,40 @@
     "leaveTitle": "Lascia lo studio",
     "leaveSub": "Lascia questo studio. Potrai unirti a un altro studio con un nuovo invito.",
     "accountNotSecretary": "Questo account non può accettare un invito in segreteria. Usa un account separato creato dal link di invito.",
-    "teamResendConfirm": "Inviare un nuovo invito a {email}? Il codice condiviso in precedenza smetterà di funzionare."
+    "teamResendConfirm": "Inviare un nuovo invito a {email}? Il codice condiviso in precedenza smetterà di funzionare.",
+    "inviteFrom": "Invito da {clinic}",
+    "inviteFor": "Questo invito è per {email}. Registrati con questo indirizzo email."
+  },
+  "invitePage": {
+    "metaTitle": "Il tuo invito",
+    "heading": "Il tuo invito a SolvyMed",
+    "sub": "La tua clinica ti invita a collegarti su SolvyMed.",
+    "codeLabel": "Il tuo codice invito",
+    "step1": "Scarica SolvyMed sul tuo telefono.",
+    "step2": "Apri l'app, tocca <b>Registrati</b>, scegli <b>Paziente</b> e poi inserisci il codice qui sopra in <b>Codice invito</b>.",
+    "step3": "Hai già un account? Apri la scheda <b>Home</b> e inserisci il codice in <b>Connettiti al tuo medico</b>."
+  },
+  "accountDelete": {
+    "backToHome": "Torna alla home",
+    "title": "Elimina il tuo account",
+    "intro": "Inviaci la tua richiesta qui sotto. La elaboreremo entro 30 giorni e te lo confermeremo via email.",
+    "whatHappensTitle": "Cosa succede ai tuoi dati",
+    "professionals": "<b>Professionisti sanitari:</b> per legge le cartelle cliniche dei tuoi pazienti devono essere conservate per 20 anni, quindi chiudiamo il tuo account e conserviamo le cartelle in modo sicuro invece di eliminarle.",
+    "patients": "<b>Pazienti:</b> eliminiamo il tuo account. Le informazioni che il tuo studio conserva su di te restano allo studio; rivolgiti allo studio.",
+    "emailLabel": "Indirizzo email",
+    "emailPlaceholder": "tua@email.com",
+    "reasonLabel": "Motivo",
+    "optional": "(facoltativo)",
+    "reasonPlaceholder": "Dicci perché te ne vai…",
+    "submit": "Richiedi l'eliminazione dell'account",
+    "submitting": "Invio…",
+    "preferEmail": "Preferisci l'email?",
+    "emailSupport": "Scrivi al supporto",
+    "closeSubject": "Chiudi il mio account",
+    "doneTitle": "Richiesta ricevuta",
+    "doneBody": "Abbiamo ricevuto la tua richiesta per <b>{email}</b>.",
+    "doneSub": "La elaboreremo entro 30 giorni e te lo confermeremo via email.",
+    "errorEmailRequired": "Inserisci il tuo indirizzo email.",
+    "errorGeneric": "Qualcosa è andato storto. Riprova o scrivi a {email}."
   }
 }

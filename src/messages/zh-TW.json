@@ -8,7 +8,12 @@
     "subtitle": "Solvymed將預約管理、患者病歷、處方和付款整合在一款快速整潔的應用程式中，專為醫療專業人員設計。",
     "appStore": "在App Store下載",
     "googlePlay": "在Google Play取得",
-    "comingSoon": "下載連結即將推出。"
+    "comingSoon": "下載連結即將推出。",
+    "soon": "即將推出",
+    "appStoreComingSoon": "即將登上 App Store",
+    "openApp": "開啟 App",
+    "iosBeta": "iPhone 測試版 – 透過 TestFlight 安裝",
+    "iosBetaHint": "需要 Apple 免費的 TestFlight App"
   },
   "highlights": {
     "h1": "智慧排程",
@@ -45,7 +50,10 @@
     "body": "本網站正在開發中。完整的Solvymed網站即將上線，屆時將提供詳細文件、定價和支援資源。在此期間，應用程式完全可用 — 立即下載並開始管理您的診所。"
   },
   "footer": {
-    "copyright": "© 2026 Solvymed 版權所有。"
+    "copyright": "© 2026 Solvymed 版權所有。",
+    "privacy": "隱私權政策",
+    "terms": "服務條款",
+    "legal": "法律資訊"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -67,7 +75,7 @@
     "updatedTitle": "密碼已更新",
     "updatedMessage": "您的密碼已更改。您現在可以使用新密碼登入。",
     "matchError": "兩次輸入的密碼不相符。",
-    "lengthError": "密碼至少需要6個字元。",
+    "lengthError": "密碼至少需要{min}個字元。",
     "openDashboard": "開啟儀表板",
     "dashboardHint": "您將被重新導向至儀表板。"
   },
@@ -183,7 +191,8 @@
     "useBookingCard": "請使用預約請求卡來確認、拒絕或為此請求提議新時間。",
     "genericError": "發生問題，請重試。",
     "missingFieldsError": "請填寫所有必填欄位。",
-    "pastMidnightError": "此時間和時長將超過午夜。"
+    "pastMidnightError": "此時間和時長將超過午夜。",
+    "patientArchivedError": "此病歷已封存。請在「病患」中還原後再預約。"
   },
   "payments": {
     "thisWeek": "本週",
@@ -247,7 +256,16 @@
     "bornOn": "出生於 {date}",
     "openExisting": "開啟既有紀錄",
     "createAnyway": "仍要建立",
-    "openPatient": "開啟病患"
+    "openPatient": "開啟病患",
+    "archivedTitle": "已封存的病歷",
+    "activeChip": "使用中 ({n})",
+    "archivedChip": "已封存 ({n})",
+    "noArchived": "沒有已封存的病歷",
+    "archivedBadge": "已封存",
+    "restore": "還原",
+    "restoreError": "無法還原病歷，請再試一次。",
+    "archivedOn": "{date} 封存",
+    "archivedOnBy": "{date} 由 {name} 封存"
   },
   "patientDetail": {
     "tabInfo": "資訊",
@@ -318,7 +336,35 @@
     "codeCopied": "已複製！",
     "regenerateCode": "重新產生",
     "addedBy": "新增者",
-    "addedBySecretary": "{name}（祕書），{date}"
+    "addedBySecretary": "{name}（祕書），{date}",
+    "allPatients": "所有病歷",
+    "archivePatient": "封存病歷",
+    "archiveTitle": "要封存 {name} 嗎？",
+    "archiveBody": "已封存的病歷不會出現在清單、搜尋和行程中。歷史紀錄會保留，可隨時還原。",
+    "archiveUpcoming": "{n, plural, =0 {不會取消任何即將到來的預約。} other {將取消 # 個即將到來的預約。}}",
+    "archiveConfirm": "封存",
+    "archiveError": "無法封存病歷，請再試一次。",
+    "archivedSub": "已封存的病歷無法新增預約、紀錄或處方。",
+    "archivedNoNew": "此病歷已封存。請先還原再新增內容。",
+    "deleteNoHistoryConfirm": "要刪除 {name} 嗎？此動作無法復原。",
+    "deleteHasHistory": "此病歷現已有臨床紀錄，無法刪除。請改為封存。",
+    "deleteError": "無法刪除病歷，請再試一次。",
+    "editEntry": "編輯",
+    "deleteEntry": "刪除",
+    "addCorrection": "新增更正",
+    "correctionReason": "更正原因",
+    "correctionReasonPlaceholder": "例如：劑量錯誤、診斷中的錯字",
+    "reasonRequired": "請輸入原因。",
+    "correctedOnBy": "{date} 由 {name} 更正：{reason}",
+    "correctedOn": "{date} 更正：{reason}",
+    "correctionLabel": "更正",
+    "correctRecordTitle": "更正紀錄",
+    "correctPrescriptionTitle": "更正處方",
+    "editRecordTitle": "編輯紀錄",
+    "editPrescriptionTitle": "編輯處方",
+    "lockedError": "此項目已無法變更。請改為新增更正。",
+    "contentRequired": "請輸入內容。",
+    "entryNotFound": "此項目已不存在。請重新整理頁面。"
   },
   "settings": {
     "profileTitle": "個人資料",
@@ -466,9 +512,12 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n} 分鐘",
     "customTime": "自訂時間",
-    "orCustomTime": "或選擇自訂時間"
+    "orCustomTime": "或選擇自訂時間",
+    "professionalFallback": "專業人員",
+    "errorArchived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。"
   },
   "auth": {
+    "passwordTooShort": "密碼至少需要{min}個字元。",
     "login": {
       "title": "歡迎回來",
       "subtitle": "登入您的 SolvyMed 帳戶",
@@ -506,7 +555,9 @@
       "emailExists": "此電子郵件已有帳戶。請登入。",
       "joiningAs": "透過邀請連結以 {role} 身份加入。",
       "joiningAsSecretary": "透過邀請連結以祕書身分註冊。",
-      "secretaryNeedsInvite": "你是祕書？請向你的醫師索取邀請連結。"
+      "secretaryNeedsInvite": "你是祕書？請向你的醫師索取邀請連結。",
+      "secretaryEmailMismatch": "此電子郵件與邀請不符，或邀請已失效。請檢查電子郵件，或向診所索取新的連結。",
+      "consent": "建立帳戶即表示您同意<terms>服務條款</terms>與<privacy>隱私權政策</privacy>。"
     },
     "forgotPassword": {
       "title": "忘記密碼？",
@@ -550,7 +601,8 @@
       "linkFailed": "關聯您的帳戶時發生錯誤，請重試。",
       "backToSignup": "使用其他帳戶",
       "tooManyAttempts": "嘗試次數過多，請稍後再試。",
-      "alreadyInvitedByAnother": "您的帳戶已與另一位醫生關聯。"
+      "alreadyInvitedByAnother": "您的帳戶已與另一位醫生關聯。",
+      "archived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。"
     },
     "pendingConfirmation": {
       "loading": "正在檢查您的狀態…",
@@ -714,6 +766,40 @@
     "leaveTitle": "離開診所",
     "leaveSub": "不再為這位醫師工作。你可以憑新的邀請加入其他診所。",
     "accountNotSecretary": "此帳戶無法接受祕書邀請。請使用透過邀請連結建立的另一個帳戶。",
-    "teamResendConfirm": "要向 {email} 傳送新邀請嗎？先前分享的邀請碼將失效。"
+    "teamResendConfirm": "要向 {email} 傳送新邀請嗎？先前分享的邀請碼將失效。",
+    "inviteFrom": "來自 {clinic} 的邀請",
+    "inviteFor": "此邀請的對象是 {email}。請使用該電子郵件註冊。"
+  },
+  "invitePage": {
+    "metaTitle": "邀請",
+    "heading": "SolvyMed 邀請",
+    "sub": "您的診所邀請您在 SolvyMed 上建立連結。",
+    "codeLabel": "您的邀請碼",
+    "step1": "在手機上下載 SolvyMed。",
+    "step2": "開啟 App，點選 <b>Sign up</b>，選擇 <b>Patient</b>，然後在 <b>Invite code</b> 輸入上方的邀請碼。",
+    "step3": "已有帳戶？開啟 <b>Home</b> 分頁，在 <b>Connect to Your Doctor</b> 輸入邀請碼。"
+  },
+  "accountDelete": {
+    "backToHome": "返回首頁",
+    "title": "刪除帳戶",
+    "intro": "請在下方送出申請。我們會在 30 天內處理，並以電子郵件確認。",
+    "whatHappensTitle": "您的資料會如何處理",
+    "professionals": "<b>醫療專業人員：</b>依法律規定，您病患的病歷必須保存 20 年，因此我們會關閉您的帳戶並安全保存病歷，而不是刪除。",
+    "patients": "<b>病患：</b>我們會刪除您的帳戶。診所保存的您的紀錄仍由診所保管；相關問題請洽詢診所。",
+    "emailLabel": "電子郵件",
+    "emailPlaceholder": "your@email.com",
+    "reasonLabel": "原因",
+    "optional": "（選填）",
+    "reasonPlaceholder": "請告訴我們您離開的原因…",
+    "submit": "申請刪除帳戶",
+    "submitting": "送出中…",
+    "preferEmail": "偏好使用電子郵件？",
+    "emailSupport": "聯絡支援團隊",
+    "closeSubject": "關閉我的帳戶",
+    "doneTitle": "已收到申請",
+    "doneBody": "我們已收到 <b>{email}</b> 的申請。",
+    "doneSub": "我們會在 30 天內處理，並以電子郵件確認。",
+    "errorEmailRequired": "請輸入您的電子郵件。",
+    "errorGeneric": "發生錯誤。請再試一次，或寄信至 {email}。"
   }
 }

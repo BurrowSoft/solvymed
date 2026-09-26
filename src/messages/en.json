@@ -8,7 +8,12 @@
     "subtitle": "Solvymed brings scheduling, patient records, prescriptions, and payments together in one clean, fast app built for healthcare professionals.",
     "appStore": "Download on the App Store",
     "googlePlay": "Get it on Google Play",
-    "comingSoon": "Download links coming soon — check back shortly."
+    "comingSoon": "Download links coming soon — check back shortly.",
+    "soon": "Soon",
+    "appStoreComingSoon": "Coming soon to the App Store",
+    "openApp": "Open App",
+    "iosBeta": "iPhone beta – install with TestFlight",
+    "iosBetaHint": "Requires Apple's free TestFlight app"
   },
   "highlights": {
     "h1": "Smart scheduling",
@@ -45,7 +50,10 @@
     "body": "This website is a work in progress. The full Solvymed website is coming soon with detailed documentation, pricing, and support resources. In the meantime, the app is fully operational — download it and start managing your practice today."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. All rights reserved."
+    "copyright": "© 2026 Solvymed. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "legal": "Legal"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -67,7 +75,7 @@
     "updatedTitle": "Password updated",
     "updatedMessage": "Your password has been changed. You can now sign in with your new password.",
     "matchError": "Passwords do not match.",
-    "lengthError": "Password must be at least 6 characters.",
+    "lengthError": "Password must be at least {min} characters.",
     "openDashboard": "Open dashboard",
     "dashboardHint": "You'll be redirected to your dashboard."
   },
@@ -183,7 +191,8 @@
     "accept": "Accept",
     "decline": "Decline",
     "slotTakenAlert": "That slot is no longer available. Please decline and let the patient choose another time.",
-    "pastProposalAlert": "The proposed time has already passed. Please decline so the patient can request a new slot."
+    "pastProposalAlert": "The proposed time has already passed. Please decline so the patient can request a new slot.",
+    "patientArchivedError": "This patient is archived. Restore the patient in Patients to schedule an appointment."
   },
   "payments": {
     "thisWeek": "This week",
@@ -247,7 +256,16 @@
     "bornOn": "born {date}",
     "openExisting": "Open existing",
     "createAnyway": "Create anyway",
-    "openPatient": "Open patient"
+    "openPatient": "Open patient",
+    "archivedTitle": "Archived patients",
+    "activeChip": "Active ({n})",
+    "archivedChip": "Archived ({n})",
+    "noArchived": "No archived patients",
+    "archivedBadge": "Archived",
+    "restore": "Restore",
+    "restoreError": "Couldn't restore the patient. Please try again.",
+    "archivedOn": "Archived {date}",
+    "archivedOnBy": "Archived {date} by {name}"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -318,7 +336,35 @@
     "paidLabel": "Paid",
     "pendingLabel": "Pending",
     "addedBy": "Added by",
-    "addedBySecretary": "{name} (secretary), {date}"
+    "addedBySecretary": "{name} (secretary), {date}",
+    "allPatients": "All Patients",
+    "archivePatient": "Archive patient",
+    "archiveTitle": "Archive {name}?",
+    "archiveBody": "Archived patients are hidden from lists, search and scheduling. Their history is kept, and you can restore them at any time.",
+    "archiveUpcoming": "{n, plural, =0 {No upcoming appointments will be cancelled.} one {# upcoming appointment will be cancelled.} other {# upcoming appointments will be cancelled.}}",
+    "archiveConfirm": "Archive",
+    "archiveError": "Couldn't archive the patient. Please try again.",
+    "archivedSub": "Archived patients can't get new appointments, records or prescriptions.",
+    "archivedNoNew": "This patient is archived. Restore the patient to add new entries.",
+    "deleteNoHistoryConfirm": "Delete {name}? This can't be undone.",
+    "deleteHasHistory": "This patient now has clinical history and can't be deleted. Archive the patient instead.",
+    "deleteError": "Couldn't delete the patient. Please try again.",
+    "editEntry": "Edit",
+    "deleteEntry": "Delete",
+    "addCorrection": "Add correction",
+    "correctionReason": "Reason for the correction",
+    "correctionReasonPlaceholder": "e.g. wrong dosage, typo in the diagnosis",
+    "reasonRequired": "Please enter a reason.",
+    "correctedOnBy": "Corrected on {date} by {name}: {reason}",
+    "correctedOn": "Corrected on {date}: {reason}",
+    "correctionLabel": "Correction",
+    "correctRecordTitle": "Correct record",
+    "correctPrescriptionTitle": "Correct prescription",
+    "editRecordTitle": "Edit record",
+    "editPrescriptionTitle": "Edit prescription",
+    "lockedError": "This entry can no longer be changed. Add a correction instead.",
+    "contentRequired": "Please enter the content.",
+    "entryNotFound": "This entry no longer exists. Reload the page."
   },
   "settings": {
     "profileTitle": "Profile",
@@ -466,9 +512,12 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n} min",
     "customTime": "Custom time",
-    "orCustomTime": "Or pick a custom time"
+    "orCustomTime": "Or pick a custom time",
+    "professionalFallback": "Professional",
+    "errorArchived": "This clinic isn't taking new bookings for your account. Please contact the clinic."
   },
   "auth": {
+    "passwordTooShort": "Password must be at least {min} characters.",
     "login": {
       "title": "Welcome back",
       "subtitle": "Sign in to your SolvyMed account",
@@ -506,7 +555,9 @@
       "emailExists": "An account with this email already exists. Please sign in instead.",
       "joiningAs": "Joining as {role} via invite link.",
       "joiningAsSecretary": "Joining as a secretary via invite link.",
-      "secretaryNeedsInvite": "Secretary? Ask your doctor for an invite link."
+      "secretaryNeedsInvite": "Secretary? Ask your doctor for an invite link.",
+      "secretaryEmailMismatch": "This email doesn't match the invitation, or the invitation is no longer valid. Check the email, or ask the clinic for a new link.",
+      "consent": "By creating an account, you agree to the <terms>Terms of Service</terms> and the <privacy>Privacy Policy</privacy>."
     },
     "forgotPassword": {
       "title": "Forgot your password?",
@@ -550,7 +601,8 @@
       "linkFailed": "Something went wrong linking your account. Please try again.",
       "tooManyAttempts": "Too many attempts. Please wait a while before trying again.",
       "alreadyInvitedByAnother": "Your account is already connected to a different doctor.",
-      "backToSignup": "Use a different account"
+      "backToSignup": "Use a different account",
+      "archived": "This clinic isn't taking new bookings for your account. Please contact the clinic."
     },
     "pendingConfirmation": {
       "loading": "Checking your status…",
@@ -714,6 +766,40 @@
     "leaveTitle": "Leave clinic",
     "leaveSub": "Stop working for this doctor. You can join another clinic with a new invite.",
     "accountNotSecretary": "This account can't accept a secretary invite. Use a separate account created from the invite link.",
-    "teamResendConfirm": "Send a new invite to {email}? The code you shared before will stop working."
+    "teamResendConfirm": "Send a new invite to {email}? The code you shared before will stop working.",
+    "inviteFrom": "Invitation from {clinic}",
+    "inviteFor": "This invitation is for {email}. Sign up with that email address."
+  },
+  "invitePage": {
+    "metaTitle": "Your invitation",
+    "heading": "You're invited to SolvyMed",
+    "sub": "Your clinic has invited you to connect on SolvyMed.",
+    "codeLabel": "Your invite code",
+    "step1": "Download SolvyMed on your phone.",
+    "step2": "Open the app, tap <b>Sign up</b>, choose <b>Patient</b>, then enter the code above in <b>Invite code</b>.",
+    "step3": "Already have an account? Open the <b>Home</b> tab and enter the code under <b>Connect to Your Doctor</b>."
+  },
+  "accountDelete": {
+    "backToHome": "Back to home",
+    "title": "Delete your account",
+    "intro": "Send us your request below. We'll process it within 30 days and confirm by email.",
+    "whatHappensTitle": "What happens to your data",
+    "professionals": "<b>Healthcare professionals:</b> by law, your patients' medical records must be kept for 20 years, so we close your account and keep the records secure instead of deleting them.",
+    "patients": "<b>Patients:</b> we delete your account. The records your clinic keeps about you stay with the clinic; contact the clinic about them.",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "your@email.com",
+    "reasonLabel": "Reason",
+    "optional": "(optional)",
+    "reasonPlaceholder": "Tell us why you're leaving…",
+    "submit": "Request account deletion",
+    "submitting": "Submitting…",
+    "preferEmail": "Prefer email?",
+    "emailSupport": "Email support",
+    "closeSubject": "Close my account",
+    "doneTitle": "Request received",
+    "doneBody": "We've received your request for <b>{email}</b>.",
+    "doneSub": "We'll process it within 30 days and confirm by email.",
+    "errorEmailRequired": "Please enter your email address.",
+    "errorGeneric": "Something went wrong. Please try again or email {email}."
   }
 }

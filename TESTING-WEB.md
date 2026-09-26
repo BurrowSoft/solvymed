@@ -9,6 +9,25 @@ repos).
 
 ## Merge gate
 
+**Current gate (since 2026-09-26), all three required on the exact HEAD being merged:**
+1. **Code review:** the dedicated **code reviewer** agent (never the PR's
+   author) reviews the exact HEAD and posts findings on the PR, tagged
+   BLOCKING or FOLLOW-UP. Only BLOCKING findings (correctness, security,
+   data loss, crash, real UX break) must be fixed; follow-ups go to the
+   post-launch list. Re-rounds cover only the new delta, and any commit
+   after a clean review needs a quick delta check before merging. Web
+   tester records it here as "review: clean at `<SHA>`".
+2. **Web tester's 🟢** in this file, scoped to that SHA (a docs-only
+   addendum on top is fine after the code reviewer's delta check).
+3. **CI:** the required "Typecheck and unit tests" check is green (branch
+   protection enforces it).
+
+GitHub Copilot review is **retired** (user decision, 2026-09-26), so
+don't request `@copilot`. Mentions of Copilot in the entries below are
+historical records of how those PRs were reviewed.
+
+Merging to `master` deploys to production (www.solvymed.com).
+
 **Do not merge a feature branch until its row below says 🟢.** A row only
 gets 🟢 after its Playwright flow(s) have actually been *run* against a real
 browser and passed — not just written. If a feature has no row yet, its E2E
@@ -471,7 +490,7 @@ accept it.
 | A-5 🤖 | Patient signup with a typed patient invite code | The Patient role shows the code field, with the hint "Digite o código de convite". After confirming you land on `/auth/patient-welcome`, with `linked_patient_id` set. |
 | A-6 | Patient signup with an invalid or no code | `/auth/invite-required` shows clinic wording. Retrying with a valid code links the account. A bogus code shows the "doesn't match" message. |
 | A-7 | Signup validation | Mismatched passwords, a weak password and an email that's already registered each show a clear error, not a crash. |
-| A-7b ⏳ | Password minimum is **8**, approved by the user | Test on signup *and* on reset-password (A-9). **7 characters is rejected with a translated message**, pt-BR and en, and no account or password change happens. 8 characters is accepted. Also check the server: Supabase Auth's minimum password length is 8, so a 7-character password sent straight to the Auth API is refused too, not just by the form. |
+| A-7b | Password minimum is **8** (#18) | **Web form:** on signup, reset-password and a secretary invite signup, **7 characters is rejected** with "A senha deve ter pelo menos 8 caracteres." (pt-BR) / the en equivalent. There's no `/auth/v1/signup` or password-update call, and no account or change. 8 characters works. An existing account with a 6-character password still logs in. **Server part, still ⏳:** Supabase Auth's minimum stays **6** until mobile 1.3.0 is on Play (UX decision, 2026-09-26). Once mob dev raises it to 8, a 7-character password sent straight to the Auth API must be refused too. Until then, this half is ❌ at RC per the G rule, unless UX waives it for the web launch. |
 | A-8 📱 | Login and logout | Wrong credentials show an error. The right ones route by role: doctor → `/dashboard`, patient → `/my-appointments` or `pending-confirmation`, secretary → `/dashboard`, or `not-connected` / `clinic-inactive`. Sign-out lands on the current locale's home. |
 | A-9 | Forgot password → reset | Requesting a reset shows a neutral "if the account exists" message. The email link goes to `/auth/reset-password` with `access_token` and `refresh_token` **in the URL hash**; the page calls `setSession`, then `updateUser`. It does **not** go through `/api/auth/callback`. The new password saves, the old one stops working, and the new one logs in. Check the page and its messages in pt-BR and en. **Local test recipe:** get a recovery `hashed_token` from the admin `generate_link` API (`type: recovery`), exchange it with `verifyOtp` (`type: recovery`) for a session, then open `/<locale>/auth/reset-password#access_token=…&refresh_token=…&type=recovery`. **Open issue to confirm at RC:** `forgot-password` hard-codes `redirectTo` to `https://www.solvymed.com/en/auth/reset-password`, so pt-BR users land on the English page. |
 | A-10 | `/join/<bogus>`, signed in and signed out | Signed out, it redirects to signup. Signed in, it shows "Este link pode ser inválido…". There's no 5xx. |
@@ -491,7 +510,8 @@ accept it.
 | B-4 | Schedule: status changes | confirmed → completed or cancelled persists after reload. Tentative and proposal rows show a badge, with no status dropdown. |
 | B-5 | Schedule: propose a new time to a patient | The appointment becomes a proposal. The patient sees it in My appointments and can accept or decline (see D-4). |
 | B-6 🤖 | Schedule: Pix QR on a confirmed, unpaid appointment | The Pix QR button opens the QR. "Copia e Cola" contains the key, the amount and the city, and the image encodes the same payload. |
-| B-7 📱 | Patients: list, search, create, edit, delete | CRUD persists. Delete asks for confirmation. Patient detail shows Info, Records, Prescriptions and Appointments. |
+| B-7 📱 | Patients: list, search, create, edit, delete or archive (#18, migration 094) | CRUD persists. Patient detail shows Info, Records, Prescriptions and Appointments. **Delete** is offered only to a patient with **no clinical history** and asks for confirmation. A patient with a record or prescription shows only **"Arquivar cadastro"**. The archive confirm states the number of upcoming appointments that will be cancelled ("Nenhuma consulta futura…" / "N consultas futuras…"), and they are cancelled. Archived patients disappear from the list, search, the dashboard count and the New-appointment picker, and appear under **"Arquivados (n)"**. The banner reads "Arquivado em … por …", with Restaurar; restore also works from the duplicate warning. No raw `patient_archived`/`patient_has_clinical_history` codes appear anywhere (schedule create by name, re-activation, patient booking). |
+| B-7b 📱 | Clinical records: the 24-hour rule (#29, migrations 097 and 098) | **Under 24h, by the author:** Editar/Excluir on records and prescriptions; Edit saves; removing a middle medication row keeps the other rows' values. **Over 24h:** only "Adicionar correção", and a reason is required ("Informe um motivo."). The original is struck through, with "Corrigido em … por …: <reason>", and the correction is badged. **DB enforced:** a direct REST PATCH/DELETE of an older-than-24h row returns `clinical_record_locked`, for the doctor's JWT **and** the service role, and so does deleting an old prescription's items. **Stale page:** saving after the cutoff shows "Este registro não pode mais ser alterado. Adicione uma correção." An archived patient has no clinical actions. |
 | B-8 🤖 | Patients: duplicate warnings | A same name and phone shows "Possível duplicidade…" with Open existing / Create anyway. A same CPF, after Create anyway, shows "já está cadastrado(a)" plus Open patient, which points at the CPF owner. |
 | B-9 | Records and prescriptions | Adding and deleting a record works. A prescription with at least 1 medication saves, and the PDF or print view renders. With no medication it's refused. |
 | B-10 | Patient invite code, from the patient detail | Generating a code shows it. A patient who signs up with it gets linked (A-5). |
@@ -524,7 +544,7 @@ accept it.
 | D-2 🤖📱 | Book, `/book/<professionalId>` (the route My appointments and the pending page link to, optionally with `?name=`, `specialty=` and `clinicName=`) | The header shows the real doctor name, from `get_professional_public_info` (merged in #16), or the translated "Profissional", never "Doctor". Slots come from the doctor's hours. The request becomes tentative in the doctor's schedule. |
 | D-3 📱 | My appointments | Upcoming and past appointments are listed correctly. The Book link opens `/book/<professionalId>` for their doctor, and there's no `?name=Doctor` in it. |
 | D-4 | Reschedule | A patient's request shows for the doctor, who can approve or decline it. When the doctor proposes a new time, the patient can accept or decline it. Both sides see the final state. |
-| D-5 | Close account (`/account/delete`, or archive once built) | A deletion request is recorded and a confirmation shown. **This needs rechecking once the archive/close-account feature ships.** |
+| D-5 | Account deletion request (`/account/delete`, #25) | In all 15 locales, the page shows the "what happens to your data" note: professionals' records are kept for 20 years, and patients' accounts are deleted while the clinic keeps its records. There's no "erased and cannot be recovered" wording. The mailto goes to `support@solvymed.com` with a localized subject. A submit records a **pending** `deletion_requests` row and shows the translated confirmation with the email in bold. **Enforced today:** a doctor with clinical history can't be deleted (094: `patient_has_clinical_history`; support closes the account). A patient can delete their account even when a clinic archived their record (096). **Still ⏳:** close-account (mob dev), and the support alert when a request lands (mob dev, S-01). |
 
 ### E. Secretary (all 🤖 from #13 unless noted)
 
@@ -568,8 +588,12 @@ counts as ❌** unless UX/PM has dropped the feature from 1.3.0.
 | G-4 ⏳📱 | Trial chip | It shows the days left. At **≤3 days it turns amber**, and on the last day it's still correct, with no off-by-one in UTC. It's hidden for active, lifetime and secretary accounts. |
 | G-5 ⏳ | One-time cards | Each one-time card shows until it's dismissed. Once dismissed, it stays dismissed after reload, sign-out and sign-in, and on another browser if that's stored per account. |
 | G-6 ⏳📱 | LGPD consent banner | It shows on first visit, signed out and signed in. **Declining really blocks marketing tracking:** in the Network tab, no analytics or ads pixels or requests fire and no tracking cookies are set, before consent and after declining. Accepting enables them. The choice persists, and can be changed later from a link (footer or privacy page). Only the necessary cookies are set before a choice is made. |
-| G-7 ⏳ | Sentry | A forced client error and a forced server error each appear in Sentry with a release tag. **No patient data in the event:** no names, CPF, email, phone, record or prescription text, in the message, breadcrumbs, request body or URL query. Check the raw event JSON. |
-| G-8 ⏳ | Privacy and terms: data retention | `/privacy` and `/terms`, in pt-BR and en, state the retention periods and deletion process, and match what the app actually does (for example what happens on close-account or archive; see D-5). LGPD controller and contact details are present. |
+| G-7 | Sentry (#31): errors only, PII scrubbed | **Payload** (checked locally, re-runnable without Sentry access): intercept the browser SDK's envelopes in Playwright, and for the server run `NEXT_PUBLIC_SENTRY_DSN=http://public@127.0.0.1:9999/1 VERCEL_ENV=preview` against a local sink. Messages mask emails, CPFs and phones. `request` is URL and method only, with **no query string** anywhere (including every breadcrumb URL). There's no user beyond an id; no extra, spans, replay or `nextjs` context; no console breadcrumbs; and stack-frame context lines are masked, with no frame vars. `*.js.map` returns 404 publicly. `/api/sentry-check` returns 500 on a preview and 404 on prod. **Live in Sentry:** see F-S1/F-S2 (the user with UX). |
+| G-8 ⏳ | Privacy and terms: data retention | **Facts corrected in #28** (prod since `d2565c3`), matching what's enforced: records are kept 20 years; a patient with records can only be archived; an account with records is closed by support; the right-to-be-forgotten exception; Supabase and Vercel in São Paulo; Resend, Stripe, Expo and Sentry listed. #29 added the 24h correction paragraph to §7. **Still ⏳:** the lawyer-reviewed rewrite. It adds §6a "who can see data inside a clinic" (secretaries), international transfers (LGPD art. 33), pt-BR and en as the authoritative versions, and translated pages. Until then `/privacy` and `/terms` are English-only in every locale. |
+| G-9 | Legal links and consent (#27) | Every auth page (login, signup, forgot/reset, join, join/secretary, invite, account/delete) and the landing footer show a `nav[aria-label]` with Privacy and Terms links in the page's locale. At 375px, and in ar RTL, nothing overflows. Signup shows "Ao criar uma conta, você concorda com os Termos de Uso e a Política de Privacidade." above the submit button, with both links opening in a new tab. |
+| G-10 | Language detection and switcher (#30) | **First visit, no cookie, unprefixed URL:** the browser's language wins, and the country is the fallback, then en. A pt-BR browser from a TH IP → `/pt-BR`; th from BR → `/th`; `pl` → the country's language, then en. The auto pick is stored for **30 days**; a switcher pick for 365. An existing `NEXT_LOCALE` cookie always wins. `/en/…` pins en. `/pt/…` and case variants 308 to `/pt-BR/…`, keeping the query. Bots get no redirect. **Switcher:** on the auth pages it keeps `?secretary`, `?email` and `?next`. There's **no switcher** on `/auth/confirm` or `/auth/reset-password`. **Test note:** on Vercel the real IP country always applies, and `?country=` doesn't affect detection, so test other countries on a local server with `x-vercel-ip-country`. |
+| G-11 | Server region (#26) | `x-vercel-id` on prod shows `::gru1::` for pages, route handlers (`/api/billing/portal`, `/api/webhooks/stripe`) and server actions. A signed TEST Stripe event to the prod webhook returns 200 `{"ok":true}`, and a bad signature returns 400. |
+| G-12 | Invite and join privacy (#23, #24) | `X-Robots-Tag: noindex, nofollow` is sent on `/invite/*`, `/join/*`, and signup/login URLs carrying `secretary`, `join`, `email` or `next`. Invalid codes return 404, or "Convite inválido" for secretary codes. Share links have no `?email=`, and old `?email=` links ignore it. The masked hint ("Este convite é para e2***@…") is fetched in the browser only. A stale or resent code shows "Convite inválido" with no signup, and the mismatch copy covers "or the invitation is no longer valid". Vercel Analytics URLs are redacted: an allowlist of params, and the fragment dropped. |
 
 ### H. The ad visitor path (paid-traffic simulation, pt-BR, phone)
 
@@ -2741,6 +2765,1100 @@ uses PKCE (`?code=`), which is tied to the signing-up browser. An
 admin-generated link uses the implicit flow (a hash), which the callback
 doesn't read. So only the allow-list side is proven here. Re-check A-3 at
 RC with a real inbox.
+
+## PR #16 (`fix/pending-signout-and-book-name`) — two pre-existing display bugs, 🟢 at `63201e2`
+
+**Scope: this entry covers exactly `63201e2`.** These are the two bugs I
+reported in the #15 entry. Tested live with throwaway doctors and pending
+patients (linked through `link_by_professional_public_code`), in en, pt-BR
+and es.
+
+**🟢 1. `/auth/pending-confirmation`.**
+- **Sign-out label:** the button reads **"Sign out"** in en and **"Sair"**
+  in pt-BR, found by role and name. The raw key
+  `auth.myAppointments.signOut` is gone.
+- **With a known professional:** the body names them ("…vinculado(a) a
+  Opus Bookdoc…").
+- **With a nameless professional** (`full_name` = ""): the generic "Sua
+  conta está vinculada, mas a clínica ainda precisa confirmá-la…". There's
+  no "Doctor", and no dangling "vinculado(a) a ,".
+
+**🟢 2. `/book/<id>`.**
+- **No `?name=`, as a pending patient:** the header shows the real "Opus
+  Bookdoc · Psicologia" from `get_professional_public_info`, in en, pt-BR
+  and es.
+- **From the pending page's "Solicitar uma consulta" link:** it carries
+  `?name=`, and shows the same correct name and specialty.
+- **No info available:** for a random UUID, for a real but *unrelated*
+  professional, and for a nameless one, the header shows the translated
+  fallback. That's **"Professional"** in a fresh en session and
+  **"Profissional"** in pt-BR, never "Doctor".
+
+**Not covered:** the "from My appointments" entry point (step 3's first
+half). It needs a fully linked patient with appointments. It uses the same
+page and header code, and the pending-link entry point passed.
+
+**Test note:** unprefixed (en) URLs follow the `NEXT_LOCALE` cookie. After
+visiting a pt-BR page the "en" page renders in pt-BR, so I checked the en
+fallback in a fresh browser context.
+
+**Cleaned up.** All throwaway accounts are deleted.
+
+**Merge gate: 🟢 for `63201e2`.**
+
+**Addendum: 🟢 at `8369aa1`.** `42b89f7` stops My appointments injecting
+`?name=Doctor`. `8369aa1` changes the German fallback to
+"Gesundheitsfachkraft". This closes the entry point I couldn't cover
+above. The patients were **fully linked** through
+`generate_patient_invite_code` and `link_patient_by_invite_code`, so role
+`patient` with a `linked_patient_id`.
+- **Nameless doctor** (`full_name` = ""): the Book link on
+  `/my-appointments` has **no `name=`** (`/book/<id>?`). The header shows
+  the translated fallback: "Professional" (en), "Profissional" (pt-BR),
+  "Gesundheitsfachkraft" (de). Never "Doctor".
+- **Named doctor:** the link carries `?name=Opus+Named+Doc`, and the header
+  shows it in en, pt-BR and de.
+- **Nit, not blocking:** when there's no name, the link ends in a bare `?`
+  (empty query string). It's harmless.
+
+Cleaned up: the 4 throwaway accounts are deleted. **Merge gate: 🟢 for
+`8369aa1`.**
+
+**Addendum: 🟢 at `017d02a`.** Two small commits; I reviewed the diffs.
+- **Repeated query params (`4dd0510`):**
+  `/book/<id>?name=Alpha&name=Beta&specialty=S1&specialty=S2` returns HTTP
+  200. The header shows the first values, "Alpha · S1", and there are 0
+  page errors.
+- **No dangling "?" (`017d02a`):** for a nameless doctor, the My
+  appointments Book link is now exactly `/book/<id>`.
+
+Cleaned up: the 2 throwaway accounts are deleted. **Merge gate: 🟢 for
+`017d02a`.**
+
+## PR #19 (`fix/unit-suite-green`) — unit suite green, 🟢 at `d054422`
+
+**Scope: exactly `d054422`.** The diff is two files, +10 lines:
+- a `next/navigation` mock (`useParams` and `useRouter`) in
+  `BookingRequestsPanel.test.tsx`;
+- `include: ['src/**/*.test.{ts,tsx}']` in `vitest.config.ts`, so vitest
+  no longer collects the Playwright `e2e/` specs.
+
+I checked the diff for `.skip`, `.only`, `xit`, `xdescribe` or `todo`, and
+for any removed `it`, `test` or `describe`: **there are none**.
+
+| | Test files | Tests |
+|---|---|---|
+| master `1bc3f56` (control) | 4 failed, 4 passed (8) | **18 failed**, 60 passed (78) |
+| PR #19 `d054422` | 5 passed (5) | **78 passed (78)** |
+
+It's the same 78 unit tests, all passing now, with nothing skipped. Once
+this merges, checklist F-6 can go green.
+
+**Merge gate: 🟢 for `d054422`.**
+
+## PR #20 (`ci/github-actions`) — CI: typecheck, unit tests and advisory lint
+
+> **Current status, at `b5b5dc4`: 🟢, and the review is clean.** The design
+> **at this SHA**:
+> - **"Typecheck and unit tests" job:** `npm ci`, then
+>   `npm run typecheck` (= `next typegen && tsc --noEmit`), then
+>   `npm test`.
+> - **Separate "Lint" job:** `scripts/ci-lint.mjs` exits **0 on
+>   findings**. It exits **2 on a crash or on any fatal parse error**,
+>   listing the files and a "runner failed" summary. There's no
+>   `continue-on-error`. It reports 35 errors and 17 warnings.
+> - **Setup:** actions v7 (checkout 7.0.1, setup-node 7.0.0), pinned by
+>   SHA, with `persist-credentials: false`. Master pushes are grouped per
+>   SHA.
+>
+> CI run `36219009258` is green on both jobs: "✓ Route types generated
+> successfully", 78/78 tests, and Lint at 35 errors and 17 warnings.
+> **Review: Claude `/code-review high`, clean at `b5b5dc4`** (Copilot
+> quota exhausted). Round 6 found no merge-blocking issues. See the round-6
+> addendum at the end of this entry. Everything below is the history,
+> oldest first; the earlier 🟢 lines apply only to their own SHAs.
+
+**Scope of the first section below: exactly `48f81c9`.** The earlier entry
+was for `2fdba55`; `48f81c9` moves the lint `continue-on-error` from the
+job to the step. That design has since been replaced (see the status box
+above).
+- **Changes:** adds `.github/workflows/ci.yml`, triggered on `pull_request`
+  and `push` with Node 24.
+  - **"Typecheck and unit tests":** `npm ci`, `npm run typecheck`, `npm test`.
+  - **"Lint (advisory)":** `npm ci`, then `npm run lint` with a
+    **step-level** `continue-on-error: true` (`ci.yml:46`).
+- **ESLint:** it's installed now (`eslint`, `eslint-config-next`,
+  `@eslint/eslintrc`), and `lint` is `eslint .`.
+- **Build:** `next.config.ts` sets `eslint.ignoreDuringBuilds`, with the
+  comment "type errors still fail the build".
+
+**🟢 (1) Checks at `48f81c9`** (CI run `36209706986`, workflow **success**):
+- **Typecheck and unit tests: ✅.** `tsc --noEmit` is clean, and the tests
+  are 5 files, **78/78** passed.
+- **Lint (advisory): ✅, green.** Its findings are still reported: **54
+  problems (35 errors, 19 warnings)** in the log, plus 22 check-run
+  annotations.
+- **PR state:** `mergeStateStatus` is `CLEAN`. (At `2fdba55`, the job-level
+  setting showed lint as a red ✗ and the PR as `UNSTABLE`.)
+
+**(2) Vercel preview: the build is ✅, but pages were not checked.**
+Correction to my earlier note: the preview is behind **Vercel SSO
+deployment protection**. `curl -L` followed the redirect to Vercel's login
+page, and it was *that* page that returned 200, not the app. What's proven
+is that the Vercel build and deploy check passed with ESLint installed.
+Loading real pages on a preview needs a protection-bypass token.
+
+**(3) Local run: skipped on purpose.** In this worktree `node_modules` is a
+**junction into the main checkout**, so `npm ci` here would wipe the
+dependencies other sessions' servers run on. CI's clean `npm ci` covers it.
+
+**Merge gate: 🟢 for `48f81c9`.**
+
+**Addendum: 🟢 at `380932f`.** Two commits on top of `48f81c9`:
+- **`eb47acb` merges master (#21) in.** I checked it: the #19, #20 and #21
+  entries are intact and in order, with no conflict markers.
+- **`380932f` fixes a test that only passed before 9 a.m.**
+  `booking-client.test.tsx` clicks today's 9:00 slot, which the page
+  hides once 9:00 local time has passed. The fix pins `Date` only
+  (`toFake: ["Date"]`, 2030-01-14 06:00), so the real timers `waitFor`
+  uses keep running. They're restored after each test.
+
+| | Local time | Tests |
+|---|---|---|
+| master `81101fe` (control) | 09:59 | **6 failed**, all in `booking-client` |
+| #20 `380932f` | 10:00 | **78/78 passed** |
+
+CI run `36213290674` at `380932f` is green on both jobs (Typecheck and
+unit tests, and advisory Lint).
+
+**Review: Claude `/code-review high` at `380932f`** (Copilot quota
+exhausted). 9 findings were posted as inline PR comments. None is a
+correctness bug; the notable ones:
+- `cancel-in-progress: true` also cancels `master` push runs, so
+  back-to-back merges leave a merge commit with no CI result.
+- Lint is fully non-gating in two places.
+
+The rest are small: annotation caps, ESLint ignores for generated dirs, the
+two lint switches not linked, a duplicate `npm ci`, split `beforeEach`
+hooks, and actions pinned to tags. The first finding, the gate being scoped
+to an old SHA, is resolved by this addendum. **Review status: not yet
+clean.** It's waiting on web dev's fixes or answers; I'll re-run it on the
+new HEAD.
+
+**Addendum: CI 🟢 at `4d1f66d`; review not clean.**
+- **What changed:** `4d1f66d` answered all 9 round-1 threads. CI is now a
+  single "Typecheck and unit tests" job, with lint as an advisory
+  **step** inside it that reports totals in the job summary. Actions are
+  pinned to SHAs, and concurrency cancels only PR runs.
+- **CI:** run `36214247909` is green. `npm ci`, typecheck, the tests
+  (78/78) and the Lint (advisory) step all pass, and lint still reports
+  54 problems (35 errors, 19 warnings). There's no separate "Lint
+  (advisory)" check any more.
+- **Review round 2: Claude `/code-review high` at `4d1f66d`** (Copilot
+  quota exhausted). **6 new findings** were posted inline, three of them
+  real:
+  - The concurrency group still loses a *queued* master run when a third
+    merge lands (GitHub keeps one pending run per group), so group pushes
+    by SHA.
+  - `|| true` masks an ESLint crash (exit 2) as a green step with no
+    findings.
+  - `if: always()` runs lint after a failed `npm ci`, where `npx eslint`
+    would fetch ESLint 10.
+  - Also: ESLint runs twice; the synced `packages/shared` copy gets
+    linted; and this entry described the old two-check layout, which this
+    addendum fixes.
+- **Review status: not clean.** I'll re-run it on the next HEAD.
+
+**Addendum: CI 🟢 at `7ffedcf`; review round 3 not clean.**
+- **What changed:** `cebdc88` and `7ffedcf` answer round 2.
+  - Master pushes are grouped per commit SHA.
+  - Lint runs once, through `scripts/ci-lint.mjs` (the ESLint API),
+    which exits 2 on a crash and adds a summary line.
+  - The lint step runs only when `npm ci` succeeded and the run wasn't
+    cancelled.
+  - `packages/**` is ignored.
+  - A new gating step, `node --check scripts/ci-lint.mjs`, runs first.
+    The runner at `cebdc88` had a syntax error that looked exactly like
+    "findings", and it's fixed in `7ffedcf`.
+- **CI:** run `36215208355` is green: checkout and setup (pinned SHAs),
+  `npm ci`, typecheck, the tests (78/78), `node --check`, and Lint
+  (advisory) reporting **35 errors, 17 warnings**.
+- **Review round 3: Claude `/code-review high` at `7ffedcf`.** 7 findings
+  were posted inline.
+  - **Worth fixing:**
+    - A *runtime* crash in the runner (e.g. the top-level `import` failing
+      to resolve, outside the try) still exits 1 and looks like findings,
+      since `node --check` only catches syntax. The suggested root fix:
+      exit 0 on findings, non-zero only on a crash, and drop
+      `continue-on-error`.
+    - Findings past GitHub's annotation cap print in the log with **no
+      file or line**.
+  - **Trivial:** workflow-command escaping, and a stray blank line in
+    `.gitignore`.
+  - **Already decided by UX:** two findings (lint should gate; don't use
+    `::error` on untouched files) re-raise the "lint advisory until
+    post-launch" decision. They should be answered and resolved, not
+    reopened.
+  - The gate-SHA finding is resolved by this addendum.
+- **Review status: not clean** (2 real, 2 trivial).
+
+**Addendum: CI 🟢 at `80fee99`; review round 4 not clean.**
+- **What changed:** `80fee99` answers round 3.
+  - The runner now **exits 0 on findings and non-zero on any crash**:
+    ESLint is imported inside the try, and there's no
+    `continue-on-error`.
+  - The `node --check` step is removed as redundant.
+  - Findings print as `::warning` with `path:line:col` in the text, and
+    the escaping is fixed.
+  - The stray `.gitignore` line is gone.
+- **CI:** run `36215570827` is green (checkout and setup, `npm ci`,
+  typecheck, tests 78/78, and Lint (advisory) reporting 35 errors and 17
+  warnings). The steps now differ from what the header of this entry
+  describes.
+- **Review round 4: Claude `/code-review high` at `80fee99`.** 8 findings
+  were posted inline.
+  - **Real:**
+    - The typecheck runs `tsc` without `next typegen`, so Next's route
+      and page types aren't checked: a bad `params` type passes CI and
+      only fails `next build`.
+    - `actions/checkout` and `setup-node` v4.4.0 run on GitHub's
+      deprecated Node 20 action runtime.
+  - **By design, with a cheap improvement:** a lint crash now fails the
+    single job, under the "Typecheck and unit tests" name. A separate
+    "Lint" job would attribute it correctly.
+  - **Nits:** the annotation cap, where the ~10 shown are arbitrary; the
+    test-clock design (pass `now` into the helpers); the catch block
+    mislabelling a failed summary write; and a path recomputed per
+    message.
+  - The gate-SHA finding is resolved by this addendum.
+- **Review status: not clean** (2 real).
+
+**Addendum: CI 🟢 at `8bd4f9b`; review round 5 not clean.**
+- **What changed:** `8bd4f9b` answers round 4. It adds `next typegen` before
+  typecheck, moves the actions to v7 (Node 24, pinned SHAs), and makes
+  Lint its own job again. Web dev notes that Next types page props as
+  `{ params: Promise<…> } & any`, so a wrong page `params` isn’t caught
+  by `next build` either; CI now matches the build exactly.
+- **CI:** run `36216041689` is green on both jobs.
+- **Review round 5: Claude `/code-review high` at `8bd4f9b`.** 8 findings
+  were posted inline.
+  - **Real:** `ci-lint.mjs` counts **fatal parse errors** as ordinary
+    findings and exits 0. A broken parser or config gives a green Lint
+    check, because `fatalErrorCount` is never checked.
+  - **Worth a one-liner:** `npm run typecheck` doesn’t run `next typegen`,
+    so local and CI typechecks differ.
+  - **Low:** ESLint 9.39.5 is deprecated; the ignore list drifts from
+    `.gitignore`; `persist-credentials` isn’t disabled; `@types/node` is
+    22 while CI runs 24; and the Lint job costs a second `npm ci`
+    (accepted).
+  - The stale-header finding is resolved by the status box at the top of
+    this entry.
+- **Review status: not clean** (1 real).
+
+**Addendum: 🟢 at `b5b5dc4`; review round 6 clean.**
+- **What changed:** `b5b5dc4` fixes the round-5 bug. Fatal parse errors
+  now make the runner list the files and **exit 2** with the "runner
+  failed" summary. Web dev verified it with an unparseable probe file.
+- **Also in this commit:**
+  - `typecheck` is `next typegen && tsc --noEmit`, and CI calls the
+    script.
+  - `persist-credentials: false` on both checkouts.
+- **CI:** run `36219009258` is green on both jobs.
+- **Review round 6: Claude `/code-review high`, clean at `b5b5dc4`**
+  (Copilot quota exhausted). **No merge-blocking findings.** 8
+  low-severity or design notes were posted inline; none is a correctness
+  bug. The two worth a **follow-up PR** rather than more commits here:
+  - **CI runs tests in UTC**, so the timezone regression tests can't fail
+    there. Set `TZ=America/Sao_Paulo` (the users are in Brazil) on the
+    test step.
+  - The `next` range `^15.1.0` allows versions without `next typegen`.
+    Raise it to `^15.5.0`; today only the lockfile's 15.5.19 makes it
+    work.
+  - The rest are design notes: stale local `.next/types`, local
+    `npm run lint` exiting 1, linking the two lint switches, the
+    clock-injection refactor, Windows path normalisation in the fatal
+    list, and duplicated setup steps across the jobs.
+
+**Merge gate: 🟢 for `b5b5dc4`, review clean.**
+
+## PR #21 (`hotfix/auth-links-locale`) — password reset 404 on prod; auth emails keep the language, 🟢 at `ce40aef`
+
+**Scope: exactly `ce40aef`.** This is the hotfix for the prod reset 404
+logged under "Production auth-link check" (master's
+`/en/auth/reset-password` gets geo-rewritten to `/<cc>/en/…`, a 404). It
+also fixes the PKCE problem found while testing it: web reset requests
+used PKCE, so real email links returned `?code=`, which the hash-only
+reset page can't read.
+
+**How it was tested.** Vercel previews are behind SSO, so I ran the build
+locally at `ce40aef` (and the earlier HEADs as they came in).
+- **Geo:** simulated by injecting `x-vercel-ip-country` (TH, BR, US) on
+  requests to the app only.
+- **Fresh browsers:** each link was opened in a brand-new context (no
+  cookies), as if from a phone's mail app.
+- **Real links:** real recovery links, built with admin `generate_link`
+  and followed through GoTrue `/verify`, with the host swapped to the
+  local app.
+
+**🟢 Reset.**
+- **The request is implicit-flow:** the real `/auth/v1/recover` request
+  from the forgot page sends **`code_challenge: null`**. The `redirect_to`
+  is `https://www.solvymed.com/pt-BR/auth/reset-password`, or `…/en/…` for
+  en.
+- **The real email link has the right shape:** mob dev checked it
+  **server-side** on prod for a reset triggered from the page. The stored
+  token is plain, not `pkce_`, and verify returns **303 to
+  `/pt-BR/auth/reset-password#access_token=…&type=recovery`**. No token
+  left mob dev's session.
+- **pt-BR link, fresh browser from TH and from BR:** the pt-BR form, and
+  the new password logs in. No 404.
+- **en link, fresh browser from TH and from BR:** it lands on
+  **`/auth/reset-password` with `html lang="en"`**, shows the form, and
+  the new password works.
+  - On `76476e9` this landed in the geo locale instead (`/th/…`,
+    `/pt-BR/…`). **`0c03600` fixed it** by pinning `NEXT_LOCALE=en` on
+    explicit `/en/` requests.
+- **Stale link, then a new one, in the same browser:** open a tokenless
+  `/pt-BR/auth/reset-password` first (it shows the error state), then a
+  real link, either in a **new tab** or the **same tab with a full load**.
+  In both cases the form opens and "Senha atualizada" shows.
+  - One edge case, not a bug: a same-path, hash-only change in the same
+    tab doesn't re-validate. Real links always arrive through Supabase's
+    `/verify`, which gives a full page load.
+- **Invalid link:** a bogus or legacy `?code=` shows the error state ("…O
+  link pode ter expirado"), with no page errors.
+
+**🟢 Signup.**
+- **The link carries the locale:** the confirmation email's redirect is
+  `/api/auth/callback?locale=pt-BR`.
+- **Fresh browser, `token_hash`:** it lands on `/pt-BR/dashboard`, with
+  `NEXT_LOCALE=pt-BR` pinned.
+- **Fresh browser, PKCE `?code=`:** it can't be exchanged there, so it
+  lands on **`/pt-BR/auth/login`**, per the revised plan. The email is
+  already confirmed by GoTrue. Proper cross-browser signup comes with
+  S-01; see checklist A-15.
+
+**🟢 `/en/auth/login`**, fresh browser from TH and from BR: the English
+`/auth/login` (`lang="en"`), no longer a 404.
+
+**🟢 No regressions in routing.**
+- Unprefixed paths still geo-redirect (`/auth/login` goes to
+  `/pt-BR/…` for BR and `/th/…` for TH).
+- `/es/…` is left alone.
+- `/identity-x` is no longer mistaken for the `id` locale.
+
+**Cleaned up.** All throwaway accounts are deleted; prod has 0
+`e2e-test-opus-*` accounts left.
+
+**Merge gate: 🟢 for `ce40aef`.**
+
+## PR #22 (`fix/play-store-link`) — store buttons, 🟢 at `11ecf2f`, review clean
+
+**Scope: exactly `11ecf2f`.**
+- **What it does:** the Play button opens the Play listing with an
+  attribution referrer, and the old expo.dev build link is gone.
+- **iOS:** the button is driven by `NEXT_PUBLIC_IOS_APP_URL`. The
+  variable is unset, so it shows "soon"; beta and store modes are
+  unit-tested.
+- **Invite page:** `/invite/<code>` is rewritten to the app's real flow
+  and translated.
+- **TZ:** the tests are pinned to `America/Sao_Paulo` in
+  `vitest.config.ts`.
+
+**Tested live on the Vercel preview**, using the automation bypass
+header (the secret is never logged). The preview served the real app,
+so checklist F-8 passes.
+
+**🟢 Landing (`/pt-BR`, `/es`, `/en`).**
+- **Play:** both buttons link to
+  `play.google.com/store/apps/details?id=com.burrowsoft.solvymed&referrer=utm_source=solvymed_web&utm_medium=web&utm_campaign=landing`
+  (UX's option A).
+- **Removed:** no `expo.dev` anywhere, no iOS store link, and no
+  `a[href="#"]`.
+- **iOS placeholder:** a non-focusable `div` ("Em breve" / "Pronto" /
+  "Soon"), shown after Play.
+
+**🟢 Invite (`/pt-BR/invite/<code>`, `/es/…`, unprefixed).**
+- **Play button:** it comes first, as the primary button, with
+  `utm_campaign=invite` and a translated label ("Disponível no Google
+  Play" / "Obtener en Google Play").
+- **Step 2:** it matches the mobile app's real login label, which I
+  checked in mobile master `lib/i18n.ts`: "toque em **Cadastre-se**,
+  escolha Paciente…" / "toca **Regístrate**…".
+- **Metadata:** `robots: noindex, nofollow`, no canonical link, and a
+  neutral OG title ("Seu convite para o SolvyMed").
+- **Contrast:** the primary Play button, **measured live**, is white on
+  `#0f766e` = **5.47:1**, which passes WCAG AA for the 18px bold label. At
+  `7deefc7` it was 2.49:1 (`teal-500`), which I flagged as BLOCKING.
+
+**Review: Claude `/code-review high`, clean at `11ecf2f`** (Copilot quota
+exhausted). This follows UX's convergence rule: BLOCKING means
+correctness, security, data-loss, crash or a real UX break.
+- **Round 1, `5142906`:**
+  - The invite label was hard-coded English and ignored the iOS config.
+  - The unit test read the real env.
+  - TZ was set only in CI.
+  - The iOS placeholder was a fake `href="#"` link.
+- **Round 2, `cbd3447`:** 3 BLOCKING:
+  - The steps said "Create account", but the app's login shows "Sign
+    up" / "Cadastre-se".
+  - `/invite` was indexable.
+  - The disabled iOS button was primary, with Play secondary.
+- **Round 3, `7deefc7`:** the contrast regression.
+- **`11ecf2f`:** a one-class fix, checked live.
+
+**FOLLOW-UP (listed in the PR body):**
+- twitter:title still comes from the homepage.
+- **`/join/secretary/<code>?email=` is still indexable.** This is
+  pre-existing and carries an invitee email, so web dev is raising a
+  privacy PR.
+- The invite code isn't validated.
+- The page's openGraph drops site_name and locale.
+- The step text doesn't mention the onboarding slides.
+- The faded "Soon" badge.
+- The beta button duplicates the shared button classes.
+- `<Analytics/>` records `/invite/<CODE>`.
+- `apps.apple.com` accepts any path, and a TestFlight trailing slash is
+  rejected.
+- The TZ pin drops UTC coverage.
+
+**CI at `11ecf2f`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `11ecf2f`, review clean.**
+
+## PR #23 (`fix/invite-join-privacy`) — privacy part A, 🟢 at `e39ccf3`, review clean
+
+**Scope: exactly `e39ccf3`.**
+- **Indexing:** invite and join links are never indexed, and neither
+  are the signup and login URLs they hand off to.
+- **Validation:** invite codes are validated.
+- **Share previews:** the invite page gets its own twitter and OG tags.
+- **Analytics:** Vercel Analytics URLs are redacted before sending.
+- **Sessions:** the middleware now saves refreshed Supabase session
+  cookies.
+
+**Tested live on the Vercel preview**, using the automation bypass
+header (the secret is never logged), with a throwaway
+`e2e-test-opus-pr13-*` doctor that has since been deleted.
+
+**🟢 X-Robots-Tag.** It is `noindex, nofollow` on:
+- `/invite/<code>` and `/join/<code>`, both prefixed and on the
+  unprefixed 302 geo-redirects;
+- `/pt-BR/join/<code>` (307 → `signup?join=`);
+- `/join/secretary/<code>?email=`;
+- `/auth/signup?secretary=…&email=…`, `/auth/signup?join=…` and
+  `/auth/login?next=…`.
+
+Plain `/auth/login`, `/auth/signup` and `/pt-BR` keep plain `noindex`.
+
+**🟢 Invite code validation.** `/pt-BR/invite/AB12CD-` and
+`/pt-BR/invite/A` return 404.
+
+**🟢 Share previews.** On `/pt-BR/invite/<code>`, og:title and
+twitter:title are both "Seu convite para o SolvyMed". og:site_name,
+og:locale `pt_BR` and twitter:card `summary` are present.
+
+**🟢 Analytics redaction.** The preview sends no `/_vercel/insights`
+beacons, so I checked redaction by running the branch's
+`redactAnalyticsUrl` on real URLs rather than by catching the payload.
+- **Paths:** invite, join and join/secretary codes become `[code]`.
+- **Fragment:** `#access_token` on reset links is dropped.
+- **Query strings:** now an allowlist. Only utm_*, date, week, view, tab,
+  archived, locale and country keep their values; every other value
+  becomes `[redacted]`.
+- **My round 1 BLOCKING cases now pass**, all covered by unit tests:
+  - `?next=/pt-BR/join/secretary/S-…`;
+  - `?q=Maria Silva`;
+  - `?q=123.456.789-00`.
+- **Bad input:** a URL that can't be parsed drops the event.
+
+**🟢 Session refresh cookies.** I sent requests with a real session
+whose access token had expired 120 s earlier.
+- **Pages:** `/pt-BR/dashboard`, `/pt-BR/dashboard/settings`,
+  `/pt-BR/invite/<code>` and `/pt-BR` (307 → dashboard).
+- **Result:** every response now carries `Set-Cookie: sb-<ref>-auth-token`
+  with a **new refresh token and a new access token**. Each new access
+  token is valid (`/auth/v1/user` returns 200).
+- **Cookie attributes:** Path=/, Max-Age 400 days, SameSite=lax.
+- **At `a23ce60`** the same requests returned no Set-Cookie at all.
+- **Bogus refresh token:** a request to `/pt-BR/dashboard` gets 307 →
+  `/pt-BR/auth/login`, and the auth cookie is cleared.
+- **Harmless:** on `/pt-BR`, the page's own redirect for logged-in users
+  sends the auth and `NEXT_LOCALE` cookies twice, carrying the same
+  valid session.
+
+**Review: Claude `/code-review high`, clean at `e39ccf3`** (Copilot quota
+exhausted).
+- **Round 1, `a23ce60`:** 7 inline comments.
+  - 2 BLOCKING: `next` and `q` reached Analytics unredacted.
+  - FOLLOW-UP: the middleware dropped the refreshed cookies; the 404 is
+    bare English; login and signup URLs had plain noindex; beforeSend
+    was re-created on each render; OG fields are duplicated.
+- **Round 2, `9ac1944`..`e39ccf3`, changed code only:**
+  - Both BLOCKING items are fixed with the allowlist.
+  - The cookie fix covers every return path: the dashboard-guard
+    redirect, the geo-redirect, `?country=`, and the next-intl
+    response.
+  - Login and signup now get noindex, and beforeSend is a stable
+    module-level function.
+  - No new findings.
+
+**FOLLOW-UP (reasons in the resolved threads):**
+- **404:** `notFound()` shows the bare English page.
+- **OG:** the invite page's OG fields duplicate the layout's.
+
+**CI at `e39ccf3`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `e39ccf3`, review clean.**
+
+## PR #24 (`fix/secretary-link-no-email`) — privacy part B, 🟢 at `fd02c10`, review clean
+
+**Scope: exactly `fd02c10`.**
+- Secretary invite links no longer carry the invitee's email.
+- The join page shows a masked hint from `get_secretary_invite_hint`
+  (migration 093, live).
+- Signup checks the email with `secretary_invite_email_matches` before
+  the account is created.
+- Stale and malformed codes say the invite isn't valid.
+
+**Tested live on the Vercel preview.**
+- **Bypass header:** only on preview requests, never on Supabase ones;
+  the secret is never logged.
+- **Test data:** throwaway `e2e-test-opus-pr13-*` doctors and
+  `e2e-test-opus-pr24-*` invitees. All deleted afterwards, with their
+  invites.
+
+**🟢 Share link (tested at `50a19dc`, where this code last changed).**
+- **Copied link:** Settings → Team → Invite gives
+  `/pt-BR/join/secretary/<code>`, with no `?email=`.
+- **WhatsApp:** the `wa.me` text doesn't contain the email either.
+
+**🟢 Open invite (signed out).**
+- **Hint:** "Convite de Clinica Opus Pr24", "Este convite é para
+  e2\*\*\*@burrowsoft.com", and "Criar conta".
+- **Where the lookup runs:** the only `get_secretary_invite_hint` call
+  comes from the browser. The SSR HTML contains neither the masked nor
+  the full email.
+- **Old links:** a link with `?email=other@example.com` ignores the
+  parameter. The CTA is `/pt-BR/auth/signup?secretary=<code>`.
+
+**🟢 Signup, end to end.**
+- **Email field:** empty and editable.
+- **Wrong email:** shows "…não corresponde ao convite, ou o convite não é
+  mais válido…". Only the matches RPC runs: no `/auth/v1/signup` and no
+  account.
+- **Right email:** matches, then signUp. After confirmation it lands on
+  `/pt-BR/dashboard`, with `role=secretary`, `invited_by` set to the
+  doctor, and the invite's `accepted_at` set.
+
+**🟢 Stale link.** This was round 1's BLOCKING, and my resend repro now
+passes.
+- **Setup:** invite X, then resend to X.
+- **Old code, join page:** "Convite inválido / Este convite não é mais
+  válido", with no signup link.
+- **Old code straight on `/auth/signup?secretary=`, CORRECT email:** the
+  widened message, with no signup call and no account. At `50a19dc` this
+  showed the misleading "doesn't match".
+- **Resent code:** its page shows the hint and signup.
+
+**🟢 Malformed codes (`S-ABC`, `S-ABCDEFGHI`, `X-ABCDEFGH`).**
+- **Join page:** "Convite inválido", server-rendered (it's in the SSR
+  HTML), with no signup.
+- **RPC calls:** none, on the join pages or on
+  `/auth/signup?secretary=S-ABC`.
+
+**🟢 Error handling, forced with a Playwright route.**
+- **Hint RPC error:** a 400 `too_many_attempts` or a network abort still
+  offers "Criar conta", without the hint. It does not show the invalid
+  state.
+- **`email_matches` error:** a 400 `too_many_attempts` lets signUp go
+  ahead. The accept-time check is the boundary.
+
+**Review: Claude `/code-review`, clean at `fd02c10`.**
+- **Round 1, `50a19dc`:** I ran it before code review moved to the
+  dedicated code reviewer agent. It found 1 BLOCKING (the stale link
+  shown as a mismatch), confirmed live.
+- **Round 2, `fd02c10`:** by the code reviewer, clean, with no
+  BLOCKING.
+
+**FOLLOW-UP:**
+- **InviteHint:** it spends the per-code budget on every mount; cache it
+  in sessionStorage.
+- **Tests:** the pre-check branches have no tests, and the signup guard
+  is redundant.
+- **Mobile links:** mobile 1.2.0 still builds links with `?email=`. It's
+  fixed in the mobile 1.3.0 cleanup; web keeps ignoring the parameter.
+
+**CI at `fd02c10`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `fd02c10`, review clean.**
+
+## PR #18 (`feat/patient-archive`) — patient archive + 8-char passwords, 🟢 at `047f7a6`, review clean
+
+**Scope: exactly `047f7a6`.** This is the rebase onto master after #24.
+Migrations 094 (archive) and 096 (the detach fix) are live on prod.
+
+**Tested live on the Vercel preview (pt-BR).**
+- **Bypass header:** only on preview requests; the secret is never
+  logged.
+- **Test data:** throwaway `e2e-test-opus-*` doctors, patients, patient
+  accounts and a secretary, all deleted afterwards. Seeded clinical rows
+  are removed first, since 094 intentionally refuses to delete a doctor
+  whose patients have history.
+
+**🟢 1. Delete vs Archive.**
+- **Patient with a record:** "Arquivar cadastro" is shown, with no Delete.
+- **Patient with no history:** both are shown. Delete asks "Excluir …?
+  Esta ação não pode ser desfeita." and the row is gone.
+
+**🟢 2. Archive confirm and effects.**
+- **Confirm text:** "Nenhuma consulta futura será cancelada." for a
+  patient with none. "2 consultas futuras serão canceladas." for one with
+  a confirmed appointment plus a pending request from their linked app
+  account.
+- **Cancellation:** after archiving, both are cancelled. Past requests are
+  left alone, by design.
+- **Banner:** "Arquivado em 26 de set. de 2026 por Dra Opus Pr18" appears
+  without a reload, in about 3.5 s via `router.refresh`.
+- **Hidden actions:** Archive, Delete, New record and New prescription.
+- **Push:** the linked account had no push token, so the cancellation
+  notification wasn't observable. It's code-reviewed only.
+
+**🟢 3. Lists and pickers.**
+- **Lists:** Patients and search hide both archived patients. The chips
+  read "Ativos (1)" and "Arquivados (2)". `?archived=1` lists them, with
+  the "Arquivado em … por …" label.
+- **Dashboard:** the patient count is 1, the active patient only.
+- **New appointment:** the datalist offers only the active patient.
+
+**🟢 4. Restore.**
+- **From the banner:** the banner clears without a reload and
+  `archived_at` is NULL.
+- **From the duplicate warning:** the new-patient form with an archived
+  person's name and phone shows the match with the "Arquivado" badge,
+  Restaurar and "Criar mesmo assim". Restaurar restores it and lands on
+  the patient page, with no second record created.
+
+**🟢 5. No raw codes.** No
+`patient_archived`/`patient_has_clinical_history` was found on any page
+visited.
+- **Schedule, by name:** creating an appointment for a name matching only
+  an archived patient shows "Este cadastro está arquivado. Restaure-o em
+  Pacientes para agendar uma consulta." No row is created.
+- **Schedule, re-activation:** re-activating a cancelled appointment of an
+  archived patient shows the same copy. The select reverts, and the DB
+  stays `cancelled`.
+- **Patient app account booking:** booking at the clinic that archived
+  them shows "Esta clínica não está aceitando novos agendamentos para a
+  sua conta…". The RPC returns `patient_archived`.
+- **Booking requests:** only the propose path could be exercised live, and
+  it doesn't raise `patient_archived`; see FOLLOW-UP.
+  - Archiving cancels every upcoming request, so no future pending
+    request can exist for an archived patient.
+  - A past one shows no Confirm button, so the Confirm → alert path is
+    code-verified only.
+
+**🟢 6. Secretary.** A secretary can archive and restore. The banner reads
+"Arquivado em … por Sec Opus Ana".
+
+**🟢 7. Passwords.**
+- **Signup, 7 characters:** "A senha deve ter pelo menos 8 caracteres.",
+  with no `/auth/v1/signup` call.
+- **Signup, 8 characters:** the account is created ("Verifique seu
+  e-mail").
+- **Reset via a real recovery token:** 7 characters gives the same
+  message, with no update call. 8 characters works (password grant OK).
+- **Existing 6-character password:** still logs in, to `/pt-BR/dashboard`.
+  The Supabase minimum stays 6 until mobile 1.3.0 is on Play, per UX.
+
+**🟢 #24 + #18 together (secretary signup).** The join page shows the
+masked hint.
+- **7 characters:** the length error, with no RPC and no signup.
+- **8 characters, wrong email:** the mismatch copy, from the matches RPC
+  only, with no account.
+- **8 characters, right email:** matches, then signup, and the account is
+  created.
+
+**DB findings from this run** (mob dev):
+- **094 blocked patient-account deletion.** It failed when a past active
+  appointment pointed at an archived record: the `ON DELETE SET NULL`
+  tripped the trigger. Fixed by 096, and re-verified live: the delete
+  now succeeds and `patient_auth_id` becomes NULL.
+- **Doctor accounts with clinical history can't be deleted.** This is
+  intended (records are retained for 20 years); close-account will
+  handle it.
+
+**Review: Claude `/code-review` (code reviewer), clean at `047f7a6`.**
+
+**FOLLOW-UP:**
+- **Propose to an archived patient:** a doctor can still send "Propor novo
+  horário" on an archived patient's past request. It succeeded live and
+  set `proposed_date`. 094 lets it through because `date` doesn't change,
+  but the patient's accept would then be refused.
+- **Accept on `my-appointments`:** it ignores `acceptProposal` errors, so
+  a refused accept is silent. This is pre-existing; a past-dated proposal
+  shows no Accept button, so it wasn't reachable live.
+- **Push on archive:** not observable without a device token.
+
+**CI at `047f7a6`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `047f7a6`, review clean.**
+
+## PR #25 (`fix/account-delete-page`) — delete-account page, 🟢 at `15b358a`, review clean
+
+**Scope: exactly `15b358a`.** This covers the public `/account/delete`
+request form:
+- **The note:** the false "records will be erased" warning is replaced
+  by a note that separates professionals and patients.
+- **Support address:** the support mailto moves to `support@solvymed.com`.
+- **Translation:** the page is translated into 15 locales.
+
+Tested live on the Vercel preview, using the bypass header on preview
+requests only.
+
+**🟢 All 15 locales render.**
+- **Locales:** pt-BR, en (unprefixed), es, de, fr, it, ja, ko, zh, zh-TW,
+  ru, ar, th, vi and id each return 200 with a translated title, e.g.
+  "Excluir sua conta", "Konto löschen" or "حذف حسابك".
+- **Content:** there are no missing keys, no `burrowsoft.com`, and no
+  "erased and cannot be recovered".
+- **Note:** it reads, for example, "Profissionais de saúde: por lei, os
+  prontuários … 20 anos…" or "Healthcare professionals: by law … 20
+  years".
+- **Mailto:** `support@solvymed.com` with a localized subject in every
+  locale, e.g. "Encerrar minha conta", "Close my account", "Cerrar mi
+  cuenta" or "Mein Konto schließen".
+- **RTL:** ar renders `dir=rtl`.
+- **Labels:** in pt-BR and ar, clicking a label focuses its field
+  (`delete-email`, `delete-reason`).
+
+**🟢 Submit (pt-BR and de).**
+- **Confirmation:** "Solicitação recebida — Recebemos sua solicitação
+  para **<email>**." and "Anfrage erhalten — Wir haben Ihre Anfrage für
+  **<email>** erhalten." The email is in bold.
+- **Database:** each submit creates one `deletion_requests` row with
+  status `pending`, the reason stored and `processed_at` null. Both test
+  rows were deleted afterwards.
+- **Blank email:** a whitespace-only email with the client `required`
+  removed returns the server's `email_required`, shown as "Informe seu
+  e-mail.". The `generic` error copy is code-verified only.
+
+**Review: Claude `/code-review` (code reviewer), clean at `15b358a`.**
+
+**FOLLOW-UP:** nothing alerts support when a request lands. Mob dev owns
+this: a webhook, edge function and email, probably with S-01. The 20-year
+wording is to be re-aligned with the privacy-policy rewrite.
+
+**CI at `15b358a`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `15b358a`, review clean.**
+
+## PR #26 (`perf/vercel-region-gru1`) — Vercel functions in São Paulo, 🟢 at `1caa406`, review clean
+
+**Scope: exactly `1caa406`.**
+- **Region:** `vercel.json` sets `"regions": ["gru1"]`.
+- **Gate paragraph:** the PR adds the "Current gate" paragraph at the top
+  of the Merge gate section. I've read it and it's accurate.
+
+Tested on the Vercel preview against prod, with a throwaway doctor
+(12 patients, 1 record) using a real SSR session cookie. The bypass
+header was sent on preview requests only.
+
+**🟢 1. Region.** `x-vercel-id` on the preview is `sin1::gru1::…` for all
+of these:
+- **Pages:** `/pt-BR` (307 → dashboard), `/pt-BR/dashboard/patients` and
+  a patient page.
+- **Route handlers:** `/api/billing/portal` (405 on GET) and
+  `/api/webhooks/stripe`.
+- **A server action:** the record save on the patient page.
+
+Prod is still `sin1::iad1::…`. My edge is Singapore; the second segment
+is the function region.
+
+**🟡 2. TTFB, median of 9 each, measured from Thailand (edge `sin1`).**
+
+| Page | Preview (gru1) | Prod (iad1) |
+|---|---|---|
+| Patients list | 1402 ms | 1677 ms (−16% on gru1) |
+| Patient page | 1627 ms | 1585 ms (+3%, noise) |
+
+From here the edge→function hop is longer to gru1 than to iad1, so this
+understates the gain for Brazilian users. There, both the edge and the
+database are in São Paulo. What it does show: no regression, and an
+improvement on the multi-query list page. A Brazil-side measurement
+would be the real before and after.
+
+**🟢 3. Stripe webhook on the preview (test mode).** I sent a synthetic
+test event signed with the test webhook secret. The type was
+`customer.created`, which the handler just acknowledges, so no
+subscription is touched.
+- **Signed:** 200 `{"ok":true}`, in `gru1`.
+- **Bad signature:** 400 "Invalid signature".
+- **Checkout:** none run, per the standing no-checkout-on-preview rule.
+
+**🟢 4. Smoke.**
+- **Login:** lands on `/pt-BR/dashboard`, which shows a patient count of
+  12.
+- **Patient page:** it renders.
+- **New record:** saved via a server action, visible on the page, and
+  present in the DB.
+
+**Review: Claude `/code-review` (code reviewer), clean at `1caa406`.**
+
+**CI at `1caa406`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `1caa406`, review clean.** After the merge, confirm
+prod shows `::gru1::`.
+
+**Prod addendum (`67df2c9`):**
+- **Region:** `sin1::gru1` on pages, `/api/billing/portal` and a server
+  action.
+- **Stripe webhook:** a signed TEST `customer.created` to
+  `https://www.solvymed.com/api/webhooks/stripe` returns 200
+  `{"ok":true}`, and a bad signature returns 400.
+- **Smoke:** login, the dashboard, a patient page and a record save all
+  pass.
+
+## PR #28 (`fix/privacy-facts`) — /privacy factual fixes, 🟢 at `aa4251d`, review clean
+
+**Scope: exactly `aa4251d`.** This is English-only text in
+`privacy/page.tsx`. The diff against master touches only the lines
+below.
+
+Checked live on the preview at `/privacy` and `/pt-BR/privacy`, with prod
+alongside as the "before":
+- **Last updated:** "September 26, 2026" (prod: June 18, 2026).
+- **Section 5, Data Sharing:**
+  - Supabase: "servers in Brazil, São Paulo region" (prod: "US/EU").
+  - New line, Vercel: "server processing in Brazil, São Paulo region".
+  - New line, Resend: "transactional email … (USA)".
+  - No "US/EU" remains.
+- **Section 7, Retention:** UX's final text.
+  - Medical records (clinical notes, prescriptions and exam files) are
+    kept for at least 20 years.
+  - A patient with records can only be archived.
+  - An account holding records is closed by support rather than deleted.
+  - Other account data is kept while the account is active.
+  - This matches what 094 and 096 enforce.
+- **Section 8:** the "right to be forgotten" bullet adds "except medical
+  records, which are kept as described in section 7."
+
+**Review: Claude `/code-review` (code reviewer), clean at `aa4251d`.**
+
+**FOLLOW-UP, for the privacy-policy rewrite:**
+- **Section 6:** it says only professionals access their patients'
+  records, but linked secretaries now do too.
+- **Transfers:** Stripe and Expo (US) aren't marked as international
+  transfers.
+- **Language:** the policy and the terms are English-only in every
+  locale.
+
+**CI at `aa4251d`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `aa4251d`, review clean.**
+
+## PR #27 (`feat/legal-links`) — Privacy/Terms links + signup consent, 🟢 at `9271345`, review clean
+
+**Scope: exactly `9271345`.** That's `1142ea0`, plus the master merge
+(`cabee51`, bringing in #28), plus `LegalLinks` on `/invite/<code>`.
+
+Tested live on the preview in pt-BR (at a 375 px mobile width), en
+(unprefixed), es and ar. The bypass header was sent on preview requests
+only.
+
+**🟢 Legal links.** A `<nav>` with a translated label ("Informações
+legais", "Legal", "Información legal", "معلومات قانونية") carries both
+links, prefixed with the page's locale. It appears on:
+- the landing page;
+- login, signup and forgot-password;
+- `/join/<code>` (which redirects to signup);
+- `/join/secretary/<code>`;
+- `/account/delete`;
+- **`/invite/<code>`**. It was missing at `1142ea0` and is fixed in
+  `9271345`.
+
+Other checks:
+- **Links:** clicking through lands on `/pt-BR/privacy`, `/pt-BR/terms`,
+  `/privacy` and `/terms`.
+- **Layout:** no horizontal overflow at 375 px, and ar is `dir=rtl`.
+
+**🟢 Signup consent, in 4 locales.** For example, "Ao criar uma conta,
+você concorda com os Termos de Uso e a Política de Privacidade." and
+"By creating an account, you agree to the Terms of Service and the
+Privacy Policy."
+- **Position:** above the submit button.
+- **Links:** both go to the locale's `/terms` and `/privacy`, with
+  `target=_blank`. Clicking Terms opens a new tab on the right page.
+
+**Review: Claude `/code-review` (code reviewer), clean at `9271345`.**
+
+**FOLLOW-UP:** the `/privacy` and `/terms` pages themselves are
+English-only in every locale. That's covered by the lawyer-reviewed
+rewrite, where pt-BR and en are authoritative.
+
+**CI at `9271345`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `9271345`, review clean.**
+
+**Prod addendum (`9a458c4`):** the invite page, the auth pages and the
+signup consent line all show the legal links in pt-BR, en, es and ar.
+
+## PR #30 (`feat/locale-detection`) — browser-language detection + auth-page switcher, 🟢 at `beb83e0`, review clean
+
+**Scope: exactly `beb83e0`.** That's `b4a5083` plus the code reviewer's
+fix: no switcher on `/auth/confirm` or `/auth/reset-password`, and the
+switcher no longer carries the `#fragment`.
+
+**How it was tested.** The preview can only test country TH.
+- **Preview:** raw requests with manual redirects, under the bypass
+  header. My real country (TH, from Thailand) always applies there.
+  Vercel overwrites an injected `x-vercel-ip-country`, and `?country=`
+  doesn't feed first-visit detection (it runs after that block).
+- **Local:** for BR/US/no-country cases, `next dev` on `beb83e0`, where
+  the country header is honoured.
+- **Browser:** Playwright for the switcher and the layout.
+
+**🟢 1. Browser vs country.**
+- **pt-BR browser in TH** (preview): 302 → `/pt-BR`, including a deep
+  link that keeps `?next=`.
+- **th browser in BR** (local): → `/th`.
+- **Other tags:** pt-PT → pt-BR; zh-Hant and zh-HK → zh-TW; zh-CN → zh.
+  `en-US` first with pt-BR second stays en (200, no redirect). `pt;q=0,
+  es` → es.
+
+**🟢 2. Fallbacks.**
+- **No Accept-Language:** → the country's language (th on the preview,
+  pt-BR in BR locally).
+- **Unsupported `pl`:** → th in TH and pt-BR in BR; en in US or with no
+  country. `pl,es;q=0.5` → es. `*` → the country.
+
+**🟢 3. Cookie and `/en`.**
+- **Existing cookie wins over a pt-BR browser:** `NEXT_LOCALE=es` → es,
+  and `NEXT_LOCALE=en` → stays en.
+- **`/en/auth/login` with a pt-BR browser:** 307 → `/auth/login`, pinning
+  `NEXT_LOCALE=en`.
+- **Cookie lifetime:** an auto pick sets `Max-Age=2592000` (30 days); a
+  manual pick in the switcher lasts 365 days.
+
+**🟢 4. Aliases.**
+- `/pt` → 308 `/pt-BR`.
+- `/pt/auth/login?x=1` → 308 `/pt-BR/auth/login?x=1`.
+- `/PT-br/auth/login` → 308 `/pt-BR/auth/login`.
+- `/zh-tw` → 308 `/zh-TW`.
+- `/identity` isn't treated as an alias (404, as before).
+
+**🟢 5. Bots (Googlebot, no Accept-Language).** Prefixed URLs (`/pt-BR/…`,
+`/es`) return 200 with no redirect. Unprefixed `/` returns 200 in en and
+doesn't redirect, even from BR. That's the same as before: bots skip
+detection entirely, so the PR body's "the country decides as before" is
+inaccurate, but the behaviour is unchanged.
+
+**🟢 6. Switcher.**
+- **Signup:** `/pt-BR/auth/signup?secretary=S-…&email=…` → es keeps both
+  params; → en also keeps them.
+- **Login:** `?next=` survives a switch to fr.
+- **One-time-link pages:** `/auth/confirm` and `/auth/reset-password` show
+  no switcher. A real recovery link sets the new password successfully.
+
+**🟢 7. 375 px layout (pt-BR, ar, de).** Checked on login, signup and
+join/secretary.
+- **Overflow:** none.
+- **Wrapping:** the switcher sits on its own row under the legal links in
+  pt-BR and de. In ar (RTL) they share a row, and the screenshot looks
+  right.
+
+**Review: Claude `/code-review` (code reviewer), clean at `beb83e0`.**
+
+**FOLLOW-UP:**
+- **Test instructions:** the PR body says to use `?country=XX` to simulate
+  a country, but it doesn't affect first-visit detection (the preview
+  sends TH regardless, and locally `/?country=BR` stays en). Use a local
+  server with `x-vercel-ip-country`, or unit tests.
+- **Accessibility:** the switcher's `aria-label` is a hard-coded "Select
+  language" in every locale.
+
+**CI at `beb83e0`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `beb83e0`, review clean.**
+## PR #29 (`feat/record-corrections`) — 24-hour correction rule, 🟢 at `63379ac`, review clean
+
+**Scope: exactly `63379ac`.** This ships in lockstep with mobile #19.
+- **097:** the corrections migration.
+- **098:** a hotfix. 097's `_clinical_row_editable` returned NULL
+  whenever `app.retention_purge` was unset, so the lock never fired.
+  I found this live on prod on the first run: a doctor PATCHed and
+  DELETEd a 30-hour-old record, and the service role updated any
+  clinical row. Mob dev fixed it in 098.
+
+**Tested live on the preview, after 098 was live.**
+- **Test data:** a throwaway doctor with patients, records and
+  prescriptions seeded through the doctor's JWT. The ">24h" rows were
+  inserted with a backdated `created_at`. Old prescriptions were created
+  fresh, given their items, then backdated by the author.
+- **Cleanup:** 097 intentionally makes clinical rows undeletable except
+  by a retention purge, so mob dev purges the throwaways on request.
+
+**🟢 1. New record, as the author.**
+- **Buttons:** it shows "Editar" and "Excluir".
+- **Edit:** the "Editar registro" dialog saves the new content.
+- **Delete:** it asks "Excluir este registro? Esta ação não pode ser
+  desfeita." and removes the row.
+
+**🟢 2. Record older than 24h.**
+- **Buttons:** only "Adicionar correção".
+- **Dialog:** "Corrigir registro", prefilled with the original text.
+- **Blank reason:** "Informe um motivo." (with the client `required`
+  removed), and no raw code.
+- **With a reason:** the original is struck through, followed by
+  "Corrigido em 26 de set. de 2026 por Dra Opus Pr29: erro de digitação",
+  then the correction with its "Correção" badge.
+- **Database:** the correction row has `corrects_id`, the reason and
+  `created_by_name`.
+- **Nesting:** a fresh correction offers Editar/Excluir, since it's under
+  24h old. Correcting a correction needs it to be over 24h old, so that
+  case is code-verified only.
+
+**🟢 3. Prescriptions.**
+- **New prescription, 3 medications:** Edit with the middle row removed
+  leaves the form as Med Um 1mg and Med Tres 3mg, with no value shifting.
+  The DB holds exactly those 2 items, with no duplicates.
+- **Prescription older than 24h:** only "Adicionar correção".
+  - **Prefilled:** Amoxicilina and Dipirona.
+  - **Saved correction:** Amoxicilina 875mg and Dipirona 1g, with the
+    reason "dose errada".
+  - **Trail:** the original's items are struck through, with "Corrigido
+    em … por …: dose errada".
+
+**🟢 4. Stale page.**
+- **Setup:** the edit dialog was opened on a record 23h54m old (Editar is
+  still offered before 23h55m). I waited until it was past 24h, then
+  saved.
+- **Result:** "Este registro não pode mais ser alterado. Adicione uma
+  correção." shows, with no raw code, and the DB content is unchanged.
+
+**🟢 Lock at the DB, with 098.** Every direct REST write to a row older
+than 24h returns 400 `clinical_record_locked`:
+- doctor-JWT PATCH;
+- service-role PATCH;
+- doctor-JWT DELETE;
+- DELETE of an old prescription's items.
+
+**🟢 5. Archived patient, copy and privacy.**
+- **Archived patient:** their record shows no Editar, Excluir or
+  Adicionar correção.
+- **es:** "Editar", "Eliminar", "Añadir corrección", "Corregido el 26 sept
+  2026 por …" and "Corrección".
+- **Privacy §7:** `/privacy` has the new paragraph ("After 24 hours, a
+  clinical note or prescription can no longer be edited or deleted…").
+
+**Review: Claude `/code-review` (code reviewer), clean at `63379ac`.**
+
+**FOLLOW-UP:** none web-side. The prod lock bug was DB-side and is fixed
+by 098 (mob dev added a flag-never-set test).
+
+**CI at `63379ac`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `63379ac`, review clean. 097 and 098 are live.**
 
 ## iOS — open question
 

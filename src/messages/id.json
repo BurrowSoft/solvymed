@@ -8,7 +8,12 @@
     "subtitle": "Solvymed menyatukan jadwal, rekam medis, resep, dan pembayaran dalam satu aplikasi yang cepat dan bersih, dirancang untuk tenaga kesehatan profesional.",
     "appStore": "Unduh di App Store",
     "googlePlay": "Dapatkan di Google Play",
-    "comingSoon": "Tautan unduhan segera hadir."
+    "comingSoon": "Tautan unduhan segera hadir.",
+    "soon": "Segera",
+    "appStoreComingSoon": "Segera hadir di App Store",
+    "openApp": "Buka aplikasi",
+    "iosBeta": "Beta untuk iPhone – instal lewat TestFlight",
+    "iosBetaHint": "Memerlukan aplikasi TestFlight gratis dari Apple"
   },
   "highlights": {
     "h1": "Penjadwalan cerdas",
@@ -45,7 +50,10 @@
     "body": "Website ini masih dalam pengembangan. Website lengkap Solvymed akan segera hadir dengan dokumentasi lengkap, harga, dan sumber daya dukungan. Sementara itu, aplikasi sudah beroperasi penuh — unduh dan mulailah mengelola praktik Anda hari ini."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. Hak cipta dilindungi."
+    "copyright": "© 2026 Solvymed. Hak cipta dilindungi.",
+    "privacy": "Kebijakan Privasi",
+    "terms": "Ketentuan Layanan",
+    "legal": "Informasi hukum"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -67,7 +75,7 @@
     "updatedTitle": "Kata sandi diperbarui",
     "updatedMessage": "Kata sandi Anda telah diubah. Sekarang Anda dapat masuk dengan kata sandi baru.",
     "matchError": "Kata sandi tidak cocok.",
-    "lengthError": "Kata sandi harus minimal 6 karakter.",
+    "lengthError": "Kata sandi harus minimal {min} karakter.",
     "openDashboard": "Buka dasbor",
     "dashboardHint": "Anda akan diarahkan ke dasbor Anda."
   },
@@ -183,7 +191,8 @@
     "useBookingCard": "Gunakan kartu permintaan janji temu untuk mengonfirmasi, menolak, atau mengusulkan waktu baru untuk permintaan ini.",
     "genericError": "Terjadi kesalahan. Silakan coba lagi.",
     "missingFieldsError": "Harap isi semua kolom yang wajib diisi.",
-    "pastMidnightError": "Waktu dan durasi ini akan melewati tengah malam."
+    "pastMidnightError": "Waktu dan durasi ini akan melewati tengah malam.",
+    "patientArchivedError": "Rekam medis ini diarsipkan. Pulihkan di menu Pasien untuk membuat janji temu."
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -247,7 +256,16 @@
     "bornOn": "lahir {date}",
     "openExisting": "Buka yang ada",
     "createAnyway": "Tetap buat",
-    "openPatient": "Buka pasien"
+    "openPatient": "Buka pasien",
+    "archivedTitle": "Rekam medis yang diarsipkan",
+    "activeChip": "Aktif ({n})",
+    "archivedChip": "Diarsipkan ({n})",
+    "noArchived": "Tidak ada rekam medis yang diarsipkan",
+    "archivedBadge": "Diarsipkan",
+    "restore": "Pulihkan",
+    "restoreError": "Tidak dapat memulihkan rekam medis. Silakan coba lagi.",
+    "archivedOn": "Diarsipkan {date}",
+    "archivedOnBy": "Diarsipkan {date} oleh {name}"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -318,7 +336,35 @@
     "codeCopied": "Disalin!",
     "regenerateCode": "Buat ulang",
     "addedBy": "Ditambahkan oleh",
-    "addedBySecretary": "{name} (sekretaris), {date}"
+    "addedBySecretary": "{name} (sekretaris), {date}",
+    "allPatients": "Semua rekam medis",
+    "archivePatient": "Arsipkan rekam medis",
+    "archiveTitle": "Arsipkan {name}?",
+    "archiveBody": "Rekam medis yang diarsipkan disembunyikan dari daftar, pencarian, dan jadwal. Riwayat tetap disimpan dan dapat dipulihkan kapan saja.",
+    "archiveUpcoming": "{n, plural, =0 {Tidak ada janji temu mendatang yang dibatalkan.} other {# janji temu mendatang akan dibatalkan.}}",
+    "archiveConfirm": "Arsipkan",
+    "archiveError": "Tidak dapat mengarsipkan rekam medis. Silakan coba lagi.",
+    "archivedSub": "Rekam medis yang diarsipkan tidak dapat menerima janji temu, catatan, atau resep baru.",
+    "archivedNoNew": "Rekam medis ini diarsipkan. Pulihkan untuk menambahkan entri baru.",
+    "deleteNoHistoryConfirm": "Hapus {name}? Tindakan ini tidak dapat dibatalkan.",
+    "deleteHasHistory": "Rekam medis ini sekarang memiliki riwayat klinis dan tidak dapat dihapus. Arsipkan saja.",
+    "deleteError": "Tidak dapat menghapus rekam medis. Silakan coba lagi.",
+    "editEntry": "Ubah",
+    "deleteEntry": "Hapus",
+    "addCorrection": "Tambah koreksi",
+    "correctionReason": "Alasan koreksi",
+    "correctionReasonPlaceholder": "mis.: dosis salah, salah ketik pada diagnosis",
+    "reasonRequired": "Masukkan alasan.",
+    "correctedOnBy": "Dikoreksi pada {date} oleh {name}: {reason}",
+    "correctedOn": "Dikoreksi pada {date}: {reason}",
+    "correctionLabel": "Koreksi",
+    "correctRecordTitle": "Koreksi catatan",
+    "correctPrescriptionTitle": "Koreksi resep",
+    "editRecordTitle": "Ubah catatan",
+    "editPrescriptionTitle": "Ubah resep",
+    "lockedError": "Entri ini tidak dapat diubah lagi. Tambahkan koreksi sebagai gantinya.",
+    "contentRequired": "Masukkan isi.",
+    "entryNotFound": "Entri ini sudah tidak ada. Muat ulang halaman."
   },
   "settings": {
     "profileTitle": "Profil",
@@ -466,9 +512,12 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n} menit",
     "customTime": "Waktu khusus",
-    "orCustomTime": "Atau pilih waktu khusus"
+    "orCustomTime": "Atau pilih waktu khusus",
+    "professionalFallback": "Tenaga profesional",
+    "errorArchived": "Klinik ini tidak menerima pemesanan baru untuk akun Anda. Silakan hubungi klinik."
   },
   "auth": {
+    "passwordTooShort": "Kata sandi harus minimal {min} karakter.",
     "login": {
       "title": "Selamat datang kembali",
       "subtitle": "Masuk ke akun SolvyMed Anda",
@@ -506,7 +555,9 @@
       "emailExists": "Akun dengan email ini sudah ada. Silakan masuk.",
       "joiningAs": "Bergabung sebagai {role} melalui tautan undangan.",
       "joiningAsSecretary": "Mendaftar sebagai sekretaris melalui tautan undangan.",
-      "secretaryNeedsInvite": "Sekretaris? Minta tautan undangan dari dokter Anda."
+      "secretaryNeedsInvite": "Sekretaris? Minta tautan undangan dari dokter Anda.",
+      "secretaryEmailMismatch": "Email ini tidak cocok dengan undangan, atau undangan sudah tidak berlaku. Periksa email Anda atau minta tautan baru ke klinik.",
+      "consent": "Dengan membuat akun, Anda menyetujui <terms>Ketentuan Layanan</terms> dan <privacy>Kebijakan Privasi</privacy>."
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",
@@ -550,7 +601,8 @@
       "linkFailed": "Terjadi kesalahan saat menautkan akun Anda. Silakan coba lagi.",
       "backToSignup": "Gunakan akun lain",
       "tooManyAttempts": "Terlalu banyak percobaan. Harap tunggu sebentar sebelum mencoba lagi.",
-      "alreadyInvitedByAnother": "Akun Anda sudah terhubung dengan dokter lain."
+      "alreadyInvitedByAnother": "Akun Anda sudah terhubung dengan dokter lain.",
+      "archived": "Klinik ini tidak menerima pemesanan baru untuk akun Anda. Silakan hubungi klinik."
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",
@@ -714,6 +766,40 @@
     "leaveTitle": "Keluar dari klinik",
     "leaveSub": "Berhenti bekerja untuk dokter ini. Anda dapat bergabung ke klinik lain dengan undangan baru.",
     "accountNotSecretary": "Akun ini tidak dapat menerima undangan sekretaris. Gunakan akun terpisah yang dibuat dari tautan undangan.",
-    "teamResendConfirm": "Kirim undangan baru ke {email}? Kode yang Anda bagikan sebelumnya tidak akan berlaku lagi."
+    "teamResendConfirm": "Kirim undangan baru ke {email}? Kode yang Anda bagikan sebelumnya tidak akan berlaku lagi.",
+    "inviteFrom": "Undangan dari {clinic}",
+    "inviteFor": "Undangan ini untuk {email}. Daftar dengan email tersebut."
+  },
+  "invitePage": {
+    "metaTitle": "Undangan",
+    "heading": "Undangan ke SolvyMed",
+    "sub": "Klinik Anda mengundang Anda untuk terhubung di SolvyMed.",
+    "codeLabel": "Kode undangan Anda",
+    "step1": "Unduh SolvyMed di ponsel Anda.",
+    "step2": "Buka aplikasi, ketuk <b>Sign up</b>, pilih <b>Patient</b>, lalu masukkan kode di atas pada <b>Invite code</b>.",
+    "step3": "Sudah punya akun? Buka tab <b>Home</b> dan masukkan kode di <b>Connect to Your Doctor</b>."
+  },
+  "accountDelete": {
+    "backToHome": "Kembali ke beranda",
+    "title": "Hapus akun Anda",
+    "intro": "Kirim permintaan Anda di bawah. Kami akan memprosesnya dalam 30 hari dan mengonfirmasi lewat email.",
+    "whatHappensTitle": "Apa yang terjadi pada data Anda",
+    "professionals": "<b>Tenaga kesehatan:</b> menurut hukum, rekam medis pasien Anda harus disimpan selama 20 tahun, jadi kami menutup akun Anda dan menyimpan rekam medis dengan aman alih-alih menghapusnya.",
+    "patients": "<b>Pasien:</b> kami menghapus akun Anda. Catatan yang disimpan klinik tentang Anda tetap berada di klinik; hubungi klinik terkait hal itu.",
+    "emailLabel": "Alamat email",
+    "emailPlaceholder": "your@email.com",
+    "reasonLabel": "Alasan",
+    "optional": "(opsional)",
+    "reasonPlaceholder": "Beri tahu kami mengapa Anda pergi…",
+    "submit": "Minta penghapusan akun",
+    "submitting": "Mengirim…",
+    "preferEmail": "Lebih suka email?",
+    "emailSupport": "Email tim dukungan",
+    "closeSubject": "Tutup akun saya",
+    "doneTitle": "Permintaan diterima",
+    "doneBody": "Kami telah menerima permintaan untuk <b>{email}</b>.",
+    "doneSub": "Kami akan memprosesnya dalam 30 hari dan mengonfirmasi lewat email.",
+    "errorEmailRequired": "Masukkan alamat email Anda.",
+    "errorGeneric": "Terjadi kesalahan. Coba lagi atau kirim email ke {email}."
   }
 }

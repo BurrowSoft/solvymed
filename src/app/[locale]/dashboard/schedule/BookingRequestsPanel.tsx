@@ -89,7 +89,11 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
 
   function handleConfirmClick(b: Booking) {
     const note = notes[b.id] || undefined;
-    startTransition(async () => { await confirmBookingAndAddPatient(b.id, note); });
+    startTransition(async () => {
+      const result = await confirmBookingAndAddPatient(b.id, note);
+      // The patient's record at this clinic is archived (server-enforced).
+      if (result?.error === "patient_archived") alert(t("patientArchivedError"));
+    });
   }
 
   function handleReject(id: string) {
@@ -101,7 +105,8 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
     if (!propDate || !propStart || !propEnd) return;
     const note = notes[id] || undefined;
     startTransition(async () => {
-      await proposeNewTime(id, propDate, propStart, propEnd, note);
+      const result = await proposeNewTime(id, propDate, propStart, propEnd, note);
+      if (result?.error === "patient_archived") alert(t("patientArchivedError"));
       setProposalId(null);
     });
   }
@@ -227,6 +232,8 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                             alert(t("slotTakenAlert"));
                           } else if (result.error === "proposed_time_expired") {
                             alert(t("pastProposalAlert"));
+                          } else if (result.error === "patient_archived") {
+                            alert(t("patientArchivedError"));
                           }
                         })}
                         disabled={isPending}

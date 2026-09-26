@@ -7,6 +7,7 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
 import { IconBadge } from "@/components/IconBadge";
+import { MIN_PASSWORD_LENGTH, isWeakPasswordError } from "@/lib/password";
 
 interface Props {
   state: "signup" | "recovery" | "unknown";
@@ -83,8 +84,8 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
       setSaveError(t("matchError"));
       return;
     }
-    if (password.length < 6) {
-      setSaveError(t("lengthError"));
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setSaveError(t("lengthError", { min: MIN_PASSWORD_LENGTH }));
       return;
     }
     setSaving(true);
@@ -92,7 +93,9 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
     const supabase = createClient();
     const { error } = await supabase.auth.updateUser({ password });
     setSaving(false);
-    if (error) {
+    if (isWeakPasswordError(error)) {
+      setSaveError(t("lengthError", { min: MIN_PASSWORD_LENGTH }));
+    } else if (error) {
       setSaveError(error.message);
     } else {
       setSaveSuccess(true);
@@ -101,7 +104,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
 
   if (state === "unknown") {
     return (
-      <AuthPageShell>
+      <AuthPageShell languageSwitcher={false}>
         <AuthCard>
           <Logo />
           <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("error")}</h1>
@@ -119,7 +122,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
     // Mobile: redirect to app — show opening UI while timer fires
     if (!isDesktop) {
       return (
-        <AuthPageShell>
+        <AuthPageShell languageSwitcher={false}>
           <AuthCard>
             <Logo />
             <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("resetPassword")}</h1>
@@ -148,7 +151,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
 
     // Desktop: show password form
     return (
-      <AuthPageShell>
+      <AuthPageShell languageSwitcher={false}>
         <AuthCard>
           <Logo />
           {saveSuccess ? (
@@ -176,7 +179,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     required
-                    minLength={6}
+                    minLength={MIN_PASSWORD_LENGTH}
                     className="w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-900 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
                   />
                 </div>
@@ -187,7 +190,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
                     value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)}
                     required
-                    minLength={6}
+                    minLength={MIN_PASSWORD_LENGTH}
                     className="w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-900 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
                   />
                 </div>
@@ -209,7 +212,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
   }
 
   return (
-    <AuthPageShell>
+    <AuthPageShell languageSwitcher={false}>
       <AuthCard>
         <Logo />
 

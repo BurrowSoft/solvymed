@@ -8,7 +8,12 @@
     "subtitle": "Solvymed는 예약, 환자 기록, 처방전, 결제를 하나의 빠르고 깔끔한 앱으로 통합했습니다. 의료 전문가를 위해 설계되었습니다.",
     "appStore": "App Store에서 다운로드",
     "googlePlay": "Google Play에서 받기",
-    "comingSoon": "다운로드 링크 출시 예정."
+    "comingSoon": "다운로드 링크 출시 예정.",
+    "soon": "곧 출시",
+    "appStoreComingSoon": "App Store에 곧 출시",
+    "openApp": "앱 열기",
+    "iosBeta": "iPhone 베타 – TestFlight로 설치",
+    "iosBetaHint": "Apple의 무료 TestFlight 앱이 필요합니다"
   },
   "highlights": {
     "h1": "스마트 일정 관리",
@@ -45,7 +50,10 @@
     "body": "이 웹사이트는 현재 개발 중입니다. 상세 문서, 가격 및 지원 리소스를 갖춘 Solvymed 전체 웹사이트가 곧 공개됩니다. 그동안 앱은 완전히 사용 가능합니다 — 다운로드하고 오늘부터 진료 관리를 시작하세요."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. All rights reserved."
+    "copyright": "© 2026 Solvymed. All rights reserved.",
+    "privacy": "개인정보처리방침",
+    "terms": "서비스 약관",
+    "legal": "법적 고지"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -67,7 +75,7 @@
     "updatedTitle": "비밀번호 업데이트됨",
     "updatedMessage": "비밀번호가 변경되었습니다. 이제 새 비밀번호로 로그인할 수 있습니다.",
     "matchError": "비밀번호가 일치하지 않습니다.",
-    "lengthError": "비밀번호는 최소 6자 이상이어야 합니다.",
+    "lengthError": "비밀번호는 최소 {min}자 이상이어야 합니다.",
     "openDashboard": "대시보드 열기",
     "dashboardHint": "대시보드로 리디렉션됩니다."
   },
@@ -183,7 +191,8 @@
     "useBookingCard": "이 요청을 수락, 거절하거나 새 시간을 제안하려면 예약 요청 카드를 사용하세요.",
     "genericError": "문제가 발생했습니다. 다시 시도해 주세요.",
     "missingFieldsError": "필수 항목을 모두 입력해 주세요.",
-    "pastMidnightError": "이 시간과 소요 시간은 자정을 넘깁니다."
+    "pastMidnightError": "이 시간과 소요 시간은 자정을 넘깁니다.",
+    "patientArchivedError": "이 차트는 보관되어 있습니다. 예약하려면 환자 메뉴에서 복원하세요."
   },
   "payments": {
     "thisWeek": "이번 주",
@@ -247,7 +256,16 @@
     "bornOn": "{date} 출생",
     "openExisting": "기존 환자 열기",
     "createAnyway": "그래도 생성",
-    "openPatient": "환자 열기"
+    "openPatient": "환자 열기",
+    "archivedTitle": "보관된 차트",
+    "activeChip": "활성 ({n})",
+    "archivedChip": "보관됨 ({n})",
+    "noArchived": "보관된 차트가 없습니다",
+    "archivedBadge": "보관됨",
+    "restore": "복원",
+    "restoreError": "차트를 복원하지 못했습니다. 다시 시도해 주세요.",
+    "archivedOn": "{date}에 보관됨",
+    "archivedOnBy": "{date}에 {name}님이 보관함"
   },
   "patientDetail": {
     "tabInfo": "정보",
@@ -318,7 +336,35 @@
     "codeCopied": "복사됨!",
     "regenerateCode": "재생성",
     "addedBy": "추가한 사람",
-    "addedBySecretary": "{name}(비서), {date}"
+    "addedBySecretary": "{name}(비서), {date}",
+    "allPatients": "전체 차트",
+    "archivePatient": "차트 보관",
+    "archiveTitle": "{name} 차트를 보관할까요?",
+    "archiveBody": "보관된 차트는 목록, 검색, 일정에서 숨겨집니다. 기록은 유지되며 언제든지 복원할 수 있습니다.",
+    "archiveUpcoming": "{n, plural, =0 {취소되는 예정된 예약이 없습니다.} other {예정된 예약 #건이 취소됩니다.}}",
+    "archiveConfirm": "보관",
+    "archiveError": "차트를 보관하지 못했습니다. 다시 시도해 주세요.",
+    "archivedSub": "보관된 차트에는 새 예약, 기록, 처방을 추가할 수 없습니다.",
+    "archivedNoNew": "이 차트는 보관되어 있습니다. 새 항목을 추가하려면 복원하세요.",
+    "deleteNoHistoryConfirm": "{name} 차트를 삭제할까요? 이 작업은 되돌릴 수 없습니다.",
+    "deleteHasHistory": "이 차트에는 진료 기록이 있어 삭제할 수 없습니다. 대신 보관하세요.",
+    "deleteError": "차트를 삭제하지 못했습니다. 다시 시도해 주세요.",
+    "editEntry": "편집",
+    "deleteEntry": "삭제",
+    "addCorrection": "정정 추가",
+    "correctionReason": "정정 사유",
+    "correctionReasonPlaceholder": "예: 잘못된 용량, 진단명 오타",
+    "reasonRequired": "사유를 입력하세요.",
+    "correctedOnBy": "{date}에 {name}님이 정정: {reason}",
+    "correctedOn": "{date}에 정정: {reason}",
+    "correctionLabel": "정정",
+    "correctRecordTitle": "기록 정정",
+    "correctPrescriptionTitle": "처방 정정",
+    "editRecordTitle": "기록 편집",
+    "editPrescriptionTitle": "처방 편집",
+    "lockedError": "이 항목은 더 이상 변경할 수 없습니다. 대신 정정을 추가하세요.",
+    "contentRequired": "내용을 입력하세요.",
+    "entryNotFound": "이 항목이 더 이상 존재하지 않습니다. 페이지를 새로고침하세요."
   },
   "settings": {
     "profileTitle": "프로필",
@@ -466,9 +512,12 @@
     "cpfPlaceholder": "000.000.000-00",
     "durationMin": "{n}분",
     "customTime": "사용자 지정 시간",
-    "orCustomTime": "또는 시간 직접 선택"
+    "orCustomTime": "또는 시간 직접 선택",
+    "professionalFallback": "담당 전문가",
+    "errorArchived": "이 클리닉은 회원님 계정의 새 예약을 받지 않습니다. 클리닉에 문의해 주세요."
   },
   "auth": {
+    "passwordTooShort": "비밀번호는 최소 {min}자 이상이어야 합니다.",
     "login": {
       "title": "다시 오셨군요",
       "subtitle": "SolvyMed 계정에 로그인",
@@ -506,7 +555,9 @@
       "emailExists": "이 이메일로 이미 계정이 존재합니다. 로그인해 주세요.",
       "joiningAs": "초대 링크를 통해 {role}(으)로 가입합니다.",
       "joiningAsSecretary": "초대 링크로 비서로 가입합니다.",
-      "secretaryNeedsInvite": "비서이신가요? 의사에게 초대 링크를 요청하세요."
+      "secretaryNeedsInvite": "비서이신가요? 의사에게 초대 링크를 요청하세요.",
+      "secretaryEmailMismatch": "이 이메일이 초대와 일치하지 않거나 초대가 더 이상 유효하지 않습니다. 이메일을 확인하거나 클리닉에 새 링크를 요청하세요.",
+      "consent": "계정을 만들면 <terms>서비스 약관</terms> 및 <privacy>개인정보처리방침</privacy>에 동의하는 것으로 간주됩니다."
     },
     "forgotPassword": {
       "title": "비밀번호를 잊으셨나요?",
@@ -550,7 +601,8 @@
       "linkFailed": "계정 연결 중 오류가 발생했습니다. 다시 시도해 주세요.",
       "backToSignup": "다른 계정 사용",
       "tooManyAttempts": "시도 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
-      "alreadyInvitedByAnother": "계정이 이미 다른 의사와 연결되어 있습니다."
+      "alreadyInvitedByAnother": "계정이 이미 다른 의사와 연결되어 있습니다.",
+      "archived": "이 클리닉은 회원님 계정의 새 예약을 받지 않습니다. 클리닉에 문의해 주세요."
     },
     "pendingConfirmation": {
       "loading": "상태 확인 중…",
@@ -714,6 +766,40 @@
     "leaveTitle": "병원 떠나기",
     "leaveSub": "이 의사를 위한 업무를 그만둡니다. 새 초대로 다른 병원에 합류할 수 있습니다.",
     "accountNotSecretary": "이 계정으로는 비서 초대를 수락할 수 없습니다. 초대 링크로 만든 별도 계정을 사용하세요.",
-    "teamResendConfirm": "{email}님에게 새 초대를 보낼까요? 이전에 공유한 코드는 더 이상 작동하지 않습니다."
+    "teamResendConfirm": "{email}님에게 새 초대를 보낼까요? 이전에 공유한 코드는 더 이상 작동하지 않습니다.",
+    "inviteFrom": "{clinic}의 초대",
+    "inviteFor": "이 초대는 {email} 대상입니다. 해당 이메일로 가입하세요."
+  },
+  "invitePage": {
+    "metaTitle": "초대",
+    "heading": "SolvyMed 초대",
+    "sub": "클리닉에서 SolvyMed 연결을 위해 초대했습니다.",
+    "codeLabel": "초대 코드",
+    "step1": "휴대폰에 SolvyMed를 다운로드하세요.",
+    "step2": "앱을 열고 <b>Sign up</b>을 누른 다음 <b>Patient</b>를 선택하고, 위 코드를 <b>Invite code</b>에 입력하세요.",
+    "step3": "이미 계정이 있으신가요? <b>Home</b> 탭을 열고 <b>Connect to Your Doctor</b>에 코드를 입력하세요."
+  },
+  "accountDelete": {
+    "backToHome": "홈으로",
+    "title": "계정 삭제",
+    "intro": "아래에서 요청을 보내 주세요. 30일 이내에 처리하고 이메일로 알려 드립니다.",
+    "whatHappensTitle": "데이터 처리 방식",
+    "professionals": "<b>의료 전문가:</b> 법에 따라 환자의 진료 기록은 20년간 보관해야 하므로, 기록을 삭제하지 않고 안전하게 보관한 채 계정을 폐쇄합니다.",
+    "patients": "<b>환자:</b> 계정을 삭제합니다. 클리닉이 보유한 귀하의 기록은 클리닉에 남으며, 관련 문의는 클리닉에 해 주세요.",
+    "emailLabel": "이메일 주소",
+    "emailPlaceholder": "your@email.com",
+    "reasonLabel": "사유",
+    "optional": "(선택)",
+    "reasonPlaceholder": "떠나시는 이유를 알려 주세요…",
+    "submit": "계정 삭제 요청",
+    "submitting": "전송 중…",
+    "preferEmail": "이메일이 편하신가요?",
+    "emailSupport": "지원팀에 이메일",
+    "closeSubject": "내 계정 폐쇄",
+    "doneTitle": "요청이 접수되었습니다",
+    "doneBody": "<b>{email}</b>에 대한 요청을 접수했습니다.",
+    "doneSub": "30일 이내에 처리하고 이메일로 알려 드립니다.",
+    "errorEmailRequired": "이메일 주소를 입력하세요.",
+    "errorGeneric": "문제가 발생했습니다. 다시 시도하거나 {email}로 문의하세요."
   }
 }
