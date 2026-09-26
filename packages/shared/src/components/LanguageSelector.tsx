@@ -29,6 +29,8 @@ interface Props {
   locales: string[];
   /** Optional Tailwind classes to override styling */
   className?: string;
+  /** Accessible name, in the page's language (e.g. "Idioma") */
+  ariaLabel?: string;
 }
 
 /**
@@ -39,7 +41,7 @@ interface Props {
  *   import { LanguageSelector } from "@burrowsoft/shared";
  *   <LanguageSelector locales={["en", "th"]} />
  */
-export function LanguageSelector({ locales, className = "" }: Props) {
+export function LanguageSelector({ locales, className = "", ariaLabel = "Language" }: Props) {
   const currentLocale = useLocale();
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -65,7 +67,7 @@ export function LanguageSelector({ locales, className = "" }: Props) {
     <select
       value={currentLocale}
       onChange={handleChange}
-      aria-label="Select language"
+      aria-label={ariaLabel}
       className={`rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm font-medium text-slate-700 shadow-sm cursor-pointer transition-opacity disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-1 ${className}`}
     >
       {locales.map((locale) => (

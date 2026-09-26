@@ -53,7 +53,8 @@
     "copyright": "© 2026 Solvymed สงวนลิขสิทธิ์ทั้งหมด",
     "privacy": "นโยบายความเป็นส่วนตัว",
     "terms": "ข้อกำหนดการใช้บริการ",
-    "legal": "ข้อมูลทางกฎหมาย"
+    "legal": "ข้อมูลทางกฎหมาย",
+    "languageLabel": "ภาษา"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -192,7 +193,8 @@
     "genericError": "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
     "missingFieldsError": "กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน",
     "pastMidnightError": "เวลาและระยะเวลานี้จะเกินเที่ยงคืน",
-    "patientArchivedError": "แฟ้มนี้ถูกเก็บถาวรแล้ว กู้คืนในเมนูผู้ป่วยก่อนเพื่อนัดหมาย"
+    "patientArchivedError": "แฟ้มนี้ถูกเก็บถาวรแล้ว กู้คืนในเมนูผู้ป่วยก่อนเพื่อนัดหมาย",
+    "moreCount": "อีก {n} รายการ"
   },
   "payments": {
     "thisWeek": "สัปดาห์นี้",

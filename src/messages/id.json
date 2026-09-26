@@ -53,7 +53,8 @@
     "copyright": "© 2026 Solvymed. Hak cipta dilindungi.",
     "privacy": "Kebijakan Privasi",
     "terms": "Ketentuan Layanan",
-    "legal": "Informasi hukum"
+    "legal": "Informasi hukum",
+    "languageLabel": "Bahasa"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -192,7 +193,8 @@
     "genericError": "Terjadi kesalahan. Silakan coba lagi.",
     "missingFieldsError": "Harap isi semua kolom yang wajib diisi.",
     "pastMidnightError": "Waktu dan durasi ini akan melewati tengah malam.",
-    "patientArchivedError": "Rekam medis ini diarsipkan. Pulihkan di menu Pasien untuk membuat janji temu."
+    "patientArchivedError": "Rekam medis ini diarsipkan. Pulihkan di menu Pasien untuk membuat janji temu.",
+    "moreCount": "+{n} lainnya"
   },
   "payments": {
     "thisWeek": "Minggu ini",

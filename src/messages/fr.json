@@ -53,7 +53,8 @@
     "copyright": "© 2026 Solvymed. Tous droits réservés.",
     "privacy": "Politique de confidentialité",
     "terms": "Conditions d'utilisation",
-    "legal": "Mentions légales"
+    "legal": "Mentions légales",
+    "languageLabel": "Langue"
   },
   "confirm": {
     "emailConfirmed": "Email confirmé !",
@@ -192,7 +193,8 @@
     "genericError": "Une erreur s'est produite. Réessayez.",
     "missingFieldsError": "Veuillez remplir tous les champs obligatoires.",
     "pastMidnightError": "Cet horaire et cette durée dépasseraient minuit.",
-    "patientArchivedError": "Ce dossier est archivé. Restaurez-le dans Patients pour planifier un rendez-vous."
+    "patientArchivedError": "Ce dossier est archivé. Restaurez-le dans Patients pour planifier un rendez-vous.",
+    "moreCount": "+{n} de plus"
   },
   "payments": {
     "thisWeek": "Cette semaine",
