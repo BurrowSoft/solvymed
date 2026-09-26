@@ -624,6 +624,16 @@
       "body": "Configurons votre cabinet en quelques étapes rapides, pour que vous puissiez fixer votre premier rendez-vous.",
       "startSetup": "Commencer la configuration",
       "skip": "Plus tard"
+    },
+    "verify": {
+      "confirmTitle": "Confirmez votre e-mail",
+      "confirmBody": "Appuyez sur Continuer pour finir de créer votre compte SolvyMed.",
+      "otherTitle": "Presque terminé",
+      "otherBody": "Appuyez sur Continuer pour terminer.",
+      "continue": "Continuer",
+      "expiredTitle": "Ce lien a expiré",
+      "expiredBody": "Demandez-en un nouveau depuis la page de connexion.",
+      "goToSignIn": "Aller à la connexion"
     }
   },
   "myAppointments": {

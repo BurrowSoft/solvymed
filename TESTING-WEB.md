@@ -498,7 +498,7 @@ accept it.
 | A-12 | Auth links keep the language (#21) | A reset requested in pt-BR emails `/pt-BR/auth/reset-password`; opened in a **fresh** browser, even from another country, it shows the pt-BR form and the new password works. A signup confirmation carries `?locale=` and lands on the pt-BR page with `NEXT_LOCALE` pinned. `/en/…` links never 404. **Check that en links end in English**: at `76476e9`, `/en/…` landed in the geo locale. |
 | A-13 | Reset link shape | The reset request sends **no `code_challenge`** (implicit flow), so the email link returns `#access_token…&type=recovery` and works in any browser, such as a phone's mail app. A legacy `?code=` link works in the requesting browser; in any other browser it fails gracefully with "O link pode ter expirado". |
 | A-14 | Mobile-origin links, `/auth/confirm` | Unprefixed `/auth/confirm#access_token…&type=recovery` geo-redirects (302) to `/<cc>/auth/confirm` **with the fragment kept**, and the set-password form completes the reset. `/pt-BR/auth/confirm` does the same in pt-BR. Both verified on prod on 2026-09-26. |
-| A-15 ⏳ | S-01: `token_hash` links (send-email hook, 1.3.0) | **Web-origin links:** `/api/auth/callback?token_hash&type&locale` verifies server-side and lands on the right locale page. For reset that's `/<locale>/auth/reset-password`, with a session. **Mobile-origin links on desktop:** `/<locale>/auth/confirm?token_hash&type` shows "Open in the app" / "Continue in the browser", and the browser path completes the confirm or reset. **Scanner safety:** a plain GET of either confirm URL does **not** consume the token (no verify on page load), and a real click afterwards still works. **Fallbacks:** old `#access_token` and `?code=` links still work. **Password reset, a pre-A-15 BLOCKER** (the code reviewer, 2026-09-26): a recovery email link → `/auth/reset-password`, a new password works, and the old one no longer does. Today a `type=recovery` `token_hash` through `/api/auth/callback` logs the user in and lands on `/dashboard`, with no way to set a password; found live in the #35 run. Also check the recovery link never lands on `/auth/professional-welcome`. |
+| A-15 ⏳ | S-01: `token_hash` links (send-email hook, 1.3.0) | **Web-origin links:** callback → 307 to `/[locale]/auth/verify` (no verify on GET); Continue / set-password verifies on click. Then it lands on the right locale page. For reset, the set-password form is on `/[locale]/auth/verify?type=recovery` itself. **Mobile-origin links on desktop:** `/<locale>/auth/confirm?token_hash&type` shows "Open in the app" / "Continue in the browser", and the browser path completes the confirm or reset. **Scanner safety:** a plain GET of either confirm URL does **not** consume the token (no verify on page load), and a real click afterwards still works. **Fallbacks:** old `#access_token` and `?code=` links still work. **Password reset, a pre-A-15 BLOCKER** (the code reviewer, 2026-09-26): a recovery email link → the set-password form (on `/[locale]/auth/verify` since #41), a new password works, and the old one no longer does. Found live in the #35 run: a `type=recovery` `token_hash` through `/api/auth/callback` logged the user in on `/dashboard`. Also check the recovery link never lands on `/auth/professional-welcome`. **Both blockers are fixed and verified on the web side by #41 (`75c91a8`):** callback `token_hash` links redirect to `/[locale]/auth/verify`, which never verifies on load. HEAD and GET scans leave the token valid. Recovery shows the set-password form, the new password works and the old one fails, and the recovery link never reaches the welcome page. **Still ⏳ for A-15 itself:** repeat this with the live send-email hook's real emails, including app-origin links. |
 
 ### B. Doctor
 
@@ -4239,6 +4239,120 @@ code reviewer's clean head), with CI green.
   doctor, and its chip results are the ones above. The orphaned account
   was deleted.
 
+## PR #41 (`fix/auth-links-verify-on-click`) — scanner-safe links, reset opens the password form, 🟢 at `75c91a8`, review clean
+
+**Scope: exactly `75c91a8`.** This fixes both pre-A-15 blockers.
+- **Callback:** `/api/auth/callback?token_hash` no longer verifies. It
+  redirects to `/[locale]/auth/verify`.
+- **Verify page:** verifies only on submit or "Continuar", then routes
+  through `POST /api/auth/after-verify` (`lib/authRouting.ts`).
+
+Tested live on the preview with real `token_hash` values from admin
+`generate_link`, using throwaway accounts that were deleted afterwards.
+
+**🟢 Scanner safety.**
+- **Before every browser click:** I sent a cookieless, JS-less GET that
+  follows redirects, like `curl -L`. The page renders the
+  form or Continue screen, with no Supabase call.
+- **HEAD (`curl -I`):** on the callback and on both verify URLs, no token
+  is consumed.
+- **After all those scans:** the token still verifies (200), and every
+  real click afterwards worked.
+- **Callback redirect:** it sends `Referrer-Policy: no-referrer` and pins
+  `NEXT_LOCALE` (e.g. `en`).
+- **Verify page:** `<meta name="referrer" content="no-referrer">` and
+  `robots noindex, nofollow`. The response header itself is the default
+  `strict-origin-when-cross-origin`; the meta tag is what applies.
+- **`GET /api/auth/after-verify`:** 405.
+
+**🟢 Recovery, pt-BR and en.**
+- **Landing:** `/pt-BR/auth/verify?…&type=recovery` shows "Definir nova
+  senha" (en: `/auth/verify`, "Set new password"), with 2 password fields
+  and **no language switcher**. **No auth call** is made on load.
+- **Submit:** `POST /auth/v1/verify` then `PUT /auth/v1/user` → "Senha
+  atualizada" / "Password updated".
+- **Passwords:** the **new password logs in, and the old one is refused**
+  (`invalid_credentials`).
+- **Reusing the link:** "Este link expirou" / "This link has expired". The
+  password stays the new one.
+
+**🟢 Signup confirmation.**
+- **New professional:** "Confirme seu e-mail" / "Toque em Continuar para
+  concluir a criação…" → **Continuar** → `/pt-BR/auth/professional-welcome`
+  ("Boas-vindas ao SolvyMed, Joana!").
+- **Reused signup link:** "Este link expirou", "Solicite um novo na página
+  de login." and "Ir para o login".
+- **Secretary with an invite:** Continuar → `/pt-BR/dashboard`, and the
+  invite's `accepted_at` is set.
+- **Patient with the doctor's public code:** Continuar →
+  `/pt-BR/auth/pending-confirmation` (`invited_by_professional_id` set).
+- **Magiclink (other types):** "Quase lá" → Continuar → routed as usual.
+  The just-confirmed doctor went to the welcome page, as designed for a
+  confirmation under 10 min old.
+- **App-origin `/pt-BR/auth/confirm?token_hash&type=signup`:** a plain GET
+  (200) doesn't consume the token; the later click through the callback
+  still worked.
+
+**Review: Claude `/code-review` (code reviewer), clean at `75c91a8`.**
+
+**Also in this commit:** checklist row A-15 now records both blockers as
+fixed on the web side. It stays ⏳ until the live send-email hook's real
+emails are re-run.
+
+**CI at `75c91a8`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `75c91a8`, review clean.**
+
+## PR #42 (`fix/confirm-verify-on-click`) — /auth/confirm token links verify on click, 🟢 at `d87ee62`, review clean
+
+**Scope: exactly `d87ee62`.** That's `bd7b360` plus one moved import line.
+`/[locale]/auth/confirm?token_hash&type`, the app's `redirect_to`, now
+renders the same click-to-verify page as `/auth/verify` (`appHandoff`).
+After the click, an account created in the app goes back to the app
+through the `solvymed://` deep link carrying its session; a web account
+follows the web routing. The page has `robots noindex, nofollow` and a
+`no-referrer` meta. The PKCE `?code=` path is unchanged.
+
+Tested live on the preview. The links were built the same way as mob dev's
+`gen_auth_link.js` (admin `generate_link` with `redirect_to` set to the
+preview's `/auth/confirm`), with app accounts (`platform: mobile`) and web
+accounts. The throwaways were deleted.
+
+**🟢 Scanner safety.** Before every click: HEAD, GET, HEAD, GET, all
+returning 200. The signup account **stays unconfirmed**
+(`email_not_confirmed`), and the page makes **0** `/auth/v1/verify` calls
+on load. Every later click still worked.
+
+**🟢 App signup (`platform: mobile`), pt-BR and en.**
+- **Page:** "Confirme seu e-mail" / "Confirm your email", with no language
+  switcher.
+- **On a phone** (Playwright Pixel 7), Continue → "Email confirmado!" /
+  "Email confirmed!" and "Abrindo o SolvyMed…", with the "Abrir SolvyMed"
+  button. The page navigates to
+  **`solvymed://?access_token=…&refresh_token=…&type=signup`**, and the
+  access token in the deep link is **valid** (`/auth/v1/user` returns 200).
+- **On a desktop browser**, the same flow ends on `/dashboard`.
+  `ConfirmClient`'s existing desktop fallback redirects there instead of
+  to the app, the same as the PKCE path.
+- **Reused link:** "Este link expirou" / "This link has expired".
+
+**🟢 Web signup (`platform: web`).** Continue →
+`/pt-BR/auth/professional-welcome` ("Boas-vindas ao SolvyMed, Opus!").
+Reusing the link shows expired.
+
+**🟢 Recovery via `/auth/confirm`, pt-BR and en** (app accounts). After the
+scans, the page shows "Definir nova senha" / "Set new password" with 2
+fields; submitting shows "Senha atualizada" / "Password updated". The
+**new password logs in, and the old one is refused**.
+
+**🟢 Page tags:** `<meta name="robots" content="noindex, nofollow">` and
+`<meta name="referrer" content="no-referrer">`.
+
+**Review: Claude `/code-review` (code reviewer), clean at `d87ee62`.**
+
+**CI at `d87ee62`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `d87ee62`, review clean.**
 ## PR #32 (`feat/close-account`) — close or delete your own account, 🟢 at `f0ce14a`, review clean
 
 **Scope: exactly `f0ce14a`.** This is the web half of close-account, in

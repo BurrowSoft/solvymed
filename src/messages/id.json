@@ -624,6 +624,16 @@
       "body": "Mari siapkan klinik Anda dalam beberapa langkah singkat, agar Anda bisa membuat janji temu pertama.",
       "startSetup": "Mulai penyiapan",
       "skip": "Nanti saja"
+    },
+    "verify": {
+      "confirmTitle": "Konfirmasi email Anda",
+      "confirmBody": "Ketuk Lanjutkan untuk menyelesaikan pembuatan akun SolvyMed Anda.",
+      "otherTitle": "Hampir selesai",
+      "otherBody": "Ketuk Lanjutkan untuk menyelesaikan.",
+      "continue": "Lanjutkan",
+      "expiredTitle": "Tautan ini sudah kedaluwarsa",
+      "expiredBody": "Minta tautan baru dari halaman masuk.",
+      "goToSignIn": "Ke halaman masuk"
     }
   },
   "myAppointments": {

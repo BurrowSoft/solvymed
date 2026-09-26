@@ -624,6 +624,16 @@
       "body": "只需几个简单步骤即可设置您的诊所，然后预约第一位患者。",
       "startSetup": "开始设置",
       "skip": "以后再说"
+    },
+    "verify": {
+      "confirmTitle": "确认您的邮箱",
+      "confirmBody": "点击“继续”完成创建您的 SolvyMed 账户。",
+      "otherTitle": "马上就好",
+      "otherBody": "点击“继续”完成。",
+      "continue": "继续",
+      "expiredTitle": "此链接已过期",
+      "expiredBody": "请在登录页面重新获取链接。",
+      "goToSignIn": "前往登录"
     }
   },
   "myAppointments": {

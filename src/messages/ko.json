@@ -624,6 +624,16 @@
       "body": "몇 가지 간단한 단계로 진료소를 설정하고 첫 예약을 잡아 보세요.",
       "startSetup": "설정 시작",
       "skip": "나중에"
+    },
+    "verify": {
+      "confirmTitle": "이메일 확인",
+      "confirmBody": "계속을 눌러 SolvyMed 계정 만들기를 완료하세요.",
+      "otherTitle": "거의 다 됐습니다",
+      "otherBody": "계속을 눌러 완료하세요.",
+      "continue": "계속",
+      "expiredTitle": "링크가 만료되었습니다",
+      "expiredBody": "로그인 페이지에서 새 링크를 요청하세요.",
+      "goToSignIn": "로그인으로 이동"
     }
   },
   "myAppointments": {

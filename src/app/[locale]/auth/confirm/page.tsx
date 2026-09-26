@@ -1,17 +1,34 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import ConfirmClient from "./ConfirmClient";
+import { VerifyClient } from "../verify/VerifyClient";
+import type { Metadata } from "next";
 import { isFirstConfirmation } from "@/lib/firstConfirmation";
+
+// Auth links carry one-time codes and tokens in the URL: never index them or
+// leak them in referrers.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+  referrer: "no-referrer",
+};
 
 export default async function AuthConfirmPage({
   params,
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ code?: string; type?: string }>;
+  searchParams: Promise<{ code?: string; type?: string; token_hash?: string }>;
 }) {
   const { locale } = await params;
-  const { code, type } = await searchParams;
+  const { code, type, token_hash: tokenHash } = await searchParams;
+
+  // One-time token links (the send-email hook builds <redirect_to>?token_hash
+  // for app-origin emails) are never verified on load: mail scanners open
+  // links first and would burn the token. Same click-to-verify page as
+  // /auth/verify; an app account is then handed back to the app.
+  if (!code && tokenHash) {
+    return <VerifyClient locale={locale} tokenHash={tokenHash} type={type ?? "signup"} appHandoff />;
+  }
 
   if (!code) {
     return <ConfirmClient state="unknown" deepLink="solvymed://" />;
