@@ -32,8 +32,6 @@ jobs:
     name: Lint (advisory)
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Reported, not gating, until the existing findings are cleaned up.
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -41,4 +39,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # Reported, not gating, until the existing findings are cleaned up:
+      # the step may fail, the job stays green, and the findings still show
+      # as annotations.
       - run: npm run lint
+        continue-on-error: true
