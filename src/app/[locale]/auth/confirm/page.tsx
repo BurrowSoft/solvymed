@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import ConfirmClient from "./ConfirmClient";
 import { VerifyClient } from "../verify/VerifyClient";
 import type { Metadata } from "next";
+import { isFirstConfirmation } from "@/lib/firstConfirmation";
 
 // Auth links carry one-time codes and tokens in the URL: never index them or
 // leak them in referrers.
@@ -10,7 +11,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
   referrer: "no-referrer",
 };
-import { isFirstConfirmation } from "@/lib/firstConfirmation";
 
 export default async function AuthConfirmPage({
   params,
