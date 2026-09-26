@@ -548,7 +548,9 @@ accept it.
 | F-3 📱 | Accessibility spot-check | Form inputs have labels or accessible names, dialogs trap focus and close with Esc, and tab order is sane on login, signup, book and subscribe. |
 | F-4 | Errors | Console: no uncaught errors on the main pages. Server log: no 5xx during the run. |
 | F-5 | Version gate (`app_config`) | Doctors and secretaries below the minimum version see the gate; others don't. |
-| F-6 | Unit tests (`npx vitest run`) on the RC SHA | **All green.** As of 2026-09-26, master has 18 pre-existing failures: `BookingRequestsPanel.test.tsx` doesn't mock `useParams`, and vitest also picks up the Playwright `e2e/` specs. That makes this ❌ until the follow-up fix lands, because "all green" means nothing until then. |
+| F-6 | Unit tests (`npx vitest run`) on the RC SHA | **All green.** As of 2026-09-26, master has 18 pre-existing failures: `BookingRequestsPanel.test.tsx` doesn't mock `useParams`, and vitest also picks up the Playwright `e2e/` specs. That makes this ❌ until the follow-up fix lands, because "all green" means nothing until then. **Update: fixed by #19, merged at `07c7452`, which runs 78/78; CI (#20) enforces it on every PR.** |
+| F-7 | Vercel env scoping, a **launch gate** | **Previews never have live Stripe keys.** Once prod has the live `sk_live_`/`whsec_` keys, every Preview-scoped Stripe var must still be a **test** key. Check by names and scopes only (`vercel env ls`); never print values. On a preview, a checkout must show Stripe's **test-mode** banner. **Until this is confirmed, don't run any checkout on a preview.** The Supabase `NEXT_PUBLIC_*` vars and `SENTRY_AUTH_TOKEN` are Preview-scoped: on 2026-09-26 they were Production-only, so every preview's middleware crashed (`MIDDLEWARE_INVOCATION_FAILED`). |
+| F-8 | Preview is really reachable | Using the bypass header `x-vercel-protection-bypass` from the git-ignored `VERCEL_AUTOMATION_BYPASS_SECRET` (never printed), the preview serves **the app**, not Vercel's login page and not a 500. Check the page content, not just the HTTP status: an SSO redirect also ends in a 200. |
 
 ### G. Launch features (⏳ placeholders, filled in as each one ships)
 
