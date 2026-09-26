@@ -10,11 +10,13 @@ repos).
 ## Merge gate
 
 **Current gate (since 2026-09-26), all three required on the exact HEAD being merged:**
-1. **Code review:** web tester (never the PR's author) runs Claude
-   `/code-review high <PR#> --comment` on the HEAD. Only blocking findings
-   (correctness, security, data loss, crash, real UX break) must be fixed;
-   the rest are tagged follow-up. Re-rounds review only the changed code.
-   Record it here as "review: Claude /code-review, clean at `<SHA>`".
+1. **Code review:** the dedicated **code reviewer** agent (never the PR's
+   author) reviews the exact HEAD and posts findings on the PR, tagged
+   BLOCKING or FOLLOW-UP. Only BLOCKING findings (correctness, security,
+   data loss, crash, real UX break) must be fixed; follow-ups go to the
+   post-launch list. Re-rounds cover only the new delta, and any commit
+   after a clean review needs a quick delta check before merging. Web
+   tester records it here as "review: clean at `<SHA>`".
 2. **Web tester's 🟢** in this file, scoped to that SHA (a docs-only
    addendum on top is fine).
 3. **CI:** the required "Typecheck and unit tests" check is green (branch
