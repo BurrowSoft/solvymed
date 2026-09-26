@@ -338,7 +338,7 @@
     "archivePatient": "Lưu trữ hồ sơ",
     "archiveTitle": "Lưu trữ hồ sơ {name}?",
     "archiveBody": "Hồ sơ đã lưu trữ sẽ bị ẩn khỏi danh sách, tìm kiếm và lịch hẹn. Lịch sử vẫn được giữ lại và có thể khôi phục bất cứ lúc nào.",
-    "archiveUpcoming": "{n, plural, other {# lịch hẹn sắp tới sẽ bị hủy.}}",
+    "archiveUpcoming": "{n, plural, =0 {Không có lịch hẹn sắp tới nào bị hủy.} other {# lịch hẹn sắp tới sẽ bị hủy.}}",
     "archiveConfirm": "Lưu trữ",
     "archiveError": "Không thể lưu trữ hồ sơ. Vui lòng thử lại.",
     "archivedSub": "Không thể thêm lịch hẹn, ghi chép hoặc đơn thuốc mới cho hồ sơ đã lưu trữ.",

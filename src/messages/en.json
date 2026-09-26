@@ -338,7 +338,7 @@
     "archivePatient": "Archive patient",
     "archiveTitle": "Archive {name}?",
     "archiveBody": "Archived patients are hidden from lists, search and scheduling. Their history is kept, and you can restore them at any time.",
-    "archiveUpcoming": "{n, plural, one {# upcoming appointment will be cancelled.} other {# upcoming appointments will be cancelled.}}",
+    "archiveUpcoming": "{n, plural, =0 {No upcoming appointments will be cancelled.} one {# upcoming appointment will be cancelled.} other {# upcoming appointments will be cancelled.}}",
     "archiveConfirm": "Archive",
     "archiveError": "Couldn't archive the patient. Please try again.",
     "archivedSub": "Archived patients can't get new appointments, records or prescriptions.",

@@ -635,8 +635,10 @@ function ArchiveDialog({ open, onClose, patient }: { open: boolean; onClose: () 
       <p className="text-sm text-slate-600">{t("archiveBody")}</p>
       {loadingPreview ? (
         <p className="mt-3 text-sm text-slate-400">…</p>
-      ) : upcoming !== null && upcoming > 0 ? (
-        <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">
+      ) : upcoming !== null ? (
+        // Always stated when known, zero included, so the user knows what
+        // archiving will do; highlighted only when something is cancelled.
+        <p className={`mt-3 rounded-xl border px-4 py-3 text-sm font-semibold ${upcoming > 0 ? "border-amber-200 bg-amber-50 text-amber-900" : "border-slate-200 bg-slate-50 text-slate-600"}`}>
           {t("archiveUpcoming", { n: upcoming })}
         </p>
       ) : null}

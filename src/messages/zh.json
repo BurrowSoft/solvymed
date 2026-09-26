@@ -338,7 +338,7 @@
     "archivePatient": "归档档案",
     "archiveTitle": "归档 {name}？",
     "archiveBody": "已归档的档案不会出现在列表、搜索和日程中。历史记录会保留，可随时恢复。",
-    "archiveUpcoming": "{n, plural, other {将取消 # 个即将到来的预约。}}",
+    "archiveUpcoming": "{n, plural, =0 {不会取消任何即将到来的预约。} other {将取消 # 个即将到来的预约。}}",
     "archiveConfirm": "归档",
     "archiveError": "无法归档档案，请重试。",
     "archivedSub": "已归档的档案不能添加新的预约、病历或处方。",

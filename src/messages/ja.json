@@ -338,7 +338,7 @@
     "archivePatient": "カルテをアーカイブ",
     "archiveTitle": "{name} をアーカイブしますか？",
     "archiveBody": "アーカイブしたカルテは一覧、検索、予約から非表示になります。履歴は保持され、いつでも復元できます。",
-    "archiveUpcoming": "{n, plural, other {今後の予約 # 件がキャンセルされます。}}",
+    "archiveUpcoming": "{n, plural, =0 {キャンセルされる今後の予約はありません。} other {今後の予約 # 件がキャンセルされます。}}",
     "archiveConfirm": "アーカイブ",
     "archiveError": "カルテをアーカイブできませんでした。もう一度お試しください。",
     "archivedSub": "アーカイブ済みのカルテには、新しい予約・記録・処方を追加できません。",

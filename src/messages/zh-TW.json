@@ -338,7 +338,7 @@
     "archivePatient": "封存病歷",
     "archiveTitle": "要封存 {name} 嗎？",
     "archiveBody": "已封存的病歷不會出現在清單、搜尋和行程中。歷史紀錄會保留，可隨時還原。",
-    "archiveUpcoming": "{n, plural, other {將取消 # 個即將到來的預約。}}",
+    "archiveUpcoming": "{n, plural, =0 {不會取消任何即將到來的預約。} other {將取消 # 個即將到來的預約。}}",
     "archiveConfirm": "封存",
     "archiveError": "無法封存病歷，請再試一次。",
     "archivedSub": "已封存的病歷無法新增預約、紀錄或處方。",

@@ -338,7 +338,7 @@
     "archivePatient": "Archiver le dossier",
     "archiveTitle": "Archiver {name} ?",
     "archiveBody": "Les dossiers archivés sont masqués des listes, de la recherche et de l'agenda. L'historique est conservé et vous pouvez le restaurer à tout moment.",
-    "archiveUpcoming": "{n, plural, one {# rendez-vous à venir sera annulé.} other {# rendez-vous à venir seront annulés.}}",
+    "archiveUpcoming": "{n, plural, =0 {Aucun rendez-vous à venir ne sera annulé.} one {# rendez-vous à venir sera annulé.} other {# rendez-vous à venir seront annulés.}}",
     "archiveConfirm": "Archiver",
     "archiveError": "Impossible d'archiver le dossier. Veuillez réessayer.",
     "archivedSub": "Un dossier archivé ne peut pas recevoir de nouveaux rendez-vous, comptes rendus ou ordonnances.",
