@@ -4448,6 +4448,85 @@ with the extra checks above.
 call is confirmed server-side (202, skipped=1). The closed throwaways were
 purged by mob dev.
 
+**Prod addendum (`e2a049d`):**
+- **Settings panel, doctor with a record and a secretary:** "Encerrar
+  conta" with "Seu 1 paciente é arquivado e não há consultas futuras a
+  cancelar" and "1 pessoa da equipe perde o acesso". Not submitted; that
+  throwaway went to mob dev for purge.
+- **Secretary:** the team-account copy, then deleted their own account
+  (200 `deleted`, auth user 404). The doctor's patient is untouched.
+- **Doctor without records:** "Excluir conta", then deleted their own
+  account (200 `deleted`).
+- **Text:** the `/privacy` §7 self-service line and the
+  `/pt-BR/account/delete` professionals line are live.
+
+## Prod addendum — #41 + #42 auth links (the S-01 enable gate), www.solvymed.com at `0f2eff2`
+
+Mob dev named this run the gate for enabling S-01's `token_hash` emails.
+The links were built as `gen_auth_link.js` does (admin `generate_link`
+with `redirect_to` set to prod's `/auth/confirm`, `/pt-BR/auth/confirm`,
+or the `/api/auth/callback` path). The throwaways were deleted.
+
+**🟢 Callback path (#41).**
+- **Scanning:** cookieless GET-follow scans leave every token valid, and
+  there's no auth call on load.
+- **Recovery, pt-BR and en:** the set-password form, then "Senha
+  atualizada" / "Password updated". The new password logs in and the old
+  one is refused. A reused link says "expirou" / "expired".
+- **Signup:** Continuar → the welcome page, and reuse says expired.
+- **Secretary with an invite:** → `/pt-BR/dashboard`, with the invite
+  accepted.
+- **Patient with the doctor's code:** → `/pt-BR/auth/pending-confirmation`.
+- **Magiclink:** "Quase lá".
+- **`GET /api/auth/after-verify`:** 405.
+- **Page tags:** robots `noindex` and meta `no-referrer`.
+
+**🟢 `/auth/confirm` (#42).**
+- **Page tags:** `robots noindex, nofollow` and `referrer no-referrer`.
+- **Before each click:** HEAD/GET ×4. Signup accounts stay unconfirmed,
+  with 0 verify calls on load.
+- **App signup (`platform: mobile`), on a phone UA, pt-BR and en:**
+  Continue → "Email confirmado!" / "Email confirmed!" with the "Abrir /
+  Open SolvyMed" button, navigating to
+  `solvymed://?access_token=…&refresh_token=…&type=signup`. The deep-link
+  access token is valid (200).
+- **On a desktop UA:** the existing fallback goes to `/dashboard`.
+- **Web signup:** → the welcome page.
+- **Recovery via `/auth/confirm`, pt-BR and en:** the set-password form;
+  the new password works and the old one is refused.
+- **Reused links:** "Este link expirou" / "This link has expired". The en
+  reuse and en recovery text were re-checked after a timing miss in the
+  first run.
+
+**Gate: 🟢 for enabling S-01 on the web side.** A-15 itself stays ⏳ until
+real hook emails are exercised once S-01 is on.
+
+## PR #43 (`copy/close-panel-lines`) — close/delete panel copy, 🟢 at `083d593`, review clean
+
+**Scope: exactly `083d593`.** This is copy only, 15 locales: the Settings
+delete panel lines for a doctor without records and for a secretary.
+
+Checked on the preview with a trial doctor without records and their
+secretary (throwaways, deleted afterwards; nothing submitted):
+- **pt-BR:**
+  - **Doctor:** "Excluir conta" with **"Sua conta, seus pacientes e suas
+    consultas serão excluídos definitivamente."**
+  - **Secretary:** **"Seu acesso e seu perfil serão excluídos. Os
+    pacientes e as consultas do consultório continuam com o consultório."**
+- **en:**
+  - **Doctor:** "Delete account" with **"Your account, patients and
+    appointments will be permanently deleted."**
+  - **Secretary:** **"Your login and profile will be deleted. The
+    practice's patients and appointments stay with the practice."**
+- **Old wording:** gone in both locales.
+
+**Review: Claude `/code-review` (code reviewer), clean at `083d593`.**
+
+**CI at `083d593`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `083d593`, review clean.** This commit also carries
+the #32 prod addendum and the #41/#42 S-01 gate addendum above.
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
