@@ -188,7 +188,8 @@
     "useBookingCard": "Utilisez la carte de demande de rendez-vous pour confirmer, refuser ou proposer un horaire.",
     "genericError": "Une erreur s'est produite. Réessayez.",
     "missingFieldsError": "Veuillez remplir tous les champs obligatoires.",
-    "pastMidnightError": "Cet horaire et cette durée dépasseraient minuit."
+    "pastMidnightError": "Cet horaire et cette durée dépasseraient minuit.",
+    "patientArchivedError": "Ce dossier est archivé. Restaurez-le dans Patients pour planifier un rendez-vous."
   },
   "payments": {
     "thisWeek": "Cette semaine",
@@ -252,7 +253,16 @@
     "bornOn": "né(e) le {date}",
     "openExisting": "Ouvrir l'existant",
     "createAnyway": "Créer quand même",
-    "openPatient": "Ouvrir le patient"
+    "openPatient": "Ouvrir le patient",
+    "archivedTitle": "Dossiers archivés",
+    "activeChip": "Actifs ({n})",
+    "archivedChip": "Archivés ({n})",
+    "noArchived": "Aucun dossier archivé",
+    "archivedBadge": "Archivé",
+    "restore": "Restaurer",
+    "restoreError": "Impossible de restaurer le dossier. Veuillez réessayer.",
+    "archivedOn": "Archivé le {date}",
+    "archivedOnBy": "Archivé le {date} par {name}"
   },
   "patientDetail": {
     "tabInfo": "Infos",
@@ -323,7 +333,19 @@
     "codeCopied": "Copié !",
     "regenerateCode": "Régénérer",
     "addedBy": "Ajouté par",
-    "addedBySecretary": "{name} (secrétaire), {date}"
+    "addedBySecretary": "{name} (secrétaire), {date}",
+    "allPatients": "Tous les dossiers",
+    "archivePatient": "Archiver le dossier",
+    "archiveTitle": "Archiver {name} ?",
+    "archiveBody": "Les dossiers archivés sont masqués des listes, de la recherche et de l'agenda. L'historique est conservé et vous pouvez le restaurer à tout moment.",
+    "archiveUpcoming": "{n, plural, one {# rendez-vous à venir sera annulé.} other {# rendez-vous à venir seront annulés.}}",
+    "archiveConfirm": "Archiver",
+    "archiveError": "Impossible d'archiver le dossier. Veuillez réessayer.",
+    "archivedSub": "Un dossier archivé ne peut pas recevoir de nouveaux rendez-vous, comptes rendus ou ordonnances.",
+    "archivedNoNew": "Ce dossier est archivé. Restaurez-le pour ajouter de nouvelles entrées.",
+    "deleteNoHistoryConfirm": "Supprimer {name} ? Cette action est irréversible.",
+    "deleteHasHistory": "Ce dossier contient désormais un historique clinique et ne peut pas être supprimé. Archivez-le plutôt.",
+    "deleteError": "Impossible de supprimer le dossier. Veuillez réessayer."
   },
   "settings": {
     "profileTitle": "Profil",
@@ -472,7 +494,8 @@
     "durationMin": "{n} min",
     "customTime": "Heure personnalisée",
     "orCustomTime": "Ou choisir une heure",
-    "professionalFallback": "Professionnel(le)"
+    "professionalFallback": "Professionnel(le)",
+    "errorArchived": "Cette clinique n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter la clinique."
   },
   "auth": {
     "passwordTooShort": "Le mot de passe doit comporter au moins {min} caractères.",
@@ -558,7 +581,8 @@
       "linkFailed": "Une erreur s'est produite lors de la liaison de votre compte. Veuillez réessayer.",
       "backToSignup": "Utiliser un autre compte",
       "tooManyAttempts": "Trop de tentatives. Veuillez patienter avant de réessayer.",
-      "alreadyInvitedByAnother": "Votre compte est déjà rattaché à un autre cabinet."
+      "alreadyInvitedByAnother": "Votre compte est déjà rattaché à un autre cabinet.",
+      "archived": "Cette clinique n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter la clinique."
     },
     "pendingConfirmation": {
       "loading": "Vérification de votre statut…",

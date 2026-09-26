@@ -188,7 +188,8 @@
     "useBookingCard": "استخدم بطاقة طلب الموعد لتأكيد هذا الطلب أو رفضه أو اقتراح وقت آخر.",
     "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
     "missingFieldsError": "يرجى ملء جميع الحقول المطلوبة.",
-    "pastMidnightError": "سيتجاوز هذا الوقت والمدة منتصف الليل."
+    "pastMidnightError": "سيتجاوز هذا الوقت والمدة منتصف الليل.",
+    "patientArchivedError": "هذا الملف مؤرشف. استعِده من قسم المرضى لحجز موعد."
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",
@@ -252,7 +253,16 @@
     "bornOn": "مولود في {date}",
     "openExisting": "فتح الموجود",
     "createAnyway": "إنشاء على أي حال",
-    "openPatient": "فتح المريض"
+    "openPatient": "فتح المريض",
+    "archivedTitle": "الملفات المؤرشفة",
+    "activeChip": "النشطة ({n})",
+    "archivedChip": "المؤرشفة ({n})",
+    "noArchived": "لا توجد ملفات مؤرشفة",
+    "archivedBadge": "مؤرشف",
+    "restore": "استعادة",
+    "restoreError": "تعذّرت استعادة الملف. يُرجى المحاولة مرة أخرى.",
+    "archivedOn": "أُرشف في {date}",
+    "archivedOnBy": "أُرشف في {date} بواسطة {name}"
   },
   "patientDetail": {
     "tabInfo": "معلومات",
@@ -323,7 +333,19 @@
     "codeCopied": "تم النسخ!",
     "regenerateCode": "إعادة إنشاء",
     "addedBy": "أضافه",
-    "addedBySecretary": "{name} (سكرتير)، {date}"
+    "addedBySecretary": "{name} (سكرتير)، {date}",
+    "allPatients": "جميع الملفات",
+    "archivePatient": "أرشفة الملف",
+    "archiveTitle": "أرشفة ملف {name}؟",
+    "archiveBody": "تُخفى الملفات المؤرشفة من القوائم والبحث والجدول. يُحتفظ بالسجل ويمكن استعادة الملف في أي وقت.",
+    "archiveUpcoming": "{n, plural, zero {لن يُلغى أي موعد قادم.} one {سيُلغى موعد قادم واحد.} two {سيُلغى موعدان قادمان.} few {ستُلغى # مواعيد قادمة.} many {سيُلغى # موعدًا قادمًا.} other {سيُلغى # موعد قادم.}}",
+    "archiveConfirm": "أرشفة",
+    "archiveError": "تعذّرت أرشفة الملف. يُرجى المحاولة مرة أخرى.",
+    "archivedSub": "لا يمكن إضافة مواعيد أو سجلات أو وصفات جديدة إلى ملف مؤرشف.",
+    "archivedNoNew": "هذا الملف مؤرشف. استعِده لإضافة إدخالات جديدة.",
+    "deleteNoHistoryConfirm": "حذف {name}؟ لا يمكن التراجع عن هذا الإجراء.",
+    "deleteHasHistory": "أصبح لهذا الملف سجل سريري ولا يمكن حذفه. أرشِفه بدلًا من ذلك.",
+    "deleteError": "تعذّر حذف الملف. يُرجى المحاولة مرة أخرى."
   },
   "settings": {
     "profileTitle": "الملف الشخصي",
@@ -472,7 +494,8 @@
     "durationMin": "{n} دقيقة",
     "customTime": "وقت مخصص",
     "orCustomTime": "أو اختر وقتاً مخصصاً",
-    "professionalFallback": "المختص(ة)"
+    "professionalFallback": "المختص(ة)",
+    "errorArchived": "لا تقبل هذه العيادة حجوزات جديدة لحسابك. يُرجى التواصل مع العيادة."
   },
   "auth": {
     "passwordTooShort": "يجب أن تتكون كلمة المرور من {min} أحرف على الأقل.",
@@ -558,7 +581,8 @@
       "linkFailed": "حدث خطأ أثناء ربط حسابك. يرجى المحاولة مرة أخرى.",
       "backToSignup": "استخدام حساب آخر",
       "tooManyAttempts": "محاولات كثيرة جدًا. يرجى الانتظار قليلاً قبل المحاولة مرة أخرى.",
-      "alreadyInvitedByAnother": "حسابك متصل بالفعل بعيادة أخرى."
+      "alreadyInvitedByAnother": "حسابك متصل بالفعل بعيادة أخرى.",
+      "archived": "لا تقبل هذه العيادة حجوزات جديدة لحسابك. يُرجى التواصل مع العيادة."
     },
     "pendingConfirmation": {
       "loading": "جارٍ التحقق من حالتك…",

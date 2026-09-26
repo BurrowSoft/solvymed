@@ -188,7 +188,8 @@
     "useBookingCard": "Usa la scheda della richiesta di appuntamento per confermare, rifiutare o proporre un orario.",
     "genericError": "Qualcosa è andato storto. Riprova.",
     "missingFieldsError": "Compila tutti i campi obbligatori.",
-    "pastMidnightError": "Questo orario e questa durata supererebbero la mezzanotte."
+    "pastMidnightError": "Questo orario e questa durata supererebbero la mezzanotte.",
+    "patientArchivedError": "Questa scheda è archiviata. Ripristinala in Pazienti per fissare un appuntamento."
   },
   "payments": {
     "thisWeek": "Questa settimana",
@@ -252,7 +253,16 @@
     "bornOn": "nato/a il {date}",
     "openExisting": "Apri esistente",
     "createAnyway": "Crea comunque",
-    "openPatient": "Apri paziente"
+    "openPatient": "Apri paziente",
+    "archivedTitle": "Schede archiviate",
+    "activeChip": "Attive ({n})",
+    "archivedChip": "Archiviate ({n})",
+    "noArchived": "Nessuna scheda archiviata",
+    "archivedBadge": "Archiviata",
+    "restore": "Ripristina",
+    "restoreError": "Impossibile ripristinare la scheda. Riprova.",
+    "archivedOn": "Archiviata il {date}",
+    "archivedOnBy": "Archiviata il {date} da {name}"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -323,7 +333,19 @@
     "codeCopied": "Copiato!",
     "regenerateCode": "Rigenera",
     "addedBy": "Aggiunto da",
-    "addedBySecretary": "{name} (segreteria), {date}"
+    "addedBySecretary": "{name} (segreteria), {date}",
+    "allPatients": "Tutte le schede",
+    "archivePatient": "Archivia scheda",
+    "archiveTitle": "Archiviare {name}?",
+    "archiveBody": "Le schede archiviate sono nascoste da elenchi, ricerca e agenda. Lo storico viene conservato e puoi ripristinarle in qualsiasi momento.",
+    "archiveUpcoming": "{n, plural, one {# appuntamento futuro verrà annullato.} other {# appuntamenti futuri verranno annullati.}}",
+    "archiveConfirm": "Archivia",
+    "archiveError": "Impossibile archiviare la scheda. Riprova.",
+    "archivedSub": "Le schede archiviate non possono ricevere nuovi appuntamenti, note cliniche o prescrizioni.",
+    "archivedNoNew": "Questa scheda è archiviata. Ripristinala per aggiungere nuove voci.",
+    "deleteNoHistoryConfirm": "Eliminare {name}? L'operazione non può essere annullata.",
+    "deleteHasHistory": "Questa scheda ora ha uno storico clinico e non può essere eliminata. Archiviala invece.",
+    "deleteError": "Impossibile eliminare la scheda. Riprova."
   },
   "settings": {
     "profileTitle": "Profilo",
@@ -472,7 +494,8 @@
     "durationMin": "{n} min",
     "customTime": "Orario personalizzato",
     "orCustomTime": "O scegli un orario",
-    "professionalFallback": "Professionista"
+    "professionalFallback": "Professionista",
+    "errorArchived": "Questa clinica non accetta nuove prenotazioni per il tuo account. Contatta la clinica."
   },
   "auth": {
     "passwordTooShort": "La password deve essere lunga almeno {min} caratteri.",
@@ -558,7 +581,8 @@
       "linkFailed": "Si è verificato un errore durante il collegamento del tuo account. Riprova.",
       "backToSignup": "Usa un altro account",
       "tooManyAttempts": "Troppi tentativi. Attendi un momento prima di riprovare.",
-      "alreadyInvitedByAnother": "Il tuo account è già collegato a un altro studio."
+      "alreadyInvitedByAnother": "Il tuo account è già collegato a un altro studio.",
+      "archived": "Questa clinica non accetta nuove prenotazioni per il tuo account. Contatta la clinica."
     },
     "pendingConfirmation": {
       "loading": "Verifica dello stato…",

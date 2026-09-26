@@ -188,7 +188,8 @@
     "useBookingCard": "请使用预约请求卡来确认、拒绝或为此请求提议新时间。",
     "genericError": "出现问题，请重试。",
     "missingFieldsError": "请填写所有必填字段。",
-    "pastMidnightError": "此时间和时长将超过午夜。"
+    "pastMidnightError": "此时间和时长将超过午夜。",
+    "patientArchivedError": "此档案已归档。请在“患者”中恢复后再预约。"
   },
   "payments": {
     "thisWeek": "本周",
@@ -252,7 +253,16 @@
     "bornOn": "出生于 {date}",
     "openExisting": "打开已有记录",
     "createAnyway": "仍然创建",
-    "openPatient": "打开患者"
+    "openPatient": "打开患者",
+    "archivedTitle": "已归档的档案",
+    "activeChip": "有效 ({n})",
+    "archivedChip": "已归档 ({n})",
+    "noArchived": "没有已归档的档案",
+    "archivedBadge": "已归档",
+    "restore": "恢复",
+    "restoreError": "无法恢复档案，请重试。",
+    "archivedOn": "{date} 归档",
+    "archivedOnBy": "{date} 由 {name} 归档"
   },
   "patientDetail": {
     "tabInfo": "信息",
@@ -323,7 +333,19 @@
     "codeCopied": "已复制！",
     "regenerateCode": "重新生成",
     "addedBy": "添加人",
-    "addedBySecretary": "{name}（秘书），{date}"
+    "addedBySecretary": "{name}（秘书），{date}",
+    "allPatients": "全部档案",
+    "archivePatient": "归档档案",
+    "archiveTitle": "归档 {name}？",
+    "archiveBody": "已归档的档案不会出现在列表、搜索和日程中。历史记录会保留，可随时恢复。",
+    "archiveUpcoming": "{n, plural, other {将取消 # 个即将到来的预约。}}",
+    "archiveConfirm": "归档",
+    "archiveError": "无法归档档案，请重试。",
+    "archivedSub": "已归档的档案不能添加新的预约、病历或处方。",
+    "archivedNoNew": "此档案已归档。请先恢复再添加新内容。",
+    "deleteNoHistoryConfirm": "删除 {name}？此操作无法撤销。",
+    "deleteHasHistory": "此档案现已有临床记录，无法删除。请改为归档。",
+    "deleteError": "无法删除档案，请重试。"
   },
   "settings": {
     "profileTitle": "个人资料",
@@ -472,7 +494,8 @@
     "durationMin": "{n} 分钟",
     "customTime": "自定义时间",
     "orCustomTime": "或选择自定义时间",
-    "professionalFallback": "专业人员"
+    "professionalFallback": "专业人员",
+    "errorArchived": "该诊所目前不接受您账户的新预约。请联系诊所。"
   },
   "auth": {
     "passwordTooShort": "密码至少需要{min}个字符。",
@@ -558,7 +581,8 @@
       "linkFailed": "关联您的账户时出错，请重试。",
       "backToSignup": "使用其他账户",
       "tooManyAttempts": "尝试次数过多，请稍后再试。",
-      "alreadyInvitedByAnother": "您的账户已与另一位医生关联。"
+      "alreadyInvitedByAnother": "您的账户已与另一位医生关联。",
+      "archived": "该诊所目前不接受您账户的新预约。请联系诊所。"
     },
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",

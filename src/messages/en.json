@@ -188,7 +188,8 @@
     "accept": "Accept",
     "decline": "Decline",
     "slotTakenAlert": "That slot is no longer available. Please decline and let the patient choose another time.",
-    "pastProposalAlert": "The proposed time has already passed. Please decline so the patient can request a new slot."
+    "pastProposalAlert": "The proposed time has already passed. Please decline so the patient can request a new slot.",
+    "patientArchivedError": "This patient is archived. Restore the patient in Patients to schedule an appointment."
   },
   "payments": {
     "thisWeek": "This week",
@@ -252,7 +253,16 @@
     "bornOn": "born {date}",
     "openExisting": "Open existing",
     "createAnyway": "Create anyway",
-    "openPatient": "Open patient"
+    "openPatient": "Open patient",
+    "archivedTitle": "Archived patients",
+    "activeChip": "Active ({n})",
+    "archivedChip": "Archived ({n})",
+    "noArchived": "No archived patients",
+    "archivedBadge": "Archived",
+    "restore": "Restore",
+    "restoreError": "Couldn't restore the patient. Please try again.",
+    "archivedOn": "Archived {date}",
+    "archivedOnBy": "Archived {date} by {name}"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -323,7 +333,19 @@
     "paidLabel": "Paid",
     "pendingLabel": "Pending",
     "addedBy": "Added by",
-    "addedBySecretary": "{name} (secretary), {date}"
+    "addedBySecretary": "{name} (secretary), {date}",
+    "allPatients": "All Patients",
+    "archivePatient": "Archive patient",
+    "archiveTitle": "Archive {name}?",
+    "archiveBody": "Archived patients are hidden from lists, search and scheduling. Their history is kept, and you can restore them at any time.",
+    "archiveUpcoming": "{n, plural, one {# upcoming appointment will be cancelled.} other {# upcoming appointments will be cancelled.}}",
+    "archiveConfirm": "Archive",
+    "archiveError": "Couldn't archive the patient. Please try again.",
+    "archivedSub": "Archived patients can't get new appointments, records or prescriptions.",
+    "archivedNoNew": "This patient is archived. Restore the patient to add new entries.",
+    "deleteNoHistoryConfirm": "Delete {name}? This can't be undone.",
+    "deleteHasHistory": "This patient now has clinical history and can't be deleted. Archive the patient instead.",
+    "deleteError": "Couldn't delete the patient. Please try again."
   },
   "settings": {
     "profileTitle": "Profile",
@@ -472,7 +494,8 @@
     "durationMin": "{n} min",
     "customTime": "Custom time",
     "orCustomTime": "Or pick a custom time",
-    "professionalFallback": "Professional"
+    "professionalFallback": "Professional",
+    "errorArchived": "This clinic isn't taking new bookings for your account. Please contact the clinic."
   },
   "auth": {
     "passwordTooShort": "Password must be at least {min} characters.",
@@ -558,7 +581,8 @@
       "linkFailed": "Something went wrong linking your account. Please try again.",
       "tooManyAttempts": "Too many attempts. Please wait a while before trying again.",
       "alreadyInvitedByAnother": "Your account is already connected to a different doctor.",
-      "backToSignup": "Use a different account"
+      "backToSignup": "Use a different account",
+      "archived": "This clinic isn't taking new bookings for your account. Please contact the clinic."
     },
     "pendingConfirmation": {
       "loading": "Checking your status…",

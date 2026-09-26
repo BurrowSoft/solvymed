@@ -32,6 +32,7 @@ export async function SecretarySettings({ supabase, doctorId, locale }: { supaba
       .select("id, full_name, email, phone")
       .eq("professional_id", doctorId)
       .eq("booking_blocked", true)
+      .is("archived_at", null)
       .order("full_name"),
   ]);
 

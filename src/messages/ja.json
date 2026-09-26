@@ -188,7 +188,8 @@
     "useBookingCard": "この予約リクエストの確定・拒否・時間の再提案には、予約リクエストカードをご利用ください。",
     "genericError": "問題が発生しました。もう一度お試しください。",
     "missingFieldsError": "必須項目をすべて入力してください。",
-    "pastMidnightError": "この時間と所要時間では深夜0時を超えてしまいます。"
+    "pastMidnightError": "この時間と所要時間では深夜0時を超えてしまいます。",
+    "patientArchivedError": "このカルテはアーカイブ済みです。予約するには「患者」で復元してください。"
   },
   "payments": {
     "thisWeek": "今週",
@@ -252,7 +253,16 @@
     "bornOn": "{date}生まれ",
     "openExisting": "既存の患者を開く",
     "createAnyway": "このまま作成",
-    "openPatient": "患者を開く"
+    "openPatient": "患者を開く",
+    "archivedTitle": "アーカイブ済みのカルテ",
+    "activeChip": "有効 ({n})",
+    "archivedChip": "アーカイブ済み ({n})",
+    "noArchived": "アーカイブ済みのカルテはありません",
+    "archivedBadge": "アーカイブ済み",
+    "restore": "復元",
+    "restoreError": "カルテを復元できませんでした。もう一度お試しください。",
+    "archivedOn": "{date} にアーカイブ",
+    "archivedOnBy": "{date} に {name} がアーカイブ"
   },
   "patientDetail": {
     "tabInfo": "情報",
@@ -323,7 +333,19 @@
     "codeCopied": "コピーしました!",
     "regenerateCode": "再生成",
     "addedBy": "登録者",
-    "addedBySecretary": "{name}（受付スタッフ）、{date}"
+    "addedBySecretary": "{name}（受付スタッフ）、{date}",
+    "allPatients": "すべてのカルテ",
+    "archivePatient": "カルテをアーカイブ",
+    "archiveTitle": "{name} をアーカイブしますか？",
+    "archiveBody": "アーカイブしたカルテは一覧、検索、予約から非表示になります。履歴は保持され、いつでも復元できます。",
+    "archiveUpcoming": "{n, plural, other {今後の予約 # 件がキャンセルされます。}}",
+    "archiveConfirm": "アーカイブ",
+    "archiveError": "カルテをアーカイブできませんでした。もう一度お試しください。",
+    "archivedSub": "アーカイブ済みのカルテには、新しい予約・記録・処方を追加できません。",
+    "archivedNoNew": "このカルテはアーカイブ済みです。新しい項目を追加するには復元してください。",
+    "deleteNoHistoryConfirm": "{name} を削除しますか？この操作は取り消せません。",
+    "deleteHasHistory": "このカルテには診療履歴があるため削除できません。代わりにアーカイブしてください。",
+    "deleteError": "カルテを削除できませんでした。もう一度お試しください。"
   },
   "settings": {
     "profileTitle": "プロフィール",
@@ -472,7 +494,8 @@
     "durationMin": "{n}分",
     "customTime": "カスタム時間",
     "orCustomTime": "または時間を指定する",
-    "professionalFallback": "担当者"
+    "professionalFallback": "担当者",
+    "errorArchived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。"
   },
   "auth": {
     "passwordTooShort": "パスワードは{min}文字以上である必要があります。",
@@ -558,7 +581,8 @@
       "linkFailed": "アカウントの連携中にエラーが発生しました。もう一度お試しください。",
       "backToSignup": "別のアカウントを使う",
       "tooManyAttempts": "試行回数が多すぎます。しばらくしてからもう一度お試しください。",
-      "alreadyInvitedByAnother": "あなたのアカウントはすでに別の医師と連携しています。"
+      "alreadyInvitedByAnother": "あなたのアカウントはすでに別の医師と連携しています。",
+      "archived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。"
     },
     "pendingConfirmation": {
       "loading": "状況を確認しています…",

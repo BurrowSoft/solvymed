@@ -3,13 +3,26 @@
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useState, useTransition, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { createPatient, deletePatient, type PatientMatch } from "./actions";
+import { createPatient, restorePatient, type PatientMatch } from "./actions";
 import Link from "next/link";
 
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
   sex?: string; birth_date?: string; created_at: string;
+  archived_at?: string | null; archived_by_name?: string | null;
 };
+
+// "Archived {date} by {name}". The name is stored at archive time, so it
+// survives the secretary who archived leaving the clinic.
+export function archivedLabel(
+  t: ReturnType<typeof useTranslations>,
+  archivedAt: string,
+  byName: string | null | undefined,
+  locale: string,
+) {
+  const date = new Date(archivedAt).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
+  return byName?.trim() ? t("archivedOnBy", { date, name: byName.trim() }) : t("archivedOn", { date });
+}
 
 function Dialog({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
   if (!open) return null;
@@ -148,6 +161,8 @@ export function NewPatientButton({ locale }: { locale: string }) {
   const [error, setError] = useState("");
   const [matches, setMatches] = useState<PatientMatch[] | null>(null);
   const [existing, setExisting] = useState<{ id: string; full_name: string } | null>(null);
+  const [restoringId, setRestoringId] = useState<string | null>(null);
+  const router = useRouter();
   // Set by "Create anyway" for the very next submit only.
   const forceNext = useRef(false);
   const prefix = locale === "en" ? "" : `/${locale}`;
@@ -189,6 +204,18 @@ export function NewPatientButton({ locale }: { locale: string }) {
     form.requestSubmit();
   }
 
+  function restoreMatch(id: string) {
+    setError("");
+    setRestoringId(id);
+    startTransition(async () => {
+      const result = await restorePatient(id);
+      setRestoringId(null);
+      if ("error" in result) { setError(t("restoreError")); return; }
+      close();
+      router.push(`${prefix}/dashboard/patients/${id}`);
+    });
+  }
+
   function close() {
     setOpen(false);
     setError("");
@@ -206,10 +233,21 @@ export function NewPatientButton({ locale }: { locale: string }) {
               {m.full_name}
               {m.birth_date ? ` · ${t("bornOn", { date: new Date(m.birth_date + "T12:00:00").toLocaleDateString(locale) })}` : ""}
               {m.phone ? ` · ${m.phone}` : ""}
+              {m.archived_at && (
+                <span className="ml-2 rounded-full bg-slate-200 px-2 py-0.5 text-xs font-semibold text-slate-600">{t("archivedBadge")}</span>
+              )}
             </span>
-            <Link href={`${prefix}/dashboard/patients/${m.id}`} className="shrink-0 font-semibold text-teal-700 hover:underline">
-              {t("openExisting")}
-            </Link>
+            {m.archived_at ? (
+              // Bring the existing record back rather than creating a second
+              // one for the same person.
+              <button type="button" onClick={() => restoreMatch(m.id)} disabled={pending || restoringId !== null} className="shrink-0 font-semibold text-teal-700 hover:underline disabled:opacity-60">
+                {restoringId === m.id ? "…" : t("restore")}
+              </button>
+            ) : (
+              <Link href={`${prefix}/dashboard/patients/${m.id}`} className="shrink-0 font-semibold text-teal-700 hover:underline">
+                {t("openExisting")}
+              </Link>
+            )}
           </li>
         ))}
       </ul>
@@ -238,28 +276,6 @@ export function NewPatientButton({ locale }: { locale: string }) {
   );
 }
 
-export function DeletePatientButton({ id }: { id: string }) {
-  const t = useTranslations("patients");
-  const [pending, startTransition] = useTransition();
-  const router = useRouter();
-
-  function handleDelete(e: React.MouseEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!confirm(t("deleteConfirm"))) return;
-    startTransition(async () => {
-      await deletePatient(id);
-      router.push("/dashboard/patients");
-    });
-  }
-
-  return (
-    <button onClick={handleDelete} disabled={pending} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-red-600 border border-red-200 hover:bg-red-50 transition disabled:opacity-60">
-      {pending ? t("saving") : t("delete") ?? "Delete"}
-    </button>
-  );
-}
-
 export function PatientCard({ patient, locale }: { patient: Patient; locale: string }) {
   const t = useTranslations("patients");
   const prefix = locale === "en" ? "" : `/${locale}`;
@@ -278,6 +294,9 @@ export function PatientCard({ patient, locale }: { patient: Patient; locale: str
         <p className="text-xs text-slate-500 truncate mt-0.5">
           {[patient.email, age ? `${age} ${t("yrs")}` : null, patient.phone].filter(Boolean).join(" · ")}
         </p>
+        {patient.archived_at && (
+          <p className="text-xs text-slate-400 truncate mt-0.5">{archivedLabel(t, patient.archived_at, patient.archived_by_name, locale)}</p>
+        )}
       </div>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-300 group-hover:text-teal-400 transition shrink-0">
         <polyline points="9 18 15 12 9 6"/>

@@ -41,15 +41,21 @@ export async function createAppointment(formData: FormData) {
   const endTime = computeEndTime(startTime, duration);
   if (!endTime) return { error: "This time and duration would run past midnight", code: "past_midnight" };
 
-  // Find patient_id by name (best-effort match)
+  // Find patient_id by name (best-effort match). Active patients win. When
+  // the only match is archived, refuse rather than book an unlinked
+  // appointment for someone the clinic archived; the server also refuses
+  // appointments on an archived patient_id.
   const { data: patients } = await supabase
     .from("patients")
-    .select("id")
+    .select("id, archived_at")
     .eq("professional_id", effectiveProfId)
     .ilike("full_name", patientName.trim())
+    .order("archived_at", { ascending: false, nullsFirst: true })
     .limit(1);
 
-  const patientId = patients?.[0]?.id ?? null;
+  const match = patients?.[0] as { id: string; archived_at: string | null } | undefined;
+  if (match?.archived_at) return { error: "Patient is archived", code: "patient_archived" };
+  const patientId = match?.id ?? null;
 
   const { error } = await supabase.from("appointments").insert({
     professional_id: effectiveProfId,
@@ -68,7 +74,10 @@ export async function createAppointment(formData: FormData) {
     scheduled_by: "professional",
   });
 
-  if (error) return { error: error.message, code: "generic" };
+  if (error) {
+    if (error.message?.includes("patient_archived")) return { error: "Patient is archived", code: "patient_archived" };
+    return { error: error.message, code: "generic" };
+  }
   revalidatePath("/dashboard/schedule");
   return { success: true };
 }

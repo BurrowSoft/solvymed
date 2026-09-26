@@ -146,6 +146,7 @@ const ACTION_ERROR_KEY: Record<string, string> = {
   use_booking_card: "useBookingCard",
   missing_fields: "missingFieldsError",
   past_midnight: "pastMidnightError",
+  patient_archived: "patientArchivedError",
   generic: "genericError",
 };
 

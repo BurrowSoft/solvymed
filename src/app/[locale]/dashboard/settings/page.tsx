@@ -57,6 +57,7 @@ export default async function SettingsPage({
       .select("id, full_name, email, phone")
       .eq("professional_id", user.id)
       .eq("booking_blocked", true)
+      .is("archived_at", null)
       .order("full_name"),
     supabase.rpc("list_my_team"),
   ]);
