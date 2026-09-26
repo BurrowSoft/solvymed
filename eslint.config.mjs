@@ -11,7 +11,9 @@ export default [
     // Flat config doesn't read .gitignore; keep generated output out.
     ignores: [
       ".next/**", "node_modules/**", "out/**", "build/**", "coverage/**", ".vercel/**",
-      "playwright-report/**", "test-results/**", "eslint-report.json", "next-env.d.ts",
+      "playwright-report/**", "test-results/**", "next-env.d.ts",
+      // Synced copy of the org-wide @burrowsoft/shared (maintained upstream).
+      "packages/**",
     ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),

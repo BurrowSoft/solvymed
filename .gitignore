@@ -45,5 +45,3 @@ requirements/
 
 .vercel
 
-# CI lint report
-eslint-report.json

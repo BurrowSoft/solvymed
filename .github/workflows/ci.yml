@@ -9,9 +9,10 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
-  # Superseded PR runs are cancelled; master runs never are, so every merge
-  # commit gets its own CI result.
+  # PR runs share a group per branch, so a new push cancels the superseded
+  # run. Master runs are grouped per commit: GitHub keeps only one pending
+  # run per group, so a shared group would drop queued merge commits.
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
@@ -26,26 +27,17 @@ jobs:
           # Matches the Vercel project's Node.js version (24.x).
           node-version: 24
           cache: npm
-      - run: npm ci
+      - id: install
+        run: npm ci
       - run: npm run typecheck
       - run: npm test
 
       # Lint is advisory until the existing findings are cleaned up: it may
       # fail without failing the job. To make it gating, remove this
       # continue-on-error AND eslint.ignoreDuringBuilds in next.config.ts
-      # together. GitHub shows only ~10 errors + 10 warnings as annotations,
-      # so the totals go to the job summary.
+      # together. It runs whenever the install succeeded (also after a
+      # failed typecheck or test), using the project's own ESLint.
       - name: Lint (advisory)
-        if: always()
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         continue-on-error: true
-        run: |
-          npx eslint . -f json -o eslint-report.json || true
-          node -e '
-            const r = require("./eslint-report.json");
-            const e = r.reduce((n, f) => n + f.errorCount, 0);
-            const w = r.reduce((n, f) => n + f.warningCount, 0);
-            const s = `### Lint (advisory)\n\n${e} errors, ${w} warnings\n`;
-            require("fs").appendFileSync(process.env.GITHUB_STEP_SUMMARY, s);
-            console.log(s);
-          '
-          npm run lint
+        run: node scripts/ci-lint.mjs
