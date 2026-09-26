@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { PeriodFilter, MarkPaidButton, MarkUnpaidButton } from "./PaymentsClient";
+import { clinicDate, getClinicTimeZone, previousMonthRange, weekRange } from "@/lib/clinicTime";
 
 type Period = "week" | "month" | "last_month" | "all";
 
@@ -11,25 +12,12 @@ function formatBRL(n: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
 }
 
-function getDateRange(period: Period): { from: string; to: string } {
-  const now = new Date();
-  const today = now.toISOString().split("T")[0];
-
-  if (period === "week") {
-    const mon = new Date(now);
-    mon.setDate(now.getDate() - now.getDay() + 1);
-    const sun = new Date(mon);
-    sun.setDate(mon.getDate() + 6);
-    return { from: mon.toISOString().split("T")[0], to: sun.toISOString().split("T")[0] };
-  }
-  if (period === "month") {
-    return { from: `${today.slice(0, 7)}-01`, to: today };
-  }
-  if (period === "last_month") {
-    const d = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const last = new Date(now.getFullYear(), now.getMonth(), 0);
-    return { from: d.toISOString().split("T")[0], to: last.toISOString().split("T")[0] };
-  }
+// Ranges on the practice's calendar, not the server's (UTC).
+function getDateRange(period: Period, timeZone: string): { from: string; to: string } {
+  const today = clinicDate(new Date(), timeZone);
+  if (period === "week") return weekRange(today);
+  if (period === "month") return { from: `${today.slice(0, 7)}-01`, to: today };
+  if (period === "last_month") return previousMonthRange(today);
   return { from: "2000-01-01", to: today };
 }
 
@@ -57,7 +45,8 @@ export default async function PaymentsPage({
   if (!effectiveProfId) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
   const isSecretary = effectiveProfId !== user.id;
 
-  const { from, to } = getDateRange(period);
+  const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
+  const { from, to } = getDateRange(period, timeZone);
 
   const [pendingResult, paidResult] = await Promise.all([
     supabase

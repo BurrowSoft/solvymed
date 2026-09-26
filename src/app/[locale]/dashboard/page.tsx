@@ -3,6 +3,7 @@ import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { addDays, clinicDate, clinicHour, getClinicTimeZone } from "@/lib/clinicTime";
 
 function formatBRL(amount: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(amount);
@@ -47,24 +48,26 @@ export default async function DashboardPage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
 
-  const today = new Date().toISOString().split("T")[0];
-  const nextWeek = new Date();
-  nextWeek.setDate(nextWeek.getDate() + 7);
-  const nextWeekStr = nextWeek.toISOString().split("T")[0];
-  const monthStart = `${today.slice(0, 7)}-01`;
   const prefix = locale === "en" ? "" : `/${locale}`;
-
-  const hour = new Date().getUTCHours();
-  const greeting = hour >= 5 && hour < 12
-    ? t("greetingMorning")
-    : hour >= 12 && hour < 18
-      ? t("greetingAfternoon")
-      : t("greetingEvening");
 
   // A secretary sees their doctor's practice, not their own (empty) id.
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
   if (!effectiveProfId) redirect(`${prefix}/auth/login`);
   const isSecretary = effectiveProfId !== user.id;
+
+  // The practice's day and hour, not the server's (UTC).
+  const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
+  const now = new Date();
+  const today = clinicDate(now, timeZone);
+  const nextWeekStr = addDays(today, 7);
+  const monthStart = `${today.slice(0, 7)}-01`;
+
+  const hour = clinicHour(now, timeZone);
+  const greeting = hour >= 5 && hour < 12
+    ? t("greetingMorning")
+    : hour >= 12 && hour < 18
+      ? t("greetingAfternoon")
+      : t("greetingEvening");
 
   const [
     professionalResult,
@@ -100,7 +103,7 @@ export default async function DashboardPage({
   const firstName = ownName?.split(" ")[0] || user.email?.split("@")[0] || "Doctor";
   const totalPending = pendingPayments.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
   const totalRevenue = monthRevenue.reduce((s, r) => s + (r.payment_amount ?? 0), 0);
-  const todayFormatted = new Date().toLocaleDateString(locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  const todayFormatted = now.toLocaleDateString(locale, { timeZone, weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
   return (
     <div className="p-6 lg:p-8 max-w-7xl">

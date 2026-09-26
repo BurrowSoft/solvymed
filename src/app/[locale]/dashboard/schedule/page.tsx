@@ -6,6 +6,7 @@ import { BookingRequestsPanel } from "./BookingRequestsPanel";
 import { getTentativeBookings } from "./booking-actions";
 import { CalendarView, type CalendarAppt } from "./CalendarView";
 import { ShareInviteLinkButton } from "@/components/ShareInviteLinkButton";
+import { clinicDate, getClinicTimeZone } from "@/lib/clinicTime";
 
 function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
 function addDaysTo(dateStr: string, n: number) {
@@ -62,7 +63,9 @@ export default async function SchedulePage({
     ? (userRoleData?.invited_by_professional_id as string | null) ?? user.id
     : user.id;
 
-  const today = isoDate(new Date());
+  // The practice's today, not the server's (UTC).
+  const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
+  const today = clinicDate(new Date(), timeZone);
   const currentDate = dateParam ?? today;
   const view = (["list", "day", "week", "month"].includes(viewParam ?? "")) ? (viewParam as "list" | "day" | "week" | "month") : "list";
 
@@ -234,6 +237,7 @@ export default async function SchedulePage({
         <CalendarView
           appointments={appointments}
           currentDate={currentDate}
+          today={today}
           view={view}
         />
       )}
