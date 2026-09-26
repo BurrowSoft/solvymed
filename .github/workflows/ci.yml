@@ -31,6 +31,9 @@ jobs:
         run: npm ci
       - run: npm run typecheck
       - run: npm test
+      # Gating: a syntax error in the lint runner would otherwise exit 1 and
+      # look like ordinary lint findings in the advisory step below.
+      - run: node --check scripts/ci-lint.mjs
 
       # Lint is advisory until the existing findings are cleaned up: it may
       # fail without failing the job. To make it gating, remove this
