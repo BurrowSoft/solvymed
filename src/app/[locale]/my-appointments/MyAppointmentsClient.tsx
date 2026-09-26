@@ -295,7 +295,8 @@ export function MyAppointmentsClient({
     if (myProfessionalMeta?.name) params.set("name", myProfessionalMeta.name);
     if (myProfessionalMeta?.specialty) params.set("specialty", myProfessionalMeta.specialty);
     if (myProfessionalMeta?.clinicName) params.set("clinicName", myProfessionalMeta.clinicName);
-    return `${prefix}/book/${myProfessionalId}?${params.toString()}`;
+    const qs = params.toString();
+    return `${prefix}/book/${myProfessionalId}${qs ? `?${qs}` : ""}`;
   })();
 
   async function handleSignOut() {
