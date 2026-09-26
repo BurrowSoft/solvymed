@@ -8,7 +8,12 @@
     "subtitle": "يجمع Solvymed المواعيد وسجلات المرضى والوصفات الطبية والمدفوعات في تطبيق واحد سريع ومنظم، مصمم للمتخصصين في الرعاية الصحية.",
     "appStore": "تنزيل من App Store",
     "googlePlay": "احصل عليه من Google Play",
-    "comingSoon": "روابط التنزيل قريباً."
+    "comingSoon": "روابط التنزيل قريباً.",
+    "soon": "قريبًا",
+    "appStoreComingSoon": "قريبًا على App Store",
+    "openApp": "فتح التطبيق",
+    "iosBeta": "النسخة التجريبية لـ iPhone – ثبّتها عبر TestFlight",
+    "iosBetaHint": "يتطلب تطبيق TestFlight المجاني من Apple"
   },
   "highlights": {
     "h1": "جدولة ذكية",
@@ -716,5 +721,14 @@
     "leaveSub": "مغادرة هذه العيادة. يمكنك الانضمام إلى عيادة أخرى بدعوة جديدة.",
     "accountNotSecretary": "لا يمكن لهذا الحساب قبول دعوة سكرتارية. استخدم حسابًا منفصلاً يتم إنشاؤه من رابط الدعوة.",
     "teamResendConfirm": "إرسال دعوة جديدة إلى {email}؟ سيتوقف الرمز الذي شاركته سابقًا عن العمل."
+  },
+  "invitePage": {
+    "metaTitle": "دعوتك",
+    "heading": "دعوتك إلى SolvyMed",
+    "sub": "تدعوك عيادتك إلى الاتصال عبر SolvyMed.",
+    "codeLabel": "رمز الدعوة الخاص بك",
+    "step1": "نزّل تطبيق SolvyMed على هاتفك.",
+    "step2": "افتح التطبيق، واضغط <b>Sign up</b>، واختر <b>Patient</b>، ثم أدخل الرمز أعلاه في <b>Invite code</b>.",
+    "step3": "لديك حساب بالفعل؟ افتح علامة التبويب <b>Home</b> وأدخل الرمز في <b>Connect to Your Doctor</b>."
   }
 }

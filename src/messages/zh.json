@@ -8,7 +8,12 @@
     "subtitle": "Solvymed将预约管理、患者档案、处方和付款整合在一款快速简洁的应用中，专为医疗专业人员设计。",
     "appStore": "在App Store下载",
     "googlePlay": "在Google Play获取",
-    "comingSoon": "下载链接即将推出。"
+    "comingSoon": "下载链接即将推出。",
+    "soon": "即将推出",
+    "appStoreComingSoon": "即将登陆 App Store",
+    "openApp": "打开应用",
+    "iosBeta": "iPhone 测试版 – 通过 TestFlight 安装",
+    "iosBetaHint": "需要 Apple 免费的 TestFlight 应用"
   },
   "highlights": {
     "h1": "智能排程",
@@ -716,5 +721,14 @@
     "leaveSub": "不再为这位医生工作。你可以凭新的邀请加入其他诊所。",
     "accountNotSecretary": "此账户无法接受秘书邀请。请使用通过邀请链接创建的单独账户。",
     "teamResendConfirm": "要向 {email} 发送新邀请吗？之前分享的邀请码将失效。"
+  },
+  "invitePage": {
+    "metaTitle": "邀请",
+    "heading": "SolvyMed 邀请",
+    "sub": "您的诊所邀请您在 SolvyMed 上建立连接。",
+    "codeLabel": "您的邀请码",
+    "step1": "在手机上下载 SolvyMed。",
+    "step2": "打开应用，点击 <b>Sign up</b>，选择 <b>Patient</b>，然后在 <b>Invite code</b> 中输入上方的邀请码。",
+    "step3": "已有账户？打开 <b>Home</b> 标签页，在 <b>Connect to Your Doctor</b> 中输入邀请码。"
   }
 }

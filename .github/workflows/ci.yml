@@ -35,6 +35,7 @@ jobs:
       # the page/layout/route-handler validator tsconfig includes), so tsc
       # checks the same things `next build` does, locally and here.
       - run: npm run typecheck
+      # vitest.config.ts pins TZ=America/Sao_Paulo (same locally).
       - run: npm test
 
   lint:

@@ -2890,6 +2890,80 @@ locally at `ce40aef` (and the earlier HEADs as they came in).
 
 **Merge gate: 🟢 for `ce40aef`.**
 
+## PR #22 (`fix/play-store-link`) — store buttons, 🟢 at `11ecf2f`, review clean
+
+**Scope: exactly `11ecf2f`.**
+- **What it does:** the Play button opens the Play listing with an
+  attribution referrer, and the old expo.dev build link is gone.
+- **iOS:** the button is driven by `NEXT_PUBLIC_IOS_APP_URL`. The
+  variable is unset, so it shows "soon"; beta and store modes are
+  unit-tested.
+- **Invite page:** `/invite/<code>` is rewritten to the app's real flow
+  and translated.
+- **TZ:** the tests are pinned to `America/Sao_Paulo` in
+  `vitest.config.ts`.
+
+**Tested live on the Vercel preview**, using the automation bypass
+header (the secret is never logged). The preview served the real app,
+so checklist F-8 passes.
+
+**🟢 Landing (`/pt-BR`, `/es`, `/en`).**
+- **Play:** both buttons link to
+  `play.google.com/store/apps/details?id=com.burrowsoft.solvymed&referrer=utm_source=solvymed_web&utm_medium=web&utm_campaign=landing`
+  (UX's option A).
+- **Removed:** no `expo.dev` anywhere, no iOS store link, and no
+  `a[href="#"]`.
+- **iOS placeholder:** a non-focusable `div` ("Em breve" / "Pronto" /
+  "Soon"), shown after Play.
+
+**🟢 Invite (`/pt-BR/invite/<code>`, `/es/…`, unprefixed).**
+- **Play button:** it comes first, as the primary button, with
+  `utm_campaign=invite` and a translated label ("Disponível no Google
+  Play" / "Obtener en Google Play").
+- **Step 2:** it matches the mobile app's real login label, which I
+  checked in mobile master `lib/i18n.ts`: "toque em **Cadastre-se**,
+  escolha Paciente…" / "toca **Regístrate**…".
+- **Metadata:** `robots: noindex, nofollow`, no canonical link, and a
+  neutral OG title ("Seu convite para o SolvyMed").
+- **Contrast:** the primary Play button, **measured live**, is white on
+  `#0f766e` = **5.47:1**, which passes WCAG AA for the 18px bold label. At
+  `7deefc7` it was 2.49:1 (`teal-500`), which I flagged as BLOCKING.
+
+**Review: Claude `/code-review high`, clean at `11ecf2f`** (Copilot quota
+exhausted). This follows UX's convergence rule: BLOCKING means
+correctness, security, data-loss, crash or a real UX break.
+- **Round 1, `5142906`:**
+  - The invite label was hard-coded English and ignored the iOS config.
+  - The unit test read the real env.
+  - TZ was set only in CI.
+  - The iOS placeholder was a fake `href="#"` link.
+- **Round 2, `cbd3447`:** 3 BLOCKING:
+  - The steps said "Create account", but the app's login shows "Sign
+    up" / "Cadastre-se".
+  - `/invite` was indexable.
+  - The disabled iOS button was primary, with Play secondary.
+- **Round 3, `7deefc7`:** the contrast regression.
+- **`11ecf2f`:** a one-class fix, checked live.
+
+**FOLLOW-UP (listed in the PR body):**
+- twitter:title still comes from the homepage.
+- **`/join/secretary/<code>?email=` is still indexable.** This is
+  pre-existing and carries an invitee email, so web dev is raising a
+  privacy PR.
+- The invite code isn't validated.
+- The page's openGraph drops site_name and locale.
+- The step text doesn't mention the onboarding slides.
+- The faded "Soon" badge.
+- The beta button duplicates the shared button classes.
+- `<Analytics/>` records `/invite/<CODE>`.
+- `apps.apple.com` accepts any path, and a TestFlight trailing slash is
+  rejected.
+- The TZ pin drops UTC coverage.
+
+**CI at `11ecf2f`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `11ecf2f`, review clean.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo

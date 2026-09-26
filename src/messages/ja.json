@@ -8,7 +8,12 @@
     "subtitle": "Solvymedは予約管理、患者記録、処方箋、支払いをひとつの高速で使いやすいアプリにまとめました。医療専門家のために設計されています。",
     "appStore": "App Storeでダウンロード",
     "googlePlay": "Google Playで入手",
-    "comingSoon": "ダウンロードリンクは近日公開予定。"
+    "comingSoon": "ダウンロードリンクは近日公開予定。",
+    "soon": "近日公開",
+    "appStoreComingSoon": "App Store で近日公開",
+    "openApp": "アプリを開く",
+    "iosBeta": "iPhone ベータ版 – TestFlight でインストール",
+    "iosBetaHint": "Apple の無料アプリ TestFlight が必要です"
   },
   "highlights": {
     "h1": "スマート予約管理",
@@ -716,5 +721,14 @@
     "leaveSub": "この医師のもとでの勤務をやめます。新しい招待で別のクリニックに参加できます。",
     "accountNotSecretary": "このアカウントでは受付スタッフの招待を承諾できません。招待リンクから作成した別のアカウントをご利用ください。",
     "teamResendConfirm": "{email}に新しい招待を送りますか？以前に共有したコードは使えなくなります。"
+  },
+  "invitePage": {
+    "metaTitle": "招待",
+    "heading": "SolvyMed への招待",
+    "sub": "クリニックから SolvyMed への招待が届いています。",
+    "codeLabel": "招待コード",
+    "step1": "スマートフォンに SolvyMed をダウンロードします。",
+    "step2": "アプリを開いて <b>Sign up</b> をタップし、<b>Patient</b> を選んでから、上のコードを <b>Invite code</b> に入力します。",
+    "step3": "すでにアカウントをお持ちの場合は、<b>Home</b> タブを開き、<b>Connect to Your Doctor</b> にコードを入力してください。"
   }
 }

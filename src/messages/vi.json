@@ -8,7 +8,12 @@
     "subtitle": "Solvymed kết hợp lịch hẹn, hồ sơ bệnh nhân, đơn thuốc và thanh toán vào một ứng dụng nhanh và gọn, được xây dựng cho các chuyên gia y tế.",
     "appStore": "Tải về trên App Store",
     "googlePlay": "Tải trên Google Play",
-    "comingSoon": "Liên kết tải xuống sắp có."
+    "comingSoon": "Liên kết tải xuống sắp có.",
+    "soon": "Sắp ra mắt",
+    "appStoreComingSoon": "Sắp có trên App Store",
+    "openApp": "Mở ứng dụng",
+    "iosBeta": "Bản beta cho iPhone – cài qua TestFlight",
+    "iosBetaHint": "Cần ứng dụng TestFlight miễn phí của Apple"
   },
   "highlights": {
     "h1": "Lịch hẹn thông minh",
@@ -716,5 +721,14 @@
     "leaveSub": "Ngừng làm việc cho bác sĩ này. Bạn có thể tham gia phòng khám khác bằng lời mời mới.",
     "accountNotSecretary": "Tài khoản này không thể nhận lời mời làm thư ký. Hãy dùng tài khoản riêng được tạo từ liên kết mời.",
     "teamResendConfirm": "Gửi lời mời mới tới {email}? Mã bạn đã chia sẻ trước đó sẽ không còn dùng được."
+  },
+  "invitePage": {
+    "metaTitle": "Lời mời",
+    "heading": "Lời mời tham gia SolvyMed",
+    "sub": "Phòng khám của bạn mời bạn kết nối trên SolvyMed.",
+    "codeLabel": "Mã mời của bạn",
+    "step1": "Tải SolvyMed về điện thoại.",
+    "step2": "Mở ứng dụng, chạm <b>Sign up</b>, chọn <b>Patient</b>, rồi nhập mã ở trên vào <b>Invite code</b>.",
+    "step3": "Đã có tài khoản? Mở thẻ <b>Home</b> và nhập mã ở mục <b>Connect to Your Doctor</b>."
   }
 }

@@ -8,7 +8,12 @@
     "subtitle": "Solvymed menyatukan jadwal, rekam medis, resep, dan pembayaran dalam satu aplikasi yang cepat dan bersih, dirancang untuk tenaga kesehatan profesional.",
     "appStore": "Unduh di App Store",
     "googlePlay": "Dapatkan di Google Play",
-    "comingSoon": "Tautan unduhan segera hadir."
+    "comingSoon": "Tautan unduhan segera hadir.",
+    "soon": "Segera",
+    "appStoreComingSoon": "Segera hadir di App Store",
+    "openApp": "Buka aplikasi",
+    "iosBeta": "Beta untuk iPhone – instal lewat TestFlight",
+    "iosBetaHint": "Memerlukan aplikasi TestFlight gratis dari Apple"
   },
   "highlights": {
     "h1": "Penjadwalan cerdas",
@@ -716,5 +721,14 @@
     "leaveSub": "Berhenti bekerja untuk dokter ini. Anda dapat bergabung ke klinik lain dengan undangan baru.",
     "accountNotSecretary": "Akun ini tidak dapat menerima undangan sekretaris. Gunakan akun terpisah yang dibuat dari tautan undangan.",
     "teamResendConfirm": "Kirim undangan baru ke {email}? Kode yang Anda bagikan sebelumnya tidak akan berlaku lagi."
+  },
+  "invitePage": {
+    "metaTitle": "Undangan",
+    "heading": "Undangan ke SolvyMed",
+    "sub": "Klinik Anda mengundang Anda untuk terhubung di SolvyMed.",
+    "codeLabel": "Kode undangan Anda",
+    "step1": "Unduh SolvyMed di ponsel Anda.",
+    "step2": "Buka aplikasi, ketuk <b>Sign up</b>, pilih <b>Patient</b>, lalu masukkan kode di atas pada <b>Invite code</b>.",
+    "step3": "Sudah punya akun? Buka tab <b>Home</b> dan masukkan kode di <b>Connect to Your Doctor</b>."
   }
 }

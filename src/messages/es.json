@@ -8,7 +8,12 @@
     "subtitle": "Solvymed reúne citas, historiales de pacientes, recetas y pagos en una sola app rápida y limpia, diseñada para profesionales de la salud.",
     "appStore": "Descargar en App Store",
     "googlePlay": "Obtener en Google Play",
-    "comingSoon": "Links de descarga próximamente."
+    "comingSoon": "Links de descarga próximamente.",
+    "soon": "Pronto",
+    "appStoreComingSoon": "Próximamente en la App Store",
+    "openApp": "Abrir la app",
+    "iosBeta": "Beta para iPhone – instálala con TestFlight",
+    "iosBetaHint": "Requiere la app gratuita TestFlight de Apple"
   },
   "highlights": {
     "h1": "Agenda inteligente",
@@ -716,5 +721,14 @@
     "leaveSub": "Dejar esta clínica. Puedes unirte a otra clínica con una nueva invitación.",
     "accountNotSecretary": "Esta cuenta no puede aceptar una invitación al equipo. Usa una cuenta aparte creada desde el enlace de invitación.",
     "teamResendConfirm": "¿Enviar una nueva invitación a {email}? El código que compartiste antes dejará de funcionar."
+  },
+  "invitePage": {
+    "metaTitle": "Tu invitación",
+    "heading": "Tu invitación a SolvyMed",
+    "sub": "Tu clínica te ha invitado a conectarte en SolvyMed.",
+    "codeLabel": "Tu código de invitación",
+    "step1": "Descarga SolvyMed en tu teléfono.",
+    "step2": "Abre la app, toca <b>Regístrate</b>, elige <b>Paciente</b> y luego introduce el código de arriba en <b>Código de invitación</b>.",
+    "step3": "¿Ya tienes una cuenta? Abre la pestaña <b>Inicio</b> e introduce el código en <b>Conéctate a tu médico</b>."
   }
 }

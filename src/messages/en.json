@@ -8,7 +8,12 @@
     "subtitle": "Solvymed brings scheduling, patient records, prescriptions, and payments together in one clean, fast app built for healthcare professionals.",
     "appStore": "Download on the App Store",
     "googlePlay": "Get it on Google Play",
-    "comingSoon": "Download links coming soon — check back shortly."
+    "comingSoon": "Download links coming soon — check back shortly.",
+    "soon": "Soon",
+    "appStoreComingSoon": "Coming soon to the App Store",
+    "openApp": "Open App",
+    "iosBeta": "iPhone beta – install with TestFlight",
+    "iosBetaHint": "Requires Apple's free TestFlight app"
   },
   "highlights": {
     "h1": "Smart scheduling",
@@ -716,5 +721,14 @@
     "leaveSub": "Stop working for this doctor. You can join another clinic with a new invite.",
     "accountNotSecretary": "This account can't accept a secretary invite. Use a separate account created from the invite link.",
     "teamResendConfirm": "Send a new invite to {email}? The code you shared before will stop working."
+  },
+  "invitePage": {
+    "metaTitle": "Your invitation",
+    "heading": "You're invited to SolvyMed",
+    "sub": "Your clinic has invited you to connect on SolvyMed.",
+    "codeLabel": "Your invite code",
+    "step1": "Download SolvyMed on your phone.",
+    "step2": "Open the app, tap <b>Sign up</b>, choose <b>Patient</b>, then enter the code above in <b>Invite code</b>.",
+    "step3": "Already have an account? Open the <b>Home</b> tab and enter the code under <b>Connect to Your Doctor</b>."
   }
 }
