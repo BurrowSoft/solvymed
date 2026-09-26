@@ -3310,6 +3310,63 @@ wording is to be re-aligned with the privacy-policy rewrite.
 
 **Merge gate: 🟢 for `15b358a`, review clean.**
 
+## PR #26 (`perf/vercel-region-gru1`) — Vercel functions in São Paulo, 🟢 at `1caa406`, review clean
+
+**Scope: exactly `1caa406`.**
+- **Region:** `vercel.json` sets `"regions": ["gru1"]`.
+- **Gate paragraph:** the PR adds the "Current gate" paragraph at the top
+  of the Merge gate section. I've read it and it's accurate.
+
+Tested on the Vercel preview against prod, with a throwaway doctor
+(12 patients, 1 record) using a real SSR session cookie. The bypass
+header was sent on preview requests only.
+
+**🟢 1. Region.** `x-vercel-id` on the preview is `sin1::gru1::…` for all
+of these:
+- **Pages:** `/pt-BR` (307 → dashboard), `/pt-BR/dashboard/patients` and
+  a patient page.
+- **Route handlers:** `/api/billing/portal` (405 on GET) and
+  `/api/webhooks/stripe`.
+- **A server action:** the record save on the patient page.
+
+Prod is still `sin1::iad1::…`. My edge is Singapore; the second segment
+is the function region.
+
+**🟡 2. TTFB, median of 9 each, measured from Thailand (edge `sin1`).**
+
+| Page | Preview (gru1) | Prod (iad1) |
+|---|---|---|
+| Patients list | 1402 ms | 1677 ms (−16% on gru1) |
+| Patient page | 1627 ms | 1585 ms (+3%, noise) |
+
+From here the edge→function hop is longer to gru1 than to iad1, so this
+understates the gain for Brazilian users. There, both the edge and the
+database are in São Paulo. What it does show: no regression, and an
+improvement on the multi-query list page. A Brazil-side measurement
+would be the real before and after.
+
+**🟢 3. Stripe webhook on the preview (test mode).** I sent a synthetic
+test event signed with the test webhook secret. The type was
+`customer.created`, which the handler just acknowledges, so no
+subscription is touched.
+- **Signed:** 200 `{"ok":true}`, in `gru1`.
+- **Bad signature:** 400 "Invalid signature".
+- **Checkout:** none run, per the standing no-checkout-on-preview rule.
+
+**🟢 4. Smoke.**
+- **Login:** lands on `/pt-BR/dashboard`, which shows a patient count of
+  12.
+- **Patient page:** it renders.
+- **New record:** saved via a server action, visible on the page, and
+  present in the DB.
+
+**Review: Claude `/code-review` (code reviewer), clean at `1caa406`.**
+
+**CI at `1caa406`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `1caa406`, review clean.** After the merge, confirm
+prod shows `::gru1::`.
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
