@@ -56,7 +56,9 @@ export function LanguageSelector({ locales, className = "" }: Props) {
         break;
       }
     }
-    window.location.href = bare;
+    // Keep the query and fragment: auth pages carry state there (invite
+    // codes, the post-login destination, the password-reset code).
+    window.location.href = bare + window.location.search + window.location.hash;
   }
 
   return (
