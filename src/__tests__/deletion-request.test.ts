@@ -12,9 +12,11 @@ describe("deletionRequestError", () => {
 
 describe("deletionRequestRow", () => {
   it("normalizes the email and drops an empty reason", () => {
-    const row = deletionRequestRow("  Ana@Example.COM ", "   ");
+    const row = deletionRequestRow("  Ana@Example.COM ", "   ", "pt-BR");
     expect(row.email).toBe("ana@example.com");
     expect(row.reason).toBeNull();
     expect(row.status).toBe("pending");
+    // The page's language, for support's reply to the requester.
+    expect(row.locale).toBe("pt-BR");
   });
 });

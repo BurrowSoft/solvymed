@@ -12,11 +12,15 @@ export function deletionRequestError(message: string | null | undefined): Deleti
   return "generic";
 }
 
-export function deletionRequestRow(emailInput: string, reasonInput: string) {
+// locale is the page's language, so support's confirmation reply is drafted
+// in the requester's language (deletion_requests.locale, validated by the
+// database against the supported locales).
+export function deletionRequestRow(emailInput: string, reasonInput: string, locale: string) {
   return {
     email: emailInput.trim().toLowerCase(),
     reason: reasonInput.trim() || null,
     requested_at: new Date().toISOString(),
     status: "pending",
+    locale,
   };
 }
