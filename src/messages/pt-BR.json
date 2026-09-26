@@ -8,7 +8,10 @@
     "subtitle": "O Solvymed reúne agendamento, prontuários, prescrições e pagamentos em um único app rápido e organizado, feito para profissionais de saúde.",
     "appStore": "Baixar na App Store",
     "googlePlay": "Disponível no Google Play",
-    "comingSoon": "Links de download em breve."
+    "comingSoon": "Links de download em breve.",
+    "soon": "Em breve",
+    "appStoreComingSoon": "Em breve na App Store",
+    "openApp": "Abrir o app"
   },
   "highlights": {
     "h1": "Agendamento inteligente",

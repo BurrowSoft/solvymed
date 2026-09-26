@@ -8,7 +8,10 @@
     "subtitle": "Solvymed riunisce agenda, cartelle cliniche, ricette e pagamenti in un'unica app veloce e ordinata, pensata per i professionisti della salute.",
     "appStore": "Scarica su App Store",
     "googlePlay": "Disponibile su Google Play",
-    "comingSoon": "Link per il download in arrivo."
+    "comingSoon": "Link per il download in arrivo.",
+    "soon": "Presto",
+    "appStoreComingSoon": "Presto disponibile sull'App Store",
+    "openApp": "Apri l'app"
   },
   "highlights": {
     "h1": "Agenda intelligente",

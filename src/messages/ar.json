@@ -8,7 +8,10 @@
     "subtitle": "يجمع Solvymed المواعيد وسجلات المرضى والوصفات الطبية والمدفوعات في تطبيق واحد سريع ومنظم، مصمم للمتخصصين في الرعاية الصحية.",
     "appStore": "تنزيل من App Store",
     "googlePlay": "احصل عليه من Google Play",
-    "comingSoon": "روابط التنزيل قريباً."
+    "comingSoon": "روابط التنزيل قريباً.",
+    "soon": "قريبًا",
+    "appStoreComingSoon": "قريبًا على App Store",
+    "openApp": "فتح التطبيق"
   },
   "highlights": {
     "h1": "جدولة ذكية",

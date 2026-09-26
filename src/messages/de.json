@@ -8,7 +8,10 @@
     "subtitle": "Solvymed vereint Terminplanung, Patientenakten, Rezepte und Zahlungen in einer schnellen, übersichtlichen App – entwickelt für Gesundheitsfachleute.",
     "appStore": "Im App Store laden",
     "googlePlay": "Bei Google Play erhalten",
-    "comingSoon": "Download-Links folgen in Kürze."
+    "comingSoon": "Download-Links folgen in Kürze.",
+    "soon": "Bald",
+    "appStoreComingSoon": "Bald im App Store verfügbar",
+    "openApp": "App öffnen"
   },
   "highlights": {
     "h1": "Intelligente Terminplanung",

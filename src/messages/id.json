@@ -8,7 +8,10 @@
     "subtitle": "Solvymed menyatukan jadwal, rekam medis, resep, dan pembayaran dalam satu aplikasi yang cepat dan bersih, dirancang untuk tenaga kesehatan profesional.",
     "appStore": "Unduh di App Store",
     "googlePlay": "Dapatkan di Google Play",
-    "comingSoon": "Tautan unduhan segera hadir."
+    "comingSoon": "Tautan unduhan segera hadir.",
+    "soon": "Segera",
+    "appStoreComingSoon": "Segera hadir di App Store",
+    "openApp": "Buka aplikasi"
   },
   "highlights": {
     "h1": "Penjadwalan cerdas",

@@ -8,7 +8,10 @@
     "subtitle": "Solvymed將預約管理、患者病歷、處方和付款整合在一款快速整潔的應用程式中，專為醫療專業人員設計。",
     "appStore": "在App Store下載",
     "googlePlay": "在Google Play取得",
-    "comingSoon": "下載連結即將推出。"
+    "comingSoon": "下載連結即將推出。",
+    "soon": "即將推出",
+    "appStoreComingSoon": "即將登上 App Store",
+    "openApp": "開啟 App"
   },
   "highlights": {
     "h1": "智慧排程",

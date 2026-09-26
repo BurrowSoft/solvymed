@@ -8,7 +8,10 @@
     "subtitle": "Solvymed kết hợp lịch hẹn, hồ sơ bệnh nhân, đơn thuốc và thanh toán vào một ứng dụng nhanh và gọn, được xây dựng cho các chuyên gia y tế.",
     "appStore": "Tải về trên App Store",
     "googlePlay": "Tải trên Google Play",
-    "comingSoon": "Liên kết tải xuống sắp có."
+    "comingSoon": "Liên kết tải xuống sắp có.",
+    "soon": "Sắp ra mắt",
+    "appStoreComingSoon": "Sắp có trên App Store",
+    "openApp": "Mở ứng dụng"
   },
   "highlights": {
     "h1": "Lịch hẹn thông minh",

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { playStoreUrl } from "@/lib/appStores";
 
 export const metadata: Metadata = {
   title: "SolvyMed – You've been invited",
@@ -42,7 +43,7 @@ export default async function InvitePage({
         </ol>
 
         <a
-          href="https://play.google.com/store/apps/details?id=com.burrowsoft.solvymed"
+          href={playStoreUrl("invite")}
           className="flex items-center justify-center gap-2 bg-teal-600 text-white rounded-xl px-6 py-3 text-sm font-semibold hover:bg-teal-700 transition-colors"
           target="_blank"
           rel="noopener noreferrer"

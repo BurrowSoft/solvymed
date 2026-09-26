@@ -8,7 +8,10 @@
     "subtitle": "Solvymed réunit agenda, dossiers patients, ordonnances et paiements dans une seule application rapide et claire, pensée pour les professionnels de santé.",
     "appStore": "Télécharger sur l'App Store",
     "googlePlay": "Disponible sur Google Play",
-    "comingSoon": "Liens de téléchargement bientôt disponibles."
+    "comingSoon": "Liens de téléchargement bientôt disponibles.",
+    "soon": "Bientôt",
+    "appStoreComingSoon": "Bientôt disponible sur l'App Store",
+    "openApp": "Ouvrir l'app"
   },
   "highlights": {
     "h1": "Agenda intelligente",

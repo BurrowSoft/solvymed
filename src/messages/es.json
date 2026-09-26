@@ -8,7 +8,10 @@
     "subtitle": "Solvymed reúne citas, historiales de pacientes, recetas y pagos en una sola app rápida y limpia, diseñada para profesionales de la salud.",
     "appStore": "Descargar en App Store",
     "googlePlay": "Obtener en Google Play",
-    "comingSoon": "Links de descarga próximamente."
+    "comingSoon": "Links de descarga próximamente.",
+    "soon": "Pronto",
+    "appStoreComingSoon": "Próximamente en la App Store",
+    "openApp": "Abrir la app"
   },
   "highlights": {
     "h1": "Agenda inteligente",

@@ -8,7 +8,10 @@
     "subtitle": "Solvymedは予約管理、患者記録、処方箋、支払いをひとつの高速で使いやすいアプリにまとめました。医療専門家のために設計されています。",
     "appStore": "App Storeでダウンロード",
     "googlePlay": "Google Playで入手",
-    "comingSoon": "ダウンロードリンクは近日公開予定。"
+    "comingSoon": "ダウンロードリンクは近日公開予定。",
+    "soon": "近日公開",
+    "appStoreComingSoon": "App Store で近日公開",
+    "openApp": "アプリを開く"
   },
   "highlights": {
     "h1": "スマート予約管理",

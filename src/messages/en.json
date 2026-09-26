@@ -8,7 +8,10 @@
     "subtitle": "Solvymed brings scheduling, patient records, prescriptions, and payments together in one clean, fast app built for healthcare professionals.",
     "appStore": "Download on the App Store",
     "googlePlay": "Get it on Google Play",
-    "comingSoon": "Download links coming soon — check back shortly."
+    "comingSoon": "Download links coming soon — check back shortly.",
+    "soon": "Soon",
+    "appStoreComingSoon": "Coming soon to the App Store",
+    "openApp": "Open App"
   },
   "highlights": {
     "h1": "Smart scheduling",
