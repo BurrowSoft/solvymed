@@ -10,7 +10,7 @@ import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
-import { normalizeSecretaryCode } from "@/lib/secretary";
+import { isWellFormedSecretaryCode, normalizeSecretaryCode } from "@/lib/secretary";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -28,16 +28,16 @@ export default function SignupPage() {
   const isJoinFlow = !!joinCode;
 
   // Secretaries can only sign up through a doctor's invite:
-  // /join/secretary/<code> sends signed-out invitees here with the code
-  // and, from the doctor's share link, their email. The role is locked to
-  // secretary, and the email is locked when the link carried one. That lock
-  // is UX only: the server matches the email on accept.
+  // /join/secretary/<code> sends signed-out invitees here with the code, and
+  // the role is locked to secretary. The email is typed, never taken from
+  // the URL (older links carried ?email=, now ignored); before signing up
+  // it's checked against the invite, and the server matches it again on
+  // accept, which is the real boundary.
   const secretaryCode = isJoinFlow ? "" : normalizeSecretaryCode(searchParams.get("secretary") ?? "");
   const isSecretaryFlow = !!secretaryCode;
-  const lockedEmail = isSecretaryFlow ? (searchParams.get("email") ?? "").trim() : "";
 
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState(lockedEmail);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<Role>(isJoinFlow ? "patient" : isSecretaryFlow ? "secretary" : "professional");
@@ -65,6 +65,28 @@ export default function SignupPage() {
 
     setLoading(true);
     const supabase = createClient();
+
+    // Catch a wrong email before the account exists, not after the
+    // confirmation email when accepting fails. BROWSER ONLY (see migration
+    // 093's header): the RPC is rate-limited per client IP. Any other error
+    // lets signup go ahead, since the accept-time check still applies.
+    if (role === "secretary" && isSecretaryFlow && isWellFormedSecretaryCode(secretaryCode)) {
+      const { data: matches, error: matchError } = await supabase.rpc("secretary_invite_email_matches", {
+        p_code: secretaryCode,
+        p_email: email,
+      });
+      if (matchError?.message?.includes("too_many_attempts")) {
+        setLoading(false);
+        setError(t("inviteRequired.tooManyAttempts"));
+        return;
+      }
+      if (!matchError && matches === false) {
+        setLoading(false);
+        setError(t("signup.secretaryEmailMismatch"));
+        return;
+      }
+    }
+
     const { data: signUpData, error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -224,9 +246,8 @@ export default function SignupPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              readOnly={!!lockedEmail}
               autoComplete="email"
-              className={`text-input${lockedEmail ? " bg-slate-50 text-slate-500" : ""}`}
+              className="text-input"
             />
           </div>
           <div>

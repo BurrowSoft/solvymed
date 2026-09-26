@@ -512,7 +512,8 @@
       "emailExists": "此電子郵件已有帳戶。請登入。",
       "joiningAs": "透過邀請連結以 {role} 身份加入。",
       "joiningAsSecretary": "透過邀請連結以祕書身分註冊。",
-      "secretaryNeedsInvite": "你是祕書？請向你的醫師索取邀請連結。"
+      "secretaryNeedsInvite": "你是祕書？請向你的醫師索取邀請連結。",
+      "secretaryEmailMismatch": "此電子郵件與邀請不符。請使用收到邀請的電子郵件地址。"
     },
     "forgotPassword": {
       "title": "忘記密碼？",
@@ -720,7 +721,9 @@
     "leaveTitle": "離開診所",
     "leaveSub": "不再為這位醫師工作。你可以憑新的邀請加入其他診所。",
     "accountNotSecretary": "此帳戶無法接受祕書邀請。請使用透過邀請連結建立的另一個帳戶。",
-    "teamResendConfirm": "要向 {email} 傳送新邀請嗎？先前分享的邀請碼將失效。"
+    "teamResendConfirm": "要向 {email} 傳送新邀請嗎？先前分享的邀請碼將失效。",
+    "inviteFrom": "來自 {clinic} 的邀請",
+    "inviteFor": "此邀請的對象是 {email}。請使用該電子郵件註冊。"
   },
   "invitePage": {
     "metaTitle": "邀請",
