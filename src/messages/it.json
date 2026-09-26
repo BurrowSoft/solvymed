@@ -624,6 +624,16 @@
       "body": "Configuriamo il tuo studio in pochi passaggi, così potrai fissare il tuo primo appuntamento.",
       "startSetup": "Inizia la configurazione",
       "skip": "Più tardi"
+    },
+    "verify": {
+      "confirmTitle": "Conferma la tua email",
+      "confirmBody": "Tocca Continua per completare la creazione del tuo account SolvyMed.",
+      "otherTitle": "Ci siamo quasi",
+      "otherBody": "Tocca Continua per completare.",
+      "continue": "Continua",
+      "expiredTitle": "Questo link è scaduto",
+      "expiredBody": "Richiedine uno nuovo dalla pagina di accesso.",
+      "goToSignIn": "Vai all'accesso"
     }
   },
   "myAppointments": {

@@ -624,6 +624,16 @@
       "body": "Let's set up your clinic in a few quick steps, so you can book your first appointment.",
       "startSetup": "Start setup",
       "skip": "Skip for now"
+    },
+    "verify": {
+      "confirmTitle": "Confirm your email",
+      "confirmBody": "Tap Continue to finish creating your SolvyMed account.",
+      "otherTitle": "Almost there",
+      "otherBody": "Tap Continue to finish.",
+      "continue": "Continue",
+      "expiredTitle": "This link has expired",
+      "expiredBody": "Request a new one from the sign-in page.",
+      "goToSignIn": "Go to sign in"
     }
   },
   "myAppointments": {

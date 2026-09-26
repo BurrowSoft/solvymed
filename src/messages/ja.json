@@ -624,6 +624,16 @@
       "body": "いくつかの簡単なステップで診療所を設定し、最初の予約を入れましょう。",
       "startSetup": "設定を始める",
       "skip": "あとで"
+    },
+    "verify": {
+      "confirmTitle": "メールアドレスの確認",
+      "confirmBody": "「続ける」をタップして SolvyMed アカウントの作成を完了してください。",
+      "otherTitle": "あと少しです",
+      "otherBody": "「続ける」をタップして完了してください。",
+      "continue": "続ける",
+      "expiredTitle": "このリンクは期限切れです",
+      "expiredBody": "ログインページから新しいリンクをリクエストしてください。",
+      "goToSignIn": "ログインへ"
     }
   },
   "myAppointments": {

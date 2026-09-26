@@ -624,6 +624,16 @@
       "body": "Hãy thiết lập phòng khám của bạn trong vài bước nhanh để đặt lịch hẹn đầu tiên.",
       "startSetup": "Bắt đầu thiết lập",
       "skip": "Để sau"
+    },
+    "verify": {
+      "confirmTitle": "Xác nhận email của bạn",
+      "confirmBody": "Nhấn Tiếp tục để hoàn tất việc tạo tài khoản SolvyMed.",
+      "otherTitle": "Sắp xong rồi",
+      "otherBody": "Nhấn Tiếp tục để hoàn tất.",
+      "continue": "Tiếp tục",
+      "expiredTitle": "Liên kết này đã hết hạn",
+      "expiredBody": "Hãy yêu cầu liên kết mới từ trang đăng nhập.",
+      "goToSignIn": "Đến trang đăng nhập"
     }
   },
   "myAppointments": {

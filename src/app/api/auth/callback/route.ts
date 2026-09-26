@@ -1,14 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
-import type { EmailOtpType } from "@supabase/supabase-js";
 import { routing } from "@/i18n/routing";
-import { isFirstConfirmation } from "@/lib/firstConfirmation";
+import { routeAfterAuth } from "@/lib/authRouting";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
   const tokenHash = searchParams.get("token_hash");
-  const type = (searchParams.get("type") ?? "signup") as EmailOtpType;
+  const type = searchParams.get("type");
 
   // No [locale] segment here (this is a Route Handler, not a page under
   // [locale]). The signup form puts its locale on the confirmation link
@@ -38,6 +37,23 @@ export async function GET(request: NextRequest) {
     return pinLocale(NextResponse.redirect(new URL(localePrefix || "/", origin)));
   }
 
+  // A one-time token link (token_hash) is never verified on GET: mail
+  // scanners (e.g. Outlook Safe Links) open links before the person does,
+  // and verifying here would burn the token so the real click fails. The
+  // verify page asks for a click (or, for a password reset, the new
+  // password) and verifies only then.
+  if (!code && tokenHash) {
+    const verifyUrl = new URL(`${localePrefix}/auth/verify`, origin);
+    verifyUrl.searchParams.set("token_hash", tokenHash);
+    verifyUrl.searchParams.set("type", type ?? "signup");
+    const res = pinLocale(NextResponse.redirect(verifyUrl));
+    // The token is in the URL: keep it out of the verify page's referrers.
+    res.headers.set("Referrer-Policy", "no-referrer");
+    return res;
+  }
+
+  // PKCE code: exchanging it needs this browser's code verifier cookie, so a
+  // scanner can't use it up.
   // Collect cookies Supabase wants to set — we'll apply them to the final redirect response.
   // next/headers cookies() would NOT attach to a manually-created NextResponse,
   // so we buffer them and apply explicitly instead.
@@ -58,132 +74,11 @@ export async function GET(request: NextRequest) {
     },
   );
 
-  // Use explicit if/else to avoid TypeScript union issues between
-  // exchangeCodeForSession (AuthResponse) and verifyOtp (AuthOtpResponse).
-  let sessionUser: { id: string; user_metadata: Record<string, unknown>; confirmed_at?: string | null; email_confirmed_at?: string | null } | null = null;
-  let sessionExists = false;
-
-  if (code) {
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error && data.session && data.user) {
-      sessionUser = data.user;
-      sessionExists = true;
-    }
-  } else if (tokenHash) {
-    const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
-    if (!error && data.session && data.user) {
-      sessionUser = data.user as unknown as typeof sessionUser;
-      sessionExists = true;
-    }
-  }
-
-  let redirectUrl: URL;
-
-  if (sessionExists && sessionUser) {
-    const meta = sessionUser.user_metadata ?? {};
-    const role = meta.role as string | undefined;
-    const inviteCode = meta.invite_code as string | undefined;
-
-    if (role === "secretary") {
-      // Linking is server-only; there's no client-side user_roles write
-      // anymore. handle_new_user created the row at signup (role secretary,
-      // no link), and accept_secretary_invite attaches it to the doctor,
-      // keyed on this session's auth.uid() and email. The RPC itself
-      // refuses patient and professional accounts, so client-writable
-      // metadata can't change anyone's role here. If it fails (the invite
-      // was revoked or expired meanwhile), the row just stays unlinked, and
-      // dashboard/layout.tsx shows "Not connected" with a code field.
-      const secretaryCode = meta.secretary_invite_code as string | undefined;
-      if (secretaryCode) {
-        const { error: acceptError } = await supabase.rpc("accept_secretary_invite", { p_code: secretaryCode });
-        if (acceptError) console.error("Secretary invite accept failed at confirmation:", acceptError.message);
-      }
-      redirectUrl = new URL(`${localePrefix}/dashboard`, origin);
-
-    } else if (role === "patient") {
-      // Refuse to touch an existing role — matches the guard on the
-      // invite-required retry form. The linking RPCs below own writing
-      // user_roles now (see link_patient_by_invite_code /
-      // link_by_professional_public_code), so this only reads.
-      const { data: existingRole } = await supabase
-        .from("user_roles")
-        .select("role, invited_by_professional_id, linked_patient_id")
-        .eq("user_id", sessionUser.id)
-        .maybeSingle();
-
-      if (existingRole?.role === "patient" && existingRole.linked_patient_id) {
-        redirectUrl = new URL(`${localePrefix}/my-appointments`, origin);
-      } else if (existingRole?.role === "patient" && existingRole.invited_by_professional_id) {
-        // Linked to a doctor's "orbit" but not yet confirmed — patient_connections
-        // doesn't exist until the doctor calls confirm_and_link_patient.
-        redirectUrl = new URL(`${localePrefix}/auth/pending-confirmation`, origin);
-      } else if (existingRole?.role) {
-        redirectUrl = new URL(`${localePrefix}/dashboard`, origin);
-      } else if (inviteCode) {
-        // Two distinct code types, tried in sequence: a patient invite code
-        // (tied to a specific pre-existing patient record — link is
-        // immediate, patient_connections created server-side) or a doctor's
-        // public code (sets invited_by_professional_id, pending until the
-        // doctor confirms).
-        const { data: fullyLinked, error: linkError } = await supabase.rpc("link_patient_by_invite_code", { p_code: inviteCode });
-        if (linkError) {
-          // A transient/RPC failure isn't the same as "this code doesn't
-          // match anything" — don't cascade into a second call that will
-          // fail the same way. invite-required still keeps the session
-          // alive either way, so the destination is the same, but the two
-          // failure modes shouldn't be conflated in the code.
-          redirectUrl = new URL(`${localePrefix}/auth/invite-required`, origin);
-        } else if (fullyLinked) {
-          redirectUrl = new URL(`${localePrefix}/auth/patient-welcome`, origin);
-        } else {
-          const { data: profId, error: profLinkError } = await supabase.rpc("link_by_professional_public_code", { p_public_code: inviteCode });
-          redirectUrl = profLinkError
-            ? new URL(`${localePrefix}/auth/invite-required`, origin)
-            : profId
-            ? new URL(`${localePrefix}/auth/pending-confirmation`, origin)
-            : new URL(`${localePrefix}/auth/invite-required`, origin);
-        }
-      } else {
-        // An invite code is required for patients — without one there's no
-        // doctor to link them to, so they don't get a patient role at all
-        // (see /auth/invite-required, which explains why and sends them
-        // back to sign up with a code). No valid invite doesn't sign the
-        // session out — the account already exists (can't re-signup with
-        // the same email), so /auth/invite-required keeps them signed in
-        // and offers a retry form to attach a valid code.
-        // dashboard/layout.tsx's allowlist guard is what actually keeps a
-        // role-less session out of the professional dashboard.
-        redirectUrl = new URL(`${localePrefix}/auth/invite-required`, origin);
-      }
-
-    } else {
-      // professional (default). user_roles is server-only (migration 088):
-      // handle_new_user creates the professional row at signup, and the
-      // client can no longer write it at all, so this branch only reads.
-      // A session with no row at all is, in practice, a patient mid-signup,
-      // so it goes to the invite-code form rather than getting a role
-      // written for it.
-      const { data: existingRole, error: roleLookupError } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", sessionUser.id)
-        .maybeSingle();
-      if (!roleLookupError && !existingRole?.role) {
-        redirectUrl = new URL(`${localePrefix}/auth/invite-required`, origin);
-      } else if (existingRole?.role === "professional" && isFirstConfirmation(sessionUser, searchParams.get("type"))) {
-        // The link that just confirmed a new professional: the one-time
-        // welcome (first-run spec §1). Later logins go to the dashboard.
-        redirectUrl = new URL(`${localePrefix}/auth/professional-welcome`, origin);
-      } else {
-        // dashboard/layout.tsx routes every persisted role (and fails
-        // closed on a lookup error).
-        redirectUrl = new URL(`${localePrefix}/dashboard`, origin);
-      }
-    }
-  } else {
-    // Auth failed — send to login so the user has a clear path forward
-    redirectUrl = new URL(`${localePrefix}/auth/login`, origin);
-  }
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code!);
+  // Auth failed: login gives the user a clear path forward.
+  const redirectUrl = !error && data.session && data.user
+    ? new URL(await routeAfterAuth(supabase, data.user, localePrefix, type), origin)
+    : new URL(`${localePrefix}/auth/login`, origin);
 
   const response = NextResponse.redirect(redirectUrl);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
