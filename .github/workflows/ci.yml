@@ -22,16 +22,18 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # No job pushes, so don't leave a token in .git/config.
+          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           # Matches the Vercel project's Node.js version (24.x).
           node-version: 24
           cache: npm
       - run: npm ci
-      # Generates .next/types (route types and the page/layout/route-handler
-      # validator) that tsconfig includes, so tsc checks the same things
-      # `next build` does.
-      - run: npx next typegen
+      # `next typegen && tsc --noEmit`: generates .next/types (route types and
+      # the page/layout/route-handler validator tsconfig includes), so tsc
+      # checks the same things `next build` does, locally and here.
       - run: npm run typecheck
       - run: npm test
 
@@ -44,6 +46,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # No job pushes, so don't leave a token in .git/config.
+          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24

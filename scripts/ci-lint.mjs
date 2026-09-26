@@ -2,9 +2,9 @@
 // up, so findings never fail the step: they're printed (as ::warning
 // annotations, with path:line:col in the text since GitHub annotates only
 // ~10 per type) and totalled in the job summary, and the runner exits 0.
-// Anything else (ESLint failing to load or run, a bug in this script)
-// exits non-zero, so the "Lint" check goes red and a crash can't pass as
-// findings. To make lint gating later: exit 1 when errors > 0, and remove
+// Anything else (ESLint failing to load or run, a file it can't parse, a
+// bug in this script) exits non-zero, so the "Lint" check goes red and a
+// crash can't pass as findings. To make lint gating later: exit 1 when errors > 0, and remove
 // eslint.ignoreDuringBuilds in next.config.ts.
 import { appendFileSync } from "node:fs";
 import { relative } from "node:path";
@@ -27,6 +27,15 @@ function summary(text) {
 async function main() {
   const { ESLint } = await import("eslint");
   const results = await new ESLint().lintFiles(["."]);
+
+  // Fatal messages (e.g. "Parsing error") mean ESLint couldn't lint the
+  // file at all, so no rules ran: that's a broken setup, not findings.
+  const fatal = results.flatMap((file) =>
+    file.messages.filter((m) => m.fatal).map((m) => `${relative(process.cwd(), file.filePath)}:${m.line ?? 1} ${m.message}`),
+  );
+  if (fatal.length > 0) {
+    throw new Error(`ESLint couldn't parse ${fatal.length} file(s), so no rules ran on them:\n${fatal.join("\n")}`);
+  }
 
   let errors = 0;
   let warnings = 0;
