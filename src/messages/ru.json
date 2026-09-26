@@ -502,7 +502,7 @@
       "inviteCode": "Код приглашения",
       "inviteCodeRequired": "Требуется код приглашения",
       "inviteCodePlaceholder": "ABC123",
-      "inviteCodeHint": "Введите код врача для автоматической привязки",
+      "inviteCodeHint": "Введите код приглашения",
       "emailExists": "Аккаунт с этим email уже существует. Пожалуйста, войдите.",
       "joiningAs": "Присоединение как {role} по ссылке приглашения.",
       "joiningAsSecretary": "Регистрация секретарём по ссылке-приглашению.",

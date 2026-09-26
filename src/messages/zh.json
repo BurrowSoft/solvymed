@@ -502,7 +502,7 @@
       "inviteCode": "邀请码",
       "inviteCodeRequired": "需要邀请码",
       "inviteCodePlaceholder": "ABC123",
-      "inviteCodeHint": "输入医生的邀请码以自动连接",
+      "inviteCodeHint": "输入邀请码",
       "emailExists": "此邮箕已有账户。请登录。",
       "joiningAs": "通过邀请链接以 {role} 身份加入。",
       "joiningAsSecretary": "通过邀请链接以秘书身份注册。",

@@ -502,7 +502,7 @@
       "inviteCode": "招待コード",
       "inviteCodeRequired": "招待コードが必要です",
       "inviteCodePlaceholder": "ABC123",
-      "inviteCodeHint": "医師のコードを入力して自動的に連携する",
+      "inviteCodeHint": "招待コードを入力してください",
       "emailExists": "このメールアドレスのアカウントは既に存在します。サインインしてください。",
       "joiningAs": "招待リンクで{role}として参加します。",
       "joiningAsSecretary": "招待リンクから受付スタッフとして登録します。",

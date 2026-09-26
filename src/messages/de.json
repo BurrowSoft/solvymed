@@ -506,7 +506,7 @@
       "emailExists": "Ein Konto mit dieser E-Mail existiert bereits. Bitte melden Sie sich an.",
       "joiningAs": "Beitreten als {role} über Einladungslink.",
       "joiningAsSecretary": "Registrierung für das Praxisteam über einen Einladungslink.",
-      "secretaryNeedsInvite": "Im Praxisteam tätig? Bitten Sie Ihre Ärztin oder Ihren Arzt um einen Einladungslink."
+      "secretaryNeedsInvite": "Im Praxisteam tätig? Bitten Sie Ihre Praxis um einen Einladungslink."
     },
     "forgotPassword": {
       "title": "Passwort vergessen?",
@@ -648,7 +648,7 @@
   },
   "secretary": {
     "notConnectedTitle": "Noch mit keiner Praxis verbunden",
-    "notConnectedBody": "Bitten Sie die Ärztin oder den Arzt, für die bzw. den Sie arbeiten, um einen Einladungslink für Sekretariate, oder geben Sie den erhaltenen Code ein.",
+    "notConnectedBody": "Bitten Sie die Praxis, in der Sie arbeiten, um einen Einladungslink für das Praxisteam, oder geben Sie den erhaltenen Code ein.",
     "codeLabel": "Einladungscode",
     "codeRequired": "Geben Sie den Einladungscode ein.",
     "continue": "Weiter",
@@ -658,9 +658,9 @@
     "clinicInactiveBodyGeneric": "Das SolvyMed-Abonnement Ihrer Praxis ist inaktiv. Der Zugang ist wieder möglich, sobald es verlängert wird.",
     "backToHome": "Zur Startseite",
     "inviteInvalidTitle": "Einladung ungültig",
-    "inviteInvalid": "Diese Einladung ist nicht mehr gültig. Bitten Sie die Ärztin oder den Arzt um eine neue.",
+    "inviteInvalid": "Diese Einladung ist nicht mehr gültig. Bitten Sie die Praxis um eine neue.",
     "invitedTitle": "Sie wurden ins Praxisteam eingeladen",
-    "invitedBody": "Eine Ärztin oder ein Arzt lädt Sie ein, auf SolvyMed Termine und Patienten der Praxis mitzuverwalten. Erstellen Sie ein Konto, um anzunehmen.",
+    "invitedBody": "Eine Praxis lädt Sie ein, auf SolvyMed Termine und Patienten mitzuverwalten. Erstellen Sie ein Konto, um anzunehmen.",
     "createAccount": "Konto erstellen",
     "haveAccountLogIn": "Schon ein Konto? Anmelden",
     "cannotAcceptTitle": "Einladung kann nicht angenommen werden",

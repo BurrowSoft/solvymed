@@ -502,7 +502,7 @@
       "inviteCode": "Kode undangan",
       "inviteCodeRequired": "Kode undangan diperlukan",
       "inviteCodePlaceholder": "ABC123",
-      "inviteCodeHint": "Masukkan kode dokter untuk terhubung secara otomatis",
+      "inviteCodeHint": "Masukkan kode undangan",
       "emailExists": "Akun dengan email ini sudah ada. Silakan masuk.",
       "joiningAs": "Bergabung sebagai {role} melalui tautan undangan.",
       "joiningAsSecretary": "Mendaftar sebagai sekretaris melalui tautan undangan.",
