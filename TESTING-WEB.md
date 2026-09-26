@@ -545,7 +545,7 @@ accept it.
 | D-2 🤖📱 | Book, `/book/<professionalId>` (the route My appointments and the pending page link to, optionally with `?name=`, `specialty=` and `clinicName=`) | The header shows the real doctor name, from `get_professional_public_info` (merged in #16), or the translated "Profissional", never "Doctor". Slots come from the doctor's hours. The request becomes tentative in the doctor's schedule. |
 | D-3 📱 | My appointments | Upcoming and past appointments are listed correctly. The Book link opens `/book/<professionalId>` for their doctor, and there's no `?name=Doctor` in it. |
 | D-4 | Reschedule | A patient's request shows for the doctor, who can approve or decline it. When the doctor proposes a new time, the patient can accept or decline it. Both sides see the final state. |
-| D-5 | Account deletion request (`/account/delete`, #25) | In all 15 locales, the page shows the "what happens to your data" note: professionals' records are kept for 20 years, and patients' accounts are deleted while the clinic keeps its records. There's no "erased and cannot be recovered" wording. The mailto goes to `support@solvymed.com` with a localized subject. A submit records a **pending** `deletion_requests` row and shows the translated confirmation with the email in bold. **Enforced today:** a doctor with clinical history can't be deleted. The gate is 095's `delete_my_account` refusal (`patient_has_clinical_history`), backed by 094's delete trigger; support closes the account. A patient can delete their account even when a clinic archived their record (096). **Still ⏳:** close-account (mob dev), and the support alert when a request lands (mob dev, S-01). |
+| D-5 | Account deletion request (`/account/delete`, #25) | In all 15 locales, the page shows the "what happens to your data" note: professionals' records are kept for 20 years, and patients' accounts are deleted while the clinic keeps its records. There's no "erased and cannot be recovered" wording. The mailto goes to `support@solvymed.com` with a localized subject. A submit records a `new` row (the form sends `pending`; intake stores `new`) and shows the translated confirmation with the email in bold. **Enforced today:** a doctor with clinical history can't be deleted. The gate is 095's `delete_my_account` refusal (`patient_has_clinical_history`), backed by 094's delete trigger; support closes the account. A patient can delete their account even when a clinic archived their record (096). **Since migration 100 (#36):** rows are stored as `new` and each accepted request emails the **real support inbox**. There's a limit of 3 per email and 10 per IP per day, and `too_many_attempts`/`invalid_email` show translated messages. **Since 101 (#38):** the row stores the page's `locale`. **Test-submit rule (user, via UX, 2026-09-26):** every test submit uses an obviously-test email (`e2e-…@burrowsoft.com` or `…@example.invalid`) **and** a reason starting with `[TEST]`, so the owner can ignore it at a glance. Keep submits to the minimum, and have mob dev delete the rows. **Still ⏳:** close-account (#32, migration 102). |
 
 ### E. Secretary (all 🤖 from #13 unless noted)
 
@@ -4027,6 +4027,110 @@ English on pt-BR pages. That's pre-existing, not from #34.
 
 **Merge gate: 🟢 for `29cf23c`, review clean.**
 
+**Prod addendum (`33ea7f5`, real time ~12:04 BRT):**
+- **Doctor and secretary:** "Boa tarde, sábado 26". The schedule defaults
+  to the 26th, and the week and month views highlight 26.
+- **Payments:** "this week" is Mon 21 to Sun 27.
+- **Record time:** shows HH:MM (`12:04`).
+- **Practice set to `Asia/Bangkok`:** "Boa noite" (22:04 there), then
+  reset.
+- **Bangkok browser:** the month grid starts on 31 Aug.
+- **Patient:** today's appointment is under Próximas.
+
+## PR #36 (`fix/account-delete-intake`) — /account/delete inserts from the browser, 🟢 (pre-100 scope) at `9f28b3c`, review clean
+
+**Scope: exactly `9f28b3c`.** The form inserts into `deletion_requests`
+directly from the browser, so migration 100's per-IP rate limit sees the
+visitor. The old `requestAccountDeletion` server action is removed.
+Migration 100's errors are translated. It merges **before** 100, per the
+code reviewer, because current RLS already allows the browser insert.
+
+Tested live on the preview, pt-BR, with `@example.invalid` emails. The
+test rows were deleted afterwards.
+
+**🟢 Anonymous submit:**
+- **Confirmation:** "Solicitação recebida — Recebemos sua solicitação
+  para <email>."
+- **Network:** exactly one **direct Supabase REST** `POST
+  /rest/v1/deletion_requests` (201, no `select`) and **no server-action
+  POST**.
+- **Row:** status `pending`, with the reason.
+
+**🟢 Signed in** (a throwaway doctor): the same confirmation, a direct REST
+201, and the row stored.
+
+**🟢 Blank email** (whitespace, with the client `required` removed):
+"Informe seu e-mail.", and no REST POST is made.
+
+**⏳ After migration 100 goes live, to check on prod:**
+- the row gets status `new`;
+- support receives the alert email;
+- the 4th request for the same email within a day shows the new
+  "several requests" line;
+- an invalid email shows "invalid email";
+- two different browsers or IPs each get their own limit.
+
+**Review: Claude `/code-review` (code reviewer), clean at `9f28b3c`.**
+
+**CI at `9f28b3c`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `9f28b3c` (pre-100 behaviour), review clean.** The
+post-100 checks are recorded here as a prod addendum once 100 is live.
+
+**Prod addendum, after migration 100** (`335a118` live, pt-BR,
+`@example.invalid`):
+- **🟢 Status `new`:** three submits of the same email, each from a fresh
+  browser context, each get 201 and "Solicitação recebida". The rows are
+  stored with status **`new`** (it was `pending` before 100).
+- **🟢 Rate limit:** the **4th** submit of that email the same day gets
+  REST 400 `too_many_attempts`. The page shows "Já recebemos várias
+  solicitações. Tente de novo amanhã ou escreva para
+  support@solvymed.com." and stays on the form.
+- **🟢 Invalid email:** `a@b` passes the browser's own `type=email` check,
+  gets REST 400 `invalid_email`, and shows "Informe um endereço de e-mail
+  válido."
+- **Not verifiable here:**
+  - **Support alert email:** sent (Resend accepted, `alert_sent_at` set);
+    inbox delivery pending the user's check. Mob dev saw status `new` and
+    `alert_sent_at` set on all 4 test rows (1 from an aborted first run)
+    when deleting them.
+  - **"Two IPs each get their own limit":** I only have one IP. Two
+    browser contexts from the same IP share the per-email limit, as
+    shown above.
+- **Cleanup:** the 4 test rows went to mob dev for deletion.
+
+## PR #38 (`feat/deletion-request-locale`) — deletion requests carry the page locale, 🟢 at `77ade20`, review clean
+
+**Scope: exactly `77ade20`.** `/account/delete` sends the page's locale
+with the insert; migration 101 (`deletion_requests.locale`) is live.
+
+Tested live on the preview with **2 submits only**, per the `[TEST]` rule:
+`@example.invalid` emails and reasons starting with `[TEST]`.
+
+**🟢 pt-BR:** from `/pt-BR/account/delete`, the browser's REST POST body
+includes `"locale":"pt-BR"`, and the page shows "Solicitação recebida".
+The row is stored with `locale='pt-BR'`, status `new` and the `[TEST]`
+reason.
+
+**🟢 en (unprefixed):** from `/account/delete` with `NEXT_LOCALE=en`, the
+POST includes `"locale":"en"`, and the page shows "Request received". The
+row is stored with `locale='en'`.
+
+**Not run:** the code reviewer suggested `/ja/account/delete` →
+`'ja'`. I kept to the two-request limit, and `en` also covers the
+unprefixed default locale. The mechanism is the same for every locale.
+- **Alert subject:** that it starts with "[TEST] " is pending the user's
+  inbox check.
+- **Cleanup:** the 2 test rows went to mob dev for deletion.
+
+**Also in this commit:** checklist row D-5 now records the `[TEST]`
+test-submit rule, plus what migrations 100 and 101 enforce.
+
+**Review: Claude `/code-review` (code reviewer), clean at `77ade20`.**
+
+**CI at `77ade20`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `77ade20`, review clean.**
 ## PR #35 (`feat/first-run`) — first-run part 1, 🟢 at `e38114d`, review clean
 
 **Scope: exactly `e38114d`.** It covers:

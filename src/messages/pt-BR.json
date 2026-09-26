@@ -810,7 +810,9 @@
     "doneBody": "Recebemos sua solicitação para <b>{email}</b>.",
     "doneSub": "Vamos processá-la em até 30 dias e confirmar por e-mail.",
     "errorEmailRequired": "Informe seu e-mail.",
-    "errorGeneric": "Algo deu errado. Tente novamente ou escreva para {email}."
+    "errorGeneric": "Algo deu errado. Tente novamente ou escreva para {email}.",
+    "errorTooManyAttempts": "Já recebemos várias solicitações. Tente de novo amanhã ou escreva para {email}.",
+    "errorInvalidEmail": "Informe um endereço de e-mail válido."
   },
   "firstRun": {
     "scheduleEmptyTitle": "Nenhuma consulta ainda.",

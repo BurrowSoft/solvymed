@@ -810,7 +810,9 @@
     "doneBody": "Hemos recibido tu solicitud para <b>{email}</b>.",
     "doneSub": "La procesaremos en un plazo de 30 días y te lo confirmaremos por correo.",
     "errorEmailRequired": "Introduce tu correo electrónico.",
-    "errorGeneric": "Algo salió mal. Inténtalo de nuevo o escribe a {email}."
+    "errorGeneric": "Algo salió mal. Inténtalo de nuevo o escribe a {email}.",
+    "errorTooManyAttempts": "Ya recibimos varias solicitudes. Inténtalo de nuevo mañana o escribe a {email}.",
+    "errorInvalidEmail": "Introduce una dirección de correo válida."
   },
   "firstRun": {
     "scheduleEmptyTitle": "Aún no hay citas.",
