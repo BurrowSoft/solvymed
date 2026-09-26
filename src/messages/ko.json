@@ -636,7 +636,8 @@
       "expiredTitle": "링크가 만료되었습니다",
       "expiredBody": "로그인 페이지에서 새 링크를 요청하세요.",
       "goToSignIn": "로그인으로 이동"
-    }
+    },
+    "captchaFailed": "확인을 완료한 뒤 다시 시도하세요."
   },
   "myAppointments": {
     "title": "내 예약",

@@ -636,7 +636,8 @@
       "expiredTitle": "Ce lien a expiré",
       "expiredBody": "Demandez-en un nouveau depuis la page de connexion.",
       "goToSignIn": "Aller à la connexion"
-    }
+    },
+    "captchaFailed": "Veuillez terminer la vérification et réessayer."
   },
   "myAppointments": {
     "title": "Mes rendez-vous",

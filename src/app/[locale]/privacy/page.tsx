@@ -1,3 +1,5 @@
+import { turnstileEnabled } from "@/lib/turnstile";
+
 export default async function PrivacyPage({
   params,
 }: {
@@ -85,6 +87,10 @@ export default async function PrivacyPage({
               <li><strong>Expo</strong> — push notification delivery service.</li>
               <li><strong>Resend</strong> — transactional email (account confirmations and password resets) (USA).</li>
               <li><strong>Sentry</strong> — error monitoring for the website; error reports carry technical details and are filtered for personal data before they are sent (USA).</li>
+              {/* Only while Turnstile is switched on (site key set), so the policy matches what runs. */}
+              {turnstileEnabled && (
+                <li><strong>Cloudflare Turnstile</strong> — protects sign-up, sign-in and password reset against automated abuse by checking technical signals from your browser (global).</li>
+              )}
             </ul>
             <p>
               We may disclose information if required by law, court order, or to protect the rights and safety

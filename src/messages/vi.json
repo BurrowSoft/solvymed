@@ -636,7 +636,8 @@
       "expiredTitle": "Liên kết này đã hết hạn",
       "expiredBody": "Hãy yêu cầu liên kết mới từ trang đăng nhập.",
       "goToSignIn": "Đến trang đăng nhập"
-    }
+    },
+    "captchaFailed": "Vui lòng hoàn tất bước xác minh rồi thử lại."
   },
   "myAppointments": {
     "title": "Lịch hẹn của tôi",

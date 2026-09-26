@@ -636,7 +636,8 @@
       "expiredTitle": "此链接已过期",
       "expiredBody": "请在登录页面重新获取链接。",
       "goToSignIn": "前往登录"
-    }
+    },
+    "captchaFailed": "请完成验证后重试。"
   },
   "myAppointments": {
     "title": "我的预约",

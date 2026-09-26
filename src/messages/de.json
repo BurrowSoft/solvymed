@@ -636,7 +636,8 @@
       "expiredTitle": "Dieser Link ist abgelaufen",
       "expiredBody": "Fordern Sie auf der Anmeldeseite einen neuen an.",
       "goToSignIn": "Zur Anmeldung"
-    }
+    },
+    "captchaFailed": "Bitte schließen Sie die Überprüfung ab und versuchen Sie es erneut."
   },
   "myAppointments": {
     "title": "Meine Termine",

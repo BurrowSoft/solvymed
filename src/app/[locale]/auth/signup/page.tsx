@@ -12,6 +12,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 import { isWellFormedSecretaryCode, normalizeSecretaryCode } from "@/lib/secretary";
 import { MIN_PASSWORD_LENGTH, isWeakPasswordError } from "@/lib/password";
+import { TurnstileWidget, turnstileEnabled, isCaptchaError } from "@/components/TurnstileWidget";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -49,6 +50,9 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  // Bot protection (dormant until a Turnstile site key is configured).
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaReset, setCaptchaReset] = useState(0);
 
   const localePath = (path: string) =>
     locale === "en" ? path : `/${locale}${path}`;
@@ -69,6 +73,11 @@ export default function SignupPage() {
 
     if (role === "patient" && !inviteCode.trim()) {
       setError(t("signup.inviteCodeRequired"));
+      return;
+    }
+
+    if (turnstileEnabled && !captchaToken) {
+      setError(t("captchaFailed"));
       return;
     }
 
@@ -114,11 +123,15 @@ export default function SignupPage() {
         // The callback has no [locale] segment; this lands the user on the
         // page in the language they signed up in.
         emailRedirectTo: `https://www.solvymed.com/api/auth/callback?locale=${encodeURIComponent(locale)}`,
+        ...(captchaToken ? { captchaToken } : {}),
       },
     });
     setLoading(false);
+    if (turnstileEnabled) setCaptchaReset((n) => n + 1);
 
-    if (isWeakPasswordError(authError)) {
+    if (isCaptchaError(authError)) {
+      setError(t("captchaFailed"));
+    } else if (isWeakPasswordError(authError)) {
       setError(t("passwordTooShort", { min: MIN_PASSWORD_LENGTH }));
     } else if (authError) {
       setError(t("signup.error"));
@@ -293,6 +306,8 @@ export default function SignupPage() {
               ),
             })}
           </p>
+
+          <TurnstileWidget onToken={setCaptchaToken} locale={locale} resetKey={captchaReset} />
 
           <button
             type="submit"

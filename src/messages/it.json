@@ -636,7 +636,8 @@
       "expiredTitle": "Questo link è scaduto",
       "expiredBody": "Richiedine uno nuovo dalla pagina di accesso.",
       "goToSignIn": "Vai all'accesso"
-    }
+    },
+    "captchaFailed": "Completa la verifica e riprova."
   },
   "myAppointments": {
     "title": "I miei appuntamenti",

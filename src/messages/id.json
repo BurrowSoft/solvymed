@@ -636,7 +636,8 @@
       "expiredTitle": "Tautan ini sudah kedaluwarsa",
       "expiredBody": "Minta tautan baru dari halaman masuk.",
       "goToSignIn": "Ke halaman masuk"
-    }
+    },
+    "captchaFailed": "Selesaikan verifikasi lalu coba lagi."
   },
   "myAppointments": {
     "title": "Janji Saya",

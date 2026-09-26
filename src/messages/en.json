@@ -636,7 +636,8 @@
       "expiredTitle": "This link has expired",
       "expiredBody": "Request a new one from the sign-in page.",
       "goToSignIn": "Go to sign in"
-    }
+    },
+    "captchaFailed": "Please complete the verification and try again."
   },
   "myAppointments": {
     "title": "My Appointments",
