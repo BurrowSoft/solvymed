@@ -4535,3 +4535,50 @@ Xcode constraint mobile does — Playwright's WebKit engine *can* run on
 Windows/Linux without a Mac, so if Safari-specific web bugs ever matter,
 add a `webkit` project to `playwright.config.ts`. Not done yet since
 Chromium coverage is the priority while the E2E layer is brand new.
+
+## PR #47 (`fix/auth-error-codes`) — auth errors from Supabase's error code, 🟢 at `4558c8e`, review clean
+
+**Scope: exactly `4558c8e`**, retargeted to master after #46 merged, with the
+head unchanged. This entry sits at the end of the file so it doesn't clash
+with master's #44–#46 entries.
+
+**Setup.** Checked on the preview in pt-BR and en with four throwaways,
+all deleted afterwards:
+- a confirmed doctor;
+- an unconfirmed account (admin-created with `email_confirm: false`);
+- a banned account (admin `ban_duration`), standing in for a closed one,
+  since both give `user_banned`;
+- a fresh doctor for the /auth/confirm check.
+
+**Results.** The Supabase code behind each line was read from the network,
+and pt-BR / en shows the text that appeared:
+
+| Step | Supabase | pt-BR / en |
+| --- | --- | --- |
+| 1. Wrong password | 400 `invalid_credentials` | "E-mail ou senha incorretos." / "Wrong email or password." |
+| 1. Unknown email | 400 `invalid_credentials` | **the same line**, so no enumeration |
+| 2. Unconfirmed | 400 `email_not_confirmed` | "Confirme seu e-mail primeiro: toque no link…" / "Confirm your email first: tap the link…" |
+| 5. Closed / banned | 400 `user_banned` | "Esta conta foi encerrada ou suspensa… support@solvymed.com." / "This account has been closed or suspended…" |
+| Offline login | fetch fails | "Sem conexão. Verifique sua internet e tente novamente." / "No connection. Check your internet and try again." |
+| 3. Signup, 7 chars | client check | "A senha deve ter pelo menos 8 caracteres." / "Password must be at least 8 characters." (nothing created) |
+| 3. Forgot, 2nd request inside a minute | 429 `over_email_send_rate_limit` | "Muitas tentativas. Aguarde alguns minutos…" / "Too many attempts. Wait a few minutes…" (the 1st shows the usual sent line) |
+| 4. Recovery form (/auth/verify), 7 chars | client check | the 8-character line above |
+| 4. Recovery form, same password | 422 `same_password` | "A nova senha deve ser diferente da senha atual." / "New password must differ from your current password." |
+| 6. Recovery link reused | verify fails | "Este link expirou…" / "This link has expired…" |
+| /auth/confirm set-password form, same password | 422 `same_password` | the same "must differ" line, no raw English (it used to show `error.message`) |
+
+**Notes:**
+- **/auth/confirm with 7 characters:** the input's `minlength=8` stops the
+  submit with the browser's own bubble, before any app code runs. So the
+  text follows the browser's language, not the page's. This is pre-existing,
+  #47 doesn't change it, and it's not a blocker.
+- **/auth/reset-password:** a plain logged-in session shows the page's
+  "link may have expired" state and no form. Recovery links now land on
+  /auth/verify (#41), so the form above is the one users see; the page's
+  error path goes through the same `useAuthErrorText`.
+
+**Review: Claude `/code-review` (code reviewer), clean at `4558c8e`.**
+
+**CI at `4558c8e`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `4558c8e`, review clean.**
