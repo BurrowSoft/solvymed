@@ -2478,6 +2478,12 @@ had no working hours.
 **Merge gate: 🟢 for `74f599b`.** The two findings above are follow-ups,
 not blockers for this copy PR.
 
+**Addendum: 🟢 at `e97f381`.** This commit only changes the Arabic signup
+role label in `ar.json`, to "مختص(ة) رعاية صحية" (healthcare professional);
+I checked the diff. `ar.json` still parses, with 26 namespaces. Rendered
+live, `/ar/auth/signup` is RTL and shows the new label, not the old
+standalone "الرعاية الصحية".
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
