@@ -11,7 +11,9 @@
     "comingSoon": "ダウンロードリンクは近日公開予定。",
     "soon": "近日公開",
     "appStoreComingSoon": "App Store で近日公開",
-    "openApp": "アプリを開く"
+    "openApp": "アプリを開く",
+    "iosBeta": "iPhone ベータ版 – TestFlight でインストール",
+    "iosBetaHint": "Apple の無料アプリ TestFlight が必要です"
   },
   "highlights": {
     "h1": "スマート予約管理",

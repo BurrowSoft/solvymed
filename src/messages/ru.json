@@ -11,7 +11,9 @@
     "comingSoon": "Ссылки для скачивания появятся в ближайшее время.",
     "soon": "Скоро",
     "appStoreComingSoon": "Скоро в App Store",
-    "openApp": "Открыть приложение"
+    "openApp": "Открыть приложение",
+    "iosBeta": "Бета для iPhone – установка через TestFlight",
+    "iosBetaHint": "Нужно бесплатное приложение TestFlight от Apple"
   },
   "highlights": {
     "h1": "Умное расписание",

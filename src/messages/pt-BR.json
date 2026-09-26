@@ -11,7 +11,9 @@
     "comingSoon": "Links de download em breve.",
     "soon": "Em breve",
     "appStoreComingSoon": "Em breve na App Store",
-    "openApp": "Abrir o app"
+    "openApp": "Abrir o app",
+    "iosBeta": "Beta para iPhone – instale pelo TestFlight",
+    "iosBetaHint": "Requer o app TestFlight gratuito da Apple"
   },
   "highlights": {
     "h1": "Agendamento inteligente",

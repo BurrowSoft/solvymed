@@ -11,7 +11,9 @@
     "comingSoon": "下載連結即將推出。",
     "soon": "即將推出",
     "appStoreComingSoon": "即將登上 App Store",
-    "openApp": "開啟 App"
+    "openApp": "開啟 App",
+    "iosBeta": "iPhone 測試版 – 透過 TestFlight 安裝",
+    "iosBetaHint": "需要 Apple 免費的 TestFlight App"
   },
   "highlights": {
     "h1": "智慧排程",

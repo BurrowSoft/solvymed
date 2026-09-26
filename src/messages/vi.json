@@ -11,7 +11,9 @@
     "comingSoon": "Liên kết tải xuống sắp có.",
     "soon": "Sắp ra mắt",
     "appStoreComingSoon": "Sắp có trên App Store",
-    "openApp": "Mở ứng dụng"
+    "openApp": "Mở ứng dụng",
+    "iosBeta": "Bản beta cho iPhone – cài qua TestFlight",
+    "iosBetaHint": "Cần ứng dụng TestFlight miễn phí của Apple"
   },
   "highlights": {
     "h1": "Lịch hẹn thông minh",

@@ -11,7 +11,9 @@
     "comingSoon": "Download-Links folgen in Kürze.",
     "soon": "Bald",
     "appStoreComingSoon": "Bald im App Store verfügbar",
-    "openApp": "App öffnen"
+    "openApp": "App öffnen",
+    "iosBeta": "iPhone-Beta – über TestFlight installieren",
+    "iosBetaHint": "Erfordert die kostenlose TestFlight-App von Apple"
   },
   "highlights": {
     "h1": "Intelligente Terminplanung",

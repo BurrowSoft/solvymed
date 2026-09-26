@@ -11,7 +11,9 @@
     "comingSoon": "ลิงก์ดาวน์โหลดเร็วๆ นี้",
     "soon": "เร็วๆ นี้",
     "appStoreComingSoon": "เร็วๆ นี้บน App Store",
-    "openApp": "เปิดแอป"
+    "openApp": "เปิดแอป",
+    "iosBeta": "เวอร์ชันเบต้าสำหรับ iPhone – ติดตั้งผ่าน TestFlight",
+    "iosBetaHint": "ต้องใช้แอป TestFlight ของ Apple (ฟรี)"
   },
   "highlights": {
     "h1": "นัดหมายอัจฉริยะ",

@@ -11,7 +11,9 @@
     "comingSoon": "Tautan unduhan segera hadir.",
     "soon": "Segera",
     "appStoreComingSoon": "Segera hadir di App Store",
-    "openApp": "Buka aplikasi"
+    "openApp": "Buka aplikasi",
+    "iosBeta": "Beta untuk iPhone – instal lewat TestFlight",
+    "iosBetaHint": "Memerlukan aplikasi TestFlight gratis dari Apple"
   },
   "highlights": {
     "h1": "Penjadwalan cerdas",

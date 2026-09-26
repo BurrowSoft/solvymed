@@ -11,7 +11,9 @@
     "comingSoon": "روابط التنزيل قريباً.",
     "soon": "قريبًا",
     "appStoreComingSoon": "قريبًا على App Store",
-    "openApp": "فتح التطبيق"
+    "openApp": "فتح التطبيق",
+    "iosBeta": "النسخة التجريبية لـ iPhone – ثبّتها عبر TestFlight",
+    "iosBetaHint": "يتطلب تطبيق TestFlight المجاني من Apple"
   },
   "highlights": {
     "h1": "جدولة ذكية",

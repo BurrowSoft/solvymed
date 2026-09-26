@@ -11,7 +11,9 @@
     "comingSoon": "下载链接即将推出。",
     "soon": "即将推出",
     "appStoreComingSoon": "即将登陆 App Store",
-    "openApp": "打开应用"
+    "openApp": "打开应用",
+    "iosBeta": "iPhone 测试版 – 通过 TestFlight 安装",
+    "iosBetaHint": "需要 Apple 免费的 TestFlight 应用"
   },
   "highlights": {
     "h1": "智能排程",

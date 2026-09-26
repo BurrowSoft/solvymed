@@ -11,7 +11,9 @@
     "comingSoon": "Download links coming soon — check back shortly.",
     "soon": "Soon",
     "appStoreComingSoon": "Coming soon to the App Store",
-    "openApp": "Open App"
+    "openApp": "Open App",
+    "iosBeta": "iPhone beta – install with TestFlight",
+    "iosBetaHint": "Requires Apple's free TestFlight app"
   },
   "highlights": {
     "h1": "Smart scheduling",
