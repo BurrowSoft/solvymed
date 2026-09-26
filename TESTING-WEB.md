@@ -4277,9 +4277,11 @@ linked patient.**
   - **The secretary:** detached (`invited_by_professional_id` null) and
     sees no patients.
   - **The linked patient:** unlinked (`linked_patient_id` null).
-- **Notices:** delivery isn't observable here (fake token and
-  `@example.invalid`); I've asked mob dev for the server-side accepted
-  count.
+- **Notices:** confirmed server-side by mob dev. `notify-clinic-closed`
+  was called 1.3 s after the close and returned POST 202, logging
+  `sent=0 failed=0 skipped=1`. The skip is the `@example.invalid` linked
+  patient, correctly not emailed. Push delivery to the fake Expo token
+  isn't observable.
 
 **🟢 2. Doctor without records, on trial.** "Excluir conta" (no no-refund
 line) → `deleted`. The auth user returns 404, and the professional row and
@@ -4329,7 +4331,8 @@ with the extra checks above.
 **CI at `f0ce14a`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `f0ce14a`, review clean.** The linked-patient notice
-count is pending mob dev's server-side confirmation.
+call is confirmed server-side (202, skipped=1). The closed throwaways were
+purged by mob dev.
 
 ## iOS — open question
 
