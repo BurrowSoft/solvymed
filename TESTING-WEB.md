@@ -4209,7 +4209,35 @@ this head** (only the Vercel checks are listed). It's required, so it must
 go green before merge.
 
 **Merge gate: 🟢 for `e38114d`, review clean, pending the required CI
-check.**
+check.** Merged as `b51c1ff`, after master was merged in (`f87053a`, the
+code reviewer's clean head), with CI green.
+
+**Prod addendum (`b51c1ff`, www.solvymed.com):**
+- **Welcome:** a real UI signup plus confirmation lands on
+  `/pt-BR/auth/professional-welcome` ("Boas-vindas ao SolvyMed, Joana!",
+  no countdown). Start setup → `/dashboard?setup=1`; Skip → `/dashboard`.
+- **Other routes:** a second login → `/dashboard`, and a recovery link via
+  the callback → `/dashboard`, not the welcome page. The recovery fix is
+  tracked under A-15.
+- **Schedule empty state:** "Share" goes to Settings when there's no code;
+  with a code it copies `…/join/<code>` with **no locale** ("Link
+  copiado!"). Settings "Copiar link" is the same.
+- **Team links:** the secretary link and WhatsApp text are
+  `…/join/secretary/<code>`, with no locale. Opened in an en browser, they
+  show English, and the patient link goes to `/auth/signup?join=…` with
+  `lang=en`.
+- **Payments empty state:** "Definir seus preços" → Settings. A secretary
+  gets no Set-prices or Share button and no chip.
+- **Chip:** +12h is **red**, "Teste grátis: último dia · Assinar". An active
+  subscription shows **no chip**. A brand-new doctor shows the neutral
+  "faltam 15 dias · Ver plano" on Home, Schedule and Patients, and the
+  old banner is gone.
+- **#34:** the schedule still defaults to the Brazil date.
+- **Harness note:** in one of the two specs, the lookup of the new user
+  ran before prod finished the signup, so its chip PATCHes didn't apply
+  and it kept the default 15-day trial. The second spec used a pre-made
+  doctor, and its chip results are the ones above. The orphaned account
+  was deleted.
 
 ## iOS — open question
 
