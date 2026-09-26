@@ -544,6 +544,37 @@ accept it.
 | F-4 | Errors | Console: no uncaught errors on the main pages. Server log: no 5xx during the run. |
 | F-5 | Version gate (`app_config`) | Doctors and secretaries below the minimum version see the gate; others don't. |
 
+### G. Launch features (⏳ placeholders, filled in as each one ships)
+
+Each ⏳ item becomes a normal row, with a PR number and exact expected
+text, once that feature is merged. **An item still marked ⏳ at RC time
+counts as ❌** unless UX/PM has dropped the feature from 1.3.0.
+
+| ID | Flow | Expected result (draft) |
+|---|---|---|
+| G-1 ⏳📱 | First run: welcome page | A new doctor's first login shows the translated welcome page in pt-BR and en. It's shown once; returning later doesn't show it again. |
+| G-2 ⏳📱 | First run: setup checklist | Every step deep-links to the right screen: profile, hours, procedures, Pix key, invite a patient, and so on. A step ticks off once it's actually done (check this from the DB state, not just the click). It's shown to **doctors only**; a secretary or patient never sees it, even via its URL. |
+| G-3 ⏳ | First run: empty states | Each empty list (schedule, patients, payments, team, My appointments) shows a helpful translated empty state with a next-step link. None are blank. |
+| G-4 ⏳📱 | Trial chip | It shows the days left. At **≤3 days it turns amber**, and on the last day it's still correct, with no off-by-one in UTC. It's hidden for active, lifetime and secretary accounts. |
+| G-5 ⏳ | One-time cards | Each one-time card shows until it's dismissed. Once dismissed, it stays dismissed after reload, sign-out and sign-in, and on another browser if that's stored per account. |
+| G-6 ⏳📱 | LGPD consent banner | It shows on first visit, signed out and signed in. **Declining really blocks marketing tracking:** in the Network tab, no analytics or ads pixels or requests fire and no tracking cookies are set, before consent and after declining. Accepting enables them. The choice persists, and can be changed later from a link (footer or privacy page). Only the necessary cookies are set before a choice is made. |
+| G-7 ⏳ | Sentry | A forced client error and a forced server error each appear in Sentry with a release tag. **No patient data in the event:** no names, CPF, email, phone, record or prescription text, in the message, breadcrumbs, request body or URL query. Check the raw event JSON. |
+| G-8 ⏳ | Privacy and terms: data retention | `/privacy` and `/terms`, in pt-BR and en, state the retention periods and deletion process, and match what the app actually does (for example what happens on close-account or archive; see D-5). LGPD controller and contact details are present. |
+
+### H. The ad visitor path (paid-traffic simulation, pt-BR, phone)
+
+This is the exact path a paid-marketing visitor takes. Run it on
+**Pixel 7 and iPhone 14 emulation**, in pt-BR, in a **fresh browser
+context**, with no cookies and no `NEXT_LOCALE`.
+
+| ID | Step | Expected result |
+|---|---|---|
+| H-1 📱 | Open `/pt-BR/?utm_source=facebook&utm_medium=paid&utm_campaign=launch_br&utm_content=test` | The landing page renders in pt-BR, the LGPD banner shows (G-6), and nothing overflows. The UTM params survive, i.e. they're kept for attribution (cookie, storage or signup metadata, whatever the design is). Record where they end up. |
+| H-2 📱 | CTA → signup | The signup opens in pt-BR with the doctor role by default ("Profissional de saúde") and the form usable on a phone keyboard. The UTM attribution is still there. |
+| H-3 📱 | Sign up → "Verifique seu e-mail" → confirm, via the callback `token_hash` | The visitor lands on the dashboard in **pt-BR**, not en. |
+| H-4 📱 | First run | The welcome page (G-1) and the setup checklist (G-2) show. The first step's deep link works on the phone. The trial chip (G-4) shows about 15 days. |
+| H-5 | Attribution check | The new account, or the analytics event, carries the UTM values from H-1, if consent was accepted. With consent declined, **no** marketing event fires, but the signup still works. |
+
 ### L-1. Live-mode Stripe check on production (at release time, with the user)
 
 Only with the user present, and only after the live keys, the webhook
