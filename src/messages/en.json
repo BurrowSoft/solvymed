@@ -50,7 +50,10 @@
     "body": "This website is a work in progress. The full Solvymed website is coming soon with detailed documentation, pricing, and support resources. In the meantime, the app is fully operational — download it and start managing your practice today."
   },
   "footer": {
-    "copyright": "© 2026 Solvymed. All rights reserved."
+    "copyright": "© 2026 Solvymed. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "legal": "Legal"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -537,7 +540,8 @@
       "joiningAs": "Joining as {role} via invite link.",
       "joiningAsSecretary": "Joining as a secretary via invite link.",
       "secretaryNeedsInvite": "Secretary? Ask your doctor for an invite link.",
-      "secretaryEmailMismatch": "This email doesn't match the invitation, or the invitation is no longer valid. Check the email, or ask the clinic for a new link."
+      "secretaryEmailMismatch": "This email doesn't match the invitation, or the invitation is no longer valid. Check the email, or ask the clinic for a new link.",
+      "consent": "By creating an account, you agree to the <terms>Terms of Service</terms> and the <privacy>Privacy Policy</privacy>."
     },
     "forgotPassword": {
       "title": "Forgot your password?",

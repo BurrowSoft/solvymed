@@ -3414,6 +3414,49 @@ alongside as the "before":
 
 **Merge gate: 🟢 for `aa4251d`, review clean.**
 
+## PR #27 (`feat/legal-links`) — Privacy/Terms links + signup consent, 🟢 at `9271345`, review clean
+
+**Scope: exactly `9271345`.** That's `1142ea0`, plus the master merge
+(`cabee51`, bringing in #28), plus `LegalLinks` on `/invite/<code>`.
+
+Tested live on the preview in pt-BR (at a 375 px mobile width), en
+(unprefixed), es and ar. The bypass header was sent on preview requests
+only.
+
+**🟢 Legal links.** A `<nav>` with a translated label ("Informações
+legais", "Legal", "Información legal", "معلومات قانونية") carries both
+links, prefixed with the page's locale. It appears on:
+- the landing page;
+- login, signup and forgot-password;
+- `/join/<code>` (which redirects to signup);
+- `/join/secretary/<code>`;
+- `/account/delete`;
+- **`/invite/<code>`**. It was missing at `1142ea0` and is fixed in
+  `9271345`.
+
+Other checks:
+- **Links:** clicking through lands on `/pt-BR/privacy`, `/pt-BR/terms`,
+  `/privacy` and `/terms`.
+- **Layout:** no horizontal overflow at 375 px, and ar is `dir=rtl`.
+
+**🟢 Signup consent, in 4 locales.** For example, "Ao criar uma conta,
+você concorda com os Termos de Uso e a Política de Privacidade." and
+"By creating an account, you agree to the Terms of Service and the
+Privacy Policy."
+- **Position:** above the submit button.
+- **Links:** both go to the locale's `/terms` and `/privacy`, with
+  `target=_blank`. Clicking Terms opens a new tab on the right page.
+
+**Review: Claude `/code-review` (code reviewer), clean at `9271345`.**
+
+**FOLLOW-UP:** the `/privacy` and `/terms` pages themselves are
+English-only in every locale. That's covered by the lawyer-reviewed
+rewrite, where pt-BR and en are authoritative.
+
+**CI at `9271345`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `9271345`, review clean.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
