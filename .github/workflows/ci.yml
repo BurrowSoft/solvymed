@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  # PR runs share a group per branch, so a new push cancels the superseded
+  # run. Master runs are grouped per commit: GitHub keeps only one pending
+  # run per group, so a shared group would drop queued merge commits.
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    name: Typecheck and unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # No job pushes, so don't leave a token in .git/config.
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          # Matches the Vercel project's Node.js version (24.x).
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # `next typegen && tsc --noEmit`: generates .next/types (route types and
+      # the page/layout/route-handler validator tsconfig includes), so tsc
+      # checks the same things `next build` does, locally and here.
+      - run: npm run typecheck
+      - run: npm test
+
+  lint:
+    # Advisory: scripts/ci-lint.mjs reports findings (annotations and a
+    # job-summary total) and exits 0; it fails only when the runner itself
+    # crashes, so a red "Lint" check always means a broken linter.
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # No job pushes, so don't leave a token in .git/config.
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: node scripts/ci-lint.mjs

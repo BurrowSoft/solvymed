@@ -2594,6 +2594,231 @@ this merges, checklist F-6 can go green.
 
 **Merge gate: 🟢 for `d054422`.**
 
+## PR #20 (`ci/github-actions`) — CI: typecheck, unit tests and advisory lint
+
+> **Current status, at `b5b5dc4`: 🟢, and the review is clean.** The design
+> **at this SHA**:
+> - **"Typecheck and unit tests" job:** `npm ci`, then
+>   `npm run typecheck` (= `next typegen && tsc --noEmit`), then
+>   `npm test`.
+> - **Separate "Lint" job:** `scripts/ci-lint.mjs` exits **0 on
+>   findings**. It exits **2 on a crash or on any fatal parse error**,
+>   listing the files and a "runner failed" summary. There's no
+>   `continue-on-error`. It reports 35 errors and 17 warnings.
+> - **Setup:** actions v7 (checkout 7.0.1, setup-node 7.0.0), pinned by
+>   SHA, with `persist-credentials: false`. Master pushes are grouped per
+>   SHA.
+>
+> CI run `36219009258` is green on both jobs: "✓ Route types generated
+> successfully", 78/78 tests, and Lint at 35 errors and 17 warnings.
+> **Review: Claude `/code-review high`, clean at `b5b5dc4`** (Copilot
+> quota exhausted). Round 6 found no merge-blocking issues. See the round-6
+> addendum at the end of this entry. Everything below is the history,
+> oldest first; the earlier 🟢 lines apply only to their own SHAs.
+
+**Scope of the first section below: exactly `48f81c9`.** The earlier entry
+was for `2fdba55`; `48f81c9` moves the lint `continue-on-error` from the
+job to the step. That design has since been replaced (see the status box
+above).
+- **Changes:** adds `.github/workflows/ci.yml`, triggered on `pull_request`
+  and `push` with Node 24.
+  - **"Typecheck and unit tests":** `npm ci`, `npm run typecheck`, `npm test`.
+  - **"Lint (advisory)":** `npm ci`, then `npm run lint` with a
+    **step-level** `continue-on-error: true` (`ci.yml:46`).
+- **ESLint:** it's installed now (`eslint`, `eslint-config-next`,
+  `@eslint/eslintrc`), and `lint` is `eslint .`.
+- **Build:** `next.config.ts` sets `eslint.ignoreDuringBuilds`, with the
+  comment "type errors still fail the build".
+
+**🟢 (1) Checks at `48f81c9`** (CI run `36209706986`, workflow **success**):
+- **Typecheck and unit tests: ✅.** `tsc --noEmit` is clean, and the tests
+  are 5 files, **78/78** passed.
+- **Lint (advisory): ✅, green.** Its findings are still reported: **54
+  problems (35 errors, 19 warnings)** in the log, plus 22 check-run
+  annotations.
+- **PR state:** `mergeStateStatus` is `CLEAN`. (At `2fdba55`, the job-level
+  setting showed lint as a red ✗ and the PR as `UNSTABLE`.)
+
+**(2) Vercel preview: the build is ✅, but pages were not checked.**
+Correction to my earlier note: the preview is behind **Vercel SSO
+deployment protection**. `curl -L` followed the redirect to Vercel's login
+page, and it was *that* page that returned 200, not the app. What's proven
+is that the Vercel build and deploy check passed with ESLint installed.
+Loading real pages on a preview needs a protection-bypass token.
+
+**(3) Local run: skipped on purpose.** In this worktree `node_modules` is a
+**junction into the main checkout**, so `npm ci` here would wipe the
+dependencies other sessions' servers run on. CI's clean `npm ci` covers it.
+
+**Merge gate: 🟢 for `48f81c9`.**
+
+**Addendum: 🟢 at `380932f`.** Two commits on top of `48f81c9`:
+- **`eb47acb` merges master (#21) in.** I checked it: the #19, #20 and #21
+  entries are intact and in order, with no conflict markers.
+- **`380932f` fixes a test that only passed before 9 a.m.**
+  `booking-client.test.tsx` clicks today's 9:00 slot, which the page
+  hides once 9:00 local time has passed. The fix pins `Date` only
+  (`toFake: ["Date"]`, 2030-01-14 06:00), so the real timers `waitFor`
+  uses keep running. They're restored after each test.
+
+| | Local time | Tests |
+|---|---|---|
+| master `81101fe` (control) | 09:59 | **6 failed**, all in `booking-client` |
+| #20 `380932f` | 10:00 | **78/78 passed** |
+
+CI run `36213290674` at `380932f` is green on both jobs (Typecheck and
+unit tests, and advisory Lint).
+
+**Review: Claude `/code-review high` at `380932f`** (Copilot quota
+exhausted). 9 findings were posted as inline PR comments. None is a
+correctness bug; the notable ones:
+- `cancel-in-progress: true` also cancels `master` push runs, so
+  back-to-back merges leave a merge commit with no CI result.
+- Lint is fully non-gating in two places.
+
+The rest are small: annotation caps, ESLint ignores for generated dirs, the
+two lint switches not linked, a duplicate `npm ci`, split `beforeEach`
+hooks, and actions pinned to tags. The first finding, the gate being scoped
+to an old SHA, is resolved by this addendum. **Review status: not yet
+clean.** It's waiting on web dev's fixes or answers; I'll re-run it on the
+new HEAD.
+
+**Addendum: CI 🟢 at `4d1f66d`; review not clean.**
+- **What changed:** `4d1f66d` answered all 9 round-1 threads. CI is now a
+  single "Typecheck and unit tests" job, with lint as an advisory
+  **step** inside it that reports totals in the job summary. Actions are
+  pinned to SHAs, and concurrency cancels only PR runs.
+- **CI:** run `36214247909` is green. `npm ci`, typecheck, the tests
+  (78/78) and the Lint (advisory) step all pass, and lint still reports
+  54 problems (35 errors, 19 warnings). There's no separate "Lint
+  (advisory)" check any more.
+- **Review round 2: Claude `/code-review high` at `4d1f66d`** (Copilot
+  quota exhausted). **6 new findings** were posted inline, three of them
+  real:
+  - The concurrency group still loses a *queued* master run when a third
+    merge lands (GitHub keeps one pending run per group), so group pushes
+    by SHA.
+  - `|| true` masks an ESLint crash (exit 2) as a green step with no
+    findings.
+  - `if: always()` runs lint after a failed `npm ci`, where `npx eslint`
+    would fetch ESLint 10.
+  - Also: ESLint runs twice; the synced `packages/shared` copy gets
+    linted; and this entry described the old two-check layout, which this
+    addendum fixes.
+- **Review status: not clean.** I'll re-run it on the next HEAD.
+
+**Addendum: CI 🟢 at `7ffedcf`; review round 3 not clean.**
+- **What changed:** `cebdc88` and `7ffedcf` answer round 2.
+  - Master pushes are grouped per commit SHA.
+  - Lint runs once, through `scripts/ci-lint.mjs` (the ESLint API),
+    which exits 2 on a crash and adds a summary line.
+  - The lint step runs only when `npm ci` succeeded and the run wasn't
+    cancelled.
+  - `packages/**` is ignored.
+  - A new gating step, `node --check scripts/ci-lint.mjs`, runs first.
+    The runner at `cebdc88` had a syntax error that looked exactly like
+    "findings", and it's fixed in `7ffedcf`.
+- **CI:** run `36215208355` is green: checkout and setup (pinned SHAs),
+  `npm ci`, typecheck, the tests (78/78), `node --check`, and Lint
+  (advisory) reporting **35 errors, 17 warnings**.
+- **Review round 3: Claude `/code-review high` at `7ffedcf`.** 7 findings
+  were posted inline.
+  - **Worth fixing:**
+    - A *runtime* crash in the runner (e.g. the top-level `import` failing
+      to resolve, outside the try) still exits 1 and looks like findings,
+      since `node --check` only catches syntax. The suggested root fix:
+      exit 0 on findings, non-zero only on a crash, and drop
+      `continue-on-error`.
+    - Findings past GitHub's annotation cap print in the log with **no
+      file or line**.
+  - **Trivial:** workflow-command escaping, and a stray blank line in
+    `.gitignore`.
+  - **Already decided by UX:** two findings (lint should gate; don't use
+    `::error` on untouched files) re-raise the "lint advisory until
+    post-launch" decision. They should be answered and resolved, not
+    reopened.
+  - The gate-SHA finding is resolved by this addendum.
+- **Review status: not clean** (2 real, 2 trivial).
+
+**Addendum: CI 🟢 at `80fee99`; review round 4 not clean.**
+- **What changed:** `80fee99` answers round 3.
+  - The runner now **exits 0 on findings and non-zero on any crash**:
+    ESLint is imported inside the try, and there's no
+    `continue-on-error`.
+  - The `node --check` step is removed as redundant.
+  - Findings print as `::warning` with `path:line:col` in the text, and
+    the escaping is fixed.
+  - The stray `.gitignore` line is gone.
+- **CI:** run `36215570827` is green (checkout and setup, `npm ci`,
+  typecheck, tests 78/78, and Lint (advisory) reporting 35 errors and 17
+  warnings). The steps now differ from what the header of this entry
+  describes.
+- **Review round 4: Claude `/code-review high` at `80fee99`.** 8 findings
+  were posted inline.
+  - **Real:**
+    - The typecheck runs `tsc` without `next typegen`, so Next's route
+      and page types aren't checked: a bad `params` type passes CI and
+      only fails `next build`.
+    - `actions/checkout` and `setup-node` v4.4.0 run on GitHub's
+      deprecated Node 20 action runtime.
+  - **By design, with a cheap improvement:** a lint crash now fails the
+    single job, under the "Typecheck and unit tests" name. A separate
+    "Lint" job would attribute it correctly.
+  - **Nits:** the annotation cap, where the ~10 shown are arbitrary; the
+    test-clock design (pass `now` into the helpers); the catch block
+    mislabelling a failed summary write; and a path recomputed per
+    message.
+  - The gate-SHA finding is resolved by this addendum.
+- **Review status: not clean** (2 real).
+
+**Addendum: CI 🟢 at `8bd4f9b`; review round 5 not clean.**
+- **What changed:** `8bd4f9b` answers round 4. It adds `next typegen` before
+  typecheck, moves the actions to v7 (Node 24, pinned SHAs), and makes
+  Lint its own job again. Web dev notes that Next types page props as
+  `{ params: Promise<…> } & any`, so a wrong page `params` isn’t caught
+  by `next build` either; CI now matches the build exactly.
+- **CI:** run `36216041689` is green on both jobs.
+- **Review round 5: Claude `/code-review high` at `8bd4f9b`.** 8 findings
+  were posted inline.
+  - **Real:** `ci-lint.mjs` counts **fatal parse errors** as ordinary
+    findings and exits 0. A broken parser or config gives a green Lint
+    check, because `fatalErrorCount` is never checked.
+  - **Worth a one-liner:** `npm run typecheck` doesn’t run `next typegen`,
+    so local and CI typechecks differ.
+  - **Low:** ESLint 9.39.5 is deprecated; the ignore list drifts from
+    `.gitignore`; `persist-credentials` isn’t disabled; `@types/node` is
+    22 while CI runs 24; and the Lint job costs a second `npm ci`
+    (accepted).
+  - The stale-header finding is resolved by the status box at the top of
+    this entry.
+- **Review status: not clean** (1 real).
+
+**Addendum: 🟢 at `b5b5dc4`; review round 6 clean.**
+- **What changed:** `b5b5dc4` fixes the round-5 bug. Fatal parse errors
+  now make the runner list the files and **exit 2** with the "runner
+  failed" summary. Web dev verified it with an unparseable probe file.
+- **Also in this commit:**
+  - `typecheck` is `next typegen && tsc --noEmit`, and CI calls the
+    script.
+  - `persist-credentials: false` on both checkouts.
+- **CI:** run `36219009258` is green on both jobs.
+- **Review round 6: Claude `/code-review high`, clean at `b5b5dc4`**
+  (Copilot quota exhausted). **No merge-blocking findings.** 8
+  low-severity or design notes were posted inline; none is a correctness
+  bug. The two worth a **follow-up PR** rather than more commits here:
+  - **CI runs tests in UTC**, so the timezone regression tests can't fail
+    there. Set `TZ=America/Sao_Paulo` (the users are in Brazil) on the
+    test step.
+  - The `next` range `^15.1.0` allows versions without `next typegen`.
+    Raise it to `^15.5.0`; today only the lockfile's 15.5.19 makes it
+    work.
+  - The rest are design notes: stale local `.next/types`, local
+    `npm run lint` exiting 1, linking the two lint switches, the
+    clock-injection refactor, Windows path normalisation in the fatal
+    list, and duplicated setup steps across the jobs.
+
+**Merge gate: 🟢 for `b5b5dc4`, review clean.**
+
 ## PR #21 (`hotfix/auth-links-locale`) — password reset 404 on prod; auth emails keep the language, 🟢 at `ce40aef`
 
 **Scope: exactly `ce40aef`.** This is the hotfix for the prod reset 404
