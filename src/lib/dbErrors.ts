@@ -1,6 +1,7 @@
 // Stable error codes the database raises that the UI must show as
 // translated copy, never as the raw message: patient archive (094) and the
-// 24-hour correction rule for clinical records (097).
+// 24-hour correction rule for clinical records (097) and closing an
+// account (100).
 export type KnownDbError =
   | "patient_archived"
   | "patient_has_clinical_history"
@@ -8,7 +9,8 @@ export type KnownDbError =
   | "reason_required"
   | "content_required"
   | "record_not_found"
-  | "prescription_not_found";
+  | "prescription_not_found"
+  | "subscription_active";
 
 const KNOWN: KnownDbError[] = [
   "patient_archived",
@@ -18,6 +20,7 @@ const KNOWN: KnownDbError[] = [
   "content_required",
   "record_not_found",
   "prescription_not_found",
+  "subscription_active",
 ];
 
 // The code when a Postgres/PostgREST error message carries one, else null.
