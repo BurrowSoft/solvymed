@@ -758,5 +758,28 @@
     "step1": "在手机上下载 SolvyMed。",
     "step2": "打开应用，点击 <b>Sign up</b>，选择 <b>Patient</b>，然后在 <b>Invite code</b> 中输入上方的邀请码。",
     "step3": "已有账户？打开 <b>Home</b> 标签页，在 <b>Connect to Your Doctor</b> 中输入邀请码。"
+  },
+  "accountDelete": {
+    "backToHome": "返回首页",
+    "title": "删除账户",
+    "intro": "请在下方提交申请。我们会在 30 天内处理，并通过邮件确认。",
+    "whatHappensTitle": "您的数据会如何处理",
+    "professionals": "<b>医疗专业人员：</b>根据法律，您患者的病历必须保存 20 年，因此我们会关闭您的账户并安全保存病历，而不是删除它们。",
+    "patients": "<b>患者：</b>我们会删除您的账户。诊所保存的有关您的记录仍由诊所保管；如有疑问请联系诊所。",
+    "emailLabel": "电子邮箱",
+    "emailPlaceholder": "your@email.com",
+    "reasonLabel": "原因",
+    "optional": "（选填）",
+    "reasonPlaceholder": "请告诉我们您离开的原因…",
+    "submit": "申请删除账户",
+    "submitting": "正在提交…",
+    "preferEmail": "更喜欢用邮件？",
+    "emailSupport": "联系支持团队",
+    "closeSubject": "关闭我的账户",
+    "doneTitle": "申请已收到",
+    "doneBody": "我们已收到 <b>{email}</b> 的申请。",
+    "doneSub": "我们会在 30 天内处理，并通过邮件确认。",
+    "errorEmailRequired": "请输入您的电子邮箱。",
+    "errorGeneric": "出错了。请重试，或发送邮件至 {email}。"
   }
 }

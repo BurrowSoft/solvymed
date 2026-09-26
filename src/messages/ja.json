@@ -758,5 +758,28 @@
     "step1": "スマートフォンに SolvyMed をダウンロードします。",
     "step2": "アプリを開いて <b>Sign up</b> をタップし、<b>Patient</b> を選んでから、上のコードを <b>Invite code</b> に入力します。",
     "step3": "すでにアカウントをお持ちの場合は、<b>Home</b> タブを開き、<b>Connect to Your Doctor</b> にコードを入力してください。"
+  },
+  "accountDelete": {
+    "backToHome": "ホームに戻る",
+    "title": "アカウントの削除",
+    "intro": "以下からリクエストを送信してください。30日以内に処理し、メールでお知らせします。",
+    "whatHappensTitle": "データの取り扱い",
+    "professionals": "<b>医療従事者の方:</b> 法律により患者さんの診療記録は20年間保存する必要があるため、記録を削除せずに安全に保管したうえでアカウントを閉鎖します。",
+    "patients": "<b>患者さん:</b> アカウントを削除します。クリニックが保有するあなたの記録はクリニックに残ります。記録についてはクリニックにお問い合わせください。",
+    "emailLabel": "メールアドレス",
+    "emailPlaceholder": "your@email.com",
+    "reasonLabel": "理由",
+    "optional": "（任意）",
+    "reasonPlaceholder": "退会の理由をお聞かせください…",
+    "submit": "アカウントの削除をリクエスト",
+    "submitting": "送信中…",
+    "preferEmail": "メールをご希望ですか？",
+    "emailSupport": "サポートにメール",
+    "closeSubject": "アカウントを閉鎖",
+    "doneTitle": "リクエストを受け付けました",
+    "doneBody": "<b>{email}</b> のリクエストを受け付けました。",
+    "doneSub": "30日以内に処理し、メールでお知らせします。",
+    "errorEmailRequired": "メールアドレスを入力してください。",
+    "errorGeneric": "問題が発生しました。もう一度お試しいただくか、{email} までご連絡ください。"
   }
 }

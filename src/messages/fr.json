@@ -758,5 +758,28 @@
     "step1": "Téléchargez SolvyMed sur votre téléphone.",
     "step2": "Ouvrez l'app, touchez <b>S'inscrire</b>, choisissez <b>Patient</b>, puis saisissez le code ci-dessus dans <b>Code d'invitation</b>.",
     "step3": "Vous avez déjà un compte ? Ouvrez l'onglet <b>Accueil</b> et saisissez le code sous <b>Connectez-vous à votre médecin</b>."
+  },
+  "accountDelete": {
+    "backToHome": "Retour à l'accueil",
+    "title": "Supprimer votre compte",
+    "intro": "Envoyez-nous votre demande ci-dessous. Nous la traiterons sous 30 jours et vous le confirmerons par e-mail.",
+    "whatHappensTitle": "Ce qu'il advient de vos données",
+    "professionals": "<b>Professionnels de santé :</b> la loi impose de conserver les dossiers médicaux de vos patients pendant 20 ans ; nous fermons donc votre compte et conservons les dossiers en toute sécurité au lieu de les supprimer.",
+    "patients": "<b>Patients :</b> nous supprimons votre compte. Les dossiers que votre cabinet conserve à votre sujet restent au cabinet ; adressez-vous à lui.",
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "votre@email.com",
+    "reasonLabel": "Motif",
+    "optional": "(facultatif)",
+    "reasonPlaceholder": "Dites-nous pourquoi vous partez…",
+    "submit": "Demander la suppression du compte",
+    "submitting": "Envoi…",
+    "preferEmail": "Vous préférez l'e-mail ?",
+    "emailSupport": "Écrire au support",
+    "closeSubject": "Fermer mon compte",
+    "doneTitle": "Demande reçue",
+    "doneBody": "Nous avons reçu votre demande pour <b>{email}</b>.",
+    "doneSub": "Nous la traiterons sous 30 jours et vous le confirmerons par e-mail.",
+    "errorEmailRequired": "Veuillez saisir votre adresse e-mail.",
+    "errorGeneric": "Une erreur s'est produite. Réessayez ou écrivez à {email}."
   }
 }

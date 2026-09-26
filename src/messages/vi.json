@@ -758,5 +758,28 @@
     "step1": "Tải SolvyMed về điện thoại.",
     "step2": "Mở ứng dụng, chạm <b>Sign up</b>, chọn <b>Patient</b>, rồi nhập mã ở trên vào <b>Invite code</b>.",
     "step3": "Đã có tài khoản? Mở thẻ <b>Home</b> và nhập mã ở mục <b>Connect to Your Doctor</b>."
+  },
+  "accountDelete": {
+    "backToHome": "Về trang chủ",
+    "title": "Xóa tài khoản",
+    "intro": "Gửi yêu cầu của bạn bên dưới. Chúng tôi sẽ xử lý trong vòng 30 ngày và xác nhận qua email.",
+    "whatHappensTitle": "Dữ liệu của bạn sẽ ra sao",
+    "professionals": "<b>Nhân viên y tế:</b> theo luật, hồ sơ bệnh án của bệnh nhân phải được lưu giữ 20 năm, vì vậy chúng tôi đóng tài khoản của bạn và lưu giữ hồ sơ an toàn thay vì xóa.",
+    "patients": "<b>Bệnh nhân:</b> chúng tôi xóa tài khoản của bạn. Hồ sơ mà phòng khám lưu về bạn vẫn ở phòng khám; hãy liên hệ phòng khám nếu cần.",
+    "emailLabel": "Địa chỉ email",
+    "emailPlaceholder": "your@email.com",
+    "reasonLabel": "Lý do",
+    "optional": "(không bắt buộc)",
+    "reasonPlaceholder": "Cho chúng tôi biết lý do bạn rời đi…",
+    "submit": "Yêu cầu xóa tài khoản",
+    "submitting": "Đang gửi…",
+    "preferEmail": "Bạn thích dùng email hơn?",
+    "emailSupport": "Gửi email cho bộ phận hỗ trợ",
+    "closeSubject": "Đóng tài khoản của tôi",
+    "doneTitle": "Đã nhận yêu cầu",
+    "doneBody": "Chúng tôi đã nhận yêu cầu cho <b>{email}</b>.",
+    "doneSub": "Chúng tôi sẽ xử lý trong vòng 30 ngày và xác nhận qua email.",
+    "errorEmailRequired": "Vui lòng nhập địa chỉ email.",
+    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại hoặc gửi email tới {email}."
   }
 }

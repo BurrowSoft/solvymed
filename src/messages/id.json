@@ -758,5 +758,28 @@
     "step1": "Unduh SolvyMed di ponsel Anda.",
     "step2": "Buka aplikasi, ketuk <b>Sign up</b>, pilih <b>Patient</b>, lalu masukkan kode di atas pada <b>Invite code</b>.",
     "step3": "Sudah punya akun? Buka tab <b>Home</b> dan masukkan kode di <b>Connect to Your Doctor</b>."
+  },
+  "accountDelete": {
+    "backToHome": "Kembali ke beranda",
+    "title": "Hapus akun Anda",
+    "intro": "Kirim permintaan Anda di bawah. Kami akan memprosesnya dalam 30 hari dan mengonfirmasi lewat email.",
+    "whatHappensTitle": "Apa yang terjadi pada data Anda",
+    "professionals": "<b>Tenaga kesehatan:</b> menurut hukum, rekam medis pasien Anda harus disimpan selama 20 tahun, jadi kami menutup akun Anda dan menyimpan rekam medis dengan aman alih-alih menghapusnya.",
+    "patients": "<b>Pasien:</b> kami menghapus akun Anda. Catatan yang disimpan klinik tentang Anda tetap berada di klinik; hubungi klinik terkait hal itu.",
+    "emailLabel": "Alamat email",
+    "emailPlaceholder": "your@email.com",
+    "reasonLabel": "Alasan",
+    "optional": "(opsional)",
+    "reasonPlaceholder": "Beri tahu kami mengapa Anda pergi…",
+    "submit": "Minta penghapusan akun",
+    "submitting": "Mengirim…",
+    "preferEmail": "Lebih suka email?",
+    "emailSupport": "Email tim dukungan",
+    "closeSubject": "Tutup akun saya",
+    "doneTitle": "Permintaan diterima",
+    "doneBody": "Kami telah menerima permintaan untuk <b>{email}</b>.",
+    "doneSub": "Kami akan memprosesnya dalam 30 hari dan mengonfirmasi lewat email.",
+    "errorEmailRequired": "Masukkan alamat email Anda.",
+    "errorGeneric": "Terjadi kesalahan. Coba lagi atau kirim email ke {email}."
   }
 }

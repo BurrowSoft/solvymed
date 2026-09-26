@@ -758,5 +758,28 @@
     "step1": "Descarga SolvyMed en tu teléfono.",
     "step2": "Abre la app, toca <b>Regístrate</b>, elige <b>Paciente</b> y luego introduce el código de arriba en <b>Código de invitación</b>.",
     "step3": "¿Ya tienes una cuenta? Abre la pestaña <b>Inicio</b> e introduce el código en <b>Conéctate a tu médico</b>."
+  },
+  "accountDelete": {
+    "backToHome": "Volver al inicio",
+    "title": "Eliminar tu cuenta",
+    "intro": "Envíanos tu solicitud abajo. La procesaremos en un plazo de 30 días y te lo confirmaremos por correo.",
+    "whatHappensTitle": "Qué pasa con tus datos",
+    "professionals": "<b>Profesionales de la salud:</b> por ley, las historias clínicas de tus pacientes deben conservarse durante 20 años, así que cerramos tu cuenta y mantenemos las historias seguras en lugar de eliminarlas.",
+    "patients": "<b>Pacientes:</b> eliminamos tu cuenta. Los registros que tu clínica guarda sobre ti se quedan en la clínica; consúltalo con ella.",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "tu@email.com",
+    "reasonLabel": "Motivo",
+    "optional": "(opcional)",
+    "reasonPlaceholder": "Cuéntanos por qué te vas…",
+    "submit": "Solicitar eliminación de la cuenta",
+    "submitting": "Enviando…",
+    "preferEmail": "¿Prefieres el correo?",
+    "emailSupport": "Escribir a soporte",
+    "closeSubject": "Cerrar mi cuenta",
+    "doneTitle": "Solicitud recibida",
+    "doneBody": "Hemos recibido tu solicitud para <b>{email}</b>.",
+    "doneSub": "La procesaremos en un plazo de 30 días y te lo confirmaremos por correo.",
+    "errorEmailRequired": "Introduce tu correo electrónico.",
+    "errorGeneric": "Algo salió mal. Inténtalo de nuevo o escribe a {email}."
   }
 }

@@ -758,5 +758,28 @@
     "step1": "Scarica SolvyMed sul tuo telefono.",
     "step2": "Apri l'app, tocca <b>Registrati</b>, scegli <b>Paziente</b> e poi inserisci il codice qui sopra in <b>Codice invito</b>.",
     "step3": "Hai già un account? Apri la scheda <b>Home</b> e inserisci il codice in <b>Connettiti al tuo medico</b>."
+  },
+  "accountDelete": {
+    "backToHome": "Torna alla home",
+    "title": "Elimina il tuo account",
+    "intro": "Inviaci la tua richiesta qui sotto. La elaboreremo entro 30 giorni e te lo confermeremo via email.",
+    "whatHappensTitle": "Cosa succede ai tuoi dati",
+    "professionals": "<b>Professionisti sanitari:</b> per legge le cartelle cliniche dei tuoi pazienti devono essere conservate per 20 anni, quindi chiudiamo il tuo account e conserviamo le cartelle in modo sicuro invece di eliminarle.",
+    "patients": "<b>Pazienti:</b> eliminiamo il tuo account. Le informazioni che il tuo studio conserva su di te restano allo studio; rivolgiti allo studio.",
+    "emailLabel": "Indirizzo email",
+    "emailPlaceholder": "tua@email.com",
+    "reasonLabel": "Motivo",
+    "optional": "(facoltativo)",
+    "reasonPlaceholder": "Dicci perché te ne vai…",
+    "submit": "Richiedi l'eliminazione dell'account",
+    "submitting": "Invio…",
+    "preferEmail": "Preferisci l'email?",
+    "emailSupport": "Scrivi al supporto",
+    "closeSubject": "Chiudi il mio account",
+    "doneTitle": "Richiesta ricevuta",
+    "doneBody": "Abbiamo ricevuto la tua richiesta per <b>{email}</b>.",
+    "doneSub": "La elaboreremo entro 30 giorni e te lo confermeremo via email.",
+    "errorEmailRequired": "Inserisci il tuo indirizzo email.",
+    "errorGeneric": "Qualcosa è andato storto. Riprova o scrivi a {email}."
   }
 }
