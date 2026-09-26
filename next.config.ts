@@ -7,8 +7,8 @@ const nextConfig: NextConfig = {
   // Lint is advisory for now (existing findings; CI reports them without
   // gating). Without this, `next build` would fail on lint errors now that
   // ESLint is installed. Type errors still fail the build. To make lint
-  // gating, remove this AND the lint step's continue-on-error in
-  // .github/workflows/ci.yml together.
+  // gating, remove this AND make scripts/ci-lint.mjs exit 1 on errors
+  // (see the note at its top).
   eslint: { ignoreDuringBuilds: true },
   async headers() {
     return [

@@ -31,16 +31,9 @@ jobs:
         run: npm ci
       - run: npm run typecheck
       - run: npm test
-      # Gating: a syntax error in the lint runner would otherwise exit 1 and
-      # look like ordinary lint findings in the advisory step below.
-      - run: node --check scripts/ci-lint.mjs
-
-      # Lint is advisory until the existing findings are cleaned up: it may
-      # fail without failing the job. To make it gating, remove this
-      # continue-on-error AND eslint.ignoreDuringBuilds in next.config.ts
-      # together. It runs whenever the install succeeded (also after a
-      # failed typecheck or test), using the project's own ESLint.
+      # Lint is advisory: scripts/ci-lint.mjs reports findings (annotations
+      # and a job-summary total) and exits 0; it fails only when the runner
+      # itself crashes, so a crash is never mistaken for findings.
       - name: Lint (advisory)
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
-        continue-on-error: true
         run: node scripts/ci-lint.mjs
