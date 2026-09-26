@@ -84,6 +84,7 @@ export default async function PrivacyPage({
               <li><strong>Stripe</strong> — payment processing for subscriptions.</li>
               <li><strong>Expo</strong> — push notification delivery service.</li>
               <li><strong>Resend</strong> — transactional email (account confirmations and password resets) (USA).</li>
+              <li><strong>Sentry</strong> — error monitoring for the website; error reports carry technical details and are filtered for personal data before they are sent (USA).</li>
             </ul>
             <p>
               We may disclose information if required by law, court order, or to protect the rights and safety
