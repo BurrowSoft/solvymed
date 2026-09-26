@@ -2594,10 +2594,27 @@ this merges, checklist F-6 can go green.
 
 **Merge gate: 🟢 for `d054422`.**
 
-## PR #20 (`ci/github-actions`) — CI: typecheck, unit tests and advisory lint, 🟢 at `48f81c9`
+## PR #20 (`ci/github-actions`) — CI: typecheck, unit tests and advisory lint
 
-**Scope: exactly `48f81c9`.** The earlier entry was for `2fdba55`;
-`48f81c9` moves the lint `continue-on-error` from the job to the step.
+> **Current status, at `8bd4f9b`: CI 🟢; review round 5 not clean** (1
+> real bug). The design **at this SHA**:
+> - **"Typecheck and unit tests" job:** `npm ci`, `npx next typegen`,
+>   `npm run typecheck`, `npm test`.
+> - **Separate "Lint" job:** `scripts/ci-lint.mjs` exits **0 on
+>   findings** and **non-zero only on a crash**, with no
+>   `continue-on-error`. It reports 35 errors and 17 warnings.
+> - **Setup:** actions v7 (checkout 7.0.1, setup-node 7.0.0), pinned by
+>   SHA. Master pushes are grouped per SHA.
+>
+> CI run `36216041689` is green on both jobs. Everything below is the
+> history, oldest first. The earlier 🟢 lines apply only to their own
+> SHAs. **This PR is not mergeable until a later addendum records the
+> review as clean at its exact HEAD.**
+
+**Scope of the first section below: exactly `48f81c9`.** The earlier entry
+was for `2fdba55`; `48f81c9` moves the lint `continue-on-error` from the
+job to the step. That design has since been replaced (see the status box
+above).
 - **Changes:** adds `.github/workflows/ci.yml`, triggered on `pull_request`
   and `push` with Node 24.
   - **"Typecheck and unit tests":** `npm ci`, `npm run typecheck`, `npm test`.
@@ -2748,6 +2765,28 @@ new HEAD.
     message.
   - The gate-SHA finding is resolved by this addendum.
 - **Review status: not clean** (2 real).
+
+**Addendum: CI 🟢 at `8bd4f9b`; review round 5 not clean.**
+- **What changed:** `8bd4f9b` answers round 4. It adds `next typegen` before
+  typecheck, moves the actions to v7 (Node 24, pinned SHAs), and makes
+  Lint its own job again. Web dev notes that Next types page props as
+  `{ params: Promise<…> } & any`, so a wrong page `params` isn’t caught
+  by `next build` either; CI now matches the build exactly.
+- **CI:** run `36216041689` is green on both jobs.
+- **Review round 5: Claude `/code-review high` at `8bd4f9b`.** 8 findings
+  were posted inline.
+  - **Real:** `ci-lint.mjs` counts **fatal parse errors** as ordinary
+    findings and exits 0. A broken parser or config gives a green Lint
+    check, because `fatalErrorCount` is never checked.
+  - **Worth a one-liner:** `npm run typecheck` doesn’t run `next typegen`,
+    so local and CI typechecks differ.
+  - **Low:** ESLint 9.39.5 is deprecated; the ignore list drifts from
+    `.gitignore`; `persist-credentials` isn’t disabled; `@types/node` is
+    22 while CI runs 24; and the Lint job costs a second `npm ci`
+    (accepted).
+  - The stale-header finding is resolved by the status box at the top of
+    this entry.
+- **Review status: not clean** (1 real).
 
 ## PR #21 (`hotfix/auth-links-locale`) — password reset 404 on prod; auth emails keep the language, 🟢 at `ce40aef`
 
