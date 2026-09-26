@@ -2562,6 +2562,17 @@ above. The patients were **fully linked** through
 Cleaned up: the 4 throwaway accounts are deleted. **Merge gate: 🟢 for
 `8369aa1`.**
 
+**Addendum: 🟢 at `017d02a`.** Two small commits; I reviewed the diffs.
+- **Repeated query params (`4dd0510`):**
+  `/book/<id>?name=Alpha&name=Beta&specialty=S1&specialty=S2` returns HTTP
+  200. The header shows the first values, "Alpha · S1", and there are 0
+  page errors.
+- **No dangling "?" (`017d02a`):** for a nameless doctor, the My
+  appointments Book link is now exactly `/book/<id>`.
+
+Cleaned up: the 2 throwaway accounts are deleted. **Merge gate: 🟢 for
+`017d02a`.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
