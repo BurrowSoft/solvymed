@@ -24,10 +24,17 @@ export async function GET(request: NextRequest) {
     ? cookieLocale
     : routing.defaultLocale;
   const localePrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
+  // Pin the language for this browser on every redirect from here. en pages
+  // are unprefixed, and without the cookie the middleware's first-visit
+  // geo-redirect would move a fresh browser to its country's locale.
+  const pinLocale = (res: NextResponse) => {
+    res.cookies.set("NEXT_LOCALE", locale, { maxAge: 60 * 60 * 24 * 365, path: "/", sameSite: "lax" });
+    return res;
+  };
 
   // Must have either a PKCE code or an OTP token_hash
   if (!code && !tokenHash) {
-    return NextResponse.redirect(new URL(localePrefix || "/", origin));
+    return pinLocale(NextResponse.redirect(new URL(localePrefix || "/", origin)));
   }
 
   // Collect cookies Supabase wants to set — we'll apply them to the final redirect response.
@@ -176,9 +183,5 @@ export async function GET(request: NextRequest) {
   const response = NextResponse.redirect(redirectUrl);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   pendingCookies.forEach(({ name, value, ...rest }) => response.cookies.set(name, value, rest as any));
-  // Pin the language for this browser. en pages are unprefixed, and without
-  // the cookie the middleware's first-visit geo-redirect would move a
-  // fresh browser to its country's locale.
-  response.cookies.set("NEXT_LOCALE", locale, { maxAge: 60 * 60 * 24 * 365, path: "/", sameSite: "lax" });
-  return response;
+  return pinLocale(response);
 }
