@@ -800,6 +800,8 @@
     "doneBody": "Nous avons reçu votre demande pour <b>{email}</b>.",
     "doneSub": "Nous la traiterons sous 30 jours et vous le confirmerons par e-mail.",
     "errorEmailRequired": "Veuillez saisir votre adresse e-mail.",
-    "errorGeneric": "Une erreur s'est produite. Réessayez ou écrivez à {email}."
+    "errorGeneric": "Une erreur s'est produite. Réessayez ou écrivez à {email}.",
+    "errorTooManyAttempts": "Nous avons déjà reçu plusieurs demandes pour cette adresse e-mail. Réessayez demain ou écrivez à {email}.",
+    "errorInvalidEmail": "Veuillez saisir une adresse e-mail valide."
   }
 }
