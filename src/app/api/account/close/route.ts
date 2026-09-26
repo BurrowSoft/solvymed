@@ -9,7 +9,7 @@ import { closeFailureCode, planClosureNotices, stripeCloseStep, type ClosureRow 
 import { sendExpoPush } from "@/lib/push";
 import { routing } from "@/i18n/routing";
 
-// Closes or deletes the caller's own account (migration 100), for the web
+// Closes or deletes the caller's own account (migration 101), for the web
 // settings page and the mobile app alike:
 //   0. a dry run of close_my_account(), so a close that would fail never
 //      gets as far as Stripe;

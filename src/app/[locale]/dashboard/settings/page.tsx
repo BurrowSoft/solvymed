@@ -27,7 +27,7 @@ export default async function SettingsPage({
     .eq("user_id", user.id)
     .maybeSingle();
 
-  // Close/delete account (migration 100). No panel if the preview can't
+  // Close/delete account (migration 101). No panel if the preview can't
   // load: the page must never offer an action it can't describe.
   const { data: previewRows } = await supabase.rpc("get_account_closure_preview");
   const closurePreview = (Array.isArray(previewRows) ? previewRows[0] : previewRows) as ClosurePreview | undefined;

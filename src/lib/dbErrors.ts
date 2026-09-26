@@ -1,7 +1,7 @@
 // Stable error codes the database raises that the UI must show as
 // translated copy, never as the raw message: patient archive (094) and the
 // 24-hour correction rule for clinical records (097) and closing an
-// account (100).
+// account (101).
 export type KnownDbError =
   | "patient_archived"
   | "patient_has_clinical_history"

@@ -1,4 +1,4 @@
-// Close-account (migration 100): the pure decisions behind
+// Close-account (migration 101): the pure decisions behind
 // /api/account/close, kept here so they're unit-tested.
 
 type ProfessionalBilling = {
