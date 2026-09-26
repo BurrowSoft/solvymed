@@ -4027,6 +4027,86 @@ English on pt-BR pages. That's pre-existing, not from #34.
 
 **Merge gate: 🟢 for `29cf23c`, review clean.**
 
+## PR #35 (`feat/first-run`) — first-run part 1, 🟢 at `e38114d`, review clean
+
+**Scope: exactly `e38114d`.** It covers:
+- the welcome page, plus a new professional's first confirmation now
+  routing to it (my finding at `bc215ba`, fixed here);
+- the Schedule and Payments empty states;
+- the trial chip replacing the TrialBanner;
+- copied share links without a locale segment (UX rule).
+
+Tested live on the preview, pt-BR, with throwaway accounts, all deleted
+afterwards.
+
+**🟢 1. Welcome page and routing.**
+- **Real flow:** a UI signup as Profissional, then the confirmation link
+  via `/api/auth/callback`, lands on **`/pt-BR/auth/professional-welcome`**.
+  It shows "Boas-vindas ao SolvyMed, Joana!", the body copy, "Começar
+  configuração" and "Agora não", with no countdown.
+- **Buttons:** Start setup → `/pt-BR/dashboard?setup=1`; Skip →
+  `/pt-BR/dashboard`.
+- **Later logins:** a second login (password) goes to `/pt-BR/dashboard`.
+- **Callback matrix** (`redirect: manual`, reading `Location`):
+  - a doctor's link within 10 min of confirmation → welcome;
+  - the same doctor **after 11 min** → `/dashboard`;
+  - recovery links → `/dashboard`, never the welcome page, before or
+    after;
+  - secretary → `/dashboard`;
+  - linked patient → `/my-appointments`;
+  - pending patient → `/auth/pending-confirmation`.
+- **Not covered:** the PKCE `?code=` confirmation (it needs a real inbox
+  in the signing-up browser); that path is code-reviewed.
+
+**🟢 2. Schedule empty state (List view).**
+- **Copy:** "Nenhuma consulta ainda." with its body, plus "Marcar
+  consulta" (which opens the new-appointment dialog) and "Compartilhar
+  link de convite".
+- **Share, before an invite code exists:** it's a link to Settings.
+- **Share, with a code:** it copies `…/join/<code>` with **no locale**,
+  and shows "Link copiado!".
+- **Settings → Copiar link:** also `…/join/<code>`, with no locale.
+
+**🟢 Team invite links.**
+- **Secretary link:** Copiar link gives `…/join/secretary/<code>`, and the
+  WhatsApp text "Convite para a equipe da minha secretaria no SolvyMed:
+  …/join/secretary/<code>", both with no locale.
+- **In an en browser:** the secretary link shows "You've been invited as a
+  secretary", and the patient link lands on `/auth/signup?join=…` with
+  `lang=en`.
+
+**🟢 3. Payments empty state.**
+- **Doctor:** "Nenhum pagamento ainda." with its body; "Definir seus
+  preços" goes to `/pt-BR/dashboard/settings`.
+- **Secretary:** the empty states show, with no "Definir seus preços", no
+  Share button and no chip.
+
+**🟢 4. Trial chip**, the same on Home, Schedule and Patients, linking to
+`/pt-BR/subscribe`:
+- **+10 days:** neutral (slate), "Teste grátis: faltam 10 dias · Ver
+  plano".
+- **+3 days:** **amber**, "faltam 3 dias · Assinar".
+- **+12 hours:** **red**, "Teste grátis: último dia · Assinar".
+- **Active subscription:** no chip.
+- **The old TrialBanner:** gone.
+
+**🟢 #34 in the merged tree:** the schedule still defaults to today in
+Brazil ("sábado, 26 de setembro de 2026").
+
+**Review: Claude `/code-review` (code reviewer), clean at `e38114d`.**
+
+**Observation (not #35):** a `type=recovery` token_hash sent through
+`/api/auth/callback` logs the user in and lands on `/dashboard`, not
+`/auth/reset-password`. Real reset emails don't use this route today;
+re-check with A-15 (S-01 `token_hash` links).
+
+**CI at `e38114d`:** Vercel ✅. **"Typecheck and unit tests" has not run on
+this head** (only the Vercel checks are listed). It's required, so it must
+go green before merge.
+
+**Merge gate: 🟢 for `e38114d`, review clean, pending the required CI
+check.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
