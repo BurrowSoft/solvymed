@@ -2496,6 +2496,14 @@ checked the diff.
 - **German secretary strings** no longer mention "Arzt" or "Ärztin", for
   example "Nur das Hauptkonto der Praxis kann das ändern.".
 
+**Addendum: 🟢 at `05771c0`.** This commit changes 7 strings in it, fr, ru
+and ar, and nothing else in `src/messages`; I checked the diff.
+- **Duplicate-patient messages are now neutral:** "questa persona", "Cette
+  personne…", "enregistré(e)", "Эта запись…", "зарегистрирован(а)", and
+  Arabic "هذا السجل".
+- **Parsing:** all 15 files parse with 26 namespaces, and es and pt-BR are
+  unchanged.
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
