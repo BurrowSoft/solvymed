@@ -64,7 +64,11 @@ function scrubUrl(url: string | undefined): string | undefined {
   const redacted = redactAnalyticsUrl(absolute ? url : `https://x.invalid${url.startsWith("/") ? "" : "/"}${url}`);
   if (!redacted) return undefined;
   // Path only: no query string at all (search terms, emails, invite data).
-  const pathOnly = redacted.split("?")[0];
+  // Storage object paths end in the uploaded file's name, which can contain
+  // a patient's name: that last segment becomes [file].
+  const pathOnly = redacted
+    .split("?")[0]
+    .replace(/(\/storage\/v1\/(?:object|render\/image)\/[^?#]*\/)[^/?#]+$/, "$1[file]");
   return absolute ? pathOnly : pathOnly.replace("https://x.invalid", "");
 }
 

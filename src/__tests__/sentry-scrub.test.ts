@@ -16,6 +16,11 @@ describe("scrubText", () => {
       .toBe("GET https://x.supabase.co/rest/v1/patients failed");
     expect(scrubText("opened https://www.solvymed.com/pt-BR/invite/AB12CD from mail"))
       .toBe("opened https://www.solvymed.com/pt-BR/invite/[code] from mail");
+    // Uploaded file names can carry a patient's name.
+    expect(scrubText("upload failed: https://x.supabase.co/storage/v1/object/public/patient-files/u1/p9/Exame%20Maria%20Silva.pdf?token=abc"))
+      .toBe("upload failed: https://x.supabase.co/storage/v1/object/public/patient-files/u1/p9/[file]");
+    expect(scrubText("https://x.supabase.co/storage/v1/render/image/public/profile-photos/u1/ana.jpg?width=64"))
+      .toBe("https://x.supabase.co/storage/v1/render/image/public/profile-photos/u1/[file]");
   });
 
   it("keeps ordinary error text", () => {
