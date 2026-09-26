@@ -2544,6 +2544,24 @@ fallback in a fresh browser context.
 
 **Merge gate: 🟢 for `63201e2`.**
 
+**Addendum: 🟢 at `8369aa1`.** `42b89f7` stops My appointments injecting
+`?name=Doctor`. `8369aa1` changes the German fallback to
+"Gesundheitsfachkraft". This closes the entry point I couldn't cover
+above. The patients were **fully linked** through
+`generate_patient_invite_code` and `link_patient_by_invite_code`, so role
+`patient` with a `linked_patient_id`.
+- **Nameless doctor** (`full_name` = ""): the Book link on
+  `/my-appointments` has **no `name=`** (`/book/<id>?`). The header shows
+  the translated fallback: "Professional" (en), "Profissional" (pt-BR),
+  "Gesundheitsfachkraft" (de). Never "Doctor".
+- **Named doctor:** the link carries `?name=Opus+Named+Doc`, and the header
+  shows it in en, pt-BR and de.
+- **Nit, not blocking:** when there's no name, the link ends in a bare `?`
+  (empty query string). It's harmless.
+
+Cleaned up: the 4 throwaway accounts are deleted. **Merge gate: 🟢 for
+`8369aa1`.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
