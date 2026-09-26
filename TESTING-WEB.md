@@ -18,7 +18,7 @@ repos).
    after a clean review needs a quick delta check before merging. Web
    tester records it here as "review: clean at `<SHA>`".
 2. **Web tester's 🟢** in this file, scoped to that SHA (a docs-only
-   addendum on top is fine).
+   addendum on top is fine after the code reviewer's delta check).
 3. **CI:** the required "Typecheck and unit tests" check is green (branch
    protection enforces it).
 
