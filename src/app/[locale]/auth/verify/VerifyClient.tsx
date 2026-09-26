@@ -10,16 +10,28 @@ import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 import { MIN_PASSWORD_LENGTH, isWeakPasswordError } from "@/lib/password";
+import ConfirmClient from "../confirm/ConfirmClient";
 
 const OTP_TYPES: EmailOtpType[] = ["signup", "invite", "magiclink", "recovery", "email_change", "email"];
 
 type State = "ready" | "working" | "expired" | "resetDone";
 
-export function VerifyClient({ locale, tokenHash, type }: { locale: string; tokenHash: string | null; type: string }) {
+// appHandoff (used by /auth/confirm): an account created in the mobile app
+// goes back to the app after the click, with its session in the deep link,
+// as the PKCE flow on that page does. Web accounts follow the web routing.
+export function VerifyClient({ locale, tokenHash, type, appHandoff = false }: {
+  locale: string;
+  tokenHash: string | null;
+  type: string;
+  appHandoff?: boolean;
+}) {
   const t = useTranslations("auth");
   const localePath = (path: string) => (locale === "en" ? path : `/${locale}${path}`);
   const otpType = (OTP_TYPES as string[]).includes(type) ? (type as EmailOtpType) : null;
   const [state, setState] = useState<State>(tokenHash && otpType ? "ready" : "expired");
+  const [appDeepLink, setAppDeepLink] = useState<string | null>(null);
+
+  if (appDeepLink) return <ConfirmClient state="signup" deepLink={appDeepLink} autoRedirect />;
 
   if (state === "expired") {
     return (
@@ -59,6 +71,14 @@ export function VerifyClient({ locale, tokenHash, type }: { locale: string; toke
     if (error) {
       setState("expired");
       return;
+    }
+    if (appHandoff) {
+      const { data: { session } } = await supabase.auth.getSession();
+      const platform = session?.user.user_metadata?.platform as string | undefined;
+      if (session && platform && platform !== "web") {
+        setAppDeepLink(`solvymed://?access_token=${encodeURIComponent(session.access_token)}&refresh_token=${encodeURIComponent(session.refresh_token)}&type=${otpType}`);
+        return;
+      }
     }
     // The session is set; the server decides where this user goes (role
     // linking, first-confirmation welcome, and so on).

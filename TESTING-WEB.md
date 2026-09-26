@@ -4303,6 +4303,57 @@ emails are re-run.
 
 **Merge gate: 🟢 for `75c91a8`, review clean.**
 
+## PR #42 (`fix/confirm-verify-on-click`) — /auth/confirm token links verify on click, 🟢 at `d87ee62`, review clean
+
+**Scope: exactly `d87ee62`.** That's `bd7b360` plus one moved import line.
+`/[locale]/auth/confirm?token_hash&type`, the app's `redirect_to`, now
+renders the same click-to-verify page as `/auth/verify` (`appHandoff`).
+After the click, an account created in the app goes back to the app
+through the `solvymed://` deep link carrying its session; a web account
+follows the web routing. The page has `robots noindex, nofollow` and a
+`no-referrer` meta. The PKCE `?code=` path is unchanged.
+
+Tested live on the preview. The links were built the same way as mob dev's
+`gen_auth_link.js` (admin `generate_link` with `redirect_to` set to the
+preview's `/auth/confirm`), with app accounts (`platform: mobile`) and web
+accounts. The throwaways were deleted.
+
+**🟢 Scanner safety.** Before every click: HEAD, GET, HEAD, GET, all
+returning 200. The signup account **stays unconfirmed**
+(`email_not_confirmed`), and the page makes **0** `/auth/v1/verify` calls
+on load. Every later click still worked.
+
+**🟢 App signup (`platform: mobile`), pt-BR and en.**
+- **Page:** "Confirme seu e-mail" / "Confirm your email", with no language
+  switcher.
+- **On a phone** (Playwright Pixel 7), Continue → "Email confirmado!" /
+  "Email confirmed!" and "Abrindo o SolvyMed…", with the "Abrir SolvyMed"
+  button. The page navigates to
+  **`solvymed://?access_token=…&refresh_token=…&type=signup`**, and the
+  access token in the deep link is **valid** (`/auth/v1/user` returns 200).
+- **On a desktop browser**, the same flow ends on `/dashboard`.
+  `ConfirmClient`'s existing desktop fallback redirects there instead of
+  to the app, the same as the PKCE path.
+- **Reused link:** "Este link expirou" / "This link has expired".
+
+**🟢 Web signup (`platform: web`).** Continue →
+`/pt-BR/auth/professional-welcome` ("Boas-vindas ao SolvyMed, Opus!").
+Reusing the link shows expired.
+
+**🟢 Recovery via `/auth/confirm`, pt-BR and en** (app accounts). After the
+scans, the page shows "Definir nova senha" / "Set new password" with 2
+fields; submitting shows "Senha atualizada" / "Password updated". The
+**new password logs in, and the old one is refused**.
+
+**🟢 Page tags:** `<meta name="robots" content="noindex, nofollow">` and
+`<meta name="referrer" content="no-referrer">`.
+
+**Review: Claude `/code-review` (code reviewer), clean at `d87ee62`.**
+
+**CI at `d87ee62`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `d87ee62`, review clean.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
