@@ -467,7 +467,7 @@
     "durationMin": "{n} Min.",
     "customTime": "Benutzerdefinierte Zeit",
     "orCustomTime": "Oder eigene Uhrzeit",
-    "professionalFallback": "Praxis"
+    "professionalFallback": "Gesundheitsfachkraft"
   },
   "auth": {
     "login": {
