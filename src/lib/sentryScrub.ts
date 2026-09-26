@@ -8,13 +8,21 @@ type ScrubbableEvent = {
   user?: { id?: string | number; [key: string]: unknown };
   extra?: unknown;
   message?: string;
-  exception?: { values?: { value?: string }[] };
+  exception?: { values?: { value?: string; stacktrace?: { frames?: StackFrame[] } }[] };
   transaction?: string;
   breadcrumbs?: Breadcrumb[];
   contexts?: Record<string, Record<string, unknown> | undefined>;
   tags?: Record<string, unknown>;
   logentry?: { message?: string; params?: unknown[]; [key: string]: unknown };
   spans?: unknown[];
+};
+
+type StackFrame = {
+  context_line?: string;
+  pre_context?: string[];
+  post_context?: string[];
+  vars?: unknown;
+  [key: string]: unknown;
 };
 
 // Contexts kept as they are: environment facts only. Everything else is
@@ -63,6 +71,13 @@ export function scrubEvent<T extends object>(input: T): T {
   if (event.message) event.message = scrubText(event.message);
   for (const ex of event.exception?.values ?? []) {
     if (ex.value) ex.value = scrubText(ex.value);
+    // Source lines around each frame, and local variables if ever enabled.
+    for (const frame of ex.stacktrace?.frames ?? []) {
+      if (frame.context_line) frame.context_line = scrubText(frame.context_line);
+      if (frame.pre_context) frame.pre_context = frame.pre_context.map(scrubText);
+      if (frame.post_context) frame.post_context = frame.post_context.map(scrubText);
+      delete frame.vars;
+    }
   }
   if (event.transaction) event.transaction = scrubUrl(event.transaction) ?? event.transaction;
   if (event.contexts) {

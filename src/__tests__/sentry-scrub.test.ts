@@ -85,6 +85,32 @@ describe("scrubEvent", () => {
     expect(out.tags).toEqual({ url: "/pt-BR/join/[code]", note: "for [email]", level: 3 });
   });
 
+  it("scrubs stack-frame source lines and drops local variables", () => {
+    const event = {
+      type: undefined,
+      exception: {
+        values: [{
+          value: "boom",
+          stacktrace: {
+            frames: [{
+              filename: "route.ts",
+              pre_context: ['const who = "ana@gmail.com";'],
+              context_line: 'throw new Error("CPF 123.456.789-00");',
+              post_context: ["// call +55 11 99999-1234"],
+              vars: { patient: "Maria Silva" },
+            }],
+          },
+        }],
+      },
+    } as unknown as ErrorEvent;
+    const frame = scrubEvent(event).exception?.values?.[0].stacktrace?.frames?.[0];
+    expect(frame?.pre_context).toEqual(['const who = "[email]";']);
+    expect(frame?.context_line).toBe('throw new Error("CPF [cpf]");');
+    expect(frame?.post_context).toEqual(["// call [phone]"]);
+    expect(frame?.vars).toBeUndefined();
+    expect(frame?.filename).toBe("route.ts");
+  });
+
   it("drops spans, which carry full request URLs", () => {
     const event = {
       type: "transaction",

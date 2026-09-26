@@ -8,7 +8,11 @@ export function GET() {
   if (process.env.VERCEL_ENV !== "preview") {
     return new Response("Not found", { status: 404 });
   }
-  throw new Error(
-    "sentry-check: test error for maria.teste@example.com, CPF 123.456.789-09, phone +55 11 91234-5678",
-  );
+  // The fake data is assembled at runtime, so it only exists in the error
+  // message (which must come out masked), never literally in this source
+  // line, which Sentry shows as the stack frame's context.
+  const email = ["maria.teste", "example.com"].join("@");
+  const cpf = ["123", "456", "789"].join(".") + "-09";
+  const phone = ["+55", "11", "91234"].join(" ") + "-5678";
+  throw new Error(`sentry-check: test error for ${email}, CPF ${cpf}, phone ${phone}`);
 }
