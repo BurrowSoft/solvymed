@@ -4090,9 +4090,10 @@ post-100 checks are recorded here as a prod addendum once 100 is live.
   gets REST 400 `invalid_email`, and shows "Informe um endereço de e-mail
   válido."
 - **Not verifiable here:**
-  - **Support alert email:** I have no inbox access. Mob dev's own E2E
-    insert alerted support. My 4 accepted submits (1 from an aborted
-    first run) sent 4 alerts.
+  - **Support alert email:** I have no inbox access, but the alert did
+    fire. When mob dev deleted my 4 test rows (1 from an aborted first
+    run), each was status `new` with **`alert_sent_at` set**, so the
+    alert is confirmed on the browser path.
   - **"Two IPs each get their own limit":** I only have one IP. Two
     browser contexts from the same IP share the per-email limit, as
     shown above.
