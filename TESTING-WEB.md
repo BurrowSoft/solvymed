@@ -4527,6 +4527,34 @@ secretary (throwaways, deleted afterwards; nothing submitted):
 **Merge gate: 🟢 for `083d593`, review clean.** This commit also carries
 the #32 prod addendum and the #41/#42 S-01 gate addendum above.
 
+## PR #45 (`fix/sentry-scrub-urls-in-text`) — URLs in error text cut to path, storage file names masked, 🟢 at `e843b09`, review clean
+
+**Scope: exactly `e843b09`.** `sentryScrub` now also rewrites absolute
+URLs inside free text (error and breadcrumb messages).
+- **URLs:** each is reduced to its path, with invite codes redacted and
+  the query and fragment dropped.
+- **Storage objects:** the last segment of a `/storage/v1/object/…` or
+  `/storage/v1/render/image/…` path, the file name, becomes `[file]`.
+
+The unit tests cover it. I also checked it live, the same way as #31:
+Playwright intercepted the browser SDK's envelope on the preview and
+answered it locally, so nothing reached Sentry. The thrown error contained
+a signed storage URL, an image-render URL and a secretary join link with
+`?email=` and `#frag`. The message sent was:
+
+> `b45 check: fetch failed https://…supabase.co/storage/v1/object/sign/patient-files/doc-uuid/pat-uuid/[file] then https://…supabase.co/storage/v1/render/image/public/profile-photos/doc-uuid/[file] and https://www.solvymed.com/pt-BR/join/secretary/[code]`
+
+**🟢 Nothing leaked** anywhere in the envelope: not the signing token, the
+patient-looking file names (`exame-maria-silva.pdf`,
+`foto-joao-souza.jpg`), `width=200`, the invite code, the email or the
+fragment.
+
+**Review: Claude `/code-review` (code reviewer), clean at `e843b09`.**
+
+**CI at `e843b09`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `e843b09`, review clean.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
