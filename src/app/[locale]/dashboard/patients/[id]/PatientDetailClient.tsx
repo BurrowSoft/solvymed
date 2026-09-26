@@ -496,7 +496,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale }: {
         <div className="mb-2 flex items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
-            <span className="text-xs font-semibold text-slate-500">{r.date} {r.time}</span>
+            <span className="text-xs font-semibold text-slate-500">{r.date} {r.time?.slice(0, 5)}</span>
             {r.record_type && r.record_type !== "free_text" && (
               <span className="rounded-full bg-teal-50 px-2 py-0.5 text-xs font-semibold text-teal-700 capitalize">{r.record_type.replace("_", " ")}</span>
             )}
