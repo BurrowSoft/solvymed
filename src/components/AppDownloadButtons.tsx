@@ -19,14 +19,17 @@ function PlayIcon() {
   );
 }
 
-const PRIMARY_BASE =
-  "flex items-center justify-center gap-3 rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-xl shadow-teal-900/40";
+const BUTTON = "flex items-center justify-center gap-3 rounded-xl px-8 py-4 text-lg font-bold";
+const PRIMARY = "bg-teal-500 text-white shadow-xl shadow-teal-900/40";
 const PRIMARY_HOVER = "transition hover:bg-teal-400";
-// The Play and Open-app buttons are outlined; their colours depend on the
-// background the buttons sit on.
+// Outlined buttons; their colours depend on the background they sit on.
 const SECONDARY = {
-  dark: "border-2 border-white/20 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20",
-  light: "border-2 border-teal-600 bg-white text-teal-700 hover:bg-teal-50",
+  dark: "border-2 border-white/20 bg-white/10 text-white backdrop-blur-sm",
+  light: "border-2 border-teal-600 bg-white text-teal-700",
+} as const;
+const SECONDARY_HOVER = {
+  dark: "transition hover:bg-white/20",
+  light: "transition hover:bg-teal-50",
 } as const;
 
 // medium: the page the buttons sit on, recorded as install attribution.
@@ -47,56 +50,68 @@ export function AppDownloadButtons({
   const ios = iosAppLink(medium);
   // Full width on phones; side by side from sm up unless stacked.
   const width = stacked ? "w-full" : "w-full sm:w-auto";
-  const primary = `${PRIMARY_BASE} ${PRIMARY_HOVER} ${width}`;
-  const secondary = `flex items-center justify-center gap-3 rounded-xl px-8 py-4 text-lg font-bold transition ${width} ${SECONDARY[tone]}`;
+  const primary = `${BUTTON} ${PRIMARY} ${PRIMARY_HOVER} ${width}`;
+  const secondary = `${BUTTON} ${SECONDARY[tone]} ${SECONDARY_HOVER[tone]} ${width}`;
+  // The store that works leads: while iOS is "coming soon", Google Play is
+  // the first, primary button and the iOS placeholder follows, de-emphasised.
+  const iosLive = ios.mode !== "soon";
 
   function openApp() {
     window.location.href = "solvymed://";
   }
 
+  const play = (
+    // Android: the Play listing (auto-updates), never a sideloaded build.
+    <a href={playStoreUrl(medium)} target="_blank" rel="noopener noreferrer" className={iosLive ? secondary : primary}>
+      <PlayIcon />
+      {t("googlePlay")}
+    </a>
+  );
+
+  // iOS, driven by NEXT_PUBLIC_IOS_APP_URL (see lib/appStores.ts): unset =
+  // coming soon, TestFlight link = beta, App Store link = store. Beta mode
+  // deliberately uses a plain text button: Apple's "Download on the App
+  // Store" badge isn't allowed for TestFlight.
+  const iosButton =
+    ios.mode === "soon" ? (
+      // Not a link: nothing to activate yet. Its visible text (label plus
+      // "Soon" badge) is its accessible name; the title is a tooltip.
+      <div
+        role="group"
+        aria-disabled="true"
+        title={t("appStoreComingSoon")}
+        className={`relative ${BUTTON} ${SECONDARY[tone]} ${width} cursor-not-allowed select-none opacity-60`}
+      >
+        <AppleIcon />
+        {t("appStore")}
+        <span className="absolute -top-2.5 -right-2.5 rounded-full bg-amber-400 px-2 py-0.5 text-xs font-bold text-amber-900 shadow-sm whitespace-nowrap">
+          {t("soon")}
+        </span>
+      </div>
+    ) : ios.mode === "beta" ? (
+      <a
+        href={ios.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`flex flex-col items-center justify-center rounded-xl px-8 py-3 text-lg font-bold ${PRIMARY} ${PRIMARY_HOVER} ${width}`}
+      >
+        <span className="flex items-center gap-3">
+          <AppleIcon />
+          {t("iosBeta")}
+        </span>
+        <span className="mt-0.5 text-xs font-medium text-teal-50">{t("iosBetaHint")}</span>
+      </a>
+    ) : (
+      <a href={ios.url} target="_blank" rel="noopener noreferrer" className={primary}>
+        <AppleIcon />
+        {t("appStore")}
+      </a>
+    );
+
   return (
     <div className={`flex flex-col items-center gap-4 ${stacked ? "" : "sm:flex-row sm:justify-center"}`}>
-      {/* iOS, driven by NEXT_PUBLIC_IOS_APP_URL (see lib/appStores.ts):
-          unset = coming soon, TestFlight link = beta, App Store link = store.
-          Beta mode deliberately uses a plain text button: Apple's
-          "Download on the App Store" badge isn't allowed for TestFlight. */}
-      {ios.mode === "soon" && (
-        // Not a link: nothing to activate yet. Its visible text (label plus
-        // "Soon" badge) is its accessible name; the title is a tooltip.
-        <div
-          role="group"
-          aria-disabled="true"
-          title={t("appStoreComingSoon")}
-          className={`relative ${PRIMARY_BASE} ${width} cursor-not-allowed select-none opacity-75`}
-        >
-          <AppleIcon />
-          {t("appStore")}
-          <span className="absolute -top-2.5 -right-2.5 rounded-full bg-amber-400 px-2 py-0.5 text-xs font-bold text-amber-900 shadow-sm whitespace-nowrap">
-            {t("soon")}
-          </span>
-        </div>
-      )}
-      {ios.mode === "beta" && (
-        <a href={ios.url} target="_blank" rel="noopener noreferrer" className={`flex flex-col items-center justify-center rounded-xl bg-teal-500 px-8 py-3 text-lg font-bold text-white shadow-xl shadow-teal-900/40 ${PRIMARY_HOVER} ${width}`}>
-          <span className="flex items-center gap-3">
-            <AppleIcon />
-            {t("iosBeta")}
-          </span>
-          <span className="mt-0.5 text-xs font-medium text-teal-50">{t("iosBetaHint")}</span>
-        </a>
-      )}
-      {ios.mode === "store" && (
-        <a href={ios.url} target="_blank" rel="noopener noreferrer" className={primary}>
-          <AppleIcon />
-          {t("appStore")}
-        </a>
-      )}
-
-      {/* Android: the Play listing (auto-updates), never a sideloaded build */}
-      <a href={playStoreUrl(medium)} target="_blank" rel="noopener noreferrer" className={secondary}>
-        <PlayIcon />
-        {t("googlePlay")}
-      </a>
+      {iosLive ? iosButton : play}
+      {iosLive ? play : iosButton}
 
       {showOpenApp && (
         <button type="button" onClick={openApp} className={secondary}>

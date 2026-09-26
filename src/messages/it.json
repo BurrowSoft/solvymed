@@ -728,7 +728,7 @@
     "sub": "La tua clinica ti invita a collegarti su SolvyMed.",
     "codeLabel": "Il tuo codice invito",
     "step1": "Scarica SolvyMed sul tuo telefono.",
-    "step2": "Apri l'app, tocca <b>Crea account</b>, scegli <b>Paziente</b> e inserisci il codice qui sopra in <b>Codice invito</b>.",
+    "step2": "Apri l'app, tocca <b>Registrati</b>, scegli <b>Paziente</b> e poi inserisci il codice qui sopra in <b>Codice invito</b>.",
     "step3": "Hai già un account? Apri la scheda <b>Home</b> e inserisci il codice in <b>Connettiti al tuo medico</b>."
   }
 }

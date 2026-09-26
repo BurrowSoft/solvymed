@@ -728,7 +728,7 @@
     "sub": "クリニックから SolvyMed への招待が届いています。",
     "codeLabel": "招待コード",
     "step1": "スマートフォンに SolvyMed をダウンロードします。",
-    "step2": "アプリを開いて <b>Create account</b> をタップし、<b>Patient</b> を選んで、上のコードを <b>Invite code</b> に入力します。",
+    "step2": "アプリを開いて <b>Sign up</b> をタップし、<b>Patient</b> を選んでから、上のコードを <b>Invite code</b> に入力します。",
     "step3": "すでにアカウントをお持ちの場合は、<b>Home</b> タブを開き、<b>Connect to Your Doctor</b> にコードを入力してください。"
   }
 }

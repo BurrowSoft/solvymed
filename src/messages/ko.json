@@ -728,7 +728,7 @@
     "sub": "클리닉에서 SolvyMed 연결을 위해 초대했습니다.",
     "codeLabel": "초대 코드",
     "step1": "휴대폰에 SolvyMed를 다운로드하세요.",
-    "step2": "앱을 열고 <b>Create account</b>를 누른 다음 <b>Patient</b>를 선택하고 위 코드를 <b>Invite code</b>에 입력하세요.",
+    "step2": "앱을 열고 <b>Sign up</b>을 누른 다음 <b>Patient</b>를 선택하고, 위 코드를 <b>Invite code</b>에 입력하세요.",
     "step3": "이미 계정이 있으신가요? <b>Home</b> 탭을 열고 <b>Connect to Your Doctor</b>에 코드를 입력하세요."
   }
 }

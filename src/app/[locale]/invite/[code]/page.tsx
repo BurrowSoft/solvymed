@@ -11,7 +11,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "invitePage" });
-  return { title: t("metaTitle") };
+  // The URL carries a personal invite code: keep it out of search engines,
+  // and give link previews neutral text (no code, not the homepage's).
+  return {
+    title: t("metaTitle"),
+    description: t("sub"),
+    robots: { index: false, follow: false },
+    alternates: { canonical: null },
+    openGraph: { title: t("heading"), description: t("sub") },
+  };
 }
 
 export default async function InvitePage({

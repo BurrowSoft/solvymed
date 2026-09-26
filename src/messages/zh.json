@@ -728,7 +728,7 @@
     "sub": "您的诊所邀请您在 SolvyMed 上建立连接。",
     "codeLabel": "您的邀请码",
     "step1": "在手机上下载 SolvyMed。",
-    "step2": "打开应用，点击 <b>Create account</b>，选择 <b>Patient</b>，然后在 <b>Invite code</b> 中输入上方的邀请码。",
+    "step2": "打开应用，点击 <b>Sign up</b>，选择 <b>Patient</b>，然后在 <b>Invite code</b> 中输入上方的邀请码。",
     "step3": "已有账户？打开 <b>Home</b> 标签页，在 <b>Connect to Your Doctor</b> 中输入邀请码。"
   }
 }

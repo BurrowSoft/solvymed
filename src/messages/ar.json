@@ -728,7 +728,7 @@
     "sub": "تدعوك عيادتك إلى الاتصال عبر SolvyMed.",
     "codeLabel": "رمز الدعوة الخاص بك",
     "step1": "نزّل تطبيق SolvyMed على هاتفك.",
-    "step2": "افتح التطبيق، واضغط <b>Create account</b>، واختر <b>Patient</b>، ثم أدخل الرمز أعلاه في <b>Invite code</b>.",
+    "step2": "افتح التطبيق، واضغط <b>Sign up</b>، واختر <b>Patient</b>، ثم أدخل الرمز أعلاه في <b>Invite code</b>.",
     "step3": "لديك حساب بالفعل؟ افتح علامة التبويب <b>Home</b> وأدخل الرمز في <b>Connect to Your Doctor</b>."
   }
 }

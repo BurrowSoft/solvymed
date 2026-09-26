@@ -728,7 +728,7 @@
     "sub": "คลินิกของคุณเชิญคุณให้เชื่อมต่อบน SolvyMed",
     "codeLabel": "รหัสเชิญของคุณ",
     "step1": "ดาวน์โหลด SolvyMed ลงในโทรศัพท์ของคุณ",
-    "step2": "เปิดแอป แตะ <b>Create account</b> เลือก <b>Patient</b> แล้วกรอกรหัสด้านบนในช่อง <b>Invite code</b>",
+    "step2": "เปิดแอป แตะ <b>Sign up</b> เลือก <b>Patient</b> แล้วกรอกรหัสด้านบนในช่อง <b>Invite code</b>",
     "step3": "มีบัญชีอยู่แล้ว? เปิดแท็บ <b>Home</b> แล้วกรอกรหัสที่ <b>Connect to Your Doctor</b>"
   }
 }
