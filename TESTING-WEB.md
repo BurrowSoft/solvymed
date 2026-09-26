@@ -4527,6 +4527,43 @@ secretary (throwaways, deleted afterwards; nothing submitted):
 **Merge gate: 🟢 for `083d593`, review clean.** This commit also carries
 the #32 prod addendum and the #41/#42 S-01 gate addendum above.
 
+## PR #46 (`feat/turnstile-dormant`) — Cloudflare Turnstile shipped dormant, 🟢 at `d1461c3`, review clean
+
+**Scope: exactly `d1461c3`.** Turnstile on sign-up, sign-in and password
+reset. It stays dormant unless `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is set.
+Supabase's own CAPTCHA stays off; this PR doesn't touch it.
+
+**1. Dormant: the preview has no site key.** Checked in a pt-BR browser
+with one new signup and a confirmed throwaway doctor, both deleted
+afterwards:
+- **Signup:** no widget; the account is created and the page shows
+  "Verifique seu e-mail", with no error.
+- **Login:** no widget; lands on `/pt-BR/dashboard`.
+- **Forgot password:** no widget; shows "Se existir uma conta com esse
+  e-mail, você receberá um link em breve.", with no error.
+- **Requests:** none to `challenges.cloudflare.com`, and no `captcha` field
+  in any `/auth/v1/signup|token|recover` POST.
+- **Page errors:** none.
+
+**2. Live, with Cloudflare's TEST site keys.** Run on local `next dev` of
+`d1461c3` against the prod Supabase, since a preview can't take a
+per-branch key without the Vercel env:
+- **Always-block key (`2x…AB`):** the script and challenge load from
+  `challenges.cloudflare.com`. Submitting login, forgot or signup shows
+  **"Conclua a verificação e tente novamente."** and sends **no** auth POST,
+  so no account is created.
+- **Always-pass key (`1x…AA`):** the widget renders in pt-BR ("Sucesso!",
+  with Cloudflare's test-only banner). Login reaches the dashboard and
+  forgot shows the sent line. Both POSTs carry a `captcha_token`, which
+  Supabase accepts and ignores because its CAPTCHA is off.
+- **Page errors:** none.
+
+**Review: Claude `/code-review` (code reviewer), clean at `d1461c3`.**
+
+**CI at `d1461c3`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `d1461c3`, review clean.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
