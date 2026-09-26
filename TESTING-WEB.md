@@ -3688,6 +3688,34 @@ user runs them with UX.
 
 **Merge gate: 🟢 for `279ea4f`, review clean.**
 
+**Re-check at `81a0584`** (a master merge, plus the source-context
+FOLLOW-UP fixed). `/api/sentry-check` now builds its fake data at runtime,
+and `scrubEvent` masks stack-frame context lines and drops frame vars.
+
+**🟢 Server event,** captured with the same local-DSN sink, in the scratch
+clone updated to `81a0584`:
+- **Message:** "sentry-check: test error for [email], CPF [cpf], phone
+  [phone]".
+- **Source context:** the route's frame shows only the runtime-built
+  code (`["123", "456", "789"].join(".")`, …), and no frame anywhere
+  carries a literal email, CPF or phone.
+- **Planted values:** none of "maria.teste", "example.com",
+  "123.456.789", "91234-5678", "x@y.com", "Maria" or the cookie appears
+  anywhere in the capture.
+- **Other fields:** no frame `vars`. `request` is URL+method with no
+  "?"; no user; the contexts have no `nextjs`.
+
+**🟢 Routes:** the preview `/api/sentry-check` returns 500, and prod
+returns 404.
+
+The client side is unaffected by this delta (the code reviewer agreed),
+so the `279ea4f` results stand. The `#29`/`#30` entries from master sit
+before this one, as expected.
+
+**CI at `81a0584`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `81a0584`, review clean.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
