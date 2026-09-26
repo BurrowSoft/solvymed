@@ -2596,20 +2596,25 @@ this merges, checklist F-6 can go green.
 
 ## PR #20 (`ci/github-actions`) — CI: typecheck, unit tests and advisory lint
 
-> **Current status, at `8bd4f9b`: CI 🟢; review round 5 not clean** (1
-> real bug). The design **at this SHA**:
-> - **"Typecheck and unit tests" job:** `npm ci`, `npx next typegen`,
->   `npm run typecheck`, `npm test`.
+> **Current status, at `b5b5dc4`: 🟢, and the review is clean.** The design
+> **at this SHA**:
+> - **"Typecheck and unit tests" job:** `npm ci`, then
+>   `npm run typecheck` (= `next typegen && tsc --noEmit`), then
+>   `npm test`.
 > - **Separate "Lint" job:** `scripts/ci-lint.mjs` exits **0 on
->   findings** and **non-zero only on a crash**, with no
+>   findings**. It exits **2 on a crash or on any fatal parse error**,
+>   listing the files and a "runner failed" summary. There's no
 >   `continue-on-error`. It reports 35 errors and 17 warnings.
 > - **Setup:** actions v7 (checkout 7.0.1, setup-node 7.0.0), pinned by
->   SHA. Master pushes are grouped per SHA.
+>   SHA, with `persist-credentials: false`. Master pushes are grouped per
+>   SHA.
 >
-> CI run `36216041689` is green on both jobs. Everything below is the
-> history, oldest first. The earlier 🟢 lines apply only to their own
-> SHAs. **This PR is not mergeable until a later addendum records the
-> review as clean at its exact HEAD.**
+> CI run `36219009258` is green on both jobs: "✓ Route types generated
+> successfully", 78/78 tests, and Lint at 35 errors and 17 warnings.
+> **Review: Claude `/code-review high`, clean at `b5b5dc4`** (Copilot
+> quota exhausted). Round 6 found no merge-blocking issues. See the round-6
+> addendum at the end of this entry. Everything below is the history,
+> oldest first; the earlier 🟢 lines apply only to their own SHAs.
 
 **Scope of the first section below: exactly `48f81c9`.** The earlier entry
 was for `2fdba55`; `48f81c9` moves the lint `continue-on-error` from the
@@ -2787,6 +2792,32 @@ new HEAD.
   - The stale-header finding is resolved by the status box at the top of
     this entry.
 - **Review status: not clean** (1 real).
+
+**Addendum: 🟢 at `b5b5dc4`; review round 6 clean.**
+- **What changed:** `b5b5dc4` fixes the round-5 bug. Fatal parse errors
+  now make the runner list the files and **exit 2** with the "runner
+  failed" summary. Web dev verified it with an unparseable probe file.
+- **Also in this commit:**
+  - `typecheck` is `next typegen && tsc --noEmit`, and CI calls the
+    script.
+  - `persist-credentials: false` on both checkouts.
+- **CI:** run `36219009258` is green on both jobs.
+- **Review round 6: Claude `/code-review high`, clean at `b5b5dc4`**
+  (Copilot quota exhausted). **No merge-blocking findings.** 8
+  low-severity or design notes were posted inline; none is a correctness
+  bug. The two worth a **follow-up PR** rather than more commits here:
+  - **CI runs tests in UTC**, so the timezone regression tests can't fail
+    there. Set `TZ=America/Sao_Paulo` (the users are in Brazil) on the
+    test step.
+  - The `next` range `^15.1.0` allows versions without `next typegen`.
+    Raise it to `^15.5.0`; today only the lockfile's 15.5.19 makes it
+    work.
+  - The rest are design notes: stale local `.next/types`, local
+    `npm run lint` exiting 1, linking the two lint switches, the
+    clock-injection refactor, Windows path normalisation in the fatal
+    list, and duplicated setup steps across the jobs.
+
+**Merge gate: 🟢 for `b5b5dc4`, review clean.**
 
 ## PR #21 (`hotfix/auth-links-locale`) — password reset 404 on prod; auth emails keep the language, 🟢 at `ce40aef`
 
