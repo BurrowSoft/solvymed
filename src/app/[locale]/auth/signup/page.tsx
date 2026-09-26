@@ -82,7 +82,9 @@ export default function SignupPage() {
             ? { secretary_invite_code: secretaryCode }
             : {}),
         },
-        emailRedirectTo: "https://www.solvymed.com/api/auth/callback",
+        // The callback has no [locale] segment; this lands the user on the
+        // page in the language they signed up in.
+        emailRedirectTo: `https://www.solvymed.com/api/auth/callback?locale=${encodeURIComponent(locale)}`,
       },
     });
     setLoading(false);

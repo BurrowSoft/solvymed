@@ -2594,6 +2594,77 @@ this merges, checklist F-6 can go green.
 
 **Merge gate: 🟢 for `d054422`.**
 
+## PR #21 (`hotfix/auth-links-locale`) — password reset 404 on prod; auth emails keep the language, 🟢 at `ce40aef`
+
+**Scope: exactly `ce40aef`.** This is the hotfix for the prod reset 404
+logged under "Production auth-link check" (master's
+`/en/auth/reset-password` gets geo-rewritten to `/<cc>/en/…`, a 404). It
+also fixes the PKCE problem found while testing it: web reset requests
+used PKCE, so real email links returned `?code=`, which the hash-only
+reset page can't read.
+
+**How it was tested.** Vercel previews are behind SSO, so I ran the build
+locally at `ce40aef` (and the earlier HEADs as they came in).
+- **Geo:** simulated by injecting `x-vercel-ip-country` (TH, BR, US) on
+  requests to the app only.
+- **Fresh browsers:** each link was opened in a brand-new context (no
+  cookies), as if from a phone's mail app.
+- **Real links:** real recovery links, built with admin `generate_link`
+  and followed through GoTrue `/verify`, with the host swapped to the
+  local app.
+
+**🟢 Reset.**
+- **The request is implicit-flow:** the real `/auth/v1/recover` request
+  from the forgot page sends **`code_challenge: null`**. The `redirect_to`
+  is `https://www.solvymed.com/pt-BR/auth/reset-password`, or `…/en/…` for
+  en.
+- **The real email link has the right shape:** mob dev checked it
+  **server-side** on prod for a reset triggered from the page. The stored
+  token is plain, not `pkce_`, and verify returns **303 to
+  `/pt-BR/auth/reset-password#access_token=…&type=recovery`**. No token
+  left mob dev's session.
+- **pt-BR link, fresh browser from TH and from BR:** the pt-BR form, and
+  the new password logs in. No 404.
+- **en link, fresh browser from TH and from BR:** it lands on
+  **`/auth/reset-password` with `html lang="en"`**, shows the form, and
+  the new password works.
+  - On `76476e9` this landed in the geo locale instead (`/th/…`,
+    `/pt-BR/…`). **`0c03600` fixed it** by pinning `NEXT_LOCALE=en` on
+    explicit `/en/` requests.
+- **Stale link, then a new one, in the same browser:** open a tokenless
+  `/pt-BR/auth/reset-password` first (it shows the error state), then a
+  real link, either in a **new tab** or the **same tab with a full load**.
+  In both cases the form opens and "Senha atualizada" shows.
+  - One edge case, not a bug: a same-path, hash-only change in the same
+    tab doesn't re-validate. Real links always arrive through Supabase's
+    `/verify`, which gives a full page load.
+- **Invalid link:** a bogus or legacy `?code=` shows the error state ("…O
+  link pode ter expirado"), with no page errors.
+
+**🟢 Signup.**
+- **The link carries the locale:** the confirmation email's redirect is
+  `/api/auth/callback?locale=pt-BR`.
+- **Fresh browser, `token_hash`:** it lands on `/pt-BR/dashboard`, with
+  `NEXT_LOCALE=pt-BR` pinned.
+- **Fresh browser, PKCE `?code=`:** it can't be exchanged there, so it
+  lands on **`/pt-BR/auth/login`**, per the revised plan. The email is
+  already confirmed by GoTrue. Proper cross-browser signup comes with
+  S-01; see checklist A-15.
+
+**🟢 `/en/auth/login`**, fresh browser from TH and from BR: the English
+`/auth/login` (`lang="en"`), no longer a 404.
+
+**🟢 No regressions in routing.**
+- Unprefixed paths still geo-redirect (`/auth/login` goes to
+  `/pt-BR/…` for BR and `/th/…` for TH).
+- `/es/…` is left alone.
+- `/identity-x` is no longer mistaken for the `id` locale.
+
+**Cleaned up.** All throwaway accounts are deleted; prod has 0
+`e2e-test-opus-*` accounts left.
+
+**Merge gate: 🟢 for `ce40aef`.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
