@@ -2594,43 +2594,41 @@ this merges, checklist F-6 can go green.
 
 **Merge gate: 🟢 for `d054422`.**
 
-## PR #20 (`ci/github-actions`) — CI: typecheck, unit tests and advisory lint, 🟢 at `2fdba55`
+## PR #20 (`ci/github-actions`) — CI: typecheck, unit tests and advisory lint, 🟢 at `48f81c9`
 
-**Scope: exactly `2fdba55`.**
+**Scope: exactly `48f81c9`.** The earlier entry was for `2fdba55`;
+`48f81c9` moves the lint `continue-on-error` from the job to the step.
 - **Changes:** adds `.github/workflows/ci.yml`, triggered on `pull_request`
-  and `push` with Node 24. The "Typecheck and unit tests" job runs `npm ci`,
-  `npm run typecheck` and `npm test`. The "Lint (advisory)" job runs
-  `npm ci` and `npm run lint`, with a job-level `continue-on-error: true`.
+  and `push` with Node 24.
+  - **"Typecheck and unit tests":** `npm ci`, `npm run typecheck`, `npm test`.
+  - **"Lint (advisory)":** `npm ci`, then `npm run lint` with a
+    **step-level** `continue-on-error: true` (`ci.yml:46`).
 - **ESLint:** it's installed now (`eslint`, `eslint-config-next`,
   `@eslint/eslintrc`), and `lint` is `eslint .`.
 - **Build:** `next.config.ts` sets `eslint.ignoreDuringBuilds`, with the
   comment "type errors still fail the build".
 
-**🟢 (1) Checks on #20** (CI run `36209506541`; the workflow concludes
-**success**):
+**🟢 (1) Checks at `48f81c9`** (CI run `36209706986`, workflow **success**):
 - **Typecheck and unit tests: ✅.** `tsc --noEmit` is clean, and the tests
-  are **5 files, 78 passed (78)**.
-- **Lint (advisory):** it reports its findings, **54 problems (35 errors,
-  19 warnings)**, matching the 35 known errors, and doesn't fail the
-  workflow.
+  are 5 files, **78/78** passed.
+- **Lint (advisory): ✅, green.** Its findings are still reported: **54
+  problems (35 errors, 19 warnings)** in the log, plus 22 check-run
+  annotations.
+- **PR state:** `mergeStateStatus` is `CLEAN`. (At `2fdba55`, the job-level
+  setting showed lint as a red ✗ and the PR as `UNSTABLE`.)
 
-**🟢 (2) Vercel preview.** The deployment is ✅, and
-`solvymed-git-ci-github-actions-burrowsoft.vercel.app` serves `/`,
-`/pt-BR`, `/auth/login` and `/pt-BR/auth/signup` with HTTP 200. So the
-build isn't broken by the newly installed ESLint.
+**(2) Vercel preview: the build is ✅, but pages were not checked.**
+Correction to my earlier note: the preview is behind **Vercel SSO
+deployment protection**. `curl -L` followed the redirect to Vercel's login
+page, and it was *that* page that returned 200, not the app. What's proven
+is that the Vercel build and deploy check passed with ESLint installed.
+Loading real pages on a preview needs a protection-bypass token.
 
 **(3) Local run: skipped on purpose.** In this worktree `node_modules` is a
 **junction into the main checkout**, so `npm ci` here would wipe the
 dependencies other sessions' servers run on. CI's clean `npm ci` covers it.
 
-**Nit, not blocking.** With a *job-level* `continue-on-error`, the lint
-check still ends as **FAILURE**, a red ✗ on the PR, and the PR's
-`mergeStateStatus` is `UNSTABLE`. `master` has no branch protection, so
-nothing is blocked. To show the findings without a red ✗, move
-`continue-on-error: true` onto the `npm run lint` *step*; the job then
-passes and the lint annotations still show.
-
-**Merge gate: 🟢 for `2fdba55`.**
+**Merge gate: 🟢 for `48f81c9`.**
 
 ## iOS — open question
 
