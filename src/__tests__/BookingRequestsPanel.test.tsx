@@ -36,6 +36,13 @@ vi.mock('next-intl', () => ({
   },
 }));
 
+// The panel reads the locale from the route to build patient links; outside
+// the App Router useParams() returns null.
+vi.mock('next/navigation', () => ({
+  useParams: () => ({ locale: 'en' }),
+  useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
+}));
+
 // Mock server actions before importing the component
 vi.mock('@/app/[locale]/dashboard/schedule/booking-actions', () => ({
   confirmBooking: vi.fn().mockResolvedValue(undefined),
