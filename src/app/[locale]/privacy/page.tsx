@@ -108,9 +108,8 @@ export default async function PrivacyPage({
             <p>
               Medical records (clinical notes, prescriptions and exam files) are kept for at least 20 years,
               as required by Brazilian law for patient records. A patient with medical records cannot be
-              deleted, only archived, and an account that holds medical records is closed by our support team
-              rather than deleted, so the records are kept. Other account data is kept while the account is
-              active.
+              deleted, only archived, and an account that holds medical records is closed rather than
+              deleted, so the records are kept. Other account data is kept while the account is active.
             </p>
             <p>
               After 24 hours, a clinical note or prescription can no longer be edited or deleted. It can be
@@ -119,9 +118,26 @@ export default async function PrivacyPage({
               period.
             </p>
             <p>
-              You may request deletion of your account at any time by contacting us; medical records are kept
-              as described above.
+              You can close or delete your account yourself in Settings, or ask us by email:
             </p>
+            <ul>
+              <li>
+                Secretaries, patients, and professionals whose patients have no medical records: the account
+                is deleted immediately.
+              </li>
+              <li>
+                A professional whose patients have medical records: the account is closed. The login, contact
+                details, photo, payment and practice details are deleted immediately. The medical records and
+                the patient list are kept, inaccessible, for the legal retention period (20 years from
+                closure), then permanently deleted. The professional&apos;s name and professional registration
+                stay with the records as their author.
+              </li>
+              <li>
+                Patients of a closed practice can request copies of their records from support@solvymed.com.
+              </li>
+              <li>Payment history is kept by our payment processor (Stripe), as required by tax law.</li>
+              <li>The same email address can be used to open a new, empty account.</li>
+            </ul>
           </Section>
 
           <Section title="8. Your Rights">

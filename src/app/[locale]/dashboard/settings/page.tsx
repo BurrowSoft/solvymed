@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, SchedulingRulesForm, BlockedPatientsPanel, InviteCodeCard } from "./SettingsClient";
 import { TeamPanel, type TeamRow } from "./TeamPanel";
 import { SecretarySettings } from "./SecretarySettings";
+import { CloseAccountPanel, type ClosurePreview } from "./CloseAccountPanel";
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 type WorkingHours = Record<DayKey, { enabled: boolean; start: string; end: string }>;
@@ -26,6 +27,11 @@ export default async function SettingsPage({
     .eq("user_id", user.id)
     .maybeSingle();
 
+  // Close/delete account (migration 102). No panel if the preview can't
+  // load: the page must never offer an action it can't describe.
+  const { data: previewRows } = await supabase.rpc("get_account_closure_preview");
+  const closurePreview = (Array.isArray(previewRows) ? previewRows[0] : previewRows) as ClosurePreview | undefined;
+
   // A secretary gets their own view: the doctor's practice read-only via
   // RPCs, never the editable forms below (which would write under the
   // secretary's own id, and whose actions refuse them anyway).
@@ -36,6 +42,11 @@ export default async function SettingsPage({
           <h1 className="text-2xl font-extrabold text-slate-900">{t("pageTitle")}</h1>
         </div>
         <SecretarySettings supabase={supabase} doctorId={userRoleData.invited_by_professional_id as string} locale={locale} />
+        {closurePreview && (
+          <div className="mt-6">
+            <CloseAccountPanel preview={closurePreview} locale={locale} />
+          </div>
+        )}
       </div>
     );
   }
@@ -126,6 +137,8 @@ export default async function SettingsPage({
         <BlockedPatientsPanel patients={blockedPatients} locale={locale} />
 
         <ProceduresPanel procedures={procedures} />
+
+        {closurePreview && <CloseAccountPanel preview={closurePreview} locale={locale} />}
       </div>
     </div>
   );

@@ -4353,6 +4353,100 @@ fields; submitting shows "Senha atualizada" / "Password updated". The
 **CI at `d87ee62`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `d87ee62`, review clean.**
+## PR #32 (`feat/close-account`) — close or delete your own account, 🟢 at `f0ce14a`, review clean
+
+**Scope: exactly `f0ce14a`.** This is the web half of close-account, in
+lockstep with migration 102 and `notify-clinic-closed` (live).
+- **Settings → Encerrar / Excluir conta:** the panel's copy comes from
+  `get_account_closure_preview()`.
+- **`POST /api/account/close`:** works with the cookie session or a mobile
+  `Bearer` token. It cancels Stripe first, fail-closed, then runs
+  `close_my_account()`, then sends notices after the response.
+
+Tested live on the preview.
+- **Accounts:** throwaways only. The linked patient used `@example.invalid`
+  with a fake Expo token, so no real email or push went out.
+- **Stripe:** a **TEST** subscription was created through the API (no
+  checkout).
+- **Cleanup:** closed doctors can't be deleted by me (their records are
+  retained), so they went to mob dev to purge. Everything else is
+  deleted.
+
+**🟢 1. Doctor with records, an active TEST subscription, a secretary and a
+linked patient.**
+- **Preview RPC:** `has_clinical_history:true, subscription_active:true,
+  patients:2, upcoming_appointments:1, secretaries:1`.
+- **Panel ("Encerrar conta"):** "Seus 2 pacientes são arquivados e 1
+  consulta futura é cancelada…", "1 pessoa da equipe perde o acesso", and
+  "Sua assinatura termina agora. O período atual não é reembolsado."
+  Submitting requires the "Entendo…" checkbox.
+- **Close:** 200 `{"outcome":"closed"}`, then signed out to `/pt-BR`.
+- **After the close:**
+  - **Stripe:** the subscription is `canceled`.
+  - **Login:** refused.
+  - **Data:** the record is kept, both patients are archived, and the
+    upcoming appointment is `cancelled`.
+  - **Storage:** `profile-photos/<uid>/` and `document-logos/<uid>/` are
+    empty (they had a file each before).
+  - **The secretary:** detached (`invited_by_professional_id` null) and
+    sees no patients.
+  - **The linked patient:** unlinked (`linked_patient_id` null).
+- **Notices:** confirmed server-side by mob dev. `notify-clinic-closed`
+  was called 1.3 s after the close and returned POST 202, logging
+  `sent=0 failed=0 skipped=1`. The skip is the `@example.invalid` linked
+  patient, correctly not emailed. Push delivery to the fake Expo token
+  isn't observable.
+
+**🟢 2. Doctor without records, on trial.** "Excluir conta" (no no-refund
+line) → `deleted`. The auth user returns 404, and the professional row and
+patients are gone.
+
+**🟢 3. Secretary.** "Excluir conta", with "Isto exclui definitivamente sua
+conta da equipe. Os dados da clínica não são afetados." → `deleted`. The
+secretary can't log in; the doctor's patients and login are untouched.
+
+**🟢 4. Stripe guard.**
+- **Unknown or deleted subscription ID** (the row still says active): 409
+  `subscription_active`, shown as "Sua assinatura ainda está ativa. Tente
+  de novo em um minuto." The account stays open.
+- **A subscription whose `metadata.user_id` isn't the caller:** 409
+  `check_failed`, shown as "Sua conta não foi encerrada. Tente de novo."
+  The Stripe subscription is **untouched (`active`)**, and the account
+  stays open.
+- **`cancelled_not_closed`:** couldn't be forced on the preview; it's
+  code-reviewed.
+
+**🟢 5. Mobile `Bearer` path.**
+- **No token, or a bad token:** 401 `unauthorized`.
+- **Doctor without records:** 200 `deleted`.
+- **Patient:** 200 `deleted` (the auth user returns 404).
+- **Doctor with records:** 200 `closed`.
+  - **The pre-close token reads nothing afterwards:** records `[]`,
+    patients `[]`, the professional row `[]`.
+  - **What's kept:** the record.
+  - **Login:** refused, and the email is now
+    `closed+<id>@solvymed.invalid`.
+
+**🟢 6. Text.**
+- **`/privacy` §7:** "…an account that holds medical records is closed
+  rather than deleted…" and "You can close or delete your account yourself
+  in Settings, or ask us by email", plus the per-role facts.
+- **`/pt-BR/account/delete`:** "Profissionais de saúde: você também pode
+  encerrar ou excluir sua conta em Configurações. Se seus pacientes têm
+  prontuários… encerramos sua conta… Sem prontuários, sua conta é
+  excluída."
+
+**Review: Claude `/code-review` (code reviewer), clean at `f0ce14a`.**
+
+**Harness note:** the first run hit my 15-minute test timeout during step
+4 (the Settings page was fine), so steps 4–6 were re-run in a second spec
+with the extra checks above.
+
+**CI at `f0ce14a`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `f0ce14a`, review clean.** The linked-patient notice
+call is confirmed server-side (202, skipped=1). The closed throwaways were
+purged by mob dev.
 
 ## iOS — open question
 
