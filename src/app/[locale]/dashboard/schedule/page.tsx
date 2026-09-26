@@ -215,6 +215,7 @@ export default async function SchedulePage({
         <CalendarView
           appointments={appointments}
           currentDate={currentDate}
+          today={today}
           view={view}
         />
       )}
