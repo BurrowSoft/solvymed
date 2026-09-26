@@ -72,7 +72,7 @@
     "updatedTitle": "Contraseña actualizada",
     "updatedMessage": "Tu contraseña ha sido cambiada. Ahora puedes iniciar sesión con tu nueva contraseña.",
     "matchError": "Las contraseñas no coinciden.",
-    "lengthError": "La contraseña debe tener al menos 6 caracteres.",
+    "lengthError": "La contraseña debe tener al menos {min} caracteres.",
     "openDashboard": "Abrir panel",
     "dashboardHint": "Serás redirigido a tu panel."
   },
@@ -188,7 +188,8 @@
     "useBookingCard": "Usa la tarjeta de solicitud de cita para confirmar, rechazar o proponer un horario.",
     "genericError": "Algo salió mal. Inténtalo de nuevo.",
     "missingFieldsError": "Completa todos los campos obligatorios.",
-    "pastMidnightError": "Esta hora y duración pasarían de la medianoche."
+    "pastMidnightError": "Esta hora y duración pasarían de la medianoche.",
+    "patientArchivedError": "Este registro está archivado. Restáuralo en Pacientes para agendar una cita."
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -252,7 +253,16 @@
     "bornOn": "nacido/a el {date}",
     "openExisting": "Abrir existente",
     "createAnyway": "Crear de todos modos",
-    "openPatient": "Abrir paciente"
+    "openPatient": "Abrir paciente",
+    "archivedTitle": "Pacientes archivados",
+    "activeChip": "Activos ({n})",
+    "archivedChip": "Archivados ({n})",
+    "noArchived": "No hay pacientes archivados",
+    "archivedBadge": "Archivado",
+    "restore": "Restaurar",
+    "restoreError": "No se pudo restaurar el registro. Inténtalo de nuevo.",
+    "archivedOn": "Archivado el {date}",
+    "archivedOnBy": "Archivado el {date} por {name}"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -323,7 +333,19 @@
     "codeCopied": "¡Copiado!",
     "regenerateCode": "Regenerar",
     "addedBy": "Añadido por",
-    "addedBySecretary": "{name} (secretaría), {date}"
+    "addedBySecretary": "{name} (secretaría), {date}",
+    "allPatients": "Todos los pacientes",
+    "archivePatient": "Archivar registro",
+    "archiveTitle": "¿Archivar a {name}?",
+    "archiveBody": "Los registros archivados no aparecen en las listas, la búsqueda ni la agenda. El historial se conserva y puedes restaurarlo en cualquier momento.",
+    "archiveUpcoming": "{n, plural, =0 {No se cancelará ninguna cita próxima.} one {Se cancelará # cita próxima.} other {Se cancelarán # citas próximas.}}",
+    "archiveConfirm": "Archivar",
+    "archiveError": "No se pudo archivar el registro. Inténtalo de nuevo.",
+    "archivedSub": "Los registros archivados no pueden recibir nuevas citas, notas clínicas ni recetas.",
+    "archivedNoNew": "Este registro está archivado. Restáuralo para añadir nuevas entradas.",
+    "deleteNoHistoryConfirm": "¿Eliminar a {name}? Esta acción no se puede deshacer.",
+    "deleteHasHistory": "Este registro ya tiene historial clínico y no se puede eliminar. Archívalo en su lugar.",
+    "deleteError": "No se pudo eliminar el registro. Inténtalo de nuevo."
   },
   "settings": {
     "profileTitle": "Perfil",
@@ -472,9 +494,11 @@
     "durationMin": "{n} min",
     "customTime": "Hora personalizada",
     "orCustomTime": "O elige una hora",
-    "professionalFallback": "Profesional"
+    "professionalFallback": "Profesional",
+    "errorArchived": "Esta clínica no está aceptando nuevas reservas para tu cuenta. Ponte en contacto con la clínica."
   },
   "auth": {
+    "passwordTooShort": "La contraseña debe tener al menos {min} caracteres.",
     "login": {
       "title": "Qué bueno verte de nuevo",
       "subtitle": "Inicia sesión en tu cuenta SolvyMed",
@@ -557,7 +581,8 @@
       "linkFailed": "Ocurrió un error al vincular tu cuenta. Inténtalo de nuevo.",
       "backToSignup": "Usar otra cuenta",
       "tooManyAttempts": "Demasiados intentos. Espera un momento antes de volver a intentarlo.",
-      "alreadyInvitedByAnother": "Tu cuenta ya está conectada con otra clínica."
+      "alreadyInvitedByAnother": "Tu cuenta ya está conectada con otra clínica.",
+      "archived": "Esta clínica no está aceptando nuevas reservas para tu cuenta. Ponte en contacto con la clínica."
     },
     "pendingConfirmation": {
       "loading": "Verificando tu estado…",

@@ -3,8 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId, isProfessionalRole } from "@/lib/effectiveProfId";
+import { sendExpoPush } from "@/lib/push";
+import { actionError } from "@/lib/dbErrors";
 
-export type PatientMatch = { id: string; full_name: string; phone: string | null; birth_date: string | null };
+// archived_at is set for an archived match, so the warning can offer
+// Restore instead of creating a second record for the same person.
+export type PatientMatch = { id: string; full_name: string; phone: string | null; birth_date: string | null; archived_at: string | null };
 
 export type CreatePatientResult =
   | { success: true }
@@ -57,7 +61,7 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
       p_cpf: cpf,
     });
     if (!similarError && Array.isArray(similar) && similar.length > 0) {
-      const matches = (similar as PatientMatch[]).map(({ id, full_name, phone, birth_date }) => ({ id, full_name, phone, birth_date }));
+      const matches = (similar as PatientMatch[]).map(({ id, full_name, phone, birth_date, archived_at }) => ({ id, full_name, phone, birth_date, archived_at: archived_at ?? null }));
       return { error: "Possible match", code: "possible_match", matches };
     }
   }
@@ -132,7 +136,7 @@ export async function updatePatient(id: string, formData: FormData) {
     convenio_type: (formData.get("convenio_type") as string) || null,
   }).eq("id", id).eq("professional_id", effectiveProfId);
 
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${id}`);
   revalidatePath("/dashboard/patients");
   return { success: true };
@@ -147,8 +151,87 @@ export async function deletePatient(id: string) {
   if (!effectiveProfId) return { error: "Could not verify account" };
 
   const { error } = await supabase.from("patients").delete().eq("id", id).eq("professional_id", effectiveProfId);
-  if (error) return { error: error.message };
+  if (error) {
+    // A server trigger refuses to delete a patient with clinical history
+    // (records, prescriptions or files); the UI offers Archive instead, but
+    // its preview can be stale.
+    if (error.message?.includes("patient_has_clinical_history")) return { error: "patient_has_clinical_history" };
+    return { error: actionError(error.message) };
+  }
   revalidatePath("/dashboard/patients");
+  return { success: true };
+}
+
+export type ArchivePreview = { hasClinicalHistory: boolean; upcomingAppointments: number };
+
+// Drives Delete-vs-Archive and the "{n} upcoming appointments will be
+// cancelled" line. Never exposes clinical content. Null on any error, and
+// callers then hide Delete (the delete trigger is the real boundary).
+export async function getArchivePreview(patientId: string): Promise<ArchivePreview | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .rpc("get_patient_archive_preview", { p_patient_id: patientId })
+    .maybeSingle();
+  if (error || !data) return null;
+  const row = data as { has_clinical_history: boolean; upcoming_appointments: number };
+  return { hasClinicalHistory: row.has_clinical_history, upcomingAppointments: row.upcoming_appointments ?? 0 };
+}
+
+export type ArchiveResult =
+  | { success: true; cancelled: number }
+  | { error: "patient_not_found" | "already_archived" | "generic" };
+
+export async function archivePatient(patientId: string): Promise<ArchiveResult> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "generic" };
+
+  // The RPC scopes to the caller's practice (doctor or linked secretary),
+  // cancels upcoming appointments in the same transaction and returns them,
+  // so every cancelled appointment gets its notification, including one
+  // booked a moment before the archive.
+  const { data, error } = await supabase.rpc("archive_patient", { p_patient_id: patientId });
+  if (error) {
+    if (error.message?.includes("patient_not_found")) return { error: "patient_not_found" };
+    if (error.message?.includes("already_archived")) return { error: "already_archived" };
+    return { error: "generic" };
+  }
+
+  const cancelled = (data ?? []) as { appointment_id: string; patient_auth_id: string | null; date: string; start_time: string }[];
+  await Promise.all(cancelled
+    .filter((a) => a.patient_auth_id)
+    .map(async (a) => {
+      const { data: tokenRows } = await supabase.rpc("get_patient_push_tokens", { p_patient_auth_id: a.patient_auth_id });
+      const tokens = (tokenRows ?? []).map((r: { token: string }) => r.token);
+      await sendExpoPush(
+        tokens,
+        "Appointment Cancelled",
+        `Your appointment on ${a.date} at ${a.start_time.slice(0, 5)} has been cancelled by the clinic.`,
+      );
+    }));
+
+  revalidatePath("/dashboard/patients");
+  revalidatePath(`/dashboard/patients/${patientId}`);
+  revalidatePath("/dashboard/schedule");
+  return { success: true, cancelled: cancelled.length };
+}
+
+export type RestoreResult = { success: true } | { error: "patient_not_found" | "generic" };
+
+export async function restorePatient(patientId: string): Promise<RestoreResult> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "generic" };
+
+  const { error } = await supabase.rpc("restore_patient", { p_patient_id: patientId });
+  if (error) {
+    if (error.message?.includes("patient_not_found")) return { error: "patient_not_found" };
+    // Someone else restored it first: the end state is what was asked for.
+    if (error.message?.includes("not_archived")) return { success: true };
+    return { error: "generic" };
+  }
+  revalidatePath("/dashboard/patients");
+  revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
 }
 
@@ -173,7 +256,7 @@ export async function createRecord(patientId: string, formData: FormData) {
     record_type: (formData.get("record_type") as string) || "free_text",
   });
 
-  if (error) return { error: error.message };
+  if (error) return { error: error.message?.includes("patient_archived") ? "patient_archived" : error.message };
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
 }
@@ -187,7 +270,7 @@ export async function deleteRecord(id: string, patientId: string) {
   if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
 
   const { error } = await supabase.from("medical_records").delete().eq("id", id).eq("professional_id", user.id);
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
 }
@@ -209,7 +292,7 @@ export async function createPrescription(patientId: string, formData: FormData) 
     .select()
     .single();
 
-  if (pError) return { error: pError.message };
+  if (pError) return { error: pError.message?.includes("patient_archived") ? "patient_archived" : pError.message };
 
   // Parse medications from form (name_0, dosage_0, frequency_0, duration_0, ...)
   const items: { prescription_id: string; name: string; dosage: string; frequency: string; duration: string }[] = [];
@@ -234,7 +317,7 @@ export async function createPrescription(patientId: string, formData: FormData) 
   }
 
   const { error: iError } = await supabase.from("prescription_items").insert(items);
-  if (iError) return { error: iError.message };
+  if (iError) return { error: actionError(iError.message) };
 
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
@@ -254,7 +337,7 @@ export async function toggleBookingBlock(patientId: string, blocked: boolean) {
     .eq("id", patientId)
     .eq("professional_id", effectiveProfId);
 
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
   revalidatePath("/dashboard/patients");
   return { success: true };
@@ -266,7 +349,7 @@ export async function generatePatientInviteCode(patientId: string) {
   if (!user) return { error: "Unauthorized" };
 
   const { data, error } = await supabase.rpc("generate_patient_invite_code", { p_patient_id: patientId });
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
 
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { code: data as string };
@@ -282,7 +365,7 @@ export async function deletePrescription(id: string, patientId: string) {
 
   await supabase.from("prescription_items").delete().eq("prescription_id", id);
   const { error } = await supabase.from("prescriptions").delete().eq("id", id).eq("professional_id", user.id);
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
 }

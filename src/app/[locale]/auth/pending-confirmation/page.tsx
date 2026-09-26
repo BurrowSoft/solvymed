@@ -112,12 +112,16 @@ export default function PendingConfirmationPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prefix, router]);
 
+  // The clinic archived this patient's record: the patient-side message,
+  // never the raw code.
+  const actionErrorText = (e: string) => (e === "patient_archived" ? t("inviteRequired.archived") : e);
+
   async function handleAccept(id: string) {
     setActingId(id);
     setActionError("");
     const result = await acceptProposal(id);
     setActingId(null);
-    if (result?.error) { setActionError(result.error); return; }
+    if (result?.error) { setActionError(actionErrorText(result.error)); return; }
     // A successful accept links the patient (accept_appointment_proposal
     // owns that server-side) — reload to pick up the new linked state,
     // which redirects to patient-welcome above.
@@ -129,7 +133,7 @@ export default function PendingConfirmationPage() {
     setActionError("");
     const result = await declineProposal(id);
     setActingId(null);
-    if (result?.error) { setActionError(result.error); return; }
+    if (result?.error) { setActionError(actionErrorText(result.error)); return; }
     await load(false);
   }
 

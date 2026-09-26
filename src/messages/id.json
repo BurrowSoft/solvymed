@@ -72,7 +72,7 @@
     "updatedTitle": "Kata sandi diperbarui",
     "updatedMessage": "Kata sandi Anda telah diubah. Sekarang Anda dapat masuk dengan kata sandi baru.",
     "matchError": "Kata sandi tidak cocok.",
-    "lengthError": "Kata sandi harus minimal 6 karakter.",
+    "lengthError": "Kata sandi harus minimal {min} karakter.",
     "openDashboard": "Buka dasbor",
     "dashboardHint": "Anda akan diarahkan ke dasbor Anda."
   },
@@ -188,7 +188,8 @@
     "useBookingCard": "Gunakan kartu permintaan janji temu untuk mengonfirmasi, menolak, atau mengusulkan waktu baru untuk permintaan ini.",
     "genericError": "Terjadi kesalahan. Silakan coba lagi.",
     "missingFieldsError": "Harap isi semua kolom yang wajib diisi.",
-    "pastMidnightError": "Waktu dan durasi ini akan melewati tengah malam."
+    "pastMidnightError": "Waktu dan durasi ini akan melewati tengah malam.",
+    "patientArchivedError": "Rekam medis ini diarsipkan. Pulihkan di menu Pasien untuk membuat janji temu."
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -252,7 +253,16 @@
     "bornOn": "lahir {date}",
     "openExisting": "Buka yang ada",
     "createAnyway": "Tetap buat",
-    "openPatient": "Buka pasien"
+    "openPatient": "Buka pasien",
+    "archivedTitle": "Rekam medis yang diarsipkan",
+    "activeChip": "Aktif ({n})",
+    "archivedChip": "Diarsipkan ({n})",
+    "noArchived": "Tidak ada rekam medis yang diarsipkan",
+    "archivedBadge": "Diarsipkan",
+    "restore": "Pulihkan",
+    "restoreError": "Tidak dapat memulihkan rekam medis. Silakan coba lagi.",
+    "archivedOn": "Diarsipkan {date}",
+    "archivedOnBy": "Diarsipkan {date} oleh {name}"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -323,7 +333,19 @@
     "codeCopied": "Disalin!",
     "regenerateCode": "Buat ulang",
     "addedBy": "Ditambahkan oleh",
-    "addedBySecretary": "{name} (sekretaris), {date}"
+    "addedBySecretary": "{name} (sekretaris), {date}",
+    "allPatients": "Semua rekam medis",
+    "archivePatient": "Arsipkan rekam medis",
+    "archiveTitle": "Arsipkan {name}?",
+    "archiveBody": "Rekam medis yang diarsipkan disembunyikan dari daftar, pencarian, dan jadwal. Riwayat tetap disimpan dan dapat dipulihkan kapan saja.",
+    "archiveUpcoming": "{n, plural, =0 {Tidak ada janji temu mendatang yang dibatalkan.} other {# janji temu mendatang akan dibatalkan.}}",
+    "archiveConfirm": "Arsipkan",
+    "archiveError": "Tidak dapat mengarsipkan rekam medis. Silakan coba lagi.",
+    "archivedSub": "Rekam medis yang diarsipkan tidak dapat menerima janji temu, catatan, atau resep baru.",
+    "archivedNoNew": "Rekam medis ini diarsipkan. Pulihkan untuk menambahkan entri baru.",
+    "deleteNoHistoryConfirm": "Hapus {name}? Tindakan ini tidak dapat dibatalkan.",
+    "deleteHasHistory": "Rekam medis ini sekarang memiliki riwayat klinis dan tidak dapat dihapus. Arsipkan saja.",
+    "deleteError": "Tidak dapat menghapus rekam medis. Silakan coba lagi."
   },
   "settings": {
     "profileTitle": "Profil",
@@ -472,9 +494,11 @@
     "durationMin": "{n} menit",
     "customTime": "Waktu khusus",
     "orCustomTime": "Atau pilih waktu khusus",
-    "professionalFallback": "Tenaga profesional"
+    "professionalFallback": "Tenaga profesional",
+    "errorArchived": "Klinik ini tidak menerima pemesanan baru untuk akun Anda. Silakan hubungi klinik."
   },
   "auth": {
+    "passwordTooShort": "Kata sandi harus minimal {min} karakter.",
     "login": {
       "title": "Selamat datang kembali",
       "subtitle": "Masuk ke akun SolvyMed Anda",
@@ -557,7 +581,8 @@
       "linkFailed": "Terjadi kesalahan saat menautkan akun Anda. Silakan coba lagi.",
       "backToSignup": "Gunakan akun lain",
       "tooManyAttempts": "Terlalu banyak percobaan. Harap tunggu sebentar sebelum mencoba lagi.",
-      "alreadyInvitedByAnother": "Akun Anda sudah terhubung dengan dokter lain."
+      "alreadyInvitedByAnother": "Akun Anda sudah terhubung dengan dokter lain.",
+      "archived": "Klinik ini tidak menerima pemesanan baru untuk akun Anda. Silakan hubungi klinik."
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",

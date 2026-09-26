@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition, useRef } from "react";
+import { useState, useTransition, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { createRecord, deleteRecord, createPrescription, deletePrescription, updatePatient, deletePatient, toggleBookingBlock, generatePatientInviteCode } from "../actions";
+import { createRecord, deleteRecord, createPrescription, deletePrescription, updatePatient, deletePatient, toggleBookingBlock, generatePatientInviteCode, getArchivePreview, archivePatient, restorePatient } from "../actions";
+import { archivedLabel } from "../PatientsClient";
 
 type MedRecord = { id: string; date: string; time: string; content: string; record_type?: string; created_at: string };
 type RxItem = { name: string; dosage: string; frequency: string; duration: string };
@@ -61,13 +62,18 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
   appointments: Appt[];
   locale: string;
   isSecretary?: boolean;
+  // Archived patients are read-only for new clinical entries and bookings
+  // (the server refuses them too, with patient_archived).
+  isArchived?: boolean;
+  // Only a patient without clinical history can be deleted.
+  canDelete?: boolean;
 }) {
   const t = useTranslations("patientDetail");
   const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "appointments">("info");
@@ -100,16 +106,20 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         ))}
       </div>
 
-      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} />}
-      {tab === "records" && <RecordsTab patientId={patient.id} records={records} />}
-      {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} />}
+      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} />}
+      {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} />}
+      {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} isArchived={isArchived} />}
       {tab === "appointments" && <AppointmentsTab appointments={appointments} locale={locale} />}
     </div>
   );
 }
 
-function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string }) {
+function PatientInfoTab({ patient, locale, isArchived, canDelete }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean }) {
   const t = useTranslations("patientDetail");
+  // Archive codes from the server become translated copy, never raw codes.
+  const errorText = (e: string) =>
+    e === "patient_archived" ? t("archivedNoNew") : e === "patient_has_clinical_history" ? t("deleteHasHistory") : e;
+  const [archiveOpen, setArchiveOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [pending, startTransition] = useTransition();
   const [blockPending, startBlockTransition] = useTransition();
@@ -127,7 +137,7 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
     setCodeError("");
     startCodeTransition(async () => {
       const result = await generatePatientInviteCode(patient.id);
-      if (result.error) { setCodeError(result.error); return; }
+      if (result.error) { setCodeError(errorText(result.error)); return; }
       if (result.code) setInviteCode(result.code);
     });
   }
@@ -152,15 +162,21 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
     setError("");
     startTransition(async () => {
       const result = await updatePatient(patient.id, formData);
-      if (result?.error) { setError(result.error); return; }
+      if (result?.error) { setError(errorText(result.error)); return; }
       setEditing(false);
     });
   }
 
   function handleDelete() {
-    if (!confirm(t("deletePatientConfirm", { name: patient.full_name }))) return;
+    if (!confirm(t("deleteNoHistoryConfirm", { name: patient.full_name }))) return;
+    setError("");
     startTransition(async () => {
-      await deletePatient(patient.id);
+      const result = await deletePatient(patient.id);
+      if (result?.error) {
+        // History was added since the page loaded: archive instead.
+        setError(result.error === "patient_has_clinical_history" ? t("deleteHasHistory") : t("deleteError"));
+        return;
+      }
       router.push(`${prefix}/dashboard/patients`);
     });
   }
@@ -206,7 +222,7 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
             </div>
           </div>
         )}
-        <div className="mb-5 rounded-xl border border-slate-100 bg-slate-50 p-4">
+        {!isArchived && <div className="mb-5 rounded-xl border border-slate-100 bg-slate-50 p-4">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{t("inviteCode")}</p>
           {inviteCode ? (
             <div className="flex flex-wrap items-center gap-3">
@@ -231,7 +247,7 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
             </button>
           )}
           {codeError && <p className="mt-2 text-xs text-red-600">{codeError}</p>}
-        </div>
+        </div>}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {fields.map(({ label, value }) => value ? (
             <div key={label} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
@@ -244,7 +260,7 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
           <button onClick={() => setEditing(true)} className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
             {t("editPatient")}
           </button>
-          <button
+          {!isArchived && <button
             onClick={handleToggleBlock}
             disabled={blockPending}
             className={`rounded-xl border px-4 py-2.5 text-sm font-semibold transition disabled:opacity-60 ${
@@ -254,11 +270,20 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
             }`}
           >
             {blockPending ? "…" : patient.booking_blocked ? t("unblockBookings") : t("blockBookings")}
-          </button>
-          <button onClick={handleDelete} disabled={pending} className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60">
-            {t("deletePatient")}
-          </button>
+          </button>}
+          {!isArchived && (
+            <button onClick={() => setArchiveOpen(true)} className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+              {t("archivePatient")}
+            </button>
+          )}
+          {canDelete && (
+            <button onClick={handleDelete} disabled={pending} className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60">
+              {t("deletePatient")}
+            </button>
+          )}
         </div>
+        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        <ArchiveDialog open={archiveOpen} onClose={() => setArchiveOpen(false)} patient={patient} />
       </div>
     );
   }
@@ -323,7 +348,7 @@ function PatientInfoTab({ patient, locale }: { patient: Patient; locale: string 
   );
 }
 
-function RecordsTab({ patientId, records }: { patientId: string; records: MedRecord[] }) {
+function RecordsTab({ patientId, records, isArchived }: { patientId: string; records: MedRecord[]; isArchived: boolean }) {
   const t = useTranslations("patientDetail");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -336,7 +361,7 @@ function RecordsTab({ patientId, records }: { patientId: string; records: MedRec
     setError("");
     startTransition(async () => {
       const result = await createRecord(patientId, formData);
-      if (result?.error) { setError(result.error); return; }
+      if (result?.error) { setError(result.error === "patient_archived" ? t("archivedNoNew") : result.error); return; }
       setOpen(false);
       formRef.current?.reset();
     });
@@ -351,10 +376,10 @@ function RecordsTab({ patientId, records }: { patientId: string; records: MedRec
     <div>
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-slate-500">{t("records", { n: records.length })}</p>
-        <button onClick={() => setOpen(true)} className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">
+        {!isArchived && <button onClick={() => setOpen(true)} className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3.5 w-3.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           {t("newRecord")}
-        </button>
+        </button>}
       </div>
 
       {records.length === 0 ? (
@@ -411,7 +436,7 @@ function RecordsTab({ patientId, records }: { patientId: string; records: MedRec
   );
 }
 
-function PrescriptionsTab({ patientId, prescriptions }: { patientId: string; prescriptions: Rx[] }) {
+function PrescriptionsTab({ patientId, prescriptions, isArchived }: { patientId: string; prescriptions: Rx[]; isArchived: boolean }) {
   const t = useTranslations("patientDetail");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -433,7 +458,7 @@ function PrescriptionsTab({ patientId, prescriptions }: { patientId: string; pre
     setError("");
     startTransition(async () => {
       const result = await createPrescription(patientId, formData);
-      if (result?.error) { setError(result.error); return; }
+      if (result?.error) { setError(result.error === "patient_archived" ? t("archivedNoNew") : result.error); return; }
       setOpen(false);
       setMedications([{ name: "", dosage: "", frequency: "", duration: "" }]);
     });
@@ -448,10 +473,10 @@ function PrescriptionsTab({ patientId, prescriptions }: { patientId: string; pre
     <div>
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-slate-500">{t("prescriptions", { n: prescriptions.length })}</p>
-        <button onClick={() => setOpen(true)} className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">
+        {!isArchived && <button onClick={() => setOpen(true)} className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3.5 w-3.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           {t("newPrescription")}
-        </button>
+        </button>}
       </div>
 
       {prescriptions.length === 0 ? (
@@ -566,6 +591,99 @@ function AppointmentsTab({ appointments, locale }: { appointments: Appt[]; local
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function ArchiveDialog({ open, onClose, patient }: { open: boolean; onClose: () => void; patient: Patient }) {
+  const t = useTranslations("patientDetail");
+  const router = useRouter();
+  const [upcoming, setUpcoming] = useState<number | null>(null);
+  const [loadingPreview, setLoadingPreview] = useState(false);
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState("");
+
+  // Fetched when the dialog opens, so the count reflects bookings made
+  // since the page loaded. The server still cancels whatever is upcoming at
+  // archive time and notifies each patient.
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    setError("");
+    setUpcoming(null);
+    setLoadingPreview(true);
+    getArchivePreview(patient.id).then((preview) => {
+      if (cancelled) return;
+      setUpcoming(preview?.upcomingAppointments ?? null);
+      setLoadingPreview(false);
+    });
+    return () => { cancelled = true; };
+  }, [open, patient.id]);
+
+  function handleArchive() {
+    setError("");
+    startTransition(async () => {
+      const result = await archivePatient(patient.id);
+      if ("error" in result && result.error !== "already_archived") {
+        setError(t("archiveError"));
+        return;
+      }
+      onClose();
+      router.refresh();
+    });
+  }
+
+  return (
+    <Dialog open={open} onClose={onClose} title={t("archiveTitle", { name: patient.full_name })}>
+      <p className="text-sm text-slate-600">{t("archiveBody")}</p>
+      {loadingPreview ? (
+        <p className="mt-3 text-sm text-slate-400">…</p>
+      ) : upcoming !== null ? (
+        // Always stated when known, zero included, so the user knows what
+        // archiving will do; highlighted only when something is cancelled.
+        <p className={`mt-3 rounded-xl border px-4 py-3 text-sm font-semibold ${upcoming > 0 ? "border-amber-200 bg-amber-50 text-amber-900" : "border-slate-200 bg-slate-50 text-slate-600"}`}>
+          {t("archiveUpcoming", { n: upcoming })}
+        </p>
+      ) : null}
+      {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+      <div className="flex gap-3 pt-5">
+        <button type="button" onClick={onClose} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
+        <button type="button" onClick={handleArchive} disabled={pending || loadingPreview} className="flex-1 rounded-xl bg-slate-800 py-2.5 text-sm font-bold text-white hover:bg-slate-900 transition disabled:opacity-60">
+          {pending ? t("saving") : t("archiveConfirm")}
+        </button>
+      </div>
+    </Dialog>
+  );
+}
+
+export function ArchivedBanner({ patientId, archivedAt, archivedByName, locale }: {
+  patientId: string; archivedAt: string; archivedByName: string | null; locale: string;
+}) {
+  const t = useTranslations("patientDetail");
+  const tPatients = useTranslations("patients");
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState("");
+
+  function handleRestore() {
+    setError("");
+    startTransition(async () => {
+      const result = await restorePatient(patientId);
+      if ("error" in result) { setError(tPatients("restoreError")); return; }
+      router.refresh();
+    });
+  }
+
+  return (
+    <div role="status" className="mb-6 flex flex-wrap items-start justify-between gap-3 rounded-xl border border-slate-200 bg-slate-100 px-4 py-3.5">
+      <div>
+        <p className="text-sm font-bold text-slate-800">{archivedLabel(tPatients, archivedAt, archivedByName, locale)}</p>
+        <p className="mt-0.5 text-xs text-slate-600">{t("archivedSub")}</p>
+        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      </div>
+      <button type="button" onClick={handleRestore} disabled={pending} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
+        {pending ? "…" : tPatients("restore")}
+      </button>
     </div>
   );
 }

@@ -72,7 +72,7 @@
     "updatedTitle": "Đã cập nhật mật khẩu",
     "updatedMessage": "Mật khẩu của bạn đã được thay đổi. Bây giờ bạn có thể đăng nhập bằng mật khẩu mới.",
     "matchError": "Mật khẩu không khớp.",
-    "lengthError": "Mật khẩu phải có ít nhất 6 ký tự.",
+    "lengthError": "Mật khẩu phải có ít nhất {min} ký tự.",
     "openDashboard": "Mở bảng điều khiển",
     "dashboardHint": "Bạn sẽ được chuyển hướng đến bảng điều khiển."
   },
@@ -188,7 +188,8 @@
     "useBookingCard": "Hãy dùng thẻ yêu cầu đặt lịch để xác nhận, từ chối hoặc đề xuất giờ khác cho yêu cầu này.",
     "genericError": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "missingFieldsError": "Vui lòng điền đầy đủ các trường bắt buộc.",
-    "pastMidnightError": "Thời gian và thời lượng này sẽ vượt quá nửa đêm."
+    "pastMidnightError": "Thời gian và thời lượng này sẽ vượt quá nửa đêm.",
+    "patientArchivedError": "Hồ sơ này đã được lưu trữ. Hãy khôi phục trong mục Bệnh nhân để đặt lịch hẹn."
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -252,7 +253,16 @@
     "bornOn": "sinh ngày {date}",
     "openExisting": "Mở hồ sơ có sẵn",
     "createAnyway": "Vẫn tạo mới",
-    "openPatient": "Mở bệnh nhân"
+    "openPatient": "Mở bệnh nhân",
+    "archivedTitle": "Hồ sơ đã lưu trữ",
+    "activeChip": "Đang hoạt động ({n})",
+    "archivedChip": "Đã lưu trữ ({n})",
+    "noArchived": "Không có hồ sơ nào đã lưu trữ",
+    "archivedBadge": "Đã lưu trữ",
+    "restore": "Khôi phục",
+    "restoreError": "Không thể khôi phục hồ sơ. Vui lòng thử lại.",
+    "archivedOn": "Lưu trữ ngày {date}",
+    "archivedOnBy": "Lưu trữ ngày {date} bởi {name}"
   },
   "patientDetail": {
     "tabInfo": "Thông tin",
@@ -323,7 +333,19 @@
     "codeCopied": "Đã sao chép!",
     "regenerateCode": "Tạo lại",
     "addedBy": "Được thêm bởi",
-    "addedBySecretary": "{name} (thư ký), {date}"
+    "addedBySecretary": "{name} (thư ký), {date}",
+    "allPatients": "Tất cả hồ sơ",
+    "archivePatient": "Lưu trữ hồ sơ",
+    "archiveTitle": "Lưu trữ hồ sơ {name}?",
+    "archiveBody": "Hồ sơ đã lưu trữ sẽ bị ẩn khỏi danh sách, tìm kiếm và lịch hẹn. Lịch sử vẫn được giữ lại và có thể khôi phục bất cứ lúc nào.",
+    "archiveUpcoming": "{n, plural, =0 {Không có lịch hẹn sắp tới nào bị hủy.} other {# lịch hẹn sắp tới sẽ bị hủy.}}",
+    "archiveConfirm": "Lưu trữ",
+    "archiveError": "Không thể lưu trữ hồ sơ. Vui lòng thử lại.",
+    "archivedSub": "Không thể thêm lịch hẹn, ghi chép hoặc đơn thuốc mới cho hồ sơ đã lưu trữ.",
+    "archivedNoNew": "Hồ sơ này đã được lưu trữ. Hãy khôi phục để thêm mục mới.",
+    "deleteNoHistoryConfirm": "Xóa {name}? Không thể hoàn tác thao tác này.",
+    "deleteHasHistory": "Hồ sơ này hiện đã có lịch sử khám và không thể xóa. Hãy lưu trữ thay vì xóa.",
+    "deleteError": "Không thể xóa hồ sơ. Vui lòng thử lại."
   },
   "settings": {
     "profileTitle": "Hồ sơ",
@@ -472,9 +494,11 @@
     "durationMin": "{n} phút",
     "customTime": "Thời gian tùy chỉnh",
     "orCustomTime": "Hoặc chọn giờ khác",
-    "professionalFallback": "Chuyên gia"
+    "professionalFallback": "Chuyên gia",
+    "errorArchived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám."
   },
   "auth": {
+    "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
     "login": {
       "title": "Chào mừng trở lại",
       "subtitle": "Đăng nhập vào tài khoản SolvyMed của bạn",
@@ -557,7 +581,8 @@
       "linkFailed": "Đã xảy ra lỗi khi liên kết tài khoản của bạn. Vui lòng thử lại.",
       "backToSignup": "Dùng tài khoản khác",
       "tooManyAttempts": "Quá nhiều lần thử. Vui lòng đợi một chút rồi thử lại.",
-      "alreadyInvitedByAnother": "Tài khoản của bạn đã được liên kết với một bác sĩ khác."
+      "alreadyInvitedByAnother": "Tài khoản của bạn đã được liên kết với một bác sĩ khác.",
+      "archived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám."
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",

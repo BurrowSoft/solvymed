@@ -72,7 +72,7 @@
     "updatedTitle": "비밀번호 업데이트됨",
     "updatedMessage": "비밀번호가 변경되었습니다. 이제 새 비밀번호로 로그인할 수 있습니다.",
     "matchError": "비밀번호가 일치하지 않습니다.",
-    "lengthError": "비밀번호는 최소 6자 이상이어야 합니다.",
+    "lengthError": "비밀번호는 최소 {min}자 이상이어야 합니다.",
     "openDashboard": "대시보드 열기",
     "dashboardHint": "대시보드로 리디렉션됩니다."
   },
@@ -188,7 +188,8 @@
     "useBookingCard": "이 요청을 수락, 거절하거나 새 시간을 제안하려면 예약 요청 카드를 사용하세요.",
     "genericError": "문제가 발생했습니다. 다시 시도해 주세요.",
     "missingFieldsError": "필수 항목을 모두 입력해 주세요.",
-    "pastMidnightError": "이 시간과 소요 시간은 자정을 넘깁니다."
+    "pastMidnightError": "이 시간과 소요 시간은 자정을 넘깁니다.",
+    "patientArchivedError": "이 차트는 보관되어 있습니다. 예약하려면 환자 메뉴에서 복원하세요."
   },
   "payments": {
     "thisWeek": "이번 주",
@@ -252,7 +253,16 @@
     "bornOn": "{date} 출생",
     "openExisting": "기존 환자 열기",
     "createAnyway": "그래도 생성",
-    "openPatient": "환자 열기"
+    "openPatient": "환자 열기",
+    "archivedTitle": "보관된 차트",
+    "activeChip": "활성 ({n})",
+    "archivedChip": "보관됨 ({n})",
+    "noArchived": "보관된 차트가 없습니다",
+    "archivedBadge": "보관됨",
+    "restore": "복원",
+    "restoreError": "차트를 복원하지 못했습니다. 다시 시도해 주세요.",
+    "archivedOn": "{date}에 보관됨",
+    "archivedOnBy": "{date}에 {name}님이 보관함"
   },
   "patientDetail": {
     "tabInfo": "정보",
@@ -323,7 +333,19 @@
     "codeCopied": "복사됨!",
     "regenerateCode": "재생성",
     "addedBy": "추가한 사람",
-    "addedBySecretary": "{name}(비서), {date}"
+    "addedBySecretary": "{name}(비서), {date}",
+    "allPatients": "전체 차트",
+    "archivePatient": "차트 보관",
+    "archiveTitle": "{name} 차트를 보관할까요?",
+    "archiveBody": "보관된 차트는 목록, 검색, 일정에서 숨겨집니다. 기록은 유지되며 언제든지 복원할 수 있습니다.",
+    "archiveUpcoming": "{n, plural, =0 {취소되는 예정된 예약이 없습니다.} other {예정된 예약 #건이 취소됩니다.}}",
+    "archiveConfirm": "보관",
+    "archiveError": "차트를 보관하지 못했습니다. 다시 시도해 주세요.",
+    "archivedSub": "보관된 차트에는 새 예약, 기록, 처방을 추가할 수 없습니다.",
+    "archivedNoNew": "이 차트는 보관되어 있습니다. 새 항목을 추가하려면 복원하세요.",
+    "deleteNoHistoryConfirm": "{name} 차트를 삭제할까요? 이 작업은 되돌릴 수 없습니다.",
+    "deleteHasHistory": "이 차트에는 진료 기록이 있어 삭제할 수 없습니다. 대신 보관하세요.",
+    "deleteError": "차트를 삭제하지 못했습니다. 다시 시도해 주세요."
   },
   "settings": {
     "profileTitle": "프로필",
@@ -472,9 +494,11 @@
     "durationMin": "{n}분",
     "customTime": "사용자 지정 시간",
     "orCustomTime": "또는 시간 직접 선택",
-    "professionalFallback": "담당 전문가"
+    "professionalFallback": "담당 전문가",
+    "errorArchived": "이 클리닉은 회원님 계정의 새 예약을 받지 않습니다. 클리닉에 문의해 주세요."
   },
   "auth": {
+    "passwordTooShort": "비밀번호는 최소 {min}자 이상이어야 합니다.",
     "login": {
       "title": "다시 오셨군요",
       "subtitle": "SolvyMed 계정에 로그인",
@@ -557,7 +581,8 @@
       "linkFailed": "계정 연결 중 오류가 발생했습니다. 다시 시도해 주세요.",
       "backToSignup": "다른 계정 사용",
       "tooManyAttempts": "시도 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
-      "alreadyInvitedByAnother": "계정이 이미 다른 의사와 연결되어 있습니다."
+      "alreadyInvitedByAnother": "계정이 이미 다른 의사와 연결되어 있습니다.",
+      "archived": "이 클리닉은 회원님 계정의 새 예약을 받지 않습니다. 클리닉에 문의해 주세요."
     },
     "pendingConfirmation": {
       "loading": "상태 확인 중…",

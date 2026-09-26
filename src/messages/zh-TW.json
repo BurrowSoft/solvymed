@@ -72,7 +72,7 @@
     "updatedTitle": "密碼已更新",
     "updatedMessage": "您的密碼已更改。您現在可以使用新密碼登入。",
     "matchError": "兩次輸入的密碼不相符。",
-    "lengthError": "密碼至少需要6個字元。",
+    "lengthError": "密碼至少需要{min}個字元。",
     "openDashboard": "開啟儀表板",
     "dashboardHint": "您將被重新導向至儀表板。"
   },
@@ -188,7 +188,8 @@
     "useBookingCard": "請使用預約請求卡來確認、拒絕或為此請求提議新時間。",
     "genericError": "發生問題，請重試。",
     "missingFieldsError": "請填寫所有必填欄位。",
-    "pastMidnightError": "此時間和時長將超過午夜。"
+    "pastMidnightError": "此時間和時長將超過午夜。",
+    "patientArchivedError": "此病歷已封存。請在「病患」中還原後再預約。"
   },
   "payments": {
     "thisWeek": "本週",
@@ -252,7 +253,16 @@
     "bornOn": "出生於 {date}",
     "openExisting": "開啟既有紀錄",
     "createAnyway": "仍要建立",
-    "openPatient": "開啟病患"
+    "openPatient": "開啟病患",
+    "archivedTitle": "已封存的病歷",
+    "activeChip": "使用中 ({n})",
+    "archivedChip": "已封存 ({n})",
+    "noArchived": "沒有已封存的病歷",
+    "archivedBadge": "已封存",
+    "restore": "還原",
+    "restoreError": "無法還原病歷，請再試一次。",
+    "archivedOn": "{date} 封存",
+    "archivedOnBy": "{date} 由 {name} 封存"
   },
   "patientDetail": {
     "tabInfo": "資訊",
@@ -323,7 +333,19 @@
     "codeCopied": "已複製！",
     "regenerateCode": "重新產生",
     "addedBy": "新增者",
-    "addedBySecretary": "{name}（祕書），{date}"
+    "addedBySecretary": "{name}（祕書），{date}",
+    "allPatients": "所有病歷",
+    "archivePatient": "封存病歷",
+    "archiveTitle": "要封存 {name} 嗎？",
+    "archiveBody": "已封存的病歷不會出現在清單、搜尋和行程中。歷史紀錄會保留，可隨時還原。",
+    "archiveUpcoming": "{n, plural, =0 {不會取消任何即將到來的預約。} other {將取消 # 個即將到來的預約。}}",
+    "archiveConfirm": "封存",
+    "archiveError": "無法封存病歷，請再試一次。",
+    "archivedSub": "已封存的病歷無法新增預約、紀錄或處方。",
+    "archivedNoNew": "此病歷已封存。請先還原再新增內容。",
+    "deleteNoHistoryConfirm": "要刪除 {name} 嗎？此動作無法復原。",
+    "deleteHasHistory": "此病歷現已有臨床紀錄，無法刪除。請改為封存。",
+    "deleteError": "無法刪除病歷，請再試一次。"
   },
   "settings": {
     "profileTitle": "個人資料",
@@ -472,9 +494,11 @@
     "durationMin": "{n} 分鐘",
     "customTime": "自訂時間",
     "orCustomTime": "或選擇自訂時間",
-    "professionalFallback": "專業人員"
+    "professionalFallback": "專業人員",
+    "errorArchived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。"
   },
   "auth": {
+    "passwordTooShort": "密碼至少需要{min}個字元。",
     "login": {
       "title": "歡迎回來",
       "subtitle": "登入您的 SolvyMed 帳戶",
@@ -557,7 +581,8 @@
       "linkFailed": "關聯您的帳戶時發生錯誤，請重試。",
       "backToSignup": "使用其他帳戶",
       "tooManyAttempts": "嘗試次數過多，請稍後再試。",
-      "alreadyInvitedByAnother": "您的帳戶已與另一位醫生關聯。"
+      "alreadyInvitedByAnother": "您的帳戶已與另一位醫生關聯。",
+      "archived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。"
     },
     "pendingConfirmation": {
       "loading": "正在檢查您的狀態…",

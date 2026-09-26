@@ -72,7 +72,7 @@
     "updatedTitle": "Passwort aktualisiert",
     "updatedMessage": "Ihr Passwort wurde geändert. Sie können sich jetzt mit Ihrem neuen Passwort anmelden.",
     "matchError": "Die Passwörter stimmen nicht überein.",
-    "lengthError": "Das Passwort muss mindestens 6 Zeichen lang sein.",
+    "lengthError": "Das Passwort muss mindestens {min} Zeichen lang sein.",
     "openDashboard": "Dashboard öffnen",
     "dashboardHint": "Sie werden zu Ihrem Dashboard weitergeleitet."
   },
@@ -188,7 +188,8 @@
     "useBookingCard": "Verwenden Sie die Terminanfragekarte, um diese Anfrage zu bestätigen, abzulehnen oder eine neue Zeit vorzuschlagen.",
     "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "missingFieldsError": "Bitte füllen Sie alle Pflichtfelder aus.",
-    "pastMidnightError": "Diese Uhrzeit und Dauer würden über Mitternacht hinausgehen."
+    "pastMidnightError": "Diese Uhrzeit und Dauer würden über Mitternacht hinausgehen.",
+    "patientArchivedError": "Diese Akte ist archiviert. Stellen Sie sie unter Patienten wieder her, um einen Termin anzulegen."
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -252,7 +253,16 @@
     "bornOn": "geb. {date}",
     "openExisting": "Vorhandenen öffnen",
     "createAnyway": "Trotzdem anlegen",
-    "openPatient": "Patient öffnen"
+    "openPatient": "Patient öffnen",
+    "archivedTitle": "Archivierte Patientenakten",
+    "activeChip": "Aktiv ({n})",
+    "archivedChip": "Archiviert ({n})",
+    "noArchived": "Keine archivierten Patientenakten",
+    "archivedBadge": "Archiviert",
+    "restore": "Wiederherstellen",
+    "restoreError": "Die Akte konnte nicht wiederhergestellt werden. Bitte versuchen Sie es erneut.",
+    "archivedOn": "Archiviert am {date}",
+    "archivedOnBy": "Archiviert am {date} von {name}"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -323,7 +333,19 @@
     "codeCopied": "Kopiert!",
     "regenerateCode": "Neu generieren",
     "addedBy": "Hinzugefügt von",
-    "addedBySecretary": "{name} (Sekretariat), {date}"
+    "addedBySecretary": "{name} (Sekretariat), {date}",
+    "allPatients": "Alle Patientenakten",
+    "archivePatient": "Akte archivieren",
+    "archiveTitle": "{name} archivieren?",
+    "archiveBody": "Archivierte Akten werden in Listen, Suche und Terminplanung ausgeblendet. Der Verlauf bleibt erhalten und Sie können sie jederzeit wiederherstellen.",
+    "archiveUpcoming": "{n, plural, =0 {Es werden keine bevorstehenden Termine storniert.} one {# bevorstehender Termin wird storniert.} other {# bevorstehende Termine werden storniert.}}",
+    "archiveConfirm": "Archivieren",
+    "archiveError": "Die Akte konnte nicht archiviert werden. Bitte versuchen Sie es erneut.",
+    "archivedSub": "Für archivierte Akten können keine neuen Termine, Einträge oder Rezepte angelegt werden.",
+    "archivedNoNew": "Diese Akte ist archiviert. Stellen Sie sie wieder her, um neue Einträge hinzuzufügen.",
+    "deleteNoHistoryConfirm": "{name} löschen? Das kann nicht rückgängig gemacht werden.",
+    "deleteHasHistory": "Diese Akte hat inzwischen einen klinischen Verlauf und kann nicht gelöscht werden. Archivieren Sie sie stattdessen.",
+    "deleteError": "Die Akte konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
   },
   "settings": {
     "profileTitle": "Profil",
@@ -472,9 +494,11 @@
     "durationMin": "{n} Min.",
     "customTime": "Benutzerdefinierte Zeit",
     "orCustomTime": "Oder eigene Uhrzeit",
-    "professionalFallback": "Gesundheitsfachkraft"
+    "professionalFallback": "Gesundheitsfachkraft",
+    "errorArchived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis."
   },
   "auth": {
+    "passwordTooShort": "Das Passwort muss mindestens {min} Zeichen lang sein.",
     "login": {
       "title": "Willkommen zurück",
       "subtitle": "Melden Sie sich bei Ihrem SolvyMed-Konto an",
@@ -557,7 +581,8 @@
       "linkFailed": "Beim Verknüpfen Ihres Kontos ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
       "backToSignup": "Anderes Konto verwenden",
       "tooManyAttempts": "Zu viele Versuche. Bitte warten Sie einen Moment, bevor Sie es erneut versuchen.",
-      "alreadyInvitedByAnother": "Ihr Konto ist bereits mit einer anderen Praxis verbunden."
+      "alreadyInvitedByAnother": "Ihr Konto ist bereits mit einer anderen Praxis verbunden.",
+      "archived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis."
     },
     "pendingConfirmation": {
       "loading": "Status wird geprüft…",

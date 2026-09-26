@@ -72,7 +72,7 @@
     "updatedTitle": "Senha atualizada",
     "updatedMessage": "Sua senha foi alterada. Você já pode entrar com sua nova senha.",
     "matchError": "As senhas não coincidem.",
-    "lengthError": "A senha deve ter pelo menos 6 caracteres.",
+    "lengthError": "A senha deve ter pelo menos {min} caracteres.",
     "openDashboard": "Abrir painel",
     "dashboardHint": "Você será redirecionado para o painel."
   },
@@ -188,7 +188,8 @@
     "useBookingCard": "Use o card de solicitação de agendamento para confirmar, rejeitar ou propor um horário.",
     "genericError": "Algo deu errado. Tente novamente.",
     "missingFieldsError": "Preencha todos os campos obrigatórios.",
-    "pastMidnightError": "Esse horário e duração ultrapassariam a meia-noite."
+    "pastMidnightError": "Esse horário e duração ultrapassariam a meia-noite.",
+    "patientArchivedError": "Este cadastro está arquivado. Restaure-o em Pacientes para agendar uma consulta."
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -252,7 +253,16 @@
     "bornOn": "nascido(a) em {date}",
     "openExisting": "Abrir existente",
     "createAnyway": "Criar mesmo assim",
-    "openPatient": "Abrir paciente"
+    "openPatient": "Abrir paciente",
+    "archivedTitle": "Pacientes arquivados",
+    "activeChip": "Ativos ({n})",
+    "archivedChip": "Arquivados ({n})",
+    "noArchived": "Nenhum paciente arquivado",
+    "archivedBadge": "Arquivado",
+    "restore": "Restaurar",
+    "restoreError": "Não foi possível restaurar o cadastro. Tente novamente.",
+    "archivedOn": "Arquivado em {date}",
+    "archivedOnBy": "Arquivado em {date} por {name}"
   },
   "patientDetail": {
     "tabInfo": "Informações",
@@ -323,7 +333,19 @@
     "codeCopied": "Copiado!",
     "regenerateCode": "Gerar novo",
     "addedBy": "Adicionado por",
-    "addedBySecretary": "{name} (secretaria), {date}"
+    "addedBySecretary": "{name} (secretaria), {date}",
+    "allPatients": "Todos os pacientes",
+    "archivePatient": "Arquivar cadastro",
+    "archiveTitle": "Arquivar {name}?",
+    "archiveBody": "Cadastros arquivados ficam ocultos das listas, da busca e da agenda. O histórico é mantido e você pode restaurar a qualquer momento.",
+    "archiveUpcoming": "{n, plural, =0 {Nenhuma consulta futura será cancelada.} one {# consulta futura será cancelada.} other {# consultas futuras serão canceladas.}}",
+    "archiveConfirm": "Arquivar",
+    "archiveError": "Não foi possível arquivar o cadastro. Tente novamente.",
+    "archivedSub": "Cadastros arquivados não recebem novas consultas, registros ou receitas.",
+    "archivedNoNew": "Este cadastro está arquivado. Restaure-o para adicionar novos registros.",
+    "deleteNoHistoryConfirm": "Excluir {name}? Esta ação não pode ser desfeita.",
+    "deleteHasHistory": "Este cadastro agora tem histórico clínico e não pode ser excluído. Arquive-o em vez disso.",
+    "deleteError": "Não foi possível excluir o cadastro. Tente novamente."
   },
   "settings": {
     "profileTitle": "Perfil",
@@ -472,9 +494,11 @@
     "durationMin": "{n} min",
     "customTime": "Horário personalizado",
     "orCustomTime": "Ou escolha um horário específico",
-    "professionalFallback": "Profissional"
+    "professionalFallback": "Profissional",
+    "errorArchived": "Esta clínica não está aceitando novos agendamentos para a sua conta. Entre em contato com a clínica."
   },
   "auth": {
+    "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",
     "login": {
       "title": "Que bom ter você de volta",
       "subtitle": "Entre na sua conta SolvyMed",
@@ -557,7 +581,8 @@
       "linkFailed": "Ocorreu um erro ao vincular sua conta. Tente novamente.",
       "backToSignup": "Usar outra conta",
       "tooManyAttempts": "Muitas tentativas. Aguarde um pouco antes de tentar novamente.",
-      "alreadyInvitedByAnother": "Sua conta já está conectada a outra clínica."
+      "alreadyInvitedByAnother": "Sua conta já está conectada a outra clínica.",
+      "archived": "Esta clínica não está aceitando novos agendamentos para a sua conta. Entre em contato com a clínica."
     },
     "pendingConfirmation": {
       "loading": "Verificando seu status…",
