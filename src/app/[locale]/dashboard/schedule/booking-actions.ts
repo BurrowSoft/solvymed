@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { computeSlots, toMinutes, getDayHours } from "@/lib/slots";
 import type { WorkingHours } from "@/lib/slots";
 import { sendExpoPush } from "@/lib/push";
+import { actionError } from "@/lib/dbErrors";
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
 
 export async function getTentativeBookings() {
@@ -74,7 +75,7 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
     if (error.message?.includes("appointment_not_confirmable")) {
       return { error: "This request can no longer be confirmed" };
     }
-    return { error: error.message };
+    return { error: actionError(error.message) };
   }
 
   await notifyPatient(supabase, appointmentId, "Appointment Confirmed", note ? `Your appointment has been confirmed by the doctor. Note: ${note}` : "Your appointment has been confirmed by the doctor.");
@@ -98,7 +99,7 @@ export async function confirmBooking(appointmentId: string, note?: string) {
     .eq("id", appointmentId)
     .eq("professional_id", effectiveProfId);
 
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
 
   // Notify patient via push
   await notifyPatient(supabase, appointmentId, "Appointment Confirmed", note ? `Your appointment has been confirmed by the doctor. Note: ${note}` : "Your appointment has been confirmed by the doctor.");
@@ -121,7 +122,7 @@ export async function rejectBooking(appointmentId: string, note?: string) {
     .eq("id", appointmentId)
     .eq("professional_id", effectiveProfId);
 
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
 
   // A rejected request never becomes an appointment — don't create a patient
   // record for it. Linking only happens on accept/confirm, server-side.
@@ -157,7 +158,7 @@ export async function proposeNewTime(
     .eq("id", appointmentId)
     .eq("professional_id", effectiveProfId);
 
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
 
   // A proposal isn't a confirmed appointment yet — don't create a patient
   // record until the patient accepts (accept_appointment_proposal links via
@@ -187,7 +188,7 @@ export async function acceptProposal(appointmentId: string) {
     p_appointment_id: appointmentId,
   });
 
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
 
   await notifyProfessional(supabase, appt.professional_id as string, "Proposal Accepted", `${appt.patient_name} accepted the new time: ${appt.proposed_date} at ${(appt.proposed_start_time as string).slice(0, 5)}.`);
 
@@ -211,7 +212,7 @@ export async function declineProposal(appointmentId: string) {
     p_appointment_id: appointmentId,
   });
 
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
 
   if (appt) {
     await notifyProfessional(supabase, appt.professional_id as string, "Proposal Declined", `${appt.patient_name} declined the proposed time. The booking was cancelled.`);
@@ -258,7 +259,7 @@ export async function requestReschedule(
     if (error.message?.includes("appointment_not_found_or_not_reschedulable")) {
       return { error: "Appointment cannot be rescheduled" };
     }
-    return { error: error.message };
+    return { error: actionError(error.message) };
   }
 
   await notifyProfessional(
@@ -294,7 +295,7 @@ export async function acceptRescheduleRequest(appointmentId: string) {
     if (error.message?.includes("slot_taken")) return { error: "slot_taken" };
     if (error.message?.includes("appointment_not_found_or_not_pending")) return { error: "Appointment not found" };
     if (error.message?.includes("proposed_time_expired")) return { error: "proposed_time_expired" };
-    return { error: error.message };
+    return { error: actionError(error.message) };
   }
 
   const row = Array.isArray(rpcData) && rpcData.length > 0 ? rpcData[0] as Record<string, unknown> : null;
@@ -345,7 +346,7 @@ export async function declineRescheduleRequest(appointmentId: string) {
     .eq("scheduled_by", "patient")
     .select("id");
 
-  if (error) return { error: error.message };
+  if (error) return { error: actionError(error.message) };
 
   // Only notify when a row was actually updated (guard against concurrent declines)
   if (updateData && updateData.length > 0) {

@@ -116,6 +116,9 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
 
 function PatientInfoTab({ patient, locale, isArchived, canDelete }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean }) {
   const t = useTranslations("patientDetail");
+  // Archive codes from the server become translated copy, never raw codes.
+  const errorText = (e: string) =>
+    e === "patient_archived" ? t("archivedNoNew") : e === "patient_has_clinical_history" ? t("deleteHasHistory") : e;
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -134,7 +137,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete }: { patient: P
     setCodeError("");
     startCodeTransition(async () => {
       const result = await generatePatientInviteCode(patient.id);
-      if (result.error) { setCodeError(result.error); return; }
+      if (result.error) { setCodeError(errorText(result.error)); return; }
       if (result.code) setInviteCode(result.code);
     });
   }
@@ -159,7 +162,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete }: { patient: P
     setError("");
     startTransition(async () => {
       const result = await updatePatient(patient.id, formData);
-      if (result?.error) { setError(result.error); return; }
+      if (result?.error) { setError(errorText(result.error)); return; }
       setEditing(false);
     });
   }
