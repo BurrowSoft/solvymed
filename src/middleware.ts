@@ -70,7 +70,12 @@ export async function middleware(req: NextRequest) {
   const isApiOrAsset = /^\/(api|_next|favicon|.*\..*)/.test(pathname);
   // Invite and join URLs carry personal codes (and, in old secretary links,
   // an email): never index them, whatever the page's own metadata says.
-  const isPersonalLink = /^(?:\/[A-Za-z-]+)?\/(?:invite|join)(?:\/|$)/.test(pathname);
+  // The signup and login pages they hand off to carry the same data in the
+  // query string (?secretary=, ?join=, ?email=, ?next=).
+  const isPersonalLink =
+    /^(?:\/[A-Za-z-]+)?\/(?:invite|join)(?:\/|$)/.test(pathname) ||
+    (/^(?:\/[A-Za-z-]+)?\/auth\/(?:signup|login)$/.test(pathname) &&
+      ["secretary", "join", "email", "next"].some((k) => searchParams.has(k)));
   // Applied to every response below.
   const finalize = (res: NextResponse) => {
     withAuthCookies(res);
