@@ -2484,6 +2484,18 @@ I checked the diff. `ar.json` still parses, with 26 namespaces. Rendered
 live, `/ar/auth/signup` is RTL and shows the new label, not the old
 standalone "الرعاية الصحية".
 
+**Addendum: 🟢 at `104ddf1`.** This commit changes `src/messages` only; I
+checked the diff.
+- **All 15 message files parse**, each with the same 26 namespaces as
+  `en`. Every file starts with a UTF-8 BOM, as on master, so this isn't
+  new and the app loads them fine.
+- **`inviteCodeHint`** is now "Enter your invite code" in en, id, ja, ko,
+  ru, th, vi, zh and zh-TW. Rendered live on `/auth/signup` with Patient
+  selected: "Enter your invite code", with no "doctor's code" wording
+  left.
+- **German secretary strings** no longer mention "Arzt" or "Ärztin", for
+  example "Nur das Hauptkonto der Praxis kann das ändern.".
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo
