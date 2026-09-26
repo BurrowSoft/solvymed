@@ -512,7 +512,8 @@
       "emailExists": "An account with this email already exists. Please sign in instead.",
       "joiningAs": "Joining as {role} via invite link.",
       "joiningAsSecretary": "Joining as a secretary via invite link.",
-      "secretaryNeedsInvite": "Secretary? Ask your doctor for an invite link."
+      "secretaryNeedsInvite": "Secretary? Ask your doctor for an invite link.",
+      "secretaryEmailMismatch": "This email doesn't match the invitation, or the invitation is no longer valid. Check the email, or ask the clinic for a new link."
     },
     "forgotPassword": {
       "title": "Forgot your password?",
@@ -720,7 +721,9 @@
     "leaveTitle": "Leave clinic",
     "leaveSub": "Stop working for this doctor. You can join another clinic with a new invite.",
     "accountNotSecretary": "This account can't accept a secretary invite. Use a separate account created from the invite link.",
-    "teamResendConfirm": "Send a new invite to {email}? The code you shared before will stop working."
+    "teamResendConfirm": "Send a new invite to {email}? The code you shared before will stop working.",
+    "inviteFrom": "Invitation from {clinic}",
+    "inviteFor": "This invitation is for {email}. Sign up with that email address."
   },
   "invitePage": {
     "metaTitle": "Your invitation",

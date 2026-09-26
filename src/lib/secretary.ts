@@ -19,3 +19,8 @@ export function normalizeSecretaryCode(raw: string): string {
   }
   return body ? `S-${body}` : "";
 }
+
+/** A normalized code with the exact invite shape: "S-" plus 8 letters/digits. */
+export function isWellFormedSecretaryCode(code: string): boolean {
+  return /^S-[A-Z0-9]{8}$/.test(code);
+}

@@ -512,7 +512,8 @@
       "emailExists": "此邮箕已有账户。请登录。",
       "joiningAs": "通过邀请链接以 {role} 身份加入。",
       "joiningAsSecretary": "通过邀请链接以秘书身份注册。",
-      "secretaryNeedsInvite": "你是秘书？请向你的医生索取邀请链接。"
+      "secretaryNeedsInvite": "你是秘书？请向你的医生索取邀请链接。",
+      "secretaryEmailMismatch": "该邮箱与邀请不匹配，或邀请已失效。请检查邮箱，或向诊所索取新的链接。"
     },
     "forgotPassword": {
       "title": "忘记密码？",
@@ -720,7 +721,9 @@
     "leaveTitle": "离开诊所",
     "leaveSub": "不再为这位医生工作。你可以凭新的邀请加入其他诊所。",
     "accountNotSecretary": "此账户无法接受秘书邀请。请使用通过邀请链接创建的单独账户。",
-    "teamResendConfirm": "要向 {email} 发送新邀请吗？之前分享的邀请码将失效。"
+    "teamResendConfirm": "要向 {email} 发送新邀请吗？之前分享的邀请码将失效。",
+    "inviteFrom": "来自 {clinic} 的邀请",
+    "inviteFor": "此邀请发给 {email}。请使用该邮箱注册。"
   },
   "invitePage": {
     "metaTitle": "邀请",

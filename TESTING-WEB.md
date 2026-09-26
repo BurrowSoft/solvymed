@@ -3049,6 +3049,88 @@ exhausted).
 
 **Merge gate: 🟢 for `e39ccf3`, review clean.**
 
+## PR #24 (`fix/secretary-link-no-email`) — privacy part B, 🟢 at `fd02c10`, review clean
+
+**Scope: exactly `fd02c10`.**
+- Secretary invite links no longer carry the invitee's email.
+- The join page shows a masked hint from `get_secretary_invite_hint`
+  (migration 093, live).
+- Signup checks the email with `secretary_invite_email_matches` before
+  the account is created.
+- Stale and malformed codes say the invite isn't valid.
+
+**Tested live on the Vercel preview.**
+- **Bypass header:** only on preview requests, never on Supabase ones;
+  the secret is never logged.
+- **Test data:** throwaway `e2e-test-opus-pr13-*` doctors and
+  `e2e-test-opus-pr24-*` invitees. All deleted afterwards, with their
+  invites.
+
+**🟢 Share link (tested at `50a19dc`, where this code last changed).**
+- **Copied link:** Settings → Team → Invite gives
+  `/pt-BR/join/secretary/<code>`, with no `?email=`.
+- **WhatsApp:** the `wa.me` text doesn't contain the email either.
+
+**🟢 Open invite (signed out).**
+- **Hint:** "Convite de Clinica Opus Pr24", "Este convite é para
+  e2\*\*\*@burrowsoft.com", and "Criar conta".
+- **Where the lookup runs:** the only `get_secretary_invite_hint` call
+  comes from the browser. The SSR HTML contains neither the masked nor
+  the full email.
+- **Old links:** a link with `?email=other@example.com` ignores the
+  parameter. The CTA is `/pt-BR/auth/signup?secretary=<code>`.
+
+**🟢 Signup, end to end.**
+- **Email field:** empty and editable.
+- **Wrong email:** shows "…não corresponde ao convite, ou o convite não é
+  mais válido…". Only the matches RPC runs: no `/auth/v1/signup` and no
+  account.
+- **Right email:** matches, then signUp. After confirmation it lands on
+  `/pt-BR/dashboard`, with `role=secretary`, `invited_by` set to the
+  doctor, and the invite's `accepted_at` set.
+
+**🟢 Stale link.** This was round 1's BLOCKING, and my resend repro now
+passes.
+- **Setup:** invite X, then resend to X.
+- **Old code, join page:** "Convite inválido / Este convite não é mais
+  válido", with no signup link.
+- **Old code straight on `/auth/signup?secretary=`, CORRECT email:** the
+  widened message, with no signup call and no account. At `50a19dc` this
+  showed the misleading "doesn't match".
+- **Resent code:** its page shows the hint and signup.
+
+**🟢 Malformed codes (`S-ABC`, `S-ABCDEFGHI`, `X-ABCDEFGH`).**
+- **Join page:** "Convite inválido", server-rendered (it's in the SSR
+  HTML), with no signup.
+- **RPC calls:** none, on the join pages or on
+  `/auth/signup?secretary=S-ABC`.
+
+**🟢 Error handling, forced with a Playwright route.**
+- **Hint RPC error:** a 400 `too_many_attempts` or a network abort still
+  offers "Criar conta", without the hint. It does not show the invalid
+  state.
+- **`email_matches` error:** a 400 `too_many_attempts` lets signUp go
+  ahead. The accept-time check is the boundary.
+
+**Review: Claude `/code-review`, clean at `fd02c10`.**
+- **Round 1, `50a19dc`:** I ran it before code review moved to the
+  dedicated code reviewer agent. It found 1 BLOCKING (the stale link
+  shown as a mismatch), confirmed live.
+- **Round 2, `fd02c10`:** by the code reviewer, clean, with no
+  BLOCKING.
+
+**FOLLOW-UP:**
+- **InviteHint:** it spends the per-code budget on every mount; cache it
+  in sessionStorage.
+- **Tests:** the pre-check branches have no tests, and the signup guard
+  is redundant.
+- **Mobile links:** mobile 1.2.0 still builds links with `?email=`. It's
+  fixed in the mobile 1.3.0 cleanup; web keeps ignoring the parameter.
+
+**CI at `fd02c10`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `fd02c10`, review clean.**
+
 ## iOS — open question
 
 Same answer as the mobile repo's `TESTING.md`: not applicable to this repo

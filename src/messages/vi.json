@@ -512,7 +512,8 @@
       "emailExists": "Đã có tài khoản với email này. Vui lòng đăng nhập.",
       "joiningAs": "Tham gia với tư cách {role} qua liên kết mời.",
       "joiningAsSecretary": "Đăng ký làm thư ký qua liên kết mời.",
-      "secretaryNeedsInvite": "Bạn là thư ký? Hãy xin bác sĩ một liên kết mời."
+      "secretaryNeedsInvite": "Bạn là thư ký? Hãy xin bác sĩ một liên kết mời.",
+      "secretaryEmailMismatch": "Email này không khớp với lời mời, hoặc lời mời không còn hiệu lực. Hãy kiểm tra email hoặc xin phòng khám một liên kết mới."
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",
@@ -720,7 +721,9 @@
     "leaveTitle": "Rời phòng khám",
     "leaveSub": "Ngừng làm việc cho bác sĩ này. Bạn có thể tham gia phòng khám khác bằng lời mời mới.",
     "accountNotSecretary": "Tài khoản này không thể nhận lời mời làm thư ký. Hãy dùng tài khoản riêng được tạo từ liên kết mời.",
-    "teamResendConfirm": "Gửi lời mời mới tới {email}? Mã bạn đã chia sẻ trước đó sẽ không còn dùng được."
+    "teamResendConfirm": "Gửi lời mời mới tới {email}? Mã bạn đã chia sẻ trước đó sẽ không còn dùng được.",
+    "inviteFrom": "Lời mời từ {clinic}",
+    "inviteFor": "Lời mời này dành cho {email}. Hãy đăng ký bằng email đó."
   },
   "invitePage": {
     "metaTitle": "Lời mời",

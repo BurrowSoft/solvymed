@@ -512,7 +512,8 @@
       "emailExists": "このメールアドレスのアカウントは既に存在します。サインインしてください。",
       "joiningAs": "招待リンクで{role}として参加します。",
       "joiningAsSecretary": "招待リンクから受付スタッフとして登録します。",
-      "secretaryNeedsInvite": "受付スタッフの方は、医師に招待リンクを依頼してください。"
+      "secretaryNeedsInvite": "受付スタッフの方は、医師に招待リンクを依頼してください。",
+      "secretaryEmailMismatch": "このメールアドレスは招待と一致しないか、招待の有効期限が切れています。メールアドレスを確認するか、クリニックに新しいリンクを依頼してください。"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",
@@ -720,7 +721,9 @@
     "leaveTitle": "クリニックを離れる",
     "leaveSub": "この医師のもとでの勤務をやめます。新しい招待で別のクリニックに参加できます。",
     "accountNotSecretary": "このアカウントでは受付スタッフの招待を承諾できません。招待リンクから作成した別のアカウントをご利用ください。",
-    "teamResendConfirm": "{email}に新しい招待を送りますか？以前に共有したコードは使えなくなります。"
+    "teamResendConfirm": "{email}に新しい招待を送りますか？以前に共有したコードは使えなくなります。",
+    "inviteFrom": "{clinic} からの招待",
+    "inviteFor": "この招待は {email} 宛てです。このメールアドレスで登録してください。"
   },
   "invitePage": {
     "metaTitle": "招待",

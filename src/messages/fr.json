@@ -512,7 +512,8 @@
       "emailExists": "Un compte avec cet e-mail existe déjà. Veuillez vous connecter.",
       "joiningAs": "Inscription en tant que {role} via lien d'invitation.",
       "joiningAsSecretary": "Inscription en tant que secrétaire via un lien d'invitation.",
-      "secretaryNeedsInvite": "Secrétaire ? Demandez un lien d'invitation au cabinet où vous travaillez."
+      "secretaryNeedsInvite": "Secrétaire ? Demandez un lien d'invitation au cabinet où vous travaillez.",
+      "secretaryEmailMismatch": "Cet e-mail ne correspond pas à l'invitation, ou l'invitation n'est plus valide. Vérifiez l'e-mail ou demandez un nouveau lien au cabinet."
     },
     "forgotPassword": {
       "title": "Mot de passe oublié ?",
@@ -720,7 +721,9 @@
     "leaveTitle": "Quitter le cabinet",
     "leaveSub": "Quitter ce cabinet. Vous pourrez rejoindre un autre cabinet avec une nouvelle invitation.",
     "accountNotSecretary": "Ce compte ne peut pas accepter une invitation de secrétaire. Utilisez un compte distinct créé depuis le lien d'invitation.",
-    "teamResendConfirm": "Envoyer une nouvelle invitation à {email} ? Le code partagé précédemment ne fonctionnera plus."
+    "teamResendConfirm": "Envoyer une nouvelle invitation à {email} ? Le code partagé précédemment ne fonctionnera plus.",
+    "inviteFrom": "Invitation de {clinic}",
+    "inviteFor": "Cette invitation est destinée à {email}. Inscrivez-vous avec cette adresse e-mail."
   },
   "invitePage": {
     "metaTitle": "Votre invitation",

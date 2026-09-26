@@ -512,7 +512,8 @@
       "emailExists": "Ya existe una cuenta con este correo. Por favor, inicia sesión.",
       "joiningAs": "Uniéndose como {role} mediante enlace de invitación.",
       "joiningAsSecretary": "Te unes al equipo de secretaría mediante un enlace de invitación.",
-      "secretaryNeedsInvite": "¿Trabajas en secretaría? Pide un enlace de invitación a la clínica donde trabajas."
+      "secretaryNeedsInvite": "¿Trabajas en secretaría? Pide un enlace de invitación a la clínica donde trabajas.",
+      "secretaryEmailMismatch": "Este correo no coincide con la invitación, o la invitación ya no es válida. Revisa el correo o pide un nuevo enlace a la clínica."
     },
     "forgotPassword": {
       "title": "¿Olvidaste tu contraseña?",
@@ -720,7 +721,9 @@
     "leaveTitle": "Salir de la clínica",
     "leaveSub": "Dejar esta clínica. Puedes unirte a otra clínica con una nueva invitación.",
     "accountNotSecretary": "Esta cuenta no puede aceptar una invitación al equipo. Usa una cuenta aparte creada desde el enlace de invitación.",
-    "teamResendConfirm": "¿Enviar una nueva invitación a {email}? El código que compartiste antes dejará de funcionar."
+    "teamResendConfirm": "¿Enviar una nueva invitación a {email}? El código que compartiste antes dejará de funcionar.",
+    "inviteFrom": "Invitación de {clinic}",
+    "inviteFor": "Esta invitación es para {email}. Regístrate con ese correo electrónico."
   },
   "invitePage": {
     "metaTitle": "Tu invitación",

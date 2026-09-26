@@ -512,7 +512,8 @@
       "emailExists": "이 이메일로 이미 계정이 존재합니다. 로그인해 주세요.",
       "joiningAs": "초대 링크를 통해 {role}(으)로 가입합니다.",
       "joiningAsSecretary": "초대 링크로 비서로 가입합니다.",
-      "secretaryNeedsInvite": "비서이신가요? 의사에게 초대 링크를 요청하세요."
+      "secretaryNeedsInvite": "비서이신가요? 의사에게 초대 링크를 요청하세요.",
+      "secretaryEmailMismatch": "이 이메일이 초대와 일치하지 않거나 초대가 더 이상 유효하지 않습니다. 이메일을 확인하거나 클리닉에 새 링크를 요청하세요."
     },
     "forgotPassword": {
       "title": "비밀번호를 잊으셨나요?",
@@ -720,7 +721,9 @@
     "leaveTitle": "병원 떠나기",
     "leaveSub": "이 의사를 위한 업무를 그만둡니다. 새 초대로 다른 병원에 합류할 수 있습니다.",
     "accountNotSecretary": "이 계정으로는 비서 초대를 수락할 수 없습니다. 초대 링크로 만든 별도 계정을 사용하세요.",
-    "teamResendConfirm": "{email}님에게 새 초대를 보낼까요? 이전에 공유한 코드는 더 이상 작동하지 않습니다."
+    "teamResendConfirm": "{email}님에게 새 초대를 보낼까요? 이전에 공유한 코드는 더 이상 작동하지 않습니다.",
+    "inviteFrom": "{clinic}의 초대",
+    "inviteFor": "이 초대는 {email} 대상입니다. 해당 이메일로 가입하세요."
   },
   "invitePage": {
     "metaTitle": "초대",

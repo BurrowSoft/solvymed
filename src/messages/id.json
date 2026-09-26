@@ -512,7 +512,8 @@
       "emailExists": "Akun dengan email ini sudah ada. Silakan masuk.",
       "joiningAs": "Bergabung sebagai {role} melalui tautan undangan.",
       "joiningAsSecretary": "Mendaftar sebagai sekretaris melalui tautan undangan.",
-      "secretaryNeedsInvite": "Sekretaris? Minta tautan undangan dari dokter Anda."
+      "secretaryNeedsInvite": "Sekretaris? Minta tautan undangan dari dokter Anda.",
+      "secretaryEmailMismatch": "Email ini tidak cocok dengan undangan, atau undangan sudah tidak berlaku. Periksa email Anda atau minta tautan baru ke klinik."
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",
@@ -720,7 +721,9 @@
     "leaveTitle": "Keluar dari klinik",
     "leaveSub": "Berhenti bekerja untuk dokter ini. Anda dapat bergabung ke klinik lain dengan undangan baru.",
     "accountNotSecretary": "Akun ini tidak dapat menerima undangan sekretaris. Gunakan akun terpisah yang dibuat dari tautan undangan.",
-    "teamResendConfirm": "Kirim undangan baru ke {email}? Kode yang Anda bagikan sebelumnya tidak akan berlaku lagi."
+    "teamResendConfirm": "Kirim undangan baru ke {email}? Kode yang Anda bagikan sebelumnya tidak akan berlaku lagi.",
+    "inviteFrom": "Undangan dari {clinic}",
+    "inviteFor": "Undangan ini untuk {email}. Daftar dengan email tersebut."
   },
   "invitePage": {
     "metaTitle": "Undangan",

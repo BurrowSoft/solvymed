@@ -46,8 +46,11 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
   const members = rows.filter((r) => r.kind === "secretary");
   const invites = rows.filter((r) => r.kind === "invite");
 
+  // No email in the link: URLs end up in history, logs and referrers. The
+  // invite page shows a masked hint instead, and the server matches the
+  // email on accept.
   const shareLink = (c: Created) =>
-    `${window.location.origin}${prefix}/join/secretary/${encodeURIComponent(c.code)}?email=${encodeURIComponent(c.email)}`;
+    `${window.location.origin}${prefix}/join/secretary/${encodeURIComponent(c.code)}`;
 
   function invite(targetEmail: string) {
     setError("");

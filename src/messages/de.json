@@ -512,7 +512,8 @@
       "emailExists": "Ein Konto mit dieser E-Mail existiert bereits. Bitte melden Sie sich an.",
       "joiningAs": "Beitreten als {role} über Einladungslink.",
       "joiningAsSecretary": "Registrierung für das Praxisteam über einen Einladungslink.",
-      "secretaryNeedsInvite": "Im Praxisteam tätig? Bitten Sie Ihre Praxis um einen Einladungslink."
+      "secretaryNeedsInvite": "Im Praxisteam tätig? Bitten Sie Ihre Praxis um einen Einladungslink.",
+      "secretaryEmailMismatch": "Diese E-Mail-Adresse passt nicht zur Einladung, oder die Einladung ist nicht mehr gültig. Prüfen Sie die Adresse oder bitten Sie die Praxis um einen neuen Link."
     },
     "forgotPassword": {
       "title": "Passwort vergessen?",
@@ -720,7 +721,9 @@
     "leaveTitle": "Praxis verlassen",
     "leaveSub": "Nicht mehr für diese Praxis arbeiten. Mit einer neuen Einladung können Sie einer anderen Praxis beitreten.",
     "accountNotSecretary": "Dieses Konto kann keine Einladung ins Praxisteam annehmen. Nutzen Sie ein eigenes Konto, das über den Einladungslink erstellt wird.",
-    "teamResendConfirm": "Neue Einladung an {email} senden? Der zuvor geteilte Code funktioniert dann nicht mehr."
+    "teamResendConfirm": "Neue Einladung an {email} senden? Der zuvor geteilte Code funktioniert dann nicht mehr.",
+    "inviteFrom": "Einladung von {clinic}",
+    "inviteFor": "Diese Einladung gilt für {email}. Registrieren Sie sich mit dieser E-Mail-Adresse."
   },
   "invitePage": {
     "metaTitle": "Ihre Einladung",

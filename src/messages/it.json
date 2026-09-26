@@ -512,7 +512,8 @@
       "emailExists": "Esiste già un account con questa e-mail. Effettua il login.",
       "joiningAs": "Accesso come {role} tramite link d'invito.",
       "joiningAsSecretary": "Ti stai registrando in segreteria tramite link di invito.",
-      "secretaryNeedsInvite": "Lavori in segreteria? Chiedi un link di invito al tuo studio."
+      "secretaryNeedsInvite": "Lavori in segreteria? Chiedi un link di invito al tuo studio.",
+      "secretaryEmailMismatch": "Questa email non corrisponde all'invito, oppure l'invito non è più valido. Controlla l'email o chiedi un nuovo link allo studio."
     },
     "forgotPassword": {
       "title": "Password dimenticata?",
@@ -720,7 +721,9 @@
     "leaveTitle": "Lascia lo studio",
     "leaveSub": "Lascia questo studio. Potrai unirti a un altro studio con un nuovo invito.",
     "accountNotSecretary": "Questo account non può accettare un invito in segreteria. Usa un account separato creato dal link di invito.",
-    "teamResendConfirm": "Inviare un nuovo invito a {email}? Il codice condiviso in precedenza smetterà di funzionare."
+    "teamResendConfirm": "Inviare un nuovo invito a {email}? Il codice condiviso in precedenza smetterà di funzionare.",
+    "inviteFrom": "Invito da {clinic}",
+    "inviteFor": "Questo invito è per {email}. Registrati con questo indirizzo email."
   },
   "invitePage": {
     "metaTitle": "Il tuo invito",
