@@ -821,6 +821,7 @@
     "working": "잠시 기다려 주세요…",
     "errorStripe": "구독을 취소하지 못해 계정이 폐쇄되지 않았습니다. 다시 시도하거나 support@solvymed.com으로 문의하세요.",
     "errorSubscription": "구독이 아직 활성 상태입니다. 1분 후 다시 시도하세요.",
+    "errorCancelledNotClosed": "구독은 취소되었지만 계정이 폐쇄되지 않았습니다. 다시 시도하세요. 계속 실패하면 support@solvymed.com으로 문의하세요.",
     "errorGeneric": "계정이 폐쇄되지 않았습니다. 다시 시도하세요.",
     "pushClosedTitle": "진료소 폐쇄",
     "pushClosedBody": "이용하시던 진료소가 SolvyMed 계정을 폐쇄했습니다. 예정된 예약은 취소되었습니다. 진료 기록 사본은 support@solvymed.com으로 요청하세요.",

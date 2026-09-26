@@ -14,7 +14,13 @@ export type ClosurePreview = {
   secretaries: number;
 };
 
-type CloseCode = "unauthorized" | "check_failed" | "stripe_cancel_failed" | "subscription_active" | "generic";
+type CloseCode =
+  | "unauthorized"
+  | "check_failed"
+  | "stripe_cancel_failed"
+  | "subscription_active"
+  | "cancelled_not_closed"
+  | "generic";
 
 // Closing (a professional with clinical history) or deleting (everyone
 // else) the signed-in account, through /api/account/close.
@@ -54,6 +60,7 @@ export function CloseAccountPanel({ preview, locale }: { preview: ClosurePreview
   const errorText =
     error === "stripe_cancel_failed" ? t("errorStripe")
     : error === "subscription_active" ? t("errorSubscription")
+    : error === "cancelled_not_closed" ? t("errorCancelledNotClosed")
     : error ? t("errorGeneric")
     : null;
 

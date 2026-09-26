@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { planClosureNotices, stripeCloseStep, type ClosureRow } from "@/lib/accountClose";
+import { closeFailureCode, planClosureNotices, stripeCloseStep, type ClosureRow } from "@/lib/accountClose";
 
 const stripeProf = { subscription_status: "active", subscription_provider: "stripe", subscription_id: "sub_1" };
 
@@ -31,6 +31,24 @@ describe("stripeCloseStep", () => {
     expect(stripeCloseStep("u1", stripeProf, { id: "sub_1", status: "active", metadata: { user_id: "u2" } }))
       .toEqual({ kind: "not_owner" });
     expect(stripeCloseStep("u1", stripeProf, { id: "sub_1", status: "active" })).toEqual({ kind: "not_owner" });
+  });
+});
+
+describe("closeFailureCode", () => {
+  it("tells the professional when the subscription is gone but the account isn't closed", () => {
+    expect(closeFailureCode({ kind: "cancel", subId: "sub_1" }, null)).toBe("cancelled_not_closed");
+    expect(closeFailureCode({ kind: "ended", subId: "sub_1" }, null)).toBe("cancelled_not_closed");
+    expect(closeFailureCode({ kind: "none" }, null)).toBe("generic");
+    expect(closeFailureCode({ kind: "cancel", subId: "sub_1" }, "subscription_active")).toBe("subscription_active");
+  });
+
+  it("a retry after a cancel skips Stripe: the subscription is already over", () => {
+    // First attempt cancelled sub_1 and the close failed. On retry Stripe
+    // reports it canceled, so the route doesn't cancel again and goes
+    // straight to close_my_account().
+    const retry = stripeCloseStep("u1", { ...stripeProf, subscription_status: "expired" },
+      { id: "sub_1", status: "canceled", metadata: { user_id: "u1" } });
+    expect(retry).toEqual({ kind: "ended", subId: "sub_1" });
   });
 });
 

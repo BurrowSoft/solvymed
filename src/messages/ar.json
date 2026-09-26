@@ -821,6 +821,7 @@
     "working": "يُرجى الانتظار…",
     "errorStripe": "تعذّر إلغاء اشتراكك، لذلك لم يُغلق حسابك. حاول مرة أخرى أو راسلنا على support@solvymed.com.",
     "errorSubscription": "لا يزال اشتراكك نشطًا. حاول مرة أخرى بعد دقيقة.",
+    "errorCancelledNotClosed": "أُلغي اشتراكك، لكن لم يُغلق حسابك. حاول مرة أخرى. إذا استمر الخطأ، راسل support@solvymed.com.",
     "errorGeneric": "لم يُغلق حسابك. حاول مرة أخرى.",
     "pushClosedTitle": "أُغلقت العيادة",
     "pushClosedBody": "أغلقت عيادتك حسابها في SolvyMed. أُلغيت مواعيدك القادمة. للحصول على نسخة من سجلك، راسل support@solvymed.com.",

@@ -39,6 +39,19 @@ export function stripeCloseStep(
   return { kind: "cancel", subId: live.id };
 }
 
+// The code for a failed close_my_account(). Once the subscription has been
+// cancelled (in this request or an earlier attempt), the professional must
+// be told so: their access has ended although the account is still open.
+// A retry finds the subscription "ended", skips Stripe and closes.
+export function closeFailureCode(
+  step: StripeCloseStep,
+  dbError: string | null,
+): "subscription_active" | "cancelled_not_closed" | "generic" {
+  if (dbError === "subscription_active") return "subscription_active";
+  if (step.kind === "cancel" || step.kind === "ended") return "cancelled_not_closed";
+  return "generic";
+}
+
 // One row of close_my_account()'s result.
 export type ClosureRow = {
   outcome: "deleted" | "closed";

@@ -821,6 +821,7 @@
     "working": "Vui lòng chờ…",
     "errorStripe": "Không thể hủy gói đăng ký nên tài khoản của bạn chưa được đóng. Vui lòng thử lại hoặc liên hệ support@solvymed.com.",
     "errorSubscription": "Gói đăng ký của bạn vẫn đang hoạt động. Vui lòng thử lại sau một phút.",
+    "errorCancelledNotClosed": "Gói đăng ký của bạn đã bị hủy nhưng tài khoản chưa được đóng. Vui lòng thử lại. Nếu vẫn lỗi, hãy liên hệ support@solvymed.com.",
     "errorGeneric": "Tài khoản của bạn chưa được đóng. Vui lòng thử lại.",
     "pushClosedTitle": "Phòng khám đã đóng",
     "pushClosedBody": "Phòng khám của bạn đã đóng tài khoản SolvyMed. Các lịch hẹn sắp tới của bạn đã bị hủy. Để nhận bản sao hồ sơ, hãy liên hệ support@solvymed.com.",

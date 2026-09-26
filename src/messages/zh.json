@@ -821,6 +821,7 @@
     "working": "请稍候…",
     "errorStripe": "无法取消您的订阅，因此账户未关闭。请重试，或联系 support@solvymed.com。",
     "errorSubscription": "您的订阅仍然有效。请一分钟后重试。",
+    "errorCancelledNotClosed": "您的订阅已取消，但账户未关闭。请重试。如果问题持续，请联系 support@solvymed.com。",
     "errorGeneric": "您的账户未关闭。请重试。",
     "pushClosedTitle": "诊所已关闭",
     "pushClosedBody": "您的诊所已关闭其 SolvyMed 账户。您的后续预约已取消。如需病历副本，请联系 support@solvymed.com。",

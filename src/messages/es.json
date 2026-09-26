@@ -821,6 +821,7 @@
     "working": "Espera…",
     "errorStripe": "No pudimos cancelar tu suscripción, así que tu cuenta no se cerró. Inténtalo de nuevo o escribe a support@solvymed.com.",
     "errorSubscription": "Tu suscripción sigue activa. Inténtalo de nuevo en un minuto.",
+    "errorCancelledNotClosed": "Tu suscripción se canceló, pero tu cuenta no se cerró. Inténtalo de nuevo. Si el error continúa, escribe a support@solvymed.com.",
     "errorGeneric": "Tu cuenta no se cerró. Inténtalo de nuevo.",
     "pushClosedTitle": "Clínica cerrada",
     "pushClosedBody": "Tu clínica cerró su cuenta de SolvyMed. Tus citas futuras se cancelaron. Para obtener una copia de tu historia clínica, escribe a support@solvymed.com.",

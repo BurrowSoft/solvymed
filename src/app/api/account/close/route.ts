@@ -5,23 +5,32 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { stripe, retrieveSubscriptionOrNull } from "@/lib/stripeBilling";
 import { knownDbError } from "@/lib/dbErrors";
-import { planClosureNotices, stripeCloseStep, type ClosureRow } from "@/lib/accountClose";
+import { closeFailureCode, planClosureNotices, stripeCloseStep, type ClosureRow } from "@/lib/accountClose";
 import { sendExpoPush } from "@/lib/push";
 import { routing } from "@/i18n/routing";
 
 // Closes or deletes the caller's own account (migration 100), for the web
 // settings page and the mobile app alike:
-//   1. a professional's paid Stripe subscription is cancelled first, and
-//      fail-closed: if Stripe fails, nothing is closed;
+//   0. a dry run of close_my_account(), so a close that would fail never
+//      gets as far as Stripe;
+//   1. a professional's paid Stripe subscription is cancelled, fail-closed:
+//      if Stripe fails, nothing is closed;
 //   2. close_my_account() runs as the caller (a professional with clinical
 //      history is closed, everyone else is deleted);
-//   3. linked patients get the "clinic closed" push here and the email from
+//   3. the professional's photo and logo files are deleted;
+//   4. linked patients get the "clinic closed" push here and the email from
 //      the notify-clinic-closed edge function; other patients with a
 //      cancelled appointment get the usual cancellation push.
 // Responses carry a stable `code` the client translates. Logs carry error
 // codes only, never names, emails or ids.
 
-type Code = "unauthorized" | "check_failed" | "stripe_cancel_failed" | "subscription_active" | "generic";
+type Code =
+  | "unauthorized"
+  | "check_failed"
+  | "stripe_cancel_failed"
+  | "subscription_active"
+  | "cancelled_not_closed"
+  | "generic";
 
 function fail(code: Code, status: number) {
   return NextResponse.json({ code }, { status });
@@ -50,6 +59,31 @@ async function caller(request: NextRequest): Promise<{ supabase: SupabaseClient;
   return { supabase, userId: user?.id ?? null };
 }
 
+const PROFESSIONAL_IMAGE_BUCKETS = ["profile-photos", "document-logos"];
+
+// Deletes everything under <uid>/ in the professional's image buckets.
+// Failures are logged (bucket and error name only) and never change the
+// response: the account is already closed, and mob dev's sweep for closed
+// practices removes any leftovers.
+async function removeProfessionalImages(userId: string) {
+  const storage = adminClient().storage;
+  for (const bucket of PROFESSIONAL_IMAGE_BUCKETS) {
+    try {
+      const { data: files, error } = await storage.from(bucket).list(userId, { limit: 1000 });
+      if (error) {
+        console.error("Account close: could not list images", bucket, error.name);
+        continue;
+      }
+      const paths = (files ?? []).map((f) => `${userId}/${f.name}`);
+      if (!paths.length) continue;
+      const { error: removeError } = await storage.from(bucket).remove(paths);
+      if (removeError) console.error("Account close: could not remove images", bucket, removeError.name);
+    } catch (err) {
+      console.error("Account close: image cleanup threw", bucket, errorCode(err));
+    }
+  }
+}
+
 function errorCode(err: unknown): string {
   if (err instanceof Stripe.errors.StripeError) return `${err.type}/${err.code ?? "-"}`;
   return err instanceof Error ? err.name : "unknown";
@@ -63,6 +97,12 @@ export async function POST(request: NextRequest) {
   const locale = (routing.locales as readonly string[]).includes(requestedLocale)
     ? (requestedLocale as string)
     : routing.defaultLocale;
+
+  // 0. Dry run: the whole close, rolled back inside the database, before
+  // anything irreversible happens (Stripe can't be un-cancelled). It skips
+  // the subscription guard, since the subscription is cancelled next.
+  const { error: dryRunError } = await supabase.rpc("close_my_account", { p_dry_run: true });
+  if (dryRunError) return fail("generic", 500);
 
   // 1. Stripe. Only a professional's own row can hold a subscription; for
   // secretaries and patients there's no row and nothing to cancel.
@@ -103,20 +143,26 @@ export async function POST(request: NextRequest) {
       .eq("id", userId)
       .eq("subscription_id", step.subId)
       .eq("subscription_status", "active");
-    if (error) return fail("check_failed", 503);
+    // The subscription is already cancelled; say so.
+    if (error) return fail("cancelled_not_closed", 503);
   }
 
   // 2. Close or delete, as the caller.
-  const { data, error } = await supabase.rpc("close_my_account");
+  const { data, error } = await supabase.rpc("close_my_account", { p_dry_run: false });
   if (error) {
-    return knownDbError(error.message) === "subscription_active"
-      ? fail("subscription_active", 409)
-      : fail("generic", 500);
+    const code = closeFailureCode(step, knownDbError(error.message));
+    return fail(code, code === "subscription_active" ? 409 : 500);
   }
   const rows = (data ?? []) as ClosureRow[];
   const outcome = rows[0]?.outcome ?? "deleted";
 
-  // 3. Notices. Best-effort: the account is already closed.
+  // 3. A professional's profile photo and document logo files: the RPC
+  // clears their references, but only the Storage API removes the files.
+  // Clinical files (patient-files, patient-photos) stay for the retention
+  // purge. Secretaries and patients have none of these.
+  if (prof) await removeProfessionalImages(userId);
+
+  // 4. Notices. Best-effort: the account is already closed.
   const plan = planClosureNotices(rows);
   if (plan.linkedPatients.length || plan.cancelledAppointments.length) {
     const t = await getTranslations({ locale, namespace: "accountClose" });
