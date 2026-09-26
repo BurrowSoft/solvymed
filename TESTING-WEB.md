@@ -3960,6 +3960,72 @@ before this one, as expected.
 
 **Merge gate: 🟢 for `81a0584`, review clean.**
 
+**Prod addendum (`5712d37`):** client events (`env=production`) are
+masked, and a `?email=…&q=…` page leaks nothing. There are no query
+strings, user, spans or replay. `/api/sentry-check` returns 404, and
+`.map` files aren't served.
+
+## PR #34 (`fix/local-record-dates`) — "today" is the practice's day, 🟢 at `29cf23c`, review clean
+
+**Scope: exactly `29cf23c`.** Server-side "today" is computed in the
+practice's time zone (`professionals.time_zone`, or `get_my_clinic()` for
+a secretary; São Paulo fallback). The calendar's today/Today button and
+the month grid are fixed, and record time shows as HH:MM. Migration 099
+went live during testing.
+
+**How it was tested.** The fix is JS-side, so I ran `29cf23c` locally with
+the **Node clock shifted** by a `--require` preload, and the browser clock
+pinned to the same instant (`page.clock.install`). Supabase keeps real
+time.
+- **Why backward:** shifting forward makes fresh auth tokens look
+  expired, so the instants are in the recent past.
+- **The instants:** Friday 25 Sept 23:30 BRT (02:30Z on the 26th),
+  Saturday 26 at 00:30 BRT, and Sunday 20 at 23:30 BRT.
+- **Where:** an isolated clone. The worktree's shared `node_modules`
+  lacks `@sentry/nextjs` since #31.
+- **Test data:** a throwaway doctor with appointments on 14, 20, 21, 25
+  and 26 Sept, a secretary, and a linked patient account.
+
+**🟢 Friday 23:30 BRT** (UTC is already the 26th). Same result for the
+doctor and the secretary:
+- **Dashboard:** "Boa noite", "sexta-feira, 25 de setembro de 2026", and
+  the Today list is the 25th.
+- **Schedule:** opens on the 25th, "1 consulta hoje".
+- **Calendar:** the week and month views highlight **25**. "Today" clicked
+  from 1 Sept goes to `?date=2026-09-25`.
+- **Payments "this week":** Mon 21 to Sun 27, R$ 750.
+- **Patient My appointments:** the 25th is still under **Próximas**.
+
+**🟢 Saturday 00:30 BRT:** the date is "sábado, 26", with "Boa noite", and
+the Today list is the 26th. The month view highlights 26. For the
+patient, the 25th moves to Histórico.
+
+**🟢 Sunday 20 at 23:30 BRT** (the old bug): payments "this week" is **Mon
+14 to Sun 20** (R$ 250), not the next week. The dashboard shows "domingo,
+20", and the month view highlights 20.
+
+**🟢 Practice time zone (099).** I set my throwaway practice to
+`Asia/Bangkok` via the service role, then reset it. At the same instant
+the doctor **and** the secretary both get "Bom dia", "sábado, 26 de
+setembro", and a schedule defaulting to the 26th.
+
+**🟢 Month grid east of UTC.** With the browser in `Asia/Bangkok`,
+September 2026 starts on **31 Aug** (Mon), then 1, 2, 3…, with 35 cells
+and no shift.
+
+**🟢 HH:MM.** A new record shows `2026-09-26 11:44` in the chart, with no
+seconds. It's stored by 099's trigger at the real server time, so the
+record-date-after-21:00 proof is B-7c's real-time run.
+
+**Review: Claude `/code-review` (code reviewer), clean at `29cf23c`.**
+
+**FOLLOW-UP:** in CalendarView, the month title ("September 2026"), the
+weekday headers (MON, TUE…) and the "Today" button are hard-coded
+English on pt-BR pages. That's pre-existing, not from #34.
+
+**CI at `29cf23c`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `29cf23c`, review clean.**
 ## PR #36 (`fix/account-delete-intake`) — /account/delete inserts from the browser, 🟢 (pre-100 scope) at `9f28b3c`, review clean
 
 **Scope: exactly `9f28b3c`.** The form inserts into `deletion_requests`

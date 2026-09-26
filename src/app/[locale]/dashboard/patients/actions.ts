@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId, isProfessionalRole } from "@/lib/effectiveProfId";
 import { sendExpoPush } from "@/lib/push";
 import { actionError } from "@/lib/dbErrors";
+import { clinicDate, clinicTime } from "@/lib/clinicTime";
 
 // archived_at is set for an archived match, so the warning can offer
 // Restore instead of creating a second record for the same person.
@@ -246,12 +247,13 @@ export async function createRecord(patientId: string, formData: FormData) {
   const content = (formData.get("content") as string)?.trim();
   if (!content) return { error: "Record content is required" };
 
+  // The practice's date and time, not the server's (UTC).
   const now = new Date();
   const { error } = await supabase.from("medical_records").insert({
     patient_id: patientId,
     professional_id: user.id,
-    date: now.toISOString().split("T")[0],
-    time: now.toTimeString().slice(0, 5),
+    date: clinicDate(now),
+    time: clinicTime(now),
     content,
     record_type: (formData.get("record_type") as string) || "free_text",
   });
@@ -328,7 +330,7 @@ export async function createPrescription(patientId: string, formData: FormData) 
   if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinical records" };
 
   const notes = (formData.get("notes") as string)?.trim() || null;
-  const date = new Date().toISOString().split("T")[0];
+  const date = clinicDate();
 
   const { data: prescription, error: pError } = await supabase
     .from("prescriptions")

@@ -4,6 +4,7 @@ import { useState } from "react";
 import type React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { AppointmentStatusSelect, DeleteAppointmentButton } from "./ScheduleClient";
+import { toLocalDateString } from "@/lib/slots";
 
 export type CalendarAppt = {
   id: string;
@@ -29,18 +30,21 @@ const LAST_H = 21;
 const HOURS = Array.from({ length: LAST_H - FIRST_H }, (_, i) => i + FIRST_H);
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
+// Every Date here is a local calendar day, so it's formatted with local
+// getters: toISOString() is UTC, and for a browser east of UTC local
+// midnight is the previous day there (the month grid shifted a day).
+const isoDate = toLocalDateString;
 function toMins(t: string) { const [h, m] = t.split(":").map(Number); return h * 60 + m; }
 function apptTop(startTime: string) { return ((toMins(startTime) - FIRST_H * 60) / 60) * HOUR_H; }
 function apptHeight(dur: number) { return Math.max((dur / 60) * HOUR_H, 20); }
 
-function addDaysTo(dateStr: string, n: number) {
+export function addDaysTo(dateStr: string, n: number) {
   const d = new Date(dateStr + "T12:00:00");
   d.setDate(d.getDate() + n);
   return isoDate(d);
 }
 
-function getWeekDays(dateStr: string): string[] {
+export function getWeekDays(dateStr: string): string[] {
   const d = new Date(dateStr + "T12:00:00");
   const dow = d.getDay();
   const monday = new Date(d);
@@ -52,7 +56,7 @@ function getWeekDays(dateStr: string): string[] {
   });
 }
 
-function getMonthGrid(dateStr: string): string[][] {
+export function getMonthGrid(dateStr: string): string[][] {
   const d = new Date(dateStr + "T12:00:00");
   const year = d.getFullYear();
   const month = d.getMonth();
@@ -269,15 +273,17 @@ function MonthGrid({
 export function CalendarView({
   appointments,
   currentDate,
+  today,
   view,
 }: {
   appointments: CalendarAppt[];
   currentDate: string;
+  // The practice's today, from the server (lib/clinicTime), not the browser's UTC date.
+  today: string;
   view: "day" | "week" | "month";
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const today = isoDate(new Date());
   const [selected, setSelected] = useState<CalendarAppt | null>(null);
 
   function go(date: string, v = view) {
