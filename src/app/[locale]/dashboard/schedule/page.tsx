@@ -40,10 +40,10 @@ export default async function SchedulePage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ date?: string; view?: string }>;
+  searchParams: Promise<{ date?: string; view?: string; new?: string }>;
 }) {
   const { locale } = await params;
-  const { date: dateParam, view: viewParam } = await searchParams;
+  const { date: dateParam, view: viewParam, new: newParam } = await searchParams;
 
   const [supabase, t, tFirstRun] = await Promise.all([
     createClient(),
@@ -139,7 +139,7 @@ export default async function SchedulePage({
         <div className="flex flex-wrap items-center gap-2">
           <ViewToggle currentView={view} currentDate={currentDate} />
           <BlockTimeButton defaultDate={currentDate} />
-          <NewAppointmentButton patients={patients} defaultDate={currentDate} procedures={procedures} />
+          <NewAppointmentButton patients={patients} defaultDate={currentDate} procedures={procedures} autoOpen={newParam === "1"} />
         </div>
       </div>
 

@@ -437,7 +437,10 @@
     "copyLink": "Copia link",
     "loadError": "Impossibile caricare le impostazioni. Aggiorna la pagina. Se il problema persiste, contatta l'assistenza.",
     "regenerateConfirm": "I codici e i link già condivisi smetteranno di funzionare. Generare un nuovo codice?",
-    "regenerateError": "Impossibile generare un nuovo codice. Riprova."
+    "regenerateError": "Impossibile generare un nuovo codice. Riprova.",
+    "showSetup": "Mostra la lista di configurazione",
+    "registration": "Iscrizione all'albo",
+    "registrationPlaceholder": "es. CRM 12345/SP"
   },
   "clinics": {
     "title": "Le mie cliniche",
@@ -861,5 +864,34 @@
     "pushClosedBody": "Il tuo studio ha chiuso il suo account SolvyMed. I tuoi appuntamenti futuri sono stati annullati. Per una copia della tua cartella, scrivi a support@solvymed.com.",
     "pushCancelledTitle": "Appuntamento annullato",
     "pushCancelledBody": "Il tuo appuntamento del {date} alle {time} è stato annullato dallo studio."
+  },
+  "setup": {
+    "title": "Configura il tuo studio",
+    "progress": "{done} di 6",
+    "hide": "Nascondi",
+    "profile": "Completa il tuo profilo",
+    "profileCta": "Completa profilo",
+    "hours": "Imposta i tuoi orari",
+    "hoursCta": "Imposta orari",
+    "procedure": "Aggiungi la tua prima prestazione",
+    "procedureCta": "Aggiungi prestazione",
+    "patient": "Aggiungi il tuo primo paziente",
+    "patientCta": "Aggiungi paziente",
+    "appointment": "Prenota il tuo primo appuntamento",
+    "appointmentCta": "Prenota appuntamento",
+    "invite": "Invita i tuoi pazienti",
+    "inviteCta": "Condividi il link di invito",
+    "alsoUseful": "Utile anche",
+    "pix": "Aggiungi la tua chiave Pix",
+    "secretary": "Invita il tuo team",
+    "ready": "Il tuo studio è pronto 🎉",
+    "gotIt": "Ho capito"
+  },
+  "onboarding": {
+    "secretaryWelcome": "Ora fai parte del team di {clinic}. Puoi gestire l'agenda, i pazienti e i pagamenti. Le cartelle cliniche restano riservate al professionista.",
+    "patientConnected": "Il tuo account è collegato a {clinic}.",
+    "bookAppointment": "Prenota un appuntamento",
+    "dismiss": "Chiudi",
+    "gotIt": "Ho capito"
   }
 }

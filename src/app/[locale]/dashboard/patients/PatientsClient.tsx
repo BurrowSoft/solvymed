@@ -154,9 +154,10 @@ export function PatientSearch({ defaultValue }: { defaultValue: string }) {
 
 const NEW_PATIENT_FORM_ID = "new-patient-form";
 
-export function NewPatientButton({ locale }: { locale: string }) {
+// autoOpen: the setup checklist links here with ?new=1 (first patient).
+export function NewPatientButton({ locale, autoOpen = false }: { locale: string; autoOpen?: boolean }) {
   const t = useTranslations("patients");
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(autoOpen);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [matches, setMatches] = useState<PatientMatch[] | null>(null);

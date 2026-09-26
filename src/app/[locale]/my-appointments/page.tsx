@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MyAppointmentsClient } from "./MyAppointmentsClient";
 import { clinicDate } from "@/lib/clinicTime";
+import { getOnboardingFlags } from "@/lib/setup";
 
 export type PatientAppointment = {
   id: string;
@@ -104,8 +105,13 @@ export default async function MyAppointmentsPage({
     .order("date", { ascending: false })
     .limit(5);
 
+  // The one-time "connected to {clinic}" card, once per clinic (migration 103).
+  const flags = await getOnboardingFlags(supabase);
+  const connectedClinicName = flags && !flags.patient_connected_seen && flags.clinic_professional_id ? flags.clinic_name : null;
+
   return (
     <MyAppointmentsClient
+      connectedClinicName={connectedClinicName}
       upcoming={upcoming ?? []}
       past={past ?? []}
       userEmail={user.email ?? ""}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useState, useTransition, useRef } from "react";
+import { useState, useTransition, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime } from "./actions";
 import { generatePixString, pixQrUrl } from "@/lib/pix";
@@ -222,12 +222,14 @@ export function DeleteAppointmentButton({ id }: { id: string }) {
   );
 }
 
-export function NewAppointmentButton({ patients, defaultDate, procedures, label }: {
+export function NewAppointmentButton({ patients, defaultDate, procedures, label, autoOpen = false }: {
   patients: Patient[];
   defaultDate: string;
   procedures: Procedure[];
   // The button's text; the dialog title stays "New appointment".
   label?: string;
+  // Open on arrival (the setup checklist links here with ?new=1).
+  autoOpen?: boolean;
 }) {
   const t = useTranslations("schedule");
   const [open, setOpen] = useState(false);
@@ -246,6 +248,12 @@ export function NewAppointmentButton({ patients, defaultDate, procedures, label 
     setError("");
     setOpen(true);
   }
+
+  useEffect(() => {
+    if (autoOpen) handleOpen();
+    // Only on arrival.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleProcChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const name = e.target.value;

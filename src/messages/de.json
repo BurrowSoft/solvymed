@@ -437,7 +437,10 @@
     "copyLink": "Link kopieren",
     "loadError": "Ihre Einstellungen konnten nicht geladen werden. Bitte laden Sie die Seite neu. Wenn das Problem weiterhin besteht, wenden Sie sich an den Support.",
     "regenerateConfirm": "Bereits geteilte Codes und Links funktionieren dann nicht mehr. Neuen Code erzeugen?",
-    "regenerateError": "Es konnte kein neuer Code erzeugt werden. Bitte versuchen Sie es erneut."
+    "regenerateError": "Es konnte kein neuer Code erzeugt werden. Bitte versuchen Sie es erneut.",
+    "showSetup": "Einrichtungsliste anzeigen",
+    "registration": "Berufliche Registrierungsnummer",
+    "registrationPlaceholder": "z. B. CRM 12345/SP"
   },
   "clinics": {
     "title": "Meine Kliniken",
@@ -861,5 +864,34 @@
     "pushClosedBody": "Ihre Praxis hat ihr SolvyMed-Konto geschlossen. Ihre anstehenden Termine wurden abgesagt. Eine Kopie Ihrer Akte erhalten Sie über support@solvymed.com.",
     "pushCancelledTitle": "Termin abgesagt",
     "pushCancelledBody": "Ihr Termin am {date} um {time} wurde von der Praxis abgesagt."
+  },
+  "setup": {
+    "title": "Richten Sie Ihre Praxis ein",
+    "progress": "{done} von 6",
+    "hide": "Ausblenden",
+    "profile": "Vervollständigen Sie Ihr Profil",
+    "profileCta": "Profil vervollständigen",
+    "hours": "Legen Sie Ihre Sprechzeiten fest",
+    "hoursCta": "Sprechzeiten festlegen",
+    "procedure": "Fügen Sie Ihre erste Leistung hinzu",
+    "procedureCta": "Leistung hinzufügen",
+    "patient": "Fügen Sie Ihren ersten Patienten hinzu",
+    "patientCta": "Patienten hinzufügen",
+    "appointment": "Buchen Sie Ihren ersten Termin",
+    "appointmentCta": "Termin buchen",
+    "invite": "Laden Sie Ihre Patienten ein",
+    "inviteCta": "Einladungslink teilen",
+    "alsoUseful": "Ebenfalls nützlich",
+    "pix": "Fügen Sie Ihren Pix-Schlüssel hinzu",
+    "secretary": "Laden Sie Ihr Team ein",
+    "ready": "Ihre Praxis ist bereit 🎉",
+    "gotIt": "Verstanden"
+  },
+  "onboarding": {
+    "secretaryWelcome": "Sie gehören jetzt zum Team von {clinic}. Sie können den Terminkalender, die Patienten und die Zahlungen verwalten. Patientenakten bleiben dem Behandelnden vorbehalten.",
+    "patientConnected": "Ihr Konto ist mit {clinic} verbunden.",
+    "bookAppointment": "Termin buchen",
+    "dismiss": "Schließen",
+    "gotIt": "Verstanden"
   }
 }

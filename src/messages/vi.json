@@ -437,7 +437,10 @@
     "copyLink": "Sao chép liên kết",
     "loadError": "Không thể tải cài đặt của bạn. Vui lòng tải lại trang. Nếu sự cố vẫn tiếp diễn, hãy liên hệ bộ phận hỗ trợ.",
     "regenerateConfirm": "Các mã và liên kết bạn đã chia sẻ sẽ không còn dùng được. Tạo mã mới?",
-    "regenerateError": "Không thể tạo mã mới. Vui lòng thử lại."
+    "regenerateError": "Không thể tạo mã mới. Vui lòng thử lại.",
+    "showSetup": "Hiện danh sách thiết lập",
+    "registration": "Số đăng ký hành nghề",
+    "registrationPlaceholder": "vd. CRM 12345/SP"
   },
   "clinics": {
     "title": "Phòng khám của tôi",
@@ -861,5 +864,34 @@
     "pushClosedBody": "Phòng khám của bạn đã đóng tài khoản SolvyMed. Các lịch hẹn sắp tới của bạn đã bị hủy. Để nhận bản sao hồ sơ, hãy liên hệ support@solvymed.com.",
     "pushCancelledTitle": "Lịch hẹn đã bị hủy",
     "pushCancelledBody": "Lịch hẹn của bạn vào {date} lúc {time} đã bị phòng khám hủy."
+  },
+  "setup": {
+    "title": "Thiết lập phòng khám của bạn",
+    "progress": "{done}/6",
+    "hide": "Ẩn",
+    "profile": "Hoàn thiện hồ sơ",
+    "profileCta": "Hoàn thiện hồ sơ",
+    "hours": "Đặt giờ làm việc",
+    "hoursCta": "Đặt giờ",
+    "procedure": "Thêm dịch vụ đầu tiên",
+    "procedureCta": "Thêm dịch vụ",
+    "patient": "Thêm bệnh nhân đầu tiên",
+    "patientCta": "Thêm bệnh nhân",
+    "appointment": "Đặt lịch hẹn đầu tiên",
+    "appointmentCta": "Đặt lịch hẹn",
+    "invite": "Mời bệnh nhân của bạn",
+    "inviteCta": "Chia sẻ liên kết mời",
+    "alsoUseful": "Cũng hữu ích",
+    "pix": "Thêm khóa Pix",
+    "secretary": "Mời đội ngũ của bạn",
+    "ready": "Phòng khám của bạn đã sẵn sàng 🎉",
+    "gotIt": "Đã hiểu"
+  },
+  "onboarding": {
+    "secretaryWelcome": "Bạn đã là thành viên của đội ngũ {clinic}. Bạn có thể quản lý lịch hẹn, bệnh nhân và thanh toán. Hồ sơ bệnh án chỉ chuyên gia mới xem được.",
+    "patientConnected": "Bạn đã kết nối với {clinic}.",
+    "bookAppointment": "Đặt lịch hẹn",
+    "dismiss": "Đóng",
+    "gotIt": "Đã hiểu"
   }
 }

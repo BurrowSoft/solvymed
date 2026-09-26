@@ -437,7 +437,10 @@
     "copyLink": "نسخ الرابط",
     "loadError": "تعذّر تحميل إعداداتك. يرجى تحديث الصفحة. إذا استمرت المشكلة، تواصل مع الدعم.",
     "regenerateConfirm": "ستتوقف الرموز والروابط التي شاركتها بالفعل عن العمل. هل تريد إنشاء رمز جديد؟",
-    "regenerateError": "تعذّر إنشاء رمز جديد. يرجى المحاولة مرة أخرى."
+    "regenerateError": "تعذّر إنشاء رمز جديد. يرجى المحاولة مرة أخرى.",
+    "showSetup": "عرض قائمة الإعداد",
+    "registration": "رقم التسجيل المهني",
+    "registrationPlaceholder": "مثال: CRM 12345/SP"
   },
   "clinics": {
     "title": "عياداتي",
@@ -861,5 +864,34 @@
     "pushClosedBody": "أغلقت عيادتك حسابها في SolvyMed. أُلغيت مواعيدك القادمة. للحصول على نسخة من سجلك، راسل support@solvymed.com.",
     "pushCancelledTitle": "أُلغي الموعد",
     "pushCancelledBody": "ألغت العيادة موعدك في {date} الساعة {time}."
+  },
+  "setup": {
+    "title": "جهّز عيادتك",
+    "progress": "{done} من 6",
+    "hide": "إخفاء",
+    "profile": "أكمل ملفك الشخصي",
+    "profileCta": "إكمال الملف",
+    "hours": "حدّد ساعات العمل",
+    "hoursCta": "تحديد الساعات",
+    "procedure": "أضف أول إجراء",
+    "procedureCta": "إضافة إجراء",
+    "patient": "أضف أول مريض",
+    "patientCta": "إضافة مريض",
+    "appointment": "احجز أول موعد",
+    "appointmentCta": "حجز موعد",
+    "invite": "ادعُ مرضاك",
+    "inviteCta": "مشاركة رابط الدعوة",
+    "alsoUseful": "مفيد أيضًا",
+    "pix": "أضف مفتاح Pix",
+    "secretary": "ادعُ فريقك",
+    "ready": "عيادتك جاهزة 🎉",
+    "gotIt": "حسنًا"
+  },
+  "onboarding": {
+    "secretaryWelcome": "أصبحت الآن ضمن فريق {clinic}. يمكنك إدارة المواعيد والمرضى والمدفوعات. تبقى السجلات الطبية خاصة بالمختص.",
+    "patientConnected": "أنت الآن متصل بـ {clinic}.",
+    "bookAppointment": "حجز موعد",
+    "dismiss": "إغلاق",
+    "gotIt": "حسنًا"
   }
 }

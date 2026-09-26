@@ -437,7 +437,10 @@
     "copyLink": "Salin tautan",
     "loadError": "Tidak dapat memuat pengaturan Anda. Silakan muat ulang halaman. Jika masalah berlanjut, hubungi dukungan.",
     "regenerateConfirm": "Kode dan tautan yang sudah Anda bagikan tidak akan berlaku lagi. Buat kode baru?",
-    "regenerateError": "Tidak dapat membuat kode baru. Silakan coba lagi."
+    "regenerateError": "Tidak dapat membuat kode baru. Silakan coba lagi.",
+    "showSetup": "Tampilkan daftar penyiapan",
+    "registration": "Nomor registrasi profesi",
+    "registrationPlaceholder": "mis. CRM 12345/SP"
   },
   "clinics": {
     "title": "Klinik Saya",
@@ -861,5 +864,34 @@
     "pushClosedBody": "Klinik Anda telah menutup akun SolvyMed-nya. Janji temu mendatang Anda dibatalkan. Untuk salinan rekam medis, hubungi support@solvymed.com.",
     "pushCancelledTitle": "Janji temu dibatalkan",
     "pushCancelledBody": "Janji temu Anda pada {date} pukul {time} dibatalkan oleh klinik."
+  },
+  "setup": {
+    "title": "Siapkan klinik Anda",
+    "progress": "{done} dari 6",
+    "hide": "Sembunyikan",
+    "profile": "Lengkapi profil Anda",
+    "profileCta": "Lengkapi profil",
+    "hours": "Atur jam kerja Anda",
+    "hoursCta": "Atur jam",
+    "procedure": "Tambahkan layanan pertama",
+    "procedureCta": "Tambah layanan",
+    "patient": "Tambahkan pasien pertama",
+    "patientCta": "Tambah pasien",
+    "appointment": "Buat janji temu pertama",
+    "appointmentCta": "Buat janji temu",
+    "invite": "Undang pasien Anda",
+    "inviteCta": "Bagikan tautan undangan",
+    "alsoUseful": "Juga berguna",
+    "pix": "Tambahkan kunci Pix",
+    "secretary": "Undang tim Anda",
+    "ready": "Klinik Anda sudah siap 🎉",
+    "gotIt": "Mengerti"
+  },
+  "onboarding": {
+    "secretaryWelcome": "Anda sekarang bagian dari tim {clinic}. Anda dapat mengelola jadwal, pasien, dan pembayaran. Rekam medis tetap privat untuk tenaga profesional.",
+    "patientConnected": "Anda terhubung dengan {clinic}.",
+    "bookAppointment": "Buat janji temu",
+    "dismiss": "Tutup",
+    "gotIt": "Mengerti"
   }
 }

@@ -437,7 +437,10 @@
     "copyLink": "リンクをコピー",
     "loadError": "設定を読み込めませんでした。ページを再読み込みしてください。問題が続く場合はサポートにお問い合わせください。",
     "regenerateConfirm": "すでに共有したコードやリンクは使えなくなります。新しいコードを生成しますか？",
-    "regenerateError": "新しいコードを生成できませんでした。もう一度お試しください。"
+    "regenerateError": "新しいコードを生成できませんでした。もう一度お試しください。",
+    "showSetup": "設定チェックリストを表示",
+    "registration": "登録番号",
+    "registrationPlaceholder": "例: CRM 12345/SP"
   },
   "clinics": {
     "title": "マイクリニック",
@@ -861,5 +864,34 @@
     "pushClosedBody": "ご利用の診療所が SolvyMed のアカウントを閉鎖しました。今後の予約はキャンセルされました。診療記録の写しは support@solvymed.com までご請求ください。",
     "pushCancelledTitle": "予約のキャンセル",
     "pushCancelledBody": "{date} {time} の予約は診療所によりキャンセルされました。"
+  },
+  "setup": {
+    "title": "診療所を設定しましょう",
+    "progress": "{done} / 6",
+    "hide": "非表示",
+    "profile": "プロフィールを完成させる",
+    "profileCta": "プロフィールを入力",
+    "hours": "診療時間を設定する",
+    "hoursCta": "時間を設定",
+    "procedure": "最初の診療メニューを追加する",
+    "procedureCta": "メニューを追加",
+    "patient": "最初の患者を追加する",
+    "patientCta": "患者を追加",
+    "appointment": "最初の予約を入れる",
+    "appointmentCta": "予約を入れる",
+    "invite": "患者を招待する",
+    "inviteCta": "招待リンクを共有",
+    "alsoUseful": "こちらもおすすめ",
+    "pix": "Pix キーを追加",
+    "secretary": "チームを招待",
+    "ready": "診療所の準備ができました 🎉",
+    "gotIt": "OK"
+  },
+  "onboarding": {
+    "secretaryWelcome": "{clinic} のチームに参加しました。予約、患者、支払いを管理できます。診療記録は医療者のみが閲覧できます。",
+    "patientConnected": "{clinic} と接続しました。",
+    "bookAppointment": "予約を入れる",
+    "dismiss": "閉じる",
+    "gotIt": "OK"
   }
 }
