@@ -2685,6 +2685,39 @@ new HEAD.
     addendum fixes.
 - **Review status: not clean.** I'll re-run it on the next HEAD.
 
+**Addendum: CI 🟢 at `7ffedcf`; review round 3 not clean.**
+- **What changed:** `cebdc88` and `7ffedcf` answer round 2.
+  - Master pushes are grouped per commit SHA.
+  - Lint runs once, through `scripts/ci-lint.mjs` (the ESLint API),
+    which exits 2 on a crash and adds a summary line.
+  - The lint step runs only when `npm ci` succeeded and the run wasn't
+    cancelled.
+  - `packages/**` is ignored.
+  - A new gating step, `node --check scripts/ci-lint.mjs`, runs first.
+    The runner at `cebdc88` had a syntax error that looked exactly like
+    "findings", and it's fixed in `7ffedcf`.
+- **CI:** run `36215208355` is green: checkout and setup (pinned SHAs),
+  `npm ci`, typecheck, the tests (78/78), `node --check`, and Lint
+  (advisory) reporting **35 errors, 17 warnings**.
+- **Review round 3: Claude `/code-review high` at `7ffedcf`.** 7 findings
+  were posted inline.
+  - **Worth fixing:**
+    - A *runtime* crash in the runner (e.g. the top-level `import` failing
+      to resolve, outside the try) still exits 1 and looks like findings,
+      since `node --check` only catches syntax. The suggested root fix:
+      exit 0 on findings, non-zero only on a crash, and drop
+      `continue-on-error`.
+    - Findings past GitHub's annotation cap print in the log with **no
+      file or line**.
+  - **Trivial:** workflow-command escaping, and a stray blank line in
+    `.gitignore`.
+  - **Already decided by UX:** two findings (lint should gate; don't use
+    `::error` on untouched files) re-raise the "lint advisory until
+    post-launch" decision. They should be answered and resolved, not
+    reopened.
+  - The gate-SHA finding is resolved by this addendum.
+- **Review status: not clean** (2 real, 2 trivial).
+
 ## PR #21 (`hotfix/auth-links-locale`) — password reset 404 on prod; auth emails keep the language, 🟢 at `ce40aef`
 
 **Scope: exactly `ce40aef`.** This is the hotfix for the prod reset 404
