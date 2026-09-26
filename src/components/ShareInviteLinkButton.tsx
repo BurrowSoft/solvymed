@@ -20,7 +20,9 @@ export function ShareInviteLinkButton({ code, className = "" }: { code: string |
   }
 
   function handleCopy() {
-    navigator.clipboard.writeText(`${window.location.origin}${prefix}/join/${code}`).then(() => {
+    // Unprefixed: the patient's own browser language decides (UX rule for
+    // links shared with patients).
+    navigator.clipboard.writeText(`${window.location.origin}/join/${code}`).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }).catch(() => {});
