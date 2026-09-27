@@ -4688,6 +4688,87 @@ and pt-BR / en shows the text that appeared:
 
 **Merge gate: 🟢 for `4558c8e`, review clean.**
 
+## PR #52 (`fix/verify-app-handoff`) — fixed callback link for every auth email, 🟢 at `7424eb7`, review clean
+
+**Scope: exactly `7424eb7`.** This is the web side of the email-template
+switch: the fixed link `/api/auth/callback?token_hash&type[&locale]`, app/web
+routing after the click, and the app-account recovery screen.
+
+**Setup.** Links were built by hand with admin `generate_link` (the same
+as mob dev's generator), in the fixed-template shape, on the preview. Seven
+throwaways were used and all deleted.
+
+**Results:**
+- **Scanner first:**
+  - A plain `GET` of the link, following redirects with no JS, ends at
+    `200 /pt-BR/auth/verify?…`.
+  - Nothing is verified: the click afterwards still works, for both web
+    signup and app recovery.
+  - The callback answers `307` with `Referrer-Policy: no-referrer`.
+- **Address bar:** after load it's `/pt-BR/auth/verify`, with no
+  `token_hash` or `type`. There are no verify calls on load; the only
+  `POST /auth/v1/verify` is on the click or submit.
+- **Web signup** (platform `web`, locale `pt-BR`): "Confirme seu e-mail" →
+  Continuar → `/pt-BR/auth/professional-welcome` ("Boas-vindas ao SolvyMed,
+  Dra!").
+- **App signup on a phone** (Pixel 7 UA, platform `mobile`) → Continuar →
+  the handoff screen, then a `solvymed://?access_token&refresh_token&type=signup`
+  hand-off:
+  - `locale=pt-BR` → `/pt-BR/auth/verify`: "Email confirmado! … Abrindo o
+    SolvyMed… / Abrir SolvyMed".
+  - `locale=de-DE` → `/de/auth/verify`: "Bestätigen Sie Ihre
+    E-Mail-Adresse / Weiter" → "E-Mail bestätigt! … SolvyMed öffnen".
+  - no `locale`, en browser → `/auth/verify`: "Confirm your email /
+    Continue" → "Email confirmed! … Open SolvyMed".
+- **App-account recovery** (phone, pt-BR):
+  - The form verifies on submit and shows **"Senha atualizada"** / "Sua
+    senha foi alterada. Você já pode entrar com sua nova senha.", with
+    **"Abrir SolvyMed" → `href="solvymed://"` (no tokens)** and "Ir para o
+    login" as the secondary link.
+  - **Browser signed out:** `/pt-BR/dashboard` afterwards → `/pt-BR/auth/login`.
+  - **Global sign-out, observed:** a session opened for the same account
+    before the reset (standing in for the app) is refused on refresh with
+    `refresh_token_not_found`. The new password signs in.
+- **Web-account recovery:** the existing success screen, "Senha atualizada"
+  / "Sua senha foi atualizada. Você já pode fazer login.", with "Ir para o
+  login" and no app button.
+- **Hostile or odd `?locale=`** (callback `Location` only):
+
+  | `locale=` | Lands on |
+  | --- | --- |
+  | `pt-BR&type=signup` (encoded) | `/pt-BR/auth/verify` |
+  | `<no value>` | `/auth/verify` (en) |
+  | `<no value>` with Accept-Language pt-BR | `/pt-BR/…` |
+  | `<script>…` | `/auth/verify`, not reflected |
+  | `//evil.com` | `/auth/verify`, same origin |
+  | empty | `/auth/verify` |
+  | `de-DE` | `/de/…` |
+  | `fr-FR` | `/fr/…` |
+
+- **Types:** missing, `reauthentication` and `junk` all show **"Este link
+  expirou"**, with no Continuar button and **no verify call**. The same
+  magiclink token then still works with its real type (→ welcome), so
+  nothing was consumed.
+- **`email_change_new`:** the page shows "Quase lá" and the click verifies
+  with **`type: email_change`** (the alias works).
+  - Supabase answers `403 otp_expired` for the admin-generated
+    *new-address* token and keeps the change pending, so the page shows
+    "Este link expirou".
+  - The *current-address* token (`email_change_current` → `email_change`) is
+    accepted: 200, "proceed to confirm link sent to the other email". The
+    page then lands on login with no message.
+  - That's Supabase-side, not this PR. The real-email E2E after the
+    template switch settles it, if any client offers an email change.
+
+**Review: Claude `/code-review` (code reviewer), clean at `7424eb7`.**
+
+**CI at `7424eb7`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `7424eb7`, review clean.** After merge, mob dev
+switches the templates and the hook; then the web and mobile testers run
+the real-email E2E (pt-BR and en, web- and app-origin, signup and recovery,
+with a scanner GET first).
+
 ## PR #51 (`fix/confirm-novalidate`) — /auth/confirm set-password form shows the app's own lines, 🟢 at `9871e73`, review clean
 
 **Scope: exactly `9871e73`.** This is the follow-up to the #47 note: the
