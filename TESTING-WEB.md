@@ -5077,3 +5077,97 @@ doctor (no procedures), deleted afterwards.
 errors), Vercel ✅.
 
 **Merge gate: 🟢 for `9256248`, review clean.**
+
+## PR #57 (`feat/consent-attribution`) — LGPD cookie banner, first-touch signup attribution, 🟢 at `916e1d5`, review clean
+
+**Scope: exactly `916e1d5`.** Master was merged in before this entry; the
+code under test is unchanged.
+
+**Setup.** Checked on the preview, with fresh browsers per scenario. Two
+throwaway signups were confirmed through the preview's own
+`/api/auth/callback`, so `after-verify` ran on the same origin as the
+cookies. mob dev read `signup_attribution` on prod and deleted the accounts.
+
+**Banner:**
+- On a first visit it shows **"Aceitar tudo" / "Somente necessários" /
+  "Escolher…"**, all three with the same style (no nudge). The "Política de
+  privacidade" link → `/pt-BR/privacy`.
+- en: "Accept all / Necessary only / Choose…", with the link → `/privacy`.
+- **Before an answer:** no `sm_consent` and no `sm_attr` cookie, and no
+  analytics request.
+- **No banner** on a first visit to `/pt-BR/auth/verify`, `/pt-BR/auth/confirm`,
+  `/pt-BR/auth/reset-password` or `/auth/verify`.
+- **Reopening:** "Configurações de cookies" in the footer and "Cookie
+  settings" in the dashboard Settings reopen it with the current state
+  (Necessários ☑ fixed, Análise and Marketing as saved).
+
+**Consent and cookies:**
+- **"Aceitar tudo"** after client-side navigation from a landing of
+  `/pt-BR/invite/QA7CODE?utm_source=test&utm_medium=cpc&utm_campaign=qa`
+  gives `sm_consent=1.11.<ts>` and `sm_attr` =
+  `{utm_source: test, utm_medium: cpc, utm_campaign: qa, landing_path: "/pt-BR/invite/:code"}`,
+  with the code redacted.
+- **Withdraw marketing** (Salvar escolhas): `1.10.<ts>`, and **`sm_attr`
+  is deleted**.
+- **Withdraw analytics:** `1.00.<ts>`, the **page reloads**, `sm_anon_id` is
+  removed, and no analytics requests are made afterwards.
+- **"Somente necessários":** `1.00.<ts>`, with no `sm_attr` and no analytics
+  requests.
+
+**Attribution rows** (mob dev, read on prod with the service role):
+- **Marketing accepted** (landing `/pt-BR/invite/QA7CODE?…utm_campaign=qa-accept`):
+  exactly **one** row, with `utm_source=test`, `utm_medium=cpc`,
+  `utm_campaign=qa-accept`, `landing_path=/pt-BR/invite/:code`,
+  `platform=web`, and `referrer_host`, `utm_term` and `utm_content` all null.
+- **"Somente necessários":** **no row**.
+- Both were confirmed seconds after signup. The later-confirmation path
+  (migration 104) is covered by the SQL tests, not by this live run.
+
+**Findings, non-blocking (sent to web dev, open):**
+- **F1:** `/pt-BR/join/<code>?utm_…` redirects (307) to
+  `/pt-BR/auth/signup?join=<code>` **without the UTM parameters**, so traffic
+  through the patient join link is recorded with
+  `landing_path=/pt-BR/auth/signup` and no UTMs.
+- **F2:** after a signup confirms, `after-verify` clears `sm_attr`. The next
+  page (`/pt-BR/auth/professional-welcome`) then writes a **new** `sm_attr`
+  with that internal path and no UTMs. The account keeps its first row, but
+  a later signup in the same browser would get this bogus first touch.
+- **Not #57:** Vercel Analytics makes no request even after "Aceitar tudo"
+  (`window.va` is set, but no script is fetched). Today's prod doesn't load
+  it either, which looks like Analytics isn't enabled on the Vercel project.
+  PostHog `track()` stays dormant with no key.
+
+**Review: Claude `/code-review` (code reviewer), clean at `916e1d5`.**
+
+**CI at `916e1d5`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `916e1d5`, review clean,** with F1/F2 left to web
+dev/UX as follow-ups.
+
+### PR #57 re-test at `717032c` (F1/F2 fixed, Vercel Analytics removed) — 🟢
+
+Re-run on the preview at head `717032c` (base `release`):
+- **F1 fixed:** `/pt-BR/join/QA7CODE?utm_source=x&utm_campaign=y&gclid=z` →
+  `/pt-BR/auth/signup?join=QA7CODE&utm_source=x&utm_campaign=y`. The UTMs
+  are forwarded and gclid is dropped.
+  - After "Aceitar tudo", `sm_attr` = `{utm_source: x, utm_campaign: y, landing_path: "/pt-BR/auth/signup"}`,
+    with the code nowhere in it.
+  - mob dev on prod: exactly **one** `signup_attribution` row for that
+    signup (`utm_source=x`, `utm_campaign=y`,
+    `landing_path=/pt-BR/auth/signup`, `platform=web`), with no code and no
+    gclid.
+- **F2 fixed:** after the signup's Continuar, `sm_attr="sent"` on
+  `/pt-BR/auth/professional-welcome` and still on later pages (dashboard,
+  settings). No new first touch is captured.
+- **Vercel Analytics removed:** after "Aceitar tudo" there's no `window.va`,
+  no insights script and no `_vercel/insights` or `va.vercel-scripts`
+  request. PostHog `track()` stays dormant with no key.
+- **The first run's checks still pass:** a single `sm_attr` with
+  `/pt-BR/invite/:code`; the same-style buttons; nothing before an answer;
+  withdrawing marketing deletes `sm_attr`; withdrawing analytics reloads;
+  necessary-only → no row (mob dev); no banner on the auth link pages; and it
+  reopens from the footer and from Settings, in pt-BR and en.
+- **Cleanup:** all throwaways deleted.
+
+**CI at `717032c`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+**Review: clean at `717032c`.** **Merge gate: 🟢 for `717032c`.**

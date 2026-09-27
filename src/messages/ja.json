@@ -54,7 +54,8 @@
     "privacy": "プライバシーポリシー",
     "terms": "利用規約",
     "legal": "法的情報",
-    "languageLabel": "言語"
+    "languageLabel": "言語",
+    "cookieSettings": "Cookie設定"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -910,5 +911,20 @@
     "bookAppointment": "予約を入れる",
     "dismiss": "閉じる",
     "gotIt": "OK"
+  },
+  "consent": {
+    "title": "Cookieの設定",
+    "text": "SolvyMedの動作に必要なCookieを使用しています。許可いただければ、サイトの利用状況の測定（分析）と、どの広告からお越しいただいたかの把握（マーケティング）も行います。",
+    "privacyLink": "プライバシーポリシー",
+    "acceptAll": "すべて許可",
+    "necessaryOnly": "必要なもののみ",
+    "choose": "選択…",
+    "save": "選択を保存",
+    "necessaryTitle": "必須",
+    "necessaryDesc": "ログイン状態、言語、この選択を保持します。常に有効です。",
+    "analyticsTitle": "分析",
+    "analyticsDesc": "ページの利用状況の統計。サイトの改善に使います。",
+    "marketingTitle": "マーケティング",
+    "marketingDesc": "どの広告やサイトからお越しいただいたかを記録し、登録された場合はアカウントに保存します。"
   }
 }

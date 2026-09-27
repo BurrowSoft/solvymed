@@ -54,7 +54,8 @@
     "privacy": "隐私政策",
     "terms": "服务条款",
     "legal": "法律信息",
-    "languageLabel": "语言"
+    "languageLabel": "语言",
+    "cookieSettings": "Cookie 设置"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -910,5 +911,20 @@
     "bookAppointment": "预约",
     "dismiss": "关闭",
     "gotIt": "知道了"
+  },
+  "consent": {
+    "title": "Cookie 偏好",
+    "text": "我们使用必要的 Cookie 来运行 SolvyMed。经您许可，我们还希望衡量网站的使用情况（分析），以及是哪些广告带您来到这里（营销）。",
+    "privacyLink": "隐私政策",
+    "acceptAll": "全部接受",
+    "necessaryOnly": "仅必要",
+    "choose": "自行选择…",
+    "save": "保存选择",
+    "necessaryTitle": "必要",
+    "necessaryDesc": "保持您的登录状态，并记住您的语言和此选择。始终开启。",
+    "analyticsTitle": "分析",
+    "analyticsDesc": "页面使用情况统计，帮助我们改进网站。",
+    "marketingTitle": "营销",
+    "marketingDesc": "记住是哪个广告或网站带您来到这里，并在您注册时与您的账户一起保存。"
   }
 }
