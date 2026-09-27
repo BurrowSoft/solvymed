@@ -4865,3 +4865,27 @@ for path 1 a second signed-in browser.
 **CI at `75ebecf`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `75ebecf`, review clean.**
+
+## PR #48 (`i18n/booking-brl`) — booking page prices in BRL format, 🟢 at `da6211e`, review clean
+
+**Scope: exactly `da6211e`.** On `/book/<professionalId>`, procedure prices
+now use `formatBRL`. Master was merged in (`e03feba`) before this entry; the
+code under test is unchanged.
+
+**Setup.** Checked on the preview with a throwaway doctor and three active
+procedures (R$ 150, R$ 1234.5 and R$ 0). The patient was put in the
+doctor's orbit (a `user_roles` patient row with
+`invited_by_professional_id`), since `get_professional_procedures` only
+returns procedures to a caller allowed to see that doctor's schedule. Both
+were deleted afterwards.
+
+**Results** (the same in pt-BR and en):
+- The procedure list reads **"30 min · R$ 150,00"** and **"30 min · R$ 1.234,50"**.
+- The free procedure shows "30 min", with no price (unchanged).
+- No dot-decimal `R$ 150.00` remains.
+
+**Review: Claude `/code-review` (code reviewer), clean at `da6211e`.**
+
+**CI at `da6211e`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `da6211e`, review clean.**
