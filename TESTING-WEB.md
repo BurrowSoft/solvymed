@@ -5234,3 +5234,52 @@ Checked on the preview in pt-BR, en, de and th, at a phone width of 390px:
 **CI at `aa650a8`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `aa650a8`, review clean.**
+
+## Prod addendum — 1.3.0 rc1 (`release` @ `93f4d0b`, tag `v1.3.0-rc1`), 2026-09-27
+
+**Deployment.** www.solvymed.com → `dpl_GSF7b1JE…`, production, Ready,
+cloned from **`Branch: release, Commit: 93f4d0b`**. This is web dev's
+redeploy of the same commit with `NEXT_PUBLIC_POSTHOG_KEY` set.
+
+**#58 (privacy + terms), live** at 390px width:
+- `/pt-BR/privacy` "Política de Privacidade" and `/pt-BR/terms` "Termos de
+  Uso": no horizontal scroll (390/390).
+- Privacy has the PostHog row and no Turnstile/Cloudflare row.
+- Terms §5 has the billing-portal/cancel sentence.
+- `/de/privacy` shows "Privacy Policy" under the German English-only note.
+- Unprefixed `/privacy` and `/terms` in a browser whose locale cookie is
+  `pt-BR` serve the pt-BR text, as locale detection intends. The en text
+  was covered in the #58 entry.
+
+**PostHog, now keyed** (fresh browsers per scenario; two throwaways, deleted):
+- **Before an answer:** 0 PostHog requests, no `sm_anon_id`.
+- **"Aceitar tudo":** a `$pageview` goes to `eu.i.posthog.com/i/v0/e/` →
+  **200**, with `$geoip_disable: true`, `$process_person_profile: false`
+  and a random `distinct_id` (`sm_anon_id`). Each later page sends its own
+  `$pageview`.
+- **Signup submit** with analytics accepted: **`signup_submitted`
+  `{role: "professional"}`** → 200. No email appears in any event.
+- **URL redaction** (`$current_url`):
+  - `/pt-BR/dashboard/patients/[id]`, with no patient, doctor or email id
+    anywhere;
+  - `/pt-BR/invite/[code]` and `/pt-BR/join/secretary/[code]`;
+  - `/pt-BR/auth/signup?join=[redacted]&utm_source=x&utm_campaign=y` (after
+    the `/join` redirect);
+  - `?email=[redacted]`.
+  - Only the UTM keys (and a short safe list) keep their values.
+- **Withdrawing analytics** (dashboard Settings → Configurações de cookies):
+  `sm_consent=1.01.…`, the page reloads, **`sm_anon_id` is removed**, and
+  there are **no events** on the pages after.
+- **"Somente necessários":** **0 PostHog requests** across 5 pages, and no
+  `sm_anon_id`.
+
+**Auth access tokens at 15 minutes** (mob dev's ops change, `jwt_exp=900`),
+with a throwaway doctor, deleted afterwards:
+- After login the session cookie shows `expires_in=900`.
+- The patient page tab sat **idle for 17 minutes**.
+- Then, in the same tab, **Editar Paciente → Salvar** (a server action)
+  saved (confirmed in the DB), with no error and no sign-out.
+- A full navigation to the server-rendered `/pt-BR/dashboard/schedule`
+  loaded it, with **no bounce to login**.
+- The browser made no refresh call of its own, so the session was refreshed
+  server-side (middleware / `@supabase/ssr`).
