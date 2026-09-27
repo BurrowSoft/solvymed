@@ -926,5 +926,8 @@
     "analyticsDesc": "Statistics on how pages are used, so we can improve the site.",
     "marketingTitle": "Marketing",
     "marketingDesc": "Remembers which ad or website brought you here, and saves it with your account if you sign up."
+  },
+  "legal": {
+    "englishOnly": "This document is available in English and Portuguese (Brazil)."
   }
 }

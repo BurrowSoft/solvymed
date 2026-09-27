@@ -926,5 +926,8 @@
     "analyticsDesc": "Statistiche sull'uso delle pagine, per migliorare il sito.",
     "marketingTitle": "Marketing",
     "marketingDesc": "Ricorda quale annuncio o sito ti ha portato qui e lo salva con il tuo account se ti registri."
+  },
+  "legal": {
+    "englishOnly": "Questo documento è disponibile solo in inglese e portoghese (Brasile). Di seguito è riportata la versione inglese."
   }
 }

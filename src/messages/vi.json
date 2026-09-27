@@ -926,5 +926,8 @@
     "analyticsDesc": "Thống kê cách các trang được sử dụng để chúng tôi cải thiện trang web.",
     "marketingTitle": "Tiếp thị",
     "marketingDesc": "Ghi nhớ quảng cáo hoặc trang web nào đã đưa bạn đến đây và lưu cùng tài khoản nếu bạn đăng ký."
+  },
+  "legal": {
+    "englishOnly": "Tài liệu này chỉ có bằng tiếng Anh và tiếng Bồ Đào Nha (Brazil). Bản tiếng Anh được hiển thị bên dưới."
   }
 }

@@ -926,5 +926,8 @@
     "analyticsDesc": "Statistik penggunaan halaman agar kami dapat meningkatkan situs.",
     "marketingTitle": "Pemasaran",
     "marketingDesc": "Mengingat iklan atau situs mana yang membawa Anda ke sini dan menyimpannya bersama akun Anda jika Anda mendaftar."
+  },
+  "legal": {
+    "englishOnly": "Dokumen ini hanya tersedia dalam bahasa Inggris dan Portugis (Brasil). Versi bahasa Inggris ditampilkan di bawah."
   }
 }
