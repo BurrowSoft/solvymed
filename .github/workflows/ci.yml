@@ -39,9 +39,9 @@ jobs:
       - run: npm test
 
   lint:
-    # Advisory: scripts/ci-lint.mjs reports findings (annotations and a
-    # job-summary total) and exits 0; it fails only when the runner itself
-    # crashes, so a red "Lint" check always means a broken linter.
+    # scripts/ci-lint.mjs fails on lint ERRORS (exit 1) or a crashed runner
+    # (exit 2); warnings are reported (annotations and a job-summary total)
+    # but don't fail the check.
     name: Lint
     runs-on: ubuntu-latest
     timeout-minutes: 10

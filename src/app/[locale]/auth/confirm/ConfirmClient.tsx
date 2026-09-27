@@ -10,6 +10,7 @@ import { IconBadge } from "@/components/IconBadge";
 import { MIN_PASSWORD_LENGTH } from "@/lib/password";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { endOtherSessions } from "@/lib/endOtherSessions";
+import { Link } from "@/i18n/navigation";
 
 interface Props {
   state: "signup" | "recovery" | "unknown";
@@ -112,9 +113,9 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
           <Logo />
           <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("error")}</h1>
           <p className="mb-8 text-center text-slate-500">{t("errorSub")}</p>
-          <a href="/" className="flex w-full items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-6 py-4 text-base font-semibold text-slate-700 transition hover:bg-slate-100">
+          <Link href="/" className="flex w-full items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-6 py-4 text-base font-semibold text-slate-700 transition hover:bg-slate-100">
             {t("backToHome")}
-          </a>
+          </Link>
         </AuthCard>
         <Footer />
       </AuthPageShell>
@@ -166,9 +167,9 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
               </IconBadge>
               <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("updatedTitle")}</h1>
               <p className="mb-8 text-center text-slate-500">{t("updatedMessage")}</p>
-              <a href="/" className="flex w-full items-center justify-center rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md shadow-teal-600/20 transition hover:bg-teal-700">
+              <Link href="/" className="flex w-full items-center justify-center rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md shadow-teal-600/20 transition hover:bg-teal-700">
                 {t("backToHome")}
-              </a>
+              </Link>
             </>
           ) : (
             <>
@@ -268,7 +269,7 @@ function Footer() {
   return (
     <p className="auth-footer-text">
       SolvyMed by{" "}
-      <a href="/" className="link-teal">BurrowSoft</a>
+      <Link href="/" className="link-teal">BurrowSoft</Link>
     </p>
   );
 }
