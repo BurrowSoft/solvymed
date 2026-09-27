@@ -4829,3 +4829,39 @@ and no clinical rows were created.
 **CI at `5146a69`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `5146a69`, review clean.**
+
+## PR #53 (`fix/reset-ends-other-sessions`) — a password reset ends every other session, 🟢 at `75ebecf`, review clean
+
+**Scope: exactly `75ebecf`.** After a reset, `signOut({ scope: "others" })`
+runs on all three set-password paths, and this browser stays signed in.
+This replaces #52's full sign-out after an app-account reset. Master was
+merged in (`e36e852`) before this entry; the code under test is unchanged.
+
+**Setup.** Checked on the preview in pt-BR with four throwaway doctors,
+all deleted afterwards. "Other client" means a session opened before the
+reset: a password grant, standing in for the app or another device, plus
+for path 1 a second signed-in browser.
+
+**Results:**
+- **1. `/auth/verify` recovery form (web account):** "Senha atualizada".
+  - This browser: `/pt-BR/dashboard` loads.
+  - Other session: refresh refused with `refresh_token_not_found`.
+  - Other browser: its next request to `/pt-BR/dashboard` → `/pt-BR/auth/login`.
+- **2. `/auth/reset-password`** (recovery tokens in the hash): the form
+  shows, "Senha atualizada", and the new password works.
+  - This browser: `/pt-BR/dashboard` loads.
+  - Other session: refused with `refresh_token_not_found`.
+- **3. `/auth/confirm` set-password form** (desktop, hash session): "Senha
+  atualizada / Sua senha foi alterada…", and the new password works.
+  - Other session: refused with `refresh_token_not_found`.
+  - This browser's own refresh token: still OK.
+- **4. App-account recovery (phone):** the screen is unchanged: "Senha
+  atualizada", **"Abrir SolvyMed" → `solvymed://`**, and "Ir para o login".
+  - The browser is **no longer signed out**: `/pt-BR/dashboard` loads.
+  - The app's pre-reset session: refused with `refresh_token_not_found`.
+
+**Review: Claude `/code-review` (code reviewer), clean at `75ebecf`.**
+
+**CI at `75ebecf`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `75ebecf`, review clean.**
