@@ -1,11 +1,10 @@
-// CI lint runner. Lint is advisory until the existing findings are cleaned
-// up, so findings never fail the step: they're printed (as ::warning
-// annotations, with path:line:col in the text since GitHub annotates only
-// ~10 per type) and totalled in the job summary, and the runner exits 0.
-// Anything else (ESLint failing to load or run, a file it can't parse, a
-// bug in this script) exits non-zero, so the "Lint" check goes red and a
-// crash can't pass as findings. To make lint gating later: exit 1 when errors > 0, and remove
-// eslint.ignoreDuringBuilds in next.config.ts.
+// CI lint runner. Lint ERRORS fail the step (exit 1); warnings are advisory.
+// Findings are printed as ::error / ::warning annotations (with
+// path:line:col in the text, since GitHub annotates only ~10 per type) and
+// totalled in the job summary. Anything else (ESLint failing to load or
+// run, a file it can't parse, a bug in this script) exits 2, so a crash
+// can't pass as clean. next.config.ts keeps eslint.ignoreDuringBuilds:
+// lint runs here, once, not again inside every Vercel build.
 import { appendFileSync } from "node:fs";
 import { relative } from "node:path";
 
@@ -48,17 +47,18 @@ async function main() {
       const col = m.column ?? 1;
       const level = m.severity === 2 ? "error" : "warning";
       const text = `${path}:${line}:${col} ${level}: ${m.message} (${m.ruleId ?? "eslint"})`;
-      console.log(`::warning file=${escapeProperty(path)},line=${line},col=${col}::${escapeData(text)}`);
+      console.log(`::${level} file=${escapeProperty(path)},line=${line},col=${col}::${escapeData(text)}`);
     }
   }
 
-  summary(`### Lint (advisory)\n\n${errors} errors, ${warnings} warnings`);
+  summary(`### Lint\n\n${errors} errors, ${warnings} warnings (warnings are advisory)`);
+  if (errors > 0) process.exitCode = 1;
 }
 
 try {
   await main();
 } catch (err) {
   console.error("Lint runner failed:", err);
-  summary("### Lint (advisory)\n\n⚠️ The lint runner failed (see the step log). No findings were checked.");
+  summary("### Lint\n\n⚠️ The lint runner failed (see the step log). No findings were checked.");
   process.exit(2);
 }

@@ -498,7 +498,7 @@ accept it.
 | A-12 | Auth links keep the language (#21) | A reset requested in pt-BR emails `/pt-BR/auth/reset-password`; opened in a **fresh** browser, even from another country, it shows the pt-BR form and the new password works. A signup confirmation carries `?locale=` and lands on the pt-BR page with `NEXT_LOCALE` pinned. `/en/…` links never 404. **Check that en links end in English**: at `76476e9`, `/en/…` landed in the geo locale. |
 | A-13 | Reset link shape | The reset request sends **no `code_challenge`** (implicit flow), so the email link returns `#access_token…&type=recovery` and works in any browser, such as a phone's mail app. A legacy `?code=` link works in the requesting browser; in any other browser it fails gracefully with "O link pode ter expirado". |
 | A-14 | Mobile-origin links, `/auth/confirm` | Unprefixed `/auth/confirm#access_token…&type=recovery` geo-redirects (302) to `/<cc>/auth/confirm` **with the fragment kept**, and the set-password form completes the reset. `/pt-BR/auth/confirm` does the same in pt-BR. Both verified on prod on 2026-09-26. |
-| A-15 ⏳ | S-01: `token_hash` links (send-email hook, 1.3.0) | **Web-origin links:** callback → 307 to `/[locale]/auth/verify` (no verify on GET); Continue / set-password verifies on click. Then it lands on the right locale page. For reset, the set-password form is on `/[locale]/auth/verify?type=recovery` itself. **Mobile-origin links on desktop:** `/<locale>/auth/confirm?token_hash&type` shows "Open in the app" / "Continue in the browser", and the browser path completes the confirm or reset. **Scanner safety:** a plain GET of either confirm URL does **not** consume the token (no verify on page load), and a real click afterwards still works. **Fallbacks:** old `#access_token` and `?code=` links still work. **Password reset, a pre-A-15 BLOCKER** (the code reviewer, 2026-09-26): a recovery email link → the set-password form (on `/[locale]/auth/verify` since #41), a new password works, and the old one no longer does. Found live in the #35 run: a `type=recovery` `token_hash` through `/api/auth/callback` logged the user in on `/dashboard`. Also check the recovery link never lands on `/auth/professional-welcome`. **Both blockers are fixed and verified on the web side by #41 (`75c91a8`):** callback `token_hash` links redirect to `/[locale]/auth/verify`, which never verifies on load. HEAD and GET scans leave the token valid. Recovery shows the set-password form, the new password works and the old one fails, and the recovery link never reaches the welcome page. **Still ⏳ for A-15 itself:** repeat this with the live send-email hook's real emails, including app-origin links. |
+| A-15 ⏳ | S-01: `token_hash` links (send-email hook, 1.3.0) | **Web-origin links:** callback → 307 to `/[locale]/auth/verify` (no verify on GET); Continue / set-password verifies on click. Then it lands on the right locale page. For reset, the set-password form is on `/[locale]/auth/verify?type=recovery` itself. **Mobile-origin links on desktop:** `/<locale>/auth/confirm?token_hash&type` shows "Open in the app" / "Continue in the browser", and the browser path completes the confirm or reset. **Scanner safety:** a plain GET of either confirm URL does **not** consume the token (no verify on page load), and a real click afterwards still works. **Fallbacks:** old `#access_token` and `?code=` links still work. **Password reset, a pre-A-15 BLOCKER** (the code reviewer, 2026-09-26): a recovery email link → the set-password form (on `/[locale]/auth/verify` since #41), a new password works, and the old one no longer does. Found live in the #35 run: a `type=recovery` `token_hash` through `/api/auth/callback` logged the user in on `/dashboard`. Also check the recovery link never lands on `/auth/professional-welcome`. **Both blockers are fixed and verified on the web side by #41 (`75c91a8`):** callback `token_hash` links redirect to `/[locale]/auth/verify`, which never verifies on load. HEAD and GET scans leave the token valid. Recovery shows the set-password form, the new password works and the old one fails, and the recovery link never reaches the welcome page. **Still ⏳ for A-15 itself:** repeat this with the live send-email hook's real emails, including app-origin links. **Web-origin real emails ✅ on prod (2026-09-27),** after the switch to the fixed `/api/auth/callback?token_hash&type&locale` templates (#52): a pt-BR signup (`pkce_` token) and an en reset both pass, each with a scanner GET first. Details are in "Prod addendum — B-7c, A-15, #50" at the end of this file. **Still ⏳:** app-origin links (the mobile tester) and the user's retroactive inbox check, which isn't a gate. |
 
 ### B. Doctor
 
@@ -512,7 +512,7 @@ accept it.
 | B-6 🤖 | Schedule: Pix QR on a confirmed, unpaid appointment | The Pix QR button opens the QR. "Copia e Cola" contains the key, the amount and the city, and the image encodes the same payload. |
 | B-7 📱 | Patients: list, search, create, edit, delete or archive (#18, migration 094) | CRUD persists. Patient detail shows Info, Records, Prescriptions and Appointments. **Delete** is offered only to a patient with **no clinical history** and asks for confirmation. A patient with a record or prescription shows only **"Arquivar cadastro"**. The archive confirm states the number of upcoming appointments that will be cancelled ("Nenhuma consulta futura…" / "N consultas futuras…"), and they are cancelled. Archived patients disappear from the list, search, the dashboard count and the New-appointment picker, and appear under **"Arquivados (n)"**. The banner reads "Arquivado em … por …", with Restaurar; restore also works from the duplicate warning. No raw `patient_archived`/`patient_has_clinical_history` codes appear anywhere (schedule create by name, re-activation, patient booking). |
 | B-7b 📱 | Clinical records: the 24-hour rule (#29, migrations 097 and 098) | **Under 24h, by the author:** Editar/Excluir on records and prescriptions; Edit saves; removing a middle medication row keeps the other rows' values. **Over 24h:** only "Adicionar correção", and a reason is required ("Informe um motivo."). The original is struck through, with "Corrigido em … por …: <reason>", and the correction is badged. **DB enforced:** a direct REST PATCH/DELETE of an older-than-24h row returns `clinical_record_locked`, for the doctor's JWT **and** the service role, and so does deleting an old prescription's items. **Stale page:** saving after the cutoff shows "Este registro não pode mais ser alterado. Adicione uma correção." An archived patient has no clinical actions. |
-| B-7c | Clinical dates follow the practice's time zone. **Launch-blocking** (UX, 2026-09-26: the code reviewer's finding and design) | **Design under test:** every record, prescription and correction gets its `date`/`time` **stamped server-side** by a DB trigger, in the practice's time zone (`professionals.time_zone`, default `America/Sao_Paulo`). The client's value is ignored; neither app has a date picker. `date`/`time` are **immutable on UPDATE**. **When:** after that fix is on prod. The bug is already confirmed by code analysis, so it isn't reproduced first. ❌ blocks the launch. **1. Any hour, fixture practices.** Use one throwaway practice with `time_zone = Pacific/Kiritimati` (UTC+14) and one with `Pacific/Pago_Pago` (UTC−11), and the browser deliberately in another zone (e.g. `Asia/Bangkok`). Create a **record**, a **prescription** and a **correction** in each, through the UI **and** through REST sending a deliberately wrong `date`/`time`. Each stored `date` must equal `(now() AT TIME ZONE tz)::date`, and `time` the local time, whatever the client sent. The chart and any export or PDF show that date. **2. Immutable.** A REST PATCH of `date`/`time` on the author's own entry **within 24h** is ignored: the row is unchanged, and editing the content still works. **3. Real spot check, default zone.** A practice on the default `America/Sao_Paulo`, at about **23:30 BRT** (02:30 UTC the next day): a record, prescription and correction show **today's Brazil date**, not tomorrow's, in the chart, the export and the stored columns. Clock-mocked unit tests in the fix PR are the backup, and this run is the final proof. |
+| B-7c ✅ (web, prod 2026-09-26/27; exports/PDF ⏳) | Clinical dates follow the practice's time zone. **Launch-blocking** (UX, 2026-09-26: the code reviewer's finding and design) | **Design under test:** every record, prescription and correction gets its `date`/`time` **stamped server-side** by a DB trigger, in the practice's time zone (`professionals.time_zone`, default `America/Sao_Paulo`). The client's value is ignored; neither app has a date picker. `date`/`time` are **immutable on UPDATE**. **When:** after that fix is on prod. The bug is already confirmed by code analysis, so it isn't reproduced first. ❌ blocks the launch. **1. Any hour, fixture practices.** Use one throwaway practice with `time_zone = Pacific/Kiritimati` (UTC+14) and one with `Pacific/Pago_Pago` (UTC−11), and the browser deliberately in another zone (e.g. `Asia/Bangkok`). Create a **record**, a **prescription** and a **correction** in each, through the UI **and** through REST sending a deliberately wrong `date`/`time`. Each stored `date` must equal `(now() AT TIME ZONE tz)::date`, and `time` the local time, whatever the client sent. The chart and any export or PDF show that date. **2. Immutable.** A REST PATCH of `date`/`time` on the author's own entry **within 24h** is ignored: the row is unchanged, and editing the content still works. **3. Real spot check, default zone.** A practice on the default `America/Sao_Paulo`, at about **23:30 BRT** (02:30 UTC the next day): a record, prescription and correction show **today's Brazil date**, not tomorrow's, in the chart, the export and the stored columns. Clock-mocked unit tests in the fix PR are the backup, and this run is the final proof. **Result:** ✅ on www.solvymed.com in all three parts (details in "Prod addendum — B-7c, A-15, #50" at the end of this file). **Still ⏳:** the export and PDF weren't opened in these runs; the chart and the stored columns were. |
 | B-8 🤖 | Patients: duplicate warnings | A same name and phone shows "Possível duplicidade…" with Open existing / Create anyway. A same CPF, after Create anyway, shows "já está cadastrado(a)" plus Open patient, which points at the CPF owner. |
 | B-9 | Records and prescriptions | Adding and deleting a record works. A prescription with at least 1 medication saves, and the PDF or print view renders. With no medication it's refused. |
 | B-10 | Patient invite code, from the patient detail | Generating a code shows it. A patient who signs up with it gets linked (A-5). |
@@ -4984,3 +4984,96 @@ unchanged.
 **CI at `f1c68af`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `f1c68af`, review clean.**
+
+## Prod addendum — B-7c, A-15, #50 (www.solvymed.com, 2026-09-26/27)
+
+### B-7c: clinical dates follow the practice's time zone ✅
+
+**Method.** Each run used a throwaway practice with the browser in
+`Asia/Bangkok`, and did all of the following:
+- inserted a record, a prescription and a correction (`add_record_correction`)
+  over REST, deliberately sending `date = 2001-01-01` and `time = 03:03`;
+- tried a PATCH of the record's `date`/`time`;
+- created a record through the UI;
+- read the chart, the dashboard and (in the real-clock runs) the Schedule's
+  default day. Those runs also seeded an appointment for today and one for
+  tomorrow.
+
+**Results:**
+
+| Run (UTC) | Practice zone and local time | Stored date (REST record, prescription, correction; UI record) | Screens |
+| --- | --- | --- | --- |
+| 18:44, 26/09 (fixtures) | `Pacific/Kiritimati`, 27/09 08:44 | **2026-09-27** for all | chart "2026-09-27 08:44"; dashboard "Bom dia, domingo, 27 de setembro" |
+| 18:44, 26/09 (fixtures) | `Pacific/Pago_Pago`, 26/09 07:44 | **2026-09-26** for all | chart "2026-09-26 07:4x"; dashboard "sábado, 26 de setembro" |
+| 00:02, 27/09 | São Paulo (default), 26/09 21:02 | **2026-09-26** for all (UTC date was already 27/09) | chart "2026-09-26 21:02"; dashboard "Boa noite, sábado, 26 de setembro" with today's appointment and R$ 111,00; Schedule defaults to 26/09, "1 consulta hoje" |
+| 02:30, 27/09 | São Paulo, 26/09 23:30 | **2026-09-26** for all | the same screens as 21:02, at 23:30 |
+| 03:30, 27/09 | São Paulo, 27/09 00:30 | **2026-09-27** for all | chart "2026-09-27 00:30/00:31"; dashboard and Schedule show "domingo, 27 de setembro", "1 consulta hoje" |
+
+- **The client's date is ignored:** the wrong client `date`/`time` never
+  reached a stored row.
+- **Immutable:** the PATCH of `date`/`time` answered 200 and left the row
+  unchanged, while the content edit still applied, in every run.
+- **Not covered:** the export and PDF weren't opened, so they stay ⏳ on the
+  row.
+- **Cleanup:** the practices' clinical rows went to mob dev for purge.
+
+### A-15: web-origin real emails after the template switch ✅
+
+The templates now link to
+`https://www.solvymed.com/api/auth/callback?token_hash={{ .TokenHash }}&type=…[&locale=…]`.
+Each email was triggered once, for real, from the prod UI. mob dev read the
+exact link the email contains from `auth.users` (`confirmation_token` /
+`recovery_token`). The same browser then made the clicks:
+- **Web signup, pt-BR (UI, `pkce_` token, `&locale=pt-BR`):**
+  - A scanner GET → `200 /pt-BR/auth/verify`, with nothing verified.
+  - The click → `/pt-BR/auth/verify`, with **no token in the address bar**
+    and no verify on load.
+  - **Continuar** → `/pt-BR/auth/professional-welcome`. The account is
+    confirmed, with metadata locale `pt-BR`.
+- **Forgot password, en (`&locale=en`):**
+  - A scanner GET verified nothing.
+  - The click → `/auth/verify` "Set new password" → **"Password updated"**.
+    The new password works and the old one is refused.
+- **Note:** a cookie-less scanner GET with `Accept-Language: *` ends on the
+  IP-country locale (here `/th/`). That's harmless: real browsers keep the
+  locale cookie the callback pins.
+- This proves the link and the flow, not how the email looks. The user's
+  inbox check is retroactive and not a gate, and app-origin links are the
+  mobile tester's.
+
+### #50 (first-run part 2) prod spot-check ✅
+
+With a throwaway doctor, deleted afterwards:
+- `/pt-BR/dashboard?setup=1` shows "Configure sua clínica · 0 de 6",
+  expanded, with 6 items.
+- "Completar perfil" → `settings#profile`, with the registration field.
+- **Ocultar** → Settings shows "Mostrar lista de configuração" → back on
+  `/pt-BR/dashboard` with the card.
+
+## PR #55 (`chore/lint-cleanup`) — lint cleanup, CI fails on lint errors, locale-safe links, 🟢 at `9256248`, review clean
+
+**Scope: exactly `9256248`.** Any master merge above this entry is a sync;
+the code under test is unchanged.
+
+**Setup.** Checked on the preview in pt-BR and en with one throwaway
+doctor (no procedures), deleted afterwards.
+
+**Results:**
+- **`/auth/confirm` links:**
+  - Without tokens: "Voltar para Solvymed.com" and "BurrowSoft" → `/pt-BR`,
+    and in en → `/`. Privacy and Terms are locale-prefixed.
+  - Clicking BurrowSoft lands on `/pt-BR` or `/`.
+  - After a set-password reset on the same page, "Voltar para Solvymed.com"
+    / "Back to Solvymed.com" → `/pt-BR` or `/`, and the click lands there.
+- **New-appointment dialog with no procedures:** the link "Adicione
+  procedimentos nas Configurações" → **`/pt-BR/dashboard/settings#procedures`**
+  (en: "Add procedures in Settings" → `/dashboard/settings#procedures`). The
+  click lands there with the Procedures card in view; it used to drop the
+  locale.
+
+**Review: Claude `/code-review` (code reviewer), clean at `9256248`.**
+
+**CI at `9256248`:** Typecheck and unit tests ✅, Lint ✅ (now blocking on
+errors), Vercel ✅.
+
+**Merge gate: 🟢 for `9256248`, review clean.**
