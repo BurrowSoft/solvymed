@@ -932,5 +932,28 @@
   },
   "legal": {
     "englishOnly": "この文書は英語とポルトガル語（ブラジル）でのみ提供しています。以下は英語版です。"
+  },
+  "feedback": {
+    "title": "ご意見をお寄せください",
+    "subtitle": "SolvyMedについてのご意見をお聞かせください。",
+    "ratingLabel": "SolvyMedの評価は？",
+    "ratingValue": "5段階中{n}",
+    "optional": "（任意）",
+    "name": "お名前",
+    "namePlaceholder": "お名前",
+    "email": "メールアドレス",
+    "emailPlaceholder": "your@email.com",
+    "message": "メッセージ",
+    "messagePlaceholder": "ご感想、足りない機能、改善点などをお聞かせください…",
+    "send": "送信する",
+    "sending": "送信中…",
+    "thanksTitle": "ありがとうございます！",
+    "thanksBody": "いただいたご意見はSolvyMedの改善に役立てます。",
+    "backToHome": "ホームに戻る",
+    "errors": {
+      "email_required": "メールアドレスを入力してください。",
+      "message_required": "メッセージを入力してください。",
+      "failed": "エラーが発生しました。もう一度お試しください。"
+    }
   }
 }

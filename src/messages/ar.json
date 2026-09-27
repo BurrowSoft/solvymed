@@ -932,5 +932,28 @@
   },
   "legal": {
     "englishOnly": "هذه الوثيقة متاحة باللغتين الإنجليزية والبرتغالية (البرازيل) فقط. تظهر النسخة الإنجليزية أدناه."
+  },
+  "feedback": {
+    "title": "شاركنا رأيك",
+    "subtitle": "يسعدنا أن نعرف رأيك في SolvyMed.",
+    "ratingLabel": "كيف تقيّم SolvyMed؟",
+    "ratingValue": "{n} من 5",
+    "optional": "(اختياري)",
+    "name": "الاسم",
+    "namePlaceholder": "اسمك",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "your@email.com",
+    "message": "الرسالة",
+    "messagePlaceholder": "أخبرنا برأيك، أو بما ينقص، أو بما يمكننا تحسينه…",
+    "send": "إرسال الرأي",
+    "sending": "جارٍ الإرسال…",
+    "thanksTitle": "شكرًا لك!",
+    "thanksBody": "رأيك يساعدنا على تحسين SolvyMed للجميع.",
+    "backToHome": "العودة إلى الرئيسية",
+    "errors": {
+      "email_required": "يرجى إدخال بريدك الإلكتروني.",
+      "message_required": "يرجى كتابة رسالة.",
+      "failed": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+    }
   }
 }
