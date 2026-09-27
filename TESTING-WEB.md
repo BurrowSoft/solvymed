@@ -5049,3 +5049,31 @@ With a throwaway doctor, deleted afterwards:
 - "Completar perfil" → `settings#profile`, with the registration field.
 - **Ocultar** → Settings shows "Mostrar lista de configuração" → back on
   `/pt-BR/dashboard` with the card.
+
+## PR #55 (`chore/lint-cleanup`) — lint cleanup, CI fails on lint errors, locale-safe links, 🟢 at `9256248`, review clean
+
+**Scope: exactly `9256248`.** Any master merge above this entry is a sync;
+the code under test is unchanged.
+
+**Setup.** Checked on the preview in pt-BR and en with one throwaway
+doctor (no procedures), deleted afterwards.
+
+**Results:**
+- **`/auth/confirm` links:**
+  - Without tokens: "Voltar para Solvymed.com" and "BurrowSoft" → `/pt-BR`,
+    and in en → `/`. Privacy and Terms are locale-prefixed.
+  - Clicking BurrowSoft lands on `/pt-BR` or `/`.
+  - After a set-password reset on the same page, "Voltar para Solvymed.com"
+    / "Back to Solvymed.com" → `/pt-BR` or `/`, and the click lands there.
+- **New-appointment dialog with no procedures:** the link "Adicione
+  procedimentos nas Configurações" → **`/pt-BR/dashboard/settings#procedures`**
+  (en: "Add procedures in Settings" → `/dashboard/settings#procedures`). The
+  click lands there with the Procedures card in view; it used to drop the
+  locale.
+
+**Review: Claude `/code-review` (code reviewer), clean at `9256248`.**
+
+**CI at `9256248`:** Typecheck and unit tests ✅, Lint ✅ (now blocking on
+errors), Vercel ✅.
+
+**Merge gate: 🟢 for `9256248`, review clean.**
