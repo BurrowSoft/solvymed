@@ -81,6 +81,24 @@ export function parseAttribution(raw: string | null | undefined): Attribution | 
   return out;
 }
 
+// The UTM parameters of a page's query, as "&utm_x=…" pairs, for server
+// redirects that would otherwise drop them before the banner can read them.
+export function utmQuerySuffix(searchParams: Record<string, string | string[] | undefined>): string {
+  const out = new URLSearchParams();
+  for (const key of UTM_KEYS) {
+    const raw = searchParams[key];
+    const v = clip(Array.isArray(raw) ? raw[0] ?? "" : raw ?? "");
+    if (v) out.set(key, v);
+  }
+  const s = out.toString();
+  return s ? `&${s}` : "";
+}
+
+// Stored in place of the attribution once it was sent after a signup, so
+// the page the user lands on next doesn't capture a new, bogus first touch.
+// parseAttribution rejects it, so it's never sent.
+export const ATTRIBUTION_SENT = "sent";
+
 // The record_signup_attribution payload.
 export function attributionPayload(a: Attribution): Record<string, string> {
   return { ...a, platform: "web" } as Record<string, string>;

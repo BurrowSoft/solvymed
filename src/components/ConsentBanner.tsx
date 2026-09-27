@@ -61,7 +61,8 @@ export function ConsentBanner() {
     if (reopened) firstControl.current?.focus();
   }, [reopened]);
 
-  // First touch: written once, only with marketing consent.
+  // First touch: written once, only with marketing consent. Any existing
+  // value (including the "sent" marker after a signup) is kept.
   useEffect(() => {
     if (consent?.marketing && landing && !readCookie(ATTRIBUTION_COOKIE)) {
       writeCookie(ATTRIBUTION_COOKIE, serializeAttribution(landing), ATTRIBUTION_MAX_AGE_S);

@@ -9,7 +9,9 @@ import {
 } from "@/lib/consent";
 import {
   ATTRIBUTION_COOKIE,
+  ATTRIBUTION_SENT,
   attributionPayload,
+  utmQuerySuffix,
   captureAttribution,
   parseAttribution,
   redactLandingPath,
@@ -131,6 +133,17 @@ describe("attribution cookie", () => {
     for (const raw of [null, "", "%E0%A4%A", "not json", encodeURIComponent("[]"), encodeURIComponent(JSON.stringify({ utm_source: "x" })), encodeURIComponent(JSON.stringify({ first_seen_at: "nope" }))]) {
       expect(parseAttribution(raw)).toBeNull();
     }
+  });
+
+  it("never treats the after-signup marker as attribution", () => {
+    expect(parseAttribution(ATTRIBUTION_SENT)).toBeNull();
+  });
+
+  it("forwards only UTM parameters through redirects", () => {
+    expect(utmQuerySuffix({ utm_source: "ig", utm_campaign: ["a", "b"], gclid: "x", code: "SECRET" })).toBe("&utm_source=ig&utm_campaign=a");
+    expect(utmQuerySuffix({ utm_term: "agenda médica & co" })).toBe("&utm_term=agenda+m%C3%A9dica+%26+co");
+    expect(utmQuerySuffix({})).toBe("");
+    expect(utmQuerySuffix({ utm_source: "  " })).toBe("");
   });
 
   it("builds the RPC payload with platform web", () => {

@@ -9,7 +9,6 @@ import {
   Noto_Sans_KR,
   Noto_Sans_Arabic,
 } from "next/font/google";
-import { PrivacyAnalytics } from "@/components/PrivacyAnalytics";
 import { ConsentBanner } from "@/components/ConsentBanner";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -112,7 +111,6 @@ export default async function LocaleLayout({
       <body className="font-[family-name:var(--font-inter,ui-sans-serif)] min-h-screen bg-white text-slate-900 antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
-          <PrivacyAnalytics />
           <ConsentBanner />
         </NextIntlClientProvider>
       </body>

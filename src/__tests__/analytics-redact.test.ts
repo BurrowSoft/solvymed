@@ -60,6 +60,13 @@ describe("redactAnalyticsUrl", () => {
     expect(redactAnalyticsUrl(`${B}/`)).toBe(`${B}/`);
   });
 
+  it("redacts record ids (UUID path segments)", () => {
+    const id = "3f2b8c1e-9a4d-4e7b-8c21-0d5f6a7b8c9d";
+    expect(redactAnalyticsUrl(`${B}/pt-BR/dashboard/patients/${id}`)).toBe(`${B}/pt-BR/dashboard/patients/[id]`);
+    expect(redactAnalyticsUrl(`${B}/book/${id.toUpperCase()}/confirm`)).toBe(`${B}/book/[id]/confirm`);
+    expect(redactAnalyticsUrl(`${B}/dashboard/${id}x`)).toBe(`${B}/dashboard/${id}x`);
+  });
+
   it("drops unparseable URLs", () => {
     expect(redactAnalyticsUrl("not a url")).toBeNull();
   });

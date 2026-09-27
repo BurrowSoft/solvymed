@@ -8,7 +8,7 @@ import { ANON_ID_KEY, currentConsent } from "./consentClient";
 // PostHog's capture API (no SDK, no cookies, no autocapture or session
 // recording) with a random anonymous id kept in localStorage, and without a
 // person profile. Never put personal data (names, emails, codes, record
-// contents) in props; the URL is redacted like Vercel Analytics'.
+// contents) in props; the URL is redacted (lib/analyticsRedact).
 
 const KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim();
 const HOST = (process.env.NEXT_PUBLIC_POSTHOG_HOST?.trim() || "https://eu.i.posthog.com").replace(/\/+$/, "");
@@ -43,6 +43,8 @@ export function track(event: string, props: TrackProps = {}) {
       ...props,
       $current_url: redactAnalyticsUrl(location.href),
       $process_person_profile: false,
+      // No location lookup from the IP (the project also discards the IP).
+      $geoip_disable: true,
       $lib: "solvymed-web",
     },
   };
