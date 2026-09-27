@@ -366,7 +366,12 @@
     "editPrescriptionTitle": "Editar receita",
     "lockedError": "Este registro não pode mais ser alterado. Adicione uma correção.",
     "contentRequired": "Informe o conteúdo.",
-    "entryNotFound": "Este registro não existe mais. Recarregue a página."
+    "entryNotFound": "Este registro não existe mais. Recarregue a página.",
+    "medicationRequired": "Adicione pelo menos um medicamento.",
+    "notDoctorError": "Somente o profissional pode gerenciar registros clínicos.",
+    "sessionError": "Sua sessão expirou. Entre novamente.",
+    "nameRequired": "Informe o nome completo do paciente.",
+    "genericError": "Algo deu errado. Tente novamente."
   },
   "settings": {
     "profileTitle": "Perfil",

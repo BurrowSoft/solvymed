@@ -366,7 +366,12 @@
     "editPrescriptionTitle": "처방 편집",
     "lockedError": "이 항목은 더 이상 변경할 수 없습니다. 대신 정정을 추가하세요.",
     "contentRequired": "내용을 입력하세요.",
-    "entryNotFound": "이 항목이 더 이상 존재하지 않습니다. 페이지를 새로고침하세요."
+    "entryNotFound": "이 항목이 더 이상 존재하지 않습니다. 페이지를 새로고침하세요.",
+    "medicationRequired": "약을 하나 이상 추가하세요.",
+    "notDoctorError": "진료 기록은 담당 전문가만 관리할 수 있습니다.",
+    "sessionError": "세션이 만료되었습니다. 다시 로그인하세요.",
+    "nameRequired": "환자의 전체 이름을 입력하세요.",
+    "genericError": "문제가 발생했습니다. 다시 시도하세요."
   },
   "settings": {
     "profileTitle": "프로필",
