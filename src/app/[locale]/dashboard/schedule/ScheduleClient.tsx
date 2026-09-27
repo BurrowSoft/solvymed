@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useRouter, useSearchParams, usePathname, useParams } from "next/navigation";
 import { useState, useTransition, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime } from "./actions";
@@ -8,7 +8,7 @@ import { generatePixString, pixQrUrl } from "@/lib/pix";
 import { toLocalDateString } from "@/lib/slots";
 import { dropQueryParam } from "@/lib/dropQueryParam";
 import { formatBRL } from "@/lib/money";
-import { Link } from "@/i18n/navigation";
+import Link from "next/link";
 
 type Patient = { id: string; full_name: string };
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
@@ -234,6 +234,8 @@ export function NewAppointmentButton({ patients, defaultDate, procedures, label,
   autoOpen?: boolean;
 }) {
   const t = useTranslations("schedule");
+  const { locale } = useParams<{ locale: string }>();
+  const settingsProceduresHref = `${locale === "en" ? "" : `/${locale}`}/dashboard/settings#procedures`;
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -303,7 +305,7 @@ export function NewAppointmentButton({ patients, defaultDate, procedures, label,
             {procedures.length === 0 ? (
               <div className="rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3 text-xs text-amber-700">
                 {t("noProcedures")}{" "}
-                <Link href="/dashboard/settings#procedures" className="font-semibold underline underline-offset-2">
+                <Link href={settingsProceduresHref} className="font-semibold underline underline-offset-2">
                   {t("addProcSettings")}
                 </Link>{" "}
                 {t("beforeScheduling")}
