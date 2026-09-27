@@ -30,9 +30,11 @@ const nextConfig: NextConfig = {
 // served publicly. Without SENTRY_AUTH_TOKEN (local builds) the upload is
 // skipped.
 export default withSentryConfig(withNextIntl(nextConfig), {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  authToken: process.env.SENTRY_AUTH_TOKEN,
+  // Trimmed: a stray space pasted into a Vercel env value made sentry-cli
+  // reject the project (" solvymed-web") and skip the source-map upload.
+  org: process.env.SENTRY_ORG?.trim(),
+  project: process.env.SENTRY_PROJECT?.trim(),
+  authToken: process.env.SENTRY_AUTH_TOKEN?.trim(),
   silent: !process.env.CI,
   // No build telemetry to Sentry: only runtime errors, scrubbed, are sent.
   telemetry: false,
