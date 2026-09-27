@@ -56,8 +56,9 @@ export function TermsEn() {
           price is always shown before you pay.
         </p>
         <p>
-          The subscription renews automatically each month until you cancel it. You can cancel at any time. We do not
-          refund partial billing periods, unless required by applicable law.
+          The subscription renews automatically each month until you cancel it. You can cancel at any time by contacting{" "}
+          <Mail /> or, where available, in the billing portal. Closing your account also cancels your subscription. We
+          do not refund partial billing periods, unless required by applicable law.
         </p>
         <p>
           If a payment fails, access to professional features pauses immediately. It resumes as soon as you update your

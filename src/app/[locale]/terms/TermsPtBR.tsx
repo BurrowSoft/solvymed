@@ -58,7 +58,8 @@ export function TermsPtBR() {
         </p>
         <p>
           A assinatura é renovada automaticamente todo mês até que você a cancele. Você pode cancelar a qualquer
-          momento. Não reembolsamos períodos parciais, salvo quando exigido pela legislação aplicável.
+          momento pelo <Mail /> ou, quando disponível, no portal de cobrança. Encerrar sua conta também cancela sua
+          assinatura. Não reembolsamos períodos parciais, salvo quando exigido pela legislação aplicável.
         </p>
         <p>
           Se um pagamento falhar, o acesso aos recursos para profissionais é suspenso imediatamente. Ele volta assim que
