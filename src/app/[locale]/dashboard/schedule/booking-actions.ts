@@ -36,7 +36,7 @@ export async function getTentativeBookings() {
     .map((b: Record<string, unknown>) => b.patient_auth_id as string)
     .filter(Boolean);
 
-  let knownMap = new Map<string, string>();
+  const knownMap = new Map<string, string>();
   if (authIds.length > 0) {
     const { data: known } = await supabase.rpc("get_known_patients", {
       p_patient_auth_ids: authIds,

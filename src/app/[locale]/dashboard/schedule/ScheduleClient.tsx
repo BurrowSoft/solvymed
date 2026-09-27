@@ -8,6 +8,7 @@ import { generatePixString, pixQrUrl } from "@/lib/pix";
 import { toLocalDateString } from "@/lib/slots";
 import { dropQueryParam } from "@/lib/dropQueryParam";
 import { formatBRL } from "@/lib/money";
+import { Link } from "@/i18n/navigation";
 
 type Patient = { id: string; full_name: string };
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
@@ -302,9 +303,9 @@ export function NewAppointmentButton({ patients, defaultDate, procedures, label,
             {procedures.length === 0 ? (
               <div className="rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3 text-xs text-amber-700">
                 {t("noProcedures")}{" "}
-                <a href="/dashboard/settings" className="font-semibold underline underline-offset-2">
+                <Link href="/dashboard/settings#procedures" className="font-semibold underline underline-offset-2">
                   {t("addProcSettings")}
-                </a>{" "}
+                </Link>{" "}
                 {t("beforeScheduling")}
               </div>
             ) : (
