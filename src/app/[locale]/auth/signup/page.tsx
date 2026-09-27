@@ -113,6 +113,9 @@ export default function SignupPage() {
           full_name: fullName,
           role,
           platform: "web",
+          // The language auth emails link back in (the template passes it to
+          // /api/auth/callback). Language only; never used for access.
+          locale,
           ...(role === "patient" && inviteCode.trim()
             ? { invite_code: inviteCode.toUpperCase().trim() }
             : {}),
