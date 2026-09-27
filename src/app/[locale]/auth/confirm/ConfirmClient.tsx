@@ -172,7 +172,9 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
             <>
               <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("setPasswordTitle")}</h1>
               <p className="mb-6 text-center text-slate-500">{t("setPasswordSub")}</p>
-              <form onSubmit={handleSetPassword} className="space-y-4">
+              {/* noValidate: our translated length and match messages instead of the
+                  browser's native bubble (in the browser's language). */}
+              <form onSubmit={handleSetPassword} noValidate className="space-y-4">
                 <div>
                   <label className="mb-1 block text-sm font-medium text-slate-700">{t("newPassword")}</label>
                   <input
