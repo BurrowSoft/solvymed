@@ -11,6 +11,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 import { MIN_PASSWORD_LENGTH } from "@/lib/password";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
+import { endOtherSessions } from "@/lib/endOtherSessions";
 
 type PageState = "loading" | "form" | "success" | "error";
 
@@ -82,6 +83,7 @@ export default function ResetPasswordPage() {
     if (updateError) {
       setError(authErrorText(updateError) ?? t("errors.generic"));
     } else {
+      await endOtherSessions(supabase);
       setPageState("success");
     }
   }
