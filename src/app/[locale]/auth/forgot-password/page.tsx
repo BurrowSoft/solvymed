@@ -10,9 +10,12 @@ import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
+import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
+import { useAuthErrorText } from "@/lib/useAuthErrorText";
 
 export default function ForgotPasswordPage() {
   const t = useTranslations("auth");
+  const authErrorText = useAuthErrorText();
   const params = useParams();
   const locale = (params.locale as string) ?? "en";
 
@@ -20,6 +23,9 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  // Bot protection (dormant until a Turnstile site key is configured).
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaReset, setCaptchaReset] = useState(0);
 
   const localePath = (path: string) =>
     locale === "en" ? path : `/${locale}${path}`;
@@ -27,6 +33,10 @@ export default function ForgotPasswordPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    if (turnstileEnabled && !captchaToken) {
+      setError(t("captchaFailed"));
+      return;
+    }
     setLoading(true);
     // Implicit flow for the recovery email only. The app's default browser
     // client uses PKCE, whose link returns ?code= that can only be
@@ -42,11 +52,12 @@ export default function ForgotPasswordPage() {
       email,
       // Keep the user's language. The locale is explicit even for en, so a
       // fresh browser (no NEXT_LOCALE cookie) isn't geo-redirected elsewhere.
-      { redirectTo: `https://www.solvymed.com/${locale}/auth/reset-password` }
+      { redirectTo: `https://www.solvymed.com/${locale}/auth/reset-password`, ...(captchaToken ? { captchaToken } : {}) }
     );
     setLoading(false);
+    if (turnstileEnabled) setCaptchaReset((n) => n + 1);
     if (authError) {
-      setError(t("forgotPassword.error"));
+      setError(authErrorText(authError) ?? t("errors.generic"));
     } else {
       setSuccess(true);
     }
@@ -126,6 +137,8 @@ export default function ForgotPasswordPage() {
               className="text-input"
             />
           </div>
+
+          <TurnstileWidget onToken={setCaptchaToken} locale={locale} resetKey={captchaReset} />
 
           <button
             type="submit"

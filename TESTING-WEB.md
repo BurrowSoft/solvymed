@@ -4595,6 +4595,42 @@ seen at `da5820a`.
 **CI at `63e0192`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `63e0192`, review clean.**
+## PR #46 (`feat/turnstile-dormant`) — Cloudflare Turnstile shipped dormant, 🟢 at `d1461c3`, review clean
+
+**Scope: exactly `d1461c3`.** Turnstile on sign-up, sign-in and password
+reset. It stays dormant unless `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is set.
+Supabase's own CAPTCHA stays off; this PR doesn't touch it.
+
+**1. Dormant: the preview has no site key.** Checked in a pt-BR browser
+with one new signup and a confirmed throwaway doctor, both deleted
+afterwards:
+- **Signup:** no widget; the account is created and the page shows
+  "Verifique seu e-mail", with no error.
+- **Login:** no widget; lands on `/pt-BR/dashboard`.
+- **Forgot password:** no widget; shows "Se existir uma conta com esse
+  e-mail, você receberá um link em breve.", with no error.
+- **Requests:** none to `challenges.cloudflare.com`, and no `captcha` field
+  in any `/auth/v1/signup|token|recover` POST.
+- **Page errors:** none.
+
+**2. Live, with Cloudflare's TEST site keys.** Run on local `next dev` of
+`d1461c3` against the prod Supabase, since a preview can't take a
+per-branch key without the Vercel env:
+- **Always-block key (`2x…AB`):** the script and challenge load from
+  `challenges.cloudflare.com`. Submitting login, forgot or signup shows
+  **"Conclua a verificação e tente novamente."** and sends **no** auth POST,
+  so no account is created.
+- **Always-pass key (`1x…AA`):** the widget renders in pt-BR ("Sucesso!",
+  with Cloudflare's test-only banner). Login reaches the dashboard and
+  forgot shows the sent line. Both POSTs carry a `captcha_token`, which
+  Supabase accepts and ignores because its CAPTCHA is off.
+- **Page errors:** none.
+
+**Review: Claude `/code-review` (code reviewer), clean at `d1461c3`.**
+
+**CI at `d1461c3`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `d1461c3`, review clean.**
 
 ## iOS — open question
 
@@ -4604,3 +4640,252 @@ Xcode constraint mobile does — Playwright's WebKit engine *can* run on
 Windows/Linux without a Mac, so if Safari-specific web bugs ever matter,
 add a `webkit` project to `playwright.config.ts`. Not done yet since
 Chromium coverage is the priority while the E2E layer is brand new.
+
+## PR #47 (`fix/auth-error-codes`) — auth errors from Supabase's error code, 🟢 at `4558c8e`, review clean
+
+**Scope: exactly `4558c8e`**, retargeted to master after #46 merged, with the
+head unchanged. This entry sits at the end of the file so it doesn't clash
+with master's #44–#46 entries.
+
+**Setup.** Checked on the preview in pt-BR and en with four throwaways,
+all deleted afterwards:
+- a confirmed doctor;
+- an unconfirmed account (admin-created with `email_confirm: false`);
+- a banned account (admin `ban_duration`), standing in for a closed one,
+  since both give `user_banned`;
+- a fresh doctor for the /auth/confirm check.
+
+**Results.** The Supabase code behind each line was read from the network,
+and pt-BR / en shows the text that appeared:
+
+| Step | Supabase | pt-BR / en |
+| --- | --- | --- |
+| 1. Wrong password | 400 `invalid_credentials` | "E-mail ou senha incorretos." / "Wrong email or password." |
+| 1. Unknown email | 400 `invalid_credentials` | **the same line**, so no enumeration |
+| 2. Unconfirmed | 400 `email_not_confirmed` | "Confirme seu e-mail primeiro: toque no link…" / "Confirm your email first: tap the link…" |
+| 5. Closed / banned | 400 `user_banned` | "Esta conta foi encerrada ou suspensa… support@solvymed.com." / "This account has been closed or suspended…" |
+| Offline login | fetch fails | "Sem conexão. Verifique sua internet e tente novamente." / "No connection. Check your internet and try again." |
+| 3. Signup, 7 chars | client check | "A senha deve ter pelo menos 8 caracteres." / "Password must be at least 8 characters." (nothing created) |
+| 3. Forgot, 2nd request inside a minute | 429 `over_email_send_rate_limit` | "Muitas tentativas. Aguarde alguns minutos…" / "Too many attempts. Wait a few minutes…" (the 1st shows the usual sent line) |
+| 4. Recovery form (/auth/verify), 7 chars | client check | the 8-character line above |
+| 4. Recovery form, same password | 422 `same_password` | "A nova senha deve ser diferente da senha atual." / "New password must differ from your current password." |
+| 6. Recovery link reused | verify fails | "Este link expirou…" / "This link has expired…" |
+| /auth/confirm set-password form, same password | 422 `same_password` | the same "must differ" line, no raw English (it used to show `error.message`) |
+
+**Notes:**
+- **/auth/confirm with 7 characters:** the input's `minlength=8` stops the
+  submit with the browser's own bubble, before any app code runs. So the
+  text follows the browser's language, not the page's. This is pre-existing,
+  #47 doesn't change it, and it's not a blocker.
+- **/auth/reset-password:** a plain logged-in session shows the page's
+  "link may have expired" state and no form. Recovery links now land on
+  /auth/verify (#41), so the form above is the one users see; the page's
+  error path goes through the same `useAuthErrorText`.
+
+**Review: Claude `/code-review` (code reviewer), clean at `4558c8e`.**
+
+**CI at `4558c8e`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `4558c8e`, review clean.**
+
+## PR #52 (`fix/verify-app-handoff`) — fixed callback link for every auth email, 🟢 at `7424eb7`, review clean
+
+**Scope: exactly `7424eb7`.** This is the web side of the email-template
+switch: the fixed link `/api/auth/callback?token_hash&type[&locale]`, app/web
+routing after the click, and the app-account recovery screen.
+
+**Setup.** Links were built by hand with admin `generate_link` (the same
+as mob dev's generator), in the fixed-template shape, on the preview. Seven
+throwaways were used and all deleted.
+
+**Results:**
+- **Scanner first:**
+  - A plain `GET` of the link, following redirects with no JS, ends at
+    `200 /pt-BR/auth/verify?…`.
+  - Nothing is verified: the click afterwards still works, for both web
+    signup and app recovery.
+  - The callback answers `307` with `Referrer-Policy: no-referrer`.
+- **Address bar:** after load it's `/pt-BR/auth/verify`, with no
+  `token_hash` or `type`. There are no verify calls on load; the only
+  `POST /auth/v1/verify` is on the click or submit.
+- **Web signup** (platform `web`, locale `pt-BR`): "Confirme seu e-mail" →
+  Continuar → `/pt-BR/auth/professional-welcome` ("Boas-vindas ao SolvyMed,
+  Dra!").
+- **App signup on a phone** (Pixel 7 UA, platform `mobile`) → Continuar →
+  the handoff screen, then a `solvymed://?access_token&refresh_token&type=signup`
+  hand-off:
+  - `locale=pt-BR` → `/pt-BR/auth/verify`: "Email confirmado! … Abrindo o
+    SolvyMed… / Abrir SolvyMed".
+  - `locale=de-DE` → `/de/auth/verify`: "Bestätigen Sie Ihre
+    E-Mail-Adresse / Weiter" → "E-Mail bestätigt! … SolvyMed öffnen".
+  - no `locale`, en browser → `/auth/verify`: "Confirm your email /
+    Continue" → "Email confirmed! … Open SolvyMed".
+- **App-account recovery** (phone, pt-BR):
+  - The form verifies on submit and shows **"Senha atualizada"** / "Sua
+    senha foi alterada. Você já pode entrar com sua nova senha.", with
+    **"Abrir SolvyMed" → `href="solvymed://"` (no tokens)** and "Ir para o
+    login" as the secondary link.
+  - **Browser signed out:** `/pt-BR/dashboard` afterwards → `/pt-BR/auth/login`.
+  - **Global sign-out, observed:** a session opened for the same account
+    before the reset (standing in for the app) is refused on refresh with
+    `refresh_token_not_found`. The new password signs in.
+- **Web-account recovery:** the existing success screen, "Senha atualizada"
+  / "Sua senha foi atualizada. Você já pode fazer login.", with "Ir para o
+  login" and no app button.
+- **Hostile or odd `?locale=`** (callback `Location` only):
+
+  | `locale=` | Lands on |
+  | --- | --- |
+  | `pt-BR&type=signup` (encoded) | `/pt-BR/auth/verify` |
+  | `<no value>` | `/auth/verify` (en) |
+  | `<no value>` with Accept-Language pt-BR | `/pt-BR/…` |
+  | `<script>…` | `/auth/verify`, not reflected |
+  | `//evil.com` | `/auth/verify`, same origin |
+  | empty | `/auth/verify` |
+  | `de-DE` | `/de/…` |
+  | `fr-FR` | `/fr/…` |
+
+- **Types:** missing, `reauthentication` and `junk` all show **"Este link
+  expirou"**, with no Continuar button and **no verify call**. The same
+  magiclink token then still works with its real type (→ welcome), so
+  nothing was consumed.
+- **`email_change_new`:** the page shows "Quase lá" and the click verifies
+  with **`type: email_change`** (the alias works).
+  - Supabase answers `403 otp_expired` for the admin-generated
+    *new-address* token and keeps the change pending, so the page shows
+    "Este link expirou".
+  - The *current-address* token (`email_change_current` → `email_change`) is
+    accepted: 200, "proceed to confirm link sent to the other email". The
+    page then lands on login with no message.
+  - That's Supabase-side, not this PR. The real-email E2E after the
+    template switch settles it, if any client offers an email change.
+
+**Review: Claude `/code-review` (code reviewer), clean at `7424eb7`.**
+
+**CI at `7424eb7`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `7424eb7`, review clean.** After merge, mob dev
+switches the templates and the hook; then the web and mobile testers run
+the real-email E2E (pt-BR and en, web- and app-origin, signup and recovery,
+with a scanner GET first).
+
+## PR #51 (`fix/confirm-novalidate`) — /auth/confirm set-password form shows the app's own lines, 🟢 at `9871e73`, review clean
+
+**Scope: exactly `9871e73`.** This is the follow-up to the #47 note: the
+app's set-password form on `/auth/confirm` (a desktop recovery session via
+the hash) now has `noValidate`.
+
+Checked on the preview in pt-BR and en with one throwaway doctor, deleted
+afterwards. The form reports `noValidate=true`, so the browser bubble no
+longer blocks the submit. Results (pt-BR / en):
+
+| Input | Line shown |
+| --- | --- |
+| 7 characters | "A senha deve ter pelo menos 8 caracteres." / "Password must be at least 8 characters." |
+| Mismatched | "As senhas não coincidem." / "Passwords do not match." |
+| Both empty | the 8-character line |
+| Same password (server) | 422 → "A nova senha deve ser diferente da senha atual." / "New password must differ from your current password." |
+
+Only the last case calls the server (`PUT /auth/v1/user`); the first three
+are caught client-side.
+
+**Review: Claude `/code-review` (code reviewer), clean at `9871e73`.**
+
+**CI at `9871e73`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `9871e73`, review clean.**
+
+## PR #49 (`i18n/clinical-fallbacks`) — patient page errors never English or raw database text, 🟢 at `5146a69`, review clean
+
+**Scope: exactly `5146a69`.** The patient page's server actions return
+codes, and the tabs translate them, with anything unknown →
+`patientDetail.genericError`. Master was merged in (`5207232`) before this
+entry so it appends without a conflict; the code under test is unchanged.
+
+**Setup.** Checked on the preview in pt-BR with a throwaway doctor, one
+patient and a secretary linked to the doctor. All were deleted afterwards,
+and no clinical rows were created.
+
+**Doctor, through the UI:**
+- **Prescription with no medication:** "Adicione pelo menos um
+  medicamento." The server deletes the empty prescription, leaving 0 rows.
+- **Record with only spaces:** passes the browser's `required`, is trimmed
+  on the server, and shows "Informe o conteúdo." (0 rows).
+- **Patient edit with a blank name (spaces):** "Informe o nome completo do
+  paciente." The name is unchanged.
+- **Tab sweep:** Informações, Registros, Receitas and Consultas show no
+  raw English (the old `Unauthorized`, `Only the doctor…`, `Add at least
+  one medication`, …) and no database text.
+
+**Secretary:**
+- Only the Informações and Consultas tabs are visible.
+- The doctor-only `createRecord` and `createPrescription` actions, called
+  directly, return **`{"error":"not_doctor"}`**, a code rather than English;
+  the tabs map it to "Somente o profissional pode gerenciar registros
+  clínicos.". Nothing is created.
+
+**Review: Claude `/code-review` (code reviewer), clean at `5146a69`.**
+
+**CI at `5146a69`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `5146a69`, review clean.**
+
+## PR #53 (`fix/reset-ends-other-sessions`) — a password reset ends every other session, 🟢 at `75ebecf`, review clean
+
+**Scope: exactly `75ebecf`.** After a reset, `signOut({ scope: "others" })`
+runs on all three set-password paths, and this browser stays signed in.
+This replaces #52's full sign-out after an app-account reset. Master was
+merged in (`e36e852`) before this entry; the code under test is unchanged.
+
+**Setup.** Checked on the preview in pt-BR with four throwaway doctors,
+all deleted afterwards. "Other client" means a session opened before the
+reset: a password grant, standing in for the app or another device, plus
+for path 1 a second signed-in browser.
+
+**Results:**
+- **1. `/auth/verify` recovery form (web account):** "Senha atualizada".
+  - This browser: `/pt-BR/dashboard` loads.
+  - Other session: refresh refused with `refresh_token_not_found`.
+  - Other browser: its next request to `/pt-BR/dashboard` → `/pt-BR/auth/login`.
+- **2. `/auth/reset-password`** (recovery tokens in the hash): the form
+  shows, "Senha atualizada", and the new password works.
+  - This browser: `/pt-BR/dashboard` loads.
+  - Other session: refused with `refresh_token_not_found`.
+- **3. `/auth/confirm` set-password form** (desktop, hash session): "Senha
+  atualizada / Sua senha foi alterada…", and the new password works.
+  - Other session: refused with `refresh_token_not_found`.
+  - This browser's own refresh token: still OK.
+- **4. App-account recovery (phone):** the screen is unchanged: "Senha
+  atualizada", **"Abrir SolvyMed" → `solvymed://`**, and "Ir para o login".
+  - The browser is **no longer signed out**: `/pt-BR/dashboard` loads.
+  - The app's pre-reset session: refused with `refresh_token_not_found`.
+
+**Review: Claude `/code-review` (code reviewer), clean at `75ebecf`.**
+
+**CI at `75ebecf`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `75ebecf`, review clean.**
+
+## PR #48 (`i18n/booking-brl`) — booking page prices in BRL format, 🟢 at `da6211e`, review clean
+
+**Scope: exactly `da6211e`.** On `/book/<professionalId>`, procedure prices
+now use `formatBRL`. Master was merged in (`e03feba`) before this entry; the
+code under test is unchanged.
+
+**Setup.** Checked on the preview with a throwaway doctor and three active
+procedures (R$ 150, R$ 1234.5 and R$ 0). The patient was put in the
+doctor's orbit (a `user_roles` patient row with
+`invited_by_professional_id`), since `get_professional_procedures` only
+returns procedures to a caller allowed to see that doctor's schedule. Both
+were deleted afterwards.
+
+**Results** (the same in pt-BR and en):
+- The procedure list reads **"30 min · R$ 150,00"** and **"30 min · R$ 1.234,50"**.
+- The free procedure shows "30 min", with no price (unchanged).
+- No dot-decimal `R$ 150.00` remains.
+
+**Review: Claude `/code-review` (code reviewer), clean at `da6211e`.**
+
+**CI at `da6211e`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `da6211e`, review clean.**

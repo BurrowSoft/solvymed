@@ -8,9 +8,12 @@ import Link from "next/link";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
+import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
+import { useAuthErrorText } from "@/lib/useAuthErrorText";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
+  const authErrorText = useAuthErrorText();
   const params = useParams();
   const searchParams = useSearchParams();
   const locale = (params.locale as string) ?? "en";
@@ -20,6 +23,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  // Bot protection (dormant until a Turnstile site key is configured).
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaReset, setCaptchaReset] = useState(0);
 
   const localePath = (path: string) =>
     locale === "en" ? path : `/${locale}${path}`;
@@ -27,15 +33,22 @@ export default function LoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    if (turnstileEnabled && !captchaToken) {
+      setError(t("captchaFailed"));
+      return;
+    }
     setLoading(true);
     const supabase = createClient();
     const { data: signInData, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
+      options: captchaToken ? { captchaToken } : undefined,
     });
     setLoading(false);
+    // A token is single-use: get a fresh one for the next attempt.
+    if (turnstileEnabled) setCaptchaReset((n) => n + 1);
     if (authError) {
-      setError(t("login.error"));
+      setError(authErrorText(authError) ?? t("errors.generic"));
     } else if (signInData.user) {
       const { data: roleRow } = await supabase
         .from("user_roles")
@@ -136,6 +149,8 @@ export default function LoginPage() {
               className="text-input"
             />
           </div>
+
+          <TurnstileWidget onToken={setCaptchaToken} locale={locale} resetKey={captchaReset} />
 
           <button
             type="submit"

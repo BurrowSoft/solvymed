@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { computeSlots, toMinutes, filterPastSlots, toLocalDateString } from "@/lib/slots";
+import { formatBRL } from "@/lib/money";
 import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
 
@@ -436,7 +437,7 @@ export function BookingClient({
                       >
                         <p className={`font-semibold text-sm ${active ? "text-teal-800" : "text-slate-800"}`}>{proc.name}</p>
                         <p className={`text-xs mt-0.5 ${active ? "text-teal-600" : "text-slate-400"}`}>
-                          {proc.durationMinutes} min{proc.price ? ` · R$ ${proc.price.toFixed(2)}` : ""}
+                          {proc.durationMinutes} min{proc.price ? ` · ${formatBRL(proc.price)}` : ""}
                         </p>
                       </button>
                     );
