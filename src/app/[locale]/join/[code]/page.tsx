@@ -3,14 +3,17 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { AuthPageShell } from "@/components/AuthPageShell";
+import { utmQuerySuffix } from "@/lib/attribution";
 
 // Patient-only. Secretary linking has no equivalent RPC and has never
 // actually worked in any flow (confirmed by mob dev) — don't invent one
 // here; that's a separate, pending product decision.
 export default async function JoinPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; code: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale, code } = await params;
   const prefix = locale === "en" ? "" : `/${locale}`;
@@ -26,7 +29,8 @@ export default async function JoinPage({
   if (!user) {
     // Signup treats `join` the same as a manually-typed invite code (pre-
     // filled, role locked to patient) — no separate metadata shape.
-    redirect(`${prefix}/auth/signup?join=${encodeURIComponent(code)}`);
+    // Campaign links point here: keep their UTM values for attribution.
+    redirect(`${prefix}/auth/signup?join=${encodeURIComponent(code)}${utmQuerySuffix(await searchParams)}`);
   }
 
   // `role` is never read from a URL/query param here — only the persisted

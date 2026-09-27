@@ -54,7 +54,8 @@
     "privacy": "Chính sách quyền riêng tư",
     "terms": "Điều khoản dịch vụ",
     "legal": "Thông tin pháp lý",
-    "languageLabel": "Ngôn ngữ"
+    "languageLabel": "Ngôn ngữ",
+    "cookieSettings": "Cài đặt cookie"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -910,5 +911,23 @@
     "bookAppointment": "Đặt lịch hẹn",
     "dismiss": "Đóng",
     "gotIt": "Đã hiểu"
+  },
+  "consent": {
+    "title": "Tùy chọn cookie",
+    "text": "Chúng tôi dùng cookie cần thiết để SolvyMed hoạt động. Nếu bạn cho phép, chúng tôi cũng muốn đo lường cách trang web được sử dụng (phân tích) và quảng cáo nào đã đưa bạn đến đây (tiếp thị).",
+    "privacyLink": "Chính sách quyền riêng tư",
+    "acceptAll": "Chấp nhận tất cả",
+    "necessaryOnly": "Chỉ cần thiết",
+    "choose": "Tùy chọn…",
+    "save": "Lưu lựa chọn",
+    "necessaryTitle": "Cần thiết",
+    "necessaryDesc": "Giữ bạn đăng nhập, ghi nhớ ngôn ngữ và lựa chọn này. Luôn bật.",
+    "analyticsTitle": "Phân tích",
+    "analyticsDesc": "Thống kê cách các trang được sử dụng để chúng tôi cải thiện trang web.",
+    "marketingTitle": "Tiếp thị",
+    "marketingDesc": "Ghi nhớ quảng cáo hoặc trang web nào đã đưa bạn đến đây và lưu cùng tài khoản nếu bạn đăng ký."
+  },
+  "legal": {
+    "englishOnly": "Tài liệu này chỉ có bằng tiếng Anh và tiếng Bồ Đào Nha (Brazil). Bản tiếng Anh được hiển thị bên dưới."
   }
 }

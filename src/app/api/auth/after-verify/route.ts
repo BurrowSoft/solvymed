@@ -3,6 +3,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { routing } from "@/i18n/routing";
 import { routeAfterAuth } from "@/lib/authRouting";
+import { recordSignupAttribution } from "@/lib/recordAttribution";
+import { ATTRIBUTION_COOKIE, ATTRIBUTION_MAX_AGE_S, ATTRIBUTION_SENT } from "@/lib/attribution";
 
 // Called by /auth/verify after the user clicked Continue and the browser
 // verified the one-time token (which set the session cookies). Runs the
@@ -20,6 +22,23 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ redirect: `${localePrefix}/auth/login` }, { status: 401 });
 
+  // Signup confirmations only ("email" is the newer name for the same OTP).
+  const sentAttribution = linkType === "signup" || linkType === "email"
+    ? await recordSignupAttribution(supabase as unknown as SupabaseClient, request.cookies)
+    : false;
+
   const redirect = await routeAfterAuth(supabase as unknown as SupabaseClient, user, localePrefix, linkType);
-  return NextResponse.json({ redirect });
+  const response = NextResponse.json({ redirect });
+  // First touch is stored (or was already): replace it with a marker, so the
+  // page the user lands on next doesn't capture a new, bogus first touch
+  // (e.g. landing_path=/auth/professional-welcome). Readable by the banner.
+  if (sentAttribution) {
+    response.cookies.set(ATTRIBUTION_COOKIE, ATTRIBUTION_SENT, {
+      path: "/",
+      maxAge: ATTRIBUTION_MAX_AGE_S,
+      sameSite: "lax",
+      secure: request.nextUrl.protocol === "https:",
+    });
+  }
+  return response;
 }

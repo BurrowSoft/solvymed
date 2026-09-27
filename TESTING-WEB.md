@@ -5077,3 +5077,160 @@ doctor (no procedures), deleted afterwards.
 errors), Vercel ✅.
 
 **Merge gate: 🟢 for `9256248`, review clean.**
+
+## PR #57 (`feat/consent-attribution`) — LGPD cookie banner, first-touch signup attribution, 🟢 at `916e1d5`, review clean
+
+**Scope: exactly `916e1d5`.** Master was merged in before this entry; the
+code under test is unchanged.
+
+**Setup.** Checked on the preview, with fresh browsers per scenario. Two
+throwaway signups were confirmed through the preview's own
+`/api/auth/callback`, so `after-verify` ran on the same origin as the
+cookies. mob dev read `signup_attribution` on prod and deleted the accounts.
+
+**Banner:**
+- On a first visit it shows **"Aceitar tudo" / "Somente necessários" /
+  "Escolher…"**, all three with the same style (no nudge). The "Política de
+  privacidade" link → `/pt-BR/privacy`.
+- en: "Accept all / Necessary only / Choose…", with the link → `/privacy`.
+- **Before an answer:** no `sm_consent` and no `sm_attr` cookie, and no
+  analytics request.
+- **No banner** on a first visit to `/pt-BR/auth/verify`, `/pt-BR/auth/confirm`,
+  `/pt-BR/auth/reset-password` or `/auth/verify`.
+- **Reopening:** "Configurações de cookies" in the footer and "Cookie
+  settings" in the dashboard Settings reopen it with the current state
+  (Necessários ☑ fixed, Análise and Marketing as saved).
+
+**Consent and cookies:**
+- **"Aceitar tudo"** after client-side navigation from a landing of
+  `/pt-BR/invite/QA7CODE?utm_source=test&utm_medium=cpc&utm_campaign=qa`
+  gives `sm_consent=1.11.<ts>` and `sm_attr` =
+  `{utm_source: test, utm_medium: cpc, utm_campaign: qa, landing_path: "/pt-BR/invite/:code"}`,
+  with the code redacted.
+- **Withdraw marketing** (Salvar escolhas): `1.10.<ts>`, and **`sm_attr`
+  is deleted**.
+- **Withdraw analytics:** `1.00.<ts>`, the **page reloads**, `sm_anon_id` is
+  removed, and no analytics requests are made afterwards.
+- **"Somente necessários":** `1.00.<ts>`, with no `sm_attr` and no analytics
+  requests.
+
+**Attribution rows** (mob dev, read on prod with the service role):
+- **Marketing accepted** (landing `/pt-BR/invite/QA7CODE?…utm_campaign=qa-accept`):
+  exactly **one** row, with `utm_source=test`, `utm_medium=cpc`,
+  `utm_campaign=qa-accept`, `landing_path=/pt-BR/invite/:code`,
+  `platform=web`, and `referrer_host`, `utm_term` and `utm_content` all null.
+- **"Somente necessários":** **no row**.
+- Both were confirmed seconds after signup. The later-confirmation path
+  (migration 104) is covered by the SQL tests, not by this live run.
+
+**Findings, non-blocking (sent to web dev, open):**
+- **F1:** `/pt-BR/join/<code>?utm_…` redirects (307) to
+  `/pt-BR/auth/signup?join=<code>` **without the UTM parameters**, so traffic
+  through the patient join link is recorded with
+  `landing_path=/pt-BR/auth/signup` and no UTMs.
+- **F2:** after a signup confirms, `after-verify` clears `sm_attr`. The next
+  page (`/pt-BR/auth/professional-welcome`) then writes a **new** `sm_attr`
+  with that internal path and no UTMs. The account keeps its first row, but
+  a later signup in the same browser would get this bogus first touch.
+- **Not #57:** Vercel Analytics makes no request even after "Aceitar tudo"
+  (`window.va` is set, but no script is fetched). Today's prod doesn't load
+  it either, which looks like Analytics isn't enabled on the Vercel project.
+  PostHog `track()` stays dormant with no key.
+
+**Review: Claude `/code-review` (code reviewer), clean at `916e1d5`.**
+
+**CI at `916e1d5`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `916e1d5`, review clean,** with F1/F2 left to web
+dev/UX as follow-ups.
+
+### PR #57 re-test at `717032c` (F1/F2 fixed, Vercel Analytics removed) — 🟢
+
+Re-run on the preview at head `717032c` (base `release`):
+- **F1 fixed:** `/pt-BR/join/QA7CODE?utm_source=x&utm_campaign=y&gclid=z` →
+  `/pt-BR/auth/signup?join=QA7CODE&utm_source=x&utm_campaign=y`. The UTMs
+  are forwarded and gclid is dropped.
+  - After "Aceitar tudo", `sm_attr` = `{utm_source: x, utm_campaign: y, landing_path: "/pt-BR/auth/signup"}`,
+    with the code nowhere in it.
+  - mob dev on prod: exactly **one** `signup_attribution` row for that
+    signup (`utm_source=x`, `utm_campaign=y`,
+    `landing_path=/pt-BR/auth/signup`, `platform=web`), with no code and no
+    gclid.
+- **F2 fixed:** after the signup's Continuar, `sm_attr="sent"` on
+  `/pt-BR/auth/professional-welcome` and still on later pages (dashboard,
+  settings). No new first touch is captured.
+- **Vercel Analytics removed:** after "Aceitar tudo" there's no `window.va`,
+  no insights script and no `_vercel/insights` or `va.vercel-scripts`
+  request. PostHog `track()` stays dormant with no key.
+- **The first run's checks still pass:** a single `sm_attr` with
+  `/pt-BR/invite/:code`; the same-style buttons; nothing before an answer;
+  withdrawing marketing deletes `sm_attr`; withdrawing analytics reloads;
+  necessary-only → no row (mob dev); no banner on the auth link pages; and it
+  reopens from the footer and from Settings, in pt-BR and en.
+- **Cleanup:** all throwaways deleted.
+
+**CI at `717032c`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+**Review: clean at `717032c`.** **Merge gate: 🟢 for `717032c`.**
+
+## Prod addendum — #57 on www.solvymed.com (`release` @ `b880c69`)
+
+- **Deployment:** `dpl_JzAVR6aM…`, production, Ready, cloned from **`Branch: release, Commit: b880c69`**,
+  so prod now builds from `release`. The deployment before it, at `c8e94c8`, was
+  still cloned from `master`.
+- **Banner:** "Aceitar tudo / Somente necessários / Escolher…", with no cookies before an answer.
+- **Join link:** `/pt-BR/join/<code>?utm_source&utm_campaign&gclid` → `/pt-BR/auth/signup?join=…&utm_source&utm_campaign`,
+  with gclid dropped.
+- **Aceitar tudo:** `sm_attr` holds the UTMs with `landing_path=/pt-BR/auth/signup` and
+  no code. There's no Vercel Analytics: no `window.va` and no requests.
+- **Footer "Configurações de cookies":** reopens the banner with the current
+  state. "Somente necessários" then deletes `sm_attr`.
+- **Email-link pages:** no banner on `/pt-BR/auth/verify`, `/pt-BR/auth/confirm`
+  or `/auth/reset-password`.
+
+## PR #58 (`docs/privacy-terms-1.3.0`) — privacy + terms rewrite for 1.3.0, 🟢 at `aa650a8`, review clean
+
+**Scope: exactly `aa650a8`,** base `release`. Any merge of `release` above
+this entry is a sync; the code under test is unchanged.
+
+Checked on the preview in pt-BR, en, de and th, at a phone width of 390px:
+- **Languages:**
+  - `/pt-BR/privacy` "Política de Privacidade" and `/pt-BR/terms` "Termos
+    de Uso" are in Portuguese.
+  - `/privacy` "Privacy Policy" and `/terms` "Terms of Service" are in
+    English.
+  - `/de/…` and `/th/…` show the English text under a one-line note in the
+    page's language ("Dieses Dokument ist nur auf Englisch und Portugiesisch
+    (Brasilien) verfügbar…" / "เอกสารนี้มีเฉพาะภาษาอังกฤษและภาษาโปรตุเกส (บราซิล)…").
+  - pt-BR and en have no note.
+- **390px:** the document width equals the viewport (390/390) on every page,
+  so there's no horizontal scroll. The provider table sits in an
+  `overflow-x: auto` wrapper (342/342, it fits).
+- **§11 "Configurações de cookies" / "Cookie settings" button:** it opens
+  the banner with the 3 categories.
+- **Provider table (pt-BR and en):** Supabase, Vercel, Stripe, Resend, Expo,
+  Sentry, **PostHog "Website usage statistics, only with your consent" /
+  "Estatísticas de uso do site, somente com o seu consentimento"**, and
+  Google Workspace. There's **no Turnstile/Cloudflare row** (it's dormant)
+  and no WhatsApp.
+- **Privacy text** (pt-BR and en) mentions `sm_consent`, `sm_attr` (90
+  days), `sm_anon_id`, 12 months and 20 years. These match what #57 and
+  migration 102 do, as tested.
+- **Terms §5:**
+  - "…cancelar a qualquer momento pelo support@solvymed.com ou, quando
+    disponível, no portal de cobrança. Encerrar sua conta também cancela sua
+    assinatura." In en: "…by contacting support@solvymed.com or, where
+    available, in the billing portal. Closing your account also cancels your
+    subscription."
+  - The emails are `mailto:` links (4 on the page).
+  - R$ 89 and US$ 19, a 15-day trial, card; no annual plan.
+- **Terms §10 Privacy Policy link:** locale-aware (`/pt-BR/privacy`,
+  `/privacy`, `/de/privacy`, `/th/privacy`). Landing and login footers link
+  to the locale's privacy and terms pages.
+- **Analytics:** no PostHog or other analytics requests on any page (no key
+  set).
+
+**Review: Claude `/code-review` (code reviewer), clean at `aa650a8`.**
+
+**CI at `aa650a8`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `aa650a8`, review clean.**

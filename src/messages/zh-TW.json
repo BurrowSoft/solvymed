@@ -54,7 +54,8 @@
     "privacy": "隱私權政策",
     "terms": "服務條款",
     "legal": "法律資訊",
-    "languageLabel": "語言"
+    "languageLabel": "語言",
+    "cookieSettings": "Cookie 設定"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -910,5 +911,23 @@
     "bookAppointment": "預約",
     "dismiss": "關閉",
     "gotIt": "知道了"
+  },
+  "consent": {
+    "title": "Cookie 偏好",
+    "text": "我們使用必要的 Cookie 來運作 SolvyMed。經您同意，我們也希望衡量網站的使用情形（分析），以及是哪些廣告帶您來到這裡（行銷）。",
+    "privacyLink": "隱私權政策",
+    "acceptAll": "全部接受",
+    "necessaryOnly": "僅必要",
+    "choose": "自行選擇…",
+    "save": "儲存選擇",
+    "necessaryTitle": "必要",
+    "necessaryDesc": "保持您的登入狀態，並記住您的語言和此選擇。一律開啟。",
+    "analyticsTitle": "分析",
+    "analyticsDesc": "頁面使用情形統計，協助我們改善網站。",
+    "marketingTitle": "行銷",
+    "marketingDesc": "記住是哪個廣告或網站帶您來到這裡，並在您註冊時與您的帳戶一併儲存。"
+  },
+  "legal": {
+    "englishOnly": "本文件僅提供英文與葡萄牙文（巴西）版本。以下為英文版本。"
   }
 }

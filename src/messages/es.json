@@ -54,7 +54,8 @@
     "privacy": "Política de privacidad",
     "terms": "Términos del servicio",
     "legal": "Información legal",
-    "languageLabel": "Idioma"
+    "languageLabel": "Idioma",
+    "cookieSettings": "Configuración de cookies"
   },
   "confirm": {
     "emailConfirmed": "¡Correo confirmado!",
@@ -910,5 +911,23 @@
     "bookAppointment": "Programar una cita",
     "dismiss": "Cerrar",
     "gotIt": "Entendido"
+  },
+  "consent": {
+    "title": "Preferencias de cookies",
+    "text": "Usamos cookies necesarias para que SolvyMed funcione. Con tu permiso, también queremos medir cómo se usa el sitio (analítica) y qué anuncios te trajeron aquí (marketing).",
+    "privacyLink": "Política de privacidad",
+    "acceptAll": "Aceptar todo",
+    "necessaryOnly": "Solo necesarias",
+    "choose": "Elegir…",
+    "save": "Guardar opciones",
+    "necessaryTitle": "Necesarias",
+    "necessaryDesc": "Mantienen tu sesión iniciada y recuerdan tu idioma y esta elección. Siempre activas.",
+    "analyticsTitle": "Analítica",
+    "analyticsDesc": "Estadísticas sobre el uso de las páginas, para mejorar el sitio.",
+    "marketingTitle": "Marketing",
+    "marketingDesc": "Recuerda qué anuncio o sitio web te trajo aquí y lo guarda con tu cuenta si te registras."
+  },
+  "legal": {
+    "englishOnly": "Este documento solo está disponible en inglés y portugués (Brasil). A continuación se muestra la versión en inglés."
   }
 }

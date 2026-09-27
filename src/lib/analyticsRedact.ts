@@ -1,6 +1,6 @@
-// Strips personal data from URLs before they reach Vercel Analytics:
-// invite and join codes in paths, every query value that isn't known to be
-// safe, and the whole fragment (password-reset links carry #access_token=…).
+// Strips personal data from URLs before they reach analytics (and Sentry):
+// invite and join codes and record ids in paths, every query value that
+// isn't known to be safe, and the whole fragment (password-reset links carry #access_token=…).
 // Returns a same-origin URL string, or null to drop the event if the URL
 // can't be parsed.
 
@@ -10,6 +10,8 @@ const CODE_PATHS = [
   /^((?:\/[A-Za-z-]+)?\/join\/)[^/]+/,
   /^((?:\/[A-Za-z-]+)?\/invite\/)[^/]+/,
 ];
+
+const UUID_SEGMENT = /\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?=\/|$)/gi;
 
 // Query values are redacted unless the key is on this list. An allowlist,
 // because params keep appearing that carry personal data (search terms with
@@ -34,6 +36,8 @@ export function redactAnalyticsUrl(raw: string): string | null {
       break;
     }
   }
+  // Record ids (patients, appointments, professionals) say whose page it is.
+  url.pathname = url.pathname.replace(UUID_SEGMENT, "/[id]");
   for (const key of new Set(url.searchParams.keys())) {
     if (!SAFE_PARAMS.has(key)) url.searchParams.set(key, "[redacted]");
   }

@@ -54,7 +54,8 @@
     "privacy": "개인정보처리방침",
     "terms": "서비스 약관",
     "legal": "법적 고지",
-    "languageLabel": "언어"
+    "languageLabel": "언어",
+    "cookieSettings": "쿠키 설정"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -910,5 +911,23 @@
     "bookAppointment": "예약하기",
     "dismiss": "닫기",
     "gotIt": "확인"
+  },
+  "consent": {
+    "title": "쿠키 환경설정",
+    "text": "SolvyMed 운영에 필요한 쿠키를 사용합니다. 동의하시면 사이트 이용 방식(분석)과 어떤 광고를 통해 방문하셨는지(마케팅)도 측정하고자 합니다.",
+    "privacyLink": "개인정보 처리방침",
+    "acceptAll": "모두 허용",
+    "necessaryOnly": "필수만 허용",
+    "choose": "선택…",
+    "save": "선택 저장",
+    "necessaryTitle": "필수",
+    "necessaryDesc": "로그인 상태와 언어, 이 선택을 기억합니다. 항상 사용됩니다.",
+    "analyticsTitle": "분석",
+    "analyticsDesc": "사이트 개선을 위한 페이지 이용 통계입니다.",
+    "marketingTitle": "마케팅",
+    "marketingDesc": "어떤 광고나 웹사이트를 통해 방문하셨는지 기억하고, 가입하시면 계정에 함께 저장합니다."
+  },
+  "legal": {
+    "englishOnly": "이 문서는 영어와 포르투갈어(브라질)로만 제공됩니다. 아래는 영어 버전입니다."
   }
 }
