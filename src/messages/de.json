@@ -926,5 +926,8 @@
     "analyticsDesc": "Statistiken zur Nutzung der Seiten, damit wir die Website verbessern können.",
     "marketingTitle": "Marketing",
     "marketingDesc": "Merkt sich, welche Anzeige oder Website Sie hergeführt hat, und speichert das bei der Registrierung mit Ihrem Konto."
+  },
+  "legal": {
+    "englishOnly": "Dieses Dokument ist nur auf Englisch und Portugiesisch (Brasilien) verfügbar. Unten steht die englische Fassung."
   }
 }

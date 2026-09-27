@@ -926,5 +926,8 @@
     "analyticsDesc": "Des statistiques d'utilisation des pages, pour améliorer le site.",
     "marketingTitle": "Marketing",
     "marketingDesc": "Mémorise la publicité ou le site qui vous a amené ici et l'enregistre avec votre compte si vous vous inscrivez."
+  },
+  "legal": {
+    "englishOnly": "Ce document n'est disponible qu'en anglais et en portugais (Brésil). La version anglaise est affichée ci-dessous."
   }
 }
