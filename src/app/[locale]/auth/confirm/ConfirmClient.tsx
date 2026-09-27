@@ -7,7 +7,9 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
 import { IconBadge } from "@/components/IconBadge";
-import { MIN_PASSWORD_LENGTH, isWeakPasswordError } from "@/lib/password";
+import { MIN_PASSWORD_LENGTH } from "@/lib/password";
+import { useAuthErrorText } from "@/lib/useAuthErrorText";
+import { endOtherSessions } from "@/lib/endOtherSessions";
 
 interface Props {
   state: "signup" | "recovery" | "unknown";
@@ -22,6 +24,7 @@ function isMobileDevice() {
 
 export default function ConfirmClient({ state: initialState, deepLink, autoRedirect }: Props) {
   const t = useTranslations("confirm");
+  const authErrorText = useAuthErrorText();
   const [redirecting, setRedirecting] = useState(false);
   const [state, setState] = useState(initialState);
   const [password, setPassword] = useState("");
@@ -93,11 +96,11 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
     const supabase = createClient();
     const { error } = await supabase.auth.updateUser({ password });
     setSaving(false);
-    if (isWeakPasswordError(error)) {
-      setSaveError(t("lengthError", { min: MIN_PASSWORD_LENGTH }));
-    } else if (error) {
-      setSaveError(error.message);
+    if (error) {
+      // The approved line for the error code, never the raw message.
+      setSaveError(authErrorText(error) ?? t("error"));
     } else {
+      await endOtherSessions(supabase);
       setSaveSuccess(true);
     }
   }
@@ -171,7 +174,9 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
             <>
               <h1 className="mb-2 text-center text-2xl font-extrabold text-slate-900">{t("setPasswordTitle")}</h1>
               <p className="mb-6 text-center text-slate-500">{t("setPasswordSub")}</p>
-              <form onSubmit={handleSetPassword} className="space-y-4">
+              {/* noValidate: our translated length and match messages instead of the
+                  browser's native bubble (in the browser's language). */}
+              <form onSubmit={handleSetPassword} noValidate className="space-y-4">
                 <div>
                   <label className="mb-1 block text-sm font-medium text-slate-700">{t("newPassword")}</label>
                   <input

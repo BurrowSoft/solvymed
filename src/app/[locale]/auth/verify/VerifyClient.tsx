@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import type { EmailOtpType } from "@supabase/supabase-js";
@@ -9,10 +9,12 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
-import { MIN_PASSWORD_LENGTH, isWeakPasswordError } from "@/lib/password";
+import { MIN_PASSWORD_LENGTH } from "@/lib/password";
+import { otpTypeFor } from "@/lib/otpType";
+import { endOtherSessions } from "@/lib/endOtherSessions";
+import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import ConfirmClient from "../confirm/ConfirmClient";
 
-const OTP_TYPES: EmailOtpType[] = ["signup", "invite", "magiclink", "recovery", "email_change", "email"];
 
 type State = "ready" | "working" | "expired" | "resetDone";
 
@@ -27,9 +29,19 @@ export function VerifyClient({ locale, tokenHash, type, appHandoff = false }: {
 }) {
   const t = useTranslations("auth");
   const localePath = (path: string) => (locale === "en" ? path : `/${locale}${path}`);
-  const otpType = (OTP_TYPES as string[]).includes(type) ? (type as EmailOtpType) : null;
+  const otpType = otpTypeFor(type);
   const [state, setState] = useState<State>(tokenHash && otpType ? "ready" : "expired");
   const [appDeepLink, setAppDeepLink] = useState<string | null>(null);
+
+  // The token now lives only in this component: take it out of the address
+  // bar before anything else (history, analytics, error reports) can read it.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has("token_hash")) return;
+    url.searchParams.delete("token_hash");
+    url.searchParams.delete("type");
+    window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+  }, []);
 
   if (appDeepLink) return <ConfirmClient state="signup" deepLink={appDeepLink} autoRedirect />;
 
@@ -127,10 +139,15 @@ function RecoveryForm({ tokenHash, state, setState, loginHref }: {
   loginHref: string;
 }) {
   const t = useTranslations("auth");
+  const authErrorText = useAuthErrorText();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
   const [verified, setVerified] = useState(false);
+  // An account created in the app: after the reset, send the person back to
+  // the app to sign in (no session in the link; they use the new password).
+  const [appAccount, setAppAccount] = useState(false);
+  const tConfirm = useTranslations("confirm");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -156,9 +173,14 @@ function RecoveryForm({ tokenHash, state, setState, loginHref }: {
     const { error: updateError } = await supabase.auth.updateUser({ password });
     if (updateError) {
       setState("ready");
-      setError(isWeakPasswordError(updateError) ? t("passwordTooShort", { min: MIN_PASSWORD_LENGTH }) : t("resetPassword.error"));
+      setError(authErrorText(updateError) ?? t("errors.generic"));
       return;
     }
+    const { data: { user } } = await supabase.auth.getUser();
+    const platform = user?.user_metadata?.platform as string | undefined;
+    const isApp = !!platform && platform !== "web";
+    await endOtherSessions(supabase);
+    setAppAccount(isApp);
     setState("resetDone");
   }
 
@@ -172,11 +194,21 @@ function RecoveryForm({ tokenHash, state, setState, loginHref }: {
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </IconBadge>
-          <h1 className="auth-heading">{t("resetPassword.success")}</h1>
-          <p className="mb-8 text-slate-500">{t("resetPassword.successSub")}</p>
+          <h1 className="auth-heading">{appAccount ? tConfirm("updatedTitle") : t("resetPassword.success")}</h1>
+          <p className="mb-8 text-slate-500">{appAccount ? tConfirm("updatedMessage") : t("resetPassword.successSub")}</p>
+          {appAccount && (
+            <a
+              href="solvymed://"
+              className="mb-3 inline-flex w-full items-center justify-center rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md transition hover:bg-teal-700 active:scale-95"
+            >
+              {tConfirm("openApp")}
+            </a>
+          )}
           <Link
             href={loginHref}
-            className="inline-flex w-full items-center justify-center rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md transition hover:bg-teal-700 active:scale-95"
+            className={appAccount
+              ? "inline-block text-sm font-semibold text-slate-500 transition hover:text-teal-700"
+              : "inline-flex w-full items-center justify-center rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md transition hover:bg-teal-700 active:scale-95"}
           >
             {t("resetPassword.goToLogin")}
           </Link>

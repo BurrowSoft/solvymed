@@ -366,7 +366,12 @@
     "editPrescriptionTitle": "Editar receta",
     "lockedError": "Este registro ya no se puede modificar. Añade una corrección.",
     "contentRequired": "Indica el contenido.",
-    "entryNotFound": "Este registro ya no existe. Recarga la página."
+    "entryNotFound": "Este registro ya no existe. Recarga la página.",
+    "medicationRequired": "Añade al menos un medicamento.",
+    "notDoctorError": "Solo el profesional puede gestionar los registros clínicos.",
+    "sessionError": "Tu sesión caducó. Vuelve a iniciar sesión.",
+    "nameRequired": "Indica el nombre completo del paciente.",
+    "genericError": "Algo salió mal. Inténtalo de nuevo."
   },
   "settings": {
     "profileTitle": "Perfil",
@@ -636,6 +641,18 @@
       "expiredTitle": "Este enlace caducó",
       "expiredBody": "Solicita uno nuevo desde la página de inicio de sesión.",
       "goToSignIn": "Ir al inicio de sesión"
+    },
+    "captchaFailed": "Completa la verificación e inténtalo de nuevo.",
+    "errors": {
+      "wrongCredentials": "Correo o contraseña incorrectos.",
+      "emailNotConfirmed": "Primero confirma tu correo: toca el enlace que te enviamos.",
+      "rateLimited": "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
+      "weakPassword": "Esta contraseña es demasiado débil. Usa al menos {min} caracteres.",
+      "samePassword": "La nueva contraseña debe ser diferente a la actual.",
+      "accountClosed": "Esta cuenta está cerrada o suspendida. Si necesitas ayuda, escribe a support@solvymed.com.",
+      "linkExpired": "Este enlace caducó o ya se usó. Solicita uno nuevo.",
+      "network": "Sin conexión. Revisa tu internet e inténtalo de nuevo.",
+      "generic": "Algo salió mal. Inténtalo de nuevo."
     }
   },
   "myAppointments": {
