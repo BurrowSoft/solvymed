@@ -5171,3 +5171,66 @@ Re-run on the preview at head `717032c` (base `release`):
 
 **CI at `717032c`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 **Review: clean at `717032c`.** **Merge gate: 🟢 for `717032c`.**
+
+## Prod addendum — #57 on www.solvymed.com (`release` @ `b880c69`)
+
+- **Deployment:** `dpl_JzAVR6aM…`, production, Ready, cloned from **`Branch: release, Commit: b880c69`**,
+  so prod now builds from `release`. The deployment before it, at `c8e94c8`, was
+  still cloned from `master`.
+- **Banner:** "Aceitar tudo / Somente necessários / Escolher…", with no cookies before an answer.
+- **Join link:** `/pt-BR/join/<code>?utm_source&utm_campaign&gclid` → `/pt-BR/auth/signup?join=…&utm_source&utm_campaign`,
+  with gclid dropped.
+- **Aceitar tudo:** `sm_attr` holds the UTMs with `landing_path=/pt-BR/auth/signup` and
+  no code. There's no Vercel Analytics: no `window.va` and no requests.
+- **Footer "Configurações de cookies":** reopens the banner with the current
+  state. "Somente necessários" then deletes `sm_attr`.
+- **Email-link pages:** no banner on `/pt-BR/auth/verify`, `/pt-BR/auth/confirm`
+  or `/auth/reset-password`.
+
+## PR #58 (`docs/privacy-terms-1.3.0`) — privacy + terms rewrite for 1.3.0, 🟢 at `aa650a8`, review clean
+
+**Scope: exactly `aa650a8`,** base `release`. Any merge of `release` above
+this entry is a sync; the code under test is unchanged.
+
+Checked on the preview in pt-BR, en, de and th, at a phone width of 390px:
+- **Languages:**
+  - `/pt-BR/privacy` "Política de Privacidade" and `/pt-BR/terms` "Termos
+    de Uso" are in Portuguese.
+  - `/privacy` "Privacy Policy" and `/terms` "Terms of Service" are in
+    English.
+  - `/de/…` and `/th/…` show the English text under a one-line note in the
+    page's language ("Dieses Dokument ist nur auf Englisch und Portugiesisch
+    (Brasilien) verfügbar…" / "เอกสารนี้มีเฉพาะภาษาอังกฤษและภาษาโปรตุเกส (บราซิล)…").
+  - pt-BR and en have no note.
+- **390px:** the document width equals the viewport (390/390) on every page,
+  so there's no horizontal scroll. The provider table sits in an
+  `overflow-x: auto` wrapper (342/342, it fits).
+- **§11 "Configurações de cookies" / "Cookie settings" button:** it opens
+  the banner with the 3 categories.
+- **Provider table (pt-BR and en):** Supabase, Vercel, Stripe, Resend, Expo,
+  Sentry, **PostHog "Website usage statistics, only with your consent" /
+  "Estatísticas de uso do site, somente com o seu consentimento"**, and
+  Google Workspace. There's **no Turnstile/Cloudflare row** (it's dormant)
+  and no WhatsApp.
+- **Privacy text** (pt-BR and en) mentions `sm_consent`, `sm_attr` (90
+  days), `sm_anon_id`, 12 months and 20 years. These match what #57 and
+  migration 102 do, as tested.
+- **Terms §5:**
+  - "…cancelar a qualquer momento pelo support@solvymed.com ou, quando
+    disponível, no portal de cobrança. Encerrar sua conta também cancela sua
+    assinatura." In en: "…by contacting support@solvymed.com or, where
+    available, in the billing portal. Closing your account also cancels your
+    subscription."
+  - The emails are `mailto:` links (4 on the page).
+  - R$ 89 and US$ 19, a 15-day trial, card; no annual plan.
+- **Terms §10 Privacy Policy link:** locale-aware (`/pt-BR/privacy`,
+  `/privacy`, `/de/privacy`, `/th/privacy`). Landing and login footers link
+  to the locale's privacy and terms pages.
+- **Analytics:** no PostHog or other analytics requests on any page (no key
+  set).
+
+**Review: Claude `/code-review` (code reviewer), clean at `aa650a8`.**
+
+**CI at `aa650a8`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `aa650a8`, review clean.**
