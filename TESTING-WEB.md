@@ -4959,3 +4959,28 @@ card, and neither the secretary nor the patient sees a checklist.
 **CI at `185a0b3`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `185a0b3`, review clean.**
+
+## PR #54 (`fix/sentry-env-trim`) — Sentry env values trimmed so source maps upload, 🟢 at `f1c68af`, review clean
+
+**Scope: exactly `f1c68af`.** This is config only: `SENTRY_ORG`,
+`SENTRY_PROJECT` and `SENTRY_AUTH_TOKEN` are `.trim()`med in
+`next.config.ts`, because the Vercel project value had a leading space. If
+master had to be merged in before this entry, the code under test is
+unchanged.
+
+**Evidence: the preview build `dpl_EKcoxyo41CasyDFE1R7zNnbXv5L7`**
+(`solvymed-1bsocozhr-burrowsoft.vercel.app`, cloned at
+`fix/sentry-env-trim` / `f1c68af`, via `vercel inspect … --logs`):
+- `[@sentry/nextjs - Node.js] Info: Successfully uploaded source maps to Sentry`
+- `[@sentry/nextjs - Edge] Info: Successfully uploaded source maps to Sentry`
+- `[@sentry/nextjs - Client] Info: Successfully uploaded source maps to Sentry`
+- **Build warning:** only the known Supabase "Node.js API in the Edge
+  Runtime" notice; the build completed and the preview is Ready.
+- **Maps not public:** three client chunks from `/pt-BR/auth/login` return
+  200, and their `.map` files 404.
+
+**Review: Claude `/code-review` (code reviewer), clean at `f1c68af`.**
+
+**CI at `f1c68af`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `f1c68af`, review clean.**
