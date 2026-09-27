@@ -8,7 +8,7 @@ import { CookieSettingsButton } from "./CookieSettingsButton";
 export function LegalLinks({ className = "" }: { className?: string }) {
   const t = useTranslations("footer");
   return (
-    <nav aria-label={t("legal")} className={`flex items-center gap-4 text-sm text-slate-400 ${className}`}>
+    <nav aria-label={t("legal")} className={`flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-slate-400 ${className}`}>
       <Link href="/privacy" className="transition hover:text-teal-600">{t("privacy")}</Link>
       <Link href="/terms" className="transition hover:text-teal-600">{t("terms")}</Link>
       <CookieSettingsButton className="transition hover:text-teal-600" />
