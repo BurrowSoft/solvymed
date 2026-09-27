@@ -4794,3 +4794,38 @@ are caught client-side.
 **CI at `9871e73`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `9871e73`, review clean.**
+
+## PR #49 (`i18n/clinical-fallbacks`) — patient page errors never English or raw database text, 🟢 at `5146a69`, review clean
+
+**Scope: exactly `5146a69`.** The patient page's server actions return
+codes, and the tabs translate them, with anything unknown →
+`patientDetail.genericError`. Master was merged in (`5207232`) before this
+entry so it appends without a conflict; the code under test is unchanged.
+
+**Setup.** Checked on the preview in pt-BR with a throwaway doctor, one
+patient and a secretary linked to the doctor. All were deleted afterwards,
+and no clinical rows were created.
+
+**Doctor, through the UI:**
+- **Prescription with no medication:** "Adicione pelo menos um
+  medicamento." The server deletes the empty prescription, leaving 0 rows.
+- **Record with only spaces:** passes the browser's `required`, is trimmed
+  on the server, and shows "Informe o conteúdo." (0 rows).
+- **Patient edit with a blank name (spaces):** "Informe o nome completo do
+  paciente." The name is unchanged.
+- **Tab sweep:** Informações, Registros, Receitas and Consultas show no
+  raw English (the old `Unauthorized`, `Only the doctor…`, `Add at least
+  one medication`, …) and no database text.
+
+**Secretary:**
+- Only the Informações and Consultas tabs are visible.
+- The doctor-only `createRecord` and `createPrescription` actions, called
+  directly, return **`{"error":"not_doctor"}`**, a code rather than English;
+  the tabs map it to "Somente o profissional pode gerenciar registros
+  clínicos.". Nothing is created.
+
+**Review: Claude `/code-review` (code reviewer), clean at `5146a69`.**
+
+**CI at `5146a69`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `5146a69`, review clean.**

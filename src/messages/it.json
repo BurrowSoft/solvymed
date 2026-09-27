@@ -366,7 +366,12 @@
     "editPrescriptionTitle": "Modifica prescrizione",
     "lockedError": "Questa voce non può più essere modificata. Aggiungi invece una correzione.",
     "contentRequired": "Inserisci il contenuto.",
-    "entryNotFound": "Questa voce non esiste più. Ricarica la pagina."
+    "entryNotFound": "Questa voce non esiste più. Ricarica la pagina.",
+    "medicationRequired": "Aggiungi almeno un farmaco.",
+    "notDoctorError": "Solo il professionista può gestire le cartelle cliniche.",
+    "sessionError": "La sessione è scaduta. Accedi di nuovo.",
+    "nameRequired": "Inserisci il nome completo del paziente.",
+    "genericError": "Qualcosa è andato storto. Riprova."
   },
   "settings": {
     "profileTitle": "Profilo",
