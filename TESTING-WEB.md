@@ -5143,3 +5143,31 @@ cookies. mob dev read `signup_attribution` on prod and deleted the accounts.
 
 **Merge gate: 🟢 for `916e1d5`, review clean,** with F1/F2 left to web
 dev/UX as follow-ups.
+
+### PR #57 re-test at `717032c` (F1/F2 fixed, Vercel Analytics removed) — 🟢
+
+Re-run on the preview at head `717032c` (base `release`):
+- **F1 fixed:** `/pt-BR/join/QA7CODE?utm_source=x&utm_campaign=y&gclid=z` →
+  `/pt-BR/auth/signup?join=QA7CODE&utm_source=x&utm_campaign=y`. The UTMs
+  are forwarded and gclid is dropped.
+  - After "Aceitar tudo", `sm_attr` = `{utm_source: x, utm_campaign: y, landing_path: "/pt-BR/auth/signup"}`,
+    with the code nowhere in it.
+  - mob dev on prod: exactly **one** `signup_attribution` row for that
+    signup (`utm_source=x`, `utm_campaign=y`,
+    `landing_path=/pt-BR/auth/signup`, `platform=web`), with no code and no
+    gclid.
+- **F2 fixed:** after the signup's Continuar, `sm_attr="sent"` on
+  `/pt-BR/auth/professional-welcome` and still on later pages (dashboard,
+  settings). No new first touch is captured.
+- **Vercel Analytics removed:** after "Aceitar tudo" there's no `window.va`,
+  no insights script and no `_vercel/insights` or `va.vercel-scripts`
+  request. PostHog `track()` stays dormant with no key.
+- **The first run's checks still pass:** a single `sm_attr` with
+  `/pt-BR/invite/:code`; the same-style buttons; nothing before an answer;
+  withdrawing marketing deletes `sm_attr`; withdrawing analytics reloads;
+  necessary-only → no row (mob dev); no banner on the auth link pages; and it
+  reopens from the footer and from Settings, in pt-BR and en.
+- **Cleanup:** all throwaways deleted.
+
+**CI at `717032c`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+**Review: clean at `717032c`.** **Merge gate: 🟢 for `717032c`.**
