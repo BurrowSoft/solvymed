@@ -4687,3 +4687,29 @@ and pt-BR / en shows the text that appeared:
 **CI at `4558c8e`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `4558c8e`, review clean.**
+
+## PR #51 (`fix/confirm-novalidate`) — /auth/confirm set-password form shows the app's own lines, 🟢 at `9871e73`, review clean
+
+**Scope: exactly `9871e73`.** This is the follow-up to the #47 note: the
+app's set-password form on `/auth/confirm` (a desktop recovery session via
+the hash) now has `noValidate`.
+
+Checked on the preview in pt-BR and en with one throwaway doctor, deleted
+afterwards. The form reports `noValidate=true`, so the browser bubble no
+longer blocks the submit. Results (pt-BR / en):
+
+| Input | Line shown |
+| --- | --- |
+| 7 characters | "A senha deve ter pelo menos 8 caracteres." / "Password must be at least 8 characters." |
+| Mismatched | "As senhas não coincidem." / "Passwords do not match." |
+| Both empty | the 8-character line |
+| Same password (server) | 422 → "A nova senha deve ser diferente da senha atual." / "New password must differ from your current password." |
+
+Only the last case calls the server (`PUT /auth/v1/user`); the first three
+are caught client-side.
+
+**Review: Claude `/code-review` (code reviewer), clean at `9871e73`.**
+
+**CI at `9871e73`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `9871e73`, review clean.**
