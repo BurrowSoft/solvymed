@@ -54,7 +54,8 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "legal": "Legal",
-    "languageLabel": "Language"
+    "languageLabel": "Language",
+    "cookieSettings": "Cookie settings"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -910,5 +911,20 @@
     "bookAppointment": "Book an appointment",
     "dismiss": "Dismiss",
     "gotIt": "Got it"
+  },
+  "consent": {
+    "title": "Cookie preferences",
+    "text": "We use necessary cookies to run SolvyMed. With your permission, we'd also like to measure how the site is used (analytics) and which ads brought you here (marketing).",
+    "privacyLink": "Privacy policy",
+    "acceptAll": "Accept all",
+    "necessaryOnly": "Necessary only",
+    "choose": "Choose…",
+    "save": "Save choices",
+    "necessaryTitle": "Necessary",
+    "necessaryDesc": "Keep you signed in and remember your language and this choice. Always on.",
+    "analyticsTitle": "Analytics",
+    "analyticsDesc": "Statistics on how pages are used, so we can improve the site.",
+    "marketingTitle": "Marketing",
+    "marketingDesc": "Remembers which ad or website brought you here, and saves it with your account if you sign up."
   }
 }

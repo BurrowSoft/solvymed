@@ -10,6 +10,7 @@ import {
   Noto_Sans_Arabic,
 } from "next/font/google";
 import { PrivacyAnalytics } from "@/components/PrivacyAnalytics";
+import { ConsentBanner } from "@/components/ConsentBanner";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
@@ -112,6 +113,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
           <PrivacyAnalytics />
+          <ConsentBanner />
         </NextIntlClientProvider>
       </body>
     </html>

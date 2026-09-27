@@ -14,6 +14,7 @@ import { isWellFormedSecretaryCode, normalizeSecretaryCode } from "@/lib/secreta
 import { MIN_PASSWORD_LENGTH } from "@/lib/password";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
+import { track } from "@/lib/track";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -141,6 +142,7 @@ export default function SignupPage() {
       // already registered — avoid leaking "email exists" by pointing to login.
       setError(t("signup.emailExists"));
     } else {
+      track("signup_submitted", { role });
       setSuccess(true);
     }
   }

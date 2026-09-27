@@ -54,7 +54,8 @@
     "privacy": "Kebijakan Privasi",
     "terms": "Ketentuan Layanan",
     "legal": "Informasi hukum",
-    "languageLabel": "Bahasa"
+    "languageLabel": "Bahasa",
+    "cookieSettings": "Pengaturan cookie"
   },
   "confirm": {
     "emailConfirmed": "Email confirmed!",
@@ -910,5 +911,20 @@
     "bookAppointment": "Buat janji temu",
     "dismiss": "Tutup",
     "gotIt": "Mengerti"
+  },
+  "consent": {
+    "title": "Preferensi cookie",
+    "text": "Kami menggunakan cookie yang diperlukan agar SolvyMed berfungsi. Dengan izin Anda, kami juga ingin mengukur cara situs digunakan (analitik) dan iklan mana yang membawa Anda ke sini (pemasaran).",
+    "privacyLink": "Kebijakan privasi",
+    "acceptAll": "Terima semua",
+    "necessaryOnly": "Hanya yang diperlukan",
+    "choose": "Pilih…",
+    "save": "Simpan pilihan",
+    "necessaryTitle": "Diperlukan",
+    "necessaryDesc": "Menjaga Anda tetap masuk serta mengingat bahasa Anda dan pilihan ini. Selalu aktif.",
+    "analyticsTitle": "Analitik",
+    "analyticsDesc": "Statistik penggunaan halaman agar kami dapat meningkatkan situs.",
+    "marketingTitle": "Pemasaran",
+    "marketingDesc": "Mengingat iklan atau situs mana yang membawa Anda ke sini dan menyimpannya bersama akun Anda jika Anda mendaftar."
   }
 }
