@@ -16,6 +16,8 @@ export async function updateProfile(formData: FormData) {
     email: user.email!,
     full_name: (formData.get("full_name") as string)?.trim() || "",
     specialty: (formData.get("specialty") as string)?.trim() || null,
+    // Optional; the database caps it at 100 characters (migration 103).
+    professional_registration: ((formData.get("professional_registration") as string) ?? "").trim().slice(0, 100) || null,
   });
 
   if (error) return { error: error.message };

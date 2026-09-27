@@ -4,6 +4,9 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { addDays, clinicDate, clinicHour, getClinicTimeZone } from "@/lib/clinicTime";
+import { getOnboardingFlags, getSetupProgress, showChecklist } from "@/lib/setup";
+import { SetupChecklist } from "@/components/SetupChecklist";
+import { OnboardingCard } from "@/components/OnboardingCard";
 
 function formatBRL(amount: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(amount);
@@ -23,10 +26,14 @@ function statusBadge(status: string) {
 
 export default async function DashboardPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ setup?: string }>;
 }) {
   const { locale } = await params;
+  // "Start setup" on the welcome page opens the checklist expanded.
+  const { setup: setupParam } = await searchParams;
   const [supabase, t, tSchedule] = await Promise.all([
     createClient(),
     getTranslations("home"),
@@ -69,6 +76,13 @@ export default async function DashboardPage({
       ? t("greetingAfternoon")
       : t("greetingEvening");
 
+  // Doctors: the setup checklist; secretaries: their one-time welcome card.
+  // Both RPCs fail closed to "nothing shown" (e.g. before migration 103).
+  const [setupProgress, onboardingFlags] = await Promise.all([
+    isSecretary ? Promise.resolve(null) : getSetupProgress(supabase),
+    isSecretary ? getOnboardingFlags(supabase) : Promise.resolve(null),
+  ]);
+
   const [
     professionalResult,
     todayApptsResult,
@@ -78,7 +92,7 @@ export default async function DashboardPage({
     monthRevenueResult,
   ] = await Promise.all([
     // The greeting is for the viewer, so this stays the caller's own row.
-    supabase.from("professionals").select("full_name, specialty, photo_url").eq("id", user.id).maybeSingle(),
+    supabase.from("professionals").select("full_name, specialty, photo_url, public_invite_code").eq("id", user.id).maybeSingle(),
     supabase.from("appointments").select("id, patient_name, start_time, end_time, status, consultation_type").eq("professional_id", effectiveProfId).eq("date", today).neq("status", "blocked").order("start_time"),
     supabase.from("appointments").select("patient_name, date, start_time, consultation_type, status").eq("professional_id", effectiveProfId).gt("date", today).lte("date", nextWeekStr).neq("status", "blocked").order("date").order("start_time").limit(8),
     supabase.from("appointments").select("patient_name, payment_amount, date").eq("professional_id", effectiveProfId).eq("payment_status", "pending").neq("status", "blocked").neq("status", "cancelled"),
@@ -121,6 +135,19 @@ export default async function DashboardPage({
           {t("newAppt")}
         </Link>
       </div>
+
+      {/* First-run: the doctor's setup checklist, or a secretary's one-time welcome */}
+      {setupProgress && showChecklist(setupProgress) && (
+        <SetupChecklist
+          progress={setupProgress}
+          locale={locale}
+          inviteCode={(professional as { public_invite_code?: string | null } | null)?.public_invite_code ?? null}
+          expanded={setupParam === "1"}
+        />
+      )}
+      {onboardingFlags && !onboardingFlags.secretary_welcome_seen && onboardingFlags.clinic_professional_id && onboardingFlags.clinic_name && (
+        <OnboardingCard kind="secretary_welcome" clinicName={onboardingFlags.clinic_name} />
+      )}
 
       {/* Stat Cards */}
       <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">

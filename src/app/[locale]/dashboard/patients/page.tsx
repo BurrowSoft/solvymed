@@ -9,7 +9,7 @@ export default async function PatientsPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ q?: string | string[]; archived?: string | string[] }>;
+  searchParams: Promise<{ q?: string | string[]; archived?: string | string[]; new?: string }>;
 }) {
   const { locale } = await params;
   const sp = await searchParams;
@@ -78,7 +78,7 @@ export default async function PatientsPage({
             {t("total", { n: showArchived ? archivedTotal : total })}{q ? ` · ${t("matching", { n: patientList.length, q })}` : ""}
           </p>
         </div>
-        {!showArchived && <NewPatientButton locale={locale} />}
+        {!showArchived && <NewPatientButton locale={locale} autoOpen={sp.new === "1"} />}
       </div>
 
       {/* Active / Archived switch. It only appears once a patient has been

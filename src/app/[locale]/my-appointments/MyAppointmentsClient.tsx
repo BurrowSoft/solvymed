@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { acceptProposal, declineProposal, requestReschedule, getAvailableSlotsForDate } from "@/app/[locale]/dashboard/schedule/booking-actions";
 import type { PatientAppointment } from "./page";
+import { OnboardingCard } from "@/components/OnboardingCard";
 
 const STATUS_COLOR: Record<string, string> = {
   tentative: "bg-amber-50 text-amber-600 border-amber-200",
@@ -277,12 +278,15 @@ export function MyAppointmentsClient({
   userEmail,
   myProfessionalId,
   myProfessionalMeta,
+  connectedClinicName = null,
 }: {
   upcoming: PatientAppointment[];
   past: PatientAppointment[];
   userEmail: string;
   myProfessionalId: string | null;
   myProfessionalMeta: { name: string; specialty: string; clinicName?: string } | null;
+  // First-run: the one-time "You're connected to {clinic}" card (null = don't show).
+  connectedClinicName?: string | null;
 }) {
   const t = useTranslations("myAppointments");
   const { locale } = useParams<{ locale: string }>();
@@ -338,6 +342,9 @@ export function MyAppointmentsClient({
       </header>
 
       <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
+        {connectedClinicName && (
+          <OnboardingCard kind="patient_connected" clinicName={connectedClinicName} bookHref={bookPath ?? undefined} />
+        )}
         {/* Greeting */}
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>

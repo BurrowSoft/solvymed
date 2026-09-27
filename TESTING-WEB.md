@@ -4889,3 +4889,73 @@ were deleted afterwards.
 **CI at `da6211e`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `da6211e`, review clean.**
+
+## PR #50 (`feat/first-run-part2`) — setup checklist, "show setup" row, registration field, one-time cards, 🟢 at `185a0b3`, review clean
+
+**Scope: exactly `185a0b3`,** on migration 103, which is live. Master was
+merged in (`f5b3640`) before this entry; the code under test is unchanged.
+
+**Setup.** Checked on the preview with seven throwaways, all deleted by the
+test's cleanup; the doctors' patients and appointments went with them, and
+no clinical rows were made:
+- doctor D1: a real web signup link, pt-BR;
+- doctor D2, in en;
+- a secretary linked to D1;
+- a doctor with two patients linked through a `patients` row.
+
+**1–3. D1 (pt-BR), checklist 0 → 6 through each CTA:**
+- **Start:** welcome → **Começar configuração** → `/pt-BR/dashboard?setup=1`,
+  with the card **expanded**: "Configure sua clínica · 0 de 6", progress
+  bar 0, and the six items in the spec's order.
+- **Profile:** "Completar perfil" → `settings#profile`. The new
+  **Registro profissional** field (placeholder "ex.: CRM 12345/SP") saves
+  `"  CRM 12345/SP  "` trimmed as `CRM 12345/SP`. With a specialty, that
+  makes **1 de 6** ✓.
+- **Hours:** "Definir horário" → `#hours`; one day enabled → **2 de 6** ✓.
+- **Procedure:** "Adicionar procedimento" → `#procedures`; one procedure
+  added → **3 de 6** ✓.
+- **Patient:** "Adicionar paciente" → `/dashboard/patients` with the
+  **new-patient dialog open** and `?new=1` gone from the URL. A reload
+  doesn't reopen it. Patient saved → **4 de 6** ✓.
+- **Appointment:** "Marcar consulta" → `/dashboard/schedule` with the
+  **new-appointment dialog open** and `?new=1` gone; a reload doesn't
+  reopen it. Appointment saved (scheduled, tomorrow) → **5 de 6** ✓.
+- **Invite, without a code yet:** "Compartilhar link de convite" is a link
+  to Settings. "Gerar código" there doesn't complete the item on its own
+  (still 5 de 6). Back on Home, the same CTA is now a button: it copies
+  `…/join/<code>` (unprefixed) → **6 de 6**.
+- **Finish:** **"Sua clínica está pronta 🎉" [Entendi]** → the card is gone,
+  and stays gone after a reload, with `?setup=1` and in Settings (no "show"
+  row).
+
+**4. D2 (en):**
+- The card shows collapsed by default: "Set up your clinic · 0 of 6".
+- **Hide** → gone, including after a reload.
+- Settings shows **"Show setup checklist"** → back to `/dashboard` with the
+  card, and the row is gone.
+- Settings "Generate code" → **"Copy link"** also completes **Invite your
+  patients** ✓ (1 of 6).
+
+**5. Secretary linked to D1 (clinic "Clínica Opus Setup"):**
+- Home shows **"Agora você faz parte da equipe de Clínica Opus Setup. Você
+  pode gerenciar a agenda, os pacientes e os pagamentos. Os prontuários
+  continuam privados do profissional."** [Entendi].
+- After Entendi and a reload → gone. There's no checklist for the secretary.
+
+**6. Patients connected to a doctor:**
+- My appointments shows **"Sua conta está conectada a Clínica Opus
+  Conexão." [Marcar consulta] [Fechar]**, with no checklist.
+- **Marcar consulta** → `/pt-BR/book/<doctor>`. **Fechar** → the card goes
+  away at once. Both stay gone after a reload.
+- **Pending patients:** a patient still pending the doctor's confirmation
+  goes to `/auth/pending-confirmation` as before, so the card only appears
+  once they're linked.
+
+**Nothing extra where it doesn't apply:** the doctor's Home has no one-time
+card, and neither the secretary nor the patient sees a checklist.
+
+**Review: Claude `/code-review` (code reviewer), clean at `185a0b3`.**
+
+**CI at `185a0b3`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `185a0b3`, review clean.**
