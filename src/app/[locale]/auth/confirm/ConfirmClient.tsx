@@ -9,6 +9,7 @@ import { Logo } from "@/components/Logo";
 import { IconBadge } from "@/components/IconBadge";
 import { MIN_PASSWORD_LENGTH } from "@/lib/password";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
+import { endOtherSessions } from "@/lib/endOtherSessions";
 
 interface Props {
   state: "signup" | "recovery" | "unknown";
@@ -99,6 +100,7 @@ export default function ConfirmClient({ state: initialState, deepLink, autoRedir
       // The approved line for the error code, never the raw message.
       setSaveError(authErrorText(error) ?? t("error"));
     } else {
+      await endOtherSessions(supabase);
       setSaveSuccess(true);
     }
   }

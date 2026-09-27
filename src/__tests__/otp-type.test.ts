@@ -14,3 +14,10 @@ describe("otpTypeFor", () => {
     expect(otpTypeFor("SIGNUP")).toBeNull();
   });
 });
+
+describe("otpTypeFor prototype keys", () => {
+  it("doesn't treat Object.prototype names as aliases", () => {
+    expect(otpTypeFor("constructor")).toBeNull();
+    expect(otpTypeFor("toString")).toBeNull();
+  });
+});

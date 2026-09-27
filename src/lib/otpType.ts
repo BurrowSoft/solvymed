@@ -9,6 +9,7 @@ const TYPE_ALIASES: Record<string, EmailOtpType> = { email_change_new: "email_ch
 
 export function otpTypeFor(type: string | null | undefined): EmailOtpType | null {
   if (!type) return null;
-  if (TYPE_ALIASES[type]) return TYPE_ALIASES[type];
+  // Own keys only ("constructor" and friends are not types).
+  if (Object.hasOwn(TYPE_ALIASES, type)) return TYPE_ALIASES[type];
   return (OTP_TYPES as string[]).includes(type) ? (type as EmailOtpType) : null;
 }

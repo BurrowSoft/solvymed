@@ -11,6 +11,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 import { MIN_PASSWORD_LENGTH } from "@/lib/password";
 import { otpTypeFor } from "@/lib/otpType";
+import { endOtherSessions } from "@/lib/endOtherSessions";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import ConfirmClient from "../confirm/ConfirmClient";
 
@@ -178,8 +179,7 @@ function RecoveryForm({ tokenHash, state, setState, loginHref }: {
     const { data: { user } } = await supabase.auth.getUser();
     const platform = user?.user_metadata?.platform as string | undefined;
     const isApp = !!platform && platform !== "web";
-    // An app account signs in in the app: don't leave a browser session behind.
-    if (isApp) await supabase.auth.signOut().catch(() => {});
+    await endOtherSessions(supabase);
     setAppAccount(isApp);
     setState("resetDone");
   }
