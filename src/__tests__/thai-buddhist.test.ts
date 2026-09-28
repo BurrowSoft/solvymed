@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { dateLocale, formatDateLabel } from "@/lib/dateLabels";
+import { dateLocale, formatDateLabel, formatShortDate } from "@/lib/dateLabels";
 
 // Thai dates show the Buddhist year (Sprint TH). "th" alone only gives it
 // where the runtime's default calendar for Thai is Buddhist, so the web asks
@@ -25,6 +25,12 @@ describe("Thai dates: the Buddhist calendar is requested explicitly", () => {
   it("formatDateLabel shows the Buddhist year in Thai, the Gregorian one elsewhere", () => {
     expect(formatDateLabel("th", "2026-09-28", { year: "numeric", month: "short", day: "numeric" })).toContain("2569");
     expect(formatDateLabel("pt-BR", "2026-09-28", { year: "numeric", month: "short", day: "numeric" })).toContain("2026");
+  });
+
+  it("formatShortDate: the locale's short date, like the app (birth dates, record dates)", () => {
+    expect(formatShortDate("pt-BR", "1993-05-14")).toBe("14/05/1993");
+    expect(formatShortDate("en", "1993-05-14")).toBe("05/14/1993");
+    expect(formatShortDate("th", "1993-05-14")).toBe("14/05/2536");
   });
 
   // Every date formatter in the app goes through dateLocale, so a new one

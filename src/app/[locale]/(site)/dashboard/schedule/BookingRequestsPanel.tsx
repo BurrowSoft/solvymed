@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
-import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
+import { formatDateLabel, formatShortDate, formatTimeLabel } from "@/lib/dateLabels";
 import { createClient } from "@/lib/supabase/client";
 import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest } from "./booking-actions";
 import { toLocalDateString } from "@/lib/slots";
@@ -150,7 +150,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                     )}
                   </div>
                   <p className="mt-0.5 text-sm text-slate-500">
-                    {b.date} · {b.start_time.slice(0, 5)}–{b.end_time.slice(0, 5)}
+                    {formatDateLabel(locale, b.date)} · {b.start_time.slice(0, 5)}–{b.end_time.slice(0, 5)}
                   </p>
                   <p className="text-sm text-slate-500">{b.consultation_type}</p>
                   {b.notes && (
@@ -289,14 +289,14 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                           <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoName")}</span><br />{prof?.full_name || b.patient_name}</p>
                           {prof?.email && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoEmail")}</span><br />{prof.email}</p>}
                           {prof?.phone && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoPhone")}</span><br />{prof.phone}</p>}
-                          {prof?.birth_date && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoDob")}</span><br />{prof.birth_date}</p>}
+                          {prof?.birth_date && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoDob")}</span><br />{formatShortDate(locale, prof.birth_date)}</p>}
                           {idFields.map((f) => prof?.[f.name] ? (
                             <p key={f.name}><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{f.label}</span><br />{prof[f.name]}</p>
                           ) : null)}
                           {!prof && <p className="col-span-2 text-xs text-slate-400 italic">{t("infoNoProfile")}</p>}
                         </div>
                         <div className="border-t border-slate-200 pt-2">
-                          <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoConsultation")}</span><br />{b.consultation_type} · {b.date} {b.start_time.slice(0, 5)}–{b.end_time.slice(0, 5)}</p>
+                          <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoConsultation")}</span><br />{b.consultation_type} · {formatDateLabel(locale, b.date)} {b.start_time.slice(0, 5)}–{b.end_time.slice(0, 5)}</p>
                           {b.notes && <p className="mt-1 text-slate-400 italic text-xs">{b.notes}</p>}
                         </div>
                         <div className="flex items-center justify-between gap-2 border-t border-slate-200 pt-2">
