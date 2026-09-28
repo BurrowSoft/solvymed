@@ -6208,3 +6208,60 @@ off.
 
 **CI at `10c6b1b`:** ✅. **Merge gate: 🟢 for `10c6b1b`**, once the
 reviewer is clean. This docs commit sits on top, after a master sync.
+
+## PR #92 (`th/3-consent-access-log`, base master) — signup consent checkbox and record access log, 🟢 at `c1c135e` (pre-111 scope)
+
+Migration 111 is **not** applied. Its two functions answer 404 `PGRST202`
+for a real doctor's token (`log_record_access`, `get_patient_access_log`).
+So the stored consent row, the log entries and the access-log tab are
+**unit-tested only**. Checked on the Preview at `c1c135e`.
+
+**Signup checkbox** (pt-BR, en, ja, th; each signup was captured and
+aborted, so no account was created):
+- It's **unchecked** by default and **required**.
+- Submitting without it sends **nothing** (0 signup requests); the browser
+  shows its "check this box" message.
+- Once it's checked, the doctor signup's `user_metadata` carries
+  `privacy_version: "2026-09-28"`, `terms_version: "2026-09-28"` and
+  `privacy_consent_platform: "web"`.
+- **Labels:**
+  - pt-BR: "Li e aceito os Termos de Uso e a Política de Privacidade".
+  - en: "I have read and accept the Terms of Use and the Privacy Policy".
+  - ja and th are translated.
+- **Links:** they point to `/<locale>/terms` and `/<locale>/privacy` with
+  `target=_blank`. Clicked in pt-BR, they open "Termos de Uso" and
+  "Política de Privacidade" in a new tab.
+
+**Patient page** (throwaway doctor and secretary, deleted afterwards):
+- Both get a 200.
+- The doctor's tabs are Informações / Receitas / Consultas, with **no
+  "Registro de acessos"**. The secretary's are Informações / Consultas, as
+  before.
+- No error text and no page errors. The log call happens server-side and
+  fails silently, since the function doesn't exist yet.
+
+**Privacy and Terms** (en + pt-BR):
+- **§3.1** adds "When someone creates an account, we record which version
+  of the Terms of Use and Privacy Policy they accepted, and when" /
+  "Quando alguém cria uma conta, registramos qual versão…".
+- **§7** adds "An access log records who opened each patient record,
+  prescription, exam or file, and when…" / "Um registro de acessos guarda
+  quem abriu cada prontuário, receita, exame ou arquivo…". On the web,
+  exams and records are shown only inside the chart, whose opening is
+  logged, and there's no file viewer. So the web surface matches the text
+  once 111 is applied.
+- **"Last updated" lines unchanged:** "Last updated: September 28, 2026" /
+  "Última atualização: 28 de setembro de 2026", on Privacy and on Terms.
+
+**⚠ Release gate (not a blocker for master):** §3.1 and §7 describe what
+111 enforces. Until 111 is on prod, nothing records the consent version
+or the access log. So **111 must be applied before this master code
+reaches `release`/prod**; otherwise the policy overclaims.
+
+**⏳ Needs 111:** the `privacy_consents` row written by `handle_new_user`,
+the log entries (doctor and secretary opens), and the tab's contents,
+paging and names after an account deletion.
+
+**CI at `c1c135e`:** ✅. **Merge gate: 🟢 for `c1c135e`** within the
+pre-111 scope, once the reviewer is clean. This docs commit sits on top,
+after a master sync.
