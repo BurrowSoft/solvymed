@@ -9,6 +9,7 @@ import { dropQueryParam } from "@/lib/dropQueryParam";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
+import { dateLocale } from "@/lib/dateLabels";
 
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
@@ -24,7 +25,7 @@ export function archivedLabel(
   byName: string | null | undefined,
   locale: string,
 ) {
-  const date = new Date(archivedAt).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
+  const date = new Date(archivedAt).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric" });
   return byName?.trim() ? t("archivedOnBy", { date, name: byName.trim() }) : t("archivedOn", { date });
 }
 
@@ -260,7 +261,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR" }: { 
           <li key={m.id} className="flex items-center justify-between gap-3 text-sm text-amber-900">
             <span>
               {m.full_name}
-              {m.birth_date ? ` · ${t("bornOn", { date: new Date(m.birth_date + "T12:00:00").toLocaleDateString(locale) })}` : ""}
+              {m.birth_date ? ` · ${t("bornOn", { date: new Date(m.birth_date + "T12:00:00").toLocaleDateString(dateLocale(locale)) })}` : ""}
               {m.phone ? ` · ${m.phone}` : ""}
               {m.archived_at && (
                 <span className="ml-2 rounded-full bg-slate-200 px-2 py-0.5 text-xs font-semibold text-slate-600">{t("archivedBadge")}</span>

@@ -6,7 +6,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPrescription, deletePrescription, updatePrescription, addPrescriptionCorrection, updatePatient, deletePatient, toggleBookingBlock, generatePatientInviteCode, getArchivePreview, archivePatient, restorePatient, loadAccessLog } from "../actions";
 import { archivedLabel } from "../PatientsClient";
 import { fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
-import { formatDateLabel } from "@/lib/dateLabels";
+import { dateLocale, formatDateLabel } from "@/lib/dateLabels";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
@@ -328,7 +328,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
     { label: t("profession"), value: patient.profession },
     { label: t("emergencyPhone"), value: patient.emergency_phone },
     { label: t("insurance"), value: patient.convenio_type === "health_plan" ? t("healthPlan") : patient.convenio_type === "particular" ? t("privateInsurance") : null },
-    { label: t("patientSince"), value: new Date(patient.created_at).toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" }) },
+    { label: t("patientSince"), value: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "long", day: "numeric" }) },
     // Only when someone other than the doctor (i.e. a secretary) added
     // the patient.
     {
@@ -336,7 +336,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
       value: patient.created_by && patient.created_by !== patient.professional_id && patient.created_by_name
         ? t("addedBySecretary", {
             name: patient.created_by_name,
-            date: new Date(patient.created_at).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" }),
+            date: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric" }),
           })
         : null,
     },
@@ -540,7 +540,7 @@ function useClinicalErrorText() {
 
 function CorrectionTrail({ correction, locale }: { correction: ClinicalMeta; locale: string }) {
   const t = useTranslations("patientDetail");
-  const date = new Date(correction.created_at).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
+  const date = new Date(correction.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric" });
   const reason = correction.correction_reason ?? "";
   return (
     <p className="text-xs font-medium text-amber-800">
@@ -890,7 +890,7 @@ function AppointmentsTab({ appointments, locale }: { appointments: Appt[]; local
           {appointments.map(appt => (
             <div key={appt.id} className="flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4">
               <div className="shrink-0 rounded-lg bg-teal-50 p-2 text-center min-w-[44px]">
-                <p className="text-xs font-bold text-teal-600 uppercase">{new Date(appt.date + "T12:00:00").toLocaleDateString(locale, { month: "short" })}</p>
+                <p className="text-xs font-bold text-teal-600 uppercase">{new Date(appt.date + "T12:00:00").toLocaleDateString(dateLocale(locale), { month: "short" })}</p>
                 <p className="text-base font-extrabold text-slate-900 leading-tight">{new Date(appt.date + "T12:00:00").getDate()}</p>
               </div>
               <div className="flex-1 min-w-0">
