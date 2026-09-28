@@ -8,19 +8,8 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { IconBadge } from "@/components/IconBadge";
 import { acceptProposal, declineProposal } from "@/app/[locale]/dashboard/schedule/booking-actions";
+import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr + "T00:00:00").toLocaleDateString(undefined, {
-    weekday: "short", month: "short", day: "numeric",
-  });
-}
-
-function formatTime(timeStr: string) {
-  const [h, m] = timeStr.split(":");
-  const d = new Date();
-  d.setHours(Number(h), Number(m));
-  return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
-}
 
 type ProfessionalInfo = { name: string; specialty: string; clinicName?: string } | null;
 type PendingRequest = { id: string; date: string; start_time: string; status: string };
@@ -112,9 +101,9 @@ export default function PendingConfirmationPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prefix, router]);
 
-  // The clinic archived this patient's record: the patient-side message,
-  // never the raw code.
-  const actionErrorText = (e: string) => (e === "patient_archived" ? t("inviteRequired.archived") : e);
+  // Translated text only, never a raw code: the clinic archived this
+  // patient's record, or anything else went wrong.
+  const actionErrorText = (e: string) => (e === "patient_archived" ? t("inviteRequired.archived") : t("errors.generic"));
 
   async function handleAccept(id: string) {
     setActingId(id);
@@ -210,7 +199,7 @@ export default function PendingConfirmationPage() {
               {requests.map((r) => (
                 <li key={r.id} className="text-sm text-slate-600">
                   <div>
-                    {formatDate(r.date)} · {formatTime(r.start_time)}
+                    {formatDateLabel(locale, r.date)} · {formatTimeLabel(locale, r.start_time)}
                     <span className="ml-2 text-xs text-slate-400">
                       {r.status === "proposal" ? t("pendingConfirmation.statusProposal") : t("pendingConfirmation.statusTentative")}
                     </span>
