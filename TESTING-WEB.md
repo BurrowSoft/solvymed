@@ -6847,8 +6847,9 @@ nothing is written to the DB.
   Maria amanhã às 14h"".
 - **Secretary:** no ✦ and no panel.
 
-**Flag OFF:** without the variable the panel isn't rendered (`liveFeatures.solvyAi`
-false → `SolvyAi` not mounted); Production doesn't set it.
+**Flag OFF (checked on #103's Preview, where the variable is unset):** a
+doctor's dashboard has **no ✦ button and no panel**. Production doesn't
+set the variable.
 
 **Mock-only follow-ups for b2** (not user-facing until the real backend,
 and non-blocking):
