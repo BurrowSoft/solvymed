@@ -6714,3 +6714,42 @@ markdown.
 **CI at `05f1de0`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `05f1de0`.** This docs commit sits on top, after a master sync (12
 behind).
+
+## PR #105 (`fix/thai-buddhist-explicit`, base master) — Thai dates request the Buddhist calendar explicitly (`th-TH-u-ca-buddhist`), 🟢 at `6eb3291`
+
+Android's Intl doesn't default Thai to the Buddhist calendar. The web
+engines do today, but this is insurance. A new `dateLocale()` is used by
+every user-facing formatter: dashboard, calendar, patients, patient
+detail, booking, Team panel, access log, `dateLabels`. A grep of the
+branch finds only fixed technical locales left: clinicTime `en-US` /
+`en-CA`, legal dates `en-US` / `pt-BR`, and the browser time zone.
+
+**Before the PR** (master Preview, th): the three engines already showed
+2569. Identified by feature: Blink `vendor=Google Inc.`, WebKit `Apple
+Computer, Inc.`, Gecko via `-moz-appearance`. All three resolve `th` to
+`calendar: "buddhist"`.
+
+**At `6eb3291`** (Preview, Thai flag on, throwaway doctor + patient,
+deleted afterwards), in **Chromium, WebKit and Firefox**:
+
+| th page | Shown | "2026" |
+|---|---|---|
+| Visão geral date (server) | "วันจันทร์ที่ 28 กันยายน 2569" | 0 |
+| Schedule month / week / day (client) | "กันยายน 2569" / "28 ก.ย. – 4 ต.ค. 2569" / "วันจันทร์ที่ 28 กันยายน 2569" | 0 |
+| Patient detail | "28 กันยายน 2569" (patient since) | 0 |
+| Booking day strip (patient) | "อังคาร 29 ก.ย.", "พุธ 30 ก.ย."… (WebKit: "อ. 29 ก.ย."), no year shown | 0 |
+
+- **pt-BR and en are unchanged:** "…28 de setembro de 2026", "setembro de
+  2026" / "Monday, September 28, 2026", "September 2026".
+- **Not covered:** the Team-panel invite expiry, the access log (needs
+  111), and record dates (my seeded record didn't insert). They use the
+  same `dateLocale()` path.
+- **Follow-up, pre-existing (on master too, not #105):** patient detail
+  shows **Data de nascimento as the raw stored value, "1993-05-14 (33 …)",
+  in every language**. It isn't formatted, so in th it's the one
+  Gregorian date on screen. Sent to UX.
+
+**CI at `6eb3291`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`6eb3291`.** This docs commit sits on top, after a master sync (16
+behind). The `dashboard/page.tsx` auto-merge keeps both `dateLocale` and
+#104's greeting.

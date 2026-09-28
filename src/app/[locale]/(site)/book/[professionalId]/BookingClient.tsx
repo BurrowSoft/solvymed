@@ -9,7 +9,7 @@ import { formatMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
 import { isValidThaiId, type PatientIdKind } from "@/lib/patientIds";
 import { usePatientIdFields, type PatientIdValues } from "@/lib/usePatientIdFields";
-import { formatTimeLabel } from "@/lib/dateLabels";
+import { dateLocale, formatTimeLabel } from "@/lib/dateLabels";
 import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
 
@@ -58,7 +58,7 @@ function getDefaultCountry(locale: string) {
 
 function getDateFormat(locale: string): string {
   try {
-    const parts = new Intl.DateTimeFormat(locale, { year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(2000, 0, 31));
+    const parts = new Intl.DateTimeFormat(dateLocale(locale), { year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(2000, 0, 31));
     return parts.map((p) => {
       if (p.type === "year") return "YYYY";
       if (p.type === "month") return "MM";
@@ -86,7 +86,7 @@ function buildDays() {
 function dayLabel(dateStr: string, locale: string, todayLabel: string) {
   const today = toLocalDateString(new Date());
   if (dateStr === today) return todayLabel;
-  return new Date(dateStr + "T12:00:00").toLocaleDateString(locale, {
+  return new Date(dateStr + "T12:00:00").toLocaleDateString(dateLocale(locale), {
     weekday: "short", month: "short", day: "numeric",
   });
 }
