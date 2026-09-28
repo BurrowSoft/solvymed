@@ -190,7 +190,8 @@
     "missingFieldsError": "Vui lòng điền đầy đủ các trường bắt buộc.",
     "pastMidnightError": "Thời gian và thời lượng này sẽ vượt quá nửa đêm.",
     "patientArchivedError": "Hồ sơ này đã được lưu trữ. Hãy khôi phục trong mục Bệnh nhân để đặt lịch hẹn.",
-    "moreCount": "+{n} nữa"
+    "moreCount": "+{n} nữa",
+    "slotBlockedConfirm": "Khung giờ này đã bị chặn ({start}–{end}). Vẫn đặt lịch?"
   },
   "payments": {
     "thisWeek": "Tuần này",

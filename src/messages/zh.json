@@ -190,7 +190,8 @@
     "missingFieldsError": "请填写所有必填字段。",
     "pastMidnightError": "此时间和时长将超过午夜。",
     "patientArchivedError": "此档案已归档。请在“患者”中恢复后再预约。",
-    "moreCount": "另外 {n} 个"
+    "moreCount": "另外 {n} 个",
+    "slotBlockedConfirm": "此时间段已被屏蔽（{start}–{end}）。仍要预约吗？"
   },
   "payments": {
     "thisWeek": "本周",

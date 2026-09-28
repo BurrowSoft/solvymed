@@ -5284,6 +5284,26 @@ with a throwaway doctor, deleted afterwards:
 - The browser made no refresh call of its own, so the session was refreshed
   server-side (middleware / `@supabase/ssr`).
 
+## PR #68 (`feat/blocked-slot-confirm`, base master) — doctor booking over their own block asks first, 🟢 at `ec6e28e`, review clean
+
+This follows the RC finding (d). UX decided a doctor or secretary may book
+over their own block, with a warning. Checked on the preview with a
+throwaway doctor and a block from 14:00 to 15:00 tomorrow (deleted
+afterwards):
+- **Overlap (14:30):** the prompt reads **"Este horário está bloqueado
+  (14:00–15:00). Agendar mesmo assim?"**.
+  - Cancel books nothing, and the new-appointment dialog stays open.
+  - OK books it.
+- **A free time (10:00):** books with no prompt.
+- **Edge case, 13:30–14:00** (ending exactly as the block starts): no
+  prompt, and it's booked.
+- The same four cases passed on the earlier head `157abff`, whose prompt
+  had no times.
+- **Separately verified on prod:** a **patient** can't book over a block.
+  `create_public_booking` returns `slot_taken` for full and partial
+  overlaps, and a direct insert gets RLS 403.
+
+**CI at `ec6e28e`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `ec6e28e`.**
 ## PR #66 (`chore/i18n-cleanup`, base master) — join notice names the role in the page's language, 🟢 at `ac8ee77`, review clean
 
 This fixes the RC finding (b). Checked on the preview with a throwaway

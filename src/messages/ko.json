@@ -190,7 +190,8 @@
     "missingFieldsError": "필수 항목을 모두 입력해 주세요.",
     "pastMidnightError": "이 시간과 소요 시간은 자정을 넘깁니다.",
     "patientArchivedError": "이 차트는 보관되어 있습니다. 예약하려면 환자 메뉴에서 복원하세요.",
-    "moreCount": "+{n}개 더"
+    "moreCount": "+{n}개 더",
+    "slotBlockedConfirm": "이 시간은 차단되어 있습니다({start}–{end}). 그래도 예약할까요?"
   },
   "payments": {
     "thisWeek": "이번 주",

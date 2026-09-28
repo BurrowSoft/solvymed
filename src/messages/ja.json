@@ -190,7 +190,8 @@
     "missingFieldsError": "必須項目をすべて入力してください。",
     "pastMidnightError": "この時間と所要時間では深夜0時を超えてしまいます。",
     "patientArchivedError": "このカルテはアーカイブ済みです。予約するには「患者」で復元してください。",
-    "moreCount": "他 {n} 件"
+    "moreCount": "他 {n} 件",
+    "slotBlockedConfirm": "この時間はブロックされています（{start}–{end}）。それでも予約しますか？"
   },
   "payments": {
     "thisWeek": "今週",

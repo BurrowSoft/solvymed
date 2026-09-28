@@ -190,7 +190,8 @@
     "missingFieldsError": "Compila tutti i campi obbligatori.",
     "pastMidnightError": "Questo orario e questa durata supererebbero la mezzanotte.",
     "patientArchivedError": "Questa scheda è archiviata. Ripristinala in Pazienti per fissare un appuntamento.",
-    "moreCount": "+{n} altri"
+    "moreCount": "+{n} altri",
+    "slotBlockedConfirm": "Questo orario è bloccato ({start}–{end}). Prenotare comunque?"
   },
   "payments": {
     "thisWeek": "Questa settimana",

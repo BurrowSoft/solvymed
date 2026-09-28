@@ -190,7 +190,8 @@
     "missingFieldsError": "Preencha todos os campos obrigatórios.",
     "pastMidnightError": "Esse horário e duração ultrapassariam a meia-noite.",
     "patientArchivedError": "Este cadastro está arquivado. Restaure-o em Pacientes para agendar uma consulta.",
-    "moreCount": "+{n} mais"
+    "moreCount": "+{n} mais",
+    "slotBlockedConfirm": "Este horário está bloqueado ({start}–{end}). Agendar mesmo assim?"
   },
   "payments": {
     "thisWeek": "Esta semana",
