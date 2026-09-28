@@ -959,5 +959,12 @@
       "message_required": "Escreva uma mensagem.",
       "failed": "Algo deu errado. Tente novamente."
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "Documento de identidade tailandês",
+    "passport": "Número do passaporte",
+    "passportOrId": "Número do passaporte ou documento",
+    "thaiIdInvalid": "Este número de identidade tailandês não é válido. Confira os 13 dígitos."
   }
 }

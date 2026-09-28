@@ -959,5 +959,12 @@
       "message_required": "Vui lòng viết nội dung.",
       "failed": "Đã có lỗi xảy ra. Vui lòng thử lại."
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "Số căn cước Thái Lan",
+    "passport": "Số hộ chiếu",
+    "passportOrId": "Số hộ chiếu hoặc giấy tờ tùy thân",
+    "thaiIdInvalid": "Số căn cước Thái Lan này không hợp lệ. Hãy kiểm tra 13 chữ số."
   }
 }

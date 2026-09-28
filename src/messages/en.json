@@ -959,5 +959,12 @@
       "message_required": "Please write a message.",
       "failed": "Something went wrong. Please try again."
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "Thai national ID",
+    "passport": "Passport number",
+    "passportOrId": "Passport or ID number",
+    "thaiIdInvalid": "This Thai ID number isn't valid. Check the 13 digits."
   }
 }

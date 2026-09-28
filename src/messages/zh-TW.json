@@ -959,5 +959,12 @@
       "message_required": "請填寫留言。",
       "failed": "發生錯誤，請再試一次。"
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "泰國身分證字號",
+    "passport": "護照號碼",
+    "passportOrId": "護照或證件號碼",
+    "thaiIdInvalid": "此泰國身分證字號無效。請檢查這 13 位數字。"
   }
 }

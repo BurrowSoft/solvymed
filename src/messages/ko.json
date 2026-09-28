@@ -959,5 +959,12 @@
       "message_required": "메시지를 입력해 주세요.",
       "failed": "문제가 발생했습니다. 다시 시도해 주세요."
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "태국 신분증 번호",
+    "passport": "여권 번호",
+    "passportOrId": "여권 또는 신분증 번호",
+    "thaiIdInvalid": "유효하지 않은 태국 신분증 번호입니다. 13자리를 확인하세요."
   }
 }
