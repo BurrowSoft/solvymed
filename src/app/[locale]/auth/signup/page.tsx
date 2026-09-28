@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -15,6 +15,7 @@ import { MIN_PASSWORD_LENGTH } from "@/lib/password";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
+import { browserTimeZone, countryToStore, initialCountryChoice, type CountryChoice } from "@/lib/signupCountry";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -56,6 +57,26 @@ export default function SignupPage() {
   // Bot protection (dormant until a Turnstile site key is configured).
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaReset, setCaptchaReset] = useState(0);
+
+  // The practice's country (doctors only; secretaries and patients follow
+  // their practice). Pre-selected from the visitor's country, else the page
+  // language; it sets currency, patient ID and payment QR, and afterwards
+  // changes only through support.
+  const [detectedCountry, setDetectedCountry] = useState<string | null>(null);
+  const [countryChoice, setCountryChoice] = useState<CountryChoice>(() => initialCountryChoice(null, locale));
+  const countryTouched = useRef(false);
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/geo")
+      .then((r) => r.json() as Promise<{ country: string | null }>)
+      .then(({ country }) => {
+        if (!alive) return;
+        setDetectedCountry(country);
+        if (!countryTouched.current) setCountryChoice(initialCountryChoice(country, locale));
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [locale]);
 
   const localePath = (path: string) =>
     locale === "en" ? path : `/${locale}${path}`;
@@ -117,6 +138,11 @@ export default function SignupPage() {
           // The language auth emails link back in (the template passes it to
           // /api/auth/callback). Language only; never used for access.
           locale,
+          // The practice country and the browser's time zone (doctors):
+          // handle_new_user stores them (migration 110; ignored before it).
+          ...(role === "professional"
+            ? { country: countryToStore(countryChoice, detectedCountry), time_zone: browserTimeZone() }
+            : {}),
           ...(role === "patient" && inviteCode.trim()
             ? { invite_code: inviteCode.toUpperCase().trim() }
             : {}),
@@ -223,6 +249,31 @@ export default function SignupPage() {
           </div>
           <p className="mt-3 text-center text-xs text-slate-500">{t("signup.secretaryNeedsInvite")}</p>
         </div>
+        )}
+
+        {/* Practice country — doctors only */}
+        {role === "professional" && !isSecretaryFlow && !isJoinFlow && (
+          <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4">
+            <label htmlFor="signup-country" className="block text-sm font-semibold text-slate-700 mb-1">
+              {t("signup.country")}
+            </label>
+            <select
+              id="signup-country"
+              form="signup-form"
+              value={countryChoice}
+              onChange={(e) => {
+                countryTouched.current = true;
+                setCountryChoice(e.target.value as CountryChoice);
+              }}
+              className="w-full rounded-xl border border-teal-200 bg-white px-4 py-3 text-base text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+            >
+              {/* Country names in their own language, as in a language picker. */}
+              <option value="BR">Brasil</option>
+              <option value="TH">ประเทศไทย</option>
+              <option value="OTHER">{t("signup.countryOther")}</option>
+            </select>
+            <p className="mt-1.5 text-xs text-slate-500">{t("signup.countryHint")}</p>
+          </div>
         )}
 
         {/* Invite code — patients only, hidden when joining via link */}

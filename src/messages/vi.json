@@ -574,7 +574,10 @@
       "joiningAsSecretary": "Đăng ký làm thư ký qua liên kết mời.",
       "secretaryNeedsInvite": "Bạn là thư ký? Hãy xin bác sĩ một liên kết mời.",
       "secretaryEmailMismatch": "Email này không khớp với lời mời, hoặc lời mời không còn hiệu lực. Hãy kiểm tra email hoặc xin phòng khám một liên kết mới.",
-      "consent": "Khi tạo tài khoản, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>."
+      "consent": "Khi tạo tài khoản, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>.",
+      "country": "Phòng khám của bạn ở đâu?",
+      "countryOther": "Quốc gia khác",
+      "countryHint": "Xác định tiền tệ, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi sau, hãy liên hệ bộ phận hỗ trợ."
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",

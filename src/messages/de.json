@@ -574,7 +574,10 @@
       "joiningAsSecretary": "Registrierung für das Praxisteam über einen Einladungslink.",
       "secretaryNeedsInvite": "Im Praxisteam tätig? Bitten Sie Ihre Praxis um einen Einladungslink.",
       "secretaryEmailMismatch": "Diese E-Mail-Adresse passt nicht zur Einladung, oder die Einladung ist nicht mehr gültig. Prüfen Sie die Adresse oder bitten Sie die Praxis um einen neuen Link.",
-      "consent": "Mit der Erstellung eines Kontos stimmen Sie den <terms>Nutzungsbedingungen</terms> und der <privacy>Datenschutzerklärung</privacy> zu."
+      "consent": "Mit der Erstellung eines Kontos stimmen Sie den <terms>Nutzungsbedingungen</terms> und der <privacy>Datenschutzerklärung</privacy> zu.",
+      "country": "Wo ist Ihre Praxis?",
+      "countryOther": "Anderes Land",
+      "countryHint": "Legt Währung, Patientenausweis und Zahlungs-QR fest. Für eine spätere Änderung wenden Sie sich an den Support."
     },
     "forgotPassword": {
       "title": "Passwort vergessen?",

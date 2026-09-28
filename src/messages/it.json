@@ -574,7 +574,10 @@
       "joiningAsSecretary": "Ti stai registrando in segreteria tramite link di invito.",
       "secretaryNeedsInvite": "Lavori in segreteria? Chiedi un link di invito al tuo studio.",
       "secretaryEmailMismatch": "Questa email non corrisponde all'invito, oppure l'invito non è più valido. Controlla l'email o chiedi un nuovo link allo studio.",
-      "consent": "Creando un account, accetti i <terms>Termini di servizio</terms> e l'<privacy>Informativa sulla privacy</privacy>."
+      "consent": "Creando un account, accetti i <terms>Termini di servizio</terms> e l'<privacy>Informativa sulla privacy</privacy>.",
+      "country": "Dove si trova il tuo studio?",
+      "countryOther": "Altro paese",
+      "countryHint": "Imposta la valuta, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza."
     },
     "forgotPassword": {
       "title": "Password dimenticata?",

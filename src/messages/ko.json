@@ -574,7 +574,10 @@
       "joiningAsSecretary": "초대 링크로 비서로 가입합니다.",
       "secretaryNeedsInvite": "비서이신가요? 의사에게 초대 링크를 요청하세요.",
       "secretaryEmailMismatch": "이 이메일이 초대와 일치하지 않거나 초대가 더 이상 유효하지 않습니다. 이메일을 확인하거나 클리닉에 새 링크를 요청하세요.",
-      "consent": "계정을 만들면 <terms>서비스 약관</terms> 및 <privacy>개인정보처리방침</privacy>에 동의하는 것으로 간주됩니다."
+      "consent": "계정을 만들면 <terms>서비스 약관</terms> 및 <privacy>개인정보처리방침</privacy>에 동의하는 것으로 간주됩니다.",
+      "country": "진료소는 어디에 있나요?",
+      "countryOther": "기타 국가",
+      "countryHint": "통화, 환자 신분증, 결제 QR이 정해집니다. 나중에 변경하려면 지원팀에 문의하세요."
     },
     "forgotPassword": {
       "title": "비밀번호를 잊으셨나요?",
