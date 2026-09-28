@@ -378,7 +378,23 @@
     "notDoctorError": "Solo el profesional puede gestionar los registros clínicos.",
     "sessionError": "Tu sesión caducó. Vuelve a iniciar sesión.",
     "nameRequired": "Indica el nombre completo del paciente.",
-    "genericError": "Algo salió mal. Inténtalo de nuevo."
+    "genericError": "Algo salió mal. Inténtalo de nuevo.",
+    "tabAccessLog": "Registro de accesos",
+    "accessLogIntro": "Quién abrió la historia de este paciente y cuándo. Solo tú puedes ver este registro.",
+    "accessLogEmpty": "Aún no hay accesos registrados.",
+    "accessLogFailed": "No se pudo cargar el registro de accesos. Inténtalo de nuevo.",
+    "accessLogMore": "Ver anteriores",
+    "accessRoleProfessional": "Profesional",
+    "accessRoleSecretary": "Secretaria/o",
+    "accessRolePatient": "El propio paciente",
+    "accessKindPatient": "Ficha del paciente",
+    "accessKindRecord": "Historia clínica",
+    "accessKindExam": "Examen",
+    "accessKindPrescription": "Receta",
+    "accessKindFile": "Archivo",
+    "accessColWhen": "Cuándo",
+    "accessColWho": "Quién",
+    "accessColWhat": "Qué"
   },
   "settings": {
     "profileTitle": "Perfil",
@@ -588,7 +604,7 @@
       "joiningAsSecretary": "Te unes al equipo de secretaría mediante un enlace de invitación.",
       "secretaryNeedsInvite": "¿Trabajas en secretaría? Pide un enlace de invitación a la clínica donde trabajas.",
       "secretaryEmailMismatch": "Este correo no coincide con la invitación, o la invitación ya no es válida. Revisa el correo o pide un nuevo enlace a la clínica.",
-      "consent": "Al crear una cuenta, aceptas los <terms>Términos del servicio</terms> y la <privacy>Política de privacidad</privacy>.",
+      "consentCheckbox": "He leído y acepto los <terms>Términos de uso</terms> y la <privacy>Política de privacidad</privacy>",
       "country": "¿Dónde está tu consulta?",
       "countryOther": "Otro país",
       "countryHint": "Define la moneda, el precio del plan, el documento del paciente y el QR de pago. Para cambiarlo después, contacta con soporte."

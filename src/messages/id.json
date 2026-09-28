@@ -378,7 +378,23 @@
     "notDoctorError": "Hanya tenaga profesional yang dapat mengelola catatan klinis.",
     "sessionError": "Sesi Anda sudah berakhir. Silakan masuk lagi.",
     "nameRequired": "Masukkan nama lengkap pasien.",
-    "genericError": "Terjadi kesalahan. Coba lagi."
+    "genericError": "Terjadi kesalahan. Coba lagi.",
+    "tabAccessLog": "Log akses",
+    "accessLogIntro": "Siapa yang membuka rekam pasien ini, dan kapan. Hanya Anda yang dapat melihat log ini.",
+    "accessLogEmpty": "Belum ada akses yang tercatat.",
+    "accessLogFailed": "Gagal memuat log akses. Silakan coba lagi.",
+    "accessLogMore": "Tampilkan yang lebih lama",
+    "accessRoleProfessional": "Dokter",
+    "accessRoleSecretary": "Asisten",
+    "accessRolePatient": "Pasien sendiri",
+    "accessKindPatient": "Data pasien",
+    "accessKindRecord": "Rekam medis",
+    "accessKindExam": "Pemeriksaan",
+    "accessKindPrescription": "Resep",
+    "accessKindFile": "File",
+    "accessColWhen": "Kapan",
+    "accessColWho": "Siapa",
+    "accessColWhat": "Apa"
   },
   "settings": {
     "profileTitle": "Profil",
@@ -588,7 +604,7 @@
       "joiningAsSecretary": "Mendaftar sebagai sekretaris melalui tautan undangan.",
       "secretaryNeedsInvite": "Sekretaris? Minta tautan undangan dari dokter Anda.",
       "secretaryEmailMismatch": "Email ini tidak cocok dengan undangan, atau undangan sudah tidak berlaku. Periksa email Anda atau minta tautan baru ke klinik.",
-      "consent": "Dengan membuat akun, Anda menyetujui <terms>Ketentuan Layanan</terms> dan <privacy>Kebijakan Privasi</privacy>.",
+      "consentCheckbox": "Saya telah membaca dan menyetujui <terms>Ketentuan Penggunaan</terms> dan <privacy>Kebijakan Privasi</privacy>",
       "country": "Di mana praktik Anda?",
       "countryOther": "Negara lain",
       "countryHint": "Menentukan mata uang, harga paket, identitas pasien, dan QR pembayaran. Untuk mengubahnya nanti, hubungi dukungan."

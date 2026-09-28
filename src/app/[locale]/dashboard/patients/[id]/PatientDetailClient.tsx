@@ -3,8 +3,10 @@
 import { useState, useTransition, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPrescription, deletePrescription, updatePrescription, addPrescriptionCorrection, updatePatient, deletePatient, toggleBookingBlock, generatePatientInviteCode, getArchivePreview, archivePatient, restorePatient } from "../actions";
+import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPrescription, deletePrescription, updatePrescription, addPrescriptionCorrection, updatePatient, deletePatient, toggleBookingBlock, generatePatientInviteCode, getArchivePreview, archivePatient, restorePatient, loadAccessLog } from "../actions";
 import { archivedLabel } from "../PatientsClient";
+import { fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
+import { formatDateLabel } from "@/lib/dateLabels";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 
@@ -76,7 +78,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, currentUserId, idKind = "BR" }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, currentUserId, idKind = "BR", accessLog = null }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -92,17 +94,22 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   currentUserId: string;
   // The practice country's patient ID (lib/patientIds).
   idKind?: PatientIdKind;
+  // The access log's first page (doctor only; null = no tab: before
+  // migration 111, or a secretary).
+  accessLog?: AccessLogPage | "failed" | null;
 }) {
   const t = useTranslations("patientDetail");
-  const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "appointments">("info");
+  const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "appointments" | "access">("info");
   const ALL_TABS = [
     { key: "info" as const, label: t("tabInfo") },
     { key: "records" as const, label: t("tabRecords", { n: records.length }) },
     { key: "prescriptions" as const, label: t("tabPrescriptions", { n: prescriptions.length }) },
     { key: "appointments" as const, label: t("tabAppointments", { n: appointments.length }) },
+    { key: "access" as const, label: t("tabAccessLog") },
   ];
   const TABS = ALL_TABS.filter(tb =>
-    !isSecretary || !["records", "prescriptions"].includes(tb.key),
+    (!isSecretary || !["records", "prescriptions", "access"].includes(tb.key)) &&
+    (tb.key !== "access" || accessLog != null),
   );
 
   return (
@@ -128,6 +135,99 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
       {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {tab === "appointments" && <AppointmentsTab appointments={appointments} locale={locale} />}
+      {tab === "access" && accessLog != null && (
+        <AccessLogTab patientId={patient.id} initial={accessLog} records={records} prescriptions={prescriptions} locale={locale} />
+      )}
+    </div>
+  );
+}
+
+// Who opened this patient's record, and when (migration 111). The doctor
+// only; newest first, 50 at a time.
+function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
+  patientId: string;
+  initial: AccessLogPage | "failed";
+  records: MedRecord[];
+  prescriptions: Rx[];
+  locale: string;
+}) {
+  const t = useTranslations("patientDetail");
+  const [rows, setRows] = useState<AccessLogRow[]>(initial === "failed" ? [] : initial.rows);
+  const [hasMore, setHasMore] = useState(initial !== "failed" && initial.hasMore);
+  const [failed, setFailed] = useState(initial === "failed");
+  const [pending, startTransition] = useTransition();
+
+  function loadMore() {
+    const last = rows[rows.length - 1];
+    if (!last) return;
+    startTransition(async () => {
+      const next = await loadAccessLog(patientId, last.at, locale);
+      if (next === "failed" || next === null) { setFailed(true); return; }
+      setRows((r) => [...r, ...next.rows]);
+      setHasMore(next.hasMore);
+    });
+  }
+
+  const who = (r: AccessLogRow) =>
+    r.actorRole === "patient" ? t("accessRolePatient")
+      : `${r.actorName} · ${r.actorRole === "secretary" ? t("accessRoleSecretary") : t("accessRoleProfessional")}`;
+
+  const what = (r: AccessLogRow) => {
+    if (r.kind === "record" || r.kind === "exam") {
+      const rec = records.find((x) => x.id === r.objectRef);
+      const label = r.kind === "exam" ? t("accessKindExam") : t("accessKindRecord");
+      if (!rec) return label;
+      const type = rec.record_type && rec.record_type !== "free_text" ? ` · ${rec.record_type.replace("_", " ")}` : "";
+      return `${label}${type} · ${formatDateLabel(locale, rec.date, { year: "numeric", month: "short", day: "numeric" })}`;
+    }
+    if (r.kind === "prescription") {
+      const rx = prescriptions.find((x) => x.id === r.objectRef);
+      return rx ? `${t("accessKindPrescription")} · ${formatDateLabel(locale, rx.date, { year: "numeric", month: "short", day: "numeric" })}` : t("accessKindPrescription");
+    }
+    if (r.kind === "file") {
+      const name = fileNameFromRef(r.objectRef);
+      return name ? `${t("accessKindFile")} · ${name}` : t("accessKindFile");
+    }
+    return t("accessKindPatient");
+  };
+
+  return (
+    <div>
+      <p className="mb-4 text-sm text-slate-500">{t("accessLogIntro")}</p>
+      {failed && <p className="mb-4 text-sm text-red-600">{t("accessLogFailed")}</p>}
+      {!failed && rows.length === 0 && <p className="text-sm text-slate-400">{t("accessLogEmpty")}</p>}
+      {rows.length > 0 && (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
+                <th className="py-2 pr-4 font-semibold">{t("accessColWhen")}</th>
+                <th className="py-2 pr-4 font-semibold">{t("accessColWho")}</th>
+                <th className="py-2 font-semibold">{t("accessColWhat")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r, i) => (
+                <tr key={`${r.at}-${i}`} className="border-b border-slate-50 align-top">
+                  <td className="whitespace-nowrap py-2 pr-4 text-slate-500">{r.when}</td>
+                  <td className="py-2 pr-4 text-slate-800">{who(r)}</td>
+                  <td className="py-2 text-slate-600">{what(r)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {hasMore && !failed && (
+        <button
+          type="button"
+          onClick={loadMore}
+          disabled={pending}
+          className="mt-4 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60"
+        >
+          {t("accessLogMore")}
+        </button>
+      )}
     </div>
   );
 }

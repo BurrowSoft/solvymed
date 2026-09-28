@@ -378,7 +378,23 @@
     "notDoctorError": "يمكن للمختص فقط إدارة السجلات السريرية.",
     "sessionError": "انتهت جلستك. سجّل الدخول مرة أخرى.",
     "nameRequired": "أدخل الاسم الكامل للمريض.",
-    "genericError": "حدث خطأ ما. حاول مرة أخرى."
+    "genericError": "حدث خطأ ما. حاول مرة أخرى.",
+    "tabAccessLog": "سجل الوصول",
+    "accessLogIntro": "من فتح ملف هذا المريض ومتى. أنت وحدك ترى هذا السجل.",
+    "accessLogEmpty": "لا توجد عمليات وصول مسجلة بعد.",
+    "accessLogFailed": "تعذّر تحميل سجل الوصول. يُرجى المحاولة مرة أخرى.",
+    "accessLogMore": "عرض الأقدم",
+    "accessRoleProfessional": "الطبيب",
+    "accessRoleSecretary": "السكرتير/ة",
+    "accessRolePatient": "المريض نفسه",
+    "accessKindPatient": "ملف المريض",
+    "accessKindRecord": "سجل طبي",
+    "accessKindExam": "فحص",
+    "accessKindPrescription": "وصفة",
+    "accessKindFile": "ملف",
+    "accessColWhen": "متى",
+    "accessColWho": "من",
+    "accessColWhat": "ماذا"
   },
   "settings": {
     "profileTitle": "الملف الشخصي",
@@ -588,7 +604,7 @@
       "joiningAsSecretary": "الانضمام كسكرتير عبر رابط دعوة.",
       "secretaryNeedsInvite": "للسكرتارية: اطلب رابط دعوة من العيادة.",
       "secretaryEmailMismatch": "هذا البريد الإلكتروني لا يطابق الدعوة، أو أن الدعوة لم تعد صالحة. تحقّق من البريد أو اطلب رابطًا جديدًا من العيادة.",
-      "consent": "بإنشاء حساب، فإنك توافق على <terms>شروط الخدمة</terms> و<privacy>سياسة الخصوصية</privacy>.",
+      "consentCheckbox": "قرأتُ <terms>شروط الاستخدام</terms> و<privacy>سياسة الخصوصية</privacy> وأوافق عليهما",
       "country": "أين تقع عيادتك؟",
       "countryOther": "دولة أخرى",
       "countryHint": "يحدد العملة وسعر الباقة وهوية المريض ورمز الدفع. لتغييره لاحقًا، تواصل مع الدعم."

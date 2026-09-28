@@ -32,7 +32,7 @@ export function PrivacyPtBR({ turnstile }: { turnstile: boolean }) {
       </Section>
 
       <Section title="3. Dados que coletamos">
-        <p><strong>3.1 Dados de conta:</strong> nome, e-mail e senha (armazenada somente como hash seguro). Profissionais podem incluir especialidade, registro profissional, nome da clínica, endereço, telefone, CNPJ e uma chave Pix. Também guardamos o país e o fuso horário do consultório, escolhidos no cadastro (para &quot;Outro país&quot;, o país detectado pela conexão no cadastro).</p>
+        <p><strong>3.1 Dados de conta:</strong> nome, e-mail e senha (armazenada somente como hash seguro). Profissionais podem incluir especialidade, registro profissional, nome da clínica, endereço, telefone, CNPJ e uma chave Pix. Também guardamos o país e o fuso horário do consultório, escolhidos no cadastro (para &quot;Outro país&quot;, o país detectado pela conexão no cadastro). Quando alguém cria uma conta, registramos qual versão dos Termos de Uso e da Política de Privacidade foi aceita, e quando.</p>
         <p><strong>3.2 Dados de pacientes registrados por profissionais ou suas secretárias:</strong> dados de identificação e contato (nome, CPF ou, para clínicas fora do Brasil, um documento de identidade nacional ou número de passaporte, data de nascimento, sexo, telefone, e-mail) e dados de saúde (anotações, diagnósticos, receitas, exames, arquivos, histórico de consultas). Dados de saúde são dados pessoais sensíveis segundo a LGPD.</p>
         <p><strong>3.3 Consultas e pagamentos:</strong> datas, horários, status, valores e situação do pagamento. Clínicas na Tailândia podem incluir um ID PromptPay (celular ou ID nacional / fiscal), usado apenas para gerar o QR de pagamento das consultas.</p>
         <p><strong>3.4 Cobrança da assinatura:</strong> feita pela Stripe. Nunca vemos nem armazenamos o número completo do cartão; guardamos apenas uma referência da Stripe e o status da sua assinatura.</p>
@@ -102,6 +102,11 @@ export function PrivacyPtBR({ turnstile }: { turnstile: boolean }) {
             equipe do SolvyMed só acessa dados quando necessário para suporte ou obrigações legais.
           </li>
         </ul>
+        <p>
+          Um registro de acessos guarda quem abriu cada prontuário, receita, exame ou arquivo de paciente, e quando. O
+          profissional responsável pelo paciente pode consultá-lo. Os registros são mantidos pelo mesmo prazo do
+          prontuário e guardam o nome de quem acessou, mesmo que essa conta seja excluída depois.
+        </p>
       </Section>
 
       <Section title="8. Segurança">

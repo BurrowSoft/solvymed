@@ -378,7 +378,23 @@
     "notDoctorError": "診療記録を管理できるのは医療者のみです。",
     "sessionError": "セッションの有効期限が切れました。もう一度ログインしてください。",
     "nameRequired": "患者の氏名を入力してください。",
-    "genericError": "問題が発生しました。もう一度お試しください。"
+    "genericError": "問題が発生しました。もう一度お試しください。",
+    "tabAccessLog": "アクセス履歴",
+    "accessLogIntro": "この患者のカルテを誰がいつ開いたか。この履歴はあなただけが見られます。",
+    "accessLogEmpty": "アクセス記録はまだありません。",
+    "accessLogFailed": "アクセス履歴を読み込めませんでした。もう一度お試しください。",
+    "accessLogMore": "以前の履歴を表示",
+    "accessRoleProfessional": "医師",
+    "accessRoleSecretary": "スタッフ",
+    "accessRolePatient": "患者本人",
+    "accessKindPatient": "患者情報",
+    "accessKindRecord": "診療記録",
+    "accessKindExam": "検査",
+    "accessKindPrescription": "処方箋",
+    "accessKindFile": "ファイル",
+    "accessColWhen": "日時",
+    "accessColWho": "誰が",
+    "accessColWhat": "内容"
   },
   "settings": {
     "profileTitle": "プロフィール",
@@ -588,7 +604,7 @@
       "joiningAsSecretary": "招待リンクから受付スタッフとして登録します。",
       "secretaryNeedsInvite": "受付スタッフの方は、医師に招待リンクを依頼してください。",
       "secretaryEmailMismatch": "このメールアドレスは招待と一致しないか、招待の有効期限が切れています。メールアドレスを確認するか、クリニックに新しいリンクを依頼してください。",
-      "consent": "アカウントを作成すると、<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。",
+      "consentCheckbox": "<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>を読み、同意します",
       "country": "クリニックの所在国は？",
       "countryOther": "その他の国",
       "countryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。後で変更するにはサポートにご連絡ください。"

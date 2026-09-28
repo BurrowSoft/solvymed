@@ -378,7 +378,23 @@
     "notDoctorError": "เฉพาะผู้ให้การรักษาเท่านั้นที่จัดการเวชระเบียนได้",
     "sessionError": "เซสชันหมดอายุแล้ว โปรดเข้าสู่ระบบอีกครั้ง",
     "nameRequired": "โปรดกรอกชื่อเต็มของผู้ป่วย",
-    "genericError": "เกิดข้อผิดพลาด โปรดลองอีกครั้ง"
+    "genericError": "เกิดข้อผิดพลาด โปรดลองอีกครั้ง",
+    "tabAccessLog": "บันทึกการเข้าถึง",
+    "accessLogIntro": "ใครเปิดดูเวชระเบียนของคนไข้รายนี้ และเมื่อไร มีเพียงคุณที่เห็นบันทึกนี้",
+    "accessLogEmpty": "ยังไม่มีการเข้าถึงที่บันทึกไว้",
+    "accessLogFailed": "โหลดบันทึกการเข้าถึงไม่สำเร็จ โปรดลองอีกครั้ง",
+    "accessLogMore": "ดูรายการก่อนหน้า",
+    "accessRoleProfessional": "แพทย์",
+    "accessRoleSecretary": "ผู้ช่วย",
+    "accessRolePatient": "ตัวคนไข้เอง",
+    "accessKindPatient": "ข้อมูลคนไข้",
+    "accessKindRecord": "เวชระเบียน",
+    "accessKindExam": "ผลตรวจ",
+    "accessKindPrescription": "ใบสั่งยา",
+    "accessKindFile": "ไฟล์",
+    "accessColWhen": "เมื่อไร",
+    "accessColWho": "ใคร",
+    "accessColWhat": "อะไร"
   },
   "settings": {
     "profileTitle": "โปรไฟล์",
@@ -588,7 +604,7 @@
       "joiningAsSecretary": "สมัครเป็นเลขานุการผ่านลิงก์คำเชิญ",
       "secretaryNeedsInvite": "เป็นเลขานุการใช่ไหม? ขอลิงก์คำเชิญจากแพทย์ของคุณ",
       "secretaryEmailMismatch": "อีเมลนี้ไม่ตรงกับคำเชิญ หรือคำเชิญหมดอายุแล้ว โปรดตรวจสอบอีเมล หรือขอลิงก์ใหม่จากคลินิก",
-      "consent": "การสร้างบัญชีถือว่าคุณยอมรับ<terms>ข้อกำหนดการใช้บริการ</terms>และ<privacy>นโยบายความเป็นส่วนตัว</privacy>",
+      "consentCheckbox": "ฉันได้อ่านและยอมรับ<terms>ข้อกำหนดการใช้งาน</terms>และ<privacy>นโยบายความเป็นส่วนตัว</privacy>",
       "country": "คลินิกของคุณอยู่ที่ไหน",
       "countryOther": "ประเทศอื่น",
       "countryHint": "ใช้กำหนดสกุลเงิน ราคาแพ็กเกจ เอกสารระบุตัวตนผู้ป่วย และ QR สำหรับชำระเงิน หากต้องการเปลี่ยนภายหลัง โปรดติดต่อฝ่ายสนับสนุน"
