@@ -482,7 +482,11 @@
     "nameRequiredError": "اسم العيادة مطلوب.",
     "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
     "delete": "حذف العيادة",
-    "deleteConfirm": "حذف «{name}»؟ لا يمكن التراجع عن ذلك."
+    "deleteConfirm": "حذف «{name}»؟ لا يمكن التراجع عن ذلك.",
+    "adjustPin": "ضبط على الخريطة",
+    "adjustPinTitle": "الموقع على الخريطة: {name}",
+    "adjustPinHint": "اسحب العلامة (أو اضغط على الخريطة) إلى مدخل العيادة ثم احفظ.",
+    "savePin": "حفظ الموقع"
   },
   "consultType": {
     "consultation": "استشارة",

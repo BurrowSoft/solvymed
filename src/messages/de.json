@@ -482,7 +482,11 @@
     "nameRequiredError": "Der Name der Klinik ist erforderlich.",
     "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "delete": "Praxis löschen",
-    "deleteConfirm": "„{name}“ löschen? Das kann nicht rückgängig gemacht werden."
+    "deleteConfirm": "„{name}“ löschen? Das kann nicht rückgängig gemacht werden.",
+    "adjustPin": "Auf der Karte anpassen",
+    "adjustPinTitle": "Kartenposition: {name}",
+    "adjustPinHint": "Ziehen Sie die Markierung (oder tippen Sie auf die Karte) zum Praxiseingang und speichern Sie.",
+    "savePin": "Position speichern"
   },
   "consultType": {
     "consultation": "Beratung",

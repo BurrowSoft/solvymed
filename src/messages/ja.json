@@ -482,7 +482,11 @@
     "nameRequiredError": "クリニック名は必須です。",
     "genericError": "問題が発生しました。もう一度お試しください。",
     "delete": "クリニックを削除",
-    "deleteConfirm": "「{name}」を削除しますか？この操作は元に戻せません。"
+    "deleteConfirm": "「{name}」を削除しますか？この操作は元に戻せません。",
+    "adjustPin": "地図で調整",
+    "adjustPinTitle": "地図上の位置：{name}",
+    "adjustPinHint": "ピンをドラッグ（または地図をタップ）してクリニックの入口に合わせ、保存してください。",
+    "savePin": "位置を保存"
   },
   "consultType": {
     "consultation": "診察",
