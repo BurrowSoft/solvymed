@@ -58,7 +58,7 @@ function addTarget(name: string) {
   const el = document.createElement("div");
   el.setAttribute("data-tour", name);
   el.getBoundingClientRect = () => ({ top: 10, left: 10, width: 100, height: 40, right: 110, bottom: 50, x: 10, y: 10, toJSON: () => ({}) });
-  Object.defineProperty(el, "offsetParent", { get: () => document.body });
+  Object.defineProperty(el, "offsetParent", { get: () => document.body, configurable: true });
   el.scrollIntoView = () => {};
   document.body.appendChild(el);
   return el;
@@ -139,6 +139,17 @@ describe("TourOverlay", () => {
     expect(screen.getByText("menuText")).toBeInTheDocument();
     fireEvent.click(screen.getByText("finish"));
     expect(onClose).toHaveBeenCalledWith("completed", 0);
+    vi.useRealTimers();
+  });
+
+  it("a position:fixed target (the ☰ button: no offsetParent) still counts as on screen (tester)", async () => {
+    vi.useFakeTimers();
+    const fixed = addTarget("menu");
+    Object.defineProperty(fixed, "offsetParent", { get: () => null });
+    const onClose = vi.fn();
+    render(<TourOverlay steps={[{ ...steps[0], target: "missing", fallback: { target: "menu", textKey: "menuText" } }]} prefix="" onClose={onClose} />);
+    await act(async () => { vi.advanceTimersByTime(400); });
+    expect(screen.getByText("menuText")).toBeInTheDocument();
     vi.useRealTimers();
   });
 

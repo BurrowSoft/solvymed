@@ -25,9 +25,13 @@ type Rect = { top: number; left: number; width: number; height: number };
 // display:none, zero size, or entirely off-screen horizontally (the closed
 // phone drawer is translated off the left edge, still laid out). Vertical
 // position doesn't count: a target below the fold gets scrolled into view.
+// Not offsetParent: a position:fixed element (the ☰ menu button) has none
+// even when it's plainly visible (tester). display:none already gives a
+// 0×0 rect.
 export function isOnScreen(el: HTMLElement): boolean {
   const r = el.getBoundingClientRect();
-  return r.width > 0 && r.height > 0 && el.offsetParent !== null && r.right > 0 && r.left < window.innerWidth;
+  if (r.width <= 0 || r.height <= 0 || r.right <= 0 || r.left >= window.innerWidth) return false;
+  return getComputedStyle(el).visibility !== "hidden";
 }
 
 // The element a step spotlights now, and the text to show with it: its own
