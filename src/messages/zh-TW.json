@@ -195,7 +195,9 @@
     "patientArchivedError": "此病歷已封存。請在「病患」中還原後再預約。",
     "moreCount": "另外 {n} 個",
     "slotBlockedConfirm": "此時段已封鎖（{start}–{end}）。仍要預約嗎？",
-    "requestedLabel": "申請時間：{date} · {time}"
+    "requestedLabel": "申請時間：{date} · {time}",
+    "promptPayTitle": "PromptPay QR 碼",
+    "promptPayScan": "使用任何泰國銀行 App 掃描付款。"
   },
   "payments": {
     "thisWeek": "本週",
@@ -450,7 +452,11 @@
     "regenerateError": "無法產生新的邀請碼，請重試。",
     "showSetup": "顯示設定清單",
     "registration": "執業登記號碼",
-    "registrationPlaceholder": "例如 CRM 12345/SP"
+    "registrationPlaceholder": "例如 CRM 12345/SP",
+    "promptPay": "PromptPay ID",
+    "promptPayHint": "與 PromptPay 綁定的手機號碼或13位身分證號 / 稅號。病患掃描預約的 QR 碼付款。",
+    "promptPayInvalid": "請輸入10位手機號碼（以0開頭）或13位身分證號 / 稅號。",
+    "saveFailed": "無法儲存，請再試一次。"
   },
   "clinics": {
     "title": "我的診所",

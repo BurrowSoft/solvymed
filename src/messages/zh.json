@@ -195,7 +195,9 @@
     "patientArchivedError": "此档案已归档。请在“患者”中恢复后再预约。",
     "moreCount": "另外 {n} 个",
     "slotBlockedConfirm": "此时间段已被屏蔽（{start}–{end}）。仍要预约吗？",
-    "requestedLabel": "申请时间：{date} · {time}"
+    "requestedLabel": "申请时间：{date} · {time}",
+    "promptPayTitle": "PromptPay 二维码",
+    "promptPayScan": "使用任意泰国银行应用扫码付款。"
   },
   "payments": {
     "thisWeek": "本周",
@@ -450,7 +452,11 @@
     "regenerateError": "无法生成新的邀请码，请重试。",
     "showSetup": "显示设置清单",
     "registration": "执业注册号",
-    "registrationPlaceholder": "例如 CRM 12345/SP"
+    "registrationPlaceholder": "例如 CRM 12345/SP",
+    "promptPay": "PromptPay ID",
+    "promptPayHint": "与 PromptPay 绑定的手机号或13位身份证号 / 税号。患者扫描预约的二维码付款。",
+    "promptPayInvalid": "请输入10位手机号（以0开头）或13位身份证号 / 税号。",
+    "saveFailed": "无法保存，请重试。"
   },
   "clinics": {
     "title": "我的诊所",

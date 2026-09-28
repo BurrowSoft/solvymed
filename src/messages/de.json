@@ -195,7 +195,9 @@
     "patientArchivedError": "Diese Akte ist archiviert. Stellen Sie sie unter Patienten wieder her, um einen Termin anzulegen.",
     "moreCount": "+{n} weitere",
     "slotBlockedConfirm": "Diese Zeit ist blockiert ({start}–{end}). Trotzdem buchen?",
-    "requestedLabel": "Angefragt: {date} · {time}"
+    "requestedLabel": "Angefragt: {date} · {time}",
+    "promptPayTitle": "PromptPay-QR",
+    "promptPayScan": "Zum Bezahlen mit einer beliebigen thailändischen Banking-App scannen."
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -450,7 +452,11 @@
     "regenerateError": "Es konnte kein neuer Code erzeugt werden. Bitte versuchen Sie es erneut.",
     "showSetup": "Einrichtungsliste anzeigen",
     "registration": "Berufliche Registrierungsnummer",
-    "registrationPlaceholder": "z. B. CRM 12345/SP"
+    "registrationPlaceholder": "z. B. CRM 12345/SP",
+    "promptPay": "PromptPay-ID",
+    "promptPayHint": "Ihre Handynummer oder 13-stellige nationale ID / Steuer-ID, die mit PromptPay verknüpft ist. Patienten scannen den QR-Code des Termins, um zu bezahlen.",
+    "promptPayInvalid": "Geben Sie eine 10-stellige Handynummer (beginnend mit 0) oder eine 13-stellige nationale ID / Steuer-ID ein.",
+    "saveFailed": "Speichern fehlgeschlagen. Bitte versuchen Sie es erneut."
   },
   "clinics": {
     "title": "Meine Kliniken",

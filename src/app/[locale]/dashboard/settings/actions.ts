@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole, getEffectiveProfId } from "@/lib/effectiveProfId";
+import { normalizePromptPayId } from "@/lib/promptpay";
 
 export async function updateProfile(formData: FormData) {
   const supabase = await createClient();
@@ -33,6 +34,16 @@ export async function updateClinic(formData: FormData) {
   // Doctor-only: a secretary may view but never edit these.
   if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can change these settings" };
 
+  // Only Thai practices have the PromptPay field (the database refuses it
+  // for any other country: 'promptpay_requires_th'). Empty clears it.
+  let promptPay: { promptpay_id?: string | null } = {};
+  if (formData.has("promptpay_id")) {
+    const raw = ((formData.get("promptpay_id") as string) ?? "").trim();
+    const id = raw ? normalizePromptPayId(raw) : null;
+    if (raw && !id) return { error: "invalid_promptpay" };
+    promptPay = { promptpay_id: id };
+  }
+
   const { error } = await supabase.from("professionals").update({
     clinic_name: (formData.get("clinic_name") as string)?.trim() || null,
     clinic_cnpj: (formData.get("clinic_cnpj") as string)?.trim() || null,
@@ -44,6 +55,7 @@ export async function updateClinic(formData: FormData) {
     // Only Brazilian practices have the Pix field; a form without it (a
     // practice in another country) leaves the stored key untouched.
     ...(formData.has("pix_key") ? { pix_key: (formData.get("pix_key") as string)?.trim() || null } : {}),
+    ...promptPay,
   }).eq("id", user.id);
 
   if (error) return { error: error.message };

@@ -195,7 +195,9 @@
     "patientArchivedError": "이 차트는 보관되어 있습니다. 예약하려면 환자 메뉴에서 복원하세요.",
     "moreCount": "+{n}개 더",
     "slotBlockedConfirm": "이 시간은 차단되어 있습니다({start}–{end}). 그래도 예약할까요?",
-    "requestedLabel": "요청: {date} · {time}"
+    "requestedLabel": "요청: {date} · {time}",
+    "promptPayTitle": "PromptPay QR",
+    "promptPayScan": "태국 은행 앱으로 스캔해 결제하세요."
   },
   "payments": {
     "thisWeek": "이번 주",
@@ -450,7 +452,11 @@
     "regenerateError": "새 코드를 생성하지 못했습니다. 다시 시도해 주세요.",
     "showSetup": "설정 체크리스트 보기",
     "registration": "면허 번호",
-    "registrationPlaceholder": "예: CRM 12345/SP"
+    "registrationPlaceholder": "예: CRM 12345/SP",
+    "promptPay": "PromptPay ID",
+    "promptPayHint": "PromptPay에 연결된 휴대폰 번호 또는 13자리 국민 ID / 납세자 번호. 환자는 예약 QR을 스캔해 결제합니다.",
+    "promptPayInvalid": "10자리 휴대폰 번호(0으로 시작) 또는 13자리 국민 ID / 납세자 번호를 입력하세요.",
+    "saveFailed": "저장하지 못했습니다. 다시 시도하세요."
   },
   "clinics": {
     "title": "내 클리닉",
