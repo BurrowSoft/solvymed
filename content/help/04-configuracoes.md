@@ -1,0 +1,89 @@
+# Help batch 4: Configurações / Settings (pt-BR + en)
+
+---
+## C1. Meu perfil e registro profissional / Profile and professional registration
+**pt-BR**
+1. **Configurações → Meu perfil**: nome e especialidade.
+2. **Configurações → Cadastros**: seu registro profissional (ex.: "CRM 12345/SP"). Ele aparece nas receitas e documentos em PDF.
+**en**
+1. **Settings → My profile**: name and specialty.
+2. **Settings → Registrations**: your professional registration (e.g. "CRM 12345/SP"). It appears on prescriptions and PDF documents.
+**No site:** **Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: "CRM 12345/SP"), no mesmo cartão.
+**On the website:** **Settings → Profile**: name, specialty and **Professional registration** (e.g. "CRM 12345/SP"), on the same card.
+`open:settings-profile`
+
+---
+## C2. Horário de atendimento / Working hours
+**pt-BR**
+**Configurações → Horário de atendimento**. Escolha os dias e horários. Pacientes só conseguem pedir consultas dentro desses horários.
+**en**
+**Settings → Working hours**. Choose the days and times. Patients can only request appointments within these hours.
+**No site:** **Configurações → Horário de atendimento**: igual ao app.
+**On the website:** **Settings → Working hours**: the same as in the app.
+`open:settings-hours`
+
+---
+## C3. Procedimentos e valores / Procedures and prices
+**pt-BR**
+**Configurações → Procedimentos**. Adicione cada procedimento (ex.: "Consulta") com duração e valor. Eles aparecem ao marcar uma consulta.
+**en**
+**Settings → Procedures**. Add each procedure (e.g. "Consultation") with its duration and price. They show up when you book an appointment.
+**No site:** **Configurações → Procedimentos**: clique em **Novo procedimento**, preencha nome, duração e preço (ex.: 89,90) e clique em **Adicionar procedimento**.
+**On the website:** **Settings → Procedures**: click **New procedure**, fill in the name, duration and price (e.g. 89.90) and click **Add procedure**.
+`open:settings-procedures`
+
+---
+## C4. Convidar uma secretária / Invite a secretary
+**pt-BR**
+1. **Configurações → Equipe → Convidar**.
+2. Compartilhe o código de convite (vale 7 dias, uso único).
+3. A pessoa cria a conta em "Trabalha na secretaria?" com esse código.
+Você pode ter até 3 secretárias(os). Elas(es) cuidam da agenda, dos pacientes e dos pagamentos, mas não veem prontuários, receitas, exames nem arquivos. Para remover alguém: **Equipe → Remover**.
+**en**
+1. **Settings → Team → Invite**.
+2. Share the invite code (valid for 7 days, single use).
+3. The person signs up under "Work at the front desk?" with that code.
+You can have up to 3 secretaries. They manage the schedule, patients and payments, but can't see records, prescriptions, exams or files. To remove someone: **Team → Remove**.
+**No site:** **Configurações → Equipe**: digite o e-mail da pessoa e clique em **Convidar**. Compartilhe na hora o link ou o código que aparece (só aparece uma vez, vale 7 dias e só para esse e-mail). Para tirar alguém: **Remover**; para cancelar um convite pendente: **Revogar**.
+**On the website:** **Settings → Team**: type the person's email and click **Invite**. Share the link or code that appears right away (it's shown only once and works for 7 days, for that email only). To remove someone: **Remove**; to cancel a pending invite: **Revoke**.
+`open:settings-team`
+
+---
+## C5. Link de convite para pacientes / Patient invite link
+**pt-BR**
+Em **Início** (ou **Configurações**), toque em **Compartilhar link de convite**. Quem abrir o link baixa o app ou entra pelo site e pede consultas com você. Tocar em **Novo** gera um código novo e o anterior deixa de funcionar.
+**en**
+On **Home** (or **Settings**), tap **Share invite link**. Anyone who opens it gets the app or the website and can request appointments with you. Tapping **New** creates a new code and the old one stops working.
+**No site:** Em **Agenda**, clique em **Compartilhar link de convite**, ou em **Configurações → Seu código de convite**, use **Copiar** ou **Copiar link**. **Gerar novo** cria um código novo e o anterior deixa de funcionar.
+**On the website:** In the **Schedule**, click **Share invite link**, or in **Settings → Your invite code**, use **Copy** or **Copy link**. **Regenerate** creates a new code and the old one stops working.
+`open:home`
+
+---
+## C6. Bloqueio do app / App lock
+**pt-BR**
+**Configurações → Segurança**: ative o **Bloqueio biométrico** (digital ou Face ID; se falhar, vale a senha do próprio celular) e escolha o **bloqueio automático** (5, 15 ou 30 minutos).
+**en**
+**Settings → Security**: turn on the **Biometric lock** (fingerprint or Face ID; if it fails, your phone's own passcode works) and choose the **auto-lock** (5, 15 or 30 minutes).
+**No site:** Não se aplica ao site: o bloqueio biométrico é do app. No site, saia da conta em computadores compartilhados.
+**On the website:** Doesn't apply to the website: the biometric lock is an app feature. On the website, sign out on shared computers.
+`open:settings-security`
+
+---
+## C7. Lembretes e notificações / Reminders and notifications
+**pt-BR**
+**Configurações → Notificações**: ative os lembretes de consulta, escolha a antecedência (15 min, 1 h, 2 h ou 24 h) e o resumo diário.
+**en**
+**Settings → Notifications**: turn on appointment reminders, choose how early (15 min, 1 h, 2 h or 24 h), and the daily summary.
+**No site:** Os lembretes e notificações são do app; o site não envia notificações.
+**On the website:** Reminders and notifications are app features; the website doesn't send notifications.
+`open:settings-notifications`
+
+---
+## C8. Idioma e tema / Language and theme
+**pt-BR**
+**Configurações → Idioma** e **Tema** (claro, escuro ou do sistema). Algumas partes mudam de idioma depois de reabrir o app.
+**en**
+**Settings → Language** and **Theme** (light, dark or system). Some parts switch language after you reopen the app.
+**No site:** O idioma muda no seletor de idioma do menu lateral. O site não tem tema escuro.
+**On the website:** Change the language with the language selector in the side menu. The website has no dark theme.
+`open:settings`
