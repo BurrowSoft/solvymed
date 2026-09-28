@@ -1,5 +1,4 @@
 ﻿{
-  "banner": "Site em construção. O aplicativo já está no ar — baixe agora e comece a usar.",
   "getApp": "Baixar o app",
   "hero": {
     "badge": "App disponível agora",
@@ -13,7 +12,10 @@
     "appStoreComingSoon": "Em breve na App Store",
     "openApp": "Abrir o app",
     "iosBeta": "Beta para iPhone – instale pelo TestFlight",
-    "iosBetaHint": "Requer o app TestFlight gratuito da Apple"
+    "iosBetaHint": "Requer o app TestFlight gratuito da Apple",
+    "signupCta": "Comece seu teste grátis",
+    "haveAccount": "Já tem conta?",
+    "preferApp": "Prefere o app? Baixe aqui:"
   },
   "highlights": {
     "h1": "Agendamento inteligente",
@@ -41,13 +43,9 @@
   },
   "cta": {
     "heading": "Pronto para simplificar sua clínica?",
-    "sub": "O app está no ar e pronto — baixe agora e tenha sua clínica funcionando em minutos. O site está a caminho.",
+    "sub": "Comece seu teste grátis pelo site ou pelo app. Sua clínica pronta em minutos.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
-  },
-  "construction": {
-    "heading": "Site em construção",
-    "body": "Este site está em desenvolvimento. O site completo do Solvymed estará disponível em breve com documentação, preços e suporte detalhados. Enquanto isso, o app está totalmente funcional — baixe e comece a gerenciar sua clínica hoje."
   },
   "footer": {
     "copyright": "© 2026 Solvymed. Todos os direitos reservados.",
@@ -195,7 +193,9 @@
     "missingFieldsError": "Preencha todos os campos obrigatórios.",
     "pastMidnightError": "Esse horário e duração ultrapassariam a meia-noite.",
     "patientArchivedError": "Este cadastro está arquivado. Restaure-o em Pacientes para agendar uma consulta.",
-    "moreCount": "+{n} mais"
+    "moreCount": "+{n} mais",
+    "slotBlockedConfirm": "Este horário está bloqueado ({start}–{end}). Agendar mesmo assim?",
+    "requestedLabel": "Solicitado: {date} · {time}"
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -476,7 +476,9 @@
     "emptySubtitle": "Adicione sua clínica para que os pacientes possam encontrá-lo",
     "addFirst": "Adicionar sua primeira clínica",
     "nameRequiredError": "O nome da clínica é obrigatório.",
-    "genericError": "Algo deu errado. Tente novamente."
+    "genericError": "Algo deu errado. Tente novamente.",
+    "delete": "Excluir clínica",
+    "deleteConfirm": "Excluir “{name}”? Isso não pode ser desfeito."
   },
   "consultType": {
     "consultation": "Consulta",
@@ -680,7 +682,8 @@
     "reschedulePending": "Remarcação pendente",
     "rescheduleRequestedLabel": "Reagendamento solicitado: {date} · {time}",
     "rescheduleButton": "Solicitar reagendamento",
-    "closeDialog": "Fechar"
+    "closeDialog": "Fechar",
+    "originallyLabel": "Originalmente: {date} · {time}"
   },
   "nav": {
     "overview": "Visão geral",
@@ -929,5 +932,28 @@
   },
   "legal": {
     "englishOnly": "Este documento está disponível em português (Brasil) e inglês."
+  },
+  "feedback": {
+    "title": "Envie sua opinião",
+    "subtitle": "Queremos saber o que você acha do SolvyMed.",
+    "ratingLabel": "Como você avalia o SolvyMed?",
+    "ratingValue": "{n} de 5",
+    "optional": "(opcional)",
+    "name": "Nome",
+    "namePlaceholder": "Seu nome",
+    "email": "E-mail",
+    "emailPlaceholder": "seu@email.com",
+    "message": "Mensagem",
+    "messagePlaceholder": "Conte o que você acha, o que está faltando ou o que podemos melhorar…",
+    "send": "Enviar opinião",
+    "sending": "Enviando…",
+    "thanksTitle": "Obrigado!",
+    "thanksBody": "Sua opinião nos ajuda a melhorar o SolvyMed para todos.",
+    "backToHome": "Voltar ao início",
+    "errors": {
+      "email_required": "Informe seu e-mail.",
+      "message_required": "Escreva uma mensagem.",
+      "failed": "Algo deu errado. Tente novamente."
+    }
   }
 }

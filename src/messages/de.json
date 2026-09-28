@@ -1,5 +1,4 @@
 ﻿{
-  "banner": "Website im Aufbau. Die App ist bereits verfügbar — jetzt herunterladen und loslegen.",
   "getApp": "App herunterladen",
   "hero": {
     "badge": "App jetzt verfügbar",
@@ -13,7 +12,10 @@
     "appStoreComingSoon": "Bald im App Store verfügbar",
     "openApp": "App öffnen",
     "iosBeta": "iPhone-Beta – über TestFlight installieren",
-    "iosBetaHint": "Erfordert die kostenlose TestFlight-App von Apple"
+    "iosBetaHint": "Erfordert die kostenlose TestFlight-App von Apple",
+    "signupCta": "Kostenlos testen",
+    "haveAccount": "Schon ein Konto?",
+    "preferApp": "Lieber die App? Hier herunterladen:"
   },
   "highlights": {
     "h1": "Intelligente Terminplanung",
@@ -41,13 +43,9 @@
   },
   "cta": {
     "heading": "Bereit, Ihre Praxis zu vereinfachen?",
-    "sub": "Die App ist live und bereit – laden Sie sie jetzt herunter und haben Sie Ihre Praxis in Minuten am Laufen. Die Website folgt.",
+    "sub": "Starten Sie Ihren kostenlosen Test im Web oder in der App. Ihre Praxis, in wenigen Minuten eingerichtet.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
-  },
-  "construction": {
-    "heading": "Website im Aufbau",
-    "body": "Diese Website befindet sich im Aufbau. Die vollständige Solvymed-Website kommt bald mit ausführlicher Dokumentation, Preisen und Support-Ressourcen. In der Zwischenzeit ist die App vollständig einsatzbereit – laden Sie sie herunter und beginnen Sie noch heute, Ihre Praxis zu verwalten."
   },
   "footer": {
     "copyright": "© 2026 Solvymed. Alle Rechte vorbehalten.",
@@ -195,7 +193,9 @@
     "missingFieldsError": "Bitte füllen Sie alle Pflichtfelder aus.",
     "pastMidnightError": "Diese Uhrzeit und Dauer würden über Mitternacht hinausgehen.",
     "patientArchivedError": "Diese Akte ist archiviert. Stellen Sie sie unter Patienten wieder her, um einen Termin anzulegen.",
-    "moreCount": "+{n} weitere"
+    "moreCount": "+{n} weitere",
+    "slotBlockedConfirm": "Diese Zeit ist blockiert ({start}–{end}). Trotzdem buchen?",
+    "requestedLabel": "Angefragt: {date} · {time}"
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -476,7 +476,9 @@
     "emptySubtitle": "Fügen Sie Ihre Klinik hinzu, damit Patienten Sie finden können",
     "addFirst": "Erste Klinik hinzufügen",
     "nameRequiredError": "Der Name der Klinik ist erforderlich.",
-    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "delete": "Praxis löschen",
+    "deleteConfirm": "„{name}“ löschen? Das kann nicht rückgängig gemacht werden."
   },
   "consultType": {
     "consultation": "Beratung",
@@ -680,7 +682,8 @@
     "reschedulePending": "Verschiebung ausstehend",
     "rescheduleRequestedLabel": "Terminverschiebung angefragt: {date} · {time}",
     "rescheduleButton": "Verschiebung beantragen",
-    "closeDialog": "Schließen"
+    "closeDialog": "Schließen",
+    "originallyLabel": "Ursprünglich: {date} · {time}"
   },
   "nav": {
     "overview": "Übersicht",
@@ -929,5 +932,28 @@
   },
   "legal": {
     "englishOnly": "Dieses Dokument ist nur auf Englisch und Portugiesisch (Brasilien) verfügbar. Unten steht die englische Fassung."
+  },
+  "feedback": {
+    "title": "Feedback geben",
+    "subtitle": "Wir möchten gern wissen, was Sie von SolvyMed halten.",
+    "ratingLabel": "Wie bewerten Sie SolvyMed?",
+    "ratingValue": "{n} von 5",
+    "optional": "(optional)",
+    "name": "Name",
+    "namePlaceholder": "Ihr Name",
+    "email": "E-Mail",
+    "emailPlaceholder": "ihre@email.com",
+    "message": "Nachricht",
+    "messagePlaceholder": "Sagen Sie uns, was Sie denken, was fehlt oder was wir besser machen können…",
+    "send": "Feedback senden",
+    "sending": "Wird gesendet…",
+    "thanksTitle": "Vielen Dank!",
+    "thanksBody": "Ihr Feedback hilft uns, SolvyMed für alle zu verbessern.",
+    "backToHome": "Zur Startseite",
+    "errors": {
+      "email_required": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
+      "message_required": "Bitte schreiben Sie eine Nachricht.",
+      "failed": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    }
   }
 }

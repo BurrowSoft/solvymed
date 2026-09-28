@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { computeSlots, toMinutes, filterPastSlots, toLocalDateString } from "@/lib/slots";
 import { formatBRL } from "@/lib/money";
+import { formatTimeLabel } from "@/lib/dateLabels";
 import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
 
@@ -86,12 +87,7 @@ function dayLabel(dateStr: string, locale: string, todayLabel: string) {
     weekday: "short", month: "short", day: "numeric",
   });
 }
-function formatTime(t: string) {
-  const [h, m] = t.split(":");
-  const d = new Date();
-  d.setHours(Number(h), Number(m));
-  return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
-}
+const formatTime = formatTimeLabel;
 
 async function fetchSlots(
   professionalId: string,
@@ -138,7 +134,11 @@ export function BookingClient({
   const t = useTranslations("book");
   const tConsult = useTranslations("consultType");
   const prefix = locale === "en" ? "" : `/${locale}`;
-  const days = buildDays();
+  // The next DAYS_AHEAD days in the visitor's calendar, built after mount:
+  // during the server render "today" is the server's (UTC) date, a day
+  // ahead of Brazil from 21:00, which shifted the strip and failed
+  // hydration (React #418).
+  const [days, setDays] = useState<string[]>([]);
 
   function applyConsultType(name: string) {
     if ((CONSULT_TYPES as readonly string[]).includes(name)) {
@@ -159,7 +159,12 @@ export function BookingClient({
   const [selectedProcedure, setSelectedProcedure] = useState<Procedure | null>(null);
   const [duration, setDuration] = useState(30);
 
-  const [selectedDate, setSelectedDate] = useState(days[0]);
+  const [selectedDate, setSelectedDate] = useState("");
+  useEffect(() => {
+    const d = buildDays();
+    setDays(d);
+    setSelectedDate(d[0]);
+  }, []);
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
@@ -285,7 +290,7 @@ export function BookingClient({
   );
 
   useEffect(() => {
-    if (!loadingHours) loadSlots(selectedDate, duration);
+    if (!loadingHours && selectedDate) loadSlots(selectedDate, duration);
   }, [selectedDate, duration, loadSlots, loadingHours]);
 
   async function handleBook() {
@@ -366,7 +371,7 @@ export function BookingClient({
           </div>
           <h1 className="text-xl font-extrabold text-slate-900 mb-2">{t("successTitle")}</h1>
           <p className="text-slate-500 text-sm mb-1">
-            {t("successBody", { date: dayLabel(bookedDate, locale, t("today")), time: formatTime(bookedSlot!.start), doctor: professionalName })}
+            {t("successBody", { date: dayLabel(bookedDate, locale, t("today")), time: formatTime(locale, bookedSlot!.start), doctor: professionalName })}
           </p>
           <p className="text-slate-400 text-xs mb-8">{t("successHint")}</p>
           <button
@@ -520,7 +525,7 @@ export function BookingClient({
             {/* Time slots */}
             <div>
               <h2 className="text-sm font-bold text-slate-700 mb-2">{t("availableTimes")}</h2>
-              {loadingSlots ? (
+              {loadingSlots || !selectedDate ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="h-5 w-5 animate-spin rounded-full border-2 border-teal-600 border-t-transparent" />
                 </div>
@@ -537,7 +542,7 @@ export function BookingClient({
                       onClick={() => { setSelectedSlot(slot); setShowCustomTime(false); setCustomTimeValue(""); }}
                       className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${selectedSlot?.start === slot.start && !showCustomTime ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
                     >
-                      {formatTime(slot.start)}
+                      {formatTime(locale, slot.start)}
                     </button>
                   ))}
                 </div>

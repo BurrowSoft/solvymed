@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { AppointmentStatusSelect, DeleteAppointmentButton } from "./ScheduleClient";
 import { toLocalDateString } from "@/lib/slots";
 import { formatBRL } from "@/lib/money";
+import { plainSpaces } from "@/lib/dateLabels";
 
 export type CalendarAppt = {
   id: string;
@@ -34,20 +35,22 @@ const HOURS = Array.from({ length: LAST_H - FIRST_H }, (_, i) => i + FIRST_H);
 // a Monday; formatted in UTC so the day can't shift).
 export function weekdayLabels(locale: string): string[] {
   const fmt = new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "UTC" });
-  return Array.from({ length: 7 }, (_, i) => fmt.format(new Date(Date.UTC(2024, 0, 1 + i))));
+  return Array.from({ length: 7 }, (_, i) => plainSpaces(fmt.format(new Date(Date.UTC(2024, 0, 1 + i)))));
 }
 
 // The calendar header: a day, a Monday–Sunday range, or a month, localized.
+// Spaces are normalized: server (Node) and browser ICU differ there, e.g.
+// thin spaces around the range's en dash (React #418 on the week view).
 export function calendarHeaderLabel(locale: string, view: "day" | "week" | "month", currentDate: string, weekDays: string[]): string {
   const at = (d: string) => new Date(d + "T12:00:00Z");
   if (view === "day") {
-    return new Intl.DateTimeFormat(locale, { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(at(currentDate));
+    return plainSpaces(new Intl.DateTimeFormat(locale, { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(at(currentDate)));
   }
   if (view === "week") {
-    return new Intl.DateTimeFormat(locale, { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
-      .formatRange(at(weekDays[0]), at(weekDays[6]));
+    return plainSpaces(new Intl.DateTimeFormat(locale, { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
+      .formatRange(at(weekDays[0]), at(weekDays[6])));
   }
-  return new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "UTC" }).format(at(currentDate));
+  return plainSpaces(new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "UTC" }).format(at(currentDate)));
 }
 
 // Every Date here is a local calendar day, so it's formatted with local
@@ -145,10 +148,21 @@ function TimeGrid({
   const byDay = new Map<string, CalendarAppt[]>();
   for (const day of days) byDay.set(day, appointments.filter(a => a.date === day));
 
-  const now = new Date();
-  const nowMins = now.getHours() * 60 + now.getMinutes();
-  const nowTop = ((nowMins - FIRST_H * 60) / 60) * HOUR_H;
-  const showNow = nowMins >= FIRST_H * 60 && nowMins <= LAST_H * 60;
+  // The "now" line is placed after mount (and every minute): read during
+  // render, the server's clock (UTC) and a browser in another zone disagree
+  // on whether it's shown at all, and hydration fails (React #418).
+  const [nowMins, setNowMins] = useState<number | null>(null);
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date();
+      setNowMins(now.getHours() * 60 + now.getMinutes());
+    };
+    tick();
+    const id = setInterval(tick, 60_000);
+    return () => clearInterval(id);
+  }, []);
+  const nowTop = nowMins === null ? 0 : ((nowMins - FIRST_H * 60) / 60) * HOUR_H;
+  const showNow = nowMins !== null && nowMins >= FIRST_H * 60 && nowMins <= LAST_H * 60;
 
   return (
     <div className="flex">
