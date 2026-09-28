@@ -53,13 +53,22 @@ export function generatePixString(
   return payload + crc16(payload);
 }
 
-// The QR image, generated in the page (a GIF data URL). The Pix payload
-// holds the practice's Pix key, name and the amount, so it must never be
-// sent to a third-party QR service. Error correction M, as banks' own Pix
-// QRs use; the payload is ASCII (generatePixString strips accents).
-export function pixQrDataUrl(pixString: string): string {
+// The Pix QR, generated in the page. The payload holds the practice's Pix
+// key, name and the amount, so it must never be sent to a third-party QR
+// service. Scannability (same rules as the app): error correction M, black
+// on white, 5 px modules (>= 4) and a quiet zone of 4 modules. The payload
+// is ASCII (generatePixString strips accents).
+export const PIX_QR_MODULE_PX = 5;
+export const PIX_QR_QUIET_MODULES = 4;
+
+export function makePixQr(pixString: string) {
   const qr = qrcode(0, "M");
   qr.addData(pixString);
   qr.make();
-  return qr.createDataURL(5, 2);
+  return qr;
+}
+
+// A GIF data URL (createDataURL's margin is in pixels, not modules).
+export function pixQrDataUrl(pixString: string): string {
+  return makePixQr(pixString).createDataURL(PIX_QR_MODULE_PX, PIX_QR_MODULE_PX * PIX_QR_QUIET_MODULES);
 }

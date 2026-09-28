@@ -477,7 +477,9 @@ export function PixQrButton({
 
       <Dialog open={open} onClose={() => setOpen(false)} title="Pix QR Code">
         <div className="flex flex-col items-center gap-4">
-          <img src={qrUrl} alt="Pix QR Code" width={200} height={200} className="rounded-xl border border-slate-100" />
+          {/* Natural size (5 px modules): scaling it down would blur the
+              modules below the 4 px phones need to scan it reliably. */}
+          <img src={qrUrl} alt="Pix QR Code" className="max-w-full rounded-xl border border-slate-100 [image-rendering:pixelated]" />
           <div className="w-full">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1.5">Copia e Cola</p>
             <div className="relative">
