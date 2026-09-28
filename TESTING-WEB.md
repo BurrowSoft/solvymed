@@ -5283,3 +5283,14 @@ with a throwaway doctor, deleted afterwards:
   loaded it, with **no bounce to login**.
 - The browser made no refresh call of its own, so the session was refreshed
   server-side (middleware / `@supabase/ssr`).
+
+## PR #66 (`chore/i18n-cleanup`, base master) — join notice names the role in the page's language, 🟢 at `ac8ee77`, review clean
+
+This fixes the RC finding (b). Checked on the preview with a throwaway
+doctor's public code (deleted afterwards):
+- `/pt-BR/join/<code>` → `/pt-BR/auth/signup?join=…` shows **"Entrando
+  como Paciente via link de convite."** It used to show "Entrando como
+  patient…".
+- `/join/<code>` (en) shows "Joining as Patient via invite link."
+
+**CI at `ac8ee77`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `ac8ee77`.**
