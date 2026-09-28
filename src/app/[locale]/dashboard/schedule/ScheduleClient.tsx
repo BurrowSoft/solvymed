@@ -277,7 +277,13 @@ export function NewAppointmentButton({ patients, defaultDate, procedures, label,
     const formData = new FormData(formRef.current!);
     setError("");
     startTransition(async () => {
-      const result = await createAppointment(formData);
+      let result = await createAppointment(formData);
+      // Booking over time the practice blocked: ask, then book anyway.
+      if (result?.code === "slot_blocked") {
+        if (!window.confirm(t("slotBlockedConfirm"))) return;
+        formData.set("confirm_blocked", "1");
+        result = await createAppointment(formData);
+      }
       if (result?.error) { setError(actionErrorMessage(t, result.code)); return; }
       setOpen(false);
     });

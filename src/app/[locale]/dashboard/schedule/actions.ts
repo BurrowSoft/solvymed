@@ -58,6 +58,21 @@ export async function createAppointment(formData: FormData) {
   if (match?.archived_at) return { error: "Patient is archived", code: "patient_archived" };
   const patientId = match?.id ?? null;
 
+  // The practice blocked this time itself: ask before booking over it
+  // (the form resubmits with confirm_blocked=1). Not a hard refusal.
+  if (formData.get("confirm_blocked") !== "1") {
+    const { data: blocks } = await supabase
+      .from("appointments")
+      .select("id")
+      .eq("professional_id", effectiveProfId)
+      .eq("date", date)
+      .eq("status", "blocked")
+      .lt("start_time", endTime)
+      .gt("end_time", startTime)
+      .limit(1);
+    if (blocks?.length) return { error: "This time is blocked", code: "slot_blocked" };
+  }
+
   const { error } = await supabase.from("appointments").insert({
     professional_id: effectiveProfId,
     patient_id: patientId,

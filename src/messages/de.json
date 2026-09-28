@@ -195,7 +195,8 @@
     "missingFieldsError": "Bitte füllen Sie alle Pflichtfelder aus.",
     "pastMidnightError": "Diese Uhrzeit und Dauer würden über Mitternacht hinausgehen.",
     "patientArchivedError": "Diese Akte ist archiviert. Stellen Sie sie unter Patienten wieder her, um einen Termin anzulegen.",
-    "moreCount": "+{n} weitere"
+    "moreCount": "+{n} weitere",
+    "slotBlockedConfirm": "Diese Zeit ist blockiert. Trotzdem buchen?"
   },
   "payments": {
     "thisWeek": "Diese Woche",

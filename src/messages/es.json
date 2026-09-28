@@ -195,7 +195,8 @@
     "missingFieldsError": "Completa todos los campos obligatorios.",
     "pastMidnightError": "Esta hora y duración pasarían de la medianoche.",
     "patientArchivedError": "Este registro está archivado. Restáuralo en Pacientes para agendar una cita.",
-    "moreCount": "+{n} más"
+    "moreCount": "+{n} más",
+    "slotBlockedConfirm": "Este horario está bloqueado. ¿Agendar de todos modos?"
   },
   "payments": {
     "thisWeek": "Esta semana",
