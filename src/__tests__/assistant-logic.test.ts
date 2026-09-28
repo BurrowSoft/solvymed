@@ -4,7 +4,7 @@ import { bestArticle, createMockBackend, mockAnswer, plusMinutes } from "@/lib/a
 import { isInternalHref, webPath } from "@/lib/assistant/targets";
 import type { AnswerChunk } from "@/lib/assistant/types";
 
-describe("maskPersonalData (spec §6: v1 sends no personal data)", () => {
+describe("maskPersonalData (spec §6: identifiers are masked; names go as typed)", () => {
   it.each([
     ["O CPF 123.456.789-09 não aparece", "O CPF [cpf] não aparece"],
     ["cpf 12345678909", "cpf [cpf]"],

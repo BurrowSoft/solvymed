@@ -34,6 +34,14 @@ export function screenOf(pathname: string, prefix: string): AssistantScreen {
 
 const HINT_KEY = "solvyai_hint_seen";
 
+// Blocked time and times outside the working hours always ask a second
+// question (§2.3); a card with either warning but no secondConfirm is
+// malformed and dropped (the same rule as the app).
+export function cardIsSafe(card: ConfirmationCard): boolean {
+  const asksTwice = card.warnings.some((w) => w.code === "blocked" || w.code === "outside_hours");
+  return !asksTwice || !!card.secondConfirm?.question;
+}
+
 // "Renova em N h": whole hours until the reset, at least 1.
 export function hoursUntil(resetsAt: string, now = Date.now()): number {
   const t = Date.parse(resetsAt);
@@ -115,7 +123,9 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
         } else if (chunk.kind === "block") {
           // A text block closes the streamed text; other blocks come whole.
           if (chunk.block.type === "text") { blocks = [...blocks, { type: "text", text: current }]; current = ""; }
-          else blocks = [...blocks, chunk.block];
+          // Fail closed: a card that must ask twice but carries no second
+          // question is never shown, so it can't be confirmed without asking.
+          else if (!(chunk.block.type === "card" && !cardIsSafe(chunk.block.card))) blocks = [...blocks, chunk.block];
           setTurns([...history, { role: "assistant", blocks, streaming: true }]);
         } else if (chunk.kind === "usage") {
           gotUsage = true;

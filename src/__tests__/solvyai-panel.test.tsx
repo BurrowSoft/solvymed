@@ -9,7 +9,9 @@ vi.mock("next-intl", () => ({
 }));
 vi.mock("@/lib/track", () => ({ track: vi.fn() }));
 
-import { SolvyAi, screenOf } from "@/components/solvyai/SolvyAi";
+import { SolvyAi, cardIsSafe, screenOf } from "@/components/solvyai/SolvyAi";
+import { mockAnswer } from "@/lib/assistant/mockBackend";
+import type { ConfirmationCard } from "@/lib/assistant/types";
 
 beforeEach(() => {
   push.mockClear();
@@ -115,6 +117,17 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
     fireEvent.change(box, { target: { value: "x".repeat(600) } });
     expect(box.value.length).toBe(500);
     expect(screen.getByText("500/500")).toBeInTheDocument();
+  });
+
+  it("fails closed: a blocked / outside-hours card without its second question is never shown", () => {
+    const b = mockAnswer("Marca a Maria Silva amanhã às 12h", "pt", "").find((x) => x.type === "card");
+    if (!b || b.type !== "card") throw new Error("no card");
+    expect(cardIsSafe(b.card)).toBe(true);
+    const bad: ConfirmationCard = { ...b.card, secondConfirm: undefined };
+    expect(cardIsSafe(bad)).toBe(false);
+    expect(cardIsSafe({ ...bad, warnings: [{ code: "outside_hours", text: "x" }] })).toBe(false);
+    // Warnings that don't ask twice are fine without one.
+    expect(cardIsSafe({ ...bad, warnings: [{ code: "same_patient_day", text: "x" }] })).toBe(true);
   });
 
   it("maps the page to its screen", () => {

@@ -1,6 +1,7 @@
-// Before a help question leaves the browser, anything that looks like a
-// patient identifier is masked (specs/assistant.md §6: v1 sends no personal
-// data): CPF, a Thai national ID, phone numbers and email addresses.
+// Before a question leaves the browser, anything that looks like an
+// identifier is masked (specs/assistant.md §6): CPF, a Thai national ID,
+// phone numbers and email addresses. Names are sent as typed (they can't be
+// masked reliably), which is why the input asks not to type patient data.
 
 // The SAME rules as the app (mobile lib/solvyai.ts maskPersonalData, one
 // shared case table); the /api/assistant route re-masks with this too. Change
