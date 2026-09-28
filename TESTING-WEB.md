@@ -5997,3 +5997,112 @@ contains the parentheses, and the label wraps it in another pair.
 
 **CI at `ce258bd`:** ✅. **Review: clean.** **Merge gate: 🟢 for
 `ce258bd`.**
+
+## PR #88 (`th/4-promptpay`, base `th/1-country-currency`) — PromptPay QR for Thai practices, 🟢 at `94748f8` (Thai path ⏳)
+
+Pre-110, every practice is Brazilian and `promptpay_id` doesn't exist, so
+nothing may change for Brazil. The Thai path can't run end to end yet: the
+Settings field, saving the ID and the schedule QR are **unit-tested only**.
+Checked on the Preview at `94748f8` with a throwaway doctor and secretary
+(deleted afterwards).
+
+**BR unchanged:**
+- **Schedule** (doctor and secretary): the Pix button is shown, and there's
+  **no "QR PromptPay" button**.
+- **Pix payload after the `lib/emv` refactor:** the doctor's decoded QR is
+  `…0014br.gov.bcb.pix0126<key>52040000 5303986 5406187.50 5802BR
+  5915CLINICA OPUS 88 6009SAO PAULO 62070503*** 6304…`, with a valid CRC.
+  That's the same layout #70 verified on prod. The secretary's is identical
+  apart from the city, which the test had just changed to CAMPINAS (again
+  with a valid CRC).
+- **Settings:**
+  - There's no PromptPay input or label, and the Pix field is shown.
+  - Saving a city change shows "Salvo!". This is the new error handling,
+    and a success shows no error.
+  - The row has the new city with `pix_key` kept.
+- **Privacy §3.3** (en + pt-BR): the new sentence reads "Clinics in
+  Thailand may add a PromptPay ID (a mobile number or national / tax ID),
+  used only to build the appointment payment QR" / "Clínicas na Tailândia
+  podem incluir um ID PromptPay…".
+
+**Independent payload cross-check** (the head's `lib/promptpay.ts` against
+the MIT `promptpay-qr` npm library, outside the repo):
+- **72/72 payloads identical**: 8 IDs × 9 amounts.
+  - IDs: 08/09 mobiles, 13-digit IDs, `+66 81 234 5678`, `081-234-5678`.
+  - Amounts: none, 0, 0.01, 1, 150, 187.5, 690, 1234.56, 99999.99.
+- `normalizePromptPayId` rejects 9- and 11-digit mobiles, a 10-digit
+  number not starting with 0, 12 digits, text, empty and null. It maps
+  `+66 812345678` to `0812345678`.
+- Sample: `00020101021229370016A000000677010111011300668123456785802TH53037645406187.506304166C`.
+
+**⏳ Thai path:** a TH practice's Settings field and save, the schedule
+QR, and a scan with a real Thai banking app. These need migration 110 on a
+DB, and the final gate is the user's real Thai bank scan.
+
+**CI at `94748f8`:** ✅. **Review: clean.** **Merge gate: 🟢 for `94748f8`**
+for everything verifiable pre-110.
+
+## PR #85 (`th/2-signup-country`, base `th/1-country-currency`) — practice country at doctor signup, read-only in Settings, 🟢 at `93972ad`
+
+Pre-110 (no `country` column), `handle_new_user` ignores the new metadata,
+so every account still becomes a Brazilian practice. The TH/Other storage
+needs 110 and is **unit-tested only**. Checked against the head's code
+(`9efbf8a`; the rebase to `93972ad` changed no code). The flag-OFF checks
+ran on a local `next dev`, where `x-vercel-ip-country` can be sent by hand;
+the flag-ON checks ran on the Preview.
+
+**Picker (flag OFF = Production):**
+- It offers **Brasil + Outro país** only; there's no Thailand option.
+- Pre-selection by geo:
+  - BR or unknown → Brasil;
+  - **TH → Outro país** (Thailand is never pre-selected while hidden);
+  - US → Outro país.
+- The hint reads: "Define a moeda, o preço do plano, o documento do
+  paciente e o QR de pagamento…"
+
+**Picker (flag ON Preview):**
+- It offers Brasil / ประเทศไทย / Outro país.
+- It's shown only for the doctor role. It disappears on the Paciente card
+  and comes back on the doctor card.
+- It's absent on `?secretary=…` and `?join=…`.
+
+**Signup** (2 throwaway doctors via the UI, deleted afterwards):
+- The POST `/auth/v1/signup` returns 200 and then shows "Verifique seu
+  e-mail".
+- The metadata:
+  - Brasil: `country: "BR", time_zone: "America/Sao_Paulo"`.
+  - Outro país with geo US: `country: "US"` plus the browser zone.
+- The `professionals` row is created (trial, `America/Sao_Paulo`).
+
+**Settings card "País do consultório"** (doctor, pt-BR + en):
+- It shows "Brasil" / "Brazil" with the support hint and has no controls,
+  so it's read-only.
+- An existing (pre-110) doctor also sees Brasil.
+- The Pix field is still there.
+- The secretary's Settings has no card, since that's a separate page.
+
+**CI at `93972ad`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`93972ad`**. It inherits #84's loop fix.
+
+## PR #85 re-test (`th/2-signup-country`, base master) — no picker before the Thai release (UX decision b), 🟢 at `7caddf5`
+
+UX changed the rule after my 🟢 at `93972ad`, to match the app: before the
+Thai release there's **no** country picker, and signup sends no country, so
+the DB default (BR) applies. The rule is in `c655a6c`; the head `7caddf5`
+only adds master merges.
+
+**Checks:** each signup below was captured and **aborted before it reached
+Supabase**, so no account was created.
+
+| Build | Location (`x-vercel-ip-country`) | Picker | `/api/geo` | Signup `user_metadata` |
+|---|---|---|---|---|
+| Flag OFF: local `next dev` of `7caddf5` (= Production) | none, TH, US | **none** ("Onde fica seu consultório?" absent) | **0 requests** | `full_name, role, platform, locale`, **no `country` / `time_zone`** |
+| Flag ON: Preview `7caddf5` | real (Vercel says TH) | Brasil / ประเทศไทย / Outro país, pre-selected **ประเทศไทย** from location | 1 → `{"country":"TH"}` | `country: "TH"`, `time_zone: "America/Sao_Paulo"` (browser zone) |
+
+**Settings card** (Preview `7caddf5`): unchanged. Doctor pt-BR: "País do
+consultório / Brasil" plus the support hint. Doctor en: "Practice country /
+Brazil". It has no controls, so it's read-only. The secretary's Settings
+has no card, as before.
+
+**CI at `7caddf5`:** ✅. **Review: clean at `c761d31`** (the picker code is the same). **Merge gate: 🟢 for `7caddf5`.** The earlier 🟢 at `93972ad` is
+superseded.

@@ -195,7 +195,9 @@
     "patientArchivedError": "This patient is archived. Restore the patient in Patients to schedule an appointment.",
     "moreCount": "+{n} more",
     "slotBlockedConfirm": "This time is blocked ({start}–{end}). Book anyway?",
-    "requestedLabel": "Requested: {date} · {time}"
+    "requestedLabel": "Requested: {date} · {time}",
+    "promptPayTitle": "PromptPay QR",
+    "promptPayScan": "Scan with any Thai banking app to pay."
   },
   "payments": {
     "thisWeek": "This week",
@@ -450,7 +452,14 @@
     "regenerateError": "Couldn't generate a new code. Please try again.",
     "showSetup": "Show setup checklist",
     "registration": "Professional registration",
-    "registrationPlaceholder": "e.g. CRM 12345/SP"
+    "registrationPlaceholder": "e.g. CRM 12345/SP",
+    "promptPay": "PromptPay ID",
+    "promptPayHint": "Your mobile number or 13-digit national ID / tax ID linked to PromptPay. Patients scan the appointment's QR to pay.",
+    "promptPayInvalid": "Enter a 10-digit mobile number (starting with 0) or a 13-digit national ID / tax ID.",
+    "saveFailed": "Couldn't save. Please try again.",
+    "practiceCountry": "Practice country",
+    "practiceCountryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it, contact support@solvymed.com.",
+    "practiceCountryOther": "Other country"
   },
   "clinics": {
     "title": "My Clinics",
@@ -579,7 +588,10 @@
       "joiningAsSecretary": "Joining as a secretary via invite link.",
       "secretaryNeedsInvite": "Secretary? Ask your doctor for an invite link.",
       "secretaryEmailMismatch": "This email doesn't match the invitation, or the invitation is no longer valid. Check the email, or ask the clinic for a new link.",
-      "consent": "By creating an account, you agree to the <terms>Terms of Service</terms> and the <privacy>Privacy Policy</privacy>."
+      "consent": "By creating an account, you agree to the <terms>Terms of Service</terms> and the <privacy>Privacy Policy</privacy>.",
+      "country": "Where is your practice?",
+      "countryOther": "Other country",
+      "countryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it later, contact support."
     },
     "forgotPassword": {
       "title": "Forgot your password?",

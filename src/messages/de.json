@@ -195,7 +195,9 @@
     "patientArchivedError": "Diese Akte ist archiviert. Stellen Sie sie unter Patienten wieder her, um einen Termin anzulegen.",
     "moreCount": "+{n} weitere",
     "slotBlockedConfirm": "Diese Zeit ist blockiert ({start}–{end}). Trotzdem buchen?",
-    "requestedLabel": "Angefragt: {date} · {time}"
+    "requestedLabel": "Angefragt: {date} · {time}",
+    "promptPayTitle": "PromptPay-QR",
+    "promptPayScan": "Zum Bezahlen mit einer beliebigen thailändischen Banking-App scannen."
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -450,7 +452,14 @@
     "regenerateError": "Es konnte kein neuer Code erzeugt werden. Bitte versuchen Sie es erneut.",
     "showSetup": "Einrichtungsliste anzeigen",
     "registration": "Berufliche Registrierungsnummer",
-    "registrationPlaceholder": "z. B. CRM 12345/SP"
+    "registrationPlaceholder": "z. B. CRM 12345/SP",
+    "promptPay": "PromptPay-ID",
+    "promptPayHint": "Ihre Handynummer oder 13-stellige nationale ID / Steuer-ID, die mit PromptPay verknüpft ist. Patienten scannen den QR-Code des Termins, um zu bezahlen.",
+    "promptPayInvalid": "Geben Sie eine 10-stellige Handynummer (beginnend mit 0) oder eine 13-stellige nationale ID / Steuer-ID ein.",
+    "saveFailed": "Speichern fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "practiceCountry": "Land der Praxis",
+    "practiceCountryHint": "Legt Währung, Tarifpreis, Patientenausweis und Zahlungs-QR fest. Für eine Änderung schreiben Sie an support@solvymed.com.",
+    "practiceCountryOther": "Anderes Land"
   },
   "clinics": {
     "title": "Meine Kliniken",
@@ -579,7 +588,10 @@
       "joiningAsSecretary": "Registrierung für das Praxisteam über einen Einladungslink.",
       "secretaryNeedsInvite": "Im Praxisteam tätig? Bitten Sie Ihre Praxis um einen Einladungslink.",
       "secretaryEmailMismatch": "Diese E-Mail-Adresse passt nicht zur Einladung, oder die Einladung ist nicht mehr gültig. Prüfen Sie die Adresse oder bitten Sie die Praxis um einen neuen Link.",
-      "consent": "Mit der Erstellung eines Kontos stimmen Sie den <terms>Nutzungsbedingungen</terms> und der <privacy>Datenschutzerklärung</privacy> zu."
+      "consent": "Mit der Erstellung eines Kontos stimmen Sie den <terms>Nutzungsbedingungen</terms> und der <privacy>Datenschutzerklärung</privacy> zu.",
+      "country": "Wo ist Ihre Praxis?",
+      "countryOther": "Anderes Land",
+      "countryHint": "Legt Währung, Tarifpreis, Patientenausweis und Zahlungs-QR fest. Für eine spätere Änderung wenden Sie sich an den Support."
     },
     "forgotPassword": {
       "title": "Passwort vergessen?",

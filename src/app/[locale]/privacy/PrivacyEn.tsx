@@ -34,7 +34,7 @@ export function PrivacyEn({ turnstile }: { turnstile: boolean }) {
       <Section title="3. Information we collect">
         <p><strong>3.1 Account information:</strong> name, email and password (stored only as a secure hash). Professionals may add their specialty, professional registration, clinic name, address, phone, CNPJ (tax ID) and a Pix key. We also store the practice&apos;s country and time zone, chosen at sign-up (for &quot;Other country&quot;, the country detected from the connection at sign-up).</p>
         <p><strong>3.2 Patient data entered by professionals or their secretaries:</strong> identification and contact data (name, CPF or, for clinics outside Brazil, a national ID or passport number, date of birth, sex, phone, email) and health data (notes, diagnoses, prescriptions, exams, files, appointment history). Health data is sensitive personal data under the LGPD.</p>
-        <p><strong>3.3 Appointments and payments:</strong> dates, times, status, amounts and payment status.</p>
+        <p><strong>3.3 Appointments and payments:</strong> dates, times, status, amounts and payment status. Clinics in Thailand may add a PromptPay ID (a mobile number or national / tax ID), used only to build the appointment payment QR.</p>
         <p><strong>3.4 Subscription billing:</strong> handled by Stripe. We never see or store full card numbers; we keep only a Stripe reference and your subscription status.</p>
         <p><strong>3.5 Device and technical data:</strong> device type, operating system version, app version, push notification tokens, and technical error reports.</p>
         <p>

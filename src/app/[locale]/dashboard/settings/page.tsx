@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, SchedulingRulesForm, BlockedPatientsPanel, InviteCodeCard } from "./SettingsClient";
+import { Card, ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, SchedulingRulesForm, BlockedPatientsPanel, InviteCodeCard } from "./SettingsClient";
 import { TeamPanel, type TeamRow } from "./TeamPanel";
 import { SecretarySettings } from "./SecretarySettings";
 import { ShowSetupRow } from "./ShowSetupRow";
@@ -108,8 +108,25 @@ export default async function SettingsPage({
   }[];
   const teamRows = (Array.isArray(teamResult.data) ? teamResult.data : []) as TeamRow[];
 
-  // What the practice's country decides (currency, payment QR).
-  const practiceProfile = countryProfile(await getPracticeCountry(supabase, user.id, user.id));
+  // The practice country: what it decides (currency, payment QR), and its
+  // name in the page's language ('ZZ' = unknown).
+  const practiceCountry = await getPracticeCountry(supabase, user.id, user.id);
+  const practiceProfile = countryProfile(practiceCountry);
+  let countryName = t("practiceCountryOther");
+  if (practiceCountry !== "ZZ") {
+    try {
+      countryName = new Intl.DisplayNames([locale], { type: "region" }).of(practiceCountry) ?? practiceCountry;
+    } catch {
+      countryName = practiceCountry;
+    }
+  }
+  // The PromptPay ID (Thai practices; the column is from migration 110, so
+  // it's only read for them). If it can't be read, the field is left out:
+  // an empty field would clear the stored ID on the next save.
+  const promptPayResult = practiceProfile.paymentQr === "promptpay"
+    ? await supabase.from("professionals").select("promptpay_id").eq("id", user.id).maybeSingle()
+    : null;
+  const showPromptPay = !!promptPayResult && !promptPayResult.error;
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl">
@@ -131,8 +148,15 @@ export default async function SettingsPage({
 
         <TeamPanel rows={teamRows} loadFailed={!!teamResult.error} />
 
+        {/* The practice country (set at signup, support-only to change). */}
+        <Card title={t("practiceCountry")}>
+          <p className="text-sm font-semibold text-slate-900">{countryName}</p>
+          <p className="mt-1 text-xs text-slate-500">{t("practiceCountryHint")}</p>
+        </Card>
+
         <ClinicForm
           showPix={practiceProfile.paymentQr === "pix"}
+          showPromptPay={showPromptPay}
           data={{
             clinic_name: prof.clinic_name ?? undefined,
             clinic_cnpj: prof.clinic_cnpj ?? undefined,
@@ -142,6 +166,7 @@ export default async function SettingsPage({
             clinic_city: prof.clinic_city ?? undefined,
             clinic_state: prof.clinic_state ?? undefined,
             pix_key: (prof as { pix_key?: string | null }).pix_key ?? undefined,
+            promptpay_id: (promptPayResult?.data as { promptpay_id?: string | null } | null)?.promptpay_id ?? undefined,
           }}
         />
 

@@ -195,7 +195,9 @@
     "patientArchivedError": "هذا الملف مؤرشف. استعِده من قسم المرضى لحجز موعد.",
     "moreCount": "+{n} أخرى",
     "slotBlockedConfirm": "هذا الوقت محجوب ({start}–{end}). هل تريد الحجز على أي حال؟",
-    "requestedLabel": "المطلوب: {date} · {time}"
+    "requestedLabel": "المطلوب: {date} · {time}",
+    "promptPayTitle": "رمز QR لـ PromptPay",
+    "promptPayScan": "امسح الرمز بأي تطبيق مصرفي تايلاندي للدفع."
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",
@@ -450,7 +452,14 @@
     "regenerateError": "تعذّر إنشاء رمز جديد. يرجى المحاولة مرة أخرى.",
     "showSetup": "عرض قائمة الإعداد",
     "registration": "رقم التسجيل المهني",
-    "registrationPlaceholder": "مثال: CRM 12345/SP"
+    "registrationPlaceholder": "مثال: CRM 12345/SP",
+    "promptPay": "معرّف PromptPay",
+    "promptPayHint": "رقم هاتفك المحمول أو رقم الهوية الوطنية / الضريبية المكوّن من 13 رقمًا المرتبط بـ PromptPay. يمسح المرضى رمز QR الخاص بالموعد للدفع.",
+    "promptPayInvalid": "أدخل رقم هاتف محمول من 10 أرقام (يبدأ بـ 0) أو رقم هوية وطنية / ضريبية من 13 رقمًا.",
+    "saveFailed": "تعذّر الحفظ. يُرجى المحاولة مرة أخرى.",
+    "practiceCountry": "دولة العيادة",
+    "practiceCountryHint": "يحدد العملة وسعر الباقة وهوية المريض ورمز الدفع. لتغييره، راسل support@solvymed.com.",
+    "practiceCountryOther": "دولة أخرى"
   },
   "clinics": {
     "title": "عياداتي",
@@ -579,7 +588,10 @@
       "joiningAsSecretary": "الانضمام كسكرتير عبر رابط دعوة.",
       "secretaryNeedsInvite": "للسكرتارية: اطلب رابط دعوة من العيادة.",
       "secretaryEmailMismatch": "هذا البريد الإلكتروني لا يطابق الدعوة، أو أن الدعوة لم تعد صالحة. تحقّق من البريد أو اطلب رابطًا جديدًا من العيادة.",
-      "consent": "بإنشاء حساب، فإنك توافق على <terms>شروط الخدمة</terms> و<privacy>سياسة الخصوصية</privacy>."
+      "consent": "بإنشاء حساب، فإنك توافق على <terms>شروط الخدمة</terms> و<privacy>سياسة الخصوصية</privacy>.",
+      "country": "أين تقع عيادتك؟",
+      "countryOther": "دولة أخرى",
+      "countryHint": "يحدد العملة وسعر الباقة وهوية المريض ورمز الدفع. لتغييره لاحقًا، تواصل مع الدعم."
     },
     "forgotPassword": {
       "title": "نسيت كلمة المرور؟",
