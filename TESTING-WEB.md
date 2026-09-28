@@ -6265,3 +6265,43 @@ paging and names after an account deletion.
 **CI at `c1c135e`:** ✅. **Merge gate: 🟢 for `c1c135e`** within the
 pre-111 scope, once the reviewer is clean. This docs commit sits on top,
 after a master sync.
+
+## PR #93 (`fix/money-input`, base `release`) — hotfix: typed amounts read "150,50" as 150.50, not 15050, 🟢 at `962b880`
+
+The money inputs were `type="number"`. Chrome read "150,50" as 15050, and
+the procedure price refused cents. The inputs are now text with
+`inputMode="decimal"`, read by `parseMoney`, with an "= R$ …" preview and
+an error for invalid text (no fallback).
+
+Checked on the Preview at `962b880` in **Chromium and WebKit** (Safari's
+engine), pt-BR. I used a throwaway doctor per browser (deleted
+afterwards), with past pending appointments that had no amount.
+
+**Payments → "Marcar como Pago"** (identical in both browsers):
+
+| Typed | Preview | After "Confirmar" | DB |
+|---|---|---|---|
+| `150,50` | "= R$ 150,50" | R$ 150,50 in the list | paid, 150.5 |
+| `1.500,50` | "= R$ 1.500,50" | R$ 1.500,50 | paid, 1500.5 |
+| `150.50` | "= R$ 150,50" | R$ 150,50 | paid, 150.5 |
+| `abc` | none | "Informe um valor válido." | **pending, null** |
+| `150,5050` | none | "Informe um valor válido." | **pending, null** |
+
+The "received" total afterwards is R$ 1.801,50 (150.50 + 1500.50 +
+150.50), so it's correct.
+
+**Settings → Procedimentos → new procedure** (both browsers):
+- `89,90`: preview "= R$ 89,90". Saved as **89.9**, and the list row reads
+  "60 min · R$ 89,90 · private", also after a reload. Before, cents were
+  refused.
+- `1.234,5`: preview "= R$ 1.234,50", saved as 1234.5.
+- `abc`: "Informe um valor válido.", and **nothing saved**.
+
+**Input type:** both fields are `type=text` and `inputMode=decimal`, so
+phones show a decimal keyboard. At 390 px (touch) there's no sideways
+scroll. Other numeric inputs on `release` are whole numbers only
+(duration, max bookings), so they're unaffected.
+
+**CI at `962b880`:** ✅. **Merge gate: 🟢 for `962b880`**, once the reviewer
+is clean. The branch was up to date with `release`; this docs commit sits
+on top.
