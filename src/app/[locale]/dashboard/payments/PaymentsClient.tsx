@@ -4,6 +4,8 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTransition, useCallback, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { markPaid, markUnpaid } from "./actions";
+import { formatMoney, parseMoney } from "@/lib/money";
+import type { Currency } from "@/lib/country";
 
 
 const ERROR_CODE_KEY: Record<string, string> = {
@@ -49,7 +51,8 @@ export function PeriodFilter({ current }: { current: string }) {
   );
 }
 
-export function MarkPaidButton({ id, amount }: { id: string; amount?: number }) {
+// currency: the practice's (its country), for the "= …" echo.
+export function MarkPaidButton({ id, amount, currency = "BRL" }: { id: string; amount?: number; currency?: Currency }) {
   const t = useTranslations("payments");
   const [pending, startTransition] = useTransition();
   const [showAmount, setShowAmount] = useState(false);
@@ -57,9 +60,19 @@ export function MarkPaidButton({ id, amount }: { id: string; amount?: number }) 
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // The typed amount, read by one rule (lib/money parseMoney; "150,50" and
+  // "150.50" both = 150.50). Invalid text is an error, never a fallback to
+  // another amount.
+  const parsed = parseMoney(inputVal);
+
   function handlePaid() {
-    if (!amount && !inputVal) { setShowAmount(true); return; }
-    const finalAmount = parseFloat(inputVal) || amount || 0;
+    if (!amount && !inputVal.trim()) { setShowAmount(true); return; }
+    if (inputVal.trim() && parsed === null) {
+      setShowAmount(true);
+      setError(t("errorInvalidAmount"));
+      return;
+    }
+    const finalAmount = inputVal.trim() ? parsed! : amount ?? 0;
     setError("");
     startTransition(async () => {
       const result = await markPaid(id, finalAmount);
@@ -71,13 +84,14 @@ export function MarkPaidButton({ id, amount }: { id: string; amount?: number }) 
     return (
       <div className="flex flex-col items-start gap-1">
         <div className="flex items-center gap-2">
+          {/* Text, not type="number": Chrome reads "150,50" as 15050. */}
           <input
             ref={inputRef}
-            type="number"
-            min="0"
-            step="0.01"
+            type="text"
+            inputMode="decimal"
+            autoComplete="off"
             value={inputVal}
-            onChange={e => setInputVal(e.target.value)}
+            onChange={e => { setInputVal(e.target.value); setError(""); }}
             placeholder={t("amountPlaceholder")}
             className="w-28 rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
             autoFocus
@@ -93,6 +107,8 @@ export function MarkPaidButton({ id, amount }: { id: string; amount?: number }) 
             {t("cancel")}
           </button>
         </div>
+        {/* What will be saved, so a misread amount is visible before confirming. */}
+        {parsed !== null && !error && <p className="text-xs text-slate-500">= {formatMoney(parsed, currency)}</p>}
         {error && <p className="text-xs text-red-600">{error}</p>}
       </div>
     );

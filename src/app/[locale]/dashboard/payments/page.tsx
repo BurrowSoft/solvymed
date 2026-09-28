@@ -179,7 +179,7 @@ export default async function PaymentsPage({
                       )}
                     </div>
                     <div className="shrink-0">
-                      <MarkPaidButton id={p.id} amount={p.payment_amount} />
+                      <MarkPaidButton id={p.id} amount={p.payment_amount} currency={currency} />
                     </div>
                   </div>
                 </div>
