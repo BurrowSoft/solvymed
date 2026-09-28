@@ -1,5 +1,4 @@
 ﻿{
-  "banner": "Trang web đang được xây dựng. Ứng dụng đã có mặt — tải xuống ngay và bắt đầu.",
   "getApp": "Tải ứng dụng",
   "hero": {
     "badge": "Ứng dụng đã sẵn sàng",
@@ -44,10 +43,6 @@
     "sub": "Ứng dụng đã sẵn sàng — tải xuống ngay và để phòng khám của bạn hoạt động trong vài phút. Trang web đang trên đường.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
-  },
-  "construction": {
-    "heading": "Trang web đang được xây dựng",
-    "body": "Trang web này đang được phát triển. Trang web đầy đủ của Solvymed sẽ sớm ra mắt với tài liệu chi tiết, bảng giá và tài nguyên hỗ trợ. Trong thời gian này, ứng dụng hoàn toàn hoạt động — tải xuống và bắt đầu quản lý phòng khám của bạn ngay hôm nay."
   },
   "footer": {
     "copyright": "© 2026 Solvymed. Bảo lưu mọi quyền.",

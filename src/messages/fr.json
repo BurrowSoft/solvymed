@@ -1,5 +1,4 @@
 ﻿{
-  "banner": "Site en cours de construction. L'app est déjà disponible — téléchargez-la maintenant.",
   "getApp": "Télécharger l'app",
   "hero": {
     "badge": "App disponible maintenant",
@@ -44,10 +43,6 @@
     "sub": "L'app est en ligne et opérationnelle — téléchargez-la maintenant et faites tourner votre cabinet en quelques minutes. Le site arrive bientôt.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
-  },
-  "construction": {
-    "heading": "Site en cours de construction",
-    "body": "Ce site web est en cours de développement. Le site complet de Solvymed sera bientôt disponible avec une documentation détaillée, les tarifs et des ressources d'assistance. En attendant, l'application est entièrement opérationnelle — téléchargez-la et commencez à gérer votre cabinet dès aujourd'hui."
   },
   "footer": {
     "copyright": "© 2026 Solvymed. Tous droits réservés.",

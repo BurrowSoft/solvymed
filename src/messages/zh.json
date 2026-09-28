@@ -1,5 +1,4 @@
 ﻿{
-  "banner": "网站正在建设中。应用程序已上线 — 立即下载开始使用。",
   "getApp": "下载应用",
   "hero": {
     "badge": "应用已上线",
@@ -44,10 +43,6 @@
     "sub": "应用已上线并随时可用 — 立即下载，几分钟内让您的诊所运转起来。网站即将上线。",
     "appStore": "App Store",
     "googlePlay": "Google Play"
-  },
-  "construction": {
-    "heading": "网站建设中",
-    "body": "本网站正在开发中。完整的Solvymed网站即将上线，届时将提供详细文档、定价和支持资源。在此期间，应用程序完全可用 — 立即下载并开始管理您的诊所。"
   },
   "footer": {
     "copyright": "© 2026 Solvymed 版权所有。",

@@ -1,5 +1,4 @@
 ﻿{
-  "banner": "網站建設中。應用程式已上線 — 立即下載開始使用。",
   "getApp": "下載應用程式",
   "hero": {
     "badge": "應用程式已上線",
@@ -44,10 +43,6 @@
     "sub": "應用程式已上線並隨時可用 — 立即下載，幾分鐘內讓您的診所運作起來。網站即將上線。",
     "appStore": "App Store",
     "googlePlay": "Google Play"
-  },
-  "construction": {
-    "heading": "網站建設中",
-    "body": "本網站正在開發中。完整的Solvymed網站即將上線，屆時將提供詳細文件、定價和支援資源。在此期間，應用程式完全可用 — 立即下載並開始管理您的診所。"
   },
   "footer": {
     "copyright": "© 2026 Solvymed 版權所有。",
