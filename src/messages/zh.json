@@ -479,7 +479,9 @@
     "emptySubtitle": "添加您的诊所以便患者找到您",
     "addFirst": "添加您的第一家诊所",
     "nameRequiredError": "诊所名称为必填项。",
-    "genericError": "出现问题，请重试。"
+    "genericError": "出现问题，请重试。",
+    "delete": "删除诊所",
+    "deleteConfirm": "删除“{name}”？此操作无法撤销。"
   },
   "consultType": {
     "consultation": "门诊",

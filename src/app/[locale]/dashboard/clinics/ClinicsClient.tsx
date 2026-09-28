@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useRef } from "react";
+import { useEffect, useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { addClinic, deleteClinic } from "./actions";
@@ -30,6 +30,9 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
   const t = useTranslations("clinics");
   const router = useRouter();
   const [clinics, setClinics] = useState(initial);
+  // router.refresh() after adding passes a new list; useState alone would
+  // keep showing the old one until a reload.
+  useEffect(() => setClinics(initial), [initial]);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -50,7 +53,8 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
     });
   }
 
-  function handleDelete(id: string) {
+  function handleDelete(id: string, name: string) {
+    if (!window.confirm(t("deleteConfirm", { name }))) return;
     setDeletingId(id);
     startTransition(async () => {
       const result = await deleteClinic(id);
@@ -185,9 +189,10 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
                 </div>
               </div>
               <button
-                onClick={() => handleDelete(clinic.id)}
+                onClick={() => handleDelete(clinic.id, clinic.name)}
                 disabled={deletingId === clinic.id || isPending}
-                title={t("cancel")}
+                title={t("delete")}
+                aria-label={t("delete")}
                 className="shrink-0 rounded-lg p-2 text-slate-400 hover:bg-red-50 hover:text-red-500 transition disabled:opacity-40"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">

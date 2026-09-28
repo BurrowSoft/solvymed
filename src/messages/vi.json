@@ -479,7 +479,9 @@
     "emptySubtitle": "Thêm phòng khám của bạn để bệnh nhân có thể tìm thấy bạn",
     "addFirst": "Thêm phòng khám đầu tiên của bạn",
     "nameRequiredError": "Tên phòng khám là bắt buộc.",
-    "genericError": "Đã xảy ra lỗi. Vui lòng thử lại."
+    "genericError": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "delete": "Xóa phòng khám",
+    "deleteConfirm": "Xóa “{name}”? Không thể hoàn tác thao tác này."
   },
   "consultType": {
     "consultation": "Tư vấn",

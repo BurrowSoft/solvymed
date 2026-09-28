@@ -479,7 +479,9 @@
     "emptySubtitle": "Fügen Sie Ihre Klinik hinzu, damit Patienten Sie finden können",
     "addFirst": "Erste Klinik hinzufügen",
     "nameRequiredError": "Der Name der Klinik ist erforderlich.",
-    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "delete": "Praxis löschen",
+    "deleteConfirm": "„{name}“ löschen? Das kann nicht rückgängig gemacht werden."
   },
   "consultType": {
     "consultation": "Beratung",

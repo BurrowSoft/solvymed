@@ -479,7 +479,9 @@
     "emptySubtitle": "Tambahkan klinik Anda agar pasien dapat menemukan Anda",
     "addFirst": "Tambahkan klinik pertama Anda",
     "nameRequiredError": "Nama klinik wajib diisi.",
-    "genericError": "Terjadi kesalahan. Silakan coba lagi."
+    "genericError": "Terjadi kesalahan. Silakan coba lagi.",
+    "delete": "Hapus klinik",
+    "deleteConfirm": "Hapus “{name}”? Tindakan ini tidak dapat dibatalkan."
   },
   "consultType": {
     "consultation": "Konsultasi",

@@ -5334,6 +5334,23 @@ phones:
 
 **Merge gate: 🟢 for `d963bd0`, and so for #64 at `b7405d7`, which it contains.**
 
+## PR #67 (`fix/clinics-form`, base `release`) — clinics: save without País, list refresh, delete confirm, 🟢 at `a229316`, review clean
+
+This fixes the RC finding (a). Checked on the preview on master's
+`cbb181d` and again on the release rebase `a229316` (same code), with a
+throwaway doctor, deleted afterwards:
+- **Save without País:** before, it failed on `null value in column
+  "country"` behind a generic error. Now the clinic saves, with `country =
+  BR`, geocoded, and **appears in the list immediately** (no reload).
+- **Delete:** the icon is labelled **"Excluir clínica"** (title and
+  `aria-label`), where it used to say "Cancelar". It asks **"Excluir
+  “Unidade Opus 67”? Isso não pode ser desfeito."**: Cancel keeps the
+  clinic, OK deletes it and removes it from the list.
+- **Observation, not a blocker:** "Rua Augusta, 500, São Paulo" with no
+  state geocoded to lat −22.85 (not São Paulo). With "SP" and "Brasil" it
+  was right (−23.56).
+
+**CI at `a229316`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `a229316`.**
 ## PR #62 (`chore/review-followups`, base `release`) — feedback page translated, generic error on pending-confirmation, 🟢 at `b6b3aa7`, review clean
 
 **Checked on the preview** in pt-BR, th, ar and en, with 3 `[TEST]`

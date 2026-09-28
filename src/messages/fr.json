@@ -479,7 +479,9 @@
     "emptySubtitle": "Ajoutez votre clinique pour que les patients puissent vous trouver",
     "addFirst": "Ajouter votre première clinique",
     "nameRequiredError": "Le nom de la clinique est obligatoire.",
-    "genericError": "Une erreur s'est produite. Réessayez."
+    "genericError": "Une erreur s'est produite. Réessayez.",
+    "delete": "Supprimer la clinique",
+    "deleteConfirm": "Supprimer « {name} » ? Cette action est irréversible."
   },
   "consultType": {
     "consultation": "Consultation",

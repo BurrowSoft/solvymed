@@ -479,7 +479,9 @@
     "emptySubtitle": "Aggiungi la tua clinica per permettere ai pazienti di trovarti",
     "addFirst": "Aggiungi la tua prima clinica",
     "nameRequiredError": "Il nome della clinica è obbligatorio.",
-    "genericError": "Qualcosa è andato storto. Riprova."
+    "genericError": "Qualcosa è andato storto. Riprova.",
+    "delete": "Elimina clinica",
+    "deleteConfirm": "Eliminare «{name}»? L'operazione non può essere annullata."
   },
   "consultType": {
     "consultation": "Consulenza",
