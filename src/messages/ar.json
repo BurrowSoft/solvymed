@@ -195,7 +195,8 @@
     "missingFieldsError": "يرجى ملء جميع الحقول المطلوبة.",
     "pastMidnightError": "سيتجاوز هذا الوقت والمدة منتصف الليل.",
     "patientArchivedError": "هذا الملف مؤرشف. استعِده من قسم المرضى لحجز موعد.",
-    "moreCount": "+{n} أخرى"
+    "moreCount": "+{n} أخرى",
+    "requestedLabel": "المطلوب: {date} · {time}"
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",

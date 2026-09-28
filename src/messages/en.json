@@ -195,7 +195,8 @@
     "slotTakenAlert": "That slot is no longer available. Please decline and let the patient choose another time.",
     "pastProposalAlert": "The proposed time has already passed. Please decline so the patient can request a new slot.",
     "patientArchivedError": "This patient is archived. Restore the patient in Patients to schedule an appointment.",
-    "moreCount": "+{n} more"
+    "moreCount": "+{n} more",
+    "requestedLabel": "Requested: {date} · {time}"
   },
   "payments": {
     "thisWeek": "This week",
