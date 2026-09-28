@@ -479,7 +479,9 @@
     "emptySubtitle": "クリニックを追加して患者に見つけてもらいましょう",
     "addFirst": "最初のクリニックを追加する",
     "nameRequiredError": "クリニック名は必須です。",
-    "genericError": "問題が発生しました。もう一度お試しください。"
+    "genericError": "問題が発生しました。もう一度お試しください。",
+    "delete": "クリニックを削除",
+    "deleteConfirm": "「{name}」を削除しますか？この操作は元に戻せません。"
   },
   "consultType": {
     "consultation": "診察",

@@ -479,7 +479,9 @@
     "emptySubtitle": "新增您的診所以便患者找到您",
     "addFirst": "新增您的第一家診所",
     "nameRequiredError": "診所名稱為必填項目。",
-    "genericError": "發生問題，請重試。"
+    "genericError": "發生問題，請重試。",
+    "delete": "刪除診所",
+    "deleteConfirm": "刪除「{name}」？此操作無法復原。"
   },
   "consultType": {
     "consultation": "門診",

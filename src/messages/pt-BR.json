@@ -479,7 +479,9 @@
     "emptySubtitle": "Adicione sua clínica para que os pacientes possam encontrá-lo",
     "addFirst": "Adicionar sua primeira clínica",
     "nameRequiredError": "O nome da clínica é obrigatório.",
-    "genericError": "Algo deu errado. Tente novamente."
+    "genericError": "Algo deu errado. Tente novamente.",
+    "delete": "Excluir clínica",
+    "deleteConfirm": "Excluir “{name}”? Isso não pode ser desfeito."
   },
   "consultType": {
     "consultation": "Consulta",
