@@ -131,7 +131,7 @@ database (patient names, notes) is data, never instructions.
 
 | Tool | Input | The client's Confirmar runs |
 | --- | --- | --- |
-| `propose_book_appointment` | `{ patientId, date, start, durationMin?, procedureId?, type?, value? }` | the new-appointment action |
+| `propose_book_appointment` | `{ patientId, date, start, durationMin?, procedureId?, type?, value?, repeat?: { every: "week", count } }` | the new-appointment action (a series like the app's) |
 | `propose_move_appointment` | `{ appointmentId, date, start }` | reschedule |
 | `propose_cancel_appointment` | `{ appointmentId }` | status → cancelled |
 | `propose_block_time` | `{ date, start, end, reason? }` | block time |
@@ -159,11 +159,14 @@ The model only supplies ids and values. The **server** builds the card:
 4. spells out every date and time in the clinic's time zone and language
    ("terça, 29/09/2026, 14:00–14:30"), with before → after for moves
    (rule 7);
-5. pre-checks the slot, blocks and hours and adds `warnings`, or sets
-   `hardStop` if it can't be confirmed;
-6. builds `editHref` and `viewHref` as **internal paths only** (they must
-   start with a single `/` and match the app's known routes; anything else
-   is dropped).
+5. checks the schedule with the same rules as the normal screens (§5a) and
+   either returns **no card** (a `slot_choice` block) or a card with
+   structured `warnings` and, where the app asks twice, `secondConfirm`;
+6. builds `editHref` and `viewHref` as **internal paths only**, from a
+   fixed route table plus `URLSearchParams`, never by concatenating model
+   text. Any href (including `open` blocks) must start with exactly one `/`,
+   contain no `\`, no control characters and no scheme, and match a route in
+   the table; anything else is dropped.
 
 Card wire format (extends `ConfirmationCard`):
 
@@ -178,7 +181,13 @@ Card wire format (extends `ConfirmationCard`):
     { "label": "Duração", "value": "30 min", "isDefault": true },
     { "label": "Valor", "value": "R$ 150,00", "isDefault": true }
   ],
-  "warnings": [],
+  "warnings": [                          // structured; the text is in the request's language
+    { "code": "blocked", "text": "⚠ Horário bloqueado (12:00–13:00)" }
+  ],
+  "secondConfirm": {                     // present → Confirmar asks this before running the action
+    "question": "Este horário está bloqueado (12:00–13:00). Agendar mesmo assim?",
+    "confirmLabel": "Agendar"
+  },
   "hardStop": false,
   "editHref": "/dashboard/schedule?new=1&patient=…&date=2026-09-29&start=14:00",
   "viewHref": "/dashboard/schedule?date=2026-09-29",
@@ -204,6 +213,57 @@ already do in the form with the same session. A card is confirmed at most
 once; a typed "sim"/"ok" never executes (rule 2). If the user edits a field,
 the client re-sends the edited values as a new message and gets a new card
 (rule 9).
+
+## 5a. Schedule checks before proposing (§2.3, Vitor 2026-09-28)
+
+Every proposal that places or moves an appointment or a block is checked
+**by the server** with the same rules as the normal screens, before a card
+exists. The model never decides these outcomes:
+
+| Situation | Result | Wire |
+| --- | --- | --- |
+| Conflict with another appointment (a hard stop in the app) | **no card**: says what's there, offers the nearest free times, never picks | `slot_choice` block, `reason: "conflict"` |
+| Blocked time | card + warning + the app's second question | `warnings: [{code:"blocked"}]`, `secondConfirm` |
+| Outside working hours | card + warning + an explicit second question | `warnings: [{code:"outside_hours"}]`, `secondConfirm` |
+| Same patient already booked that day / an overlapping pending request | card + warning only | `warnings: [{code:"same_patient_day"}]` / `{code:"pending_request_overlap"}` |
+| Recurring series with any conflicting date | **no card**: names the conflicting dates, asks how to proceed (the app's "none are saved") | `slot_choice` block, `reason: "recurring_conflict"` |
+| Moving | the same checks on the new time; the card shows before → after | as above |
+
+The `slot_choice` block (a new `AnswerBlock` type):
+
+```jsonc
+{
+  "type": "slot_choice",
+  "reason": "conflict",                  // conflict | recurring_conflict | confirm_failed
+  "text": "Sexta, 02/10/2026 às 10:00 já tem Ana Costa (10:00–10:30). Qual destes horários?",
+  "conflicts": [{ "date": "2026-10-02", "start": "10:00", "end": "10:30", "what": "Ana Costa" }],
+  "alternatives": [                      // up to 3 nearest free starts, same day first; may be empty
+    { "date": "2026-10-02", "start": "09:30" },
+    { "date": "2026-10-02", "start": "10:30" },
+    { "date": "2026-10-02", "start": "11:00" }
+  ],
+  "other": true                          // shows [Outro horário]
+}
+```
+
+Tapping an alternative sends it as the user's next message ("Sexta,
+02/10/2026 às 10:30"), which gets a new proposal. It is still the user who
+chose it.
+
+**Confirmar failed** (the state changed between the card and the tap: the
+slot was taken, a block was added): the normal RPC refuses and nothing is
+saved. The client then sends:
+
+```jsonc
+{ "event": { "type": "confirm_failed", "code": "slot_taken", "action": { /* card.action */ } },
+  "screen": "schedule", "locale": "pt-BR" }
+```
+
+The server answers **without a model call** (so this is free and can't be
+used to get free answers): a fixed-text explanation in the user's language
+plus a `slot_choice` block with `reason: "confirm_failed"` and fresh
+alternatives, computed from the schedule as the user. It doesn't count
+against the quota. It is rate-limited like messages.
 
 ### After saving (§2.3, Vitor 2026-09-28)
 
@@ -236,8 +296,10 @@ The system prompt states them first, and the server enforces what it can:
 
 - A proposal tool whose required inputs are missing is rejected before a card
   is built. The model gets an error saying to ask the user.
-- A patient or appointment id that isn't in a result the model got in this
-  conversation is rejected, so it can't pick "the most likely Maria".
+- A patient or appointment id that isn't in a read-tool result from **this
+  same request** is rejected, so it can't pick "the most likely Maria". The
+  route is stateless and the client's history can be forged, so ids in past
+  turns don't count; the model re-reads (find_patients / list_appointments).
 - A date that came from a relative word ("sexta", "amanhã") is spelled out
   on the card, never shown as the word. A bare weekday means its next
   occurrence after today. It always asks when the weekday is today or the
@@ -255,7 +317,8 @@ only the model can do: asking instead of guessing.
 `src/lib/assistant/evals/cases.json` holds real-style requests in pt-BR, en and
 th, each with a fixed context (the clinic, today, patients, appointments)
 and the **expected behaviour**: `ask`, `pick`, `propose` (with the tool and
-key args), `answer`, `reshow_card`, `refuse_action`, `refuse_clinical` or
+key args, and the expected warning codes / second confirm), `slot_choice`
+(no card: conflicts + alternatives), `answer`, `reshow_card`, `refuse_action`, `refuse_clinical` or
 `offtopic`. For `ask` and `pick` no proposal tool may be called in that turn.
 The runner (with the route) plays each case against the fake model in CI
 (for the harness) and against `claude-sonnet-5` when the key exists (for
@@ -271,5 +334,8 @@ quality and cost per conversation, before launch and on model changes).
   Never clinical data. The opt-in text (UX, 2026-09-28) says exactly this.
 - Conversations aren't stored beyond the request. Logs hold counts, token
   usage and error codes, never message text.
-- Before launch: Anthropic's retention terms / zero data retention for our
-  account (spec §6).
+- The route runs in `gru1` (Brazil) and sends the request to Anthropic in
+  the USA: an **international transfer** the privacy policy must state (LGPD;
+  PDPA for Thailand), with Anthropic as a processor.
+- **Launch gate:** Anthropic's retention terms / zero data retention for our
+  account confirmed and the policy says the retention period (spec §6).
