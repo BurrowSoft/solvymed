@@ -685,7 +685,8 @@
     "reschedulePending": "إعادة الجدولة قيد الانتظار",
     "rescheduleRequestedLabel": "طلب تغيير الموعد: {date} · {time}",
     "rescheduleButton": "طلب تغيير الموعد",
-    "closeDialog": "إغلاق"
+    "closeDialog": "إغلاق",
+    "originallyLabel": "الموعد الأصلي: {date} · {time}"
   },
   "nav": {
     "overview": "نظرة عامة",

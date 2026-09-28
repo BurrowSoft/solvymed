@@ -685,7 +685,8 @@
     "reschedulePending": "일정 변경 대기 중",
     "rescheduleRequestedLabel": "일정 변경 요청: {date} · {time}",
     "rescheduleButton": "일정 변경 요청",
-    "closeDialog": "닫기"
+    "closeDialog": "닫기",
+    "originallyLabel": "기존: {date} · {time}"
   },
   "nav": {
     "overview": "홈",

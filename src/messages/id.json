@@ -685,7 +685,8 @@
     "reschedulePending": "Penjadwalan Ulang Tertunda",
     "rescheduleRequestedLabel": "Permintaan penjadwalan ulang: {date} · {time}",
     "rescheduleButton": "Minta penjadwalan ulang",
-    "closeDialog": "Tutup"
+    "closeDialog": "Tutup",
+    "originallyLabel": "Semula: {date} · {time}"
   },
   "nav": {
     "overview": "Ringkasan",

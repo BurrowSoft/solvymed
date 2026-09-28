@@ -685,7 +685,8 @@
     "reschedulePending": "รอการยืนยัน",
     "rescheduleRequestedLabel": "คำขอเปลี่ยนนัด: {date} · {time}",
     "rescheduleButton": "ขอเปลี่ยนนัดหมาย",
-    "closeDialog": "ปิด"
+    "closeDialog": "ปิด",
+    "originallyLabel": "เดิม: {date} · {time}"
   },
   "nav": {
     "overview": "ภาพรวม",

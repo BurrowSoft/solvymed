@@ -685,7 +685,8 @@
     "reschedulePending": "Verschiebung ausstehend",
     "rescheduleRequestedLabel": "Terminverschiebung angefragt: {date} · {time}",
     "rescheduleButton": "Verschiebung beantragen",
-    "closeDialog": "Schließen"
+    "closeDialog": "Schließen",
+    "originallyLabel": "Ursprünglich: {date} · {time}"
   },
   "nav": {
     "overview": "Übersicht",

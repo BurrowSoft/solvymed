@@ -685,7 +685,8 @@
     "reschedulePending": "Reprogrammation en attente",
     "rescheduleRequestedLabel": "Report demandé : {date} · {time}",
     "rescheduleButton": "Demander un report",
-    "closeDialog": "Fermer"
+    "closeDialog": "Fermer",
+    "originallyLabel": "Initialement : {date} · {time}"
   },
   "nav": {
     "overview": "Accueil",
