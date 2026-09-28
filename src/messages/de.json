@@ -1064,7 +1064,7 @@
     "newApptTitle": "Termine in Sekunden",
     "newApptText": "Patient und Uhrzeit wählen, fertig. Sie können auch Zeiten blockieren.",
     "scheduleTitle": "Ihr Kalender",
-    "scheduleText": "Nach Tag, Woche oder Monat; öffnen Sie einen Termin, um ihn zu bestätigen, zu verschieben oder als bezahlt zu markieren.",
+    "scheduleText": "Nach Tag, Woche oder Monat: Ändern Sie den Status von Terminen und beantworten Sie Anfragen von Patienten.",
     "patientsTitle": "Ihre Patienten",
     "patientsText": "Stammdaten, Verlauf, Akten, Rezepte und Befunde jedes Patienten.",
     "paymentsPixTitle": "Mit Pix bezahlt werden",

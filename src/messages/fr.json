@@ -1064,7 +1064,7 @@
     "newApptTitle": "Prenez rendez-vous en quelques secondes",
     "newApptText": "Choisissez le patient et l'heure, c'est tout. Vous pouvez aussi bloquer des créneaux.",
     "scheduleTitle": "Votre agenda",
-    "scheduleText": "Par jour, semaine ou mois ; ouvrez un rendez-vous pour le confirmer, le déplacer ou le marquer comme payé.",
+    "scheduleText": "Par jour, semaine ou mois : changez le statut des rendez-vous et répondez aux demandes des patients.",
     "patientsTitle": "Vos patients",
     "patientsText": "Coordonnées, historique, dossiers, ordonnances et examens de chaque patient.",
     "paymentsPixTitle": "Soyez payé par Pix",

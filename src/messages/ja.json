@@ -1064,7 +1064,7 @@
     "newApptTitle": "数秒で予約",
     "newApptText": "患者と時間を選ぶだけ。時間のブロックもできます。",
     "scheduleTitle": "予約表",
-    "scheduleText": "日・週・月で表示。予約を開いて確定、変更、支払い済みにできます。",
+    "scheduleText": "日・週・月で表示し、予約のステータス変更や患者からのリクエストへの対応ができます。",
     "patientsTitle": "患者",
     "patientsText": "各患者の情報、履歴、カルテ、処方箋、検査。",
     "paymentsPixTitle": "Pix で受け取る",
