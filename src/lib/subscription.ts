@@ -41,5 +41,7 @@ export function getPlanPrice(country: string | null | undefined): PlanPrice {
   const kind = countryProfile(country).kind;
   if (kind === 'BR') return { amount: 'R$ 89', currency: 'brl', unitAmount: 8900 };
   if (kind === 'TH') return { amount: '฿690', currency: 'thb', unitAmount: 69000 };
-  return { amount: '$19', currency: 'usd', unitAmount: 1900 };
+  // "US$", not a bare "$": the currency must be unmistakable before the card
+  // form (UX), and "$" alone also means other dollars.
+  return { amount: 'US$ 19', currency: 'usd', unitAmount: 1900 };
 }

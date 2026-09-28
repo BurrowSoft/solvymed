@@ -5,7 +5,7 @@ describe("getPlanPrice (by practice country, TH-5)", () => {
   it("prices Brazil, Thailand and everywhere else", () => {
     expect(getPlanPrice("BR")).toEqual({ amount: "R$ 89", currency: "brl", unitAmount: 8900 });
     expect(getPlanPrice("TH")).toEqual({ amount: "฿690", currency: "thb", unitAmount: 69000 });
-    for (const c of ["PT", "US", "ZZ"]) expect(getPlanPrice(c)).toEqual({ amount: "$19", currency: "usd", unitAmount: 1900 });
+    for (const c of ["PT", "US", "ZZ"]) expect(getPlanPrice(c)).toEqual({ amount: "US$ 19", currency: "usd", unitAmount: 1900 });
   });
 
   it("is Brazil for a practice without a country yet (before migration 110)", () => {
