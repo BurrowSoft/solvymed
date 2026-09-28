@@ -149,6 +149,13 @@ describe("BookingClient", () => {
     expect(screen.getByText("Health Clinic")).toBeInTheDocument();
   });
 
+  it("the optional ID field says (optional) once, not ((optional))", async () => {
+    setupMocks();
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getAllByText("(optional)").length).toBeGreaterThan(0));
+    expect(screen.queryByText("((optional))")).not.toBeInTheDocument();
+  });
+
   it("shows loading spinner while fetching setup data", () => {
     mockRpc.mockReturnValue(new Promise(() => {})); // never resolves
     render(<BookingClient {...BASE_PROPS} />);
