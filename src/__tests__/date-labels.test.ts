@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { formatDateLabel, formatTimeLabel, plainSpaces } from "@/lib/dateLabels";
-import { calendarHeaderLabel, weekdayLabels } from "@/app/[locale]/dashboard/schedule/CalendarView";
+import { calendarHeaderLabel, weekdayLabels } from "@/app/[locale]/(site)/dashboard/schedule/CalendarView";
 
 // Node's ICU emits thin/narrow no-break spaces where browsers emit plain
 // ones; labels must be identical on both sides (React #418 otherwise).
