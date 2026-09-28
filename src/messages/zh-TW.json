@@ -1102,5 +1102,70 @@
       "tourSpot": "在設定 → 重新觀看導覽。",
       "tourSpotMenu": "開啟選單 → 設定 → 重新觀看導覽。"
     }
+  },
+  "assistant": {
+    "preview": "預覽",
+    "newConversation": "新對話",
+    "close": "關閉",
+    "emptyTitle": "就 SolvyMed 提問或下達指令。",
+    "thinking": "SolvyAI 思考中…",
+    "limitReached": "您今天的 SolvyAI 訊息已用完，{hours} 小時後重置。",
+    "help": "說明",
+    "startNew": "開始新對話",
+    "placeholder": "提問或下達指令…",
+    "mic": "語音輸入",
+    "send": "傳送",
+    "tooFast": "請稍候再傳送。",
+    "noPatientData": "說明問題中請勿包含病患資料。",
+    "hint": "需要幫忙嗎？什麼都可以問。",
+    "open": "開啟 SolvyAI",
+    "usageToday": "今日用量",
+    "resetsIn": "{hours} 小時後重置",
+    "extra": "+{n} 則額外訊息",
+    "helpful": "有幫助",
+    "notHelpful": "沒幫助",
+    "support": "聯絡客服",
+    "default": "預設",
+    "saved": "✓ 已完成",
+    "undone": "已復原",
+    "simulated": "模擬",
+    "undo": "復原（{s} 秒）",
+    "view": "在行程中查看",
+    "edit": "編輯",
+    "confirm": "確認 ✓",
+    "failed": "無法儲存。",
+    "failedBlocked": "該時段已封鎖。",
+    "chips": {
+      "home": {
+        "a": "我明天有什麼安排？",
+        "b": "如何邀請助理？",
+        "c": "預約"
+      },
+      "schedule": {
+        "a": "我明天有什麼安排？",
+        "b": "封鎖週五下午",
+        "c": "預約"
+      },
+      "patients": {
+        "a": "登錄病患",
+        "b": "如何封存病患？",
+        "c": "尋找病患"
+      },
+      "payments": {
+        "a": "本週待收多少？",
+        "b": "傳送 Pix 給病患",
+        "c": "標記為已付款"
+      },
+      "settings": {
+        "a": "如何邀請助理？",
+        "b": "設定 Pix",
+        "c": "修改看診時間"
+      },
+      "other": {
+        "a": "我明天有什麼安排？",
+        "b": "如何邀請助理？",
+        "c": "預約"
+      }
+    }
   }
 }

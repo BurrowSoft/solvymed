@@ -11,6 +11,7 @@ import { TourProvider } from "@/components/tour/TourProvider";
 import { readTourState, tourEntry } from "@/lib/tourState";
 import { CURRENT_NEWS, newsTourId } from "@/lib/news";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { SolvyAi } from "@/components/solvyai/SolvyAi";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 
@@ -192,6 +193,12 @@ export default async function DashboardLayout({
             </div>
           </main>
         </div>
+        {/* SolvyAI (specs/assistant.md): doctors only, behind its flag; its
+            panel sits here so it pushes the content on wide screens.
+            10 messages a day during the trial, 20 on a paid plan. */}
+        {liveFeatures.solvyAi && !isSecretary && (
+          <SolvyAi locale={locale} prefix={locale === "en" ? "" : `/${locale}`} dailyLimit={sub?.subscription_status === "trial" ? 10 : 20} />
+        )}
       </div>
     </TourProvider>
   );
