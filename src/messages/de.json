@@ -1083,7 +1083,25 @@
     "secHomeTitle": "Der Tag der Praxis",
     "secHomeText": "Die heutigen Termine und die Woche der Praxis.",
     "secScheduleText": "Bestätigen Sie Anfragen von Patienten und organisieren Sie Termine nach Tag, Woche oder Monat.",
-    "secPatientsText": "Patienten anlegen und aktualisieren. Patientenakten bleiben bei der Ärztin bzw. dem Arzt."
+    "secPatientsText": "Patienten anlegen und aktualisieren. Patientenakten bleiben bei der Ärztin bzw. dem Arzt.",
+    "inMenu": "Im Menü ☰ unter {section}: "
+  },
+  "news": {
+    "title": "Neu in SolvyMed ✨",
+    "see": "Neuerungen ansehen",
+    "later": "Nicht jetzt",
+    "cardTitle": "Neuigkeiten",
+    "cardSub": "Sehen Sie, was sich in jeder Version geändert hat, und wiederholen Sie die Touren.",
+    "show": "Anzeigen",
+    "r140": {
+      "solvyaiTitle": "SolvyAI kennenlernen ✦",
+      "solvyaiLine": "Ihr KI-Assistent: fragen oder beauftragen Sie ihn, und er bestätigt alles vorher mit Ihnen.",
+      "solvyaiSpot": "Tippen Sie hier, wann immer Sie möchten. Probieren Sie: „Was habe ich morgen?“",
+      "tourTitle": "Geführte Tour",
+      "tourLine": "Ein kurzer Rundgang durch die wichtigsten Funktionen. Jederzeit wiederholbar.",
+      "tourSpot": "Unter Einstellungen → Tour erneut ansehen.",
+      "tourSpotMenu": "Öffnen Sie das Menü → Einstellungen → Tour erneut ansehen."
+    }
   },
   "dateInput": {
     "buddhistYear": "Das sieht nach einem Jahr der buddhistischen Zeitrechnung aus. Bitte das gregorianische Jahr verwenden (z. B. 1996)."

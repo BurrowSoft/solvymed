@@ -207,14 +207,21 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-100 text-sm font-bold text-teal-700 overflow-hidden">
           {photoUrl ? (
             <img src={photoUrl} alt="" className="h-9 w-9 object-cover" />
-          ) : (
+          ) : firstName ? (
             // The initial of the name, not of a title ("Dra. Beatriz" → B).
             nameInitial(firstName)
+          ) : (
+            // No name yet: a neutral person icon, not a blank circle (UX).
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21v-1a7 7 0 0 1 16 0v1" />
+            </svg>
           )}
         </div>
         <div className="min-w-0 flex-1">
-          {/* Already "Dra. Beatriz" when the doctor typed a title; we never add one. */}
-          <p className="truncate text-sm font-semibold text-slate-900">{firstName}</p>
+          {/* Already "Dra. Beatriz" when the doctor typed a title; we never
+              add one. No name yet: only the email line. */}
+          {firstName && <p className="truncate text-sm font-semibold text-slate-900">{firstName}</p>}
           <p className="truncate text-xs text-slate-400">{email}</p>
         </div>
         <button
@@ -236,6 +243,8 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
       {/* Mobile menu button */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
+        // Tours spotlight it when their step's link is inside the closed drawer.
+        data-tour="nav-menu"
         className="fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-md border border-slate-100 lg:hidden"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5 text-slate-600">

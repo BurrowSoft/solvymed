@@ -1083,7 +1083,25 @@
     "secHomeTitle": "클리닉의 하루",
     "secHomeText": "클리닉의 오늘과 이번 주 예약.",
     "secScheduleText": "환자 요청을 확정하고 예약을 일·주·월로 정리합니다.",
-    "secPatientsText": "환자를 등록하고 수정합니다. 진료 기록은 의사만 볼 수 있습니다."
+    "secPatientsText": "환자를 등록하고 수정합니다. 진료 기록은 의사만 볼 수 있습니다.",
+    "inMenu": "메뉴 ☰의 {section}: "
+  },
+  "news": {
+    "title": "SolvyMed의 새 소식 ✨",
+    "see": "새 기능 보기",
+    "later": "나중에",
+    "cardTitle": "새 소식",
+    "cardSub": "버전별 변경 사항을 보고 투어를 다시 볼 수 있습니다.",
+    "show": "보기",
+    "r140": {
+      "solvyaiTitle": "SolvyAI를 만나보세요 ✦",
+      "solvyaiLine": "AI 비서: 묻거나 요청하면 실행 전에 항상 확인을 받습니다.",
+      "solvyaiSpot": "언제든 여기를 누르세요. \"내일 일정이 뭐야?\"라고 해 보세요.",
+      "tourTitle": "가이드 투어",
+      "tourLine": "주요 기능을 빠르게 둘러봅니다. 언제든 다시 볼 수 있습니다.",
+      "tourSpot": "설정 → 투어 다시 보기.",
+      "tourSpotMenu": "메뉴 열기 → 설정 → 투어 다시 보기."
+    }
   },
   "dateInput": {
     "buddhistYear": "불기 연도로 보입니다. 서기 연도를 사용해 주세요(예: 1996)."

@@ -12,6 +12,11 @@ export const liveFeatures = {
   // "Built for PDPA": consent at signup + the record access log live
   // (TH-3) and the Thai lawyer's OK on the wording.
   pdpa: false,
+  // The "Novidades" popup + new-feature tour (walkthrough §4a): on with the
+  // release that announces something (and migration 113 for its state).
+  // NEXT_PUBLIC_NEWS_ENABLED=1 turns it on for testing (a local build or a
+  // Preview); nobody sets it on Production until the release.
+  news: process.env.NEXT_PUBLIC_NEWS_ENABLED === "1",
   // The public Help Center (/help): indexed and linked only once the
   // mobile tester has checked every label against the release (UX).
   helpCenter: false,

@@ -1083,7 +1083,25 @@
     "secHomeTitle": "El día de la clínica",
     "secHomeText": "Las citas de hoy y de la semana de la clínica.",
     "secScheduleText": "Confirma las solicitudes de los pacientes y organiza las citas por día, semana o mes.",
-    "secPatientsText": "Registra y actualiza pacientes. Las historias clínicas quedan solo con el profesional."
+    "secPatientsText": "Registra y actualiza pacientes. Las historias clínicas quedan solo con el profesional.",
+    "inMenu": "En el menú ☰, en {section}: "
+  },
+  "news": {
+    "title": "Novedades en SolvyMed ✨",
+    "see": "Ver las novedades",
+    "later": "Ahora no",
+    "cardTitle": "Novedades",
+    "cardSub": "Mira qué cambió en cada versión y vuelve a ver los tours.",
+    "show": "Mostrar",
+    "r140": {
+      "solvyaiTitle": "Conoce SolvyAI ✦",
+      "solvyaiLine": "Tu asistente con IA: pregúntale o pídele algo, y siempre lo confirma contigo antes.",
+      "solvyaiSpot": "Tócalo cuando quieras. Prueba: \"¿Qué tengo mañana?\"",
+      "tourTitle": "Tour guiado",
+      "tourLine": "Un recorrido rápido por las funciones principales. Vuelve a verlo cuando quieras.",
+      "tourSpot": "En Configuración → Ver el tour de nuevo.",
+      "tourSpotMenu": "Abre el menú → Configuración → Ver el tour de nuevo."
+    }
   },
   "dateInput": {
     "buddhistYear": "Parece un año de la era budista. Usa el año gregoriano (p. ej., 1996)."
