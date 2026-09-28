@@ -196,7 +196,7 @@
     "pastMidnightError": "Questo orario e questa durata supererebbero la mezzanotte.",
     "patientArchivedError": "Questa scheda è archiviata. Ripristinala in Pazienti per fissare un appuntamento.",
     "moreCount": "+{n} altri",
-    "slotBlockedConfirm": "Questo orario è bloccato. Prenotare comunque?"
+    "slotBlockedConfirm": "Questo orario è bloccato ({start}–{end}). Prenotare comunque?"
   },
   "payments": {
     "thisWeek": "Questa settimana",

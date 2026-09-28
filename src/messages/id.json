@@ -196,7 +196,7 @@
     "pastMidnightError": "Waktu dan durasi ini akan melewati tengah malam.",
     "patientArchivedError": "Rekam medis ini diarsipkan. Pulihkan di menu Pasien untuk membuat janji temu.",
     "moreCount": "+{n} lainnya",
-    "slotBlockedConfirm": "Waktu ini diblokir. Tetap buat janji?"
+    "slotBlockedConfirm": "Waktu ini diblokir ({start}–{end}). Tetap buat janji?"
   },
   "payments": {
     "thisWeek": "Minggu ini",

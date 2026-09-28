@@ -196,7 +196,7 @@
     "pastMidnightError": "سيتجاوز هذا الوقت والمدة منتصف الليل.",
     "patientArchivedError": "هذا الملف مؤرشف. استعِده من قسم المرضى لحجز موعد.",
     "moreCount": "+{n} أخرى",
-    "slotBlockedConfirm": "هذا الوقت محجوب. هل تريد الحجز على أي حال؟"
+    "slotBlockedConfirm": "هذا الوقت محجوب ({start}–{end}). هل تريد الحجز على أي حال؟"
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",

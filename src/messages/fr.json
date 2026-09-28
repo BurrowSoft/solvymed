@@ -196,7 +196,7 @@
     "pastMidnightError": "Cet horaire et cette durée dépasseraient minuit.",
     "patientArchivedError": "Ce dossier est archivé. Restaurez-le dans Patients pour planifier un rendez-vous.",
     "moreCount": "+{n} de plus",
-    "slotBlockedConfirm": "Ce créneau est bloqué. Réserver quand même ?"
+    "slotBlockedConfirm": "Ce créneau est bloqué ({start}–{end}). Réserver quand même ?"
   },
   "payments": {
     "thisWeek": "Cette semaine",

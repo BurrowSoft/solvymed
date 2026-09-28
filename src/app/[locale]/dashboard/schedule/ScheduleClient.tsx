@@ -279,8 +279,8 @@ export function NewAppointmentButton({ patients, defaultDate, procedures, label,
     startTransition(async () => {
       let result = await createAppointment(formData);
       // Booking over time the practice blocked: ask, then book anyway.
-      if (result?.code === "slot_blocked") {
-        if (!window.confirm(t("slotBlockedConfirm"))) return;
+      if (result?.code === "slot_blocked" && "blockStart" in result) {
+        if (!window.confirm(t("slotBlockedConfirm", { start: result.blockStart ?? "", end: result.blockEnd ?? "" }))) return;
         formData.set("confirm_blocked", "1");
         result = await createAppointment(formData);
       }

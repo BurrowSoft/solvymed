@@ -63,14 +63,24 @@ export async function createAppointment(formData: FormData) {
   if (formData.get("confirm_blocked") !== "1") {
     const { data: blocks } = await supabase
       .from("appointments")
-      .select("id")
+      .select("start_time, end_time")
       .eq("professional_id", effectiveProfId)
       .eq("date", date)
       .eq("status", "blocked")
       .lt("start_time", endTime)
       .gt("end_time", startTime)
+      .order("start_time")
       .limit(1);
-    if (blocks?.length) return { error: "This time is blocked", code: "slot_blocked" };
+    const block = blocks?.[0] as { start_time: string; end_time: string } | undefined;
+    if (block) {
+      // Stored clinic-local wall times, shown as HH:MM in the prompt.
+      return {
+        error: "This time is blocked",
+        code: "slot_blocked",
+        blockStart: block.start_time.slice(0, 5),
+        blockEnd: block.end_time.slice(0, 5),
+      };
+    }
   }
 
   const { error } = await supabase.from("appointments").insert({

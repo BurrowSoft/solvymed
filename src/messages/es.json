@@ -196,7 +196,7 @@
     "pastMidnightError": "Esta hora y duración pasarían de la medianoche.",
     "patientArchivedError": "Este registro está archivado. Restáuralo en Pacientes para agendar una cita.",
     "moreCount": "+{n} más",
-    "slotBlockedConfirm": "Este horario está bloqueado. ¿Agendar de todos modos?"
+    "slotBlockedConfirm": "Este horario está bloqueado ({start}–{end}). ¿Agendar de todos modos?"
   },
   "payments": {
     "thisWeek": "Esta semana",

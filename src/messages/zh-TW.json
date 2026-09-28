@@ -196,7 +196,7 @@
     "pastMidnightError": "此時間和時長將超過午夜。",
     "patientArchivedError": "此病歷已封存。請在「病患」中還原後再預約。",
     "moreCount": "另外 {n} 個",
-    "slotBlockedConfirm": "此時段已封鎖。仍要預約嗎？"
+    "slotBlockedConfirm": "此時段已封鎖（{start}–{end}）。仍要預約嗎？"
   },
   "payments": {
     "thisWeek": "本週",

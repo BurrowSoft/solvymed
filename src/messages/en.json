@@ -196,7 +196,7 @@
     "pastProposalAlert": "The proposed time has already passed. Please decline so the patient can request a new slot.",
     "patientArchivedError": "This patient is archived. Restore the patient in Patients to schedule an appointment.",
     "moreCount": "+{n} more",
-    "slotBlockedConfirm": "This time is blocked. Book anyway?"
+    "slotBlockedConfirm": "This time is blocked ({start}–{end}). Book anyway?"
   },
   "payments": {
     "thisWeek": "This week",
