@@ -1,9 +1,10 @@
 import { LanguageSelector } from "@burrowsoft/shared";
 import { useTranslations } from "next-intl";
-import { routing } from "@/i18n/routing";
+import { publicLocales } from "@/lib/publicLocales";
 import { LegalLinks } from "./LegalLinks";
 
-const ALL_LOCALES = routing.locales as unknown as string[];
+// Offered languages (Thai stays hidden until the Thai release).
+const ALL_LOCALES = publicLocales();
 
 // languageSwitcher={false} on pages opened from a one-time link (email
 // confirmation, password reset): switching reloads the page, and the link's

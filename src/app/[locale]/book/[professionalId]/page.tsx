@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { BookingClient } from "./BookingClient";
+import { countryProfile } from "@/lib/country";
 
 export default async function BookPage({
   params,
@@ -43,7 +44,8 @@ export default async function BookPage({
     supabase.rpc("get_professional_public_info", { p_professional_id: professionalId }).maybeSingle(),
     getTranslations({ locale, namespace: "book" }),
   ]);
-  const prof = profRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null } | null;
+  // country: migration 110 (absent before it, which means BR).
+  const prof = profRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null; country?: string | null } | null;
   const displayName = prof?.full_name?.trim() || name?.trim() || t("professionalFallback");
   const displaySpecialty = prof?.specialty?.trim() || specialty || "";
   const displayClinic = prof?.clinic_name?.trim() || clinicName || undefined;
@@ -60,6 +62,8 @@ export default async function BookPage({
       patientEmail={user.email ?? ""}
       locale={locale}
       initialManualProfile={initialManualProfile}
+      currency={countryProfile(prof?.country).currency}
+      idKind={countryProfile(prof?.country).kind}
     />
   );
 }

@@ -195,7 +195,9 @@
     "patientArchivedError": "Este cadastro está arquivado. Restaure-o em Pacientes para agendar uma consulta.",
     "moreCount": "+{n} mais",
     "slotBlockedConfirm": "Este horário está bloqueado ({start}–{end}). Agendar mesmo assim?",
-    "requestedLabel": "Solicitado: {date} · {time}"
+    "requestedLabel": "Solicitado: {date} · {time}",
+    "promptPayTitle": "QR PromptPay",
+    "promptPayScan": "Escaneie com qualquer app de banco tailandês para pagar."
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -450,7 +452,14 @@
     "regenerateError": "Não foi possível gerar um novo código. Tente novamente.",
     "showSetup": "Mostrar lista de configuração",
     "registration": "Registro profissional",
-    "registrationPlaceholder": "ex.: CRM 12345/SP"
+    "registrationPlaceholder": "ex.: CRM 12345/SP",
+    "promptPay": "ID PromptPay",
+    "promptPayHint": "Seu celular ou ID nacional / fiscal de 13 dígitos vinculado ao PromptPay. Os pacientes escaneiam o QR da consulta para pagar.",
+    "promptPayInvalid": "Digite um celular de 10 dígitos (começando com 0) ou um ID nacional / fiscal de 13 dígitos.",
+    "saveFailed": "Não foi possível salvar. Tente novamente.",
+    "practiceCountry": "País do consultório",
+    "practiceCountryHint": "Define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar, fale com support@solvymed.com.",
+    "practiceCountryOther": "Outro país"
   },
   "clinics": {
     "title": "Minhas Clínicas",
@@ -579,7 +588,10 @@
       "joiningAsSecretary": "Entrando na equipe de secretaria por link de convite.",
       "secretaryNeedsInvite": "Trabalha na secretaria? Peça um link de convite à clínica onde você trabalha.",
       "secretaryEmailMismatch": "Este e-mail não corresponde ao convite, ou o convite não é mais válido. Confira o e-mail ou peça um novo link à clínica.",
-      "consent": "Ao criar uma conta, você concorda com os <terms>Termos de Uso</terms> e a <privacy>Política de Privacidade</privacy>."
+      "consent": "Ao criar uma conta, você concorda com os <terms>Termos de Uso</terms> e a <privacy>Política de Privacidade</privacy>.",
+      "country": "Onde fica seu consultório?",
+      "countryOther": "Outro país",
+      "countryHint": "Define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar depois, fale com o suporte."
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",
@@ -964,5 +976,12 @@
       "message_required": "Escreva uma mensagem.",
       "failed": "Algo deu errado. Tente novamente."
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "Documento de identidade tailandês",
+    "passport": "Número do passaporte",
+    "passportOrId": "Número do passaporte ou documento",
+    "thaiIdInvalid": "Este número de identidade tailandês não é válido. Confira os 13 dígitos."
   }
 }

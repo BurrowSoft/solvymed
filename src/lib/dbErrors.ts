@@ -10,7 +10,8 @@ export type KnownDbError =
   | "content_required"
   | "record_not_found"
   | "prescription_not_found"
-  | "subscription_active";
+  | "subscription_active"
+  | "invalid_th_id";
 
 const KNOWN: KnownDbError[] = [
   "patient_archived",
@@ -21,6 +22,8 @@ const KNOWN: KnownDbError[] = [
   "record_not_found",
   "prescription_not_found",
   "subscription_active",
+  // Thai national ID failing its checksum (110).
+  "invalid_th_id",
 ];
 
 // The code when a Postgres/PostgREST error message carries one, else null.

@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { computeSlots, toMinutes, filterPastSlots, toLocalDateString } from "@/lib/slots";
-import { formatBRL } from "@/lib/money";
+import { formatMoney } from "@/lib/money";
+import type { Currency } from "@/lib/country";
+import { isValidThaiId, type PatientIdKind } from "@/lib/patientIds";
+import { usePatientIdFields, type PatientIdValues } from "@/lib/usePatientIdFields";
 import { formatTimeLabel } from "@/lib/dateLabels";
 import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
@@ -120,6 +123,8 @@ export function BookingClient({
   patientEmail,
   locale,
   initialManualProfile,
+  currency = "BRL",
+  idKind = "BR",
 }: {
   professionalId: string;
   professionalName: string;
@@ -128,10 +133,15 @@ export function BookingClient({
   patientAuthId: string;
   patientEmail: string;
   locale: string;
-  initialManualProfile?: { full_name: string | null; phone: string | null; birth_date: string | null; cpf: string | null } | null;
+  initialManualProfile?: { full_name: string | null; phone: string | null; birth_date: string | null; cpf: string | null; th_national_id?: string | null; passport_number?: string | null } | null;
+  // The practice's currency (its country), for procedure prices.
+  currency?: Currency;
+  // The practice country's patient identifier (lib/patientIds).
+  idKind?: PatientIdKind;
 }) {
   const router = useRouter();
   const t = useTranslations("book");
+  const tIds = useTranslations("patientIds");
   const tConsult = useTranslations("consultType");
   const prefix = locale === "en" ? "" : `/${locale}`;
   // The next DAYS_AHEAD days in the visitor's calendar, built after mount:
@@ -185,7 +195,12 @@ export function BookingClient({
   const [phoneCountry, setPhoneCountry] = useState(() => getDefaultCountry(locale));
   const [patientPhoneLocal, setPatientPhoneLocal] = useState("");
   const [patientDob, setPatientDob] = useState("");
-  const [patientCpf, setPatientCpf] = useState("");
+  // The identifier(s) the booked practice's country uses (CPF / Thai ID +
+  // passport / passport). Only those columns are read and written, so a
+  // Brazilian practice (all of them before migration 110) works as before.
+  const [patientIds, setPatientIds] = useState<PatientIdValues>({});
+  const idFields = usePatientIdFields(idKind, patientIds);
+  const idColumns = idFields.map((f) => f.name);
   const [profileLoaded, setProfileLoaded] = useState(false);
 
   // Load existing profile to pre-fill the form
@@ -195,9 +210,11 @@ export function BookingClient({
         const supabase = createClient();
         const { data } = await supabase
           .from("patient_profiles")
-          .select("full_name, email, phone, birth_date, cpf")
+          .select(["full_name", "email", "phone", "birth_date", ...idColumns].join(", "))
           .eq("user_id", patientAuthId)
-          .maybeSingle();
+          .maybeSingle<Record<string, string | null>>();
+        const pickIds = (row: Record<string, unknown>) =>
+          Object.fromEntries(idColumns.map((c) => [c, typeof row[c] === "string" ? (row[c] as string) : ""])) as PatientIdValues;
 
         const applyPhone = (stored: string) => {
           const matched = COUNTRIES.find((c) => stored.startsWith(c.dialCode));
@@ -213,17 +230,19 @@ export function BookingClient({
           if (data.full_name) setPatientFullName(data.full_name as string);
           if (data.phone) applyPhone(data.phone as string);
           if (data.birth_date) setPatientDob(data.birth_date as string);
-          if (data.cpf)        setPatientCpf(data.cpf as string);
+          setPatientIds(pickIds(data));
         } else if (initialManualProfile) {
           // Patient was manually added as a walk-in before signing up — use that data
           if (initialManualProfile.full_name) setPatientFullName(initialManualProfile.full_name);
           if (initialManualProfile.phone) applyPhone(initialManualProfile.phone);
           if (initialManualProfile.birth_date) setPatientDob(initialManualProfile.birth_date);
-          if (initialManualProfile.cpf) setPatientCpf(initialManualProfile.cpf);
+          setPatientIds(pickIds(initialManualProfile));
         }
       } catch { /* non-fatal */ }
       setProfileLoaded(true);
     })();
+    // idColumns follows idKind, a prop that doesn't change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientAuthId, initialManualProfile]);
 
   // Fetch working hours (SECURITY DEFINER bypasses patient RLS)
@@ -295,6 +314,11 @@ export function BookingClient({
 
   async function handleBook() {
     if (!selectedSlot) return;
+    // A Thai ID must pass its checksum (the database refuses it otherwise).
+    if (idKind === "TH" && patientIds.th_national_id?.trim() && !isValidThaiId(patientIds.th_national_id)) {
+      setError(tIds("thaiIdInvalid"));
+      return;
+    }
     setBooking(true);
     setError("");
     const supabase = createClient();
@@ -310,7 +334,8 @@ export function BookingClient({
           email: patientEmail,
           phone: fullPhone,
           birth_date: patientDob || null,
-          cpf: patientCpf.trim() || null,
+          // Only the booked practice country's identifier columns.
+          ...Object.fromEntries(idColumns.map((c) => [c, patientIds[c]?.trim() || null])),
         },
         { onConflict: "user_id" },
       );
@@ -442,7 +467,7 @@ export function BookingClient({
                       >
                         <p className={`font-semibold text-sm ${active ? "text-teal-800" : "text-slate-800"}`}>{proc.name}</p>
                         <p className={`text-xs mt-0.5 ${active ? "text-teal-600" : "text-slate-400"}`}>
-                          {proc.durationMinutes} min{proc.price ? ` · ${formatBRL(proc.price)}` : ""}
+                          {proc.durationMinutes} min{proc.price ? ` · ${formatMoney(proc.price, currency)}` : ""}
                         </p>
                       </button>
                     );
@@ -660,16 +685,20 @@ export function BookingClient({
                 />
                 <p className="text-[10px] text-slate-400 mt-0.5">{getDateFormat(locale)}</p>
               </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">{t("cpfLabel")} <span className="text-slate-400 font-normal">({t("notesOptional")})</span></label>
-                <input
-                  type="text"
-                  value={patientCpf}
-                  onChange={e => setPatientCpf(e.target.value)}
-                  placeholder={t("cpfPlaceholder")}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                />
-              </div>
+              {idFields.map((f) => (
+                <div key={f.name}>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">{f.label} <span className="text-slate-400 font-normal">({t("notesOptional")})</span></label>
+                  <input
+                    type="text"
+                    value={f.value}
+                    onChange={e => setPatientIds((ids) => ({ ...ids, [f.name]: e.target.value }))}
+                    placeholder={f.name === "cpf" ? t("cpfPlaceholder") : f.placeholder}
+                    inputMode={f.inputMode}
+                    maxLength={f.maxLength}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                  />
+                </div>
+              ))}
             </div>
 
             {error && (

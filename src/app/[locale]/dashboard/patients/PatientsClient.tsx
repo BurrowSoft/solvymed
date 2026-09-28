@@ -6,6 +6,8 @@ import { useTranslations } from "next-intl";
 import { createPatient, restorePatient, type PatientMatch } from "./actions";
 import Link from "next/link";
 import { dropQueryParam } from "@/lib/dropQueryParam";
+import { usePatientIdFields } from "@/lib/usePatientIdFields";
+import type { PatientIdKind } from "@/lib/patientIds";
 
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
@@ -58,8 +60,10 @@ function Select({ children, ...props }: React.SelectHTMLAttributes<HTMLSelectEle
   );
 }
 
-function PatientForm({ onSubmit, pending, error, id }: { onSubmit: (fd: FormData) => void; pending: boolean; error: string; id?: string }) {
+function PatientForm({ onSubmit, pending, error, id, idKind }: { onSubmit: (fd: FormData) => void; pending: boolean; error: string; id?: string; idKind: PatientIdKind }) {
   const t = useTranslations("patients");
+  // CPF, Thai ID/passport or passport/ID, by the practice's country.
+  const idFields = usePatientIdFields(idKind);
   const formRef = useRef<HTMLFormElement>(null);
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -67,6 +71,8 @@ function PatientForm({ onSubmit, pending, error, id }: { onSubmit: (fd: FormData
   }
   return (
     <form ref={formRef} id={id} onSubmit={handleSubmit} className="space-y-4">
+      {/* Which ID fields this form shows; the action refuses a mismatch. */}
+      <input type="hidden" name="id_kind" value={idKind} />
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2">
           <FieldLabel>{t("fullName")} *</FieldLabel>
@@ -80,10 +86,12 @@ function PatientForm({ onSubmit, pending, error, id }: { onSubmit: (fd: FormData
           <FieldLabel>{t("phone")}</FieldLabel>
           <Input name="phone" placeholder="+55 11 99999-9999" />
         </div>
-        <div>
-          <FieldLabel>{t("cpf")}</FieldLabel>
-          <Input name="cpf" placeholder="000.000.000-00" />
-        </div>
+        {idFields.map((f) => (
+          <div key={f.name}>
+            <FieldLabel>{f.label}</FieldLabel>
+            <Input name={f.name} placeholder={f.placeholder} inputMode={f.inputMode} maxLength={f.maxLength} />
+          </div>
+        ))}
         <div>
           <FieldLabel>{t("dateOfBirth")}</FieldLabel>
           <Input name="birth_date" type="date" />
@@ -166,8 +174,10 @@ export function PatientSearch({ defaultValue }: { defaultValue: string }) {
 const NEW_PATIENT_FORM_ID = "new-patient-form";
 
 // autoOpen: the setup checklist links here with ?new=1 (first patient).
-export function NewPatientButton({ locale, autoOpen = false }: { locale: string; autoOpen?: boolean }) {
+// idKind: the practice country's patient identifier (lib/patientIds).
+export function NewPatientButton({ locale, autoOpen = false, idKind = "BR" }: { locale: string; autoOpen?: boolean; idKind?: PatientIdKind }) {
   const t = useTranslations("patients");
+  const tIds = useTranslations("patientIds");
   const [open, setOpen] = useState(autoOpen);
   // Opened from the setup checklist (?new=1): drop the parameter once shown.
   useEffect(() => { if (autoOpen) dropQueryParam("new"); }, [autoOpen]);
@@ -201,7 +211,10 @@ export function NewPatientButton({ locale, autoOpen = false }: { locale: string;
         setError(result.existing ? t("alreadyRegistered", { name: result.existing.full_name }) : t("alreadyRegisteredGeneric"));
         return;
       }
-      setError(t(result.code === "name_required" ? "nameRequired" : "saveError"));
+      // The fields shown were for another country: reload them (the typed
+      // values stay in the open form) and let the user save again.
+      if (result.code === "id_kind_mismatch") router.refresh();
+      setError(result.code === "invalid_th_id" ? tIds("thaiIdInvalid") : t(result.code === "name_required" ? "nameRequired" : "saveError"));
     });
   }
 
@@ -284,7 +297,7 @@ export function NewPatientButton({ locale, autoOpen = false }: { locale: string;
             {t("openPatient")}
           </Link>
         )}
-        <PatientForm id={NEW_PATIENT_FORM_ID} onSubmit={submit} pending={pending} error={error} />
+        <PatientForm id={NEW_PATIENT_FORM_ID} onSubmit={submit} pending={pending} error={error} idKind={idKind} />
       </Dialog>
     </>
   );

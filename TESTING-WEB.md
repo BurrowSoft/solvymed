@@ -5872,3 +5872,237 @@ throwaway doctors and clinics, deleted afterwards:
   - en: "…and shows the map when a professional adjusts the pin…".
 
 **CI at `669f204`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `669f204`.**
+
+## PR #84 (`th/1-country-currency`, base master) — amounts by practice country, Thai hidden until its release, 🟢 at `765ec43`
+
+Migration 110 is **not** applied: the prod DB (which the Previews use) has
+no `professionals.country`. So every practice must behave exactly as today
+(Brazil). The TH/Other paths need 110 and are **unit-tested only**; nothing
+here exercises them end to end.
+
+**❌ on the first head `1054429`, fixed at `765ec43`.** With the Thai flag
+off (what Production runs), a browser that already had `NEXT_LOCALE=th`
+looped forever: `/ → 307 /th → 307 / → …`, and Chromium showed
+`ERR_TOO_MANY_REDIRECTS`. It happened on `/`, `/auth/login`, `/privacy` and
+`/dashboard`. Anyone who picked ภาษาไทย in today's prod switcher, or was
+auto-detected to Thai, has that cookie. The fix treats a hidden-locale
+cookie as no cookie and deletes it on the `/th` redirect.
+
+**Flag OFF** (local `next dev` of the head with no
+`NEXT_PUBLIC_THAI_ENABLED`, i.e. Production):
+
+| Check | Result at `765ec43` |
+|---|---|
+| Cookie `th` + `/`, `/auth/login`, `/privacy` | 200 at once, cookie rewritten to `en` |
+| Cookie `th` + `/th/auth/login` | 307 `/auth/login` (cookie deleted) → 200, cookie `en` |
+| Cookie `th` + `/dashboard` (logged out) | `/en/auth/login` → `/auth/login` (cookie `en`) → 200 |
+| A real browser with cookie `th` opens `/` | 200, `lang=en`, cookie `en` |
+| `/th`, `/th/privacy` | 307 → `/`, `/privacy` |
+| `/th/auth/login?next=%2Fdashboard&locale=th` | 307 → `/auth/login?next=%2Fdashboard&locale=th` (query kept) |
+| `/thx` | 404 (no false prefix match) |
+| First visit, Accept-Language `th` + geo TH, or `th` only | English, cookie `en` |
+| hreflang / language switchers (home, login) | no `th` (15 alternates incl. x-default; 14 languages) |
+
+**Flag ON Preview (`765ec43`):** cookie `th` → `/th`, and a fresh Thai
+browser → `/th` with cookie `th`. `pt-BR` behaves as before. `th` is in
+hreflang (16) and in the switcher (15), and `/th` is indexable.
+
+**Brazilian practice on the Preview** (throwaway doctor, secretary and
+patient; checked at `1054429`, and the fix only touches the middleware):
+
+- **DB:** `professionals.country` returns 42703, which the code treats as
+  BR. `get_my_clinic` has no `country` key. No page broke.
+- **Amounts in R$ everywhere:**
+  - Dashboard: R$ 187,50 / R$ 250,00.
+  - Payments, also with the **English UI**: R$.
+  - Schedule list and calendar popup: R$ 187,50.
+  - New-appointment procedure option: "Consulta Opus · R$ 150,00".
+  - Settings procedures: R$ 150,00.
+  - Secretary dashboard, payments, settings and schedule: R$.
+  - Patient booking page (linked patient): "30 min · R$ 150,00".
+- **Pix unchanged:**
+  - The schedule Pix button is shown for the doctor and the secretary.
+  - The decoded QR has key, amount 187.50, 5303 986, 5802 BR, and the CRC
+    is valid.
+  - The Settings Pix field is shown and prefilled.
+- **Settings save:**
+  - Changing only the city keeps `pix_key`.
+  - A new key is saved.
+  - Clearing it sets `null`.
+
+**CI at `765ec43`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`765ec43`** (this docs commit sits on top, after a master sync).
+
+## PR #86 (`th/3-plan-price`, base `th/1-country-currency`) — plan price by practice country, Terms §5, 🟢 at `84156ce`
+
+Pre-110, every practice is Brazilian, so the price must be **R$ 89
+whatever the UI language**. Before this PR, a non-pt-BR UI showed $19.
+฿690 / US$ 19 and the fail-closed path need 110 or a DB fault, so they're
+**unit-tested only**. **No checkout was started:** Stripe stays untouched
+on Previews. Checked on the Preview at `e69cb03`; the rebase to `84156ce`
+changed no code.
+
+| Doctor | pt-BR | en | es |
+|---|---|---|---|
+| In trial | R$ 89, "Assinar com Cartão" | R$ 89, "Subscribe with Card" | R$ 89, "Suscribirse con tarjeta" |
+| Trial expired | R$ 89 | R$ 89 | R$ 89 |
+
+- No "—" price and no check-failed message.
+- Zero `/api/checkout` requests on page load.
+- **Terms §5:** it reads "the price depends on your practice's country:
+  R$ 89 … Brazil, ฿690 … Thailand and US$ 19 … elsewhere".
+  - pt-BR: "O preço depende do país do seu consultório: R$ 89 por mês no
+    Brasil, ฿690 por mês na Tailândia e US$ 19 por mês nos demais países".
+  - `/th/terms` shows the English text, as before.
+
+**CI at `84156ce`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`84156ce`.**
+
+## PR #87 (`th/5-patient-ids`, base `th/1-country-currency`) — patient identifiers by practice country, 🟢 at `ce258bd`
+
+Pre-110, only the BR (CPF) path can run: the Thai ID and passport columns
+don't exist yet, so those paths are **unit-tested only**. Checked on the
+Preview at `ce258bd` with a throwaway doctor, secretary and patient
+(deleted afterwards).
+
+- **New patient** (doctor): the labels are unchanged, with CPF between
+  Telefone and Data de nascimento and no Thai/passport field. The hidden
+  `id_kind=BR` is present. The row is saved with `cpf 123.456.789-09`.
+- **Same CPF again under another name:** the "Possível duplicidade…
+  Opus Paciente Um / Abrir existente / Criar mesmo assim" warning appears,
+  and no second row is created.
+- **Search** `?q=45678` (CPF digits) finds the patient.
+- **Detail:** it shows "CPF 123.456.789-09".
+- **Edit:**
+  - The only ID input is `cpf` (prefilled), with `id_kind=BR`.
+  - Saving a phone change works, the CPF is kept, and the form closes.
+  - Clearing the CPF saves `null`.
+- **Server guard:** with the hidden `id_kind` tampered to `TH` and the CPF
+  emptied, the save is **refused**. The row is unchanged (the CPF is
+  kept), and "Algo deu errado. Tente novamente." is shown.
+- **Secretary** (the `get_my_clinic` path): the same CPF form, and the
+  patient is created with its CPF.
+- **Patient booking form** (linked patient): the CPF is prefilled from
+  `patient_profiles` (111.444.777-35), and no `patient_profiles` request
+  fails, so no 110 column is selected.
+- **Privacy** (en + pt-BR):
+  - §3.1 adds "the practice's country and time zone, chosen at sign-up
+    (for "Other country", the country detected from the connection…)".
+  - §3.2 reads "CPF or, for clinics outside Brazil, a national ID or
+    passport number".
+
+**Follow-up (not from this PR, already on master):** the booking form's
+label reads "CPF ((opcional))". The `book.notesOptional` string already
+contains the parentheses, and the label wraps it in another pair.
+
+**CI at `ce258bd`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`ce258bd`.**
+
+## PR #88 (`th/4-promptpay`, base `th/1-country-currency`) — PromptPay QR for Thai practices, 🟢 at `94748f8` (Thai path ⏳)
+
+Pre-110, every practice is Brazilian and `promptpay_id` doesn't exist, so
+nothing may change for Brazil. The Thai path can't run end to end yet: the
+Settings field, saving the ID and the schedule QR are **unit-tested only**.
+Checked on the Preview at `94748f8` with a throwaway doctor and secretary
+(deleted afterwards).
+
+**BR unchanged:**
+- **Schedule** (doctor and secretary): the Pix button is shown, and there's
+  **no "QR PromptPay" button**.
+- **Pix payload after the `lib/emv` refactor:** the doctor's decoded QR is
+  `…0014br.gov.bcb.pix0126<key>52040000 5303986 5406187.50 5802BR
+  5915CLINICA OPUS 88 6009SAO PAULO 62070503*** 6304…`, with a valid CRC.
+  That's the same layout #70 verified on prod. The secretary's is identical
+  apart from the city, which the test had just changed to CAMPINAS (again
+  with a valid CRC).
+- **Settings:**
+  - There's no PromptPay input or label, and the Pix field is shown.
+  - Saving a city change shows "Salvo!". This is the new error handling,
+    and a success shows no error.
+  - The row has the new city with `pix_key` kept.
+- **Privacy §3.3** (en + pt-BR): the new sentence reads "Clinics in
+  Thailand may add a PromptPay ID (a mobile number or national / tax ID),
+  used only to build the appointment payment QR" / "Clínicas na Tailândia
+  podem incluir um ID PromptPay…".
+
+**Independent payload cross-check** (the head's `lib/promptpay.ts` against
+the MIT `promptpay-qr` npm library, outside the repo):
+- **72/72 payloads identical**: 8 IDs × 9 amounts.
+  - IDs: 08/09 mobiles, 13-digit IDs, `+66 81 234 5678`, `081-234-5678`.
+  - Amounts: none, 0, 0.01, 1, 150, 187.5, 690, 1234.56, 99999.99.
+- `normalizePromptPayId` rejects 9- and 11-digit mobiles, a 10-digit
+  number not starting with 0, 12 digits, text, empty and null. It maps
+  `+66 812345678` to `0812345678`.
+- Sample: `00020101021229370016A000000677010111011300668123456785802TH53037645406187.506304166C`.
+
+**⏳ Thai path:** a TH practice's Settings field and save, the schedule
+QR, and a scan with a real Thai banking app. These need migration 110 on a
+DB, and the final gate is the user's real Thai bank scan.
+
+**CI at `94748f8`:** ✅. **Review: clean.** **Merge gate: 🟢 for `94748f8`**
+for everything verifiable pre-110.
+
+## PR #85 (`th/2-signup-country`, base `th/1-country-currency`) — practice country at doctor signup, read-only in Settings, 🟢 at `93972ad`
+
+Pre-110 (no `country` column), `handle_new_user` ignores the new metadata,
+so every account still becomes a Brazilian practice. The TH/Other storage
+needs 110 and is **unit-tested only**. Checked against the head's code
+(`9efbf8a`; the rebase to `93972ad` changed no code). The flag-OFF checks
+ran on a local `next dev`, where `x-vercel-ip-country` can be sent by hand;
+the flag-ON checks ran on the Preview.
+
+**Picker (flag OFF = Production):**
+- It offers **Brasil + Outro país** only; there's no Thailand option.
+- Pre-selection by geo:
+  - BR or unknown → Brasil;
+  - **TH → Outro país** (Thailand is never pre-selected while hidden);
+  - US → Outro país.
+- The hint reads: "Define a moeda, o preço do plano, o documento do
+  paciente e o QR de pagamento…"
+
+**Picker (flag ON Preview):**
+- It offers Brasil / ประเทศไทย / Outro país.
+- It's shown only for the doctor role. It disappears on the Paciente card
+  and comes back on the doctor card.
+- It's absent on `?secretary=…` and `?join=…`.
+
+**Signup** (2 throwaway doctors via the UI, deleted afterwards):
+- The POST `/auth/v1/signup` returns 200 and then shows "Verifique seu
+  e-mail".
+- The metadata:
+  - Brasil: `country: "BR", time_zone: "America/Sao_Paulo"`.
+  - Outro país with geo US: `country: "US"` plus the browser zone.
+- The `professionals` row is created (trial, `America/Sao_Paulo`).
+
+**Settings card "País do consultório"** (doctor, pt-BR + en):
+- It shows "Brasil" / "Brazil" with the support hint and has no controls,
+  so it's read-only.
+- An existing (pre-110) doctor also sees Brasil.
+- The Pix field is still there.
+- The secretary's Settings has no card, since that's a separate page.
+
+**CI at `93972ad`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`93972ad`**. It inherits #84's loop fix.
+
+## PR #85 re-test (`th/2-signup-country`, base master) — no picker before the Thai release (UX decision b), 🟢 at `7caddf5`
+
+UX changed the rule after my 🟢 at `93972ad`, to match the app: before the
+Thai release there's **no** country picker, and signup sends no country, so
+the DB default (BR) applies. The rule is in `c655a6c`; the head `7caddf5`
+only adds master merges.
+
+**Checks:** each signup below was captured and **aborted before it reached
+Supabase**, so no account was created.
+
+| Build | Location (`x-vercel-ip-country`) | Picker | `/api/geo` | Signup `user_metadata` |
+|---|---|---|---|---|
+| Flag OFF: local `next dev` of `7caddf5` (= Production) | none, TH, US | **none** ("Onde fica seu consultório?" absent) | **0 requests** | `full_name, role, platform, locale`, **no `country` / `time_zone`** |
+| Flag ON: Preview `7caddf5` | real (Vercel says TH) | Brasil / ประเทศไทย / Outro país, pre-selected **ประเทศไทย** from location | 1 → `{"country":"TH"}` | `country: "TH"`, `time_zone: "America/Sao_Paulo"` (browser zone) |
+
+**Settings card** (Preview `7caddf5`): unchanged. Doctor pt-BR: "País do
+consultório / Brasil" plus the support hint. Doctor en: "Practice country /
+Brazil". It has no controls, so it's read-only. The secretary's Settings
+has no card, as before.
+
+**CI at `7caddf5`:** ✅. **Review: clean at `c761d31`** (the picker code is the same). **Merge gate: 🟢 for `7caddf5`.** The earlier 🟢 at `93972ad` is
+superseded.

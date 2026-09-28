@@ -195,7 +195,9 @@
     "patientArchivedError": "このカルテはアーカイブ済みです。予約するには「患者」で復元してください。",
     "moreCount": "他 {n} 件",
     "slotBlockedConfirm": "この時間はブロックされています（{start}–{end}）。それでも予約しますか？",
-    "requestedLabel": "希望日時：{date} · {time}"
+    "requestedLabel": "希望日時：{date} · {time}",
+    "promptPayTitle": "PromptPay QR",
+    "promptPayScan": "タイの銀行アプリでスキャンして支払います。"
   },
   "payments": {
     "thisWeek": "今週",
@@ -450,7 +452,14 @@
     "regenerateError": "新しいコードを生成できませんでした。もう一度お試しください。",
     "showSetup": "設定チェックリストを表示",
     "registration": "登録番号",
-    "registrationPlaceholder": "例: CRM 12345/SP"
+    "registrationPlaceholder": "例: CRM 12345/SP",
+    "promptPay": "PromptPay ID",
+    "promptPayHint": "PromptPay に登録した携帯電話番号、または13桁の国民ID / 納税者番号。患者は予約の QR をスキャンして支払います。",
+    "promptPayInvalid": "10桁の携帯電話番号（0 から始まる）または13桁の国民ID / 納税者番号を入力してください。",
+    "saveFailed": "保存できませんでした。もう一度お試しください。",
+    "practiceCountry": "クリニックの所在国",
+    "practiceCountryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。変更するには support@solvymed.com までご連絡ください。",
+    "practiceCountryOther": "その他の国"
   },
   "clinics": {
     "title": "マイクリニック",
@@ -579,7 +588,10 @@
       "joiningAsSecretary": "招待リンクから受付スタッフとして登録します。",
       "secretaryNeedsInvite": "受付スタッフの方は、医師に招待リンクを依頼してください。",
       "secretaryEmailMismatch": "このメールアドレスは招待と一致しないか、招待の有効期限が切れています。メールアドレスを確認するか、クリニックに新しいリンクを依頼してください。",
-      "consent": "アカウントを作成すると、<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。"
+      "consent": "アカウントを作成すると、<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。",
+      "country": "クリニックの所在国は？",
+      "countryOther": "その他の国",
+      "countryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。後で変更するにはサポートにご連絡ください。"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",
@@ -964,5 +976,12 @@
       "message_required": "メッセージを入力してください。",
       "failed": "エラーが発生しました。もう一度お試しください。"
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "タイの国民ID番号",
+    "passport": "パスポート番号",
+    "passportOrId": "パスポートまたは身分証番号",
+    "thaiIdInvalid": "このタイの国民ID番号は無効です。13桁を確認してください。"
   }
 }

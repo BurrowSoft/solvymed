@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { getPracticeCountry } from "@/lib/practiceCountry";
+import { patientIdKind } from "@/lib/patientIds";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -115,6 +117,7 @@ export default async function PatientDetailPage({
           isSecretary={isSecretary}
           isArchived={isArchived}
           currentUserId={user.id}
+          idKind={patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId))}
           canDelete={preview?.hasClinicalHistory === false}
         />
       </div>

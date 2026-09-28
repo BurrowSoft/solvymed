@@ -1,5 +1,7 @@
 "use client";
 
+import { formatMoney } from "@/lib/money";
+import type { Currency } from "@/lib/country";
 import { useTransition, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { markInviteShared } from "@/lib/setupActions";
@@ -186,18 +188,27 @@ type ClinicData = {
   clinic_name?: string; clinic_cnpj?: string; clinic_phone?: string;
   clinic_website?: string; clinic_address?: string; clinic_city?: string; clinic_state?: string;
   pix_key?: string;
+  promptpay_id?: string;
 };
 
-export function ClinicForm({ data }: { data: ClinicData }) {
+// showPix / showPromptPay: the practice country's payment QR is Pix
+// (Brazil) or PromptPay (Thailand).
+export function ClinicForm({ data, showPix = true, showPromptPay = false }: { data: ClinicData; showPix?: boolean; showPromptPay?: boolean }) {
   const t = useTranslations("settings");
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    setError("");
     start(async () => {
-      await updateClinic(fd);
+      const result = await updateClinic(fd);
+      if ("error" in result && result.error) {
+        setError(result.error === "invalid_promptpay" ? t("promptPayInvalid") : t("saveFailed"));
+        return;
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     });
@@ -235,11 +246,23 @@ export function ClinicForm({ data }: { data: ClinicData }) {
             <Label>{t("state")}</Label>
             <Input name="clinic_state" defaultValue={data.clinic_state ?? ""} placeholder="SP" />
           </div>
-          <div className="sm:col-span-2">
-            <Label>Chave Pix</Label>
-            <Input name="pix_key" defaultValue={data.pix_key ?? ""} placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória" />
-          </div>
+          {/* Pix is Brazil's payment QR: only for Brazilian practices. */}
+          {showPix && (
+            <div className="sm:col-span-2">
+              <Label>Chave Pix</Label>
+              <Input name="pix_key" defaultValue={data.pix_key ?? ""} placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória" />
+            </div>
+          )}
+          {/* PromptPay is Thailand's payment QR: only for Thai practices. */}
+          {showPromptPay && (
+            <div className="sm:col-span-2">
+              <Label>{t("promptPay")}</Label>
+              <Input name="promptpay_id" defaultValue={data.promptpay_id ?? ""} placeholder="08X-XXX-XXXX" />
+              <p className="mt-1 text-xs text-slate-400">{t("promptPayHint")}</p>
+            </div>
+          )}
         </div>
+        {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
         <SaveRow pending={pending} saved={saved} />
       </form>
     </Card>
@@ -378,12 +401,13 @@ type Procedure = {
   id: string; name: string; duration_minutes: number; price?: number; payment_type: string; active: boolean;
 };
 
-function formatBRL(n?: number) {
+function formatPrice(n: number | undefined, currency: Currency) {
   if (!n) return "—";
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
+  return formatMoney(n, currency);
 }
 
-export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
+// currency: the practice's (its country), not the UI's.
+export function ProceduresPanel({ procedures, currency = "BRL" }: { procedures: Procedure[]; currency?: Currency }) {
   const t = useTranslations("settings");
   const [showForm, setShowForm] = useState(false);
   const [pending, start] = useTransition();
@@ -409,7 +433,7 @@ export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
           <p className="text-sm text-slate-400 py-4 text-center">{t("noProcedures")}</p>
         )}
         {procedures.map(proc => (
-          <ProcedureRow key={proc.id} proc={proc} />
+          <ProcedureRow key={proc.id} proc={proc} currency={currency} />
         ))}
       </div>
 
@@ -505,7 +529,7 @@ export function BlockedPatientsPanel({ patients, locale }: { patients: BlockedPa
   );
 }
 
-function ProcedureRow({ proc }: { proc: Procedure }) {
+function ProcedureRow({ proc, currency }: { proc: Procedure; currency: Currency }) {
   const t = useTranslations("settings");
   const [pending, start] = useTransition();
 
@@ -514,7 +538,7 @@ function ProcedureRow({ proc }: { proc: Procedure }) {
       <div className="min-w-0">
         <p className="text-sm font-semibold text-slate-900">{proc.name}</p>
         <p className="text-xs text-slate-500 mt-0.5">
-          {proc.duration_minutes} min · {formatBRL(proc.price)} · {proc.payment_type}
+          {proc.duration_minutes} min · {formatPrice(proc.price, currency)} · {proc.payment_type}
         </p>
       </div>
       <div className="flex items-center gap-2 shrink-0">

@@ -9,7 +9,7 @@ describe("patientSearchFilter", () => {
 
   it("adds CPF and phone digit matches from 3 digits, tolerating separators", () => {
     expect(patientSearchFilter("123.456")).toBe(
-      'full_name.ilike."*123.456*",cpf.imatch."1[^0-9]*2[^0-9]*3[^0-9]*4[^0-9]*5[^0-9]*6",phone.imatch."1[^0-9]*2[^0-9]*3[^0-9]*4[^0-9]*5[^0-9]*6"',
+      'full_name.ilike."*123.456*",phone.imatch."1[^0-9]*2[^0-9]*3[^0-9]*4[^0-9]*5[^0-9]*6",cpf.imatch."1[^0-9]*2[^0-9]*3[^0-9]*4[^0-9]*5[^0-9]*6"',
     );
     expect(patientSearchFilter("12")).toBe('full_name.ilike."*12*"');
   });
@@ -28,6 +28,27 @@ describe("patientSearchFilter", () => {
     expect(patientSearchFilter("   ")).toBeNull();
     expect(patientSearchFilter(null)).toBeNull();
     expect(cleanSearchText("x".repeat(100))).toHaveLength(60);
+  });
+});
+
+describe("patientSearchFilter by practice country (TH-1)", () => {
+  it("Brazil never names the migration-110 columns", () => {
+    const f = patientSearchFilter("123 Maria", "BR")!;
+    expect(f).toContain("cpf.imatch");
+    expect(f).not.toMatch(/th_national_id|passport_number/);
+  });
+
+  it("Thailand searches the Thai ID digits and the passport, not CPF", () => {
+    const f = patientSearchFilter("1-1017", "TH")!;
+    expect(f).toContain('th_national_id.imatch."1[^0-9]*1[^0-9]*0[^0-9]*1[^0-9]*7"');
+    expect(f).toContain('passport_number.ilike."*1-1017*"');
+    expect(f).not.toContain("cpf.");
+  });
+
+  it("Other searches the passport/ID only (no CPF, no Thai ID)", () => {
+    const f = patientSearchFilter("AB123", "OTHER")!;
+    expect(f).toContain('passport_number.ilike."*AB123*"');
+    expect(f).not.toMatch(/cpf\.|th_national_id/);
   });
 });
 

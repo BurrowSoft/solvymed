@@ -5,9 +5,6 @@ import { useTransition, useCallback, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { markPaid, markUnpaid } from "./actions";
 
-function formatBRL(n: number) {
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
-}
 
 const ERROR_CODE_KEY: Record<string, string> = {
   invalid_amount: "errorInvalidAmount",
