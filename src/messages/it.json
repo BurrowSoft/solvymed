@@ -450,7 +450,10 @@
     "regenerateError": "Impossibile generare un nuovo codice. Riprova.",
     "showSetup": "Mostra la lista di configurazione",
     "registration": "Iscrizione all'albo",
-    "registrationPlaceholder": "es. CRM 12345/SP"
+    "registrationPlaceholder": "es. CRM 12345/SP",
+    "practiceCountry": "Paese dello studio",
+    "practiceCountryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo, scrivi a support@solvymed.com.",
+    "practiceCountryOther": "Altro paese"
   },
   "clinics": {
     "title": "Le mie cliniche",
@@ -577,7 +580,7 @@
       "consent": "Creando un account, accetti i <terms>Termini di servizio</terms> e l'<privacy>Informativa sulla privacy</privacy>.",
       "country": "Dove si trova il tuo studio?",
       "countryOther": "Altro paese",
-      "countryHint": "Imposta la valuta, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza."
+      "countryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza."
     },
     "forgotPassword": {
       "title": "Password dimenticata?",

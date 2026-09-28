@@ -450,7 +450,10 @@
     "regenerateError": "無法產生新的邀請碼，請重試。",
     "showSetup": "顯示設定清單",
     "registration": "執業登記號碼",
-    "registrationPlaceholder": "例如 CRM 12345/SP"
+    "registrationPlaceholder": "例如 CRM 12345/SP",
+    "practiceCountry": "診所所在國家",
+    "practiceCountryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。如需變更，請聯絡 support@solvymed.com。",
+    "practiceCountryOther": "其他國家"
   },
   "clinics": {
     "title": "我的診所",
@@ -577,7 +580,7 @@
       "consent": "建立帳戶即表示您同意<terms>服務條款</terms>與<privacy>隱私權政策</privacy>。",
       "country": "您的診所在哪裡？",
       "countryOther": "其他國家",
-      "countryHint": "用於設定貨幣、病患證件與付款 QR 碼。之後如需變更，請聯絡客服。"
+      "countryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。之後如需變更，請聯絡客服。"
     },
     "forgotPassword": {
       "title": "忘記密碼？",

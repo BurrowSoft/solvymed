@@ -450,7 +450,10 @@
     "regenerateError": "无法生成新的邀请码，请重试。",
     "showSetup": "显示设置清单",
     "registration": "执业注册号",
-    "registrationPlaceholder": "例如 CRM 12345/SP"
+    "registrationPlaceholder": "例如 CRM 12345/SP",
+    "practiceCountry": "诊所所在国家",
+    "practiceCountryHint": "用于设定货币、套餐价格、患者证件和付款二维码。如需更改，请联系 support@solvymed.com。",
+    "practiceCountryOther": "其他国家"
   },
   "clinics": {
     "title": "我的诊所",
@@ -577,7 +580,7 @@
       "consent": "创建账户即表示您同意<terms>服务条款</terms>和<privacy>隐私政策</privacy>。",
       "country": "您的诊所在哪里？",
       "countryOther": "其他国家",
-      "countryHint": "用于设定货币、患者证件和付款二维码。之后如需更改，请联系客服。"
+      "countryHint": "用于设定货币、套餐价格、患者证件和付款二维码。之后如需更改，请联系客服。"
     },
     "forgotPassword": {
       "title": "忘记密码？",

@@ -450,7 +450,10 @@
     "regenerateError": "新しいコードを生成できませんでした。もう一度お試しください。",
     "showSetup": "設定チェックリストを表示",
     "registration": "登録番号",
-    "registrationPlaceholder": "例: CRM 12345/SP"
+    "registrationPlaceholder": "例: CRM 12345/SP",
+    "practiceCountry": "クリニックの所在国",
+    "practiceCountryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。変更するには support@solvymed.com までご連絡ください。",
+    "practiceCountryOther": "その他の国"
   },
   "clinics": {
     "title": "マイクリニック",
@@ -577,7 +580,7 @@
       "consent": "アカウントを作成すると、<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。",
       "country": "クリニックの所在国は？",
       "countryOther": "その他の国",
-      "countryHint": "通貨、患者の身分証、支払いQRが決まります。後で変更するにはサポートにご連絡ください。"
+      "countryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。後で変更するにはサポートにご連絡ください。"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",

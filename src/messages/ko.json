@@ -450,7 +450,10 @@
     "regenerateError": "새 코드를 생성하지 못했습니다. 다시 시도해 주세요.",
     "showSetup": "설정 체크리스트 보기",
     "registration": "면허 번호",
-    "registrationPlaceholder": "예: CRM 12345/SP"
+    "registrationPlaceholder": "예: CRM 12345/SP",
+    "practiceCountry": "진료소 국가",
+    "practiceCountryHint": "통화, 요금제 가격, 환자 신분증, 결제 QR이 정해집니다. 변경하려면 support@solvymed.com으로 문의하세요.",
+    "practiceCountryOther": "기타 국가"
   },
   "clinics": {
     "title": "내 클리닉",
@@ -577,7 +580,7 @@
       "consent": "계정을 만들면 <terms>서비스 약관</terms> 및 <privacy>개인정보처리방침</privacy>에 동의하는 것으로 간주됩니다.",
       "country": "진료소는 어디에 있나요?",
       "countryOther": "기타 국가",
-      "countryHint": "통화, 환자 신분증, 결제 QR이 정해집니다. 나중에 변경하려면 지원팀에 문의하세요."
+      "countryHint": "통화, 요금제 가격, 환자 신분증, 결제 QR이 정해집니다. 나중에 변경하려면 지원팀에 문의하세요."
     },
     "forgotPassword": {
       "title": "비밀번호를 잊으셨나요?",
