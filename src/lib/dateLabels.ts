@@ -10,7 +10,7 @@
 // and the space before AM/PM is U+202F in some versions. Same look,
 // different text, so hydration fails. Every label goes through this.
 export function plainSpaces(s: string): string {
-  return s.replace(/[   ]/g, " ");
+  return s.replace(/[\u00a0\u2009\u202f]/g, " ");
 }
 
 export function formatDateLabel(

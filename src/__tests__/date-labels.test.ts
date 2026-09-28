@@ -4,12 +4,12 @@ import { calendarHeaderLabel, weekdayLabels } from "@/app/[locale]/dashboard/sch
 
 // Node's ICU emits thin/narrow no-break spaces where browsers emit plain
 // ones; labels must be identical on both sides (React #418 otherwise).
-const ODD_SPACES = /[   ]/;
+const ODD_SPACES = /[\u00a0\u2009\u202f]/;
 
 describe("plain spaces in labels", () => {
   it("normalizes the spaces ICU versions disagree on", () => {
-    expect(plainSpaces("28 de set. – 4 de out.")).toBe("28 de set. – 4 de out.");
-    expect(plainSpaces("2:30 PM")).toBe("2:30 PM");
+    expect(plainSpaces("28 de set.\u2009–\u20094 de out.")).toBe("28 de set. – 4 de out.");
+    expect(plainSpaces("2:30\u202fPM")).toBe("2:30 PM");
   });
 
   it("the calendar header and weekday labels contain only plain spaces", () => {
