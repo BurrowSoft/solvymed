@@ -7,8 +7,12 @@ export const liveFeatures = {
   promptPay: false,
   // Appointment reminders on LINE (TH-6).
   lineReminders: false,
-  // SolvyAI, the AI assistant (Enhancing UX).
-  solvyAi: false,
+  // SolvyAI, the AI assistant (Enhancing UX): its panel for doctors, the
+  // tour step, the Novidades item and the pricing line.
+  // NEXT_PUBLIC_SOLVYAI_ENABLED=1 turns it all on for testing (a local build
+  // or a Preview; the backend is a mock until the edge function exists);
+  // nobody sets it on Production until the release.
+  solvyAi: process.env.NEXT_PUBLIC_SOLVYAI_ENABLED === "1",
   // "Built for PDPA": consent at signup + the record access log live
   // (TH-3) and the Thai lawyer's OK on the wording.
   pdpa: false,

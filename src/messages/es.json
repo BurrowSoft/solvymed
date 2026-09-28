@@ -1102,5 +1102,70 @@
       "tourSpot": "En Configuración → Ver el tour de nuevo.",
       "tourSpotMenu": "Abre el menú → Configuración → Ver el tour de nuevo."
     }
+  },
+  "assistant": {
+    "preview": "Vista previa",
+    "newConversation": "Nueva conversación",
+    "close": "Cerrar",
+    "emptyTitle": "Pregunta o pide algo sobre SolvyMed.",
+    "thinking": "SolvyAI está pensando…",
+    "limitReached": "Usaste los mensajes de hoy de SolvyAI. Se renueva en {hours} h.",
+    "help": "Ayuda",
+    "startNew": "Empezar una nueva conversación",
+    "placeholder": "Pregunta o pide algo…",
+    "mic": "Dictar",
+    "send": "Enviar",
+    "tooFast": "Espera un momento antes de enviar de nuevo.",
+    "noPatientData": "No incluyas datos de pacientes en las preguntas de ayuda.",
+    "hint": "¿Te ayudo? Pregunta o pide lo que quieras.",
+    "open": "Abrir SolvyAI",
+    "usageToday": "Uso de hoy",
+    "resetsIn": "Se renueva en {hours} h",
+    "extra": "+{n} mensajes extra",
+    "helpful": "Útil",
+    "notHelpful": "No fue útil",
+    "support": "Hablar con soporte",
+    "default": "predeterminado",
+    "saved": "✓ Hecho",
+    "undone": "Deshecho",
+    "simulated": "simulación",
+    "undo": "Deshacer ({s} s)",
+    "view": "Ver en la agenda",
+    "edit": "Editar",
+    "confirm": "Confirmar ✓",
+    "failed": "No se pudo guardar.",
+    "failedBlocked": "El horario está bloqueado.",
+    "chips": {
+      "home": {
+        "a": "¿Qué tengo mañana?",
+        "b": "¿Cómo invito a mi secretaria?",
+        "c": "Agendar cita"
+      },
+      "schedule": {
+        "a": "¿Qué tengo mañana?",
+        "b": "Bloquear el viernes por la tarde",
+        "c": "Agendar cita"
+      },
+      "patients": {
+        "a": "Registrar paciente",
+        "b": "¿Cómo archivo un paciente?",
+        "c": "Buscar paciente"
+      },
+      "payments": {
+        "a": "¿Cuánto tengo por cobrar esta semana?",
+        "b": "Enviar Pix a un paciente",
+        "c": "Marcar como pagado"
+      },
+      "settings": {
+        "a": "¿Cómo invito a mi secretaria?",
+        "b": "Configurar Pix",
+        "c": "Cambiar el horario de atención"
+      },
+      "other": {
+        "a": "¿Qué tengo mañana?",
+        "b": "¿Cómo invito a mi secretaria?",
+        "c": "Agendar cita"
+      }
+    }
   }
 }
