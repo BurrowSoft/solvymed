@@ -934,5 +934,28 @@
   },
   "legal": {
     "englishOnly": "이 문서는 영어와 포르투갈어(브라질)로만 제공됩니다. 아래는 영어 버전입니다."
+  },
+  "feedback": {
+    "title": "의견 보내기",
+    "subtitle": "SolvyMed에 대한 의견을 듣고 싶습니다.",
+    "ratingLabel": "SolvyMed를 평가해 주세요",
+    "ratingValue": "5점 중 {n}점",
+    "optional": "(선택)",
+    "name": "이름",
+    "namePlaceholder": "이름",
+    "email": "이메일",
+    "emailPlaceholder": "your@email.com",
+    "message": "메시지",
+    "messagePlaceholder": "생각, 부족한 점, 개선할 점을 알려 주세요…",
+    "send": "의견 보내기",
+    "sending": "보내는 중…",
+    "thanksTitle": "감사합니다!",
+    "thanksBody": "보내 주신 의견은 모두를 위해 SolvyMed를 개선하는 데 도움이 됩니다.",
+    "backToHome": "홈으로 돌아가기",
+    "errors": {
+      "email_required": "이메일을 입력해 주세요.",
+      "message_required": "메시지를 입력해 주세요.",
+      "failed": "문제가 발생했습니다. 다시 시도해 주세요."
+    }
   }
 }

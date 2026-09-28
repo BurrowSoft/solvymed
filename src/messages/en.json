@@ -934,5 +934,28 @@
   },
   "legal": {
     "englishOnly": "This document is available in English and Portuguese (Brazil)."
+  },
+  "feedback": {
+    "title": "Share your feedback",
+    "subtitle": "We'd love to hear what you think about SolvyMed.",
+    "ratingLabel": "How would you rate SolvyMed?",
+    "ratingValue": "{n} out of 5",
+    "optional": "(optional)",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "message": "Message",
+    "messagePlaceholder": "Tell us what you think, what's missing, or what we could do better…",
+    "send": "Send feedback",
+    "sending": "Sending…",
+    "thanksTitle": "Thank you!",
+    "thanksBody": "Your feedback helps us improve SolvyMed for everyone.",
+    "backToHome": "Back to home",
+    "errors": {
+      "email_required": "Please enter your email.",
+      "message_required": "Please write a message.",
+      "failed": "Something went wrong. Please try again."
+    }
   }
 }

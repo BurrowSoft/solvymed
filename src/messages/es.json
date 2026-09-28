@@ -934,5 +934,28 @@
   },
   "legal": {
     "englishOnly": "Este documento solo está disponible en inglés y portugués (Brasil). A continuación se muestra la versión en inglés."
+  },
+  "feedback": {
+    "title": "Envíanos tu opinión",
+    "subtitle": "Nos encantaría saber qué piensas de SolvyMed.",
+    "ratingLabel": "¿Cómo calificarías SolvyMed?",
+    "ratingValue": "{n} de 5",
+    "optional": "(opcional)",
+    "name": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "tu@email.com",
+    "message": "Mensaje",
+    "messagePlaceholder": "Cuéntanos qué piensas, qué falta o qué podríamos mejorar…",
+    "send": "Enviar opinión",
+    "sending": "Enviando…",
+    "thanksTitle": "¡Gracias!",
+    "thanksBody": "Tu opinión nos ayuda a mejorar SolvyMed para todos.",
+    "backToHome": "Volver al inicio",
+    "errors": {
+      "email_required": "Introduce tu correo electrónico.",
+      "message_required": "Escribe un mensaje.",
+      "failed": "Algo salió mal. Inténtalo de nuevo."
+    }
   }
 }

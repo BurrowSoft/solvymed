@@ -934,5 +934,28 @@
   },
   "legal": {
     "englishOnly": "Dokumen ini hanya tersedia dalam bahasa Inggris dan Portugis (Brasil). Versi bahasa Inggris ditampilkan di bawah."
+  },
+  "feedback": {
+    "title": "Kirim masukan",
+    "subtitle": "Kami ingin tahu pendapat Anda tentang SolvyMed.",
+    "ratingLabel": "Berapa nilai Anda untuk SolvyMed?",
+    "ratingValue": "{n} dari 5",
+    "optional": "(opsional)",
+    "name": "Nama",
+    "namePlaceholder": "Nama Anda",
+    "email": "Email",
+    "emailPlaceholder": "anda@email.com",
+    "message": "Pesan",
+    "messagePlaceholder": "Ceritakan pendapat Anda, apa yang kurang, atau apa yang bisa kami perbaiki…",
+    "send": "Kirim masukan",
+    "sending": "Mengirim…",
+    "thanksTitle": "Terima kasih!",
+    "thanksBody": "Masukan Anda membantu kami meningkatkan SolvyMed untuk semua.",
+    "backToHome": "Kembali ke beranda",
+    "errors": {
+      "email_required": "Masukkan email Anda.",
+      "message_required": "Tulis pesan.",
+      "failed": "Terjadi kesalahan. Silakan coba lagi."
+    }
   }
 }
