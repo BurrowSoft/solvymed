@@ -268,7 +268,11 @@
     "restore": "Wiederherstellen",
     "restoreError": "Die Akte konnte nicht wiederhergestellt werden. Bitte versuchen Sie es erneut.",
     "archivedOn": "Archiviert am {date}",
-    "archivedOnBy": "Archiviert am {date} von {name}"
+    "archivedOnBy": "Archiviert am {date} von {name}",
+    "pageInfo": "{from}–{to} von {total}",
+    "prevPage": "Zurück",
+    "nextPage": "Weiter",
+    "pagesLabel": "Seiten"
   },
   "patientDetail": {
     "tabInfo": "Info",

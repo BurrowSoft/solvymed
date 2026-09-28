@@ -268,7 +268,11 @@
     "restore": "Pulihkan",
     "restoreError": "Tidak dapat memulihkan rekam medis. Silakan coba lagi.",
     "archivedOn": "Diarsipkan {date}",
-    "archivedOnBy": "Diarsipkan {date} oleh {name}"
+    "archivedOnBy": "Diarsipkan {date} oleh {name}",
+    "pageInfo": "{from}–{to} dari {total}",
+    "prevPage": "Sebelumnya",
+    "nextPage": "Berikutnya",
+    "pagesLabel": "Halaman"
   },
   "patientDetail": {
     "tabInfo": "Info",

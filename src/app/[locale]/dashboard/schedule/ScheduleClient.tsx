@@ -4,7 +4,7 @@ import { useRouter, useSearchParams, usePathname, useParams } from "next/navigat
 import { useState, useTransition, useRef, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDateLabel } from "@/lib/dateLabels";
-import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime } from "./actions";
+import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime, searchPatientsForPicker } from "./actions";
 import { generatePixString, pixQrDataUrl } from "@/lib/pix";
 import { toLocalDateString } from "@/lib/slots";
 import { dropQueryParam } from "@/lib/dropQueryParam";
@@ -229,8 +229,7 @@ export function DeleteAppointmentButton({ id }: { id: string }) {
   );
 }
 
-export function NewAppointmentButton({ patients, defaultDate, procedures, label, autoOpen = false }: {
-  patients: Patient[];
+export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen = false }: {
   defaultDate: string;
   procedures: Procedure[];
   // The button's text; the dialog title stays "New appointment".
@@ -248,6 +247,24 @@ export function NewAppointmentButton({ patients, defaultDate, procedures, label,
   const [duration, setDuration] = useState("30");
   const [paymentType, setPaymentType] = useState("private");
   const formRef = useRef<HTMLFormElement>(null);
+
+  // Patient suggestions come from a server search as the name is typed (a
+  // clinic can have thousands of patients; loading all would be capped at
+  // 1000). Only the latest query's answer is kept.
+  const [matches, setMatches] = useState<Patient[]>([]);
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const latestQuery = useRef("");
+  useEffect(() => () => { if (searchTimer.current) clearTimeout(searchTimer.current); }, []);
+  function handlePatientInput(e: React.ChangeEvent<HTMLInputElement>) {
+    const q = e.target.value;
+    latestQuery.current = q;
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    if (q.trim().length < 2) { setMatches([]); return; }
+    searchTimer.current = setTimeout(async () => {
+      const found = await searchPatientsForPicker(q);
+      if (latestQuery.current === q) setMatches(found);
+    }, 250);
+  }
 
   function handleOpen() {
     const first = procedures[0] ?? null;
@@ -305,9 +322,9 @@ export function NewAppointmentButton({ patients, defaultDate, procedures, label,
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           <div>
             <FieldLabel>{t("patientName")} *</FieldLabel>
-            <Input name="patient_name" required list="patient-list" placeholder={t("patientNamePlaceholder")} />
+            <Input name="patient_name" required list="patient-list" autoComplete="off" onChange={handlePatientInput} placeholder={t("patientNamePlaceholder")} />
             <datalist id="patient-list">
-              {patients.map(p => <option key={p.id} value={p.full_name} />)}
+              {matches.map(p => <option key={p.id} value={p.full_name} />)}
             </datalist>
           </div>
 

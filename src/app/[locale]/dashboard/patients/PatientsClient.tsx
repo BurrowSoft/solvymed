@@ -130,11 +130,21 @@ export function PatientSearch({ defaultValue }: { defaultValue: string }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  // Searched on the server: wait until typing pauses, replace (not push)
+  // the URL so Back leaves the page, and start again at page 1.
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (e.target.value) params.set("q", e.target.value);
-    else params.delete("q");
-    router.push(`${pathname}?${params.toString()}`);
+    const value = e.target.value;
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) params.set("q", value);
+      else params.delete("q");
+      params.delete("page");
+      const s = params.toString();
+      router.replace(s ? `${pathname}?${s}` : pathname);
+    }, 300);
   }, [router, pathname, searchParams]);
 
   return (

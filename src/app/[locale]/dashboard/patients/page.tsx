@@ -3,13 +3,14 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { PatientSearch, NewPatientButton, PatientCard } from "./PatientsClient";
+import { PATIENTS_PAGE_SIZE, pageRange, parsePage, patientSearchFilter } from "@/lib/patientSearch";
 
 export default async function PatientsPage({
   params,
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ q?: string | string[]; archived?: string | string[]; new?: string }>;
+  searchParams: Promise<{ q?: string | string[]; archived?: string | string[]; new?: string; page?: string | string[] }>;
 }) {
   const { locale } = await params;
   const sp = await searchParams;
@@ -36,21 +37,28 @@ export default async function PatientsPage({
     ? (userRoleData?.invited_by_professional_id as string | null) ?? user.id
     : user.id;
 
+  // Paged and searched in the database: a response is capped at 1000 rows,
+  // so a large clinic's list must never be loaded whole.
+  const page = parsePage(first(sp.page));
+  const [from, to] = pageRange(page);
+  const filter = patientSearchFilter(q);
+
   let query = supabase
     .from("patients")
-    .select("id, full_name, email, phone, sex, birth_date, created_at, archived_at, archived_by_name")
+    .select("id, full_name, email, phone, sex, birth_date, created_at, archived_at, archived_by_name", { count: "exact" })
     .eq("professional_id", effectiveProfId)
-    .order("full_name");
+    .order("full_name")
+    .order("id")
+    .range(from, to);
   query = showArchived ? query.not("archived_at", "is", null) : query.is("archived_at", null);
-
-  if (q) query = query.ilike("full_name", `%${q}%`);
+  if (filter) query = query.or(filter);
 
   const countQuery = () => supabase
     .from("patients")
     .select("*", { count: "exact", head: true })
     .eq("professional_id", effectiveProfId);
 
-  const [{ data: patients }, activeCount, archivedCount] = await Promise.all([
+  const [{ data: patients, count: listCount }, activeCount, archivedCount] = await Promise.all([
     query,
     countQuery().is("archived_at", null),
     countQuery().not("archived_at", "is", null),
@@ -64,7 +72,17 @@ export default async function PatientsPage({
 
   const total = activeCount.count ?? 0;
   const archivedTotal = archivedCount.count ?? 0;
+  const matched = listCount ?? patientList.length;
+  const lastPage = Math.max(1, Math.ceil(matched / PATIENTS_PAGE_SIZE));
   const listHref = (archived: boolean) => `${prefix}/dashboard/patients${archived ? "?archived=1" : ""}`;
+  const pageHref = (n: number) => {
+    const params = new URLSearchParams();
+    if (showArchived) params.set("archived", "1");
+    if (q) params.set("q", q);
+    if (n > 1) params.set("page", String(n));
+    const s = params.toString();
+    return `${prefix}/dashboard/patients${s ? `?${s}` : ""}`;
+  };
   const chipClass = (active: boolean) =>
     `rounded-full px-3 py-1 text-xs font-semibold transition ${active ? "bg-teal-600 text-white" : "border border-slate-200 text-slate-600 hover:bg-slate-50"}`;
 
@@ -75,7 +93,7 @@ export default async function PatientsPage({
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">{showArchived ? t("archivedTitle") : t("title")}</h1>
           <p className="text-sm text-slate-500 mt-0.5">
-            {t("total", { n: showArchived ? archivedTotal : total })}{q ? ` · ${t("matching", { n: patientList.length, q })}` : ""}
+            {t("total", { n: showArchived ? archivedTotal : total })}{q ? ` · ${t("matching", { n: matched, q })}` : ""}
           </p>
         </div>
         {!showArchived && <NewPatientButton locale={locale} autoOpen={sp.new === "1"} />}
@@ -117,6 +135,27 @@ export default async function PatientsPage({
             <PatientCard key={patient.id} patient={patient} locale={locale} />
           ))}
         </div>
+      )}
+
+      {/* Pages of PATIENTS_PAGE_SIZE */}
+      {matched > PATIENTS_PAGE_SIZE && (
+        <nav aria-label={t("pagesLabel")} className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm">
+          <span className="text-slate-500">
+            {t("pageInfo", { from: Math.min(from + 1, matched), to: Math.min(to + 1, matched), total: matched })}
+          </span>
+          <div className="flex gap-2">
+            {page > 1 ? (
+              <Link href={pageHref(page - 1)} rel="prev" className="rounded-xl border border-slate-200 px-3 py-1.5 font-semibold text-slate-700 hover:bg-slate-50">
+                {t("prevPage")}
+              </Link>
+            ) : null}
+            {page < lastPage ? (
+              <Link href={pageHref(page + 1)} rel="next" className="rounded-xl border border-slate-200 px-3 py-1.5 font-semibold text-slate-700 hover:bg-slate-50">
+                {t("nextPage")}
+              </Link>
+            ) : null}
+          </div>
+        </nav>
       )}
     </div>
   );

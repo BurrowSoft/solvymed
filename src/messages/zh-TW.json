@@ -268,7 +268,11 @@
     "restore": "還原",
     "restoreError": "無法還原病歷，請再試一次。",
     "archivedOn": "{date} 封存",
-    "archivedOnBy": "{date} 由 {name} 封存"
+    "archivedOnBy": "{date} 由 {name} 封存",
+    "pageInfo": "第 {from}–{to} 筆，共 {total} 筆",
+    "prevPage": "上一頁",
+    "nextPage": "下一頁",
+    "pagesLabel": "分頁"
   },
   "patientDetail": {
     "tabInfo": "資訊",

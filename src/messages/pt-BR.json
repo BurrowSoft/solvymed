@@ -268,7 +268,11 @@
     "restore": "Restaurar",
     "restoreError": "Não foi possível restaurar o cadastro. Tente novamente.",
     "archivedOn": "Arquivado em {date}",
-    "archivedOnBy": "Arquivado em {date} por {name}"
+    "archivedOnBy": "Arquivado em {date} por {name}",
+    "pageInfo": "{from}–{to} de {total}",
+    "prevPage": "Anterior",
+    "nextPage": "Próxima",
+    "pagesLabel": "Páginas"
   },
   "patientDetail": {
     "tabInfo": "Informações",

@@ -268,7 +268,11 @@
     "restore": "恢复",
     "restoreError": "无法恢复档案，请重试。",
     "archivedOn": "{date} 归档",
-    "archivedOnBy": "{date} 由 {name} 归档"
+    "archivedOnBy": "{date} 由 {name} 归档",
+    "pageInfo": "第 {from}–{to} 条，共 {total} 条",
+    "prevPage": "上一页",
+    "nextPage": "下一页",
+    "pagesLabel": "分页"
   },
   "patientDetail": {
     "tabInfo": "信息",

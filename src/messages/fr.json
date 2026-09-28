@@ -268,7 +268,11 @@
     "restore": "Restaurer",
     "restoreError": "Impossible de restaurer le dossier. Veuillez réessayer.",
     "archivedOn": "Archivé le {date}",
-    "archivedOnBy": "Archivé le {date} par {name}"
+    "archivedOnBy": "Archivé le {date} par {name}",
+    "pageInfo": "{from}–{to} sur {total}",
+    "prevPage": "Précédent",
+    "nextPage": "Suivant",
+    "pagesLabel": "Pages"
   },
   "patientDetail": {
     "tabInfo": "Infos",

@@ -268,7 +268,11 @@
     "restore": "복원",
     "restoreError": "차트를 복원하지 못했습니다. 다시 시도해 주세요.",
     "archivedOn": "{date}에 보관됨",
-    "archivedOnBy": "{date}에 {name}님이 보관함"
+    "archivedOnBy": "{date}에 {name}님이 보관함",
+    "pageInfo": "{total}명 중 {from}–{to}",
+    "prevPage": "이전",
+    "nextPage": "다음",
+    "pagesLabel": "페이지"
   },
   "patientDetail": {
     "tabInfo": "정보",

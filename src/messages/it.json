@@ -268,7 +268,11 @@
     "restore": "Ripristina",
     "restoreError": "Impossibile ripristinare la scheda. Riprova.",
     "archivedOn": "Archiviata il {date}",
-    "archivedOnBy": "Archiviata il {date} da {name}"
+    "archivedOnBy": "Archiviata il {date} da {name}",
+    "pageInfo": "{from}–{to} di {total}",
+    "prevPage": "Precedente",
+    "nextPage": "Successiva",
+    "pagesLabel": "Pagine"
   },
   "patientDetail": {
     "tabInfo": "Info",

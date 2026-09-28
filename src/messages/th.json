@@ -268,7 +268,11 @@
     "restore": "กู้คืน",
     "restoreError": "กู้คืนแฟ้มไม่สำเร็จ โปรดลองอีกครั้ง",
     "archivedOn": "เก็บถาวรเมื่อ {date}",
-    "archivedOnBy": "เก็บถาวรเมื่อ {date} โดย {name}"
+    "archivedOnBy": "เก็บถาวรเมื่อ {date} โดย {name}",
+    "pageInfo": "{from}–{to} จาก {total}",
+    "prevPage": "ก่อนหน้า",
+    "nextPage": "ถัดไป",
+    "pagesLabel": "หน้า"
   },
   "patientDetail": {
     "tabInfo": "ข้อมูล",

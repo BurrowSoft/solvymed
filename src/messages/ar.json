@@ -268,7 +268,11 @@
     "restore": "استعادة",
     "restoreError": "تعذّرت استعادة الملف. يُرجى المحاولة مرة أخرى.",
     "archivedOn": "أُرشف في {date}",
-    "archivedOnBy": "أُرشف في {date} بواسطة {name}"
+    "archivedOnBy": "أُرشف في {date} بواسطة {name}",
+    "pageInfo": "{from}–{to} من {total}",
+    "prevPage": "السابق",
+    "nextPage": "التالي",
+    "pagesLabel": "الصفحات"
   },
   "patientDetail": {
     "tabInfo": "معلومات",

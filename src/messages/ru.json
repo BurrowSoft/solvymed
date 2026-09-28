@@ -268,7 +268,11 @@
     "restore": "Восстановить",
     "restoreError": "Не удалось восстановить карту. Попробуйте ещё раз.",
     "archivedOn": "В архиве с {date}",
-    "archivedOnBy": "Перемещено в архив {date}, {name}"
+    "archivedOnBy": "Перемещено в архив {date}, {name}",
+    "pageInfo": "{from}–{to} из {total}",
+    "prevPage": "Назад",
+    "nextPage": "Далее",
+    "pagesLabel": "Страницы"
   },
   "patientDetail": {
     "tabInfo": "Инфо",
