@@ -80,6 +80,10 @@ export function TourOverlay({
   const [cardH, setCardH] = useState(200);
   const cardRef = useRef<HTMLDivElement>(null);
   const targetRef = useRef<HTMLElement | null>(null);
+  // Pages whose steps were already filtered (the starting page, up front).
+  const checkedPaths = useRef(new Set<string>(
+    typeof window === "undefined" ? [] : initialSteps.filter((s) => `${prefix}${s.path}` === pathname).map((s) => s.path),
+  ));
   const [reduceMotion, setReduceMotion] = useState(false);
 
   useEffect(() => {
@@ -113,6 +117,14 @@ export function TourOverlay({
       if (cancelled) return;
       const el = findTarget(step.target);
       if (el) {
+        // First time on this page (e.g. a replay started in Settings, then
+        // came to the dashboard): the page is rendered now, so the later
+        // steps on it whose element isn't on screen are dropped at once and
+        // the count is right from here, not only as each is reached.
+        if (!checkedPaths.current.has(step.path)) {
+          checkedPaths.current.add(step.path);
+          setSteps((all) => all.filter((s, i) => i <= index || s.path !== step.path || findTarget(s.target) !== null));
+        }
         targetRef.current = el;
         el.scrollIntoView({ block: "center", inline: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
         // Measure after the scroll settles.

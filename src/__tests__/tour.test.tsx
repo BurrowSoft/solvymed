@@ -106,6 +106,23 @@ describe("TourOverlay", () => {
     vi.useRealTimers();
   });
 
+  it("a replay started on another page: arriving on the dashboard drops its missing steps at once (the count is right)", async () => {
+    vi.useFakeTimers();
+    addTarget("a");
+    addTarget("b");
+    pathname = "/dashboard/settings";
+    const onClose = vi.fn();
+    const { rerender } = render(<TourOverlay steps={steps} prefix="" onClose={onClose} />);
+    expect(push).toHaveBeenCalledWith("/dashboard");
+    pathname = "/dashboard";
+    rerender(<TourOverlay steps={steps} prefix="" onClose={onClose} />);
+    await act(async () => { vi.advanceTimersByTime(400); });
+    await act(async () => { vi.advanceTimersByTime(400); });
+    // "missing" (same page, not on screen) is gone before step 2: 1 of 2, not 1 of 3.
+    expect(screen.getByText('progress:{"n":1,"total":2}', { selector: "p:not(.sr-only)" })).toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
   it("a step on another page whose element never shows up is dropped when reached", async () => {
     vi.useFakeTimers();
     addTarget("a");
