@@ -5,6 +5,7 @@ import { Card, ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, Sched
 import { TeamPanel, type TeamRow } from "./TeamPanel";
 import { SecretarySettings } from "./SecretarySettings";
 import { ShowSetupRow } from "./ShowSetupRow";
+import { TourSettingsCard } from "@/components/tour/TourProvider";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
@@ -47,6 +48,9 @@ export default async function SettingsPage({
           <h1 className="text-2xl font-extrabold text-slate-900">{t("pageTitle")}</h1>
         </div>
         <SecretarySettings supabase={supabase} doctorId={userRoleData.invited_by_professional_id as string} locale={locale} />
+        <div className="mt-6">
+          <TourSettingsCard />
+        </div>
         {closurePreview && (
           <div className="mt-6">
             <CloseAccountPanel preview={closurePreview} locale={locale} />
@@ -137,6 +141,8 @@ export default async function SettingsPage({
 
       <div className="space-y-6">
         {offerShowSetup && <ShowSetupRow />}
+
+        <TourSettingsCard />
 
         <ProfileForm
           fullName={prof.full_name}

@@ -126,7 +126,7 @@ export default async function DashboardPage({
     <div className="p-6 lg:p-8 max-w-7xl">
       {/* Greeting */}
       <div className="mb-8 flex items-start justify-between gap-4">
-        <div>
+        <div data-tour="home">
           <h1 className="text-2xl font-extrabold text-slate-900 md:text-3xl">
             {greeting}, {isSecretary ? firstName : `Dr. ${firstName}`} 👋
           </h1>
@@ -134,7 +134,7 @@ export default async function DashboardPage({
             {todayFormatted}{professional?.specialty ? ` · ${professional.specialty}` : ""}
           </p>
         </div>
-        <Link href={`${prefix}/dashboard/schedule`} className="shrink-0 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition hidden sm:block">
+        <Link href={`${prefix}/dashboard/schedule`} data-tour="new-appointment" className="shrink-0 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition hidden sm:block">
           {t("newAppt")}
         </Link>
       </div>
