@@ -55,7 +55,9 @@ export default async function HelpArticlePage({
         ) : (
           <>
             <HelpBlocks blocks={article.body[lang]} />
-            {article.web && (
+            {/* Web notes are for website readers; the app variant (opened in
+                the app) shows and searches only the app text (UX). */}
+            {article.web && !app && (
               <div className="mt-6 rounded-xl bg-slate-50 p-4">
                 <p className="mb-1 text-xs font-bold uppercase tracking-wide text-slate-500">{ui.onTheWebsite}</p>
                 <p className="text-sm leading-relaxed text-slate-700"><Inline text={article.web[lang]} /></p>
