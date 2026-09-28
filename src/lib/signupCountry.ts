@@ -1,3 +1,5 @@
+import { thaiEnabled } from "./publicLocales";
+
 // The practice-country picker at doctor signup (Sprint TH, TH-1): Brasil,
 // ประเทศไทย or Other. It's stored once (professionals.country, migration
 // 110) and afterwards changes only through support.
@@ -6,12 +8,19 @@ export type CountryChoice = "BR" | "TH" | "OTHER";
 
 // Pre-selection: the visitor's country when it's BR or TH; any other known
 // country means Other; unknown falls back to the page language (pt-BR →
-// Brasil, th → Thailand), else Brasil.
-export function initialCountryChoice(detected: string | null | undefined, locale: string): CountryChoice {
+// Brasil, th → Thailand), else Brasil. While Thailand isn't offered yet
+// (NEXT_PUBLIC_THAI_ENABLED, Thai release), it's never pre-selected: a
+// Thai visitor gets Other (UX).
+export function initialCountryChoice(
+  detected: string | null | undefined,
+  locale: string,
+  thaiOffered: boolean = thaiEnabled,
+): CountryChoice {
   const c = (detected ?? "").toUpperCase();
-  if (c === "BR" || c === "TH") return c;
+  if (c === "BR") return "BR";
+  if (c === "TH") return thaiOffered ? "TH" : "OTHER";
   if (/^[A-Z]{2}$/.test(c)) return "OTHER";
-  if (locale === "th") return "TH";
+  if (locale === "th") return thaiOffered ? "TH" : "OTHER";
   return "BR";
 }
 

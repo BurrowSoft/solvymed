@@ -16,6 +16,7 @@ import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget"
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
 import { browserTimeZone, countryToStore, initialCountryChoice, type CountryChoice } from "@/lib/signupCountry";
+import { thaiEnabled } from "@/lib/publicLocales";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -269,7 +270,8 @@ export default function SignupPage() {
             >
               {/* Country names in their own language, as in a language picker. */}
               <option value="BR">Brasil</option>
-              <option value="TH">ประเทศไทย</option>
+              {/* Thailand is offered from the Thai release on. */}
+              {thaiEnabled && <option value="TH">ประเทศไทย</option>}
               <option value="OTHER">{t("signup.countryOther")}</option>
             </select>
             <p className="mt-1.5 text-xs text-slate-500">{t("signup.countryHint")}</p>
