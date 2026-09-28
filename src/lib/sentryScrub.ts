@@ -41,6 +41,8 @@ const SAFE_TRACE_KEYS = ["trace_id", "span_id", "parent_span_id", "op", "status"
 const EMAIL = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
 // CPF with or without punctuation (000.000.000-00 / 00000000000).
 const CPF = /\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g;
+// Thai national ID (13 digits, often written 1-2345-67890-12-3).
+const THAI_ID = /\b\d[- ]?\d{4}[- ]?\d{5}[- ]?\d{2}[- ]?\d\b/g;
 // Phone-like runs: 8+ digits, optionally with +, spaces, dots, dashes, parens.
 const PHONE = /\+?\(?\d[\d\s().-]{7,}\d/g;
 
@@ -53,6 +55,7 @@ export function scrubText(text: string): string {
   return text
     .replace(URL_IN_TEXT, (url) => scrubUrl(url) ?? "[url]")
     .replace(EMAIL, "[email]")
+    .replace(THAI_ID, "[thai_id]")
     .replace(CPF, "[cpf]")
     .replace(PHONE, "[phone]");
 }

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPrescription, deletePrescription, updatePrescription, addPrescriptionCorrection, updatePatient, deletePatient, toggleBookingBlock, generatePatientInviteCode, getArchivePreview, archivePatient, restorePatient } from "../actions";
 import { archivedLabel } from "../PatientsClient";
+import { usePatientIdFields } from "@/lib/usePatientIdFields";
+import type { PatientIdKind } from "@/lib/patientIds";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -22,6 +24,8 @@ export type Rx = ClinicalMeta & { id: string; date: string; notes?: string; pres
 type Appt = { id: string; date: string; start_time: string; consultation_type: string; status: string; payment_status: string };
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string; cpf?: string;
+  // Migration 110 (Thai / other-country practices); absent before it.
+  th_national_id?: string | null; passport_number?: string | null;
   sex?: string; birth_date?: string; profession?: string; emergency_phone?: string;
   convenio_type?: string; invite_code?: string; created_at: string;
   booking_blocked?: boolean;
@@ -72,7 +76,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, currentUserId }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, currentUserId, idKind = "BR" }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -86,6 +90,8 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   canDelete?: boolean;
   // Records and prescriptions can be edited or deleted only by their author.
   currentUserId: string;
+  // The practice country's patient ID (lib/patientIds).
+  idKind?: PatientIdKind;
 }) {
   const t = useTranslations("patientDetail");
   const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "appointments">("info");
@@ -118,7 +124,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         ))}
       </div>
 
-      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} />}
+      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} idKind={idKind} />}
       {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {tab === "appointments" && <AppointmentsTab appointments={appointments} locale={locale} />}
@@ -126,13 +132,17 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   );
 }
 
-function PatientInfoTab({ patient, locale, isArchived, canDelete }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean }) {
+function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; idKind: PatientIdKind }) {
   const t = useTranslations("patientDetail");
+  const tIds = useTranslations("patientIds");
+  // CPF, Thai ID/passport or passport/ID, by the practice's country.
+  const idFields = usePatientIdFields(idKind, patient);
   // Server codes become translated copy, never raw codes or database text.
   const errorText = (e: string) =>
     e === "patient_archived" ? t("archivedNoNew")
     : e === "patient_has_clinical_history" ? t("deleteHasHistory")
     : e === "name_required" ? t("nameRequired")
+    : e === "invalid_th_id" ? tIds("thaiIdInvalid")
     : e === "unauthorized" ? t("sessionError")
     : t("genericError");
   const [archiveOpen, setArchiveOpen] = useState(false);
@@ -204,7 +214,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete }: { patient: P
   const fields = [
     { label: t("email"), value: patient.email },
     { label: t("phone"), value: patient.phone },
-    { label: t("cpf"), value: patient.cpf },
+    ...idFields.map((f) => ({ label: f.label, value: f.value || null })),
     { label: t("dateOfBirth"), value: patient.birth_date ? `${patient.birth_date}${age ? ` (${age} ${t("yrs")})` : ""}` : null },
     { label: t("sex"), value: patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null },
     { label: t("profession"), value: patient.profession },
@@ -319,10 +329,12 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete }: { patient: P
           <FieldLabel>{t("phone")}</FieldLabel>
           <Input name="phone" defaultValue={patient.phone ?? ""} />
         </div>
-        <div>
-          <FieldLabel>{t("cpf")}</FieldLabel>
-          <Input name="cpf" defaultValue={patient.cpf ?? ""} />
-        </div>
+        {idFields.map((f) => (
+          <div key={f.name}>
+            <FieldLabel>{f.label}</FieldLabel>
+            <Input name={f.name} defaultValue={f.value} placeholder={f.placeholder} inputMode={f.inputMode} maxLength={f.maxLength} />
+          </div>
+        ))}
         <div>
           <FieldLabel>{t("dateOfBirth")}</FieldLabel>
           <Input name="birth_date" type="date" defaultValue={patient.birth_date ?? ""} />

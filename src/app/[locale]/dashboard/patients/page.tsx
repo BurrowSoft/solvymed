@@ -4,6 +4,8 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { PatientSearch, NewPatientButton, PatientCard } from "./PatientsClient";
 import { PATIENTS_PAGE_SIZE, pageRange, parsePage, patientSearchFilter } from "@/lib/patientSearch";
+import { getPracticeCountry } from "@/lib/practiceCountry";
+import { patientIdKind } from "@/lib/patientIds";
 
 export default async function PatientsPage({
   params,
@@ -41,7 +43,9 @@ export default async function PatientsPage({
   // so a large clinic's list must never be loaded whole.
   const page = parsePage(first(sp.page));
   const [from, to] = pageRange(page);
-  const filter = patientSearchFilter(q);
+  // The practice country's patient ID (CPF / Thai ID + passport / passport).
+  const idKind = patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId));
+  const filter = patientSearchFilter(q, idKind);
 
   let query = supabase
     .from("patients")
@@ -111,7 +115,7 @@ export default async function PatientsPage({
             {t("total", { n: showArchived ? archivedTotal : total })}{q ? ` · ${t("matching", { n: matched, q })}` : ""}
           </p>
         </div>
-        {!showArchived && <NewPatientButton locale={locale} autoOpen={sp.new === "1"} />}
+        {!showArchived && <NewPatientButton locale={locale} autoOpen={sp.new === "1"} idKind={idKind} />}
       </div>
 
       {/* Active / Archived switch. It only appears once a patient has been

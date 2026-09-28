@@ -6,6 +6,8 @@ import { getEffectiveProfId, isProfessionalRole } from "@/lib/effectiveProfId";
 import { sendExpoPush } from "@/lib/push";
 import { actionError } from "@/lib/dbErrors";
 import { clinicDate, clinicTime } from "@/lib/clinicTime";
+import { lookupPracticeCountry } from "@/lib/practiceCountry";
+import { patientIdError, patientIdKind, readPatientIds, sameIdentifier, similarPatientArgs } from "@/lib/patientIds";
 
 // archived_at is set for an archived match, so the warning can offer
 // Restore instead of creating a second record for the same person.
@@ -13,7 +15,7 @@ export type PatientMatch = { id: string; full_name: string; phone: string | null
 
 export type CreatePatientResult =
   | { success: true }
-  | { error: string; code: "generic" | "name_required" }
+  | { error: string; code: "generic" | "name_required" | "invalid_th_id" }
   // Possible duplicates found before saving. The user chooses "Open
   // existing" or "Create anyway" (resubmits with force=1).
   | { error: string; code: "possible_match"; matches: PatientMatch[] }
@@ -33,7 +35,13 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
 
   const email = (formData.get("email") as string)?.trim().toLowerCase() || null;
   const phone = (formData.get("phone") as string)?.trim() || null;
-  const cpf = (formData.get("cpf") as string)?.trim() || null;
+  // The patient identifiers of the practice's country (CPF in Brazil; Thai
+  // ID/passport in Thailand; passport/ID elsewhere). Strict lookup: an
+  // unknown country must not silently drop an identifier.
+  const country = await lookupPracticeCountry(supabase, user.id, effectiveProfId);
+  if (!country.ok) return { error: "Could not verify the practice country", code: "generic" };
+  const ids = readPatientIds(formData, patientIdKind(country.country));
+  if (patientIdError(ids)) return { error: "Invalid Thai ID", code: "invalid_th_id" };
   const birthDate = (formData.get("birth_date") as string) || null;
   const force = formData.get("force") === "1";
 
@@ -59,7 +67,7 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
       p_name: fullName,
       p_phone: phone,
       p_birth_date: birthDate,
-      p_cpf: cpf,
+      ...similarPatientArgs(ids),
     });
     if (!similarError && Array.isArray(similar) && similar.length > 0) {
       const matches = (similar as PatientMatch[]).map(({ id, full_name, phone, birth_date, archived_at }) => ({ id, full_name, phone, birth_date, archived_at: archived_at ?? null }));
@@ -72,7 +80,7 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
     full_name: fullName,
     email,
     phone,
-    cpf,
+    ...ids,
     sex: (formData.get("sex") as string) || null,
     birth_date: birthDate,
     profession: (formData.get("profession") as string)?.trim() || null,
@@ -82,16 +90,17 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
 
   if (error) {
     if (error.code === "23505") {
-      // A unique CPF (patients_professional_cpf_key) or email collision.
-      // Look the existing patient up so the user can open it.
+      // A unique identifier (the CPF, Thai ID or passport key) or email
+      // collision. Look the existing patient up so the user can open it.
       let existing: { id: string; full_name: string } | null = null;
-      if (cpf) {
+      const idArgs = similarPatientArgs(ids);
+      if (Object.keys(idArgs).length) {
         // The RPC can also return name/phone matches, so pick the row whose
-        // CPF is the one that collided, not just the first result.
-        const digits = (v: string | null | undefined) => (v ?? "").replace(/\D/g, "");
-        const { data } = await supabase.rpc("find_similar_patients", { p_name: fullName, p_cpf: cpf });
+        // identifier is the one that collided, not just the first result.
+        const { data } = await supabase.rpc("find_similar_patients", { p_name: fullName, ...idArgs });
         const hit = Array.isArray(data)
-          ? (data as (PatientMatch & { cpf?: string | null })[]).find((m) => digits(m.cpf) === digits(cpf))
+          ? (data as (PatientMatch & { cpf?: string | null; th_national_id?: string | null; passport_number?: string | null })[])
+              .find((m) => sameIdentifier(ids, m))
           : undefined;
         if (hit) existing = { id: hit.id, full_name: hit.full_name };
       }
@@ -125,11 +134,18 @@ export async function updatePatient(id: string, formData: FormData) {
   const fullName = (formData.get("full_name") as string)?.trim();
   if (!fullName) return { error: "name_required" };
 
+  // Only the practice country's identifier columns are written.
+  const country = await lookupPracticeCountry(supabase, user.id, effectiveProfId);
+  if (!country.ok) return { error: "check_failed" };
+  const ids = readPatientIds(formData, patientIdKind(country.country));
+  const idError = patientIdError(ids);
+  if (idError) return { error: idError };
+
   const { error } = await supabase.from("patients").update({
     full_name: fullName,
     email: (formData.get("email") as string)?.trim().toLowerCase() || null,
     phone: (formData.get("phone") as string)?.trim() || null,
-    cpf: (formData.get("cpf") as string)?.trim() || null,
+    ...ids,
     sex: (formData.get("sex") as string) || null,
     birth_date: (formData.get("birth_date") as string) || null,
     profession: (formData.get("profession") as string)?.trim() || null,

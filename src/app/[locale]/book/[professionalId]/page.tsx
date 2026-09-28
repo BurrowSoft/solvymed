@@ -63,6 +63,7 @@ export default async function BookPage({
       locale={locale}
       initialManualProfile={initialManualProfile}
       currency={countryProfile(prof?.country).currency}
+      idKind={countryProfile(prof?.country).kind}
     />
   );
 }
