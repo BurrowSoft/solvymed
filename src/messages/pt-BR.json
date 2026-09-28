@@ -1010,7 +1010,7 @@
       "reminders": "Lembretes de consulta e notificações",
       "devices": "Site e app (Android e iPhone), sempre sincronizados",
       "devicesAndroid": "Site e app Android, sempre sincronizados",
-      "security": "Dados privados e criptografados; prontuários nunca são apagados, só corrigidos",
+      "security": "Dados privados e criptografados; após 24 horas, prontuários e receitas só podem ser corrigidos, e o original fica guardado.",
       "solvyai": "SolvyAI, seu assistente com IA: pergunte ou peça \"marca a Maria amanhã às 14h\""
     },
     "faqTitle": "Dúvidas",

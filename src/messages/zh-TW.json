@@ -1010,7 +1010,7 @@
       "reminders": "預約提醒與推播通知",
       "devices": "網頁版與手機 App（Android 與 iPhone），隨時同步",
       "devicesAndroid": "網頁版與 Android App，隨時同步",
-      "security": "私密且加密的資料；病歷永不刪除，只能更正",
+      "security": "私密且加密的資料；24 小時後，病歷與處方只能更正，原始紀錄會被保留。",
       "solvyai": "SolvyAI，您的 AI 助理：提問，或直接說「幫 Maria 約明天下午 2 點」"
     },
     "faqTitle": "常見問題",

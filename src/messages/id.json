@@ -1010,7 +1010,7 @@
       "reminders": "Pengingat janji temu dan notifikasi push",
       "devices": "Web dan aplikasi seluler (Android dan iPhone), selalu tersinkron",
       "devicesAndroid": "Web dan aplikasi Android, selalu tersinkron",
-      "security": "Data pribadi dan terenkripsi; rekam medis tidak pernah dihapus, hanya dikoreksi",
+      "security": "Data pribadi dan terenkripsi; setelah 24 jam, rekam medis dan resep hanya dapat dikoreksi, dan versi aslinya tetap disimpan.",
       "solvyai": "SolvyAI, asisten AI Anda: tanyakan atau katakan \"buat janji Maria besok jam 14.00\""
     },
     "faqTitle": "Pertanyaan",

@@ -1010,7 +1010,7 @@
       "reminders": "Nhắc lịch hẹn và thông báo đẩy",
       "devices": "Web và ứng dụng di động (Android và iPhone), luôn đồng bộ",
       "devicesAndroid": "Web và ứng dụng Android, luôn đồng bộ",
-      "security": "Dữ liệu riêng tư, được mã hóa; hồ sơ không bao giờ bị xóa, chỉ được chỉnh sửa",
+      "security": "Dữ liệu riêng tư, được mã hóa; sau 24 giờ, hồ sơ và đơn thuốc chỉ có thể được chỉnh sửa và bản gốc vẫn được giữ lại.",
       "solvyai": "SolvyAI, trợ lý AI của bạn: hỏi hoặc nói \"đặt lịch cho Maria ngày mai lúc 14 giờ\""
     },
     "faqTitle": "Câu hỏi",

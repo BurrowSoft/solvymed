@@ -1010,7 +1010,7 @@
       "reminders": "Rappels de rendez-vous et notifications push",
       "devices": "Web et application mobile (Android et iPhone), toujours synchronisés",
       "devicesAndroid": "Web et application Android, toujours synchronisés",
-      "security": "Données privées et chiffrées ; les dossiers ne sont jamais supprimés, seulement corrigés",
+      "security": "Données privées et chiffrées ; après 24 heures, les dossiers et les ordonnances ne peuvent plus qu'être corrigés, et l'original est conservé.",
       "solvyai": "SolvyAI, votre assistant IA : posez une question ou dites « rendez-vous pour Maria demain à 14 h »"
     },
     "faqTitle": "Questions",

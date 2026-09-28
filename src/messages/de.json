@@ -1010,7 +1010,7 @@
       "reminders": "Terminerinnerungen und Push-Benachrichtigungen",
       "devices": "Web und Handy-App (Android und iPhone), immer synchron",
       "devicesAndroid": "Web und Android-App, immer synchron",
-      "security": "Private, verschlüsselte Daten; Akten werden nie gelöscht, nur korrigiert",
+      "security": "Private, verschlüsselte Daten; nach 24 Stunden können Akten und Rezepte nur noch korrigiert werden, das Original bleibt erhalten.",
       "solvyai": "SolvyAI, Ihr KI-Assistent: fragen Sie oder sagen Sie „Termin für Maria morgen um 14 Uhr“"
     },
     "faqTitle": "Fragen",

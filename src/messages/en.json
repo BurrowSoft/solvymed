@@ -1010,7 +1010,7 @@
       "reminders": "Appointment reminders and push notifications",
       "devices": "Web and mobile app (Android and iPhone), always in sync",
       "devicesAndroid": "Web and Android app, always in sync",
-      "security": "Private, encrypted data; records are never deleted, only corrected",
+      "security": "Private, encrypted data; after 24 hours, records and prescriptions can only be corrected, and the original is kept.",
       "solvyai": "SolvyAI, your AI assistant: ask or say \"book Maria tomorrow at 2pm\""
     },
     "faqTitle": "Questions",

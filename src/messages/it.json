@@ -1010,7 +1010,7 @@
       "reminders": "Promemoria degli appuntamenti e notifiche push",
       "devices": "Web e app mobile (Android e iPhone), sempre sincronizzati",
       "devicesAndroid": "Web e app Android, sempre sincronizzati",
-      "security": "Dati privati e cifrati; le cartelle non vengono mai cancellate, solo corrette",
+      "security": "Dati privati e cifrati; dopo 24 ore, cartelle e ricette possono solo essere corrette e l'originale viene conservato.",
       "solvyai": "SolvyAI, il tuo assistente IA: chiedi o di' \"appuntamento per Maria domani alle 14\""
     },
     "faqTitle": "Domande",

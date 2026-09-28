@@ -1010,7 +1010,7 @@
       "reminders": "예약 알림 및 푸시 알림",
       "devices": "웹과 모바일 앱(Android 및 iPhone), 항상 동기화",
       "devicesAndroid": "웹과 Android 앱, 항상 동기화",
-      "security": "비공개 암호화 데이터, 진료 기록은 삭제되지 않고 정정만 가능",
+      "security": "비공개 암호화 데이터. 24시간이 지나면 진료 기록과 처방전은 정정만 가능하며 원본은 보관됩니다.",
       "solvyai": "AI 비서 SolvyAI: 질문하거나 \"내일 오후 2시에 마리아 예약해 줘\"라고 말하세요"
     },
     "faqTitle": "자주 묻는 질문",

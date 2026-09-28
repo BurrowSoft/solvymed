@@ -1010,7 +1010,7 @@
       "reminders": "Recordatorios de citas y notificaciones push",
       "devices": "Web y app móvil (Android y iPhone), siempre sincronizadas",
       "devicesAndroid": "Web y app Android, siempre sincronizadas",
-      "security": "Datos privados y cifrados; las historias clínicas nunca se borran, solo se corrigen",
+      "security": "Datos privados y cifrados; pasadas 24 horas, las historias clínicas y las recetas solo se pueden corregir, y el original se conserva.",
       "solvyai": "SolvyAI, tu asistente con IA: pregunta o di \"cita a María mañana a las 14:00\""
     },
     "faqTitle": "Preguntas",
