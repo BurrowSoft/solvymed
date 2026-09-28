@@ -9,6 +9,7 @@ import { fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/ac
 import { formatDateLabel } from "@/lib/dateLabels";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
+import { BirthDateInput } from "@/components/BirthDateInput";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -235,6 +236,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
 function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; idKind: PatientIdKind }) {
   const t = useTranslations("patientDetail");
   const tIds = useTranslations("patientIds");
+  const tBirth = useTranslations("birthDate");
   // CPF, Thai ID/passport or passport/ID, by the practice's country.
   const idFields = usePatientIdFields(idKind, patient);
   // Server codes become translated copy, never raw codes or database text.
@@ -243,6 +245,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
     : e === "patient_has_clinical_history" ? t("deleteHasHistory")
     : e === "name_required" ? t("nameRequired")
     : e === "invalid_th_id" ? tIds("thaiIdInvalid")
+    : e === "birth_year_buddhist" ? tBirth("buddhistYear")
     : e === "unauthorized" ? t("sessionError")
     : t("genericError");
   const [archiveOpen, setArchiveOpen] = useState(false);
@@ -444,7 +447,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
         ))}
         <div>
           <FieldLabel>{t("dateOfBirth")}</FieldLabel>
-          <Input name="birth_date" type="date" defaultValue={patient.birth_date ?? ""} />
+          <BirthDateInput name="birth_date" defaultValue={patient.birth_date ?? ""} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
         </div>
         <div>
           <FieldLabel>{t("sex")}</FieldLabel>

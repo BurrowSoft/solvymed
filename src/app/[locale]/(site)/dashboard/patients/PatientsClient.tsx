@@ -8,6 +8,7 @@ import Link from "next/link";
 import { dropQueryParam } from "@/lib/dropQueryParam";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
+import { BirthDateInput } from "@/components/BirthDateInput";
 
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
@@ -94,7 +95,7 @@ function PatientForm({ onSubmit, pending, error, id, idKind }: { onSubmit: (fd: 
         ))}
         <div>
           <FieldLabel>{t("dateOfBirth")}</FieldLabel>
-          <Input name="birth_date" type="date" />
+          <BirthDateInput name="birth_date" className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
         </div>
         <div>
           <FieldLabel>{t("sex")}</FieldLabel>
@@ -178,6 +179,7 @@ const NEW_PATIENT_FORM_ID = "new-patient-form";
 export function NewPatientButton({ locale, autoOpen = false, idKind = "BR" }: { locale: string; autoOpen?: boolean; idKind?: PatientIdKind }) {
   const t = useTranslations("patients");
   const tIds = useTranslations("patientIds");
+  const tBirth = useTranslations("birthDate");
   const [open, setOpen] = useState(autoOpen);
   // Opened from the setup checklist (?new=1): drop the parameter once shown.
   useEffect(() => { if (autoOpen) dropQueryParam("new"); }, [autoOpen]);
@@ -214,7 +216,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR" }: { 
       // The fields shown were for another country: reload them (the typed
       // values stay in the open form) and let the user save again.
       if (result.code === "id_kind_mismatch") router.refresh();
-      setError(result.code === "invalid_th_id" ? tIds("thaiIdInvalid") : t(result.code === "name_required" ? "nameRequired" : "saveError"));
+      setError(result.code === "invalid_th_id" ? tIds("thaiIdInvalid") : result.code === "birth_year_buddhist" ? tBirth("buddhistYear") : t(result.code === "name_required" ? "nameRequired" : "saveError"));
     });
   }
 

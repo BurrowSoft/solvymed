@@ -1084,5 +1084,8 @@
     "secHomeText": "Les rendez-vous du jour et de la semaine du cabinet.",
     "secScheduleText": "Confirmez les demandes des patients et organisez les rendez-vous par jour, semaine ou mois.",
     "secPatientsText": "Enregistrez et mettez à jour les patients. Les dossiers médicaux restent réservés au praticien."
+  },
+  "birthDate": {
+    "buddhistYear": "Cela ressemble à une année de l'ère bouddhiste. Utilisez l'année grégorienne (ex. : 1996)."
   }
 }

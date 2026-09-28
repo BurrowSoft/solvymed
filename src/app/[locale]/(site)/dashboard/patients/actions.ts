@@ -9,6 +9,7 @@ import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
 import { readAccessLog, type AccessLogPage } from "@/lib/accessLog";
 import { routing } from "@/i18n/routing";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
+import { looksBuddhistEra } from "@/lib/birthDate";
 import { formIdKindMatches, patientIdError, patientIdKind, readPatientIds, sameIdentifier, similarPatientArgs } from "@/lib/patientIds";
 
 // archived_at is set for an archived match, so the warning can offer
@@ -17,7 +18,7 @@ export type PatientMatch = { id: string; full_name: string; phone: string | null
 
 export type CreatePatientResult =
   | { success: true }
-  | { error: string; code: "generic" | "name_required" | "invalid_th_id" | "id_kind_mismatch" }
+  | { error: string; code: "generic" | "name_required" | "invalid_th_id" | "id_kind_mismatch" | "birth_year_buddhist" }
   // Possible duplicates found before saving. The user chooses "Open
   // existing" or "Create anyway" (resubmits with force=1).
   | { error: string; code: "possible_match"; matches: PatientMatch[] }
@@ -48,6 +49,7 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
   const ids = readPatientIds(formData, idKind);
   if (patientIdError(ids)) return { error: "Invalid Thai ID", code: "invalid_th_id" };
   const birthDate = (formData.get("birth_date") as string) || null;
+  if (looksBuddhistEra(birthDate)) return { error: "Buddhist-era birth year", code: "birth_year_buddhist" };
   const force = formData.get("force") === "1";
 
   // Email must be unique per doctor.
@@ -138,6 +140,9 @@ export async function updatePatient(id: string, formData: FormData) {
 
   const fullName = (formData.get("full_name") as string)?.trim();
   if (!fullName) return { error: "name_required" };
+  // A Buddhist-era birth year is never saved or converted (the field
+  // blocks it first; this is the backstop).
+  if (looksBuddhistEra(formData.get("birth_date") as string | null)) return { error: "birth_year_buddhist" };
 
   // Only the practice country's identifier columns are written.
   const country = await lookupPracticeCountry(supabase, user.id, effectiveProfId);

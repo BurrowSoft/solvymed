@@ -1084,5 +1084,8 @@
     "secHomeText": "Die heutigen Termine und die Woche der Praxis.",
     "secScheduleText": "Bestätigen Sie Anfragen von Patienten und organisieren Sie Termine nach Tag, Woche oder Monat.",
     "secPatientsText": "Patienten anlegen und aktualisieren. Patientenakten bleiben bei der Ärztin bzw. dem Arzt."
+  },
+  "birthDate": {
+    "buddhistYear": "Das sieht nach einem Jahr der buddhistischen Zeitrechnung aus. Bitte das gregorianische Jahr verwenden (z. B. 1996)."
   }
 }

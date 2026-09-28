@@ -1084,5 +1084,8 @@
     "secHomeText": "As consultas de hoje e da semana da clínica.",
     "secScheduleText": "Confirme os pedidos dos pacientes e organize as consultas por dia, semana ou mês.",
     "secPatientsText": "Cadastre e atualize pacientes. Prontuários ficam só com o profissional."
+  },
+  "birthDate": {
+    "buddhistYear": "Parece um ano do calendário budista. Use o ano do calendário gregoriano (ex.: 1996)."
   }
 }

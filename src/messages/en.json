@@ -1114,5 +1114,8 @@
     "secHomeText": "Today's appointments and the week ahead for the clinic.",
     "secScheduleText": "Confirm patients' requests and organize appointments by day, week or month.",
     "secPatientsText": "Register and update patients. Medical records stay with the professional."
+  },
+  "birthDate": {
+    "buddhistYear": "That looks like a Buddhist-era year. Please use the Gregorian year (e.g. 1996)."
   }
 }

@@ -10,6 +10,8 @@ import type { Currency } from "@/lib/country";
 import { isValidThaiId, type PatientIdKind } from "@/lib/patientIds";
 import { usePatientIdFields, type PatientIdValues } from "@/lib/usePatientIdFields";
 import { formatTimeLabel } from "@/lib/dateLabels";
+import { looksBuddhistEra } from "@/lib/birthDate";
+import { BirthDateInput } from "@/components/BirthDateInput";
 import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
 
@@ -319,6 +321,8 @@ export function BookingClient({
       setError(tIds("thaiIdInvalid"));
       return;
     }
+    // A Buddhist-era birth year is never saved (the field says why).
+    if (looksBuddhistEra(patientDob)) return;
     setBooking(true);
     setError("");
     const supabase = createClient();
@@ -677,10 +681,9 @@ export function BookingClient({
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">{t("dobLabel")} <span className="text-red-400">*</span></label>
-                <input
-                  type="date"
+                <BirthDateInput
                   value={patientDob}
-                  onChange={e => setPatientDob(e.target.value)}
+                  onChange={setPatientDob}
                   className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 />
                 <p className="text-[10px] text-slate-400 mt-0.5">{getDateFormat(locale)}</p>
@@ -709,7 +712,7 @@ export function BookingClient({
 
             <button
               onClick={handleBook}
-              disabled={!selectedSlot || !consultType.trim() || !patientFullName.trim() || !patientPhoneLocal.trim() || !patientDob || booking}
+              disabled={!selectedSlot || !consultType.trim() || !patientFullName.trim() || !patientPhoneLocal.trim() || !patientDob || looksBuddhistEra(patientDob) || booking}
               className="w-full rounded-xl bg-teal-600 py-4 text-base font-bold text-white shadow-sm hover:bg-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {booking ? (

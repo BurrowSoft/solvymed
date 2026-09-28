@@ -1084,5 +1084,8 @@
     "secHomeText": "诊所今天和本周的预约。",
     "secScheduleText": "确认患者的预约请求，并按日、周或月安排预约。",
     "secPatientsText": "登记和更新患者信息。病历仅医生可见。"
+  },
+  "birthDate": {
+    "buddhistYear": "这看起来是佛历年份。请使用公历年份（例如 1996）。"
   }
 }

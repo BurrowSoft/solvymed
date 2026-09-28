@@ -1084,5 +1084,8 @@
     "secHomeText": "Janji temu hari ini dan minggu ini di klinik.",
     "secScheduleText": "Konfirmasi permintaan pasien dan atur janji temu per hari, minggu, atau bulan.",
     "secPatientsText": "Daftarkan dan perbarui data pasien. Rekam medis hanya untuk dokter."
+  },
+  "birthDate": {
+    "buddhistYear": "Sepertinya ini tahun Buddhis. Gunakan tahun Masehi (misalnya 1996)."
   }
 }

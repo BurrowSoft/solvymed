@@ -1084,5 +1084,8 @@
     "secHomeText": "Gli appuntamenti di oggi e della settimana dello studio.",
     "secScheduleText": "Conferma le richieste dei pazienti e organizza gli appuntamenti per giorno, settimana o mese.",
     "secPatientsText": "Registra e aggiorna i pazienti. Le cartelle cliniche restano solo al medico."
+  },
+  "birthDate": {
+    "buddhistYear": "Sembra un anno dell'era buddhista. Usa l'anno gregoriano (es. 1996)."
   }
 }
