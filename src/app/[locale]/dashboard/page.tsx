@@ -10,6 +10,7 @@ import { OnboardingCard } from "@/components/OnboardingCard";
 import { formatMoney } from "@/lib/money";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
+import { RECEIVABLE_STATUSES } from "@/lib/paymentRules";
 
 
 function statusBadge(status: string) {
@@ -98,7 +99,8 @@ export default async function DashboardPage({
     supabase.from("professionals").select("full_name, specialty, photo_url, public_invite_code").eq("id", user.id).maybeSingle(),
     supabase.from("appointments").select("id, patient_name, start_time, end_time, status, consultation_type").eq("professional_id", effectiveProfId).eq("date", today).neq("status", "blocked").order("start_time"),
     supabase.from("appointments").select("patient_name, date, start_time, consultation_type, status").eq("professional_id", effectiveProfId).gt("date", today).lte("date", nextWeekStr).neq("status", "blocked").order("date").order("start_time").limit(8),
-    supabase.from("appointments").select("patient_name, payment_amount, date").eq("professional_id", effectiveProfId).eq("payment_status", "pending").neq("status", "blocked").neq("status", "cancelled"),
+    // The pending card: the app's "to receive" rule (lib/paymentRules).
+    supabase.from("appointments").select("patient_name, payment_amount, date").eq("professional_id", effectiveProfId).eq("payment_status", "pending").in("status", [...RECEIVABLE_STATUSES]),
     supabase.from("patients").select("*", { count: "exact", head: true }).eq("professional_id", effectiveProfId).is("archived_at", null),
     // Revenue is doctor-only, so a secretary never fetches it.
     isSecretary
