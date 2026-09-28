@@ -3,7 +3,15 @@
 import { useEffect, useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { addClinic, deleteClinic } from "./actions";
+import dynamic from "next/dynamic";
+import { addClinic, deleteClinic, locateClinicCity, updateClinicLocation } from "./actions";
+
+// Leaflet needs the browser, and the tiles should load only when a doctor
+// opens the pin dialog: loaded on demand, never on the server.
+const ClinicPinMap = dynamic(() => import("./ClinicPinMap"), { ssr: false });
+
+// Where the map opens for a clinic with no pin yet: all of Brazil.
+const NO_PIN_CENTER = { lat: -14.235, lng: -51.925, zoom: 4 };
 
 type Clinic = {
   id: string;
@@ -50,6 +58,60 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
         setShowForm(false);
         router.refresh();
       }
+    });
+  }
+
+  // Confirm or correct a clinic's map pin (the geocoder can miss).
+  const [pinClinic, setPinClinic] = useState<Clinic | null>(null);
+  const [pinPos, setPinPos] = useState<{ lat: number; lng: number; zoom: number }>(NO_PIN_CENTER);
+  const [pinError, setPinError] = useState("");
+  // A clinic without a pin opens on the middle of Brazil: saving that as its
+  // location would place it wrongly on patients' map, so Save waits until
+  // the doctor has placed the pin. A clinic with a pin can confirm it as is.
+  const [pinPlaced, setPinPlaced] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // Opening a clinic without a pin first looks up its city, so the map
+  // starts there (zoom 12) rather than on all of Brazil; Save still waits
+  // until the doctor places the pin.
+  const [locatingId, setLocatingId] = useState<string | null>(null);
+  async function openPin(clinic: Clinic) {
+    const hasPin = clinic.lat != null && clinic.lng != null;
+    setPinError("");
+    setPinPlaced(hasPin);
+    if (hasPin) {
+      setPinPos({ lat: clinic.lat!, lng: clinic.lng!, zoom: 17 });
+    } else {
+      setLocatingId(clinic.id);
+      const city = await locateClinicCity(clinic.id).catch(() => null);
+      setLocatingId(null);
+      setPinPos(city ? { lat: city.lat, lng: city.lng, zoom: 12 } : NO_PIN_CENTER);
+    }
+    setPinClinic(clinic);
+  }
+
+  // The dialog closes on Escape and takes focus when it opens.
+  useEffect(() => {
+    if (!pinClinic) return;
+    dialogRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setPinClinic(null); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [pinClinic]);
+
+  function savePin() {
+    if (!pinClinic || !pinPlaced) return;
+    const { id } = pinClinic;
+    const { lat, lng } = pinPos;
+    setPinError("");
+    startTransition(async () => {
+      const result = await updateClinicLocation(id, lat, lng);
+      if (result.error) {
+        setPinError(t("genericError"));
+        return;
+      }
+      setClinics((prev) => prev.map((c) => (c.id === id ? { ...c, lat, lng } : c)));
+      setPinClinic(null);
     });
   }
 
@@ -186,6 +248,15 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
                       {t("noMapPin")}
                     </span>
                   )}
+                  <button
+                    type="button"
+                    onClick={() => openPin(clinic)}
+                    disabled={locatingId !== null}
+                    aria-busy={locatingId === clinic.id}
+                    className="text-xs font-semibold text-teal-700 underline underline-offset-2 hover:text-teal-800 disabled:opacity-50"
+                  >
+                    {t("adjustPin")}
+                  </button>
                 </div>
               </div>
               <button
@@ -203,6 +274,48 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
           </div>
         ))}
       </div>
+
+      {/* Pin dialog: the map (and its tiles) exists only while it's open. */}
+      {pinClinic && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center" onClick={() => setPinClinic(null)}>
+          <div
+            ref={dialogRef}
+            tabIndex={-1}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pin-dialog-title"
+            className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl outline-none"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="pin-dialog-title" className="text-base font-bold text-slate-900">{t("adjustPinTitle", { name: pinClinic.name })}</h2>
+            <p className="mt-1 mb-3 text-sm text-slate-500">{pinPlaced ? t("adjustPinHint") : t("placePinFirst")}</p>
+            <ClinicPinMap
+              lat={pinPos.lat}
+              lng={pinPos.lng}
+              zoom={pinPos.zoom}
+              onMove={(lat, lng) => {
+                setPinPos((p) => ({ lat, lng, zoom: p.zoom }));
+                setPinPlaced(true);
+              }}
+            />
+            {pinError && <p className="mt-3 text-sm text-red-600">{pinError}</p>}
+            <div className="mt-4 flex items-center justify-end gap-3">
+              <button type="button" onClick={() => setPinClinic(null)} className="text-sm text-slate-500 hover:text-slate-700">
+                {t("cancel")}
+              </button>
+              <button
+                type="button"
+                onClick={savePin}
+                disabled={isPending || !pinPlaced}
+                title={pinPlaced ? undefined : t("placePinFirst")}
+                className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60"
+              >
+                {isPending ? t("saving") : t("savePin")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

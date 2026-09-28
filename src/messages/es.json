@@ -482,7 +482,12 @@
     "nameRequiredError": "El nombre de la clínica es obligatorio.",
     "genericError": "Algo salió mal. Inténtalo de nuevo.",
     "delete": "Eliminar clínica",
-    "deleteConfirm": "¿Eliminar «{name}»? Esta acción no se puede deshacer."
+    "deleteConfirm": "¿Eliminar «{name}»? Esta acción no se puede deshacer.",
+    "adjustPin": "Ajustar en el mapa",
+    "adjustPinTitle": "Ubicación en el mapa: {name}",
+    "adjustPinHint": "Arrastra el marcador (o toca el mapa) hasta la entrada de la clínica y guarda.",
+    "savePin": "Guardar ubicación",
+    "placePinFirst": "Toca el mapa donde está tu clínica y luego guarda."
   },
   "consultType": {
     "consultation": "Consulta",

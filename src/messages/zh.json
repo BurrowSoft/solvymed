@@ -482,7 +482,12 @@
     "nameRequiredError": "诊所名称为必填项。",
     "genericError": "出现问题，请重试。",
     "delete": "删除诊所",
-    "deleteConfirm": "删除“{name}”？此操作无法撤销。"
+    "deleteConfirm": "删除“{name}”？此操作无法撤销。",
+    "adjustPin": "在地图上调整",
+    "adjustPinTitle": "地图位置：{name}",
+    "adjustPinHint": "拖动标记（或点击地图）到诊所入口，然后保存。",
+    "savePin": "保存位置",
+    "placePinFirst": "在地图上点击诊所所在位置，然后保存。"
   },
   "consultType": {
     "consultation": "门诊",

@@ -5827,3 +5827,108 @@ Filters are always kept, and there are no 5xx. `?page=junk` → page 1 was
 verified in #81.
 
 **CI at `d0df091`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `d0df091`.**
+
+## PR #83 (`feat/clinic-pin-adjust`, base master) — confirm or drag the clinic's map pin, 🟢 at `669f204`, review clean
+
+**Setup.** Checked on the preview (Leaflet with OpenStreetMap tiles) with
+throwaway doctors and clinics, deleted afterwards:
+- **A:** pinned by the bad geocode of "Rua Augusta, 500, São Paulo", which
+  lands in Campinas (−22.8507, −47.05);
+- **C:** no pin, city Campinas/SP;
+- **B:** no pin and no city.
+
+**Results:**
+- **Lazy tiles:** loading `/pt-BR/dashboard/clinics` makes **0** requests to
+  `tile.openstreetmap.org`. Tiles load only once a dialog opens; they send a
+  **Referer** (the site origin), and "© OpenStreetMap" is shown.
+- **Pinned clinic (A):**
+  - "Ajustar no mapa" opens "Local no mapa: …" at **zoom 17** on the pin,
+    and **focus moves into the dialog**.
+  - **Confirm as-is** ("Salvar local" without moving) saves the same spot
+    and closes.
+  - **Drag + Salvar local** persists (→ −22.8511, −47.0491).
+  - **After a reload**, reopening shows the marker exactly at the map centre
+    (offset 0,0), i.e. the saved spot.
+- **Clinic without a pin:**
+  - With a city (C), the dialog opens on **Campinas at zoom 12**; with no
+    city (B), on **Brazil at zoom 4**.
+  - "Salvar local" is **disabled**, with "Toque no mapa onde fica a clínica
+    e depois salve.", until a tap or drag. The default centre is never
+    saved: Esc before placing leaves `lat/lng` null.
+  - After a tap, Save is enabled and the tapped spot is saved. The card
+    drops "Sem localização no mapa" and shows "No mapa", immediately and
+    after a reload.
+- **Esc** and **a backdrop click** close the dialog **without saving**, even
+  after tapping a new spot.
+- **360 px:** the page is 360/360, the map sits at 36→324, and "Salvar
+  local" is visible.
+- **A secretary** opening `/pt-BR/dashboard/clinics` → redirected to
+  `/pt-BR/dashboard/settings`.
+- **Privacy §5, OpenStreetMap row:**
+  - pt-BR: "Converte o endereço da clínica em uma localização no mapa **e
+    exibe o mapa quando um profissional ajusta o marcador**, a partir dos
+    nossos servidores, do aplicativo ou do navegador (sem dados de
+    pacientes)".
+  - en: "…and shows the map when a professional adjusts the pin…".
+
+**CI at `669f204`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `669f204`.**
+
+## PR #84 (`th/1-country-currency`, base master) — amounts by practice country, Thai hidden until its release, 🟢 at `765ec43`
+
+Migration 110 is **not** applied: the prod DB (which the Previews use) has
+no `professionals.country`. So every practice must behave exactly as today
+(Brazil). The TH/Other paths need 110 and are **unit-tested only**; nothing
+here exercises them end to end.
+
+**❌ on the first head `1054429`, fixed at `765ec43`.** With the Thai flag
+off (what Production runs), a browser that already had `NEXT_LOCALE=th`
+looped forever: `/ → 307 /th → 307 / → …`, and Chromium showed
+`ERR_TOO_MANY_REDIRECTS`. It happened on `/`, `/auth/login`, `/privacy` and
+`/dashboard`. Anyone who picked ภาษาไทย in today's prod switcher, or was
+auto-detected to Thai, has that cookie. The fix treats a hidden-locale
+cookie as no cookie and deletes it on the `/th` redirect.
+
+**Flag OFF** (local `next dev` of the head with no
+`NEXT_PUBLIC_THAI_ENABLED`, i.e. Production):
+
+| Check | Result at `765ec43` |
+|---|---|
+| Cookie `th` + `/`, `/auth/login`, `/privacy` | 200 at once, cookie rewritten to `en` |
+| Cookie `th` + `/th/auth/login` | 307 `/auth/login` (cookie deleted) → 200, cookie `en` |
+| Cookie `th` + `/dashboard` (logged out) | `/en/auth/login` → `/auth/login` (cookie `en`) → 200 |
+| A real browser with cookie `th` opens `/` | 200, `lang=en`, cookie `en` |
+| `/th`, `/th/privacy` | 307 → `/`, `/privacy` |
+| `/th/auth/login?next=%2Fdashboard&locale=th` | 307 → `/auth/login?next=%2Fdashboard&locale=th` (query kept) |
+| `/thx` | 404 (no false prefix match) |
+| First visit, Accept-Language `th` + geo TH, or `th` only | English, cookie `en` |
+| hreflang / language switchers (home, login) | no `th` (15 alternates incl. x-default; 14 languages) |
+
+**Flag ON Preview (`765ec43`):** cookie `th` → `/th`, and a fresh Thai
+browser → `/th` with cookie `th`. `pt-BR` behaves as before. `th` is in
+hreflang (16) and in the switcher (15), and `/th` is indexable.
+
+**Brazilian practice on the Preview** (throwaway doctor, secretary and
+patient; checked at `1054429`, and the fix only touches the middleware):
+
+- **DB:** `professionals.country` returns 42703, which the code treats as
+  BR. `get_my_clinic` has no `country` key. No page broke.
+- **Amounts in R$ everywhere:**
+  - Dashboard: R$ 187,50 / R$ 250,00.
+  - Payments, also with the **English UI**: R$.
+  - Schedule list and calendar popup: R$ 187,50.
+  - New-appointment procedure option: "Consulta Opus · R$ 150,00".
+  - Settings procedures: R$ 150,00.
+  - Secretary dashboard, payments, settings and schedule: R$.
+  - Patient booking page (linked patient): "30 min · R$ 150,00".
+- **Pix unchanged:**
+  - The schedule Pix button is shown for the doctor and the secretary.
+  - The decoded QR has key, amount 187.50, 5303 986, 5802 BR, and the CRC
+    is valid.
+  - The Settings Pix field is shown and prefilled.
+- **Settings save:**
+  - Changing only the city keeps `pix_key`.
+  - A new key is saved.
+  - Clearing it sets `null`.
+
+**CI at `765ec43`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`765ec43`** (this docs commit sits on top, after a master sync).
