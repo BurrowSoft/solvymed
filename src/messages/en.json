@@ -13,7 +13,10 @@
     "appStoreComingSoon": "Coming soon to the App Store",
     "openApp": "Open App",
     "iosBeta": "iPhone beta – install with TestFlight",
-    "iosBetaHint": "Requires Apple's free TestFlight app"
+    "iosBetaHint": "Requires Apple's free TestFlight app",
+    "signupCta": "Start your free trial",
+    "haveAccount": "Already have an account?",
+    "preferApp": "Prefer the app? Download it:"
   },
   "highlights": {
     "h1": "Smart scheduling",
@@ -41,7 +44,7 @@
   },
   "cta": {
     "heading": "Ready to simplify your practice?",
-    "sub": "The app is live and ready — download it now and have your practice running in minutes. The website is on the way.",
+    "sub": "Start your free trial on the web or in the app. Your practice, set up in minutes.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
   },

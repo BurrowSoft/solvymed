@@ -13,7 +13,10 @@
     "appStoreComingSoon": "قريبًا على App Store",
     "openApp": "فتح التطبيق",
     "iosBeta": "النسخة التجريبية لـ iPhone – ثبّتها عبر TestFlight",
-    "iosBetaHint": "يتطلب تطبيق TestFlight المجاني من Apple"
+    "iosBetaHint": "يتطلب تطبيق TestFlight المجاني من Apple",
+    "signupCta": "ابدأ تجربتك المجانية",
+    "haveAccount": "لديك حساب بالفعل؟",
+    "preferApp": "تفضّل التطبيق؟ نزّله من هنا:"
   },
   "highlights": {
     "h1": "جدولة ذكية",
@@ -41,7 +44,7 @@
   },
   "cta": {
     "heading": "هل أنت مستعد لتبسيط عيادتك؟",
-    "sub": "التطبيق جاهز — حمّله الآن وشغّل عيادتك في دقائق. الموقع في الطريق.",
+    "sub": "ابدأ تجربتك المجانية على الموقع أو في التطبيق. عيادتك جاهزة في دقائق.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
   },

@@ -13,7 +13,10 @@
     "appStoreComingSoon": "Em breve na App Store",
     "openApp": "Abrir o app",
     "iosBeta": "Beta para iPhone – instale pelo TestFlight",
-    "iosBetaHint": "Requer o app TestFlight gratuito da Apple"
+    "iosBetaHint": "Requer o app TestFlight gratuito da Apple",
+    "signupCta": "Comece seu teste grátis",
+    "haveAccount": "Já tem conta?",
+    "preferApp": "Prefere o app? Baixe aqui:"
   },
   "highlights": {
     "h1": "Agendamento inteligente",
@@ -41,7 +44,7 @@
   },
   "cta": {
     "heading": "Pronto para simplificar sua clínica?",
-    "sub": "O app está no ar e pronto — baixe agora e tenha sua clínica funcionando em minutos. O site está a caminho.",
+    "sub": "Comece seu teste grátis pelo site ou pelo app. Sua clínica pronta em minutos.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
   },

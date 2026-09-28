@@ -13,7 +13,10 @@
     "appStoreComingSoon": "Próximamente en la App Store",
     "openApp": "Abrir la app",
     "iosBeta": "Beta para iPhone – instálala con TestFlight",
-    "iosBetaHint": "Requiere la app gratuita TestFlight de Apple"
+    "iosBetaHint": "Requiere la app gratuita TestFlight de Apple",
+    "signupCta": "Empieza tu prueba gratis",
+    "haveAccount": "¿Ya tienes cuenta?",
+    "preferApp": "¿Prefieres la app? Descárgala:"
   },
   "highlights": {
     "h1": "Agenda inteligente",
@@ -41,7 +44,7 @@
   },
   "cta": {
     "heading": "¿Listo para simplificar tu consulta?",
-    "sub": "La app está en marcha y lista — descárgala ahora y ten tu consulta funcionando en minutos. El sitio web está en camino.",
+    "sub": "Empieza tu prueba gratis en la web o en la app. Tu consulta, lista en minutos.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
   },

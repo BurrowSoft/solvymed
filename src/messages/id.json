@@ -13,7 +13,10 @@
     "appStoreComingSoon": "Segera hadir di App Store",
     "openApp": "Buka aplikasi",
     "iosBeta": "Beta untuk iPhone – instal lewat TestFlight",
-    "iosBetaHint": "Memerlukan aplikasi TestFlight gratis dari Apple"
+    "iosBetaHint": "Memerlukan aplikasi TestFlight gratis dari Apple",
+    "signupCta": "Mulai uji coba gratis",
+    "haveAccount": "Sudah punya akun?",
+    "preferApp": "Lebih suka aplikasinya? Unduh di sini:"
   },
   "highlights": {
     "h1": "Penjadwalan cerdas",
@@ -41,7 +44,7 @@
   },
   "cta": {
     "heading": "Siap menyederhanakan praktik Anda?",
-    "sub": "Aplikasi sudah siap — unduh sekarang dan jalankan praktik Anda dalam hitungan menit. Website segera hadir.",
+    "sub": "Mulai uji coba gratis di web atau di aplikasi. Praktik Anda siap dalam hitungan menit.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
   },

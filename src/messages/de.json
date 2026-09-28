@@ -13,7 +13,10 @@
     "appStoreComingSoon": "Bald im App Store verfügbar",
     "openApp": "App öffnen",
     "iosBeta": "iPhone-Beta – über TestFlight installieren",
-    "iosBetaHint": "Erfordert die kostenlose TestFlight-App von Apple"
+    "iosBetaHint": "Erfordert die kostenlose TestFlight-App von Apple",
+    "signupCta": "Kostenlos testen",
+    "haveAccount": "Schon ein Konto?",
+    "preferApp": "Lieber die App? Hier herunterladen:"
   },
   "highlights": {
     "h1": "Intelligente Terminplanung",
@@ -41,7 +44,7 @@
   },
   "cta": {
     "heading": "Bereit, Ihre Praxis zu vereinfachen?",
-    "sub": "Die App ist live und bereit – laden Sie sie jetzt herunter und haben Sie Ihre Praxis in Minuten am Laufen. Die Website folgt.",
+    "sub": "Starten Sie Ihren kostenlosen Test im Web oder in der App. Ihre Praxis, in wenigen Minuten eingerichtet.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
   },
