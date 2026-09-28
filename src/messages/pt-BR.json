@@ -488,7 +488,12 @@
     "nameRequiredError": "O nome da clínica é obrigatório.",
     "genericError": "Algo deu errado. Tente novamente.",
     "delete": "Excluir clínica",
-    "deleteConfirm": "Excluir “{name}”? Isso não pode ser desfeito."
+    "deleteConfirm": "Excluir “{name}”? Isso não pode ser desfeito.",
+    "adjustPin": "Ajustar no mapa",
+    "adjustPinTitle": "Local no mapa: {name}",
+    "adjustPinHint": "Arraste o marcador (ou toque no mapa) até a entrada da clínica e salve.",
+    "savePin": "Salvar local",
+    "placePinFirst": "Toque no mapa onde fica a clínica e depois salve."
   },
   "consultType": {
     "consultation": "Consulta",

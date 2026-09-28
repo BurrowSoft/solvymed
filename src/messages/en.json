@@ -488,7 +488,12 @@
     "nameRequiredError": "Clinic name is required.",
     "genericError": "Something went wrong. Please try again.",
     "delete": "Delete clinic",
-    "deleteConfirm": "Delete “{name}”? This can't be undone."
+    "deleteConfirm": "Delete “{name}”? This can't be undone.",
+    "adjustPin": "Adjust on map",
+    "adjustPinTitle": "Map location: {name}",
+    "adjustPinHint": "Drag the pin (or tap the map) to your clinic's entrance, then save.",
+    "savePin": "Save location",
+    "placePinFirst": "Tap the map where your clinic is, then save."
   },
   "consultType": {
     "consultation": "Consultation",

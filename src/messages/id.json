@@ -488,7 +488,12 @@
     "nameRequiredError": "Nama klinik wajib diisi.",
     "genericError": "Terjadi kesalahan. Silakan coba lagi.",
     "delete": "Hapus klinik",
-    "deleteConfirm": "Hapus “{name}”? Tindakan ini tidak dapat dibatalkan."
+    "deleteConfirm": "Hapus “{name}”? Tindakan ini tidak dapat dibatalkan.",
+    "adjustPin": "Sesuaikan di peta",
+    "adjustPinTitle": "Lokasi di peta: {name}",
+    "adjustPinHint": "Seret penanda (atau ketuk peta) ke pintu masuk klinik, lalu simpan.",
+    "savePin": "Simpan lokasi",
+    "placePinFirst": "Ketuk peta di lokasi klinik Anda, lalu simpan."
   },
   "consultType": {
     "consultation": "Konsultasi",
