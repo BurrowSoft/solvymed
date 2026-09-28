@@ -6753,3 +6753,16 @@ deleted afterwards), in **Chromium, WebKit and Firefox**:
 `6eb3291`.** This docs commit sits on top, after a master sync (16
 behind). The `dashboard/page.tsx` auto-merge keeps both `dateLocale` and
 #104's greeting.
+
+## PR #108 (`docs/assistant-contract`, base master) — SolvyAI `/api/assistant` contract + no-guessing eval fixtures (no UI), 🟢 at `1b2b427`
+
+- **Files:** only 3. `docs/assistant-api.md`,
+  `src/__tests__/assistant-evals.test.ts` and
+  `src/lib/assistant/evals/cases.json`.
+- **Nothing user-facing:** the fixture is imported **only** by that test
+  (`git grep "evals/cases"` finds no app import), so nothing reaches a
+  page or the bundle. No route, component or message changed.
+
+**CI at `1b2b427`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`1b2b427`.** This docs commit sits on top, after a master sync (8
+behind).
