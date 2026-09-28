@@ -44,7 +44,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 // Mock server actions before importing the component
-vi.mock('@/app/[locale]/dashboard/schedule/booking-actions', () => ({
+vi.mock('@/app/[locale]/(site)/dashboard/schedule/booking-actions', () => ({
   confirmBooking: vi.fn().mockResolvedValue(undefined),
   confirmBookingAndAddPatient: vi.fn().mockResolvedValue(undefined),
   rejectBooking: vi.fn().mockResolvedValue(undefined),
@@ -61,8 +61,8 @@ vi.mock('@/lib/supabase/client', () => ({
   }),
 }));
 
-import { BookingRequestsPanel } from '@/app/[locale]/dashboard/schedule/BookingRequestsPanel';
-import * as bookingActions from '@/app/[locale]/dashboard/schedule/booking-actions';
+import { BookingRequestsPanel } from '@/app/[locale]/(site)/dashboard/schedule/BookingRequestsPanel';
+import * as bookingActions from '@/app/[locale]/(site)/dashboard/schedule/booking-actions';
 
 const TENTATIVE_BOOKING = {
   id: 'b1',

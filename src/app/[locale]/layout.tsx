@@ -14,6 +14,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { isPublicLocale, publicLocales } from "@/lib/publicLocales";
+import { pickMessages } from "@/lib/pickMessages";
 import "../globals.css";
 
 const inter   = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
@@ -125,8 +126,12 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} className={fontClass}>
       <body style={{ fontFamily }} className="min-h-screen bg-white text-slate-900 antialiased">
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
+        {/* Each route group gives its client components the messages they
+            need: (site) all of them, /help only a few (the page source
+            must not carry strings like the subscription copy, store
+            rules). The cookie banner gets just its own. */}
+        {children}
+        <NextIntlClientProvider locale={locale} messages={pickMessages(messages, ["consent"])}>
           <ConsentBanner />
         </NextIntlClientProvider>
       </body>
