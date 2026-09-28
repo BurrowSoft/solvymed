@@ -627,7 +627,7 @@ endpoint and the Customer Portal are configured in live mode:
 
 | Date | RC SHA | Env | Locales / viewports | Result | Notes / ❌ items |
 |---|---|---|---|---|---|
-| | | | | | |
+| 2026-09-27/28 (overnight) | `release` `cc34e97` (rc1 code), then the fixes through `647a232` | **prod** www.solvymed.com | pt-BR full + en spot; desktop 1280, Pixel 7 (Chromium), iPhone 14 (**WebKit**), 360/390/412 | ✅ after fixes; the Pix bank-app scan is ⏳ (the user) | See "RC regression run — prod, 2026-09-27/28" at the end of this file. Found and fixed: the landing overflowed on phones (#64/#65, blocking); no web signup CTA (#65); clinics save/refresh/delete (#67); "patient" in pt-BR (#66, master); React #418 (#69, #74 master); raw "Requested:" (#71); the **Pix BR Code field 26 was malformed** (#70, blocking); Pix QR via api.qrserver.com (#70). Open: the Pix real bank-app scan (the user); F-7 Stripe env split before the live keys; L-1. |
 
 ## CSS refactor visual verification (PR #2, `refactor/css-extract`)
 
@@ -5456,3 +5456,148 @@ confirmed unpaid appointment of R$ 187,50 (deleted afterwards):
 
 **CI at `85d5672`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `85d5672`
 on everything the tester can verify; the bank-app scan is the user's.**
+
+
+## RC regression run — prod, 2026-09-27/28 (`release`, rc1 `cc34e97` → fixes → `647a232`)
+
+**Setup.** The full release checklist ran on **prod** (www.solvymed.com =
+`release`) overnight, with throwaway `e2e-test-opus-rc-*` accounts, all
+deleted afterwards or purged by mob dev (clinical rows, test feedback, the
+`[TEST]` deletion request). No Stripe checkout was run on prod (see F-7).
+- **Browsers:** desktop Chromium 1280; Pixel 7 (Chromium); iPhone 14
+  (**WebKit**); and 360/390/412 for layout.
+- **Browser time zones:** America/Sao_Paulo, with Asia/Bangkok for off-zone
+  checks.
+
+**Found → fixed (every fix verified on its preview and again on prod after merge):**
+
+| Finding | Severity | Fix | Prod |
+|---|---|---|---|
+| The landing overflowed on phones: the header was ~90–110 px wider than 390/412. On Android the layout viewport grew to 498 px, pushing the cookie banner off-screen, and the tap on "Aceitar tudo" was intercepted | **blocking** (paid-ad landing) | #64 + #65 | ✅ 15 locales × 360/390/1280, 0 overflow; **real taps** on Pixel 7 + iPhone WebKit set consent |
+| No web signup CTA on the landing (ads must reach web signup) | **blocking** (UX) | #65 | ✅ "Comece seu teste grátis" in the header, hero and bottom → `/pt-BR/auth/signup?utm_*` |
+| **Pix BR Code field 26 malformed** (`0014` + `14br.gov.bcb.pix`, so the key never parses) → bank apps reject. The app had the same bug (mobile #50) | **blocking** (UX) | #70 | ✅ it decodes to a valid EMV code (26→00 `br.gov.bcb.pix`, 01 key, 54 amount, 59 payee, CRC OK). ⏳ a real bank-app scan by the user |
+| The Pix QR image came from `api.qrserver.com`, which received the key, clinic name and amount; it's not in the privacy policy | high (policy vs enforced) | #70 | ✅ a `data:` image, no third-party request |
+| `/dashboard/clinics`: saving without País failed (country NOT NULL, behind a generic error); a new clinic didn't show until a reload; the delete icon was labelled "Cancelar" and deleted with no confirmation | medium | #67 | ✅ |
+| React #418 hydration error on `/dashboard/schedule` (the server's locale and ICU spaces in date labels) | low (console) | #69 (release), #74 (master, off-zone day/week) | ✅ list/day/week/month clean in pt-BR and en (BRT browser) |
+| Doctor's requests panel showed raw English "Requested: {date}" | low | #71 | ✅ "Solicitado: qui., 1 de out. · 8:00" |
+| pt-BR join notice said "Entrando como **patient**…" | low | #66 (master) | preview ✅ |
+| A patient signup without a code got the browser bubble, not a translated line | low | #72 (master) | preview ✅ |
+| A doctor could book over their own block with no warning | UX: **intended**, with a confirm | #68 (master) | preview ✅ |
+
+**✅ passing on prod, by section:**
+- **A. Public pages and auth:**
+  - **A-1:** landing pt-BR/en, the language switcher, and no console
+    errors.
+  - **A-2:** Stripe is named, and there's no Asaas.
+  - **A-3:** UI signup "Profissional de saúde" → "Verifique seu e-mail" →
+    confirm → welcome → "Boa noite, Dr. Joana" / `professional` / `trial` for
+    15 days.
+  - **A-4:** a join link → a locked patient → pending, naming the doctor,
+    with `invited_by` set.
+  - **A-5:** a typed patient code → patient-welcome, with
+    `linked_patient_id` set.
+  - **A-6:** a bogus code → `invite-required`.
+  - **A-7:** mismatch, 7 characters and an existing email each show their
+    line.
+  - **A-7b:** 8 is the minimum; a 6-character legacy account still logs in.
+  - **A-8:** role routing (secretary → not-connected), wrong password, and
+    sign-out → `/pt-BR`.
+  - **A-10:** `/join/<bogus>` signed out → signup.
+  - **A-11:** cleared cookies → login.
+  - **A-14:** unprefixed `/auth/confirm#…` → `/pt-BR/auth/confirm#…` with
+    the fragment kept and the form shown.
+  - **A-15:** see the addendum.
+  - **G-9:** legal nav on 6 auth pages at 375 px.
+  - **G-10:** pt-BR/th/de browsers → `/pt-BR` `/th` `/de`; `/pt/…` and
+    `/PT-br/…` → 308 `/pt-BR/…`; `/en/…` → 307.
+  - **G-11:** `x-vercel-id` `gru1` on pages and APIs; a bad-signature
+    webhook → 400.
+  - **G-12:** `noindex, nofollow` on invite, join, and signup/login with
+    params. Well-formed unknown invite codes render generically (no lookup)
+    and only malformed ones 404, by design.
+- **B. Doctor:**
+  - **B-1:** the dashboard greeting.
+  - **B-2/B-3:** create, the list/day/week views, and block time. A
+    **patient** over a block is refused **server-side**: `create_public_booking`
+    returns `slot_taken` for full and partial overlaps, and a direct insert
+    gets RLS 403.
+  - **B-4:** confirmed → completed persists.
+  - **B-5:** propose → the patient sees "Originalmente: …" and accepts.
+  - **B-6:** the Pix payload, per #70.
+  - **B-7:** CRUD, search, delete (no history, with a confirm), archive (a
+    dialog, the banner "Arquivado em … por …", future appointments
+    cancelled, "Arquivados (1)") and restore.
+  - **B-7b:** under 24h, edit and delete; over 24h, a REST PATCH/DELETE →
+    `clinical_record_locked`, and the UI offers only "Adicionar correção".
+  - **B-8:** name+phone and CPF duplicates.
+  - **B-9:** a record, and a prescription (none without a medication).
+    There's no web PDF/print view; that's mobile.
+  - **B-10:** the patient invite code.
+  - **B-11:** a booking block, then Settings → unblock.
+  - **B-12:** Mark Paid with an amount → paid; Reverter → pending; filters.
+  - **B-13:** profile, registration, clinic, Pix, hours, procedures and
+    rules persist.
+  - **B-14:** Gerar/Gerar novo (confirm)/copy link.
+  - **B-15:** per #67.
+  - **B-16:** per #62.
+  - **📱 Pixel 7:** 0 overflow on 6 doctor pages.
+- **C. Billing (no checkout on prod):**
+  - **C-2:** en `/subscribe` shows $19.
+  - **C-9:** an expired trial → `/pt-BR/subscribe` "Seu período de teste
+    encerrou…", R$ 89, card-only, no Pix.
+  - **G-4 trial chip:** "faltam 10 dias · Ver plano" (slate); ≤3 days
+    **amber** "· Assinar"; the last day **red**; none for an active
+    account.
+- **D. Patient:**
+  - **D-1:** pending → a booking request → the doctor's "Solicitações de
+    consulta" → Confirmar → linked.
+  - **D-2:** the book page names the doctor, with slots and a tentative
+    "Pendente" booking.
+  - **D-3:** My appointments, the connected card, and a book link with no
+    `name=Doctor`.
+  - **D-4:** reschedule requested → approved → moved.
+  - **D-5:** `/account/delete` in 15 locales (20-year note, mailto, no
+    "erased" wording), plus one `[TEST]` submit → "Solicitação recebida".
+  - **📱:** 0 overflow.
+- **E. Secretary:**
+  - **E-1:** invite → copy code/link, WhatsApp → signup via the link →
+    linked. The email isn't locked, by #24's design.
+  - **E-2:** sees schedule, patients and payments with no revenue, no
+    Records/Prescriptions and no Clinics; Mark Paid works; the one-time
+    welcome card.
+  - **E-3:** settings read-only, with Leave.
+  - **E-4 / F-1:** REST records/prescriptions `[]`, insert 403, and a
+    `user_roles` PATCH → 403.
+  - **E-5:** a limit of 3 counting pending, resend, revoke, and remove →
+    not-connected.
+  - **E-6:** a doctor on a secretary invite → "Esta é uma conta
+    profissional…"; a garbled code → "Convite inválido".
+  - **E-7:** the doctor lapsed → `/auth/clinic-inactive`, never
+    `/subscribe`.
+  - **E-8:** Pix, per #70.
+  - **📱:** 0 overflow.
+- **F / G:**
+  - **G-6:** consent, per #57.
+  - **G-7:** `/api/sentry-check` → 404 on prod, `.js.map` → 403, and no
+    `sourceMappingURL`.
+  - **PostHog:** per the rc1 addendum.
+  - **15-minute access tokens:** a 17-minute idle tab still saves.
+- **H. Ad path**, on Pixel 7 and iPhone WebKit after #65:
+  - **H-1:** UTMs are captured on "Aceitar tudo".
+  - **H-2:** the CTA → signup, with the professional role preselected.
+  - **H-3:** pt-BR welcome.
+  - **H-4:** the checklist at 0 de 6, and the first step's deep link.
+  - **H-5 (mob dev on prod):** exactly one `signup_attribution` row each,
+    with facebook/paid/launch_br/test, `/pt-BR` and `web`.
+
+**Open:**
+- **Pix:** a real banking-app scan of the dashboard QR, with no payment,
+  showing the payee and amount (the user).
+- **F-7 Stripe env scoping:** `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
+  and the publishable key are each **one value scoped Preview + Production**,
+  so prod runs on test keys. When the live keys go in, they must be
+  Production-only, with test keys kept for Preview. Checked by name and
+  scope; no values printed.
+- **L-1:** the live R$ 89 charge, with the user.
+- **Minor:** #67's geocoding of an address without a state can land in the
+  wrong city (a master follow-up).
