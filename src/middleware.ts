@@ -1,5 +1,5 @@
 import createMiddleware from "next-intl/middleware";
-import { publicLocales } from "@/lib/publicLocales";
+import { isPublicLocale, publicLocales } from "@/lib/publicLocales";
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
@@ -62,6 +62,15 @@ export async function middleware(req: NextRequest) {
   const firstSegment = pathname.split("/")[1] ?? "";
   const hasLocalePrefix = (routing.locales as readonly string[]).includes(firstSegment);
   const isApiOrAsset = /^\/(api|_next|favicon|.*\..*)/.test(pathname);
+
+  // A language that isn't offered yet (Thai before its release): /th/...
+  // redirects to the same page without the prefix, keeping the query (an
+  // auth link sent with locale=th still works, in English).
+  if (hasLocalePrefix && !isPublicLocale(firstSegment)) {
+    const url = req.nextUrl.clone();
+    url.pathname = pathname.slice(firstSegment.length + 1) || "/";
+    return NextResponse.redirect(url, { status: 307 });
+  }
   // Invite and join URLs carry personal codes (and, in old secretary links,
   // an email): never index them, whatever the page's own metadata says.
   // The signup and login pages they hand off to carry the same data in the
