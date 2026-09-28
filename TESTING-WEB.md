@@ -5619,3 +5619,18 @@ Checked on the preview at a phone width of 360 px:
   (#67, verified).
 
 **CI at `3b51b6f`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `3b51b6f`.**
+
+## PR #79 (`chore/nominatim-ua`, base `release`) — server-side User-Agent for Nominatim, 🟢 at `4bf6fa2`, review clean
+
+This change is server-only: the User-Agent sent to Nominatim when a clinic
+is saved. The first preview build failed with a transient `next/font`
+Google-loader error; the redeploy was Ready.
+
+Checked on the redeployed preview (`solvymed-849v9vodj`, branch at
+`4bf6fa2`, which includes #67) with a throwaway doctor (deleted
+afterwards). A clinic "Av. Paulista, 1000, São Paulo, SP" is **geocoded**
+(lat −23.5649, lng −46.6519, country BR). It appears in the list **without
+a reload**, with the "No mapa" pin, and there are no page errors. The
+header itself isn't observable from the browser.
+
+**CI at `4bf6fa2`:** ✅✅. **Review: clean.** **Merge gate: 🟢 for `4bf6fa2`.**
