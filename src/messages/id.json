@@ -983,5 +983,46 @@
     "passport": "Nomor paspor",
     "passportOrId": "Nomor paspor atau identitas",
     "thaiIdInvalid": "Nomor identitas Thailand ini tidak valid. Periksa 13 digitnya."
+  },
+  "pricing": {
+    "navLabel": "Harga",
+    "countryLabel": "Harga untuk:",
+    "countryOther": "Negara lain",
+    "title": "Satu paket sederhana. Semua sudah termasuk.",
+    "subtitle": "Tanpa biaya pendaftaran, tanpa biaya per pasien, tanpa kejutan.",
+    "perMonth": "/bulan",
+    "trial": "Gratis 15 hari.",
+    "trialNoCard": "Tanpa kartu untuk memulai.",
+    "cta": "Mulai uji coba gratis",
+    "cancel": "Batalkan kapan saja.",
+    "includedTitle": "Yang termasuk",
+    "f": {
+      "schedule": "Jadwal harian, mingguan, dan bulanan, janji temu berulang, dan blokir waktu",
+      "patients": "Pasien tanpa batas, dengan riwayat, rekam medis, resep, dan hasil pemeriksaan",
+      "patientApp": "Aplikasi pasien dan pemesanan online lewat tautan undangan Anda",
+      "secretaries": "Hingga 3 asisten, tanpa akses ke rekam medis",
+      "payments": {
+        "BR": "Pelacakan pembayaran dan kode QR Pix",
+        "TH": "Pelacakan pembayaran dan kode QR PromptPay",
+        "OTHER": "Pelacakan pembayaran"
+      },
+      "pdfs": "Resep, kuitansi, dan riwayat dalam PDF berbahasa Anda",
+      "reminders": "Pengingat janji temu dan notifikasi push",
+      "devices": "Web dan aplikasi seluler (Android dan iPhone), selalu tersinkron",
+      "devicesAndroid": "Web dan aplikasi Android, selalu tersinkron",
+      "security": "Data pribadi dan terenkripsi; rekam medis tidak pernah dihapus, hanya dikoreksi",
+      "solvyai": "SolvyAI, asisten AI Anda: tanyakan atau katakan \"buat janji Maria besok jam 14.00\""
+    },
+    "faqTitle": "Pertanyaan",
+    "faq": {
+      "q1": "Apa yang terjadi setelah uji coba gratis?",
+      "a1": "Anda yang memilih untuk berlangganan atau tidak. Jika tidak, akun Anda dijeda dan data Anda tetap aman.",
+      "q2": "Bagaimana cara membayar?",
+      "a2": "Dengan kartu, bulanan, di situs web kami.",
+      "q3": "Apakah asisten saya juga membayar?",
+      "a3": "Tidak. Hingga 3 asisten sudah termasuk dalam paket Anda.",
+      "q4": "Bisakah saya membatalkan?",
+      "a4": "Ya, kapan saja, dengan menghubungi dukungan atau melalui portal penagihan jika tersedia."
+    }
   }
 }

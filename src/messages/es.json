@@ -983,5 +983,46 @@
     "passport": "Número de pasaporte",
     "passportOrId": "Número de pasaporte o documento",
     "thaiIdInvalid": "Este número de identidad tailandés no es válido. Revisa los 13 dígitos."
+  },
+  "pricing": {
+    "navLabel": "Precios",
+    "countryLabel": "Precios para:",
+    "countryOther": "Otro país",
+    "title": "Un plan sencillo. Todo incluido.",
+    "subtitle": "Sin cuota de alta, sin cobros por paciente, sin sorpresas.",
+    "perMonth": "/mes",
+    "trial": "Gratis durante 15 días.",
+    "trialNoCard": "Sin tarjeta para empezar.",
+    "cta": "Empieza tu prueba gratis",
+    "cancel": "Cancela cuando quieras.",
+    "includedTitle": "Qué incluye",
+    "f": {
+      "schedule": "Agenda por día, semana y mes, citas recurrentes y bloqueo de horarios",
+      "patients": "Pacientes ilimitados, con historial, historias clínicas, recetas y exámenes",
+      "patientApp": "App para pacientes y reservas online con tu enlace de invitación",
+      "secretaries": "Hasta 3 secretarias/os, sin acceso a las historias clínicas",
+      "payments": {
+        "BR": "Control de pagos y códigos QR Pix",
+        "TH": "Control de pagos y códigos QR PromptPay",
+        "OTHER": "Control de pagos"
+      },
+      "pdfs": "Recetas, recibos e historial en PDF en tu idioma",
+      "reminders": "Recordatorios de citas y notificaciones push",
+      "devices": "Web y app móvil (Android y iPhone), siempre sincronizadas",
+      "devicesAndroid": "Web y app Android, siempre sincronizadas",
+      "security": "Datos privados y cifrados; las historias clínicas nunca se borran, solo se corrigen",
+      "solvyai": "SolvyAI, tu asistente con IA: pregunta o di \"cita a María mañana a las 14:00\""
+    },
+    "faqTitle": "Preguntas",
+    "faq": {
+      "q1": "¿Qué pasa después de la prueba gratis?",
+      "a1": "Tú decides si te suscribes. Si no lo haces, tu cuenta queda en pausa y tus datos siguen seguros.",
+      "q2": "¿Cómo pago?",
+      "a2": "Con tarjeta, mensualmente, en nuestro sitio web.",
+      "q3": "¿Mis secretarias también pagan?",
+      "a3": "No. Hasta 3 secretarias/os están incluidas/os en tu plan.",
+      "q4": "¿Puedo cancelar?",
+      "a4": "Sí, cuando quieras, contactando con soporte o en el portal de facturación cuando esté disponible."
+    }
   }
 }

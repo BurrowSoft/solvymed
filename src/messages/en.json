@@ -983,5 +983,76 @@
     "passport": "Passport number",
     "passportOrId": "Passport or ID number",
     "thaiIdInvalid": "This Thai ID number isn't valid. Check the 13 digits."
+  },
+  "pricing": {
+    "navLabel": "Pricing",
+    "countryLabel": "Prices for:",
+    "countryOther": "Other country",
+    "title": "One simple plan. Everything included.",
+    "subtitle": "No setup fees, no per-patient charges, no surprises.",
+    "perMonth": "/month",
+    "trial": "Free for 15 days.",
+    "trialNoCard": "No card needed to start.",
+    "cta": "Start your free trial",
+    "cancel": "Cancel whenever you want.",
+    "includedTitle": "What's included",
+    "f": {
+      "schedule": "Schedule with day, week and month views, recurring appointments and blocked time",
+      "patients": "Unlimited patients, with history, medical records, prescriptions and exams",
+      "patientApp": "Patient app and online booking with your invite link",
+      "secretaries": "Up to 3 secretaries, with no access to medical records",
+      "payments": {
+        "BR": "Payment tracking and Pix QR codes",
+        "TH": "Payment tracking and PromptPay QR codes",
+        "OTHER": "Payment tracking"
+      },
+      "pdfs": "Prescriptions, receipts and history as PDFs in your language",
+      "reminders": "Appointment reminders and push notifications",
+      "devices": "Web and mobile app (Android and iPhone), always in sync",
+      "devicesAndroid": "Web and Android app, always in sync",
+      "security": "Private, encrypted data; records are never deleted, only corrected",
+      "solvyai": "SolvyAI, your AI assistant: ask or say \"book Maria tomorrow at 2pm\""
+    },
+    "faqTitle": "Questions",
+    "faq": {
+      "q1": "What happens after the free trial?",
+      "a1": "You choose whether to subscribe. If you don't, your account pauses, and your data stays safe.",
+      "q2": "How do I pay?",
+      "a2": "By card, monthly, on our website.",
+      "q3": "Do my secretaries pay too?",
+      "a3": "No. Up to 3 secretaries are included in your plan.",
+      "q4": "Can I cancel?",
+      "a4": "Yes, whenever you want, by contacting support or in the billing portal where available."
+    }
+  },
+  "thLanding": {
+    "title": "Clinic software made for Thai doctors",
+    "subtitle": "Simple, mobile-first, with one public price. No sales calls, no contracts.",
+    "b1": {
+      "title": "Your clinic in your pocket",
+      "text": "Schedule, patients, records and payments in one app, on your phone and computer."
+    },
+    "b2": {
+      "title": "Get paid with PromptPay",
+      "text": "Show a PromptPay QR with the exact amount for each appointment."
+    },
+    "b3": {
+      "title": "Patients book online",
+      "text": "Share your link; patients request appointments in the app and you confirm with one tap."
+    },
+    "b4": {
+      "title": "Your team, your rules",
+      "text": "Add up to 3 assistants. They manage the schedule, never the medical records."
+    },
+    "b5": {
+      "title": "Reminders on LINE",
+      "text": "Patients get appointment reminders on LINE."
+    },
+    "b6": {
+      "title": "Built for PDPA",
+      "text": "Private, encrypted data, a log of who opened each record, and patient consent at signup."
+    },
+    "price": "{price}/month, everything included. Free for 15 days.",
+    "cta": "Start your free trial"
   }
 }

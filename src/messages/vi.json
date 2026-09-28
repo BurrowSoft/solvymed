@@ -983,5 +983,46 @@
     "passport": "Số hộ chiếu",
     "passportOrId": "Số hộ chiếu hoặc giấy tờ tùy thân",
     "thaiIdInvalid": "Số căn cước Thái Lan này không hợp lệ. Hãy kiểm tra 13 chữ số."
+  },
+  "pricing": {
+    "navLabel": "Bảng giá",
+    "countryLabel": "Giá cho:",
+    "countryOther": "Quốc gia khác",
+    "title": "Một gói đơn giản. Bao gồm tất cả.",
+    "subtitle": "Không phí thiết lập, không tính phí theo bệnh nhân, không có bất ngờ.",
+    "perMonth": "/tháng",
+    "trial": "Miễn phí 15 ngày.",
+    "trialNoCard": "Không cần thẻ để bắt đầu.",
+    "cta": "Bắt đầu dùng thử miễn phí",
+    "cancel": "Hủy bất cứ lúc nào.",
+    "includedTitle": "Bao gồm",
+    "f": {
+      "schedule": "Lịch hẹn theo ngày, tuần và tháng, lịch hẹn định kỳ và khóa khung giờ",
+      "patients": "Không giới hạn bệnh nhân, kèm lịch sử, hồ sơ bệnh án, đơn thuốc và xét nghiệm",
+      "patientApp": "Ứng dụng cho bệnh nhân và đặt lịch trực tuyến qua liên kết mời của bạn",
+      "secretaries": "Tối đa 3 trợ lý, không truy cập hồ sơ bệnh án",
+      "payments": {
+        "BR": "Theo dõi thanh toán và mã QR Pix",
+        "TH": "Theo dõi thanh toán và mã QR PromptPay",
+        "OTHER": "Theo dõi thanh toán"
+      },
+      "pdfs": "Đơn thuốc, biên nhận và lịch sử dạng PDF bằng ngôn ngữ của bạn",
+      "reminders": "Nhắc lịch hẹn và thông báo đẩy",
+      "devices": "Web và ứng dụng di động (Android và iPhone), luôn đồng bộ",
+      "devicesAndroid": "Web và ứng dụng Android, luôn đồng bộ",
+      "security": "Dữ liệu riêng tư, được mã hóa; hồ sơ không bao giờ bị xóa, chỉ được chỉnh sửa",
+      "solvyai": "SolvyAI, trợ lý AI của bạn: hỏi hoặc nói \"đặt lịch cho Maria ngày mai lúc 14 giờ\""
+    },
+    "faqTitle": "Câu hỏi",
+    "faq": {
+      "q1": "Điều gì xảy ra sau thời gian dùng thử?",
+      "a1": "Bạn tự chọn có đăng ký hay không. Nếu không, tài khoản sẽ tạm dừng và dữ liệu của bạn vẫn an toàn.",
+      "q2": "Tôi thanh toán thế nào?",
+      "a2": "Bằng thẻ, hằng tháng, trên trang web của chúng tôi.",
+      "q3": "Trợ lý của tôi có phải trả phí không?",
+      "a3": "Không. Gói của bạn bao gồm tối đa 3 trợ lý.",
+      "q4": "Tôi có thể hủy không?",
+      "a4": "Có, bất cứ lúc nào, bằng cách liên hệ bộ phận hỗ trợ hoặc qua cổng thanh toán khi có."
+    }
   }
 }

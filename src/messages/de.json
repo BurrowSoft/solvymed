@@ -983,5 +983,46 @@
     "passport": "Reisepassnummer",
     "passportOrId": "Reisepass- oder Ausweisnummer",
     "thaiIdInvalid": "Diese thailändische Ausweisnummer ist ungültig. Prüfen Sie die 13 Ziffern."
+  },
+  "pricing": {
+    "navLabel": "Preise",
+    "countryLabel": "Preise für:",
+    "countryOther": "Anderes Land",
+    "title": "Ein einfacher Tarif. Alles inklusive.",
+    "subtitle": "Keine Einrichtungsgebühr, keine Kosten pro Patient, keine Überraschungen.",
+    "perMonth": "/Monat",
+    "trial": "15 Tage kostenlos.",
+    "trialNoCard": "Keine Karte zum Start nötig.",
+    "cta": "Kostenlos testen",
+    "cancel": "Jederzeit kündbar.",
+    "includedTitle": "Das ist enthalten",
+    "f": {
+      "schedule": "Terminkalender mit Tages-, Wochen- und Monatsansicht, Serienterminen und geblockten Zeiten",
+      "patients": "Unbegrenzt viele Patienten, mit Verlauf, Patientenakten, Rezepten und Befunden",
+      "patientApp": "Patienten-App und Online-Terminbuchung über Ihren Einladungslink",
+      "secretaries": "Bis zu 3 Praxiskräfte, ohne Zugriff auf die Patientenakten",
+      "payments": {
+        "BR": "Zahlungsübersicht und Pix-QR-Codes",
+        "TH": "Zahlungsübersicht und PromptPay-QR-Codes",
+        "OTHER": "Zahlungsübersicht"
+      },
+      "pdfs": "Rezepte, Quittungen und Verlauf als PDF in Ihrer Sprache",
+      "reminders": "Terminerinnerungen und Push-Benachrichtigungen",
+      "devices": "Web und Handy-App (Android und iPhone), immer synchron",
+      "devicesAndroid": "Web und Android-App, immer synchron",
+      "security": "Private, verschlüsselte Daten; Akten werden nie gelöscht, nur korrigiert",
+      "solvyai": "SolvyAI, Ihr KI-Assistent: fragen Sie oder sagen Sie „Termin für Maria morgen um 14 Uhr“"
+    },
+    "faqTitle": "Fragen",
+    "faq": {
+      "q1": "Was passiert nach dem kostenlosen Test?",
+      "a1": "Sie entscheiden, ob Sie ein Abo abschließen. Wenn nicht, wird Ihr Konto pausiert und Ihre Daten bleiben sicher.",
+      "q2": "Wie bezahle ich?",
+      "a2": "Per Karte, monatlich, auf unserer Website.",
+      "q3": "Zahlen meine Praxiskräfte auch?",
+      "a3": "Nein. Bis zu 3 Praxiskräfte sind in Ihrem Tarif enthalten.",
+      "q4": "Kann ich kündigen?",
+      "a4": "Ja, jederzeit, über den Support oder im Abrechnungsportal, sofern verfügbar."
+    }
   }
 }
