@@ -15,7 +15,7 @@ import { MIN_PASSWORD_LENGTH } from "@/lib/password";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
-import { browserTimeZone, countryToStore, initialCountryChoice, type CountryChoice } from "@/lib/signupCountry";
+import { browserTimeZone, initialCountryChoice, signupCountryMetadata, type CountryChoice } from "@/lib/signupCountry";
 import { thaiEnabled } from "@/lib/publicLocales";
 
 type Role = "professional" | "secretary" | "patient";
@@ -67,6 +67,8 @@ export default function SignupPage() {
   const [countryChoice, setCountryChoice] = useState<CountryChoice>(() => initialCountryChoice(null, locale));
   const countryTouched = useRef(false);
   useEffect(() => {
+    // No picker before the Thai release, so no lookup either.
+    if (!thaiEnabled) return;
     let alive = true;
     fetch("/api/geo")
       .then((r) => r.json() as Promise<{ country: string | null }>)
@@ -141,8 +143,9 @@ export default function SignupPage() {
           locale,
           // The practice country and the browser's time zone (doctors):
           // handle_new_user stores them (migration 110; ignored before it).
+          // Nothing before the Thai release (the database default, BR).
           ...(role === "professional"
-            ? { country: countryToStore(countryChoice, detectedCountry), time_zone: browserTimeZone() }
+            ? signupCountryMetadata(countryChoice, detectedCountry, browserTimeZone())
             : {}),
           ...(role === "patient" && inviteCode.trim()
             ? { invite_code: inviteCode.toUpperCase().trim() }
@@ -252,8 +255,9 @@ export default function SignupPage() {
         </div>
         )}
 
-        {/* Practice country — doctors only */}
-        {role === "professional" && !isSecretaryFlow && !isJoinFlow && (
+        {/* Practice country: doctors only, from the Thai release on (before
+            it every practice is Brazilian, the database default). */}
+        {thaiEnabled && role === "professional" && !isSecretaryFlow && !isJoinFlow && (
           <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4">
             <label htmlFor="signup-country" className="block text-sm font-semibold text-slate-700 mb-1">
               {t("signup.country")}
@@ -270,8 +274,7 @@ export default function SignupPage() {
             >
               {/* Country names in their own language, as in a language picker. */}
               <option value="BR">Brasil</option>
-              {/* Thailand is offered from the Thai release on. */}
-              {thaiEnabled && <option value="TH">ประเทศไทย</option>}
+              <option value="TH">ประเทศไทย</option>
               <option value="OTHER">{t("signup.countryOther")}</option>
             </select>
             <p className="mt-1.5 text-xs text-slate-500">{t("signup.countryHint")}</p>
