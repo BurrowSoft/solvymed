@@ -70,7 +70,7 @@ export function PrivacyEn({ turnstile }: { turnstile: boolean }) {
             ["Sentry", "Error monitoring for the app and website (no patient data)", "USA"],
             ["PostHog", "Website usage statistics, only with your consent", "EU"],
             ["Google Workspace", "Support email", "USA / global"],
-            ["OpenStreetMap Nominatim", "Converts the clinic's address into a map location when the clinic is saved, from our servers or the app (no patient data)", "EU / UK"],
+            ["OpenStreetMap", "Converts the clinic's address into a map location, and shows the map when a professional adjusts the pin, from our servers, the app or the browser (no patient data)", "EU / UK"],
             ...(turnstile
               ? [["Cloudflare Turnstile", "Protects sign-up, sign-in and password reset against automated abuse by checking technical signals from your browser", "Global"]]
               : []),

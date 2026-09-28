@@ -482,7 +482,12 @@
     "nameRequiredError": "클리닉 이름은 필수입니다.",
     "genericError": "문제가 발생했습니다. 다시 시도해 주세요.",
     "delete": "클리닉 삭제",
-    "deleteConfirm": "“{name}”을(를) 삭제할까요? 되돌릴 수 없습니다."
+    "deleteConfirm": "“{name}”을(를) 삭제할까요? 되돌릴 수 없습니다.",
+    "adjustPin": "지도에서 조정",
+    "adjustPinTitle": "지도 위치: {name}",
+    "adjustPinHint": "핀을 드래그하거나 지도를 탭해 클리닉 입구로 옮긴 뒤 저장하세요.",
+    "savePin": "위치 저장",
+    "placePinFirst": "지도에서 클리닉 위치를 탭한 뒤 저장하세요."
   },
   "consultType": {
     "consultation": "진료",
