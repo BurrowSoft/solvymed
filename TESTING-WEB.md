@@ -6083,3 +6083,26 @@ the flag-ON checks ran on the Preview.
 
 **CI at `93972ad`:** ✅. **Review: clean.** **Merge gate: 🟢 for
 `93972ad`**. It inherits #84's loop fix.
+
+## PR #85 re-test (`th/2-signup-country`, base master) — no picker before the Thai release (UX decision b), 🟢 at `7caddf5`
+
+UX changed the rule after my 🟢 at `93972ad`, to match the app: before the
+Thai release there's **no** country picker, and signup sends no country, so
+the DB default (BR) applies. The rule is in `c655a6c`; the head `7caddf5`
+only adds master merges.
+
+**Checks:** each signup below was captured and **aborted before it reached
+Supabase**, so no account was created.
+
+| Build | Location (`x-vercel-ip-country`) | Picker | `/api/geo` | Signup `user_metadata` |
+|---|---|---|---|---|
+| Flag OFF: local `next dev` of `7caddf5` (= Production) | none, TH, US | **none** ("Onde fica seu consultório?" absent) | **0 requests** | `full_name, role, platform, locale`, **no `country` / `time_zone`** |
+| Flag ON: Preview `7caddf5` | real (Vercel says TH) | Brasil / ประเทศไทย / Outro país, pre-selected **ประเทศไทย** from location | 1 → `{"country":"TH"}` | `country: "TH"`, `time_zone: "America/Sao_Paulo"` (browser zone) |
+
+**Settings card** (Preview `7caddf5`): unchanged. Doctor pt-BR: "País do
+consultório / Brasil" plus the support hint. Doctor en: "Practice country /
+Brazil". It has no controls, so it's read-only. The secretary's Settings
+has no card, as before.
+
+**CI at `7caddf5`:** ✅. **Review: clean at `c761d31`** (the picker code is the same). **Merge gate: 🟢 for `7caddf5`.** The earlier 🟢 at `93972ad` is
+superseded.
