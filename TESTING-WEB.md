@@ -5872,3 +5872,63 @@ throwaway doctors and clinics, deleted afterwards:
   - en: "…and shows the map when a professional adjusts the pin…".
 
 **CI at `669f204`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `669f204`.**
+
+## PR #84 (`th/1-country-currency`, base master) — amounts by practice country, Thai hidden until its release, 🟢 at `765ec43`
+
+Migration 110 is **not** applied: the prod DB (which the Previews use) has
+no `professionals.country`. So every practice must behave exactly as today
+(Brazil). The TH/Other paths need 110 and are **unit-tested only**; nothing
+here exercises them end to end.
+
+**❌ on the first head `1054429`, fixed at `765ec43`.** With the Thai flag
+off (what Production runs), a browser that already had `NEXT_LOCALE=th`
+looped forever: `/ → 307 /th → 307 / → …`, and Chromium showed
+`ERR_TOO_MANY_REDIRECTS`. It happened on `/`, `/auth/login`, `/privacy` and
+`/dashboard`. Anyone who picked ภาษาไทย in today's prod switcher, or was
+auto-detected to Thai, has that cookie. The fix treats a hidden-locale
+cookie as no cookie and deletes it on the `/th` redirect.
+
+**Flag OFF** (local `next dev` of the head with no
+`NEXT_PUBLIC_THAI_ENABLED`, i.e. Production):
+
+| Check | Result at `765ec43` |
+|---|---|
+| Cookie `th` + `/`, `/auth/login`, `/privacy` | 200 at once, cookie rewritten to `en` |
+| Cookie `th` + `/th/auth/login` | 307 `/auth/login` (cookie deleted) → 200, cookie `en` |
+| Cookie `th` + `/dashboard` (logged out) | `/en/auth/login` → `/auth/login` (cookie `en`) → 200 |
+| A real browser with cookie `th` opens `/` | 200, `lang=en`, cookie `en` |
+| `/th`, `/th/privacy` | 307 → `/`, `/privacy` |
+| `/th/auth/login?next=%2Fdashboard&locale=th` | 307 → `/auth/login?next=%2Fdashboard&locale=th` (query kept) |
+| `/thx` | 404 (no false prefix match) |
+| First visit, Accept-Language `th` + geo TH, or `th` only | English, cookie `en` |
+| hreflang / language switchers (home, login) | no `th` (15 alternates incl. x-default; 14 languages) |
+
+**Flag ON Preview (`765ec43`):** cookie `th` → `/th`, and a fresh Thai
+browser → `/th` with cookie `th`. `pt-BR` behaves as before. `th` is in
+hreflang (16) and in the switcher (15), and `/th` is indexable.
+
+**Brazilian practice on the Preview** (throwaway doctor, secretary and
+patient; checked at `1054429`, and the fix only touches the middleware):
+
+- **DB:** `professionals.country` returns 42703, which the code treats as
+  BR. `get_my_clinic` has no `country` key. No page broke.
+- **Amounts in R$ everywhere:**
+  - Dashboard: R$ 187,50 / R$ 250,00.
+  - Payments, also with the **English UI**: R$.
+  - Schedule list and calendar popup: R$ 187,50.
+  - New-appointment procedure option: "Consulta Opus · R$ 150,00".
+  - Settings procedures: R$ 150,00.
+  - Secretary dashboard, payments, settings and schedule: R$.
+  - Patient booking page (linked patient): "30 min · R$ 150,00".
+- **Pix unchanged:**
+  - The schedule Pix button is shown for the doctor and the secretary.
+  - The decoded QR has key, amount 187.50, 5303 986, 5802 BR, and the CRC
+    is valid.
+  - The Settings Pix field is shown and prefilled.
+- **Settings save:**
+  - Changing only the city keeps `pix_key`.
+  - A new key is saved.
+  - Clearing it sets `null`.
+
+**CI at `765ec43`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`765ec43`** (this docs commit sits on top, after a master sync).
