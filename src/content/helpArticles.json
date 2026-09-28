@@ -51,8 +51,10 @@
           "pt": "Em **Agenda**, clique em **Nova Consulta** (também há o botão na **Visão geral**). Escolha o paciente, a data, o início, a duração, o tipo, o procedimento e a forma de pagamento (particular ou convênio), e clique em **Salvar Consulta**. O valor vem do procedimento escolhido.",
           "en": "In the **Schedule**, click **New Appointment** (there's also a button on the **Overview**). Choose the patient, date, start, duration, type, procedure and payment (private or insurance), and click **Save Appointment**. The amount comes from the chosen procedure."
         },
+        "webUnavailable": false,
         "open": "new-appointment",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "A2",
@@ -95,8 +97,10 @@
           "pt": "Ainda não disponível no site; use o app.",
           "en": "Not available on the website yet; use the app."
         },
+        "webUnavailable": true,
         "open": "new-appointment",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "A3",
@@ -139,8 +143,10 @@
           "pt": "Em **Agenda**, clique em **Bloquear Horário**, escolha a data, o início e o fim, e salve.",
           "en": "In the **Schedule**, click **Block Time**, choose the date, start and end, and save."
         },
+        "webUnavailable": false,
         "open": "schedule",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "A4",
@@ -175,8 +181,10 @@
           "pt": "Remarcar ainda não está disponível no site; use o app. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**.",
           "en": "Moving an appointment isn't available on the website yet; use the app. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**."
         },
+        "webUnavailable": false,
         "open": "schedule",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "A5",
@@ -203,8 +211,10 @@
           "pt": "Em **Agenda**, cada consulta da lista tem um seletor de status; escolha o novo status nele.",
           "en": "In the **Schedule**, each appointment in the list has a status selector; pick the new status there (the website calls Completed \"Done\" and No-show \"Absent\")."
         },
+        "webUnavailable": false,
         "open": "schedule",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "A6",
@@ -247,8 +257,10 @@
           "pt": "Os pedidos aparecem em **Agenda**, em **Solicitações de consulta**. Clique em **Confirmar**, **Rejeitar** ou **Propor novo horário** (dá para escrever uma mensagem ao paciente). Para um paciente novo, **Confirmar e Adicionar Paciente** já cria o cadastro.",
           "en": "Requests show in the **Schedule**, under **Booking Requests**. Click **Confirm**, **Reject** or **Propose new time** (you can add a note for the patient). For a new patient, **Confirm and Add New Patient** also creates their record."
         },
+        "webUnavailable": false,
         "open": "home",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "A7",
@@ -275,8 +287,10 @@
           "pt": "Igual, com **Dia**, **Semana** e **Mês**, as setas e **Hoje**; clique num dia do mês para abri-lo.",
           "en": "The same, with **Day**, **Week** and **Month**, the arrows and **Today**; click a day in the month view to open it."
         },
+        "webUnavailable": false,
         "open": "schedule",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "A8",
@@ -303,8 +317,10 @@
           "pt": "O pedido aparece em **Agenda**, em **Solicitações de consulta**, marcado **Remarcação solicitada**, com **Aceitar** e **Recusar**.",
           "en": "The request shows in the **Schedule**, under **Booking Requests**, marked **Reschedule Requested**, with **Accept** and **Decline**."
         },
+        "webUnavailable": false,
         "open": "home",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       }
     ]
   },
@@ -356,8 +372,10 @@
           "pt": "Em **Pacientes**, clique em **Novo Paciente**, preencha os dados e clique em **Salvar Paciente**. Os mesmos avisos de CPF repetido e de paciente parecido aparecem no site.",
           "en": "In **Patients**, click **New Patient**, fill in the details and click **Save Patient**. The same duplicate-CPF and similar-patient warnings appear on the website."
         },
+        "webUnavailable": false,
         "open": "new-patient",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "P2",
@@ -384,8 +402,10 @@
           "pt": "Em **Pacientes**, use a caixa **Buscar pacientes…** (nome, telefone ou CPF).",
           "en": "In **Patients**, use the **Search patients…** box (name, phone or CPF)."
         },
+        "webUnavailable": false,
         "open": "patients",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "P3",
@@ -428,8 +448,10 @@
           "pt": "Abra o paciente e, na aba **Informações**, clique em **Arquivar cadastro** e confirme. Para ver arquivados: em **Pacientes**, clique em **Arquivados**; abra o paciente e clique em **Restaurar**.",
           "en": "Open the patient and, on the **Info** tab, click **Archive patient** and confirm. To see archived patients: in **Patients**, click **Archived**; open the patient and click **Restore**."
         },
+        "webUnavailable": false,
         "open": "patients",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "P4",
@@ -470,8 +492,10 @@
           "pt": "Abra o paciente, a aba **Registros** e clique em **Novo Registro**. Escolha o **Tipo de Registro**, escreva e clique em **Salvar Registro**.",
           "en": "Open the patient, the **Records** tab, and click **New Record**. Choose the **Record Type**, write and click **Save Record**."
         },
+        "webUnavailable": false,
         "open": "patients",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "P5",
@@ -498,8 +522,10 @@
           "pt": "Nas primeiras 24 horas aparecem **Editar** e **Excluir**. Depois, clique em **Adicionar correção**, escreva a correção e o motivo, e salve.",
           "en": "In the first 24 hours you'll see **Edit** and **Delete**. After that, click **Add correction**, write the correction and the reason, and save."
         },
+        "webUnavailable": false,
         "open": "patients",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "P6",
@@ -542,8 +568,10 @@
           "pt": "Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. O PDF da receita ainda não está disponível no site; use o app.",
           "en": "Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. The prescription PDF isn't available on the website yet; use the app."
         },
+        "webUnavailable": false,
         "open": "patients",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "P7",
@@ -584,8 +612,10 @@
           "pt": "Ainda não disponível no site; use o app.",
           "en": "Not available on the website yet; use the app."
         },
+        "webUnavailable": true,
         "open": "patients",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "P8",
@@ -612,8 +642,10 @@
           "pt": "Ainda não disponível no site; use o app.",
           "en": "Not available on the website yet; use the app."
         },
+        "webUnavailable": true,
         "open": "patients",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "P9",
@@ -640,8 +672,10 @@
           "pt": "Abra o paciente e, na aba **Informações**, em **Código de Convite**, clique em **Gerar código** e depois em **Copiar** para enviar ao paciente.",
           "en": "Open the patient and, on the **Info** tab, under **Invite Code**, click **Generate code** and then **Copy** to send it to the patient."
         },
+        "webUnavailable": false,
         "open": "patients",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "P10",
@@ -668,8 +702,10 @@
           "pt": "Ainda não disponível no site; use o app.",
           "en": "Not available on the website yet; use the app."
         },
+        "webUnavailable": true,
         "open": "settings",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       }
     ]
   },
@@ -719,8 +755,10 @@
           "pt": "Em **Pagamentos**, clique em **Marcar como Pago** na consulta (se ela não tiver valor, digite o valor) e em **Confirmar**. Para desfazer, clique em **Reverter** e confirme.",
           "en": "In **Payments**, click **Mark Paid** on the appointment (if it has no amount, type it in) and **Confirm**. To undo, click **Revert** and confirm."
         },
+        "webUnavailable": false,
         "open": "payments",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "G2",
@@ -747,8 +785,10 @@
           "pt": "Em **Pagamentos**, os totais se chamam **Pendente**, **Recebido** e **Total**, com os mesmos períodos. A regra é a mesma do app.",
           "en": "In **Payments**, the totals are **Pending**, **Received** and **Total**, with the same periods. The rule is the same as in the app."
         },
+        "webUnavailable": false,
         "open": "payments",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "G3",
@@ -789,8 +829,10 @@
           "pt": "**Configurações → Clínica**: preencha a **Chave Pix** e salve.",
           "en": "**Settings → Clinic**: fill in the **Chave Pix** (Pix key) and save."
         },
+        "webUnavailable": false,
         "open": "settings-financial",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "G4",
@@ -833,8 +875,10 @@
           "pt": "Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Copia e Cola** (botão **Copiar**). O envio por WhatsApp está só no app. Quando o pagamento cair, marque como pago em **Pagamentos**.",
           "en": "In the **Schedule**, click the QR icon next to the appointment: the **Pix QR Code** and the **Copia e Cola** code (with **Copiar**) appear. Sending by WhatsApp is app-only. When the payment arrives, mark it as paid in **Payments**."
         },
+        "webUnavailable": false,
         "open": "payments",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "G5",
@@ -861,8 +905,10 @@
           "pt": "Ainda não disponível no site; use o app.",
           "en": "Not available on the website yet; use the app."
         },
+        "webUnavailable": true,
         "open": "payments",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "G6",
@@ -889,8 +935,10 @@
           "pt": "Na **Visão geral** você vê as consultas de hoje, o valor pendente, o número de pacientes e o recebido no mês. O detalhe por período fica em **Pagamentos**; o filtro particular/convênio está só no app.",
           "en": "The **Overview** shows today's appointments, the pending amount, the number of patients and what was received this month. The breakdown by period is in **Payments**; the private/insurance filter is app-only."
         },
+        "webUnavailable": false,
         "open": "home",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       }
     ]
   },
@@ -932,8 +980,10 @@
           "pt": "**Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: \"CRM 12345/SP\"), no mesmo cartão.",
           "en": "**Settings → Profile**: name, specialty and **Professional registration** (e.g. \"CRM 12345/SP\"), on the same card."
         },
+        "webUnavailable": false,
         "open": "settings-profile",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "C2",
@@ -960,8 +1010,10 @@
           "pt": "**Configurações → Horário de atendimento**: igual ao app.",
           "en": "**Settings → Working hours**: the same as in the app."
         },
+        "webUnavailable": false,
         "open": "settings-hours",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "C3",
@@ -988,8 +1040,10 @@
           "pt": "**Configurações → Procedimentos**: clique em **Novo procedimento**, preencha nome, duração e preço (ex.: 89,90) e clique em **Adicionar procedimento**.",
           "en": "**Settings → Procedures**: click **New procedure**, fill in the name, duration and price (e.g. 89.90) and click **Add procedure**."
         },
+        "webUnavailable": false,
         "open": "settings-procedures",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "C4",
@@ -1032,8 +1086,10 @@
           "pt": "**Configurações → Equipe**: digite o e-mail da pessoa e clique em **Convidar**. Compartilhe na hora o link ou o código que aparece (só aparece uma vez, vale 7 dias e só para esse e-mail). Para tirar alguém: **Remover**; para cancelar um convite pendente: **Revogar**.",
           "en": "**Settings → Team**: type the person's email and click **Invite**. Share the link or code that appears right away (it's shown only once and works for 7 days, for that email only). To remove someone: **Remove**; to cancel a pending invite: **Revoke**."
         },
+        "webUnavailable": false,
         "open": "settings-team",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "C5",
@@ -1060,8 +1116,10 @@
           "pt": "Em **Agenda**, clique em **Compartilhar link de convite**, ou em **Configurações → Seu código de convite**, use **Copiar** ou **Copiar link**. **Gerar novo** cria um código novo e o anterior deixa de funcionar.",
           "en": "In the **Schedule**, click **Share invite link**, or in **Settings → Your invite code**, use **Copy** or **Copy link**. **Regenerate** creates a new code and the old one stops working."
         },
+        "webUnavailable": false,
         "open": "home",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "C6",
@@ -1088,8 +1146,10 @@
           "pt": "Não se aplica ao site: o bloqueio biométrico é do app. No site, saia da conta em computadores compartilhados.",
           "en": "Doesn't apply to the website: the biometric lock is an app feature. On the website, sign out on shared computers."
         },
+        "webUnavailable": true,
         "open": "settings-security",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "C7",
@@ -1116,8 +1176,10 @@
           "pt": "Os lembretes e notificações são do app; o site não envia notificações.",
           "en": "Reminders and notifications are app features; the website doesn't send notifications."
         },
+        "webUnavailable": true,
         "open": "settings-notifications",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "C8",
@@ -1144,8 +1206,10 @@
           "pt": "O idioma muda no seletor de idioma do menu lateral. O site não tem tema escuro.",
           "en": "Change the language with the language selector in the side menu. The website has no dark theme."
         },
+        "webUnavailable": false,
         "open": "settings",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       }
     ]
   },
@@ -1181,10 +1245,15 @@
           "pt": "Durante o teste, o contador de dias fica no topo do painel. Clique nele para ver o plano e assinar com cartão.",
           "en": "During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card."
         },
+        "webUnavailable": false,
         "open": null,
         "appOnly": {
           "pt": "Veja os detalhes da sua conta em Configurações.",
           "en": "See your account details in Settings."
+        },
+        "appTitle": {
+          "pt": "Sua conta",
+          "en": "Your account"
         }
       },
       {
@@ -1212,8 +1281,10 @@
           "pt": "Ainda não há **Alterar senha** no site; use o app, ou saia da conta e use **Esqueceu a senha?** na tela de entrada.",
           "en": "There's no **Change password** on the website yet; use the app, or sign out and use **Forgot password?** on the sign-in screen."
         },
+        "webUnavailable": false,
         "open": "settings",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "K3",
@@ -1240,8 +1311,10 @@
           "pt": "Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**.",
           "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**."
         },
+        "webUnavailable": false,
         "open": null,
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "K4",
@@ -1268,8 +1341,10 @@
           "pt": "**Configurações → Encerrar conta**, no fim da página: funciona igual ao app.",
           "en": "**Settings → Close account**, at the bottom of the page: it works the same as in the app."
         },
+        "webUnavailable": false,
         "open": "settings",
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "K5",
@@ -1293,8 +1368,10 @@
           ]
         },
         "web": null,
+        "webUnavailable": false,
         "open": null,
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       },
       {
         "id": "K6",
@@ -1318,8 +1395,10 @@
           ]
         },
         "web": null,
+        "webUnavailable": false,
         "open": null,
-        "appOnly": null
+        "appOnly": null,
+        "appTitle": null
       }
     ]
   }

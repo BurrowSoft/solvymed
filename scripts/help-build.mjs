@@ -48,7 +48,7 @@ export function parseBatch(file, text) {
     const head = lines.shift().match(/^(\w+)\.\s+(.+?)\s+\/\s+(.+)$/);
     if (!head) throw new Error(`${file}: bad article title in "${chunk.slice(0, 40)}"`);
     const [, id, ptTitle, enTitle] = head;
-    const a = { id, category: cat.slug, title: { pt: ptTitle, en: enTitle }, body: { pt: [], en: [] }, web: null, open: null, appOnly: null };
+    const a = { id, category: cat.slug, title: { pt: ptTitle, en: enTitle }, body: { pt: [], en: [] }, web: null, webUnavailable: false, open: null, appOnly: null, appTitle: null };
     let lang = null;
     const web = {};
     for (const line of lines) {
@@ -64,13 +64,21 @@ export function parseBatch(file, text) {
         a.appOnly = { pt: m[1], en: m[2] };
         continue;
       }
+      if ((m = line.match(/^App title: "([^"]+)" \/ "([^"]+)"$/))) {
+        a.appTitle = { pt: m[1], en: m[2] };
+        continue;
+      }
       if (!lang) throw new Error(`${id}: text outside a language block: "${line.slice(0, 50)}"`);
       a.body[lang].push(line);
     }
     if (!a.body.pt.length || !a.body.en.length) throw new Error(`${id}: missing pt-BR or en text`);
     if (!!web.pt !== !!web.en) throw new Error(`${id}: the web note needs both pt-BR and en`);
+    if (a.appTitle && !a.appOnly) throw new Error(`${id}: an app title without the apps' text`);
     a.body = { pt: blocks(a.body.pt), en: blocks(a.body.en) };
     if (web.pt) a.web = web;
+    // The web note says the feature isn't on the website: no "Open on the
+    // website" button then (the three phrasings the notes use).
+    a.webUnavailable = !!web.en && /^(Not available on the website|Doesn't apply to the website|Reminders and notifications are app features)/.test(web.en);
     articles.push(a);
   }
   return { slug: cat.slug, title: { pt: cat.pt, en: cat.en }, articles };

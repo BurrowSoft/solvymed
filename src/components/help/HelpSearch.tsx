@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { articleSlug, HELP_UI, searchHelp, type HelpLang } from "@/lib/help";
+import { articleSlug, articleTitle, HELP_UI, searchHelp, type HelpLang } from "@/lib/help";
 import { HelpLink } from "./HelpChrome";
 
 // Instant search over the articles (plain text, no AI), per specs/assistant.md.
@@ -29,7 +29,7 @@ export function HelpSearch({ lang, app }: { lang: HelpLang; app: boolean }) {
               {results.map((a) => (
                 <li key={a.id}>
                   <HelpLink href={`/help/${articleSlug(a)}`} app={app} className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50">
-                    {a.title[lang]}
+                    {articleTitle(a, lang, app)}
                   </HelpLink>
                 </li>
               ))}

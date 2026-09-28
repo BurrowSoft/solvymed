@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { resolve } from "node:path";
 import { buildAll, parseBatch } from "../../scripts/help-build.mjs";
 import json from "@/content/helpArticles.json";
-import { findArticle, helpLang, inlineSegments, searchHelp, webScreen, HELP } from "@/lib/help";
+import { articleTitle, findArticle, helpLang, inlineSegments, searchHelp, webScreen, HELP } from "@/lib/help";
 
 describe("Help Center content", () => {
   it("src/content/helpArticles.json is up to date with content/help/*.md (run npm run help:build)", () => {
@@ -36,6 +36,29 @@ describe("the app-opened variant (store rules)", () => {
   it("search in the app variant never surfaces the subscribing text", () => {
     expect(searchHelp("assine", "pt", false).map((a) => a.id)).toContain("K1");
     expect(searchHelp("assine", "pt", true).map((a) => a.id)).not.toContain("K1");
+  });
+
+  it("K1 has a neutral title in the apps (no 'assinatura')", () => {
+    const k1 = findArticle("k1")!.article;
+    expect(articleTitle(k1, "pt", true)).toBe("Sua conta");
+    expect(articleTitle(k1, "en", true)).toBe("Your account");
+    expect(articleTitle(k1, "pt", false)).toBe("Teste grátis e assinatura");
+    expect(searchHelp("assinatura", "pt", true).map((a) => a.id)).not.toContain("K1");
+  });
+
+  it("the app variant searches only what it shows: never the web notes", () => {
+    // "Visão geral" appears only in web notes (the web's name for Home).
+    expect(searchHelp("visao geral", "pt", false).length).toBeGreaterThan(0);
+    expect(searchHelp("visao geral", "pt", true)).toEqual([]);
+  });
+});
+
+describe("Open on the website", () => {
+  it("is hidden where the web note says the website doesn't have it", () => {
+    const flagged = HELP.flatMap((c) => c.articles).filter((a) => a.webUnavailable).map((a) => a.id);
+    expect(flagged).toEqual(["A2", "P7", "P8", "P10", "G5", "C6", "C7"]);
+    // A4 can cancel on the web (only moving is app-only): it keeps the button.
+    expect(findArticle("a4")!.article.webUnavailable).toBe(false);
   });
 });
 

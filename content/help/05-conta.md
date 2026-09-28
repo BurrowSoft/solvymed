@@ -10,6 +10,7 @@ You get 15 days free, with no card. To continue afterwards, subscribe on solvyme
 **On the website:** During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card.
 `open:none`
 Note for SolvyAI: inside the APPS, never mention prices, buying or the website for subscribing (store rules); give this answer only in the web dashboard. In the apps: "Veja os detalhes da sua conta em Configurações." / "See your account details in Settings."
+App title: "Sua conta" / "Your account"
 
 ---
 ## K2. Trocar a senha / Change your password

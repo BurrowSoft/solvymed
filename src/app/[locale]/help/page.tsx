@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { HelpFrame, HelpLink } from "@/components/help/HelpChrome";
 import { HelpSearch } from "@/components/help/HelpSearch";
-import { articleSlug, HELP, HELP_UI, helpLang } from "@/lib/help";
+import { articleSlug, articleTitle, HELP, HELP_UI, helpLang } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
 
 // Not indexed (and not linked) until UX confirms the label check
@@ -40,7 +40,7 @@ export default async function HelpIndex({
               {c.articles.map((a) => (
                 <li key={a.id}>
                   <HelpLink href={`/help/${articleSlug(a)}`} app={app} className="text-sm text-teal-700 hover:underline">
-                    {a.title[lang]}
+                    {articleTitle(a, lang, app)}
                   </HelpLink>
                 </li>
               ))}

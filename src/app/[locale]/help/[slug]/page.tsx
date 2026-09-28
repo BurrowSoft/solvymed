@@ -1,15 +1,23 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { HelpBlocks, HelpFrame, HelpLink, Inline } from "@/components/help/HelpChrome";
-import { findArticle, HELP_UI, helpLang, webScreen } from "@/lib/help";
+import { articleTitle, findArticle, HELP_UI, helpLang, webScreen } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+  searchParams: Promise<{ app?: string }>;
+}): Promise<Metadata> {
   const { locale, slug } = await params;
+  const app = (await searchParams).app === "1";
   const found = findArticle(slug);
   const lang = helpLang(locale);
   return {
-    title: found ? found.article.title[lang] : HELP_UI[lang].title,
+    // The app variant's neutral title (no "subscription" in the apps).
+    title: found ? articleTitle(found.article, lang, app) : HELP_UI[lang].title,
     // Not indexed until UX confirms the label check (liveFeatures.helpCenter).
     robots: liveFeatures.helpCenter ? undefined : { index: false, follow: false },
   };
@@ -29,13 +37,15 @@ export default async function HelpArticlePage({
   const { article, category } = found;
   const lang = helpLang(locale);
   const ui = HELP_UI[lang];
-  const screen = app ? null : webScreen(article.open);
+  // No "Open on the website" in the app variant, nor when the website
+  // doesn't have the feature.
+  const screen = app || article.webUnavailable ? null : webScreen(article.open);
 
   return (
     <HelpFrame app={app} lang={lang}>
       <HelpLink href="/help" app={app} className="text-sm font-semibold text-slate-500 hover:text-slate-700">{ui.back}</HelpLink>
       <p className="mt-6 text-xs font-semibold uppercase tracking-wide text-teal-600">{category.title[lang]}</p>
-      <h1 className="mt-1 mb-6 text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl">{article.title[lang]}</h1>
+      <h1 className="mt-1 mb-6 text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl">{articleTitle(article, lang, app)}</h1>
 
       <article className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
         {app && article.appOnly ? (

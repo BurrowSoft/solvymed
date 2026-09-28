@@ -13,11 +13,21 @@ export type HelpArticle = {
   title: Record<HelpLang, string>;
   body: Record<HelpLang, HelpBlock[]>;
   web: Record<HelpLang, string> | null;
+  // The web note says the feature isn't on the website (no "Open on the
+  // website" button).
+  webUnavailable: boolean;
   open: string | null;
   // Opened from the apps (?app=1), this text replaces the article: no
   // prices, buying or subscribing on the website (store rules).
   appOnly: Record<HelpLang, string> | null;
+  // And its neutral title there (e.g. "Your account", not "subscription").
+  appTitle: Record<HelpLang, string> | null;
 };
+
+// The title a reader sees: the app variant's neutral one when there is one.
+export function articleTitle(a: HelpArticle, lang: HelpLang, app: boolean): string {
+  return app && a.appTitle ? a.appTitle[lang] : a.title[lang];
+}
 export type HelpCategory = { slug: string; title: Record<HelpLang, string>; articles: HelpArticle[] };
 
 export const HELP: HelpCategory[] = data as HelpCategory[];
@@ -84,15 +94,16 @@ export function inlineSegments(text: string): { bold: boolean; text: string }[] 
 const plain = (s: string) => s.replace(/\*\*/g, "").toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
 
 // The articles whose title or text contain every word of the query
-// (accents and case ignored).
+// (accents and case ignored). Only what the variant SHOWS is searched: in
+// the app variant, the app title and text, never the web notes.
 export function searchHelp(query: string, lang: HelpLang, app: boolean): HelpArticle[] {
   const words = plain(query).split(/\s+/).filter(Boolean);
   if (!words.length) return [];
   return HELP.flatMap((c) => c.articles).filter((a) => {
     const text = plain([
-      a.title[lang],
+      articleTitle(a, lang, app),
       ...(app && a.appOnly ? [a.appOnly[lang]] : a.body[lang].flatMap((b) => (b.type === "ol" ? b.items : [b.text]))),
-      a.web?.[lang] ?? "",
+      app ? "" : a.web?.[lang] ?? "",
     ].join(" "));
     return words.every((w) => text.includes(w));
   });
