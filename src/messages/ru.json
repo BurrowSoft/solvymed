@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "Это время заблокировано ({start}–{end}). Всё равно записать?",
     "requestedLabel": "Запрошено: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
-    "promptPayScan": "Отсканируйте любым тайским банковским приложением для оплаты."
+    "promptPayScan": "Отсканируйте любым тайским банковским приложением для оплаты.",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "На этой неделе",

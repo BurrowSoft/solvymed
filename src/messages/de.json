@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "Diese Zeit ist blockiert ({start}–{end}). Trotzdem buchen?",
     "requestedLabel": "Angefragt: {date} · {time}",
     "promptPayTitle": "PromptPay-QR",
-    "promptPayScan": "Zum Bezahlen mit einer beliebigen thailändischen Banking-App scannen."
+    "promptPayScan": "Zum Bezahlen mit einer beliebigen thailändischen Banking-App scannen.",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "Diese Woche",

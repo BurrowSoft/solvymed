@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "この時間はブロックされています（{start}–{end}）。それでも予約しますか？",
     "requestedLabel": "希望日時：{date} · {time}",
     "promptPayTitle": "PromptPay QR",
-    "promptPayScan": "タイの銀行アプリでスキャンして支払います。"
+    "promptPayScan": "タイの銀行アプリでスキャンして支払います。",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "今週",

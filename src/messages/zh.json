@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "此时间段已被屏蔽（{start}–{end}）。仍要预约吗？",
     "requestedLabel": "申请时间：{date} · {time}",
     "promptPayTitle": "PromptPay 二维码",
-    "promptPayScan": "使用任意泰国银行应用扫码付款。"
+    "promptPayScan": "使用任意泰国银行应用扫码付款。",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "本周",
