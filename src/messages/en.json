@@ -1133,6 +1133,71 @@
       "tourSpotMenu": "Open the menu → Settings → Replay the tour."
     }
   },
+  "assistant": {
+    "preview": "Preview",
+    "newConversation": "New conversation",
+    "close": "Close",
+    "emptyTitle": "Ask or tell SolvyAI something about SolvyMed.",
+    "thinking": "SolvyAI is thinking…",
+    "limitReached": "You've used today's SolvyAI messages. Renews in {hours} h.",
+    "help": "Help",
+    "startNew": "Start a new conversation",
+    "placeholder": "Ask or tell it something…",
+    "mic": "Dictate",
+    "send": "Send",
+    "tooFast": "Wait a moment before sending again.",
+    "noPatientData": "Don't include patient data in help questions.",
+    "hint": "Can I help? Ask or tell me anything.",
+    "open": "Open SolvyAI",
+    "usageToday": "Today's usage",
+    "resetsIn": "Renews in {hours} h",
+    "extra": "+{n} extra messages",
+    "helpful": "Helpful",
+    "notHelpful": "Not helpful",
+    "support": "Contact support",
+    "default": "default",
+    "saved": "✓ Done",
+    "undone": "Undone",
+    "simulated": "simulated",
+    "undo": "Undo ({s} s)",
+    "view": "See in the schedule",
+    "edit": "Edit",
+    "confirm": "Confirm ✓",
+    "failed": "Couldn't save.",
+    "failedBlocked": "The time is blocked.",
+    "chips": {
+      "home": {
+        "a": "What do I have tomorrow?",
+        "b": "How do I invite my secretary?",
+        "c": "Book an appointment"
+      },
+      "schedule": {
+        "a": "What do I have tomorrow?",
+        "b": "Block Friday afternoon",
+        "c": "Book an appointment"
+      },
+      "patients": {
+        "a": "Add a patient",
+        "b": "How do I archive a patient?",
+        "c": "Find a patient"
+      },
+      "payments": {
+        "a": "How much is to receive this week?",
+        "b": "Send Pix to a patient",
+        "c": "Mark as paid"
+      },
+      "settings": {
+        "a": "How do I invite my secretary?",
+        "b": "Set up Pix",
+        "c": "Change working hours"
+      },
+      "other": {
+        "a": "What do I have tomorrow?",
+        "b": "How do I invite my secretary?",
+        "c": "Book an appointment"
+      }
+    }
+  },
   "dateInput": {
     "buddhistYear": "That looks like a Buddhist-era year. Please use the Gregorian year (e.g. 1996)."
   }

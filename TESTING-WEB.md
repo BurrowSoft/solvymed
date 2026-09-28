@@ -6807,3 +6807,101 @@ backstop"** means: the form was submitted with browser validation off
 **CI at `ee3f014`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `ee3f014`.** This docs commit sits on top, after a master sync (5 behind;
 message JSON valid).
+
+## PR #103 (`ux/solvyai`, base master) — SolvyAI panel UI with a mock backend (behind `NEXT_PUBLIC_SOLVYAI_ENABLED`), 🟢 at `268fa2d`
+
+The flag is unset on Vercel, so this ran on a **local `next dev` of
+`268fa2d` with `NEXT_PUBLIC_SOLVYAI_ENABLED=1`**, against the prod DB
+(throwaway doctors and a secretary, deleted afterwards). The backend is
+`mockBackend.ts`: it answers from the real Help articles, and
+Confirmar/Desfazer are simulated.
+
+**Button and panel** (doctor, pt-BR, 1280):
+- **✦ button:** bottom-right (1204,724, 56×56), labelled "Abrir o
+  SolvyAI".
+- **First visit:** "Posso ajudar? Pergunte ou peça qualquer coisa." shows,
+  then is **gone after 5 s**; it doesn't come back on the next visit.
+- **Opening it:** a **400 px panel on the right that pushes the content**
+  (main 1024 → 624 px). It shows "PRÉVIA", "Nova conversa", ✕, the usage
+  bar "Uso de hoje 0% · Renova em 11 h", 3 chips, 🎤, Enviar and "Não
+  inclua dados de pacientes…".
+- **390 px:** the panel is a **full sheet** (0,0 390×844), with no
+  overflow.
+- **English:** "PREVIEW · New conversation · Today's usage · Renews in 11 h
+  · Ask or tell SolvyAI something about SolvyMed. · What do I have
+  tomorrow? / How do I invite my secretary? / Book an appointment · Send ·
+  Don't include patient data…".
+
+**Chips per screen:**
+
+| Screen | Chips |
+|---|---|
+| Início | O que tenho amanhã? · Como convido minha secretária? · Marcar consulta |
+| Agenda | O que tenho amanhã? · Bloquear sexta à tarde · Marcar consulta |
+| Pacientes | Cadastrar paciente · Como arquivar um paciente? · Encontrar paciente |
+| Pagamentos | Quanto tenho a receber esta semana? · Enviar Pix para um paciente · Marcar como pago |
+| Configurações | Como convido minha secretária? · Configurar Pix · Mudar horário de atendimento |
+| Clínicas (other) | the home set |
+
+**Conversations:**
+- **"Como convido minha secretária?"** → the C4 article steps plus the "No
+  site" note. **"Abrir tela →"** goes to the screen and **minimises the
+  panel to a "SolvyAI ✦" pill**; the pill reopens it with the conversation
+  kept.
+- **"Marca a Maria amanhã às 14h"** → **"Qual Maria?"**, offering Maria
+  Silva / Maria Souza (DOB + last visit).
+- **"Marca a Maria Silva amanhã"** → **"Para que horário?"**
+- **"…às 14h"** → a card: Paciente, Quando "terça, 29/09/2026 ·
+  14:00–14:30", and **Duração / Procedimento / Valor / Onde each marked
+  "(padrão)"**.
+  - **Confirmar ✓** → **"✓ Feito (simulação)"** with **"Desfazer (9 s)"**
+    counting down (7 s after 2.5 s).
+  - Desfazer → "Desfeito (simulação)".
+- **"…às 12h"** → the same card with **"⚠ Horário bloqueado
+  (12:00–13:00)"**. Confirmar gives **"Não foi possível salvar. O horário
+  está bloqueado."**
+- **"qual a dose de dipirona"** → "Não posso ajudar com questões
+  clínicas." Off-topic ("quem ganhou o jogo ontem?") → "Só posso ajudar
+  com o SolvyMed."
+- **Masking:** "como cadastro o paciente 123.456.789-09 tel (11)
+  98765-4321 email ana@example.com dia 29.09.2026 às 14:00 valor R$ 150"
+  is shown and sent as "…paciente **[cpf]** tel **[phone]** email
+  **[email]** dia **[phone]** às 14:00 valor R$ 150".
+
+**Limits:**
+- A second send within **3 s** → "Aguarde um instante antes de enviar de
+  novo." and it isn't sent.
+- The input stops at **500** characters ("500/500").
+- A trial account reaches **10 messages** → the bar reads **100%**, and
+  "Você usou as mensagens de hoje do SolvyAI. Renova em 11 h." **replaces
+  the input**.
+
+**Network:** during the whole chat (help, booking cards, Confirmar,
+Desfazer, masking, limits), the only request besides Next internals was
+the page GET from "Abrir tela". **Nothing is sent to any backend**, and
+nothing is written to the DB.
+
+**What the same flag turns on:**
+- The main tour becomes **9 steps**, with "Conheça o SolvyAI" as step 2 on
+  the ✦.
+- /pricing lists "SolvyAI, seu assistente com IA: pergunte ou peça "marca a
+  Maria amanhã às 14h"".
+- **Secretary:** no ✦ and no panel.
+
+**Flag OFF (checked on #103's Preview, where the variable is unset):** a
+doctor's dashboard has **no ✦ button and no panel**. Production doesn't
+set the variable.
+
+**Mock-only follow-ups for b2** (not user-facing until the real backend,
+and non-blocking):
+1. The card's end time adds 30 min without carrying the hour: "14:45" →
+   "**14:45–14:75**".
+2. The phone mask also catches a dotted date: "29.09.2026" → "[phone]"
+   (8 digits in one run). Slashed dates, "14:00" and "R$ 150" are kept.
+3. The en clinical reply's text wasn't captured by my log (the same mock
+   path as pt-BR).
+
+**CI at `268fa2d`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`268fa2d`.** This docs commit sits on top, after a master sync (18
+behind; message JSON valid). The `dashboard/layout.tsx` auto-merge keeps
+SolvyAI, news and #104's name logic.

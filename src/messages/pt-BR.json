@@ -1103,6 +1103,71 @@
       "tourSpotMenu": "Abra o menu → Configurações → Rever o tour."
     }
   },
+  "assistant": {
+    "preview": "Prévia",
+    "newConversation": "Nova conversa",
+    "close": "Fechar",
+    "emptyTitle": "Pergunte ou peça algo sobre o SolvyMed.",
+    "thinking": "SolvyAI está pensando…",
+    "limitReached": "Você usou as mensagens de hoje do SolvyAI. Renova em {hours} h.",
+    "help": "Ajuda",
+    "startNew": "Começar nova conversa",
+    "placeholder": "Pergunte ou peça algo…",
+    "mic": "Ditar",
+    "send": "Enviar",
+    "tooFast": "Aguarde um instante antes de enviar de novo.",
+    "noPatientData": "Não inclua dados de pacientes nas perguntas de ajuda.",
+    "hint": "Posso ajudar? Pergunte ou peça qualquer coisa.",
+    "open": "Abrir o SolvyAI",
+    "usageToday": "Uso de hoje",
+    "resetsIn": "Renova em {hours} h",
+    "extra": "+{n} mensagens extras",
+    "helpful": "Útil",
+    "notHelpful": "Não foi útil",
+    "support": "Falar com o suporte",
+    "default": "padrão",
+    "saved": "✓ Feito",
+    "undone": "Desfeito",
+    "simulated": "simulação",
+    "undo": "Desfazer ({s} s)",
+    "view": "Ver na agenda",
+    "edit": "Editar",
+    "confirm": "Confirmar ✓",
+    "failed": "Não foi possível salvar.",
+    "failedBlocked": "O horário está bloqueado.",
+    "chips": {
+      "home": {
+        "a": "O que tenho amanhã?",
+        "b": "Como convido minha secretária?",
+        "c": "Marcar consulta"
+      },
+      "schedule": {
+        "a": "O que tenho amanhã?",
+        "b": "Bloquear sexta à tarde",
+        "c": "Marcar consulta"
+      },
+      "patients": {
+        "a": "Cadastrar paciente",
+        "b": "Como arquivar um paciente?",
+        "c": "Encontrar paciente"
+      },
+      "payments": {
+        "a": "Quanto tenho a receber esta semana?",
+        "b": "Enviar Pix para um paciente",
+        "c": "Marcar como pago"
+      },
+      "settings": {
+        "a": "Como convido minha secretária?",
+        "b": "Configurar Pix",
+        "c": "Mudar horário de atendimento"
+      },
+      "other": {
+        "a": "O que tenho amanhã?",
+        "b": "Como convido minha secretária?",
+        "c": "Marcar consulta"
+      }
+    }
+  },
   "dateInput": {
     "buddhistYear": "Esse ano parece do calendário budista. Use o ano cristão (ex.: 1996)."
   }

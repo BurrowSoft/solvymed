@@ -1103,6 +1103,71 @@
       "tourSpotMenu": "Mở menu → Cài đặt → Xem lại hướng dẫn."
     }
   },
+  "assistant": {
+    "preview": "Xem trước",
+    "newConversation": "Cuộc trò chuyện mới",
+    "close": "Đóng",
+    "emptyTitle": "Hỏi hoặc yêu cầu điều gì đó về SolvyMed.",
+    "thinking": "SolvyAI đang suy nghĩ…",
+    "limitReached": "Bạn đã dùng hết tin nhắn SolvyAI hôm nay. Làm mới sau {hours} giờ.",
+    "help": "Trợ giúp",
+    "startNew": "Bắt đầu cuộc trò chuyện mới",
+    "placeholder": "Hỏi hoặc yêu cầu…",
+    "mic": "Đọc chính tả",
+    "send": "Gửi",
+    "tooFast": "Vui lòng chờ một chút trước khi gửi lại.",
+    "noPatientData": "Đừng đưa dữ liệu bệnh nhân vào câu hỏi trợ giúp.",
+    "hint": "Tôi giúp được gì? Hỏi bất cứ điều gì.",
+    "open": "Mở SolvyAI",
+    "usageToday": "Mức dùng hôm nay",
+    "resetsIn": "Làm mới sau {hours} giờ",
+    "extra": "+{n} tin nhắn bổ sung",
+    "helpful": "Hữu ích",
+    "notHelpful": "Không hữu ích",
+    "support": "Liên hệ hỗ trợ",
+    "default": "mặc định",
+    "saved": "✓ Xong",
+    "undone": "Đã hoàn tác",
+    "simulated": "mô phỏng",
+    "undo": "Hoàn tác ({s} giây)",
+    "view": "Xem trong lịch",
+    "edit": "Sửa",
+    "confirm": "Xác nhận ✓",
+    "failed": "Không lưu được.",
+    "failedBlocked": "Khung giờ bị khóa.",
+    "chips": {
+      "home": {
+        "a": "Ngày mai tôi có lịch gì?",
+        "b": "Làm sao mời trợ lý?",
+        "c": "Đặt lịch hẹn"
+      },
+      "schedule": {
+        "a": "Ngày mai tôi có lịch gì?",
+        "b": "Khóa chiều thứ Sáu",
+        "c": "Đặt lịch hẹn"
+      },
+      "patients": {
+        "a": "Thêm bệnh nhân",
+        "b": "Làm sao lưu trữ bệnh nhân?",
+        "c": "Tìm bệnh nhân"
+      },
+      "payments": {
+        "a": "Tuần này còn phải thu bao nhiêu?",
+        "b": "Gửi Pix cho bệnh nhân",
+        "c": "Đánh dấu đã thanh toán"
+      },
+      "settings": {
+        "a": "Làm sao mời trợ lý?",
+        "b": "Thiết lập Pix",
+        "c": "Đổi giờ làm việc"
+      },
+      "other": {
+        "a": "Ngày mai tôi có lịch gì?",
+        "b": "Làm sao mời trợ lý?",
+        "c": "Đặt lịch hẹn"
+      }
+    }
+  },
   "dateInput": {
     "buddhistYear": "Có vẻ đây là năm theo Phật lịch. Vui lòng dùng năm dương lịch (ví dụ: 1996)."
   }

@@ -1103,6 +1103,71 @@
       "tourSpotMenu": "Buka menu → Pengaturan → Lihat tur lagi."
     }
   },
+  "assistant": {
+    "preview": "Pratinjau",
+    "newConversation": "Percakapan baru",
+    "close": "Tutup",
+    "emptyTitle": "Tanyakan atau minta sesuatu tentang SolvyMed.",
+    "thinking": "SolvyAI sedang berpikir…",
+    "limitReached": "Pesan SolvyAI hari ini sudah habis. Diperbarui dalam {hours} jam.",
+    "help": "Bantuan",
+    "startNew": "Mulai percakapan baru",
+    "placeholder": "Tanyakan atau minta sesuatu…",
+    "mic": "Dikte",
+    "send": "Kirim",
+    "tooFast": "Tunggu sebentar sebelum mengirim lagi.",
+    "noPatientData": "Jangan sertakan data pasien dalam pertanyaan bantuan.",
+    "hint": "Bisa saya bantu? Tanyakan apa saja.",
+    "open": "Buka SolvyAI",
+    "usageToday": "Pemakaian hari ini",
+    "resetsIn": "Diperbarui dalam {hours} jam",
+    "extra": "+{n} pesan tambahan",
+    "helpful": "Membantu",
+    "notHelpful": "Tidak membantu",
+    "support": "Hubungi dukungan",
+    "default": "bawaan",
+    "saved": "✓ Selesai",
+    "undone": "Dibatalkan",
+    "simulated": "simulasi",
+    "undo": "Batalkan ({s} dtk)",
+    "view": "Lihat di jadwal",
+    "edit": "Ubah",
+    "confirm": "Konfirmasi ✓",
+    "failed": "Gagal menyimpan.",
+    "failedBlocked": "Waktunya diblokir.",
+    "chips": {
+      "home": {
+        "a": "Apa jadwal saya besok?",
+        "b": "Bagaimana mengundang asisten?",
+        "c": "Buat janji temu"
+      },
+      "schedule": {
+        "a": "Apa jadwal saya besok?",
+        "b": "Blokir Jumat sore",
+        "c": "Buat janji temu"
+      },
+      "patients": {
+        "a": "Tambah pasien",
+        "b": "Bagaimana mengarsipkan pasien?",
+        "c": "Cari pasien"
+      },
+      "payments": {
+        "a": "Berapa yang harus diterima minggu ini?",
+        "b": "Kirim Pix ke pasien",
+        "c": "Tandai sudah dibayar"
+      },
+      "settings": {
+        "a": "Bagaimana mengundang asisten?",
+        "b": "Atur Pix",
+        "c": "Ubah jam praktik"
+      },
+      "other": {
+        "a": "Apa jadwal saya besok?",
+        "b": "Bagaimana mengundang asisten?",
+        "c": "Buat janji temu"
+      }
+    }
+  },
   "dateInput": {
     "buddhistYear": "Sepertinya ini tahun Buddhis. Gunakan tahun Masehi (misalnya 1996)."
   }
