@@ -5664,3 +5664,26 @@ yesterday and one for the day after tomorrow:
   and the past one last.
 
 **CI at `44e7a48`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `44e7a48`.**
+
+## PR #76 (`fix/booking-days-hydration`, base master) — the booking day strip starts at the browser's today, 🟢 at `355a44a`, review clean
+
+**Why.** The public booking page built its day strip from the server's UTC
+date, so from 21:00 BRT it shifted a day. Checked on the preview **at
+23:01–23:03 BRT** (a real clock, inside the risky window), as a linked
+patient of a throwaway doctor with hours 08:00–18:00. Both accounts and the
+bookings were deleted afterwards.
+- **No #418** on `/pt-BR/book/<id>`, with a browser in `America/Sao_Paulo`
+  or `Asia/Bangkok`.
+- **The strip starts at the browser's today, "Hoje":**
+  - São Paulo → Sun 27, then "seg., 28 de set.", "ter., 29 de set.";
+  - Bangkok → Mon 28, then Tue 29, Wed 30.
+- **Loading:**
+  - Bangkok (09:01, with slots today) went straight to the 16 slots
+    (10:00, 10:30, …), with **no "Nenhum horário disponível" flash**.
+  - São Paulo at 23:01 showed "Nenhum horário disponível" for today, which
+    is correct, since the clinic's hours were over.
+- **A normal booking** (patient details + the first free slot) → "Solicitação
+  enviada!", with the rows `2026-09-28 10:00 tentative` (São Paulo) and
+  `2026-09-29 10:00 tentative` (Bangkok).
+
+**CI at `355a44a`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `355a44a`.**

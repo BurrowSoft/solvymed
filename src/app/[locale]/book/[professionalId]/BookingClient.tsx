@@ -134,7 +134,11 @@ export function BookingClient({
   const t = useTranslations("book");
   const tConsult = useTranslations("consultType");
   const prefix = locale === "en" ? "" : `/${locale}`;
-  const days = buildDays();
+  // The next DAYS_AHEAD days in the visitor's calendar, built after mount:
+  // during the server render "today" is the server's (UTC) date, a day
+  // ahead of Brazil from 21:00, which shifted the strip and failed
+  // hydration (React #418).
+  const [days, setDays] = useState<string[]>([]);
 
   function applyConsultType(name: string) {
     if ((CONSULT_TYPES as readonly string[]).includes(name)) {
@@ -155,7 +159,12 @@ export function BookingClient({
   const [selectedProcedure, setSelectedProcedure] = useState<Procedure | null>(null);
   const [duration, setDuration] = useState(30);
 
-  const [selectedDate, setSelectedDate] = useState(days[0]);
+  const [selectedDate, setSelectedDate] = useState("");
+  useEffect(() => {
+    const d = buildDays();
+    setDays(d);
+    setSelectedDate(d[0]);
+  }, []);
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
@@ -281,7 +290,7 @@ export function BookingClient({
   );
 
   useEffect(() => {
-    if (!loadingHours) loadSlots(selectedDate, duration);
+    if (!loadingHours && selectedDate) loadSlots(selectedDate, duration);
   }, [selectedDate, duration, loadSlots, loadingHours]);
 
   async function handleBook() {
@@ -516,7 +525,7 @@ export function BookingClient({
             {/* Time slots */}
             <div>
               <h2 className="text-sm font-bold text-slate-700 mb-2">{t("availableTimes")}</h2>
-              {loadingSlots ? (
+              {loadingSlots || !selectedDate ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="h-5 w-5 animate-spin rounded-full border-2 border-teal-600 border-t-transparent" />
                 </div>
