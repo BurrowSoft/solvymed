@@ -12,6 +12,9 @@ export const liveFeatures = {
   // "Built for PDPA": consent at signup + the record access log live
   // (TH-3) and the Thai lawyer's OK on the wording.
   pdpa: false,
+  // The public Help Center (/help): indexed and linked only once the
+  // mobile tester has checked every label against the release (UX).
+  helpCenter: false,
   // The iPhone app on the App Store (TestFlight only until then).
   iosApp: false,
   // The app's PDFs (prescriptions, receipts, history) in Thai, with

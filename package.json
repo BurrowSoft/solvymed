@@ -15,7 +15,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "i18n:th-sheet": "node scripts/th-review-sheet.mjs"
+    "i18n:th-sheet": "node scripts/th-review-sheet.mjs",
+    "help:build": "node scripts/help-build.mjs"
   },
   "dependencies": {
     "@burrowsoft/shared": "*",
