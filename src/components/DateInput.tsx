@@ -2,26 +2,28 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { buddhistYearOf, looksBuddhistEra } from "@/lib/birthDate";
+import { buddhistYearOf, looksBuddhistEra } from "@/lib/buddhistEra";
 
-// A date-of-birth field. The browser's picker is always Gregorian, so in
-// Thai the Buddhist-era year of the picked date shows under it. A year that
-// looks Buddhist-era (≥ 2400) blocks the form's submit with a message; it's
-// never converted. Works controlled (value/onChange) or in a plain form
-// (name/defaultValue).
-export function BirthDateInput({
+// A typed date field (birth dates, the schedule's dates). A year that looks
+// Buddhist-era (≥ 2400) blocks the form's submit with a message; it's never
+// converted. The browser's picker is always Gregorian, so on a birth date
+// (`buddhistHint`) Thai shows the picked date's Buddhist-era year under it.
+// Works controlled (value/onChange) or in a plain form (name/defaultValue).
+export function DateInput({
   value,
   defaultValue,
   onChange,
+  buddhistHint = false,
   className,
   ...rest
 }: Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "defaultValue" | "onChange"> & {
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
+  buddhistHint?: boolean;
 }) {
   const locale = useLocale();
-  const t = useTranslations("birthDate");
+  const t = useTranslations("dateInput");
   const [own, setOwn] = useState(defaultValue ?? "");
   const current = value ?? own;
   const ref = useRef<HTMLInputElement>(null);
@@ -32,7 +34,7 @@ export function BirthDateInput({
     ref.current?.setCustomValidity(wrongEra ? message : "");
   }, [wrongEra, message]);
 
-  const beYear = locale === "th" ? buddhistYearOf(current) : null;
+  const beYear = buddhistHint && locale === "th" ? buddhistYearOf(current) : null;
 
   return (
     <>

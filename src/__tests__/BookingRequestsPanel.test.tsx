@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 // Mock next-intl to avoid requiring NextIntlClientProvider
 vi.mock('next-intl', () => ({
+  useLocale: () => 'en',
   useTranslations: () => (key: string) => {
     const translations: Record<string, string> = {
       bookingRequests: 'Booking Requests',
@@ -152,6 +153,20 @@ describe('BookingRequestsPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Propose new time' }));
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(screen.queryByText('Propose a new time')).not.toBeInTheDocument();
+  });
+
+  it('a Buddhist-era year in the proposed date disables Send (never saved or converted)', () => {
+    const { container } = render(<BookingRequestsPanel bookings={[TENTATIVE_BOOKING]} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Propose new time' }));
+    const [start, end] = Array.from(container.querySelectorAll('input[type="time"]'));
+    fireEvent.change(start, { target: { value: '09:00' } });
+    fireEvent.change(end, { target: { value: '09:30' } });
+    const date = container.querySelector('input[type="date"]')!;
+    fireEvent.change(date, { target: { value: '2569-10-01' } });
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
+    fireEvent.change(date, { target: { value: '2026-10-01' } });
+    expect(screen.getByRole('button', { name: 'Send' })).not.toBeDisabled();
   });
 
   it('renders multiple bookings', () => {

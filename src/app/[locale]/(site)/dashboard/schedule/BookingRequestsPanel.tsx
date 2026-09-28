@@ -10,6 +10,8 @@ import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
 import { createClient } from "@/lib/supabase/client";
 import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest } from "./booking-actions";
 import { toLocalDateString } from "@/lib/slots";
+import { looksBuddhistEra } from "@/lib/buddhistEra";
+import { DateInput } from "@/components/DateInput";
 
 type Booking = {
   id: string;
@@ -115,7 +117,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
   }
 
   function handleProposeSubmit(id: string) {
-    if (!propDate || !propStart || !propEnd) return;
+    if (!propDate || !propStart || !propEnd || looksBuddhistEra(propDate)) return;
     const note = notes[id] || undefined;
     startTransition(async () => {
       const result = await proposeNewTime(id, propDate, propStart, propEnd, note);
@@ -329,10 +331,9 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                   <div className="flex flex-wrap gap-2">
                     <div>
                       <label className="block text-xs text-slate-600 mb-1">{t("proposeDate")}</label>
-                      <input
-                        type="date"
+                      <DateInput
                         value={propDate}
-                        onChange={e => setPropDate(e.target.value)}
+                        onChange={setPropDate}
                         className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                       />
                     </div>
@@ -357,7 +358,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                     <div className="flex items-end gap-2">
                       <button
                         onClick={() => handleProposeSubmit(b.id)}
-                        disabled={isPending || !propDate || !propStart || !propEnd}
+                        disabled={isPending || !propDate || !propStart || !propEnd || looksBuddhistEra(propDate)}
                         className="rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-amber-600 disabled:opacity-50"
                       >
                         {t("send")}

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { buddhistYearOf, looksBuddhistEra } from "@/lib/birthDate";
+import { buddhistYearOf, looksBuddhistEra } from "@/lib/buddhistEra";
 
 let locale = "th";
 vi.mock("next-intl", () => ({
@@ -8,7 +8,7 @@ vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }));
 
-import { BirthDateInput } from "@/components/BirthDateInput";
+import { DateInput } from "@/components/DateInput";
 
 describe("birth dates: a Buddhist-era year is never saved or converted", () => {
   it("a year ≥ 2400 looks Buddhist-era; real birth years don't", () => {
@@ -27,16 +27,16 @@ describe("birth dates: a Buddhist-era year is never saved or converted", () => {
   });
 });
 
-describe("BirthDateInput", () => {
+describe("DateInput", () => {
   it("Thai: shows the พ.ศ. year of the picked date", () => {
     locale = "th";
-    render(<BirthDateInput name="birth_date" defaultValue="1996-05-14" />);
+    render(<DateInput buddhistHint name="birth_date" defaultValue="1996-05-14" />);
     expect(screen.getByText("พ.ศ. 2539")).toBeInTheDocument();
   });
 
   it("other languages: no พ.ศ. hint", () => {
     locale = "pt-BR";
-    render(<BirthDateInput name="birth_date" defaultValue="1996-05-14" />);
+    render(<DateInput buddhistHint name="birth_date" defaultValue="1996-05-14" />);
     expect(screen.queryByText(/พ\.ศ\./)).not.toBeInTheDocument();
   });
 
@@ -45,7 +45,7 @@ describe("BirthDateInput", () => {
     const onSubmit = vi.fn((e: React.FormEvent) => e.preventDefault());
     const { container } = render(
       <form onSubmit={onSubmit}>
-        <BirthDateInput name="birth_date" />
+        <DateInput buddhistHint name="birth_date" />
         <button type="submit">save</button>
       </form>,
     );
@@ -61,10 +61,20 @@ describe("BirthDateInput", () => {
     expect(input.validity.customError).toBe(false);
   });
 
+  it("a schedule date (no buddhistHint): no พ.ศ. hint, but the same guard", () => {
+    locale = "th";
+    const { container } = render(<DateInput name="date" defaultValue="2026-09-28" />);
+    expect(screen.queryByText(/พ\.ศ\./)).not.toBeInTheDocument();
+    const input = container.querySelector("input")!;
+    fireEvent.change(input, { target: { value: "2569-09-28" } });
+    expect(screen.getByRole("alert")).toHaveTextContent("buddhistYear");
+    expect(input.validity.customError).toBe(true);
+  });
+
   it("controlled: reports changes and shows what it's given", () => {
     locale = "th";
     const onChange = vi.fn();
-    const { container } = render(<BirthDateInput value="1990-01-02" onChange={onChange} />);
+    const { container } = render(<DateInput buddhistHint value="1990-01-02" onChange={onChange} />);
     expect(screen.getByText("พ.ศ. 2533")).toBeInTheDocument();
     fireEvent.change(container.querySelector("input")!, { target: { value: "1991-01-02" } });
     expect(onChange).toHaveBeenCalledWith("1991-01-02");

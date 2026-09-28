@@ -1085,7 +1085,7 @@
     "secScheduleText": "Confirma las solicitudes de los pacientes y organiza las citas por día, semana o mes.",
     "secPatientsText": "Registra y actualiza pacientes. Las historias clínicas quedan solo con el profesional."
   },
-  "birthDate": {
+  "dateInput": {
     "buddhistYear": "Parece un año de la era budista. Usa el año gregoriano (p. ej., 1996)."
   }
 }

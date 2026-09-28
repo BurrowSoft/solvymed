@@ -10,8 +10,8 @@ import type { Currency } from "@/lib/country";
 import { isValidThaiId, type PatientIdKind } from "@/lib/patientIds";
 import { usePatientIdFields, type PatientIdValues } from "@/lib/usePatientIdFields";
 import { formatTimeLabel } from "@/lib/dateLabels";
-import { looksBuddhistEra } from "@/lib/birthDate";
-import { BirthDateInput } from "@/components/BirthDateInput";
+import { looksBuddhistEra } from "@/lib/buddhistEra";
+import { DateInput } from "@/components/DateInput";
 import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
 
@@ -681,7 +681,7 @@ export function BookingClient({
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">{t("dobLabel")} <span className="text-red-400">*</span></label>
-                <BirthDateInput
+                <DateInput buddhistHint
                   value={patientDob}
                   onChange={setPatientDob}
                   className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"

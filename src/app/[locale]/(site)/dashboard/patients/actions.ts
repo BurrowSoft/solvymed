@@ -9,7 +9,7 @@ import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
 import { readAccessLog, type AccessLogPage } from "@/lib/accessLog";
 import { routing } from "@/i18n/routing";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
-import { looksBuddhistEra } from "@/lib/birthDate";
+import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { formIdKindMatches, patientIdError, patientIdKind, readPatientIds, sameIdentifier, similarPatientArgs } from "@/lib/patientIds";
 
 // archived_at is set for an archived match, so the warning can offer

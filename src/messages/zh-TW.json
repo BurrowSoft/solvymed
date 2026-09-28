@@ -1085,7 +1085,7 @@
     "secScheduleText": "確認病患的預約申請，並依日、週或月安排預約。",
     "secPatientsText": "登錄與更新病患資料。病歷僅醫師可見。"
   },
-  "birthDate": {
+  "dateInput": {
     "buddhistYear": "這看起來是佛曆年份。請使用西元年份（例如 1996）。"
   }
 }

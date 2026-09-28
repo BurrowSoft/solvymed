@@ -9,7 +9,7 @@ import { fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/ac
 import { formatDateLabel } from "@/lib/dateLabels";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
-import { BirthDateInput } from "@/components/BirthDateInput";
+import { DateInput } from "@/components/DateInput";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -236,7 +236,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
 function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; idKind: PatientIdKind }) {
   const t = useTranslations("patientDetail");
   const tIds = useTranslations("patientIds");
-  const tBirth = useTranslations("birthDate");
+  const tBirth = useTranslations("dateInput");
   // CPF, Thai ID/passport or passport/ID, by the practice's country.
   const idFields = usePatientIdFields(idKind, patient);
   // Server codes become translated copy, never raw codes or database text.
@@ -447,7 +447,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
         ))}
         <div>
           <FieldLabel>{t("dateOfBirth")}</FieldLabel>
-          <BirthDateInput name="birth_date" defaultValue={patient.birth_date ?? ""} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
+          <DateInput buddhistHint name="birth_date" defaultValue={patient.birth_date ?? ""} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
         </div>
         <div>
           <FieldLabel>{t("sex")}</FieldLabel>

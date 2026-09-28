@@ -8,7 +8,7 @@ import Link from "next/link";
 import { dropQueryParam } from "@/lib/dropQueryParam";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
-import { BirthDateInput } from "@/components/BirthDateInput";
+import { DateInput } from "@/components/DateInput";
 
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
@@ -95,7 +95,7 @@ function PatientForm({ onSubmit, pending, error, id, idKind }: { onSubmit: (fd: 
         ))}
         <div>
           <FieldLabel>{t("dateOfBirth")}</FieldLabel>
-          <BirthDateInput name="birth_date" className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
+          <DateInput buddhistHint name="birth_date" className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
         </div>
         <div>
           <FieldLabel>{t("sex")}</FieldLabel>
@@ -179,7 +179,7 @@ const NEW_PATIENT_FORM_ID = "new-patient-form";
 export function NewPatientButton({ locale, autoOpen = false, idKind = "BR" }: { locale: string; autoOpen?: boolean; idKind?: PatientIdKind }) {
   const t = useTranslations("patients");
   const tIds = useTranslations("patientIds");
-  const tBirth = useTranslations("birthDate");
+  const tBirth = useTranslations("dateInput");
   const [open, setOpen] = useState(autoOpen);
   // Opened from the setup checklist (?new=1): drop the parameter once shown.
   useEffect(() => { if (autoOpen) dropQueryParam("new"); }, [autoOpen]);
