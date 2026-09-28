@@ -13,7 +13,10 @@
     "appStoreComingSoon": "App Store で近日公開",
     "openApp": "アプリを開く",
     "iosBeta": "iPhone ベータ版 – TestFlight でインストール",
-    "iosBetaHint": "Apple の無料アプリ TestFlight が必要です"
+    "iosBetaHint": "Apple の無料アプリ TestFlight が必要です",
+    "signupCta": "無料トライアルを始める",
+    "haveAccount": "アカウントをお持ちの方",
+    "preferApp": "アプリ派の方はこちらからダウンロード："
   },
   "highlights": {
     "h1": "スマート予約管理",
@@ -41,7 +44,7 @@
   },
   "cta": {
     "heading": "クリニックを簡素化する準備はできましたか?",
-    "sub": "アプリは稼働中です — 今すぐダウンロードして、数分でクリニックを動かしましょう。ウェブサイトも近日公開予定。",
+    "sub": "ウェブでもアプリでも無料トライアルを始められます。数分でクリニックの準備が整います。",
     "appStore": "App Store",
     "googlePlay": "Google Play"
   },
@@ -476,7 +479,9 @@
     "emptySubtitle": "クリニックを追加して患者に見つけてもらいましょう",
     "addFirst": "最初のクリニックを追加する",
     "nameRequiredError": "クリニック名は必須です。",
-    "genericError": "問題が発生しました。もう一度お試しください。"
+    "genericError": "問題が発生しました。もう一度お試しください。",
+    "delete": "クリニックを削除",
+    "deleteConfirm": "「{name}」を削除しますか？この操作は元に戻せません。"
   },
   "consultType": {
     "consultation": "診察",
@@ -930,5 +935,28 @@
   },
   "legal": {
     "englishOnly": "この文書は英語とポルトガル語（ブラジル）でのみ提供しています。以下は英語版です。"
+  },
+  "feedback": {
+    "title": "ご意見をお寄せください",
+    "subtitle": "SolvyMedについてのご意見をお聞かせください。",
+    "ratingLabel": "SolvyMedの評価は？",
+    "ratingValue": "5段階中{n}",
+    "optional": "（任意）",
+    "name": "お名前",
+    "namePlaceholder": "お名前",
+    "email": "メールアドレス",
+    "emailPlaceholder": "your@email.com",
+    "message": "メッセージ",
+    "messagePlaceholder": "ご感想、足りない機能、改善点などをお聞かせください…",
+    "send": "送信する",
+    "sending": "送信中…",
+    "thanksTitle": "ありがとうございます！",
+    "thanksBody": "いただいたご意見はSolvyMedの改善に役立てます。",
+    "backToHome": "ホームに戻る",
+    "errors": {
+      "email_required": "メールアドレスを入力してください。",
+      "message_required": "メッセージを入力してください。",
+      "failed": "エラーが発生しました。もう一度お試しください。"
+    }
   }
 }

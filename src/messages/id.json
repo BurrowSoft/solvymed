@@ -13,7 +13,10 @@
     "appStoreComingSoon": "Segera hadir di App Store",
     "openApp": "Buka aplikasi",
     "iosBeta": "Beta untuk iPhone – instal lewat TestFlight",
-    "iosBetaHint": "Memerlukan aplikasi TestFlight gratis dari Apple"
+    "iosBetaHint": "Memerlukan aplikasi TestFlight gratis dari Apple",
+    "signupCta": "Mulai uji coba gratis",
+    "haveAccount": "Sudah punya akun?",
+    "preferApp": "Lebih suka aplikasinya? Unduh di sini:"
   },
   "highlights": {
     "h1": "Penjadwalan cerdas",
@@ -41,7 +44,7 @@
   },
   "cta": {
     "heading": "Siap menyederhanakan praktik Anda?",
-    "sub": "Aplikasi sudah siap — unduh sekarang dan jalankan praktik Anda dalam hitungan menit. Website segera hadir.",
+    "sub": "Mulai uji coba gratis di web atau di aplikasi. Praktik Anda siap dalam hitungan menit.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
   },
@@ -476,7 +479,9 @@
     "emptySubtitle": "Tambahkan klinik Anda agar pasien dapat menemukan Anda",
     "addFirst": "Tambahkan klinik pertama Anda",
     "nameRequiredError": "Nama klinik wajib diisi.",
-    "genericError": "Terjadi kesalahan. Silakan coba lagi."
+    "genericError": "Terjadi kesalahan. Silakan coba lagi.",
+    "delete": "Hapus klinik",
+    "deleteConfirm": "Hapus “{name}”? Tindakan ini tidak dapat dibatalkan."
   },
   "consultType": {
     "consultation": "Konsultasi",
@@ -930,5 +935,28 @@
   },
   "legal": {
     "englishOnly": "Dokumen ini hanya tersedia dalam bahasa Inggris dan Portugis (Brasil). Versi bahasa Inggris ditampilkan di bawah."
+  },
+  "feedback": {
+    "title": "Kirim masukan",
+    "subtitle": "Kami ingin tahu pendapat Anda tentang SolvyMed.",
+    "ratingLabel": "Berapa nilai Anda untuk SolvyMed?",
+    "ratingValue": "{n} dari 5",
+    "optional": "(opsional)",
+    "name": "Nama",
+    "namePlaceholder": "Nama Anda",
+    "email": "Email",
+    "emailPlaceholder": "anda@email.com",
+    "message": "Pesan",
+    "messagePlaceholder": "Ceritakan pendapat Anda, apa yang kurang, atau apa yang bisa kami perbaiki…",
+    "send": "Kirim masukan",
+    "sending": "Mengirim…",
+    "thanksTitle": "Terima kasih!",
+    "thanksBody": "Masukan Anda membantu kami meningkatkan SolvyMed untuk semua.",
+    "backToHome": "Kembali ke beranda",
+    "errors": {
+      "email_required": "Masukkan email Anda.",
+      "message_required": "Tulis pesan.",
+      "failed": "Terjadi kesalahan. Silakan coba lagi."
+    }
   }
 }

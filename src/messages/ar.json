@@ -13,7 +13,10 @@
     "appStoreComingSoon": "قريبًا على App Store",
     "openApp": "فتح التطبيق",
     "iosBeta": "النسخة التجريبية لـ iPhone – ثبّتها عبر TestFlight",
-    "iosBetaHint": "يتطلب تطبيق TestFlight المجاني من Apple"
+    "iosBetaHint": "يتطلب تطبيق TestFlight المجاني من Apple",
+    "signupCta": "ابدأ تجربتك المجانية",
+    "haveAccount": "لديك حساب بالفعل؟",
+    "preferApp": "تفضّل التطبيق؟ نزّله من هنا:"
   },
   "highlights": {
     "h1": "جدولة ذكية",
@@ -41,7 +44,7 @@
   },
   "cta": {
     "heading": "هل أنت مستعد لتبسيط عيادتك؟",
-    "sub": "التطبيق جاهز — حمّله الآن وشغّل عيادتك في دقائق. الموقع في الطريق.",
+    "sub": "ابدأ تجربتك المجانية على الموقع أو في التطبيق. عيادتك جاهزة في دقائق.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
   },
@@ -476,7 +479,9 @@
     "emptySubtitle": "أضف عيادتك حتى يتمكن المرضى من إيجادك",
     "addFirst": "أضف عيادتك الأولى",
     "nameRequiredError": "اسم العيادة مطلوب.",
-    "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+    "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "delete": "حذف العيادة",
+    "deleteConfirm": "حذف «{name}»؟ لا يمكن التراجع عن ذلك."
   },
   "consultType": {
     "consultation": "استشارة",
@@ -930,5 +935,28 @@
   },
   "legal": {
     "englishOnly": "هذه الوثيقة متاحة باللغتين الإنجليزية والبرتغالية (البرازيل) فقط. تظهر النسخة الإنجليزية أدناه."
+  },
+  "feedback": {
+    "title": "شاركنا رأيك",
+    "subtitle": "يسعدنا أن نعرف رأيك في SolvyMed.",
+    "ratingLabel": "كيف تقيّم SolvyMed؟",
+    "ratingValue": "{n} من 5",
+    "optional": "(اختياري)",
+    "name": "الاسم",
+    "namePlaceholder": "اسمك",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "your@email.com",
+    "message": "الرسالة",
+    "messagePlaceholder": "أخبرنا برأيك، أو بما ينقص، أو بما يمكننا تحسينه…",
+    "send": "إرسال الرأي",
+    "sending": "جارٍ الإرسال…",
+    "thanksTitle": "شكرًا لك!",
+    "thanksBody": "رأيك يساعدنا على تحسين SolvyMed للجميع.",
+    "backToHome": "العودة إلى الرئيسية",
+    "errors": {
+      "email_required": "يرجى إدخال بريدك الإلكتروني.",
+      "message_required": "يرجى كتابة رسالة.",
+      "failed": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+    }
   }
 }

@@ -47,7 +47,9 @@ export async function addClinic(formData: FormData) {
       address,
       city,
       state,
-      country,
+      // Left out when empty: the column is NOT NULL DEFAULT 'BR' (013), and
+      // an explicit null overrides the default and fails the insert.
+      ...(country ? { country } : {}),
       phone,
       lat:  coords?.lat ?? null,
       lng:  coords?.lng ?? null,
