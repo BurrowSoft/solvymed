@@ -6588,3 +6588,129 @@ builds and behaved **identically**, so they were timing, not #101:
 **CI at `c89f9bc`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `c89f9bc`.** The branch is up to date with master; this docs commit sits
 on top.
+
+## PR #102 (`ux/news`, base master) — the Novidades popup + new-feature tour (behind `NEXT_PUBLIC_NEWS_ENABLED`), 🟢 at `59def69`
+
+The flag is unset on Vercel, so the ON side ran on a **local `next dev`
+with `NEXT_PUBLIC_NEWS_ENABLED=1`**, against the prod DB (throwaway
+doctor and secretary, deleted afterwards). Migration 113 isn't applied,
+so the popup is opened with `/dashboard?news=1`. Once-per-release saving
+is unit-tested only.
+
+**Rounds:**
+- **`07444e2`:** below lg, "Ver as novidades" closed the popup and showed
+  nothing. Its only step (the sidebar's Configurações) is inside the
+  closed drawer. UX chose to spotlight the ☰ button instead, and never to
+  mark a release seen if nothing could be shown.
+- **❌ at `a75207c`:** the ☰ fallback was never found. The button is
+  `position: fixed`, so `offsetParent === null` (measured at 390 px: 16,16
+  40×40, visible), and `isOnScreen` rejected it.
+- **`59def69`:** `isOnScreen` now uses size + viewport overlap +
+  `visibility`. With the same change (`cb06103b`), the **main tour's**
+  drawer steps also point at the ☰ below lg.
+
+**At `59def69`:**
+- **Without `?news=1` (pre-113):** no popup.
+- **Doctor, 1280, pt-BR:**
+  - The popup appears after ≈0.9 s: "Novidades no SolvyMed ✨", with
+    "Tour guiado — Um passeio rápido…" only (SolvyAI stays hidden), and
+    "Agora não" / "Ver as novidades". The card takes focus.
+  - A click on the dim doesn't close it; **Esc** and **"Agora não"** close
+    it with no spotlight.
+  - **"Ver as novidades"** → "1 de 1", "Tour guiado — Em Configurações →
+    Rever o tour.", spotlighting the sidebar's Configurações. **Concluir**
+    closes it.
+  - **Settings → "Novidades"** card: "1.4.0 · Tour guiado: …" → **Mostrar**
+    navigates to the dashboard and shows the same spotlight.
+  - The **main tour** replay still starts at "1 de 8". No page errors.
+- **en:** "What's new in SolvyMed ✨", "Guided tour…", "Not now" / "See
+  what's new".
+- **900 px:**
+  - "Ver as novidades" → "1 de 1" on **☰** with "Abra o menu →
+    Configurações → Rever o tour." The card is on screen and doesn't cover
+    the ☰.
+  - Main tour: **8 steps**: home, New appointment, ☰ "No menu ☰, em
+    Agenda: …", ☰ Pacientes, ☰ Pagamentos, trial chip, invite, ☰
+    Configurações.
+- **390 px (phone):**
+  - The popup is a **bottom sheet** (full width, flush with the bottom),
+    with no overflow.
+  - "Ver as novidades" → ☰ with the menu text, and the card doesn't cover
+    the ☰.
+  - Main tour: **7 steps** (New appointment is dropped below sm): home, ☰
+    Agenda, ☰ Pacientes, ☰ Pagamentos, trial, invite, ☰ Configurações.
+- **Secretary:**
+  - At 1280, the popup waits until the one-time welcome card is dismissed
+    ("Entendi"), then shows the same item. "Ver as novidades" spotlights
+    Configurações, and Settings has the Novidades card with "Mostrar".
+  - At 390: the news spotlight is on ☰. The main tour has 3 steps: home, ☰
+    "No menu ☰, em Agenda: Confirme os pedidos…", ☰ Pacientes.
+- **Flag OFF (#102's Preview, where the variable is unset):** with
+  `?news=1` there's no popup, and Settings has no Novidades card and no
+  "Mostrar".
+
+**CI at `59def69`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`59def69`.** This docs commit sits on top, after a master sync (2 behind;
+message JSON valid).
+
+## PR #104 (`fix/name-titles-parity`, base master) — the name rule matches the app (ordinal and stacked titles); no name → "Boa tarde!", email-only sidebar, neutral avatar, 🟢 at `0b2feab`
+
+`0b2feab` is `e311118` (review-clean) plus a master merge. The rule is
+the app's regex, extended to the Brazilian ordinal (Drª, Dr.ª, Drª.) and
+up to 3 stacked titles. The avatar letter always skips titles, and a
+title is still never added.
+
+Checked on the Preview with a throwaway doctor per name
+(`professionals.full_name` set as below; all deleted afterwards), pt-BR
+dashboard, afternoon:
+
+| Saved name | Greeting | Sidebar name | Avatar |
+|---|---|---|---|
+| `Drª Ana Souza` | "Boa tarde, Drª Ana 👋" | Drª Ana | A |
+| `Dr.ª Beatriz Lima` | "Boa tarde, Dr.ª Beatriz 👋" | Dr.ª Beatriz | B |
+| `drª. carla dias` | "Boa tarde, Drª. carla 👋" | Drª. carla | C |
+| `Prof. Dr. Carlos Melo` | "Boa tarde, Prof. Dr. Carlos 👋" | Prof. Dr. Carlos | C |
+| `Prof. Dr. Dra. Eva Neves` | "…, Prof. Dr. Dra. Eva 👋" | Prof. Dr. Dra. Eva | E |
+| `DOTT.SSA giulia rossi` | "…, Dott.ssa giulia 👋" | Dott.ssa giulia | G |
+| `Pr. João Alves` | "…, Pr. João 👋" | Pr. João | J |
+| `Priscila Alves` / `Draco Malfoy` / `Profeta Gentileza` | Priscila / Draco / Profeta (**not** read as titles) | same | P / D / P |
+| `Dra.` (title only) | "…, Dra. 👋" | Dra. | D |
+| `Ana Opus Souza` | "Boa tarde, Ana 👋" (no "Dr.") | Ana | A |
+| `""` and `"   "` | **"Boa tarde! 👋"** | **none**, only the email line | **neutral person icon** |
+
+- **No name:** a secretary without a name gets the same result ("Boa
+  tarde! 👋", email only, person icon). A named secretary gets "Boa
+  tarde, Sec". The phone drawer at 390 px shows the email only and the
+  icon, with no overflow.
+- **Note:** `full_name = null` is refused by the DB (400), so an empty
+  name reaches the web only as `""` or blanks. Both were covered.
+- **Master merge:** the auto-merge of `dashboard/layout.tsx` and
+  `DashboardSidebar.tsx` keeps both #102's news and ☰ `data-tour` markers
+  and #104's name and avatar logic.
+
+**CI at `0b2feab`:** ✅. **Review: clean at `e311118` (a9)**, and
+`0b2feab` only adds a master merge. **Merge gate: 🟢 for `0b2feab`.**
+This docs commit sits on top, after a master sync (7 behind; message JSON
+valid).
+
+## PR #106 (`fix/help-invite-copy`, base master) — Help C5 "Patient invite link" app steps corrected (content only; Help Center still gated), 🟢 at `05f1de0`
+
+This only changes `content/help/04-configuracoes.md` and the regenerated
+`helpArticles.json`: C5's app steps for pt-BR and en. The web note
+("No site / On the website") is untouched, as the diff shows.
+
+Checked on the Preview at `05f1de0` (server HTML, bold rendered):
+
+| Page | Body | Web note | "Abrir no site" |
+|---|---|---|---|
+| `/pt-BR/help/c5` | "Em **Início**, na lista para configurar a clínica, toque em **Compartilhar link de convite**. Ou em **Configurações → Seu código de convite para pacientes**, toque em **Compartilhar** (sem código ainda? toque em **Gerar código de convite**). … **Novo** gera um código novo…" | unchanged ("Em **Agenda**, clique em **Compartilhar link de convite**, ou em **Configurações → Seu código de convite**…") | yes |
+| `/pt-BR/help/c5?app=1` | same body | hidden (app variant) | no |
+| `/help/c5` | "On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings → Your patient invite code**, tap **Share** (no code yet? tap **Generate invite code**). … **New** creates a new code…" | unchanged | yes |
+| `/help/c5?app=1` | same body | hidden | no |
+
+All four pages return 200, with no raw `**`. The JSON's C5 matches the
+markdown.
+
+**CI at `05f1de0`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`05f1de0`.** This docs commit sits on top, after a master sync (12
+behind).

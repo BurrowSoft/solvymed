@@ -123,7 +123,8 @@ export default async function DashboardPage({
     : professional?.full_name;
   // The doctor's own title if they typed one ("Dra. Beatriz"), never one we
   // add (lib/doctorName, the app's rule).
-  const firstName = doctorDisplayName(ownName, { firstOnly: true }) || user.email?.split("@")[0] || "";
+  // No name saved yet: no name at all ("Boa tarde!"), never the email (UX).
+  const firstName = doctorDisplayName(ownName, { firstOnly: true });
   const totalPending = pendingPayments.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
   const totalRevenue = monthRevenue.reduce((s, r) => s + (r.payment_amount ?? 0), 0);
   const todayFormatted = now.toLocaleDateString(dateLocale(locale), { timeZone, weekday: "long", year: "numeric", month: "long", day: "numeric" });
@@ -134,7 +135,7 @@ export default async function DashboardPage({
       <div className="mb-8 flex items-start justify-between gap-4">
         <div data-tour="home">
           <h1 className="text-2xl font-extrabold text-slate-900 md:text-3xl">
-            {greeting}, {firstName} 👋
+            {firstName ? `${greeting}, ${firstName}` : `${greeting}!`} 👋
           </h1>
           <p className="mt-1 text-sm text-slate-500">
             {todayFormatted}{professional?.specialty ? ` · ${professional.specialty}` : ""}
