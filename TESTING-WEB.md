@@ -5644,3 +5644,23 @@ deleted afterwards or purged by mob dev (clinical rows, test feedback, the
 - **L-1:** the live R$ 89 charge, with the user.
 - **Minor:** #67's geocoding of an address without a state can land in the
   wrong city (a master follow-up).
+
+## PR #74 (`fix/now-line-hydration`, base master) — no React #418 for off-zone browsers on schedule day/week, 🟢 at `44e7a48`, review clean
+
+This is the follow-up to #69: a Bangkok browser still got #418 on
+`?view=day` and `?view=week`. Checked on the preview, logged in as a
+throwaway doctor (deleted afterwards), with two booking requests, one for
+yesterday and one for the day after tomorrow:
+- **No #418:** browsers in `America/Sao_Paulo`, `Asia/Bangkok` (the browser
+  date one day ahead of the clinic's) and `Asia/Tokyo`, on
+  `/pt-BR/dashboard/schedule` `?view=day`, `week`, `list` and `month`.
+- **Now-line (`.calendar-now-line`), placed after mount:**
+  - Bangkok (browser 08:58) → `--now-top: 125.9px`, on both day and week.
+  - Tokyo (10:59) → about 254 px.
+  - São Paulo at 22:58 → correctly hidden, since the grid runs 07:00–21:00.
+  - Off-zone, the line uses the **browser's** clock on the clinic's "today"
+    column. That's a nuance, not a regression.
+- **Requests panel order is unchanged:** the future request is listed first
+  and the past one last.
+
+**CI at `44e7a48`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `44e7a48`.**
