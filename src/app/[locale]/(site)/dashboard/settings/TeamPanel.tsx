@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "./SettingsClient";
 import { createSecretaryInvite, revokeSecretaryInvite, removeSecretary } from "./team-actions";
+import { dateLocale } from "@/lib/dateLabels";
 
 export type TeamRow = {
   kind: "secretary" | "invite";
@@ -129,7 +130,7 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
                   <p className="truncate text-sm text-slate-900">{inv.email}</p>
                   {inv.expires_at && (
                     <p className="text-xs text-slate-500">
-                      {t("teamExpires", { date: new Date(inv.expires_at).toLocaleDateString(locale) })}
+                      {t("teamExpires", { date: new Date(inv.expires_at).toLocaleDateString(dateLocale(locale)) })}
                     </p>
                   )}
                 </div>
