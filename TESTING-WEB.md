@@ -6692,3 +6692,25 @@ dashboard, afternoon:
 `0b2feab` only adds a master merge. **Merge gate: 🟢 for `0b2feab`.**
 This docs commit sits on top, after a master sync (7 behind; message JSON
 valid).
+
+## PR #106 (`fix/help-invite-copy`, base master) — Help C5 "Patient invite link" app steps corrected (content only; Help Center still gated), 🟢 at `05f1de0`
+
+This only changes `content/help/04-configuracoes.md` and the regenerated
+`helpArticles.json`: C5's app steps for pt-BR and en. The web note
+("No site / On the website") is untouched, as the diff shows.
+
+Checked on the Preview at `05f1de0` (server HTML, bold rendered):
+
+| Page | Body | Web note | "Abrir no site" |
+|---|---|---|---|
+| `/pt-BR/help/c5` | "Em **Início**, na lista para configurar a clínica, toque em **Compartilhar link de convite**. Ou em **Configurações → Seu código de convite para pacientes**, toque em **Compartilhar** (sem código ainda? toque em **Gerar código de convite**). … **Novo** gera um código novo…" | unchanged ("Em **Agenda**, clique em **Compartilhar link de convite**, ou em **Configurações → Seu código de convite**…") | yes |
+| `/pt-BR/help/c5?app=1` | same body | hidden (app variant) | no |
+| `/help/c5` | "On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings → Your patient invite code**, tap **Share** (no code yet? tap **Generate invite code**). … **New** creates a new code…" | unchanged | yes |
+| `/help/c5?app=1` | same body | hidden | no |
+
+All four pages return 200, with no raw `**`. The JSON's C5 matches the
+markdown.
+
+**CI at `05f1de0`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`05f1de0`.** This docs commit sits on top, after a master sync (12
+behind).
