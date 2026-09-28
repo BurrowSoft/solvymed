@@ -476,7 +476,7 @@
     "practiceCountry": "Paese dello studio",
     "practiceCountryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo, scrivi a support@solvymed.com.",
     "practiceCountryOther": "Altro paese",
-    "fullNameHint": "Se vuoi, aggiungi il tuo titolo (Dr., Prof.): compare nei saluti."
+    "fullNameHint": "Se vuoi, aggiungi il tuo titolo (Dott., Dott.ssa, Prof.): compare nei saluti."
   },
   "clinics": {
     "title": "Le mie cliniche",
@@ -609,7 +609,7 @@
       "country": "Dove si trova il tuo studio?",
       "countryOther": "Altro paese",
       "countryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza.",
-      "fullNameHint": "Se vuoi, aggiungi il tuo titolo (Dr., Prof.): compare nei saluti."
+      "fullNameHint": "Se vuoi, aggiungi il tuo titolo (Dott., Dott.ssa, Prof.): compare nei saluti."
     },
     "forgotPassword": {
       "title": "Password dimenticata?",

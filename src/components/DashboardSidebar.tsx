@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useState, useRef, useEffect } from "react";
+import { nameInitial } from "@/lib/doctorName";
 
 interface Props {
   locale: string;
@@ -206,7 +207,7 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
             <img src={photoUrl} alt="" className="h-9 w-9 object-cover" />
           ) : (
             // The initial of the name, not of a title ("Dra. Beatriz" → B).
-            firstName.replace(/^(Dra|Dr|Profa|Prof)\.\s*/, "")[0]?.toUpperCase()
+            nameInitial(firstName)
           )}
         </div>
         <div className="min-w-0 flex-1">
