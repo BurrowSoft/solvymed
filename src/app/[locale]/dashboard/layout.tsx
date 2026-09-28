@@ -139,7 +139,9 @@ export default async function DashboardLayout({
     : professional?.full_name;
   // The doctor's own title if they typed one, never one we add
   // (lib/doctorName, the app's rule).
-  const firstName = doctorDisplayName(ownName, { firstOnly: true }) || user.email?.split("@")[0] || "";
+  // Empty when no name is saved yet: the sidebar then shows only the email
+  // and a neutral avatar (UX).
+  const firstName = doctorDisplayName(ownName, { firstOnly: true });
 
   // The guided tour (specs/walkthrough.md): auto-start on the first sign-in,
   // a resume offer after leaving mid-tour, or nothing (before migration 113
