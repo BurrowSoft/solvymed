@@ -6767,6 +6767,47 @@ behind). The `dashboard/page.tsx` auto-merge keeps both `dateLocale` and
 `1b2b427`.** This docs commit sits on top, after a master sync (8
 behind).
 
+## PR #107 (`fix/th-dob-guard`, base master) — a Buddhist-era year (≥ 2400) is never saved or converted; พ.ศ. hint on Thai birth dates, 🟢 at `ee3f014`
+
+`ee3f014` is `2384a92` (review-clean) plus master merges (after #104 and
+#105). How the guard works:
+- A new `DateInput` sets `setCustomValidity` and shows the message.
+- The patient booking button and the "propose new time" Send button are
+  disabled.
+- Server backstops: `createPatient`, `updatePatient`, `createAppointment`,
+  `blockTime`, `proposeNewTime` and `requestReschedule`.
+
+Checked on the Preview (Thai flag on) with a throwaway doctor, a patient
+and a seeded booking request (all deleted afterwards). **"Server
+backstop"** means: the form was submitted with browser validation off
+(`noValidate` + `requestSubmit`), so only the server action could refuse.
+
+| Field | th | pt-BR | en |
+|---|---|---|---|
+| New patient: birth date 1996-05-14 | hint **"พ.ศ. 2539"** | no hint | no hint |
+| New patient: typed 2539 | "ดูเหมือนเป็นปี พ.ศ. กรุณาใช้ปี ค.ศ. (เช่น 1996)"; save blocked; server backstop shows the message; **no row** | "Esse ano parece do calendário budista. Use o ano cristão (ex.: 1996)."; same result | "That looks like a Buddhist-era year. Please use the Gregorian year (e.g. 1996)."; same result |
+| Edit patient (stored 1993-05-14) | prefilled hint "พ.ศ. 2536"; typed 2536 → message; save blocked; server refuses; **DOB unchanged** | message; blocked; server refuses; unchanged | same |
+| New appointment: date 2569-10-01 | message; blocked; server (`date_buddhist_era`) refuses; **no appointment** | same | same |
+| Block time: 2569-10-01 | message; blocked; server refuses; nothing saved | same | same |
+| Booking request → propose new time: 2569-10-02 | message; **Send disabled** | same | same |
+| Patient booking page: birth date | "พ.ศ. 2539" for 1996; typed 2539 → message; **"ส่งคำขอนัดหมาย" disabled** | message; **"Enviar Solicitação" disabled** | — |
+
+- **Thai dates still show 2569** next to the guard (the reviewer's check,
+  since both touch the same imports): the patient page "28 กันยายน 2569",
+  the dashboard "วันจันทร์ที่ 28 กันยายน 2569", and the booking day strip
+  "อังคาร 29 ก.ย." (no year shown). There's no "2026" on the Thai pages.
+- **End state:** the DB held only the seeded rows (1 patient, DOB still
+  1993-05-14, only the seeded request), so **no Buddhist-era date was
+  stored anywhere**.
+- **Residual (not a blocker):** the patient booking page writes
+  `patient_profiles.birth_date` straight from the browser (no server
+  action), so its guard is client-side only (the button is disabled plus
+  an early return). A DB-level check would need a migration.
+
+**CI at `ee3f014`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`ee3f014`.** This docs commit sits on top, after a master sync (5 behind;
+message JSON valid).
+
 ## PR #103 (`ux/solvyai`, base master) — SolvyAI panel UI with a mock backend (behind `NEXT_PUBLIC_SOLVYAI_ENABLED`), 🟢 at `268fa2d`
 
 The flag is unset on Vercel, so this ran on a **local `next dev` of
@@ -6864,6 +6905,22 @@ and non-blocking):
 `268fa2d`.** This docs commit sits on top, after a master sync (18
 behind; message JSON valid). The `dashboard/layout.tsx` auto-merge keeps
 SolvyAI, news and #104's name logic.
+
+## PR #107 re-confirm at `d991329` (master merge after #103, conflict resolved by b2)
+
+- **Code:** #107's 13 code files are **byte-identical** to `ee3f014`
+  (`git diff ee3f014 d991329` on them is empty).
+- **Conflicts resolved:** the message files keep both `dateInput.*` (#107)
+  and `assistant.*` (#103), and all message JSON is valid. The #107
+  section above is intact.
+- **Thai re-run on the Preview at `d991329`:** the same results as the
+  entry above:
+  - พ.ศ. hints; the guard message on new/edit patient, new appointment,
+    block time and propose (Send disabled);
+  - blocked saves, and nothing saved even with browser validation off;
+  - the booking page's th and pt-BR guard;
+  - Thai dates still 2569.
+- **CI at `d991329`:** ✅. **Merge gate: 🟢 for `d991329`.**
 
 ## PR #109 (`fix/dob-locale-format`, base master) — no raw ISO dates; birth date + age like the app, 🟢 at `496f038`
 

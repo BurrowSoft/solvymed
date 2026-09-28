@@ -7,6 +7,7 @@ import type { WorkingHours } from "@/lib/slots";
 import { sendExpoPush } from "@/lib/push";
 import { actionError } from "@/lib/dbErrors";
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
+import { looksBuddhistEra } from "@/lib/buddhistEra";
 
 export async function getTentativeBookings() {
   const supabase = await createClient();
@@ -146,6 +147,8 @@ export async function proposeNewTime(
 
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account" };
+  // A Buddhist-era year is never saved or converted (the field blocks it).
+  if (looksBuddhistEra(proposedDate)) return { error: "date_buddhist_era" };
 
   const { error } = await supabase
     .from("appointments")
@@ -235,6 +238,7 @@ export async function requestReschedule(
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  if (looksBuddhistEra(newDate)) return { error: "date_buddhist_era" };
 
   const { data: appt } = await supabase
     .from("appointments")

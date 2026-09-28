@@ -1167,5 +1167,8 @@
         "c": "Marcar consulta"
       }
     }
+  },
+  "dateInput": {
+    "buddhistYear": "Esse ano parece do calendário budista. Use o ano cristão (ex.: 1996)."
   }
 }

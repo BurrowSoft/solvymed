@@ -1167,5 +1167,8 @@
         "c": "Buat janji temu"
       }
     }
+  },
+  "dateInput": {
+    "buddhistYear": "Sepertinya ini tahun Buddhis. Gunakan tahun Masehi (misalnya 1996)."
   }
 }

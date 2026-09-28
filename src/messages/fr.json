@@ -1167,5 +1167,8 @@
         "c": "Prendre rendez-vous"
       }
     }
+  },
+  "dateInput": {
+    "buddhistYear": "Cela ressemble à une année de l'ère bouddhiste. Utilisez l'année grégorienne (ex. : 1996)."
   }
 }

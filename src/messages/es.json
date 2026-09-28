@@ -1167,5 +1167,8 @@
         "c": "Agendar cita"
       }
     }
+  },
+  "dateInput": {
+    "buddhistYear": "Parece un año de la era budista. Usa el año gregoriano (p. ej., 1996)."
   }
 }

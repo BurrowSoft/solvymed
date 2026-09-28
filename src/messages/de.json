@@ -1167,5 +1167,8 @@
         "c": "Termin buchen"
       }
     }
+  },
+  "dateInput": {
+    "buddhistYear": "Das sieht nach einem Jahr der buddhistischen Zeitrechnung aus. Bitte das gregorianische Jahr verwenden (z. B. 1996)."
   }
 }

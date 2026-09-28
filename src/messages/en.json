@@ -1197,5 +1197,8 @@
         "c": "Book an appointment"
       }
     }
+  },
+  "dateInput": {
+    "buddhistYear": "That looks like a Buddhist-era year. Please use the Gregorian year (e.g. 1996)."
   }
 }

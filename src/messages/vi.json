@@ -1167,5 +1167,8 @@
         "c": "Đặt lịch hẹn"
       }
     }
+  },
+  "dateInput": {
+    "buddhistYear": "Có vẻ đây là năm theo Phật lịch. Vui lòng dùng năm dương lịch (ví dụ: 1996)."
   }
 }
