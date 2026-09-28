@@ -574,7 +574,10 @@
       "joiningAsSecretary": "通过邀请链接以秘书身份注册。",
       "secretaryNeedsInvite": "你是秘书？请向你的医生索取邀请链接。",
       "secretaryEmailMismatch": "该邮箱与邀请不匹配，或邀请已失效。请检查邮箱，或向诊所索取新的链接。",
-      "consent": "创建账户即表示您同意<terms>服务条款</terms>和<privacy>隐私政策</privacy>。"
+      "consent": "创建账户即表示您同意<terms>服务条款</terms>和<privacy>隐私政策</privacy>。",
+      "country": "您的诊所在哪里？",
+      "countryOther": "其他国家",
+      "countryHint": "用于设定货币、患者证件和付款二维码。之后如需更改，请联系客服。"
     },
     "forgotPassword": {
       "title": "忘记密码？",

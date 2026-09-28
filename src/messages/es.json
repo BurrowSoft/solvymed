@@ -574,7 +574,10 @@
       "joiningAsSecretary": "Te unes al equipo de secretaría mediante un enlace de invitación.",
       "secretaryNeedsInvite": "¿Trabajas en secretaría? Pide un enlace de invitación a la clínica donde trabajas.",
       "secretaryEmailMismatch": "Este correo no coincide con la invitación, o la invitación ya no es válida. Revisa el correo o pide un nuevo enlace a la clínica.",
-      "consent": "Al crear una cuenta, aceptas los <terms>Términos del servicio</terms> y la <privacy>Política de privacidad</privacy>."
+      "consent": "Al crear una cuenta, aceptas los <terms>Términos del servicio</terms> y la <privacy>Política de privacidad</privacy>.",
+      "country": "¿Dónde está tu consulta?",
+      "countryOther": "Otro país",
+      "countryHint": "Define la moneda, el documento del paciente y el QR de pago. Para cambiarlo después, contacta con soporte."
     },
     "forgotPassword": {
       "title": "¿Olvidaste tu contraseña?",
