@@ -101,9 +101,9 @@ export default function PendingConfirmationPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prefix, router]);
 
-  // The clinic archived this patient's record: the patient-side message,
-  // never the raw code.
-  const actionErrorText = (e: string) => (e === "patient_archived" ? t("inviteRequired.archived") : e);
+  // Translated text only, never a raw code: the clinic archived this
+  // patient's record, or anything else went wrong.
+  const actionErrorText = (e: string) => (e === "patient_archived" ? t("inviteRequired.archived") : t("errors.generic"));
 
   async function handleAccept(id: string) {
     setActingId(id);

@@ -5284,6 +5284,129 @@ with a throwaway doctor, deleted afterwards:
 - The browser made no refresh call of its own, so the session was refreshed
   server-side (middleware / `@supabase/ssr`).
 
+## PR #64 + #65 (`fix/landing-header-mobile` + `feat/landing-signup-cta`, base `release`) — landing fits phones, free-trial CTA, 🟢 at `d963bd0` (includes #64's `b7405d7`), review clean
+
+**Why.** In the RC run on prod (`cc34e97`), the landing overflowed on
+phones:
+- **Header:** its row ended at x=497 on a 412px Pixel 7 and at x=503 on a
+  390px iPhone 14 (WebKit).
+- **Banner:** on Android the layout viewport stretched to 498px, which put
+  the cookie banner partly off-screen, and a tap on "Aceitar tudo" was
+  intercepted.
+- **No web signup CTA:** the landing had none, while ads must reach web
+  signup (UX).
+
+**Checked on the #65 preview at `d963bd0`** (it contains #64):
+- **No sideways scroll:** 15 locales × 360/390/1280, 45 pages, **0
+  overflow** (innerWidth = viewport, scrollWidth ≤ viewport, no element past
+  the right edge). A signup CTA is present on every page.
+- **CTA:** "Comece seu teste grátis" / "Start your free trial" in the
+  header, the hero and the bottom section. From
+  `/pt-BR?utm_source=x&utm_campaign=y&gclid=z`, each links to
+  `/pt-BR/auth/signup?utm_source=x&utm_campaign=y`, so **only the UTMs** are
+  carried and gclid is dropped (en: `/auth/signup?…`). The CTA opens signup
+  with "Profissional de saúde" preselected and no invite-code field.
+- **Phones (390):** "Já tem conta? Entrar" / "Already have an account? Log
+  in" sits under the hero at y≈570, **inside the first screen**. The header
+  shows the CTA. **Desktop (1280):** the header shows "Entrar | Comece seu
+  teste grátis" / "Log in | Start your free trial".
+- **Bottom copy:** "Comece seu teste grátis pelo site ou pelo app. Sua
+  clínica pronta em minutos." / "Start your free trial on the web or in the
+  app. Your practice, set up in minutes." There's no "website on the way".
+- **Store buttons** are still present (4), after "Prefere o app? Baixe
+  aqui:" / "Prefer the app? Download it:".
+- **Attribution:** after a hard reload of the signup page and "Aceitar tudo",
+  `sm_attr` = `{utm_source: x, utm_campaign: y, landing_path: "/pt-BR/auth/signup"}`
+  (en: `/auth/signup`).
+- **Real devices, fresh visit to
+  `/pt-BR?utm_source=facebook&utm_campaign=launch_br`:**
+  - Pixel 7 (Chromium): innerWidth **412**, banner 12→400.
+  - iPhone 14 (WebKit): innerWidth **390**, banner 12→378.
+  - On both, a **real tap** on "Aceitar tudo" sets `sm_consent=1.11.…` and
+    `sm_attr` with the UTMs, and the login link is within the first screen.
+- **Auth page footer (`/pt-BR/auth/login`):** the legal links are centred
+  (equal side gaps: 72/72 on the Pixel, 61/61 on the iPhone) and wrap to 2
+  rows, with no overflow.
+
+**Review: Claude `/code-review` (code reviewer), clean at `b7405d7` (#64) and `d963bd0` (#65).**
+
+**CI at `d963bd0`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
+
+**Merge gate: 🟢 for `d963bd0`, and so for #64 at `b7405d7`, which it contains.**
+
+## PR #67 (`fix/clinics-form`, base `release`) — clinics: save without País, list refresh, delete confirm, 🟢 at `a229316`, review clean
+
+This fixes the RC finding (a). Checked on the preview on master's
+`cbb181d` and again on the release rebase `a229316` (same code), with a
+throwaway doctor, deleted afterwards:
+- **Save without País:** before, it failed on `null value in column
+  "country"` behind a generic error. Now the clinic saves, with `country =
+  BR`, geocoded, and **appears in the list immediately** (no reload).
+- **Delete:** the icon is labelled **"Excluir clínica"** (title and
+  `aria-label`), where it used to say "Cancelar". It asks **"Excluir
+  “Unidade Opus 67”? Isso não pode ser desfeito."**: Cancel keeps the
+  clinic, OK deletes it and removes it from the list.
+- **Observation, not a blocker:** "Rua Augusta, 500, São Paulo" with no
+  state geocoded to lat −22.85 (not São Paulo). With "SP" and "Brasil" it
+  was right (−23.56).
+
+**CI at `a229316`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `a229316`.**
+## PR #62 (`chore/review-followups`, base `release`) — feedback page translated, generic error on pending-confirmation, 🟢 at `b6b3aa7`, review clean
+
+**Checked on the preview** in pt-BR, th, ar and en, with 3 `[TEST]`
+feedback rows stored (mob dev deletes them):
+- **`/feedback` fully translated:** the title, subtitle, rating question,
+  labels, "(opcional)" and placeholders ("Seu nome", "Conte o que você
+  acha…" / th / ar / en), with no English left in non-en locales and no
+  horizontal overflow. **ar** renders with `dir="rtl"`.
+- **Rating buttons:** they announce as "1 de 5" … "5 de 5" (th "4 จาก 5",
+  ar "4 من 5", en "4 out of 5"). A click sets `aria-pressed="true"` on
+  that one only.
+- **A whitespace-only message** is caught by the server action and shows
+  "Escreva uma mensagem." / "กรุณาเขียนข้อความ" / "يرجى كتابة رسالة." /
+  "Please write a message.", and no row is stored.
+- **A real submit** (pt-BR, rating 4) stores a `feedback` row and shows
+  "Obrigado! Sua opinião nos ajuda a melhorar o SolvyMed para todos." This
+  covers checklist **B-16**.
+- **Pending-confirmation, code level:** an accept/decline error other than
+  `patient_archived` now shows `auth.errors.generic`, never the raw code.
+  It's hard to force live.
+
+**CI at `b6b3aa7`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `b6b3aa7`.**
+
+## PR #69 (`fix/hydration-418`, base `release`) — React #418 hydration fixes, 🟢 at `cf99265` (merges as-is per UX; the off-zone leftover goes to master), review clean
+
+This fixes the RC finding (c): React #418 on `/pt-BR/dashboard/schedule`
+on prod. The server formatted dates with its default locale, and the
+server's ICU puts thin spaces around the "–" in date ranges.
+
+**Checked on the preview, logged in, a doctor with a patient and an
+appointment, all combinations in parallel:**
+- **Browser in `America/Sao_Paulo`, pt-BR and en:** `/dashboard/schedule`
+  `?view=list`, `day`, `week` and `month`, `/my-appointments` and
+  `/book/<id>` all show **no #418**. `/auth/pending-confirmation` is clean
+  too (checked at `bc8f18c`).
+- **Browser in `Asia/Bangkok`** (the browser date one day ahead of the
+  clinic's):
+  - list, month, my-appointments and book are clean;
+  - **day and week still throw #418.**
+  - The visible header is correct in both the server HTML and after
+    hydration ("domingo, 27 de setembro de 2026" / "21 – 27 de set. de
+    2026", the clinic's date), so the mismatching text is elsewhere in the
+    grid.
+  - UX decided this merges as-is. It only affects doctors whose browser is
+    outside São Paulo; the follow-up goes to master.
+- **pt-BR dates and 24h times:** "ter., 29 de set. de 2026", "9:00", with
+  no English or AM/PM. en shows "Tue, Sep 29, 2026".
+- **The week view highlights the clinic's date (27)** with a Bangkok browser
+  too, and the Reschedule button shows on upcoming appointments.
+- **A counter-proposal:** the doctor proposes a new time (inline form →
+  Enviar) and the patient sees **"Originalmente: qua., 30 de set. de 2026 ·
+  10:00"** with Aceitar / Recusar (en: "Originally: Wed, Sep 30, 2026 · 10:00
+  AM").
+
+**CI at `cf99265`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `cf99265`.**
+
 ## PR #71 (`fix/requests-panel-i18n`, base `release`, stacked on #69) — requests panel "Requested:" translated, 🟢 at `1217fb7`, review clean
 
 This fixes an RC follow-up: the doctor's booking-requests panel rendered raw

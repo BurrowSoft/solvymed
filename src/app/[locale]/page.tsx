@@ -4,6 +4,7 @@ import { routing } from "@/i18n/routing";
 import { LanguageSelector } from "@burrowsoft/shared";
 import { AppDownloadButtons } from "@/components/AppDownloadButtons";
 import { LegalLinks } from "@/components/LegalLinks";
+import { SignupCta } from "@/components/SignupCta";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -116,26 +117,26 @@ export default async function HomePage({
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
           <div className="flex items-center gap-2">
             <img src="/solvymed_logo.png" alt="SolvyMed" className="h-8 w-8 rounded-lg" />
-            <span className="text-xl font-bold tracking-tight text-slate-900">Solvymed</span>
+            {/* Phones: the logo alone, so the header fits (no sideways scroll). */}
+            <span className="hidden text-xl font-bold tracking-tight text-slate-900 sm:inline">Solvymed</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <LanguageSelector
               locales={ALL_LOCALES}
               className="text-xs border-slate-200 bg-white shadow-sm"
               ariaLabel={t("footer.languageLabel")}
             />
+            {/* Phones: "Log in" moves under the hero's signup button. */}
             <Link
               href="/auth/login"
-              className="rounded-lg border-2 border-teal-600 px-4 py-2 text-sm font-bold text-teal-700 transition-colors hover:bg-teal-50 whitespace-nowrap"
+              className="hidden rounded-lg border-2 border-teal-600 px-4 py-2 text-sm font-bold text-teal-700 transition-colors hover:bg-teal-50 whitespace-nowrap sm:inline-block"
             >
               {t("auth.logIn")}
             </Link>
-            <a
-              href="#download"
-              className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 whitespace-nowrap"
-            >
-              {t("getApp")}
-            </a>
+            <SignupCta
+              label={t("hero.signupCta")}
+              className="max-w-[11rem] rounded-lg bg-teal-600 px-3 py-2 text-center text-sm font-bold leading-tight text-white shadow-sm transition-colors hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 sm:max-w-none sm:whitespace-nowrap sm:px-4"
+            />
           </div>
         </div>
       </header>
@@ -166,7 +167,19 @@ export default async function HomePage({
               {t("hero.subtitle")}
             </p>
 
-            <div id="download">
+            <SignupCta
+              label={t("hero.signupCta")}
+              className="inline-block rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:ring-offset-2 focus:ring-offset-teal-900"
+            />
+            <p className="mt-4 text-sm text-slate-300 sm:hidden">
+              {t("hero.haveAccount")}{" "}
+              <Link href="/auth/login" className="font-semibold text-teal-300 underline hover:text-teal-200">
+                {t("auth.logIn")}
+              </Link>
+            </p>
+
+            <div id="download" className="mt-12">
+              <p className="mb-4 text-sm font-medium text-slate-400">{t("hero.preferApp")}</p>
               <AppDownloadButtons />
             </div>
           </div>
@@ -221,6 +234,11 @@ export default async function HomePage({
               {t("cta.heading")}
             </h2>
             <p className="mb-10 text-slate-400">{t("cta.sub")}</p>
+            <SignupCta
+              label={t("hero.signupCta")}
+              className="inline-block rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400"
+            />
+            <p className="mb-4 mt-10 text-sm font-medium text-slate-400">{t("hero.preferApp")}</p>
             <AppDownloadButtons />
           </div>
         </section>
@@ -230,7 +248,7 @@ export default async function HomePage({
       {/* Footer */}
       <footer className="border-t border-slate-100 bg-white py-10">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+          <div className="flex flex-col flex-wrap items-center justify-between gap-4 sm:flex-row">
             <div className="flex items-center gap-2 text-slate-600">
               <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-teal-600">
                 <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">

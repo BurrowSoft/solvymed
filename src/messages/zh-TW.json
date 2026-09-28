@@ -13,7 +13,10 @@
     "appStoreComingSoon": "即將登上 App Store",
     "openApp": "開啟 App",
     "iosBeta": "iPhone 測試版 – 透過 TestFlight 安裝",
-    "iosBetaHint": "需要 Apple 免費的 TestFlight App"
+    "iosBetaHint": "需要 Apple 免費的 TestFlight App",
+    "signupCta": "開始免費試用",
+    "haveAccount": "已有帳戶？",
+    "preferApp": "偏好使用應用程式？在此下載："
   },
   "highlights": {
     "h1": "智慧排程",
@@ -41,7 +44,7 @@
   },
   "cta": {
     "heading": "準備好簡化您的診所了嗎？",
-    "sub": "應用程式已上線並隨時可用 — 立即下載，幾分鐘內讓您的診所運作起來。網站即將上線。",
+    "sub": "在網站或應用程式中開始免費試用。幾分鐘即可讓您的診所準備就緒。",
     "appStore": "App Store",
     "googlePlay": "Google Play"
   },
@@ -477,7 +480,9 @@
     "emptySubtitle": "新增您的診所以便患者找到您",
     "addFirst": "新增您的第一家診所",
     "nameRequiredError": "診所名稱為必填項目。",
-    "genericError": "發生問題，請重試。"
+    "genericError": "發生問題，請重試。",
+    "delete": "刪除診所",
+    "deleteConfirm": "刪除「{name}」？此操作無法復原。"
   },
   "consultType": {
     "consultation": "門診",
@@ -931,5 +936,28 @@
   },
   "legal": {
     "englishOnly": "本文件僅提供英文與葡萄牙文（巴西）版本。以下為英文版本。"
+  },
+  "feedback": {
+    "title": "提供意見",
+    "subtitle": "我們很想知道您對 SolvyMed 的看法。",
+    "ratingLabel": "您給 SolvyMed 幾分？",
+    "ratingValue": "{n} 分（滿分 5 分）",
+    "optional": "（選填）",
+    "name": "姓名",
+    "namePlaceholder": "您的姓名",
+    "email": "電子郵件",
+    "emailPlaceholder": "your@email.com",
+    "message": "留言",
+    "messagePlaceholder": "告訴我們您的想法、缺少的功能或可以改進的地方…",
+    "send": "送出意見",
+    "sending": "傳送中…",
+    "thanksTitle": "謝謝！",
+    "thanksBody": "您的意見幫助我們為所有人改善 SolvyMed。",
+    "backToHome": "返回首頁",
+    "errors": {
+      "email_required": "請輸入您的電子郵件。",
+      "message_required": "請填寫留言。",
+      "failed": "發生錯誤，請再試一次。"
+    }
   }
 }
