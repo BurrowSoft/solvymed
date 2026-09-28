@@ -6652,3 +6652,43 @@ is unit-tested only.
 **CI at `59def69`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `59def69`.** This docs commit sits on top, after a master sync (2 behind;
 message JSON valid).
+
+## PR #104 (`fix/name-titles-parity`, base master) — the name rule matches the app (ordinal and stacked titles); no name → "Boa tarde!", email-only sidebar, neutral avatar, 🟢 at `0b2feab`
+
+`0b2feab` is `e311118` (review-clean) plus a master merge. The rule is
+the app's regex, extended to the Brazilian ordinal (Drª, Dr.ª, Drª.) and
+up to 3 stacked titles. The avatar letter always skips titles, and a
+title is still never added.
+
+Checked on the Preview with a throwaway doctor per name
+(`professionals.full_name` set as below; all deleted afterwards), pt-BR
+dashboard, afternoon:
+
+| Saved name | Greeting | Sidebar name | Avatar |
+|---|---|---|---|
+| `Drª Ana Souza` | "Boa tarde, Drª Ana 👋" | Drª Ana | A |
+| `Dr.ª Beatriz Lima` | "Boa tarde, Dr.ª Beatriz 👋" | Dr.ª Beatriz | B |
+| `drª. carla dias` | "Boa tarde, Drª. carla 👋" | Drª. carla | C |
+| `Prof. Dr. Carlos Melo` | "Boa tarde, Prof. Dr. Carlos 👋" | Prof. Dr. Carlos | C |
+| `Prof. Dr. Dra. Eva Neves` | "…, Prof. Dr. Dra. Eva 👋" | Prof. Dr. Dra. Eva | E |
+| `DOTT.SSA giulia rossi` | "…, Dott.ssa giulia 👋" | Dott.ssa giulia | G |
+| `Pr. João Alves` | "…, Pr. João 👋" | Pr. João | J |
+| `Priscila Alves` / `Draco Malfoy` / `Profeta Gentileza` | Priscila / Draco / Profeta (**not** read as titles) | same | P / D / P |
+| `Dra.` (title only) | "…, Dra. 👋" | Dra. | D |
+| `Ana Opus Souza` | "Boa tarde, Ana 👋" (no "Dr.") | Ana | A |
+| `""` and `"   "` | **"Boa tarde! 👋"** | **none**, only the email line | **neutral person icon** |
+
+- **No name:** a secretary without a name gets the same result ("Boa
+  tarde! 👋", email only, person icon). A named secretary gets "Boa
+  tarde, Sec". The phone drawer at 390 px shows the email only and the
+  icon, with no overflow.
+- **Note:** `full_name = null` is refused by the DB (400), so an empty
+  name reaches the web only as `""` or blanks. Both were covered.
+- **Master merge:** the auto-merge of `dashboard/layout.tsx` and
+  `DashboardSidebar.tsx` keeps both #102's news and ☰ `data-tour` markers
+  and #104's name and avatar logic.
+
+**CI at `0b2feab`:** ✅. **Review: clean at `e311118` (a9)**, and
+`0b2feab` only adds a master merge. **Merge gate: 🟢 for `0b2feab`.**
+This docs commit sits on top, after a master sync (7 behind; message JSON
+valid).
