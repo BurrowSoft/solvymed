@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
-import { plainSpaces } from "./dateLabels";
+import { dateLocale, plainSpaces } from "./dateLabels";
 
 // The record access log (Sprint TH, TH-3; migration 111): who opened a
 // patient's record, and when. The web logs server-side, in the page that
@@ -62,7 +62,7 @@ export async function readAccessLog(
   const raw = (Array.isArray(data) ? data : []) as {
     accessed_at: string; actor_name: string; actor_role: string; kind: string; object_ref: string | null;
   }[];
-  const fmt = new Intl.DateTimeFormat(opts.locale, { dateStyle: "medium", timeStyle: "short", timeZone: opts.timeZone });
+  const fmt = new Intl.DateTimeFormat(dateLocale(opts.locale), { dateStyle: "medium", timeStyle: "short", timeZone: opts.timeZone });
   return {
     rows: raw.slice(0, ACCESS_LOG_PAGE).map((r) => ({
       when: plainSpaces(fmt.format(new Date(r.accessed_at))),

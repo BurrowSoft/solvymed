@@ -12,6 +12,7 @@ import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { RECEIVABLE_STATUSES } from "@/lib/paymentRules";
 import { doctorDisplayName } from "@/lib/doctorName";
+import { dateLocale } from "@/lib/dateLabels";
 
 
 function statusBadge(status: string) {
@@ -122,10 +123,11 @@ export default async function DashboardPage({
     : professional?.full_name;
   // The doctor's own title if they typed one ("Dra. Beatriz"), never one we
   // add (lib/doctorName, the app's rule).
-  const firstName = doctorDisplayName(ownName, { firstOnly: true }) || user.email?.split("@")[0] || "";
+  // No name saved yet: no name at all ("Boa tarde!"), never the email (UX).
+  const firstName = doctorDisplayName(ownName, { firstOnly: true });
   const totalPending = pendingPayments.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
   const totalRevenue = monthRevenue.reduce((s, r) => s + (r.payment_amount ?? 0), 0);
-  const todayFormatted = now.toLocaleDateString(locale, { timeZone, weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  const todayFormatted = now.toLocaleDateString(dateLocale(locale), { timeZone, weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
   return (
     <div className="p-6 lg:p-8 max-w-7xl">
@@ -133,7 +135,7 @@ export default async function DashboardPage({
       <div className="mb-8 flex items-start justify-between gap-4">
         <div data-tour="home">
           <h1 className="text-2xl font-extrabold text-slate-900 md:text-3xl">
-            {greeting}, {firstName} 👋
+            {firstName ? `${greeting}, ${firstName}` : `${greeting}!`} 👋
           </h1>
           <p className="mt-1 text-sm text-slate-500">
             {todayFormatted}{professional?.specialty ? ` · ${professional.specialty}` : ""}
@@ -249,7 +251,7 @@ export default async function DashboardPage({
               {upcomingAppts.map((appt, i) => (
                 <div key={i} className="flex items-center gap-3 rounded-xl border border-slate-100 p-3.5">
                   <div className="shrink-0 rounded-lg bg-teal-50 p-2 text-center min-w-[48px]">
-                    <p className="text-xs font-bold text-teal-600 uppercase">{new Date(appt.date + "T12:00:00").toLocaleDateString(locale, { month: "short" })}</p>
+                    <p className="text-xs font-bold text-teal-600 uppercase">{new Date(appt.date + "T12:00:00").toLocaleDateString(dateLocale(locale), { month: "short" })}</p>
                     <p className="text-lg font-extrabold text-slate-900 leading-tight">{new Date(appt.date + "T12:00:00").getDate()}</p>
                   </div>
                   <div className="flex-1 min-w-0">
