@@ -7,6 +7,10 @@ import { TrialChip, trialChipMessage } from "@/components/TrialChip";
 import { getTranslations } from "next-intl/server";
 import { isAccessAllowed, trialDaysRemaining, type EffectiveSub } from "@/lib/subscription";
 import { doctorDisplayName } from "@/lib/doctorName";
+import { TourProvider } from "@/components/tour/TourProvider";
+import { readTourState, tourEntry } from "@/lib/tourState";
+import { countryProfile } from "@/lib/country";
+import { getPracticeCountry } from "@/lib/practiceCountry";
 
 function isVersionBelow(current: string, minimum: string): boolean {
   const parse = (v: string) => v.split(".").map(n => parseInt(n, 10) || 0);
@@ -137,6 +141,13 @@ export default async function DashboardLayout({
   // (lib/doctorName, the app's rule).
   const firstName = doctorDisplayName(ownName, { firstOnly: true }) || user.email?.split("@")[0] || "";
 
+  // The guided tour (specs/walkthrough.md): auto-start on the first sign-in,
+  // a resume offer after leaving mid-tour, or nothing (before migration 113
+  // there's no saved state, so nothing starts by itself). The payments step
+  // names the practice country's payment QR.
+  const tourState = await readTourState(supabase, user.id);
+  const paymentQr = isSecretary ? null : countryProfile(await getPracticeCountry(supabase, user.id, user.id)).paymentQr;
+
   let trialChipText = "";
   if (showTrialChip) {
     const t = await getTranslations({ locale, namespace: "subscription" });
@@ -145,26 +156,36 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
-      <DashboardSidebar
-        locale={locale}
-        firstName={firstName}
-        email={user.email ?? ""}
-        photoUrl={professional?.photo_url}
-        isSecretary={isSecretary}
-      />
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {showTrialChip && (
-          <div className="flex justify-end px-4 pt-3 lg:px-8">
-            <TrialChip daysLeft={daysLeft!} locale={locale} text={trialChipText} />
-          </div>
-        )}
-        <main className="flex-1 overflow-auto lg:pl-0 pt-0">
-          <div className="min-h-full">
-            {children}
-          </div>
-        </main>
+    <TourProvider
+      role={isSecretary ? "secretary" : "professional"}
+      paymentQr={paymentQr}
+      prefix={locale === "en" ? "" : `/${locale}`}
+      entry={tourEntry(tourState)}
+      resumeStep={tourState.kind === "row" ? tourState.step : 0}
+    >
+      <div className="flex h-screen overflow-hidden bg-slate-50">
+        <DashboardSidebar
+          locale={locale}
+          firstName={firstName}
+          email={user.email ?? ""}
+          photoUrl={professional?.photo_url}
+          isSecretary={isSecretary}
+        />
+        <div className="flex flex-1 flex-col overflow-hidden">
+          {showTrialChip && (
+            <div className="flex justify-end px-4 pt-3 lg:px-8">
+              <span data-tour="trial-chip" className="inline-flex">
+                <TrialChip daysLeft={daysLeft!} locale={locale} text={trialChipText} />
+              </span>
+            </div>
+          )}
+          <main className="flex-1 overflow-auto lg:pl-0 pt-0">
+            <div className="min-h-full">
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </TourProvider>
   );
 }

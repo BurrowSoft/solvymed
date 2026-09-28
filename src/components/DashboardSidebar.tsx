@@ -183,6 +183,8 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
           <Link
             key={path}
             href={`${prefix}${path}`}
+            // Guided tour target: nav-home, nav-schedule, nav-patients, ...
+            data-tour={`nav-${path === "/dashboard" ? "home" : path.split("/").pop()}`}
             onClick={() => setMobileOpen(false)}
             className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
               active

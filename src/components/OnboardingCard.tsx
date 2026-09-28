@@ -31,7 +31,8 @@ export function OnboardingCard({ kind, clinicName, bookHref }: {
     : t("patientConnected", { clinic: clinicName });
 
   return (
-    <section className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-teal-100 bg-teal-50 p-5" role="status">
+    // data-tour-block: the guided tour waits until this one-time card is gone.
+    <section data-tour-block className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-teal-100 bg-teal-50 p-5" role="status">
       <p className="min-w-0 flex-1 text-sm font-medium text-teal-900">{text}</p>
       <div className="flex shrink-0 items-center gap-2">
         {kind === "patient_connected" && bookHref && (
