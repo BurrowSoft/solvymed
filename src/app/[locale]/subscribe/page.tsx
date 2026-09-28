@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { SubscribeButton } from "@/components/SubscribeButton";
 import { UpdateCardButton } from "@/components/UpdateCardButton";
 import { isAccessAllowed, trialDaysRemaining, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
-import { getPracticeCountry } from "@/lib/practiceCountry";
+import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { retrieveStoredStripeSubscription, isLive, needsCardFix } from "@/lib/stripeBilling";
 
 export default async function SubscribePage({
@@ -79,8 +79,11 @@ export default async function SubscribePage({
   }
 
   const daysLeft = trialDaysRemaining(sub);
-  // Priced by the practice's country (only a doctor subscribes here).
-  const plan = getPlanPrice(await getPracticeCountry(supabase, user.id, user.id));
+  // Priced by the practice's country (only a doctor subscribes here). Money
+  // fails closed: if the country can't be read (other than "no country
+  // column yet"), no price and no checkout, rather than the wrong currency.
+  const countryLookup = await lookupPracticeCountry(supabase, user.id, user.id);
+  const plan = countryLookup.ok ? getPlanPrice(countryLookup.country) : null;
 
   const { data: professional } = await supabase
     .from("professionals")
@@ -142,7 +145,7 @@ export default async function SubscribePage({
           <div className="bg-teal-600 p-6 text-white">
             <h1 className="text-xl font-extrabold">{t("planName")}</h1>
             <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-4xl font-black">{plan.amount}</span>
+              <span className="text-4xl font-black">{plan ? plan.amount : "—"}</span>
               <span className="text-teal-200 text-sm">/{t("perMonth")}</span>
             </div>
             <p className="mt-1 text-teal-100 text-xs">{t("planSubtitle")}</p>
@@ -161,7 +164,9 @@ export default async function SubscribePage({
 
             {/* Payment buttons */}
             <div className="flex flex-col gap-3">
-              {activating ? null : paymentFailed ? (
+              {activating ? null : !plan ? (
+                <p className="text-center text-sm text-red-600">{t("errorCheckFailed")}</p>
+              ) : paymentFailed ? (
                 // Fix the card on the existing subscription. Never offer a
                 // new checkout here: Stripe is still retrying the old one.
                 roleRow?.role === "professional" ? (
