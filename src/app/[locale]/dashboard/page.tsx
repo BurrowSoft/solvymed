@@ -11,6 +11,7 @@ import { formatMoney } from "@/lib/money";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { RECEIVABLE_STATUSES } from "@/lib/paymentRules";
+import { doctorDisplayName } from "@/lib/doctorName";
 
 
 function statusBadge(status: string) {
@@ -119,7 +120,9 @@ export default async function DashboardPage({
   const ownName = isSecretary
     ? (user.user_metadata?.full_name as string | undefined)?.trim()
     : professional?.full_name;
-  const firstName = ownName?.split(" ")[0] || user.email?.split("@")[0] || "Doctor";
+  // The doctor's own title if they typed one ("Dra. Beatriz"), never one we
+  // add (lib/doctorName, the app's rule).
+  const firstName = doctorDisplayName(ownName, { firstOnly: true }) || user.email?.split("@")[0] || "";
   const totalPending = pendingPayments.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
   const totalRevenue = monthRevenue.reduce((s, r) => s + (r.payment_amount ?? 0), 0);
   const todayFormatted = now.toLocaleDateString(locale, { timeZone, weekday: "long", year: "numeric", month: "long", day: "numeric" });
@@ -130,7 +133,7 @@ export default async function DashboardPage({
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 md:text-3xl">
-            {greeting}, {isSecretary ? firstName : `Dr. ${firstName}`} 👋
+            {greeting}, {firstName} 👋
           </h1>
           <p className="mt-1 text-sm text-slate-500">
             {todayFormatted}{professional?.specialty ? ` · ${professional.specialty}` : ""}

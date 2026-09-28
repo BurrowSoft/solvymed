@@ -400,7 +400,7 @@
     "profileTitle": "个人资料",
     "profileSub": "向患者显示的姓名和专业",
     "fullName": "姓名",
-    "fullNamePlaceholder": "王医生",
+    "fullNamePlaceholder": "您的全名",
     "specialty": "专业",
     "specialtyPlaceholder": "精神科、心理咨询…",
     "clinicTitle": "诊所",
@@ -475,7 +475,8 @@
     "saveFailed": "无法保存，请重试。",
     "practiceCountry": "诊所所在国家",
     "practiceCountryHint": "用于设定货币、套餐价格、患者证件和付款二维码。如需更改，请联系 support@solvymed.com。",
-    "practiceCountryOther": "其他国家"
+    "practiceCountryOther": "其他国家",
+    "fullNameHint": "如需要，可加上头衔（Dr.、Prof.），会显示在问候语中。"
   },
   "clinics": {
     "title": "我的诊所",
@@ -607,7 +608,8 @@
       "consentCheckbox": "我已阅读并同意<terms>使用条款</terms>和<privacy>隐私政策</privacy>",
       "country": "您的诊所在哪里？",
       "countryOther": "其他国家",
-      "countryHint": "用于设定货币、套餐价格、患者证件和付款二维码。之后如需更改，请联系客服。"
+      "countryHint": "用于设定货币、套餐价格、患者证件和付款二维码。之后如需更改，请联系客服。",
+      "fullNameHint": "如需要，可加上头衔（Dr.、Prof.），会显示在问候语中。"
     },
     "forgotPassword": {
       "title": "忘记密码？",

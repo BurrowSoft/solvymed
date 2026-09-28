@@ -79,6 +79,8 @@ export function ProfileForm({ fullName, specialty, registration }: { fullName: s
           <div>
             <Label>{t("fullName")}</Label>
             <Input name="full_name" defaultValue={fullName} placeholder={t("fullNamePlaceholder")} required />
+            {/* A title is never added for them (lib/doctorName): they may type one. */}
+            <p className="mt-1 text-xs text-slate-400">{t("fullNameHint")}</p>
           </div>
           <div>
             <Label>{t("specialty")}</Label>

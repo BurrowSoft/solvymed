@@ -400,7 +400,7 @@
     "profileTitle": "Profilo",
     "profileSub": "Il tuo nome e la specialità mostrati ai pazienti",
     "fullName": "Nome completo",
-    "fullNamePlaceholder": "Dott.ssa Maria Santos",
+    "fullNamePlaceholder": "Il tuo nome completo",
     "specialty": "Specialità",
     "specialtyPlaceholder": "Psichiatra, Psicologo…",
     "clinicTitle": "Studio",
@@ -475,7 +475,8 @@
     "saveFailed": "Impossibile salvare. Riprova.",
     "practiceCountry": "Paese dello studio",
     "practiceCountryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo, scrivi a support@solvymed.com.",
-    "practiceCountryOther": "Altro paese"
+    "practiceCountryOther": "Altro paese",
+    "fullNameHint": "Se vuoi, aggiungi il tuo titolo (Dr., Prof.): compare nei saluti."
   },
   "clinics": {
     "title": "Le mie cliniche",
@@ -607,7 +608,8 @@
       "consentCheckbox": "Ho letto e accetto i <terms>Termini di utilizzo</terms> e l'<privacy>Informativa sulla privacy</privacy>",
       "country": "Dove si trova il tuo studio?",
       "countryOther": "Altro paese",
-      "countryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza."
+      "countryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza.",
+      "fullNameHint": "Se vuoi, aggiungi il tuo titolo (Dr., Prof.): compare nei saluti."
     },
     "forgotPassword": {
       "title": "Password dimenticata?",

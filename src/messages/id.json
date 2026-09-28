@@ -400,7 +400,7 @@
     "profileTitle": "Profil",
     "profileSub": "Nama dan spesialisasi Anda yang ditampilkan ke pasien",
     "fullName": "Nama lengkap",
-    "fullNamePlaceholder": "Dr. Maria Santos",
+    "fullNamePlaceholder": "Nama lengkap Anda",
     "specialty": "Spesialisasi",
     "specialtyPlaceholder": "Psikiater, Psikolog…",
     "clinicTitle": "Klinik",
@@ -475,7 +475,8 @@
     "saveFailed": "Gagal menyimpan. Silakan coba lagi.",
     "practiceCountry": "Negara praktik",
     "practiceCountryHint": "Menentukan mata uang, harga paket, identitas pasien, dan QR pembayaran. Untuk mengubahnya, hubungi support@solvymed.com.",
-    "practiceCountryOther": "Negara lain"
+    "practiceCountryOther": "Negara lain",
+    "fullNameHint": "Tambahkan gelar Anda jika mau (Dr., Prof.); gelar akan muncul di sapaan."
   },
   "clinics": {
     "title": "Klinik Saya",
@@ -607,7 +608,8 @@
       "consentCheckbox": "Saya telah membaca dan menyetujui <terms>Ketentuan Penggunaan</terms> dan <privacy>Kebijakan Privasi</privacy>",
       "country": "Di mana praktik Anda?",
       "countryOther": "Negara lain",
-      "countryHint": "Menentukan mata uang, harga paket, identitas pasien, dan QR pembayaran. Untuk mengubahnya nanti, hubungi dukungan."
+      "countryHint": "Menentukan mata uang, harga paket, identitas pasien, dan QR pembayaran. Untuk mengubahnya nanti, hubungi dukungan.",
+      "fullNameHint": "Tambahkan gelar Anda jika mau (Dr., Prof.); gelar akan muncul di sapaan."
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",

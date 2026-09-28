@@ -400,7 +400,7 @@
     "profileTitle": "Profile",
     "profileSub": "Your name and specialty shown to patients",
     "fullName": "Full name",
-    "fullNamePlaceholder": "Dr. Maria Santos",
+    "fullNamePlaceholder": "Your full name",
     "specialty": "Specialty",
     "specialtyPlaceholder": "Psychiatrist, Psychologist…",
     "inviteCodeTitle": "Your invite code",
@@ -475,7 +475,8 @@
     "saveFailed": "Couldn't save. Please try again.",
     "practiceCountry": "Practice country",
     "practiceCountryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it, contact support@solvymed.com.",
-    "practiceCountryOther": "Other country"
+    "practiceCountryOther": "Other country",
+    "fullNameHint": "Add your title if you like (Dr., Prof.); it appears in greetings."
   },
   "clinics": {
     "title": "My Clinics",
@@ -607,7 +608,8 @@
       "consentCheckbox": "I have read and accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>",
       "country": "Where is your practice?",
       "countryOther": "Other country",
-      "countryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it later, contact support."
+      "countryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it later, contact support.",
+      "fullNameHint": "Add your title if you like (Dr., Prof.); it appears in greetings."
     },
     "forgotPassword": {
       "title": "Forgot your password?",
