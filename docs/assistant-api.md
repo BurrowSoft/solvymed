@@ -90,6 +90,13 @@ line types are the panel's `AnswerChunk` (`src/lib/assistant/types.ts`) plus
 { "kind": "error", "code": "model_failed" }                 // then the stream ends
 ```
 
+**`docs/assistant-examples.ndjson`** has one example of every line and
+block type (incl. cards with each warning, `secondConfirm`, and every
+`slot_choice` reason). `src/__tests__/assistant-examples.test.ts` checks it
+against this contract. The app copies the same file into its own fixture
+test, so a shape change breaks both sides together: change the file, this
+doc and both tests in step.
+
 Errors before the stream starts are plain JSON with a status:
 `{ "error": "<code>", "usage"?: {...}, "retryAfterS"?: 3 }`.
 
