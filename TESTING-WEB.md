@@ -5420,3 +5420,39 @@ reschedule to 08:00:
   locale (São Paulo browser).
 
 **CI at `1217fb7`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `1217fb7`.**
+
+## PR #70 (`fix/pix-qr-local`, base `release`) — Pix QR drawn in the page; BR Code field 26 fixed, 🟢 at `85d5672` for payload and rendering; ⏳ the real bank-app scan (a human)
+
+**Why.** The QR image came from `api.qrserver.com`, a third party not in the
+privacy policy. It received the doctor's Pix key, the clinic name and the
+amount. Decoding the in-page QR on the first head (`5164b63`) exposed a
+**pre-existing** payload bug, which was also on prod. `generatePixString`
+built field 26 as `0014` + `14br.gov.bcb.pix` + `01…`, so the GUI sub-field
+parsed as `"14br.gov.bcb.p"` and the key never parsed; bank apps should
+reject that. The app's `lib/pix.ts` had the same bug (mobile #50). UX made
+this BLOCKING.
+
+**Checked on the preview at `85d5672`,** with a throwaway doctor, Pix key
+`opus.pix@example.invalid`, a clinic "Clínica Opus Pix" in São Paulo, and a
+confirmed unpaid appointment of R$ 187,50 (deleted afterwards):
+- **No third-party request:** opening the Pix dialog makes no request to
+  `qrserver`, googleapis charts or quickchart. The image is a
+  `data:image/gif` generated in the page.
+- **Size:** the natural size is 285×285. It's shown at 287 px on desktop and
+  **280 px on a 360 px phone** (not shrunk below readable), with
+  `image-rendering: pixelated`.
+- **Decoded with jsQR in the browser**, the QR text **equals the "Copia e
+  Cola" string**. Parsed as EMV TLV:
+  - **26 → 00 = `br.gov.bcb.pix`, 01 = `opus.pix@example.invalid`**
+  - 52 = `0000`, 53 = `986`, **54 = `187.50`**, 58 = `BR`
+  - **59 = `CLINICA OPUS PIX`**, 60 = `SAO PAULO`, 62 → 05 = `***`
+  - **63 CRC16 valid** (CCITT, 0x1021, init 0xFFFF), on desktop and phone
+  - Web dev reports the builder reproduces the BCB manual's example exactly
+    (CRC `1D3D`).
+- **⏳ Still needed:** a real banking app scanning the dashboard QR (no
+  payment) must show the payee **CLINICA OPUS PIX** (the clinic name, upper
+  case) and the amount. That needs a human; UX is arranging it with the
+  user.
+
+**CI at `85d5672`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `85d5672`
+on everything the tester can verify; the bank-app scan is the user's.**
