@@ -6905,3 +6905,19 @@ and non-blocking):
 `268fa2d`.** This docs commit sits on top, after a master sync (18
 behind; message JSON valid). The `dashboard/layout.tsx` auto-merge keeps
 SolvyAI, news and #104's name logic.
+
+## PR #107 re-confirm at `d991329` (master merge after #103, conflict resolved by b2)
+
+- **Code:** #107's 13 code files are **byte-identical** to `ee3f014`
+  (`git diff ee3f014 d991329` on them is empty).
+- **Conflicts resolved:** the message files keep both `dateInput.*` (#107)
+  and `assistant.*` (#103), and all message JSON is valid. The #107
+  section above is intact.
+- **Thai re-run on the Preview at `d991329`:** the same results as the
+  entry above:
+  - พ.ศ. hints; the guard message on new/edit patient, new appointment,
+    block time and propose (Send disabled);
+  - blocked saves, and nothing saved even with browser validation off;
+  - the booking page's th and pt-BR guard;
+  - Thai dates still 2569.
+- **CI at `d991329`:** ✅. **Merge gate: 🟢 for `d991329`.**
