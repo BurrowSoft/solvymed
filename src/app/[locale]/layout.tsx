@@ -23,13 +23,15 @@ const notoTC  = Noto_Sans_TC({ subsets: ["latin"], weight: ["400", "700"], displ
 const notoKR  = Noto_Sans_KR({ subsets: ["latin"], weight: ["400", "700"], display: "swap", variable: "--font-noto-kr" });
 const notoAR  = Noto_Sans_Arabic({ subsets: ["arabic"], weight: ["400", "700"], display: "swap", variable: "--font-noto-ar" });
 
-const LOCALE_FONT: Record<string, string> = {
-  th:      sarabun.variable,
-  ja:      notoJP.variable,
-  zh:      notoSC.variable,
-  "zh-TW": notoTC.variable,
-  ko:      notoKR.variable,
-  ar:      notoAR.variable,
+// Inter has Latin glyphs only; the locale's font follows it in the stack,
+// so its script (Thai, CJK, Arabic) renders in that font, per glyph.
+const LOCALE_FONT: Record<string, typeof inter> = {
+  th:      sarabun,
+  ja:      notoJP,
+  zh:      notoSC,
+  "zh-TW": notoTC,
+  ko:      notoKR,
+  ar:      notoAR,
 };
 
 const BASE = "https://www.solvymed.com";
@@ -104,11 +106,22 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
   const messages = await getMessages();
-  const fontClass = `${inter.variable} ${LOCALE_FONT[locale] ?? ""}`.trim();
+  const localeFont = LOCALE_FONT[locale];
+  const fontClass = `${inter.variable} ${localeFont?.variable ?? ""}`.trim();
+  // Each next/font family is "'Name', 'Name Fallback'". The fallbacks are
+  // size-adjusted local fonts covering all of Unicode ("Inter Fallback" is
+  // Arial, which has Arabic), so the locale font must come before them:
+  // Inter, <locale font>, Inter Fallback, <locale fallback>, generics.
+  // Otherwise Arabic rendered in Arial instead of Noto Sans Arabic.
+  const [interFont, interFallback] = inter.style.fontFamily.split(",").map((s) => s.trim());
+  const [localeName, localeFallback] = localeFont ? localeFont.style.fontFamily.split(",").map((s) => s.trim()) : [];
+  const fontFamily = [interFont, localeName, interFallback, localeFallback, "ui-sans-serif", "system-ui", "sans-serif"]
+    .filter(Boolean)
+    .join(", ");
 
   return (
     <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} className={fontClass}>
-      <body className="font-[family-name:var(--font-inter,ui-sans-serif)] min-h-screen bg-white text-slate-900 antialiased">
+      <body style={{ fontFamily }} className="min-h-screen bg-white text-slate-900 antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
           <ConsentBanner />

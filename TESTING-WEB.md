@@ -5687,3 +5687,25 @@ bookings were deleted afterwards.
   `2026-09-29 10:00 tentative` (Bangkok).
 
 **CI at `355a44a`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `355a44a`.**
+
+## PR #63 (`i18n/thai-groundwork`, base master) — locale fonts really apply (Thai, CJK, Arabic); confirm strings translated, 🟢 at `aa95c78`, review clean
+
+**How checked.** On the preview, with CDP `CSS.getPlatformFontsForNode`,
+which reports the font that actually renders each glyph (the landing's
+`h1` and `main p`):
+- **th:** Sarabun (h1 31 glyphs, p 112) plus Inter for Latin.
+- **ja:** Noto Sans JP. **zh:** Noto Sans SC. **zh-TW:** Noto Sans TC.
+  **ko:** Noto Sans KR. Each also uses Inter for Latin.
+- **ar: Noto Sans Arabic** (h1 30, p 129) plus Inter.
+  - On the first head `3ab8929` Arabic rendered in **Arial**: the stack was
+    `Inter, "Inter Fallback", "Noto Sans Arabic", …`, and next/font's
+    `Inter Fallback` is a local Arial with a full unicode-range that has
+    Arabic glyphs.
+  - Fixed by interleaving: `Inter, <locale font>, "Inter Fallback", <locale
+    fallback>, …`.
+- **Latin locales** (pt-BR, en, ru, vi, id): **Inter only**, unchanged.
+- **`/auth/confirm` strings are translated** in th, ja, zh, zh-TW, ko, ar,
+  ru, vi and id, with no English left (e.g. th "เกิดข้อผิดพลาด", ar "حدث خطأ
+  ما").
+
+**CI at `aa95c78`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `aa95c78`.**
