@@ -5932,3 +5932,45 @@ patient; checked at `1054429`, and the fix only touches the middleware):
 
 **CI at `765ec43`:** ✅. **Review: clean.** **Merge gate: 🟢 for
 `765ec43`** (this docs commit sits on top, after a master sync).
+
+## PR #85 (`th/2-signup-country`, base `th/1-country-currency`) — practice country at doctor signup, read-only in Settings, 🟢 at `93972ad`
+
+Pre-110 (no `country` column), `handle_new_user` ignores the new metadata,
+so every account still becomes a Brazilian practice. The TH/Other storage
+needs 110 and is **unit-tested only**. Checked against the head's code
+(`9efbf8a`; the rebase to `93972ad` changed no code). The flag-OFF checks
+ran on a local `next dev`, where `x-vercel-ip-country` can be sent by hand;
+the flag-ON checks ran on the Preview.
+
+**Picker (flag OFF = Production):**
+- It offers **Brasil + Outro país** only; there's no Thailand option.
+- Pre-selection by geo:
+  - BR or unknown → Brasil;
+  - **TH → Outro país** (Thailand is never pre-selected while hidden);
+  - US → Outro país.
+- The hint reads: "Define a moeda, o preço do plano, o documento do
+  paciente e o QR de pagamento…"
+
+**Picker (flag ON Preview):**
+- It offers Brasil / ประเทศไทย / Outro país.
+- It's shown only for the doctor role. It disappears on the Paciente card
+  and comes back on the doctor card.
+- It's absent on `?secretary=…` and `?join=…`.
+
+**Signup** (2 throwaway doctors via the UI, deleted afterwards):
+- The POST `/auth/v1/signup` returns 200 and then shows "Verifique seu
+  e-mail".
+- The metadata:
+  - Brasil: `country: "BR", time_zone: "America/Sao_Paulo"`.
+  - Outro país with geo US: `country: "US"` plus the browser zone.
+- The `professionals` row is created (trial, `America/Sao_Paulo`).
+
+**Settings card "País do consultório"** (doctor, pt-BR + en):
+- It shows "Brasil" / "Brazil" with the support hint and has no controls,
+  so it's read-only.
+- An existing (pre-110) doctor also sees Brasil.
+- The Pix field is still there.
+- The secretary's Settings has no card, since that's a separate page.
+
+**CI at `93972ad`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`93972ad`**. It inherits #84's loop fix.
