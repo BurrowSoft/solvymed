@@ -1134,7 +1134,6 @@
     "edit": "編輯",
     "confirm": "確認 ✓",
     "failed": "無法儲存。",
-    "failedBlocked": "該時段已封鎖。",
     "chips": {
       "home": {
         "a": "我明天有什麼安排？",
@@ -1166,7 +1165,12 @@
         "b": "如何邀請助理？",
         "c": "預約"
       }
-    }
+    },
+    "unavailable": "SolvyAI 暫時無法使用，請稍後再試。",
+    "expired": "此卡片已過期。請重新詢問以查看最新資訊。",
+    "cancel": "取消",
+    "chipAt": "{date} {time}",
+    "otherTime": "其他時間"
   },
   "dateInput": {
     "buddhistYear": "這看起來是佛曆年份。請使用西元年份（例如 1996）。"

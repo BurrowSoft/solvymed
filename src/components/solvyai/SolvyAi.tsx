@@ -5,7 +5,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createMockBackend } from "@/lib/assistant/mockBackend";
 import { maskPersonalData, MAX_MESSAGE_CHARS, MAX_TURNS, MIN_SECONDS_BETWEEN } from "@/lib/assistant/mask";
-import type { AnswerBlock, AssistantBackend, AssistantScreen, AssistantUsage, ConfirmationCard } from "@/lib/assistant/types";
+import type { AnswerBlock, AnswerChunk, AssistantBackend, AssistantScreen, AssistantUsage, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
+import { isInternalHref, webPath } from "@/lib/assistant/targets";
+import { formatDateLabel } from "@/lib/dateLabels";
 import { helpLang, inlineSegments } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { track } from "@/lib/track";
@@ -13,9 +15,11 @@ import { track } from "@/lib/track";
 // SolvyAI on the web (specs/assistant.md §2): doctors only, on every
 // dashboard page. A floating ✦ button bottom-right opens a 400 px panel on
 // the right that pushes the content (a full-height sheet on narrow
-// screens). The backend is a mock until the "assistant" edge function
-// exists: it answers from the Help articles and proposes actions as
-// confirmation cards; Confirmar is simulated and writes nothing.
+// screens). The backend is a mock until the /api/assistant route exists
+// (docs/assistant-api.md): it answers from the Help articles and proposes
+// actions as confirmation cards in the contract's shapes; Confirmar is
+// simulated and writes nothing. After a save the panel minimises and the
+// page goes to the item, ringed (?highlight=, HighlightFromQuery).
 
 type Turn =
   | { role: "user"; text: string }
@@ -29,6 +33,12 @@ export function screenOf(pathname: string, prefix: string): AssistantScreen {
 }
 
 const HINT_KEY = "solvyai_hint_seen";
+
+// "Renova em N h": whole hours until the reset, at least 1.
+export function hoursUntil(resetsAt: string, now = Date.now()): number {
+  const t = Date.parse(resetsAt);
+  return Number.isNaN(t) ? 1 : Math.max(1, Math.ceil((t - now) / 3_600_000));
+}
 
 export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix: string; dailyLimit: number }) {
   const t = useTranslations("assistant");
@@ -87,28 +97,72 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
     const messages = history.slice(-6).map((x) =>
       x.role === "user" ? { role: "user" as const, text: x.text } : { role: "assistant" as const, text: x.blocks.map((b) => (b.type === "text" ? b.text : "")).join(" ") },
     );
+    await play(history, backend.ask({ messages, screen, locale }));
+  }, [busy, atLimit, outOfTurns, turns, backend, screen, locale]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Streams an answer into a new assistant turn after `history`: text in
+  // pieces, whole blocks, the updated usage; an error ends it with a line.
+  async function play(history: Turn[], chunks: AsyncIterable<AnswerChunk>) {
     let blocks: AnswerBlock[] = [];
     let current = "";
-    for await (const chunk of backend.ask({ messages, screen, locale })) {
-      if (chunk.kind === "delta") {
-        current += chunk.text;
-        const live = [...blocks, { type: "text" as const, text: current }];
-        setTurns([...history, { role: "assistant", blocks: live, streaming: true }]);
-      } else if (chunk.kind === "block") {
-        // A text block closes the streamed text; other blocks come whole.
-        if (chunk.block.type === "text") { blocks = [...blocks, { type: "text", text: current }]; current = ""; }
-        else blocks = [...blocks, chunk.block];
-        setTurns([...history, { role: "assistant", blocks, streaming: true }]);
+    let gotUsage = false;
+    try {
+      for await (const chunk of chunks) {
+        if (chunk.kind === "delta") {
+          current += chunk.text;
+          const live = [...blocks, { type: "text" as const, text: current }];
+          setTurns([...history, { role: "assistant", blocks: live, streaming: true }]);
+        } else if (chunk.kind === "block") {
+          // A text block closes the streamed text; other blocks come whole.
+          if (chunk.block.type === "text") { blocks = [...blocks, { type: "text", text: current }]; current = ""; }
+          else blocks = [...blocks, chunk.block];
+          setTurns([...history, { role: "assistant", blocks, streaming: true }]);
+        } else if (chunk.kind === "usage") {
+          gotUsage = true;
+          setUsage({ used: chunk.used, limit: chunk.limit, extra: chunk.extra, resetsAt: chunk.resetsAt });
+        } else if (chunk.kind === "error") {
+          blocks = [...blocks, { type: "text", text: t("unavailable") }];
+          break;
+        }
       }
+    } catch {
+      blocks = [...blocks, { type: "text", text: t("unavailable") }];
     }
     setTurns([...history, { role: "assistant", blocks, streaming: false }]);
     setBusy(false);
-    setUsage(await backend.usage());
-  }, [busy, atLimit, outOfTurns, turns, backend, screen, locale]);
+    if (!gotUsage) setUsage(await backend.usage());
+  }
+
+  // After a confirmed save (§2.3 "After saving"): minimise to the pill, go
+  // to the action's screen with the item highlighted, and show "✓ … +
+  // Desfazer" for 10 s.
+  const afterSave = (card: ConfirmationCard, id: string | undefined, demo: boolean) => {
+    const a = card.after;
+    const hl = a.highlight?.id ?? id;
+    const path = webPath(prefix, { screen: a.screen === "whatsapp" ? a.then?.screen ?? "payments" : a.screen, date: a.date, id: a.screen === "patient" ? hl : undefined }, hl);
+    setMinimized(true);
+    if (path && isInternalHref(path)) router.push(path);
+    setToast({ card, id, demo, left: 10, undone: false });
+    track("solvyai_confirmed", { kind: card.action.kind });
+  };
+
+  // A save the normal path refused (the slot was just taken, …): the
+  // server explains and offers fresh times, in the conversation.
+  const confirmFailed = (card: ConfirmationCard, code: string) => {
+    setBusy(true);
+    void play(turns, backend.reportConfirmFailed(code, card.action, locale));
+  };
+
+  const [toast, setToast] = useState<{ card: ConfirmationCard; id?: string; demo: boolean; left: number; undone: boolean } | null>(null);
+  useEffect(() => {
+    if (!toast || toast.undone || toast.left <= 0) return;
+    const id = setTimeout(() => setToast((x) => (x ? { ...x, left: x.left - 1 } : x)), 1000);
+    return () => clearTimeout(id);
+  }, [toast]);
 
   const newConversation = () => { setTurns([]); setInput(""); setTooFast(false); };
 
-  const openScreen = (href: string) => { setMinimized(true); router.push(href); };
+  const openScreen = (href: string) => { if (!isInternalHref(href)) return; setMinimized(true); router.push(href); };
 
   const chips = [t(`chips.${screen}.a`), t(`chips.${screen}.b`), t(`chips.${screen}.c`)];
 
@@ -155,7 +209,7 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
                     <p className="animate-pulse text-slate-400 motion-reduce:animate-none" aria-live="polite">{t("thinking")}</p>
                   )}
                   {turn.blocks.map((b, j) => (
-                    <Block key={j} block={b} onPick={(v) => void send(v)} onOpen={openScreen} backend={backend} />
+                    <Block key={j} block={b} locale={locale} onPick={(v) => void send(v)} onOpen={openScreen} backend={backend} onSaved={afterSave} onFailed={confirmFailed} />
                   ))}
                 </div>
               ),
@@ -165,7 +219,7 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
           <footer className="border-t border-slate-100 p-3">
             {atLimit ? (
               <p className="text-sm text-slate-600">
-                {t("limitReached", { hours: usage?.resetsInHours ?? 0 })}
+                {t("limitReached", { hours: usage ? hoursUntil(usage.resetsAt) : 0 })}
                 {liveFeatures.helpCenter && (
                   <> <a href={`${prefix}/help`} className="font-semibold text-teal-700 underline">{t("help")}</a></>
                 )}
@@ -204,6 +258,21 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
       {/* The floating button (or the minimised pill after "Abrir tela"). */}
       {!(open && !minimized) && (
         <div className="fixed bottom-5 right-5 z-30 flex items-center gap-2">
+          {/* After a save: "✓ … + Desfazer" for 10 s (§2.3). */}
+          {toast && (toast.undone || toast.left > 0) && (
+            <p role="status" className="flex items-center gap-2 rounded-2xl bg-slate-900 px-3 py-2 text-xs text-white shadow-lg">
+              <span>{toast.undone ? t("undone") : t("saved")}{toast.demo && ` (${t("simulated")})`}</span>
+              {!toast.undone && (
+                <button
+                  type="button"
+                  onClick={async () => { await backend.undo(toast.card.action, toast.id); setToast({ ...toast, undone: true }); }}
+                  className="rounded-lg px-2 py-0.5 font-semibold text-teal-300 hover:bg-white/10"
+                >
+                  {t("undo", { s: toast.left })}
+                </button>
+              )}
+            </p>
+          )}
           {hint && !minimized && (
             <p role="status" className="max-w-[14rem] rounded-2xl bg-white px-3 py-2 text-xs text-slate-700 shadow-lg ring-1 ring-slate-100">{t("hint")}</p>
           )}
@@ -240,7 +309,7 @@ function UsageBar({ usage }: { usage: AssistantUsage }) {
       <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={t("usageToday")}>
         <div className={`h-full rounded-full ${pct >= 80 ? "bg-amber-500" : "bg-teal-500"}`} style={{ width: `${pct}%` }} />
       </div>
-      <p className="mt-1 text-[11px] text-slate-400">{t("resetsIn", { hours: usage.resetsInHours })}</p>
+      <p className="mt-1 text-[11px] text-slate-400">{t("resetsIn", { hours: hoursUntil(usage.resetsAt) })}</p>
       {usage.extra > 0 && <p className="text-[11px] text-slate-500">{t("extra", { n: usage.extra })}</p>}
     </div>
   );
@@ -250,7 +319,13 @@ function Inline({ text }: { text: string }) {
   return <>{inlineSegments(text).map((s, i) => (s.bold ? <strong key={i}>{s.text}</strong> : <span key={i}>{s.text}</span>))}</>;
 }
 
-function Block({ block, onPick, onOpen, backend }: { block: AnswerBlock; onPick: (v: string) => void; onOpen: (href: string) => void; backend: AssistantBackend }) {
+type Saved = (card: ConfirmationCard, id: string | undefined, demo: boolean) => void;
+type Failed = (card: ConfirmationCard, code: string) => void;
+
+function Block({ block, locale, onPick, onOpen, backend, onSaved, onFailed }: {
+  block: AnswerBlock; locale: string; onPick: (v: string) => void; onOpen: (href: string) => void;
+  backend: AssistantBackend; onSaved: Saved; onFailed: Failed;
+}) {
   const t = useTranslations("assistant");
   const [vote, setVote] = useState<"up" | "down" | null>(null);
   switch (block.type) {
@@ -279,7 +354,9 @@ function Block({ block, onPick, onOpen, backend }: { block: AnswerBlock; onPick:
         </div>
       );
     case "card":
-      return <CardView card={block.card} backend={backend} />;
+      return <CardView card={block.card} backend={backend} onSaved={onSaved} onFailed={onFailed} />;
+    case "slot_choice":
+      return <SlotChoiceView block={block} locale={locale} onPick={onPick} />;
     case "feedback":
       return (
         <div className="flex items-center gap-2 pt-1 text-xs text-slate-500">
@@ -292,25 +369,29 @@ function Block({ block, onPick, onOpen, backend }: { block: AnswerBlock; onPick:
 }
 
 // A confirmation card (§2.3): nothing happens until Confirmar on THIS card.
-// After saving: "✓ Saved" + Desfazer for 10 s + the view link.
-function CardView({ card, backend }: { card: ConfirmationCard; backend: AssistantBackend }) {
+// Blocked / outside hours ask the card's second question first; a hard-
+// stopped or expired card can't be confirmed. The save goes through the
+// normal path; then the panel hands over to "after saving".
+function CardView({ card, backend, onSaved, onFailed }: { card: ConfirmationCard; backend: AssistantBackend; onSaved: Saved; onFailed: Failed }) {
   const t = useTranslations("assistant");
-  const [state, setState] = useState<"idle" | "saving" | "saved" | "undone" | "failed">("idle");
-  const [undoLeft, setUndoLeft] = useState(0);
-  const [reason, setReason] = useState("");
+  const [state, setState] = useState<"idle" | "asking" | "saving" | "saved" | "failed">("idle");
+  // A malformed expiry counts as expired (never "not expired").
+  const expired = () => { const at = Date.parse(card.expiresAt); return Number.isNaN(at) || Date.now() > at; };
+  const [isExpired, setIsExpired] = useState(false);
 
-  useEffect(() => {
-    if (state !== "saved" || undoLeft <= 0) return;
-    const id = setTimeout(() => setUndoLeft((n) => n - 1), 1000);
-    return () => clearTimeout(id);
-  }, [state, undoLeft]);
-
-  const confirm = async () => {
+  const run = async () => {
+    if (expired()) { setIsExpired(true); setState("idle"); return; }
     setState("saving");
-    const r = await backend.confirm(card.id);
-    if (r.ok) { setState("saved"); setUndoLeft(10); track("solvyai_confirmed", {}); }
-    else { setState("failed"); setReason(r.reason); }
+    const r = await backend.execute(card.action);
+    if (r.ok) { setState("saved"); onSaved(card, r.id, r.demo === true); }
+    else { setState("failed"); onFailed(card, r.code); }
   };
+  const confirm = () => {
+    if (expired()) { setIsExpired(true); return; }
+    if (card.secondConfirm) setState("asking");
+    else void run();
+  };
+  const blocked = card.hardStop || isExpired;
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
@@ -323,33 +404,63 @@ function CardView({ card, backend }: { card: ConfirmationCard; backend: Assistan
           </div>
         ))}
       </dl>
-      {card.warnings.map((w) => <p key={w} className="mt-2 rounded-lg bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-800">{w}</p>)}
+      {card.warnings.map((w) => <p key={w.code} className="mt-2 rounded-lg bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-800">{w.text}</p>)}
+      {card.hardStop && card.stop && <p className="mt-2 rounded-lg bg-red-50 px-2 py-1 text-xs font-semibold text-red-700">{card.stop.text}</p>}
+      {isExpired && <p className="mt-2 text-xs font-semibold text-slate-500">{t("expired")}</p>}
       <div className="mt-3">
-        {state === "saved" || state === "undone" ? (
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="font-semibold text-green-700">{state === "saved" ? t("saved") : t("undone")}</span>
-            <span className="text-slate-400">({t("simulated")})</span>
-            {state === "saved" && undoLeft > 0 && (
-              <button type="button" onClick={async () => { await backend.undo(card.id); setState("undone"); }} className="rounded-lg px-2 py-1 font-semibold text-slate-600 hover:bg-slate-50">
-                {t("undo", { s: undoLeft })}
-              </button>
-            )}
-            <a href={card.viewHref} className="ml-auto font-semibold text-teal-700 hover:underline">{t("view")}</a>
+        {state === "saved" ? (
+          <p className="text-xs font-semibold text-green-700">{t("saved")}</p>
+        ) : state === "asking" && card.secondConfirm ? (
+          // The app's own second question, with the server's wording.
+          <div role="alertdialog" aria-label={card.secondConfirm.question} className="rounded-xl bg-amber-50 p-2 text-xs">
+            <p className="font-semibold text-amber-900">{card.secondConfirm.question}</p>
+            <div className="mt-2 flex justify-end gap-2">
+              <button type="button" onClick={() => setState("idle")} className="rounded-lg px-3 py-1.5 font-semibold text-slate-600 hover:bg-white">{t("cancel")}</button>
+              <button type="button" onClick={() => void run()} className="rounded-lg bg-teal-600 px-3 py-1.5 font-bold text-white hover:bg-teal-700">{card.secondConfirm.confirmLabel}</button>
+            </div>
           </div>
         ) : (
           <div className="flex items-center justify-between gap-2">
-            <a href={card.editHref} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">{t("edit")}</a>
+            {isInternalHref(card.editHref) ? (
+              <a href={card.editHref} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">{t("edit")}</a>
+            ) : <span />}
             <button
               type="button"
-              disabled={card.hardStop || state === "saving"}
-              onClick={() => void confirm()}
+              disabled={blocked || state === "saving"}
+              onClick={confirm}
               className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-teal-700 disabled:opacity-50"
             >
               {state === "saving" ? "…" : t("confirm")}
             </button>
           </div>
         )}
-        {state === "failed" && <p className="mt-2 text-xs font-semibold text-red-600">{t("failed")}{reason === "blocked" ? ` ${t("failedBlocked")}` : ""}</p>}
+        {state === "failed" && <p className="mt-2 text-xs font-semibold text-red-600">{t("failed")}</p>}
+      </div>
+    </div>
+  );
+}
+
+// No card: what's there, and the nearest free times as chips. Tapping one
+// sends it as the doctor's next message ("terça, 29/09/2026 às 10:30"); the
+// assistant never picks (§2.3).
+function SlotChoiceView({ block, locale, onPick }: { block: SlotChoice; locale: string; onPick: (v: string) => void }) {
+  const t = useTranslations("assistant");
+  const label = (date: string, time: string) =>
+    t("chipAt", { date: formatDateLabel(locale, date, { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" }), time });
+  return (
+    <div>
+      <p className="mb-1.5 leading-relaxed">{block.text}</p>
+      <div className="flex flex-wrap gap-2">
+        {block.alternatives.map((a) => (
+          <button key={`${a.date}${a.start}`} type="button" onClick={() => onPick(label(a.date, a.start))} className="rounded-full border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs font-semibold text-teal-800 hover:bg-teal-100">
+            {a.start}
+          </button>
+        ))}
+        {block.other && (
+          <button type="button" onClick={() => onPick(t("otherTime"))} className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+            {t("otherTime")}
+          </button>
+        )}
       </div>
     </div>
   );

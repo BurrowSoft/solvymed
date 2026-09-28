@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
@@ -12,6 +12,7 @@ import { readTourState, tourEntry } from "@/lib/tourState";
 import { CURRENT_NEWS, newsTourId } from "@/lib/news";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { SolvyAi } from "@/components/solvyai/SolvyAi";
+import { HighlightFromQuery } from "@/components/HighlightFromQuery";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 
@@ -199,7 +200,11 @@ export default async function DashboardLayout({
             panel sits here so it pushes the content on wide screens.
             10 messages a day during the trial, 20 on a paid plan. */}
         {liveFeatures.solvyAi && !isSecretary && (
-          <SolvyAi locale={locale} prefix={locale === "en" ? "" : `/${locale}`} dailyLimit={sub?.subscription_status === "trial" ? 10 : 20} />
+          <>
+            <SolvyAi locale={locale} prefix={locale === "en" ? "" : `/${locale}`} dailyLimit={sub?.subscription_status === "trial" ? 10 : 20} />
+            {/* The item a SolvyAI save lands on, ringed for 3 s. */}
+            <Suspense fallback={null}><HighlightFromQuery /></Suspense>
+          </>
         )}
       </div>
     </TourProvider>
