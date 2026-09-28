@@ -5807,3 +5807,23 @@ was linked to each doctor.
   user.
 - **Test accounts:** none left to clean up. Every throwaway is deleted or
   purged by mob dev, and a final sweep of `e2e-test-opus-*` ran.
+
+## PR #82 (`fix/patients-page-clamp`, base master) — a page past the end lands on the last page, 🟢 at `d0df091`, review clean
+
+Follows #81's note. On the first head `3eece52`, `?page=999` landed on
+**page 1**, because PostgREST answers an out-of-range page with 416 and no
+count. Checked on the preview at `d0df091` with a throwaway doctor (deleted
+afterwards): 55 active patients plus 53 archived through the
+`archive_patient` RPC.
+
+| URL | Lands on | Shows |
+|---|---|---|
+| `?page=999` | `?page=2` | "51–55 de 55", 5 rows |
+| `?archived=1&page=999` | `?archived=1&page=2` | "51–53 de 53", 3 rows |
+| `?q=Opus&page=999` | `?q=Opus&page=2` | "51–55 de 55" (the last page of the search) |
+| `?q=zzzz&page=5` (0 matches) | `?q=zzzz` (page 1) | "Nenhum paciente encontrado para "zzzz"" |
+
+Filters are always kept, and there are no 5xx. `?page=junk` → page 1 was
+verified in #81.
+
+**CI at `d0df091`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `d0df091`.**
