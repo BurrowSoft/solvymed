@@ -70,6 +70,19 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("assistant.undone"));
   });
 
+  it("a saved card can't be confirmed again after the panel is minimised and reopened (tester's finding)", async () => {
+    openPanel();
+    await ask("Marca a Maria Silva amanhã às 14h");
+    await waitFor(() => expect(screen.getByText("assistant.confirm")).toBeInTheDocument(), { timeout: 5000 });
+    fireEvent.click(screen.getByText("assistant.confirm"));
+    await waitFor(() => expect(push).toHaveBeenCalledTimes(1));
+    // Reopen from the pill: the card shows it was saved, with no Confirmar.
+    fireEvent.click(screen.getByText("SolvyAI ✦"));
+    expect(screen.queryByText("assistant.confirm")).not.toBeInTheDocument();
+    expect(screen.getAllByText("assistant.saved").length).toBeGreaterThan(0);
+    expect(push).toHaveBeenCalledTimes(1);
+  });
+
   it("blocked time asks the card's second question; Cancelar saves nothing", async () => {
     openPanel();
     await ask("Marca a Maria Silva amanhã às 12h");

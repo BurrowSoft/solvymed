@@ -125,7 +125,8 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
           if (chunk.block.type === "text") { blocks = [...blocks, { type: "text", text: current }]; current = ""; }
           // Fail closed: a card that must ask twice but carries no second
           // question is never shown, so it can't be confirmed without asking.
-          else if (!(chunk.block.type === "card" && !cardIsSafe(chunk.block.card))) blocks = [...blocks, chunk.block];
+          else if (chunk.block.type === "card" && !cardIsSafe(chunk.block.card)) blocks = [...blocks, { type: "text", text: t("unavailable") }];
+          else blocks = [...blocks, chunk.block];
           setTurns([...history, { role: "assistant", blocks, streaming: true }]);
         } else if (chunk.kind === "usage") {
           gotUsage = true;
@@ -152,6 +153,7 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
     const path = webPath(prefix, { screen: a.screen === "whatsapp" ? a.then?.screen ?? "payments" : a.screen, date: a.date, id: a.screen === "patient" ? hl : undefined }, hl);
     setMinimized(true);
     if (path && isInternalHref(path)) router.push(path);
+    setCardDone((d) => ({ ...d, [card.id]: "saved" }));
     setToast({ card, id, demo, left: 10, undone: false });
     track("solvyai_confirmed", { kind: card.action.kind });
   };
@@ -159,13 +161,20 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
   // A save the normal path refused (the slot was just taken, …): the
   // server explains and offers fresh times, in the conversation.
   const confirmFailed = (card: ConfirmationCard, code: string) => {
+    setCardDone((d) => ({ ...d, [card.id]: "failed" }));
     setBusy(true);
     void play(turns, backend.reportConfirmFailed(code, card.action, locale));
   };
 
   const [toast, setToast] = useState<{ card: ConfirmationCard; id?: string; demo: boolean; left: number; undone: boolean } | null>(null);
+  // Each card is confirmed at most once: its outcome lives here, not in the
+  // card (the panel unmounts when minimised), and a claim is taken
+  // synchronously before anything runs.
+  const [cardDone, setCardDone] = useState<Record<string, "saved" | "failed">>({});
+  const claimed = useRef(new Set<string>());
+  const claim = (id: string) => { if (claimed.current.has(id)) return false; claimed.current.add(id); return true; };
   useEffect(() => {
-    if (!toast || toast.undone || toast.left <= 0) return;
+    if (!toast || toast.left <= 0) return;
     const id = setTimeout(() => setToast((x) => (x ? { ...x, left: x.left - 1 } : x)), 1000);
     return () => clearTimeout(id);
   }, [toast]);
@@ -219,7 +228,7 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
                     <p className="animate-pulse text-slate-400 motion-reduce:animate-none" aria-live="polite">{t("thinking")}</p>
                   )}
                   {turn.blocks.map((b, j) => (
-                    <Block key={j} block={b} locale={locale} onPick={(v) => void send(v)} onOpen={openScreen} backend={backend} onSaved={afterSave} onFailed={confirmFailed} />
+                    <Block key={j} block={b} locale={locale} onPick={(v) => void send(v)} onOpen={openScreen} backend={backend} onSaved={afterSave} onFailed={confirmFailed} done={cardDone} claim={claim} />
                   ))}
                 </div>
               ),
@@ -269,13 +278,13 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
       {!(open && !minimized) && (
         <div className="fixed bottom-5 right-5 z-30 flex items-center gap-2">
           {/* After a save: "✓ … + Desfazer" for 10 s (§2.3). */}
-          {toast && (toast.undone || toast.left > 0) && (
+          {toast && toast.left > 0 && (
             <p role="status" className="flex items-center gap-2 rounded-2xl bg-slate-900 px-3 py-2 text-xs text-white shadow-lg">
               <span>{toast.undone ? t("undone") : t("saved")}{toast.demo && ` (${t("simulated")})`}</span>
               {!toast.undone && (
                 <button
                   type="button"
-                  onClick={async () => { await backend.undo(toast.card.action, toast.id); setToast({ ...toast, undone: true }); }}
+                  onClick={async () => { await backend.undo(toast.card.action, toast.id); setToast({ ...toast, undone: true, left: 4 }); }}
                   className="rounded-lg px-2 py-0.5 font-semibold text-teal-300 hover:bg-white/10"
                 >
                   {t("undo", { s: toast.left })}
@@ -332,9 +341,10 @@ function Inline({ text }: { text: string }) {
 type Saved = (card: ConfirmationCard, id: string | undefined, demo: boolean) => void;
 type Failed = (card: ConfirmationCard, code: string) => void;
 
-function Block({ block, locale, onPick, onOpen, backend, onSaved, onFailed }: {
+function Block({ block, locale, onPick, onOpen, backend, onSaved, onFailed, done, claim }: {
   block: AnswerBlock; locale: string; onPick: (v: string) => void; onOpen: (href: string) => void;
   backend: AssistantBackend; onSaved: Saved; onFailed: Failed;
+  done: Record<string, "saved" | "failed">; claim: (id: string) => boolean;
 }) {
   const t = useTranslations("assistant");
   const [vote, setVote] = useState<"up" | "down" | null>(null);
@@ -364,7 +374,7 @@ function Block({ block, locale, onPick, onOpen, backend, onSaved, onFailed }: {
         </div>
       );
     case "card":
-      return <CardView card={block.card} backend={backend} onSaved={onSaved} onFailed={onFailed} />;
+      return <CardView card={block.card} backend={backend} onSaved={onSaved} onFailed={onFailed} done={done[block.card.id]} claim={claim} />;
     case "slot_choice":
       return <SlotChoiceView block={block} locale={locale} onPick={onPick} />;
     case "feedback":
@@ -382,15 +392,23 @@ function Block({ block, locale, onPick, onOpen, backend, onSaved, onFailed }: {
 // Blocked / outside hours ask the card's second question first; a hard-
 // stopped or expired card can't be confirmed. The save goes through the
 // normal path; then the panel hands over to "after saving".
-function CardView({ card, backend, onSaved, onFailed }: { card: ConfirmationCard; backend: AssistantBackend; onSaved: Saved; onFailed: Failed }) {
+function CardView({ card, backend, onSaved, onFailed, done, claim }: {
+  card: ConfirmationCard; backend: AssistantBackend; onSaved: Saved; onFailed: Failed;
+  done?: "saved" | "failed"; claim: (id: string) => boolean;
+}) {
   const t = useTranslations("assistant");
-  const [state, setState] = useState<"idle" | "asking" | "saving" | "saved" | "failed">("idle");
+  // A card saved or refused before (e.g. before the panel was minimised)
+  // comes back as it ended, never with Confirmar again.
+  const [local, setState] = useState<"idle" | "asking" | "saving" | "saved" | "failed">("idle");
+  const state = done ?? local;
   // A malformed expiry counts as expired (never "not expired").
   const expired = () => { const at = Date.parse(card.expiresAt); return Number.isNaN(at) || Date.now() > at; };
   const [isExpired, setIsExpired] = useState(false);
 
   const run = async () => {
     if (expired()) { setIsExpired(true); setState("idle"); return; }
+    // At most once per card, whatever the UI state.
+    if (!claim(card.id)) return;
     setState("saving");
     const r = await backend.execute(card.action);
     if (r.ok) { setState("saved"); onSaved(card, r.id, r.demo === true); }
