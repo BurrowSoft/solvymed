@@ -5314,3 +5314,16 @@ doctor's public code (deleted afterwards):
 - `/join/<code>` (en) shows "Joining as Patient via invite link."
 
 **CI at `ac8ee77`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `ac8ee77`.**
+
+## PR #72 (`fix/signup-code-validation`, base master) — patient signup without a code shows the app's line, 🟢 at `e47f341`, review clean
+
+This follows RC finding (4): the empty invite-code field used to trigger the
+browser's own `required` bubble. Checked on the preview in pt-BR and en: Paciente, every field filled
+except the invite code, then submit:
+- The red banner reads **"É necessário um código de convite"** / "An invite
+  code is required".
+- There's **no browser bubble**: the input isn't `required`, and its
+  `validationMessage` is empty.
+- **No `/auth/v1/signup` call** is made, and no account is created.
+
+**CI at `e47f341`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `e47f341`.**
