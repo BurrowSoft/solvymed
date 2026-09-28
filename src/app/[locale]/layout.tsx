@@ -108,7 +108,14 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   const localeFont = LOCALE_FONT[locale];
   const fontClass = `${inter.variable} ${localeFont?.variable ?? ""}`.trim();
-  const fontFamily = [inter.style.fontFamily, localeFont?.style.fontFamily, "ui-sans-serif", "system-ui", "sans-serif"]
+  // Each next/font family is "'Name', 'Name Fallback'". The fallbacks are
+  // size-adjusted local fonts covering all of Unicode ("Inter Fallback" is
+  // Arial, which has Arabic), so the locale font must come before them:
+  // Inter, <locale font>, Inter Fallback, <locale fallback>, generics.
+  // Otherwise Arabic rendered in Arial instead of Noto Sans Arabic.
+  const [interFont, interFallback] = inter.style.fontFamily.split(",").map((s) => s.trim());
+  const [localeName, localeFallback] = localeFont ? localeFont.style.fontFamily.split(",").map((s) => s.trim()) : [];
+  const fontFamily = [interFont, localeName, interFallback, localeFallback, "ui-sans-serif", "system-ui", "sans-serif"]
     .filter(Boolean)
     .join(", ");
 
