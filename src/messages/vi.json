@@ -195,7 +195,9 @@
     "patientArchivedError": "Hồ sơ này đã được lưu trữ. Hãy khôi phục trong mục Bệnh nhân để đặt lịch hẹn.",
     "moreCount": "+{n} nữa",
     "slotBlockedConfirm": "Khung giờ này đã bị chặn ({start}–{end}). Vẫn đặt lịch?",
-    "requestedLabel": "Yêu cầu: {date} · {time}"
+    "requestedLabel": "Yêu cầu: {date} · {time}",
+    "promptPayTitle": "QR PromptPay",
+    "promptPayScan": "Quét bằng bất kỳ ứng dụng ngân hàng Thái Lan nào để thanh toán."
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -450,7 +452,11 @@
     "regenerateError": "Không thể tạo mã mới. Vui lòng thử lại.",
     "showSetup": "Hiện danh sách thiết lập",
     "registration": "Số đăng ký hành nghề",
-    "registrationPlaceholder": "vd. CRM 12345/SP"
+    "registrationPlaceholder": "vd. CRM 12345/SP",
+    "promptPay": "ID PromptPay",
+    "promptPayHint": "Số điện thoại hoặc mã định danh / mã số thuế 13 chữ số liên kết với PromptPay. Bệnh nhân quét mã QR của lịch hẹn để thanh toán.",
+    "promptPayInvalid": "Nhập số điện thoại 10 chữ số (bắt đầu bằng 0) hoặc mã định danh / mã số thuế 13 chữ số.",
+    "saveFailed": "Không lưu được. Vui lòng thử lại."
   },
   "clinics": {
     "title": "Phòng khám của tôi",

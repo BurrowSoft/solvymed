@@ -195,7 +195,9 @@
     "patientArchivedError": "このカルテはアーカイブ済みです。予約するには「患者」で復元してください。",
     "moreCount": "他 {n} 件",
     "slotBlockedConfirm": "この時間はブロックされています（{start}–{end}）。それでも予約しますか？",
-    "requestedLabel": "希望日時：{date} · {time}"
+    "requestedLabel": "希望日時：{date} · {time}",
+    "promptPayTitle": "PromptPay QR",
+    "promptPayScan": "タイの銀行アプリでスキャンして支払います。"
   },
   "payments": {
     "thisWeek": "今週",
@@ -450,7 +452,11 @@
     "regenerateError": "新しいコードを生成できませんでした。もう一度お試しください。",
     "showSetup": "設定チェックリストを表示",
     "registration": "登録番号",
-    "registrationPlaceholder": "例: CRM 12345/SP"
+    "registrationPlaceholder": "例: CRM 12345/SP",
+    "promptPay": "PromptPay ID",
+    "promptPayHint": "PromptPay に登録した携帯電話番号、または13桁の国民ID / 納税者番号。患者は予約の QR をスキャンして支払います。",
+    "promptPayInvalid": "10桁の携帯電話番号（0 から始まる）または13桁の国民ID / 納税者番号を入力してください。",
+    "saveFailed": "保存できませんでした。もう一度お試しください。"
   },
   "clinics": {
     "title": "マイクリニック",

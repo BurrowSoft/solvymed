@@ -195,7 +195,9 @@
     "patientArchivedError": "Rekam medis ini diarsipkan. Pulihkan di menu Pasien untuk membuat janji temu.",
     "moreCount": "+{n} lainnya",
     "slotBlockedConfirm": "Waktu ini diblokir ({start}–{end}). Tetap buat janji?",
-    "requestedLabel": "Diminta: {date} · {time}"
+    "requestedLabel": "Diminta: {date} · {time}",
+    "promptPayTitle": "QR PromptPay",
+    "promptPayScan": "Pindai dengan aplikasi bank Thailand mana pun untuk membayar."
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -450,7 +452,11 @@
     "regenerateError": "Tidak dapat membuat kode baru. Silakan coba lagi.",
     "showSetup": "Tampilkan daftar penyiapan",
     "registration": "Nomor registrasi profesi",
-    "registrationPlaceholder": "mis. CRM 12345/SP"
+    "registrationPlaceholder": "mis. CRM 12345/SP",
+    "promptPay": "ID PromptPay",
+    "promptPayHint": "Nomor ponsel atau ID nasional / NPWP 13 digit yang terhubung ke PromptPay. Pasien memindai QR janji temu untuk membayar.",
+    "promptPayInvalid": "Masukkan nomor ponsel 10 digit (diawali 0) atau ID nasional / NPWP 13 digit.",
+    "saveFailed": "Gagal menyimpan. Silakan coba lagi."
   },
   "clinics": {
     "title": "Klinik Saya",

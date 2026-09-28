@@ -195,7 +195,9 @@
     "patientArchivedError": "Эта карта в архиве. Восстановите её в разделе «Пациенты», чтобы записать на приём.",
     "moreCount": "ещё {n}",
     "slotBlockedConfirm": "Это время заблокировано ({start}–{end}). Всё равно записать?",
-    "requestedLabel": "Запрошено: {date} · {time}"
+    "requestedLabel": "Запрошено: {date} · {time}",
+    "promptPayTitle": "QR PromptPay",
+    "promptPayScan": "Отсканируйте любым тайским банковским приложением для оплаты."
   },
   "payments": {
     "thisWeek": "На этой неделе",
@@ -450,7 +452,11 @@
     "regenerateError": "Не удалось создать новый код. Попробуйте снова.",
     "showSetup": "Показать список настройки",
     "registration": "Профессиональная регистрация",
-    "registrationPlaceholder": "напр. CRM 12345/SP"
+    "registrationPlaceholder": "напр. CRM 12345/SP",
+    "promptPay": "ID PromptPay",
+    "promptPayHint": "Ваш мобильный номер или 13-значный национальный / налоговый ID, привязанный к PromptPay. Пациенты сканируют QR-код приёма для оплаты.",
+    "promptPayInvalid": "Введите 10-значный мобильный номер (начинается с 0) или 13-значный национальный / налоговый ID.",
+    "saveFailed": "Не удалось сохранить. Попробуйте ещё раз."
   },
   "clinics": {
     "title": "Мои клиники",

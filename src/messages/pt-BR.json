@@ -195,7 +195,9 @@
     "patientArchivedError": "Este cadastro está arquivado. Restaure-o em Pacientes para agendar uma consulta.",
     "moreCount": "+{n} mais",
     "slotBlockedConfirm": "Este horário está bloqueado ({start}–{end}). Agendar mesmo assim?",
-    "requestedLabel": "Solicitado: {date} · {time}"
+    "requestedLabel": "Solicitado: {date} · {time}",
+    "promptPayTitle": "QR PromptPay",
+    "promptPayScan": "Escaneie com qualquer app de banco tailandês para pagar."
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -450,7 +452,11 @@
     "regenerateError": "Não foi possível gerar um novo código. Tente novamente.",
     "showSetup": "Mostrar lista de configuração",
     "registration": "Registro profissional",
-    "registrationPlaceholder": "ex.: CRM 12345/SP"
+    "registrationPlaceholder": "ex.: CRM 12345/SP",
+    "promptPay": "ID PromptPay",
+    "promptPayHint": "Seu celular ou ID nacional / fiscal de 13 dígitos vinculado ao PromptPay. Os pacientes escaneiam o QR da consulta para pagar.",
+    "promptPayInvalid": "Digite um celular de 10 dígitos (começando com 0) ou um ID nacional / fiscal de 13 dígitos.",
+    "saveFailed": "Não foi possível salvar. Tente novamente."
   },
   "clinics": {
     "title": "Minhas Clínicas",

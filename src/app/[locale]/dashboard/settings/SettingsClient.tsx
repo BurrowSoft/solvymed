@@ -188,19 +188,27 @@ type ClinicData = {
   clinic_name?: string; clinic_cnpj?: string; clinic_phone?: string;
   clinic_website?: string; clinic_address?: string; clinic_city?: string; clinic_state?: string;
   pix_key?: string;
+  promptpay_id?: string;
 };
 
-// showPix: the practice country's payment QR is Pix (Brazil).
-export function ClinicForm({ data, showPix = true }: { data: ClinicData; showPix?: boolean }) {
+// showPix / showPromptPay: the practice country's payment QR is Pix
+// (Brazil) or PromptPay (Thailand).
+export function ClinicForm({ data, showPix = true, showPromptPay = false }: { data: ClinicData; showPix?: boolean; showPromptPay?: boolean }) {
   const t = useTranslations("settings");
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    setError("");
     start(async () => {
-      await updateClinic(fd);
+      const result = await updateClinic(fd);
+      if ("error" in result && result.error) {
+        setError(result.error === "invalid_promptpay" ? t("promptPayInvalid") : t("saveFailed"));
+        return;
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     });
@@ -245,7 +253,16 @@ export function ClinicForm({ data, showPix = true }: { data: ClinicData; showPix
               <Input name="pix_key" defaultValue={data.pix_key ?? ""} placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória" />
             </div>
           )}
+          {/* PromptPay is Thailand's payment QR: only for Thai practices. */}
+          {showPromptPay && (
+            <div className="sm:col-span-2">
+              <Label>{t("promptPay")}</Label>
+              <Input name="promptpay_id" defaultValue={data.promptpay_id ?? ""} placeholder="08X-XXX-XXXX" />
+              <p className="mt-1 text-xs text-slate-400">{t("promptPayHint")}</p>
+            </div>
+          )}
         </div>
+        {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
         <SaveRow pending={pending} saved={saved} />
       </form>
     </Card>

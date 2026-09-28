@@ -195,7 +195,9 @@
     "patientArchivedError": "هذا الملف مؤرشف. استعِده من قسم المرضى لحجز موعد.",
     "moreCount": "+{n} أخرى",
     "slotBlockedConfirm": "هذا الوقت محجوب ({start}–{end}). هل تريد الحجز على أي حال؟",
-    "requestedLabel": "المطلوب: {date} · {time}"
+    "requestedLabel": "المطلوب: {date} · {time}",
+    "promptPayTitle": "رمز QR لـ PromptPay",
+    "promptPayScan": "امسح الرمز بأي تطبيق مصرفي تايلاندي للدفع."
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",
@@ -450,7 +452,11 @@
     "regenerateError": "تعذّر إنشاء رمز جديد. يرجى المحاولة مرة أخرى.",
     "showSetup": "عرض قائمة الإعداد",
     "registration": "رقم التسجيل المهني",
-    "registrationPlaceholder": "مثال: CRM 12345/SP"
+    "registrationPlaceholder": "مثال: CRM 12345/SP",
+    "promptPay": "معرّف PromptPay",
+    "promptPayHint": "رقم هاتفك المحمول أو رقم الهوية الوطنية / الضريبية المكوّن من 13 رقمًا المرتبط بـ PromptPay. يمسح المرضى رمز QR الخاص بالموعد للدفع.",
+    "promptPayInvalid": "أدخل رقم هاتف محمول من 10 أرقام (يبدأ بـ 0) أو رقم هوية وطنية / ضريبية من 13 رقمًا.",
+    "saveFailed": "تعذّر الحفظ. يُرجى المحاولة مرة أخرى."
   },
   "clinics": {
     "title": "عياداتي",
