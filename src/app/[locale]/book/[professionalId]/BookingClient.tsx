@@ -687,7 +687,7 @@ export function BookingClient({
               </div>
               {idFields.map((f) => (
                 <div key={f.name}>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">{f.label} <span className="text-slate-400 font-normal">({t("notesOptional")})</span></label>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">{f.label} <span className="text-slate-400 font-normal">{t("notesOptional")}</span></label>
                   <input
                     type="text"
                     value={f.value}
