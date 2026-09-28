@@ -83,6 +83,9 @@ export default async function PatientsPage({
     const s = params.toString();
     return `${prefix}/dashboard/patients${s ? `?${s}` : ""}`;
   };
+  // A page past the end (an old link, or patients archived meanwhile) goes
+  // to the last page instead of an empty list.
+  if (page > lastPage) redirect(pageHref(lastPage));
   const chipClass = (active: boolean) =>
     `rounded-full px-3 py-1 text-xs font-semibold transition ${active ? "bg-teal-600 text-white" : "border border-slate-200 text-slate-600 hover:bg-slate-50"}`;
 
