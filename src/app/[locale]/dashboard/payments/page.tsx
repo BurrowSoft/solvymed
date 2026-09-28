@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { PeriodFilter, MarkPaidButton, MarkUnpaidButton } from "./PaymentsClient";
 import { clinicDate, getClinicTimeZone, previousMonthRange, weekRange } from "@/lib/clinicTime";
+import { RECEIVABLE_STATUSES } from "@/lib/paymentRules";
 
 type Period = "week" | "month" | "last_month" | "all";
 
@@ -54,8 +55,9 @@ export default async function PaymentsPage({
       .select("id, patient_name, date, start_time, consultation_type, payment_amount, payment_type")
       .eq("professional_id", effectiveProfId)
       .eq("payment_status", "pending")
-      .neq("status", "blocked")
-      .neq("status", "cancelled")
+      // "To receive": the app's rule (lib/paymentRules); requests, cancelled,
+      // rejected and no-shows don't count.
+      .in("status", [...RECEIVABLE_STATUSES])
       .gte("date", from)
       .lte("date", to)
       .order("date", { ascending: false }),
