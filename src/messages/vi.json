@@ -932,5 +932,28 @@
   },
   "legal": {
     "englishOnly": "Tài liệu này chỉ có bằng tiếng Anh và tiếng Bồ Đào Nha (Brazil). Bản tiếng Anh được hiển thị bên dưới."
+  },
+  "feedback": {
+    "title": "Gửi góp ý",
+    "subtitle": "Chúng tôi rất muốn biết bạn nghĩ gì về SolvyMed.",
+    "ratingLabel": "Bạn đánh giá SolvyMed thế nào?",
+    "ratingValue": "{n} trên 5",
+    "optional": "(không bắt buộc)",
+    "name": "Tên",
+    "namePlaceholder": "Tên của bạn",
+    "email": "Email",
+    "emailPlaceholder": "ban@email.com",
+    "message": "Nội dung",
+    "messagePlaceholder": "Hãy cho chúng tôi biết suy nghĩ của bạn, điều gì còn thiếu hoặc điều gì chúng tôi có thể làm tốt hơn…",
+    "send": "Gửi góp ý",
+    "sending": "Đang gửi…",
+    "thanksTitle": "Cảm ơn bạn!",
+    "thanksBody": "Góp ý của bạn giúp chúng tôi cải thiện SolvyMed cho mọi người.",
+    "backToHome": "Về trang chủ",
+    "errors": {
+      "email_required": "Vui lòng nhập email của bạn.",
+      "message_required": "Vui lòng viết nội dung.",
+      "failed": "Đã có lỗi xảy ra. Vui lòng thử lại."
+    }
   }
 }

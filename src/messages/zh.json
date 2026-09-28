@@ -932,5 +932,28 @@
   },
   "legal": {
     "englishOnly": "本文件仅提供英文和葡萄牙文（巴西）版本。以下为英文版本。"
+  },
+  "feedback": {
+    "title": "提交反馈",
+    "subtitle": "我们很想知道您对 SolvyMed 的看法。",
+    "ratingLabel": "您给 SolvyMed 打几分？",
+    "ratingValue": "{n} 分（满分 5 分）",
+    "optional": "（选填）",
+    "name": "姓名",
+    "namePlaceholder": "您的姓名",
+    "email": "电子邮箱",
+    "emailPlaceholder": "your@email.com",
+    "message": "留言",
+    "messagePlaceholder": "告诉我们您的想法、缺少的功能或可以改进的地方…",
+    "send": "提交反馈",
+    "sending": "正在发送…",
+    "thanksTitle": "谢谢！",
+    "thanksBody": "您的反馈帮助我们为所有人改进 SolvyMed。",
+    "backToHome": "返回首页",
+    "errors": {
+      "email_required": "请输入您的电子邮箱。",
+      "message_required": "请填写留言。",
+      "failed": "出错了，请重试。"
+    }
   }
 }

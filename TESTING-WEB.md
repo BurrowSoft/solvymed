@@ -5333,3 +5333,26 @@ phones:
 **CI at `d963bd0`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `d963bd0`, and so for #64 at `b7405d7`, which it contains.**
+
+## PR #62 (`chore/review-followups`, base `release`) — feedback page translated, generic error on pending-confirmation, 🟢 at `b6b3aa7`, review clean
+
+**Checked on the preview** in pt-BR, th, ar and en, with 3 `[TEST]`
+feedback rows stored (mob dev deletes them):
+- **`/feedback` fully translated:** the title, subtitle, rating question,
+  labels, "(opcional)" and placeholders ("Seu nome", "Conte o que você
+  acha…" / th / ar / en), with no English left in non-en locales and no
+  horizontal overflow. **ar** renders with `dir="rtl"`.
+- **Rating buttons:** they announce as "1 de 5" … "5 de 5" (th "4 จาก 5",
+  ar "4 من 5", en "4 out of 5"). A click sets `aria-pressed="true"` on
+  that one only.
+- **A whitespace-only message** is caught by the server action and shows
+  "Escreva uma mensagem." / "กรุณาเขียนข้อความ" / "يرجى كتابة رسالة." /
+  "Please write a message.", and no row is stored.
+- **A real submit** (pt-BR, rating 4) stores a `feedback` row and shows
+  "Obrigado! Sua opinião nos ajuda a melhorar o SolvyMed para todos." This
+  covers checklist **B-16**.
+- **Pending-confirmation, code level:** an accept/decline error other than
+  `patient_archived` now shows `auth.errors.generic`, never the raw code.
+  It's hard to force live.
+
+**CI at `b6b3aa7`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `b6b3aa7`.**
