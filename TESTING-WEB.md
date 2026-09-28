@@ -6305,3 +6305,44 @@ scroll. Other numeric inputs on `release` are whole numbers only
 **CI at `962b880`:** ✅. **Merge gate: 🟢 for `962b880`**, once the reviewer
 is clean. The branch was up to date with `release`; this docs commit sits
 on top.
+
+**Prod after merge** (`release` `d340805`, www.solvymed.com, throwaway
+doctor; 0 leftover rows afterwards):
+- "150,50" → "= R$ 150,50", saved as paid 150.5.
+- "abc" → error, still pending.
+- Procedure "89,90" → 89.9, shown as "R$ 89,90" after a reload.
+
+## PR #96 (`fix/pending-rule`, base `release`) — "Pendente" counts only receivable appointments (the app's rule), 🟢 at `6b451fb`
+
+Before this PR, "Pendente" counted every unpaid appointment that wasn't
+blocked or cancelled, including patient requests, rejected ones and
+no-shows. Now only `scheduled`, `confirmed`, `completed` and `late`
+count (`lib/paymentRules`).
+
+Checked on the Preview at `6b451fb` with a throwaway doctor (deleted
+afterwards). Each status got one unpaid appointment today with its own
+power-of-two amount, so a total shows exactly which statuses were counted:
+
+| Status | Amount (R$) |
+|---|---|
+| scheduled / confirmed / completed / late | 1 / 2 / 4 / 8 |
+| tentative / cancelled / rejected / absent | 16 / 32 / 64 / 128 |
+| proposal / blocked | 256 / 512 |
+| plus one paid appointment (completed) | 1 000 |
+
+| View | Pendente | Decodes to | Recebido |
+|---|---|---|---|
+| Payments, "Todo o período" | **R$ 15,00 · 4 sessões** | scheduled + confirmed + completed + late | R$ 1.000,00 · 1 sessão |
+| Payments, "Esta semana" | R$ 15,00 · 4 sessões | same | R$ 1.000,00 |
+| Payments, "Este mês" | R$ 15,00 · 4 sessões | same | R$ 1.000,00 |
+| Visão geral pending card (all time) | **R$ 15,00 · 4 sessões**; banner "4 sessões não pagas" | same | — |
+
+- **The pending list** holds exactly those four: completed, late,
+  scheduled and confirmed.
+- **Excluded:** tentative, cancelled, rejected, absent, proposal and
+  blocked appear nowhere.
+- **Recebido** is unchanged.
+
+**CI at `6b451fb`:** ✅. **Merge gate: 🟢 for `6b451fb`**, once the reviewer
+is clean. The branch was up to date with `release`; this docs commit sits
+on top.
