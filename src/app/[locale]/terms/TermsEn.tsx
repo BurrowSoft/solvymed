@@ -51,9 +51,9 @@ export function TermsEn() {
       <Section title="5. Subscriptions and Payment">
         <p>
           Professional features require an active SolvyMed Pro subscription. New professional accounts get a 15-day
-          free trial. The subscription is billed monthly, in advance, by card, through Stripe. The price is R$ 89 per
-          month when you subscribe with the site in Portuguese (Brazil) and US$ 19 per month in other languages; the
-          price is always shown before you pay.
+          free trial. The subscription is billed monthly, in advance, by card, through Stripe. The price depends on
+          your practice&apos;s country: R$ 89 per month in Brazil, ฿690 per month in Thailand and US$ 19 per month
+          elsewhere; the price is always shown before you pay.
         </p>
         <p>
           The subscription renews automatically each month until you cancel it. You can cancel at any time by contacting{" "}

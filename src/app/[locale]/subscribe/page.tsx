@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { SubscribeButton } from "@/components/SubscribeButton";
 import { UpdateCardButton } from "@/components/UpdateCardButton";
 import { isAccessAllowed, trialDaysRemaining, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
+import { getPracticeCountry } from "@/lib/practiceCountry";
 import { retrieveStoredStripeSubscription, isLive, needsCardFix } from "@/lib/stripeBilling";
 
 export default async function SubscribePage({
@@ -78,7 +79,8 @@ export default async function SubscribePage({
   }
 
   const daysLeft = trialDaysRemaining(sub);
-  const plan = getPlanPrice(locale);
+  // Priced by the practice's country (only a doctor subscribes here).
+  const plan = getPlanPrice(await getPracticeCountry(supabase, user.id, user.id));
 
   const { data: professional } = await supabase
     .from("professionals")
