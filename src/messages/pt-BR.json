@@ -983,5 +983,46 @@
     "passport": "Número do passaporte",
     "passportOrId": "Número do passaporte ou documento",
     "thaiIdInvalid": "Este número de identidade tailandês não é válido. Confira os 13 dígitos."
+  },
+  "pricing": {
+    "navLabel": "Preços",
+    "countryLabel": "Preços para:",
+    "countryOther": "Outros países",
+    "title": "Um plano simples. Tudo incluído.",
+    "subtitle": "Sem taxa de adesão, sem cobrança por paciente, sem surpresas.",
+    "perMonth": "/mês",
+    "trial": "Grátis por 15 dias.",
+    "trialNoCard": "Sem cartão para começar.",
+    "cta": "Comece seu teste grátis",
+    "cancel": "Cancele quando quiser.",
+    "includedTitle": "O que está incluído",
+    "f": {
+      "schedule": "Agenda por dia, semana e mês, consultas recorrentes e bloqueio de horários",
+      "patients": "Pacientes ilimitados, com histórico, prontuários, receitas e exames",
+      "patientApp": "App do paciente e agendamento online pelo seu link de convite",
+      "secretaries": "Até 3 secretárias(os), sem acesso aos prontuários",
+      "payments": {
+        "BR": "Controle de pagamentos e QR Code Pix",
+        "TH": "Controle de pagamentos e QR PromptPay",
+        "OTHER": "Controle de pagamentos"
+      },
+      "pdfs": "Receitas, recibos e histórico em PDF no seu idioma",
+      "reminders": "Lembretes de consulta e notificações",
+      "devices": "Site e app (Android e iPhone), sempre sincronizados",
+      "devicesAndroid": "Site e app Android, sempre sincronizados",
+      "security": "Dados privados e criptografados; após 24 horas, prontuários e receitas só podem ser corrigidos, e o original fica guardado.",
+      "solvyai": "SolvyAI, seu assistente com IA: pergunte ou peça \"marca a Maria amanhã às 14h\""
+    },
+    "faqTitle": "Dúvidas",
+    "faq": {
+      "q1": "O que acontece depois do teste grátis?",
+      "a1": "Você escolhe se quer assinar. Se não assinar, sua conta fica pausada e seus dados continuam seguros.",
+      "q2": "Como eu pago?",
+      "a2": "Com cartão, mensalmente, pelo nosso site.",
+      "q3": "Minhas secretárias também pagam?",
+      "a3": "Não. Até 3 secretárias(os) estão incluídas(os) no seu plano.",
+      "q4": "Posso cancelar?",
+      "a4": "Sim, quando quiser, pelo suporte ou no portal de cobrança, quando disponível."
+    }
   }
 }

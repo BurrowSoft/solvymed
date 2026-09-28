@@ -6142,3 +6142,69 @@ in another pair of parentheses, even though the string already has them.
 
 **CI at `d61eeff`:** ✅. **Merge gate: 🟢 for `d61eeff`**, once the
 reviewer is clean. This docs commit sits on top, after a master sync.
+
+## PR #91 (`th/8-pricing`, base master) — /pricing page and Thai home section, 🟢 at `10c6b1b`
+
+Tested at `45ddfff`. Then `608c19d` and `10c6b1b` changed messages only:
+- the switcher now says "Other countries";
+- the security line was reworded. At `45ddfff` it claimed "records are
+  never deleted, only corrected". But the author can delete a record or
+  prescription within 24 h (`deleteRecord` / `deletePrescription`), and an
+  account deletion removes data. UX reworded it.
+
+**Flag OFF** (local `next dev` of the head without the flag, i.e.
+Production; location header sent as TH; 10 locales: en, pt-BR, es, fr, de,
+it, ja, ar, zh, ru):
+- **Price:** `/pricing`, `?c=TH` and `?c=OTHER` all show **R$ 89**. There's
+  **no country switcher**, and `?c=` is ignored.
+- **Payments line:** "Pix".
+- **PDF line:** only in pt-BR, en, es, fr, de and it (absent in ja, ar, zh
+  and ru).
+- **No** "iPhone", "PromptPay", "SolvyAI" or "LINE" anywhere. The device
+  line reads "Web and Android app".
+- **CTA and links:** the CTA goes to `/<locale>/auth/signup`. Pricing is
+  linked in the header (desktop) and the footer.
+- **Metadata:** each page has its own canonical (`…/pricing`,
+  `…/pt-BR/pricing`…), with 15 hreflang and no `th`. Titles: "Pricing |
+  Solvymed" / "Preços | Solvymed".
+- **Thai paths:** `/th` → `/`, and `/th/pricing` → `/pricing` (English,
+  R$ 89).
+- **Home (pt-BR, en):** no Thai section. The only "App Store" text is the
+  existing "Coming soon" button.
+
+**Flag ON:**
+- **Preview:** geo TH → ฿690 with ประเทศไทย marked; `?c=OTHER` → US$ 19.
+  hreflang has 16, including `th`.
+- **Local, geo sent by hand:**
+
+| Location / `?c=` | Price | Payments line |
+|---|---|---|
+| BR | R$ 89 | "Payment tracking and Pix QR codes" |
+| TH | ฿690 | "Payment tracking" (no PromptPay) |
+| US / PT / none | US$ 19 | "Payment tracking" |
+| geo TH + `?c=BR` | R$ 89 | Pix |
+| geo BR + `?c=TH` / `?c=OTHER` | ฿690 / US$ 19 | — |
+| geo BR + `?c=xx` | R$ 89 (falls back to the location) | — |
+| geo US + `?c=br` | R$ 89 (case-insensitive) | — |
+
+- **Switcher:** its links keep the locale (`/pt-BR/pricing?c=…`).
+- **`/th`:** shows the Thai section with 3 blocks (b1, b3, b4: no PromptPay,
+  LINE or PDPA block), the "฿690/เดือน…" line linking to `/th/pricing`, and
+  the CTA. `/th/pricing` works (฿690).
+- **pt-BR and en homes:** no Thai section.
+
+**Phones:** at 360 px (`/pt-BR`, `/pt-BR/pricing`) and 390 px
+(`/pricing`), `scrollWidth - innerWidth = 0`, and the header Pricing link is
+hidden. At 768 px it's shown. The results are the same with the flag on and
+off.
+
+**Rewording at `10c6b1b`:**
+- The security line is new in all 15 locales, and all message files parse.
+  en, pt-BR and th match UX's text word for word.
+- As rendered on the Preview (en, pt-BR, th): "Private, encrypted data;
+  after 24 hours, records and prescriptions can only be corrected, and the
+  original is kept." The switcher says "Other countries" / "Outros países"
+  / "ประเทศอื่นๆ". The old "never deleted" text is gone.
+
+**CI at `10c6b1b`:** ✅. **Merge gate: 🟢 for `10c6b1b`**, once the
+reviewer is clean. This docs commit sits on top, after a master sync.

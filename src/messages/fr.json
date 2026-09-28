@@ -983,5 +983,46 @@
     "passport": "Numéro de passeport",
     "passportOrId": "Numéro de passeport ou de pièce d'identité",
     "thaiIdInvalid": "Ce numéro d'identité thaïlandais n'est pas valide. Vérifiez les 13 chiffres."
+  },
+  "pricing": {
+    "navLabel": "Tarifs",
+    "countryLabel": "Tarifs pour :",
+    "countryOther": "Autres pays",
+    "title": "Une seule formule. Tout compris.",
+    "subtitle": "Pas de frais d'installation, pas de frais par patient, pas de surprises.",
+    "perMonth": "/mois",
+    "trial": "Gratuit pendant 15 jours.",
+    "trialNoCard": "Aucune carte requise pour commencer.",
+    "cta": "Commencer l'essai gratuit",
+    "cancel": "Résiliez quand vous voulez.",
+    "includedTitle": "Ce qui est inclus",
+    "f": {
+      "schedule": "Agenda par jour, semaine et mois, rendez-vous récurrents et créneaux bloqués",
+      "patients": "Patients illimités, avec historique, dossiers médicaux, ordonnances et examens",
+      "patientApp": "Application patient et prise de rendez-vous en ligne avec votre lien d'invitation",
+      "secretaries": "Jusqu'à 3 secrétaires, sans accès aux dossiers médicaux",
+      "payments": {
+        "BR": "Suivi des paiements et QR codes Pix",
+        "TH": "Suivi des paiements et QR codes PromptPay",
+        "OTHER": "Suivi des paiements"
+      },
+      "pdfs": "Ordonnances, reçus et historique en PDF dans votre langue",
+      "reminders": "Rappels de rendez-vous et notifications push",
+      "devices": "Web et application mobile (Android et iPhone), toujours synchronisés",
+      "devicesAndroid": "Web et application Android, toujours synchronisés",
+      "security": "Données privées et chiffrées ; après 24 heures, les dossiers et les ordonnances ne peuvent plus qu'être corrigés, et l'original est conservé.",
+      "solvyai": "SolvyAI, votre assistant IA : posez une question ou dites « rendez-vous pour Maria demain à 14 h »"
+    },
+    "faqTitle": "Questions",
+    "faq": {
+      "q1": "Que se passe-t-il après l'essai gratuit ?",
+      "a1": "Vous choisissez de vous abonner ou non. Sinon, votre compte est mis en pause et vos données restent en sécurité.",
+      "q2": "Comment payer ?",
+      "a2": "Par carte, chaque mois, sur notre site web.",
+      "q3": "Mes secrétaires paient-elles aussi ?",
+      "a3": "Non. Jusqu'à 3 secrétaires sont incluses dans votre formule.",
+      "q4": "Puis-je résilier ?",
+      "a4": "Oui, quand vous voulez, en contactant le support ou dans le portail de facturation lorsqu'il est disponible."
+    }
   }
 }
