@@ -13,7 +13,10 @@
     "appStoreComingSoon": "Скоро в App Store",
     "openApp": "Открыть приложение",
     "iosBeta": "Бета для iPhone – установка через TestFlight",
-    "iosBetaHint": "Нужно бесплатное приложение TestFlight от Apple"
+    "iosBetaHint": "Нужно бесплатное приложение TestFlight от Apple",
+    "signupCta": "Начать бесплатный период",
+    "haveAccount": "Уже есть аккаунт?",
+    "preferApp": "Удобнее в приложении? Скачайте:"
   },
   "highlights": {
     "h1": "Умное расписание",

@@ -13,7 +13,10 @@
     "appStoreComingSoon": "即將登上 App Store",
     "openApp": "開啟 App",
     "iosBeta": "iPhone 測試版 – 透過 TestFlight 安裝",
-    "iosBetaHint": "需要 Apple 免費的 TestFlight App"
+    "iosBetaHint": "需要 Apple 免費的 TestFlight App",
+    "signupCta": "開始免費試用",
+    "haveAccount": "已有帳戶？",
+    "preferApp": "偏好使用應用程式？在此下載："
   },
   "highlights": {
     "h1": "智慧排程",

@@ -13,7 +13,10 @@
     "appStoreComingSoon": "即将登陆 App Store",
     "openApp": "打开应用",
     "iosBeta": "iPhone 测试版 – 通过 TestFlight 安装",
-    "iosBetaHint": "需要 Apple 免费的 TestFlight 应用"
+    "iosBetaHint": "需要 Apple 免费的 TestFlight 应用",
+    "signupCta": "开始免费试用",
+    "haveAccount": "已有账户？",
+    "preferApp": "更喜欢用应用？在此下载："
   },
   "highlights": {
     "h1": "智能排程",

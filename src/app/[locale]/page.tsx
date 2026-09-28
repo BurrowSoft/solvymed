@@ -4,6 +4,7 @@ import { routing } from "@/i18n/routing";
 import { LanguageSelector } from "@burrowsoft/shared";
 import { AppDownloadButtons } from "@/components/AppDownloadButtons";
 import { LegalLinks } from "@/components/LegalLinks";
+import { SignupCta } from "@/components/SignupCta";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -125,18 +126,17 @@ export default async function HomePage({
               className="text-xs border-slate-200 bg-white shadow-sm"
               ariaLabel={t("footer.languageLabel")}
             />
+            {/* Phones: "Log in" moves under the hero's signup button. */}
             <Link
               href="/auth/login"
-              className="rounded-lg border-2 border-teal-600 px-3 py-2 text-sm font-bold text-teal-700 transition-colors hover:bg-teal-50 whitespace-nowrap sm:px-4"
+              className="hidden rounded-lg border-2 border-teal-600 px-4 py-2 text-sm font-bold text-teal-700 transition-colors hover:bg-teal-50 whitespace-nowrap sm:inline-block"
             >
               {t("auth.logIn")}
             </Link>
-            <a
-              href="#download"
-              className="hidden rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 whitespace-nowrap sm:inline-block"
-            >
-              {t("getApp")}
-            </a>
+            <SignupCta
+              label={t("hero.signupCta")}
+              className="max-w-[11rem] rounded-lg bg-teal-600 px-3 py-2 text-center text-sm font-bold leading-tight text-white shadow-sm transition-colors hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 sm:max-w-none sm:whitespace-nowrap sm:px-4"
+            />
           </div>
         </div>
       </header>
@@ -167,7 +167,19 @@ export default async function HomePage({
               {t("hero.subtitle")}
             </p>
 
-            <div id="download">
+            <SignupCta
+              label={t("hero.signupCta")}
+              className="inline-block rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:ring-offset-2 focus:ring-offset-teal-900"
+            />
+            <p className="mt-4 text-sm text-slate-300 sm:hidden">
+              {t("hero.haveAccount")}{" "}
+              <Link href="/auth/login" className="font-semibold text-teal-300 underline hover:text-teal-200">
+                {t("auth.logIn")}
+              </Link>
+            </p>
+
+            <div id="download" className="mt-12">
+              <p className="mb-4 text-sm font-medium text-slate-400">{t("hero.preferApp")}</p>
               <AppDownloadButtons />
             </div>
           </div>
@@ -222,6 +234,11 @@ export default async function HomePage({
               {t("cta.heading")}
             </h2>
             <p className="mb-10 text-slate-400">{t("cta.sub")}</p>
+            <SignupCta
+              label={t("hero.signupCta")}
+              className="inline-block rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400"
+            />
+            <p className="mb-4 mt-10 text-sm font-medium text-slate-400">{t("hero.preferApp")}</p>
             <AppDownloadButtons />
           </div>
         </section>

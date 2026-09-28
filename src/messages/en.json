@@ -13,7 +13,10 @@
     "appStoreComingSoon": "Coming soon to the App Store",
     "openApp": "Open App",
     "iosBeta": "iPhone beta – install with TestFlight",
-    "iosBetaHint": "Requires Apple's free TestFlight app"
+    "iosBetaHint": "Requires Apple's free TestFlight app",
+    "signupCta": "Start your free trial",
+    "haveAccount": "Already have an account?",
+    "preferApp": "Prefer the app? Download it:"
   },
   "highlights": {
     "h1": "Smart scheduling",

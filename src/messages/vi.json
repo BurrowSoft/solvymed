@@ -13,7 +13,10 @@
     "appStoreComingSoon": "Sắp có trên App Store",
     "openApp": "Mở ứng dụng",
     "iosBeta": "Bản beta cho iPhone – cài qua TestFlight",
-    "iosBetaHint": "Cần ứng dụng TestFlight miễn phí của Apple"
+    "iosBetaHint": "Cần ứng dụng TestFlight miễn phí của Apple",
+    "signupCta": "Bắt đầu dùng thử miễn phí",
+    "haveAccount": "Đã có tài khoản?",
+    "preferApp": "Thích dùng ứng dụng? Tải về:"
   },
   "highlights": {
     "h1": "Lịch hẹn thông minh",

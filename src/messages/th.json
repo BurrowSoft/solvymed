@@ -13,7 +13,10 @@
     "appStoreComingSoon": "เร็วๆ นี้บน App Store",
     "openApp": "เปิดแอป",
     "iosBeta": "เวอร์ชันเบต้าสำหรับ iPhone – ติดตั้งผ่าน TestFlight",
-    "iosBetaHint": "ต้องใช้แอป TestFlight ของ Apple (ฟรี)"
+    "iosBetaHint": "ต้องใช้แอป TestFlight ของ Apple (ฟรี)",
+    "signupCta": "เริ่มทดลองใช้ฟรี",
+    "haveAccount": "มีบัญชีอยู่แล้ว?",
+    "preferApp": "ใช้แอปสะดวกกว่า? ดาวน์โหลดที่นี่:"
   },
   "highlights": {
     "h1": "นัดหมายอัจฉริยะ",
