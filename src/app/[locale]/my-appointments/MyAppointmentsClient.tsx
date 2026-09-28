@@ -2,8 +2,9 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useState, useTransition, useCallback, useEffect, useRef } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
 import { acceptProposal, declineProposal, requestReschedule, getAvailableSlotsForDate } from "@/app/[locale]/dashboard/schedule/booking-actions";
 import type { PatientAppointment } from "./page";
 import { OnboardingCard } from "@/components/OnboardingCard";
@@ -17,18 +18,11 @@ const STATUS_COLOR: Record<string, string> = {
   cancelled: "bg-red-50 text-red-500 border-red-200",
 };
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr + "T00:00:00").toLocaleDateString(undefined, {
-    weekday: "short", month: "short", day: "numeric", year: "numeric",
-  });
+function formatDate(locale: string, dateStr: string) {
+  return formatDateLabel(locale, dateStr, { weekday: "short", month: "short", day: "numeric", year: "numeric" });
 }
 
-function formatTime(timeStr: string) {
-  const [h, m] = timeStr.split(":");
-  const d = new Date();
-  d.setHours(Number(h), Number(m));
-  return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
-}
+const formatTime = formatTimeLabel;
 
 const STATUS_KEY: Record<string, string> = {
   tentative: "statusTentative", proposal: "statusProposal", scheduled: "statusScheduled",
@@ -53,10 +47,8 @@ function buildDays() {
   return days;
 }
 
-function dayLabel(dateStr: string) {
-  return new Date(dateStr + "T12:00:00").toLocaleDateString(undefined, {
-    weekday: "short", month: "short", day: "numeric",
-  });
+function dayLabel(locale: string, dateStr: string) {
+  return formatDateLabel(locale, dateStr);
 }
 
 function RescheduleDialog({
@@ -69,6 +61,7 @@ function RescheduleDialog({
   onSuccess: () => void;
 }) {
   const t = useTranslations("myAppointments");
+  const locale = useLocale();
   const days = buildDays();
   const [selectedDate, setSelectedDate] = useState(days[0]);
   const [slots, setSlots] = useState<{ start: string; end: string }[]>([]);
@@ -125,7 +118,7 @@ function RescheduleDialog({
                   : "border-slate-200 text-slate-600 hover:border-slate-300"
               }`}
             >
-              {dayLabel(day)}
+              {dayLabel(locale, day)}
             </button>
           ))}
         </div>
@@ -184,16 +177,21 @@ function RescheduleDialog({
 function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutate: () => void }) {
   const t = useTranslations("myAppointments");
   const tSchedule = useTranslations("schedule");
+  const locale = useLocale();
   const [pending, startTransition] = useTransition();
   const [showReschedule, setShowReschedule] = useState(false);
+  // "Now" is read after mount: the server (UTC) and the browser can disagree
+  // on whether an appointment has ended, and that must not change the
+  // server-rendered markup (hydration mismatch).
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => setNow(new Date()), []);
 
   const color = STATUS_COLOR[appt.status] ?? "bg-slate-50 text-slate-500 border-slate-200";
   const label = STATUS_KEY[appt.status] ? tSchedule(STATUS_KEY[appt.status]) : appt.status;
   const isProfProposal = appt.status === "proposal" && appt.scheduled_by !== "patient" && (!!appt.proposed_date || appt.scheduled_by === "professional");
   const isPatientReschedule = appt.status === "proposal" && appt.scheduled_by === "patient";
-  const now = new Date();
   const apptEndDateTime = new Date(`${appt.date}T${appt.end_time}`);
-  const canReschedule = (appt.status === "confirmed" || appt.status === "scheduled") && !isPatientReschedule && apptEndDateTime > now;
+  const canReschedule = (appt.status === "confirmed" || appt.status === "scheduled") && !isPatientReschedule && now !== null && apptEndDateTime > now;
 
   const displayDate = (isProfProposal && appt.proposed_date) ? appt.proposed_date : appt.date;
   const displayStart = (isProfProposal && appt.proposed_start_time) ? appt.proposed_start_time : appt.start_time;
@@ -206,16 +204,16 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
         <div className="flex-1 min-w-0">
           <p className="font-bold text-slate-900">{appt.consultation_type}</p>
           <p className="text-sm text-slate-500 mt-0.5">
-            {formatDate(displayDate)} · {formatTime(displayStart)} – {formatTime(displayEnd)}
+            {formatDate(locale, displayDate)} · {formatTime(locale, displayStart)} – {formatTime(locale, displayEnd)}
           </p>
           {isProfProposal && appt.proposed_date && (
             <p className="text-xs text-slate-400 mt-0.5">
-              Originally: {formatDate(appt.date)} · {formatTime(appt.start_time)}
+              {t("originallyLabel", { date: formatDate(locale, appt.date), time: formatTime(locale, appt.start_time) })}
             </p>
           )}
           {isPatientReschedule && appt.proposed_date && (
             <p className="text-xs text-blue-500 mt-0.5 font-medium">
-              {t("rescheduleRequestedLabel", { date: formatDate(appt.proposed_date), time: formatTime(appt.proposed_start_time!) })}
+              {t("rescheduleRequestedLabel", { date: formatDate(locale, appt.proposed_date), time: formatTime(locale, appt.proposed_start_time!) })}
             </p>
           )}
           <p className="text-xs text-slate-400 mt-0.5 capitalize">{appt.type.replace("-", " ")}</p>

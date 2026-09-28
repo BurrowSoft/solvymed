@@ -12,7 +12,10 @@
     "appStoreComingSoon": "Sắp có trên App Store",
     "openApp": "Mở ứng dụng",
     "iosBeta": "Bản beta cho iPhone – cài qua TestFlight",
-    "iosBetaHint": "Cần ứng dụng TestFlight miễn phí của Apple"
+    "iosBetaHint": "Cần ứng dụng TestFlight miễn phí của Apple",
+    "signupCta": "Bắt đầu dùng thử miễn phí",
+    "haveAccount": "Đã có tài khoản?",
+    "preferApp": "Thích dùng ứng dụng? Tải về:"
   },
   "highlights": {
     "h1": "Lịch hẹn thông minh",
@@ -40,7 +43,7 @@
   },
   "cta": {
     "heading": "Sẵn sàng đơn giản hóa phòng khám của bạn chưa?",
-    "sub": "Ứng dụng đã sẵn sàng — tải xuống ngay và để phòng khám của bạn hoạt động trong vài phút. Trang web đang trên đường.",
+    "sub": "Bắt đầu dùng thử miễn phí trên web hoặc trong ứng dụng. Phòng khám của bạn sẵn sàng chỉ trong vài phút.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
   },
@@ -191,7 +194,8 @@
     "pastMidnightError": "Thời gian và thời lượng này sẽ vượt quá nửa đêm.",
     "patientArchivedError": "Hồ sơ này đã được lưu trữ. Hãy khôi phục trong mục Bệnh nhân để đặt lịch hẹn.",
     "moreCount": "+{n} nữa",
-    "slotBlockedConfirm": "Khung giờ này đã bị chặn ({start}–{end}). Vẫn đặt lịch?"
+    "slotBlockedConfirm": "Khung giờ này đã bị chặn ({start}–{end}). Vẫn đặt lịch?",
+    "requestedLabel": "Yêu cầu: {date} · {time}"
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -472,7 +476,9 @@
     "emptySubtitle": "Thêm phòng khám của bạn để bệnh nhân có thể tìm thấy bạn",
     "addFirst": "Thêm phòng khám đầu tiên của bạn",
     "nameRequiredError": "Tên phòng khám là bắt buộc.",
-    "genericError": "Đã xảy ra lỗi. Vui lòng thử lại."
+    "genericError": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "delete": "Xóa phòng khám",
+    "deleteConfirm": "Xóa “{name}”? Không thể hoàn tác thao tác này."
   },
   "consultType": {
     "consultation": "Tư vấn",
@@ -676,7 +682,8 @@
     "reschedulePending": "Đang chờ đổi lịch",
     "rescheduleRequestedLabel": "Yêu cầu đổi lịch: {date} · {time}",
     "rescheduleButton": "Yêu cầu đổi lịch",
-    "closeDialog": "Đóng"
+    "closeDialog": "Đóng",
+    "originallyLabel": "Ban đầu: {date} · {time}"
   },
   "nav": {
     "overview": "Tổng quan",
@@ -925,5 +932,28 @@
   },
   "legal": {
     "englishOnly": "Tài liệu này chỉ có bằng tiếng Anh và tiếng Bồ Đào Nha (Brazil). Bản tiếng Anh được hiển thị bên dưới."
+  },
+  "feedback": {
+    "title": "Gửi góp ý",
+    "subtitle": "Chúng tôi rất muốn biết bạn nghĩ gì về SolvyMed.",
+    "ratingLabel": "Bạn đánh giá SolvyMed thế nào?",
+    "ratingValue": "{n} trên 5",
+    "optional": "(không bắt buộc)",
+    "name": "Tên",
+    "namePlaceholder": "Tên của bạn",
+    "email": "Email",
+    "emailPlaceholder": "ban@email.com",
+    "message": "Nội dung",
+    "messagePlaceholder": "Hãy cho chúng tôi biết suy nghĩ của bạn, điều gì còn thiếu hoặc điều gì chúng tôi có thể làm tốt hơn…",
+    "send": "Gửi góp ý",
+    "sending": "Đang gửi…",
+    "thanksTitle": "Cảm ơn bạn!",
+    "thanksBody": "Góp ý của bạn giúp chúng tôi cải thiện SolvyMed cho mọi người.",
+    "backToHome": "Về trang chủ",
+    "errors": {
+      "email_required": "Vui lòng nhập email của bạn.",
+      "message_required": "Vui lòng viết nội dung.",
+      "failed": "Đã có lỗi xảy ra. Vui lòng thử lại."
+    }
   }
 }

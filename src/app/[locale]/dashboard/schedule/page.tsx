@@ -150,7 +150,7 @@ export default async function SchedulePage({
       {view === "list" && (
         <>
           <div className="mb-6 flex items-center gap-3">
-            <ScheduleNav currentDate={currentDate} currentView="list" />
+            <ScheduleNav currentDate={currentDate} currentView="list" today={today} />
           </div>
           {noAppointmentsEver ? (
             <div className="rounded-2xl border border-slate-100 bg-white p-12 text-center">
