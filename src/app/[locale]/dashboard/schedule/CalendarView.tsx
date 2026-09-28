@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -148,10 +148,21 @@ function TimeGrid({
   const byDay = new Map<string, CalendarAppt[]>();
   for (const day of days) byDay.set(day, appointments.filter(a => a.date === day));
 
-  const now = new Date();
-  const nowMins = now.getHours() * 60 + now.getMinutes();
-  const nowTop = ((nowMins - FIRST_H * 60) / 60) * HOUR_H;
-  const showNow = nowMins >= FIRST_H * 60 && nowMins <= LAST_H * 60;
+  // The "now" line is placed after mount (and every minute): read during
+  // render, the server's clock (UTC) and a browser in another zone disagree
+  // on whether it's shown at all, and hydration fails (React #418).
+  const [nowMins, setNowMins] = useState<number | null>(null);
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date();
+      setNowMins(now.getHours() * 60 + now.getMinutes());
+    };
+    tick();
+    const id = setInterval(tick, 60_000);
+    return () => clearInterval(id);
+  }, []);
+  const nowTop = nowMins === null ? 0 : ((nowMins - FIRST_H * 60) / 60) * HOUR_H;
+  const showNow = nowMins !== null && nowMins >= FIRST_H * 60 && nowMins <= LAST_H * 60;
 
   return (
     <div className="flex">
