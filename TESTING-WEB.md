@@ -6525,3 +6525,66 @@ never displayed.
 
 **CI at `ce28288`:** ✅. **Merge gate: 🟢 for `ce28288`**, once the
 reviewer is clean. This docs commit sits on top, after a master sync.
+
+## PR #101 (`chore/help-slim-messages`, base master) — every page moved into a `(site)` route group so /help ships only the messages it uses, 🟢 at `c89f9bc`
+
+This was UX's gate item before the apps link the Help Center. It's almost
+entirely file renames with no URL change. Who gets which messages is
+decided by three layouts:
+- `(site)/layout.tsx` gives all messages.
+- `help/layout.tsx` gives only `footer`.
+- the root layout gives `ConsentBanner` only `consent`.
+
+The only client components outside `(site)` (the help chrome's cookie
+button, and the banner) use exactly those namespaces.
+
+**Broad smoke test,** run on #101's Preview **and on master's Preview
+(`c7b657a`) as the baseline**, with the same spec
+(`scratchpad/pr101/opus-pr101.spec.ts`):
+- **Pages:** each checked for its HTTP status, page errors, console errors
+  mentioning intl/messages, and raw message keys on screen. That covers:
+  - **Logged out** in pt-BR and en: home, pricing, login, signup (including
+    the Paciente role card), forgot/reset password, invite-required,
+    pending-confirmation, not-connected, clinic-inactive, patient- and
+    professional-welcome, confirm, verify, privacy, terms, account/delete,
+    feedback, invite/join/join-secretary links, and help (normal, `?app=1`,
+    an article, K1 `?app=1`).
+  - **Logged out** in ja and ar: home, pricing, login, signup, privacy and
+    help.
+  - **Doctor** in pt-BR and en: dashboard; schedule (list/day/week/month
+    and the New appointment dialog); patients (list and the New patient
+    dialog); patient detail (all 4 tabs); payments; clinics; settings;
+    subscribe; feedback.
+  - **Secretary:** dashboard, schedule, patients (list and detail),
+    payments, settings.
+  - **Patient:** booking page (the procedure listed) and my-appointments.
+- **Result: every page returns 200. There are no page errors, no
+  missing-message console errors and no raw keys** on #101 or on master.
+
+The few spots where the two runs differed were re-run 3 times on both
+builds and behaved **identically**, so they were timing, not #101:
+- pending-confirmation logged out: both redirect to login.
+- The New appointment dialog in pt-BR: full text 3/3 on both.
+- Where the patient-welcome countdown lands.
+
+**Cookie banner** (`ConsentBanner`, now outside `(site)` with only
+`consent`):
+- A fresh visit shows it in pt-BR ("Usamos cookies necessários… Aceitar
+  tudo | Somente necessários | Escolher…"), the same as on master.
+- "Escolher…" shows the categories, and "Salvar escolhas" sets
+  `sm_consent` and closes it.
+- "Configurações de cookies" reopens it from home, **/help** and privacy.
+
+**Page source (the goal):**
+
+| Page | "Assinar com Cartão" | "Comece seu teste grátis" | "Assine para continuar" | Size (master → #101) |
+|---|---|---|---|---|
+| `/pt-BR/help?app=1` | **no** (was yes) | **no** (was yes) | **no** (was yes) | 94 KB → 42 KB |
+| `/pt-BR/help/k1?app=1` | **no** | **no** | **no** | 76 KB → 25 KB |
+| `/help?app=1` (en) | "Subscribe with Card" / "Start your free trial": **no** (were yes) | | | 92 KB → 41 KB |
+| `/pt-BR/help` (normal) | no | yes (the visible header CTA) | no | 101 KB → 50 KB |
+| `/pt-BR`, `/pt-BR/pricing` | yes | yes | yes | unchanged: `(site)` still gets everything |
+
+**CI at `c89f9bc`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`c89f9bc`.** The branch is up to date with master; this docs commit sits
+on top.
