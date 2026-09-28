@@ -112,7 +112,9 @@ describe('BookingRequestsPanel', () => {
   it('renders patient name, date and time for a tentative booking', () => {
     render(<BookingRequestsPanel bookings={[TENTATIVE_BOOKING]} />);
     expect(screen.getByText('Maria Silva')).toBeInTheDocument();
-    expect(screen.getByText(/2030-01-15/)).toBeInTheDocument();
+    // The locale's date label, never the raw ISO date.
+    expect(screen.getAllByText(/Tue, Jan 15/).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/2030-01-15/)).not.toBeInTheDocument();
     expect(screen.getByText('Initial Consultation')).toBeInTheDocument();
   });
 
@@ -187,7 +189,7 @@ describe('BookingRequestsPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Patient Information' }));
     await waitFor(() => expect(screen.getByText('maria@example.com')).toBeInTheDocument());
     expect(screen.getByText('11999887766')).toBeInTheDocument();
-    expect(screen.getByText('1990-05-15')).toBeInTheDocument();
+    expect(screen.getByText('05/15/1990')).toBeInTheDocument();
     expect(screen.getByText('123.456.789-00')).toBeInTheDocument();
   });
 
