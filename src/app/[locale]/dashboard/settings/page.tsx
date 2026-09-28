@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, SchedulingRulesForm, BlockedPatientsPanel, InviteCodeCard } from "./SettingsClient";
+import { Card, ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, SchedulingRulesForm, BlockedPatientsPanel, InviteCodeCard } from "./SettingsClient";
 import { TeamPanel, type TeamRow } from "./TeamPanel";
 import { SecretarySettings } from "./SecretarySettings";
 import { ShowSetupRow } from "./ShowSetupRow";
@@ -108,8 +108,18 @@ export default async function SettingsPage({
   }[];
   const teamRows = (Array.isArray(teamResult.data) ? teamResult.data : []) as TeamRow[];
 
-  // What the practice's country decides (currency, payment QR).
-  const practiceProfile = countryProfile(await getPracticeCountry(supabase, user.id, user.id));
+  // The practice country: what it decides (currency, payment QR), and its
+  // name in the page's language ('ZZ' = unknown).
+  const practiceCountry = await getPracticeCountry(supabase, user.id, user.id);
+  const practiceProfile = countryProfile(practiceCountry);
+  let countryName = t("practiceCountryOther");
+  if (practiceCountry !== "ZZ") {
+    try {
+      countryName = new Intl.DisplayNames([locale], { type: "region" }).of(practiceCountry) ?? practiceCountry;
+    } catch {
+      countryName = practiceCountry;
+    }
+  }
   // The PromptPay ID (Thai practices; the column is from migration 110, so
   // it's only read for them). If it can't be read, the field is left out:
   // an empty field would clear the stored ID on the next save.
@@ -137,6 +147,12 @@ export default async function SettingsPage({
         <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} />
 
         <TeamPanel rows={teamRows} loadFailed={!!teamResult.error} />
+
+        {/* The practice country (set at signup, support-only to change). */}
+        <Card title={t("practiceCountry")}>
+          <p className="text-sm font-semibold text-slate-900">{countryName}</p>
+          <p className="mt-1 text-xs text-slate-500">{t("practiceCountryHint")}</p>
+        </Card>
 
         <ClinicForm
           showPix={practiceProfile.paymentQr === "pix"}

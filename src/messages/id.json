@@ -456,7 +456,10 @@
     "promptPay": "ID PromptPay",
     "promptPayHint": "Nomor ponsel atau ID nasional / NPWP 13 digit yang terhubung ke PromptPay. Pasien memindai QR janji temu untuk membayar.",
     "promptPayInvalid": "Masukkan nomor ponsel 10 digit (diawali 0) atau ID nasional / NPWP 13 digit.",
-    "saveFailed": "Gagal menyimpan. Silakan coba lagi."
+    "saveFailed": "Gagal menyimpan. Silakan coba lagi.",
+    "practiceCountry": "Negara praktik",
+    "practiceCountryHint": "Menentukan mata uang, harga paket, identitas pasien, dan QR pembayaran. Untuk mengubahnya, hubungi support@solvymed.com.",
+    "practiceCountryOther": "Negara lain"
   },
   "clinics": {
     "title": "Klinik Saya",
@@ -585,7 +588,10 @@
       "joiningAsSecretary": "Mendaftar sebagai sekretaris melalui tautan undangan.",
       "secretaryNeedsInvite": "Sekretaris? Minta tautan undangan dari dokter Anda.",
       "secretaryEmailMismatch": "Email ini tidak cocok dengan undangan, atau undangan sudah tidak berlaku. Periksa email Anda atau minta tautan baru ke klinik.",
-      "consent": "Dengan membuat akun, Anda menyetujui <terms>Ketentuan Layanan</terms> dan <privacy>Kebijakan Privasi</privacy>."
+      "consent": "Dengan membuat akun, Anda menyetujui <terms>Ketentuan Layanan</terms> dan <privacy>Kebijakan Privasi</privacy>.",
+      "country": "Di mana praktik Anda?",
+      "countryOther": "Negara lain",
+      "countryHint": "Menentukan mata uang, harga paket, identitas pasien, dan QR pembayaran. Untuk mengubahnya nanti, hubungi dukungan."
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",

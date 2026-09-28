@@ -456,7 +456,10 @@
     "promptPay": "ID PromptPay",
     "promptPayHint": "Il tuo cellulare o ID nazionale / fiscale di 13 cifre collegato a PromptPay. I pazienti scansionano il QR dell'appuntamento per pagare.",
     "promptPayInvalid": "Inserisci un cellulare di 10 cifre (che inizia con 0) o un ID nazionale / fiscale di 13 cifre.",
-    "saveFailed": "Impossibile salvare. Riprova."
+    "saveFailed": "Impossibile salvare. Riprova.",
+    "practiceCountry": "Paese dello studio",
+    "practiceCountryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo, scrivi a support@solvymed.com.",
+    "practiceCountryOther": "Altro paese"
   },
   "clinics": {
     "title": "Le mie cliniche",
@@ -585,7 +588,10 @@
       "joiningAsSecretary": "Ti stai registrando in segreteria tramite link di invito.",
       "secretaryNeedsInvite": "Lavori in segreteria? Chiedi un link di invito al tuo studio.",
       "secretaryEmailMismatch": "Questa email non corrisponde all'invito, oppure l'invito non è più valido. Controlla l'email o chiedi un nuovo link allo studio.",
-      "consent": "Creando un account, accetti i <terms>Termini di servizio</terms> e l'<privacy>Informativa sulla privacy</privacy>."
+      "consent": "Creando un account, accetti i <terms>Termini di servizio</terms> e l'<privacy>Informativa sulla privacy</privacy>.",
+      "country": "Dove si trova il tuo studio?",
+      "countryOther": "Altro paese",
+      "countryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza."
     },
     "forgotPassword": {
       "title": "Password dimenticata?",

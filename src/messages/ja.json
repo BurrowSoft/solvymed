@@ -456,7 +456,10 @@
     "promptPay": "PromptPay ID",
     "promptPayHint": "PromptPay に登録した携帯電話番号、または13桁の国民ID / 納税者番号。患者は予約の QR をスキャンして支払います。",
     "promptPayInvalid": "10桁の携帯電話番号（0 から始まる）または13桁の国民ID / 納税者番号を入力してください。",
-    "saveFailed": "保存できませんでした。もう一度お試しください。"
+    "saveFailed": "保存できませんでした。もう一度お試しください。",
+    "practiceCountry": "クリニックの所在国",
+    "practiceCountryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。変更するには support@solvymed.com までご連絡ください。",
+    "practiceCountryOther": "その他の国"
   },
   "clinics": {
     "title": "マイクリニック",
@@ -585,7 +588,10 @@
       "joiningAsSecretary": "招待リンクから受付スタッフとして登録します。",
       "secretaryNeedsInvite": "受付スタッフの方は、医師に招待リンクを依頼してください。",
       "secretaryEmailMismatch": "このメールアドレスは招待と一致しないか、招待の有効期限が切れています。メールアドレスを確認するか、クリニックに新しいリンクを依頼してください。",
-      "consent": "アカウントを作成すると、<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。"
+      "consent": "アカウントを作成すると、<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。",
+      "country": "クリニックの所在国は？",
+      "countryOther": "その他の国",
+      "countryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。後で変更するにはサポートにご連絡ください。"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",
