@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -40,6 +40,11 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const [isPending, startTransition] = useTransition();
+  // "Now" is read after mount: the server (UTC) and a browser in another
+  // zone disagree on which requests are past, which would reorder and
+  // restyle the list between the server render and hydration (React #418).
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => setNow(new Date()), []);
   const [proposalId, setProposalId] = useState<string | null>(null);
   const [propDate, setPropDate] = useState("");
   const [propStart, setPropStart] = useState("");
@@ -69,11 +74,11 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
 
   if (!bookings.length) return null;
 
-  const now = new Date();
-  const todayStr = toLocalDateString(now);
-  const nowHHMM = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  const todayStr = now ? toLocalDateString(now) : "";
+  const nowHHMM = now ? `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}` : "";
 
   function isObsolete(b: Booking): boolean {
+    if (!now) return false;
     const isPatientProposal = b.status === "proposal" && b.scheduled_by === "patient";
     const checkDate = isPatientProposal && b.proposed_date ? b.proposed_date : b.date;
     const checkEnd  = isPatientProposal && b.proposed_end_time ? b.proposed_end_time : b.end_time;
