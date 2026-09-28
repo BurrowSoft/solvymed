@@ -303,21 +303,47 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const formData = new FormData(formRef.current!);
+  // Blocked time / outside the working hours: ONE question listing both,
+  // then book anyway on [Agendar] (UX 2026-09-28). The form data waits here.
+  const [ask, setAsk] = useState<{ text: string; formData: FormData } | null>(null);
+
+  function submit(formData: FormData) {
     setError("");
     startTransition(async () => {
-      let result = await createAppointment(formData);
-      // Booking over time the practice blocked: ask, then book anyway.
-      if (result?.code === "slot_blocked" && "blockStart" in result) {
-        if (!window.confirm(t("slotBlockedConfirm", { start: result.blockStart ?? "", end: result.blockEnd ?? "" }))) return;
-        formData.set("confirm_blocked", "1");
-        result = await createAppointment(formData);
+      const result = await createAppointment(formData);
+      if (result?.code === "needs_confirm" && "hours" in result) {
+        const parts: string[] = [];
+        if (result.blocked) parts.push(t("warnBlocked", result.blocked));
+        if (result.hours?.kind === "outside") parts.push(t("warnOutside", { start: result.hours.start, end: result.hours.end }));
+        if (result.hours?.kind === "day_off") parts.push(t("warnDayOff", { day: result.hours.day }));
+        parts.push(t("bookAnyway"));
+        setAsk({ text: parts.join(" "), formData });
+        return;
+      }
+      // Another appointment is there: a hard stop, saying with whom.
+      if (result?.code === "slot_overlap" && "overlap" in result) {
+        const o = result.overlap;
+        setError(o?.name
+          ? t("overlapHardMsg", { name: o.name, time: o.time, duration: o.durationMin ? `${o.durationMin} min` : "" })
+          : t("overlapGeneric"));
+        return;
       }
       if (result?.error) { setError(actionErrorMessage(t, result.code)); return; }
       setOpen(false);
     });
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    submit(new FormData(formRef.current!));
+  }
+
+  function bookAnyway() {
+    if (!ask) return;
+    const formData = ask.formData;
+    formData.set("confirm_warnings", "1");
+    setAsk(null);
+    submit(formData);
   }
 
   return (
@@ -411,6 +437,14 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
             </button>
           </div>
         </form>
+      </Dialog>
+
+      <Dialog open={ask !== null} onClose={() => setAsk(null)} title={t("checkTimeTitle")}>
+        <p role="alertdialog" className="text-sm text-slate-700">{ask?.text}</p>
+        <div className="flex gap-3 pt-5">
+          <button type="button" onClick={() => setAsk(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
+          <button type="button" onClick={bookAnyway} disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">{t("bookAnywayButton")}</button>
+        </div>
       </Dialog>
     </>
   );
