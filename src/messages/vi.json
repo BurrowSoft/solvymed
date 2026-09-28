@@ -1083,7 +1083,8 @@
     "secHomeTitle": "Một ngày của phòng khám",
     "secHomeText": "Lịch hẹn hôm nay và trong tuần của phòng khám.",
     "secScheduleText": "Xác nhận yêu cầu của bệnh nhân và sắp xếp lịch hẹn theo ngày, tuần hoặc tháng.",
-    "secPatientsText": "Đăng ký và cập nhật bệnh nhân. Hồ sơ bệnh án chỉ bác sĩ xem được."
+    "secPatientsText": "Đăng ký và cập nhật bệnh nhân. Hồ sơ bệnh án chỉ bác sĩ xem được.",
+    "inMenu": "Trong menu ☰, mục {section}: "
   },
   "news": {
     "title": "Có gì mới trong SolvyMed ✨",

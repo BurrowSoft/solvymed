@@ -1083,7 +1083,8 @@
     "secHomeTitle": "O dia da clínica",
     "secHomeText": "As consultas de hoje e da semana da clínica.",
     "secScheduleText": "Confirme os pedidos dos pacientes e organize as consultas por dia, semana ou mês.",
-    "secPatientsText": "Cadastre e atualize pacientes. Prontuários ficam só com o profissional."
+    "secPatientsText": "Cadastre e atualize pacientes. Prontuários ficam só com o profissional.",
+    "inMenu": "No menu ☰, em {section}: "
   },
   "news": {
     "title": "Novidades no SolvyMed ✨",

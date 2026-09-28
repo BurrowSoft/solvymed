@@ -1083,7 +1083,8 @@
     "secHomeTitle": "Der Tag der Praxis",
     "secHomeText": "Die heutigen Termine und die Woche der Praxis.",
     "secScheduleText": "Bestätigen Sie Anfragen von Patienten und organisieren Sie Termine nach Tag, Woche oder Monat.",
-    "secPatientsText": "Patienten anlegen und aktualisieren. Patientenakten bleiben bei der Ärztin bzw. dem Arzt."
+    "secPatientsText": "Patienten anlegen und aktualisieren. Patientenakten bleiben bei der Ärztin bzw. dem Arzt.",
+    "inMenu": "Im Menü ☰ unter {section}: "
   },
   "news": {
     "title": "Neu in SolvyMed ✨",

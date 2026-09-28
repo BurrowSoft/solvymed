@@ -1083,7 +1083,8 @@
     "secHomeTitle": "クリニックの一日",
     "secHomeText": "クリニックの今日と今週の予約。",
     "secScheduleText": "患者からのリクエストを確定し、日・週・月で予約を整理します。",
-    "secPatientsText": "患者の登録・更新ができます。カルテは医師のみが閲覧できます。"
+    "secPatientsText": "患者の登録・更新ができます。カルテは医師のみが閲覧できます。",
+    "inMenu": "メニュー ☰ の「{section}」："
   },
   "news": {
     "title": "SolvyMed の新機能 ✨",

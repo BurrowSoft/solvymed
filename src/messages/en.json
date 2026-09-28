@@ -1113,7 +1113,8 @@
     "secHomeTitle": "The clinic's day",
     "secHomeText": "Today's appointments and the week ahead for the clinic.",
     "secScheduleText": "Confirm patients' requests and organize appointments by day, week or month.",
-    "secPatientsText": "Register and update patients. Medical records stay with the professional."
+    "secPatientsText": "Register and update patients. Medical records stay with the professional.",
+    "inMenu": "In the menu ☰, under {section}: "
   },
   "news": {
     "title": "What's new in SolvyMed ✨",

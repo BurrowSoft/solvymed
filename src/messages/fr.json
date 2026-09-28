@@ -1083,7 +1083,8 @@
     "secHomeTitle": "La journée du cabinet",
     "secHomeText": "Les rendez-vous du jour et de la semaine du cabinet.",
     "secScheduleText": "Confirmez les demandes des patients et organisez les rendez-vous par jour, semaine ou mois.",
-    "secPatientsText": "Enregistrez et mettez à jour les patients. Les dossiers médicaux restent réservés au praticien."
+    "secPatientsText": "Enregistrez et mettez à jour les patients. Les dossiers médicaux restent réservés au praticien.",
+    "inMenu": "Dans le menu ☰, sous {section} : "
   },
   "news": {
     "title": "Nouveautés de SolvyMed ✨",

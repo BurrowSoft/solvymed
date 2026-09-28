@@ -1083,7 +1083,8 @@
     "secHomeTitle": "诊所的一天",
     "secHomeText": "诊所今天和本周的预约。",
     "secScheduleText": "确认患者的预约请求，并按日、周或月安排预约。",
-    "secPatientsText": "登记和更新患者信息。病历仅医生可见。"
+    "secPatientsText": "登记和更新患者信息。病历仅医生可见。",
+    "inMenu": "在菜单 ☰ 的“{section}”中："
   },
   "news": {
     "title": "SolvyMed 新功能 ✨",

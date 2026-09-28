@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import type { TourStep } from "@/lib/tour";
+import type { TourFallback, TourStep } from "@/lib/tour";
 
 // The tour's overlay (specs/walkthrough.md §3): the screen dimmed, the
 // current element in a rounded cut-out with a teal glow, and a card next to
@@ -33,11 +33,11 @@ export function isOnScreen(el: HTMLElement): boolean {
 // The element a step spotlights now, and the text to show with it: its own
 // target, else its fallback (e.g. the menu button when its sidebar link is
 // inside the closed phone drawer). Null = not a step now.
-function resolveStep(s: TourStep): { el: HTMLElement; textKey: string } | null {
+function resolveStep(s: TourStep): { el: HTMLElement; fallback: TourFallback | null } | null {
   const own = findTarget(s.target);
-  if (own) return { el: own, textKey: s.textKey };
+  if (own) return { el: own, fallback: null };
   const alt = s.fallback ? findTarget(s.fallback.target) : null;
-  return alt && s.fallback ? { el: alt, textKey: s.fallback.textKey } : null;
+  return alt && s.fallback ? { el: alt, fallback: s.fallback } : null;
 }
 
 function findTarget(target: string): HTMLElement | null {
@@ -80,6 +80,7 @@ export function TourOverlay({
 }) {
   const t = useTranslations("tour");
   const tSteps = useTranslations(stepsNamespace);
+  const tNav = useTranslations("nav");
   const router = useRouter();
   const pathname = usePathname();
   // Steps on the page the tour starts on whose element isn't on screen
@@ -98,8 +99,9 @@ export function TourOverlay({
   const targetRef = useRef<HTMLElement | null>(null);
   // Whether any step has actually been shown (else nothing counts as seen).
   const shownAny = useRef(false);
-  // The text of the spotlighted element (a step's fallback text, if used).
-  const [textKey, setTextKey] = useState<string | null>(null);
+  // The fallback in use for the spotlighted element, if any: its own text,
+  // or the drawer line before the step's text.
+  const [usedFallback, setUsedFallback] = useState<TourFallback | null>(null);
   // Pages whose steps were already filtered (the starting page, up front).
   const checkedPaths = useRef(new Set<string>(
     typeof window === "undefined" ? [] : initialSteps.filter((s) => `${prefix}${s.path}` === pathname).map((s) => s.path),
@@ -125,7 +127,7 @@ export function TourOverlay({
   useEffect(() => {
     if (!step) return;
     setRect(null);
-    setTextKey(null);
+    setUsedFallback(null);
     targetRef.current = null;
     const wanted = `${prefix}${step.path}`;
     if (pathname !== wanted) {
@@ -139,7 +141,7 @@ export function TourOverlay({
       const found = resolveStep(step);
       const el = found?.el ?? null;
       if (found && el) {
-        setTextKey(found.textKey);
+        setUsedFallback(found.fallback);
         // First time on this page (e.g. a replay started in Settings, then
         // came to the dashboard): the page is rendered now, so the later
         // steps on it whose element isn't on screen are dropped at once and
@@ -221,7 +223,11 @@ export function TourOverlay({
   const pos = rect ? cardPosition(rect, cardH) : null;
   const title = tSteps(step.titleKey);
   // The fallback's text when the step's own target isn't on screen.
-  const text = tSteps(textKey ?? step.textKey);
+  const text = !usedFallback
+    ? tSteps(step.textKey)
+    : usedFallback.menuSection
+      ? `${t("inMenu", { section: tNav(usedFallback.menuSection) })}${tSteps(step.textKey)}`
+      : tSteps(usedFallback.textKey!);
 
   return createPortal(
     <div className="fixed inset-0 z-[100]" aria-hidden={false}>

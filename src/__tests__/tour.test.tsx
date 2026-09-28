@@ -29,6 +29,13 @@ describe("tour definitions (specs/walkthrough.md)", () => {
     expect(title(null)).toBe("paymentsTitle");
   });
 
+  it("sidebar steps fall back to the menu button on narrow screens (doctor and secretary)", () => {
+    const withMenu = (role: "professional" | "secretary") =>
+      tourSteps(role, "pix").filter((s) => s.fallback?.target === "nav-menu").map((s) => `${s.id}:${s.fallback?.menuSection}`);
+    expect(withMenu("professional")).toEqual(["schedule:schedule", "patients:patients", "payments:payments", "settings:settings"]);
+    expect(withMenu("secretary")).toEqual(["schedule:schedule", "patients:patients"]);
+  });
+
   it("secretary: 4 steps, no SolvyAI, no settings/invite/payments", () => {
     expect(tourSteps("secretary", null).map((s) => s.id)).toEqual(["home", "new-appointment", "schedule", "patients"]);
   });
@@ -132,6 +139,17 @@ describe("TourOverlay", () => {
     expect(screen.getByText("menuText")).toBeInTheDocument();
     fireEvent.click(screen.getByText("finish"));
     expect(onClose).toHaveBeenCalledWith("completed", 0);
+    vi.useRealTimers();
+  });
+
+  it("a sidebar step on a narrow screen: the menu button, with the drawer line before the step's text (UX)", async () => {
+    vi.useFakeTimers();
+    addTarget("nav-menu");
+    const onClose = vi.fn();
+    render(<TourOverlay steps={[{ ...steps[0], target: "nav-schedule", fallback: { target: "nav-menu", menuSection: "schedule" } }]} prefix="" onClose={onClose} />);
+    await act(async () => { vi.advanceTimersByTime(400); });
+    expect(screen.getByText('inMenu:{"section":"schedule"}aText')).toBeInTheDocument();
+    expect(screen.getByText("aTitle")).toBeInTheDocument();
     vi.useRealTimers();
   });
 

@@ -22,8 +22,20 @@ export type TourStep = {
   // phone drawer), spotlight this instead with this text (e.g. the menu
   // button: "Open the menu → Settings → …"). Without one, the step is
   // dropped.
-  fallback?: { target: string; textKey: string };
+  fallback?: TourFallback;
 };
+
+// textKey: the fallback's own text. menuSection: keep the step's text and
+// prefix "In the menu ☰, under <section>: " (the sidebar's label; UX).
+export type TourFallback =
+  | { target: string; textKey: string; menuSection?: never }
+  | { target: string; menuSection: MenuSection; textKey?: never };
+
+export type MenuSection = "schedule" | "patients" | "payments" | "settings";
+
+// A sidebar step: on narrow screens its link is inside the closed drawer,
+// so the menu button is spotlighted with the drawer line.
+const inMenu = (section: MenuSection): TourFallback => ({ target: MENU_TARGET, menuSection: section });
 
 // The menu button that opens the sidebar drawer on narrow screens.
 export const MENU_TARGET = "nav-menu";
@@ -35,8 +47,8 @@ export function tourSteps(role: TourRole, paymentQr: PaymentQr): TourStep[] {
     return [
       { id: "home", target: "home", titleKey: "secHomeTitle", textKey: "secHomeText", path: HOME },
       { id: "new-appointment", target: "new-appointment", titleKey: "newApptTitle", textKey: "newApptText", path: HOME },
-      { id: "schedule", target: "nav-schedule", titleKey: "scheduleTitle", textKey: "secScheduleText", path: HOME },
-      { id: "patients", target: "nav-patients", titleKey: "patientsTitle", textKey: "secPatientsText", path: HOME },
+      { id: "schedule", target: "nav-schedule", titleKey: "scheduleTitle", textKey: "secScheduleText", path: HOME, fallback: inMenu("schedule") },
+      { id: "patients", target: "nav-patients", titleKey: "patientsTitle", textKey: "secPatientsText", path: HOME, fallback: inMenu("patients") },
     ];
   }
   const payments = paymentQr === "pix" ? "paymentsPixTitle" : paymentQr === "promptpay" ? "paymentsPromptPayTitle" : "paymentsTitle";
@@ -45,14 +57,14 @@ export function tourSteps(role: TourRole, paymentQr: PaymentQr): TourStep[] {
     // SolvyAI: shown once it exists (liveFeatures.solvyAi).
     { id: "solvyai", target: "solvyai", titleKey: "solvyaiTitle", textKey: "solvyaiText", path: HOME, live: liveFeatures.solvyAi },
     { id: "new-appointment", target: "new-appointment", titleKey: "newApptTitle", textKey: "newApptText", path: HOME },
-    { id: "schedule", target: "nav-schedule", titleKey: "scheduleTitle", textKey: "scheduleText", path: HOME },
-    { id: "patients", target: "nav-patients", titleKey: "patientsTitle", textKey: "patientsText", path: HOME },
-    { id: "payments", target: "nav-payments", titleKey: payments, textKey: "paymentsText", path: HOME },
+    { id: "schedule", target: "nav-schedule", titleKey: "scheduleTitle", textKey: "scheduleText", path: HOME, fallback: inMenu("schedule") },
+    { id: "patients", target: "nav-patients", titleKey: "patientsTitle", textKey: "patientsText", path: HOME, fallback: inMenu("patients") },
+    { id: "payments", target: "nav-payments", titleKey: payments, textKey: "paymentsText", path: HOME, fallback: inMenu("payments") },
     { id: "trial", target: "trial-chip", titleKey: "trialTitle", textKey: "trialText", path: HOME },
     { id: "invite", target: "invite-link", titleKey: "inviteTitle", textKey: "inviteText", path: "/dashboard/settings" },
-    { id: "settings", target: "nav-settings", titleKey: "settingsTitle", textKey: "settingsText", path: "/dashboard/settings" },
+    { id: "settings", target: "nav-settings", titleKey: "settingsTitle", textKey: "settingsText", path: "/dashboard/settings", fallback: inMenu("settings") },
   ] as (TourStep & { live?: boolean })[]).filter((s) => s.live !== false);
-  return steps.map((s) => ({ id: s.id, target: s.target, titleKey: s.titleKey, textKey: s.textKey, path: s.path }));
+  return steps.map(({ id, target, titleKey, textKey, path, fallback }) => ({ id, target, titleKey, textKey, path, fallback }));
 }
 
 // The steps whose element is on screen now (the count adjusts).

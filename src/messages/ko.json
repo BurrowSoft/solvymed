@@ -1083,7 +1083,8 @@
     "secHomeTitle": "클리닉의 하루",
     "secHomeText": "클리닉의 오늘과 이번 주 예약.",
     "secScheduleText": "환자 요청을 확정하고 예약을 일·주·월로 정리합니다.",
-    "secPatientsText": "환자를 등록하고 수정합니다. 진료 기록은 의사만 볼 수 있습니다."
+    "secPatientsText": "환자를 등록하고 수정합니다. 진료 기록은 의사만 볼 수 있습니다.",
+    "inMenu": "메뉴 ☰의 {section}: "
   },
   "news": {
     "title": "SolvyMed의 새 소식 ✨",

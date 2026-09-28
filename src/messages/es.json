@@ -1083,7 +1083,8 @@
     "secHomeTitle": "El día de la clínica",
     "secHomeText": "Las citas de hoy y de la semana de la clínica.",
     "secScheduleText": "Confirma las solicitudes de los pacientes y organiza las citas por día, semana o mes.",
-    "secPatientsText": "Registra y actualiza pacientes. Las historias clínicas quedan solo con el profesional."
+    "secPatientsText": "Registra y actualiza pacientes. Las historias clínicas quedan solo con el profesional.",
+    "inMenu": "En el menú ☰, en {section}: "
   },
   "news": {
     "title": "Novedades en SolvyMed ✨",
