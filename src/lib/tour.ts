@@ -18,7 +18,15 @@ export type TourStep = {
   textKey: string;
   // The page the step is on (the tour navigates there first).
   path: string;
+  // When the target isn't on screen (a sidebar link inside the closed
+  // phone drawer), spotlight this instead with this text (e.g. the menu
+  // button: "Open the menu → Settings → …"). Without one, the step is
+  // dropped.
+  fallback?: { target: string; textKey: string };
 };
+
+// The menu button that opens the sidebar drawer on narrow screens.
+export const MENU_TARGET = "nav-menu";
 
 const HOME = "/dashboard";
 

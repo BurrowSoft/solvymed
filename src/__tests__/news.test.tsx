@@ -39,6 +39,16 @@ describe("the 1.4.0 announcement (walkthrough §4a)", () => {
   });
 });
 
+// jsdom has no layout: give a target a size, an offsetParent and a place on screen.
+function addTarget(name: string) {
+  const el = document.createElement("button");
+  el.setAttribute("data-tour", name);
+  el.getBoundingClientRect = () => ({ top: 10, left: 10, width: 40, height: 40, right: 50, bottom: 50, x: 10, y: 10, toJSON: () => ({}) });
+  Object.defineProperty(el, "offsetParent", { get: () => document.body });
+  el.scrollIntoView = () => {};
+  document.body.appendChild(el);
+}
+
 function renderProvider(props: Partial<Parameters<typeof TourProvider>[0]> = {}) {
   return render(
     <TourProvider role="professional" paymentQr="pix" prefix="" entry={null} newsPending {...props}>
@@ -70,13 +80,37 @@ describe("the Novidades popup", () => {
     vi.useRealTimers();
   });
 
-  it("See what's new starts the news tour and saves it as started", async () => {
+  it("See what's new: on a narrow screen the step spotlights the menu button with drawer-aware text", async () => {
     vi.useFakeTimers();
+    addTarget("nav-menu"); // the sidebar link is in the closed drawer; only the menu button is on screen
     renderProvider();
     await act(async () => { vi.advanceTimersByTime(900); });
     fireEvent.click(screen.getByText("news.see"));
+    await act(async () => { vi.advanceTimersByTime(400); });
     expect(screen.queryByText("news.title")).not.toBeInTheDocument();
+    expect(screen.getByText("news.r140.tourSpotMenu")).toBeInTheDocument();
     expect(save).toHaveBeenCalledWith("started", 0, "news:1.4.0");
+    vi.useRealTimers();
+  });
+
+  it("with the sidebar link on screen, its own text", async () => {
+    vi.useFakeTimers();
+    addTarget("nav-settings");
+    renderProvider();
+    await act(async () => { vi.advanceTimersByTime(900); });
+    fireEvent.click(screen.getByText("news.see"));
+    await act(async () => { vi.advanceTimersByTime(400); });
+    expect(screen.getByText("news.r140.tourSpot")).toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
+  it("if no step can be shown at all, the release is NOT marked as seen (UX)", async () => {
+    vi.useFakeTimers();
+    renderProvider(); // no targets on screen at all
+    await act(async () => { vi.advanceTimersByTime(900); });
+    fireEvent.click(screen.getByText("news.see"));
+    await act(async () => { vi.advanceTimersByTime(3500); });
+    expect(save).not.toHaveBeenCalled();
     vi.useRealTimers();
   });
 

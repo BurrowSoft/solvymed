@@ -30,6 +30,16 @@ export function isOnScreen(el: HTMLElement): boolean {
   return r.width > 0 && r.height > 0 && el.offsetParent !== null && r.right > 0 && r.left < window.innerWidth;
 }
 
+// The element a step spotlights now, and the text to show with it: its own
+// target, else its fallback (e.g. the menu button when its sidebar link is
+// inside the closed phone drawer). Null = not a step now.
+function resolveStep(s: TourStep): { el: HTMLElement; textKey: string } | null {
+  const own = findTarget(s.target);
+  if (own) return { el: own, textKey: s.textKey };
+  const alt = s.fallback ? findTarget(s.fallback.target) : null;
+  return alt && s.fallback ? { el: alt, textKey: s.fallback.textKey } : null;
+}
+
 function findTarget(target: string): HTMLElement | null {
   for (const el of document.querySelectorAll<HTMLElement>(`[data-tour="${target}"]`)) {
     if (isOnScreen(el)) return el;
@@ -64,7 +74,9 @@ export function TourOverlay({
   prefix: string;
   startAt?: number;
   onStep?: (index: number, step: TourStep) => void;
-  onClose: (result: "completed" | "skipped", index: number) => void;
+  // "none": no step could be shown at all (nothing on screen), so nothing
+  // should be recorded as seen.
+  onClose: (result: "completed" | "skipped" | "none", index: number) => void;
 }) {
   const t = useTranslations("tour");
   const tSteps = useTranslations(stepsNamespace);
@@ -76,7 +88,7 @@ export function TourOverlay({
   const [steps, setSteps] = useState(() =>
     typeof document === "undefined"
       ? initialSteps
-      : initialSteps.filter((s) => `${prefix}${s.path}` !== pathname || findTarget(s.target) !== null),
+      : initialSteps.filter((s) => `${prefix}${s.path}` !== pathname || resolveStep(s) !== null),
   );
   const [index, setIndex] = useState(Math.min(startAt, initialSteps.length - 1));
   const [rect, setRect] = useState<Rect | null>(null);
@@ -84,6 +96,10 @@ export function TourOverlay({
   const [cardH, setCardH] = useState(200);
   const cardRef = useRef<HTMLDivElement>(null);
   const targetRef = useRef<HTMLElement | null>(null);
+  // Whether any step has actually been shown (else nothing counts as seen).
+  const shownAny = useRef(false);
+  // The text of the spotlighted element (a step's fallback text, if used).
+  const [textKey, setTextKey] = useState<string | null>(null);
   // Pages whose steps were already filtered (the starting page, up front).
   const checkedPaths = useRef(new Set<string>(
     typeof window === "undefined" ? [] : initialSteps.filter((s) => `${prefix}${s.path}` === pathname).map((s) => s.path),
@@ -109,6 +125,7 @@ export function TourOverlay({
   useEffect(() => {
     if (!step) return;
     setRect(null);
+    setTextKey(null);
     targetRef.current = null;
     const wanted = `${prefix}${step.path}`;
     if (pathname !== wanted) {
@@ -119,20 +136,22 @@ export function TourOverlay({
     const started = Date.now();
     const tick = () => {
       if (cancelled) return;
-      const el = findTarget(step.target);
-      if (el) {
+      const found = resolveStep(step);
+      const el = found?.el ?? null;
+      if (found && el) {
+        setTextKey(found.textKey);
         // First time on this page (e.g. a replay started in Settings, then
         // came to the dashboard): the page is rendered now, so the later
         // steps on it whose element isn't on screen are dropped at once and
         // the count is right from here, not only as each is reached.
         if (!checkedPaths.current.has(step.path)) {
           checkedPaths.current.add(step.path);
-          setSteps((all) => all.filter((s, i) => i <= index || s.path !== step.path || findTarget(s.target) !== null));
+          setSteps((all) => all.filter((s, i) => i <= index || s.path !== step.path || resolveStep(s) !== null));
         }
         targetRef.current = el;
         el.scrollIntoView({ block: "center", inline: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
         // Measure after the scroll settles.
-        setTimeout(() => { if (!cancelled) { measure(); onStep?.(index, step); } }, reduceMotion ? 0 : 250);
+        setTimeout(() => { if (!cancelled) { measure(); shownAny.current = true; onStep?.(index, step); } }, reduceMotion ? 0 : 250);
         return;
       }
       if (Date.now() - started > FIND_TIMEOUT_MS) {
@@ -147,10 +166,11 @@ export function TourOverlay({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step?.id, pathname]);
 
-  // Every step dropped, or the last one dropped while on it: done.
+  // Every step dropped, or the last one dropped while on it: done ("none"
+  // if not a single step was shown).
   useEffect(() => {
-    if (steps.length === 0) onClose("completed", 0);
-    else if (index >= steps.length) onClose("completed", steps.length - 1);
+    if (steps.length === 0) onClose(shownAny.current ? "completed" : "none", 0);
+    else if (index >= steps.length) onClose(shownAny.current ? "completed" : "none", steps.length - 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [steps.length]);
 
@@ -200,7 +220,8 @@ export function TourOverlay({
   };
   const pos = rect ? cardPosition(rect, cardH) : null;
   const title = tSteps(step.titleKey);
-  const text = tSteps(step.textKey);
+  // The fallback's text when the step's own target isn't on screen.
+  const text = tSteps(textKey ?? step.textKey);
 
   return createPortal(
     <div className="fixed inset-0 z-[100]" aria-hidden={false}>

@@ -1098,7 +1098,8 @@
       "solvyaiSpot": "Tippen Sie hier, wann immer Sie möchten. Probieren Sie: „Was habe ich morgen?“",
       "tourTitle": "Geführte Tour",
       "tourLine": "Ein kurzer Rundgang durch die wichtigsten Funktionen. Jederzeit wiederholbar.",
-      "tourSpot": "Unter Einstellungen → Tour erneut ansehen."
+      "tourSpot": "Unter Einstellungen → Tour erneut ansehen.",
+      "tourSpotMenu": "Öffnen Sie das Menü → Einstellungen → Tour erneut ansehen."
     }
   }
 }

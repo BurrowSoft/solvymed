@@ -123,6 +123,18 @@ describe("TourOverlay", () => {
     vi.useRealTimers();
   });
 
+  it("a step whose target is off-screen uses its fallback (the menu button) with the fallback text", async () => {
+    vi.useFakeTimers();
+    addTarget("menu");
+    const onClose = vi.fn();
+    render(<TourOverlay steps={[{ ...steps[0], target: "missing", fallback: { target: "menu", textKey: "menuText" } }]} prefix="" onClose={onClose} />);
+    await act(async () => { vi.advanceTimersByTime(400); });
+    expect(screen.getByText("menuText")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("finish"));
+    expect(onClose).toHaveBeenCalledWith("completed", 0);
+    vi.useRealTimers();
+  });
+
   it("a step on another page whose element never shows up is dropped when reached", async () => {
     vi.useFakeTimers();
     addTarget("a");
@@ -148,9 +160,10 @@ describe("TourOverlay", () => {
     const onClose = vi.fn();
     render(<TourOverlay steps={[steps[0]]} prefix="" onClose={onClose} />);
     await act(async () => { vi.advanceTimersByTime(3500); });
-    // Dropped: the only step is gone, so the tour ends without spotlighting it.
+    // Dropped: the only step is gone, so the tour ends without spotlighting
+    // anything, and says so ("none": nothing may be recorded as seen).
     expect(screen.queryByText("aTitle")).not.toBeInTheDocument();
-    expect(onClose).toHaveBeenCalledWith("completed", 0);
+    expect(onClose).toHaveBeenCalledWith("none", 0);
     vi.useRealTimers();
   });
 

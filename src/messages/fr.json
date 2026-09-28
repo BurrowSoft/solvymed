@@ -1098,7 +1098,8 @@
       "solvyaiSpot": "Touchez ici quand vous voulez. Essayez : « Qu'est-ce que j'ai demain ? »",
       "tourTitle": "Visite guidée",
       "tourLine": "Un tour rapide des fonctions principales. Revoyez-la quand vous voulez.",
-      "tourSpot": "Dans Paramètres → Revoir le tour."
+      "tourSpot": "Dans Paramètres → Revoir le tour.",
+      "tourSpotMenu": "Ouvrez le menu → Paramètres → Revoir le tour."
     }
   }
 }

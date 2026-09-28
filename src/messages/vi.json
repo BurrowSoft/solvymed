@@ -1098,7 +1098,8 @@
       "solvyaiSpot": "Chạm vào đây bất cứ lúc nào. Thử: \"Ngày mai tôi có lịch gì?\"",
       "tourTitle": "Hướng dẫn nhanh",
       "tourLine": "Một vòng nhanh qua các tính năng chính. Xem lại bất cứ lúc nào.",
-      "tourSpot": "Trong Cài đặt → Xem lại hướng dẫn."
+      "tourSpot": "Trong Cài đặt → Xem lại hướng dẫn.",
+      "tourSpotMenu": "Mở menu → Cài đặt → Xem lại hướng dẫn."
     }
   }
 }

@@ -1098,7 +1098,8 @@
       "solvyaiSpot": "Toque aqui quando quiser. Experimente: \"O que tenho amanhã?\"",
       "tourTitle": "Tour guiado",
       "tourLine": "Um passeio rápido pelas principais funções. Reveja quando quiser.",
-      "tourSpot": "Em Configurações → Rever o tour."
+      "tourSpot": "Em Configurações → Rever o tour.",
+      "tourSpotMenu": "Abra o menu → Configurações → Rever o tour."
     }
   }
 }

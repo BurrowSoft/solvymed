@@ -1,5 +1,5 @@
 import { liveFeatures } from "./liveFeatures";
-import type { TourRole, TourStep } from "./tour";
+import { MENU_TARGET, type TourRole, type TourStep } from "./tour";
 
 // The "Novidades" announcements (specs/walkthrough.md §4a): one per release,
 // shown once per account (migration 113: tour "news:<release>"), each item a
@@ -31,6 +31,9 @@ export const NEWS: NewsRelease[] = [
       {
         id: "tour", target: "nav-settings", path: "/dashboard",
         titleKey: "r140.tourTitle", lineKey: "r140.tourLine", textKey: "r140.tourSpot",
+        // Narrow screens: the Settings link is inside the closed drawer, so
+        // the menu button is spotlighted with drawer-aware text (UX).
+        fallback: { target: MENU_TARGET, textKey: "r140.tourSpotMenu" },
         roles: ["professional", "secretary"], live: true,
       },
     ],
@@ -52,5 +55,5 @@ export function newsItemsFor(release: NewsRelease, role: TourRole): NewsItem[] {
 // As tour steps (the same overlay as the main tour; the card shows the
 // item's title and its spotlight text).
 export function newsSteps(release: NewsRelease, role: TourRole): TourStep[] {
-  return newsItemsFor(release, role).map(({ id, target, titleKey, textKey, path }) => ({ id, target, titleKey, textKey, path }));
+  return newsItemsFor(release, role).map(({ id, target, titleKey, textKey, path, fallback }) => ({ id, target, titleKey, textKey, path, fallback }));
 }

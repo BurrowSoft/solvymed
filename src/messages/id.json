@@ -1098,7 +1098,8 @@
       "solvyaiSpot": "Ketuk di sini kapan saja. Coba: \"Apa jadwal saya besok?\"",
       "tourTitle": "Tur panduan",
       "tourLine": "Tur singkat ke fitur-fitur utama. Putar ulang kapan saja.",
-      "tourSpot": "Di Pengaturan → Lihat tur lagi."
+      "tourSpot": "Di Pengaturan → Lihat tur lagi.",
+      "tourSpotMenu": "Buka menu → Pengaturan → Lihat tur lagi."
     }
   }
 }

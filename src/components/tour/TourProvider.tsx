@@ -57,7 +57,7 @@ export function TourProvider({
   const [active, setActive] = useState<{ startAt: number; replay: boolean } | null>(null);
   const newsItems = useMemo(() => newsItemsFor(CURRENT_NEWS, role), [role]);
   const [newsPopup, setNewsPopup] = useState(false);
-  const [newsTour, setNewsTour] = useState<{ release: string; steps: TourStep[] } | null>(null);
+  const [newsTour, setNewsTour] = useState<{ release: string; steps: TourStep[]; replay: boolean } | null>(null);
   // Not yet shown or answered in this visit.
   const newsWaiting = useRef(newsPending && newsItems.length > 0);
   // Testing (flag on only): /dashboard?news=1 opens the popup even when this
@@ -94,8 +94,10 @@ export function TourProvider({
     void saveTourProgress("started", index);
   }, [role]);
 
-  const onClose = useCallback((result: "completed" | "skipped", index: number) => {
+  const onClose = useCallback((result: "completed" | "skipped" | "none", index: number) => {
     setActive(null);
+    // Nothing could be shown (nothing on screen): nothing is recorded.
+    if (result === "none") return;
     track(result === "completed" ? TOUR_EVENTS.completed : TOUR_EVENTS.skipped, { role, step: index + 1 });
     void saveTourProgress(result, index);
     // Doctors land on the setup checklist afterwards (as in 1.3.0).
@@ -123,13 +125,17 @@ export function TourProvider({
     if (!found) return;
     const s = newsSteps(found, role);
     setNewsPopup(false);
-    if (!s.length) {
-      if (!replay) void saveTourProgress("completed", 0, newsTourId(release));
-      return;
-    }
-    setNewsTour({ release, steps: s });
-    if (!replay) void saveTourProgress("started", 0, newsTourId(release));
+    // No items for this role: nothing to show, nothing recorded.
+    if (!s.length) return;
+    // "started" is saved only once a step is actually shown (onNewsStep);
+    // a replay saves nothing (the release was already seen).
+    setNewsTour({ release, steps: s, replay });
   }, [role]);
+
+  // The first news step actually on screen: the release counts as started.
+  const onNewsStep = useCallback((index: number) => {
+    if (index === 0 && newsTour && !newsTour.replay) void saveTourProgress("started", 0, newsTourId(newsTour.release));
+  }, [newsTour]);
 
   const closeNewsPopup = useCallback(() => {
     setNewsPopup(false);
@@ -137,9 +143,12 @@ export function TourProvider({
     void saveTourProgress("skipped", 0, newsTourId(CURRENT_NEWS.release));
   }, [role]);
 
-  const onNewsClose = useCallback((result: "completed" | "skipped", index: number) => {
+  const onNewsClose = useCallback((result: "completed" | "skipped" | "none", index: number) => {
     const release = newsTour?.release ?? CURRENT_NEWS.release;
     setNewsTour(null);
+    // Not a single item could be shown: the release is NOT marked as seen
+    // (UX), so the popup comes back on a later visit.
+    if (result === "none" || newsTour?.replay) return;
     track(result === "completed" ? "news_tour_completed" : "news_tour_skipped", { release, role, step: index + 1 });
     void saveTourProgress(result, index, newsTourId(release));
   }, [newsTour, role]);
@@ -153,7 +162,7 @@ export function TourProvider({
         <TourOverlay steps={steps} prefix={prefix} startAt={active.startAt} onStep={onStep} onClose={onClose} />
       )}
       {newsTour && !active && (
-        <TourOverlay steps={newsTour.steps} prefix={prefix} stepsNamespace="news" onClose={onNewsClose} />
+        <TourOverlay steps={newsTour.steps} prefix={prefix} stepsNamespace="news" onStep={onNewsStep} onClose={onNewsClose} />
       )}
       {newsPopup && !active && !newsTour && (
         <NewsPopup items={newsItems} onSee={() => startNews(CURRENT_NEWS.release)} onLater={closeNewsPopup} />
