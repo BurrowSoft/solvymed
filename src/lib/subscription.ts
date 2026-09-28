@@ -1,3 +1,5 @@
+import { countryProfile } from './country';
+
 export interface EffectiveSub {
   subscription_status: string;
   trial_ends_at: string | null;
@@ -27,11 +29,17 @@ export function trialDaysRemaining(sub: EffectiveSub | null): number | null {
 }
 
 /**
- * BRL pricing for Brazilian locale, USD for everyone else. Single source for
- * both the displayed price and what Stripe charges (unitAmount, in the
- * currency's minor unit), so the two can't drift apart.
+ * The monthly price by the PRACTICE's country (Sprint TH, TH-5), never the
+ * UI language: Brazil R$ 89, Thailand ฿690, anywhere else US$ 19. Single
+ * source for both the displayed price and what Stripe charges (unitAmount,
+ * in the currency's minor unit: centavos, satang, cents), so the two can't
+ * drift apart.
  */
-export function getPlanPrice(locale: string): { amount: string; currency: 'brl' | 'usd'; unitAmount: number } {
-  if (locale === 'pt-BR') return { amount: 'R$ 89', currency: 'brl', unitAmount: 8900 };
+export type PlanPrice = { amount: string; currency: 'brl' | 'thb' | 'usd'; unitAmount: number };
+
+export function getPlanPrice(country: string | null | undefined): PlanPrice {
+  const kind = countryProfile(country).kind;
+  if (kind === 'BR') return { amount: 'R$ 89', currency: 'brl', unitAmount: 8900 };
+  if (kind === 'TH') return { amount: '฿690', currency: 'thb', unitAmount: 69000 };
   return { amount: '$19', currency: 'usd', unitAmount: 1900 };
 }

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isAccessAllowed, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
 import { retrieveStoredStripeSubscription, isLive, needsCardFix } from "@/lib/stripeBilling";
 import { routing } from "@/i18n/routing";
+import { getPracticeCountry } from "@/lib/practiceCountry";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-05-27.dahlia" });
 
@@ -117,26 +118,27 @@ export async function POST(request: NextRequest) {
   }
 
   const origin = request.headers.get("origin") ?? process.env.NEXT_PUBLIC_APP_URL ?? "";
-  // The client only picks a locale, never an amount: the price comes from
-  // the fixed getPlanPrice table. The locale is also interpolated into the
-  // redirect URLs below, so anything that isn't a real app locale falls
-  // back to the default.
+  // The client only picks a locale (for the redirect URLs), never an
+  // amount: the price comes from the fixed getPlanPrice table by the
+  // PRACTICE's country (server-read), not the language. The locale is
+  // interpolated into the redirect URLs below, so anything that isn't a
+  // real app locale falls back to the default.
   const requestedLocale = (await request.json().catch(() => ({}))).locale;
   const locale = (routing.locales as readonly string[]).includes(requestedLocale)
     ? (requestedLocale as string)
     : routing.defaultLocale;
-  const plan = getPlanPrice(locale);
+  const plan = getPlanPrice(await getPracticeCountry(supabase, user.id, user.id));
 
   // Collapses concurrent duplicate requests (double-click racing the
   // redirect, a retried request) into the same Checkout Session. Scoped to
   // a short window so a legitimate resubscribe after cancellation gets a
-  // fresh session. The locale is in the key because Stripe rejects a reused
-  // key whose parameters differ (currency, URLs). Everything derived from
+  // fresh session. The locale and currency are in the key because Stripe
+  // rejects a reused key whose parameters differ (currency, URLs). Everything derived from
   // time below comes from the window start, not Date.now(), for the same
   // reason.
   const WINDOW_MS = 10 * 60 * 1000;
   const windowStart = Math.floor(Date.now() / WINDOW_MS) * WINDOW_MS;
-  const idempotencyKey = `checkout-stripe-${user.id}-${locale}-${windowStart / WINDOW_MS}`;
+  const idempotencyKey = `checkout-stripe-${user.id}-${locale}-${plan.currency}-${windowStart / WINDOW_MS}`;
   // 70 min after the window start = 60-70 min from now, inside Stripe's
   // allowed 30 min to 24 h.
   const expiresAt = Math.floor(windowStart / 1000) + 70 * 60;
