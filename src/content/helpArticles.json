@@ -654,13 +654,13 @@
           "pt": [
             {
               "type": "p",
-              "text": "**Configurações → Exportar pacientes (CSV)**. O arquivo abre direto no Excel. Depois de compartilhado, o app apaga a cópia do celular."
+              "text": "**Configurações → Exportar pacientes (CSV)**. O arquivo abre direto no Excel. O app apaga a cópia do celular na próxima exportação, ao abrir o app de novo ou ao sair da conta."
             }
           ],
           "en": [
             {
               "type": "p",
-              "text": "**Settings → Export patients (CSV)**. The file opens directly in Excel. Once shared, the app deletes the copy from the phone."
+              "text": "**Settings → Export patients (CSV)**. The file opens directly in Excel. The app deletes the copy from the phone on the next export, the next time the app opens, or when you sign out."
             }
           ]
         },

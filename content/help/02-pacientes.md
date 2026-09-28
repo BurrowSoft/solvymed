@@ -119,9 +119,9 @@ Open the patient and tap **Invite to the app**. Send the personal code (or link)
 ---
 ## P10. Exportar a lista de pacientes / Export the patient list (CSV)
 **pt-BR**
-**Configurações → Exportar pacientes (CSV)**. O arquivo abre direto no Excel. Depois de compartilhado, o app apaga a cópia do celular.
+**Configurações → Exportar pacientes (CSV)**. O arquivo abre direto no Excel. O app apaga a cópia do celular na próxima exportação, ao abrir o app de novo ou ao sair da conta.
 **en**
-**Settings → Export patients (CSV)**. The file opens directly in Excel. Once shared, the app deletes the copy from the phone.
+**Settings → Export patients (CSV)**. The file opens directly in Excel. The app deletes the copy from the phone on the next export, the next time the app opens, or when you sign out.
 **No site:** Ainda não disponível no site; use o app.
 **On the website:** Not available on the website yet; use the app.
 `open:settings`
