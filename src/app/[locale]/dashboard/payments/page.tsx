@@ -5,12 +5,12 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { PeriodFilter, MarkPaidButton, MarkUnpaidButton } from "./PaymentsClient";
 import { clinicDate, getClinicTimeZone, previousMonthRange, weekRange } from "@/lib/clinicTime";
+import { formatMoney } from "@/lib/money";
+import { countryProfile } from "@/lib/country";
+import { getPracticeCountry } from "@/lib/practiceCountry";
 
 type Period = "week" | "month" | "last_month" | "all";
 
-function formatBRL(n: number) {
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
-}
 
 // Ranges on the practice's calendar, not the server's (UTC).
 function getDateRange(period: Period, timeZone: string): { from: string; to: string } {
@@ -43,6 +43,9 @@ export default async function PaymentsPage({
   // own (empty) id.
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
   if (!effectiveProfId) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
+  // Amounts are in the practice's currency (its country), not the UI's.
+  const { currency } = countryProfile(await getPracticeCountry(supabase, user.id, effectiveProfId));
+  const formatAmount = (n: number) => formatMoney(n, currency);
   const isSecretary = effectiveProfId !== user.id;
 
   const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
@@ -130,7 +133,7 @@ export default async function PaymentsPage({
       <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-orange-100 bg-orange-50 p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">{t("pendingLabel")}</p>
-          <p className="mt-1 text-2xl font-extrabold text-orange-900">{formatBRL(totalPending)}</p>
+          <p className="mt-1 text-2xl font-extrabold text-orange-900">{formatAmount(totalPending)}</p>
           <p className="text-xs text-orange-600">{t("sessions", { n: pending.length })}</p>
         </div>
         {/* Received/total sums are the practice's revenue: doctor only. */}
@@ -138,12 +141,12 @@ export default async function PaymentsPage({
           <>
             <div className="rounded-2xl border border-green-100 bg-green-50 p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-green-600">{t("receivedLabel")}</p>
-              <p className="mt-1 text-2xl font-extrabold text-green-900">{formatBRL(totalPaid)}</p>
+              <p className="mt-1 text-2xl font-extrabold text-green-900">{formatAmount(totalPaid)}</p>
               <p className="text-xs text-green-600">{t("sessions", { n: paid.length })}</p>
             </div>
             <div className="rounded-2xl border border-teal-100 bg-teal-50 p-5 col-span-2 sm:col-span-1">
               <p className="text-xs font-semibold uppercase tracking-wide text-teal-600">{t("totalLabel")}</p>
-              <p className="mt-1 text-2xl font-extrabold text-teal-900">{formatBRL(totalPending + totalPaid)}</p>
+              <p className="mt-1 text-2xl font-extrabold text-teal-900">{formatAmount(totalPending + totalPaid)}</p>
               <p className="text-xs text-teal-600">{t("sessions", { n: pending.length + paid.length })}</p>
             </div>
           </>
@@ -170,7 +173,7 @@ export default async function PaymentsPage({
                       <p className="font-semibold text-slate-900 text-sm truncate">{p.patient_name}</p>
                       <p className="text-xs text-slate-500 mt-0.5">{p.date} · {p.start_time?.slice(0, 5)} · {p.consultation_type}</p>
                       {p.payment_amount ? (
-                        <p className="text-sm font-bold text-orange-600 mt-1">{formatBRL(p.payment_amount)}</p>
+                        <p className="text-sm font-bold text-orange-600 mt-1">{formatAmount(p.payment_amount)}</p>
                       ) : (
                         <p className="text-xs text-slate-400 mt-1">{t("noAmountSet")}</p>
                       )}
@@ -204,7 +207,7 @@ export default async function PaymentsPage({
                       <p className="font-semibold text-slate-900 text-sm truncate">{p.patient_name}</p>
                       <p className="text-xs text-slate-500 mt-0.5">{p.date} · {p.start_time?.slice(0, 5)} · {p.consultation_type}</p>
                       {p.payment_amount ? (
-                        <p className="text-sm font-bold text-green-600 mt-1">{formatBRL(p.payment_amount)}</p>
+                        <p className="text-sm font-bold text-green-600 mt-1">{formatAmount(p.payment_amount)}</p>
                       ) : null}
                     </div>
                     <div className="flex flex-col items-end gap-2 shrink-0">

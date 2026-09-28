@@ -1,5 +1,7 @@
 "use client";
 
+import { formatMoney } from "@/lib/money";
+import type { Currency } from "@/lib/country";
 import { useTransition, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { markInviteShared } from "@/lib/setupActions";
@@ -378,12 +380,13 @@ type Procedure = {
   id: string; name: string; duration_minutes: number; price?: number; payment_type: string; active: boolean;
 };
 
-function formatBRL(n?: number) {
+function formatPrice(n: number | undefined, currency: Currency) {
   if (!n) return "—";
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
+  return formatMoney(n, currency);
 }
 
-export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
+// currency: the practice's (its country), not the UI's.
+export function ProceduresPanel({ procedures, currency = "BRL" }: { procedures: Procedure[]; currency?: Currency }) {
   const t = useTranslations("settings");
   const [showForm, setShowForm] = useState(false);
   const [pending, start] = useTransition();
@@ -409,7 +412,7 @@ export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
           <p className="text-sm text-slate-400 py-4 text-center">{t("noProcedures")}</p>
         )}
         {procedures.map(proc => (
-          <ProcedureRow key={proc.id} proc={proc} />
+          <ProcedureRow key={proc.id} proc={proc} currency={currency} />
         ))}
       </div>
 
@@ -505,7 +508,7 @@ export function BlockedPatientsPanel({ patients, locale }: { patients: BlockedPa
   );
 }
 
-function ProcedureRow({ proc }: { proc: Procedure }) {
+function ProcedureRow({ proc, currency }: { proc: Procedure; currency: Currency }) {
   const t = useTranslations("settings");
   const [pending, start] = useTransition();
 
@@ -514,7 +517,7 @@ function ProcedureRow({ proc }: { proc: Procedure }) {
       <div className="min-w-0">
         <p className="text-sm font-semibold text-slate-900">{proc.name}</p>
         <p className="text-xs text-slate-500 mt-0.5">
-          {proc.duration_minutes} min · {formatBRL(proc.price)} · {proc.payment_type}
+          {proc.duration_minutes} min · {formatPrice(proc.price, currency)} · {proc.payment_type}
         </p>
       </div>
       <div className="flex items-center gap-2 shrink-0">
