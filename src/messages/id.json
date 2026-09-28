@@ -1083,6 +1083,24 @@
     "secHomeTitle": "Hari di klinik",
     "secHomeText": "Janji temu hari ini dan minggu ini di klinik.",
     "secScheduleText": "Konfirmasi permintaan pasien dan atur janji temu per hari, minggu, atau bulan.",
-    "secPatientsText": "Daftarkan dan perbarui data pasien. Rekam medis hanya untuk dokter."
+    "secPatientsText": "Daftarkan dan perbarui data pasien. Rekam medis hanya untuk dokter.",
+    "inMenu": "Di menu ☰, bagian {section}: "
+  },
+  "news": {
+    "title": "Yang baru di SolvyMed ✨",
+    "see": "Lihat yang baru",
+    "later": "Nanti saja",
+    "cardTitle": "Yang baru",
+    "cardSub": "Lihat perubahan di setiap versi dan putar ulang tur.",
+    "show": "Tampilkan",
+    "r140": {
+      "solvyaiTitle": "Kenali SolvyAI ✦",
+      "solvyaiLine": "Asisten AI Anda: tanyakan atau minta sesuatu, dan selalu dikonfirmasi dengan Anda dulu.",
+      "solvyaiSpot": "Ketuk di sini kapan saja. Coba: \"Apa jadwal saya besok?\"",
+      "tourTitle": "Tur panduan",
+      "tourLine": "Tur singkat ke fitur-fitur utama. Putar ulang kapan saja.",
+      "tourSpot": "Di Pengaturan → Lihat tur lagi.",
+      "tourSpotMenu": "Buka menu → Pengaturan → Lihat tur lagi."
+    }
   }
 }

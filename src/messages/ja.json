@@ -1083,6 +1083,24 @@
     "secHomeTitle": "クリニックの一日",
     "secHomeText": "クリニックの今日と今週の予約。",
     "secScheduleText": "患者からのリクエストを確定し、日・週・月で予約を整理します。",
-    "secPatientsText": "患者の登録・更新ができます。カルテは医師のみが閲覧できます。"
+    "secPatientsText": "患者の登録・更新ができます。カルテは医師のみが閲覧できます。",
+    "inMenu": "メニュー ☰ の「{section}」："
+  },
+  "news": {
+    "title": "SolvyMed の新機能 ✨",
+    "see": "新機能を見る",
+    "later": "あとで",
+    "cardTitle": "新機能",
+    "cardSub": "各バージョンの変更点を確認し、ツアーを見直せます。",
+    "show": "表示",
+    "r140": {
+      "solvyaiTitle": "SolvyAI のご紹介 ✦",
+      "solvyaiLine": "AI アシスタント：質問や依頼をすると、実行前に必ずあなたに確認します。",
+      "solvyaiSpot": "いつでもここをタップ。試しに「明日の予定は？」と聞いてみましょう。",
+      "tourTitle": "ガイドツアー",
+      "tourLine": "主な機能を手早くご案内。いつでも見直せます。",
+      "tourSpot": "設定 → ツアーをもう一度見る。",
+      "tourSpotMenu": "メニューを開く → 設定 → ツアーをもう一度見る。"
+    }
   }
 }
