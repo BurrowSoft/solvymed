@@ -680,7 +680,8 @@
     "reschedulePending": "Перенос ожидает подтверждения",
     "rescheduleRequestedLabel": "Перенос запрошен: {date} · {time}",
     "rescheduleButton": "Запросить перенос",
-    "closeDialog": "Закрыть"
+    "closeDialog": "Закрыть",
+    "originallyLabel": "Изначально: {date} · {time}"
   },
   "nav": {
     "overview": "Обзор",

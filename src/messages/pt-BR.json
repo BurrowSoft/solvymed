@@ -680,7 +680,8 @@
     "reschedulePending": "Remarcação pendente",
     "rescheduleRequestedLabel": "Reagendamento solicitado: {date} · {time}",
     "rescheduleButton": "Solicitar reagendamento",
-    "closeDialog": "Fechar"
+    "closeDialog": "Fechar",
+    "originallyLabel": "Originalmente: {date} · {time}"
   },
   "nav": {
     "overview": "Visão geral",

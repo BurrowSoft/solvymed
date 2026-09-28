@@ -680,7 +680,8 @@
     "reschedulePending": "Reprogramación pendiente",
     "rescheduleRequestedLabel": "Reprogramación solicitada: {date} · {time}",
     "rescheduleButton": "Solicitar reprogramación",
-    "closeDialog": "Cerrar"
+    "closeDialog": "Cerrar",
+    "originallyLabel": "Originalmente: {date} · {time}"
   },
   "nav": {
     "overview": "Inicio",

@@ -2,7 +2,8 @@
 
 import { useRouter, useSearchParams, usePathname, useParams } from "next/navigation";
 import { useState, useTransition, useRef, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDateLabel } from "@/lib/dateLabels";
 import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime } from "./actions";
 import { generatePixString, pixQrUrl } from "@/lib/pix";
 import { toLocalDateString } from "@/lib/slots";
@@ -99,8 +100,12 @@ export function ViewToggle({ currentView, currentDate }: { currentView: string; 
   );
 }
 
-export function ScheduleNav({ currentDate, currentView = "list" }: { currentDate: string; currentView?: string }) {
+// `today` is the clinic's date from the server, so the server render and
+// hydration agree on whether to show "Today" (a browser `new Date()` can be
+// a different day than the server's near midnight).
+export function ScheduleNav({ currentDate, currentView = "list", today }: { currentDate: string; currentView?: string; today: string }) {
   const t = useTranslations("schedule");
+  const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -111,13 +116,13 @@ export function ScheduleNav({ currentDate, currentView = "list" }: { currentDate
   }
 
   function goToday() {
-    router.push(`${pathname}?date=${toLocalDateString(new Date())}&view=${currentView}`);
+    router.push(`${pathname}?date=${today}&view=${currentView}`);
   }
 
-  const formatted = new Date(currentDate + "T12:00:00").toLocaleDateString(undefined, {
+  const formatted = formatDateLabel(locale, currentDate, {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
-  const isToday = currentDate === toLocalDateString(new Date());
+  const isToday = currentDate === today;
 
   return (
     <div className="flex items-center gap-2">

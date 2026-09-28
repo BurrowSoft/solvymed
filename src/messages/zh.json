@@ -680,7 +680,8 @@
     "reschedulePending": "改期等待确认",
     "rescheduleRequestedLabel": "改期请求：{date} · {time}",
     "rescheduleButton": "请求改期",
-    "closeDialog": "关闭"
+    "closeDialog": "关闭",
+    "originallyLabel": "原定：{date} · {time}"
   },
   "nav": {
     "overview": "总览",

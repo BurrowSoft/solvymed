@@ -680,7 +680,8 @@
     "reschedulePending": "Đang chờ đổi lịch",
     "rescheduleRequestedLabel": "Yêu cầu đổi lịch: {date} · {time}",
     "rescheduleButton": "Yêu cầu đổi lịch",
-    "closeDialog": "Đóng"
+    "closeDialog": "Đóng",
+    "originallyLabel": "Ban đầu: {date} · {time}"
   },
   "nav": {
     "overview": "Tổng quan",

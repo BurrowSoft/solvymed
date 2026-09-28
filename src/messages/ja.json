@@ -680,7 +680,8 @@
     "reschedulePending": "変更リクエスト中",
     "rescheduleRequestedLabel": "再スケジュールリクエスト: {date} · {time}",
     "rescheduleButton": "再スケジュールをリクエスト",
-    "closeDialog": "閉じる"
+    "closeDialog": "閉じる",
+    "originallyLabel": "変更前：{date} · {time}"
   },
   "nav": {
     "overview": "ホーム",

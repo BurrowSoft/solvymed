@@ -680,7 +680,8 @@
     "reschedulePending": "Riprogrammazione in attesa",
     "rescheduleRequestedLabel": "Riprogrammazione richiesta: {date} · {time}",
     "rescheduleButton": "Richiedi riprogrammazione",
-    "closeDialog": "Chiudi"
+    "closeDialog": "Chiudi",
+    "originallyLabel": "In origine: {date} · {time}"
   },
   "nav": {
     "overview": "Panoramica",

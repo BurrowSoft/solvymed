@@ -680,7 +680,8 @@
     "reschedulePending": "Reschedule Pending",
     "rescheduleRequestedLabel": "Reschedule requested: {date} · {time}",
     "rescheduleButton": "Request reschedule",
-    "closeDialog": "Close"
+    "closeDialog": "Close",
+    "originallyLabel": "Originally: {date} · {time}"
   },
   "nav": {
     "overview": "Overview",

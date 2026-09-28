@@ -680,7 +680,8 @@
     "reschedulePending": "改期等待確認",
     "rescheduleRequestedLabel": "改期請求：{date} · {time}",
     "rescheduleButton": "請求改期",
-    "closeDialog": "關閉"
+    "closeDialog": "關閉",
+    "originallyLabel": "原定：{date} · {time}"
   },
   "nav": {
     "overview": "總覽",
