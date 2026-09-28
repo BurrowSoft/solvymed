@@ -27,13 +27,10 @@ export async function patientPushLocale(db: SupabaseClient, patientAuthId: strin
   return practiceLocale(db, professionalId);
 }
 
+// The clinic's pushes: the practice's language for now. professionals.locale
+// (047) is NOT NULL DEFAULT 'pt-BR' and nothing writes it, so it can't tell a
+// Thai doctor from a Brazilian one (a9). The saved-language RPC replaces
+// this once it records a real value.
 export async function professionalPushLocale(db: SupabaseClient, professionalId: string): Promise<PushLocale> {
-  try {
-    const { data } = await db.from("professionals").select("locale").eq("id", professionalId).maybeSingle();
-    const saved = pushLocale((data as { locale?: string | null } | null)?.locale);
-    if (saved) return saved;
-  } catch {
-    // A patient can't read the doctor's row: the practice's language.
-  }
   return practiceLocale(db, professionalId);
 }
