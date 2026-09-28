@@ -999,5 +999,46 @@
     "passport": "Numero di passaporto",
     "passportOrId": "Numero di passaporto o documento",
     "thaiIdInvalid": "Questo numero d'identità thailandese non è valido. Controlla le 13 cifre."
+  },
+  "pricing": {
+    "navLabel": "Prezzi",
+    "countryLabel": "Prezzi per:",
+    "countryOther": "Altri paesi",
+    "title": "Un solo piano semplice. Tutto incluso.",
+    "subtitle": "Nessun costo di attivazione, nessun costo per paziente, nessuna sorpresa.",
+    "perMonth": "/mese",
+    "trial": "Gratis per 15 giorni.",
+    "trialNoCard": "Nessuna carta per iniziare.",
+    "cta": "Inizia la prova gratuita",
+    "cancel": "Disdici quando vuoi.",
+    "includedTitle": "Cosa è incluso",
+    "f": {
+      "schedule": "Agenda per giorno, settimana e mese, appuntamenti ricorrenti e orari bloccati",
+      "patients": "Pazienti illimitati, con storico, cartelle cliniche, ricette ed esami",
+      "patientApp": "App per i pazienti e prenotazione online con il tuo link di invito",
+      "secretaries": "Fino a 3 segretarie/i, senza accesso alle cartelle cliniche",
+      "payments": {
+        "BR": "Gestione dei pagamenti e QR code Pix",
+        "TH": "Gestione dei pagamenti e QR code PromptPay",
+        "OTHER": "Gestione dei pagamenti"
+      },
+      "pdfs": "Ricette, ricevute e storico in PDF nella tua lingua",
+      "reminders": "Promemoria degli appuntamenti e notifiche push",
+      "devices": "Web e app mobile (Android e iPhone), sempre sincronizzati",
+      "devicesAndroid": "Web e app Android, sempre sincronizzati",
+      "security": "Dati privati e cifrati; dopo 24 ore, cartelle e ricette possono solo essere corrette e l'originale viene conservato.",
+      "solvyai": "SolvyAI, il tuo assistente IA: chiedi o di' \"appuntamento per Maria domani alle 14\""
+    },
+    "faqTitle": "Domande",
+    "faq": {
+      "q1": "Cosa succede dopo la prova gratuita?",
+      "a1": "Scegli tu se abbonarti. Se non lo fai, il tuo account viene messo in pausa e i tuoi dati restano al sicuro.",
+      "q2": "Come pago?",
+      "a2": "Con carta, ogni mese, sul nostro sito.",
+      "q3": "Anche le mie segretarie pagano?",
+      "a3": "No. Fino a 3 segretarie/i sono incluse/i nel tuo piano.",
+      "q4": "Posso disdire?",
+      "a4": "Sì, quando vuoi, contattando l'assistenza o nel portale di fatturazione, se disponibile."
+    }
   }
 }

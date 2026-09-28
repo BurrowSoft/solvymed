@@ -999,5 +999,46 @@
     "passport": "護照號碼",
     "passportOrId": "護照或證件號碼",
     "thaiIdInvalid": "此泰國身分證字號無效。請檢查這 13 位數字。"
+  },
+  "pricing": {
+    "navLabel": "價格",
+    "countryLabel": "價格適用於：",
+    "countryOther": "其他國家",
+    "title": "一個簡單的方案，功能全包。",
+    "subtitle": "無開通費，不按病患收費，沒有額外費用。",
+    "perMonth": "/月",
+    "trial": "免費試用 15 天。",
+    "trialNoCard": "開始時不需綁定信用卡。",
+    "cta": "開始免費試用",
+    "cancel": "隨時可以取消。",
+    "includedTitle": "包含內容",
+    "f": {
+      "schedule": "依日、週、月檢視的行程，重複預約與時段封鎖",
+      "patients": "病患數量不限，含病史、病歷、處方與檢查",
+      "patientApp": "病患端 App，以及透過邀請連結線上預約",
+      "secretaries": "最多 3 名助理，無法查看病歷",
+      "payments": {
+        "BR": "收款管理與 Pix QR 碼",
+        "TH": "收款管理與 PromptPay QR 碼",
+        "OTHER": "收款管理"
+      },
+      "pdfs": "處方、收據與病史，以您的語言匯出為 PDF",
+      "reminders": "預約提醒與推播通知",
+      "devices": "網頁版與手機 App（Android 與 iPhone），隨時同步",
+      "devicesAndroid": "網頁版與 Android App，隨時同步",
+      "security": "私密且加密的資料；24 小時後，病歷與處方只能更正，原始紀錄會被保留。",
+      "solvyai": "SolvyAI，您的 AI 助理：提問，或直接說「幫 Maria 約明天下午 2 點」"
+    },
+    "faqTitle": "常見問題",
+    "faq": {
+      "q1": "免費試用結束後會怎樣？",
+      "a1": "由您決定是否訂閱。若不訂閱，帳號將暫停使用，您的資料仍會安全保存。",
+      "q2": "如何付款？",
+      "a2": "在我們的網站上以信用卡按月付款。",
+      "q3": "助理也要付費嗎？",
+      "a3": "不用。您的方案包含最多 3 名助理。",
+      "q4": "可以取消嗎？",
+      "a4": "可以，隨時聯絡客服，或在帳單入口網站（開放時）取消。"
+    }
   }
 }
