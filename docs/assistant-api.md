@@ -174,6 +174,11 @@ The model only supplies ids and values. The **server** builds the card:
    text. Any href (including `open` blocks) must start with exactly one `/`,
    contain no `\`, no control characters and no scheme, and match a route in
    the table; anything else is dropped.
+7. gives every link a **screen-name form** too: `editTarget` / `viewTarget`
+   on cards and `target` on `open` blocks, `{ screen, date?, id?, params? }`
+   with the same screen names as `after`. **The app uses the target** (web
+   paths mean nothing there). **Web uses the validated href** and ignores
+   the target. Both are built from the same route-table entry.
 
 Card wire format (extends `ConfirmationCard`):
 
@@ -195,9 +200,12 @@ Card wire format (extends `ConfirmationCard`):
     "question": "Este horário está bloqueado (12:00–13:00). Agendar mesmo assim?",
     "confirmLabel": "Agendar"
   },
-  "hardStop": false,
+  "hardStop": false,                     // true → Confirmar is disabled, and `stop` says why:
+                                         // "stop": { "code": "past_time" | "patient_archived" | "not_allowed", "text": "…" }
   "editHref": "/dashboard/schedule?new=1&patient=…&date=2026-09-29&start=14:00",
   "viewHref": "/dashboard/schedule?date=2026-09-29",
+  "editTarget": { "screen": "schedule", "date": "2026-09-29", "params": { "new": "1", "start": "14:00" } },
+  "viewTarget": { "screen": "schedule", "date": "2026-09-29" },
   "after": {                             // where the UI goes once it's saved (§2.3 "After saving")
     "screen": "schedule",
     "date": "2026-09-29",

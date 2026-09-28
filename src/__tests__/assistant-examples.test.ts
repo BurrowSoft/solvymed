@@ -28,6 +28,16 @@ const ACTION_KINDS = [
 ];
 const SCREENS = ["home", "schedule", "patients", "patient", "payments", "settings", "whatsapp"];
 const ERROR_CODES = ["model_failed"];
+const STOP_CODES = ["past_time", "patient_archived", "not_allowed"];
+
+// The screen-name form of a link, for the app (web uses the href).
+function checkTarget(t: unknown) {
+  expect(isObj(t)).toBe(true);
+  const x = t as Record<string, unknown>;
+  expect(SCREENS).toContain(x.screen);
+  if ("date" in x) expect(x.date).toMatch(DATE);
+  if ("params" in x) expect(Object.values(x.params as object).every((v) => typeof v === "string")).toBe(true);
+}
 
 function checkCard(card: unknown) {
   expect(isObj(card)).toBe(true);
@@ -54,6 +64,15 @@ function checkCard(card: unknown) {
     expect(c.secondConfirm).toBeUndefined();
   }
   expect(typeof c.hardStop).toBe("boolean");
+  if (c.hardStop) {
+    const stop = c.stop as Record<string, unknown>;
+    expect(STOP_CODES).toContain(stop.code);
+    expect(isStr(stop.text)).toBe(true);
+  } else {
+    expect(c.stop).toBeUndefined();
+  }
+  checkTarget(c.editTarget);
+  checkTarget(c.viewTarget);
   expect(internalHref(c.editHref), String(c.editHref)).toBe(true);
   expect(internalHref(c.viewHref), String(c.viewHref)).toBe(true);
   const after = c.after as Record<string, unknown>;
@@ -70,7 +89,7 @@ function checkBlock(block: unknown) {
   switch (b.type) {
     case "text": expect(isStr(b.text)).toBe(true); break;
     case "steps": expect((b.items as unknown[]).every(isStr)).toBe(true); break;
-    case "open": expect(isStr(b.label) && internalHref(b.href)).toBe(true); break;
+    case "open": expect(isStr(b.label) && internalHref(b.href)).toBe(true); checkTarget(b.target); break;
     case "pick":
       expect(isStr(b.question)).toBe(true);
       for (const o of b.options as Record<string, unknown>[]) expect(isStr(o.id) && isStr(o.title) && typeof o.detail === "string").toBe(true);
@@ -112,7 +131,8 @@ describe("SolvyAI stream examples (docs/assistant-examples.ndjson)", () => {
     const blocks = lines.filter((l) => l.kind === "block").map((l) => l.block as Record<string, unknown>);
     for (const t of ["text", "steps", "open", "pick", "card", "slot_choice", "feedback"]) expect(blocks.map((b) => b.type)).toContain(t);
     const warn = blocks.filter((b) => b.type === "card").flatMap((b) => ((b.card as { warnings: { code: string }[] }).warnings).map((w) => w.code));
-    for (const w of ["blocked", "outside_hours", "same_patient_day"]) expect(warn).toContain(w);
+    for (const w of WARNING_CODES) expect(warn).toContain(w);
+    expect(blocks.some((b) => b.type === "card" && (b.card as { hardStop: boolean }).hardStop)).toBe(true);
     const reasons = blocks.filter((b) => b.type === "slot_choice").map((b) => b.reason);
     for (const r of ["conflict", "recurring_conflict", "confirm_failed"]) expect(reasons).toContain(r);
   });
