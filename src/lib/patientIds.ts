@@ -34,6 +34,16 @@ export function isValidThaiId(value: string): boolean {
   return (11 - (sum % 11)) % 10 === Number(d[12]);
 }
 
+// Whether a patient form was rendered for this identifier kind. The pages
+// pick the fields with the display lookup (BR on an error) while the
+// actions write with the strict one, so a form shown with the wrong fields
+// (e.g. CPF only for a Thai practice after a transient error) would save
+// NULL over the stored Thai ID/passport. The forms send the kind they
+// rendered as a hidden id_kind; a missing or different one is refused.
+export function formIdKindMatches(formData: FormData, kind: PatientIdKind): boolean {
+  return formData.get("id_kind") === kind;
+}
+
 // The columns to write from a patient form, for the practice's country.
 export function readPatientIds(formData: FormData, kind: PatientIdKind): PatientIdColumns {
   if (kind === "BR") return { cpf: text(formData.get("cpf")) || null };

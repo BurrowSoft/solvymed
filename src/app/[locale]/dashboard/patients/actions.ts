@@ -7,7 +7,7 @@ import { sendExpoPush } from "@/lib/push";
 import { actionError } from "@/lib/dbErrors";
 import { clinicDate, clinicTime } from "@/lib/clinicTime";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
-import { patientIdError, patientIdKind, readPatientIds, sameIdentifier, similarPatientArgs } from "@/lib/patientIds";
+import { formIdKindMatches, patientIdError, patientIdKind, readPatientIds, sameIdentifier, similarPatientArgs } from "@/lib/patientIds";
 
 // archived_at is set for an archived match, so the warning can offer
 // Restore instead of creating a second record for the same person.
@@ -15,7 +15,7 @@ export type PatientMatch = { id: string; full_name: string; phone: string | null
 
 export type CreatePatientResult =
   | { success: true }
-  | { error: string; code: "generic" | "name_required" | "invalid_th_id" }
+  | { error: string; code: "generic" | "name_required" | "invalid_th_id" | "id_kind_mismatch" }
   // Possible duplicates found before saving. The user chooses "Open
   // existing" or "Create anyway" (resubmits with force=1).
   | { error: string; code: "possible_match"; matches: PatientMatch[] }
@@ -40,7 +40,10 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
   // unknown country must not silently drop an identifier.
   const country = await lookupPracticeCountry(supabase, user.id, effectiveProfId);
   if (!country.ok) return { error: "Could not verify the practice country", code: "generic" };
-  const ids = readPatientIds(formData, patientIdKind(country.country));
+  const idKind = patientIdKind(country.country);
+  // The form showed another country's fields: never drop the typed ID.
+  if (!formIdKindMatches(formData, idKind)) return { error: "Form out of date", code: "id_kind_mismatch" };
+  const ids = readPatientIds(formData, idKind);
   if (patientIdError(ids)) return { error: "Invalid Thai ID", code: "invalid_th_id" };
   const birthDate = (formData.get("birth_date") as string) || null;
   const force = formData.get("force") === "1";
@@ -137,7 +140,11 @@ export async function updatePatient(id: string, formData: FormData) {
   // Only the practice country's identifier columns are written.
   const country = await lookupPracticeCountry(supabase, user.id, effectiveProfId);
   if (!country.ok) return { error: "check_failed" };
-  const ids = readPatientIds(formData, patientIdKind(country.country));
+  const idKind = patientIdKind(country.country);
+  // The form showed another country's fields: saving would NULL the
+  // stored ones.
+  if (!formIdKindMatches(formData, idKind)) return { error: "id_kind_mismatch" };
+  const ids = readPatientIds(formData, idKind);
   const idError = patientIdError(ids);
   if (idError) return { error: idError };
 

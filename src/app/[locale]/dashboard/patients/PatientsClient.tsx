@@ -71,6 +71,8 @@ function PatientForm({ onSubmit, pending, error, id, idKind }: { onSubmit: (fd: 
   }
   return (
     <form ref={formRef} id={id} onSubmit={handleSubmit} className="space-y-4">
+      {/* Which ID fields this form shows; the action refuses a mismatch. */}
+      <input type="hidden" name="id_kind" value={idKind} />
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2">
           <FieldLabel>{t("fullName")} *</FieldLabel>
@@ -209,6 +211,9 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR" }: { 
         setError(result.existing ? t("alreadyRegistered", { name: result.existing.full_name }) : t("alreadyRegisteredGeneric"));
         return;
       }
+      // The fields shown were for another country: reload them (the typed
+      // values stay in the open form) and let the user save again.
+      if (result.code === "id_kind_mismatch") router.refresh();
       setError(result.code === "invalid_th_id" ? tIds("thaiIdInvalid") : t(result.code === "name_required" ? "nameRequired" : "saveError"));
     });
   }

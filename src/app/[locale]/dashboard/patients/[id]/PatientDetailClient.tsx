@@ -188,7 +188,12 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
     setError("");
     startTransition(async () => {
       const result = await updatePatient(patient.id, formData);
-      if (result?.error) { setError(errorText(result.error)); return; }
+      if (result?.error) {
+        // The fields shown were for another country: reload them.
+        if (result.error === "id_kind_mismatch") router.refresh();
+        setError(errorText(result.error));
+        return;
+      }
       setEditing(false);
     });
   }
@@ -316,6 +321,8 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+      {/* Which ID fields this form shows; the action refuses a mismatch. */}
+      <input type="hidden" name="id_kind" value={idKind} />
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2">
           <FieldLabel>{t("fullName")} *</FieldLabel>

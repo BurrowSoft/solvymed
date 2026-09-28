@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  formIdKindMatches,
   isValidThaiId,
   patientIdError,
   patientIdKind,
@@ -78,5 +79,24 @@ describe("validation and duplicates", () => {
     expect(sameIdentifier({ th_national_id: "1101700207030", passport_number: null }, { th_national_id: "1101700207030" })).toBe(true);
     expect(sameIdentifier({ passport_number: "ab-123 456" }, { passport_number: "AB123456" })).toBe(true);
     expect(sameIdentifier({ passport_number: "AB1" }, { passport_number: "AB2" })).toBe(false);
+  });
+});
+
+describe("formIdKindMatches", () => {
+  it("accepts a form rendered for the practice's kind", () => {
+    for (const kind of ["BR", "TH", "OTHER"] as const) {
+      expect(formIdKindMatches(form({ id_kind: kind }), kind)).toBe(true);
+    }
+  });
+
+  it("refuses a Thai practice's save from a form that showed only CPF", () => {
+    // The page fell back to BR on a transient error; saving as TH would
+    // write NULL over the stored Thai ID and passport.
+    expect(formIdKindMatches(form({ id_kind: "BR", cpf: "12345678909" }), "TH")).toBe(false);
+  });
+
+  it("refuses a form with no id_kind (fails closed)", () => {
+    expect(formIdKindMatches(form({ full_name: "A" }), "BR")).toBe(false);
+    expect(formIdKindMatches(form({ id_kind: "" }), "OTHER")).toBe(false);
   });
 });
