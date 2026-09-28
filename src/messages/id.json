@@ -450,7 +450,10 @@
     "regenerateError": "Tidak dapat membuat kode baru. Silakan coba lagi.",
     "showSetup": "Tampilkan daftar penyiapan",
     "registration": "Nomor registrasi profesi",
-    "registrationPlaceholder": "mis. CRM 12345/SP"
+    "registrationPlaceholder": "mis. CRM 12345/SP",
+    "practiceCountry": "Negara praktik",
+    "practiceCountryHint": "Menentukan mata uang, harga paket, identitas pasien, dan QR pembayaran. Untuk mengubahnya, hubungi support@solvymed.com.",
+    "practiceCountryOther": "Negara lain"
   },
   "clinics": {
     "title": "Klinik Saya",
@@ -577,7 +580,7 @@
       "consent": "Dengan membuat akun, Anda menyetujui <terms>Ketentuan Layanan</terms> dan <privacy>Kebijakan Privasi</privacy>.",
       "country": "Di mana praktik Anda?",
       "countryOther": "Negara lain",
-      "countryHint": "Menentukan mata uang, identitas pasien, dan QR pembayaran. Untuk mengubahnya nanti, hubungi dukungan."
+      "countryHint": "Menentukan mata uang, harga paket, identitas pasien, dan QR pembayaran. Untuk mengubahnya nanti, hubungi dukungan."
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",

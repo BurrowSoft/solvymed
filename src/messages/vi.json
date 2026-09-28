@@ -450,7 +450,10 @@
     "regenerateError": "Không thể tạo mã mới. Vui lòng thử lại.",
     "showSetup": "Hiện danh sách thiết lập",
     "registration": "Số đăng ký hành nghề",
-    "registrationPlaceholder": "vd. CRM 12345/SP"
+    "registrationPlaceholder": "vd. CRM 12345/SP",
+    "practiceCountry": "Quốc gia của phòng khám",
+    "practiceCountryHint": "Xác định tiền tệ, giá gói, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi, hãy liên hệ support@solvymed.com.",
+    "practiceCountryOther": "Quốc gia khác"
   },
   "clinics": {
     "title": "Phòng khám của tôi",
@@ -577,7 +580,7 @@
       "consent": "Khi tạo tài khoản, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>.",
       "country": "Phòng khám của bạn ở đâu?",
       "countryOther": "Quốc gia khác",
-      "countryHint": "Xác định tiền tệ, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi sau, hãy liên hệ bộ phận hỗ trợ."
+      "countryHint": "Xác định tiền tệ, giá gói, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi sau, hãy liên hệ bộ phận hỗ trợ."
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",
