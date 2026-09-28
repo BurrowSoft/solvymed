@@ -486,7 +486,8 @@
     "adjustPin": "Ajustar en el mapa",
     "adjustPinTitle": "Ubicación en el mapa: {name}",
     "adjustPinHint": "Arrastra el marcador (o toca el mapa) hasta la entrada de la clínica y guarda.",
-    "savePin": "Guardar ubicación"
+    "savePin": "Guardar ubicación",
+    "placePinFirst": "Toca el mapa donde está tu clínica y luego guarda."
   },
   "consultType": {
     "consultation": "Consulta",

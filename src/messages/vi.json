@@ -486,7 +486,8 @@
     "adjustPin": "Điều chỉnh trên bản đồ",
     "adjustPinTitle": "Vị trí trên bản đồ: {name}",
     "adjustPinHint": "Kéo ghim (hoặc chạm vào bản đồ) đến lối vào phòng khám rồi lưu.",
-    "savePin": "Lưu vị trí"
+    "savePin": "Lưu vị trí",
+    "placePinFirst": "Chạm vào bản đồ tại vị trí phòng khám rồi lưu."
   },
   "consultType": {
     "consultation": "Tư vấn",

@@ -65,15 +65,31 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
   const [pinClinic, setPinClinic] = useState<Clinic | null>(null);
   const [pinPos, setPinPos] = useState<{ lat: number; lng: number; zoom: number }>(NO_PIN_CENTER);
   const [pinError, setPinError] = useState("");
+  // A clinic without a pin opens on the middle of Brazil: saving that as its
+  // location would place it wrongly on patients' map, so Save waits until
+  // the doctor has placed the pin. A clinic with a pin can confirm it as is.
+  const [pinPlaced, setPinPlaced] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   function openPin(clinic: Clinic) {
+    const hasPin = clinic.lat != null && clinic.lng != null;
     setPinError("");
-    setPinPos(clinic.lat != null && clinic.lng != null ? { lat: clinic.lat, lng: clinic.lng, zoom: 17 } : NO_PIN_CENTER);
+    setPinPlaced(hasPin);
+    setPinPos(hasPin ? { lat: clinic.lat!, lng: clinic.lng!, zoom: 17 } : NO_PIN_CENTER);
     setPinClinic(clinic);
   }
 
-  function savePin() {
+  // The dialog closes on Escape and takes focus when it opens.
+  useEffect(() => {
     if (!pinClinic) return;
+    dialogRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setPinClinic(null); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [pinClinic]);
+
+  function savePin() {
+    if (!pinClinic || !pinPlaced) return;
     const { id } = pinClinic;
     const { lat, lng } = pinPos;
     setPinError("");
@@ -250,19 +266,24 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
       {pinClinic && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center" onClick={() => setPinClinic(null)}>
           <div
+            ref={dialogRef}
+            tabIndex={-1}
             role="dialog"
             aria-modal="true"
             aria-labelledby="pin-dialog-title"
-            className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl"
+            className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl outline-none"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 id="pin-dialog-title" className="text-base font-bold text-slate-900">{t("adjustPinTitle", { name: pinClinic.name })}</h2>
-            <p className="mt-1 mb-3 text-sm text-slate-500">{t("adjustPinHint")}</p>
+            <p className="mt-1 mb-3 text-sm text-slate-500">{pinPlaced ? t("adjustPinHint") : t("placePinFirst")}</p>
             <ClinicPinMap
               lat={pinPos.lat}
               lng={pinPos.lng}
               zoom={pinPos.zoom}
-              onMove={(lat, lng) => setPinPos((p) => ({ lat, lng, zoom: p.zoom }))}
+              onMove={(lat, lng) => {
+                setPinPos((p) => ({ lat, lng, zoom: p.zoom }));
+                setPinPlaced(true);
+              }}
             />
             {pinError && <p className="mt-3 text-sm text-red-600">{pinError}</p>}
             <div className="mt-4 flex items-center justify-end gap-3">
@@ -272,7 +293,8 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
               <button
                 type="button"
                 onClick={savePin}
-                disabled={isPending}
+                disabled={isPending || !pinPlaced}
+                title={pinPlaced ? undefined : t("placePinFirst")}
                 className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60"
               >
                 {isPending ? t("saving") : t("savePin")}

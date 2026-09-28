@@ -486,7 +486,8 @@
     "adjustPin": "在地圖上調整",
     "adjustPinTitle": "地圖位置：{name}",
     "adjustPinHint": "拖曳標記（或點選地圖）到診所入口，然後儲存。",
-    "savePin": "儲存位置"
+    "savePin": "儲存位置",
+    "placePinFirst": "在地圖上點選診所所在位置，然後儲存。"
   },
   "consultType": {
     "consultation": "門診",

@@ -486,7 +486,8 @@
     "adjustPin": "Ajustar no mapa",
     "adjustPinTitle": "Local no mapa: {name}",
     "adjustPinHint": "Arraste o marcador (ou toque no mapa) até a entrada da clínica e salve.",
-    "savePin": "Salvar local"
+    "savePin": "Salvar local",
+    "placePinFirst": "Toque no mapa onde fica a clínica e depois salve."
   },
   "consultType": {
     "consultation": "Consulta",

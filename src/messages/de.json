@@ -486,7 +486,8 @@
     "adjustPin": "Auf der Karte anpassen",
     "adjustPinTitle": "Kartenposition: {name}",
     "adjustPinHint": "Ziehen Sie die Markierung (oder tippen Sie auf die Karte) zum Praxiseingang und speichern Sie.",
-    "savePin": "Position speichern"
+    "savePin": "Position speichern",
+    "placePinFirst": "Tippen Sie auf der Karte auf den Standort Ihrer Praxis und speichern Sie dann."
   },
   "consultType": {
     "consultation": "Beratung",

@@ -486,7 +486,8 @@
     "adjustPin": "ضبط على الخريطة",
     "adjustPinTitle": "الموقع على الخريطة: {name}",
     "adjustPinHint": "اسحب العلامة (أو اضغط على الخريطة) إلى مدخل العيادة ثم احفظ.",
-    "savePin": "حفظ الموقع"
+    "savePin": "حفظ الموقع",
+    "placePinFirst": "اضغط على الخريطة في موقع العيادة ثم احفظ."
   },
   "consultType": {
     "consultation": "استشارة",

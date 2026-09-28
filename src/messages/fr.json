@@ -486,7 +486,8 @@
     "adjustPin": "Ajuster sur la carte",
     "adjustPinTitle": "Emplacement sur la carte : {name}",
     "adjustPinHint": "Faites glisser le repère (ou touchez la carte) jusqu'à l'entrée du cabinet, puis enregistrez.",
-    "savePin": "Enregistrer l'emplacement"
+    "savePin": "Enregistrer l'emplacement",
+    "placePinFirst": "Touchez la carte à l'emplacement du cabinet, puis enregistrez."
   },
   "consultType": {
     "consultation": "Consultation",

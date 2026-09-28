@@ -486,7 +486,8 @@
     "adjustPin": "Adjust on map",
     "adjustPinTitle": "Map location: {name}",
     "adjustPinHint": "Drag the pin (or tap the map) to your clinic's entrance, then save.",
-    "savePin": "Save location"
+    "savePin": "Save location",
+    "placePinFirst": "Tap the map where your clinic is, then save."
   },
   "consultType": {
     "consultation": "Consultation",

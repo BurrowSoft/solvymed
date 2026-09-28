@@ -113,13 +113,16 @@ export async function updateClinicLocation(clinicId: string, lat: number, lng: n
   if (!user) return { error: "Unauthorized", code: "generic" };
   if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinics", code: "generic" };
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("clinics")
     .update({ lat: Math.round(lat * 1e6) / 1e6, lng: Math.round(lng * 1e6) / 1e6 })
     .eq("id", clinicId)
-    .eq("professional_id", user.id); // owner-only guard
+    .eq("professional_id", user.id) // owner-only guard
+    .select("id");
 
   if (error) return { error: error.message, code: "generic" };
+  // No row matched (not this doctor's clinic, or it was deleted): not saved.
+  if (!data?.length) return { error: "Clinic not found", code: "generic" };
   revalidatePath("/dashboard/clinics");
   return { success: true };
 }

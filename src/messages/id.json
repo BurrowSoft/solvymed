@@ -486,7 +486,8 @@
     "adjustPin": "Sesuaikan di peta",
     "adjustPinTitle": "Lokasi di peta: {name}",
     "adjustPinHint": "Seret penanda (atau ketuk peta) ke pintu masuk klinik, lalu simpan.",
-    "savePin": "Simpan lokasi"
+    "savePin": "Simpan lokasi",
+    "placePinFirst": "Ketuk peta di lokasi klinik Anda, lalu simpan."
   },
   "consultType": {
     "consultation": "Konsultasi",
