@@ -5601,3 +5601,21 @@ deleted afterwards or purged by mob dev (clinical rows, test feedback, the
 - **L-1:** the live R$ 89 charge, with the user.
 - **Minor:** #67's geocoding of an address without a state can land in the
   wrong city (a master follow-up).
+
+## PR #78 (`docs/privacy-nominatim`, base `release`) — privacy §5 lists OpenStreetMap Nominatim, 🟢 at `3b51b6f`, review clean
+
+Checked on the preview at a phone width of 360 px:
+- **`/pt-BR/privacy`:** a new provider row, "OpenStreetMap Nominatim |
+  Converte o endereço da clínica em uma localização no mapa quando a
+  clínica é salva, a partir dos nossos servidores ou do aplicativo (sem
+  dados de pacientes) | UE / Reino Unido".
+- **`/privacy` (en):** "OpenStreetMap Nominatim | Converts the clinic's
+  address into a map location when the clinic is saved, from our servers
+  or the app (no patient data) | EU / UK".
+- **Layout:** the document width is 360/360, so there's no page overflow.
+  The table sits in its `overflow-x: auto` wrapper, scrolling within itself
+  in pt-BR (340 inside 312) and fitting exactly in en (312/312).
+- This matches what's enforced: clinic geocoding calls Nominatim on save
+  (#67, verified).
+
+**CI at `3b51b6f`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `3b51b6f`.**
