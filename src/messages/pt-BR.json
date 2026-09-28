@@ -1169,6 +1169,7 @@
     }
   },
   "dateInput": {
-    "buddhistYear": "Esse ano parece do calendário budista. Use o ano cristão (ex.: 1996)."
+    "buddhistYear": "Esse ano parece do calendário budista. Use o ano cristão (ex.: 1996).",
+    "invalidBirthDate": "Data de nascimento inválida: use uma data entre 1900 e hoje."
   }
 }

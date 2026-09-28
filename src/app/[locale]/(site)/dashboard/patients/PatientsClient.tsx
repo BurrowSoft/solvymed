@@ -96,7 +96,7 @@ function PatientForm({ onSubmit, pending, error, id, idKind }: { onSubmit: (fd: 
         ))}
         <div>
           <FieldLabel>{t("dateOfBirth")}</FieldLabel>
-          <DateInput buddhistHint name="birth_date" className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
+          <DateInput birthDate name="birth_date" className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
         </div>
         <div>
           <FieldLabel>{t("sex")}</FieldLabel>
@@ -217,7 +217,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR" }: { 
       // The fields shown were for another country: reload them (the typed
       // values stay in the open form) and let the user save again.
       if (result.code === "id_kind_mismatch") router.refresh();
-      setError(result.code === "invalid_th_id" ? tIds("thaiIdInvalid") : result.code === "birth_year_buddhist" ? tBirth("buddhistYear") : t(result.code === "name_required" ? "nameRequired" : "saveError"));
+      setError(result.code === "invalid_th_id" ? tIds("thaiIdInvalid") : result.code === "birth_year_buddhist" ? tBirth("buddhistYear") : result.code === "invalid_birth_date" ? tBirth("invalidBirthDate") : t(result.code === "name_required" ? "nameRequired" : "saveError"));
     });
   }
 

@@ -10,7 +10,7 @@ import type { Currency } from "@/lib/country";
 import { isValidThaiId, type PatientIdKind } from "@/lib/patientIds";
 import { usePatientIdFields, type PatientIdValues } from "@/lib/usePatientIdFields";
 import { dateLocale, formatTimeLabel } from "@/lib/dateLabels";
-import { looksBuddhistEra } from "@/lib/buddhistEra";
+import { birthDateOutOfRange, looksBuddhistEra } from "@/lib/buddhistEra";
 import { DateInput } from "@/components/DateInput";
 import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
@@ -144,6 +144,7 @@ export function BookingClient({
   const router = useRouter();
   const t = useTranslations("book");
   const tIds = useTranslations("patientIds");
+  const tDate = useTranslations("dateInput");
   const tConsult = useTranslations("consultType");
   const prefix = locale === "en" ? "" : `/${locale}`;
   // The next DAYS_AHEAD days in the visitor's calendar, built after mount:
@@ -322,7 +323,7 @@ export function BookingClient({
       return;
     }
     // A Buddhist-era birth year is never saved (the field says why).
-    if (looksBuddhistEra(patientDob)) return;
+    if (looksBuddhistEra(patientDob) || birthDateOutOfRange(patientDob)) return;
     setBooking(true);
     setError("");
     const supabase = createClient();
@@ -331,7 +332,7 @@ export function BookingClient({
       const fullPhone = patientPhoneLocal.trim()
         ? `${phoneCountry.dialCode}${patientPhoneLocal.trim()}`
         : null;
-      await supabase.from("patient_profiles").upsert(
+      const { error: profileError } = await supabase.from("patient_profiles").upsert(
         {
           user_id: patientAuthId,
           full_name: patientFullName.trim(),
@@ -343,6 +344,9 @@ export function BookingClient({
         },
         { onConflict: "user_id" },
       );
+      // The database refuses a birth date outside 1900..today (116): say so
+      // and don't book with a profile that wasn't saved.
+      if (profileError?.message?.includes("invalid_birth_date")) { setError(tDate("invalidBirthDate")); return; }
 
       const { error: rpcError } = await supabase.rpc("create_public_booking", {
         p_professional_id: professionalId,
@@ -681,7 +685,7 @@ export function BookingClient({
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">{t("dobLabel")} <span className="text-red-400">*</span></label>
-                <DateInput buddhistHint
+                <DateInput birthDate
                   value={patientDob}
                   onChange={setPatientDob}
                   className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
@@ -712,7 +716,7 @@ export function BookingClient({
 
             <button
               onClick={handleBook}
-              disabled={!selectedSlot || !consultType.trim() || !patientFullName.trim() || !patientPhoneLocal.trim() || !patientDob || looksBuddhistEra(patientDob) || booking}
+              disabled={!selectedSlot || !consultType.trim() || !patientFullName.trim() || !patientPhoneLocal.trim() || !patientDob || looksBuddhistEra(patientDob) || birthDateOutOfRange(patientDob) || booking}
               className="w-full rounded-xl bg-teal-600 py-4 text-base font-bold text-white shadow-sm hover:bg-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {booking ? (

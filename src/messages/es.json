@@ -1169,6 +1169,7 @@
     }
   },
   "dateInput": {
-    "buddhistYear": "Parece un año de la era budista. Usa el año gregoriano (p. ej., 1996)."
+    "buddhistYear": "Parece un año de la era budista. Usa el año gregoriano (p. ej., 1996).",
+    "invalidBirthDate": "Fecha de nacimiento no válida: usa una fecha entre 1900 y hoy."
   }
 }

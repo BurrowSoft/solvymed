@@ -245,6 +245,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
     : e === "patient_has_clinical_history" ? t("deleteHasHistory")
     : e === "name_required" ? t("nameRequired")
     : e === "invalid_th_id" ? tIds("thaiIdInvalid")
+    : e === "invalid_birth_date" ? tBirth("invalidBirthDate")
     : e === "birth_year_buddhist" ? tBirth("buddhistYear")
     : e === "unauthorized" ? t("sessionError")
     : t("genericError");
@@ -447,7 +448,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
         ))}
         <div>
           <FieldLabel>{t("dateOfBirth")}</FieldLabel>
-          <DateInput buddhistHint name="birth_date" defaultValue={patient.birth_date ?? ""} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
+          <DateInput birthDate name="birth_date" defaultValue={patient.birth_date ?? ""} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
         </div>
         <div>
           <FieldLabel>{t("sex")}</FieldLabel>
