@@ -6106,3 +6106,23 @@ has no card, as before.
 
 **CI at `7caddf5`:** ✅. **Review: clean at `c761d31`** (the picker code is the same). **Merge gate: 🟢 for `7caddf5`.** The earlier 🟢 at `93972ad` is
 superseded.
+
+## PR #90 (`fix/booking-optional-parens`, base master) — booking ID label says "(opcional)" once, 🟢 at `d61eeff`
+
+This is the follow-up from #87's entry. The label wrapped `book.notesOptional`
+in another pair of parentheses, even though the string already has them.
+
+- **All 15 locales carry their own brackets** in `book.notesOptional`:
+  "(opcional)", "(optional)", "（任意）", "（可选）", "（選填）",
+  "(ไม่บังคับ)"… So dropping the extra pair leaves no locale without
+  brackets.
+- **Preview `d61eeff`,** as a linked throwaway patient on `/book/<doctor>`
+  (deleted afterwards):
+  - pt-BR: "CPF (opcional)" and "Observações (opcional)".
+  - en: "CPF (optional)" and "Notes (optional)".
+  - ja: "CPF （任意）" and "メモ （任意）".
+  - No doubled brackets anywhere. The notes heading is unchanged; it
+    already used the string alone.
+
+**CI at `d61eeff`:** ✅. **Merge gate: 🟢 for `d61eeff`**, once the
+reviewer is clean. This docs commit sits on top, after a master sync.
