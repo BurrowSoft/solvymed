@@ -9,7 +9,12 @@ async function geocode(address: string, city: string, country: string) {
     const q = [address, city, country].filter(Boolean).join(", ");
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`,
-      { headers: { "User-Agent": "SolvyMed/1.3 (support@solvymed.com)" }, next: { revalidate: 0 } },
+      {
+        headers: { "User-Agent": "SolvyMed/1.3 (support@solvymed.com)" },
+        next: { revalidate: 0 },
+        // A slow Nominatim must not hold up saving a clinic or opening the map.
+        signal: AbortSignal.timeout(5000),
+      },
     );
     const json = (await res.json()) as Array<{ lat: string; lon: string }>;
     if (!json.length) return null;
