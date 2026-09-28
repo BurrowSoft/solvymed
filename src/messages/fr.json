@@ -1083,6 +1083,24 @@
     "secHomeTitle": "La journée du cabinet",
     "secHomeText": "Les rendez-vous du jour et de la semaine du cabinet.",
     "secScheduleText": "Confirmez les demandes des patients et organisez les rendez-vous par jour, semaine ou mois.",
-    "secPatientsText": "Enregistrez et mettez à jour les patients. Les dossiers médicaux restent réservés au praticien."
+    "secPatientsText": "Enregistrez et mettez à jour les patients. Les dossiers médicaux restent réservés au praticien.",
+    "inMenu": "Dans le menu ☰, sous {section} : "
+  },
+  "news": {
+    "title": "Nouveautés de SolvyMed ✨",
+    "see": "Voir les nouveautés",
+    "later": "Plus tard",
+    "cardTitle": "Nouveautés",
+    "cardSub": "Voyez ce qui a changé à chaque version et revoyez les visites.",
+    "show": "Afficher",
+    "r140": {
+      "solvyaiTitle": "Découvrez SolvyAI ✦",
+      "solvyaiLine": "Votre assistant IA : demandez-lui ce que vous voulez, il confirme toujours avec vous avant d'agir.",
+      "solvyaiSpot": "Touchez ici quand vous voulez. Essayez : « Qu'est-ce que j'ai demain ? »",
+      "tourTitle": "Visite guidée",
+      "tourLine": "Un tour rapide des fonctions principales. Revoyez-la quand vous voulez.",
+      "tourSpot": "Dans Paramètres → Revoir le tour.",
+      "tourSpotMenu": "Ouvrez le menu → Paramètres → Revoir le tour."
+    }
   }
 }

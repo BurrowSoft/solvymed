@@ -9,6 +9,8 @@ import { isAccessAllowed, trialDaysRemaining, type EffectiveSub } from "@/lib/su
 import { doctorDisplayName } from "@/lib/doctorName";
 import { TourProvider } from "@/components/tour/TourProvider";
 import { readTourState, tourEntry } from "@/lib/tourState";
+import { CURRENT_NEWS, newsTourId } from "@/lib/news";
+import { liveFeatures } from "@/lib/liveFeatures";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 
@@ -148,6 +150,10 @@ export default async function DashboardLayout({
   // there's no saved state, so nothing starts by itself). The payments step
   // names the practice country's payment QR.
   const tourState = await readTourState(supabase, user.id);
+  // The Novidades popup (liveFeatures.news): pending when this release's
+  // announcement has no saved state yet (before 113: unavailable, so never).
+  const newsPending = liveFeatures.news
+    && (await readTourState(supabase, user.id, newsTourId(CURRENT_NEWS.release))).kind === "none";
   const paymentQr = isSecretary ? null : countryProfile(await getPracticeCountry(supabase, user.id, user.id)).paymentQr;
 
   let trialChipText = "";
@@ -164,6 +170,7 @@ export default async function DashboardLayout({
       prefix={locale === "en" ? "" : `/${locale}`}
       entry={tourEntry(tourState)}
       resumeStep={tourState.kind === "row" ? tourState.step : 0}
+      newsPending={newsPending}
     >
       <div className="flex h-screen overflow-hidden bg-slate-50">
         <DashboardSidebar

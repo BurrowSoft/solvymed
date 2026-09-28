@@ -243,6 +243,8 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
       {/* Mobile menu button */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
+        // Tours spotlight it when their step's link is inside the closed drawer.
+        data-tour="nav-menu"
         className="fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-md border border-slate-100 lg:hidden"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5 text-slate-600">
