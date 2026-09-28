@@ -21,12 +21,18 @@ const FIND_TIMEOUT_MS = 3000;
 type Rect = { top: number; left: number; width: number; height: number };
 
 // The first VISIBLE element for the target (the sidebar links exist twice:
-// the desktop sidebar and the phone drawer). Hidden (display:none, a
-// collapsed sidebar, zero size) = not a step now.
+// the desktop sidebar and the phone drawer). Hidden = not a step now:
+// display:none, zero size, or entirely off-screen horizontally (the closed
+// phone drawer is translated off the left edge, still laid out). Vertical
+// position doesn't count: a target below the fold gets scrolled into view.
+export function isOnScreen(el: HTMLElement): boolean {
+  const r = el.getBoundingClientRect();
+  return r.width > 0 && r.height > 0 && el.offsetParent !== null && r.right > 0 && r.left < window.innerWidth;
+}
+
 function findTarget(target: string): HTMLElement | null {
   for (const el of document.querySelectorAll<HTMLElement>(`[data-tour="${target}"]`)) {
-    const r = el.getBoundingClientRect();
-    if (r.width > 0 && r.height > 0 && el.offsetParent !== null) return el;
+    if (isOnScreen(el)) return el;
   }
   return null;
 }
@@ -60,7 +66,14 @@ export function TourOverlay({
   const t = useTranslations("tour");
   const router = useRouter();
   const pathname = usePathname();
-  const [steps, setSteps] = useState(initialSteps);
+  // Steps on the page the tour starts on whose element isn't on screen
+  // (the sidebar on a narrow screen, ...) are dropped up front, so the count
+  // is right from step 1; steps on other pages are checked when reached.
+  const [steps, setSteps] = useState(() =>
+    typeof document === "undefined"
+      ? initialSteps
+      : initialSteps.filter((s) => `${prefix}${s.path}` !== pathname || findTarget(s.target) !== null),
+  );
   const [index, setIndex] = useState(Math.min(startAt, initialSteps.length - 1));
   const [rect, setRect] = useState<Rect | null>(null);
   const [confirmSkip, setConfirmSkip] = useState(false);

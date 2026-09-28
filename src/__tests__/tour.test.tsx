@@ -71,7 +71,7 @@ describe("TourOverlay", () => {
     { id: "b", target: "b", titleKey: "bTitle", textKey: "bText", path: "/dashboard" },
   ];
 
-  it("spotlights a step, skips one whose element isn't there (the count adjusts), and completes", async () => {
+  it("drops a step whose element isn't on this page up front (the count is right from step 1), and completes", async () => {
     vi.useFakeTimers();
     addTarget("a");
     addTarget("b");
@@ -79,11 +79,9 @@ describe("TourOverlay", () => {
     render(<TourOverlay steps={steps} prefix="" onClose={onClose} />);
     await act(async () => { vi.advanceTimersByTime(400); });
     expect(screen.getByText("aTitle")).toBeInTheDocument();
-    expect(screen.getByText('progress:{"n":1,"total":3}', { selector: "p:not(.sr-only)" })).toBeInTheDocument();
+    expect(screen.getByText('progress:{"n":1,"total":2}', { selector: "p:not(.sr-only)" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByText("next"));
-    // "missing" never shows up: dropped after the timeout, "b" is next, 2 steps total.
-    await act(async () => { vi.advanceTimersByTime(3500); });
     await act(async () => { vi.advanceTimersByTime(400); });
     expect(screen.getByText("bTitle")).toBeInTheDocument();
     expect(screen.getByText('progress:{"n":2,"total":2}', { selector: "p:not(.sr-only)" })).toBeInTheDocument();
@@ -105,6 +103,37 @@ describe("TourOverlay", () => {
     expect(screen.getByText("skipConfirmTitle")).toBeInTheDocument();
     fireEvent.click(screen.getByText("skip"));
     expect(onClose).toHaveBeenCalledWith("skipped", 0);
+    vi.useRealTimers();
+  });
+
+  it("a step on another page whose element never shows up is dropped when reached", async () => {
+    vi.useFakeTimers();
+    addTarget("a");
+    const onClose = vi.fn();
+    const { rerender } = render(
+      <TourOverlay steps={[steps[0], { ...steps[1], path: "/dashboard/settings" }]} prefix="" onClose={onClose} />,
+    );
+    await act(async () => { vi.advanceTimersByTime(400); });
+    expect(screen.getByText('progress:{"n":1,"total":2}', { selector: "p:not(.sr-only)" })).toBeInTheDocument();
+    fireEvent.click(screen.getByText("next"));
+    expect(push).toHaveBeenCalledWith("/dashboard/settings");
+    pathname = "/dashboard/settings";
+    rerender(<TourOverlay steps={[steps[0], { ...steps[1], path: "/dashboard/settings" }]} prefix="" onClose={onClose} />);
+    await act(async () => { vi.advanceTimersByTime(3500); });
+    expect(onClose).toHaveBeenCalledWith("completed", 0);
+    vi.useRealTimers();
+  });
+
+  it("an element translated off-screen (the closed phone drawer) is not a step", async () => {
+    vi.useFakeTimers();
+    const off = addTarget("a");
+    off.getBoundingClientRect = () => ({ top: 10, left: -300, width: 256, height: 40, right: -44, bottom: 50, x: -300, y: 10, toJSON: () => ({}) });
+    const onClose = vi.fn();
+    render(<TourOverlay steps={[steps[0]]} prefix="" onClose={onClose} />);
+    await act(async () => { vi.advanceTimersByTime(3500); });
+    // Dropped: the only step is gone, so the tour ends without spotlighting it.
+    expect(screen.queryByText("aTitle")).not.toBeInTheDocument();
+    expect(onClose).toHaveBeenCalledWith("completed", 0);
     vi.useRealTimers();
   });
 
