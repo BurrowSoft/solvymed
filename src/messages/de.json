@@ -1,5 +1,4 @@
 ﻿{
-  "banner": "Website im Aufbau. Die App ist bereits verfügbar — jetzt herunterladen und loslegen.",
   "getApp": "App herunterladen",
   "hero": {
     "badge": "App jetzt verfügbar",
@@ -44,10 +43,6 @@
     "sub": "Die App ist live und bereit – laden Sie sie jetzt herunter und haben Sie Ihre Praxis in Minuten am Laufen. Die Website folgt.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
-  },
-  "construction": {
-    "heading": "Website im Aufbau",
-    "body": "Diese Website befindet sich im Aufbau. Die vollständige Solvymed-Website kommt bald mit ausführlicher Dokumentation, Preisen und Support-Ressourcen. In der Zwischenzeit ist die App vollständig einsatzbereit – laden Sie sie herunter und beginnen Sie noch heute, Ihre Praxis zu verwalten."
   },
   "footer": {
     "copyright": "© 2026 Solvymed. Alle Rechte vorbehalten.",

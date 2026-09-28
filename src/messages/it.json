@@ -1,5 +1,4 @@
 ﻿{
-  "banner": "Sito in costruzione. L'app è già disponibile — scaricala subito e inizia.",
   "getApp": "Scarica l'app",
   "hero": {
     "badge": "App disponibile ora",
@@ -44,10 +43,6 @@
     "sub": "L'app è online e pronta — scaricala ora e gestisci il tuo studio in pochi minuti. Il sito è in arrivo.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
-  },
-  "construction": {
-    "heading": "Sito in costruzione",
-    "body": "Questo sito è in fase di sviluppo. Il sito completo di Solvymed sarà presto disponibile con documentazione dettagliata, prezzi e risorse di supporto. Nel frattempo, l'app è completamente operativa — scaricala e inizia a gestire il tuo studio oggi stesso."
   },
   "footer": {
     "copyright": "© 2026 Solvymed. Tutti i diritti riservati.",

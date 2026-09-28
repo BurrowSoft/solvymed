@@ -1,5 +1,4 @@
 ﻿{
-  "banner": "Site em construção. O aplicativo já está no ar — baixe agora e comece a usar.",
   "getApp": "Baixar o app",
   "hero": {
     "badge": "App disponível agora",
@@ -44,10 +43,6 @@
     "sub": "O app está no ar e pronto — baixe agora e tenha sua clínica funcionando em minutos. O site está a caminho.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
-  },
-  "construction": {
-    "heading": "Site em construção",
-    "body": "Este site está em desenvolvimento. O site completo do Solvymed estará disponível em breve com documentação, preços e suporte detalhados. Enquanto isso, o app está totalmente funcional — baixe e comece a gerenciar sua clínica hoje."
   },
   "footer": {
     "copyright": "© 2026 Solvymed. Todos os direitos reservados.",

@@ -1,5 +1,4 @@
 ﻿{
-  "banner": "웹사이트는 현재 구축 중입니다. 앱은 이미 출시되었습니다 — 지금 다운로드하세요.",
   "getApp": "앱 다운로드",
   "hero": {
     "badge": "앱 출시 완료",
@@ -44,10 +43,6 @@
     "sub": "앱은 지금 바로 사용 가능합니다 — 지금 다운로드하고 몇 분 안에 진료를 시작하세요. 웹사이트도 곧 오픈됩니다.",
     "appStore": "App Store",
     "googlePlay": "Google Play"
-  },
-  "construction": {
-    "heading": "웹사이트 구축 중",
-    "body": "이 웹사이트는 현재 개발 중입니다. 상세 문서, 가격 및 지원 리소스를 갖춘 Solvymed 전체 웹사이트가 곧 공개됩니다. 그동안 앱은 완전히 사용 가능합니다 — 다운로드하고 오늘부터 진료 관리를 시작하세요."
   },
   "footer": {
     "copyright": "© 2026 Solvymed. All rights reserved.",
