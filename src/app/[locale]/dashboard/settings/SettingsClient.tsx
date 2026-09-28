@@ -190,7 +190,8 @@ type ClinicData = {
   pix_key?: string;
 };
 
-export function ClinicForm({ data }: { data: ClinicData }) {
+// showPix: the practice country's payment QR is Pix (Brazil).
+export function ClinicForm({ data, showPix = true }: { data: ClinicData; showPix?: boolean }) {
   const t = useTranslations("settings");
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
@@ -237,10 +238,13 @@ export function ClinicForm({ data }: { data: ClinicData }) {
             <Label>{t("state")}</Label>
             <Input name="clinic_state" defaultValue={data.clinic_state ?? ""} placeholder="SP" />
           </div>
-          <div className="sm:col-span-2">
-            <Label>Chave Pix</Label>
-            <Input name="pix_key" defaultValue={data.pix_key ?? ""} placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória" />
-          </div>
+          {/* Pix is Brazil's payment QR: only for Brazilian practices. */}
+          {showPix && (
+            <div className="sm:col-span-2">
+              <Label>Chave Pix</Label>
+              <Input name="pix_key" defaultValue={data.pix_key ?? ""} placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória" />
+            </div>
+          )}
         </div>
         <SaveRow pending={pending} saved={saved} />
       </form>

@@ -117,6 +117,9 @@ export async function middleware(req: NextRequest) {
     // own negotiation agrees on the next request. next-intl negotiates
     // Accept-Language itself on this request, which could still pick a
     // hidden language (Thai before its release), so it sees our choice.
+    // The rebuilt request keeps the URL and headers only (no method/body):
+    // fine here, since this branch only handles first-visit page loads
+    // (GETs without a locale cookie); API and asset paths never reach it.
     const headers = new Headers(req.headers);
     headers.set("accept-language", routing.defaultLocale);
     const res = finalize(intlMiddleware(new NextRequest(req.url, { headers })));

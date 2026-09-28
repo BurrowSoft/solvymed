@@ -67,7 +67,8 @@ export default async function SchedulePage({
     : user.id;
 
   // Amounts are in the practice's currency (its country), not the UI's.
-  const { currency } = countryProfile(await getPracticeCountry(supabase, user.id, effectiveProfId));
+  const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
+  const { currency } = countryProfile(practiceCountry);
 
   // The practice's today, not the server's (UTC).
   const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
@@ -117,7 +118,9 @@ export default async function SchedulePage({
   const pixSource = (isSecretary
     ? (Array.isArray(profResult.data) ? profResult.data[0] : null)
     : profResult.data) as PixSource;
-  const pixKey = pixSource?.pix_key ?? null;
+  // Pix is Brazil's payment QR: only for a Brazilian practice (TH rule 1:
+  // the practice country, never the language).
+  const pixKey = countryProfile(practiceCountry).paymentQr === "pix" ? pixSource?.pix_key ?? null : null;
   const clinicName = pixSource?.clinic_name ?? "";
   const clinicCity = pixSource?.clinic_city ?? "";
   // The doctor's public invite code, for "Share invite link" (not for a secretary).
