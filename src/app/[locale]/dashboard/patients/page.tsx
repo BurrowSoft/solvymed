@@ -72,7 +72,19 @@ export default async function PatientsPage({
 
   const total = activeCount.count ?? 0;
   const archivedTotal = archivedCount.count ?? 0;
-  const matched = listCount ?? patientList.length;
+  // A page past the end makes PostgREST reject the range (PGRST103) with no
+  // count, so the total then comes from a separate count with the same
+  // filters (the unfiltered totals are already known).
+  let matched = listCount ?? null;
+  if (matched === null) {
+    if (!filter) {
+      matched = showArchived ? archivedTotal : total;
+    } else {
+      let c = countQuery();
+      c = showArchived ? c.not("archived_at", "is", null) : c.is("archived_at", null);
+      matched = (await c.or(filter)).count ?? patientList.length;
+    }
+  }
   const lastPage = Math.max(1, Math.ceil(matched / PATIENTS_PAGE_SIZE));
   const listHref = (archived: boolean) => `${prefix}/dashboard/patients${archived ? "?archived=1" : ""}`;
   const pageHref = (n: number) => {
@@ -83,6 +95,9 @@ export default async function PatientsPage({
     const s = params.toString();
     return `${prefix}/dashboard/patients${s ? `?${s}` : ""}`;
   };
+  // A page past the end (an old link, or patients archived meanwhile) goes
+  // to the last page instead of an empty list.
+  if (page > lastPage) redirect(pageHref(lastPage));
   const chipClass = (active: boolean) =>
     `rounded-full px-3 py-1 text-xs font-semibold transition ${active ? "bg-teal-600 text-white" : "border border-slate-200 text-slate-600 hover:bg-slate-50"}`;
 
