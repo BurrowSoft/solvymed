@@ -126,3 +126,22 @@ export async function updateClinicLocation(clinicId: string, lat: number, lng: n
   revalidatePath("/dashboard/clinics");
   return { success: true };
 }
+
+// Where to open the pin map for a clinic without a pin: its city (the
+// street lookup may have failed where the city still resolves). Returns
+// null when the city is unknown or not found. Doctor-only, own clinics.
+export async function locateClinicCity(clinicId: string): Promise<{ lat: number; lng: number } | null> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return null;
+  const { data: clinic } = await supabase
+    .from("clinics")
+    .select("city, state, country")
+    .eq("id", clinicId)
+    .eq("professional_id", user.id)
+    .maybeSingle();
+  if (!clinic?.city) return null;
+  const city = [clinic.city, clinic.state].filter(Boolean).join(", ");
+  return geocode("", city, clinic.country === "BR" || !clinic.country ? "Brasil" : clinic.country);
+}

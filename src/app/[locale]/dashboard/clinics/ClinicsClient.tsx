@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import { addClinic, deleteClinic, updateClinicLocation } from "./actions";
+import { addClinic, deleteClinic, locateClinicCity, updateClinicLocation } from "./actions";
 
 // Leaflet needs the browser, and the tiles should load only when a doctor
 // opens the pin dialog: loaded on demand, never on the server.
@@ -71,11 +71,22 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
   const [pinPlaced, setPinPlaced] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  function openPin(clinic: Clinic) {
+  // Opening a clinic without a pin first looks up its city, so the map
+  // starts there (zoom 12) rather than on all of Brazil; Save still waits
+  // until the doctor places the pin.
+  const [locatingId, setLocatingId] = useState<string | null>(null);
+  async function openPin(clinic: Clinic) {
     const hasPin = clinic.lat != null && clinic.lng != null;
     setPinError("");
     setPinPlaced(hasPin);
-    setPinPos(hasPin ? { lat: clinic.lat!, lng: clinic.lng!, zoom: 17 } : NO_PIN_CENTER);
+    if (hasPin) {
+      setPinPos({ lat: clinic.lat!, lng: clinic.lng!, zoom: 17 });
+    } else {
+      setLocatingId(clinic.id);
+      const city = await locateClinicCity(clinic.id).catch(() => null);
+      setLocatingId(null);
+      setPinPos(city ? { lat: city.lat, lng: city.lng, zoom: 12 } : NO_PIN_CENTER);
+    }
     setPinClinic(clinic);
   }
 
@@ -240,7 +251,9 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
                   <button
                     type="button"
                     onClick={() => openPin(clinic)}
-                    className="text-xs font-semibold text-teal-700 underline underline-offset-2 hover:text-teal-800"
+                    disabled={locatingId !== null}
+                    aria-busy={locatingId === clinic.id}
+                    className="text-xs font-semibold text-teal-700 underline underline-offset-2 hover:text-teal-800 disabled:opacity-50"
                   >
                     {t("adjustPin")}
                   </button>
