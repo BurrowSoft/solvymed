@@ -6525,3 +6525,130 @@ never displayed.
 
 **CI at `ce28288`:** ✅. **Merge gate: 🟢 for `ce28288`**, once the
 reviewer is clean. This docs commit sits on top, after a master sync.
+
+## PR #101 (`chore/help-slim-messages`, base master) — every page moved into a `(site)` route group so /help ships only the messages it uses, 🟢 at `c89f9bc`
+
+This was UX's gate item before the apps link the Help Center. It's almost
+entirely file renames with no URL change. Who gets which messages is
+decided by three layouts:
+- `(site)/layout.tsx` gives all messages.
+- `help/layout.tsx` gives only `footer`.
+- the root layout gives `ConsentBanner` only `consent`.
+
+The only client components outside `(site)` (the help chrome's cookie
+button, and the banner) use exactly those namespaces.
+
+**Broad smoke test,** run on #101's Preview **and on master's Preview
+(`c7b657a`) as the baseline**, with the same spec
+(`scratchpad/pr101/opus-pr101.spec.ts`):
+- **Pages:** each checked for its HTTP status, page errors, console errors
+  mentioning intl/messages, and raw message keys on screen. That covers:
+  - **Logged out** in pt-BR and en: home, pricing, login, signup (including
+    the Paciente role card), forgot/reset password, invite-required,
+    pending-confirmation, not-connected, clinic-inactive, patient- and
+    professional-welcome, confirm, verify, privacy, terms, account/delete,
+    feedback, invite/join/join-secretary links, and help (normal, `?app=1`,
+    an article, K1 `?app=1`).
+  - **Logged out** in ja and ar: home, pricing, login, signup, privacy and
+    help.
+  - **Doctor** in pt-BR and en: dashboard; schedule (list/day/week/month
+    and the New appointment dialog); patients (list and the New patient
+    dialog); patient detail (all 4 tabs); payments; clinics; settings;
+    subscribe; feedback.
+  - **Secretary:** dashboard, schedule, patients (list and detail),
+    payments, settings.
+  - **Patient:** booking page (the procedure listed) and my-appointments.
+- **Result: every page returns 200. There are no page errors, no
+  missing-message console errors and no raw keys** on #101 or on master.
+
+The few spots where the two runs differed were re-run 3 times on both
+builds and behaved **identically**, so they were timing, not #101:
+- pending-confirmation logged out: both redirect to login.
+- The New appointment dialog in pt-BR: full text 3/3 on both.
+- Where the patient-welcome countdown lands.
+
+**Cookie banner** (`ConsentBanner`, now outside `(site)` with only
+`consent`):
+- A fresh visit shows it in pt-BR ("Usamos cookies necessários… Aceitar
+  tudo | Somente necessários | Escolher…"), the same as on master.
+- "Escolher…" shows the categories, and "Salvar escolhas" sets
+  `sm_consent` and closes it.
+- "Configurações de cookies" reopens it from home, **/help** and privacy.
+
+**Page source (the goal):**
+
+| Page | "Assinar com Cartão" | "Comece seu teste grátis" | "Assine para continuar" | Size (master → #101) |
+|---|---|---|---|---|
+| `/pt-BR/help?app=1` | **no** (was yes) | **no** (was yes) | **no** (was yes) | 94 KB → 42 KB |
+| `/pt-BR/help/k1?app=1` | **no** | **no** | **no** | 76 KB → 25 KB |
+| `/help?app=1` (en) | "Subscribe with Card" / "Start your free trial": **no** (were yes) | | | 92 KB → 41 KB |
+| `/pt-BR/help` (normal) | no | yes (the visible header CTA) | no | 101 KB → 50 KB |
+| `/pt-BR`, `/pt-BR/pricing` | yes | yes | yes | unchanged: `(site)` still gets everything |
+
+**CI at `c89f9bc`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`c89f9bc`.** The branch is up to date with master; this docs commit sits
+on top.
+
+## PR #102 (`ux/news`, base master) — the Novidades popup + new-feature tour (behind `NEXT_PUBLIC_NEWS_ENABLED`), 🟢 at `59def69`
+
+The flag is unset on Vercel, so the ON side ran on a **local `next dev`
+with `NEXT_PUBLIC_NEWS_ENABLED=1`**, against the prod DB (throwaway
+doctor and secretary, deleted afterwards). Migration 113 isn't applied,
+so the popup is opened with `/dashboard?news=1`. Once-per-release saving
+is unit-tested only.
+
+**Rounds:**
+- **`07444e2`:** below lg, "Ver as novidades" closed the popup and showed
+  nothing. Its only step (the sidebar's Configurações) is inside the
+  closed drawer. UX chose to spotlight the ☰ button instead, and never to
+  mark a release seen if nothing could be shown.
+- **❌ at `a75207c`:** the ☰ fallback was never found. The button is
+  `position: fixed`, so `offsetParent === null` (measured at 390 px: 16,16
+  40×40, visible), and `isOnScreen` rejected it.
+- **`59def69`:** `isOnScreen` now uses size + viewport overlap +
+  `visibility`. With the same change (`cb06103b`), the **main tour's**
+  drawer steps also point at the ☰ below lg.
+
+**At `59def69`:**
+- **Without `?news=1` (pre-113):** no popup.
+- **Doctor, 1280, pt-BR:**
+  - The popup appears after ≈0.9 s: "Novidades no SolvyMed ✨", with
+    "Tour guiado — Um passeio rápido…" only (SolvyAI stays hidden), and
+    "Agora não" / "Ver as novidades". The card takes focus.
+  - A click on the dim doesn't close it; **Esc** and **"Agora não"** close
+    it with no spotlight.
+  - **"Ver as novidades"** → "1 de 1", "Tour guiado — Em Configurações →
+    Rever o tour.", spotlighting the sidebar's Configurações. **Concluir**
+    closes it.
+  - **Settings → "Novidades"** card: "1.4.0 · Tour guiado: …" → **Mostrar**
+    navigates to the dashboard and shows the same spotlight.
+  - The **main tour** replay still starts at "1 de 8". No page errors.
+- **en:** "What's new in SolvyMed ✨", "Guided tour…", "Not now" / "See
+  what's new".
+- **900 px:**
+  - "Ver as novidades" → "1 de 1" on **☰** with "Abra o menu →
+    Configurações → Rever o tour." The card is on screen and doesn't cover
+    the ☰.
+  - Main tour: **8 steps**: home, New appointment, ☰ "No menu ☰, em
+    Agenda: …", ☰ Pacientes, ☰ Pagamentos, trial chip, invite, ☰
+    Configurações.
+- **390 px (phone):**
+  - The popup is a **bottom sheet** (full width, flush with the bottom),
+    with no overflow.
+  - "Ver as novidades" → ☰ with the menu text, and the card doesn't cover
+    the ☰.
+  - Main tour: **7 steps** (New appointment is dropped below sm): home, ☰
+    Agenda, ☰ Pacientes, ☰ Pagamentos, trial, invite, ☰ Configurações.
+- **Secretary:**
+  - At 1280, the popup waits until the one-time welcome card is dismissed
+    ("Entendi"), then shows the same item. "Ver as novidades" spotlights
+    Configurações, and Settings has the Novidades card with "Mostrar".
+  - At 390: the news spotlight is on ☰. The main tour has 3 steps: home, ☰
+    "No menu ☰, em Agenda: Confirme os pedidos…", ☰ Pacientes.
+- **Flag OFF (#102's Preview, where the variable is unset):** with
+  `?news=1` there's no popup, and Settings has no Novidades card and no
+  "Mostrar".
+
+**CI at `59def69`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`59def69`.** This docs commit sits on top, after a master sync (2 behind;
+message JSON valid).
