@@ -20,8 +20,8 @@ To undo, tap **Mark unpaid** and confirm.
 **A receber** soma as consultas não pagas do período que estão agendadas, confirmadas, concluídas ou atrasadas (pedidos ainda não aceitos, canceladas, rejeitadas e ausências não entram). **Recebido** soma tudo o que foi marcado como pago. Escolha o período: esta semana, este mês, mês passado ou todo o período.
 **en**
 **To receive** adds up the period's unpaid appointments that are scheduled, confirmed, completed or late (requests not yet accepted, cancelled, rejected and no-shows don't count). **Received** adds up everything marked as paid. Choose the period: this week, this month, last month or all time.
-**No site:** Em **Pagamentos**, os totais se chamam **Pendente**, **Recebido** e **Total**, com os mesmos períodos. No site, **Pendente** soma todas as consultas não pagas do período, exceto as canceladas.
-**On the website:** In **Payments**, the totals are **Pending**, **Received** and **Total**, with the same periods. On the website, **Pending** adds up all the period's unpaid appointments except cancelled ones.
+**No site:** Em **Pagamentos**, os totais se chamam **Pendente**, **Recebido** e **Total**, com os mesmos períodos. A regra é a mesma do app.
+**On the website:** In **Payments**, the totals are **Pending**, **Received** and **Total**, with the same periods. The rule is the same as in the app.
 `open:payments`
 
 ---

@@ -744,8 +744,8 @@
           ]
         },
         "web": {
-          "pt": "Em **Pagamentos**, os totais se chamam **Pendente**, **Recebido** e **Total**, com os mesmos períodos. No site, **Pendente** soma todas as consultas não pagas do período, exceto as canceladas.",
-          "en": "In **Payments**, the totals are **Pending**, **Received** and **Total**, with the same periods. On the website, **Pending** adds up all the period's unpaid appointments except cancelled ones."
+          "pt": "Em **Pagamentos**, os totais se chamam **Pendente**, **Recebido** e **Total**, com os mesmos períodos. A regra é a mesma do app.",
+          "en": "In **Payments**, the totals are **Pending**, **Received** and **Total**, with the same periods. The rule is the same as in the app."
         },
         "open": "payments",
         "appOnly": null
