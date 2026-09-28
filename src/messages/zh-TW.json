@@ -1083,6 +1083,24 @@
     "secHomeTitle": "診所的一天",
     "secHomeText": "診所今天與本週的預約。",
     "secScheduleText": "確認病患的預約申請，並依日、週或月安排預約。",
-    "secPatientsText": "登錄與更新病患資料。病歷僅醫師可見。"
+    "secPatientsText": "登錄與更新病患資料。病歷僅醫師可見。",
+    "inMenu": "在選單 ☰ 的「{section}」中："
+  },
+  "news": {
+    "title": "SolvyMed 新功能 ✨",
+    "see": "查看新功能",
+    "later": "稍後再說",
+    "cardTitle": "新功能",
+    "cardSub": "查看每個版本的變更，並重新觀看導覽。",
+    "show": "查看",
+    "r140": {
+      "solvyaiTitle": "認識 SolvyAI ✦",
+      "solvyaiLine": "您的 AI 助理：提問或下達指令，執行前一定會先和您確認。",
+      "solvyaiSpot": "隨時點這裡。試試：「我明天有什麼安排？」",
+      "tourTitle": "導覽",
+      "tourLine": "快速認識主要功能，隨時可以重新觀看。",
+      "tourSpot": "在設定 → 重新觀看導覽。",
+      "tourSpotMenu": "開啟選單 → 設定 → 重新觀看導覽。"
+    }
   }
 }

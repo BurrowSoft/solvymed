@@ -21,14 +21,15 @@ type Reader = {
   };
 };
 
-export async function readTourState(db: unknown, userId: string): Promise<TourState> {
+// tour: "main" (the guided tour) or "news:<release>" (a Novidades popup).
+export async function readTourState(db: unknown, userId: string, tour = "main"): Promise<TourState> {
   try {
     const { data, error } = await (db as Reader)
       .from("tour_progress")
       .select("status, step")
       .eq("user_id", userId)
       .eq("platform", "web")
-      .eq("tour", "main")
+      .eq("tour", tour)
       .maybeSingle();
     if (error) return { kind: "unavailable" };
     if (!data) return { kind: "none" };

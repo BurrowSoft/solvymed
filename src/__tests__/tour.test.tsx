@@ -29,6 +29,13 @@ describe("tour definitions (specs/walkthrough.md)", () => {
     expect(title(null)).toBe("paymentsTitle");
   });
 
+  it("sidebar steps fall back to the menu button on narrow screens (doctor and secretary)", () => {
+    const withMenu = (role: "professional" | "secretary") =>
+      tourSteps(role, "pix").filter((s) => s.fallback?.target === "nav-menu").map((s) => `${s.id}:${s.fallback?.menuSection}`);
+    expect(withMenu("professional")).toEqual(["schedule:schedule", "patients:patients", "payments:payments", "settings:settings"]);
+    expect(withMenu("secretary")).toEqual(["schedule:schedule", "patients:patients"]);
+  });
+
   it("secretary: 4 steps, no SolvyAI, no settings/invite/payments", () => {
     expect(tourSteps("secretary", null).map((s) => s.id)).toEqual(["home", "new-appointment", "schedule", "patients"]);
   });
@@ -51,7 +58,7 @@ function addTarget(name: string) {
   const el = document.createElement("div");
   el.setAttribute("data-tour", name);
   el.getBoundingClientRect = () => ({ top: 10, left: 10, width: 100, height: 40, right: 110, bottom: 50, x: 10, y: 10, toJSON: () => ({}) });
-  Object.defineProperty(el, "offsetParent", { get: () => document.body });
+  Object.defineProperty(el, "offsetParent", { get: () => document.body, configurable: true });
   el.scrollIntoView = () => {};
   document.body.appendChild(el);
   return el;
@@ -123,6 +130,40 @@ describe("TourOverlay", () => {
     vi.useRealTimers();
   });
 
+  it("a step whose target is off-screen uses its fallback (the menu button) with the fallback text", async () => {
+    vi.useFakeTimers();
+    addTarget("menu");
+    const onClose = vi.fn();
+    render(<TourOverlay steps={[{ ...steps[0], target: "missing", fallback: { target: "menu", textKey: "menuText" } }]} prefix="" onClose={onClose} />);
+    await act(async () => { vi.advanceTimersByTime(400); });
+    expect(screen.getByText("menuText")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("finish"));
+    expect(onClose).toHaveBeenCalledWith("completed", 0);
+    vi.useRealTimers();
+  });
+
+  it("a position:fixed target (the ☰ button: no offsetParent) still counts as on screen (tester)", async () => {
+    vi.useFakeTimers();
+    const fixed = addTarget("menu");
+    Object.defineProperty(fixed, "offsetParent", { get: () => null });
+    const onClose = vi.fn();
+    render(<TourOverlay steps={[{ ...steps[0], target: "missing", fallback: { target: "menu", textKey: "menuText" } }]} prefix="" onClose={onClose} />);
+    await act(async () => { vi.advanceTimersByTime(400); });
+    expect(screen.getByText("menuText")).toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
+  it("a sidebar step on a narrow screen: the menu button, with the drawer line before the step's text (UX)", async () => {
+    vi.useFakeTimers();
+    addTarget("nav-menu");
+    const onClose = vi.fn();
+    render(<TourOverlay steps={[{ ...steps[0], target: "nav-schedule", fallback: { target: "nav-menu", menuSection: "schedule" } }]} prefix="" onClose={onClose} />);
+    await act(async () => { vi.advanceTimersByTime(400); });
+    expect(screen.getByText('inMenu:{"section":"schedule"}aText')).toBeInTheDocument();
+    expect(screen.getByText("aTitle")).toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
   it("a step on another page whose element never shows up is dropped when reached", async () => {
     vi.useFakeTimers();
     addTarget("a");
@@ -148,9 +189,10 @@ describe("TourOverlay", () => {
     const onClose = vi.fn();
     render(<TourOverlay steps={[steps[0]]} prefix="" onClose={onClose} />);
     await act(async () => { vi.advanceTimersByTime(3500); });
-    // Dropped: the only step is gone, so the tour ends without spotlighting it.
+    // Dropped: the only step is gone, so the tour ends without spotlighting
+    // anything, and says so ("none": nothing may be recorded as seen).
     expect(screen.queryByText("aTitle")).not.toBeInTheDocument();
-    expect(onClose).toHaveBeenCalledWith("completed", 0);
+    expect(onClose).toHaveBeenCalledWith("none", 0);
     vi.useRealTimers();
   });
 
