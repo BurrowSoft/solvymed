@@ -198,7 +198,8 @@
     "missingFieldsError": "Заполните все обязательные поля.",
     "pastMidnightError": "Это время и продолжительность выйдут за полночь.",
     "patientArchivedError": "Эта карта в архиве. Восстановите её в разделе «Пациенты», чтобы записать на приём.",
-    "moreCount": "ещё {n}"
+    "moreCount": "ещё {n}",
+    "requestedLabel": "Запрошено: {date} · {time}"
   },
   "payments": {
     "thisWeek": "На этой неделе",

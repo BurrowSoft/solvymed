@@ -5406,3 +5406,17 @@ appointment, all combinations in parallel:**
   AM").
 
 **CI at `cf99265`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `cf99265`.**
+
+## PR #71 (`fix/requests-panel-i18n`, base `release`, stacked on #69) — requests panel "Requested:" translated, 🟢 at `1217fb7`, review clean
+
+This fixes an RC follow-up: the doctor's booking-requests panel rendered raw
+English "Requested: {date} {time}" for a patient's reschedule request.
+Checked on the preview with a throwaway doctor and a linked patient (both
+deleted afterwards). The patient asked, through the My appointments UI, to
+reschedule to 08:00:
+- **pt-BR panel:** **"Solicitado: qui., 1 de out. · 8:00"**, with no English.
+- **en panel:** "Reschedule Requested" / "Requested: Thu, Oct 1 · 8:00 AM".
+- No React #418 or hydration warning on `/dashboard/schedule` in either
+  locale (São Paulo browser).
+
+**CI at `1217fb7`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `1217fb7`.**

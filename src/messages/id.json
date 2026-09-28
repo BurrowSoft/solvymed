@@ -198,7 +198,8 @@
     "missingFieldsError": "Harap isi semua kolom yang wajib diisi.",
     "pastMidnightError": "Waktu dan durasi ini akan melewati tengah malam.",
     "patientArchivedError": "Rekam medis ini diarsipkan. Pulihkan di menu Pasien untuk membuat janji temu.",
-    "moreCount": "+{n} lainnya"
+    "moreCount": "+{n} lainnya",
+    "requestedLabel": "Diminta: {date} · {time}"
   },
   "payments": {
     "thisWeek": "Minggu ini",

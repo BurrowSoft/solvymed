@@ -198,7 +198,8 @@
     "missingFieldsError": "Veuillez remplir tous les champs obligatoires.",
     "pastMidnightError": "Cet horaire et cette durée dépasseraient minuit.",
     "patientArchivedError": "Ce dossier est archivé. Restaurez-le dans Patients pour planifier un rendez-vous.",
-    "moreCount": "+{n} de plus"
+    "moreCount": "+{n} de plus",
+    "requestedLabel": "Demandé : {date} · {time}"
   },
   "payments": {
     "thisWeek": "Cette semaine",
