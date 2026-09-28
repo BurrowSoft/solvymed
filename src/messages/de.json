@@ -253,7 +253,7 @@
     "savePatient": "Patienten speichern",
     "saving": "Wird gespeichert…",
     "deleteConfirm": "Diesen Patienten und alle Daten löschen? Dies kann nicht rückgängig gemacht werden.",
-    "yrs": "J.",
+    "age": "{n, plural, one {# Jahr} other {# Jahre}}",
     "alreadyRegistered": "{name} ist bereits erfasst.",
     "alreadyRegisteredGeneric": "Diese Person ist bereits erfasst.",
     "nameRequired": "Der vollständige Name ist erforderlich.",
@@ -292,7 +292,7 @@
     "insurance": "Versicherung",
     "inviteCode": "Einladungscode",
     "patientSince": "Patient seit",
-    "yrs": "J.",
+    "age": "{n, plural, one {# Jahr} other {# Jahre}}",
     "editPatient": "Patient bearbeiten",
     "unblockBookings": "Buchungen entsperren",
     "blockBookings": "Buchungen sperren",
@@ -1101,6 +1101,71 @@
       "tourLine": "Ein kurzer Rundgang durch die wichtigsten Funktionen. Jederzeit wiederholbar.",
       "tourSpot": "Unter Einstellungen → Tour erneut ansehen.",
       "tourSpotMenu": "Öffnen Sie das Menü → Einstellungen → Tour erneut ansehen."
+    }
+  },
+  "assistant": {
+    "preview": "Vorschau",
+    "newConversation": "Neues Gespräch",
+    "close": "Schließen",
+    "emptyTitle": "Fragen Sie etwas zu SolvyMed.",
+    "thinking": "SolvyAI denkt nach…",
+    "limitReached": "Sie haben die heutigen SolvyAI-Nachrichten verbraucht. Erneuert in {hours} Std.",
+    "help": "Hilfe",
+    "startNew": "Neues Gespräch beginnen",
+    "placeholder": "Fragen oder beauftragen…",
+    "mic": "Diktieren",
+    "send": "Senden",
+    "tooFast": "Bitte kurz warten, bevor Sie erneut senden.",
+    "noPatientData": "Keine Patientendaten in Hilfefragen angeben.",
+    "hint": "Kann ich helfen? Fragen Sie mich alles.",
+    "open": "SolvyAI öffnen",
+    "usageToday": "Heutige Nutzung",
+    "resetsIn": "Erneuert in {hours} Std.",
+    "extra": "+{n} zusätzliche Nachrichten",
+    "helpful": "Hilfreich",
+    "notHelpful": "Nicht hilfreich",
+    "support": "Support kontaktieren",
+    "default": "Standard",
+    "saved": "✓ Erledigt",
+    "undone": "Rückgängig gemacht",
+    "simulated": "Simulation",
+    "undo": "Rückgängig ({s} s)",
+    "view": "Im Kalender ansehen",
+    "edit": "Bearbeiten",
+    "confirm": "Bestätigen ✓",
+    "failed": "Speichern nicht möglich.",
+    "failedBlocked": "Die Zeit ist geblockt.",
+    "chips": {
+      "home": {
+        "a": "Was habe ich morgen?",
+        "b": "Wie lade ich meine Praxiskraft ein?",
+        "c": "Termin buchen"
+      },
+      "schedule": {
+        "a": "Was habe ich morgen?",
+        "b": "Freitagnachmittag blocken",
+        "c": "Termin buchen"
+      },
+      "patients": {
+        "a": "Patient anlegen",
+        "b": "Wie archiviere ich einen Patienten?",
+        "c": "Patient finden"
+      },
+      "payments": {
+        "a": "Wie viel ist diese Woche offen?",
+        "b": "Pix an einen Patienten senden",
+        "c": "Als bezahlt markieren"
+      },
+      "settings": {
+        "a": "Wie lade ich meine Praxiskraft ein?",
+        "b": "Pix einrichten",
+        "c": "Sprechzeiten ändern"
+      },
+      "other": {
+        "a": "Was habe ich morgen?",
+        "b": "Wie lade ich meine Praxiskraft ein?",
+        "c": "Termin buchen"
+      }
     }
   }
 }

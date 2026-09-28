@@ -31,6 +31,12 @@ export function formatDateLabel(
   return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale), { ...options, timeZone: "UTC" }).format(new Date(Date.UTC(y, m - 1, d, 12))));
 }
 
+// The locale's short numeric date, like the app: 14/05/1993 (pt-BR),
+// 05/14/1993 (en), 14/05/2536 (th, Buddhist year).
+export function formatShortDate(locale: string, date: string): string {
+  return formatDateLabel(locale, date, { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
 export function formatTimeLabel(locale: string, time: string): string {
   const [h, m] = time.split(":").map(Number);
   if (!Number.isInteger(h) || !Number.isInteger(m)) return time;

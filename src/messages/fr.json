@@ -253,7 +253,7 @@
     "savePatient": "Enregistrer le patient",
     "saving": "Enregistrement…",
     "deleteConfirm": "Supprimer ce patient et tous ses dossiers ? Cette action est irréversible.",
-    "yrs": "ans",
+    "age": "{n, plural, one {# an} other {# ans}}",
     "alreadyRegistered": "{name} est déjà enregistré(e).",
     "alreadyRegisteredGeneric": "Cette personne est déjà enregistrée.",
     "nameRequired": "Le nom complet est obligatoire.",
@@ -292,7 +292,7 @@
     "insurance": "Assurance",
     "inviteCode": "Code d'invitation",
     "patientSince": "Patient depuis",
-    "yrs": "ans",
+    "age": "{n, plural, one {# an} other {# ans}}",
     "editPatient": "Modifier le patient",
     "unblockBookings": "Débloquer les rendez-vous",
     "blockBookings": "Bloquer les rendez-vous",
@@ -1101,6 +1101,71 @@
       "tourLine": "Un tour rapide des fonctions principales. Revoyez-la quand vous voulez.",
       "tourSpot": "Dans Paramètres → Revoir le tour.",
       "tourSpotMenu": "Ouvrez le menu → Paramètres → Revoir le tour."
+    }
+  },
+  "assistant": {
+    "preview": "Aperçu",
+    "newConversation": "Nouvelle conversation",
+    "close": "Fermer",
+    "emptyTitle": "Demandez quelque chose sur SolvyMed.",
+    "thinking": "SolvyAI réfléchit…",
+    "limitReached": "Vous avez utilisé les messages SolvyAI d'aujourd'hui. Renouvellement dans {hours} h.",
+    "help": "Aide",
+    "startNew": "Nouvelle conversation",
+    "placeholder": "Demandez quelque chose…",
+    "mic": "Dicter",
+    "send": "Envoyer",
+    "tooFast": "Patientez un instant avant de renvoyer.",
+    "noPatientData": "N'incluez pas de données de patients dans les questions d'aide.",
+    "hint": "Je peux aider ? Demandez-moi n'importe quoi.",
+    "open": "Ouvrir SolvyAI",
+    "usageToday": "Utilisation du jour",
+    "resetsIn": "Renouvellement dans {hours} h",
+    "extra": "+{n} messages supplémentaires",
+    "helpful": "Utile",
+    "notHelpful": "Pas utile",
+    "support": "Contacter le support",
+    "default": "par défaut",
+    "saved": "✓ Fait",
+    "undone": "Annulé",
+    "simulated": "simulation",
+    "undo": "Annuler ({s} s)",
+    "view": "Voir dans l'agenda",
+    "edit": "Modifier",
+    "confirm": "Confirmer ✓",
+    "failed": "Impossible d'enregistrer.",
+    "failedBlocked": "Le créneau est bloqué.",
+    "chips": {
+      "home": {
+        "a": "Qu'est-ce que j'ai demain ?",
+        "b": "Comment inviter ma secrétaire ?",
+        "c": "Prendre rendez-vous"
+      },
+      "schedule": {
+        "a": "Qu'est-ce que j'ai demain ?",
+        "b": "Bloquer vendredi après-midi",
+        "c": "Prendre rendez-vous"
+      },
+      "patients": {
+        "a": "Ajouter un patient",
+        "b": "Comment archiver un patient ?",
+        "c": "Trouver un patient"
+      },
+      "payments": {
+        "a": "Combien reste-t-il à encaisser cette semaine ?",
+        "b": "Envoyer un Pix à un patient",
+        "c": "Marquer comme payé"
+      },
+      "settings": {
+        "a": "Comment inviter ma secrétaire ?",
+        "b": "Configurer Pix",
+        "c": "Modifier les horaires"
+      },
+      "other": {
+        "a": "Qu'est-ce que j'ai demain ?",
+        "b": "Comment inviter ma secrétaire ?",
+        "c": "Prendre rendez-vous"
+      }
     }
   }
 }
