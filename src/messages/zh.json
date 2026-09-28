@@ -378,7 +378,23 @@
     "notDoctorError": "只有专业人员可以管理临床记录。",
     "sessionError": "会话已过期，请重新登录。",
     "nameRequired": "请输入患者全名。",
-    "genericError": "出现问题，请重试。"
+    "genericError": "出现问题，请重试。",
+    "tabAccessLog": "访问记录",
+    "accessLogIntro": "谁在何时打开了该患者的病历。只有您能查看此记录。",
+    "accessLogEmpty": "暂无访问记录。",
+    "accessLogFailed": "无法加载访问记录，请重试。",
+    "accessLogMore": "查看更早记录",
+    "accessRoleProfessional": "医生",
+    "accessRoleSecretary": "助理",
+    "accessRolePatient": "患者本人",
+    "accessKindPatient": "患者档案",
+    "accessKindRecord": "病历",
+    "accessKindExam": "检查",
+    "accessKindPrescription": "处方",
+    "accessKindFile": "文件",
+    "accessColWhen": "时间",
+    "accessColWho": "人员",
+    "accessColWhat": "内容"
   },
   "settings": {
     "profileTitle": "个人资料",
@@ -588,7 +604,7 @@
       "joiningAsSecretary": "通过邀请链接以秘书身份注册。",
       "secretaryNeedsInvite": "你是秘书？请向你的医生索取邀请链接。",
       "secretaryEmailMismatch": "该邮箱与邀请不匹配，或邀请已失效。请检查邮箱，或向诊所索取新的链接。",
-      "consent": "创建账户即表示您同意<terms>服务条款</terms>和<privacy>隐私政策</privacy>。",
+      "consentCheckbox": "我已阅读并同意<terms>使用条款</terms>和<privacy>隐私政策</privacy>",
       "country": "您的诊所在哪里？",
       "countryOther": "其他国家",
       "countryHint": "用于设定货币、套餐价格、患者证件和付款二维码。之后如需更改，请联系客服。"

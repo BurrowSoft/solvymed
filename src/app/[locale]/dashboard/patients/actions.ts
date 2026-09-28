@@ -5,7 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId, isProfessionalRole } from "@/lib/effectiveProfId";
 import { sendExpoPush } from "@/lib/push";
 import { actionError } from "@/lib/dbErrors";
-import { clinicDate, clinicTime } from "@/lib/clinicTime";
+import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
+import { readAccessLog, type AccessLogPage } from "@/lib/accessLog";
+import { routing } from "@/i18n/routing";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { formIdKindMatches, patientIdError, patientIdKind, readPatientIds, sameIdentifier, similarPatientArgs } from "@/lib/patientIds";
 
@@ -184,6 +186,18 @@ export async function deletePatient(id: string) {
   }
   revalidatePath("/dashboard/patients");
   return { success: true };
+}
+
+// The next page of a patient's access log (older than `before`). The RPC
+// itself allows only the practice's doctor (null otherwise).
+export async function loadAccessLog(patientId: string, before: string, locale: string): Promise<AccessLogPage | "failed" | null> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const timeZone = await getClinicTimeZone(supabase, { professionalId: user.id, isSecretary: false });
+  // The locale comes from the client: only a real app locale reaches Intl.
+  const safeLocale = (routing.locales as readonly string[]).includes(locale) ? locale : routing.defaultLocale;
+  return readAccessLog(supabase, patientId, { before, locale: safeLocale, timeZone });
 }
 
 export type ArchivePreview = { hasClinicalHistory: boolean; upcomingAppointments: number };

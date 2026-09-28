@@ -378,7 +378,23 @@
     "notDoctorError": "Nur die behandelnde Fachkraft kann klinische Einträge verwalten.",
     "sessionError": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
     "nameRequired": "Bitte geben Sie den vollständigen Namen des Patienten ein.",
-    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "tabAccessLog": "Zugriffsprotokoll",
+    "accessLogIntro": "Wer die Akte dieses Patienten geöffnet hat und wann. Nur Sie sehen dieses Protokoll.",
+    "accessLogEmpty": "Noch keine Zugriffe erfasst.",
+    "accessLogFailed": "Das Zugriffsprotokoll konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "accessLogMore": "Ältere anzeigen",
+    "accessRoleProfessional": "Ärztin/Arzt",
+    "accessRoleSecretary": "Praxiskraft",
+    "accessRolePatient": "Der Patient selbst",
+    "accessKindPatient": "Patientenakte",
+    "accessKindRecord": "Behandlungseintrag",
+    "accessKindExam": "Befund",
+    "accessKindPrescription": "Rezept",
+    "accessKindFile": "Datei",
+    "accessColWhen": "Wann",
+    "accessColWho": "Wer",
+    "accessColWhat": "Was"
   },
   "settings": {
     "profileTitle": "Profil",
@@ -588,7 +604,7 @@
       "joiningAsSecretary": "Registrierung für das Praxisteam über einen Einladungslink.",
       "secretaryNeedsInvite": "Im Praxisteam tätig? Bitten Sie Ihre Praxis um einen Einladungslink.",
       "secretaryEmailMismatch": "Diese E-Mail-Adresse passt nicht zur Einladung, oder die Einladung ist nicht mehr gültig. Prüfen Sie die Adresse oder bitten Sie die Praxis um einen neuen Link.",
-      "consent": "Mit der Erstellung eines Kontos stimmen Sie den <terms>Nutzungsbedingungen</terms> und der <privacy>Datenschutzerklärung</privacy> zu.",
+      "consentCheckbox": "Ich habe die <terms>Nutzungsbedingungen</terms> und die <privacy>Datenschutzerklärung</privacy> gelesen und akzeptiere sie",
       "country": "Wo ist Ihre Praxis?",
       "countryOther": "Anderes Land",
       "countryHint": "Legt Währung, Tarifpreis, Patientenausweis und Zahlungs-QR fest. Für eine spätere Änderung wenden Sie sich an den Support."

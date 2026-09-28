@@ -378,7 +378,23 @@
     "notDoctorError": "Seul le professionnel peut gérer les dossiers cliniques.",
     "sessionError": "Votre session a expiré. Veuillez vous reconnecter.",
     "nameRequired": "Veuillez saisir le nom complet du patient.",
-    "genericError": "Une erreur s'est produite. Veuillez réessayer."
+    "genericError": "Une erreur s'est produite. Veuillez réessayer.",
+    "tabAccessLog": "Journal des accès",
+    "accessLogIntro": "Qui a ouvert le dossier de ce patient, et quand. Vous seul pouvez voir ce journal.",
+    "accessLogEmpty": "Aucun accès enregistré pour l'instant.",
+    "accessLogFailed": "Impossible de charger le journal des accès. Veuillez réessayer.",
+    "accessLogMore": "Voir les plus anciens",
+    "accessRoleProfessional": "Praticien",
+    "accessRoleSecretary": "Secrétaire",
+    "accessRolePatient": "Le patient lui-même",
+    "accessKindPatient": "Fiche du patient",
+    "accessKindRecord": "Dossier médical",
+    "accessKindExam": "Examen",
+    "accessKindPrescription": "Ordonnance",
+    "accessKindFile": "Fichier",
+    "accessColWhen": "Quand",
+    "accessColWho": "Qui",
+    "accessColWhat": "Quoi"
   },
   "settings": {
     "profileTitle": "Profil",
@@ -588,7 +604,7 @@
       "joiningAsSecretary": "Inscription en tant que secrétaire via un lien d'invitation.",
       "secretaryNeedsInvite": "Secrétaire ? Demandez un lien d'invitation au cabinet où vous travaillez.",
       "secretaryEmailMismatch": "Cet e-mail ne correspond pas à l'invitation, ou l'invitation n'est plus valide. Vérifiez l'e-mail ou demandez un nouveau lien au cabinet.",
-      "consent": "En créant un compte, vous acceptez les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>.",
+      "consentCheckbox": "J'ai lu et j'accepte les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>",
       "country": "Où se trouve votre cabinet ?",
       "countryOther": "Autre pays",
       "countryHint": "Définit la devise, le prix de l'abonnement, la pièce d'identité du patient et le QR de paiement. Pour le changer ensuite, contactez le support."

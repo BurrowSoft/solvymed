@@ -6,6 +6,8 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { PatientTabs, ArchivedBanner, type MedRecord, type Rx } from "./PatientDetailClient";
 import { getArchivePreview } from "../actions";
+import { logPatientOpen, readAccessLog } from "@/lib/accessLog";
+import { getClinicTimeZone } from "@/lib/clinicTime";
 
 export default async function PatientDetailPage({
   params,
@@ -50,6 +52,18 @@ export default async function PatientDetailPage({
   ]);
 
   if (!patientResult.data) notFound();
+
+  // The access log (migration 111): this open is recorded (doctor or
+  // secretary), and the doctor gets the log's first page for its tab.
+  // Secretaries never see the log. Logged first, so the log shown
+  // includes this open.
+  await logPatientOpen(supabase, id);
+  const accessLog = isSecretary
+    ? null
+    : await readAccessLog(supabase, id, {
+        locale,
+        timeZone: await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary }),
+      });
 
   const patient = patientResult.data as {
     id: string; full_name: string; email?: string; phone?: string; cpf?: string;
@@ -119,6 +133,7 @@ export default async function PatientDetailPage({
           currentUserId={user.id}
           idKind={patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId))}
           canDelete={preview?.hasClinicalHistory === false}
+          accessLog={accessLog}
         />
       </div>
     </div>

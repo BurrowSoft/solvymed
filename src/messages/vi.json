@@ -378,7 +378,23 @@
     "notDoctorError": "Chỉ chuyên gia mới có thể quản lý hồ sơ lâm sàng.",
     "sessionError": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
     "nameRequired": "Vui lòng nhập họ tên đầy đủ của bệnh nhân.",
-    "genericError": "Đã xảy ra lỗi. Vui lòng thử lại."
+    "genericError": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "tabAccessLog": "Nhật ký truy cập",
+    "accessLogIntro": "Ai đã mở hồ sơ của bệnh nhân này và khi nào. Chỉ bạn xem được nhật ký này.",
+    "accessLogEmpty": "Chưa có lượt truy cập nào được ghi lại.",
+    "accessLogFailed": "Không tải được nhật ký truy cập. Vui lòng thử lại.",
+    "accessLogMore": "Xem cũ hơn",
+    "accessRoleProfessional": "Bác sĩ",
+    "accessRoleSecretary": "Trợ lý",
+    "accessRolePatient": "Chính bệnh nhân",
+    "accessKindPatient": "Hồ sơ bệnh nhân",
+    "accessKindRecord": "Bệnh án",
+    "accessKindExam": "Xét nghiệm",
+    "accessKindPrescription": "Đơn thuốc",
+    "accessKindFile": "Tệp",
+    "accessColWhen": "Khi nào",
+    "accessColWho": "Ai",
+    "accessColWhat": "Nội dung"
   },
   "settings": {
     "profileTitle": "Hồ sơ",
@@ -588,7 +604,7 @@
       "joiningAsSecretary": "Đăng ký làm thư ký qua liên kết mời.",
       "secretaryNeedsInvite": "Bạn là thư ký? Hãy xin bác sĩ một liên kết mời.",
       "secretaryEmailMismatch": "Email này không khớp với lời mời, hoặc lời mời không còn hiệu lực. Hãy kiểm tra email hoặc xin phòng khám một liên kết mới.",
-      "consent": "Khi tạo tài khoản, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>.",
+      "consentCheckbox": "Tôi đã đọc và chấp nhận <terms>Điều khoản sử dụng</terms> và <privacy>Chính sách quyền riêng tư</privacy>",
       "country": "Phòng khám của bạn ở đâu?",
       "countryOther": "Quốc gia khác",
       "countryHint": "Xác định tiền tệ, giá gói, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi sau, hãy liên hệ bộ phận hỗ trợ."

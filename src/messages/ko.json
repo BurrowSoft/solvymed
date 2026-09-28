@@ -378,7 +378,23 @@
     "notDoctorError": "진료 기록은 담당 전문가만 관리할 수 있습니다.",
     "sessionError": "세션이 만료되었습니다. 다시 로그인하세요.",
     "nameRequired": "환자의 전체 이름을 입력하세요.",
-    "genericError": "문제가 발생했습니다. 다시 시도하세요."
+    "genericError": "문제가 발생했습니다. 다시 시도하세요.",
+    "tabAccessLog": "접근 기록",
+    "accessLogIntro": "이 환자의 기록을 누가 언제 열었는지 보여줍니다. 이 기록은 본인만 볼 수 있습니다.",
+    "accessLogEmpty": "아직 기록된 접근이 없습니다.",
+    "accessLogFailed": "접근 기록을 불러오지 못했습니다. 다시 시도하세요.",
+    "accessLogMore": "이전 기록 보기",
+    "accessRoleProfessional": "의사",
+    "accessRoleSecretary": "직원",
+    "accessRolePatient": "환자 본인",
+    "accessKindPatient": "환자 정보",
+    "accessKindRecord": "진료 기록",
+    "accessKindExam": "검사",
+    "accessKindPrescription": "처방전",
+    "accessKindFile": "파일",
+    "accessColWhen": "일시",
+    "accessColWho": "누가",
+    "accessColWhat": "내용"
   },
   "settings": {
     "profileTitle": "프로필",
@@ -588,7 +604,7 @@
       "joiningAsSecretary": "초대 링크로 비서로 가입합니다.",
       "secretaryNeedsInvite": "비서이신가요? 의사에게 초대 링크를 요청하세요.",
       "secretaryEmailMismatch": "이 이메일이 초대와 일치하지 않거나 초대가 더 이상 유효하지 않습니다. 이메일을 확인하거나 클리닉에 새 링크를 요청하세요.",
-      "consent": "계정을 만들면 <terms>서비스 약관</terms> 및 <privacy>개인정보처리방침</privacy>에 동의하는 것으로 간주됩니다.",
+      "consentCheckbox": "<terms>이용약관</terms> 및 <privacy>개인정보 처리방침</privacy>을 읽었으며 이에 동의합니다",
       "country": "진료소는 어디에 있나요?",
       "countryOther": "기타 국가",
       "countryHint": "통화, 요금제 가격, 환자 신분증, 결제 QR이 정해집니다. 나중에 변경하려면 지원팀에 문의하세요."

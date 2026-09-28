@@ -378,7 +378,23 @@
     "notDoctorError": "Only the doctor can manage clinical records.",
     "sessionError": "Your session has expired. Please sign in again.",
     "nameRequired": "Please enter the patient's full name.",
-    "genericError": "Something went wrong. Please try again."
+    "genericError": "Something went wrong. Please try again.",
+    "tabAccessLog": "Access log",
+    "accessLogIntro": "Who opened this patient's record, and when. Only you can see this log.",
+    "accessLogEmpty": "No accesses recorded yet.",
+    "accessLogFailed": "Couldn't load the access log. Please try again.",
+    "accessLogMore": "Show older",
+    "accessRoleProfessional": "Doctor",
+    "accessRoleSecretary": "Secretary",
+    "accessRolePatient": "The patient themself",
+    "accessKindPatient": "Patient record",
+    "accessKindRecord": "Medical record",
+    "accessKindExam": "Exam",
+    "accessKindPrescription": "Prescription",
+    "accessKindFile": "File",
+    "accessColWhen": "When",
+    "accessColWho": "Who",
+    "accessColWhat": "What"
   },
   "settings": {
     "profileTitle": "Profile",
@@ -588,7 +604,7 @@
       "joiningAsSecretary": "Joining as a secretary via invite link.",
       "secretaryNeedsInvite": "Secretary? Ask your doctor for an invite link.",
       "secretaryEmailMismatch": "This email doesn't match the invitation, or the invitation is no longer valid. Check the email, or ask the clinic for a new link.",
-      "consent": "By creating an account, you agree to the <terms>Terms of Service</terms> and the <privacy>Privacy Policy</privacy>.",
+      "consentCheckbox": "I have read and accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>",
       "country": "Where is your practice?",
       "countryOther": "Other country",
       "countryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it later, contact support."

@@ -17,6 +17,7 @@ import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
 import { browserTimeZone, initialCountryChoice, signupCountryMetadata, type CountryChoice } from "@/lib/signupCountry";
 import { thaiEnabled } from "@/lib/publicLocales";
+import { consentMetadata } from "@/lib/legalVersions";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -141,6 +142,10 @@ export default function SignupPage() {
           // The language auth emails link back in (the template passes it to
           // /api/auth/callback). Language only; never used for access.
           locale,
+          // The Terms and Privacy Policy versions accepted with the required
+          // checkbox (recorded by handle_new_user, migration 111; ignored
+          // before it).
+          ...consentMetadata(),
           // The practice country and the browser's time zone (doctors):
           // handle_new_user stores them (migration 110; ignored before it).
           // Nothing before the Thai release (the database default, BR).
@@ -356,17 +361,26 @@ export default function SignupPage() {
             />
           </div>
 
-          {/* Consent to the Terms and Privacy Policy by creating the account. */}
-          <p className="text-center text-xs text-slate-500">
-            {t.rich("signup.consent", {
-              terms: (chunks) => (
-                <Link href={localePath("/terms")} target="_blank" className="font-semibold text-teal-600 hover:underline">{chunks}</Link>
-              ),
-              privacy: (chunks) => (
-                <Link href={localePath("/privacy")} target="_blank" className="font-semibold text-teal-600 hover:underline">{chunks}</Link>
-              ),
-            })}
-          </p>
+          {/* Consent to the Terms and Privacy Policy: unchecked, required.
+              The accepted versions are recorded at signup (TH-3). */}
+          <label className="flex items-start gap-2.5 text-sm text-slate-600">
+            <input
+              type="checkbox"
+              name="consent"
+              required
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+            />
+            <span>
+              {t.rich("signup.consentCheckbox", {
+                terms: (chunks) => (
+                  <Link href={localePath("/terms")} target="_blank" className="font-semibold text-teal-600 hover:underline">{chunks}</Link>
+                ),
+                privacy: (chunks) => (
+                  <Link href={localePath("/privacy")} target="_blank" className="font-semibold text-teal-600 hover:underline">{chunks}</Link>
+                ),
+              })}
+            </span>
+          </label>
 
           <TurnstileWidget onToken={setCaptchaToken} locale={locale} resetKey={captchaReset} />
 

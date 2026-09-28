@@ -378,7 +378,23 @@
     "notDoctorError": "只有專業人員可以管理臨床紀錄。",
     "sessionError": "工作階段已過期，請重新登入。",
     "nameRequired": "請輸入病患全名。",
-    "genericError": "發生錯誤，請再試一次。"
+    "genericError": "發生錯誤，請再試一次。",
+    "tabAccessLog": "存取紀錄",
+    "accessLogIntro": "誰在何時開啟了這位病患的病歷。只有您能查看此紀錄。",
+    "accessLogEmpty": "尚無存取紀錄。",
+    "accessLogFailed": "無法載入存取紀錄，請再試一次。",
+    "accessLogMore": "查看較早紀錄",
+    "accessRoleProfessional": "醫師",
+    "accessRoleSecretary": "助理",
+    "accessRolePatient": "病患本人",
+    "accessKindPatient": "病患資料",
+    "accessKindRecord": "病歷",
+    "accessKindExam": "檢查",
+    "accessKindPrescription": "處方",
+    "accessKindFile": "檔案",
+    "accessColWhen": "時間",
+    "accessColWho": "人員",
+    "accessColWhat": "內容"
   },
   "settings": {
     "profileTitle": "個人資料",
@@ -588,7 +604,7 @@
       "joiningAsSecretary": "透過邀請連結以祕書身分註冊。",
       "secretaryNeedsInvite": "你是祕書？請向你的醫師索取邀請連結。",
       "secretaryEmailMismatch": "此電子郵件與邀請不符，或邀請已失效。請檢查電子郵件，或向診所索取新的連結。",
-      "consent": "建立帳戶即表示您同意<terms>服務條款</terms>與<privacy>隱私權政策</privacy>。",
+      "consentCheckbox": "我已閱讀並同意<terms>使用條款</terms>與<privacy>隱私權政策</privacy>",
       "country": "您的診所在哪裡？",
       "countryOther": "其他國家",
       "countryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。之後如需變更，請聯絡客服。"

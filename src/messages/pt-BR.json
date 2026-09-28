@@ -378,7 +378,23 @@
     "notDoctorError": "Somente o profissional pode gerenciar registros clínicos.",
     "sessionError": "Sua sessão expirou. Entre novamente.",
     "nameRequired": "Informe o nome completo do paciente.",
-    "genericError": "Algo deu errado. Tente novamente."
+    "genericError": "Algo deu errado. Tente novamente.",
+    "tabAccessLog": "Registro de acessos",
+    "accessLogIntro": "Quem abriu o prontuário deste paciente, e quando. Só você vê este registro.",
+    "accessLogEmpty": "Nenhum acesso registrado ainda.",
+    "accessLogFailed": "Não foi possível carregar o registro de acessos. Tente novamente.",
+    "accessLogMore": "Ver mais antigos",
+    "accessRoleProfessional": "Profissional",
+    "accessRoleSecretary": "Secretária(o)",
+    "accessRolePatient": "O próprio paciente",
+    "accessKindPatient": "Ficha do paciente",
+    "accessKindRecord": "Prontuário",
+    "accessKindExam": "Exame",
+    "accessKindPrescription": "Receita",
+    "accessKindFile": "Arquivo",
+    "accessColWhen": "Quando",
+    "accessColWho": "Quem",
+    "accessColWhat": "O quê"
   },
   "settings": {
     "profileTitle": "Perfil",
@@ -588,7 +604,7 @@
       "joiningAsSecretary": "Entrando na equipe de secretaria por link de convite.",
       "secretaryNeedsInvite": "Trabalha na secretaria? Peça um link de convite à clínica onde você trabalha.",
       "secretaryEmailMismatch": "Este e-mail não corresponde ao convite, ou o convite não é mais válido. Confira o e-mail ou peça um novo link à clínica.",
-      "consent": "Ao criar uma conta, você concorda com os <terms>Termos de Uso</terms> e a <privacy>Política de Privacidade</privacy>.",
+      "consentCheckbox": "Li e aceito os <terms>Termos de Uso</terms> e a <privacy>Política de Privacidade</privacy>",
       "country": "Onde fica seu consultório?",
       "countryOther": "Outro país",
       "countryHint": "Define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar depois, fale com o suporte."
