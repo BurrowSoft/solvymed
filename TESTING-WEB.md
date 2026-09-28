@@ -5373,3 +5373,36 @@ feedback rows stored (mob dev deletes them):
   It's hard to force live.
 
 **CI at `b6b3aa7`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `b6b3aa7`.**
+
+## PR #69 (`fix/hydration-418`, base `release`) — React #418 hydration fixes, 🟢 at `cf99265` (merges as-is per UX; the off-zone leftover goes to master), review clean
+
+This fixes the RC finding (c): React #418 on `/pt-BR/dashboard/schedule`
+on prod. The server formatted dates with its default locale, and the
+server's ICU puts thin spaces around the "–" in date ranges.
+
+**Checked on the preview, logged in, a doctor with a patient and an
+appointment, all combinations in parallel:**
+- **Browser in `America/Sao_Paulo`, pt-BR and en:** `/dashboard/schedule`
+  `?view=list`, `day`, `week` and `month`, `/my-appointments` and
+  `/book/<id>` all show **no #418**. `/auth/pending-confirmation` is clean
+  too (checked at `bc8f18c`).
+- **Browser in `Asia/Bangkok`** (the browser date one day ahead of the
+  clinic's):
+  - list, month, my-appointments and book are clean;
+  - **day and week still throw #418.**
+  - The visible header is correct in both the server HTML and after
+    hydration ("domingo, 27 de setembro de 2026" / "21 – 27 de set. de
+    2026", the clinic's date), so the mismatching text is elsewhere in the
+    grid.
+  - UX decided this merges as-is. It only affects doctors whose browser is
+    outside São Paulo; the follow-up goes to master.
+- **pt-BR dates and 24h times:** "ter., 29 de set. de 2026", "9:00", with
+  no English or AM/PM. en shows "Tue, Sep 29, 2026".
+- **The week view highlights the clinic's date (27)** with a Bangkok browser
+  too, and the Reschedule button shows on upcoming appointments.
+- **A counter-proposal:** the doctor proposes a new time (inline form →
+  Enviar) and the patient sees **"Originalmente: qua., 30 de set. de 2026 ·
+  10:00"** with Aceitar / Recusar (en: "Originally: Wed, Sep 30, 2026 · 10:00
+  AM").
+
+**CI at `cf99265`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `cf99265`.**
