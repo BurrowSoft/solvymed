@@ -6901,3 +6901,15 @@ Checked on the Preview (Thai flag on) with a throwaway doctor and patient
 **CI at `496f038`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `496f038`.** This docs commit sits on top, after a master sync (11
 behind; message JSON valid).
+
+## PR #110 (`docs/assistant-examples`, base master) — SolvyAI stream examples shared with the app + a contract test (no UI), 🟢 at `219aeaf`
+
+- **Files:** only 3. `docs/assistant-api.md` (+17/−1),
+  `docs/assistant-examples.ndjson` and
+  `src/__tests__/assistant-examples.test.ts`.
+- **Nothing user-facing:** no app code, route, component or message
+  changed. The `.ndjson` lives under `docs/` and is read only by the test.
+
+**CI at `219aeaf`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`219aeaf`.** This docs commit sits on top, after a master sync (10
+behind).
