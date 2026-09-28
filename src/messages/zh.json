@@ -970,5 +970,12 @@
       "message_required": "请填写留言。",
       "failed": "出错了，请重试。"
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "泰国身份证号",
+    "passport": "护照号码",
+    "passportOrId": "护照或证件号码",
+    "thaiIdInvalid": "该泰国身份证号无效。请检查这 13 位数字。"
   }
 }

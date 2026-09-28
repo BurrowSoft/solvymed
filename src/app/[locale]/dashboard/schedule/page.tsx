@@ -160,7 +160,7 @@ export default async function SchedulePage({
       </div>
 
       {/* Booking Requests */}
-      <BookingRequestsPanel bookings={tentativeBookings as Parameters<typeof BookingRequestsPanel>[0]["bookings"]} />
+      <BookingRequestsPanel bookings={tentativeBookings as Parameters<typeof BookingRequestsPanel>[0]["bookings"]} idKind={countryProfile(practiceCountry).kind} />
 
       {/* ── List view (current design) ── */}
       {view === "list" && (

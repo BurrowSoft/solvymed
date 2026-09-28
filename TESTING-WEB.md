@@ -5933,6 +5933,71 @@ patient; checked at `1054429`, and the fix only touches the middleware):
 **CI at `765ec43`:** ✅. **Review: clean.** **Merge gate: 🟢 for
 `765ec43`** (this docs commit sits on top, after a master sync).
 
+## PR #86 (`th/3-plan-price`, base `th/1-country-currency`) — plan price by practice country, Terms §5, 🟢 at `84156ce`
+
+Pre-110, every practice is Brazilian, so the price must be **R$ 89
+whatever the UI language**. Before this PR, a non-pt-BR UI showed $19.
+฿690 / US$ 19 and the fail-closed path need 110 or a DB fault, so they're
+**unit-tested only**. **No checkout was started:** Stripe stays untouched
+on Previews. Checked on the Preview at `e69cb03`; the rebase to `84156ce`
+changed no code.
+
+| Doctor | pt-BR | en | es |
+|---|---|---|---|
+| In trial | R$ 89, "Assinar com Cartão" | R$ 89, "Subscribe with Card" | R$ 89, "Suscribirse con tarjeta" |
+| Trial expired | R$ 89 | R$ 89 | R$ 89 |
+
+- No "—" price and no check-failed message.
+- Zero `/api/checkout` requests on page load.
+- **Terms §5:** it reads "the price depends on your practice's country:
+  R$ 89 … Brazil, ฿690 … Thailand and US$ 19 … elsewhere".
+  - pt-BR: "O preço depende do país do seu consultório: R$ 89 por mês no
+    Brasil, ฿690 por mês na Tailândia e US$ 19 por mês nos demais países".
+  - `/th/terms` shows the English text, as before.
+
+**CI at `84156ce`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`84156ce`.**
+
+## PR #87 (`th/5-patient-ids`, base `th/1-country-currency`) — patient identifiers by practice country, 🟢 at `ce258bd`
+
+Pre-110, only the BR (CPF) path can run: the Thai ID and passport columns
+don't exist yet, so those paths are **unit-tested only**. Checked on the
+Preview at `ce258bd` with a throwaway doctor, secretary and patient
+(deleted afterwards).
+
+- **New patient** (doctor): the labels are unchanged, with CPF between
+  Telefone and Data de nascimento and no Thai/passport field. The hidden
+  `id_kind=BR` is present. The row is saved with `cpf 123.456.789-09`.
+- **Same CPF again under another name:** the "Possível duplicidade…
+  Opus Paciente Um / Abrir existente / Criar mesmo assim" warning appears,
+  and no second row is created.
+- **Search** `?q=45678` (CPF digits) finds the patient.
+- **Detail:** it shows "CPF 123.456.789-09".
+- **Edit:**
+  - The only ID input is `cpf` (prefilled), with `id_kind=BR`.
+  - Saving a phone change works, the CPF is kept, and the form closes.
+  - Clearing the CPF saves `null`.
+- **Server guard:** with the hidden `id_kind` tampered to `TH` and the CPF
+  emptied, the save is **refused**. The row is unchanged (the CPF is
+  kept), and "Algo deu errado. Tente novamente." is shown.
+- **Secretary** (the `get_my_clinic` path): the same CPF form, and the
+  patient is created with its CPF.
+- **Patient booking form** (linked patient): the CPF is prefilled from
+  `patient_profiles` (111.444.777-35), and no `patient_profiles` request
+  fails, so no 110 column is selected.
+- **Privacy** (en + pt-BR):
+  - §3.1 adds "the practice's country and time zone, chosen at sign-up
+    (for "Other country", the country detected from the connection…)".
+  - §3.2 reads "CPF or, for clinics outside Brazil, a national ID or
+    passport number".
+
+**Follow-up (not from this PR, already on master):** the booking form's
+label reads "CPF ((opcional))". The `book.notesOptional` string already
+contains the parentheses, and the label wraps it in another pair.
+
+**CI at `ce258bd`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`ce258bd`.**
+
 ## PR #88 (`th/4-promptpay`, base `th/1-country-currency`) — PromptPay QR for Thai practices, 🟢 at `94748f8` (Thai path ⏳)
 
 Pre-110, every practice is Brazilian and `promptpay_id` doesn't exist, so

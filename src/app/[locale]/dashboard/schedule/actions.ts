@@ -4,19 +4,23 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { knownDbError } from "@/lib/dbErrors";
-import { PICKER_LIMIT, patientSearchFilter } from "@/lib/patientSearch";
+import { PICKER_LIMIT, cleanSearchText, patientSearchFilter } from "@/lib/patientSearch";
+import { getPracticeCountry } from "@/lib/practiceCountry";
+import { patientIdKind } from "@/lib/patientIds";
 
 // The new-appointment patient picker: up to PICKER_LIMIT active patients of
 // this practice whose name (or CPF/phone digits) match, searched in the
 // database instead of loading every patient into the page.
 export async function searchPatientsForPicker(q: string): Promise<{ id: string; full_name: string }[]> {
-  const filter = patientSearchFilter(q);
-  if (!filter) return [];
+  if (!cleanSearchText(q)) return [];
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
   if (!effectiveProfId) return [];
+  // The practice country decides which ID column is searched.
+  const filter = patientSearchFilter(q, patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId)));
+  if (!filter) return [];
   const { data } = await supabase
     .from("patients")
     .select("id, full_name")
