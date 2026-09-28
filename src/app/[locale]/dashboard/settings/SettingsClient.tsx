@@ -3,6 +3,7 @@
 import { useTransition, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { markInviteShared } from "@/lib/setupActions";
+import { parseMoney } from "@/lib/money";
 import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient, generatePublicInviteCode } from "./actions";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
@@ -387,17 +388,23 @@ export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
   const t = useTranslations("settings");
   const [showForm, setShowForm] = useState(false);
   const [pending, start] = useTransition();
+  const tPay = useTranslations("payments");
   const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
+  // The price as typed, read by one rule (lib/money parseMoney).
+  const [priceText, setPriceText] = useState("");
+  const parsedPrice = parseMoney(priceText);
 
   async function handleCreate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (priceText.trim() && parsedPrice === null) { setError(tPay("errorInvalidAmount")); return; }
     const fd = new FormData(e.currentTarget);
     start(async () => {
       const res = await createProcedure(fd);
-      if (res?.error) { setError(res.error); return; }
+      if (res?.error) { setError(res.error === "invalid_price" ? tPay("errorInvalidAmount") : res.error); return; }
       setShowForm(false);
       setError("");
+      setPriceText("");
       formRef.current?.reset();
     });
   }
@@ -427,7 +434,19 @@ export function ProceduresPanel({ procedures }: { procedures: Procedure[] }) {
             </div>
             <div>
               <Label>{t("priceLabel")}</Label>
-              <Input name="price" type="number" placeholder="0.00" />
+              {/* Text, not type="number": Chrome reads "150,50" as 15050,
+                  and a number input without a step refuses cents. */}
+              <input
+                name="price"
+                type="text"
+                inputMode="decimal"
+                autoComplete="off"
+                value={priceText}
+                onChange={(e) => { setPriceText(e.target.value); setError(""); }}
+                placeholder="0,00"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-100 transition"
+              />
+              {parsedPrice !== null && <p className="mt-1 text-xs text-slate-500">= {formatBRL(parsedPrice) === "—" ? "R$ 0,00" : formatBRL(parsedPrice)}</p>}
             </div>
             <div className="sm:col-span-2">
               <Label>{t("paymentTypeLabel")}</Label>

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole, getEffectiveProfId } from "@/lib/effectiveProfId";
+import { parseMoney } from "@/lib/money";
 
 export async function updateProfile(formData: FormData) {
   const supabase = await createClient();
@@ -83,11 +84,17 @@ export async function createProcedure(formData: FormData) {
   const name = (formData.get("name") as string)?.trim();
   if (!name) return { error: "Name is required" };
 
+  // The same rule as the form (lib/money parseMoney): parseFloat("150,50")
+  // is 150, and a bad value must be refused, never saved as another one.
+  const priceText = ((formData.get("price") as string) ?? "").trim();
+  const price = priceText ? parseMoney(priceText) : null;
+  if (priceText && price === null) return { error: "invalid_price" };
+
   const { error } = await supabase.from("procedures").insert({
     professional_id: user.id,
     name,
     duration_minutes: parseInt(formData.get("duration_minutes") as string) || 30,
-    price: parseFloat(formData.get("price") as string) || null,
+    price: price || null,
     payment_type: (formData.get("payment_type") as string) || "private",
     active: true,
   });
