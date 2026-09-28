@@ -234,7 +234,9 @@ export default function SignupPage() {
             <input
               id="signup-invite-code"
               type="text"
-              required
+              // Not `required`: the browser's bubble would pre-empt the
+              // translated signup.inviteCodeRequired that handleSubmit shows.
+              aria-required="true"
               form="signup-form"
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6))}
