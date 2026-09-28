@@ -5709,3 +5709,35 @@ which reports the font that actually renders each glyph (the landing's
   ما").
 
 **CI at `aa95c78`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `aa95c78`.**
+## PR #78 (`docs/privacy-nominatim`, base `release`) — privacy §5 lists OpenStreetMap Nominatim, 🟢 at `3b51b6f`, review clean
+
+Checked on the preview at a phone width of 360 px:
+- **`/pt-BR/privacy`:** a new provider row, "OpenStreetMap Nominatim |
+  Converte o endereço da clínica em uma localização no mapa quando a
+  clínica é salva, a partir dos nossos servidores ou do aplicativo (sem
+  dados de pacientes) | UE / Reino Unido".
+- **`/privacy` (en):** "OpenStreetMap Nominatim | Converts the clinic's
+  address into a map location when the clinic is saved, from our servers
+  or the app (no patient data) | EU / UK".
+- **Layout:** the document width is 360/360, so there's no page overflow.
+  The table sits in its `overflow-x: auto` wrapper, scrolling within itself
+  in pt-BR (340 inside 312) and fitting exactly in en (312/312).
+- This matches what's enforced: clinic geocoding calls Nominatim on save
+  (#67, verified).
+
+**CI at `3b51b6f`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `3b51b6f`.**
+
+## PR #79 (`chore/nominatim-ua`, base `release`) — server-side User-Agent for Nominatim, 🟢 at `4bf6fa2`, review clean
+
+This change is server-only: the User-Agent sent to Nominatim when a clinic
+is saved. The first preview build failed with a transient `next/font`
+Google-loader error; the redeploy was Ready.
+
+Checked on the redeployed preview (`solvymed-849v9vodj`, branch at
+`4bf6fa2`, which includes #67) with a throwaway doctor (deleted
+afterwards). A clinic "Av. Paulista, 1000, São Paulo, SP" is **geocoded**
+(lat −23.5649, lng −46.6519, country BR). It appears in the list **without
+a reload**, with the "No mapa" pin, and there are no page errors. The
+header itself isn't observable from the browser.
+
+**CI at `4bf6fa2`:** ✅✅. **Review: clean.** **Merge gate: 🟢 for `4bf6fa2`.**
