@@ -492,6 +492,9 @@ export function PixQrButton({
   clinicCity: string;
   amount?: number;
 }) {
+  const t = useTranslations("schedule");
+  // "QR Code Pix" in Portuguese, "Pix QR code" elsewhere (UX).
+  const title = t("pixQrTitle");
   const [open, setOpen] = useState(false);
   const pixStr = generatePixString(pixKey, clinicName, clinicCity, amount);
   // Built in the page, only while the dialog is open (one per appointment row).
@@ -501,7 +504,7 @@ export function PixQrButton({
     <>
       <button
         onClick={() => setOpen(true)}
-        title="Pix QR Code"
+        title={title}
         className="rounded-lg p-1.5 text-teal-500 hover:bg-teal-50 transition"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-4 w-4">
@@ -512,11 +515,11 @@ export function PixQrButton({
         </svg>
       </button>
 
-      <Dialog open={open} onClose={() => setOpen(false)} title="Pix QR Code">
+      <Dialog open={open} onClose={() => setOpen(false)} title={title}>
         <div className="flex flex-col items-center gap-4">
           {/* Natural size (5 px modules): scaling it down would blur the
               modules below the 4 px phones need to scan it reliably. */}
-          <img src={qrUrl} alt="Pix QR Code" className="max-w-full rounded-xl border border-slate-100 [image-rendering:pixelated]" />
+          <img src={qrUrl} alt={title} className="max-w-full rounded-xl border border-slate-100 [image-rendering:pixelated]" />
           <div className="w-full">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1.5">Copia e Cola</p>
             <div className="relative">

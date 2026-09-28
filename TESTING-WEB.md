@@ -6305,3 +6305,172 @@ scroll. Other numeric inputs on `release` are whole numbers only
 **CI at `962b880`:** ✅. **Merge gate: 🟢 for `962b880`**, once the reviewer
 is clean. The branch was up to date with `release`; this docs commit sits
 on top.
+
+**Prod after merge** (`release` `d340805`, www.solvymed.com, throwaway
+doctor; 0 leftover rows afterwards):
+- "150,50" → "= R$ 150,50", saved as paid 150.5.
+- "abc" → error, still pending.
+- Procedure "89,90" → 89.9, shown as "R$ 89,90" after a reload.
+
+## PR #96 (`fix/pending-rule`, base `release`) — "Pendente" counts only receivable appointments (the app's rule), 🟢 at `6b451fb`
+
+Before this PR, "Pendente" counted every unpaid appointment that wasn't
+blocked or cancelled, including patient requests, rejected ones and
+no-shows. Now only `scheduled`, `confirmed`, `completed` and `late`
+count (`lib/paymentRules`).
+
+Checked on the Preview at `6b451fb` with a throwaway doctor (deleted
+afterwards). Each status got one unpaid appointment today with its own
+power-of-two amount, so a total shows exactly which statuses were counted:
+
+| Status | Amount (R$) |
+|---|---|
+| scheduled / confirmed / completed / late | 1 / 2 / 4 / 8 |
+| tentative / cancelled / rejected / absent | 16 / 32 / 64 / 128 |
+| proposal / blocked | 256 / 512 |
+| plus one paid appointment (completed) | 1 000 |
+
+| View | Pendente | Decodes to | Recebido |
+|---|---|---|---|
+| Payments, "Todo o período" | **R$ 15,00 · 4 sessões** | scheduled + confirmed + completed + late | R$ 1.000,00 · 1 sessão |
+| Payments, "Esta semana" | R$ 15,00 · 4 sessões | same | R$ 1.000,00 |
+| Payments, "Este mês" | R$ 15,00 · 4 sessões | same | R$ 1.000,00 |
+| Visão geral pending card (all time) | **R$ 15,00 · 4 sessões**; banner "4 sessões não pagas" | same | — |
+
+- **The pending list** holds exactly those four: completed, late,
+  scheduled and confirmed.
+- **Excluded:** tentative, cancelled, rejected, absent, proposal and
+  blocked appear nowhere.
+- **Recebido** is unchanged.
+
+**CI at `6b451fb`:** ✅. **Merge gate: 🟢 for `6b451fb`**, once the reviewer
+is clean. The branch was up to date with `release`; this docs commit sits
+on top.
+
+## PR #95 (`ux/tour`, base master) — guided tour for doctors and secretaries, 🟢 at `96656d7`
+
+Migration 113 is not applied, so the tour never auto-starts and nothing is
+saved. It was tested via **Settings → "Rever o tour"** on the Preview, with
+throwaway doctors and a secretary (deleted afterwards).
+
+**Rounds:**
+- **`8f1d2c1` → `adad321`** (copy only): the schedule step no longer claims
+  "remarcar / marcar como paga" from an appointment. The web can't do
+  those; it now reads "mude o status das consultas e responda aos
+  pedidos".
+- **❌ at `adad321`:** below lg (900 px) and on phones (390 px), the
+  sidebar steps were still counted and "spotlighted" off-screen. The
+  closed drawer's links are translated off the left edge, so the card
+  described nothing visible ("8 de 8" / "7 de 7"). Fixed at `07c34b3`
+  (targets must intersect the viewport).
+- **`07c34b3` → `96656d7`:** a replay from Settings on a narrow screen
+  started at "1 de 7" and then shrank. It's now right from step 1.
+
+**Desktop 1280, doctor, pt-BR (`96656d7`):**
+- **Order:** "Seu dia em um só lugar" (home) → "Marque consultas em
+  segundos" (New appointment) → Agenda → Pacientes → Pagamentos ("Receba
+  pelo Pix" for BR) → the trial chip → the invite card (navigates to
+  Settings) → Configurações. That's **8 steps**; "n de 8" and the dots
+  (active dot included) are correct at every step.
+- **The card never overlaps the spotlight** (checked geometrically at
+  every step).
+- **Dim and Esc:** clicking the dimmed area does nothing. Esc → "Pular o
+  tour? / Você pode revê-lo em Configurações." with "Continuar tour" and
+  "Pular".
+- **Keys:** → / ← / Enter work.
+- **Concluir** (click or Enter, 3/3 runs) → `/pt-BR/dashboard?setup=1`
+  with "Configure sua clínica" open. "Pular tour → Pular" closes the tour
+  too.
+
+**Narrow widths (`96656d7`):**
+- **900 px:** "1 de 4" → home, New appointment, trial chip, invite (no
+  sidebar steps).
+- **390 px:** "1 de 3" → home, trial chip, invite (no sidebar and no New
+  appointment).
+- The card stays on screen, with no horizontal overflow.
+
+**Other checks:**
+- **Secretary:** 4 steps ("O dia da clínica", New appointment, Agenda,
+  Pacientes); no Settings, invite or payments steps. Concluir stays on the
+  dashboard.
+- **Reduce motion:** no pulse on step 1 (it pulses otherwise).
+- **Languages:** en, es, ja, th and ar are translated for the first steps,
+  with no raw keys. ar is RTL: the sidebar is on the right, and there's no
+  overlap.
+- **Screenshots** for UX's copy review: UX approved the copy as rendered.
+
+**⏳ Needs 113:** the auto-start on first sign-in, the resume offer, and
+saved progress.
+
+**CI at `96656d7`:** ✅. **Merge gate: 🟢 for `96656d7`**, once the
+reviewer is clean. This docs commit sits on top, after a master sync.
+
+## PR #99 (`fix/greeting-plurals`, base master) — the doctor's own title, never an added "Dr."; pt-BR zero is plural, 🟢 at `5ba1898`
+
+These are UX's two tickets from #95's screenshots:
+- "Bom dia, Dr. Dra" was a hard-coded `Dr. ${firstName}`.
+- "0 sessão": pt-BR uses the plural for zero.
+
+The new `lib/doctorName` mirrors the app's regex: a typed title (Dr, Dra,
+Prof, Profa, Pr, Dott, Dott.ssa) is kept in the doctor's spelling, with
+the case tidied and a dot only if one was typed. **No title is ever
+added.**
+
+Checked on the Preview with throwaway doctors, deleted afterwards. The
+first run was at `91c0488`; the re-run at `5ba1898`, after b2's master
+merge (the `layout.tsx` conflict with #95's tour), gave the same results.
+
+| `full_name` saved | Greeting | Sidebar name | Avatar |
+|---|---|---|---|
+| `Dra Opus Tour` | "Bom dia, Dra Opus 👋" | Dra Opus | O |
+| `dra. beatriz lima` | "Bom dia, Dra. beatriz 👋" | Dra. beatriz | B |
+| `Ana Opus Souza` | "Bom dia, Ana 👋" (no "Dr.") | Ana | A |
+| `Prof. Carlos Opus` | "Bom dia, Prof. Carlos 👋" | Prof. Carlos | C |
+
+**Zero in pt-BR:**
+- Visão geral pending card: "0 sessões".
+- Payments with one paid appointment: Pendente "R$ 0,00 / 0 sessões",
+  next to "1 sessão" (the singular is unchanged).
+- Agenda: "0 consultas hoje".
+- Patient tabs: "Registros (0) / Receitas (0) / Consultas (0)".
+- No pt-BR `plural` message is left without a `=0` case, and no "Dr. "
+  prefix is left in code or messages.
+
+**Name field:**
+- **Settings → Perfil:** the placeholder is "Seu nome completo", with the
+  hint "Se quiser, inclua seu título (Dr., Dra., Prof.): ele aparece nas
+  saudações."
+- **Signup:** the same hint appears for the doctor role only (not
+  Paciente).
+
+**After the merge with #95:** the tour still works on this head. Replay →
+Concluir (click or Enter, 3/3) → `/dashboard?setup=1` with the checklist.
+
+**CI at `5ba1898`:** ✅. **Merge gate: 🟢 for `5ba1898`**, once the
+reviewer is clean. The branch is up to date with master; this docs commit
+sits on top.
+
+## PR #100 (`fix/pix-dialog-i18n`, base master) — the Pix QR dialog title in the page's language, 🟢 at `cb2c26a`
+
+This is UX's third item from the #97 help review. The dialog was titled
+"Pix QR Code" (hard-coded) in every language. Its tooltip, title and image
+alt now come from `schedule.pixQrTitle`: "QR Code Pix" in pt-BR, "Pix QR
+code" in the other 14 locales. "Copia e Cola" / "Copiar" stay as they were,
+since Pix is Brazilian.
+
+Checked on the Preview at `cb2c26a` with a throwaway BR doctor (Pix key
+set, deleted afterwards) and an R$ 120 pending appointment, in Agenda →
+list:
+
+| UI | Button tooltip | Dialog title | `img alt` | QR |
+|---|---|---|---|---|
+| pt-BR | "QR Code Pix" | "QR Code Pix" | "QR Code Pix" | decodes, CRC ok, amount 120.00 |
+| en | "Pix QR code" | "Pix QR code" | "Pix QR code" | decodes, CRC ok, 120.00 |
+| es | "Pix QR code" | "Pix QR code" | "Pix QR code" | decodes, CRC ok, 120.00 |
+
+The old string "Pix QR Code" is no longer referenced anywhere in the repo
+(apart from TESTING-WEB.md).
+
+**CI at `cb2c26a`:** ✅. **Merge gate: 🟢 for `cb2c26a`**, once the
+reviewer is clean. The branch is up to date with master; this docs commit
+sits on top.

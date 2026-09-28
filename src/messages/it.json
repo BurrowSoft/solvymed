@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "Questo orario è bloccato ({start}–{end}). Prenotare comunque?",
     "requestedLabel": "Richiesto: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
-    "promptPayScan": "Scansiona con qualsiasi app bancaria thailandese per pagare."
+    "promptPayScan": "Scansiona con qualsiasi app bancaria thailandese per pagare.",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "Questa settimana",
@@ -400,7 +401,7 @@
     "profileTitle": "Profilo",
     "profileSub": "Il tuo nome e la specialità mostrati ai pazienti",
     "fullName": "Nome completo",
-    "fullNamePlaceholder": "Dott.ssa Maria Santos",
+    "fullNamePlaceholder": "Il tuo nome completo",
     "specialty": "Specialità",
     "specialtyPlaceholder": "Psichiatra, Psicologo…",
     "clinicTitle": "Studio",
@@ -475,7 +476,8 @@
     "saveFailed": "Impossibile salvare. Riprova.",
     "practiceCountry": "Paese dello studio",
     "practiceCountryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo, scrivi a support@solvymed.com.",
-    "practiceCountryOther": "Altro paese"
+    "practiceCountryOther": "Altro paese",
+    "fullNameHint": "Se vuoi, aggiungi il tuo titolo (Dott., Dott.ssa, Prof.): compare nei saluti."
   },
   "clinics": {
     "title": "Le mie cliniche",
@@ -607,7 +609,8 @@
       "consentCheckbox": "Ho letto e accetto i <terms>Termini di utilizzo</terms> e l'<privacy>Informativa sulla privacy</privacy>",
       "country": "Dove si trova il tuo studio?",
       "countryOther": "Altro paese",
-      "countryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza."
+      "countryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza.",
+      "fullNameHint": "Se vuoi, aggiungi il tuo titolo (Dott., Dott.ssa, Prof.): compare nei saluti."
     },
     "forgotPassword": {
       "title": "Password dimenticata?",
@@ -1040,5 +1043,46 @@
       "q4": "Posso disdire?",
       "a4": "Sì, quando vuoi, contattando l'assistenza o nel portale di fatturazione, se disponibile."
     }
+  },
+  "tour": {
+    "skipTour": "Salta il tour",
+    "skip": "Salta",
+    "continueTour": "Continua il tour",
+    "skipConfirmTitle": "Saltare il tour?",
+    "skipConfirmText": "Puoi rivederlo nelle Impostazioni.",
+    "back": "Indietro",
+    "next": "Avanti",
+    "finish": "Fine",
+    "progress": "{n} di {total}",
+    "resumeTitle": "Continuare il tour? (passo {n} di {total})",
+    "continue": "Continua",
+    "dismiss": "Ignora",
+    "replay": "Rivedi il tour",
+    "settingsCardTitle": "Tour guidato",
+    "settingsCardText": "Un giro di 1 minuto tra le schermate principali.",
+    "homeTitle": "La tua giornata a colpo d'occhio",
+    "homeText": "Gli appuntamenti di oggi, la settimana e la tua lista di configurazione.",
+    "solvyaiTitle": "Scopri SolvyAI",
+    "solvyaiText": "Il tuo assistente IA. Chiedi come fare qualsiasi cosa, o di': \"appuntamento per Maria domani alle 14\". Conferma sempre tutto con te prima.",
+    "newApptTitle": "Prenota in pochi secondi",
+    "newApptText": "Scegli il paziente e l'orario, ed è fatto. Puoi anche bloccare gli orari.",
+    "scheduleTitle": "La tua agenda",
+    "scheduleText": "Per giorno, settimana o mese: cambia lo stato degli appuntamenti e rispondi alle richieste dei pazienti.",
+    "patientsTitle": "I tuoi pazienti",
+    "patientsText": "Dati, storico, cartelle cliniche, ricette ed esami di ogni paziente.",
+    "paymentsPixTitle": "Incassa con Pix",
+    "paymentsPromptPayTitle": "Incassa con PromptPay",
+    "paymentsTitle": "Tieni traccia dei pagamenti",
+    "paymentsText": "Quello che resta da incassare e quello già entrato.",
+    "trialTitle": "La tua prova gratuita",
+    "trialText": "Qui vedi quanti giorni restano e il piano.",
+    "inviteTitle": "I pazienti prenotano da soli",
+    "inviteText": "Condividi il tuo link di invito e i pazienti richiedono appuntamenti nell'app.",
+    "settingsTitle": "A modo tuo",
+    "settingsText": "Orari, prestazioni, il tuo team e i dati di pagamento. Puoi rivedere questo tour qui quando vuoi.",
+    "secHomeTitle": "La giornata dello studio",
+    "secHomeText": "Gli appuntamenti di oggi e della settimana dello studio.",
+    "secScheduleText": "Conferma le richieste dei pazienti e organizza gli appuntamenti per giorno, settimana o mese.",
+    "secPatientsText": "Registra e aggiorna i pazienti. Le cartelle cliniche restano solo al medico."
   }
 }

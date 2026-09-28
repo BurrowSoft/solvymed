@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "이 시간은 차단되어 있습니다({start}–{end}). 그래도 예약할까요?",
     "requestedLabel": "요청: {date} · {time}",
     "promptPayTitle": "PromptPay QR",
-    "promptPayScan": "태국 은행 앱으로 스캔해 결제하세요."
+    "promptPayScan": "태국 은행 앱으로 스캔해 결제하세요.",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "이번 주",
@@ -400,7 +401,7 @@
     "profileTitle": "프로필",
     "profileSub": "환자에게 표시되는 이름과 전문 분야",
     "fullName": "성명",
-    "fullNamePlaceholder": "김민지 선생님",
+    "fullNamePlaceholder": "성명",
     "specialty": "전문 분야",
     "specialtyPlaceholder": "정신건강의학과, 심리상담사…",
     "clinicTitle": "클리닉",
@@ -475,7 +476,8 @@
     "saveFailed": "저장하지 못했습니다. 다시 시도하세요.",
     "practiceCountry": "진료소 국가",
     "practiceCountryHint": "통화, 요금제 가격, 환자 신분증, 결제 QR이 정해집니다. 변경하려면 support@solvymed.com으로 문의하세요.",
-    "practiceCountryOther": "기타 국가"
+    "practiceCountryOther": "기타 국가",
+    "fullNameHint": "원하면 호칭(Dr., Prof.)을 붙이세요. 인사말에 표시됩니다."
   },
   "clinics": {
     "title": "내 클리닉",
@@ -607,7 +609,8 @@
       "consentCheckbox": "<terms>이용약관</terms> 및 <privacy>개인정보 처리방침</privacy>을 읽었으며 이에 동의합니다",
       "country": "진료소는 어디에 있나요?",
       "countryOther": "기타 국가",
-      "countryHint": "통화, 요금제 가격, 환자 신분증, 결제 QR이 정해집니다. 나중에 변경하려면 지원팀에 문의하세요."
+      "countryHint": "통화, 요금제 가격, 환자 신분증, 결제 QR이 정해집니다. 나중에 변경하려면 지원팀에 문의하세요.",
+      "fullNameHint": "원하면 호칭(Dr., Prof.)을 붙이세요. 인사말에 표시됩니다."
     },
     "forgotPassword": {
       "title": "비밀번호를 잊으셨나요?",
@@ -1040,5 +1043,46 @@
       "q4": "해지할 수 있나요?",
       "a4": "네, 언제든지 지원팀에 문의하거나 사용 가능한 경우 결제 포털에서 해지할 수 있습니다."
     }
+  },
+  "tour": {
+    "skipTour": "투어 건너뛰기",
+    "skip": "건너뛰기",
+    "continueTour": "투어 계속하기",
+    "skipConfirmTitle": "투어를 건너뛸까요?",
+    "skipConfirmText": "설정에서 다시 볼 수 있습니다.",
+    "back": "이전",
+    "next": "다음",
+    "finish": "완료",
+    "progress": "{n} / {total}",
+    "resumeTitle": "투어를 계속할까요? ({n}/{total}단계)",
+    "continue": "계속",
+    "dismiss": "닫기",
+    "replay": "투어 다시 보기",
+    "settingsCardTitle": "가이드 투어",
+    "settingsCardText": "주요 화면을 1분 동안 둘러봅니다.",
+    "homeTitle": "오늘 하루를 한눈에",
+    "homeText": "오늘 예약, 이번 주 일정, 설정 체크리스트.",
+    "solvyaiTitle": "SolvyAI를 만나보세요",
+    "solvyaiText": "AI 비서입니다. 무엇이든 방법을 묻거나 \"내일 오후 2시에 마리아 예약해 줘\"라고 말하세요. 실행 전 항상 확인을 받습니다.",
+    "newApptTitle": "몇 초 만에 예약",
+    "newApptText": "환자와 시간만 고르면 끝. 시간 차단도 할 수 있습니다.",
+    "scheduleTitle": "내 일정",
+    "scheduleText": "일·주·월로 보고, 예약 상태를 바꾸고 환자 요청에 응답합니다.",
+    "patientsTitle": "내 환자",
+    "patientsText": "각 환자의 정보, 이력, 진료 기록, 처방전, 검사.",
+    "paymentsPixTitle": "Pix로 결제받기",
+    "paymentsPromptPayTitle": "PromptPay로 결제받기",
+    "paymentsTitle": "결제 관리",
+    "paymentsText": "받을 금액과 이미 받은 금액.",
+    "trialTitle": "무료 체험",
+    "trialText": "남은 기간과 요금제를 여기서 확인하세요.",
+    "inviteTitle": "환자가 직접 예약",
+    "inviteText": "초대 링크를 공유하면 환자가 앱에서 예약을 요청합니다.",
+    "settingsTitle": "나에게 맞게",
+    "settingsText": "진료 시간, 시술, 팀, 결제 정보. 이 투어는 여기서 언제든 다시 볼 수 있습니다.",
+    "secHomeTitle": "클리닉의 하루",
+    "secHomeText": "클리닉의 오늘과 이번 주 예약.",
+    "secScheduleText": "환자 요청을 확정하고 예약을 일·주·월로 정리합니다.",
+    "secPatientsText": "환자를 등록하고 수정합니다. 진료 기록은 의사만 볼 수 있습니다."
   }
 }

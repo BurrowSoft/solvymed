@@ -87,7 +87,7 @@
     "statPending": "Pendente",
     "statPatients": "Pacientes",
     "statRevenue": "Receita do mês",
-    "sessions": "{n, plural, one {# sessão} other {# sessões}}",
+    "sessions": "{n, plural, =0 {# sessões} one {# sessão} other {# sessões}}",
     "thisMonth": "Este mês",
     "newAppt": "+ Nova Consulta",
     "todaySchedule": "Agenda de hoje",
@@ -96,13 +96,13 @@
     "noApptsToday": "Sem consultas hoje",
     "scheduleOne": "Agendar uma →",
     "noUpcoming": "Sem consultas próximas",
-    "unpaidSessions": "{n, plural, one {# sessão não paga} other {# sessões não pagas}}",
+    "unpaidSessions": "{n, plural, =0 {# sessões não pagas} one {# sessão não paga} other {# sessões não pagas}}",
     "pendingCollection": "{amount} pendente de cobrança",
     "managePayments": "Gerenciar Pagamentos"
   },
   "schedule": {
     "title": "Agenda",
-    "apptsToday": "{count, plural, one {# consulta hoje} other {# consultas hoje}}",
+    "apptsToday": "{count, plural, =0 {# consultas hoje} one {# consulta hoje} other {# consultas hoje}}",
     "noAppts": "Sem consultas neste dia",
     "noApptHint": "Use o botão acima para agendar uma.",
     "newAppt": "Nova Consulta",
@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "Este horário está bloqueado ({start}–{end}). Agendar mesmo assim?",
     "requestedLabel": "Solicitado: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
-    "promptPayScan": "Escaneie com qualquer app de banco tailandês para pagar."
+    "promptPayScan": "Escaneie com qualquer app de banco tailandês para pagar.",
+    "pixQrTitle": "QR Code Pix"
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -219,7 +220,7 @@
     "pendingLabel": "Pendente",
     "receivedLabel": "Recebido",
     "totalLabel": "Total",
-    "sessions": "{n, plural, one {# sessão} other {# sessões}}",
+    "sessions": "{n, plural, =0 {# sessões} one {# sessão} other {# sessões}}",
     "noAmountSet": "Sem valor definido",
     "allPaidUp": "Tudo pago! 🎉",
     "noPaidYet": "Nenhuma sessão paga ainda",
@@ -309,7 +310,7 @@
     "other": "Outro",
     "privateInsurance": "Particular",
     "healthPlan": "Convênio",
-    "records": "{n, plural, one {# registro} other {# registros}}",
+    "records": "{n, plural, =0 {# registros} one {# registro} other {# registros}}",
     "newRecord": "Novo Registro",
     "noRecords": "Nenhum registro ainda",
     "deleteRecordConfirm": "Excluir este registro? Esta ação não pode ser desfeita.",
@@ -322,7 +323,7 @@
     "content": "Conteúdo",
     "contentPlaceholder": "Escreva o registro médico aqui…",
     "saveRecord": "Salvar Registro",
-    "prescriptions": "{n, plural, one {# receita} other {# receitas}}",
+    "prescriptions": "{n, plural, =0 {# receitas} one {# receita} other {# receitas}}",
     "newPrescription": "Nova Receita",
     "noPrescriptions": "Nenhuma receita ainda",
     "deletePrescriptionConfirm": "Excluir esta receita?",
@@ -400,7 +401,7 @@
     "profileTitle": "Perfil",
     "profileSub": "Seu nome e especialidade exibidos para os pacientes",
     "fullName": "Nome completo",
-    "fullNamePlaceholder": "Dra. Maria Santos",
+    "fullNamePlaceholder": "Seu nome completo",
     "specialty": "Especialidade",
     "specialtyPlaceholder": "Psiquiatra, Psicólogo…",
     "clinicTitle": "Clínica",
@@ -475,7 +476,8 @@
     "saveFailed": "Não foi possível salvar. Tente novamente.",
     "practiceCountry": "País do consultório",
     "practiceCountryHint": "Define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar, fale com support@solvymed.com.",
-    "practiceCountryOther": "Outro país"
+    "practiceCountryOther": "Outro país",
+    "fullNameHint": "Se quiser, inclua seu título (Dr., Dra., Prof.): ele aparece nas saudações."
   },
   "clinics": {
     "title": "Minhas Clínicas",
@@ -607,7 +609,8 @@
       "consentCheckbox": "Li e aceito os <terms>Termos de Uso</terms> e a <privacy>Política de Privacidade</privacy>",
       "country": "Onde fica seu consultório?",
       "countryOther": "Outro país",
-      "countryHint": "Define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar depois, fale com o suporte."
+      "countryHint": "Define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar depois, fale com o suporte.",
+      "fullNameHint": "Se quiser, inclua seu título (Dr., Dra., Prof.): ele aparece nas saudações."
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",
@@ -635,7 +638,7 @@
     "logIn": "Entrar",
     "backToHome": "Voltar ao início",
     "patientWelcome": {
-      "countdown": "Levando você para seus agendamentos em {count, plural, one {# segundo} other {# segundos}}…",
+      "countdown": "Levando você para seus agendamentos em {count, plural, =0 {# segundos} one {# segundo} other {# segundos}}…",
       "goToAppointments": "Ir para Meus Agendamentos"
     },
     "inviteRequired": {
@@ -903,12 +906,12 @@
     "closeIntro": "Seus pacientes têm prontuários, por isso sua conta não pode ser simplesmente excluída. Ao encerrá-la:",
     "closeLogin": "Seu acesso, dados de contato, foto e dados de pagamento e do consultório são excluídos imediatamente.",
     "closeRecords": "Seus prontuários e sua lista de pacientes ficam guardados, sem acesso para ninguém, pelo prazo legal (20 anos) e depois são excluídos definitivamente. Seu nome e registro profissional permanecem nos prontuários como autor.",
-    "closePatients": "{patients, plural, one {Seu # paciente é arquivado} other {Seus # pacientes são arquivados}} e {appointments, plural, =0 {não há consultas futuras a cancelar} one {# consulta futura é cancelada} other {# consultas futuras são canceladas}}. Os pacientes que usam o app são avisados.",
-    "closeTeam": "{secretaries, plural, one {# pessoa da equipe perde} other {# pessoas da equipe perdem}} o acesso.",
+    "closePatients": "{patients, plural, =0 {Seus # pacientes são arquivados} one {Seu # paciente é arquivado} other {Seus # pacientes são arquivados}} e {appointments, plural, =0 {não há consultas futuras a cancelar} one {# consulta futura é cancelada} other {# consultas futuras são canceladas}}. Os pacientes que usam o app são avisados.",
+    "closeTeam": "{secretaries, plural, =0 {# pessoas da equipe perdem} one {# pessoa da equipe perde} other {# pessoas da equipe perdem}} o acesso.",
     "closeEmail": "Você poderá usar o mesmo e-mail para abrir uma conta nova, vazia.",
     "deleteIntroProfessional": "Sua conta, seus pacientes e suas consultas serão excluídos definitivamente.",
     "deleteIntroSecretary": "Seu acesso e seu perfil serão excluídos. Os pacientes e as consultas do consultório continuam com o consultório.",
-    "deleteAppointments": "{appointments, plural, one {# consulta futura é cancelada} other {# consultas futuras são canceladas}}.",
+    "deleteAppointments": "{appointments, plural, =0 {# consultas futuras são canceladas} one {# consulta futura é cancelada} other {# consultas futuras são canceladas}}.",
     "noRefund": "Sua assinatura termina agora. O período atual não é reembolsado.",
     "confirmCheckbox": "Entendo que isto não pode ser desfeito.",
     "closeButton": "Encerrar conta definitivamente",
@@ -1040,5 +1043,46 @@
       "q4": "Posso cancelar?",
       "a4": "Sim, quando quiser, pelo suporte ou no portal de cobrança, quando disponível."
     }
+  },
+  "tour": {
+    "skipTour": "Pular tour",
+    "skip": "Pular",
+    "continueTour": "Continuar tour",
+    "skipConfirmTitle": "Pular o tour?",
+    "skipConfirmText": "Você pode revê-lo em Configurações.",
+    "back": "Voltar",
+    "next": "Próximo",
+    "finish": "Concluir",
+    "progress": "{n} de {total}",
+    "resumeTitle": "Continuar o tour? (passo {n} de {total})",
+    "continue": "Continuar",
+    "dismiss": "Dispensar",
+    "replay": "Rever o tour",
+    "settingsCardTitle": "Tour guiado",
+    "settingsCardText": "Um passeio de 1 minuto pelas telas principais.",
+    "homeTitle": "Seu dia em um só lugar",
+    "homeText": "As consultas de hoje, a semana e a lista para configurar sua clínica.",
+    "solvyaiTitle": "Conheça o SolvyAI",
+    "solvyaiText": "Seu assistente com IA. Pergunte como fazer qualquer coisa, ou peça: \"marca a Maria amanhã às 14h\". Ele sempre confirma tudo com você antes de fazer.",
+    "newApptTitle": "Marque consultas em segundos",
+    "newApptText": "Escolha o paciente, o horário e pronto. Também dá para bloquear horários.",
+    "scheduleTitle": "Sua agenda",
+    "scheduleText": "Veja por dia, semana ou mês, mude o status das consultas e responda aos pedidos dos pacientes.",
+    "patientsTitle": "Seus pacientes",
+    "patientsText": "Cadastro, histórico, prontuários, receitas e exames de cada paciente.",
+    "paymentsPixTitle": "Receba pelo Pix",
+    "paymentsPromptPayTitle": "Receba pelo PromptPay",
+    "paymentsTitle": "Acompanhe os pagamentos",
+    "paymentsText": "O que falta receber e o que já entrou.",
+    "trialTitle": "Seu teste grátis",
+    "trialText": "Veja aqui quantos dias faltam e o plano.",
+    "inviteTitle": "Pacientes marcam sozinhos",
+    "inviteText": "Envie seu link de convite e os pacientes pedem horários pelo app.",
+    "settingsTitle": "Deixe do seu jeito",
+    "settingsText": "Horário de atendimento, procedimentos, sua equipe e os dados de pagamento. Você pode rever este tour aqui quando quiser.",
+    "secHomeTitle": "O dia da clínica",
+    "secHomeText": "As consultas de hoje e da semana da clínica.",
+    "secScheduleText": "Confirme os pedidos dos pacientes e organize as consultas por dia, semana ou mês.",
+    "secPatientsText": "Cadastre e atualize pacientes. Prontuários ficam só com o profissional."
   }
 }

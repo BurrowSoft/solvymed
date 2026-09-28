@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "This time is blocked ({start}–{end}). Book anyway?",
     "requestedLabel": "Requested: {date} · {time}",
     "promptPayTitle": "PromptPay QR",
-    "promptPayScan": "Scan with any Thai banking app to pay."
+    "promptPayScan": "Scan with any Thai banking app to pay.",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "This week",
@@ -400,7 +401,7 @@
     "profileTitle": "Profile",
     "profileSub": "Your name and specialty shown to patients",
     "fullName": "Full name",
-    "fullNamePlaceholder": "Dr. Maria Santos",
+    "fullNamePlaceholder": "Your full name",
     "specialty": "Specialty",
     "specialtyPlaceholder": "Psychiatrist, Psychologist…",
     "inviteCodeTitle": "Your invite code",
@@ -475,7 +476,8 @@
     "saveFailed": "Couldn't save. Please try again.",
     "practiceCountry": "Practice country",
     "practiceCountryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it, contact support@solvymed.com.",
-    "practiceCountryOther": "Other country"
+    "practiceCountryOther": "Other country",
+    "fullNameHint": "Add your title if you like (Dr., Prof.); it appears in greetings."
   },
   "clinics": {
     "title": "My Clinics",
@@ -607,7 +609,8 @@
       "consentCheckbox": "I have read and accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>",
       "country": "Where is your practice?",
       "countryOther": "Other country",
-      "countryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it later, contact support."
+      "countryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it later, contact support.",
+      "fullNameHint": "Add your title if you like (Dr., Prof.); it appears in greetings."
     },
     "forgotPassword": {
       "title": "Forgot your password?",
@@ -1070,5 +1073,46 @@
     },
     "price": "{price}/month, everything included. Free for 15 days.",
     "cta": "Start your free trial"
+  },
+  "tour": {
+    "skipTour": "Skip tour",
+    "skip": "Skip",
+    "continueTour": "Continue tour",
+    "skipConfirmTitle": "Skip the tour?",
+    "skipConfirmText": "You can replay it in Settings.",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Done",
+    "progress": "{n} of {total}",
+    "resumeTitle": "Continue the tour? (step {n} of {total})",
+    "continue": "Continue",
+    "dismiss": "Dismiss",
+    "replay": "Replay the tour",
+    "settingsCardTitle": "Guided tour",
+    "settingsCardText": "A 1-minute walk through the main screens.",
+    "homeTitle": "Your day at a glance",
+    "homeText": "Today's appointments, the week ahead and your setup checklist.",
+    "solvyaiTitle": "Meet SolvyAI",
+    "solvyaiText": "Your AI assistant. Ask how to do anything, or just say: \"book Maria tomorrow at 2pm\". It always confirms everything with you first.",
+    "newApptTitle": "Book in seconds",
+    "newApptText": "Pick the patient and the time, and you're done. You can also block time.",
+    "scheduleTitle": "Your schedule",
+    "scheduleText": "See it by day, week or month, change an appointment's status and answer patients' requests.",
+    "patientsTitle": "Your patients",
+    "patientsText": "Details, history, medical records, prescriptions and exams for each patient.",
+    "paymentsPixTitle": "Get paid by Pix",
+    "paymentsPromptPayTitle": "Get paid with PromptPay",
+    "paymentsTitle": "Track payments",
+    "paymentsText": "What's still to receive and what has come in.",
+    "trialTitle": "Your free trial",
+    "trialText": "See here how many days are left, and the plan.",
+    "inviteTitle": "Patients book themselves",
+    "inviteText": "Share your invite link, and patients request appointments in the app.",
+    "settingsTitle": "Make it yours",
+    "settingsText": "Working hours, procedures, your team and your payment details. You can replay this tour here any time.",
+    "secHomeTitle": "The clinic's day",
+    "secHomeText": "Today's appointments and the week ahead for the clinic.",
+    "secScheduleText": "Confirm patients' requests and organize appointments by day, week or month.",
+    "secPatientsText": "Register and update patients. Medical records stay with the professional."
   }
 }

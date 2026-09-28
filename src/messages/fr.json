@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "Ce créneau est bloqué ({start}–{end}). Réserver quand même ?",
     "requestedLabel": "Demandé : {date} · {time}",
     "promptPayTitle": "QR PromptPay",
-    "promptPayScan": "Scannez avec n'importe quelle appli bancaire thaïlandaise pour payer."
+    "promptPayScan": "Scannez avec n'importe quelle appli bancaire thaïlandaise pour payer.",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "Cette semaine",
@@ -400,7 +401,7 @@
     "profileTitle": "Profil",
     "profileSub": "Votre nom et spécialité affichés aux patients",
     "fullName": "Nom complet",
-    "fullNamePlaceholder": "Dr. Maria Santos",
+    "fullNamePlaceholder": "Votre nom complet",
     "specialty": "Spécialité",
     "specialtyPlaceholder": "Psychiatre, Psychologue…",
     "clinicTitle": "Cabinet",
@@ -475,7 +476,8 @@
     "saveFailed": "Enregistrement impossible. Veuillez réessayer.",
     "practiceCountry": "Pays du cabinet",
     "practiceCountryHint": "Définit la devise, le prix de l'abonnement, la pièce d'identité du patient et le QR de paiement. Pour le changer, écrivez à support@solvymed.com.",
-    "practiceCountryOther": "Autre pays"
+    "practiceCountryOther": "Autre pays",
+    "fullNameHint": "Ajoutez votre titre si vous le souhaitez (Dr, Pr) : il apparaît dans les salutations."
   },
   "clinics": {
     "title": "Mes Cliniques",
@@ -607,7 +609,8 @@
       "consentCheckbox": "J'ai lu et j'accepte les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>",
       "country": "Où se trouve votre cabinet ?",
       "countryOther": "Autre pays",
-      "countryHint": "Définit la devise, le prix de l'abonnement, la pièce d'identité du patient et le QR de paiement. Pour le changer ensuite, contactez le support."
+      "countryHint": "Définit la devise, le prix de l'abonnement, la pièce d'identité du patient et le QR de paiement. Pour le changer ensuite, contactez le support.",
+      "fullNameHint": "Ajoutez votre titre si vous le souhaitez (Dr, Pr) : il apparaît dans les salutations."
     },
     "forgotPassword": {
       "title": "Mot de passe oublié ?",
@@ -1040,5 +1043,46 @@
       "q4": "Puis-je résilier ?",
       "a4": "Oui, quand vous voulez, en contactant le support ou dans le portail de facturation lorsqu'il est disponible."
     }
+  },
+  "tour": {
+    "skipTour": "Passer le tour",
+    "skip": "Passer",
+    "continueTour": "Continuer le tour",
+    "skipConfirmTitle": "Passer le tour ?",
+    "skipConfirmText": "Vous pourrez le revoir dans les Paramètres.",
+    "back": "Retour",
+    "next": "Suivant",
+    "finish": "Terminer",
+    "progress": "{n} sur {total}",
+    "resumeTitle": "Reprendre le tour ? (étape {n} sur {total})",
+    "continue": "Reprendre",
+    "dismiss": "Ignorer",
+    "replay": "Revoir le tour",
+    "settingsCardTitle": "Visite guidée",
+    "settingsCardText": "Un tour d'une minute des écrans principaux.",
+    "homeTitle": "Votre journée en un coup d'œil",
+    "homeText": "Les rendez-vous du jour, la semaine à venir et votre liste de configuration.",
+    "solvyaiTitle": "Découvrez SolvyAI",
+    "solvyaiText": "Votre assistant IA. Demandez comment faire n'importe quoi, ou dites : « rendez-vous pour Maria demain à 14 h ». Il confirme toujours tout avec vous avant.",
+    "newApptTitle": "Prenez rendez-vous en quelques secondes",
+    "newApptText": "Choisissez le patient et l'heure, c'est tout. Vous pouvez aussi bloquer des créneaux.",
+    "scheduleTitle": "Votre agenda",
+    "scheduleText": "Par jour, semaine ou mois : changez le statut des rendez-vous et répondez aux demandes des patients.",
+    "patientsTitle": "Vos patients",
+    "patientsText": "Coordonnées, historique, dossiers, ordonnances et examens de chaque patient.",
+    "paymentsPixTitle": "Soyez payé par Pix",
+    "paymentsPromptPayTitle": "Soyez payé par PromptPay",
+    "paymentsTitle": "Suivez les paiements",
+    "paymentsText": "Ce qui reste à encaisser et ce qui est déjà entré.",
+    "trialTitle": "Votre essai gratuit",
+    "trialText": "Voyez ici combien de jours il reste, et la formule.",
+    "inviteTitle": "Les patients prennent rendez-vous seuls",
+    "inviteText": "Partagez votre lien d'invitation, et les patients demandent un rendez-vous dans l'application.",
+    "settingsTitle": "À votre façon",
+    "settingsText": "Horaires, actes, votre équipe et vos informations de paiement. Vous pouvez revoir ce tour ici à tout moment.",
+    "secHomeTitle": "La journée du cabinet",
+    "secHomeText": "Les rendez-vous du jour et de la semaine du cabinet.",
+    "secScheduleText": "Confirmez les demandes des patients et organisez les rendez-vous par jour, semaine ou mois.",
+    "secPatientsText": "Enregistrez et mettez à jour les patients. Les dossiers médicaux restent réservés au praticien."
   }
 }

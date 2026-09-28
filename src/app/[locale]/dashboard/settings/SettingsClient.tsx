@@ -44,9 +44,10 @@ function SaveRow({ pending, saved }: { pending: boolean; saved: boolean }) {
 }
 
 // `id` is an anchor the setup checklist links to (e.g. /dashboard/settings#hours).
-export function Card({ title, description, children, id }: { title: string; description?: string; children: React.ReactNode; id?: string }) {
+// tour: a guided-tour target (data-tour).
+export function Card({ title, description, children, id, tour }: { title: string; description?: string; children: React.ReactNode; id?: string; tour?: string }) {
   return (
-    <div id={id} className="scroll-mt-6 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+    <div id={id} data-tour={tour} className="scroll-mt-6 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
       <div className="mb-5">
         <h2 className="text-base font-bold text-slate-900">{title}</h2>
         {description && <p className="text-sm text-slate-500 mt-0.5">{description}</p>}
@@ -79,6 +80,8 @@ export function ProfileForm({ fullName, specialty, registration }: { fullName: s
           <div>
             <Label>{t("fullName")}</Label>
             <Input name="full_name" defaultValue={fullName} placeholder={t("fullNamePlaceholder")} required />
+            {/* A title is never added for them (lib/doctorName): they may type one. */}
+            <p className="mt-1 text-xs text-slate-400">{t("fullNameHint")}</p>
           </div>
           <div>
             <Label>{t("specialty")}</Label>
@@ -139,7 +142,7 @@ export function InviteCodeCard({ code: initialCode }: { code?: string }) {
   }
 
   return (
-    <Card title={t("inviteCodeTitle")} description={t("inviteCodeSub")}>
+    <Card title={t("inviteCodeTitle")} description={t("inviteCodeSub")} tour="invite-link">
       {code ? (
         <div className="flex flex-wrap items-center gap-3">
           <span className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-lg font-bold tracking-widest text-slate-900">

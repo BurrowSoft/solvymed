@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "Diese Zeit ist blockiert ({start}–{end}). Trotzdem buchen?",
     "requestedLabel": "Angefragt: {date} · {time}",
     "promptPayTitle": "PromptPay-QR",
-    "promptPayScan": "Zum Bezahlen mit einer beliebigen thailändischen Banking-App scannen."
+    "promptPayScan": "Zum Bezahlen mit einer beliebigen thailändischen Banking-App scannen.",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -400,7 +401,7 @@
     "profileTitle": "Profil",
     "profileSub": "Ihr Name und Ihre Fachrichtung für Patienten",
     "fullName": "Vollständiger Name",
-    "fullNamePlaceholder": "Dr. Maria Santos",
+    "fullNamePlaceholder": "Ihr vollständiger Name",
     "specialty": "Fachrichtung",
     "specialtyPlaceholder": "Psychiater, Psychologe…",
     "clinicTitle": "Praxis",
@@ -475,7 +476,8 @@
     "saveFailed": "Speichern fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "practiceCountry": "Land der Praxis",
     "practiceCountryHint": "Legt Währung, Tarifpreis, Patientenausweis und Zahlungs-QR fest. Für eine Änderung schreiben Sie an support@solvymed.com.",
-    "practiceCountryOther": "Anderes Land"
+    "practiceCountryOther": "Anderes Land",
+    "fullNameHint": "Fügen Sie auf Wunsch Ihren Titel hinzu (Dr., Prof.); er erscheint in der Begrüßung."
   },
   "clinics": {
     "title": "Meine Kliniken",
@@ -607,7 +609,8 @@
       "consentCheckbox": "Ich habe die <terms>Nutzungsbedingungen</terms> und die <privacy>Datenschutzerklärung</privacy> gelesen und akzeptiere sie",
       "country": "Wo ist Ihre Praxis?",
       "countryOther": "Anderes Land",
-      "countryHint": "Legt Währung, Tarifpreis, Patientenausweis und Zahlungs-QR fest. Für eine spätere Änderung wenden Sie sich an den Support."
+      "countryHint": "Legt Währung, Tarifpreis, Patientenausweis und Zahlungs-QR fest. Für eine spätere Änderung wenden Sie sich an den Support.",
+      "fullNameHint": "Fügen Sie auf Wunsch Ihren Titel hinzu (Dr., Prof.); er erscheint in der Begrüßung."
     },
     "forgotPassword": {
       "title": "Passwort vergessen?",
@@ -1040,5 +1043,46 @@
       "q4": "Kann ich kündigen?",
       "a4": "Ja, jederzeit, über den Support oder im Abrechnungsportal, sofern verfügbar."
     }
+  },
+  "tour": {
+    "skipTour": "Tour überspringen",
+    "skip": "Überspringen",
+    "continueTour": "Tour fortsetzen",
+    "skipConfirmTitle": "Tour überspringen?",
+    "skipConfirmText": "Sie können sie in den Einstellungen erneut ansehen.",
+    "back": "Zurück",
+    "next": "Weiter",
+    "finish": "Fertig",
+    "progress": "{n} von {total}",
+    "resumeTitle": "Tour fortsetzen? (Schritt {n} von {total})",
+    "continue": "Fortsetzen",
+    "dismiss": "Ausblenden",
+    "replay": "Tour erneut ansehen",
+    "settingsCardTitle": "Geführte Tour",
+    "settingsCardText": "Ein einminütiger Rundgang durch die wichtigsten Seiten.",
+    "homeTitle": "Ihr Tag auf einen Blick",
+    "homeText": "Die heutigen Termine, die kommende Woche und Ihre Einrichtungs-Checkliste.",
+    "solvyaiTitle": "SolvyAI kennenlernen",
+    "solvyaiText": "Ihr KI-Assistent. Fragen Sie, wie etwas geht, oder sagen Sie: „Termin für Maria morgen um 14 Uhr“. Er bestätigt immer alles vorher mit Ihnen.",
+    "newApptTitle": "Termine in Sekunden",
+    "newApptText": "Patient und Uhrzeit wählen, fertig. Sie können auch Zeiten blockieren.",
+    "scheduleTitle": "Ihr Kalender",
+    "scheduleText": "Nach Tag, Woche oder Monat: Ändern Sie den Status von Terminen und beantworten Sie Anfragen von Patienten.",
+    "patientsTitle": "Ihre Patienten",
+    "patientsText": "Stammdaten, Verlauf, Akten, Rezepte und Befunde jedes Patienten.",
+    "paymentsPixTitle": "Mit Pix bezahlt werden",
+    "paymentsPromptPayTitle": "Mit PromptPay bezahlt werden",
+    "paymentsTitle": "Zahlungen im Blick",
+    "paymentsText": "Was noch offen ist und was schon eingegangen ist.",
+    "trialTitle": "Ihre kostenlose Testphase",
+    "trialText": "Hier sehen Sie, wie viele Tage übrig sind, und den Tarif.",
+    "inviteTitle": "Patienten buchen selbst",
+    "inviteText": "Teilen Sie Ihren Einladungslink, und Patienten fragen Termine in der App an.",
+    "settingsTitle": "Nach Ihren Wünschen",
+    "settingsText": "Sprechzeiten, Leistungen, Ihr Team und Ihre Zahlungsdaten. Sie können diese Tour hier jederzeit erneut ansehen.",
+    "secHomeTitle": "Der Tag der Praxis",
+    "secHomeText": "Die heutigen Termine und die Woche der Praxis.",
+    "secScheduleText": "Bestätigen Sie Anfragen von Patienten und organisieren Sie Termine nach Tag, Woche oder Monat.",
+    "secPatientsText": "Patienten anlegen und aktualisieren. Patientenakten bleiben bei der Ärztin bzw. dem Arzt."
   }
 }
