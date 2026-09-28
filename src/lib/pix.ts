@@ -1,3 +1,5 @@
+import qrcode from "qrcode-generator";
+
 function crc16(data: string): string {
   let crc = 0xffff;
   for (let i = 0; i < data.length; i++) {
@@ -51,6 +53,13 @@ export function generatePixString(
   return payload + crc16(payload);
 }
 
-export function pixQrUrl(pixString: string): string {
-  return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(pixString)}`;
+// The QR image, generated in the page (a GIF data URL). The Pix payload
+// holds the practice's Pix key, name and the amount, so it must never be
+// sent to a third-party QR service. Error correction M, as banks' own Pix
+// QRs use; the payload is ASCII (generatePixString strips accents).
+export function pixQrDataUrl(pixString: string): string {
+  const qr = qrcode(0, "M");
+  qr.addData(pixString);
+  qr.make();
+  return qr.createDataURL(5, 2);
 }

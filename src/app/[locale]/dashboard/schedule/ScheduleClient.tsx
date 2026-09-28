@@ -4,7 +4,7 @@ import { useRouter, useSearchParams, usePathname, useParams } from "next/navigat
 import { useState, useTransition, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime } from "./actions";
-import { generatePixString, pixQrUrl } from "@/lib/pix";
+import { generatePixString, pixQrDataUrl } from "@/lib/pix";
 import { toLocalDateString } from "@/lib/slots";
 import { dropQueryParam } from "@/lib/dropQueryParam";
 import { formatBRL } from "@/lib/money";
@@ -457,7 +457,8 @@ export function PixQrButton({
 }) {
   const [open, setOpen] = useState(false);
   const pixStr = generatePixString(pixKey, clinicName, clinicCity, amount);
-  const qrUrl = pixQrUrl(pixStr);
+  // Built in the page, only while the dialog is open (one per appointment row).
+  const qrUrl = open ? pixQrDataUrl(pixStr) : "";
 
   return (
     <>
