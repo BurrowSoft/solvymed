@@ -1,0 +1,1405 @@
+[
+  {
+    "slug": "agenda",
+    "title": {
+      "pt": "Agenda",
+      "en": "Schedule"
+    },
+    "articles": [
+      {
+        "id": "A1",
+        "category": "agenda",
+        "title": {
+          "pt": "Marcar uma consulta",
+          "en": "Book an appointment"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "Toque no botão **+** (ou em **Nova consulta**).",
+                "Escolha o paciente (digite o nome para buscar) ou cadastre um novo.",
+                "Escolha a data, o horário e a duração.",
+                "Escolha o tipo (presencial ou online), o procedimento e o valor, se quiser.",
+                "Toque em **Salvar**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Se o horário estiver bloqueado, o app mostra o bloqueio e pergunta se você quer agendar mesmo assim. Se já houver outra consulta no mesmo horário, não é possível salvar."
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "Tap **+** (or **New appointment**).",
+                "Pick the patient (type the name to search) or add a new one.",
+                "Choose the date, time and duration.",
+                "Choose the type (in person or online), the procedure and the value, if you want.",
+                "Tap **Save**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "If the time is blocked, the app shows the block and asks whether to book anyway. If another appointment already takes that time, it can't be saved."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Em **Agenda**, clique em **Nova Consulta** (também há o botão na **Visão geral**). Escolha o paciente, a data, o início, a duração, o tipo, o procedimento e a forma de pagamento (particular ou convênio), e clique em **Salvar Consulta**. O valor vem do procedimento escolhido.",
+          "en": "In the **Schedule**, click **New Appointment** (there's also a button on the **Overview**). Choose the patient, date, start, duration, type, procedure and payment (private or insurance), and click **Save Appointment**. The amount comes from the chosen procedure."
+        },
+        "webUnavailable": false,
+        "open": "new-appointment",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "A2",
+        "category": "agenda",
+        "title": {
+          "pt": "Consultas recorrentes",
+          "en": "Recurring appointments"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "Em **Nova consulta**, preencha a primeira consulta.",
+                "Ative **Repetir** e escolha semanal, quinzenal ou mensal, e quantas vezes.",
+                "Toque em **Salvar**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Se alguma das datas tiver conflito, nenhuma é salva, e o app mostra qual data conflita."
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "In **New appointment**, fill in the first appointment.",
+                "Turn on **Repeat** and choose weekly, every two weeks or monthly, and how many times.",
+                "Tap **Save**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "If any date conflicts, none are saved, and the app shows which date conflicts."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Ainda não disponível no site; use o app.",
+          "en": "Not available on the website yet; use the app."
+        },
+        "webUnavailable": true,
+        "open": "new-appointment",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "A3",
+        "category": "agenda",
+        "title": {
+          "pt": "Bloquear horários",
+          "en": "Block time"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "Na **Agenda**, toque em **+** e escolha **Bloquear horário**.",
+                "Escolha a data e o período (início e fim).",
+                "Toque em **Salvar**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Pacientes não conseguem pedir consultas em horários bloqueados. Você ainda pode agendar por cima, se precisar (o app pede confirmação)."
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "In the **Schedule**, tap **+** and choose **Block time**.",
+                "Choose the date and the period (start and end).",
+                "Tap **Save**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Patients can't request appointments in blocked time. You can still book over it if you need to (the app asks you to confirm)."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Em **Agenda**, clique em **Bloquear Horário**, escolha a data, o início e o fim, e salve.",
+          "en": "In the **Schedule**, click **Block Time**, choose the date, start and end, and save."
+        },
+        "webUnavailable": false,
+        "open": "schedule",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "A4",
+        "category": "agenda",
+        "title": {
+          "pt": "Remarcar ou cancelar",
+          "en": "Move or cancel an appointment"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "Na **Agenda**, toque na consulta.",
+                "Para remarcar: altere a data ou o horário e toque em **Salvar**.",
+                "Para cancelar: mude o status para **Cancelado**."
+              ]
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "In the **Schedule**, tap the appointment.",
+                "To move it: change the date or time and tap **Save**.",
+                "To cancel it: change the status to **Cancelled**."
+              ]
+            }
+          ]
+        },
+        "web": {
+          "pt": "Remarcar ainda não está disponível no site; use o app. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**.",
+          "en": "Moving an appointment isn't available on the website yet; use the app. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**."
+        },
+        "webUnavailable": false,
+        "open": "schedule",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "A5",
+        "category": "agenda",
+        "title": {
+          "pt": "Status das consultas",
+          "en": "Appointment statuses"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Agendado, Confirmado, Concluído, Cancelado, Atrasado, Ausente e Rejeitado. Toque na consulta e escolha o status. Consultas pedidas por pacientes aparecem como pedidos até você confirmar ou rejeitar."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "Scheduled, Confirmed, Completed, Cancelled, Late, No-show and Rejected. Tap the appointment and choose the status. Appointments requested by patients show as requests until you confirm or reject them."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Em **Agenda**, cada consulta da lista tem um seletor de status; escolha o novo status nele.",
+          "en": "In the **Schedule**, each appointment in the list has a status selector; pick the new status there (the website calls Completed \"Done\" and No-show \"Absent\")."
+        },
+        "webUnavailable": false,
+        "open": "schedule",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "A6",
+        "category": "agenda",
+        "title": {
+          "pt": "Pedidos de pacientes",
+          "en": "Patient booking requests"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "Os pedidos aparecem em **Início**, em **Solicitações**.",
+                "Toque no pedido e escolha **Confirmar**, **Rejeitar** (com uma mensagem opcional) ou proponha **outro horário**.",
+                "O paciente recebe uma notificação com a sua resposta."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Um paciente novo que pediu pelo seu link fica ligado à sua clínica quando você confirma."
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "Requests show on **Home**, under **Requests**.",
+                "Tap the request and choose **Confirm**, **Reject** (with an optional note) or propose **another time**.",
+                "The patient gets a notification with your answer."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "A new patient who requested through your link is connected to your clinic when you confirm."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Os pedidos aparecem em **Agenda**, em **Solicitações de consulta**. Clique em **Confirmar**, **Rejeitar** ou **Propor novo horário** (dá para escrever uma mensagem ao paciente). Para um paciente novo, **Confirmar e Adicionar Paciente** já cria o cadastro.",
+          "en": "Requests show in the **Schedule**, under **Booking Requests**. Click **Confirm**, **Reject** or **Propose new time** (you can add a note for the patient). For a new patient, **Confirm and Add New Patient** also creates their record."
+        },
+        "webUnavailable": false,
+        "open": "home",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "A7",
+        "category": "agenda",
+        "title": {
+          "pt": "Ver o dia, a semana ou o mês",
+          "en": "Day, week and month views"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Na **Agenda**, use os botões **Dia**, **Semana** e **Mês**. Use as setas para avançar ou voltar, e toque num dia do mês para abrir esse dia."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "In the **Schedule**, use **Day**, **Week** and **Month**. Use the arrows to move forward or back, and tap a day in the month view to open that day."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Igual, com **Dia**, **Semana** e **Mês**, as setas e **Hoje**; clique num dia do mês para abri-lo.",
+          "en": "The same, with **Day**, **Week** and **Month**, the arrows and **Today**; click a day in the month view to open it."
+        },
+        "webUnavailable": false,
+        "open": "schedule",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "A8",
+        "category": "agenda",
+        "title": {
+          "pt": "Pedidos de remarcação do paciente",
+          "en": "Patient reschedule requests"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Quando um paciente pede para remarcar uma consulta confirmada, o pedido aparece em **Início**. **Aceitar** muda a consulta para o novo horário; **Recusar** mantém o horário original."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "When a patient asks to reschedule a confirmed appointment, the request shows on **Home**. **Accept** moves the appointment to the new time; **Decline** keeps the original time."
+            }
+          ]
+        },
+        "web": {
+          "pt": "O pedido aparece em **Agenda**, em **Solicitações de consulta**, marcado **Remarcação solicitada**, com **Aceitar** e **Recusar**.",
+          "en": "The request shows in the **Schedule**, under **Booking Requests**, marked **Reschedule Requested**, with **Accept** and **Decline**."
+        },
+        "webUnavailable": false,
+        "open": "home",
+        "appOnly": null,
+        "appTitle": null
+      }
+    ]
+  },
+  {
+    "slug": "pacientes",
+    "title": {
+      "pt": "Pacientes",
+      "en": "Patients"
+    },
+    "articles": [
+      {
+        "id": "P1",
+        "category": "pacientes",
+        "title": {
+          "pt": "Cadastrar um paciente",
+          "en": "Add a patient"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "Abra **Pacientes** e toque em **+** (Novo paciente).",
+                "Preencha nome, data de nascimento, telefone e, se quiser, CPF e e-mail.",
+                "Toque em **Salvar**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Se o CPF já estiver cadastrado, o app avisa e não cria um paciente repetido. Se o telefone ou nome + data de nascimento parecerem de alguém já cadastrado, o app mostra o paciente parecido para você abrir o existente ou criar mesmo assim."
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "Open **Patients** and tap **+** (New patient).",
+                "Fill in the name, date of birth, phone and, if you want, CPF and email.",
+                "Tap **Save**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "If the CPF is already registered, the app warns you and doesn't create a duplicate. If the phone, or the name + date of birth, look like an existing patient, the app shows the similar patient so you can open it or create a new one anyway."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Em **Pacientes**, clique em **Novo Paciente**, preencha os dados e clique em **Salvar Paciente**. Os mesmos avisos de CPF repetido e de paciente parecido aparecem no site.",
+          "en": "In **Patients**, click **New Patient**, fill in the details and click **Save Patient**. The same duplicate-CPF and similar-patient warnings appear on the website."
+        },
+        "webUnavailable": false,
+        "open": "new-patient",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "P2",
+        "category": "pacientes",
+        "title": {
+          "pt": "Encontrar um paciente",
+          "en": "Find a patient"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Em **Pacientes**, use a busca (lupa) e digite o nome, o CPF ou o telefone."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "In **Patients**, use search (the magnifier) and type the name, CPF or phone."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Em **Pacientes**, use a caixa **Buscar pacientes…** (nome, telefone ou CPF).",
+          "en": "In **Patients**, use the **Search patients…** box (name, phone or CPF)."
+        },
+        "webUnavailable": false,
+        "open": "patients",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "P3",
+        "category": "pacientes",
+        "title": {
+          "pt": "Arquivar e restaurar",
+          "en": "Archive and restore a patient"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "Abra o paciente e toque no menu (⋯).",
+                "Toque em **Arquivar** e confirme. As próximas consultas desse paciente são canceladas; o histórico continua guardado.",
+                "Para ver arquivados: em **Pacientes**, abra **Arquivados**. Abra o paciente e toque em **Restaurar**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Pacientes com prontuário, receita ou arquivo só podem ser arquivados, nunca apagados (o prontuário deve ser guardado por lei)."
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "Open the patient and tap the menu (⋯).",
+                "Tap **Archive** and confirm. The patient's upcoming appointments are cancelled; the history stays saved.",
+                "To see archived patients: in **Patients**, open **Archived**. Open the patient and tap **Restore**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Patients with a record, prescription or file can only be archived, never deleted (records must be kept by law)."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Abra o paciente e, na aba **Informações**, clique em **Arquivar cadastro** e confirme. Para ver arquivados: em **Pacientes**, clique em **Arquivados**; abra o paciente e clique em **Restaurar**.",
+          "en": "Open the patient and, on the **Info** tab, click **Archive patient** and confirm. To see archived patients: in **Patients**, click **Archived**; open the patient and click **Restore**."
+        },
+        "webUnavailable": false,
+        "open": "patients",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "P4",
+        "category": "pacientes",
+        "title": {
+          "pt": "Escrever no prontuário",
+          "en": "Write a medical record"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "Abra o paciente e a aba **Prontuários**.",
+                "Toque em **+**, escreva (texto livre ou um modelo) e toque em **Salvar**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Só você vê os prontuários; secretárias(os) não têm acesso."
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "Open the patient and the **Records** tab.",
+                "Tap **+**, write (free text or a template) and tap **Save**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Only you can see records; secretaries have no access."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Abra o paciente, a aba **Registros** e clique em **Novo Registro**. Escolha o **Tipo de Registro**, escreva e clique em **Salvar Registro**.",
+          "en": "Open the patient, the **Records** tab, and click **New Record**. Choose the **Record Type**, write and click **Save Record**."
+        },
+        "webUnavailable": false,
+        "open": "patients",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "P5",
+        "category": "pacientes",
+        "title": {
+          "pt": "Corrigir um prontuário ou receita",
+          "en": "Correct a record or prescription"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Nas primeiras 24 horas você pode editar ou apagar. Depois disso, o registro fica protegido: toque em **Corrigir**, escreva a correção e salve. O texto original continua guardado e visível, marcado como corrigido."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "In the first 24 hours you can edit or delete. After that the entry is protected: tap **Correct**, write the correction and save. The original text stays saved and visible, marked as corrected."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Nas primeiras 24 horas aparecem **Editar** e **Excluir**. Depois, clique em **Adicionar correção**, escreva a correção e o motivo, e salve.",
+          "en": "In the first 24 hours you'll see **Edit** and **Delete**. After that, click **Add correction**, write the correction and the reason, and save."
+        },
+        "webUnavailable": false,
+        "open": "patients",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "P6",
+        "category": "pacientes",
+        "title": {
+          "pt": "Fazer uma receita",
+          "en": "Write a prescription"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "Abra o paciente e a aba **Receitas**.",
+                "Toque em **+**, adicione os medicamentos e toque em **Salvar**.",
+                "Toque em **PDF** para gerar a receita com sua assinatura e compartilhar."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Para a receita sair com seus dados, preencha seu registro profissional (ex.: CRM) em **Configurações → Cadastros** e a assinatura em **Configurações**."
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "Open the patient and the **Prescriptions** tab.",
+                "Tap **+**, add the medications and tap **Save**.",
+                "Tap **PDF** to create the prescription with your signature and share it."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "For the prescription to show your details, fill in your professional registration (e.g. CRM) in **Settings → Registrations** and your signature in **Settings**."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. O PDF da receita ainda não está disponível no site; use o app.",
+          "en": "Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. The prescription PDF isn't available on the website yet; use the app."
+        },
+        "webUnavailable": false,
+        "open": "patients",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "P7",
+        "category": "pacientes",
+        "title": {
+          "pt": "Exames e arquivos",
+          "en": "Exams and files"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "Abra o paciente e a aba **Exames** (ou **Arquivos**).",
+                "Toque em **Enviar** e escolha uma foto ou um PDF."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Os arquivos são privados: só você acessa, por links temporários."
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "Open the patient and the **Exams** (or **Files**) tab.",
+                "Tap **Upload** and choose a photo or a PDF."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Files are private: only you can open them, through temporary links."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Ainda não disponível no site; use o app.",
+          "en": "Not available on the website yet; use the app."
+        },
+        "webUnavailable": true,
+        "open": "patients",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "P8",
+        "category": "pacientes",
+        "title": {
+          "pt": "Histórico em PDF",
+          "en": "Export a patient's history as PDF"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Abra o paciente e toque no ícone de exportar histórico. O PDF sai no idioma do app, com datas e valores no formato local."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "Open the patient and tap the export-history icon. The PDF comes out in the app's language, with local date and currency formats."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Ainda não disponível no site; use o app.",
+          "en": "Not available on the website yet; use the app."
+        },
+        "webUnavailable": true,
+        "open": "patients",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "P9",
+        "category": "pacientes",
+        "title": {
+          "pt": "Convidar o paciente para o app",
+          "en": "Invite a patient to the app"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Abra o paciente e toque em **Convidar para o app**. Envie o código pessoal (ou o link) por WhatsApp ou outro app. Quando o paciente se cadastra com ele, fica ligado a este cadastro e pode pedir consultas."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "Open the patient and tap **Invite to the app**. Send the personal code (or link) by WhatsApp or another app. When the patient signs up with it, they're connected to this record and can request appointments."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Abra o paciente e, na aba **Informações**, em **Código de Convite**, clique em **Gerar código** e depois em **Copiar** para enviar ao paciente.",
+          "en": "Open the patient and, on the **Info** tab, under **Invite Code**, click **Generate code** and then **Copy** to send it to the patient."
+        },
+        "webUnavailable": false,
+        "open": "patients",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "P10",
+        "category": "pacientes",
+        "title": {
+          "pt": "Exportar a lista de pacientes",
+          "en": "Export the patient list (CSV)"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "**Configurações → Exportar pacientes (CSV)**. O arquivo abre direto no Excel. O app apaga a cópia do celular na próxima exportação, ao abrir o app de novo ou ao sair da conta."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "**Settings → Export patients (CSV)**. The file opens directly in Excel. The app deletes the copy from the phone on the next export, the next time the app opens, or when you sign out."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Ainda não disponível no site; use o app.",
+          "en": "Not available on the website yet; use the app."
+        },
+        "webUnavailable": true,
+        "open": "settings",
+        "appOnly": null,
+        "appTitle": null
+      }
+    ]
+  },
+  {
+    "slug": "pagamentos",
+    "title": {
+      "pt": "Pagamentos",
+      "en": "Payments"
+    },
+    "articles": [
+      {
+        "id": "G1",
+        "category": "pagamentos",
+        "title": {
+          "pt": "Marcar como pago",
+          "en": "Mark an appointment as paid"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "Abra **Pagamentos** (ou a consulta na **Agenda**).",
+                "Toque na consulta e em **Marcar como pago**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Para desfazer, toque em **Desmarcar** e confirme."
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "Open **Payments** (or the appointment in the **Schedule**).",
+                "Tap the appointment and **Mark as paid**."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "To undo, tap **Mark unpaid** and confirm."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Em **Pagamentos**, clique em **Marcar como Pago** na consulta (se ela não tiver valor, digite o valor) e em **Confirmar**. Para desfazer, clique em **Reverter** e confirme.",
+          "en": "In **Payments**, click **Mark Paid** on the appointment (if it has no amount, type it in) and **Confirm**. To undo, click **Revert** and confirm."
+        },
+        "webUnavailable": false,
+        "open": "payments",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "G2",
+        "category": "pagamentos",
+        "title": {
+          "pt": "A receber e recebido",
+          "en": "To receive vs received"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "**A receber** soma as consultas não pagas do período que estão agendadas, confirmadas, concluídas ou atrasadas (pedidos ainda não aceitos, canceladas, rejeitadas e ausências não entram). **Recebido** soma tudo o que foi marcado como pago. Escolha o período: esta semana, este mês, mês passado ou todo o período."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "**To receive** adds up the period's unpaid appointments that are scheduled, confirmed, completed or late (requests not yet accepted, cancelled, rejected and no-shows don't count). **Received** adds up everything marked as paid. Choose the period: this week, this month, last month or all time."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Em **Pagamentos**, os totais se chamam **Pendente**, **Recebido** e **Total**, com os mesmos períodos. A regra é a mesma do app.",
+          "en": "In **Payments**, the totals are **Pending**, **Received** and **Total**, with the same periods. The rule is the same as in the app."
+        },
+        "webUnavailable": false,
+        "open": "payments",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "G3",
+        "category": "pagamentos",
+        "title": {
+          "pt": "Configurar o Pix",
+          "en": "Set up Pix (Brazil)"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "**Configurações → Financeiro**.",
+                "Digite sua chave Pix (CPF, CNPJ, e-mail, telefone ou chave aleatória) e salve."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "A partir daí, cada consulta com valor mostra o QR Code Pix e o Pix Copia e Cola com o valor certo."
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "**Settings → Financial**.",
+                "Enter your Pix key (CPF, CNPJ, email, phone or random key) and save."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "From then on, each appointment with a value shows the Pix QR code and the Pix Copia e Cola code with the right amount."
+            }
+          ]
+        },
+        "web": {
+          "pt": "**Configurações → Clínica**: preencha a **Chave Pix** e salve.",
+          "en": "**Settings → Clinic**: fill in the **Chave Pix** (Pix key) and save."
+        },
+        "webUnavailable": false,
+        "open": "settings-financial",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "G4",
+        "category": "pagamentos",
+        "title": {
+          "pt": "Cobrar pelo Pix",
+          "en": "Get paid by Pix"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "Abra a consulta e toque em **QR Code Pix**. O paciente escaneia com o app do banco.",
+                "Ou toque em **Enviar Pix por WhatsApp**: o paciente recebe o código para colar no app do banco.",
+                "Quando o pagamento cair, marque a consulta como paga."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "O SolvyMed não recebe o dinheiro: o Pix vai direto para a sua conta."
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "Open the appointment and tap **Pix QR code**. The patient scans it with their banking app.",
+                "Or tap **Send Pix via WhatsApp**: the patient gets the code to paste in their banking app.",
+                "When the payment arrives, mark the appointment as paid."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "SolvyMed doesn't receive the money: Pix goes straight to your account."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Copia e Cola** (botão **Copiar**). O envio por WhatsApp está só no app. Quando o pagamento cair, marque como pago em **Pagamentos**.",
+          "en": "In the **Schedule**, click the QR icon next to the appointment: the **Pix QR Code** and the **Copia e Cola** code (with **Copiar**) appear. Sending by WhatsApp is app-only. When the payment arrives, mark it as paid in **Payments**."
+        },
+        "webUnavailable": false,
+        "open": "payments",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "G5",
+        "category": "pagamentos",
+        "title": {
+          "pt": "Recibo em PDF",
+          "en": "Receipt PDF"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Abra uma consulta paga e toque em **Gerar recibo em PDF**. Compartilhe pelo WhatsApp, e-mail ou outro app."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "Open a paid appointment and tap **Create receipt PDF**. Share it by WhatsApp, email or another app."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Ainda não disponível no site; use o app.",
+          "en": "Not available on the website yet; use the app."
+        },
+        "webUnavailable": true,
+        "open": "payments",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "G6",
+        "category": "pagamentos",
+        "title": {
+          "pt": "Relatórios",
+          "en": "Reports"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Em **Início**, veja o resumo da semana, do mês ou de todo o período, com filtro por particular ou convênio."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "On **Home**, see the summary for the week, the month or all time, filtered by private or insurance."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Na **Visão geral** você vê as consultas de hoje, o valor pendente, o número de pacientes e o recebido no mês. O detalhe por período fica em **Pagamentos**; o filtro particular/convênio está só no app.",
+          "en": "The **Overview** shows today's appointments, the pending amount, the number of patients and what was received this month. The breakdown by period is in **Payments**; the private/insurance filter is app-only."
+        },
+        "webUnavailable": false,
+        "open": "home",
+        "appOnly": null,
+        "appTitle": null
+      }
+    ]
+  },
+  {
+    "slug": "configuracoes",
+    "title": {
+      "pt": "Configurações",
+      "en": "Settings"
+    },
+    "articles": [
+      {
+        "id": "C1",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Meu perfil e registro profissional",
+          "en": "Profile and professional registration"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "**Configurações → Meu perfil**: nome e especialidade.",
+                "**Configurações → Cadastros**: seu registro profissional (ex.: \"CRM 12345/SP\"). Ele aparece nas receitas e documentos em PDF."
+              ]
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "**Settings → My profile**: name and specialty.",
+                "**Settings → Registrations**: your professional registration (e.g. \"CRM 12345/SP\"). It appears on prescriptions and PDF documents."
+              ]
+            }
+          ]
+        },
+        "web": {
+          "pt": "**Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: \"CRM 12345/SP\"), no mesmo cartão.",
+          "en": "**Settings → Profile**: name, specialty and **Professional registration** (e.g. \"CRM 12345/SP\"), on the same card."
+        },
+        "webUnavailable": false,
+        "open": "settings-profile",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "C2",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Horário de atendimento",
+          "en": "Working hours"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "**Configurações → Horário de atendimento**. Escolha os dias e horários. Pacientes só conseguem pedir consultas dentro desses horários."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "**Settings → Working hours**. Choose the days and times. Patients can only request appointments within these hours."
+            }
+          ]
+        },
+        "web": {
+          "pt": "**Configurações → Horário de atendimento**: igual ao app.",
+          "en": "**Settings → Working hours**: the same as in the app."
+        },
+        "webUnavailable": false,
+        "open": "settings-hours",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "C3",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Procedimentos e valores",
+          "en": "Procedures and prices"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "**Configurações → Procedimentos**. Adicione cada procedimento (ex.: \"Consulta\") com duração e valor. Eles aparecem ao marcar uma consulta."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "**Settings → Procedures**. Add each procedure (e.g. \"Consultation\") with its duration and price. They show up when you book an appointment."
+            }
+          ]
+        },
+        "web": {
+          "pt": "**Configurações → Procedimentos**: clique em **Novo procedimento**, preencha nome, duração e preço (ex.: 89,90) e clique em **Adicionar procedimento**.",
+          "en": "**Settings → Procedures**: click **New procedure**, fill in the name, duration and price (e.g. 89.90) and click **Add procedure**."
+        },
+        "webUnavailable": false,
+        "open": "settings-procedures",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "C4",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Convidar uma secretária",
+          "en": "Invite a secretary"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "ol",
+              "items": [
+                "**Configurações → Equipe → Convidar**.",
+                "Compartilhe o código de convite (vale 7 dias, uso único).",
+                "A pessoa cria a conta em \"Trabalha na secretaria?\" com esse código."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Você pode ter até 3 secretárias(os). Elas(es) cuidam da agenda, dos pacientes e dos pagamentos, mas não veem prontuários, receitas, exames nem arquivos. Para remover alguém: **Equipe → Remover**."
+            }
+          ],
+          "en": [
+            {
+              "type": "ol",
+              "items": [
+                "**Settings → Team → Invite**.",
+                "Share the invite code (valid for 7 days, single use).",
+                "The person signs up under \"Work at the front desk?\" with that code."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "You can have up to 3 secretaries. They manage the schedule, patients and payments, but can't see records, prescriptions, exams or files. To remove someone: **Team → Remove**."
+            }
+          ]
+        },
+        "web": {
+          "pt": "**Configurações → Equipe**: digite o e-mail da pessoa e clique em **Convidar**. Compartilhe na hora o link ou o código que aparece (só aparece uma vez, vale 7 dias e só para esse e-mail). Para tirar alguém: **Remover**; para cancelar um convite pendente: **Revogar**.",
+          "en": "**Settings → Team**: type the person's email and click **Invite**. Share the link or code that appears right away (it's shown only once and works for 7 days, for that email only). To remove someone: **Remove**; to cancel a pending invite: **Revoke**."
+        },
+        "webUnavailable": false,
+        "open": "settings-team",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "C5",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Link de convite para pacientes",
+          "en": "Patient invite link"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Em **Início** (ou **Configurações**), toque em **Compartilhar link de convite**. Quem abrir o link baixa o app ou entra pelo site e pede consultas com você. Tocar em **Novo** gera um código novo e o anterior deixa de funcionar."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "On **Home** (or **Settings**), tap **Share invite link**. Anyone who opens it gets the app or the website and can request appointments with you. Tapping **New** creates a new code and the old one stops working."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Em **Agenda**, clique em **Compartilhar link de convite**, ou em **Configurações → Seu código de convite**, use **Copiar** ou **Copiar link**. **Gerar novo** cria um código novo e o anterior deixa de funcionar.",
+          "en": "In the **Schedule**, click **Share invite link**, or in **Settings → Your invite code**, use **Copy** or **Copy link**. **Regenerate** creates a new code and the old one stops working."
+        },
+        "webUnavailable": false,
+        "open": "home",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "C6",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Bloqueio do app",
+          "en": "App lock"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "**Configurações → Segurança**: ative o **Bloqueio biométrico** (digital ou Face ID; se falhar, vale a senha do próprio celular) e escolha o **bloqueio automático** (5, 15 ou 30 minutos)."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "**Settings → Security**: turn on the **Biometric lock** (fingerprint or Face ID; if it fails, your phone's own passcode works) and choose the **auto-lock** (5, 15 or 30 minutes)."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Não se aplica ao site: o bloqueio biométrico é do app. No site, saia da conta em computadores compartilhados.",
+          "en": "Doesn't apply to the website: the biometric lock is an app feature. On the website, sign out on shared computers."
+        },
+        "webUnavailable": true,
+        "open": "settings-security",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "C7",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Lembretes e notificações",
+          "en": "Reminders and notifications"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "**Configurações → Notificações**: ative os lembretes de consulta, escolha a antecedência (15 min, 1 h, 2 h ou 24 h) e o resumo diário."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "**Settings → Notifications**: turn on appointment reminders, choose how early (15 min, 1 h, 2 h or 24 h), and the daily summary."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Os lembretes e notificações são do app; o site não envia notificações.",
+          "en": "Reminders and notifications are app features; the website doesn't send notifications."
+        },
+        "webUnavailable": true,
+        "open": "settings-notifications",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "C8",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Idioma e tema",
+          "en": "Language and theme"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "**Configurações → Idioma** e **Tema** (claro, escuro ou do sistema). Algumas partes mudam de idioma depois de reabrir o app."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "**Settings → Language** and **Theme** (light, dark or system). Some parts switch language after you reopen the app."
+            }
+          ]
+        },
+        "web": {
+          "pt": "O idioma muda no seletor de idioma do menu lateral. O site não tem tema escuro.",
+          "en": "Change the language with the language selector in the side menu. The website has no dark theme."
+        },
+        "webUnavailable": false,
+        "open": "settings",
+        "appOnly": null,
+        "appTitle": null
+      }
+    ]
+  },
+  {
+    "slug": "conta",
+    "title": {
+      "pt": "Conta",
+      "en": "Account"
+    },
+    "articles": [
+      {
+        "id": "K1",
+        "category": "conta",
+        "title": {
+          "pt": "Teste grátis e assinatura",
+          "en": "Free trial and subscription"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Você tem 15 dias grátis, sem cartão. Para continuar depois, assine pelo site solvymed.com, entrando com sua conta. O plano inclui tudo, com até 3 secretárias(os)."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "You get 15 days free, with no card. To continue afterwards, subscribe on solvymed.com, signed in with your account. The plan includes everything, with up to 3 secretaries."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Durante o teste, o contador de dias fica no topo do painel. Clique nele para ver o plano e assinar com cartão.",
+          "en": "During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card."
+        },
+        "webUnavailable": false,
+        "open": null,
+        "appOnly": {
+          "pt": "Veja os detalhes da sua conta em Configurações.",
+          "en": "See your account details in Settings."
+        },
+        "appTitle": {
+          "pt": "Sua conta",
+          "en": "Your account"
+        }
+      },
+      {
+        "id": "K2",
+        "category": "conta",
+        "title": {
+          "pt": "Trocar a senha",
+          "en": "Change your password"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "**Configurações → Alterar senha**. Por segurança, as sessões nos outros aparelhos são encerradas."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "**Settings → Change password**. For security, your sessions on other devices are ended."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Ainda não há **Alterar senha** no site; use o app, ou saia da conta e use **Esqueceu a senha?** na tela de entrada.",
+          "en": "There's no **Change password** on the website yet; use the app, or sign out and use **Forgot password?** on the sign-in screen."
+        },
+        "webUnavailable": false,
+        "open": "settings",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "K3",
+        "category": "conta",
+        "title": {
+          "pt": "Esqueci a senha",
+          "en": "Forgot password"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 1 hora)."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 1 hour)."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**.",
+          "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**."
+        },
+        "webUnavailable": false,
+        "open": null,
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "K4",
+        "category": "conta",
+        "title": {
+          "pt": "Encerrar a conta",
+          "en": "Close your account"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "**Configurações → Encerrar conta**. Seus dados de acesso e a assinatura são cancelados. Os prontuários ficam guardados e bloqueados pelo prazo exigido por lei (ninguém acessa pelo app) e depois são apagados."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "**Settings → Close account**. Your login and subscription are cancelled. Medical records are kept locked for the legally required period (nobody can open them in the app) and then erased."
+            }
+          ]
+        },
+        "web": {
+          "pt": "**Configurações → Encerrar conta**, no fim da página: funciona igual ao app.",
+          "en": "**Settings → Close account**, at the bottom of the page: it works the same as in the app."
+        },
+        "webUnavailable": false,
+        "open": "settings",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "K5",
+        "category": "conta",
+        "title": {
+          "pt": "Privacidade",
+          "en": "Privacy"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Seus dados ficam privados e criptografados; cada clínica só vê os próprios dados; secretárias(os) não veem dados clínicos. Veja a Política de Privacidade em solvymed.com/privacy."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "Your data is private and encrypted; each clinic only sees its own data; secretaries don't see clinical data. See the Privacy Policy at solvymed.com/privacy."
+            }
+          ]
+        },
+        "web": null,
+        "webUnavailable": false,
+        "open": null,
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "K6",
+        "category": "conta",
+        "title": {
+          "pt": "Falar com o suporte",
+          "en": "Contact support"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Escreva para support@solvymed.com. Nunca pedimos sua senha."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "Email support@solvymed.com. We never ask for your password."
+            }
+          ]
+        },
+        "web": null,
+        "webUnavailable": false,
+        "open": null,
+        "appOnly": null,
+        "appTitle": null
+      }
+    ]
+  }
+]

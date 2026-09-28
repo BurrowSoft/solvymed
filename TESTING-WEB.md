@@ -6474,3 +6474,54 @@ The old string "Pix QR Code" is no longer referenced anywhere in the repo
 **CI at `cb2c26a`:** ✅. **Merge gate: 🟢 for `cb2c26a`**, once the
 reviewer is clean. The branch is up to date with master; this docs commit
 sits on top.
+
+## PR #97 (`ux/help`, base master) — Help Center at /help (publish-gated), 🟢 at `ce28288`
+
+38 articles (pt-BR + en), `noindex`, and not linked from anywhere until UX
+flips `liveFeatures.helpCenter`.
+
+**Round 1 (`961b45c`) and UX's fixes:**
+- Round 1 worked apart from three small findings. UX decided them, and b2
+  fixed them at `794dfb9` → `ce28288`:
+  1. The `?app=1` search matched hidden subscribing text: "cartão" found K1
+     through its web note.
+  2. "Abrir no site" showed on features the web doesn't have.
+  3. The pt note "QR Code Pix" didn't match the dialog's hard-coded title.
+     That's fixed separately in #100.
+- An automated check found every **bolded** label in the web notes (en +
+  pt) as real web UI text. The only exceptions were K2's "Change password",
+  which the note says doesn't exist, and G4, fixed by #100.
+
+**Checked on the Preview at `ce28288`:**
+
+| Page | Result |
+|---|---|
+| `/help` in pt-BR, en, ja, th | 200, `noindex, nofollow`, 38 article links. pt-BR → "Central de Ajuda"; en, ja, th → "Help Center". No overflow at 1280. |
+| `/help?app=1` (all four) | No `/pricing` or `/auth/signup` link and no language switcher. Every help link keeps `?app=1`. |
+| All 38 articles × {normal, `?app=1`} | 200 and `noindex`; no raw `**`. In `?app=1`: **no "No site" box and no "Abrir no site"** on any article. |
+| "Abrir no site" (normal) | Present on 27 articles and **absent on A2, P7, P8, P10, G5, C6 and C7** (web-unavailable). A4 keeps it (cancelling works on the web). Targets: `/dashboard`, `/schedule`, `/patients` (`?new=1`), `/payments`, `/settings`, `#clinic`, `#procedures`. Logged out, each redirects to login, so none 404s. |
+| K1 normal | "Teste grátis e assinatura" / "Free trial and subscription": the subscription text plus the web note. |
+| K1 `?app=1` | "**Sua conta**" / "**Your account**" in the index, the h1 and the tab title. The body is only "Veja os detalhes da sua conta em Configurações." K1's subscribing text and title are **not in the HTML at all**. |
+| `/help/zz9` | 404 |
+| `/`, `/pricing`, `/auth/login` | 0 links to `/help` |
+| 390 px, `/help/a4` and `?app=1` | No horizontal overflow |
+
+**Search** (pt-BR, accents and case ignored):
+
+| Query | Normal | App variant |
+|---|---|---|
+| "bloquear horario" | Bloquear horários | Bloquear horários |
+| "PIX" | Configurar o Pix, Cobrar pelo Pix | same |
+| "secretária" | 4 articles, incl. "Teste grátis e assinatura" | 3 (K1 gone) |
+| "assinatura" | Fazer uma receita, Teste grátis e assinatura, Encerrar a conta | Fazer uma receita, Encerrar a conta |
+| "cartao" | Meu perfil…, Teste grátis e assinatura | **nothing** |
+| "visão geral" | Marcar uma consulta, Relatórios | **nothing** (that phrase appears only in web notes) |
+| "xyzzy" | no-results message | no-results message |
+
+**Note for UX (not a #97 issue):** every page, including `?app=1`, ships
+next-intl's whole message bundle in a hidden script, so the page source
+contains strings like `subscription.payCard` ("Assinar com Cartão"). It's
+never displayed.
+
+**CI at `ce28288`:** ✅. **Merge gate: 🟢 for `ce28288`**, once the
+reviewer is clean. This docs commit sits on top, after a master sync.
