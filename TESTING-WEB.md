@@ -6346,3 +6346,61 @@ power-of-two amount, so a total shows exactly which statuses were counted:
 **CI at `6b451fb`:** ✅. **Merge gate: 🟢 for `6b451fb`**, once the reviewer
 is clean. The branch was up to date with `release`; this docs commit sits
 on top.
+
+## PR #95 (`ux/tour`, base master) — guided tour for doctors and secretaries, 🟢 at `96656d7`
+
+Migration 113 is not applied, so the tour never auto-starts and nothing is
+saved. It was tested via **Settings → "Rever o tour"** on the Preview, with
+throwaway doctors and a secretary (deleted afterwards).
+
+**Rounds:**
+- **`8f1d2c1` → `adad321`** (copy only): the schedule step no longer claims
+  "remarcar / marcar como paga" from an appointment. The web can't do
+  those; it now reads "mude o status das consultas e responda aos
+  pedidos".
+- **❌ at `adad321`:** below lg (900 px) and on phones (390 px), the
+  sidebar steps were still counted and "spotlighted" off-screen. The
+  closed drawer's links are translated off the left edge, so the card
+  described nothing visible ("8 de 8" / "7 de 7"). Fixed at `07c34b3`
+  (targets must intersect the viewport).
+- **`07c34b3` → `96656d7`:** a replay from Settings on a narrow screen
+  started at "1 de 7" and then shrank. It's now right from step 1.
+
+**Desktop 1280, doctor, pt-BR (`96656d7`):**
+- **Order:** "Seu dia em um só lugar" (home) → "Marque consultas em
+  segundos" (New appointment) → Agenda → Pacientes → Pagamentos ("Receba
+  pelo Pix" for BR) → the trial chip → the invite card (navigates to
+  Settings) → Configurações. That's **8 steps**; "n de 8" and the dots
+  (active dot included) are correct at every step.
+- **The card never overlaps the spotlight** (checked geometrically at
+  every step).
+- **Dim and Esc:** clicking the dimmed area does nothing. Esc → "Pular o
+  tour? / Você pode revê-lo em Configurações." with "Continuar tour" and
+  "Pular".
+- **Keys:** → / ← / Enter work.
+- **Concluir** (click or Enter, 3/3 runs) → `/pt-BR/dashboard?setup=1`
+  with "Configure sua clínica" open. "Pular tour → Pular" closes the tour
+  too.
+
+**Narrow widths (`96656d7`):**
+- **900 px:** "1 de 4" → home, New appointment, trial chip, invite (no
+  sidebar steps).
+- **390 px:** "1 de 3" → home, trial chip, invite (no sidebar and no New
+  appointment).
+- The card stays on screen, with no horizontal overflow.
+
+**Other checks:**
+- **Secretary:** 4 steps ("O dia da clínica", New appointment, Agenda,
+  Pacientes); no Settings, invite or payments steps. Concluir stays on the
+  dashboard.
+- **Reduce motion:** no pulse on step 1 (it pulses otherwise).
+- **Languages:** en, es, ja, th and ar are translated for the first steps,
+  with no raw keys. ar is RTL: the sidebar is on the right, and there's no
+  overlap.
+- **Screenshots** for UX's copy review: UX approved the copy as rendered.
+
+**⏳ Needs 113:** the auto-start on first sign-in, the resume offer, and
+saved progress.
+
+**CI at `96656d7`:** ✅. **Merge gate: 🟢 for `96656d7`**, once the
+reviewer is clean. This docs commit sits on top, after a master sync.
