@@ -268,7 +268,11 @@
     "restore": "復元",
     "restoreError": "カルテを復元できませんでした。もう一度お試しください。",
     "archivedOn": "{date} にアーカイブ",
-    "archivedOnBy": "{date} に {name} がアーカイブ"
+    "archivedOnBy": "{date} に {name} がアーカイブ",
+    "pageInfo": "{total}件中 {from}–{to}件",
+    "prevPage": "前へ",
+    "nextPage": "次へ",
+    "pagesLabel": "ページ"
   },
   "patientDetail": {
     "tabInfo": "情報",

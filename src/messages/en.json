@@ -268,7 +268,11 @@
     "restore": "Restore",
     "restoreError": "Couldn't restore the patient. Please try again.",
     "archivedOn": "Archived {date}",
-    "archivedOnBy": "Archived {date} by {name}"
+    "archivedOnBy": "Archived {date} by {name}",
+    "pageInfo": "{from}–{to} of {total}",
+    "prevPage": "Previous",
+    "nextPage": "Next",
+    "pagesLabel": "Pages"
   },
   "patientDetail": {
     "tabInfo": "Info",

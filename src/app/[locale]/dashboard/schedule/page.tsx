@@ -88,7 +88,7 @@ export default async function SchedulePage({
     rangeEnd = isoDate(lastDay);
   }
 
-  const [apptsResult, patientsResult, procsResult, tentativeBookings, profResult, anyApptResult] = await Promise.all([
+  const [apptsResult, procsResult, tentativeBookings, profResult, anyApptResult] = await Promise.all([
     supabase
       .from("appointments")
       .select("id, date, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes")
@@ -96,8 +96,6 @@ export default async function SchedulePage({
       .gte("date", rangeStart)
       .lte("date", rangeEnd)
       .order("start_time"),
-    // Archived patients aren't offered for new appointments.
-    supabase.from("patients").select("id, full_name").eq("professional_id", effectiveProfId).is("archived_at", null).order("full_name"),
     supabase.from("procedures").select("id, name, duration_minutes, price, payment_type").eq("professional_id", effectiveProfId).eq("active", true).order("name"),
     getTentativeBookings(),
     // Pix QR details. A secretary can't read the doctor's professionals row
@@ -123,7 +121,6 @@ export default async function SchedulePage({
   const noAppointmentsEver = !anyApptResult.error && (anyApptResult.count ?? 0) === 0;
 
   const appointments = (apptsResult.data ?? []) as CalendarAppt[];
-  const patients = (patientsResult.data ?? []) as { id: string; full_name: string }[];
   const procedures = (procsResult.data ?? []) as { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
 
   const todayCount = appointments.filter(a => a.date === today && a.status !== "blocked").length;
@@ -139,7 +136,7 @@ export default async function SchedulePage({
         <div className="flex flex-wrap items-center gap-2">
           <ViewToggle currentView={view} currentDate={currentDate} />
           <BlockTimeButton defaultDate={currentDate} />
-          <NewAppointmentButton patients={patients} defaultDate={currentDate} procedures={procedures} autoOpen={newParam === "1"} />
+          <NewAppointmentButton defaultDate={currentDate} procedures={procedures} autoOpen={newParam === "1"} />
         </div>
       </div>
 
@@ -162,7 +159,7 @@ export default async function SchedulePage({
               <p className="font-semibold text-slate-700">{tFirstRun("scheduleEmptyTitle")}</p>
               <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">{tFirstRun("scheduleEmptyBody")}</p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                <NewAppointmentButton patients={patients} defaultDate={currentDate} procedures={procedures} label={tFirstRun("bookAppointment")} />
+                <NewAppointmentButton defaultDate={currentDate} procedures={procedures} label={tFirstRun("bookAppointment")} />
                 {!isSecretary && <ShareInviteLinkButton code={inviteCode} />}
               </div>
             </div>

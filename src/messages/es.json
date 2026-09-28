@@ -268,7 +268,11 @@
     "restore": "Restaurar",
     "restoreError": "No se pudo restaurar el registro. Inténtalo de nuevo.",
     "archivedOn": "Archivado el {date}",
-    "archivedOnBy": "Archivado el {date} por {name}"
+    "archivedOnBy": "Archivado el {date} por {name}",
+    "pageInfo": "{from}–{to} de {total}",
+    "prevPage": "Anterior",
+    "nextPage": "Siguiente",
+    "pagesLabel": "Páginas"
   },
   "patientDetail": {
     "tabInfo": "Info",

@@ -5741,3 +5741,69 @@ a reload**, with the "No mapa" pin, and there are no page errors. The
 header itself isn't observable from the browser.
 
 **CI at `4bf6fa2`:** ✅✅. **Review: clean.** **Merge gate: 🟢 for `4bf6fa2`.**
+
+
+## PR #81 (`feat/patients-paging`, base master) — server-side patient paging and search, 🟢 at `aa56833`, review clean
+
+**Setup.** Checked on the preview with throwaway doctors (deleted
+afterwards). One had 57 active patients, "Paciente Opus 001…057", including
+one with CPF `529.982.247-25` and one with phone `11 99999-8888`. Another
+had 12 patients plus one archived **through the UI**. A direct insert or
+PATCH of `archived_at` is cleared by a trigger, as designed. A secretary
+was linked to each doctor.
+- **Paging:** `/pt-BR/dashboard/patients` shows **50** rows, "**1–50 de 60**"
+  and **Próxima**. Page 2 shows "51–60 de 60" and continues alphabetically
+  (048…057). `?page=junk` and `?page=-3` → page 1.
+- **Search runs server-side and resets to page 1:**
+  - **Name fragment:** "Opus 01" → 010…019.
+  - **CPF:** `52998224725` and `529.982.247-25` both → 007.
+  - **Phone:** `99999-8888` and `999998888` both → 008.
+  - **A 2-digit query** ("12") matches **names only**; phones containing
+    "12" aren't returned.
+- **Hostile input:** `a"),(b*%` and `"),id.eq.1,(` are treated as literal
+  text. `?q=` carries them, the page shows "Nenhum paciente encontrado para
+  …", and there's **no error and no 5xx**.
+- **History:** typing a whole query adds **no** history entries, and Back
+  leaves the page.
+- **Archived view:** it lists only the archived patient. Search inside it
+  finds "Arquivado Opus 1" and never an active patient; the active list
+  excludes the archived one.
+- **New-appointment picker:**
+  - no suggestions for 1 letter;
+  - "Pa" → the matching patients, capped at **20** with 57;
+  - **archived patients are never offered** ("Arq" → none).
+  - Booking by the picked name saves the appointment with `patient_id`
+    linked.
+- **Secretary:** the same list for the doctor's practice ("1–50 de 60",
+  "12 total"), with phone and name search working.
+- **Notes, not blockers:**
+  - `?page=999` shows the "Nenhum paciente ainda / Novo Paciente" empty
+    state instead of clamping to the last page.
+  - React #418 on `/dashboard/schedule` in this run comes from the branch
+    predating #74's fix.
+
+**CI at `aa56833`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `aa56833`.**
+
+### Web tester checkpoint — 2026-09-28 (internet going down)
+
+- **Done and recorded:**
+  - **1.3.0 RC regression on prod:** docs PR #75.
+  - **On `release`:** #62, #64/#65, #67, #69, #70, #71, #78 and #79 🟢, each
+    re-checked on prod after merge.
+  - **On master:** #63, #66, #68, #72, #74, #76 and #81 🟢.
+- **⏳ Pix real bank-app scan:** the user scans the dashboard Pix QR with a
+  banking app, no payment. The payee (the clinic name in upper case) and
+  the amount must show. The tester has already verified the payload at the
+  TLV and CRC level on prod.
+- **⏳ W3 / W12 (the user's test script):** the web tester checks two things
+  in the DB when UX pings.
+  - **W3:** the signup of `vitor.goathik+solvy1@gmail.com` via
+    `/pt-BR?utm_source=teste&utm_campaign=vitor` → one `signup_attribution`
+    row with teste/vitor.
+  - **W12:** after that account is closed, its Stripe TEST subscription is
+    cancelled.
+- **⏳ F-7:** split the Stripe vars (Production = live, Preview = test)
+  before the live keys go in. **⏳ L-1:** the live R$ 89 charge, with the
+  user.
+- **Test accounts:** none left to clean up. Every throwaway is deleted or
+  purged by mob dev, and a final sweep of `e2e-test-opus-*` ran.

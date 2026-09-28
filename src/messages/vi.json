@@ -268,7 +268,11 @@
     "restore": "Khôi phục",
     "restoreError": "Không thể khôi phục hồ sơ. Vui lòng thử lại.",
     "archivedOn": "Lưu trữ ngày {date}",
-    "archivedOnBy": "Lưu trữ ngày {date} bởi {name}"
+    "archivedOnBy": "Lưu trữ ngày {date} bởi {name}",
+    "pageInfo": "{from}–{to} trên {total}",
+    "prevPage": "Trước",
+    "nextPage": "Tiếp",
+    "pagesLabel": "Trang"
   },
   "patientDetail": {
     "tabInfo": "Thông tin",
