@@ -6,6 +6,8 @@ import { TeamPanel, type TeamRow } from "./TeamPanel";
 import { SecretarySettings } from "./SecretarySettings";
 import { ShowSetupRow } from "./ShowSetupRow";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
+import { countryProfile } from "@/lib/country";
+import { getPracticeCountry } from "@/lib/practiceCountry";
 import { getSetupProgress } from "@/lib/setup";
 import { CloseAccountPanel, type ClosurePreview } from "./CloseAccountPanel";
 
@@ -145,7 +147,7 @@ export default async function SettingsPage({
 
         <BlockedPatientsPanel patients={blockedPatients} locale={locale} />
 
-        <ProceduresPanel procedures={procedures} />
+        <ProceduresPanel procedures={procedures} currency={countryProfile(await getPracticeCountry(supabase, user.id, user.id)).currency} />
 
         <CookieSettingsButton className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-3 text-left text-sm font-semibold text-slate-700 transition hover:bg-slate-50" />
 

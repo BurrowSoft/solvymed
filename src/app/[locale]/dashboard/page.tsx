@@ -7,10 +7,10 @@ import { addDays, clinicDate, clinicHour, getClinicTimeZone } from "@/lib/clinic
 import { getOnboardingFlags, getSetupProgress, showChecklist } from "@/lib/setup";
 import { SetupChecklist } from "@/components/SetupChecklist";
 import { OnboardingCard } from "@/components/OnboardingCard";
+import { formatMoney } from "@/lib/money";
+import { countryProfile } from "@/lib/country";
+import { getPracticeCountry } from "@/lib/practiceCountry";
 
-function formatBRL(amount: number) {
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(amount);
-}
 
 function statusBadge(status: string) {
   switch (status) {
@@ -61,6 +61,9 @@ export default async function DashboardPage({
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
   if (!effectiveProfId) redirect(`${prefix}/auth/login`);
   const isSecretary = effectiveProfId !== user.id;
+  // Amounts are in the practice's currency (its country), not the UI's.
+  const { currency } = countryProfile(await getPracticeCountry(supabase, user.id, effectiveProfId));
+  const formatAmount = (n: number) => formatMoney(n, currency);
 
   // The practice's day and hour, not the server's (UTC).
   const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
@@ -164,7 +167,7 @@ export default async function DashboardPage({
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-orange-500"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
           </div>
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("statPending")}</p>
-          <p className="mt-1 text-2xl font-extrabold text-slate-900">{formatBRL(totalPending)}</p>
+          <p className="mt-1 text-2xl font-extrabold text-slate-900">{formatAmount(totalPending)}</p>
           <p className="text-xs text-slate-400">{t("sessions", { n: pendingPayments.length })}</p>
         </Link>
 
@@ -182,7 +185,7 @@ export default async function DashboardPage({
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-green-600"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             </div>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("statRevenue")}</p>
-            <p className="mt-1 text-2xl font-extrabold text-slate-900">{formatBRL(totalRevenue)}</p>
+            <p className="mt-1 text-2xl font-extrabold text-slate-900">{formatAmount(totalRevenue)}</p>
             <p className="text-xs text-slate-400">{t("thisMonth")}</p>
           </Link>
         )}
@@ -262,7 +265,7 @@ export default async function DashboardPage({
           <div className="flex items-start justify-between gap-4">
             <div>
               <h3 className="font-bold text-orange-900">{t("unpaidSessions", { n: pendingPayments.length })}</h3>
-              <p className="mt-1 text-sm text-orange-700">{t("pendingCollection", { amount: formatBRL(totalPending) })}</p>
+              <p className="mt-1 text-sm text-orange-700">{t("pendingCollection", { amount: formatAmount(totalPending) })}</p>
             </div>
             <Link href={`${prefix}/dashboard/payments`} className="shrink-0 rounded-xl bg-orange-600 px-4 py-2 text-sm font-bold text-white hover:bg-orange-700 transition">
               {t("managePayments")}
