@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "Ce créneau est bloqué ({start}–{end}). Réserver quand même ?",
     "requestedLabel": "Demandé : {date} · {time}",
     "promptPayTitle": "QR PromptPay",
-    "promptPayScan": "Scannez avec n'importe quelle appli bancaire thaïlandaise pour payer."
+    "promptPayScan": "Scannez avec n'importe quelle appli bancaire thaïlandaise pour payer.",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "Cette semaine",

@@ -6449,3 +6449,28 @@ Concluir (click or Enter, 3/3) → `/dashboard?setup=1` with the checklist.
 **CI at `5ba1898`:** ✅. **Merge gate: 🟢 for `5ba1898`**, once the
 reviewer is clean. The branch is up to date with master; this docs commit
 sits on top.
+
+## PR #100 (`fix/pix-dialog-i18n`, base master) — the Pix QR dialog title in the page's language, 🟢 at `cb2c26a`
+
+This is UX's third item from the #97 help review. The dialog was titled
+"Pix QR Code" (hard-coded) in every language. Its tooltip, title and image
+alt now come from `schedule.pixQrTitle`: "QR Code Pix" in pt-BR, "Pix QR
+code" in the other 14 locales. "Copia e Cola" / "Copiar" stay as they were,
+since Pix is Brazilian.
+
+Checked on the Preview at `cb2c26a` with a throwaway BR doctor (Pix key
+set, deleted afterwards) and an R$ 120 pending appointment, in Agenda →
+list:
+
+| UI | Button tooltip | Dialog title | `img alt` | QR |
+|---|---|---|---|---|
+| pt-BR | "QR Code Pix" | "QR Code Pix" | "QR Code Pix" | decodes, CRC ok, amount 120.00 |
+| en | "Pix QR code" | "Pix QR code" | "Pix QR code" | decodes, CRC ok, 120.00 |
+| es | "Pix QR code" | "Pix QR code" | "Pix QR code" | decodes, CRC ok, 120.00 |
+
+The old string "Pix QR Code" is no longer referenced anywhere in the repo
+(apart from TESTING-WEB.md).
+
+**CI at `cb2c26a`:** ✅. **Merge gate: 🟢 for `cb2c26a`**, once the
+reviewer is clean. The branch is up to date with master; this docs commit
+sits on top.

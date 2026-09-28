@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "Este horario está bloqueado ({start}–{end}). ¿Agendar de todos modos?",
     "requestedLabel": "Solicitado: {date} · {time}",
     "promptPayTitle": "QR de PromptPay",
-    "promptPayScan": "Escanea con cualquier app bancaria tailandesa para pagar."
+    "promptPayScan": "Escanea con cualquier app bancaria tailandesa para pagar.",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "Esta semana",

@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "Khung giờ này đã bị chặn ({start}–{end}). Vẫn đặt lịch?",
     "requestedLabel": "Yêu cầu: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
-    "promptPayScan": "Quét bằng bất kỳ ứng dụng ngân hàng Thái Lan nào để thanh toán."
+    "promptPayScan": "Quét bằng bất kỳ ứng dụng ngân hàng Thái Lan nào để thanh toán.",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "Tuần này",

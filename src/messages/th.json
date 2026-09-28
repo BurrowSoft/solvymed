@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "ช่วงเวลานี้ถูกปิดไว้ ({start}–{end}) ต้องการนัดหมายต่อหรือไม่",
     "requestedLabel": "ขอเลื่อนเป็น: {date} · {time}",
     "promptPayTitle": "QR พร้อมเพย์",
-    "promptPayScan": "สแกนด้วยแอปธนาคารใดก็ได้เพื่อชำระเงิน"
+    "promptPayScan": "สแกนด้วยแอปธนาคารใดก็ได้เพื่อชำระเงิน",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "สัปดาห์นี้",

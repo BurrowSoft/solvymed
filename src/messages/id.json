@@ -197,7 +197,8 @@
     "slotBlockedConfirm": "Waktu ini diblokir ({start}–{end}). Tetap buat janji?",
     "requestedLabel": "Diminta: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
-    "promptPayScan": "Pindai dengan aplikasi bank Thailand mana pun untuk membayar."
+    "promptPayScan": "Pindai dengan aplikasi bank Thailand mana pun untuk membayar.",
+    "pixQrTitle": "Pix QR code"
   },
   "payments": {
     "thisWeek": "Minggu ini",
