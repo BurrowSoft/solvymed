@@ -485,7 +485,12 @@
     "nameRequiredError": "Le nom de la clinique est obligatoire.",
     "genericError": "Une erreur s'est produite. Réessayez.",
     "delete": "Supprimer la clinique",
-    "deleteConfirm": "Supprimer « {name} » ? Cette action est irréversible."
+    "deleteConfirm": "Supprimer « {name} » ? Cette action est irréversible.",
+    "adjustPin": "Ajuster sur la carte",
+    "adjustPinTitle": "Emplacement sur la carte : {name}",
+    "adjustPinHint": "Faites glisser le repère (ou touchez la carte) jusqu'à l'entrée du cabinet, puis enregistrez.",
+    "savePin": "Enregistrer l'emplacement",
+    "placePinFirst": "Touchez la carte à l'emplacement du cabinet, puis enregistrez."
   },
   "consultType": {
     "consultation": "Consultation",

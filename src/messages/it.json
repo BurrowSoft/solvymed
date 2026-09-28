@@ -485,7 +485,12 @@
     "nameRequiredError": "Il nome della clinica è obbligatorio.",
     "genericError": "Qualcosa è andato storto. Riprova.",
     "delete": "Elimina clinica",
-    "deleteConfirm": "Eliminare «{name}»? L'operazione non può essere annullata."
+    "deleteConfirm": "Eliminare «{name}»? L'operazione non può essere annullata.",
+    "adjustPin": "Regola sulla mappa",
+    "adjustPinTitle": "Posizione sulla mappa: {name}",
+    "adjustPinHint": "Trascina il segnaposto (o tocca la mappa) fino all'ingresso della clinica, poi salva.",
+    "savePin": "Salva posizione",
+    "placePinFirst": "Tocca la mappa dove si trova la clinica, poi salva."
   },
   "consultType": {
     "consultation": "Consulenza",

@@ -9,7 +9,12 @@ async function geocode(address: string, city: string, country: string) {
     const q = [address, city, country].filter(Boolean).join(", ");
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`,
-      { headers: { "User-Agent": "SolvyMed/1.3 (support@solvymed.com)" }, next: { revalidate: 0 } },
+      {
+        headers: { "User-Agent": "SolvyMed/1.3 (support@solvymed.com)" },
+        next: { revalidate: 0 },
+        // A slow Nominatim must not hold up saving a clinic or opening the map.
+        signal: AbortSignal.timeout(5000),
+      },
     );
     const json = (await res.json()) as Array<{ lat: string; lon: string }>;
     if (!json.length) return null;
@@ -100,4 +105,48 @@ export async function deleteClinic(clinicId: string) {
   if (error) return { error: error.message, code: "generic" };
   revalidatePath("/dashboard/clinics");
   return { success: true };
+}
+
+// The doctor confirms or corrects the map pin (the geocoder can miss, e.g.
+// when OpenStreetMap lacks the house number). Doctor-only, own clinics.
+export async function updateClinicLocation(clinicId: string, lat: number, lng: number) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+    return { error: "Invalid location", code: "generic" };
+  }
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized", code: "generic" };
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinics", code: "generic" };
+
+  const { data, error } = await supabase
+    .from("clinics")
+    .update({ lat: Math.round(lat * 1e6) / 1e6, lng: Math.round(lng * 1e6) / 1e6 })
+    .eq("id", clinicId)
+    .eq("professional_id", user.id) // owner-only guard
+    .select("id");
+
+  if (error) return { error: error.message, code: "generic" };
+  // No row matched (not this doctor's clinic, or it was deleted): not saved.
+  if (!data?.length) return { error: "Clinic not found", code: "generic" };
+  revalidatePath("/dashboard/clinics");
+  return { success: true };
+}
+
+// Where to open the pin map for a clinic without a pin: its city (the
+// street lookup may have failed where the city still resolves). Returns
+// null when the city is unknown or not found. Doctor-only, own clinics.
+export async function locateClinicCity(clinicId: string): Promise<{ lat: number; lng: number } | null> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  if ((await isProfessionalRole(supabase, user.id)) !== true) return null;
+  const { data: clinic } = await supabase
+    .from("clinics")
+    .select("city, state, country")
+    .eq("id", clinicId)
+    .eq("professional_id", user.id)
+    .maybeSingle();
+  if (!clinic?.city) return null;
+  const city = [clinic.city, clinic.state].filter(Boolean).join(", ");
+  return geocode("", city, clinic.country === "BR" || !clinic.country ? "Brasil" : clinic.country);
 }
