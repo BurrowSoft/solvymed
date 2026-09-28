@@ -8,7 +8,7 @@ import { AppointmentStatusSelect, DeleteAppointmentButton } from "./ScheduleClie
 import { toLocalDateString } from "@/lib/slots";
 import { formatMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
-import { plainSpaces } from "@/lib/dateLabels";
+import { dateLocale, plainSpaces } from "@/lib/dateLabels";
 
 export type CalendarAppt = {
   id: string;
@@ -35,7 +35,7 @@ const HOURS = Array.from({ length: LAST_H - FIRST_H }, (_, i) => i + FIRST_H);
 // Short weekday names, Monday first, in the page's language (2024-01-01 was
 // a Monday; formatted in UTC so the day can't shift).
 export function weekdayLabels(locale: string): string[] {
-  const fmt = new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "UTC" });
+  const fmt = new Intl.DateTimeFormat(dateLocale(locale), { weekday: "short", timeZone: "UTC" });
   return Array.from({ length: 7 }, (_, i) => plainSpaces(fmt.format(new Date(Date.UTC(2024, 0, 1 + i)))));
 }
 
@@ -45,13 +45,13 @@ export function weekdayLabels(locale: string): string[] {
 export function calendarHeaderLabel(locale: string, view: "day" | "week" | "month", currentDate: string, weekDays: string[]): string {
   const at = (d: string) => new Date(d + "T12:00:00Z");
   if (view === "day") {
-    return plainSpaces(new Intl.DateTimeFormat(locale, { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(at(currentDate)));
+    return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale), { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(at(currentDate)));
   }
   if (view === "week") {
-    return plainSpaces(new Intl.DateTimeFormat(locale, { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
+    return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale), { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
       .formatRange(at(weekDays[0]), at(weekDays[6])));
   }
-  return plainSpaces(new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "UTC" }).format(at(currentDate)));
+  return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale), { month: "long", year: "numeric", timeZone: "UTC" }).format(at(currentDate)));
 }
 
 // Every Date here is a local calendar day, so it's formatted with local
@@ -403,7 +403,7 @@ export function CalendarView({
             <div className="space-y-1.5 mb-4">
               <div className="flex items-center gap-2 text-xs text-slate-600">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 text-slate-400 shrink-0"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                {new Date(selected.date + "T12:00:00").toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" })}
+                {new Date(selected.date + "T12:00:00").toLocaleDateString(dateLocale(locale), { weekday: "short", month: "short", day: "numeric" })}
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-600">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 text-slate-400 shrink-0"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>

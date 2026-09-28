@@ -13,6 +13,14 @@ export function plainSpaces(s: string): string {
   return s.replace(/[\u00a0\u2009\u202f]/g, " ");
 }
 
+// The locale every date formatter uses. Thai dates show the Buddhist year
+// (Sprint TH), which "th" only gives where the runtime's default calendar
+// for it is Buddhist (Node's is; some browsers/devices use Gregorian), so
+// it's requested explicitly. Stored dates stay Gregorian.
+export function dateLocale(locale: string): string {
+  return locale === "th" ? "th-TH-u-ca-buddhist" : locale;
+}
+
 export function formatDateLabel(
   locale: string,
   date: string,
@@ -20,14 +28,14 @@ export function formatDateLabel(
 ): string {
   const [y, m, d] = date.split("-").map(Number);
   if (!y || !m || !d) return date;
-  return plainSpaces(new Intl.DateTimeFormat(locale, { ...options, timeZone: "UTC" }).format(new Date(Date.UTC(y, m - 1, d, 12))));
+  return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale), { ...options, timeZone: "UTC" }).format(new Date(Date.UTC(y, m - 1, d, 12))));
 }
 
 export function formatTimeLabel(locale: string, time: string): string {
   const [h, m] = time.split(":").map(Number);
   if (!Number.isInteger(h) || !Number.isInteger(m)) return time;
   return plainSpaces(
-    new Intl.DateTimeFormat(locale, { hour: "numeric", minute: "2-digit", timeZone: "UTC" }).format(
+    new Intl.DateTimeFormat(dateLocale(locale), { hour: "numeric", minute: "2-digit", timeZone: "UTC" }).format(
       new Date(Date.UTC(2000, 0, 1, h, m)),
     ),
   );
