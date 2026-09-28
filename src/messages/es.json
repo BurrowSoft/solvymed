@@ -195,7 +195,9 @@
     "patientArchivedError": "Este registro está archivado. Restáuralo en Pacientes para agendar una cita.",
     "moreCount": "+{n} más",
     "slotBlockedConfirm": "Este horario está bloqueado ({start}–{end}). ¿Agendar de todos modos?",
-    "requestedLabel": "Solicitado: {date} · {time}"
+    "requestedLabel": "Solicitado: {date} · {time}",
+    "promptPayTitle": "QR de PromptPay",
+    "promptPayScan": "Escanea con cualquier app bancaria tailandesa para pagar."
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -451,6 +453,10 @@
     "showSetup": "Mostrar lista de configuración",
     "registration": "Registro profesional",
     "registrationPlaceholder": "p. ej.: CRM 12345/SP",
+    "promptPay": "ID de PromptPay",
+    "promptPayHint": "Tu móvil o tu ID nacional / fiscal de 13 dígitos vinculado a PromptPay. Los pacientes escanean el QR de la cita para pagar.",
+    "promptPayInvalid": "Introduce un móvil de 10 dígitos (que empiece por 0) o un ID nacional / fiscal de 13 dígitos.",
+    "saveFailed": "No se pudo guardar. Inténtalo de nuevo.",
     "practiceCountry": "País de la consulta",
     "practiceCountryHint": "Define la moneda, el precio del plan, el documento del paciente y el QR de pago. Para cambiarlo, escribe a support@solvymed.com.",
     "practiceCountryOther": "Otro país"
@@ -970,5 +976,12 @@
       "message_required": "Escribe un mensaje.",
       "failed": "Algo salió mal. Inténtalo de nuevo."
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "Documento de identidad tailandés",
+    "passport": "Número de pasaporte",
+    "passportOrId": "Número de pasaporte o documento",
+    "thaiIdInvalid": "Este número de identidad tailandés no es válido. Revisa los 13 dígitos."
   }
 }

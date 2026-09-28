@@ -195,7 +195,9 @@
     "patientArchivedError": "此病歷已封存。請在「病患」中還原後再預約。",
     "moreCount": "另外 {n} 個",
     "slotBlockedConfirm": "此時段已封鎖（{start}–{end}）。仍要預約嗎？",
-    "requestedLabel": "申請時間：{date} · {time}"
+    "requestedLabel": "申請時間：{date} · {time}",
+    "promptPayTitle": "PromptPay QR 碼",
+    "promptPayScan": "使用任何泰國銀行 App 掃描付款。"
   },
   "payments": {
     "thisWeek": "本週",
@@ -451,6 +453,10 @@
     "showSetup": "顯示設定清單",
     "registration": "執業登記號碼",
     "registrationPlaceholder": "例如 CRM 12345/SP",
+    "promptPay": "PromptPay ID",
+    "promptPayHint": "與 PromptPay 綁定的手機號碼或13位身分證號 / 稅號。病患掃描預約的 QR 碼付款。",
+    "promptPayInvalid": "請輸入10位手機號碼（以0開頭）或13位身分證號 / 稅號。",
+    "saveFailed": "無法儲存，請再試一次。",
     "practiceCountry": "診所所在國家",
     "practiceCountryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。如需變更，請聯絡 support@solvymed.com。",
     "practiceCountryOther": "其他國家"
@@ -970,5 +976,12 @@
       "message_required": "請填寫留言。",
       "failed": "發生錯誤，請再試一次。"
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "泰國身分證字號",
+    "passport": "護照號碼",
+    "passportOrId": "護照或證件號碼",
+    "thaiIdInvalid": "此泰國身分證字號無效。請檢查這 13 位數字。"
   }
 }

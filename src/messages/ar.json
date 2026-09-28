@@ -195,7 +195,9 @@
     "patientArchivedError": "هذا الملف مؤرشف. استعِده من قسم المرضى لحجز موعد.",
     "moreCount": "+{n} أخرى",
     "slotBlockedConfirm": "هذا الوقت محجوب ({start}–{end}). هل تريد الحجز على أي حال؟",
-    "requestedLabel": "المطلوب: {date} · {time}"
+    "requestedLabel": "المطلوب: {date} · {time}",
+    "promptPayTitle": "رمز QR لـ PromptPay",
+    "promptPayScan": "امسح الرمز بأي تطبيق مصرفي تايلاندي للدفع."
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",
@@ -451,6 +453,10 @@
     "showSetup": "عرض قائمة الإعداد",
     "registration": "رقم التسجيل المهني",
     "registrationPlaceholder": "مثال: CRM 12345/SP",
+    "promptPay": "معرّف PromptPay",
+    "promptPayHint": "رقم هاتفك المحمول أو رقم الهوية الوطنية / الضريبية المكوّن من 13 رقمًا المرتبط بـ PromptPay. يمسح المرضى رمز QR الخاص بالموعد للدفع.",
+    "promptPayInvalid": "أدخل رقم هاتف محمول من 10 أرقام (يبدأ بـ 0) أو رقم هوية وطنية / ضريبية من 13 رقمًا.",
+    "saveFailed": "تعذّر الحفظ. يُرجى المحاولة مرة أخرى.",
     "practiceCountry": "دولة العيادة",
     "practiceCountryHint": "يحدد العملة وسعر الباقة وهوية المريض ورمز الدفع. لتغييره، راسل support@solvymed.com.",
     "practiceCountryOther": "دولة أخرى"
@@ -970,5 +976,12 @@
       "message_required": "يرجى كتابة رسالة.",
       "failed": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "بطاقة الهوية التايلاندية",
+    "passport": "رقم جواز السفر",
+    "passportOrId": "رقم جواز السفر أو الهوية",
+    "thaiIdInvalid": "رقم الهوية التايلاندية هذا غير صالح. تحقق من الأرقام الـ13."
   }
 }

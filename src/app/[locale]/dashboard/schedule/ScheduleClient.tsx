@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { formatDateLabel } from "@/lib/dateLabels";
 import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime, searchPatientsForPicker } from "./actions";
 import { generatePixString, pixQrDataUrl } from "@/lib/pix";
+import { generatePromptPayString } from "@/lib/promptpay";
 import { toLocalDateString } from "@/lib/slots";
 import { dropQueryParam } from "@/lib/dropQueryParam";
 import { formatMoney } from "@/lib/money";
@@ -533,6 +534,43 @@ export function PixQrButton({
               </button>
             </div>
           </div>
+        </div>
+      </Dialog>
+    </>
+  );
+}
+
+// PromptPay (Thailand's payment QR) for a Thai practice, with the
+// appointment's amount in THB. Same QR rendering as Pix (built in the page,
+// never sent to a QR service).
+export function PromptPayQrButton({ promptPayId, amount }: { promptPayId: string; amount?: number }) {
+  const t = useTranslations("schedule");
+  const [open, setOpen] = useState(false);
+  const payload = generatePromptPayString(promptPayId, amount);
+  const qrUrl = open ? pixQrDataUrl(payload) : "";
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        title={t("promptPayTitle")}
+        aria-label={t("promptPayTitle")}
+        className="rounded-lg p-1.5 text-teal-500 hover:bg-teal-50 transition"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-4 w-4">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3" rx="0.5"/>
+          <rect x="19" y="14" width="2" height="2" rx="0.5"/><rect x="14" y="19" width="2" height="2" rx="0.5"/>
+          <rect x="18" y="18" width="3" height="3" rx="0.5"/>
+        </svg>
+      </button>
+
+      <Dialog open={open} onClose={() => setOpen(false)} title={t("promptPayTitle")}>
+        <div className="flex flex-col items-center gap-4">
+          {/* Natural size, as for Pix (5 px modules). */}
+          <img src={qrUrl} alt={t("promptPayTitle")} className="max-w-full rounded-xl border border-slate-100 [image-rendering:pixelated]" />
+          {amount != null && amount > 0 && <p className="text-lg font-bold text-slate-900">{formatMoney(amount, "THB")}</p>}
+          <p className="text-center text-sm text-slate-500">{t("promptPayScan")}</p>
         </div>
       </Dialog>
     </>

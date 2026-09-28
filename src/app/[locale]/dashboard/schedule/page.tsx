@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, ViewToggle, PixQrButton } from "./ScheduleClient";
+import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, ViewToggle, PixQrButton, PromptPayQrButton } from "./ScheduleClient";
+import { normalizePromptPayId } from "@/lib/promptpay";
 import { BookingRequestsPanel } from "./BookingRequestsPanel";
 import { getTentativeBookings } from "./booking-actions";
 import { CalendarView, type CalendarAppt } from "./CalendarView";
@@ -121,6 +122,16 @@ export default async function SchedulePage({
   // Pix is Brazil's payment QR: only for a Brazilian practice (TH rule 1:
   // the practice country, never the language).
   const pixKey = countryProfile(practiceCountry).paymentQr === "pix" ? pixSource?.pix_key ?? null : null;
+  // PromptPay is Thailand's: only for a Thai practice with an ID. The column
+  // is from migration 110, so it's only read for Thai practices (a
+  // secretary gets it from get_my_clinic, which returns it from 110).
+  let promptPayId: string | null = null;
+  if (countryProfile(practiceCountry).paymentQr === "promptpay") {
+    const stored = isSecretary
+      ? (pixSource as { promptpay_id?: string | null } | null)?.promptpay_id
+      : ((await supabase.from("professionals").select("promptpay_id").eq("id", effectiveProfId).maybeSingle()).data as { promptpay_id?: string | null } | null)?.promptpay_id;
+    promptPayId = normalizePromptPayId(stored);
+  }
   const clinicName = pixSource?.clinic_name ?? "";
   const clinicCity = pixSource?.clinic_city ?? "";
   // The doctor's public invite code, for "Share invite link" (not for a secretary).
@@ -149,7 +160,7 @@ export default async function SchedulePage({
       </div>
 
       {/* Booking Requests */}
-      <BookingRequestsPanel bookings={tentativeBookings as Parameters<typeof BookingRequestsPanel>[0]["bookings"]} />
+      <BookingRequestsPanel bookings={tentativeBookings as Parameters<typeof BookingRequestsPanel>[0]["bookings"]} idKind={countryProfile(practiceCountry).kind} />
 
       {/* ── List view (current design) ── */}
       {view === "list" && (
@@ -218,6 +229,9 @@ export default async function SchedulePage({
                             clinicCity={clinicCity}
                             amount={appt.payment_amount}
                           />
+                        )}
+                        {promptPayId && appt.status !== "blocked" && (
+                          <PromptPayQrButton promptPayId={promptPayId} amount={appt.payment_amount} />
                         )}
                         <DeleteAppointmentButton id={appt.id} />
                       </div>

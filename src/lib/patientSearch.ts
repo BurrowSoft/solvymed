@@ -1,3 +1,5 @@
+import type { PatientIdKind } from "./patientIds";
+
 // Server-side patient search and paging (the patient list, the appointment
 // picker). Supabase caps a response at 1000 rows, so lists are paged and
 // searched in the database, never loaded whole.
@@ -19,18 +21,25 @@ export function cleanSearchText(q: string): string {
 }
 
 // The PostgREST `or` filter for a search: the name contains the text, or,
-// with 3+ digits typed, the CPF or phone contains those digits in order
-// with only separators between them ("123.456" matches "123456" and
-// "123 456"). Null when there's nothing to search for.
-export function patientSearchFilter(q: string | null | undefined): string | null {
+// with 3+ digits typed, the phone or the practice country's ID number
+// contains those digits in order with only separators between them
+// ("123.456" matches "123456" and "123 456"); a passport matches as text.
+// Only the country's own ID columns are searched (lib/patientIds): a
+// Brazilian practice (all of them before migration 110) searches CPF as
+// before and never names the new columns. Null when there's nothing to
+// search for.
+export function patientSearchFilter(q: string | null | undefined, idKind: PatientIdKind = "BR"): string | null {
   const text = cleanSearchText(q ?? "");
   if (!text) return null;
   const clauses = [`full_name.ilike."*${text}*"`];
   const digits = text.replace(/\D/g, "");
   if (digits.length >= 3) {
     const pattern = digits.split("").join("[^0-9]*");
-    clauses.push(`cpf.imatch."${pattern}"`, `phone.imatch."${pattern}"`);
+    clauses.push(`phone.imatch."${pattern}"`);
+    if (idKind === "BR") clauses.push(`cpf.imatch."${pattern}"`);
+    if (idKind === "TH") clauses.push(`th_national_id.imatch."${pattern}"`);
   }
+  if (idKind !== "BR" && text.length >= 3) clauses.push(`passport_number.ilike."*${text}*"`);
   return clauses.join(",");
 }
 

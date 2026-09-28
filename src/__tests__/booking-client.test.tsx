@@ -47,6 +47,7 @@ vi.mock("next-intl", () => ({
       "book.phonePlaceholder": "Phone number",
       "book.dobLabel": "Date of birth",
       "book.cpfLabel": "CPF",
+      "patientIds.cpf": "CPF",
       "book.cpfPlaceholder": "000.000.000-00",
       "book.durationMin": "{n} min",
       "consultType.consultation": "Consultation",

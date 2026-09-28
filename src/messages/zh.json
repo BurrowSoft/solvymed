@@ -195,7 +195,9 @@
     "patientArchivedError": "此档案已归档。请在“患者”中恢复后再预约。",
     "moreCount": "另外 {n} 个",
     "slotBlockedConfirm": "此时间段已被屏蔽（{start}–{end}）。仍要预约吗？",
-    "requestedLabel": "申请时间：{date} · {time}"
+    "requestedLabel": "申请时间：{date} · {time}",
+    "promptPayTitle": "PromptPay 二维码",
+    "promptPayScan": "使用任意泰国银行应用扫码付款。"
   },
   "payments": {
     "thisWeek": "本周",
@@ -451,6 +453,10 @@
     "showSetup": "显示设置清单",
     "registration": "执业注册号",
     "registrationPlaceholder": "例如 CRM 12345/SP",
+    "promptPay": "PromptPay ID",
+    "promptPayHint": "与 PromptPay 绑定的手机号或13位身份证号 / 税号。患者扫描预约的二维码付款。",
+    "promptPayInvalid": "请输入10位手机号（以0开头）或13位身份证号 / 税号。",
+    "saveFailed": "无法保存，请重试。",
     "practiceCountry": "诊所所在国家",
     "practiceCountryHint": "用于设定货币、套餐价格、患者证件和付款二维码。如需更改，请联系 support@solvymed.com。",
     "practiceCountryOther": "其他国家"
@@ -970,5 +976,12 @@
       "message_required": "请填写留言。",
       "failed": "出错了，请重试。"
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "泰国身份证号",
+    "passport": "护照号码",
+    "passportOrId": "护照或证件号码",
+    "thaiIdInvalid": "该泰国身份证号无效。请检查这 13 位数字。"
   }
 }

@@ -5958,6 +5958,90 @@ changed no code.
 **CI at `84156ce`:** ✅. **Review: clean.** **Merge gate: 🟢 for
 `84156ce`.**
 
+## PR #87 (`th/5-patient-ids`, base `th/1-country-currency`) — patient identifiers by practice country, 🟢 at `ce258bd`
+
+Pre-110, only the BR (CPF) path can run: the Thai ID and passport columns
+don't exist yet, so those paths are **unit-tested only**. Checked on the
+Preview at `ce258bd` with a throwaway doctor, secretary and patient
+(deleted afterwards).
+
+- **New patient** (doctor): the labels are unchanged, with CPF between
+  Telefone and Data de nascimento and no Thai/passport field. The hidden
+  `id_kind=BR` is present. The row is saved with `cpf 123.456.789-09`.
+- **Same CPF again under another name:** the "Possível duplicidade…
+  Opus Paciente Um / Abrir existente / Criar mesmo assim" warning appears,
+  and no second row is created.
+- **Search** `?q=45678` (CPF digits) finds the patient.
+- **Detail:** it shows "CPF 123.456.789-09".
+- **Edit:**
+  - The only ID input is `cpf` (prefilled), with `id_kind=BR`.
+  - Saving a phone change works, the CPF is kept, and the form closes.
+  - Clearing the CPF saves `null`.
+- **Server guard:** with the hidden `id_kind` tampered to `TH` and the CPF
+  emptied, the save is **refused**. The row is unchanged (the CPF is
+  kept), and "Algo deu errado. Tente novamente." is shown.
+- **Secretary** (the `get_my_clinic` path): the same CPF form, and the
+  patient is created with its CPF.
+- **Patient booking form** (linked patient): the CPF is prefilled from
+  `patient_profiles` (111.444.777-35), and no `patient_profiles` request
+  fails, so no 110 column is selected.
+- **Privacy** (en + pt-BR):
+  - §3.1 adds "the practice's country and time zone, chosen at sign-up
+    (for "Other country", the country detected from the connection…)".
+  - §3.2 reads "CPF or, for clinics outside Brazil, a national ID or
+    passport number".
+
+**Follow-up (not from this PR, already on master):** the booking form's
+label reads "CPF ((opcional))". The `book.notesOptional` string already
+contains the parentheses, and the label wraps it in another pair.
+
+**CI at `ce258bd`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`ce258bd`.**
+
+## PR #88 (`th/4-promptpay`, base `th/1-country-currency`) — PromptPay QR for Thai practices, 🟢 at `94748f8` (Thai path ⏳)
+
+Pre-110, every practice is Brazilian and `promptpay_id` doesn't exist, so
+nothing may change for Brazil. The Thai path can't run end to end yet: the
+Settings field, saving the ID and the schedule QR are **unit-tested only**.
+Checked on the Preview at `94748f8` with a throwaway doctor and secretary
+(deleted afterwards).
+
+**BR unchanged:**
+- **Schedule** (doctor and secretary): the Pix button is shown, and there's
+  **no "QR PromptPay" button**.
+- **Pix payload after the `lib/emv` refactor:** the doctor's decoded QR is
+  `…0014br.gov.bcb.pix0126<key>52040000 5303986 5406187.50 5802BR
+  5915CLINICA OPUS 88 6009SAO PAULO 62070503*** 6304…`, with a valid CRC.
+  That's the same layout #70 verified on prod. The secretary's is identical
+  apart from the city, which the test had just changed to CAMPINAS (again
+  with a valid CRC).
+- **Settings:**
+  - There's no PromptPay input or label, and the Pix field is shown.
+  - Saving a city change shows "Salvo!". This is the new error handling,
+    and a success shows no error.
+  - The row has the new city with `pix_key` kept.
+- **Privacy §3.3** (en + pt-BR): the new sentence reads "Clinics in
+  Thailand may add a PromptPay ID (a mobile number or national / tax ID),
+  used only to build the appointment payment QR" / "Clínicas na Tailândia
+  podem incluir um ID PromptPay…".
+
+**Independent payload cross-check** (the head's `lib/promptpay.ts` against
+the MIT `promptpay-qr` npm library, outside the repo):
+- **72/72 payloads identical**: 8 IDs × 9 amounts.
+  - IDs: 08/09 mobiles, 13-digit IDs, `+66 81 234 5678`, `081-234-5678`.
+  - Amounts: none, 0, 0.01, 1, 150, 187.5, 690, 1234.56, 99999.99.
+- `normalizePromptPayId` rejects 9- and 11-digit mobiles, a 10-digit
+  number not starting with 0, 12 digits, text, empty and null. It maps
+  `+66 812345678` to `0812345678`.
+- Sample: `00020101021229370016A000000677010111011300668123456785802TH53037645406187.506304166C`.
+
+**⏳ Thai path:** a TH practice's Settings field and save, the schedule
+QR, and a scan with a real Thai banking app. These need migration 110 on a
+DB, and the final gate is the user's real Thai bank scan.
+
+**CI at `94748f8`:** ✅. **Review: clean.** **Merge gate: 🟢 for `94748f8`**
+for everything verifiable pre-110.
+
 ## PR #85 (`th/2-signup-country`, base `th/1-country-currency`) — practice country at doctor signup, read-only in Settings, 🟢 at `93972ad`
 
 Pre-110 (no `country` column), `handle_new_user` ignores the new metadata,

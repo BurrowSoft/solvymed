@@ -195,7 +195,9 @@
     "patientArchivedError": "Hồ sơ này đã được lưu trữ. Hãy khôi phục trong mục Bệnh nhân để đặt lịch hẹn.",
     "moreCount": "+{n} nữa",
     "slotBlockedConfirm": "Khung giờ này đã bị chặn ({start}–{end}). Vẫn đặt lịch?",
-    "requestedLabel": "Yêu cầu: {date} · {time}"
+    "requestedLabel": "Yêu cầu: {date} · {time}",
+    "promptPayTitle": "QR PromptPay",
+    "promptPayScan": "Quét bằng bất kỳ ứng dụng ngân hàng Thái Lan nào để thanh toán."
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -451,6 +453,10 @@
     "showSetup": "Hiện danh sách thiết lập",
     "registration": "Số đăng ký hành nghề",
     "registrationPlaceholder": "vd. CRM 12345/SP",
+    "promptPay": "ID PromptPay",
+    "promptPayHint": "Số điện thoại hoặc mã định danh / mã số thuế 13 chữ số liên kết với PromptPay. Bệnh nhân quét mã QR của lịch hẹn để thanh toán.",
+    "promptPayInvalid": "Nhập số điện thoại 10 chữ số (bắt đầu bằng 0) hoặc mã định danh / mã số thuế 13 chữ số.",
+    "saveFailed": "Không lưu được. Vui lòng thử lại.",
     "practiceCountry": "Quốc gia của phòng khám",
     "practiceCountryHint": "Xác định tiền tệ, giá gói, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi, hãy liên hệ support@solvymed.com.",
     "practiceCountryOther": "Quốc gia khác"
@@ -970,5 +976,12 @@
       "message_required": "Vui lòng viết nội dung.",
       "failed": "Đã có lỗi xảy ra. Vui lòng thử lại."
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "Số căn cước Thái Lan",
+    "passport": "Số hộ chiếu",
+    "passportOrId": "Số hộ chiếu hoặc giấy tờ tùy thân",
+    "thaiIdInvalid": "Số căn cước Thái Lan này không hợp lệ. Hãy kiểm tra 13 chữ số."
   }
 }
