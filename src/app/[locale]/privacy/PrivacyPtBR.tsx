@@ -70,6 +70,7 @@ export function PrivacyPtBR({ turnstile }: { turnstile: boolean }) {
             ["Sentry", "Monitoramento de erros do aplicativo e do site (sem dados de pacientes)", "EUA"],
             ["PostHog", "Estatísticas de uso do site, somente com o seu consentimento", "UE"],
             ["Google Workspace", "E-mail de suporte", "EUA / global"],
+            ["OpenStreetMap Nominatim", "Converte o endereço da clínica em uma localização no mapa quando a clínica é salva (sem dados de pacientes)", "UE / Reino Unido"],
             ...(turnstile
               ? [["Cloudflare Turnstile", "Protege cadastro, login e redefinição de senha contra abuso automatizado, verificando sinais técnicos do seu navegador", "Global"]]
               : []),
