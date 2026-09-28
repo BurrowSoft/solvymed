@@ -1084,5 +1084,21 @@
     "secHomeText": "As consultas de hoje e da semana da clínica.",
     "secScheduleText": "Confirme os pedidos dos pacientes e organize as consultas por dia, semana ou mês.",
     "secPatientsText": "Cadastre e atualize pacientes. Prontuários ficam só com o profissional."
+  },
+  "news": {
+    "title": "Novidades no SolvyMed ✨",
+    "see": "Ver as novidades",
+    "later": "Agora não",
+    "cardTitle": "Novidades",
+    "cardSub": "Veja o que mudou em cada versão e reveja os tours.",
+    "show": "Mostrar",
+    "r140": {
+      "solvyaiTitle": "Conheça o SolvyAI ✦",
+      "solvyaiLine": "Seu assistente com IA: pergunte ou peça, e ele confirma tudo com você antes de fazer.",
+      "solvyaiSpot": "Toque aqui quando quiser. Experimente: \"O que tenho amanhã?\"",
+      "tourTitle": "Tour guiado",
+      "tourLine": "Um passeio rápido pelas principais funções. Reveja quando quiser.",
+      "tourSpot": "Em Configurações → Rever o tour."
+    }
   }
 }

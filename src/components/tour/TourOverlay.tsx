@@ -56,7 +56,10 @@ export function TourOverlay({
   startAt = 0,
   onStep,
   onClose,
+  stepsNamespace = "tour",
 }: {
+  // Where the steps' title/text keys live ("news" for a Novidades tour).
+  stepsNamespace?: "tour" | "news";
   steps: TourStep[];
   prefix: string;
   startAt?: number;
@@ -64,6 +67,7 @@ export function TourOverlay({
   onClose: (result: "completed" | "skipped", index: number) => void;
 }) {
   const t = useTranslations("tour");
+  const tSteps = useTranslations(stepsNamespace);
   const router = useRouter();
   const pathname = usePathname();
   // Steps on the page the tour starts on whose element isn't on screen
@@ -195,8 +199,8 @@ export function TourOverlay({
     h: rect.height + 2 * PAD,
   };
   const pos = rect ? cardPosition(rect, cardH) : null;
-  const title = t(step.titleKey);
-  const text = t(step.textKey);
+  const title = tSteps(step.titleKey);
+  const text = tSteps(step.textKey);
 
   return createPortal(
     <div className="fixed inset-0 z-[100]" aria-hidden={false}>

@@ -1114,5 +1114,21 @@
     "secHomeText": "Today's appointments and the week ahead for the clinic.",
     "secScheduleText": "Confirm patients' requests and organize appointments by day, week or month.",
     "secPatientsText": "Register and update patients. Medical records stay with the professional."
+  },
+  "news": {
+    "title": "What's new in SolvyMed ✨",
+    "see": "See what's new",
+    "later": "Not now",
+    "cardTitle": "What's new",
+    "cardSub": "See what changed in each version and replay the tours.",
+    "show": "Show",
+    "r140": {
+      "solvyaiTitle": "Meet SolvyAI ✦",
+      "solvyaiLine": "Your AI assistant: ask or tell it what to do, and it confirms everything with you first.",
+      "solvyaiSpot": "Tap here anytime. Try: \"What do I have tomorrow?\"",
+      "tourTitle": "Guided tour",
+      "tourLine": "A quick walk through the main features. Replay it anytime.",
+      "tourSpot": "In Settings → Replay the tour."
+    }
   }
 }

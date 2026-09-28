@@ -1084,5 +1084,21 @@
     "secHomeText": "诊所今天和本周的预约。",
     "secScheduleText": "确认患者的预约请求，并按日、周或月安排预约。",
     "secPatientsText": "登记和更新患者信息。病历仅医生可见。"
+  },
+  "news": {
+    "title": "SolvyMed 新功能 ✨",
+    "see": "查看新功能",
+    "later": "以后再说",
+    "cardTitle": "新功能",
+    "cardSub": "查看每个版本的变化，并重新观看导览。",
+    "show": "查看",
+    "r140": {
+      "solvyaiTitle": "认识 SolvyAI ✦",
+      "solvyaiLine": "您的 AI 助手：提问或下达指令，执行前总会先和您确认。",
+      "solvyaiSpot": "随时点这里。试试：“我明天有什么安排？”",
+      "tourTitle": "引导导览",
+      "tourLine": "快速了解主要功能，随时可以重新观看。",
+      "tourSpot": "在设置 → 重新观看导览。"
+    }
   }
 }

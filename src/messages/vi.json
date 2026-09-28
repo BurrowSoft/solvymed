@@ -1084,5 +1084,21 @@
     "secHomeText": "Lịch hẹn hôm nay và trong tuần của phòng khám.",
     "secScheduleText": "Xác nhận yêu cầu của bệnh nhân và sắp xếp lịch hẹn theo ngày, tuần hoặc tháng.",
     "secPatientsText": "Đăng ký và cập nhật bệnh nhân. Hồ sơ bệnh án chỉ bác sĩ xem được."
+  },
+  "news": {
+    "title": "Có gì mới trong SolvyMed ✨",
+    "see": "Xem điểm mới",
+    "later": "Để sau",
+    "cardTitle": "Có gì mới",
+    "cardSub": "Xem những thay đổi trong mỗi phiên bản và xem lại hướng dẫn.",
+    "show": "Xem",
+    "r140": {
+      "solvyaiTitle": "Gặp SolvyAI ✦",
+      "solvyaiLine": "Trợ lý AI của bạn: hỏi hoặc yêu cầu, trợ lý luôn xác nhận với bạn trước khi làm.",
+      "solvyaiSpot": "Chạm vào đây bất cứ lúc nào. Thử: \"Ngày mai tôi có lịch gì?\"",
+      "tourTitle": "Hướng dẫn nhanh",
+      "tourLine": "Một vòng nhanh qua các tính năng chính. Xem lại bất cứ lúc nào.",
+      "tourSpot": "Trong Cài đặt → Xem lại hướng dẫn."
+    }
   }
 }

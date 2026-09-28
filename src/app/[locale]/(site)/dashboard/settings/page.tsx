@@ -5,7 +5,8 @@ import { Card, ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, Sched
 import { TeamPanel, type TeamRow } from "./TeamPanel";
 import { SecretarySettings } from "./SecretarySettings";
 import { ShowSetupRow } from "./ShowSetupRow";
-import { TourSettingsCard } from "@/components/tour/TourProvider";
+import { NewsSettingsCard, TourSettingsCard } from "@/components/tour/TourProvider";
+import { liveFeatures } from "@/lib/liveFeatures";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
@@ -51,6 +52,11 @@ export default async function SettingsPage({
         <div className="mt-6">
           <TourSettingsCard />
         </div>
+        {liveFeatures.news && (
+          <div className="mt-6">
+            <NewsSettingsCard />
+          </div>
+        )}
         {closurePreview && (
           <div className="mt-6">
             <CloseAccountPanel preview={closurePreview} locale={locale} />
@@ -143,6 +149,7 @@ export default async function SettingsPage({
         {offerShowSetup && <ShowSetupRow />}
 
         <TourSettingsCard />
+        {liveFeatures.news && <NewsSettingsCard />}
 
         <ProfileForm
           fullName={prof.full_name}

@@ -1084,5 +1084,21 @@
     "secHomeText": "Gli appuntamenti di oggi e della settimana dello studio.",
     "secScheduleText": "Conferma le richieste dei pazienti e organizza gli appuntamenti per giorno, settimana o mese.",
     "secPatientsText": "Registra e aggiorna i pazienti. Le cartelle cliniche restano solo al medico."
+  },
+  "news": {
+    "title": "Novità in SolvyMed ✨",
+    "see": "Scopri le novità",
+    "later": "Non ora",
+    "cardTitle": "Novità",
+    "cardSub": "Guarda cosa è cambiato in ogni versione e rivedi i tour.",
+    "show": "Mostra",
+    "r140": {
+      "solvyaiTitle": "Scopri SolvyAI ✦",
+      "solvyaiLine": "Il tuo assistente IA: chiedi o chiedi di fare, e conferma sempre tutto con te prima.",
+      "solvyaiSpot": "Tocca qui quando vuoi. Prova: \"Cosa ho domani?\"",
+      "tourTitle": "Tour guidato",
+      "tourLine": "Un giro veloce tra le funzioni principali. Rivedilo quando vuoi.",
+      "tourSpot": "In Impostazioni → Rivedi il tour."
+    }
   }
 }
