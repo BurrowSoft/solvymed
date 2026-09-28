@@ -6921,3 +6921,40 @@ SolvyAI, news and #104's name logic.
   - the booking page's th and pt-BR guard;
   - Thai dates still 2569.
 - **CI at `d991329`:** ✅. **Merge gate: 🟢 for `d991329`.**
+
+## PR #109 (`fix/dob-locale-format`, base master) — no raw ISO dates; birth date + age like the app, 🟢 at `496f038`
+
+These were my findings from #105 (a raw "1993-05-14" on the patient
+page). #109 adds `formatShortDate` (the locale's short numeric date,
+Buddhist year in th, via `dateLocale`) and the translated age with plural
+forms.
+
+Checked on the Preview (Thai flag on) with a throwaway doctor and patient
+(deleted afterwards; seeded records and prescriptions deleted first):
+- **patients:** "Opus Adulta" born 1993-05-14, and "Opus Bebe" born
+  2025-08-24 (1 year old);
+- **clinical rows:** a record and a prescription;
+- **appointments:** a pending and a paid one;
+- **a booking request** from a patient whose profile DOB is 1988-11-07.
+
+| Place | pt-BR | en | th |
+|---|---|---|---|
+| Patient detail DOB (adult) | **14/05/1993 (33 anos)** | **05/14/1993 (33 years)** | **14/05/2536 (33 ปี)** |
+| Patient detail DOB (1 year) | 24/08/2025 (**1 ano**) | 08/24/2025 (**1 year**) | 24/08/2568 (1 ปี) |
+| Patient header age | 33 anos | 33 years | 33 ปี |
+| Patients list card | 33 anos · 1 ano | 33 years · 1 year | 33 ปี · 1 ปี |
+| Records tab | 28/09/2026 14:06 | 09/28/2026 14:06 | 28/09/2569 14:06 |
+| Prescriptions tab | 28/09/2026 | 09/28/2026 | 28/09/2569 |
+| Payments list | "dom., 20 de set. · 09:00 · Consulta" | "Sun, Sep 20 · 09:00 · …" | "อาทิตย์ 20 ก.ย. · 09:00 · …" |
+| Booking-request card: date / DOB / consultation line | "ter., 29 de set. · 15:00–15:30" / **07/11/1988** / "Consulta · ter., 29 de set. 15:00–15:30" | "Tue, Sep 29 …" / **11/07/1988** / … | "อังคาร 29 ก.ย. …" / **07/11/2531** / … |
+
+- **No raw YYYY-MM-DD** on any of these pages in any of the three
+  languages.
+- **Sweep:** a grep of the branch for date fields printed raw in JSX finds
+  none left. What remains is server-side English push text
+  (`patients/actions.ts:247`, `booking-actions.ts:193`), passed to b2 as a
+  follow-up.
+
+**CI at `496f038`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`496f038`.** This docs commit sits on top, after a master sync (11
+behind; message JSON valid).

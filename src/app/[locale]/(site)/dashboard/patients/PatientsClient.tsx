@@ -9,7 +9,7 @@ import { dropQueryParam } from "@/lib/dropQueryParam";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
-import { dateLocale } from "@/lib/dateLabels";
+import { dateLocale, formatShortDate } from "@/lib/dateLabels";
 
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
@@ -261,7 +261,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR" }: { 
           <li key={m.id} className="flex items-center justify-between gap-3 text-sm text-amber-900">
             <span>
               {m.full_name}
-              {m.birth_date ? ` · ${t("bornOn", { date: new Date(m.birth_date + "T12:00:00").toLocaleDateString(dateLocale(locale)) })}` : ""}
+              {m.birth_date ? ` · ${t("bornOn", { date: formatShortDate(locale, m.birth_date) })}` : ""}
               {m.phone ? ` · ${m.phone}` : ""}
               {m.archived_at && (
                 <span className="ml-2 rounded-full bg-slate-200 px-2 py-0.5 text-xs font-semibold text-slate-600">{t("archivedBadge")}</span>
@@ -322,7 +322,7 @@ export function PatientCard({ patient, locale }: { patient: Patient; locale: str
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-slate-900 truncate">{patient.full_name}</p>
         <p className="text-xs text-slate-500 truncate mt-0.5">
-          {[patient.email, age ? `${age} ${t("yrs")}` : null, patient.phone].filter(Boolean).join(" · ")}
+          {[patient.email, age ? t("age", { n: age }) : null, patient.phone].filter(Boolean).join(" · ")}
         </p>
         {patient.archived_at && (
           <p className="text-xs text-slate-400 truncate mt-0.5">{archivedLabel(t, patient.archived_at, patient.archived_by_name, locale)}</p>
