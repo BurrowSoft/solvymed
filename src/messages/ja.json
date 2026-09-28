@@ -400,7 +400,7 @@
     "profileTitle": "プロフィール",
     "profileSub": "患者に表示される名前と専門分野",
     "fullName": "氏名",
-    "fullNamePlaceholder": "山田 花子 先生",
+    "fullNamePlaceholder": "氏名（フルネーム）",
     "specialty": "専門分野",
     "specialtyPlaceholder": "精神科医、心理士…",
     "clinicTitle": "クリニック",
@@ -475,7 +475,8 @@
     "saveFailed": "保存できませんでした。もう一度お試しください。",
     "practiceCountry": "クリニックの所在国",
     "practiceCountryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。変更するには support@solvymed.com までご連絡ください。",
-    "practiceCountryOther": "その他の国"
+    "practiceCountryOther": "その他の国",
+    "fullNameHint": "必要に応じて肩書き（Dr.、Prof.）を付けてください。あいさつに表示されます。"
   },
   "clinics": {
     "title": "マイクリニック",
@@ -607,7 +608,8 @@
       "consentCheckbox": "<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>を読み、同意します",
       "country": "クリニックの所在国は？",
       "countryOther": "その他の国",
-      "countryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。後で変更するにはサポートにご連絡ください。"
+      "countryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。後で変更するにはサポートにご連絡ください。",
+      "fullNameHint": "必要に応じて肩書き（Dr.、Prof.）を付けてください。あいさつに表示されます。"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",

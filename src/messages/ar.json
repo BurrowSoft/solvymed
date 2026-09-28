@@ -400,7 +400,7 @@
     "profileTitle": "الملف الشخصي",
     "profileSub": "اسمك وتخصصك المعروضان للمرضى",
     "fullName": "الاسم الكامل",
-    "fullNamePlaceholder": "د. ماريا سانتوس",
+    "fullNamePlaceholder": "اسمك الكامل",
     "specialty": "التخصص",
     "specialtyPlaceholder": "طبيب نفسي، معالج نفسي…",
     "clinicTitle": "العيادة",
@@ -475,7 +475,8 @@
     "saveFailed": "تعذّر الحفظ. يُرجى المحاولة مرة أخرى.",
     "practiceCountry": "دولة العيادة",
     "practiceCountryHint": "يحدد العملة وسعر الباقة وهوية المريض ورمز الدفع. لتغييره، راسل support@solvymed.com.",
-    "practiceCountryOther": "دولة أخرى"
+    "practiceCountryOther": "دولة أخرى",
+    "fullNameHint": "أضف لقبك إن أردت (Dr.، Prof.)؛ يظهر في التحيات."
   },
   "clinics": {
     "title": "عياداتي",
@@ -607,7 +608,8 @@
       "consentCheckbox": "قرأتُ <terms>شروط الاستخدام</terms> و<privacy>سياسة الخصوصية</privacy> وأوافق عليهما",
       "country": "أين تقع عيادتك؟",
       "countryOther": "دولة أخرى",
-      "countryHint": "يحدد العملة وسعر الباقة وهوية المريض ورمز الدفع. لتغييره لاحقًا، تواصل مع الدعم."
+      "countryHint": "يحدد العملة وسعر الباقة وهوية المريض ورمز الدفع. لتغييره لاحقًا، تواصل مع الدعم.",
+      "fullNameHint": "أضف لقبك إن أردت (Dr.، Prof.)؛ يظهر في التحيات."
     },
     "forgotPassword": {
       "title": "نسيت كلمة المرور؟",

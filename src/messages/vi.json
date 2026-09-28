@@ -400,7 +400,7 @@
     "profileTitle": "Hồ sơ",
     "profileSub": "Tên và chuyên môn của bạn hiển thị cho bệnh nhân",
     "fullName": "Họ và tên",
-    "fullNamePlaceholder": "BS. Nguyễn Thị Hoa",
+    "fullNamePlaceholder": "Họ và tên của bạn",
     "specialty": "Chuyên môn",
     "specialtyPlaceholder": "Tâm thần học, Tâm lý học…",
     "clinicTitle": "Phòng khám",
@@ -475,7 +475,8 @@
     "saveFailed": "Không lưu được. Vui lòng thử lại.",
     "practiceCountry": "Quốc gia của phòng khám",
     "practiceCountryHint": "Xác định tiền tệ, giá gói, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi, hãy liên hệ support@solvymed.com.",
-    "practiceCountryOther": "Quốc gia khác"
+    "practiceCountryOther": "Quốc gia khác",
+    "fullNameHint": "Bạn có thể thêm danh xưng (Dr., Prof.); danh xưng sẽ hiện trong lời chào."
   },
   "clinics": {
     "title": "Phòng khám của tôi",
@@ -607,7 +608,8 @@
       "consentCheckbox": "Tôi đã đọc và chấp nhận <terms>Điều khoản sử dụng</terms> và <privacy>Chính sách quyền riêng tư</privacy>",
       "country": "Phòng khám của bạn ở đâu?",
       "countryOther": "Quốc gia khác",
-      "countryHint": "Xác định tiền tệ, giá gói, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi sau, hãy liên hệ bộ phận hỗ trợ."
+      "countryHint": "Xác định tiền tệ, giá gói, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi sau, hãy liên hệ bộ phận hỗ trợ.",
+      "fullNameHint": "Bạn có thể thêm danh xưng (Dr., Prof.); danh xưng sẽ hiện trong lời chào."
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",

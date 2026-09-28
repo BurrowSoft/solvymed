@@ -326,6 +326,10 @@ export default function SignupPage() {
               autoComplete="name"
               className="text-input"
             />
+            {/* Doctors: a title is never added for them (lib/doctorName); they may type one. */}
+            {role === "professional" && !isSecretaryFlow && !isJoinFlow && (
+              <p className="mt-1.5 text-xs text-slate-500">{t("signup.fullNameHint")}</p>
+            )}
           </div>
           <div>
             <label className="field-label">{t("signup.email")}</label>

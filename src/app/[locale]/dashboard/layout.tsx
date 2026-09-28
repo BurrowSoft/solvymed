@@ -6,6 +6,7 @@ import { ReloadButton } from "@/components/ReloadButton";
 import { TrialChip, trialChipMessage } from "@/components/TrialChip";
 import { getTranslations } from "next-intl/server";
 import { isAccessAllowed, trialDaysRemaining, type EffectiveSub } from "@/lib/subscription";
+import { doctorDisplayName } from "@/lib/doctorName";
 import { TourProvider } from "@/components/tour/TourProvider";
 import { readTourState, tourEntry } from "@/lib/tourState";
 import { countryProfile } from "@/lib/country";
@@ -136,7 +137,9 @@ export default async function DashboardLayout({
   const ownName = isSecretary
     ? (user.user_metadata?.full_name as string | undefined)?.trim()
     : professional?.full_name;
-  const firstName = ownName?.split(" ")[0] || user.email?.split("@")[0] || "Doctor";
+  // The doctor's own title if they typed one, never one we add
+  // (lib/doctorName, the app's rule).
+  const firstName = doctorDisplayName(ownName, { firstOnly: true }) || user.email?.split("@")[0] || "";
 
   // The guided tour (specs/walkthrough.md): auto-start on the first sign-in,
   // a resume offer after leaving mid-tour, or nothing (before migration 113

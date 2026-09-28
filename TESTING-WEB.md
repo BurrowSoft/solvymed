@@ -6404,3 +6404,48 @@ saved progress.
 
 **CI at `96656d7`:** ✅. **Merge gate: 🟢 for `96656d7`**, once the
 reviewer is clean. This docs commit sits on top, after a master sync.
+
+## PR #99 (`fix/greeting-plurals`, base master) — the doctor's own title, never an added "Dr."; pt-BR zero is plural, 🟢 at `5ba1898`
+
+These are UX's two tickets from #95's screenshots:
+- "Bom dia, Dr. Dra" was a hard-coded `Dr. ${firstName}`.
+- "0 sessão": pt-BR uses the plural for zero.
+
+The new `lib/doctorName` mirrors the app's regex: a typed title (Dr, Dra,
+Prof, Profa, Pr, Dott, Dott.ssa) is kept in the doctor's spelling, with
+the case tidied and a dot only if one was typed. **No title is ever
+added.**
+
+Checked on the Preview with throwaway doctors, deleted afterwards. The
+first run was at `91c0488`; the re-run at `5ba1898`, after b2's master
+merge (the `layout.tsx` conflict with #95's tour), gave the same results.
+
+| `full_name` saved | Greeting | Sidebar name | Avatar |
+|---|---|---|---|
+| `Dra Opus Tour` | "Bom dia, Dra Opus 👋" | Dra Opus | O |
+| `dra. beatriz lima` | "Bom dia, Dra. beatriz 👋" | Dra. beatriz | B |
+| `Ana Opus Souza` | "Bom dia, Ana 👋" (no "Dr.") | Ana | A |
+| `Prof. Carlos Opus` | "Bom dia, Prof. Carlos 👋" | Prof. Carlos | C |
+
+**Zero in pt-BR:**
+- Visão geral pending card: "0 sessões".
+- Payments with one paid appointment: Pendente "R$ 0,00 / 0 sessões",
+  next to "1 sessão" (the singular is unchanged).
+- Agenda: "0 consultas hoje".
+- Patient tabs: "Registros (0) / Receitas (0) / Consultas (0)".
+- No pt-BR `plural` message is left without a `=0` case, and no "Dr. "
+  prefix is left in code or messages.
+
+**Name field:**
+- **Settings → Perfil:** the placeholder is "Seu nome completo", with the
+  hint "Se quiser, inclua seu título (Dr., Dra., Prof.): ele aparece nas
+  saudações."
+- **Signup:** the same hint appears for the doctor role only (not
+  Paciente).
+
+**After the merge with #95:** the tour still works on this head. Replay →
+Concluir (click or Enter, 3/3) → `/dashboard?setup=1` with the checklist.
+
+**CI at `5ba1898`:** ✅. **Merge gate: 🟢 for `5ba1898`**, once the
+reviewer is clean. The branch is up to date with master; this docs commit
+sits on top.

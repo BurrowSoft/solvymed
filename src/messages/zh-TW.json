@@ -400,7 +400,7 @@
     "profileTitle": "個人資料",
     "profileSub": "向患者顯示的姓名和專業",
     "fullName": "姓名",
-    "fullNamePlaceholder": "王醫生",
+    "fullNamePlaceholder": "您的全名",
     "specialty": "專業",
     "specialtyPlaceholder": "精神科、心理諮詢…",
     "clinicTitle": "診所",
@@ -475,7 +475,8 @@
     "saveFailed": "無法儲存，請再試一次。",
     "practiceCountry": "診所所在國家",
     "practiceCountryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。如需變更，請聯絡 support@solvymed.com。",
-    "practiceCountryOther": "其他國家"
+    "practiceCountryOther": "其他國家",
+    "fullNameHint": "如有需要，可加上頭銜（Dr.、Prof.），會顯示在問候語中。"
   },
   "clinics": {
     "title": "我的診所",
@@ -607,7 +608,8 @@
       "consentCheckbox": "我已閱讀並同意<terms>使用條款</terms>與<privacy>隱私權政策</privacy>",
       "country": "您的診所在哪裡？",
       "countryOther": "其他國家",
-      "countryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。之後如需變更，請聯絡客服。"
+      "countryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。之後如需變更，請聯絡客服。",
+      "fullNameHint": "如有需要，可加上頭銜（Dr.、Prof.），會顯示在問候語中。"
     },
     "forgotPassword": {
       "title": "忘記密碼？",

@@ -400,7 +400,7 @@
     "profileTitle": "Profil",
     "profileSub": "Votre nom et spécialité affichés aux patients",
     "fullName": "Nom complet",
-    "fullNamePlaceholder": "Dr. Maria Santos",
+    "fullNamePlaceholder": "Votre nom complet",
     "specialty": "Spécialité",
     "specialtyPlaceholder": "Psychiatre, Psychologue…",
     "clinicTitle": "Cabinet",
@@ -475,7 +475,8 @@
     "saveFailed": "Enregistrement impossible. Veuillez réessayer.",
     "practiceCountry": "Pays du cabinet",
     "practiceCountryHint": "Définit la devise, le prix de l'abonnement, la pièce d'identité du patient et le QR de paiement. Pour le changer, écrivez à support@solvymed.com.",
-    "practiceCountryOther": "Autre pays"
+    "practiceCountryOther": "Autre pays",
+    "fullNameHint": "Ajoutez votre titre si vous le souhaitez (Dr, Pr) : il apparaît dans les salutations."
   },
   "clinics": {
     "title": "Mes Cliniques",
@@ -607,7 +608,8 @@
       "consentCheckbox": "J'ai lu et j'accepte les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>",
       "country": "Où se trouve votre cabinet ?",
       "countryOther": "Autre pays",
-      "countryHint": "Définit la devise, le prix de l'abonnement, la pièce d'identité du patient et le QR de paiement. Pour le changer ensuite, contactez le support."
+      "countryHint": "Définit la devise, le prix de l'abonnement, la pièce d'identité du patient et le QR de paiement. Pour le changer ensuite, contactez le support.",
+      "fullNameHint": "Ajoutez votre titre si vous le souhaitez (Dr, Pr) : il apparaît dans les salutations."
     },
     "forgotPassword": {
       "title": "Mot de passe oublié ?",
