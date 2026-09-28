@@ -6106,3 +6106,20 @@ has no card, as before.
 
 **CI at `7caddf5`:** ✅. **Review: clean at `c761d31`** (the picker code is the same). **Merge gate: 🟢 for `7caddf5`.** The earlier 🟢 at `93972ad` is
 superseded.
+
+## PR #89 (`th/2-buddhist-year`, base master) — tests: the Thai UI keeps the Buddhist year, 🟢 at `55c7f91`
+
+This PR adds only `src/__tests__/thai-buddhist-year.test.ts`; there's no UI
+change. It locks in that Thai dates show the Buddhist year (2026 → 2569)
+while stored dates stay Gregorian.
+- Checked: `formatDateLabel`, `calendarHeaderLabel`, `toLocaleDateString`,
+  and the `th` default calendar being "buddhist". English keeps 2026.
+
+**Runs:**
+- **4/4 passing at `55c7f91`**, run locally with vitest (exit 0).
+- **4/4 again on current master (`602ff00`) plus the file,** which is this
+  branch's content after the master sync. So master's later changes don't
+  break it.
+
+**CI at `55c7f91`:** ✅. **Merge gate: 🟢 for `55c7f91`**, once the
+reviewer is clean. This docs commit sits on top, after a master sync.
