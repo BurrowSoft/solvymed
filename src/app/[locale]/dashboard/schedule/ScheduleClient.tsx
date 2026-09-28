@@ -261,8 +261,13 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
     if (searchTimer.current) clearTimeout(searchTimer.current);
     if (q.trim().length < 2) { setMatches([]); return; }
     searchTimer.current = setTimeout(async () => {
-      const found = await searchPatientsForPicker(q);
-      if (latestQuery.current === q) setMatches(found);
+      try {
+        const found = await searchPatientsForPicker(q);
+        if (latestQuery.current === q) setMatches(found);
+      } catch {
+        // Suggestions are optional: a failed lookup just shows none.
+        if (latestQuery.current === q) setMatches([]);
+      }
     }, 250);
   }
 
