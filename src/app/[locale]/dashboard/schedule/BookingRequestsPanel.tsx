@@ -4,6 +4,8 @@ import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { usePatientIdFields } from "@/lib/usePatientIdFields";
+import type { PatientIdKind } from "@/lib/patientIds";
 import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
 import { createClient } from "@/lib/supabase/client";
 import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest } from "./booking-actions";
@@ -33,10 +35,15 @@ type PatientProfile = {
   phone?: string | null;
   birth_date?: string | null;
   cpf?: string | null;
+  th_national_id?: string | null;
+  passport_number?: string | null;
 };
 
-export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
+// idKind: the practice country's patient identifier (lib/patientIds).
+export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Booking[]; idKind?: PatientIdKind }) {
   const t = useTranslations("schedule");
+  // Only the practice country's ID columns are read (pre-110: CPF only).
+  const idFields = usePatientIdFields(idKind);
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const [isPending, startTransition] = useTransition();
@@ -64,7 +71,7 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
       const supabase = createClient();
       const { data } = await supabase
         .from("patient_profiles")
-        .select("full_name, email, phone, birth_date, cpf")
+        .select(["full_name", "email", "phone", "birth_date", ...idFields.map((f) => f.name)].join(", "))
         .eq("user_id", b.patient_auth_id)
         .maybeSingle();
       setProfiles(prev => ({ ...prev, [b.id]: data as PatientProfile | null }));
@@ -283,7 +290,9 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                           {prof?.email && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoEmail")}</span><br />{prof.email}</p>}
                           {prof?.phone && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoPhone")}</span><br />{prof.phone}</p>}
                           {prof?.birth_date && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoDob")}</span><br />{prof.birth_date}</p>}
-                          {prof?.cpf && <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoCpf")}</span><br />{prof.cpf}</p>}
+                          {idFields.map((f) => prof?.[f.name] ? (
+                            <p key={f.name}><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{f.label}</span><br />{prof[f.name]}</p>
+                          ) : null)}
                           {!prof && <p className="col-span-2 text-xs text-slate-400 italic">{t("infoNoProfile")}</p>}
                         </div>
                         <div className="border-t border-slate-200 pt-2">

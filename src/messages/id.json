@@ -964,5 +964,12 @@
       "message_required": "Tulis pesan.",
       "failed": "Terjadi kesalahan. Silakan coba lagi."
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "Nomor identitas Thailand",
+    "passport": "Nomor paspor",
+    "passportOrId": "Nomor paspor atau identitas",
+    "thaiIdInvalid": "Nomor identitas Thailand ini tidak valid. Periksa 13 digitnya."
   }
 }

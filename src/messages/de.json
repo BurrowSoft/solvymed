@@ -964,5 +964,12 @@
       "message_required": "Bitte schreiben Sie eine Nachricht.",
       "failed": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "Thailändischer Personalausweis",
+    "passport": "Reisepassnummer",
+    "passportOrId": "Reisepass- oder Ausweisnummer",
+    "thaiIdInvalid": "Diese thailändische Ausweisnummer ist ungültig. Prüfen Sie die 13 Ziffern."
   }
 }

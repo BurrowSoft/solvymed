@@ -964,5 +964,12 @@
       "message_required": "メッセージを入力してください。",
       "failed": "エラーが発生しました。もう一度お試しください。"
     }
+  },
+  "patientIds": {
+    "cpf": "CPF",
+    "thaiId": "タイの国民ID番号",
+    "passport": "パスポート番号",
+    "passportOrId": "パスポートまたは身分証番号",
+    "thaiIdInvalid": "このタイの国民ID番号は無効です。13桁を確認してください。"
   }
 }

@@ -5957,3 +5957,43 @@ changed no code.
 
 **CI at `84156ce`:** ✅. **Review: clean.** **Merge gate: 🟢 for
 `84156ce`.**
+
+## PR #87 (`th/5-patient-ids`, base `th/1-country-currency`) — patient identifiers by practice country, 🟢 at `ce258bd`
+
+Pre-110, only the BR (CPF) path can run: the Thai ID and passport columns
+don't exist yet, so those paths are **unit-tested only**. Checked on the
+Preview at `ce258bd` with a throwaway doctor, secretary and patient
+(deleted afterwards).
+
+- **New patient** (doctor): the labels are unchanged, with CPF between
+  Telefone and Data de nascimento and no Thai/passport field. The hidden
+  `id_kind=BR` is present. The row is saved with `cpf 123.456.789-09`.
+- **Same CPF again under another name:** the "Possível duplicidade…
+  Opus Paciente Um / Abrir existente / Criar mesmo assim" warning appears,
+  and no second row is created.
+- **Search** `?q=45678` (CPF digits) finds the patient.
+- **Detail:** it shows "CPF 123.456.789-09".
+- **Edit:**
+  - The only ID input is `cpf` (prefilled), with `id_kind=BR`.
+  - Saving a phone change works, the CPF is kept, and the form closes.
+  - Clearing the CPF saves `null`.
+- **Server guard:** with the hidden `id_kind` tampered to `TH` and the CPF
+  emptied, the save is **refused**. The row is unchanged (the CPF is
+  kept), and "Algo deu errado. Tente novamente." is shown.
+- **Secretary** (the `get_my_clinic` path): the same CPF form, and the
+  patient is created with its CPF.
+- **Patient booking form** (linked patient): the CPF is prefilled from
+  `patient_profiles` (111.444.777-35), and no `patient_profiles` request
+  fails, so no 110 column is selected.
+- **Privacy** (en + pt-BR):
+  - §3.1 adds "the practice's country and time zone, chosen at sign-up
+    (for "Other country", the country detected from the connection…)".
+  - §3.2 reads "CPF or, for clinics outside Brazil, a national ID or
+    passport number".
+
+**Follow-up (not from this PR, already on master):** the booking form's
+label reads "CPF ((opcional))". The `book.notesOptional` string already
+contains the parentheses, and the label wraps it in another pair.
+
+**CI at `ce258bd`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`ce258bd`.**
