@@ -6,9 +6,10 @@ import { useTranslations, useLocale } from "next-intl";
 import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPrescription, deletePrescription, updatePrescription, addPrescriptionCorrection, updatePatient, deletePatient, toggleBookingBlock, generatePatientInviteCode, getArchivePreview, archivePatient, restorePatient, loadAccessLog } from "../actions";
 import { archivedLabel } from "../PatientsClient";
 import { fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
-import { dateLocale, formatDateLabel } from "@/lib/dateLabels";
+import { dateLocale, formatDateLabel, formatShortDate } from "@/lib/dateLabels";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
+import { DateInput } from "@/components/DateInput";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -235,6 +236,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
 function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; idKind: PatientIdKind }) {
   const t = useTranslations("patientDetail");
   const tIds = useTranslations("patientIds");
+  const tBirth = useTranslations("dateInput");
   // CPF, Thai ID/passport or passport/ID, by the practice's country.
   const idFields = usePatientIdFields(idKind, patient);
   // Server codes become translated copy, never raw codes or database text.
@@ -243,6 +245,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
     : e === "patient_has_clinical_history" ? t("deleteHasHistory")
     : e === "name_required" ? t("nameRequired")
     : e === "invalid_th_id" ? tIds("thaiIdInvalid")
+    : e === "birth_year_buddhist" ? tBirth("buddhistYear")
     : e === "unauthorized" ? t("sessionError")
     : t("genericError");
   const [archiveOpen, setArchiveOpen] = useState(false);
@@ -320,7 +323,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
     { label: t("email"), value: patient.email },
     { label: t("phone"), value: patient.phone },
     ...idFields.map((f) => ({ label: f.label, value: f.value || null })),
-    { label: t("dateOfBirth"), value: patient.birth_date ? `${patient.birth_date}${age ? ` (${age} ${t("yrs")})` : ""}` : null },
+    { label: t("dateOfBirth"), value: patient.birth_date ? `${formatShortDate(locale, patient.birth_date)}${age ? ` (${t("age", { n: age })})` : ""}` : null },
     { label: t("sex"), value: patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null },
     { label: t("profession"), value: patient.profession },
     { label: t("emergencyPhone"), value: patient.emergency_phone },
@@ -444,7 +447,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
         ))}
         <div>
           <FieldLabel>{t("dateOfBirth")}</FieldLabel>
-          <Input name="birth_date" type="date" defaultValue={patient.birth_date ?? ""} />
+          <DateInput buddhistHint name="birth_date" defaultValue={patient.birth_date ?? ""} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
         </div>
         <div>
           <FieldLabel>{t("sex")}</FieldLabel>
@@ -624,7 +627,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale }: {
         <div className="mb-2 flex items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
-            <span className="text-xs font-semibold text-slate-500">{r.date} {r.time?.slice(0, 5)}</span>
+            <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, r.date)} {r.time?.slice(0, 5)}</span>
             {r.record_type && r.record_type !== "free_text" && (
               <span className="rounded-full bg-teal-50 px-2 py-0.5 text-xs font-semibold text-teal-700 capitalize">{r.record_type.replace("_", " ")}</span>
             )}
@@ -767,7 +770,7 @@ function PrescriptionsTab({ patientId, prescriptions, isArchived, currentUserId,
         <div className="mb-3 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
-            <span className="text-xs font-semibold text-slate-500">{rx.date}</span>
+            <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, rx.date)}</span>
           </div>
           <EntryActions
             editable={canEditEntry(rx, currentUserId) && !corrected}

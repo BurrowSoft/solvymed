@@ -9,6 +9,7 @@ import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
 import { hoursWarning } from "@/lib/scheduleChecks";
 import type { WorkingHours } from "@/lib/slots";
+import { looksBuddhistEra } from "@/lib/buddhistEra";
 
 // The new-appointment patient picker: up to PICKER_LIMIT active patients of
 // this practice whose name (or CPF/phone digits) match, searched in the
@@ -65,6 +66,8 @@ export async function createAppointment(formData: FormData) {
   const notes = formData.get("notes") as string;
 
   if (!patientName || !date || !startTime) return { error: "Missing required fields", code: "missing_fields" };
+  // Never saved or converted (the field blocks it first).
+  if (looksBuddhistEra(date)) return { error: "Buddhist-era year", code: "date_buddhist_era" };
 
   const parsedDuration = parseInt(durationStr);
   const duration = Number.isInteger(parsedDuration) && parsedDuration > 0 && parsedDuration <= 480 ? parsedDuration : 30;
@@ -244,6 +247,7 @@ export async function blockTime(formData: FormData) {
   const reason = formData.get("reason") as string;
 
   if (!date || !startTime) return { error: "Missing required fields", code: "missing_fields" };
+  if (looksBuddhistEra(date)) return { error: "Buddhist-era year", code: "date_buddhist_era" };
 
   const parsedDuration = parseInt(durationStr);
   const duration = Number.isInteger(parsedDuration) && parsedDuration > 0 && parsedDuration <= 480 ? parsedDuration : 60;

@@ -6766,3 +6766,207 @@ behind). The `dashboard/page.tsx` auto-merge keeps both `dateLocale` and
 **CI at `1b2b427`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `1b2b427`.** This docs commit sits on top, after a master sync (8
 behind).
+
+## PR #107 (`fix/th-dob-guard`, base master) — a Buddhist-era year (≥ 2400) is never saved or converted; พ.ศ. hint on Thai birth dates, 🟢 at `ee3f014`
+
+`ee3f014` is `2384a92` (review-clean) plus master merges (after #104 and
+#105). How the guard works:
+- A new `DateInput` sets `setCustomValidity` and shows the message.
+- The patient booking button and the "propose new time" Send button are
+  disabled.
+- Server backstops: `createPatient`, `updatePatient`, `createAppointment`,
+  `blockTime`, `proposeNewTime` and `requestReschedule`.
+
+Checked on the Preview (Thai flag on) with a throwaway doctor, a patient
+and a seeded booking request (all deleted afterwards). **"Server
+backstop"** means: the form was submitted with browser validation off
+(`noValidate` + `requestSubmit`), so only the server action could refuse.
+
+| Field | th | pt-BR | en |
+|---|---|---|---|
+| New patient: birth date 1996-05-14 | hint **"พ.ศ. 2539"** | no hint | no hint |
+| New patient: typed 2539 | "ดูเหมือนเป็นปี พ.ศ. กรุณาใช้ปี ค.ศ. (เช่น 1996)"; save blocked; server backstop shows the message; **no row** | "Esse ano parece do calendário budista. Use o ano cristão (ex.: 1996)."; same result | "That looks like a Buddhist-era year. Please use the Gregorian year (e.g. 1996)."; same result |
+| Edit patient (stored 1993-05-14) | prefilled hint "พ.ศ. 2536"; typed 2536 → message; save blocked; server refuses; **DOB unchanged** | message; blocked; server refuses; unchanged | same |
+| New appointment: date 2569-10-01 | message; blocked; server (`date_buddhist_era`) refuses; **no appointment** | same | same |
+| Block time: 2569-10-01 | message; blocked; server refuses; nothing saved | same | same |
+| Booking request → propose new time: 2569-10-02 | message; **Send disabled** | same | same |
+| Patient booking page: birth date | "พ.ศ. 2539" for 1996; typed 2539 → message; **"ส่งคำขอนัดหมาย" disabled** | message; **"Enviar Solicitação" disabled** | — |
+
+- **Thai dates still show 2569** next to the guard (the reviewer's check,
+  since both touch the same imports): the patient page "28 กันยายน 2569",
+  the dashboard "วันจันทร์ที่ 28 กันยายน 2569", and the booking day strip
+  "อังคาร 29 ก.ย." (no year shown). There's no "2026" on the Thai pages.
+- **End state:** the DB held only the seeded rows (1 patient, DOB still
+  1993-05-14, only the seeded request), so **no Buddhist-era date was
+  stored anywhere**.
+- **Residual (not a blocker):** the patient booking page writes
+  `patient_profiles.birth_date` straight from the browser (no server
+  action), so its guard is client-side only (the button is disabled plus
+  an early return). A DB-level check would need a migration.
+
+**CI at `ee3f014`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`ee3f014`.** This docs commit sits on top, after a master sync (5 behind;
+message JSON valid).
+
+## PR #103 (`ux/solvyai`, base master) — SolvyAI panel UI with a mock backend (behind `NEXT_PUBLIC_SOLVYAI_ENABLED`), 🟢 at `268fa2d`
+
+The flag is unset on Vercel, so this ran on a **local `next dev` of
+`268fa2d` with `NEXT_PUBLIC_SOLVYAI_ENABLED=1`**, against the prod DB
+(throwaway doctors and a secretary, deleted afterwards). The backend is
+`mockBackend.ts`: it answers from the real Help articles, and
+Confirmar/Desfazer are simulated.
+
+**Button and panel** (doctor, pt-BR, 1280):
+- **✦ button:** bottom-right (1204,724, 56×56), labelled "Abrir o
+  SolvyAI".
+- **First visit:** "Posso ajudar? Pergunte ou peça qualquer coisa." shows,
+  then is **gone after 5 s**; it doesn't come back on the next visit.
+- **Opening it:** a **400 px panel on the right that pushes the content**
+  (main 1024 → 624 px). It shows "PRÉVIA", "Nova conversa", ✕, the usage
+  bar "Uso de hoje 0% · Renova em 11 h", 3 chips, 🎤, Enviar and "Não
+  inclua dados de pacientes…".
+- **390 px:** the panel is a **full sheet** (0,0 390×844), with no
+  overflow.
+- **English:** "PREVIEW · New conversation · Today's usage · Renews in 11 h
+  · Ask or tell SolvyAI something about SolvyMed. · What do I have
+  tomorrow? / How do I invite my secretary? / Book an appointment · Send ·
+  Don't include patient data…".
+
+**Chips per screen:**
+
+| Screen | Chips |
+|---|---|
+| Início | O que tenho amanhã? · Como convido minha secretária? · Marcar consulta |
+| Agenda | O que tenho amanhã? · Bloquear sexta à tarde · Marcar consulta |
+| Pacientes | Cadastrar paciente · Como arquivar um paciente? · Encontrar paciente |
+| Pagamentos | Quanto tenho a receber esta semana? · Enviar Pix para um paciente · Marcar como pago |
+| Configurações | Como convido minha secretária? · Configurar Pix · Mudar horário de atendimento |
+| Clínicas (other) | the home set |
+
+**Conversations:**
+- **"Como convido minha secretária?"** → the C4 article steps plus the "No
+  site" note. **"Abrir tela →"** goes to the screen and **minimises the
+  panel to a "SolvyAI ✦" pill**; the pill reopens it with the conversation
+  kept.
+- **"Marca a Maria amanhã às 14h"** → **"Qual Maria?"**, offering Maria
+  Silva / Maria Souza (DOB + last visit).
+- **"Marca a Maria Silva amanhã"** → **"Para que horário?"**
+- **"…às 14h"** → a card: Paciente, Quando "terça, 29/09/2026 ·
+  14:00–14:30", and **Duração / Procedimento / Valor / Onde each marked
+  "(padrão)"**.
+  - **Confirmar ✓** → **"✓ Feito (simulação)"** with **"Desfazer (9 s)"**
+    counting down (7 s after 2.5 s).
+  - Desfazer → "Desfeito (simulação)".
+- **"…às 12h"** → the same card with **"⚠ Horário bloqueado
+  (12:00–13:00)"**. Confirmar gives **"Não foi possível salvar. O horário
+  está bloqueado."**
+- **"qual a dose de dipirona"** → "Não posso ajudar com questões
+  clínicas." Off-topic ("quem ganhou o jogo ontem?") → "Só posso ajudar
+  com o SolvyMed."
+- **Masking:** "como cadastro o paciente 123.456.789-09 tel (11)
+  98765-4321 email ana@example.com dia 29.09.2026 às 14:00 valor R$ 150"
+  is shown and sent as "…paciente **[cpf]** tel **[phone]** email
+  **[email]** dia **[phone]** às 14:00 valor R$ 150".
+
+**Limits:**
+- A second send within **3 s** → "Aguarde um instante antes de enviar de
+  novo." and it isn't sent.
+- The input stops at **500** characters ("500/500").
+- A trial account reaches **10 messages** → the bar reads **100%**, and
+  "Você usou as mensagens de hoje do SolvyAI. Renova em 11 h." **replaces
+  the input**.
+
+**Network:** during the whole chat (help, booking cards, Confirmar,
+Desfazer, masking, limits), the only request besides Next internals was
+the page GET from "Abrir tela". **Nothing is sent to any backend**, and
+nothing is written to the DB.
+
+**What the same flag turns on:**
+- The main tour becomes **9 steps**, with "Conheça o SolvyAI" as step 2 on
+  the ✦.
+- /pricing lists "SolvyAI, seu assistente com IA: pergunte ou peça "marca a
+  Maria amanhã às 14h"".
+- **Secretary:** no ✦ and no panel.
+
+**Flag OFF (checked on #103's Preview, where the variable is unset):** a
+doctor's dashboard has **no ✦ button and no panel**. Production doesn't
+set the variable.
+
+**Mock-only follow-ups for b2** (not user-facing until the real backend,
+and non-blocking):
+1. The card's end time adds 30 min without carrying the hour: "14:45" →
+   "**14:45–14:75**".
+2. The phone mask also catches a dotted date: "29.09.2026" → "[phone]"
+   (8 digits in one run). Slashed dates, "14:00" and "R$ 150" are kept.
+3. The en clinical reply's text wasn't captured by my log (the same mock
+   path as pt-BR).
+
+**CI at `268fa2d`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`268fa2d`.** This docs commit sits on top, after a master sync (18
+behind; message JSON valid). The `dashboard/layout.tsx` auto-merge keeps
+SolvyAI, news and #104's name logic.
+
+## PR #107 re-confirm at `d991329` (master merge after #103, conflict resolved by b2)
+
+- **Code:** #107's 13 code files are **byte-identical** to `ee3f014`
+  (`git diff ee3f014 d991329` on them is empty).
+- **Conflicts resolved:** the message files keep both `dateInput.*` (#107)
+  and `assistant.*` (#103), and all message JSON is valid. The #107
+  section above is intact.
+- **Thai re-run on the Preview at `d991329`:** the same results as the
+  entry above:
+  - พ.ศ. hints; the guard message on new/edit patient, new appointment,
+    block time and propose (Send disabled);
+  - blocked saves, and nothing saved even with browser validation off;
+  - the booking page's th and pt-BR guard;
+  - Thai dates still 2569.
+- **CI at `d991329`:** ✅. **Merge gate: 🟢 for `d991329`.**
+
+## PR #109 (`fix/dob-locale-format`, base master) — no raw ISO dates; birth date + age like the app, 🟢 at `496f038`
+
+These were my findings from #105 (a raw "1993-05-14" on the patient
+page). #109 adds `formatShortDate` (the locale's short numeric date,
+Buddhist year in th, via `dateLocale`) and the translated age with plural
+forms.
+
+Checked on the Preview (Thai flag on) with a throwaway doctor and patient
+(deleted afterwards; seeded records and prescriptions deleted first):
+- **patients:** "Opus Adulta" born 1993-05-14, and "Opus Bebe" born
+  2025-08-24 (1 year old);
+- **clinical rows:** a record and a prescription;
+- **appointments:** a pending and a paid one;
+- **a booking request** from a patient whose profile DOB is 1988-11-07.
+
+| Place | pt-BR | en | th |
+|---|---|---|---|
+| Patient detail DOB (adult) | **14/05/1993 (33 anos)** | **05/14/1993 (33 years)** | **14/05/2536 (33 ปี)** |
+| Patient detail DOB (1 year) | 24/08/2025 (**1 ano**) | 08/24/2025 (**1 year**) | 24/08/2568 (1 ปี) |
+| Patient header age | 33 anos | 33 years | 33 ปี |
+| Patients list card | 33 anos · 1 ano | 33 years · 1 year | 33 ปี · 1 ปี |
+| Records tab | 28/09/2026 14:06 | 09/28/2026 14:06 | 28/09/2569 14:06 |
+| Prescriptions tab | 28/09/2026 | 09/28/2026 | 28/09/2569 |
+| Payments list | "dom., 20 de set. · 09:00 · Consulta" | "Sun, Sep 20 · 09:00 · …" | "อาทิตย์ 20 ก.ย. · 09:00 · …" |
+| Booking-request card: date / DOB / consultation line | "ter., 29 de set. · 15:00–15:30" / **07/11/1988** / "Consulta · ter., 29 de set. 15:00–15:30" | "Tue, Sep 29 …" / **11/07/1988** / … | "อังคาร 29 ก.ย. …" / **07/11/2531** / … |
+
+- **No raw YYYY-MM-DD** on any of these pages in any of the three
+  languages.
+- **Sweep:** a grep of the branch for date fields printed raw in JSX finds
+  none left. What remains is server-side English push text
+  (`patients/actions.ts:247`, `booking-actions.ts:193`), passed to b2 as a
+  follow-up.
+
+**CI at `496f038`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`496f038`.** This docs commit sits on top, after a master sync (11
+behind; message JSON valid).
+
+## PR #110 (`docs/assistant-examples`, base master) — SolvyAI stream examples shared with the app + a contract test (no UI), 🟢 at `219aeaf`
+
+- **Files:** only 3. `docs/assistant-api.md` (+17/−1),
+  `docs/assistant-examples.ndjson` and
+  `src/__tests__/assistant-examples.test.ts`.
+- **Nothing user-facing:** no app code, route, component or message
+  changed. The `.ndjson` lives under `docs/` and is read only by the test.
+
+**CI at `219aeaf`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`219aeaf`.** This docs commit sits on top, after a master sync (10
+behind).

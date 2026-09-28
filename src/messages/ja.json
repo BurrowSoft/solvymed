@@ -260,7 +260,7 @@
     "savePatient": "患者を保存",
     "saving": "保存中…",
     "deleteConfirm": "この患者とすべての記録を削除しますか？この操作は元に戻せません。",
-    "yrs": "歳",
+    "age": "{n}歳",
     "alreadyRegistered": "{name}さんはすでに登録されています。",
     "alreadyRegisteredGeneric": "この患者はすでに登録されています。",
     "nameRequired": "氏名は必須です。",
@@ -299,7 +299,7 @@
     "insurance": "保険",
     "inviteCode": "招待コード",
     "patientSince": "患者登録日",
-    "yrs": "歳",
+    "age": "{n}歳",
     "editPatient": "患者を編集",
     "unblockBookings": "予約のブロックを解除",
     "blockBookings": "予約をブロック",
@@ -1109,5 +1109,73 @@
       "tourSpot": "設定 → ツアーをもう一度見る。",
       "tourSpotMenu": "メニューを開く → 設定 → ツアーをもう一度見る。"
     }
+  },
+  "assistant": {
+    "preview": "プレビュー",
+    "newConversation": "新しい会話",
+    "close": "閉じる",
+    "emptyTitle": "SolvyMed について質問や依頼をどうぞ。",
+    "thinking": "SolvyAI が考えています…",
+    "limitReached": "本日の SolvyAI メッセージを使い切りました。{hours} 時間後にリセットされます。",
+    "help": "ヘルプ",
+    "startNew": "新しい会話を始める",
+    "placeholder": "質問や依頼を入力…",
+    "mic": "音声入力",
+    "send": "送信",
+    "tooFast": "少し待ってから再送信してください。",
+    "noPatientData": "ヘルプの質問に患者データを含めないでください。",
+    "hint": "お手伝いしましょうか？何でも聞いてください。",
+    "open": "SolvyAI を開く",
+    "usageToday": "本日の使用量",
+    "resetsIn": "{hours} 時間後にリセット",
+    "extra": "+{n} 件の追加メッセージ",
+    "helpful": "役に立った",
+    "notHelpful": "役に立たなかった",
+    "support": "サポートに連絡",
+    "default": "デフォルト",
+    "saved": "✓ 完了",
+    "undone": "取り消しました",
+    "simulated": "シミュレーション",
+    "undo": "取り消す（{s} 秒）",
+    "view": "予約表で見る",
+    "edit": "編集",
+    "confirm": "確定 ✓",
+    "failed": "保存できませんでした。",
+    "failedBlocked": "その時間はブロックされています。",
+    "chips": {
+      "home": {
+        "a": "明日の予定は？",
+        "b": "スタッフを招待するには？",
+        "c": "予約を入れる"
+      },
+      "schedule": {
+        "a": "明日の予定は？",
+        "b": "金曜の午後をブロック",
+        "c": "予約を入れる"
+      },
+      "patients": {
+        "a": "患者を登録",
+        "b": "患者をアーカイブするには？",
+        "c": "患者を探す"
+      },
+      "payments": {
+        "a": "今週の未収はいくら？",
+        "b": "患者に Pix を送る",
+        "c": "支払い済みにする"
+      },
+      "settings": {
+        "a": "スタッフを招待するには？",
+        "b": "Pix を設定",
+        "c": "診療時間を変更"
+      },
+      "other": {
+        "a": "明日の予定は？",
+        "b": "スタッフを招待するには？",
+        "c": "予約を入れる"
+      }
+    }
+  },
+  "dateInput": {
+    "buddhistYear": "仏暦の年のようです。西暦で入力してください（例：1996）。"
   }
 }

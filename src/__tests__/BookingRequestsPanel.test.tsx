@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 // Mock next-intl to avoid requiring NextIntlClientProvider
 vi.mock('next-intl', () => ({
+  useLocale: () => 'en',
   useTranslations: () => (key: string) => {
     const translations: Record<string, string> = {
       bookingRequests: 'Booking Requests',
@@ -112,7 +113,9 @@ describe('BookingRequestsPanel', () => {
   it('renders patient name, date and time for a tentative booking', () => {
     render(<BookingRequestsPanel bookings={[TENTATIVE_BOOKING]} />);
     expect(screen.getByText('Maria Silva')).toBeInTheDocument();
-    expect(screen.getByText(/2030-01-15/)).toBeInTheDocument();
+    // The locale's date label, never the raw ISO date.
+    expect(screen.getAllByText(/Tue, Jan 15/).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/2030-01-15/)).not.toBeInTheDocument();
     expect(screen.getByText('Initial Consultation')).toBeInTheDocument();
   });
 
@@ -154,6 +157,20 @@ describe('BookingRequestsPanel', () => {
     expect(screen.queryByText('Propose a new time')).not.toBeInTheDocument();
   });
 
+  it('a Buddhist-era year in the proposed date disables Send (never saved or converted)', () => {
+    const { container } = render(<BookingRequestsPanel bookings={[TENTATIVE_BOOKING]} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Propose new time' }));
+    const [start, end] = Array.from(container.querySelectorAll('input[type="time"]'));
+    fireEvent.change(start, { target: { value: '09:00' } });
+    fireEvent.change(end, { target: { value: '09:30' } });
+    const date = container.querySelector('input[type="date"]')!;
+    fireEvent.change(date, { target: { value: '2569-10-01' } });
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
+    fireEvent.change(date, { target: { value: '2026-10-01' } });
+    expect(screen.getByRole('button', { name: 'Send' })).not.toBeDisabled();
+  });
+
   it('renders multiple bookings', () => {
     const second = { ...TENTATIVE_BOOKING, id: 'b3', patient_name: 'João Santos' };
     render(<BookingRequestsPanel bookings={[TENTATIVE_BOOKING, second]} />);
@@ -187,7 +204,7 @@ describe('BookingRequestsPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Patient Information' }));
     await waitFor(() => expect(screen.getByText('maria@example.com')).toBeInTheDocument());
     expect(screen.getByText('11999887766')).toBeInTheDocument();
-    expect(screen.getByText('1990-05-15')).toBeInTheDocument();
+    expect(screen.getByText('05/15/1990')).toBeInTheDocument();
     expect(screen.getByText('123.456.789-00')).toBeInTheDocument();
   });
 

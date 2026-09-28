@@ -260,7 +260,7 @@
     "savePatient": "환자 저장",
     "saving": "저장 중…",
     "deleteConfirm": "이 환자와 모든 기록을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
-    "yrs": "세",
+    "age": "{n}세",
     "alreadyRegistered": "{name}님은 이미 등록되어 있습니다.",
     "alreadyRegisteredGeneric": "이미 등록된 환자입니다.",
     "nameRequired": "이름은 필수입니다.",
@@ -299,7 +299,7 @@
     "insurance": "보험",
     "inviteCode": "초대 코드",
     "patientSince": "환자 등록일",
-    "yrs": "세",
+    "age": "{n}세",
     "editPatient": "환자 편집",
     "unblockBookings": "예약 차단 해제",
     "blockBookings": "예약 차단",
@@ -1109,5 +1109,73 @@
       "tourSpot": "설정 → 투어 다시 보기.",
       "tourSpotMenu": "메뉴 열기 → 설정 → 투어 다시 보기."
     }
+  },
+  "assistant": {
+    "preview": "미리보기",
+    "newConversation": "새 대화",
+    "close": "닫기",
+    "emptyTitle": "SolvyMed에 대해 묻거나 요청하세요.",
+    "thinking": "SolvyAI가 생각 중…",
+    "limitReached": "오늘의 SolvyAI 메시지를 모두 사용했습니다. {hours}시간 후 갱신됩니다.",
+    "help": "도움말",
+    "startNew": "새 대화 시작",
+    "placeholder": "묻거나 요청하세요…",
+    "mic": "받아쓰기",
+    "send": "보내기",
+    "tooFast": "잠시 후 다시 보내 주세요.",
+    "noPatientData": "도움말 질문에 환자 정보를 넣지 마세요.",
+    "hint": "도와드릴까요? 무엇이든 물어보세요.",
+    "open": "SolvyAI 열기",
+    "usageToday": "오늘 사용량",
+    "resetsIn": "{hours}시간 후 갱신",
+    "extra": "추가 메시지 +{n}개",
+    "helpful": "도움됨",
+    "notHelpful": "도움 안 됨",
+    "support": "지원팀 문의",
+    "default": "기본값",
+    "saved": "✓ 완료",
+    "undone": "취소됨",
+    "simulated": "시뮬레이션",
+    "undo": "실행 취소 ({s}초)",
+    "view": "일정에서 보기",
+    "edit": "수정",
+    "confirm": "확인 ✓",
+    "failed": "저장하지 못했습니다.",
+    "failedBlocked": "차단된 시간입니다.",
+    "chips": {
+      "home": {
+        "a": "내일 일정이 뭐야?",
+        "b": "직원을 어떻게 초대해?",
+        "c": "예약하기"
+      },
+      "schedule": {
+        "a": "내일 일정이 뭐야?",
+        "b": "금요일 오후 차단",
+        "c": "예약하기"
+      },
+      "patients": {
+        "a": "환자 등록",
+        "b": "환자를 어떻게 보관 처리해?",
+        "c": "환자 찾기"
+      },
+      "payments": {
+        "a": "이번 주 받을 금액은?",
+        "b": "환자에게 Pix 보내기",
+        "c": "결제 완료로 표시"
+      },
+      "settings": {
+        "a": "직원을 어떻게 초대해?",
+        "b": "Pix 설정",
+        "c": "진료 시간 변경"
+      },
+      "other": {
+        "a": "내일 일정이 뭐야?",
+        "b": "직원을 어떻게 초대해?",
+        "c": "예약하기"
+      }
+    }
+  },
+  "dateInput": {
+    "buddhistYear": "불기 연도로 보입니다. 서기 연도를 사용해 주세요(예: 1996)."
   }
 }

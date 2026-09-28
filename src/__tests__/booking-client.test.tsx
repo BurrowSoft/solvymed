@@ -10,6 +10,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("next-intl", () => ({
+  useLocale: () => "en",
   useTranslations: (ns: string) => (key: string, params?: Record<string, unknown>) => {
     const translations: Record<string, string> = {
       "book.title": "Book Appointment",
@@ -327,5 +328,20 @@ describe("BookingClient", () => {
       expect.objectContaining({ onConflict: "user_id" }),
     );
     expect(mockRpc).toHaveBeenCalledWith("create_public_booking", expect.any(Object));
+  });
+
+  it("a Buddhist-era birth year disables Send and is never saved", async () => {
+    setupMocks({ busySlots: [], profile: FULL_PROFILE });
+    const { container } = render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
+    fireEvent.click(screen.getAllByText("Consultation")[0]);
+    await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
+    fireEvent.click(screen.getByText(/9:00/));
+    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
+    fireEvent.change(container.querySelector('input[type="date"]')!, { target: { value: "2539-05-14" } });
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+    expect(screen.getByText("Send Booking Request")).toBeDisabled();
+    fireEvent.click(screen.getByText("Send Booking Request"));
+    expect(mockUpsert).not.toHaveBeenCalled();
   });
 });
