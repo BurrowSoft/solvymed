@@ -2,14 +2,15 @@
 
 import { createClient } from "@/lib/supabase/server";
 
+// Errors are codes; the page translates them.
 export async function submitFeedback(formData: FormData) {
   const email = (formData.get("email") as string)?.trim().toLowerCase();
   const name = (formData.get("name") as string)?.trim() || null;
   const message = (formData.get("message") as string)?.trim();
   const rating = (formData.get("rating") as string) || null;
 
-  if (!email) return { error: "Email is required." };
-  if (!message) return { error: "Message is required." };
+  if (!email) return { error: "email_required" as const };
+  if (!message) return { error: "message_required" as const };
 
   const supabase = await createClient();
 
@@ -21,7 +22,7 @@ export async function submitFeedback(formData: FormData) {
     submitted_at: new Date().toISOString(),
   });
 
-  if (error) return { error: "Something went wrong. Please try again." };
+  if (error) return { error: "failed" as const };
 
   return { success: true };
 }

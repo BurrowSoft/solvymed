@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
 import { createClient } from "@/lib/supabase/client";
 import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest } from "./booking-actions";
 import { toLocalDateString } from "@/lib/slots";
@@ -155,7 +156,10 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                   )}
                   {b.status === "proposal" && b.scheduled_by === "patient" && b.proposed_date && (
                     <p className="mt-1 text-xs text-slate-500">
-                      Requested: {b.proposed_date} {b.proposed_start_time?.slice(0, 5)}
+                      {t("requestedLabel", {
+                        date: formatDateLabel(locale, b.proposed_date),
+                        time: b.proposed_start_time ? formatTimeLabel(locale, b.proposed_start_time) : "",
+                      })}
                     </p>
                   )}
                 </div>

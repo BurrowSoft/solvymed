@@ -198,7 +198,8 @@
     "missingFieldsError": "Bitte füllen Sie alle Pflichtfelder aus.",
     "pastMidnightError": "Diese Uhrzeit und Dauer würden über Mitternacht hinausgehen.",
     "patientArchivedError": "Diese Akte ist archiviert. Stellen Sie sie unter Patienten wieder her, um einen Termin anzulegen.",
-    "moreCount": "+{n} weitere"
+    "moreCount": "+{n} weitere",
+    "requestedLabel": "Angefragt: {date} · {time}"
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -479,7 +480,9 @@
     "emptySubtitle": "Fügen Sie Ihre Klinik hinzu, damit Patienten Sie finden können",
     "addFirst": "Erste Klinik hinzufügen",
     "nameRequiredError": "Der Name der Klinik ist erforderlich.",
-    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "delete": "Praxis löschen",
+    "deleteConfirm": "„{name}“ löschen? Das kann nicht rückgängig gemacht werden."
   },
   "consultType": {
     "consultation": "Beratung",
@@ -683,7 +686,8 @@
     "reschedulePending": "Verschiebung ausstehend",
     "rescheduleRequestedLabel": "Terminverschiebung angefragt: {date} · {time}",
     "rescheduleButton": "Verschiebung beantragen",
-    "closeDialog": "Schließen"
+    "closeDialog": "Schließen",
+    "originallyLabel": "Ursprünglich: {date} · {time}"
   },
   "nav": {
     "overview": "Übersicht",
@@ -932,5 +936,28 @@
   },
   "legal": {
     "englishOnly": "Dieses Dokument ist nur auf Englisch und Portugiesisch (Brasilien) verfügbar. Unten steht die englische Fassung."
+  },
+  "feedback": {
+    "title": "Feedback geben",
+    "subtitle": "Wir möchten gern wissen, was Sie von SolvyMed halten.",
+    "ratingLabel": "Wie bewerten Sie SolvyMed?",
+    "ratingValue": "{n} von 5",
+    "optional": "(optional)",
+    "name": "Name",
+    "namePlaceholder": "Ihr Name",
+    "email": "E-Mail",
+    "emailPlaceholder": "ihre@email.com",
+    "message": "Nachricht",
+    "messagePlaceholder": "Sagen Sie uns, was Sie denken, was fehlt oder was wir besser machen können…",
+    "send": "Feedback senden",
+    "sending": "Wird gesendet…",
+    "thanksTitle": "Vielen Dank!",
+    "thanksBody": "Ihr Feedback hilft uns, SolvyMed für alle zu verbessern.",
+    "backToHome": "Zur Startseite",
+    "errors": {
+      "email_required": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
+      "message_required": "Bitte schreiben Sie eine Nachricht.",
+      "failed": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    }
   }
 }

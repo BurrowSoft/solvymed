@@ -198,7 +198,8 @@
     "missingFieldsError": "กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน",
     "pastMidnightError": "เวลาและระยะเวลานี้จะเกินเที่ยงคืน",
     "patientArchivedError": "แฟ้มนี้ถูกเก็บถาวรแล้ว กู้คืนในเมนูผู้ป่วยก่อนเพื่อนัดหมาย",
-    "moreCount": "อีก {n} รายการ"
+    "moreCount": "อีก {n} รายการ",
+    "requestedLabel": "ขอเลื่อนเป็น: {date} · {time}"
   },
   "payments": {
     "thisWeek": "สัปดาห์นี้",
@@ -479,7 +480,9 @@
     "emptySubtitle": "เพิ่มคลินิกของคุณเพื่อให้ผู้ป่วยค้นพบคุณ",
     "addFirst": "เพิ่มคลินิกแรกของคุณ",
     "nameRequiredError": "กรุณากรอกชื่อคลินิก",
-    "genericError": "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง"
+    "genericError": "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
+    "delete": "ลบคลินิก",
+    "deleteConfirm": "ลบ “{name}” ใช่ไหม การดำเนินการนี้ย้อนกลับไม่ได้"
   },
   "consultType": {
     "consultation": "ปรึกษาแพทย์",
@@ -683,7 +686,8 @@
     "reschedulePending": "รอการยืนยัน",
     "rescheduleRequestedLabel": "คำขอเปลี่ยนนัด: {date} · {time}",
     "rescheduleButton": "ขอเปลี่ยนนัดหมาย",
-    "closeDialog": "ปิด"
+    "closeDialog": "ปิด",
+    "originallyLabel": "เดิม: {date} · {time}"
   },
   "nav": {
     "overview": "ภาพรวม",
@@ -932,5 +936,28 @@
   },
   "legal": {
     "englishOnly": "เอกสารนี้มีเฉพาะภาษาอังกฤษและภาษาโปรตุเกส (บราซิล) ด้านล่างนี้คือฉบับภาษาอังกฤษ"
+  },
+  "feedback": {
+    "title": "แสดงความคิดเห็น",
+    "subtitle": "เราอยากทราบว่าคุณคิดอย่างไรกับ SolvyMed",
+    "ratingLabel": "คุณให้คะแนน SolvyMed เท่าไร",
+    "ratingValue": "{n} จาก 5",
+    "optional": "(ไม่บังคับ)",
+    "name": "ชื่อ",
+    "namePlaceholder": "ชื่อของคุณ",
+    "email": "อีเมล",
+    "emailPlaceholder": "your@email.com",
+    "message": "ข้อความ",
+    "messagePlaceholder": "บอกเราว่าคุณคิดอย่างไร อะไรที่ยังขาด หรืออะไรที่เราทำได้ดีกว่านี้…",
+    "send": "ส่งความคิดเห็น",
+    "sending": "กำลังส่ง…",
+    "thanksTitle": "ขอบคุณ!",
+    "thanksBody": "ความคิดเห็นของคุณช่วยให้เราพัฒนา SolvyMed ให้ดีขึ้นสำหรับทุกคน",
+    "backToHome": "กลับหน้าแรก",
+    "errors": {
+      "email_required": "กรุณากรอกอีเมลของคุณ",
+      "message_required": "กรุณาเขียนข้อความ",
+      "failed": "เกิดข้อผิดพลาด กรุณาลองอีกครั้ง"
+    }
   }
 }

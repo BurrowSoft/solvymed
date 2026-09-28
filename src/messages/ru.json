@@ -198,7 +198,8 @@
     "missingFieldsError": "Заполните все обязательные поля.",
     "pastMidnightError": "Это время и продолжительность выйдут за полночь.",
     "patientArchivedError": "Эта карта в архиве. Восстановите её в разделе «Пациенты», чтобы записать на приём.",
-    "moreCount": "ещё {n}"
+    "moreCount": "ещё {n}",
+    "requestedLabel": "Запрошено: {date} · {time}"
   },
   "payments": {
     "thisWeek": "На этой неделе",
@@ -479,7 +480,9 @@
     "emptySubtitle": "Добавьте свою клинику, чтобы пациенты могли вас найти",
     "addFirst": "Добавить первую клинику",
     "nameRequiredError": "Укажите название клиники.",
-    "genericError": "Что-то пошло не так. Попробуйте снова."
+    "genericError": "Что-то пошло не так. Попробуйте снова.",
+    "delete": "Удалить клинику",
+    "deleteConfirm": "Удалить «{name}»? Это действие нельзя отменить."
   },
   "consultType": {
     "consultation": "Консультация",
@@ -683,7 +686,8 @@
     "reschedulePending": "Перенос ожидает подтверждения",
     "rescheduleRequestedLabel": "Перенос запрошен: {date} · {time}",
     "rescheduleButton": "Запросить перенос",
-    "closeDialog": "Закрыть"
+    "closeDialog": "Закрыть",
+    "originallyLabel": "Изначально: {date} · {time}"
   },
   "nav": {
     "overview": "Обзор",
@@ -932,5 +936,28 @@
   },
   "legal": {
     "englishOnly": "Этот документ доступен только на английском и португальском (Бразилия) языках. Ниже приведена английская версия."
+  },
+  "feedback": {
+    "title": "Оставьте отзыв",
+    "subtitle": "Нам важно знать, что вы думаете о SolvyMed.",
+    "ratingLabel": "Как вы оцениваете SolvyMed?",
+    "ratingValue": "{n} из 5",
+    "optional": "(необязательно)",
+    "name": "Имя",
+    "namePlaceholder": "Ваше имя",
+    "email": "Эл. почта",
+    "emailPlaceholder": "ваш@email.com",
+    "message": "Сообщение",
+    "messagePlaceholder": "Расскажите, что вы думаете, чего не хватает или что можно улучшить…",
+    "send": "Отправить отзыв",
+    "sending": "Отправка…",
+    "thanksTitle": "Спасибо!",
+    "thanksBody": "Ваш отзыв помогает нам улучшать SolvyMed для всех.",
+    "backToHome": "На главную",
+    "errors": {
+      "email_required": "Введите адрес эл. почты.",
+      "message_required": "Напишите сообщение.",
+      "failed": "Что-то пошло не так. Попробуйте ещё раз."
+    }
   }
 }

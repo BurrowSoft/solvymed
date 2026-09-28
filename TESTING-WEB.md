@@ -5333,3 +5333,90 @@ phones:
 **CI at `d963bd0`:** Typecheck and unit tests ✅, Lint ✅, Vercel ✅.
 
 **Merge gate: 🟢 for `d963bd0`, and so for #64 at `b7405d7`, which it contains.**
+
+## PR #67 (`fix/clinics-form`, base `release`) — clinics: save without País, list refresh, delete confirm, 🟢 at `a229316`, review clean
+
+This fixes the RC finding (a). Checked on the preview on master's
+`cbb181d` and again on the release rebase `a229316` (same code), with a
+throwaway doctor, deleted afterwards:
+- **Save without País:** before, it failed on `null value in column
+  "country"` behind a generic error. Now the clinic saves, with `country =
+  BR`, geocoded, and **appears in the list immediately** (no reload).
+- **Delete:** the icon is labelled **"Excluir clínica"** (title and
+  `aria-label`), where it used to say "Cancelar". It asks **"Excluir
+  “Unidade Opus 67”? Isso não pode ser desfeito."**: Cancel keeps the
+  clinic, OK deletes it and removes it from the list.
+- **Observation, not a blocker:** "Rua Augusta, 500, São Paulo" with no
+  state geocoded to lat −22.85 (not São Paulo). With "SP" and "Brasil" it
+  was right (−23.56).
+
+**CI at `a229316`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `a229316`.**
+## PR #62 (`chore/review-followups`, base `release`) — feedback page translated, generic error on pending-confirmation, 🟢 at `b6b3aa7`, review clean
+
+**Checked on the preview** in pt-BR, th, ar and en, with 3 `[TEST]`
+feedback rows stored (mob dev deletes them):
+- **`/feedback` fully translated:** the title, subtitle, rating question,
+  labels, "(opcional)" and placeholders ("Seu nome", "Conte o que você
+  acha…" / th / ar / en), with no English left in non-en locales and no
+  horizontal overflow. **ar** renders with `dir="rtl"`.
+- **Rating buttons:** they announce as "1 de 5" … "5 de 5" (th "4 จาก 5",
+  ar "4 من 5", en "4 out of 5"). A click sets `aria-pressed="true"` on
+  that one only.
+- **A whitespace-only message** is caught by the server action and shows
+  "Escreva uma mensagem." / "กรุณาเขียนข้อความ" / "يرجى كتابة رسالة." /
+  "Please write a message.", and no row is stored.
+- **A real submit** (pt-BR, rating 4) stores a `feedback` row and shows
+  "Obrigado! Sua opinião nos ajuda a melhorar o SolvyMed para todos." This
+  covers checklist **B-16**.
+- **Pending-confirmation, code level:** an accept/decline error other than
+  `patient_archived` now shows `auth.errors.generic`, never the raw code.
+  It's hard to force live.
+
+**CI at `b6b3aa7`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `b6b3aa7`.**
+
+## PR #69 (`fix/hydration-418`, base `release`) — React #418 hydration fixes, 🟢 at `cf99265` (merges as-is per UX; the off-zone leftover goes to master), review clean
+
+This fixes the RC finding (c): React #418 on `/pt-BR/dashboard/schedule`
+on prod. The server formatted dates with its default locale, and the
+server's ICU puts thin spaces around the "–" in date ranges.
+
+**Checked on the preview, logged in, a doctor with a patient and an
+appointment, all combinations in parallel:**
+- **Browser in `America/Sao_Paulo`, pt-BR and en:** `/dashboard/schedule`
+  `?view=list`, `day`, `week` and `month`, `/my-appointments` and
+  `/book/<id>` all show **no #418**. `/auth/pending-confirmation` is clean
+  too (checked at `bc8f18c`).
+- **Browser in `Asia/Bangkok`** (the browser date one day ahead of the
+  clinic's):
+  - list, month, my-appointments and book are clean;
+  - **day and week still throw #418.**
+  - The visible header is correct in both the server HTML and after
+    hydration ("domingo, 27 de setembro de 2026" / "21 – 27 de set. de
+    2026", the clinic's date), so the mismatching text is elsewhere in the
+    grid.
+  - UX decided this merges as-is. It only affects doctors whose browser is
+    outside São Paulo; the follow-up goes to master.
+- **pt-BR dates and 24h times:** "ter., 29 de set. de 2026", "9:00", with
+  no English or AM/PM. en shows "Tue, Sep 29, 2026".
+- **The week view highlights the clinic's date (27)** with a Bangkok browser
+  too, and the Reschedule button shows on upcoming appointments.
+- **A counter-proposal:** the doctor proposes a new time (inline form →
+  Enviar) and the patient sees **"Originalmente: qua., 30 de set. de 2026 ·
+  10:00"** with Aceitar / Recusar (en: "Originally: Wed, Sep 30, 2026 · 10:00
+  AM").
+
+**CI at `cf99265`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `cf99265`.**
+
+## PR #71 (`fix/requests-panel-i18n`, base `release`, stacked on #69) — requests panel "Requested:" translated, 🟢 at `1217fb7`, review clean
+
+This fixes an RC follow-up: the doctor's booking-requests panel rendered raw
+English "Requested: {date} {time}" for a patient's reschedule request.
+Checked on the preview with a throwaway doctor and a linked patient (both
+deleted afterwards). The patient asked, through the My appointments UI, to
+reschedule to 08:00:
+- **pt-BR panel:** **"Solicitado: qui., 1 de out. · 8:00"**, with no English.
+- **en panel:** "Reschedule Requested" / "Requested: Thu, Oct 1 · 8:00 AM".
+- No React #418 or hydration warning on `/dashboard/schedule` in either
+  locale (São Paulo browser).
+
+**CI at `1217fb7`:** ✅✅✅. **Review: clean.** **Merge gate: 🟢 for `1217fb7`.**

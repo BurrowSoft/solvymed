@@ -198,7 +198,8 @@
     "missingFieldsError": "请填写所有必填字段。",
     "pastMidnightError": "此时间和时长将超过午夜。",
     "patientArchivedError": "此档案已归档。请在“患者”中恢复后再预约。",
-    "moreCount": "另外 {n} 个"
+    "moreCount": "另外 {n} 个",
+    "requestedLabel": "申请时间：{date} · {time}"
   },
   "payments": {
     "thisWeek": "本周",
@@ -479,7 +480,9 @@
     "emptySubtitle": "添加您的诊所以便患者找到您",
     "addFirst": "添加您的第一家诊所",
     "nameRequiredError": "诊所名称为必填项。",
-    "genericError": "出现问题，请重试。"
+    "genericError": "出现问题，请重试。",
+    "delete": "删除诊所",
+    "deleteConfirm": "删除“{name}”？此操作无法撤销。"
   },
   "consultType": {
     "consultation": "门诊",
@@ -683,7 +686,8 @@
     "reschedulePending": "改期等待确认",
     "rescheduleRequestedLabel": "改期请求：{date} · {time}",
     "rescheduleButton": "请求改期",
-    "closeDialog": "关闭"
+    "closeDialog": "关闭",
+    "originallyLabel": "原定：{date} · {time}"
   },
   "nav": {
     "overview": "总览",
@@ -932,5 +936,28 @@
   },
   "legal": {
     "englishOnly": "本文件仅提供英文和葡萄牙文（巴西）版本。以下为英文版本。"
+  },
+  "feedback": {
+    "title": "提交反馈",
+    "subtitle": "我们很想知道您对 SolvyMed 的看法。",
+    "ratingLabel": "您给 SolvyMed 打几分？",
+    "ratingValue": "{n} 分（满分 5 分）",
+    "optional": "（选填）",
+    "name": "姓名",
+    "namePlaceholder": "您的姓名",
+    "email": "电子邮箱",
+    "emailPlaceholder": "your@email.com",
+    "message": "留言",
+    "messagePlaceholder": "告诉我们您的想法、缺少的功能或可以改进的地方…",
+    "send": "提交反馈",
+    "sending": "正在发送…",
+    "thanksTitle": "谢谢！",
+    "thanksBody": "您的反馈帮助我们为所有人改进 SolvyMed。",
+    "backToHome": "返回首页",
+    "errors": {
+      "email_required": "请输入您的电子邮箱。",
+      "message_required": "请填写留言。",
+      "failed": "出错了，请重试。"
+    }
   }
 }

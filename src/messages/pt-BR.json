@@ -198,7 +198,8 @@
     "missingFieldsError": "Preencha todos os campos obrigatórios.",
     "pastMidnightError": "Esse horário e duração ultrapassariam a meia-noite.",
     "patientArchivedError": "Este cadastro está arquivado. Restaure-o em Pacientes para agendar uma consulta.",
-    "moreCount": "+{n} mais"
+    "moreCount": "+{n} mais",
+    "requestedLabel": "Solicitado: {date} · {time}"
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -479,7 +480,9 @@
     "emptySubtitle": "Adicione sua clínica para que os pacientes possam encontrá-lo",
     "addFirst": "Adicionar sua primeira clínica",
     "nameRequiredError": "O nome da clínica é obrigatório.",
-    "genericError": "Algo deu errado. Tente novamente."
+    "genericError": "Algo deu errado. Tente novamente.",
+    "delete": "Excluir clínica",
+    "deleteConfirm": "Excluir “{name}”? Isso não pode ser desfeito."
   },
   "consultType": {
     "consultation": "Consulta",
@@ -683,7 +686,8 @@
     "reschedulePending": "Remarcação pendente",
     "rescheduleRequestedLabel": "Reagendamento solicitado: {date} · {time}",
     "rescheduleButton": "Solicitar reagendamento",
-    "closeDialog": "Fechar"
+    "closeDialog": "Fechar",
+    "originallyLabel": "Originalmente: {date} · {time}"
   },
   "nav": {
     "overview": "Visão geral",
@@ -932,5 +936,28 @@
   },
   "legal": {
     "englishOnly": "Este documento está disponível em português (Brasil) e inglês."
+  },
+  "feedback": {
+    "title": "Envie sua opinião",
+    "subtitle": "Queremos saber o que você acha do SolvyMed.",
+    "ratingLabel": "Como você avalia o SolvyMed?",
+    "ratingValue": "{n} de 5",
+    "optional": "(opcional)",
+    "name": "Nome",
+    "namePlaceholder": "Seu nome",
+    "email": "E-mail",
+    "emailPlaceholder": "seu@email.com",
+    "message": "Mensagem",
+    "messagePlaceholder": "Conte o que você acha, o que está faltando ou o que podemos melhorar…",
+    "send": "Enviar opinião",
+    "sending": "Enviando…",
+    "thanksTitle": "Obrigado!",
+    "thanksBody": "Sua opinião nos ajuda a melhorar o SolvyMed para todos.",
+    "backToHome": "Voltar ao início",
+    "errors": {
+      "email_required": "Informe seu e-mail.",
+      "message_required": "Escreva uma mensagem.",
+      "failed": "Algo deu errado. Tente novamente."
+    }
   }
 }

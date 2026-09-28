@@ -198,7 +198,8 @@
     "slotTakenAlert": "That slot is no longer available. Please decline and let the patient choose another time.",
     "pastProposalAlert": "The proposed time has already passed. Please decline so the patient can request a new slot.",
     "patientArchivedError": "This patient is archived. Restore the patient in Patients to schedule an appointment.",
-    "moreCount": "+{n} more"
+    "moreCount": "+{n} more",
+    "requestedLabel": "Requested: {date} · {time}"
   },
   "payments": {
     "thisWeek": "This week",
@@ -479,7 +480,9 @@
     "emptySubtitle": "Add your clinic so patients can find you",
     "addFirst": "Add your first clinic",
     "nameRequiredError": "Clinic name is required.",
-    "genericError": "Something went wrong. Please try again."
+    "genericError": "Something went wrong. Please try again.",
+    "delete": "Delete clinic",
+    "deleteConfirm": "Delete “{name}”? This can't be undone."
   },
   "consultType": {
     "consultation": "Consultation",
@@ -683,7 +686,8 @@
     "reschedulePending": "Reschedule Pending",
     "rescheduleRequestedLabel": "Reschedule requested: {date} · {time}",
     "rescheduleButton": "Request reschedule",
-    "closeDialog": "Close"
+    "closeDialog": "Close",
+    "originallyLabel": "Originally: {date} · {time}"
   },
   "nav": {
     "overview": "Overview",
@@ -932,5 +936,28 @@
   },
   "legal": {
     "englishOnly": "This document is available in English and Portuguese (Brazil)."
+  },
+  "feedback": {
+    "title": "Share your feedback",
+    "subtitle": "We'd love to hear what you think about SolvyMed.",
+    "ratingLabel": "How would you rate SolvyMed?",
+    "ratingValue": "{n} out of 5",
+    "optional": "(optional)",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "message": "Message",
+    "messagePlaceholder": "Tell us what you think, what's missing, or what we could do better…",
+    "send": "Send feedback",
+    "sending": "Sending…",
+    "thanksTitle": "Thank you!",
+    "thanksBody": "Your feedback helps us improve SolvyMed for everyone.",
+    "backToHome": "Back to home",
+    "errors": {
+      "email_required": "Please enter your email.",
+      "message_required": "Please write a message.",
+      "failed": "Something went wrong. Please try again."
+    }
   }
 }

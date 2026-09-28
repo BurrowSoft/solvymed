@@ -198,7 +198,8 @@
     "missingFieldsError": "Harap isi semua kolom yang wajib diisi.",
     "pastMidnightError": "Waktu dan durasi ini akan melewati tengah malam.",
     "patientArchivedError": "Rekam medis ini diarsipkan. Pulihkan di menu Pasien untuk membuat janji temu.",
-    "moreCount": "+{n} lainnya"
+    "moreCount": "+{n} lainnya",
+    "requestedLabel": "Diminta: {date} · {time}"
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -479,7 +480,9 @@
     "emptySubtitle": "Tambahkan klinik Anda agar pasien dapat menemukan Anda",
     "addFirst": "Tambahkan klinik pertama Anda",
     "nameRequiredError": "Nama klinik wajib diisi.",
-    "genericError": "Terjadi kesalahan. Silakan coba lagi."
+    "genericError": "Terjadi kesalahan. Silakan coba lagi.",
+    "delete": "Hapus klinik",
+    "deleteConfirm": "Hapus “{name}”? Tindakan ini tidak dapat dibatalkan."
   },
   "consultType": {
     "consultation": "Konsultasi",
@@ -683,7 +686,8 @@
     "reschedulePending": "Penjadwalan Ulang Tertunda",
     "rescheduleRequestedLabel": "Permintaan penjadwalan ulang: {date} · {time}",
     "rescheduleButton": "Minta penjadwalan ulang",
-    "closeDialog": "Tutup"
+    "closeDialog": "Tutup",
+    "originallyLabel": "Semula: {date} · {time}"
   },
   "nav": {
     "overview": "Ringkasan",
@@ -932,5 +936,28 @@
   },
   "legal": {
     "englishOnly": "Dokumen ini hanya tersedia dalam bahasa Inggris dan Portugis (Brasil). Versi bahasa Inggris ditampilkan di bawah."
+  },
+  "feedback": {
+    "title": "Kirim masukan",
+    "subtitle": "Kami ingin tahu pendapat Anda tentang SolvyMed.",
+    "ratingLabel": "Berapa nilai Anda untuk SolvyMed?",
+    "ratingValue": "{n} dari 5",
+    "optional": "(opsional)",
+    "name": "Nama",
+    "namePlaceholder": "Nama Anda",
+    "email": "Email",
+    "emailPlaceholder": "anda@email.com",
+    "message": "Pesan",
+    "messagePlaceholder": "Ceritakan pendapat Anda, apa yang kurang, atau apa yang bisa kami perbaiki…",
+    "send": "Kirim masukan",
+    "sending": "Mengirim…",
+    "thanksTitle": "Terima kasih!",
+    "thanksBody": "Masukan Anda membantu kami meningkatkan SolvyMed untuk semua.",
+    "backToHome": "Kembali ke beranda",
+    "errors": {
+      "email_required": "Masukkan email Anda.",
+      "message_required": "Tulis pesan.",
+      "failed": "Terjadi kesalahan. Silakan coba lagi."
+    }
   }
 }

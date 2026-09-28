@@ -198,7 +198,8 @@
     "missingFieldsError": "Veuillez remplir tous les champs obligatoires.",
     "pastMidnightError": "Cet horaire et cette durée dépasseraient minuit.",
     "patientArchivedError": "Ce dossier est archivé. Restaurez-le dans Patients pour planifier un rendez-vous.",
-    "moreCount": "+{n} de plus"
+    "moreCount": "+{n} de plus",
+    "requestedLabel": "Demandé : {date} · {time}"
   },
   "payments": {
     "thisWeek": "Cette semaine",
@@ -479,7 +480,9 @@
     "emptySubtitle": "Ajoutez votre clinique pour que les patients puissent vous trouver",
     "addFirst": "Ajouter votre première clinique",
     "nameRequiredError": "Le nom de la clinique est obligatoire.",
-    "genericError": "Une erreur s'est produite. Réessayez."
+    "genericError": "Une erreur s'est produite. Réessayez.",
+    "delete": "Supprimer la clinique",
+    "deleteConfirm": "Supprimer « {name} » ? Cette action est irréversible."
   },
   "consultType": {
     "consultation": "Consultation",
@@ -683,7 +686,8 @@
     "reschedulePending": "Reprogrammation en attente",
     "rescheduleRequestedLabel": "Report demandé : {date} · {time}",
     "rescheduleButton": "Demander un report",
-    "closeDialog": "Fermer"
+    "closeDialog": "Fermer",
+    "originallyLabel": "Initialement : {date} · {time}"
   },
   "nav": {
     "overview": "Accueil",
@@ -932,5 +936,28 @@
   },
   "legal": {
     "englishOnly": "Ce document n'est disponible qu'en anglais et en portugais (Brésil). La version anglaise est affichée ci-dessous."
+  },
+  "feedback": {
+    "title": "Donnez votre avis",
+    "subtitle": "Nous aimerions savoir ce que vous pensez de SolvyMed.",
+    "ratingLabel": "Quelle note donneriez-vous à SolvyMed ?",
+    "ratingValue": "{n} sur 5",
+    "optional": "(facultatif)",
+    "name": "Nom",
+    "namePlaceholder": "Votre nom",
+    "email": "E-mail",
+    "emailPlaceholder": "vous@email.com",
+    "message": "Message",
+    "messagePlaceholder": "Dites-nous ce que vous en pensez, ce qui manque ou ce que nous pourrions améliorer…",
+    "send": "Envoyer",
+    "sending": "Envoi…",
+    "thanksTitle": "Merci !",
+    "thanksBody": "Votre avis nous aide à améliorer SolvyMed pour tous.",
+    "backToHome": "Retour à l'accueil",
+    "errors": {
+      "email_required": "Veuillez saisir votre e-mail.",
+      "message_required": "Veuillez écrire un message.",
+      "failed": "Une erreur s'est produite. Veuillez réessayer."
+    }
   }
 }
