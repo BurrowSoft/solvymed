@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { formatDateLabel } from "@/lib/dateLabels";
-import { calendarHeaderLabel } from "@/app/[locale]/dashboard/schedule/CalendarView";
+import { calendarHeaderLabel } from "@/app/[locale]/(site)/dashboard/schedule/CalendarView";
 
 // Sprint TH (TH-2): the Thai UI shows the Buddhist year (Gregorian + 543),
 // which the "th" locale's default calendar gives with Intl. Stored dates

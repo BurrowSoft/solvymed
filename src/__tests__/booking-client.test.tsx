@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { BookingClient } from "@/app/[locale]/book/[professionalId]/BookingClient";
+import { BookingClient } from "@/app/[locale]/(site)/book/[professionalId]/BookingClient";
 
 const mockPush = vi.fn();
 const mockBack = vi.fn();

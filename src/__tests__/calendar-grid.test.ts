@@ -1,5 +1,5 @@
 import { afterEach, describe, it, expect } from "vitest";
-import { addDaysTo, calendarHeaderLabel, getMonthGrid, getWeekDays, weekdayLabels } from "@/app/[locale]/dashboard/schedule/CalendarView";
+import { addDaysTo, calendarHeaderLabel, getMonthGrid, getWeekDays, weekdayLabels } from "@/app/[locale]/(site)/dashboard/schedule/CalendarView";
 
 describe("calendar labels follow the page's language", () => {
   it("names the weekdays, Monday first", () => {

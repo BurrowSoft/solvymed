@@ -7,11 +7,11 @@ const createClient = vi.fn();
 vi.mock("@/lib/supabase/server", () => ({ createClient: (...a: unknown[]) => createClient(...a) }));
 // The client components themselves aren't under test (and pull in
 // next-intl navigation); stand-ins let the test check what's rendered.
-vi.mock("@/app/[locale]/auth/verify/VerifyClient", () => ({ VerifyClient: function VerifyClient() { return null; } }));
-vi.mock("@/app/[locale]/auth/confirm/ConfirmClient", () => ({ default: function ConfirmClient() { return null; } }));
+vi.mock("@/app/[locale]/(site)/auth/verify/VerifyClient", () => ({ VerifyClient: function VerifyClient() { return null; } }));
+vi.mock("@/app/[locale]/(site)/auth/confirm/ConfirmClient", () => ({ default: function ConfirmClient() { return null; } }));
 
-const { default: AuthConfirmPage } = await import("@/app/[locale]/auth/confirm/page");
-const { VerifyClient } = await import("@/app/[locale]/auth/verify/VerifyClient");
+const { default: AuthConfirmPage } = await import("@/app/[locale]/(site)/auth/confirm/page");
+const { VerifyClient } = await import("@/app/[locale]/(site)/auth/verify/VerifyClient");
 
 describe("/auth/confirm with a one-time token", () => {
   it("renders the click-to-verify page with the app handoff, without verifying", async () => {
