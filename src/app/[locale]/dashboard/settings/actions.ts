@@ -41,7 +41,9 @@ export async function updateClinic(formData: FormData) {
     clinic_address: (formData.get("clinic_address") as string)?.trim() || null,
     clinic_city: (formData.get("clinic_city") as string)?.trim() || null,
     clinic_state: (formData.get("clinic_state") as string)?.trim() || null,
-    pix_key: (formData.get("pix_key") as string)?.trim() || null,
+    // Only Brazilian practices have the Pix field; a form without it (a
+    // practice in another country) leaves the stored key untouched.
+    ...(formData.has("pix_key") ? { pix_key: (formData.get("pix_key") as string)?.trim() || null } : {}),
   }).eq("id", user.id);
 
   if (error) return { error: error.message };

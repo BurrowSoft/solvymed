@@ -2,6 +2,8 @@ import { getTranslations } from "next-intl/server";
 import type { createClient } from "@/lib/supabase/server";
 import { Card, InviteCodeCard, BlockedPatientsPanel } from "./SettingsClient";
 import { LeaveClinicButton } from "./LeaveClinicButton";
+import { formatMoney } from "@/lib/money";
+import { countryProfile } from "@/lib/country";
 
 type Supabase = Awaited<ReturnType<typeof createClient>>;
 type MyClinic = {
@@ -9,6 +11,8 @@ type MyClinic = {
   professional_name: string | null;
   clinic_name: string | null;
   public_invite_code: string | null;
+  // Migration 110; absent before it, which means BR.
+  country?: string | null;
 };
 type DayHours = { enabled: boolean; start: string; end: string };
 const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
@@ -80,7 +84,7 @@ export async function SecretarySettings({ supabase, doctorId, locale }: { supaba
               <li key={p.id} className="flex justify-between py-2 text-slate-700">
                 <span className="font-medium">{p.name}</span>
                 <span className="text-slate-500">
-                  {p.duration_minutes} min{p.price != null ? ` · ${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(p.price))}` : ""}
+                  {p.duration_minutes} min{p.price != null ? ` · ${formatMoney(Number(p.price), countryProfile(clinic?.country).currency)}` : ""}
                 </span>
               </li>
             ))}

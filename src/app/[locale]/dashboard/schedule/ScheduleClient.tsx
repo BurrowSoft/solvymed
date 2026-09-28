@@ -8,7 +8,8 @@ import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTim
 import { generatePixString, pixQrDataUrl } from "@/lib/pix";
 import { toLocalDateString } from "@/lib/slots";
 import { dropQueryParam } from "@/lib/dropQueryParam";
-import { formatBRL } from "@/lib/money";
+import { formatMoney } from "@/lib/money";
+import type { Currency } from "@/lib/country";
 import Link from "next/link";
 
 type Patient = { id: string; full_name: string };
@@ -229,8 +230,10 @@ export function DeleteAppointmentButton({ id }: { id: string }) {
   );
 }
 
-export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen = false }: {
+export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen = false, currency = "BRL" }: {
   defaultDate: string;
+  // The practice's currency (its country), for procedure prices.
+  currency?: Currency;
   procedures: Procedure[];
   // The button's text; the dialog title stays "New appointment".
   label?: string;
@@ -347,7 +350,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
               <Select name="consultation_type" value={selectedProcName} onChange={handleProcChange} required>
                 {procedures.map(p => (
                   <option key={p.id} value={p.name}>
-                    {p.name}{p.price ? ` · ${formatBRL(p.price)}` : ""}
+                    {p.name}{p.price ? ` · ${formatMoney(p.price, currency)}` : ""}
                   </option>
                 ))}
               </Select>

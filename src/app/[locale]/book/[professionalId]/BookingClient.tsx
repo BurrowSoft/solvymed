@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { computeSlots, toMinutes, filterPastSlots, toLocalDateString } from "@/lib/slots";
-import { formatBRL } from "@/lib/money";
+import { formatMoney } from "@/lib/money";
+import type { Currency } from "@/lib/country";
 import { formatTimeLabel } from "@/lib/dateLabels";
 import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
@@ -120,6 +121,7 @@ export function BookingClient({
   patientEmail,
   locale,
   initialManualProfile,
+  currency = "BRL",
 }: {
   professionalId: string;
   professionalName: string;
@@ -129,6 +131,8 @@ export function BookingClient({
   patientEmail: string;
   locale: string;
   initialManualProfile?: { full_name: string | null; phone: string | null; birth_date: string | null; cpf: string | null } | null;
+  // The practice's currency (its country), for procedure prices.
+  currency?: Currency;
 }) {
   const router = useRouter();
   const t = useTranslations("book");
@@ -442,7 +446,7 @@ export function BookingClient({
                       >
                         <p className={`font-semibold text-sm ${active ? "text-teal-800" : "text-slate-800"}`}>{proc.name}</p>
                         <p className={`text-xs mt-0.5 ${active ? "text-teal-600" : "text-slate-400"}`}>
-                          {proc.durationMinutes} min{proc.price ? ` · ${formatBRL(proc.price)}` : ""}
+                          {proc.durationMinutes} min{proc.price ? ` · ${formatMoney(proc.price, currency)}` : ""}
                         </p>
                       </button>
                     );

@@ -7,7 +7,9 @@ import { getTentativeBookings } from "./booking-actions";
 import { CalendarView, type CalendarAppt } from "./CalendarView";
 import { ShareInviteLinkButton } from "@/components/ShareInviteLinkButton";
 import { clinicDate, getClinicTimeZone } from "@/lib/clinicTime";
-import { formatBRL } from "@/lib/money";
+import { formatMoney } from "@/lib/money";
+import { countryProfile } from "@/lib/country";
+import { getPracticeCountry } from "@/lib/practiceCountry";
 
 function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
 function addDaysTo(dateStr: string, n: number) {
@@ -64,6 +66,10 @@ export default async function SchedulePage({
     ? (userRoleData?.invited_by_professional_id as string | null) ?? user.id
     : user.id;
 
+  // Amounts are in the practice's currency (its country), not the UI's.
+  const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
+  const { currency } = countryProfile(practiceCountry);
+
   // The practice's today, not the server's (UTC).
   const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
   const today = clinicDate(new Date(), timeZone);
@@ -112,7 +118,9 @@ export default async function SchedulePage({
   const pixSource = (isSecretary
     ? (Array.isArray(profResult.data) ? profResult.data[0] : null)
     : profResult.data) as PixSource;
-  const pixKey = pixSource?.pix_key ?? null;
+  // Pix is Brazil's payment QR: only for a Brazilian practice (TH rule 1:
+  // the practice country, never the language).
+  const pixKey = countryProfile(practiceCountry).paymentQr === "pix" ? pixSource?.pix_key ?? null : null;
   const clinicName = pixSource?.clinic_name ?? "";
   const clinicCity = pixSource?.clinic_city ?? "";
   // The doctor's public invite code, for "Share invite link" (not for a secretary).
@@ -136,7 +144,7 @@ export default async function SchedulePage({
         <div className="flex flex-wrap items-center gap-2">
           <ViewToggle currentView={view} currentDate={currentDate} />
           <BlockTimeButton defaultDate={currentDate} />
-          <NewAppointmentButton defaultDate={currentDate} procedures={procedures} autoOpen={newParam === "1"} />
+          <NewAppointmentButton defaultDate={currentDate} currency={currency} procedures={procedures} autoOpen={newParam === "1"} />
         </div>
       </div>
 
@@ -159,7 +167,7 @@ export default async function SchedulePage({
               <p className="font-semibold text-slate-700">{tFirstRun("scheduleEmptyTitle")}</p>
               <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">{tFirstRun("scheduleEmptyBody")}</p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                <NewAppointmentButton defaultDate={currentDate} procedures={procedures} label={tFirstRun("bookAppointment")} />
+                <NewAppointmentButton defaultDate={currentDate} currency={currency} procedures={procedures} label={tFirstRun("bookAppointment")} />
                 {!isSecretary && <ShareInviteLinkButton code={inviteCode} />}
               </div>
             </div>
@@ -218,7 +226,7 @@ export default async function SchedulePage({
                       <div className="mt-2 flex items-center gap-3">
                         <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
                           {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}
-                          {appt.payment_amount ? ` · ${formatBRL(appt.payment_amount)}` : ""}
+                          {appt.payment_amount ? ` · ${formatMoney(appt.payment_amount, currency)}` : ""}
                         </span>
                       </div>
                     )}
@@ -237,6 +245,7 @@ export default async function SchedulePage({
           currentDate={currentDate}
           today={today}
           view={view}
+          currency={currency}
         />
       )}
     </div>
