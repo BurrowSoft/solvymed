@@ -66,10 +66,18 @@ export async function middleware(req: NextRequest) {
   // A language that isn't offered yet (Thai before its release): /th/...
   // redirects to the same page without the prefix, keeping the query (an
   // auth link sent with locale=th still works, in English).
+  // A NEXT_LOCALE cookie can hold such a language (picked in an older
+  // switcher, or auto-detected before it was hidden). next-intl would keep
+  // sending that visitor to /th and the redirect here back, forever, so the
+  // cookie counts as missing and is dropped on the redirect.
+  const cookieLocale = req.cookies.get("NEXT_LOCALE")?.value;
+  const hiddenCookie = !!cookieLocale && !isPublicLocale(cookieLocale);
   if (hasLocalePrefix && !isPublicLocale(firstSegment)) {
     const url = req.nextUrl.clone();
     url.pathname = pathname.slice(firstSegment.length + 1) || "/";
-    return NextResponse.redirect(url, { status: 307 });
+    const res = withAuthCookies(NextResponse.redirect(url, { status: 307 }));
+    if (hiddenCookie) res.cookies.delete("NEXT_LOCALE");
+    return res;
   }
   // Invite and join URLs carry personal codes (and, in old secretary links,
   // an email): never index them, whatever the page's own metadata says.
@@ -97,7 +105,8 @@ export async function middleware(req: NextRequest) {
 
   // First visit to an unprefixed URL: the browser's language wins when we
   // support it; the country is only the fallback (lib/localeDetect).
-  if (!hasLocalePrefix && !isApiOrAsset && !req.cookies.has("NEXT_LOCALE") && !isBot) {
+  // A cookie holding a hidden language counts as no cookie (see above).
+  if (!hasLocalePrefix && !isApiOrAsset && (!req.cookies.has("NEXT_LOCALE") || hiddenCookie) && !isBot) {
     const locale = pickLocale({
       acceptLanguage: req.headers.get("accept-language"),
       country: req.headers.get("x-vercel-ip-country") ?? req.headers.get("cf-ipcountry"),
@@ -119,10 +128,14 @@ export async function middleware(req: NextRequest) {
     // hidden language (Thai before its release), so it sees our choice.
     // The rebuilt request keeps the URL and headers only (no method/body):
     // fine here, since this branch only handles first-visit page loads
-    // (GETs without a locale cookie); API and asset paths never reach it.
+    // (GETs without a usable locale cookie); API and asset paths never
+    // reach it. A hidden-language cookie is removed from the rebuilt
+    // request too, or next-intl would still redirect to it.
     const headers = new Headers(req.headers);
     headers.set("accept-language", routing.defaultLocale);
-    const res = finalize(intlMiddleware(new NextRequest(req.url, { headers })));
+    const pinned = new NextRequest(req.url, { headers });
+    pinned.cookies.delete("NEXT_LOCALE");
+    const res = finalize(intlMiddleware(pinned));
     res.cookies.set("NEXT_LOCALE", routing.defaultLocale, { maxAge: AUTO_LOCALE_MAX_AGE, path: "/", sameSite: "lax" });
     return res;
   }

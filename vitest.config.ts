@@ -15,6 +15,10 @@ export default defineConfig({
     // e2e/ holds Playwright specs (run with `npx playwright test`); vitest
     // must not collect them.
     include: ['src/**/*.test.{ts,tsx}'],
+    // next-intl's middleware imports "next/server" without an extension,
+    // which Node's ESM loader can't resolve; let Vite resolve it (the
+    // middleware tests).
+    server: { deps: { inline: ['next-intl'] } },
   },
   resolve: {
     alias: {
