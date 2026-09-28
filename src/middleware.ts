@@ -1,6 +1,7 @@
 import createMiddleware from "next-intl/middleware";
+import { publicLocales } from "@/lib/publicLocales";
 import { createServerClient } from "@supabase/ssr";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 import { canonicalLocalePath, pickLocale } from "./lib/localeDetect";
 
@@ -91,7 +92,9 @@ export async function middleware(req: NextRequest) {
     const locale = pickLocale({
       acceptLanguage: req.headers.get("accept-language"),
       country: req.headers.get("x-vercel-ip-country") ?? req.headers.get("cf-ipcountry"),
-      supported: routing.locales,
+      // Only offered languages: a Thai browser or TH visitor isn't sent
+      // to /th before the Thai release.
+      supported: publicLocales(),
       defaultLocale: routing.defaultLocale,
     });
     if (locale !== routing.defaultLocale) {
@@ -102,8 +105,12 @@ export async function middleware(req: NextRequest) {
       return finalize(res);
     }
     // English: no redirect (en is unprefixed), but pin it so next-intl's
-    // own negotiation agrees on the next request.
-    const res = finalize(intlMiddleware(req));
+    // own negotiation agrees on the next request. next-intl negotiates
+    // Accept-Language itself on this request, which could still pick a
+    // hidden language (Thai before its release), so it sees our choice.
+    const headers = new Headers(req.headers);
+    headers.set("accept-language", routing.defaultLocale);
+    const res = finalize(intlMiddleware(new NextRequest(req.url, { headers })));
     res.cookies.set("NEXT_LOCALE", routing.defaultLocale, { maxAge: AUTO_LOCALE_MAX_AGE, path: "/", sameSite: "lax" });
     return res;
   }

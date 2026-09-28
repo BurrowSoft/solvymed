@@ -13,6 +13,7 @@ import { ConsentBanner } from "@/components/ConsentBanner";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+import { isPublicLocale, publicLocales } from "@/lib/publicLocales";
 import "../globals.css";
 
 const inter   = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
@@ -47,8 +48,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const canonical = locale === "en" ? `${BASE}/` : `${BASE}/${locale}/`;
+  // Only offered languages (Thai stays out until the Thai release).
   const languages = Object.fromEntries(
-    routing.locales.map((l) => [l, l === "en" ? `${BASE}/` : `${BASE}/${l}/`])
+    publicLocales().map((l) => [l, l === "en" ? `${BASE}/` : `${BASE}/${l}/`])
   );
   languages["x-default"] = `${BASE}/`;
 
@@ -83,7 +85,8 @@ export async function generateMetadata({
       title: "Solvymed — Medical Practice Management",
       description: "The all-in-one practice management app for healthcare professionals.",
     },
-    robots: { index: true, follow: true },
+    // A hidden language (Thai before its release) is reachable but not indexed.
+    robots: isPublicLocale(locale) ? { index: true, follow: true } : { index: false, follow: false },
     icons: {
       icon: "/solvymed_logo.png",
       apple: "/solvymed_logo.png",
