@@ -20,7 +20,7 @@ export type PatientMatch = { id: string; full_name: string; phone: string | null
 
 export type CreatePatientResult =
   | { success: true }
-  | { error: string; code: "generic" | "name_required" | "invalid_th_id" | "id_kind_mismatch" | "birth_year_buddhist" }
+  | { error: string; code: "generic" | "name_required" | "invalid_th_id" | "id_kind_mismatch" | "birth_year_buddhist" | "invalid_birth_date" }
   // Possible duplicates found before saving. The user chooses "Open
   // existing" or "Create anyway" (resubmits with force=1).
   | { error: string; code: "possible_match"; matches: PatientMatch[] }
@@ -126,6 +126,8 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
       }
       return { error: "Already registered", code: "already_registered", existing };
     }
+    // A birth date outside 1900..today (the database refuses it, 116).
+    if (error.message?.includes("invalid_birth_date")) return { error: "Invalid date of birth", code: "invalid_birth_date" };
     return { error: error.message, code: "generic" };
   }
   revalidatePath("/dashboard/patients");

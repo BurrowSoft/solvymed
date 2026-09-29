@@ -1181,6 +1181,7 @@
     "otherTime": "Giờ khác"
   },
   "dateInput": {
-    "buddhistYear": "Có vẻ đây là năm theo Phật lịch. Vui lòng dùng năm dương lịch (ví dụ: 1996)."
+    "buddhistYear": "Có vẻ đây là năm theo Phật lịch. Vui lòng dùng năm dương lịch (ví dụ: 1996).",
+    "invalidBirthDate": "Ngày sinh không hợp lệ: hãy dùng ngày từ năm 1900 đến hôm nay."
   }
 }
