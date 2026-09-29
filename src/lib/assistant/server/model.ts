@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { rankHelp } from "@/lib/help";
 
 // The model behind /api/assistant, injected so the route is testable and
 // runs without a key (docs/assistant-api.md §1). The real client is the
@@ -57,7 +58,25 @@ export function anthropicModelClient(apiKey: string): ModelClient {
 // adds ANTHROPIC_API_KEY to Vercel), else none (the route answers 503).
 export function modelFromEnv(): ModelClient | null {
   const key = process.env.ANTHROPIC_API_KEY;
-  return key ? anthropicModelClient(key) : null;
+  if (key) return anthropicModelClient(key);
+  // For testing without a key (a local run or a Preview): SOLVYAI_FAKE_MODEL=1
+  // answers from the best-matching Help article. Never on Production.
+  if (process.env.SOLVYAI_FAKE_MODEL === "1" && process.env.VERCEL_ENV !== "production") return helpEchoModel();
+  return null;
+}
+
+// The testing stand-in: the best Help article's first lines + its marker,
+// or the off-topic line. No network, no cost.
+function helpEchoModel(): ModelClient {
+  return fakeModelClient((req) => {
+    const last = req.messages[req.messages.length - 1];
+    const q = typeof last?.content === "string" ? last.content : "";
+    const lang = /Brazilian Portuguese/.test(req.system) ? "pt" : "en";
+    const [top] = rankHelp(q, lang, false, 1);
+    if (!top) return lang === "pt" ? "Só posso ajudar com o SolvyMed." : "I can only help with SolvyMed.";
+    const first = top.body[lang].map((b) => (b.type === "ol" ? b.items.map((s, i) => `${i + 1}. ${s}`).join("\n") : b.text)).slice(0, 2).join("\n");
+    return `(${lang === "pt" ? "resposta de teste" : "test answer"}) ${top.title[lang]}\n${first}\n[[open:${top.id}]]`;
+  });
 }
 
 // For tests: answers with `reply(request)`, streamed in pieces, then usage.

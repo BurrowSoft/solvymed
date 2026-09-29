@@ -46,6 +46,8 @@ export async function POST(request: NextRequest) {
     },
     async cancel() {
       await it.return?.();
+      // A cancel before the first pull never started the handler: settle here.
+      await outcome.settle?.();
     },
   });
   return new Response(stream, {

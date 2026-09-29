@@ -22,7 +22,10 @@ type Rpc = { rpc(fn: string, args?: Record<string, unknown>): PromiseLike<{ data
 export type Deps = { enabled: boolean; userId: string | null; db: Rpc; service: Rpc; model: ModelClient | null; client: Client };
 export type Outcome =
   | { status: number; json: Record<string, unknown> }
-  | { status: 200; stream: AsyncIterable<AnswerChunk> };
+  // settle(): refunds the counted message unless the answer already settled
+  // it; the route calls it on cancel, which may come before the stream
+  // started (a9).
+  | { status: 200; stream: AsyncIterable<AnswerChunk>; settle?: () => Promise<void> };
 
 const SCREENS: AssistantScreen[] = ["home", "schedule", "patients", "payments", "settings", "other"];
 const KEEP_MESSAGES = 6;
@@ -177,13 +180,13 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
   // Every counted message ends settled exactly once: its usage recorded,
   // or refunded (a model failure, no answer, or the client going away
   // mid-answer: the route cancels the stream and this finally runs; a9).
+  let settled = false;
+  const refund = async () => {
+    if (settled) return;
+    settled = true;
+    await deps.service.rpc("assistant_release_message", { p_professional_id: userId });
+  };
   async function* stream(): AsyncIterable<AnswerChunk> {
-    let settled = false;
-    const refund = async () => {
-      if (settled) return;
-      settled = true;
-      await deps.service.rpc("assistant_release_message", { p_professional_id: userId });
-    };
     try {
       yield { kind: "meta", mode };
       const seen: string[] = [];
@@ -234,5 +237,5 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       await refund();
     }
   }
-  return { status: 200, stream: stream() };
+  return { status: 200, stream: stream(), settle: refund };
 }

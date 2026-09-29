@@ -171,6 +171,34 @@ describe("/api/assistant: a help answer", () => {
     expect(t.service.calls).toEqual([{ fn: "assistant_release_message", args: { p_professional_id: "doc-1" } }]);
   });
 
+  it("a cancel before the stream even started still refunds (settle), once", async () => {
+    const t = deps();
+    const out = await handleAssistant(ask("oi"), t.d);
+    if (!("stream" in out)) throw new Error("no stream");
+    await out.settle?.();
+    await out.settle?.();
+    expect(t.service.calls).toEqual([{ fn: "assistant_release_message", args: { p_professional_id: "doc-1" } }]);
+  });
+
+  it("the testing model (SOLVYAI_FAKE_MODEL=1) answers from Help, and never on Production", async () => {
+    const { modelFromEnv } = await import("@/lib/assistant/server/model");
+    const env = { ...process.env };
+    delete process.env.ANTHROPIC_API_KEY;
+    process.env.SOLVYAI_FAKE_MODEL = "1";
+    process.env.VERCEL_ENV = "production";
+    expect(modelFromEnv()).toBeNull();
+    process.env.VERCEL_ENV = "preview";
+    const model = modelFromEnv();
+    expect(model).not.toBeNull();
+    const t = deps({ model });
+    const out = await handleAssistant(ask("Como bloquear horário na agenda?"), t.d);
+    if (!("stream" in out)) throw new Error("no stream");
+    const chunks = await collect(out.stream);
+    expect(chunks.filter((c) => c.kind === "delta").map((c) => (c.kind === "delta" ? c.text : "")).join("")).toContain("resposta de teste");
+    expect(chunks.some((c) => c.kind === "block" && c.block.type === "open")).toBe(true);
+    process.env = env;
+  });
+
   it("a finished answer is settled once (recorded), never refunded too", async () => {
     const t = deps();
     const out = await handleAssistant(ask("oi"), t.d);
