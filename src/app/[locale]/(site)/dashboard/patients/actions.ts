@@ -11,6 +11,11 @@ import { routing } from "@/i18n/routing";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { formIdKindMatches, patientIdError, patientIdKind, readPatientIds, sameIdentifier, similarPatientArgs } from "@/lib/patientIds";
+import { patientSearchFilter } from "@/lib/patientSearch";
+import { mergeSupported } from "@/lib/mergeProbe";
+import { MERGE_COLUMNS, MERGE_ERRORS, MERGE_FIELD_KEYS, type MergeErrorCode, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
+
+const UUIDISH_MERGE = /^[0-9a-f-]{8,64}$/i;
 
 // archived_at is set for an archived match, so the warning can offer
 // Restore instead of creating a second record for the same person.
@@ -519,4 +524,72 @@ export async function addPrescriptionCorrection(prescriptionId: string, patientI
   if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
+}
+
+// ── Merge duplicate patients (migration 133; the app's lib/patient-merge.ts) ──
+
+// Mesclar shows only once the database has merge_patients (lib/mergeProbe).
+export async function mergeAvailable(): Promise<boolean> {
+  return mergeSupported(await createClient());
+}
+
+// The other records the doctor may pick (archived ones too), by name or ID.
+export async function searchMergeCandidates(patientId: string, q: string): Promise<{ id: string; full_name: string; birth_date: string | null; archived: boolean }[]> {
+  if (!UUIDISH_MERGE.test(patientId)) return [];
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || (await isProfessionalRole(supabase, user.id)) !== true) return [];
+  // The practice country picks which ID the search also matches (never
+  // assumed: unknown searches by name and passport only).
+  const lookup = await lookupPracticeCountry(supabase, user.id, user.id);
+  const kind = patientIdKind(lookup.ok ? lookup.country : "ZZ");
+  const filter = patientSearchFilter(q, kind);
+  let query = supabase.from("patients").select("id, full_name, birth_date, archived_at")
+    .eq("professional_id", user.id).neq("id", patientId).order("full_name").limit(20);
+  if (filter) query = query.or(filter);
+  const { data } = await query;
+  return ((data ?? []) as { id: string; full_name: string; birth_date: string | null; archived_at: string | null }[])
+    .map((p) => ({ id: p.id, full_name: p.full_name, birth_date: p.birth_date, archived: !!p.archived_at }));
+}
+
+// Both records (the compared fields only) and what each one holds.
+export async function loadMergeComparison(a: string, b: string): Promise<{ rows: MergeRow[]; preview: Record<string, MergePreviewSide> } | null> {
+  if (!UUIDISH_MERGE.test(a) || !UUIDISH_MERGE.test(b) || a === b) return null;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || (await isProfessionalRole(supabase, user.id)) !== true) return null;
+  const [{ data: rows, error }, { data: prev, error: prevError }] = await Promise.all([
+    supabase.from("patients").select(MERGE_COLUMNS).eq("professional_id", user.id).in("id", [a, b]),
+    supabase.rpc("merge_patients_preview", { p_a: a, p_b: b }),
+  ]);
+  if (error || prevError || (rows ?? []).length !== 2) return null;
+  const preview: Record<string, MergePreviewSide> = {};
+  for (const r of (prev ?? []) as Record<string, unknown>[]) {
+    preview[String(r.patient_id)] = {
+      appointments: Number(r.appointments ?? 0), records: Number(r.records ?? 0), prescriptions: Number(r.prescriptions ?? 0),
+      files: Number(r.files ?? 0), hasAppAccount: !!r.has_app_account,
+    };
+  }
+  return { rows: rows as unknown as MergeRow[], preview };
+}
+
+// merge_patients: the kept record gets everything; choices only name fields
+// taken from the removed one. The client's choices are re-validated.
+export async function mergePatientsAction(keptId: string, mergedId: string, choices: Record<string, string>, appAccountConfirmed: boolean): Promise<{ ok: true; keptId: string } | { ok: false; code: MergeErrorCode }> {
+  if (!UUIDISH_MERGE.test(keptId) || !UUIDISH_MERGE.test(mergedId) || keptId === mergedId) return { ok: false, code: "invalid" };
+  const clean: Record<string, "merged"> = {};
+  for (const [k, v] of Object.entries(choices ?? {})) {
+    if (!MERGE_FIELD_KEYS.includes(k) || v !== "merged") return { ok: false, code: "invalid" };
+    clean[k] = "merged";
+  }
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false, code: "not_allowed" };
+  const { data, error } = await supabase.rpc("merge_patients", {
+    p_kept_id: keptId, p_merged_id: mergedId, p_choices: clean, p_app_account_confirmed: appAccountConfirmed === true,
+  });
+  if (error) return { ok: false, code: MERGE_ERRORS.find((c) => (error.message ?? "").includes(c)) ?? "generic" };
+  const r = (data ?? {}) as { kept_id?: string };
+  revalidatePath("/dashboard/patients");
+  return { ok: true, keptId: r.kept_id ?? keptId };
 }

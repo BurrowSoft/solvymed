@@ -301,6 +301,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
+      text: "On the website: open the patient, Info tab → \"Mesclar com outro paciente…\" / \"Merge with another patient…\" (doctor only): the same flow (only the differing fields, \"Manter este cadastro\" / \"Keep this record\", \"Mesclar\" / \"Merge\", a second \"São a mesma pessoa\" / \"Same person\" when an app account is involved). SolvyAI never merges; send the doctor there.",
+      pending: ["migration-133"],
+    },
+    help: "P12",
+  },
+  {
+    rule: {
       text: "Importing patients from another system (website only, doctor: Pacientes → \"Importar pacientes\" / \"Import patients\"): a CSV or Excel file (iClinic and Prontuário Verde recognised, or our template); columns are mapped, the sheet is checked (new / already exist / with errors, with a downloadable error list) and nothing is saved until \"Importar\"; \"Desfazer importação\" works for 24 hours on the new patients not yet edited or used. SolvyAI never imports; send the doctor there.",
       pending: ["patient-import-live"],
     },

@@ -5,7 +5,8 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { PatientTabs, ArchivedBanner, type MedRecord, type Rx } from "./PatientDetailClient";
-import { getArchivePreview } from "../actions";
+import { getArchivePreview, mergeAvailable } from "../actions";
+import { MergedNotice } from "./MergeNotice";
 import { logPatientOpen, readAccessLog } from "@/lib/accessLog";
 import { getClinicTimeZone } from "@/lib/clinicTime";
 
@@ -132,6 +133,7 @@ export default async function PatientDetailPage({
 
       {/* Tabs */}
       <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-6">
+        <MergedNotice />
         <PatientTabs
           patient={patient}
           records={records}
@@ -142,6 +144,7 @@ export default async function PatientDetailPage({
           isArchived={isArchived}
           currentUserId={user.id}
           idKind={patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId))}
+          canMerge={!isSecretary && (await mergeAvailable())}
           canDelete={preview?.hasClinicalHistory === false && preview.hasAppointments === false}
           accessLog={accessLog}
         />

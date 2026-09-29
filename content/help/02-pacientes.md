@@ -142,23 +142,25 @@ Only you (the doctor) can see imported data; secretaries and the patient can't. 
 ---
 ## P12. Mesclar pacientes duplicados / Merge duplicate patients
 **pt-BR**
-1. Em **Pacientes**, toque no menu (⋯) do paciente e em **Mesclar com outro paciente…** (só o médico).
-2. Busque o outro cadastro (os arquivados também aparecem).
-3. Aparecem só os campos diferentes: toque no valor que quer manter. Em **Manter este cadastro**, escolha qual cadastro fica (vem marcado o que usa o app).
-4. Confirme. Se um dos cadastros usa o app, confirme de novo em **São a mesma pessoa**.
+Quando a mesma pessoa tem dois cadastros, você pode mesclá-los: tudo passa para o cadastro que fica.
+{pending:merge-patients-live} 1. Em **Pacientes**, toque no menu (⋯) do paciente e em **Mesclar com outro paciente…** (só o médico).
+{pending:merge-patients-live} 2. Busque o outro cadastro (os arquivados também aparecem).
+{pending:merge-patients-live} 3. Aparecem só os campos diferentes: toque no valor que quer manter. Em **Manter este cadastro**, escolha qual cadastro fica (vem marcado o que usa o app).
+{pending:merge-patients-live} 4. Confirme. Se um dos cadastros usa o app, confirme de novo em **São a mesma pessoa**.
 Consultas, prontuários, receitas e arquivos passam para o cadastro que fica (os arquivos podem levar alguns segundos). A mesclagem não pode ser desfeita. A aba **Acessos** registra "Mesclou com «nome»".
 Se um dos cadastros estava com o agendamento bloqueado, o que fica continua bloqueado. Um cadastro importado como falecido precisa ser restaurado antes de mesclar. O código de convite do cadastro removido deixa de valer. Para auditoria, uma cópia do cadastro removido é guardada enquanto a clínica existir.
 **en**
-1. In **Patients**, tap the patient's menu (⋯) and **Merge with another patient…** (doctor only).
-2. Search for the other record (archived ones are listed too).
-3. Only the fields that differ are shown: tap the value to keep. Under **Keep this record**, choose which record stays (the one that uses the app is preselected).
-4. Confirm. If either record uses the app, confirm again with **Same person**.
+When the same person has two records, you can merge them: everything moves to the record that stays.
+{pending:merge-patients-live} 1. In **Patients**, tap the patient's menu (⋯) and **Merge with another patient…** (doctor only).
+{pending:merge-patients-live} 2. Search for the other record (archived ones are listed too).
+{pending:merge-patients-live} 3. Only the fields that differ are shown: tap the value to keep. Under **Keep this record**, choose which record stays (the one that uses the app is preselected).
+{pending:merge-patients-live} 4. Confirm. If either record uses the app, confirm again with **Same person**.
 Appointments, records, prescriptions and files move to the record that stays (files can take a few seconds). A merge can't be undone. The **Access** tab records "Merged with “name”".
 If either record had booking blocked, the one that stays remains blocked. A record imported as deceased must be restored before merging. The removed record's invite code stops working. For auditing, a copy of the removed record is kept while the practice exists.
-**No site:** Ainda não disponível no site; use o app.
-**On the website:** Not available on the website yet; use the app.
+**No site:** Abra o paciente e, na aba **Informações**, clique em **Mesclar com outro paciente…** (só o médico). Busque o outro cadastro (os arquivados também aparecem), escolha em **Manter este cadastro** qual fica, marque o valor que quer manter em cada campo diferente e clique em **Mesclar**; se um dos cadastros usa o app, confirme em **São a mesma pessoa**.
+**On the website:** Open the patient and, on the **Info** tab, click **Merge with another patient…** (doctor only). Search for the other record (archived ones are listed too), choose under **Keep this record** which one stays, mark the value to keep in each field that differs and click **Merge**; if either record uses the app, confirm with **Same person**.
 `open:patients`
-`requires:merge-patients-live`
+`requires:migration-133`
 
 ---
 ## P13. Importar pacientes de outro sistema / Import patients from another system

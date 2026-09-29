@@ -62,5 +62,9 @@
   "notice-outbox-live": {
     "met": false,
     "what": "The patient notice outbox is about to go live: migration 135 (enqueue_patient_notice / cancel_patient_notice, the ~1-minute hold, the 30-day delivery record with its purge) is applied on production. Flip this and deploy BEFORE the sender is switched on (the function's Vault secret set LAST, per 38's runbook), so privacy §6e is published before any notice waits or is recorded."
+  },
+  "migration-133": {
+    "met": false,
+    "what": "Migration 133 (merge_patients / merge_patients_preview) is applied on production: the website's \"Mesclar com outro paciente…\" appears (its own probe) and Help P12 shows with the website's steps; the app's steps also wait on merge-patients-live."
   }
 }
