@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPrescription, deletePrescription, updatePrescription, addPrescriptionCorrection, updatePatient, deletePatient, toggleBookingBlock, generatePatientInviteCode, getArchivePreview, archivePatient, restorePatient, loadAccessLog } from "../actions";
 import { archivedLabel } from "../PatientsClient";
-import { fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
+import { accessKindLabelKey, fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
 import { dateLocale, formatDateLabel, formatShortDate } from "@/lib/dateLabels";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
@@ -195,7 +195,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
       const name = fileNameFromRef(r.objectRef);
       return name ? `${t("accessKindFile")} · ${name}` : t("accessKindFile");
     }
-    return t("accessKindPatient");
+    return t(accessKindLabelKey(r.kind));
   };
 
   return (

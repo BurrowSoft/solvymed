@@ -277,6 +277,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     help: "C9",
   },
   {
+    rule: {
+      text: "Imported data (\"Dados importados\" / \"Imported data\"): a patient brought from another system may have extra spreadsheet columns kept as imported data. Only the doctor sees them (in the app: open the patient → Dados importados, with \"Importado de … em …\"); each opening is logged in the patient's Access tab (\"Abriu os dados importados\" / \"Opened the imported data\"). SolvyAI never reads them; send the doctor there.",
+      pending: ["import-extras-live"],
+    },
+    help: "P11",
+  },
+  {
     rule: { text: "\"Mostrar botão do assistente\" / \"Show the assistant button\" (Settings → SolvyAI; per phone in the app, per browser on the website) hides or shows the ✦ button.", pending: ["mobile#99", "solvyai-live"] },
     help: "C9",
   },

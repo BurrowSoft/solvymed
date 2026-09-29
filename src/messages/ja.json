@@ -445,6 +445,8 @@
     "accessKindExam": "検査",
     "accessKindPrescription": "処方箋",
     "accessKindFile": "ファイル",
+    "accessKindExport": "患者リストでエクスポート (CSV)",
+    "accessKindImported": "インポートしたデータを開いた",
     "accessColWhen": "日時",
     "accessColWho": "誰が",
     "accessColWhat": "内容"
