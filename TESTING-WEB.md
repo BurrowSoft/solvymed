@@ -9172,3 +9172,21 @@ a whole text block with no deltas, rendered empty, so only "Não foi
 possível salvar." showed.
 
 **CI at `18b6c32`:** ✅. **Review: clean (9a).** **Merge gate: 🟢 for `18b6c32`.** This docs commit sits on top of a master sync (12 behind; clean).
+
+## #166 The recibo's back link says "Voltar aos pagamentos" (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `bbbc0c4`, on its Vercel Preview (Playwright).
+- **Accounts:** throwaway BR and TH doctors, each with a paid appointment.
+- **Regression check:** P8, on the kept #150 fixture.
+
+| Page | pt-BR | en | th |
+|---|---|---|---|
+| BR recibo (the document shows) | ✅ "← Voltar aos pagamentos" → /pt-BR/dashboard/payments | ✅ "← Back to payments" → /dashboard/payments | ✅ "← กลับไปที่การชำระเงิน" → /th/dashboard/payments |
+| TH practice recibo URL (hint, no document) | ✅ the same label → Pagamentos | ✅ | ✅ |
+| P8 history print (regression) | ✅ still "← Voltar ao paciente" → the patient's page | | |
+
+**Not run live:** the recibo's country-error page. It passes the same
+`backToPayments` label per the diff; the injection runs are in #153 / #162.
+
+**Master sync:** master merged in under this docs commit, cleanly.
+**Review: clean (9a).** **Merge gate: 🟢 for `bbbc0c4`.**
