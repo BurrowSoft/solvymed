@@ -38,8 +38,8 @@ Se alguma das datas tiver conflito, nenhuma é salva, e o app mostra qual data c
 2. Turn on **Repeat** and choose weekly, every two weeks or monthly, and how many times.
 3. Tap **Save**.
 If any date conflicts, none are saved, and the app shows which date conflicts.
-**No site:** Ainda não disponível no site; use o app.
-**On the website:** Not available on the website yet; use the app.
+**No site:** Em **Nova Consulta**, escolha **Repetir** (semanal, a cada 2 semanas ou mensal) e **Quantas consultas** (de 2 a 52), e clique em **Salvar ×N**. Todas as datas são verificadas: se alguma conflitar com outra consulta, nenhuma é salva e o site mostra qual data; horário bloqueado ou fora do atendimento é perguntado uma vez, com a data.
+**On the website:** In **New Appointment**, choose **Repeat** (weekly, every 2 weeks or monthly) and **Number of appointments** (2 to 52), and click **Save ×N**. Every date is checked: if any conflicts with another appointment, none is saved and the website shows which date; blocked time or outside the working hours is asked once, with the date.
 `open:new-appointment`
 
 ---
