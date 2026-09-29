@@ -77,6 +77,7 @@ describe("helpers", () => {
     expect(accessKindLabelKey("export")).toBe("accessKindExport");
     expect(accessKindLabelKey("imported")).toBe("accessKindImported");
     expect(accessKindLabelKey("patient")).toBe("accessKindPatient");
+    expect(accessKindLabelKey("merged")).toBe("accessKindMerged");
     expect(pt.patientDetail.accessKindExport).toBe("Exportado na lista de pacientes (CSV)");
     expect(pt.patientDetail.accessKindImported).toBe("Abriu os dados importados");
     expect(en.patientDetail.accessKindImported).toBe("Opened the imported data");

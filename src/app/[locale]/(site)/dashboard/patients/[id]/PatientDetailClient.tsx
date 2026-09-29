@@ -195,9 +195,8 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
       const name = fileNameFromRef(r.objectRef);
       return name ? `${t("accessKindFile")} · ${name}` : t("accessKindFile");
     }
-    // Migration 133: merged with another record; the ref is its name.
-    if (r.kind === "merged") return t("accessKindMerged", { name: r.objectRef || "—" });
-    return t(accessKindLabelKey(r.kind));
+    // {name}: a merge's ref is the removed record's name (133).
+    return t(accessKindLabelKey(r.kind), { name: r.objectRef || "—" });
   };
 
   return (
