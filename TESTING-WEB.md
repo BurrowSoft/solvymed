@@ -8558,3 +8558,31 @@ URL fix is Vitor's dashboard change. After merge, the prod check will be
 the same rows on www with a DB flip; no checkout.
 **Review: clean (7f).** **Merge gate: 🟢 for `1c89b62`.** The branch was
 up to date with `release`; this docs commit sits on top.
+
+## #146 Merge-back of release #145 into master (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `4528f4b`, on its Vercel Preview, using
+#145's spec with the same service-role flip and no checkout.
+
+| Row | Result |
+|---|---|
+| Trial → ?success=1; the "webhook" at +8 s | ✅ "Ativando…" with the spinner, then "Assinatura ativada!" at +11 s |
+| Trial, no webhook | ✅ the slow text + the support@solvymed.com mailto at about 30 s |
+| Already active → ?success=1 | ✅ "ativada" on load |
+| en, the "webhook" at +6 s | ✅ "Payment received! …", then "Subscription activated! …" |
+| Without ?success=1 (unchanged) | ✅ Trial: the trial text plus **Assinar com Cartão**. Active: /pt-BR/dashboard. |
+| **Master's plan-load error** (no `professionals` row, so the country lookup fails and there's no plan), without ?success=1 | ✅ "Não foi possível verificar o status da sua assinatura. Tente novamente.", with no subscribe button |
+| Same, with ?success=1 | ✅ "Ativando…" only; no plan error and no button (success=1 wins, as in the merged condition) |
+
+**#145 prod check (release `ec33299` on www, Ready):** ✅. The same 10 rows
+as #145's entry, with a DB flip and no checkout:
+- the flip → "ativada" about 3 s later;
+- no webhook → the slow text at about 30 s, and then polling stops;
+- active or lifetime → activated at once;
+- lapsed or expired → never "ativada";
+- en matches;
+- no subscribe button while success=1.
+
+**CI at `4528f4b`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`4528f4b`.** The branch was up to date with master; this docs commit sits
+on top.
