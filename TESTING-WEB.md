@@ -8817,3 +8817,33 @@ Tested by web tester 2.
 locales (checked by web tester 1).
 
 **CI at `dfc0c31`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for `dfc0c31`.** This docs commit sits on top of a master sync (10 behind; clean).
+
+## PR #158 (`feat/payments-type-filter`, base master) — Pagamentos: Todos / Particular / Convênio filter (Help G6), 🟢 at `0b7e482`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Where:** the Vercel Preview (Playwright) against the prod DB.
+- **Data:** a throwaway doctor + secretary (deleted afterwards), with 4
+  completed appointments from yesterday:
+  - particular: pending R$ 100, paid R$ 200;
+  - convênio: pending R$ 300, paid R$ 400.
+- **"No type" rows:** a row with an empty `payment_type` is refused by the
+  DB check (23514), so that case can't occur.
+
+**Results:**
+
+| Row | Result |
+|---|---|
+| Controls | ✅ "Esta semana · Este mês · Mês passado · Todo o período" + "Todos · Particular · Convênio" |
+| Todos | ✅ Pendente R$ 400 (2) · Recebido R$ 600 (2) · Total R$ 1.000 (4); both lists show all 4 |
+| Particular | ✅ `?type=private`; R$ 100 / R$ 200 / R$ 300 (2); only the two particular rows |
+| Convênio | ✅ `?type=insurance`; R$ 300 / R$ 400 / R$ 700 (2); only the two convênio rows. **Particular + Convênio = Todos** (300 + 700 = 1.000) |
+| Period change with a type | ✅ "Todo o período" → `?type=insurance&period=all`, same totals |
+| Todos clears it | ✅ `?period=all` only, all 4 back |
+| Secretary | ✅ the same filter; Convênio shows only the two convênio rows |
+| Help G6 | ✅ the web note: "…O detalhe por período fica em Pagamentos, com o filtro Todos / Particular / Convênio." |
+| en | ✅ "All · Private · Insurance" |
+| th | ✅ "ทั้งหมด · ชำระเอง · ประกัน". **Nit:** the period "All time" is also "ทั้งหมด", so two identical buttons sit side by side. Suggest e.g. "ทุกประเภท" for the type filter (Vitor / UX to choose) |
+
+**CI at `0b7e482`:** ✅. **Review: clean.** **Merge gate: 🟢 for `0b7e482`.** This docs commit sits on top of a master sync (1 behind; clean).
