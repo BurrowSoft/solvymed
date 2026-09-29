@@ -127,7 +127,7 @@ const T: Record<PushLocale, Table> = {
     rescheduleDeclined: { title: "ไม่สามารถเลื่อนนัดได้", body: "ไม่สามารถเลื่อนนัดได้ เวลาเดิมยังคงได้รับการยืนยัน" },
     apptBookedByClinic: { title: "นัดหมายใหม่", body: "{clinic} ได้นัดหมายให้คุณในวันที่ {date} เวลา {time}" },
 
-    apptCancelledByClinic: { title: "นัดหมายถูกยกเลิก", body: "{clinic} ได้ยกเลิกนัดหมายของคุณวันที่ {date} เวลา {time} หากต้องการนัดใหม่ กรุณาเปิดแอป" },
+    apptCancelledByClinic: { title: "นัดหมายถูกยกเลิก", body: "นัดหมายของคุณวันที่ {date} เวลา {time} ถูกยกเลิกโดย {clinic} หากต้องการนัดใหม่ กรุณาเปิดแอป" },
     note: "หมายเหตุ: {note}",
   },
 };
