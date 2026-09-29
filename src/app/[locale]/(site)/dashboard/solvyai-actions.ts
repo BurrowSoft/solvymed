@@ -1,6 +1,7 @@
 "use server";
 
-import { createAppointment, blockTime, updateAppointmentStatus, deleteAppointment } from "./schedule/actions";
+import { createAppointment, blockTime, moveAppointment, updateAppointmentStatus, deleteAppointment } from "./schedule/actions";
+import { MOVABLE_STATUSES } from "@/lib/scheduleChecks";
 import { confirmBookingAndAddPatient, rejectBooking } from "./schedule/booking-actions";
 import { createPatient, deletePatient } from "./patients/actions";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
@@ -121,6 +122,19 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
       const r = a.paid ? await markPaid(id, amount) : await markUnpaid(id);
       return "success" in r && r.success ? { ok: true, id, prev: before.payment_status ?? "pending" } : mapError(r);
     }
+    case "move_appointment": {
+      const id = str(a.appointmentId);
+      const date = str(a.date);
+      const start = str(a.start);
+      if (!UUIDISH.test(id) || !DATE.test(date) || !TIME.test(start)) return { ok: false, code: "generic" };
+      // Still movable (moveAppointment checks too, in its write).
+      const b = await currentRow(id);
+      if (!b || !MOVABLE_STATUSES.includes(b.status)) return { ok: false, code: "generic" };
+      const r = await moveAppointment(form({ id, date, start_time: start, ...(warningsAsked ? { confirm_warnings: "1" } : {}) }));
+      // Desfazer moves it back.
+      const prev = JSON.stringify({ date: b.date, start: b.start_time.slice(0, 5) });
+      return "success" in r && r.success ? { ok: true, id, prev } : mapError(r);
+    }
     case "unblock_time": {
       const id = str(a.blockId);
       if (!UUIDISH.test(id)) return { ok: false, code: "generic" };
@@ -170,7 +184,7 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
       return { ok: false, code: "code" in r ? r.code : "generic" };
     }
     default:
-      // move / send Pix: app-only on the website for now (UX 36).
+      // send Pix: app-only (WhatsApp) on the website (UX 36).
       return { ok: false, code: "generic" };
   }
 }
@@ -188,6 +202,15 @@ export async function undoSolvyAiAction(action: CardAction, id: string, prev?: s
       return done(await updateAppointmentStatus(id, prev || "scheduled"));
     case "mark_paid":
       return done(prev === "paid" ? await markPaid(id) : await markUnpaid(id));
+    case "move_appointment": {
+      // Back where it was (the doctor had already accepted that slot).
+      let p: { date?: unknown; start?: unknown } = {};
+      try { p = JSON.parse(prev ?? "{}"); } catch { return { ok: false, code: "generic" }; }
+      const date = str(p.date), start = str(p.start);
+      if (!DATE.test(date) || !TIME.test(start)) return { ok: false, code: "generic" };
+      const r = await moveAppointment(form({ id, date, start_time: start, confirm_warnings: "1" }));
+      return "success" in r && r.success ? { ok: true, id } : mapError(r);
+    }
     case "unblock_time": {
       // The block again, as it was.
       let p: { date?: unknown; start?: unknown; end?: unknown; reason?: unknown } = {};

@@ -8227,6 +8227,65 @@ dados continuam os mesmos."
 **Review: clean (7f).** **Merge gate: 🟢 for `98f1679`.** This docs commit
 sits on top of a master sync (10 behind: #134, #141; clean merge).
 
+## PR #136 (`feat/solvyai-move-card`, base master) — SolvyAI's move card on the website (via Remarcar), 🟢 at `06c10f7`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `06c10f7` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts the model's `tool_use` turns (ids taken
+  from the route's own `list_appointments`) and logs Expo pushes, never
+  sending them.
+- **Data:** the prod DB, with throwaway fixtures (deleted afterwards):
+  - a doctor, open Mon–Fri 08:00–18:00;
+  - a linked patient with a device token;
+  - "Opus Outro" Tue 10:00;
+  - a block Wed 12:00–13:00;
+  - a no-show; a tentative request.
+
+**Moves:**
+- **Tue 06/10 09:00 → Wed 07/10 09:00:**
+  - The card reads "Remarcar consulta | Paciente | De: Terça-feira,
+    06/10/2026, 09:00–09:30 | Para: Quarta-feira, 07/10/2026,
+    09:00–09:30".
+  - Confirmar → saved, same 30 min.
+  - Push: "Consulta remarcada | Clínica Opus Mover mudou sua consulta de
+    06/10/2026 às 09:00 para 07/10/2026 às 09:00."
+  - The page opens `/dashboard/schedule?date=2026-10-07&highlight=<id>`
+    with the appointment **ringed**.
+  - **Desfazer** → back to Tue 09:00. It sends a second push, "…de
+    07/10/2026 às 09:00 para 06/10/2026 às 09:00." (the same as a manual
+    move back).
+- **Overlapping its own old slot** (09:00 → 09:15): a normal card, no
+  clash.
+- **Onto "Opus Outro" (10:15):** no card. "…10:00 já tem Opus Outro
+  (10:00–10:30). Qual destes horários?" with chips 09:30 / 10:30 / 11:00 /
+  Outro horário. The model is told to ask and never pick.
+- **Into the block (Wed 12:15):**
+  - The card shows "⚠ Horário bloqueado (12:00–13:00)".
+  - Confirmar → "Este horário está bloqueado (12:00–13:00). Remarcar mesmo
+    assim?" [Cancelar] [Remarcar].
+  - Remarcar → saved, plus the push.
+- **A past time:** "Esse horário já passou. Escolha outro horário."
+  Confirmar is **disabled**.
+  - SolvyAI is stricter here than the Remarcar dialog, which allows a past
+    date without a push.
+- **Refused, no card:**
+  - A no-show → the model gets "offer to book this patient again".
+  - A request → "answered on the request (propose_booking_decision)".
+- **Slot taken between the card and Confirmar:** "Esse horário acabou de
+  ser ocupado. Nada foi salvo. Qual destes horários?" with fresh chips.
+  The appointment is unchanged.
+
+**Rules / App Map:** the "no move on the website" lines are gone. Sending
+Pix by WhatsApp stays app-only (knowledge rule + `send_pix` web: null).
+
+**CI at `06c10f7`:** ✅ (lint, typecheck + unit tests).
+**Review: clean (7f).** **Merge gate: 🟢 for `06c10f7`.** This docs commit
+sits on top of a master sync (12 behind: #135 merged; clean merge; the
+`helpArticles.json` rebuild is identical).
+
 ## PR #138 (`feat/web-recurring`, base `feat/web-reschedule`) — recurring appointments on the website, 🟢 at `b74cf4f`
 
 Tested by web tester 2.

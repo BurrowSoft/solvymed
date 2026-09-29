@@ -16,6 +16,7 @@ vi.mock("@/app/[locale]/(site)/dashboard/schedule/actions", () => ({
   blockTime: (...a: unknown[]) => h.rec("blockTime", { success: true, id: "new-block" })(...a),
   updateAppointmentStatus: (...a: unknown[]) => h.rec("updateAppointmentStatus", { success: true })(...a),
   deleteAppointment: (...a: unknown[]) => h.rec("deleteAppointment", { success: true })(...a),
+  moveAppointment: (...a: unknown[]) => h.rec("moveAppointment", { success: true, id: "moved" })(...a),
 }));
 vi.mock("@/app/[locale]/(site)/dashboard/schedule/booking-actions", () => ({
   confirmBookingAndAddPatient: (...a: unknown[]) => h.rec("confirmBookingAndAddPatient", { error: null })(...a),
@@ -91,8 +92,23 @@ describe("Confirmar (part 2)", () => {
     expect(calls).toEqual([{ fn: "deletePatient", args: [ID] }]);
   });
 
-  it("move and send Pix aren't run on the website (app-only for now)", async () => {
-    expect(await executeSolvyAiAction({ kind: "move_appointment", args: { appointmentId: ID, date: "2026-10-02", start: "10:00" } }, false)).toEqual({ ok: false, code: "generic" });
+  it("move: runs Remarcar (the second question's answer carried), only while movable; Desfazer moves it back", async () => {
+    h.state.row = { status: "confirmed", date: "2026-10-01", start_time: "09:00:00", end_time: "09:30:00", patient_name: "M", payment_status: null };
+    const move = { kind: "move_appointment" as const, args: { appointmentId: ID, date: "2026-10-02", start: "10:00", durationMin: 30 } };
+    const r = await executeSolvyAiAction(move, true);
+    expect(r).toMatchObject({ ok: true, id: ID });
+    expect(Object.fromEntries((calls[0].args[0] as FormData).entries())).toEqual({ id: ID, date: "2026-10-02", start_time: "10:00", confirm_warnings: "1" });
+    calls.length = 0;
+    await undoSolvyAiAction(move, ID, (r as { prev?: string }).prev);
+    expect(Object.fromEntries((calls[0].args[0] as FormData).entries())).toEqual({ id: ID, date: "2026-10-01", start_time: "09:00", confirm_warnings: "1" });
+    // A no-show isn't moved.
+    h.state.row = { ...h.state.row, status: "absent" };
+    calls.length = 0;
+    expect(await executeSolvyAiAction(move, false)).toEqual({ ok: false, code: "generic" });
+    expect(calls).toEqual([]);
+  });
+
+  it("send Pix isn't run on the website (app-only)", async () => {
     expect(await executeSolvyAiAction({ kind: "send_pix", args: { appointmentId: ID } }, false)).toEqual({ ok: false, code: "generic" });
     expect(calls).toEqual([]);
   });
