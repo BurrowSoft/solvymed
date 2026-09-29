@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { formatCnpj } from "@/lib/cnpj";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
@@ -93,7 +94,7 @@ export default async function ReceiptPrintPage({
           number={`${date.replace(/-/g, "")}-${apptId.slice(0, 6).toUpperCase()}`}
           date={docDate(country, date)}
           provider={[header.fullName, header.specialty].filter(Boolean).join(" — ")}
-          clinic={[header.clinicName, country === "BR" && header.clinicCnpj ? `CNPJ ${header.clinicCnpj}` : null].filter(Boolean).join(" · ")}
+          clinic={[header.clinicName, country === "BR" && header.clinicCnpj ? `CNPJ ${formatCnpj(header.clinicCnpj)}` : null].filter(Boolean).join(" · ")}
           address={[header.address, header.city, header.state].filter(Boolean).join(", ")}
           service={String(a.consultation_type ?? "")}
           serviceDetail={`${a.type === "online" ? t("online") : t("inPerson")} · ${docTime(a.start_time as string)}`}
