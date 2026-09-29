@@ -3,7 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { SubscribeButton } from "@/components/SubscribeButton";
 import { UpdateCardButton } from "@/components/UpdateCardButton";
-import { isAccessAllowed, trialDaysRemaining, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
+import { isAccessAllowed, isPaidActive, trialDaysRemaining, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
+import { ActivationStatus } from "./ActivationStatus";
 import { retrieveStoredStripeSubscription, isLive, needsCardFix } from "@/lib/stripeBilling";
 
 export default async function SubscribePage({
@@ -106,12 +107,9 @@ export default async function SubscribePage({
           <p className="mt-1 text-lg font-bold text-slate-800">SolvyMed</p>
         </div>
 
-        {/* Success message */}
-        {sp.success === "1" && (
-          <div className="mb-6 rounded-xl bg-green-50 border border-green-200 p-4 text-center text-sm text-green-800 font-medium">
-            {t("successMessage")}
-          </div>
-        )}
+        {/* Back from checkout: "activated" only once the database says so
+            (the webhook writes it); until then "activating…". */}
+        {sp.success === "1" && <ActivationStatus initiallyActive={isPaidActive(sub)} />}
 
         {/* Trial status */}
         {daysLeft !== null && daysLeft > 0 && sp.success !== "1" && (
@@ -159,7 +157,8 @@ export default async function SubscribePage({
 
             {/* Payment buttons */}
             <div className="flex flex-col gap-3">
-              {activating ? null : paymentFailed ? (
+              {/* Just paid: never offer a second checkout while it activates. */}
+              {activating || sp.success === "1" ? null : paymentFailed ? (
                 // Fix the card on the existing subscription. Never offer a
                 // new checkout here: Stripe is still retrying the old one.
                 roleRow?.role === "professional" ? (
