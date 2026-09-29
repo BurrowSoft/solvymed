@@ -7888,3 +7888,41 @@ problem.
 **CI at `72aa7f7`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `72aa7f7`.** This docs commit sits directly on top; the branch is up to
 date with master.
+
+## PR #137 (`fix/my-appointments-no-notes`, base **release**) — RELEASE privacy hotfix: patients never get the clinic's appointment notes (with migration 106, live), 🟢 at `1028239`
+
+**Why it's urgent:** migration 106 is live on prod and drops the
+patient's whole-row read. Until this ships, prod /my-appointments and
+pending-confirmation show nothing (I saw it: pending-confirmation listed
+no requests on master during #132).
+
+**Tested on the release Preview at `1028239`**, against the prod DB (106
+applied):
+- **Patient A:** linked, with a confirmed future appointment (clinic
+  note "OBS-CLINICA-SECRETA-FUTURA", patient_note "Mensagem futura do
+  paciente A"), a past completed one (with a clinic note) and a doctor's
+  proposal (with a clinic note).
+- **Patient B:** invited, not linked, with a proposal (a clinic note plus
+  a patient_note) and a tentative request (a patient_note).
+
+| Check | Result |
+|---|---|
+| REST as patient A: `appointments?select=notes`, `select=*`, `select=id,date,patient_note` | **200, 0 rows** each: no direct read of the table |
+| `rpc/get_my_appointments` as A | 3 rows (theirs); columns include `patient_note`, **no `notes` key**; the secret appears nowhere in the payload |
+| A: /my-appointments | Próximas (Confirmado; Proposta with Aceitar/Recusar and "Originalmente: …"), Histórico (Concluído). The patient's own message "Mensagem futura do paciente A" is shown. **The clinic's notes appear nowhere**, in the text or the page HTML |
+| A accepts the proposal | saved: **confirmed** at the proposed 05/10 11:00 |
+| B: pending-confirmation | "SUAS SOLICITAÇÕES" lists both requests (Novo horário proposto with Aceitar/Recusar; Aguardando confirmação); no clinic note |
+| B accepts | saved: **confirmed** 05/10 14:00 |
+| Clinic: schedule list (both days) | "**Mensagem do paciente:** Mensagem futura do paciente A", "…: Pedido do B com mensagem", "…: Mensagem do B"; the clinic still sees its own notes |
+| Privacy §8, pt-BR and en | the new line: "…the clinic's notes on an appointment are private and never shown to the patient (a patient sees only their own…" (pt: "…as observações…") |
+
+**Not covered here** (in the post-merge prod check):
+- a fresh booking from /book with a message (the seeds wrote
+  `patient_note` directly);
+- "Solicitar reagendamento";
+- the clinic push (not observable on a Preview).
+
+**CI at `1028239`:** ✅. **Review: clean (7f; the head adds only the
+apostrophe escape since the clean `07ea1db`).** **Merge gate: 🟢 for
+`1028239`.** The branch was up to date with `release`; this docs commit
+sits on top.
