@@ -78,8 +78,8 @@ Para a receita sair com seus dados, preencha seu registro profissional (ex.: CRM
 2. Tap **+**, add the medications and tap **Save**.
 3. Tap **PDF** to create the prescription with your signature and share it.
 For the prescription to show your details, fill in your professional registration (e.g. CRM) in **Settings → Registrations** and your signature in **Settings**.
-**No site:** Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. O PDF da receita ainda não está disponível no site; use o app.
-**On the website:** Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. The prescription PDF isn't available on the website yet; use the app.
+**No site:** Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. Para imprimir ou salvar em PDF, clique em **PDF** na receita e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. No site a receita sai com uma linha em branco para assinar à mão, com seu nome e registro embaixo.
+**On the website:** Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. To print it or save it as a PDF, click **PDF** on the prescription and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. On the website the prescription has a blank line to sign by hand, with your name and registration under it.
 `open:patients`
 
 ---

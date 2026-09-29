@@ -407,6 +407,7 @@
     "nameRequired": "Veuillez saisir le nom complet du patient.",
     "genericError": "Une erreur s'est produite. Veuillez réessayer.",
     "tabAccessLog": "Journal des accès",
+    "rxPdfAria": "PDF de l’ordonnance (imprimer ou enregistrer)",
     "tabExams": "Examens",
     "tabFiles": "Fichiers",
     "filesHint": "Photos ou PDF, privés : vous seul pouvez les ouvrir.",
@@ -1258,5 +1259,21 @@
     "cancel": "Annuler",
     "turnOn": "Activer",
     "error": "Enregistrement impossible. Réessayez."
+  },
+  "prescriptionDoc": {
+    "title": "Ordonnance",
+    "patient": "Patient",
+    "date": "Date",
+    "medications": "Médicaments",
+    "medication": "Médicament",
+    "dosage": "Posologie",
+    "frequency": "Fréquence",
+    "duration": "Durée",
+    "notes": "Remarques",
+    "footer": "SolvyMed — Gestion de cabinet",
+    "corrected": "(corrigé)",
+    "print": "Imprimer / Enregistrer en PDF",
+    "printHint": "Pour enregistrer le fichier, choisissez « Enregistrer au format PDF » dans la fenêtre d’impression.",
+    "back": "Retour au patient"
   }
 }

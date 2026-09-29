@@ -407,6 +407,7 @@
     "nameRequired": "أدخل الاسم الكامل للمريض.",
     "genericError": "حدث خطأ ما. حاول مرة أخرى.",
     "tabAccessLog": "سجل الوصول",
+    "rxPdfAria": "ملف PDF للوصفة (طباعة أو حفظ)",
     "tabExams": "الفحوصات",
     "tabFiles": "الملفات",
     "filesHint": "صور أو ملفات PDF، خاصة: أنت وحدك من يمكنه فتحها.",
@@ -1258,5 +1259,21 @@
     "cancel": "إلغاء",
     "turnOn": "تفعيل",
     "error": "تعذّر الحفظ. حاول مرة أخرى."
+  },
+  "prescriptionDoc": {
+    "title": "وصفة طبية",
+    "patient": "المريض",
+    "date": "التاريخ",
+    "medications": "الأدوية",
+    "medication": "الدواء",
+    "dosage": "الجرعة",
+    "frequency": "التكرار",
+    "duration": "المدة",
+    "notes": "ملاحظات",
+    "footer": "SolvyMed — إدارة العيادات",
+    "corrected": "(مُصحَّح)",
+    "print": "طباعة / حفظ PDF",
+    "printHint": "لحفظ الملف، اختر \"حفظ بتنسيق PDF\" في نافذة الطباعة.",
+    "back": "العودة إلى المريض"
   }
 }

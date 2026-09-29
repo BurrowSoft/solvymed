@@ -407,6 +407,7 @@
     "nameRequired": "Bitte geben Sie den vollständigen Namen des Patienten ein.",
     "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "tabAccessLog": "Zugriffsprotokoll",
+    "rxPdfAria": "Rezept als PDF (drucken oder speichern)",
     "tabExams": "Befunde",
     "tabFiles": "Dateien",
     "filesHint": "Fotos oder PDFs, privat: Nur Sie können sie öffnen.",
@@ -1258,5 +1259,21 @@
     "cancel": "Abbrechen",
     "turnOn": "Einschalten",
     "error": "Speichern nicht möglich. Bitte erneut versuchen."
+  },
+  "prescriptionDoc": {
+    "title": "Rezept",
+    "patient": "Patient",
+    "date": "Datum",
+    "medications": "Medikamente",
+    "medication": "Medikament",
+    "dosage": "Dosierung",
+    "frequency": "Häufigkeit",
+    "duration": "Dauer",
+    "notes": "Hinweise",
+    "footer": "SolvyMed — Praxisverwaltung",
+    "corrected": "(korrigiert)",
+    "print": "Drucken / Als PDF speichern",
+    "printHint": "Um die Datei zu speichern, wählen Sie im Druckfenster „Als PDF speichern“.",
+    "back": "Zurück zum Patienten"
   }
 }

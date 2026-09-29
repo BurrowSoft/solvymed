@@ -8589,6 +8589,8 @@ on top.
 
 ## PR #147 (`feat/web-patient-files`, base master) — exams and files on the website (Help P7), 🟢 at `6681b0a`
 
+## PR #150 (`feat/web-prescription-pdf`, base master) — print / save a prescription as PDF on the website (Help P6), 🟢 at `29b90ee`
+
 Tested by web tester 2.
 
 **Setup:**
@@ -8659,6 +8661,17 @@ Tested by web tester 2.
   - `professionals` is set to `stripe` / that id / `active` (what the
     webhook would write).
   - The subscription is cancelled and the customer deleted afterwards.
+
+- **Where:** the Vercel Preview (Playwright, Chromium) against the prod DB.
+- **Doctor:** the #147 fixture doctor, already on 8d's purge list.
+- **Prescriptions:** created as that doctor, with its own token.
+  - Items can only be added by the author within 24 h (097).
+  - The correction was made through `add_prescription_correction`, the
+    real path.
+- **Template:** a `prescription` template with `#7c3aed` / `#ea580c`, a
+  header, a footer and an https logo.
+- **Other accounts:** the secretary and the "other doctor" are fresh and
+  were deleted.
 
 **Results:**
 
@@ -8751,3 +8764,23 @@ merge was clean, with no change to this PR's code.
 There was a conflict in TESTING-WEB.md only: master's block comes first,
 then #148's, and nothing was dropped.
 **Review: clean (7f).** **Merge gate: 🟢 for `eba558c`.**
+
+| Receitas tab | ✅ each prescription has a **PDF** link (aria "PDF da receita (imprimir ou salvar)") → `…/prescriptions/<rxId>/print` |
+| Print page (the corrected rx) | ✅ "Receita", the header text, the logo; PACIENTE; DATA "29/09/2026 **(corrigido)**"; the items table; the notes as text (a typed `<b>` stays text); a blank signature line over "Dra Opus Arquivos / CRM 12345/SP"; the footer. The colours applied: rgb(124,58,237) / rgb(234,88,12) |
+| The correction itself | ✅ its own items and notes, not marked "(corrigido)" |
+| Logo | ✅ an https logo on another host loads (naturalWidth 120), with no CSP report |
+| Toolbar | ✅ "← Voltar ao paciente", "Imprimir / Salvar PDF", and the hint "Para salvar o arquivo, escolha "Salvar como PDF" na janela de impressão." |
+| Print | ✅ in print media only `#print-doc` stays visible (everything else is `visibility:hidden`). The Chromium PDF is **1 page, MediaBox 594.96×841.92 (A4)**, with colours kept |
+| Scoping | ✅ the rx under another patient's id → 404; an unknown rx id → 404 |
+| Secretary of the practice | ✅ 404 |
+| Another doctor | ✅ 404 |
+| Access log | ✅ `record_access_log` kind `prescription`, `object_ref` = the rx id, one per view |
+
+**Nit (not blocking, same builder as the app):** the template's accent
+colour is used as a **solid** background for the alternate table row and
+the notes box. With a strong accent (`#ea580c`), the grey "Observações"
+text on it is hard to read. A tint of the accent, or dark text, would keep
+it legible.
+
+**CI at `29b90ee`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `29b90ee`.** This docs commit sits directly on the PR head. The branch is 8 behind master, and a master merge conflicts in code (app-map.ts + the 15 message files), so e7 syncs it.

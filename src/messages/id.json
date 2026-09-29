@@ -407,6 +407,7 @@
     "nameRequired": "Masukkan nama lengkap pasien.",
     "genericError": "Terjadi kesalahan. Coba lagi.",
     "tabAccessLog": "Log akses",
+    "rxPdfAria": "PDF resep (cetak atau simpan)",
     "tabExams": "Pemeriksaan",
     "tabFiles": "File",
     "filesHint": "Foto atau PDF, pribadi: hanya Anda yang dapat membukanya.",
@@ -1258,5 +1259,21 @@
     "cancel": "Batal",
     "turnOn": "Aktifkan",
     "error": "Tidak dapat menyimpan. Coba lagi."
+  },
+  "prescriptionDoc": {
+    "title": "Resep",
+    "patient": "Pasien",
+    "date": "Tanggal",
+    "medications": "Obat-obatan",
+    "medication": "Obat",
+    "dosage": "Dosis",
+    "frequency": "Frekuensi",
+    "duration": "Durasi",
+    "notes": "Catatan",
+    "footer": "SolvyMed — Manajemen klinik",
+    "corrected": "(dikoreksi)",
+    "print": "Cetak / Simpan PDF",
+    "printHint": "Untuk menyimpan file, pilih \"Simpan sebagai PDF\" di jendela cetak.",
+    "back": "Kembali ke pasien"
   }
 }

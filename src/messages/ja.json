@@ -407,6 +407,7 @@
     "nameRequired": "患者の氏名を入力してください。",
     "genericError": "問題が発生しました。もう一度お試しください。",
     "tabAccessLog": "アクセス履歴",
+    "rxPdfAria": "処方箋の PDF（印刷または保存）",
     "tabExams": "検査",
     "tabFiles": "ファイル",
     "filesHint": "写真または PDF。非公開で、開けるのはあなただけです。",
@@ -1258,5 +1259,21 @@
     "cancel": "キャンセル",
     "turnOn": "オンにする",
     "error": "保存できませんでした。もう一度お試しください。"
+  },
+  "prescriptionDoc": {
+    "title": "処方箋",
+    "patient": "患者",
+    "date": "日付",
+    "medications": "薬剤",
+    "medication": "薬剤",
+    "dosage": "用量",
+    "frequency": "頻度",
+    "duration": "期間",
+    "notes": "備考",
+    "footer": "SolvyMed — クリニック管理",
+    "corrected": "（訂正済み）",
+    "print": "印刷 / PDF で保存",
+    "printHint": "ファイルを保存するには、印刷ウィンドウで「PDF として保存」を選んでください。",
+    "back": "患者に戻る"
   }
 }
