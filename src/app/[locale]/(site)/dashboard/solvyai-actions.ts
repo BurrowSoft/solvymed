@@ -66,7 +66,10 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
         const procedureId = str(a.procedureId);
         if (!UUIDISH.test(procedureId)) return { ok: false, code: "generic" };
         const supabase = await createClient();
-        const { data: p } = await supabase.from("procedures").select("name, payment_type").eq("id", procedureId).eq("active", true).maybeSingle();
+        const { data: { user } } = await supabase.auth.getUser();
+        const prof = user ? await getEffectiveProfId(supabase, user.id) : null;
+        if (!prof) return { ok: false, code: "generic" };
+        const { data: p } = await supabase.from("procedures").select("name, payment_type").eq("id", procedureId).eq("professional_id", prof).eq("active", true).maybeSingle();
         if (!p) return { ok: false, code: "generic" };
         const row = p as { name: string; payment_type: string };
         procedure.consultation_type = row.name;
