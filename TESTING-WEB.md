@@ -7822,12 +7822,18 @@ problem.
 - **The G1/G4 app variants are unchanged**, as intended: the website line
   isn't shown there.
 
-**Open question (sent to UX; 8d is checking the app code):** K4's **app**
-variant now also says "(ou **Excluir conta**…)". I can't verify the app's
-label from the web. If the app differs, that one sentence goes back to
-"Encerrar conta" only, as a one-line follow-up. It isn't blocking the
-website changes above.
+**K4 app label, resolved at `72aa7f7`:**
+- **What the app shows** (8d, from the app code): every doctor sees one
+  button, **"Excluir Conta" / "Delete Account"**. The dialog then says
+  "Excluir Conta" (no records) or "Encerrar sua conta" (with records).
+- **The fix:** the K4 body now reads "**Configurações → Excluir conta**.
+  Se ainda não houver prontuários, a conta é excluída. Se houver, ela é
+  encerrada: …" (en "**Settings → Delete account**. If there are no
+  records yet, the account is deleted. If there are, it's closed: …").
+- **Checked on the Preview at `72aa7f7`:** `/pt-BR/help/k4`, `/help/k4`
+  and their `?app=1` variants all show the new text; `helpArticles.json`
+  was rebuilt with the same content.
 
-**CI at `4e420ef`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
-`4e420ef`**, website scope. This docs commit sits on top of a master sync
-(20 behind, clean merge; message JSON valid).
+**CI at `72aa7f7`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`72aa7f7`.** This docs commit sits directly on top; the branch is up to
+date with master.
