@@ -344,4 +344,19 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getByText("Send Booking Request"));
     expect(mockUpsert).not.toHaveBeenCalled();
   });
+
+  it("a birth date the database refuses (116): says so and doesn't book", async () => {
+    setupMocks({ busySlots: [], profile: FULL_PROFILE });
+    mockUpsert.mockResolvedValueOnce({ error: { message: "invalid_birth_date" } });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
+    fireEvent.click(screen.getAllByText("Consultation")[0]);
+    await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
+    fireEvent.click(screen.getByText(/9:00/));
+    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
+    mockRpc.mockClear();
+    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText(/invalidBirthDate/)).toBeInTheDocument());
+    expect(mockRpc).not.toHaveBeenCalledWith("create_public_booking", expect.anything());
+  });
 });

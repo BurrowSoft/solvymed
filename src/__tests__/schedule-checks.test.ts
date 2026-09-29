@@ -60,6 +60,13 @@ describe("the booking question's copy (UX's exact strings)", () => {
     );
   });
 
+  it("the overlap's duration is in the locale's words (tester: Thai showed \"min\")", () => {
+    const tt = createTranslator({ locale: "th", messages: load("th"), namespace: "schedule" });
+    expect(tt("durationMinutes", { n: 30 })).toBe("30 นาที");
+    const tj = createTranslator({ locale: "ja", messages: load("ja"), namespace: "schedule" });
+    expect(tj("durationMinutes", { n: 30 })).toBe("30分");
+  });
+
   it("the overlap message is the app's", () => {
     const t = createTranslator({ locale: "pt-BR", messages: load("pt-BR"), namespace: "schedule" });
     expect(t("overlapHardMsg", { name: "Maria Silva", time: "10:00", duration: "30 min" }))

@@ -205,7 +205,8 @@
     "requestedLabel": "Yêu cầu: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Quét bằng bất kỳ ứng dụng ngân hàng Thái Lan nào để thanh toán.",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n} phút"
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -1180,6 +1181,7 @@
     "otherTime": "Giờ khác"
   },
   "dateInput": {
-    "buddhistYear": "Có vẻ đây là năm theo Phật lịch. Vui lòng dùng năm dương lịch (ví dụ: 1996)."
+    "buddhistYear": "Có vẻ đây là năm theo Phật lịch. Vui lòng dùng năm dương lịch (ví dụ: 1996).",
+    "invalidBirthDate": "Ngày sinh không hợp lệ: hãy dùng ngày từ năm 1900 đến hôm nay."
   }
 }

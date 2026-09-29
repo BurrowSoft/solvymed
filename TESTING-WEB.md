@@ -7127,3 +7127,67 @@ date with master.
 **CI at `1c4fa89`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `1c4fa89`.** This docs commit sits on top of a master sync (10 behind,
 clean merge, no conflicts).
+
+## PR #114 (`fix/birth-date-range-client`, base master) — birth date between 1900-01-01 and today, 🟢 at `0cd70ed`
+
+Tested on the Preview at `0cd70ed` (Thai flag on) in pt-BR, en and th.
+The browser was on America/Sao_Paulo, so today = 2026-09-28. Every save
+was checked in the DB.
+
+| Birth date typed | New patient | Edit patient | Booking page (patient) |
+|---|---|---|---|
+| tomorrow (2026-09-29) | invalid: "Data de nascimento inválida: use uma data entre 1900 e hoje." / "Invalid date of birth: use a date between 1900 and today." / "วันเกิดไม่ถูกต้อง กรุณาใช้วันที่ระหว่างปี ค.ศ. 1900 ถึงวันนี้"; **Save blocked, nothing saved** | same message; Save blocked, DOB unchanged | same message (pt-BR, th) |
+| 1899-12-31 | same range message; Save blocked | same; blocked | same |
+| 2539-05-14 (≥ 2400) | still the **Buddhist-era** message, not the range one | same | same |
+| 1900-01-01 | accepted, **saved** (th hint "พ.ศ. 2443") | — | accepted |
+| today (2026-09-28) | accepted, **saved** (th "พ.ศ. 2569") | accepted, **saved** | accepted |
+| 1996-05-14 | accepted | — | accepted |
+
+- **Picker limits:** `min="1900-01-01"` everywhere. `max="2026-09-28"` on
+  edit patient and the booking page (see the nit about new patient).
+- **Schedule dates aren't limited:** the New appointment date has no
+  min/max, and 2027-03-10 is accepted with no message.
+- **Not tested: the DB refusal** (`invalid_birth_date`, migration 116). The
+  migration isn't applied, so a forced submit past the browser's check
+  would still save today. The mapping to the message is covered by the
+  unit tests.
+
+**Nit (not blocking, sent to b2):** the `max` on **New patient opened
+through `?new=1`** (the setup checklist link) is the **server's UTC date**.
+- **Cause:** that path renders the form on the server
+  (`useState(autoOpen)`), and `localToday()` runs there; hydration keeps
+  the server's attribute.
+- **Seen here:** at 21:xx BRT it was `max="2026-09-29"` (tomorrow). The
+  field's own message still catches tomorrow, so there it's only
+  cosmetic.
+- **Where it would bite:** a UTC+7 browser between 00:00 and 07:00 local
+  would get yesterday as `max`. Today's date would then be refused by
+  the browser's native range tooltip, with no message of ours.
+- **Unaffected:** opening the form with the button, and the edit and
+  booking forms, all render in the browser and are correct.
+
+**CI at `0cd70ed`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`0cd70ed`.** This docs commit sits on top of a master sync (15 behind,
+clean merge; message JSON valid).
+
+## PR #115 (`fix/overlap-duration-i18n`, base master) — the overlap message's duration in the locale's words, 🟢 at `50cc51a`
+
+This follows up my #111 nit. Tested on the Preview at `50cc51a`: a
+throwaway doctor with an existing 45-min appointment (Opus Existente,
+10:00). In each language I booked 10:15 through New appointment:
+
+| Locale | Message | Saved? |
+|---|---|---|
+| th | เวลานี้ซ้อนกับนัดของ Opus Existente เวลา 10:00 (**45 นาที**) กรุณาเลือกเวลาอื่น | no |
+| ja | この時間はOpus Existenteさんの予約（10:00、**45分**）と重なっています。別の時間を選んでください。 | no |
+| pt-BR | Este horário conflita com Opus Existente às 10:00 (**45 min**). Escolha outro horário. | no |
+| en | This overlaps with Opus Existente at 10:00 (**45 min**). Choose another time. | no |
+| de | Dieser Termin überschneidet sich mit Opus Existente um 10:00 (**45 Min.**). Bitte wählen Sie eine andere Zeit. | no |
+
+The duration is the real one (45, not the procedure's 30). pt-BR and en
+are unchanged from #111.
+
+**CI at `50cc51a`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`50cc51a`.** This docs commit sits on top of a master sync (11 behind;
+the message files auto-merged; all 15 are valid JSON and each has
+`durationMinutes` once).

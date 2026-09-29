@@ -205,7 +205,8 @@
     "requestedLabel": "Demandé : {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Scannez avec n'importe quelle appli bancaire thaïlandaise pour payer.",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n} min"
   },
   "payments": {
     "thisWeek": "Cette semaine",
@@ -1180,6 +1181,7 @@
     "otherTime": "Un autre horaire"
   },
   "dateInput": {
-    "buddhistYear": "Cela ressemble à une année de l'ère bouddhiste. Utilisez l'année grégorienne (ex. : 1996)."
+    "buddhistYear": "Cela ressemble à une année de l'ère bouddhiste. Utilisez l'année grégorienne (ex. : 1996).",
+    "invalidBirthDate": "Date de naissance invalide : utilisez une date entre 1900 et aujourd’hui."
   }
 }
