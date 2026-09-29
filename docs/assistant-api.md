@@ -23,7 +23,15 @@ works, §6 privacy). This file is the wire contract the web panel
   injected (an interface), so tests use a fake model and the route works
   without a key (`ANTHROPIC_API_KEY` goes into Vercel only when Vitor adds
   it; until then the route answers `503 model_unavailable`).
+- **Off until SolvyAI is live:** a server-only switch, `SOLVYAI_API_ENABLED=1`
+  (never a `NEXT_PUBLIC_` value), is checked before anything else. Off →
+  both routes answer `404 not_found` before reading the request, counting or
+  calling the model, so nothing reaches Anthropic before the privacy policy
+  names it (a9).
 - **Doctors only.** Secretaries and patients get `403 not_doctor`.
+- **Every counted message is settled exactly once:** its usage recorded, or
+  refunded (a model failure, no answer, or the client going away mid-answer;
+  the route cancels the stream).
 - **Nothing is ever written by the route.** Read tools run directly; write
   tools return a *proposal* (a confirmation card). The client executes the
   card's `action` through the **normal RPC** only after the user taps

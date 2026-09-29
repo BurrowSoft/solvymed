@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { handleAssistant } from "@/lib/assistant/server/handle";
-import { assistantCaller, assistantService } from "@/lib/assistant/server/caller";
+import { assistantApiEnabled, assistantCaller, assistantService } from "@/lib/assistant/server/caller";
 import { modelFromEnv } from "@/lib/assistant/server/model";
 
 // SolvyAI (docs/assistant-api.md): a question in, a streamed answer out
@@ -10,6 +10,8 @@ export const dynamic = "force-dynamic";
 export const preferredRegion = "gru1";
 
 export async function POST(request: NextRequest) {
+  // SolvyAI off: 404 before reading anything (a9).
+  if (!assistantApiEnabled()) return NextResponse.json({ error: "not_found" }, { status: 404 });
   let body: unknown;
   try {
     body = await request.json();
@@ -18,6 +20,7 @@ export async function POST(request: NextRequest) {
   }
   const { db, userId, client } = await assistantCaller(request);
   const outcome = await handleAssistant(body as Parameters<typeof handleAssistant>[0], {
+    enabled: assistantApiEnabled(),
     userId,
     db,
     service: assistantService(),
@@ -26,15 +29,23 @@ export async function POST(request: NextRequest) {
   });
   if (!("stream" in outcome)) return NextResponse.json(outcome.json, { status: outcome.status });
 
+  // Pull-based, so a client that goes away cancels the answer: return()
+  // stops the model's stream and the handler settles the message (a9).
   const encoder = new TextEncoder();
+  const it = outcome.stream[Symbol.asyncIterator]();
   const stream = new ReadableStream<Uint8Array>({
-    async start(controller) {
+    async pull(controller) {
       try {
-        for await (const chunk of outcome.stream) controller.enqueue(encoder.encode(JSON.stringify(chunk) + "\n"));
+        const { value, done } = await it.next();
+        if (done) controller.close();
+        else controller.enqueue(encoder.encode(JSON.stringify(value) + "\n"));
       } catch {
         controller.enqueue(encoder.encode(JSON.stringify({ kind: "error", code: "model_failed" }) + "\n"));
+        controller.close();
       }
-      controller.close();
+    },
+    async cancel() {
+      await it.return?.();
     },
   });
   return new Response(stream, {

@@ -15,7 +15,11 @@ import type { ModelClient } from "./model";
 // action tools come next.
 
 type Rpc = { rpc(fn: string, args?: Record<string, unknown>): PromiseLike<{ data: unknown; error: { message?: string } | null }> };
-export type Deps = { userId: string | null; db: Rpc; service: Rpc; model: ModelClient | null; client: Client };
+// enabled: the server-only switch (SOLVYAI_API_ENABLED), checked before
+// anything else: until SolvyAI is live (the privacy policy names Anthropic,
+// 115 applied), nothing can reach the model, even by calling the route
+// directly (a9).
+export type Deps = { enabled: boolean; userId: string | null; db: Rpc; service: Rpc; model: ModelClient | null; client: Client };
 export type Outcome =
   | { status: number; json: Record<string, unknown> }
   | { status: 200; stream: AsyncIterable<AnswerChunk> };
@@ -106,6 +110,8 @@ async function* filterMarkers(texts: AsyncIterable<string>, seen: string[]): Asy
 }
 
 export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> {
+  // 0. SolvyAI off: the route doesn't exist.
+  if (!deps.enabled) return fail(404, "not_found");
   // 1. Who is asking (RLS as them from here on).
   if (!deps.userId) return fail(401, "unauthorized");
   // 2–4. The request itself.
@@ -168,53 +174,65 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
     return { status: 200, stream: unavailable() };
   }
 
+  // Every counted message ends settled exactly once: its usage recorded,
+  // or refunded (a model failure, no answer, or the client going away
+  // mid-answer: the route cancels the stream and this finally runs; a9).
   async function* stream(): AsyncIterable<AnswerChunk> {
-    yield { kind: "meta", mode };
-    const seen: string[] = [];
-    let usage: { input: number; output: number; cacheRead: number; cacheWrite: number } | null = null;
-    let answered = false;
+    let settled = false;
+    const refund = async () => {
+      if (settled) return;
+      settled = true;
+      await deps.service.rpc("assistant_release_message", { p_professional_id: userId });
+    };
     try {
-      async function* texts(): AsyncIterable<string> {
-        for await (const ev of model.stream({
-          cachedSystem: cachedSystem(lang, deps.client),
-          system: rules(lang, deps.client, req.screen, mode),
-          messages,
-          maxTokens: MAX_TOKENS,
-        })) {
-          if (ev.type === "text") yield ev.text;
-          else usage = ev.usage;
+      yield { kind: "meta", mode };
+      const seen: string[] = [];
+      let usage: { input: number; output: number; cacheRead: number; cacheWrite: number } | null = null;
+      let answered = false;
+      try {
+        async function* texts(): AsyncIterable<string> {
+          for await (const ev of model.stream({
+            cachedSystem: cachedSystem(lang, deps.client),
+            system: rules(lang, deps.client, req.screen, mode),
+            messages,
+            maxTokens: MAX_TOKENS,
+          })) {
+            if (ev.type === "text") yield ev.text;
+            else usage = ev.usage;
+          }
         }
+        for await (const t of filterMarkers(texts(), seen)) {
+          answered = true;
+          yield { kind: "delta", text: t };
+        }
+        yield { kind: "block", block: { type: "text", text: "" } };
+      } catch {
+        // The model failed: the message isn't spent (fair to the doctor).
+        await refund();
+        yield { kind: "error", code: "model_failed" };
+        return;
       }
-      for await (const t of filterMarkers(texts(), seen)) {
-        answered = true;
-        yield { kind: "delta", text: t };
+      if (!answered) {
+        await refund();
+        yield { kind: "error", code: "model_failed" };
+        return;
       }
-      yield { kind: "block", block: { type: "text", text: "" } };
-    } catch {
-      // The model failed: the message isn't spent (fair to the doctor).
-      await deps.service.rpc("assistant_release_message", { p_professional_id: userId });
-      yield { kind: "error", code: "model_failed" };
-      return;
-    }
-    if (!answered) {
-      await deps.service.rpc("assistant_release_message", { p_professional_id: userId });
-      yield { kind: "error", code: "model_failed" };
-      return;
-    }
-    // Token usage for the budget guard: for the caller it just counted,
-    // with the service client, never an id from the request (a9).
-    const u = usage as { input: number; output: number; cacheRead: number; cacheWrite: number } | null;
-    if (u) {
+      // Token usage for the budget guard: for the caller it just counted,
+      // with the service client, never an id from the request (a9).
+      const u = (usage as { input: number; output: number; cacheRead: number; cacheWrite: number } | null) ?? { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
+      settled = true;
       await deps.service.rpc("assistant_record_usage", {
         p_professional_id: userId,
         p_input: u.input, p_output: u.output, p_cache_read: u.cacheRead, p_cache_write: u.cacheWrite,
       });
+      const open = seen.length ? openBlock(seen[0], req.locale, deps.client) : null;
+      if (open) yield open;
+      yield { kind: "block", block: { type: "feedback" } };
+      yield { kind: "usage", used: c.used ?? 0, limit: c.limit ?? 0, extra: 0, resetsAt: c.resets_at ?? "" };
+      yield { kind: "done" };
+    } finally {
+      await refund();
     }
-    const open = seen.length ? openBlock(seen[0], req.locale, deps.client) : null;
-    if (open) yield open;
-    yield { kind: "block", block: { type: "feedback" } };
-    yield { kind: "usage", used: c.used ?? 0, limit: c.limit ?? 0, extra: 0, resetsAt: c.resets_at ?? "" };
-    yield { kind: "done" };
   }
   return { status: 200, stream: stream() };
 }

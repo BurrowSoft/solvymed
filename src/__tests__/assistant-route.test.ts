@@ -32,7 +32,7 @@ function deps(over: Partial<Deps> & { consume?: unknown; budget?: unknown } = {}
   });
   const service = rpcClient({});
   const model = (over.model === undefined ? fakeModelClient(() => "Toque em **Bloquear horário** na Agenda.\n[[open:A3]]") : over.model) as ModelClient | null;
-  return { db, service, model, d: { userId: over.userId === undefined ? "doc-1" : over.userId, db, service, model, client: over.client ?? "web" } as Deps };
+  return { db, service, model, d: { enabled: over.enabled ?? true, userId: over.userId === undefined ? "doc-1" : over.userId, db, service, model, client: over.client ?? "web" } as Deps };
 }
 
 async function collect(stream: AsyncIterable<AnswerChunk>) {
@@ -42,6 +42,29 @@ async function collect(stream: AsyncIterable<AnswerChunk>) {
 }
 
 describe("/api/assistant: the checks, in the contract's order", () => {
+  it("SolvyAI switched off (the server-only switch): 404 before anything, nothing counted, no model call", async () => {
+    const model = fakeModelClient(() => "x");
+    const t = deps({ enabled: false, model });
+    expect(await handleAssistant(ask("oi"), t.d)).toEqual({ status: 404, json: { error: "not_found" } });
+    // Even without a user: the route doesn't exist.
+    expect(await handleAssistant(ask("oi"), deps({ enabled: false, userId: null }).d)).toEqual({ status: 404, json: { error: "not_found" } });
+    expect(t.db.calls).toEqual([]);
+    expect(t.service.calls).toEqual([]);
+    expect(model.calls).toEqual([]);
+  });
+
+  it("the switch is server-only: only SOLVYAI_API_ENABLED=1 turns it on", async () => {
+    const { assistantApiEnabled } = await import("@/lib/assistant/server/caller");
+    const before = process.env.SOLVYAI_API_ENABLED;
+    process.env.SOLVYAI_API_ENABLED = "";
+    process.env.NEXT_PUBLIC_SOLVYAI_ENABLED = "1";
+    expect(assistantApiEnabled()).toBe(false);
+    process.env.SOLVYAI_API_ENABLED = "1";
+    expect(assistantApiEnabled()).toBe(true);
+    process.env.SOLVYAI_API_ENABLED = before;
+    delete process.env.NEXT_PUBLIC_SOLVYAI_ENABLED;
+  });
+
   it("no user → 401; malformed → 400; limits → 400", async () => {
     expect(await handleAssistant(ask("oi"), deps({ userId: null }).d)).toEqual({ status: 401, json: { error: "unauthorized" } });
     expect((await handleAssistant({ messages: [] }, deps().d)).status).toBe(400);
@@ -135,6 +158,24 @@ describe("/api/assistant: a help answer", () => {
     const chunks = await collect(out.stream);
     expect(chunks.at(-1)).toEqual({ kind: "error", code: "model_failed" });
     expect(t.service.calls).toEqual([{ fn: "assistant_release_message", args: { p_professional_id: "doc-1" } }]);
+  });
+
+  it("a client that goes away mid-answer: the message is refunded, never left pending", async () => {
+    const t = deps({ model: fakeModelClient(() => "Uma resposta bem longa que ainda está chegando.") });
+    const out = await handleAssistant(ask("oi"), t.d);
+    if (!("stream" in out)) throw new Error("no stream");
+    const it = out.stream[Symbol.asyncIterator]();
+    await it.next(); // meta
+    await it.next(); // the first piece of text
+    await it.return?.(undefined); // the route's cancel()
+    expect(t.service.calls).toEqual([{ fn: "assistant_release_message", args: { p_professional_id: "doc-1" } }]);
+  });
+
+  it("a finished answer is settled once (recorded), never refunded too", async () => {
+    const t = deps();
+    const out = await handleAssistant(ask("oi"), t.d);
+    if ("stream" in out) await collect(out.stream);
+    expect(t.service.calls.map((c) => c.fn)).toEqual(["assistant_record_usage"]);
   });
 
   it("over the monthly budget: no model call, not spent, a plain line (never 'budget')", async () => {

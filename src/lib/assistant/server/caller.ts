@@ -30,3 +30,9 @@ export function assistantService(): SupabaseClient {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }
+
+// The server-only switch for /api/assistant (never a NEXT_PUBLIC_ value:
+// nothing a browser or the app sends can turn it on). Read per request.
+export function assistantApiEnabled(): boolean {
+  return process.env.SOLVYAI_API_ENABLED === "1";
+}
