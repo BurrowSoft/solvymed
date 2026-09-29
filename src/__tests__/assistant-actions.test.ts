@@ -539,4 +539,12 @@ describe("SolvyAI actions mode: send Pix (app only; Brazil only; Thai practices 
     t.tables.appointments.find((a) => a.id === "a-joao")!.payment_status = "paid";
     expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
   });
+
+  it("an unknown practice country: no card at all (never a guessed Pix path)", async () => {
+    const t = inApp(setup(pix));
+    t.tables.professionals[0].id = "someone-else";
+    const r = await run(t, ask("Manda o Pix do Mario"));
+    expect(cardOf(r.blocks)).toBeUndefined();
+    expect(resultsIn(t.model.calls[2])[0]).toMatchObject({ is_error: true });
+  });
 });

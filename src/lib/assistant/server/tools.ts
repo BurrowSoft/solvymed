@@ -5,7 +5,7 @@ import { MOVABLE_STATUSES, hoursWarning, keptDuration } from "@/lib/scheduleChec
 import { MAX_OCCURRENCES, MIN_OCCURRENCES, recurrenceDates, type Recurrence } from "@/lib/recurrence";
 import { formatDateLabel, formatShortDate } from "@/lib/dateLabels";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
-import { getPracticeCountry } from "@/lib/practiceCountry";
+import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
 import { countryProfile } from "@/lib/country";
 import { formatMoney } from "@/lib/money";
@@ -208,8 +208,14 @@ function card(ctx: ToolContext, c: Omit<ConfirmationCard, "id" | "editHref" | "v
 }
 
 // The practice country (IDs and currency), read once per request.
+// Unknown (a failed lookup) throws: runTool turns it into "that didn't
+// work", so no card ever shows a guessed currency, ID or payment method (9a).
 async function practiceCountry(ctx: ToolContext): Promise<string> {
-  if (!ctx.country) ctx.country = await getPracticeCountry(ctx.db, ctx.profId, ctx.profId);
+  if (!ctx.country) {
+    const r = await lookupPracticeCountry(ctx.db, ctx.profId, ctx.profId);
+    if (!r.ok) throw new Error("practice_country_unknown");
+    ctx.country = r.country;
+  }
   return ctx.country;
 }
 const money = (amount: number, country: string) => formatMoney(amount, countryProfile(country).currency);
