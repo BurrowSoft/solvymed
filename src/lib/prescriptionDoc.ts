@@ -5,6 +5,8 @@
 // the doctor's name and council registration under it, to be signed by
 // hand (UX 36: the app's drawn signature lives on the phone only).
 
+// Print views sit in a data-theme="light" scope: they stay light in the
+// dashboard's dark theme (Help C8).
 // Print views: only #print-doc prints, on A4. The dashboard's nav, the
 // toolbar (.print-hide) and any floating button stay off the page, and
 // colours print as on screen.
