@@ -408,6 +408,7 @@
     "genericError": "出现问题，请重试。",
     "tabAccessLog": "访问记录",
     "rxPdfAria": "处方 PDF（打印或保存）",
+    "historyPdf": "病史 PDF",
     "tabExams": "检查",
     "tabFiles": "文件",
     "filesHint": "照片或 PDF，私密：只有您可以打开。",
@@ -1201,6 +1202,8 @@
     "undone": "已撤销",
     "simulated": "模拟",
     "undo": "撤销（{s} 秒）",
+    "undoFailed": "无法撤销。请打开该项目进行调整。",
+    "openItem": "打开",
     "view": "在日程中查看",
     "edit": "编辑",
     "confirm": "确认 ✓",
@@ -1274,6 +1277,16 @@
     "corrected": "（已更正）",
     "print": "打印 / 保存为 PDF",
     "printHint": "要保存文件，请在打印窗口中选择“另存为 PDF”。",
-    "back": "返回患者"
+    "back": "返回患者",
+    "historyTitle": "病史",
+    "medicalRecords": "病历记录",
+    "prescriptions": "处方",
+    "noRecords": "暂无记录。",
+    "noPrescriptions": "暂无处方。",
+    "birthDate": "出生日期：{value}",
+    "phone": "电话：{value}",
+    "exportedBy": "由 {name} 于 {date} 导出",
+    "accessLogFailed": "无法记录访问。请重试。",
+    "countryFailed": "无法加载诊所信息。请重试。"
   }
 }

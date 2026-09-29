@@ -408,6 +408,7 @@
     "genericError": "حدث خطأ ما. حاول مرة أخرى.",
     "tabAccessLog": "سجل الوصول",
     "rxPdfAria": "ملف PDF للوصفة (طباعة أو حفظ)",
+    "historyPdf": "ملف PDF للسجل",
     "tabExams": "الفحوصات",
     "tabFiles": "الملفات",
     "filesHint": "صور أو ملفات PDF، خاصة: أنت وحدك من يمكنه فتحها.",
@@ -1201,6 +1202,8 @@
     "undone": "تم التراجع",
     "simulated": "محاكاة",
     "undo": "تراجع ({s} ث)",
+    "undoFailed": "تعذّر التراجع. افتح العنصر لتعديله.",
+    "openItem": "فتح",
     "view": "عرض في الجدول",
     "edit": "تعديل",
     "confirm": "تأكيد ✓",
@@ -1274,6 +1277,16 @@
     "corrected": "(مُصحَّح)",
     "print": "طباعة / حفظ PDF",
     "printHint": "لحفظ الملف، اختر \"حفظ بتنسيق PDF\" في نافذة الطباعة.",
-    "back": "العودة إلى المريض"
+    "back": "العودة إلى المريض",
+    "historyTitle": "السجل الطبي",
+    "medicalRecords": "السجلات الطبية",
+    "prescriptions": "الوصفات الطبية",
+    "noRecords": "لا توجد سجلات.",
+    "noPrescriptions": "لا توجد وصفات.",
+    "birthDate": "تاريخ الميلاد: {value}",
+    "phone": "الهاتف: {value}",
+    "exportedBy": "صدّره {name} في {date}",
+    "accessLogFailed": "تعذّر تسجيل الوصول. حاول مرة أخرى.",
+    "countryFailed": "تعذّر تحميل بيانات العيادة. حاول مرة أخرى."
   }
 }

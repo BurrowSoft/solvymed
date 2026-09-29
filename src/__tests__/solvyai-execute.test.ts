@@ -5,7 +5,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => {
   const calls: { fn: string; args: unknown[] }[] = [];
-  const state: { row: Record<string, unknown> | null } = { row: null };
+  // authId: the patient's SolvyMed account (get_patient_auth_id); null = none.
+  const state: { row: Record<string, unknown> | null; authId: string | null; rpcError: unknown } = { row: null, authId: null, rpcError: null };
   const rec = (fn: string, result: unknown) => (...args: unknown[]) => { calls.push({ fn, args }); return Promise.resolve(result); };
   return { calls, state, rec };
 });
@@ -32,14 +33,51 @@ vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => ({ 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => {
     const q = { select: () => q, eq: () => q, maybeSingle: async () => ({ data: h.state.row, error: null }) };
-    return { auth: { getUser: async () => ({ data: { user: { id: "doc-1" } } }) }, from: () => q };
+    return {
+      auth: { getUser: async () => ({ data: { user: { id: "doc-1" } } }) },
+      from: () => q,
+      rpc: async (fn: string, args: unknown) => { h.calls.push({ fn, args: [args] }); return { data: h.state.authId, error: h.state.rpcError }; },
+    };
   },
 }));
 
 import { executeSolvyAiAction, undoSolvyAiAction } from "@/app/[locale]/(site)/dashboard/solvyai-actions";
 
 const ID = "0f3b9c2e-1111-4222-8333-444455556666";
-beforeEach(() => { calls.length = 0; h.state.row = null; });
+beforeEach(() => { calls.length = 0; h.state.row = null; h.state.authId = null; h.state.rpcError = null; });
+
+describe("Desfazer only when nothing reached the patient (UX 36)", () => {
+  const P = "9a9b9c9d-1111-4222-8333-444455556666";
+  const appt = { status: "scheduled", date: "2026-10-05", start_time: "09:00:00", end_time: "09:30:00", patient_name: "M", payment_status: "pending", patient_id: P };
+  const book = { kind: "book_appointment", args: { patientId: P, date: "2026-10-05", start: "09:00", durationMin: 30 } } as const;
+
+  it("a patient without a SolvyMed account: book / move / cancel keep Desfazer", async () => {
+    expect(await executeSolvyAiAction(book, false)).toEqual({ ok: true, id: "new-appt" });
+    h.state.row = appt;
+    expect(await executeSolvyAiAction({ kind: "cancel_appointment", args: { appointmentId: ID } }, false)).toEqual({ ok: true, id: ID, prev: "scheduled" });
+    expect(await executeSolvyAiAction({ kind: "move_appointment", args: { appointmentId: ID, date: "2026-10-06", start: "10:00" } }, false)).toMatchObject({ ok: true, id: ID, prev: expect.any(String) });
+    expect(calls.filter((c) => c.fn === "get_patient_auth_id").map((c) => c.args[0])).toEqual([{ p_patient_id: P }, { p_patient_id: P }, { p_patient_id: P }]);
+  });
+
+  it("a patient with an account (app push or LINE): no Desfazer, and nothing to restore", async () => {
+    h.state.authId = "user-9";
+    expect(await executeSolvyAiAction(book, false)).toEqual({ ok: true, id: "new-appt", noUndo: true });
+    h.state.row = appt;
+    expect(await executeSolvyAiAction({ kind: "cancel_appointment", args: { appointmentId: ID } }, false)).toEqual({ ok: true, id: ID, noUndo: true });
+    expect(await executeSolvyAiAction({ kind: "move_appointment", args: { appointmentId: ID, date: "2026-10-06", start: "10:00" } }, false)).toEqual({ ok: true, id: ID, noUndo: true });
+  });
+
+  it("unsure (the lookup failed) counts as told: no Desfazer", async () => {
+    h.state.rpcError = { message: "boom" };
+    expect(await executeSolvyAiAction(book, false)).toEqual({ ok: true, id: "new-appt", noUndo: true });
+  });
+
+  it("a payment keeps Desfazer whoever the patient is (nothing is sent)", async () => {
+    h.state.authId = "user-9";
+    h.state.row = appt;
+    expect(await executeSolvyAiAction({ kind: "mark_paid", args: { appointmentId: ID, paid: true } }, false)).toEqual({ ok: true, id: ID, prev: "pending" });
+  });
+});
 
 describe("Confirmar (part 2)", () => {
   it("unblock: only a block; Desfazer re-creates it as it was", async () => {
