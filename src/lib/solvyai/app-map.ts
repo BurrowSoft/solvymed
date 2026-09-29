@@ -99,7 +99,6 @@ export const ACTIONS: AppMapAction[] = [
       "Another appointment at the new time is a hard stop (the database refuses the overlap).",
       { text: "Moving onto blocked time or outside the working hours is asked twice, like booking.", pending: ["mobile#91"] },
       "An edit that doesn't move it (same date, start and duration) isn't asked again.",
-      "On the website there's no move yet: SolvyAI says it's only in the app for now, with the Help link (no card).",
       "The card shows before → after.",
       "On the website a no-show (absent) isn't moved: it stays on record (history, 'to receive'); book again with the 'New appointment (same patient)' icon next to it (same patient, procedure and duration).",
       { text: "In the app too: only scheduled, confirmed or late appointments change date or time; others (a no-show included) show the date read-only, and an absent one has 'Nova consulta' pre-filled.", pending: ["mobile#116"] },

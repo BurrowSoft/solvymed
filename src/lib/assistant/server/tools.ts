@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { cleanSearchText, patientSearchFilter } from "@/lib/patientSearch";
 import { computeSlots, fromMinutes, getDayHours, toMinutes, type WorkingHours } from "@/lib/slots";
-import { hoursWarning } from "@/lib/scheduleChecks";
+import { MOVABLE_STATUSES, hoursWarning } from "@/lib/scheduleChecks";
 import { formatDateLabel, formatShortDate } from "@/lib/dateLabels";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { getPracticeCountry } from "@/lib/practiceCountry";
@@ -70,6 +70,11 @@ export const TOOL_DEFS: ToolDef[] = [
     input_schema: obj({ patientId: { type: "string" }, date: { type: "string" }, start: { type: "string" }, durationMin: { type: "integer" } }, ["patientId", "date", "start"]),
   },
   {
+    name: "propose_move_appointment",
+    description: "Propose moving an appointment (id from list_appointments; scheduled, confirmed or late) to a new date (YYYY-MM-DD) and start (HH:MM); the duration stays. A no-show (absent) is never moved: offer to book again instead. Shows a card; nothing is saved.",
+    input_schema: obj({ appointmentId: { type: "string" }, date: { type: "string" }, start: { type: "string" } }, ["appointmentId", "date", "start"]),
+  },
+  {
     name: "propose_cancel_appointment",
     description: "Propose cancelling one appointment (id from list_appointments). Shows a card; nothing is saved. One card per appointment.",
     input_schema: obj({ appointmentId: { type: "string" } }, ["appointmentId"]),
@@ -114,6 +119,8 @@ const T = {
     outsideAsk: (s: string, e: string) => `Este horário está fora do horário de atendimento (${s}–${e}).`,
     dayOffAsk: (d: string) => `${d} não é dia de atendimento.`,
     bookAnyway: "Agendar mesmo assim?", bookLabel: "Agendar",
+    moveAppt: "Remarcar consulta", from: "De", to: "Para", moveAnyway: "Remarcar mesmo assim?", moveLabel: "Remarcar",
+    notMovable: "Esta consulta não pode ser remarcada.",
     pastStop: "Esse horário já passou. Escolha outro horário.",
     archivedStop: "Este paciente está arquivado. Restaure o cadastro antes de agendar.",
     requestStop: "Pedidos de consulta são aceitos ou recusados no próprio pedido.",
@@ -139,6 +146,8 @@ const T = {
     outsideAsk: (s: string, e: string) => `This time is outside the working hours (${s}–${e}).`,
     dayOffAsk: (d: string) => `${d} isn't a working day.`,
     bookAnyway: "Book anyway?", bookLabel: "Book",
+    moveAppt: "Reschedule appointment", from: "From", to: "To", moveAnyway: "Reschedule anyway?", moveLabel: "Reschedule",
+    notMovable: "This appointment can't be rescheduled.",
     pastStop: "That time has already passed. Choose another time.",
     archivedStop: "This patient is archived. Restore the record before booking.",
     requestStop: "Booking requests are accepted or declined on the request itself.",
@@ -424,6 +433,82 @@ async function birthOf(ctx: ToolContext, patientId: string | null): Promise<stri
   return ((data ?? null) as { birth_date: string | null } | null)?.birth_date ?? null;
 }
 
+// Remarcar (the website's moveAppointment): a new date and start, the same
+// duration; the same checks as booking. The card shows before → after.
+async function proposeMove(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
+  const t = T[ctx.lang];
+  const a = await readAppointment(ctx, input.appointmentId);
+  if (!a || a.status === "blocked") return unseen("appointment");
+  if (a.status === "absent") return err("A no-show isn't moved (it stays on record): offer to book this patient again instead (find_patients, then propose_book_appointment).");
+  if (a.status === "tentative" || a.status === "proposal") return err("That's a booking request: it's answered on the request (propose_booking_decision), not moved.");
+  if (!MOVABLE_STATUSES.includes(a.status)) return err(`A ${a.status} appointment can't be moved; tell the user.`);
+  const { date, start } = input;
+  if (!isDate(date)) return err("The date must be YYYY-MM-DD in the Gregorian calendar; ask the user if unsure.");
+  if (!isTime(start)) return err("The start must be HH:MM; ask the user for the time.");
+  const oldStart = hhmm(a.start_time);
+  if (date === a.date && start === oldStart) return err("That's where it already is; ask the user for the new date and time.");
+  const dur = Math.max(5, toMinutes(hhmm(a.end_time)) - toMinutes(oldStart));
+  const endMin = toMinutes(start) + dur;
+  if (endMin > 24 * 60) return err("That would run past midnight; ask for another time.");
+  const end = fromMinutes(endMin);
+
+  const { data: sameDay } = await ctx.db
+    .from("appointments")
+    .select(APPT_COLS)
+    .eq("professional_id", ctx.profId)
+    .eq("date", date)
+    .not("status", "in", "(cancelled,rejected)");
+  const day = ((sameDay ?? []) as ApptRow[]).filter((r) => r.id !== a.id);
+  const overlaps = (r: ApptRow) => toMinutes(hhmm(r.start_time)) < endMin && toMinutes(start) < toMinutes(hhmm(r.end_time));
+  const clash = day.find((r) => r.status !== "blocked" && overlaps(r));
+  if (clash) {
+    const alternatives = await nearestFree(ctx, date, start, dur);
+    const s = hhmm(clash.start_time);
+    const e = hhmm(clash.end_time);
+    const what = clash.patient_name ?? "—";
+    return {
+      forModel: `Conflict: ${date} ${s}–${e} is taken (${what}). The user was shown the nearest free times as choices; ask which one (never pick).`,
+      block: { type: "slot_choice", reason: "conflict", text: (alternatives.length ? t.conflict : t.conflictNone)(whenLabel(ctx, date), what, s, e), conflicts: [{ date, start: s, end: e, what }], alternatives, other: true },
+    };
+  }
+
+  const warnings: CardWarning[] = [];
+  const asks: string[] = [];
+  const block = day.find((r) => r.status === "blocked" && overlaps(r));
+  if (block) {
+    warnings.push({ code: "blocked", text: t.blockedWarn(hhmm(block.start_time), hhmm(block.end_time)) });
+    asks.push(t.blockedAsk(hhmm(block.start_time), hhmm(block.end_time)));
+  }
+  const hours = hoursWarning(date, start, end, await workingHours(ctx));
+  if (hours?.kind === "outside") {
+    warnings.push({ code: "outside_hours", text: t.outsideWarn(hours.start, hours.end) });
+    asks.push(t.outsideAsk(hours.start, hours.end));
+  } else if (hours?.kind === "day_off") {
+    warnings.push({ code: "outside_hours", text: t.dayOffWarn(weekdayName(ctx, date)) });
+    asks.push(t.dayOffAsk(weekdayName(ctx, date)));
+  }
+  const past = date < ctx.today || (date === ctx.today && start <= ctx.nowTime);
+  const c = card(ctx, {
+    icon: "calendar-move",
+    title: t.moveAppt,
+    fields: [
+      { label: t.patient, value: personLabel(ctx, a.patient_name ?? "—", await birthOf(ctx, a.patient_id)) },
+      { label: t.from, value: `${whenLabel(ctx, a.date)}, ${oldStart}–${hhmm(a.end_time)}` },
+      { label: t.to, value: `${whenLabel(ctx, date)}, ${start}–${end}` },
+    ],
+    warnings,
+    ...(asks.length ? { secondConfirm: { question: `${asks.join(" ")} ${t.moveAnyway}`, confirmLabel: t.moveLabel } } : {}),
+    hardStop: past,
+    ...(past ? { stop: { code: "past_time" as const, text: t.pastStop } } : {}),
+    editTarget: { screen: "schedule", date: a.date },
+    viewTarget: { screen: "schedule", date },
+    after: { screen: "schedule", date, highlight: { kind: "appointment", id: a.id } },
+    // durationMin: for fresh times if the slot is taken at Confirmar (confirm_failed); not saved.
+    action: { kind: "move_appointment", args: { appointmentId: a.id, date, start, durationMin: dur } },
+  });
+  return { forModel: `Card shown (${c.id}${past ? ", blocked: past_time" : ""}). Tell the user to check it and tap Confirmar.`, block: { type: "card", card: c } };
+}
+
 async function proposeCancel(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
   const t = T[ctx.lang];
   const a = await readAppointment(ctx, input.appointmentId);
@@ -601,6 +686,7 @@ const RUN: Record<string, (ctx: ToolContext, input: Record<string, unknown>) => 
   list_appointments: listAppointments,
   find_free_slots: findFreeSlots,
   propose_book_appointment: proposeBook,
+  propose_move_appointment: proposeMove,
   propose_cancel_appointment: proposeCancel,
   propose_block_time: proposeBlock,
   propose_mark_paid: proposeMarkPaid,

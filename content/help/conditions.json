@@ -21,7 +21,7 @@
   },
   "solvyai-live": {
     "met": false,
-    "what": "SolvyAI is on for doctors in production: migration 115 applied, the budget cap set, the privacy policy names Anthropic (USA) as processor, and the app's Settings → SolvyAI (mobile #99) released. Also: every action C9 names (book, move, cancel, block time, add patient, mark paid) is a SolvyAI tool on the website's route; the website's route has book, cancel, block time, mark paid, unblock, booking decisions and add patient; move waits for the website's own Remarcar (UX 36: this sprint), so that must be merged first."
+    "what": "SolvyAI is on for doctors in production: migration 115 applied, the budget cap set, the privacy policy names Anthropic (USA) as processor, and the app's Settings → SolvyAI (mobile #99) released. Also: every action C9 names (book, move, cancel, block time, add patient, mark paid) is a SolvyAI tool on the website's route; the website's route has book, cancel, block time, mark paid, unblock, booking decisions, add patient and move (through the website's Remarcar)."
   },
   "mobile#111": {
     "met": false,
