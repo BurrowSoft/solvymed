@@ -35,25 +35,26 @@ describe("AppearanceCard", () => {
 });
 
 describe("dark-theme.css", () => {
-  const css = fs.readFileSync("src/app/dark-theme.css", "utf8");
+  // Line endings aside (a Windows checkout has CRLF).
+  const lf = (x: string) => x.split("\r\n").join("\n");
+  const css = lf(fs.readFileSync("src/app/dark-theme.css", "utf8"));
   const theme = fs.readFileSync("node_modules/tailwindcss/theme.css", "utf8");
-  const v = (name: string) => theme.match(new RegExp(`--${name}:\s*([^;]+);`))![1].trim();
+  const v = (name: string) => {
+    const at = theme.indexOf(`--${name}:`);
+    return theme.slice(at + name.length + 3, theme.indexOf(";", at)).trim();
+  };
 
   it("is up to date with its generator", () => {
-    // Line endings aside (a Windows checkout has CRLF).
-    const lf = (x: string) => x.replace(/
-/g, "
-");
-    const before = lf(css);
     execFileSync(process.execPath, ["scripts/dark-theme-build.mjs"], { stdio: "ignore" });
-    expect(lf(fs.readFileSync("src/app/dark-theme.css", "utf8"))).toBe(before);
+    expect(lf(fs.readFileSync("src/app/dark-theme.css", "utf8"))).toBe(css);
   });
 
-  it("swaps light and dark steps, keeps 400–600, and makes white the card surface", () => {
+  it("swaps light and dark steps, keeps accent 400–600, lightens neutral text, and makes white the card surface", () => {
     const darkBlock = css.slice(css.indexOf('[data-theme="dark"] {'), css.indexOf("}"));
     expect(darkBlock).toContain(`--color-slate-50: ${v("color-slate-950")};`);
     expect(darkBlock).toContain(`--color-red-700: ${v("color-red-300")};`);
     expect(darkBlock).not.toContain("--color-red-600:");
+    expect(darkBlock).toContain(`--color-slate-600: ${v("color-slate-300")};`);
     expect(darkBlock).toContain(`--color-white: ${v("color-slate-900")};`);
     expect(css).toContain('[data-theme="dark"] .text-white { color: #fff; }');
   });
