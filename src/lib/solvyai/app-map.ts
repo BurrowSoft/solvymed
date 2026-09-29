@@ -249,7 +249,7 @@ export const ACTIONS: AppMapAction[] = [
       "Only for Brazilian practices with a Pix key; it opens WhatsApp with the patient's number and the Pix message.",
       "It needs the patient's phone number; without one, say so and offer the QR / Pix Copia e Cola on the appointment instead.",
       "On the website SolvyAI doesn't send it: it's only in the app for now (say so, with the Help link).",
-      "Thai practices show a PromptPay QR on the appointment instead; there's no WhatsApp PromptPay message.",
+      "Thai practices show a PromptPay QR on the appointment instead; there's no WhatsApp PromptPay message. Asked to send it for a Thai practice, SolvyAI never proposes it: it answers \"Em clínicas na Tailândia, o paciente paga escaneando o QR PromptPay da consulta.\" with an \"Abrir QR\" link to that appointment.",
       "The payment method always follows the PRACTICE's country.",
     ],
     card: ["patient", "appointment", "value", "Pix key"],
