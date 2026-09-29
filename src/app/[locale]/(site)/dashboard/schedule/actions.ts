@@ -10,6 +10,7 @@ import { patientIdKind } from "@/lib/patientIds";
 import { hoursWarning } from "@/lib/scheduleChecks";
 import type { WorkingHours } from "@/lib/slots";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
+import { tellPatient } from "@/lib/clinicNotify";
 
 // The new-appointment patient picker: up to PICKER_LIMIT active patients of
 // this practice whose name (or CPF/phone digits) match, searched in the
@@ -196,6 +197,11 @@ export async function createAppointment(formData: FormData) {
     if (error.code === "23P01") return { error: "This time overlaps with another appointment", code: "slot_overlap", overlap: null };
     return { error: error.message, code: knownDbError(error.message) ?? "generic" };
   }
+  // The patient hears about it when they have the app (never the past).
+  await tellPatient(supabase, {
+    kind: "booked", practiceId: effectiveProfId, isSecretary: user.id !== effectiveProfId,
+    patientId, date, startTime,
+  });
   revalidatePath("/dashboard/schedule");
   return { success: true, id: (saved as { id: string } | null)?.id };
 }
@@ -224,6 +230,19 @@ export async function updateAppointmentStatus(id: string, status: string) {
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
+  // A cancel tells the patient (below): what it was before, read first.
+  type Before = { status: string; date: string; start_time: string; patient_id: string | null; patient_auth_id: string | null };
+  let before: Before | null = null;
+  if (status === "cancelled") {
+    const { data: row } = await supabase
+      .from("appointments")
+      .select("status, date, start_time, patient_id, patient_auth_id")
+      .eq("id", id)
+      .eq("professional_id", effectiveProfId)
+      .maybeSingle();
+    before = (row ?? null) as Before | null;
+  }
+
   // The tentative/proposal exclusion is enforced in the same atomic write
   // as the update itself (not a separate read-then-write, which would be
   // a TOCTOU race against a concurrent booking-card action) — a 0-row
@@ -240,6 +259,16 @@ export async function updateAppointmentStatus(id: string, status: string) {
   if (error) return { error: error.message, code: knownDbError(error.message) ?? "generic" };
   if (!data || data.length === 0) {
     return { error: "Use the booking request card to confirm, reject, or propose a time for this request", code: "use_booking_card" };
+  }
+
+  // Cancelled now (not before): the patient hears about it when they have
+  // the app; never for blocked time or the past.
+  if (before && before.status !== "cancelled") {
+    await tellPatient(supabase, {
+      kind: "cancelled", practiceId: effectiveProfId, isSecretary: user.id !== effectiveProfId,
+      patientAuthId: before.patient_auth_id, patientId: before.patient_id, status: before.status,
+      date: before.date, startTime: before.start_time,
+    });
   }
 
   revalidatePath("/dashboard/schedule");

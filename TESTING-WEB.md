@@ -7793,6 +7793,57 @@ mapa": the label clears.
 `c74f9ad`.** This docs commit sits on top of a master sync (16 behind,
 clean merge; message JSON valid).
 
+## PR #131 (`feat/clinic-change-pushes`, base master) — the website tells the patient when the clinic books or cancels, 🟢 at `6a01fbc` (+ docs/parser-only commits to `2ccdf5a`), with one ⏳ post-110 row
+
+**Setup:**
+- **Server:** a local `next dev` with my test-only Expo sink (pushes are
+  logged, never sent; the clinic-closed email call is sunk too), against
+  the prod DB.
+- **Practice:** a throwaway one with `clinic_name` "Clínica Opus Push"
+  plus two locations ("Aaa Opus Local Norte", "Zzz Opus Local Sul").
+- **Patients:** "Opus Push pt" (`pt-BR`) and "Opus Push th" (`th`), both
+  linked app accounts with device tokens, plus an unlinked "Opus Push Sem
+  Conta".
+- Every action was done through the UI (the Nova Consulta form, the
+  status select, Arquivar, Settings › close account).
+
+| Action | Push (title \| body) |
+|---|---|
+| Doctor books pt (Tuesday 10:00) | Nova consulta \| **Clínica Opus Push marcou uma consulta para você em 06/10/2026 às 10:00.** |
+| Status → Cancelado (pt) | Consulta cancelada \| **Clínica Opus Push cancelou sua consulta de 06/10/2026 às 10:00. Para marcar outra, abra o app.** |
+| Cancelado → Confirmado | none (only a change *to* cancelled notifies) |
+| Booking or cancelling in the past; Bloquear Horário; an unlinked patient | none |
+| Archive th (2 future appointments) | one each: นัดหมายถูกยกเลิก \| **นัดหมายของคุณวันที่ 07/10/2569 เวลา 15:00 ถูกยกเลิกโดย Clínica Opus Push หากต้องการนัดใหม่ กรุณาเปิดแอป** (and 16:00): UX's exact wording |
+| Account close by a second doctor (no `clinic_name`, location "Consultório Opus Sul") | th: **…เวลา 08:00 ถูกยกเลิกโดย Consultório Opus Sul** (no "open the app" suffix; the first-location fallback); pt: the unchanged close text |
+
+**My two findings:**
+1. **A linked patient whose appointments were all made on the website
+   gets no book/cancel push.**
+   - The web form stores `patient_id` but not `patient_auth_id`.
+   - `get_patient_push_tokens` (088) only returns tokens when an
+     appointment with `patient_auth_id` exists for the practice, so it
+     returns 0 tokens silently. The th patient got nothing; the pt
+     patient, with one app booking, got both pushes.
+   - **Handled:** the fix is mobile #117 / migration 119 (unapplied). Web
+     gates the Help/App Map claims on `linked-bookings`, and the built
+     A1/A4 show no website-notification sentence.
+2. **A secretary's action names a location, not the clinic:** "Aaa Opus
+   Local Norte marcou…" / "…cancelou…", while the doctor's own push says
+   "Clínica Opus Push".
+   - **Cause:** the secretary path reads `clinic_name` from
+     `get_professional_public_info`, which returns the profile name only
+     after migration 110. Prod is on 105.
+   - The reviewer ruled it expected before 110 and not a gate, since
+     master reaches prod only with the Thai release, which applies 110–119
+     first.
+   - **⏳ post-110:** re-run the secretary push on a profile-named practice
+     with 2 locations → it must say the profile name. The same row
+     applies to mobile #111.
+
+**CI:** ✅. **Review: clean (7f).** **Merge gate: 🟢** (with the ⏳
+post-110 row above). This docs commit sits on top of a master sync (9
+behind, clean merge).
+
 ## PR #128 (`fix/label-audit`, base master) — Pix dialog labels translated; Help G1/G4/K4 match the real labels (from my label audit), 🟢 at `4e420ef`
 
 **The Pix dialog** (Agenda, an appointment with a value, the Preview at

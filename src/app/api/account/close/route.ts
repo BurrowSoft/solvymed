@@ -10,6 +10,7 @@ import { sendExpoPush } from "@/lib/push";
 import { pushLocale } from "@/lib/pushText";
 import { formatShortDate } from "@/lib/dateLabels";
 import { routing } from "@/i18n/routing";
+import { patientFacingClinicName } from "@/lib/clinicNotify";
 
 // Closes or deletes the caller's own account (migration 102), for the web
 // settings page and the mobile app alike:
@@ -110,10 +111,17 @@ export async function POST(request: NextRequest) {
   // secretaries and patients there's no row and nothing to cancel.
   const { data: prof, error: profError } = await supabase
     .from("professionals")
-    .select("subscription_status, subscription_provider, subscription_id")
+    .select("subscription_status, subscription_provider, subscription_id, clinic_name, full_name")
     .eq("id", userId)
     .maybeSingle();
   if (profError) return fail("check_failed", 503);
+  // The name patients know the clinic by, for the cancellation notices
+  // (read now: the close removes it).
+  let clinicName = "";
+  if (prof) {
+    const { data: locs } = await supabase.from("clinics").select("name").eq("professional_id", userId).order("name").limit(1);
+    clinicName = patientFacingClinicName(prof.clinic_name, ((locs ?? []) as { name: string | null }[])[0]?.name, prof.full_name);
+  }
 
   let live: Stripe.Subscription | null = null;
   if (prof?.subscription_provider === "stripe" && prof.subscription_id && prof.subscription_status !== "lifetime") {
@@ -197,7 +205,7 @@ export async function POST(request: NextRequest) {
         if (!token) continue;
         const loc = localeOf(a.patientAuthId);
         const t = await tFor(loc);
-        pushes.push(sendExpoPush([token], t("pushCancelledTitle"), t("pushCancelledBody", { date: formatShortDate(loc, a.date), time: a.startTime.slice(0, 5) })));
+        pushes.push(sendExpoPush([token], t("pushCancelledTitle"), t("pushCancelledBody", { date: formatShortDate(loc, a.date), time: a.startTime.slice(0, 5), clinic: clinicName })));
       }
       if (plan.linkedPatients.length) {
         pushes.push(
