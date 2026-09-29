@@ -27,7 +27,7 @@
             },
             {
               "type": "p",
-              "text": "Se o horário estiver bloqueado, o app mostra o bloqueio e pergunta se você quer agendar mesmo assim. Fora do seu horário de atendimento (ou num dia em que você não atende), ele também pergunta antes de agendar. Se já houver outra consulta no mesmo horário, não é possível salvar: o app diz com quem é e você escolhe outro horário."
+              "text": "Se o horário estiver bloqueado, o app mostra o bloqueio e pergunta se você quer agendar mesmo assim. Se já houver outra consulta no mesmo horário, não é possível salvar: o app diz com quem é e você escolhe outro horário."
             }
           ],
           "en": [
@@ -43,7 +43,7 @@
             },
             {
               "type": "p",
-              "text": "If the time is blocked, the app shows the block and asks whether to book anyway. Outside your working hours (or on a day you don't work), it also asks before booking. If another appointment already takes that time, it can't be saved: the app says whose it is and you pick another time."
+              "text": "If the time is blocked, the app shows the block and asks whether to book anyway. If another appointment already takes that time, it can't be saved: the app says whose it is and you pick another time."
             }
           ]
         },
@@ -1207,52 +1207,6 @@
           "en": "Change the language with the language selector in the side menu. The website has no dark theme."
         },
         "webUnavailable": false,
-        "open": "settings",
-        "appOnly": null,
-        "appTitle": null
-      },
-      {
-        "id": "C9",
-        "category": "configuracoes",
-        "title": {
-          "pt": "SolvyAI",
-          "en": "SolvyAI"
-        },
-        "body": {
-          "pt": [
-            {
-              "type": "p",
-              "text": "**Configurações → SolvyAI** (só para médicos) tem duas opções:"
-            },
-            {
-              "type": "p",
-              "text": "**Mostrar botão do assistente** (neste celular, ligado por padrão): mostra ou esconde o botão ✦. Desligar só esconde o botão; ligue de novo quando quiser."
-            },
-            {
-              "type": "p",
-              "text": "**Permitir que o SolvyAI faça ações** (vale para a clínica, desligado por padrão): com ela ligada, o SolvyAI pode marcar, remarcar e cancelar consultas, bloquear horários, cadastrar pacientes e marcar pagamentos, sempre com a sua confirmação. Para isso, o nome e a data de nascimento do paciente e os dados da consulta são enviados à Anthropic (EUA), que processa o pedido. O SolvyAI nunca lê prontuários, receitas ou exames. O que você digita no chat é enviado como você escreveu, então evite digitar dados clínicos. Com ela desligada, o SolvyAI só responde perguntas sobre como usar o SolvyMed."
-            }
-          ],
-          "en": [
-            {
-              "type": "p",
-              "text": "**Settings → SolvyAI** (doctors only) has two options:"
-            },
-            {
-              "type": "p",
-              "text": "**Show the assistant button** (this phone, on by default): shows or hides the ✦ button. Turning it off only hides the button; turn it back on any time."
-            },
-            {
-              "type": "p",
-              "text": "**Let SolvyAI take actions** (for the clinic, off by default): when it's on, SolvyAI can book, move and cancel appointments, block time, add patients and mark payments, always after you confirm. To do this, the patient's name and date of birth and the appointment details are sent to Anthropic (USA), which processes the request. SolvyAI never reads records, prescriptions or exams. What you type in the chat is sent as you write it, so avoid typing clinical details. When it's off, SolvyAI only answers questions about using SolvyMed."
-            }
-          ]
-        },
-        "web": {
-          "pt": "Ainda não disponível no site: use o app.",
-          "en": "Not available on the website yet: use the app."
-        },
-        "webUnavailable": true,
         "open": "settings",
         "appOnly": null,
         "appTitle": null

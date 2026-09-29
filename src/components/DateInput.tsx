@@ -29,10 +29,14 @@ export function DateInput({
   const [own, setOwn] = useState(defaultValue ?? "");
   const current = value ?? own;
   const ref = useRef<HTMLInputElement>(null);
-  const today = localToday();
+  // The browser's own today, read after mount: a server render (a form
+  // opened by ?new=1) would otherwise fix it to the server's UTC date, a day
+  // early for Asia in the morning (tester).
+  const [today, setToday] = useState<string | null>(null);
+  useEffect(() => { setToday(localToday()); }, []);
   const message = looksBuddhistEra(current)
     ? t("buddhistYear")
-    : birthDate && birthDateOutOfRange(current, today)
+    : birthDate && today !== null && birthDateOutOfRange(current, today)
       ? t("invalidBirthDate")
       : "";
 
@@ -46,7 +50,7 @@ export function DateInput({
     <>
       <input
         {...rest}
-        {...(birthDate ? { min: BIRTH_DATE_MIN, max: today } : {})}
+        {...(birthDate ? { min: BIRTH_DATE_MIN, ...(today ? { max: today } : {}) } : {})}
         ref={ref}
         type="date"
         value={current}

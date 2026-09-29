@@ -13,6 +13,16 @@
 //   **On the website:** <web note en>   (optional)
 //   `open:<screen>`
 //   Note for SolvyAI: ... In the apps: "<pt>" / "<en>".   (optional)
+//   `requires:<id>,<id>`   (optional) the whole article only when all are met
+//   {pending:<id>} <text>  a paragraph only when <id> is met
+//
+// Conditions (content/help/conditions.json; the App Map's pending rules use
+// the same ids): text that describes something not true yet (an app build
+// not released, a migration not applied, SolvyAI not live) is left out of
+// the JSON entirely, so it's in no page, list, search, the app's view,
+// SolvyAI's knowledge or the JS bundle. Flipping a condition is one line in
+// conditions.json + `npm run help:build`, in the PR that makes it true. An
+// unknown id fails the build (a typo can't silently hide or show text).
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -39,7 +49,7 @@ function blocks(lines) {
   return out;
 }
 
-export function parseBatch(file, text) {
+export function parseBatch(file, text, conditions = {}) {
   const cat = CATEGORIES[file];
   if (!cat) throw new Error(`unknown help file ${file}`);
   const articles = [];
@@ -51,6 +61,11 @@ export function parseBatch(file, text) {
     const a = { id, category: cat.slug, title: { pt: ptTitle, en: enTitle }, body: { pt: [], en: [] }, web: null, webUnavailable: false, open: null, appOnly: null, appTitle: null };
     let lang = null;
     const web = {};
+    let requires = [];
+    const isMet = (cid) => {
+      if (!Object.hasOwn(conditions, cid)) throw new Error(`${id}: unknown condition "${cid}"`);
+      return conditions[cid].met === true;
+    };
     for (const line of lines) {
       if (line === "**pt-BR**") { lang = "pt"; continue; }
       if (line === "**en**") { lang = "en"; continue; }
@@ -58,6 +73,7 @@ export function parseBatch(file, text) {
       if ((m = line.match(/^\*\*No site:\*\*\s+(.+)$/))) { web.pt = m[1]; lang = null; continue; }
       if ((m = line.match(/^\*\*On the website:\*\*\s+(.+)$/))) { web.en = m[1]; lang = null; continue; }
       if ((m = line.match(/^`open:([\w-]+)`$/))) { a.open = m[1] === "none" ? null : m[1]; lang = null; continue; }
+      if ((m = line.match(/^`requires:([\w#.,-]+)`$/))) { requires = m[1].split(","); requires.forEach(isMet); continue; }
       if (line.startsWith("Note for SolvyAI:")) {
         m = line.match(/In the apps: "([^"]+)" \/ "([^"]+)"/);
         if (!m) throw new Error(`${id}: a SolvyAI note without the apps' text`);
@@ -69,6 +85,10 @@ export function parseBatch(file, text) {
         continue;
       }
       if (!lang) throw new Error(`${id}: text outside a language block: "${line.slice(0, 50)}"`);
+      if ((m = line.match(/^\{pending:([\w#.-]+)\}\s+(.+)$/))) {
+        if (isMet(m[1])) a.body[lang].push(m[2]);
+        continue;
+      }
       a.body[lang].push(line);
     }
     if (!a.body.pt.length || !a.body.en.length) throw new Error(`${id}: missing pt-BR or en text`);
@@ -79,16 +99,22 @@ export function parseBatch(file, text) {
     // The web note says the feature isn't on the website: no "Open on the
     // website" button then (the three phrasings the notes use).
     a.webUnavailable = !!web.en && /^(Not available on the website|Doesn't apply to the website|Reminders and notifications are app features)/.test(web.en);
+    if (requires.some((cid) => !isMet(cid))) continue;
     articles.push(a);
   }
   return { slug: cat.slug, title: { pt: cat.pt, en: cat.en }, articles };
 }
 
+export function readConditions(dir) {
+  return JSON.parse(readFileSync(resolve(dir, "conditions.json"), "utf8"));
+}
+
 export function buildAll(dir) {
+  const conditions = readConditions(dir);
   return readdirSync(dir)
     .filter((f) => /^\d\d-.+\.md$/.test(f))
     .sort()
-    .map((f) => parseBatch(f.replace(/\.md$/, ""), readFileSync(resolve(dir, f), "utf8")));
+    .map((f) => parseBatch(f.replace(/\.md$/, ""), readFileSync(resolve(dir, f), "utf8"), conditions));
 }
 
 // CLI: write the JSON.

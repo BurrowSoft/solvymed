@@ -12,12 +12,23 @@
 // and the code it names.
 
 import type { ActionKind, TargetScreen } from "@/lib/assistant/types";
+import conditions from "../../../content/help/conditions.json";
+import { HELP } from "@/lib/help";
 
 export type Role = "doctor" | "secretary";
-// A rule the code enforces today, or one that becomes true when the named
-// PR / migration ships (pending rules stay out of the model's text until
-// then, so the map never claims more than the product does; a9).
-export type Rule = string | { text: string; pending: string };
+// The conditions shared with the Help build (content/help/conditions.json):
+// one registry says what's true yet, for both.
+export type ConditionId = keyof typeof conditions;
+export function isMet(id: ConditionId): boolean {
+  return conditions[id].met === true;
+}
+// A rule the code enforces today, or one that becomes true when its
+// conditions are met (an app build released, a migration applied). Pending
+// rules stay out of the model's text until then, so the map never claims
+// more than the product does (a9); they go live when conditions.json flips.
+export type Rule = string | { text: string; pending: ConditionId[] };
+export const ruleIsLive = (r: Rule) => typeof r === "string" || r.pending.every(isMet);
+export const ruleText = (r: Rule) => (typeof r === "string" ? r : r.text);
 export type Label = { pt: string; en: string };
 
 export type AppMapAction = {
@@ -61,7 +72,7 @@ export const ACTIONS: AppMapAction[] = [
       "Another appointment at that time is a hard stop: nothing is saved; say who is there and offer the nearest free times (cancelled, rejected and blocked entries don't count).",
       "Blocked time is allowed but asked twice: 'Este horário está bloqueado (…). Agendar mesmo assim?'.",
       "On the website, outside the working hours or on a day the doctor doesn't work is allowed but asked twice; when blocked too, ONE question lists both. Hours never set up: no question.",
-      { text: "In the app too: outside the working hours or on a day off is asked twice.", pending: "mobile #91" },
+      { text: "In the app too: outside the working hours or on a day off is asked twice.", pending: ["mobile#91"] },
       "An archived patient can't get new appointments (restore them first).",
       "The appointment can't run past midnight. Duration is 1–480 minutes.",
       "Dates are Gregorian; a year of 2400 or more is never saved or converted.",
@@ -83,7 +94,7 @@ export const ACTIONS: AppMapAction[] = [
     inputs: { required: ["which appointment", "new date", "new start time"], optional: ["new duration"], defaults: ["the same duration"] },
     rules: [
       "Another appointment at the new time is a hard stop (the database refuses the overlap).",
-      { text: "Moving onto blocked time or outside the working hours is asked twice, like booking.", pending: "mobile #91" },
+      { text: "Moving onto blocked time or outside the working hours is asked twice, like booking.", pending: ["mobile#91"] },
       "An edit that doesn't move it (same date, start and duration) isn't asked again.",
       "The card shows before → after.",
       "Patients' own reschedule requests are a separate flow (the doctor accepts or declines them).",
@@ -182,7 +193,7 @@ export const ACTIONS: AppMapAction[] = [
       "The same CPF / Thai ID / passport can't be registered twice in one practice.",
       "A Thai ID must pass its checksum.",
       "A birth-date year of 2400 or more is never saved or converted.",
-      { text: "The birth date must be between 1900 and today.", pending: "web #114 + the app + migration 116" },
+      { text: "The birth date must be between 1900 and today.", pending: ["mobile#95", "migration-116"] },
       "Only the ID fields of the practice's country are used.",
     ],
     card: ["full name", "birth date", "phone", "email", "ID"],
@@ -236,12 +247,12 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   {
     rule: {
       text: "SolvyAI's actions need the clinic's opt-in (Settings → SolvyAI → \"Permitir que o SolvyAI faça ações\" / \"Let SolvyAI take actions\", off by default); without it, SolvyAI only answers questions about using SolvyMed.",
-      pending: "migration 115 + mobile #99",
+      pending: ["migration-115", "mobile#99", "solvyai-live"],
     },
     help: "C9",
   },
   {
-    rule: { text: "\"Mostrar botão do assistente\" / \"Show the assistant button\" (Settings → SolvyAI, per phone) hides or shows the ✦ button.", pending: "mobile #99" },
+    rule: { text: "\"Mostrar botão do assistente\" / \"Show the assistant button\" (Settings → SolvyAI; per phone in the app, per browser on the website) hides or shows the ✦ button.", pending: ["mobile#99", "solvyai-live"] },
     help: "C9",
   },
 ];
@@ -285,11 +296,13 @@ export function appMapText(): string {
     lines.push(`### ${a.kind} (${a.tool})`, a.what);
     lines.push(`Screen: app "${a.screen.app.en}"${a.screen.web ? `, web "${a.screen.web.en}"` : " (app only)"}. Roles: ${a.roles.join(", ")}.`);
     lines.push(`Required: ${a.inputs.required.join(", ")}.${a.inputs.optional.length ? ` Optional: ${a.inputs.optional.join(", ")}.` : ""}${a.inputs.defaults.length ? ` Defaults (shown as "(padrão)"): ${a.inputs.defaults.join(", ")}.` : ""}`);
-    for (const r of a.rules) if (typeof r === "string") lines.push(`- ${r}`);
+    for (const r of a.rules) if (ruleIsLive(r)) lines.push(`- ${ruleText(r)}`);
     lines.push(`Card: ${a.card.join("; ")}. After saving: ${a.after}. Help: ${a.help}.`, "");
   }
   lines.push("## About SolvyAI");
-  for (const g of GENERAL) if (typeof g.rule === "string") lines.push(`- ${g.rule} (Help ${g.help})`);
+  // A held article (not built yet) isn't pointed to.
+  const built = new Set(HELP.flatMap((c) => c.articles.map((a) => a.id)));
+  for (const g of GENERAL) if (ruleIsLive(g.rule)) lines.push(`- ${ruleText(g.rule)}${built.has(g.help) ? ` (Help ${g.help})` : ""}`);
   lines.push("", "## Never via SolvyAI");
   for (const n of NEVER) lines.push(`- ${n.what} (Help ${n.help})`);
   lines.push("", "## Glossary");

@@ -1,0 +1,26 @@
+{
+  "mobile#91": {
+    "met": false,
+    "what": "The app asks before booking outside the working hours or on a day off, also when moving (mobile #91), in a RELEASED store build (not just merged)."
+  },
+  "mobile#95": {
+    "met": false,
+    "what": "The app refuses birth dates outside 1900..today (mobile #95) in a RELEASED store build (not just merged)."
+  },
+  "mobile#99": {
+    "met": false,
+    "what": "The app's Settings → SolvyAI (the button switch and the actions opt-in, mobile #99) is in a RELEASED store build (not just merged)."
+  },
+  "migration-115": {
+    "met": false,
+    "what": "Migration 115 (SolvyAI quota and the actions switch) is applied on production."
+  },
+  "migration-116": {
+    "met": false,
+    "what": "Migration 116 (the database refuses birth dates outside 1900..today) is applied on production."
+  },
+  "solvyai-live": {
+    "met": false,
+    "what": "SolvyAI is on for doctors in production: migration 115 applied, the budget cap set, the privacy policy names Anthropic (USA) as processor, and the app's Settings → SolvyAI (mobile #99) released."
+  }
+}

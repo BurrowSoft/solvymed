@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { birthDateOutOfRange, buddhistYearOf, looksBuddhistEra } from "@/lib/buddhistEra";
 
 let locale = "th";
@@ -50,6 +50,16 @@ describe("birth dates are between 1900-01-01 and today (116)", () => {
     // A Buddhist-era year keeps its own, more specific message.
     fireEvent.change(input, { target: { value: "2539-05-14" } });
     expect(screen.getByRole("alert")).toHaveTextContent("buddhistYear");
+  });
+
+  it("max is the browser's today, set after mount (never a server-rendered date)", async () => {
+    vi.useFakeTimers();
+    // 06:30 in Bangkok = 23:30 UTC the day before: a server's date would be a day early.
+    vi.setSystemTime(new Date(2026, 8, 30, 6, 30));
+    const { container } = render(<DateInput birthDate name="birth_date" />);
+    await act(async () => {});
+    expect(container.querySelector("input")!.max).toBe("2026-09-30");
+    vi.useRealTimers();
   });
 
   it("schedule dates (not birth dates) may be in the future", () => {

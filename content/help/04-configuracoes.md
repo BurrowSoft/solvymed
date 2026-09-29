@@ -98,6 +98,7 @@ On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings
 **Settings → SolvyAI** (doctors only) has two options:
 **Show the assistant button** (this phone, on by default): shows or hides the ✦ button. Turning it off only hides the button; turn it back on any time.
 **Let SolvyAI take actions** (for the clinic, off by default): when it's on, SolvyAI can book, move and cancel appointments, block time, add patients and mark payments, always after you confirm. To do this, the patient's name and date of birth and the appointment details are sent to Anthropic (USA), which processes the request. SolvyAI never reads records, prescriptions or exams. What you type in the chat is sent as you write it, so avoid typing clinical details. When it's off, SolvyAI only answers questions about using SolvyMed.
-**No site:** Ainda não disponível no site: use o app.
-**On the website:** Not available on the website yet: use the app.
+**No site:** Em **Configurações → SolvyAI** estão as mesmas duas opções; no site, **Mostrar botão do assistente** vale para este navegador.
+**On the website:** **Settings → SolvyAI** has the same two options; on the website, **Show the assistant button** applies to this browser.
 `open:settings`
+`requires:solvyai-live`
