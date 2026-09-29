@@ -267,6 +267,14 @@ describe("SolvyAI actions mode: other proposals", () => {
     t = setup(listThen("2026-09-30", { name: "propose_mark_paid", input: { appointmentId: "a-joao", paid: true } }));
     r = await run(t, ask("O Mario pagou"));
     expect(cardOf(r.blocks)!.after).toEqual({ screen: "payments", highlight: { kind: "appointment", id: "a-joao" } });
+    // The value in the practice's currency (Sprint TH rule 1).
+    expect(cardOf(r.blocks)!.fields.find((f) => f.label === "Valor")!.value).toMatch(/^R\$\s200,00$/);
+    t = setup(listThen("2026-09-30", { name: "propose_mark_paid", input: { appointmentId: "a-joao", paid: true } }));
+    t.tables.professionals[0].country = "TH";
+    r = await run(t, ask("O Mario pagou"));
+    expect(cardOf(r.blocks)!.fields.find((f) => f.label === "Valor")!.value).toBe("฿200.00");
+    const listed = JSON.parse(String((resultsIn(t.model.calls[1])[0] as { content: string }).content)) as Row[];
+    expect(listed[0].value).toBe("฿200.00");
   });
 
   it("at most 4 model calls per answer", async () => {

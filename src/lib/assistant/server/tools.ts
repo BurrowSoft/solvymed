@@ -6,6 +6,8 @@ import { formatDateLabel, formatShortDate } from "@/lib/dateLabels";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
+import { countryProfile } from "@/lib/country";
+import { formatMoney } from "@/lib/money";
 import { webPath } from "@/lib/assistant/targets";
 import type { AnswerBlock, CardWarning, ConfirmationCard, ScreenTarget } from "@/lib/assistant/types";
 import type { ToolDef } from "./model";
@@ -28,6 +30,8 @@ export type ToolContext = {
   today: string;
   nowTime: string;
   seen: Set<string>;
+  // The practice country, read once per request (IDs and currency key off it).
+  country?: string;
 };
 
 // What a tool gives back: text for the model (and whether it's an error the
@@ -144,6 +148,13 @@ function card(ctx: ToolContext, c: Omit<ConfirmationCard, "id" | "editHref" | "v
   };
 }
 
+// The practice country (IDs and currency), read once per request.
+async function practiceCountry(ctx: ToolContext): Promise<string> {
+  if (!ctx.country) ctx.country = await getPracticeCountry(ctx.db, ctx.profId, ctx.profId);
+  return ctx.country;
+}
+const money = (amount: number, country: string) => formatMoney(amount, countryProfile(country).currency);
+
 const err = (forModel: string): ToolOutcome => ({ forModel, isError: true });
 const unseen = (what: string) => err(`Unknown ${what}: use a read tool first and pick from its results; never guess an id. If several could match, ask the user.`);
 
@@ -181,7 +192,7 @@ async function nearestFree(ctx: ToolContext, date: string, start: string, durati
 async function findPatients(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
   const q = cleanSearchText(String(input.query ?? ""));
   // The practice country decides which ID column is searched (the picker's rule).
-  const filter = patientSearchFilter(q, patientIdKind(await getPracticeCountry(ctx.db, ctx.profId, ctx.profId)));
+  const filter = patientSearchFilter(q, patientIdKind(await practiceCountry(ctx)));
   if (!q || !filter) return err("Say who: ask the user for the patient's name.");
   const { data, error } = await ctx.db
     .from("patients")
@@ -226,6 +237,7 @@ async function listAppointments(ctx: ToolContext, input: Record<string, unknown>
     for (const p of (ps ?? []) as { id: string; birth_date: string | null }[]) births.set(p.id, p.birth_date);
   }
   rows.forEach((r) => { ctx.seen.add(r.id); if (r.patient_id) ctx.seen.add(r.patient_id); });
+  const country = await practiceCountry(ctx);
   return {
     forModel: JSON.stringify(rows.map((r) => ({
       id: r.id,
@@ -241,7 +253,7 @@ async function listAppointments(ctx: ToolContext, input: Record<string, unknown>
             patientId: r.patient_id,
             birthDate: r.patient_id && births.get(r.patient_id) ? formatShortDate(ctx.locale, births.get(r.patient_id)!) : null,
             paid: r.payment_status === "paid",
-            value: r.payment_amount,
+            value: r.payment_amount === null ? null : money(r.payment_amount, country),
           }),
     }))),
   };
@@ -437,7 +449,7 @@ async function proposeMarkPaid(ctx: ToolContext, input: Record<string, unknown>)
     fields: [
       { label: t.patient, value: personLabel(ctx, a.patient_name ?? "—", await birthOf(ctx, a.patient_id)) },
       { label: t.appointment, value: `${whenLabel(ctx, a.date)}, ${hhmm(a.start_time)}–${hhmm(a.end_time)}` },
-      ...(value ? [{ label: t.value, value: String(value) }] : []),
+      ...(value ? [{ label: t.value, value: money(value, await practiceCountry(ctx)) }] : []),
     ],
     warnings: [],
     editTarget: { screen: "payments" },
