@@ -9115,3 +9115,31 @@ doctor (existing access rows).
 
 **CI at `0e7b9ea`:** ✅. **Review: clean (9a).** **Merge gate: 🟢 for
 `0e7b9ea`**, with the ⏳ row above for after 126 / 131.
+
+## #171 Settings → Clinic: CNPJ only in Brazil, the Thai clinic tax ID in Thailand (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `7b49fce`, on its Vercel Preview (Playwright),
+against the prod DB (migration 112 applied).
+- **Accounts:** throwaway doctors with the practice country BR, TH and GB.
+- **Setup:** each **started with a stored CNPJ** (11.222.333/0001-81), to
+  prove that no save wipes it.
+
+| Row | Result |
+|---|---|
+| BR (pt-BR / en / th) | ✅ **CNPJ** shown (sample 00.000.000/0001-00); no tax ID field. Saving keeps the CNPJ. |
+| TH (pt-BR / en / th) | ✅ no CNPJ field; **"Nº de identificação fiscal (13 dígitos)" / "Tax ID (13 digits)" / "เลขประจำตัวผู้เสียภาษี (13 หลัก)"** |
+| GB (pt-BR / en / th) | ✅ neither field. Saving keeps the stored CNPJ. |
+| TH: 1234567890121 | ✅ saved as `clinic_tax_id = 1234567890121`, shown again after a reload |
+| TH: dashes (1-2345-67890-12-1, 3-1012-00456-78-9) | ✅ saved as digits only |
+| TH: bad checksum 1234567890123 | ✅ pt "Digite um número de identificação fiscal válido, com 13 dígitos." / en "Enter a valid 13-digit tax ID." / th "กรอกเลขประจำตัวผู้เสียภาษี 13 หลักที่ถูกต้อง"; **nothing saved** (the other fields weren't saved either) |
+| TH: 12 digits | ✅ the same error; nothing saved |
+| TH: emptied | ✅ `clinic_tax_id` cleared (null); saving it again works |
+| CNPJ after every TH / GB save | ✅ still 11.222.333/0001-81 |
+
+**Not covered here:** the Thai receipt reading the tax ID is app-only (the
+website's recibo sends Thai practices to the app). That's for the mobile
+testers.
+
+**Master sync:** master (#169, #170) merged in under this docs commit,
+cleanly.
+**Review: clean (9a).** **Merge gate: 🟢 for `7b49fce`.**
