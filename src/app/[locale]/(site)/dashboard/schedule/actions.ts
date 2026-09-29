@@ -7,7 +7,7 @@ import { knownDbError } from "@/lib/dbErrors";
 import { PICKER_LIMIT, cleanSearchText, patientSearchFilter } from "@/lib/patientSearch";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
-import { hoursWarning } from "@/lib/scheduleChecks";
+import { MOVABLE_STATUSES, hoursWarning, keptDuration } from "@/lib/scheduleChecks";
 import type { WorkingHours } from "@/lib/slots";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { tellPatient } from "@/lib/clinicNotify";
@@ -204,6 +204,111 @@ export async function createAppointment(formData: FormData) {
   });
   revalidatePath("/dashboard/schedule");
   return { success: true, id: (saved as { id: string } | null)?.id };
+}
+
+// Remarcar: a new date and start, the same duration, with the same checks
+// as booking (another appointment there is a hard stop saying with whom;
+// blocked time / outside the working hours asked once, resubmitted with
+// confirm_warnings=1). The patient with the app hears about it (08's text,
+// old → new; never for the past).
+export async function moveAppointment(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized", code: "generic" };
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
+
+  const id = formData.get("id") as string;
+  const date = formData.get("date") as string;
+  const startTime = ((formData.get("start_time") as string) ?? "").slice(0, 5);
+  if (!id || !date || !startTime) return { error: "Missing required fields", code: "missing_fields" };
+  if (looksBuddhistEra(date)) return { error: "Buddhist-era year", code: "date_buddhist_era" };
+
+  const { data: row } = await supabase
+    .from("appointments")
+    .select("status, date, start_time, end_time, duration_minutes, patient_id, patient_auth_id")
+    .eq("id", id)
+    .eq("professional_id", effectiveProfId)
+    .maybeSingle();
+  const before = row as { status: string; date: string; start_time: string; end_time: string; duration_minutes: number | null; patient_id: string | null; patient_auth_id: string | null } | null;
+  if (!before) return { error: "Not found", code: "generic" };
+  if (!MOVABLE_STATUSES.includes(before.status)) return { error: "Can't be moved", code: before.status === "tentative" || before.status === "proposal" ? "use_booking_card" : "not_movable" };
+  // Nothing changes: nothing to ask, save or tell.
+  if (before.date === date && before.start_time.slice(0, 5) === startTime) return { success: true, id };
+
+  const duration = keptDuration(before.start_time, before.end_time);
+  const endTime = computeEndTime(startTime, duration);
+  if (!endTime) return { error: "This time and duration would run past midnight", code: "past_midnight" };
+
+  // Another appointment there (not this one): a hard stop, saying with whom.
+  const { data: clashes } = await supabase
+    .from("appointments")
+    .select("patient_name, start_time, duration_minutes")
+    .eq("professional_id", effectiveProfId)
+    .eq("date", date)
+    .neq("id", id)
+    .not("status", "in", "(cancelled,rejected,blocked)")
+    .lt("start_time", endTime)
+    .gt("end_time", startTime)
+    .order("start_time")
+    .limit(1);
+  const clash = clashes?.[0] as { patient_name: string | null; start_time: string; duration_minutes: number | null } | undefined;
+  if (clash) {
+    return {
+      error: "This time overlaps with another appointment",
+      code: "slot_overlap",
+      overlap: { name: clash.patient_name ?? "", time: clash.start_time.slice(0, 5), durationMin: clash.duration_minutes ?? null },
+    };
+  }
+
+  if (formData.get("confirm_warnings") !== "1") {
+    const [{ data: blocks }, { data: wh }] = await Promise.all([
+      supabase
+        .from("appointments")
+        .select("start_time, end_time")
+        .eq("professional_id", effectiveProfId)
+        .eq("date", date)
+        .eq("status", "blocked")
+        .lt("start_time", endTime)
+        .gt("end_time", startTime)
+        .order("start_time")
+        .limit(1),
+      supabase.rpc("get_professional_working_hours", { p_professional_id: effectiveProfId }),
+    ]);
+    const block = blocks?.[0] as { start_time: string; end_time: string } | undefined;
+    const hours = hoursWarning(date, startTime, endTime, wh as WorkingHours | null);
+    if (block || hours) {
+      return {
+        error: "Needs confirmation",
+        code: "needs_confirm",
+        blocked: block ? { start: block.start_time.slice(0, 5), end: block.end_time.slice(0, 5) } : null,
+        hours,
+      };
+    }
+  }
+
+  // The same statuses in the write itself, so a concurrent change (a cancel,
+  // a request card) isn't overwritten.
+  const { data: moved, error } = await supabase
+    .from("appointments")
+    .update({ date, start_time: startTime, end_time: endTime })
+    .eq("id", id)
+    .eq("professional_id", effectiveProfId)
+    .in("status", MOVABLE_STATUSES)
+    .select("id");
+  if (error) {
+    if (error.code === "23P01") return { error: "This time overlaps with another appointment", code: "slot_overlap", overlap: null };
+    return { error: error.message, code: knownDbError(error.message) ?? "generic" };
+  }
+  if (!moved?.length) return { error: "Can't be moved", code: "not_movable" };
+
+  await tellPatient(supabase, {
+    kind: "moved", practiceId: effectiveProfId, isSecretary: user.id !== effectiveProfId,
+    patientAuthId: before.patient_auth_id, patientId: before.patient_id, status: before.status,
+    date, startTime, from: { date: before.date, startTime: before.start_time },
+  });
+  revalidatePath("/dashboard/schedule");
+  return { success: true, id };
 }
 
 // tentative/proposal/rejected are deliberately excluded — those are

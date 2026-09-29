@@ -30,11 +30,11 @@ describe("push texts", () => {
     const kinds: PushKind[] = [
       "apptConfirmed", "bookingNotAvailable", "newTimeProposed", "proposalAccepted", "proposalDeclined",
       "rescheduleRequested", "rescheduleConfirmed", "rescheduleConfirmedNoTime", "rescheduleDeclined",
-      "apptBookedByClinic", "apptCancelledByClinic", "newBookingRequest",
+      "apptBookedByClinic", "apptCancelledByClinic", "apptMovedByClinic", "newBookingRequest",
     ];
     const locales: PushLocale[] = ["pt-BR", "en", "es", "fr", "de", "it", "th"];
     for (const l of locales) for (const k of kinds) {
-      const { title, body } = pushText(l, k, { name: "X", when: "W", clinic: "C", date: "D", time: "T" });
+      const { title, body } = pushText(l, k, { name: "X", when: "W", clinic: "C", date: "D", time: "T", oldDate: "OD", oldTime: "OT" });
       expect(title.length, `${l} ${k}`).toBeGreaterThan(0);
       expect(body, `${l} ${k}`).not.toMatch(/[{}]/);
     }
