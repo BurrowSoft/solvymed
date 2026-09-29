@@ -1299,6 +1299,7 @@
     "print": "Imprimer / Enregistrer en PDF",
     "printHint": "Pour enregistrer le fichier, choisissez « Enregistrer au format PDF » dans la fenêtre d’impression.",
     "back": "Retour au patient",
+    "backToPayments": "Retour aux paiements",
     "historyTitle": "Dossier médical",
     "medicalRecords": "Notes médicales",
     "prescriptions": "Ordonnances",

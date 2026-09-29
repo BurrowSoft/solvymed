@@ -1299,6 +1299,7 @@
     "print": "인쇄 / PDF로 저장",
     "printHint": "파일을 저장하려면 인쇄 창에서 'PDF로 저장'을 선택하세요.",
     "back": "환자로 돌아가기",
+    "backToPayments": "결제로 돌아가기",
     "historyTitle": "진료 이력",
     "medicalRecords": "진료 기록",
     "prescriptions": "처방전",

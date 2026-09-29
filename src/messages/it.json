@@ -1299,6 +1299,7 @@
     "print": "Stampa / Salva PDF",
     "printHint": "Per salvare il file, scegli «Salva come PDF» nella finestra di stampa.",
     "back": "Torna al paziente",
+    "backToPayments": "Torna ai pagamenti",
     "historyTitle": "Storia clinica",
     "medicalRecords": "Note cliniche",
     "prescriptions": "Prescrizioni",

@@ -1299,6 +1299,7 @@
     "print": "Imprimir / Guardar PDF",
     "printHint": "Para guardar el archivo, elige «Guardar como PDF» en la ventana de impresión.",
     "back": "Volver al paciente",
+    "backToPayments": "Volver a pagos",
     "historyTitle": "Historia clínica",
     "medicalRecords": "Registros clínicos",
     "prescriptions": "Recetas",
