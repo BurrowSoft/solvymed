@@ -13,6 +13,7 @@ import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { formIdKindMatches, patientIdError, patientIdKind, readPatientIds, sameIdentifier, similarPatientArgs } from "@/lib/patientIds";
 import { patientSearchFilter } from "@/lib/patientSearch";
 import { mergeSupported } from "@/lib/mergeProbe";
+import { conditionMet } from "@/lib/conditions";
 import { MERGE_COLUMNS, MERGE_ERRORS, MERGE_FIELD_KEYS, type MergeErrorCode, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
 
 const UUIDISH_MERGE = /^[0-9a-f-]{8,64}$/i;
@@ -528,8 +529,11 @@ export async function addPrescriptionCorrection(prescriptionId: string, patientI
 
 // ── Merge duplicate patients (migration 133; the app's lib/patient-merge.ts) ──
 
-// Mesclar shows only once the database has merge_patients (lib/mergeProbe).
+// Mesclar shows only once the database has merge_patients (lib/mergeProbe)
+// AND migration-133 is flipped by hand after the testers' 133 run (9a: the
+// probe alone would switch it on untested the moment 133 is applied).
 export async function mergeAvailable(): Promise<boolean> {
+  if (!conditionMet("migration-133")) return false;
   return mergeSupported(await createClient());
 }
 

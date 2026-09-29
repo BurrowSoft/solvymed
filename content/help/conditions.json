@@ -65,6 +65,6 @@
   },
   "migration-133": {
     "met": false,
-    "what": "Migration 133 (merge_patients / merge_patients_preview) is applied on production: the website's \"Mesclar com outro paciente…\" appears (its own probe) and Help P12 shows with the website's steps; the app's steps also wait on merge-patients-live."
+    "what": "Migration 133 (merge_patients / merge_patients_preview) is applied on production AND the testers' 133 rows passed there: flip by hand (9a), never automatically. Gates the website's \"Mesclar com outro paciente…\" (together with its probe) and Help P12 with the website's steps; the app's steps also wait on merge-patients-live."
   }
 }
