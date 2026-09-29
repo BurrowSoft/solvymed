@@ -6,7 +6,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const h = vi.hoisted(() => {
   const calls: { fn: string; args: unknown[] }[] = [];
   // authId: the patient's SolvyMed account (get_patient_auth_id); null = none.
-  const state: { row: Record<string, unknown> | null; authId: string | null; rpcError: unknown } = { row: null, authId: null, rpcError: null };
+  const state: { row: Record<string, unknown> | null; authId: string | null; rpcError: unknown; apptCount: number | null; countError: unknown; preview: unknown; previewError: unknown } =
+    { row: null, authId: null, rpcError: null, apptCount: 0, countError: null, preview: { has_clinical_history: false, upcoming_appointments: 0 }, previewError: null };
   const rec = (fn: string, result: unknown) => (...args: unknown[]) => { calls.push({ fn, args }); return Promise.resolve(result); };
   return { calls, state, rec };
 });
@@ -32,11 +33,16 @@ vi.mock("@/lib/effectiveProfId", () => ({ getEffectiveProfId: async () => "doc-1
 vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => ({ ok: true, country: "TH" }) }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => {
-    const q = { select: () => q, eq: () => q, maybeSingle: async () => ({ data: h.state.row, error: null }) };
+    const q: Record<string, unknown> = { select: () => q, eq: () => q, maybeSingle: async () => ({ data: h.state.row, error: null }) };
+    // A head count (the add_patient undo's "any appointment?").
+    q.then = (res: (v: unknown) => unknown) => Promise.resolve({ count: h.state.apptCount, error: h.state.countError }).then(res);
     return {
       auth: { getUser: async () => ({ data: { user: { id: "doc-1" } } }) },
       from: () => q,
-      rpc: async (fn: string, args: unknown) => { h.calls.push({ fn, args: [args] }); return { data: h.state.authId, error: h.state.rpcError }; },
+      rpc: async (fn: string, args: unknown) => {
+        if (fn === "get_patient_archive_preview") return { data: h.state.preview, error: h.state.previewError };
+        h.calls.push({ fn, args: [args] }); return { data: h.state.authId, error: h.state.rpcError };
+      },
     };
   },
 }));
@@ -44,7 +50,10 @@ vi.mock("@/lib/supabase/server", () => ({
 import { executeSolvyAiAction, undoSolvyAiAction } from "@/app/[locale]/(site)/dashboard/solvyai-actions";
 
 const ID = "0f3b9c2e-1111-4222-8333-444455556666";
-beforeEach(() => { calls.length = 0; h.state.row = null; h.state.authId = null; h.state.rpcError = null; });
+beforeEach(() => {
+  calls.length = 0; h.state.row = null; h.state.authId = null; h.state.rpcError = null;
+  h.state.apptCount = 0; h.state.countError = null; h.state.preview = { has_clinical_history: false, upcoming_appointments: 0 }; h.state.previewError = null;
+});
 
 describe("Desfazer only when nothing reached the patient (UX 36)", () => {
   const P = "9a9b9c9d-1111-4222-8333-444455556666";
@@ -134,6 +143,28 @@ describe("Confirmar (part 2)", () => {
     calls.length = 0;
     await undoSolvyAiAction({ kind: "add_patient", args: {} }, ID);
     expect(calls).toEqual([{ fn: "deletePatient", args: [ID] }]);
+  });
+
+  it("Desfazer of a new patient deletes it only while nothing uses it; a failed check refuses (app parity)", async () => {
+    const undo = () => undoSolvyAiAction({ kind: "add_patient", args: {} }, ID);
+    expect(await undo()).toEqual({ ok: true, id: ID });
+    // An appointment booked meanwhile (another tab, the next card).
+    calls.length = 0; h.state.apptCount = 1;
+    expect(await undo()).toEqual({ ok: false, code: "generic" });
+    expect(calls).toEqual([]);
+    // Clinical history.
+    h.state.apptCount = 0; h.state.preview = { has_clinical_history: true, upcoming_appointments: 0 };
+    expect(await undo()).toEqual({ ok: false, code: "generic" });
+    // Either check failing counts as in use.
+    h.state.preview = { has_clinical_history: false, upcoming_appointments: 0 }; h.state.countError = { message: "boom" };
+    expect(await undo()).toEqual({ ok: false, code: "generic" });
+    h.state.countError = null; h.state.apptCount = null;
+    expect(await undo()).toEqual({ ok: false, code: "generic" });
+    h.state.apptCount = 0; h.state.previewError = { message: "boom" };
+    expect(await undo()).toEqual({ ok: false, code: "generic" });
+    h.state.previewError = null; h.state.preview = null;
+    expect(await undo()).toEqual({ ok: false, code: "generic" });
+    expect(calls).toEqual([]);
   });
 
   it("move: runs Remarcar (the second question's answer carried), only while movable; Desfazer moves it back", async () => {
