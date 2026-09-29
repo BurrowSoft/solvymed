@@ -1,6 +1,5 @@
+import "server-only";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
-
-// Server only: imported by server components (the key isn't NEXT_PUBLIC).
 
 // The practice's header for a printed document (the recibo, Help G5): the
 // doctor's name and specialty, the clinic's name, CNPJ and address, and the

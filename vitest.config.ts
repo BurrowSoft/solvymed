@@ -23,6 +23,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
+      // Next resolves "server-only" itself; tests use its empty module.
+      'server-only': resolve(__dirname, './node_modules/next/dist/compiled/server-only/empty.js'),
     },
   },
 });

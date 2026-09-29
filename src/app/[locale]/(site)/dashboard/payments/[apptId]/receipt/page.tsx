@@ -2,7 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
-import { getPracticeCountry } from "@/lib/practiceCountry";
+import { lookupPracticeCountry } from "@/lib/practiceCountry";
+import { AccessLogFailed } from "@/components/printAccess";
 import { countryProfile } from "@/lib/country";
 import { formatMoney } from "@/lib/money";
 import { PRINT_CSS, docDate, docTime, toDocTemplate } from "@/lib/prescriptionDoc";
@@ -41,8 +42,12 @@ export default async function ReceiptPrintPage({
     getTranslations({ locale, namespace: "prescriptionDoc" }),
     getTranslations({ locale, namespace: "patientIds" }),
   ]);
-  const country = await getPracticeCountry(supabase, user.id, profId);
   const back = `${prefix}/dashboard/payments`;
+  // The practice country decides the recibo (currency, IDs, dates; Thai →
+  // none). Unknown: an error, never a guessed Brazilian recibo (9a).
+  const lookup = await lookupPracticeCountry(supabase, user.id, profId);
+  if (!lookup.ok) return <AccessLogFailed backHref={back} text={t("countryFailed")} backLabel={t("back")} />;
+  const country = lookup.country;
 
   if (country === "TH") {
     return (

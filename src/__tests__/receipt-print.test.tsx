@@ -9,7 +9,7 @@ const h = vi.hoisted(() => ({
   profId: "doc-1" as string | null,
   appt: null as Record<string, unknown> | null,
   patient: { full_name: "Maria Silva", cpf: "123.456.789-00", passport_number: "X1" } as unknown,
-  country: "BR",
+  country: "BR" as string | null,
   headerFor: [] as string[],
   filters: [] as [string, string, unknown][],
 }));
@@ -26,7 +26,7 @@ vi.mock("@/lib/supabase/server", () => ({
   }),
 }));
 vi.mock("@/lib/effectiveProfId", () => ({ getEffectiveProfId: async () => h.profId }));
-vi.mock("@/lib/practiceCountry", () => ({ getPracticeCountry: async () => h.country }));
+vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => (h.country ? { ok: true, country: h.country } : { ok: false, code: "exception" }) }));
 vi.mock("@/lib/practiceHeader", () => ({
   readPracticeHeader: async (id: string) => {
     h.headerFor.push(id);
@@ -98,5 +98,13 @@ describe("recibo print page", () => {
     expect(text).not.toContain("CNPJ");
     expect(text).not.toContain("cpf");
     expect(text).toContain("passportOrId: X1");
+  });
+
+  it("an unknown practice country: an error, never a guessed Brazilian recibo", async () => {
+    h.country = null;
+    const { container } = render(await ReceiptPage({ params }));
+    expect(container.querySelector("#print-doc")).toBeNull();
+    expect(container.querySelector("[role=alert]")?.textContent).toContain("countryFailed");
+    expect(h.headerFor).toEqual([]);
   });
 });
