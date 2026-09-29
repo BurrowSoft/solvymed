@@ -511,6 +511,7 @@
     "noAddress": "Tidak ada alamat",
     "onMap": "Di peta",
     "noMapPin": "Tidak ada pin peta — tambahkan alamat untuk muncul di peta",
+    "noPinYet": "Tidak ada pin peta",
     "empty": "Belum ada klinik",
     "emptySubtitle": "Tambahkan klinik Anda agar pasien dapat menemukan Anda",
     "addFirst": "Tambahkan klinik pertama Anda",

@@ -511,6 +511,7 @@
     "noAddress": "Sin dirección",
     "onMap": "En el mapa",
     "noMapPin": "Sin marcador en el mapa — agrega una dirección para aparecer en el mapa",
+    "noPinYet": "Sin marcador en el mapa",
     "empty": "Aún no hay clínicas",
     "emptySubtitle": "Agrega tu clínica para que los pacientes puedan encontrarte",
     "addFirst": "Agregar tu primera clínica",
