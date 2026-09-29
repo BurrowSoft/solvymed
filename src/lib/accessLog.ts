@@ -34,9 +34,16 @@ export type AccessLogRow = {
   at: string;
   actorName: string;
   actorRole: "professional" | "secretary" | "patient" | string;
-  kind: "patient" | "record" | "prescription" | "exam" | "file" | string;
+  kind: "patient" | "record" | "prescription" | "exam" | "file" | "export" | "imported" | string;
   objectRef: string | null;
 };
+
+// The label for a kind shown without details: the CSV export (126) and
+// opening a patient's imported data (131) have their own; anything else
+// not described by the caller is the patient's record.
+export function accessKindLabelKey(kind: string): "accessKindExport" | "accessKindImported" | "accessKindPatient" {
+  return kind === "export" ? "accessKindExport" : kind === "imported" ? "accessKindImported" : "accessKindPatient";
+}
 
 export type AccessLogPage = { rows: AccessLogRow[]; hasMore: boolean };
 
