@@ -3,7 +3,7 @@ import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 
 // English Privacy Policy (authoritative with pt-BR; keep both in step).
 // Every statement here must match what the Service enforces today.
-export function PrivacyEn({ turnstile, solvyai = false, line = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean }) {
+export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; notices?: boolean }) {
   return (
     <>
       <Section title="1. Overview">
@@ -123,6 +123,12 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false }: { turnst
             <li>If you block SolvyMed on LINE, we stop sending messages but keep the link so they resume if you unblock. To remove it, tap Disconnect (Settings → LINE) in the app or delete your account.</li>
             <li>The delivery history of LINE notices is deleted after 90 days.</li>
           </ul>
+        </Section>
+      )}
+
+      {notices && (
+        <Section title="6e. Patient notices">
+          <p>Patient notices: when the clinic books, moves or cancels an appointment, the notice to the patient waits about 1 minute before it&rsquo;s sent, so the clinic can undo a mistake. We keep a record of each notice (which appointment, the kind of notice, the time slot and whether it was sent), with no names or clinical data, for 30 days, and then delete it.</p>
         </Section>
       )}
 
