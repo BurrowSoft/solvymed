@@ -4,15 +4,19 @@ import { routing } from "@/i18n/routing";
 import { maskPersonalData, MAX_MESSAGE_CHARS, MAX_TURNS } from "@/lib/assistant/mask";
 import { isInternalHref, webPath } from "@/lib/assistant/targets";
 import type { AnswerChunk, AssistantScreen, TargetScreen } from "@/lib/assistant/types";
+import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
+import { formatDateLabel } from "@/lib/dateLabels";
 import { cachedSystem, rules, type Client } from "./knowledge";
-import type { ModelClient } from "./model";
+import type { ContentBlock, ModelClient, ModelMessage, ModelUsage } from "./model";
+import { TOOL_DEFS, confirmFailedBlock, runTool, type ToolContext } from "./tools";
 
 // POST /api/assistant, without the HTTP (docs/assistant-api.md §3): the
 // checks in the contract's order, then the streamed answer. Everything it
 // touches is injected: the caller's database client (RLS as the user), a
 // service client ONLY for the usage report / refund of the message it just
-// counted for this caller (a9), and the model. This PR is help mode; the
-// action tools come next.
+// counted for this caller (a9), and the model. In actions mode (the
+// doctor's opt-in, decided by the database per request) the model gets the
+// tools (./tools.ts): reads, and proposals that only ever become cards.
 
 type Rpc = { rpc(fn: string, args?: Record<string, unknown>): PromiseLike<{ data: unknown; error: { message?: string } | null }> };
 // enabled: the server-only switch (SOLVYAI_API_ENABLED), checked before
@@ -30,13 +34,36 @@ export type Outcome =
 const SCREENS: AssistantScreen[] = ["home", "schedule", "patients", "payments", "settings", "other"];
 const KEEP_MESSAGES = 6;
 const MAX_TOKENS = 800;
+// Model calls per answer in actions mode (reads, then a proposal or text).
+const MAX_ROUNDS = 4;
 
 type Body = {
   messages?: { role?: unknown; text?: unknown }[];
   screen?: unknown;
   locale?: unknown;
   conversationTurns?: unknown;
+  event?: unknown;
 };
+
+const localeOf = (v: unknown) => (typeof v === "string" && (routing.locales as readonly string[]).includes(v) ? v : routing.defaultLocale);
+const prefixOf = (locale: string) => (locale === routing.defaultLocale ? "" : `/${locale}`);
+
+// The clinic's "now" and the tool context for one request.
+async function toolContext(db: unknown, profId: string, locale: string): Promise<ToolContext & { tz: string }> {
+  const tz = await getClinicTimeZone(db, { professionalId: profId, isSecretary: false });
+  const now = new Date();
+  return {
+    db: db as ToolContext["db"],
+    profId,
+    lang: helpLang(locale),
+    locale,
+    prefix: prefixOf(locale),
+    today: clinicDate(now, tz),
+    nowTime: clinicTime(now, tz),
+    seen: new Set(),
+    tz,
+  };
+}
 
 // The Help Center links only lead somewhere once it's published.
 const helpPublished = () => (liveFeatures.helpCenter as boolean) === true;
@@ -112,11 +139,47 @@ async function* filterMarkers(texts: AsyncIterable<string>, seen: string[]): Asy
   if (held && !held.startsWith("[[")) yield held;
 }
 
+// The client's Confirmar failed (the slot was just taken): a fixed text and
+// fresh times, no model call, so it's free and can't be used for free
+// answers. Rate-limited like a message (consumed), then not counted
+// (released). Only the action's date, time and duration are used, all
+// re-validated; nothing else in it is trusted (a9).
+async function confirmFailed(body: Body, deps: Deps, userId: string): Promise<Outcome> {
+  const ev = body.event as { type?: unknown; code?: unknown; action?: unknown } | null;
+  if (!ev || typeof ev !== "object" || ev.type !== "confirm_failed" || typeof ev.code !== "string") return fail(400, "bad_request");
+  const { data: consumed, error } = await deps.db.rpc("assistant_consume_message");
+  if (error || !consumed || typeof consumed !== "object") return fail(503, "model_unavailable");
+  const c = consumed as { allowed: boolean; reason?: string; retry_after_s?: number; actions?: boolean };
+  if (!c.allowed) {
+    if (c.reason === "not_doctor") return fail(403, "not_doctor");
+    if (c.reason === "inactive") return fail(403, "inactive");
+    if (c.reason === "rate_limited") return fail(429, "rate_limited", { retryAfterS: c.retry_after_s ?? 3 });
+    // Out of messages today: this one was free anyway, so it's still answered.
+    if (c.reason !== "quota_exhausted") return fail(503, "model_unavailable");
+  } else {
+    await deps.service.rpc("assistant_release_message", { p_professional_id: userId });
+  }
+  // Cards only exist in actions mode; a help-mode doctor can't have one.
+  if (c.allowed && c.actions !== true) return fail(400, "bad_request");
+  const locale = localeOf(body.locale);
+  const ctx = await toolContext(deps.db, userId, locale);
+  const block = await confirmFailedBlock(ctx, ev.action);
+  if (!block) return fail(400, "bad_request");
+  async function* stream(): AsyncIterable<AnswerChunk> {
+    yield { kind: "meta", mode: "actions" };
+    yield { kind: "block", block: block! };
+    yield { kind: "done" };
+  }
+  return { status: 200, stream: stream() };
+}
+
 export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> {
   // 0. SolvyAI off: the route doesn't exist.
   if (!deps.enabled) return fail(404, "not_found");
   // 1. Who is asking (RLS as them from here on).
   if (!deps.userId) return fail(401, "unauthorized");
+  // A Confirmar the database refused: answered without the model (§5a).
+  if (body && body.event !== undefined) return confirmFailed(body, deps, deps.userId);
   // 2–4. The request itself.
   const parsed = parse(body);
   if (parsed === null) return fail(400, "bad_request");
@@ -142,8 +205,9 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
     return fail(503, "model_unavailable");
   }
 
-  // The mode (contract §2): help here; actions arrive with the tools.
-  const mode = "help" as const;
+  // The mode (contract §2): actions only with the doctor's opt-in, which
+  // the database reports per request (115); never from the client.
+  const mode: "help" | "actions" = c.actions === true ? "actions" : "help";
   const lang = helpLang(req.locale);
   const model = deps.model;
   const userId = deps.userId;
@@ -190,23 +254,53 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
     try {
       yield { kind: "meta", mode };
       const seen: string[] = [];
-      let usage: { input: number; output: number; cacheRead: number; cacheWrite: number } | null = null;
+      const usage: ModelUsage = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
       let answered = false;
       try {
-        async function* texts(): AsyncIterable<string> {
-          for await (const ev of model.stream({
-            cachedSystem: cachedSystem(lang, deps.client),
-            system: rules(lang, deps.client, req.screen, mode),
-            messages,
-            maxTokens: MAX_TOKENS,
-          })) {
-            if (ev.type === "text") yield ev.text;
-            else usage = ev.usage;
+        const ctx = mode === "actions" ? await toolContext(deps.db, userId, req.locale) : null;
+        let system = rules(lang, deps.client, req.screen, mode);
+        if (ctx) system += `\nToday at the clinic: ${formatDateLabel("en-US", ctx.today, { weekday: "long" })} ${ctx.today}, ${ctx.nowTime} (${ctx.tz}). Dates for the tools are YYYY-MM-DD in this calendar.`;
+        const history: ModelMessage[] = [...messages];
+        for (let round = 0; round < (ctx ? MAX_ROUNDS : 1); round++) {
+          let said = "";
+          const calls: { id: string; name: string; input: Record<string, unknown> }[] = [];
+          async function* texts(): AsyncIterable<string> {
+            for await (const ev of model.stream({
+              cachedSystem: cachedSystem(lang, deps.client),
+              system,
+              messages: history,
+              ...(ctx ? { tools: TOOL_DEFS } : {}),
+              maxTokens: MAX_TOKENS,
+            })) {
+              if (ev.type === "text") { said += ev.text; yield ev.text; }
+              else if (ev.type === "tool_use") calls.push(ev);
+              else if (ev.type === "usage") {
+                usage.input += ev.usage.input; usage.output += ev.usage.output;
+                usage.cacheRead += ev.usage.cacheRead; usage.cacheWrite += ev.usage.cacheWrite;
+              }
+            }
           }
-        }
-        for await (const t of filterMarkers(texts(), seen)) {
-          answered = true;
-          yield { kind: "delta", text: t };
+          for await (const t of filterMarkers(texts(), seen)) {
+            answered = true;
+            yield { kind: "delta", text: t };
+          }
+          if (!ctx || calls.length === 0) break;
+          // The tools, as the user; their blocks (a card, time chips) go
+          // straight to the user, the text back to the model.
+          const results: ContentBlock[] = [];
+          for (const call of calls) {
+            const out = await runTool(ctx, call.name, call.input);
+            if (out.block) { answered = true; yield { kind: "block", block: out.block }; }
+            results.push({ type: "tool_result", tool_use_id: call.id, content: out.forModel, ...(out.isError ? { is_error: true } : {}) });
+          }
+          history.push({ role: "assistant", content: [...(said ? [{ type: "text" as const, text: said }] : []), ...calls.map((t) => ({ type: "tool_use" as const, ...t }))] });
+          history.push({ role: "user", content: results });
+          // Out of rounds with nothing shown: a plain line, not an error
+          // (the model did answer; its usage is recorded).
+          if (round === MAX_ROUNDS - 1 && !answered) {
+            answered = true;
+            yield { kind: "delta", text: lang === "pt" ? "Não consegui concluir isso. Pode dizer de outro jeito, com o nome do paciente, a data e o horário?" : "I couldn't finish that. Could you say it another way, with the patient's name, the date and the time?" };
+          }
         }
         yield { kind: "block", block: { type: "text", text: "" } };
       } catch {
@@ -222,7 +316,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       }
       // Token usage for the budget guard: for the caller it just counted,
       // with the service client, never an id from the request (a9).
-      const u = (usage as { input: number; output: number; cacheRead: number; cacheWrite: number } | null) ?? { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
+      const u = usage;
       settled = true;
       await deps.service.rpc("assistant_record_usage", {
         p_professional_id: userId,
