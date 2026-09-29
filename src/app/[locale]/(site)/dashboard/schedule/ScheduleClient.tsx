@@ -560,7 +560,7 @@ export function PixQrButton({
               modules below the 4 px phones need to scan it reliably. */}
           <img src={qrUrl} alt={title} className="max-w-full rounded-xl border border-slate-100 [image-rendering:pixelated]" />
           <div className="w-full">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1.5">Copia e Cola</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1.5">{t("pixCopyPaste")}</p>
             <div className="relative">
               <textarea
                 readOnly
@@ -572,7 +572,7 @@ export function PixQrButton({
                 onClick={() => navigator.clipboard.writeText(pixStr)}
                 className="absolute top-2 right-2 rounded-lg bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition"
               >
-                Copiar
+                {t("pixCopy")}
               </button>
             </div>
           </div>

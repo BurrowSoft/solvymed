@@ -35,11 +35,11 @@ On the sign-in screen, tap **Forgot your password?**, enter your email and open 
 ---
 ## K4. Encerrar a conta / Close your account
 **pt-BR**
-**Configurações → Encerrar conta**. Seus dados de acesso e a assinatura são cancelados. Os prontuários ficam guardados e bloqueados pelo prazo exigido por lei (ninguém acessa pelo app) e depois são apagados.
+**Configurações → Encerrar conta** (ou **Excluir conta**, se ainda não houver prontuários). Seus dados de acesso e a assinatura são cancelados. Os prontuários ficam guardados e bloqueados pelo prazo exigido por lei (ninguém acessa pelo app) e depois são apagados.
 **en**
-**Settings → Close account**. Your login and subscription are cancelled. Medical records are kept locked for the legally required period (nobody can open them in the app) and then erased.
-**No site:** **Configurações → Encerrar conta**, no fim da página: funciona igual ao app.
-**On the website:** **Settings → Close account**, at the bottom of the page: it works the same as in the app.
+**Settings → Close account** (or **Delete account** if there are no records yet). Your login and subscription are cancelled. Medical records are kept locked for the legally required period (nobody can open them in the app) and then erased.
+**No site:** **Configurações → Encerrar conta** (ou **Excluir conta**, se ainda não houver prontuários), no fim da página: funciona igual ao app.
+**On the website:** **Settings → Close account** (or **Delete account** if there are no records yet), at the bottom of the page: it works the same as in the app.
 `open:settings`
 
 ---
