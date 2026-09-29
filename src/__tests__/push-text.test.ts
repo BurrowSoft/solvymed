@@ -74,7 +74,8 @@ describe("push texts", () => {
     // close sentence with the clinic's name for "คลินิก", then "open the app".
     const cancelled = pushText("th", "apptCancelledByClinic", { clinic: "คลินิก", date: "D", time: "T" });
     expect(cancelled.title).toBe(th.accountClose.pushCancelledTitle);
-    const closeBody = th.accountClose.pushCancelledBody.replace("{date}", "D").replace("{time}", "T");
+    // (UX's text spaces the clinic's name: "ถูกยกเลิกโดย {clinic}".)
+    const closeBody = th.accountClose.pushCancelledBody.replace("{date}", "D").replace("{time}", "T").replace("ถูกยกเลิกโดยคลินิก", "ถูกยกเลิกโดย คลินิก");
     expect(cancelled.body).toBe(`${closeBody} หากต้องการนัดใหม่ กรุณาเปิดแอป`);
   });
 
