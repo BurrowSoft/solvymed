@@ -195,10 +195,12 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
   // server explains and offers fresh times, in the conversation.
   const confirmFailed = (card: ConfirmationCard, code: string) => {
     setCardDone((d) => ({ ...d, [card.id]: "failed" }));
-    // Fresh times only when the time was taken; anything else just says
-    // it wasn't saved (on the card).
+    // Fresh times only when the time was taken, and a line when a cancel
+    // is no longer allowed; anything else just says it wasn't saved (on
+    // the card).
     // (A series: one date's fresh times don't fit; the card just says it wasn't saved.)
-    if (code !== "slot_taken" || (card.action.kind !== "book_appointment" && card.action.kind !== "move_appointment") || card.action.args.repeat) return;
+    const notCancellable = code === "appointment_not_cancellable" && card.action.kind === "cancel_appointment";
+    if (!notCancellable && (code !== "slot_taken" || (card.action.kind !== "book_appointment" && card.action.kind !== "move_appointment") || card.action.args.repeat)) return;
     setBusy(true);
     void play(turns, backend.reportConfirmFailed(code, card.action, locale));
   };
