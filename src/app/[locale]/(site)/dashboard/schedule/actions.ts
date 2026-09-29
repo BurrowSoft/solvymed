@@ -228,7 +228,7 @@ export async function createAppointment(formData: FormData) {
   // A series is one push: how many, and the first.
   await tellPatient(supabase, {
     kind: "booked", practiceId: effectiveProfId, isSecretary: user.id !== effectiveProfId,
-    patientId, date, startTime, ...(dates.length > 1 ? { count: dates.length } : {}),
+    patientId, date, startTime, ...(dates.length > 1 ? { dates } : {}),
   });
   revalidatePath("/dashboard/schedule");
   return { success: true, id: saved?.id, count: dates.length };
