@@ -3,7 +3,7 @@ import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 
 // English Privacy Policy (authoritative with pt-BR; keep both in step).
 // Every statement here must match what the Service enforces today.
-export function PrivacyEn({ turnstile, solvyai = false, line = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean }) {
+export function PrivacyEn({ turnstile, solvyai = false, line = false, founders = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; founders?: boolean }) {
   return (
     <>
       <Section title="1. Overview">
@@ -122,6 +122,17 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false }: { turnst
             <li>LINE receives only the clinic&rsquo;s name, the appointment&rsquo;s date and time, and what happened to it (confirmed, moved, reminder, cancelled): never clinical information.</li>
             <li>If you block SolvyMed on LINE, we stop sending messages but keep the link so they resume if you unblock. To remove it, tap Disconnect (Settings → LINE) in the app or delete your account.</li>
             <li>The delivery history of LINE notices is deleted after 90 days.</li>
+          </ul>
+        </Section>
+      )}
+
+      {founders && (
+        <Section title="6d. Founders Program applications">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>If you apply to the Founders Program on solvymed.com, we collect your answers: name, email, WhatsApp or LINE number, country, profession and specialty, professional registration, the clinic system you use, how long you&rsquo;ve used it, your practice size and what you&rsquo;d like to import. If you accepted marketing cookies, we also keep the campaign that brought you.</li>
+            <li>We use these answers only to run the program and to contact you about it.</li>
+            <li>To stop abuse, we keep a scrambled (salted hash) form of your IP address for 2 days, never the address itself.</li>
+            <li>Declined or withdrawn applications are deleted 12 months after that decision. To have yours deleted sooner, write to support@solvymed.com.</li>
           </ul>
         </Section>
       )}

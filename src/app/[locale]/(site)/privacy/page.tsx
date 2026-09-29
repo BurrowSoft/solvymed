@@ -1,5 +1,6 @@
 import { turnstileEnabled } from "@/lib/turnstile";
 import { conditionMet } from "@/lib/conditions";
+import { liveFeatures } from "@/lib/liveFeatures";
 import { LegalDoc, legalLangFor } from "@/components/LegalDoc";
 import { PrivacyEn } from "./PrivacyEn";
 import { PrivacyPtBR } from "./PrivacyPtBR";
@@ -16,13 +17,15 @@ export default async function PrivacyPage({
   // (content/help/conditions.json), so the policy matches what runs.
   const solvyai = conditionMet("solvyai-live");
   const line = conditionMet("line-live");
+  // The Founders Program section only while its page is live.
+  const founders = liveFeatures.founders;
   return legalLangFor(locale) === "pt-BR" ? (
     <LegalDoc locale={locale} title="Política de Privacidade" updated={`Última atualização: ${legalDateLabel("pt-BR", PRIVACY_VERSION)}`}>
-      <PrivacyPtBR turnstile={turnstileEnabled} solvyai={solvyai} line={line} />
+      <PrivacyPtBR turnstile={turnstileEnabled} solvyai={solvyai} line={line} founders={founders} />
     </LegalDoc>
   ) : (
     <LegalDoc locale={locale} title="Privacy Policy" updated={`Last updated: ${legalDateLabel("en", PRIVACY_VERSION)}`}>
-      <PrivacyEn turnstile={turnstileEnabled} solvyai={solvyai} line={line} />
+      <PrivacyEn turnstile={turnstileEnabled} solvyai={solvyai} line={line} founders={founders} />
     </LegalDoc>
   );
 }

@@ -3,6 +3,8 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { ATTRIBUTION_COOKIE, parseAttribution } from "@/lib/attribution";
 import { clientIp, founderPayload, mapApplyError } from "@/lib/founders";
+import { sendFounderEmails } from "@/lib/foundersEmail";
+import { routing } from "@/i18n/routing";
 
 // The Founders Program application (founders-page-spec.md, stage 1).
 // Public: no account. The database (migration 129's founder_apply, server
@@ -24,12 +26,22 @@ export async function POST(request: NextRequest) {
   const db = createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
-  const { data, error } = await db.rpc("founder_apply", { p_payload: founderPayload(body, attribution), p_client_ip: ip });
+  const payload = founderPayload(body, attribution);
+  const { data, error } = await db.rpc("founder_apply", { p_payload: payload, p_client_ip: ip });
   if (error) {
     const e = mapApplyError(error.message);
     const status = e.code === "too_many_attempts" ? 429 : e.code === "already_applied" ? 409 : e.code === "invalid" ? 400 : 500;
     return NextResponse.json(e, { status });
   }
-  const status = (data as { status?: string } | null)?.status === "waitlist" ? "waitlist" : "new";
+  // A jsonb object or a one-row table, whichever 129 returns.
+  const row = (Array.isArray(data) ? data[0] : data) as { id?: string; status?: string } | null;
+  const locale = (routing.locales as readonly string[]).includes(String(payload.locale)) ? String(payload.locale) : routing.defaultLocale;
+  const status = row?.status === "waitlist" ? "waitlist" : "new";
+  // The confirmation + the team summary (no-op until Resend is set up).
+  await sendFounderEmails({
+    locale, email: String(payload.email), fullName: String(payload.full_name),
+    system: String(payload.system), systemOther: String(payload.system_other), country: String(payload.country), status, id: row?.id,
+  });
+  // The browser gets the status only, never the id (38).
   return NextResponse.json({ status });
 }

@@ -4,8 +4,57 @@
 // request and maps its answers to the form's messages.
 import type { Attribution } from "./attribution";
 
-export const FOUNDERS_COUNTRIES = ["BR", "TH"] as const;
+// Brazil and Thailand have places per system; other countries may apply,
+// with no counter (UX).
+export const FOUNDERS_COUNTRIES = ["BR", "TH", "OTHER"] as const;
 export type FoundersCountry = (typeof FOUNDERS_COUNTRIES)[number];
+
+// The clinic systems per country (UX's copy file; brand names aren't
+// translated). The slugs are what migration 129 stores and counts.
+export const SYSTEMS: Record<"BR" | "TH", { slug: string; name: string }[]> = {
+  BR: [
+    { slug: "iclinic", name: "iClinic" },
+    { slug: "feegow", name: "Feegow" },
+    { slug: "amplimed", name: "Amplimed" },
+    { slug: "prodoctor", name: "ProDoctor" },
+    { slug: "hidoctor", name: "HiDoctor" },
+    { slug: "prontuario_verde", name: "Prontuário Verde" },
+    { slug: "ninsaude", name: "Ninsaúde" },
+    { slug: "simples_dental", name: "Simples Dental" },
+  ],
+  TH: [
+    { slug: "proclinic", name: "ProClinic" },
+    { slug: "cliniter", name: "Cliniter" },
+    { slug: "cliniclive", name: "cliniclive" },
+    { slug: "easy_clinic", name: "Easy Clinic" },
+    { slug: "clinixmate", name: "ClinixMate" },
+    { slug: "delhos", name: "DelHos" },
+    { slug: "iclinig", name: "iClinig" },
+    { slug: "gio_clinic", name: "GIO Clinic" },
+  ],
+};
+// Offered in every country, never counted.
+export const GENERIC_SYSTEMS = ["other", "spreadsheet", "paper"] as const;
+
+export function systemName(slug: string): string {
+  for (const list of Object.values(SYSTEMS)) {
+    const s = list.find((x) => x.slug === slug);
+    if (s) return s.name;
+  }
+  return slug;
+}
+
+// The answers' option slugs (sent to 129 as given).
+export const OPTIONS = {
+  usage_years: ["lt1", "1_3", "3plus"],
+  patient_count_range: ["lt200", "200_1000", "1000_5000", "5000plus"],
+  wants: ["patients", "future_appointments", "appointment_history", "clinical_records", "prescriptions", "files_exams"],
+  can_export: ["yes", "not_sure", "support_only"],
+  team_size: ["alone", "one_secretary", "two_plus"],
+} as const;
+
+// The page's default country from its language.
+export const defaultFoundersCountry = (locale: string): FoundersCountry => (locale === "pt-BR" ? "BR" : locale === "th" ? "TH" : "OTHER");
 
 // What the form sends (the route adds the IP; the honeypot never reaches
 // the database).

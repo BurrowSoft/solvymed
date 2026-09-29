@@ -3,7 +3,7 @@ import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 
 // Política de Privacidade em português (Brasil). Autoritativa junto com a
 // versão em inglês; mantenha as duas alinhadas.
-export function PrivacyPtBR({ turnstile, solvyai = false, line = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean }) {
+export function PrivacyPtBR({ turnstile, solvyai = false, line = false, founders = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; founders?: boolean }) {
   return (
     <>
       <Section title="1. Visão geral">
@@ -122,6 +122,17 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false }: { turn
             <li>O LINE recebe só o nome da clínica, a data e o horário da consulta e o que aconteceu com ela (confirmada, remarcada, lembrete, cancelada): nunca informações clínicas.</li>
             <li>Se você bloquear a conta SolvyMed no LINE, paramos de enviar mensagens, mas guardamos a ligação para retomar se você desbloquear. Para removê-la, toque em Desconectar (Configurações → LINE) no app ou exclua sua conta.</li>
             <li>O histórico de envios dos avisos LINE é apagado após 90 dias.</li>
+          </ul>
+        </Section>
+      )}
+
+      {founders && (
+        <Section title="6d. Inscrições no Programa Fundadores">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>Se você se inscrever no Programa Fundadores em solvymed.com, guardamos suas respostas: nome, e-mail, WhatsApp ou LINE, país, profissão e especialidade, registro profissional, o sistema de clínica que você usa, há quanto tempo usa, o tamanho do consultório e o que gostaria de importar. Se você aceitou os cookies de marketing, guardamos também a campanha que trouxe você.</li>
+            <li>Usamos essas respostas só para o programa e para falar com você sobre ele.</li>
+            <li>Para evitar abuso, guardamos por 2 dias uma forma embaralhada (hash com sal) do seu endereço IP, nunca o endereço em si.</li>
+            <li>Inscrições recusadas ou canceladas são apagadas 12 meses após essa decisão. Para apagar a sua antes, escreva para support@solvymed.com.</li>
           </ul>
         </Section>
       )}
