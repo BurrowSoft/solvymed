@@ -137,8 +137,8 @@ describe("the app-opened variant (store rules)", () => {
 describe("Open on the website", () => {
   it("is hidden where the web note says the website doesn't have it", () => {
     const flagged = HELP.flatMap((c) => c.articles).filter((a) => a.webUnavailable).map((a) => a.id);
-    // A2 (recurring), P7 (exams and files) and P8 (the history PDF) are on the website too now.
-    expect(flagged).toEqual(["P10", "G5", "C6", "C7"]);
+    // A2 (recurring), P7 (exams and files), P8 (the history PDF) and G5 (the recibo) are on the website too now.
+    expect(flagged).toEqual(["P10", "C6", "C7"]);
     // A4 (move and cancel) is on the website: it keeps the button.
     expect(findArticle("a4")!.article.webUnavailable).toBe(false);
   });

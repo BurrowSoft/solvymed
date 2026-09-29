@@ -3,7 +3,7 @@ import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
-import { PeriodFilter, MarkPaidButton, MarkUnpaidButton } from "./PaymentsClient";
+import { PeriodFilter, TypeFilter, MarkPaidButton, MarkUnpaidButton } from "./PaymentsClient";
 import { clinicDate, getClinicTimeZone, previousMonthRange, weekRange } from "@/lib/clinicTime";
 import { formatMoney } from "@/lib/money";
 import { formatDateLabel } from "@/lib/dateLabels";
@@ -28,10 +28,13 @@ export default async function PaymentsPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ period?: string }>;
+  searchParams: Promise<{ period?: string; type?: string }>;
 }) {
   const { locale } = await params;
-  const { period: periodParam } = await searchParams;
+  const { period: periodParam, type: typeParam } = await searchParams;
+  // Particular / convênio (Help G6): anything not private is insurance.
+  const payType: "all" | "private" | "insurance" = typeParam === "private" || typeParam === "insurance" ? typeParam : "all";
+  const TYPE_FILTER = payType === "private" ? "payment_type.eq.private" : payType === "insurance" ? "payment_type.is.null,payment_type.neq.private" : null;
   const period: Period = (["week", "month", "last_month", "all"].includes(periodParam ?? "") ? periodParam : "month") as Period;
 
   const [supabase, t, tFirstRun] = await Promise.all([
@@ -46,30 +49,36 @@ export default async function PaymentsPage({
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
   if (!effectiveProfId) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
   // Amounts are in the practice's currency (its country), not the UI's.
-  const { currency } = countryProfile(await getPracticeCountry(supabase, user.id, effectiveProfId));
+  const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
+  const { currency } = countryProfile(practiceCountry);
+  // The recibo (Help G5): a print view for every non-Thai practice; a Thai
+  // practice's receipt is the numbered one, issued in the app (UX 36).
+  const tDoc = await getTranslations({ locale, namespace: "prescriptionDoc" });
+  const receiptPrefix = locale === "en" ? "" : `/${locale}`;
   const formatAmount = (n: number) => formatMoney(n, currency);
   const isSecretary = effectiveProfId !== user.id;
 
   const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
   const { from, to } = getDateRange(period, timeZone);
 
-  const [pendingResult, paidResult] = await Promise.all([
-    supabase
+  const byStatus = (status: "pending" | "paid") => {
+    let q = supabase
       .from("appointments")
       .select("id, patient_name, date, start_time, consultation_type, payment_amount, payment_type")
       .eq("professional_id", effectiveProfId)
-      .eq("payment_status", "pending")
+      .eq("payment_status", status);
+    if (TYPE_FILTER) q = q.or(TYPE_FILTER);
+    return q;
+  };
+  const [pendingResult, paidResult] = await Promise.all([
+    byStatus("pending")
       // "To receive": the app's rule (lib/paymentRules); requests, cancelled,
       // rejected and no-shows don't count.
       .in("status", [...RECEIVABLE_STATUSES])
       .gte("date", from)
       .lte("date", to)
       .order("date", { ascending: false }),
-    supabase
-      .from("appointments")
-      .select("id, patient_name, date, start_time, consultation_type, payment_amount, payment_type")
-      .eq("professional_id", effectiveProfId)
-      .eq("payment_status", "paid")
+    byStatus("paid")
       .gte("date", from)
       .lte("date", to)
       .order("date", { ascending: false }),
@@ -128,8 +137,9 @@ export default async function PaymentsPage({
       </div>
 
       {/* Period filter */}
-      <div className="mb-6 overflow-x-auto">
+      <div className="mb-6 flex flex-wrap gap-3 overflow-x-auto">
         <PeriodFilter current={period} />
+        <TypeFilter current={payType} />
       </div>
 
       {/* Summary cards */}
@@ -197,6 +207,9 @@ export default async function PaymentsPage({
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">{paid.length}</span>
             {t("receivedLabel")}
           </h2>
+          {practiceCountry === "TH" && paid.length > 0 && (
+            <p className="mb-3 text-xs text-slate-500">{tDoc("receiptThaiHint")}</p>
+          )}
           {paid.length === 0 ? (
             <div className="rounded-2xl border border-slate-100 bg-white p-10 text-center">
               <p className="text-sm text-slate-400">{t("noPaidYet")}</p>
@@ -216,6 +229,11 @@ export default async function PaymentsPage({
                     <div className="flex flex-col items-end gap-2 shrink-0">
                       <span className="text-xs font-semibold text-green-600">{t("paidBadge")}</span>
                       <MarkUnpaidButton id={p.id} />
+                      {practiceCountry !== "TH" && (
+                        <Link href={`${receiptPrefix}/dashboard/payments/${p.id}/receipt`} className="text-xs font-semibold text-teal-700 hover:underline">
+                          {tDoc("receiptLink")}
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </div>

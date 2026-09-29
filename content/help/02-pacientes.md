@@ -127,3 +127,16 @@ Open the patient and tap **Invite to the app**. Send the personal code (or link)
 **No site:** {pending:migration-126} Em **Configurações → Exportar pacientes (CSV)** (só para médicos) o site baixa a planilha com todos os pacientes, ativos e arquivados. O registro de acesso de cada paciente anota "Exportado na lista de pacientes (CSV)"; se esse registro não puder ser gravado, nada é baixado e aparece "Não foi possível registrar o acesso. Tente novamente."
 **On the website:** {pending:migration-126} In **Settings → Export patients (CSV)** (doctors only) the website downloads the spreadsheet with every patient, active and archived. Each patient's access log records "Exported in the patient list (CSV)"; if that can't be recorded, nothing is downloaded and you see "Couldn't record the access. Please try again."
 `open:settings`
+
+---
+## P11. Dados importados / Imported data
+**pt-BR**
+Pacientes trazidos de outro sistema podem ter **Dados importados**: as colunas da planilha que não viraram um campo do SolvyMed. No app, abra o paciente e toque em **Dados importados** para ver os campos e de onde vieram ("Importado de … em …").
+Só você (médico) vê os dados importados; secretárias(os) e o paciente não. Quando você os abre, isso fica registrado na aba **Acessos** do paciente ("Abriu os dados importados"); aberturas repetidas em menos de um minuto contam uma vez só.
+**en**
+Patients brought from another system may have **Imported data**: the spreadsheet columns that didn't become a SolvyMed field. In the app, open the patient and tap **Imported data** to see the fields and where they came from ("Imported from … on …").
+Only you (the doctor) can see imported data; secretaries and the patient can't. When you open it, it's recorded in the patient's **Access** tab ("Opened the imported data"); repeated openings within a minute count once.
+**No site:** Ainda não disponível no site; use o app.
+**On the website:** Not available on the website yet; use the app.
+`open:patients`
+`requires:import-extras-live`
