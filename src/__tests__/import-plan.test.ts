@@ -130,6 +130,14 @@ describe("reading the file", async () => {
     expect(r.rows[0][3]).toBe("11987654321");
   });
 
+  it("long numbers in General format stay whole (not 5.51199E+12); a custom format keeps what the sheet shows", () => {
+    const ws = XLSX.utils.aoa_to_sheet([["Nome", "Celular", "CNS", "CPF"], ["Ana", 5511987654321, 123456789012345, 1234567890]]);
+    ws.D2.z = "00000000000"; // a CPF formatted to keep its leading zero
+    const bytes = XLSX.write({ SheetNames: ["P"], Sheets: { P: ws } }, { type: "array", bookType: "xlsx" }) as ArrayBuffer;
+    const r = readSpreadsheet(new Uint8Array(bytes), "p.xlsx");
+    expect(r.ok && r.rows[0].slice(1)).toEqual(["5511987654321", "123456789012345", "01234567890"]);
+  });
+
   it("CSV by extension; ZIP, other types, an empty file and too many rows are refused", () => {
     const csv = new TextEncoder().encode("Nome;CPF\nAna;123\n");
     expect(readSpreadsheet(csv, "x.csv")).toEqual({ ok: true, headers: ["Nome", "CPF"], rows: [["Ana", "123"]], encoding: "utf-8" });

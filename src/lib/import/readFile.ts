@@ -60,9 +60,12 @@ function sheetRows(wb: XLSX.WorkBook): SheetCell[][] {
 function cellValue(cell: XLSX.CellObject | undefined): SheetCell {
   if (!cell || cell.v === undefined || cell.v === null) return "";
   if (cell.t === "n") {
-    // A date cell: its serial number. Any other number: as displayed.
+    // A date cell: its serial number. A number in a custom format (a CPF
+    // formatted to keep its leading zero): as displayed. Otherwise the
+    // number itself: "General" shows a 13-digit phone as 5.51199E+12.
     if (cell.z && XLSX.SSF.is_date(String(cell.z))) return cell.v as number;
-    return cell.w ?? String(cell.v);
+    if (cell.z && cell.z !== "General" && cell.w !== undefined) return cell.w;
+    return String(cell.v);
   }
   if (cell.t === "b") return cell.v ? "1" : "0";
   return cell.w ?? String(cell.v);

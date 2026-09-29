@@ -69,7 +69,7 @@ describe("Importar pacientes", () => {
     fireEvent.click(screen.getByText("Verificar planilha"));
     expect(await screen.findByText("1 novos · 0 já existem · 1 com erro")).toBeInTheDocument();
     expect(staged[0]).toEqual({ row: 2, full_name: "Maria Silva", cpf: "123.456.789-09", extra: { Plano: "Ouro" } });
-    expect(screen.getByText("Sem nome")).toBeInTheDocument();
+    expect(screen.getByText("Sem nome (linha não importada)")).toBeInTheDocument();
     expect(calls.map((c) => c.fn)).toEqual(["import_patients_begin", "import_patients_add_rows", "import_patients_validate"]);
 
     fireEvent.click(screen.getByText("Importar 1 paciente"));
