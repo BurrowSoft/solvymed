@@ -243,18 +243,18 @@ export const NEVER: { what: string; help: string }[] = [
   { what: "The clinic's country.", help: "C1" },
 ];
 
-// Status labels are the EXACT ones on screen (web src/messages, app
-// lib/i18n: pt-BR / en); where web and app differ, both are listed.
+// Status labels are the EXACT ones on screen, the same on web and app
+// (web #117, mobile #96; UX 2026-09-29): pt-BR / en.
 export const GLOSSARY: { term: string; meaning: string }[] = [
   { term: "scheduled: \"Agendado\" / \"Scheduled\"", meaning: "Booked by the practice." },
   { term: "confirmed: \"Confirmado\" / \"Confirmed\"", meaning: "Confirmed with the patient." },
-  { term: "completed: \"Concluído\" / web \"Done\", app \"Completed\"", meaning: "The appointment happened." },
+  { term: "completed: \"Concluído\" / \"Completed\"", meaning: "The appointment happened." },
   { term: "late: \"Atrasado\" / \"Late\"", meaning: "The patient is late." },
   { term: "absent: \"Ausente\" / \"Absent\"", meaning: "The patient didn't come; it doesn't count as 'to receive'." },
   { term: "cancelled: \"Cancelado\" / \"Cancelled\"", meaning: "Cancelled; frees the time." },
   { term: "blocked: \"Bloqueado\" / \"Blocked\"", meaning: "A blocked period, not an appointment." },
-  { term: "tentative: \"Pendente\" / web \"Tentative\", app \"Pending\"", meaning: "A patient's booking request waiting for the practice." },
-  { term: "proposal: web \"Proposta\" / \"Proposal\", app \"Horário Proposto\" / \"Time Proposed\"", meaning: "A new time proposed on a request, waiting for the other side." },
+  { term: "tentative: \"Solicitado\" / \"Requested\"", meaning: "A patient's booking request waiting for the practice." },
+  { term: "proposal: \"Novo horário proposto\" / \"New time proposed\"", meaning: "A new time proposed on a request, waiting for the other side." },
   { term: "rejected: \"Rejeitado\" / \"Rejected\"", meaning: "A request the practice didn't accept." },
   { term: "request flow", meaning: "The patient asks → the practice confirms, rejects or proposes a new time → the patient accepts or declines a proposal." },
   { term: "trial / plan", meaning: "A free trial, then a paid plan; SolvyAI's daily message limit (10 in the trial, 20 on a paid plan) arrives with the SolvyAI backend." },
