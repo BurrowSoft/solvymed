@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resolve } from "node:path";
+import { readFileSync } from "node:fs";
 import { buildAll, parseBatch } from "../../scripts/help-build.mjs";
 import json from "@/content/helpArticles.json";
 import { articleTitle, findArticle, helpLang, inlineSegments, searchHelp, webScreen, HELP } from "@/lib/help";
@@ -24,6 +25,52 @@ describe("Help Center content", () => {
     expect(() => parseBatch("01-agenda", "## A1. Um / One\n**pt-BR**\nTexto\n`open:x`\n")).toThrow(/missing/);
     expect(() => parseBatch("01-agenda", "## A1. Um / One\n**pt-BR**\nT\n**en**\nT\n**No site:** só pt\n")).toThrow(/both/);
     expect(() => parseBatch("99-x", "")).toThrow(/unknown/);
+  });
+});
+
+// Text that isn't true yet (an app build not released, a migration not
+// applied, SolvyAI not live) never reaches the built JSON: no page, list,
+// search, app view, SolvyAI knowledge or bundle has it (content/help/
+// conditions.json; the App Map uses the same ids).
+describe("conditions: held text is left out of the build", () => {
+  const md = (extra: string, para = "") =>
+    `## Z1. Um / One\n**pt-BR**\nTexto\n${para}\n**en**\nText\n${extra}\n`;
+  const c = (met: boolean) => ({ x: { met, what: "test" } });
+
+  it("an article that requires an unmet condition isn't built at all", () => {
+    expect(parseBatch("05-conta", md("`requires:x`"), c(false)).articles).toEqual([]);
+    expect(parseBatch("05-conta", md("`requires:x`"), c(true)).articles.map((a) => a.id)).toEqual(["Z1"]);
+  });
+
+  it("a pending paragraph appears only when its condition is met, without the marker", () => {
+    const off = parseBatch("05-conta", md("", "{pending:x} Held"), c(false)).articles[0];
+    expect(JSON.stringify(off)).not.toContain("Held");
+    const on = parseBatch("05-conta", md("", "{pending:x} Held"), c(true)).articles[0];
+    expect(JSON.stringify(on.body.pt)).toContain("Held");
+    expect(JSON.stringify(on)).not.toContain("{pending");
+  });
+
+  it("an unknown condition id fails the build (a typo can't hide or show text)", () => {
+    expect(() => parseBatch("05-conta", md("`requires:typo`"), c(true))).toThrow(/unknown condition "typo"/);
+    expect(() => parseBatch("05-conta", md("", "{pending:typo} T"), c(true))).toThrow(/unknown condition "typo"/);
+  });
+
+  it("the real build has no markers, and the held A1 sentence is out while mobile #91 isn't released", () => {
+    const text = JSON.stringify(json);
+    expect(text).not.toMatch(/\{pending:|`requires:/);
+    const conditions = JSON.parse(readFileSync(resolve(__dirname, "../../content/help/conditions.json"), "utf8"));
+    const a1 = JSON.stringify(findArticle("a1")!.article);
+    if (conditions["mobile#91"].met) expect(a1).toContain("Outside your working hours");
+    else expect(a1).not.toContain("Outside your working hours");
+  });
+
+  it("every condition says what 'met' means; app ones mean a RELEASED build", () => {
+    const conditions = JSON.parse(readFileSync(resolve(__dirname, "../../content/help/conditions.json"), "utf8"));
+    for (const [id, v] of Object.entries(conditions) as [string, { met: unknown; what: string }][]) {
+      expect(typeof v.met, id).toBe("boolean");
+      expect(v.what.length, id).toBeGreaterThan(20);
+      if (id.startsWith("mobile#")) expect(v.what, id).toMatch(/RELEASED/);
+    }
   });
 });
 
