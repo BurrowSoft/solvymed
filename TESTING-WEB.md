@@ -8487,3 +8487,41 @@ was clean, with no change to this PR's code.
 **Master sync:** master (#142) merged in under this docs commit. The merge
 was clean, with no change to this PR's code.
 **Review: clean (7f, `a8dc0d8`).** **Merge gate: 🟢 for `a8dc0d8`.**
+
+## PR #144 (`feat/privacy-additions`, base master) — privacy policy additions for SolvyAI and LINE, gated on `solvyai-live` / `line-live`, 🟢 at `fc85fd4`
+
+Tested by web tester 2.
+
+**Today's pages are unchanged** (the Vercel Preview at `fc85fd4` vs the
+master Preview, with the bypass header):
+- `/pt-BR/privacy`, `/privacy`, `/pt-BR/terms` and `/terms` all return 200,
+  and their main text is **identical** to master (137 / 61 lines).
+- Anthropic, SolvyAI, LY Corporation and LINE are **not visible** on any of
+  them.
+- **The page source has none of #144's own strings** (0 on the PR, 0 on
+  master): "LY Corporation", "6b. SolvyAI", "processados pela Anthropic" /
+  "processed by Anthropic", "identidade tailandesa" / "Thai ID numbers",
+  "Japão / Tailândia" / "Japan / Thailand", "6c.", "Desconectar".
+  - The plain words Anthropic / SolvyAI / LINE in the raw HTML come from the
+    next-intl bundle and are on master too.
+  - "90 dias" / "90 days" appear 4× on both (existing text).
+- **Gating:** `page.tsx` reads `conditionMet("solvyai-live" / "line-live")`
+  server-side (both unmet).
+  - The `c62a169` → `fc85fd4` delta (the LINE row, §6c bullets,
+    "Desconectar", condition text) is entirely inside `{line && …}` /
+    `...(line ? …)`.
+
+**Policy = what runs**, for the gated §6b text, checked against the code:
+- **"CPF and Thai ID numbers, phones and emails are masked":**
+  `lib/assistant/mask.ts` masks email, CPF, 13-digit Thai ID and phone
+  shapes. Passports aren't masked and aren't claimed.
+- **"Never reads records, prescriptions, exams or files":** the server tools
+  are `find_patients`, `list_appointments`, `find_free_slots` and the
+  `propose_*` cards. None reads clinical tables.
+- **"A 👍/👎 is recorded only as a vote":** the panel sends
+  `track("solvyai_feedback", { vote })` and nothing else.
+- **"Conversations aren't kept":** the assistant route has no insert.
+
+**CI at `fc85fd4`:** ✅ (lint, typecheck + unit tests incl.
+`privacy-gated.test.tsx`, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `fc85fd4`.** This docs commit sits on top of a master sync (7 behind: #142, #143; clean merge).
