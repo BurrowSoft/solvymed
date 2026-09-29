@@ -205,7 +205,8 @@
     "requestedLabel": "요청: {date} · {time}",
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "태국 은행 앱으로 스캔해 결제하세요.",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n}분"
   },
   "payments": {
     "thisWeek": "이번 주",

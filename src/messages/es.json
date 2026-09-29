@@ -205,7 +205,8 @@
     "requestedLabel": "Solicitado: {date} · {time}",
     "promptPayTitle": "QR de PromptPay",
     "promptPayScan": "Escanea con cualquier app bancaria tailandesa para pagar.",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n} min"
   },
   "payments": {
     "thisWeek": "Esta semana",

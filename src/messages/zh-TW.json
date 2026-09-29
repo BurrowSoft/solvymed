@@ -205,7 +205,8 @@
     "requestedLabel": "申請時間：{date} · {time}",
     "promptPayTitle": "PromptPay QR 碼",
     "promptPayScan": "使用任何泰國銀行 App 掃描付款。",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n} 分鐘"
   },
   "payments": {
     "thisWeek": "本週",
