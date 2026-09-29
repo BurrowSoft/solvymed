@@ -194,7 +194,14 @@
     "pastMidnightError": "Cet horaire et cette durée dépasseraient minuit.",
     "patientArchivedError": "Ce dossier est archivé. Restaurez-le dans Patients pour planifier un rendez-vous.",
     "moreCount": "+{n} de plus",
-    "slotBlockedConfirm": "Ce créneau est bloqué ({start}–{end}). Réserver quand même ?",
+    "warnBlocked": "Ce créneau est bloqué ({start}–{end}).",
+    "warnOutside": "Ce créneau est en dehors de vos horaires de consultation ({start}–{end}).",
+    "warnDayOff": "Vous ne consultez pas {day, select, sun {le dimanche} mon {le lundi} tue {le mardi} wed {le mercredi} thu {le jeudi} fri {le vendredi} sat {le samedi} other {ce jour-là}}.",
+    "bookAnyway": "Réserver quand même ?",
+    "bookAnywayButton": "Réserver",
+    "checkTimeTitle": "Vérifiez l’horaire",
+    "overlapHardMsg": "Ce créneau chevauche {name} à {time} ({duration}). Choisissez un autre horaire.",
+    "overlapGeneric": "Ce créneau chevauche un autre rendez-vous. Choisissez un autre horaire.",
     "requestedLabel": "Demandé : {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Scannez avec n'importe quelle appli bancaire thaïlandaise pour payer.",
@@ -1134,7 +1141,6 @@
     "edit": "Modifier",
     "confirm": "Confirmer ✓",
     "failed": "Impossible d'enregistrer.",
-    "failedBlocked": "Le créneau est bloqué.",
     "chips": {
       "home": {
         "a": "Qu'est-ce que j'ai demain ?",
@@ -1166,7 +1172,12 @@
         "b": "Comment inviter ma secrétaire ?",
         "c": "Prendre rendez-vous"
       }
-    }
+    },
+    "unavailable": "SolvyAI est indisponible pour le moment. Réessayez dans un instant.",
+    "expired": "Cette carte a expiré. Redemandez pour voir les informations à jour.",
+    "cancel": "Annuler",
+    "chipAt": "{date} à {time}",
+    "otherTime": "Un autre horaire"
   },
   "dateInput": {
     "buddhistYear": "Cela ressemble à une année de l'ère bouddhiste. Utilisez l'année grégorienne (ex. : 1996)."

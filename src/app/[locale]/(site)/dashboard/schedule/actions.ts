@@ -7,6 +7,8 @@ import { knownDbError } from "@/lib/dbErrors";
 import { PICKER_LIMIT, cleanSearchText, patientSearchFilter } from "@/lib/patientSearch";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
+import { hoursWarning } from "@/lib/scheduleChecks";
+import type { WorkingHours } from "@/lib/slots";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 
 // The new-appointment patient picker: up to PICKER_LIMIT active patients of
@@ -88,27 +90,55 @@ export async function createAppointment(formData: FormData) {
   if (match?.archived_at) return { error: "Patient is archived", code: "patient_archived" };
   const patientId = match?.id ?? null;
 
-  // The practice blocked this time itself: ask before booking over it
-  // (the form resubmits with confirm_blocked=1). Not a hard refusal.
-  if (formData.get("confirm_blocked") !== "1") {
-    const { data: blocks } = await supabase
-      .from("appointments")
-      .select("start_time, end_time")
-      .eq("professional_id", effectiveProfId)
-      .eq("date", date)
-      .eq("status", "blocked")
-      .lt("start_time", endTime)
-      .gt("end_time", startTime)
-      .order("start_time")
-      .limit(1);
+  // Another appointment already there: a hard stop, like the app (the
+  // database's exclusion constraint refuses it anyway; this says with whom).
+  // The same statuses as the constraint (081): cancelled, rejected and
+  // blocked time don't count.
+  const { data: clashes } = await supabase
+    .from("appointments")
+    .select("patient_name, start_time, duration_minutes")
+    .eq("professional_id", effectiveProfId)
+    .eq("date", date)
+    .not("status", "in", "(cancelled,rejected,blocked)")
+    .lt("start_time", endTime)
+    .gt("end_time", startTime)
+    .order("start_time")
+    .limit(1);
+  const clash = clashes?.[0] as { patient_name: string | null; start_time: string; duration_minutes: number | null } | undefined;
+  if (clash) {
+    return {
+      error: "This time overlaps with another appointment",
+      code: "slot_overlap",
+      overlap: { name: clash.patient_name ?? "", time: clash.start_time.slice(0, 5), durationMin: clash.duration_minutes ?? null },
+    };
+  }
+
+  // Blocked time and times outside the working hours are allowed but asked
+  // about first, in ONE question listing both (UX 2026-09-28); the form
+  // resubmits with confirm_warnings=1. Never a hard refusal.
+  if (formData.get("confirm_warnings") !== "1") {
+    const [{ data: blocks }, { data: wh }] = await Promise.all([
+      supabase
+        .from("appointments")
+        .select("start_time, end_time")
+        .eq("professional_id", effectiveProfId)
+        .eq("date", date)
+        .eq("status", "blocked")
+        .lt("start_time", endTime)
+        .gt("end_time", startTime)
+        .order("start_time")
+        .limit(1),
+      supabase.rpc("get_professional_working_hours", { p_professional_id: effectiveProfId }),
+    ]);
     const block = blocks?.[0] as { start_time: string; end_time: string } | undefined;
-    if (block) {
-      // Stored clinic-local wall times, shown as HH:MM in the prompt.
+    const hours = hoursWarning(date, startTime, endTime, wh as WorkingHours | null);
+    if (block || hours) {
+      // Stored clinic-local wall times, shown as HH:MM in the question.
       return {
-        error: "This time is blocked",
-        code: "slot_blocked",
-        blockStart: block.start_time.slice(0, 5),
-        blockEnd: block.end_time.slice(0, 5),
+        error: "Needs confirmation",
+        code: "needs_confirm",
+        blocked: block ? { start: block.start_time.slice(0, 5), end: block.end_time.slice(0, 5) } : null,
+        hours,
       };
     }
   }
@@ -132,6 +162,8 @@ export async function createAppointment(formData: FormData) {
 
   if (error) {
     if (error.message?.includes("patient_archived")) return { error: "Patient is archived", code: "patient_archived" };
+    // Taken between the check above and the insert: the exclusion constraint.
+    if (error.code === "23P01") return { error: "This time overlaps with another appointment", code: "slot_overlap", overlap: null };
     return { error: error.message, code: knownDbError(error.message) ?? "generic" };
   }
   revalidatePath("/dashboard/schedule");

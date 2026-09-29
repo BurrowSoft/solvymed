@@ -194,7 +194,14 @@
     "pastMidnightError": "Esse horário e duração ultrapassariam a meia-noite.",
     "patientArchivedError": "Este cadastro está arquivado. Restaure-o em Pacientes para agendar uma consulta.",
     "moreCount": "+{n} mais",
-    "slotBlockedConfirm": "Este horário está bloqueado ({start}–{end}). Agendar mesmo assim?",
+    "warnBlocked": "Este horário está bloqueado ({start}–{end}).",
+    "warnOutside": "Este horário está fora do seu horário de atendimento ({start}–{end}).",
+    "warnDayOff": "Você não atende {day, select, sun {aos domingos} mon {às segundas} tue {às terças} wed {às quartas} thu {às quintas} fri {às sextas} sat {aos sábados} other {nesse dia}}.",
+    "bookAnyway": "Agendar mesmo assim?",
+    "bookAnywayButton": "Agendar",
+    "checkTimeTitle": "Confira o horário",
+    "overlapHardMsg": "Este horário conflita com {name} às {time} ({duration}). Escolha outro horário.",
+    "overlapGeneric": "Este horário conflita com outra consulta. Escolha outro horário.",
     "requestedLabel": "Solicitado: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Escaneie com qualquer app de banco tailandês para pagar.",
@@ -1134,7 +1141,6 @@
     "edit": "Editar",
     "confirm": "Confirmar ✓",
     "failed": "Não foi possível salvar.",
-    "failedBlocked": "O horário está bloqueado.",
     "chips": {
       "home": {
         "a": "O que tenho amanhã?",
@@ -1166,7 +1172,12 @@
         "b": "Como convido minha secretária?",
         "c": "Marcar consulta"
       }
-    }
+    },
+    "unavailable": "O SolvyAI está indisponível agora. Tente de novo em instantes.",
+    "expired": "Este cartão expirou. Peça de novo para ver os dados atualizados.",
+    "cancel": "Cancelar",
+    "chipAt": "{date} às {time}",
+    "otherTime": "Outro horário"
   },
   "dateInput": {
     "buddhistYear": "Esse ano parece do calendário budista. Use o ano cristão (ex.: 1996)."

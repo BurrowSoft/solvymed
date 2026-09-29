@@ -194,7 +194,14 @@
     "pastMidnightError": "سيتجاوز هذا الوقت والمدة منتصف الليل.",
     "patientArchivedError": "هذا الملف مؤرشف. استعِده من قسم المرضى لحجز موعد.",
     "moreCount": "+{n} أخرى",
-    "slotBlockedConfirm": "هذا الوقت محجوب ({start}–{end}). هل تريد الحجز على أي حال؟",
+    "warnBlocked": "هذا الوقت محجوب ({start}–{end}).",
+    "warnOutside": "هذا الوقت خارج ساعات عملك ({start}–{end}).",
+    "warnDayOff": "أنت لا تعمل {day, select, sun {أيام الأحد} mon {أيام الاثنين} tue {أيام الثلاثاء} wed {أيام الأربعاء} thu {أيام الخميس} fri {أيام الجمعة} sat {أيام السبت} other {في ذلك اليوم}}.",
+    "bookAnyway": "هل تريد الحجز على أي حال؟",
+    "bookAnywayButton": "احجز",
+    "checkTimeTitle": "تحقق من الوقت",
+    "overlapHardMsg": "هذا الوقت يتعارض مع {name} في {time} ({duration}). اختر وقتًا آخر.",
+    "overlapGeneric": "هذا الوقت يتعارض مع موعد آخر. اختر وقتًا آخر.",
     "requestedLabel": "المطلوب: {date} · {time}",
     "promptPayTitle": "رمز QR لـ PromptPay",
     "promptPayScan": "امسح الرمز بأي تطبيق مصرفي تايلاندي للدفع.",
@@ -1134,7 +1141,6 @@
     "edit": "تعديل",
     "confirm": "تأكيد ✓",
     "failed": "تعذّر الحفظ.",
-    "failedBlocked": "الوقت محجوب.",
     "chips": {
       "home": {
         "a": "ما مواعيدي غدًا؟",
@@ -1166,7 +1172,12 @@
         "b": "كيف أدعو السكرتير/ة؟",
         "c": "حجز موعد"
       }
-    }
+    },
+    "unavailable": "SolvyAI غير متاح الآن. حاول مرة أخرى بعد قليل.",
+    "expired": "انتهت صلاحية هذه البطاقة. اسأل مرة أخرى لرؤية البيانات المحدثة.",
+    "cancel": "إلغاء",
+    "chipAt": "{date} في {time}",
+    "otherTime": "وقت آخر"
   },
   "dateInput": {
     "buddhistYear": "يبدو أن هذه سنة بالتقويم البوذي. يُرجى استخدام السنة الميلادية (مثل 1996)."

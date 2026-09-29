@@ -6970,3 +6970,99 @@ behind; message JSON valid).
 **CI at `219aeaf`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `219aeaf`.** This docs commit sits on top, after a master sync (10
 behind).
+
+## PR #112 (`feat/solvyai-after-save`, base master) — SolvyAI mock follow-up: contract shapes, second question, after-save navigation, app-parity mask, 🟢 at `3909d66`
+
+Tested with Playwright on a local `next dev` with
+`NEXT_PUBLIC_SOLVYAI_ENABLED=1` (the flag is unset on Vercel). Tested
+first at `dd62a85`; the finding below was fixed at `3909d66` and
+re-tested there.
+
+- **Mask (shown question):** kept: `29.09.2026`, `29/09`,
+  `2026-10-02`, `02.10.2026`, `14:00`, `R$ 150` and `1500 2000`. Masked:
+  `123.456.789-09` → [cpf]; `(11) 98765-4321`, `11 91234-5678`,
+  `+55 11 91234-5678` and `91234-5678` → [phone]; the email → [email].
+- **End times:** 14:45–15:15, 09:45–10:15, 17:50–18:20 and 11:30–12:00.
+  No "14:75".
+- **slot_choice (10h taken):** no card. The text "…10:00 já tem Ana
+  Souza (10:00–10:30). Qual destes horários?" comes with chips 09:30 /
+  10:30 / 11:00 / Outro horário. A chip is sent as the next message
+  ("terça-feira, 29/09/2026 às 10:30"). The stateless mock then answers
+  off-topic, which is expected for the mock.
+- **Blocked (12h):** the card shows "⚠ Horário bloqueado (12:00–13:00)".
+  Confirmar opens the inline "Este horário está bloqueado (12:00–13:00).
+  Agendar mesmo assim?" [Cancelar] [Agendar]. **Cancelar:** nothing
+  runs, with no toast, no navigation and the card back to Confirmar.
+- **Outside hours (19h):** the outside-hours question; Agendar saves.
+  en: "This time is blocked (12:00–13:00). Book anyway?" [Cancel] [Book].
+- **After save:** the panel minimises to the "SolvyAI ✦" pill. The page
+  goes to `/schedule?date=2026-09-29&highlight=<id>` (the block goes to
+  `date=2026-10-02`), with one navigation. The toast "✓ Feito
+  (simulação)" + "Desfazer (10 s)" counts down to 1 s and goes.
+  Desfazer → "Desfeito (simulação)", hidden after about 4 s.
+- **Slot just taken (16h):** "Não foi possível salvar." plus "Esse
+  horário acabou de ser ocupado. Nada foi salvo." with chips 16:30 /
+  17:00 / Outro horário. No navigation.
+- **Expiry** (clock +16 min): "Este cartão expirou. Peça de novo para ver
+  os dados atualizados."; Confirmar disabled, nothing runs.
+- **Ring** (`?highlight=` with a real appointment, calendar and list
+  views): the row is ringed at about 2 s, the ring is off by about 5 s
+  and the parameter is dropped. A reload doesn't ring. An unknown id →
+  no crash, parameter dropped.
+- **Hard stop and fail-closed:** the mock never sends either, so I
+  tested them with a local-only patch to `mockBackend.ts` (reverted,
+  never committed).
+  - Hard stop: the reason ("Esse horário já passou.") shows in red;
+    Confirmar is disabled and a forced click does nothing.
+  - A card with a blocked warning but no `secondConfirm` is dropped. The
+    panel shows "O SolvyAI está indisponível agora. Tente de novo em
+    instantes." in its place.
+- **Flag off:** no ✦ button, panel or pill.
+
+**Finding at `dd62a85`, fixed at `3909d66`:**
+- **At `dd62a85`:** after a save, reopening the pill brought the same
+  card back with Confirmar enabled, and a second Confirmar ran
+  `execute()` again. With the real backend, that is a double booking.
+  a9 marked it BLOCKING.
+- **At `3909d66`:** the reopened card shows "✓ Feito" and has no
+  Confirmar. A rapid double-click on Confirmar, and on Agendar in the
+  second question, gives one toast and one navigation.
+
+**CI at `3909d66`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`3909d66`.** This docs commit sits on top; the branch was already up to
+
+## PR #111 (`fix/booking-overlap-hours`, base master) — overlap is a hard stop that says with whom; blocked / outside hours / day off → one question, 🟢 at `f7d578f`
+
+Tested with Playwright on the Preview at `f7d578f` (Thai flag on), in
+pt-BR, en and th. Each language ran against its own throwaway doctor:
+hours Mon–Sat 08:00–18:00, Sunday off, and blocks on Tuesday at
+14:00–15:00 and 19:00–20:00. Each doctor already had an appointment,
+"Opus Existente", on Tuesday at 10:00–10:30. Every case was also
+checked in the DB.
+
+| Case (Tuesday unless noted) | pt-BR | en | th | Saved? |
+|---|---|---|---|---|
+| BE year `2569-09-29` at 10:15 (#107 interplay) | message under the field; server backstop: "Esse ano parece do calendário budista…" | "That looks like a Buddhist-era year…" | "ดูเหมือนเป็นปี พ.ศ. …" | no; no hours or overlap question first |
+| 10:15, overlaps Opus Existente | "Este horário conflita com Opus Existente às 10:00 (30 min). Escolha outro horário." | "This overlaps with Opus Existente at 10:00 (30 min). Choose another time." | "เวลานี้ซ้อนกับนัดของ Opus Existente เวลา 10:00 (30 min) กรุณาเลือกเวลาอื่น" | no; hard stop, no Agendar button |
+| 14:15, blocked | "Confira o horário" / "Este horário está bloqueado (14:00–15:00). Agendar mesmo assim?" [Cancelar] [Agendar] | "Check the time" / "This time is blocked (14:00–15:00). Book anyway?" | "ตรวจสอบเวลา" / "ช่วงเวลานี้ถูกปิดไว้ (14:00–15:00) ยืนยันนัดหมายหรือไม่?" | Cancelar → no, form stays open; Agendar → yes |
+| 18:30, outside hours | "…fora do seu horário de atendimento (08:00–18:00)…" | "…outside your working hours (08:00–18:00)…" | "…นอกเวลาทำการของคุณ (08:00–18:00)…" | Agendar → yes |
+| 19:15, blocked **and** outside | both sentences in **one** question | same | same | Cancelar → no |
+| Sunday 10:00, day off | "Você não atende aos domingos. Agendar mesmo assim?" | "You don't work on Sundays. Book anyway?" | "คุณไม่ได้ทำงานวันอาทิตย์ ยืนยันนัดหมายหรือไม่?" | Agendar → yes |
+| 11:00–13:00, inside hours | no question | no question | no question | yes, directly |
+
+- **Overlap beats the question:** the first run reused pt-BR's saved
+  times in en and th. The blocked, outside and day-off slots were already
+  taken there, and each gave the overlap hard stop (naming the pt-BR
+  appointment), never the question.
+- **Hours never set** (`working_hours` `{}`): Sunday 22:00 → no question,
+  saved.
+- **Secretary** (booking for the doctor): gets the same outside-hours
+  question and the same overlap hard stop.
+
+**Nit (not blocking, sent to b2):** the Thai overlap text keeps "(30
+min)"; the duration is built as `` `${durationMin} min` `` in
+`ScheduleClient.tsx:331` rather than coming from the messages.
+
+**CI at `f7d578f`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`f7d578f`.** This docs commit sits on top; the branch was already up to
+date with master.

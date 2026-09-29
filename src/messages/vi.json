@@ -194,7 +194,14 @@
     "pastMidnightError": "Thời gian và thời lượng này sẽ vượt quá nửa đêm.",
     "patientArchivedError": "Hồ sơ này đã được lưu trữ. Hãy khôi phục trong mục Bệnh nhân để đặt lịch hẹn.",
     "moreCount": "+{n} nữa",
-    "slotBlockedConfirm": "Khung giờ này đã bị chặn ({start}–{end}). Vẫn đặt lịch?",
+    "warnBlocked": "Khung giờ này đã bị chặn ({start}–{end}).",
+    "warnOutside": "Giờ này nằm ngoài giờ làm việc của bạn ({start}–{end}).",
+    "warnDayOff": "Bạn không làm việc vào {day, select, sun {Chủ nhật} mon {thứ Hai} tue {thứ Ba} wed {thứ Tư} thu {thứ Năm} fri {thứ Sáu} sat {thứ Bảy} other {ngày đó}}.",
+    "bookAnyway": "Vẫn đặt lịch?",
+    "bookAnywayButton": "Đặt lịch",
+    "checkTimeTitle": "Kiểm tra giờ",
+    "overlapHardMsg": "Giờ này trùng với {name} lúc {time} ({duration}). Hãy chọn giờ khác.",
+    "overlapGeneric": "Giờ này trùng với một lịch hẹn khác. Hãy chọn giờ khác.",
     "requestedLabel": "Yêu cầu: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Quét bằng bất kỳ ứng dụng ngân hàng Thái Lan nào để thanh toán.",
@@ -1134,7 +1141,6 @@
     "edit": "Sửa",
     "confirm": "Xác nhận ✓",
     "failed": "Không lưu được.",
-    "failedBlocked": "Khung giờ bị khóa.",
     "chips": {
       "home": {
         "a": "Ngày mai tôi có lịch gì?",
@@ -1166,7 +1172,12 @@
         "b": "Làm sao mời trợ lý?",
         "c": "Đặt lịch hẹn"
       }
-    }
+    },
+    "unavailable": "SolvyAI hiện không khả dụng. Hãy thử lại sau giây lát.",
+    "expired": "Thẻ này đã hết hạn. Hãy hỏi lại để xem thông tin mới nhất.",
+    "cancel": "Hủy",
+    "chipAt": "{date} lúc {time}",
+    "otherTime": "Giờ khác"
   },
   "dateInput": {
     "buddhistYear": "Có vẻ đây là năm theo Phật lịch. Vui lòng dùng năm dương lịch (ví dụ: 1996)."
