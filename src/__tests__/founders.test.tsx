@@ -9,7 +9,7 @@ vi.mock("@/lib/liveFeatures", async (orig) => {
   const real = await orig<typeof import("@/lib/liveFeatures")>();
   return { ...real, liveFeatures: new Proxy(real.liveFeatures, { get: (t, k) => (k === "founders" ? flags.founders : k === "foundersRules" ? flags.foundersRules : (t as Record<string, unknown>)[k as string]) }) };
 });
-const h = vi.hoisted(() => ({ rpc: [] as { fn: string; args: Record<string, unknown> }[], result: { data: { id: "app-1", status: "new" } as unknown, error: null as unknown }, emails: [] as unknown[] }));
+const h = vi.hoisted(() => ({ rpc: [] as { fn: string; args: Record<string, unknown> }[], result: { data: { ok: true, id: "app-1", status: "new" } as unknown, error: null as unknown }, emails: [] as unknown[] }));
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({ rpc: async (fn: string, args: Record<string, unknown>) => { h.rpc.push({ fn, args }); return h.result; } }),
 }));
@@ -31,7 +31,7 @@ const post = (body: unknown, headers: Record<string, string> = { "x-forwarded-fo
 beforeEach(() => {
   flags.founders = true; flags.foundersRules = false;
   h.rpc = []; h.emails = [];
-  h.result = { data: { id: "app-1", status: "new" }, error: null };
+  h.result = { data: { ok: true, id: "app-1", status: "new" }, error: null };
 });
 
 describe("founders helpers", () => {
@@ -86,7 +86,7 @@ describe("POST /api/founders/apply", () => {
   });
 
   it("waitlist, and a one-row table result, both work", async () => {
-    h.result = { data: [{ id: "app-2", status: "waitlist" }], error: null };
+    h.result = { data: [{ ok: true, id: "app-2", status: "waitlist" }], error: null };
     expect(await (await post(form)).json()).toEqual({ status: "waitlist" });
   });
 
@@ -100,15 +100,22 @@ describe("POST /api/founders/apply", () => {
   });
 
   it("maps the database's refusals to status codes, and sends no email", async () => {
-    h.result = { data: null, error: { message: "already_applied" } };
+    h.result = { data: { ok: false, error: "already_applied" }, error: null };
     let res = await post(form);
     expect([res.status, await res.json()]).toEqual([409, { code: "already_applied" }]);
-    h.result = { data: null, error: { message: "too_many_attempts" } };
+    h.result = { data: { ok: false, error: "too_many_attempts" }, error: null };
     res = await post(form);
     expect(res.status).toBe(429);
-    h.result = { data: null, error: { message: "invalid:phone" } };
+    h.result = { data: { ok: false, error: "invalid:phone" }, error: null };
     res = await post(form);
     expect([res.status, await res.json()]).toEqual([400, { code: "invalid", field: "phone" }]);
+    h.result = { data: { ok: false, error: "invalid:client_ip" }, error: null };
+    res = await post(form);
+    expect([res.status, await res.json()]).toEqual([400, { code: "invalid", field: "client_ip" }]);
+    // A thrown RPC error is a real failure, never read as a refusal.
+    h.result = { data: null, error: { message: "already_applied" } };
+    res = await post(form);
+    expect([res.status, await res.json()]).toEqual([500, { code: "generic" }]);
     expect(h.emails).toEqual([]);
   });
 });

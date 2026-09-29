@@ -128,7 +128,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, founders =
 
       {founders && (
         <Section title="6d. Founders Program applications">
-          <p>Founders Program: if you apply, we process your name, email, phone, profession and registration number, the clinic system you use, your practice size and how you found us, to assess your application and contact you. Applications that aren&rsquo;t accepted are deleted 12 months after their last update; accepted founders&rsquo; applications are kept while their account exists.</p>
+          <p>Founders Program: if you apply, we process your name, email, phone, profession and registration number, the clinic system you use, your practice size and how you found us, to assess your application and contact you. Applications that aren&rsquo;t accepted are deleted 12 months after their last update; accepted founders&rsquo; applications are kept while their account exists (or deleted 12 months after acceptance if no account was ever linked).</p>
           <p className="mt-2">To stop abuse, we keep a scrambled (salted hash) form of your IP address for 2 days, never the address itself. To have your application deleted sooner, write to support@solvymed.com.</p>
         </Section>
       )}

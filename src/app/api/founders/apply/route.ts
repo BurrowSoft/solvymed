@@ -28,13 +28,15 @@ export async function POST(request: NextRequest) {
   });
   const payload = founderPayload(body, attribution);
   const { data, error } = await db.rpc("founder_apply", { p_payload: payload, p_client_ip: ip });
-  if (error) {
-    const e = mapApplyError(error.message);
+  // A thrown error is a real failure; a refusal comes back as
+  // { ok: false, error } (129's contract).
+  if (error) return NextResponse.json({ code: "generic" }, { status: 500 });
+  const row = (Array.isArray(data) ? data[0] : data) as { ok?: boolean; id?: string; status?: string; error?: string } | null;
+  if (!row || row.ok !== true) {
+    const e = mapApplyError(row?.error);
     const status = e.code === "too_many_attempts" ? 429 : e.code === "already_applied" ? 409 : e.code === "invalid" ? 400 : 500;
     return NextResponse.json(e, { status });
   }
-  // A jsonb object or a one-row table, whichever 129 returns.
-  const row = (Array.isArray(data) ? data[0] : data) as { id?: string; status?: string } | null;
   const locale = (routing.locales as readonly string[]).includes(String(payload.locale)) ? String(payload.locale) : routing.defaultLocale;
   const status = row?.status === "waitlist" ? "waitlist" : "new";
   // The confirmation + the team summary (no-op until Resend is set up).

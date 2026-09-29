@@ -128,7 +128,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, founders
 
       {founders && (
         <Section title="6d. Inscrições no Programa Fundadores">
-          <p>Programa Fundadores: se você se inscrever, tratamos seu nome, e-mail, telefone, profissão e registro profissional, o sistema de clínica que você usa, o porte do consultório e como nos conheceu, para avaliar a inscrição e falar com você. Inscrições não aceitas são apagadas 12 meses após a última atualização; as de fundadores aceitos ficam guardadas enquanto a conta existir.</p>
+          <p>Programa Fundadores: se você se inscrever, tratamos seu nome, e-mail, telefone, profissão e registro profissional, o sistema de clínica que você usa, o porte do consultório e como nos conheceu, para avaliar a inscrição e falar com você. Inscrições não aceitas são apagadas 12 meses após a última atualização; as de fundadores aceitos ficam guardadas enquanto a conta existir (ou são apagadas 12 meses após a aceitação, se nenhuma conta for vinculada).</p>
           <p className="mt-2">Para evitar abuso, guardamos por 2 dias uma forma embaralhada (hash com sal) do seu endereço IP, nunca o endereço em si. Para apagar sua inscrição antes, escreva para support@solvymed.com.</p>
         </Section>
       )}
