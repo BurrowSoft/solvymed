@@ -3,7 +3,7 @@ import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 
 // English Privacy Policy (authoritative with pt-BR; keep both in step).
 // Every statement here must match what the Service enforces today.
-export function PrivacyEn({ turnstile }: { turnstile: boolean }) {
+export function PrivacyEn({ turnstile, solvyai = false, line = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean }) {
   return (
     <>
       <Section title="1. Overview">
@@ -74,6 +74,12 @@ export function PrivacyEn({ turnstile }: { turnstile: boolean }) {
             ...(turnstile
               ? [["Cloudflare Turnstile", "Protects sign-up, sign-in and password reset against automated abuse by checking technical signals from your browser", "Global"]]
               : []),
+            ...(solvyai
+              ? [["Anthropic (SolvyAI, professionals only, when used)", "Processes the professional's typed questions and requests to answer them; for actions the professional has switched on, the patient's name, date of birth and the appointment details needed for the request", "USA"]]
+              : []),
+            ...(line
+              ? [["LY Corporation (LINE), Thai clinics only, for patients who connect LINE", "Sends appointment notices (clinic name, date, time); we store the patient's LINE user id to deliver them", "Japan / Thailand"]]
+              : []),
           ]}
         />
         <p>We may disclose information if required by law or court order.</p>
@@ -84,8 +90,39 @@ export function PrivacyEn({ turnstile }: { turnstile: boolean }) {
           Some providers above process data outside Brazil. We only use providers that commit to adequate
           protection (for example, standard contractual clauses), as required by Art. 33 of the LGPD and the
           rules of the ANPD. Clinical records are stored in Brazil.
+          {(solvyai || line) && (
+            <>
+              {" "}
+              {solvyai && line
+                ? "SolvyAI requests are processed by Anthropic in the United States, and LINE notices by LY Corporation, under contractual safeguards required by the LGPD (Art. 33) and the PDPA."
+                : solvyai
+                  ? "SolvyAI requests are processed by Anthropic in the United States, under contractual safeguards required by the LGPD (Art. 33) and the PDPA."
+                  : "LINE notices are processed by LY Corporation, under contractual safeguards required by the LGPD (Art. 33) and the PDPA."}
+              {/* TODO(Vitor): Anthropic's retention terms go here before solvyai-live is flipped. */}
+            </>
+          )}
         </p>
       </Section>
+
+      {solvyai && (
+        <Section title="6b. SolvyAI (professionals only)">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>SolvyAI is an optional assistant for professionals. It never reads medical records, prescriptions, exams or files.</li>
+            <li>What you type in the chat is sent as you write it; don&rsquo;t type clinical details. CPF and Thai ID numbers, phone numbers and emails are masked before sending.</li>
+            <li>Actions (booking, moving, cancelling, blocking time, adding patients, marking payments) are off by default; when a professional turns them on, the patient data needed for each request is sent as described in section 5, and nothing is saved without the professional&rsquo;s confirmation.</li>
+            <li>We don&rsquo;t keep chat conversations after the session. A 👍/👎 on an answer is recorded as a vote only, never the conversation.</li>
+          </ul>
+        </Section>
+      )}
+
+      {line && (
+        <Section title="6c. LINE notices (Thailand)">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>Patients of Thai clinics can connect LINE to receive appointment notices. They choose to connect and can disconnect at any time (in the app, or by blocking the SolvyMed LINE account).</li>
+            <li>Notices contain only the clinic name, the date and the time, never clinical information.</li>
+          </ul>
+        </Section>
+      )}
 
       <Section title="7. Who can see data inside a clinic">
         <ul>
