@@ -70,12 +70,12 @@ describe("push texts", () => {
 
   it("Thai: one title for an appointment cancelled by the clinic (Schedule / archive and account close)", () => {
     const th = JSON.parse(readFileSync(join(__dirname, "..", "messages", "th.json"), "utf8").replace(/^﻿/, ""));
-    // The single wording (UX 36): the Schedule / archive one is the account
-    // close sentence with the clinic's name for "คลินิก", then "open the app".
-    const cancelled = pushText("th", "apptCancelledByClinic", { clinic: "คลินิก", date: "D", time: "T" });
+    // The single wording (UX 36): the Schedule / archive one is exactly the
+    // account close sentence, then "to book another, open the app".
+    const cancelled = pushText("th", "apptCancelledByClinic", { clinic: "C", date: "D", time: "T" });
     expect(cancelled.title).toBe(th.accountClose.pushCancelledTitle);
-    // (UX's text spaces the clinic's name: "ถูกยกเลิกโดย {clinic}".)
-    const closeBody = th.accountClose.pushCancelledBody.replace("{date}", "D").replace("{time}", "T").replace("ถูกยกเลิกโดยคลินิก", "ถูกยกเลิกโดย คลินิก");
+    const closeBody = th.accountClose.pushCancelledBody.replace("{date}", "D").replace("{time}", "T").replace("{clinic}", "C");
+    expect(closeBody).toBe("นัดหมายของคุณวันที่ D เวลา T ถูกยกเลิกโดย C");
     expect(cancelled.body).toBe(`${closeBody} หากต้องการนัดใหม่ กรุณาเปิดแอป`);
   });
 
