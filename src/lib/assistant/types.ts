@@ -109,5 +109,6 @@ export interface AssistantBackend {
   // offers fresh times, without a model call and without counting.
   reportConfirmFailed(code: string, action: CardAction, locale: string): AsyncIterable<AnswerChunk>;
   // Desfazer (10 s after saving).
-  undo(action: CardAction, id?: string): Promise<void>;
+  // Desfazer: true when it was undone.
+  undo(action: CardAction, id?: string): Promise<boolean>;
 }
