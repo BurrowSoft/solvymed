@@ -8817,3 +8817,29 @@ Tested by web tester 2.
 locales (checked by web tester 1).
 
 **CI at `dfc0c31`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for `dfc0c31`.** This docs commit sits on top of a master sync (10 behind; clean).
+
+## PR #164 (`feat/solvyai-send-pix-route`, base master) — `propose_send_pix` for the app's SolvyAI (BR card; TH PromptPay answer; never on the website), 🟢 at `76ceb35`
+
+Tested by web tester 2, over HTTP against `/api/assistant`.
+
+**Setup:**
+- **Server:** a local `next dev` at `76ceb35` with `SOLVYAI_API_ENABLED=1`
+  and a fake key.
+- **Test-only preload:** it scripts `list_appointments` →
+  `propose_send_pix`.
+- **Clients:** the **app** client uses a Bearer token; the **website**
+  client uses the SSR session cookie (no Bearer).
+- **Data:** the prod DB, with throwaway doctors, one BR and one `country =
+  TH` (deleted afterwards).
+
+| Row | Result |
+|---|---|
+| BR, app, value + Pix key + patient phone | ✅ the tool is offered. Card "Enviar Pix por WhatsApp": Paciente / Consulta "Terça-feira, 06/10/2026, 09:00–09:30" / Valor "R$ 150,00" / Chave Pix. `action {kind: send_pix, args: {appointmentId}}`; `after {screen: whatsapp, highlight: appointment, then: payments}` |
+| No patient phone | ✅ no card; the model is told to offer the QR / Pix Copia e Cola |
+| Already paid | ✅ no card; "It's already paid" |
+| No value | ✅ no card; "set it first" |
+| No Pix key | ✅ no card; "add it in Settings (Help G3)" |
+| **Website** client | ✅ `propose_send_pix` is **not among the 11 tools** sent to the model. A forced call is refused: "On the website Pix isn't sent by WhatsApp… Help G4" |
+| TH practice (pt-BR / en / th) | ✅ **never a card**. Text "Em clínicas na Tailândia, o paciente paga escaneando o QR PromptPay da consulta." / en / th, plus an `open` block "Abrir QR" / "Open QR" / "เปิด QR" → `{screen: schedule, date, id, params: {sheet: "1"}}` (web href `…/dashboard/schedule?date=…&sheet=1&highlight=<id>`). The model is told to add nothing |
+
+**CI at `76ceb35`:** ✅. **Review: clean (9a).** **Merge gate: 🟢 for `76ceb35`.** This docs commit sits directly on the PR head. The branch is 25 behind master, and a master merge conflicts in code (src/lib/assistant/server/handle.ts), so the web dev syncs it.
