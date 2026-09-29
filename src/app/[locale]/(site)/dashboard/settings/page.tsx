@@ -13,6 +13,7 @@ import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { getSetupProgress } from "@/lib/setup";
 import { CloseAccountPanel, type ClosurePreview } from "./CloseAccountPanel";
+import { ChangePasswordPanel } from "./ChangePasswordPanel";
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 type WorkingHours = Record<DayKey, { enabled: boolean; start: string; end: string }>;
@@ -56,6 +57,11 @@ export default async function SettingsPage({
         {liveFeatures.news && (
           <div className="mt-6">
             <NewsSettingsCard />
+          </div>
+        )}
+        {user.email && (
+          <div className="mt-6">
+            <ChangePasswordPanel email={user.email} locale={locale} />
           </div>
         )}
         {closurePreview && (
@@ -194,6 +200,8 @@ export default async function SettingsPage({
         <ProceduresPanel procedures={procedures} currency={practiceProfile.currency} />
 
         <CookieSettingsButton className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-3 text-left text-sm font-semibold text-slate-700 transition hover:bg-slate-50" />
+
+        {user.email && <ChangePasswordPanel email={user.email} locale={locale} />}
 
         {closurePreview && <CloseAccountPanel preview={closurePreview} locale={locale} />}
       </div>

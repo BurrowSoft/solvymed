@@ -18,8 +18,8 @@ App title: "Sua conta" / "Your account"
 **Configurações → Alterar senha**. Por segurança, as sessões nos outros aparelhos são encerradas.
 **en**
 **Settings → Change password**. For security, your sessions on other devices are ended.
-**No site:** Ainda não há **Alterar senha** no site; use o app, ou saia da conta e use **Esqueceu a senha?** na tela de entrada.
-**On the website:** There's no **Change password** on the website yet; use the app, or sign out and use **Forgot password?** on the sign-in screen.
+**No site:** **Configurações → Alterar senha**: digite a senha atual e a nova (duas vezes). As sessões nos outros aparelhos são encerradas; este navegador continua conectado.
+**On the website:** **Settings → Change password**: enter your current password and the new one (twice). Your sessions on other devices are ended; this browser stays signed in.
 `open:settings`
 
 ---

@@ -944,6 +944,22 @@
     "paymentsEmptyBody": "I pagamenti dei tuoi appuntamenti appariranno qui.",
     "setYourPrices": "Imposta i tuoi prezzi"
   },
+  "changePassword": {
+    "title": "Cambia password",
+    "hint": "Per sicurezza, le sessioni sugli altri dispositivi vengono chiuse.",
+    "current": "Password attuale",
+    "new": "Nuova password",
+    "confirm": "Conferma nuova password",
+    "success": "Password cambiata! Le sessioni sugli altri dispositivi sono state chiuse.",
+    "sameError": "La nuova password deve essere diversa da quella attuale.",
+    "mismatch": "Le password non coincidono.",
+    "tooShort": "La password deve avere almeno {min} caratteri.",
+    "allFields": "Compila tutti i campi.",
+    "currentWrong": "La password attuale non è corretta.",
+    "generic": "Impossibile cambiare la password. Riprova.",
+    "cancel": "Annulla",
+    "saving": "Salvataggio…"
+  },
   "accountClose": {
     "titleClose": "Chiudi account",
     "titleDelete": "Elimina account",
