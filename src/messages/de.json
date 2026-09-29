@@ -1201,6 +1201,8 @@
     "undone": "Rückgängig gemacht",
     "simulated": "Simulation",
     "undo": "Rückgängig ({s} s)",
+    "undoFailed": "Rückgängig machen nicht möglich. Öffnen Sie den Eintrag, um ihn anzupassen.",
+    "openItem": "Öffnen",
     "view": "Im Kalender ansehen",
     "edit": "Bearbeiten",
     "confirm": "Bestätigen ✓",

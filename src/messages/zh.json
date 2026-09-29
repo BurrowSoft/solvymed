@@ -1201,6 +1201,8 @@
     "undone": "已撤销",
     "simulated": "模拟",
     "undo": "撤销（{s} 秒）",
+    "undoFailed": "无法撤销。请打开该项目进行调整。",
+    "openItem": "打开",
     "view": "在日程中查看",
     "edit": "编辑",
     "confirm": "确认 ✓",

@@ -1201,6 +1201,8 @@
     "undone": "Đã hoàn tác",
     "simulated": "mô phỏng",
     "undo": "Hoàn tác ({s} giây)",
+    "undoFailed": "Không thể hoàn tác. Hãy mở mục đó để điều chỉnh.",
+    "openItem": "Mở",
     "view": "Xem trong lịch",
     "edit": "Sửa",
     "confirm": "Xác nhận ✓",

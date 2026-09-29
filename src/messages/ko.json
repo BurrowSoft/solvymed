@@ -1201,6 +1201,8 @@
     "undone": "취소됨",
     "simulated": "시뮬레이션",
     "undo": "실행 취소 ({s}초)",
+    "undoFailed": "실행 취소할 수 없습니다. 항목을 열어 조정하세요.",
+    "openItem": "열기",
     "view": "일정에서 보기",
     "edit": "수정",
     "confirm": "확인 ✓",
