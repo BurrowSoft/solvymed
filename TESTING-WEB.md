@@ -7792,3 +7792,42 @@ mapa": the label clears.
 **CI at `c74f9ad`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `c74f9ad`.** This docs commit sits on top of a master sync (16 behind,
 clean merge; message JSON valid).
+
+## PR #128 (`fix/label-audit`, base master) — Pix dialog labels translated; Help G1/G4/K4 match the real labels (from my label audit), 🟢 at `4e420ef`
+
+**The Pix dialog** (Agenda, an appointment with a value, the Preview at
+`4e420ef`):
+
+| Locale | Button title | Dialog |
+|---|---|---|
+| pt-BR | QR Code Pix | QR Code Pix · **Pix Copia e Cola** · **Copiar** |
+| en | Pix QR code | Pix QR code · **Pix Copia e Cola** · **Copy** |
+| th | Pix QR code | Pix QR code · **Pix Copia e Cola** · **คัดลอก** |
+
+Before, the dialog hardcoded "Copia e Cola" / "Copiar" in every locale.
+In th the title stays "Pix QR code": Pix is Brazil-only, so not a
+problem.
+
+**Help:** all 156 pages were compared with the master Preview.
+- **148 are identical.** Only these changed:
+  - **G1** (pt, en; the website line): "clique em **Marcar como Pago** na
+    consulta: salva na hora. Se ela não tiver valor, digite o valor e
+    clique em **Confirmar**." This matches the one-click save when there
+    is a value.
+  - **G4** (pt, en; the website line): "**Pix Copia e Cola**"; en "(with
+    **Copy**)".
+  - **K4** (pt, en; plain and `?app=1`): "**Encerrar conta** (ou
+    **Excluir conta**, se ainda não houver prontuários)". The website shows
+    "Excluir conta" for an account with no clinical history.
+- **The G1/G4 app variants are unchanged**, as intended: the website line
+  isn't shown there.
+
+**Open question (sent to UX; 8d is checking the app code):** K4's **app**
+variant now also says "(ou **Excluir conta**…)". I can't verify the app's
+label from the web. If the app differs, that one sentence goes back to
+"Encerrar conta" only, as a one-line follow-up. It isn't blocking the
+website changes above.
+
+**CI at `4e420ef`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`4e420ef`**, website scope. This docs commit sits on top of a master sync
+(20 behind, clean merge; message JSON valid).
