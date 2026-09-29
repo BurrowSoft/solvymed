@@ -101,6 +101,7 @@
     "managePayments": "Manage Payments"
   },
   "schedule": {
+    "patientMessage": "Patient's message",
     "title": "Schedule",
     "apptsToday": "{count, plural, one {# appointment today} other {# appointments today}}",
     "noAppts": "No appointments on this day",

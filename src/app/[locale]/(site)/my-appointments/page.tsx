@@ -1,3 +1,4 @@
+import { myAppointments } from "@/lib/myAppointments";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MyAppointmentsClient } from "./MyAppointmentsClient";
@@ -12,12 +13,13 @@ export type PatientAppointment = {
   status: string;
   consultation_type: string;
   type: string;
-  notes: string | null;
   professional_id: string;
   proposed_date: string | null;
   proposed_start_time: string | null;
   proposed_end_time: string | null;
   scheduled_by: string | null;
+  // The patient's own booking message (never the clinic's notes).
+  patient_note: string | null;
 };
 
 export default async function MyAppointmentsPage({
@@ -87,23 +89,14 @@ export default async function MyAppointmentsPage({
   // the practice's row, so its own zone isn't used here.)
   const today = clinicDate();
 
-  const { data: upcoming } = await supabase
-    .from("appointments")
-    .select("id, date, start_time, end_time, status, consultation_type, type, notes, professional_id, proposed_date, proposed_start_time, proposed_end_time, scheduled_by")
-    .eq("patient_auth_id", user.id)
-    .gte("date", today)
-    .not("status", "in", '("cancelled","completed","blocked","rejected")')
-    .order("date", { ascending: true })
-    .order("start_time", { ascending: true });
-
-  const { data: past } = await supabase
-    .from("appointments")
-    .select("id, date, start_time, end_time, status, consultation_type, type, notes, professional_id, proposed_date, proposed_start_time, proposed_end_time, scheduled_by")
-    .eq("patient_auth_id", user.id)
-    .lt("date", today)
-    .in("status", ["completed", "confirmed", "scheduled"])
-    .order("date", { ascending: false })
-    .limit(5);
+  // Only through get_my_appointments (migration 106): explicit columns,
+  // never the clinic's notes. It comes ordered by date and start.
+  const mine = await myAppointments(supabase);
+  const upcoming = mine.filter((a) => a.date >= today && !["cancelled", "completed", "blocked", "rejected"].includes(a.status));
+  const past = mine
+    .filter((a) => a.date < today && ["completed", "confirmed", "scheduled"].includes(a.status))
+    .reverse()
+    .slice(0, 5);
 
   // The one-time "connected to {clinic}" card, once per clinic (migration 103).
   const flags = await getOnboardingFlags(supabase);

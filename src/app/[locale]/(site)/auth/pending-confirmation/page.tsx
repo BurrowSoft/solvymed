@@ -1,5 +1,6 @@
 "use client";
 
+import { myAppointments } from "@/lib/myAppointments";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -67,13 +68,10 @@ export default function PendingConfirmationPage() {
 
     const [{ data: profRowRaw }, { data: apptRows }] = await Promise.all([
       supabase.rpc("get_professional_public_info", { p_professional_id: profId }).maybeSingle(),
-      supabase
-        .from("appointments")
-        .select("id, date, start_time, status, proposed_date, proposed_start_time")
-        .eq("patient_auth_id", user.id)
-        .eq("professional_id", profId)
-        .in("status", ["tentative", "proposal"])
-        .order("date", { ascending: true }),
+      // The patient's own rows, only through get_my_appointments (106).
+      myAppointments(supabase).then((rows) => ({
+        data: rows.filter((r) => r.professional_id === profId && (r.status === "tentative" || r.status === "proposal")),
+      })),
     ]);
 
     const profRow = profRowRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null } | null;
