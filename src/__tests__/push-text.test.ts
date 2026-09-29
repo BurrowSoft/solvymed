@@ -63,6 +63,14 @@ describe("push texts", () => {
     expect(await patientPushLocale(noSaved, "p", "d")).toBe("th");
   });
 
+  it("Thai: one wording for an appointment cancelled by the clinic (archive and account close)", () => {
+    const th = JSON.parse(readFileSync(join(__dirname, "..", "messages", "th.json"), "utf8").replace(/^﻿/, ""));
+    const archive = pushText("th", "apptCancelledByClinic", { when: "W" });
+    expect(archive.title).toBe(th.accountClose.pushCancelledTitle);
+    expect(archive.body).toContain("ถูกยกเลิกโดยคลินิก");
+    expect(th.accountClose.pushCancelledBody).toContain("ถูกยกเลิกโดยคลินิก");
+  });
+
   it("no push in src is sent with literal (English) text", () => {
     const root = join(__dirname, "..");
     const offenders: string[] = [];
