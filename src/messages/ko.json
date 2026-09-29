@@ -461,6 +461,7 @@
     "clinicName": "클리닉 / 의원 이름",
     "clinicNamePlaceholder": "행복 클리닉",
     "cnpj": "CNPJ",
+    "cnpjInvalid": "CNPJ가 올바르지 않습니다. 번호를 확인하세요.",
     "taxIdLabel": "납세자 번호(13자리)",
     "taxIdInvalid": "올바른 13자리 납세자 번호를 입력하세요.",
     "phone": "전화",

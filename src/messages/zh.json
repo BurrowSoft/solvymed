@@ -461,6 +461,7 @@
     "clinicName": "诊所 / 机构名称",
     "clinicNamePlaceholder": "健康诊所",
     "cnpj": "CNPJ",
+    "cnpjInvalid": "CNPJ 无效,请检查号码。",
     "taxIdLabel": "税号(13 位)",
     "taxIdInvalid": "请输入有效的 13 位税号。",
     "phone": "电话",

@@ -461,6 +461,7 @@
     "clinicName": "Nome dello studio / clinica",
     "clinicNamePlaceholder": "Studio Benessere",
     "cnpj": "CNPJ",
+    "cnpjInvalid": "Il CNPJ non è valido. Controlla il numero.",
     "taxIdLabel": "Codice fiscale (13 cifre)",
     "taxIdInvalid": "Inserisci un codice fiscale valido di 13 cifre.",
     "phone": "Telefono",

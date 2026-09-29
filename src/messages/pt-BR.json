@@ -461,6 +461,7 @@
     "clinicName": "Nome da clínica / consultório",
     "clinicNamePlaceholder": "Clínica Bem-Estar",
     "cnpj": "CNPJ",
+    "cnpjInvalid": "O CNPJ não é válido. Confira o número.",
     "taxIdLabel": "Nº de identificação fiscal (13 dígitos)",
     "taxIdInvalid": "Digite um número de identificação fiscal válido, com 13 dígitos.",
     "phone": "Telefone",
