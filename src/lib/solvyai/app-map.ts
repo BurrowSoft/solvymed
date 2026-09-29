@@ -133,6 +133,7 @@ export const ACTIONS: AppMapAction[] = [
     rules: [
       "The booking pages don't offer blocked times to patients (a screen rule; the database itself doesn't refuse them).",
       "The practice can still book over a block, after the second question.",
+      "SolvyAI never blocks over existing appointments: it names them and asks what to do.",
       "A year of 2400 or more is never saved.",
     ],
     card: ["period (weekday, date, start–end)", "reason"],
