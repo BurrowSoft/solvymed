@@ -655,10 +655,10 @@
           ]
         },
         "web": {
-          "pt": "Ainda não disponível no site; use o app.",
-          "en": "Not available on the website yet; use the app."
+          "pt": "Abra o paciente e clique em **PDF do histórico** (no topo), depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Sai no idioma do site, com todos os registros e receitas e uma linha em branco para assinar à mão.",
+          "en": "Open the patient and click **History PDF** (at the top), then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. It comes out in the website's language, with every record and prescription and a blank line to sign by hand."
         },
-        "webUnavailable": true,
+        "webUnavailable": false,
         "open": "patients",
         "appOnly": null,
         "appTitle": null
