@@ -408,6 +408,7 @@
     "genericError": "問題が発生しました。もう一度お試しください。",
     "tabAccessLog": "アクセス履歴",
     "rxPdfAria": "処方箋の PDF（印刷または保存）",
+    "historyPdf": "履歴の PDF",
     "tabExams": "検査",
     "tabFiles": "ファイル",
     "filesHint": "写真または PDF。非公開で、開けるのはあなただけです。",
@@ -1277,6 +1278,16 @@
     "corrected": "（訂正済み）",
     "print": "印刷 / PDF で保存",
     "printHint": "ファイルを保存するには、印刷ウィンドウで「PDF として保存」を選んでください。",
-    "back": "患者に戻る"
+    "back": "患者に戻る",
+    "historyTitle": "診療履歴",
+    "medicalRecords": "診療記録",
+    "prescriptions": "処方箋",
+    "noRecords": "記録はありません。",
+    "noPrescriptions": "処方箋はありません。",
+    "birthDate": "生年月日：{value}",
+    "phone": "電話：{value}",
+    "exportedBy": "{date} に {name} がエクスポート",
+    "accessLogFailed": "アクセスを記録できませんでした。もう一度お試しください。",
+    "countryFailed": "クリニックの情報を読み込めませんでした。もう一度お試しください。"
   }
 }

@@ -109,6 +109,15 @@ export default async function PatientDetailPage({
             {[patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null, age ? t("age", { n: age }) : null, patient.email].filter(Boolean).join(" · ")}
           </p>
         </div>
+        {/* The history print view (Help P8): clinical, so doctor only. */}
+        {!isSecretary && (
+          <a
+            href={`${prefix}/dashboard/patients/${patient.id}/history/print`}
+            className="ml-auto shrink-0 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            {t("historyPdf")}
+          </a>
+        )}
       </div>
 
       {isArchived && (

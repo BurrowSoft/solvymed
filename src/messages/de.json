@@ -408,6 +408,7 @@
     "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "tabAccessLog": "Zugriffsprotokoll",
     "rxPdfAria": "Rezept als PDF (drucken oder speichern)",
+    "historyPdf": "Verlauf als PDF",
     "tabExams": "Befunde",
     "tabFiles": "Dateien",
     "filesHint": "Fotos oder PDFs, privat: Nur Sie können sie öffnen.",
@@ -1277,6 +1278,16 @@
     "corrected": "(korrigiert)",
     "print": "Drucken / Als PDF speichern",
     "printHint": "Um die Datei zu speichern, wählen Sie im Druckfenster „Als PDF speichern“.",
-    "back": "Zurück zum Patienten"
+    "back": "Zurück zum Patienten",
+    "historyTitle": "Krankengeschichte",
+    "medicalRecords": "Behandlungseinträge",
+    "prescriptions": "Rezepte",
+    "noRecords": "Keine Einträge.",
+    "noPrescriptions": "Keine Rezepte.",
+    "birthDate": "Geburtsdatum: {value}",
+    "phone": "Telefon: {value}",
+    "exportedBy": "Exportiert von {name} am {date}",
+    "accessLogFailed": "Der Zugriff konnte nicht protokolliert werden. Bitte versuchen Sie es erneut.",
+    "countryFailed": "Die Praxisdaten konnten nicht geladen werden. Bitte versuchen Sie es erneut."
   }
 }

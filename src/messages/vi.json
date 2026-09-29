@@ -408,6 +408,7 @@
     "genericError": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "tabAccessLog": "Nhật ký truy cập",
     "rxPdfAria": "PDF đơn thuốc (in hoặc lưu)",
+    "historyPdf": "PDF bệnh sử",
     "tabExams": "Xét nghiệm",
     "tabFiles": "Tệp",
     "filesHint": "Ảnh hoặc PDF, riêng tư: chỉ bạn mới mở được.",
@@ -1277,6 +1278,16 @@
     "corrected": "(đã sửa)",
     "print": "In / Lưu PDF",
     "printHint": "Để lưu tệp, hãy chọn \"Lưu dưới dạng PDF\" trong cửa sổ in.",
-    "back": "Quay lại bệnh nhân"
+    "back": "Quay lại bệnh nhân",
+    "historyTitle": "Bệnh sử",
+    "medicalRecords": "Hồ sơ khám bệnh",
+    "prescriptions": "Đơn thuốc",
+    "noRecords": "Chưa có hồ sơ.",
+    "noPrescriptions": "Chưa có đơn thuốc.",
+    "birthDate": "Ngày sinh: {value}",
+    "phone": "Điện thoại: {value}",
+    "exportedBy": "Xuất bởi {name} ngày {date}",
+    "accessLogFailed": "Không thể ghi lại lượt truy cập. Vui lòng thử lại.",
+    "countryFailed": "Không thể tải thông tin phòng khám. Vui lòng thử lại."
   }
 }
