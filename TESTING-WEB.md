@@ -7192,6 +7192,27 @@ are unchanged from #111.
 the message files auto-merged; all 15 are valid JSON and each has
 `durationMinutes` once).
 
+## PR #118 (`fix/th-cancel-wording`, base master) — one Thai wording for an appointment cancelled by the clinic, 🟢 at `bef269f`
+
+This follows up my #113 note. Copy only: `src/lib/pushText.ts` (1 line),
+`src/messages/th.json` (1 line) and a unit test.
+
+| Push | Before (seen live in #113) | Now |
+|---|---|---|
+| Archive (`pushText` th) | ยกเลิกนัดหมาย \| นัดหมายของคุณวันที่ {when} ถูกยกเลิกโดยคลินิก | **นัดหมายถูกยกเลิก** \| นัดหมายของคุณวันที่ {when} ถูกยกเลิกโดยคลินิก |
+| Account close (`accountClose` th) | นัดหมายถูกยกเลิก \| …เวลา {time} ถูกคลินิกยกเลิกแล้ว | นัดหมายถูกยกเลิก \| …เวลา {time} **ถูกยกเลิกโดยคลินิก** |
+
+- **Same title and ending on both paths.** The new test pins the archive
+  title to `accountClose.pushCancelledTitle`.
+- **Placeholders unchanged** (`{when}`, `{date}`, `{time}`); th.json is
+  valid.
+- **Not re-run live:** the #113 sink run exercised both paths, and this
+  changes only the strings. First-pass Thai review is Vitor's, per the
+  standing rule.
+
+**CI at `bef269f`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`bef269f`.** This docs commit sits on top of a master sync (9 behind,
+
 ## PR #116 (`feat/solvyai-app-map`, base master) — the SolvyAI App Map (data) + its drift test, 🟢 at `6bded04`
 
 - **Files:** only 2, `src/lib/solvyai/app-map.ts` (+280) and
