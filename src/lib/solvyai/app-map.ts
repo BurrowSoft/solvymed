@@ -278,6 +278,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     help: "C9",
   },
   {
+    rule: {
+      text: "In the app too (1.4.0): after a SolvyAI save the toast offers \"Desfazer\" / \"Undo\" for 10 s only when nothing reached the patient yet, and \"Abrir\" / \"Open\" when the patient may already have been told (same rule as the website).",
+      pending: ["app-1.4.0", "solvyai-live"],
+    },
+    help: "C9",
+  },
+  {
     rule: { text: "\"Mostrar botão do assistente\" / \"Show the assistant button\" (Settings → SolvyAI; per phone in the app, per browser on the website) hides or shows the ✦ button.", pending: ["mobile#99", "solvyai-live"] },
     help: "C9",
   },
