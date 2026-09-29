@@ -789,6 +789,8 @@
     "or": "o",
     "cancelAnytime": "Annulla quando vuoi. Nessun impegno.",
     "successMessage": "Abbonamento attivato! Ti diamo il benvenuto in SolvyMed Pro.",
+    "activationPending": "Pagamento ricevuto! Attivazione dell’abbonamento in corso…",
+    "activationSlow": "Abbiamo ricevuto il pagamento, ma l’attivazione sta richiedendo più tempo del solito. Di solito si completa in pochi minuti; se il piano non compare, contatta l’assistenza:",
     "trialDaysLeft": "Hai ancora {n} giorni nella tua prova gratuita.",
     "trialExpired": "Il tuo periodo di prova è terminato. Abbonati per continuare.",
     "trialBannerPrefix": "Prova gratuita:",
