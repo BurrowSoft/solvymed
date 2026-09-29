@@ -113,7 +113,7 @@ const T: Record<PushLocale, Table> = {
     rescheduleConfirmed: { title: "ยืนยันการเลื่อนนัดแล้ว", body: "นัดหมายของคุณถูกเลื่อนเป็น {when}" },
     rescheduleConfirmedNoTime: { title: "ยืนยันการเลื่อนนัดแล้ว", body: "คำขอเลื่อนนัดของคุณได้รับการยืนยันแล้ว" },
     rescheduleDeclined: { title: "ไม่สามารถเลื่อนนัดได้", body: "ไม่สามารถเลื่อนนัดได้ เวลาเดิมยังคงได้รับการยืนยัน" },
-    apptCancelledByClinic: { title: "ยกเลิกนัดหมาย", body: "นัดหมายของคุณวันที่ {when} ถูกยกเลิกโดยคลินิก" },
+    apptCancelledByClinic: { title: "นัดหมายถูกยกเลิก", body: "นัดหมายของคุณวันที่ {when} ถูกยกเลิกโดยคลินิก" },
     note: "หมายเหตุ: {note}",
   },
 };
