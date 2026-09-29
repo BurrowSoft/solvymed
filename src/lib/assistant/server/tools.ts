@@ -88,6 +88,7 @@ const T = {
   pt: {
     newAppt: "Nova consulta", cancelAppt: "Cancelar consulta", block: "Bloquear horário", paid: "Marcar como pago", unpaid: "Marcar como não pago",
     patient: "Paciente", when: "Quando", duration: "Duração", period: "Período", reason: "Motivo", appointment: "Consulta", value: "Valor",
+    procedure: "Procedimento", type: "Tipo", inPerson: "Presencial",
     blockedWarn: (s: string, e: string) => `⚠ Horário bloqueado (${s}–${e})`,
     outsideWarn: (s: string, e: string) => `⚠ Fora do horário de atendimento (${s}–${e})`,
     dayOffWarn: (d: string) => `⚠ ${d} não é dia de atendimento`,
@@ -107,6 +108,7 @@ const T = {
   en: {
     newAppt: "New appointment", cancelAppt: "Cancel appointment", block: "Block time", paid: "Mark as paid", unpaid: "Mark as unpaid",
     patient: "Patient", when: "When", duration: "Duration", period: "Period", reason: "Reason", appointment: "Appointment", value: "Value",
+    procedure: "Procedure", type: "Type", inPerson: "In person",
     blockedWarn: (s: string, e: string) => `⚠ Blocked time (${s}–${e})`,
     outsideWarn: (s: string, e: string) => `⚠ Outside the working hours (${s}–${e})`,
     dayOffWarn: (d: string) => `⚠ ${d} isn't a working day`,
@@ -159,6 +161,21 @@ const err = (forModel: string): ToolOutcome => ({ forModel, isError: true });
 const unseen = (what: string) => err(`Unknown ${what}: use a read tool first and pick from its results; never guess an id. If several could match, ask the user.`);
 
 // ── Reads ────────────────────────────────────────────────────────────────
+
+type Procedure = { id: string; name: string; duration_minutes: number; price: number | null; payment_type: string };
+async function defaultProcedure(ctx: ToolContext): Promise<Procedure | null> {
+  const { data } = await ctx.db
+    .from("procedures")
+    .select("id, name, duration_minutes, price, payment_type")
+    .eq("professional_id", ctx.profId)
+    .eq("active", true)
+    .order("name")
+    .limit(1);
+  const p = ((data ?? []) as Procedure[])[0];
+  if (!p) return null;
+  const price = Number(p.price);
+  return { ...p, price: Number.isFinite(price) && price > 0 ? price : null };
+}
 
 async function workingHours(ctx: ToolContext): Promise<WorkingHours | null> {
   const { data } = await ctx.db.rpc("get_professional_working_hours", { p_professional_id: ctx.profId });
@@ -274,7 +291,11 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
   const t = T[ctx.lang];
   const { patientId, date, start } = input;
   const durGiven = input.durationMin !== undefined && input.durationMin !== null;
-  const dur = durGiven ? Number(input.durationMin) : 30;
+  // The clinic's default procedure (the booking form's: the first active one
+  // by name) gives the procedure, value, payment type and, unless said, the
+  // duration; every field saved is on the card (UX, §2.3a.1).
+  const proc = await defaultProcedure(ctx);
+  const dur = durGiven ? Number(input.durationMin) : proc?.duration_minutes ?? 30;
   if (typeof patientId !== "string" || !ctx.seen.has(patientId)) return unseen("patient");
   if (!isDate(date)) return err("The date must be YYYY-MM-DD in the Gregorian calendar; ask the user if unsure.");
   if (!isTime(start)) return err("The start must be HH:MM; ask the user for the time.");
@@ -347,6 +368,9 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
     fields: [
       { label: t.patient, value: personLabel(ctx, patient.full_name, patient.birth_date) },
       { label: t.when, value: `${whenLabel(ctx, date)}, ${start}–${end}` },
+      ...(proc ? [{ label: t.procedure, value: proc.name, isDefault: true }] : []),
+      ...(proc?.price ? [{ label: t.value, value: money(proc.price, await practiceCountry(ctx)), isDefault: true }] : []),
+      { label: t.type, value: t.inPerson, isDefault: true },
       { label: t.duration, value: `${dur} min`, ...(durGiven ? {} : { isDefault: true }) },
     ],
     warnings,
@@ -356,7 +380,7 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
     editTarget: { screen: "schedule", date, params: { new: "1", start } },
     viewTarget: view,
     after: { screen: "schedule", date, highlight: { kind: "appointment" } },
-    action: { kind: "book_appointment", args: { patientId, date, start, durationMin: dur } },
+    action: { kind: "book_appointment", args: { patientId, date, start, durationMin: dur, ...(proc ? { procedureId: proc.id } : {}) } },
   });
   return { forModel: `Card shown (${c.id}${stop ? `, blocked: ${stop.code}` : ""}${warnings.length ? `, warnings: ${warnings.map((w) => w.code).join(",")}` : ""}). Tell the user to check it and tap Confirmar; don't repeat the details.`, block: { type: "card", card: c } };
 }

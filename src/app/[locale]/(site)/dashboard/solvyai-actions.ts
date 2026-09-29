@@ -58,8 +58,22 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
       const start = str(a.start);
       const dur = Number(a.durationMin ?? 30);
       if (!UUIDISH.test(patientId) || !DATE.test(date) || !TIME.test(start) || !Number.isInteger(dur) || dur < 5 || dur > 480) return { ok: false, code: "generic" };
+      // The procedure the card showed (its name, payment type and, through
+      // createAppointment, its price), re-read as the user; gone or
+      // deactivated since the card → not saved.
+      const procedure: Record<string, string> = {};
+      if (a.procedureId !== undefined) {
+        const procedureId = str(a.procedureId);
+        if (!UUIDISH.test(procedureId)) return { ok: false, code: "generic" };
+        const supabase = await createClient();
+        const { data: p } = await supabase.from("procedures").select("name, payment_type").eq("id", procedureId).eq("active", true).maybeSingle();
+        if (!p) return { ok: false, code: "generic" };
+        const row = p as { name: string; payment_type: string };
+        procedure.consultation_type = row.name;
+        procedure.payment_type = row.payment_type;
+      }
       const r = await createAppointment(form({
-        patient_id: patientId, date, start_time: start, duration_minutes: String(dur),
+        patient_id: patientId, date, start_time: start, duration_minutes: String(dur), type: "in-person", ...procedure,
         ...(warningsAsked ? { confirm_warnings: "1" } : {}),
       }));
       return "success" in r && r.success ? { ok: true, id: r.id } : mapError(r);

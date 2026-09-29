@@ -22,6 +22,12 @@ const HOURS = Object.fromEntries(
 function world() {
   const tables: Record<string, Row[]> = {
     professionals: [{ id: "doc-1", time_zone: "America/Sao_Paulo", country: "BR" }],
+    // The default is the first active one by name (the booking form's).
+    procedures: [
+      { id: "pr-ret", professional_id: "doc-1", name: "Retorno", duration_minutes: 20, price: null, payment_type: "private", active: true },
+      { id: "pr-con", professional_id: "doc-1", name: "Consulta", duration_minutes: 50, price: 250, payment_type: "private", active: true },
+      { id: "pr-old", professional_id: "doc-1", name: "Avaliação", duration_minutes: 90, price: 400, payment_type: "private", active: false },
+    ],
     patients: [
       { id: "p-maria", professional_id: "doc-1", full_name: "Maria Silva", birth_date: "1980-05-02", archived_at: null },
       { id: "p-mario", professional_id: "doc-1", full_name: "Mario Souza", birth_date: null, archived_at: null },
@@ -52,7 +58,7 @@ function world() {
         if (m) rows = rows.filter((r) => String(r.full_name).toLowerCase().includes(m[1].toLowerCase()));
         return q;
       },
-      order: () => q,
+      order: (c: string) => { rows.sort((x, y) => String(x[c]).localeCompare(String(y[c]))); return q; },
       limit: (n: number) => { rows = rows.slice(0, n); return q; },
       maybeSingle: () => { single = true; return q; },
       then: (res: (v: unknown) => unknown, rej?: (e: unknown) => unknown) =>
@@ -148,12 +154,15 @@ describe("SolvyAI actions mode: booking", () => {
     expect(card.title).toBe("Nova consulta");
     expect(card.fields).toEqual([
       { label: "Paciente", value: "Maria Silva (02/05/1980)" },
-      { label: "Quando", value: "Quarta-feira, 30/09/2026, 14:00–14:30" },
-      { label: "Duração", value: "30 min", isDefault: true },
+      { label: "Quando", value: "Quarta-feira, 30/09/2026, 14:00–14:50" },
+      { label: "Procedimento", value: "Consulta", isDefault: true },
+      { label: "Valor", value: expect.stringMatching(/^R\$\s250,00$/), isDefault: true },
+      { label: "Tipo", value: "Presencial", isDefault: true },
+      { label: "Duração", value: "50 min", isDefault: true },
     ]);
     expect(card.warnings).toEqual([]);
     expect(card.hardStop).toBe(false);
-    expect(card.action).toEqual({ kind: "book_appointment", args: { patientId: "p-maria", date: "2026-09-30", start: "14:00", durationMin: 30 } });
+    expect(card.action).toEqual({ kind: "book_appointment", args: { patientId: "p-maria", date: "2026-09-30", start: "14:00", durationMin: 50, procedureId: "pr-con" } });
     expect(card.after).toEqual({ screen: "schedule", date: "2026-09-30", highlight: { kind: "appointment" } });
     expect(card.viewHref.startsWith("/pt-BR/dashboard/schedule")).toBe(true);
     expect(Date.parse(card.expiresAt) - Date.now()).toBe(15 * 60_000);
@@ -164,6 +173,14 @@ describe("SolvyAI actions mode: booking", () => {
     expect(r.chunks[r.chunks.length - 1]).toEqual({ kind: "done" });
   });
 
+  it("no procedures set up: no procedure or value on the card, 30 min, nothing else invented", async () => {
+    const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-09-30", start: "14:00" } })));
+    t.tables.procedures = [];
+    const card = cardOf((await run(t, ask("…"))).blocks)!;
+    expect(card.fields.map((f) => f.label)).toEqual(["Paciente", "Quando", "Tipo", "Duração"]);
+    expect(card.action.args).toEqual({ patientId: "p-maria", date: "2026-09-30", start: "14:00", durationMin: 30 });
+  });
+
   it("an id the model didn't get from a read in THIS request is refused, never a card", async () => {
     const t = setup((req, round) => (round === 0 ? { tools: [{ name: "propose_book_appointment", input: { patientId: "p-maria", date: "2026-09-30", start: "14:00" } }] } : "Qual paciente?"));
     const r = await run(t, ask("Marca a p-maria"));
@@ -172,7 +189,7 @@ describe("SolvyAI actions mode: booking", () => {
   });
 
   it("another appointment at that time: time chips (nearest free), never a card", async () => {
-    const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-09-30", start: "10:00" } })));
+    const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-09-30", start: "10:00", durationMin: 30 } })));
     const r = await run(t, ask("Marca a Maria Silva amanhã às 10h"));
     expect(cardOf(r.blocks)).toBeUndefined();
     const choice = choiceOf(r.blocks)!;
