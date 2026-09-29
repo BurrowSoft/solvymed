@@ -196,6 +196,8 @@ describe("/api/assistant: a help answer", () => {
     const chunks = await collect(out.stream);
     expect(chunks.filter((c) => c.kind === "delta").map((c) => (c.kind === "delta" ? c.text : "")).join("")).toContain("resposta de teste");
     expect(chunks.some((c) => c.kind === "block" && c.block.type === "open")).toBe(true);
+    // It records zero usage (a Preview on the real database stays clean).
+    expect(t.service.calls).toEqual([{ fn: "assistant_record_usage", args: { p_professional_id: "doc-1", p_input: 0, p_output: 0, p_cache_read: 0, p_cache_write: 0 } }]);
     process.env = env;
   });
 

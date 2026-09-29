@@ -76,7 +76,8 @@ function helpEchoModel(): ModelClient {
     if (!top) return lang === "pt" ? "Só posso ajudar com o SolvyMed." : "I can only help with SolvyMed.";
     const first = top.body[lang].map((b) => (b.type === "ol" ? b.items.map((s, i) => `${i + 1}. ${s}`).join("\n") : b.text)).slice(0, 2).join("\n");
     return `(${lang === "pt" ? "resposta de teste" : "test answer"}) ${top.title[lang]}\n${first}\n[[open:${top.id}]]`;
-  });
+    // Zero usage: a Preview on the real database records nothing (a9).
+  }, { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 });
 }
 
 // For tests: answers with `reply(request)`, streamed in pieces, then usage.
