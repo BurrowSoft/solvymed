@@ -118,10 +118,10 @@ In the **Schedule**, use **Day**, **Week** and **Month**. Use the arrows to move
 ## A8. Pedidos de remarcação do paciente / Patient reschedule requests
 **pt-BR**
 Quando um paciente pede para remarcar uma consulta confirmada, o pedido aparece em **Início**. **Aceitar** muda a consulta para o novo horário; **Recusar** mantém o horário original.
-{pending:app-1.4.0} No app do paciente: ele só pode pedir remarcação antes do horário da consulta, e não cancela sozinho uma consulta marcada (o app diz "Para cancelar, fale com a clínica."). Ele pode cancelar um pedido que ainda está pendente, e aceitar ou recusar um novo horário que você propôs.
+{pending:app-1.4.0} No app do paciente: ele só pode pedir remarcação antes do horário da consulta, e não cancela sozinho uma consulta marcada (o app diz "Para cancelar, fale com a clínica."). Ele pode cancelar um pedido que ainda está pendente, e aceitar ou recusar um novo horário que você propôs (o app mostra o horário proposto e, se for remarcação, o horário atual).
 **en**
 When a patient asks to reschedule a confirmed appointment, the request shows on **Home**. **Accept** moves the appointment to the new time; **Decline** keeps the original time.
-{pending:app-1.4.0} In the patient's app: they can only ask to reschedule before the appointment starts, and they can't cancel a booked appointment themselves (the app says "To cancel, talk to the clinic."). They can cancel a request that's still pending, and accept or decline a new time you proposed.
+{pending:app-1.4.0} In the patient's app: they can only ask to reschedule before the appointment starts, and they can't cancel a booked appointment themselves (the app says "To cancel, talk to the clinic."). They can cancel a request that's still pending, and accept or decline a new time you proposed (the app shows the proposed time and, for a reschedule, the current one).
 **No site:** O pedido aparece em **Agenda**, em **Solicitações de consulta**, marcado **Remarcação solicitada**, com **Aceitar** e **Recusar**.
 **On the website:** The request shows in the **Schedule**, under **Booking Requests**, marked **Reschedule Requested**, with **Accept** and **Decline**.
 `open:home`
