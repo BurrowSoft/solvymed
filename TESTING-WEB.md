@@ -8903,11 +8903,77 @@ locales (checked by web tester 1).
 cleanly.
 **Review: clean (7f).** **Merge gate: 🟢 for `e1197b6`.**
 
+## PR #155 (`fix/files-hide-reason-label`, base master) — the file hide dialog says "Motivo para ocultar", 🟢 at `23f326f`
+
 ## PR #158 (`feat/payments-type-filter`, base master) — Pagamentos: Todos / Particular / Convênio filter (Help G6), 🟢 at `0b7e482`
 
 Tested by web tester 2.
 
 **Setup:**
+- **Where:** the Vercel Preview.
+- **Fixture:** the #147 fixture doctor's `foto-lesao-opus.png` (Arquivos),
+  backdated to −2 days by 38 so the >24 h hide dialog opens.
+- **Flow:** Remover opened the dialog in each language, which was
+  cancelled each time (nothing hidden).
+
+| Locale | Dialog |
+|---|---|
+| pt-BR | "Remover arquivo: foto-lesao-opus.png · Já se passaram mais de 24 horas… Informe o motivo." Field label **"Motivo para ocultar"** (was "Motivo da correção"); Cancelar / Remover |
+| en | "Remove file… Say why." Field **"Reason for hiding"**; Cancel / Remove |
+| th | "นำไฟล์ออก…" Field **"เหตุผลที่ซ่อน"**; ยกเลิก / นำออก |
+
+The new key is in all 15 locales (16 files, +1 line each).
+
+**CI at `23f326f`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`23f326f`.** This docs commit sits on top of a master sync (1 behind;
+clean).
+
+## #159 Opening a patient file is fail-closed on the access log (web tester 1, 2026-09-29/30)
+
+**What was tested:** PR head `fdf91b2`, on a local `next dev` (Playwright).
+- **Injection:** a test-only preload answers `rpc/log_record_access` with
+  a 500 while switched on (its log confirms each injected call).
+- **Fixture:** the kept #150 fixture doctor (on the purge list), Exames
+  tab. A small PDF was uploaded through the tab.
+
+| Row | Result |
+|---|---|
+| Upload | ✅ listed as "opus-pr159-exame.pdf · 1 KB" with **Abrir** / **Remover**. A second upload with the same name became "opus-pr159-exame (2).pdf". |
+| Abrir, log works | ✅ one `record_access_log` row (kind `file`, `object_ref` = the storage path) is written first. The new tab then loads the signed `storage/v1/object/sign/patient-files/…` link, which returns 200 `application/pdf`. Headless Chromium saves a PDF as a download ("opus-pr159-exame.pdf"); a normal browser shows it. |
+| Abrir, the log write fails (pt-BR) | ✅ "Não foi possível registrar o acesso. Tente novamente." The blank tab closes (after about 2 s); **no signed link is requested**, and no `file` row is written (checked past the 60 s dedupe). |
+| Same in en | ✅ "Couldn't record the access. Please try again."; the tab closes |
+| Unblocked again | ✅ it opens (signed link, 200 PDF) |
+| Locales | ✅ `patientDetail.filesAccessLogFailed` is in all 15 locales |
+
+**Leftover:** one uploaded test PDF stays on the fixture patient; the other
+was removed through **Remove**. It goes with the mobile dev's purge of the
+pr150 fixtures.
+
+**Master sync:** master (#152–#155) merged in under this docs commit,
+cleanly.
+**Review: clean (7f).** **Merge gate: 🟢 for `fdf91b2`.**
+
+## PR #156 (`fix/solvyai-series-same-patient-date`, base master) — a SolvyAI series card's same-patient warning checks every date and names the first, 🟢 at `30c07ec`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `30c07ec` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts `find_patients` →
+  `propose_book_appointment`.
+- **Data:** the prod DB, with a throwaway doctor + patient (deleted
+  afterwards). The patient already has 09:00 on **13/10** and **20/10**
+  (the 2nd and 3rd weekly dates).
+
+| Row | Result |
+|---|---|
+| Weekly ×3 from 06/10 at 11:00 | ✅ the card shows "Repetir: Semanal, 3 consultas (até 20/10/2026)" and **"13/10/2026: ⚠ Opus Serie Aviso já tem consulta nesse dia às 09:00"**, the FIRST such date, although 20/10 also has one |
+| Confirmar | ✅ the warning doesn't block: 06/10, 13/10, 20/10 at 11:00 are saved next to the existing 09:00s |
+| Single booking on 13/10 at 15:00 | ✅ "⚠ Opus Serie Aviso já tem consulta nesse dia às 09:00", **no date prefix** (as before) |
+
+**CI at `30c07ec`:** ✅. **Review: clean.** **Merge gate: 🟢 for `30c07ec`.** This docs block sits on top of a master sync (after #155 merged; clean).
+
 - **Where:** the Vercel Preview (Playwright) against the prod DB.
 - **Data:** a throwaway doctor + secretary (deleted afterwards), with 4
   completed appointments from yesterday:

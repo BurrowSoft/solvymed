@@ -78,6 +78,7 @@ export const ACTIONS: AppMapAction[] = [
       "Dates are Gregorian; a year of 2400 or more is never saved or converted.",
       "Recurring (app and website): weekly, every 2 weeks or monthly, 2–52 appointments; every date is checked; if any conflicts, none are saved and the conflicting date is named; blocked time on any date is asked once, naming the date. A monthly series keeps the day number (the 31st rolls over into the next month).",
       "On the website a recurring series is also checked against the working hours: outside them or a day off on any date is asked once, naming the date.",
+      "SolvyAI's card warns (⚠, not a question) when the patient already has an appointment that day; in a series it names the first such date.",
       { text: "In the app too: a series outside the working hours or on a day off is asked once, naming the date.", pending: ["mobile#91"] },
       "It's saved as scheduled, with payment pending; the value is the chosen procedure's price (none when it has no price).",
       "Every field that will be saved is on the card; defaults are marked (padrão).",
