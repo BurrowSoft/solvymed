@@ -9072,3 +9072,31 @@ type-filter label, per my nit. Thai Pagamentos now shows "สัปดาห์�
 - **Coverage:** #158 also touches Pagamentos (the Todos / Particular /
   Convênio filter). The rows above ran at `90065f5`, before that merge.
 **Review: clean (9a).** **Merge gate: 🟢 for `90065f5`.**
+
+## #169 Settings → Clinic: the state label and samples follow the practice country (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `9474d92`, on its Vercel Preview (Playwright).
+- **Accounts:** throwaway doctors with the practice country BR, TH and GB
+  ("any other country"). Each was checked in pt-BR, en and th.
+- **Read on each page:** the label and the placeholder of each clinic
+  field.
+
+| Practice | State label (pt-BR / en / th) | State sample | City sample | Phone sample | Website sample |
+|---|---|---|---|---|---|
+| BR | ✅ "Estado" / "State" / "จังหวัด" | SP | São Paulo | (11) 3000-0000 | www.example.com.br |
+| TH | ✅ "Província" / "Province" / "จังหวัด" | none | Bangkok | 02 000 0000 | www.example.com |
+| GB | ✅ "Estado ou província" / "State or province" / "รัฐหรือจังหวัด" | none | none | "+ código do país e número" / "+ country code and number" / "+ รหัสประเทศและหมายเลข" | www.example.com |
+
+**Also checked:**
+- **Saving:** the state value still saves for each country (BR "RJ", TH
+  "Chiang Mai", GB "Greater London" round-trip to `professionals`).
+- **Locales:** `stateProvince`, `stateOrProvince` and
+  `phoneIntlPlaceholder` are in all 15 locales.
+
+**Known (not in this PR, and the PR says so):** the **CNPJ** field, with its
+"00.000.000/0001-00" sample, still shows for TH and GB practices. That's an
+open question for UX.
+
+**The branch** was up to date with master; this docs commit sits on the PR
+head.
+**Review: clean (9a).** **Merge gate: 🟢 for `9474d92`.**

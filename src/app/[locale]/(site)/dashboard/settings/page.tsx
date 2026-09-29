@@ -184,6 +184,7 @@ export default async function SettingsPage({
         </Card>
 
         <ClinicForm
+          country={practiceCountry}
           showPix={practiceProfile.paymentQr === "pix"}
           showPromptPay={showPromptPay}
           data={{
