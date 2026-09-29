@@ -408,6 +408,7 @@
     "genericError": "문제가 발생했습니다. 다시 시도하세요.",
     "tabAccessLog": "접근 기록",
     "rxPdfAria": "처방전 PDF(인쇄 또는 저장)",
+    "historyPdf": "이력 PDF",
     "tabExams": "검사",
     "tabFiles": "파일",
     "filesHint": "사진 또는 PDF, 비공개: 본인만 열 수 있습니다.",
@@ -1276,6 +1277,16 @@
     "corrected": "(수정됨)",
     "print": "인쇄 / PDF로 저장",
     "printHint": "파일을 저장하려면 인쇄 창에서 'PDF로 저장'을 선택하세요.",
-    "back": "환자로 돌아가기"
+    "back": "환자로 돌아가기",
+    "historyTitle": "진료 이력",
+    "medicalRecords": "진료 기록",
+    "prescriptions": "처방전",
+    "noRecords": "기록이 없습니다.",
+    "noPrescriptions": "처방전이 없습니다.",
+    "birthDate": "생년월일: {value}",
+    "phone": "전화: {value}",
+    "exportedBy": "{name}님이 {date}에 내보냄",
+    "accessLogFailed": "접근 기록을 저장하지 못했습니다. 다시 시도해 주세요.",
+    "countryFailed": "클리닉 정보를 불러오지 못했습니다. 다시 시도해 주세요."
   }
 }

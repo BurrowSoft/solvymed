@@ -408,6 +408,7 @@
     "genericError": "Something went wrong. Please try again.",
     "tabAccessLog": "Access log",
     "rxPdfAria": "Prescription PDF (print or save)",
+    "historyPdf": "History PDF",
     "tabExams": "Exams",
     "tabFiles": "Files",
     "filesHint": "Photos or PDFs, private: only you can open them.",
@@ -1306,6 +1307,16 @@
     "corrected": "(corrected)",
     "print": "Print / Save as PDF",
     "printHint": "To save the file, choose \"Save as PDF\" in the print window.",
-    "back": "Back to the patient"
+    "back": "Back to the patient",
+    "historyTitle": "Medical history",
+    "medicalRecords": "Medical records",
+    "prescriptions": "Prescriptions",
+    "noRecords": "No records.",
+    "noPrescriptions": "No prescriptions.",
+    "birthDate": "Date of birth: {value}",
+    "phone": "Phone: {value}",
+    "exportedBy": "Exported by {name} on {date}",
+    "accessLogFailed": "Couldn't record the access. Please try again.",
+    "countryFailed": "Couldn't load the clinic's details. Please try again."
   }
 }

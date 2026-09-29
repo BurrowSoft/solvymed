@@ -408,6 +408,7 @@
     "genericError": "Qualcosa è andato storto. Riprova.",
     "tabAccessLog": "Registro degli accessi",
     "rxPdfAria": "PDF della prescrizione (stampa o salva)",
+    "historyPdf": "PDF della storia clinica",
     "tabExams": "Esami",
     "tabFiles": "File",
     "filesHint": "Foto o PDF, privati: solo tu puoi aprirli.",
@@ -1276,6 +1277,16 @@
     "corrected": "(corretto)",
     "print": "Stampa / Salva PDF",
     "printHint": "Per salvare il file, scegli «Salva come PDF» nella finestra di stampa.",
-    "back": "Torna al paziente"
+    "back": "Torna al paziente",
+    "historyTitle": "Storia clinica",
+    "medicalRecords": "Note cliniche",
+    "prescriptions": "Prescrizioni",
+    "noRecords": "Nessuna nota.",
+    "noPrescriptions": "Nessuna prescrizione.",
+    "birthDate": "Data di nascita: {value}",
+    "phone": "Telefono: {value}",
+    "exportedBy": "Esportato da {name} il {date}",
+    "accessLogFailed": "Impossibile registrare l’accesso. Riprova.",
+    "countryFailed": "Impossibile caricare i dati dello studio. Riprova."
   }
 }

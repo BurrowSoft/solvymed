@@ -1,4 +1,4 @@
-import type { DocTemplate } from "@/lib/prescriptionDoc";
+import { tint, type DocTemplate } from "@/lib/prescriptionDoc";
 
 // The printed prescription (the app's PDF layout). React escapes every
 // typed text; colours and the logo come through lib/prescriptionDoc's
@@ -56,7 +56,7 @@ export function PrescriptionDocument({ template, labels, patientName, date, corr
             {items.map((m, i) => (
               <tr key={i}>
                 {[m.name, m.dosage, m.frequency, m.duration].map((v, j) => (
-                  <td key={j} className="border-b border-[#E5E9F0] p-2.5 text-[13px]" style={i % 2 === 1 ? { background: accentColor } : undefined}>
+                  <td key={j} className="border-b border-[#E5E9F0] p-2.5 text-[13px]" style={i % 2 === 1 ? { background: tint(accentColor) } : undefined}>
                     {j === 0 ? <strong>{v}</strong> : v}
                   </td>
                 ))}
@@ -66,7 +66,7 @@ export function PrescriptionDocument({ template, labels, patientName, date, corr
         </table>
       </section>
       {notes && (
-        <div className="mt-4 rounded-r-lg px-4 py-3 text-[13px] text-[#6B7A99]" style={{ background: accentColor, borderLeft: `3px solid ${primaryColor}` }}>
+        <div className="mt-4 rounded-r-lg px-4 py-3 text-[13px] text-[#6B7A99]" style={{ background: tint(accentColor), borderLeft: `3px solid ${primaryColor}` }}>
           <strong>{labels.notes}:</strong> {notes}
         </div>
       )}

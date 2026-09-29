@@ -408,6 +408,7 @@
     "genericError": "Terjadi kesalahan. Coba lagi.",
     "tabAccessLog": "Log akses",
     "rxPdfAria": "PDF resep (cetak atau simpan)",
+    "historyPdf": "PDF riwayat",
     "tabExams": "Pemeriksaan",
     "tabFiles": "File",
     "filesHint": "Foto atau PDF, pribadi: hanya Anda yang dapat membukanya.",
@@ -1276,6 +1277,16 @@
     "corrected": "(dikoreksi)",
     "print": "Cetak / Simpan PDF",
     "printHint": "Untuk menyimpan file, pilih \"Simpan sebagai PDF\" di jendela cetak.",
-    "back": "Kembali ke pasien"
+    "back": "Kembali ke pasien",
+    "historyTitle": "Riwayat medis",
+    "medicalRecords": "Catatan medis",
+    "prescriptions": "Resep",
+    "noRecords": "Tidak ada catatan.",
+    "noPrescriptions": "Tidak ada resep.",
+    "birthDate": "Tanggal lahir: {value}",
+    "phone": "Telepon: {value}",
+    "exportedBy": "Diekspor oleh {name} pada {date}",
+    "accessLogFailed": "Tidak dapat mencatat akses. Silakan coba lagi.",
+    "countryFailed": "Tidak dapat memuat data klinik. Silakan coba lagi."
   }
 }
