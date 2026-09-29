@@ -212,6 +212,8 @@
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Scansiona con qualsiasi app bancaria thailandese per pagare.",
     "pixQrTitle": "Pix QR code",
+    "pixCopyPaste": "Pix Copia e Cola",
+    "pixCopy": "Copia",
     "durationMinutes": "{n} min"
   },
   "payments": {
@@ -517,6 +519,7 @@
     "noAddress": "Nessun indirizzo",
     "onMap": "Sulla mappa",
     "noMapPin": "Nessun segnaposto — aggiungi un indirizzo per apparire sulla mappa",
+    "noPinYet": "Nessun segnaposto",
     "empty": "Nessuna clinica ancora",
     "emptySubtitle": "Aggiungi la tua clinica per permettere ai pazienti di trovarti",
     "addFirst": "Aggiungi la tua prima clinica",

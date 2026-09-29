@@ -244,8 +244,11 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
                       {t("onMap")}
                     </span>
                   ) : (
+                    // With an address but no pin (the lookup missed, or the
+                    // address changed in the app and the pin was cleared,
+                    // migration 118): "Sem pin no mapa", next to Ajustar.
                     <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-xs text-slate-400">
-                      {t("noMapPin")}
+                      {clinic.address || clinic.city ? t("noPinYet") : t("noMapPin")}
                     </span>
                   )}
                   <button
