@@ -53,8 +53,13 @@ vi.mock("@/lib/patientNotice", () => ({
   NoticeOutboxUnavailable: class extends Error {},
 }));
 
+process.env.SUPABASE_SERVICE_ROLE_KEY = "test-secret";
 import { undoScheduleChange } from "@/app/[locale]/(site)/dashboard/schedule/actions";
 import type { UndoToken } from "@/lib/scheduleUndo";
+import { UNDO_TTL_MS, signUndo } from "@/lib/scheduleUndoSign";
+
+type Plain = Omit<UndoToken, "iat" | "sig">;
+const sign = (t: Plain, practice = "doc-1", at?: number) => signUndo(t, practice, at)!;
 
 const A = "0f3b9c2e-1111-4222-8333-444455556666";
 const B = "1f3b9c2e-1111-4222-8333-444455556666";
@@ -65,7 +70,7 @@ beforeEach(() => { h.state.appointments = []; h.state.steps = []; h.state.cancel
 describe("Desfazer in the Agenda", () => {
   it("a booked series: still as left → the notice dropped → the whole series deleted", async () => {
     h.state.appointments = [row(A), row(B, { date: "2026-10-12" })];
-    const t: UndoToken = { kind: "booked", ids: [A, B], told: 7, dates: ["2026-10-05", "2026-10-12"], start: "09:00", status: "scheduled" };
+    const t = sign({ kind: "booked", ids: [A, B], told: 7, dates: ["2026-10-05", "2026-10-12"], start: "09:00", status: "scheduled" });
     expect(await undoScheduleChange(t)).toEqual({ ok: true });
     expect(h.state.steps).toEqual(["read", "cancel-notice", "revert"]);
     expect(h.state.appointments).toEqual([]);
@@ -73,28 +78,28 @@ describe("Desfazer in the Agenda", () => {
 
   it("changed meanwhile: refused before anything (the notice stays)", async () => {
     h.state.appointments = [row(A, { start_time: "10:00:00" })];
-    expect(await undoScheduleChange({ kind: "booked", ids: [A], told: 7, dates: ["2026-10-05"], start: "09:00", status: "scheduled" })).toEqual({ ok: false });
+    expect(await undoScheduleChange(sign({ kind: "booked", ids: [A], told: 7, dates: ["2026-10-05"], start: "09:00", status: "scheduled" }))).toEqual({ ok: false });
     expect(h.state.steps).toEqual(["read"]);
   });
 
   it("the notice already on its way: refused, nothing reverted", async () => {
     h.state.appointments = [row(A, { status: "cancelled" })];
     h.state.cancelOk = false;
-    expect(await undoScheduleChange({ kind: "cancelled", ids: [A], told: 7, dates: ["2026-10-05"], start: "09:00", status: "cancelled", prevStatus: "confirmed" })).toEqual({ ok: false });
+    expect(await undoScheduleChange(sign({ kind: "cancelled", ids: [A], told: 7, dates: ["2026-10-05"], start: "09:00", status: "cancelled", prevStatus: "confirmed" }))).toEqual({ ok: false });
     expect(h.state.steps).toEqual(["read", "cancel-notice"]);
     expect(h.state.appointments[0].status).toBe("cancelled");
   });
 
   it("a cancel: the old status back; nobody told (null) needs no notice step", async () => {
     h.state.appointments = [row(A, { status: "cancelled" })];
-    expect(await undoScheduleChange({ kind: "cancelled", ids: [A], told: null, dates: ["2026-10-05"], start: "09:00", status: "cancelled", prevStatus: "confirmed" })).toEqual({ ok: true });
+    expect(await undoScheduleChange(sign({ kind: "cancelled", ids: [A], told: null, dates: ["2026-10-05"], start: "09:00", status: "cancelled", prevStatus: "confirmed" }))).toEqual({ ok: true });
     expect(h.state.steps).toEqual(["read", "revert"]);
     expect(h.state.appointments[0].status).toBe("confirmed");
   });
 
   it("a move: back to the old slot; if that fails (taken meanwhile) the patient is told again", async () => {
     h.state.appointments = [row(A, { date: "2026-10-06", start_time: "14:00:00" })];
-    const t: UndoToken = { kind: "moved", ids: [A], told: 7, dates: ["2026-10-06"], start: "14:00", status: "scheduled", prevDate: "2026-10-05", prevStart: "09:00", prevEnd: "09:30" };
+    const t = sign({ kind: "moved", ids: [A], told: 7, dates: ["2026-10-06"], start: "14:00", status: "scheduled", prevDate: "2026-10-05", prevStart: "09:00", prevEnd: "09:30" });
     expect(await undoScheduleChange(t)).toEqual({ ok: true });
     expect(h.state.appointments[0]).toMatchObject({ date: "2026-10-05", start_time: "09:00", end_time: "09:30" });
 
@@ -112,7 +117,35 @@ describe("Desfazer in the Agenda", () => {
       { kind: "moved", ids: [A, B], told: null, dates: ["2026-10-05"], start: "09:00", status: "scheduled" },
       { kind: "cancelled", ids: [A], told: null, dates: ["5/10/2026"], start: "09:00", status: "cancelled" },
     ];
-    for (const t of bad) expect(await undoScheduleChange(t as UndoToken)).toEqual({ ok: false });
+    for (const t of bad) expect(await undoScheduleChange(sign(t as Plain))).toEqual({ ok: false });
     expect(h.state.steps).toEqual([]);
+  });
+
+  it("only a token the server issued, untampered, for this practice, within 2 minutes (9a)", async () => {
+    h.state.appointments = [row(A, { date: "2026-10-06", start_time: "14:00:00" })];
+    const plain: Plain = { kind: "moved", ids: [A], told: null, dates: ["2026-10-06"], start: "14:00", status: "scheduled", prevDate: "2026-10-05", prevStart: "09:00", prevEnd: "09:30" };
+    // Unsigned, or a field changed after signing (e.g. to move it anywhere).
+    expect(await undoScheduleChange({ ...plain, iat: Date.now(), sig: "forged" })).toEqual({ ok: false });
+    expect(await undoScheduleChange({ ...sign(plain), prevDate: "2026-12-24" })).toEqual({ ok: false });
+    // Another practice's token.
+    expect(await undoScheduleChange(sign(plain, "doc-2"))).toEqual({ ok: false });
+    // Expired.
+    expect(await undoScheduleChange(sign(plain, "doc-1", Date.now() - UNDO_TTL_MS - 1000))).toEqual({ ok: false });
+    expect(h.state.steps).toEqual([]);
+    // The genuine one works.
+    expect(await undoScheduleChange(sign(plain))).toEqual({ ok: true });
+  });
+
+  it("no server secret: no token is ever issued, and none is accepted", async () => {
+    const saved = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const t = sign({ kind: "cancelled", ids: [A], told: null, dates: ["2026-10-05"], start: "09:00", status: "cancelled", prevStatus: "confirmed" });
+    delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+    try {
+      expect(signUndo({ kind: "cancelled", ids: [A], told: null, dates: ["2026-10-05"], start: "09:00", status: "cancelled" }, "doc-1")).toBeNull();
+      h.state.appointments = [row(A, { status: "cancelled" })];
+      expect(await undoScheduleChange(t)).toEqual({ ok: false });
+    } finally {
+      process.env.SUPABASE_SERVICE_ROLE_KEY = saved;
+    }
   });
 });

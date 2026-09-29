@@ -49,6 +49,8 @@ const h = vi.hoisted(() => {
   return { state, client };
 });
 
+// The Agenda Desfazer token is signed with a key derived from this.
+process.env.SUPABASE_SERVICE_ROLE_KEY = "test-secret";
 vi.mock("@/lib/supabase/server", () => ({ createClient: async () => h.client }));
 vi.mock("@/lib/effectiveProfId", () => ({ getEffectiveProfId: async () => "doc-1" }));
 vi.mock("@/lib/clinicNotify", () => ({ tellPatient: async (_db: unknown, change: unknown) => { h.state.told.push(change); } }));

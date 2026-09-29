@@ -20,6 +20,10 @@ export type UndoToken = {
   prevStart?: string;
   prevEnd?: string;
   prevStatus?: string;
+  // Issued at (ms) and the server's signature over all of it + the practice
+  // (lib/scheduleUndoSign): the token is only ever honoured as issued.
+  iat: number;
+  sig: string;
 };
 
 export const UNDO_EVENT = "solvymed:schedule-undo";

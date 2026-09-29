@@ -14,6 +14,7 @@ import { MAX_OCCURRENCES, MIN_OCCURRENCES, RECURRENCES, recurrenceDates, type Re
 import { tellPatient, type Told } from "@/lib/clinicNotify";
 import { cancelPatientNotice, enqueuePatientNotice } from "@/lib/patientNotice";
 import type { UndoToken } from "@/lib/scheduleUndo";
+import { signUndo, verifyUndo } from "@/lib/scheduleUndoSign";
 
 // The new-appointment patient picker: up to PICKER_LIMIT active patients of
 // this practice whose name (or CPF/phone digits) match, searched in the
@@ -235,7 +236,7 @@ export async function createAppointment(formData: FormData) {
     appointmentIds: ids,
   });
   revalidatePath("/dashboard/schedule");
-  return { success: true, id: saved?.id, count: dates.length, undo: undoToken(told, { kind: "booked", ids, dates, start: startTime, status: "scheduled" }) };
+  return { success: true, id: saved?.id, count: dates.length, undo: undoToken(told, effectiveProfId, { kind: "booked", ids, dates, start: startTime, status: "scheduled" }) };
 }
 
 // Remarcar: a new date and start, the same duration, with the same checks
@@ -346,7 +347,7 @@ export async function moveAppointment(formData: FormData) {
   revalidatePath("/dashboard/schedule");
   return {
     success: true, id,
-    undo: undoToken(told, {
+    undo: undoToken(told, effectiveProfId, {
       kind: "moved", ids: [id], dates: [date], start: startTime, status: before.status,
       prevDate: before.date, prevStart: before.start_time.slice(0, 5), prevEnd: before.end_time.slice(0, 5),
     }),
@@ -420,7 +421,7 @@ export async function updateAppointmentStatus(id: string, status: string) {
     });
     // Blocked time isn't a cancel the patient hears of; its own flow.
     if (before.status !== "blocked") {
-      undo = undoToken(told, { kind: "cancelled", ids: [id], dates: [before.date], start: before.start_time.slice(0, 5), status: "cancelled", prevStatus: before.status });
+      undo = undoToken(told, effectiveProfId, { kind: "cancelled", ids: [id], dates: [before.date], start: before.start_time.slice(0, 5), status: "cancelled", prevStatus: before.status });
     }
   }
 
@@ -428,9 +429,10 @@ export async function updateAppointmentStatus(id: string, status: string) {
   return { success: true, undo };
 }
 
-// The Agenda's Desfazer is offered unless a push already went out from here.
-function undoToken(told: Told, t: Omit<UndoToken, "told">): UndoToken | null {
-  return told === "direct" ? null : { ...t, told };
+// The Agenda's Desfazer is offered unless a push already went out from
+// here; the token is signed for this practice (never issued unsigned).
+function undoToken(told: Told, practiceId: string, t: Omit<UndoToken, "told" | "iat" | "sig">): UndoToken | null {
+  return told === "direct" ? null : signUndo({ ...t, told }, practiceId);
 }
 
 const UNDO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -446,8 +448,9 @@ const REVERTIBLE = ["scheduled", "confirmed", "late", "completed", "absent"];
 //      refused; the action stands and the patient hears it);
 //   3. revert. If that fails, the patient is told again (re-queued) and the
 //      undo reports failure.
-// The token comes from the client, so every field is re-validated and every
-// write is scoped to the practice (RLS as the user on top).
+// The token comes back from the client: it must be untampered, this
+// practice's and fresh (lib/scheduleUndoSign), and every field is still
+// re-validated and every write scoped to the practice (RLS on top).
 export async function undoScheduleChange(token: UndoToken): Promise<{ ok: boolean }> {
   const t = token as Partial<UndoToken> | null;
   const kind = t?.kind;
@@ -462,7 +465,7 @@ export async function undoScheduleChange(token: UndoToken): Promise<{ ok: boolea
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false };
   const prof = await getEffectiveProfId(supabase, user.id);
-  if (!prof) return { ok: false };
+  if (!prof || !verifyUndo(token, prof)) return { ok: false };
 
   // 1. Still as the action left it.
   try {

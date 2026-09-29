@@ -22,7 +22,7 @@ describe("ScheduleUndoToast", () => {
   it("offers Desfazer after a cancel; runs once; says Desfeito and reloads the day", async () => {
     render(<NextIntlClientProvider locale="pt-BR" messages={pt}><ScheduleUndoToast /></NextIntlClientProvider>);
     expect(screen.queryByRole("status")).toBeNull();
-    act(() => offerUndo({ kind: "cancelled", ids: ["a"], told: 3, dates: ["2026-10-05"], start: "09:00", status: "cancelled", prevStatus: "scheduled" }));
+    act(() => offerUndo({ kind: "cancelled", ids: ["a"], told: 3, dates: ["2026-10-05"], start: "09:00", status: "cancelled", prevStatus: "scheduled", iat: Date.now(), sig: "x" }));
     expect(screen.getByText("Consulta cancelada")).toBeInTheDocument();
     const button = screen.getByText("Desfazer (10 s)");
     fireEvent.click(button);
