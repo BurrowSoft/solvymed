@@ -12,7 +12,7 @@
     "what": "The app's Settings → SolvyAI (the button switch and the actions opt-in, mobile #99) is in a RELEASED store build (not just merged)."
   },
   "migration-115": {
-    "met": false,
+    "met": true,
     "what": "Migration 115 (SolvyAI quota and the actions switch) is applied on production."
   },
   "migration-116": {
@@ -32,7 +32,7 @@
     "what": "Pushes reach each person in the language they chose: migration 117 (user_locales, set_my_locale, the push-target RPCs) applied on production AND the app saving its language (mobile #97) in a RELEASED store build. The website already saves its language (for the app's 7 languages) and reads the targets once 117 exists."
   },
   "linked-bookings": {
-    "met": false,
+    "met": true,
     "what": "Appointments of a linked patient carry their account however they were made (migration 119, mobile #117: a trigger filling patient_auth_id from the linked record, the backfill and the fill on later linking) applied on production: until then pushes only reach patients on appointments they booked in the app."
   }
 }

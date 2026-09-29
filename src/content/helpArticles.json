@@ -28,6 +28,10 @@
             {
               "type": "p",
               "text": "Se o horário estiver bloqueado, o app mostra o bloqueio e pergunta se você quer agendar mesmo assim. Se já houver outra consulta no mesmo horário, não é possível salvar: o app diz com quem é e você escolhe outro horário."
+            },
+            {
+              "type": "p",
+              "text": "No site também: se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você agenda."
             }
           ],
           "en": [
@@ -44,6 +48,10 @@
             {
               "type": "p",
               "text": "If the time is blocked, the app shows the block and asks whether to book anyway. If another appointment already takes that time, it can't be saved: the app says whose it is and you pick another time."
+            },
+            {
+              "type": "p",
+              "text": "On the website too: if the patient has a SolvyMed account, they get a notification when you book."
             }
           ]
         },
@@ -164,6 +172,10 @@
                 "Para remarcar: altere a data ou o horário e toque em **Salvar**.",
                 "Para cancelar: mude o status para **Cancelado**."
               ]
+            },
+            {
+              "type": "p",
+              "text": "No site também: se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você cancela (ou arquiva o paciente). Consultas no passado não notificam."
             }
           ],
           "en": [
@@ -174,6 +186,10 @@
                 "To move it: change the date or time and tap **Save**.",
                 "To cancel it: change the status to **Cancelled**."
               ]
+            },
+            {
+              "type": "p",
+              "text": "On the website too: if the patient has a SolvyMed account, they get a notification when you cancel (or archive the patient). Past appointments don't notify."
             }
           ]
         },
