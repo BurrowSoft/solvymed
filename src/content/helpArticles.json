@@ -203,13 +203,13 @@
           "en": [
             {
               "type": "p",
-              "text": "Scheduled, Confirmed, Completed, Cancelled, Late, No-show and Rejected. Tap the appointment and choose the status. Appointments requested by patients show as requests until you confirm or reject them."
+              "text": "Scheduled, Confirmed, Completed, Cancelled, Late, Absent and Rejected. Tap the appointment and choose the status. Appointments requested by patients show as requests until you confirm or reject them."
             }
           ]
         },
         "web": {
           "pt": "Em **Agenda**, cada consulta da lista tem um seletor de status; escolha o novo status nele.",
-          "en": "In the **Schedule**, each appointment in the list has a status selector; pick the new status there (the website calls Completed \"Done\" and No-show \"Absent\")."
+          "en": "In the **Schedule**, each appointment in the list has a status selector; pick the new status there."
         },
         "webUnavailable": false,
         "open": "schedule",

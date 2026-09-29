@@ -171,7 +171,7 @@
     "dialogBody": "{name} ยังไม่อยู่ในรายการผู้ป่วยของคุณ คุณต้องการเพิ่มขณะยืนยันนัดหมายนี้หรือไม่?",
     "confirmAndAdd": "ยืนยันและเพิ่มผู้ป่วยใหม่",
     "confirmOnly": "ยืนยันเท่านั้น",
-    "statusTentative": "รออนุมัติ",
+    "statusTentative": "ส่งคำขอแล้ว",
     "statusProposal": "เสนอเวลาใหม่",
     "statusScheduled": "นัดหมายแล้ว",
     "statusConfirmed": "ยืนยันแล้ว",
