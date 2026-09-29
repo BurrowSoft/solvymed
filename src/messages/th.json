@@ -1313,6 +1313,20 @@
     "noPrescriptions": "ไม่มีใบสั่งยา",
     "birthDate": "วันเกิด: {value}",
     "phone": "โทรศัพท์: {value}",
-    "exportedBy": "ส่งออกโดย {name} เมื่อ {date}"
+    "exportedBy": "ส่งออกโดย {name} เมื่อ {date}",
+    "receiptTitle": "ใบเสร็จ",
+    "services": "บริการ",
+    "description": "รายการ",
+    "amount": "จำนวนเงิน",
+    "total": "ยอดรวม",
+    "payment": "การชำระเงิน",
+    "online": "ออนไลน์",
+    "inPerson": "ที่คลินิก",
+    "privatePay": "ชำระเอง",
+    "insurance": "ประกัน",
+    "paid": "ชำระแล้ว",
+    "pending": "รอชำระ",
+    "receiptLink": "ใบเสร็จ",
+    "receiptThaiHint": "ใบเสร็จแบบมีเลขที่ออกได้ในแอป"
   }
 }

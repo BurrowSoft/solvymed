@@ -1313,6 +1313,20 @@
     "noPrescriptions": "No prescriptions.",
     "birthDate": "Date of birth: {value}",
     "phone": "Phone: {value}",
-    "exportedBy": "Exported by {name} on {date}"
+    "exportedBy": "Exported by {name} on {date}",
+    "receiptTitle": "Receipt",
+    "services": "Services",
+    "description": "Description",
+    "amount": "Amount",
+    "total": "Total",
+    "payment": "Payment",
+    "online": "Online",
+    "inPerson": "In person",
+    "privatePay": "Private pay",
+    "insurance": "Insurance",
+    "paid": "Paid",
+    "pending": "Pending",
+    "receiptLink": "Receipt",
+    "receiptThaiHint": "Numbered receipts are issued in the app."
   }
 }

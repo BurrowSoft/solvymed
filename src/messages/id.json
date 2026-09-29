@@ -1283,6 +1283,20 @@
     "noPrescriptions": "Tidak ada resep.",
     "birthDate": "Tanggal lahir: {value}",
     "phone": "Telepon: {value}",
-    "exportedBy": "Diekspor oleh {name} pada {date}"
+    "exportedBy": "Diekspor oleh {name} pada {date}",
+    "receiptTitle": "Kuitansi",
+    "services": "Layanan",
+    "description": "Keterangan",
+    "amount": "Jumlah",
+    "total": "Total",
+    "payment": "Pembayaran",
+    "online": "Daring",
+    "inPerson": "Tatap muka",
+    "privatePay": "Bayar sendiri",
+    "insurance": "Asuransi",
+    "paid": "Lunas",
+    "pending": "Tertunda",
+    "receiptLink": "Kuitansi",
+    "receiptThaiHint": "Kuitansi bernomor diterbitkan di aplikasi."
   }
 }

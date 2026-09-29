@@ -1283,6 +1283,20 @@
     "noPrescriptions": "Keine Rezepte.",
     "birthDate": "Geburtsdatum: {value}",
     "phone": "Telefon: {value}",
-    "exportedBy": "Exportiert von {name} am {date}"
+    "exportedBy": "Exportiert von {name} am {date}",
+    "receiptTitle": "Quittung",
+    "services": "Leistungen",
+    "description": "Beschreibung",
+    "amount": "Betrag",
+    "total": "Gesamt",
+    "payment": "Zahlung",
+    "online": "Online",
+    "inPerson": "Vor Ort",
+    "privatePay": "Selbstzahler",
+    "insurance": "Versicherung",
+    "paid": "Bezahlt",
+    "pending": "Ausstehend",
+    "receiptLink": "Quittung",
+    "receiptThaiHint": "Nummerierte Quittungen werden in der App ausgestellt."
   }
 }

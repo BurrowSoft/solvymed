@@ -1283,6 +1283,20 @@
     "noPrescriptions": "尚無處方。",
     "birthDate": "出生日期：{value}",
     "phone": "電話：{value}",
-    "exportedBy": "由 {name} 於 {date} 匯出"
+    "exportedBy": "由 {name} 於 {date} 匯出",
+    "receiptTitle": "收據",
+    "services": "服務",
+    "description": "說明",
+    "amount": "金額",
+    "total": "合計",
+    "payment": "付款",
+    "online": "線上",
+    "inPerson": "到診",
+    "privatePay": "自費",
+    "insurance": "保險",
+    "paid": "已付款",
+    "pending": "待付款",
+    "receiptLink": "收據",
+    "receiptThaiHint": "有編號的收據須在 App 中開立。"
   }
 }

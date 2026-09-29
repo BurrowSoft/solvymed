@@ -1283,6 +1283,20 @@
     "noPrescriptions": "Nessuna prescrizione.",
     "birthDate": "Data di nascita: {value}",
     "phone": "Telefono: {value}",
-    "exportedBy": "Esportato da {name} il {date}"
+    "exportedBy": "Esportato da {name} il {date}",
+    "receiptTitle": "Ricevuta",
+    "services": "Prestazioni",
+    "description": "Descrizione",
+    "amount": "Importo",
+    "total": "Totale",
+    "payment": "Pagamento",
+    "online": "Online",
+    "inPerson": "In presenza",
+    "privatePay": "Privato",
+    "insurance": "Assicurazione",
+    "paid": "Pagato",
+    "pending": "In sospeso",
+    "receiptLink": "Ricevuta",
+    "receiptThaiHint": "Le ricevute numerate si emettono nell’app."
   }
 }

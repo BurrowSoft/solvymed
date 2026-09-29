@@ -1283,6 +1283,20 @@
     "noPrescriptions": "Aucune ordonnance.",
     "birthDate": "Date de naissance : {value}",
     "phone": "Téléphone : {value}",
-    "exportedBy": "Exporté par {name} le {date}"
+    "exportedBy": "Exporté par {name} le {date}",
+    "receiptTitle": "Reçu",
+    "services": "Prestations",
+    "description": "Description",
+    "amount": "Montant",
+    "total": "Total",
+    "payment": "Paiement",
+    "online": "En ligne",
+    "inPerson": "En présentiel",
+    "privatePay": "Paiement direct",
+    "insurance": "Assurance",
+    "paid": "Payé",
+    "pending": "En attente",
+    "receiptLink": "Reçu",
+    "receiptThaiHint": "Les reçus numérotés sont émis dans l’application."
   }
 }

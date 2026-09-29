@@ -1283,6 +1283,20 @@
     "noPrescriptions": "Рецептов нет.",
     "birthDate": "Дата рождения: {value}",
     "phone": "Телефон: {value}",
-    "exportedBy": "Экспортировал(а) {name}, {date}"
+    "exportedBy": "Экспортировал(а) {name}, {date}",
+    "receiptTitle": "Квитанция",
+    "services": "Услуги",
+    "description": "Описание",
+    "amount": "Сумма",
+    "total": "Итого",
+    "payment": "Оплата",
+    "online": "Онлайн",
+    "inPerson": "Очно",
+    "privatePay": "Самостоятельная оплата",
+    "insurance": "Страховка",
+    "paid": "Оплачено",
+    "pending": "Ожидает оплаты",
+    "receiptLink": "Квитанция",
+    "receiptThaiHint": "Нумерованные квитанции выдаются в приложении."
   }
 }

@@ -1283,6 +1283,20 @@
     "noPrescriptions": "لا توجد وصفات.",
     "birthDate": "تاريخ الميلاد: {value}",
     "phone": "الهاتف: {value}",
-    "exportedBy": "صدّره {name} في {date}"
+    "exportedBy": "صدّره {name} في {date}",
+    "receiptTitle": "إيصال",
+    "services": "الخدمات",
+    "description": "الوصف",
+    "amount": "المبلغ",
+    "total": "الإجمالي",
+    "payment": "الدفع",
+    "online": "عبر الإنترنت",
+    "inPerson": "حضوريًا",
+    "privatePay": "دفع خاص",
+    "insurance": "تأمين",
+    "paid": "مدفوع",
+    "pending": "قيد الانتظار",
+    "receiptLink": "إيصال",
+    "receiptThaiHint": "تُصدَر الإيصالات المرقّمة في التطبيق."
   }
 }

@@ -1283,6 +1283,20 @@
     "noPrescriptions": "Nenhuma receita.",
     "birthDate": "Nascimento: {value}",
     "phone": "Telefone: {value}",
-    "exportedBy": "Exportado por {name} em {date}"
+    "exportedBy": "Exportado por {name} em {date}",
+    "receiptTitle": "Recibo",
+    "services": "Serviços",
+    "description": "Descrição",
+    "amount": "Valor",
+    "total": "Total",
+    "payment": "Pagamento",
+    "online": "Online",
+    "inPerson": "Presencial",
+    "privatePay": "Particular",
+    "insurance": "Convênio",
+    "paid": "Pago",
+    "pending": "Pendente",
+    "receiptLink": "Recibo",
+    "receiptThaiHint": "Recibos numerados são emitidos no app."
   }
 }
