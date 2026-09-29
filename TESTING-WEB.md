@@ -7169,3 +7169,25 @@ through `?new=1`** (the setup checklist link) is the **server's UTC date**.
 **CI at `0cd70ed`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `0cd70ed`.** This docs commit sits on top of a master sync (15 behind,
 clean merge; message JSON valid).
+
+## PR #115 (`fix/overlap-duration-i18n`, base master) — the overlap message's duration in the locale's words, 🟢 at `50cc51a`
+
+This follows up my #111 nit. Tested on the Preview at `50cc51a`: a
+throwaway doctor with an existing 45-min appointment (Opus Existente,
+10:00). In each language I booked 10:15 through New appointment:
+
+| Locale | Message | Saved? |
+|---|---|---|
+| th | เวลานี้ซ้อนกับนัดของ Opus Existente เวลา 10:00 (**45 นาที**) กรุณาเลือกเวลาอื่น | no |
+| ja | この時間はOpus Existenteさんの予約（10:00、**45分**）と重なっています。別の時間を選んでください。 | no |
+| pt-BR | Este horário conflita com Opus Existente às 10:00 (**45 min**). Escolha outro horário. | no |
+| en | This overlaps with Opus Existente at 10:00 (**45 min**). Choose another time. | no |
+| de | Dieser Termin überschneidet sich mit Opus Existente um 10:00 (**45 Min.**). Bitte wählen Sie eine andere Zeit. | no |
+
+The duration is the real one (45, not the procedure's 30). pt-BR and en
+are unchanged from #111.
+
+**CI at `50cc51a`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`50cc51a`.** This docs commit sits on top of a master sync (11 behind;
+the message files auto-merged; all 15 are valid JSON and each has
+`durationMinutes` once).

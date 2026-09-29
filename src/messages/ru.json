@@ -205,7 +205,8 @@
     "requestedLabel": "Запрошено: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Отсканируйте любым тайским банковским приложением для оплаты.",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n} мин"
   },
   "payments": {
     "thisWeek": "На этой неделе",

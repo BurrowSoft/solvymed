@@ -205,7 +205,8 @@
     "requestedLabel": "Yêu cầu: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Quét bằng bất kỳ ứng dụng ngân hàng Thái Lan nào để thanh toán.",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n} phút"
   },
   "payments": {
     "thisWeek": "Tuần này",
