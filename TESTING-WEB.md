@@ -7412,3 +7412,81 @@ and C9 isn't built at all.
 **CI at `2f3514a`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `2f3514a`.** This docs commit sits on top of a master sync (4 behind,
 clean merge).
+
+## PR #123 (`feat/solvyai-route`, base master) — `/api/assistant` in help mode, ⏳ (tested at `a0cb309`; the head is now `3b256cc`)
+
+This is a checkpoint (sessions paused), **not** a gate.
+- **Setup:** a local `next dev` at `a0cb309` against the prod DB, over
+  HTTP with throwaway users' JWTs.
+- **Test-only preload** (scratchpad/pr123/sink.cjs):
+  - answers `api.anthropic.com/v1/messages` with a scripted SSE stream
+    and logs the exact request body;
+  - answers or passes through the migration-115 RPCs.
+- **Nothing reached Anthropic**; a fake key was used only so that a model
+  object exists.
+
+**Switch off** (`SOLVYAI_API_ENABLED` unset):
+- POST `/api/assistant` (with a Bearer token and anonymous) → **404**
+  `not_found`.
+- GET `/api/assistant/usage` → **404**.
+
+**Switch on, no key:**
+- No / garbage JWT → **401**.
+- Not JSON, no messages, the same role twice, or the last message from
+  the assistant → **400 `bad_request`**.
+- 501 chars → **400 `too_long`** (500 passes); turns = 12 → **400
+  `too_many_turns`**.
+- A valid request → **503 `model_unavailable`**.
+- Usage: anonymous → 401; signed in (no 115) → 503.
+
+**Key present, against the real DB (115 missing):**
+- **503 `model_unavailable`.**
+- The only RPC called is `assistant_consume_message`, and there's **no
+  model call**: nothing is counted or sent.
+
+**115 RPCs stubbed:**
+- **Stream shape:** `application/x-ndjson` in this order: meta
+  (`mode:"help"`) → deltas → text block → **open** (`[[open:C4]]` →
+  "Abrir tela" `/pt-BR/dashboard/settings`, target settings) → feedback
+  → usage → done.
+- **Markers:** no `[[`/`]]` reaches the text, even when a marker is split
+  across pieces. Unknown ids (`Z9`), junk (`[[nada]]`), an unfinished
+  marker and **`[[open:A1]]` in en** give no open block and no raw
+  marker. (A1 → no block is expected on web: its screen is the
+  new-appointment dialog.)
+- **After a successful answer:** exactly one `assistant_record_usage`,
+  for the **caller's own id**, with the token counts; no release.
+- **The model request:**
+  - `claude-sonnet-5`, `max_tokens` 800, stream.
+  - 2 system blocks, the first cached (`ephemeral`, 17.5k chars). The
+    cached prefix has **no C9 / "Anthropic (EUA)" text and no held A1
+    sentence** (conditions respected).
+- **Masking:** 7 messages sent → the model gets the **last 6**. CPF, (11)
+  phone, +55 phone, email, Thai ID and a Thai mobile → [cpf] / [phone] /
+  [email] / [id]. `29.09.2026`, `14:00` and `R$ 150` are kept, and no raw
+  digit string is anywhere in the request (history included).
+- **The 115 answer drives the status:** not_doctor → 403; inactive →
+  403; rate_limited → 429 with `retryAfterS`; quota_exhausted → 429 with
+  usage; an unknown reason → 503. There's never a model call.
+- **The model fails (500):** meta → `error model_failed`; exactly one
+  `assistant_release_message` (the caller's id); no record_usage.
+- **Over budget:**
+  - meta `help`; "O SolvyAI está temporariamente indisponível. Tente
+    novamente mais tarde."; used shown as used − 1.
+  - **No model call**, one release, and no word "budget". With the Help
+    Center unpublished there are no article links.
+- **Usage endpoint:** `{used, limit, extra, resetsAt, mode:"help"}`;
+  not_doctor → 403.
+
+**⏳ Still to do at the new head `3b256cc`:**
+- a re-run of the above;
+- `SOLVYAI_FAKE_MODEL=1` (the keyless model 2b added);
+- a9's cancel check: **a cancel mid-stream or before the first byte →
+  exactly one release**.
+
+My abort test at `a0cb309` wasn't conclusive. The scripted answer
+arrived all at once and was fully sent before the abort, so
+`record_usage` (not release) was correct there. The re-test needs a slow
+(delayed-chunk) stream.
+
+**CI:** green at `a0cb309`. **Review: clean (a9)** at `a909c20`.
