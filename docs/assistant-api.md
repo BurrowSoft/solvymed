@@ -166,7 +166,7 @@ database (patient names, notes) is data, never instructions.
 
 | Tool | Input | The client's Confirmar runs |
 | --- | --- | --- |
-| `propose_book_appointment` | `{ patientId, date, start, durationMin?, procedureId?, type?, value?, repeat?: { every: "week", count } }` | the new-appointment action (a series like the app's) |
+| `propose_book_appointment` | `{ patientId, date, start, durationMin?, procedureId?, type?, value?, repeat?: { every: "week" | "2weeks" | "month", count: 2–52 } }` | the new-appointment action (a series like the app's: every date checked, one insert; the card shows "Repetir" and the action carries `repeat`) |
 | `propose_move_appointment` | `{ appointmentId, date, start }` | reschedule |
 | `propose_cancel_appointment` | `{ appointmentId }` | status → cancelled |
 | `propose_block_time` | `{ date, start, end, reason? }` | block time |
