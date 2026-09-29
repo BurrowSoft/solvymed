@@ -6970,3 +6970,39 @@ behind; message JSON valid).
 **CI at `219aeaf`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `219aeaf`.** This docs commit sits on top, after a master sync (10
 behind).
+
+## PR #111 (`fix/booking-overlap-hours`, base master) — overlap is a hard stop that says with whom; blocked / outside hours / day off → one question, 🟢 at `f7d578f`
+
+Tested with Playwright on the Preview at `f7d578f` (Thai flag on), in
+pt-BR, en and th. Each language ran against its own throwaway doctor:
+hours Mon–Sat 08:00–18:00, Sunday off, and blocks on Tuesday at
+14:00–15:00 and 19:00–20:00. Each doctor already had an appointment,
+"Opus Existente", on Tuesday at 10:00–10:30. Every case was also
+checked in the DB.
+
+| Case (Tuesday unless noted) | pt-BR | en | th | Saved? |
+|---|---|---|---|---|
+| BE year `2569-09-29` at 10:15 (#107 interplay) | message under the field; server backstop: "Esse ano parece do calendário budista…" | "That looks like a Buddhist-era year…" | "ดูเหมือนเป็นปี พ.ศ. …" | no; no hours or overlap question first |
+| 10:15, overlaps Opus Existente | "Este horário conflita com Opus Existente às 10:00 (30 min). Escolha outro horário." | "This overlaps with Opus Existente at 10:00 (30 min). Choose another time." | "เวลานี้ซ้อนกับนัดของ Opus Existente เวลา 10:00 (30 min) กรุณาเลือกเวลาอื่น" | no; hard stop, no Agendar button |
+| 14:15, blocked | "Confira o horário" / "Este horário está bloqueado (14:00–15:00). Agendar mesmo assim?" [Cancelar] [Agendar] | "Check the time" / "This time is blocked (14:00–15:00). Book anyway?" | "ตรวจสอบเวลา" / "ช่วงเวลานี้ถูกปิดไว้ (14:00–15:00) ยืนยันนัดหมายหรือไม่?" | Cancelar → no, form stays open; Agendar → yes |
+| 18:30, outside hours | "…fora do seu horário de atendimento (08:00–18:00)…" | "…outside your working hours (08:00–18:00)…" | "…นอกเวลาทำการของคุณ (08:00–18:00)…" | Agendar → yes |
+| 19:15, blocked **and** outside | both sentences in **one** question | same | same | Cancelar → no |
+| Sunday 10:00, day off | "Você não atende aos domingos. Agendar mesmo assim?" | "You don't work on Sundays. Book anyway?" | "คุณไม่ได้ทำงานวันอาทิตย์ ยืนยันนัดหมายหรือไม่?" | Agendar → yes |
+| 11:00–13:00, inside hours | no question | no question | no question | yes, directly |
+
+- **Overlap beats the question:** the first run reused pt-BR's saved
+  times in en and th. The blocked, outside and day-off slots were already
+  taken there, and each gave the overlap hard stop (naming the pt-BR
+  appointment), never the question.
+- **Hours never set** (`working_hours` `{}`): Sunday 22:00 → no question,
+  saved.
+- **Secretary** (booking for the doctor): gets the same outside-hours
+  question and the same overlap hard stop.
+
+**Nit (not blocking, sent to b2):** the Thai overlap text keeps "(30
+min)"; the duration is built as `` `${durationMin} min` `` in
+`ScheduleClient.tsx:331` rather than coming from the messages.
+
+**CI at `f7d578f`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`f7d578f`.** This docs commit sits on top; the branch was already up to
+date with master.
