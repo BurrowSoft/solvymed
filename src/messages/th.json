@@ -219,6 +219,7 @@
     "overlapHardMsg": "เวลานี้ซ้อนกับนัดของ {name} เวลา {time} ({duration}) กรุณาเลือกเวลาอื่น",
     "overlapGeneric": "เวลานี้ซ้อนกับนัดหมายอื่น กรุณาเลือกเวลาอื่น",
     "requestedLabel": "ขอเลื่อนเป็น: {date} · {time}",
+    "proposedLabel": "เสนอ: {date} · {time}",
     "promptPayTitle": "QR พร้อมเพย์",
     "promptPayScan": "สแกนด้วยแอปธนาคารใดก็ได้เพื่อชำระเงิน",
     "pixQrTitle": "Pix QR code",

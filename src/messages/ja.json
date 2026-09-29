@@ -219,6 +219,7 @@
     "overlapHardMsg": "この時間は{name}さんの予約（{time}、{duration}）と重なっています。別の時間を選んでください。",
     "overlapGeneric": "この時間は別の予約と重なっています。別の時間を選んでください。",
     "requestedLabel": "希望日時：{date} · {time}",
+    "proposedLabel": "提案：{date} · {time}",
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "タイの銀行アプリでスキャンして支払います。",
     "pixQrTitle": "Pix QR code",

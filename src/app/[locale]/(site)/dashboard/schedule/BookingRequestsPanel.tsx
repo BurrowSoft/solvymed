@@ -167,6 +167,15 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                       {t("waitingForResponse")}
                     </span>
                   )}
+                  {/* The clinic's proposal: the time it proposed, not just the original (UX 36). */}
+                  {b.status === "proposal" && b.scheduled_by !== "patient" && b.proposed_date && (
+                    <p className="mt-1 text-xs text-slate-500">
+                      {t("proposedLabel", {
+                        date: formatDateLabel(locale, b.proposed_date),
+                        time: b.proposed_start_time ? formatTimeLabel(locale, b.proposed_start_time) : "",
+                      })}
+                    </p>
+                  )}
                   {b.status === "proposal" && b.scheduled_by === "patient" && (
                     <span className="mt-1 inline-block rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
                       {t("rescheduleRequested")}

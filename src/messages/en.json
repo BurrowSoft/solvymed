@@ -219,6 +219,7 @@
     "overlapHardMsg": "This overlaps with {name} at {time} ({duration}). Choose another time.",
     "overlapGeneric": "This time overlaps with another appointment. Choose another time.",
     "requestedLabel": "Requested: {date} · {time}",
+    "proposedLabel": "Proposed: {date} · {time}",
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "Scan with any Thai banking app to pay.",
     "pixQrTitle": "Pix QR code",

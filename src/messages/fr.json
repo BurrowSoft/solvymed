@@ -219,6 +219,7 @@
     "overlapHardMsg": "Ce créneau chevauche {name} à {time} ({duration}). Choisissez un autre horaire.",
     "overlapGeneric": "Ce créneau chevauche un autre rendez-vous. Choisissez un autre horaire.",
     "requestedLabel": "Demandé : {date} · {time}",
+    "proposedLabel": "Proposé : {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Scannez avec n'importe quelle appli bancaire thaïlandaise pour payer.",
     "pixQrTitle": "Pix QR code",

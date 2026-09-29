@@ -219,6 +219,7 @@
     "overlapHardMsg": "Giờ này trùng với {name} lúc {time} ({duration}). Hãy chọn giờ khác.",
     "overlapGeneric": "Giờ này trùng với một lịch hẹn khác. Hãy chọn giờ khác.",
     "requestedLabel": "Yêu cầu: {date} · {time}",
+    "proposedLabel": "Đề xuất: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Quét bằng bất kỳ ứng dụng ngân hàng Thái Lan nào để thanh toán.",
     "pixQrTitle": "Pix QR code",

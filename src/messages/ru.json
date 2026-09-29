@@ -219,6 +219,7 @@
     "overlapHardMsg": "Это время пересекается с {name} в {time} ({duration}). Выберите другое время.",
     "overlapGeneric": "Это время пересекается с другой записью. Выберите другое время.",
     "requestedLabel": "Запрошено: {date} · {time}",
+    "proposedLabel": "Предложено: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Отсканируйте любым тайским банковским приложением для оплаты.",
     "pixQrTitle": "Pix QR code",
