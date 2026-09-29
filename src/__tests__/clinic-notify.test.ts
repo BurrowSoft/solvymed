@@ -39,7 +39,7 @@ function db(o: Opts = {}) {
         rpcCalls.push(fn);
         if (fn === "get_patient_auth_id") return { data: o.authId === undefined ? "auth-1" : o.authId, error: null };
         if (fn === "get_patient_push_tokens") return { data: (o.tokens ?? ["tok"]).map((token) => ({ token })), error: null };
-        if (fn === "get_professional_public_info") return { data: [{ full_name: o.publicName ?? "Dr. Público", country: "BR" }], error: null };
+        if (fn === "get_professional_public_info") return { data: [{ clinic_name: o.publicName ?? "Clínica Pública", full_name: "Dr. Público", country: "BR" }], error: null };
         return { data: null, error: null };
       },
     } as unknown as SupabaseClient,
@@ -74,13 +74,20 @@ describe("tellPatient", () => {
     expect(sent).toHaveLength(1);
   });
 
-  it("the clinic's name: profile → first location → doctor (a secretary: the practice's public info)", async () => {
+  it("the clinic's name: profile → first location → doctor (a secretary: the practice public info, 110s rule)", async () => {
     expect(patientFacingClinicName("  ", "Unidade Centro", "Dra. Ana")).toBe("Unidade Centro");
     expect(patientFacingClinicName(null, null, "Dra. Ana")).toBe("Dra. Ana");
     expect(patientFacingClinicName(null, null, null)).toBe("SolvyMed");
     await tellPatient(db({ profRow: { clinic_name: null, full_name: "Dra. Ana" }, clinics: [{ name: "Unidade Centro" }] }).client, { kind: "booked", patientId: "p-1", ...future });
     await tellPatient(db({ profRow: null, clinics: [] }).client, { kind: "booked", patientId: "p-1", isSecretary: true, ...future });
-    expect(sent.map((s) => s.body.split(" marcou")[0])).toEqual(["Unidade Centro", "Dr. Público"]);
+    expect(sent.map((s) => s.body.split(" marcou")[0])).toEqual(["Unidade Centro", "Clínica Pública"]);
+    // A secretary, a practice with a profile name and two locations: the profile name (the RPC applies the rule).
+    await tellPatient(db({ profRow: null, clinics: [{ name: "A Unidade" }, { name: "B Unidade" }], publicName: "Clínica Sol" }).client, { kind: "booked", patientId: "p-1", isSecretary: true, ...future });
+    expect(sent[2].body.split(" marcou")[0]).toBe("Clínica Sol");
+    sent.splice(2, 1);
+    // The practice has no clinic name at all: the doctor, from the public info.
+    await tellPatient(db({ profRow: null, clinics: [], publicName: "" }).client, { kind: "booked", patientId: "p-1", isSecretary: true, ...future });
+    expect(sent[2].body.split(" marcou")[0]).toBe("Dr. Público");
   });
 
   it("never throws: a failing read is swallowed", async () => {
