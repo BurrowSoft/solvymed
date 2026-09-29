@@ -206,6 +206,8 @@
     "promptPayTitle": "QR de PromptPay",
     "promptPayScan": "Escanea con cualquier app bancaria tailandesa para pagar.",
     "pixQrTitle": "Pix QR code",
+    "pixCopyPaste": "Pix Copia e Cola",
+    "pixCopy": "Copiar",
     "durationMinutes": "{n} min"
   },
   "payments": {

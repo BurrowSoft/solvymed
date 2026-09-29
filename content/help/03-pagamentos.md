@@ -10,8 +10,8 @@ Para desfazer, toque em **Desmarcar** e confirme.
 1. Open **Payments** (or the appointment in the **Schedule**).
 2. Tap the appointment and **Mark as paid**.
 To undo, tap **Mark unpaid** and confirm.
-**No site:** Em **Pagamentos**, clique em **Marcar como Pago** na consulta (se ela não tiver valor, digite o valor) e em **Confirmar**. Para desfazer, clique em **Reverter** e confirme.
-**On the website:** In **Payments**, click **Mark Paid** on the appointment (if it has no amount, type it in) and **Confirm**. To undo, click **Revert** and confirm.
+**No site:** Em **Pagamentos**, clique em **Marcar como Pago** na consulta: salva na hora. Se ela não tiver valor, digite o valor e clique em **Confirmar**. Para desfazer, clique em **Reverter** e confirme.
+**On the website:** In **Payments**, click **Mark Paid** on the appointment: it's saved right away. If it has no amount, type it in and click **Confirm**. To undo, click **Revert** and confirm.
 `open:payments`
 
 ---
@@ -50,8 +50,8 @@ O SolvyMed não recebe o dinheiro: o Pix vai direto para a sua conta.
 2. Or tap **Send Pix via WhatsApp**: the patient gets the code to paste in their banking app.
 3. When the payment arrives, mark the appointment as paid.
 SolvyMed doesn't receive the money: Pix goes straight to your account.
-**No site:** Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Copia e Cola** (botão **Copiar**). O envio por WhatsApp está só no app. Quando o pagamento cair, marque como pago em **Pagamentos**.
-**On the website:** In the **Schedule**, click the QR icon next to the appointment: the **Pix QR Code** and the **Copia e Cola** code (with **Copiar**) appear. Sending by WhatsApp is app-only. When the payment arrives, mark it as paid in **Payments**.
+**No site:** Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Pix Copia e Cola** (botão **Copiar**). O envio por WhatsApp está só no app. Quando o pagamento cair, marque como pago em **Pagamentos**.
+**On the website:** In the **Schedule**, click the QR icon next to the appointment: the **Pix QR code** and the **Pix Copia e Cola** code (with **Copy**) appear. Sending by WhatsApp is app-only. When the payment arrives, mark it as paid in **Payments**.
 `open:payments`
 
 ---
