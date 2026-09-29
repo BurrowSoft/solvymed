@@ -73,13 +73,19 @@ describe("Confirmar (part 2)", () => {
 
   it("add patient: the form's fields for the practice's country; create-anyway only when the card said so; Desfazer deletes it", async () => {
     const r = await executeSolvyAiAction({ kind: "add_patient", args: { fullName: " Ana  Nova ", birthDate: "1990-02-03", phone: "081 234 5678" } }, false);
+    // (A phone in the action is ignored: SolvyAI never saves contact details.)
     expect(r).toEqual({ ok: true, id: "new-patient" });
     const f = calls[0].args[0] as FormData;
-    expect(Object.fromEntries(f.entries())).toEqual({ full_name: "Ana Nova", id_kind: "TH", birth_date: "1990-02-03", phone: "081 234 5678" });
+    expect(Object.fromEntries(f.entries())).toEqual({ full_name: "Ana Nova", id_kind: "TH", birth_date: "1990-02-03" });
     calls.length = 0;
     await executeSolvyAiAction({ kind: "add_patient", args: { fullName: "Maria Silva", createAnyway: true } }, false);
     expect((calls[0].args[0] as FormData).get("force")).toBe("1");
     expect(await executeSolvyAiAction({ kind: "add_patient", args: { fullName: "X", birthDate: "03/02/1990" } }, false)).toEqual({ ok: false, code: "generic" });
+    // A mask placeholder anywhere: nothing saved.
+    calls.length = 0;
+    expect(await executeSolvyAiAction({ kind: "add_patient", args: { fullName: "[phone]" } }, false)).toEqual({ ok: false, code: "generic" });
+    expect(await executeSolvyAiAction({ kind: "add_patient", args: { fullName: "Ana", email: "[email]" } }, false)).toEqual({ ok: false, code: "generic" });
+    expect(calls).toEqual([]);
     calls.length = 0;
     await undoSolvyAiAction({ kind: "add_patient", args: {} }, ID);
     expect(calls).toEqual([{ fn: "deletePatient", args: [ID] }]);

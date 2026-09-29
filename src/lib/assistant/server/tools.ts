@@ -40,6 +40,8 @@ export type ToolOutcome = { forModel: string; isError?: boolean; block?: AnswerB
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
+// The placeholders maskPersonalData puts in the chat (lib/assistant/mask).
+export const MASK_TOKEN = /\[(?:email|cpf|phone|id)\]/i;
 const MAX_LIST_DAYS = 14;
 const CARD_MINUTES = 15;
 
@@ -94,8 +96,8 @@ export const TOOL_DEFS: ToolDef[] = [
   },
   {
     name: "propose_add_patient",
-    description: "Propose adding a patient: full name required; birth date (YYYY-MM-DD), phone and email only if the user said them. If similar patients exist you get them back: tell the user and ask; only if they say it's someone else, propose again with createAnyway=true.",
-    input_schema: obj({ fullName: { type: "string" }, birthDate: { type: "string" }, phone: { type: "string" }, email: { type: "string" }, createAnyway: { type: "boolean" } }, ["fullName"]),
+    description: "Propose adding a patient: full name required; birth date (YYYY-MM-DD) only if the user said it. Phone, email and ID numbers are never taken here (the chat masks them): say they're added on the patient's page after saving. If similar patients exist you get them back: tell the user and ask; only if they say it's someone else, propose again with createAnyway=true.",
+    input_schema: obj({ fullName: { type: "string" }, birthDate: { type: "string" }, createAnyway: { type: "boolean" } }, ["fullName"]),
   },
 ];
 
@@ -121,7 +123,7 @@ const T = {
     slotTakenNone: "Esse horário acabou de ser ocupado. Nada foi salvo. Qual outro horário?",
     unblock: "Desbloquear horário", confirmReq: "Confirmar pedido", rejectReq: "Recusar pedido",
     decision: "Decisão", confirmIt: "Confirmar", rejectIt: "Recusar", note: "Observação",
-    addPatient: "Novo paciente", fullName: "Nome", birth: "Nascimento", phone: "Telefone", email: "E-mail",
+    addPatient: "Novo paciente", fullName: "Nome", birth: "Nascimento",
     similar: "Parecidos já cadastrados",
     proposalConfirmStop: "Este pedido está aguardando a resposta do paciente à nova proposta; só é possível recusar.",
   },
@@ -146,7 +148,7 @@ const T = {
     slotTakenNone: "That time was just taken. Nothing was saved. Which other time?",
     unblock: "Unblock time", confirmReq: "Confirm request", rejectReq: "Decline request",
     decision: "Decision", confirmIt: "Confirm", rejectIt: "Decline", note: "Note",
-    addPatient: "New patient", fullName: "Name", birth: "Date of birth", phone: "Phone", email: "Email",
+    addPatient: "New patient", fullName: "Name", birth: "Date of birth",
     similar: "Similar patients already registered",
     proposalConfirmStop: "This request is waiting for the patient's answer to the new time; it can only be declined.",
   },
@@ -563,15 +565,14 @@ async function proposeAddPatient(ctx: ToolContext, input: Record<string, unknown
   const t = T[ctx.lang];
   const fullName = typeof input.fullName === "string" ? input.fullName.replace(/\s+/g, " ").trim().slice(0, 120) : "";
   if (fullName.length < 2) return err("Ask the user for the patient's full name.");
+  // The chat masks identifiers ([cpf], [phone], …): a placeholder is never a name.
+  if (MASK_TOKEN.test(fullName)) return err("That isn't a name. Ask for the patient's full name; contact details and IDs go on the patient's page after saving.");
   const birthDate = input.birthDate === undefined || input.birthDate === null || input.birthDate === "" ? null : input.birthDate;
   if (birthDate !== null && (!isDate(birthDate) || birthDate < "1900-01-01" || birthDate > ctx.today)) {
     return err("The birth date must be YYYY-MM-DD (Gregorian), between 1900 and today; ask the user.");
   }
-  const phone = typeof input.phone === "string" ? input.phone.trim().slice(0, 30) : "";
-  const email = typeof input.email === "string" ? input.email.trim().toLowerCase().slice(0, 120) : "";
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return err("That email doesn't look valid; ask the user.");
   // The same duplicate check as the form (find_similar_patients, as the user).
-  const { data: similar } = await ctx.db.rpc("find_similar_patients", { p_name: fullName, p_phone: phone || null, p_birth_date: birthDate });
+  const { data: similar } = await ctx.db.rpc("find_similar_patients", { p_name: fullName, p_phone: null, p_birth_date: birthDate });
   const matches = (Array.isArray(similar) ? similar : []) as { id: string; full_name: string; birth_date: string | null; archived_at?: string | null }[];
   matches.forEach((m) => ctx.seen.add(m.id));
   const listed = matches.slice(0, 5).map((m) => `${personLabel(ctx, m.full_name, m.birth_date)}${m.archived_at ? (ctx.lang === "pt" ? " (arquivado)" : " (archived)") : ""}`).join("; ");
@@ -584,15 +585,13 @@ async function proposeAddPatient(ctx: ToolContext, input: Record<string, unknown
     fields: [
       { label: t.fullName, value: fullName },
       ...(birthDate ? [{ label: t.birth, value: formatShortDate(ctx.locale, birthDate) }] : []),
-      ...(phone ? [{ label: t.phone, value: phone }] : []),
-      ...(email ? [{ label: t.email, value: email }] : []),
       ...(matches.length ? [{ label: t.similar, value: listed }] : []),
     ],
     warnings: [],
     editTarget: { screen: "patients", params: { new: "1" } },
     viewTarget: { screen: "patients" },
     after: { screen: "patient", highlight: { kind: "patient" } },
-    action: { kind: "add_patient", args: { fullName, ...(birthDate ? { birthDate } : {}), ...(phone ? { phone } : {}), ...(email ? { email } : {}), ...(matches.length ? { createAnyway: true } : {}) } },
+    action: { kind: "add_patient", args: { fullName, ...(birthDate ? { birthDate } : {}), ...(matches.length ? { createAnyway: true } : {}) } },
   });
   return { forModel: `Card shown (${c.id}). Tell the user to check it and tap Confirmar.`, block: { type: "card", card: c } };
 }

@@ -369,14 +369,20 @@ describe("SolvyAI actions mode: part 2 (unblock, booking decision, add patient)"
   });
 
   it("add patient: a card with only what was said; similar patients are asked about first", async () => {
-    let t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "João  Pedro", birthDate: "1990-02-03", phone: "11 99999-0000" } }] } : "ok"));
+    let t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "João  Pedro", birthDate: "1990-02-03" } }] } : "ok"));
     let card = cardOf((await run(t, ask("Cadastra o João Pedro"))).blocks)!;
     expect(card.fields).toEqual([
       { label: "Nome", value: "João Pedro" },
       { label: "Nascimento", value: "03/02/1990" },
-      { label: "Telefone", value: "11 99999-0000" },
     ]);
-    expect(card.action).toEqual({ kind: "add_patient", args: { fullName: "João Pedro", birthDate: "1990-02-03", phone: "11 99999-0000" } });
+    expect(card.action).toEqual({ kind: "add_patient", args: { fullName: "João Pedro", birthDate: "1990-02-03" } });
+    // The chat masks identifiers: a placeholder is never taken as a name (7f).
+    t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "[phone]" } }] } : "ok"));
+    expect(cardOf((await run(t, ask("Cadastra (11) 99999-0000"))).blocks)).toBeUndefined();
+    expect(resultsIn(t.model.calls[1])[0]).toMatchObject({ is_error: true });
+    // Phone / email / IDs aren't tool inputs at all.
+    const addTool = t.model.calls[0].tools!.find((x) => x.name === "propose_add_patient")!;
+    expect(Object.keys((addTool.input_schema as { properties: object }).properties)).toEqual(["fullName", "birthDate", "createAnyway"]);
     expect(card.after).toEqual({ screen: "patient", highlight: { kind: "patient" } });
     // Maria Silva exists: back to the model, no card, until the user says it's someone else.
     t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "Maria Silva" } }] } : "ok"));

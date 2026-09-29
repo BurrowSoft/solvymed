@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { toMinutes } from "@/lib/slots";
 import type { CardAction } from "@/lib/assistant/types";
+import { MASK_TOKEN } from "@/lib/assistant/server/tools";
 
 // SolvyAI's Confirmar and Desfazer on the website (docs/assistant-api.md
 // §2.3a rule 10): a card's action runs through the SAME server actions as
@@ -148,6 +149,9 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
       const fullName = str(a.fullName).replace(/\s+/g, " ").trim().slice(0, 120);
       const birthDate = str(a.birthDate);
       if (fullName.length < 2 || (birthDate && !DATE.test(birthDate))) return { ok: false, code: "generic" };
+      // Only the name and birth date come from SolvyAI: the chat masks phone,
+      // email and IDs, so a placeholder ("[phone]") is never saved (7f).
+      if (MASK_TOKEN.test(fullName) || Object.values(a).some((v) => typeof v === "string" && MASK_TOKEN.test(v))) return { ok: false, code: "generic" };
       // The form's own fields, for the practice's country (no ID from SolvyAI).
       const supabase = await createClient();
       const { data: { user } } = await supabase.auth.getUser();
@@ -158,8 +162,6 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
       const r = await createPatient(form({
         full_name: fullName, id_kind: patientIdKind(country.country),
         ...(birthDate ? { birth_date: birthDate } : {}),
-        ...(str(a.phone) ? { phone: str(a.phone).slice(0, 30) } : {}),
-        ...(str(a.email) ? { email: str(a.email).slice(0, 120) } : {}),
         // "Create anyway" only when the card listed the similar patients.
         ...(a.createAnyway === true ? { force: "1" } : {}),
       }));

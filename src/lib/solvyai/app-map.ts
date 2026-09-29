@@ -203,6 +203,7 @@ export const ACTIONS: AppMapAction[] = [
       "A birth-date year of 2400 or more is never saved or converted.",
       { text: "The birth date must be between 1900 and today.", pending: ["mobile#95", "migration-116"] },
       "Only the ID fields of the practice's country are used.",
+      "Through SolvyAI only the name and birth date are taken (the chat masks phone, email and ID numbers); those are added on the patient's page after saving.",
     ],
     card: ["full name", "birth date", "phone", "email", "ID"],
     after: "patient",
