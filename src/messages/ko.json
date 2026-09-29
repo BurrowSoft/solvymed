@@ -194,7 +194,14 @@
     "pastMidnightError": "이 시간과 소요 시간은 자정을 넘깁니다.",
     "patientArchivedError": "이 차트는 보관되어 있습니다. 예약하려면 환자 메뉴에서 복원하세요.",
     "moreCount": "+{n}개 더",
-    "slotBlockedConfirm": "이 시간은 차단되어 있습니다({start}–{end}). 그래도 예약할까요?",
+    "warnBlocked": "이 시간은 차단되어 있습니다({start}–{end}).",
+    "warnOutside": "이 시간은 진료 시간 외입니다({start}–{end}).",
+    "warnDayOff": "{day, select, sun {일요일} mon {월요일} tue {화요일} wed {수요일} thu {목요일} fri {금요일} sat {토요일} other {그날}}에는 진료하지 않습니다.",
+    "bookAnyway": "그래도 예약할까요?",
+    "bookAnywayButton": "예약",
+    "checkTimeTitle": "시간 확인",
+    "overlapHardMsg": "이 시간은 {time}의 {name} 예약({duration})과 겹칩니다. 다른 시간을 선택하세요.",
+    "overlapGeneric": "이 시간은 다른 예약과 겹칩니다. 다른 시간을 선택하세요.",
     "requestedLabel": "요청: {date} · {time}",
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "태국 은행 앱으로 스캔해 결제하세요.",
@@ -1134,7 +1141,6 @@
     "edit": "수정",
     "confirm": "확인 ✓",
     "failed": "저장하지 못했습니다.",
-    "failedBlocked": "차단된 시간입니다.",
     "chips": {
       "home": {
         "a": "내일 일정이 뭐야?",
@@ -1166,7 +1172,12 @@
         "b": "직원을 어떻게 초대해?",
         "c": "예약하기"
       }
-    }
+    },
+    "unavailable": "지금은 SolvyAI를 사용할 수 없습니다. 잠시 후 다시 시도하세요.",
+    "expired": "이 카드는 만료되었습니다. 최신 정보를 보려면 다시 요청하세요.",
+    "cancel": "취소",
+    "chipAt": "{date} {time}",
+    "otherTime": "다른 시간"
   },
   "dateInput": {
     "buddhistYear": "불기 연도로 보입니다. 서기 연도를 사용해 주세요(예: 1996).",

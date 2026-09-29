@@ -194,7 +194,14 @@
     "pastProposalAlert": "The proposed time has already passed. Please decline so the patient can request a new slot.",
     "patientArchivedError": "This patient is archived. Restore the patient in Patients to schedule an appointment.",
     "moreCount": "+{n} more",
-    "slotBlockedConfirm": "This time is blocked ({start}–{end}). Book anyway?",
+    "warnBlocked": "This time is blocked ({start}–{end}).",
+    "warnOutside": "This time is outside your working hours ({start}–{end}).",
+    "warnDayOff": "You don't work on {day, select, sun {Sundays} mon {Mondays} tue {Tuesdays} wed {Wednesdays} thu {Thursdays} fri {Fridays} sat {Saturdays} other {that day}}.",
+    "bookAnyway": "Book anyway?",
+    "bookAnywayButton": "Book",
+    "checkTimeTitle": "Check the time",
+    "overlapHardMsg": "This overlaps with {name} at {time} ({duration}). Choose another time.",
+    "overlapGeneric": "This time overlaps with another appointment. Choose another time.",
     "requestedLabel": "Requested: {date} · {time}",
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "Scan with any Thai banking app to pay.",
@@ -1164,7 +1171,6 @@
     "edit": "Edit",
     "confirm": "Confirm ✓",
     "failed": "Couldn't save.",
-    "failedBlocked": "The time is blocked.",
     "chips": {
       "home": {
         "a": "What do I have tomorrow?",
@@ -1196,7 +1202,12 @@
         "b": "How do I invite my secretary?",
         "c": "Book an appointment"
       }
-    }
+    },
+    "unavailable": "SolvyAI is unavailable right now. Try again in a moment.",
+    "expired": "This card has expired. Ask again to see up-to-date details.",
+    "cancel": "Cancel",
+    "chipAt": "{date} at {time}",
+    "otherTime": "Another time"
   },
   "dateInput": {
     "buddhistYear": "That looks like a Buddhist-era year. Please use the Gregorian year (e.g. 1996).",

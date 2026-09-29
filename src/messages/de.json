@@ -194,7 +194,14 @@
     "pastMidnightError": "Diese Uhrzeit und Dauer würden über Mitternacht hinausgehen.",
     "patientArchivedError": "Diese Akte ist archiviert. Stellen Sie sie unter Patienten wieder her, um einen Termin anzulegen.",
     "moreCount": "+{n} weitere",
-    "slotBlockedConfirm": "Diese Zeit ist blockiert ({start}–{end}). Trotzdem buchen?",
+    "warnBlocked": "Diese Zeit ist blockiert ({start}–{end}).",
+    "warnOutside": "Diese Zeit liegt außerhalb Ihrer Sprechzeiten ({start}–{end}).",
+    "warnDayOff": "Sie arbeiten {day, select, sun {sonntags} mon {montags} tue {dienstags} wed {mittwochs} thu {donnerstags} fri {freitags} sat {samstags} other {an diesem Tag}} nicht.",
+    "bookAnyway": "Trotzdem buchen?",
+    "bookAnywayButton": "Buchen",
+    "checkTimeTitle": "Zeit prüfen",
+    "overlapHardMsg": "Dieser Termin überschneidet sich mit {name} um {time} ({duration}). Bitte wählen Sie eine andere Zeit.",
+    "overlapGeneric": "Diese Zeit überschneidet sich mit einem anderen Termin. Bitte wählen Sie eine andere Zeit.",
     "requestedLabel": "Angefragt: {date} · {time}",
     "promptPayTitle": "PromptPay-QR",
     "promptPayScan": "Zum Bezahlen mit einer beliebigen thailändischen Banking-App scannen.",
@@ -1134,7 +1141,6 @@
     "edit": "Bearbeiten",
     "confirm": "Bestätigen ✓",
     "failed": "Speichern nicht möglich.",
-    "failedBlocked": "Die Zeit ist geblockt.",
     "chips": {
       "home": {
         "a": "Was habe ich morgen?",
@@ -1166,7 +1172,12 @@
         "b": "Wie lade ich meine Praxiskraft ein?",
         "c": "Termin buchen"
       }
-    }
+    },
+    "unavailable": "SolvyAI ist gerade nicht verfügbar. Versuchen Sie es gleich noch einmal.",
+    "expired": "Diese Karte ist abgelaufen. Fragen Sie erneut, um aktuelle Angaben zu sehen.",
+    "cancel": "Abbrechen",
+    "chipAt": "{date} um {time}",
+    "otherTime": "Andere Uhrzeit"
   },
   "dateInput": {
     "buddhistYear": "Das sieht nach einem Jahr der buddhistischen Zeitrechnung aus. Bitte das gregorianische Jahr verwenden (z. B. 1996).",

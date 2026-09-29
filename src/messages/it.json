@@ -194,7 +194,14 @@
     "pastMidnightError": "Questo orario e questa durata supererebbero la mezzanotte.",
     "patientArchivedError": "Questa scheda è archiviata. Ripristinala in Pazienti per fissare un appuntamento.",
     "moreCount": "+{n} altri",
-    "slotBlockedConfirm": "Questo orario è bloccato ({start}–{end}). Prenotare comunque?",
+    "warnBlocked": "Questo orario è bloccato ({start}–{end}).",
+    "warnOutside": "Questo orario è fuori dal tuo orario di lavoro ({start}–{end}).",
+    "warnDayOff": "Non lavori {day, select, sun {la domenica} mon {il lunedì} tue {il martedì} wed {il mercoledì} thu {il giovedì} fri {il venerdì} sat {il sabato} other {quel giorno}}.",
+    "bookAnyway": "Prenotare comunque?",
+    "bookAnywayButton": "Prenota",
+    "checkTimeTitle": "Controlla l’orario",
+    "overlapHardMsg": "Questo orario si sovrappone a {name} alle {time} ({duration}). Scegli un altro orario.",
+    "overlapGeneric": "Questo orario si sovrappone a un altro appuntamento. Scegli un altro orario.",
     "requestedLabel": "Richiesto: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Scansiona con qualsiasi app bancaria thailandese per pagare.",
@@ -1134,7 +1141,6 @@
     "edit": "Modifica",
     "confirm": "Conferma ✓",
     "failed": "Impossibile salvare.",
-    "failedBlocked": "L'orario è bloccato.",
     "chips": {
       "home": {
         "a": "Cosa ho domani?",
@@ -1166,7 +1172,12 @@
         "b": "Come invito la mia segretaria?",
         "c": "Prenota un appuntamento"
       }
-    }
+    },
+    "unavailable": "SolvyAI non è disponibile al momento. Riprova tra poco.",
+    "expired": "Questa scheda è scaduta. Chiedi di nuovo per vedere i dati aggiornati.",
+    "cancel": "Annulla",
+    "chipAt": "{date} alle {time}",
+    "otherTime": "Un altro orario"
   },
   "dateInput": {
     "buddhistYear": "Sembra un anno dell'era buddhista. Usa l'anno gregoriano (es. 1996).",

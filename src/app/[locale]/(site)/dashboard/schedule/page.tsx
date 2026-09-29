@@ -196,7 +196,7 @@ export default async function SchedulePage({
             <div className="space-y-3">
               {appointments.map((appt) => (
                 <div
-                  key={appt.id}
+                  key={appt.id} data-highlight-id={appt.id}
                   className={`group flex items-start gap-4 rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md ${
                     appt.status === "blocked" ? "border-slate-100 opacity-75" : "border-slate-100 hover:border-slate-200"
                   }`}

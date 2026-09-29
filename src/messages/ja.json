@@ -194,7 +194,14 @@
     "pastMidnightError": "この時間と所要時間では深夜0時を超えてしまいます。",
     "patientArchivedError": "このカルテはアーカイブ済みです。予約するには「患者」で復元してください。",
     "moreCount": "他 {n} 件",
-    "slotBlockedConfirm": "この時間はブロックされています（{start}–{end}）。それでも予約しますか？",
+    "warnBlocked": "この時間はブロックされています（{start}–{end}）。",
+    "warnOutside": "この時間は診療時間外です（{start}–{end}）。",
+    "warnDayOff": "{day, select, sun {日曜日} mon {月曜日} tue {火曜日} wed {水曜日} thu {木曜日} fri {金曜日} sat {土曜日} other {その日}}は診療日ではありません。",
+    "bookAnyway": "このまま予約しますか？",
+    "bookAnywayButton": "予約する",
+    "checkTimeTitle": "時間を確認",
+    "overlapHardMsg": "この時間は{name}さんの予約（{time}、{duration}）と重なっています。別の時間を選んでください。",
+    "overlapGeneric": "この時間は別の予約と重なっています。別の時間を選んでください。",
     "requestedLabel": "希望日時：{date} · {time}",
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "タイの銀行アプリでスキャンして支払います。",
@@ -1134,7 +1141,6 @@
     "edit": "編集",
     "confirm": "確定 ✓",
     "failed": "保存できませんでした。",
-    "failedBlocked": "その時間はブロックされています。",
     "chips": {
       "home": {
         "a": "明日の予定は？",
@@ -1166,7 +1172,12 @@
         "b": "スタッフを招待するには？",
         "c": "予約を入れる"
       }
-    }
+    },
+    "unavailable": "SolvyAI は現在ご利用いただけません。しばらくしてからもう一度お試しください。",
+    "expired": "このカードは有効期限が切れました。最新の内容を見るにはもう一度お尋ねください。",
+    "cancel": "キャンセル",
+    "chipAt": "{date} {time}",
+    "otherTime": "別の時間"
   },
   "dateInput": {
     "buddhistYear": "仏暦の年のようです。西暦で入力してください（例：1996）。",

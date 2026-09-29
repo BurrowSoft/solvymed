@@ -194,7 +194,14 @@
     "pastMidnightError": "此時間和時長將超過午夜。",
     "patientArchivedError": "此病歷已封存。請在「病患」中還原後再預約。",
     "moreCount": "另外 {n} 個",
-    "slotBlockedConfirm": "此時段已封鎖（{start}–{end}）。仍要預約嗎？",
+    "warnBlocked": "此時段已封鎖（{start}–{end}）。",
+    "warnOutside": "此時間不在您的看診時間內（{start}–{end}）。",
+    "warnDayOff": "您{day, select, sun {週日} mon {週一} tue {週二} wed {週三} thu {週四} fri {週五} sat {週六} other {那天}}不看診。",
+    "bookAnyway": "仍要預約嗎？",
+    "bookAnywayButton": "預約",
+    "checkTimeTitle": "請確認時間",
+    "overlapHardMsg": "此時間與 {name} 在 {time} 的預約（{duration}）衝突。請選擇其他時間。",
+    "overlapGeneric": "此時間與另一個預約衝突。請選擇其他時間。",
     "requestedLabel": "申請時間：{date} · {time}",
     "promptPayTitle": "PromptPay QR 碼",
     "promptPayScan": "使用任何泰國銀行 App 掃描付款。",
@@ -1134,7 +1141,6 @@
     "edit": "編輯",
     "confirm": "確認 ✓",
     "failed": "無法儲存。",
-    "failedBlocked": "該時段已封鎖。",
     "chips": {
       "home": {
         "a": "我明天有什麼安排？",
@@ -1166,7 +1172,12 @@
         "b": "如何邀請助理？",
         "c": "預約"
       }
-    }
+    },
+    "unavailable": "SolvyAI 暫時無法使用，請稍後再試。",
+    "expired": "此卡片已過期。請重新詢問以查看最新資訊。",
+    "cancel": "取消",
+    "chipAt": "{date} {time}",
+    "otherTime": "其他時間"
   },
   "dateInput": {
     "buddhistYear": "這看起來是佛曆年份。請使用西元年份（例如 1996）。",
