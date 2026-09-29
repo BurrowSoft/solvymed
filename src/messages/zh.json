@@ -502,6 +502,13 @@
     "saveFailed": "无法保存，请重试。",
     "practiceCountry": "诊所所在国家",
     "practiceCountryHint": "用于设定货币、套餐价格、患者证件和付款二维码。如需更改，请联系 support@solvymed.com。",
+    "subscriptionTitle": "订阅",
+    "subscriptionActive": "Pro 套餐 · 有效",
+    "subscriptionLifetime": "Pro 套餐 · 终身",
+    "subscriptionTrial": "免费试用：剩余 {n} 天",
+    "subscriptionInactive": "没有有效的订阅",
+    "manageSubscription": "管理订阅",
+    "subscriptionSubscribe": "查看套餐",
     "practiceCountryOther": "其他国家",
     "fullNameHint": "如需要，可加上头衔（Dr.、Prof.），会显示在问候语中。"
   },

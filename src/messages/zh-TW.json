@@ -502,6 +502,13 @@
     "saveFailed": "無法儲存，請再試一次。",
     "practiceCountry": "診所所在國家",
     "practiceCountryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。如需變更，請聯絡 support@solvymed.com。",
+    "subscriptionTitle": "訂閱",
+    "subscriptionActive": "Pro 方案 · 有效",
+    "subscriptionLifetime": "Pro 方案 · 終身",
+    "subscriptionTrial": "免費試用：剩餘 {n} 天",
+    "subscriptionInactive": "沒有有效的訂閱",
+    "manageSubscription": "管理訂閱",
+    "subscriptionSubscribe": "查看方案",
     "practiceCountryOther": "其他國家",
     "fullNameHint": "如有需要，可加上頭銜（Dr.、Prof.），會顯示在問候語中。"
   },

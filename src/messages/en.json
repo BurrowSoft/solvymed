@@ -502,6 +502,13 @@
     "saveFailed": "Couldn't save. Please try again.",
     "practiceCountry": "Practice country",
     "practiceCountryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it, contact support@solvymed.com.",
+    "subscriptionTitle": "Subscription",
+    "subscriptionActive": "Pro plan · active",
+    "subscriptionLifetime": "Pro plan · lifetime",
+    "subscriptionTrial": "Free trial: {n, plural, one {# day} other {# days}} left",
+    "subscriptionInactive": "No active subscription",
+    "manageSubscription": "Manage subscription",
+    "subscriptionSubscribe": "See the plan",
     "practiceCountryOther": "Other country",
     "fullNameHint": "Add your title if you like (Dr., Prof.); it appears in greetings."
   },

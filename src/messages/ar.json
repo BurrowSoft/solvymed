@@ -502,6 +502,13 @@
     "saveFailed": "تعذّر الحفظ. يُرجى المحاولة مرة أخرى.",
     "practiceCountry": "دولة العيادة",
     "practiceCountryHint": "يحدد العملة وسعر الباقة وهوية المريض ورمز الدفع. لتغييره، راسل support@solvymed.com.",
+    "subscriptionTitle": "الاشتراك",
+    "subscriptionActive": "خطة Pro · نشطة",
+    "subscriptionLifetime": "خطة Pro · مدى الحياة",
+    "subscriptionTrial": "التجربة المجانية: {n, plural, zero {لم يتبقَّ أي يوم} one {يتبقى يوم واحد} two {يتبقى يومان} few {تتبقى # أيام} many {يتبقى # يومًا} other {يتبقى # يوم}}",
+    "subscriptionInactive": "لا يوجد اشتراك نشط",
+    "manageSubscription": "إدارة الاشتراك",
+    "subscriptionSubscribe": "عرض الخطة",
     "practiceCountryOther": "دولة أخرى",
     "fullNameHint": "أضف لقبك إن أردت (Dr.، Prof.)؛ يظهر في التحيات."
   },
