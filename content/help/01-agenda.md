@@ -10,7 +10,7 @@
 5. Toque em **Salvar**.
 Se o horário estiver bloqueado, o app mostra o bloqueio e pergunta se você quer agendar mesmo assim. Se já houver outra consulta no mesmo horário, não é possível salvar: o app diz com quem é e você escolhe outro horário.
 {pending:mobile#91} Fora do horário de atendimento (ou num dia que não é de atendimento), o app também pergunta antes de agendar.
-{pending:mobile#111} Se o paciente tiver conta no SolvyMed, ele recebe uma notificação no idioma dele quando você agenda pelo app (também em consultas recorrentes). Horários bloqueados e consultas no passado não notificam.
+{pending:mobile#111} Se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você agenda pelo app (também em consultas recorrentes). Horários bloqueados e consultas no passado não notificam.
 **en**
 1. Tap **+** (or **New appointment**).
 2. Pick the patient (type the name to search) or add a new one.
@@ -19,7 +19,7 @@ Se o horário estiver bloqueado, o app mostra o bloqueio e pergunta se você que
 5. Tap **Save**.
 If the time is blocked, the app shows the block and asks whether to book anyway. If another appointment already takes that time, it can't be saved: the app says whose it is and you pick another time.
 {pending:mobile#91} Outside the working hours (or on a day that isn't a working day), the app also asks before booking.
-{pending:mobile#111} If the patient has a SolvyMed account, they get a notification in their language when you book in the app (recurring appointments too). Blocked time and past appointments don't notify.
+{pending:mobile#111} If the patient has a SolvyMed account, they get a notification when you book in the app (recurring appointments too). Blocked time and past appointments don't notify.
 **No site:** Em **Agenda**, clique em **Nova Consulta** (também há o botão na **Visão geral**). Escolha o paciente, a data, o início, a duração, o tipo, o procedimento e a forma de pagamento (particular ou convênio), e clique em **Salvar Consulta**. O valor vem do procedimento escolhido.
 **On the website:** In the **Schedule**, click **New Appointment** (there's also a button on the **Overview**). Choose the patient, date, start, duration, type, procedure and payment (private or insurance), and click **Save Appointment**. The amount comes from the chosen procedure.
 `open:new-appointment`
@@ -62,12 +62,12 @@ Patients can't request appointments in blocked time. You can still book over it 
 1. Na **Agenda**, toque na consulta.
 2. Para remarcar: altere a data ou o horário e toque em **Salvar**.
 3. Para cancelar: mude o status para **Cancelado**.
-{pending:mobile#111} Se o paciente tiver conta no SolvyMed, ele recebe uma notificação no idioma dele quando você remarca ou cancela pelo app (também ao arquivar o paciente). Consultas no passado não notificam.
+{pending:mobile#111} Se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você remarca ou cancela pelo app (também ao arquivar o paciente). Consultas no passado não notificam.
 **en**
 1. In the **Schedule**, tap the appointment.
 2. To move it: change the date or time and tap **Save**.
 3. To cancel it: change the status to **Cancelled**.
-{pending:mobile#111} If the patient has a SolvyMed account, they get a notification in their language when you move or cancel in the app (also when you archive the patient). Past appointments don't notify.
+{pending:mobile#111} If the patient has a SolvyMed account, they get a notification when you move or cancel in the app (also when you archive the patient). Past appointments don't notify.
 **No site:** Remarcar ainda não está disponível no site; use o app. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**.
 **On the website:** Moving an appointment isn't available on the website yet; use the app. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**.
 `open:schedule`
