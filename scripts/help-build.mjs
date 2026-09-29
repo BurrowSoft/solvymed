@@ -86,7 +86,8 @@ export function parseBatch(file, text, conditions = {}) {
       }
       if (!lang) throw new Error(`${id}: text outside a language block: "${line.slice(0, 50)}"`);
       if ((m = line.match(/^\{pending:([\w#.,-]+)\}\s+(.+)$/))) {
-        if (m[1].split(",").every(isMet)) a.body[lang].push(m[2]);
+        // Every id checked (an unknown one fails the build), then all must be met.
+        if (m[1].split(",").map(isMet).every(Boolean)) a.body[lang].push(m[2]);
         continue;
       }
       a.body[lang].push(line);
