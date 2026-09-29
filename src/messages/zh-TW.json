@@ -445,6 +445,8 @@
     "accessKindExam": "檢查",
     "accessKindPrescription": "處方",
     "accessKindFile": "檔案",
+    "accessKindExport": "隨病患清單匯出 (CSV)",
+    "accessKindImported": "開啟了匯入的資料",
     "accessColWhen": "時間",
     "accessColWho": "人員",
     "accessColWhat": "內容"

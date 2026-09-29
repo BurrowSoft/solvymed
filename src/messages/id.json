@@ -445,6 +445,8 @@
     "accessKindExam": "Pemeriksaan",
     "accessKindPrescription": "Resep",
     "accessKindFile": "File",
+    "accessKindExport": "Diekspor dalam daftar pasien (CSV)",
+    "accessKindImported": "Membuka data impor",
     "accessColWhen": "Kapan",
     "accessColWho": "Siapa",
     "accessColWhat": "Apa"

@@ -445,6 +445,8 @@
     "accessKindExam": "Xét nghiệm",
     "accessKindPrescription": "Đơn thuốc",
     "accessKindFile": "Tệp",
+    "accessKindExport": "Đã xuất trong danh sách bệnh nhân (CSV)",
+    "accessKindImported": "Đã mở dữ liệu đã nhập",
     "accessColWhen": "Khi nào",
     "accessColWho": "Ai",
     "accessColWhat": "Nội dung"

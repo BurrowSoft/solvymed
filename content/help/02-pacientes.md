@@ -125,3 +125,16 @@ Open the patient and tap **Invite to the app**. Send the personal code (or link)
 **No site:** Ainda não disponível no site; use o app.
 **On the website:** Not available on the website yet; use the app.
 `open:settings`
+
+---
+## P11. Dados importados / Imported data
+**pt-BR**
+Pacientes trazidos de outro sistema podem ter **Dados importados**: as colunas da planilha que não viraram um campo do SolvyMed. No app, abra o paciente e toque em **Dados importados** para ver os campos e de onde vieram ("Importado de … em …").
+Só você (médico) vê os dados importados; secretárias(os) e o paciente não. Quando você os abre, isso fica registrado na aba **Acessos** do paciente ("Abriu os dados importados"); aberturas repetidas em menos de um minuto contam uma vez só.
+**en**
+Patients brought from another system may have **Imported data**: the spreadsheet columns that didn't become a SolvyMed field. In the app, open the patient and tap **Imported data** to see the fields and where they came from ("Imported from … on …").
+Only you (the doctor) can see imported data; secretaries and the patient can't. When you open it, it's recorded in the patient's **Access** tab ("Opened the imported data"); repeated openings within a minute count once.
+**No site:** Ainda não disponível no site; use o app.
+**On the website:** Not available on the website yet; use the app.
+`open:patients`
+`requires:import-extras-live`

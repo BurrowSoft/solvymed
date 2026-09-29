@@ -445,6 +445,8 @@
     "accessKindExam": "Examen",
     "accessKindPrescription": "Receta",
     "accessKindFile": "Archivo",
+    "accessKindExport": "Exportado en la lista de pacientes (CSV)",
+    "accessKindImported": "Abrió los datos importados",
     "accessColWhen": "Cuándo",
     "accessColWho": "Quién",
     "accessColWhat": "Qué"
