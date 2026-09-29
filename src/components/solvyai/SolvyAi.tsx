@@ -9,7 +9,7 @@ import { maskPersonalData, MAX_MESSAGE_CHARS, MAX_TURNS, MIN_SECONDS_BETWEEN } f
 import type { AnswerBlock, AnswerChunk, AssistantBackend, AssistantScreen, AssistantUsage, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
 import { isInternalHref, webPath } from "@/lib/assistant/targets";
 import { formatDateLabel } from "@/lib/dateLabels";
-import { BUTTON_EVENT, readButtonHidden } from "./SolvyAiSettings";
+import { BUTTON_EVENT, CLOSED_EVENT, OPEN_EVENT, readButtonHidden } from "./SolvyAiSettings";
 import { helpLang, inlineSegments } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { track } from "@/lib/track";
@@ -142,8 +142,10 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
           const live = [...blocks, { type: "text" as const, text: current }];
           setTurns([...history, { role: "assistant", blocks: live, streaming: true }]);
         } else if (chunk.kind === "block") {
-          // A text block closes the streamed text; other blocks come whole.
-          if (chunk.block.type === "text") { blocks = [...blocks, { type: "text", text: current }]; current = ""; }
+          // A text block closes the streamed text (the model's comes empty,
+          // after its deltas); a fixed line (confirm_failed) carries its own
+          // text. Other blocks come whole.
+          if (chunk.block.type === "text") { blocks = [...blocks, { type: "text", text: current || chunk.block.text }]; current = ""; }
           // Fail closed: a card that must ask twice but carries no second
           // question is never shown, so it can't be confirmed without asking.
           else if (chunk.block.type === "card" && !cardIsSafe(chunk.block.card)) blocks = [...blocks, { type: "text", text: t("unavailable") }];
@@ -195,10 +197,12 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
   // server explains and offers fresh times, in the conversation.
   const confirmFailed = (card: ConfirmationCard, code: string) => {
     setCardDone((d) => ({ ...d, [card.id]: "failed" }));
-    // Fresh times only when the time was taken; anything else just says
-    // it wasn't saved (on the card).
+    // Fresh times only when the time was taken, and a line when a cancel
+    // is no longer allowed; anything else just says it wasn't saved (on
+    // the card).
     // (A series: one date's fresh times don't fit; the card just says it wasn't saved.)
-    if (code !== "slot_taken" || (card.action.kind !== "book_appointment" && card.action.kind !== "move_appointment") || card.action.args.repeat) return;
+    const notCancellable = code === "appointment_not_cancellable" && card.action.kind === "cancel_appointment";
+    if (!notCancellable && (code !== "slot_taken" || (card.action.kind !== "book_appointment" && card.action.kind !== "move_appointment") || card.action.args.repeat)) return;
     setBusy(true);
     void play(turns, backend.reportConfirmFailed(code, card.action, locale));
   };
@@ -231,6 +235,22 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
     return () => clearTimeout(id);
   }, [toast]);
 
+  // Closing tells the tour (paused by "Experimentar agora") it can resume.
+  const closePanel = () => { setOpen(false); window.dispatchEvent(new Event(CLOSED_EVENT)); };
+  // The tour's "Experimentar agora": open and ask its question.
+  const sendRef = useRef(send);
+  sendRef.current = send;
+  useEffect(() => {
+    const on = (e: Event) => {
+      const text = (e as CustomEvent<{ text?: string }>).detail?.text;
+      setOpen(true);
+      setMinimized(false);
+      if (text) setTimeout(() => void sendRef.current(text), 0);
+    };
+    window.addEventListener(OPEN_EVENT, on);
+    return () => window.removeEventListener(OPEN_EVENT, on);
+  }, []);
+
   const newConversation = () => { setTurns([]); setInput(""); setTooFast(false); };
 
   const openScreen = (href: string) => { if (!isInternalHref(href)) return; setMinimized(true); router.push(href); };
@@ -252,7 +272,7 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
             {!remote && <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">{t("preview")}</span>}
             <div className="ml-auto flex items-center gap-1">
               <button type="button" onClick={newConversation} className="rounded-lg px-2 py-1 text-xs font-semibold text-slate-500 hover:bg-slate-50">{t("newConversation")}</button>
-              <button type="button" onClick={() => setOpen(false)} aria-label={t("close")} className="rounded-lg px-2 py-1 text-lg leading-none text-slate-400 hover:bg-slate-50">✕</button>
+              <button type="button" onClick={closePanel} aria-label={t("close")} className="rounded-lg px-2 py-1 text-lg leading-none text-slate-400 hover:bg-slate-50">✕</button>
             </div>
           </header>
 

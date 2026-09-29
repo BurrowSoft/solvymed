@@ -136,6 +136,7 @@ const T = {
     conflictNone: (when: string, what: string, s: string, e: string) => `${when} às ${s} já tem ${what} (${s}–${e}). Qual outro horário?`,
     slotTaken: "Esse horário acabou de ser ocupado. Nada foi salvo. Qual destes horários?",
     slotTakenNone: "Esse horário acabou de ser ocupado. Nada foi salvo. Qual outro horário?",
+    notCancellable: "Só é possível cancelar consultas agendadas, confirmadas ou atrasadas. Nada foi salvo.",
     unblock: "Desbloquear horário", confirmReq: "Confirmar pedido", rejectReq: "Recusar pedido",
     decision: "Decisão", confirmIt: "Confirmar", rejectIt: "Recusar", note: "Observação",
     addPatient: "Novo paciente", fullName: "Nome", birth: "Nascimento",
@@ -166,6 +167,7 @@ const T = {
     conflictNone: (when: string, what: string, s: string, e: string) => `${when} at ${s} already has ${what} (${s}–${e}). Which other time?`,
     slotTaken: "That time was just taken. Nothing was saved. Which of these times?",
     slotTakenNone: "That time was just taken. Nothing was saved. Which other time?",
+    notCancellable: "Only scheduled, confirmed or late appointments can be cancelled. Nothing was saved.",
     unblock: "Unblock time", confirmReq: "Confirm request", rejectReq: "Decline request",
     decision: "Decision", confirmIt: "Confirm", rejectIt: "Decline", note: "Note",
     addPatient: "New patient", fullName: "Name", birth: "Date of birth",
@@ -440,8 +442,12 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
     warnings.push({ code: "outside_hours", text: onDate(hoursDate) + t.dayOffWarn(weekdayName(ctx, hoursDate)) });
     asks.push(onDate(hoursDate) + t.dayOffAsk(weekdayName(ctx, hoursDate)));
   }
-  const already = day.find((r) => r.patient_id === patientId && r.status !== "blocked");
-  if (already) warnings.push({ code: "same_patient_day", text: t.samePatientWarn(patient.full_name, hhmm(already.start_time)) });
+  // The patient already booked on a (series) date: the first such date,
+  // named like the block / hours warnings (7f).
+  const already = all
+    .filter((r) => r.patient_id === patientId && r.status !== "blocked" && dates.includes(r.date))
+    .sort((a, b) => a.date.localeCompare(b.date) || a.start_time.localeCompare(b.start_time))[0];
+  if (already) warnings.push({ code: "same_patient_day", text: onDate(already.date) + t.samePatientWarn(patient.full_name, hhmm(already.start_time)) });
 
   const past = date < ctx.today || (date === ctx.today && start <= ctx.nowTime);
   const stop = past
@@ -571,6 +577,9 @@ async function proposeCancel(ctx: ToolContext, input: Record<string, unknown>): 
   if (!a || a.status === "blocked") return unseen("appointment");
   if (a.status === "cancelled" || a.status === "rejected") return err("That appointment isn't active; tell the user.");
   const isRequest = a.status === "tentative" || a.status === "proposal";
+  // Completed / absent (and anything else not live): the same rule as the
+  // app's executor (only scheduled, confirmed or late).
+  if (!isRequest && !MOVABLE_STATUSES.includes(a.status)) return err("Only scheduled, confirmed or late appointments can be cancelled; this one is " + a.status + ". Tell the user.");
   const c = card(ctx, {
     icon: "calendar-x",
     title: t.cancelAppt,
@@ -761,10 +770,12 @@ export async function runTool(ctx: ToolContext, name: string, input: Record<stri
   }
 }
 
-// A save the normal path refused (the slot was just taken): fresh times,
-// no model call (§5a). Only the date and time of the client's action are
+// A save the normal path refused: the slot was just taken → fresh times;
+// a cancel of an appointment that's no longer live → a fixed line. No
+// model call (§5a). Only the date and time of the client's action are
 // used, re-validated (a9: the rest is untrusted).
-export async function confirmFailedBlock(ctx: ToolContext, action: unknown): Promise<AnswerBlock | null> {
+export async function confirmFailedBlock(ctx: ToolContext, action: unknown, code = "slot_taken"): Promise<AnswerBlock | null> {
+  if (code === "appointment_not_cancellable") return { type: "text", text: T[ctx.lang].notCancellable };
   const args = (action as { args?: Record<string, unknown> } | null)?.args ?? {};
   const { date, start } = args;
   if (!isDate(date) || !isTime(start)) return null;

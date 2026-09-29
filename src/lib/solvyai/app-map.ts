@@ -78,6 +78,7 @@ export const ACTIONS: AppMapAction[] = [
       "Dates are Gregorian; a year of 2400 or more is never saved or converted.",
       "Recurring (app and website): weekly, every 2 weeks or monthly, 2–52 appointments; every date is checked; if any conflicts, none are saved and the conflicting date is named; blocked time on any date is asked once, naming the date. A monthly series keeps the day number (the 31st rolls over into the next month).",
       "On the website a recurring series is also checked against the working hours: outside them or a day off on any date is asked once, naming the date.",
+      "SolvyAI's card warns (⚠, not a question) when the patient already has an appointment that day; in a series it names the first such date.",
       { text: "In the app too: a series outside the working hours or on a day off is asked once, naming the date.", pending: ["mobile#91"] },
       "It's saved as scheduled, with payment pending; the value is the chosen procedure's price (none when it has no price).",
       "Every field that will be saved is on the card; defaults are marked (padrão).",
@@ -124,6 +125,7 @@ export const ACTIONS: AppMapAction[] = [
     inputs: { required: ["which appointment"], optional: [], defaults: [] },
     rules: [
       "Booking requests (tentative / proposal) are never cancelled this way: they're rejected on the request card.",
+      "Only scheduled, confirmed or late appointments can be cancelled; completed, absent, cancelled or rejected ones can't (SolvyAI says so; nothing is saved).",
       "A cancelled appointment no longer counts as 'to receive' and frees the time.",
       "Deleting an appointment is a different action and never done by SolvyAI.",
       "Archiving a patient on the website cancels their upcoming appointments.",
@@ -276,6 +278,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     help: "C9",
   },
   {
+    rule: {
+      text: "Imported data (\"Dados importados\" / \"Imported data\"): a patient brought from another system may have extra spreadsheet columns kept as imported data. Only the doctor sees them (in the app: open the patient → Dados importados, with \"Importado de … em …\"); opening it is logged in the patient's Access tab (\"Abriu os dados importados\" / \"Opened the imported data\"; repeated openings within a minute count once). SolvyAI never reads them; send the doctor there.",
+      pending: ["import-extras-live"],
+    },
+    help: "P11",
+  },
+  {
     rule: { text: "\"Mostrar botão do assistente\" / \"Show the assistant button\" (Settings → SolvyAI; per phone in the app, per browser on the website) hides or shows the ✦ button.", pending: ["mobile#99", "solvyai-live"] },
     help: "C9",
   },
@@ -287,10 +296,12 @@ export const NEVER: { what: string; help: string }[] = [
   { what: "Medical records: reading, writing or correcting them (a record locks 24 h after it's written; after that it can only be corrected, never deleted).", help: "P4" },
   { what: "Prescriptions (on the website, PDF on a prescription opens a print view: \"Imprimir / Salvar PDF\" / \"Print / Save as PDF\", with a blank line to sign by hand).", help: "P6" },
   { what: "Exams and files (photos or PDFs; the doctor adds them in the patient's Exams or Files tab, in the app or on the website; within 24 h of upload a file can be deleted, after that only hidden with a reason).", help: "P7" },
+  { what: "Exporting a patient's history (on the website, \"PDF do histórico\" / \"History PDF\" at the top of the patient opens a print view: \"Imprimir / Salvar PDF\").", help: "P8" },
   { what: "Deleting or archiving a patient.", help: "P3" },
   { what: "Closing the account.", help: "K4" },
   { what: "Changing the password (Settings → Change password, on the app and the website; the other devices are signed out).", help: "K2" },
   { what: "Payment and Pix / PromptPay settings.", help: "G3" },
+  { what: "Receipts (on the website: Payments → a received appointment → \"Recibo\" / \"Receipt\", a print view, for the doctor and the secretary; a Thai practice's numbered receipts are issued in the app).", help: "G5" },
   { what: "The subscription and plan (the doctor sees the plan's status in Settings → Subscription on the website; \"Manage subscription\" opens Stripe's page for a card subscription).", help: "K1" },
   { what: "Team members (inviting or removing a secretary).", help: "C4" },
   { what: "The clinic's country.", help: "C1" },

@@ -2,9 +2,10 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
-import { formatShortDate } from "@/lib/dateLabels";
-import { PRINT_CSS, toDocTemplate } from "@/lib/prescriptionDoc";
+import { lookupPracticeCountry } from "@/lib/practiceCountry";
+import { PRINT_CSS, docDate, toDocTemplate } from "@/lib/prescriptionDoc";
 import { PrescriptionDocument } from "./PrescriptionDocument";
+import { AccessLogFailed, logAccesses } from "@/components/printAccess";
 import { PrintToolbar } from "@/components/PrintToolbar";
 
 // The prescription's print view (Help P6 on the website): the same layout
@@ -37,8 +38,18 @@ export default async function PrescriptionPrintPage({
   const rx = rxResult.data as { id: string; date: string; notes: string | null; prescription_items: { name: string; dosage: string; frequency: string; duration: string }[] | null } | null;
   if (!patient || !rx) notFound();
 
-  // The access log (migration 111), best effort like the app's.
-  await supabase.rpc("log_record_access", { p_patient_id: patient.id, p_kind: "prescription", p_object_ref: rx.id }).then(() => {}, () => {});
+  // The date in the practice country's format (TH: Buddhist era). Unknown
+  // country: an error, never a guessed calendar (7f). Checked before the
+  // log, so a failed page records no access.
+  const lookup = await lookupPracticeCountry(supabase, user.id, user.id);
+  if (!lookup.ok) return <AccessLogFailed backHref={`${prefix}/dashboard/patients/${patient.id}`} text={t("countryFailed")} backLabel={t("back")} />;
+  const country = lookup.country;
+
+  // The access log (migration 111). Fail closed (UX 36): no print unless
+  // the access was recorded.
+  if (!(await logAccesses(supabase, patient.id, [{ kind: "prescription", ref: rx.id }]))) {
+    return <AccessLogFailed backHref={`${prefix}/dashboard/patients/${patient.id}`} text={t("accessLogFailed")} backLabel={t("back")} />;
+  }
 
   const prof = profResult.data as { full_name: string | null; professional_registration: string | null } | null;
 
@@ -57,7 +68,7 @@ export default async function PrescriptionPrintPage({
             notes: t("notes"), footer: t("footer"), corrected: t("corrected"),
           }}
           patientName={patient.full_name}
-          date={formatShortDate(locale, rx.date)}
+          date={docDate(country, rx.date)}
           corrected={(correctionResult.data ?? []).length > 0}
           items={rx.prescription_items ?? []}
           notes={rx.notes?.trim() ? rx.notes : null}

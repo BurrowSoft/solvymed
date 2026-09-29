@@ -13,6 +13,42 @@ const ERROR_CODE_KEY: Record<string, string> = {
   generic: "errorGeneric",
 };
 
+// Particular / convênio (Help G6, like the app's report filter): anything
+// not private counts as insurance.
+export function TypeFilter({ current }: { current: "all" | "private" | "insurance" }) {
+  const t = useTranslations("payments");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const TYPES = [
+    { key: "all", label: t("typeAll") },
+    { key: "private", label: t("typePrivate") },
+    { key: "insurance", label: t("typeInsurance") },
+  ] as const;
+  const set = useCallback((type: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (type === "all") params.delete("type"); else params.set("type", type);
+    router.push(`${pathname}?${params.toString()}`);
+  }, [router, pathname, searchParams]);
+  return (
+    <div role="group" aria-label={t("typeFilterLabel")} className="flex gap-1 rounded-xl border border-slate-200 bg-slate-50 p-1">
+      {TYPES.map(p => (
+        <button
+          key={p.key}
+          type="button"
+          aria-pressed={current === p.key}
+          onClick={() => set(p.key)}
+          className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-all ${
+            current === p.key ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+          }`}
+        >
+          {p.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function PeriodFilter({ current }: { current: string }) {
   const t = useTranslations("payments");
   const router = useRouter();

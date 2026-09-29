@@ -61,15 +61,22 @@ export async function listPatientFiles(patientId: string, kind: FileKind): Promi
 }
 
 // A short-lived link to open one file, logged in the patient's access log
-// (TH-3, migration 111: kind "file", the storage path).
+// (TH-3, migration 111: kind "file", the storage path). Fail closed (UX
+// 36): no link unless the access was recorded first.
 export async function openPatientFile(patientId: string, path: string): Promise<Result<string>> {
   const me = await doctor(patientId);
   if (!me) return { ok: false, code: "not_doctor" };
   if (!pathBelongs(path, me.uid, patientId)) return { ok: false, code: "generic" };
+  let logged = false;
+  try {
+    const { error: logError } = await me.supabase.rpc("log_record_access", { p_patient_id: patientId, p_kind: "file", p_object_ref: path });
+    logged = !logError;
+  } catch {
+    logged = false;
+  }
+  if (!logged) return { ok: false, code: "access_log_failed" };
   const { data, error } = await me.supabase.storage.from(BUCKET).createSignedUrl(path, SIGNED_URL_SECONDS);
   if (error || !data?.signedUrl) return { ok: false, code: "generic" };
-  // Best effort, like the app's: the log never blocks opening the file.
-  await me.supabase.rpc("log_record_access", { p_patient_id: patientId, p_kind: "file", p_object_ref: path }).then(() => {}, () => {});
   return { ok: true, data: data.signedUrl };
 }
 

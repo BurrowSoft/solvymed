@@ -60,8 +60,8 @@ SolvyMed doesn't receive the money: Pix goes straight to your account.
 Abra uma consulta paga e toque em **Gerar recibo em PDF**. Compartilhe pelo WhatsApp, e-mail ou outro app.
 **en**
 Open a paid appointment and tap **Create receipt PDF**. Share it by WhatsApp, email or another app.
-**No site:** Ainda não disponível no site; use o app.
-**On the website:** Not available on the website yet; use the app.
+**No site:** Em **Pagamentos**, na consulta recebida, clique em **Recibo** e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Médico e secretária(o) podem emitir. Clínicas na Tailândia: os recibos numerados são emitidos no app.
+**On the website:** In **Payments**, on the received appointment, click **Receipt** and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. The doctor and the secretary can create it. Clinics in Thailand: numbered receipts are issued in the app.
 `open:payments`
 
 ---
@@ -70,6 +70,6 @@ Open a paid appointment and tap **Create receipt PDF**. Share it by WhatsApp, em
 Em **Início**, veja o resumo da semana, do mês ou de todo o período, com filtro por particular ou convênio.
 **en**
 On **Home**, see the summary for the week, the month or all time, filtered by private or insurance.
-**No site:** Na **Visão geral** você vê as consultas de hoje, o valor pendente, o número de pacientes e o recebido no mês. O detalhe por período fica em **Pagamentos**; o filtro particular/convênio está só no app.
-**On the website:** The **Overview** shows today's appointments, the pending amount, the number of patients and what was received this month. The breakdown by period is in **Payments**; the private/insurance filter is app-only.
+**No site:** Na **Visão geral** você vê as consultas de hoje, o valor pendente, o número de pacientes e o recebido no mês. O detalhe por período fica em **Pagamentos**, com o filtro **Todos / Particular / Convênio**.
+**On the website:** The **Overview** shows today's appointments, the pending amount, the number of patients and what was received this month. The breakdown by period is in **Payments**, with the **All / Private / Insurance** filter.
 `open:home`

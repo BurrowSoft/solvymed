@@ -102,8 +102,8 @@ Files are private: only you can open them, through temporary links.
 Abra o paciente e toque no ícone de exportar histórico. O PDF sai no idioma do app, com datas e valores no formato local.
 **en**
 Open the patient and tap the export-history icon. The PDF comes out in the app's language, with local date and currency formats.
-**No site:** Ainda não disponível no site; use o app.
-**On the website:** Not available on the website yet; use the app.
+**No site:** Abra o paciente e clique em **PDF do histórico** (no topo), depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Sai no idioma do site, com as datas no formato do país da clínica (na Tailândia, na era budista), com todos os registros e receitas e uma linha em branco para assinar à mão.
+**On the website:** Open the patient and click **History PDF** (at the top), then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. It comes out in the website's language, with dates in the clinic country’s format (in Thailand, the Buddhist era), with every record and prescription and a blank line to sign by hand.
 `open:patients`
 
 ---
@@ -125,3 +125,16 @@ Open the patient and tap **Invite to the app**. Send the personal code (or link)
 **No site:** Ainda não disponível no site; use o app.
 **On the website:** Not available on the website yet; use the app.
 `open:settings`
+
+---
+## P11. Dados importados / Imported data
+**pt-BR**
+Pacientes trazidos de outro sistema podem ter **Dados importados**: as colunas da planilha que não viraram um campo do SolvyMed. No app, abra o paciente e toque em **Dados importados** para ver os campos e de onde vieram ("Importado de … em …").
+Só você (médico) vê os dados importados; secretárias(os) e o paciente não. Quando você os abre, isso fica registrado na aba **Acessos** do paciente ("Abriu os dados importados"); aberturas repetidas em menos de um minuto contam uma vez só.
+**en**
+Patients brought from another system may have **Imported data**: the spreadsheet columns that didn't become a SolvyMed field. In the app, open the patient and tap **Imported data** to see the fields and where they came from ("Imported from … on …").
+Only you (the doctor) can see imported data; secretaries and the patient can't. When you open it, it's recorded in the patient's **Access** tab ("Opened the imported data"); repeated openings within a minute count once.
+**No site:** Ainda não disponível no site; use o app.
+**On the website:** Not available on the website yet; use the app.
+`open:patients`
+`requires:import-extras-live`

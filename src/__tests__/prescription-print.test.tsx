@@ -73,11 +73,13 @@ const h = vi.hoisted(() => ({
   rx: { id: "rx-1", date: "2026-10-01", notes: null, prescription_items: [] } as unknown,
   filters: [] as [string, string, unknown][],
   rpcs: [] as unknown[],
+  // The access-log write fails: no document (UX 36, fail closed).
+  logFails: false,
 }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
     auth: { getUser: async () => ({ data: { user: { id: "doc-1" } } }) },
-    rpc: async (fn: string, args: unknown) => { h.rpcs.push({ fn, args }); return { data: null, error: null }; },
+    rpc: async (fn: string, args: unknown) => { h.rpcs.push({ fn, args }); return { data: null, error: h.logFails ? { message: "not_allowed" } : null }; },
     from: (table: string) => {
       const q: Record<string, unknown> = {};
       q.select = () => q;
@@ -97,12 +99,36 @@ vi.mock("next/navigation", () => ({
   notFound: () => { throw new Error("NOT_FOUND"); },
   redirect: () => { throw new Error("REDIRECT"); },
 }));
+const country = vi.hoisted(() => ({ code: "BR" as string | null }));
+vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => (country.code ? { ok: true, country: country.code } : { ok: false, code: "exception" }) }));
+vi.mock("@/components/PrintToolbar", () => ({ PrintToolbar: () => null }));
 
 import PrintPage from "@/app/[locale]/(site)/dashboard/patients/[id]/prescriptions/[rxId]/print/page";
+import { docDate, docTime, docToday } from "@/lib/prescriptionDoc";
+
+// Printed dates follow the PRACTICE's country, not the screen (UX 36).
+describe("document dates", () => {
+  it("dd/mm/yyyy, the Buddhist era for a Thai practice", () => {
+    expect(docDate("BR", "2026-10-01")).toBe("01/10/2026");
+    expect(docDate("TH", "2026-10-01")).toBe("01/10/2569");
+    expect(docDate("ZZ", "2026-10-01")).toBe("01/10/2026");
+    expect(docTime("9:05:00")).toBe("09:05");
+    // 02:30 UTC on Oct 2 is still Oct 1 in São Paulo.
+    expect(docToday("BR", "America/Sao_Paulo", new Date("2026-10-02T02:30:00Z"))).toBe("01/10/2026");
+    expect(docToday("TH", "Asia/Bangkok", new Date("2026-10-02T02:30:00Z"))).toBe("02/10/2569");
+  });
+
+  it("the print page uses the practice's calendar whatever the UI language", async () => {
+    country.code = "TH";
+    const { container } = render(await PrintPage({ params: Promise.resolve({ locale: "en", id: "p-1", rxId: "rx-1" }) }));
+    expect(container.textContent).toContain("01/10/2569");
+    country.code = "BR";
+  });
+});
 
 describe("print page", () => {
   const params = Promise.resolve({ locale: "pt-BR", id: "p-1", rxId: "rx-1" });
-  beforeEach(() => { h.role = "professional"; h.patient = { id: "p-1", full_name: "Maria" }; h.rx = { id: "rx-1", date: "2026-10-01", notes: null, prescription_items: [] }; h.filters = []; h.rpcs = []; });
+  beforeEach(() => { h.role = "professional"; h.patient = { id: "p-1", full_name: "Maria" }; h.rx = { id: "rx-1", date: "2026-10-01", notes: null, prescription_items: [] }; h.filters = []; h.rpcs = []; h.logFails = false; });
 
   it("a secretary never gets it", async () => {
     h.role = "secretary";
@@ -127,5 +153,21 @@ describe("print page", () => {
   it("logs the prescription access", async () => {
     await PrintPage({ params });
     expect(h.rpcs).toEqual([{ fn: "log_record_access", args: { p_patient_id: "p-1", p_kind: "prescription", p_object_ref: "rx-1" } }]);
+  });
+
+  it("no document when the access can't be recorded (fail closed)", async () => {
+    h.logFails = true;
+    const { container } = render(await PrintPage({ params }));
+    expect(container.querySelector("#print-doc")).toBeNull();
+    expect(container.querySelector("[role=alert]")?.textContent).toContain("accessLogFailed");
+  });
+
+  it("an unknown practice country: an error, not a guessed calendar, and no access logged", async () => {
+    country.code = null;
+    const { container } = render(await PrintPage({ params }));
+    expect(container.querySelector("#print-doc")).toBeNull();
+    expect(container.querySelector("[role=alert]")?.textContent).toContain("countryFailed");
+    expect(h.rpcs).toEqual([]);
+    country.code = "BR";
   });
 });
