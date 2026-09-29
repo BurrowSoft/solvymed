@@ -475,6 +475,13 @@ describe("SolvyAI actions mode: a recurring series (the website's Repetir)", () 
     expect(card.secondConfirm?.question).toBe("14/10/2026: Este horário está bloqueado (12:00–13:00). Agendar mesmo assim?");
   });
 
+  it("the patient already booked on a later date: the warning names that date (7f)", async () => {
+    const t = setup(series({ every: "week", count: 3 }));
+    t.tables.appointments.push({ id: "m-x", professional_id: "doc-1", patient_id: "p-maria", patient_name: "Maria Silva", date: "2026-10-21", start_time: "09:00:00", end_time: "09:30:00", status: "scheduled", payment_status: "pending", payment_amount: null });
+    const card = cardOf((await run(t, ask("…"))).blocks)!;
+    expect(card.warnings).toContainEqual({ code: "same_patient_day", text: "21/10/2026: ⚠ Maria Silva já tem consulta nesse dia às 09:00" });
+  });
+
   it("a bad repeat goes back to the model", async () => {
     const t = setup(series({ every: "day", count: 3 }));
     expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();

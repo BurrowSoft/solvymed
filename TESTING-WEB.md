@@ -8950,3 +8950,24 @@ pr150 fixtures.
 **Master sync:** master (#152–#155) merged in under this docs commit,
 cleanly.
 **Review: clean (7f).** **Merge gate: 🟢 for `fdf91b2`.**
+
+## PR #156 (`fix/solvyai-series-same-patient-date`, base master) — a SolvyAI series card's same-patient warning checks every date and names the first, 🟢 at `30c07ec`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `30c07ec` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts `find_patients` →
+  `propose_book_appointment`.
+- **Data:** the prod DB, with a throwaway doctor + patient (deleted
+  afterwards). The patient already has 09:00 on **13/10** and **20/10**
+  (the 2nd and 3rd weekly dates).
+
+| Row | Result |
+|---|---|
+| Weekly ×3 from 06/10 at 11:00 | ✅ the card shows "Repetir: Semanal, 3 consultas (até 20/10/2026)" and **"13/10/2026: ⚠ Opus Serie Aviso já tem consulta nesse dia às 09:00"**, the FIRST such date, although 20/10 also has one |
+| Confirmar | ✅ the warning doesn't block: 06/10, 13/10, 20/10 at 11:00 are saved next to the existing 09:00s |
+| Single booking on 13/10 at 15:00 | ✅ "⚠ Opus Serie Aviso já tem consulta nesse dia às 09:00", **no date prefix** (as before) |
+
+**CI at `30c07ec`:** ✅. **Review: clean.** **Merge gate: 🟢 for `30c07ec`.** This docs block sits on top of a master sync (after #155 merged; clean).
