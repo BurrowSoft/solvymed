@@ -8032,3 +8032,64 @@ for the patient-accept step. This docs commit includes that master sync.
 **CI at `9c0e60a`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `9c0e60a`.** This docs commit sits on top of a master sync (8 behind,
 clean merge; it brings #139).
+
+## PR #134 (`feat/solvyai-actions-2`, base master) — SolvyAI actions part 2: unblock, booking decision, add patient, 🟢 at `a39dbf3`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `a39dbf3` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it answers the model call with scripted Anthropic
+  SSE `tool_use` turns. Ids are taken from the route's own
+  `list_appointments` results. The same preload logs Expo pushes and never
+  sends them.
+- **Data:** the real prod DB, with throwaway fixtures (all deleted
+  afterwards):
+  - a doctor with a confirmed appointment, a lunch block, a tentative
+    request and a doctor's proposal;
+  - an invited patient with a device token.
+- **Flow:** everything goes through the panel. Confirmar and Desfazer run
+  the screens' own actions.
+
+**Unblock:**
+- **U1:** the card reads "Desbloquear horário | Terça-feira, 06/10/2026,
+  12:00–13:00 | Motivo: Almoço Opus". Confirmar → the block row is gone.
+  Desfazer → the block is re-created with the same 12:00–13:00 and reason.
+- **U2:** an appointment id given as `blockId` → no card; the model is
+  told it isn't a block.
+
+**Booking decision:**
+- **D1, confirming the tentative request:** status `confirmed`, the patient
+  linked (`linked_patient_id` set). One push: "Consulta confirmada | Sua
+  consulta foi confirmada. Observação: Até lá!". The toast shows "✓ Feito"
+  with **no Desfazer**.
+- **D2, confirming a proposal:** the card says "Este pedido está aguardando
+  a resposta do paciente à nova proposta; só é possível recusar."
+  Confirmar is **disabled**.
+- **D3, declining the proposal:** status `rejected`. One push: "Pedido não
+  aceito | Não foi possível aceitar o seu pedido de consulta."
+
+**Add patient:**
+- **A1, name + birth date:**
+  - The card shows only Nome and Nascimento.
+  - Saved with phone, email and CPF all null.
+  - Desfazer → the patient row is deleted. On `next dev` the delete lands
+    more than 20 s after the click (first compile of the undo); a 90 s
+    poll confirmed it.
+- **A2, duplicates:**
+  - Same name + birth date as an existing patient → the first tool result
+    returns "Possible duplicates" to the model, and no card is shown.
+  - With `createAnyway` → the card lists "Parecidos já cadastrados: Opus
+    Bruno Lima (01/02/1985)".
+  - A name alone doesn't match. That's by design: `find_similar_patients`
+    matches the same phone, or the same name + birth date, as in the form.
+- **A3, a typed phone:**
+  - "Cadastra a Ana 11 91234-5678" → the model saw "Cadastra a Ana
+    [phone]".
+  - Its `fullName: "Ana [phone]"` is refused ("That isn't a name…").
+  - No card; no patient row with "phone" in the name and no phone saved.
+
+**CI at `a39dbf3`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `a39dbf3`.** This docs commit
+sits on top of a master sync (43 behind, clean merge).
