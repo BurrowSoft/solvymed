@@ -8441,3 +8441,49 @@ push sink.
 was clean, with no change to this PR's code.
 **Review: clean (7f, `5a96210` / `dd58b72`).** **Merge gate: 🟢 for
 `dd58b72`.**
+
+## #143 Alterar senha on the website (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `a8dc0d8`, on its Vercel Preview (Playwright).
+- **Accounts:** throwaway doctors (pt-BR and en) and a secretary (pt-BR),
+  each signed in on two browsers:
+  - A changes the password;
+  - B is "another device";
+  - a third session exists only through the API.
+- **Where it shows:** Configurações → **Alterar senha** sits above Excluir
+  conta for the doctor. For the secretary it sits after Sair da clínica and
+  Tour guiado, above Excluir conta. The en card says **Change password**.
+
+| Row | pt-BR (doctor + secretary) | en (doctor) | Auth calls |
+|---|---|---|---|
+| All fields empty | ✅ "Preencha todos os campos." | ✅ "Please fill in all fields." | none |
+| New ≠ confirm | ✅ "As senhas não coincidem." | ✅ "Passwords do not match." | none |
+| 7 characters | ✅ "A senha deve ter pelo menos 8 caracteres." | ✅ "…at least 8 characters." | none |
+| New = current | ✅ "A nova senha deve ser diferente da senha atual." | ✅ "New password must differ…" | none |
+| Wrong current | ✅ "Sua senha atual está incorreta." The old password still signs in; the new one doesn't. | ✅ "Your current password is incorrect." | 1 sign-in only; no update |
+| Cancelar, then reopen | ✅ the fields and the error are cleared | ✅ | — |
+| Success | ✅ "Senha alterada com sucesso! As sessões nos outros aparelhos foram encerradas." The form closes. | ✅ "Password changed successfully! …" | sign-in, then update, then logout (others) |
+
+**After success (all 3 runs):**
+- **Passwords:** the old one is refused (400) and the new one signs in
+  (200).
+- **This browser (A)** stays signed in: reloading Settings stays on
+  Settings.
+- **The other browser (B)** is signed out: Settings and /dashboard both go
+  to /auth/login.
+- **The API session** is ended too: its refresh fails with 400, and /user
+  with its old access token returns 403.
+- **A fresh sign-in** with the new password reaches /dashboard.
+
+**Help and strings:**
+- **Help K2** (/help/k2 and /pt-BR/help/k2) shows the new website note:
+  - "No site: Configurações → Alterar senha: digite a senha atual e a
+    nova (duas vezes). As sessões nos outros aparelhos são encerradas;
+    este navegador continua conectado."
+  - The en page matches.
+- **Locales:** the `changePassword` namespace has all 14 keys in all 15
+  locales (Thai included), and `tooShort` keeps `{min}`.
+
+**Master sync:** master (#142) merged in under this docs commit. The merge
+was clean, with no change to this PR's code.
+**Review: clean (7f, `a8dc0d8`).** **Merge gate: 🟢 for `a8dc0d8`.**
