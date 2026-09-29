@@ -407,6 +407,7 @@
     "nameRequired": "Please enter the patient's full name.",
     "genericError": "Something went wrong. Please try again.",
     "tabAccessLog": "Access log",
+    "rxPdfAria": "Prescription PDF (print or save)",
     "accessLogIntro": "Who opened this patient's record, and when. Only you can see this log.",
     "accessLogEmpty": "No accesses recorded yet.",
     "accessLogFailed": "Couldn't load the access log. Please try again.",
@@ -1261,5 +1262,21 @@
     "cancel": "Cancel",
     "turnOn": "Turn on",
     "error": "Couldn't save. Try again."
+  },
+  "prescriptionDoc": {
+    "title": "Prescription",
+    "patient": "Patient",
+    "date": "Date",
+    "medications": "Medications",
+    "medication": "Medication",
+    "dosage": "Dosage",
+    "frequency": "Frequency",
+    "duration": "Duration",
+    "notes": "Notes",
+    "footer": "SolvyMed — Clinic management",
+    "corrected": "(corrected)",
+    "print": "Print / Save as PDF",
+    "printHint": "To save the file, choose \"Save as PDF\" in the print window.",
+    "back": "Back to the patient"
   }
 }

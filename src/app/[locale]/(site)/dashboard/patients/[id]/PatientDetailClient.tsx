@@ -773,14 +773,24 @@ function PrescriptionsTab({ patientId, prescriptions, isArchived, currentUserId,
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
             <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, rx.date)}</span>
           </div>
-          <EntryActions
-            editable={canEditEntry(rx, currentUserId) && !corrected}
-            isArchived={isArchived}
-            pending={pending}
-            onEdit={() => open({ mode: "edit", rx })}
-            onDelete={() => handleDelete(rx.id)}
-            onCorrect={() => open({ mode: "correct", rx })}
-          />
+          <div className="flex items-center gap-1">
+            {/* The print view (Help P6): "Imprimir / Salvar PDF" there. */}
+            <a
+              href={`${locale === "en" ? "" : `/${locale}`}/dashboard/patients/${patientId}/prescriptions/${rx.id}/print`}
+              className="rounded-lg px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-50"
+              aria-label={t("rxPdfAria")}
+            >
+              PDF
+            </a>
+            <EntryActions
+              editable={canEditEntry(rx, currentUserId) && !corrected}
+              isArchived={isArchived}
+              pending={pending}
+              onEdit={() => open({ mode: "edit", rx })}
+              onDelete={() => handleDelete(rx.id)}
+              onCorrect={() => open({ mode: "correct", rx })}
+            />
+          </div>
         </div>
         <div className={`space-y-2 ${corrected ? "opacity-60" : ""}`}>
           {rx.prescription_items.map((item, i) => (

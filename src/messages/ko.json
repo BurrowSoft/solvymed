@@ -407,6 +407,7 @@
     "nameRequired": "환자의 전체 이름을 입력하세요.",
     "genericError": "문제가 발생했습니다. 다시 시도하세요.",
     "tabAccessLog": "접근 기록",
+    "rxPdfAria": "처방전 PDF(인쇄 또는 저장)",
     "accessLogIntro": "이 환자의 기록을 누가 언제 열었는지 보여줍니다. 이 기록은 본인만 볼 수 있습니다.",
     "accessLogEmpty": "아직 기록된 접근이 없습니다.",
     "accessLogFailed": "접근 기록을 불러오지 못했습니다. 다시 시도하세요.",
@@ -1231,5 +1232,21 @@
     "cancel": "취소",
     "turnOn": "켜기",
     "error": "저장하지 못했습니다. 다시 시도하세요."
+  },
+  "prescriptionDoc": {
+    "title": "처방전",
+    "patient": "환자",
+    "date": "날짜",
+    "medications": "약물",
+    "medication": "약물",
+    "dosage": "용량",
+    "frequency": "빈도",
+    "duration": "기간",
+    "notes": "메모",
+    "footer": "SolvyMed — 클리닉 관리",
+    "corrected": "(수정됨)",
+    "print": "인쇄 / PDF로 저장",
+    "printHint": "파일을 저장하려면 인쇄 창에서 'PDF로 저장'을 선택하세요.",
+    "back": "환자로 돌아가기"
   }
 }

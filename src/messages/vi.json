@@ -407,6 +407,7 @@
     "nameRequired": "Vui lòng nhập họ tên đầy đủ của bệnh nhân.",
     "genericError": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "tabAccessLog": "Nhật ký truy cập",
+    "rxPdfAria": "PDF đơn thuốc (in hoặc lưu)",
     "accessLogIntro": "Ai đã mở hồ sơ của bệnh nhân này và khi nào. Chỉ bạn xem được nhật ký này.",
     "accessLogEmpty": "Chưa có lượt truy cập nào được ghi lại.",
     "accessLogFailed": "Không tải được nhật ký truy cập. Vui lòng thử lại.",
@@ -1231,5 +1232,21 @@
     "cancel": "Hủy",
     "turnOn": "Bật",
     "error": "Không thể lưu. Hãy thử lại."
+  },
+  "prescriptionDoc": {
+    "title": "Đơn thuốc",
+    "patient": "Bệnh nhân",
+    "date": "Ngày",
+    "medications": "Thuốc",
+    "medication": "Thuốc",
+    "dosage": "Liều dùng",
+    "frequency": "Tần suất",
+    "duration": "Thời gian dùng",
+    "notes": "Ghi chú",
+    "footer": "SolvyMed — Quản lý phòng khám",
+    "corrected": "(đã sửa)",
+    "print": "In / Lưu PDF",
+    "printHint": "Để lưu tệp, hãy chọn \"Lưu dưới dạng PDF\" trong cửa sổ in.",
+    "back": "Quay lại bệnh nhân"
   }
 }

@@ -407,6 +407,7 @@
     "nameRequired": "Informe o nome completo do paciente.",
     "genericError": "Algo deu errado. Tente novamente.",
     "tabAccessLog": "Registro de acessos",
+    "rxPdfAria": "PDF da receita (imprimir ou salvar)",
     "accessLogIntro": "Quem abriu o prontuário deste paciente, e quando. Só você vê este registro.",
     "accessLogEmpty": "Nenhum acesso registrado ainda.",
     "accessLogFailed": "Não foi possível carregar o registro de acessos. Tente novamente.",
@@ -1231,5 +1232,21 @@
     "cancel": "Cancelar",
     "turnOn": "Ativar",
     "error": "Não foi possível salvar. Tente de novo."
+  },
+  "prescriptionDoc": {
+    "title": "Receita",
+    "patient": "Paciente",
+    "date": "Data",
+    "medications": "Medicamentos",
+    "medication": "Medicamento",
+    "dosage": "Dose",
+    "frequency": "Frequência",
+    "duration": "Duração",
+    "notes": "Observações",
+    "footer": "SolvyMed — Gestão de clínicas",
+    "corrected": "(corrigido)",
+    "print": "Imprimir / Salvar PDF",
+    "printHint": "Para salvar o arquivo, escolha \"Salvar como PDF\" na janela de impressão.",
+    "back": "Voltar ao paciente"
   }
 }

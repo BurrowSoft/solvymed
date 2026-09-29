@@ -407,6 +407,7 @@
     "nameRequired": "請輸入病患全名。",
     "genericError": "發生錯誤，請再試一次。",
     "tabAccessLog": "存取紀錄",
+    "rxPdfAria": "處方 PDF（列印或儲存）",
     "accessLogIntro": "誰在何時開啟了這位病患的病歷。只有您能查看此紀錄。",
     "accessLogEmpty": "尚無存取紀錄。",
     "accessLogFailed": "無法載入存取紀錄，請再試一次。",
@@ -1231,5 +1232,21 @@
     "cancel": "取消",
     "turnOn": "開啟",
     "error": "無法儲存，請再試一次。"
+  },
+  "prescriptionDoc": {
+    "title": "處方",
+    "patient": "病患",
+    "date": "日期",
+    "medications": "藥物",
+    "medication": "藥物",
+    "dosage": "劑量",
+    "frequency": "頻率",
+    "duration": "療程",
+    "notes": "備註",
+    "footer": "SolvyMed — 診所管理",
+    "corrected": "（已更正）",
+    "print": "列印 / 儲存為 PDF",
+    "printHint": "若要儲存檔案，請在列印視窗中選擇「另存為 PDF」。",
+    "back": "返回病患"
   }
 }
