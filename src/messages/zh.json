@@ -1295,6 +1295,20 @@
     "phone": "电话：{value}",
     "exportedBy": "由 {name} 于 {date} 导出",
     "accessLogFailed": "无法记录访问。请重试。",
-    "countryFailed": "无法加载诊所信息。请重试。"
+    "countryFailed": "无法加载诊所信息。请重试。",
+    "receiptTitle": "收据",
+    "services": "服务",
+    "description": "说明",
+    "amount": "金额",
+    "total": "合计",
+    "payment": "付款",
+    "online": "线上",
+    "inPerson": "到诊",
+    "privatePay": "自费",
+    "insurance": "保险",
+    "paid": "已付款",
+    "pending": "待付款",
+    "receiptLink": "收据",
+    "receiptThaiHint": "带编号的收据在应用中开具。"
   }
 }

@@ -1295,6 +1295,20 @@
     "phone": "Teléfono: {value}",
     "exportedBy": "Exportado por {name} el {date}",
     "accessLogFailed": "No se pudo registrar el acceso. Inténtalo de nuevo.",
-    "countryFailed": "No se pudieron cargar los datos de la clínica. Inténtalo de nuevo."
+    "countryFailed": "No se pudieron cargar los datos de la clínica. Inténtalo de nuevo.",
+    "receiptTitle": "Recibo",
+    "services": "Servicios",
+    "description": "Descripción",
+    "amount": "Importe",
+    "total": "Total",
+    "payment": "Pago",
+    "online": "En línea",
+    "inPerson": "Presencial",
+    "privatePay": "Particular",
+    "insurance": "Seguro",
+    "paid": "Pagado",
+    "pending": "Pendiente",
+    "receiptLink": "Recibo",
+    "receiptThaiHint": "Los recibos numerados se emiten en la app."
   }
 }

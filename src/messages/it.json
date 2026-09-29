@@ -1295,6 +1295,20 @@
     "phone": "Telefono: {value}",
     "exportedBy": "Esportato da {name} il {date}",
     "accessLogFailed": "Impossibile registrare l’accesso. Riprova.",
-    "countryFailed": "Impossibile caricare i dati dello studio. Riprova."
+    "countryFailed": "Impossibile caricare i dati dello studio. Riprova.",
+    "receiptTitle": "Ricevuta",
+    "services": "Prestazioni",
+    "description": "Descrizione",
+    "amount": "Importo",
+    "total": "Totale",
+    "payment": "Pagamento",
+    "online": "Online",
+    "inPerson": "In presenza",
+    "privatePay": "Privato",
+    "insurance": "Assicurazione",
+    "paid": "Pagato",
+    "pending": "In sospeso",
+    "receiptLink": "Ricevuta",
+    "receiptThaiHint": "Le ricevute numerate si emettono nell’app."
   }
 }

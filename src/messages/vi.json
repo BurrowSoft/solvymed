@@ -1295,6 +1295,20 @@
     "phone": "Điện thoại: {value}",
     "exportedBy": "Xuất bởi {name} ngày {date}",
     "accessLogFailed": "Không thể ghi lại lượt truy cập. Vui lòng thử lại.",
-    "countryFailed": "Không thể tải thông tin phòng khám. Vui lòng thử lại."
+    "countryFailed": "Không thể tải thông tin phòng khám. Vui lòng thử lại.",
+    "receiptTitle": "Biên nhận",
+    "services": "Dịch vụ",
+    "description": "Mô tả",
+    "amount": "Số tiền",
+    "total": "Tổng cộng",
+    "payment": "Thanh toán",
+    "online": "Trực tuyến",
+    "inPerson": "Trực tiếp",
+    "privatePay": "Tự chi trả",
+    "insurance": "Bảo hiểm",
+    "paid": "Đã thanh toán",
+    "pending": "Chờ thanh toán",
+    "receiptLink": "Biên nhận",
+    "receiptThaiHint": "Biên nhận có đánh số được xuất trong ứng dụng."
   }
 }

@@ -1295,6 +1295,20 @@
     "phone": "Téléphone : {value}",
     "exportedBy": "Exporté par {name} le {date}",
     "accessLogFailed": "Impossible d’enregistrer l’accès. Veuillez réessayer.",
-    "countryFailed": "Impossible de charger les informations du cabinet. Veuillez réessayer."
+    "countryFailed": "Impossible de charger les informations du cabinet. Veuillez réessayer.",
+    "receiptTitle": "Reçu",
+    "services": "Prestations",
+    "description": "Description",
+    "amount": "Montant",
+    "total": "Total",
+    "payment": "Paiement",
+    "online": "En ligne",
+    "inPerson": "En présentiel",
+    "privatePay": "Paiement direct",
+    "insurance": "Assurance",
+    "paid": "Payé",
+    "pending": "En attente",
+    "receiptLink": "Reçu",
+    "receiptThaiHint": "Les reçus numérotés sont émis dans l’application."
   }
 }
