@@ -8785,11 +8785,228 @@ it legible.
 **CI at `29b90ee`:** ✅ (lint, typecheck + unit tests, Vercel).
 **Review: clean (7f).** **Merge gate: 🟢 for `29b90ee`.** This docs commit sits directly on the PR head. The branch is 8 behind master, and a master merge conflicts in code (app-map.ts + the 15 message files), so e7 syncs it.
 
+## PR #152 (`fix/solvyai-undo-guard`, base master) — SolvyAI's Desfazer only when nothing reached the patient; claim-once; a failed undo says so, 🟢 at `dfc0c31`
+
 ## PR #157 (`feat/tour-try-solvyai`, base master) — the tour's SolvyAI step gets "Experimentar agora", 🟢 at `70858a7`
 
 Tested by web tester 2.
 
 **Setup:**
+- **Server:** a local `next dev` at `dfc0c31` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts the model's `tool_use` turns and logs
+  Expo pushes, never sending them.
+- **Data:** the prod DB, with throwaway fixtures (deleted afterwards):
+  - a patient **with** an account (linked, with a device token);
+  - a patient **without** one;
+  - a lunch block.
+
+**Results:**
+
+| Row | Result |
+|---|---|
+| Book, patient WITH an account | ✅ saved + push "…marcou uma consulta para você em 06/10/2026 às 11:00." The toast is **"✓ Feito · Abrir"**, no Desfazer. Abrir → `/pt-BR/dashboard/schedule?date=2026-10-06&highlight=<id>` |
+| Move, WITH an account | ✅ saved + the "Consulta remarcada" push; "✓ Feito · Abrir" |
+| Cancel, WITH an account | ✅ cancelled + the "Consulta cancelada" push; "✓ Feito · Abrir" |
+| Book, patient WITHOUT an account | ✅ "✓ Feito · Desfazer (10 s)" → Desfazer → the row is deleted, "Desfeito" |
+| Move, WITHOUT an account | ✅ Desfazer → back to 06/10 10:00 |
+| Unblock + **double-click** Desfazer | ✅ the button turns "…" and is disabled at once; a third click is refused. **Exactly one** 12:00–13:00 block comes back (7f's double-undo) |
+| Mark paid | ✅ keeps Desfazer |
+| Forced undo failure (the server action aborted) | ✅ "Não foi possível desfazer. Abra o item para ajustar." + **Abrir** (→ `/pt-BR/dashboard/payments?highlight=<id>`); the row stays paid |
+| Add patient | ✅ keeps Desfazer |
+
+**Locales:** the 2 new keys (`undoFailed` / `openItem`) are in all 15
+locales (checked by web tester 1).
+
+**CI at `dfc0c31`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for `dfc0c31`.** This docs commit sits on top of a master sync (10 behind; clean).
+
+## #153 History print view (P8) + practice-country dates on printed documents (web tester 1, 2026-09-29/30)
+
+**What was tested:** PR head `47a4a1c`.
+- **The Preview (Playwright):** everything that runs normally.
+- **A local `next dev` at `47a4a1c`:** the failure paths. A test-only
+  preload fails `log_record_access` or the practice-country read on
+  demand.
+- **Fixtures:** the #150 fixture doctors, already on the mobile dev's purge
+  list.
+  - **doc1 (BR):** records created with its own token; a record correction
+    and a prescription correction through `add_record_correction` /
+    `add_prescription_correction`; a `medical_record` template with a
+    strong accent `#ea580c`.
+  - **doc2:** switched to a **TH** practice (time zone Asia/Bangkok), with
+    one record and one prescription.
+
+**Brazilian practice (doc1):**
+
+| Row | Result |
+|---|---|
+| The button | ✅ **PDF do histórico** on the patient page → `/pt-BR/dashboard/patients/<id>/history/print`. The secretary has no button. |
+| P8, pt-BR | ✅ "Histórico clínico", then the template header. **Details:** "Nascimento: 03/03/1975 (51 anos)", **CPF only** (the patient also has a Thai ID and a passport, not shown), "Telefone", "Feminino". **Entries:** "Prontuário (3)" with the replaced record "29/09/2026 15:00 **(corrigido)**", then "Receitas (3)" with the corrected prescription "(corrigido)". **Close:** "Exportado por Dra Ana Opus Receita · Clínica Opus Receitas em 29/09/2026", the signature line with the name + "CRM-SP 150150", the template footer. |
+| Print | ✅ only `#print-doc` in print media; the Chromium PDF is A4, 2 pages for 6 entries |
+| Contrast | ✅ with the `#ea580c` accent, the zebra rows and notes are a light tint (`color(srgb 0.985 0.882 0.828)`), not the solid accent |
+| P8, en UI | ✅ English labels ("Medical history", "Date of birth", "Medical records (3)", "(corrected)", "Exported by … on 29/09/2026"). **Dates stay dd/mm/yyyy** (the practice's format). |
+| P6 after the change | ✅ "29/09/2026 (corrigido)"; in en, "29/09/2026 (corrected)". It was MM/DD in en before. |
+| Access log | ✅ one `record_access_log` row per record (3) and per prescription (3). |
+| Scoping | ✅ the secretary → 404; doc2 on doc1's patient → 404 |
+
+**Thai practice (doc2), in pt-BR, en and th UIs:**
+- ✅ Every date is Buddhist era:
+  - "Nascimento: 04/04/2523 (46 anos)";
+  - the record "29/09/2569 15:00" and the prescription "29/09/2569";
+  - P6 "29/09/2569".
+- ✅ **Thai ID + passport, no CPF**: "Documento de identidade tailandês:
+  1101700230708", "Número do passaporte: THPASS153" (en "Thai national
+  ID", th "เลขประจำตัวประชาชน").
+- ✅ The signature shows "ว.153153".
+- ✅ The labels follow the UI (ประวัติการรักษา / ใบสั่งยา in th).
+- ✅ **The export date follows the clinic's time zone:** "em 30/09/2569"
+  at 18:30 UTC on 29/09, when it was already the 30th in Bangkok and still
+  the 29th in Brazil.
+
+**Failure paths (local, with the injection preload):**
+
+| Row | Result |
+|---|---|
+| The access-log write fails | ✅ P8 and P6: no document and no toolbar, only "Não foi possível registrar o acesso. Tente novamente." + "← Voltar ao paciente" (→ the patient page). No log rows were written. |
+| The practice-country read fails | ✅ P8 and P6: "Não foi possível carregar os dados da clínica. Tente novamente." + the back link. No document, no guessed calendar, **no log rows**. |
+| Dark theme (prefers-color-scheme: dark) | ✅ the print view sits in `data-theme="light"`: the document is white with dark text (`rgb(26,33,56)`) |
+
+**Notes (not blocking):**
+- **The "patient" row:** P8 logs a `patient` row too. Right after opening
+  the patient page, the 60 s dedupe folds it into the page's own row, so
+  it doesn't show up again.
+- **Record dates:** they come from the server's clock at creation (097), so
+  the fixtures' records all read 29/09 15:00.
+
+**Master sync:** master (#152) merged in under this docs commit, cleanly.
+**Review: clean (7f).** **Merge gate: 🟢 for `47a4a1c`.**
+
+## #154 Remarcar maps migration 121's `appointment_not_movable` to the not-movable line (web tester 1, 2026-09-29/30)
+
+**What was tested:** PR head `e1197b6`, on a local `next dev` (Playwright).
+- **Migration 121** isn't applied, so a test-only preload stands in for its
+  guard. A PATCH to `/rest/v1/appointments` for a listed id gets the DB
+  error `400 {code: P0001, message: "appointment_not_movable"}`;
+  everything else passes through.
+- The preload's log confirms it injected exactly on the guarded row's
+  update.
+
+| Row | Result |
+|---|---|
+| pt-BR: Remarcar a guarded confirmed appointment (→ Wednesday 14:00) | ✅ the dialog shows "Esta consulta não pode ser remarcada." instead of a raw DB error; the row is unchanged (06/10 10:00, confirmed) |
+| en: the same | ✅ "This appointment can't be rescheduled." (the existing `notMovableError`); the row is unchanged |
+| A normal Remarcar (no guard) | ✅ it still moves (11:00 → Wednesday 12:00) |
+| A completed visit | ✅ no Remarcar button at all (MOVABLE_STATUSES), in pt and en |
+
+**Not covered:** SolvyAI's move card. It goes through the same
+`moveAppointment` action (per the PR), and I didn't run it here.
+
+**Master sync:** master (#152, #153) merged in under this docs commit,
+cleanly.
+**Review: clean (7f).** **Merge gate: 🟢 for `e1197b6`.**
+
+## PR #155 (`fix/files-hide-reason-label`, base master) — the file hide dialog says "Motivo para ocultar", 🟢 at `23f326f`
+
+## PR #158 (`feat/payments-type-filter`, base master) — Pagamentos: Todos / Particular / Convênio filter (Help G6), 🟢 at `0b7e482`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Where:** the Vercel Preview.
+- **Fixture:** the #147 fixture doctor's `foto-lesao-opus.png` (Arquivos),
+  backdated to −2 days by 38 so the >24 h hide dialog opens.
+- **Flow:** Remover opened the dialog in each language, which was
+  cancelled each time (nothing hidden).
+
+| Locale | Dialog |
+|---|---|
+| pt-BR | "Remover arquivo: foto-lesao-opus.png · Já se passaram mais de 24 horas… Informe o motivo." Field label **"Motivo para ocultar"** (was "Motivo da correção"); Cancelar / Remover |
+| en | "Remove file… Say why." Field **"Reason for hiding"**; Cancel / Remove |
+| th | "นำไฟล์ออก…" Field **"เหตุผลที่ซ่อน"**; ยกเลิก / นำออก |
+
+The new key is in all 15 locales (16 files, +1 line each).
+
+**CI at `23f326f`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`23f326f`.** This docs commit sits on top of a master sync (1 behind;
+clean).
+
+## #159 Opening a patient file is fail-closed on the access log (web tester 1, 2026-09-29/30)
+
+**What was tested:** PR head `fdf91b2`, on a local `next dev` (Playwright).
+- **Injection:** a test-only preload answers `rpc/log_record_access` with
+  a 500 while switched on (its log confirms each injected call).
+- **Fixture:** the kept #150 fixture doctor (on the purge list), Exames
+  tab. A small PDF was uploaded through the tab.
+
+| Row | Result |
+|---|---|
+| Upload | ✅ listed as "opus-pr159-exame.pdf · 1 KB" with **Abrir** / **Remover**. A second upload with the same name became "opus-pr159-exame (2).pdf". |
+| Abrir, log works | ✅ one `record_access_log` row (kind `file`, `object_ref` = the storage path) is written first. The new tab then loads the signed `storage/v1/object/sign/patient-files/…` link, which returns 200 `application/pdf`. Headless Chromium saves a PDF as a download ("opus-pr159-exame.pdf"); a normal browser shows it. |
+| Abrir, the log write fails (pt-BR) | ✅ "Não foi possível registrar o acesso. Tente novamente." The blank tab closes (after about 2 s); **no signed link is requested**, and no `file` row is written (checked past the 60 s dedupe). |
+| Same in en | ✅ "Couldn't record the access. Please try again."; the tab closes |
+| Unblocked again | ✅ it opens (signed link, 200 PDF) |
+| Locales | ✅ `patientDetail.filesAccessLogFailed` is in all 15 locales |
+
+**Leftover:** one uploaded test PDF stays on the fixture patient; the other
+was removed through **Remove**. It goes with the mobile dev's purge of the
+pr150 fixtures.
+
+**Master sync:** master (#152–#155) merged in under this docs commit,
+cleanly.
+**Review: clean (7f).** **Merge gate: 🟢 for `fdf91b2`.**
+
+## PR #156 (`fix/solvyai-series-same-patient-date`, base master) — a SolvyAI series card's same-patient warning checks every date and names the first, 🟢 at `30c07ec`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `30c07ec` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts `find_patients` →
+  `propose_book_appointment`.
+- **Data:** the prod DB, with a throwaway doctor + patient (deleted
+  afterwards). The patient already has 09:00 on **13/10** and **20/10**
+  (the 2nd and 3rd weekly dates).
+
+| Row | Result |
+|---|---|
+| Weekly ×3 from 06/10 at 11:00 | ✅ the card shows "Repetir: Semanal, 3 consultas (até 20/10/2026)" and **"13/10/2026: ⚠ Opus Serie Aviso já tem consulta nesse dia às 09:00"**, the FIRST such date, although 20/10 also has one |
+| Confirmar | ✅ the warning doesn't block: 06/10, 13/10, 20/10 at 11:00 are saved next to the existing 09:00s |
+| Single booking on 13/10 at 15:00 | ✅ "⚠ Opus Serie Aviso já tem consulta nesse dia às 09:00", **no date prefix** (as before) |
+
+**CI at `30c07ec`:** ✅. **Review: clean.** **Merge gate: 🟢 for `30c07ec`.** This docs block sits on top of a master sync (after #155 merged; clean).
+
+- **Where:** the Vercel Preview (Playwright) against the prod DB.
+- **Data:** a throwaway doctor + secretary (deleted afterwards), with 4
+  completed appointments from yesterday:
+  - particular: pending R$ 100, paid R$ 200;
+  - convênio: pending R$ 300, paid R$ 400.
+- **"No type" rows:** a row with an empty `payment_type` is refused by the
+  DB check (23514), so that case can't occur.
+
+**Results:**
+
+| Row | Result |
+|---|---|
+| Controls | ✅ "Esta semana · Este mês · Mês passado · Todo o período" + "Todos · Particular · Convênio" |
+| Todos | ✅ Pendente R$ 400 (2) · Recebido R$ 600 (2) · Total R$ 1.000 (4); both lists show all 4 |
+| Particular | ✅ `?type=private`; R$ 100 / R$ 200 / R$ 300 (2); only the two particular rows |
+| Convênio | ✅ `?type=insurance`; R$ 300 / R$ 400 / R$ 700 (2); only the two convênio rows. **Particular + Convênio = Todos** (300 + 700 = 1.000) |
+| Period change with a type | ✅ "Todo o período" → `?type=insurance&period=all`, same totals |
+| Todos clears it | ✅ `?period=all` only, all 4 back |
+| Secretary | ✅ the same filter; Convênio shows only the two convênio rows |
+| Help G6 | ✅ the web note: "…O detalhe por período fica em Pagamentos, com o filtro Todos / Particular / Convênio." |
+| en | ✅ "All · Private · Insurance" |
+| th | ✅ "ทั้งหมด · ชำระเอง · ประกัน". **Nit:** the period "All time" is also "ทั้งหมด", so two identical buttons sit side by side. Suggest e.g. "ทุกประเภท" for the type filter (Vitor / UX to choose) |
+
+**CI at `0b7e482`:** ✅. **Review: clean.** **Merge gate: 🟢 for `0b7e482`.** This docs commit sits on top of a master sync (1 behind; clean).
+
+**#158 re-check at `c4b9740`** (web tester 2): it changes only the th
+type-filter label, per my nit. Thai Pagamentos now shows "สัปดาห์นี้ ·
+เดือนนี้ · เดือนที่แล้ว · ทั้งหมด" (the period) + "ทุกประเภท · ชำระเอง ·
+ประกัน" (the type), so there's no duplicate. "ทุกประเภท" clears `?type=`.
+**Merge gate: 🟢 for `c4b9740`.**
+
 - **Server:** a local `next dev` at `70858a7` with `SOLVYAI_API_ENABLED=1`,
   `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
 - **Test-only preload:** it answers the model call with scripted text.

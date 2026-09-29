@@ -655,10 +655,10 @@
           ]
         },
         "web": {
-          "pt": "Ainda não disponível no site; use o app.",
-          "en": "Not available on the website yet; use the app."
+          "pt": "Abra o paciente e clique em **PDF do histórico** (no topo), depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Sai no idioma do site, com as datas no formato do país da clínica (na Tailândia, na era budista), com todos os registros e receitas e uma linha em branco para assinar à mão.",
+          "en": "Open the patient and click **History PDF** (at the top), then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. It comes out in the website's language, with dates in the clinic country’s format (in Thailand, the Buddhist era), with every record and prescription and a blank line to sign by hand."
         },
-        "webUnavailable": true,
+        "webUnavailable": false,
         "open": "patients",
         "appOnly": null,
         "appTitle": null
@@ -948,8 +948,8 @@
           ]
         },
         "web": {
-          "pt": "Na **Visão geral** você vê as consultas de hoje, o valor pendente, o número de pacientes e o recebido no mês. O detalhe por período fica em **Pagamentos**; o filtro particular/convênio está só no app.",
-          "en": "The **Overview** shows today's appointments, the pending amount, the number of patients and what was received this month. The breakdown by period is in **Payments**; the private/insurance filter is app-only."
+          "pt": "Na **Visão geral** você vê as consultas de hoje, o valor pendente, o número de pacientes e o recebido no mês. O detalhe por período fica em **Pagamentos**, com o filtro **Todos / Particular / Convênio**.",
+          "en": "The **Overview** shows today's appointments, the pending amount, the number of patients and what was received this month. The breakdown by period is in **Payments**, with the **All / Private / Insurance** filter."
         },
         "webUnavailable": false,
         "open": "home",

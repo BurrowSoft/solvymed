@@ -68,7 +68,7 @@ export function FilesTab({ patientId, doctorId, kind, isArchived, locale }: {
     const win = window.open("", "_blank");
     if (win) win.opener = null;
     const r = await openPatientFile(patientId, f.path);
-    if (!r.ok) { win?.close(); setError(t("filesError")); return; }
+    if (!r.ok) { win?.close(); setError(r.code === "access_log_failed" ? t("filesAccessLogFailed") : t("filesError")); return; }
     // Pop-ups blocked: never navigate away from the patient; say so.
     if (win) win.location.href = r.data;
     else setError(t("filesPopupBlocked"));
@@ -164,7 +164,7 @@ export function FilesTab({ patientId, doctorId, kind, isArchived, locale }: {
         <div role="dialog" aria-label={t("filesHideTitle")} className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm">
           <p className="font-bold text-slate-900">{t("filesHideTitle")}: {hiding.name}</p>
           <p className="mt-1 text-slate-600">{t("filesHideHint")}</p>
-          <label className="mt-3 block font-semibold text-slate-700">{t("correctionReason")}
+          <label className="mt-3 block font-semibold text-slate-700">{t("filesHideReason")}
             <textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={2} className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" />
           </label>
           <div className="mt-3 flex gap-2">

@@ -187,7 +187,7 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
     setMinimized(true);
     if (path && isInternalHref(path)) router.push(path);
     setCardDone((d) => ({ ...d, [card.id]: "saved" }));
-    setToast({ card, id, demo, left: 10, undone: false, noUndo });
+    setToast({ card, id, demo, left: 10, phase: "saved", noUndo, path: path && isInternalHref(path) ? path : undefined });
     track("solvyai_confirmed", { kind: card.action.kind });
   };
 
@@ -203,7 +203,21 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
     void play(turns, backend.reportConfirmFailed(code, card.action, locale));
   };
 
-  const [toast, setToast] = useState<{ card: ConfirmationCard; id?: string; demo: boolean; left: number; undone: boolean; noUndo: boolean } | null>(null);
+  // phase: saved → undoing (Desfazer tapped: pending, never twice) →
+  // undone, or failed ("Abra o item para ajustar"). noUndo: the patient
+  // may already have been told, so "Abrir" instead of Desfazer.
+  const [toast, setToast] = useState<{ card: ConfirmationCard; id?: string; demo: boolean; left: number; phase: "saved" | "undoing" | "undone" | "failed"; noUndo: boolean; path?: string } | null>(null);
+  const undoClaimed = useRef<ConfirmationCard | null>(null);
+  const runUndo = async () => {
+    const x = toast;
+    // Claimed synchronously: a second tap (or a double click) runs nothing.
+    if (!x || x.phase !== "saved" || undoClaimed.current === x.card) return;
+    undoClaimed.current = x.card;
+    setToast({ ...x, phase: "undoing" });
+    let ok = false;
+    try { ok = await backend.undo(x.card.action, x.id); } catch { ok = false; }
+    setToast((cur) => (cur && cur.card === x.card ? { ...cur, phase: ok ? "undone" : "failed", left: ok ? 4 : 8 } : cur));
+  };
   // Each card is confirmed at most once: its outcome lives here, not in the
   // card (the panel unmounts when minimised), and a claim is taken
   // synchronously before anything runs.
@@ -211,7 +225,8 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
   const claimed = useRef(new Set<string>());
   const claim = (id: string) => { if (claimed.current.has(id)) return false; claimed.current.add(id); return true; };
   useEffect(() => {
-    if (!toast || toast.left <= 0) return;
+    // Paused while undoing: the toast stays until the result is known.
+    if (!toast || toast.left <= 0 || toast.phase === "undoing") return;
     const id = setTimeout(() => setToast((x) => (x ? { ...x, left: x.left - 1 } : x)), 1000);
     return () => clearTimeout(id);
   }, [toast]);
@@ -333,14 +348,24 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
           {/* After a save: "✓ … + Desfazer" for 10 s (§2.3). */}
           {toast && toast.left > 0 && (
             <p role="status" className="flex items-center gap-2 rounded-2xl bg-slate-900 px-3 py-2 text-xs text-white shadow-lg">
-              <span>{toast.undone ? t("undone") : t("saved")}{toast.demo && ` (${t("simulated")})`}</span>
-              {!toast.undone && !toast.noUndo && (
+              <span>
+                {toast.phase === "undone" ? t("undone") : toast.phase === "failed" ? t("undoFailed") : t("saved")}
+                {toast.demo && ` (${t("simulated")})`}
+              </span>
+              {(toast.phase === "saved" || toast.phase === "undoing") && !toast.noUndo && (
                 <button
                   type="button"
-                  onClick={async () => { await backend.undo(toast.card.action, toast.id); setToast({ ...toast, undone: true, left: 4 }); }}
-                  className="rounded-lg px-2 py-0.5 font-semibold text-teal-300 hover:bg-white/10"
+                  disabled={toast.phase === "undoing"}
+                  aria-busy={toast.phase === "undoing"}
+                  onClick={() => void runUndo()}
+                  className="rounded-lg px-2 py-0.5 font-semibold text-teal-300 hover:bg-white/10 disabled:opacity-60"
                 >
-                  {t("undo", { s: toast.left })}
+                  {toast.phase === "undoing" ? "…" : t("undo", { s: toast.left })}
+                </button>
+              )}
+              {(toast.noUndo || toast.phase === "failed") && toast.path && (
+                <button type="button" onClick={() => { setToast(null); router.push(toast.path!); }} className="rounded-lg px-2 py-0.5 font-semibold text-teal-300 hover:bg-white/10">
+                  {t("openItem")}
                 </button>
               )}
             </p>
