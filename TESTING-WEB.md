@@ -9100,3 +9100,18 @@ open question for UX.
 **The branch** was up to date with master; this docs commit sits on the PR
 head.
 **Review: clean (9a).** **Merge gate: 🟢 for `9474d92`.**
+
+## PR #170 (`feat/import-extra-knowhow`, base master) — imported-data know-how (Help P11, gated) + access-log labels for `export` / `imported`, 🟢 at `0e7b9ea`
+
+Tested by web tester 2 on the Vercel Preview, with the #147 fixture
+doctor (existing access rows).
+
+| Row | Result |
+|---|---|
+| Help P11 is not public yet (`requires:import-extras-live`, unmet) | ✅ `/pt-BR/help/p11` and `/help/p11` → **404**; P6 / P7 → 200. `helpArticles.json` is unchanged in the diff |
+| Existing Acessos labels unchanged | ✅ pt "Ficha do paciente", "Receita · 29 de set. de 2026", "Arquivo · exams/raio-x opus (2).png"; en "Patient record", "Prescription · Sep 29, 2026", "File · …" |
+| New labels | ✅ `accessKindExport` / `accessKindImported`: pt "Exportado na lista de pacientes (CSV)" / "Abriu os dados importados"; en "Exported in the patient list (CSV)" / "Opened the imported data"; th "ส่งออกในรายชื่อผู้ป่วย (CSV)" / "เปิดข้อมูลที่นำเข้า". The mapping is unit-tested (`accessKindLabelKey`) |
+| Live rows of the new kinds | ⏳ not possible yet: prod's `record_access_log` check refuses `kind = 'export'` / `'imported'` (23514) until migrations 126 / 131 are applied. No row was written. Re-check the Acessos tab once they're live |
+
+**CI at `0e7b9ea`:** ✅. **Review: clean (9a).** **Merge gate: 🟢 for
+`0e7b9ea`**, with the ⏳ row above for after 126 / 131.
