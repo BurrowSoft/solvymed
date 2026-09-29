@@ -8525,3 +8525,262 @@ master Preview, with the bypass header):
 **CI at `fc85fd4`:** ✅ (lint, typecheck + unit tests incl.
 `privacy-gated.test.tsx`, Vercel).
 **Review: clean (7f).** **Merge gate: 🟢 for `fc85fd4`.** This docs commit sits on top of a master sync (7 behind: #142, #143; clean merge).
+
+## #145 (release) /subscribe?success=1 says "activated" only once the plan is on (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `1c89b62` (base `release`), on its Vercel
+Preview (Playwright), with a throwaway doctor per row.
+- **No Stripe checkout.** A service-role PATCH on `professionals`
+  simulates the webhook's write: `subscription_status = 'active'` and
+  `current_period_end` = +30 days.
+- `subscription_id` stays null, so the page makes no Stripe call.
+
+| Row | Result |
+|---|---|
+| R1 trial → ?success=1; the "webhook" lands at +8 s | ✅ "Pagamento recebido! Ativando sua assinatura…", with a spinner (aria-busy). At +12 s it shows "Assinatura ativada! Boas-vindas ao SolvyMed Pro." Polls: 2, then they stop. |
+| R2 trial, no webhook | ✅ "Ativando…" until about 30 s, then "Recebemos seu pagamento, mas a ativação está demorando. … fale com o suporte: support@solvymed.com" (a mailto link). 8 polls, about every 3.5 s on the Preview, then none. The row stays trial. |
+| R3 already active → ?success=1 | ✅ "Assinatura ativada!" on load, with 0 polls |
+| R4 lifetime → ?success=1 | ✅ "Assinatura ativada!" on load, with 0 polls |
+| R5 status active but the period ended 2 days ago | ✅ fails closed: "Ativando…", then the slow text. Never "ativada". |
+| R6 trial ended (expired) | ✅ "Ativando…", then the slow text |
+| R7 en, the "webhook" at +6 s | ✅ "Payment received! Activating your subscription…", then "Subscription activated! Welcome to SolvyMed Pro." at +8 s |
+| R8 en, no webhook | ✅ "We received your payment, but activation is taking longer than usual. … contact support: support@solvymed.com" |
+| While ?success=1 (R1–R8) | ✅ no subscribe button (no second checkout), and no trial text |
+| R9 without ?success=1 (unchanged) | ✅ Trial: the trial text plus **Assinar com Cartão**. Active: bounced to /pt-BR/dashboard. |
+
+**Also checked:**
+- **Locales:** `activationPending` and `activationSlow` are in all 15
+  locales (Thai included).
+- **CI at `1c89b62`:** ✅ (lint, typecheck + unit tests, Vercel).
+
+**Not covered here:** the real Stripe webhook landing, since its endpoint
+URL fix is Vitor's dashboard change. After merge, the prod check will be
+the same rows on www with a DB flip; no checkout.
+**Review: clean (7f).** **Merge gate: 🟢 for `1c89b62`.** The branch was
+up to date with `release`; this docs commit sits on top.
+
+## #146 Merge-back of release #145 into master (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `4528f4b`, on its Vercel Preview, using
+#145's spec with the same service-role flip and no checkout.
+
+| Row | Result |
+|---|---|
+| Trial → ?success=1; the "webhook" at +8 s | ✅ "Ativando…" with the spinner, then "Assinatura ativada!" at +11 s |
+| Trial, no webhook | ✅ the slow text + the support@solvymed.com mailto at about 30 s |
+| Already active → ?success=1 | ✅ "ativada" on load |
+| en, the "webhook" at +6 s | ✅ "Payment received! …", then "Subscription activated! …" |
+| Without ?success=1 (unchanged) | ✅ Trial: the trial text plus **Assinar com Cartão**. Active: /pt-BR/dashboard. |
+| **Master's plan-load error** (no `professionals` row, so the country lookup fails and there's no plan), without ?success=1 | ✅ "Não foi possível verificar o status da sua assinatura. Tente novamente.", with no subscribe button |
+| Same, with ?success=1 | ✅ "Ativando…" only; no plan error and no button (success=1 wins, as in the merged condition) |
+
+**#145 prod check (release `ec33299` on www, Ready):** ✅. The same 10 rows
+as #145's entry, with a DB flip and no checkout:
+- the flip → "ativada" about 3 s later;
+- no webhook → the slow text at about 30 s, and then polling stops;
+- active or lifetime → activated at once;
+- lapsed or expired → never "ativada";
+- en matches;
+- no subscribe button while success=1.
+
+**CI at `4528f4b`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`4528f4b`.** The branch was up to date with master; this docs commit sits
+on top.
+
+## PR #147 (`feat/web-patient-files`, base master) — exams and files on the website (Help P7), 🟢 at `6681b0a`
+
+## PR #150 (`feat/web-prescription-pdf`, base master) — print / save a prescription as PDF on the website (Help P6), 🟢 at `29b90ee`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Where:** Vercel Preview (Playwright, Chromium) against the prod DB.
+- **Fixtures:** a throwaway doctor and two patients, with throwaway 1-KB
+  PNG / PDF files only (no real data), plus a throwaway secretary.
+- **Purge:** 8d purges the doctors afterwards (files = clinical history).
+- **Backdating:** for the >24 h row, 8d backdated one object
+  (`exams/hemograma-opus.pdf`) to −2 days, guarded to this fixture.
+
+**Tabs and upload (tested at `48ec09a`; `6681b0a` only changes `open()` + the UUID guard):**
+- **Doctor:** tabs "Informações · Registros · Receitas · **Exames** ·
+  **Arquivos** · Consultas · Registro de acessos". The secretary sees only
+  "Informações · Consultas".
+- **Upload:** PNG + PDF into Exames → `<prof>/<pat>/exams/…`, and into
+  Arquivos → `<prof>/<pat>/…`, listed with the date and size.
+- **The same name twice:** "raio-x opus (2).png". Nothing is overwritten
+  (storage has both).
+- **Rejected:**
+  - a `.txt` → "Escolha uma foto ou um PDF.";
+  - a 51 MB PDF → "O arquivo é grande demais (máximo 50 MB)."
+- **Remover within 24 h:** confirm → the object is deleted from storage, no
+  hide dialog.
+- **Archived patient** (via "Arquivar cadastro"): only "Abrir"; no Enviar,
+  no Remover.
+- **Access log:** opening writes `record_access_log` kind `file` with the
+  path.
+- **en:** the tabs are "Exams / Files / Access log".
+
+**Opening a file, re-tested at `6681b0a`:**
+- **My finding at `48ec09a`** (7f: BLOCKING): `window.open(…, "noopener")`
+  returned null, so "Abrir" replaced the app tab with the signed URL and
+  left an about:blank tab. It's fixed.
+- **Abrir:** a new tab opens the signed URL (HTTP 200) with
+  `window.opener === null`. The app tab stays on
+  `/pt-BR/dashboard/patients/<id>`.
+- **Pop-ups blocked** (`window.open` → null): "O navegador bloqueou a nova
+  aba. Permita pop-ups para o SolvyMed e tente de novo." No navigation.
+- **Failed link** (the object deleted behind the page): "Algo deu errado.
+  Tente novamente." The blank tab is closed (1 tab before and after).
+
+**Hiding an older file** (the backdated PDF):
+- Remover → "Remover arquivo: hemograma-opus.pdf | Já se passaram mais de 24
+  horas desde o envio, então o arquivo é ocultado em vez de excluído.
+  Informe o motivo."
+- An empty reason → "Informe um motivo." (the dialog stays).
+- With a reason → gone from the list; "Arquivos removidos (1)" →
+  "hemograma-opus.pdf removido em 29/09/2026 por Dra Opus Arquivos: [TEST]
+  exame duplicado", with **no Abrir**. The object stays in storage.
+- **Nit (copy):** the reason field is labelled "Motivo da correção"
+  (borrowed from record corrections). "Motivo" alone would fit a file
+  removal.
+
+**CI at `6681b0a`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `6681b0a`.** This docs commit sits on top of a master sync (6 behind; clean).
+
+## PR #149 (`feat/settings-subscription`, base master) — Configurações → Assinatura with "Gerenciar assinatura", 🟢 at `0c92dc2`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Where:** the Vercel Preview (Playwright) against the prod DB, with a
+  throwaway doctor and secretary (deleted afterwards).
+- **The active row:** a real **Stripe TEST** subscription made through the
+  API.
+  - The customer has `pm_card_visa`, the price is R$ 89/month, and
+    `metadata.user_id` = the doctor, as the portal route requires.
+  - `professionals` is set to `stripe` / that id / `active` (what the
+    webhook would write).
+  - The subscription is cancelled and the customer deleted afterwards.
+
+- **Where:** the Vercel Preview (Playwright, Chromium) against the prod DB.
+- **Doctor:** the #147 fixture doctor, already on 8d's purge list.
+- **Prescriptions:** created as that doctor, with its own token.
+  - Items can only be added by the author within 24 h (097).
+  - The correction was made through `add_prescription_correction`, the
+    real path.
+- **Template:** a `prescription` template with `#7c3aed` / `#ea580c`, a
+  header, a footer and an https logo.
+- **Other accounts:** the secretary and the "other doctor" are fresh and
+  were deleted.
+
+**Results:**
+
+| Row | Result |
+|---|---|
+| Trial (15 days) | ✅ "Assinatura: Teste grátis: faltam 15 dias" + "Ver o plano" → `/pt-BR/subscribe` |
+| Trial ending in 25 h | ✅ "faltam 2 dias" (rounded up), link shown |
+| Active Stripe sub | ✅ "Plano Pro · ativo" + **Gerenciar assinatura** → `billing.stripe.com/p/session…`. The portal's return link is `/pt-BR/dashboard/settings`, and following it lands back on Configurações (not /subscribe) |
+| Lifetime | ✅ "Plano Pro · vitalício", no button |
+| Expired | ✅ Configurações isn't reachable: the existing gate sends them to `/pt-BR/subscribe` ("Seu período de teste encerrou. Assine para continuar."). The card's "Nenhuma assinatura ativa" state isn't shown in this case |
+| Secretary | ✅ no Assinatura card (no status line, no plan / manage buttons) |
+| en / th | ✅ "Subscription · Free trial: 2 days left · See the plan"; "การสมัครสมาชิก · ทดลองใช้ฟรี: เหลืออีก 2 วัน" |
+
+**CI at `0c92dc2`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `0c92dc2`.** This docs commit sits on top of a master sync (3 behind; clean).
+
+## #148 (release) Stripe webhook failures reported to Sentry (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `e80517a`, locally with `next dev`.
+- **Sentry:** `NEXT_PUBLIC_SENTRY_DSN` pointed at a local sink (with
+  `VERCEL_ENV=preview`), so the capture is exactly what Sentry would get
+  after `beforeSend`, and nothing reached Sentry.
+- **Webhook secret:** a local-only `STRIPE_WEBHOOK_SECRET`, used to sign
+  test events with the stripe library's `generateTestHeaderString`.
+- **Stripe key:** the test-mode key from `.env.local`, for the retrieve
+  calls.
+- **No prod env changes, and no checkout.**
+- **Leak check:** every payload carried marker strings (an email, a
+  customer id, the name "Dra Vazamento Opus", the amount 98765, "4242").
+
+| Case | Response | Sentry |
+|---|---|---|
+| E1 bad signature | ✅ 400 "Invalid signature" | ✅ one event, "Stripe webhook: bad_signature", level error, tag `stripe_webhook_failure=bad_signature`, fingerprint [stripe-webhook, bad_signature] |
+| E2 no stripe-signature header | 400 "No signature" | none (this path returns before the report; see the note) |
+| E3 valid, an unhandled type (customer.created) | ✅ 200 | ✅ none |
+| E4 valid checkout.session.completed, unpaid | ✅ 200 | ✅ none |
+| E5 valid invoice.payment_failed, no subscription | ✅ 200 | ✅ none |
+| E6 valid customer.subscription.updated; Stripe answers 404 on retrieve | ✅ 500 "Could not fetch subscription" | ✅ one "Stripe webhook: sync_failed", tags `stripe_event_type=customer.subscription.updated` + `stripe_event_id` |
+| E7 valid checkout, paid, with a sub that can't be retrieved | ✅ 500 | ✅ one sync_failed, tags type `checkout.session.completed` + id |
+
+**What Sentry got:**
+- **Marker strings:** none of them, and no `stripe-signature` / `v1=` /
+  whsec / cookie. `request` is only `{url, method}`, with no body.
+- **Note (not blocking; for 7f/UX):** the two sync_failed events carry a
+  Sentry **breadcrumb** of the failing Stripe API call, e.g.
+  `https://api.stripe.com/v1/subscriptions/sub_… (404)`.
+  - So the **Stripe subscription id** is in the event, as well as the
+    event id in the tags.
+  - It's a pseudonymous id, not an email, name or amount. It isn't in the
+    PR's "type + id only" wording, though.
+- **Not covered:**
+  - a missing signature header (E2) isn't reported;
+  - `handler_threw` and `no_professional_row` weren't forced. The second
+    needs a live test-mode subscription for a user with no row.
+- **The success path with a real subscription** (sync writes active → 200,
+  no event) isn't run here. It would need a Stripe test subscription or a
+  checkout. E3–E5 cover "200 → no event".
+
+**Release sync:** release (#145) merged in under this docs commit. The
+merge was clean, with no change to this PR's code.
+**CI at `e80517a`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`e80517a`**, with the breadcrumb note for 7f/UX to decide.
+
+**#148 prod check (www, release `6e90d70`, Ready):** ✅.
+- A POST with a bad `stripe-signature` → 400 "Invalid signature"; no
+  header → 400 "No signature".
+- That bad-signature POST (about 15:40 UTC 2026-09-29) makes one real
+  "Stripe webhook: bad_signature" event in prod Sentry. It's this test,
+  not a Stripe problem; 7f and e7 were told.
+
+## #151 Merge-back of release #148 into master (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `eba558c`.
+- **The code:** the webhook route is identical to release's. Only the
+  comment in `stripeWebhookReport.ts` changed; it now says what Sentry
+  receives, including the Stripe API path breadcrumb.
+- **The run:** #148's local run, repeated at `eba558c`: local `next dev`,
+  the DSN pointed at a local sink, a local-only webhook secret with signed
+  test events.
+
+| Case | Result |
+|---|---|
+| Bad signature | ✅ 400 + one "Stripe webhook: bad_signature" event |
+| No signature header | ✅ 400, no event |
+| Valid unhandled / unpaid checkout / invoice with no subscription | ✅ 200, no event |
+| Valid subscription.updated or paid checkout whose subscription 404s | ✅ 500 + one sync_failed, tagged with the event type and id |
+| The marker strings (email, customer, name, amount, card) | ✅ none in what Sentry got |
+
+**Master sync:** master (#147, #149) merged in under this docs commit.
+There was a conflict in TESTING-WEB.md only: master's block comes first,
+then #148's, and nothing was dropped.
+**Review: clean (7f).** **Merge gate: 🟢 for `eba558c`.**
+
+| Receitas tab | ✅ each prescription has a **PDF** link (aria "PDF da receita (imprimir ou salvar)") → `…/prescriptions/<rxId>/print` |
+| Print page (the corrected rx) | ✅ "Receita", the header text, the logo; PACIENTE; DATA "29/09/2026 **(corrigido)**"; the items table; the notes as text (a typed `<b>` stays text); a blank signature line over "Dra Opus Arquivos / CRM 12345/SP"; the footer. The colours applied: rgb(124,58,237) / rgb(234,88,12) |
+| The correction itself | ✅ its own items and notes, not marked "(corrigido)" |
+| Logo | ✅ an https logo on another host loads (naturalWidth 120), with no CSP report |
+| Toolbar | ✅ "← Voltar ao paciente", "Imprimir / Salvar PDF", and the hint "Para salvar o arquivo, escolha "Salvar como PDF" na janela de impressão." |
+| Print | ✅ in print media only `#print-doc` stays visible (everything else is `visibility:hidden`). The Chromium PDF is **1 page, MediaBox 594.96×841.92 (A4)**, with colours kept |
+| Scoping | ✅ the rx under another patient's id → 404; an unknown rx id → 404 |
+| Secretary of the practice | ✅ 404 |
+| Another doctor | ✅ 404 |
+| Access log | ✅ `record_access_log` kind `prescription`, `object_ref` = the rx id, one per view |
+
+**Nit (not blocking, same builder as the app):** the template's accent
+colour is used as a **solid** background for the alternate table row and
+the notes box. With a strong accent (`#ea580c`), the grey "Observações"
+text on it is hard to read. A tint of the accent, or dark text, would keep
+it legible.
+
+**CI at `29b90ee`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `29b90ee`.** This docs commit sits directly on the PR head. The branch is 8 behind master, and a master merge conflicts in code (app-map.ts + the 15 message files), so e7 syncs it.
