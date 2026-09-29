@@ -3,26 +3,14 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { formatShortDate } from "@/lib/dateLabels";
-import { toDocTemplate } from "@/lib/prescriptionDoc";
+import { PRINT_CSS, toDocTemplate } from "@/lib/prescriptionDoc";
 import { PrescriptionDocument } from "./PrescriptionDocument";
-import { PrintToolbar } from "./PrintToolbar";
+import { PrintToolbar } from "@/components/PrintToolbar";
 
 // The prescription's print view (Help P6 on the website): the same layout
 // as the app's PDF; "Imprimir / Salvar PDF" opens the print window, where
 // "Salvar como PDF" gives the file. Doctor only (clinical data), and only
 // this practice's patient's prescription.
-
-// Only the prescription prints, on A4: the dashboard's nav, the toolbar and
-// any floating button stay off the page. Colours print as on screen.
-const PRINT_CSS = `
-@page { size: A4; margin: 12mm; }
-@media print {
-  body * { visibility: hidden !important; }
-  #rx-doc, #rx-doc * { visibility: visible !important; }
-  #rx-doc { position: absolute; left: 0; top: 0; width: 100%; max-width: none; padding: 0; }
-  .rx-no-print { display: none !important; }
-  #rx-doc { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-}`;
 
 export default async function PrescriptionPrintPage({
   params,

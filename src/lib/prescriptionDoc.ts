@@ -5,6 +5,18 @@
 // the doctor's name and council registration under it, to be signed by
 // hand (UX 36: the app's drawn signature lives on the phone only).
 
+// Print views: only #print-doc prints, on A4. The dashboard's nav, the
+// toolbar (.print-hide) and any floating button stay off the page, and
+// colours print as on screen.
+export const PRINT_CSS = `
+@page { size: A4; margin: 12mm; }
+@media print {
+  body * { visibility: hidden !important; }
+  #print-doc, #print-doc * { visibility: visible !important; }
+  #print-doc { position: absolute; left: 0; top: 0; width: 100%; max-width: none; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .print-hide { display: none !important; }
+}`;
+
 export type DocTemplate = {
   primaryColor: string;
   accentColor: string;

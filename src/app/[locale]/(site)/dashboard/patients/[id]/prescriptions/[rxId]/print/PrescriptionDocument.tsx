@@ -22,7 +22,7 @@ export function PrescriptionDocument({ template, labels, patientName, date, corr
   const { primaryColor, accentColor } = template;
   const label = "mb-1.5 text-[11px] uppercase tracking-[0.5px] text-[#A0ABBE]";
   return (
-    <article id="rx-doc" className="mx-auto max-w-[680px] bg-white p-10 text-[#1A2138]" style={{ fontFamily: "-apple-system, Helvetica, Arial, sans-serif" }}>
+    <article id="print-doc" className="mx-auto max-w-[680px] bg-white p-10 text-[#1A2138]" style={{ fontFamily: "-apple-system, Helvetica, Arial, sans-serif" }}>
       <header className="mb-7 flex items-center justify-between pb-[18px]" style={{ borderBottom: `3px solid ${primaryColor}` }}>
         <div>
           <h1 className="mb-1 text-[22px] font-extrabold" style={{ color: primaryColor }}>{labels.title}</h1>
