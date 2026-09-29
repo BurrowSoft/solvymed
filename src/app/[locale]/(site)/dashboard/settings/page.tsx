@@ -7,6 +7,7 @@ import { SecretarySettings } from "./SecretarySettings";
 import { ShowSetupRow } from "./ShowSetupRow";
 import { NewsSettingsCard, TourSettingsCard } from "@/components/tour/TourProvider";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { SolvyAiSettingsCard } from "@/components/solvyai/SolvyAiSettings";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
@@ -150,6 +151,7 @@ export default async function SettingsPage({
 
         <TourSettingsCard />
         {liveFeatures.news && <NewsSettingsCard />}
+        {liveFeatures.solvyAi && <SolvyAiSettingsCard prefix={locale === "en" ? "" : `/${locale}`} />}
 
         <ProfileForm
           fullName={prof.full_name}

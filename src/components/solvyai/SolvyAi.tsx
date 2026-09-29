@@ -8,6 +8,7 @@ import { maskPersonalData, MAX_MESSAGE_CHARS, MAX_TURNS, MIN_SECONDS_BETWEEN } f
 import type { AnswerBlock, AnswerChunk, AssistantBackend, AssistantScreen, AssistantUsage, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
 import { isInternalHref, webPath } from "@/lib/assistant/targets";
 import { formatDateLabel } from "@/lib/dateLabels";
+import { BUTTON_EVENT, readButtonHidden } from "./SolvyAiSettings";
 import { helpLang, inlineSegments } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { track } from "@/lib/track";
@@ -57,6 +58,14 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
   const [open, setOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
   const [hint, setHint] = useState(false);
+  // Configurações › SolvyAI › "Mostrar botão do assistente" (this browser).
+  const [buttonHidden, setButtonHidden] = useState(false);
+  useEffect(() => {
+    setButtonHidden(readButtonHidden());
+    const on = (e: Event) => setButtonHidden((e as CustomEvent<{ hidden: boolean }>).detail.hidden);
+    window.addEventListener(BUTTON_EVENT, on);
+    return () => window.removeEventListener(BUTTON_EVENT, on);
+  }, []);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -275,7 +284,7 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
       )}
 
       {/* The floating button (or the minimised pill after "Abrir tela"). */}
-      {!(open && !minimized) && (
+      {!(open && !minimized) && !buttonHidden && (
         <div className="fixed bottom-5 right-5 z-30 flex items-center gap-2">
           {/* After a save: "✓ … + Desfazer" for 10 s (§2.3). */}
           {toast && toast.left > 0 && (

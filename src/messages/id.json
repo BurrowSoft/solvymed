@@ -1183,5 +1183,17 @@
   "dateInput": {
     "buddhistYear": "Sepertinya ini tahun Buddhis. Gunakan tahun Masehi (misalnya 1996).",
     "invalidBirthDate": "Tanggal lahir tidak valid: gunakan tanggal antara 1900 dan hari ini."
+  },
+  "solvyaiSettings": {
+    "title": "SolvyAI",
+    "buttonLabel": "Tampilkan tombol asisten",
+    "buttonHint": "Di browser ini.",
+    "actionsLabel": "Izinkan SolvyAI melakukan tindakan",
+    "actionsText": "SolvyAI dapat membuat, memindahkan, dan membatalkan janji temu, memblokir waktu, menambahkan pasien, dan menandai pembayaran, selalu setelah Anda konfirmasi. Untuk itu, nama dan tanggal lahir pasien serta detail janji temu dikirim ke Anthropic (AS), yang memproses permintaan. SolvyAI tidak pernah membaca rekam medis, resep, atau hasil pemeriksaan. Apa yang Anda ketik di chat dikirim sesuai yang Anda tulis, jadi hindari mengetik data klinis.",
+    "privacy": "Kebijakan Privasi",
+    "confirmTitle": "Aktifkan tindakan SolvyAI?",
+    "cancel": "Batal",
+    "turnOn": "Aktifkan",
+    "error": "Tidak dapat menyimpan. Coba lagi."
   }
 }
