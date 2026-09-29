@@ -7561,3 +7561,71 @@ provider still generates and bills that answer. Worth checking whether
 `3b256cc`.** This docs commit sits on top of a master sync (4 behind,
 with #124; the TESTING-WEB.md conflict was resolved by keeping both
 blocks).
+
+## PR #126 (`feat/solvyai-actions`, base master) — SolvyAI actions mode, part 1 (read tools + book / cancel / block / mark-paid cards), 🟢 at `cd70175`
+
+Server-only: nothing reaches the UI yet.
+- **Unit tests:** `assistant-actions` + `assistant-route`, 33/33 (vitest
+  exit 0).
+- **End-to-end over HTTP:**
+  - A local `next dev` at `cd70175` with `SOLVYAI_API_ENABLED=1` and a
+    fake key.
+  - A test-only preload (scratchpad/pr126/sink.cjs) answers
+    `api.anthropic.com` with **real Anthropic SSE**, including `tool_use`
+    blocks (`input_json_delta`) and `stop_reason: tool_use`, scripted per
+    round. Ids in the scripted tool inputs are resolved from the tool
+    results the route itself sent back, so they come from the real reads.
+  - The **real tools ran against the prod DB** as a throwaway doctor: hours
+    Mon–Fri 08–18, weekends off, patients Ana / Bruno / Carla (archived),
+    Tuesday appointments, blocks at 12–13 and 18–19, a pending request.
+  - The 115 RPCs were stubbed; nothing reached Anthropic.
+
+| # | Scenario | Result |
+|---|---|---|
+| 1 | 115 says `actions:false` | `meta.mode = help`, **no tools offered** to the model, no card |
+| 2 | a propose with a patient id not read in this request | tool error "Unknown patient: use a read tool first…", **no card**; the model asks |
+| 2b | the id only in a (forged) earlier history message | still refused |
+| 3 | find_patients → book Tuesday 11:00, no duration | card **Nova consulta**: Paciente "Opus Ana Costa (14/05/1990)", Quando "Terça-feira, 06/10/2026, 11:00–11:30", Duração 30 min **isDefault**; action args = the fields; `editHref` / `viewHref` internal (`/pt-BR/dashboard/schedule?date=…`); `after` schedule; expires in **15 min**; random id |
+| 4 | book over Bruno 10:00–10:30 | **no card**; `slot_choice conflict`: "…10:00 já tem Opus Bruno Lima (10:00–10:30). Qual destes horários?", alternatives **09:30 / 10:30 / 11:00**, other |
+| 5 | blocked 12:15 | ⚠ "Horário bloqueado (12:00–13:00)" + secondConfirm "Este horário está bloqueado (12:00–13:00). Agendar mesmo assim?" [Agendar] |
+| 5 | 07:00 | ⚠ "Fora do horário de atendimento (08:00–18:00)" + secondConfirm |
+| 5 | Sunday | ⚠ "Domingo não é dia de atendimento" + secondConfirm "Domingo não é dia de atendimento. Agendar mesmo assim?" |
+| 5 | blocked **and** outside 18:15 | both warnings, **one** question with both sentences |
+| 5 | the same patient already booked that day | warning "…já tem consulta nesse dia às 15:00" **only**, no second question |
+| 5 | yesterday | **hard stop** `past_time` "Esse horário já passou. Escolha outro horário." |
+| 5 | durationMin 45 | 11:00–11:45, "45 min" not marked default |
+| 5b | en | "New appointment", "Tuesday, 10/06/2026", "⚠ Blocked time (12:00–13:00)", "This time is blocked (12:00–13:00). Book anyway?" [Book], hrefs without the prefix |
+| 6 | archived patient (seen via list_appointments) | **hard stop** `patient_archived` "Este paciente está arquivado. Restaure o cadastro antes de agendar." |
+| 7 | block 09–11 over Bruno | **refused** (tool error naming "10:00 Opus Bruno Lima"), no card |
+| 7 | block 13–14 "Almoço" | card **Bloquear horário**, Período + Motivo |
+| 7 | block yesterday | hard stop `past_time` |
+| 8 | mark paid, no value | tool error "…no value: ask the user for the amount…", **no card** |
+| 8 | mark paid with 200 | card **Marcar como pago**, Valor 200; `after` payments + highlight id |
+| 9 | cancel a confirmed appointment | card **Cancelar consulta**; `after` highlights that id |
+| 9 | cancel a pending request | **hard stop** `not_allowed` "Pedidos de consulta são aceitos ou recusados no próprio pedido." |
+| 10 | unknown tool (`delete_record`) | "There's no tool…"; BE year 2569 → rejected; no time → "ask the user for the time" |
+| 11 | the model keeps reading and never proposes | stops after **4 rounds** with "Não consegui concluir isso. Pode dizer de outro jeito…" |
+| 12 | `confirm_failed` event (a slot taken) | **no model call**, `slot_choice confirm_failed` "Esse horário acabou de ser ocupado. Nada foi salvo…", fresh times 09:00 / 09:30 / 10:30, **one consume + one release** |
+| 12 | the same in help mode / with junk args (2569, 25:00) | 400 `bad_request` |
+
+- **Privacy:**
+  - An appointment note ("SEGREDO-CLINICO-OPUS") seeded on Bruno's
+    appointment **never appears** in any request to the model.
+  - `list_appointments` sends id, date, times, status, patient name + birth
+    date, paid, value; `find_patients` sends id, name, birth date.
+  - All 7 tools are sent with `strict`.
+- **Nothing is written:** a DB snapshot (appointments and patients,
+  including `updated_at`) is identical before and after all of the above.
+
+**Nits (not blocking; to UX / e7):**
+- **Unformatted value:** the mark-paid card shows **"Valor 200"**, not
+  "R$ 200,00" / "฿200" (the tool uses `String(value)`).
+- **Book card fields:** only Paciente / Quando / Duração. The contract's
+  example also shows Valor (and the mock had Procedimento / Onde). Worth
+  a UX look, since the saved appointment gets the form's defaults for
+  those.
+
+**CI at `cd70175`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`cd70175`.** Not synced with master: the merge conflicts in
+`content/help/conditions.json` (the dev's file), so I aborted it and
+handed it to e7. This docs commit sits directly on `cd70175`.
