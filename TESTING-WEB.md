@@ -8351,3 +8351,54 @@ Tested by web tester 2.
 **CI at `b74cf4f`:** ✅ (lint, typecheck + unit tests, Vercel).
 **Review: clean (7f).** **Merge gate: 🟢 for `b74cf4f`.** This docs commit
 sits directly on top; the branch is up to date with its base.
+
+## PR #140 (`feat/solvyai-series`, base master) — SolvyAI's series card on the website, 🟢 at `755fe42`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `755fe42` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts the model's `tool_use` turns
+  (`find_patients` → `propose_book_appointment` with `repeat`) and logs
+  Expo pushes, never sending them.
+- **Data:** the prod DB, with throwaway fixtures (deleted afterwards):
+  - a doctor, open Mon–Fri 08:00–18:00;
+  - a linked patient with a device token, and an unlinked patient;
+  - "Opus Ocupado" Tue 20/10 10:00;
+  - a block Tue 27/10 14:00–15:00.
+- **Earlier run:** a first run at `81ab667` stopped at login (a harness
+  flake). The src delta to `755fe42` is only `helpArticles.json`.
+
+**Series:**
+- **Weekly ×3:**
+  - The card shows "Repetir | Semanal, 3 consultas (até 20/10/2026)".
+  - Confirmar → 3 rows (06/10, 13/10, 20/10).
+  - ONE push: "Clínica Opus Série IA marcou 3 consultas para você. A
+    primeira é em 06/10/2026 às 11:00."
+  - The toast is "✓ Feito" with **no Desfazer**.
+- **Weekly ×4 with a clash on the 3rd date:** no card. "Terça-feira,
+  20/10/2026 às 10:00 já tem Opus Ocupado. Nada foi salvo. Como prefere
+  seguir?" with only "Outro horário". The model is told to ask and never
+  pick. 0 rows.
+- **Weekly ×4 with a block on the 4th date:**
+  - The card shows "27/10/2026: ⚠ Horário bloqueado (14:00–15:00)".
+  - Confirmar → "27/10/2026: Este horário está bloqueado (14:00–15:00).
+    Agendar mesmo assim?" → Agendar → 4 rows.
+  - No push (unlinked patient).
+- **Bad repeats** (count 1, count 53, every "day"): no card; the model gets
+  "Repeat is { every: "week" | "2weeks" | "month", count: 2–52 }; ask the
+  user."
+- **Every 2 weeks ×2:** "A cada 2 semanas, 2 consultas (até 20/10/2026)" →
+  06/10 + 20/10, one push "marcou 2 consultas…".
+- **A date taken between the card and Confirmar:** "Não foi possível
+  salvar." Nothing saved (none of the series' dates).
+
+**Nit (not blocking):** a series card's same-patient warning ("já tem
+consulta nesse dia às 11:00") doesn't name the date, although it can apply
+to several.
+
+**CI at `755fe42`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `755fe42`.** This docs commit
+sits on top of a master sync (1 behind: #138's merge commit, no content
+change).
