@@ -7,7 +7,7 @@ import { knownDbError } from "@/lib/dbErrors";
 import { PICKER_LIMIT, cleanSearchText, patientSearchFilter } from "@/lib/patientSearch";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
-import { MOVABLE_STATUSES, hoursWarning } from "@/lib/scheduleChecks";
+import { MOVABLE_STATUSES, hoursWarning, keptDuration } from "@/lib/scheduleChecks";
 import type { WorkingHours } from "@/lib/slots";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { tellPatient } from "@/lib/clinicNotify";
@@ -236,9 +236,7 @@ export async function moveAppointment(formData: FormData) {
   // Nothing changes: nothing to ask, save or tell.
   if (before.date === date && before.start_time.slice(0, 5) === startTime) return { success: true, id };
 
-  const duration = before.duration_minutes && before.duration_minutes > 0
-    ? before.duration_minutes
-    : Math.max(5, (Date.parse(`1970-01-01T${before.end_time}Z`) - Date.parse(`1970-01-01T${before.start_time}Z`)) / 60_000);
+  const duration = keptDuration(before.start_time, before.end_time);
   const endTime = computeEndTime(startTime, duration);
   if (!endTime) return { error: "This time and duration would run past midnight", code: "past_midnight" };
 
