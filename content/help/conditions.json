@@ -30,5 +30,9 @@
   "saved-locale-live": {
     "met": false,
     "what": "Pushes reach each person in the language they chose: migration 117 (user_locales, set_my_locale, the push-target RPCs) applied on production AND the app saving its language (mobile #97) in a RELEASED store build. The website already saves its language (for the app's 7 languages) and reads the targets once 117 exists."
+  },
+  "mobile#116": {
+    "met": false,
+    "what": "In the app only scheduled / confirmed / late appointments change date or time; others show the date read-only, and an absent one offers Nova consulta pre-filled (mobile #116), in a RELEASED store build (not just merged)."
   }
 }
