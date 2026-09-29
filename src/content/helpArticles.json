@@ -48,8 +48,8 @@
           ]
         },
         "web": {
-          "pt": "Em **Agenda**, clique em **Nova Consulta** (também há o botão na **Visão geral**). Escolha o paciente, a data, o início, a duração, o tipo, o procedimento e a forma de pagamento (particular ou convênio), e clique em **Salvar Consulta**. O valor vem do procedimento escolhido. Se o paciente tiver conta no SolvyMed, ele recebe uma notificação.",
-          "en": "In the **Schedule**, click **New Appointment** (there's also a button on the **Overview**). Choose the patient, date, start, duration, type, procedure and payment (private or insurance), and click **Save Appointment**. The amount comes from the chosen procedure. If the patient has a SolvyMed account, they get a notification."
+          "pt": "Em **Agenda**, clique em **Nova Consulta** (também há o botão na **Visão geral**). Escolha o paciente, a data, o início, a duração, o tipo, o procedimento e a forma de pagamento (particular ou convênio), e clique em **Salvar Consulta**. O valor vem do procedimento escolhido.",
+          "en": "In the **Schedule**, click **New Appointment** (there's also a button on the **Overview**). Choose the patient, date, start, duration, type, procedure and payment (private or insurance), and click **Save Appointment**. The amount comes from the chosen procedure."
         },
         "webUnavailable": false,
         "open": "new-appointment",
@@ -178,8 +178,8 @@
           ]
         },
         "web": {
-          "pt": "Para remarcar: em **Agenda**, clique no ícone **Remarcar** ao lado da consulta, escolha a nova data e o horário e clique em **Remarcar** (a duração e os outros dados continuam os mesmos). Se o paciente tiver conta no SolvyMed, ele recebe uma notificação. Uma consulta marcada como **Ausente** não é remarcada (a falta fica registrada): use o ícone **Nova consulta (mesmo paciente)** ao lado dela. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**. Se o paciente tiver conta no SolvyMed, ele recebe uma notificação (consultas no passado não notificam).",
-          "en": "To move it: in the **Schedule**, click the **Reschedule** icon next to the appointment, choose the new date and time and click **Reschedule** (the duration and other details stay the same). If the patient has a SolvyMed account, they get a notification. An appointment marked **Absent** isn't moved (the no-show stays on record): use the **New appointment (same patient)** icon next to it. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**. If the patient has a SolvyMed account, they get a notification (past appointments don't)."
+          "pt": "Para remarcar: em **Agenda**, clique no ícone **Remarcar** ao lado da consulta, escolha a nova data e o horário e clique em **Remarcar** (a duração e os outros dados continuam os mesmos). Uma consulta marcada como **Ausente** não é remarcada (a falta fica registrada): use o ícone **Nova consulta (mesmo paciente)** ao lado dela. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**.",
+          "en": "To move it: in the **Schedule**, click the **Reschedule** icon next to the appointment, choose the new date and time and click **Reschedule** (the duration and other details stay the same). An appointment marked **Absent** isn't moved (the no-show stays on record): use the **New appointment (same patient)** icon next to it. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**."
         },
         "webUnavailable": false,
         "open": "schedule",
