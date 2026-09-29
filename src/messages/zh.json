@@ -511,6 +511,7 @@
     "noAddress": "无地址",
     "onMap": "在地图上",
     "noMapPin": "无地图标记 — 添加地址以在地图上显示",
+    "noPinYet": "无地图标记",
     "empty": "暂无诊所",
     "emptySubtitle": "添加您的诊所以便患者找到您",
     "addFirst": "添加您的第一家诊所",

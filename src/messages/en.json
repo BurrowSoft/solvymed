@@ -511,6 +511,7 @@
     "noAddress": "No address",
     "onMap": "On map",
     "noMapPin": "No map pin — add an address to appear on the map",
+    "noPinYet": "No map pin",
     "empty": "No clinics yet",
     "emptySubtitle": "Add your clinic so patients can find you",
     "addFirst": "Add your first clinic",
