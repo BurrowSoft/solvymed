@@ -326,7 +326,7 @@
     "editPatient": "編輯患者",
     "unblockBookings": "解除預約限制",
     "blockBookings": "限制預約",
-    "deletePatient": "刪除患者",
+    "deletePatient": "刪除病歷",
     "deletePatientConfirm": "刪除 {name}？所有病歷和處方將被永久刪除。",
     "blockedTitle": "預約已被限制",
     "blockedSub": "此患者無法申請新預約。解決待處理問題後請解除限制。",

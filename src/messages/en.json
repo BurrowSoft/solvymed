@@ -330,7 +330,7 @@
     "editPatient": "Edit Patient",
     "unblockBookings": "Unblock bookings",
     "blockBookings": "Block bookings",
-    "deletePatient": "Delete Patient",
+    "deletePatient": "Delete patient",
     "deletePatientConfirm": "Delete {name}? All records and prescriptions will be permanently deleted.",
     "blockedTitle": "Blocked from booking",
     "blockedSub": "This patient cannot request new appointments. Unblock after resolving the pending issue.",

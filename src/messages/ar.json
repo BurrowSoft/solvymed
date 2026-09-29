@@ -326,7 +326,7 @@
     "editPatient": "تعديل المريض",
     "unblockBookings": "إلغاء حظر الحجوزات",
     "blockBookings": "حظر الحجوزات",
-    "deletePatient": "حذف المريض",
+    "deletePatient": "حذف الملف",
     "deletePatientConfirm": "حذف {name}؟ ستُحذف جميع السجلات والوصفات بشكل دائم.",
     "blockedTitle": "محظور من الحجز",
     "blockedSub": "لا يستطيع هذا المريض طلب مواعيد جديدة. قم بإلغاء الحظر بعد حل المشكلة المعلقة.",

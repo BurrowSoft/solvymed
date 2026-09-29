@@ -326,7 +326,7 @@
     "editPatient": "Modifica Paziente",
     "unblockBookings": "Sblocca prenotazioni",
     "blockBookings": "Blocca prenotazioni",
-    "deletePatient": "Elimina Paziente",
+    "deletePatient": "Elimina scheda",
     "deletePatientConfirm": "Eliminare {name}? Tutti i dati e le ricette saranno eliminati definitivamente.",
     "blockedTitle": "Bloccato dalle prenotazioni",
     "blockedSub": "Questo paziente non può richiedere nuovi appuntamenti. Sblocca dopo aver risolto il problema in sospeso.",

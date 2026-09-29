@@ -326,7 +326,7 @@
     "editPatient": "Patient bearbeiten",
     "unblockBookings": "Buchungen entsperren",
     "blockBookings": "Buchungen sperren",
-    "deletePatient": "Patienten löschen",
+    "deletePatient": "Akte löschen",
     "deletePatientConfirm": "{name} löschen? Alle Akten und Rezepte werden dauerhaft gelöscht.",
     "blockedTitle": "Buchungen gesperrt",
     "blockedSub": "Dieser Patient kann keine neuen Termine anfragen. Entsperren Sie nach Lösung des Problems.",

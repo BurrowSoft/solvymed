@@ -326,7 +326,7 @@
     "editPatient": "Chỉnh sửa bệnh nhân",
     "unblockBookings": "Bỏ chặn đặt lịch",
     "blockBookings": "Chặn đặt lịch",
-    "deletePatient": "Xóa bệnh nhân",
+    "deletePatient": "Xóa hồ sơ",
     "deletePatientConfirm": "Xóa {name}? Tất cả hồ sơ và đơn thuốc sẽ bị xóa vĩnh viễn.",
     "blockedTitle": "Bị chặn đặt lịch",
     "blockedSub": "Bệnh nhân này không thể yêu cầu lịch hẹn mới. Bỏ chặn sau khi giải quyết vấn đề đang chờ.",

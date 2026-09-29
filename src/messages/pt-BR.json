@@ -326,7 +326,7 @@
     "editPatient": "Editar Paciente",
     "unblockBookings": "Desbloquear agendamentos",
     "blockBookings": "Bloquear agendamentos",
-    "deletePatient": "Excluir Paciente",
+    "deletePatient": "Excluir cadastro",
     "deletePatientConfirm": "Excluir {name}? Todos os registros e receitas serão permanentemente excluídos.",
     "blockedTitle": "Bloqueado para agendamentos",
     "blockedSub": "Este paciente não pode solicitar novas consultas. Desbloqueie após resolver o problema pendente.",

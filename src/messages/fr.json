@@ -326,7 +326,7 @@
     "editPatient": "Modifier le patient",
     "unblockBookings": "Débloquer les rendez-vous",
     "blockBookings": "Bloquer les rendez-vous",
-    "deletePatient": "Supprimer le patient",
+    "deletePatient": "Supprimer le dossier",
     "deletePatientConfirm": "Supprimer {name} ? Tous les dossiers et ordonnances seront définitivement supprimés.",
     "blockedTitle": "Bloqué des réservations",
     "blockedSub": "Ce patient ne peut pas demander de nouveaux rendez-vous. Débloquez-le après avoir résolu le problème en attente.",

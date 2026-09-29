@@ -326,7 +326,7 @@
     "editPatient": "Editar Paciente",
     "unblockBookings": "Desbloquear citas",
     "blockBookings": "Bloquear citas",
-    "deletePatient": "Eliminar Paciente",
+    "deletePatient": "Eliminar registro",
     "deletePatientConfirm": "¿Eliminar a {name}? Todos los registros y recetas se eliminarán de forma permanente.",
     "blockedTitle": "Bloqueado de citas",
     "blockedSub": "Este paciente no puede solicitar nuevas citas. Desbloquea después de resolver el problema pendiente.",

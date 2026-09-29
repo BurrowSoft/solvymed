@@ -326,7 +326,7 @@
     "editPatient": "Edit Pasien",
     "unblockBookings": "Buka blokir janji",
     "blockBookings": "Blokir janji",
-    "deletePatient": "Hapus Pasien",
+    "deletePatient": "Hapus rekam medis",
     "deletePatientConfirm": "Hapus {name}? Semua rekam medis dan resep akan dihapus secara permanen.",
     "blockedTitle": "Diblokir dari pemesanan",
     "blockedSub": "Pasien ini tidak dapat meminta janji baru. Buka blokir setelah menyelesaikan masalah yang tertunda.",
