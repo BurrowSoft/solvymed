@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { conditionMet } from "@/lib/conditions";
-import { patientsCsv, type CsvPatient } from "@/lib/patientsCsv";
+import { CSV_COLUMNS, patientsCsv, type CsvPatient } from "@/lib/patientsCsv";
 import { routing } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
 
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
   for (let from = 0; ; from += PAGE) {
     const { data, error } = await supabase
       .from("patients")
-      .select("*")
+      .select(CSV_COLUMNS)
       .eq("professional_id", user.id)
       .order("full_name")
       .range(from, from + PAGE - 1);

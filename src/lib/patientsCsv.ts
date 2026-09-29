@@ -32,6 +32,11 @@ export type CsvPatient = {
   profession?: string | null; tags?: unknown; archived_at?: string | null;
 };
 
+// Exactly what the export reads from patients: the CsvPatient fields + id
+// (for the access log). Never "*": a new column (imported data, notes, …)
+// stays out of the file until it's added here on purpose.
+export const CSV_COLUMNS = "id, full_name, cpf, th_national_id, passport_number, sex, birth_date, phone, email, profession, tags, archived_at";
+
 export type CsvLabels = {
   fullName: string; cpf: string; thaiId: string; passport: string; sex: string; birthDate: string; phone: string;
   email: string; profession: string; tags: string; archivedOn: string; male: string; female: string; other: string;

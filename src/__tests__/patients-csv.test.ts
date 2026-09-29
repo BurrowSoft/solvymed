@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { csvCell, csvSeparator, patientsCsv, type CsvLabels } from "@/lib/patientsCsv";
+import { CSV_COLUMNS, csvCell, csvSeparator, patientsCsv, type CsvLabels } from "@/lib/patientsCsv";
 
 // The patient CSV (Help P10): the app's rules, and fail closed on the
 // access log (UX 36, migration 126).
@@ -40,6 +40,7 @@ const h = vi.hoisted(() => ({
   patients: [] as Record<string, unknown>[],
   rpc: [] as { fn: string; args: Record<string, unknown> }[],
   logError: null as unknown,
+  selects: [] as string[],
 }));
 vi.mock("@/lib/conditions", () => ({ conditionMet: () => h.met }));
 const country = vi.hoisted(() => ({ code: "BR" as string | null }));
@@ -52,7 +53,7 @@ vi.mock("@/lib/supabase/server", () => ({
     from: (table: string) => {
       let range: [number, number] = [0, 0];
       const q: Record<string, unknown> = {};
-      q.select = () => q;
+      q.select = (cols: string) => { if (table === "patients") h.selects.push(cols); return q; };
       q.eq = () => q;
       q.order = () => q;
       q.maybeSingle = async () => ({ data: table === "user_roles" ? { role: h.role } : null, error: null });
@@ -70,7 +71,13 @@ const req = () => new NextRequest("https://www.solvymed.com/api/patients/export?
 const P = (i: number) => ({ id: `p-${i}`, full_name: `Paciente ${i}`, cpf: null });
 
 describe("GET /api/patients/export", () => {
-  beforeEach(() => { h.met = true; h.role = "professional"; h.patients = [P(1), P(2)]; h.rpc = []; h.logError = null; });
+  beforeEach(() => { h.met = true; h.role = "professional"; h.patients = [P(1), P(2)]; h.rpc = []; h.logError = null; h.selects = []; });
+
+  it("reads an explicit column list, never *", async () => {
+    expect((await GET(req())).status).toBe(200);
+    expect(h.selects).toEqual([CSV_COLUMNS]);
+    expect(CSV_COLUMNS).not.toMatch(/\*|import|note/);
+  });
 
   it("off until migration 126", async () => {
     h.met = false;
