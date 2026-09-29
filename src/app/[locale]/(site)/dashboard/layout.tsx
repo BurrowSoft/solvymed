@@ -14,6 +14,7 @@ import { liveFeatures } from "@/lib/liveFeatures";
 import { SolvyAi } from "@/components/solvyai/SolvyAi";
 import { assistantApiEnabled } from "@/lib/assistant/server/caller";
 import { HighlightFromQuery } from "@/components/HighlightFromQuery";
+import { SaveMyLocale } from "@/components/SaveMyLocale";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 
@@ -207,6 +208,8 @@ export default async function DashboardLayout({
             <Suspense fallback={null}><HighlightFromQuery /></Suspense>
           </>
         )}
+        {/* The language others' pushes and messages reach this user in (117). */}
+        <SaveMyLocale locale={locale} />
       </div>
     </TourProvider>
   );

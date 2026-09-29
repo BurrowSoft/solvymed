@@ -1,12 +1,13 @@
 "use server";
 
+import { myAppointment } from "@/lib/myAppointments";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { computeSlots, toMinutes, getDayHours } from "@/lib/slots";
 import type { WorkingHours } from "@/lib/slots";
 import { sendExpoPush } from "@/lib/push";
 import { pushText, pushWhen, type PushKind } from "@/lib/pushText";
-import { patientPushLocale, professionalPushLocale } from "@/lib/pushRecipient";
+import { clinicPushTargets, patientPushTargets } from "@/lib/pushRecipient";
 import { actionError } from "@/lib/dbErrors";
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
@@ -180,12 +181,8 @@ export async function acceptProposal(appointmentId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("proposed_date, proposed_start_time, proposed_end_time, professional_id, patient_name")
-    .eq("id", appointmentId)
-    .eq("patient_auth_id", user.id)
-    .maybeSingle();
+  // The patient's own row, only through get_my_appointments (106).
+  const appt = await myAppointment(supabase, appointmentId);
 
   if (!appt) return { error: "Appointment not found" };
 
@@ -206,12 +203,7 @@ export async function declineProposal(appointmentId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("professional_id, patient_name")
-    .eq("id", appointmentId)
-    .eq("patient_auth_id", user.id)
-    .maybeSingle();
+  const appt = await myAppointment(supabase, appointmentId);
 
   const { error } = await supabase.rpc("decline_appointment_proposal", {
     p_appointment_id: appointmentId,
@@ -242,12 +234,7 @@ export async function requestReschedule(
   if (!user) return { error: "Unauthorized" };
   if (looksBuddhistEra(newDate)) return { error: "date_buddhist_era" };
 
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("professional_id, patient_name")
-    .eq("id", appointmentId)
-    .eq("patient_auth_id", user.id)
-    .maybeSingle();
+  const appt = await myAppointment(supabase, appointmentId);
 
   if (!appt) return { error: "Appointment not found" };
 
@@ -413,13 +400,11 @@ async function notifyPatient(
   const patientAuthId = appt?.patient_auth_id as string | null;
   if (!patientAuthId) return;
 
-  const { data } = await supabase.rpc("get_patient_push_tokens", { p_patient_auth_id: patientAuthId });
-  const tokens = (data ?? []).map((r: { token: string }) => r.token);
-  if (!tokens.length) return;
-  const locale = await patientPushLocale(supabase, patientAuthId, appt?.professional_id as string);
-  const when = extra.date ? pushWhen(locale, extra.date, extra.time) : undefined;
-  const { title, body } = pushText(locale, kind, { when, note: extra.note });
-  await sendExpoPush(tokens, title, body);
+  for (const { locale, tokens } of await patientPushTargets(supabase, patientAuthId, appt?.professional_id as string)) {
+    const when = extra.date ? pushWhen(locale, extra.date, extra.time) : undefined;
+    const { title, body } = pushText(locale, kind, { when, note: extra.note });
+    await sendExpoPush(tokens, title, body);
+  }
 }
 
 async function notifyProfessional(
@@ -428,11 +413,9 @@ async function notifyProfessional(
   kind: PushKind,
   extra: { name?: string | null; date?: string | null; time?: string | null } = {},
 ) {
-  const { data } = await supabase.rpc("get_clinic_push_tokens", { p_professional_id: professionalId });
-  const tokens = (data ?? []).map((r: { token: string }) => r.token);
-  if (!tokens.length) return;
-  const locale = await professionalPushLocale(supabase, professionalId);
-  const when = extra.date ? pushWhen(locale, extra.date, extra.time) : undefined;
-  const { title, body } = pushText(locale, kind, { name: extra.name ?? "", when });
-  await sendExpoPush(tokens, title, body);
+  for (const { locale, tokens } of await clinicPushTargets(supabase, professionalId)) {
+    const when = extra.date ? pushWhen(locale, extra.date, extra.time) : undefined;
+    const { title, body } = pushText(locale, kind, { name: extra.name ?? "", when });
+    await sendExpoPush(tokens, title, body);
+  }
 }

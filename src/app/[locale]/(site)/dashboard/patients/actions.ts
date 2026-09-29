@@ -3,9 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId, isProfessionalRole } from "@/lib/effectiveProfId";
-import { sendExpoPush } from "@/lib/push";
-import { pushText, pushWhen } from "@/lib/pushText";
-import { patientPushLocale } from "@/lib/pushRecipient";
+import { tellPatient } from "@/lib/clinicNotify";
 import { actionError } from "@/lib/dbErrors";
 import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
 import { readAccessLog, type AccessLogPage } from "@/lib/accessLog";
@@ -246,17 +244,14 @@ export async function archivePatient(patientId: string): Promise<ArchiveResult> 
 
   const cancelled = (data ?? []) as { appointment_id: string; patient_auth_id: string | null; date: string; start_time: string }[];
   const practiceId = (await getEffectiveProfId(supabase, user.id)) ?? user.id;
+  // Each cancelled appointment, told the same way as a cancel in the
+  // Schedule (the clinic's name, the patient's language; lib/clinicNotify).
   await Promise.all(cancelled
     .filter((a) => a.patient_auth_id)
-    .map(async (a) => {
-      const { data: tokenRows } = await supabase.rpc("get_patient_push_tokens", { p_patient_auth_id: a.patient_auth_id });
-      const tokens = (tokenRows ?? []).map((r: { token: string }) => r.token);
-      if (!tokens.length) return;
-      // In the patient's language, the date in its format.
-      const locale = await patientPushLocale(supabase, a.patient_auth_id!, practiceId);
-      const { title, body } = pushText(locale, "apptCancelledByClinic", { when: pushWhen(locale, a.date, a.start_time) });
-      await sendExpoPush(tokens, title, body);
-    }));
+    .map((a) => tellPatient(supabase, {
+      kind: "cancelled", practiceId, isSecretary: user.id !== practiceId,
+      patientAuthId: a.patient_auth_id, date: a.date, startTime: a.start_time,
+    })));
 
   revalidatePath("/dashboard/patients");
   revalidatePath(`/dashboard/patients/${patientId}`);

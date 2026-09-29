@@ -7721,3 +7721,314 @@ fast.
 **CI at `ac398a9`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `ac398a9`.** This docs commit sits directly on top; the branch is up to
 date with master.
+
+## PR #129 (`fix/booking-saves-procedure-price`, base **release**) — RELEASE hotfix: a web booking saves the procedure's price as its value, 🟢 at `7a505c1`
+
+**The live bug:** Agenda › Nova Consulta on the website never saved the
+procedure's price, so web-booked appointments had no value in Pagamentos
+or in the Pix code.
+
+**Tested on the release Preview at `7a505c1`:**
+- **Setup:** a throwaway doctor with a Pix key and two procedures:
+  "Consulta Opus" R$ 150 and "Retorno Opus" with no price.
+- **Bookings:** both were made through the real form (Agenda › Nova
+  Consulta), and each save was checked in the DB.
+
+| Check | Result |
+|---|---|
+| Book with "Consulta Opus · R$ 150,00" | saved with **`payment_amount` 150**, `consultation_type` Consulta Opus, pending |
+| Book with "Retorno Opus" (no price) | saved with **`payment_amount` null** (as before) |
+| Bloquear Horário 13:00 | the block row has `payment_amount` null: **block time unaffected** |
+| Pagamentos (the two rows moved to yesterday via REST, since Pagamentos lists up to today; the values are the form's) | Pendente: "Opus Preco Com · Consulta Opus · **R$ 150,00** · Marcar como Pago"; "Opus Preco Sem · Retorno Opus · **Sem valor definido**" |
+| Pix QR (Agenda, the priced appointment) | the Copia e Cola code parsed as EMV: **tag 54 = `150.00`**, so the amount is in the Pix |
+
+- **Note (unchanged by this PR, release only):** on release the Pix dialog
+  title reads "Pix QR Code" even in pt-BR. Master has the translated
+  title since #100, and the dialog's hardcoded "Copia e Cola" / "Copiar"
+  are the #128 item.
+- **Post-merge:** the prod spot-check (one booking with a priced
+  procedure, then delete it) follows when this lands on
+  www.solvymed.com.
+
+**CI at `7a505c1`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`7a505c1`.** The branch was up to date with `release`; this docs commit
+sits on top.
+
+**#129 post-merge prod check ✅** (www.solvymed.com; Vercel prod = release
+`b7a4c08`, checked with `vercel inspect`). Same spec, with no bypass
+header sent to prod:
+- "Consulta Opus · R$ 150,00" → **`payment_amount` 150**; "Retorno Opus"
+  → null; a block → null.
+- Pagamentos: "Consulta Opus · **R$ 150,00**" / "Sem valor definido".
+- The Pix Copia e Cola **tag 54 = `150.00`**.
+- The throwaway doctor was deleted.
+
+## PR #133 (`chore/merge-back-release-129`, base master) — merge-back release → master after #129, 🟢 at `84972ec`
+
+- **CI:** green.
+- **Diff vs master:** `TESTING-WEB.md` only (+32 lines: the #129 block);
+  no code. Master's own price block (from #127) is kept, and the branch
+  contains master.
+- **Docs:** no docs commit was pushed to it, at the dev's request (to
+  keep the reviewed head), so the entry is recorded here.
+
+## PR #130 (`feat/clinic-pins`, base master) — My Clinics: "Sem pin no mapa" for a clinic with an address but no pin, 🟢 at `c74f9ad`
+
+Tested on the Preview at `c74f9ad` (Thai flag on). The throwaway doctor
+had three clinics:
+- **A:** an address, `lat`/`lng` null;
+- **B:** no address, no pin;
+- **C:** an address and a pin.
+
+| Clinic | pt-BR | en | th |
+|---|---|---|---|
+| A (address, no pin) | "**Sem pin no mapa**" + "Ajustar no mapa" | "**No map pin**" + "Adjust on map" | "**ไม่มีหมุดแผนที่**" + "ปรับบนแผนที่" |
+| B (no address) | old text: "Sem localização no mapa — adicione um endereço para aparecer no mapa" | "No map pin — add an address to appear on the map" | "ไม่มีหมุดแผนที่ — เพิ่มที่อยู่เพื่อปรากฏบนแผนที่" |
+| C (pinned) | "No mapa" | "On map" | "บนแผนที่" |
+
+**Setting A's pin** (`lat`/`lng` via REST, then a reload) → A shows "No
+mapa": the label clears.
+
+**CI at `c74f9ad`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`c74f9ad`.** This docs commit sits on top of a master sync (16 behind,
+clean merge; message JSON valid).
+
+## PR #131 (`feat/clinic-change-pushes`, base master) — the website tells the patient when the clinic books or cancels, 🟢 at `6a01fbc` (+ docs/parser-only commits to `2ccdf5a`), with one ⏳ post-110 row
+
+**Setup:**
+- **Server:** a local `next dev` with my test-only Expo sink (pushes are
+  logged, never sent; the clinic-closed email call is sunk too), against
+  the prod DB.
+- **Practice:** a throwaway one with `clinic_name` "Clínica Opus Push"
+  plus two locations ("Aaa Opus Local Norte", "Zzz Opus Local Sul").
+- **Patients:** "Opus Push pt" (`pt-BR`) and "Opus Push th" (`th`), both
+  linked app accounts with device tokens, plus an unlinked "Opus Push Sem
+  Conta".
+- Every action was done through the UI (the Nova Consulta form, the
+  status select, Arquivar, Settings › close account).
+
+| Action | Push (title \| body) |
+|---|---|
+| Doctor books pt (Tuesday 10:00) | Nova consulta \| **Clínica Opus Push marcou uma consulta para você em 06/10/2026 às 10:00.** |
+| Status → Cancelado (pt) | Consulta cancelada \| **Clínica Opus Push cancelou sua consulta de 06/10/2026 às 10:00. Para marcar outra, abra o app.** |
+| Cancelado → Confirmado | none (only a change *to* cancelled notifies) |
+| Booking or cancelling in the past; Bloquear Horário; an unlinked patient | none |
+| Archive th (2 future appointments) | one each: นัดหมายถูกยกเลิก \| **นัดหมายของคุณวันที่ 07/10/2569 เวลา 15:00 ถูกยกเลิกโดย Clínica Opus Push หากต้องการนัดใหม่ กรุณาเปิดแอป** (and 16:00): UX's exact wording |
+| Account close by a second doctor (no `clinic_name`, location "Consultório Opus Sul") | th: **…เวลา 08:00 ถูกยกเลิกโดย Consultório Opus Sul** (no "open the app" suffix; the first-location fallback); pt: the unchanged close text |
+
+**My two findings:**
+1. **A linked patient whose appointments were all made on the website
+   gets no book/cancel push.**
+   - The web form stores `patient_id` but not `patient_auth_id`.
+   - `get_patient_push_tokens` (088) only returns tokens when an
+     appointment with `patient_auth_id` exists for the practice, so it
+     returns 0 tokens silently. The th patient got nothing; the pt
+     patient, with one app booking, got both pushes.
+   - **Handled:** the fix is mobile #117 / migration 119 (unapplied). Web
+     gates the Help/App Map claims on `linked-bookings`, and the built
+     A1/A4 show no website-notification sentence.
+2. **A secretary's action names a location, not the clinic:** "Aaa Opus
+   Local Norte marcou…" / "…cancelou…", while the doctor's own push says
+   "Clínica Opus Push".
+   - **Cause:** the secretary path reads `clinic_name` from
+     `get_professional_public_info`, which returns the profile name only
+     after migration 110. Prod is on 105.
+   - The reviewer ruled it expected before 110 and not a gate, since
+     master reaches prod only with the Thai release, which applies 110–119
+     first.
+   - **⏳ post-110:** re-run the secretary push on a profile-named practice
+     with 2 locations → it must say the profile name. The same row
+     applies to mobile #111.
+
+**CI:** ✅. **Review: clean (7f).** **Merge gate: 🟢** (with the ⏳
+post-110 row above). This docs commit sits on top of a master sync (9
+behind, clean merge).
+
+## PR #128 (`fix/label-audit`, base master) — Pix dialog labels translated; Help G1/G4/K4 match the real labels (from my label audit), 🟢 at `4e420ef`
+
+**The Pix dialog** (Agenda, an appointment with a value, the Preview at
+`4e420ef`):
+
+| Locale | Button title | Dialog |
+|---|---|---|
+| pt-BR | QR Code Pix | QR Code Pix · **Pix Copia e Cola** · **Copiar** |
+| en | Pix QR code | Pix QR code · **Pix Copia e Cola** · **Copy** |
+| th | Pix QR code | Pix QR code · **Pix Copia e Cola** · **คัดลอก** |
+
+Before, the dialog hardcoded "Copia e Cola" / "Copiar" in every locale.
+In th the title stays "Pix QR code": Pix is Brazil-only, so not a
+problem.
+
+**Help:** all 156 pages were compared with the master Preview.
+- **148 are identical.** Only these changed:
+  - **G1** (pt, en; the website line): "clique em **Marcar como Pago** na
+    consulta: salva na hora. Se ela não tiver valor, digite o valor e
+    clique em **Confirmar**." This matches the one-click save when there
+    is a value.
+  - **G4** (pt, en; the website line): "**Pix Copia e Cola**"; en "(with
+    **Copy**)".
+  - **K4** (pt, en; plain and `?app=1`): "**Encerrar conta** (ou
+    **Excluir conta**, se ainda não houver prontuários)". The website shows
+    "Excluir conta" for an account with no clinical history.
+- **The G1/G4 app variants are unchanged**, as intended: the website line
+  isn't shown there.
+
+**K4 app label, resolved at `72aa7f7`:**
+- **What the app shows** (8d, from the app code): every doctor sees one
+  button, **"Excluir Conta" / "Delete Account"**. The dialog then says
+  "Excluir Conta" (no records) or "Encerrar sua conta" (with records).
+- **The fix:** the K4 body now reads "**Configurações → Excluir conta**.
+  Se ainda não houver prontuários, a conta é excluída. Se houver, ela é
+  encerrada: …" (en "**Settings → Delete account**. If there are no
+  records yet, the account is deleted. If there are, it's closed: …").
+- **Checked on the Preview at `72aa7f7`:** `/pt-BR/help/k4`, `/help/k4`
+  and their `?app=1` variants all show the new text; `helpArticles.json`
+  was rebuilt with the same content.
+
+**CI at `72aa7f7`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`72aa7f7`.** This docs commit sits directly on top; the branch is up to
+date with master.
+
+## PR #137 (`fix/my-appointments-no-notes`, base **release**) — RELEASE privacy hotfix: patients never get the clinic's appointment notes (with migration 106, live), 🟢 at `1028239`
+
+**Why it's urgent:** migration 106 is live on prod and drops the
+patient's whole-row read. Until this ships, prod /my-appointments and
+pending-confirmation show nothing (I saw it: pending-confirmation listed
+no requests on master during #132).
+
+**Tested on the release Preview at `1028239`**, against the prod DB (106
+applied):
+- **Patient A:** linked, with a confirmed future appointment (clinic
+  note "OBS-CLINICA-SECRETA-FUTURA", patient_note "Mensagem futura do
+  paciente A"), a past completed one (with a clinic note) and a doctor's
+  proposal (with a clinic note).
+- **Patient B:** invited, not linked, with a proposal (a clinic note plus
+  a patient_note) and a tentative request (a patient_note).
+
+| Check | Result |
+|---|---|
+| REST as patient A: `appointments?select=notes`, `select=*`, `select=id,date,patient_note` | **200, 0 rows** each: no direct read of the table |
+| `rpc/get_my_appointments` as A | 3 rows (theirs); columns include `patient_note`, **no `notes` key**; the secret appears nowhere in the payload |
+| A: /my-appointments | Próximas (Confirmado; Proposta with Aceitar/Recusar and "Originalmente: …"), Histórico (Concluído). The patient's own message "Mensagem futura do paciente A" is shown. **The clinic's notes appear nowhere**, in the text or the page HTML |
+| A accepts the proposal | saved: **confirmed** at the proposed 05/10 11:00 |
+| B: pending-confirmation | "SUAS SOLICITAÇÕES" lists both requests (Novo horário proposto with Aceitar/Recusar; Aguardando confirmação); no clinic note |
+| B accepts | saved: **confirmed** 05/10 14:00 |
+| Clinic: schedule list (both days) | "**Mensagem do paciente:** Mensagem futura do paciente A", "…: Pedido do B com mensagem", "…: Mensagem do B"; the clinic still sees its own notes |
+| Privacy §8, pt-BR and en | the new line: "…the clinic's notes on an appointment are private and never shown to the patient (a patient sees only their own…" (pt: "…as observações…") |
+
+**Not covered here** (in the post-merge prod check):
+- a fresh booking from /book with a message (the seeds wrote
+  `patient_note` directly);
+- "Solicitar reagendamento";
+- the clinic push (not observable on a Preview).
+
+**CI at `1028239`:** ✅. **Review: clean (7f; the head adds only the
+apostrophe escape since the clean `07ea1db`).** **Merge gate: 🟢 for
+`1028239`.** The branch was up to date with `release`; this docs commit
+sits on top.
+
+**#137 post-merge prod check ✅** (www.solvymed.com; Vercel prod = release
+`ae855b1`, checked with `vercel inspect`). The same spec as above, with no
+bypass header on prod:
+- **Patient reads:** REST notes → 0 rows; `get_my_appointments` has no
+  `notes` key; /my-appointments shows no clinic note (text or HTML) and
+  shows the patient's own message.
+- **Actions:** accepting a proposal works; pending-confirmation lists the
+  requests again, and Accept works.
+- **Clinic and privacy:** the clinic sees "Mensagem do paciente"; privacy
+  §8 is OK.
+- **Plus a fresh /book booking with a message** (a new spec,
+  `opus-pr137-book`):
+  - the DB has `patient_note` = the message and `notes` null;
+  - the patient sees their message in /my-appointments;
+  - the clinic's request card shows "Mensagem do paciente: Mensagem nova
+    Opus pelo booking".
+- **Not yet covered:** a patient's "Solicitar reagendamento".
+
+## PR #139 (`chore/merge-back-137`, base master) — merge-back of #137: master's patient reads through `get_my_appointments` + Help K5 line, 🟢 at `b1e8acc`
+
+**Why:** since migration 106, master's patient pages read nothing: I saw
+an empty pending-confirmation while testing #132.
+
+**Tested on the #139 (master) Preview at `b1e8acc`**, against the prod DB
+(106 live). Both #137 specs, unchanged:
+- **REST as a patient:** notes / `*` → 0 rows; `get_my_appointments` →
+  own rows, no `notes` key, no clinic note anywhere.
+- **/my-appointments:** Confirmado, "Novo horário proposto" (master's
+  #117 label) and Concluído. The patient's own message is shown; the
+  clinic's notes are absent from text and HTML. Accepting the proposal
+  saves **confirmed**.
+- **pending-confirmation** (an invited patient): lists both requests again,
+  and Aceitar saves **confirmed**.
+- **Clinic:** "Mensagem do paciente: …" on the request cards and schedule
+  rows.
+- **/book with a message:** `patient_note` = the message, `notes` null; the
+  patient sees it; the clinic card shows "Mensagem do paciente".
+- **Help K5:** pt "As observações da clínica são privadas e não aparecem
+  para o paciente."; en "The clinic's notes are private and never shown to
+  the patient."
+- **Privacy §8** (pt/en): the line is present.
+
+(One run had a Preview login time out for the second patient; a re-run was
+clean.)
+
+**CI at `b1e8acc`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`b1e8acc`.** This docs commit sits directly on top; the branch is up to
+date with master.
+
+## PR #132 (`feat/saved-locale`, base master) — pushes in each reader's saved language; the website saves its language (migration 117), 🟢 at `9c0e60a`
+
+**Setup:**
+- **Server:** a local `next dev` with my test-only Expo sink (pushes are
+  logged, never sent).
+- **Three runs:**
+  1. before 117 existed, against the prod DB;
+  2. 117's RPCs **stubbed**;
+  3. **live**, once 8d applied 117 (with master merged in locally, so it
+     includes #139's patient-read fix).
+- **Throwaway fixtures:** a doctor ("Clínica Opus Idioma"), a secretary,
+  and a patient with a tentative request. Each has a device token.
+
+**Live (117 applied): the result that matters**
+- **Saving the language:**
+  - The patient saved **fr-FR** through `set_my_locale` with their own
+    token, the way the app does. The website's `<SaveMyLocale>` runs only
+    on the dashboard, so it covers doctors and secretaries.
+  - Secretary on the English site: `set_my_locale("en")`, stored.
+  - Secretary then on **/ja**: **no call**. ja isn't a push language, so
+    the saved "en" isn't overwritten.
+  - Doctor on pt-BR: `set_my_locale("pt-BR")`.
+- **The pushes:**
+  - Doctor proposes a new time → the patient's push in **French**:
+    "Nouvel horaire proposé | Un nouvel horaire a été proposé : 04/10/2026
+    09:30."
+  - The patient accepts (pending-confirmation) → **one clinic push per
+    reader:**
+    - doctor: **pt-BR** "Proposta aceita | Opus Idioma Paciente aceitou o
+      novo horário: 04/10/2026 09:30.";
+    - secretary: **en** "Proposal accepted | … accepted the new time:
+      10/04/2026 09:30." (the en date format).
+- **No page errors.** `<SaveMyLocale>` calls at most once per language per
+  tab session, and stores `solvymed_saved_locale` when saved.
+
+**Before 117 (prod as it was):**
+- **Fail-soft:** `set_my_locale` fails silently (no UI error), and there's
+  one attempt per language per tab session.
+- **Pushes as before:** the pt-BR fallback for the patient's "Novo horário
+  proposto" and the clinic's "Proposta aceita".
+
+**117 stubbed:** the same routing as live (a French patient; doctor pt-BR
++ secretary en). After I fixed my own stub (a 204 needs a null body), the
+client also stored the saved language.
+
+**Help:** C8's new sentence is `{pending:saved-locale-live}`, which is
+still unmet because it also needs the app's language saving in a released
+build. `help-build` output is unchanged.
+
+**Note (from testing):** between 106 going live and #139, master's
+pending-confirmation showed no requests. #132's head needed master (#139)
+for the patient-accept step. This docs commit includes that master sync.
+
+**CI at `9c0e60a`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`9c0e60a`.** This docs commit sits on top of a master sync (8 behind,
+clean merge; it brings #139).

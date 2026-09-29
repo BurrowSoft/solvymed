@@ -1,9 +1,10 @@
 "use server";
 
+import { myAppointments } from "@/lib/myAppointments";
 import { createClient } from "@/lib/supabase/server";
 import { sendExpoPush } from "@/lib/push";
 import { pushText, pushWhen } from "@/lib/pushText";
-import { professionalPushLocale } from "@/lib/pushRecipient";
+import { clinicPushTargets } from "@/lib/pushRecipient";
 
 export async function notifyProfessionalOfBooking(
   professionalId: string,
@@ -20,22 +21,13 @@ export async function notifyProfessionalOfBooking(
   // this booking flow's UI. Verify a real tentative booking exists for this
   // caller matching what's being announced before sending anything; RLS
   // limits this read to the caller's own appointments.
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("patient_name")
-    .eq("professional_id", professionalId)
-    .eq("patient_auth_id", user.id)
-    .eq("date", date)
-    .eq("start_time", time)
-    .eq("status", "tentative")
-    .maybeSingle();
+  const appt = (await myAppointments(supabase)).find((a) =>
+    a.professional_id === professionalId && a.date === date && a.start_time.slice(0, 5) === time.slice(0, 5) && a.status === "tentative") ?? null;
   if (!appt) return;
 
-  const { data } = await supabase.rpc("get_clinic_push_tokens", { p_professional_id: professionalId });
-  const tokens = (data ?? []).map((r: { token: string }) => r.token);
-  if (!tokens.length) return;
-  // In the clinic's language, the date in its format.
-  const locale = await professionalPushLocale(supabase, professionalId);
-  const { title, body } = pushText(locale, "newBookingRequest", { name: appt.patient_name as string, when: pushWhen(locale, date, time) });
-  await sendExpoPush(tokens, title, body);
+  // Each of the clinic's devices in its reader's language, the date in its format.
+  for (const { locale, tokens } of await clinicPushTargets(supabase, professionalId)) {
+    const { title, body } = pushText(locale, "newBookingRequest", { name: appt.patient_name as string, when: pushWhen(locale, date, time) });
+    await sendExpoPush(tokens, title, body);
+  }
 }

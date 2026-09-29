@@ -101,6 +101,7 @@
     "managePayments": "Gestionar pagos"
   },
   "schedule": {
+    "patientMessage": "Mensaje del paciente",
     "title": "Agenda",
     "apptsToday": "{count, plural, one {# cita hoy} other {# citas hoy}}",
     "noAppts": "Sin citas este día",
@@ -206,6 +207,8 @@
     "promptPayTitle": "QR de PromptPay",
     "promptPayScan": "Escanea con cualquier app bancaria tailandesa para pagar.",
     "pixQrTitle": "Pix QR code",
+    "pixCopyPaste": "Pix Copia e Cola",
+    "pixCopy": "Copiar",
     "durationMinutes": "{n} min"
   },
   "payments": {
@@ -511,6 +514,7 @@
     "noAddress": "Sin dirección",
     "onMap": "En el mapa",
     "noMapPin": "Sin marcador en el mapa — agrega una dirección para aparecer en el mapa",
+    "noPinYet": "Sin marcador en el mapa",
     "empty": "Aún no hay clínicas",
     "emptySubtitle": "Agrega tu clínica para que los pacientes puedan encontrarte",
     "addFirst": "Agregar tu primera clínica",

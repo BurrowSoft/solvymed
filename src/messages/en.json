@@ -101,6 +101,7 @@
     "managePayments": "Manage Payments"
   },
   "schedule": {
+    "patientMessage": "Patient's message",
     "title": "Schedule",
     "apptsToday": "{count, plural, one {# appointment today} other {# appointments today}}",
     "noAppts": "No appointments on this day",
@@ -206,6 +207,8 @@
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "Scan with any Thai banking app to pay.",
     "pixQrTitle": "Pix QR code",
+    "pixCopyPaste": "Pix Copia e Cola",
+    "pixCopy": "Copy",
     "durationMinutes": "{n} min"
   },
   "payments": {
@@ -511,6 +514,7 @@
     "noAddress": "No address",
     "onMap": "On map",
     "noMapPin": "No map pin — add an address to appear on the map",
+    "noPinYet": "No map pin",
     "empty": "No clinics yet",
     "emptySubtitle": "Add your clinic so patients can find you",
     "addFirst": "Add your first clinic",

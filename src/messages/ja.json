@@ -101,6 +101,7 @@
     "managePayments": "支払い管理"
   },
   "schedule": {
+    "patientMessage": "患者からのメッセージ",
     "title": "スケジュール",
     "apptsToday": "本日の予約 {count}件",
     "noAppts": "この日の予約はありません",
@@ -206,6 +207,8 @@
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "タイの銀行アプリでスキャンして支払います。",
     "pixQrTitle": "Pix QR code",
+    "pixCopyPaste": "Pix Copia e Cola",
+    "pixCopy": "コピー",
     "durationMinutes": "{n}分"
   },
   "payments": {
@@ -511,6 +514,7 @@
     "noAddress": "住所なし",
     "onMap": "地図上に表示",
     "noMapPin": "地図ピンなし — 住所を追加して地図に表示させましょう",
+    "noPinYet": "地図ピンなし",
     "empty": "クリニックがまだありません",
     "emptySubtitle": "クリニックを追加して患者に見つけてもらいましょう",
     "addFirst": "最初のクリニックを追加する",

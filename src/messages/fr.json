@@ -101,6 +101,7 @@
     "managePayments": "Gérer les paiements"
   },
   "schedule": {
+    "patientMessage": "Message du patient",
     "title": "Planning",
     "apptsToday": "{count, plural, one {# rendez-vous aujourd'hui} other {# rendez-vous aujourd'hui}}",
     "noAppts": "Pas de rendez-vous ce jour",
@@ -206,6 +207,8 @@
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Scannez avec n'importe quelle appli bancaire thaïlandaise pour payer.",
     "pixQrTitle": "Pix QR code",
+    "pixCopyPaste": "Pix Copia e Cola",
+    "pixCopy": "Copier",
     "durationMinutes": "{n} min"
   },
   "payments": {
@@ -511,6 +514,7 @@
     "noAddress": "Aucune adresse",
     "onMap": "Sur la carte",
     "noMapPin": "Pas de repère sur la carte — ajoutez une adresse pour apparaître sur la carte",
+    "noPinYet": "Pas de repère sur la carte",
     "empty": "Pas encore de cliniques",
     "emptySubtitle": "Ajoutez votre clinique pour que les patients puissent vous trouver",
     "addFirst": "Ajouter votre première clinique",

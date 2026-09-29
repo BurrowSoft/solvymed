@@ -101,6 +101,7 @@
     "managePayments": "จัดการการชำระเงิน"
   },
   "schedule": {
+    "patientMessage": "ข้อความจากผู้ป่วย",
     "title": "ตารางนัดหมาย",
     "apptsToday": "นัดหมายวันนี้ {count} ครั้ง",
     "noAppts": "ไม่มีนัดหมายในวันนี้",
@@ -206,6 +207,8 @@
     "promptPayTitle": "QR พร้อมเพย์",
     "promptPayScan": "สแกนด้วยแอปธนาคารใดก็ได้เพื่อชำระเงิน",
     "pixQrTitle": "Pix QR code",
+    "pixCopyPaste": "Pix Copia e Cola",
+    "pixCopy": "คัดลอก",
     "durationMinutes": "{n} นาที"
   },
   "payments": {
@@ -511,6 +514,7 @@
     "noAddress": "ไม่มีที่อยู่",
     "onMap": "บนแผนที่",
     "noMapPin": "ไม่มีหมุดแผนที่ — เพิ่มที่อยู่เพื่อปรากฏบนแผนที่",
+    "noPinYet": "ไม่มีหมุดแผนที่",
     "empty": "ยังไม่มีคลินิก",
     "emptySubtitle": "เพิ่มคลินิกของคุณเพื่อให้ผู้ป่วยค้นพบคุณ",
     "addFirst": "เพิ่มคลินิกแรกของคุณ",
@@ -932,7 +936,7 @@
     "pushClosedTitle": "คลินิกปิดบัญชีแล้ว",
     "pushClosedBody": "คลินิกของคุณปิดบัญชี SolvyMed แล้ว นัดหมายที่จะถึงของคุณถูกยกเลิก หากต้องการสำเนาเวชระเบียน โปรดติดต่อ support@solvymed.com",
     "pushCancelledTitle": "นัดหมายถูกยกเลิก",
-    "pushCancelledBody": "นัดหมายของคุณวันที่ {date} เวลา {time} ถูกยกเลิกโดยคลินิก"
+    "pushCancelledBody": "นัดหมายของคุณวันที่ {date} เวลา {time} ถูกยกเลิกโดย {clinic}"
   },
   "setup": {
     "title": "ตั้งค่าคลินิกของคุณ",

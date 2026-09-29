@@ -101,6 +101,7 @@
     "managePayments": "管理付款"
   },
   "schedule": {
+    "patientMessage": "患者留言",
     "title": "日程",
     "apptsToday": "今日预约 {count} 个",
     "noAppts": "今日暂无预约",
@@ -206,6 +207,8 @@
     "promptPayTitle": "PromptPay 二维码",
     "promptPayScan": "使用任意泰国银行应用扫码付款。",
     "pixQrTitle": "Pix QR code",
+    "pixCopyPaste": "Pix Copia e Cola",
+    "pixCopy": "复制",
     "durationMinutes": "{n} 分钟"
   },
   "payments": {
@@ -511,6 +514,7 @@
     "noAddress": "无地址",
     "onMap": "在地图上",
     "noMapPin": "无地图标记 — 添加地址以在地图上显示",
+    "noPinYet": "无地图标记",
     "empty": "暂无诊所",
     "emptySubtitle": "添加您的诊所以便患者找到您",
     "addFirst": "添加您的第一家诊所",

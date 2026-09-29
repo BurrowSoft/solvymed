@@ -82,8 +82,10 @@ On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings
 ## C8. Idioma e tema / Language and theme
 **pt-BR**
 **Configurações → Idioma** e **Tema** (claro, escuro ou do sistema). Algumas partes mudam de idioma depois de reabrir o app.
+{pending:saved-locale-live} As notificações que você recebe chegam no idioma que você escolheu por último, no app ou no site (português, inglês, espanhol, francês, alemão, italiano ou tailandês; nos outros idiomas do site, vale o último destes que você escolheu).
 **en**
 **Settings → Language** and **Theme** (light, dark or system). Some parts switch language after you reopen the app.
+{pending:saved-locale-live} The notifications you receive arrive in the language you last chose, in the app or on the website (Portuguese, English, Spanish, French, German, Italian or Thai; the website's other languages keep the last of these you chose).
 **No site:** O idioma muda no seletor de idioma do menu lateral. O site não tem tema escuro.
 **On the website:** Change the language with the language selector in the side menu. The website has no dark theme.
 `open:settings`
