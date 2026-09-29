@@ -86,6 +86,22 @@ describe("readPlaces", () => {
   });
 });
 
+describe("founders texts", () => {
+  it("every locale has its own translation (no en fallback), with en's placeholders and tags", async () => {
+    const fs = await import("node:fs");
+    const dir = "src/messages";
+    const marks = (v: string) => [...(v.match(/\{\w+\}/g) ?? []), ...(v.match(/<\/?\w+>/g) ?? [])].sort().join(" ");
+    const enF = en.founders as Record<string, string>;
+    for (const f of fs.readdirSync(dir)) {
+      if (f === "en.json") continue;
+      const loc = JSON.parse(fs.readFileSync(`${dir}/${f}`, "utf8").replace(/^﻿/, "")).founders as Record<string, string>;
+      expect(Object.keys(loc), f).toEqual(Object.keys(enF));
+      for (const k of ["heroTitle", "rule5", "privacyNotice", "rulesTranslationNote"]) expect(loc[k], `${f} ${k}`).not.toBe(enF[k]);
+      for (const k of Object.keys(enF)) expect(marks(loc[k]), `${f} ${k}`).toBe(marks(enF[k]));
+    }
+  });
+});
+
 describe("privacy policy", () => {
   it("the Founders section only while the page is live", async () => {
     const { PrivacyEn } = await import("@/app/[locale]/(site)/privacy/PrivacyEn");

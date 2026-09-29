@@ -7,7 +7,9 @@ import { liveFeatures } from "@/lib/liveFeatures";
 
 // The Founders Program rules (the brief's "Program rules", verbatim per
 // language). Published only after the lawyer's check (foundersRules);
-// until then the page says they're coming.
+// until then the page says they're coming. Any other language says it's a
+// translation of the reference versions (UX).
+const REFERENCE_LOCALES = ["pt-BR", "en"];
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -27,6 +29,9 @@ export default async function FoundersRulesPage({ params }: { params: Promise<{ 
       <main className="bg-slate-50">
         <section className="mx-auto max-w-3xl px-4 py-16">
           <h1 className="mb-8 text-3xl font-extrabold tracking-tight text-slate-900">{t("rulesTitle")}</h1>
+          {liveFeatures.foundersRules && !REFERENCE_LOCALES.includes(locale) && (
+            <p className="-mt-4 mb-8 text-sm italic text-slate-500">{t("rulesTranslationNote")}</p>
+          )}
           {liveFeatures.foundersRules ? (
             <ol className="list-decimal space-y-4 pl-6 text-slate-700">
               {[1, 2].map((n) => <li key={n}>{t.rich(`rule${n}`, b)}</li>)}
