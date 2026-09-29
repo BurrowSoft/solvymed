@@ -9172,3 +9172,34 @@ a whole text block with no deltas, rendered empty, so only "Não foi
 possível salvar." showed.
 
 **CI at `18b6c32`:** ✅. **Review: clean (9a).** **Merge gate: 🟢 for `18b6c32`.** This docs commit sits on top of a master sync (12 behind; clean).
+
+## #165 A clinic proposal shows the proposed time; the pt-BR trial "=0" plural (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `6033260`, on its Vercel Preview (Playwright).
+- **Account:** a throwaway doctor.
+- **Seeded requests** (all for 13/10), shown in "Solicitações de consulta":
+  - a clinic proposal with a proposed date + time (14/10 15:30);
+  - a patient's reschedule request (`scheduled_by = patient`);
+  - a clinic proposal with a date but **no** proposed time;
+  - a plain tentative request.
+
+| Row | pt-BR | en | th |
+|---|---|---|---|
+| Clinic proposal (date + time) | ✅ "Aguardando resposta do paciente / **Proposto: qua., 14 de out. · 15:30**" | ✅ "Proposed: Wed, Oct 14 · 3:30 PM" | ✅ "เสนอ: พุธ 14 ต.ค. · 15:30" |
+| The patient's reschedule request | ✅ no "Proposto" (it keeps "Remarcação solicitada / Solicitado: qui., 15 de out. · 11:00") | ✅ | ✅ |
+| Clinic proposal without a proposed time | ✅ shown, with no proposed line | ✅ | ✅ |
+| Plain request | ✅ no proposed line | ✅ | ✅ |
+| Proposed lines in the panel | ✅ exactly 1 | ✅ 1 | ✅ 1 |
+
+**The pt-BR trial plural (`settings.subscriptionTrial`):**
+- **How it was checked:** formatted with the app's `use-intl`.
+- **This PR:** n=0 "Teste grátis: **faltam 0 dias**", 1 "falta 1 dia", 2
+  "faltam 2 dias", 15 "faltam 15 dias".
+- **Master, before:** gave "**falta 0 dia**".
+- **en / th:** unchanged ("0 days left" / "เหลืออีก 0 วัน").
+- **Live:** the web's Settings → Assinatura only shows the trial line
+  while days > 0 (`subscriptionPlan`), so 0 can't be seen there today.
+  The fix is for parity with the app.
+
+**Master sync:** master merged in under this docs commit, cleanly.
+**Review: clean (9a).** **Merge gate: 🟢 for `6033260`.**
