@@ -7975,3 +7975,60 @@ clean.)
 **CI at `b1e8acc`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `b1e8acc`.** This docs commit sits directly on top; the branch is up to
 date with master.
+
+## PR #132 (`feat/saved-locale`, base master) — pushes in each reader's saved language; the website saves its language (migration 117), 🟢 at `9c0e60a`
+
+**Setup:**
+- **Server:** a local `next dev` with my test-only Expo sink (pushes are
+  logged, never sent).
+- **Three runs:**
+  1. before 117 existed, against the prod DB;
+  2. 117's RPCs **stubbed**;
+  3. **live**, once 8d applied 117 (with master merged in locally, so it
+     includes #139's patient-read fix).
+- **Throwaway fixtures:** a doctor ("Clínica Opus Idioma"), a secretary,
+  and a patient with a tentative request. Each has a device token.
+
+**Live (117 applied): the result that matters**
+- **Saving the language:**
+  - The patient saved **fr-FR** through `set_my_locale` with their own
+    token, the way the app does. The website's `<SaveMyLocale>` runs only
+    on the dashboard, so it covers doctors and secretaries.
+  - Secretary on the English site: `set_my_locale("en")`, stored.
+  - Secretary then on **/ja**: **no call**. ja isn't a push language, so
+    the saved "en" isn't overwritten.
+  - Doctor on pt-BR: `set_my_locale("pt-BR")`.
+- **The pushes:**
+  - Doctor proposes a new time → the patient's push in **French**:
+    "Nouvel horaire proposé | Un nouvel horaire a été proposé : 04/10/2026
+    09:30."
+  - The patient accepts (pending-confirmation) → **one clinic push per
+    reader:**
+    - doctor: **pt-BR** "Proposta aceita | Opus Idioma Paciente aceitou o
+      novo horário: 04/10/2026 09:30.";
+    - secretary: **en** "Proposal accepted | … accepted the new time:
+      10/04/2026 09:30." (the en date format).
+- **No page errors.** `<SaveMyLocale>` calls at most once per language per
+  tab session, and stores `solvymed_saved_locale` when saved.
+
+**Before 117 (prod as it was):**
+- **Fail-soft:** `set_my_locale` fails silently (no UI error), and there's
+  one attempt per language per tab session.
+- **Pushes as before:** the pt-BR fallback for the patient's "Novo horário
+  proposto" and the clinic's "Proposta aceita".
+
+**117 stubbed:** the same routing as live (a French patient; doctor pt-BR
++ secretary en). After I fixed my own stub (a 204 needs a null body), the
+client also stored the saved language.
+
+**Help:** C8's new sentence is `{pending:saved-locale-live}`, which is
+still unmet because it also needs the app's language saving in a released
+build. `help-build` output is unchanged.
+
+**Note (from testing):** between 106 going live and #139, master's
+pending-confirmation showed no requests. #132's head needed master (#139)
+for the patient-accept step. This docs commit includes that master sync.
+
+**CI at `9c0e60a`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`9c0e60a`.** This docs commit sits on top of a master sync (8 behind,
+clean merge; it brings #139).

@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { sendExpoPush } from "./push";
-import { patientPushLocale } from "./pushRecipient";
+import { patientPushTargets } from "./pushRecipient";
 import { formatShortDate } from "./dateLabels";
 import { pushText } from "./pushText";
 import { clinicDate, clinicTime, getClinicTimeZone } from "./clinicTime";
@@ -66,17 +66,16 @@ export async function tellPatient(db: SupabaseClient, change: ClinicChange): Pro
       account = (data as string | null) ?? null;
     }
     if (!account) return;
-    const { data: tokenRows } = await db.rpc("get_patient_push_tokens", { p_patient_auth_id: account });
-    const tokens = ((tokenRows ?? []) as { token: string }[]).map((r) => r.token);
-    if (!tokens.length) return;
-
-    const locale = await patientPushLocale(db, account, change.practiceId);
-    const { title, body } = pushText(locale, change.kind === "booked" ? "apptBookedByClinic" : "apptCancelledByClinic", {
-      clinic: await clinicName(db, change.practiceId),
-      date: formatShortDate(locale, change.date),
-      time: start,
-    });
-    await sendExpoPush(tokens, title, body);
+    const targets = await patientPushTargets(db, account, change.practiceId);
+    if (!targets.length) return;
+    const clinic = await clinicName(db, change.practiceId);
+    // Each device in its reader's language, the date in its format.
+    for (const { locale, tokens } of targets) {
+      const { title, body } = pushText(locale, change.kind === "booked" ? "apptBookedByClinic" : "apptCancelledByClinic", {
+        clinic, date: formatShortDate(locale, change.date), time: start,
+      });
+      await sendExpoPush(tokens, title, body);
+    }
   } catch {
     // Best effort.
   }
