@@ -1295,7 +1295,21 @@
     "phone": "Telepon: {value}",
     "exportedBy": "Diekspor oleh {name} pada {date}",
     "accessLogFailed": "Tidak dapat mencatat akses. Silakan coba lagi.",
-    "countryFailed": "Tidak dapat memuat data klinik. Silakan coba lagi."
+    "countryFailed": "Tidak dapat memuat data klinik. Silakan coba lagi.",
+    "receiptTitle": "Kuitansi",
+    "services": "Layanan",
+    "description": "Keterangan",
+    "amount": "Jumlah",
+    "total": "Total",
+    "payment": "Pembayaran",
+    "online": "Daring",
+    "inPerson": "Tatap muka",
+    "privatePay": "Bayar sendiri",
+    "insurance": "Asuransi",
+    "paid": "Lunas",
+    "pending": "Tertunda",
+    "receiptLink": "Kuitansi",
+    "receiptThaiHint": "Kuitansi bernomor diterbitkan di aplikasi."
   },
   "founders": {
     "metaTitle": "SolvyMed Founders Program",

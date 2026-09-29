@@ -1295,7 +1295,21 @@
     "phone": "Telefon: {value}",
     "exportedBy": "Exportiert von {name} am {date}",
     "accessLogFailed": "Der Zugriff konnte nicht protokolliert werden. Bitte versuchen Sie es erneut.",
-    "countryFailed": "Die Praxisdaten konnten nicht geladen werden. Bitte versuchen Sie es erneut."
+    "countryFailed": "Die Praxisdaten konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "receiptTitle": "Quittung",
+    "services": "Leistungen",
+    "description": "Beschreibung",
+    "amount": "Betrag",
+    "total": "Gesamt",
+    "payment": "Zahlung",
+    "online": "Online",
+    "inPerson": "Vor Ort",
+    "privatePay": "Selbstzahler",
+    "insurance": "Versicherung",
+    "paid": "Bezahlt",
+    "pending": "Ausstehend",
+    "receiptLink": "Quittung",
+    "receiptThaiHint": "Nummerierte Quittungen werden in der App ausgestellt."
   },
   "founders": {
     "metaTitle": "SolvyMed Founders Program",

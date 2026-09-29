@@ -1325,7 +1325,21 @@
     "phone": "Phone: {value}",
     "exportedBy": "Exported by {name} on {date}",
     "accessLogFailed": "Couldn't record the access. Please try again.",
-    "countryFailed": "Couldn't load the clinic's details. Please try again."
+    "countryFailed": "Couldn't load the clinic's details. Please try again.",
+    "receiptTitle": "Receipt",
+    "services": "Services",
+    "description": "Description",
+    "amount": "Amount",
+    "total": "Total",
+    "payment": "Payment",
+    "online": "Online",
+    "inPerson": "In person",
+    "privatePay": "Private pay",
+    "insurance": "Insurance",
+    "paid": "Paid",
+    "pending": "Pending",
+    "receiptLink": "Receipt",
+    "receiptThaiHint": "Numbered receipts are issued in the app."
   },
   "founders": {
     "metaTitle": "SolvyMed Founders Program",

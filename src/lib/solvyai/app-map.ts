@@ -293,6 +293,7 @@ export const NEVER: { what: string; help: string }[] = [
   { what: "Closing the account.", help: "K4" },
   { what: "Changing the password (Settings → Change password, on the app and the website; the other devices are signed out).", help: "K2" },
   { what: "Payment and Pix / PromptPay settings.", help: "G3" },
+  { what: "Receipts (on the website: Payments → a received appointment → \"Recibo\" / \"Receipt\", a print view, for the doctor and the secretary; a Thai practice's numbered receipts are issued in the app).", help: "G5" },
   { what: "The subscription and plan (the doctor sees the plan's status in Settings → Subscription on the website; \"Manage subscription\" opens Stripe's page for a card subscription).", help: "K1" },
   { what: "Team members (inviting or removing a secretary).", help: "C4" },
   { what: "The clinic's country.", help: "C1" },

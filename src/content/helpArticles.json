@@ -918,10 +918,10 @@
           ]
         },
         "web": {
-          "pt": "Ainda não disponível no site; use o app.",
-          "en": "Not available on the website yet; use the app."
+          "pt": "Em **Pagamentos**, na consulta recebida, clique em **Recibo** e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Médico e secretária(o) podem emitir. Clínicas na Tailândia: os recibos numerados são emitidos no app.",
+          "en": "In **Payments**, on the received appointment, click **Receipt** and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. The doctor and the secretary can create it. Clinics in Thailand: numbered receipts are issued in the app."
         },
-        "webUnavailable": true,
+        "webUnavailable": false,
         "open": "payments",
         "appOnly": null,
         "appTitle": null

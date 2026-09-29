@@ -1295,7 +1295,21 @@
     "phone": "電話：{value}",
     "exportedBy": "{date} に {name} がエクスポート",
     "accessLogFailed": "アクセスを記録できませんでした。もう一度お試しください。",
-    "countryFailed": "クリニックの情報を読み込めませんでした。もう一度お試しください。"
+    "countryFailed": "クリニックの情報を読み込めませんでした。もう一度お試しください。",
+    "receiptTitle": "領収書",
+    "services": "サービス",
+    "description": "内容",
+    "amount": "金額",
+    "total": "合計",
+    "payment": "支払い",
+    "online": "オンライン",
+    "inPerson": "対面",
+    "privatePay": "自費",
+    "insurance": "保険",
+    "paid": "支払い済み",
+    "pending": "未払い",
+    "receiptLink": "領収書",
+    "receiptThaiHint": "番号付きの領収書はアプリで発行されます。"
   },
   "founders": {
     "metaTitle": "SolvyMed Founders Program",

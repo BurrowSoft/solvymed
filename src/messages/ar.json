@@ -1295,7 +1295,21 @@
     "phone": "الهاتف: {value}",
     "exportedBy": "صدّره {name} في {date}",
     "accessLogFailed": "تعذّر تسجيل الوصول. حاول مرة أخرى.",
-    "countryFailed": "تعذّر تحميل بيانات العيادة. حاول مرة أخرى."
+    "countryFailed": "تعذّر تحميل بيانات العيادة. حاول مرة أخرى.",
+    "receiptTitle": "إيصال",
+    "services": "الخدمات",
+    "description": "الوصف",
+    "amount": "المبلغ",
+    "total": "الإجمالي",
+    "payment": "الدفع",
+    "online": "عبر الإنترنت",
+    "inPerson": "حضوريًا",
+    "privatePay": "دفع خاص",
+    "insurance": "تأمين",
+    "paid": "مدفوع",
+    "pending": "قيد الانتظار",
+    "receiptLink": "إيصال",
+    "receiptThaiHint": "تُصدَر الإيصالات المرقّمة في التطبيق."
   },
   "founders": {
     "metaTitle": "SolvyMed Founders Program",

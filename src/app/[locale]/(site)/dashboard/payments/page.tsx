@@ -49,7 +49,12 @@ export default async function PaymentsPage({
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
   if (!effectiveProfId) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
   // Amounts are in the practice's currency (its country), not the UI's.
-  const { currency } = countryProfile(await getPracticeCountry(supabase, user.id, effectiveProfId));
+  const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
+  const { currency } = countryProfile(practiceCountry);
+  // The recibo (Help G5): a print view for every non-Thai practice; a Thai
+  // practice's receipt is the numbered one, issued in the app (UX 36).
+  const tDoc = await getTranslations({ locale, namespace: "prescriptionDoc" });
+  const receiptPrefix = locale === "en" ? "" : `/${locale}`;
   const formatAmount = (n: number) => formatMoney(n, currency);
   const isSecretary = effectiveProfId !== user.id;
 
@@ -202,6 +207,9 @@ export default async function PaymentsPage({
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">{paid.length}</span>
             {t("receivedLabel")}
           </h2>
+          {practiceCountry === "TH" && paid.length > 0 && (
+            <p className="mb-3 text-xs text-slate-500">{tDoc("receiptThaiHint")}</p>
+          )}
           {paid.length === 0 ? (
             <div className="rounded-2xl border border-slate-100 bg-white p-10 text-center">
               <p className="text-sm text-slate-400">{t("noPaidYet")}</p>
@@ -221,6 +229,11 @@ export default async function PaymentsPage({
                     <div className="flex flex-col items-end gap-2 shrink-0">
                       <span className="text-xs font-semibold text-green-600">{t("paidBadge")}</span>
                       <MarkUnpaidButton id={p.id} />
+                      {practiceCountry !== "TH" && (
+                        <Link href={`${receiptPrefix}/dashboard/payments/${p.id}/receipt`} className="text-xs font-semibold text-teal-700 hover:underline">
+                          {tDoc("receiptLink")}
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </div>
