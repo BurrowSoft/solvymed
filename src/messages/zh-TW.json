@@ -407,6 +407,7 @@
     "nameRequired": "請輸入病患全名。",
     "genericError": "發生錯誤，請再試一次。",
     "tabAccessLog": "存取紀錄",
+    "rxPdfAria": "處方 PDF（列印或儲存）",
     "tabExams": "檢查",
     "tabFiles": "檔案",
     "filesHint": "照片或 PDF，私密：只有您可以開啟。",
@@ -520,6 +521,13 @@
     "saveFailed": "無法儲存，請再試一次。",
     "practiceCountry": "診所所在國家",
     "practiceCountryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。如需變更，請聯絡 support@solvymed.com。",
+    "subscriptionTitle": "訂閱",
+    "subscriptionActive": "Pro 方案 · 有效",
+    "subscriptionLifetime": "Pro 方案 · 終身",
+    "subscriptionTrial": "免費試用：剩餘 {n} 天",
+    "subscriptionInactive": "沒有有效的訂閱",
+    "manageSubscription": "管理訂閱",
+    "subscriptionSubscribe": "查看方案",
     "practiceCountryOther": "其他國家",
     "fullNameHint": "如有需要，可加上頭銜（Dr.、Prof.），會顯示在問候語中。"
   },
@@ -1253,5 +1261,21 @@
     "cancel": "取消",
     "turnOn": "開啟",
     "error": "無法儲存，請再試一次。"
+  },
+  "prescriptionDoc": {
+    "title": "處方",
+    "patient": "病患",
+    "date": "日期",
+    "medications": "藥物",
+    "medication": "藥物",
+    "dosage": "劑量",
+    "frequency": "頻率",
+    "duration": "療程",
+    "notes": "備註",
+    "footer": "SolvyMed — 診所管理",
+    "corrected": "（已更正）",
+    "print": "列印 / 儲存為 PDF",
+    "printHint": "若要儲存檔案，請在列印視窗中選擇「另存為 PDF」。",
+    "back": "返回病患"
   }
 }

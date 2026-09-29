@@ -407,6 +407,7 @@
     "nameRequired": "Veuillez saisir le nom complet du patient.",
     "genericError": "Une erreur s'est produite. Veuillez réessayer.",
     "tabAccessLog": "Journal des accès",
+    "rxPdfAria": "PDF de l’ordonnance (imprimer ou enregistrer)",
     "tabExams": "Examens",
     "tabFiles": "Fichiers",
     "filesHint": "Photos ou PDF, privés : vous seul pouvez les ouvrir.",
@@ -520,6 +521,13 @@
     "saveFailed": "Enregistrement impossible. Veuillez réessayer.",
     "practiceCountry": "Pays du cabinet",
     "practiceCountryHint": "Définit la devise, le prix de l'abonnement, la pièce d'identité du patient et le QR de paiement. Pour le changer, écrivez à support@solvymed.com.",
+    "subscriptionTitle": "Abonnement",
+    "subscriptionActive": "Forfait Pro · actif",
+    "subscriptionLifetime": "Forfait Pro · à vie",
+    "subscriptionTrial": "Essai gratuit : {n, plural, one {# jour restant} other {# jours restants}}",
+    "subscriptionInactive": "Aucun abonnement actif",
+    "manageSubscription": "Gérer l’abonnement",
+    "subscriptionSubscribe": "Voir le forfait",
     "practiceCountryOther": "Autre pays",
     "fullNameHint": "Ajoutez votre titre si vous le souhaitez (Dr, Pr) : il apparaît dans les salutations."
   },
@@ -1253,5 +1261,21 @@
     "cancel": "Annuler",
     "turnOn": "Activer",
     "error": "Enregistrement impossible. Réessayez."
+  },
+  "prescriptionDoc": {
+    "title": "Ordonnance",
+    "patient": "Patient",
+    "date": "Date",
+    "medications": "Médicaments",
+    "medication": "Médicament",
+    "dosage": "Posologie",
+    "frequency": "Fréquence",
+    "duration": "Durée",
+    "notes": "Remarques",
+    "footer": "SolvyMed — Gestion de cabinet",
+    "corrected": "(corrigé)",
+    "print": "Imprimer / Enregistrer en PDF",
+    "printHint": "Pour enregistrer le fichier, choisissez « Enregistrer au format PDF » dans la fenêtre d’impression.",
+    "back": "Retour au patient"
   }
 }

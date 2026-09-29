@@ -581,8 +581,8 @@
           ]
         },
         "web": {
-          "pt": "Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. O PDF da receita ainda não está disponível no site; use o app.",
-          "en": "Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. The prescription PDF isn't available on the website yet; use the app."
+          "pt": "Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. Para imprimir ou salvar em PDF, clique em **PDF** na receita e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. No site a receita sai com uma linha em branco para assinar à mão, com seu nome e registro embaixo.",
+          "en": "Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. To print it or save it as a PDF, click **PDF** on the prescription and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. On the website the prescription has a blank line to sign by hand, with your name and registration under it."
         },
         "webUnavailable": false,
         "open": "patients",
@@ -1258,8 +1258,8 @@
           ]
         },
         "web": {
-          "pt": "Durante o teste, o contador de dias fica no topo do painel. Clique nele para ver o plano e assinar com cartão.",
-          "en": "During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card."
+          "pt": "Durante o teste, o contador de dias fica no topo do painel. Clique nele para ver o plano e assinar com cartão. A situação do plano fica em **Configurações → Assinatura**; se você assina com cartão, **Gerenciar assinatura** abre a página do Stripe para gerenciá-la (por exemplo, trocar o cartão).",
+          "en": "During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card. Your plan's status is in **Settings → Subscription**; if you subscribe by card, **Manage subscription** opens Stripe's page to manage it (for example, to change the card)."
         },
         "webUnavailable": false,
         "open": null,

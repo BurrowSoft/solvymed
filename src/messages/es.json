@@ -407,6 +407,7 @@
     "nameRequired": "Indica el nombre completo del paciente.",
     "genericError": "Algo salió mal. Inténtalo de nuevo.",
     "tabAccessLog": "Registro de accesos",
+    "rxPdfAria": "PDF de la receta (imprimir o guardar)",
     "tabExams": "Exámenes",
     "tabFiles": "Archivos",
     "filesHint": "Fotos o PDF, privados: solo tú puedes abrirlos.",
@@ -520,6 +521,13 @@
     "saveFailed": "No se pudo guardar. Inténtalo de nuevo.",
     "practiceCountry": "País de la consulta",
     "practiceCountryHint": "Define la moneda, el precio del plan, el documento del paciente y el QR de pago. Para cambiarlo, escribe a support@solvymed.com.",
+    "subscriptionTitle": "Suscripción",
+    "subscriptionActive": "Plan Pro · activo",
+    "subscriptionLifetime": "Plan Pro · vitalicio",
+    "subscriptionTrial": "Prueba gratis: {n, plural, one {queda # día} other {quedan # días}}",
+    "subscriptionInactive": "Ninguna suscripción activa",
+    "manageSubscription": "Gestionar suscripción",
+    "subscriptionSubscribe": "Ver el plan",
     "practiceCountryOther": "Otro país",
     "fullNameHint": "Si quieres, añade tu título (Dr., Dra., Prof.): aparece en los saludos."
   },
@@ -1253,5 +1261,21 @@
     "cancel": "Cancelar",
     "turnOn": "Activar",
     "error": "No se pudo guardar. Inténtalo de nuevo."
+  },
+  "prescriptionDoc": {
+    "title": "Receta",
+    "patient": "Paciente",
+    "date": "Fecha",
+    "medications": "Medicamentos",
+    "medication": "Medicamento",
+    "dosage": "Dosis",
+    "frequency": "Frecuencia",
+    "duration": "Duración",
+    "notes": "Notas",
+    "footer": "SolvyMed — Gestión de consultas",
+    "corrected": "(corregido)",
+    "print": "Imprimir / Guardar PDF",
+    "printHint": "Para guardar el archivo, elige «Guardar como PDF» en la ventana de impresión.",
+    "back": "Volver al paciente"
   }
 }

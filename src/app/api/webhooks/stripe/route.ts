@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient as createServerClient } from "@supabase/supabase-js";
 import { retrieveSubscriptionOrNull } from "@/lib/stripeBilling";
+import { reportWebhookFailure } from "@/lib/stripeWebhookReport";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-05-27.dahlia" });
 
@@ -21,9 +22,24 @@ export async function POST(request: NextRequest) {
   try {
     event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
   } catch {
+    await reportWebhookFailure("bad_signature");
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
+  // Every failure Stripe will retry is reported (event type + id only).
+  let res: NextResponse;
+  try {
+    res = await handleEvent(event);
+  } catch (err) {
+    console.error(`Stripe webhook: ${event.type} ${event.id} threw`, err);
+    await reportWebhookFailure("handler_threw", event);
+    return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
+  }
+  if (res.status >= 500) await reportWebhookFailure("sync_failed", event);
+  return res;
+}
+
+async function handleEvent(event: Stripe.Event): Promise<NextResponse> {
   const db = adminClient();
 
   if (event.type === "checkout.session.completed") {
@@ -38,7 +54,7 @@ export async function POST(request: NextRequest) {
     // from this payload: a late or replayed checkout for an old subscription
     // must not put that old id back on the row (a later event for it would
     // then pass the dead-subscription guard and expire the live one).
-    return syncSubscription(db, subId);
+    return syncSubscription(db, subId, event);
   }
 
   if (
@@ -47,14 +63,14 @@ export async function POST(request: NextRequest) {
     event.type === "customer.subscription.deleted"
   ) {
     const sub = event.data.object as Stripe.Subscription;
-    return syncSubscription(db, sub.id);
+    return syncSubscription(db, sub.id, event);
   }
 
   if (event.type === "invoice.payment_failed") {
     const invoice = event.data.object as Stripe.Invoice;
     const subRef = invoice.parent?.subscription_details?.subscription;
     const subId = typeof subRef === "string" ? subRef : subRef?.id ?? null;
-    if (subId) return syncSubscription(db, subId);
+    if (subId) return syncSubscription(db, subId, event);
   }
 
   return NextResponse.json({ ok: true });
@@ -105,7 +121,7 @@ function sameState(a: DesiredState, b: DesiredState): boolean {
 // written. The last write to the row is then always followed by its
 // handler reading that same state from Stripe, so once events stop
 // arriving, the row matches Stripe. No lock or version column needed.
-async function syncSubscription(db: ReturnType<typeof adminClient>, subId: string) {
+async function syncSubscription(db: ReturnType<typeof adminClient>, subId: string, event: Stripe.Event) {
   let written: DesiredState | null = null;
   for (let round = 0; round < 3; round++) {
     let sub: Stripe.Subscription;
@@ -137,6 +153,7 @@ async function syncSubscription(db: ReturnType<typeof adminClient>, subId: strin
         // (which Stripe never changes). Retrying can't change either, so
         // don't make Stripe retry for days. Log it loudly instead.
         console.error(`Stripe webhook: active subscription ${desired.subId} matched no non-lifetime professionals row for ${desired.userId}`);
+        await reportWebhookFailure("no_professional_row", event);
         return NextResponse.json({ ok: true });
       }
     } else {

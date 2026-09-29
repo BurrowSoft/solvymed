@@ -407,6 +407,7 @@
     "nameRequired": "Vui lòng nhập họ tên đầy đủ của bệnh nhân.",
     "genericError": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "tabAccessLog": "Nhật ký truy cập",
+    "rxPdfAria": "PDF đơn thuốc (in hoặc lưu)",
     "tabExams": "Xét nghiệm",
     "tabFiles": "Tệp",
     "filesHint": "Ảnh hoặc PDF, riêng tư: chỉ bạn mới mở được.",
@@ -520,6 +521,13 @@
     "saveFailed": "Không lưu được. Vui lòng thử lại.",
     "practiceCountry": "Quốc gia của phòng khám",
     "practiceCountryHint": "Xác định tiền tệ, giá gói, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi, hãy liên hệ support@solvymed.com.",
+    "subscriptionTitle": "Gói đăng ký",
+    "subscriptionActive": "Gói Pro · đang hoạt động",
+    "subscriptionLifetime": "Gói Pro · trọn đời",
+    "subscriptionTrial": "Dùng thử miễn phí: còn {n} ngày",
+    "subscriptionInactive": "Không có gói đăng ký đang hoạt động",
+    "manageSubscription": "Quản lý gói đăng ký",
+    "subscriptionSubscribe": "Xem gói",
     "practiceCountryOther": "Quốc gia khác",
     "fullNameHint": "Bạn có thể thêm danh xưng (Dr., Prof.); danh xưng sẽ hiện trong lời chào."
   },
@@ -1253,5 +1261,21 @@
     "cancel": "Hủy",
     "turnOn": "Bật",
     "error": "Không thể lưu. Hãy thử lại."
+  },
+  "prescriptionDoc": {
+    "title": "Đơn thuốc",
+    "patient": "Bệnh nhân",
+    "date": "Ngày",
+    "medications": "Thuốc",
+    "medication": "Thuốc",
+    "dosage": "Liều dùng",
+    "frequency": "Tần suất",
+    "duration": "Thời gian dùng",
+    "notes": "Ghi chú",
+    "footer": "SolvyMed — Quản lý phòng khám",
+    "corrected": "(đã sửa)",
+    "print": "In / Lưu PDF",
+    "printHint": "Để lưu tệp, hãy chọn \"Lưu dưới dạng PDF\" trong cửa sổ in.",
+    "back": "Quay lại bệnh nhân"
   }
 }

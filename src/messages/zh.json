@@ -407,6 +407,7 @@
     "nameRequired": "请输入患者全名。",
     "genericError": "出现问题，请重试。",
     "tabAccessLog": "访问记录",
+    "rxPdfAria": "处方 PDF（打印或保存）",
     "tabExams": "检查",
     "tabFiles": "文件",
     "filesHint": "照片或 PDF，私密：只有您可以打开。",
@@ -520,6 +521,13 @@
     "saveFailed": "无法保存，请重试。",
     "practiceCountry": "诊所所在国家",
     "practiceCountryHint": "用于设定货币、套餐价格、患者证件和付款二维码。如需更改，请联系 support@solvymed.com。",
+    "subscriptionTitle": "订阅",
+    "subscriptionActive": "Pro 套餐 · 有效",
+    "subscriptionLifetime": "Pro 套餐 · 终身",
+    "subscriptionTrial": "免费试用：剩余 {n} 天",
+    "subscriptionInactive": "没有有效的订阅",
+    "manageSubscription": "管理订阅",
+    "subscriptionSubscribe": "查看套餐",
     "practiceCountryOther": "其他国家",
     "fullNameHint": "如需要，可加上头衔（Dr.、Prof.），会显示在问候语中。"
   },
@@ -1253,5 +1261,21 @@
     "cancel": "取消",
     "turnOn": "开启",
     "error": "无法保存，请重试。"
+  },
+  "prescriptionDoc": {
+    "title": "处方",
+    "patient": "患者",
+    "date": "日期",
+    "medications": "药物",
+    "medication": "药物",
+    "dosage": "剂量",
+    "frequency": "频次",
+    "duration": "疗程",
+    "notes": "备注",
+    "footer": "SolvyMed — 诊所管理",
+    "corrected": "（已更正）",
+    "print": "打印 / 保存为 PDF",
+    "printHint": "要保存文件，请在打印窗口中选择“另存为 PDF”。",
+    "back": "返回患者"
   }
 }

@@ -407,6 +407,7 @@
     "nameRequired": "أدخل الاسم الكامل للمريض.",
     "genericError": "حدث خطأ ما. حاول مرة أخرى.",
     "tabAccessLog": "سجل الوصول",
+    "rxPdfAria": "ملف PDF للوصفة (طباعة أو حفظ)",
     "tabExams": "الفحوصات",
     "tabFiles": "الملفات",
     "filesHint": "صور أو ملفات PDF، خاصة: أنت وحدك من يمكنه فتحها.",
@@ -520,6 +521,13 @@
     "saveFailed": "تعذّر الحفظ. يُرجى المحاولة مرة أخرى.",
     "practiceCountry": "دولة العيادة",
     "practiceCountryHint": "يحدد العملة وسعر الباقة وهوية المريض ورمز الدفع. لتغييره، راسل support@solvymed.com.",
+    "subscriptionTitle": "الاشتراك",
+    "subscriptionActive": "خطة Pro · نشطة",
+    "subscriptionLifetime": "خطة Pro · مدى الحياة",
+    "subscriptionTrial": "التجربة المجانية: {n, plural, zero {لم يتبقَّ أي يوم} one {يتبقى يوم واحد} two {يتبقى يومان} few {تتبقى # أيام} many {يتبقى # يومًا} other {يتبقى # يوم}}",
+    "subscriptionInactive": "لا يوجد اشتراك نشط",
+    "manageSubscription": "إدارة الاشتراك",
+    "subscriptionSubscribe": "عرض الخطة",
     "practiceCountryOther": "دولة أخرى",
     "fullNameHint": "أضف لقبك إن أردت (Dr.، Prof.)؛ يظهر في التحيات."
   },
@@ -1253,5 +1261,21 @@
     "cancel": "إلغاء",
     "turnOn": "تفعيل",
     "error": "تعذّر الحفظ. حاول مرة أخرى."
+  },
+  "prescriptionDoc": {
+    "title": "وصفة طبية",
+    "patient": "المريض",
+    "date": "التاريخ",
+    "medications": "الأدوية",
+    "medication": "الدواء",
+    "dosage": "الجرعة",
+    "frequency": "التكرار",
+    "duration": "المدة",
+    "notes": "ملاحظات",
+    "footer": "SolvyMed — إدارة العيادات",
+    "corrected": "(مُصحَّح)",
+    "print": "طباعة / حفظ PDF",
+    "printHint": "لحفظ الملف، اختر \"حفظ بتنسيق PDF\" في نافذة الطباعة.",
+    "back": "العودة إلى المريض"
   }
 }
