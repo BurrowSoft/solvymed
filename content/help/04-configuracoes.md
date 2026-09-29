@@ -87,3 +87,18 @@ On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings
 **No site:** O idioma muda no seletor de idioma do menu lateral. O site não tem tema escuro.
 **On the website:** Change the language with the language selector in the side menu. The website has no dark theme.
 `open:settings`
+
+---
+## C9. SolvyAI / SolvyAI
+**pt-BR**
+**Configurações → SolvyAI** (só para médicos) tem duas opções:
+**Mostrar botão do assistente** (neste celular, ligado por padrão): mostra ou esconde o botão ✦. Desligar só esconde o botão; ligue de novo quando quiser.
+**Permitir que o SolvyAI faça ações** (vale para a clínica, desligado por padrão): com ela ligada, o SolvyAI pode marcar, remarcar e cancelar consultas, bloquear horários, cadastrar pacientes e marcar pagamentos, sempre com a sua confirmação. Para isso, o nome e a data de nascimento do paciente e os dados da consulta são enviados à Anthropic (EUA), que processa o pedido. O SolvyAI nunca lê prontuários, receitas ou exames. O que você digita no chat é enviado como você escreveu, então evite digitar dados clínicos. Com ela desligada, o SolvyAI só responde perguntas sobre como usar o SolvyMed.
+**en**
+**Settings → SolvyAI** (doctors only) has two options:
+**Show the assistant button** (this phone, on by default): shows or hides the ✦ button. Turning it off only hides the button; turn it back on any time.
+**Let SolvyAI take actions** (for the clinic, off by default): when it's on, SolvyAI can book, move and cancel appointments, block time, add patients and mark payments, always after you confirm. To do this, the patient's name and date of birth and the appointment details are sent to Anthropic (USA), which processes the request. SolvyAI never reads records, prescriptions or exams. What you type in the chat is sent as you write it, so avoid typing clinical details. When it's off, SolvyAI only answers questions about using SolvyMed.
+**No site:** Em **Configurações → SolvyAI** estão as mesmas duas opções; no site, **Mostrar botão do assistente** vale para este navegador.
+**On the website:** **Settings → SolvyAI** has the same two options; on the website, **Show the assistant button** applies to this browser.
+`open:settings`
+`requires:solvyai-live`

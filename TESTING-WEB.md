@@ -7381,3 +7381,34 @@ stays hidden until migration 115 is on prod, and 115 is part of the
 **CI at `990a0ee`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `990a0ee`.** This docs commit sits on top of a master sync (3 behind,
 clean merge; message JSON valid).
+
+## PR #120 (`docs/solvyai-settings-help`, base master) — App Map rules + Help C9 "SolvyAI", held until SolvyAI is live, 🟢 at `2f3514a`
+
+**History:** at `ca4bd05` I held this PR. C9 was public on master
+(`/pt-BR/help/c9` returned 200, noindex only). It described the pending
+actions opt-in and named Anthropic (USA), which the privacy policy
+doesn't. a9 ruled it BLOCKING; #121 added Help conditions. The rebase
+marks C9 `requires:solvyai-live`, so `helpArticles.json` is unchanged
+and C9 isn't built at all.
+
+**Re-test on the Preview at `2f3514a`:**
+- **C9 is gone:** `/pt-BR/help/c9`, `/pt-BR/help/c9?app=1`, `/help/c9`,
+  `/help/c9?app=1` and `/pt-BR/help/C9` all return **404**. None of the
+  responses contains "Anthropic" or "Permitir que o SolvyAI".
+- **Nothing else in Help changed:** all 39 slugs (38 articles + c9) ×
+  (pt-BR, en) × (plain, `?app=1`) = 156 pages are **identical** to the
+  master Preview (`68dea5e`, which has #121). A1 stays held.
+- **Search** (`/help` and `?app=1`, pt-BR and en) for "SolvyAI",
+  "Anthropic" and "Permitir que o SolvyAI" / "Let SolvyAI take actions"
+  → **no results** ("Nenhum artigo encontrado…" / "No articles found…"),
+  the same as master.
+- **Lists and chips:** C9 isn't in the built articles, so it can't show
+  in a category list or the SolvyAI help chips (those also sit behind
+  `liveFeatures.helpCenter`).
+- **App Map:** C9's rules stay `pending` (the actions opt-in waits for
+  migration 115 + mobile #99; the button switch for mobile #99).
+  Unit-tested in CI.
+
+**CI at `2f3514a`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`2f3514a`.** This docs commit sits on top of a master sync (4 behind,
+clean merge).

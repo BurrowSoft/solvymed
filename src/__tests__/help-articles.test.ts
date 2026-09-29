@@ -64,6 +64,19 @@ describe("conditions: held text is left out of the build", () => {
     else expect(a1).not.toContain("Outside your working hours");
   });
 
+  it("C9 (SolvyAI) is truly absent until SolvyAI is live: no page, list, search or app view", () => {
+    const conditions = JSON.parse(readFileSync(resolve(__dirname, "../../content/help/conditions.json"), "utf8"));
+    if (conditions["solvyai-live"].met) return;
+    // /help/c9 (plain or ?app=1) → notFound(): the page looks it up here.
+    expect(findArticle("c9")).toBeNull();
+    expect(HELP.flatMap((c) => c.articles).map((a) => a.id)).not.toContain("C9");
+    for (const lang of ["pt", "en"] as const) {
+      for (const app of [false, true]) expect(searchHelp("SolvyAI", lang, app).map((a) => a.id)).not.toContain("C9");
+    }
+    // Nothing of it in the built data (so not in any bundle or SolvyAI's knowledge).
+    expect(JSON.stringify(json)).not.toMatch(/Anthropic|Permitir que o SolvyAI/);
+  });
+
   it("every condition says what 'met' means; app ones mean a RELEASED build", () => {
     const conditions = JSON.parse(readFileSync(resolve(__dirname, "../../content/help/conditions.json"), "utf8"));
     for (const [id, v] of Object.entries(conditions) as [string, { met: unknown; what: string }][]) {
