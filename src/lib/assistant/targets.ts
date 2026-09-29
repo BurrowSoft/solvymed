@@ -11,6 +11,8 @@ const BASE: Record<ScreenTarget["screen"], string | null> = {
   payments: "/dashboard/payments",
   settings: "/dashboard/settings",
   whatsapp: null,
+  // A Help article (id = the article, e.g. "a1").
+  help: "/help",
 };
 
 const ID = /^[A-Za-z0-9_-]{1,64}$/;
@@ -20,6 +22,10 @@ export function webPath(prefix: string, target: ScreenTarget, highlight?: string
   const base = BASE[target.screen];
   if (!base) return null;
   let path = `${prefix}${base}`;
+  if (target.screen === "help") {
+    if (!target.id || !/^[a-z]\d{1,2}$/i.test(target.id)) return `${prefix}${BASE.help}`;
+    path += `/${target.id.toLowerCase()}`;
+  }
   if (target.screen === "patient") {
     if (!target.id || !ID.test(target.id)) return `${prefix}${BASE.patients}`;
     path += `/${target.id}`;

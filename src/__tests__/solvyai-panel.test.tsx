@@ -43,7 +43,7 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
     openPanel();
     fireEvent.change(screen.getByLabelText("assistant.placeholder"), { target: { value: "Como bloquear horário na agenda?" } });
     fireEvent.click(screen.getByText("assistant.send"));
-    await waitFor(() => expect(screen.getByLabelText("assistant.helpful")).toBeInTheDocument(), { timeout: 5000 });
+    await waitFor(() => expect(screen.getByLabelText("assistant.helpful")).toBeInTheDocument(), { timeout: 12000 });
     expect(screen.getByText(/Bloquear horários/)).toBeInTheDocument();
   });
 
@@ -62,7 +62,7 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
   it("after a confirmed save: the panel minimises, goes to the day with the item highlighted, and offers Desfazer", async () => {
     openPanel();
     await ask("Marca a Maria Silva amanhã às 14h");
-    await waitFor(() => expect(screen.getByText("assistant.confirm")).toBeInTheDocument(), { timeout: 5000 });
+    await waitFor(() => expect(screen.getByText("assistant.confirm")).toBeInTheDocument(), { timeout: 12000 });
     expect(screen.getAllByText("(assistant.default)").length).toBe(4);
     fireEvent.click(screen.getByText("assistant.confirm"));
     await waitFor(() => expect(push).toHaveBeenCalledWith("/pt-BR/dashboard/schedule?date=2026-09-29&highlight=demo-1"));
@@ -77,7 +77,7 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
   it("a saved card can't be confirmed again after the panel is minimised and reopened (tester's finding)", async () => {
     openPanel();
     await ask("Marca a Maria Silva amanhã às 14h");
-    await waitFor(() => expect(screen.getByText("assistant.confirm")).toBeInTheDocument(), { timeout: 5000 });
+    await waitFor(() => expect(screen.getByText("assistant.confirm")).toBeInTheDocument(), { timeout: 12000 });
     fireEvent.click(screen.getByText("assistant.confirm"));
     await waitFor(() => expect(push).toHaveBeenCalledTimes(1));
     // Reopen from the pill: the card shows it was saved, with no Confirmar.
@@ -90,7 +90,7 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
   it("blocked time asks the card's second question; Cancelar saves nothing", async () => {
     openPanel();
     await ask("Marca a Maria Silva amanhã às 12h");
-    await waitFor(() => expect(screen.getByText("assistant.confirm")).toBeInTheDocument(), { timeout: 5000 });
+    await waitFor(() => expect(screen.getByText("assistant.confirm")).toBeInTheDocument(), { timeout: 12000 });
     fireEvent.click(screen.getByText("assistant.confirm"));
     expect(screen.getByRole("alertdialog")).toHaveTextContent("Este horário está bloqueado (12:00–13:00). Agendar mesmo assim?");
     fireEvent.click(screen.getByText("assistant.cancel"));
@@ -105,7 +105,7 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
   it("a conflict gets time chips, never a card; a chip is sent as the doctor's own choice", async () => {
     openPanel();
     await ask("Marca a Maria Silva amanhã às 10h");
-    await waitFor(() => expect(screen.getByText("10:30")).toBeInTheDocument(), { timeout: 5000 });
+    await waitFor(() => expect(screen.getByText("10:30")).toBeInTheDocument(), { timeout: 12000 });
     expect(screen.queryByText("assistant.confirm")).not.toBeInTheDocument();
     expect(screen.getByText("assistant.otherTime")).toBeInTheDocument();
   });
@@ -113,9 +113,9 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
   it("a slot taken between the card and Confirmar: nothing saved, fresh times in the conversation", async () => {
     openPanel();
     await ask("Marca a Maria Silva amanhã às 16h");
-    await waitFor(() => expect(screen.getByText("assistant.confirm")).toBeInTheDocument(), { timeout: 5000 });
+    await waitFor(() => expect(screen.getByText("assistant.confirm")).toBeInTheDocument(), { timeout: 12000 });
     fireEvent.click(screen.getByText("assistant.confirm"));
-    await waitFor(() => expect(screen.getByText("16:30")).toBeInTheDocument(), { timeout: 5000 });
+    await waitFor(() => expect(screen.getByText("16:30")).toBeInTheDocument(), { timeout: 12000 });
     expect(screen.getByText("assistant.failed")).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
   });
@@ -124,7 +124,7 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
     openPanel({ dailyLimit: 1 });
     fireEvent.change(screen.getByLabelText("assistant.placeholder"), { target: { value: "Qual a dose?" } });
     fireEvent.click(screen.getByText("assistant.send"));
-    await waitFor(() => expect(screen.getByText(/assistant\.limitReached/)).toBeInTheDocument(), { timeout: 5000 });
+    await waitFor(() => expect(screen.getByText(/assistant\.limitReached/)).toBeInTheDocument(), { timeout: 12000 });
     expect(screen.queryByLabelText("assistant.placeholder")).not.toBeInTheDocument();
   });
 

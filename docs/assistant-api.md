@@ -12,13 +12,26 @@ works, §6 privacy). This file is the wire contract the web panel
 - Used by **web and the app**. Both send the user's **Supabase access token**
   (`Authorization: Bearer <jwt>`). The route builds a Supabase client with that
   token, so every read and every RPC runs **as the user** (RLS and role rules
-  apply). No service-role key in this path.
+  apply). The website may use its cookie session instead of the header.
+  The one exception: the usage report and the refund of the message the
+  route just counted (§3) go through a **service client**, because those
+  RPCs are service-role only (a user could otherwise report maximal usage
+  or refund a message mid-flight; a9). The professional id comes from the
+  verified caller, never from the request.
 - Model: `claude-sonnet-5` through the official Anthropic TypeScript SDK,
   streaming, the Help articles in a cached prefix. The model client is
   injected (an interface), so tests use a fake model and the route works
   without a key (`ANTHROPIC_API_KEY` goes into Vercel only when Vitor adds
   it; until then the route answers `503 model_unavailable`).
+- **Off until SolvyAI is live:** a server-only switch, `SOLVYAI_API_ENABLED=1`
+  (never a `NEXT_PUBLIC_` value), is checked before anything else. Off →
+  both routes answer `404 not_found` before reading the request, counting or
+  calling the model, so nothing reaches Anthropic before the privacy policy
+  names it (a9).
 - **Doctors only.** Secretaries and patients get `403 not_doctor`.
+- **Every counted message is settled exactly once:** its usage recorded, or
+  refunded (a model failure, no answer, or the client going away mid-answer;
+  the route cancels the stream).
 - **Nothing is ever written by the route.** Read tools run directly; write
   tools return a *proposal* (a confirmation card). The client executes the
   card's `action` through the **normal RPC** only after the user taps
@@ -32,8 +45,14 @@ works, §6 privacy). This file is the wire contract the web panel
 | `actions` | the doctor switched on "Permitir que o SolvyAI faça ações" (migration 115) | as `help`, plus the read and proposal tools (§5) |
 
 The mode is decided **by the server** on every request from the database,
-never taken from the client. At 100% of the monthly budget every clinic is
-`help` until the next month ("Central de Ajuda only"), never an error.
+never taken from the client. At 100% of the monthly budget
+(`assistant_budget_state().over_budget`), there's **no model call** until
+the next month and the message isn't spent. Never an error, and never the
+word "budget" (UX): "O SolvyAI está temporariamente indisponível. Estes
+artigos podem ajudar:" + up to 3 matching Help articles (a plain search) as
+`open` blocks, or, when nothing matches or the Help Center isn't
+published, "…Tente novamente mais tarde." Confirming a card never depends
+on the model.
 
 ## 3. `POST /api/assistant`
 
@@ -68,9 +87,18 @@ Server-side checks, **before** any model call and in this order:
 7. Off-topic and clinical questions get a fixed short reply (§4.6, §6), which
    still counts as a message.
 
-If the model call then fails, the route calls `assistant_release_message()`
-(the message isn't spent) and streams `error`. Token usage is recorded with
-`assistant_record_usage()` after a successful answer.
+If the model call then fails, the route calls
+`assistant_release_message(p_professional_id)` (the message isn't spent) and
+streams `error`. Token usage is recorded with
+`assistant_record_usage(p_professional_id, …)` after a successful answer,
+using the numbers from the model's response. Both calls use the **service
+client**, with the id of the verified caller that step 6 just counted.
+
+A help answer can end with `[[open:A1]]` (a Help article id). The route
+strips the marker from the text and turns it into an `open` block built
+from the Help data: the article's screen, the locale prefix, and the
+internal-href check. Unknown ids, and screens the website doesn't have,
+give no button.
 
 ### Response: a stream
 
@@ -178,7 +206,10 @@ The model only supplies ids and values. The **server** builds the card:
    on cards and `target` on `open` blocks, `{ screen, date?, id?, params? }`
    with the same screen names as `after`. **The app uses the target** (web
    paths mean nothing there). **Web uses the validated href** and ignores
-   the target. Both are built from the same route-table entry.
+   the target. Both are built from the same route-table entry. Screens:
+   `home`, `schedule`, `patients`, `patient` (with `id`), `payments`,
+   `settings`, `whatsapp`, and `help` (a Help article, `id` = its id, e.g.
+   `a1`; the app opens its Help view of that article).
 
 Card wire format (extends `ConfirmationCard`):
 

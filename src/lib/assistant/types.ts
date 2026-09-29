@@ -14,7 +14,7 @@ export type AssistantRequest = {
 
 // Screens by name (each client maps them to its own routes), for links and
 // the navigation after a save.
-export type TargetScreen = "home" | "schedule" | "patients" | "patient" | "payments" | "settings" | "whatsapp";
+export type TargetScreen = "home" | "schedule" | "patients" | "patient" | "payments" | "settings" | "whatsapp" | "help";
 export type ScreenTarget = { screen: TargetScreen; date?: string; id?: string; params?: Record<string, string> };
 
 // One field of a confirmation card. isDefault = it came from the clinic's
