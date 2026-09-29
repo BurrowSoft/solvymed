@@ -425,6 +425,7 @@
     "filesHiddenLine": "{date}에 {name}님이 제거: {reason}",
     "filesHideTitle": "파일 제거",
     "filesHideHint": "업로드 후 24시간이 지나 파일이 삭제되지 않고 숨겨집니다. 사유를 입력하세요.",
+    "filesHideReason": "숨기는 이유",
     "filesPopupBlocked": "브라우저가 새 탭을 차단했습니다. SolvyMed의 팝업을 허용한 후 다시 시도하세요.",
     "accessLogIntro": "이 환자의 기록을 누가 언제 열었는지 보여줍니다. 이 기록은 본인만 볼 수 있습니다.",
     "accessLogEmpty": "아직 기록된 접근이 없습니다.",

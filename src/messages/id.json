@@ -425,6 +425,7 @@
     "filesHiddenLine": "dihapus pada {date} oleh {name}: {reason}",
     "filesHideTitle": "Hapus file",
     "filesHideHint": "Sudah lebih dari 24 jam sejak diunggah, jadi file disembunyikan, bukan dihapus. Sebutkan alasannya.",
+    "filesHideReason": "Alasan menyembunyikan",
     "filesPopupBlocked": "Browser Anda memblokir tab baru. Izinkan pop-up untuk SolvyMed lalu coba lagi.",
     "accessLogIntro": "Siapa yang membuka rekam pasien ini, dan kapan. Hanya Anda yang dapat melihat log ini.",
     "accessLogEmpty": "Belum ada akses yang tercatat.",

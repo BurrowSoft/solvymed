@@ -425,6 +425,7 @@
     "filesHiddenLine": "{date} 由 {name} 移除：{reason}",
     "filesHideTitle": "移除文件",
     "filesHideHint": "上传已超过 24 小时，因此文件将被隐藏而不是删除。请说明原因。",
+    "filesHideReason": "隐藏原因",
     "filesPopupBlocked": "浏览器拦截了新标签页。请允许 SolvyMed 的弹出窗口后重试。",
     "accessLogIntro": "谁在何时打开了该患者的病历。只有您能查看此记录。",
     "accessLogEmpty": "暂无访问记录。",
