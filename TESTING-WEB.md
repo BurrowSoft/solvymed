@@ -9173,6 +9173,36 @@ possível salvar." showed.
 
 **CI at `18b6c32`:** ✅. **Review: clean (9a).** **Merge gate: 🟢 for `18b6c32`.** This docs commit sits on top of a master sync (12 behind; clean).
 
+## #172 Settings → Clinic: the CNPJ validated and masked like the app (alphanumeric) (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `d69ef5b`, on its Vercel Preview (Playwright).
+- **Account:** a throwaway BR doctor.
+- **Each row:** type the CNPJ and a marker in the state field, then save.
+  Read the error, whether the marker saved, the stored `clinic_cnpj`, and
+  the field after a reload.
+
+| Row | Result |
+|---|---|
+| 11.222.333/0001-81 | ✅ saved "11.222.333/0001-81" |
+| 12.abc.345/01de-35 (lower case) | ✅ saved "12.ABC.345/01DE-35" |
+| 11222333000181 (digits only) | ✅ saved masked "11.222.333/0001-81" |
+| 11.222.333/0001-82 (bad check digit) | ✅ "O CNPJ não é válido. Confira o número." / en "The CNPJ isn't valid. Check the number."; **nothing saved** (the marker wasn't saved either) |
+| 00.000.000/0000-00 (repeated) | ✅ the same error; nothing saved |
+| 12.ABC.345/01DE-36 (alphanumeric, bad check) | ✅ the same error; nothing saved |
+| A bad CNPJ already stored (seeded "11.222.333/0001-99", and the raw "11222333000199"), editing only the state | ✅ the state saves, and the stored CNPJ is left as it was (the field shows it masked) |
+| The stored bad value → another bad value (…-98) | ✅ refused with the error |
+| Emptied | ✅ `clinic_cnpj` → null |
+| The recibo header with a raw stored CNPJ | ✅ "Clínica Opus CNPJ · CNPJ 12.ABC.345/01DE-35" (stored "12abc34501de35") and "· CNPJ 11.222.333/0001-81" (stored "11222333000181") |
+
+**Note:** in the first full run, the stored-bad-value row once came back
+with the state not saved and no error shown. It didn't reproduce in three
+more saves (both seeds, plus a valid stored CNPJ), each of which saved.
+Most likely the save's response arrived after the test's 3.5 s check.
+
+**Master sync:** master (#168, #171) merged in under this docs commit,
+cleanly.
+**Review: clean (9a).** **Merge gate: 🟢 for `d69ef5b`.**
+
 ## #166 The recibo's back link says "Voltar aos pagamentos" (web tester 1, 2026-09-30)
 
 **What was tested:** PR head `bbbc0c4`, on its Vercel Preview (Playwright).

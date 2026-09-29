@@ -463,6 +463,7 @@
     "clinicName": "Praxis- / Klinikname",
     "clinicNamePlaceholder": "Praxis Wohlbefinden",
     "cnpj": "CNPJ",
+    "cnpjInvalid": "Die CNPJ ist ungültig. Prüfen Sie die Nummer.",
     "taxIdLabel": "Steuernummer (13 Ziffern)",
     "taxIdInvalid": "Geben Sie eine gültige 13-stellige Steuernummer ein.",
     "phone": "Telefon",
