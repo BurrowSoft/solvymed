@@ -440,8 +440,12 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
     warnings.push({ code: "outside_hours", text: onDate(hoursDate) + t.dayOffWarn(weekdayName(ctx, hoursDate)) });
     asks.push(onDate(hoursDate) + t.dayOffAsk(weekdayName(ctx, hoursDate)));
   }
-  const already = day.find((r) => r.patient_id === patientId && r.status !== "blocked");
-  if (already) warnings.push({ code: "same_patient_day", text: t.samePatientWarn(patient.full_name, hhmm(already.start_time)) });
+  // The patient already booked on a (series) date: the first such date,
+  // named like the block / hours warnings (7f).
+  const already = all
+    .filter((r) => r.patient_id === patientId && r.status !== "blocked" && dates.includes(r.date))
+    .sort((a, b) => a.date.localeCompare(b.date) || a.start_time.localeCompare(b.start_time))[0];
+  if (already) warnings.push({ code: "same_patient_day", text: onDate(already.date) + t.samePatientWarn(patient.full_name, hhmm(already.start_time)) });
 
   const past = date < ctx.today || (date === ctx.today && start <= ctx.nowTime);
   const stop = past

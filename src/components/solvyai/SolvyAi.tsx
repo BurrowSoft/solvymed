@@ -9,7 +9,7 @@ import { maskPersonalData, MAX_MESSAGE_CHARS, MAX_TURNS, MIN_SECONDS_BETWEEN } f
 import type { AnswerBlock, AnswerChunk, AssistantBackend, AssistantScreen, AssistantUsage, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
 import { isInternalHref, webPath } from "@/lib/assistant/targets";
 import { formatDateLabel } from "@/lib/dateLabels";
-import { BUTTON_EVENT, readButtonHidden } from "./SolvyAiSettings";
+import { BUTTON_EVENT, CLOSED_EVENT, OPEN_EVENT, readButtonHidden } from "./SolvyAiSettings";
 import { helpLang, inlineSegments } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { track } from "@/lib/track";
@@ -231,6 +231,22 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
     return () => clearTimeout(id);
   }, [toast]);
 
+  // Closing tells the tour (paused by "Experimentar agora") it can resume.
+  const closePanel = () => { setOpen(false); window.dispatchEvent(new Event(CLOSED_EVENT)); };
+  // The tour's "Experimentar agora": open and ask its question.
+  const sendRef = useRef(send);
+  sendRef.current = send;
+  useEffect(() => {
+    const on = (e: Event) => {
+      const text = (e as CustomEvent<{ text?: string }>).detail?.text;
+      setOpen(true);
+      setMinimized(false);
+      if (text) setTimeout(() => void sendRef.current(text), 0);
+    };
+    window.addEventListener(OPEN_EVENT, on);
+    return () => window.removeEventListener(OPEN_EVENT, on);
+  }, []);
+
   const newConversation = () => { setTurns([]); setInput(""); setTooFast(false); };
 
   const openScreen = (href: string) => { if (!isInternalHref(href)) return; setMinimized(true); router.push(href); };
@@ -252,7 +268,7 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
             {!remote && <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">{t("preview")}</span>}
             <div className="ml-auto flex items-center gap-1">
               <button type="button" onClick={newConversation} className="rounded-lg px-2 py-1 text-xs font-semibold text-slate-500 hover:bg-slate-50">{t("newConversation")}</button>
-              <button type="button" onClick={() => setOpen(false)} aria-label={t("close")} className="rounded-lg px-2 py-1 text-lg leading-none text-slate-400 hover:bg-slate-50">✕</button>
+              <button type="button" onClick={closePanel} aria-label={t("close")} className="rounded-lg px-2 py-1 text-lg leading-none text-slate-400 hover:bg-slate-50">✕</button>
             </div>
           </header>
 

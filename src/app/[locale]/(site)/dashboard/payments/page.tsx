@@ -3,7 +3,7 @@ import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
-import { PeriodFilter, MarkPaidButton, MarkUnpaidButton } from "./PaymentsClient";
+import { PeriodFilter, TypeFilter, MarkPaidButton, MarkUnpaidButton } from "./PaymentsClient";
 import { clinicDate, getClinicTimeZone, previousMonthRange, weekRange } from "@/lib/clinicTime";
 import { formatMoney } from "@/lib/money";
 import { formatDateLabel } from "@/lib/dateLabels";
@@ -28,10 +28,13 @@ export default async function PaymentsPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ period?: string }>;
+  searchParams: Promise<{ period?: string; type?: string }>;
 }) {
   const { locale } = await params;
-  const { period: periodParam } = await searchParams;
+  const { period: periodParam, type: typeParam } = await searchParams;
+  // Particular / convênio (Help G6): anything not private is insurance.
+  const payType: "all" | "private" | "insurance" = typeParam === "private" || typeParam === "insurance" ? typeParam : "all";
+  const TYPE_FILTER = payType === "private" ? "payment_type.eq.private" : payType === "insurance" ? "payment_type.is.null,payment_type.neq.private" : null;
   const period: Period = (["week", "month", "last_month", "all"].includes(periodParam ?? "") ? periodParam : "month") as Period;
 
   const [supabase, t, tFirstRun] = await Promise.all([
@@ -58,23 +61,24 @@ export default async function PaymentsPage({
   const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
   const { from, to } = getDateRange(period, timeZone);
 
-  const [pendingResult, paidResult] = await Promise.all([
-    supabase
+  const byStatus = (status: "pending" | "paid") => {
+    let q = supabase
       .from("appointments")
       .select("id, patient_name, date, start_time, consultation_type, payment_amount, payment_type")
       .eq("professional_id", effectiveProfId)
-      .eq("payment_status", "pending")
+      .eq("payment_status", status);
+    if (TYPE_FILTER) q = q.or(TYPE_FILTER);
+    return q;
+  };
+  const [pendingResult, paidResult] = await Promise.all([
+    byStatus("pending")
       // "To receive": the app's rule (lib/paymentRules); requests, cancelled,
       // rejected and no-shows don't count.
       .in("status", [...RECEIVABLE_STATUSES])
       .gte("date", from)
       .lte("date", to)
       .order("date", { ascending: false }),
-    supabase
-      .from("appointments")
-      .select("id, patient_name, date, start_time, consultation_type, payment_amount, payment_type")
-      .eq("professional_id", effectiveProfId)
-      .eq("payment_status", "paid")
+    byStatus("paid")
       .gte("date", from)
       .lte("date", to)
       .order("date", { ascending: false }),
@@ -133,8 +137,9 @@ export default async function PaymentsPage({
       </div>
 
       {/* Period filter */}
-      <div className="mb-6 overflow-x-auto">
+      <div className="mb-6 flex flex-wrap gap-3 overflow-x-auto">
         <PeriodFilter current={period} />
+        <TypeFilter current={payType} />
       </div>
 
       {/* Summary cards */}

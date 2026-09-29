@@ -8787,6 +8787,8 @@ it legible.
 
 ## PR #152 (`fix/solvyai-undo-guard`, base master) — SolvyAI's Desfazer only when nothing reached the patient; claim-once; a failed undo says so, 🟢 at `dfc0c31`
 
+## PR #157 (`feat/tour-try-solvyai`, base master) — the tour's SolvyAI step gets "Experimentar agora", 🟢 at `70858a7`
+
 Tested by web tester 2.
 
 **Setup:**
@@ -8878,3 +8880,147 @@ locales (checked by web tester 1).
 
 **Master sync:** master (#152) merged in under this docs commit, cleanly.
 **Review: clean (7f).** **Merge gate: 🟢 for `47a4a1c`.**
+
+## #154 Remarcar maps migration 121's `appointment_not_movable` to the not-movable line (web tester 1, 2026-09-29/30)
+
+**What was tested:** PR head `e1197b6`, on a local `next dev` (Playwright).
+- **Migration 121** isn't applied, so a test-only preload stands in for its
+  guard. A PATCH to `/rest/v1/appointments` for a listed id gets the DB
+  error `400 {code: P0001, message: "appointment_not_movable"}`;
+  everything else passes through.
+- The preload's log confirms it injected exactly on the guarded row's
+  update.
+
+| Row | Result |
+|---|---|
+| pt-BR: Remarcar a guarded confirmed appointment (→ Wednesday 14:00) | ✅ the dialog shows "Esta consulta não pode ser remarcada." instead of a raw DB error; the row is unchanged (06/10 10:00, confirmed) |
+| en: the same | ✅ "This appointment can't be rescheduled." (the existing `notMovableError`); the row is unchanged |
+| A normal Remarcar (no guard) | ✅ it still moves (11:00 → Wednesday 12:00) |
+| A completed visit | ✅ no Remarcar button at all (MOVABLE_STATUSES), in pt and en |
+
+**Not covered:** SolvyAI's move card. It goes through the same
+`moveAppointment` action (per the PR), and I didn't run it here.
+
+**Master sync:** master (#152, #153) merged in under this docs commit,
+cleanly.
+**Review: clean (7f).** **Merge gate: 🟢 for `e1197b6`.**
+
+## PR #155 (`fix/files-hide-reason-label`, base master) — the file hide dialog says "Motivo para ocultar", 🟢 at `23f326f`
+
+## PR #158 (`feat/payments-type-filter`, base master) — Pagamentos: Todos / Particular / Convênio filter (Help G6), 🟢 at `0b7e482`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Where:** the Vercel Preview.
+- **Fixture:** the #147 fixture doctor's `foto-lesao-opus.png` (Arquivos),
+  backdated to −2 days by 38 so the >24 h hide dialog opens.
+- **Flow:** Remover opened the dialog in each language, which was
+  cancelled each time (nothing hidden).
+
+| Locale | Dialog |
+|---|---|
+| pt-BR | "Remover arquivo: foto-lesao-opus.png · Já se passaram mais de 24 horas… Informe o motivo." Field label **"Motivo para ocultar"** (was "Motivo da correção"); Cancelar / Remover |
+| en | "Remove file… Say why." Field **"Reason for hiding"**; Cancel / Remove |
+| th | "นำไฟล์ออก…" Field **"เหตุผลที่ซ่อน"**; ยกเลิก / นำออก |
+
+The new key is in all 15 locales (16 files, +1 line each).
+
+**CI at `23f326f`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`23f326f`.** This docs commit sits on top of a master sync (1 behind;
+clean).
+
+## #159 Opening a patient file is fail-closed on the access log (web tester 1, 2026-09-29/30)
+
+**What was tested:** PR head `fdf91b2`, on a local `next dev` (Playwright).
+- **Injection:** a test-only preload answers `rpc/log_record_access` with
+  a 500 while switched on (its log confirms each injected call).
+- **Fixture:** the kept #150 fixture doctor (on the purge list), Exames
+  tab. A small PDF was uploaded through the tab.
+
+| Row | Result |
+|---|---|
+| Upload | ✅ listed as "opus-pr159-exame.pdf · 1 KB" with **Abrir** / **Remover**. A second upload with the same name became "opus-pr159-exame (2).pdf". |
+| Abrir, log works | ✅ one `record_access_log` row (kind `file`, `object_ref` = the storage path) is written first. The new tab then loads the signed `storage/v1/object/sign/patient-files/…` link, which returns 200 `application/pdf`. Headless Chromium saves a PDF as a download ("opus-pr159-exame.pdf"); a normal browser shows it. |
+| Abrir, the log write fails (pt-BR) | ✅ "Não foi possível registrar o acesso. Tente novamente." The blank tab closes (after about 2 s); **no signed link is requested**, and no `file` row is written (checked past the 60 s dedupe). |
+| Same in en | ✅ "Couldn't record the access. Please try again."; the tab closes |
+| Unblocked again | ✅ it opens (signed link, 200 PDF) |
+| Locales | ✅ `patientDetail.filesAccessLogFailed` is in all 15 locales |
+
+**Leftover:** one uploaded test PDF stays on the fixture patient; the other
+was removed through **Remove**. It goes with the mobile dev's purge of the
+pr150 fixtures.
+
+**Master sync:** master (#152–#155) merged in under this docs commit,
+cleanly.
+**Review: clean (7f).** **Merge gate: 🟢 for `fdf91b2`.**
+
+## PR #156 (`fix/solvyai-series-same-patient-date`, base master) — a SolvyAI series card's same-patient warning checks every date and names the first, 🟢 at `30c07ec`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `30c07ec` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts `find_patients` →
+  `propose_book_appointment`.
+- **Data:** the prod DB, with a throwaway doctor + patient (deleted
+  afterwards). The patient already has 09:00 on **13/10** and **20/10**
+  (the 2nd and 3rd weekly dates).
+
+| Row | Result |
+|---|---|
+| Weekly ×3 from 06/10 at 11:00 | ✅ the card shows "Repetir: Semanal, 3 consultas (até 20/10/2026)" and **"13/10/2026: ⚠ Opus Serie Aviso já tem consulta nesse dia às 09:00"**, the FIRST such date, although 20/10 also has one |
+| Confirmar | ✅ the warning doesn't block: 06/10, 13/10, 20/10 at 11:00 are saved next to the existing 09:00s |
+| Single booking on 13/10 at 15:00 | ✅ "⚠ Opus Serie Aviso já tem consulta nesse dia às 09:00", **no date prefix** (as before) |
+
+**CI at `30c07ec`:** ✅. **Review: clean.** **Merge gate: 🟢 for `30c07ec`.** This docs block sits on top of a master sync (after #155 merged; clean).
+
+- **Where:** the Vercel Preview (Playwright) against the prod DB.
+- **Data:** a throwaway doctor + secretary (deleted afterwards), with 4
+  completed appointments from yesterday:
+  - particular: pending R$ 100, paid R$ 200;
+  - convênio: pending R$ 300, paid R$ 400.
+- **"No type" rows:** a row with an empty `payment_type` is refused by the
+  DB check (23514), so that case can't occur.
+
+**Results:**
+
+| Row | Result |
+|---|---|
+| Controls | ✅ "Esta semana · Este mês · Mês passado · Todo o período" + "Todos · Particular · Convênio" |
+| Todos | ✅ Pendente R$ 400 (2) · Recebido R$ 600 (2) · Total R$ 1.000 (4); both lists show all 4 |
+| Particular | ✅ `?type=private`; R$ 100 / R$ 200 / R$ 300 (2); only the two particular rows |
+| Convênio | ✅ `?type=insurance`; R$ 300 / R$ 400 / R$ 700 (2); only the two convênio rows. **Particular + Convênio = Todos** (300 + 700 = 1.000) |
+| Period change with a type | ✅ "Todo o período" → `?type=insurance&period=all`, same totals |
+| Todos clears it | ✅ `?period=all` only, all 4 back |
+| Secretary | ✅ the same filter; Convênio shows only the two convênio rows |
+| Help G6 | ✅ the web note: "…O detalhe por período fica em Pagamentos, com o filtro Todos / Particular / Convênio." |
+| en | ✅ "All · Private · Insurance" |
+| th | ✅ "ทั้งหมด · ชำระเอง · ประกัน". **Nit:** the period "All time" is also "ทั้งหมด", so two identical buttons sit side by side. Suggest e.g. "ทุกประเภท" for the type filter (Vitor / UX to choose) |
+
+**CI at `0b7e482`:** ✅. **Review: clean.** **Merge gate: 🟢 for `0b7e482`.** This docs commit sits on top of a master sync (1 behind; clean).
+
+**#158 re-check at `c4b9740`** (web tester 2): it changes only the th
+type-filter label, per my nit. Thai Pagamentos now shows "สัปดาห์นี้ ·
+เดือนนี้ · เดือนที่แล้ว · ทั้งหมด" (the period) + "ทุกประเภท · ชำระเอง ·
+ประกัน" (the type), so there's no duplicate. "ทุกประเภท" clears `?type=`.
+**Merge gate: 🟢 for `c4b9740`.**
+
+- **Server:** a local `next dev` at `70858a7` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it answers the model call with scripted text.
+- **Accounts:** a fresh throwaway doctor per variant, so the tour opens on
+  the first dashboard visit.
+
+| Row | Result |
+|---|---|
+| The button | ✅ step 1 of 9 has no "Experimentar agora"; step **2 of 9** (SolvyAI) has it, next to Pular tour / Voltar / Próximo |
+| Experimentar agora | ✅ the tour closes and the SolvyAI panel opens. It sends **"O que o SolvyAI pode fazer?"** by itself (the model request's last message is exactly that) and shows the answer, with 👍/👎 |
+| ✕ on the panel | ✅ "**Continuar o tour? (passo 3 de 9)**" · Dispensar · Continuar, i.e. the step AFTER SolvyAI |
+| Continuar | ✅ the tour resumes at **3 de 9** |
+| Dispensar | ✅ after a reload, no tour and no resume offer |
+| Console | ✅ no errors in either run |
+| Strings | ✅ `tour.tryNow` / `tryNowQuestion`: en "Try it now" / "What can SolvyAI do?"; th "ลองใช้เลย" / "SolvyAI ทำอะไรได้บ้าง" |
+
+**CI at `70858a7`:** ✅. **Review: clean.** **Merge gate: 🟢 for `70858a7`.** This docs commit sits directly on the PR head. The branch is 5 behind master, and a master merge conflicts in content/help/04-configuracoes.md, so the web dev syncs it.
