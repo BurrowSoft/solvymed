@@ -1232,6 +1232,8 @@
     "undone": "Undone",
     "simulated": "simulated",
     "undo": "Undo ({s} s)",
+    "undoFailed": "Couldn't undo. Open the item to adjust it.",
+    "openItem": "Open",
     "view": "See in the schedule",
     "edit": "Edit",
     "confirm": "Confirm ✓",

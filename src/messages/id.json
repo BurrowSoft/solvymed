@@ -1202,6 +1202,8 @@
     "undone": "Dibatalkan",
     "simulated": "simulasi",
     "undo": "Batalkan ({s} dtk)",
+    "undoFailed": "Tidak dapat membatalkan. Buka item untuk menyesuaikannya.",
+    "openItem": "Buka",
     "view": "Lihat di jadwal",
     "edit": "Ubah",
     "confirm": "Konfirmasi ✓",

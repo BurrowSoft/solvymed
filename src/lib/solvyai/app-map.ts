@@ -269,6 +269,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     help: "C9",
   },
   {
+    rule: {
+      text: "On the website, after a SolvyAI save the toast offers \"Desfazer\" / \"Undo\" for 10 s only when nothing reached the patient yet (a new patient, a payment, a block or unblock, or a single book / move / cancel for a patient without a SolvyMed account). When the patient may already have been told (a patient with an account: app push or LINE; a booking decision; a series), it shows \"Abrir\" / \"Open\" instead. If Desfazer fails: \"Não foi possível desfazer. Abra o item para ajustar.\"",
+      pending: ["solvyai-live"],
+    },
+    help: "C9",
+  },
+  {
     rule: { text: "\"Mostrar botão do assistente\" / \"Show the assistant button\" (Settings → SolvyAI; per phone in the app, per browser on the website) hides or shows the ✦ button.", pending: ["mobile#99", "solvyai-live"] },
     help: "C9",
   },

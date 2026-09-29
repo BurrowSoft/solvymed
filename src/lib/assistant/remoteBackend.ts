@@ -105,8 +105,12 @@ export function createRemoteBackend({ limit }: { limit: number }): AssistantBack
       return post({ event: { type: "confirm_failed", code, action }, locale });
     },
     async undo(action: CardAction, id?: string) {
-      if (!id) return;
-      try { await undoSolvyAiAction(action, id, prevs.get(id)); } catch { /* the toast still closes */ }
+      if (!id) return false;
+      try {
+        return (await undoSolvyAiAction(action, id, prevs.get(id))).ok;
+      } catch {
+        return false;
+      }
     },
   };
 }
