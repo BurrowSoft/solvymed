@@ -35,4 +35,17 @@ describe("privacy policy: SolvyAI / LINE blocks follow their conditions", () => 
     expect(r.container.textContent).not.toMatch(/Anthropic|6b\./);
     r.unmount();
   });
+
+  it("the patient notice record (135) only once the outbox is live", () => {
+    expect(conditionMet("notice-outbox-live")).toBe(false);
+    for (const [Doc, title] of [[PrivacyEn, "6e. Patient notices"], [PrivacyPtBR, "6e. Avisos ao paciente"]] as const) {
+      let r = render(<Doc turnstile={false} />);
+      expect(r.container.textContent).not.toContain(title);
+      r.unmount();
+      r = render(<Doc turnstile={false} notices />);
+      expect(r.container.textContent).toContain(title);
+      expect(r.container.textContent).toMatch(/30 (days|dias)/);
+      r.unmount();
+    }
+  });
 });

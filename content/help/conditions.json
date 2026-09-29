@@ -54,5 +54,9 @@
   "merge-patients-live": {
     "met": false,
     "what": "Merging duplicate patients is live: migration 133 (merge_patients / merge_patients_preview, access kind 'merged') is applied on production AND the app build with \"Mesclar com outro paciente…\" (mobile feat/merge-patients-app) is released on Google Play."
+  },
+  "notice-outbox-live": {
+    "met": false,
+    "what": "The patient notice outbox is live: migration 135 (enqueue_patient_notice / cancel_patient_notice, the ~1-minute hold, the 30-day delivery record with its purge) is applied on production AND its sender is switched on (the function's Vault secret set; until then enqueue returns 'outbox_not_live'). Gates privacy §6e."
   }
 }

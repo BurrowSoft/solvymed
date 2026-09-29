@@ -16,13 +16,16 @@ export default async function PrivacyPage({
   // (content/help/conditions.json), so the policy matches what runs.
   const solvyai = conditionMet("solvyai-live");
   const line = conditionMet("line-live");
+  // Patient notices wait ~1 minute in an outbox with a 30-day delivery
+  // record (migration 135), once that's live.
+  const notices = conditionMet("notice-outbox-live");
   return legalLangFor(locale) === "pt-BR" ? (
     <LegalDoc locale={locale} title="Política de Privacidade" updated={`Última atualização: ${legalDateLabel("pt-BR", PRIVACY_VERSION)}`}>
-      <PrivacyPtBR turnstile={turnstileEnabled} solvyai={solvyai} line={line} />
+      <PrivacyPtBR turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} />
     </LegalDoc>
   ) : (
     <LegalDoc locale={locale} title="Privacy Policy" updated={`Last updated: ${legalDateLabel("en", PRIVACY_VERSION)}`}>
-      <PrivacyEn turnstile={turnstileEnabled} solvyai={solvyai} line={line} />
+      <PrivacyEn turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} />
     </LegalDoc>
   );
 }
