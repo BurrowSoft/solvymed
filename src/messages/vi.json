@@ -1141,7 +1141,6 @@
     "edit": "Sửa",
     "confirm": "Xác nhận ✓",
     "failed": "Không lưu được.",
-    "failedBlocked": "Khung giờ bị khóa.",
     "chips": {
       "home": {
         "a": "Ngày mai tôi có lịch gì?",
@@ -1173,7 +1172,12 @@
         "b": "Làm sao mời trợ lý?",
         "c": "Đặt lịch hẹn"
       }
-    }
+    },
+    "unavailable": "SolvyAI hiện không khả dụng. Hãy thử lại sau giây lát.",
+    "expired": "Thẻ này đã hết hạn. Hãy hỏi lại để xem thông tin mới nhất.",
+    "cancel": "Hủy",
+    "chipAt": "{date} lúc {time}",
+    "otherTime": "Giờ khác"
   },
   "dateInput": {
     "buddhistYear": "Có vẻ đây là năm theo Phật lịch. Vui lòng dùng năm dương lịch (ví dụ: 1996)."

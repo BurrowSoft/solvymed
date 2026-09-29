@@ -1141,7 +1141,6 @@
     "edit": "Ubah",
     "confirm": "Konfirmasi ✓",
     "failed": "Gagal menyimpan.",
-    "failedBlocked": "Waktunya diblokir.",
     "chips": {
       "home": {
         "a": "Apa jadwal saya besok?",
@@ -1173,7 +1172,12 @@
         "b": "Bagaimana mengundang asisten?",
         "c": "Buat janji temu"
       }
-    }
+    },
+    "unavailable": "SolvyAI sedang tidak tersedia. Coba lagi sebentar lagi.",
+    "expired": "Kartu ini sudah kedaluwarsa. Tanyakan lagi untuk melihat data terbaru.",
+    "cancel": "Batal",
+    "chipAt": "{date} pukul {time}",
+    "otherTime": "Waktu lain"
   },
   "dateInput": {
     "buddhistYear": "Sepertinya ini tahun Buddhis. Gunakan tahun Masehi (misalnya 1996)."

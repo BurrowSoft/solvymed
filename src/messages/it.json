@@ -1141,7 +1141,6 @@
     "edit": "Modifica",
     "confirm": "Conferma ✓",
     "failed": "Impossibile salvare.",
-    "failedBlocked": "L'orario è bloccato.",
     "chips": {
       "home": {
         "a": "Cosa ho domani?",
@@ -1173,7 +1172,12 @@
         "b": "Come invito la mia segretaria?",
         "c": "Prenota un appuntamento"
       }
-    }
+    },
+    "unavailable": "SolvyAI non è disponibile al momento. Riprova tra poco.",
+    "expired": "Questa scheda è scaduta. Chiedi di nuovo per vedere i dati aggiornati.",
+    "cancel": "Annulla",
+    "chipAt": "{date} alle {time}",
+    "otherTime": "Un altro orario"
   },
   "dateInput": {
     "buddhistYear": "Sembra un anno dell'era buddhista. Usa l'anno gregoriano (es. 1996)."

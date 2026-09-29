@@ -1141,7 +1141,6 @@
     "edit": "Modifier",
     "confirm": "Confirmer ✓",
     "failed": "Impossible d'enregistrer.",
-    "failedBlocked": "Le créneau est bloqué.",
     "chips": {
       "home": {
         "a": "Qu'est-ce que j'ai demain ?",
@@ -1173,7 +1172,12 @@
         "b": "Comment inviter ma secrétaire ?",
         "c": "Prendre rendez-vous"
       }
-    }
+    },
+    "unavailable": "SolvyAI est indisponible pour le moment. Réessayez dans un instant.",
+    "expired": "Cette carte a expiré. Redemandez pour voir les informations à jour.",
+    "cancel": "Annuler",
+    "chipAt": "{date} à {time}",
+    "otherTime": "Un autre horaire"
   },
   "dateInput": {
     "buddhistYear": "Cela ressemble à une année de l'ère bouddhiste. Utilisez l'année grégorienne (ex. : 1996)."

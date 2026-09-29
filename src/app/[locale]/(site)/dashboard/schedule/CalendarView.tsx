@@ -219,7 +219,7 @@ function TimeGrid({
                 if (top + height < 0 || top > HOURS.length * HOUR_H) return null;
                 return (
                   <button
-                    key={appt.id}
+                    key={appt.id} data-highlight-id={appt.id}
                     className={`calendar-appt-block rounded-r-lg px-1.5 py-1 text-left overflow-hidden cursor-pointer transition hover:brightness-95 hover:shadow-md ${blockStyle(appt.status)}`}
                     style={{ '--appt-top': `${Math.max(top, 0)}px`, '--appt-height': `${height}px` } as React.CSSProperties}
                     onClick={() => onSelect(appt)}
@@ -287,7 +287,7 @@ function MonthGrid({
                 <div className="space-y-0.5">
                   {dayAppts.slice(0, 3).map(appt => (
                     <button
-                      key={appt.id}
+                      key={appt.id} data-highlight-id={appt.id}
                       className={`w-full text-left rounded px-1 py-0.5 text-[10px] font-semibold truncate ${chipStyle(appt.status)}`}
                       onClick={e => { e.stopPropagation(); onSelect(appt); }}
                     >
