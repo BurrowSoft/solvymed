@@ -100,6 +100,20 @@ describe("GET /api/patients/export", () => {
     expect(await res.json()).toEqual({ code: "access_log_failed" });
   });
 
+  it("no patients: just the header, and no log call (126 refuses an empty list)", async () => {
+    h.patients = [];
+    const res = await GET(req());
+    expect(res.status).toBe(200);
+    expect(h.rpc).toEqual([]);
+  });
+
+  it("more than 5000 patients: logged in chunks of 5000 (126's cap)", async () => {
+    h.patients = Array.from({ length: 5001 }, (_, i) => P(i));
+    const res = await GET(req());
+    expect(res.status).toBe(200);
+    expect(h.rpc.map((r) => (r.args.p_patient_ids as string[]).length)).toEqual([5000, 1]);
+  });
+
   it("every page of patients", async () => {
     h.patients = Array.from({ length: 1500 }, (_, i) => P(i));
     const res = await GET(req());

@@ -40,6 +40,8 @@ export async function GET(request: NextRequest) {
     if (!data || data.length < PAGE) break;
   }
 
+  // No patients: nothing exported, nothing to log (126 refuses an empty
+  // list); the file has just the header row.
   for (let i = 0; i < patients.length; i += LOG_CHUNK) {
     const ids = patients.slice(i, i + LOG_CHUNK).map((p) => p.id);
     const { error } = await supabase.rpc("log_record_access_batch", { p_patient_ids: ids, p_kind: "export", p_object_ref: "csv" });
