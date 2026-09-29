@@ -96,6 +96,26 @@ const plain = (s: string) => s.replace(/\*\*/g, "").toLowerCase().normalize("NFD
 // The articles whose title or text contain every word of the query
 // (accents and case ignored). Only what the variant SHOWS is searched: in
 // the app variant, the app title and text, never the web notes.
+// The articles that best match a question in plain words (no model): for
+// SolvyAI's fallback when it's unavailable. Words shared with the article
+// count once, with its title twice; stems match ("bloquear"/"bloqueio").
+// At most `n`, best first, and only real matches.
+const RANK_STOP = new Set(["como", "para", "uma", "que", "com", "meu", "minha", "the", "how", "can", "what", "does", "and", "you", "your", "sobre", "fazer", "posso", "quero", "want"]);
+export function rankHelp(question: string, lang: HelpLang, app: boolean, n = 3): HelpArticle[] {
+  const words = plain(question).split(/[^a-z0-9]+/).filter((w) => w.length > 3 && !RANK_STOP.has(w));
+  if (!words.length) return [];
+  const scored = HELP.flatMap((c) => c.articles).map((a) => {
+    const title = plain(articleTitle(a, lang, app));
+    const text = plain([title, ...(app && a.appOnly ? [a.appOnly[lang]] : a.body[lang].flatMap((b) => (b.type === "ol" ? b.items : [b.text])))].join(" "));
+    const score = words.reduce((s, w) => {
+      const stem = w.slice(0, Math.max(4, w.length - 3));
+      return s + (text.includes(stem) ? 1 : 0) + (title.includes(stem) ? 1 : 0);
+    }, 0);
+    return { a, score };
+  });
+  return scored.filter((x) => x.score >= 2).sort((x, y) => y.score - x.score).slice(0, n).map((x) => x.a);
+}
+
 export function searchHelp(query: string, lang: HelpLang, app: boolean): HelpArticle[] {
   const words = plain(query).split(/\s+/).filter(Boolean);
   if (!words.length) return [];

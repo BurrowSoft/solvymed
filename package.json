@@ -19,6 +19,7 @@
     "help:build": "node scripts/help-build.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.129.0",
     "@burrowsoft/shared": "*",
     "@sentry/nextjs": "^10.75.3",
     "@supabase/ssr": "^0.12.0",

@@ -177,6 +177,9 @@ describe("links and screens", () => {
     expect(webPath("", { screen: "patient", id: "../../x" })).toBe("/dashboard/patients");
     expect(webPath("", { screen: "schedule", date: "javascript:1" })).toBe("/dashboard/schedule");
     expect(webPath("", { screen: "whatsapp" })).toBeNull();
+    // A Help article: only an article-shaped id goes in the path.
+    expect(webPath("/pt-BR", { screen: "help", id: "A3" })).toBe("/pt-BR/help/a3");
+    expect(webPath("", { screen: "help", id: "../x" })).toBe("/help");
   });
   it("only internal hrefs are followed", () => {
     for (const bad of ["https://evil.test", "//evil.test", "/\\evil.test", "javascript:alert(1)"]) expect(isInternalHref(bad)).toBe(false);

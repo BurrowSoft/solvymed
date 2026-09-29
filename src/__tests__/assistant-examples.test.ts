@@ -26,7 +26,7 @@ const ACTION_KINDS = [
   "book_appointment", "move_appointment", "cancel_appointment", "block_time", "unblock_time",
   "booking_decision", "add_patient", "mark_paid", "send_pix",
 ];
-const SCREENS = ["home", "schedule", "patients", "patient", "payments", "settings", "whatsapp"];
+const SCREENS = ["home", "schedule", "patients", "patient", "payments", "settings", "whatsapp", "help"];
 const ERROR_CODES = ["model_failed"];
 const STOP_CODES = ["past_time", "patient_archived", "not_allowed"];
 
