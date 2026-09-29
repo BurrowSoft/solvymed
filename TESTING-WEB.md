@@ -8847,3 +8847,9 @@ Tested by web tester 2.
 | th | ✅ "ทั้งหมด · ชำระเอง · ประกัน". **Nit:** the period "All time" is also "ทั้งหมด", so two identical buttons sit side by side. Suggest e.g. "ทุกประเภท" for the type filter (Vitor / UX to choose) |
 
 **CI at `0b7e482`:** ✅. **Review: clean.** **Merge gate: 🟢 for `0b7e482`.** This docs commit sits on top of a master sync (1 behind; clean).
+
+**#158 re-check at `c4b9740`** (web tester 2): it changes only the th
+type-filter label, per my nit. Thai Pagamentos now shows "สัปดาห์นี้ ·
+เดือนนี้ · เดือนที่แล้ว · ทั้งหมด" (the period) + "ทุกประเภท · ชำระเอง ·
+ประกัน" (the type), so there's no duplicate. "ทุกประเภท" clears `?type=`.
+**Merge gate: 🟢 for `c4b9740`.**
