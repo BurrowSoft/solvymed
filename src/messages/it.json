@@ -1176,6 +1176,7 @@
       }
     },
     "unavailable": "SolvyAI non è disponibile al momento. Riprova tra poco.",
+    "notForAccount": "SolvyAI non è disponibile per questo account.",
     "expired": "Questa scheda è scaduta. Chiedi di nuovo per vedere i dati aggiornati.",
     "cancel": "Annulla",
     "chipAt": "{date} alle {time}",

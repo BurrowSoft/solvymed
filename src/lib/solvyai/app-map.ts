@@ -65,7 +65,7 @@ export const ACTIONS: AppMapAction[] = [
     inputs: {
       required: ["patient", "date", "start time"],
       optional: ["duration", "procedure", "type (in person / online)", "value", "notes", "repeat (app: weekly / every 2 weeks / monthly)"],
-      defaults: ["duration 30 min (or the procedure's)", "procedure and value from the clinic's procedures", "in person", "payment pending"],
+      defaults: ["the default procedure (the first active one by name) with its price as the value and its payment type", "duration: the default procedure's, else 30 min", "in person", "payment pending"],
     },
     rules: [
       "The patient must belong to this practice: search only within it, never another clinic's patients.",
@@ -77,10 +77,11 @@ export const ACTIONS: AppMapAction[] = [
       "The appointment can't run past midnight. Duration is 1–480 minutes.",
       "Dates are Gregorian; a year of 2400 or more is never saved or converted.",
       "Recurring (app): every date is checked; if any conflicts, none are saved and the conflicting date is named.",
-      "It's saved as scheduled, with payment pending.",
+      "It's saved as scheduled, with payment pending; the value is the chosen procedure's price (none when it has no price).",
+      "Every field that will be saved is on the card; defaults are marked (padrão).",
       { text: "Booked in the app (single or series): a patient linked to a SolvyMed account is notified, named by the clinic; never for blocked time or the past. The website doesn't notify.", pending: ["mobile#111"] },
     ],
-    card: ["patient (full name + birth date)", "when (weekday, date, start–end)", "duration (padrão)", "procedure (padrão)", "value (padrão)", "where"],
+    card: ["patient (full name + birth date)", "when (weekday, date, start–end)", "procedure (padrão)", "value (padrão, in the practice currency)", "type (padrão)", "duration (padrão unless said)"],
     after: "schedule",
     help: "A1",
     runs: { web: { module: "src/app/[locale]/(site)/dashboard/schedule/actions.ts", fn: "createAppointment" }, rpcs: [], app: "createAppointment / createRecurringAppointments (lib/services)" },
@@ -137,6 +138,7 @@ export const ACTIONS: AppMapAction[] = [
     rules: [
       "The booking pages don't offer blocked times to patients (a screen rule; the database itself doesn't refuse them).",
       "The practice can still book over a block, after the second question.",
+      "SolvyAI never blocks over existing appointments: it names them and asks what to do.",
       "A year of 2400 or more is never saved.",
     ],
     card: ["period (weekday, date, start–end)", "reason"],

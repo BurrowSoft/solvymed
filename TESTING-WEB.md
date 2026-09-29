@@ -7562,6 +7562,74 @@ provider still generates and bills that answer. Worth checking whether
 with #124; the TESTING-WEB.md conflict was resolved by keeping both
 blocks).
 
+## PR #126 (`feat/solvyai-actions`, base master) — SolvyAI actions mode, part 1 (read tools + book / cancel / block / mark-paid cards), 🟢 at `cd70175`
+
+Server-only: nothing reaches the UI yet.
+- **Unit tests:** `assistant-actions` + `assistant-route`, 33/33 (vitest
+  exit 0).
+- **End-to-end over HTTP:**
+  - A local `next dev` at `cd70175` with `SOLVYAI_API_ENABLED=1` and a
+    fake key.
+  - A test-only preload (scratchpad/pr126/sink.cjs) answers
+    `api.anthropic.com` with **real Anthropic SSE**, including `tool_use`
+    blocks (`input_json_delta`) and `stop_reason: tool_use`, scripted per
+    round. Ids in the scripted tool inputs are resolved from the tool
+    results the route itself sent back, so they come from the real reads.
+  - The **real tools ran against the prod DB** as a throwaway doctor: hours
+    Mon–Fri 08–18, weekends off, patients Ana / Bruno / Carla (archived),
+    Tuesday appointments, blocks at 12–13 and 18–19, a pending request.
+  - The 115 RPCs were stubbed; nothing reached Anthropic.
+
+| # | Scenario | Result |
+|---|---|---|
+| 1 | 115 says `actions:false` | `meta.mode = help`, **no tools offered** to the model, no card |
+| 2 | a propose with a patient id not read in this request | tool error "Unknown patient: use a read tool first…", **no card**; the model asks |
+| 2b | the id only in a (forged) earlier history message | still refused |
+| 3 | find_patients → book Tuesday 11:00, no duration | card **Nova consulta**: Paciente "Opus Ana Costa (14/05/1990)", Quando "Terça-feira, 06/10/2026, 11:00–11:30", Duração 30 min **isDefault**; action args = the fields; `editHref` / `viewHref` internal (`/pt-BR/dashboard/schedule?date=…`); `after` schedule; expires in **15 min**; random id |
+| 4 | book over Bruno 10:00–10:30 | **no card**; `slot_choice conflict`: "…10:00 já tem Opus Bruno Lima (10:00–10:30). Qual destes horários?", alternatives **09:30 / 10:30 / 11:00**, other |
+| 5 | blocked 12:15 | ⚠ "Horário bloqueado (12:00–13:00)" + secondConfirm "Este horário está bloqueado (12:00–13:00). Agendar mesmo assim?" [Agendar] |
+| 5 | 07:00 | ⚠ "Fora do horário de atendimento (08:00–18:00)" + secondConfirm |
+| 5 | Sunday | ⚠ "Domingo não é dia de atendimento" + secondConfirm "Domingo não é dia de atendimento. Agendar mesmo assim?" |
+| 5 | blocked **and** outside 18:15 | both warnings, **one** question with both sentences |
+| 5 | the same patient already booked that day | warning "…já tem consulta nesse dia às 15:00" **only**, no second question |
+| 5 | yesterday | **hard stop** `past_time` "Esse horário já passou. Escolha outro horário." |
+| 5 | durationMin 45 | 11:00–11:45, "45 min" not marked default |
+| 5b | en | "New appointment", "Tuesday, 10/06/2026", "⚠ Blocked time (12:00–13:00)", "This time is blocked (12:00–13:00). Book anyway?" [Book], hrefs without the prefix |
+| 6 | archived patient (seen via list_appointments) | **hard stop** `patient_archived` "Este paciente está arquivado. Restaure o cadastro antes de agendar." |
+| 7 | block 09–11 over Bruno | **refused** (tool error naming "10:00 Opus Bruno Lima"), no card |
+| 7 | block 13–14 "Almoço" | card **Bloquear horário**, Período + Motivo |
+| 7 | block yesterday | hard stop `past_time` |
+| 8 | mark paid, no value | tool error "…no value: ask the user for the amount…", **no card** |
+| 8 | mark paid with 200 | card **Marcar como pago**, Valor 200; `after` payments + highlight id |
+| 9 | cancel a confirmed appointment | card **Cancelar consulta**; `after` highlights that id |
+| 9 | cancel a pending request | **hard stop** `not_allowed` "Pedidos de consulta são aceitos ou recusados no próprio pedido." |
+| 10 | unknown tool (`delete_record`) | "There's no tool…"; BE year 2569 → rejected; no time → "ask the user for the time" |
+| 11 | the model keeps reading and never proposes | stops after **4 rounds** with "Não consegui concluir isso. Pode dizer de outro jeito…" |
+| 12 | `confirm_failed` event (a slot taken) | **no model call**, `slot_choice confirm_failed` "Esse horário acabou de ser ocupado. Nada foi salvo…", fresh times 09:00 / 09:30 / 10:30, **one consume + one release** |
+| 12 | the same in help mode / with junk args (2569, 25:00) | 400 `bad_request` |
+
+- **Privacy:**
+  - An appointment note ("SEGREDO-CLINICO-OPUS") seeded on Bruno's
+    appointment **never appears** in any request to the model.
+  - `list_appointments` sends id, date, times, status, patient name + birth
+    date, paid, value; `find_patients` sends id, name, birth date.
+  - All 7 tools are sent with `strict`.
+- **Nothing is written:** a DB snapshot (appointments and patients,
+  including `updated_at`) is identical before and after all of the above.
+
+**Nits (not blocking; to UX / e7):**
+- **Unformatted value:** the mark-paid card shows **"Valor 200"**, not
+  "R$ 200,00" / "฿200" (the tool uses `String(value)`).
+- **Book card fields:** only Paciente / Quando / Duração. The contract's
+  example also shows Valor (and the mock had Procedimento / Onde). Worth
+  a UX look, since the saved appointment gets the form's defaults for
+  those.
+
+**CI at `cd70175`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`cd70175`.** Not synced with master: the merge conflicts in
+`content/help/conditions.json` (the dev's file), so I aborted it and
+handed it to e7. This docs commit sits directly on `cd70175`.
+
 ## PR #125 (`docs/help-clinic-change-push`, base master) — Help + App Map: the patient is notified on app book/move/cancel (pending mobile#111), 🟢 at `143509b`
 
 Docs/data only.
@@ -7601,3 +7669,87 @@ Docs/data only.
 **CI at `143509b`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `143509b`.** This docs commit sits on top of a master sync (7 behind,
 clean merge).
+
+## PR #127 (`feat/solvyai-panel`, base master) — the web panel on the real `/api/assistant`; the book card shows every field it saves; the web form saves the procedure's price, 🟢 at `ac398a9`
+
+**Setup:**
+- **Tool:** Playwright on a local `next dev` with `SOLVYAI_API_ENABLED=1`
+  + `NEXT_PUBLIC_SOLVYAI_ENABLED=1`, against the prod DB as a throwaway
+  doctor (hours Mon–Fri 08–18; Bruno booked Tuesday 10:00, value 150; a
+  block at 12–13; procedure "Consulta Opus" R$ 150).
+- **The model:** my test-only sink (scratchpad/pr126/sink.cjs) stands in
+  for Anthropic with scripted tool calls; the 115 RPCs are stubbed.
+- **Saves are real:** they go through the screens' server actions, and
+  every result below was checked in the DB.
+- **Heads:** first run at `d5874d8`, then at `09be187` (the rebase + the
+  full book card); the focused checks re-ran at `ac398a9`.
+
+| Flow | Result |
+|---|---|
+| Panel on the route | no "Prévia" label |
+| Book card (Ana, Tuesday 11:00) | Paciente "Opus Ana Costa (14/05/1990)", Quando "Terça-feira, 06/10/2026, 11:00–11:30", **Procedimento Consulta Opus (padrão), Valor R$ 150,00 (padrão), Tipo Presencial (padrão), Duração 30 min (padrão)** |
+| Confirmar | row saved: `consultation_type` Consulta Opus, `payment_type` private, **`payment_amount` 150**, type in-person, 30 min, scheduled. The panel minimises; the page goes to **`/dashboard/schedule?date=2026-10-06&highlight=<new id>`** and **that row gets the ring**; the toast "✓ Feito · Desfazer (10 s)" |
+| Desfazer (book) | the row is **deleted** (~2.8 s), and the toast reads "Desfeito" |
+| Blocked 12:15 | inline "Este horário está bloqueado (12:00–13:00). Agendar mesmo assim?" → Agendar → **saved** (the warnings accepted) |
+| Slot taken between the card and the tap (14:00 booked via REST before Confirmar) | "Não foi possível salvar." then "Esse horário acabou de ser ocupado. Nada foi salvo. Qual destes horários?" with chips **13:00 / 13:30 / 14:30 / Outro horário**; **no model call**, one consume + one release; nothing of ours saved at 14:00 |
+| Cancel Bruno | status **cancelled** → Desfazer → **confirmed** again |
+| Block 15–16 "Almoço" | a **blocked** row → Desfazer → **gone** |
+| Mark Bruno paid | card Valor **R$ 150,00** (formatted, the 7f fix) → **paid** → Desfazer → **pending** |
+| 115 says `inactive` | "O SolvyAI não está disponível para esta conta."; the input stays |
+| **Next request after that failure** | the model received only `[user: "Como convido minha secretária?"]`: **no dangling user turn** |
+| `rate_limited` | "Aguarde um instante antes de enviar de novo." |
+| `quota_exhausted` | "Você usou as mensagens de hoje do SolvyAI. Renova em 5 h."; the bar at 100%; the input is replaced |
+| The server switch off (`SOLVYAI_API_ENABLED` unset, the panel flag on) | the **mock panel with "Prévia"**; no route or model calls |
+| The panel flag off (the Vercel Preview) | no ✦, no Settings card: as before |
+
+**The plain form** (Agenda › Nova Consulta, the live fix):
+- Procedure "Consulta Opus · R$ 150,00" → the appointment is saved with
+  **`payment_amount` 150**.
+- "Retorno Opus" (no price) → saved with **no value**.
+- The same fix on release is #129, tested separately on the release
+  Preview.
+
+**Dev-server note:** the first navigations, undos and event replies take
+3–10 s on `next dev` (first compiles). My first run read them too early.
+Every check above passed once the waits covered that. On a Preview they're
+fast.
+
+**Not testable yet:** ฿ on the cards needs a TH practice
+(`professionals.country` doesn't exist until migration 110); covered by
+7f's unit tests.
+
+**CI at `ac398a9`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`ac398a9`.** This docs commit sits directly on top; the branch is up to
+date with master.
+
+## PR #129 (`fix/booking-saves-procedure-price`, base **release**) — RELEASE hotfix: a web booking saves the procedure's price as its value, 🟢 at `7a505c1`
+
+**The live bug:** Agenda › Nova Consulta on the website never saved the
+procedure's price, so web-booked appointments had no value in Pagamentos
+or in the Pix code.
+
+**Tested on the release Preview at `7a505c1`:**
+- **Setup:** a throwaway doctor with a Pix key and two procedures:
+  "Consulta Opus" R$ 150 and "Retorno Opus" with no price.
+- **Bookings:** both were made through the real form (Agenda › Nova
+  Consulta), and each save was checked in the DB.
+
+| Check | Result |
+|---|---|
+| Book with "Consulta Opus · R$ 150,00" | saved with **`payment_amount` 150**, `consultation_type` Consulta Opus, pending |
+| Book with "Retorno Opus" (no price) | saved with **`payment_amount` null** (as before) |
+| Bloquear Horário 13:00 | the block row has `payment_amount` null: **block time unaffected** |
+| Pagamentos (the two rows moved to yesterday via REST, since Pagamentos lists up to today; the values are the form's) | Pendente: "Opus Preco Com · Consulta Opus · **R$ 150,00** · Marcar como Pago"; "Opus Preco Sem · Retorno Opus · **Sem valor definido**" |
+| Pix QR (Agenda, the priced appointment) | the Copia e Cola code parsed as EMV: **tag 54 = `150.00`**, so the amount is in the Pix |
+
+- **Note (unchanged by this PR, release only):** on release the Pix dialog
+  title reads "Pix QR Code" even in pt-BR. Master has the translated
+  title since #100, and the dialog's hardcoded "Copia e Cola" / "Copiar"
+  are the #128 item.
+- **Post-merge:** the prod spot-check (one booking with a priced
+  procedure, then delete it) follows when this lands on
+  www.solvymed.com.
+
+**CI at `7a505c1`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`7a505c1`.** The branch was up to date with `release`; this docs commit
+sits on top.
