@@ -71,9 +71,9 @@ Patients can't request appointments in blocked time. You can still book over it 
 **pt-BR**
 Agendado, Confirmado, Concluído, Cancelado, Atrasado, Ausente e Rejeitado. Toque na consulta e escolha o status. Consultas pedidas por pacientes aparecem como pedidos até você confirmar ou rejeitar.
 **en**
-Scheduled, Confirmed, Completed, Cancelled, Late, No-show and Rejected. Tap the appointment and choose the status. Appointments requested by patients show as requests until you confirm or reject them.
+Scheduled, Confirmed, Completed, Cancelled, Late, Absent and Rejected. Tap the appointment and choose the status. Appointments requested by patients show as requests until you confirm or reject them.
 **No site:** Em **Agenda**, cada consulta da lista tem um seletor de status; escolha o novo status nele.
-**On the website:** In the **Schedule**, each appointment in the list has a status selector; pick the new status there (the website calls Completed "Done" and No-show "Absent").
+**On the website:** In the **Schedule**, each appointment in the list has a status selector; pick the new status there.
 `open:schedule`
 
 ---
