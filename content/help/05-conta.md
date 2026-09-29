@@ -45,9 +45,9 @@ On the sign-in screen, tap **Forgot your password?**, enter your email and open 
 ---
 ## K5. Privacidade / Privacy
 **pt-BR**
-Seus dados ficam privados e criptografados; cada clínica só vê os próprios dados; secretárias(os) não veem dados clínicos. Veja a Política de Privacidade em solvymed.com/privacy.
+Seus dados ficam privados e criptografados; cada clínica só vê os próprios dados; secretárias(os) não veem dados clínicos. As observações da clínica são privadas e não aparecem para o paciente. Veja a Política de Privacidade em solvymed.com/privacy.
 **en**
-Your data is private and encrypted; each clinic only sees its own data; secretaries don't see clinical data. See the Privacy Policy at solvymed.com/privacy.
+Your data is private and encrypted; each clinic only sees its own data; secretaries don't see clinical data. The clinic's notes are private and never shown to the patient. See the Privacy Policy at solvymed.com/privacy.
 `open:none`
 
 ---

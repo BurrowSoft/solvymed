@@ -7888,3 +7888,147 @@ problem.
 **CI at `72aa7f7`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `72aa7f7`.** This docs commit sits directly on top; the branch is up to
 date with master.
+
+## PR #137 (`fix/my-appointments-no-notes`, base **release**) — RELEASE privacy hotfix: patients never get the clinic's appointment notes (with migration 106, live), 🟢 at `1028239`
+
+**Why it's urgent:** migration 106 is live on prod and drops the
+patient's whole-row read. Until this ships, prod /my-appointments and
+pending-confirmation show nothing (I saw it: pending-confirmation listed
+no requests on master during #132).
+
+**Tested on the release Preview at `1028239`**, against the prod DB (106
+applied):
+- **Patient A:** linked, with a confirmed future appointment (clinic
+  note "OBS-CLINICA-SECRETA-FUTURA", patient_note "Mensagem futura do
+  paciente A"), a past completed one (with a clinic note) and a doctor's
+  proposal (with a clinic note).
+- **Patient B:** invited, not linked, with a proposal (a clinic note plus
+  a patient_note) and a tentative request (a patient_note).
+
+| Check | Result |
+|---|---|
+| REST as patient A: `appointments?select=notes`, `select=*`, `select=id,date,patient_note` | **200, 0 rows** each: no direct read of the table |
+| `rpc/get_my_appointments` as A | 3 rows (theirs); columns include `patient_note`, **no `notes` key**; the secret appears nowhere in the payload |
+| A: /my-appointments | Próximas (Confirmado; Proposta with Aceitar/Recusar and "Originalmente: …"), Histórico (Concluído). The patient's own message "Mensagem futura do paciente A" is shown. **The clinic's notes appear nowhere**, in the text or the page HTML |
+| A accepts the proposal | saved: **confirmed** at the proposed 05/10 11:00 |
+| B: pending-confirmation | "SUAS SOLICITAÇÕES" lists both requests (Novo horário proposto with Aceitar/Recusar; Aguardando confirmação); no clinic note |
+| B accepts | saved: **confirmed** 05/10 14:00 |
+| Clinic: schedule list (both days) | "**Mensagem do paciente:** Mensagem futura do paciente A", "…: Pedido do B com mensagem", "…: Mensagem do B"; the clinic still sees its own notes |
+| Privacy §8, pt-BR and en | the new line: "…the clinic's notes on an appointment are private and never shown to the patient (a patient sees only their own…" (pt: "…as observações…") |
+
+**Not covered here** (in the post-merge prod check):
+- a fresh booking from /book with a message (the seeds wrote
+  `patient_note` directly);
+- "Solicitar reagendamento";
+- the clinic push (not observable on a Preview).
+
+**CI at `1028239`:** ✅. **Review: clean (7f; the head adds only the
+apostrophe escape since the clean `07ea1db`).** **Merge gate: 🟢 for
+`1028239`.** The branch was up to date with `release`; this docs commit
+sits on top.
+
+**#137 post-merge prod check ✅** (www.solvymed.com; Vercel prod = release
+`ae855b1`, checked with `vercel inspect`). The same spec as above, with no
+bypass header on prod:
+- **Patient reads:** REST notes → 0 rows; `get_my_appointments` has no
+  `notes` key; /my-appointments shows no clinic note (text or HTML) and
+  shows the patient's own message.
+- **Actions:** accepting a proposal works; pending-confirmation lists the
+  requests again, and Accept works.
+- **Clinic and privacy:** the clinic sees "Mensagem do paciente"; privacy
+  §8 is OK.
+- **Plus a fresh /book booking with a message** (a new spec,
+  `opus-pr137-book`):
+  - the DB has `patient_note` = the message and `notes` null;
+  - the patient sees their message in /my-appointments;
+  - the clinic's request card shows "Mensagem do paciente: Mensagem nova
+    Opus pelo booking".
+- **Not yet covered:** a patient's "Solicitar reagendamento".
+
+## PR #139 (`chore/merge-back-137`, base master) — merge-back of #137: master's patient reads through `get_my_appointments` + Help K5 line, 🟢 at `b1e8acc`
+
+**Why:** since migration 106, master's patient pages read nothing: I saw
+an empty pending-confirmation while testing #132.
+
+**Tested on the #139 (master) Preview at `b1e8acc`**, against the prod DB
+(106 live). Both #137 specs, unchanged:
+- **REST as a patient:** notes / `*` → 0 rows; `get_my_appointments` →
+  own rows, no `notes` key, no clinic note anywhere.
+- **/my-appointments:** Confirmado, "Novo horário proposto" (master's
+  #117 label) and Concluído. The patient's own message is shown; the
+  clinic's notes are absent from text and HTML. Accepting the proposal
+  saves **confirmed**.
+- **pending-confirmation** (an invited patient): lists both requests again,
+  and Aceitar saves **confirmed**.
+- **Clinic:** "Mensagem do paciente: …" on the request cards and schedule
+  rows.
+- **/book with a message:** `patient_note` = the message, `notes` null; the
+  patient sees it; the clinic card shows "Mensagem do paciente".
+- **Help K5:** pt "As observações da clínica são privadas e não aparecem
+  para o paciente."; en "The clinic's notes are private and never shown to
+  the patient."
+- **Privacy §8** (pt/en): the line is present.
+
+(One run had a Preview login time out for the second patient; a re-run was
+clean.)
+
+**CI at `b1e8acc`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`b1e8acc`.** This docs commit sits directly on top; the branch is up to
+date with master.
+
+## PR #132 (`feat/saved-locale`, base master) — pushes in each reader's saved language; the website saves its language (migration 117), 🟢 at `9c0e60a`
+
+**Setup:**
+- **Server:** a local `next dev` with my test-only Expo sink (pushes are
+  logged, never sent).
+- **Three runs:**
+  1. before 117 existed, against the prod DB;
+  2. 117's RPCs **stubbed**;
+  3. **live**, once 8d applied 117 (with master merged in locally, so it
+     includes #139's patient-read fix).
+- **Throwaway fixtures:** a doctor ("Clínica Opus Idioma"), a secretary,
+  and a patient with a tentative request. Each has a device token.
+
+**Live (117 applied): the result that matters**
+- **Saving the language:**
+  - The patient saved **fr-FR** through `set_my_locale` with their own
+    token, the way the app does. The website's `<SaveMyLocale>` runs only
+    on the dashboard, so it covers doctors and secretaries.
+  - Secretary on the English site: `set_my_locale("en")`, stored.
+  - Secretary then on **/ja**: **no call**. ja isn't a push language, so
+    the saved "en" isn't overwritten.
+  - Doctor on pt-BR: `set_my_locale("pt-BR")`.
+- **The pushes:**
+  - Doctor proposes a new time → the patient's push in **French**:
+    "Nouvel horaire proposé | Un nouvel horaire a été proposé : 04/10/2026
+    09:30."
+  - The patient accepts (pending-confirmation) → **one clinic push per
+    reader:**
+    - doctor: **pt-BR** "Proposta aceita | Opus Idioma Paciente aceitou o
+      novo horário: 04/10/2026 09:30.";
+    - secretary: **en** "Proposal accepted | … accepted the new time:
+      10/04/2026 09:30." (the en date format).
+- **No page errors.** `<SaveMyLocale>` calls at most once per language per
+  tab session, and stores `solvymed_saved_locale` when saved.
+
+**Before 117 (prod as it was):**
+- **Fail-soft:** `set_my_locale` fails silently (no UI error), and there's
+  one attempt per language per tab session.
+- **Pushes as before:** the pt-BR fallback for the patient's "Novo horário
+  proposto" and the clinic's "Proposta aceita".
+
+**117 stubbed:** the same routing as live (a French patient; doctor pt-BR
++ secretary en). After I fixed my own stub (a 204 needs a null body), the
+client also stored the saved language.
+
+**Help:** C8's new sentence is `{pending:saved-locale-live}`, which is
+still unmet because it also needs the app's language saving in a released
+build. `help-build` output is unchanged.
+
+**Note (from testing):** between 106 going live and #139, master's
+pending-confirmation showed no requests. #132's head needed master (#139)
+for the patient-accept step. This docs commit includes that master sync.
+
+**CI at `9c0e60a`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`9c0e60a`.** This docs commit sits on top of a master sync (8 behind,
+clean merge; it brings #139).

@@ -101,6 +101,7 @@
     "managePayments": "Gerenciar Pagamentos"
   },
   "schedule": {
+    "patientMessage": "Mensagem do paciente",
     "title": "Agenda",
     "apptsToday": "{count, plural, =0 {# consultas hoje} one {# consulta hoje} other {# consultas hoje}}",
     "noAppts": "Sem consultas neste dia",

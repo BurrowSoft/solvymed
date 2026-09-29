@@ -101,6 +101,7 @@
     "managePayments": "Gérer les paiements"
   },
   "schedule": {
+    "patientMessage": "Message du patient",
     "title": "Planning",
     "apptsToday": "{count, plural, one {# rendez-vous aujourd'hui} other {# rendez-vous aujourd'hui}}",
     "noAppts": "Pas de rendez-vous ce jour",
