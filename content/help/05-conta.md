@@ -6,8 +6,8 @@
 Você tem 15 dias grátis, sem cartão. Para continuar depois, assine pelo site solvymed.com, entrando com sua conta. O plano inclui tudo, com até 3 secretárias(os).
 **en**
 You get 15 days free, with no card. To continue afterwards, subscribe on solvymed.com, signed in with your account. The plan includes everything, with up to 3 secretaries.
-**No site:** Durante o teste, o contador de dias fica no topo do painel. Clique nele para ver o plano e assinar com cartão.
-**On the website:** During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card.
+**No site:** Durante o teste, o contador de dias fica no topo do painel. Clique nele para ver o plano e assinar com cartão. A situação do plano fica em **Configurações → Assinatura**; se você assina com cartão, **Gerenciar assinatura** abre a página do Stripe para gerenciá-la (por exemplo, trocar o cartão).
+**On the website:** During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card. Your plan's status is in **Settings → Subscription**; if you subscribe by card, **Manage subscription** opens Stripe's page to manage it (for example, to change the card).
 `open:none`
 Note for SolvyAI: inside the APPS, never mention prices, buying or the website for subscribing (store rules); give this answer only in the web dashboard. In the apps: "Veja os detalhes da sua conta em Configurações." / "See your account details in Settings."
 App title: "Sua conta" / "Your account"
@@ -18,8 +18,8 @@ App title: "Sua conta" / "Your account"
 **Configurações → Alterar senha**. Por segurança, as sessões nos outros aparelhos são encerradas.
 **en**
 **Settings → Change password**. For security, your sessions on other devices are ended.
-**No site:** Ainda não há **Alterar senha** no site; use o app, ou saia da conta e use **Esqueceu a senha?** na tela de entrada.
-**On the website:** There's no **Change password** on the website yet; use the app, or sign out and use **Forgot password?** on the sign-in screen.
+**No site:** **Configurações → Alterar senha**: digite a senha atual e a nova (duas vezes). As sessões nos outros aparelhos são encerradas; este navegador continua conectado.
+**On the website:** **Settings → Change password**: enter your current password and the new one (twice). Your sessions on other devices are ended; this browser stays signed in.
 `open:settings`
 
 ---

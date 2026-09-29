@@ -8285,3 +8285,502 @@ Pix by WhatsApp stays app-only (knowledge rule + `send_pix` web: null).
 **Review: clean (7f).** **Merge gate: 🟢 for `06c10f7`.** This docs commit
 sits on top of a master sync (12 behind: #135 merged; clean merge; the
 `helpArticles.json` rebuild is identical).
+
+## PR #138 (`feat/web-recurring`, base `feat/web-reschedule`) — recurring appointments on the website, 🟢 at `b74cf4f`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `b74cf4f` with a test-only Expo sink
+  (pushes are logged, never sent), against the prod DB.
+- **Throwaway fixtures (deleted afterwards):**
+  - a doctor, "Clínica Opus Série", open Mon–Fri 08:00–18:00;
+  - a linked patient with a device token;
+  - an appointment on the 3rd weekly date at 10:00;
+  - a block on the 4th weekly date, 14:00–15:00.
+- **Flow:** everything goes through Nova Consulta. First date: Tue
+  06/10/2026.
+
+**Form:**
+- **pt-BR:** Repetir "Sem repetição / Semanal / Quinzenal / Mensal";
+  "Quantas consultas" defaults to 8; the button reads "Salvar ×8", then
+  "Salvar ×4" after the count changes.
+- **en:** "No repeat / Weekly / Every 2 weeks / Monthly"; "Save ×N".
+
+**Series:**
+- **Weekly ×4 for the linked patient:**
+  - 4 rows (06/10, 13/10, 20/10, 27/10, 11:00–11:30), each with
+    `patient_auth_id`.
+  - **ONE push:** "Nova consulta | Clínica Opus Série marcou 4 consultas
+    para você. A primeira é em 06/10/2026 às 11:00."
+- **Clash on the 3rd date:** "Em 20/10/2026: Este horário conflita com
+  Opus Ocupado às 10:00 (30 min). Escolha outro horário." **0 rows
+  saved.**
+  - en: "On 10/20/2026: This overlaps with Opus Ocupado at 10:00 (30
+    min)…"
+- **Block on the 4th date:** ONE question, "Em 27/10/2026: Este horário
+  está bloqueado (14:00–15:00). Agendar mesmo assim?".
+  - Cancelar → 0 rows.
+  - Agendar → all 4 saved.
+- **Quinzenal ×3:** 06/10, 20/10, 03/11.
+- **Mensal ×3 from Sat 31/10:**
+  - ONE question: "Em 31/10/2026: Sábado não é dia de atendimento. Agendar
+    mesmo assim?".
+  - Agendar → **31/10, 01/12 (31/11 rolls over), 31/12**.
+- **Outside hours** (17:45 + 30 min on every date): the question names the
+  first date, "Em 06/10/2026: … fora do horário de atendimento
+  (08:00–18:00)".
+
+**Limits and single bookings:**
+- **Limits** (the browser's min/max bypassed): n=1 and n=53 → "Escolha de 2
+  a 52 consultas.", 0 saved. n=52 → 52 rows, 06/10/2026 to 28/09/2027.
+- **A single booking is unchanged:** its overlap message names no date.
+- **Other patients:** no push for the unlinked patients' series.
+
+**Follow-up (7f: not blocking; the merged app behaves the same):**
+- **The problem:** a series whose **first date is past** sends no push,
+  even for its future dates.
+  - Live: weekly ×3 from 22/09 → rows 22/09, 29/09, 06/10 → **0
+    pushes**.
+  - Control, weekly ×2 from 06/10 → 1 push.
+- **UX 36's rule for the fix (both repos):**
+  - One push counting only the future appointments: the single-booking
+    text for 1, the series text for 2+.
+  - No push when none are in the future.
+
+**CI at `b74cf4f`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `b74cf4f`.** This docs commit
+sits directly on top; the branch is up to date with its base.
+
+## PR #140 (`feat/solvyai-series`, base master) — SolvyAI's series card on the website, 🟢 at `755fe42`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `755fe42` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts the model's `tool_use` turns
+  (`find_patients` → `propose_book_appointment` with `repeat`) and logs
+  Expo pushes, never sending them.
+- **Data:** the prod DB, with throwaway fixtures (deleted afterwards):
+  - a doctor, open Mon–Fri 08:00–18:00;
+  - a linked patient with a device token, and an unlinked patient;
+  - "Opus Ocupado" Tue 20/10 10:00;
+  - a block Tue 27/10 14:00–15:00.
+- **Earlier run:** a first run at `81ab667` stopped at login (a harness
+  flake). The src delta to `755fe42` is only `helpArticles.json`.
+
+**Series:**
+- **Weekly ×3:**
+  - The card shows "Repetir | Semanal, 3 consultas (até 20/10/2026)".
+  - Confirmar → 3 rows (06/10, 13/10, 20/10).
+  - ONE push: "Clínica Opus Série IA marcou 3 consultas para você. A
+    primeira é em 06/10/2026 às 11:00."
+  - The toast is "✓ Feito" with **no Desfazer**.
+- **Weekly ×4 with a clash on the 3rd date:** no card. "Terça-feira,
+  20/10/2026 às 10:00 já tem Opus Ocupado. Nada foi salvo. Como prefere
+  seguir?" with only "Outro horário". The model is told to ask and never
+  pick. 0 rows.
+- **Weekly ×4 with a block on the 4th date:**
+  - The card shows "27/10/2026: ⚠ Horário bloqueado (14:00–15:00)".
+  - Confirmar → "27/10/2026: Este horário está bloqueado (14:00–15:00).
+    Agendar mesmo assim?" → Agendar → 4 rows.
+  - No push (unlinked patient).
+- **Bad repeats** (count 1, count 53, every "day"): no card; the model gets
+  "Repeat is { every: "week" | "2weeks" | "month", count: 2–52 }; ask the
+  user."
+- **Every 2 weeks ×2:** "A cada 2 semanas, 2 consultas (até 20/10/2026)" →
+  06/10 + 20/10, one push "marcou 2 consultas…".
+- **A date taken between the card and Confirmar:** "Não foi possível
+  salvar." Nothing saved (none of the series' dates).
+
+**Nit (not blocking):** a series card's same-patient warning ("já tem
+consulta nesse dia às 11:00") doesn't name the date, although it can apply
+to several.
+
+**CI at `755fe42`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `755fe42`.** This docs commit
+sits on top of a master sync (1 behind: #138's merge commit, no content
+change).
+
+## #142 A clinic-booked series announces only its future dates (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `dd58b72`, on a local `next dev` with the Expo
+push sink.
+- **The fix commit:** `5a96210`. It's identical at `dd58b72`
+  (`git range-diff`: `=`).
+- **Earlier run:** the same run at `5a96210` gave the same results.
+- **Setup:** a linked patient with a device token (user_roles
+  linked_patient_id + patient_connections + push_tokens), booked from
+  Agenda → Nova Consulta → Repetir.
+- **Clinic clock:** today 29/09/2026, 11:13 BRT.
+- **Covers UX 36's rule:** one push counting only the future
+  appointments. The single-booking text for 1, the series text for 2+, no
+  push when none are in the future.
+
+| Case | Rows | Push to the patient |
+|---|---|---|
+| Weekly ×4 from 22/09 08:00 (22/09, today 08:00 = past, 06/10, 13/10) | 4 | ✅ one: "Clínica Opus Futuro marcou 2 consultas para você. A primeira é em 06/10/2026 às 08:00." |
+| Weekly ×3 from 22/09 09:00 (only 06/10 ahead) | 3 | ✅ one, the single text: "…marcou uma consulta para você em 06/10/2026 às 09:00." |
+| Weekly ×2 from 15/09 10:00 (all past) | 2 | ✅ none |
+| Weekly ×2 from today 16:00 (later today counts as future) | 2 | ✅ "…marcou 2 consultas… A primeira é em 29/09/2026 às 16:00." |
+| Weekly ×3 from 06/10 11:00 (all future: unchanged) | 3 | ✅ "…marcou 3 consultas… A primeira é em 06/10/2026 às 11:00." |
+| Single booking 01/10 12:00 (unchanged) | 1 | ✅ "…marcou uma consulta para você em 01/10/2026 às 12:00." |
+| Single booking 28/09 12:00 (past: unchanged) | 1 | ✅ none |
+
+**Also checked:**
+- **Tester 2's repro** (weekly ×3 from last week) now gets its push; before
+  the fix it got 0.
+- **Unit tests:** clinic-notify + create-series pass, 11/11 (vitest exit
+  0).
+- **SolvyAI's series card (#140, now on master)** books through the same
+  `createAppointment`, so it gets the fix too. SolvyAI refuses past start
+  times, so its series never start in the past.
+
+**Master sync:** master (#140) merged in under this docs commit. The merge
+was clean, with no change to this PR's code.
+**Review: clean (7f, `5a96210` / `dd58b72`).** **Merge gate: 🟢 for
+`dd58b72`.**
+
+## #143 Alterar senha on the website (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `a8dc0d8`, on its Vercel Preview (Playwright).
+- **Accounts:** throwaway doctors (pt-BR and en) and a secretary (pt-BR),
+  each signed in on two browsers:
+  - A changes the password;
+  - B is "another device";
+  - a third session exists only through the API.
+- **Where it shows:** Configurações → **Alterar senha** sits above Excluir
+  conta for the doctor. For the secretary it sits after Sair da clínica and
+  Tour guiado, above Excluir conta. The en card says **Change password**.
+
+| Row | pt-BR (doctor + secretary) | en (doctor) | Auth calls |
+|---|---|---|---|
+| All fields empty | ✅ "Preencha todos os campos." | ✅ "Please fill in all fields." | none |
+| New ≠ confirm | ✅ "As senhas não coincidem." | ✅ "Passwords do not match." | none |
+| 7 characters | ✅ "A senha deve ter pelo menos 8 caracteres." | ✅ "…at least 8 characters." | none |
+| New = current | ✅ "A nova senha deve ser diferente da senha atual." | ✅ "New password must differ…" | none |
+| Wrong current | ✅ "Sua senha atual está incorreta." The old password still signs in; the new one doesn't. | ✅ "Your current password is incorrect." | 1 sign-in only; no update |
+| Cancelar, then reopen | ✅ the fields and the error are cleared | ✅ | — |
+| Success | ✅ "Senha alterada com sucesso! As sessões nos outros aparelhos foram encerradas." The form closes. | ✅ "Password changed successfully! …" | sign-in, then update, then logout (others) |
+
+**After success (all 3 runs):**
+- **Passwords:** the old one is refused (400) and the new one signs in
+  (200).
+- **This browser (A)** stays signed in: reloading Settings stays on
+  Settings.
+- **The other browser (B)** is signed out: Settings and /dashboard both go
+  to /auth/login.
+- **The API session** is ended too: its refresh fails with 400, and /user
+  with its old access token returns 403.
+- **A fresh sign-in** with the new password reaches /dashboard.
+
+**Help and strings:**
+- **Help K2** (/help/k2 and /pt-BR/help/k2) shows the new website note:
+  - "No site: Configurações → Alterar senha: digite a senha atual e a
+    nova (duas vezes). As sessões nos outros aparelhos são encerradas;
+    este navegador continua conectado."
+  - The en page matches.
+- **Locales:** the `changePassword` namespace has all 14 keys in all 15
+  locales (Thai included), and `tooShort` keeps `{min}`.
+
+**Master sync:** master (#142) merged in under this docs commit. The merge
+was clean, with no change to this PR's code.
+**Review: clean (7f, `a8dc0d8`).** **Merge gate: 🟢 for `a8dc0d8`.**
+
+## PR #144 (`feat/privacy-additions`, base master) — privacy policy additions for SolvyAI and LINE, gated on `solvyai-live` / `line-live`, 🟢 at `fc85fd4`
+
+Tested by web tester 2.
+
+**Today's pages are unchanged** (the Vercel Preview at `fc85fd4` vs the
+master Preview, with the bypass header):
+- `/pt-BR/privacy`, `/privacy`, `/pt-BR/terms` and `/terms` all return 200,
+  and their main text is **identical** to master (137 / 61 lines).
+- Anthropic, SolvyAI, LY Corporation and LINE are **not visible** on any of
+  them.
+- **The page source has none of #144's own strings** (0 on the PR, 0 on
+  master): "LY Corporation", "6b. SolvyAI", "processados pela Anthropic" /
+  "processed by Anthropic", "identidade tailandesa" / "Thai ID numbers",
+  "Japão / Tailândia" / "Japan / Thailand", "6c.", "Desconectar".
+  - The plain words Anthropic / SolvyAI / LINE in the raw HTML come from the
+    next-intl bundle and are on master too.
+  - "90 dias" / "90 days" appear 4× on both (existing text).
+- **Gating:** `page.tsx` reads `conditionMet("solvyai-live" / "line-live")`
+  server-side (both unmet).
+  - The `c62a169` → `fc85fd4` delta (the LINE row, §6c bullets,
+    "Desconectar", condition text) is entirely inside `{line && …}` /
+    `...(line ? …)`.
+
+**Policy = what runs**, for the gated §6b text, checked against the code:
+- **"CPF and Thai ID numbers, phones and emails are masked":**
+  `lib/assistant/mask.ts` masks email, CPF, 13-digit Thai ID and phone
+  shapes. Passports aren't masked and aren't claimed.
+- **"Never reads records, prescriptions, exams or files":** the server tools
+  are `find_patients`, `list_appointments`, `find_free_slots` and the
+  `propose_*` cards. None reads clinical tables.
+- **"A 👍/👎 is recorded only as a vote":** the panel sends
+  `track("solvyai_feedback", { vote })` and nothing else.
+- **"Conversations aren't kept":** the assistant route has no insert.
+
+**CI at `fc85fd4`:** ✅ (lint, typecheck + unit tests incl.
+`privacy-gated.test.tsx`, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `fc85fd4`.** This docs commit sits on top of a master sync (7 behind: #142, #143; clean merge).
+
+## #145 (release) /subscribe?success=1 says "activated" only once the plan is on (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `1c89b62` (base `release`), on its Vercel
+Preview (Playwright), with a throwaway doctor per row.
+- **No Stripe checkout.** A service-role PATCH on `professionals`
+  simulates the webhook's write: `subscription_status = 'active'` and
+  `current_period_end` = +30 days.
+- `subscription_id` stays null, so the page makes no Stripe call.
+
+| Row | Result |
+|---|---|
+| R1 trial → ?success=1; the "webhook" lands at +8 s | ✅ "Pagamento recebido! Ativando sua assinatura…", with a spinner (aria-busy). At +12 s it shows "Assinatura ativada! Boas-vindas ao SolvyMed Pro." Polls: 2, then they stop. |
+| R2 trial, no webhook | ✅ "Ativando…" until about 30 s, then "Recebemos seu pagamento, mas a ativação está demorando. … fale com o suporte: support@solvymed.com" (a mailto link). 8 polls, about every 3.5 s on the Preview, then none. The row stays trial. |
+| R3 already active → ?success=1 | ✅ "Assinatura ativada!" on load, with 0 polls |
+| R4 lifetime → ?success=1 | ✅ "Assinatura ativada!" on load, with 0 polls |
+| R5 status active but the period ended 2 days ago | ✅ fails closed: "Ativando…", then the slow text. Never "ativada". |
+| R6 trial ended (expired) | ✅ "Ativando…", then the slow text |
+| R7 en, the "webhook" at +6 s | ✅ "Payment received! Activating your subscription…", then "Subscription activated! Welcome to SolvyMed Pro." at +8 s |
+| R8 en, no webhook | ✅ "We received your payment, but activation is taking longer than usual. … contact support: support@solvymed.com" |
+| While ?success=1 (R1–R8) | ✅ no subscribe button (no second checkout), and no trial text |
+| R9 without ?success=1 (unchanged) | ✅ Trial: the trial text plus **Assinar com Cartão**. Active: bounced to /pt-BR/dashboard. |
+
+**Also checked:**
+- **Locales:** `activationPending` and `activationSlow` are in all 15
+  locales (Thai included).
+- **CI at `1c89b62`:** ✅ (lint, typecheck + unit tests, Vercel).
+
+**Not covered here:** the real Stripe webhook landing, since its endpoint
+URL fix is Vitor's dashboard change. After merge, the prod check will be
+the same rows on www with a DB flip; no checkout.
+**Review: clean (7f).** **Merge gate: 🟢 for `1c89b62`.** The branch was
+up to date with `release`; this docs commit sits on top.
+
+## #146 Merge-back of release #145 into master (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `4528f4b`, on its Vercel Preview, using
+#145's spec with the same service-role flip and no checkout.
+
+| Row | Result |
+|---|---|
+| Trial → ?success=1; the "webhook" at +8 s | ✅ "Ativando…" with the spinner, then "Assinatura ativada!" at +11 s |
+| Trial, no webhook | ✅ the slow text + the support@solvymed.com mailto at about 30 s |
+| Already active → ?success=1 | ✅ "ativada" on load |
+| en, the "webhook" at +6 s | ✅ "Payment received! …", then "Subscription activated! …" |
+| Without ?success=1 (unchanged) | ✅ Trial: the trial text plus **Assinar com Cartão**. Active: /pt-BR/dashboard. |
+| **Master's plan-load error** (no `professionals` row, so the country lookup fails and there's no plan), without ?success=1 | ✅ "Não foi possível verificar o status da sua assinatura. Tente novamente.", with no subscribe button |
+| Same, with ?success=1 | ✅ "Ativando…" only; no plan error and no button (success=1 wins, as in the merged condition) |
+
+**#145 prod check (release `ec33299` on www, Ready):** ✅. The same 10 rows
+as #145's entry, with a DB flip and no checkout:
+- the flip → "ativada" about 3 s later;
+- no webhook → the slow text at about 30 s, and then polling stops;
+- active or lifetime → activated at once;
+- lapsed or expired → never "ativada";
+- en matches;
+- no subscribe button while success=1.
+
+**CI at `4528f4b`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`4528f4b`.** The branch was up to date with master; this docs commit sits
+on top.
+
+## PR #147 (`feat/web-patient-files`, base master) — exams and files on the website (Help P7), 🟢 at `6681b0a`
+
+## PR #150 (`feat/web-prescription-pdf`, base master) — print / save a prescription as PDF on the website (Help P6), 🟢 at `29b90ee`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Where:** Vercel Preview (Playwright, Chromium) against the prod DB.
+- **Fixtures:** a throwaway doctor and two patients, with throwaway 1-KB
+  PNG / PDF files only (no real data), plus a throwaway secretary.
+- **Purge:** 8d purges the doctors afterwards (files = clinical history).
+- **Backdating:** for the >24 h row, 8d backdated one object
+  (`exams/hemograma-opus.pdf`) to −2 days, guarded to this fixture.
+
+**Tabs and upload (tested at `48ec09a`; `6681b0a` only changes `open()` + the UUID guard):**
+- **Doctor:** tabs "Informações · Registros · Receitas · **Exames** ·
+  **Arquivos** · Consultas · Registro de acessos". The secretary sees only
+  "Informações · Consultas".
+- **Upload:** PNG + PDF into Exames → `<prof>/<pat>/exams/…`, and into
+  Arquivos → `<prof>/<pat>/…`, listed with the date and size.
+- **The same name twice:** "raio-x opus (2).png". Nothing is overwritten
+  (storage has both).
+- **Rejected:**
+  - a `.txt` → "Escolha uma foto ou um PDF.";
+  - a 51 MB PDF → "O arquivo é grande demais (máximo 50 MB)."
+- **Remover within 24 h:** confirm → the object is deleted from storage, no
+  hide dialog.
+- **Archived patient** (via "Arquivar cadastro"): only "Abrir"; no Enviar,
+  no Remover.
+- **Access log:** opening writes `record_access_log` kind `file` with the
+  path.
+- **en:** the tabs are "Exams / Files / Access log".
+
+**Opening a file, re-tested at `6681b0a`:**
+- **My finding at `48ec09a`** (7f: BLOCKING): `window.open(…, "noopener")`
+  returned null, so "Abrir" replaced the app tab with the signed URL and
+  left an about:blank tab. It's fixed.
+- **Abrir:** a new tab opens the signed URL (HTTP 200) with
+  `window.opener === null`. The app tab stays on
+  `/pt-BR/dashboard/patients/<id>`.
+- **Pop-ups blocked** (`window.open` → null): "O navegador bloqueou a nova
+  aba. Permita pop-ups para o SolvyMed e tente de novo." No navigation.
+- **Failed link** (the object deleted behind the page): "Algo deu errado.
+  Tente novamente." The blank tab is closed (1 tab before and after).
+
+**Hiding an older file** (the backdated PDF):
+- Remover → "Remover arquivo: hemograma-opus.pdf | Já se passaram mais de 24
+  horas desde o envio, então o arquivo é ocultado em vez de excluído.
+  Informe o motivo."
+- An empty reason → "Informe um motivo." (the dialog stays).
+- With a reason → gone from the list; "Arquivos removidos (1)" →
+  "hemograma-opus.pdf removido em 29/09/2026 por Dra Opus Arquivos: [TEST]
+  exame duplicado", with **no Abrir**. The object stays in storage.
+- **Nit (copy):** the reason field is labelled "Motivo da correção"
+  (borrowed from record corrections). "Motivo" alone would fit a file
+  removal.
+
+**CI at `6681b0a`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `6681b0a`.** This docs commit sits on top of a master sync (6 behind; clean).
+
+## PR #149 (`feat/settings-subscription`, base master) — Configurações → Assinatura with "Gerenciar assinatura", 🟢 at `0c92dc2`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Where:** the Vercel Preview (Playwright) against the prod DB, with a
+  throwaway doctor and secretary (deleted afterwards).
+- **The active row:** a real **Stripe TEST** subscription made through the
+  API.
+  - The customer has `pm_card_visa`, the price is R$ 89/month, and
+    `metadata.user_id` = the doctor, as the portal route requires.
+  - `professionals` is set to `stripe` / that id / `active` (what the
+    webhook would write).
+  - The subscription is cancelled and the customer deleted afterwards.
+
+- **Where:** the Vercel Preview (Playwright, Chromium) against the prod DB.
+- **Doctor:** the #147 fixture doctor, already on 8d's purge list.
+- **Prescriptions:** created as that doctor, with its own token.
+  - Items can only be added by the author within 24 h (097).
+  - The correction was made through `add_prescription_correction`, the
+    real path.
+- **Template:** a `prescription` template with `#7c3aed` / `#ea580c`, a
+  header, a footer and an https logo.
+- **Other accounts:** the secretary and the "other doctor" are fresh and
+  were deleted.
+
+**Results:**
+
+| Row | Result |
+|---|---|
+| Trial (15 days) | ✅ "Assinatura: Teste grátis: faltam 15 dias" + "Ver o plano" → `/pt-BR/subscribe` |
+| Trial ending in 25 h | ✅ "faltam 2 dias" (rounded up), link shown |
+| Active Stripe sub | ✅ "Plano Pro · ativo" + **Gerenciar assinatura** → `billing.stripe.com/p/session…`. The portal's return link is `/pt-BR/dashboard/settings`, and following it lands back on Configurações (not /subscribe) |
+| Lifetime | ✅ "Plano Pro · vitalício", no button |
+| Expired | ✅ Configurações isn't reachable: the existing gate sends them to `/pt-BR/subscribe` ("Seu período de teste encerrou. Assine para continuar."). The card's "Nenhuma assinatura ativa" state isn't shown in this case |
+| Secretary | ✅ no Assinatura card (no status line, no plan / manage buttons) |
+| en / th | ✅ "Subscription · Free trial: 2 days left · See the plan"; "การสมัครสมาชิก · ทดลองใช้ฟรี: เหลืออีก 2 วัน" |
+
+**CI at `0c92dc2`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `0c92dc2`.** This docs commit sits on top of a master sync (3 behind; clean).
+
+## #148 (release) Stripe webhook failures reported to Sentry (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `e80517a`, locally with `next dev`.
+- **Sentry:** `NEXT_PUBLIC_SENTRY_DSN` pointed at a local sink (with
+  `VERCEL_ENV=preview`), so the capture is exactly what Sentry would get
+  after `beforeSend`, and nothing reached Sentry.
+- **Webhook secret:** a local-only `STRIPE_WEBHOOK_SECRET`, used to sign
+  test events with the stripe library's `generateTestHeaderString`.
+- **Stripe key:** the test-mode key from `.env.local`, for the retrieve
+  calls.
+- **No prod env changes, and no checkout.**
+- **Leak check:** every payload carried marker strings (an email, a
+  customer id, the name "Dra Vazamento Opus", the amount 98765, "4242").
+
+| Case | Response | Sentry |
+|---|---|---|
+| E1 bad signature | ✅ 400 "Invalid signature" | ✅ one event, "Stripe webhook: bad_signature", level error, tag `stripe_webhook_failure=bad_signature`, fingerprint [stripe-webhook, bad_signature] |
+| E2 no stripe-signature header | 400 "No signature" | none (this path returns before the report; see the note) |
+| E3 valid, an unhandled type (customer.created) | ✅ 200 | ✅ none |
+| E4 valid checkout.session.completed, unpaid | ✅ 200 | ✅ none |
+| E5 valid invoice.payment_failed, no subscription | ✅ 200 | ✅ none |
+| E6 valid customer.subscription.updated; Stripe answers 404 on retrieve | ✅ 500 "Could not fetch subscription" | ✅ one "Stripe webhook: sync_failed", tags `stripe_event_type=customer.subscription.updated` + `stripe_event_id` |
+| E7 valid checkout, paid, with a sub that can't be retrieved | ✅ 500 | ✅ one sync_failed, tags type `checkout.session.completed` + id |
+
+**What Sentry got:**
+- **Marker strings:** none of them, and no `stripe-signature` / `v1=` /
+  whsec / cookie. `request` is only `{url, method}`, with no body.
+- **Note (not blocking; for 7f/UX):** the two sync_failed events carry a
+  Sentry **breadcrumb** of the failing Stripe API call, e.g.
+  `https://api.stripe.com/v1/subscriptions/sub_… (404)`.
+  - So the **Stripe subscription id** is in the event, as well as the
+    event id in the tags.
+  - It's a pseudonymous id, not an email, name or amount. It isn't in the
+    PR's "type + id only" wording, though.
+- **Not covered:**
+  - a missing signature header (E2) isn't reported;
+  - `handler_threw` and `no_professional_row` weren't forced. The second
+    needs a live test-mode subscription for a user with no row.
+- **The success path with a real subscription** (sync writes active → 200,
+  no event) isn't run here. It would need a Stripe test subscription or a
+  checkout. E3–E5 cover "200 → no event".
+
+**Release sync:** release (#145) merged in under this docs commit. The
+merge was clean, with no change to this PR's code.
+**CI at `e80517a`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`e80517a`**, with the breadcrumb note for 7f/UX to decide.
+
+**#148 prod check (www, release `6e90d70`, Ready):** ✅.
+- A POST with a bad `stripe-signature` → 400 "Invalid signature"; no
+  header → 400 "No signature".
+- That bad-signature POST (about 15:40 UTC 2026-09-29) makes one real
+  "Stripe webhook: bad_signature" event in prod Sentry. It's this test,
+  not a Stripe problem; 7f and e7 were told.
+
+## #151 Merge-back of release #148 into master (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `eba558c`.
+- **The code:** the webhook route is identical to release's. Only the
+  comment in `stripeWebhookReport.ts` changed; it now says what Sentry
+  receives, including the Stripe API path breadcrumb.
+- **The run:** #148's local run, repeated at `eba558c`: local `next dev`,
+  the DSN pointed at a local sink, a local-only webhook secret with signed
+  test events.
+
+| Case | Result |
+|---|---|
+| Bad signature | ✅ 400 + one "Stripe webhook: bad_signature" event |
+| No signature header | ✅ 400, no event |
+| Valid unhandled / unpaid checkout / invoice with no subscription | ✅ 200, no event |
+| Valid subscription.updated or paid checkout whose subscription 404s | ✅ 500 + one sync_failed, tagged with the event type and id |
+| The marker strings (email, customer, name, amount, card) | ✅ none in what Sentry got |
+
+**Master sync:** master (#147, #149) merged in under this docs commit.
+There was a conflict in TESTING-WEB.md only: master's block comes first,
+then #148's, and nothing was dropped.
+**Review: clean (7f).** **Merge gate: 🟢 for `eba558c`.**
+
+| Receitas tab | ✅ each prescription has a **PDF** link (aria "PDF da receita (imprimir ou salvar)") → `…/prescriptions/<rxId>/print` |
+| Print page (the corrected rx) | ✅ "Receita", the header text, the logo; PACIENTE; DATA "29/09/2026 **(corrigido)**"; the items table; the notes as text (a typed `<b>` stays text); a blank signature line over "Dra Opus Arquivos / CRM 12345/SP"; the footer. The colours applied: rgb(124,58,237) / rgb(234,88,12) |
+| The correction itself | ✅ its own items and notes, not marked "(corrigido)" |
+| Logo | ✅ an https logo on another host loads (naturalWidth 120), with no CSP report |
+| Toolbar | ✅ "← Voltar ao paciente", "Imprimir / Salvar PDF", and the hint "Para salvar o arquivo, escolha "Salvar como PDF" na janela de impressão." |
+| Print | ✅ in print media only `#print-doc` stays visible (everything else is `visibility:hidden`). The Chromium PDF is **1 page, MediaBox 594.96×841.92 (A4)**, with colours kept |
+| Scoping | ✅ the rx under another patient's id → 404; an unknown rx id → 404 |
+| Secretary of the practice | ✅ 404 |
+| Another doctor | ✅ 404 |
+| Access log | ✅ `record_access_log` kind `prescription`, `object_ref` = the rx id, one per view |
+
+**Nit (not blocking, same builder as the app):** the template's accent
+colour is used as a **solid** background for the alternate table row and
+the notes box. With a strong accent (`#ea580c`), the grey "Observações"
+text on it is hard to read. A tint of the accent, or dark text, would keep
+it legible.
+
+**CI at `29b90ee`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `29b90ee`.** This docs commit sits directly on the PR head. The branch is 8 behind master, and a master merge conflicts in code (app-map.ts + the 15 message files), so e7 syncs it.

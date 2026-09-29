@@ -3,7 +3,7 @@ import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 
 // Política de Privacidade em português (Brasil). Autoritativa junto com a
 // versão em inglês; mantenha as duas alinhadas.
-export function PrivacyPtBR({ turnstile }: { turnstile: boolean }) {
+export function PrivacyPtBR({ turnstile, solvyai = false, line = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean }) {
   return (
     <>
       <Section title="1. Visão geral">
@@ -74,6 +74,12 @@ export function PrivacyPtBR({ turnstile }: { turnstile: boolean }) {
             ...(turnstile
               ? [["Cloudflare Turnstile", "Protege cadastro, login e redefinição de senha contra abuso automatizado, verificando sinais técnicos do seu navegador", "Global"]]
               : []),
+            ...(solvyai
+              ? [["Anthropic (SolvyAI, só profissionais, quando usado)", "Processa as perguntas e pedidos digitados pelo profissional para respondê-los; nas ações que o profissional ativou, o nome e a data de nascimento do paciente e os dados da consulta necessários ao pedido", "EUA"]]
+              : []),
+            ...(line
+              ? [["LY Corporation (LINE), só clínicas na Tailândia, para pacientes que conectam o LINE", "Envia avisos de consulta (o nome da clínica, a data e o horário, e o que aconteceu: confirmada, remarcada, lembrete, cancelada); guardamos o identificador LINE do paciente para entregá-los", "Japão / Tailândia"]]
+              : []),
           ]}
         />
         <p>Podemos divulgar informações quando exigido por lei ou ordem judicial.</p>
@@ -84,8 +90,41 @@ export function PrivacyPtBR({ turnstile }: { turnstile: boolean }) {
           Alguns dos prestadores acima tratam dados fora do Brasil. Só usamos prestadores que se comprometem com um
           nível adequado de proteção (por exemplo, cláusulas contratuais padrão), conforme o art. 33 da LGPD e as
           normas da ANPD. Os prontuários são armazenados no Brasil.
+          {(solvyai || line) && (
+            <>
+              {" "}
+              {solvyai && line
+                ? "Os pedidos ao SolvyAI são processados pela Anthropic nos Estados Unidos, e os avisos LINE pela LY Corporation, com as salvaguardas contratuais exigidas pela LGPD (art. 33) e pela PDPA."
+                : solvyai
+                  ? "Os pedidos ao SolvyAI são processados pela Anthropic nos Estados Unidos, com as salvaguardas contratuais exigidas pela LGPD (art. 33) e pela PDPA."
+                  : "Os avisos LINE são processados pela LY Corporation, com as salvaguardas contratuais exigidas pela LGPD (art. 33) e pela PDPA."}
+              {/* TODO(Vitor): os termos de retenção da Anthropic entram aqui antes de solvyai-live. */}
+            </>
+          )}
         </p>
       </Section>
+
+      {solvyai && (
+        <Section title="6b. SolvyAI (só profissionais)">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>O SolvyAI é um assistente opcional para profissionais. Ele nunca lê prontuários, receitas, exames ou arquivos.</li>
+            <li>O que você digita no chat é enviado como você escreveu; não digite dados clínicos. Números de CPF e de identidade tailandesa, telefones e e-mails são mascarados antes do envio.</li>
+            <li>As ações (marcar, remarcar, cancelar, bloquear horários, cadastrar pacientes, marcar pagamentos) vêm desativadas; quando o profissional as ativa, os dados do paciente necessários para cada pedido são enviados como descrito na seção 5, e nada é salvo sem a confirmação do profissional.</li>
+            <li>Não guardamos as conversas depois da sessão. Um 👍/👎 numa resposta é registrado só como voto, nunca a conversa.</li>
+          </ul>
+        </Section>
+      )}
+
+      {line && (
+        <Section title="6c. Avisos pelo LINE (Tailândia)">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>Pacientes de clínicas na Tailândia podem conectar o LINE para receber avisos de consulta. Eles escolhem conectar e podem parar a qualquer momento.</li>
+            <li>O LINE recebe só o nome da clínica, a data e o horário da consulta e o que aconteceu com ela (confirmada, remarcada, lembrete, cancelada): nunca informações clínicas.</li>
+            <li>Se você bloquear a conta SolvyMed no LINE, paramos de enviar mensagens, mas guardamos a ligação para retomar se você desbloquear. Para removê-la, toque em Desconectar (Configurações → LINE) no app ou exclua sua conta.</li>
+            <li>O histórico de envios dos avisos LINE é apagado após 90 dias.</li>
+          </ul>
+        </Section>
+      )}
 
       <Section title="7. Quem vê os dados dentro de uma clínica">
         <ul>

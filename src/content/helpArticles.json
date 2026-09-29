@@ -102,10 +102,10 @@
           ]
         },
         "web": {
-          "pt": "Ainda não disponível no site; use o app.",
-          "en": "Not available on the website yet; use the app."
+          "pt": "Em **Nova Consulta**, escolha **Repetir** (semanal, a cada 2 semanas ou mensal) e **Quantas consultas** (de 2 a 52), e clique em **Salvar ×N**. Todas as datas são verificadas: se alguma conflitar com outra consulta, nenhuma é salva e o site mostra qual data; horário bloqueado ou fora do atendimento é perguntado uma vez, com a data.",
+          "en": "In **New Appointment**, choose **Repeat** (weekly, every 2 weeks or monthly) and **Number of appointments** (2 to 52), and click **Save ×N**. Every date is checked: if any conflicts with another appointment, none is saved and the website shows which date; blocked time or outside the working hours is asked once, with the date."
         },
-        "webUnavailable": true,
+        "webUnavailable": false,
         "open": "new-appointment",
         "appOnly": null,
         "appTitle": null
@@ -581,8 +581,8 @@
           ]
         },
         "web": {
-          "pt": "Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. O PDF da receita ainda não está disponível no site; use o app.",
-          "en": "Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. The prescription PDF isn't available on the website yet; use the app."
+          "pt": "Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. Para imprimir ou salvar em PDF, clique em **PDF** na receita e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. No site a receita sai com uma linha em branco para assinar à mão, com seu nome e registro embaixo.",
+          "en": "Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. To print it or save it as a PDF, click **PDF** on the prescription and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. On the website the prescription has a blank line to sign by hand, with your name and registration under it."
         },
         "webUnavailable": false,
         "open": "patients",
@@ -625,10 +625,10 @@
           ]
         },
         "web": {
-          "pt": "Ainda não disponível no site; use o app.",
-          "en": "Not available on the website yet; use the app."
+          "pt": "Abra o paciente, a aba **Exames** (ou **Arquivos**) e clique em **Enviar**. Nas primeiras 24 horas depois do envio você pode excluir o arquivo em **Remover**; depois disso, ele só pode ser ocultado, informando o motivo.",
+          "en": "Open the patient, the **Exams** (or **Files**) tab, and click **Upload**. For 24 hours after the upload you can delete the file with **Remove**; after that it can only be hidden, with a reason."
         },
-        "webUnavailable": true,
+        "webUnavailable": false,
         "open": "patients",
         "appOnly": null,
         "appTitle": null
@@ -1258,8 +1258,8 @@
           ]
         },
         "web": {
-          "pt": "Durante o teste, o contador de dias fica no topo do painel. Clique nele para ver o plano e assinar com cartão.",
-          "en": "During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card."
+          "pt": "Durante o teste, o contador de dias fica no topo do painel. Clique nele para ver o plano e assinar com cartão. A situação do plano fica em **Configurações → Assinatura**; se você assina com cartão, **Gerenciar assinatura** abre a página do Stripe para gerenciá-la (por exemplo, trocar o cartão).",
+          "en": "During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card. Your plan's status is in **Settings → Subscription**; if you subscribe by card, **Manage subscription** opens Stripe's page to manage it (for example, to change the card)."
         },
         "webUnavailable": false,
         "open": null,
@@ -1294,8 +1294,8 @@
           ]
         },
         "web": {
-          "pt": "Ainda não há **Alterar senha** no site; use o app, ou saia da conta e use **Esqueceu a senha?** na tela de entrada.",
-          "en": "There's no **Change password** on the website yet; use the app, or sign out and use **Forgot password?** on the sign-in screen."
+          "pt": "**Configurações → Alterar senha**: digite a senha atual e a nova (duas vezes). As sessões nos outros aparelhos são encerradas; este navegador continua conectado.",
+          "en": "**Settings → Change password**: enter your current password and the new one (twice). Your sessions on other devices are ended; this browser stays signed in."
         },
         "webUnavailable": false,
         "open": "settings",

@@ -21,11 +21,37 @@ export function isAccessAllowed(sub: EffectiveSub | null): boolean {
   return false;
 }
 
+// A paid plan that's on: active (within its period) or lifetime. Unlike
+// isAccessAllowed, a trial or no row is NOT active (it fails closed), so
+// /subscribe?success=1 only says "activated" once the webhook wrote it.
+export function isPaidActive(sub: EffectiveSub | null): boolean {
+  if (!sub) return false;
+  if (sub.subscription_status !== 'active' && sub.subscription_status !== 'lifetime') return false;
+  return isAccessAllowed(sub);
+}
+
 export function trialDaysRemaining(sub: EffectiveSub | null): number | null {
   if (!sub || sub.subscription_status !== 'trial' || !sub.trial_ends_at) return null;
   const ms = new Date(sub.trial_ends_at).getTime() - Date.now();
   if (ms <= 0) return 0;
   return Math.ceil(ms / (1000 * 60 * 60 * 24));
+}
+
+// What Settings → Assinatura says about the plan: active, lifetime, the
+// trial with its days left, or nothing running (ended trial or expired).
+export type PlanSummary =
+  | { kind: "active" }
+  | { kind: "lifetime" }
+  | { kind: "trial"; daysLeft: number }
+  | { kind: "inactive" };
+
+export function planSummary(sub: EffectiveSub | null): PlanSummary | null {
+  if (!sub) return null;
+  if (sub.subscription_status === "lifetime") return { kind: "lifetime" };
+  if (isPaidActive(sub)) return { kind: "active" };
+  const days = trialDaysRemaining(sub);
+  if (days !== null && days > 0) return { kind: "trial", daysLeft: days };
+  return { kind: "inactive" };
 }
 
 /**

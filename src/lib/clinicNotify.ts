@@ -50,6 +50,9 @@ export type ClinicChange = {
   startTime: string;
   // A move: where it was (the date/time above are the new ones).
   from?: { date: string; startTime: string };
+  // A booked series: all its dates (UX: only the FUTURE ones are announced,
+  // one push naming the first future date and counting the future ones).
+  dates?: string[];
 };
 
 export async function tellPatient(db: SupabaseClient, change: ClinicChange): Promise<void> {
@@ -60,7 +63,11 @@ export async function tellPatient(db: SupabaseClient, change: ClinicChange): Pro
     const now = new Date();
     const start = change.startTime.slice(0, 5);
     const today = clinicDate(now, tz);
-    if (change.date < today || (change.date === today && start <= clinicTime(now, tz))) return;
+    const nowTime = clinicTime(now, tz);
+    const future = (change.dates ?? [change.date]).filter((d) => d > today || (d === today && start > nowTime)).sort();
+    if (!future.length) return;
+    const date = future[0];
+    const count = future.length;
 
     let account = change.patientAuthId ?? null;
     if (!account && change.patientId) {
@@ -73,9 +80,10 @@ export async function tellPatient(db: SupabaseClient, change: ClinicChange): Pro
     const clinic = await clinicName(db, change.practiceId);
     // Each device in its reader's language, the date in its format.
     for (const { locale, tokens } of targets) {
-      const kind = change.kind === "booked" ? "apptBookedByClinic" : change.kind === "moved" ? "apptMovedByClinic" : "apptCancelledByClinic";
+      const kind = change.kind === "booked" ? (count > 1 ? "apptBookedSeriesByClinic" : "apptBookedByClinic")
+        : change.kind === "moved" ? "apptMovedByClinic" : "apptCancelledByClinic";
       const { title, body } = pushText(locale, kind, {
-        clinic, date: formatShortDate(locale, change.date), time: start,
+        clinic, date: formatShortDate(locale, date), time: start, n: count,
         ...(change.from ? { oldDate: formatShortDate(locale, change.from.date), oldTime: change.from.startTime.slice(0, 5) } : {}),
       });
       await sendExpoPush(tokens, title, body);

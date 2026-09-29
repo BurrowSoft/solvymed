@@ -10,6 +10,7 @@ import { patientIdKind } from "@/lib/patientIds";
 import { MOVABLE_STATUSES, hoursWarning, keptDuration } from "@/lib/scheduleChecks";
 import type { WorkingHours } from "@/lib/slots";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
+import { MAX_OCCURRENCES, MIN_OCCURRENCES, RECURRENCES, recurrenceDates, type Recurrence } from "@/lib/recurrence";
 import { tellPatient } from "@/lib/clinicNotify";
 
 // The new-appointment patient picker: up to PICKER_LIMIT active patients of
@@ -88,6 +89,19 @@ export async function createAppointment(formData: FormData) {
   const endTime = computeEndTime(startTime, duration);
   if (!endTime) return { error: "This time and duration would run past midnight", code: "past_midnight" };
 
+  // A recurring series (the app's): every week / 2 weeks / month, 2–52
+  // dates, each checked below and saved in ONE insert (all or nothing).
+  const recurrenceIn = formData.get("recurrence") as string | null;
+  const recurrence = RECURRENCES.includes(recurrenceIn as Recurrence) ? (recurrenceIn as Recurrence) : null;
+  let dates = [date];
+  if (recurrence) {
+    const n = parseInt((formData.get("occurrences") as string) ?? "", 10);
+    if (!Number.isInteger(n) || n < MIN_OCCURRENCES || n > MAX_OCCURRENCES) return { error: "Invalid number of appointments", code: "invalid_occurrences" };
+    dates = recurrenceDates(date, recurrence, n);
+  }
+  // In a series, the messages name the date that has the problem.
+  const onDate = (d: string) => (dates.length > 1 ? d : null);
+
   // Find patient_id by name (best-effort match). Active patients win. When
   // the only match is archived, refuse rather than book an unlinked
   // appointment for someone the clinic archived; the server also refuses
@@ -110,20 +124,21 @@ export async function createAppointment(formData: FormData) {
   // blocked time don't count.
   const { data: clashes } = await supabase
     .from("appointments")
-    .select("patient_name, start_time, duration_minutes")
+    .select("date, patient_name, start_time, duration_minutes")
     .eq("professional_id", effectiveProfId)
-    .eq("date", date)
+    .in("date", dates)
     .not("status", "in", "(cancelled,rejected,blocked)")
     .lt("start_time", endTime)
     .gt("end_time", startTime)
+    .order("date")
     .order("start_time")
     .limit(1);
-  const clash = clashes?.[0] as { patient_name: string | null; start_time: string; duration_minutes: number | null } | undefined;
+  const clash = clashes?.[0] as { date: string; patient_name: string | null; start_time: string; duration_minutes: number | null } | undefined;
   if (clash) {
     return {
       error: "This time overlaps with another appointment",
       code: "slot_overlap",
-      overlap: { name: clash.patient_name ?? "", time: clash.start_time.slice(0, 5), durationMin: clash.duration_minutes ?? null },
+      overlap: { name: clash.patient_name ?? "", time: clash.start_time.slice(0, 5), durationMin: clash.duration_minutes ?? null, date: onDate(clash.date) },
     };
   }
 
@@ -134,25 +149,34 @@ export async function createAppointment(formData: FormData) {
     const [{ data: blocks }, { data: wh }] = await Promise.all([
       supabase
         .from("appointments")
-        .select("start_time, end_time")
+        .select("date, start_time, end_time")
         .eq("professional_id", effectiveProfId)
-        .eq("date", date)
+        .in("date", dates)
         .eq("status", "blocked")
         .lt("start_time", endTime)
         .gt("end_time", startTime)
+        .order("date")
         .order("start_time")
         .limit(1),
       supabase.rpc("get_professional_working_hours", { p_professional_id: effectiveProfId }),
     ]);
-    const block = blocks?.[0] as { start_time: string; end_time: string } | undefined;
-    const hours = hoursWarning(date, startTime, endTime, wh as WorkingHours | null);
+    const block = blocks?.[0] as { date: string; start_time: string; end_time: string } | undefined;
+    // The first date outside the hours (or a day off), if any.
+    let hours: ReturnType<typeof hoursWarning> = null;
+    let hoursDate: string | null = null;
+    for (const d of dates) {
+      hours = hoursWarning(d, startTime, endTime, wh as WorkingHours | null);
+      if (hours) { hoursDate = d; break; }
+    }
     if (block || hours) {
-      // Stored clinic-local wall times, shown as HH:MM in the question.
+      // Stored clinic-local wall times, shown as HH:MM in the question; in a
+      // series, the dates concerned.
       return {
         error: "Needs confirmation",
         code: "needs_confirm",
-        blocked: block ? { start: block.start_time.slice(0, 5), end: block.end_time.slice(0, 5) } : null,
+        blocked: block ? { start: block.start_time.slice(0, 5), end: block.end_time.slice(0, 5), date: onDate(block.date) } : null,
         hours,
+        hoursDate: hoursDate ? onDate(hoursDate) : null,
       };
     }
   }
@@ -173,11 +197,11 @@ export async function createAppointment(formData: FormData) {
     if (Number.isFinite(price) && price > 0) paymentAmount = price;
   }
 
-  const { data: saved, error } = await supabase.from("appointments").insert({
+  const rows = dates.map((d) => ({
     professional_id: effectiveProfId,
     patient_id: patientId,
     patient_name: patientName.trim(),
-    date,
+    date: d,
     start_time: startTime,
     end_time: endTime,
     duration_minutes: duration,
@@ -189,7 +213,10 @@ export async function createAppointment(formData: FormData) {
     status: "scheduled",
     notes: notes || null,
     scheduled_by: "professional",
-  }).select("id").single();
+  }));
+  // One statement: if any date is taken meanwhile (23P01), none is saved.
+  const { data: savedRows, error } = await supabase.from("appointments").insert(rows).select("id, date").order("date");
+  const saved = ((savedRows ?? []) as { id: string; date: string }[])[0] ?? null;
 
   if (error) {
     if (error.message?.includes("patient_archived")) return { error: "Patient is archived", code: "patient_archived" };
@@ -198,12 +225,13 @@ export async function createAppointment(formData: FormData) {
     return { error: error.message, code: knownDbError(error.message) ?? "generic" };
   }
   // The patient hears about it when they have the app (never the past).
+  // A series is one push: how many, and the first.
   await tellPatient(supabase, {
     kind: "booked", practiceId: effectiveProfId, isSecretary: user.id !== effectiveProfId,
-    patientId, date, startTime,
+    patientId, date, startTime, ...(dates.length > 1 ? { dates } : {}),
   });
   revalidatePath("/dashboard/schedule");
-  return { success: true, id: (saved as { id: string } | null)?.id };
+  return { success: true, id: saved?.id, count: dates.length };
 }
 
 // Remarcar: a new date and start, the same duration, with the same checks

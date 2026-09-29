@@ -64,7 +64,7 @@ export const ACTIONS: AppMapAction[] = [
     roles: ["doctor", "secretary"],
     inputs: {
       required: ["patient", "date", "start time"],
-      optional: ["duration", "procedure", "type (in person / online)", "value", "notes", "repeat (app: weekly / every 2 weeks / monthly)"],
+      optional: ["duration", "procedure", "type (in person / online)", "value", "notes", "repeat (weekly / every 2 weeks / monthly, 2–52 appointments)"],
       defaults: ["the default procedure (the first active one by name) with its price as the value and its payment type", "duration: the default procedure's, else 30 min", "in person", "payment pending"],
     },
     rules: [
@@ -76,7 +76,9 @@ export const ACTIONS: AppMapAction[] = [
       "An archived patient can't get new appointments (restore them first).",
       "The appointment can't run past midnight. Duration is 1–480 minutes.",
       "Dates are Gregorian; a year of 2400 or more is never saved or converted.",
-      "Recurring (app): every date is checked; if any conflicts, none are saved and the conflicting date is named.",
+      "Recurring (app and website): weekly, every 2 weeks or monthly, 2–52 appointments; every date is checked; if any conflicts, none are saved and the conflicting date is named; blocked time on any date is asked once, naming the date. A monthly series keeps the day number (the 31st rolls over into the next month).",
+      "On the website a recurring series is also checked against the working hours: outside them or a day off on any date is asked once, naming the date.",
+      { text: "In the app too: a series outside the working hours or on a day off is asked once, naming the date.", pending: ["mobile#91"] },
       "It's saved as scheduled, with payment pending; the value is the chosen procedure's price (none when it has no price).",
       "Every field that will be saved is on the card; defaults are marked (padrão).",
       { text: "Booked on the website: a patient linked to a SolvyMed account is notified, named by the clinic; never for the past.", pending: ["linked-bookings"] },
@@ -276,11 +278,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
 // it explains where to do them instead.
 export const NEVER: { what: string; help: string }[] = [
   { what: "Medical records: reading, writing or correcting them (a record locks 24 h after it's written; after that it can only be corrected, never deleted).", help: "P4" },
-  { what: "Prescriptions, exams and files.", help: "P6" },
+  { what: "Prescriptions (on the website, PDF on a prescription opens a print view: \"Imprimir / Salvar PDF\" / \"Print / Save as PDF\", with a blank line to sign by hand).", help: "P6" },
+  { what: "Exams and files (photos or PDFs; the doctor adds them in the patient's Exams or Files tab, in the app or on the website; within 24 h of upload a file can be deleted, after that only hidden with a reason).", help: "P7" },
   { what: "Deleting or archiving a patient.", help: "P3" },
   { what: "Closing the account.", help: "K4" },
+  { what: "Changing the password (Settings → Change password, on the app and the website; the other devices are signed out).", help: "K2" },
   { what: "Payment and Pix / PromptPay settings.", help: "G3" },
-  { what: "The subscription and plan.", help: "K1" },
+  { what: "The subscription and plan (the doctor sees the plan's status in Settings → Subscription on the website; \"Manage subscription\" opens Stripe's page for a card subscription).", help: "K1" },
   { what: "Team members (inviting or removing a secretary).", help: "C4" },
   { what: "The clinic's country.", help: "C1" },
 ];
