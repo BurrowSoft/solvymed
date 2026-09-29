@@ -1135,6 +1135,8 @@
     "resumeTitle": "Продолжить тур? (шаг {n} из {total})",
     "continue": "Продолжить",
     "dismiss": "Скрыть",
+    "tryNow": "Попробовать",
+    "tryNowQuestion": "Что умеет SolvyAI?",
     "replay": "Посмотреть тур снова",
     "settingsCardTitle": "Обзорный тур",
     "settingsCardText": "Минутный обзор главных экранов.",

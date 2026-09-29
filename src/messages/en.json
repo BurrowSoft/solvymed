@@ -1165,6 +1165,8 @@
     "resumeTitle": "Continue the tour? (step {n} of {total})",
     "continue": "Continue",
     "dismiss": "Dismiss",
+    "tryNow": "Try it now",
+    "tryNowQuestion": "What can SolvyAI do?",
     "replay": "Replay the tour",
     "settingsCardTitle": "Guided tour",
     "settingsCardText": "A 1-minute walk through the main screens.",

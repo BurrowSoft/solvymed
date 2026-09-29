@@ -1165,6 +1165,8 @@
     "resumeTitle": "ดูทัวร์ต่อไหม (ขั้นที่ {n} จาก {total})",
     "continue": "ดูต่อ",
     "dismiss": "ปิด",
+    "tryNow": "ลองใช้เลย",
+    "tryNowQuestion": "SolvyAI ทำอะไรได้บ้าง",
     "replay": "ดูทัวร์อีกครั้ง",
     "settingsCardTitle": "ทัวร์แนะนำ",
     "settingsCardText": "พาชมหน้าหลักใน 1 นาที",

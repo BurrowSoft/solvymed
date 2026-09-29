@@ -1135,6 +1135,8 @@
     "resumeTitle": "ツアーを続けますか？（ステップ {n} / {total}）",
     "continue": "続ける",
     "dismiss": "閉じる",
+    "tryNow": "今すぐ試す",
+    "tryNowQuestion": "SolvyAI では何ができますか？",
     "replay": "ツアーをもう一度見る",
     "settingsCardTitle": "ガイドツアー",
     "settingsCardText": "主な画面を1分でご案内します。",

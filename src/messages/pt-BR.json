@@ -1135,6 +1135,8 @@
     "resumeTitle": "Continuar o tour? (passo {n} de {total})",
     "continue": "Continuar",
     "dismiss": "Dispensar",
+    "tryNow": "Experimentar agora",
+    "tryNowQuestion": "O que o SolvyAI pode fazer?",
     "replay": "Rever o tour",
     "settingsCardTitle": "Tour guiado",
     "settingsCardText": "Um passeio de 1 minuto pelas telas principais.",

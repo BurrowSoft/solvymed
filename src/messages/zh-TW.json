@@ -1135,6 +1135,8 @@
     "resumeTitle": "要繼續導覽嗎？（第 {n} / {total} 步）",
     "continue": "繼續",
     "dismiss": "忽略",
+    "tryNow": "立即試用",
+    "tryNowQuestion": "SolvyAI 能做什麼？",
     "replay": "重新觀看導覽",
     "settingsCardTitle": "導覽",
     "settingsCardText": "1 分鐘認識主要畫面。",
