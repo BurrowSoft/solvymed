@@ -7462,3 +7462,102 @@ above applies to secretaries too.
 **CI at `02d1f6d`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `02d1f6d`.** This docs commit sits directly on top; the branch is up to
 date with master.
+
+## PR #123 (`feat/solvyai-route`, base master) — `/api/assistant` in help mode, 🟢 at `3b256cc`
+
+- **Setup:** a local `next dev` against the prod DB, over HTTP with
+  throwaway users' JWTs. Everything below was first run at `a0cb309`,
+  then **re-run in full at `3b256cc`** with the same results.
+- **Test-only preload** (scratchpad/pr123/sink.cjs):
+  - answers `api.anthropic.com/v1/messages` with a scripted SSE stream
+    and logs the exact request body;
+  - answers or passes through the migration-115 RPCs.
+- **Nothing reached Anthropic**; a fake key was used only so that a model
+  object exists.
+
+**Switch off** (`SOLVYAI_API_ENABLED` unset):
+- POST `/api/assistant` (with a Bearer token and anonymous) → **404**
+  `not_found`.
+- GET `/api/assistant/usage` → **404**.
+
+**Switch on, no key:**
+- No / garbage JWT → **401**.
+- Not JSON, no messages, the same role twice, or the last message from
+  the assistant → **400 `bad_request`**.
+- 501 chars → **400 `too_long`** (500 passes); turns = 12 → **400
+  `too_many_turns`**.
+- A valid request → **503 `model_unavailable`**.
+- Usage: anonymous → 401; signed in (no 115) → 503.
+
+**Key present, against the real DB (115 missing):**
+- **503 `model_unavailable`.**
+- The only RPC called is `assistant_consume_message`, and there's **no
+  model call**: nothing is counted or sent.
+
+**115 RPCs stubbed:**
+- **Stream shape:** `application/x-ndjson` in this order: meta
+  (`mode:"help"`) → deltas → text block → **open** (`[[open:C4]]` →
+  "Abrir tela" `/pt-BR/dashboard/settings`, target settings) → feedback
+  → usage → done.
+- **Markers:** no `[[`/`]]` reaches the text, even when a marker is split
+  across pieces. Unknown ids (`Z9`), junk (`[[nada]]`), an unfinished
+  marker and **`[[open:A1]]` in en** give no open block and no raw
+  marker. (A1 → no block is expected on web: its screen is the
+  new-appointment dialog.)
+- **After a successful answer:** exactly one `assistant_record_usage`,
+  for the **caller's own id**, with the token counts; no release.
+- **The model request:**
+  - `claude-sonnet-5`, `max_tokens` 800, stream.
+  - 2 system blocks, the first cached (`ephemeral`, 17.5k chars). The
+    cached prefix has **no C9 / "Anthropic (EUA)" text and no held A1
+    sentence** (conditions respected).
+- **Masking:** 7 messages sent → the model gets the **last 6**. CPF, (11)
+  phone, +55 phone, email, Thai ID and a Thai mobile → [cpf] / [phone] /
+  [email] / [id]. `29.09.2026`, `14:00` and `R$ 150` are kept, and no raw
+  digit string is anywhere in the request (history included).
+- **The 115 answer drives the status:** not_doctor → 403; inactive →
+  403; rate_limited → 429 with `retryAfterS`; quota_exhausted → 429 with
+  usage; an unknown reason → 503. There's never a model call.
+- **The model fails (500):** meta → `error model_failed`; exactly one
+  `assistant_release_message` (the caller's id); no record_usage.
+- **Over budget:**
+  - meta `help`; "O SolvyAI está temporariamente indisponível. Tente
+    novamente mais tarde."; used shown as used − 1.
+  - **No model call**, one release, and no word "budget". With the Help
+    Center unpublished there are no article links.
+- **Usage endpoint:** `{used, limit, extra, resetsAt, mode:"help"}`;
+  not_doctor → 403.
+
+**Cancels at `3b256cc`** (the sink streams one SSE event every 400 ms):
+- **Mid-stream** (the client aborts after 3 lines): **exactly one
+  `assistant_release_message`**; no `record_usage`.
+- **Before the first byte is read** (abort right after the response
+  headers): **exactly one release**.
+- **A slow answer read to the end:** exactly one `record_usage`, no
+  release; the open block and done arrive as normal.
+
+(My abort at `a0cb309` was inconclusive: an instant answer is fully sent
+before the abort lands, so `record_usage` was correct there.)
+
+**`SOLVYAI_FAKE_MODEL=1`, no key** (the keyless Help-echo model):
+- "Como convido minha secretária?" (pt-BR) → "(resposta de teste)
+  Convidar uma secretária …", open `/pt-BR/dashboard/settings`.
+- "How do I block time in the schedule?" (en) → "(test answer) Block time
+  …", open `/dashboard/schedule`.
+- Off-topic → "Só posso ajudar com o SolvyMed.", with no open block.
+- No raw marker, and **no call to Anthropic**.
+- `record_usage` with **zeros** (the fix at `3b256cc`).
+- Before 115 → still 503. (The production guard, `VERCEL_ENV !==
+  "production"`, was checked by reading the code; it can't be run
+  locally.)
+
+**Question for the reviewer (not blocking):** after a client cancel, my
+sink never saw the **upstream** model stream being cancelled. The
+message is refunded correctly, but if the SDK request keeps running, the
+provider still generates and bills that answer. Worth checking whether
+`it.return()` reaches `stream.abort()` once the real key exists.
+
+**CI at `3b256cc`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`3b256cc`.** This docs commit sits on top of a master sync (4 behind,
+with #124; the TESTING-WEB.md conflict was resolved by keeping both
+blocks).
