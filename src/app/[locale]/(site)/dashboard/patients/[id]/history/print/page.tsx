@@ -44,11 +44,19 @@ export default async function HistoryPrintPage({
   // that silently leaves entries out.
   if (recordsResult.error || rxResult.error) throw new Error("history_load_failed");
 
-  // The whole chart is read: logged like opening the patient (111).
-  await supabase.rpc("log_record_access", { p_patient_id: id, p_kind: "patient" }).then(() => {}, () => {});
-
   const records = (recordsResult.data ?? []) as { id: string; date: string; time: string | null; content: string; corrects_id: string | null }[];
   const rxs = (rxResult.data ?? []) as { id: string; date: string; notes: string | null; corrects_id: string | null; prescription_items: { name: string; dosage: string; frequency: string; duration: string }[] | null }[];
+
+  // Every entry printed is logged as opened (111), like the app's export
+  // (mobile #103): the patient, each record, each prescription. Best
+  // effort: logging never blocks the export.
+  const log = (kind: string, ref?: string) =>
+    supabase.rpc("log_record_access", { p_patient_id: id, p_kind: kind, ...(ref ? { p_object_ref: ref } : {}) }).then(() => {}, () => {});
+  await Promise.all([
+    log("patient"),
+    ...records.map((r) => log("record", r.id)),
+    ...rxs.map((rx) => log("prescription", rx.id)),
+  ]);
   const correctedRecords = new Set(records.map((r) => r.corrects_id).filter(Boolean));
   const correctedRx = new Set(rxs.map((r) => r.corrects_id).filter(Boolean));
 

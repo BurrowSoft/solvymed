@@ -64,7 +64,9 @@ vi.mock("@/lib/supabase/server", () => ({
       q.eq = (c: string, v: unknown) => { h.filters.push([table, c, v]); return q; };
       q.order = () => q;
       q.then = (res: (v: unknown) => unknown) => Promise.resolve(
-        table === "medical_records" ? { data: [], error: h.recordsError } : { data: [], error: null },
+        table === "medical_records" ? { data: h.recordsError ? null : [{ id: "r1", date: "2026-10-01", time: "09:00", content: "x", corrects_id: null }, { id: "r2", date: "2026-10-02", time: "10:00", content: "y", corrects_id: "r1" }], error: h.recordsError }
+          : table === "prescriptions" ? { data: [{ id: "x1", date: "2026-10-01", notes: null, corrects_id: null, prescription_items: [] }], error: null }
+          : { data: [], error: null },
       ).then(res);
       q.maybeSingle = async () => ({
         data: table === "user_roles" ? { role: h.role } : table === "patients" ? h.patient : table === "professionals" ? { full_name: "Dra. Ana", clinic_name: null, professional_registration: null } : null,
@@ -107,10 +109,17 @@ describe("history print page", () => {
     expect(h.rpcs).toEqual([]);
   });
 
-  it("logs the read and shows only the practice country's IDs", async () => {
+  it("logs every entry printed (like the app's export) and shows only the practice country's IDs", async () => {
     const el = await HistoryPage({ params });
     const { container } = render(el);
-    expect(h.rpcs).toEqual([{ fn: "log_record_access", args: { p_patient_id: "p-1", p_kind: "patient" } }]);
+    const log = (args: Record<string, string>) => ({ fn: "log_record_access", args: { p_patient_id: "p-1", ...args } });
+    expect(h.rpcs).toEqual([
+      log({ p_kind: "patient" }),
+      log({ p_kind: "record", p_object_ref: "r1" }),
+      log({ p_kind: "record", p_object_ref: "r2" }),
+      log({ p_kind: "prescription", p_object_ref: "x1" }),
+    ]);
+    expect(container.textContent).toContain("corrected");
     expect(container.textContent).toContain("cpf: 123");
     expect(container.textContent).not.toContain("999");
   });
