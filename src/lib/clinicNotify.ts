@@ -23,17 +23,15 @@ async function clinicName(db: SupabaseClient, practiceId: string): Promise<strin
     db.from("professionals").select("clinic_name, full_name").eq("id", practiceId).maybeSingle(),
     db.from("clinics").select("name").eq("professional_id", practiceId).order("name").limit(1),
   ]);
-  let doctor = (prof as { full_name?: string | null } | null)?.full_name ?? null;
   if (!prof) {
-    // A secretary can't read the doctor's row: the practice's public info.
-    const { data } = await db.rpc("get_professional_public_info", { p_professional_id: practiceId });
-    doctor = ((Array.isArray(data) ? data[0] : data) as { full_name?: string | null } | null)?.full_name ?? null;
+    // A secretary can't read the doctor's row: get_my_clinic, as the app
+    // does for them (its clinic_name and the doctor's name).
+    const { data } = await db.rpc("get_my_clinic");
+    const row = (Array.isArray(data) ? data[0] : data) as { clinic_name?: string | null; professional_name?: string | null } | null;
+    return patientFacingClinicName(row?.clinic_name, ((locs ?? []) as { name: string | null }[])[0]?.name, row?.professional_name);
   }
-  return patientFacingClinicName(
-    (prof as { clinic_name?: string | null } | null)?.clinic_name,
-    ((locs ?? []) as { name: string | null }[])[0]?.name,
-    doctor,
-  );
+  const p = prof as { clinic_name?: string | null; full_name?: string | null };
+  return patientFacingClinicName(p.clinic_name, ((locs ?? []) as { name: string | null }[])[0]?.name, p.full_name);
 }
 
 export type ClinicChange = {

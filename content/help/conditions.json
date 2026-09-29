@@ -26,5 +26,9 @@
   "mobile#111": {
     "met": false,
     "what": "The app notifies the patient (if linked to a SolvyMed account) when the clinic books (single or series), moves or cancels their appointment (mobile #111), in a RELEASED store build (not just merged)."
+  },
+  "linked-bookings": {
+    "met": false,
+    "what": "Appointments of a linked patient carry their account however they were made (migration 119: a trigger filling patient_auth_id from the linked record, the backfill and the fill on later linking) applied on production: until then pushes only reach patients on appointments they booked in the app."
   }
 }
