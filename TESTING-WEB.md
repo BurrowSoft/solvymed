@@ -8878,3 +8878,27 @@ locales (checked by web tester 1).
 
 **Master sync:** master (#152) merged in under this docs commit, cleanly.
 **Review: clean (7f).** **Merge gate: 🟢 for `47a4a1c`.**
+
+## #154 Remarcar maps migration 121's `appointment_not_movable` to the not-movable line (web tester 1, 2026-09-29/30)
+
+**What was tested:** PR head `e1197b6`, on a local `next dev` (Playwright).
+- **Migration 121** isn't applied, so a test-only preload stands in for its
+  guard. A PATCH to `/rest/v1/appointments` for a listed id gets the DB
+  error `400 {code: P0001, message: "appointment_not_movable"}`;
+  everything else passes through.
+- The preload's log confirms it injected exactly on the guarded row's
+  update.
+
+| Row | Result |
+|---|---|
+| pt-BR: Remarcar a guarded confirmed appointment (→ Wednesday 14:00) | ✅ the dialog shows "Esta consulta não pode ser remarcada." instead of a raw DB error; the row is unchanged (06/10 10:00, confirmed) |
+| en: the same | ✅ "This appointment can't be rescheduled." (the existing `notMovableError`); the row is unchanged |
+| A normal Remarcar (no guard) | ✅ it still moves (11:00 → Wednesday 12:00) |
+| A completed visit | ✅ no Remarcar button at all (MOVABLE_STATUSES), in pt and en |
+
+**Not covered:** SolvyAI's move card. It goes through the same
+`moveAppointment` action (per the PR), and I didn't run it here.
+
+**Master sync:** master (#152, #153) merged in under this docs commit,
+cleanly.
+**Review: clean (7f).** **Merge gate: 🟢 for `e1197b6`.**
