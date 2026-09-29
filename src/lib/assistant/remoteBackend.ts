@@ -99,7 +99,7 @@ export function createRemoteBackend({ limit }: { limit: number }): AssistantBack
       }
       if (!r.ok) return r;
       if (r.id && r.prev) prevs.set(r.id, r.prev);
-      return { ok: true, id: r.id };
+      return { ok: true, id: r.id, ...(r.noUndo ? { noUndo: true } : {}) };
     },
     reportConfirmFailed(code: string, action: CardAction, locale: string) {
       return post({ event: { type: "confirm_failed", code, action }, locale });
