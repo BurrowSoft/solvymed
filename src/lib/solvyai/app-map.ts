@@ -64,7 +64,7 @@ export const ACTIONS: AppMapAction[] = [
     roles: ["doctor", "secretary"],
     inputs: {
       required: ["patient", "date", "start time"],
-      optional: ["duration", "procedure", "type (in person / online)", "value", "notes", "repeat (app: weekly / every 2 weeks / monthly)"],
+      optional: ["duration", "procedure", "type (in person / online)", "value", "notes", "repeat (weekly / every 2 weeks / monthly, 2–52 appointments)"],
       defaults: ["the default procedure (the first active one by name) with its price as the value and its payment type", "duration: the default procedure's, else 30 min", "in person", "payment pending"],
     },
     rules: [
@@ -76,7 +76,7 @@ export const ACTIONS: AppMapAction[] = [
       "An archived patient can't get new appointments (restore them first).",
       "The appointment can't run past midnight. Duration is 1–480 minutes.",
       "Dates are Gregorian; a year of 2400 or more is never saved or converted.",
-      "Recurring (app): every date is checked; if any conflicts, none are saved and the conflicting date is named.",
+      "Recurring (app and website): weekly, every 2 weeks or monthly, 2–52 appointments; every date is checked; if any conflicts, none are saved and the conflicting date is named; blocked time or outside the hours is asked once, naming the date. A monthly series keeps the day number (the 31st rolls over into the next month).",
       "It's saved as scheduled, with payment pending; the value is the chosen procedure's price (none when it has no price).",
       "Every field that will be saved is on the card; defaults are marked (padrão).",
       { text: "Booked on the website: a patient linked to a SolvyMed account is notified, named by the clinic; never for the past.", pending: ["linked-bookings"] },

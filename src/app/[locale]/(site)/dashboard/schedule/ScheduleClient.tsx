@@ -10,6 +10,7 @@ import { generatePixString, pixQrDataUrl } from "@/lib/pix";
 import { generatePromptPayString } from "@/lib/promptpay";
 import { toLocalDateString } from "@/lib/slots";
 import { dropQueryParam } from "@/lib/dropQueryParam";
+import { DEFAULT_OCCURRENCES, MAX_OCCURRENCES, MIN_OCCURRENCES } from "@/lib/recurrence";
 import { formatMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
 import Link from "next/link";
@@ -346,6 +347,9 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   const [selectedProcName, setSelectedProcName] = useState("");
   const [duration, setDuration] = useState("30");
   const [paymentType, setPaymentType] = useState("private");
+  const [recurrence, setRecurrence] = useState("");
+  const [occurrences, setOccurrences] = useState(String(DEFAULT_OCCURRENCES));
+  const uiLocale = useLocale();
   const formRef = useRef<HTMLFormElement>(null);
 
   // Patient suggestions come from a server search as the name is typed (a
@@ -377,6 +381,8 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
     setSelectedProcName(first?.name ?? "");
     setDuration(String(prefill?.duration ?? first?.duration_minutes ?? 30));
     setPaymentType(first?.payment_type ?? "private");
+    setRecurrence("");
+    setOccurrences(String(DEFAULT_OCCURRENCES));
     setError("");
     setOpen(true);
   }
@@ -408,11 +414,14 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
     setError("");
     startTransition(async () => {
       const result = await createAppointment(formData);
+      // In a series, which date (the app names it too).
+      const on = (d: string | null | undefined) => (d ? `${t("seriesOnDate", { date: formatDateLabel(uiLocale, d, { day: "2-digit", month: "2-digit", year: "numeric" }) })} ` : "");
       if (result?.code === "needs_confirm" && "hours" in result) {
         const parts: string[] = [];
-        if (result.blocked) parts.push(t("warnBlocked", result.blocked));
-        if (result.hours?.kind === "outside") parts.push(t("warnOutside", { start: result.hours.start, end: result.hours.end }));
-        if (result.hours?.kind === "day_off") parts.push(t("warnDayOff", { day: result.hours.day }));
+        if (result.blocked) parts.push(on(result.blocked.date) + t("warnBlocked", { start: result.blocked.start, end: result.blocked.end }));
+        const hd = "hoursDate" in result ? result.hoursDate : null;
+        if (result.hours?.kind === "outside") parts.push(on(hd) + t("warnOutside", { start: result.hours.start, end: result.hours.end }));
+        if (result.hours?.kind === "day_off") parts.push(on(hd) + t("warnDayOff", { day: result.hours.day }));
         parts.push(t("bookAnyway"));
         setAsk({ text: parts.join(" "), formData });
         return;
@@ -421,10 +430,11 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
       if (result?.code === "slot_overlap" && "overlap" in result) {
         const o = result.overlap;
         setError(o?.name
-          ? t("overlapHardMsg", { name: o.name, time: o.time, duration: o.durationMin ? t("durationMinutes", { n: o.durationMin }) : "" })
+          ? on("date" in o ? o.date : null) + t("overlapHardMsg", { name: o.name, time: o.time, duration: o.durationMin ? t("durationMinutes", { n: o.durationMin }) : "" })
           : t("overlapGeneric"));
         return;
       }
+      if (result?.code === "invalid_occurrences") { setError(t("occurrencesRange", { min: MIN_OCCURRENCES, max: MAX_OCCURRENCES })); return; }
       if (result?.error) { setError(actionErrorMessage(t, result.code, tDate)); return; }
       setOpen(false);
     });
@@ -527,6 +537,25 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
             </div>
           </div>
 
+          {/* Repeat (the app's recurrence): every date checked, all or nothing. */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <FieldLabel>{t("repeat")}</FieldLabel>
+              <Select name="recurrence" value={recurrence} onChange={e => setRecurrence(e.target.value)}>
+                <option value="">{t("noRepeat")}</option>
+                <option value="weekly">{t("repeatWeekly")}</option>
+                <option value="biweekly">{t("repeatBiweekly")}</option>
+                <option value="monthly">{t("repeatMonthly")}</option>
+              </Select>
+            </div>
+            {recurrence && (
+              <div>
+                <FieldLabel>{t("occurrences")}</FieldLabel>
+                <Input name="occurrences" type="number" min={MIN_OCCURRENCES} max={MAX_OCCURRENCES} value={occurrences} onChange={e => setOccurrences(e.target.value)} />
+              </div>
+            )}
+          </div>
+
           <div>
             <FieldLabel>{t("payment")}</FieldLabel>
             <Select name="payment_type" value={paymentType} onChange={e => setPaymentType(e.target.value)}>
@@ -544,7 +573,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
             <button type="submit" disabled={pending || procedures.length === 0} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
-              {pending ? t("saving") : t("saveAppt")}
+              {pending ? t("saving") : recurrence ? t("saveTimes", { n: parseInt(occurrences, 10) || DEFAULT_OCCURRENCES }) : t("saveAppt")}
             </button>
           </div>
         </form>
