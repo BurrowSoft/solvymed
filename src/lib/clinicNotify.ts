@@ -24,11 +24,13 @@ async function clinicName(db: SupabaseClient, practiceId: string): Promise<strin
     db.from("clinics").select("name").eq("professional_id", practiceId).order("name").limit(1),
   ]);
   if (!prof) {
-    // A secretary can't read the doctor's row: get_my_clinic, as the app
-    // does for them (its clinic_name and the doctor's name).
-    const { data } = await db.rpc("get_my_clinic");
-    const row = (Array.isArray(data) ? data[0] : data) as { clinic_name?: string | null; professional_name?: string | null } | null;
-    return patientFacingClinicName(row?.clinic_name, ((locs ?? []) as { name: string | null }[])[0]?.name, row?.professional_name);
+    // A secretary can't read the doctor's row: the practice's public info,
+    // whose clinic_name is the patient-facing rule itself (profile → first
+    // location by name, 110) and full_name the doctor's (7f; get_my_clinic
+    // puts an arbitrary location first).
+    const { data } = await db.rpc("get_professional_public_info", { p_professional_id: practiceId });
+    const row = (Array.isArray(data) ? data[0] : data) as { clinic_name?: string | null; full_name?: string | null } | null;
+    return patientFacingClinicName(row?.clinic_name, ((locs ?? []) as { name: string | null }[])[0]?.name, row?.full_name);
   }
   const p = prof as { clinic_name?: string | null; full_name?: string | null };
   return patientFacingClinicName(p.clinic_name, ((locs ?? []) as { name: string | null }[])[0]?.name, p.full_name);
