@@ -7753,3 +7753,42 @@ or in the Pix code.
 **CI at `7a505c1`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `7a505c1`.** The branch was up to date with `release`; this docs commit
 sits on top.
+
+**#129 post-merge prod check ✅** (www.solvymed.com; Vercel prod = release
+`b7a4c08`, checked with `vercel inspect`). Same spec, with no bypass
+header sent to prod:
+- "Consulta Opus · R$ 150,00" → **`payment_amount` 150**; "Retorno Opus"
+  → null; a block → null.
+- Pagamentos: "Consulta Opus · **R$ 150,00**" / "Sem valor definido".
+- The Pix Copia e Cola **tag 54 = `150.00`**.
+- The throwaway doctor was deleted.
+
+## PR #133 (`chore/merge-back-release-129`, base master) — merge-back release → master after #129, 🟢 at `84972ec`
+
+- **CI:** green.
+- **Diff vs master:** `TESTING-WEB.md` only (+32 lines: the #129 block);
+  no code. Master's own price block (from #127) is kept, and the branch
+  contains master.
+- **Docs:** no docs commit was pushed to it, at the dev's request (to
+  keep the reviewed head), so the entry is recorded here.
+
+## PR #130 (`feat/clinic-pins`, base master) — My Clinics: "Sem pin no mapa" for a clinic with an address but no pin, 🟢 at `c74f9ad`
+
+Tested on the Preview at `c74f9ad` (Thai flag on). The throwaway doctor
+had three clinics:
+- **A:** an address, `lat`/`lng` null;
+- **B:** no address, no pin;
+- **C:** an address and a pin.
+
+| Clinic | pt-BR | en | th |
+|---|---|---|---|
+| A (address, no pin) | "**Sem pin no mapa**" + "Ajustar no mapa" | "**No map pin**" + "Adjust on map" | "**ไม่มีหมุดแผนที่**" + "ปรับบนแผนที่" |
+| B (no address) | old text: "Sem localização no mapa — adicione um endereço para aparecer no mapa" | "No map pin — add an address to appear on the map" | "ไม่มีหมุดแผนที่ — เพิ่มที่อยู่เพื่อปรากฏบนแผนที่" |
+| C (pinned) | "No mapa" | "On map" | "บนแผนที่" |
+
+**Setting A's pin** (`lat`/`lng` via REST, then a reload) → A shows "No
+mapa": the label clears.
+
+**CI at `c74f9ad`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`c74f9ad`.** This docs commit sits on top of a master sync (16 behind,
+clean merge; message JSON valid).
