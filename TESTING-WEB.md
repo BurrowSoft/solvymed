@@ -8402,3 +8402,42 @@ to several.
 **Review: clean (7f).** **Merge gate: 🟢 for `755fe42`.** This docs commit
 sits on top of a master sync (1 behind: #138's merge commit, no content
 change).
+
+## #142 A clinic-booked series announces only its future dates (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `dd58b72`, on a local `next dev` with the Expo
+push sink.
+- **The fix commit:** `5a96210`. It's identical at `dd58b72`
+  (`git range-diff`: `=`).
+- **Earlier run:** the same run at `5a96210` gave the same results.
+- **Setup:** a linked patient with a device token (user_roles
+  linked_patient_id + patient_connections + push_tokens), booked from
+  Agenda → Nova Consulta → Repetir.
+- **Clinic clock:** today 29/09/2026, 11:13 BRT.
+- **Covers UX 36's rule:** one push counting only the future
+  appointments. The single-booking text for 1, the series text for 2+, no
+  push when none are in the future.
+
+| Case | Rows | Push to the patient |
+|---|---|---|
+| Weekly ×4 from 22/09 08:00 (22/09, today 08:00 = past, 06/10, 13/10) | 4 | ✅ one: "Clínica Opus Futuro marcou 2 consultas para você. A primeira é em 06/10/2026 às 08:00." |
+| Weekly ×3 from 22/09 09:00 (only 06/10 ahead) | 3 | ✅ one, the single text: "…marcou uma consulta para você em 06/10/2026 às 09:00." |
+| Weekly ×2 from 15/09 10:00 (all past) | 2 | ✅ none |
+| Weekly ×2 from today 16:00 (later today counts as future) | 2 | ✅ "…marcou 2 consultas… A primeira é em 29/09/2026 às 16:00." |
+| Weekly ×3 from 06/10 11:00 (all future: unchanged) | 3 | ✅ "…marcou 3 consultas… A primeira é em 06/10/2026 às 11:00." |
+| Single booking 01/10 12:00 (unchanged) | 1 | ✅ "…marcou uma consulta para você em 01/10/2026 às 12:00." |
+| Single booking 28/09 12:00 (past: unchanged) | 1 | ✅ none |
+
+**Also checked:**
+- **Tester 2's repro** (weekly ×3 from last week) now gets its push; before
+  the fix it got 0.
+- **Unit tests:** clinic-notify + create-series pass, 11/11 (vitest exit
+  0).
+- **SolvyAI's series card (#140, now on master)** books through the same
+  `createAppointment`, so it gets the fix too. SolvyAI refuses past start
+  times, so its series never start in the past.
+
+**Master sync:** master (#140) merged in under this docs commit. The merge
+was clean, with no change to this PR's code.
+**Review: clean (7f, `5a96210` / `dd58b72`).** **Merge gate: 🟢 for
+`dd58b72`.**
