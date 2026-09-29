@@ -101,6 +101,7 @@
     "managePayments": "支払い管理"
   },
   "schedule": {
+    "patientMessage": "患者からのメッセージ",
     "title": "スケジュール",
     "apptsToday": "本日の予約 {count}件",
     "noAppts": "この日の予約はありません",

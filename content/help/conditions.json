@@ -27,6 +27,10 @@
     "met": false,
     "what": "The app notifies the patient (if linked to a SolvyMed account) when the clinic books (single or series), moves or cancels their appointment (mobile #111), in a RELEASED store build (not just merged)."
   },
+  "saved-locale-live": {
+    "met": false,
+    "what": "Pushes reach each person in the language they chose: migration 117 (user_locales, set_my_locale, the push-target RPCs) applied on production AND the app saving its language (mobile #97) in a RELEASED store build. The website already saves its language (for the app's 7 languages) and reads the targets once 117 exists."
+  },
   "linked-bookings": {
     "met": true,
     "what": "Appointments of a linked patient carry their account however they were made (migration 119, mobile #117: a trigger filling patient_auth_id from the linked record, the backfill and the fill on later linking) applied on production: until then pushes only reach patients on appointments they booked in the app."
