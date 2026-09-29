@@ -195,9 +195,14 @@ type ClinicData = {
 };
 
 // showPix / showPromptPay: the practice country's payment QR is Pix
-// (Brazil) or PromptPay (Thailand).
-export function ClinicForm({ data, showPix = true, showPromptPay = false }: { data: ClinicData; showPix?: boolean; showPromptPay?: boolean }) {
+// (Brazil) or PromptPay (Thailand). country: the practice country, for the
+// state label and the sample placeholders (same rule as the app).
+export function ClinicForm({ data, showPix = true, showPromptPay = false, country = "BR" }: { data: ClinicData; showPix?: boolean; showPromptPay?: boolean; country?: string }) {
   const t = useTranslations("settings");
+  const br = country === "BR";
+  const th = country === "TH";
+  const stateLabel = br ? t("state") : th ? t("stateProvince") : t("stateOrProvince");
+  const phonePlaceholder = br ? "(11) 3000-0000" : th ? "02 000 0000" : t("phoneIntlPlaceholder");
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
@@ -231,11 +236,11 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false }: { da
           </div>
           <div>
             <Label>{t("phone")}</Label>
-            <Input name="clinic_phone" defaultValue={data.clinic_phone ?? ""} placeholder="(11) 3000-0000" />
+            <Input name="clinic_phone" defaultValue={data.clinic_phone ?? ""} placeholder={phonePlaceholder} />
           </div>
           <div>
             <Label>{t("website")}</Label>
-            <Input name="clinic_website" defaultValue={data.clinic_website ?? ""} placeholder="www.example.com.br" />
+            <Input name="clinic_website" defaultValue={data.clinic_website ?? ""} placeholder={br ? "www.example.com.br" : "www.example.com"} />
           </div>
           <div className="sm:col-span-2">
             <Label>{t("address")}</Label>
@@ -243,11 +248,11 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false }: { da
           </div>
           <div>
             <Label>{t("city")}</Label>
-            <Input name="clinic_city" defaultValue={data.clinic_city ?? ""} placeholder="São Paulo" />
+            <Input name="clinic_city" defaultValue={data.clinic_city ?? ""} placeholder={br ? "São Paulo" : th ? "Bangkok" : undefined} />
           </div>
           <div>
-            <Label>{t("state")}</Label>
-            <Input name="clinic_state" defaultValue={data.clinic_state ?? ""} placeholder="SP" />
+            <Label>{stateLabel}</Label>
+            <Input name="clinic_state" defaultValue={data.clinic_state ?? ""} placeholder={br ? "SP" : undefined} />
           </div>
           {/* Pix is Brazil's payment QR: only for Brazilian practices. */}
           {showPix && (
