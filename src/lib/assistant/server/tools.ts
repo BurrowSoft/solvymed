@@ -33,11 +33,14 @@ export type ToolContext = {
   seen: Set<string>;
   // The practice country, read once per request (IDs and currency key off it).
   country?: string;
+  // Who asked: the website or the app (sending Pix by WhatsApp is app-only).
+  client: "web" | "app";
 };
 
 // What a tool gives back: text for the model (and whether it's an error the
 // model should turn into a question), and a block for the user, if any.
-export type ToolOutcome = { forModel: string; isError?: boolean; block?: AnswerBlock };
+// blocks: more than one for the user (e.g. an answer and an Open link).
+export type ToolOutcome = { forModel: string; isError?: boolean; block?: AnswerBlock; blocks?: AnswerBlock[] };
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -105,6 +108,11 @@ export const TOOL_DEFS: ToolDef[] = [
     input_schema: obj({ appointmentId: { type: "string" }, decision: { type: "string", enum: ["confirm", "reject"] }, note: { type: "string" } }, ["appointmentId", "decision"]),
   },
   {
+    name: "propose_send_pix",
+    description: "Propose sending the patient the Pix payment details by WhatsApp for one appointment (id from list_appointments). App only; Brazilian practices only (a Thai practice gets its PromptPay answer instead). Shows a card; nothing is sent until the user confirms.",
+    input_schema: obj({ appointmentId: { type: "string" } }, ["appointmentId"]),
+  },
+  {
     name: "propose_add_patient",
     description: "Propose adding a patient: full name required; birth date (YYYY-MM-DD) only if the user said it. Phone, email and ID numbers are never taken here (the chat masks them): say they're added on the patient's page after saving. If similar patients exist you get them back: tell the user and ask; only if they say it's someone else, propose again with createAnyway=true.",
     input_schema: obj({ fullName: { type: "string" }, birthDate: { type: "string" }, createAnyway: { type: "boolean" } }, ["fullName"]),
@@ -113,6 +121,7 @@ export const TOOL_DEFS: ToolDef[] = [
 
 const T = {
   pt: {
+    sendPix: "Enviar Pix por WhatsApp", pixKey: "Chave Pix",
     newAppt: "Nova consulta", cancelAppt: "Cancelar consulta", block: "Bloquear horário", paid: "Marcar como pago", unpaid: "Marcar como não pago",
     patient: "Paciente", when: "Quando", duration: "Duração", period: "Período", reason: "Motivo", appointment: "Consulta", value: "Valor",
     procedure: "Procedimento", type: "Tipo", inPerson: "Presencial",
@@ -143,6 +152,7 @@ const T = {
     proposalConfirmStop: "Este pedido está aguardando a resposta do paciente à nova proposta; só é possível recusar.",
   },
   en: {
+    sendPix: "Send Pix on WhatsApp", pixKey: "Pix key",
     newAppt: "New appointment", cancelAppt: "Cancel appointment", block: "Block time", paid: "Mark as paid", unpaid: "Mark as unpaid",
     patient: "Patient", when: "When", duration: "Duration", period: "Period", reason: "Reason", appointment: "Appointment", value: "Value",
     procedure: "Procedure", type: "Type", inPerson: "In person",
@@ -737,6 +747,63 @@ async function proposeAddPatient(ctx: ToolContext, input: Record<string, unknown
   return { forModel: `Card shown (${c.id}). Tell the user to check it and tap Confirmar.`, block: { type: "card", card: c } };
 }
 
+// A Thai practice's answer to "send the Pix" (UX 36 / 38): the patient
+// scans the appointment's PromptPay QR; "Abrir QR" opens that appointment.
+const PROMPTPAY: Record<string, [string, string]> = {
+  pt: ["Em clínicas na Tailândia, o paciente paga escaneando o QR PromptPay da consulta.", "Abrir QR"],
+  en: ["For clinics in Thailand, the patient pays by scanning the appointment's PromptPay QR.", "Open QR"],
+  th: ["สำหรับคลินิกในประเทศไทย ผู้ป่วยชำระเงินโดยสแกน QR พร้อมเพย์ของนัดหมาย", "เปิด QR"],
+  fr: ["Dans les cliniques en Thaïlande, le patient paie en scannant le QR PromptPay du rendez-vous.", "Ouvrir le QR"],
+  de: ["In Praxen in Thailand bezahlt der Patient, indem er den PromptPay-QR-Code des Termins scannt.", "QR öffnen"],
+  it: ["Nelle cliniche in Thailandia, il paziente paga scansionando il QR PromptPay dell’appuntamento.", "Apri QR"],
+  es: ["En las clínicas de Tailandia, el paciente paga escaneando el QR de PromptPay de la cita.", "Abrir QR"],
+};
+const promptPayText = (locale: string) => PROMPTPAY[locale.slice(0, 2).toLowerCase()] ?? PROMPTPAY.en;
+
+async function proposeSendPix(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
+  if (ctx.client !== "app") return err("On the website Pix isn't sent by WhatsApp: say it's only in the app and point to Help G4.");
+  const t = T[ctx.lang];
+  const a = await readAppointment(ctx, input.appointmentId);
+  if (!a || a.status === "blocked") return unseen("appointment");
+  const country = await practiceCountry(ctx);
+  if (country === "TH") {
+    // Never a Pix card for a Thai practice: the answer and the way to the QR.
+    const [text, label] = promptPayText(ctx.locale);
+    const target: ScreenTarget = { screen: "schedule", date: a.date, id: a.id, params: { sheet: "1" } };
+    const href = webPath(ctx.prefix, target, a.id);
+    return {
+      forModel: "Thai practice: no Pix. The user was shown that the patient pays with the appointment's PromptPay QR, with an Open QR link. Don't propose it again; add nothing.",
+      blocks: [{ type: "text", text }, ...(href ? [{ type: "open" as const, label, href, target }] : [])],
+    };
+  }
+  if (country !== "BR") return err("Pix is only for practices in Brazil; say so (there's no payment message to send for this practice).");
+  if (a.payment_status === "paid") return err("It's already paid; tell the user.");
+  if (!a.payment_amount) return err("This appointment has no value: tell the user to set it first (on the appointment), then ask again.");
+  const [{ data: prof }, { data: pat }] = await Promise.all([
+    ctx.db.from("professionals").select("pix_key").eq("id", ctx.profId).maybeSingle(),
+    a.patient_id ? ctx.db.from("patients").select("phone").eq("id", a.patient_id).maybeSingle() : Promise.resolve({ data: null }),
+  ]);
+  const pixKey = (prof as { pix_key?: string | null } | null)?.pix_key?.trim();
+  if (!pixKey) return err("The practice has no Pix key: tell the user to add it in Settings (Help G3).");
+  if (!(pat as { phone?: string | null } | null)?.phone?.trim()) return err("The patient has no phone number: say so, and offer the QR / Pix Copia e Cola on the appointment instead.");
+  const c = card(ctx, {
+    icon: "cash",
+    title: t.sendPix,
+    fields: [
+      { label: t.patient, value: personLabel(ctx, a.patient_name ?? "—", await birthOf(ctx, a.patient_id)) },
+      { label: t.appointment, value: `${whenLabel(ctx, a.date)}, ${hhmm(a.start_time)}–${hhmm(a.end_time)}` },
+      { label: t.value, value: money(a.payment_amount, country) },
+      { label: t.pixKey, value: pixKey },
+    ],
+    warnings: [],
+    editTarget: { screen: "payments" },
+    viewTarget: { screen: "payments" },
+    after: { screen: "whatsapp", highlight: { kind: "appointment", id: a.id }, then: { screen: "payments" } },
+    action: { kind: "send_pix", args: { appointmentId: a.id } },
+  });
+  return { forModel: `Card shown (${c.id}). Tell the user to check it and tap Confirmar: it opens WhatsApp.`, block: { type: "card", card: c } };
+}
+
 const RUN: Record<string, (ctx: ToolContext, input: Record<string, unknown>) => Promise<ToolOutcome>> = {
   find_patients: findPatients,
   list_appointments: listAppointments,
@@ -749,7 +816,11 @@ const RUN: Record<string, (ctx: ToolContext, input: Record<string, unknown>) => 
   propose_unblock_time: proposeUnblock,
   propose_booking_decision: proposeBookingDecision,
   propose_add_patient: proposeAddPatient,
+  propose_send_pix: proposeSendPix,
 };
+
+// The tools a client gets: sending Pix by WhatsApp only in the app.
+export const toolDefsFor = (client: "web" | "app") => TOOL_DEFS.filter((d) => client === "app" || d.name !== "propose_send_pix");
 
 export async function runTool(ctx: ToolContext, name: string, input: Record<string, unknown>): Promise<ToolOutcome> {
   const run = RUN[name];
