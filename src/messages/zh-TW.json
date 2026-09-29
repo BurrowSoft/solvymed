@@ -789,6 +789,8 @@
     "or": "或",
     "cancelAnytime": "隨時取消。無需承諾。",
     "successMessage": "訂閱已啟用！歡迎使用SolvyMed Pro。",
+    "activationPending": "已收到付款！正在啟用您的訂閱…",
+    "activationSlow": "我們已收到您的付款，但啟用時間比平常久。通常幾分鐘內即可完成；如果您的方案沒有顯示，請聯絡客服：",
     "trialDaysLeft": "您的免費試用還剩{n}天。",
     "trialExpired": "您的免費試用已結束。請訂閱以繼續使用。",
     "trialBannerPrefix": "免費試用：",
