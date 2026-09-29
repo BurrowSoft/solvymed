@@ -6,6 +6,7 @@ import { PatientSearch, NewPatientButton, PatientCard } from "./PatientsClient";
 import { PATIENTS_PAGE_SIZE, pageRange, parsePage, patientSearchFilter } from "@/lib/patientSearch";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
+import { conditionMet } from "@/lib/conditions";
 
 export default async function PatientsPage({
   params,
@@ -47,9 +48,14 @@ export default async function PatientsPage({
   const idKind = patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId));
   const filter = patientSearchFilter(q, idKind);
 
+  // The import (130/131): its button for the doctor, and the archived
+  // reason column, which exists only once 131 is applied.
+  const importLive = conditionMet("patient-import-live");
+  const isDoctor = userRoleData?.role !== "secretary";
+  const listCols: string = `id, full_name, email, phone, sex, birth_date, created_at, archived_at, archived_by_name${importLive ? ", archived_reason" : ""}`;
   let query = supabase
     .from("patients")
-    .select("id, full_name, email, phone, sex, birth_date, created_at, archived_at, archived_by_name", { count: "exact" })
+    .select(listCols, { count: "exact" })
     .eq("professional_id", effectiveProfId)
     .order("full_name")
     .order("id")
@@ -68,10 +74,10 @@ export default async function PatientsPage({
     countQuery().not("archived_at", "is", null),
   ]);
 
-  const patientList = (patients ?? []) as {
+  const patientList = (patients ?? []) as unknown as {
     id: string; full_name: string; email?: string; phone?: string;
     sex?: string; birth_date?: string; created_at: string;
-    archived_at?: string | null; archived_by_name?: string | null;
+    archived_at?: string | null; archived_by_name?: string | null; archived_reason?: string | null;
   }[];
 
   const total = activeCount.count ?? 0;
@@ -115,7 +121,16 @@ export default async function PatientsPage({
             {t("total", { n: showArchived ? archivedTotal : total })}{q ? ` · ${t("matching", { n: matched, q })}` : ""}
           </p>
         </div>
-        {!showArchived && <NewPatientButton locale={locale} autoOpen={sp.new === "1"} idKind={idKind} />}
+        {!showArchived && (
+          <div className="flex flex-wrap items-center gap-2">
+            {importLive && isDoctor && (
+              <Link href={`${prefix}/dashboard/patients/import`} className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                {t("importButton")}
+              </Link>
+            )}
+            <NewPatientButton locale={locale} autoOpen={sp.new === "1"} idKind={idKind} />
+          </div>
+        )}
       </div>
 
       {/* Active / Archived switch. It only appears once a patient has been
@@ -147,6 +162,9 @@ export default async function PatientsPage({
           </div>
           <p className="font-semibold text-slate-500">{q ? t("noResults", { q }) : showArchived ? t("noArchived") : t("noPatients")}</p>
           {!q && !showArchived && <p className="text-sm text-slate-400 mt-1">{t("noPatientsHint")}</p>}
+          {!q && !showArchived && importLive && isDoctor && (
+            <Link href={`${prefix}/dashboard/patients/import`} className="mt-3 inline-block text-sm font-semibold text-teal-700 underline">{t("importEmptyLink")}</Link>
+          )}
         </div>
       ) : (
         <div className="space-y-2">

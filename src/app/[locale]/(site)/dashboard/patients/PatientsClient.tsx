@@ -14,17 +14,21 @@ import { dateLocale, formatShortDate } from "@/lib/dateLabels";
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
   sex?: string; birth_date?: string; created_at: string;
-  archived_at?: string | null; archived_by_name?: string | null;
+  archived_at?: string | null; archived_by_name?: string | null; archived_reason?: string | null;
 };
 
 // "Archived {date} by {name}". The name is stored at archive time, so it
-// survives the secretary who archived leaving the clinic.
+// survives the secretary who archived leaving the clinic. A patient the
+// import archived (131) says why instead.
 export function archivedLabel(
   t: ReturnType<typeof useTranslations>,
   archivedAt: string,
   byName: string | null | undefined,
   locale: string,
+  reason?: string | null,
 ) {
+  if (reason === "imported_inactive") return t("archivedImportedInactive");
+  if (reason === "imported_deceased") return t("archivedImportedDeceased");
   const date = new Date(archivedAt).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric" });
   return byName?.trim() ? t("archivedOnBy", { date, name: byName.trim() }) : t("archivedOn", { date });
 }
@@ -325,7 +329,7 @@ export function PatientCard({ patient, locale }: { patient: Patient; locale: str
           {[patient.email, age ? t("age", { n: age }) : null, patient.phone].filter(Boolean).join(" · ")}
         </p>
         {patient.archived_at && (
-          <p className="text-xs text-slate-400 truncate mt-0.5">{archivedLabel(t, patient.archived_at, patient.archived_by_name, locale)}</p>
+          <p className="text-xs text-slate-400 truncate mt-0.5">{archivedLabel(t, patient.archived_at, patient.archived_by_name, locale, patient.archived_reason)}</p>
         )}
       </div>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-300 group-hover:text-teal-400 transition shrink-0">

@@ -1003,8 +1003,8 @@ function ArchiveDialog({ open, onClose, patient }: { open: boolean; onClose: () 
   );
 }
 
-export function ArchivedBanner({ patientId, archivedAt, archivedByName, locale }: {
-  patientId: string; archivedAt: string; archivedByName: string | null; locale: string;
+export function ArchivedBanner({ patientId, archivedAt, archivedByName, archivedReason = null, locale }: {
+  patientId: string; archivedAt: string; archivedByName: string | null; archivedReason?: string | null; locale: string;
 }) {
   const t = useTranslations("patientDetail");
   const tPatients = useTranslations("patients");
@@ -1024,7 +1024,7 @@ export function ArchivedBanner({ patientId, archivedAt, archivedByName, locale }
   return (
     <div role="status" className="mb-6 flex flex-wrap items-start justify-between gap-3 rounded-xl border border-slate-200 bg-slate-100 px-4 py-3.5">
       <div>
-        <p className="text-sm font-bold text-slate-800">{archivedLabel(tPatients, archivedAt, archivedByName, locale)}</p>
+        <p className="text-sm font-bold text-slate-800">{archivedLabel(tPatients, archivedAt, archivedByName, locale, archivedReason)}</p>
         <p className="mt-0.5 text-xs text-slate-600">{t("archivedSub")}</p>
         {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
       </div>
