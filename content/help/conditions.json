@@ -12,7 +12,7 @@
     "what": "The app's Settings → SolvyAI (the button switch and the actions opt-in, mobile #99) is in a RELEASED store build (not just merged)."
   },
   "migration-115": {
-    "met": false,
+    "met": true,
     "what": "Migration 115 (SolvyAI quota and the actions switch) is applied on production."
   },
   "migration-116": {
@@ -21,7 +21,7 @@
   },
   "solvyai-live": {
     "met": false,
-    "what": "SolvyAI is on for doctors in production: migration 115 applied, the budget cap set, the privacy policy names Anthropic (USA) as processor, and the app's Settings → SolvyAI (mobile #99) released. Also: every action C9 names (book, move, cancel, block time, add patient, mark paid) is a SolvyAI tool on the website's route; part 1 has book, cancel, block time and mark paid, so move and add patient (part 2) must be merged first."
+    "what": "SolvyAI is on for doctors in production: migration 115 applied, the budget cap set, the privacy policy names Anthropic (USA) as processor, and the app's Settings → SolvyAI (mobile #99) released. Also: every action C9 names (book, move, cancel, block time, add patient, mark paid) is a SolvyAI tool on the website's route; the website's route has book, cancel, block time, mark paid, unblock, booking decisions and add patient; move waits for the website's own Remarcar (UX 36: this sprint), so that must be merged first."
   },
   "mobile#111": {
     "met": false,
@@ -36,7 +36,7 @@
     "what": "In the app only scheduled / confirmed / late appointments change date or time; others show the date read-only, and an absent one offers Nova consulta pre-filled (mobile #116), in a RELEASED store build (not just merged)."
   },
   "linked-bookings": {
-    "met": false,
+    "met": true,
     "what": "Appointments of a linked patient carry their account however they were made (migration 119, mobile #117: a trigger filling patient_auth_id from the linked record, the backfill and the fill on later linking) applied on production: until then pushes only reach patients on appointments they booked in the app."
   }
 }

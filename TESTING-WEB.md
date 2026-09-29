@@ -8033,6 +8033,200 @@ for the patient-accept step. This docs commit includes that master sync.
 `9c0e60a`.** This docs commit sits on top of a master sync (8 behind,
 clean merge; it brings #139).
 
+## PR #134 (`feat/solvyai-actions-2`, base master) — SolvyAI actions part 2: unblock, booking decision, add patient, 🟢 at `a39dbf3`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `a39dbf3` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it answers the model call with scripted Anthropic
+  SSE `tool_use` turns. Ids are taken from the route's own
+  `list_appointments` results. The same preload logs Expo pushes and never
+  sends them.
+- **Data:** the real prod DB, with throwaway fixtures (all deleted
+  afterwards):
+  - a doctor with a confirmed appointment, a lunch block, a tentative
+    request and a doctor's proposal;
+  - an invited patient with a device token.
+- **Flow:** everything goes through the panel. Confirmar and Desfazer run
+  the screens' own actions.
+
+**Unblock:**
+- **U1:** the card reads "Desbloquear horário | Terça-feira, 06/10/2026,
+  12:00–13:00 | Motivo: Almoço Opus". Confirmar → the block row is gone.
+  Desfazer → the block is re-created with the same 12:00–13:00 and reason.
+- **U2:** an appointment id given as `blockId` → no card; the model is
+  told it isn't a block.
+
+**Booking decision:**
+- **D1, confirming the tentative request:** status `confirmed`, the patient
+  linked (`linked_patient_id` set). One push: "Consulta confirmada | Sua
+  consulta foi confirmada. Observação: Até lá!". The toast shows "✓ Feito"
+  with **no Desfazer**.
+- **D2, confirming a proposal:** the card says "Este pedido está aguardando
+  a resposta do paciente à nova proposta; só é possível recusar."
+  Confirmar is **disabled**.
+- **D3, declining the proposal:** status `rejected`. One push: "Pedido não
+  aceito | Não foi possível aceitar o seu pedido de consulta."
+
+**Add patient:**
+- **A1, name + birth date:**
+  - The card shows only Nome and Nascimento.
+  - Saved with phone, email and CPF all null.
+  - Desfazer → the patient row is deleted. On `next dev` the delete lands
+    more than 20 s after the click (first compile of the undo); a 90 s
+    poll confirmed it.
+- **A2, duplicates:**
+  - Same name + birth date as an existing patient → the first tool result
+    returns "Possible duplicates" to the model, and no card is shown.
+  - With `createAnyway` → the card lists "Parecidos já cadastrados: Opus
+    Bruno Lima (01/02/1985)".
+  - A name alone doesn't match. That's by design: `find_similar_patients`
+    matches the same phone, or the same name + birth date, as in the form.
+- **A3, a typed phone:**
+  - "Cadastra a Ana 11 91234-5678" → the model saw "Cadastra a Ana
+    [phone]".
+  - Its `fullName: "Ana [phone]"` is refused ("That isn't a name…").
+  - No card; no patient row with "phone" in the name and no phone saved.
+
+**CI at `a39dbf3`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `a39dbf3`.** This docs commit
+sits on top of a master sync (43 behind, clean merge).
+
+## PR #141 (`docs/flip-115-119`, base master) — Help: flip `migration-115` and `linked-bookings` (115 and 119 applied), 🟢 at `5060fd3`
+
+**Help (the #141 Preview vs the master Preview, all 156 pages):**
+- **Changed as intended:** A1 and A4, pt and en, plain and `?app=1`, each
+  gain one paragraph:
+  - A1: "No site também: se o paciente tiver conta no SolvyMed, ele recebe
+    uma notificação quando você agenda." / "On the website too: … they get
+    a notification when you book."
+  - A4: "No site também: … quando você cancela (ou arquiva o paciente).
+    Consultas no passado não notificam." / "On the website too: … when you
+    cancel (or archive the patient). Past appointments don't notify."
+- **The only other difference was K5:** the branch predated #139's K5
+  privacy line. After this docs commit's master sync, the built
+  `helpArticles.json` differs from master **only** by those four A1/A4
+  paragraphs.
+- **SolvyAI stays hidden:** `/help/c9` is 404 and no SolvyAI text is
+  built (`solvyai-live` is still unmet).
+
+**Is the new sentence true? Live check on current master** (migrations 110
+and 119 applied):
+- **Setup:** a local `next dev` + my Expo sink (pushes logged, never sent);
+  the #131 spec run through the UI with **no app-origin booking** for
+  either patient (`NO_APP_ROW=1`).
+- **Doctor's website booking → linked patients:** both get the push, which
+  #131 could not do before 119:
+  - pt: "Nova consulta | **Clínica Opus Push marcou uma consulta para você
+    em 06/10/2026 às 10:00.**"
+  - th: "นัดหมายใหม่ | **Clínica Opus Push ได้นัดหมายให้คุณในวันที่ 06/10/2569
+    เวลา 11:00**"
+- **Status → Cancelado:**
+  - pt: "Clínica Opus Push cancelou sua consulta de 06/10/2026 às 10:00.
+    Para marcar outra, abra o app."
+  - th: "…ถูกยกเลิกโดย Clínica Opus Push หากต้องการนัดใหม่ กรุณาเปิดแอป"
+- **No push** for an unlinked patient, a past booking or cancel, a block,
+  or cancelled → confirmed.
+- **Archive** → one push per future appointment. **Account close** (th) →
+  "…ถูกยกเลิกโดย Consultório Opus Sul" (the first-location fallback, no
+  suffix).
+
+**Closes two ⏳ rows from #131:**
+- **post-119 (`linked-bookings`):** website-only linked patients now get
+  the book/cancel pushes ✅ (above).
+- **post-110 (the secretary names the clinic):** a secretary booking and
+  cancelling on a profile-named practice **with two locations** → "**Clínica
+  Opus Push** marcou…" / "…cancelou…". That's the profile name, the same as
+  the doctor's ✅.
+
+**CI at `5060fd3`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`5060fd3`.** This docs commit sits on top of a master sync (14 behind,
+clean merge).
+
+## PR #135 (`feat/web-reschedule`, base master) — Remarcar on the website, 🟢 at `98f1679`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `98f1679` with a test-only Expo sink
+  (pushes are logged, never sent), against the prod DB.
+- **Throwaway fixtures (deleted afterwards):**
+  - a doctor whose practice is **profile-named** ("Clínica Opus Perfil")
+    with **2 locations** ("Aaa Opus Local Norte", "Zzz Opus Local Sul"),
+    open Mon–Fri 08:00–18:00;
+  - a linked patient with a device token;
+  - a secretary;
+  - appointments in every relevant status, plus a block on Wed 17:30–19:00.
+
+**Icons (list):**
+- Scheduled, confirmed and late → **Remarcar**.
+- Tentative → none.
+- Absent (with or without `patient_id`) → **"Nova consulta (mesmo
+  paciente)"** only, with no Remarcar.
+- A confirmed row with a message shows "Mensagem do paciente: Posso chegar
+  10 min antes?".
+
+**Icons (Dia view, calendar popover):** the same icons.
+- A late 45 min appointment moved from the popover keeps **45 min**.
+- The no-show's book-again opens with the name pre-filled.
+
+**The dialog:** "Remarcar consulta", with the hint "A duração e os outros
+dados continuam os mesmos."
+
+**Moves:**
+- **Scheduled Tue 06/10 09:00 → Wed 07/10 09:00:** saved, 30 min kept.
+  - Push: "Consulta remarcada | Clínica Opus Perfil mudou sua consulta de
+    06/10/2026 às 09:00 para 07/10/2026 às 09:00."
+- **The same date + time:** nothing saved, **no push**.
+- **Onto another appointment:** "Este horário conflita com Opus Outro às
+  10:00 (30 min). Escolha outro horário." Unchanged.
+- **Wed 18:00 (blocked AND outside the hours):** ONE question, "Este
+  horário está bloqueado (17:30–19:00). Este horário está fora do horário
+  de atendimento (08:00–18:00). Remarcar mesmo assim?".
+  - Cancelar → unchanged, no push.
+  - Remarcar → saved + push "…de 07/10/2026 às 09:00 para 07/10/2026 às
+    18:00."
+- **Refused:**
+  - 23:45 + 30 min → "Esse horário e duração ultrapassariam a
+    meia-noite.";
+  - a Buddhist-era year → the BE message.
+- **Late 45 min → Thu 11:00:** 45 min and `late` kept.
+- **A row turned `tentative` after the page loaded:** "Use o card de
+  solicitação de agendamento…". Nothing moved.
+- **A confirmed row moved to yesterday:** saved, **no push**.
+
+**Book again after a no-show:**
+- **With `patient_id`:**
+  - The name is read-only and the patient id is carried.
+  - The procedure is "Retorno Opus", 45 min.
+  - Saved Thu 15:00 for the same `patient_id` (the absent row stays).
+  - The normal single-booking push was sent.
+- **Without `patient_id`:** the name is editable and pre-filled "Opus Sem
+  Ficha"; no hidden id.
+
+**Secretary (post-110 row):**
+- The secretary moved the linked appointment.
+- The push names the **profile**: "Consulta remarcada | Clínica Opus
+  Perfil mudou sua consulta de 07/10/2026 às 18:00 para 08/10/2026 às
+  09:00." It names neither the first location nor the doctor.
+- This also closes #131's ⏳ secretary-name row for moves.
+
+**i18n / Help / App Map:**
+- The 6 new `schedule` keys are present in all 15 locales. en is
+  "Reschedule" / "New appointment (same patient)"; th and es were checked
+  too.
+- Help A4 (pt + en) now describes the website's Remarcar icon and button,
+  which match the UI labels.
+- The notification note is shown now that `linked-bookings` is met.
+- The app's line is `{pending:mobile#116}`.
+- The App Map `move_appointment` has web = `moveAppointment`.
+
+**CI at `98f1679`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `98f1679`.** This docs commit
+sits on top of a master sync (10 behind: #134, #141; clean merge).
+
 ## PR #138 (`feat/web-recurring`, base `feat/web-reschedule`) — recurring appointments on the website, 🟢 at `b74cf4f`
 
 Tested by web tester 2.
