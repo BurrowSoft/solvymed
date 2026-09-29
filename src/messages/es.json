@@ -424,6 +424,7 @@
     "filesHiddenLine": "quitado el {date} por {name}: {reason}",
     "filesHideTitle": "Quitar archivo",
     "filesHideHint": "Han pasado más de 24 horas desde la subida, así que el archivo se oculta en lugar de eliminarse. Indica el motivo.",
+    "filesPopupBlocked": "Tu navegador bloqueó la nueva pestaña. Permite las ventanas emergentes para SolvyMed e inténtalo de nuevo.",
     "accessLogIntro": "Quién abrió la historia de este paciente y cuándo. Solo tú puedes ver este registro.",
     "accessLogEmpty": "Aún no hay accesos registrados.",
     "accessLogFailed": "No se pudo cargar el registro de accesos. Inténtalo de nuevo.",

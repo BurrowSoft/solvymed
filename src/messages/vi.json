@@ -424,6 +424,7 @@
     "filesHiddenLine": "gỡ ngày {date} bởi {name}: {reason}",
     "filesHideTitle": "Gỡ tệp",
     "filesHideHint": "Đã hơn 24 giờ kể từ khi tải lên, nên tệp sẽ được ẩn thay vì xóa. Hãy nêu lý do.",
+    "filesPopupBlocked": "Trình duyệt đã chặn tab mới. Hãy cho phép cửa sổ bật lên cho SolvyMed rồi thử lại.",
     "accessLogIntro": "Ai đã mở hồ sơ của bệnh nhân này và khi nào. Chỉ bạn xem được nhật ký này.",
     "accessLogEmpty": "Chưa có lượt truy cập nào được ghi lại.",
     "accessLogFailed": "Không tải được nhật ký truy cập. Vui lòng thử lại.",

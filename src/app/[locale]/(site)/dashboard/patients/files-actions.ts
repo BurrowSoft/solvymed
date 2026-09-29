@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
 import {
-  BUCKET, SIGNED_URL_SECONDS, folderFor, isFileDeletable, pathBelongs,
+  BUCKET, SIGNED_URL_SECONDS, folderFor, isFileDeletable, isUuid, pathBelongs,
   type FileKind, type PatientFile,
 } from "@/lib/patientFiles";
 
@@ -16,7 +16,8 @@ import {
 
 type Result<T> = { ok: true; data: T } | { ok: false; code: string };
 
-async function doctor() {
+async function doctor(patientId: string) {
+  if (!isUuid(patientId)) return null;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
@@ -25,7 +26,7 @@ async function doctor() {
 }
 
 export async function listPatientFiles(patientId: string, kind: FileKind): Promise<Result<PatientFile[]>> {
-  const me = await doctor();
+  const me = await doctor(patientId);
   if (!me) return { ok: false, code: "not_doctor" };
   const folder = folderFor(me.uid, patientId, kind);
   const { data, error } = await me.supabase.storage
@@ -62,7 +63,7 @@ export async function listPatientFiles(patientId: string, kind: FileKind): Promi
 // A short-lived link to open one file, logged in the patient's access log
 // (TH-3, migration 111: kind "file", the storage path).
 export async function openPatientFile(patientId: string, path: string): Promise<Result<string>> {
-  const me = await doctor();
+  const me = await doctor(patientId);
   if (!me) return { ok: false, code: "not_doctor" };
   if (!pathBelongs(path, me.uid, patientId)) return { ok: false, code: "generic" };
   const { data, error } = await me.supabase.storage.from(BUCKET).createSignedUrl(path, SIGNED_URL_SECONDS);
@@ -74,7 +75,7 @@ export async function openPatientFile(patientId: string, path: string): Promise<
 
 // Within 24 h of upload: deleted (storage refuses later deletes anyway).
 export async function deletePatientFile(patientId: string, path: string, createdAt: string): Promise<Result<null>> {
-  const me = await doctor();
+  const me = await doctor(patientId);
   if (!me) return { ok: false, code: "not_doctor" };
   if (!pathBelongs(path, me.uid, patientId)) return { ok: false, code: "generic" };
   if (!isFileDeletable(createdAt)) return { ok: false, code: "delete_window_passed" };
@@ -85,7 +86,7 @@ export async function deletePatientFile(patientId: string, path: string, created
 
 // After 24 h: hidden with a reason (it stays in storage, 097).
 export async function hidePatientFile(patientId: string, path: string, reason: string): Promise<Result<null>> {
-  const me = await doctor();
+  const me = await doctor(patientId);
   if (!me) return { ok: false, code: "not_doctor" };
   if (!pathBelongs(path, me.uid, patientId)) return { ok: false, code: "generic" };
   const why = reason.trim().slice(0, 500);

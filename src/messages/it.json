@@ -424,6 +424,7 @@
     "filesHiddenLine": "rimosso il {date} da {name}: {reason}",
     "filesHideTitle": "Rimuovi file",
     "filesHideHint": "Sono passate più di 24 ore dal caricamento, quindi il file viene nascosto invece che eliminato. Indica il motivo.",
+    "filesPopupBlocked": "Il browser ha bloccato la nuova scheda. Consenti i pop-up per SolvyMed e riprova.",
     "accessLogIntro": "Chi ha aperto la cartella di questo paziente, e quando. Solo tu puoi vedere questo registro.",
     "accessLogEmpty": "Nessun accesso registrato finora.",
     "accessLogFailed": "Impossibile caricare il registro degli accessi. Riprova.",

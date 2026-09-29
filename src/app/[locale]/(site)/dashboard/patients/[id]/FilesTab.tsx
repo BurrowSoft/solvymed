@@ -63,10 +63,15 @@ export function FilesTab({ patientId, doctorId, kind, isArchived, locale }: {
 
   async function open(f: PatientFile) {
     // Opened synchronously so the browser doesn't block it as a pop-up.
-    const win = window.open("", "_blank", "noopener");
+    // Not with "noopener": then window.open returns null and the file
+    // would replace this page. The opener is cut by hand instead.
+    const win = window.open("", "_blank");
+    if (win) win.opener = null;
     const r = await openPatientFile(patientId, f.path);
-    if (r.ok) { if (win) win.location.href = r.data; else window.location.href = r.data; }
-    else { win?.close(); setError(t("filesError")); }
+    if (!r.ok) { win?.close(); setError(t("filesError")); return; }
+    // Pop-ups blocked: never navigate away from the patient; say so.
+    if (win) win.location.href = r.data;
+    else setError(t("filesPopupBlocked"));
   }
 
   async function remove(f: PatientFile) {

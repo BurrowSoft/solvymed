@@ -49,18 +49,18 @@ beforeEach(() => {
 
 describe("patientFiles helpers", () => {
   it("puts exams in their own folder", () => {
-    expect(folderFor("d", "p", "exams")).toBe("d/p/exams");
+    expect(folderFor("d", "11111111-1111-4111-8111-111111111111", "exams")).toBe("d/11111111-1111-4111-8111-111111111111/exams");
     expect(folderFor("d", "p", "files")).toBe("d/p");
   });
 
   it("accepts only this doctor's patient paths", () => {
-    expect(pathBelongs("d/p/a.pdf", "d", "p")).toBe(true);
-    expect(pathBelongs("d/p/exams/a.pdf", "d", "p", "exams")).toBe(true);
-    expect(pathBelongs("d/p/exams/a.pdf", "d", "p", "files")).toBe(false);
-    expect(pathBelongs("x/p/a.pdf", "d", "p")).toBe(false);
-    expect(pathBelongs("d/q/a.pdf", "d", "p")).toBe(false);
-    expect(pathBelongs("d/p/../q/a.pdf", "d", "p")).toBe(false);
-    expect(pathBelongs("d/p/other/a.pdf", "d", "p")).toBe(false);
+    expect(pathBelongs("d/11111111-1111-4111-8111-111111111111/a.pdf", "d", "11111111-1111-4111-8111-111111111111")).toBe(true);
+    expect(pathBelongs("d/11111111-1111-4111-8111-111111111111/exams/a.pdf", "d", "11111111-1111-4111-8111-111111111111", "exams")).toBe(true);
+    expect(pathBelongs("d/11111111-1111-4111-8111-111111111111/exams/a.pdf", "d", "11111111-1111-4111-8111-111111111111", "files")).toBe(false);
+    expect(pathBelongs("x/11111111-1111-4111-8111-111111111111/a.pdf", "d", "11111111-1111-4111-8111-111111111111")).toBe(false);
+    expect(pathBelongs("d/22222222-2222-4222-8222-222222222222/a.pdf", "d", "11111111-1111-4111-8111-111111111111")).toBe(false);
+    expect(pathBelongs("d/11111111-1111-4111-8111-111111111111/../22222222-2222-4222-8222-222222222222/a.pdf", "d", "11111111-1111-4111-8111-111111111111")).toBe(false);
+    expect(pathBelongs("d/11111111-1111-4111-8111-111111111111/other/a.pdf", "d", "11111111-1111-4111-8111-111111111111")).toBe(false);
   });
 
   it("allows deleting for 24 hours", () => {
@@ -86,49 +86,55 @@ describe("files actions", () => {
       { id: "1", name: "a.pdf", created_at: "2026-10-01T10:00:00Z", metadata: { mimetype: "application/pdf", size: 2048 } },
       { id: "2", name: "b.jpg", created_at: "2026-09-01T10:00:00Z", metadata: { mimetype: "image/jpeg", size: 10 } },
     ];
-    h.state.states = [{ object_path: "doc-1/p-1/b.jpg", hidden_at: "2026-09-05T10:00:00Z", hidden_by_name: "Dra. A", hidden_reason: "wrong patient" }];
-    const r = await listPatientFiles("p-1", "files");
-    expect(h.state.listed).toEqual(["doc-1/p-1"]);
-    expect(r.ok && r.data.map((f) => [f.name, f.path, !!f.hidden])).toEqual([["a.pdf", "doc-1/p-1/a.pdf", false], ["b.jpg", "doc-1/p-1/b.jpg", true]]);
+    h.state.states = [{ object_path: "doc-1/11111111-1111-4111-8111-111111111111/b.jpg", hidden_at: "2026-09-05T10:00:00Z", hidden_by_name: "Dra. A", hidden_reason: "wrong patient" }];
+    const r = await listPatientFiles("11111111-1111-4111-8111-111111111111", "files");
+    expect(h.state.listed).toEqual(["doc-1/11111111-1111-4111-8111-111111111111"]);
+    expect(r.ok && r.data.map((f) => [f.name, f.path, !!f.hidden])).toEqual([["a.pdf", "doc-1/11111111-1111-4111-8111-111111111111/a.pdf", false], ["b.jpg", "doc-1/11111111-1111-4111-8111-111111111111/b.jpg", true]]);
     expect(r.ok && r.data[1].hidden).toEqual({ at: "2026-09-05T10:00:00Z", byName: "Dra. A", reason: "wrong patient" });
   });
 
-  it("refuses a secretary", async () => {
-    h.state.professional = false;
-    expect(await listPatientFiles("p-1", "exams")).toEqual({ ok: false, code: "not_doctor" });
+  it("refuses a patient id that isn't a UUID", async () => {
+    expect(await listPatientFiles("../other", "files")).toEqual({ ok: false, code: "not_doctor" });
     expect(await openPatientFile("p-1", "doc-1/p-1/a.pdf")).toEqual({ ok: false, code: "not_doctor" });
     expect(h.state.listed).toEqual([]);
   });
 
+  it("refuses a secretary", async () => {
+    h.state.professional = false;
+    expect(await listPatientFiles("11111111-1111-4111-8111-111111111111", "exams")).toEqual({ ok: false, code: "not_doctor" });
+    expect(await openPatientFile("11111111-1111-4111-8111-111111111111", "doc-1/11111111-1111-4111-8111-111111111111/a.pdf")).toEqual({ ok: false, code: "not_doctor" });
+    expect(h.state.listed).toEqual([]);
+  });
+
   it("opens with a signed link and logs the access", async () => {
-    const r = await openPatientFile("p-1", "doc-1/p-1/exams/a.pdf");
-    expect(r).toEqual({ ok: true, data: "https://signed/doc-1/p-1/exams/a.pdf" });
-    expect(h.state.rpcs).toEqual([{ fn: "log_record_access", args: { p_patient_id: "p-1", p_kind: "file", p_object_ref: "doc-1/p-1/exams/a.pdf" } }]);
+    const r = await openPatientFile("11111111-1111-4111-8111-111111111111", "doc-1/11111111-1111-4111-8111-111111111111/exams/a.pdf");
+    expect(r).toEqual({ ok: true, data: "https://signed/doc-1/11111111-1111-4111-8111-111111111111/exams/a.pdf" });
+    expect(h.state.rpcs).toEqual([{ fn: "log_record_access", args: { p_patient_id: "11111111-1111-4111-8111-111111111111", p_kind: "file", p_object_ref: "doc-1/11111111-1111-4111-8111-111111111111/exams/a.pdf" } }]);
   });
 
   it("never opens another practice's or patient's path", async () => {
-    expect((await openPatientFile("p-1", "doc-2/p-1/a.pdf")).ok).toBe(false);
-    expect((await openPatientFile("p-1", "doc-1/p-2/a.pdf")).ok).toBe(false);
+    expect((await openPatientFile("11111111-1111-4111-8111-111111111111", "doc-2/11111111-1111-4111-8111-111111111111/a.pdf")).ok).toBe(false);
+    expect((await openPatientFile("11111111-1111-4111-8111-111111111111", "doc-1/22222222-2222-4222-8222-222222222222/a.pdf")).ok).toBe(false);
     expect(h.state.rpcs).toEqual([]);
   });
 
   it("deletes within 24 h, and says when the window has passed", async () => {
     const fresh = new Date(Date.now() - 60_000).toISOString();
-    expect(await deletePatientFile("p-1", "doc-1/p-1/a.pdf", fresh)).toEqual({ ok: true, data: null });
-    expect(h.state.removed).toEqual([["doc-1/p-1/a.pdf"]]);
-    expect(await deletePatientFile("p-1", "doc-1/p-1/a.pdf", "2026-01-01T00:00:00Z")).toEqual({ ok: false, code: "delete_window_passed" });
+    expect(await deletePatientFile("11111111-1111-4111-8111-111111111111", "doc-1/11111111-1111-4111-8111-111111111111/a.pdf", fresh)).toEqual({ ok: true, data: null });
+    expect(h.state.removed).toEqual([["doc-1/11111111-1111-4111-8111-111111111111/a.pdf"]]);
+    expect(await deletePatientFile("11111111-1111-4111-8111-111111111111", "doc-1/11111111-1111-4111-8111-111111111111/a.pdf", "2026-01-01T00:00:00Z")).toEqual({ ok: false, code: "delete_window_passed" });
     expect(h.state.removed).toHaveLength(1);
     // Storage refused it (the window closed on the server's clock).
     h.state.removeResult = [];
-    expect(await deletePatientFile("p-1", "doc-1/p-1/a.pdf", fresh)).toEqual({ ok: false, code: "delete_window_passed" });
+    expect(await deletePatientFile("11111111-1111-4111-8111-111111111111", "doc-1/11111111-1111-4111-8111-111111111111/a.pdf", fresh)).toEqual({ ok: false, code: "delete_window_passed" });
   });
 
   it("hides with a reason", async () => {
-    expect(await hidePatientFile("p-1", "doc-1/p-1/a.pdf", "   ")).toEqual({ ok: false, code: "reason_required" });
+    expect(await hidePatientFile("11111111-1111-4111-8111-111111111111", "doc-1/11111111-1111-4111-8111-111111111111/a.pdf", "   ")).toEqual({ ok: false, code: "reason_required" });
     expect(h.state.rpcs).toEqual([]);
-    expect(await hidePatientFile("p-1", "doc-1/p-1/a.pdf", " duplicate ")).toEqual({ ok: true, data: null });
-    expect(h.state.rpcs).toEqual([{ fn: "hide_patient_file", args: { p_path: "doc-1/p-1/a.pdf", p_reason: "duplicate" } }]);
+    expect(await hidePatientFile("11111111-1111-4111-8111-111111111111", "doc-1/11111111-1111-4111-8111-111111111111/a.pdf", " duplicate ")).toEqual({ ok: true, data: null });
+    expect(h.state.rpcs).toEqual([{ fn: "hide_patient_file", args: { p_path: "doc-1/11111111-1111-4111-8111-111111111111/a.pdf", p_reason: "duplicate" } }]);
     h.state.rpcError = { message: "boom" };
-    expect(await hidePatientFile("p-1", "doc-1/p-1/a.pdf", "x")).toEqual({ ok: false, code: "generic" });
+    expect(await hidePatientFile("11111111-1111-4111-8111-111111111111", "doc-1/11111111-1111-4111-8111-111111111111/a.pdf", "x")).toEqual({ ok: false, code: "generic" });
   });
 });

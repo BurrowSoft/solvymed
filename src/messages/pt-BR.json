@@ -424,6 +424,7 @@
     "filesHiddenLine": "removido em {date} por {name}: {reason}",
     "filesHideTitle": "Remover arquivo",
     "filesHideHint": "Já se passaram mais de 24 horas desde o envio, então o arquivo é ocultado em vez de excluído. Informe o motivo.",
+    "filesPopupBlocked": "O navegador bloqueou a nova aba. Permita pop-ups para o SolvyMed e tente de novo.",
     "accessLogIntro": "Quem abriu o prontuário deste paciente, e quando. Só você vê este registro.",
     "accessLogEmpty": "Nenhum acesso registrado ainda.",
     "accessLogFailed": "Não foi possível carregar o registro de acessos. Tente novamente.",

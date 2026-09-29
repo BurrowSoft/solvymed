@@ -25,6 +25,12 @@ export const SIGNED_URL_SECONDS = 60 * 60;
 // Supabase's default upload limit is 50 MB; say so before trying.
 export const MAX_UPLOAD_BYTES = 50 * 1024 * 1024;
 
+// Patient ids are UUIDs; anything else never reaches a storage path.
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export function isUuid(v: unknown): v is string {
+  return typeof v === "string" && UUID.test(v);
+}
+
 export function folderFor(professionalId: string, patientId: string, kind: FileKind): string {
   return kind === "exams" ? `${professionalId}/${patientId}/exams` : `${professionalId}/${patientId}`;
 }
@@ -32,7 +38,7 @@ export function folderFor(professionalId: string, patientId: string, kind: FileK
 // Whether a path belongs to this practice's patient (and this kind).
 export function pathBelongs(path: string, professionalId: string, patientId: string, kind?: FileKind): boolean {
   const parts = path.split("/");
-  if (parts[0] !== professionalId || parts[1] !== patientId || parts.some((p) => p === "" || p === "." || p === "..")) return false;
+  if (!isUuid(patientId) || parts[0] !== professionalId || parts[1] !== patientId || parts.some((p) => p === "" || p === "." || p === "..")) return false;
   if (kind === "exams") return parts.length === 4 && parts[2] === "exams";
   if (kind === "files") return parts.length === 3;
   return parts.length === 3 || (parts.length === 4 && parts[2] === "exams");
