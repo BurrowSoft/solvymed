@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { ACTIONS, GLOSSARY, NEVER, appMapText } from "@/lib/solvyai/app-map";
+import { ACTIONS, GENERAL, GLOSSARY, NEVER, appMapText } from "@/lib/solvyai/app-map";
 import help from "@/content/helpArticles.json";
 
 // The drift test (specs/assistant.md §4): the App Map, the contract's
@@ -62,6 +62,7 @@ describe("App Map ↔ the contract ↔ the code", () => {
   it("every Help article it points to exists", () => {
     for (const a of ACTIONS) expect(helpIds.has(a.help), `${a.kind}: ${a.help}`).toBe(true);
     for (const n of NEVER) expect(helpIds.has(n.help), n.what).toBe(true);
+    for (const g of GENERAL) expect(helpIds.has(g.help), g.help).toBe(true);
   });
 
   it("every action has rules, a card and inputs; the text form is complete", () => {
@@ -78,7 +79,7 @@ describe("App Map ↔ the contract ↔ the code", () => {
 
   it("a pending rule names what makes it true, and stays out of the model's text until then", () => {
     const text = appMapText();
-    const pending = ACTIONS.flatMap((a) => a.rules).filter((r): r is { text: string; pending: string } => typeof r !== "string");
+    const pending = [...ACTIONS.flatMap((a) => a.rules), ...GENERAL.map((g) => g.rule)].filter((r): r is { text: string; pending: string } => typeof r !== "string");
     expect(pending.length).toBeGreaterThan(0);
     for (const r of pending) {
       expect(r.pending, r.text).toMatch(/(web|mobile) #\d+|migration \d+/);

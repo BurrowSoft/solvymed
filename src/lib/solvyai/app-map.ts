@@ -230,6 +230,22 @@ export const ACTIONS: AppMapAction[] = [
   },
 ];
 
+// Rules about SolvyAI itself (not one action).
+export const GENERAL: { rule: Rule; help: string }[] = [
+  { rule: "SolvyAI is for doctors only; secretaries and patients don't have it.", help: "C9" },
+  {
+    rule: {
+      text: "SolvyAI's actions need the clinic's opt-in (Settings → SolvyAI → \"Permitir que o SolvyAI faça ações\" / \"Let SolvyAI take actions\", off by default); without it, SolvyAI only answers questions about using SolvyMed.",
+      pending: "migration 115 + mobile #99",
+    },
+    help: "C9",
+  },
+  {
+    rule: { text: "\"Mostrar botão do assistente\" / \"Show the assistant button\" (Settings → SolvyAI, per phone) hides or shows the ✦ button.", pending: "mobile #99" },
+    help: "C9",
+  },
+];
+
 // Things SolvyAI never does, not even with confirmation (spec §3 "Never"):
 // it explains where to do them instead.
 export const NEVER: { what: string; help: string }[] = [
@@ -272,7 +288,9 @@ export function appMapText(): string {
     for (const r of a.rules) if (typeof r === "string") lines.push(`- ${r}`);
     lines.push(`Card: ${a.card.join("; ")}. After saving: ${a.after}. Help: ${a.help}.`, "");
   }
-  lines.push("## Never via SolvyAI");
+  lines.push("## About SolvyAI");
+  for (const g of GENERAL) if (typeof g.rule === "string") lines.push(`- ${g.rule} (Help ${g.help})`);
+  lines.push("", "## Never via SolvyAI");
   for (const n of NEVER) lines.push(`- ${n.what} (Help ${n.help})`);
   lines.push("", "## Glossary");
   for (const g of GLOSSARY) lines.push(`- ${g.term}: ${g.meaning}`);
