@@ -7212,4 +7212,56 @@ This follows up my #113 note. Copy only: `src/lib/pushText.ts` (1 line),
 
 **CI at `bef269f`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `bef269f`.** This docs commit sits on top of a master sync (9 behind,
+
+## PR #116 (`feat/solvyai-app-map`, base master) — the SolvyAI App Map (data) + its drift test, 🟢 at `6bded04`
+
+- **Files:** only 2, `src/lib/solvyai/app-map.ts` (+280) and
+  `src/__tests__/app-map.test.ts` (+93).
+- **Nothing user-facing:** no runtime code imports `app-map.ts` (a grep
+  finds only the test). No route, component or message changed.
+- **Status glossary:** it already uses #117's single labels ("Solicitado"
+  / "Requested", "Novo horário proposto" / "New time proposed",
+  "Concluído" / "Completed"). No old label (Pendente, Proposta,
+  Tentative, Done, No-show) is left.
+
+**CI at `6bded04`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`6bded04`.** This docs commit sits on top of a master sync (14 behind,
+clean merge). The drift test re-runs in CI on the merge.
+
+## PR #117 (`fix/status-labels`, base master) — one set of status labels on web and app, 🟢 at `f6ec62e`
+
+Tested on the Preview at `f6ec62e` in pt-BR, en and th. The throwaway
+doctor had today's appointments in each status: tentative (from a
+patient), a doctor's proposal, completed, confirmed and absent. There
+was also a later tentative one, and the payment was pending on all of
+them. A linked throwaway patient checked their own side.
+
+| Status | pt-BR | en | th |
+|---|---|---|---|
+| tentative | **Solicitado** | **Requested** | ส่งคำขอแล้ว |
+| proposal | **Novo horário proposto** | **New time proposed** | เสนอเวลาใหม่ |
+| completed | Concluído | **Completed** | เสร็จสิ้น |
+| confirmed / absent | Confirmado / Ausente | Confirmed / Absent | ยืนยันแล้ว / ขาดนัด |
+
+- **Home (today's list):** every row carries the label in the table.
+- **Schedule, list view:** the request rows say Solicitado / Novo
+  horário proposto. The status selector holds the right value on each
+  row (completed → Concluído / Completed / เสร็จสิ้น). Its options:
+  Agendado, Confirmado, Concluído, Cancelado, Atrasado, Ausente (en:
+  Scheduled … Completed … Absent).
+- **Patient, My appointments:** the badges read Solicitado / Novo
+  horário proposto / Solicitado (en Requested / New time proposed; th
+  ส่งคำขอแล้ว / เสนอเวลาใหม่).
+- **"Pendente/Pending" is now only the payment pill** ("⏳ Pendente · R$
+  150,00" / "⏳ Pending · …"). No status says Pendente, Tentative,
+  Proposta, Proposal or Done anywhere.
+- **Help A5** (`content/help/01-agenda.md` and the rebuilt
+  `helpArticles.json`): the list reads "Scheduled, Confirmed, Completed,
+  Cancelled, Late, **Absent** and Rejected" (pt "… Atrasado, Ausente e
+  Rejeitado"). The website note about "Done" / "No-show" is gone. The
+  in-app Help and SolvyAI surfaces aren't live, so I checked the content
+  files, not a screen.
+
+**CI at `f6ec62e`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`f6ec62e`.** This docs commit sits on top of a master sync (14 behind,
 clean merge; message JSON valid).
