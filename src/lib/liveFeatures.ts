@@ -29,6 +29,12 @@ export const liveFeatures = {
   // The app's PDFs (prescriptions, receipts, history) in Thai, with
   // Buddhist-year dates (the app's TH-2).
   thaiPdfs: false,
+  // The Founders Program page (/founders) and its application form: on
+  // only with Vitor's OK, migration 129 applied, the mailbox + Resend key,
+  // the privacy-policy line and the native Thai review. Its rules page also
+  // waits for the lawyer (foundersRules).
+  founders: false,
+  foundersRules: false,
 } as const;
 
 // The languages the app's PDFs are generated in today (UX, verified on the
