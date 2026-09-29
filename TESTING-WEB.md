@@ -9247,3 +9247,150 @@ Tested by web tester 2, over HTTP against `/api/assistant`.
 (code), so the web dev syncs it. This docs commit sits directly on the PR
 head. A re-check of the built JSON after the sync is quick.
 **Review: clean (9a).** **Merge gate: 🟢 for `3937f0b`.**
+
+## #161 Dark theme (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `3b060e32d9cd84c0c754d8c05aac3d16cb583ddf`** (the dark theme, synced head)
+
+**How it was tested:**
+- **Where:** the Vercel Preview, plus a local `next dev` at the same head
+  for the SolvyAI panel, since SolvyAI is off on the Preview.
+- **Data:** the #147 fixture doctor, with one appointment per status for
+  the badges, and throwaway doctors / a secretary (deleted afterwards).
+
+| Row | Result |
+|---|---|
+| Configurações → Aparência | ✅ "Aparência · O tema do painel neste navegador. Impressões e e-mails ficam sempre claros. · Automático · Claro · Escuro". Escuro applies at once, with cookie `sm_theme=dark` |
+| No flash / persisted | ✅ the server-rendered HTML of /dashboard already has `data-theme="dark"`; it holds after a reload |
+| Readability (dark) | ✅ an automated contrast scan of every visible text element (colours resolved through a canvas, so oklch works) found **0 below 3:1** on: Início, Agenda (lista + semana), Pacientes, the patient page + tabs Receitas / Exames / Arquivos / Registro de acessos, Pagamentos, Configurações, Clínicas. Screenshots checked |
+| Status badges | ✅ Agendado / Confirmado / Concluído / Cancelado / Ausente / Atrasado / Solicitado each keep a distinct dark-tinted chip with light text |
+| Claro with the OS in dark | ✅ stays light (`data-theme=light`, white cards) |
+| Automático | ✅ follows the OS: dark cards when the OS is dark; white after `colorScheme → light` |
+| Secretary | ✅ has Aparência |
+| Print view under Escuro and under Automático + OS dark | ✅ `#print-doc` is scoped `data-theme=light`, white background, dark text. In print media only the document is visible (checked after the nav's CSS transition settles). The Chromium PDF is 1 page |
+| Public site / Help / login (signed-out visitor with `sm_theme=dark`) | ✅ not themed (no theme root; white pages) |
+| The tour in dark | ✅ works. **Nit:** its step card stays white with dark text on the dark dashboard (readable, but not themed); the "Continuar o tour?" toast is themed |
+| SolvyAI panel in dark (local) | ✅ the panel surface is dark, and the answer, card and chips are readable. Items under 4.5:1 are the known white-on-teal-600 (3.74, both themes, as the PR notes), the small grey footnotes (3.74; lighter than slate-400 on white in light mode), and the disabled Enviar |
+| Console | ✅ no errors |
+
+Merged at `3b060e3` (evidence: PR comment 5898934052).
+
+## #165 A clinic proposal shows the proposed time; the pt-BR trial "=0" plural (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `6033260`, on its Vercel Preview (Playwright).
+- **Account:** a throwaway doctor.
+- **Seeded requests** (all for 13/10), shown in "Solicitações de consulta":
+  - a clinic proposal with a proposed date + time (14/10 15:30);
+  - a patient's reschedule request (`scheduled_by = patient`);
+  - a clinic proposal with a date but **no** proposed time;
+  - a plain tentative request.
+
+| Row | pt-BR | en | th |
+|---|---|---|---|
+| Clinic proposal (date + time) | ✅ "Aguardando resposta do paciente / **Proposto: qua., 14 de out. · 15:30**" | ✅ "Proposed: Wed, Oct 14 · 3:30 PM" | ✅ "เสนอ: พุธ 14 ต.ค. · 15:30" |
+| The patient's reschedule request | ✅ no "Proposto" (it keeps "Remarcação solicitada / Solicitado: qui., 15 de out. · 11:00") | ✅ | ✅ |
+| Clinic proposal without a proposed time | ✅ shown, with no proposed line | ✅ | ✅ |
+| Plain request | ✅ no proposed line | ✅ | ✅ |
+| Proposed lines in the panel | ✅ exactly 1 | ✅ 1 | ✅ 1 |
+
+**The pt-BR trial plural (`settings.subscriptionTrial`):**
+- **How it was checked:** formatted with the app's `use-intl`.
+- **This PR:** n=0 "Teste grátis: **faltam 0 dias**", 1 "falta 1 dia", 2
+  "faltam 2 dias", 15 "faltam 15 dias".
+- **Master, before:** gave "**falta 0 dia**".
+- **en / th:** unchanged ("0 days left" / "เหลืออีก 0 วัน").
+- **Live:** the web's Settings → Assinatura only shows the trial line
+  while days > 0 (`subscriptionPlan`), so 0 can't be seen there today.
+  The fix is for parity with the app.
+
+**Master sync:** master merged in under this docs commit, cleanly.
+**Review: clean (9a).** **Merge gate: 🟢 for `6033260`.**
+
+Merged at `376cdd9` (the docs commit was dropped at merge; restored here).
+
+## #166 The recibo's back link says "Voltar aos pagamentos" (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `bbbc0c4`, on its Vercel Preview (Playwright).
+- **Accounts:** throwaway BR and TH doctors, each with a paid appointment.
+- **Regression check:** P8, on the kept #150 fixture.
+
+| Page | pt-BR | en | th |
+|---|---|---|---|
+| BR recibo (the document shows) | ✅ "← Voltar aos pagamentos" → /pt-BR/dashboard/payments | ✅ "← Back to payments" → /dashboard/payments | ✅ "← กลับไปที่การชำระเงิน" → /th/dashboard/payments |
+| TH practice recibo URL (hint, no document) | ✅ the same label → Pagamentos | ✅ | ✅ |
+| P8 history print (regression) | ✅ still "← Voltar ao paciente" → the patient's page | | |
+
+**Not run live:** the recibo's country-error page. It passes the same
+`backToPayments` label per the diff; the injection runs are in #153 / #162.
+
+**Master sync:** master merged in under this docs commit, cleanly.
+**Review: clean (9a).** **Merge gate: 🟢 for `bbbc0c4`.**
+
+Merged at `1b92b9e` (the docs commit was dropped at merge; restored here).
+
+## #173 SolvyAI add_patient Desfazer never deletes a patient in use (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `1a50a5390867812d117d9d5f02b012d1a1a04a49`** (SolvyAI's `add_patient` Desfazer never deletes a patient in use)
+
+**How it was tested:**
+- **Server:** a local `next dev` at this head with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts `propose_add_patient`.
+- **Data:** the prod DB, with a throwaway doctor (deleted afterwards).
+
+| Row | Result |
+|---|---|
+| Add a patient → an appointment is booked for them before Desfazer (a REST insert standing in for another tab) → Desfazer | ✅ the toast goes "…" (pending), then **"Não foi possível desfazer. Abra o item para ajustar."** + **Abrir**. The patient **stays**, and the appointment keeps its `patient_id` (not orphaned). Abrir → `/pt-BR/dashboard/patients/<id>?highlight=<id>` |
+| Add a patient, unused → Desfazer | ✅ the patient row is deleted; the toast says "Desfeito" |
+
+**FYI (not this PR):** after SolvyAI saves a new doctor's first patient,
+the page ended on `/pt-BR/dashboard?setup=1` instead of the patient's page.
+It's likely the setup checklist's own navigation; #134 also stayed on the
+dashboard.
+
+Merged at `1a50a53` (evidence: PR comment 5899224987).
+
+## #174 Patient Delete only with no history and no appointments (web tester 1, 2026-09-29)
+
+**First round:**
+
+**Web tester 1: ❌ at `6587772078aab7def5207d4b9fe5408dccf27450`**. One Help label finding; everything else works.
+
+**How it was tested:**
+- **Where:** the Vercel Preview (Playwright), plus a local `next dev` at the same head.
+- **Migration 134** isn't applied, so a test-only preload answers the patients DELETE with its `patient_has_appointments` error for one patient.
+- **Accounts:** throwaway doctors, cleaned up, and the kept #150 fixture for a patient with records.
+
+| Row | Result |
+|---|---|
+| A patient with nothing | ✅ Informações shows **Arquivar cadastro** + **Excluir Paciente**. Excluir → confirm "Excluir Opus Limpo? Esta ação não pode ser desfeita." → deleted |
+| Only a past **cancelled** appointment | ✅ only Arquivar cadastro |
+| A future appointment | ✅ only Arquivar cadastro |
+| A patient with records (fixture) | ✅ only Arquivar cadastro |
+| Race: the page is open, an appointment is added elsewhere, then Excluir | ✅ as expected before 134: the delete goes through, and the appointment stays with `patient_id = null`. **Re-check after 134** (it should refuse) ⏳ |
+| 134's refusal (local injection) | ✅ pt "Este paciente tem consultas registradas, então não pode ser excluído. Você pode arquivá-lo." + an **Arquivar cadastro** button that opens the archive dialog ("Arquivar Opus Guarda 134? …"); the patient isn't deleted. en: "This patient has appointments on record, so they can't be deleted. You can archive them instead." + **Archive patient** |
+
+**❌ Help P3, pt:**
+- **What:** the new web note says "**Excluir cadastro** só aparece para pacientes sem prontuário, receita, arquivo e sem nenhuma consulta…". The button on screen reads **"Excluir Paciente"** (`patientDetail.deletePatient`). ("Arquivar cadastro" does match.)
+- **en:** "**Delete patient** shows only…" vs the button "Delete Patient" differs only in case, which is fine.
+- **Fix:** either say **Excluir Paciente** in the Help, or rename the button (for example to "Excluir cadastro", to pair with "Arquivar cadastro"). Check with UX / the app's wording.
+
+**Re-check:**
+
+**Web tester 1: 🟢 at `f8788c9270ec76e293124571fd795c6a4410d26b`**. This resolves the ❌ on `6587772`.
+
+**What changed since `6587772`:** the button's wording, per UX. It now pairs with Arquivar cadastro, and Help P3 is unchanged. It was checked on the Vercel Preview (Playwright) with a clean patient:
+
+| Locale | Info buttons | Help P3 web note |
+|---|---|---|
+| pt-BR | ✅ **Arquivar cadastro** · **Excluir cadastro** | ✅ "…clique em **Arquivar cadastro**… **Excluir cadastro** só aparece para pacientes sem prontuário, receita, arquivo e sem nenhuma consulta; os demais só podem ser arquivados." |
+| en | ✅ **Archive patient** · **Delete patient** | ✅ "…click **Archive patient**… **Delete patient** shows only for patients with no record, prescription, file or appointment; the others can only be archived." |
+| th | ✅ **เก็บประวัติผู้ป่วยเข้าคลัง** · **ลบประวัติผู้ป่วย** | (no th Help) |
+
+**Carried over from `6587772`:** the commits since only change message strings (the button labels, plus `deleteHasAppointments` wording in th/fr/de/es). So the behaviour rows in my previous comment still hold:
+- Delete shows only with no history and no appointment (past or cancelled ones count);
+- 134's refusal gives the message + an Arquivar button → the archive dialog.
+
+**Still ⏳:** re-check the open-page race after migration 134 is applied; it should then refuse.
+
+Merged at `f8788c9` (evidence: PR comments 5899204969 / 5899348036).
