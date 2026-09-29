@@ -10,6 +10,7 @@ import { dateLocale, formatDateLabel, formatShortDate } from "@/lib/dateLabels";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
+import { FilesTab } from "./FilesTab";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -100,16 +101,18 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   accessLog?: AccessLogPage | "failed" | null;
 }) {
   const t = useTranslations("patientDetail");
-  const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "appointments" | "access">("info");
+  const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "exams" | "files" | "appointments" | "access">("info");
   const ALL_TABS = [
     { key: "info" as const, label: t("tabInfo") },
     { key: "records" as const, label: t("tabRecords", { n: records.length }) },
     { key: "prescriptions" as const, label: t("tabPrescriptions", { n: prescriptions.length }) },
+    { key: "exams" as const, label: t("tabExams") },
+    { key: "files" as const, label: t("tabFiles") },
     { key: "appointments" as const, label: t("tabAppointments", { n: appointments.length }) },
     { key: "access" as const, label: t("tabAccessLog") },
   ];
   const TABS = ALL_TABS.filter(tb =>
-    (!isSecretary || !["records", "prescriptions", "access"].includes(tb.key)) &&
+    (!isSecretary || !["records", "prescriptions", "exams", "files", "access"].includes(tb.key)) &&
     (tb.key !== "access" || accessLog != null),
   );
 
@@ -135,6 +138,9 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
       {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} idKind={idKind} />}
       {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
+      {(tab === "exams" || tab === "files") && !isSecretary && (
+        <FilesTab key={tab} patientId={patient.id} doctorId={currentUserId} kind={tab} isArchived={isArchived} locale={locale} />
+      )}
       {tab === "appointments" && <AppointmentsTab appointments={appointments} locale={locale} />}
       {tab === "access" && accessLog != null && (
         <AccessLogTab patientId={patient.id} initial={accessLog} records={records} prescriptions={prescriptions} locale={locale} />
