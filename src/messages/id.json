@@ -912,6 +912,22 @@
     "paymentsEmptyBody": "Pembayaran dari janji temu Anda akan muncul di sini.",
     "setYourPrices": "Atur harga Anda"
   },
+  "changePassword": {
+    "title": "Ubah kata sandi",
+    "hint": "Demi keamanan, sesi di perangkat lain akan diakhiri.",
+    "current": "Kata sandi saat ini",
+    "new": "Kata sandi baru",
+    "confirm": "Konfirmasi kata sandi baru",
+    "success": "Kata sandi berhasil diubah! Sesi di perangkat lain telah diakhiri.",
+    "sameError": "Kata sandi baru harus berbeda dari yang sekarang.",
+    "mismatch": "Kata sandi tidak cocok.",
+    "tooShort": "Kata sandi minimal {min} karakter.",
+    "allFields": "Isi semua kolom.",
+    "currentWrong": "Kata sandi saat ini salah.",
+    "generic": "Tidak dapat mengubah kata sandi. Coba lagi.",
+    "cancel": "Batal",
+    "saving": "Menyimpan…"
+  },
   "accountClose": {
     "titleClose": "Tutup akun",
     "titleDelete": "Hapus akun",

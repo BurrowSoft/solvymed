@@ -912,6 +912,22 @@
     "paymentsEmptyBody": "予約の支払いはここに表示されます。",
     "setYourPrices": "料金を設定"
   },
+  "changePassword": {
+    "title": "パスワードを変更",
+    "hint": "安全のため、ほかの端末のセッションは終了します。",
+    "current": "現在のパスワード",
+    "new": "新しいパスワード",
+    "confirm": "新しいパスワード（確認）",
+    "success": "パスワードを変更しました。ほかの端末のセッションは終了しました。",
+    "sameError": "新しいパスワードは現在のものと異なる必要があります。",
+    "mismatch": "パスワードが一致しません。",
+    "tooShort": "パスワードは{min}文字以上にしてください。",
+    "allFields": "すべての項目を入力してください。",
+    "currentWrong": "現在のパスワードが正しくありません。",
+    "generic": "パスワードを変更できませんでした。もう一度お試しください。",
+    "cancel": "キャンセル",
+    "saving": "保存中…"
+  },
   "accountClose": {
     "titleClose": "アカウントを閉鎖",
     "titleDelete": "アカウントを削除",

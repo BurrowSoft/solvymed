@@ -912,6 +912,22 @@
     "paymentsEmptyBody": "Zahlungen aus Ihren Terminen erscheinen hier.",
     "setYourPrices": "Preise festlegen"
   },
+  "changePassword": {
+    "title": "Passwort ändern",
+    "hint": "Aus Sicherheitsgründen werden Ihre Sitzungen auf anderen Geräten beendet.",
+    "current": "Aktuelles Passwort",
+    "new": "Neues Passwort",
+    "confirm": "Neues Passwort bestätigen",
+    "success": "Passwort geändert! Ihre Sitzungen auf anderen Geräten wurden beendet.",
+    "sameError": "Das neue Passwort muss sich vom aktuellen unterscheiden.",
+    "mismatch": "Die Passwörter stimmen nicht überein.",
+    "tooShort": "Das Passwort muss mindestens {min} Zeichen haben.",
+    "allFields": "Bitte füllen Sie alle Felder aus.",
+    "currentWrong": "Ihr aktuelles Passwort ist falsch.",
+    "generic": "Das Passwort konnte nicht geändert werden. Bitte erneut versuchen.",
+    "cancel": "Abbrechen",
+    "saving": "Wird gespeichert…"
+  },
   "accountClose": {
     "titleClose": "Konto schließen",
     "titleDelete": "Konto löschen",

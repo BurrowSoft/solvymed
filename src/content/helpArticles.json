@@ -1294,8 +1294,8 @@
           ]
         },
         "web": {
-          "pt": "Ainda não há **Alterar senha** no site; use o app, ou saia da conta e use **Esqueceu a senha?** na tela de entrada.",
-          "en": "There's no **Change password** on the website yet; use the app, or sign out and use **Forgot password?** on the sign-in screen."
+          "pt": "**Configurações → Alterar senha**: digite a senha atual e a nova (duas vezes). As sessões nos outros aparelhos são encerradas; este navegador continua conectado.",
+          "en": "**Settings → Change password**: enter your current password and the new one (twice). Your sessions on other devices are ended; this browser stays signed in."
         },
         "webUnavailable": false,
         "open": "settings",

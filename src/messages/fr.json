@@ -912,6 +912,22 @@
     "paymentsEmptyBody": "Les paiements de vos rendez-vous apparaîtront ici.",
     "setYourPrices": "Définir vos tarifs"
   },
+  "changePassword": {
+    "title": "Changer le mot de passe",
+    "hint": "Par sécurité, les sessions sur vos autres appareils sont fermées.",
+    "current": "Mot de passe actuel",
+    "new": "Nouveau mot de passe",
+    "confirm": "Confirmer le nouveau mot de passe",
+    "success": "Mot de passe modifié ! Les sessions sur vos autres appareils ont été fermées.",
+    "sameError": "Le nouveau mot de passe doit être différent de l'actuel.",
+    "mismatch": "Les mots de passe ne correspondent pas.",
+    "tooShort": "Le mot de passe doit contenir au moins {min} caractères.",
+    "allFields": "Veuillez remplir tous les champs.",
+    "currentWrong": "Votre mot de passe actuel est incorrect.",
+    "generic": "Impossible de changer le mot de passe. Réessayez.",
+    "cancel": "Annuler",
+    "saving": "Enregistrement…"
+  },
   "accountClose": {
     "titleClose": "Fermer le compte",
     "titleDelete": "Supprimer le compte",

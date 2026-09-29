@@ -912,6 +912,22 @@
     "paymentsEmptyBody": "Payments from your appointments will appear here.",
     "setYourPrices": "Set your prices"
   },
+  "changePassword": {
+    "title": "Change password",
+    "hint": "For security, your sessions on other devices are ended.",
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm new password",
+    "success": "Password changed successfully! Your sessions on other devices were ended.",
+    "sameError": "New password must differ from your current password.",
+    "mismatch": "Passwords do not match.",
+    "tooShort": "Password must be at least {min} characters.",
+    "allFields": "Please fill in all fields.",
+    "currentWrong": "Your current password is incorrect.",
+    "generic": "Couldn't change the password. Please try again.",
+    "cancel": "Cancel",
+    "saving": "Saving…"
+  },
   "accountClose": {
     "titleClose": "Close account",
     "titleDelete": "Delete account",
