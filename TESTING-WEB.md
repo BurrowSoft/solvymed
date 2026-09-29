@@ -7926,3 +7926,52 @@ applied):
 apostrophe escape since the clean `07ea1db`).** **Merge gate: 🟢 for
 `1028239`.** The branch was up to date with `release`; this docs commit
 sits on top.
+
+**#137 post-merge prod check ✅** (www.solvymed.com; Vercel prod = release
+`ae855b1`, checked with `vercel inspect`). The same spec as above, with no
+bypass header on prod:
+- **Patient reads:** REST notes → 0 rows; `get_my_appointments` has no
+  `notes` key; /my-appointments shows no clinic note (text or HTML) and
+  shows the patient's own message.
+- **Actions:** accepting a proposal works; pending-confirmation lists the
+  requests again, and Accept works.
+- **Clinic and privacy:** the clinic sees "Mensagem do paciente"; privacy
+  §8 is OK.
+- **Plus a fresh /book booking with a message** (a new spec,
+  `opus-pr137-book`):
+  - the DB has `patient_note` = the message and `notes` null;
+  - the patient sees their message in /my-appointments;
+  - the clinic's request card shows "Mensagem do paciente: Mensagem nova
+    Opus pelo booking".
+- **Not yet covered:** a patient's "Solicitar reagendamento".
+
+## PR #139 (`chore/merge-back-137`, base master) — merge-back of #137: master's patient reads through `get_my_appointments` + Help K5 line, 🟢 at `b1e8acc`
+
+**Why:** since migration 106, master's patient pages read nothing: I saw
+an empty pending-confirmation while testing #132.
+
+**Tested on the #139 (master) Preview at `b1e8acc`**, against the prod DB
+(106 live). Both #137 specs, unchanged:
+- **REST as a patient:** notes / `*` → 0 rows; `get_my_appointments` →
+  own rows, no `notes` key, no clinic note anywhere.
+- **/my-appointments:** Confirmado, "Novo horário proposto" (master's
+  #117 label) and Concluído. The patient's own message is shown; the
+  clinic's notes are absent from text and HTML. Accepting the proposal
+  saves **confirmed**.
+- **pending-confirmation** (an invited patient): lists both requests again,
+  and Aceitar saves **confirmed**.
+- **Clinic:** "Mensagem do paciente: …" on the request cards and schedule
+  rows.
+- **/book with a message:** `patient_note` = the message, `notes` null; the
+  patient sees it; the clinic card shows "Mensagem do paciente".
+- **Help K5:** pt "As observações da clínica são privadas e não aparecem
+  para o paciente."; en "The clinic's notes are private and never shown to
+  the patient."
+- **Privacy §8** (pt/en): the line is present.
+
+(One run had a Preview login time out for the second patient; a re-run was
+clean.)
+
+**CI at `b1e8acc`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`b1e8acc`.** This docs commit sits directly on top; the branch is up to
+date with master.
