@@ -76,6 +76,16 @@ describe("App Map ↔ the contract ↔ the code", () => {
     expect(GLOSSARY.length).toBeGreaterThan(5);
   });
 
+  it("a pending rule names what makes it true, and stays out of the model's text until then", () => {
+    const text = appMapText();
+    const pending = ACTIONS.flatMap((a) => a.rules).filter((r): r is { text: string; pending: string } => typeof r !== "string");
+    expect(pending.length).toBeGreaterThan(0);
+    for (const r of pending) {
+      expect(r.pending, r.text).toMatch(/(web|mobile) #\d+|migration \d+/);
+      expect(text, r.text).not.toContain(r.text);
+    }
+  });
+
   it("the 'never' list covers the spec's (clinical data, deletions, settings, account)", () => {
     const all = NEVER.map((n) => n.what.toLowerCase()).join(" | ");
     for (const w of ["record", "prescription", "archiv", "closing the account", "pix", "subscription", "secretary", "country"]) expect(all, w).toContain(w);

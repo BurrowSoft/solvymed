@@ -14,6 +14,10 @@
 import type { ActionKind, TargetScreen } from "@/lib/assistant/types";
 
 export type Role = "doctor" | "secretary";
+// A rule the code enforces today, or one that becomes true when the named
+// PR / migration ships (pending rules stay out of the model's text until
+// then, so the map never claims more than the product does; a9).
+export type Rule = string | { text: string; pending: string };
 export type Label = { pt: string; en: string };
 
 export type AppMapAction = {
@@ -27,7 +31,7 @@ export type AppMapAction = {
   roles: Role[];
   inputs: { required: string[]; optional: string[]; defaults: string[] };
   // The business rules, in plain words (what the server checks).
-  rules: string[];
+  rules: Rule[];
   // What the confirmation card shows, in order.
   card: string[];
   // Where the UI goes after Confirmar (the card's `after`).
@@ -53,9 +57,11 @@ export const ACTIONS: AppMapAction[] = [
       defaults: ["duration 30 min (or the procedure's)", "procedure and value from the clinic's procedures", "in person", "payment pending"],
     },
     rules: [
+      "The patient must belong to this practice: search only within it, never another clinic's patients.",
       "Another appointment at that time is a hard stop: nothing is saved; say who is there and offer the nearest free times (cancelled, rejected and blocked entries don't count).",
       "Blocked time is allowed but asked twice: 'Este horário está bloqueado (…). Agendar mesmo assim?'.",
-      "Outside the working hours, or on a day the doctor doesn't work, is allowed but asked twice; when blocked too, ONE question lists both. Hours never set up: no question.",
+      "On the website, outside the working hours or on a day the doctor doesn't work is allowed but asked twice; when blocked too, ONE question lists both. Hours never set up: no question.",
+      { text: "In the app too: outside the working hours or on a day off is asked twice.", pending: "mobile #91" },
       "An archived patient can't get new appointments (restore them first).",
       "The appointment can't run past midnight. Duration is 1–480 minutes.",
       "Dates are Gregorian; a year of 2400 or more is never saved or converted.",
@@ -76,7 +82,8 @@ export const ACTIONS: AppMapAction[] = [
     roles: ["doctor", "secretary"],
     inputs: { required: ["which appointment", "new date", "new start time"], optional: ["new duration"], defaults: ["the same duration"] },
     rules: [
-      "The new time gets the same checks as booking (overlap = hard stop; blocked / outside hours = asked twice).",
+      "Another appointment at the new time is a hard stop (the database refuses the overlap).",
+      { text: "Moving onto blocked time or outside the working hours is asked twice, like booking.", pending: "mobile #91" },
       "An edit that doesn't move it (same date, start and duration) isn't asked again.",
       "The card shows before → after.",
       "Patients' own reschedule requests are a separate flow (the doctor accepts or declines them).",
@@ -113,7 +120,7 @@ export const ACTIONS: AppMapAction[] = [
     roles: ["doctor", "secretary"],
     inputs: { required: ["date", "start time", "end (or duration)"], optional: ["reason"], defaults: [] },
     rules: [
-      "Patients can't request appointments in blocked time.",
+      "The booking pages don't offer blocked times to patients (a screen rule; the database itself doesn't refuse them).",
       "The practice can still book over a block, after the second question.",
       "A year of 2400 or more is never saved.",
     ],
@@ -174,7 +181,8 @@ export const ACTIONS: AppMapAction[] = [
       "A possible duplicate (same ID, same phone, or same name + birth date) is shown first, archived ones marked, with 'open existing' or 'create anyway'.",
       "The same CPF / Thai ID / passport can't be registered twice in one practice.",
       "A Thai ID must pass its checksum.",
-      "The birth date must be between 1900 and today; a year of 2400 or more is never saved or converted.",
+      "A birth-date year of 2400 or more is never saved or converted.",
+      { text: "The birth date must be between 1900 and today.", pending: "web #114 + the app + migration 116" },
       "Only the ID fields of the practice's country are used.",
     ],
     card: ["full name", "birth date", "phone", "email", "ID"],
@@ -192,6 +200,8 @@ export const ACTIONS: AppMapAction[] = [
     inputs: { required: ["which appointment", "paid or unpaid"], optional: ["amount"], defaults: [] },
     rules: [
       "'To receive' counts unpaid appointments that are scheduled, confirmed, completed or late; requests, cancelled, rejected, absent and blocked never count.",
+      "If the appointment has no value, the amount is required to mark it paid.",
+      "Marking an appointment UNPAID again asks for a confirmation first (both platforms).",
     ],
     card: ["patient", "appointment (weekday, date, time)", "value", "paid / unpaid"],
     after: "payments",
@@ -208,6 +218,7 @@ export const ACTIONS: AppMapAction[] = [
     inputs: { required: ["which appointment"], optional: [], defaults: [] },
     rules: [
       "Only for Brazilian practices with a Pix key; it opens WhatsApp with the patient's number and the Pix message.",
+      "It needs the patient's phone number; without one, say so and offer the QR / Pix Copia e Cola on the appointment instead.",
       "Thai practices show a PromptPay QR on the appointment instead; there's no WhatsApp PromptPay message.",
       "The payment method always follows the PRACTICE's country.",
     ],
@@ -232,19 +243,21 @@ export const NEVER: { what: string; help: string }[] = [
   { what: "The clinic's country.", help: "C1" },
 ];
 
+// Status labels are the EXACT ones on screen (web src/messages, app
+// lib/i18n: pt-BR / en); where web and app differ, both are listed.
 export const GLOSSARY: { term: string; meaning: string }[] = [
-  { term: "scheduled (Agendada)", meaning: "Booked by the practice." },
-  { term: "confirmed (Confirmada)", meaning: "Confirmed with the patient." },
-  { term: "completed (Concluída)", meaning: "The appointment happened." },
-  { term: "late (Atrasado)", meaning: "The patient is late." },
-  { term: "absent (Faltou)", meaning: "The patient didn't come; it doesn't count as 'to receive'." },
-  { term: "cancelled (Cancelada)", meaning: "Cancelled; frees the time." },
-  { term: "blocked", meaning: "A blocked period, not an appointment." },
-  { term: "tentative (Pedido)", meaning: "A patient's booking request waiting for the practice." },
-  { term: "proposal", meaning: "A new time proposed on a request, waiting for the other side." },
-  { term: "rejected", meaning: "A request the practice didn't accept." },
+  { term: "scheduled: \"Agendado\" / \"Scheduled\"", meaning: "Booked by the practice." },
+  { term: "confirmed: \"Confirmado\" / \"Confirmed\"", meaning: "Confirmed with the patient." },
+  { term: "completed: \"Concluído\" / web \"Done\", app \"Completed\"", meaning: "The appointment happened." },
+  { term: "late: \"Atrasado\" / \"Late\"", meaning: "The patient is late." },
+  { term: "absent: \"Ausente\" / \"Absent\"", meaning: "The patient didn't come; it doesn't count as 'to receive'." },
+  { term: "cancelled: \"Cancelado\" / \"Cancelled\"", meaning: "Cancelled; frees the time." },
+  { term: "blocked: \"Bloqueado\" / \"Blocked\"", meaning: "A blocked period, not an appointment." },
+  { term: "tentative: \"Pendente\" / web \"Tentative\", app \"Pending\"", meaning: "A patient's booking request waiting for the practice." },
+  { term: "proposal: web \"Proposta\" / \"Proposal\", app \"Horário Proposto\" / \"Time Proposed\"", meaning: "A new time proposed on a request, waiting for the other side." },
+  { term: "rejected: \"Rejeitado\" / \"Rejected\"", meaning: "A request the practice didn't accept." },
   { term: "request flow", meaning: "The patient asks → the practice confirms, rejects or proposes a new time → the patient accepts or declines a proposal." },
-  { term: "trial / plan", meaning: "A free trial, then a paid plan; SolvyAI gives 10 messages a day during the trial and 20 on a paid plan." },
+  { term: "trial / plan", meaning: "A free trial, then a paid plan; SolvyAI's daily message limit (10 in the trial, 20 on a paid plan) arrives with the SolvyAI backend." },
   { term: "roles", meaning: "Doctor (the practice's owner), secretary (schedule, patients and payments, never clinical data; no SolvyAI) and patient (books through the app or the website; no SolvyAI)." },
   { term: "practice country", meaning: "Decides the currency, the patient ID fields (CPF / Thai ID / passport) and the payment QR (Pix / PromptPay)." },
 ];
@@ -256,7 +269,7 @@ export function appMapText(): string {
     lines.push(`### ${a.kind} (${a.tool})`, a.what);
     lines.push(`Screen: app "${a.screen.app.en}"${a.screen.web ? `, web "${a.screen.web.en}"` : " (app only)"}. Roles: ${a.roles.join(", ")}.`);
     lines.push(`Required: ${a.inputs.required.join(", ")}.${a.inputs.optional.length ? ` Optional: ${a.inputs.optional.join(", ")}.` : ""}${a.inputs.defaults.length ? ` Defaults (shown as "(padrão)"): ${a.inputs.defaults.join(", ")}.` : ""}`);
-    for (const r of a.rules) lines.push(`- ${r}`);
+    for (const r of a.rules) if (typeof r === "string") lines.push(`- ${r}`);
     lines.push(`Card: ${a.card.join("; ")}. After saving: ${a.after}. Help: ${a.help}.`, "");
   }
   lines.push("## Never via SolvyAI");
