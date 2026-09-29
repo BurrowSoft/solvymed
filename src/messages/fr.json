@@ -408,6 +408,7 @@
     "genericError": "Une erreur s'est produite. Veuillez réessayer.",
     "tabAccessLog": "Journal des accès",
     "rxPdfAria": "PDF de l’ordonnance (imprimer ou enregistrer)",
+    "historyPdf": "PDF du dossier",
     "accessLogIntro": "Qui a ouvert le dossier de ce patient, et quand. Vous seul pouvez voir ce journal.",
     "accessLogEmpty": "Aucun accès enregistré pour l'instant.",
     "accessLogFailed": "Impossible de charger le journal des accès. Veuillez réessayer.",
@@ -1247,6 +1248,14 @@
     "corrected": "(corrigé)",
     "print": "Imprimer / Enregistrer en PDF",
     "printHint": "Pour enregistrer le fichier, choisissez « Enregistrer au format PDF » dans la fenêtre d’impression.",
-    "back": "Retour au patient"
+    "back": "Retour au patient",
+    "historyTitle": "Dossier médical",
+    "medicalRecords": "Notes médicales",
+    "prescriptions": "Ordonnances",
+    "noRecords": "Aucune note.",
+    "noPrescriptions": "Aucune ordonnance.",
+    "birthDate": "Date de naissance : {value}",
+    "phone": "Téléphone : {value}",
+    "exportedBy": "Exporté par {name} le {date}"
   }
 }

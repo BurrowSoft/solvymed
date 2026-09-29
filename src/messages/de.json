@@ -408,6 +408,7 @@
     "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "tabAccessLog": "Zugriffsprotokoll",
     "rxPdfAria": "Rezept als PDF (drucken oder speichern)",
+    "historyPdf": "Verlauf als PDF",
     "accessLogIntro": "Wer die Akte dieses Patienten geöffnet hat und wann. Nur Sie sehen dieses Protokoll.",
     "accessLogEmpty": "Noch keine Zugriffe erfasst.",
     "accessLogFailed": "Das Zugriffsprotokoll konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
@@ -1247,6 +1248,14 @@
     "corrected": "(korrigiert)",
     "print": "Drucken / Als PDF speichern",
     "printHint": "Um die Datei zu speichern, wählen Sie im Druckfenster „Als PDF speichern“.",
-    "back": "Zurück zum Patienten"
+    "back": "Zurück zum Patienten",
+    "historyTitle": "Krankengeschichte",
+    "medicalRecords": "Behandlungseinträge",
+    "prescriptions": "Rezepte",
+    "noRecords": "Keine Einträge.",
+    "noPrescriptions": "Keine Rezepte.",
+    "birthDate": "Geburtsdatum: {value}",
+    "phone": "Telefon: {value}",
+    "exportedBy": "Exportiert von {name} am {date}"
   }
 }

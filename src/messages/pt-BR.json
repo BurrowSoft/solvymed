@@ -408,6 +408,7 @@
     "genericError": "Algo deu errado. Tente novamente.",
     "tabAccessLog": "Registro de acessos",
     "rxPdfAria": "PDF da receita (imprimir ou salvar)",
+    "historyPdf": "PDF do histórico",
     "accessLogIntro": "Quem abriu o prontuário deste paciente, e quando. Só você vê este registro.",
     "accessLogEmpty": "Nenhum acesso registrado ainda.",
     "accessLogFailed": "Não foi possível carregar o registro de acessos. Tente novamente.",
@@ -1247,6 +1248,14 @@
     "corrected": "(corrigido)",
     "print": "Imprimir / Salvar PDF",
     "printHint": "Para salvar o arquivo, escolha \"Salvar como PDF\" na janela de impressão.",
-    "back": "Voltar ao paciente"
+    "back": "Voltar ao paciente",
+    "historyTitle": "Histórico clínico",
+    "medicalRecords": "Prontuário",
+    "prescriptions": "Receitas",
+    "noRecords": "Nenhum registro.",
+    "noPrescriptions": "Nenhuma receita.",
+    "birthDate": "Nascimento: {value}",
+    "phone": "Telefone: {value}",
+    "exportedBy": "Exportado por {name} em {date}"
   }
 }

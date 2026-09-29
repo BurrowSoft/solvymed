@@ -408,6 +408,7 @@
     "genericError": "حدث خطأ ما. حاول مرة أخرى.",
     "tabAccessLog": "سجل الوصول",
     "rxPdfAria": "ملف PDF للوصفة (طباعة أو حفظ)",
+    "historyPdf": "ملف PDF للسجل",
     "accessLogIntro": "من فتح ملف هذا المريض ومتى. أنت وحدك ترى هذا السجل.",
     "accessLogEmpty": "لا توجد عمليات وصول مسجلة بعد.",
     "accessLogFailed": "تعذّر تحميل سجل الوصول. يُرجى المحاولة مرة أخرى.",
@@ -1247,6 +1248,14 @@
     "corrected": "(مُصحَّح)",
     "print": "طباعة / حفظ PDF",
     "printHint": "لحفظ الملف، اختر \"حفظ بتنسيق PDF\" في نافذة الطباعة.",
-    "back": "العودة إلى المريض"
+    "back": "العودة إلى المريض",
+    "historyTitle": "السجل الطبي",
+    "medicalRecords": "السجلات الطبية",
+    "prescriptions": "الوصفات الطبية",
+    "noRecords": "لا توجد سجلات.",
+    "noPrescriptions": "لا توجد وصفات.",
+    "birthDate": "تاريخ الميلاد: {value}",
+    "phone": "الهاتف: {value}",
+    "exportedBy": "صدّره {name} في {date}"
   }
 }

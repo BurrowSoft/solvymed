@@ -408,6 +408,7 @@
     "genericError": "Qualcosa è andato storto. Riprova.",
     "tabAccessLog": "Registro degli accessi",
     "rxPdfAria": "PDF della prescrizione (stampa o salva)",
+    "historyPdf": "PDF della storia clinica",
     "accessLogIntro": "Chi ha aperto la cartella di questo paziente, e quando. Solo tu puoi vedere questo registro.",
     "accessLogEmpty": "Nessun accesso registrato finora.",
     "accessLogFailed": "Impossibile caricare il registro degli accessi. Riprova.",
@@ -1247,6 +1248,14 @@
     "corrected": "(corretto)",
     "print": "Stampa / Salva PDF",
     "printHint": "Per salvare il file, scegli «Salva come PDF» nella finestra di stampa.",
-    "back": "Torna al paziente"
+    "back": "Torna al paziente",
+    "historyTitle": "Storia clinica",
+    "medicalRecords": "Note cliniche",
+    "prescriptions": "Prescrizioni",
+    "noRecords": "Nessuna nota.",
+    "noPrescriptions": "Nessuna prescrizione.",
+    "birthDate": "Data di nascita: {value}",
+    "phone": "Telefono: {value}",
+    "exportedBy": "Esportato da {name} il {date}"
   }
 }
