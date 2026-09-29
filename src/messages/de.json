@@ -1283,6 +1283,7 @@
     "noPrescriptions": "Keine Rezepte.",
     "birthDate": "Geburtsdatum: {value}",
     "phone": "Telefon: {value}",
-    "exportedBy": "Exportiert von {name} am {date}"
+    "exportedBy": "Exportiert von {name} am {date}",
+    "accessLogFailed": "Der Zugriff konnte nicht protokolliert werden. Bitte versuchen Sie es erneut."
   }
 }

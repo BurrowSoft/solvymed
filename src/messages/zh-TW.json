@@ -1283,6 +1283,7 @@
     "noPrescriptions": "尚無處方。",
     "birthDate": "出生日期：{value}",
     "phone": "電話：{value}",
-    "exportedBy": "由 {name} 於 {date} 匯出"
+    "exportedBy": "由 {name} 於 {date} 匯出",
+    "accessLogFailed": "無法記錄存取。請再試一次。"
   }
 }

@@ -1283,6 +1283,7 @@
     "noPrescriptions": "처방전이 없습니다.",
     "birthDate": "생년월일: {value}",
     "phone": "전화: {value}",
-    "exportedBy": "{name}님이 {date}에 내보냄"
+    "exportedBy": "{name}님이 {date}에 내보냄",
+    "accessLogFailed": "접근 기록을 저장하지 못했습니다. 다시 시도해 주세요."
   }
 }

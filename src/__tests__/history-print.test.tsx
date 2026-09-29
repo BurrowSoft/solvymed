@@ -53,11 +53,13 @@ const h = vi.hoisted(() => ({
   recordsError: null as unknown,
   filters: [] as [string, string, unknown][],
   rpcs: [] as unknown[],
+  // The access-log write fails: no document (UX 36, fail closed).
+  logFails: false,
 }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
     auth: { getUser: async () => ({ data: { user: { id: "doc-1" } } }) },
-    rpc: async (fn: string, args: unknown) => { h.rpcs.push({ fn, args }); return { data: null, error: null }; },
+    rpc: async (fn: string, args: unknown) => { h.rpcs.push({ fn, args }); return { data: null, error: h.logFails ? { message: "not_allowed" } : null }; },
     from: (table: string) => {
       const q: Record<string, unknown> = {};
       q.select = () => q;
@@ -90,7 +92,7 @@ import HistoryPage from "@/app/[locale]/(site)/dashboard/patients/[id]/history/p
 describe("history print page", () => {
   const params = Promise.resolve({ locale: "pt-BR", id: "p-1" });
   beforeEach(() => {
-    h.role = "professional"; h.recordsError = null; h.filters = []; h.rpcs = [];
+    h.role = "professional"; h.recordsError = null; h.filters = []; h.rpcs = []; h.logFails = false;
     h.patient = { id: "p-1", full_name: "Maria", cpf: "123", th_national_id: "999", birth_date: null, phone: null, sex: "female" };
   });
 
@@ -122,5 +124,12 @@ describe("history print page", () => {
     expect(container.textContent).toContain("corrected");
     expect(container.textContent).toContain("cpf: 123");
     expect(container.textContent).not.toContain("999");
+  });
+
+  it("no document when the access can't be recorded (fail closed)", async () => {
+    h.logFails = true;
+    const { container } = render(await HistoryPage({ params }));
+    expect(container.querySelector("#print-doc")).toBeNull();
+    expect(container.querySelector("[role=alert]")?.textContent).toContain("accessLogFailed");
   });
 });

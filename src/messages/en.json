@@ -1313,6 +1313,7 @@
     "noPrescriptions": "No prescriptions.",
     "birthDate": "Date of birth: {value}",
     "phone": "Phone: {value}",
-    "exportedBy": "Exported by {name} on {date}"
+    "exportedBy": "Exported by {name} on {date}",
+    "accessLogFailed": "Couldn't record the access. Please try again."
   }
 }

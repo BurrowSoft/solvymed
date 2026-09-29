@@ -1283,6 +1283,7 @@
     "noPrescriptions": "Nenhuma receita.",
     "birthDate": "Nascimento: {value}",
     "phone": "Telefone: {value}",
-    "exportedBy": "Exportado por {name} em {date}"
+    "exportedBy": "Exportado por {name} em {date}",
+    "accessLogFailed": "Não foi possível registrar o acesso. Tente novamente."
   }
 }

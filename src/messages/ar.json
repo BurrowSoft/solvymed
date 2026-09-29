@@ -1283,6 +1283,7 @@
     "noPrescriptions": "لا توجد وصفات.",
     "birthDate": "تاريخ الميلاد: {value}",
     "phone": "الهاتف: {value}",
-    "exportedBy": "صدّره {name} في {date}"
+    "exportedBy": "صدّره {name} في {date}",
+    "accessLogFailed": "تعذّر تسجيل الوصول. حاول مرة أخرى."
   }
 }

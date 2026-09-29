@@ -1283,6 +1283,7 @@
     "noPrescriptions": "処方箋はありません。",
     "birthDate": "生年月日：{value}",
     "phone": "電話：{value}",
-    "exportedBy": "{date} に {name} がエクスポート"
+    "exportedBy": "{date} に {name} がエクスポート",
+    "accessLogFailed": "アクセスを記録できませんでした。もう一度お試しください。"
   }
 }
