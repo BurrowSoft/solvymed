@@ -927,6 +927,22 @@
     "paymentsEmptyBody": "Các khoản thanh toán từ lịch hẹn của bạn sẽ hiển thị ở đây.",
     "setYourPrices": "Đặt giá dịch vụ"
   },
+  "changePassword": {
+    "title": "Đổi mật khẩu",
+    "hint": "Để bảo mật, các phiên trên thiết bị khác sẽ bị kết thúc.",
+    "current": "Mật khẩu hiện tại",
+    "new": "Mật khẩu mới",
+    "confirm": "Xác nhận mật khẩu mới",
+    "success": "Đã đổi mật khẩu! Các phiên trên thiết bị khác đã bị kết thúc.",
+    "sameError": "Mật khẩu mới phải khác mật khẩu hiện tại.",
+    "mismatch": "Mật khẩu không khớp.",
+    "tooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
+    "allFields": "Vui lòng điền tất cả các trường.",
+    "currentWrong": "Mật khẩu hiện tại không đúng.",
+    "generic": "Không thể đổi mật khẩu. Vui lòng thử lại.",
+    "cancel": "Hủy",
+    "saving": "Đang lưu…"
+  },
   "accountClose": {
     "titleClose": "Đóng tài khoản",
     "titleDelete": "Xóa tài khoản",
