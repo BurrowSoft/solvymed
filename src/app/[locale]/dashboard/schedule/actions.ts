@@ -58,6 +58,22 @@ export async function createAppointment(formData: FormData) {
   if (match?.archived_at) return { error: "Patient is archived", code: "patient_archived" };
   const patientId = match?.id ?? null;
 
+  // The value comes from the chosen procedure (its price), as the form and
+  // Help A1 say; none when it has no price.
+  let paymentAmount: number | null = null;
+  if (consultationType) {
+    const { data: proc } = await supabase
+      .from("procedures")
+      .select("price")
+      .eq("professional_id", effectiveProfId)
+      .eq("name", consultationType)
+      .eq("active", true)
+      .limit(1)
+      .maybeSingle();
+    const price = Number((proc as { price?: unknown } | null)?.price);
+    if (Number.isFinite(price) && price > 0) paymentAmount = price;
+  }
+
   const { error } = await supabase.from("appointments").insert({
     professional_id: effectiveProfId,
     patient_id: patientId,
@@ -69,6 +85,7 @@ export async function createAppointment(formData: FormData) {
     type,
     consultation_type: consultationType || "Consultation",
     payment_type: paymentType,
+    payment_amount: paymentAmount,
     payment_status: "pending",
     status: "scheduled",
     notes: notes || null,
