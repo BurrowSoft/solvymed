@@ -7265,3 +7265,28 @@ them. A linked throwaway patient checked their own side.
 **CI at `f6ec62e`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `f6ec62e`.** This docs commit sits on top of a master sync (14 behind,
 clean merge; message JSON valid).
+
+## PR #119 (`fix/dateinput-max-after-mount`, base master) — a birth date's `max` is the browser's today, set after mount, 🟢 at `99bd9d2`
+
+This follows up my #114 nit, where `?new=1` rendered on the server with
+a UTC `max`.
+- **Setup:** Preview at `99bd9d2`. The browser clock was faked with
+  Playwright (`clock.install`) to dates where the local day differs from
+  the server's UTC day.
+- **Paths:** New patient opened both via `?new=1` (server-rendered) and
+  via the button. Each save was checked in the DB.
+
+| Browser zone and time | Path | `max` | Today | Tomorrow | Saved |
+|---|---|---|---|---|---|
+| Asia/Bangkok, 2026-09-30 06:00 (a day ahead of UTC) | `?new=1` | **2026-09-30** | accepted (hint "พ.ศ. 2569") | "วันเกิดไม่ถูกต้อง…" | 2026-09-30 |
+| same | button | 2026-09-30 | accepted | flagged | 2026-09-30 |
+| America/Sao_Paulo, 2026-09-28 22:00 (a day behind UTC) | `?new=1` | **2026-09-28** | accepted | "Data de nascimento inválida…" | 2026-09-28 |
+| same | button | 2026-09-28 | accepted | flagged | 2026-09-28 |
+
+`max` now always matches the browser's local date, so today is accepted
+in a Thai browser before 07:00. Before this PR, `?new=1` showed
+`max="2026-09-29"` at 21:xx BRT.
+
+**CI at `99bd9d2`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`99bd9d2`.** This docs commit sits on top of a master sync (4 behind,
+clean merge).
