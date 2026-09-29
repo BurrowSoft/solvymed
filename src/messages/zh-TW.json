@@ -225,7 +225,13 @@
     "pixQrTitle": "Pix QR code",
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "複製",
-    "durationMinutes": "{n} 分鐘"
+    "durationMinutes": "{n} 分鐘",
+    "undoBooked": "已預約",
+    "undoMoved": "預約已改期",
+    "undoCancelled": "預約已取消",
+    "undoAction": "復原（{s} 秒）",
+    "undoDone": "已復原。",
+    "undoFailed": "無法復原。請開啟該項目進行調整。"
   },
   "payments": {
     "thisWeek": "本週",

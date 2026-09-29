@@ -225,7 +225,13 @@
     "pixQrTitle": "QR Code Pix",
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Copiar",
-    "durationMinutes": "{n} min"
+    "durationMinutes": "{n} min",
+    "undoBooked": "Consulta marcada",
+    "undoMoved": "Consulta remarcada",
+    "undoCancelled": "Consulta cancelada",
+    "undoAction": "Desfazer ({s} s)",
+    "undoDone": "Desfeito.",
+    "undoFailed": "Não foi possível desfazer. Abra o item para ajustar."
   },
   "payments": {
     "thisWeek": "Esta semana",

@@ -72,7 +72,7 @@ beforeEach(() => {
 
 describe("createAppointment: a recurring series", () => {
   it("weekly × 4: one insert with every date; one push naming how many", async () => {
-    expect(await book({ recurrence: "weekly", occurrences: "4" })).toEqual({ success: true, id: "new-0", count: 4 });
+    expect(await book({ recurrence: "weekly", occurrences: "4" })).toMatchObject({ success: true, id: "new-0", count: 4, undo: { kind: "booked", dates: ["2026-10-05", "2026-10-12", "2026-10-19", "2026-10-26"], status: "scheduled" } });
     expect(h.state.inserts).toHaveLength(1);
     expect(h.state.inserts[0].map((r) => r.date)).toEqual(["2026-10-05", "2026-10-12", "2026-10-19", "2026-10-26"]);
     expect(h.state.told).toEqual([expect.objectContaining({ kind: "booked", date: "2026-10-05", dates: ["2026-10-05", "2026-10-12", "2026-10-19", "2026-10-26"] })]);

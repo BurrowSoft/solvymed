@@ -225,7 +225,13 @@
     "pixQrTitle": "Pix QR code",
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Sao chép",
-    "durationMinutes": "{n} phút"
+    "durationMinutes": "{n} phút",
+    "undoBooked": "Đã đặt lịch hẹn",
+    "undoMoved": "Đã dời lịch hẹn",
+    "undoCancelled": "Đã hủy lịch hẹn",
+    "undoAction": "Hoàn tác ({s} giây)",
+    "undoDone": "Đã hoàn tác.",
+    "undoFailed": "Không thể hoàn tác. Hãy mở mục đó để điều chỉnh."
   },
   "payments": {
     "thisWeek": "Tuần này",

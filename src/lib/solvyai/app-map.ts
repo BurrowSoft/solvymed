@@ -300,6 +300,10 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     help: "P12",
   },
   {
+    rule: "On the website's Schedule, right after a manual book, move or cancel, \"Desfazer\" / \"Undo\" shows for 10 s, except when the patient was already notified by a push (then there's nothing to take back). It first checks the appointment wasn't changed again; if it was, or the notice is already on its way, it says \"Não foi possível desfazer. Abra o item para ajustar.\". A booked series is undone whole.",
+    help: "A4",
+  },
+  {
     rule: { text: "\"Mostrar botão do assistente\" / \"Show the assistant button\" (Settings → SolvyAI; per phone in the app, per browser on the website) hides or shows the ✦ button.", pending: ["mobile#99", "solvyai-live"] },
     help: "C9",
   },

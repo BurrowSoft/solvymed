@@ -225,7 +225,13 @@
     "pixQrTitle": "Pix QR code",
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Copiar",
-    "durationMinutes": "{n} min"
+    "durationMinutes": "{n} min",
+    "undoBooked": "Cita reservada",
+    "undoMoved": "Cita cambiada",
+    "undoCancelled": "Cita cancelada",
+    "undoAction": "Deshacer ({s} s)",
+    "undoDone": "Deshecho.",
+    "undoFailed": "No se pudo deshacer. Abre el elemento para ajustarlo."
   },
   "payments": {
     "thisWeek": "Esta semana",

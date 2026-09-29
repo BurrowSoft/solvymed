@@ -78,7 +78,7 @@ beforeEach(() => {
 
 describe("moveAppointment", () => {
   it("moves the date and start, keeps the duration, and tells the patient old → new", async () => {
-    expect(await move({ date: "2026-10-06", start_time: "14:00" })).toEqual({ success: true, id: "a-1" });
+    expect(await move({ date: "2026-10-06", start_time: "14:00" })).toMatchObject({ success: true, id: "a-1", undo: { kind: "moved", ids: ["a-1"], dates: ["2026-10-06"], start: "14:00", prevDate: "2026-10-05", prevStart: "09:00" } });
     expect(h.state.updates[0].values).toEqual({ date: "2026-10-06", start_time: "14:00", end_time: "14:50" });
     // Only while it's still movable (the write itself checks).
     expect(h.state.updates[0].filters).toContainEqual(["in", "status", ["scheduled", "confirmed", "late"]]);
