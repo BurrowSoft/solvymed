@@ -1211,6 +1211,8 @@
     "undone": "取り消しました",
     "simulated": "シミュレーション",
     "undo": "取り消す（{s} 秒）",
+    "undoFailed": "元に戻せませんでした。項目を開いて調整してください。",
+    "openItem": "開く",
     "view": "予約表で見る",
     "edit": "編集",
     "confirm": "確定 ✓",
@@ -1293,6 +1295,7 @@
     "birthDate": "生年月日：{value}",
     "phone": "電話：{value}",
     "exportedBy": "{date} に {name} がエクスポート",
-    "accessLogFailed": "アクセスを記録できませんでした。もう一度お試しください。"
+    "accessLogFailed": "アクセスを記録できませんでした。もう一度お試しください。",
+    "countryFailed": "クリニックの情報を読み込めませんでした。もう一度お試しください。"
   }
 }

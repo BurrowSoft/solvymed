@@ -282,6 +282,7 @@ export function createMockBackend(opts: { lang: HelpLang; prefix: string; limit:
     },
     async undo() {
       await sleep(delay * 6);
+      return true;
     },
   };
 }

@@ -98,8 +98,8 @@ vi.mock("next/navigation", () => ({
   notFound: () => { throw new Error("NOT_FOUND"); },
   redirect: () => { throw new Error("REDIRECT"); },
 }));
-const country = vi.hoisted(() => ({ code: "BR" }));
-vi.mock("@/lib/practiceCountry", () => ({ getPracticeCountry: async () => country.code }));
+const country = vi.hoisted(() => ({ code: "BR" as string | null }));
+vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => (country.code ? { ok: true, country: country.code } : { ok: false, code: "exception" }) }));
 vi.mock("@/components/PrintToolbar", () => ({ PrintToolbar: () => null }));
 
 import PrintPage from "@/app/[locale]/(site)/dashboard/patients/[id]/prescriptions/[rxId]/print/page";
@@ -153,5 +153,14 @@ describe("print page", () => {
     const { container } = render(await PrintPage({ params }));
     expect(container.querySelector("#print-doc")).toBeNull();
     expect(container.querySelector("[role=alert]")?.textContent).toContain("accessLogFailed");
+  });
+
+  it("an unknown practice country: an error, not a guessed calendar, and no access logged", async () => {
+    country.code = null;
+    const { container } = render(await PrintPage({ params }));
+    expect(container.querySelector("#print-doc")).toBeNull();
+    expect(container.querySelector("[role=alert]")?.textContent).toContain("countryFailed");
+    expect(h.rpcs).toEqual([]);
+    country.code = "BR";
   });
 });

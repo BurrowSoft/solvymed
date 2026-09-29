@@ -1211,6 +1211,8 @@
     "undone": "Deshecho",
     "simulated": "simulación",
     "undo": "Deshacer ({s} s)",
+    "undoFailed": "No se pudo deshacer. Abre el elemento para ajustarlo.",
+    "openItem": "Abrir",
     "view": "Ver en la agenda",
     "edit": "Editar",
     "confirm": "Confirmar ✓",
@@ -1293,6 +1295,7 @@
     "birthDate": "Fecha de nacimiento: {value}",
     "phone": "Teléfono: {value}",
     "exportedBy": "Exportado por {name} el {date}",
-    "accessLogFailed": "No se pudo registrar el acceso. Inténtalo de nuevo."
+    "accessLogFailed": "No se pudo registrar el acceso. Inténtalo de nuevo.",
+    "countryFailed": "No se pudieron cargar los datos de la clínica. Inténtalo de nuevo."
   }
 }

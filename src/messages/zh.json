@@ -1211,6 +1211,8 @@
     "undone": "已撤销",
     "simulated": "模拟",
     "undo": "撤销（{s} 秒）",
+    "undoFailed": "无法撤销。请打开该项目进行调整。",
+    "openItem": "打开",
     "view": "在日程中查看",
     "edit": "编辑",
     "confirm": "确认 ✓",
@@ -1293,6 +1295,7 @@
     "birthDate": "出生日期：{value}",
     "phone": "电话：{value}",
     "exportedBy": "由 {name} 于 {date} 导出",
-    "accessLogFailed": "无法记录访问。请重试。"
+    "accessLogFailed": "无法记录访问。请重试。",
+    "countryFailed": "无法加载诊所信息。请重试。"
   }
 }

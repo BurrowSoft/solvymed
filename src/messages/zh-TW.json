@@ -1211,6 +1211,8 @@
     "undone": "已復原",
     "simulated": "模擬",
     "undo": "復原（{s} 秒）",
+    "undoFailed": "無法復原。請開啟該項目進行調整。",
+    "openItem": "開啟",
     "view": "在行程中查看",
     "edit": "編輯",
     "confirm": "確認 ✓",
@@ -1293,6 +1295,7 @@
     "birthDate": "出生日期：{value}",
     "phone": "電話：{value}",
     "exportedBy": "由 {name} 於 {date} 匯出",
-    "accessLogFailed": "無法記錄存取。請再試一次。"
+    "accessLogFailed": "無法記錄存取。請再試一次。",
+    "countryFailed": "無法載入診所資料。請再試一次。"
   }
 }

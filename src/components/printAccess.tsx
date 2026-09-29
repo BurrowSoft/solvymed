@@ -23,7 +23,7 @@ export async function logAccesses(db: unknown, patientId: string, items: { kind:
 // novamente." and the way back.
 export function AccessLogFailed({ backHref, text, backLabel }: { backHref: string; text: string; backLabel: string }) {
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8">
+    <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
       <div role="alert" className="mx-auto max-w-[680px] rounded-2xl bg-white p-6 text-sm text-slate-700 shadow-sm">
         <p>{text}</p>
         <Link href={backHref} className="mt-4 inline-block font-semibold text-teal-700 hover:underline">← {backLabel}</Link>

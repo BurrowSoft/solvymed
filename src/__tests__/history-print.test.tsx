@@ -83,7 +83,8 @@ vi.mock("next/navigation", () => ({
   notFound: () => { throw new Error("NOT_FOUND"); },
   redirect: () => { throw new Error("REDIRECT"); },
 }));
-vi.mock("@/lib/practiceCountry", () => ({ getPracticeCountry: async () => "BR" }));
+const country = vi.hoisted(() => ({ code: "BR" as string | null }));
+vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => (country.code ? { ok: true, country: country.code } : { ok: false, code: "exception" }) }));
 vi.mock("@/components/PrintToolbar", () => ({ PrintToolbar: () => null }));
 vi.mock("@/lib/clinicTime", () => ({ getClinicTimeZone: async () => "America/Sao_Paulo" }));
 
@@ -131,5 +132,14 @@ describe("history print page", () => {
     const { container } = render(await HistoryPage({ params }));
     expect(container.querySelector("#print-doc")).toBeNull();
     expect(container.querySelector("[role=alert]")?.textContent).toContain("accessLogFailed");
+  });
+
+  it("an unknown practice country: an error, not a guessed calendar, and no access logged", async () => {
+    country.code = null;
+    const { container } = render(await HistoryPage({ params }));
+    expect(container.querySelector("#print-doc")).toBeNull();
+    expect(container.querySelector("[role=alert]")?.textContent).toContain("countryFailed");
+    expect(h.rpcs).toEqual([]);
+    country.code = "BR";
   });
 });

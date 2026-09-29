@@ -1211,6 +1211,8 @@
     "undone": "Annulé",
     "simulated": "simulation",
     "undo": "Annuler ({s} s)",
+    "undoFailed": "Impossible d’annuler. Ouvrez l’élément pour l’ajuster.",
+    "openItem": "Ouvrir",
     "view": "Voir dans l'agenda",
     "edit": "Modifier",
     "confirm": "Confirmer ✓",
@@ -1293,6 +1295,7 @@
     "birthDate": "Date de naissance : {value}",
     "phone": "Téléphone : {value}",
     "exportedBy": "Exporté par {name} le {date}",
-    "accessLogFailed": "Impossible d’enregistrer l’accès. Veuillez réessayer."
+    "accessLogFailed": "Impossible d’enregistrer l’accès. Veuillez réessayer.",
+    "countryFailed": "Impossible de charger les informations du cabinet. Veuillez réessayer."
   }
 }

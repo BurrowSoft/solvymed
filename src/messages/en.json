@@ -1241,6 +1241,8 @@
     "undone": "Undone",
     "simulated": "simulated",
     "undo": "Undo ({s} s)",
+    "undoFailed": "Couldn't undo. Open the item to adjust it.",
+    "openItem": "Open",
     "view": "See in the schedule",
     "edit": "Edit",
     "confirm": "Confirm ✓",
@@ -1323,6 +1325,7 @@
     "birthDate": "Date of birth: {value}",
     "phone": "Phone: {value}",
     "exportedBy": "Exported by {name} on {date}",
-    "accessLogFailed": "Couldn't record the access. Please try again."
+    "accessLogFailed": "Couldn't record the access. Please try again.",
+    "countryFailed": "Couldn't load the clinic's details. Please try again."
   }
 }

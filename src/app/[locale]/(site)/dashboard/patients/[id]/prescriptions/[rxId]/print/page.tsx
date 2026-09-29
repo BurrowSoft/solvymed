@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
-import { getPracticeCountry } from "@/lib/practiceCountry";
+import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { PRINT_CSS, docDate, toDocTemplate } from "@/lib/prescriptionDoc";
 import { PrescriptionDocument } from "./PrescriptionDocument";
 import { AccessLogFailed, logAccesses } from "@/components/printAccess";
@@ -38,18 +38,23 @@ export default async function PrescriptionPrintPage({
   const rx = rxResult.data as { id: string; date: string; notes: string | null; prescription_items: { name: string; dosage: string; frequency: string; duration: string }[] | null } | null;
   if (!patient || !rx) notFound();
 
+  // The date in the practice country's format (TH: Buddhist era). Unknown
+  // country: an error, never a guessed calendar (7f). Checked before the
+  // log, so a failed page records no access.
+  const lookup = await lookupPracticeCountry(supabase, user.id, user.id);
+  if (!lookup.ok) return <AccessLogFailed backHref={`${prefix}/dashboard/patients/${patient.id}`} text={t("countryFailed")} backLabel={t("back")} />;
+  const country = lookup.country;
+
   // The access log (migration 111). Fail closed (UX 36): no print unless
   // the access was recorded.
   if (!(await logAccesses(supabase, patient.id, [{ kind: "prescription", ref: rx.id }]))) {
     return <AccessLogFailed backHref={`${prefix}/dashboard/patients/${patient.id}`} text={t("accessLogFailed")} backLabel={t("back")} />;
   }
 
-  // The date in the practice country's format (TH: Buddhist era).
-  const country = await getPracticeCountry(supabase, user.id, user.id);
   const prof = profResult.data as { full_name: string | null; professional_registration: string | null } | null;
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8">
+    <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
       <PrintToolbar backHref={`${prefix}/dashboard/patients/${patient.id}`} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">

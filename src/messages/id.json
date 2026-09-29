@@ -1211,6 +1211,8 @@
     "undone": "Dibatalkan",
     "simulated": "simulasi",
     "undo": "Batalkan ({s} dtk)",
+    "undoFailed": "Tidak dapat membatalkan. Buka item untuk menyesuaikannya.",
+    "openItem": "Buka",
     "view": "Lihat di jadwal",
     "edit": "Ubah",
     "confirm": "Konfirmasi ✓",
@@ -1293,6 +1295,7 @@
     "birthDate": "Tanggal lahir: {value}",
     "phone": "Telepon: {value}",
     "exportedBy": "Diekspor oleh {name} pada {date}",
-    "accessLogFailed": "Tidak dapat mencatat akses. Silakan coba lagi."
+    "accessLogFailed": "Tidak dapat mencatat akses. Silakan coba lagi.",
+    "countryFailed": "Tidak dapat memuat data klinik. Silakan coba lagi."
   }
 }
