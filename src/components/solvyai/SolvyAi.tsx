@@ -197,7 +197,7 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
     setCardDone((d) => ({ ...d, [card.id]: "failed" }));
     // Fresh times only when the time was taken; anything else just says
     // it wasn't saved (on the card).
-    if (code !== "slot_taken" || card.action.kind !== "book_appointment") return;
+    if (code !== "slot_taken" || (card.action.kind !== "book_appointment" && card.action.kind !== "move_appointment")) return;
     setBusy(true);
     void play(turns, backend.reportConfirmFailed(code, card.action, locale));
   };
