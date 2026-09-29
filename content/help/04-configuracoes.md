@@ -8,8 +8,8 @@
 **en**
 1. **Settings → My profile**: name and specialty.
 2. **Settings → Registrations**: your professional registration (e.g. "CRM 12345/SP"). It appears on prescriptions and PDF documents.
-**No site:** **Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: "CRM 12345/SP"), no mesmo cartão.
-**On the website:** **Settings → Profile**: name, specialty and **Professional registration** (e.g. "CRM 12345/SP"), on the same card.
+**No site:** **Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: "CRM 12345/SP"), no mesmo cartão. Em **Configurações → Clínica**: o **CNPJ** (clínicas no Brasil) ou o **Nº de identificação fiscal (13 dígitos)** (clínicas na Tailândia).
+**On the website:** **Settings → Profile**: name, specialty and **Professional registration** (e.g. "CRM 12345/SP"), on the same card. In **Settings → Clinic**: the **CNPJ** (clinics in Brazil) or the **Tax ID (13 digits)** (clinics in Thailand).
 `open:settings-profile`
 
 ---

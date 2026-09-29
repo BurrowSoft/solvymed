@@ -125,6 +125,7 @@ export const ACTIONS: AppMapAction[] = [
     inputs: { required: ["which appointment"], optional: [], defaults: [] },
     rules: [
       "Booking requests (tentative / proposal) are never cancelled this way: they're rejected on the request card.",
+      "Only scheduled, confirmed or late appointments can be cancelled; completed, absent, cancelled or rejected ones can't (SolvyAI says so; nothing is saved).",
       "A cancelled appointment no longer counts as 'to receive' and frees the time.",
       "Deleting an appointment is a different action and never done by SolvyAI.",
       "Archiving a patient on the website cancels their upcoming appointments.",
@@ -285,6 +286,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     help: "C9",
   },
   {
+    rule: {
+      text: "Imported data (\"Dados importados\" / \"Imported data\"): a patient brought from another system may have extra spreadsheet columns kept as imported data. Only the doctor sees them (in the app: open the patient → Dados importados, with \"Importado de … em …\"); opening it is logged in the patient's Access tab (\"Abriu os dados importados\" / \"Opened the imported data\"; repeated openings within a minute count once). SolvyAI never reads them; send the doctor there.",
+      pending: ["import-extras-live"],
+    },
+    help: "P11",
+  },
+  {
     rule: { text: "\"Mostrar botão do assistente\" / \"Show the assistant button\" (Settings → SolvyAI; per phone in the app, per browser on the website) hides or shows the ✦ button.", pending: ["mobile#99", "solvyai-live"] },
     help: "C9",
   },
@@ -301,6 +309,7 @@ export const NEVER: { what: string; help: string }[] = [
   { what: "Closing the account.", help: "K4" },
   { what: "Changing the password (Settings → Change password, on the app and the website; the other devices are signed out).", help: "K2" },
   { what: "Payment and Pix / PromptPay settings.", help: "G3" },
+  { what: "Receipts (on the website: Payments → a received appointment → \"Recibo\" / \"Receipt\", a print view, for the doctor and the secretary; a Thai practice's numbered receipts are issued in the app).", help: "G5" },
   { what: "The subscription and plan (the doctor sees the plan's status in Settings → Subscription on the website; \"Manage subscription\" opens Stripe's page for a card subscription).", help: "K1" },
   { what: "Team members (inviting or removing a secretary).", help: "C4" },
   { what: "The clinic's country.", help: "C1" },

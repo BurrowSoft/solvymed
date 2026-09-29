@@ -163,7 +163,7 @@ async function confirmFailed(body: Body, deps: Deps, userId: string): Promise<Ou
   if (c.allowed && c.actions !== true) return fail(400, "bad_request");
   const locale = localeOf(body.locale);
   const ctx = await toolContext(deps.db, userId, locale);
-  const block = await confirmFailedBlock(ctx, ev.action);
+  const block = await confirmFailedBlock(ctx, ev.action, ev.code);
   if (!block) return fail(400, "bad_request");
   async function* stream(): AsyncIterable<AnswerChunk> {
     yield { kind: "meta", mode: "actions" };

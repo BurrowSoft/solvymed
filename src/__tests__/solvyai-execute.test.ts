@@ -55,6 +55,12 @@ describe("Desfazer only when nothing reached the patient (UX 36)", () => {
     expect(await executeSolvyAiAction(book, false)).toEqual({ ok: true, id: "new-appt" });
     h.state.row = appt;
     expect(await executeSolvyAiAction({ kind: "cancel_appointment", args: { appointmentId: ID } }, false)).toEqual({ ok: true, id: ID, prev: "scheduled" });
+    // Only a live appointment (the app's executor, #141).
+    for (const status of ["completed", "absent", "cancelled", "tentative"]) {
+      h.state.row = { ...appt, status };
+      expect(await executeSolvyAiAction({ kind: "cancel_appointment", args: { appointmentId: ID } }, false)).toEqual({ ok: false, code: "appointment_not_cancellable" });
+    }
+    h.state.row = appt;
     expect(await executeSolvyAiAction({ kind: "move_appointment", args: { appointmentId: ID, date: "2026-10-06", start: "10:00" } }, false)).toMatchObject({ ok: true, id: ID, prev: expect.any(String) });
     expect(calls.filter((c) => c.fn === "get_patient_auth_id").map((c) => c.args[0])).toEqual([{ p_patient_id: P }, { p_patient_id: P }, { p_patient_id: P }]);
   });
