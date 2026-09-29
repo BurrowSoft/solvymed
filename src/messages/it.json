@@ -199,6 +199,7 @@
     "warnDayOff": "{day, select, sun {Domenica} mon {Lunedì} tue {Martedì} wed {Mercoledì} thu {Giovedì} fri {Venerdì} sat {Sabato} other {Questo giorno}} non è un giorno lavorativo.",
     "bookAnyway": "Prenotare comunque?",
     "reschedule": "Riprogramma",
+    "bookAgain": "Nuovo appuntamento (stesso paziente)",
     "rescheduleTitle": "Riprogramma appuntamento",
     "rescheduleHint": "La durata e gli altri dati restano invariati.",
     "moveAnyway": "Riprogrammare comunque?",

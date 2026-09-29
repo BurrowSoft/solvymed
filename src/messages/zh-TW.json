@@ -199,6 +199,7 @@
     "warnDayOff": "{day, select, sun {週日} mon {週一} tue {週二} wed {週三} thu {週四} fri {週五} sat {週六} other {這一天}}不是看診日。",
     "bookAnyway": "仍要預約嗎？",
     "reschedule": "改期",
+    "bookAgain": "新預約（同一患者）",
     "rescheduleTitle": "預約改期",
     "rescheduleHint": "時長和其他資訊維持不變。",
     "moveAnyway": "仍要改期嗎？",

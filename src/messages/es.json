@@ -199,6 +199,7 @@
     "warnDayOff": "{day, select, sun {Domingo} mon {Lunes} tue {Martes} wed {Miércoles} thu {Jueves} fri {Viernes} sat {Sábado} other {Este día}} no es día de atención.",
     "bookAnyway": "¿Agendar de todos modos?",
     "reschedule": "Reprogramar",
+    "bookAgain": "Nueva cita (mismo paciente)",
     "rescheduleTitle": "Reprogramar cita",
     "rescheduleHint": "La duración y los demás datos no cambian.",
     "moveAnyway": "¿Reprogramar de todos modos?",

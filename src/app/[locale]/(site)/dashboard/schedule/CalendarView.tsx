@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { AppointmentStatusSelect, DeleteAppointmentButton, RescheduleButton } from "./ScheduleClient";
+import { AppointmentStatusSelect, DeleteAppointmentButton, NewAppointmentButton, RescheduleButton } from "./ScheduleClient";
 import { MOVABLE_STATUSES } from "@/lib/scheduleChecks";
 import { toLocalDateString } from "@/lib/slots";
 import { formatMoney } from "@/lib/money";
@@ -14,6 +14,7 @@ import { dateLocale, plainSpaces } from "@/lib/dateLabels";
 export type CalendarAppt = {
   id: string;
   date: string;
+  patient_id?: string | null;
   patient_name: string;
   start_time: string;
   end_time: string;
@@ -315,8 +316,11 @@ export function CalendarView({
   today,
   view,
   currency = "BRL",
+  procedures = [],
 }: {
   appointments: CalendarAppt[];
+  // For booking again after a no-show (the same patient, procedure, duration).
+  procedures?: { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
   currentDate: string;
   // The practice's today, from the server (lib/clinicTime), not the browser's UTC date.
   today: string;
@@ -425,6 +429,11 @@ export function CalendarView({
               }
               <div className="flex items-center gap-1">
                 {MOVABLE_STATUSES.includes(selected.status) && <RescheduleButton id={selected.id} date={selected.date} start={selected.start_time} />}
+                {/* A no-show is never moved (UX 36): book again instead. */}
+                {selected.status === "absent" && (
+                  <NewAppointmentButton defaultDate={today} currency={currency} procedures={procedures}
+                    prefill={{ patientId: selected.patient_id ?? null, patientName: selected.patient_name, procedureName: selected.consultation_type, duration: selected.duration_minutes }} />
+                )}
                 <DeleteAppointmentButton id={selected.id} />
               </div>
             </div>

@@ -199,6 +199,7 @@
     "warnDayOff": "{day, select, sun {Sonntag} mon {Montag} tue {Dienstag} wed {Mittwoch} thu {Donnerstag} fri {Freitag} sat {Samstag} other {Dieser Tag}} ist kein Sprechtag.",
     "bookAnyway": "Trotzdem buchen?",
     "reschedule": "Verschieben",
+    "bookAgain": "Neuer Termin (gleicher Patient)",
     "rescheduleTitle": "Termin verschieben",
     "rescheduleHint": "Dauer und weitere Angaben bleiben gleich.",
     "moveAnyway": "Trotzdem verschieben?",

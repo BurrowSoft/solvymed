@@ -199,6 +199,7 @@
     "warnDayOff": "{day, select, sun {周日} mon {周一} tue {周二} wed {周三} thu {周四} fri {周五} sat {周六} other {这一天}}不是工作日。",
     "bookAnyway": "仍要预约吗？",
     "reschedule": "改期",
+    "bookAgain": "新预约（同一患者）",
     "rescheduleTitle": "预约改期",
     "rescheduleHint": "时长和其他信息保持不变。",
     "moveAnyway": "仍要改期吗？",

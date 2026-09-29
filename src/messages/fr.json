@@ -199,6 +199,7 @@
     "warnDayOff": "{day, select, sun {Dimanche} mon {Lundi} tue {Mardi} wed {Mercredi} thu {Jeudi} fri {Vendredi} sat {Samedi} other {Ce jour}} n'est pas un jour de consultation.",
     "bookAnyway": "Réserver quand même ?",
     "reschedule": "Reprogrammer",
+    "bookAgain": "Nouveau rendez-vous (même patient)",
     "rescheduleTitle": "Reprogrammer le rendez-vous",
     "rescheduleHint": "La durée et les autres informations restent les mêmes.",
     "moveAnyway": "Reprogrammer quand même ?",

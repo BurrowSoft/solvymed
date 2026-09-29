@@ -199,6 +199,7 @@
     "warnDayOff": "{day, select, sun {Sunday} mon {Monday} tue {Tuesday} wed {Wednesday} thu {Thursday} fri {Friday} sat {Saturday} other {This day}} isn't a working day.",
     "bookAnyway": "Book anyway?",
     "reschedule": "Reschedule",
+    "bookAgain": "New appointment (same patient)",
     "rescheduleTitle": "Reschedule appointment",
     "rescheduleHint": "The duration and other details stay the same.",
     "moveAnyway": "Reschedule anyway?",

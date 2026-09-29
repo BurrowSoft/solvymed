@@ -100,6 +100,7 @@ export const ACTIONS: AppMapAction[] = [
       { text: "Moving onto blocked time or outside the working hours is asked twice, like booking.", pending: ["mobile#91"] },
       "An edit that doesn't move it (same date, start and duration) isn't asked again.",
       "The card shows before → after.",
+      "A no-show (absent) is never moved: it stays on record (history, 'to receive'); book again instead, with the same patient, procedure and duration (the website: the 'New appointment (same patient)' icon next to it).",
       "On the website (Remarcar): only the date and start change (same duration and details), for scheduled, confirmed or late appointments; blocked time or outside the working hours is asked once (one question listing both); a patient linked to a SolvyMed account is notified (old and new time), never for the past.",
       "Patients' own reschedule requests are a separate flow (the doctor accepts or declines them).",
       { text: "A patient linked to a SolvyMed account is notified of the move (old and new time); never for the past.", pending: ["mobile#111"] },

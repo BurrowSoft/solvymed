@@ -99,7 +99,7 @@ export default async function SchedulePage({
   const [apptsResult, procsResult, tentativeBookings, profResult, anyApptResult] = await Promise.all([
     supabase
       .from("appointments")
-      .select("id, date, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes")
+      .select("id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes")
       .eq("professional_id", effectiveProfId)
       .gte("date", rangeStart)
       .lte("date", rangeEnd)
@@ -235,6 +235,11 @@ export default async function SchedulePage({
                           <PromptPayQrButton promptPayId={promptPayId} amount={appt.payment_amount} />
                         )}
                         {MOVABLE_STATUSES.includes(appt.status) && <RescheduleButton id={appt.id} date={appt.date} start={appt.start_time} />}
+                        {/* A no-show is never moved (UX 36): book again instead. */}
+                        {appt.status === "absent" && (
+                          <NewAppointmentButton defaultDate={today} currency={currency} procedures={procedures}
+                            prefill={{ patientId: appt.patient_id ?? null, patientName: appt.patient_name, procedureName: appt.consultation_type, duration: appt.duration_minutes }} />
+                        )}
                         <DeleteAppointmentButton id={appt.id} />
                       </div>
                     </div>
@@ -262,6 +267,7 @@ export default async function SchedulePage({
           today={today}
           view={view}
           currency={currency}
+          procedures={procedures}
         />
       )}
     </div>
