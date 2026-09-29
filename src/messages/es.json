@@ -412,6 +412,7 @@
     "genericError": "Algo salió mal. Inténtalo de nuevo.",
     "tabAccessLog": "Registro de accesos",
     "rxPdfAria": "PDF de la receta (imprimir o guardar)",
+    "historyPdf": "PDF de la historia clínica",
     "tabExams": "Exámenes",
     "tabFiles": "Archivos",
     "filesHint": "Fotos o PDF, privados: solo tú puedes abrirlos.",
@@ -1280,6 +1281,16 @@
     "corrected": "(corregido)",
     "print": "Imprimir / Guardar PDF",
     "printHint": "Para guardar el archivo, elige «Guardar como PDF» en la ventana de impresión.",
-    "back": "Volver al paciente"
+    "back": "Volver al paciente",
+    "historyTitle": "Historia clínica",
+    "medicalRecords": "Registros clínicos",
+    "prescriptions": "Recetas",
+    "noRecords": "Sin registros.",
+    "noPrescriptions": "Sin recetas.",
+    "birthDate": "Fecha de nacimiento: {value}",
+    "phone": "Teléfono: {value}",
+    "exportedBy": "Exportado por {name} el {date}",
+    "accessLogFailed": "No se pudo registrar el acceso. Inténtalo de nuevo.",
+    "countryFailed": "No se pudieron cargar los datos de la clínica. Inténtalo de nuevo."
   }
 }
