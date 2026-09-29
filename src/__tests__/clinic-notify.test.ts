@@ -90,6 +90,18 @@ describe("tellPatient", () => {
     expect(sent[2].body.split(" marcou")[0]).toBe("Dr. Público");
   });
 
+  it("a series: only its FUTURE dates are announced, one push naming the first (UX 36)", async () => {
+    // Weekly from last week at 14:00: 22/09 is past; 29/09 14:00 and 06/10 are ahead (now: 29/09 10:00).
+    await tellPatient(db().client, { kind: "booked", patientId: "p-1", practiceId: "doc-1", date: "2026-09-22", startTime: "14:00", dates: ["2026-09-22", "2026-09-29", "2026-10-06"] });
+    expect(sent[0].body).toBe("Clínica Sol marcou 2 consultas para você. A primeira é em 29/09/2026 às 14:00.");
+    // At 09:30 today is past too: one future date → the single-booking text.
+    await tellPatient(db().client, { kind: "booked", patientId: "p-1", practiceId: "doc-1", date: "2026-09-22", startTime: "09:30", dates: ["2026-09-22", "2026-09-29", "2026-10-06"] });
+    expect(sent[1].body).toBe("Clínica Sol marcou uma consulta para você em 06/10/2026 às 09:30.");
+    // All past: no push.
+    await tellPatient(db().client, { kind: "booked", patientId: "p-1", practiceId: "doc-1", date: "2026-09-08", startTime: "14:00", dates: ["2026-09-08", "2026-09-15", "2026-09-22"] });
+    expect(sent).toHaveLength(2);
+  });
+
   it("never throws: a failing read is swallowed", async () => {
     const broken = { from: () => { throw new Error("x"); }, rpc: async () => { throw new Error("y"); } } as unknown as SupabaseClient;
     await expect(tellPatient(broken, { kind: "booked", patientId: "p-1", ...future })).resolves.toBeUndefined();
