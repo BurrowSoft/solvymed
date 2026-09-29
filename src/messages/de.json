@@ -1142,7 +1142,6 @@
     "edit": "Bearbeiten",
     "confirm": "Bestätigen ✓",
     "failed": "Speichern nicht möglich.",
-    "failedBlocked": "Die Zeit ist geblockt.",
     "chips": {
       "home": {
         "a": "Was habe ich morgen?",
@@ -1174,7 +1173,12 @@
         "b": "Wie lade ich meine Praxiskraft ein?",
         "c": "Termin buchen"
       }
-    }
+    },
+    "unavailable": "SolvyAI ist gerade nicht verfügbar. Versuchen Sie es gleich noch einmal.",
+    "expired": "Diese Karte ist abgelaufen. Fragen Sie erneut, um aktuelle Angaben zu sehen.",
+    "cancel": "Abbrechen",
+    "chipAt": "{date} um {time}",
+    "otherTime": "Andere Uhrzeit"
   },
   "dateInput": {
     "buddhistYear": "Das sieht nach einem Jahr der buddhistischen Zeitrechnung aus. Bitte das gregorianische Jahr verwenden (z. B. 1996)."

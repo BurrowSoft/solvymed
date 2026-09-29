@@ -2,6 +2,8 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { sendExpoPush } from "@/lib/push";
+import { pushText, pushWhen } from "@/lib/pushText";
+import { professionalPushLocale } from "@/lib/pushRecipient";
 
 export async function notifyProfessionalOfBooking(
   professionalId: string,
@@ -31,5 +33,9 @@ export async function notifyProfessionalOfBooking(
 
   const { data } = await supabase.rpc("get_clinic_push_tokens", { p_professional_id: professionalId });
   const tokens = (data ?? []).map((r: { token: string }) => r.token);
-  await sendExpoPush(tokens, "New Booking Request", `${appt.patient_name} requested an appointment on ${date} at ${time}.`);
+  if (!tokens.length) return;
+  // In the clinic's language, the date in its format.
+  const locale = await professionalPushLocale(supabase, professionalId);
+  const { title, body } = pushText(locale, "newBookingRequest", { name: appt.patient_name as string, when: pushWhen(locale, date, time) });
+  await sendExpoPush(tokens, title, body);
 }

@@ -6971,6 +6971,66 @@ behind; message JSON valid).
 `219aeaf`.** This docs commit sits on top, after a master sync (10
 behind).
 
+## PR #112 (`feat/solvyai-after-save`, base master) — SolvyAI mock follow-up: contract shapes, second question, after-save navigation, app-parity mask, 🟢 at `3909d66`
+
+Tested with Playwright on a local `next dev` with
+`NEXT_PUBLIC_SOLVYAI_ENABLED=1` (the flag is unset on Vercel). Tested
+first at `dd62a85`; the finding below was fixed at `3909d66` and
+re-tested there.
+
+- **Mask (shown question):** kept: `29.09.2026`, `29/09`,
+  `2026-10-02`, `02.10.2026`, `14:00`, `R$ 150` and `1500 2000`. Masked:
+  `123.456.789-09` → [cpf]; `(11) 98765-4321`, `11 91234-5678`,
+  `+55 11 91234-5678` and `91234-5678` → [phone]; the email → [email].
+- **End times:** 14:45–15:15, 09:45–10:15, 17:50–18:20 and 11:30–12:00.
+  No "14:75".
+- **slot_choice (10h taken):** no card. The text "…10:00 já tem Ana
+  Souza (10:00–10:30). Qual destes horários?" comes with chips 09:30 /
+  10:30 / 11:00 / Outro horário. A chip is sent as the next message
+  ("terça-feira, 29/09/2026 às 10:30"). The stateless mock then answers
+  off-topic, which is expected for the mock.
+- **Blocked (12h):** the card shows "⚠ Horário bloqueado (12:00–13:00)".
+  Confirmar opens the inline "Este horário está bloqueado (12:00–13:00).
+  Agendar mesmo assim?" [Cancelar] [Agendar]. **Cancelar:** nothing
+  runs, with no toast, no navigation and the card back to Confirmar.
+- **Outside hours (19h):** the outside-hours question; Agendar saves.
+  en: "This time is blocked (12:00–13:00). Book anyway?" [Cancel] [Book].
+- **After save:** the panel minimises to the "SolvyAI ✦" pill. The page
+  goes to `/schedule?date=2026-09-29&highlight=<id>` (the block goes to
+  `date=2026-10-02`), with one navigation. The toast "✓ Feito
+  (simulação)" + "Desfazer (10 s)" counts down to 1 s and goes.
+  Desfazer → "Desfeito (simulação)", hidden after about 4 s.
+- **Slot just taken (16h):** "Não foi possível salvar." plus "Esse
+  horário acabou de ser ocupado. Nada foi salvo." with chips 16:30 /
+  17:00 / Outro horário. No navigation.
+- **Expiry** (clock +16 min): "Este cartão expirou. Peça de novo para ver
+  os dados atualizados."; Confirmar disabled, nothing runs.
+- **Ring** (`?highlight=` with a real appointment, calendar and list
+  views): the row is ringed at about 2 s, the ring is off by about 5 s
+  and the parameter is dropped. A reload doesn't ring. An unknown id →
+  no crash, parameter dropped.
+- **Hard stop and fail-closed:** the mock never sends either, so I
+  tested them with a local-only patch to `mockBackend.ts` (reverted,
+  never committed).
+  - Hard stop: the reason ("Esse horário já passou.") shows in red;
+    Confirmar is disabled and a forced click does nothing.
+  - A card with a blocked warning but no `secondConfirm` is dropped. The
+    panel shows "O SolvyAI está indisponível agora. Tente de novo em
+    instantes." in its place.
+- **Flag off:** no ✦ button, panel or pill.
+
+**Finding at `dd62a85`, fixed at `3909d66`:**
+- **At `dd62a85`:** after a save, reopening the pill brought the same
+  card back with Confirmar enabled, and a second Confirmar ran
+  `execute()` again. With the real backend, that is a double booking.
+  a9 marked it BLOCKING.
+- **At `3909d66`:** the reopened card shows "✓ Feito" and has no
+  Confirmar. A rapid double-click on Confirmar, and on Agendar in the
+  second question, gives one toast and one navigation.
+
+**CI at `3909d66`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`3909d66`.** This docs commit sits on top; the branch was already up to
+
 ## PR #111 (`fix/booking-overlap-hours`, base master) — overlap is a hard stop that says with whom; blocked / outside hours / day off → one question, 🟢 at `f7d578f`
 
 Tested with Playwright on the Preview at `f7d578f` (Thai flag on), in
@@ -7006,3 +7066,64 @@ min)"; the duration is built as `` `${durationMin} min` `` in
 **CI at `f7d578f`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `f7d578f`.** This docs commit sits on top; the branch was already up to
 date with master.
+
+## PR #113 (`fix/localized-web-pushes`, base master) — every web push in the recipient's language, dates in its format, 🟢 at `1c4fa89`
+
+**Setup:**
+- **Server:** a local `next dev` at `1c4fa89` against the prod DB, with a
+  test-only Node preload. It intercepts every `exp.host` push request,
+  and the `notify-clinic-closed` edge-function call that closing an
+  account makes. It logs them to a file and answers locally. No push or
+  email left the machine.
+- **Data:** a throwaway doctor with no country; five throwaway patients
+  with fake Expo tokens, invited by the doctor and not linked yet.
+- **Saved languages:** `patient_profiles.locale` was seeded as `pt-BR`,
+  `en`, `th`, `es-ES` and none. The doctor's session reads it under RLS
+  (the path the PR relies on).
+- Each push was triggered from the UI.
+
+| Push (UI action) | Recipient (saved language) | Title \| body as sent |
+|---|---|---|
+| Doctor confirms, with a note | patient `pt-BR` | Consulta confirmada \| Sua consulta foi confirmada. Observação: Traga os exames |
+| Doctor confirms | patient `es-ES` (normalised → es) | Cita confirmada \| Tu cita ha sido confirmada. |
+| Doctor rejects | patient, none saved → the practice's (pt-BR) | Pedido não aceito \| Não foi possível aceitar o seu pedido de consulta. |
+| Doctor proposes a new time | patient `en` | New time proposed \| A new time was proposed: **10/03/2026** 09:30. |
+| Doctor proposes a new time | patient `th` | เสนอเวลาใหม่ \| มีการเสนอเวลาใหม่: **03/10/2569** 09:30 |
+| Doctor accepts a reschedule request | patient `en` | Reschedule confirmed \| Your appointment has been moved to 10/03/2026 16:00. |
+| Doctor declines a reschedule request | patient `th` | ไม่สามารถเลื่อนนัดได้ \| ไม่สามารถเลื่อนนัดได้ เวลาเดิมยังคงได้รับการยืนยัน |
+| Patient (th) accepts the proposal, on /auth/pending-confirmation | clinic → practice pt-BR | Proposta aceita \| Opus Push th aceitou o novo horário: 03/10/2026 09:30. |
+| Patient (en) declines the proposal | clinic → pt-BR | Proposta recusada \| Opus Push en recusou o horário proposto. O pedido foi cancelado. |
+| Doctor archives the th patient (2 future appointments) | patient `th`, one push each | ยกเลิกนัดหมาย \| นัดหมายของคุณวันที่ 03/10/2569 09:30 ถูกยกเลิกโดยคลินิก (and 01/10/2569 16:00) |
+| Account close by a second doctor: linked patient | patient `en` | Clinic closed \| Your clinic has closed its SolvyMed account. … |
+| Account close: patient with only an appointment | patient `th` | นัดหมายถูกยกเลิก \| นัดหมายของคุณวันที่ 03/10/2569 เวลา 08:30 ถูกคลินิกยกเลิกแล้ว |
+| Account close: patient with only an appointment | patient, none saved → the closing request's pt-BR | Consulta cancelada \| Sua consulta de 03/10/2026 às 09:00 foi cancelada pela clínica. |
+
+- **Every push went to the right token:** no raw `YYYY-MM-DD` and no
+  leftover `{placeholder}`. The patient's pages were in pt-BR, yet the
+  clinic's pushes followed the practice and the patients' pushes
+  followed each saved language (not the UI language of whoever acted).
+- **Account close** called `notify-clinic-closed` once, with only the
+  linked patient's id.
+- **Not testable on prod data yet:**
+  - A **Thai practice** (clinic pushes in th): `professionals.country`
+    doesn't exist until migration 110 is applied. So the practice
+    fallback is pt-BR for everyone today; the unit tests cover
+    `country = TH`.
+  - **"Reschedule requested"** (patient → clinic) needs the linked
+    patient's slot picker, so I left it to the unit test. It uses the
+    same `notifyProfessional` path as the two proposal pushes above.
+
+**Notes for UX (not blocking):**
+- **Prod has 0 rows in `patient_profiles`**, so no patient has a saved
+  language yet. Until the mobile dev's saved-language work lands,
+  every web push to a patient is pt-BR (the approved fallback).
+- **The Thai "cancelled by the clinic" push has two wordings:**
+  - archive: "ยกเลิกนัดหมาย / …ถูกยกเลิกโดยคลินิก", from `pushText.ts`;
+  - account close: "นัดหมายถูกยกเลิก / …ถูกคลินิกยกเลิกแล้ว", from the
+    `accountClose` messages.
+
+  Both are fine; unifying them is optional.
+
+**CI at `1c4fa89`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`1c4fa89`.** This docs commit sits on top of a master sync (10 behind,
+clean merge, no conflicts).
