@@ -7191,3 +7191,18 @@ are unchanged from #111.
 `50cc51a`.** This docs commit sits on top of a master sync (11 behind;
 the message files auto-merged; all 15 are valid JSON and each has
 `durationMinutes` once).
+
+## PR #116 (`feat/solvyai-app-map`, base master) — the SolvyAI App Map (data) + its drift test, 🟢 at `6bded04`
+
+- **Files:** only 2, `src/lib/solvyai/app-map.ts` (+280) and
+  `src/__tests__/app-map.test.ts` (+93).
+- **Nothing user-facing:** no runtime code imports `app-map.ts` (a grep
+  finds only the test). No route, component or message changed.
+- **Status glossary:** it already uses #117's single labels ("Solicitado"
+  / "Requested", "Novo horário proposto" / "New time proposed",
+  "Concluído" / "Completed"). No old label (Pendente, Proposta,
+  Tentative, Done, No-show) is left.
+
+**CI at `6bded04`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`6bded04`.** This docs commit sits on top of a master sync (14 behind,
+clean merge). The drift test re-runs in CI on the merge.
