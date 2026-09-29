@@ -236,6 +236,12 @@ describe("SolvyAI actions mode: booking", () => {
     expect(card.stop?.code).toBe("patient_archived");
   });
 
+  it("ending exactly at midnight is refused like the save (no card that would fail at Confirmar; 7f)", async () => {
+    const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-09-30", start: "23:30", durationMin: 30 } })));
+    expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
+    expect(resultsIn(t.model.calls[2])[0]).toMatchObject({ is_error: true });
+  });
+
   it("a Buddhist-era or malformed date is sent back to the model, never a card", async () => {
     const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2569-09-30", start: "14:00" } })));
     const r = await run(t, ask("…"));

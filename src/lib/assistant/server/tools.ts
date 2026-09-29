@@ -337,7 +337,8 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
   if (!isTime(start)) return err("The start must be HH:MM; ask the user for the time.");
   if (!Number.isInteger(dur) || dur < 5 || dur > 480) return err("The duration is 5–480 minutes.");
   const endMin = toMinutes(start) + dur;
-  if (endMin > 24 * 60) return err("That would run past midnight; ask for another time.");
+  // Ending at midnight or later is refused by the save (computeEndTime), so never a card.
+  if (endMin >= 24 * 60) return err("That would run past midnight; ask for another time.");
   const end = fromMinutes(endMin);
 
   const { data: p } = await ctx.db.from("patients").select("id, full_name, birth_date, archived_at").eq("id", patientId).eq("professional_id", ctx.profId).maybeSingle();
@@ -450,7 +451,8 @@ async function proposeMove(ctx: ToolContext, input: Record<string, unknown>): Pr
   // The same kept duration as Remarcar (moveAppointment).
   const dur = keptDuration(a.start_time, a.end_time);
   const endMin = toMinutes(start) + dur;
-  if (endMin > 24 * 60) return err("That would run past midnight; ask for another time.");
+  // Ending at midnight or later is refused by the save (computeEndTime), so never a card.
+  if (endMin >= 24 * 60) return err("That would run past midnight; ask for another time.");
   const end = fromMinutes(endMin);
 
   const { data: sameDay } = await ctx.db
