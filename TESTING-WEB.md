@@ -7332,3 +7332,52 @@ search.
 **CI at `01a8f34`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `01a8f34`.** This docs commit sits directly on top; the branch was up to
 date with master.
+
+## PR #122 (`feat/solvyai-settings-web`, base master) — Configurações › SolvyAI on the website, 🟢 at `990a0ee`
+
+Tested with Playwright in two places: a local `next dev` at `990a0ee`
+with `NEXT_PUBLIC_SOLVYAI_ENABLED=1` (against the prod DB), and the
+Vercel Preview, where the flag is unset.
+
+**Doctor, the button switch ("Mostrar botão do assistente · Neste
+navegador."):**
+- On by default, and the ✦ shows.
+- Off → the ✦ disappears at once (the same page, no reload).
+  `localStorage.solvyai_button_hidden = "1"`.
+- A reload keeps it off; Agenda has no ✦ either.
+- **Another browser** (a fresh context, same doctor) still shows the ✦,
+  so the setting is per browser.
+- On again → the ✦ is back and the key is removed.
+
+**Doctor, the actions switch ("Permitir que o SolvyAI faça ações"):**
+- **Hidden against the prod DB:** migration 115 isn't there, so
+  `assistant_usage_today` returns 404 and the card shows only the button
+  switch.
+- **Migration 115's RPCs stubbed in the browser** (`assistant_usage_today`
+  → `{actions:false}`, `set_solvyai_actions` → 204); no local DB with
+  115 was available. Results, in pt-BR and en:
+  - The switch appears, off. The copy matches C9: Anthropic (EUA/USA),
+    "nunca lê prontuários…", with a **"Política de Privacidade" /
+    "Privacy Policy" link to `/pt-BR/privacy` / `/privacy`**.
+  - **On → asks once:** "Ativar as ações do SolvyAI?" [Cancelar] [Ativar]
+    (en "Turn on SolvyAI actions?" [Cancel] [Turn on]). **No RPC call**
+    before the answer.
+  - **Cancelar:** the question closes, no call, still off.
+  - **Ativar:** one `set_solvyai_actions {"p_enabled":true}`, now on.
+  - **Off:** no question; one `set_solvyai_actions {"p_enabled":false}`,
+    now off.
+  - **The save fails (500):** it stays off, with "Não foi possível
+    salvar. Tente de novo."
+
+**Others:**
+- **Secretary:** no SolvyAI card on Configurações and no ✦.
+- **Flag off (the Preview):** no card and no ✦.
+
+**Note for release (no action here):** the Privacy link opens the
+current policy, which doesn't name Anthropic yet. The actions switch
+stays hidden until migration 115 is on prod, and 115 is part of the
+`solvyai-live` gate (#121), which also requires the privacy update.
+
+**CI at `990a0ee`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`990a0ee`.** This docs commit sits on top of a master sync (3 behind,
+clean merge; message JSON valid).

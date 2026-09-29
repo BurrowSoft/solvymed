@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 
 const push = vi.fn();
 let pathname = "/dashboard/schedule";
@@ -145,6 +145,15 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
     expect(cardIsSafe({ ...bad, warnings: [{ code: "outside_hours", text: "x" }] })).toBe(false);
     // Warnings that don't ask twice are fine without one.
     expect(cardIsSafe({ ...bad, warnings: [{ code: "same_patient_day", text: "x" }] })).toBe(true);
+  });
+
+  it("Configurações › SolvyAI can hide the ✦ button in this browser, and show it again", async () => {
+    render(<SolvyAi locale="pt-BR" prefix="/pt-BR" dailyLimit={20} />);
+    expect(screen.getByLabelText("assistant.open")).toBeInTheDocument();
+    act(() => { window.dispatchEvent(new CustomEvent("solvyai-button", { detail: { hidden: true } })); });
+    expect(screen.queryByLabelText("assistant.open")).not.toBeInTheDocument();
+    act(() => { window.dispatchEvent(new CustomEvent("solvyai-button", { detail: { hidden: false } })); });
+    expect(screen.getByLabelText("assistant.open")).toBeInTheDocument();
   });
 
   it("maps the page to its screen", () => {
