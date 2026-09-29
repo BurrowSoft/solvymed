@@ -449,6 +449,7 @@
     "accessKindFile": "ملف",
     "accessKindExport": "صُدِّر ضمن قائمة المرضى (CSV)",
     "accessKindImported": "فتح البيانات المستوردة",
+    "accessKindMerged": "دُمج مع «{name}»",
     "accessColWhen": "متى",
     "accessColWho": "من",
     "accessColWhat": "ماذا"

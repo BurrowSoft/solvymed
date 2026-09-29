@@ -34,15 +34,17 @@ export type AccessLogRow = {
   at: string;
   actorName: string;
   actorRole: "professional" | "secretary" | "patient" | string;
-  kind: "patient" | "record" | "prescription" | "exam" | "file" | "export" | "imported" | string;
+  kind: "patient" | "record" | "prescription" | "exam" | "file" | "export" | "imported" | "merged" | string;
   objectRef: string | null;
 };
 
-// The label for a kind shown without details: the CSV export (126) and
-// opening a patient's imported data (131) have their own; anything else
-// not described by the caller is the patient's record.
-export function accessKindLabelKey(kind: string): "accessKindExport" | "accessKindImported" | "accessKindPatient" {
-  return kind === "export" ? "accessKindExport" : kind === "imported" ? "accessKindImported" : "accessKindPatient";
+// The label for a kind shown without details: the CSV export (126),
+// opening a patient's imported data (131) and a merge (133, "Mesclou com
+// «{name}»": pass the row's object_ref, the removed record's name, as
+// {name}) have their own; anything else not described by the caller is the
+// patient's record.
+export function accessKindLabelKey(kind: string): "accessKindExport" | "accessKindImported" | "accessKindMerged" | "accessKindPatient" {
+  return kind === "export" ? "accessKindExport" : kind === "imported" ? "accessKindImported" : kind === "merged" ? "accessKindMerged" : "accessKindPatient";
 }
 
 export type AccessLogPage = { rows: AccessLogRow[]; hasMore: boolean };

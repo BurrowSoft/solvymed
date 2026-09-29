@@ -449,6 +449,7 @@
     "accessKindFile": "Файл",
     "accessKindExport": "Экспортирован в списке пациентов (CSV)",
     "accessKindImported": "Открыты импортированные данные",
+    "accessKindMerged": "Объединён с «{name}»",
     "accessColWhen": "Когда",
     "accessColWho": "Кто",
     "accessColWhat": "Что"

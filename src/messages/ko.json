@@ -449,6 +449,7 @@
     "accessKindFile": "파일",
     "accessKindExport": "환자 목록으로 내보냄 (CSV)",
     "accessKindImported": "가져온 데이터를 열람함",
+    "accessKindMerged": "“{name}”와(과) 병합함",
     "accessColWhen": "일시",
     "accessColWho": "누가",
     "accessColWhat": "내용"

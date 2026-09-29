@@ -449,6 +449,7 @@
     "accessKindFile": "Tệp",
     "accessKindExport": "Đã xuất trong danh sách bệnh nhân (CSV)",
     "accessKindImported": "Đã mở dữ liệu đã nhập",
+    "accessKindMerged": "Đã gộp với “{name}”",
     "accessColWhen": "Khi nào",
     "accessColWho": "Ai",
     "accessColWhat": "Nội dung"
