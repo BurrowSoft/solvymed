@@ -160,7 +160,7 @@ If either record had booking blocked, the one that stays remains blocked. A reco
 **No site:** Abra o paciente e, na aba **Informações**, clique em **Mesclar com outro paciente…** (só o médico). Busque o outro cadastro (os arquivados também aparecem), escolha em **Manter este cadastro** qual fica, marque o valor que quer manter em cada campo diferente e clique em **Mesclar**; se um dos cadastros usa o app, confirme em **São a mesma pessoa**.
 **On the website:** Open the patient and, on the **Info** tab, click **Merge with another patient…** (doctor only). Search for the other record (archived ones are listed too), choose under **Keep this record** which one stays, mark the value to keep in each field that differs and click **Merge**; if either record uses the app, confirm with **Same person**.
 `open:patients`
-`requires:migration-133`
+`requires:merge-web-live`
 
 ---
 ## P13. Importar pacientes de outro sistema / Import patients from another system

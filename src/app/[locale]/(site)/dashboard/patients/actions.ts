@@ -530,10 +530,10 @@ export async function addPrescriptionCorrection(prescriptionId: string, patientI
 // ── Merge duplicate patients (migration 133; the app's lib/patient-merge.ts) ──
 
 // Mesclar shows only once the database has merge_patients (lib/mergeProbe)
-// AND migration-133 is flipped by hand after the testers' 133 run (9a: the
+// AND merge-web-live is flipped by hand after the testers' 133 run (9a: the
 // probe alone would switch it on untested the moment 133 is applied).
 export async function mergeAvailable(): Promise<boolean> {
-  if (!conditionMet("migration-133")) return false;
+  if (!conditionMet("merge-web-live")) return false;
   return mergeSupported(await createClient());
 }
 
