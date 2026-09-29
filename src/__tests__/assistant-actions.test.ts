@@ -444,3 +444,40 @@ describe("SolvyAI actions mode: part 2 (unblock, booking decision, add patient)"
     expect(String((resultsIn(t.model.calls[2])[0] as { content: string }).content)).toContain("no-show");
   });
 });
+
+describe("SolvyAI actions mode: a recurring series (the website's Repetir)", () => {
+  const series = (repeat: unknown, date = "2026-10-07", start = "14:00") =>
+    withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date, start, durationMin: 30, repeat } }));
+
+  it("a card with Repetir and every date's check; the action carries repeat", async () => {
+    const t = setup(series({ every: "week", count: 3 }));
+    const card = cardOf((await run(t, ask("Marca a Maria toda quarta às 14h, 3 vezes"))).blocks)!;
+    expect(card.fields.find((f) => f.label === "Repetir")!.value).toBe("Semanal, 3 consultas (até 21/10/2026)");
+    expect(card.action.args.repeat).toEqual({ every: "week", count: 3 });
+  });
+
+  it("another appointment on any date: no card, the conflicting dates named (recurring_conflict)", async () => {
+    const t = setup(series({ every: "week", count: 3 }));
+    t.tables.appointments.push({ id: "a-x", professional_id: "doc-1", patient_id: null, patient_name: "Rui", date: "2026-10-14", start_time: "14:00:00", end_time: "14:30:00", status: "scheduled", payment_status: "pending", payment_amount: null });
+    const r = await run(t, ask("…"));
+    expect(cardOf(r.blocks)).toBeUndefined();
+    const c = choiceOf(r.blocks)!;
+    expect(c.reason).toBe("recurring_conflict");
+    expect(c.conflicts).toEqual([{ date: "2026-10-14", start: "14:00", end: "14:30", what: "Rui" }]);
+    expect(c.text).toContain("Nada foi salvo");
+    expect(c.alternatives).toEqual([]);
+  });
+
+  it("blocked time on a later date: the second question names that date", async () => {
+    const t3 = setup(series({ every: "week", count: 2 }, "2026-10-07", "12:00"));
+    t3.tables.appointments.push({ id: "b-x", professional_id: "doc-1", patient_id: null, patient_name: null, date: "2026-10-14", start_time: "12:00:00", end_time: "13:00:00", status: "blocked", payment_status: null, payment_amount: null });
+    const card = cardOf((await run(t3, ask("…"))).blocks)!;
+    expect(card.secondConfirm?.question).toBe("14/10/2026: Este horário está bloqueado (12:00–13:00). Agendar mesmo assim?");
+  });
+
+  it("a bad repeat goes back to the model", async () => {
+    const t = setup(series({ every: "day", count: 3 }));
+    expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
+    expect(resultsIn(t.model.calls[2])[0]).toMatchObject({ is_error: true });
+  });
+});
