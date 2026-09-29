@@ -5,6 +5,7 @@ import type { Currency } from "@/lib/country";
 import { useTransition, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { markInviteShared } from "@/lib/setupActions";
+import { formatCnpj, isValidCnpj } from "@/lib/cnpj";
 import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient, generatePublicInviteCode } from "./actions";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
@@ -208,15 +209,20 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  // The CNPJ as stored, masked; checked only when it's changed (a stored bad
+  // value never blocks other edits), like the app.
+  const loadedCnpj = data.clinic_cnpj ? formatCnpj(data.clinic_cnpj) : "";
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     setError("");
+    const cnpj = ((fd.get("clinic_cnpj") as string | null) ?? "").trim();
+    if (br && cnpj && formatCnpj(cnpj) !== loadedCnpj && !isValidCnpj(cnpj)) { setError(t("cnpjInvalid")); return; }
     start(async () => {
       const result = await updateClinic(fd);
       if ("error" in result && result.error) {
-        setError(result.error === "invalid_promptpay" ? t("promptPayInvalid") : result.error === "invalid_tax_id" ? t("taxIdInvalid") : t("saveFailed"));
+        setError(result.error === "invalid_promptpay" ? t("promptPayInvalid") : result.error === "invalid_tax_id" ? t("taxIdInvalid") : result.error === "invalid_cnpj" ? t("cnpjInvalid") : t("saveFailed"));
         return;
       }
       setSaved(true);
@@ -235,7 +241,7 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
           {br && (
             <div>
               <Label>{t("cnpj")}</Label>
-              <Input name="clinic_cnpj" defaultValue={data.clinic_cnpj ?? ""} placeholder="00.000.000/0001-00" />
+              <Input name="clinic_cnpj" defaultValue={loadedCnpj} placeholder="00.000.000/0001-00" />
             </div>
           )}
           {th && showTaxId && (

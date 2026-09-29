@@ -464,6 +464,7 @@
     "clinicName": "Tên phòng khám / cơ sở",
     "clinicNamePlaceholder": "Phòng khám Sức Khỏe",
     "cnpj": "CNPJ",
+    "cnpjInvalid": "CNPJ không hợp lệ. Hãy kiểm tra lại số.",
     "taxIdLabel": "Mã số thuế (13 chữ số)",
     "taxIdInvalid": "Nhập mã số thuế 13 chữ số hợp lệ.",
     "phone": "Điện thoại",

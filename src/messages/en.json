@@ -470,6 +470,7 @@
     "clinicName": "Clinic / practice name",
     "clinicNamePlaceholder": "Clínica Bem-Estar",
     "cnpj": "CNPJ",
+    "cnpjInvalid": "The CNPJ isn't valid. Check the number.",
     "taxIdLabel": "Tax ID (13 digits)",
     "taxIdInvalid": "Enter a valid 13-digit tax ID.",
     "phone": "Phone",

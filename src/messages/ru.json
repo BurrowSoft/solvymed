@@ -464,6 +464,7 @@
     "clinicName": "Название клиники / кабинета",
     "clinicNamePlaceholder": "Клиника Здоровье",
     "cnpj": "CNPJ",
+    "cnpjInvalid": "CNPJ недействителен. Проверьте номер.",
     "taxIdLabel": "ИНН (13 цифр)",
     "taxIdInvalid": "Введите действительный 13-значный ИНН.",
     "phone": "Телефон",

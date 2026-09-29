@@ -464,6 +464,7 @@
     "clinicName": "اسم العيادة / المجمع",
     "clinicNamePlaceholder": "عيادة الرفاهية",
     "cnpj": "CNPJ",
+    "cnpjInvalid": "رقم CNPJ غير صالح. تحقّق من الرقم.",
     "taxIdLabel": "الرقم الضريبي (13 رقمًا)",
     "taxIdInvalid": "أدخل رقمًا ضريبيًا صحيحًا من 13 رقمًا.",
     "phone": "الهاتف",
