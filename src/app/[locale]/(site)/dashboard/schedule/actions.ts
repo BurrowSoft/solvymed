@@ -56,7 +56,10 @@ export async function createAppointment(formData: FormData) {
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
-  const patientName = formData.get("patient_name") as string;
+  let patientName = formData.get("patient_name") as string;
+  // SolvyAI's cards book by id (two patients can share a name); the form
+  // books by name.
+  const patientIdIn = formData.get("patient_id");
   const date = formData.get("date") as string;
   const startTime = formData.get("start_time") as string;
   const durationStr = formData.get("duration_minutes") as string;
@@ -65,6 +68,16 @@ export async function createAppointment(formData: FormData) {
   const paymentType = (formData.get("payment_type") as string) || "private";
   const notes = formData.get("notes") as string;
 
+  if (typeof patientIdIn === "string" && patientIdIn) {
+    const { data: byId } = await supabase
+      .from("patients")
+      .select("full_name")
+      .eq("id", patientIdIn)
+      .eq("professional_id", effectiveProfId)
+      .maybeSingle();
+    if (!byId) return { error: "Patient not found", code: "generic" };
+    patientName = (byId as { full_name: string }).full_name;
+  }
   if (!patientName || !date || !startTime) return { error: "Missing required fields", code: "missing_fields" };
   // Never saved or converted (the field blocks it first).
   if (looksBuddhistEra(date)) return { error: "Buddhist-era year", code: "date_buddhist_era" };
@@ -78,13 +91,13 @@ export async function createAppointment(formData: FormData) {
   // the only match is archived, refuse rather than book an unlinked
   // appointment for someone the clinic archived; the server also refuses
   // appointments on an archived patient_id.
-  const { data: patients } = await supabase
+  const byName = supabase
     .from("patients")
     .select("id, archived_at")
-    .eq("professional_id", effectiveProfId)
-    .ilike("full_name", patientName.trim())
-    .order("archived_at", { ascending: false, nullsFirst: true })
-    .limit(1);
+    .eq("professional_id", effectiveProfId);
+  const { data: patients } = await (typeof patientIdIn === "string" && patientIdIn
+    ? byName.eq("id", patientIdIn).limit(1)
+    : byName.ilike("full_name", patientName.trim()).order("archived_at", { ascending: false, nullsFirst: true }).limit(1));
 
   const match = patients?.[0] as { id: string; archived_at: string | null } | undefined;
   if (match?.archived_at) return { error: "Patient is archived", code: "patient_archived" };
@@ -143,7 +156,7 @@ export async function createAppointment(formData: FormData) {
     }
   }
 
-  const { error } = await supabase.from("appointments").insert({
+  const { data: saved, error } = await supabase.from("appointments").insert({
     professional_id: effectiveProfId,
     patient_id: patientId,
     patient_name: patientName.trim(),
@@ -158,7 +171,7 @@ export async function createAppointment(formData: FormData) {
     status: "scheduled",
     notes: notes || null,
     scheduled_by: "professional",
-  });
+  }).select("id").single();
 
   if (error) {
     if (error.message?.includes("patient_archived")) return { error: "Patient is archived", code: "patient_archived" };
@@ -167,7 +180,7 @@ export async function createAppointment(formData: FormData) {
     return { error: error.message, code: knownDbError(error.message) ?? "generic" };
   }
   revalidatePath("/dashboard/schedule");
-  return { success: true };
+  return { success: true, id: (saved as { id: string } | null)?.id };
 }
 
 // tentative/proposal/rejected are deliberately excluded — those are
@@ -254,7 +267,7 @@ export async function blockTime(formData: FormData) {
   const endTime = computeEndTime(startTime, duration);
   if (!endTime) return { error: "This time and duration would run past midnight", code: "past_midnight" };
 
-  const { error } = await supabase.from("appointments").insert({
+  const { data: saved, error } = await supabase.from("appointments").insert({
     professional_id: effectiveProfId,
     patient_id: null,
     patient_name: reason || "Blocked",
@@ -268,9 +281,9 @@ export async function blockTime(formData: FormData) {
     payment_status: "pending",
     status: "blocked",
     scheduled_by: "professional",
-  });
+  }).select("id").single();
 
   if (error) return { error: error.message, code: knownDbError(error.message) ?? "generic" };
   revalidatePath("/dashboard/schedule");
-  return { success: true };
+  return { success: true, id: (saved as { id: string } | null)?.id };
 }

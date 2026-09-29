@@ -1175,6 +1175,7 @@
       }
     },
     "unavailable": "지금은 SolvyAI를 사용할 수 없습니다. 잠시 후 다시 시도하세요.",
+    "notForAccount": "이 계정에서는 SolvyAI를 사용할 수 없습니다.",
     "expired": "이 카드는 만료되었습니다. 최신 정보를 보려면 다시 요청하세요.",
     "cancel": "취소",
     "chipAt": "{date} {time}",

@@ -10,6 +10,8 @@ export type AssistantRequest = {
   messages: { role: "user" | "assistant"; text: string }[];
   screen: AssistantScreen;
   locale: string;
+  // User messages sent so far in this conversation (the route caps them).
+  turns?: number;
 };
 
 // Screens by name (each client maps them to its own routes), for links and
@@ -100,7 +102,8 @@ export interface AssistantBackend {
   usage(): Promise<AssistantUsage>;
   // Confirmar: the client runs the card's action through the normal save
   // path, which re-checks everything (§2.3a rule 10).
-  execute(action: CardAction): Promise<ExecuteResult>;
+  // warningsAsked: the card's second question was asked and answered.
+  execute(action: CardAction, opts?: { warningsAsked?: boolean }): Promise<ExecuteResult>;
   // The save refused (the slot was taken, …): the server explains and
   // offers fresh times, without a model call and without counting.
   reportConfirmFailed(code: string, action: CardAction, locale: string): AsyncIterable<AnswerChunk>;

@@ -1175,6 +1175,7 @@
       }
     },
     "unavailable": "SolvyAI 暂时不可用，请稍后再试。",
+    "notForAccount": "此账户无法使用 SolvyAI。",
     "expired": "此卡片已过期。请重新询问以查看最新信息。",
     "cancel": "取消",
     "chipAt": "{date} {time}",
