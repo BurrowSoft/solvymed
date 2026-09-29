@@ -225,7 +225,13 @@
     "pixQrTitle": "Pix QR code",
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "复制",
-    "durationMinutes": "{n} 分钟"
+    "durationMinutes": "{n} 分钟",
+    "undoBooked": "已预约",
+    "undoMoved": "预约已改期",
+    "undoCancelled": "预约已取消",
+    "undoAction": "撤销（{s} 秒）",
+    "undoDone": "已撤销。",
+    "undoFailed": "无法撤销。请打开该项目进行调整。"
   },
   "payments": {
     "thisWeek": "本周",

@@ -225,7 +225,13 @@
     "pixQrTitle": "Pix QR code",
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Копировать",
-    "durationMinutes": "{n} мин"
+    "durationMinutes": "{n} мин",
+    "undoBooked": "Запись создана",
+    "undoMoved": "Запись перенесена",
+    "undoCancelled": "Запись отменена",
+    "undoAction": "Отменить ({s} с)",
+    "undoDone": "Отменено.",
+    "undoFailed": "Не удалось отменить. Откройте запись, чтобы исправить её."
   },
   "payments": {
     "thisWeek": "На этой неделе",

@@ -11,7 +11,10 @@ import { MOVABLE_STATUSES, hoursWarning, keptDuration } from "@/lib/scheduleChec
 import type { WorkingHours } from "@/lib/slots";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { MAX_OCCURRENCES, MIN_OCCURRENCES, RECURRENCES, recurrenceDates, type Recurrence } from "@/lib/recurrence";
-import { tellPatient } from "@/lib/clinicNotify";
+import { tellPatient, type Told } from "@/lib/clinicNotify";
+import { cancelPatientNotice, enqueuePatientNotice } from "@/lib/patientNotice";
+import type { UndoToken } from "@/lib/scheduleUndo";
+import { signUndo, verifyUndo } from "@/lib/scheduleUndoSign";
 
 // The new-appointment patient picker: up to PICKER_LIMIT active patients of
 // this practice whose name (or CPF/phone digits) match, searched in the
@@ -226,13 +229,14 @@ export async function createAppointment(formData: FormData) {
   }
   // The patient hears about it when they have the app (never the past).
   // A series is one push: how many, and the first.
-  await tellPatient(supabase, {
+  const ids = ((savedRows ?? []) as { id: string }[]).map((r) => r.id);
+  const told = await tellPatient(supabase, {
     kind: "booked", practiceId: effectiveProfId, isSecretary: user.id !== effectiveProfId,
     patientId, date, startTime, ...(dates.length > 1 ? { dates } : {}),
-    appointmentIds: ((savedRows ?? []) as { id: string }[]).map((r) => r.id),
+    appointmentIds: ids,
   });
   revalidatePath("/dashboard/schedule");
-  return { success: true, id: saved?.id, count: dates.length };
+  return { success: true, id: saved?.id, count: dates.length, undo: undoToken(told, effectiveProfId, { kind: "booked", ids, dates, start: startTime, status: "scheduled" }) };
 }
 
 // Remarcar: a new date and start, the same duration, with the same checks
@@ -334,14 +338,20 @@ export async function moveAppointment(formData: FormData) {
   }
   if (!moved?.length) return { error: "Can't be moved", code: "not_movable" };
 
-  await tellPatient(supabase, {
+  const told = await tellPatient(supabase, {
     kind: "moved", practiceId: effectiveProfId, isSecretary: user.id !== effectiveProfId,
     patientAuthId: before.patient_auth_id, patientId: before.patient_id, status: before.status,
     date, startTime, from: { date: before.date, startTime: before.start_time },
     appointmentIds: [id],
   });
   revalidatePath("/dashboard/schedule");
-  return { success: true, id };
+  return {
+    success: true, id,
+    undo: undoToken(told, effectiveProfId, {
+      kind: "moved", ids: [id], dates: [date], start: startTime, status: before.status,
+      prevDate: before.date, prevStart: before.start_time.slice(0, 5), prevEnd: before.end_time.slice(0, 5),
+    }),
+  };
 }
 
 // tentative/proposal/rejected are deliberately excluded — those are
@@ -401,17 +411,110 @@ export async function updateAppointmentStatus(id: string, status: string) {
 
   // Cancelled now (not before): the patient hears about it when they have
   // the app; never for blocked time or the past.
+  let undo: UndoToken | null = null;
   if (before && before.status !== "cancelled") {
-    await tellPatient(supabase, {
+    const told = await tellPatient(supabase, {
       kind: "cancelled", practiceId: effectiveProfId, isSecretary: user.id !== effectiveProfId,
       patientAuthId: before.patient_auth_id, patientId: before.patient_id, status: before.status,
       date: before.date, startTime: before.start_time,
       appointmentIds: [id],
     });
+    // Blocked time isn't a cancel the patient hears of; its own flow.
+    if (before.status !== "blocked") {
+      undo = undoToken(told, effectiveProfId, { kind: "cancelled", ids: [id], dates: [before.date], start: before.start_time.slice(0, 5), status: "cancelled", prevStatus: before.status });
+    }
   }
 
   revalidatePath("/dashboard/schedule");
-  return { success: true };
+  return { success: true, undo };
+}
+
+// The Agenda's Desfazer is offered unless a push already went out from
+// here; the token is signed for this practice (never issued unsigned).
+function undoToken(told: Told, practiceId: string, t: Omit<UndoToken, "told" | "iat" | "sig">): UndoToken | null {
+  return told === "direct" ? null : signUndo({ ...t, told }, practiceId);
+}
+
+const UNDO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+const UNDO_TIME = /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/;
+const UNDO_ID = /^[0-9a-f-]{8,64}$/i;
+const REVERTIBLE = ["scheduled", "confirmed", "late", "completed", "absent"];
+
+// Desfazer (the app's undoAction order, so the patient is never told
+// something that didn't stand, nor left untold of something that did):
+//   1. every appointment is still as the action left it (else refused: it
+//      changed again meanwhile, on another screen or device);
+//   2. the queued notice is dropped (false: it's already on its way ->
+//      refused; the action stands and the patient hears it);
+//   3. revert. If that fails, the patient is told again (re-queued) and the
+//      undo reports failure.
+// The token comes back from the client: it must be untampered, this
+// practice's and fresh (lib/scheduleUndoSign), and every field is still
+// re-validated and every write scoped to the practice (RLS on top).
+export async function undoScheduleChange(token: UndoToken): Promise<{ ok: boolean }> {
+  const t = token as Partial<UndoToken> | null;
+  const kind = t?.kind;
+  const ids = Array.isArray(t?.ids) ? t!.ids.filter((x) => typeof x === "string" && UNDO_ID.test(x)) : [];
+  const dates = Array.isArray(t?.dates) ? t!.dates.filter((d) => typeof d === "string" && UNDO_DATE.test(d)) : [];
+  const start = typeof t?.start === "string" && UNDO_TIME.test(t.start) ? t.start.slice(0, 5) : null;
+  const told = typeof t?.told === "number" && Number.isInteger(t.told) ? t.told : null;
+  if ((kind !== "booked" && kind !== "moved" && kind !== "cancelled") || !ids.length || ids.length !== (t?.ids?.length ?? 0) || !dates.length || !start || typeof t?.status !== "string") return { ok: false };
+  if (kind !== "booked" && ids.length !== 1) return { ok: false };
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false };
+  const prof = await getEffectiveProfId(supabase, user.id);
+  if (!prof || !verifyUndo(token, prof)) return { ok: false };
+
+  // 1. Still as the action left it.
+  try {
+    const { data, error } = await supabase.from("appointments").select("id, date, start_time, status").eq("professional_id", prof).in("id", ids);
+    const rows = (data ?? []) as { id: string; date: string; start_time: string; status: string }[];
+    if (error || rows.length !== ids.length) return { ok: false };
+    if (!rows.every((r) => dates.includes(r.date) && r.start_time.slice(0, 5) === start && r.status === t!.status)) return { ok: false };
+    // 2. The notice, dropped before anything changes.
+    if (told !== null && !(await cancelPatientNotice(supabase, told))) return { ok: false };
+  } catch {
+    return { ok: false };
+  }
+
+  // 3. Revert (each write re-checks the state it expects).
+  let reverted = false;
+  try {
+    if (kind === "booked") {
+      // A booking (a whole series): gone.
+      const { data, error } = await supabase.from("appointments").delete().eq("professional_id", prof).in("id", ids).eq("status", "scheduled").select("id");
+      reverted = !error && (data ?? []).length === ids.length;
+    } else if (kind === "moved") {
+      const prevDate = t.prevDate, prevStart = t.prevStart, prevEnd = t.prevEnd;
+      if (typeof prevDate === "string" && UNDO_DATE.test(prevDate) && typeof prevStart === "string" && UNDO_TIME.test(prevStart) && typeof prevEnd === "string" && UNDO_TIME.test(prevEnd)) {
+        const { data, error } = await supabase.from("appointments")
+          .update({ date: prevDate, start_time: prevStart.slice(0, 5), end_time: prevEnd.slice(0, 5) })
+          .eq("id", ids[0]).eq("professional_id", prof).eq("date", dates[0]).in("status", MOVABLE_STATUSES)
+          .select("id");
+        reverted = !error && (data ?? []).length === 1;
+      }
+    } else {
+      const prev = t.prevStatus;
+      if (typeof prev === "string" && REVERTIBLE.includes(prev)) {
+        const { data, error } = await supabase.from("appointments").update({ status: prev })
+          .eq("id", ids[0]).eq("professional_id", prof).eq("status", "cancelled").select("id");
+        reverted = !error && (data ?? []).length === 1;
+      }
+    }
+  } catch {
+    reverted = false;
+  }
+  if (!reverted) {
+    // The action stands: the patient is told again (only if they were queued).
+    if (told !== null) {
+      await enqueuePatientNotice(supabase, kind, ids, kind === "moved" && t.prevDate && t.prevStart ? { date: t.prevDate, startTime: t.prevStart } : undefined).catch(() => null);
+    }
+    return { ok: false };
+  }
+  revalidatePath("/dashboard/schedule");
+  return { ok: true };
 }
 
 export async function deleteAppointment(id: string) {

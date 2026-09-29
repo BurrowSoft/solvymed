@@ -225,7 +225,13 @@
     "pixQrTitle": "Pix QR code",
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Salin",
-    "durationMinutes": "{n} menit"
+    "durationMinutes": "{n} menit",
+    "undoBooked": "Janji temu dibuat",
+    "undoMoved": "Janji temu dipindahkan",
+    "undoCancelled": "Janji temu dibatalkan",
+    "undoAction": "Batalkan ({s} dtk)",
+    "undoDone": "Dibatalkan.",
+    "undoFailed": "Tidak dapat membatalkan. Buka item untuk menyesuaikannya."
   },
   "payments": {
     "thisWeek": "Minggu ini",

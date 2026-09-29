@@ -15,6 +15,10 @@
 //   Note for SolvyAI: ... In the apps: "<pt>" / "<en>".   (optional)
 //   `requires:<id>,<id>`   (optional) the whole article only when all are met
 //   {pending:<id>,<id>} <text>  a paragraph only when all are met
+//   **No site:** {pending:<id>} <note> / **No site:** {unless:<id>} <note>
+//     a web note (pt and en alike) only when the conditions are all met /
+//     not all met: the note for before and after a feature reaches the
+//     website, so flipping the condition swaps them.
 //
 // Conditions (content/help/conditions.json; the App Map's pending rules use
 // the same ids): text that describes something not true yet (an app build
@@ -70,8 +74,15 @@ export function parseBatch(file, text, conditions = {}) {
       if (line === "**pt-BR**") { lang = "pt"; continue; }
       if (line === "**en**") { lang = "en"; continue; }
       let m;
-      if ((m = line.match(/^\*\*No site:\*\*\s+(.+)$/))) { web.pt = m[1]; lang = null; continue; }
-      if ((m = line.match(/^\*\*On the website:\*\*\s+(.+)$/))) { web.en = m[1]; lang = null; continue; }
+      if ((m = line.match(/^\*\*(No site|On the website):\*\*\s+(.+)$/))) {
+        lang = null;
+        const key = m[1] === "No site" ? "pt" : "en";
+        const held = m[2].match(/^\{(pending|unless):([\w#.,-]+)\}\s+(.+)$/);
+        if (!held) { web[key] = m[2]; continue; }
+        const all = held[2].split(",").map(isMet).every(Boolean);
+        if (all === (held[1] === "pending")) web[key] = held[3];
+        continue;
+      }
       if ((m = line.match(/^`open:([\w-]+)`$/))) { a.open = m[1] === "none" ? null : m[1]; lang = null; continue; }
       if ((m = line.match(/^`requires:([\w#.,-]+)`$/))) { requires = m[1].split(","); requires.forEach(isMet); continue; }
       if (line.startsWith("Note for SolvyAI:")) {

@@ -225,7 +225,13 @@
     "pixQrTitle": "Pix QR code",
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "복사",
-    "durationMinutes": "{n}분"
+    "durationMinutes": "{n}분",
+    "undoBooked": "예약됨",
+    "undoMoved": "예약 변경됨",
+    "undoCancelled": "예약 취소됨",
+    "undoAction": "실행 취소 ({s}초)",
+    "undoDone": "취소됨.",
+    "undoFailed": "실행 취소할 수 없습니다. 항목을 열어 조정하세요."
   },
   "payments": {
     "thisWeek": "이번 주",

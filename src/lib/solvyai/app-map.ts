@@ -301,6 +301,20 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
+      text: "On the website's Schedule, right after a manual book, move or cancel, \"Desfazer\" / \"Undo\" shows for 10 s, while the notice to the patient hasn't gone out yet. It first checks the appointment wasn't changed again; if it was, or the notice is already on its way, it says \"Não foi possível desfazer. Abra o item para ajustar.\". A booked series is undone whole.",
+      pending: ["notice-outbox-live"],
+    },
+    help: "A4",
+  },
+  {
+    rule: {
+      text: "In the app too (1.4.0): right after a manual book, move or cancel in the Agenda, \"Desfazer\" / \"Undo\" shows for 10 s, while the notice to the patient hasn't gone out yet.",
+      pending: ["app-1.4.0", "notice-outbox-live"],
+    },
+    help: "A4",
+  },
+  {
+    rule: {
       text: "Importing patients from another system (website only, doctor: Pacientes → \"Importar pacientes\" / \"Import patients\"): a CSV or Excel file (iClinic and Prontuário Verde recognised, or our template); columns are mapped, the sheet is checked (new / already exist / with errors, with a downloadable error list) and nothing is saved until \"Importar\"; \"Desfazer importação\" works for 24 hours on the new patients not yet edited or used. SolvyAI never imports; send the doctor there.",
       pending: ["patient-import-live"],
     },
