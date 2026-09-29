@@ -8032,3 +8032,54 @@ for the patient-accept step. This docs commit includes that master sync.
 **CI at `9c0e60a`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `9c0e60a`.** This docs commit sits on top of a master sync (8 behind,
 clean merge; it brings #139).
+
+## PR #141 (`docs/flip-115-119`, base master) — Help: flip `migration-115` and `linked-bookings` (115 and 119 applied), 🟢 at `5060fd3`
+
+**Help (the #141 Preview vs the master Preview, all 156 pages):**
+- **Changed as intended:** A1 and A4, pt and en, plain and `?app=1`, each
+  gain one paragraph:
+  - A1: "No site também: se o paciente tiver conta no SolvyMed, ele recebe
+    uma notificação quando você agenda." / "On the website too: … they get
+    a notification when you book."
+  - A4: "No site também: … quando você cancela (ou arquiva o paciente).
+    Consultas no passado não notificam." / "On the website too: … when you
+    cancel (or archive the patient). Past appointments don't notify."
+- **The only other difference was K5:** the branch predated #139's K5
+  privacy line. After this docs commit's master sync, the built
+  `helpArticles.json` differs from master **only** by those four A1/A4
+  paragraphs.
+- **SolvyAI stays hidden:** `/help/c9` is 404 and no SolvyAI text is
+  built (`solvyai-live` is still unmet).
+
+**Is the new sentence true? Live check on current master** (migrations 110
+and 119 applied):
+- **Setup:** a local `next dev` + my Expo sink (pushes logged, never sent);
+  the #131 spec run through the UI with **no app-origin booking** for
+  either patient (`NO_APP_ROW=1`).
+- **Doctor's website booking → linked patients:** both get the push, which
+  #131 could not do before 119:
+  - pt: "Nova consulta | **Clínica Opus Push marcou uma consulta para você
+    em 06/10/2026 às 10:00.**"
+  - th: "นัดหมายใหม่ | **Clínica Opus Push ได้นัดหมายให้คุณในวันที่ 06/10/2569
+    เวลา 11:00**"
+- **Status → Cancelado:**
+  - pt: "Clínica Opus Push cancelou sua consulta de 06/10/2026 às 10:00.
+    Para marcar outra, abra o app."
+  - th: "…ถูกยกเลิกโดย Clínica Opus Push หากต้องการนัดใหม่ กรุณาเปิดแอป"
+- **No push** for an unlinked patient, a past booking or cancel, a block,
+  or cancelled → confirmed.
+- **Archive** → one push per future appointment. **Account close** (th) →
+  "…ถูกยกเลิกโดย Consultório Opus Sul" (the first-location fallback, no
+  suffix).
+
+**Closes two ⏳ rows from #131:**
+- **post-119 (`linked-bookings`):** website-only linked patients now get
+  the book/cancel pushes ✅ (above).
+- **post-110 (the secretary names the clinic):** a secretary booking and
+  cancelling on a profile-named practice **with two locations** → "**Clínica
+  Opus Push** marcou…" / "…cancelou…". That's the profile name, the same as
+  the doctor's ✅.
+
+**CI at `5060fd3`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`5060fd3`.** This docs commit sits on top of a master sync (14 behind,
+clean merge).
