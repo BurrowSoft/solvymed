@@ -219,6 +219,7 @@
     "overlapHardMsg": "이 시간은 {time}의 {name} 예약({duration})과 겹칩니다. 다른 시간을 선택하세요.",
     "overlapGeneric": "이 시간은 다른 예약과 겹칩니다. 다른 시간을 선택하세요.",
     "requestedLabel": "요청: {date} · {time}",
+    "proposedLabel": "제안: {date} · {time}",
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "태국 은행 앱으로 스캔해 결제하세요.",
     "pixQrTitle": "Pix QR code",

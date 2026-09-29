@@ -219,6 +219,7 @@
     "overlapHardMsg": "هذا الوقت يتعارض مع {name} في {time} ({duration}). اختر وقتًا آخر.",
     "overlapGeneric": "هذا الوقت يتعارض مع موعد آخر. اختر وقتًا آخر.",
     "requestedLabel": "المطلوب: {date} · {time}",
+    "proposedLabel": "مقترح: {date} · {time}",
     "promptPayTitle": "رمز QR لـ PromptPay",
     "promptPayScan": "امسح الرمز بأي تطبيق مصرفي تايلاندي للدفع.",
     "pixQrTitle": "Pix QR code",

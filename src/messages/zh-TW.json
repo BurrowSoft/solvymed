@@ -219,6 +219,7 @@
     "overlapHardMsg": "此時間與 {name} 在 {time} 的預約（{duration}）衝突。請選擇其他時間。",
     "overlapGeneric": "此時間與另一個預約衝突。請選擇其他時間。",
     "requestedLabel": "申請時間：{date} · {time}",
+    "proposedLabel": "建議時間：{date} · {time}",
     "promptPayTitle": "PromptPay QR 碼",
     "promptPayScan": "使用任何泰國銀行 App 掃描付款。",
     "pixQrTitle": "Pix QR code",

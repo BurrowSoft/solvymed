@@ -219,6 +219,7 @@
     "overlapHardMsg": "Questo orario si sovrappone a {name} alle {time} ({duration}). Scegli un altro orario.",
     "overlapGeneric": "Questo orario si sovrappone a un altro appuntamento. Scegli un altro orario.",
     "requestedLabel": "Richiesto: {date} · {time}",
+    "proposedLabel": "Proposto: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Scansiona con qualsiasi app bancaria thailandese per pagare.",
     "pixQrTitle": "Pix QR code",

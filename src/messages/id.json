@@ -219,6 +219,7 @@
     "overlapHardMsg": "Waktu ini bertabrakan dengan {name} pukul {time} ({duration}). Pilih waktu lain.",
     "overlapGeneric": "Waktu ini bertabrakan dengan janji temu lain. Pilih waktu lain.",
     "requestedLabel": "Diminta: {date} · {time}",
+    "proposedLabel": "Diusulkan: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Pindai dengan aplikasi bank Thailand mana pun untuk membayar.",
     "pixQrTitle": "Pix QR code",

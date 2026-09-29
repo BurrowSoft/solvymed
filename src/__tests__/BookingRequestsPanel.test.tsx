@@ -136,6 +136,13 @@ describe('BookingRequestsPanel', () => {
     expect(screen.getByText('Waiting for patient response')).toBeInTheDocument();
   });
 
+  it("a clinic's proposal shows the proposed time, not just the original (UX 36)", () => {
+    const { rerender } = render(<BookingRequestsPanel bookings={[PROPOSAL_BOOKING]} />);
+    expect(screen.queryByText('proposedLabel')).not.toBeInTheDocument();
+    rerender(<BookingRequestsPanel bookings={[{ ...PROPOSAL_BOOKING, proposed_date: '2030-01-17', proposed_start_time: '14:00:00' }]} />);
+    expect(screen.getByText('proposedLabel')).toBeInTheDocument();
+  });
+
   it('does NOT show action buttons for proposal status', () => {
     render(<BookingRequestsPanel bookings={[PROPOSAL_BOOKING]} />);
     expect(screen.queryByRole('button', { name: 'Confirm' })).not.toBeInTheDocument();
