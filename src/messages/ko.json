@@ -1183,5 +1183,17 @@
   "dateInput": {
     "buddhistYear": "불기 연도로 보입니다. 서기 연도를 사용해 주세요(예: 1996).",
     "invalidBirthDate": "생년월일이 올바르지 않습니다. 1900년부터 오늘 사이의 날짜를 사용하세요."
+  },
+  "solvyaiSettings": {
+    "title": "SolvyAI",
+    "buttonLabel": "어시스턴트 버튼 표시",
+    "buttonHint": "이 브라우저에서만.",
+    "actionsLabel": "SolvyAI가 작업을 수행하도록 허용",
+    "actionsText": "SolvyAI는 예약 생성·변경·취소, 시간 차단, 환자 등록, 결제 표시를 할 수 있으며, 항상 사용자의 확인 후에 진행합니다. 이를 위해 환자의 이름과 생년월일, 예약 정보가 요청을 처리하는 Anthropic(미국)으로 전송됩니다. SolvyAI는 진료 기록, 처방전, 검사 결과를 절대 읽지 않습니다. 채팅에 입력한 내용은 입력한 그대로 전송되므로 임상 정보는 입력하지 마세요.",
+    "privacy": "개인정보 처리방침",
+    "confirmTitle": "SolvyAI 작업을 켜시겠습니까?",
+    "cancel": "취소",
+    "turnOn": "켜기",
+    "error": "저장하지 못했습니다. 다시 시도하세요."
   }
 }

@@ -1183,5 +1183,17 @@
   "dateInput": {
     "buddhistYear": "Có vẻ đây là năm theo Phật lịch. Vui lòng dùng năm dương lịch (ví dụ: 1996).",
     "invalidBirthDate": "Ngày sinh không hợp lệ: hãy dùng ngày từ năm 1900 đến hôm nay."
+  },
+  "solvyaiSettings": {
+    "title": "SolvyAI",
+    "buttonLabel": "Hiển thị nút trợ lý",
+    "buttonHint": "Trên trình duyệt này.",
+    "actionsLabel": "Cho phép SolvyAI thực hiện thao tác",
+    "actionsText": "SolvyAI có thể đặt, dời và hủy lịch hẹn, chặn khung giờ, thêm bệnh nhân và đánh dấu thanh toán, luôn sau khi bạn xác nhận. Để làm vậy, tên và ngày sinh của bệnh nhân cùng thông tin lịch hẹn được gửi đến Anthropic (Hoa Kỳ) để xử lý yêu cầu. SolvyAI không bao giờ đọc hồ sơ bệnh án, đơn thuốc hay kết quả xét nghiệm. Những gì bạn nhập trong chat được gửi đúng như bạn viết, vì vậy hãy tránh nhập dữ liệu lâm sàng.",
+    "privacy": "Chính sách quyền riêng tư",
+    "confirmTitle": "Bật thao tác của SolvyAI?",
+    "cancel": "Hủy",
+    "turnOn": "Bật",
+    "error": "Không thể lưu. Hãy thử lại."
   }
 }

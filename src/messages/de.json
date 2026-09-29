@@ -1183,5 +1183,17 @@
   "dateInput": {
     "buddhistYear": "Das sieht nach einem Jahr der buddhistischen Zeitrechnung aus. Bitte das gregorianische Jahr verwenden (z. B. 1996).",
     "invalidBirthDate": "Ungültiges Geburtsdatum: Bitte ein Datum zwischen 1900 und heute verwenden."
+  },
+  "solvyaiSettings": {
+    "title": "SolvyAI",
+    "buttonLabel": "Assistenten-Schaltfläche anzeigen",
+    "buttonHint": "In diesem Browser.",
+    "actionsLabel": "SolvyAI Aktionen ausführen lassen",
+    "actionsText": "SolvyAI kann Termine buchen, verschieben und absagen, Zeiten blockieren, Patienten anlegen und Zahlungen markieren – immer erst nach Ihrer Bestätigung. Dafür werden Name und Geburtsdatum des Patienten sowie die Termindaten an Anthropic (USA) gesendet, das die Anfrage verarbeitet. SolvyAI liest niemals Patientenakten, Rezepte oder Befunde. Was Sie im Chat eingeben, wird so gesendet, wie Sie es schreiben – geben Sie daher keine klinischen Daten ein.",
+    "privacy": "Datenschutzerklärung",
+    "confirmTitle": "SolvyAI-Aktionen einschalten?",
+    "cancel": "Abbrechen",
+    "turnOn": "Einschalten",
+    "error": "Speichern nicht möglich. Bitte erneut versuchen."
   }
 }

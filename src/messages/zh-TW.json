@@ -1183,5 +1183,17 @@
   "dateInput": {
     "buddhistYear": "這看起來是佛曆年份。請使用西元年份（例如 1996）。",
     "invalidBirthDate": "出生日期無效：請使用 1900 年至今天之間的日期。"
+  },
+  "solvyaiSettings": {
+    "title": "SolvyAI",
+    "buttonLabel": "顯示助理按鈕",
+    "buttonHint": "僅限此瀏覽器。",
+    "actionsLabel": "允許 SolvyAI 執行操作",
+    "actionsText": "SolvyAI 可以預約、改約和取消預約、封鎖時段、新增病患和標記付款，且每次都需要您確認。為此，病患的姓名、出生日期和預約資訊會傳送給 Anthropic（美國）處理請求。SolvyAI 從不讀取病歷、處方或檢查結果。您在聊天中輸入的內容會照原樣傳送，因此請避免輸入臨床資訊。",
+    "privacy": "隱私權政策",
+    "confirmTitle": "開啟 SolvyAI 操作？",
+    "cancel": "取消",
+    "turnOn": "開啟",
+    "error": "無法儲存，請再試一次。"
   }
 }
