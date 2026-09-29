@@ -1193,6 +1193,8 @@
     "undone": "Desfeito",
     "simulated": "simulação",
     "undo": "Desfazer ({s} s)",
+    "undoFailed": "Não foi possível desfazer. Abra o item para ajustar.",
+    "openItem": "Abrir",
     "view": "Ver na agenda",
     "edit": "Editar",
     "confirm": "Confirmar ✓",

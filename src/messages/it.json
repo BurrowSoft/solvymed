@@ -1193,6 +1193,8 @@
     "undone": "Annullato",
     "simulated": "simulazione",
     "undo": "Annulla ({s} s)",
+    "undoFailed": "Impossibile annullare. Apri l’elemento per modificarlo.",
+    "openItem": "Apri",
     "view": "Vedi in agenda",
     "edit": "Modifica",
     "confirm": "Conferma ✓",
