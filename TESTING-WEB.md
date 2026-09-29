@@ -9024,3 +9024,51 @@ type-filter label, per my nit. Thai Pagamentos now shows "สัปดาห์�
 | Strings | ✅ `tour.tryNow` / `tryNowQuestion`: en "Try it now" / "What can SolvyAI do?"; th "ลองใช้เลย" / "SolvyAI ทำอะไรได้บ้าง" |
 
 **CI at `70858a7`:** ✅. **Review: clean.** **Merge gate: 🟢 for `70858a7`.** This docs commit sits directly on the PR head. The branch is 5 behind master, and a master merge conflicts in content/help/04-configuracoes.md, so the web dev syncs it.
+
+## #162 Recibo print view on the website (Help G5) (web tester 1, 2026-09-29/30)
+
+**What was tested:** PR head `90065f5`.
+- **The Preview (Playwright):** everything that runs normally.
+- **A local `next dev` at `90065f5`:** the country-lookup failure, injected
+  by a test-only preload, and the dark-theme check.
+- **Accounts:** throwaway, and cleaned up.
+  - **The BR doctor:** specialty, clinic name, CNPJ and address set, plus
+    an `invoice` template with a header and footer.
+  - **Their secretary.**
+  - **A patient** with a CPF (and a passport, which isn't shown for BR).
+  - **Another practice.**
+  - **A TH practice.**
+- **The BR appointments:**
+  - A1: private, paid, R$ 150 + extras Curativo R$ 30 and Material
+    descartável R$ 12,50;
+  - A2: insurance, online, paid;
+  - A3: private, pending;
+  - a blocked slot.
+
+| Row | Result |
+|---|---|
+| Pagamentos (doctor) | ✅ **Recibo** links only on the received ones (A1, A2); the link opens `/pt-BR/dashboard/payments/<id>/receipt` |
+| A1 as the doctor | ✅ "Recibo", the template header. **Patient:** "Opus Paciente Recibo", "CPF: 529.982.247-25". **Number and date:** "#20260921-BF1C91", 21/09/2026. **Header:** "Dra Ana Opus Recibo — Clínica Geral", "Clínica Opus Recibos · CNPJ 12.345.678/0001-95", "Rua do Recibo, 162, São Paulo, SP". **Services:** "Consulta · Presencial · 09:30 R$ 150,00", "Curativo R$ 30,00", "Material descartável R$ 12,50", **Total R$ 192,50**. **Payment:** "Particular · Pago". Then the template footer. |
+| A2 | ✅ "Online · 14:00 R$ 90,00", Total R$ 90,00, "Convênio · Pago" |
+| A3 pending (by URL; no link) | ✅ the recibo says "Particular · **Pendente**" (honest; there's no Recibo link for it in Pagamentos) |
+| **A secretary** | ✅ the same Recibo links in Pagamentos, and **the full doctor/clinic header, template and CNPJ** on A1 (the server-side header read works for a secretary) |
+| en UI | ✅ "Receipt", "Services", "In person", "Private pay · Paid"; money and dates stay in the BR format (R$ 150,00; 21/09/2026) |
+| Blocked slot / another practice's appointment | ✅ 404 for the doctor; another practice's → 404 for the secretary |
+| Thai practice | ✅ Pagamentos shows "Recibos numerados são emitidos no app." and **no** Recibo link. The URL shows only that hint (toolbar + hint, no document). |
+| Print | ✅ only `#print-doc` in print media; the Chromium PDF is **1 page, A4** |
+| The country lookup fails (local injection) | ✅ "Não foi possível carregar os dados da clínica. Tente novamente." + the back link; no document |
+| Dark theme | ✅ `data-theme="light"`: the recibo is white with dark text |
+
+**Nit (not blocking; for the web dev):**
+- **What:** on the recibo, its Thai hint page and its country-error page,
+  the back link reads **"← Voltar ao paciente"**, but it goes to
+  **Pagamentos** (`/pt-BR/dashboard/payments`). It's the shared
+  PrintToolbar label from P6/P8.
+- **Suggested fix:** a "Voltar aos pagamentos" / "Back to payments" label
+  for the recibo.
+
+**Master sync:**
+- **What merged:** master (#154–#159) under this docs commit, cleanly.
+- **Coverage:** #158 also touches Pagamentos (the Todos / Particular /
+  Convênio filter). The rows above ran at `90065f5`, before that merge.
+**Review: clean (9a).** **Merge gate: 🟢 for `90065f5`.**
