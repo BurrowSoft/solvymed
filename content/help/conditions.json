@@ -58,5 +58,9 @@
   "patient-import-live": {
     "met": false,
     "what": "The patient import is live: migrations 130 (staging + validation) and 131 (commit + undo, patient_import_extras, patients.archived_reason) are applied on production. Gates the website import (Pacientes → Importar pacientes, the archived-reason labels) and Help P13."
+  },
+  "notice-outbox-live": {
+    "met": false,
+    "what": "The patient notice outbox is about to go live: migration 135 (enqueue_patient_notice / cancel_patient_notice, the ~1-minute hold, the 30-day delivery record with its purge) is applied on production. Flip this and deploy BEFORE the sender is switched on (the function's Vault secret set LAST, per 38's runbook), so privacy §6e is published before any notice waits or is recorded."
   }
 }
