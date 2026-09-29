@@ -8,6 +8,7 @@ import { patientIdKind } from "@/lib/patientIds";
 import { getClinicTimeZone } from "@/lib/clinicTime";
 import { PrintToolbar } from "@/components/PrintToolbar";
 import { HistoryDocument } from "./HistoryDocument";
+import { AccessLogFailed, logAccesses } from "@/components/printAccess";
 
 // The patient's history print view (Help P8 on the website): the app's
 // "export history" PDF as a print view; "Imprimir / Salvar PDF" opens the
@@ -47,15 +48,14 @@ export default async function HistoryPrintPage({
   const rxs = (rxResult.data ?? []) as { id: string; date: string; notes: string | null; corrects_id: string | null; prescription_items: { name: string; dosage: string; frequency: string; duration: string }[] | null }[];
 
   // Every entry printed is logged as opened (111), like the app's export
-  // (mobile #103): the patient, each record, each prescription. Best
-  // effort: logging never blocks the export.
-  const log = (kind: string, ref?: string) =>
-    supabase.rpc("log_record_access", { p_patient_id: id, p_kind: kind, ...(ref ? { p_object_ref: ref } : {}) }).then(() => {}, () => {});
-  await Promise.all([
-    log("patient"),
-    ...records.map((r) => log("record", r.id)),
-    ...rxs.map((rx) => log("prescription", rx.id)),
+  // (mobile #103): the patient, each record, each prescription. Fail
+  // closed (UX 36): no print unless every access was recorded.
+  const logged = await logAccesses(supabase, id, [
+    { kind: "patient" },
+    ...records.map((r) => ({ kind: "record", ref: r.id })),
+    ...rxs.map((rx) => ({ kind: "prescription", ref: rx.id })),
   ]);
+  if (!logged) return <AccessLogFailed backHref={`${prefix}/dashboard/patients/${id}`} text={t("accessLogFailed")} backLabel={t("back")} />;
   const correctedRecords = new Set(records.map((r) => r.corrects_id).filter(Boolean));
   const correctedRx = new Set(rxs.map((r) => r.corrects_id).filter(Boolean));
 
@@ -84,7 +84,7 @@ export default async function HistoryPrintPage({
   const today = docToday(country, timeZone);
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8">
+    <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
       <PrintToolbar backHref={`${prefix}/dashboard/patients/${id}`} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">

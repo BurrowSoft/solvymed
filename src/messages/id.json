@@ -1284,6 +1284,7 @@
     "birthDate": "Tanggal lahir: {value}",
     "phone": "Telepon: {value}",
     "exportedBy": "Diekspor oleh {name} pada {date}",
+    "accessLogFailed": "Tidak dapat mencatat akses. Silakan coba lagi.",
     "receiptTitle": "Kuitansi",
     "services": "Layanan",
     "description": "Keterangan",

@@ -1314,6 +1314,7 @@
     "birthDate": "วันเกิด: {value}",
     "phone": "โทรศัพท์: {value}",
     "exportedBy": "ส่งออกโดย {name} เมื่อ {date}",
+    "accessLogFailed": "ไม่สามารถบันทึกการเข้าถึงได้ กรุณาลองอีกครั้ง",
     "receiptTitle": "ใบเสร็จ",
     "services": "บริการ",
     "description": "รายการ",

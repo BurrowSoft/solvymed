@@ -5,6 +5,7 @@ import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { PRINT_CSS, docDate, toDocTemplate } from "@/lib/prescriptionDoc";
 import { PrescriptionDocument } from "./PrescriptionDocument";
+import { AccessLogFailed, logAccesses } from "@/components/printAccess";
 import { PrintToolbar } from "@/components/PrintToolbar";
 
 // The prescription's print view (Help P6 on the website): the same layout
@@ -37,15 +38,18 @@ export default async function PrescriptionPrintPage({
   const rx = rxResult.data as { id: string; date: string; notes: string | null; prescription_items: { name: string; dosage: string; frequency: string; duration: string }[] | null } | null;
   if (!patient || !rx) notFound();
 
-  // The access log (migration 111), best effort like the app's.
-  await supabase.rpc("log_record_access", { p_patient_id: patient.id, p_kind: "prescription", p_object_ref: rx.id }).then(() => {}, () => {});
+  // The access log (migration 111). Fail closed (UX 36): no print unless
+  // the access was recorded.
+  if (!(await logAccesses(supabase, patient.id, [{ kind: "prescription", ref: rx.id }]))) {
+    return <AccessLogFailed backHref={`${prefix}/dashboard/patients/${patient.id}`} text={t("accessLogFailed")} backLabel={t("back")} />;
+  }
 
   // The date in the practice country's format (TH: Buddhist era).
   const country = await getPracticeCountry(supabase, user.id, user.id);
   const prof = profResult.data as { full_name: string | null; professional_registration: string | null } | null;
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8">
+    <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
       <PrintToolbar backHref={`${prefix}/dashboard/patients/${patient.id}`} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">

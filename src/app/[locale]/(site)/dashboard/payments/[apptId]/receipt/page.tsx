@@ -46,7 +46,7 @@ export default async function ReceiptPrintPage({
 
   if (country === "TH") {
     return (
-      <div className="min-h-screen bg-slate-50 px-4 py-8">
+      <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
         <PrintToolbar backHref={back} />
         <p className="mx-auto max-w-[680px] rounded-2xl bg-white p-6 text-sm text-slate-600 shadow-sm">{t("receiptThaiHint")}</p>
       </div>
@@ -72,7 +72,7 @@ export default async function ReceiptPrintPage({
   const date = String(a.date ?? "");
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8">
+    <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
       <PrintToolbar backHref={back} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">

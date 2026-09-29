@@ -1284,6 +1284,7 @@
     "birthDate": "Ngày sinh: {value}",
     "phone": "Điện thoại: {value}",
     "exportedBy": "Xuất bởi {name} ngày {date}",
+    "accessLogFailed": "Không thể ghi lại lượt truy cập. Vui lòng thử lại.",
     "receiptTitle": "Biên nhận",
     "services": "Dịch vụ",
     "description": "Mô tả",

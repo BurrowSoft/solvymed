@@ -73,11 +73,13 @@ const h = vi.hoisted(() => ({
   rx: { id: "rx-1", date: "2026-10-01", notes: null, prescription_items: [] } as unknown,
   filters: [] as [string, string, unknown][],
   rpcs: [] as unknown[],
+  // The access-log write fails: no document (UX 36, fail closed).
+  logFails: false,
 }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
     auth: { getUser: async () => ({ data: { user: { id: "doc-1" } } }) },
-    rpc: async (fn: string, args: unknown) => { h.rpcs.push({ fn, args }); return { data: null, error: null }; },
+    rpc: async (fn: string, args: unknown) => { h.rpcs.push({ fn, args }); return { data: null, error: h.logFails ? { message: "not_allowed" } : null }; },
     from: (table: string) => {
       const q: Record<string, unknown> = {};
       q.select = () => q;
@@ -125,7 +127,7 @@ describe("document dates", () => {
 
 describe("print page", () => {
   const params = Promise.resolve({ locale: "pt-BR", id: "p-1", rxId: "rx-1" });
-  beforeEach(() => { h.role = "professional"; h.patient = { id: "p-1", full_name: "Maria" }; h.rx = { id: "rx-1", date: "2026-10-01", notes: null, prescription_items: [] }; h.filters = []; h.rpcs = []; });
+  beforeEach(() => { h.role = "professional"; h.patient = { id: "p-1", full_name: "Maria" }; h.rx = { id: "rx-1", date: "2026-10-01", notes: null, prescription_items: [] }; h.filters = []; h.rpcs = []; h.logFails = false; });
 
   it("a secretary never gets it", async () => {
     h.role = "secretary";
@@ -144,5 +146,12 @@ describe("print page", () => {
   it("logs the prescription access", async () => {
     await PrintPage({ params });
     expect(h.rpcs).toEqual([{ fn: "log_record_access", args: { p_patient_id: "p-1", p_kind: "prescription", p_object_ref: "rx-1" } }]);
+  });
+
+  it("no document when the access can't be recorded (fail closed)", async () => {
+    h.logFails = true;
+    const { container } = render(await PrintPage({ params }));
+    expect(container.querySelector("#print-doc")).toBeNull();
+    expect(container.querySelector("[role=alert]")?.textContent).toContain("accessLogFailed");
   });
 });

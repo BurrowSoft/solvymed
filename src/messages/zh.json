@@ -1284,6 +1284,7 @@
     "birthDate": "出生日期：{value}",
     "phone": "电话：{value}",
     "exportedBy": "由 {name} 于 {date} 导出",
+    "accessLogFailed": "无法记录访问。请重试。",
     "receiptTitle": "收据",
     "services": "服务",
     "description": "说明",

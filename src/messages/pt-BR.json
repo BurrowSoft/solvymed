@@ -1284,6 +1284,7 @@
     "birthDate": "Nascimento: {value}",
     "phone": "Telefone: {value}",
     "exportedBy": "Exportado por {name} em {date}",
+    "accessLogFailed": "Não foi possível registrar o acesso. Tente novamente.",
     "receiptTitle": "Recibo",
     "services": "Serviços",
     "description": "Descrição",
