@@ -205,7 +205,8 @@
     "requestedLabel": "ขอเลื่อนเป็น: {date} · {time}",
     "promptPayTitle": "QR พร้อมเพย์",
     "promptPayScan": "สแกนด้วยแอปธนาคารใดก็ได้เพื่อชำระเงิน",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n} นาที"
   },
   "payments": {
     "thisWeek": "สัปดาห์นี้",

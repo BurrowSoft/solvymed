@@ -328,7 +328,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
       if (result?.code === "slot_overlap" && "overlap" in result) {
         const o = result.overlap;
         setError(o?.name
-          ? t("overlapHardMsg", { name: o.name, time: o.time, duration: o.durationMin ? `${o.durationMin} min` : "" })
+          ? t("overlapHardMsg", { name: o.name, time: o.time, duration: o.durationMin ? t("durationMinutes", { n: o.durationMin }) : "" })
           : t("overlapGeneric"));
         return;
       }

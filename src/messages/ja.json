@@ -205,7 +205,8 @@
     "requestedLabel": "希望日時：{date} · {time}",
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "タイの銀行アプリでスキャンして支払います。",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n}分"
   },
   "payments": {
     "thisWeek": "今週",

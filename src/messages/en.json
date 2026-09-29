@@ -205,7 +205,8 @@
     "requestedLabel": "Requested: {date} · {time}",
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "Scan with any Thai banking app to pay.",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n} min"
   },
   "payments": {
     "thisWeek": "This week",
