@@ -20,7 +20,8 @@ import { MASK_TOKEN } from "@/lib/assistant/server/tools";
 //
 // Results: { ok, id?, prev? } where prev is what Desfazer restores, or
 // { ok: false, code } — slot_taken (the time was just taken: the panel asks
-// the route for fresh times), needs_confirm (a block / outside hours
+// the route for fresh times), appointment_not_cancellable (a cancel of one
+// no longer scheduled / confirmed / late: the route says so), needs_confirm (a block / outside hours
 // appeared after the card: nothing saved), or generic.
 
 // noUndo: the save may already have told the patient (a booking decision,
@@ -119,6 +120,8 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
       if (!UUIDISH.test(id)) return { ok: false, code: "generic" };
       const before = await currentRow(id);
       if (!before) return { ok: false, code: "generic" };
+      // Only a live appointment (the app's executor refuses the same way).
+      if (!MOVABLE_STATUSES.includes(before.status)) return { ok: false, code: "appointment_not_cancellable" };
       const r = await updateAppointmentStatus(id, "cancelled");
       if (!("success" in r && r.success)) return mapError(r);
       return (await patientConnected(before.patient_id)) ? { ok: true, id, noUndo: true } : { ok: true, id, prev: before.status };

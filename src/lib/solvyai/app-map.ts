@@ -125,6 +125,7 @@ export const ACTIONS: AppMapAction[] = [
     inputs: { required: ["which appointment"], optional: [], defaults: [] },
     rules: [
       "Booking requests (tentative / proposal) are never cancelled this way: they're rejected on the request card.",
+      "Only scheduled, confirmed or late appointments can be cancelled; completed, absent, cancelled or rejected ones can't (SolvyAI says so; nothing is saved).",
       "A cancelled appointment no longer counts as 'to receive' and frees the time.",
       "Deleting an appointment is a different action and never done by SolvyAI.",
       "Archiving a patient on the website cancels their upcoming appointments.",

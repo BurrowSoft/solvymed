@@ -9143,3 +9143,32 @@ testers.
 **Master sync:** master (#169, #170) merged in under this docs commit,
 cleanly.
 **Review: clean (9a).** **Merge gate: 🟢 for `7b49fce`.**
+
+## PR #168 (`fix/solvyai-cancel-status`, base master) — SolvyAI cancels only scheduled / confirmed / late appointments (app parity), 🟢 at `18b6c32`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts `list_appointments` →
+  `propose_cancel_appointment`.
+- **Data:** the prod DB, with a throwaway doctor and one appointment each:
+  completed, absent, scheduled, confirmed and tentative (deleted
+  afterwards).
+
+| Row | Result |
+|---|---|
+| C1 completed | ✅ no card; the model gets "Only scheduled, confirmed or late appointments can be cancelled; this one is completed. Tell the user." Status unchanged |
+| C2 absent | ✅ the same, "…this one is absent" |
+| C6 tentative (unchanged) | ✅ the card hard-stops: "Pedidos de consulta são aceitos ou recusados no próprio pedido.", Confirmar disabled |
+| C3 scheduled | ✅ card → Confirmar → `cancelled` |
+| C4 confirmed, turned completed before Confirmar | ✅ the executor refuses and the status stays `completed`. The panel reports `confirm_failed {appointment_not_cancellable}`; the route answers the fixed line with **0 model calls**, and the panel shows **"Só é possível cancelar consultas agendadas, confirmadas ou atrasadas. Nada foi salvo."** once, after the card's "Não foi possível salvar." |
+| Streamed answer | ✅ a normal model answer shows exactly once (no doubling from `current \|\| block.text`) |
+
+**Finding at `1c5120d`** (9a: BLOCKING, fixed at `18b6c32`): the panel's
+`play()` built a text block from the streamed deltas only. The fixed line,
+a whole text block with no deltas, rendered empty, so only "Não foi
+possível salvar." showed.
+
+**CI at `18b6c32`:** ✅. **Review: clean (9a).** **Merge gate: 🟢 for `18b6c32`.** This docs commit sits on top of a master sync (12 behind; clean).

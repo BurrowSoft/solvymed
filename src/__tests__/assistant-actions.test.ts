@@ -39,6 +39,7 @@ function world() {
       { id: "b-lunch", professional_id: "doc-1", patient_id: null, patient_name: null, date: "2026-09-30", start_time: "12:00:00", end_time: "13:00:00", status: "blocked", payment_status: null, payment_amount: null },
       { id: "a-req", professional_id: "doc-1", patient_id: "p-maria", patient_name: "Maria Silva", date: "2026-10-01", start_time: "09:00:00", end_time: "09:30:00", status: "tentative", payment_status: "pending", payment_amount: null },
       { id: "a-arch", professional_id: "doc-1", patient_id: "p-arch", patient_name: "Ana Antiga", date: "2026-10-01", start_time: "11:00:00", end_time: "11:30:00", status: "scheduled", payment_status: "pending", payment_amount: null },
+      { id: "a-done", professional_id: "doc-1", patient_id: "p-mario", patient_name: "Mario Souza", date: "2026-10-03", start_time: "08:00:00", end_time: "08:30:00", status: "completed", payment_status: "paid", payment_amount: 200 },
       { id: "a-prop", professional_id: "doc-1", patient_id: null, patient_name: "Rui Novo", date: "2026-10-01", start_time: "15:00:00", end_time: "15:30:00", status: "proposal", payment_status: "pending", payment_amount: null },
     ],
   };
@@ -274,6 +275,11 @@ describe("SolvyAI actions mode: other proposals", () => {
     t = setup(listThen("2026-10-01", { name: "propose_cancel_appointment", input: { appointmentId: "a-req" } }));
     card = cardOf((await run(t, ask("Cancela a Maria"))).blocks)!;
     expect(card.stop?.code).toBe("not_allowed");
+    // Completed: no card; the model is told only live ones can be cancelled.
+    t = setup(listThen("2026-10-03", { name: "propose_cancel_appointment", input: { appointmentId: "a-done" } }));
+    const r = await run(t, ask("Cancela a do Mario"));
+    expect(cardOf(r.blocks)).toBeUndefined();
+    expect(JSON.stringify(t.model.calls.at(-1))).toContain("Only scheduled, confirmed or late appointments can be cancelled");
   });
 
   it("block time: refused over appointments, a card otherwise", async () => {
@@ -327,6 +333,13 @@ describe("SolvyAI actions mode: Confirmar failed", () => {
     expect(choice.reason).toBe("confirm_failed");
     expect(choice.text).toBe("Esse horário acabou de ser ocupado. Nada foi salvo. Qual destes horários?");
     expect(choice.alternatives.map((a) => a.start)).toEqual(["09:00", "09:30", "10:30"]);
+  });
+
+  it("a cancel that's no longer allowed: a fixed line, no model", async () => {
+    const t = setup(() => "never");
+    const r = await run(t, { event: { type: "confirm_failed", code: "appointment_not_cancellable", action: { kind: "cancel_appointment", args: { appointmentId: "a-done" } } }, screen: "schedule", locale: "pt-BR" });
+    expect(t.model.calls).toEqual([]);
+    expect(r.chunks.filter((c) => c.kind === "block")).toEqual([{ kind: "block", block: { type: "text", text: "Só é possível cancelar consultas agendadas, confirmadas ou atrasadas. Nada foi salvo." } }]);
   });
 
   it("refused: a bad action, help mode, and the anti-spam limit", async () => {

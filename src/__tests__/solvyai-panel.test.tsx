@@ -168,6 +168,31 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
     expect(screen.getByLabelText("assistant.open")).toBeInTheDocument();
   });
 
+  it("a whole text block with no deltas shows its text (confirm_failed's fixed line); streamed text isn't doubled", async () => {
+    const ndjson = (chunks: unknown[]) => new Response(chunks.map((c) => JSON.stringify(c)).join("\n") + "\n", { headers: { "Content-Type": "application/x-ndjson" } });
+    const replies = [
+      ndjson([{ kind: "meta", mode: "actions" }, { kind: "block", block: { type: "text", text: "Só é possível cancelar consultas agendadas, confirmadas ou atrasadas. Nada foi salvo." } }, { kind: "done" }]),
+      ndjson([{ kind: "meta", mode: "help" }, { kind: "delta", text: "Olá " }, { kind: "delta", text: "doutora" }, { kind: "block", block: { type: "text", text: "Olá doutora" } }, { kind: "done" }]),
+    ];
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = vi.fn(async (url: string) => {
+      if (String(url).endsWith("/usage")) return new Response(JSON.stringify({ used: 1, limit: 20, extra: 0, resetsAt: "" }));
+      return replies.shift()!;
+    }) as unknown as typeof fetch;
+    try {
+      render(<SolvyAi locale="pt-BR" prefix="/pt-BR" dailyLimit={20} remote />);
+      fireEvent.click(screen.getByLabelText("assistant.open"));
+      await ask("primeira");
+      await waitFor(() => expect(screen.getByText("Só é possível cancelar consultas agendadas, confirmadas ou atrasadas. Nada foi salvo.")).toBeInTheDocument());
+      await new Promise((r) => setTimeout(r, 3100));
+      await ask("segunda");
+      await waitFor(() => expect(screen.getByText("Olá doutora")).toBeInTheDocument());
+      expect(screen.queryByText("Olá doutoraOlá doutora")).not.toBeInTheDocument();
+    } finally {
+      globalThis.fetch = realFetch;
+    }
+  });
+
   it("on the real route: no Prévia label, the route's error states, and a failed turn isn't sent back", async () => {
     const bodies: { messages: { role: string; text: string }[] }[] = [];
     const replies = [
