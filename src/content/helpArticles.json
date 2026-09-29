@@ -102,10 +102,10 @@
           ]
         },
         "web": {
-          "pt": "Ainda não disponível no site; use o app.",
-          "en": "Not available on the website yet; use the app."
+          "pt": "Em **Nova Consulta**, escolha **Repetir** (semanal, a cada 2 semanas ou mensal) e **Quantas consultas** (de 2 a 52), e clique em **Salvar ×N**. Todas as datas são verificadas: se alguma conflitar com outra consulta, nenhuma é salva e o site mostra qual data; horário bloqueado ou fora do atendimento é perguntado uma vez, com a data.",
+          "en": "In **New Appointment**, choose **Repeat** (weekly, every 2 weeks or monthly) and **Number of appointments** (2 to 52), and click **Save ×N**. Every date is checked: if any conflicts with another appointment, none is saved and the website shows which date; blocked time or outside the working hours is asked once, with the date."
         },
-        "webUnavailable": true,
+        "webUnavailable": false,
         "open": "new-appointment",
         "appOnly": null,
         "appTitle": null
@@ -175,7 +175,7 @@
             },
             {
               "type": "p",
-              "text": "No site também: se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você cancela (ou arquiva o paciente). Consultas no passado não notificam."
+              "text": "No site também: se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você remarca ou cancela (ou arquiva o paciente). Consultas no passado não notificam."
             }
           ],
           "en": [
@@ -189,13 +189,13 @@
             },
             {
               "type": "p",
-              "text": "On the website too: if the patient has a SolvyMed account, they get a notification when you cancel (or archive the patient). Past appointments don't notify."
+              "text": "On the website too: if the patient has a SolvyMed account, they get a notification when you move or cancel (or archive the patient). Past appointments don't notify."
             }
           ]
         },
         "web": {
-          "pt": "Remarcar ainda não está disponível no site; use o app. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**.",
-          "en": "Moving an appointment isn't available on the website yet; use the app. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**."
+          "pt": "Para remarcar: em **Agenda**, clique no ícone **Remarcar** ao lado da consulta, escolha a nova data e o horário e clique em **Remarcar** (a duração e os outros dados continuam os mesmos). Uma consulta marcada como **Ausente** não é remarcada (a falta fica registrada): use o ícone **Nova consulta (mesmo paciente)** ao lado dela. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**.",
+          "en": "To move it: in the **Schedule**, click the **Reschedule** icon next to the appointment, choose the new date and time and click **Reschedule** (the duration and other details stay the same). An appointment marked **Absent** isn't moved (the no-show stays on record): use the **New appointment (same patient)** icon next to it. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**."
         },
         "webUnavailable": false,
         "open": "schedule",

@@ -5,11 +5,12 @@ import { useState, useTransition, useRef, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDateLabel } from "@/lib/dateLabels";
 import { DateInput } from "@/components/DateInput";
-import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime, searchPatientsForPicker } from "./actions";
+import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime, moveAppointment, searchPatientsForPicker } from "./actions";
 import { generatePixString, pixQrDataUrl } from "@/lib/pix";
 import { generatePromptPayString } from "@/lib/promptpay";
 import { toLocalDateString } from "@/lib/slots";
 import { dropQueryParam } from "@/lib/dropQueryParam";
+import { DEFAULT_OCCURRENCES, MAX_OCCURRENCES, MIN_OCCURRENCES } from "@/lib/recurrence";
 import { formatMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
 import Link from "next/link";
@@ -216,6 +217,94 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
   );
 }
 
+// Remarcar (UX 36): a new date and start, the same duration and details.
+// The same checks as booking: another appointment there is a hard stop
+// saying with whom; blocked time / outside the working hours asked once.
+export function RescheduleButton({ id, date, start }: { id: string; date: string; start: string }) {
+  const t = useTranslations("schedule");
+  const tDate = useTranslations("dateInput");
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
+  const [ask, setAsk] = useState<{ text: string; formData: FormData } | null>(null);
+  const [pending, startTransition] = useTransition();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  function submit(formData: FormData) {
+    setError("");
+    startTransition(async () => {
+      const result = await moveAppointment(formData);
+      if (result?.code === "needs_confirm" && "hours" in result) {
+        const parts: string[] = [];
+        if (result.blocked) parts.push(t("warnBlocked", result.blocked));
+        if (result.hours?.kind === "outside") parts.push(t("warnOutside", { start: result.hours.start, end: result.hours.end }));
+        if (result.hours?.kind === "day_off") parts.push(t("warnDayOff", { day: result.hours.day }));
+        parts.push(t("moveAnyway"));
+        setAsk({ text: parts.join(" "), formData });
+        return;
+      }
+      if (result?.code === "slot_overlap" && "overlap" in result) {
+        const o = result.overlap;
+        setError(o?.name
+          ? t("overlapHardMsg", { name: o.name, time: o.time, duration: o.durationMin ? t("durationMinutes", { n: o.durationMin }) : "" })
+          : t("overlapGeneric"));
+        return;
+      }
+      if (result?.error) { setError(result.code === "not_movable" ? t("notMovableError") : actionErrorMessage(t, result.code, tDate)); return; }
+      setOpen(false);
+    });
+  }
+
+  function moveAnyway() {
+    if (!ask) return;
+    const formData = ask.formData;
+    formData.set("confirm_warnings", "1");
+    setAsk(null);
+    submit(formData);
+  }
+
+  return (
+    <>
+      <button onClick={() => { setError(""); setOpen(true); }} title={t("reschedule")} aria-label={t("reschedule")} className="rounded-lg p-1.5 text-slate-300 hover:text-teal-600 hover:bg-teal-50 transition">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-4 w-4">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16h6M13 14l2 2-2 2"/>
+        </svg>
+      </button>
+
+      <Dialog open={open} onClose={() => setOpen(false)} title={t("rescheduleTitle")}>
+        <form ref={formRef} onSubmit={(e) => { e.preventDefault(); submit(new FormData(formRef.current!)); }} className="space-y-4">
+          <input type="hidden" name="id" value={id} />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <FieldLabel>{t("date")} *</FieldLabel>
+              <DateInput name="date" required defaultValue={date} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
+            </div>
+            <div>
+              <FieldLabel>{t("startTime")} *</FieldLabel>
+              <Input name="start_time" type="time" required defaultValue={start.slice(0, 5)} />
+            </div>
+          </div>
+          <p className="text-xs text-slate-500">{t("rescheduleHint")}</p>
+          {error && <p className="text-sm text-red-600">{error}</p>}
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
+            <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
+              {pending ? t("saving") : t("reschedule")}
+            </button>
+          </div>
+        </form>
+      </Dialog>
+
+      <Dialog open={ask !== null} onClose={() => setAsk(null)} title={t("checkTimeTitle")}>
+        <p role="alertdialog" className="text-sm text-slate-700">{ask?.text}</p>
+        <div className="flex gap-3 pt-5">
+          <button type="button" onClick={() => setAsk(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
+          <button type="button" onClick={moveAnyway} disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">{t("reschedule")}</button>
+        </div>
+      </Dialog>
+    </>
+  );
+}
+
 export function DeleteAppointmentButton({ id }: { id: string }) {
   const t = useTranslations("schedule");
   const [pending, startTransition] = useTransition();
@@ -234,7 +323,7 @@ export function DeleteAppointmentButton({ id }: { id: string }) {
   );
 }
 
-export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen = false, currency = "BRL" }: {
+export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen = false, currency = "BRL", prefill }: {
   defaultDate: string;
   // The practice's currency (its country), for procedure prices.
   currency?: Currency;
@@ -243,6 +332,10 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   label?: string;
   // Open on arrival (the setup checklist links here with ?new=1).
   autoOpen?: boolean;
+  // Booking again after a no-show (UX 36: an absent appointment is never
+  // moved): the same patient (by id, not editable), procedure and duration;
+  // shown as a small icon next to the appointment.
+  prefill?: { patientId: string | null; patientName: string; procedureName?: string; duration?: number };
 }) {
   const t = useTranslations("schedule");
   const tDate = useTranslations("dateInput");
@@ -254,6 +347,9 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   const [selectedProcName, setSelectedProcName] = useState("");
   const [duration, setDuration] = useState("30");
   const [paymentType, setPaymentType] = useState("private");
+  const [recurrence, setRecurrence] = useState("");
+  const [occurrences, setOccurrences] = useState(String(DEFAULT_OCCURRENCES));
+  const uiLocale = useLocale();
   const formRef = useRef<HTMLFormElement>(null);
 
   // Patient suggestions come from a server search as the name is typed (a
@@ -280,10 +376,13 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   }
 
   function handleOpen() {
-    const first = procedures[0] ?? null;
+    const same = prefill?.procedureName ? procedures.find((p) => p.name === prefill.procedureName) ?? null : null;
+    const first = same ?? procedures[0] ?? null;
     setSelectedProcName(first?.name ?? "");
-    setDuration(String(first?.duration_minutes ?? 30));
+    setDuration(String(prefill?.duration ?? first?.duration_minutes ?? 30));
     setPaymentType(first?.payment_type ?? "private");
+    setRecurrence("");
+    setOccurrences(String(DEFAULT_OCCURRENCES));
     setError("");
     setOpen(true);
   }
@@ -315,11 +414,14 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
     setError("");
     startTransition(async () => {
       const result = await createAppointment(formData);
+      // In a series, which date (the app names it too).
+      const on = (d: string | null | undefined) => (d ? `${t("seriesOnDate", { date: formatDateLabel(uiLocale, d, { day: "2-digit", month: "2-digit", year: "numeric" }) })} ` : "");
       if (result?.code === "needs_confirm" && "hours" in result) {
         const parts: string[] = [];
-        if (result.blocked) parts.push(t("warnBlocked", result.blocked));
-        if (result.hours?.kind === "outside") parts.push(t("warnOutside", { start: result.hours.start, end: result.hours.end }));
-        if (result.hours?.kind === "day_off") parts.push(t("warnDayOff", { day: result.hours.day }));
+        if (result.blocked) parts.push(on(result.blocked.date) + t("warnBlocked", { start: result.blocked.start, end: result.blocked.end }));
+        const hd = "hoursDate" in result ? result.hoursDate : null;
+        if (result.hours?.kind === "outside") parts.push(on(hd) + t("warnOutside", { start: result.hours.start, end: result.hours.end }));
+        if (result.hours?.kind === "day_off") parts.push(on(hd) + t("warnDayOff", { day: result.hours.day }));
         parts.push(t("bookAnyway"));
         setAsk({ text: parts.join(" "), formData });
         return;
@@ -328,10 +430,11 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
       if (result?.code === "slot_overlap" && "overlap" in result) {
         const o = result.overlap;
         setError(o?.name
-          ? t("overlapHardMsg", { name: o.name, time: o.time, duration: o.durationMin ? t("durationMinutes", { n: o.durationMin }) : "" })
+          ? on("date" in o ? o.date : null) + t("overlapHardMsg", { name: o.name, time: o.time, duration: o.durationMin ? t("durationMinutes", { n: o.durationMin }) : "" })
           : t("overlapGeneric"));
         return;
       }
+      if (result?.code === "invalid_occurrences") { setError(t("occurrencesRange", { min: MIN_OCCURRENCES, max: MAX_OCCURRENCES })); return; }
       if (result?.error) { setError(actionErrorMessage(t, result.code, tDate)); return; }
       setOpen(false);
     });
@@ -352,16 +455,30 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
 
   return (
     <>
-      <button onClick={handleOpen} className="flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition shadow-sm">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        {label ?? t("newAppt")}
-      </button>
+      {prefill ? (
+        <button onClick={handleOpen} title={t("bookAgain")} aria-label={t("bookAgain")} className="rounded-lg p-1.5 text-slate-300 hover:text-teal-600 hover:bg-teal-50 transition">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-4 w-4">
+            <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="13" x2="12" y2="19"/><line x1="9" y1="16" x2="15" y2="16"/>
+          </svg>
+        </button>
+      ) : (
+        <button onClick={handleOpen} className="flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition shadow-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          {label ?? t("newAppt")}
+        </button>
+      )}
 
       <Dialog open={open} onClose={() => setOpen(false)} title={t("newAppt")}>
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+          {prefill?.patientId && <input type="hidden" name="patient_id" value={prefill.patientId} />}
           <div>
             <FieldLabel>{t("patientName")} *</FieldLabel>
-            <Input name="patient_name" required list="patient-list" autoComplete="off" onChange={handlePatientInput} placeholder={t("patientNamePlaceholder")} />
+            {prefill?.patientId ? (
+              // The same patient, by id: not editable here.
+              <Input name="patient_name" required readOnly value={prefill.patientName} className="bg-slate-50" />
+            ) : (
+              <Input name="patient_name" required list="patient-list" autoComplete="off" onChange={handlePatientInput} placeholder={t("patientNamePlaceholder")} defaultValue={prefill?.patientName} />
+            )}
             <datalist id="patient-list">
               {matches.map(p => <option key={p.id} value={p.full_name} />)}
             </datalist>
@@ -420,6 +537,25 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
             </div>
           </div>
 
+          {/* Repeat (the app's recurrence): every date checked, all or nothing. */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <FieldLabel>{t("repeat")}</FieldLabel>
+              <Select name="recurrence" value={recurrence} onChange={e => setRecurrence(e.target.value)}>
+                <option value="">{t("noRepeat")}</option>
+                <option value="weekly">{t("repeatWeekly")}</option>
+                <option value="biweekly">{t("repeatBiweekly")}</option>
+                <option value="monthly">{t("repeatMonthly")}</option>
+              </Select>
+            </div>
+            {recurrence && (
+              <div>
+                <FieldLabel>{t("occurrences")}</FieldLabel>
+                <Input name="occurrences" type="number" min={MIN_OCCURRENCES} max={MAX_OCCURRENCES} value={occurrences} onChange={e => setOccurrences(e.target.value)} />
+              </div>
+            )}
+          </div>
+
           <div>
             <FieldLabel>{t("payment")}</FieldLabel>
             <Select name="payment_type" value={paymentType} onChange={e => setPaymentType(e.target.value)}>
@@ -437,7 +573,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
             <button type="submit" disabled={pending || procedures.length === 0} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
-              {pending ? t("saving") : t("saveAppt")}
+              {pending ? t("saving") : recurrence ? t("saveTimes", { n: parseInt(occurrences, 10) || DEFAULT_OCCURRENCES }) : t("saveAppt")}
             </button>
           </div>
         </form>

@@ -38,8 +38,8 @@ Se alguma das datas tiver conflito, nenhuma é salva, e o app mostra qual data c
 2. Turn on **Repeat** and choose weekly, every two weeks or monthly, and how many times.
 3. Tap **Save**.
 If any date conflicts, none are saved, and the app shows which date conflicts.
-**No site:** Ainda não disponível no site; use o app.
-**On the website:** Not available on the website yet; use the app.
+**No site:** Em **Nova Consulta**, escolha **Repetir** (semanal, a cada 2 semanas ou mensal) e **Quantas consultas** (de 2 a 52), e clique em **Salvar ×N**. Todas as datas são verificadas: se alguma conflitar com outra consulta, nenhuma é salva e o site mostra qual data; horário bloqueado ou fora do atendimento é perguntado uma vez, com a data.
+**On the website:** In **New Appointment**, choose **Repeat** (weekly, every 2 weeks or monthly) and **Number of appointments** (2 to 52), and click **Save ×N**. Every date is checked: if any conflicts with another appointment, none is saved and the website shows which date; blocked time or outside the working hours is asked once, with the date.
 `open:new-appointment`
 
 ---
@@ -64,16 +64,18 @@ Patients can't request appointments in blocked time. You can still book over it 
 1. Na **Agenda**, toque na consulta.
 2. Para remarcar: altere a data ou o horário e toque em **Salvar**.
 3. Para cancelar: mude o status para **Cancelado**.
+{pending:mobile#116} Consultas concluídas, canceladas ou com falta não mudam de data. Para uma consulta com falta, toque em **Nova consulta** na própria consulta: ela abre com o mesmo paciente, procedimento e duração.
 {pending:mobile#111,linked-bookings} Se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você remarca ou cancela pelo app (também ao arquivar o paciente). Consultas no passado não notificam.
-{pending:linked-bookings} No site também: se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você cancela (ou arquiva o paciente). Consultas no passado não notificam.
+{pending:linked-bookings} No site também: se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você remarca ou cancela (ou arquiva o paciente). Consultas no passado não notificam.
 **en**
 1. In the **Schedule**, tap the appointment.
 2. To move it: change the date or time and tap **Save**.
 3. To cancel it: change the status to **Cancelled**.
+{pending:mobile#116} Completed, cancelled and missed appointments don't change date. For a missed one, tap **New appointment** on it: it opens with the same patient, procedure and duration.
 {pending:mobile#111,linked-bookings} If the patient has a SolvyMed account, they get a notification when you move or cancel in the app (also when you archive the patient). Past appointments don't notify.
-{pending:linked-bookings} On the website too: if the patient has a SolvyMed account, they get a notification when you cancel (or archive the patient). Past appointments don't notify.
-**No site:** Remarcar ainda não está disponível no site; use o app. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**.
-**On the website:** Moving an appointment isn't available on the website yet; use the app. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**.
+{pending:linked-bookings} On the website too: if the patient has a SolvyMed account, they get a notification when you move or cancel (or archive the patient). Past appointments don't notify.
+**No site:** Para remarcar: em **Agenda**, clique no ícone **Remarcar** ao lado da consulta, escolha a nova data e o horário e clique em **Remarcar** (a duração e os outros dados continuam os mesmos). Uma consulta marcada como **Ausente** não é remarcada (a falta fica registrada): use o ícone **Nova consulta (mesmo paciente)** ao lado dela. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**.
+**On the website:** To move it: in the **Schedule**, click the **Reschedule** icon next to the appointment, choose the new date and time and click **Reschedule** (the duration and other details stay the same). An appointment marked **Absent** isn't moved (the no-show stays on record): use the **New appointment (same patient)** icon next to it. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**.
 `open:schedule`
 
 ---

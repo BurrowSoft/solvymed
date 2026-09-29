@@ -8144,3 +8144,261 @@ and 119 applied):
 **CI at `5060fd3`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `5060fd3`.** This docs commit sits on top of a master sync (14 behind,
 clean merge).
+
+## PR #135 (`feat/web-reschedule`, base master) — Remarcar on the website, 🟢 at `98f1679`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `98f1679` with a test-only Expo sink
+  (pushes are logged, never sent), against the prod DB.
+- **Throwaway fixtures (deleted afterwards):**
+  - a doctor whose practice is **profile-named** ("Clínica Opus Perfil")
+    with **2 locations** ("Aaa Opus Local Norte", "Zzz Opus Local Sul"),
+    open Mon–Fri 08:00–18:00;
+  - a linked patient with a device token;
+  - a secretary;
+  - appointments in every relevant status, plus a block on Wed 17:30–19:00.
+
+**Icons (list):**
+- Scheduled, confirmed and late → **Remarcar**.
+- Tentative → none.
+- Absent (with or without `patient_id`) → **"Nova consulta (mesmo
+  paciente)"** only, with no Remarcar.
+- A confirmed row with a message shows "Mensagem do paciente: Posso chegar
+  10 min antes?".
+
+**Icons (Dia view, calendar popover):** the same icons.
+- A late 45 min appointment moved from the popover keeps **45 min**.
+- The no-show's book-again opens with the name pre-filled.
+
+**The dialog:** "Remarcar consulta", with the hint "A duração e os outros
+dados continuam os mesmos."
+
+**Moves:**
+- **Scheduled Tue 06/10 09:00 → Wed 07/10 09:00:** saved, 30 min kept.
+  - Push: "Consulta remarcada | Clínica Opus Perfil mudou sua consulta de
+    06/10/2026 às 09:00 para 07/10/2026 às 09:00."
+- **The same date + time:** nothing saved, **no push**.
+- **Onto another appointment:** "Este horário conflita com Opus Outro às
+  10:00 (30 min). Escolha outro horário." Unchanged.
+- **Wed 18:00 (blocked AND outside the hours):** ONE question, "Este
+  horário está bloqueado (17:30–19:00). Este horário está fora do horário
+  de atendimento (08:00–18:00). Remarcar mesmo assim?".
+  - Cancelar → unchanged, no push.
+  - Remarcar → saved + push "…de 07/10/2026 às 09:00 para 07/10/2026 às
+    18:00."
+- **Refused:**
+  - 23:45 + 30 min → "Esse horário e duração ultrapassariam a
+    meia-noite.";
+  - a Buddhist-era year → the BE message.
+- **Late 45 min → Thu 11:00:** 45 min and `late` kept.
+- **A row turned `tentative` after the page loaded:** "Use o card de
+  solicitação de agendamento…". Nothing moved.
+- **A confirmed row moved to yesterday:** saved, **no push**.
+
+**Book again after a no-show:**
+- **With `patient_id`:**
+  - The name is read-only and the patient id is carried.
+  - The procedure is "Retorno Opus", 45 min.
+  - Saved Thu 15:00 for the same `patient_id` (the absent row stays).
+  - The normal single-booking push was sent.
+- **Without `patient_id`:** the name is editable and pre-filled "Opus Sem
+  Ficha"; no hidden id.
+
+**Secretary (post-110 row):**
+- The secretary moved the linked appointment.
+- The push names the **profile**: "Consulta remarcada | Clínica Opus
+  Perfil mudou sua consulta de 07/10/2026 às 18:00 para 08/10/2026 às
+  09:00." It names neither the first location nor the doctor.
+- This also closes #131's ⏳ secretary-name row for moves.
+
+**i18n / Help / App Map:**
+- The 6 new `schedule` keys are present in all 15 locales. en is
+  "Reschedule" / "New appointment (same patient)"; th and es were checked
+  too.
+- Help A4 (pt + en) now describes the website's Remarcar icon and button,
+  which match the UI labels.
+- The notification note is shown now that `linked-bookings` is met.
+- The app's line is `{pending:mobile#116}`.
+- The App Map `move_appointment` has web = `moveAppointment`.
+
+**CI at `98f1679`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `98f1679`.** This docs commit
+sits on top of a master sync (10 behind: #134, #141; clean merge).
+
+## PR #136 (`feat/solvyai-move-card`, base master) — SolvyAI's move card on the website (via Remarcar), 🟢 at `06c10f7`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `06c10f7` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts the model's `tool_use` turns (ids taken
+  from the route's own `list_appointments`) and logs Expo pushes, never
+  sending them.
+- **Data:** the prod DB, with throwaway fixtures (deleted afterwards):
+  - a doctor, open Mon–Fri 08:00–18:00;
+  - a linked patient with a device token;
+  - "Opus Outro" Tue 10:00;
+  - a block Wed 12:00–13:00;
+  - a no-show; a tentative request.
+
+**Moves:**
+- **Tue 06/10 09:00 → Wed 07/10 09:00:**
+  - The card reads "Remarcar consulta | Paciente | De: Terça-feira,
+    06/10/2026, 09:00–09:30 | Para: Quarta-feira, 07/10/2026,
+    09:00–09:30".
+  - Confirmar → saved, same 30 min.
+  - Push: "Consulta remarcada | Clínica Opus Mover mudou sua consulta de
+    06/10/2026 às 09:00 para 07/10/2026 às 09:00."
+  - The page opens `/dashboard/schedule?date=2026-10-07&highlight=<id>`
+    with the appointment **ringed**.
+  - **Desfazer** → back to Tue 09:00. It sends a second push, "…de
+    07/10/2026 às 09:00 para 06/10/2026 às 09:00." (the same as a manual
+    move back).
+- **Overlapping its own old slot** (09:00 → 09:15): a normal card, no
+  clash.
+- **Onto "Opus Outro" (10:15):** no card. "…10:00 já tem Opus Outro
+  (10:00–10:30). Qual destes horários?" with chips 09:30 / 10:30 / 11:00 /
+  Outro horário. The model is told to ask and never pick.
+- **Into the block (Wed 12:15):**
+  - The card shows "⚠ Horário bloqueado (12:00–13:00)".
+  - Confirmar → "Este horário está bloqueado (12:00–13:00). Remarcar mesmo
+    assim?" [Cancelar] [Remarcar].
+  - Remarcar → saved, plus the push.
+- **A past time:** "Esse horário já passou. Escolha outro horário."
+  Confirmar is **disabled**.
+  - SolvyAI is stricter here than the Remarcar dialog, which allows a past
+    date without a push.
+- **Refused, no card:**
+  - A no-show → the model gets "offer to book this patient again".
+  - A request → "answered on the request (propose_booking_decision)".
+- **Slot taken between the card and Confirmar:** "Esse horário acabou de
+  ser ocupado. Nada foi salvo. Qual destes horários?" with fresh chips.
+  The appointment is unchanged.
+
+**Rules / App Map:** the "no move on the website" lines are gone. Sending
+Pix by WhatsApp stays app-only (knowledge rule + `send_pix` web: null).
+
+**CI at `06c10f7`:** ✅ (lint, typecheck + unit tests).
+**Review: clean (7f).** **Merge gate: 🟢 for `06c10f7`.** This docs commit
+sits on top of a master sync (12 behind: #135 merged; clean merge; the
+`helpArticles.json` rebuild is identical).
+
+## PR #138 (`feat/web-recurring`, base `feat/web-reschedule`) — recurring appointments on the website, 🟢 at `b74cf4f`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `b74cf4f` with a test-only Expo sink
+  (pushes are logged, never sent), against the prod DB.
+- **Throwaway fixtures (deleted afterwards):**
+  - a doctor, "Clínica Opus Série", open Mon–Fri 08:00–18:00;
+  - a linked patient with a device token;
+  - an appointment on the 3rd weekly date at 10:00;
+  - a block on the 4th weekly date, 14:00–15:00.
+- **Flow:** everything goes through Nova Consulta. First date: Tue
+  06/10/2026.
+
+**Form:**
+- **pt-BR:** Repetir "Sem repetição / Semanal / Quinzenal / Mensal";
+  "Quantas consultas" defaults to 8; the button reads "Salvar ×8", then
+  "Salvar ×4" after the count changes.
+- **en:** "No repeat / Weekly / Every 2 weeks / Monthly"; "Save ×N".
+
+**Series:**
+- **Weekly ×4 for the linked patient:**
+  - 4 rows (06/10, 13/10, 20/10, 27/10, 11:00–11:30), each with
+    `patient_auth_id`.
+  - **ONE push:** "Nova consulta | Clínica Opus Série marcou 4 consultas
+    para você. A primeira é em 06/10/2026 às 11:00."
+- **Clash on the 3rd date:** "Em 20/10/2026: Este horário conflita com
+  Opus Ocupado às 10:00 (30 min). Escolha outro horário." **0 rows
+  saved.**
+  - en: "On 10/20/2026: This overlaps with Opus Ocupado at 10:00 (30
+    min)…"
+- **Block on the 4th date:** ONE question, "Em 27/10/2026: Este horário
+  está bloqueado (14:00–15:00). Agendar mesmo assim?".
+  - Cancelar → 0 rows.
+  - Agendar → all 4 saved.
+- **Quinzenal ×3:** 06/10, 20/10, 03/11.
+- **Mensal ×3 from Sat 31/10:**
+  - ONE question: "Em 31/10/2026: Sábado não é dia de atendimento. Agendar
+    mesmo assim?".
+  - Agendar → **31/10, 01/12 (31/11 rolls over), 31/12**.
+- **Outside hours** (17:45 + 30 min on every date): the question names the
+  first date, "Em 06/10/2026: … fora do horário de atendimento
+  (08:00–18:00)".
+
+**Limits and single bookings:**
+- **Limits** (the browser's min/max bypassed): n=1 and n=53 → "Escolha de 2
+  a 52 consultas.", 0 saved. n=52 → 52 rows, 06/10/2026 to 28/09/2027.
+- **A single booking is unchanged:** its overlap message names no date.
+- **Other patients:** no push for the unlinked patients' series.
+
+**Follow-up (7f: not blocking; the merged app behaves the same):**
+- **The problem:** a series whose **first date is past** sends no push,
+  even for its future dates.
+  - Live: weekly ×3 from 22/09 → rows 22/09, 29/09, 06/10 → **0
+    pushes**.
+  - Control, weekly ×2 from 06/10 → 1 push.
+- **UX 36's rule for the fix (both repos):**
+  - One push counting only the future appointments: the single-booking
+    text for 1, the series text for 2+.
+  - No push when none are in the future.
+
+**CI at `b74cf4f`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `b74cf4f`.** This docs commit
+sits directly on top; the branch is up to date with its base.
+
+## PR #140 (`feat/solvyai-series`, base master) — SolvyAI's series card on the website, 🟢 at `755fe42`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `755fe42` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts the model's `tool_use` turns
+  (`find_patients` → `propose_book_appointment` with `repeat`) and logs
+  Expo pushes, never sending them.
+- **Data:** the prod DB, with throwaway fixtures (deleted afterwards):
+  - a doctor, open Mon–Fri 08:00–18:00;
+  - a linked patient with a device token, and an unlinked patient;
+  - "Opus Ocupado" Tue 20/10 10:00;
+  - a block Tue 27/10 14:00–15:00.
+- **Earlier run:** a first run at `81ab667` stopped at login (a harness
+  flake). The src delta to `755fe42` is only `helpArticles.json`.
+
+**Series:**
+- **Weekly ×3:**
+  - The card shows "Repetir | Semanal, 3 consultas (até 20/10/2026)".
+  - Confirmar → 3 rows (06/10, 13/10, 20/10).
+  - ONE push: "Clínica Opus Série IA marcou 3 consultas para você. A
+    primeira é em 06/10/2026 às 11:00."
+  - The toast is "✓ Feito" with **no Desfazer**.
+- **Weekly ×4 with a clash on the 3rd date:** no card. "Terça-feira,
+  20/10/2026 às 10:00 já tem Opus Ocupado. Nada foi salvo. Como prefere
+  seguir?" with only "Outro horário". The model is told to ask and never
+  pick. 0 rows.
+- **Weekly ×4 with a block on the 4th date:**
+  - The card shows "27/10/2026: ⚠ Horário bloqueado (14:00–15:00)".
+  - Confirmar → "27/10/2026: Este horário está bloqueado (14:00–15:00).
+    Agendar mesmo assim?" → Agendar → 4 rows.
+  - No push (unlinked patient).
+- **Bad repeats** (count 1, count 53, every "day"): no card; the model gets
+  "Repeat is { every: "week" | "2weeks" | "month", count: 2–52 }; ask the
+  user."
+- **Every 2 weeks ×2:** "A cada 2 semanas, 2 consultas (até 20/10/2026)" →
+  06/10 + 20/10, one push "marcou 2 consultas…".
+- **A date taken between the card and Confirmar:** "Não foi possível
+  salvar." Nothing saved (none of the series' dates).
+
+**Nit (not blocking):** a series card's same-patient warning ("já tem
+consulta nesse dia às 11:00") doesn't name the date, although it can apply
+to several.
+
+**CI at `755fe42`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `755fe42`.** This docs commit
+sits on top of a master sync (1 behind: #138's merge commit, no content
+change).

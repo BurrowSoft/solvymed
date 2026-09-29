@@ -37,7 +37,7 @@ async function clinicName(db: SupabaseClient, practiceId: string): Promise<strin
 }
 
 export type ClinicChange = {
-  kind: "booked" | "cancelled";
+  kind: "booked" | "cancelled" | "moved";
   practiceId: string;
   // The caller is the practice's secretary (they read the clinic's zone differently).
   isSecretary?: boolean;
@@ -48,6 +48,10 @@ export type ClinicChange = {
   status?: string | null;
   date: string;
   startTime: string;
+  // A move: where it was (the date/time above are the new ones).
+  from?: { date: string; startTime: string };
+  // A booked series: how many (the date/time above are the first).
+  count?: number;
 };
 
 export async function tellPatient(db: SupabaseClient, change: ClinicChange): Promise<void> {
@@ -71,8 +75,11 @@ export async function tellPatient(db: SupabaseClient, change: ClinicChange): Pro
     const clinic = await clinicName(db, change.practiceId);
     // Each device in its reader's language, the date in its format.
     for (const { locale, tokens } of targets) {
-      const { title, body } = pushText(locale, change.kind === "booked" ? "apptBookedByClinic" : "apptCancelledByClinic", {
-        clinic, date: formatShortDate(locale, change.date), time: start,
+      const kind = change.kind === "booked" ? (change.count && change.count > 1 ? "apptBookedSeriesByClinic" : "apptBookedByClinic")
+        : change.kind === "moved" ? "apptMovedByClinic" : "apptCancelledByClinic";
+      const { title, body } = pushText(locale, kind, {
+        clinic, date: formatShortDate(locale, change.date), time: start, n: change.count,
+        ...(change.from ? { oldDate: formatShortDate(locale, change.from.date), oldTime: change.from.startTime.slice(0, 5) } : {}),
       });
       await sendExpoPush(tokens, title, body);
     }
