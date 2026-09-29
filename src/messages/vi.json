@@ -408,6 +408,7 @@
     "genericError": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "tabAccessLog": "Nhật ký truy cập",
     "rxPdfAria": "PDF đơn thuốc (in hoặc lưu)",
+    "historyPdf": "PDF bệnh sử",
     "tabExams": "Xét nghiệm",
     "tabFiles": "Tệp",
     "filesHint": "Ảnh hoặc PDF, riêng tư: chỉ bạn mới mở được.",
@@ -425,6 +426,7 @@
     "filesHiddenLine": "gỡ ngày {date} bởi {name}: {reason}",
     "filesHideTitle": "Gỡ tệp",
     "filesHideHint": "Đã hơn 24 giờ kể từ khi tải lên, nên tệp sẽ được ẩn thay vì xóa. Hãy nêu lý do.",
+    "filesHideReason": "Lý do ẩn",
     "filesPopupBlocked": "Trình duyệt đã chặn tab mới. Hãy cho phép cửa sổ bật lên cho SolvyMed rồi thử lại.",
     "filesAccessLogFailed": "Không thể ghi lại lượt truy cập. Vui lòng thử lại.",
     "accessLogIntro": "Ai đã mở hồ sơ của bệnh nhân này và khi nào. Chỉ bạn xem được nhật ký này.",
@@ -1202,6 +1204,8 @@
     "undone": "Đã hoàn tác",
     "simulated": "mô phỏng",
     "undo": "Hoàn tác ({s} giây)",
+    "undoFailed": "Không thể hoàn tác. Hãy mở mục đó để điều chỉnh.",
+    "openItem": "Mở",
     "view": "Xem trong lịch",
     "edit": "Sửa",
     "confirm": "Xác nhận ✓",
@@ -1275,6 +1279,16 @@
     "corrected": "(đã sửa)",
     "print": "In / Lưu PDF",
     "printHint": "Để lưu tệp, hãy chọn \"Lưu dưới dạng PDF\" trong cửa sổ in.",
-    "back": "Quay lại bệnh nhân"
+    "back": "Quay lại bệnh nhân",
+    "historyTitle": "Bệnh sử",
+    "medicalRecords": "Hồ sơ khám bệnh",
+    "prescriptions": "Đơn thuốc",
+    "noRecords": "Chưa có hồ sơ.",
+    "noPrescriptions": "Chưa có đơn thuốc.",
+    "birthDate": "Ngày sinh: {value}",
+    "phone": "Điện thoại: {value}",
+    "exportedBy": "Xuất bởi {name} ngày {date}",
+    "accessLogFailed": "Không thể ghi lại lượt truy cập. Vui lòng thử lại.",
+    "countryFailed": "Không thể tải thông tin phòng khám. Vui lòng thử lại."
   }
 }

@@ -408,6 +408,7 @@
     "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "tabAccessLog": "Zugriffsprotokoll",
     "rxPdfAria": "Rezept als PDF (drucken oder speichern)",
+    "historyPdf": "Verlauf als PDF",
     "tabExams": "Befunde",
     "tabFiles": "Dateien",
     "filesHint": "Fotos oder PDFs, privat: Nur Sie können sie öffnen.",
@@ -425,6 +426,7 @@
     "filesHiddenLine": "entfernt am {date} von {name}: {reason}",
     "filesHideTitle": "Datei entfernen",
     "filesHideHint": "Seit dem Hochladen sind mehr als 24 Stunden vergangen, daher wird die Datei ausgeblendet statt gelöscht. Geben Sie den Grund an.",
+    "filesHideReason": "Grund für das Ausblenden",
     "filesPopupBlocked": "Ihr Browser hat den neuen Tab blockiert. Erlauben Sie Pop-ups für SolvyMed und versuchen Sie es erneut.",
     "filesAccessLogFailed": "Der Zugriff konnte nicht protokolliert werden. Bitte versuchen Sie es erneut.",
     "accessLogIntro": "Wer die Akte dieses Patienten geöffnet hat und wann. Nur Sie sehen dieses Protokoll.",
@@ -1202,6 +1204,8 @@
     "undone": "Rückgängig gemacht",
     "simulated": "Simulation",
     "undo": "Rückgängig ({s} s)",
+    "undoFailed": "Rückgängig machen nicht möglich. Öffnen Sie den Eintrag, um ihn anzupassen.",
+    "openItem": "Öffnen",
     "view": "Im Kalender ansehen",
     "edit": "Bearbeiten",
     "confirm": "Bestätigen ✓",
@@ -1275,6 +1279,16 @@
     "corrected": "(korrigiert)",
     "print": "Drucken / Als PDF speichern",
     "printHint": "Um die Datei zu speichern, wählen Sie im Druckfenster „Als PDF speichern“.",
-    "back": "Zurück zum Patienten"
+    "back": "Zurück zum Patienten",
+    "historyTitle": "Krankengeschichte",
+    "medicalRecords": "Behandlungseinträge",
+    "prescriptions": "Rezepte",
+    "noRecords": "Keine Einträge.",
+    "noPrescriptions": "Keine Rezepte.",
+    "birthDate": "Geburtsdatum: {value}",
+    "phone": "Telefon: {value}",
+    "exportedBy": "Exportiert von {name} am {date}",
+    "accessLogFailed": "Der Zugriff konnte nicht protokolliert werden. Bitte versuchen Sie es erneut.",
+    "countryFailed": "Die Praxisdaten konnten nicht geladen werden. Bitte versuchen Sie es erneut."
   }
 }

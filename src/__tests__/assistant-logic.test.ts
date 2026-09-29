@@ -67,7 +67,9 @@ describe("the mock follows the spec's rules", () => {
   });
 
   it("no Open screen for what the website doesn't have", () => {
-    const blocks = mockAnswer("How do I export a patient's history as PDF?", "en", "");
+    // P10 (the patient list as a spreadsheet) is still app-only.
+    const blocks = mockAnswer("How do I export my patient list as a CSV spreadsheet?", "en", "");
+    expect(JSON.stringify(blocks)).toMatch(/CSV|planilha|spreadsheet/i);
     expect(blocks.some((b) => b.type === "open")).toBe(false);
   });
 

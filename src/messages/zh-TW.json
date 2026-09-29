@@ -408,6 +408,7 @@
     "genericError": "發生錯誤，請再試一次。",
     "tabAccessLog": "存取紀錄",
     "rxPdfAria": "處方 PDF（列印或儲存）",
+    "historyPdf": "病史 PDF",
     "tabExams": "檢查",
     "tabFiles": "檔案",
     "filesHint": "照片或 PDF，私密：只有您可以開啟。",
@@ -425,6 +426,7 @@
     "filesHiddenLine": "{date} 由 {name} 移除：{reason}",
     "filesHideTitle": "移除檔案",
     "filesHideHint": "上傳已超過 24 小時，因此檔案將被隱藏而非刪除。請說明原因。",
+    "filesHideReason": "隱藏原因",
     "filesPopupBlocked": "瀏覽器封鎖了新分頁。請允許 SolvyMed 的彈出式視窗後再試一次。",
     "filesAccessLogFailed": "無法記錄存取。請再試一次。",
     "accessLogIntro": "誰在何時開啟了這位病患的病歷。只有您能查看此紀錄。",
@@ -1202,6 +1204,8 @@
     "undone": "已復原",
     "simulated": "模擬",
     "undo": "復原（{s} 秒）",
+    "undoFailed": "無法復原。請開啟該項目進行調整。",
+    "openItem": "開啟",
     "view": "在行程中查看",
     "edit": "編輯",
     "confirm": "確認 ✓",
@@ -1275,6 +1279,16 @@
     "corrected": "（已更正）",
     "print": "列印 / 儲存為 PDF",
     "printHint": "若要儲存檔案，請在列印視窗中選擇「另存為 PDF」。",
-    "back": "返回病患"
+    "back": "返回病患",
+    "historyTitle": "病史",
+    "medicalRecords": "病歷紀錄",
+    "prescriptions": "處方",
+    "noRecords": "尚無紀錄。",
+    "noPrescriptions": "尚無處方。",
+    "birthDate": "出生日期：{value}",
+    "phone": "電話：{value}",
+    "exportedBy": "由 {name} 於 {date} 匯出",
+    "accessLogFailed": "無法記錄存取。請再試一次。",
+    "countryFailed": "無法載入診所資料。請再試一次。"
   }
 }
