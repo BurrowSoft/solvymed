@@ -48,15 +48,15 @@ describe("the booking question's copy (UX's exact strings)", () => {
   };
 
   it("pt-BR and en match UX word for word", () => {
-    expect(compose("pt-BR", ["outside"])).toBe("Este horário está fora do seu horário de atendimento (08:00–18:00). Agendar mesmo assim?");
-    expect(compose("en", ["outside"])).toBe("This time is outside your working hours (08:00–18:00). Book anyway?");
-    expect(compose("pt-BR", ["dayoff"])).toBe("Você não atende às sextas. Agendar mesmo assim?");
-    expect(compose("en", ["dayoff"])).toBe("You don't work on Fridays. Book anyway?");
+    expect(compose("pt-BR", ["outside"])).toBe("Este horário está fora do horário de atendimento (08:00–18:00). Agendar mesmo assim?");
+    expect(compose("en", ["outside"])).toBe("This time is outside the working hours (08:00–18:00). Book anyway?");
+    expect(compose("pt-BR", ["dayoff"])).toBe("Sexta-feira não é dia de atendimento. Agendar mesmo assim?");
+    expect(compose("en", ["dayoff"])).toBe("Friday isn't a working day. Book anyway?");
     // Blocked keeps the app's wording.
     expect(compose("pt-BR", ["blocked"])).toBe("Este horário está bloqueado (12:00–13:00). Agendar mesmo assim?");
     // Both at once: one question listing both.
     expect(compose("pt-BR", ["blocked", "outside"])).toBe(
-      "Este horário está bloqueado (12:00–13:00). Este horário está fora do seu horário de atendimento (08:00–18:00). Agendar mesmo assim?",
+      "Este horário está bloqueado (12:00–13:00). Este horário está fora do horário de atendimento (08:00–18:00). Agendar mesmo assim?",
     );
   });
 

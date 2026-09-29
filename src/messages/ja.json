@@ -196,7 +196,7 @@
     "moreCount": "他 {n} 件",
     "warnBlocked": "この時間はブロックされています（{start}–{end}）。",
     "warnOutside": "この時間は診療時間外です（{start}–{end}）。",
-    "warnDayOff": "{day, select, sun {日曜日} mon {月曜日} tue {火曜日} wed {水曜日} thu {木曜日} fri {金曜日} sat {土曜日} other {その日}}は診療日ではありません。",
+    "warnDayOff": "{day, select, sun {日曜日} mon {月曜日} tue {火曜日} wed {水曜日} thu {木曜日} fri {金曜日} sat {土曜日} other {この日}}は診療日ではありません。",
     "bookAnyway": "このまま予約しますか？",
     "bookAnywayButton": "予約する",
     "checkTimeTitle": "時間を確認",
