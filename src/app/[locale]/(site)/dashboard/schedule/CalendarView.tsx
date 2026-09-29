@@ -25,6 +25,8 @@ export type CalendarAppt = {
   payment_status: string;
   payment_amount?: number;
   notes?: string;
+  // The patient's own booking message (migration 106).
+  patient_note?: string | null;
 };
 
 // HOUR_H/FIRST_H/LAST_H drive the grid's Tailwind classes below (h-16 = HOUR_H,
