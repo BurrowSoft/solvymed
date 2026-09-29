@@ -9228,3 +9228,22 @@ Tested by web tester 2, over HTTP against `/api/assistant`.
 | TH practice (pt-BR / en / th) | ✅ **never a card**. Text "Em clínicas na Tailândia, o paciente paga escaneando o QR PromptPay da consulta." / en / th, plus an `open` block "Abrir QR" / "Open QR" / "เปิด QR" → `{screen: schedule, date, id, params: {sheet: "1"}}` (web href `…/dashboard/schedule?date=…&sheet=1&highlight=<id>`). The model is told to add nothing |
 
 **CI at `76ceb35`:** ✅. **Review: clean (9a).** **Merge gate: 🟢 for `76ceb35`.** This docs commit sits directly on the PR head. The branch is 25 behind master, and a master merge conflicts in code (src/lib/assistant/server/handle.ts), so the web dev syncs it.
+
+## #160 Help A8 / C9 + App Map know-how for app 1.4.0 (mobile #137 / #141), pending `app-1.4.0` (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `3937f0b`. It's know-how only
+(`content/help/01-agenda.md`, `04-configuracoes.md`, `conditions.json`,
+`src/lib/solvyai/app-map.ts`), so it was checked offline.
+
+| Row | Result |
+|---|---|
+| New condition | ✅ `app-1.4.0` is `met: false` ("App 1.4.0 is released on Google Play…") |
+| Help lines | ✅ each new line (A8 in the patient's app; C9 in the app's Desfazer / Abrir toast, pt + en) is `{pending:app-1.4.0}` |
+| The built Help while unmet | ✅ `node scripts/help-build.mjs` at the PR head → `src/content/helpArticles.json` has **no content change** (`git diff --ignore-cr-at-eol` is empty; the only difference is LF vs CRLF). The built JSON isn't in the PR, as expected. |
+| App Map | ✅ the new booking-decision rule is `pending: ["app-1.4.0"]`, and the new GENERAL C9 rule is `pending: ["app-1.4.0", "solvyai-live"]`. Nothing new is live (`ruleIsLive` needs every condition met). |
+| Tests | ✅ `help-articles` + the App Map tests: 28/28 (vitest exit 0) |
+
+**Not synced:** a master merge **conflicts in `src/lib/solvyai/app-map.ts`**
+(code), so the web dev syncs it. This docs commit sits directly on the PR
+head. A re-check of the built JSON after the sync is quick.
+**Review: clean (9a).** **Merge gate: 🟢 for `3937f0b`.**
