@@ -60,8 +60,8 @@ SolvyMed doesn't receive the money: Pix goes straight to your account.
 Abra uma consulta paga e toque em **Gerar recibo em PDF**. Compartilhe pelo WhatsApp, e-mail ou outro app.
 **en**
 Open a paid appointment and tap **Create receipt PDF**. Share it by WhatsApp, email or another app.
-**No site:** Ainda não disponível no site; use o app.
-**On the website:** Not available on the website yet; use the app.
+**No site:** Em **Pagamentos**, na consulta recebida, clique em **Recibo** e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Médico e secretária(o) podem emitir. Clínicas na Tailândia: os recibos numerados são emitidos no app.
+**On the website:** In **Payments**, on the received appointment, click **Receipt** and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. The doctor and the secretary can create it. Clinics in Thailand: numbered receipts are issued in the app.
 `open:payments`
 
 ---
