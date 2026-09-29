@@ -101,6 +101,7 @@
     "managePayments": "إدارة المدفوعات"
   },
   "schedule": {
+    "patientMessage": "رسالة المريض",
     "title": "الجدول الزمني",
     "apptsToday": "{count} موعد اليوم",
     "noAppts": "لا مواعيد في هذا اليوم",

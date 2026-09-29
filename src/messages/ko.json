@@ -101,6 +101,7 @@
     "managePayments": "결제 관리"
   },
   "schedule": {
+    "patientMessage": "환자 메시지",
     "title": "일정",
     "apptsToday": "오늘 예약 {count}건",
     "noAppts": "이 날의 예약이 없습니다",

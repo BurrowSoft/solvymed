@@ -98,7 +98,7 @@ export default async function SchedulePage({
   const [apptsResult, procsResult, tentativeBookings, profResult, anyApptResult] = await Promise.all([
     supabase
       .from("appointments")
-      .select("id, date, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes")
+      .select("id, date, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note")
       .eq("professional_id", effectiveProfId)
       .gte("date", rangeStart)
       .lte("date", rangeEnd)
@@ -215,6 +215,7 @@ export default async function SchedulePage({
                           {appt.consultation_type}
                           {appt.type === "online" && <span className="ml-2 rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600 font-semibold">{t("onlineBadge")}</span>}
                         </p>
+                        {appt.patient_note && <p className="text-xs text-slate-500 mt-1 truncate"><span className="font-semibold">{t("patientMessage")}:</span> {appt.patient_note}</p>}
                         {appt.notes && <p className="text-xs text-slate-400 mt-1 truncate">{appt.notes}</p>}
                       </div>
                       <div className="shrink-0 flex items-center gap-2">
