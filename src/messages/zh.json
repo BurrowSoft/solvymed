@@ -927,6 +927,22 @@
     "paymentsEmptyBody": "您预约的付款记录将显示在这里。",
     "setYourPrices": "设置价格"
   },
+  "changePassword": {
+    "title": "修改密码",
+    "hint": "为安全起见，其他设备上的会话将被结束。",
+    "current": "当前密码",
+    "new": "新密码",
+    "confirm": "确认新密码",
+    "success": "密码已修改！其他设备上的会话已结束。",
+    "sameError": "新密码必须与当前密码不同。",
+    "mismatch": "两次输入的密码不一致。",
+    "tooShort": "密码至少需要 {min} 个字符。",
+    "allFields": "请填写所有字段。",
+    "currentWrong": "当前密码不正确。",
+    "generic": "无法修改密码，请重试。",
+    "cancel": "取消",
+    "saving": "正在保存…"
+  },
   "accountClose": {
     "titleClose": "关闭账户",
     "titleDelete": "删除账户",

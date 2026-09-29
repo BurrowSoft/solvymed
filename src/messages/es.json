@@ -927,6 +927,22 @@
     "paymentsEmptyBody": "Los pagos de tus citas aparecerán aquí.",
     "setYourPrices": "Definir tus precios"
   },
+  "changePassword": {
+    "title": "Cambiar contraseña",
+    "hint": "Por seguridad, se cierran las sesiones en otros dispositivos.",
+    "current": "Contraseña actual",
+    "new": "Nueva contraseña",
+    "confirm": "Confirmar nueva contraseña",
+    "success": "¡Contraseña cambiada! Se cerraron las sesiones en otros dispositivos.",
+    "sameError": "La nueva contraseña debe ser distinta de la actual.",
+    "mismatch": "Las contraseñas no coinciden.",
+    "tooShort": "La contraseña debe tener al menos {min} caracteres.",
+    "allFields": "Completa todos los campos.",
+    "currentWrong": "Tu contraseña actual es incorrecta.",
+    "generic": "No se pudo cambiar la contraseña. Inténtalo de nuevo.",
+    "cancel": "Cancelar",
+    "saving": "Guardando…"
+  },
   "accountClose": {
     "titleClose": "Cerrar cuenta",
     "titleDelete": "Eliminar cuenta",

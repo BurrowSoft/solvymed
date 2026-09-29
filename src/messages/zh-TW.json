@@ -927,6 +927,22 @@
     "paymentsEmptyBody": "您預約的付款紀錄將顯示在這裡。",
     "setYourPrices": "設定價格"
   },
+  "changePassword": {
+    "title": "修改密碼",
+    "hint": "為了安全，其他裝置上的工作階段將會結束。",
+    "current": "目前密碼",
+    "new": "新密碼",
+    "confirm": "確認新密碼",
+    "success": "密碼已修改！其他裝置上的工作階段已結束。",
+    "sameError": "新密碼必須與目前密碼不同。",
+    "mismatch": "兩次輸入的密碼不一致。",
+    "tooShort": "密碼至少需要 {min} 個字元。",
+    "allFields": "請填寫所有欄位。",
+    "currentWrong": "目前密碼不正確。",
+    "generic": "無法修改密碼，請再試一次。",
+    "cancel": "取消",
+    "saving": "儲存中…"
+  },
   "accountClose": {
     "titleClose": "關閉帳戶",
     "titleDelete": "刪除帳戶",

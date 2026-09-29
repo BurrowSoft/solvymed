@@ -927,6 +927,22 @@
     "paymentsEmptyBody": "Os pagamentos das suas consultas aparecerão aqui.",
     "setYourPrices": "Definir seus preços"
   },
+  "changePassword": {
+    "title": "Alterar senha",
+    "hint": "Por segurança, as sessões nos outros aparelhos são encerradas.",
+    "current": "Senha atual",
+    "new": "Nova senha",
+    "confirm": "Confirmar nova senha",
+    "success": "Senha alterada com sucesso! As sessões nos outros aparelhos foram encerradas.",
+    "sameError": "A nova senha deve ser diferente da senha atual.",
+    "mismatch": "As senhas não coincidem.",
+    "tooShort": "A senha deve ter pelo menos {min} caracteres.",
+    "allFields": "Preencha todos os campos.",
+    "currentWrong": "Sua senha atual está incorreta.",
+    "generic": "Não foi possível alterar a senha. Tente de novo.",
+    "cancel": "Cancelar",
+    "saving": "Salvando…"
+  },
   "accountClose": {
     "titleClose": "Encerrar conta",
     "titleDelete": "Excluir conta",
