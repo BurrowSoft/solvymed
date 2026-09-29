@@ -68,8 +68,8 @@ Patients can't request appointments in blocked time. You can still book over it 
 2. To move it: change the date or time and tap **Save**.
 3. To cancel it: change the status to **Cancelled**.
 {pending:mobile#111} If the patient has a SolvyMed account, they get a notification when you move or cancel in the app (also when you archive the patient). Past appointments don't notify.
-**No site:** Remarcar ainda não está disponível no site; use o app. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**. Se o paciente tiver conta no SolvyMed, ele recebe uma notificação (consultas no passado não notificam).
-**On the website:** Moving an appointment isn't available on the website yet; use the app. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**. If the patient has a SolvyMed account, they get a notification (past appointments don't).
+**No site:** Para remarcar: em **Agenda**, clique no ícone **Remarcar** ao lado da consulta, escolha a nova data e o horário e clique em **Remarcar** (a duração e os outros dados continuam os mesmos). Se o paciente tiver conta no SolvyMed, ele recebe uma notificação. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**. Se o paciente tiver conta no SolvyMed, ele recebe uma notificação (consultas no passado não notificam).
+**On the website:** To move it: in the **Schedule**, click the **Reschedule** icon next to the appointment, choose the new date and time and click **Reschedule** (the duration and other details stay the same). If the patient has a SolvyMed account, they get a notification. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**. If the patient has a SolvyMed account, they get a notification (past appointments don't).
 `open:schedule`
 
 ---

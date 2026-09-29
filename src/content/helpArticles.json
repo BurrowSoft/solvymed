@@ -178,8 +178,8 @@
           ]
         },
         "web": {
-          "pt": "Remarcar ainda não está disponível no site; use o app. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**. Se o paciente tiver conta no SolvyMed, ele recebe uma notificação (consultas no passado não notificam).",
-          "en": "Moving an appointment isn't available on the website yet; use the app. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**. If the patient has a SolvyMed account, they get a notification (past appointments don't)."
+          "pt": "Para remarcar: em **Agenda**, clique no ícone **Remarcar** ao lado da consulta, escolha a nova data e o horário e clique em **Remarcar** (a duração e os outros dados continuam os mesmos). Se o paciente tiver conta no SolvyMed, ele recebe uma notificação. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**. Se o paciente tiver conta no SolvyMed, ele recebe uma notificação (consultas no passado não notificam).",
+          "en": "To move it: in the **Schedule**, click the **Reschedule** icon next to the appointment, choose the new date and time and click **Reschedule** (the duration and other details stay the same). If the patient has a SolvyMed account, they get a notification. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**. If the patient has a SolvyMed account, they get a notification (past appointments don't)."
         },
         "webUnavailable": false,
         "open": "schedule",

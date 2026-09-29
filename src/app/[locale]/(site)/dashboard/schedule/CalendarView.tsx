@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import type React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { AppointmentStatusSelect, DeleteAppointmentButton } from "./ScheduleClient";
+import { AppointmentStatusSelect, DeleteAppointmentButton, RescheduleButton } from "./ScheduleClient";
+import { MOVABLE_STATUSES } from "@/lib/scheduleChecks";
 import { toLocalDateString } from "@/lib/slots";
 import { formatMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
@@ -422,7 +423,10 @@ export function CalendarView({
                 ? <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">{t("blockedLabel")}</span>
                 : <AppointmentStatusSelect id={selected.id} current={selected.status} />
               }
-              <DeleteAppointmentButton id={selected.id} />
+              <div className="flex items-center gap-1">
+                {MOVABLE_STATUSES.includes(selected.status) && <RescheduleButton id={selected.id} date={selected.date} start={selected.start_time} />}
+                <DeleteAppointmentButton id={selected.id} />
+              </div>
             </div>
           </div>
         </div>

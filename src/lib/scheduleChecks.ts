@@ -24,3 +24,8 @@ export function hoursWarning(
   }
   return null;
 }
+
+// The appointments the website can move (Remarcar, UX 36): booked ones.
+// Requests are answered on their card; cancelled, rejected, completed and
+// absent ones stay where they were; blocked time is removed and re-added.
+export const MOVABLE_STATUSES = ["scheduled", "confirmed", "late"];

@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, ViewToggle, PixQrButton, PromptPayQrButton } from "./ScheduleClient";
+import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, RescheduleButton, ViewToggle, PixQrButton, PromptPayQrButton } from "./ScheduleClient";
+import { MOVABLE_STATUSES } from "@/lib/scheduleChecks";
 import { normalizePromptPayId } from "@/lib/promptpay";
 import { BookingRequestsPanel } from "./BookingRequestsPanel";
 import { getTentativeBookings } from "./booking-actions";
@@ -233,6 +234,7 @@ export default async function SchedulePage({
                         {promptPayId && appt.status !== "blocked" && (
                           <PromptPayQrButton promptPayId={promptPayId} amount={appt.payment_amount} />
                         )}
+                        {MOVABLE_STATUSES.includes(appt.status) && <RescheduleButton id={appt.id} date={appt.date} start={appt.start_time} />}
                         <DeleteAppointmentButton id={appt.id} />
                       </div>
                     </div>
