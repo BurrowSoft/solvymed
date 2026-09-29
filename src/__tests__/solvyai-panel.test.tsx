@@ -54,6 +54,18 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
     await waitFor(() => expect(screen.getByText("paciente CPF [cpf] não aparece")).toBeInTheDocument());
   });
 
+  it("the tour's Experimentar agora opens the panel and asks; closing tells the tour", async () => {
+    const { OPEN_EVENT, CLOSED_EVENT } = await import("@/components/solvyai/SolvyAiSettings");
+    render(<SolvyAi locale="pt-BR" prefix="/pt-BR" dailyLimit={20} />);
+    act(() => { window.dispatchEvent(new CustomEvent(OPEN_EVENT, { detail: { text: "O que o SolvyAI pode fazer?" } })); });
+    await waitFor(() => expect(screen.getByText("O que o SolvyAI pode fazer?")).toBeInTheDocument());
+    const closed = vi.fn();
+    window.addEventListener(CLOSED_EVENT, closed);
+    fireEvent.click(screen.getByLabelText("assistant.close"));
+    expect(closed).toHaveBeenCalledTimes(1);
+    window.removeEventListener(CLOSED_EVENT, closed);
+  });
+
   async function ask(text: string) {
     fireEvent.change(screen.getByLabelText("assistant.placeholder"), { target: { value: text } });
     fireEvent.click(screen.getByText("assistant.send"));

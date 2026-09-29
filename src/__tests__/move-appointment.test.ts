@@ -10,6 +10,7 @@ const h = vi.hoisted(() => {
     hours: null as unknown,
     updates: [] as { values: Row; filters: [string, string, unknown][] }[],
     told: [] as unknown[],
+    updateError: null as { code?: string; message?: string } | null,
   };
   function query(table: string) {
     // Copies, like a real query (an update never changes a row already read).
@@ -31,6 +32,7 @@ const h = vi.hoisted(() => {
       limit: () => q,
       maybeSingle: () => { single = true; return q; },
       then: (res: (v: unknown) => unknown) => {
+        if (update && state.updateError) return Promise.resolve({ data: null, error: state.updateError }).then(res);
         if (update) {
           state.updates.push({ values: update, filters });
           for (const r of rows) Object.assign(state.appointments.find((x) => x.id === r.id)!, update);
@@ -71,6 +73,7 @@ beforeEach(() => {
   h.state.hours = { mon: { enabled: true, start: "08:00", end: "18:00" }, tue: { enabled: true, start: "08:00", end: "18:00" }, sat: { enabled: false, start: "08:00", end: "12:00" } };
   h.state.updates = [];
   h.state.told = [];
+  h.state.updateError = null;
 });
 
 describe("moveAppointment", () => {
@@ -109,6 +112,12 @@ describe("moveAppointment", () => {
     h.state.appointments = [appt()];
     expect(await move({ date: "2026-10-05", start_time: "09:00" })).toEqual({ success: true, id: "a-1" });
     expect(h.state.updates).toEqual([]);
+    expect(h.state.told).toEqual([]);
+  });
+
+  it("migration 121's guard (appointment_not_movable) shows the friendly not-movable line", async () => {
+    h.state.updateError = { code: "P0001", message: "appointment_not_movable" };
+    expect(await move({ date: "2026-10-06", start_time: "14:00" })).toMatchObject({ code: "not_movable" });
     expect(h.state.told).toEqual([]);
   });
 

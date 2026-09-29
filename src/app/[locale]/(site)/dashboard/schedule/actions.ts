@@ -326,6 +326,9 @@ export async function moveAppointment(formData: FormData) {
     .select("id");
   if (error) {
     if (error.code === "23P01") return { error: "This time overlaps with another appointment", code: "slot_overlap", overlap: null };
+    // Migration 121's guard (completed / absent / cancelled / rejected never
+    // change date): the same friendly line as the status check above.
+    if (error.message?.includes("appointment_not_movable")) return { error: "Can't be moved", code: "not_movable" };
     return { error: error.message, code: knownDbError(error.message) ?? "generic" };
   }
   if (!moved?.length) return { error: "Can't be moved", code: "not_movable" };
