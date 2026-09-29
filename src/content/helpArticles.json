@@ -625,10 +625,10 @@
           ]
         },
         "web": {
-          "pt": "Ainda não disponível no site; use o app.",
-          "en": "Not available on the website yet; use the app."
+          "pt": "Abra o paciente, a aba **Exames** (ou **Arquivos**) e clique em **Enviar**. Nas primeiras 24 horas depois do envio você pode excluir o arquivo em **Remover**; depois disso, ele só pode ser ocultado, informando o motivo.",
+          "en": "Open the patient, the **Exams** (or **Files**) tab, and click **Upload**. For 24 hours after the upload you can delete the file with **Remove**; after that it can only be hidden, with a reason."
         },
-        "webUnavailable": true,
+        "webUnavailable": false,
         "open": "patients",
         "appOnly": null,
         "appTitle": null
@@ -1258,8 +1258,8 @@
           ]
         },
         "web": {
-          "pt": "Durante o teste, o contador de dias fica no topo do painel. Clique nele para ver o plano e assinar com cartão.",
-          "en": "During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card."
+          "pt": "Durante o teste, o contador de dias fica no topo do painel. Clique nele para ver o plano e assinar com cartão. A situação do plano fica em **Configurações → Assinatura**; se você assina com cartão, **Gerenciar assinatura** abre a página do Stripe para gerenciá-la (por exemplo, trocar o cartão).",
+          "en": "During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card. Your plan's status is in **Settings → Subscription**; if you subscribe by card, **Manage subscription** opens Stripe's page to manage it (for example, to change the card)."
         },
         "webUnavailable": false,
         "open": null,

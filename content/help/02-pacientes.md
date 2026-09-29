@@ -92,8 +92,8 @@ Os arquivos são privados: só você acessa, por links temporários.
 1. Open the patient and the **Exams** (or **Files**) tab.
 2. Tap **Upload** and choose a photo or a PDF.
 Files are private: only you can open them, through temporary links.
-**No site:** Ainda não disponível no site; use o app.
-**On the website:** Not available on the website yet; use the app.
+**No site:** Abra o paciente, a aba **Exames** (ou **Arquivos**) e clique em **Enviar**. Nas primeiras 24 horas depois do envio você pode excluir o arquivo em **Remover**; depois disso, ele só pode ser ocultado, informando o motivo.
+**On the website:** Open the patient, the **Exams** (or **Files**) tab, and click **Upload**. For 24 hours after the upload you can delete the file with **Remove**; after that it can only be hidden, with a reason.
 `open:patients`
 
 ---
