@@ -195,6 +195,8 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
       const name = fileNameFromRef(r.objectRef);
       return name ? `${t("accessKindFile")} · ${name}` : t("accessKindFile");
     }
+    // Migration 126: the patient list exported as CSV.
+    if (r.kind === "export") return t("accessKindExport");
     return t("accessKindPatient");
   };
 
