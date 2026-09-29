@@ -1,7 +1,7 @@
 {
   "app-1.4.0": {
     "met": false,
-    "what": "App 1.4.0 is released in the stores (flip when both Play and App Store have it). Includes mobile #137, the patient's appointment view: their pending request can be cancelled ('Cancelar pedido'), a clinic's proposed time can be accepted or declined, an upcoming scheduled/confirmed appointment offers 'Pedir remarcação' only before it starts, and cancelling means talking to the clinic."
+    "what": "App 1.4.0 is released on Google Play (iOS is TestFlight-only for now, so Play alone flips it). Includes mobile #137, the patient's appointment view: their pending request can be cancelled ('Cancelar pedido'), a clinic's proposed time can be accepted or declined, an upcoming scheduled/confirmed appointment offers 'Pedir remarcação' only before it starts, and cancelling means talking to the clinic."
   },
   "mobile#91": {
     "met": false,
