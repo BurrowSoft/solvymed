@@ -9203,33 +9203,47 @@ Most likely the save's response arrived after the test's 3.5 s check.
 cleanly.
 **Review: clean (9a).** **Merge gate: 🟢 for `d69ef5b`.**
 
-## #165 A clinic proposal shows the proposed time; the pt-BR trial "=0" plural (web tester 1, 2026-09-30)
+## PR #164 (`feat/solvyai-send-pix-route`, base master) — `propose_send_pix` for the app's SolvyAI (BR card; TH PromptPay answer; never on the website), 🟢 at `76ceb35`
 
-**What was tested:** PR head `6033260`, on its Vercel Preview (Playwright).
-- **Account:** a throwaway doctor.
-- **Seeded requests** (all for 13/10), shown in "Solicitações de consulta":
-  - a clinic proposal with a proposed date + time (14/10 15:30);
-  - a patient's reschedule request (`scheduled_by = patient`);
-  - a clinic proposal with a date but **no** proposed time;
-  - a plain tentative request.
+Tested by web tester 2, over HTTP against `/api/assistant`.
 
-| Row | pt-BR | en | th |
-|---|---|---|---|
-| Clinic proposal (date + time) | ✅ "Aguardando resposta do paciente / **Proposto: qua., 14 de out. · 15:30**" | ✅ "Proposed: Wed, Oct 14 · 3:30 PM" | ✅ "เสนอ: พุธ 14 ต.ค. · 15:30" |
-| The patient's reschedule request | ✅ no "Proposto" (it keeps "Remarcação solicitada / Solicitado: qui., 15 de out. · 11:00") | ✅ | ✅ |
-| Clinic proposal without a proposed time | ✅ shown, with no proposed line | ✅ | ✅ |
-| Plain request | ✅ no proposed line | ✅ | ✅ |
-| Proposed lines in the panel | ✅ exactly 1 | ✅ 1 | ✅ 1 |
+**Setup:**
+- **Server:** a local `next dev` at `76ceb35` with `SOLVYAI_API_ENABLED=1`
+  and a fake key.
+- **Test-only preload:** it scripts `list_appointments` →
+  `propose_send_pix`.
+- **Clients:** the **app** client uses a Bearer token; the **website**
+  client uses the SSR session cookie (no Bearer).
+- **Data:** the prod DB, with throwaway doctors, one BR and one `country =
+  TH` (deleted afterwards).
 
-**The pt-BR trial plural (`settings.subscriptionTrial`):**
-- **How it was checked:** formatted with the app's `use-intl`.
-- **This PR:** n=0 "Teste grátis: **faltam 0 dias**", 1 "falta 1 dia", 2
-  "faltam 2 dias", 15 "faltam 15 dias".
-- **Master, before:** gave "**falta 0 dia**".
-- **en / th:** unchanged ("0 days left" / "เหลืออีก 0 วัน").
-- **Live:** the web's Settings → Assinatura only shows the trial line
-  while days > 0 (`subscriptionPlan`), so 0 can't be seen there today.
-  The fix is for parity with the app.
+| Row | Result |
+|---|---|
+| BR, app, value + Pix key + patient phone | ✅ the tool is offered. Card "Enviar Pix por WhatsApp": Paciente / Consulta "Terça-feira, 06/10/2026, 09:00–09:30" / Valor "R$ 150,00" / Chave Pix. `action {kind: send_pix, args: {appointmentId}}`; `after {screen: whatsapp, highlight: appointment, then: payments}` |
+| No patient phone | ✅ no card; the model is told to offer the QR / Pix Copia e Cola |
+| Already paid | ✅ no card; "It's already paid" |
+| No value | ✅ no card; "set it first" |
+| No Pix key | ✅ no card; "add it in Settings (Help G3)" |
+| **Website** client | ✅ `propose_send_pix` is **not among the 11 tools** sent to the model. A forced call is refused: "On the website Pix isn't sent by WhatsApp… Help G4" |
+| TH practice (pt-BR / en / th) | ✅ **never a card**. Text "Em clínicas na Tailândia, o paciente paga escaneando o QR PromptPay da consulta." / en / th, plus an `open` block "Abrir QR" / "Open QR" / "เปิด QR" → `{screen: schedule, date, id, params: {sheet: "1"}}` (web href `…/dashboard/schedule?date=…&sheet=1&highlight=<id>`). The model is told to add nothing |
 
-**Master sync:** master merged in under this docs commit, cleanly.
-**Review: clean (9a).** **Merge gate: 🟢 for `6033260`.**
+**CI at `76ceb35`:** ✅. **Review: clean (9a).** **Merge gate: 🟢 for `76ceb35`.** This docs commit sits directly on the PR head. The branch is 25 behind master, and a master merge conflicts in code (src/lib/assistant/server/handle.ts), so the web dev syncs it.
+
+## #160 Help A8 / C9 + App Map know-how for app 1.4.0 (mobile #137 / #141), pending `app-1.4.0` (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `3937f0b`. It's know-how only
+(`content/help/01-agenda.md`, `04-configuracoes.md`, `conditions.json`,
+`src/lib/solvyai/app-map.ts`), so it was checked offline.
+
+| Row | Result |
+|---|---|
+| New condition | ✅ `app-1.4.0` is `met: false` ("App 1.4.0 is released on Google Play…") |
+| Help lines | ✅ each new line (A8 in the patient's app; C9 in the app's Desfazer / Abrir toast, pt + en) is `{pending:app-1.4.0}` |
+| The built Help while unmet | ✅ `node scripts/help-build.mjs` at the PR head → `src/content/helpArticles.json` has **no content change** (`git diff --ignore-cr-at-eol` is empty; the only difference is LF vs CRLF). The built JSON isn't in the PR, as expected. |
+| App Map | ✅ the new booking-decision rule is `pending: ["app-1.4.0"]`, and the new GENERAL C9 rule is `pending: ["app-1.4.0", "solvyai-live"]`. Nothing new is live (`ruleIsLive` needs every condition met). |
+| Tests | ✅ `help-articles` + the App Map tests: 28/28 (vitest exit 0) |
+
+**Not synced:** a master merge **conflicts in `src/lib/solvyai/app-map.ts`**
+(code), so the web dev syncs it. This docs commit sits directly on the PR
+head. A re-check of the built JSON after the sync is quick.
+**Review: clean (9a).** **Merge gate: 🟢 for `3937f0b`.**

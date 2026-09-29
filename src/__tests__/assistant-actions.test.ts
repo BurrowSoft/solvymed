@@ -501,3 +501,70 @@ describe("SolvyAI actions mode: a recurring series (the website's Repetir)", () 
     expect(resultsIn(t.model.calls[2])[0]).toMatchObject({ is_error: true });
   });
 });
+
+describe("SolvyAI actions mode: send Pix (app only; Brazil only; Thai practices get the PromptPay answer)", () => {
+  // Read the day, then propose sending Pix for Mario's appointment.
+  const pix = (req: ModelRequest, round: number): FakeTurn => {
+    if (round === 0) return { tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }] };
+    if (round === 1) return { tools: [{ name: "propose_send_pix", input: { appointmentId: "a-joao" } }] };
+    return "Confira.";
+  };
+  const inApp = (t: ReturnType<typeof setup>) => {
+    (t.d as { client: string }).client = "app";
+    t.tables.professionals[0].pix_key = "pix@clinica.com";
+    t.tables.patients.find((p) => p.id === "p-mario")!.phone = "+55 11 99999-0000";
+    return t;
+  };
+
+  it("the website never gets the tool", async () => {
+    const t = setup(pix);
+    await run(t, ask("Manda o Pix do Mario"));
+    expect(t.model.calls[0].tools?.map((d) => d.name)).not.toContain("propose_send_pix");
+  });
+
+  it("app, Brazil: a card (patient, appointment, value, Pix key) that opens WhatsApp, then Payments", async () => {
+    const t = inApp(setup(pix));
+    expect(t.model.calls.length).toBe(0);
+    const r = await run(t, ask("Manda o Pix do Mario"));
+    expect(t.model.calls[0].tools?.map((d) => d.name)).toContain("propose_send_pix");
+    const card = cardOf(r.blocks)!;
+    expect(card.action).toEqual({ kind: "send_pix", args: { appointmentId: "a-joao" } });
+    expect(card.fields.map((f) => f.label)).toEqual(["Paciente", "Consulta", "Valor", "Chave Pix"]);
+    expect(card.fields[3].value).toBe("pix@clinica.com");
+    expect(card.after).toEqual({ screen: "whatsapp", highlight: { kind: "appointment", id: "a-joao" }, then: { screen: "payments" } });
+  });
+
+  it("app, Thailand: no card, the PromptPay answer and an Open QR link to the appointment's sheet", async () => {
+    const t = inApp(setup(pix));
+    t.tables.professionals[0].country = "TH";
+    const r = await run(t, ask("Manda o Pix do Mario"));
+    expect(cardOf(r.blocks)).toBeUndefined();
+    const texts = r.chunks.flatMap((c) => (c.kind === "block" && c.block.type === "text" ? [c.block.text] : []));
+    expect(texts).toContain("Em clínicas na Tailândia, o paciente paga escaneando o QR PromptPay da consulta.");
+    const open = r.blocks.find((b) => b.type === "open") as Extract<AnswerBlock, { type: "open" }>;
+    expect(open.label).toBe("Abrir QR");
+    expect(open.target).toEqual({ screen: "schedule", date: "2026-09-30", id: "a-joao", params: { sheet: "1" } });
+    expect(open.href).toContain("sheet=1");
+  });
+
+  it("app, Brazil: no Pix key, no phone, or already paid → back to the model, no card", async () => {
+    let t = inApp(setup(pix));
+    t.tables.professionals[0].pix_key = null;
+    expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
+    expect(resultsIn(t.model.calls[2])[0]).toMatchObject({ is_error: true });
+    t = inApp(setup(pix));
+    t.tables.patients.find((p) => p.id === "p-mario")!.phone = null;
+    expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
+    t = inApp(setup(pix));
+    t.tables.appointments.find((a) => a.id === "a-joao")!.payment_status = "paid";
+    expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
+  });
+
+  it("an unknown practice country: no card at all (never a guessed Pix path)", async () => {
+    const t = inApp(setup(pix));
+    t.tables.professionals[0].id = "someone-else";
+    const r = await run(t, ask("Manda o Pix do Mario"));
+    expect(cardOf(r.blocks)).toBeUndefined();
+    expect(resultsIn(t.model.calls[2])[0]).toMatchObject({ is_error: true });
+  });
+});
