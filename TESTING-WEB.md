@@ -8032,3 +8032,69 @@ for the patient-accept step. This docs commit includes that master sync.
 **CI at `9c0e60a`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `9c0e60a`.** This docs commit sits on top of a master sync (8 behind,
 clean merge; it brings #139).
+
+## PR #138 (`feat/web-recurring`, base `feat/web-reschedule`) — recurring appointments on the website, 🟢 at `b74cf4f`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `b74cf4f` with a test-only Expo sink
+  (pushes are logged, never sent), against the prod DB.
+- **Throwaway fixtures (deleted afterwards):**
+  - a doctor, "Clínica Opus Série", open Mon–Fri 08:00–18:00;
+  - a linked patient with a device token;
+  - an appointment on the 3rd weekly date at 10:00;
+  - a block on the 4th weekly date, 14:00–15:00.
+- **Flow:** everything goes through Nova Consulta. First date: Tue
+  06/10/2026.
+
+**Form:**
+- **pt-BR:** Repetir "Sem repetição / Semanal / Quinzenal / Mensal";
+  "Quantas consultas" defaults to 8; the button reads "Salvar ×8", then
+  "Salvar ×4" after the count changes.
+- **en:** "No repeat / Weekly / Every 2 weeks / Monthly"; "Save ×N".
+
+**Series:**
+- **Weekly ×4 for the linked patient:**
+  - 4 rows (06/10, 13/10, 20/10, 27/10, 11:00–11:30), each with
+    `patient_auth_id`.
+  - **ONE push:** "Nova consulta | Clínica Opus Série marcou 4 consultas
+    para você. A primeira é em 06/10/2026 às 11:00."
+- **Clash on the 3rd date:** "Em 20/10/2026: Este horário conflita com
+  Opus Ocupado às 10:00 (30 min). Escolha outro horário." **0 rows
+  saved.**
+  - en: "On 10/20/2026: This overlaps with Opus Ocupado at 10:00 (30
+    min)…"
+- **Block on the 4th date:** ONE question, "Em 27/10/2026: Este horário
+  está bloqueado (14:00–15:00). Agendar mesmo assim?".
+  - Cancelar → 0 rows.
+  - Agendar → all 4 saved.
+- **Quinzenal ×3:** 06/10, 20/10, 03/11.
+- **Mensal ×3 from Sat 31/10:**
+  - ONE question: "Em 31/10/2026: Sábado não é dia de atendimento. Agendar
+    mesmo assim?".
+  - Agendar → **31/10, 01/12 (31/11 rolls over), 31/12**.
+- **Outside hours** (17:45 + 30 min on every date): the question names the
+  first date, "Em 06/10/2026: … fora do horário de atendimento
+  (08:00–18:00)".
+
+**Limits and single bookings:**
+- **Limits** (the browser's min/max bypassed): n=1 and n=53 → "Escolha de 2
+  a 52 consultas.", 0 saved. n=52 → 52 rows, 06/10/2026 to 28/09/2027.
+- **A single booking is unchanged:** its overlap message names no date.
+- **Other patients:** no push for the unlinked patients' series.
+
+**Follow-up (7f: not blocking; the merged app behaves the same):**
+- **The problem:** a series whose **first date is past** sends no push,
+  even for its future dates.
+  - Live: weekly ×3 from 22/09 → rows 22/09, 29/09, 06/10 → **0
+    pushes**.
+  - Control, weekly ×2 from 06/10 → 1 push.
+- **UX 36's rule for the fix (both repos):**
+  - One push counting only the future appointments: the single-booking
+    text for 1, the series text for 2+.
+  - No push when none are in the future.
+
+**CI at `b74cf4f`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `b74cf4f`.** This docs commit
+sits directly on top; the branch is up to date with its base.
