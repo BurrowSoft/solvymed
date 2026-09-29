@@ -8558,3 +8558,89 @@ URL fix is Vitor's dashboard change. After merge, the prod check will be
 the same rows on www with a DB flip; no checkout.
 **Review: clean (7f).** **Merge gate: 🟢 for `1c89b62`.** The branch was
 up to date with `release`; this docs commit sits on top.
+
+## #146 Merge-back of release #145 into master (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `4528f4b`, on its Vercel Preview, using
+#145's spec with the same service-role flip and no checkout.
+
+| Row | Result |
+|---|---|
+| Trial → ?success=1; the "webhook" at +8 s | ✅ "Ativando…" with the spinner, then "Assinatura ativada!" at +11 s |
+| Trial, no webhook | ✅ the slow text + the support@solvymed.com mailto at about 30 s |
+| Already active → ?success=1 | ✅ "ativada" on load |
+| en, the "webhook" at +6 s | ✅ "Payment received! …", then "Subscription activated! …" |
+| Without ?success=1 (unchanged) | ✅ Trial: the trial text plus **Assinar com Cartão**. Active: /pt-BR/dashboard. |
+| **Master's plan-load error** (no `professionals` row, so the country lookup fails and there's no plan), without ?success=1 | ✅ "Não foi possível verificar o status da sua assinatura. Tente novamente.", with no subscribe button |
+| Same, with ?success=1 | ✅ "Ativando…" only; no plan error and no button (success=1 wins, as in the merged condition) |
+
+**#145 prod check (release `ec33299` on www, Ready):** ✅. The same 10 rows
+as #145's entry, with a DB flip and no checkout:
+- the flip → "ativada" about 3 s later;
+- no webhook → the slow text at about 30 s, and then polling stops;
+- active or lifetime → activated at once;
+- lapsed or expired → never "ativada";
+- en matches;
+- no subscribe button while success=1.
+
+**CI at `4528f4b`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`4528f4b`.** The branch was up to date with master; this docs commit sits
+on top.
+
+## PR #147 (`feat/web-patient-files`, base master) — exams and files on the website (Help P7), 🟢 at `6681b0a`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Where:** Vercel Preview (Playwright, Chromium) against the prod DB.
+- **Fixtures:** a throwaway doctor and two patients, with throwaway 1-KB
+  PNG / PDF files only (no real data), plus a throwaway secretary.
+- **Purge:** 8d purges the doctors afterwards (files = clinical history).
+- **Backdating:** for the >24 h row, 8d backdated one object
+  (`exams/hemograma-opus.pdf`) to −2 days, guarded to this fixture.
+
+**Tabs and upload (tested at `48ec09a`; `6681b0a` only changes `open()` + the UUID guard):**
+- **Doctor:** tabs "Informações · Registros · Receitas · **Exames** ·
+  **Arquivos** · Consultas · Registro de acessos". The secretary sees only
+  "Informações · Consultas".
+- **Upload:** PNG + PDF into Exames → `<prof>/<pat>/exams/…`, and into
+  Arquivos → `<prof>/<pat>/…`, listed with the date and size.
+- **The same name twice:** "raio-x opus (2).png". Nothing is overwritten
+  (storage has both).
+- **Rejected:**
+  - a `.txt` → "Escolha uma foto ou um PDF.";
+  - a 51 MB PDF → "O arquivo é grande demais (máximo 50 MB)."
+- **Remover within 24 h:** confirm → the object is deleted from storage, no
+  hide dialog.
+- **Archived patient** (via "Arquivar cadastro"): only "Abrir"; no Enviar,
+  no Remover.
+- **Access log:** opening writes `record_access_log` kind `file` with the
+  path.
+- **en:** the tabs are "Exams / Files / Access log".
+
+**Opening a file, re-tested at `6681b0a`:**
+- **My finding at `48ec09a`** (7f: BLOCKING): `window.open(…, "noopener")`
+  returned null, so "Abrir" replaced the app tab with the signed URL and
+  left an about:blank tab. It's fixed.
+- **Abrir:** a new tab opens the signed URL (HTTP 200) with
+  `window.opener === null`. The app tab stays on
+  `/pt-BR/dashboard/patients/<id>`.
+- **Pop-ups blocked** (`window.open` → null): "O navegador bloqueou a nova
+  aba. Permita pop-ups para o SolvyMed e tente de novo." No navigation.
+- **Failed link** (the object deleted behind the page): "Algo deu errado.
+  Tente novamente." The blank tab is closed (1 tab before and after).
+
+**Hiding an older file** (the backdated PDF):
+- Remover → "Remover arquivo: hemograma-opus.pdf | Já se passaram mais de 24
+  horas desde o envio, então o arquivo é ocultado em vez de excluído.
+  Informe o motivo."
+- An empty reason → "Informe um motivo." (the dialog stays).
+- With a reason → gone from the list; "Arquivos removidos (1)" →
+  "hemograma-opus.pdf removido em 29/09/2026 por Dra Opus Arquivos: [TEST]
+  exame duplicado", with **no Abrir**. The object stays in storage.
+- **Nit (copy):** the reason field is labelled "Motivo da correção"
+  (borrowed from record corrections). "Motivo" alone would fit a file
+  removal.
+
+**CI at `6681b0a`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `6681b0a`.** This docs commit sits on top of a master sync (6 behind; clean).

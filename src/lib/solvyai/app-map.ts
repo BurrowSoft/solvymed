@@ -278,7 +278,8 @@ export const GENERAL: { rule: Rule; help: string }[] = [
 // it explains where to do them instead.
 export const NEVER: { what: string; help: string }[] = [
   { what: "Medical records: reading, writing or correcting them (a record locks 24 h after it's written; after that it can only be corrected, never deleted).", help: "P4" },
-  { what: "Prescriptions, exams and files.", help: "P6" },
+  { what: "Prescriptions.", help: "P6" },
+  { what: "Exams and files (photos or PDFs; the doctor adds them in the patient's Exams or Files tab, in the app or on the website; within 24 h of upload a file can be deleted, after that only hidden with a reason).", help: "P7" },
   { what: "Deleting or archiving a patient.", help: "P3" },
   { what: "Closing the account.", help: "K4" },
   { what: "Changing the password (Settings → Change password, on the app and the website; the other devices are signed out).", help: "K2" },
