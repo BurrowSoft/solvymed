@@ -625,10 +625,10 @@
           ]
         },
         "web": {
-          "pt": "Ainda não disponível no site; use o app.",
-          "en": "Not available on the website yet; use the app."
+          "pt": "Abra o paciente, a aba **Exames** (ou **Arquivos**) e clique em **Enviar**. Nas primeiras 24 horas depois do envio você pode excluir o arquivo em **Remover**; depois disso, ele só pode ser ocultado, informando o motivo.",
+          "en": "Open the patient, the **Exams** (or **Files**) tab, and click **Upload**. For 24 hours after the upload you can delete the file with **Remove**; after that it can only be hidden, with a reason."
         },
-        "webUnavailable": true,
+        "webUnavailable": false,
         "open": "patients",
         "appOnly": null,
         "appTitle": null

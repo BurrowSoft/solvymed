@@ -8586,3 +8586,61 @@ as #145's entry, with a DB flip and no checkout:
 **CI at `4528f4b`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `4528f4b`.** The branch was up to date with master; this docs commit sits
 on top.
+
+## PR #147 (`feat/web-patient-files`, base master) — exams and files on the website (Help P7), 🟢 at `6681b0a`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Where:** Vercel Preview (Playwright, Chromium) against the prod DB.
+- **Fixtures:** a throwaway doctor and two patients, with throwaway 1-KB
+  PNG / PDF files only (no real data), plus a throwaway secretary.
+- **Purge:** 8d purges the doctors afterwards (files = clinical history).
+- **Backdating:** for the >24 h row, 8d backdated one object
+  (`exams/hemograma-opus.pdf`) to −2 days, guarded to this fixture.
+
+**Tabs and upload (tested at `48ec09a`; `6681b0a` only changes `open()` + the UUID guard):**
+- **Doctor:** tabs "Informações · Registros · Receitas · **Exames** ·
+  **Arquivos** · Consultas · Registro de acessos". The secretary sees only
+  "Informações · Consultas".
+- **Upload:** PNG + PDF into Exames → `<prof>/<pat>/exams/…`, and into
+  Arquivos → `<prof>/<pat>/…`, listed with the date and size.
+- **The same name twice:** "raio-x opus (2).png". Nothing is overwritten
+  (storage has both).
+- **Rejected:**
+  - a `.txt` → "Escolha uma foto ou um PDF.";
+  - a 51 MB PDF → "O arquivo é grande demais (máximo 50 MB)."
+- **Remover within 24 h:** confirm → the object is deleted from storage, no
+  hide dialog.
+- **Archived patient** (via "Arquivar cadastro"): only "Abrir"; no Enviar,
+  no Remover.
+- **Access log:** opening writes `record_access_log` kind `file` with the
+  path.
+- **en:** the tabs are "Exams / Files / Access log".
+
+**Opening a file, re-tested at `6681b0a`:**
+- **My finding at `48ec09a`** (7f: BLOCKING): `window.open(…, "noopener")`
+  returned null, so "Abrir" replaced the app tab with the signed URL and
+  left an about:blank tab. It's fixed.
+- **Abrir:** a new tab opens the signed URL (HTTP 200) with
+  `window.opener === null`. The app tab stays on
+  `/pt-BR/dashboard/patients/<id>`.
+- **Pop-ups blocked** (`window.open` → null): "O navegador bloqueou a nova
+  aba. Permita pop-ups para o SolvyMed e tente de novo." No navigation.
+- **Failed link** (the object deleted behind the page): "Algo deu errado.
+  Tente novamente." The blank tab is closed (1 tab before and after).
+
+**Hiding an older file** (the backdated PDF):
+- Remover → "Remover arquivo: hemograma-opus.pdf | Já se passaram mais de 24
+  horas desde o envio, então o arquivo é ocultado em vez de excluído.
+  Informe o motivo."
+- An empty reason → "Informe um motivo." (the dialog stays).
+- With a reason → gone from the list; "Arquivos removidos (1)" →
+  "hemograma-opus.pdf removido em 29/09/2026 por Dra Opus Arquivos: [TEST]
+  exame duplicado", with **no Abrir**. The object stays in storage.
+- **Nit (copy):** the reason field is labelled "Motivo da correção"
+  (borrowed from record corrections). "Motivo" alone would fit a file
+  removal.
+
+**CI at `6681b0a`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `6681b0a`.** This docs commit sits on top of a master sync (6 behind; clean).
