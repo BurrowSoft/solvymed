@@ -1219,8 +1219,8 @@
           ]
         },
         "web": {
-          "pt": "O idioma muda no seletor de idioma do menu lateral. O site não tem tema escuro.",
-          "en": "Change the language with the language selector in the side menu. The website has no dark theme."
+          "pt": "O idioma muda no seletor de idioma do menu lateral. O tema fica em **Configurações → Aparência** (Automático, Claro ou Escuro) e vale para este navegador; impressões e e-mails ficam sempre claros.",
+          "en": "Change the language with the language selector in the side menu. The theme is in **Settings → Appearance** (Automatic, Light or Dark) and applies to this browser; prints and emails always stay light."
         },
         "webUnavailable": false,
         "open": "settings",

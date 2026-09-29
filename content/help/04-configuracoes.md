@@ -86,8 +86,8 @@ On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings
 **en**
 **Settings → Language** and **Theme** (light, dark or system). Some parts switch language after you reopen the app.
 {pending:saved-locale-live} The notifications you receive arrive in the language you last chose, in the app or on the website (Portuguese, English, Spanish, French, German, Italian or Thai; the website's other languages keep the last of these you chose).
-**No site:** O idioma muda no seletor de idioma do menu lateral. O site não tem tema escuro.
-**On the website:** Change the language with the language selector in the side menu. The website has no dark theme.
+**No site:** O idioma muda no seletor de idioma do menu lateral. O tema fica em **Configurações → Aparência** (Automático, Claro ou Escuro) e vale para este navegador; impressões e e-mails ficam sempre claros.
+**On the website:** Change the language with the language selector in the side menu. The theme is in **Settings → Appearance** (Automatic, Light or Dark) and applies to this browser; prints and emails always stay light.
 `open:settings`
 
 ---
