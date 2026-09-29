@@ -7412,3 +7412,37 @@ and C9 isn't built at all.
 **CI at `2f3514a`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `2f3514a`.** This docs commit sits on top of a master sync (4 behind,
 clean merge).
+
+## PR #124 (`fix/neutral-hours-copy`, base master) — neutral working-hours wording, ⏳ at `02d1f6d` (pt-BR done, en to finish)
+
+This is a checkpoint (sessions paused), **not** a gate. Tested on the
+Preview at `02d1f6d` with the #111 spec: a throwaway doctor, hours
+Mon–Fri 08–18, Saturday and Sunday off, blocks at 14–15 and 19–20.
+
+**pt-BR, doctor: ✅.** Every question is "Confira o horário" with
+[Cancelar] [Agendar]:
+- 18:30 → "Este horário está **fora do horário de atendimento**
+  (08:00–18:00). Agendar mesmo assim?" Agendar saves.
+- Saturday 10:00 → "**Sábado não é dia de atendimento.** Agendar mesmo
+  assim?" Agendar saves.
+- 19:15 (blocked and outside) → **one** question with both sentences:
+  "Este horário está bloqueado (19:00–20:00). Este horário está fora do
+  horário de atendimento (08:00–18:00). Agendar mesmo assim?" Cancelar
+  saves nothing.
+- Blocked 14:15 and the overlap hard stop are unchanged from #111.
+
+**pt-BR, secretary: ✅.** 07:00 → "Este horário está fora do horário de
+atendimento (08:00–18:00). Agendar mesmo assim?" Agendar saves; the
+overlap is still a hard stop.
+
+**en: ⏳.** Seen so far: the combined question "This time is blocked
+(19:00–20:00). This time is outside the working hours (08:00–18:00). Book
+anyway?" [Cancel] [Book].
+- **Still to check:** the single outside-hours question and "Saturday
+  isn't a working day.". My first run reused pt-BR's slots, so those
+  cases hit the overlap stop. The en-only re-run was stopped at the
+  checkpoint.
+- **To finish:** `LOCS=en` spec pr124.
+
+**CI at `02d1f6d`:** ✅. **Review: clean (a9).** The branch was up to
+date with master.
