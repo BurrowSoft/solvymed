@@ -92,6 +92,7 @@ vi.mock("@/lib/supabase/server", () => ({
   }),
 }));
 vi.mock("next-intl/server", () => ({ getTranslations: async () => (k: string) => k }));
+vi.mock("@/components/PrintToolbar", () => ({ PrintToolbar: () => null }));
 vi.mock("next/navigation", () => ({
   notFound: () => { throw new Error("NOT_FOUND"); },
   redirect: () => { throw new Error("REDIRECT"); },
@@ -115,6 +116,12 @@ describe("print page", () => {
     h.rx = null;
     await expect(PrintPage({ params })).rejects.toThrow("NOT_FOUND");
     expect(h.filters).toEqual(expect.arrayContaining([["patients", "professional_id", "doc-1"], ["prescriptions", "patient_id", "p-1"]]));
+  });
+
+  it("stays light under a dark dashboard (the document is inside a light scope)", async () => {
+    const { container } = render(<div data-theme="dark">{await PrintPage({ params })}</div>);
+    const doc = container.querySelector("#print-doc")!;
+    expect(doc.closest("[data-theme]")?.getAttribute("data-theme")).toBe("light");
   });
 
   it("logs the prescription access", async () => {

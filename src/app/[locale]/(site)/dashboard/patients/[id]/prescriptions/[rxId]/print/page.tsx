@@ -43,7 +43,9 @@ export default async function PrescriptionPrintPage({
   const prof = profResult.data as { full_name: string | null; professional_registration: string | null } | null;
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8">
+    // A light scope: the print view stays light in the dashboard's dark
+    // theme, on screen and in the PDF (Help C8).
+    <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
       <PrintToolbar backHref={`${prefix}/dashboard/patients/${patient.id}`} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">
