@@ -82,6 +82,21 @@ export const TOOL_DEFS: ToolDef[] = [
     description: "Propose marking an appointment (id from list_appointments) as paid (paid=true) or unpaid (paid=false). If it has no value, ask the user for the amount and pass it.",
     input_schema: obj({ appointmentId: { type: "string" }, paid: { type: "boolean" }, amount: { type: "number" } }, ["appointmentId", "paid"]),
   },
+  {
+    name: "propose_unblock_time",
+    description: "Propose removing a blocked time (its id from list_appointments, status blocked). Never an appointment.",
+    input_schema: obj({ blockId: { type: "string" } }, ["blockId"]),
+  },
+  {
+    name: "propose_booking_decision",
+    description: "Propose confirming or rejecting a patient's booking request (id from list_appointments, status tentative; a proposal can only be rejected). Optional short note to the patient.",
+    input_schema: obj({ appointmentId: { type: "string" }, decision: { type: "string", enum: ["confirm", "reject"] }, note: { type: "string" } }, ["appointmentId", "decision"]),
+  },
+  {
+    name: "propose_add_patient",
+    description: "Propose adding a patient: full name required; birth date (YYYY-MM-DD), phone and email only if the user said them. If similar patients exist you get them back: tell the user and ask; only if they say it's someone else, propose again with createAnyway=true.",
+    input_schema: obj({ fullName: { type: "string" }, birthDate: { type: "string" }, phone: { type: "string" }, email: { type: "string" }, createAnyway: { type: "boolean" } }, ["fullName"]),
+  },
 ];
 
 const T = {
@@ -104,6 +119,11 @@ const T = {
     conflictNone: (when: string, what: string, s: string, e: string) => `${when} às ${s} já tem ${what} (${s}–${e}). Qual outro horário?`,
     slotTaken: "Esse horário acabou de ser ocupado. Nada foi salvo. Qual destes horários?",
     slotTakenNone: "Esse horário acabou de ser ocupado. Nada foi salvo. Qual outro horário?",
+    unblock: "Desbloquear horário", confirmReq: "Confirmar pedido", rejectReq: "Recusar pedido",
+    decision: "Decisão", confirmIt: "Confirmar", rejectIt: "Recusar", note: "Observação",
+    addPatient: "Novo paciente", fullName: "Nome", birth: "Nascimento", phone: "Telefone", email: "E-mail",
+    similar: "Parecidos já cadastrados",
+    proposalConfirmStop: "Este pedido está aguardando a resposta do paciente à nova proposta; só é possível recusar.",
   },
   en: {
     newAppt: "New appointment", cancelAppt: "Cancel appointment", block: "Block time", paid: "Mark as paid", unpaid: "Mark as unpaid",
@@ -124,6 +144,11 @@ const T = {
     conflictNone: (when: string, what: string, s: string, e: string) => `${when} at ${s} already has ${what} (${s}–${e}). Which other time?`,
     slotTaken: "That time was just taken. Nothing was saved. Which of these times?",
     slotTakenNone: "That time was just taken. Nothing was saved. Which other time?",
+    unblock: "Unblock time", confirmReq: "Confirm request", rejectReq: "Decline request",
+    decision: "Decision", confirmIt: "Confirm", rejectIt: "Decline", note: "Note",
+    addPatient: "New patient", fullName: "Name", birth: "Date of birth", phone: "Phone", email: "Email",
+    similar: "Similar patients already registered",
+    proposalConfirmStop: "This request is waiting for the patient's answer to the new time; it can only be declined.",
   },
 };
 
@@ -484,6 +509,94 @@ async function proposeMarkPaid(ctx: ToolContext, input: Record<string, unknown>)
   return { forModel: `Card shown (${c.id}). Tell the user to check it and tap Confirmar.`, block: { type: "card", card: c } };
 }
 
+async function proposeUnblock(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
+  const t = T[ctx.lang];
+  const b = await readAppointment(ctx, input.blockId);
+  if (!b || b.status !== "blocked") return unseen("block");
+  const reason = b.patient_name && b.patient_name !== "Blocked" ? b.patient_name : "";
+  const c = card(ctx, {
+    icon: "unlock",
+    title: t.unblock,
+    fields: [
+      { label: t.period, value: `${whenLabel(ctx, b.date)}, ${hhmm(b.start_time)}–${hhmm(b.end_time)}` },
+      ...(reason ? [{ label: t.reason, value: reason }] : []),
+    ],
+    warnings: [],
+    editTarget: { screen: "schedule", date: b.date },
+    viewTarget: { screen: "schedule", date: b.date },
+    after: { screen: "schedule", date: b.date },
+    action: { kind: "unblock_time", args: { blockId: b.id } },
+  });
+  return { forModel: `Card shown (${c.id}). Tell the user to check it and tap Confirmar.`, block: { type: "card", card: c } };
+}
+
+async function proposeBookingDecision(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
+  const t = T[ctx.lang];
+  const a = await readAppointment(ctx, input.appointmentId);
+  if (!a || (a.status !== "tentative" && a.status !== "proposal")) return unseen("booking request");
+  const decision = input.decision;
+  if (decision !== "confirm" && decision !== "reject") return err("The decision is confirm or reject; ask the user.");
+  const note = typeof input.note === "string" ? input.note.trim().slice(0, 300) : "";
+  // A proposal waits for the patient's answer: it can only be declined.
+  const stop = decision === "confirm" && a.status === "proposal" ? { code: "not_allowed" as const, text: t.proposalConfirmStop } : undefined;
+  const c = card(ctx, {
+    icon: decision === "confirm" ? "check" : "x",
+    title: decision === "confirm" ? t.confirmReq : t.rejectReq,
+    fields: [
+      { label: t.patient, value: personLabel(ctx, a.patient_name ?? "—", await birthOf(ctx, a.patient_id)) },
+      { label: t.when, value: `${whenLabel(ctx, a.date)}, ${hhmm(a.start_time)}–${hhmm(a.end_time)}` },
+      { label: t.decision, value: decision === "confirm" ? t.confirmIt : t.rejectIt },
+      ...(note ? [{ label: t.note, value: note }] : []),
+    ],
+    warnings: [],
+    hardStop: !!stop,
+    ...(stop ? { stop } : {}),
+    editTarget: { screen: "schedule", date: a.date },
+    viewTarget: { screen: "schedule", date: a.date },
+    after: { screen: "schedule", date: a.date },
+    action: { kind: "booking_decision", args: { appointmentId: a.id, decision, ...(note ? { note } : {}) } },
+  });
+  return { forModel: `Card shown (${c.id}${stop ? ", blocked: a proposal can only be declined" : ""}). Tell the user to check it and tap Confirmar.`, block: { type: "card", card: c } };
+}
+
+async function proposeAddPatient(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
+  const t = T[ctx.lang];
+  const fullName = typeof input.fullName === "string" ? input.fullName.replace(/\s+/g, " ").trim().slice(0, 120) : "";
+  if (fullName.length < 2) return err("Ask the user for the patient's full name.");
+  const birthDate = input.birthDate === undefined || input.birthDate === null || input.birthDate === "" ? null : input.birthDate;
+  if (birthDate !== null && (!isDate(birthDate) || birthDate < "1900-01-01" || birthDate > ctx.today)) {
+    return err("The birth date must be YYYY-MM-DD (Gregorian), between 1900 and today; ask the user.");
+  }
+  const phone = typeof input.phone === "string" ? input.phone.trim().slice(0, 30) : "";
+  const email = typeof input.email === "string" ? input.email.trim().toLowerCase().slice(0, 120) : "";
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return err("That email doesn't look valid; ask the user.");
+  // The same duplicate check as the form (find_similar_patients, as the user).
+  const { data: similar } = await ctx.db.rpc("find_similar_patients", { p_name: fullName, p_phone: phone || null, p_birth_date: birthDate });
+  const matches = (Array.isArray(similar) ? similar : []) as { id: string; full_name: string; birth_date: string | null; archived_at?: string | null }[];
+  matches.forEach((m) => ctx.seen.add(m.id));
+  const listed = matches.slice(0, 5).map((m) => `${personLabel(ctx, m.full_name, m.birth_date)}${m.archived_at ? (ctx.lang === "pt" ? " (arquivado)" : " (archived)") : ""}`).join("; ");
+  if (matches.length && input.createAnyway !== true) {
+    return err(`Possible duplicates: ${JSON.stringify(matches.slice(0, 5).map((m) => ({ id: m.id, name: m.full_name, birthDate: m.birth_date ? formatShortDate(ctx.locale, m.birth_date) : null, archived: !!m.archived_at })))}. Tell the user; if one is the same person, don't add. Only if they say it's someone else, propose again with createAnyway=true.`);
+  }
+  const c = card(ctx, {
+    icon: "user-plus",
+    title: t.addPatient,
+    fields: [
+      { label: t.fullName, value: fullName },
+      ...(birthDate ? [{ label: t.birth, value: formatShortDate(ctx.locale, birthDate) }] : []),
+      ...(phone ? [{ label: t.phone, value: phone }] : []),
+      ...(email ? [{ label: t.email, value: email }] : []),
+      ...(matches.length ? [{ label: t.similar, value: listed }] : []),
+    ],
+    warnings: [],
+    editTarget: { screen: "patients", params: { new: "1" } },
+    viewTarget: { screen: "patients" },
+    after: { screen: "patient", highlight: { kind: "patient" } },
+    action: { kind: "add_patient", args: { fullName, ...(birthDate ? { birthDate } : {}), ...(phone ? { phone } : {}), ...(email ? { email } : {}), ...(matches.length ? { createAnyway: true } : {}) } },
+  });
+  return { forModel: `Card shown (${c.id}). Tell the user to check it and tap Confirmar.`, block: { type: "card", card: c } };
+}
+
 const RUN: Record<string, (ctx: ToolContext, input: Record<string, unknown>) => Promise<ToolOutcome>> = {
   find_patients: findPatients,
   list_appointments: listAppointments,
@@ -492,6 +605,9 @@ const RUN: Record<string, (ctx: ToolContext, input: Record<string, unknown>) => 
   propose_cancel_appointment: proposeCancel,
   propose_block_time: proposeBlock,
   propose_mark_paid: proposeMarkPaid,
+  propose_unblock_time: proposeUnblock,
+  propose_booking_decision: proposeBookingDecision,
+  propose_add_patient: proposeAddPatient,
 };
 
 export async function runTool(ctx: ToolContext, name: string, input: Record<string, unknown>): Promise<ToolOutcome> {

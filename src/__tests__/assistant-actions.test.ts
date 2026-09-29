@@ -39,6 +39,7 @@ function world() {
       { id: "b-lunch", professional_id: "doc-1", patient_id: null, patient_name: null, date: "2026-09-30", start_time: "12:00:00", end_time: "13:00:00", status: "blocked", payment_status: null, payment_amount: null },
       { id: "a-req", professional_id: "doc-1", patient_id: "p-maria", patient_name: "Maria Silva", date: "2026-10-01", start_time: "09:00:00", end_time: "09:30:00", status: "tentative", payment_status: "pending", payment_amount: null },
       { id: "a-arch", professional_id: "doc-1", patient_id: "p-arch", patient_name: "Ana Antiga", date: "2026-10-01", start_time: "11:00:00", end_time: "11:30:00", status: "scheduled", payment_status: "pending", payment_amount: null },
+      { id: "a-prop", professional_id: "doc-1", patient_id: null, patient_name: "Rui Novo", date: "2026-10-01", start_time: "15:00:00", end_time: "15:30:00", status: "proposal", payment_status: "pending", payment_amount: null },
     ],
   };
   const calls: { fn: string; args?: Record<string, unknown> }[] = [];
@@ -70,6 +71,7 @@ function world() {
     assistant_consume_message: () => ({ allowed: true, used: 3, limit: 20, resets_at: "2026-09-30T03:00:00Z", actions: true }),
     assistant_budget_state: () => ({ configured: true, over_80: false, over_budget: false }),
     get_professional_working_hours: () => HOURS,
+    find_similar_patients: (a) => tables.patients.filter((p) => p.professional_id === "doc-1" && String(p.full_name).toLowerCase() === String(a?.p_name).toLowerCase()).map((p) => ({ id: p.id, full_name: p.full_name, birth_date: p.birth_date, archived_at: p.archived_at })),
     get_busy_slots: (a) => tables.appointments
       .filter((r) => r.date === a?.p_date && !["cancelled", "rejected"].includes(String(r.status)))
       .map((r) => ({ slot_start: r.start_time, slot_end: r.end_time })),
@@ -141,6 +143,7 @@ describe("SolvyAI actions mode: the mode", () => {
     expect(t.model.calls[0].tools?.map((x) => x.name)).toEqual([
       "find_patients", "list_appointments", "find_free_slots",
       "propose_book_appointment", "propose_cancel_appointment", "propose_block_time", "propose_mark_paid",
+      "propose_unblock_time", "propose_booking_decision", "propose_add_patient",
     ]);
     expect(t.model.calls[0].system).toContain("Today at the clinic: Tuesday 2026-09-29, 10:00 (America/Sao_Paulo)");
   });
@@ -331,5 +334,67 @@ describe("SolvyAI actions mode: Confirmar failed", () => {
     t.db.rpcs.assistant_consume_message = () => ({ allowed: false, reason: "rate_limited", retry_after_s: 2 });
     expect(await run(t, failed({ args: { date: "2026-09-30", start: "10:00" } }))).toMatchObject({ status: 429, json: { error: "rate_limited", retryAfterS: 2 } });
     expect(t.service.calls).toEqual([]);
+  });
+});
+
+describe("SolvyAI actions mode: part 2 (unblock, booking decision, add patient)", () => {
+  const listThen = (from: string, tool: { name: string; input: Record<string, unknown> }) => (_req: ModelRequest, round: number): FakeTurn =>
+    round === 0 ? { tools: [{ name: "list_appointments", input: { from, to: from } }] } : round === 1 ? { tools: [tool] } : "ok";
+
+  it("unblock: a card for a block only, never an appointment", async () => {
+    let t = setup(listThen("2026-09-30", { name: "propose_unblock_time", input: { blockId: "b-lunch" } }));
+    const card = cardOf((await run(t, ask("Desbloqueia o almoço"))).blocks)!;
+    expect(card.title).toBe("Desbloquear horário");
+    expect(card.fields[0]).toEqual({ label: "Período", value: "Quarta-feira, 30/09/2026, 12:00–13:00" });
+    expect(card.action).toEqual({ kind: "unblock_time", args: { blockId: "b-lunch" } });
+    t = setup(listThen("2026-09-30", { name: "propose_unblock_time", input: { blockId: "a-joao" } }));
+    expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
+  });
+
+  it("booking decision: confirm / reject a request; a proposal can only be declined", async () => {
+    let t = setup(listThen("2026-10-01", { name: "propose_booking_decision", input: { appointmentId: "a-req", decision: "confirm", note: "Traga os exames" } }));
+    let card = cardOf((await run(t, ask("Confirma o pedido da Maria"))).blocks)!;
+    expect(card.title).toBe("Confirmar pedido");
+    expect(card.fields.map((f) => f.label)).toEqual(["Paciente", "Quando", "Decisão", "Observação"]);
+    expect(card.action).toEqual({ kind: "booking_decision", args: { appointmentId: "a-req", decision: "confirm", note: "Traga os exames" } });
+    expect(card.hardStop).toBe(false);
+    t = setup(listThen("2026-10-01", { name: "propose_booking_decision", input: { appointmentId: "a-prop", decision: "confirm" } }));
+    card = cardOf((await run(t, ask("…"))).blocks)!;
+    expect(card.stop?.code).toBe("not_allowed");
+    t = setup(listThen("2026-10-01", { name: "propose_booking_decision", input: { appointmentId: "a-prop", decision: "reject" } }));
+    expect(cardOf((await run(t, ask("…"))).blocks)!.hardStop).toBe(false);
+    // Not a request: no card.
+    t = setup(listThen("2026-10-01", { name: "propose_booking_decision", input: { appointmentId: "a-arch", decision: "reject" } }));
+    expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
+  });
+
+  it("add patient: a card with only what was said; similar patients are asked about first", async () => {
+    let t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "João  Pedro", birthDate: "1990-02-03", phone: "11 99999-0000" } }] } : "ok"));
+    let card = cardOf((await run(t, ask("Cadastra o João Pedro"))).blocks)!;
+    expect(card.fields).toEqual([
+      { label: "Nome", value: "João Pedro" },
+      { label: "Nascimento", value: "03/02/1990" },
+      { label: "Telefone", value: "11 99999-0000" },
+    ]);
+    expect(card.action).toEqual({ kind: "add_patient", args: { fullName: "João Pedro", birthDate: "1990-02-03", phone: "11 99999-0000" } });
+    expect(card.after).toEqual({ screen: "patient", highlight: { kind: "patient" } });
+    // Maria Silva exists: back to the model, no card, until the user says it's someone else.
+    t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "Maria Silva" } }] } : "ok"));
+    expect(cardOf((await run(t, ask("Cadastra a Maria Silva"))).blocks)).toBeUndefined();
+    expect(resultsIn(t.model.calls[1])[0]).toMatchObject({ is_error: true });
+    t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "Maria Silva", createAnyway: true } }] } : "ok"));
+    card = cardOf((await run(t, ask("É outra pessoa"))).blocks)!;
+    expect(card.fields.find((f) => f.label === "Parecidos já cadastrados")!.value).toBe("Maria Silva (02/05/1980)");
+    expect(card.action.args.createAnyway).toBe(true);
+    // A birth date outside 1900..today, or a Buddhist-era year: asked again.
+    t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "Ana Nova", birthDate: "2569-01-01" } }] } : "ok"));
+    expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
+  });
+
+  it("on the website, moving and sending Pix are app-only for now (said, with the Help link)", async () => {
+    const t = setup(() => "ok");
+    await run(t, ask("Remarca a Maria para sexta"));
+    expect(t.model.calls[0].system).toContain("can't move an appointment or send Pix by WhatsApp yet");
+    expect(t.model.calls[0].tools!.map((x) => x.name)).not.toContain("propose_move_appointment");
   });
 });

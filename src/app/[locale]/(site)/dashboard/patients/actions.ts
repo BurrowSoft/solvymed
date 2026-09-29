@@ -19,7 +19,7 @@ import { formIdKindMatches, patientIdError, patientIdKind, readPatientIds, sameI
 export type PatientMatch = { id: string; full_name: string; phone: string | null; birth_date: string | null; archived_at: string | null };
 
 export type CreatePatientResult =
-  | { success: true }
+  | { success: true; id?: string }
   | { error: string; code: "generic" | "name_required" | "invalid_th_id" | "id_kind_mismatch" | "birth_year_buddhist" | "invalid_birth_date" }
   // Possible duplicates found before saving. The user chooses "Open
   // existing" or "Create anyway" (resubmits with force=1).
@@ -84,7 +84,7 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
     }
   }
 
-  const { error } = await supabase.from("patients").insert({
+  const { data: saved, error } = await supabase.from("patients").insert({
     professional_id: effectiveProfId,
     full_name: fullName,
     email,
@@ -95,7 +95,7 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
     profession: (formData.get("profession") as string)?.trim() || null,
     emergency_phone: (formData.get("emergency_phone") as string)?.trim() || null,
     convenio_type: (formData.get("convenio_type") as string) || null,
-  });
+  }).select("id").single();
 
   if (error) {
     if (error.code === "23505") {
@@ -131,7 +131,7 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
     return { error: error.message, code: "generic" };
   }
   revalidatePath("/dashboard/patients");
-  return { success: true };
+  return { success: true, id: (saved as { id: string } | null)?.id };
 }
 
 export async function updatePatient(id: string, formData: FormData) {

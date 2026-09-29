@@ -180,14 +180,14 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
   // After a confirmed save (§2.3 "After saving"): minimise to the pill, go
   // to the action's screen with the item highlighted, and show "✓ … +
   // Desfazer" for 10 s.
-  const afterSave = (card: ConfirmationCard, id: string | undefined, demo: boolean) => {
+  const afterSave = (card: ConfirmationCard, id: string | undefined, demo: boolean, noUndo = false) => {
     const a = card.after;
     const hl = a.highlight?.id ?? id;
     const path = webPath(prefix, { screen: a.screen === "whatsapp" ? a.then?.screen ?? "payments" : a.screen, date: a.date, id: a.screen === "patient" ? hl : undefined }, hl);
     setMinimized(true);
     if (path && isInternalHref(path)) router.push(path);
     setCardDone((d) => ({ ...d, [card.id]: "saved" }));
-    setToast({ card, id, demo, left: 10, undone: false });
+    setToast({ card, id, demo, left: 10, undone: false, noUndo });
     track("solvyai_confirmed", { kind: card.action.kind });
   };
 
@@ -202,7 +202,7 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
     void play(turns, backend.reportConfirmFailed(code, card.action, locale));
   };
 
-  const [toast, setToast] = useState<{ card: ConfirmationCard; id?: string; demo: boolean; left: number; undone: boolean } | null>(null);
+  const [toast, setToast] = useState<{ card: ConfirmationCard; id?: string; demo: boolean; left: number; undone: boolean; noUndo: boolean } | null>(null);
   // Each card is confirmed at most once: its outcome lives here, not in the
   // card (the panel unmounts when minimised), and a claim is taken
   // synchronously before anything runs.
@@ -317,7 +317,7 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
           {toast && toast.left > 0 && (
             <p role="status" className="flex items-center gap-2 rounded-2xl bg-slate-900 px-3 py-2 text-xs text-white shadow-lg">
               <span>{toast.undone ? t("undone") : t("saved")}{toast.demo && ` (${t("simulated")})`}</span>
-              {!toast.undone && (
+              {!toast.undone && !toast.noUndo && (
                 <button
                   type="button"
                   onClick={async () => { await backend.undo(toast.card.action, toast.id); setToast({ ...toast, undone: true, left: 4 }); }}
@@ -374,7 +374,7 @@ function Inline({ text }: { text: string }) {
   return <>{inlineSegments(text).map((s, i) => (s.bold ? <strong key={i}>{s.text}</strong> : <span key={i}>{s.text}</span>))}</>;
 }
 
-type Saved = (card: ConfirmationCard, id: string | undefined, demo: boolean) => void;
+type Saved = (card: ConfirmationCard, id: string | undefined, demo: boolean, noUndo?: boolean) => void;
 type Failed = (card: ConfirmationCard, code: string) => void;
 
 function Block({ block, locale, onPick, onOpen, backend, onSaved, onFailed, done, claim }: {
@@ -448,7 +448,7 @@ function CardView({ card, backend, onSaved, onFailed, done, claim }: {
     setState("saving");
     // Reached through the second question when the card has one.
     const r = await backend.execute(card.action, { warningsAsked: !!card.secondConfirm });
-    if (r.ok) { setState("saved"); onSaved(card, r.id, r.demo === true); }
+    if (r.ok) { setState("saved"); onSaved(card, r.id, r.demo === true, r.noUndo === true); }
     else { setState("failed"); onFailed(card, r.code); }
   };
   const confirm = () => {

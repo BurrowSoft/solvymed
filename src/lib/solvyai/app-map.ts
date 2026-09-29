@@ -98,6 +98,7 @@ export const ACTIONS: AppMapAction[] = [
       "Another appointment at the new time is a hard stop (the database refuses the overlap).",
       { text: "Moving onto blocked time or outside the working hours is asked twice, like booking.", pending: ["mobile#91"] },
       "An edit that doesn't move it (same date, start and duration) isn't asked again.",
+      "On the website there's no move yet: SolvyAI says it's only in the app for now, with the Help link (no card).",
       "The card shows before → after.",
       "Patients' own reschedule requests are a separate flow (the doctor accepts or declines them).",
       { text: "A patient linked to a SolvyMed account is notified of the move (old and new time); never for the past.", pending: ["mobile#111"] },
@@ -172,6 +173,7 @@ export const ACTIONS: AppMapAction[] = [
       "Confirming also adds (or links) the patient to the practice in the same step and notifies them.",
       "Rejecting only works while it's still a request (tentative or proposal) and notifies the patient.",
       "Proposing another time is done on the request card, not by SolvyAI.",
+      "A decision made through SolvyAI has no Desfazer: the patient is notified at once.",
     ],
     card: ["patient", "when (weekday, date, time)", "confirm or reject", "note"],
     after: "schedule",
@@ -236,6 +238,7 @@ export const ACTIONS: AppMapAction[] = [
     rules: [
       "Only for Brazilian practices with a Pix key; it opens WhatsApp with the patient's number and the Pix message.",
       "It needs the patient's phone number; without one, say so and offer the QR / Pix Copia e Cola on the appointment instead.",
+      "On the website SolvyAI doesn't send it: it's only in the app for now (say so, with the Help link).",
       "Thai practices show a PromptPay QR on the appointment instead; there's no WhatsApp PromptPay message.",
       "The payment method always follows the PRACTICE's country.",
     ],

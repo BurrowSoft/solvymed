@@ -1,6 +1,10 @@
 "use server";
 
 import { createAppointment, blockTime, updateAppointmentStatus, deleteAppointment } from "./schedule/actions";
+import { confirmBookingAndAddPatient, rejectBooking } from "./schedule/booking-actions";
+import { createPatient, deletePatient } from "./patients/actions";
+import { lookupPracticeCountry } from "@/lib/practiceCountry";
+import { patientIdKind } from "@/lib/patientIds";
 import { markPaid, markUnpaid } from "./payments/actions";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
@@ -17,7 +21,9 @@ import type { CardAction } from "@/lib/assistant/types";
 // the route for fresh times), needs_confirm (a block / outside hours
 // appeared after the card: nothing saved), or generic.
 
-export type SolvyAiSaveResult = { ok: true; id?: string; prev?: string } | { ok: false; code: string };
+// noUndo: the save told someone else already (a booking decision), so there
+// is no Desfazer.
+export type SolvyAiSaveResult = { ok: true; id?: string; prev?: string; noUndo?: boolean } | { ok: false; code: string };
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -37,14 +43,20 @@ function mapError(r: { error?: string; code?: string }): SolvyAiSaveResult {
 }
 
 // The appointment's current status / payment, for Desfazer (RLS as the user).
-async function current(id: string): Promise<{ status: string; payment_status: string | null } | null> {
+type Row = { status: string; payment_status: string | null; date: string; start_time: string; end_time: string; patient_name: string | null };
+async function currentRow(id: string): Promise<Row | null> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
   const prof = await getEffectiveProfId(supabase, user.id);
   if (!prof) return null;
-  const { data } = await supabase.from("appointments").select("status, payment_status").eq("id", id).eq("professional_id", prof).maybeSingle();
-  return (data ?? null) as { status: string; payment_status: string | null } | null;
+  const { data } = await supabase
+    .from("appointments")
+    .select("status, payment_status, date, start_time, end_time, patient_name")
+    .eq("id", id)
+    .eq("professional_id", prof)
+    .maybeSingle();
+  return (data ?? null) as Row | null;
 }
 
 // warningsAsked: the card's second question was asked and answered, so the
@@ -84,7 +96,7 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
     case "cancel_appointment": {
       const id = str(a.appointmentId);
       if (!UUIDISH.test(id)) return { ok: false, code: "generic" };
-      const before = await current(id);
+      const before = await currentRow(id);
       if (!before) return { ok: false, code: "generic" };
       const r = await updateAppointmentStatus(id, "cancelled");
       return "success" in r && r.success ? { ok: true, id, prev: before.status } : mapError(r);
@@ -102,14 +114,61 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
     case "mark_paid": {
       const id = str(a.appointmentId);
       if (!UUIDISH.test(id) || typeof a.paid !== "boolean") return { ok: false, code: "generic" };
-      const before = await current(id);
+      const before = await currentRow(id);
       if (!before) return { ok: false, code: "generic" };
       const amount = a.amount === undefined || a.amount === null ? undefined : Number(a.amount);
       const r = a.paid ? await markPaid(id, amount) : await markUnpaid(id);
       return "success" in r && r.success ? { ok: true, id, prev: before.payment_status ?? "pending" } : mapError(r);
     }
+    case "unblock_time": {
+      const id = str(a.blockId);
+      if (!UUIDISH.test(id)) return { ok: false, code: "generic" };
+      // Only blocks, never an appointment (deleteAppointment deletes either).
+      const b = await currentRow(id);
+      if (!b || b.status !== "blocked") return { ok: false, code: "generic" };
+      const r = await deleteAppointment(id);
+      // Desfazer re-creates it: when and why.
+      const prev = JSON.stringify({ date: b.date, start: b.start_time.slice(0, 5), end: b.end_time.slice(0, 5), reason: b.patient_name && b.patient_name !== "Blocked" ? b.patient_name : "" });
+      return "success" in r && r.success ? { ok: true, id, prev } : mapError(r);
+    }
+    case "booking_decision": {
+      const id = str(a.appointmentId);
+      const note = str(a.note).trim().slice(0, 300) || undefined;
+      if (!UUIDISH.test(id) || (a.decision !== "confirm" && a.decision !== "reject")) return { ok: false, code: "generic" };
+      // Still a request (rejectBooking itself doesn't check); a proposal can
+      // only be declined.
+      const b = await currentRow(id);
+      if (!b || (b.status !== "tentative" && b.status !== "proposal")) return { ok: false, code: "generic" };
+      if (a.decision === "confirm" && b.status !== "tentative") return { ok: false, code: "generic" };
+      const r = a.decision === "confirm" ? await confirmBookingAndAddPatient(id, note) : await rejectBooking(id, note);
+      // The patient is notified at once, so there's no Desfazer.
+      return r.error ? { ok: false, code: "generic" } : { ok: true, id, noUndo: true };
+    }
+    case "add_patient": {
+      const fullName = str(a.fullName).replace(/\s+/g, " ").trim().slice(0, 120);
+      const birthDate = str(a.birthDate);
+      if (fullName.length < 2 || (birthDate && !DATE.test(birthDate))) return { ok: false, code: "generic" };
+      // The form's own fields, for the practice's country (no ID from SolvyAI).
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      const prof = user ? await getEffectiveProfId(supabase, user.id) : null;
+      if (!user || !prof) return { ok: false, code: "generic" };
+      const country = await lookupPracticeCountry(supabase, user.id, prof);
+      if (!country.ok) return { ok: false, code: "generic" };
+      const r = await createPatient(form({
+        full_name: fullName, id_kind: patientIdKind(country.country),
+        ...(birthDate ? { birth_date: birthDate } : {}),
+        ...(str(a.phone) ? { phone: str(a.phone).slice(0, 30) } : {}),
+        ...(str(a.email) ? { email: str(a.email).slice(0, 120) } : {}),
+        // "Create anyway" only when the card listed the similar patients.
+        ...(a.createAnyway === true ? { force: "1" } : {}),
+      }));
+      if ("success" in r && r.success) return { ok: true, id: r.id };
+      // A similar patient appeared after the card: nothing saved.
+      return { ok: false, code: "code" in r ? r.code : "generic" };
+    }
     default:
-      // Part 2 actions (move, unblock, …) aren't offered by the route yet.
+      // move / send Pix: app-only on the website for now (UX 36).
       return { ok: false, code: "generic" };
   }
 }
@@ -127,6 +186,19 @@ export async function undoSolvyAiAction(action: CardAction, id: string, prev?: s
       return done(await updateAppointmentStatus(id, prev || "scheduled"));
     case "mark_paid":
       return done(prev === "paid" ? await markPaid(id) : await markUnpaid(id));
+    case "unblock_time": {
+      // The block again, as it was.
+      let p: { date?: unknown; start?: unknown; end?: unknown; reason?: unknown } = {};
+      try { p = JSON.parse(prev ?? "{}"); } catch { return { ok: false, code: "generic" }; }
+      const date = str(p.date), start = str(p.start), end = str(p.end);
+      if (!DATE.test(date) || !TIME.test(start) || !TIME.test(end) || end <= start) return { ok: false, code: "generic" };
+      const r = await blockTime(form({ date, start_time: start, duration_minutes: String(toMinutes(end) - toMinutes(start)), reason: str(p.reason).slice(0, 120) }));
+      return "success" in r && r.success ? { ok: true, id: r.id } : mapError(r);
+    }
+    case "add_patient": {
+      const r = await deletePatient(id);
+      return "success" in r && r.success ? { ok: true, id } : { ok: false, code: "generic" };
+    }
     default:
       return { ok: false, code: "generic" };
   }

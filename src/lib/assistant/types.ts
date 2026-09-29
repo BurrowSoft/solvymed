@@ -95,7 +95,8 @@ export type AnswerChunk =
 // the clinic's time zone.
 export type AssistantUsage = { used: number; limit: number; extra: number; resetsAt: string };
 
-export type ExecuteResult = { ok: true; id?: string; demo?: boolean } | { ok: false; code: string };
+// noUndo: the save already told someone else (a booking decision): no Desfazer.
+export type ExecuteResult = { ok: true; id?: string; demo?: boolean; noUndo?: boolean } | { ok: false; code: string };
 
 export interface AssistantBackend {
   ask(req: AssistantRequest): AsyncIterable<AnswerChunk>;
