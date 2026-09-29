@@ -34,7 +34,7 @@ export type AccessLogRow = {
   at: string;
   actorName: string;
   actorRole: "professional" | "secretary" | "patient" | string;
-  kind: "patient" | "record" | "prescription" | "exam" | "file" | "export" | "imported" | string;
+  kind: "patient" | "record" | "prescription" | "exam" | "file" | "export" | "imported" | "merged" | string;
   objectRef: string | null;
 };
 

@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const captureMessage = vi.fn();
@@ -79,5 +80,10 @@ describe("helpers", () => {
     expect(pt.patientDetail.accessKindExport).toBe("Exportado na lista de pacientes (CSV)");
     expect(pt.patientDetail.accessKindImported).toBe("Abriu os dados importados");
     expect(en.patientDetail.accessKindImported).toBe("Opened the imported data");
+  });
+
+  it("a merge (133) names the removed record, in every locale", () => {
+    expect(pt.patientDetail.accessKindMerged).toBe("Mesclou com «{name}»");
+    for (const f of fs.readdirSync("src/messages")) expect(JSON.parse(fs.readFileSync(`src/messages/${f}`, "utf8").replace(/^﻿/, "")).patientDetail.accessKindMerged, f).toContain("{name}");
   });
 });

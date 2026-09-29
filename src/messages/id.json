@@ -447,6 +447,7 @@
     "accessKindFile": "File",
     "accessKindExport": "Diekspor dalam daftar pasien (CSV)",
     "accessKindImported": "Membuka data impor",
+    "accessKindMerged": "Digabung dengan “{name}”",
     "accessColWhen": "Kapan",
     "accessColWho": "Siapa",
     "accessColWhat": "Apa"

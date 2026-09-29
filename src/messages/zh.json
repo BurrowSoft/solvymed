@@ -447,6 +447,7 @@
     "accessKindFile": "文件",
     "accessKindExport": "随患者列表导出 (CSV)",
     "accessKindImported": "打开了导入的数据",
+    "accessKindMerged": "已与“{name}”合并",
     "accessColWhen": "时间",
     "accessColWho": "人员",
     "accessColWhat": "内容"

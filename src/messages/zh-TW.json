@@ -447,6 +447,7 @@
     "accessKindFile": "檔案",
     "accessKindExport": "隨病患清單匯出 (CSV)",
     "accessKindImported": "開啟了匯入的資料",
+    "accessKindMerged": "已與「{name}」合併",
     "accessColWhen": "時間",
     "accessColWho": "人員",
     "accessColWhat": "內容"

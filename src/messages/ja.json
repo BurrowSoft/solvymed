@@ -447,6 +447,7 @@
     "accessKindFile": "ファイル",
     "accessKindExport": "患者リストでエクスポート (CSV)",
     "accessKindImported": "インポートしたデータを開いた",
+    "accessKindMerged": "「{name}」と統合",
     "accessColWhen": "日時",
     "accessColWho": "誰が",
     "accessColWhat": "内容"

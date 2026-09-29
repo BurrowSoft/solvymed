@@ -447,6 +447,7 @@
     "accessKindFile": "ไฟล์",
     "accessKindExport": "ส่งออกในรายชื่อผู้ป่วย (CSV)",
     "accessKindImported": "เปิดข้อมูลที่นำเข้า",
+    "accessKindMerged": "รวมกับ «{name}»",
     "accessColWhen": "เมื่อไร",
     "accessColWho": "ใคร",
     "accessColWhat": "อะไร"
