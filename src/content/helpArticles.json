@@ -175,7 +175,7 @@
             },
             {
               "type": "p",
-              "text": "No site também: se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você cancela (ou arquiva o paciente). Consultas no passado não notificam."
+              "text": "No site também: se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você remarca ou cancela (ou arquiva o paciente). Consultas no passado não notificam."
             }
           ],
           "en": [
@@ -189,7 +189,7 @@
             },
             {
               "type": "p",
-              "text": "On the website too: if the patient has a SolvyMed account, they get a notification when you cancel (or archive the patient). Past appointments don't notify."
+              "text": "On the website too: if the patient has a SolvyMed account, they get a notification when you move or cancel (or archive the patient). Past appointments don't notify."
             }
           ]
         },
