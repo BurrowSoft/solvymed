@@ -7413,11 +7413,61 @@ and C9 isn't built at all.
 `2f3514a`.** This docs commit sits on top of a master sync (4 behind,
 clean merge).
 
-## PR #123 (`feat/solvyai-route`, base master) — `/api/assistant` in help mode, ⏳ (tested at `a0cb309`; the head is now `3b256cc`)
+## PR #124 (`fix/neutral-hours-copy`, base master) — neutral working-hours wording, 🟢 at `02d1f6d`
 
-This is a checkpoint (sessions paused), **not** a gate.
-- **Setup:** a local `next dev` at `a0cb309` against the prod DB, over
-  HTTP with throwaway users' JWTs.
+Tested on the Preview at `02d1f6d` with the #111 spec: a throwaway
+doctor, hours Mon–Fri 08–18, Saturday and Sunday off, blocks at 14–15
+and 19–20. pt-BR and en each ran against their own doctor.
+
+**pt-BR, doctor: ✅.** Every question is "Confira o horário" with
+[Cancelar] [Agendar]:
+- 18:30 → "Este horário está **fora do horário de atendimento**
+  (08:00–18:00). Agendar mesmo assim?" Agendar saves.
+- Saturday 10:00 → "**Sábado não é dia de atendimento.** Agendar mesmo
+  assim?" Agendar saves.
+- 19:15 (blocked and outside) → **one** question with both sentences:
+  "Este horário está bloqueado (19:00–20:00). Este horário está fora do
+  horário de atendimento (08:00–18:00). Agendar mesmo assim?" Cancelar
+  saves nothing.
+- Blocked 14:15 and the overlap hard stop are unchanged from #111.
+
+**pt-BR, secretary: ✅.** 07:00 → "Este horário está fora do horário de
+atendimento (08:00–18:00). Agendar mesmo assim?" Agendar saves; the
+overlap is still a hard stop.
+
+**en, doctor: ✅.** Every question is "Check the time" with [Cancel]
+[Book]:
+- 18:30 → "This time is **outside the working hours** (08:00–18:00).
+  Book anyway?" Book saves.
+- Saturday 10:00 → "**Saturday isn't a working day.** Book anyway?" Book
+  saves.
+- 19:15 → one question: "This time is blocked (19:00–20:00). This time is
+  outside the working hours (08:00–18:00). Book anyway?" Cancel saves
+  nothing.
+- Blocked 14:15 → "This time is blocked (14:00–15:00). Book anyway?"
+  Cancel keeps the form open and saves nothing.
+- The overlap hard stop and the in-hours booking (no question) are
+  unchanged.
+
+**Hours never set** (`working_hours` `{}`): no question in either
+language, saved.
+
+No copy says "your" working hours or "Você não atende" / "You don't work"
+any more.
+
+**Coverage note:** the secretary run is pt-BR only (the spec's secretary
+case). The strings are the same keys for every role, so the en wording
+above applies to secretaries too.
+
+**CI at `02d1f6d`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`02d1f6d`.** This docs commit sits directly on top; the branch is up to
+date with master.
+
+## PR #123 (`feat/solvyai-route`, base master) — `/api/assistant` in help mode, 🟢 at `3b256cc`
+
+- **Setup:** a local `next dev` against the prod DB, over HTTP with
+  throwaway users' JWTs. Everything below was first run at `a0cb309`,
+  then **re-run in full at `3b256cc`** with the same results.
 - **Test-only preload** (scratchpad/pr123/sink.cjs):
   - answers `api.anthropic.com/v1/messages` with a scripted SSE stream
     and logs the exact request body;
@@ -7478,15 +7528,36 @@ This is a checkpoint (sessions paused), **not** a gate.
 - **Usage endpoint:** `{used, limit, extra, resetsAt, mode:"help"}`;
   not_doctor → 403.
 
-**⏳ Still to do at the new head `3b256cc`:**
-- a re-run of the above;
-- `SOLVYAI_FAKE_MODEL=1` (the keyless model 2b added);
-- a9's cancel check: **a cancel mid-stream or before the first byte →
-  exactly one release**.
+**Cancels at `3b256cc`** (the sink streams one SSE event every 400 ms):
+- **Mid-stream** (the client aborts after 3 lines): **exactly one
+  `assistant_release_message`**; no `record_usage`.
+- **Before the first byte is read** (abort right after the response
+  headers): **exactly one release**.
+- **A slow answer read to the end:** exactly one `record_usage`, no
+  release; the open block and done arrive as normal.
 
-My abort test at `a0cb309` wasn't conclusive. The scripted answer
-arrived all at once and was fully sent before the abort, so
-`record_usage` (not release) was correct there. The re-test needs a slow
-(delayed-chunk) stream.
+(My abort at `a0cb309` was inconclusive: an instant answer is fully sent
+before the abort lands, so `record_usage` was correct there.)
 
-**CI:** green at `a0cb309`. **Review: clean (a9)** at `a909c20`.
+**`SOLVYAI_FAKE_MODEL=1`, no key** (the keyless Help-echo model):
+- "Como convido minha secretária?" (pt-BR) → "(resposta de teste)
+  Convidar uma secretária …", open `/pt-BR/dashboard/settings`.
+- "How do I block time in the schedule?" (en) → "(test answer) Block time
+  …", open `/dashboard/schedule`.
+- Off-topic → "Só posso ajudar com o SolvyMed.", with no open block.
+- No raw marker, and **no call to Anthropic**.
+- `record_usage` with **zeros** (the fix at `3b256cc`).
+- Before 115 → still 503. (The production guard, `VERCEL_ENV !==
+  "production"`, was checked by reading the code; it can't be run
+  locally.)
+
+**Question for the reviewer (not blocking):** after a client cancel, my
+sink never saw the **upstream** model stream being cancelled. The
+message is refunded correctly, but if the SDK request keeps running, the
+provider still generates and bills that answer. Worth checking whether
+`it.return()` reaches `stream.abort()` once the real key exists.
+
+**CI at `3b256cc`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`3b256cc`.** This docs commit sits on top of a master sync (4 behind,
+with #124; the TESTING-WEB.md conflict was resolved by keeping both
+blocks).

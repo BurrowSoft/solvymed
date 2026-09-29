@@ -165,7 +165,7 @@ describe("the mock checks the schedule before proposing (§2.3)", () => {
     const card = blocks.find((b) => b.type === "card");
     if (!card || card.type !== "card") throw new Error("no card");
     expect(card.card.warnings.map((w) => w.code)).toEqual(["outside_hours"]);
-    expect(card.card.secondConfirm?.question).toBe("Este horário está fora do seu horário de atendimento (08:00–18:00). Agendar mesmo assim?");
+    expect(card.card.secondConfirm?.question).toBe("Este horário está fora do horário de atendimento (08:00–18:00). Agendar mesmo assim?");
   });
 });
 
