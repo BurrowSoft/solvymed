@@ -23,8 +23,10 @@ import { MASK_TOKEN } from "@/lib/assistant/server/tools";
 // the route for fresh times), needs_confirm (a block / outside hours
 // appeared after the card: nothing saved), or generic.
 
-// noUndo: the save told someone else already (a booking decision), so there
-// is no Desfazer.
+// noUndo: the save may already have told the patient (a booking decision,
+// or a book / move / cancel for a patient with a SolvyMed account: an app
+// push, or LINE, which also needs the account), so there is no Desfazer
+// (UX 36, the same rule as the app): the toast offers "Abrir" instead.
 export type SolvyAiSaveResult = { ok: true; id?: string; prev?: string; noUndo?: boolean } | { ok: false; code: string };
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -45,7 +47,7 @@ function mapError(r: { error?: string; code?: string }): SolvyAiSaveResult {
 }
 
 // The appointment's current status / payment, for Desfazer (RLS as the user).
-type Row = { status: string; payment_status: string | null; date: string; start_time: string; end_time: string; patient_name: string | null };
+type Row = { status: string; payment_status: string | null; date: string; start_time: string; end_time: string; patient_name: string | null; patient_id: string | null };
 async function currentRow(id: string): Promise<Row | null> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -54,11 +56,21 @@ async function currentRow(id: string): Promise<Row | null> {
   if (!prof) return null;
   const { data } = await supabase
     .from("appointments")
-    .select("status, payment_status, date, start_time, end_time, patient_name")
+    .select("status, payment_status, date, start_time, end_time, patient_name, patient_id")
     .eq("id", id)
     .eq("professional_id", prof)
     .maybeSingle();
   return (data ?? null) as Row | null;
+}
+
+// Whether the patient has a SolvyMed account (so a change may reach them by
+// push or LINE). Unsure (an error) counts as yes: no Desfazer.
+async function patientConnected(patientId: string | null): Promise<boolean> {
+  if (!patientId) return false;
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_patient_auth_id", { p_patient_id: patientId });
+  if (error) return true;
+  return !!data;
 }
 
 // warningsAsked: the card's second question was asked and answered, so the
@@ -99,7 +111,8 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
         ...(rep ? { recurrence: REPEAT[str(rep.every)], occurrences: String(rep.count) } : {}),
         ...(warningsAsked ? { confirm_warnings: "1" } : {}),
       }));
-      return "success" in r && r.success ? { ok: true, id: r.id, ...(rep ? { noUndo: true } : {}) } : mapError(r);
+      if (!("success" in r && r.success)) return mapError(r);
+      return { ok: true, id: r.id, ...(rep || (await patientConnected(patientId)) ? { noUndo: true } : {}) };
     }
     case "cancel_appointment": {
       const id = str(a.appointmentId);
@@ -107,7 +120,8 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
       const before = await currentRow(id);
       if (!before) return { ok: false, code: "generic" };
       const r = await updateAppointmentStatus(id, "cancelled");
-      return "success" in r && r.success ? { ok: true, id, prev: before.status } : mapError(r);
+      if (!("success" in r && r.success)) return mapError(r);
+      return (await patientConnected(before.patient_id)) ? { ok: true, id, noUndo: true } : { ok: true, id, prev: before.status };
     }
     case "block_time": {
       const date = str(a.date);
@@ -139,7 +153,8 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
       const r = await moveAppointment(form({ id, date, start_time: start, ...(warningsAsked ? { confirm_warnings: "1" } : {}) }));
       // Desfazer moves it back.
       const prev = JSON.stringify({ date: b.date, start: b.start_time.slice(0, 5) });
-      return "success" in r && r.success ? { ok: true, id, prev } : mapError(r);
+      if (!("success" in r && r.success)) return mapError(r);
+      return (await patientConnected(b.patient_id)) ? { ok: true, id, noUndo: true } : { ok: true, id, prev };
     }
     case "unblock_time": {
       const id = str(a.blockId);

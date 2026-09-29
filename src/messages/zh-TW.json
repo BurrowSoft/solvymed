@@ -1202,6 +1202,8 @@
     "undone": "已復原",
     "simulated": "模擬",
     "undo": "復原（{s} 秒）",
+    "undoFailed": "無法復原。請開啟該項目進行調整。",
+    "openItem": "開啟",
     "view": "在行程中查看",
     "edit": "編輯",
     "confirm": "確認 ✓",
