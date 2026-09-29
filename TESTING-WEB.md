@@ -7290,3 +7290,45 @@ in a Thai browser before 07:00. Before this PR, `?new=1` showed
 **CI at `99bd9d2`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `99bd9d2`.** This docs commit sits on top of a master sync (4 behind,
 clean merge).
+
+## PR #121 (`feat/help-conditions`, base master) — Help "conditions": text that isn't true yet stays out of the build, 🟢 at `01a8f34`
+
+This follows up my #120 finding: Help pages are public on master
+(noindex only).
+- **The mechanism:** `content/help/conditions.json` lists 6 unmet
+  conditions (mobile#91, #95, #99, migration-115, migration-116,
+  solvyai-live). A line marked `{pending:<condition>}` is left out of
+  `helpArticles.json` until that condition is met.
+- **Its first use:** A1's sentence about the app asking outside working
+  hours or on a day off waits for mobile #91 in a released build.
+
+**Checks:**
+- **The build is reproducible:** `node scripts/help-build.mjs` at
+  `01a8f34` regenerates `helpArticles.json` with no content change (only
+  Windows line endings). No `{pending` marker is left in the output.
+- **Every Help page, server-rendered, #121 Preview vs the master
+  Preview:** 38 articles × (pt-BR, en) × (plain, `?app=1`) = 152 pages;
+  **148 identical**. The 4 that differ are all A1, and each one differs
+  only in that paragraph:
+  - pt: "Fora do seu horário de atendimento (ou num dia em que você não
+    atende), …" is gone. The blocked-time sentence and "Se já houver outra
+    consulta no mesmo horário, não é possível salvar: o app diz com quem
+    é…" stay.
+  - en: the same ("Outside your working hours …" gone, the rest kept).
+  - The "No site / On the website" part and the steps are unchanged.
+- **Search (`/help` and `/help?app=1`, pt-BR and en), master → #121:**
+  - "horário de atendimento": Marcar uma consulta + Horário de atendimento
+    → **only Horário de atendimento**.
+  - "working hours": Book an appointment + Working hours → **only Working
+    hours**.
+  - "dia em que você não atende", "Fora do seu horário" and "a day you
+    don't work": A1 → **no results** (the component's noResults
+    paragraph).
+
+**Next:** #120 (Help C9) gets rebased onto this with C9 → `solvyai-live`.
+I re-test it then: `/help/c9` must be a 404 and C9 absent from lists and
+search.
+
+**CI at `01a8f34`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`01a8f34`.** This docs commit sits directly on top; the branch was up to
+date with master.

@@ -27,7 +27,7 @@
             },
             {
               "type": "p",
-              "text": "Se o horário estiver bloqueado, o app mostra o bloqueio e pergunta se você quer agendar mesmo assim. Fora do seu horário de atendimento (ou num dia em que você não atende), ele também pergunta antes de agendar. Se já houver outra consulta no mesmo horário, não é possível salvar: o app diz com quem é e você escolhe outro horário."
+              "text": "Se o horário estiver bloqueado, o app mostra o bloqueio e pergunta se você quer agendar mesmo assim. Se já houver outra consulta no mesmo horário, não é possível salvar: o app diz com quem é e você escolhe outro horário."
             }
           ],
           "en": [
@@ -43,7 +43,7 @@
             },
             {
               "type": "p",
-              "text": "If the time is blocked, the app shows the block and asks whether to book anyway. Outside your working hours (or on a day you don't work), it also asks before booking. If another appointment already takes that time, it can't be saved: the app says whose it is and you pick another time."
+              "text": "If the time is blocked, the app shows the block and asks whether to book anyway. If another appointment already takes that time, it can't be saved: the app says whose it is and you pick another time."
             }
           ]
         },

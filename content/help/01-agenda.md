@@ -8,14 +8,16 @@
 3. Escolha a data, o horário e a duração.
 4. Escolha o tipo (presencial ou online), o procedimento e o valor, se quiser.
 5. Toque em **Salvar**.
-Se o horário estiver bloqueado, o app mostra o bloqueio e pergunta se você quer agendar mesmo assim. Fora do seu horário de atendimento (ou num dia em que você não atende), ele também pergunta antes de agendar. Se já houver outra consulta no mesmo horário, não é possível salvar: o app diz com quem é e você escolhe outro horário.
+Se o horário estiver bloqueado, o app mostra o bloqueio e pergunta se você quer agendar mesmo assim. Se já houver outra consulta no mesmo horário, não é possível salvar: o app diz com quem é e você escolhe outro horário.
+{pending:mobile#91} Fora do seu horário de atendimento (ou num dia em que você não atende), o app também pergunta antes de agendar.
 **en**
 1. Tap **+** (or **New appointment**).
 2. Pick the patient (type the name to search) or add a new one.
 3. Choose the date, time and duration.
 4. Choose the type (in person or online), the procedure and the value, if you want.
 5. Tap **Save**.
-If the time is blocked, the app shows the block and asks whether to book anyway. Outside your working hours (or on a day you don't work), it also asks before booking. If another appointment already takes that time, it can't be saved: the app says whose it is and you pick another time.
+If the time is blocked, the app shows the block and asks whether to book anyway. If another appointment already takes that time, it can't be saved: the app says whose it is and you pick another time.
+{pending:mobile#91} Outside your working hours (or on a day you don't work), the app also asks before booking.
 **No site:** Em **Agenda**, clique em **Nova Consulta** (também há o botão na **Visão geral**). Escolha o paciente, a data, o início, a duração, o tipo, o procedimento e a forma de pagamento (particular ou convênio), e clique em **Salvar Consulta**. O valor vem do procedimento escolhido.
 **On the website:** In the **Schedule**, click **New Appointment** (there's also a button on the **Overview**). Choose the patient, date, start, duration, type, procedure and payment (private or insurance), and click **Save Appointment**. The amount comes from the chosen procedure.
 `open:new-appointment`
