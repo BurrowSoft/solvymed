@@ -426,6 +426,7 @@
     "filesHiddenLine": "{date} に {name} が削除：{reason}",
     "filesHideTitle": "ファイルを削除",
     "filesHideHint": "アップロードから 24 時間以上経過しているため、ファイルは削除ではなく非表示になります。理由を入力してください。",
+    "filesHideReason": "非表示にする理由",
     "filesPopupBlocked": "ブラウザが新しいタブをブロックしました。SolvyMed のポップアップを許可して、もう一度お試しください。",
     "accessLogIntro": "この患者のカルテを誰がいつ開いたか。この履歴はあなただけが見られます。",
     "accessLogEmpty": "アクセス記録はまだありません。",
