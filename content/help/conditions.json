@@ -1,4 +1,8 @@
 {
+  "app-1.4.0": {
+    "met": false,
+    "what": "App 1.4.0 is released in the stores (flip when both Play and App Store have it). Includes mobile #137, the patient's appointment view: their pending request can be cancelled ('Cancelar pedido'), a clinic's proposed time can be accepted or declined, an upcoming scheduled/confirmed appointment offers 'Pedir remarcação' only before it starts, and cancelling means talking to the clinic."
+  },
   "mobile#91": {
     "met": false,
     "what": "The app asks before booking outside the working hours or on a day off, also when moving (mobile #91), in a RELEASED store build (not just merged)."

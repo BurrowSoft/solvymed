@@ -180,6 +180,7 @@ export const ACTIONS: AppMapAction[] = [
       "Confirming also adds (or links) the patient to the practice in the same step and notifies them.",
       "Rejecting only works while it's still a request (tentative or proposal) and notifies the patient.",
       "Proposing another time is done on the request card, not by SolvyAI.",
+      { text: "In the patient's app: a patient can cancel their own pending request, accept or decline a time the clinic proposed, and ask to reschedule a scheduled or confirmed appointment only before it starts; they can't cancel a booked appointment themselves (the app tells them to talk to the clinic).", pending: ["app-1.4.0"] },
       "A decision made through SolvyAI has no Desfazer: the patient is notified at once.",
     ],
     card: ["patient", "when (weekday, date, time)", "confirm or reject", "note"],
