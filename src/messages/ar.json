@@ -206,6 +206,8 @@
     "promptPayTitle": "رمز QR لـ PromptPay",
     "promptPayScan": "امسح الرمز بأي تطبيق مصرفي تايلاندي للدفع.",
     "pixQrTitle": "Pix QR code",
+    "pixCopyPaste": "Pix Copia e Cola",
+    "pixCopy": "نسخ",
     "durationMinutes": "{n} دقيقة"
   },
   "payments": {
@@ -511,6 +513,7 @@
     "noAddress": "لا يوجد عنوان",
     "onMap": "على الخريطة",
     "noMapPin": "لا يوجد دبوس على الخريطة — أضف عنواناً للظهور على الخريطة",
+    "noPinYet": "لا يوجد دبوس على الخريطة",
     "empty": "لا توجد عيادات بعد",
     "emptySubtitle": "أضف عيادتك حتى يتمكن المرضى من إيجادك",
     "addFirst": "أضف عيادتك الأولى",

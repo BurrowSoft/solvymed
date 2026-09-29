@@ -206,6 +206,8 @@
     "promptPayTitle": "PromptPay QR 碼",
     "promptPayScan": "使用任何泰國銀行 App 掃描付款。",
     "pixQrTitle": "Pix QR code",
+    "pixCopyPaste": "Pix Copia e Cola",
+    "pixCopy": "複製",
     "durationMinutes": "{n} 分鐘"
   },
   "payments": {
@@ -511,6 +513,7 @@
     "noAddress": "無地址",
     "onMap": "在地圖上",
     "noMapPin": "無地圖標記 — 新增地址以在地圖上顯示",
+    "noPinYet": "無地圖標記",
     "empty": "暫無診所",
     "emptySubtitle": "新增您的診所以便患者找到您",
     "addFirst": "新增您的第一家診所",

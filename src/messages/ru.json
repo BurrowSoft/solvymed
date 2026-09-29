@@ -206,6 +206,8 @@
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Отсканируйте любым тайским банковским приложением для оплаты.",
     "pixQrTitle": "Pix QR code",
+    "pixCopyPaste": "Pix Copia e Cola",
+    "pixCopy": "Копировать",
     "durationMinutes": "{n} мин"
   },
   "payments": {
@@ -511,6 +513,7 @@
     "noAddress": "Нет адреса",
     "onMap": "На карте",
     "noMapPin": "Нет метки на карте — добавьте адрес, чтобы отображаться на карте",
+    "noPinYet": "Нет метки на карте",
     "empty": "Пока нет клиник",
     "emptySubtitle": "Добавьте свою клинику, чтобы пациенты могли вас найти",
     "addFirst": "Добавить первую клинику",

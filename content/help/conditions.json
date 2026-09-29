@@ -33,6 +33,6 @@
   },
   "linked-bookings": {
     "met": false,
-    "what": "Appointments of a linked patient carry their account however they were made (migration 119: a trigger filling patient_auth_id from the linked record, the backfill and the fill on later linking) applied on production: until then pushes only reach patients on appointments they booked in the app."
+    "what": "Appointments of a linked patient carry their account however they were made (migration 119, mobile #117: a trigger filling patient_auth_id from the linked record, the backfill and the fill on later linking) applied on production: until then pushes only reach patients on appointments they booked in the app."
   }
 }

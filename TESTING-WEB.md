@@ -7721,3 +7721,170 @@ fast.
 **CI at `ac398a9`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `ac398a9`.** This docs commit sits directly on top; the branch is up to
 date with master.
+
+## PR #129 (`fix/booking-saves-procedure-price`, base **release**) — RELEASE hotfix: a web booking saves the procedure's price as its value, 🟢 at `7a505c1`
+
+**The live bug:** Agenda › Nova Consulta on the website never saved the
+procedure's price, so web-booked appointments had no value in Pagamentos
+or in the Pix code.
+
+**Tested on the release Preview at `7a505c1`:**
+- **Setup:** a throwaway doctor with a Pix key and two procedures:
+  "Consulta Opus" R$ 150 and "Retorno Opus" with no price.
+- **Bookings:** both were made through the real form (Agenda › Nova
+  Consulta), and each save was checked in the DB.
+
+| Check | Result |
+|---|---|
+| Book with "Consulta Opus · R$ 150,00" | saved with **`payment_amount` 150**, `consultation_type` Consulta Opus, pending |
+| Book with "Retorno Opus" (no price) | saved with **`payment_amount` null** (as before) |
+| Bloquear Horário 13:00 | the block row has `payment_amount` null: **block time unaffected** |
+| Pagamentos (the two rows moved to yesterday via REST, since Pagamentos lists up to today; the values are the form's) | Pendente: "Opus Preco Com · Consulta Opus · **R$ 150,00** · Marcar como Pago"; "Opus Preco Sem · Retorno Opus · **Sem valor definido**" |
+| Pix QR (Agenda, the priced appointment) | the Copia e Cola code parsed as EMV: **tag 54 = `150.00`**, so the amount is in the Pix |
+
+- **Note (unchanged by this PR, release only):** on release the Pix dialog
+  title reads "Pix QR Code" even in pt-BR. Master has the translated
+  title since #100, and the dialog's hardcoded "Copia e Cola" / "Copiar"
+  are the #128 item.
+- **Post-merge:** the prod spot-check (one booking with a priced
+  procedure, then delete it) follows when this lands on
+  www.solvymed.com.
+
+**CI at `7a505c1`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`7a505c1`.** The branch was up to date with `release`; this docs commit
+sits on top.
+
+**#129 post-merge prod check ✅** (www.solvymed.com; Vercel prod = release
+`b7a4c08`, checked with `vercel inspect`). Same spec, with no bypass
+header sent to prod:
+- "Consulta Opus · R$ 150,00" → **`payment_amount` 150**; "Retorno Opus"
+  → null; a block → null.
+- Pagamentos: "Consulta Opus · **R$ 150,00**" / "Sem valor definido".
+- The Pix Copia e Cola **tag 54 = `150.00`**.
+- The throwaway doctor was deleted.
+
+## PR #133 (`chore/merge-back-release-129`, base master) — merge-back release → master after #129, 🟢 at `84972ec`
+
+- **CI:** green.
+- **Diff vs master:** `TESTING-WEB.md` only (+32 lines: the #129 block);
+  no code. Master's own price block (from #127) is kept, and the branch
+  contains master.
+- **Docs:** no docs commit was pushed to it, at the dev's request (to
+  keep the reviewed head), so the entry is recorded here.
+
+## PR #130 (`feat/clinic-pins`, base master) — My Clinics: "Sem pin no mapa" for a clinic with an address but no pin, 🟢 at `c74f9ad`
+
+Tested on the Preview at `c74f9ad` (Thai flag on). The throwaway doctor
+had three clinics:
+- **A:** an address, `lat`/`lng` null;
+- **B:** no address, no pin;
+- **C:** an address and a pin.
+
+| Clinic | pt-BR | en | th |
+|---|---|---|---|
+| A (address, no pin) | "**Sem pin no mapa**" + "Ajustar no mapa" | "**No map pin**" + "Adjust on map" | "**ไม่มีหมุดแผนที่**" + "ปรับบนแผนที่" |
+| B (no address) | old text: "Sem localização no mapa — adicione um endereço para aparecer no mapa" | "No map pin — add an address to appear on the map" | "ไม่มีหมุดแผนที่ — เพิ่มที่อยู่เพื่อปรากฏบนแผนที่" |
+| C (pinned) | "No mapa" | "On map" | "บนแผนที่" |
+
+**Setting A's pin** (`lat`/`lng` via REST, then a reload) → A shows "No
+mapa": the label clears.
+
+**CI at `c74f9ad`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`c74f9ad`.** This docs commit sits on top of a master sync (16 behind,
+clean merge; message JSON valid).
+
+## PR #131 (`feat/clinic-change-pushes`, base master) — the website tells the patient when the clinic books or cancels, 🟢 at `6a01fbc` (+ docs/parser-only commits to `2ccdf5a`), with one ⏳ post-110 row
+
+**Setup:**
+- **Server:** a local `next dev` with my test-only Expo sink (pushes are
+  logged, never sent; the clinic-closed email call is sunk too), against
+  the prod DB.
+- **Practice:** a throwaway one with `clinic_name` "Clínica Opus Push"
+  plus two locations ("Aaa Opus Local Norte", "Zzz Opus Local Sul").
+- **Patients:** "Opus Push pt" (`pt-BR`) and "Opus Push th" (`th`), both
+  linked app accounts with device tokens, plus an unlinked "Opus Push Sem
+  Conta".
+- Every action was done through the UI (the Nova Consulta form, the
+  status select, Arquivar, Settings › close account).
+
+| Action | Push (title \| body) |
+|---|---|
+| Doctor books pt (Tuesday 10:00) | Nova consulta \| **Clínica Opus Push marcou uma consulta para você em 06/10/2026 às 10:00.** |
+| Status → Cancelado (pt) | Consulta cancelada \| **Clínica Opus Push cancelou sua consulta de 06/10/2026 às 10:00. Para marcar outra, abra o app.** |
+| Cancelado → Confirmado | none (only a change *to* cancelled notifies) |
+| Booking or cancelling in the past; Bloquear Horário; an unlinked patient | none |
+| Archive th (2 future appointments) | one each: นัดหมายถูกยกเลิก \| **นัดหมายของคุณวันที่ 07/10/2569 เวลา 15:00 ถูกยกเลิกโดย Clínica Opus Push หากต้องการนัดใหม่ กรุณาเปิดแอป** (and 16:00): UX's exact wording |
+| Account close by a second doctor (no `clinic_name`, location "Consultório Opus Sul") | th: **…เวลา 08:00 ถูกยกเลิกโดย Consultório Opus Sul** (no "open the app" suffix; the first-location fallback); pt: the unchanged close text |
+
+**My two findings:**
+1. **A linked patient whose appointments were all made on the website
+   gets no book/cancel push.**
+   - The web form stores `patient_id` but not `patient_auth_id`.
+   - `get_patient_push_tokens` (088) only returns tokens when an
+     appointment with `patient_auth_id` exists for the practice, so it
+     returns 0 tokens silently. The th patient got nothing; the pt
+     patient, with one app booking, got both pushes.
+   - **Handled:** the fix is mobile #117 / migration 119 (unapplied). Web
+     gates the Help/App Map claims on `linked-bookings`, and the built
+     A1/A4 show no website-notification sentence.
+2. **A secretary's action names a location, not the clinic:** "Aaa Opus
+   Local Norte marcou…" / "…cancelou…", while the doctor's own push says
+   "Clínica Opus Push".
+   - **Cause:** the secretary path reads `clinic_name` from
+     `get_professional_public_info`, which returns the profile name only
+     after migration 110. Prod is on 105.
+   - The reviewer ruled it expected before 110 and not a gate, since
+     master reaches prod only with the Thai release, which applies 110–119
+     first.
+   - **⏳ post-110:** re-run the secretary push on a profile-named practice
+     with 2 locations → it must say the profile name. The same row
+     applies to mobile #111.
+
+**CI:** ✅. **Review: clean (7f).** **Merge gate: 🟢** (with the ⏳
+post-110 row above). This docs commit sits on top of a master sync (9
+behind, clean merge).
+
+## PR #128 (`fix/label-audit`, base master) — Pix dialog labels translated; Help G1/G4/K4 match the real labels (from my label audit), 🟢 at `4e420ef`
+
+**The Pix dialog** (Agenda, an appointment with a value, the Preview at
+`4e420ef`):
+
+| Locale | Button title | Dialog |
+|---|---|---|
+| pt-BR | QR Code Pix | QR Code Pix · **Pix Copia e Cola** · **Copiar** |
+| en | Pix QR code | Pix QR code · **Pix Copia e Cola** · **Copy** |
+| th | Pix QR code | Pix QR code · **Pix Copia e Cola** · **คัดลอก** |
+
+Before, the dialog hardcoded "Copia e Cola" / "Copiar" in every locale.
+In th the title stays "Pix QR code": Pix is Brazil-only, so not a
+problem.
+
+**Help:** all 156 pages were compared with the master Preview.
+- **148 are identical.** Only these changed:
+  - **G1** (pt, en; the website line): "clique em **Marcar como Pago** na
+    consulta: salva na hora. Se ela não tiver valor, digite o valor e
+    clique em **Confirmar**." This matches the one-click save when there
+    is a value.
+  - **G4** (pt, en; the website line): "**Pix Copia e Cola**"; en "(with
+    **Copy**)".
+  - **K4** (pt, en; plain and `?app=1`): "**Encerrar conta** (ou
+    **Excluir conta**, se ainda não houver prontuários)". The website shows
+    "Excluir conta" for an account with no clinical history.
+- **The G1/G4 app variants are unchanged**, as intended: the website line
+  isn't shown there.
+
+**K4 app label, resolved at `72aa7f7`:**
+- **What the app shows** (8d, from the app code): every doctor sees one
+  button, **"Excluir Conta" / "Delete Account"**. The dialog then says
+  "Excluir Conta" (no records) or "Encerrar sua conta" (with records).
+- **The fix:** the K4 body now reads "**Configurações → Excluir conta**.
+  Se ainda não houver prontuários, a conta é excluída. Se houver, ela é
+  encerrada: …" (en "**Settings → Delete account**. If there are no
+  records yet, the account is deleted. If there are, it's closed: …").
+- **Checked on the Preview at `72aa7f7`:** `/pt-BR/help/k4`, `/help/k4`
+  and their `?app=1` variants all show the new text; `helpArticles.json`
+  was rebuilt with the same content.
+
+**CI at `72aa7f7`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`72aa7f7`.** This docs commit sits directly on top; the branch is up to
+date with master.
