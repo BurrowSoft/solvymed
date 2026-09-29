@@ -13,11 +13,14 @@ const h = vi.hoisted(() => {
     removeResult: [{}] as unknown[],
     rpcs: [] as { fn: string; args: Record<string, unknown> }[],
     rpcError: null as null | { message: string },
+    // The access-log write fails (fail closed: no link).
+    logError: null as null | { message: string },
+    signed: [] as string[],
     states: [] as Record<string, unknown>[],
   };
   const bucket = {
     list: async (folder: string) => { state.listed.push(folder); return { data: state.objects, error: null }; },
-    createSignedUrl: async (path: string) => ({ data: { signedUrl: `https://signed/${path}` }, error: null }),
+    createSignedUrl: async (path: string) => { state.signed.push(path); return { data: { signedUrl: `https://signed/${path}` }, error: null }; },
     remove: async (paths: string[]) => { state.removed.push(paths); return { data: state.removeResult, error: null }; },
   };
   function query(table: string) {
@@ -34,7 +37,7 @@ const h = vi.hoisted(() => {
     auth: { getUser: async () => ({ data: { user: { id: "doc-1" } } }) },
     from: query,
     storage: { from: () => bucket },
-    rpc: async (fn: string, args: Record<string, unknown>) => { state.rpcs.push({ fn, args }); return { data: null, error: fn === "hide_patient_file" ? state.rpcError : null }; },
+    rpc: async (fn: string, args: Record<string, unknown>) => { state.rpcs.push({ fn, args }); return { data: null, error: fn === "hide_patient_file" ? state.rpcError : fn === "log_record_access" ? state.logError : null }; },
   };
   return { state, client };
 });
@@ -44,7 +47,7 @@ vi.mock("@/lib/supabase/server", () => ({ createClient: async () => h.client }))
 import { deletePatientFile, hidePatientFile, listPatientFiles, openPatientFile } from "@/app/[locale]/(site)/dashboard/patients/files-actions";
 
 beforeEach(() => {
-  Object.assign(h.state, { professional: true, objects: [], listed: [], removed: [], removeResult: [{}], rpcs: [], rpcError: null, states: [] });
+  Object.assign(h.state, { professional: true, objects: [], listed: [], removed: [], removeResult: [{}], rpcs: [], rpcError: null, logError: null, signed: [], states: [] });
 });
 
 describe("patientFiles helpers", () => {
@@ -110,6 +113,13 @@ describe("files actions", () => {
     const r = await openPatientFile("11111111-1111-4111-8111-111111111111", "doc-1/11111111-1111-4111-8111-111111111111/exams/a.pdf");
     expect(r).toEqual({ ok: true, data: "https://signed/doc-1/11111111-1111-4111-8111-111111111111/exams/a.pdf" });
     expect(h.state.rpcs).toEqual([{ fn: "log_record_access", args: { p_patient_id: "11111111-1111-4111-8111-111111111111", p_kind: "file", p_object_ref: "doc-1/11111111-1111-4111-8111-111111111111/exams/a.pdf" } }]);
+  });
+
+  it("no link unless the access was recorded (fail closed, UX 36)", async () => {
+    h.state.logError = { message: "not_allowed" };
+    const r = await openPatientFile("11111111-1111-4111-8111-111111111111", "doc-1/11111111-1111-4111-8111-111111111111/a.pdf");
+    expect(r).toEqual({ ok: false, code: "access_log_failed" });
+    expect(h.state.signed).toEqual([]);
   });
 
   it("never opens another practice's or patient's path", async () => {

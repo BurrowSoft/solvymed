@@ -12,6 +12,10 @@ import { createClient } from "@/lib/supabase/client";
 
 export const BUTTON_HIDDEN_KEY = "solvyai_button_hidden";
 export const BUTTON_EVENT = "solvyai-button";
+// The tour's "Experimentar agora": open the panel and ask this question
+// (detail { text }); the panel tells when it's closed again.
+export const OPEN_EVENT = "solvyai-open";
+export const CLOSED_EVENT = "solvyai-closed";
 
 export function readButtonHidden(): boolean {
   try { return localStorage.getItem(BUTTON_HIDDEN_KEY) === "1"; } catch { return false; }

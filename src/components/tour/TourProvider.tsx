@@ -9,6 +9,7 @@ import { CURRENT_NEWS, NEWS, newsItemsFor, newsSteps, newsTourId } from "@/lib/n
 import { NewsPopup } from "./NewsPopup";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { saveTourProgress } from "@/lib/tourActions";
+import { CLOSED_EVENT, OPEN_EVENT } from "@/components/solvyai/SolvyAiSettings";
 import { track } from "@/lib/track";
 
 // Runs the guided tour inside the dashboard (specs/walkthrough.md):
@@ -68,6 +69,10 @@ export function TourProvider({
     }
   }, [newsItems.length]);
   const [offerResume, setOfferResume] = useState(entry === "resume");
+  // Where "Continuar" picks up: the saved step, or the step after SolvyAI
+  // when "Experimentar agora" paused the tour (UX 36, like the app).
+  const [resumeAt, setResumeAt] = useState(resumeStep);
+  const paused = useRef(false);
   const autoTried = useRef(false);
   const home = `${prefix}/dashboard`;
 
@@ -153,13 +158,34 @@ export function TourProvider({
     void saveTourProgress(result, index, newsTourId(release));
   }, [newsTour, role]);
 
+  // "Experimentar agora": the tour pauses on the next step and SolvyAI opens
+  // with "O que o SolvyAI pode fazer?"; closing SolvyAI offers to continue.
+  const onTryNow = useCallback((index: number) => {
+    setActive(null);
+    track("tour_try_solvyai", { role, step: index + 1 });
+    const next = index + 1;
+    if (next >= steps.length) {
+      void saveTourProgress("completed", index);
+    } else {
+      void saveTourProgress("started", next);
+      setResumeAt(next);
+      paused.current = true;
+    }
+    window.dispatchEvent(new CustomEvent(OPEN_EVENT, { detail: { text: t("tryNowQuestion") } }));
+  }, [role, steps.length, t]);
+  useEffect(() => {
+    const on = () => { if (paused.current) { paused.current = false; setOfferResume(true); } };
+    window.addEventListener(CLOSED_EVENT, on);
+    return () => window.removeEventListener(CLOSED_EVENT, on);
+  }, []);
+
   const ctx = useMemo<TourCtx>(() => ({ start: () => begin(0, true), startNews, role }), [begin, startNews, role]);
 
   return (
     <Ctx.Provider value={ctx}>
       {children}
       {active && (
-        <TourOverlay steps={steps} prefix={prefix} startAt={active.startAt} onStep={onStep} onClose={onClose} />
+        <TourOverlay steps={steps} prefix={prefix} startAt={active.startAt} onStep={onStep} onClose={onClose} onTryNow={onTryNow} />
       )}
       {newsTour && !active && (
         <TourOverlay steps={newsTour.steps} prefix={prefix} stepsNamespace="news" onStep={onNewsStep} onClose={onNewsClose} />
@@ -169,16 +195,16 @@ export function TourProvider({
       )}
       {offerResume && !active && pathname === home && (
         <div role="status" className="fixed bottom-4 right-4 z-50 w-72 rounded-2xl border border-slate-100 bg-white p-4 shadow-xl">
-          <p className="text-sm font-semibold text-slate-900">{t("resumeTitle", { n: Math.min(resumeStep + 1, steps.length), total: steps.length })}</p>
+          <p className="text-sm font-semibold text-slate-900">{t("resumeTitle", { n: Math.min(resumeAt + 1, steps.length), total: steps.length })}</p>
           <div className="mt-3 flex justify-end gap-2">
             <button
               type="button"
-              onClick={() => { setOfferResume(false); void saveTourProgress("skipped", resumeStep); }}
+              onClick={() => { setOfferResume(false); void saveTourProgress("skipped", resumeAt); }}
               className="rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-500 hover:bg-slate-50"
             >
               {t("dismiss")}
             </button>
-            <button type="button" onClick={() => begin(Math.min(resumeStep, steps.length - 1), false)} className="rounded-lg bg-teal-600 px-3 py-1.5 text-sm font-bold text-white hover:bg-teal-700">
+            <button type="button" onClick={() => begin(Math.min(resumeAt, steps.length - 1), false)} className="rounded-lg bg-teal-600 px-3 py-1.5 text-sm font-bold text-white hover:bg-teal-700">
               {t("continue")}
             </button>
           </div>
