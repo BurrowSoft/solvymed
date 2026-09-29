@@ -8903,6 +8903,29 @@ locales (checked by web tester 1).
 cleanly.
 **Review: clean (7f).** **Merge gate: 🟢 for `e1197b6`.**
 
+## PR #155 (`fix/files-hide-reason-label`, base master) — the file hide dialog says "Motivo para ocultar", 🟢 at `23f326f`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Where:** the Vercel Preview.
+- **Fixture:** the #147 fixture doctor's `foto-lesao-opus.png` (Arquivos),
+  backdated to −2 days by 38 so the >24 h hide dialog opens.
+- **Flow:** Remover opened the dialog in each language, which was
+  cancelled each time (nothing hidden).
+
+| Locale | Dialog |
+|---|---|
+| pt-BR | "Remover arquivo: foto-lesao-opus.png · Já se passaram mais de 24 horas… Informe o motivo." Field label **"Motivo para ocultar"** (was "Motivo da correção"); Cancelar / Remover |
+| en | "Remove file… Say why." Field **"Reason for hiding"**; Cancel / Remove |
+| th | "นำไฟล์ออก…" Field **"เหตุผลที่ซ่อน"**; ยกเลิก / นำออก |
+
+The new key is in all 15 locales (16 files, +1 line each).
+
+**CI at `23f326f`:** ✅. **Review: clean.** **Merge gate: 🟢 for
+`23f326f`.** This docs commit sits on top of a master sync (1 behind;
+clean).
+
 ## PR #156 (`fix/solvyai-series-same-patient-date`, base master) — a SolvyAI series card's same-patient warning checks every date and names the first, 🟢 at `30c07ec`
 
 Tested by web tester 2.
@@ -8922,4 +8945,4 @@ Tested by web tester 2.
 | Confirmar | ✅ the warning doesn't block: 06/10, 13/10, 20/10 at 11:00 are saved next to the existing 09:00s |
 | Single booking on 13/10 at 15:00 | ✅ "⚠ Opus Serie Aviso já tem consulta nesse dia às 09:00", **no date prefix** (as before) |
 
-**CI at `30c07ec`:** ✅. **Review: clean.** **Merge gate: 🟢 for `30c07ec`.** This docs commit sits on top of a master sync (3 behind; clean).
+**CI at `30c07ec`:** ✅. **Review: clean.** **Merge gate: 🟢 for `30c07ec`.** This docs block sits on top of a master sync (after #155 merged; clean).

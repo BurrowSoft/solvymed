@@ -426,6 +426,7 @@
     "filesHiddenLine": "retiré le {date} par {name} : {reason}",
     "filesHideTitle": "Retirer le fichier",
     "filesHideHint": "Plus de 24 heures se sont écoulées depuis l’envoi : le fichier est masqué au lieu d’être supprimé. Indiquez pourquoi.",
+    "filesHideReason": "Raison du masquage",
     "filesPopupBlocked": "Votre navigateur a bloqué le nouvel onglet. Autorisez les fenêtres pop-up pour SolvyMed et réessayez.",
     "accessLogIntro": "Qui a ouvert le dossier de ce patient, et quand. Vous seul pouvez voir ce journal.",
     "accessLogEmpty": "Aucun accès enregistré pour l'instant.",
