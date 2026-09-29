@@ -8784,3 +8784,26 @@ it legible.
 
 **CI at `29b90ee`:** ✅ (lint, typecheck + unit tests, Vercel).
 **Review: clean (7f).** **Merge gate: 🟢 for `29b90ee`.** This docs commit sits directly on the PR head. The branch is 8 behind master, and a master merge conflicts in code (app-map.ts + the 15 message files), so e7 syncs it.
+
+## PR #157 (`feat/tour-try-solvyai`, base master) — the tour's SolvyAI step gets "Experimentar agora", 🟢 at `70858a7`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `70858a7` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it answers the model call with scripted text.
+- **Accounts:** a fresh throwaway doctor per variant, so the tour opens on
+  the first dashboard visit.
+
+| Row | Result |
+|---|---|
+| The button | ✅ step 1 of 9 has no "Experimentar agora"; step **2 of 9** (SolvyAI) has it, next to Pular tour / Voltar / Próximo |
+| Experimentar agora | ✅ the tour closes and the SolvyAI panel opens. It sends **"O que o SolvyAI pode fazer?"** by itself (the model request's last message is exactly that) and shows the answer, with 👍/👎 |
+| ✕ on the panel | ✅ "**Continuar o tour? (passo 3 de 9)**" · Dispensar · Continuar, i.e. the step AFTER SolvyAI |
+| Continuar | ✅ the tour resumes at **3 de 9** |
+| Dispensar | ✅ after a reload, no tour and no resume offer |
+| Console | ✅ no errors in either run |
+| Strings | ✅ `tour.tryNow` / `tryNowQuestion`: en "Try it now" / "What can SolvyAI do?"; th "ลองใช้เลย" / "SolvyAI ทำอะไรได้บ้าง" |
+
+**CI at `70858a7`:** ✅. **Review: clean.** **Merge gate: 🟢 for `70858a7`.** This docs commit sits directly on the PR head. The branch is 5 behind master, and a master merge conflicts in content/help/04-configuracoes.md, so the web dev syncs it.
