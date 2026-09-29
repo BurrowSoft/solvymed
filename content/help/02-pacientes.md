@@ -120,10 +120,10 @@ Open the patient and tap **Invite to the app**. Send the personal code (or link)
 ## P10. Exportar a lista de pacientes / Export the patient list (CSV)
 **pt-BR**
 **Configurações → Exportar pacientes (CSV)**. O arquivo abre direto no Excel. O app apaga a cópia do celular na próxima exportação, ao abrir o app de novo ou ao sair da conta.
-{pending:migration-126} No site: **Configurações → Exportar pacientes (CSV)** baixa a planilha com todos os pacientes (ativos e arquivados). O registro de acesso de cada paciente anota a exportação.
 **en**
 **Settings → Export patients (CSV)**. The file opens directly in Excel. The app deletes the copy from the phone on the next export, the next time the app opens, or when you sign out.
-{pending:migration-126} On the website: **Settings → Export patients (CSV)** downloads the spreadsheet with every patient (active and archived). Each patient's access log records the export.
-**No site:** Ainda não disponível no site; use o app.
-**On the website:** Not available on the website yet; use the app.
+**No site:** {unless:migration-126} Ainda não disponível no site; use o app.
+**On the website:** {unless:migration-126} Not available on the website yet; use the app.
+**No site:** {pending:migration-126} Em **Configurações → Exportar pacientes (CSV)** (só para médicos) o site baixa a planilha com todos os pacientes, ativos e arquivados. O registro de acesso de cada paciente anota "Exportado na lista de pacientes (CSV)"; se esse registro não puder ser gravado, nada é baixado e aparece "Não foi possível registrar o acesso. Tente novamente."
+**On the website:** {pending:migration-126} In **Settings → Export patients (CSV)** (doctors only) the website downloads the spreadsheet with every patient, active and archived. Each patient's access log records "Exported in the patient list (CSV)"; if that can't be recorded, nothing is downloaded and you see "Couldn't record the access. Please try again."
 `open:settings`

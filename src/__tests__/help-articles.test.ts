@@ -50,6 +50,17 @@ describe("conditions: held text is left out of the build", () => {
     expect(JSON.stringify(on)).not.toContain("{pending");
   });
 
+  it("a web note swaps when its condition flips ({unless:x} before, {pending:x} after)", () => {
+    const notes = "**No site:** {unless:x} Ainda não\n**On the website:** {unless:x} Not yet\n**No site:** {pending:x} Já no site\n**On the website:** {pending:x} On the website now\n`open:none`";
+    const before = parseBatch("05-conta", md(notes), c(false)).articles[0];
+    const after = parseBatch("05-conta", md(notes), c(true)).articles[0];
+    expect(JSON.stringify(before)).toContain("Ainda não");
+    expect(JSON.stringify(before)).not.toContain("Já no site");
+    expect(JSON.stringify(after)).toContain("On the website now");
+    expect(JSON.stringify(after)).not.toContain("Not yet");
+    expect(JSON.stringify(after)).not.toContain("{pending");
+  });
+
   it("an unknown condition id fails the build (a typo can't hide or show text)", () => {
     expect(() => parseBatch("05-conta", md("`requires:typo`"), c(true))).toThrow(/unknown condition "typo"/);
     expect(() => parseBatch("05-conta", md("", "{pending:typo} T"), c(true))).toThrow(/unknown condition "typo"/);
