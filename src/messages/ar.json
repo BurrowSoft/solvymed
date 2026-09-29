@@ -1128,6 +1128,8 @@
     "resumeTitle": "متابعة الجولة؟ (الخطوة {n} من {total})",
     "continue": "متابعة",
     "dismiss": "تجاهل",
+    "tryNow": "جرّبه الآن",
+    "tryNowQuestion": "ماذا يستطيع SolvyAI أن يفعل؟",
     "replay": "أعد مشاهدة الجولة",
     "settingsCardTitle": "جولة إرشادية",
     "settingsCardText": "جولة لمدة دقيقة في الشاشات الرئيسية.",

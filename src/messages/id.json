@@ -1128,6 +1128,8 @@
     "resumeTitle": "Lanjutkan tur? (langkah {n} dari {total})",
     "continue": "Lanjutkan",
     "dismiss": "Tutup",
+    "tryNow": "Coba sekarang",
+    "tryNowQuestion": "Apa yang bisa dilakukan SolvyAI?",
     "replay": "Lihat tur lagi",
     "settingsCardTitle": "Tur panduan",
     "settingsCardText": "Tur 1 menit ke layar-layar utama.",

@@ -1128,6 +1128,8 @@
     "resumeTitle": "투어를 계속할까요? ({n}/{total}단계)",
     "continue": "계속",
     "dismiss": "닫기",
+    "tryNow": "지금 사용해 보기",
+    "tryNowQuestion": "SolvyAI는 무엇을 할 수 있나요?",
     "replay": "투어 다시 보기",
     "settingsCardTitle": "가이드 투어",
     "settingsCardText": "주요 화면을 1분 동안 둘러봅니다.",

@@ -1128,6 +1128,8 @@
     "resumeTitle": "Tour fortsetzen? (Schritt {n} von {total})",
     "continue": "Fortsetzen",
     "dismiss": "Ausblenden",
+    "tryNow": "Jetzt ausprobieren",
+    "tryNowQuestion": "Was kann SolvyAI?",
     "replay": "Tour erneut ansehen",
     "settingsCardTitle": "Geführte Tour",
     "settingsCardText": "Ein einminütiger Rundgang durch die wichtigsten Seiten.",

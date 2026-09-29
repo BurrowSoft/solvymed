@@ -70,6 +70,7 @@ export function TourOverlay({
   startAt = 0,
   onStep,
   onClose,
+  onTryNow,
   stepsNamespace = "tour",
 }: {
   // Where the steps' title/text keys live ("news" for a Novidades tour).
@@ -81,6 +82,8 @@ export function TourOverlay({
   // "none": no step could be shown at all (nothing on screen), so nothing
   // should be recorded as seen.
   onClose: (result: "completed" | "skipped" | "none", index: number) => void;
+  // "Experimentar agora" on the SolvyAI step: pause the tour, open SolvyAI.
+  onTryNow?: (index: number) => void;
 }) {
   const t = useTranslations("tour");
   const tSteps = useTranslations(stepsNamespace);
@@ -296,6 +299,11 @@ export function TourOverlay({
                   {t("skipTour")}
                 </button>
                 <div className="flex gap-2">
+                  {onTryNow && steps[index]?.id === "solvyai" && (
+                    <button type="button" onClick={() => onTryNow(index)} className="rounded-lg border border-teal-200 px-3 py-2 text-sm font-semibold text-teal-700 hover:bg-teal-50">
+                      {t("tryNow")}
+                    </button>
+                  )}
                   {index > 0 && (
                     <button type="button" onClick={back} className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">
                       {t("back")}

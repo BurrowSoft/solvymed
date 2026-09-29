@@ -1128,6 +1128,8 @@
     "resumeTitle": "Tiếp tục hướng dẫn? (bước {n}/{total})",
     "continue": "Tiếp tục",
     "dismiss": "Bỏ qua",
+    "tryNow": "Dùng thử ngay",
+    "tryNowQuestion": "SolvyAI có thể làm gì?",
     "replay": "Xem lại hướng dẫn",
     "settingsCardTitle": "Hướng dẫn nhanh",
     "settingsCardText": "Một vòng 1 phút qua các màn hình chính.",

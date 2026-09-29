@@ -1128,6 +1128,8 @@
     "resumeTitle": "Reprendre le tour ? (étape {n} sur {total})",
     "continue": "Reprendre",
     "dismiss": "Ignorer",
+    "tryNow": "Essayer maintenant",
+    "tryNowQuestion": "Que peut faire SolvyAI ?",
     "replay": "Revoir le tour",
     "settingsCardTitle": "Visite guidée",
     "settingsCardText": "Un tour d'une minute des écrans principaux.",
