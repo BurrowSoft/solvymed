@@ -94,6 +94,7 @@ describe("privacy policy", () => {
     expect(container.textContent).not.toContain("Founders Program");
     rerender(wrap(true));
     expect(container.textContent).toContain("6d. Founders Program applications");
-    expect(container.textContent).toContain("deleted 12 months after that decision");
+    expect(container.textContent).toContain("deleted 12 months after their last update");
+    expect(container.textContent).toContain("kept while their account exists");
   });
 });
