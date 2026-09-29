@@ -8925,3 +8925,28 @@ The new key is in all 15 locales (16 files, +1 line each).
 **CI at `23f326f`:** ✅. **Review: clean.** **Merge gate: 🟢 for
 `23f326f`.** This docs commit sits on top of a master sync (1 behind;
 clean).
+
+## #159 Opening a patient file is fail-closed on the access log (web tester 1, 2026-09-29/30)
+
+**What was tested:** PR head `fdf91b2`, on a local `next dev` (Playwright).
+- **Injection:** a test-only preload answers `rpc/log_record_access` with
+  a 500 while switched on (its log confirms each injected call).
+- **Fixture:** the kept #150 fixture doctor (on the purge list), Exames
+  tab. A small PDF was uploaded through the tab.
+
+| Row | Result |
+|---|---|
+| Upload | ✅ listed as "opus-pr159-exame.pdf · 1 KB" with **Abrir** / **Remover**. A second upload with the same name became "opus-pr159-exame (2).pdf". |
+| Abrir, log works | ✅ one `record_access_log` row (kind `file`, `object_ref` = the storage path) is written first. The new tab then loads the signed `storage/v1/object/sign/patient-files/…` link, which returns 200 `application/pdf`. Headless Chromium saves a PDF as a download ("opus-pr159-exame.pdf"); a normal browser shows it. |
+| Abrir, the log write fails (pt-BR) | ✅ "Não foi possível registrar o acesso. Tente novamente." The blank tab closes (after about 2 s); **no signed link is requested**, and no `file` row is written (checked past the 60 s dedupe). |
+| Same in en | ✅ "Couldn't record the access. Please try again."; the tab closes |
+| Unblocked again | ✅ it opens (signed link, 200 PDF) |
+| Locales | ✅ `patientDetail.filesAccessLogFailed` is in all 15 locales |
+
+**Leftover:** one uploaded test PDF stays on the fixture patient; the other
+was removed through **Remove**. It goes with the mobile dev's purge of the
+pr150 fixtures.
+
+**Master sync:** master (#152–#155) merged in under this docs commit,
+cleanly.
+**Review: clean (7f).** **Merge gate: 🟢 for `fdf91b2`.**
