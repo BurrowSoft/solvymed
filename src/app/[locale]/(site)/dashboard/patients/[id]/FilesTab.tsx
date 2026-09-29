@@ -68,7 +68,7 @@ export function FilesTab({ patientId, doctorId, kind, isArchived, locale }: {
     const win = window.open("", "_blank");
     if (win) win.opener = null;
     const r = await openPatientFile(patientId, f.path);
-    if (!r.ok) { win?.close(); setError(t("filesError")); return; }
+    if (!r.ok) { win?.close(); setError(r.code === "access_log_failed" ? t("filesAccessLogFailed") : t("filesError")); return; }
     // Pop-ups blocked: never navigate away from the patient; say so.
     if (win) win.location.href = r.data;
     else setError(t("filesPopupBlocked"));

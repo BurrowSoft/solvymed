@@ -426,6 +426,7 @@
     "filesHideTitle": "Retirer le fichier",
     "filesHideHint": "Plus de 24 heures se sont écoulées depuis l’envoi : le fichier est masqué au lieu d’être supprimé. Indiquez pourquoi.",
     "filesPopupBlocked": "Votre navigateur a bloqué le nouvel onglet. Autorisez les fenêtres pop-up pour SolvyMed et réessayez.",
+    "filesAccessLogFailed": "Impossible d’enregistrer l’accès. Veuillez réessayer.",
     "accessLogIntro": "Qui a ouvert le dossier de ce patient, et quand. Vous seul pouvez voir ce journal.",
     "accessLogEmpty": "Aucun accès enregistré pour l'instant.",
     "accessLogFailed": "Impossible de charger le journal des accès. Veuillez réessayer.",
