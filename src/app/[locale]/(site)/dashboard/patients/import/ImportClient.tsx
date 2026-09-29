@@ -77,7 +77,7 @@ export function ImportClient({ locale, country, db: injected }: { locale: string
     try { r = await readInWorker(file, ["\t", ";", ","]); } catch { r = { ok: false, error: "unreadable" }; }
     setBusy(null);
     if (!r.ok) { setError(t(`file_${r.error}`)); return; }
-    const detected = detectSource(r.headers);
+    const detected = detectSource(r.headers, file.name);
     setSheet({ name: file.name, headers: r.headers, rows: r.rows });
     setSource(detected);
     setPlan(planColumns(detected, r.headers));

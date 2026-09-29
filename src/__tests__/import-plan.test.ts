@@ -21,13 +21,45 @@ describe("reading a CSV", () => {
   });
 });
 
-describe("the source", () => {
-  it("iClinic and Prontuário Verde by their fingerprints; anything else is a spreadsheet", () => {
-    expect(detectSource(["name", "birth_date", "gender", "cns"])).toBe("iclinic");
-    expect(detectSource(["NAME", "Birth_Date", "patient_code"])).toBe("iclinic");
-    expect(detectSource(["name", "birth_date"])).toBe("generic"); // no headers_any
-    expect(detectSource(["CLI_ID", "PAC_ID", "Nome", "Nascimento", "CPF"])).toBe("prontuario_verde");
-    expect(detectSource(["Nome", "CPF", "Celular"])).toBe("generic");
+describe("the source (the presets README; 38's reference cases, __tests__/lib/import-presets.test.ts)", () => {
+  it("an ordinary Brazilian sheet with Mãe / CNS is generic, not Prontuário Verde", () => {
+    expect(detectSource(["Nome", "Nascimento", "Mãe", "CNS", "Telefone", "E-mail"], "pacientes.csv")).toBe("generic");
+    expect(detectSource(["Nome", "Nascimento", "Prontuário"], "pacientes.csv")).toBe("generic");
+    // File names match exactly (case-sensitive): an ordinary sheet saved as paciente.csv is not PV.
+    expect(detectSource(["Nome", "Telefone"], "paciente.csv")).toBe("generic");
+  });
+  it("a real Prontuário Verde export: its ids, \"Prontuário\" with Telefone1, or PACIENTE.csv", () => {
+    expect(detectSource(["PAC_ID", "CLI_ID", "Nome", "Nascimento", "Sexo", "Telefone1", "Mãe", "CNS"])).toBe("prontuario_verde");
+    expect(detectSource(["Nome", "Nascimento", "Prontuário", "Telefone1"])).toBe("prontuario_verde");
+    expect(detectSource(["Nome", "Telefone"], "PACIENTE.csv")).toBe("prontuario_verde");
+  });
+  it("an ordinary English sheet with cns / indication is generic, not iClinic; patient.csv alone too", () => {
+    expect(detectSource(["name", "birth_date", "cns", "indication", "patient_code"], "patients.csv")).toBe("generic");
+    expect(detectSource(["name", "phone"], "patient.csv")).toBe("generic");
+  });
+  it("a real iClinic export: civil_name / social_gender, or patient.csv inside the ZIP", () => {
+    expect(detectSource(["name", "birth_date", "civil_name", "cns"])).toBe("iclinic");
+    expect(detectSource(["name", "birth_date", "social_gender"])).toBe("iclinic");
+    expect(detectSource(["whatever"], "export.zip", ["patient.csv"])).toBe("iclinic");
+  });
+});
+
+describe("unlisted columns and the header match", () => {
+  it("a system preset's unlisted column takes generic's suggestion (Telefone / E-mail / CPF) unless the preset fills that field", () => {
+    const plan = planColumns("prontuario_verde", ["PAC_ID", "Nome", "Nascimento", "Telefone", "E-mail", "Convênio"]);
+    const at = (h: string) => plan.find((c) => c.header === h)!;
+    expect([at("Telefone").field, at("E-mail").field]).toEqual(["phone", "email"]);
+    expect(at("Convênio")).toMatchObject({ kind: "extra", label: "Convênio" });
+    // Telefone1 is PV's own phone column: an extra "Telefone" stays imported data.
+    const own = planColumns("prontuario_verde", ["PAC_ID", "Nome", "Telefone1", "Telefone"]);
+    expect(own.find((c) => c.header === "Telefone")).toMatchObject({ kind: "extra" });
+  });
+
+  it("only Latin accents go (Thai marks stay); º reads as o", () => {
+    expect(normalizeHeader("Profissão")).toBe("profissao");
+    expect(normalizeHeader("Nº de identidade tailandês")).toBe("no de identidade tailandes");
+    expect(normalizeHeader("ชื่อ-นามสกุล")).toBe("ชื่อ นามสกุล");
+    expect(planColumns("generic", ["Nº de identidade tailandês", "ชื่อ-นามสกุล"]).map((c) => c.field)).toEqual(["th_national_id", "full_name"]);
   });
 });
 

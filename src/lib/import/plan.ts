@@ -1,12 +1,12 @@
 // The patient import's column plan (migrations 130/131): which of the
 // file's columns go to which SolvyMed field, per the presets (copied from
-// the mobile repo's supabase/import-presets, feat/import-presets bcefa03;
+// the mobile repo's supabase/import-presets, feat/import-presets 68cd763;
 // see its README for the rule vocabulary). The database stays the single
 // source of truth for values: a preset only routes columns and translates a
 // system's own codes; cells are sent as read.
-import generic from "./presets/generic.v1.json";
-import iclinic from "./presets/iclinic.v1.json";
-import prontuarioVerde from "./presets/prontuario_verde.v1.json";
+import generic from "./presets/generic.v2.json";
+import iclinic from "./presets/iclinic.v2.json";
+import prontuarioVerde from "./presets/prontuario_verde.v2.json";
 
 export const IMPORT_FIELDS = [
   "full_name", "cpf", "th_national_id", "passport_number", "birth_date", "sex", "phone", "email", "rg", "profession", "tags",
@@ -21,7 +21,8 @@ type ColumnRule = {
 };
 export type Preset = {
   source: ImportSource; version: number; label: string;
-  fingerprint?: { files?: string[]; headers_all?: string[]; headers_any?: string[] };
+  fingerprint?: { files?: string[]; zip_files?: string[]; headers_all?: string[]; headers_any?: (string | string[])[] };
+  unlisted?: "generic_suggest";
   read?: { encodings?: string[]; delimiters?: string[] };
   columns?: Record<string, ColumnRule>;
   suggest?: Partial<Record<ImportField, string[]>>;
@@ -51,21 +52,29 @@ export type ColumnPlan = {
 
 const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
-// Case-, accent- and punctuation-insensitive (the generic preset's rule).
+// Case-, accent- and punctuation-insensitive (the presets README): only
+// Latin diacritics go (U+0300–036F), so Thai vowel and tone marks stay;
+// NFKD also turns "º" into "o" ("Nº" = "no"). Punctuation is a space.
 export function normalizeHeader(h: string): string {
-  return h.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  return h.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, " ").trim();
 }
 
-// The highest version whose fingerprint matches; else the generic sheet.
-export function detectSource(headers: string[]): ImportSource {
-  const has = (h: string) => headers.some((x) => same(x, h));
+// The presets README "Recognising a system's file": a system is picked when
+// the uploaded file's name is in `files` (or a file inside a ZIP is in
+// `files` / `zip_files`), matched exactly and case-sensitively; or when
+// every `headers_all` header is present and at least one `headers_any` entry
+// is (an array: a group, all present). Headers ignore case and surrounding
+// spaces. The highest matching version wins; no match is the generic sheet.
+export function detectSource(headers: string[], fileName?: string, inZip: string[] = []): ImportSource {
+  const hs = new Set(headers.map((h) => h.trim().toLowerCase()));
+  const has = (h: string) => hs.has(h.trim().toLowerCase());
   const hits = PRESETS.filter((p) => {
     const f = p.fingerprint;
     if (!f) return false;
-    const all = f.headers_all ?? [];
-    const any = f.headers_any ?? [];
-    return all.length > 0 && all.every(has) && (any.length === 0 || any.some(has));
-  }).sort((a, b) => b.version - a.version);
+    const byName = (f.files ?? []).some((n) => n === fileName || inZip.includes(n)) || (f.zip_files ?? []).some((n) => inZip.includes(n));
+    const byHeaders = (f.headers_all ?? []).every(has) && (f.headers_any ?? []).some((e) => (Array.isArray(e) ? e.every(has) : has(e)));
+    return byName || byHeaders;
+  }).sort((x, y) => y.version - x.version);
   return hits[0]?.source ?? "generic";
 }
 
@@ -98,14 +107,37 @@ export function separateNames(plan: ColumnPlan[]): ColumnPlan[] {
 
 function planEach(source: ImportSource, headers: string[]): ColumnPlan[] {
   const preset = presetFor(source);
+  const gen = presetFor("generic");
   const taken = new Set<ImportField>();
+  // A system preset's own columns present in this file, and the fields they fill.
+  const ruleFor = (header: string) => {
+    const key = Object.keys(preset.columns ?? {}).find((k) => same(k, header));
+    return key ? preset.columns![key] : undefined;
+  };
+  for (const h of headers) {
+    const f = ruleFor(h)?.field;
+    if (f && f !== "archived") taken.add(f);
+  }
+  // Generic's suggestions: the first column wins a field not yet filled.
+  const suggest = (base: { index: number; header: string }): ColumnPlan | null => {
+    const n = normalizeHeader(base.header);
+    for (const f of IMPORT_FIELDS) {
+      if (taken.has(f)) continue;
+      if ((gen.suggest?.[f] ?? []).some((s) => normalizeHeader(s) === n)) {
+        taken.add(f);
+        return { ...base, kind: "field", field: f, split: f === "tags" ? ";" : undefined };
+      }
+    }
+    return null;
+  };
   return headers.map((header, index): ColumnPlan => {
     const base = { index, header };
     if (preset.columns) {
-      const key = Object.keys(preset.columns).find((k) => same(k, header));
-      const rule = key ? preset.columns[key] : undefined;
-      // Not in the preset: kept as imported data, never silently lost.
-      if (!rule) return { ...base, kind: "extra", label: header.trim() };
+      const rule = ruleFor(header);
+      // Not in the preset: generic's suggestion ("unlisted": "generic_suggest")
+      // unless the preset already fills that field; else kept as imported data,
+      // never silently lost.
+      if (!rule) return (preset.unlisted === "generic_suggest" ? suggest(base) : null) ?? { ...base, kind: "extra", label: header.trim() };
       if (rule.ignore) return { ...base, kind: "ignore" };
       if (rule.field) {
         return { ...base, kind: "field", field: rule.field, priority: rule.priority, elseExtra: rule.else_extra, values: rule.values, split: rule.split };
@@ -113,14 +145,9 @@ function planEach(source: ImportSource, headers: string[]): ColumnPlan[] {
       return { ...base, kind: "extra", label: rule.extra ?? header.trim(), values: rule.values, split: rule.split, join: rule.join, sensitive: rule.sensitive };
     }
     // The generic sheet: header suggestions; the first column wins a field.
+    const hit = suggest(base);
+    if (hit) return hit;
     const n = normalizeHeader(header);
-    for (const f of IMPORT_FIELDS) {
-      if (taken.has(f)) continue;
-      if ((preset.suggest?.[f] ?? []).some((s) => normalizeHeader(s) === n)) {
-        taken.add(f);
-        return { ...base, kind: "field", field: f, split: f === "tags" ? ";" : undefined };
-      }
-    }
     const extra = Object.entries(preset.extra_suggest ?? {}).find(([, aliases]) => aliases.some((s) => normalizeHeader(s) === n));
     return { ...base, kind: "extra", label: extra ? extra[0] : header.trim() };
   });
