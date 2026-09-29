@@ -78,7 +78,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false }: { turnst
               ? [["Anthropic (SolvyAI, professionals only, when used)", "Processes the professional's typed questions and requests to answer them; for actions the professional has switched on, the patient's name, date of birth and the appointment details needed for the request", "USA"]]
               : []),
             ...(line
-              ? [["LY Corporation (LINE), Thai clinics only, for patients who connect LINE", "Sends appointment notices (clinic name, date, time); we store the patient's LINE user id to deliver them", "Japan / Thailand"]]
+              ? [["LY Corporation (LINE), Thai clinics only, for patients who connect LINE", "Sends appointment notices (the clinic's name, the date and time, and what happened: confirmed, moved, reminder, cancelled); we store the patient's LINE user ID to deliver them", "Japan / Thailand"]]
               : []),
           ]}
         />
@@ -118,8 +118,9 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false }: { turnst
       {line && (
         <Section title="6c. LINE notices (Thailand)">
           <ul className="list-disc space-y-1 pl-5">
-            <li>Patients of Thai clinics can connect LINE to receive appointment notices. They choose to connect and can disconnect at any time (in the app, or by blocking the SolvyMed LINE account).</li>
-            <li>Notices contain only the clinic name, the date and the time, never clinical information.</li>
+            <li>Patients of Thai clinics can connect LINE to receive appointment notices. They choose to connect and can stop at any time.</li>
+            <li>LINE receives only the clinic&rsquo;s name, the appointment&rsquo;s date and time, and what happened to it (confirmed, moved, reminder, cancelled): never clinical information.</li>
+            <li>If you disconnect in the app or delete your account, we delete your LINE ID. If you block our LINE account, we stop sending and keep the ID only so notices resume if you unblock; disconnect in the app to remove it.</li>
           </ul>
         </Section>
       )}

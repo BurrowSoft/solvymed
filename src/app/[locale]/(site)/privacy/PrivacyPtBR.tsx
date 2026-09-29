@@ -78,7 +78,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false }: { turn
               ? [["Anthropic (SolvyAI, só profissionais, quando usado)", "Processa as perguntas e pedidos digitados pelo profissional para respondê-los; nas ações que o profissional ativou, o nome e a data de nascimento do paciente e os dados da consulta necessários ao pedido", "EUA"]]
               : []),
             ...(line
-              ? [["LY Corporation (LINE), só clínicas na Tailândia, para pacientes que conectam o LINE", "Envia avisos de consulta (nome da clínica, data, horário); guardamos o identificador LINE do paciente para entregá-los", "Japão / Tailândia"]]
+              ? [["LY Corporation (LINE), só clínicas na Tailândia, para pacientes que conectam o LINE", "Envia avisos de consulta (o nome da clínica, a data e o horário, e o que aconteceu: confirmada, remarcada, lembrete, cancelada); guardamos o identificador LINE do paciente para entregá-los", "Japão / Tailândia"]]
               : []),
           ]}
         />
@@ -118,8 +118,9 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false }: { turn
       {line && (
         <Section title="6c. Avisos pelo LINE (Tailândia)">
           <ul className="list-disc space-y-1 pl-5">
-            <li>Pacientes de clínicas na Tailândia podem conectar o LINE para receber avisos de consulta. Eles escolhem conectar e podem desconectar a qualquer momento (no app, ou bloqueando a conta SolvyMed no LINE).</li>
-            <li>Os avisos têm só o nome da clínica, a data e o horário, nunca informações clínicas.</li>
+            <li>Pacientes de clínicas na Tailândia podem conectar o LINE para receber avisos de consulta. Eles escolhem conectar e podem parar a qualquer momento.</li>
+            <li>O LINE recebe só o nome da clínica, a data e o horário da consulta e o que aconteceu com ela (confirmada, remarcada, lembrete, cancelada): nunca informações clínicas.</li>
+            <li>Se você desconectar no app ou excluir sua conta, apagamos seu identificador LINE. Se você bloquear nossa conta no LINE, paramos de enviar e guardamos o identificador só para retomar os avisos se você desbloquear; desconecte no app para removê-lo.</li>
           </ul>
         </Section>
       )}
