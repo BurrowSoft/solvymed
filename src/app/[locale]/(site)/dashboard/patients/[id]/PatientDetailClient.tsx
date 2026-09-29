@@ -249,6 +249,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
   const errorText = (e: string) =>
     e === "patient_archived" ? t("archivedNoNew")
     : e === "patient_has_clinical_history" ? t("deleteHasHistory")
+    : e === "patient_has_appointments" ? t("deleteHasAppointments")
     : e === "name_required" ? t("nameRequired")
     : e === "invalid_th_id" ? tIds("thaiIdInvalid")
     : e === "invalid_birth_date" ? tBirth("invalidBirthDate")
@@ -256,6 +257,9 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
     : e === "unauthorized" ? t("sessionError")
     : t("genericError");
   const [archiveOpen, setArchiveOpen] = useState(false);
+  // Delete refused (history or appointments added since the page loaded):
+  // the message comes with an Arquivar button.
+  const [offerArchive, setOfferArchive] = useState(false);
   const [editing, setEditing] = useState(false);
   const [pending, startTransition] = useTransition();
   const [blockPending, startBlockTransition] = useTransition();
@@ -311,11 +315,15 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
   function handleDelete() {
     if (!confirm(t("deleteNoHistoryConfirm", { name: patient.full_name }))) return;
     setError("");
+    setOfferArchive(false);
     startTransition(async () => {
       const result = await deletePatient(patient.id);
       if (result?.error) {
-        // History was added since the page loaded: archive instead.
-        setError(result.error === "patient_has_clinical_history" ? t("deleteHasHistory") : t("deleteError"));
+        // History or an appointment was added since the page loaded:
+        // archive instead.
+        const inUse = result.error === "patient_has_clinical_history" || result.error === "patient_has_appointments";
+        setError(result.error === "patient_has_clinical_history" ? t("deleteHasHistory") : result.error === "patient_has_appointments" ? t("deleteHasAppointments") : t("deleteError"));
+        setOfferArchive(inUse && !isArchived);
         return;
       }
       router.push(`${prefix}/dashboard/patients`);
@@ -424,6 +432,11 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
           )}
         </div>
         {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        {offerArchive && (
+          <button onClick={() => { setOfferArchive(false); setError(""); setArchiveOpen(true); }} className="mt-2 rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+            {t("archivePatient")}
+          </button>
+        )}
         <ArchiveDialog open={archiveOpen} onClose={() => setArchiveOpen(false)} patient={patient} />
       </div>
     );

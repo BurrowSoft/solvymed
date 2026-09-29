@@ -141,7 +141,7 @@ export default async function PatientDetailPage({
           isArchived={isArchived}
           currentUserId={user.id}
           idKind={patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId))}
-          canDelete={preview?.hasClinicalHistory === false}
+          canDelete={preview?.hasClinicalHistory === false && preview.hasAppointments === false}
           accessLog={accessLog}
         />
       </div>
