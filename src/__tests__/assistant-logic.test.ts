@@ -67,7 +67,7 @@ describe("the mock follows the spec's rules", () => {
   });
 
   it("no Open screen for what the website doesn't have", () => {
-    const blocks = mockAnswer("How do I upload exams and files?", "en", "");
+    const blocks = mockAnswer("How do I export a patient's history as PDF?", "en", "");
     expect(blocks.some((b) => b.type === "open")).toBe(false);
   });
 

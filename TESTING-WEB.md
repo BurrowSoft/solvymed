@@ -8587,6 +8587,94 @@ as #145's entry, with a DB flip and no checkout:
 `4528f4b`.** The branch was up to date with master; this docs commit sits
 on top.
 
+## PR #147 (`feat/web-patient-files`, base master) — exams and files on the website (Help P7), 🟢 at `6681b0a`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Where:** Vercel Preview (Playwright, Chromium) against the prod DB.
+- **Fixtures:** a throwaway doctor and two patients, with throwaway 1-KB
+  PNG / PDF files only (no real data), plus a throwaway secretary.
+- **Purge:** 8d purges the doctors afterwards (files = clinical history).
+- **Backdating:** for the >24 h row, 8d backdated one object
+  (`exams/hemograma-opus.pdf`) to −2 days, guarded to this fixture.
+
+**Tabs and upload (tested at `48ec09a`; `6681b0a` only changes `open()` + the UUID guard):**
+- **Doctor:** tabs "Informações · Registros · Receitas · **Exames** ·
+  **Arquivos** · Consultas · Registro de acessos". The secretary sees only
+  "Informações · Consultas".
+- **Upload:** PNG + PDF into Exames → `<prof>/<pat>/exams/…`, and into
+  Arquivos → `<prof>/<pat>/…`, listed with the date and size.
+- **The same name twice:** "raio-x opus (2).png". Nothing is overwritten
+  (storage has both).
+- **Rejected:**
+  - a `.txt` → "Escolha uma foto ou um PDF.";
+  - a 51 MB PDF → "O arquivo é grande demais (máximo 50 MB)."
+- **Remover within 24 h:** confirm → the object is deleted from storage, no
+  hide dialog.
+- **Archived patient** (via "Arquivar cadastro"): only "Abrir"; no Enviar,
+  no Remover.
+- **Access log:** opening writes `record_access_log` kind `file` with the
+  path.
+- **en:** the tabs are "Exams / Files / Access log".
+
+**Opening a file, re-tested at `6681b0a`:**
+- **My finding at `48ec09a`** (7f: BLOCKING): `window.open(…, "noopener")`
+  returned null, so "Abrir" replaced the app tab with the signed URL and
+  left an about:blank tab. It's fixed.
+- **Abrir:** a new tab opens the signed URL (HTTP 200) with
+  `window.opener === null`. The app tab stays on
+  `/pt-BR/dashboard/patients/<id>`.
+- **Pop-ups blocked** (`window.open` → null): "O navegador bloqueou a nova
+  aba. Permita pop-ups para o SolvyMed e tente de novo." No navigation.
+- **Failed link** (the object deleted behind the page): "Algo deu errado.
+  Tente novamente." The blank tab is closed (1 tab before and after).
+
+**Hiding an older file** (the backdated PDF):
+- Remover → "Remover arquivo: hemograma-opus.pdf | Já se passaram mais de 24
+  horas desde o envio, então o arquivo é ocultado em vez de excluído.
+  Informe o motivo."
+- An empty reason → "Informe um motivo." (the dialog stays).
+- With a reason → gone from the list; "Arquivos removidos (1)" →
+  "hemograma-opus.pdf removido em 29/09/2026 por Dra Opus Arquivos: [TEST]
+  exame duplicado", with **no Abrir**. The object stays in storage.
+- **Nit (copy):** the reason field is labelled "Motivo da correção"
+  (borrowed from record corrections). "Motivo" alone would fit a file
+  removal.
+
+**CI at `6681b0a`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `6681b0a`.** This docs commit sits on top of a master sync (6 behind; clean).
+
+## PR #149 (`feat/settings-subscription`, base master) — Configurações → Assinatura with "Gerenciar assinatura", 🟢 at `0c92dc2`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Where:** the Vercel Preview (Playwright) against the prod DB, with a
+  throwaway doctor and secretary (deleted afterwards).
+- **The active row:** a real **Stripe TEST** subscription made through the
+  API.
+  - The customer has `pm_card_visa`, the price is R$ 89/month, and
+    `metadata.user_id` = the doctor, as the portal route requires.
+  - `professionals` is set to `stripe` / that id / `active` (what the
+    webhook would write).
+  - The subscription is cancelled and the customer deleted afterwards.
+
+**Results:**
+
+| Row | Result |
+|---|---|
+| Trial (15 days) | ✅ "Assinatura: Teste grátis: faltam 15 dias" + "Ver o plano" → `/pt-BR/subscribe` |
+| Trial ending in 25 h | ✅ "faltam 2 dias" (rounded up), link shown |
+| Active Stripe sub | ✅ "Plano Pro · ativo" + **Gerenciar assinatura** → `billing.stripe.com/p/session…`. The portal's return link is `/pt-BR/dashboard/settings`, and following it lands back on Configurações (not /subscribe) |
+| Lifetime | ✅ "Plano Pro · vitalício", no button |
+| Expired | ✅ Configurações isn't reachable: the existing gate sends them to `/pt-BR/subscribe` ("Seu período de teste encerrou. Assine para continuar."). The card's "Nenhuma assinatura ativa" state isn't shown in this case |
+| Secretary | ✅ no Assinatura card (no status line, no plan / manage buttons) |
+| en / th | ✅ "Subscription · Free trial: 2 days left · See the plan"; "การสมัครสมาชิก · ทดลองใช้ฟรี: เหลืออีก 2 วัน" |
+
+**CI at `0c92dc2`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `0c92dc2`.** This docs commit sits on top of a master sync (3 behind; clean).
+
 ## #148 (release) Stripe webhook failures reported to Sentry (web tester 1, 2026-09-29)
 
 **What was tested:** PR head `e80517a`, locally with `next dev`.
@@ -8633,3 +8721,33 @@ on top.
 merge was clean, with no change to this PR's code.
 **CI at `e80517a`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `e80517a`**, with the breadcrumb note for 7f/UX to decide.
+
+**#148 prod check (www, release `6e90d70`, Ready):** ✅.
+- A POST with a bad `stripe-signature` → 400 "Invalid signature"; no
+  header → 400 "No signature".
+- That bad-signature POST (about 15:40 UTC 2026-09-29) makes one real
+  "Stripe webhook: bad_signature" event in prod Sentry. It's this test,
+  not a Stripe problem; 7f and e7 were told.
+
+## #151 Merge-back of release #148 into master (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `eba558c`.
+- **The code:** the webhook route is identical to release's. Only the
+  comment in `stripeWebhookReport.ts` changed; it now says what Sentry
+  receives, including the Stripe API path breadcrumb.
+- **The run:** #148's local run, repeated at `eba558c`: local `next dev`,
+  the DSN pointed at a local sink, a local-only webhook secret with signed
+  test events.
+
+| Case | Result |
+|---|---|
+| Bad signature | ✅ 400 + one "Stripe webhook: bad_signature" event |
+| No signature header | ✅ 400, no event |
+| Valid unhandled / unpaid checkout / invoice with no subscription | ✅ 200, no event |
+| Valid subscription.updated or paid checkout whose subscription 404s | ✅ 500 + one sync_failed, tagged with the event type and id |
+| The marker strings (email, customer, name, amount, card) | ✅ none in what Sentry got |
+
+**Master sync:** master (#147, #149) merged in under this docs commit.
+There was a conflict in TESTING-WEB.md only: master's block comes first,
+then #148's, and nothing was dropped.
+**Review: clean (7f).** **Merge gate: 🟢 for `eba558c`.**
