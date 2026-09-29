@@ -168,11 +168,11 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                     </span>
                   )}
                   {/* The clinic's proposal: the time it proposed, not just the original (UX 36). */}
-                  {b.status === "proposal" && b.scheduled_by !== "patient" && b.proposed_date && (
+                  {b.status === "proposal" && b.scheduled_by !== "patient" && b.proposed_date && b.proposed_start_time && (
                     <p className="mt-1 text-xs text-slate-500">
                       {t("proposedLabel", {
                         date: formatDateLabel(locale, b.proposed_date),
-                        time: b.proposed_start_time ? formatTimeLabel(locale, b.proposed_start_time) : "",
+                        time: formatTimeLabel(locale, b.proposed_start_time),
                       })}
                     </p>
                   )}
