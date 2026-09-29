@@ -60,8 +60,8 @@ describe("conditions: held text is left out of the build", () => {
     expect(text).not.toMatch(/\{pending:|`requires:/);
     const conditions = JSON.parse(readFileSync(resolve(__dirname, "../../content/help/conditions.json"), "utf8"));
     const a1 = JSON.stringify(findArticle("a1")!.article);
-    if (conditions["mobile#91"].met) expect(a1).toContain("Outside your working hours");
-    else expect(a1).not.toContain("Outside your working hours");
+    if (conditions["mobile#91"].met) expect(a1).toContain("Outside the working hours");
+    else expect(a1).not.toContain("Outside the working hours");
   });
 
   it("C9 (SolvyAI) is truly absent until SolvyAI is live: no page, list, search or app view", () => {
