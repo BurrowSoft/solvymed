@@ -182,6 +182,7 @@ export const ACTIONS: AppMapAction[] = [
       "Confirming also adds (or links) the patient to the practice in the same step and notifies them.",
       "Rejecting only works while it's still a request (tentative or proposal) and notifies the patient.",
       "Proposing another time is done on the request card, not by SolvyAI.",
+      { text: "In the patient's app: a patient can cancel their own pending request, accept or decline a time the clinic proposed, and ask to reschedule a scheduled or confirmed appointment only before it starts; they can't cancel a booked appointment themselves (the app tells them to talk to the clinic).", pending: ["app-1.4.0"] },
       "A decision made through SolvyAI has no Desfazer: the patient is notified at once.",
     ],
     card: ["patient", "when (weekday, date, time)", "confirm or reject", "note"],
@@ -249,7 +250,7 @@ export const ACTIONS: AppMapAction[] = [
       "Only for Brazilian practices with a Pix key; it opens WhatsApp with the patient's number and the Pix message.",
       "It needs the patient's phone number; without one, say so and offer the QR / Pix Copia e Cola on the appointment instead.",
       "On the website SolvyAI doesn't send it: it's only in the app for now (say so, with the Help link).",
-      "Thai practices show a PromptPay QR on the appointment instead; there's no WhatsApp PromptPay message.",
+      "Thai practices show a PromptPay QR on the appointment instead; there's no WhatsApp PromptPay message. Asked to send it for a Thai practice, SolvyAI never proposes it: it answers \"Em clínicas na Tailândia, o paciente paga escaneando o QR PromptPay da consulta.\" with an \"Abrir QR\" link to that appointment.",
       "The payment method always follows the PRACTICE's country.",
     ],
     card: ["patient", "appointment", "value", "Pix key"],
@@ -274,6 +275,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     rule: {
       text: "On the website, after a SolvyAI save the toast offers \"Desfazer\" / \"Undo\" for 10 s only when nothing reached the patient yet (a new patient, a payment, a block or unblock, or a single book / move / cancel for a patient without a SolvyMed account). When the patient may already have been told (a patient with an account: app push or LINE; a booking decision; a series), it shows \"Abrir\" / \"Open\" instead. If Desfazer fails: \"Não foi possível desfazer. Abra o item para ajustar.\"",
       pending: ["solvyai-live"],
+    },
+    help: "C9",
+  },
+  {
+    rule: {
+      text: "In the app too (1.4.0): after a SolvyAI save the toast offers \"Desfazer\" / \"Undo\" for 10 s only when nothing reached the patient yet, and \"Abrir\" / \"Open\" when the patient may already have been told (same rule as the website).",
+      pending: ["app-1.4.0", "solvyai-live"],
     },
     help: "C9",
   },

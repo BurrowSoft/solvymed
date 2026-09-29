@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./dark-theme.css";
 
 @theme {
   --color-teal-50: #f0fdfa;

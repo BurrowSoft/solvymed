@@ -17,6 +17,8 @@ import { HighlightFromQuery } from "@/components/HighlightFromQuery";
 import { SaveMyLocale } from "@/components/SaveMyLocale";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
+import { cookies } from "next/headers";
+import { THEME_COOKIE, parseTheme } from "@/lib/theme";
 
 function isVersionBelow(current: string, minimum: string): boolean {
   const parse = (v: string) => v.split(".").map(n => parseInt(n, 10) || 0);
@@ -167,7 +169,13 @@ export default async function DashboardLayout({
     trialChipText = t(key, { n });
   }
 
+  // Configurações → Aparência (Help C8): this browser's choice, default
+  // Automático (the system setting). The scope holds the tour and SolvyAI
+  // overlays too (display: contents keeps the layout as it was).
+  const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
+
   return (
+    <div data-theme={theme} data-theme-root className="contents">
     <TourProvider
       role={isSecretary ? "secretary" : "professional"}
       paymentQr={paymentQr}
@@ -212,5 +220,6 @@ export default async function DashboardLayout({
         <SaveMyLocale locale={locale} />
       </div>
     </TourProvider>
+    </div>
   );
 }
