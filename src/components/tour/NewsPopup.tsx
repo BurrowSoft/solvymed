@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { portalRoot } from "./portalRoot";
 import { useTranslations } from "next-intl";
 import type { NewsItem } from "@/lib/news";
 
@@ -53,6 +54,6 @@ export function NewsPopup({ items, onSee, onLater }: { items: NewsItem[]; onSee:
         </div>
       </div>
     </div>,
-    document.body,
+    portalRoot(),
   );
 }
