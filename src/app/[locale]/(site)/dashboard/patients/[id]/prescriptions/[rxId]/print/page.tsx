@@ -2,8 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
-import { formatShortDate } from "@/lib/dateLabels";
-import { PRINT_CSS, toDocTemplate } from "@/lib/prescriptionDoc";
+import { getPracticeCountry } from "@/lib/practiceCountry";
+import { PRINT_CSS, docDate, toDocTemplate } from "@/lib/prescriptionDoc";
 import { PrescriptionDocument } from "./PrescriptionDocument";
 import { PrintToolbar } from "@/components/PrintToolbar";
 
@@ -40,6 +40,8 @@ export default async function PrescriptionPrintPage({
   // The access log (migration 111), best effort like the app's.
   await supabase.rpc("log_record_access", { p_patient_id: patient.id, p_kind: "prescription", p_object_ref: rx.id }).then(() => {}, () => {});
 
+  // The date in the practice country's format (TH: Buddhist era).
+  const country = await getPracticeCountry(supabase, user.id, user.id);
   const prof = profResult.data as { full_name: string | null; professional_registration: string | null } | null;
 
   return (
@@ -55,7 +57,7 @@ export default async function PrescriptionPrintPage({
             notes: t("notes"), footer: t("footer"), corrected: t("corrected"),
           }}
           patientName={patient.full_name}
-          date={formatShortDate(locale, rx.date)}
+          date={docDate(country, rx.date)}
           corrected={(correctionResult.data ?? []).length > 0}
           items={rx.prescription_items ?? []}
           notes={rx.notes?.trim() ? rx.notes : null}

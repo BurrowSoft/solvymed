@@ -1,4 +1,4 @@
-import type { DocTemplate } from "@/lib/prescriptionDoc";
+import { tint, type DocTemplate } from "@/lib/prescriptionDoc";
 
 // The printed patient history (Help P8), laid out like the app's PDF
 // (lib/pdf-utils buildMedicalHistoryHtml): the patient's details, every
@@ -52,7 +52,7 @@ export function HistoryDocument({ template, labels, patientName, detailLines, re
         {labels.medicalRecords} <span className="font-normal text-[#A0ABBE]">({records.length})</span>
       </h2>
       {records.length === 0 ? <p className={empty}>{labels.noRecords}</p> : records.map((r) => (
-        <div key={r.id} className="mb-3.5 break-inside-avoid rounded-r-lg px-3.5 py-3" style={{ borderLeft: `3px solid ${primaryColor}`, background: accentColor }}>
+        <div key={r.id} className="mb-3.5 break-inside-avoid rounded-r-lg px-3.5 py-3" style={{ borderLeft: `3px solid ${primaryColor}`, background: tint(accentColor) }}>
           <div className="mb-1.5 text-[11px] text-[#A0ABBE]">{r.date} {r.time}{r.corrected && <strong> {labels.corrected}</strong>}</div>
           <div className="whitespace-pre-wrap text-[13px] leading-normal">{r.content}</div>
         </div>
@@ -76,7 +76,7 @@ export function HistoryDocument({ template, labels, patientName, detailLines, re
               {rx.items.map((m, i) => (
                 <tr key={i}>
                   {[m.name, m.dosage, m.frequency, m.duration].map((v, j) => (
-                    <td key={j} className="border-b border-[#E5E9F0] p-2.5 text-[13px]" style={i % 2 === 1 ? { background: accentColor } : undefined}>
+                    <td key={j} className="border-b border-[#E5E9F0] p-2.5 text-[13px]" style={i % 2 === 1 ? { background: tint(accentColor) } : undefined}>
                       {j === 0 ? <strong>{v}</strong> : v}
                     </td>
                   ))}
@@ -85,7 +85,7 @@ export function HistoryDocument({ template, labels, patientName, detailLines, re
             </tbody>
           </table>
           {rx.notes && (
-            <div className="mt-2 rounded-r-lg px-4 py-3 text-[13px] text-[#6B7A99]" style={{ background: accentColor, borderLeft: `3px solid ${primaryColor}` }}>{rx.notes}</div>
+            <div className="mt-2 rounded-r-lg px-4 py-3 text-[13px] text-[#6B7A99]" style={{ background: tint(accentColor), borderLeft: `3px solid ${primaryColor}` }}>{rx.notes}</div>
           )}
         </div>
       ))}

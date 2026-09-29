@@ -17,6 +17,41 @@ export const PRINT_CSS = `
   .print-hide { display: none !important; }
 }`;
 
+// Printed documents take their dates from the PRACTICE's country, not the
+// screen's language (UX 36 / TH rule 5): dd/mm/yyyy everywhere, in the
+// Buddhist era (+543) for a Thai practice. The labels stay in the UI
+// language.
+export function docDate(country: string, isoDate: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(isoDate);
+  if (!m) return isoDate;
+  const year = Number(m[1]) + (country === "TH" ? 543 : 0);
+  return `${m[3]}/${m[2]}/${year}`;
+}
+
+// A stored time ("9:05", "09:05:00") as HH:MM.
+export function docTime(time: string | null | undefined): string {
+  if (!time) return "";
+  const [h = "0", mm = "00"] = time.split(":");
+  return `${h.padStart(2, "0")}:${mm.padStart(2, "0").slice(0, 2)}`;
+}
+
+// Today's date in the clinic's time zone, as docDate.
+export function docToday(country: string, timeZone: string, now = new Date()): string {
+  let iso: string;
+  try {
+    iso = new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
+  } catch {
+    iso = now.toISOString().slice(0, 10);
+  }
+  return docDate(country, iso);
+}
+
+// A light tint of the accent for zebra rows and the notes box, so dark
+// text stays readable whatever accent the clinic picked (web tester 2).
+export function tint(color: string): string {
+  return `color-mix(in srgb, ${color} 18%, white)`;
+}
+
 export type DocTemplate = {
   primaryColor: string;
   accentColor: string;

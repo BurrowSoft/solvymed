@@ -2,8 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
-import { dateLocale, formatShortDate, formatTimeLabel } from "@/lib/dateLabels";
-import { PRINT_CSS, toDocTemplate } from "@/lib/prescriptionDoc";
+import { PRINT_CSS, docDate, docTime, docToday, toDocTemplate } from "@/lib/prescriptionDoc";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
 import { getClinicTimeZone } from "@/lib/clinicTime";
@@ -64,12 +63,15 @@ export default async function HistoryPrintPage({
   // phone, sex.
   const str = (v: unknown) => (typeof v === "string" && v.trim() ? v : null);
   const lines: string[] = [];
+  // Dates in the practice country's format (TH: Buddhist era); labels in
+  // the UI language.
+  const country = await getPracticeCountry(supabase, user.id, user.id);
   const birth = str(patient.birth_date);
   if (birth) {
     const age = Math.floor((Date.now() - new Date(birth).getTime()) / (365.25 * 24 * 3600 * 1000));
-    lines.push(`${t("birthDate", { value: formatShortDate(locale, birth) })}${age >= 0 ? ` (${tp("age", { n: age })})` : ""}`);
+    lines.push(`${t("birthDate", { value: docDate(country, birth) })}${age >= 0 ? ` (${tp("age", { n: age })})` : ""}`);
   }
-  const idKind = patientIdKind(await getPracticeCountry(supabase, user.id, user.id));
+  const idKind = patientIdKind(country);
   if (idKind === "BR" && str(patient.cpf)) lines.push(`${tIds("cpf")}: ${patient.cpf}`);
   if (idKind === "TH" && str(patient.th_national_id)) lines.push(`${tIds("thaiId")}: ${patient.th_national_id}`);
   if (idKind !== "BR" && str(patient.passport_number)) lines.push(`${idKind === "TH" ? tIds("passport") : tIds("passportOrId")}: ${patient.passport_number}`);
@@ -79,12 +81,7 @@ export default async function HistoryPrintPage({
 
   const prof = profResult.data as { full_name: string | null; clinic_name: string | null; professional_registration: string | null } | null;
   const timeZone = await getClinicTimeZone(supabase, { professionalId: user.id, isSecretary: false });
-  let today: string;
-  try {
-    today = new Intl.DateTimeFormat(dateLocale(locale), { year: "numeric", month: "long", day: "numeric", timeZone }).format(new Date());
-  } catch {
-    today = new Date().toISOString().slice(0, 10);
-  }
+  const today = docToday(country, timeZone);
 
   return (
     <div className="min-h-screen bg-slate-50 px-4 py-8">
@@ -103,11 +100,11 @@ export default async function HistoryPrintPage({
           patientName={patient.full_name as string}
           detailLines={lines}
           records={records.map((r) => ({
-            id: r.id, date: formatShortDate(locale, r.date), time: r.time ? formatTimeLabel(locale, r.time) : "",
+            id: r.id, date: docDate(country, r.date), time: docTime(r.time),
             content: r.content, corrected: correctedRecords.has(r.id),
           }))}
           prescriptions={rxs.map((rx) => ({
-            id: rx.id, date: formatShortDate(locale, rx.date), notes: rx.notes?.trim() ? rx.notes : null,
+            id: rx.id, date: docDate(country, rx.date), notes: rx.notes?.trim() ? rx.notes : null,
             corrected: correctedRx.has(rx.id), items: rx.prescription_items ?? [],
           }))}
           signerName={prof?.full_name ?? ""}

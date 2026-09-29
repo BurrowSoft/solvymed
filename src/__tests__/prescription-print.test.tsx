@@ -96,8 +96,32 @@ vi.mock("next/navigation", () => ({
   notFound: () => { throw new Error("NOT_FOUND"); },
   redirect: () => { throw new Error("REDIRECT"); },
 }));
+const country = vi.hoisted(() => ({ code: "BR" }));
+vi.mock("@/lib/practiceCountry", () => ({ getPracticeCountry: async () => country.code }));
+vi.mock("@/components/PrintToolbar", () => ({ PrintToolbar: () => null }));
 
 import PrintPage from "@/app/[locale]/(site)/dashboard/patients/[id]/prescriptions/[rxId]/print/page";
+import { docDate, docTime, docToday } from "@/lib/prescriptionDoc";
+
+// Printed dates follow the PRACTICE's country, not the screen (UX 36).
+describe("document dates", () => {
+  it("dd/mm/yyyy, the Buddhist era for a Thai practice", () => {
+    expect(docDate("BR", "2026-10-01")).toBe("01/10/2026");
+    expect(docDate("TH", "2026-10-01")).toBe("01/10/2569");
+    expect(docDate("ZZ", "2026-10-01")).toBe("01/10/2026");
+    expect(docTime("9:05:00")).toBe("09:05");
+    // 02:30 UTC on Oct 2 is still Oct 1 in São Paulo.
+    expect(docToday("BR", "America/Sao_Paulo", new Date("2026-10-02T02:30:00Z"))).toBe("01/10/2026");
+    expect(docToday("TH", "Asia/Bangkok", new Date("2026-10-02T02:30:00Z"))).toBe("02/10/2569");
+  });
+
+  it("the print page uses the practice's calendar whatever the UI language", async () => {
+    country.code = "TH";
+    const { container } = render(await PrintPage({ params: Promise.resolve({ locale: "en", id: "p-1", rxId: "rx-1" }) }));
+    expect(container.textContent).toContain("01/10/2569");
+    country.code = "BR";
+  });
+});
 
 describe("print page", () => {
   const params = Promise.resolve({ locale: "pt-BR", id: "p-1", rxId: "rx-1" });
