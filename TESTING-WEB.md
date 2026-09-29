@@ -9072,3 +9072,74 @@ type-filter label, per my nit. Thai Pagamentos now shows "สัปดาห์�
 - **Coverage:** #158 also touches Pagamentos (the Todos / Particular /
   Convênio filter). The rows above ran at `90065f5`, before that merge.
 **Review: clean (9a).** **Merge gate: 🟢 for `90065f5`.**
+
+## #169 Settings → Clinic: the state label and samples follow the practice country (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `9474d92`, on its Vercel Preview (Playwright).
+- **Accounts:** throwaway doctors with the practice country BR, TH and GB
+  ("any other country"). Each was checked in pt-BR, en and th.
+- **Read on each page:** the label and the placeholder of each clinic
+  field.
+
+| Practice | State label (pt-BR / en / th) | State sample | City sample | Phone sample | Website sample |
+|---|---|---|---|---|---|
+| BR | ✅ "Estado" / "State" / "จังหวัด" | SP | São Paulo | (11) 3000-0000 | www.example.com.br |
+| TH | ✅ "Província" / "Province" / "จังหวัด" | none | Bangkok | 02 000 0000 | www.example.com |
+| GB | ✅ "Estado ou província" / "State or province" / "รัฐหรือจังหวัด" | none | none | "+ código do país e número" / "+ country code and number" / "+ รหัสประเทศและหมายเลข" | www.example.com |
+
+**Also checked:**
+- **Saving:** the state value still saves for each country (BR "RJ", TH
+  "Chiang Mai", GB "Greater London" round-trip to `professionals`).
+- **Locales:** `stateProvince`, `stateOrProvince` and
+  `phoneIntlPlaceholder` are in all 15 locales.
+
+**Known (not in this PR, and the PR says so):** the **CNPJ** field, with its
+"00.000.000/0001-00" sample, still shows for TH and GB practices. That's an
+open question for UX.
+
+**The branch** was up to date with master; this docs commit sits on the PR
+head.
+**Review: clean (9a).** **Merge gate: 🟢 for `9474d92`.**
+
+## PR #170 (`feat/import-extra-knowhow`, base master) — imported-data know-how (Help P11, gated) + access-log labels for `export` / `imported`, 🟢 at `0e7b9ea`
+
+Tested by web tester 2 on the Vercel Preview, with the #147 fixture
+doctor (existing access rows).
+
+| Row | Result |
+|---|---|
+| Help P11 is not public yet (`requires:import-extras-live`, unmet) | ✅ `/pt-BR/help/p11` and `/help/p11` → **404**; P6 / P7 → 200. `helpArticles.json` is unchanged in the diff |
+| Existing Acessos labels unchanged | ✅ pt "Ficha do paciente", "Receita · 29 de set. de 2026", "Arquivo · exams/raio-x opus (2).png"; en "Patient record", "Prescription · Sep 29, 2026", "File · …" |
+| New labels | ✅ `accessKindExport` / `accessKindImported`: pt "Exportado na lista de pacientes (CSV)" / "Abriu os dados importados"; en "Exported in the patient list (CSV)" / "Opened the imported data"; th "ส่งออกในรายชื่อผู้ป่วย (CSV)" / "เปิดข้อมูลที่นำเข้า". The mapping is unit-tested (`accessKindLabelKey`) |
+| Live rows of the new kinds | ⏳ not possible yet: prod's `record_access_log` check refuses `kind = 'export'` / `'imported'` (23514) until migrations 126 / 131 are applied. No row was written. Re-check the Acessos tab once they're live |
+
+**CI at `0e7b9ea`:** ✅. **Review: clean (9a).** **Merge gate: 🟢 for
+`0e7b9ea`**, with the ⏳ row above for after 126 / 131.
+
+## #171 Settings → Clinic: CNPJ only in Brazil, the Thai clinic tax ID in Thailand (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `7b49fce`, on its Vercel Preview (Playwright),
+against the prod DB (migration 112 applied).
+- **Accounts:** throwaway doctors with the practice country BR, TH and GB.
+- **Setup:** each **started with a stored CNPJ** (11.222.333/0001-81), to
+  prove that no save wipes it.
+
+| Row | Result |
+|---|---|
+| BR (pt-BR / en / th) | ✅ **CNPJ** shown (sample 00.000.000/0001-00); no tax ID field. Saving keeps the CNPJ. |
+| TH (pt-BR / en / th) | ✅ no CNPJ field; **"Nº de identificação fiscal (13 dígitos)" / "Tax ID (13 digits)" / "เลขประจำตัวผู้เสียภาษี (13 หลัก)"** |
+| GB (pt-BR / en / th) | ✅ neither field. Saving keeps the stored CNPJ. |
+| TH: 1234567890121 | ✅ saved as `clinic_tax_id = 1234567890121`, shown again after a reload |
+| TH: dashes (1-2345-67890-12-1, 3-1012-00456-78-9) | ✅ saved as digits only |
+| TH: bad checksum 1234567890123 | ✅ pt "Digite um número de identificação fiscal válido, com 13 dígitos." / en "Enter a valid 13-digit tax ID." / th "กรอกเลขประจำตัวผู้เสียภาษี 13 หลักที่ถูกต้อง"; **nothing saved** (the other fields weren't saved either) |
+| TH: 12 digits | ✅ the same error; nothing saved |
+| TH: emptied | ✅ `clinic_tax_id` cleared (null); saving it again works |
+| CNPJ after every TH / GB save | ✅ still 11.222.333/0001-81 |
+
+**Not covered here:** the Thai receipt reading the tax ID is app-only (the
+website's recibo sends Thai practices to the app). That's for the mobile
+testers.
+
+**Master sync:** master (#169, #170) merged in under this docs commit,
+cleanly.
+**Review: clean (9a).** **Merge gate: 🟢 for `7b49fce`.**
