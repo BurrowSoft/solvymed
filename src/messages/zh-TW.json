@@ -528,6 +528,7 @@
     "exportButton": "匯出病患（CSV）",
     "exportFailed": "無法匯出。請再試一次。",
     "exportAccessLogFailed": "無法記錄存取。請再試一次。",
+    "exportCountryFailed": "無法載入診所資料。請再試一次。",
     "exportFileName": "patients",
     "csvTags": "標籤",
     "csvArchivedOn": "封存日期",

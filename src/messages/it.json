@@ -528,6 +528,7 @@
     "exportButton": "Esporta pazienti (CSV)",
     "exportFailed": "Impossibile esportare. Riprova.",
     "exportAccessLogFailed": "Impossibile registrare l’accesso. Riprova.",
+    "exportCountryFailed": "Impossibile caricare i dati dello studio. Riprova.",
     "exportFileName": "pazienti",
     "csvTags": "Etichette",
     "csvArchivedOn": "Archiviato il",

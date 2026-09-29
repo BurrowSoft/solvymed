@@ -19,7 +19,7 @@ export function ExportPatientsCard({ locale }: { locale: string }) {
       const res = await fetch(`/api/patients/export?locale=${encodeURIComponent(locale)}`, { credentials: "same-origin" });
       if (!res.ok) {
         const code = (await res.json().catch(() => ({}))).code;
-        setError(code === "access_log_failed" ? t("exportAccessLogFailed") : t("exportFailed"));
+        setError(code === "access_log_failed" ? t("exportAccessLogFailed") : code === "country_failed" ? t("exportCountryFailed") : t("exportFailed"));
         return;
       }
       const url = URL.createObjectURL(await res.blob());

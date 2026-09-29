@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
-import { getPracticeCountry } from "@/lib/practiceCountry";
+import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { conditionMet } from "@/lib/conditions";
 import { patientsCsv, type CsvPatient } from "@/lib/patientsCsv";
 import { routing } from "@/i18n/routing";
@@ -27,6 +27,12 @@ export async function GET(request: NextRequest) {
   const locale = (routing.locales as readonly string[]).includes(requested) ? requested : routing.defaultLocale;
 
   // Every patient, a page at a time (PostgREST caps a response).
+  // The practice country decides the ID columns and the calendar. Unknown:
+  // no file, and checked BEFORE the log (a failed export logs nothing; 9a).
+  const lookup = await lookupPracticeCountry(supabase, user.id, user.id);
+  if (!lookup.ok) return NextResponse.json({ code: "country_failed" }, { status: 503 });
+  const country = lookup.country;
+
   const patients: (CsvPatient & { id: string })[] = [];
   for (let from = 0; ; from += PAGE) {
     const { data, error } = await supabase
@@ -53,7 +59,6 @@ export async function GET(request: NextRequest) {
     getTranslations({ locale, namespace: "patientIds" }),
     getTranslations({ locale, namespace: "settings" }),
   ]);
-  const country = await getPracticeCountry(supabase, user.id, user.id);
   const csv = patientsCsv(patients, {
     fullName: t("fullName"), cpf: tIds("cpf"), thaiId: tIds("thaiId"), passport: country === "TH" ? tIds("passport") : tIds("passportOrId"),
     sex: t("sex"), birthDate: t("dateOfBirth"), phone: t("phone"), email: t("email"), profession: t("profession"),

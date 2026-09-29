@@ -42,7 +42,8 @@ const h = vi.hoisted(() => ({
   logError: null as unknown,
 }));
 vi.mock("@/lib/conditions", () => ({ conditionMet: () => h.met }));
-vi.mock("@/lib/practiceCountry", () => ({ getPracticeCountry: async () => "BR" }));
+const country = vi.hoisted(() => ({ code: "BR" as string | null }));
+vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => (country.code ? { ok: true, country: country.code } : { ok: false, code: "exception" }) }));
 vi.mock("next-intl/server", () => ({ getTranslations: async () => (k: string) => k }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
@@ -112,6 +113,15 @@ describe("GET /api/patients/export", () => {
     const res = await GET(req());
     expect(res.status).toBe(200);
     expect(h.rpc.map((r) => (r.args.p_patient_ids as string[]).length)).toEqual([5000, 1]);
+  });
+
+  it("an unknown practice country: no file and nothing logged", async () => {
+    country.code = null;
+    const res = await GET(req());
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ code: "country_failed" });
+    expect(h.rpc).toEqual([]);
+    country.code = "BR";
   });
 
   it("every page of patients", async () => {

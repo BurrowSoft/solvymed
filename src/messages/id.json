@@ -528,6 +528,7 @@
     "exportButton": "Ekspor pasien (CSV)",
     "exportFailed": "Tidak dapat mengekspor. Silakan coba lagi.",
     "exportAccessLogFailed": "Tidak dapat mencatat akses. Silakan coba lagi.",
+    "exportCountryFailed": "Tidak dapat memuat data klinik. Silakan coba lagi.",
     "exportFileName": "pasien",
     "csvTags": "Tag",
     "csvArchivedOn": "Diarsipkan pada",

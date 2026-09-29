@@ -528,6 +528,7 @@
     "exportButton": "Xuất bệnh nhân (CSV)",
     "exportFailed": "Không thể xuất. Vui lòng thử lại.",
     "exportAccessLogFailed": "Không thể ghi lại lượt truy cập. Vui lòng thử lại.",
+    "exportCountryFailed": "Không thể tải thông tin phòng khám. Vui lòng thử lại.",
     "exportFileName": "benh-nhan",
     "csvTags": "Thẻ",
     "csvArchivedOn": "Lưu trữ ngày",

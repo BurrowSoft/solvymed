@@ -528,6 +528,7 @@
     "exportButton": "Exporter les patients (CSV)",
     "exportFailed": "Impossible d’exporter. Veuillez réessayer.",
     "exportAccessLogFailed": "Impossible d’enregistrer l’accès. Veuillez réessayer.",
+    "exportCountryFailed": "Impossible de charger les informations du cabinet. Veuillez réessayer.",
     "exportFileName": "patients",
     "csvTags": "Étiquettes",
     "csvArchivedOn": "Archivé le",

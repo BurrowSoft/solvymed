@@ -528,6 +528,7 @@
     "exportButton": "导出患者（CSV）",
     "exportFailed": "无法导出。请重试。",
     "exportAccessLogFailed": "无法记录访问。请重试。",
+    "exportCountryFailed": "无法加载诊所信息。请重试。",
     "exportFileName": "patients",
     "csvTags": "标签",
     "csvArchivedOn": "归档日期",

@@ -528,6 +528,7 @@
     "exportButton": "Patienten exportieren (CSV)",
     "exportFailed": "Export nicht möglich. Bitte versuchen Sie es erneut.",
     "exportAccessLogFailed": "Der Zugriff konnte nicht protokolliert werden. Bitte versuchen Sie es erneut.",
+    "exportCountryFailed": "Die Praxisdaten konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
     "exportFileName": "patienten",
     "csvTags": "Schlagwörter",
     "csvArchivedOn": "Archiviert am",

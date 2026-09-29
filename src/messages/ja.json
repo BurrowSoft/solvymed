@@ -528,6 +528,7 @@
     "exportButton": "患者をエクスポート（CSV）",
     "exportFailed": "エクスポートできませんでした。もう一度お試しください。",
     "exportAccessLogFailed": "アクセスを記録できませんでした。もう一度お試しください。",
+    "exportCountryFailed": "クリニックの情報を読み込めませんでした。もう一度お試しください。",
     "exportFileName": "patients",
     "csvTags": "タグ",
     "csvArchivedOn": "アーカイブ日",

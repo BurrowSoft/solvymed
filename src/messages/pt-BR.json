@@ -528,6 +528,7 @@
     "exportButton": "Exportar pacientes (CSV)",
     "exportFailed": "Não foi possível exportar. Tente novamente.",
     "exportAccessLogFailed": "Não foi possível registrar o acesso. Tente novamente.",
+    "exportCountryFailed": "Não foi possível carregar os dados da clínica. Tente novamente.",
     "exportFileName": "pacientes",
     "csvTags": "Etiquetas",
     "csvArchivedOn": "Arquivado em",

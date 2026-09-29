@@ -528,6 +528,7 @@
     "exportButton": "Экспортировать пациентов (CSV)",
     "exportFailed": "Не удалось экспортировать. Попробуйте ещё раз.",
     "exportAccessLogFailed": "Не удалось записать доступ. Попробуйте ещё раз.",
+    "exportCountryFailed": "Не удалось загрузить данные клиники. Попробуйте ещё раз.",
     "exportFileName": "patsienty",
     "csvTags": "Метки",
     "csvArchivedOn": "В архиве с",

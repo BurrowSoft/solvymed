@@ -528,6 +528,7 @@
     "exportButton": "تصدير المرضى (CSV)",
     "exportFailed": "تعذّر التصدير. حاول مرة أخرى.",
     "exportAccessLogFailed": "تعذّر تسجيل الوصول. حاول مرة أخرى.",
+    "exportCountryFailed": "تعذّر تحميل بيانات العيادة. حاول مرة أخرى.",
     "exportFileName": "patients",
     "csvTags": "الوسوم",
     "csvArchivedOn": "تاريخ الأرشفة",

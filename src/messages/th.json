@@ -528,6 +528,7 @@
     "exportButton": "ส่งออกผู้ป่วย (CSV)",
     "exportFailed": "ส่งออกไม่ได้ กรุณาลองอีกครั้ง",
     "exportAccessLogFailed": "ไม่สามารถบันทึกการเข้าถึงได้ กรุณาลองอีกครั้ง",
+    "exportCountryFailed": "โหลดข้อมูลคลินิกไม่ได้ กรุณาลองอีกครั้ง",
     "exportFileName": "patients",
     "csvTags": "แท็ก",
     "csvArchivedOn": "เก็บถาวรเมื่อ",
