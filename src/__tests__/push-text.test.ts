@@ -70,11 +70,12 @@ describe("push texts", () => {
 
   it("Thai: one title for an appointment cancelled by the clinic (Schedule / archive and account close)", () => {
     const th = JSON.parse(readFileSync(join(__dirname, "..", "messages", "th.json"), "utf8").replace(/^﻿/, ""));
-    const cancelled = pushText("th", "apptCancelledByClinic", { clinic: "C", date: "D", time: "T" });
+    // The single wording (UX 36): the Schedule / archive one is the account
+    // close sentence with the clinic's name for "คลินิก", then "open the app".
+    const cancelled = pushText("th", "apptCancelledByClinic", { clinic: "คลินิก", date: "D", time: "T" });
     expect(cancelled.title).toBe(th.accountClose.pushCancelledTitle);
-    // The Schedule / archive one names the clinic (08's text); both say it was cancelled.
-    expect(cancelled.body).toContain("ยกเลิก");
-    expect(th.accountClose.pushCancelledBody).toContain("ยกเลิก");
+    const closeBody = th.accountClose.pushCancelledBody.replace("{date}", "D").replace("{time}", "T");
+    expect(cancelled.body).toBe(`${closeBody} หากต้องการนัดใหม่ กรุณาเปิดแอป`);
   });
 
   it("no push in src is sent with literal (English) text", () => {
