@@ -120,7 +120,8 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false }: { turnst
           <ul className="list-disc space-y-1 pl-5">
             <li>Patients of Thai clinics can connect LINE to receive appointment notices. They choose to connect and can stop at any time.</li>
             <li>LINE receives only the clinic&rsquo;s name, the appointment&rsquo;s date and time, and what happened to it (confirmed, moved, reminder, cancelled): never clinical information.</li>
-            <li>If you disconnect in the app or delete your account, we delete your LINE ID. If you block our LINE account, we stop sending and keep the ID only so notices resume if you unblock; disconnect in the app to remove it.</li>
+            <li>If you block SolvyMed on LINE, we stop sending messages but keep the link so they resume if you unblock. To remove it, tap Disconnect (Settings → LINE) in the app or delete your account.</li>
+            <li>The delivery history of LINE notices is deleted after 90 days.</li>
           </ul>
         </Section>
       )}

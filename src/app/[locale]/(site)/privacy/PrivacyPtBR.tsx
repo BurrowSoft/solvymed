@@ -120,7 +120,8 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false }: { turn
           <ul className="list-disc space-y-1 pl-5">
             <li>Pacientes de clínicas na Tailândia podem conectar o LINE para receber avisos de consulta. Eles escolhem conectar e podem parar a qualquer momento.</li>
             <li>O LINE recebe só o nome da clínica, a data e o horário da consulta e o que aconteceu com ela (confirmada, remarcada, lembrete, cancelada): nunca informações clínicas.</li>
-            <li>Se você desconectar no app ou excluir sua conta, apagamos seu identificador LINE. Se você bloquear nossa conta no LINE, paramos de enviar e guardamos o identificador só para retomar os avisos se você desbloquear; desconecte no app para removê-lo.</li>
+            <li>Se você bloquear a conta SolvyMed no LINE, paramos de enviar mensagens, mas guardamos a ligação para retomar se você desbloquear. Para removê-la, toque em Disconnect (Configurações → LINE) no app ou exclua sua conta.</li>
+            <li>O histórico de envios dos avisos LINE é apagado após 90 dias.</li>
           </ul>
         </Section>
       )}
