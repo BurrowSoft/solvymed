@@ -108,6 +108,16 @@ describe("Confirmar (part 2)", () => {
     expect(calls).toEqual([]);
   });
 
+  it("a series: the website's recurrence fields, re-validated; no Desfazer", async () => {
+    const ok = await executeSolvyAiAction({ kind: "book_appointment", args: { patientId: ID, date: "2026-10-07", start: "14:00", durationMin: 30, repeat: { every: "2weeks", count: 4 } } }, false);
+    expect(ok).toEqual({ ok: true, id: "new-appt", noUndo: true });
+    const f = calls[0].args[0] as FormData;
+    expect([f.get("recurrence"), f.get("occurrences")]).toEqual(["biweekly", "4"]);
+    calls.length = 0;
+    expect(await executeSolvyAiAction({ kind: "book_appointment", args: { patientId: ID, date: "2026-10-07", start: "14:00", repeat: { every: "day", count: 4 } } }, false)).toEqual({ ok: false, code: "generic" });
+    expect(calls).toEqual([]);
+  });
+
   it("send Pix isn't run on the website (app-only)", async () => {
     expect(await executeSolvyAiAction({ kind: "send_pix", args: { appointmentId: ID } }, false)).toEqual({ ok: false, code: "generic" });
     expect(calls).toEqual([]);
