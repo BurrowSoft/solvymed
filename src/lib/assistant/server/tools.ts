@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { cleanSearchText, patientSearchFilter } from "@/lib/patientSearch";
 import { computeSlots, fromMinutes, getDayHours, toMinutes, type WorkingHours } from "@/lib/slots";
-import { MOVABLE_STATUSES, hoursWarning } from "@/lib/scheduleChecks";
+import { MOVABLE_STATUSES, hoursWarning, keptDuration } from "@/lib/scheduleChecks";
 import { formatDateLabel, formatShortDate } from "@/lib/dateLabels";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { getPracticeCountry } from "@/lib/practiceCountry";
@@ -447,7 +447,8 @@ async function proposeMove(ctx: ToolContext, input: Record<string, unknown>): Pr
   if (!isTime(start)) return err("The start must be HH:MM; ask the user for the time.");
   const oldStart = hhmm(a.start_time);
   if (date === a.date && start === oldStart) return err("That's where it already is; ask the user for the new date and time.");
-  const dur = Math.max(5, toMinutes(hhmm(a.end_time)) - toMinutes(oldStart));
+  // The same kept duration as Remarcar (moveAppointment).
+  const dur = keptDuration(a.start_time, a.end_time);
   const endMin = toMinutes(start) + dur;
   if (endMin > 24 * 60) return err("That would run past midnight; ask for another time.");
   const end = fromMinutes(endMin);
