@@ -4,6 +4,7 @@ import { patientPushTargets } from "./pushRecipient";
 import { formatShortDate } from "./dateLabels";
 import { pushText } from "./pushText";
 import { clinicDate, clinicTime, getClinicTimeZone } from "./clinicTime";
+import { NoticeOutboxUnavailable, enqueuePatientNotice } from "./patientNotice";
 
 // Telling a patient what the clinic did to their appointment from the
 // website (UX 2026-09-29, 08's texts; the app does the same, mobile #111):
@@ -11,6 +12,10 @@ import { clinicDate, clinicTime, getClinicTimeZone } from "./clinicTime";
 // app account hears it, in their language, the clinic named as patients see
 // it; never for blocked time or anything already past. Best effort: nothing
 // here ever fails the save.
+//
+// With migration 135 live, the notice goes through the outbox instead (sent
+// ~60 s later, so a Desfazer can drop it): the server applies the same rules
+// and texts. Until then, or if the outbox can't take it, it's sent here.
 
 // The name patients see: the practice's profile name, else its first
 // location's (by name), else the doctor's (the app's clinic-name.ts).
@@ -53,9 +58,28 @@ export type ClinicChange = {
   // A booked series: all its dates (UX: only the FUTURE ones are announced,
   // one push naming the first future date and counting the future ones).
   dates?: string[];
+  // The appointment(s) changed, for the outbox (a series: all its ids).
+  appointmentIds?: string[];
 };
 
-export async function tellPatient(db: SupabaseClient, change: ClinicChange): Promise<void> {
+// queued: in the outbox (noticeId null = nobody to tell); direct: sent now,
+// or nothing to send, the old way (no undo can stop a push that went out).
+export type TellResult = { queued: true; noticeId: number | null } | { queued: false };
+
+export async function tellPatient(db: SupabaseClient, change: ClinicChange): Promise<TellResult> {
+  if (change.appointmentIds?.length) {
+    try {
+      const noticeId = await enqueuePatientNotice(db, change.kind, change.appointmentIds, change.kind === "moved" ? change.from : undefined);
+      return { queued: true, noticeId };
+    } catch (e) {
+      if (!(e instanceof NoticeOutboxUnavailable)) return { queued: false };
+    }
+  }
+  await tellPatientDirectly(db, change);
+  return { queued: false };
+}
+
+async function tellPatientDirectly(db: SupabaseClient, change: ClinicChange): Promise<void> {
   try {
     if (change.status === "blocked") return;
     // Never for the past, by the clinic's clock.

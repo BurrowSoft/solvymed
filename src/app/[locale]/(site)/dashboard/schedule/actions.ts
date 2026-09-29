@@ -229,6 +229,7 @@ export async function createAppointment(formData: FormData) {
   await tellPatient(supabase, {
     kind: "booked", practiceId: effectiveProfId, isSecretary: user.id !== effectiveProfId,
     patientId, date, startTime, ...(dates.length > 1 ? { dates } : {}),
+    appointmentIds: ((savedRows ?? []) as { id: string }[]).map((r) => r.id),
   });
   revalidatePath("/dashboard/schedule");
   return { success: true, id: saved?.id, count: dates.length };
@@ -337,6 +338,7 @@ export async function moveAppointment(formData: FormData) {
     kind: "moved", practiceId: effectiveProfId, isSecretary: user.id !== effectiveProfId,
     patientAuthId: before.patient_auth_id, patientId: before.patient_id, status: before.status,
     date, startTime, from: { date: before.date, startTime: before.start_time },
+    appointmentIds: [id],
   });
   revalidatePath("/dashboard/schedule");
   return { success: true, id };
@@ -404,6 +406,7 @@ export async function updateAppointmentStatus(id: string, status: string) {
       kind: "cancelled", practiceId: effectiveProfId, isSecretary: user.id !== effectiveProfId,
       patientAuthId: before.patient_auth_id, patientId: before.patient_id, status: before.status,
       date: before.date, startTime: before.start_time,
+      appointmentIds: [id],
     });
   }
 

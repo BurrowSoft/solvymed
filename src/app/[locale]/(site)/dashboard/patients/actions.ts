@@ -256,6 +256,7 @@ export async function archivePatient(patientId: string): Promise<ArchiveResult> 
     .map((a) => tellPatient(supabase, {
       kind: "cancelled", practiceId, isSecretary: user.id !== practiceId,
       patientAuthId: a.patient_auth_id, date: a.date, startTime: a.start_time,
+      appointmentIds: [a.appointment_id],
     })));
 
   revalidatePath("/dashboard/patients");
