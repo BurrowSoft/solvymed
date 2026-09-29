@@ -14,7 +14,7 @@
 //   `open:<screen>`
 //   Note for SolvyAI: ... In the apps: "<pt>" / "<en>".   (optional)
 //   `requires:<id>,<id>`   (optional) the whole article only when all are met
-//   {pending:<id>} <text>  a paragraph only when <id> is met
+//   {pending:<id>,<id>} <text>  a paragraph only when all are met
 //
 // Conditions (content/help/conditions.json; the App Map's pending rules use
 // the same ids): text that describes something not true yet (an app build
@@ -85,8 +85,8 @@ export function parseBatch(file, text, conditions = {}) {
         continue;
       }
       if (!lang) throw new Error(`${id}: text outside a language block: "${line.slice(0, 50)}"`);
-      if ((m = line.match(/^\{pending:([\w#.-]+)\}\s+(.+)$/))) {
-        if (isMet(m[1])) a.body[lang].push(m[2]);
+      if ((m = line.match(/^\{pending:([\w#.,-]+)\}\s+(.+)$/))) {
+        if (m[1].split(",").every(isMet)) a.body[lang].push(m[2]);
         continue;
       }
       a.body[lang].push(line);
