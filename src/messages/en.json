@@ -388,6 +388,7 @@
     "archivedNoNew": "This patient is archived. Restore the patient to add new entries.",
     "deleteNoHistoryConfirm": "Delete {name}? This can't be undone.",
     "deleteHasHistory": "This patient now has clinical history and can't be deleted. Archive the patient instead.",
+    "deleteHasAppointments": "This patient has appointments on record, so they can't be deleted. You can archive them instead.",
     "deleteError": "Couldn't delete the patient. Please try again.",
     "editEntry": "Edit",
     "deleteEntry": "Delete",

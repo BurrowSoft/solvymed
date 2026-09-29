@@ -388,6 +388,7 @@
     "archivedNoNew": "Este registro está archivado. Restáuralo para añadir nuevas entradas.",
     "deleteNoHistoryConfirm": "¿Eliminar a {name}? Esta acción no se puede deshacer.",
     "deleteHasHistory": "Este registro ya tiene historial clínico y no se puede eliminar. Archívalo en su lugar.",
+    "deleteHasAppointments": "Este paciente tiene citas registradas, por lo que no se puede eliminar. Puedes archivarlo.",
     "deleteError": "No se pudo eliminar el registro. Inténtalo de nuevo.",
     "editEntry": "Editar",
     "deleteEntry": "Eliminar",

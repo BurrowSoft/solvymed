@@ -388,6 +388,7 @@
     "archivedNoNew": "Ce dossier est archivé. Restaurez-le pour ajouter de nouvelles entrées.",
     "deleteNoHistoryConfirm": "Supprimer {name} ? Cette action est irréversible.",
     "deleteHasHistory": "Ce dossier contient désormais un historique clinique et ne peut pas être supprimé. Archivez-le plutôt.",
+    "deleteHasAppointments": "Ce patient a des rendez-vous enregistrés, il ne peut donc pas être supprimé. Vous pouvez l'archiver.",
     "deleteError": "Impossible de supprimer le dossier. Veuillez réessayer.",
     "editEntry": "Modifier",
     "deleteEntry": "Supprimer",

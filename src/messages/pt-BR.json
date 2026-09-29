@@ -388,6 +388,7 @@
     "archivedNoNew": "Este cadastro está arquivado. Restaure-o para adicionar novos registros.",
     "deleteNoHistoryConfirm": "Excluir {name}? Esta ação não pode ser desfeita.",
     "deleteHasHistory": "Este cadastro agora tem histórico clínico e não pode ser excluído. Arquive-o em vez disso.",
+    "deleteHasAppointments": "Este paciente tem consultas registradas, então não pode ser excluído. Você pode arquivá-lo.",
     "deleteError": "Não foi possível excluir o cadastro. Tente novamente.",
     "editEntry": "Editar",
     "deleteEntry": "Excluir",

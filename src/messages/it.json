@@ -388,6 +388,7 @@
     "archivedNoNew": "Questa scheda è archiviata. Ripristinala per aggiungere nuove voci.",
     "deleteNoHistoryConfirm": "Eliminare {name}? L'operazione non può essere annullata.",
     "deleteHasHistory": "Questa scheda ora ha uno storico clinico e non può essere eliminata. Archiviala invece.",
+    "deleteHasAppointments": "Questo paziente ha appuntamenti registrati, quindi non può essere eliminato. Puoi archiviarlo.",
     "deleteError": "Impossibile eliminare la scheda. Riprova.",
     "editEntry": "Modifica",
     "deleteEntry": "Elimina",

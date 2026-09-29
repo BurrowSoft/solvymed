@@ -388,6 +388,7 @@
     "archivedNoNew": "Hồ sơ này đã được lưu trữ. Hãy khôi phục để thêm mục mới.",
     "deleteNoHistoryConfirm": "Xóa {name}? Không thể hoàn tác thao tác này.",
     "deleteHasHistory": "Hồ sơ này hiện đã có lịch sử khám và không thể xóa. Hãy lưu trữ thay vì xóa.",
+    "deleteHasAppointments": "Bệnh nhân này có lịch hẹn đã ghi nhận nên không thể xóa. Bạn có thể lưu trữ bệnh nhân này.",
     "deleteError": "Không thể xóa hồ sơ. Vui lòng thử lại.",
     "editEntry": "Sửa",
     "deleteEntry": "Xóa",

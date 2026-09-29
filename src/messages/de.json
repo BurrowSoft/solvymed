@@ -388,6 +388,7 @@
     "archivedNoNew": "Diese Akte ist archiviert. Stellen Sie sie wieder her, um neue Einträge hinzuzufügen.",
     "deleteNoHistoryConfirm": "{name} löschen? Das kann nicht rückgängig gemacht werden.",
     "deleteHasHistory": "Diese Akte hat inzwischen einen klinischen Verlauf und kann nicht gelöscht werden. Archivieren Sie sie stattdessen.",
+    "deleteHasAppointments": "Für diesen Patienten sind Termine gespeichert, daher kann er nicht gelöscht werden. Sie können ihn archivieren.",
     "deleteError": "Die Akte konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
     "editEntry": "Bearbeiten",
     "deleteEntry": "Löschen",

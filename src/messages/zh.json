@@ -388,6 +388,7 @@
     "archivedNoNew": "此档案已归档。请先恢复再添加新内容。",
     "deleteNoHistoryConfirm": "删除 {name}？此操作无法撤销。",
     "deleteHasHistory": "此档案现已有临床记录，无法删除。请改为归档。",
+    "deleteHasAppointments": "该患者有预约记录,因此无法删除。你可以将其归档。",
     "deleteError": "无法删除档案，请重试。",
     "editEntry": "编辑",
     "deleteEntry": "删除",

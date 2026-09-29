@@ -388,6 +388,7 @@
     "archivedNoNew": "Rekam medis ini diarsipkan. Pulihkan untuk menambahkan entri baru.",
     "deleteNoHistoryConfirm": "Hapus {name}? Tindakan ini tidak dapat dibatalkan.",
     "deleteHasHistory": "Rekam medis ini sekarang memiliki riwayat klinis dan tidak dapat dihapus. Arsipkan saja.",
+    "deleteHasAppointments": "Pasien ini memiliki janji temu yang tercatat, jadi tidak dapat dihapus. Anda dapat mengarsipkannya.",
     "deleteError": "Tidak dapat menghapus rekam medis. Silakan coba lagi.",
     "editEntry": "Ubah",
     "deleteEntry": "Hapus",

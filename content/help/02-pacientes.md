@@ -38,8 +38,8 @@ Pacientes com prontuário, receita ou arquivo só podem ser arquivados, nunca ap
 2. Tap **Archive** and confirm. The patient's upcoming appointments are cancelled; the history stays saved.
 3. To see archived patients: in **Patients**, open **Archived**. Open the patient and tap **Restore**.
 Patients with a record, prescription or file can only be archived, never deleted (records must be kept by law).
-**No site:** Abra o paciente e, na aba **Informações**, clique em **Arquivar cadastro** e confirme. Para ver arquivados: em **Pacientes**, clique em **Arquivados**; abra o paciente e clique em **Restaurar**.
-**On the website:** Open the patient and, on the **Info** tab, click **Archive patient** and confirm. To see archived patients: in **Patients**, click **Archived**; open the patient and click **Restore**.
+**No site:** Abra o paciente e, na aba **Informações**, clique em **Arquivar cadastro** e confirme. Para ver arquivados: em **Pacientes**, clique em **Arquivados**; abra o paciente e clique em **Restaurar**. **Excluir cadastro** só aparece para pacientes sem prontuário, receita, arquivo e sem nenhuma consulta; os demais só podem ser arquivados.
+**On the website:** Open the patient and, on the **Info** tab, click **Archive patient** and confirm. To see archived patients: in **Patients**, click **Archived**; open the patient and click **Restore**. **Delete patient** shows only for patients with no record, prescription, file or appointment; the others can only be archived.
 `open:patients`
 
 ---

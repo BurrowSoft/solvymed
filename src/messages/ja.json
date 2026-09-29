@@ -388,6 +388,7 @@
     "archivedNoNew": "このカルテはアーカイブ済みです。新しい項目を追加するには復元してください。",
     "deleteNoHistoryConfirm": "{name} を削除しますか？この操作は取り消せません。",
     "deleteHasHistory": "このカルテには診療履歴があるため削除できません。代わりにアーカイブしてください。",
+    "deleteHasAppointments": "この患者には予約の記録があるため削除できません。アーカイブできます。",
     "deleteError": "カルテを削除できませんでした。もう一度お試しください。",
     "editEntry": "編集",
     "deleteEntry": "削除",

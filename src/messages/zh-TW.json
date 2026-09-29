@@ -388,6 +388,7 @@
     "archivedNoNew": "此病歷已封存。請先還原再新增內容。",
     "deleteNoHistoryConfirm": "要刪除 {name} 嗎？此動作無法復原。",
     "deleteHasHistory": "此病歷現已有臨床紀錄，無法刪除。請改為封存。",
+    "deleteHasAppointments": "此病患有預約紀錄,因此無法刪除。你可以將其封存。",
     "deleteError": "無法刪除病歷，請再試一次。",
     "editEntry": "編輯",
     "deleteEntry": "刪除",

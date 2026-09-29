@@ -189,6 +189,8 @@ export async function deletePatient(id: string) {
     // (records, prescriptions or files); the UI offers Archive instead, but
     // its preview can be stale.
     if (error.message?.includes("patient_has_clinical_history")) return { error: "patient_has_clinical_history" };
+    // Any appointment at all (the server guard, UX): archive instead.
+    if (error.message?.includes("patient_has_appointments")) return { error: "patient_has_appointments" };
     return { error: actionError(error.message) };
   }
   revalidatePath("/dashboard/patients");
@@ -207,19 +209,22 @@ export async function loadAccessLog(patientId: string, before: string, locale: s
   return readAccessLog(supabase, patientId, { before, locale: safeLocale, timeZone });
 }
 
-export type ArchivePreview = { hasClinicalHistory: boolean; upcomingAppointments: number };
+export type ArchivePreview = { hasClinicalHistory: boolean; hasAppointments: boolean; upcomingAppointments: number };
 
 // Drives Delete-vs-Archive and the "{n} upcoming appointments will be
-// cancelled" line. Never exposes clinical content. Null on any error, and
-// callers then hide Delete (the delete trigger is the real boundary).
+// cancelled" line. Delete is offered only with no clinical history and no
+// appointment at all, past ones included (UX). Never exposes clinical
+// content. Null on any error, and callers then hide Delete (the server
+// guards are the real boundary).
 export async function getArchivePreview(patientId: string): Promise<ArchivePreview | null> {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .rpc("get_patient_archive_preview", { p_patient_id: patientId })
-    .maybeSingle();
-  if (error || !data) return null;
+  const [{ data, error }, appts] = await Promise.all([
+    supabase.rpc("get_patient_archive_preview", { p_patient_id: patientId }).maybeSingle(),
+    supabase.from("appointments").select("id", { count: "exact", head: true }).eq("patient_id", patientId),
+  ]);
+  if (error || !data || appts.error || appts.count === null) return null;
   const row = data as { has_clinical_history: boolean; upcoming_appointments: number };
-  return { hasClinicalHistory: row.has_clinical_history, upcomingAppointments: row.upcoming_appointments ?? 0 };
+  return { hasClinicalHistory: row.has_clinical_history, hasAppointments: appts.count > 0, upcomingAppointments: row.upcoming_appointments ?? 0 };
 }
 
 export type ArchiveResult =
