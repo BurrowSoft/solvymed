@@ -1,5 +1,6 @@
 "use server";
 
+import { myAppointment } from "@/lib/myAppointments";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { computeSlots, toMinutes, getDayHours } from "@/lib/slots";
@@ -175,12 +176,8 @@ export async function acceptProposal(appointmentId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("proposed_date, proposed_start_time, proposed_end_time, professional_id, patient_name")
-    .eq("id", appointmentId)
-    .eq("patient_auth_id", user.id)
-    .maybeSingle();
+  // The patient's own row, only through get_my_appointments (106).
+  const appt = await myAppointment(supabase, appointmentId);
 
   if (!appt) return { error: "Appointment not found" };
 
@@ -201,12 +198,7 @@ export async function declineProposal(appointmentId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("professional_id, patient_name")
-    .eq("id", appointmentId)
-    .eq("patient_auth_id", user.id)
-    .maybeSingle();
+  const appt = await myAppointment(supabase, appointmentId);
 
   const { error } = await supabase.rpc("decline_appointment_proposal", {
     p_appointment_id: appointmentId,
@@ -236,12 +228,7 @@ export async function requestReschedule(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("professional_id, patient_name")
-    .eq("id", appointmentId)
-    .eq("patient_auth_id", user.id)
-    .maybeSingle();
+  const appt = await myAppointment(supabase, appointmentId);
 
   if (!appt) return { error: "Appointment not found" };
 

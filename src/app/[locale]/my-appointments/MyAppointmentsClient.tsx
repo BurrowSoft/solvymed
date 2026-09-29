@@ -217,8 +217,8 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
             </p>
           )}
           <p className="text-xs text-slate-400 mt-0.5 capitalize">{appt.type.replace("-", " ")}</p>
-          {appt.notes && (
-            <p className="mt-2 text-sm text-slate-600 italic">&ldquo;{appt.notes}&rdquo;</p>
+          {appt.patient_note && (
+            <p className="mt-2 text-sm text-slate-600 italic">&ldquo;{appt.patient_note}&rdquo;</p>
           )}
         </div>
         <div className="flex flex-col items-end gap-2">

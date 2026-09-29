@@ -20,6 +20,7 @@ type Booking = {
   consultation_type: string;
   status: string;
   notes?: string | null;
+  patient_note?: string | null;
   is_new_patient?: boolean;
   scheduled_by?: string | null;
   proposed_date?: string | null;
@@ -141,6 +142,9 @@ export function BookingRequestsPanel({ bookings }: { bookings: Booking[] }) {
                     {b.date} · {b.start_time.slice(0, 5)}–{b.end_time.slice(0, 5)}
                   </p>
                   <p className="text-sm text-slate-500">{b.consultation_type}</p>
+                  {b.patient_note && (
+                    <p className="mt-1 text-xs text-slate-500"><span className="font-semibold">{t("patientMessage")}:</span> <span className="italic">{b.patient_note}</span></p>
+                  )}
                   {b.notes && (
                     <p className="mt-1 text-xs text-slate-400 italic">{b.notes}</p>
                   )}

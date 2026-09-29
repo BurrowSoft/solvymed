@@ -106,6 +106,7 @@
     "managePayments": "Quản lý thanh toán"
   },
   "schedule": {
+    "patientMessage": "Lời nhắn của bệnh nhân",
     "title": "Lịch hẹn",
     "apptsToday": "{count} lịch hẹn hôm nay",
     "noAppts": "Không có lịch hẹn ngày này",

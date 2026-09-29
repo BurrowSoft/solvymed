@@ -106,6 +106,7 @@
     "managePayments": "Управление платежами"
   },
   "schedule": {
+    "patientMessage": "Сообщение пациента",
     "title": "Расписание",
     "apptsToday": "{count, plural, one {# приём сегодня} few {# приёма сегодня} other {# приёмов сегодня}}",
     "noAppts": "Приёмов в этот день нет",
