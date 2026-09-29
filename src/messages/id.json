@@ -205,7 +205,8 @@
     "requestedLabel": "Diminta: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Pindai dengan aplikasi bank Thailand mana pun untuk membayar.",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n} menit"
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -1180,6 +1181,7 @@
     "otherTime": "Waktu lain"
   },
   "dateInput": {
-    "buddhistYear": "Sepertinya ini tahun Buddhis. Gunakan tahun Masehi (misalnya 1996)."
+    "buddhistYear": "Sepertinya ini tahun Buddhis. Gunakan tahun Masehi (misalnya 1996).",
+    "invalidBirthDate": "Tanggal lahir tidak valid: gunakan tanggal antara 1900 dan hari ini."
   }
 }

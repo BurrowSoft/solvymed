@@ -205,7 +205,8 @@
     "requestedLabel": "Angefragt: {date} · {time}",
     "promptPayTitle": "PromptPay-QR",
     "promptPayScan": "Zum Bezahlen mit einer beliebigen thailändischen Banking-App scannen.",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n} Min."
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -1180,6 +1181,7 @@
     "otherTime": "Andere Uhrzeit"
   },
   "dateInput": {
-    "buddhistYear": "Das sieht nach einem Jahr der buddhistischen Zeitrechnung aus. Bitte das gregorianische Jahr verwenden (z. B. 1996)."
+    "buddhistYear": "Das sieht nach einem Jahr der buddhistischen Zeitrechnung aus. Bitte das gregorianische Jahr verwenden (z. B. 1996).",
+    "invalidBirthDate": "Ungültiges Geburtsdatum: Bitte ein Datum zwischen 1900 und heute verwenden."
   }
 }

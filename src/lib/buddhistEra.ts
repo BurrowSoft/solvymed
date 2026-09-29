@@ -22,3 +22,18 @@ export function buddhistYearOf(value: string | null | undefined): number | null 
   const y = yearOf(value);
   return y === null || y >= BUDDHIST_YEAR_MIN ? null : y + BUDDHIST_ERA_OFFSET;
 }
+
+// A birth date must be real: between 1900-01-01 and today (UX 2026-09-29;
+// the database refuses anything else from migration 116 on). "today" is the
+// browser's local date here; the database uses the practice's.
+export const BIRTH_DATE_MIN = "1900-01-01";
+
+export function localToday(now = new Date()): string {
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
+
+export function birthDateOutOfRange(value: string | null | undefined, today = localToday()): boolean {
+  const v = (value ?? "").trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+  return v < BIRTH_DATE_MIN || v > today;
+}
