@@ -463,6 +463,8 @@
     "clinicName": "Tên phòng khám / cơ sở",
     "clinicNamePlaceholder": "Phòng khám Sức Khỏe",
     "cnpj": "CNPJ",
+    "taxIdLabel": "Mã số thuế (13 chữ số)",
+    "taxIdInvalid": "Nhập mã số thuế 13 chữ số hợp lệ.",
     "phone": "Điện thoại",
     "website": "Trang web",
     "address": "Địa chỉ",

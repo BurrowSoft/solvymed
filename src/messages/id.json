@@ -463,6 +463,8 @@
     "clinicName": "Nama klinik / praktik",
     "clinicNamePlaceholder": "Klinik Sejahtera",
     "cnpj": "CNPJ",
+    "taxIdLabel": "Nomor pajak (13 digit)",
+    "taxIdInvalid": "Masukkan nomor pajak 13 digit yang valid.",
     "phone": "Telepon",
     "website": "Website",
     "address": "Alamat",

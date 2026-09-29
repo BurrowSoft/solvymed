@@ -463,6 +463,8 @@
     "clinicName": "クリニック名 / 医院名",
     "clinicNamePlaceholder": "やまだクリニック",
     "cnpj": "CNPJ",
+    "taxIdLabel": "納税者番号(13桁)",
+    "taxIdInvalid": "有効な13桁の納税者番号を入力してください。",
     "phone": "電話",
     "website": "ウェブサイト",
     "address": "住所",

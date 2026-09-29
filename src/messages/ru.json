@@ -463,6 +463,8 @@
     "clinicName": "Название клиники / кабинета",
     "clinicNamePlaceholder": "Клиника Здоровье",
     "cnpj": "CNPJ",
+    "taxIdLabel": "ИНН (13 цифр)",
+    "taxIdInvalid": "Введите действительный 13-значный ИНН.",
     "phone": "Телефон",
     "website": "Сайт",
     "address": "Адрес",

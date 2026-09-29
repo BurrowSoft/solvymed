@@ -463,6 +463,8 @@
     "clinicName": "診所 / 機構名稱",
     "clinicNamePlaceholder": "健康診所",
     "cnpj": "CNPJ",
+    "taxIdLabel": "稅籍編號(13 碼)",
+    "taxIdInvalid": "請輸入有效的 13 碼稅籍編號。",
     "phone": "電話",
     "website": "網站",
     "address": "地址",

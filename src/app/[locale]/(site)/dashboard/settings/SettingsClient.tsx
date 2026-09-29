@@ -188,7 +188,7 @@ export function InviteCodeCard({ code: initialCode }: { code?: string }) {
 
 /* ─── Clinic form ───────────────────────────────────────────────── */
 type ClinicData = {
-  clinic_name?: string; clinic_cnpj?: string; clinic_phone?: string;
+  clinic_name?: string; clinic_cnpj?: string; clinic_tax_id?: string; clinic_phone?: string;
   clinic_website?: string; clinic_address?: string; clinic_city?: string; clinic_state?: string;
   pix_key?: string;
   promptpay_id?: string;
@@ -196,8 +196,10 @@ type ClinicData = {
 
 // showPix / showPromptPay: the practice country's payment QR is Pix
 // (Brazil) or PromptPay (Thailand). country: the practice country, for the
-// state label and the sample placeholders (same rule as the app).
-export function ClinicForm({ data, showPix = true, showPromptPay = false, country = "BR" }: { data: ClinicData; showPix?: boolean; showPromptPay?: boolean; country?: string }) {
+// state label, the sample placeholders and the business ID: CNPJ in BR,
+// the clinic tax ID in TH (showTaxId: only when it could be read, or an
+// empty field would clear it), none elsewhere (UX).
+export function ClinicForm({ data, showPix = true, showPromptPay = false, showTaxId = false, country = "BR" }: { data: ClinicData; showPix?: boolean; showPromptPay?: boolean; showTaxId?: boolean; country?: string }) {
   const t = useTranslations("settings");
   const br = country === "BR";
   const th = country === "TH";
@@ -214,7 +216,7 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, countr
     start(async () => {
       const result = await updateClinic(fd);
       if ("error" in result && result.error) {
-        setError(result.error === "invalid_promptpay" ? t("promptPayInvalid") : t("saveFailed"));
+        setError(result.error === "invalid_promptpay" ? t("promptPayInvalid") : result.error === "invalid_tax_id" ? t("taxIdInvalid") : t("saveFailed"));
         return;
       }
       setSaved(true);
@@ -230,10 +232,18 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, countr
             <Label>{t("clinicName")}</Label>
             <Input name="clinic_name" defaultValue={data.clinic_name ?? ""} placeholder={t("clinicNamePlaceholder")} />
           </div>
-          <div>
-            <Label>{t("cnpj")}</Label>
-            <Input name="clinic_cnpj" defaultValue={data.clinic_cnpj ?? ""} placeholder="00.000.000/0001-00" />
-          </div>
+          {br && (
+            <div>
+              <Label>{t("cnpj")}</Label>
+              <Input name="clinic_cnpj" defaultValue={data.clinic_cnpj ?? ""} placeholder="00.000.000/0001-00" />
+            </div>
+          )}
+          {th && showTaxId && (
+            <div>
+              <Label>{t("taxIdLabel")}</Label>
+              <Input name="clinic_tax_id" defaultValue={data.clinic_tax_id ?? ""} />
+            </div>
+          )}
           <div>
             <Label>{t("phone")}</Label>
             <Input name="clinic_phone" defaultValue={data.clinic_phone ?? ""} placeholder={phonePlaceholder} />
