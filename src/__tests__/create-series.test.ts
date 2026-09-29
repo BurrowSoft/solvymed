@@ -75,7 +75,7 @@ describe("createAppointment: a recurring series", () => {
     expect(await book({ recurrence: "weekly", occurrences: "4" })).toEqual({ success: true, id: "new-0", count: 4 });
     expect(h.state.inserts).toHaveLength(1);
     expect(h.state.inserts[0].map((r) => r.date)).toEqual(["2026-10-05", "2026-10-12", "2026-10-19", "2026-10-26"]);
-    expect(h.state.told).toEqual([expect.objectContaining({ kind: "booked", date: "2026-10-05", count: 4 })]);
+    expect(h.state.told).toEqual([expect.objectContaining({ kind: "booked", date: "2026-10-05", dates: ["2026-10-05", "2026-10-12", "2026-10-19", "2026-10-26"] })]);
   });
 
   it("another appointment on any date: nothing saved, the date named", async () => {
