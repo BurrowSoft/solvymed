@@ -7206,3 +7206,41 @@ the message files auto-merged; all 15 are valid JSON and each has
 **CI at `6bded04`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
 `6bded04`.** This docs commit sits on top of a master sync (14 behind,
 clean merge). The drift test re-runs in CI on the merge.
+
+## PR #117 (`fix/status-labels`, base master) — one set of status labels on web and app, 🟢 at `f6ec62e`
+
+Tested on the Preview at `f6ec62e` in pt-BR, en and th. The throwaway
+doctor had today's appointments in each status: tentative (from a
+patient), a doctor's proposal, completed, confirmed and absent. There
+was also a later tentative one, and the payment was pending on all of
+them. A linked throwaway patient checked their own side.
+
+| Status | pt-BR | en | th |
+|---|---|---|---|
+| tentative | **Solicitado** | **Requested** | ส่งคำขอแล้ว |
+| proposal | **Novo horário proposto** | **New time proposed** | เสนอเวลาใหม่ |
+| completed | Concluído | **Completed** | เสร็จสิ้น |
+| confirmed / absent | Confirmado / Ausente | Confirmed / Absent | ยืนยันแล้ว / ขาดนัด |
+
+- **Home (today's list):** every row carries the label in the table.
+- **Schedule, list view:** the request rows say Solicitado / Novo
+  horário proposto. The status selector holds the right value on each
+  row (completed → Concluído / Completed / เสร็จสิ้น). Its options:
+  Agendado, Confirmado, Concluído, Cancelado, Atrasado, Ausente (en:
+  Scheduled … Completed … Absent).
+- **Patient, My appointments:** the badges read Solicitado / Novo
+  horário proposto / Solicitado (en Requested / New time proposed; th
+  ส่งคำขอแล้ว / เสนอเวลาใหม่).
+- **"Pendente/Pending" is now only the payment pill** ("⏳ Pendente · R$
+  150,00" / "⏳ Pending · …"). No status says Pendente, Tentative,
+  Proposta, Proposal or Done anywhere.
+- **Help A5** (`content/help/01-agenda.md` and the rebuilt
+  `helpArticles.json`): the list reads "Scheduled, Confirmed, Completed,
+  Cancelled, Late, **Absent** and Rejected" (pt "… Atrasado, Ausente e
+  Rejeitado"). The website note about "Done" / "No-show" is gone. The
+  in-app Help and SolvyAI surfaces aren't live, so I checked the content
+  files, not a screen.
+
+**CI at `f6ec62e`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`f6ec62e`.** This docs commit sits on top of a master sync (14 behind,
+clean merge; message JSON valid).

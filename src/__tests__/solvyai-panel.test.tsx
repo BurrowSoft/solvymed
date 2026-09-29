@@ -10,6 +10,10 @@ vi.mock("next-intl", () => ({
 vi.mock("@/lib/track", () => ({ track: vi.fn() }));
 
 import { SolvyAi, cardIsSafe, screenOf } from "@/components/solvyai/SolvyAi";
+
+// The mock streams word by word with real delays; under a full parallel run
+// 5 s is too tight for the longer answers.
+vi.setConfig({ testTimeout: 15_000 });
 import { mockAnswer } from "@/lib/assistant/mockBackend";
 import type { ConfirmationCard } from "@/lib/assistant/types";
 
