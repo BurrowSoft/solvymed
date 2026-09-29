@@ -40,9 +40,13 @@ describe("dark-theme.css", () => {
   const v = (name: string) => theme.match(new RegExp(`--${name}:\s*([^;]+);`))![1].trim();
 
   it("is up to date with its generator", () => {
-    const before = css;
+    // Line endings aside (a Windows checkout has CRLF).
+    const lf = (x: string) => x.replace(/
+/g, "
+");
+    const before = lf(css);
     execFileSync(process.execPath, ["scripts/dark-theme-build.mjs"], { stdio: "ignore" });
-    expect(fs.readFileSync("src/app/dark-theme.css", "utf8")).toBe(before);
+    expect(lf(fs.readFileSync("src/app/dark-theme.css", "utf8"))).toBe(before);
   });
 
   it("swaps light and dark steps, keeps 400–600, and makes white the card surface", () => {
