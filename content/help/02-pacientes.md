@@ -159,3 +159,16 @@ If either record had booking blocked, the one that stays remains blocked. A reco
 **On the website:** Not available on the website yet; use the app.
 `open:patients`
 `requires:merge-patients-live`
+
+---
+## P13. Importar pacientes de outro sistema / Import patients from another system
+**pt-BR**
+A importação é feita no site (só o médico), a partir de uma planilha CSV ou Excel: a exportação do seu sistema anterior (iClinic e Prontuário Verde são reconhecidos automaticamente) ou o nosso modelo de planilha.
+Os pacientes importados aparecem no app normalmente.
+**en**
+The import is done on the website (doctor only), from a CSV or Excel spreadsheet: your previous system's export (iClinic and Prontuário Verde are recognised automatically) or our spreadsheet template.
+Imported patients show up in the app as usual.
+**No site:** Em **Pacientes**, clique em **Importar pacientes** e escolha o arquivo (ou baixe o **modelo de planilha**). Confira para onde vai cada coluna: as que não têm campo no SolvyMed ficam como **dados importados**, visíveis só para você; nome e sobrenome em colunas separadas viram o nome completo. Escolha o que fazer com **pacientes que já existem** (**Pular** ou **Preencher campos vazios**) e clique em **Verificar planilha**: aparece o resumo de novos, já existentes e com erro, e você pode baixar a lista de erros. Nada é salvo até você clicar em **Importar**. Por 24 horas, **Desfazer importação** remove os pacientes novos que ainda não foram editados nem usados. Pacientes inativos ou falecidos no sistema anterior entram como arquivados.
+**On the website:** In **Patients**, click **Import patients** and choose the file (or download the **spreadsheet template**). Check where each column goes: the ones with no SolvyMed field are kept as **imported data**, visible only to you; first and last name in separate columns become the full name. Choose what to do with **patients who already exist** (**Skip** or **Fill in empty fields**) and click **Check the spreadsheet**: you see how many are new, already exist or have errors, and you can download the error list. Nothing is saved until you click **Import**. For 24 hours, **Undo the import** removes the new patients that haven't been edited or used yet. Patients inactive or deceased in the previous system come in archived.
+`open:patients`
+`requires:patient-import-live`

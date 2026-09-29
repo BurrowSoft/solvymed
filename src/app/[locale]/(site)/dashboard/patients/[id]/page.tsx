@@ -70,7 +70,7 @@ export default async function PatientDetailPage({
     sex?: string; birth_date?: string; profession?: string; emergency_phone?: string;
     convenio_type?: string; invite_code?: string; created_at: string;
     booking_blocked?: boolean;
-    archived_at?: string | null; archived_by_name?: string | null;
+    archived_at?: string | null; archived_by_name?: string | null; archived_reason?: string | null;
   };
   const isArchived = !!patient.archived_at;
   const records = (recordsResult.data ?? []) as MedRecord[];
@@ -125,6 +125,7 @@ export default async function PatientDetailPage({
           patientId={patient.id}
           archivedAt={patient.archived_at!}
           archivedByName={patient.archived_by_name ?? null}
+          archivedReason={patient.archived_reason ?? null}
           locale={locale}
         />
       )}
