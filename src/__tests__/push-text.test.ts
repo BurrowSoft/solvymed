@@ -9,8 +9,13 @@ import { patientPushLocale, professionalPushLocale } from "@/lib/pushRecipient";
 // YYYY-MM-DD.
 describe("push texts", () => {
   it("in the recipient's language, with the locale's date (Thai: Buddhist year)", () => {
-    expect(pushText("pt-BR", "apptCancelledByClinic", { when: pushWhen("pt-BR", "2026-09-29", "14:00:00") }))
-      .toEqual({ title: "Consulta cancelada", body: "Sua consulta de 29/09/2026 14:00 foi cancelada pela clínica." });
+    // The clinic's own pushes (08's texts, the app's #111 wording).
+    expect(pushText("pt-BR", "apptCancelledByClinic", { clinic: "Clínica Sol", date: "29/09/2026", time: "14:00" }))
+      .toEqual({ title: "Consulta cancelada", body: "Clínica Sol cancelou sua consulta de 29/09/2026 às 14:00. Para marcar outra, abra o app." });
+    expect(pushText("en", "apptBookedByClinic", { clinic: "Sun Clinic", date: "09/29/2026", time: "14:00" }))
+      .toEqual({ title: "New appointment", body: "Sun Clinic booked an appointment for you on 09/29/2026 at 14:00." });
+    // A name is text, never a replacement pattern.
+    expect(pushText("en", "apptBookedByClinic", { clinic: "A$&B", date: "d", time: "t" }).body).toBe("A$&B booked an appointment for you on d at t.");
     expect(pushText("en", "proposalAccepted", { name: "Maria Silva", when: pushWhen("en", "2026-09-29", "14:00") }).body)
       .toBe("Maria Silva accepted the new time: 09/29/2026 14:00.");
     expect(pushWhen("th", "2026-09-29", "14:00")).toBe("29/09/2569 14:00");
@@ -25,11 +30,11 @@ describe("push texts", () => {
     const kinds: PushKind[] = [
       "apptConfirmed", "bookingNotAvailable", "newTimeProposed", "proposalAccepted", "proposalDeclined",
       "rescheduleRequested", "rescheduleConfirmed", "rescheduleConfirmedNoTime", "rescheduleDeclined",
-      "apptCancelledByClinic", "newBookingRequest",
+      "apptBookedByClinic", "apptCancelledByClinic", "newBookingRequest",
     ];
     const locales: PushLocale[] = ["pt-BR", "en", "es", "fr", "de", "it", "th"];
     for (const l of locales) for (const k of kinds) {
-      const { title, body } = pushText(l, k, { name: "X", when: "W" });
+      const { title, body } = pushText(l, k, { name: "X", when: "W", clinic: "C", date: "D", time: "T" });
       expect(title.length, `${l} ${k}`).toBeGreaterThan(0);
       expect(body, `${l} ${k}`).not.toMatch(/[{}]/);
     }
@@ -63,12 +68,13 @@ describe("push texts", () => {
     expect(await patientPushLocale(noSaved, "p", "d")).toBe("th");
   });
 
-  it("Thai: one wording for an appointment cancelled by the clinic (archive and account close)", () => {
+  it("Thai: one title for an appointment cancelled by the clinic (Schedule / archive and account close)", () => {
     const th = JSON.parse(readFileSync(join(__dirname, "..", "messages", "th.json"), "utf8").replace(/^﻿/, ""));
-    const archive = pushText("th", "apptCancelledByClinic", { when: "W" });
-    expect(archive.title).toBe(th.accountClose.pushCancelledTitle);
-    expect(archive.body).toContain("ถูกยกเลิกโดยคลินิก");
-    expect(th.accountClose.pushCancelledBody).toContain("ถูกยกเลิกโดยคลินิก");
+    const cancelled = pushText("th", "apptCancelledByClinic", { clinic: "C", date: "D", time: "T" });
+    expect(cancelled.title).toBe(th.accountClose.pushCancelledTitle);
+    // The Schedule / archive one names the clinic (08's text); both say it was cancelled.
+    expect(cancelled.body).toContain("ยกเลิก");
+    expect(th.accountClose.pushCancelledBody).toContain("ยกเลิก");
   });
 
   it("no push in src is sent with literal (English) text", () => {

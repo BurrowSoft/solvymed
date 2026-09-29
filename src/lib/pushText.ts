@@ -11,7 +11,7 @@ const LOCALES: PushLocale[] = ["pt-BR", "en", "es", "fr", "de", "it", "th"];
 export type PushKind =
   | "apptConfirmed" | "bookingNotAvailable" | "newTimeProposed" | "proposalAccepted" | "proposalDeclined"
   | "rescheduleRequested" | "rescheduleConfirmed" | "rescheduleConfirmedNoTime" | "rescheduleDeclined"
-  | "apptCancelledByClinic" | "newBookingRequest";
+  | "apptBookedByClinic" | "apptCancelledByClinic" | "newBookingRequest";
 
 type Text = { title: string; body: string };
 type Table = Record<PushKind, Text> & { note: string };
@@ -29,7 +29,9 @@ const T: Record<PushLocale, Table> = {
     rescheduleConfirmed: { title: "Remarcação confirmada", body: "Sua consulta foi remarcada para {when}." },
     rescheduleConfirmedNoTime: { title: "Remarcação confirmada", body: "Seu pedido de remarcação foi confirmado." },
     rescheduleDeclined: { title: "Remarcação não aceita", body: "Não foi possível remarcar. O horário original continua confirmado." },
-    apptCancelledByClinic: { title: "Consulta cancelada", body: "Sua consulta de {when} foi cancelada pela clínica." },
+    apptBookedByClinic: { title: "Nova consulta", body: "{clinic} marcou uma consulta para você em {date} às {time}." },
+
+    apptCancelledByClinic: { title: "Consulta cancelada", body: "{clinic} cancelou sua consulta de {date} às {time}. Para marcar outra, abra o app." },
     note: "Observação: {note}",
   },
   en: {
@@ -43,7 +45,9 @@ const T: Record<PushLocale, Table> = {
     rescheduleConfirmed: { title: "Reschedule confirmed", body: "Your appointment has been moved to {when}." },
     rescheduleConfirmedNoTime: { title: "Reschedule confirmed", body: "Your reschedule request has been confirmed." },
     rescheduleDeclined: { title: "Reschedule not accepted", body: "The appointment couldn't be moved. Your original time is still confirmed." },
-    apptCancelledByClinic: { title: "Appointment cancelled", body: "Your appointment on {when} was cancelled by the clinic." },
+    apptBookedByClinic: { title: "New appointment", body: "{clinic} booked an appointment for you on {date} at {time}." },
+
+    apptCancelledByClinic: { title: "Appointment cancelled", body: "{clinic} cancelled your appointment on {date} at {time}. To book another, open the app." },
     note: "Note: {note}",
   },
   es: {
@@ -57,7 +61,9 @@ const T: Record<PushLocale, Table> = {
     rescheduleConfirmed: { title: "Cambio confirmado", body: "Tu cita se cambió a {when}." },
     rescheduleConfirmedNoTime: { title: "Cambio confirmado", body: "Tu solicitud de cambio fue confirmada." },
     rescheduleDeclined: { title: "Cambio no aceptado", body: "No se pudo cambiar la cita. Tu horario original sigue confirmado." },
-    apptCancelledByClinic: { title: "Cita cancelada", body: "Tu cita del {when} fue cancelada por la clínica." },
+    apptBookedByClinic: { title: "Nueva cita", body: "{clinic} reservó una cita para ti el {date} a las {time}." },
+
+    apptCancelledByClinic: { title: "Cita cancelada", body: "{clinic} canceló tu cita del {date} a las {time}. Para reservar otra, abre la app." },
     note: "Nota: {note}",
   },
   fr: {
@@ -71,7 +77,9 @@ const T: Record<PushLocale, Table> = {
     rescheduleConfirmed: { title: "Report confirmé", body: "Votre rendez-vous a été déplacé au {when}." },
     rescheduleConfirmedNoTime: { title: "Report confirmé", body: "Votre demande de report a été confirmée." },
     rescheduleDeclined: { title: "Report non accepté", body: "Le rendez-vous n’a pas pu être déplacé. L’horaire initial reste confirmé." },
-    apptCancelledByClinic: { title: "Rendez-vous annulé", body: "Votre rendez-vous du {when} a été annulé par la clinique." },
+    apptBookedByClinic: { title: "Nouveau rendez-vous", body: "{clinic} vous a pris un rendez-vous le {date} à {time}." },
+
+    apptCancelledByClinic: { title: "Rendez-vous annulé", body: "{clinic} a annulé votre rendez-vous du {date} à {time}. Pour en prendre un autre, ouvrez l'app." },
     note: "Remarque : {note}",
   },
   de: {
@@ -85,7 +93,9 @@ const T: Record<PushLocale, Table> = {
     rescheduleConfirmed: { title: "Verschiebung bestätigt", body: "Ihr Termin wurde auf {when} verschoben." },
     rescheduleConfirmedNoTime: { title: "Verschiebung bestätigt", body: "Ihre Verschiebungsanfrage wurde bestätigt." },
     rescheduleDeclined: { title: "Verschiebung nicht angenommen", body: "Der Termin konnte nicht verschoben werden. Die ursprüngliche Zeit bleibt bestätigt." },
-    apptCancelledByClinic: { title: "Termin abgesagt", body: "Ihr Termin am {when} wurde von der Praxis abgesagt." },
+    apptBookedByClinic: { title: "Neuer Termin", body: "{clinic} hat für Sie einen Termin am {date} um {time} gebucht." },
+
+    apptCancelledByClinic: { title: "Termin abgesagt", body: "{clinic} hat Ihren Termin am {date} um {time} abgesagt. Für einen neuen Termin öffnen Sie die App." },
     note: "Hinweis: {note}",
   },
   it: {
@@ -99,7 +109,9 @@ const T: Record<PushLocale, Table> = {
     rescheduleConfirmed: { title: "Spostamento confermato", body: "Il tuo appuntamento è stato spostato a {when}." },
     rescheduleConfirmedNoTime: { title: "Spostamento confermato", body: "La tua richiesta di spostamento è stata confermata." },
     rescheduleDeclined: { title: "Spostamento non accettato", body: "Non è stato possibile spostare l’appuntamento. L’orario originale resta confermato." },
-    apptCancelledByClinic: { title: "Appuntamento annullato", body: "Il tuo appuntamento del {when} è stato annullato dalla clinica." },
+    apptBookedByClinic: { title: "Nuovo appuntamento", body: "{clinic} ha prenotato un appuntamento per te il {date} alle {time}." },
+
+    apptCancelledByClinic: { title: "Appuntamento annullato", body: "{clinic} ha annullato il tuo appuntamento del {date} alle {time}. Per prenotarne un altro, apri l'app." },
     note: "Nota: {note}",
   },
   th: {
@@ -113,7 +125,9 @@ const T: Record<PushLocale, Table> = {
     rescheduleConfirmed: { title: "ยืนยันการเลื่อนนัดแล้ว", body: "นัดหมายของคุณถูกเลื่อนเป็น {when}" },
     rescheduleConfirmedNoTime: { title: "ยืนยันการเลื่อนนัดแล้ว", body: "คำขอเลื่อนนัดของคุณได้รับการยืนยันแล้ว" },
     rescheduleDeclined: { title: "ไม่สามารถเลื่อนนัดได้", body: "ไม่สามารถเลื่อนนัดได้ เวลาเดิมยังคงได้รับการยืนยัน" },
-    apptCancelledByClinic: { title: "นัดหมายถูกยกเลิก", body: "นัดหมายของคุณวันที่ {when} ถูกยกเลิกโดยคลินิก" },
+    apptBookedByClinic: { title: "นัดหมายใหม่", body: "{clinic} ได้นัดหมายให้คุณในวันที่ {date} เวลา {time}" },
+
+    apptCancelledByClinic: { title: "นัดหมายถูกยกเลิก", body: "{clinic} ได้ยกเลิกนัดหมายของคุณวันที่ {date} เวลา {time} หากต้องการนัดใหม่ กรุณาเปิดแอป" },
     note: "หมายเหตุ: {note}",
   },
 };
@@ -141,13 +155,19 @@ export function pushWhen(locale: PushLocale, date: string, time?: string | null)
 export function pushText(
   locale: PushLocale,
   kind: PushKind,
-  params: { name?: string; when?: string; note?: string | null } = {},
+  // clinic / date / time: the clinic's own pushes (08's texts): the
+  // clinic's patient-facing name, the date in the reader's format, HH:MM.
+  params: { name?: string; when?: string; note?: string | null; clinic?: string; date?: string; time?: string } = {},
 ): Text {
   const t = T[locale];
-  const fill = (s: string) => s.replace("{name}", params.name ?? "").replace("{when}", params.when ?? "");
+  // Replacer functions: names are user text, and "$&" in a replacement
+  // string would be read as a pattern.
+  const fill = (s: string) => s
+    .replace("{name}", () => params.name ?? "").replace("{when}", () => params.when ?? "")
+    .replace("{clinic}", () => params.clinic ?? "").replace("{date}", () => params.date ?? "").replace("{time}", () => params.time ?? "");
   const body = fill(t[kind].body);
   return {
     title: t[kind].title,
-    body: params.note ? `${body} ${t.note.replace("{note}", params.note)}` : body,
+    body: params.note ? `${body} ${t.note.replace("{note}", () => params.note ?? "")}` : body,
   };
 }

@@ -48,8 +48,8 @@
           ]
         },
         "web": {
-          "pt": "Em **Agenda**, clique em **Nova Consulta** (também há o botão na **Visão geral**). Escolha o paciente, a data, o início, a duração, o tipo, o procedimento e a forma de pagamento (particular ou convênio), e clique em **Salvar Consulta**. O valor vem do procedimento escolhido.",
-          "en": "In the **Schedule**, click **New Appointment** (there's also a button on the **Overview**). Choose the patient, date, start, duration, type, procedure and payment (private or insurance), and click **Save Appointment**. The amount comes from the chosen procedure."
+          "pt": "Em **Agenda**, clique em **Nova Consulta** (também há o botão na **Visão geral**). Escolha o paciente, a data, o início, a duração, o tipo, o procedimento e a forma de pagamento (particular ou convênio), e clique em **Salvar Consulta**. O valor vem do procedimento escolhido. Se o paciente tiver conta no SolvyMed, ele recebe uma notificação.",
+          "en": "In the **Schedule**, click **New Appointment** (there's also a button on the **Overview**). Choose the patient, date, start, duration, type, procedure and payment (private or insurance), and click **Save Appointment**. The amount comes from the chosen procedure. If the patient has a SolvyMed account, they get a notification."
         },
         "webUnavailable": false,
         "open": "new-appointment",
@@ -178,8 +178,8 @@
           ]
         },
         "web": {
-          "pt": "Remarcar ainda não está disponível no site; use o app. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**.",
-          "en": "Moving an appointment isn't available on the website yet; use the app. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**."
+          "pt": "Remarcar ainda não está disponível no site; use o app. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**. Se o paciente tiver conta no SolvyMed, ele recebe uma notificação (consultas no passado não notificam).",
+          "en": "Moving an appointment isn't available on the website yet; use the app. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**. If the patient has a SolvyMed account, they get a notification (past appointments don't)."
         },
         "webUnavailable": false,
         "open": "schedule",
