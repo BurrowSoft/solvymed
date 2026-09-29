@@ -1286,6 +1286,7 @@
     "print": "列印 / 儲存為 PDF",
     "printHint": "若要儲存檔案，請在列印視窗中選擇「另存為 PDF」。",
     "back": "返回病患",
+    "backToPayments": "返回付款",
     "historyTitle": "病史",
     "medicalRecords": "病歷紀錄",
     "prescriptions": "處方",

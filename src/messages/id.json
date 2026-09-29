@@ -1286,6 +1286,7 @@
     "print": "Cetak / Simpan PDF",
     "printHint": "Untuk menyimpan file, pilih \"Simpan sebagai PDF\" di jendela cetak.",
     "back": "Kembali ke pasien",
+    "backToPayments": "Kembali ke pembayaran",
     "historyTitle": "Riwayat medis",
     "medicalRecords": "Catatan medis",
     "prescriptions": "Resep",

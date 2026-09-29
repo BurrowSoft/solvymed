@@ -46,13 +46,13 @@ export default async function ReceiptPrintPage({
   // The practice country decides the recibo (currency, IDs, dates; Thai →
   // none). Unknown: an error, never a guessed Brazilian recibo (9a).
   const lookup = await lookupPracticeCountry(supabase, user.id, profId);
-  if (!lookup.ok) return <AccessLogFailed backHref={back} text={t("countryFailed")} backLabel={t("back")} />;
+  if (!lookup.ok) return <AccessLogFailed backHref={back} text={t("countryFailed")} backLabel={t("backToPayments")} />;
   const country = lookup.country;
 
   if (country === "TH") {
     return (
       <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
-        <PrintToolbar backHref={back} />
+        <PrintToolbar backHref={back} backLabel={t("backToPayments")} />
         <p className="mx-auto max-w-[680px] rounded-2xl bg-white p-6 text-sm text-slate-600 shadow-sm">{t("receiptThaiHint")}</p>
       </div>
     );
@@ -79,7 +79,7 @@ export default async function ReceiptPrintPage({
   return (
     <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
-      <PrintToolbar backHref={back} />
+      <PrintToolbar backHref={back} backLabel={t("backToPayments")} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">
         <ReceiptDocument
           template={toDocTemplate(header.template)}

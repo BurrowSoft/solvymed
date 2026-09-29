@@ -1286,6 +1286,7 @@
     "print": "Imprimir / Salvar PDF",
     "printHint": "Para salvar o arquivo, escolha \"Salvar como PDF\" na janela de impressão.",
     "back": "Voltar ao paciente",
+    "backToPayments": "Voltar aos pagamentos",
     "historyTitle": "Histórico clínico",
     "medicalRecords": "Prontuário",
     "prescriptions": "Receitas",

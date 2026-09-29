@@ -1286,6 +1286,7 @@
     "print": "Drucken / Als PDF speichern",
     "printHint": "Um die Datei zu speichern, wählen Sie im Druckfenster „Als PDF speichern“.",
     "back": "Zurück zum Patienten",
+    "backToPayments": "Zurück zu den Zahlungen",
     "historyTitle": "Krankengeschichte",
     "medicalRecords": "Behandlungseinträge",
     "prescriptions": "Rezepte",

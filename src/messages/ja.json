@@ -1286,6 +1286,7 @@
     "print": "印刷 / PDF で保存",
     "printHint": "ファイルを保存するには、印刷ウィンドウで「PDF として保存」を選んでください。",
     "back": "患者に戻る",
+    "backToPayments": "支払いに戻る",
     "historyTitle": "診療履歴",
     "medicalRecords": "診療記録",
     "prescriptions": "処方箋",

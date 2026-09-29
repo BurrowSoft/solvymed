@@ -1316,6 +1316,7 @@
     "print": "Print / Save as PDF",
     "printHint": "To save the file, choose \"Save as PDF\" in the print window.",
     "back": "Back to the patient",
+    "backToPayments": "Back to payments",
     "historyTitle": "Medical history",
     "medicalRecords": "Medical records",
     "prescriptions": "Prescriptions",
