@@ -948,8 +948,8 @@
           ]
         },
         "web": {
-          "pt": "Na **Visão geral** você vê as consultas de hoje, o valor pendente, o número de pacientes e o recebido no mês. O detalhe por período fica em **Pagamentos**; o filtro particular/convênio está só no app.",
-          "en": "The **Overview** shows today's appointments, the pending amount, the number of patients and what was received this month. The breakdown by period is in **Payments**; the private/insurance filter is app-only."
+          "pt": "Na **Visão geral** você vê as consultas de hoje, o valor pendente, o número de pacientes e o recebido no mês. O detalhe por período fica em **Pagamentos**, com o filtro **Todos / Particular / Convênio**.",
+          "en": "The **Overview** shows today's appointments, the pending amount, the number of patients and what was received this month. The breakdown by period is in **Payments**, with the **All / Private / Insurance** filter."
         },
         "webUnavailable": false,
         "open": "home",

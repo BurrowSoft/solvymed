@@ -8905,6 +8905,8 @@ cleanly.
 
 ## PR #155 (`fix/files-hide-reason-label`, base master) — the file hide dialog says "Motivo para ocultar", 🟢 at `23f326f`
 
+## PR #158 (`feat/payments-type-filter`, base master) — Pagamentos: Todos / Particular / Convênio filter (Help G6), 🟢 at `0b7e482`
+
 Tested by web tester 2.
 
 **Setup:**
@@ -8971,3 +8973,34 @@ Tested by web tester 2.
 | Single booking on 13/10 at 15:00 | ✅ "⚠ Opus Serie Aviso já tem consulta nesse dia às 09:00", **no date prefix** (as before) |
 
 **CI at `30c07ec`:** ✅. **Review: clean.** **Merge gate: 🟢 for `30c07ec`.** This docs block sits on top of a master sync (after #155 merged; clean).
+
+- **Where:** the Vercel Preview (Playwright) against the prod DB.
+- **Data:** a throwaway doctor + secretary (deleted afterwards), with 4
+  completed appointments from yesterday:
+  - particular: pending R$ 100, paid R$ 200;
+  - convênio: pending R$ 300, paid R$ 400.
+- **"No type" rows:** a row with an empty `payment_type` is refused by the
+  DB check (23514), so that case can't occur.
+
+**Results:**
+
+| Row | Result |
+|---|---|
+| Controls | ✅ "Esta semana · Este mês · Mês passado · Todo o período" + "Todos · Particular · Convênio" |
+| Todos | ✅ Pendente R$ 400 (2) · Recebido R$ 600 (2) · Total R$ 1.000 (4); both lists show all 4 |
+| Particular | ✅ `?type=private`; R$ 100 / R$ 200 / R$ 300 (2); only the two particular rows |
+| Convênio | ✅ `?type=insurance`; R$ 300 / R$ 400 / R$ 700 (2); only the two convênio rows. **Particular + Convênio = Todos** (300 + 700 = 1.000) |
+| Period change with a type | ✅ "Todo o período" → `?type=insurance&period=all`, same totals |
+| Todos clears it | ✅ `?period=all` only, all 4 back |
+| Secretary | ✅ the same filter; Convênio shows only the two convênio rows |
+| Help G6 | ✅ the web note: "…O detalhe por período fica em Pagamentos, com o filtro Todos / Particular / Convênio." |
+| en | ✅ "All · Private · Insurance" |
+| th | ✅ "ทั้งหมด · ชำระเอง · ประกัน". **Nit:** the period "All time" is also "ทั้งหมด", so two identical buttons sit side by side. Suggest e.g. "ทุกประเภท" for the type filter (Vitor / UX to choose) |
+
+**CI at `0b7e482`:** ✅. **Review: clean.** **Merge gate: 🟢 for `0b7e482`.** This docs commit sits on top of a master sync (1 behind; clean).
+
+**#158 re-check at `c4b9740`** (web tester 2): it changes only the th
+type-filter label, per my nit. Thai Pagamentos now shows "สัปดาห์นี้ ·
+เดือนนี้ · เดือนที่แล้ว · ทั้งหมด" (the period) + "ทุกประเภท · ชำระเอง ·
+ประกัน" (the type), so there's no duplicate. "ทุกประเภท" clears `?type=`.
+**Merge gate: 🟢 for `c4b9740`.**
