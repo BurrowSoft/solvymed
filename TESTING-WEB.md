@@ -8674,3 +8674,80 @@ Tested by web tester 2.
 
 **CI at `0c92dc2`:** ✅ (lint, typecheck + unit tests, Vercel).
 **Review: clean (7f).** **Merge gate: 🟢 for `0c92dc2`.** This docs commit sits on top of a master sync (3 behind; clean).
+
+## #148 (release) Stripe webhook failures reported to Sentry (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `e80517a`, locally with `next dev`.
+- **Sentry:** `NEXT_PUBLIC_SENTRY_DSN` pointed at a local sink (with
+  `VERCEL_ENV=preview`), so the capture is exactly what Sentry would get
+  after `beforeSend`, and nothing reached Sentry.
+- **Webhook secret:** a local-only `STRIPE_WEBHOOK_SECRET`, used to sign
+  test events with the stripe library's `generateTestHeaderString`.
+- **Stripe key:** the test-mode key from `.env.local`, for the retrieve
+  calls.
+- **No prod env changes, and no checkout.**
+- **Leak check:** every payload carried marker strings (an email, a
+  customer id, the name "Dra Vazamento Opus", the amount 98765, "4242").
+
+| Case | Response | Sentry |
+|---|---|---|
+| E1 bad signature | ✅ 400 "Invalid signature" | ✅ one event, "Stripe webhook: bad_signature", level error, tag `stripe_webhook_failure=bad_signature`, fingerprint [stripe-webhook, bad_signature] |
+| E2 no stripe-signature header | 400 "No signature" | none (this path returns before the report; see the note) |
+| E3 valid, an unhandled type (customer.created) | ✅ 200 | ✅ none |
+| E4 valid checkout.session.completed, unpaid | ✅ 200 | ✅ none |
+| E5 valid invoice.payment_failed, no subscription | ✅ 200 | ✅ none |
+| E6 valid customer.subscription.updated; Stripe answers 404 on retrieve | ✅ 500 "Could not fetch subscription" | ✅ one "Stripe webhook: sync_failed", tags `stripe_event_type=customer.subscription.updated` + `stripe_event_id` |
+| E7 valid checkout, paid, with a sub that can't be retrieved | ✅ 500 | ✅ one sync_failed, tags type `checkout.session.completed` + id |
+
+**What Sentry got:**
+- **Marker strings:** none of them, and no `stripe-signature` / `v1=` /
+  whsec / cookie. `request` is only `{url, method}`, with no body.
+- **Note (not blocking; for 7f/UX):** the two sync_failed events carry a
+  Sentry **breadcrumb** of the failing Stripe API call, e.g.
+  `https://api.stripe.com/v1/subscriptions/sub_… (404)`.
+  - So the **Stripe subscription id** is in the event, as well as the
+    event id in the tags.
+  - It's a pseudonymous id, not an email, name or amount. It isn't in the
+    PR's "type + id only" wording, though.
+- **Not covered:**
+  - a missing signature header (E2) isn't reported;
+  - `handler_threw` and `no_professional_row` weren't forced. The second
+    needs a live test-mode subscription for a user with no row.
+- **The success path with a real subscription** (sync writes active → 200,
+  no event) isn't run here. It would need a Stripe test subscription or a
+  checkout. E3–E5 cover "200 → no event".
+
+**Release sync:** release (#145) merged in under this docs commit. The
+merge was clean, with no change to this PR's code.
+**CI at `e80517a`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`e80517a`**, with the breadcrumb note for 7f/UX to decide.
+
+**#148 prod check (www, release `6e90d70`, Ready):** ✅.
+- A POST with a bad `stripe-signature` → 400 "Invalid signature"; no
+  header → 400 "No signature".
+- That bad-signature POST (about 15:40 UTC 2026-09-29) makes one real
+  "Stripe webhook: bad_signature" event in prod Sentry. It's this test,
+  not a Stripe problem; 7f and e7 were told.
+
+## #151 Merge-back of release #148 into master (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `eba558c`.
+- **The code:** the webhook route is identical to release's. Only the
+  comment in `stripeWebhookReport.ts` changed; it now says what Sentry
+  receives, including the Stripe API path breadcrumb.
+- **The run:** #148's local run, repeated at `eba558c`: local `next dev`,
+  the DSN pointed at a local sink, a local-only webhook secret with signed
+  test events.
+
+| Case | Result |
+|---|---|
+| Bad signature | ✅ 400 + one "Stripe webhook: bad_signature" event |
+| No signature header | ✅ 400, no event |
+| Valid unhandled / unpaid checkout / invoice with no subscription | ✅ 200, no event |
+| Valid subscription.updated or paid checkout whose subscription 404s | ✅ 500 + one sync_failed, tagged with the event type and id |
+| The marker strings (email, customer, name, amount, card) | ✅ none in what Sentry got |
+
+**Master sync:** master (#147, #149) merged in under this docs commit.
+There was a conflict in TESTING-WEB.md only: master's block comes first,
+then #148's, and nothing was dropped.
+**Review: clean (7f).** **Merge gate: 🟢 for `eba558c`.**
