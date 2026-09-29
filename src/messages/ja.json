@@ -1284,6 +1284,7 @@
     "birthDate": "生年月日：{value}",
     "phone": "電話：{value}",
     "exportedBy": "{date} に {name} がエクスポート",
-    "accessLogFailed": "アクセスを記録できませんでした。もう一度お試しください。"
+    "accessLogFailed": "アクセスを記録できませんでした。もう一度お試しください。",
+    "countryFailed": "クリニックの情報を読み込めませんでした。もう一度お試しください。"
   }
 }

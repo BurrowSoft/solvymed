@@ -1284,6 +1284,7 @@
     "birthDate": "Date de naissance : {value}",
     "phone": "Téléphone : {value}",
     "exportedBy": "Exporté par {name} le {date}",
-    "accessLogFailed": "Impossible d’enregistrer l’accès. Veuillez réessayer."
+    "accessLogFailed": "Impossible d’enregistrer l’accès. Veuillez réessayer.",
+    "countryFailed": "Impossible de charger les informations du cabinet. Veuillez réessayer."
   }
 }

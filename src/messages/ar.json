@@ -1284,6 +1284,7 @@
     "birthDate": "تاريخ الميلاد: {value}",
     "phone": "الهاتف: {value}",
     "exportedBy": "صدّره {name} في {date}",
-    "accessLogFailed": "تعذّر تسجيل الوصول. حاول مرة أخرى."
+    "accessLogFailed": "تعذّر تسجيل الوصول. حاول مرة أخرى.",
+    "countryFailed": "تعذّر تحميل بيانات العيادة. حاول مرة أخرى."
   }
 }

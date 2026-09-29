@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { PRINT_CSS, docDate, docTime, docToday, toDocTemplate } from "@/lib/prescriptionDoc";
-import { getPracticeCountry } from "@/lib/practiceCountry";
+import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
 import { getClinicTimeZone } from "@/lib/clinicTime";
 import { PrintToolbar } from "@/components/PrintToolbar";
@@ -47,6 +47,13 @@ export default async function HistoryPrintPage({
   const records = (recordsResult.data ?? []) as { id: string; date: string; time: string | null; content: string; corrects_id: string | null }[];
   const rxs = (rxResult.data ?? []) as { id: string; date: string; notes: string | null; corrects_id: string | null; prescription_items: { name: string; dosage: string; frequency: string; duration: string }[] | null }[];
 
+  // Dates in the practice country's format (TH: Buddhist era); labels in
+  // the UI language. Unknown country: an error, never a guessed calendar
+  // (7f). Checked before the log, so a failed page records no access.
+  const lookup = await lookupPracticeCountry(supabase, user.id, user.id);
+  if (!lookup.ok) return <AccessLogFailed backHref={`${prefix}/dashboard/patients/${id}`} text={t("countryFailed")} backLabel={t("back")} />;
+  const country = lookup.country;
+
   // Every entry printed is logged as opened (111), like the app's export
   // (mobile #103): the patient, each record, each prescription. Fail
   // closed (UX 36): no print unless every access was recorded.
@@ -63,9 +70,6 @@ export default async function HistoryPrintPage({
   // phone, sex.
   const str = (v: unknown) => (typeof v === "string" && v.trim() ? v : null);
   const lines: string[] = [];
-  // Dates in the practice country's format (TH: Buddhist era); labels in
-  // the UI language.
-  const country = await getPracticeCountry(supabase, user.id, user.id);
   const birth = str(patient.birth_date);
   if (birth) {
     const age = Math.floor((Date.now() - new Date(birth).getTime()) / (365.25 * 24 * 3600 * 1000));

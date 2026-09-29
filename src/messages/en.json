@@ -1314,6 +1314,7 @@
     "birthDate": "Date of birth: {value}",
     "phone": "Phone: {value}",
     "exportedBy": "Exported by {name} on {date}",
-    "accessLogFailed": "Couldn't record the access. Please try again."
+    "accessLogFailed": "Couldn't record the access. Please try again.",
+    "countryFailed": "Couldn't load the clinic's details. Please try again."
   }
 }

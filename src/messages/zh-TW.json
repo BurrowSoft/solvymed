@@ -1284,6 +1284,7 @@
     "birthDate": "出生日期：{value}",
     "phone": "電話：{value}",
     "exportedBy": "由 {name} 於 {date} 匯出",
-    "accessLogFailed": "無法記錄存取。請再試一次。"
+    "accessLogFailed": "無法記錄存取。請再試一次。",
+    "countryFailed": "無法載入診所資料。請再試一次。"
   }
 }
