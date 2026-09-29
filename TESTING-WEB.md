@@ -8144,3 +8144,85 @@ and 119 applied):
 **CI at `5060fd3`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `5060fd3`.** This docs commit sits on top of a master sync (14 behind,
 clean merge).
+
+## PR #135 (`feat/web-reschedule`, base master) — Remarcar on the website, 🟢 at `98f1679`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `98f1679` with a test-only Expo sink
+  (pushes are logged, never sent), against the prod DB.
+- **Throwaway fixtures (deleted afterwards):**
+  - a doctor whose practice is **profile-named** ("Clínica Opus Perfil")
+    with **2 locations** ("Aaa Opus Local Norte", "Zzz Opus Local Sul"),
+    open Mon–Fri 08:00–18:00;
+  - a linked patient with a device token;
+  - a secretary;
+  - appointments in every relevant status, plus a block on Wed 17:30–19:00.
+
+**Icons (list):**
+- Scheduled, confirmed and late → **Remarcar**.
+- Tentative → none.
+- Absent (with or without `patient_id`) → **"Nova consulta (mesmo
+  paciente)"** only, with no Remarcar.
+- A confirmed row with a message shows "Mensagem do paciente: Posso chegar
+  10 min antes?".
+
+**Icons (Dia view, calendar popover):** the same icons.
+- A late 45 min appointment moved from the popover keeps **45 min**.
+- The no-show's book-again opens with the name pre-filled.
+
+**The dialog:** "Remarcar consulta", with the hint "A duração e os outros
+dados continuam os mesmos."
+
+**Moves:**
+- **Scheduled Tue 06/10 09:00 → Wed 07/10 09:00:** saved, 30 min kept.
+  - Push: "Consulta remarcada | Clínica Opus Perfil mudou sua consulta de
+    06/10/2026 às 09:00 para 07/10/2026 às 09:00."
+- **The same date + time:** nothing saved, **no push**.
+- **Onto another appointment:** "Este horário conflita com Opus Outro às
+  10:00 (30 min). Escolha outro horário." Unchanged.
+- **Wed 18:00 (blocked AND outside the hours):** ONE question, "Este
+  horário está bloqueado (17:30–19:00). Este horário está fora do horário
+  de atendimento (08:00–18:00). Remarcar mesmo assim?".
+  - Cancelar → unchanged, no push.
+  - Remarcar → saved + push "…de 07/10/2026 às 09:00 para 07/10/2026 às
+    18:00."
+- **Refused:**
+  - 23:45 + 30 min → "Esse horário e duração ultrapassariam a
+    meia-noite.";
+  - a Buddhist-era year → the BE message.
+- **Late 45 min → Thu 11:00:** 45 min and `late` kept.
+- **A row turned `tentative` after the page loaded:** "Use o card de
+  solicitação de agendamento…". Nothing moved.
+- **A confirmed row moved to yesterday:** saved, **no push**.
+
+**Book again after a no-show:**
+- **With `patient_id`:**
+  - The name is read-only and the patient id is carried.
+  - The procedure is "Retorno Opus", 45 min.
+  - Saved Thu 15:00 for the same `patient_id` (the absent row stays).
+  - The normal single-booking push was sent.
+- **Without `patient_id`:** the name is editable and pre-filled "Opus Sem
+  Ficha"; no hidden id.
+
+**Secretary (post-110 row):**
+- The secretary moved the linked appointment.
+- The push names the **profile**: "Consulta remarcada | Clínica Opus
+  Perfil mudou sua consulta de 07/10/2026 às 18:00 para 08/10/2026 às
+  09:00." It names neither the first location nor the doctor.
+- This also closes #131's ⏳ secretary-name row for moves.
+
+**i18n / Help / App Map:**
+- The 6 new `schedule` keys are present in all 15 locales. en is
+  "Reschedule" / "New appointment (same patient)"; th and es were checked
+  too.
+- Help A4 (pt + en) now describes the website's Remarcar icon and button,
+  which match the UI labels.
+- The notification note is shown now that `linked-bookings` is met.
+- The app's line is `{pending:mobile#116}`.
+- The App Map `move_appointment` has web = `moveAppointment`.
+
+**CI at `98f1679`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `98f1679`.** This docs commit
+sits on top of a master sync (10 behind: #134, #141; clean merge).
