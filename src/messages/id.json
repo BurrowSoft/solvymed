@@ -101,6 +101,7 @@
     "managePayments": "Kelola Pembayaran"
   },
   "schedule": {
+    "patientMessage": "Pesan pasien",
     "title": "Jadwal",
     "apptsToday": "{count} janji hari ini",
     "noAppts": "Tidak ada janji pada hari ini",
