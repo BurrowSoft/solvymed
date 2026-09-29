@@ -1175,6 +1175,7 @@
       }
     },
     "unavailable": "SolvyAI hiện không khả dụng. Hãy thử lại sau giây lát.",
+    "notForAccount": "SolvyAI không khả dụng cho tài khoản này.",
     "expired": "Thẻ này đã hết hạn. Hãy hỏi lại để xem thông tin mới nhất.",
     "cancel": "Hủy",
     "chipAt": "{date} lúc {time}",

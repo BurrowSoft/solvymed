@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createMockBackend } from "@/lib/assistant/mockBackend";
+import { createRemoteBackend, type RemoteError } from "@/lib/assistant/remoteBackend";
 import { maskPersonalData, MAX_MESSAGE_CHARS, MAX_TURNS, MIN_SECONDS_BETWEEN } from "@/lib/assistant/mask";
 import type { AnswerBlock, AnswerChunk, AssistantBackend, AssistantScreen, AssistantUsage, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
 import { isInternalHref, webPath } from "@/lib/assistant/targets";
@@ -16,7 +17,7 @@ import { track } from "@/lib/track";
 // SolvyAI on the web (specs/assistant.md §2): doctors only, on every
 // dashboard page. A floating ✦ button bottom-right opens a 400 px panel on
 // the right that pushes the content (a full-height sheet on narrow
-// screens). The backend is a mock until the /api/assistant route exists
+// screens). The backend is the /api/assistant route when it's on, else a mock
 // (docs/assistant-api.md): it answers from the Help articles and proposes
 // actions as confirmation cards in the contract's shapes; Confirmar is
 // simulated and writes nothing. After a save the panel minimises and the
@@ -24,7 +25,9 @@ import { track } from "@/lib/track";
 
 type Turn =
   | { role: "user"; text: string }
-  | { role: "assistant"; blocks: AnswerBlock[]; streaming: boolean };
+  // failed: the answer didn't come (its error line isn't sent back as
+  // history; the route wants alternating turns).
+  | { role: "assistant"; blocks: AnswerBlock[]; streaming: boolean; failed?: boolean };
 
 export function screenOf(pathname: string, prefix: string): AssistantScreen {
   const p = pathname.slice(prefix.length);
@@ -49,12 +52,17 @@ export function hoursUntil(resetsAt: string, now = Date.now()): number {
   return Number.isNaN(t) ? 1 : Math.max(1, Math.ceil((t - now) / 3_600_000));
 }
 
-export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix: string; dailyLimit: number }) {
+// remote: the real route is on (SOLVYAI_API_ENABLED, read on the server);
+// otherwise the mock, labelled "Prévia".
+export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale: string; prefix: string; dailyLimit: number; remote?: boolean }) {
   const t = useTranslations("assistant");
   const router = useRouter();
   const pathname = usePathname();
   const lang = helpLang(locale);
-  const backend: AssistantBackend = useMemo(() => createMockBackend({ lang, prefix, limit: dailyLimit }), [lang, prefix, dailyLimit]);
+  const backend: AssistantBackend = useMemo(
+    () => (remote ? createRemoteBackend({ limit: dailyLimit }) : createMockBackend({ lang, prefix, limit: dailyLimit })),
+    [remote, lang, prefix, dailyLimit],
+  );
   const [open, setOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
   const [hint, setHint] = useState(false);
@@ -111,11 +119,14 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
     const history = [...turns, { role: "user" as const, text }];
     setTurns([...history, { role: "assistant", blocks: [], streaming: true }]);
     track("solvyai_message", { screen });
-    const messages = history.slice(-6).map((x) =>
-      x.role === "user" ? { role: "user" as const, text: x.text } : { role: "assistant" as const, text: x.blocks.map((b) => (b.type === "text" ? b.text : "")).join(" ") },
-    );
-    await play(history, backend.ask({ messages, screen, locale }));
-  }, [busy, atLimit, outOfTurns, turns, backend, screen, locale]); // eslint-disable-line react-hooks/exhaustive-deps
+    const messages = history
+      .filter((x) => x.role === "user" || !x.failed)
+      .slice(-8)
+      .map((x) =>
+        x.role === "user" ? { role: "user" as const, text: x.text } : { role: "assistant" as const, text: x.blocks.map((b) => (b.type === "text" ? b.text : "")).join(" ").trim() },
+      );
+    await play(history, backend.ask({ messages, screen, locale, turns: userTurns }));
+  }, [busy, atLimit, outOfTurns, turns, userTurns, backend, screen, locale]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Streams an answer into a new assistant turn after `history`: text in
   // pieces, whole blocks, the updated usage; an error ends it with a line.
@@ -123,6 +134,7 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
     let blocks: AnswerBlock[] = [];
     let current = "";
     let gotUsage = false;
+    let failed = false;
     try {
       for await (const chunk of chunks) {
         if (chunk.kind === "delta") {
@@ -141,14 +153,26 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
           gotUsage = true;
           setUsage({ used: chunk.used, limit: chunk.limit, extra: chunk.extra, resetsAt: chunk.resetsAt });
         } else if (chunk.kind === "error") {
-          blocks = [...blocks, { type: "text", text: t("unavailable") }];
+          // The route's error codes (docs/assistant-api.md §3).
+          failed = true;
+          const e = chunk as RemoteError;
+          if (e.code === "quota_exhausted") {
+            // The limit message replaces the input; the bar from the route.
+            if (e.usage) { gotUsage = true; setUsage(e.usage); }
+          } else if (e.code === "rate_limited") {
+            lastSent.current = Date.now() + Math.max(0, (e.retryAfterS ?? MIN_SECONDS_BETWEEN) - MIN_SECONDS_BETWEEN) * 1000;
+            setTooFast(true);
+          } else {
+            blocks = [...blocks, { type: "text", text: t(e.code === "inactive" || e.code === "not_doctor" ? "notForAccount" : "unavailable") }];
+          }
           break;
         }
       }
     } catch {
+      failed = true;
       blocks = [...blocks, { type: "text", text: t("unavailable") }];
     }
-    setTurns([...history, { role: "assistant", blocks, streaming: false }]);
+    setTurns([...history, { role: "assistant", blocks, streaming: false, failed }]);
     setBusy(false);
     if (!gotUsage) setUsage(await backend.usage());
   }
@@ -171,6 +195,9 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
   // server explains and offers fresh times, in the conversation.
   const confirmFailed = (card: ConfirmationCard, code: string) => {
     setCardDone((d) => ({ ...d, [card.id]: "failed" }));
+    // Fresh times only when the time was taken; anything else just says
+    // it wasn't saved (on the card).
+    if (code !== "slot_taken" || card.action.kind !== "book_appointment") return;
     setBusy(true);
     void play(turns, backend.reportConfirmFailed(code, card.action, locale));
   };
@@ -206,7 +233,7 @@ export function SolvyAi({ locale, prefix, dailyLimit }: { locale: string; prefix
           <header className="flex items-center gap-2 border-b border-slate-100 px-4 py-3">
             <span className="text-lg text-teal-600" aria-hidden="true">✦</span>
             <h2 className="font-bold text-slate-900">SolvyAI</h2>
-            <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">{t("preview")}</span>
+            {!remote && <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">{t("preview")}</span>}
             <div className="ml-auto flex items-center gap-1">
               <button type="button" onClick={newConversation} className="rounded-lg px-2 py-1 text-xs font-semibold text-slate-500 hover:bg-slate-50">{t("newConversation")}</button>
               <button type="button" onClick={() => setOpen(false)} aria-label={t("close")} className="rounded-lg px-2 py-1 text-lg leading-none text-slate-400 hover:bg-slate-50">✕</button>
@@ -419,7 +446,8 @@ function CardView({ card, backend, onSaved, onFailed, done, claim }: {
     // At most once per card, whatever the UI state.
     if (!claim(card.id)) return;
     setState("saving");
-    const r = await backend.execute(card.action);
+    // Reached through the second question when the card has one.
+    const r = await backend.execute(card.action, { warningsAsked: !!card.secondConfirm });
     if (r.ok) { setState("saved"); onSaved(card, r.id, r.demo === true); }
     else { setState("failed"); onFailed(card, r.code); }
   };

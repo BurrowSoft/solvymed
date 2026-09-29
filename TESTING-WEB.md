@@ -7669,3 +7669,55 @@ Docs/data only.
 **CI at `143509b`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
 `143509b`.** This docs commit sits on top of a master sync (7 behind,
 clean merge).
+
+## PR #127 (`feat/solvyai-panel`, base master) — the web panel on the real `/api/assistant`; the book card shows every field it saves; the web form saves the procedure's price, 🟢 at `ac398a9`
+
+**Setup:**
+- **Tool:** Playwright on a local `next dev` with `SOLVYAI_API_ENABLED=1`
+  + `NEXT_PUBLIC_SOLVYAI_ENABLED=1`, against the prod DB as a throwaway
+  doctor (hours Mon–Fri 08–18; Bruno booked Tuesday 10:00, value 150; a
+  block at 12–13; procedure "Consulta Opus" R$ 150).
+- **The model:** my test-only sink (scratchpad/pr126/sink.cjs) stands in
+  for Anthropic with scripted tool calls; the 115 RPCs are stubbed.
+- **Saves are real:** they go through the screens' server actions, and
+  every result below was checked in the DB.
+- **Heads:** first run at `d5874d8`, then at `09be187` (the rebase + the
+  full book card); the focused checks re-ran at `ac398a9`.
+
+| Flow | Result |
+|---|---|
+| Panel on the route | no "Prévia" label |
+| Book card (Ana, Tuesday 11:00) | Paciente "Opus Ana Costa (14/05/1990)", Quando "Terça-feira, 06/10/2026, 11:00–11:30", **Procedimento Consulta Opus (padrão), Valor R$ 150,00 (padrão), Tipo Presencial (padrão), Duração 30 min (padrão)** |
+| Confirmar | row saved: `consultation_type` Consulta Opus, `payment_type` private, **`payment_amount` 150**, type in-person, 30 min, scheduled. The panel minimises; the page goes to **`/dashboard/schedule?date=2026-10-06&highlight=<new id>`** and **that row gets the ring**; the toast "✓ Feito · Desfazer (10 s)" |
+| Desfazer (book) | the row is **deleted** (~2.8 s), and the toast reads "Desfeito" |
+| Blocked 12:15 | inline "Este horário está bloqueado (12:00–13:00). Agendar mesmo assim?" → Agendar → **saved** (the warnings accepted) |
+| Slot taken between the card and the tap (14:00 booked via REST before Confirmar) | "Não foi possível salvar." then "Esse horário acabou de ser ocupado. Nada foi salvo. Qual destes horários?" with chips **13:00 / 13:30 / 14:30 / Outro horário**; **no model call**, one consume + one release; nothing of ours saved at 14:00 |
+| Cancel Bruno | status **cancelled** → Desfazer → **confirmed** again |
+| Block 15–16 "Almoço" | a **blocked** row → Desfazer → **gone** |
+| Mark Bruno paid | card Valor **R$ 150,00** (formatted, the 7f fix) → **paid** → Desfazer → **pending** |
+| 115 says `inactive` | "O SolvyAI não está disponível para esta conta."; the input stays |
+| **Next request after that failure** | the model received only `[user: "Como convido minha secretária?"]`: **no dangling user turn** |
+| `rate_limited` | "Aguarde um instante antes de enviar de novo." |
+| `quota_exhausted` | "Você usou as mensagens de hoje do SolvyAI. Renova em 5 h."; the bar at 100%; the input is replaced |
+| The server switch off (`SOLVYAI_API_ENABLED` unset, the panel flag on) | the **mock panel with "Prévia"**; no route or model calls |
+| The panel flag off (the Vercel Preview) | no ✦, no Settings card: as before |
+
+**The plain form** (Agenda › Nova Consulta, the live fix):
+- Procedure "Consulta Opus · R$ 150,00" → the appointment is saved with
+  **`payment_amount` 150**.
+- "Retorno Opus" (no price) → saved with **no value**.
+- The same fix on release is #129, tested separately on the release
+  Preview.
+
+**Dev-server note:** the first navigations, undos and event replies take
+3–10 s on `next dev` (first compiles). My first run read them too early.
+Every check above passed once the waits covered that. On a Preview they're
+fast.
+
+**Not testable yet:** ฿ on the cards needs a TH practice
+(`professionals.country` doesn't exist until migration 110); covered by
+7f's unit tests.
+
+**CI at `ac398a9`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`ac398a9`.** This docs commit sits directly on top; the branch is up to
+date with master.

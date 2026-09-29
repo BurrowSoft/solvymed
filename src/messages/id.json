@@ -1175,6 +1175,7 @@
       }
     },
     "unavailable": "SolvyAI sedang tidak tersedia. Coba lagi sebentar lagi.",
+    "notForAccount": "SolvyAI tidak tersedia untuk akun ini.",
     "expired": "Kartu ini sudah kedaluwarsa. Tanyakan lagi untuk melihat data terbaru.",
     "cancel": "Batal",
     "chipAt": "{date} pukul {time}",

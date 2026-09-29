@@ -1175,6 +1175,7 @@
       }
     },
     "unavailable": "SolvyAI no está disponible ahora. Inténtalo de nuevo en un momento.",
+    "notForAccount": "SolvyAI no está disponible para esta cuenta.",
     "expired": "Esta tarjeta caducó. Pregunta de nuevo para ver los datos actualizados.",
     "cancel": "Cancelar",
     "chipAt": "{date} a las {time}",

@@ -12,6 +12,7 @@ import { readTourState, tourEntry } from "@/lib/tourState";
 import { CURRENT_NEWS, newsTourId } from "@/lib/news";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { SolvyAi } from "@/components/solvyai/SolvyAi";
+import { assistantApiEnabled } from "@/lib/assistant/server/caller";
 import { HighlightFromQuery } from "@/components/HighlightFromQuery";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
@@ -201,7 +202,7 @@ export default async function DashboardLayout({
             10 messages a day during the trial, 20 on a paid plan. */}
         {liveFeatures.solvyAi && !isSecretary && (
           <>
-            <SolvyAi locale={locale} prefix={locale === "en" ? "" : `/${locale}`} dailyLimit={sub?.subscription_status === "trial" ? 10 : 20} />
+            <SolvyAi locale={locale} prefix={locale === "en" ? "" : `/${locale}`} dailyLimit={sub?.subscription_status === "trial" ? 10 : 20} remote={assistantApiEnabled()} />
             {/* The item a SolvyAI save lands on, ringed for 3 s. */}
             <Suspense fallback={null}><HighlightFromQuery /></Suspense>
           </>

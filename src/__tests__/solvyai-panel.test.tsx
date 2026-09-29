@@ -156,6 +156,34 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
     expect(screen.getByLabelText("assistant.open")).toBeInTheDocument();
   });
 
+  it("on the real route: no Prévia label, the route's error states, and a failed turn isn't sent back", async () => {
+    const bodies: { messages: { role: string; text: string }[] }[] = [];
+    const replies = [
+      new Response(JSON.stringify({ error: "inactive" }), { status: 403 }),
+      new Response(JSON.stringify({ error: "model_unavailable" }), { status: 503 }),
+    ];
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = vi.fn(async (url: string, init?: RequestInit) => {
+      if (String(url).endsWith("/usage")) return new Response(JSON.stringify({ used: 1, limit: 20, extra: 0, resetsAt: "" }));
+      bodies.push(JSON.parse(String(init?.body)));
+      return replies.shift()!;
+    }) as unknown as typeof fetch;
+    try {
+      render(<SolvyAi locale="pt-BR" prefix="/pt-BR" dailyLimit={20} remote />);
+      fireEvent.click(screen.getByLabelText("assistant.open"));
+      expect(screen.queryByText("assistant.preview")).not.toBeInTheDocument();
+      await ask("primeira");
+      await waitFor(() => expect(screen.getByText("assistant.notForAccount")).toBeInTheDocument());
+      // The anti-spam wait, then a second question.
+      await new Promise((r) => setTimeout(r, 3100));
+      await ask("segunda");
+      await waitFor(() => expect(screen.getByText("assistant.unavailable")).toBeInTheDocument());
+      expect(bodies[1].messages).toEqual([{ role: "user", text: "segunda" }]);
+    } finally {
+      globalThis.fetch = realFetch;
+    }
+  });
+
   it("maps the page to its screen", () => {
     expect(screenOf("/pt-BR/dashboard", "/pt-BR")).toBe("home");
     expect(screenOf("/dashboard/patients/abc", "")).toBe("patients");

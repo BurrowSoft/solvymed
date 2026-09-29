@@ -6,6 +6,8 @@ import { formatDateLabel, formatShortDate } from "@/lib/dateLabels";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
+import { countryProfile } from "@/lib/country";
+import { formatMoney } from "@/lib/money";
 import { webPath } from "@/lib/assistant/targets";
 import type { AnswerBlock, CardWarning, ConfirmationCard, ScreenTarget } from "@/lib/assistant/types";
 import type { ToolDef } from "./model";
@@ -28,6 +30,8 @@ export type ToolContext = {
   today: string;
   nowTime: string;
   seen: Set<string>;
+  // The practice country, read once per request (IDs and currency key off it).
+  country?: string;
 };
 
 // What a tool gives back: text for the model (and whether it's an error the
@@ -84,6 +88,7 @@ const T = {
   pt: {
     newAppt: "Nova consulta", cancelAppt: "Cancelar consulta", block: "Bloquear horário", paid: "Marcar como pago", unpaid: "Marcar como não pago",
     patient: "Paciente", when: "Quando", duration: "Duração", period: "Período", reason: "Motivo", appointment: "Consulta", value: "Valor",
+    procedure: "Procedimento", type: "Tipo", inPerson: "Presencial",
     blockedWarn: (s: string, e: string) => `⚠ Horário bloqueado (${s}–${e})`,
     outsideWarn: (s: string, e: string) => `⚠ Fora do horário de atendimento (${s}–${e})`,
     dayOffWarn: (d: string) => `⚠ ${d} não é dia de atendimento`,
@@ -103,6 +108,7 @@ const T = {
   en: {
     newAppt: "New appointment", cancelAppt: "Cancel appointment", block: "Block time", paid: "Mark as paid", unpaid: "Mark as unpaid",
     patient: "Patient", when: "When", duration: "Duration", period: "Period", reason: "Reason", appointment: "Appointment", value: "Value",
+    procedure: "Procedure", type: "Type", inPerson: "In person",
     blockedWarn: (s: string, e: string) => `⚠ Blocked time (${s}–${e})`,
     outsideWarn: (s: string, e: string) => `⚠ Outside the working hours (${s}–${e})`,
     dayOffWarn: (d: string) => `⚠ ${d} isn't a working day`,
@@ -144,10 +150,32 @@ function card(ctx: ToolContext, c: Omit<ConfirmationCard, "id" | "editHref" | "v
   };
 }
 
+// The practice country (IDs and currency), read once per request.
+async function practiceCountry(ctx: ToolContext): Promise<string> {
+  if (!ctx.country) ctx.country = await getPracticeCountry(ctx.db, ctx.profId, ctx.profId);
+  return ctx.country;
+}
+const money = (amount: number, country: string) => formatMoney(amount, countryProfile(country).currency);
+
 const err = (forModel: string): ToolOutcome => ({ forModel, isError: true });
 const unseen = (what: string) => err(`Unknown ${what}: use a read tool first and pick from its results; never guess an id. If several could match, ask the user.`);
 
 // ── Reads ────────────────────────────────────────────────────────────────
+
+type Procedure = { id: string; name: string; duration_minutes: number; price: number | null; payment_type: string };
+async function defaultProcedure(ctx: ToolContext): Promise<Procedure | null> {
+  const { data } = await ctx.db
+    .from("procedures")
+    .select("id, name, duration_minutes, price, payment_type")
+    .eq("professional_id", ctx.profId)
+    .eq("active", true)
+    .order("name")
+    .limit(1);
+  const p = ((data ?? []) as Procedure[])[0];
+  if (!p) return null;
+  const price = Number(p.price);
+  return { ...p, price: Number.isFinite(price) && price > 0 ? price : null };
+}
 
 async function workingHours(ctx: ToolContext): Promise<WorkingHours | null> {
   const { data } = await ctx.db.rpc("get_professional_working_hours", { p_professional_id: ctx.profId });
@@ -181,7 +209,7 @@ async function nearestFree(ctx: ToolContext, date: string, start: string, durati
 async function findPatients(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
   const q = cleanSearchText(String(input.query ?? ""));
   // The practice country decides which ID column is searched (the picker's rule).
-  const filter = patientSearchFilter(q, patientIdKind(await getPracticeCountry(ctx.db, ctx.profId, ctx.profId)));
+  const filter = patientSearchFilter(q, patientIdKind(await practiceCountry(ctx)));
   if (!q || !filter) return err("Say who: ask the user for the patient's name.");
   const { data, error } = await ctx.db
     .from("patients")
@@ -226,6 +254,7 @@ async function listAppointments(ctx: ToolContext, input: Record<string, unknown>
     for (const p of (ps ?? []) as { id: string; birth_date: string | null }[]) births.set(p.id, p.birth_date);
   }
   rows.forEach((r) => { ctx.seen.add(r.id); if (r.patient_id) ctx.seen.add(r.patient_id); });
+  const country = await practiceCountry(ctx);
   return {
     forModel: JSON.stringify(rows.map((r) => ({
       id: r.id,
@@ -241,7 +270,7 @@ async function listAppointments(ctx: ToolContext, input: Record<string, unknown>
             patientId: r.patient_id,
             birthDate: r.patient_id && births.get(r.patient_id) ? formatShortDate(ctx.locale, births.get(r.patient_id)!) : null,
             paid: r.payment_status === "paid",
-            value: r.payment_amount,
+            value: r.payment_amount === null ? null : money(r.payment_amount, country),
           }),
     }))),
   };
@@ -262,7 +291,11 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
   const t = T[ctx.lang];
   const { patientId, date, start } = input;
   const durGiven = input.durationMin !== undefined && input.durationMin !== null;
-  const dur = durGiven ? Number(input.durationMin) : 30;
+  // The clinic's default procedure (the booking form's: the first active one
+  // by name) gives the procedure, value, payment type and, unless said, the
+  // duration; every field saved is on the card (UX, §2.3a.1).
+  const proc = await defaultProcedure(ctx);
+  const dur = durGiven ? Number(input.durationMin) : proc?.duration_minutes ?? 30;
   if (typeof patientId !== "string" || !ctx.seen.has(patientId)) return unseen("patient");
   if (!isDate(date)) return err("The date must be YYYY-MM-DD in the Gregorian calendar; ask the user if unsure.");
   if (!isTime(start)) return err("The start must be HH:MM; ask the user for the time.");
@@ -335,6 +368,9 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
     fields: [
       { label: t.patient, value: personLabel(ctx, patient.full_name, patient.birth_date) },
       { label: t.when, value: `${whenLabel(ctx, date)}, ${start}–${end}` },
+      ...(proc ? [{ label: t.procedure, value: proc.name, isDefault: true }] : []),
+      ...(proc?.price ? [{ label: t.value, value: money(proc.price, await practiceCountry(ctx)), isDefault: true }] : []),
+      { label: t.type, value: t.inPerson, isDefault: true },
       { label: t.duration, value: `${dur} min`, ...(durGiven ? {} : { isDefault: true }) },
     ],
     warnings,
@@ -344,7 +380,7 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
     editTarget: { screen: "schedule", date, params: { new: "1", start } },
     viewTarget: view,
     after: { screen: "schedule", date, highlight: { kind: "appointment" } },
-    action: { kind: "book_appointment", args: { patientId, date, start, durationMin: dur } },
+    action: { kind: "book_appointment", args: { patientId, date, start, durationMin: dur, ...(proc ? { procedureId: proc.id } : {}) } },
   });
   return { forModel: `Card shown (${c.id}${stop ? `, blocked: ${stop.code}` : ""}${warnings.length ? `, warnings: ${warnings.map((w) => w.code).join(",")}` : ""}). Tell the user to check it and tap Confirmar; don't repeat the details.`, block: { type: "card", card: c } };
 }
@@ -437,7 +473,7 @@ async function proposeMarkPaid(ctx: ToolContext, input: Record<string, unknown>)
     fields: [
       { label: t.patient, value: personLabel(ctx, a.patient_name ?? "—", await birthOf(ctx, a.patient_id)) },
       { label: t.appointment, value: `${whenLabel(ctx, a.date)}, ${hhmm(a.start_time)}–${hhmm(a.end_time)}` },
-      ...(value ? [{ label: t.value, value: String(value) }] : []),
+      ...(value ? [{ label: t.value, value: money(value, await practiceCountry(ctx)) }] : []),
     ],
     warnings: [],
     editTarget: { screen: "payments" },

@@ -1205,6 +1205,7 @@
       }
     },
     "unavailable": "SolvyAI is unavailable right now. Try again in a moment.",
+    "notForAccount": "SolvyAI isn't available for this account.",
     "expired": "This card has expired. Ask again to see up-to-date details.",
     "cancel": "Cancel",
     "chipAt": "{date} at {time}",
