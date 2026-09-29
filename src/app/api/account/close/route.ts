@@ -7,6 +7,8 @@ import { stripe, retrieveSubscriptionOrNull } from "@/lib/stripeBilling";
 import { knownDbError } from "@/lib/dbErrors";
 import { closeFailureCode, planClosureNotices, stripeCloseStep, type ClosureRow } from "@/lib/accountClose";
 import { sendExpoPush } from "@/lib/push";
+import { pushLocale } from "@/lib/pushText";
+import { formatShortDate } from "@/lib/dateLabels";
 import { routing } from "@/i18n/routing";
 
 // Closes or deletes the caller's own account (migration 102), for the web
@@ -167,21 +169,35 @@ export async function POST(request: NextRequest) {
   const plan = planClosureNotices(rows);
   if (plan.linkedPatients.length || plan.cancelledAppointments.length) after(async () => {
     try {
-      const t = await getTranslations({ locale, namespace: "accountClose" });
       const admin = adminClient();
       const ids = [...new Set([...plan.linkedPatients, ...plan.cancelledAppointments.map((a) => a.patientAuthId)])];
-      const { data: tokenRows } = await admin.from("push_tokens").select("user_id, token").in("user_id", ids);
+      const [{ data: tokenRows }, { data: profileRows }] = await Promise.all([
+        admin.from("push_tokens").select("user_id, token").in("user_id", ids),
+        admin.from("patient_profiles").select("user_id, locale").in("user_id", ids),
+      ]);
       const tokenOf = new Map((tokenRows ?? []).map((r: { user_id: string; token: string }) => [r.user_id, r.token]));
+      // Each patient in their own saved language (else the closing
+      // practice's), the date in that language's format.
+      const savedLocale = new Map((profileRows ?? []).map((r: { user_id: string; locale: string | null }) => [r.user_id, pushLocale(r.locale)]));
+      const translators = new Map<string, Awaited<ReturnType<typeof getTranslations<"accountClose">>>>();
+      const tFor = async (loc: string) => {
+        if (!translators.has(loc)) translators.set(loc, await getTranslations({ locale: loc, namespace: "accountClose" }));
+        return translators.get(loc)!;
+      };
+      const localeOf = (id: string) => savedLocale.get(id) ?? locale;
       const pushes: Promise<void>[] = [];
       for (const id of plan.linkedPatients) {
         const token = tokenOf.get(id);
-        if (token) pushes.push(sendExpoPush([token], t("pushClosedTitle"), t("pushClosedBody")));
+        if (!token) continue;
+        const t = await tFor(localeOf(id));
+        pushes.push(sendExpoPush([token], t("pushClosedTitle"), t("pushClosedBody")));
       }
       for (const a of plan.cancelledAppointments) {
         const token = tokenOf.get(a.patientAuthId);
-        if (token) {
-          pushes.push(sendExpoPush([token], t("pushCancelledTitle"), t("pushCancelledBody", { date: a.date, time: a.startTime.slice(0, 5) })));
-        }
+        if (!token) continue;
+        const loc = localeOf(a.patientAuthId);
+        const t = await tFor(loc);
+        pushes.push(sendExpoPush([token], t("pushCancelledTitle"), t("pushCancelledBody", { date: formatShortDate(loc, a.date), time: a.startTime.slice(0, 5) })));
       }
       if (plan.linkedPatients.length) {
         pushes.push(

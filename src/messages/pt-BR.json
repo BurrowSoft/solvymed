@@ -205,7 +205,8 @@
     "requestedLabel": "Solicitado: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Escaneie com qualquer app de banco tailandês para pagar.",
-    "pixQrTitle": "QR Code Pix"
+    "pixQrTitle": "QR Code Pix",
+    "durationMinutes": "{n} min"
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -1180,6 +1181,7 @@
     "otherTime": "Outro horário"
   },
   "dateInput": {
-    "buddhistYear": "Esse ano parece do calendário budista. Use o ano cristão (ex.: 1996)."
+    "buddhistYear": "Esse ano parece do calendário budista. Use o ano cristão (ex.: 1996).",
+    "invalidBirthDate": "Data de nascimento inválida: use uma data entre 1900 e hoje."
   }
 }

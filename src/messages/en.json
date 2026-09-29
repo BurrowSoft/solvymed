@@ -205,7 +205,8 @@
     "requestedLabel": "Requested: {date} · {time}",
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "Scan with any Thai banking app to pay.",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n} min"
   },
   "payments": {
     "thisWeek": "This week",
@@ -1210,6 +1211,7 @@
     "otherTime": "Another time"
   },
   "dateInput": {
-    "buddhistYear": "That looks like a Buddhist-era year. Please use the Gregorian year (e.g. 1996)."
+    "buddhistYear": "That looks like a Buddhist-era year. Please use the Gregorian year (e.g. 1996).",
+    "invalidBirthDate": "Invalid date of birth: use a date between 1900 and today."
   }
 }

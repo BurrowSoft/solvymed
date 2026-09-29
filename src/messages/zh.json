@@ -205,7 +205,8 @@
     "requestedLabel": "申请时间：{date} · {time}",
     "promptPayTitle": "PromptPay 二维码",
     "promptPayScan": "使用任意泰国银行应用扫码付款。",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n} 分钟"
   },
   "payments": {
     "thisWeek": "本周",
@@ -1180,6 +1181,7 @@
     "otherTime": "其他时间"
   },
   "dateInput": {
-    "buddhistYear": "这看起来是佛历年份。请使用公历年份（例如 1996）。"
+    "buddhistYear": "这看起来是佛历年份。请使用公历年份（例如 1996）。",
+    "invalidBirthDate": "出生日期无效：请使用 1900 年至今天之间的日期。"
   }
 }

@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId, isProfessionalRole } from "@/lib/effectiveProfId";
 import { sendExpoPush } from "@/lib/push";
+import { pushText, pushWhen } from "@/lib/pushText";
+import { patientPushLocale } from "@/lib/pushRecipient";
 import { actionError } from "@/lib/dbErrors";
 import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
 import { readAccessLog, type AccessLogPage } from "@/lib/accessLog";
@@ -18,7 +20,7 @@ export type PatientMatch = { id: string; full_name: string; phone: string | null
 
 export type CreatePatientResult =
   | { success: true }
-  | { error: string; code: "generic" | "name_required" | "invalid_th_id" | "id_kind_mismatch" | "birth_year_buddhist" }
+  | { error: string; code: "generic" | "name_required" | "invalid_th_id" | "id_kind_mismatch" | "birth_year_buddhist" | "invalid_birth_date" }
   // Possible duplicates found before saving. The user chooses "Open
   // existing" or "Create anyway" (resubmits with force=1).
   | { error: string; code: "possible_match"; matches: PatientMatch[] }
@@ -124,6 +126,8 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
       }
       return { error: "Already registered", code: "already_registered", existing };
     }
+    // A birth date outside 1900..today (the database refuses it, 116).
+    if (error.message?.includes("invalid_birth_date")) return { error: "Invalid date of birth", code: "invalid_birth_date" };
     return { error: error.message, code: "generic" };
   }
   revalidatePath("/dashboard/patients");
@@ -241,16 +245,17 @@ export async function archivePatient(patientId: string): Promise<ArchiveResult> 
   }
 
   const cancelled = (data ?? []) as { appointment_id: string; patient_auth_id: string | null; date: string; start_time: string }[];
+  const practiceId = (await getEffectiveProfId(supabase, user.id)) ?? user.id;
   await Promise.all(cancelled
     .filter((a) => a.patient_auth_id)
     .map(async (a) => {
       const { data: tokenRows } = await supabase.rpc("get_patient_push_tokens", { p_patient_auth_id: a.patient_auth_id });
       const tokens = (tokenRows ?? []).map((r: { token: string }) => r.token);
-      await sendExpoPush(
-        tokens,
-        "Appointment Cancelled",
-        `Your appointment on ${a.date} at ${a.start_time.slice(0, 5)} has been cancelled by the clinic.`,
-      );
+      if (!tokens.length) return;
+      // In the patient's language, the date in its format.
+      const locale = await patientPushLocale(supabase, a.patient_auth_id!, practiceId);
+      const { title, body } = pushText(locale, "apptCancelledByClinic", { when: pushWhen(locale, a.date, a.start_time) });
+      await sendExpoPush(tokens, title, body);
     }));
 
   revalidatePath("/dashboard/patients");

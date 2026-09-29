@@ -205,7 +205,8 @@
     "requestedLabel": "요청: {date} · {time}",
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "태국 은행 앱으로 스캔해 결제하세요.",
-    "pixQrTitle": "Pix QR code"
+    "pixQrTitle": "Pix QR code",
+    "durationMinutes": "{n}분"
   },
   "payments": {
     "thisWeek": "이번 주",
@@ -1180,6 +1181,7 @@
     "otherTime": "다른 시간"
   },
   "dateInput": {
-    "buddhistYear": "불기 연도로 보입니다. 서기 연도를 사용해 주세요(예: 1996)."
+    "buddhistYear": "불기 연도로 보입니다. 서기 연도를 사용해 주세요(예: 1996).",
+    "invalidBirthDate": "생년월일이 올바르지 않습니다. 1900년부터 오늘 사이의 날짜를 사용하세요."
   }
 }
