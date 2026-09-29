@@ -807,6 +807,8 @@
     "or": "hoặc",
     "cancelAnytime": "Hủy bất cứ lúc nào. Không ràng buộc.",
     "successMessage": "Đăng ký đã được kích hoạt! Chào mừng đến với SolvyMed Pro.",
+    "activationPending": "Đã nhận thanh toán! Đang kích hoạt gói đăng ký của bạn…",
+    "activationSlow": "Chúng tôi đã nhận thanh toán của bạn, nhưng việc kích hoạt đang lâu hơn bình thường. Thường sẽ hoàn tất trong vài phút; nếu gói của bạn không hiển thị, hãy liên hệ hỗ trợ:",
     "trialDaysLeft": "Bạn còn {n} ngày trong thời gian dùng thử miễn phí.",
     "trialExpired": "Thời gian dùng thử miễn phí của bạn đã kết thúc. Đăng ký để tiếp tục.",
     "trialBannerPrefix": "Dùng thử miễn phí:",

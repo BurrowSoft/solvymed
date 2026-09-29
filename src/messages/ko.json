@@ -807,6 +807,8 @@
     "or": "또는",
     "cancelAnytime": "언제든지 취소 가능. 약정 없음.",
     "successMessage": "구독이 활성화되었습니다! SolvyMed Pro에 오신 것을 환영합니다.",
+    "activationPending": "결제가 완료되었습니다! 구독을 활성화하는 중…",
+    "activationSlow": "결제는 받았지만 활성화가 평소보다 오래 걸리고 있습니다. 보통 몇 분 안에 완료됩니다. 요금제가 표시되지 않으면 지원팀에 문의하세요:",
     "trialDaysLeft": "무료 체험 기간이 {n}일 남았습니다.",
     "trialExpired": "무료 체험 기간이 종료되었습니다. 계속하려면 구독하세요.",
     "trialBannerPrefix": "무료 체험:",

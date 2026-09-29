@@ -21,6 +21,15 @@ export function isAccessAllowed(sub: EffectiveSub | null): boolean {
   return false;
 }
 
+// A paid plan that's on: active (within its period) or lifetime. Unlike
+// isAccessAllowed, a trial or no row is NOT active (it fails closed), so
+// /subscribe?success=1 only says "activated" once the webhook wrote it.
+export function isPaidActive(sub: EffectiveSub | null): boolean {
+  if (!sub) return false;
+  if (sub.subscription_status !== 'active' && sub.subscription_status !== 'lifetime') return false;
+  return isAccessAllowed(sub);
+}
+
 export function trialDaysRemaining(sub: EffectiveSub | null): number | null {
   if (!sub || sub.subscription_status !== 'trial' || !sub.trial_ends_at) return null;
   const ms = new Date(sub.trial_ends_at).getTime() - Date.now();

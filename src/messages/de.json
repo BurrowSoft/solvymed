@@ -807,6 +807,8 @@
     "or": "oder",
     "cancelAnytime": "Jederzeit kündbar. Keine Verpflichtungen.",
     "successMessage": "Abonnement aktiviert! Willkommen bei SolvyMed Pro.",
+    "activationPending": "Zahlung erhalten! Ihr Abonnement wird aktiviert…",
+    "activationSlow": "Wir haben Ihre Zahlung erhalten, aber die Aktivierung dauert länger als üblich. Sie ist meist in wenigen Minuten abgeschlossen; wenn Ihr Tarif nicht erscheint, wenden Sie sich an den Support:",
     "trialDaysLeft": "Sie haben noch {n} Tage in Ihrer kostenlosen Testphase.",
     "trialExpired": "Ihre Testphase ist abgelaufen. Abonnieren Sie, um fortzufahren.",
     "trialBannerPrefix": "Testphase:",

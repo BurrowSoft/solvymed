@@ -8525,3 +8525,64 @@ master Preview, with the bypass header):
 **CI at `fc85fd4`:** ✅ (lint, typecheck + unit tests incl.
 `privacy-gated.test.tsx`, Vercel).
 **Review: clean (7f).** **Merge gate: 🟢 for `fc85fd4`.** This docs commit sits on top of a master sync (7 behind: #142, #143; clean merge).
+
+## #145 (release) /subscribe?success=1 says "activated" only once the plan is on (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `1c89b62` (base `release`), on its Vercel
+Preview (Playwright), with a throwaway doctor per row.
+- **No Stripe checkout.** A service-role PATCH on `professionals`
+  simulates the webhook's write: `subscription_status = 'active'` and
+  `current_period_end` = +30 days.
+- `subscription_id` stays null, so the page makes no Stripe call.
+
+| Row | Result |
+|---|---|
+| R1 trial → ?success=1; the "webhook" lands at +8 s | ✅ "Pagamento recebido! Ativando sua assinatura…", with a spinner (aria-busy). At +12 s it shows "Assinatura ativada! Boas-vindas ao SolvyMed Pro." Polls: 2, then they stop. |
+| R2 trial, no webhook | ✅ "Ativando…" until about 30 s, then "Recebemos seu pagamento, mas a ativação está demorando. … fale com o suporte: support@solvymed.com" (a mailto link). 8 polls, about every 3.5 s on the Preview, then none. The row stays trial. |
+| R3 already active → ?success=1 | ✅ "Assinatura ativada!" on load, with 0 polls |
+| R4 lifetime → ?success=1 | ✅ "Assinatura ativada!" on load, with 0 polls |
+| R5 status active but the period ended 2 days ago | ✅ fails closed: "Ativando…", then the slow text. Never "ativada". |
+| R6 trial ended (expired) | ✅ "Ativando…", then the slow text |
+| R7 en, the "webhook" at +6 s | ✅ "Payment received! Activating your subscription…", then "Subscription activated! Welcome to SolvyMed Pro." at +8 s |
+| R8 en, no webhook | ✅ "We received your payment, but activation is taking longer than usual. … contact support: support@solvymed.com" |
+| While ?success=1 (R1–R8) | ✅ no subscribe button (no second checkout), and no trial text |
+| R9 without ?success=1 (unchanged) | ✅ Trial: the trial text plus **Assinar com Cartão**. Active: bounced to /pt-BR/dashboard. |
+
+**Also checked:**
+- **Locales:** `activationPending` and `activationSlow` are in all 15
+  locales (Thai included).
+- **CI at `1c89b62`:** ✅ (lint, typecheck + unit tests, Vercel).
+
+**Not covered here:** the real Stripe webhook landing, since its endpoint
+URL fix is Vitor's dashboard change. After merge, the prod check will be
+the same rows on www with a DB flip; no checkout.
+**Review: clean (7f).** **Merge gate: 🟢 for `1c89b62`.** The branch was
+up to date with `release`; this docs commit sits on top.
+
+## #146 Merge-back of release #145 into master (web tester 1, 2026-09-29)
+
+**What was tested:** PR head `4528f4b`, on its Vercel Preview, using
+#145's spec with the same service-role flip and no checkout.
+
+| Row | Result |
+|---|---|
+| Trial → ?success=1; the "webhook" at +8 s | ✅ "Ativando…" with the spinner, then "Assinatura ativada!" at +11 s |
+| Trial, no webhook | ✅ the slow text + the support@solvymed.com mailto at about 30 s |
+| Already active → ?success=1 | ✅ "ativada" on load |
+| en, the "webhook" at +6 s | ✅ "Payment received! …", then "Subscription activated! …" |
+| Without ?success=1 (unchanged) | ✅ Trial: the trial text plus **Assinar com Cartão**. Active: /pt-BR/dashboard. |
+| **Master's plan-load error** (no `professionals` row, so the country lookup fails and there's no plan), without ?success=1 | ✅ "Não foi possível verificar o status da sua assinatura. Tente novamente.", with no subscribe button |
+| Same, with ?success=1 | ✅ "Ativando…" only; no plan error and no button (success=1 wins, as in the merged condition) |
+
+**#145 prod check (release `ec33299` on www, Ready):** ✅. The same 10 rows
+as #145's entry, with a DB flip and no checkout:
+- the flip → "ativada" about 3 s later;
+- no webhook → the slow text at about 30 s, and then polling stops;
+- active or lifetime → activated at once;
+- lapsed or expired → never "ativada";
+- en matches;
+- no subscribe button while success=1.
+
+**CI at `4528f4b`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`4528f4b`.** The branch was up to date with master; this docs commit sits
+on top.
