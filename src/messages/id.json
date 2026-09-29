@@ -212,6 +212,8 @@
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Pindai dengan aplikasi bank Thailand mana pun untuk membayar.",
     "pixQrTitle": "Pix QR code",
+    "pixCopyPaste": "Pix Copia e Cola",
+    "pixCopy": "Salin",
     "durationMinutes": "{n} menit"
   },
   "payments": {
@@ -517,6 +519,7 @@
     "noAddress": "Tidak ada alamat",
     "onMap": "Di peta",
     "noMapPin": "Tidak ada pin peta — tambahkan alamat untuk muncul di peta",
+    "noPinYet": "Tidak ada pin peta",
     "empty": "Belum ada klinik",
     "emptySubtitle": "Tambahkan klinik Anda agar pasien dapat menemukan Anda",
     "addFirst": "Tambahkan klinik pertama Anda",

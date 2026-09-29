@@ -53,6 +53,16 @@ describe("conditions: held text is left out of the build", () => {
   it("an unknown condition id fails the build (a typo can't hide or show text)", () => {
     expect(() => parseBatch("05-conta", md("`requires:typo`"), c(true))).toThrow(/unknown condition "typo"/);
     expect(() => parseBatch("05-conta", md("", "{pending:typo} T"), c(true))).toThrow(/unknown condition "typo"/);
+    // A typo in a later id fails too, even when the first is unmet (7f).
+    expect(() => parseBatch("05-conta", md("", "{pending:x,typo} T"), c(false))).toThrow(/unknown condition "typo"/);
+  });
+
+  it("{pending:a,b}: the paragraph only when every condition is met", () => {
+    const two = (a: boolean, b: boolean) => ({ x: { met: a, what: "t" }, y: { met: b, what: "t" } });
+    for (const [a, b, shown] of [[true, true, true], [true, false, false], [false, true, false]] as const) {
+      const art = parseBatch("05-conta", md("", "{pending:x,y} Both"), two(a, b)).articles[0];
+      expect(JSON.stringify(art.body.pt).includes("Both")).toBe(shown);
+    }
   });
 
   it("the real build has no markers, and the held A1 sentence is out while mobile #91 isn't released", () => {
