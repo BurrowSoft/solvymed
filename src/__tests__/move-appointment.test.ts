@@ -84,7 +84,7 @@ describe("moveAppointment", () => {
     expect(h.state.updates[0].filters).toContainEqual(["in", "status", ["scheduled", "confirmed", "late"]]);
     expect(h.state.told).toEqual([{
       kind: "moved", practiceId: "doc-1", isSecretary: false, patientAuthId: null, patientId: "p-1", status: "scheduled",
-      date: "2026-10-06", startTime: "14:00", from: { date: "2026-10-05", startTime: "09:00:00" },
+      date: "2026-10-06", startTime: "14:00", from: { date: "2026-10-05", startTime: "09:00:00" }, appointmentIds: ["a-1"],
     }]);
   });
 
