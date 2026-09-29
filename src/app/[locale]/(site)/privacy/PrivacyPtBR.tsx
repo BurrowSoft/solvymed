@@ -3,7 +3,7 @@ import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 
 // Política de Privacidade em português (Brasil). Autoritativa junto com a
 // versão em inglês; mantenha as duas alinhadas.
-export function PrivacyPtBR({ turnstile, solvyai = false, line = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean }) {
+export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; notices?: boolean }) {
   return (
     <>
       <Section title="1. Visão geral">
@@ -123,6 +123,12 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false }: { turn
             <li>Se você bloquear a conta SolvyMed no LINE, paramos de enviar mensagens, mas guardamos a ligação para retomar se você desbloquear. Para removê-la, toque em Desconectar (Configurações → LINE) no app ou exclua sua conta.</li>
             <li>O histórico de envios dos avisos LINE é apagado após 90 dias.</li>
           </ul>
+        </Section>
+      )}
+
+      {notices && (
+        <Section title="6e. Avisos ao paciente">
+          <p>Avisos ao paciente: quando a clínica marca, remarca ou cancela uma consulta, o aviso ao paciente espera cerca de 1 minuto antes de ser enviado, para a clínica poder desfazer um engano. Guardamos um registro de cada aviso (qual consulta, o tipo de aviso, o horário e se foi enviado), sem nomes nem dados clínicos, por 30 dias, e depois o apagamos.</p>
         </Section>
       )}
 
