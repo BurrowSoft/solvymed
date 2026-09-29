@@ -513,6 +513,7 @@
     "noAddress": "No address",
     "onMap": "On map",
     "noMapPin": "No map pin — add an address to appear on the map",
+    "noPinYet": "No map pin",
     "empty": "No clinics yet",
     "emptySubtitle": "Add your clinic so patients can find you",
     "addFirst": "Add your first clinic",
@@ -1207,6 +1208,7 @@
       }
     },
     "unavailable": "SolvyAI is unavailable right now. Try again in a moment.",
+    "notForAccount": "SolvyAI isn't available for this account.",
     "expired": "This card has expired. Ask again to see up-to-date details.",
     "cancel": "Cancel",
     "chipAt": "{date} at {time}",

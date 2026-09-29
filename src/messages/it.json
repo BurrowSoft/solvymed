@@ -513,6 +513,7 @@
     "noAddress": "Nessun indirizzo",
     "onMap": "Sulla mappa",
     "noMapPin": "Nessun segnaposto — aggiungi un indirizzo per apparire sulla mappa",
+    "noPinYet": "Nessun segnaposto",
     "empty": "Nessuna clinica ancora",
     "emptySubtitle": "Aggiungi la tua clinica per permettere ai pazienti di trovarti",
     "addFirst": "Aggiungi la tua prima clinica",
@@ -1177,6 +1178,7 @@
       }
     },
     "unavailable": "SolvyAI non è disponibile al momento. Riprova tra poco.",
+    "notForAccount": "SolvyAI non è disponibile per questo account.",
     "expired": "Questa scheda è scaduta. Chiedi di nuovo per vedere i dati aggiornati.",
     "cancel": "Annulla",
     "chipAt": "{date} alle {time}",

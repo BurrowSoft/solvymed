@@ -513,6 +513,7 @@
     "noAddress": "Không có địa chỉ",
     "onMap": "Trên bản đồ",
     "noMapPin": "Không có ghim bản đồ — thêm địa chỉ để xuất hiện trên bản đồ",
+    "noPinYet": "Không có ghim bản đồ",
     "empty": "Chưa có phòng khám nào",
     "emptySubtitle": "Thêm phòng khám của bạn để bệnh nhân có thể tìm thấy bạn",
     "addFirst": "Thêm phòng khám đầu tiên của bạn",
@@ -1177,6 +1178,7 @@
       }
     },
     "unavailable": "SolvyAI hiện không khả dụng. Hãy thử lại sau giây lát.",
+    "notForAccount": "SolvyAI không khả dụng cho tài khoản này.",
     "expired": "Thẻ này đã hết hạn. Hãy hỏi lại để xem thông tin mới nhất.",
     "cancel": "Hủy",
     "chipAt": "{date} lúc {time}",

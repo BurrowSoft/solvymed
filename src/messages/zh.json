@@ -513,6 +513,7 @@
     "noAddress": "无地址",
     "onMap": "在地图上",
     "noMapPin": "无地图标记 — 添加地址以在地图上显示",
+    "noPinYet": "无地图标记",
     "empty": "暂无诊所",
     "emptySubtitle": "添加您的诊所以便患者找到您",
     "addFirst": "添加您的第一家诊所",
@@ -1177,6 +1178,7 @@
       }
     },
     "unavailable": "SolvyAI 暂时不可用，请稍后再试。",
+    "notForAccount": "此账户无法使用 SolvyAI。",
     "expired": "此卡片已过期。请重新询问以查看最新信息。",
     "cancel": "取消",
     "chipAt": "{date} {time}",

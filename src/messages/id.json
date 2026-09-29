@@ -513,6 +513,7 @@
     "noAddress": "Tidak ada alamat",
     "onMap": "Di peta",
     "noMapPin": "Tidak ada pin peta — tambahkan alamat untuk muncul di peta",
+    "noPinYet": "Tidak ada pin peta",
     "empty": "Belum ada klinik",
     "emptySubtitle": "Tambahkan klinik Anda agar pasien dapat menemukan Anda",
     "addFirst": "Tambahkan klinik pertama Anda",
@@ -1177,6 +1178,7 @@
       }
     },
     "unavailable": "SolvyAI sedang tidak tersedia. Coba lagi sebentar lagi.",
+    "notForAccount": "SolvyAI tidak tersedia untuk akun ini.",
     "expired": "Kartu ini sudah kedaluwarsa. Tanyakan lagi untuk melihat data terbaru.",
     "cancel": "Batal",
     "chipAt": "{date} pukul {time}",
