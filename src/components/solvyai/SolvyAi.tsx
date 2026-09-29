@@ -142,8 +142,10 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
           const live = [...blocks, { type: "text" as const, text: current }];
           setTurns([...history, { role: "assistant", blocks: live, streaming: true }]);
         } else if (chunk.kind === "block") {
-          // A text block closes the streamed text; other blocks come whole.
-          if (chunk.block.type === "text") { blocks = [...blocks, { type: "text", text: current }]; current = ""; }
+          // A text block closes the streamed text (the model's comes empty,
+          // after its deltas); a fixed line (confirm_failed) carries its own
+          // text. Other blocks come whole.
+          if (chunk.block.type === "text") { blocks = [...blocks, { type: "text", text: current || chunk.block.text }]; current = ""; }
           // Fail closed: a card that must ask twice but carries no second
           // question is never shown, so it can't be confirmed without asking.
           else if (chunk.block.type === "card" && !cardIsSafe(chunk.block.card)) blocks = [...blocks, { type: "text", text: t("unavailable") }];
