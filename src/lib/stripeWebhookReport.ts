@@ -2,8 +2,10 @@ import * as Sentry from "@sentry/nextjs";
 
 // Stripe webhook failures our route can see, sent to Sentry so a failing
 // webhook is noticed (5 checkouts went unactivated for days with nothing
-// logged). Only the reason and the Stripe event's type and id: never the
-// payload, customer, email or amounts. A redirect or an unreachable URL
+// logged). We send the reason and the Stripe event's type and id, never the
+// payload, customer, email or amounts. Sentry's automatic http breadcrumbs
+// can add the Stripe API path of a failed call (e.g. /v1/subscriptions/
+// sub_…, a pseudonymous id); the scrubber keeps paths, drops queries. A redirect or an unreachable URL
 // never reaches the route; Stripe's own alerts cover those.
 export type WebhookFailure =
   | "bad_signature" // wrong STRIPE_WEBHOOK_SECRET (e.g. after a new endpoint)
