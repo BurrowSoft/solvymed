@@ -8784,3 +8784,36 @@ it legible.
 
 **CI at `29b90ee`:** ✅ (lint, typecheck + unit tests, Vercel).
 **Review: clean (7f).** **Merge gate: 🟢 for `29b90ee`.** This docs commit sits directly on the PR head. The branch is 8 behind master, and a master merge conflicts in code (app-map.ts + the 15 message files), so e7 syncs it.
+
+## PR #152 (`fix/solvyai-undo-guard`, base master) — SolvyAI's Desfazer only when nothing reached the patient; claim-once; a failed undo says so, 🟢 at `dfc0c31`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` at `dfc0c31` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts the model's `tool_use` turns and logs
+  Expo pushes, never sending them.
+- **Data:** the prod DB, with throwaway fixtures (deleted afterwards):
+  - a patient **with** an account (linked, with a device token);
+  - a patient **without** one;
+  - a lunch block.
+
+**Results:**
+
+| Row | Result |
+|---|---|
+| Book, patient WITH an account | ✅ saved + push "…marcou uma consulta para você em 06/10/2026 às 11:00." The toast is **"✓ Feito · Abrir"**, no Desfazer. Abrir → `/pt-BR/dashboard/schedule?date=2026-10-06&highlight=<id>` |
+| Move, WITH an account | ✅ saved + the "Consulta remarcada" push; "✓ Feito · Abrir" |
+| Cancel, WITH an account | ✅ cancelled + the "Consulta cancelada" push; "✓ Feito · Abrir" |
+| Book, patient WITHOUT an account | ✅ "✓ Feito · Desfazer (10 s)" → Desfazer → the row is deleted, "Desfeito" |
+| Move, WITHOUT an account | ✅ Desfazer → back to 06/10 10:00 |
+| Unblock + **double-click** Desfazer | ✅ the button turns "…" and is disabled at once; a third click is refused. **Exactly one** 12:00–13:00 block comes back (7f's double-undo) |
+| Mark paid | ✅ keeps Desfazer |
+| Forced undo failure (the server action aborted) | ✅ "Não foi possível desfazer. Abra o item para ajustar." + **Abrir** (→ `/pt-BR/dashboard/payments?highlight=<id>`); the row stays paid |
+| Add patient | ✅ keeps Desfazer |
+
+**Locales:** the 2 new keys (`undoFailed` / `openItem`) are in all 15
+locales (checked by web tester 1).
+
+**CI at `dfc0c31`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for `dfc0c31`.** This docs commit sits on top of a master sync (10 behind; clean).
