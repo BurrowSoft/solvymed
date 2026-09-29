@@ -180,6 +180,7 @@ export const ACTIONS: AppMapAction[] = [
       "Confirming also adds (or links) the patient to the practice in the same step and notifies them.",
       "Rejecting only works while it's still a request (tentative or proposal) and notifies the patient.",
       "Proposing another time is done on the request card, not by SolvyAI.",
+      "A decision made through SolvyAI has no Desfazer: the patient is notified at once.",
     ],
     card: ["patient", "when (weekday, date, time)", "confirm or reject", "note"],
     after: "schedule",
@@ -209,6 +210,7 @@ export const ACTIONS: AppMapAction[] = [
       "A birth-date year of 2400 or more is never saved or converted.",
       { text: "The birth date must be between 1900 and today.", pending: ["mobile#95", "migration-116"] },
       "Only the ID fields of the practice's country are used.",
+      "Through SolvyAI only the name and birth date are taken (the chat masks phone, email and ID numbers); those are added on the patient's page after saving.",
     ],
     card: ["full name", "birth date", "phone", "email", "ID"],
     after: "patient",
@@ -244,6 +246,7 @@ export const ACTIONS: AppMapAction[] = [
     rules: [
       "Only for Brazilian practices with a Pix key; it opens WhatsApp with the patient's number and the Pix message.",
       "It needs the patient's phone number; without one, say so and offer the QR / Pix Copia e Cola on the appointment instead.",
+      "On the website SolvyAI doesn't send it: it's only in the app for now (say so, with the Help link).",
       "Thai practices show a PromptPay QR on the appointment instead; there's no WhatsApp PromptPay message.",
       "The payment method always follows the PRACTICE's country.",
     ],
