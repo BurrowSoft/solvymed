@@ -106,6 +106,7 @@
     "managePayments": "Zahlungen verwalten"
   },
   "schedule": {
+    "patientMessage": "Nachricht des Patienten",
     "title": "Zeitplan",
     "apptsToday": "{count, plural, one {# Termin heute} other {# Termine heute}}",
     "noAppts": "Keine Termine an diesem Tag",

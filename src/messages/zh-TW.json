@@ -106,6 +106,7 @@
     "managePayments": "管理付款"
   },
   "schedule": {
+    "patientMessage": "患者留言",
     "title": "行程",
     "apptsToday": "今日預約 {count} 個",
     "noAppts": "今日暫無預約",

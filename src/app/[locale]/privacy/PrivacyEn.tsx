@@ -107,7 +107,8 @@ export function PrivacyEn({ turnstile }: { turnstile: boolean }) {
       <Section title="8. Security">
         <p>
           Encryption in transit (TLS) and at rest; row-level access rules so each clinic sees only its own data;
-          secretaries cannot access clinical records; patient files and photos are private and served only through
+          secretaries cannot access clinical records; the clinic's notes on an appointment are private and never shown to
+          the patient (a patient sees only their own message to the clinic); patient files and photos are private and served only through
           short-lived links; an optional PIN/biometric lock in the app. No system is completely secure, so please
           use a strong password and keep your device secure.
         </p>

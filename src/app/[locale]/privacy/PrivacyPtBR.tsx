@@ -107,7 +107,8 @@ export function PrivacyPtBR({ turnstile }: { turnstile: boolean }) {
       <Section title="8. Segurança">
         <p>
           Criptografia em trânsito (TLS) e em repouso; regras de acesso por linha, para que cada clínica veja apenas os
-          próprios dados; secretárias não acessam prontuários; arquivos e fotos de pacientes são privados e só são
+          próprios dados; secretárias não acessam prontuários; as observações da clínica são privadas e não aparecem
+          para o paciente (o paciente vê só a própria mensagem para a clínica); arquivos e fotos de pacientes são privados e só são
           exibidos por links temporários; bloqueio opcional por PIN/biometria no aplicativo. Nenhum sistema é
           totalmente seguro, por isso use uma senha forte e mantenha o seu dispositivo protegido.
         </p>

@@ -106,6 +106,7 @@
     "managePayments": "จัดการการชำระเงิน"
   },
   "schedule": {
+    "patientMessage": "ข้อความจากผู้ป่วย",
     "title": "ตารางนัดหมาย",
     "apptsToday": "นัดหมายวันนี้ {count} ครั้ง",
     "noAppts": "ไม่มีนัดหมายในวันนี้",
