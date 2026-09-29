@@ -461,6 +461,8 @@
     "clinicName": "Praxis- / Klinikname",
     "clinicNamePlaceholder": "Praxis Wohlbefinden",
     "cnpj": "CNPJ",
+    "taxIdLabel": "Steuernummer (13 Ziffern)",
+    "taxIdInvalid": "Geben Sie eine gültige 13-stellige Steuernummer ein.",
     "phone": "Telefon",
     "website": "Website",
     "address": "Adresse",

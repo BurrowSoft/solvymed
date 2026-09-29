@@ -152,6 +152,11 @@ export default async function SettingsPage({
     ? await supabase.from("professionals").select("promptpay_id").eq("id", user.id).maybeSingle()
     : null;
   const showPromptPay = !!promptPayResult && !promptPayResult.error;
+  // The clinic tax ID (Thai practices; migration 112), read the same way.
+  const taxIdResult = practiceCountry === "TH"
+    ? await supabase.from("professionals").select("clinic_tax_id").eq("id", user.id).maybeSingle()
+    : null;
+  const showTaxId = !!taxIdResult && !taxIdResult.error;
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl">
@@ -187,6 +192,7 @@ export default async function SettingsPage({
           country={practiceCountry}
           showPix={practiceProfile.paymentQr === "pix"}
           showPromptPay={showPromptPay}
+          showTaxId={showTaxId}
           data={{
             clinic_name: prof.clinic_name ?? undefined,
             clinic_cnpj: prof.clinic_cnpj ?? undefined,
@@ -196,6 +202,7 @@ export default async function SettingsPage({
             clinic_city: prof.clinic_city ?? undefined,
             clinic_state: prof.clinic_state ?? undefined,
             pix_key: (prof as { pix_key?: string | null }).pix_key ?? undefined,
+            clinic_tax_id: (taxIdResult?.data as { clinic_tax_id?: string | null } | null)?.clinic_tax_id ?? undefined,
             promptpay_id: (promptPayResult?.data as { promptpay_id?: string | null } | null)?.promptpay_id ?? undefined,
           }}
         />

@@ -461,6 +461,8 @@
     "clinicName": "اسم العيادة / المجمع",
     "clinicNamePlaceholder": "عيادة الرفاهية",
     "cnpj": "CNPJ",
+    "taxIdLabel": "الرقم الضريبي (13 رقمًا)",
+    "taxIdInvalid": "أدخل رقمًا ضريبيًا صحيحًا من 13 رقمًا.",
     "phone": "الهاتف",
     "website": "الموقع الإلكتروني",
     "address": "العنوان",

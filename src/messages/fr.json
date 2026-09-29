@@ -461,6 +461,8 @@
     "clinicName": "Nom du cabinet / clinique",
     "clinicNamePlaceholder": "Cabinet Bien-Être",
     "cnpj": "CNPJ",
+    "taxIdLabel": "Numéro d'identification fiscale (13 chiffres)",
+    "taxIdInvalid": "Saisissez un numéro d'identification fiscale valide à 13 chiffres.",
     "phone": "Téléphone",
     "website": "Site web",
     "address": "Adresse",
