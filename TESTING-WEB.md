@@ -7413,11 +7413,11 @@ and C9 isn't built at all.
 `2f3514a`.** This docs commit sits on top of a master sync (4 behind,
 clean merge).
 
-## PR #124 (`fix/neutral-hours-copy`, base master) — neutral working-hours wording, ⏳ at `02d1f6d` (pt-BR done, en to finish)
+## PR #124 (`fix/neutral-hours-copy`, base master) — neutral working-hours wording, 🟢 at `02d1f6d`
 
-This is a checkpoint (sessions paused), **not** a gate. Tested on the
-Preview at `02d1f6d` with the #111 spec: a throwaway doctor, hours
-Mon–Fri 08–18, Saturday and Sunday off, blocks at 14–15 and 19–20.
+Tested on the Preview at `02d1f6d` with the #111 spec: a throwaway
+doctor, hours Mon–Fri 08–18, Saturday and Sunday off, blocks at 14–15
+and 19–20. pt-BR and en each ran against their own doctor.
 
 **pt-BR, doctor: ✅.** Every question is "Confira o horário" with
 [Cancelar] [Agendar]:
@@ -7435,14 +7435,30 @@ Mon–Fri 08–18, Saturday and Sunday off, blocks at 14–15 and 19–20.
 atendimento (08:00–18:00). Agendar mesmo assim?" Agendar saves; the
 overlap is still a hard stop.
 
-**en: ⏳.** Seen so far: the combined question "This time is blocked
-(19:00–20:00). This time is outside the working hours (08:00–18:00). Book
-anyway?" [Cancel] [Book].
-- **Still to check:** the single outside-hours question and "Saturday
-  isn't a working day.". My first run reused pt-BR's slots, so those
-  cases hit the overlap stop. The en-only re-run was stopped at the
-  checkpoint.
-- **To finish:** `LOCS=en` spec pr124.
+**en, doctor: ✅.** Every question is "Check the time" with [Cancel]
+[Book]:
+- 18:30 → "This time is **outside the working hours** (08:00–18:00).
+  Book anyway?" Book saves.
+- Saturday 10:00 → "**Saturday isn't a working day.** Book anyway?" Book
+  saves.
+- 19:15 → one question: "This time is blocked (19:00–20:00). This time is
+  outside the working hours (08:00–18:00). Book anyway?" Cancel saves
+  nothing.
+- Blocked 14:15 → "This time is blocked (14:00–15:00). Book anyway?"
+  Cancel keeps the form open and saves nothing.
+- The overlap hard stop and the in-hours booking (no question) are
+  unchanged.
 
-**CI at `02d1f6d`:** ✅. **Review: clean (a9).** The branch was up to
+**Hours never set** (`working_hours` `{}`): no question in either
+language, saved.
+
+No copy says "your" working hours or "Você não atende" / "You don't work"
+any more.
+
+**Coverage note:** the secretary run is pt-BR only (the spec's secretary
+case). The strings are the same keys for every role, so the en wording
+above applies to secretaries too.
+
+**CI at `02d1f6d`:** ✅. **Review: clean (a9).** **Merge gate: 🟢 for
+`02d1f6d`.** This docs commit sits directly on top; the branch is up to
 date with master.
