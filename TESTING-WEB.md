@@ -8644,3 +8644,33 @@ Tested by web tester 2.
 
 **CI at `6681b0a`:** ✅ (lint, typecheck + unit tests, Vercel).
 **Review: clean (7f).** **Merge gate: 🟢 for `6681b0a`.** This docs commit sits on top of a master sync (6 behind; clean).
+
+## PR #149 (`feat/settings-subscription`, base master) — Configurações → Assinatura with "Gerenciar assinatura", 🟢 at `0c92dc2`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Where:** the Vercel Preview (Playwright) against the prod DB, with a
+  throwaway doctor and secretary (deleted afterwards).
+- **The active row:** a real **Stripe TEST** subscription made through the
+  API.
+  - The customer has `pm_card_visa`, the price is R$ 89/month, and
+    `metadata.user_id` = the doctor, as the portal route requires.
+  - `professionals` is set to `stripe` / that id / `active` (what the
+    webhook would write).
+  - The subscription is cancelled and the customer deleted afterwards.
+
+**Results:**
+
+| Row | Result |
+|---|---|
+| Trial (15 days) | ✅ "Assinatura: Teste grátis: faltam 15 dias" + "Ver o plano" → `/pt-BR/subscribe` |
+| Trial ending in 25 h | ✅ "faltam 2 dias" (rounded up), link shown |
+| Active Stripe sub | ✅ "Plano Pro · ativo" + **Gerenciar assinatura** → `billing.stripe.com/p/session…`. The portal's return link is `/pt-BR/dashboard/settings`, and following it lands back on Configurações (not /subscribe) |
+| Lifetime | ✅ "Plano Pro · vitalício", no button |
+| Expired | ✅ Configurações isn't reachable: the existing gate sends them to `/pt-BR/subscribe` ("Seu período de teste encerrou. Assine para continuar."). The card's "Nenhuma assinatura ativa" state isn't shown in this case |
+| Secretary | ✅ no Assinatura card (no status line, no plan / manage buttons) |
+| en / th | ✅ "Subscription · Free trial: 2 days left · See the plan"; "การสมัครสมาชิก · ทดลองใช้ฟรี: เหลืออีก 2 วัน" |
+
+**CI at `0c92dc2`:** ✅ (lint, typecheck + unit tests, Vercel).
+**Review: clean (7f).** **Merge gate: 🟢 for `0c92dc2`.** This docs commit sits on top of a master sync (3 behind; clean).

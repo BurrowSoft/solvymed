@@ -520,6 +520,13 @@
     "saveFailed": "Speichern fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "practiceCountry": "Land der Praxis",
     "practiceCountryHint": "Legt Währung, Tarifpreis, Patientenausweis und Zahlungs-QR fest. Für eine Änderung schreiben Sie an support@solvymed.com.",
+    "subscriptionTitle": "Abonnement",
+    "subscriptionActive": "Pro-Tarif · aktiv",
+    "subscriptionLifetime": "Pro-Tarif · lebenslang",
+    "subscriptionTrial": "Kostenlose Testphase: noch {n, plural, one {# Tag} other {# Tage}}",
+    "subscriptionInactive": "Kein aktives Abonnement",
+    "manageSubscription": "Abonnement verwalten",
+    "subscriptionSubscribe": "Tarif ansehen",
     "practiceCountryOther": "Anderes Land",
     "fullNameHint": "Fügen Sie auf Wunsch Ihren Titel hinzu (Dr., Prof.); er erscheint in der Begrüßung."
   },

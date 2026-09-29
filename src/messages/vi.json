@@ -520,6 +520,13 @@
     "saveFailed": "Không lưu được. Vui lòng thử lại.",
     "practiceCountry": "Quốc gia của phòng khám",
     "practiceCountryHint": "Xác định tiền tệ, giá gói, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi, hãy liên hệ support@solvymed.com.",
+    "subscriptionTitle": "Gói đăng ký",
+    "subscriptionActive": "Gói Pro · đang hoạt động",
+    "subscriptionLifetime": "Gói Pro · trọn đời",
+    "subscriptionTrial": "Dùng thử miễn phí: còn {n} ngày",
+    "subscriptionInactive": "Không có gói đăng ký đang hoạt động",
+    "manageSubscription": "Quản lý gói đăng ký",
+    "subscriptionSubscribe": "Xem gói",
     "practiceCountryOther": "Quốc gia khác",
     "fullNameHint": "Bạn có thể thêm danh xưng (Dr., Prof.); danh xưng sẽ hiện trong lời chào."
   },

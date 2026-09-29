@@ -520,6 +520,13 @@
     "saveFailed": "บันทึกไม่สำเร็จ โปรดลองอีกครั้ง",
     "practiceCountry": "ประเทศของคลินิก",
     "practiceCountryHint": "ใช้กำหนดสกุลเงิน ราคาแพ็กเกจ เอกสารระบุตัวตนผู้ป่วย และ QR สำหรับชำระเงิน หากต้องการเปลี่ยน โปรดติดต่อ support@solvymed.com",
+    "subscriptionTitle": "การสมัครสมาชิก",
+    "subscriptionActive": "แพ็กเกจ Pro · ใช้งานอยู่",
+    "subscriptionLifetime": "แพ็กเกจ Pro · ตลอดชีพ",
+    "subscriptionTrial": "ทดลองใช้ฟรี: เหลืออีก {n} วัน",
+    "subscriptionInactive": "ไม่มีการสมัครสมาชิกที่ใช้งานอยู่",
+    "manageSubscription": "จัดการการสมัครสมาชิก",
+    "subscriptionSubscribe": "ดูแพ็กเกจ",
     "practiceCountryOther": "ประเทศอื่น",
     "fullNameHint": "ใส่คำนำหน้าได้ถ้าต้องการ (Dr., Prof.) จะแสดงในคำทักทาย"
   },

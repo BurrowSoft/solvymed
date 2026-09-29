@@ -520,6 +520,13 @@
     "saveFailed": "Impossibile salvare. Riprova.",
     "practiceCountry": "Paese dello studio",
     "practiceCountryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo, scrivi a support@solvymed.com.",
+    "subscriptionTitle": "Abbonamento",
+    "subscriptionActive": "Piano Pro · attivo",
+    "subscriptionLifetime": "Piano Pro · a vita",
+    "subscriptionTrial": "Prova gratuita: {n, plural, one {manca # giorno} other {mancano # giorni}}",
+    "subscriptionInactive": "Nessun abbonamento attivo",
+    "manageSubscription": "Gestisci abbonamento",
+    "subscriptionSubscribe": "Vedi il piano",
     "practiceCountryOther": "Altro paese",
     "fullNameHint": "Se vuoi, aggiungi il tuo titolo (Dott., Dott.ssa, Prof.): compare nei saluti."
   },

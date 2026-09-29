@@ -520,6 +520,13 @@
     "saveFailed": "저장하지 못했습니다. 다시 시도하세요.",
     "practiceCountry": "진료소 국가",
     "practiceCountryHint": "통화, 요금제 가격, 환자 신분증, 결제 QR이 정해집니다. 변경하려면 support@solvymed.com으로 문의하세요.",
+    "subscriptionTitle": "구독",
+    "subscriptionActive": "Pro 요금제 · 활성",
+    "subscriptionLifetime": "Pro 요금제 · 평생",
+    "subscriptionTrial": "무료 체험: {n}일 남음",
+    "subscriptionInactive": "활성 구독 없음",
+    "manageSubscription": "구독 관리",
+    "subscriptionSubscribe": "요금제 보기",
     "practiceCountryOther": "기타 국가",
     "fullNameHint": "원하면 호칭(Dr., Prof.)을 붙이세요. 인사말에 표시됩니다."
   },

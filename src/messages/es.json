@@ -520,6 +520,13 @@
     "saveFailed": "No se pudo guardar. Inténtalo de nuevo.",
     "practiceCountry": "País de la consulta",
     "practiceCountryHint": "Define la moneda, el precio del plan, el documento del paciente y el QR de pago. Para cambiarlo, escribe a support@solvymed.com.",
+    "subscriptionTitle": "Suscripción",
+    "subscriptionActive": "Plan Pro · activo",
+    "subscriptionLifetime": "Plan Pro · vitalicio",
+    "subscriptionTrial": "Prueba gratis: {n, plural, one {queda # día} other {quedan # días}}",
+    "subscriptionInactive": "Ninguna suscripción activa",
+    "manageSubscription": "Gestionar suscripción",
+    "subscriptionSubscribe": "Ver el plan",
     "practiceCountryOther": "Otro país",
     "fullNameHint": "Si quieres, añade tu título (Dr., Dra., Prof.): aparece en los saludos."
   },

@@ -520,6 +520,13 @@
     "saveFailed": "Не удалось сохранить. Попробуйте ещё раз.",
     "practiceCountry": "Страна практики",
     "practiceCountryHint": "Определяет валюту, цену тарифа, документ пациента и QR для оплаты. Чтобы изменить, напишите на support@solvymed.com.",
+    "subscriptionTitle": "Подписка",
+    "subscriptionActive": "Тариф Pro · активен",
+    "subscriptionLifetime": "Тариф Pro · бессрочно",
+    "subscriptionTrial": "Бесплатный период: {n, plural, one {остался # день} few {осталось # дня} many {осталось # дней} other {осталось # дня}}",
+    "subscriptionInactive": "Нет активной подписки",
+    "manageSubscription": "Управлять подпиской",
+    "subscriptionSubscribe": "Посмотреть тариф",
     "practiceCountryOther": "Другая страна",
     "fullNameHint": "При желании добавьте звание (Dr., Prof.): оно появится в приветствиях."
   },

@@ -520,6 +520,13 @@
     "saveFailed": "Enregistrement impossible. Veuillez réessayer.",
     "practiceCountry": "Pays du cabinet",
     "practiceCountryHint": "Définit la devise, le prix de l'abonnement, la pièce d'identité du patient et le QR de paiement. Pour le changer, écrivez à support@solvymed.com.",
+    "subscriptionTitle": "Abonnement",
+    "subscriptionActive": "Forfait Pro · actif",
+    "subscriptionLifetime": "Forfait Pro · à vie",
+    "subscriptionTrial": "Essai gratuit : {n, plural, one {# jour restant} other {# jours restants}}",
+    "subscriptionInactive": "Aucun abonnement actif",
+    "manageSubscription": "Gérer l’abonnement",
+    "subscriptionSubscribe": "Voir le forfait",
     "practiceCountryOther": "Autre pays",
     "fullNameHint": "Ajoutez votre titre si vous le souhaitez (Dr, Pr) : il apparaît dans les salutations."
   },

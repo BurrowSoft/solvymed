@@ -520,6 +520,13 @@
     "saveFailed": "Gagal menyimpan. Silakan coba lagi.",
     "practiceCountry": "Negara praktik",
     "practiceCountryHint": "Menentukan mata uang, harga paket, identitas pasien, dan QR pembayaran. Untuk mengubahnya, hubungi support@solvymed.com.",
+    "subscriptionTitle": "Langganan",
+    "subscriptionActive": "Paket Pro · aktif",
+    "subscriptionLifetime": "Paket Pro · seumur hidup",
+    "subscriptionTrial": "Uji coba gratis: sisa {n} hari",
+    "subscriptionInactive": "Tidak ada langganan aktif",
+    "manageSubscription": "Kelola langganan",
+    "subscriptionSubscribe": "Lihat paket",
     "practiceCountryOther": "Negara lain",
     "fullNameHint": "Tambahkan gelar Anda jika mau (Dr., Prof.); gelar akan muncul di sapaan."
   },
