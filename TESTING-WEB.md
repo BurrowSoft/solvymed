@@ -7629,3 +7629,43 @@ Server-only: nothing reaches the UI yet.
 `cd70175`.** Not synced with master: the merge conflicts in
 `content/help/conditions.json` (the dev's file), so I aborted it and
 handed it to e7. This docs commit sits directly on `cd70175`.
+
+## PR #125 (`docs/help-clinic-change-push`, base master) — Help + App Map: the patient is notified on app book/move/cancel (pending mobile#111), 🟢 at `143509b`
+
+Docs/data only.
+- **Content:** four `{pending:mobile#111}` sentences in A1/A4 (pt + en).
+- **Condition:** `mobile#111` added to `content/help/conditions.json` with
+  `met: false`.
+- **App Map:** rules marked `pending: ["mobile#111"]`.
+
+**My finding at `36eb1a4`, fixed at `143509b`:**
+- **At `36eb1a4`:** the App Map's app-cancel rule said "…The website
+  doesn't notify." But archiving a patient on the website **does**
+  notify: `dashboard/patients/actions.ts:258` sends
+  `apptCancelledByClinic` per upcoming appointment, which I saw live in
+  #113.
+- **At `143509b`:** a separate **live** rule says "Archiving a patient on
+  the website cancels their upcoming appointments and notifies the patient
+  if linked to a SolvyMed account. A cancel in the website's Schedule
+  doesn't notify." Both halves match the code: the Schedule's status
+  change sends no push. The app rule stays pending, without the false
+  clause.
+
+**Checks at `143509b` (the Preview):**
+- **The built Help is unchanged:** `help-build` at the head reproduces the
+  committed `helpArticles.json` (line endings only), with no `{pending` /
+  mobile#111 text in it.
+- **Every Help page:** 39 slugs × (pt-BR, en) × (plain, `?app=1`) = 156
+  pages, **identical** to the master Preview. A1 (Marcar uma consulta) and
+  A4 (Remarcar ou cancelar) show no new sentence.
+- **Search** for "notificação quando você agenda", "recebe uma
+  notificação", "ao arquivar o paciente" and the en equivalents, plain and
+  `?app=1`:
+  - **A1 or A4 never appears.**
+  - The hits that do come up (Pedidos de pacientes / Patient booking
+    requests, Arquivar e restaurar) are existing articles matching on
+    shared words; the built articles are the same as master.
+
+**CI at `143509b`:** ✅. **Review: clean (7f).** **Merge gate: 🟢 for
+`143509b`.** This docs commit sits on top of a master sync (7 behind,
+clean merge).
