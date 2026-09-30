@@ -7,6 +7,8 @@
 
 // Print views sit in a data-theme="light" scope: they stay light in the
 // dashboard's dark theme (Help C8).
+import { countryProfile } from "@/lib/country";
+
 // Print views: only #print-doc prints, on A4. The dashboard's nav, the
 // toolbar (.print-hide) and any floating button stay off the page, and
 // colours print as on screen.
@@ -26,7 +28,7 @@ export const PRINT_CSS = `
 export function docDate(country: string, isoDate: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(isoDate);
   if (!m) return isoDate;
-  const year = Number(m[1]) + (country === "TH" ? 543 : 0);
+  const year = Number(m[1]) + (countryProfile(country).calendar === "buddhist" ? 543 : 0);
   return `${m[3]}/${m[2]}/${year}`;
 }
 
