@@ -246,7 +246,7 @@
     "revert": "Annulla pagamento",
     "confirm": "Conferma",
     "cancel": "Annulla",
-    "amountPlaceholder": "Importo €",
+    "amountPlaceholder": "Importo ({symbol})",
     "revertConfirm": "Riportare questo pagamento a in sospeso?",
     "errorInvalidAmount": "Inserisci un importo valido.",
     "errorGeneric": "Qualcosa è andato storto. Riprova."
@@ -510,7 +510,7 @@
     "procedureName": "Nome",
     "procedureNamePlaceholder": "Prima visita, Follow-up…",
     "durationLabel": "Durata (minuti)",
-    "priceLabel": "Tariffa (R$)",
+    "priceLabel": "Tariffa ({symbol})",
     "paymentTypeLabel": "Tipo di pagamento",
     "private": "Privato",
     "insurance": "Assicurazione",
@@ -565,7 +565,7 @@
     "manageSubscription": "Gestisci abbonamento",
     "subscriptionSubscribe": "Vedi il piano",
     "practiceCountryOther": "Altro paese",
-    "fullNameHint": "Se vuoi, aggiungi il tuo titolo (Dott., Dott.ssa, Prof.): compare nei saluti.",
+    "fullNameHint": "Se vuoi, aggiungi il tuo titolo ({titles}): compare nei saluti.",
     "cnpjInvalid": "Il CNPJ non è valido. Controlla il numero.",
     "appearanceTitle": "Aspetto",
     "appearanceHint": "Il tema della dashboard in questo browser. Stampe ed e-mail restano sempre chiare.",
@@ -573,7 +573,14 @@
     "themeLight": "Chiaro",
     "themeDark": "Scuro",
     "pixKey": "Chiave Pix",
-    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, telefono o chiave casuale"
+    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, telefono o chiave casuale",
+    "fullNameTitles": "Dott., Dott.ssa, Prof.",
+    "registrationPlaceholderTH": "es. ว.12345 (licenza del Consiglio medico)",
+    "registrationPlaceholderOther": "es. il tuo numero di iscrizione",
+    "clinicNamePlaceholderTH": "Clinica Sukhumvit",
+    "clinicNamePlaceholderOther": "Studio Benessere",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "Via Principale 123"
   },
   "clinics": {
     "title": "Le mie cliniche",

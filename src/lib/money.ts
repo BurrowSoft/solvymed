@@ -15,6 +15,19 @@ export function formatMoney(amount: number, currency: Currency = "BRL"): string 
   return f.format(amount);
 }
 
+// A money input's label and example follow the practice currency (UX):
+// "Preço (R$)" / "0,00" in Brazil, "(฿)" / "0.00" in Thailand, "($)" / "0.00"
+// elsewhere. parseMoney reads either decimal style.
+const SYMBOL: Record<Currency, string> = { BRL: "R$", THB: "฿", USD: "$" };
+export function currencySymbol(currency: Currency = "BRL"): string {
+  return SYMBOL[currency];
+}
+// The example amount in the currency's own decimal style.
+const EXAMPLE: Record<Currency, string> = { BRL: "0,00", THB: "0.00", USD: "0.00" };
+export function amountExample(currency: Currency = "BRL"): string {
+  return EXAMPLE[currency];
+}
+
 /** @deprecated use formatMoney(amount, currency): kept for BRL-only call sites. */
 export function formatBRL(amount: number): string {
   return formatMoney(amount, "BRL");
