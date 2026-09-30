@@ -317,7 +317,9 @@
     "pageInfo": "第 {from}–{to} 筆，共 {total} 筆",
     "prevPage": "上一頁",
     "nextPage": "下一頁",
-    "pagesLabel": "分頁"
+    "pagesLabel": "分頁",
+    "fullNamePlaceholder": "全名",
+    "professionPlaceholder": "例如：工程師、教師…"
   },
   "patientDetail": {
     "tabInfo": "資訊",
@@ -603,7 +605,6 @@
     "countryLabel": "國家",
     "countryPlaceholder": "國家",
     "phoneLabel": "電話",
-    "phonePlaceholder": "+886 2 0000 0000",
     "locationNote": "地圖上的位置將根據您提供的地址自動偵測。",
     "noAddress": "無地址",
     "onMap": "在地圖上",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "您的姓名",
     "emailLabel": "電子郵件",
     "phoneLabel": "電話",
-    "phonePlaceholder": "912 345 678",
     "dobLabel": "出生日期",
     "cpfLabel": "身份證號",
     "cpfPlaceholder": "000.000.000-00",
@@ -1790,5 +1790,8 @@
     "couldntFinish": "沒能完成。能換個說法，並附上病患姓名、日期和時間嗎？",
     "onlySolvyMed": "我只能協助處理 SolvyMed 相關問題。",
     "noClinical": "我無法回答臨床問題。"
+  },
+  "countryExamples": {
+    "phone": "電話號碼"
   }
 }

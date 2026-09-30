@@ -8,6 +8,7 @@ import Link from "next/link";
 import { dropQueryParam } from "@/lib/dropQueryParam";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
+import { profileOfKind } from "@/lib/country";
 import { DateInput } from "@/components/DateInput";
 import { AddressFields } from "@/components/patient/AddressFields";
 import { dateLocale, formatShortDate } from "@/lib/dateLabels";
@@ -69,8 +70,12 @@ function Select({ children, ...props }: React.SelectHTMLAttributes<HTMLSelectEle
 
 function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false }: { onSubmit: (fd: FormData) => void; pending: boolean; error: string; id?: string; idKind: PatientIdKind; addressLive?: boolean }) {
   const t = useTranslations("patients");
+  const tEx = useTranslations("countryExamples");
   // CPF, Thai ID/passport or passport/ID, by the practice's country.
   const idFields = usePatientIdFields(idKind);
+  // The phone example follows the practice country too (idKind is its
+  // kind: BR / TH / OTHER); Other gets a neutral text (UX).
+  const phoneExample = profileOfKind(idKind).examples.mobile?.intl ?? tEx("phone");
   const formRef = useRef<HTMLFormElement>(null);
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -83,7 +88,7 @@ function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2">
           <FieldLabel>{t("fullName")} *</FieldLabel>
-          <Input name="full_name" required placeholder="Patient's full name" />
+          <Input name="full_name" required placeholder={t("fullNamePlaceholder")} />
         </div>
         <div>
           <FieldLabel>{t("email")}</FieldLabel>
@@ -91,7 +96,7 @@ function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false
         </div>
         <div>
           <FieldLabel>{t("phone")}</FieldLabel>
-          <Input name="phone" placeholder="+55 11 99999-9999" />
+          <Input name="phone" placeholder={phoneExample} />
         </div>
         {idFields.map((f) => (
           <div key={f.name}>
@@ -122,11 +127,11 @@ function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false
         </div>
         <div className="col-span-2">
           <FieldLabel>{t("profession")}</FieldLabel>
-          <Input name="profession" placeholder="e.g. Engineer, Teacher…" />
+          <Input name="profession" placeholder={t("professionPlaceholder")} />
         </div>
         <div className="col-span-2">
           <FieldLabel>{t("emergencyPhone")}</FieldLabel>
-          <Input name="emergency_phone" placeholder="+55 11 99999-9999" />
+          <Input name="emergency_phone" placeholder={phoneExample} />
         </div>
       </div>
       {addressLive && <AddressFields kind={idKind} />}

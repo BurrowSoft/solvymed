@@ -39,6 +39,10 @@ export type CountryProfile = {
     state: string | null;                 // e.g. "SP"
     city: string | null;
     phone: string | null;                 // null = "+ country code and number"
+    // A mobile number (patients' phones; the app's phoneExample, UX):
+    // local, with the country code, and after a separate code picker.
+    // null = the neutral text (countryExamples.phone).
+    mobile: { local: string; intl: string; national: string } | null;
     website: string;
   };
 };
@@ -50,6 +54,7 @@ const BR: CountryProfile = {
     titles: { other: "Dr., Dra., Prof." },
     registration: "registrationPlaceholder", clinicName: "clinicNamePlaceholder", address: "addressPlaceholder",
     stateLabel: "state", state: "SP", city: "São Paulo", phone: "(11) 3000-0000", website: "www.example.com.br",
+    mobile: { local: "(11) 99999-9999", intl: "+55 (11) 99999-9999", national: "11 99999-9999" },
   },
 };
 const TH: CountryProfile = {
@@ -59,6 +64,7 @@ const TH: CountryProfile = {
     titles: { th: "นพ., พญ., ทพ., ทญ.", other: "Dr." },
     registration: "registrationPlaceholderTH", clinicName: "clinicNamePlaceholderTH", address: "addressPlaceholderTH",
     stateLabel: "stateProvince", state: null, city: "Bangkok", phone: "02 000 0000", website: "www.example.com",
+    mobile: { local: "081 234 5678", intl: "+66 81 234 5678", national: "81 234 5678" },
   },
 };
 // The explicit default: any country without its own entry (or the unknown 'ZZ').
@@ -69,6 +75,7 @@ const OTHER: CountryProfile = {
     titles: null,
     registration: "registrationPlaceholderOther", clinicName: "clinicNamePlaceholderOther", address: "addressPlaceholderOther",
     stateLabel: "stateOrProvince", state: null, city: null, phone: null, website: "www.example.com",
+    mobile: null,
   },
 };
 
@@ -91,4 +98,16 @@ export function titleExamples(country: string | null | undefined, locale: string
 
 export function countryProfile(country: string | null | undefined): CountryProfile {
   return PROFILES[normalizeCountry(country)] ?? OTHER;
+}
+
+// The profile whose phone prefix this is (a phone's dial code picker);
+// any other code is the explicit default.
+export function profileOfPhonePrefix(prefix: string): CountryProfile {
+  return Object.values(PROFILES).find((p) => p.phonePrefix === prefix) ?? OTHER;
+}
+
+// The profile for a kind already resolved from the country (e.g. a form's
+// idKind): "OTHER" is the explicit default, never read as a country code.
+export function profileOfKind(kind: CountryProfile["kind"]): CountryProfile {
+  return Object.values(PROFILES).find((p) => p.kind === kind) ?? OTHER;
 }

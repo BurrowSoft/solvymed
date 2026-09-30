@@ -46,7 +46,7 @@ vi.mock("next-intl", () => ({
       "book.fullNamePlaceholder": "Your full name",
       "book.emailLabel": "Email",
       "book.phoneLabel": "Phone",
-      "book.phonePlaceholder": "Phone number",
+      "countryExamples.phone": "Phone number",
       "book.dobLabel": "Date of birth",
       "book.cpfLabel": "CPF",
       "patientIds.cpf": "CPF",
@@ -322,8 +322,29 @@ describe("BookingClient", () => {
     await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
     // Fill name and phone but not DOB → still disabled
     fireEvent.change(screen.getByPlaceholderText("Your full name"), { target: { value: "Maria" } });
-    fireEvent.change(screen.getByPlaceholderText("Phone number"), { target: { value: "11999887766" } });
+    fireEvent.change(screen.getByPlaceholderText("11 99999-9999"), { target: { value: "11999887766" } });
     await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
+  });
+
+  // UX: the dial code starts at the PRACTICE country, never the UI
+  // language; the example follows the selected code (Other: a neutral text).
+  it("the phone starts at the practice country's code, with its example", async () => {
+    const dial = () => (screen.getByPlaceholderText(/99999|234 5678|Phone number/).previousElementSibling as HTMLSelectElement).value;
+    setupMocks({ busySlots: [] });
+    const { unmount } = render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByPlaceholderText("11 99999-9999")).toBeInTheDocument());
+    expect(dial()).toBe("BR");
+    unmount();
+    setupMocks({ busySlots: [] });
+    const th = render(<BookingClient {...BASE_PROPS} idKind="TH" currency="THB" />);
+    await waitFor(() => expect(screen.getByPlaceholderText("81 234 5678")).toBeInTheDocument());
+    expect(dial()).toBe("TH");
+    th.unmount();
+    // An Other practice: the UI language's guess (en → +1) and the neutral text.
+    setupMocks({ busySlots: [] });
+    render(<BookingClient {...BASE_PROPS} idKind="OTHER" currency="NONE" />);
+    await waitFor(() => expect(screen.getByPlaceholderText("Phone number")).toBeInTheDocument());
+    expect(dial()).toBe("US");
   });
 
   it("upserts patient profile before calling create_public_booking", async () => {

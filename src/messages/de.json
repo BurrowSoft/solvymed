@@ -317,7 +317,9 @@
     "pageInfo": "{from}–{to} von {total}",
     "prevPage": "Zurück",
     "nextPage": "Weiter",
-    "pagesLabel": "Seiten"
+    "pagesLabel": "Seiten",
+    "fullNamePlaceholder": "Vollständiger Name",
+    "professionPlaceholder": "z.B. Ingenieur, Lehrer…"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -603,7 +605,6 @@
     "countryLabel": "Land",
     "countryPlaceholder": "Land",
     "phoneLabel": "Telefon",
-    "phonePlaceholder": "+49 30 12345678",
     "locationNote": "Der Standort auf der Karte wird automatisch aus der angegebenen Adresse ermittelt.",
     "noAddress": "Keine Adresse",
     "onMap": "Auf der Karte",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "Ihr vollständiger Name",
     "emailLabel": "E-Mail",
     "phoneLabel": "Telefon",
-    "phonePlaceholder": "151 23456789",
     "dobLabel": "Geburtsdatum",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -1790,5 +1790,8 @@
     "couldntFinish": "Das hat nicht geklappt. Können Sie es anders sagen, mit Name des Patienten, Datum und Uhrzeit?",
     "onlySolvyMed": "Ich kann nur bei SolvyMed helfen.",
     "noClinical": "Bei klinischen Fragen kann ich nicht helfen."
+  },
+  "countryExamples": {
+    "phone": "Telefonnummer"
   }
 }

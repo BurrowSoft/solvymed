@@ -317,7 +317,9 @@
     "pageInfo": "{from}–{to} dari {total}",
     "prevPage": "Sebelumnya",
     "nextPage": "Berikutnya",
-    "pagesLabel": "Halaman"
+    "pagesLabel": "Halaman",
+    "fullNamePlaceholder": "Nama lengkap",
+    "professionPlaceholder": "mis. Insinyur, Guru…"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -603,7 +605,6 @@
     "countryLabel": "Negara",
     "countryPlaceholder": "Negara",
     "phoneLabel": "Telepon",
-    "phonePlaceholder": "+62 21 0000 0000",
     "locationNote": "Lokasi di peta dideteksi secara otomatis dari alamat yang Anda berikan.",
     "noAddress": "Tidak ada alamat",
     "onMap": "Di peta",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "Nama lengkap Anda",
     "emailLabel": "Email",
     "phoneLabel": "Telepon",
-    "phonePlaceholder": "812 3456 7890",
     "dobLabel": "Tanggal lahir",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -1790,5 +1790,8 @@
     "couldntFinish": "Saya tidak bisa menyelesaikannya. Bisa katakan dengan cara lain, dengan nama pasien, tanggal, dan jam?",
     "onlySolvyMed": "Saya hanya bisa membantu soal SolvyMed.",
     "noClinical": "Saya tidak bisa membantu soal klinis."
+  },
+  "countryExamples": {
+    "phone": "Nomor telepon"
   }
 }
