@@ -1043,7 +1043,8 @@
     "pushClosedTitle": "คลินิกปิดบัญชีแล้ว",
     "pushClosedBody": "คลินิกของคุณปิดบัญชี SolvyMed แล้ว นัดหมายที่จะถึงของคุณถูกยกเลิก หากต้องการสำเนาเวชระเบียน โปรดติดต่อ support@solvymed.com",
     "pushCancelledTitle": "นัดหมายถูกยกเลิก",
-    "pushCancelledBody": "นัดหมายของคุณวันที่ {date} เวลา {time} ถูกยกเลิกโดย {clinic}"
+    "pushCancelledBody": "นัดหมายของคุณวันที่ {date} เวลา {time} ถูกยกเลิกโดย {clinic}",
+    "closedNotice": "บัญชีของคุณถูกปิดแล้ว"
   },
   "setup": {
     "title": "ตั้งค่าคลินิกของคุณ",

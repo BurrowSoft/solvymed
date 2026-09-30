@@ -1446,8 +1446,8 @@
           ]
         },
         "web": {
-          "pt": "**Configurações → Encerrar conta** (ou **Excluir conta**, se ainda não houver prontuários), no fim da página: funciona igual ao app. Mesmo com o teste ou a assinatura encerrados, as **Configurações** continuam abertas (o link fica na página de assinatura): exporte seus pacientes, gerencie a assinatura, troque a senha ou encerre a conta.",
-          "en": "**Settings → Close account** (or **Delete account** if there are no records yet), at the bottom of the page: it works the same as in the app. Even after the trial or subscription ends, **Settings** stays open (linked from the subscription page): export your patients, manage the subscription, change the password or close the account."
+          "pt": "**Configurações → Encerrar conta** (ou **Excluir conta**, se ainda não houver prontuários), no fim da página: funciona igual ao app. Depois, você sai da conta e volta à página inicial, com o aviso \"Sua conta foi encerrada.\" Mesmo com o teste ou a assinatura encerrados, as **Configurações** continuam abertas (o link fica na página de assinatura): exporte seus pacientes, gerencie a assinatura, troque a senha ou encerre a conta.",
+          "en": "**Settings → Close account** (or **Delete account** if there are no records yet), at the bottom of the page: it works the same as in the app. Afterwards you're signed out and back on the home page, with the note \"Your account has been closed.\" Even after the trial or subscription ends, **Settings** stays open (linked from the subscription page): export your patients, manage the subscription, change the password or close the account."
         },
         "webUnavailable": false,
         "open": "settings",

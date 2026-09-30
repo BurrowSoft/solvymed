@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { createClient as createSupabaseClient, type SupabaseClient } from "@supabase/supabase-js";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
+import { clearAuthCookies } from "@/lib/authCookies";
 import { stripe, retrieveSubscriptionOrNull } from "@/lib/stripeBilling";
 import { knownDbError } from "@/lib/dbErrors";
 import { closeFailureCode, planClosureNotices, stripeCloseStep, type ClosureRow } from "@/lib/accountClose";
@@ -229,5 +230,11 @@ export async function POST(request: NextRequest) {
     }
   });
 
-  return NextResponse.json({ outcome });
+  // The account is gone: a website caller leaves signed out. Its Supabase
+  // auth cookies are cleared on this response itself, not left to Auth's
+  // logout call (it can fail for a closed or deleted user and then keep the
+  // session, which sent the browser back to the dashboard; Vitor, 1 Oct).
+  const res = NextResponse.json({ outcome });
+  if (!request.headers.get("authorization")) clearAuthCookies(request, res);
+  return res;
 }

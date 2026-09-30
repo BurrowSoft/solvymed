@@ -1043,7 +1043,8 @@
     "pushClosedTitle": "診所已關閉",
     "pushClosedBody": "您的診所已關閉其 SolvyMed 帳戶。您的後續預約已取消。如需病歷副本，請聯絡 support@solvymed.com。",
     "pushCancelledTitle": "預約已取消",
-    "pushCancelledBody": "您在 {date} {time} 的預約已被診所取消。"
+    "pushCancelledBody": "您在 {date} {time} 的預約已被診所取消。",
+    "closedNotice": "你的帳戶已關閉。"
   },
   "setup": {
     "title": "設定您的診所",
