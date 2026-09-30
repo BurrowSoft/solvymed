@@ -17,6 +17,10 @@ describe("the Founders share preview", () => {
     expect(og.title).toBe("founders.metaTitle");
     expect(og.locale).toBe("pt_BR");
     expect(m.twitter).toMatchObject({ card: "summary_large_image", images: ["/og/solvymed-og-share-blue.png"] });
+    expect(m.alternates).toMatchObject({
+      canonical: "https://www.solvymed.com/pt-BR/founders",
+      languages: { en: "https://www.solvymed.com/founders", th: "https://www.solvymed.com/th/founders", "x-default": "https://www.solvymed.com/founders" },
+    });
   });
 
   it("the rules page shares the same banner, with its own title and URL (UX)", async () => {
@@ -26,8 +30,17 @@ describe("the Founders share preview", () => {
     expect(og.images[0].url).toBe("/og/solvymed-og-share-blue.png");
     expect(og.title).toBe("founders.rulesTitle");
     expect(og.url).toBe("https://www.solvymed.com/th/founders/rules");
-    // Its own canonical, never the home page's (3e).
-    expect(m.alternates).toMatchObject({ canonical: "https://www.solvymed.com/th/founders/rules" });
+    // Its own canonical, never the home page's (3e), and its own hreflang
+    // set in every offered language (UX: shared in three markets).
+    expect(m.alternates).toMatchObject({
+      canonical: "https://www.solvymed.com/th/founders/rules",
+      languages: {
+        "pt-BR": "https://www.solvymed.com/pt-BR/founders/rules",
+        en: "https://www.solvymed.com/founders/rules",
+        th: "https://www.solvymed.com/th/founders/rules",
+        "x-default": "https://www.solvymed.com/founders/rules",
+      },
+    });
     expect(m.twitter).toMatchObject({ card: "summary_large_image" });
   });
 

@@ -5,7 +5,7 @@ import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { Link } from "@/i18n/navigation";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { createClient } from "@/lib/supabase/server";
-import { defaultFoundersCountry, foundersShareMeta, foundersUrl } from "@/lib/founders";
+import { defaultFoundersCountry, foundersAlternates, foundersShareMeta, foundersUrl } from "@/lib/founders";
 import { readPlaces, type Place } from "@/lib/foundersPlaces";
 import { FoundersForm } from "./FoundersForm";
 import { FoundersPageView } from "./FoundersPageView";
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
-    alternates: { canonical: foundersUrl(locale) },
+    alternates: foundersAlternates(locale),
     ...foundersShareMeta({ locale, url: foundersUrl(locale), title: t("metaTitle"), description: t("metaDescription") }),
   };
 }
