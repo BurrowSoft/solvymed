@@ -99,7 +99,10 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
                 : solvyai
                   ? "SolvyAI requests are processed by Anthropic in the United States, under contractual safeguards required by the LGPD (Art. 33) and the PDPA."
                   : "LINE notices are processed by LY Corporation, under contractual safeguards required by the LGPD (Art. 33) and the PDPA."}
-              {/* TODO(Vitor): Anthropic's retention terms go here before solvyai-live is flipped. */}
+              {/* Anthropic's retention for this organization (Vitor's Console, 1 Oct: the 30-day
+                  default, no zero-retention agreement). If ZDR is granted later, this becomes
+                  "not stored by Anthropic" (UX). */}
+              {solvyai && " Anthropic deletes what is sent to SolvyAI within 30 days, except content flagged for violating its usage policies (kept for up to 2 years) or where the law requires longer retention. It is not used to train AI models."}
             </>
           )}
         </p>
