@@ -266,6 +266,7 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   { rule: "The practice country is chosen when the doctor creates the account on the website (Brazil / Thailand / Other); it sets the currency, the plan price, the patient ID field and the payment QR, and shows in Settings → \"País do consultório\" / \"Practice country\". To change it later, the doctor contacts support@solvymed.com (SolvyAI can't change it). Patients and secretaries don't choose it.", help: "C1" },
   { rule: { text: "The app (1.4.0) is in 7 languages: Portuguese, English, Spanish, French, German, Italian and Thai (ไทย), in the first-run choice, the language picker and Settings → Language; a phone set to Thai opens it in Thai.", pending: ["app-1.4.0"] }, help: "C8" },
   { rule: { text: "In the app too (1.4.0): a doctor's signup shows the same practice-country choice (Brasil / ประเทศไทย / Other), preselected from the phone's region.", pending: ["app-1.4.0"] }, help: "C1" },
+  { rule: { text: "In the app (1.4.0), an inactive subscription shows a full screen: the doctor's says \"Your SolvyMed subscription is inactive.\" with \"Questions? Write to support@solvymed.com.\" (tap to email) and Sign Out; a secretary's says \"Subscription inactive\" (access resumes once the doctor's subscription is renewed), with the same support line. No price, plan or website on either (store rules).", pending: ["app-1.4.0"] }, help: "K1" },
   {
     rule: {
       text: "The patient import also brings the address (postal code, street, number, complement, neighbourhood, city, state) and the CNS: iClinic and Prontuário Verde map them, and our template has the columns; a CEP that lost its leading zero in Excel is completed. The previous system's own notes stay imported data (doctor only), never Observações.",
@@ -311,14 +312,14 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
-      text: "Merging duplicate patients (in the app: Pacientes → the patient's ⋯ → \"Mesclar com outro paciente…\" / \"Merge with another patient…\", doctor only): pick the other record, keep the differing values you want, choose the record that stays, confirm (a second \"São a mesma pessoa\" / \"Same person\" confirm when an app account is involved). Everything moves to the record that stays; it can't be undone; the Access tab shows \"Mesclou com «nome»\". SolvyAI never merges; send the doctor there.",
+      text: "Merging duplicate patients (in the app: Pacientes → the patient's ⋯ → \"Mesclar com outro paciente…\" / \"Merge with another patient…\", doctor only): pick the other record, keep the differing values you want, choose the record that stays, confirm (a second \"São a mesma pessoa\" / \"Same person\" confirm when an app account is involved). Each record shows its birth date, the phone's last 4 digits and when it was added or imported; switching the record that stays keeps the chosen values; same-name records are named in the confirmation by what differs. Everything moves to the record that stays; it can't be undone; the Access tab shows \"Mesclou com «nome»\". SolvyAI never merges; send the doctor there.",
       pending: ["merge-patients-live"],
     },
     help: "P12",
   },
   {
     rule: {
-      text: "The website has it too (doctor only): open the patient, Info tab → \"Mesclar com outro paciente…\" / \"Merge with another patient…\": the same flow (only the differing fields, \"Manter este cadastro\" / \"Keep this record\", \"Mesclar\" / \"Merge\", a second \"São a mesma pessoa\" / \"Same person\" when an app account is involved). SolvyAI never merges; send the doctor there.",
+      text: "The website has it too (doctor only): open the patient, Info tab → \"Mesclar com outro paciente…\" / \"Merge with another patient…\": the same flow (only the differing fields, \"Manter este cadastro\" / \"Keep this record\", \"Mesclar\" / \"Merge\", a second \"São a mesma pessoa\" / \"Same person\" when an app account is involved). Each record's card shows its birth date, the phone's last 4 digits and when it was added or imported; switching which record stays keeps the marked values; two same-name records are named in the confirmation by what differs (e.g. \"Maria Silva (nasc. 12/03/1980)\"). SolvyAI never merges; send the doctor there.",
       pending: ["merge-web-live"],
     },
     help: "P12",
@@ -366,7 +367,7 @@ export const NEVER: { what: string; help: string }[] = [
   { what: "Changing the password (Settings → Change password, on the app and the website; the other devices are signed out).", help: "K2" },
   { what: "Payment and Pix / PromptPay settings.", help: "G3" },
   { what: "Receipts (on the website: Payments → a received appointment → \"Recibo\" / \"Receipt\", a print view, for the doctor and the secretary; a Thai practice's numbered receipts are issued in the app).", help: "G5" },
-  { what: "The subscription and plan (the doctor sees the plan's status in Settings → Subscription on the website; \"Manage subscription\" opens Stripe's page for a card subscription).", help: "K1" },
+  { what: "The subscription and plan (the doctor sees the plan's status in Settings → Subscription on the website; \"Manage subscription\" opens Stripe's page for a card subscription; subscribing with more than 48 h of free trial left keeps the trial: the first charge is when it ends, and cancelling before then keeps the trial until its end; with 48 h or less, the charge is immediate).", help: "K1" },
   { what: "Team members (inviting or removing a secretary).", help: "C4" },
   { what: "The clinic's country.", help: "C1" },
 ];

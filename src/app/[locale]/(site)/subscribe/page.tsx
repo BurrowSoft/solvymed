@@ -3,7 +3,9 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { SubscribeButton } from "@/components/SubscribeButton";
 import { UpdateCardButton } from "@/components/UpdateCardButton";
-import { isAccessAllowed, isPaidActive, trialDaysRemaining, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
+import { isAccessAllowed, isPaidActive, trialDaysRemaining, getPlanPrice, checkoutTrialEnd, type EffectiveSub } from "@/lib/subscription";
+import { getClinicTimeZone } from "@/lib/clinicTime";
+import { dateLocale } from "@/lib/dateLabels";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { ActivationStatus } from "./ActivationStatus";
 import { SignOutButton } from "@/components/SignOutButton";
@@ -84,6 +86,12 @@ export default async function SubscribePage({
   }
 
   const daysLeft = trialDaysRemaining(sub);
+  // Subscribing now keeps the free trial: the plan starts (and is first
+  // charged) when it ends (UX; the checkout sets the same date).
+  const keptTrialEnd = checkoutTrialEnd(sub);
+  const startsOn = keptTrialEnd
+    ? keptTrialEnd.toLocaleDateString(dateLocale(locale), { day: "numeric", month: "long", year: "numeric", timeZone: await getClinicTimeZone(supabase, { professionalId: user.id, isSecretary: false }) })
+    : null;
   // Priced by the practice's country (only a doctor subscribes here). Money
   // fails closed: if the country can't be read (other than "no country
   // column yet"), no price and no checkout, rather than the wrong currency.
@@ -214,6 +222,7 @@ export default async function SubscribePage({
               )}
             </div>
 
+            {startsOn && sp.success !== "1" && <p className="text-center text-sm text-slate-600">{t("startsAfterTrial", { date: startsOn })}</p>}
             <p className="text-center text-xs text-slate-400">{t("cancelAnytime")}</p>
           </div>
         </div>}

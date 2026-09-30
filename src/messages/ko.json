@@ -856,13 +856,8 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "또는",
     "cancelAnytime": "언제든지 취소 가능. 약정 없음.",
-    "lockedSettingsHint": "데이터는 여전히 귀하의 것입니다. 환자 내보내기, 구독 관리, 계정 해지는 다음에서:",
-    "lockedSettingsLink": "설정",
+    "startsAfterTrial": "구독은 무료 체험이 끝나는 {date}에 시작됩니다. 오늘은 청구되지 않습니다.",
     "successMessage": "구독이 활성화되었습니다! SolvyMed Pro에 오신 것을 환영합니다.",
-    "goToDashboard": "대시보드로 이동",
-    "backToDashboard": "대시보드로 돌아가기",
-    "back": "돌아가기",
-    "needHelp": "도움이 필요하신가요?",
     "activationPending": "결제가 완료되었습니다! 구독을 활성화하는 중…",
     "activationSlow": "결제는 받았지만 활성화가 평소보다 오래 걸리고 있습니다. 보통 몇 분 안에 완료됩니다. 요금제가 표시되지 않으면 지원팀에 문의하세요:",
     "trialDaysLeft": "무료 체험 기간이 {n}일 남았습니다.",
@@ -885,7 +880,13 @@
     "paymentActivating": "결제가 확인되었습니다. 접근 권한을 복원하는 중이니 잠시 후 이 페이지를 새로고침해 주세요.",
     "chipDays": "무료 체험: {n}일 남음 · 요금제 보기",
     "chipUrgentDays": "무료 체험: {n}일 남음 · 구독하기",
-    "chipLastDay": "무료 체험: 마지막 날 · 구독하기"
+    "chipLastDay": "무료 체험: 마지막 날 · 구독하기",
+    "lockedSettingsHint": "데이터는 여전히 귀하의 것입니다. 환자 내보내기, 구독 관리, 계정 해지는 다음에서:",
+    "lockedSettingsLink": "설정",
+    "goToDashboard": "대시보드로 이동",
+    "backToDashboard": "대시보드로 돌아가기",
+    "back": "돌아가기",
+    "needHelp": "도움이 필요하신가요?"
   },
   "secretary": {
     "notConnectedTitle": "아직 병원에 연결되지 않았습니다",
@@ -1658,7 +1659,11 @@
     "search": "이름 또는 신분증 번호로 검색…",
     "archivedTag": "보관됨",
     "back": "뒤로",
-    "cancel": "취소"
+    "cancel": "취소",
+    "subBirth": "생년월일 {date}",
+    "subPhone": "전화 …{last4}",
+    "subImported": "가져옴 {date}",
+    "subCreated": "등록 {date}"
   },
   "patientAddress": {
     "section": "주소",

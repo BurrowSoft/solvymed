@@ -856,13 +856,8 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "o",
     "cancelAnytime": "Annulla quando vuoi. Nessun impegno.",
-    "lockedSettingsHint": "I tuoi dati restano tuoi: esporta i pazienti, gestisci l'abbonamento o chiudi l'account in",
-    "lockedSettingsLink": "Impostazioni",
+    "startsAfterTrial": "Il tuo abbonamento inizia il {date}, quando finisce la prova gratuita. Oggi non ti viene addebitato nulla.",
     "successMessage": "Abbonamento attivato! Ti diamo il benvenuto in SolvyMed Pro.",
-    "goToDashboard": "Vai alla dashboard",
-    "backToDashboard": "Torna alla dashboard",
-    "back": "Indietro",
-    "needHelp": "Serve aiuto?",
     "activationPending": "Pagamento ricevuto! Attivazione dell’abbonamento in corso…",
     "activationSlow": "Abbiamo ricevuto il pagamento, ma l’attivazione sta richiedendo più tempo del solito. Di solito si completa in pochi minuti; se il piano non compare, contatta l’assistenza:",
     "trialDaysLeft": "Hai ancora {n} giorni nella tua prova gratuita.",
@@ -885,7 +880,13 @@
     "paymentActivating": "Pagamento ricevuto. Il tuo accesso è in fase di ripristino. Aggiorna questa pagina tra poco.",
     "chipDays": "Prova gratuita: {n} giorni rimasti · Vedi il piano",
     "chipUrgentDays": "Prova gratuita: {n} giorni rimasti · Abbonati",
-    "chipLastDay": "Prova gratuita: ultimo giorno · Abbonati"
+    "chipLastDay": "Prova gratuita: ultimo giorno · Abbonati",
+    "lockedSettingsHint": "I tuoi dati restano tuoi: esporta i pazienti, gestisci l'abbonamento o chiudi l'account in",
+    "lockedSettingsLink": "Impostazioni",
+    "goToDashboard": "Vai alla dashboard",
+    "backToDashboard": "Torna alla dashboard",
+    "back": "Indietro",
+    "needHelp": "Serve aiuto?"
   },
   "secretary": {
     "notConnectedTitle": "Non ancora collegato/a a uno studio",
@@ -1658,7 +1659,11 @@
     "search": "Cerca per nome o documento…",
     "archivedTag": "archiviato",
     "back": "Indietro",
-    "cancel": "Annulla"
+    "cancel": "Annulla",
+    "subBirth": "Nato/a il {date}",
+    "subPhone": "Tel. …{last4}",
+    "subImported": "Importato il {date}",
+    "subCreated": "Registrato il {date}"
   },
   "patientAddress": {
     "section": "Indirizzo",

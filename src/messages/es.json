@@ -856,13 +856,8 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "o",
     "cancelAnytime": "Cancela cuando quieras. Sin compromisos.",
-    "lockedSettingsHint": "Tus datos siguen siendo tuyos: exporta tus pacientes, gestiona la suscripción o cierra tu cuenta en",
-    "lockedSettingsLink": "Configuración",
+    "startsAfterTrial": "Tu suscripción empieza el {date}, cuando termina la prueba gratuita. Hoy no se cobra nada.",
     "successMessage": "¡Suscripción activada! Te damos la bienvenida a SolvyMed Pro.",
-    "goToDashboard": "Ir al panel",
-    "backToDashboard": "Volver al panel",
-    "back": "Volver",
-    "needHelp": "¿Necesitas ayuda?",
     "activationPending": "¡Pago recibido! Activando tu suscripción…",
     "activationSlow": "Recibimos tu pago, pero la activación está tardando más de lo habitual. Suele completarse en unos minutos; si tu plan no aparece, contacta con soporte:",
     "trialDaysLeft": "Te quedan {n} días en tu período de prueba.",
@@ -885,7 +880,13 @@
     "paymentActivating": "Pago recibido. Tu acceso se está restableciendo. Actualiza esta página en un momento.",
     "chipDays": "Prueba gratis: quedan {n} días · Ver plan",
     "chipUrgentDays": "Prueba gratis: quedan {n} días · Suscribirse",
-    "chipLastDay": "Prueba gratis: último día · Suscribirse"
+    "chipLastDay": "Prueba gratis: último día · Suscribirse",
+    "lockedSettingsHint": "Tus datos siguen siendo tuyos: exporta tus pacientes, gestiona la suscripción o cierra tu cuenta en",
+    "lockedSettingsLink": "Configuración",
+    "goToDashboard": "Ir al panel",
+    "backToDashboard": "Volver al panel",
+    "back": "Volver",
+    "needHelp": "¿Necesitas ayuda?"
   },
   "secretary": {
     "notConnectedTitle": "Tu cuenta aún no está conectada a una clínica",
@@ -1658,7 +1659,11 @@
     "search": "Buscar por nombre o documento…",
     "archivedTag": "archivado",
     "back": "Volver",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "subBirth": "Nac. {date}",
+    "subPhone": "Tel. …{last4}",
+    "subImported": "Importado el {date}",
+    "subCreated": "Registrado el {date}"
   },
   "patientAddress": {
     "section": "Dirección",

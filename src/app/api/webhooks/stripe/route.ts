@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient as createServerClient } from "@supabase/supabase-js";
 import { stripe, retrieveSubscriptionOrNull } from "@/lib/stripeBilling";
+import { statusWhenSubscriptionDies } from "@/lib/subscription";
 import { reportWebhookFailure } from "@/lib/stripeWebhookReport";
 
 function adminClient() {
@@ -190,11 +191,18 @@ async function syncSubscription(db: ReturnType<typeof adminClient>, subId: strin
       // the professional keeps the trial until its original trial_ends_at
       // (no extra days, so nothing to abuse). Only a subscription that was
       // once active expires the row when it dies.
-      let expire = db.from("professionals").update({ subscription_status: "expired" })
+      // Subscribed during the free trial and cancelled before it ended (UX,
+      // 1 Oct): back to "trial" until the original trial_ends_at, never
+      // "expired" (the unused trial days stay theirs; no extra days).
+      const { data: trialRow, error: trialError } = await db.from("professionals")
+        .select("trial_ends_at").eq("id", desired.userId).maybeSingle();
+      if (trialError) return NextResponse.json({ error: "DB read failed" }, { status: 500 });
+      const nextStatus = statusWhenSubscriptionDies((trialRow as { trial_ends_at?: string | null } | null)?.trial_ends_at);
+      let expire = db.from("professionals").update({ subscription_status: nextStatus })
         .eq("id", desired.userId)
         .eq("subscription_id", desired.subId)
         .neq("subscription_status", "lifetime");
-      if (desired.neverActive) expire = expire.neq("subscription_status", "trial");
+      if (desired.neverActive && nextStatus === "expired") expire = expire.neq("subscription_status", "trial");
       const { error: statusError } = await expire;
       if (statusError) return NextResponse.json({ error: "DB update failed" }, { status: 500 });
     }
