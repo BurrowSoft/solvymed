@@ -1442,7 +1442,7 @@
     "code_cpf_invalid": "Ungültige CPF (nicht importiert)",
     "code_cpf_zero_padded": "Dem CPF fehlte die führende Null (Excel entfernt sie): ergänzt; bitte prüfen",
     "code_cep_zero_padded": "Dem CEP fehlte die führende Null (Excel entfernt sie): ergänzt; bitte prüfen",
-    "code_cns_invalid": "Ungültige CNS (nicht importiert)",
+    "code_cns_invalid": "Ungültige CNS: Prüfen Sie die 15 Ziffern (nicht importiert)",
     "code_cns_not_used": "CNS nicht importiert (die Praxis ist nicht in Brasilien)",
     "code_address_invalid": "{field} zu lang (nicht importiert)",
     "cpfExcelHint": "Wenn die Datei aus Excel stammt, formatieren Sie die CPF-Spalte als Text und exportieren Sie erneut.",

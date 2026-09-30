@@ -1442,7 +1442,7 @@
     "code_cpf_invalid": "잘못된 CPF(가져오지 않음)",
     "code_cpf_zero_padded": "CPF 맨 앞의 0이 빠져 있었습니다(Excel이 삭제함): 채워 넣음, 확인해 주세요",
     "code_cep_zero_padded": "CEP 맨 앞의 0이 빠져 있었습니다(Excel이 삭제함): 채워 넣음, 확인해 주세요",
-    "code_cns_invalid": "CNS가 올바르지 않음(가져오지 않음)",
+    "code_cns_invalid": "CNS가 올바르지 않음: 15자리를 확인하세요(가져오지 않음)",
     "code_cns_not_used": "CNS를 가져오지 않음(클리닉이 브라질에 있지 않음)",
     "code_address_invalid": "{field}이(가) 너무 깁니다(가져오지 않음)",
     "cpfExcelHint": "Excel 파일이라면 CPF 열을 텍스트 형식으로 바꾼 뒤 다시 내보내세요.",

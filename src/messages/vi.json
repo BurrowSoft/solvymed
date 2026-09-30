@@ -1442,7 +1442,7 @@
     "code_cpf_invalid": "CPF không hợp lệ (không nhập)",
     "code_cpf_zero_padded": "CPF bị mất số 0 ở đầu (Excel xóa đi): đã bổ sung; vui lòng kiểm tra",
     "code_cep_zero_padded": "CEP bị mất số 0 ở đầu (Excel xóa đi): đã bổ sung; vui lòng kiểm tra",
-    "code_cns_invalid": "CNS không hợp lệ (không được nhập)",
+    "code_cns_invalid": "CNS không hợp lệ: hãy kiểm tra 15 chữ số (không được nhập)",
     "code_cns_not_used": "Không nhập CNS (phòng khám không ở Brazil)",
     "code_address_invalid": "{field} quá dài (không được nhập)",
     "cpfExcelHint": "Nếu tệp xuất từ Excel, hãy định dạng cột CPF là Văn bản rồi xuất lại.",

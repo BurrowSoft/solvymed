@@ -1472,7 +1472,7 @@
     "code_cpf_invalid": "Invalid CPF (left out)",
     "code_cpf_zero_padded": "CPF was missing the leading zero (Excel removes it): completed; please check",
     "code_cep_zero_padded": "CEP was missing the leading zero (Excel removes it): completed; please check",
-    "code_cns_invalid": "Invalid CNS (left out)",
+    "code_cns_invalid": "Invalid CNS: check the 15 digits (left out)",
     "code_cns_not_used": "CNS left out (the clinic isn't in Brazil)",
     "code_address_invalid": "{field} too long (left out)",
     "cpfExcelHint": "If the file came from Excel, format the CPF column as Text and export again.",

@@ -1442,7 +1442,7 @@
     "code_cpf_invalid": "CPF 無效(未匯入)",
     "code_cpf_zero_padded": "CPF 缺少開頭的 0(Excel 會刪除它):已補齊,請核對",
     "code_cep_zero_padded": "CEP 缺少開頭的 0(Excel 會刪除它):已補齊,請核對",
-    "code_cns_invalid": "CNS 無效(未匯入)",
+    "code_cns_invalid": "CNS 無效:請核對 15 位數字(未匯入)",
     "code_cns_not_used": "未匯入 CNS(診所不在巴西)",
     "code_address_invalid": "{field}過長(未匯入)",
     "cpfExcelHint": "如果檔案來自 Excel,請將 CPF 欄設為文字格式後重新匯出。",

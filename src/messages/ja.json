@@ -1442,7 +1442,7 @@
     "code_cpf_invalid": "CPF が無効(取り込まず)",
     "code_cpf_zero_padded": "CPF の先頭の 0 が欠けていました(Excel が削除します):補完済み。ご確認ください",
     "code_cep_zero_padded": "CEP の先頭の 0 が欠けていました(Excel が削除します):補完済み。ご確認ください",
-    "code_cns_invalid": "CNS が正しくありません(インポートされません)",
+    "code_cns_invalid": "CNS が正しくありません:15 桁を確認してください(インポートされません)",
     "code_cns_not_used": "CNS はインポートされません(クリニックがブラジルにないため)",
     "code_address_invalid": "{field}が長すぎます(インポートされません)",
     "cpfExcelHint": "Excel のファイルの場合は、CPF の列を文字列形式にしてからもう一度エクスポートしてください。",

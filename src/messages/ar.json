@@ -1442,7 +1442,7 @@
     "code_cpf_invalid": "CPF غير صالح (لم يُستورد)",
     "code_cpf_zero_padded": "كان CPF بلا الصفر في البداية (يحذفه Excel): تم إكماله؛ يُرجى التحقق",
     "code_cep_zero_padded": "كان CEP بلا الصفر في البداية (يحذفه Excel): تم إكماله؛ يُرجى التحقق",
-    "code_cns_invalid": "CNS غير صالح (لم يُستورد)",
+    "code_cns_invalid": "CNS غير صالح: تحقّق من الأرقام الخمسة عشر (لم يُستورد)",
     "code_cns_not_used": "لم يُستورد CNS (العيادة ليست في البرازيل)",
     "code_address_invalid": "{field} طويل جدًا (لم يُستورد)",
     "cpfExcelHint": "إن كان الملف من Excel، فاجعل تنسيق عمود CPF نصًا وصدّره من جديد.",

@@ -1442,7 +1442,7 @@
     "code_cpf_invalid": "CPF non valido (non importato)",
     "code_cpf_zero_padded": "Al CPF mancava lo zero iniziale (Excel lo rimuove): completato; controlla",
     "code_cep_zero_padded": "Al CEP mancava lo zero iniziale (Excel lo rimuove): completato; controlla",
-    "code_cns_invalid": "CNS non valido (non importato)",
+    "code_cns_invalid": "CNS non valido: controlla le 15 cifre (non importato)",
     "code_cns_not_used": "CNS non importato (la clinica non è in Brasile)",
     "code_address_invalid": "{field} troppo lungo (non importato)",
     "cpfExcelHint": "Se il file viene da Excel, formatta la colonna del CPF come Testo ed esporta di nuovo.",
