@@ -246,7 +246,7 @@
     "revert": "Отменить",
     "confirm": "Подтвердить",
     "cancel": "Отмена",
-    "amountPlaceholder": "Сумма",
+    "amountPlaceholder": "Сумма ({symbol})",
     "revertConfirm": "Вернуть платёж в статус ожидания?",
     "errorInvalidAmount": "Пожалуйста, введите корректную сумму.",
     "errorGeneric": "Что-то пошло не так. Попробуйте снова."
@@ -510,7 +510,7 @@
     "procedureName": "Название",
     "procedureNamePlaceholder": "Первичный приём, Повторный…",
     "durationLabel": "Длительность (минут)",
-    "priceLabel": "Цена (R$)",
+    "priceLabel": "Цена ({symbol})",
     "paymentTypeLabel": "Тип оплаты",
     "private": "Частный",
     "insurance": "Страховка",
@@ -565,7 +565,7 @@
     "manageSubscription": "Управлять подпиской",
     "subscriptionSubscribe": "Посмотреть тариф",
     "practiceCountryOther": "Другая страна",
-    "fullNameHint": "При желании добавьте звание (Dr., Prof.): оно появится в приветствиях.",
+    "fullNameHint": "При желании добавьте звание ({titles}): оно появится в приветствиях.",
     "cnpjInvalid": "CNPJ недействителен. Проверьте номер.",
     "appearanceTitle": "Оформление",
     "appearanceHint": "Тема панели в этом браузере. Печать и письма всегда остаются светлыми.",
@@ -573,7 +573,14 @@
     "themeLight": "Светлая",
     "themeDark": "Тёмная",
     "pixKey": "Ключ Pix",
-    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, телефон или случайный ключ"
+    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, телефон или случайный ключ",
+    "fullNameTitles": "Dr., Prof.",
+    "registrationPlaceholderTH": "напр. ว.12345 (лицензия Медицинского совета)",
+    "registrationPlaceholderOther": "напр. номер вашей лицензии",
+    "clinicNamePlaceholderTH": "Клиника Сукхумвит",
+    "clinicNamePlaceholderOther": "Клиника Здоровье",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "ул. Центральная, 123"
   },
   "clinics": {
     "title": "Мои клиники",
@@ -1285,12 +1292,16 @@
       "payments": {
         "a": "Сколько получить на этой неделе?",
         "b": "Отправить Pix пациенту",
-        "c": "Отметить как оплачено"
+        "c": "Отметить как оплачено",
+        "bPromptPay": "Отправить пациенту QR PromptPay",
+        "bNone": "Показать неоплаченные приёмы"
       },
       "settings": {
         "a": "Как пригласить секретаря?",
         "b": "Настроить Pix",
-        "c": "Изменить часы приёма"
+        "c": "Изменить часы приёма",
+        "bPromptPay": "Настроить PromptPay",
+        "bNone": "Изменить данные клиники"
       },
       "other": {
         "a": "Что у меня завтра?",

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
 import en from "@/messages/en.json";
@@ -22,7 +22,7 @@ vi.mock("@/lib/supabase/server", () => ({
 }));
 vi.mock("@/lib/setupActions", () => ({ markInviteShared: vi.fn() }));
 
-import { ClinicForm } from "@/app/[locale]/(site)/dashboard/settings/SettingsClient";
+import { ClinicForm, ProceduresPanel, ProfileForm } from "@/app/[locale]/(site)/dashboard/settings/SettingsClient";
 import { updateClinic } from "@/app/[locale]/(site)/dashboard/settings/actions";
 
 const show = (country: string) =>
@@ -64,6 +64,52 @@ describe("ClinicForm by practice country", () => {
       expect(input("pix_key", container).placeholder).toBe(hint);
       unmount();
     }
+  });
+
+  it("the clinic name and address examples follow the practice country, not the UI (UX)", () => {
+    let { container, unmount } = show("TH");
+    expect(input("clinic_name", container).placeholder).toBe(pt.settings.clinicNamePlaceholderTH);
+    expect(input("clinic_address", container).placeholder).toBe(pt.settings.addressPlaceholderTH);
+    unmount();
+    ({ container, unmount } = show("US"));
+    expect(input("clinic_name", container).placeholder).toBe(pt.settings.clinicNamePlaceholderOther);
+    expect(input("clinic_address", container).placeholder).toBe(pt.settings.addressPlaceholderOther);
+    unmount();
+    ({ container } = show("BR"));
+    expect(input("clinic_name", container).placeholder).toBe("Clínica Bem-Estar");
+  });
+
+  it("Settings → Profile: the title and registration examples follow the practice country", () => {
+    const profile = (country: string, loc: "th" | "pt-BR", msgs: typeof pt) => render(
+      <NextIntlClientProvider locale={loc} messages={msgs}>
+        <ProfileForm fullName="Ana" country={country} />
+      </NextIntlClientProvider>,
+    );
+    let r = profile("TH", "th", th as unknown as typeof pt);
+    expect(screen.getByText(/นพ\., พญ\., ทพ\., ทญ\./)).toBeInTheDocument();
+    expect(input("professional_registration", r.container).placeholder).toBe("เช่น ว.12345");
+    r.unmount();
+    r = profile("BR", "pt-BR", pt);
+    expect(screen.getByText(/Dr\., Dra\., Prof\./)).toBeInTheDocument();
+    expect(input("professional_registration", r.container).placeholder).toBe(pt.settings.registrationPlaceholder);
+    r.unmount();
+    r = profile("US", "pt-BR", pt);
+    expect(input("professional_registration", r.container).placeholder).toBe(pt.settings.registrationPlaceholderOther);
+    r.unmount();
+  });
+
+  it("a procedure's price input shows the practice currency; the list shows the payment type in the UI language", () => {
+    const procs = [{ id: "p1", name: "Consulta", duration_minutes: 60, price: 10, payment_type: "private", active: true }];
+    render(
+      <NextIntlClientProvider locale="th" messages={th}>
+        <ProceduresPanel procedures={procs} currency="THB" />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByText(/ชำระเอง/)).toBeInTheDocument();
+    expect(screen.queryByText(/· private/)).toBeNull();
+    fireEvent.click(screen.getByText(th.settings.addProcedure));
+    expect(screen.getByText("ราคา (฿)")).toBeInTheDocument();
+    expect((document.querySelector('input[name="price"]') as HTMLInputElement).placeholder).toBe("0.00");
   });
 
   it("elsewhere: Estado ou província and a country-code phone hint", () => {

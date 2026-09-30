@@ -246,7 +246,7 @@
     "revert": "Zurücksetzen",
     "confirm": "Bestätigen",
     "cancel": "Abbrechen",
-    "amountPlaceholder": "Betrag €",
+    "amountPlaceholder": "Betrag ({symbol})",
     "revertConfirm": "Diese Zahlung auf ausstehend zurücksetzen?",
     "errorInvalidAmount": "Bitte geben Sie einen gültigen Betrag ein.",
     "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
@@ -510,7 +510,7 @@
     "procedureName": "Name",
     "procedureNamePlaceholder": "Erstgespräch, Nachsorge…",
     "durationLabel": "Dauer (Minuten)",
-    "priceLabel": "Preis (R$)",
+    "priceLabel": "Preis ({symbol})",
     "paymentTypeLabel": "Zahlungsart",
     "private": "Privat",
     "insurance": "Krankenversicherung",
@@ -565,7 +565,7 @@
     "manageSubscription": "Abonnement verwalten",
     "subscriptionSubscribe": "Tarif ansehen",
     "practiceCountryOther": "Anderes Land",
-    "fullNameHint": "Fügen Sie auf Wunsch Ihren Titel hinzu (Dr., Prof.); er erscheint in der Begrüßung.",
+    "fullNameHint": "Fügen Sie auf Wunsch Ihren Titel hinzu ({titles}); er erscheint in der Begrüßung.",
     "cnpjInvalid": "Die CNPJ ist ungültig. Prüfen Sie die Nummer.",
     "appearanceTitle": "Darstellung",
     "appearanceHint": "Das Design des Dashboards in diesem Browser. Ausdrucke und E-Mails bleiben immer hell.",
@@ -573,7 +573,14 @@
     "themeLight": "Hell",
     "themeDark": "Dunkel",
     "pixKey": "Pix-Schlüssel",
-    "pixKeyPlaceholder": "CPF, CNPJ, E-Mail, Telefon oder zufälliger Schlüssel"
+    "pixKeyPlaceholder": "CPF, CNPJ, E-Mail, Telefon oder zufälliger Schlüssel",
+    "fullNameTitles": "Dr., Prof.",
+    "registrationPlaceholderTH": "z. B. ว.12345 (Zulassung des Medical Council)",
+    "registrationPlaceholderOther": "z. B. Ihre Zulassungsnummer",
+    "clinicNamePlaceholderTH": "Sukhumvit-Klinik",
+    "clinicNamePlaceholderOther": "Praxis Wohlbefinden",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "Hauptstraße 123"
   },
   "clinics": {
     "title": "Meine Kliniken",
@@ -1285,12 +1292,16 @@
       "payments": {
         "a": "Wie viel ist diese Woche offen?",
         "b": "Pix an einen Patienten senden",
-        "c": "Als bezahlt markieren"
+        "c": "Als bezahlt markieren",
+        "bPromptPay": "PromptPay-QR an einen Patienten senden",
+        "bNone": "Unbezahlte Termine anzeigen"
       },
       "settings": {
         "a": "Wie lade ich meine Praxiskraft ein?",
         "b": "Pix einrichten",
-        "c": "Sprechzeiten ändern"
+        "c": "Sprechzeiten ändern",
+        "bPromptPay": "PromptPay einrichten",
+        "bNone": "Praxisdaten ändern"
       },
       "other": {
         "a": "Was habe ich morgen?",

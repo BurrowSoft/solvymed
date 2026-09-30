@@ -246,7 +246,7 @@
     "revert": "Kembalikan",
     "confirm": "Konfirmasi",
     "cancel": "Batal",
-    "amountPlaceholder": "Jumlah",
+    "amountPlaceholder": "Jumlah ({symbol})",
     "revertConfirm": "Kembalikan pembayaran ini ke tertunda?",
     "errorInvalidAmount": "Silakan masukkan jumlah yang valid.",
     "errorGeneric": "Terjadi kesalahan. Silakan coba lagi."
@@ -510,7 +510,7 @@
     "procedureName": "Nama",
     "procedureNamePlaceholder": "Konsultasi awal, Tindak lanjut…",
     "durationLabel": "Durasi (menit)",
-    "priceLabel": "Harga (R$)",
+    "priceLabel": "Harga ({symbol})",
     "paymentTypeLabel": "Jenis pembayaran",
     "private": "Pribadi",
     "insurance": "Asuransi",
@@ -565,7 +565,7 @@
     "manageSubscription": "Kelola langganan",
     "subscriptionSubscribe": "Lihat paket",
     "practiceCountryOther": "Negara lain",
-    "fullNameHint": "Tambahkan gelar Anda jika mau (Dr., Prof.); gelar akan muncul di sapaan.",
+    "fullNameHint": "Tambahkan gelar Anda jika mau ({titles}); gelar akan muncul di sapaan.",
     "cnpjInvalid": "CNPJ tidak valid. Periksa nomornya.",
     "appearanceTitle": "Tampilan",
     "appearanceHint": "Tema dasbor di browser ini. Cetakan dan email selalu terang.",
@@ -573,7 +573,14 @@
     "themeLight": "Terang",
     "themeDark": "Gelap",
     "pixKey": "Kunci Pix",
-    "pixKeyPlaceholder": "CPF, CNPJ, email, telepon, atau kunci acak"
+    "pixKeyPlaceholder": "CPF, CNPJ, email, telepon, atau kunci acak",
+    "fullNameTitles": "Dr., Prof.",
+    "registrationPlaceholderTH": "mis. ว.12345 (izin Dewan Medis)",
+    "registrationPlaceholderOther": "mis. nomor izin praktik Anda",
+    "clinicNamePlaceholderTH": "Klinik Sukhumvit",
+    "clinicNamePlaceholderOther": "Klinik Sehat",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "Jl. Utama No. 123"
   },
   "clinics": {
     "title": "Klinik Saya",
@@ -1285,12 +1292,16 @@
       "payments": {
         "a": "Berapa yang harus diterima minggu ini?",
         "b": "Kirim Pix ke pasien",
-        "c": "Tandai sudah dibayar"
+        "c": "Tandai sudah dibayar",
+        "bPromptPay": "Kirim QR PromptPay ke pasien",
+        "bNone": "Lihat janji yang belum dibayar"
       },
       "settings": {
         "a": "Bagaimana mengundang asisten?",
         "b": "Atur Pix",
-        "c": "Ubah jam praktik"
+        "c": "Ubah jam praktik",
+        "bPromptPay": "Atur PromptPay",
+        "bNone": "Ubah data klinik"
       },
       "other": {
         "a": "Apa jadwal saya besok?",

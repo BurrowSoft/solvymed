@@ -4,7 +4,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTransition, useCallback, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { markPaid, markUnpaid } from "./actions";
-import { formatMoney, parseMoney } from "@/lib/money";
+import { currencySymbol, formatMoney, parseMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
 
 
@@ -128,7 +128,7 @@ export function MarkPaidButton({ id, amount, currency = "BRL" }: { id: string; a
             autoComplete="off"
             value={inputVal}
             onChange={e => { setInputVal(e.target.value); setError(""); }}
-            placeholder={t("amountPlaceholder")}
+            placeholder={t("amountPlaceholder", { symbol: currencySymbol(currency) })}
             className="w-28 rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
             autoFocus
           />
