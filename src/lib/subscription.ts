@@ -35,6 +35,23 @@ export function trialDaysRemaining(sub: EffectiveSub | null): number | null {
   return Math.ceil(ms / (1000 * 60 * 60 * 24));
 }
 
+// What Settings → Assinatura says about the plan: active, lifetime, the
+// trial with its days left, or nothing running (ended trial or expired).
+export type PlanSummary =
+  | { kind: "active" }
+  | { kind: "lifetime" }
+  | { kind: "trial"; daysLeft: number }
+  | { kind: "inactive" };
+
+export function planSummary(sub: EffectiveSub | null): PlanSummary | null {
+  if (!sub) return null;
+  if (sub.subscription_status === "lifetime") return { kind: "lifetime" };
+  if (isPaidActive(sub)) return { kind: "active" };
+  const days = trialDaysRemaining(sub);
+  if (days !== null && days > 0) return { kind: "trial", daysLeft: days };
+  return { kind: "inactive" };
+}
+
 /**
  * BRL pricing for Brazilian locale, USD for everyone else. Single source for
  * both the displayed price and what Stripe charges (unitAmount, in the

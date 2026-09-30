@@ -451,7 +451,14 @@
     "regenerateError": "تعذّر إنشاء رمز جديد. يرجى المحاولة مرة أخرى.",
     "showSetup": "عرض قائمة الإعداد",
     "registration": "رقم التسجيل المهني",
-    "registrationPlaceholder": "مثال: CRM 12345/SP"
+    "registrationPlaceholder": "مثال: CRM 12345/SP",
+    "subscriptionTitle": "الاشتراك",
+    "subscriptionActive": "خطة Pro · نشطة",
+    "subscriptionLifetime": "خطة Pro · مدى الحياة",
+    "subscriptionTrial": "التجربة المجانية: {n, plural, zero {لم يتبقَّ أي يوم} one {يتبقى يوم واحد} two {يتبقى يومان} few {تتبقى # أيام} many {يتبقى # يومًا} other {يتبقى # يوم}}",
+    "subscriptionInactive": "لا يوجد اشتراك نشط",
+    "manageSubscription": "إدارة الاشتراك",
+    "subscriptionSubscribe": "عرض الخطة"
   },
   "clinics": {
     "title": "عياداتي",

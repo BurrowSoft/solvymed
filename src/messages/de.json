@@ -451,7 +451,14 @@
     "regenerateError": "Es konnte kein neuer Code erzeugt werden. Bitte versuchen Sie es erneut.",
     "showSetup": "Einrichtungsliste anzeigen",
     "registration": "Berufliche Registrierungsnummer",
-    "registrationPlaceholder": "z. B. CRM 12345/SP"
+    "registrationPlaceholder": "z. B. CRM 12345/SP",
+    "subscriptionTitle": "Abonnement",
+    "subscriptionActive": "Pro-Tarif · aktiv",
+    "subscriptionLifetime": "Pro-Tarif · lebenslang",
+    "subscriptionTrial": "Kostenlose Testphase: noch {n, plural, one {# Tag} other {# Tage}}",
+    "subscriptionInactive": "Kein aktives Abonnement",
+    "manageSubscription": "Abonnement verwalten",
+    "subscriptionSubscribe": "Tarif ansehen"
   },
   "clinics": {
     "title": "Meine Kliniken",

@@ -451,7 +451,14 @@
     "regenerateError": "ไม่สามารถสร้างรหัสใหม่ได้ กรุณาลองใหม่อีกครั้ง",
     "showSetup": "แสดงรายการตั้งค่า",
     "registration": "เลขทะเบียนวิชาชีพ",
-    "registrationPlaceholder": "เช่น CRM 12345/SP"
+    "registrationPlaceholder": "เช่น CRM 12345/SP",
+    "subscriptionTitle": "การสมัครสมาชิก",
+    "subscriptionActive": "แพ็กเกจ Pro · ใช้งานอยู่",
+    "subscriptionLifetime": "แพ็กเกจ Pro · ตลอดชีพ",
+    "subscriptionTrial": "ทดลองใช้ฟรี: เหลืออีก {n} วัน",
+    "subscriptionInactive": "ไม่มีการสมัครสมาชิกที่ใช้งานอยู่",
+    "manageSubscription": "จัดการการสมัครสมาชิก",
+    "subscriptionSubscribe": "ดูแพ็กเกจ"
   },
   "clinics": {
     "title": "คลินิกของฉัน",

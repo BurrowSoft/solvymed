@@ -451,7 +451,14 @@
     "regenerateError": "Impossible de générer un nouveau code. Réessayez.",
     "showSetup": "Afficher la liste de configuration",
     "registration": "Numéro d'inscription professionnelle",
-    "registrationPlaceholder": "ex. : CRM 12345/SP"
+    "registrationPlaceholder": "ex. : CRM 12345/SP",
+    "subscriptionTitle": "Abonnement",
+    "subscriptionActive": "Forfait Pro · actif",
+    "subscriptionLifetime": "Forfait Pro · à vie",
+    "subscriptionTrial": "Essai gratuit : {n, plural, one {# jour restant} other {# jours restants}}",
+    "subscriptionInactive": "Aucun abonnement actif",
+    "manageSubscription": "Gérer l’abonnement",
+    "subscriptionSubscribe": "Voir le forfait"
   },
   "clinics": {
     "title": "Mes Cliniques",

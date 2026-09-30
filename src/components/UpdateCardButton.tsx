@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
-export function UpdateCardButton({ locale }: { locale: string }) {
+// Opens the Stripe Customer Portal: "Atualizar cartão" on /subscribe after
+// a failed renewal, "Gerenciar assinatura" in Settings (returnTo).
+export function UpdateCardButton({ locale, label, returnTo }: { locale: string; label?: string; returnTo?: "settings" }) {
   const t = useTranslations("subscription");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +17,7 @@ export function UpdateCardButton({ locale }: { locale: string }) {
       const res = await fetch("/api/billing/portal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locale }),
+        body: JSON.stringify({ locale, returnTo }),
       });
       const data = await res.json();
       if (data.url) {
@@ -37,7 +39,7 @@ export function UpdateCardButton({ locale }: { locale: string }) {
         disabled={loading}
         className="w-full rounded-xl bg-teal-600 px-6 py-3.5 text-sm font-bold text-white shadow hover:bg-teal-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        {loading ? "…" : t("updateCard")}
+        {loading ? "…" : label ?? t("updateCard")}
       </button>
       {error && <p className="text-center text-xs text-red-500">{error}</p>}
     </div>

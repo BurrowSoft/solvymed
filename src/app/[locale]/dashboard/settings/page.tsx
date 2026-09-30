@@ -8,6 +8,8 @@ import { ShowSetupRow } from "./ShowSetupRow";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 import { getSetupProgress } from "@/lib/setup";
 import { CloseAccountPanel, type ClosurePreview } from "./CloseAccountPanel";
+import { SubscriptionPanel } from "./SubscriptionPanel";
+import { planSummary, type EffectiveSub } from "@/lib/subscription";
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 type WorkingHours = Record<DayKey, { enabled: boolean; start: string; end: string }>;
@@ -54,10 +56,10 @@ export default async function SettingsPage({
     );
   }
 
-  const [profResult, procsResult, blockedResult, teamResult] = await Promise.all([
+  const [profResult, procsResult, blockedResult, teamResult, subResult] = await Promise.all([
     supabase
       .from("professionals")
-      .select("full_name, specialty, professional_registration, clinic_name, clinic_cnpj, clinic_phone, clinic_website, clinic_address, clinic_city, clinic_state, pix_key, working_hours, max_concurrent_bookings, public_invite_code")
+      .select("full_name, specialty, professional_registration, clinic_name, clinic_cnpj, clinic_phone, clinic_website, clinic_address, clinic_city, clinic_state, pix_key, working_hours, max_concurrent_bookings, public_invite_code, subscription_provider, subscription_id")
       .eq("id", user.id)
       .maybeSingle(),
     supabase
@@ -74,7 +76,13 @@ export default async function SettingsPage({
       .is("archived_at", null)
       .order("full_name"),
     supabase.rpc("list_my_team"),
+    supabase.rpc("get_effective_subscription", { p_user_id: user.id }),
   ]);
+  // Settings → Assinatura: no card if the plan can't be read. The portal
+  // button only for a Stripe subscription (the route re-checks all of it).
+  const plan = subResult.error ? null : planSummary((subResult.data?.[0] ?? null) as EffectiveSub | null);
+  const profBilling = profResult.data as { subscription_provider?: string | null; subscription_id?: string | null } | null;
+  const canManageBilling = profBilling?.subscription_provider === "stripe" && !!profBilling.subscription_id;
   // "Show setup checklist": only when the doctor hid it before finishing.
   const setupProgress = await getSetupProgress(supabase);
   const offerShowSetup = !!setupProgress && setupProgress.setup_hidden && !setupProgress.completed_ack && setupProgress.done_count < 6;
@@ -148,6 +156,8 @@ export default async function SettingsPage({
         <ProceduresPanel procedures={procedures} />
 
         <CookieSettingsButton className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-3 text-left text-sm font-semibold text-slate-700 transition hover:bg-slate-50" />
+
+        {plan && <SubscriptionPanel plan={plan} canManage={canManageBilling} locale={locale} />}
 
         {closurePreview && <CloseAccountPanel preview={closurePreview} locale={locale} />}
       </div>

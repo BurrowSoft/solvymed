@@ -451,7 +451,14 @@
     "regenerateError": "Не удалось создать новый код. Попробуйте снова.",
     "showSetup": "Показать список настройки",
     "registration": "Профессиональная регистрация",
-    "registrationPlaceholder": "напр. CRM 12345/SP"
+    "registrationPlaceholder": "напр. CRM 12345/SP",
+    "subscriptionTitle": "Подписка",
+    "subscriptionActive": "Тариф Pro · активен",
+    "subscriptionLifetime": "Тариф Pro · бессрочно",
+    "subscriptionTrial": "Бесплатный период: {n, plural, one {остался # день} few {осталось # дня} many {осталось # дней} other {осталось # дня}}",
+    "subscriptionInactive": "Нет активной подписки",
+    "manageSubscription": "Управлять подпиской",
+    "subscriptionSubscribe": "Посмотреть тариф"
   },
   "clinics": {
     "title": "Мои клиники",
