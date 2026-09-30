@@ -88,7 +88,7 @@ export const ACTIONS: AppMapAction[] = [
     card: ["patient (full name + birth date)", "when (weekday, date, start–end)", "procedure (padrão)", "value (padrão, in the practice currency)", "type (padrão)", "duration (padrão unless said)"],
     after: "schedule",
     help: "A1",
-    runs: { web: { module: "src/app/[locale]/(site)/dashboard/schedule/actions.ts", fn: "createAppointment" }, rpcs: [], app: "createAppointment / createRecurringAppointments (lib/services)" },
+    runs: { web: { module: "src/app/[locale]/(site)/dashboard/(gated)/schedule/actions.ts", fn: "createAppointment" }, rpcs: [], app: "createAppointment / createRecurringAppointments (lib/services)" },
     source: "web+app",
   },
   {
@@ -113,7 +113,7 @@ export const ACTIONS: AppMapAction[] = [
     card: ["patient", "from (weekday, date, time)", "to (weekday, date, time)"],
     after: "schedule",
     help: "A4",
-    runs: { web: { module: "src/app/[locale]/(site)/dashboard/schedule/actions.ts", fn: "moveAppointment" }, rpcs: [], app: "updateAppointment (lib/services)" },
+    runs: { web: { module: "src/app/[locale]/(site)/dashboard/(gated)/schedule/actions.ts", fn: "moveAppointment" }, rpcs: [], app: "updateAppointment (lib/services)" },
     source: "web+app",
   },
   {
@@ -135,7 +135,7 @@ export const ACTIONS: AppMapAction[] = [
     card: ["patient", "when (weekday, date, time)"],
     after: "schedule",
     help: "A4",
-    runs: { web: { module: "src/app/[locale]/(site)/dashboard/schedule/actions.ts", fn: "updateAppointmentStatus" }, rpcs: [], app: "updateAppointmentStatus('cancelled') (lib/services)" },
+    runs: { web: { module: "src/app/[locale]/(site)/dashboard/(gated)/schedule/actions.ts", fn: "updateAppointmentStatus" }, rpcs: [], app: "updateAppointmentStatus('cancelled') (lib/services)" },
     source: "web+app",
   },
   {
@@ -154,7 +154,7 @@ export const ACTIONS: AppMapAction[] = [
     card: ["period (weekday, date, start–end)", "reason"],
     after: "schedule",
     help: "A3",
-    runs: { web: { module: "src/app/[locale]/(site)/dashboard/schedule/actions.ts", fn: "blockTime" }, rpcs: [], app: "BlockTimeModal insert (status 'blocked')" },
+    runs: { web: { module: "src/app/[locale]/(site)/dashboard/(gated)/schedule/actions.ts", fn: "blockTime" }, rpcs: [], app: "BlockTimeModal insert (status 'blocked')" },
     source: "web+app",
   },
   {
@@ -168,7 +168,7 @@ export const ACTIONS: AppMapAction[] = [
     card: ["period (weekday, date, start–end)"],
     after: "schedule",
     help: "A3",
-    runs: { web: { module: "src/app/[locale]/(site)/dashboard/schedule/actions.ts", fn: "deleteAppointment" }, rpcs: [], app: "delete of the block row" },
+    runs: { web: { module: "src/app/[locale]/(site)/dashboard/(gated)/schedule/actions.ts", fn: "deleteAppointment" }, rpcs: [], app: "delete of the block row" },
     source: "web+app",
   },
   {
@@ -189,7 +189,7 @@ export const ACTIONS: AppMapAction[] = [
     after: "schedule",
     help: "A6",
     runs: {
-      web: { module: "src/app/[locale]/(site)/dashboard/schedule/booking-actions.ts", fn: "confirmBookingAndAddPatient" },
+      web: { module: "src/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions.ts", fn: "confirmBookingAndAddPatient" },
       rpcs: ["confirm_and_link_patient"],
       app: "confirm_and_link_patient / status 'rejected'",
     },
@@ -218,7 +218,7 @@ export const ACTIONS: AppMapAction[] = [
     card: ["full name", "birth date", "phone", "email", "ID"],
     after: "patient",
     help: "P1",
-    runs: { web: { module: "src/app/[locale]/(site)/dashboard/patients/actions.ts", fn: "createPatient" }, rpcs: ["find_similar_patients"], app: "patients insert (after find_similar_patients)" },
+    runs: { web: { module: "src/app/[locale]/(site)/dashboard/(gated)/patients/actions.ts", fn: "createPatient" }, rpcs: ["find_similar_patients"], app: "patients insert (after find_similar_patients)" },
     source: "web+app",
   },
   {
@@ -236,7 +236,7 @@ export const ACTIONS: AppMapAction[] = [
     card: ["patient", "appointment (weekday, date, time)", "value", "paid / unpaid"],
     after: "payments",
     help: "G1",
-    runs: { web: { module: "src/app/[locale]/(site)/dashboard/payments/actions.ts", fn: "markPaid" }, rpcs: [], app: "updatePaymentStatus('paid' | 'pending')" },
+    runs: { web: { module: "src/app/[locale]/(site)/dashboard/(gated)/payments/actions.ts", fn: "markPaid" }, rpcs: [], app: "updatePaymentStatus('paid' | 'pending')" },
     source: "web+app",
   },
   {
@@ -266,6 +266,7 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   { rule: "The practice country is chosen when the doctor creates the account on the website (Brazil / Thailand / Other); it sets the currency, the plan price, the patient ID field and the payment QR, and shows in Settings → \"País do consultório\" / \"Practice country\". To change it later, the doctor contacts support@solvymed.com (SolvyAI can't change it). Patients and secretaries don't choose it.", help: "C1" },
   { rule: { text: "The app (1.4.0) is in 7 languages: Portuguese, English, Spanish, French, German, Italian and Thai (ไทย), in the first-run choice, the language picker and Settings → Language; a phone set to Thai opens it in Thai.", pending: ["app-1.4.0"] }, help: "C8" },
   { rule: { text: "In the app too (1.4.0): a doctor's signup shows the same practice-country choice (Brasil / ประเทศไทย / Other), preselected from the phone's region.", pending: ["app-1.4.0"] }, help: "C1" },
+  { rule: { text: "In the app (1.4.0), an inactive subscription shows a full screen: the doctor's says \"Your SolvyMed subscription is inactive.\" with \"Questions? Write to support@solvymed.com.\" (tap to email) and Sign Out; a secretary's says \"Subscription inactive\" (access resumes once the doctor's subscription is renewed), with the same support line. No price, plan or website on either (store rules).", pending: ["app-1.4.0"] }, help: "K1" },
   {
     rule: {
       text: "The patient import also brings the address (postal code, street, number, complement, neighbourhood, city, state) and the CNS: iClinic and Prontuário Verde map them, and our template has the columns; a CEP that lost its leading zero in Excel is completed. The previous system's own notes stay imported data (doctor only), never Observações.",

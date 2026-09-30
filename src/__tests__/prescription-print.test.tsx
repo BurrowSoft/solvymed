@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { cssColor, safeLogoUrl, toDocTemplate, DEFAULT_TEMPLATE } from "@/lib/prescriptionDoc";
-import { PrescriptionDocument, type RxDocLabels } from "@/app/[locale]/(site)/dashboard/patients/[id]/prescriptions/[rxId]/print/PrescriptionDocument";
+import { PrescriptionDocument, type RxDocLabels } from "@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/prescriptions/[rxId]/print/PrescriptionDocument";
 
 // The website's prescription print view (Help P6): the app's PDF layout,
 // a blank line to sign by hand (UX 36), doctor-only.
@@ -103,7 +103,7 @@ const country = vi.hoisted(() => ({ code: "BR" as string | null }));
 vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => (country.code ? { ok: true, country: country.code } : { ok: false, code: "exception" }) }));
 vi.mock("@/components/PrintToolbar", () => ({ PrintToolbar: () => null }));
 
-import PrintPage from "@/app/[locale]/(site)/dashboard/patients/[id]/prescriptions/[rxId]/print/page";
+import PrintPage from "@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/prescriptions/[rxId]/print/page";
 import { docDate, docTime, docToday } from "@/lib/prescriptionDoc";
 
 // Printed dates follow the PRACTICE's country, not the screen (UX 36).

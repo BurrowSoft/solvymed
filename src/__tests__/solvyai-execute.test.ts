@@ -13,22 +13,22 @@ const h = vi.hoisted(() => {
 });
 const { calls } = h;
 
-vi.mock("@/app/[locale]/(site)/dashboard/schedule/actions", () => ({
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/schedule/actions", () => ({
   createAppointment: (...a: unknown[]) => h.rec("createAppointment", { success: true, id: "new-appt" })(...a),
   blockTime: (...a: unknown[]) => h.rec("blockTime", { success: true, id: "new-block" })(...a),
   updateAppointmentStatus: (...a: unknown[]) => h.rec("updateAppointmentStatus", { success: true })(...a),
   deleteAppointment: (...a: unknown[]) => h.rec("deleteAppointment", { success: true })(...a),
   moveAppointment: (...a: unknown[]) => h.rec("moveAppointment", { success: true, id: "moved" })(...a),
 }));
-vi.mock("@/app/[locale]/(site)/dashboard/schedule/booking-actions", () => ({
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions", () => ({
   confirmBookingAndAddPatient: (...a: unknown[]) => h.rec("confirmBookingAndAddPatient", { error: null })(...a),
   rejectBooking: (...a: unknown[]) => h.rec("rejectBooking", { error: null })(...a),
 }));
-vi.mock("@/app/[locale]/(site)/dashboard/patients/actions", () => ({
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/actions", () => ({
   createPatient: (...a: unknown[]) => h.rec("createPatient", { success: true, id: "new-patient" })(...a),
   deletePatient: (...a: unknown[]) => h.rec("deletePatient", { success: true })(...a),
 }));
-vi.mock("@/app/[locale]/(site)/dashboard/payments/actions", () => ({ markPaid: h.rec("markPaid", { success: true }), markUnpaid: h.rec("markUnpaid", { success: true }) }));
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/payments/actions", () => ({ markPaid: h.rec("markPaid", { success: true }), markUnpaid: h.rec("markUnpaid", { success: true }) }));
 vi.mock("@/lib/effectiveProfId", () => ({ getEffectiveProfId: async () => "doc-1" }));
 vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => ({ ok: true, country: "TH" }) }));
 vi.mock("@/lib/supabase/server", () => ({

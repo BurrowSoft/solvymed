@@ -25,7 +25,7 @@ vi.mock("@/lib/supabase/server", () => ({
   }),
 }));
 
-import { updatePatient } from "@/app/[locale]/(site)/dashboard/patients/actions";
+import { updatePatient } from "@/app/[locale]/(site)/dashboard/(gated)/patients/actions";
 
 const form = (o: Record<string, string>) => {
   const f = new FormData();

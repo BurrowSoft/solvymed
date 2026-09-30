@@ -93,7 +93,7 @@ vi.mock("@/lib/supabase/server", () => ({
 }));
 
 describe("mergePatientsAction", async () => {
-  const { mergePatientsAction } = await import("@/app/[locale]/(site)/dashboard/patients/actions");
+  const { mergePatientsAction } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions");
   const K = "0f3b9c2e-1111-4222-8333-444455556666", M = "1f3b9c2e-1111-4222-8333-444455556666";
   beforeEach(() => { h.rpcs = []; h.reply = { data: { kept_id: K }, error: null }; });
 
