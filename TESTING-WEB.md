@@ -9748,3 +9748,27 @@ Merged at `4ac82b4` (evidence: PR comment 5901966780).
 Merged at `76eb769`, hidden (evidence: PR comment 5902218726).
 
 **⏳ After 138 + 139:** the DB rows listed above, live on prod.
+
+## #190 Archive / delete / restore wording in id / ja / ko / zh-TW (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `906131fc923d062721907f2ff8b7158784d75e76`** (id / ja / ko / zh-TW: archive / delete / restore say "patient", not "medical record / chart")
+
+**How it was tested:** on the Vercel Preview, with a throwaway doctor
+(deleted afterwards). The UI was switched per locale (`NEXT_LOCALE`), each
+string was compared with the branch's message file, and every page was
+scanned for raw keys (none found anywhere).
+
+| # | Surface | id | ja | ko | zh-TW |
+|---|---|---|---|---|---|
+| 1 | Patient page buttons | ✅ "Arsipkan data pasien" / "Hapus data pasien" | ✅ "患者情報をアーカイブ" / "患者情報を削除" | ✅ "환자 정보 보관" / "환자 정보 삭제" | ✅ "封存病患資料" / "刪除病患資料" |
+| 1 | Archive dialog body | ✅ "Data pasien yang diarsipkan disembunyikan…" | ✅ "アーカイブした患者は一覧、検索、予約から非表示…" | ✅ "보관된 환자는 목록, 검색, 일정에서 숨겨집니다…" | ✅ "已封存的病患不會出現在清單、搜尋和行程中…" (confirm "封存") |
+| 2 | Archived banner | ✅ "Pasien yang diarsipkan tidak dapat menerima…" | ✅ "アーカイブ済みの患者には、新しい予約…" | ✅ "보관된 환자에게는 새 예약…" | ✅ "已封存的病患無法新增預約、紀錄或處方。" |
+| 3 | Pacientes → archived: title + empty state | ✅ "Pasien yang diarsipkan" / "Tidak ada pasien yang diarsipkan" | ✅ "アーカイブ済みの患者" / "…はいません" | ✅ "보관된 환자" / "…가 없습니다" | ✅ "已封存的病患" / "沒有已封存的病患" |
+| 3 | The archived list with one patient | ✅ title + the patient | ✅ | ✅ | ✅ |
+| 4 | Schedule: booking the archived patient | ✅ "Data pasien ini diarsipkan. Pulihkan di menu Pasien…" | ✅ "この患者情報はアーカイブ済みです…" | ✅ "이 환자 정보는 보관되어 있습니다…" | ✅ "此病患資料已封存。請在「病患」中還原後再預約。" |
+| 5 | Merge `patientMerge.errArchived` | (not reachable: merge waits on 133) "Pulihkan data ini sebelum menggabungkan ke dalamnya." | "この患者情報を復元してから統合してください。" | "이 환자 정보를 복원한 후 병합하세요." | "請先還原此病患資料,再合併到其中。" |
+
+**Nit (zh-TW, row 5):** it uses an ASCII comma ("資料,再"); the full-width
+"，" would match the other zh-TW strings.
+
+Merged at `906131f` (evidence: PR comment 5902287757).
