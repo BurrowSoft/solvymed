@@ -1396,7 +1396,7 @@
     "summaryDuplicates": "{n} ripetuti nel file (viene importato solo il primo)",
     "summaryWarnings": "{n} con avvisi (importati; vedi l'elenco)",
     "summaryArchived": "{n} saranno importati come archiviati (inattivi o deceduti)",
-    "summaryCpfPadded": "{n, plural, one {A # CPF mancava lo zero iniziale (Excel lo rimuove) ed è stato completato.} other {A # CPF mancava lo zero iniziale (Excel lo rimuove) e sono stati completati.}}",
+    "summaryCpfPadded": "{n, plural, one {A # CPF mancava lo zero iniziale (Excel lo rimuove) ed è stato completato.} other {A # CPF mancavano lo zero iniziale (Excel lo rimuove) e sono stati completati.}}",
     "summaryFill": "{n} schede esistenti avranno i campi vuoti completati",
     "colRow": "Riga",
     "colName": "Nome",
