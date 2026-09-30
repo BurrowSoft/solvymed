@@ -7,11 +7,28 @@
 import generic from "./presets/generic.v2.json";
 import iclinic from "./presets/iclinic.v2.json";
 import prontuarioVerde from "./presets/prontuario_verde.v2.json";
+import genericV3 from "./presets/generic.v3.json";
+import iclinicV3 from "./presets/iclinic.v3.json";
+import prontuarioVerdeV3 from "./presets/prontuario_verde.v3.json";
 
+// The fields 139 adds to the import (the address parts and the CNS); only
+// sent with the "import-address" capability, since before 139 the server
+// refuses a whole row that has them (unknown_field).
+export const ADDRESS_IMPORT_FIELDS = [
+  "address_postal_code", "address_street", "address_number", "address_complement", "address_neighborhood", "address_city", "address_state", "cns",
+] as const;
 export const IMPORT_FIELDS = [
   "full_name", "cpf", "th_national_id", "passport_number", "birth_date", "sex", "phone", "email", "rg", "profession", "tags",
+  ...ADDRESS_IMPORT_FIELDS,
 ] as const;
 export type ImportField = (typeof IMPORT_FIELDS)[number];
+
+// What the server can take (the presets README, "Versions that need the
+// server"): "import-address" = 139 applied (patient-address-live).
+export type ImportCap = "import-address";
+/** The fields the doctor can map to, given the capabilities. */
+export const importFields = (caps: readonly ImportCap[] = []): readonly ImportField[] =>
+  caps.includes("import-address") ? IMPORT_FIELDS : IMPORT_FIELDS.filter((f) => !(ADDRESS_IMPORT_FIELDS as readonly string[]).includes(f));
 export type ImportSource = "generic" | "iclinic" | "prontuario_verde";
 
 type Values = Record<string, string | null>;
@@ -21,6 +38,7 @@ type ColumnRule = {
 };
 export type Preset = {
   source: ImportSource; version: number; label: string;
+  requires?: string[];
   fingerprint?: { files?: string[]; zip_files?: string[]; headers_all?: string[]; headers_any?: (string | string[])[] };
   unlisted?: "generic_suggest";
   read?: { encodings?: string[]; delimiters?: string[] };
@@ -29,8 +47,15 @@ export type Preset = {
   extra_suggest?: Record<string, string[]>;
 };
 
-export const PRESETS: Preset[] = [generic as Preset, iclinic as Preset, prontuarioVerde as Preset];
-export const presetFor = (source: ImportSource): Preset => PRESETS.find((p) => p.source === source) ?? (generic as Preset);
+export const PRESETS: Preset[] = [
+  generic as Preset, iclinic as Preset, prontuarioVerde as Preset,
+  genericV3 as Preset, iclinicV3 as Preset, prontuarioVerdeV3 as Preset,
+];
+// A version is usable only when the server has every capability it lists.
+const usable = (p: Preset, caps: readonly ImportCap[]) => (p.requires ?? []).every((c) => (caps as readonly string[]).includes(c));
+/** The source's highest usable version (v3 only with "import-address", else v2). */
+export const presetFor = (source: ImportSource, caps: readonly ImportCap[] = []): Preset =>
+  PRESETS.filter((p) => p.source === source && usable(p, caps)).sort((x, y) => y.version - x.version)[0] ?? (generic as Preset);
 
 // What happens to one column. `kind` is what the doctor sees and can change;
 // the rest comes from the preset (codes, priorities, splitting).
@@ -65,12 +90,13 @@ export function normalizeHeader(h: string): string {
 // every `headers_all` header is present and at least one `headers_any` entry
 // is (an array: a group, all present). Headers ignore case and surrounding
 // spaces. The highest matching version wins; no match is the generic sheet.
-export function detectSource(headers: string[], fileName?: string, inZip: string[] = []): ImportSource {
+export function detectSource(headers: string[], fileName?: string, inZip: string[] = [], caps: readonly ImportCap[] = []): ImportSource {
   const hs = new Set(headers.map((h) => h.trim().toLowerCase()));
   const has = (h: string) => hs.has(h.trim().toLowerCase());
   const hits = PRESETS.filter((p) => {
     const f = p.fingerprint;
-    if (!f) return false;
+    // A version that needs a capability the server lacks is skipped (v3 before 139).
+    if (!f || !usable(p, caps)) return false;
     const byName = (f.files ?? []).some((n) => n === fileName || inZip.includes(n)) || (f.zip_files ?? []).some((n) => inZip.includes(n));
     const byHeaders = (f.headers_all ?? []).every(has) && (f.headers_any ?? []).some((e) => (Array.isArray(e) ? e.every(has) : has(e)));
     return byName || byHeaders;
@@ -78,8 +104,8 @@ export function detectSource(headers: string[], fileName?: string, inZip: string
   return hits[0]?.source ?? "generic";
 }
 
-export function planColumns(source: ImportSource, headers: string[]): ColumnPlan[] {
-  return joinNames(planEach(source, headers));
+export function planColumns(source: ImportSource, headers: string[], caps: readonly ImportCap[] = []): ColumnPlan[] {
+  return joinNames(planEach(source, headers, caps));
 }
 
 // First and last name in separate columns (Nome + Sobrenome, ชื่อ +
@@ -105,9 +131,10 @@ export function separateNames(plan: ColumnPlan[]): ColumnPlan[] {
         : c);
 }
 
-function planEach(source: ImportSource, headers: string[]): ColumnPlan[] {
-  const preset = presetFor(source);
-  const gen = presetFor("generic");
+function planEach(source: ImportSource, headers: string[], caps: readonly ImportCap[]): ColumnPlan[] {
+  const preset = presetFor(source, caps);
+  const gen = presetFor("generic", caps);
+  const fields = importFields(caps);
   const taken = new Set<ImportField>();
   // A system preset's own columns present in this file, and the fields they fill.
   const ruleFor = (header: string) => {
@@ -121,7 +148,7 @@ function planEach(source: ImportSource, headers: string[]): ColumnPlan[] {
   // Generic's suggestions: the first column wins a field not yet filled.
   const suggest = (base: { index: number; header: string }): ColumnPlan | null => {
     const n = normalizeHeader(base.header);
-    for (const f of IMPORT_FIELDS) {
+    for (const f of fields) {
       if (taken.has(f)) continue;
       if ((gen.suggest?.[f] ?? []).some((s) => normalizeHeader(s) === n)) {
         taken.add(f);

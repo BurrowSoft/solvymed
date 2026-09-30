@@ -6,7 +6,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { readInWorker } from "@/lib/import/readInWorker";
 import type { ReadResult, SheetCell } from "@/lib/import/readFile";
-import { IMPORT_FIELDS, buildRows, detectSource, planColumns, presetFor, separateNames, type ColumnPlan, type ImportField, type ImportSource } from "@/lib/import/plan";
+import { buildRows, detectSource, importFields, planColumns, presetFor, separateNames, type ColumnPlan, type ImportCap, type ImportField, type ImportSource } from "@/lib/import/plan";
+import { patientIdKind } from "@/lib/patientIds";
 import {
   ImportError, commitImport, discardImport, previewRows, problemRows, stageImport, undoImport, validateImport,
   type CommitSummary, type ImportDb, type PreviewRow, type ValidateSummary,
@@ -22,7 +23,8 @@ import { errorListCsv, lostLeadingZero } from "@/lib/import/errorList";
 type Step = "file" | "map" | "preview" | "done";
 type Sheet = { name: string; headers: string[]; rows: SheetCell[][] };
 
-const FIELD_KEY: Record<ImportField, string> = {
+// 139's address parts and CNS use 138's labels (patientAddress), by country.
+const FIELD_KEY: Partial<Record<ImportField, string>> = {
   full_name: "fieldFullName", cpf: "fieldCpf", th_national_id: "fieldThId", passport_number: "fieldPassport",
   birth_date: "fieldBirthDate", sex: "fieldSex", phone: "fieldPhone", email: "fieldEmail", rg: "fieldRg",
   profession: "fieldProfession", tags: "fieldTags",
@@ -33,7 +35,13 @@ const ROW_CODES = [
   "cpf_invalid", "cpf_zero_padded", "cpf_not_used", "th_national_id_invalid", "th_national_id_not_used", "passport_invalid", "passport_not_used",
   "birth_date_invalid", "birth_date_be_converted", "sex_unknown", "phone_invalid", "phone_unverified", "phone_matches_existing",
   "email_invalid", "rg_invalid", "profession_invalid", "tags_trimmed", "extra_trimmed", "archived_unknown",
+  // 139: the address and the CNS.
+  "cep_zero_padded", "cns_invalid", "cns_not_used",
 ];
+const ADDRESS_PART: Record<string, string> = {
+  address_postal_code: "postal", address_street: "street", address_number: "number", address_complement: "complement",
+  address_neighborhood: "neighborhood", address_city: "city", address_state: "state",
+};
 
 const btn = "rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60";
 const btn2 = "rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition disabled:opacity-60";
@@ -45,8 +53,13 @@ function download(fileName: string, text: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export function ImportClient({ locale, country, canMerge = false, db: injected }: { locale: string; country: string; canMerge?: boolean; db?: ImportDb }) {
+// addressLive: 138 + 139 applied, so the v3 presets (address + CNS) are usable.
+export function ImportClient({ locale, country, canMerge = false, addressLive = false, db: injected }: { locale: string; country: string; canMerge?: boolean; addressLive?: boolean; db?: ImportDb }) {
   const t = useTranslations("patientImport");
+  const tAddr = useTranslations("patientAddress");
+  const caps: ImportCap[] = useMemo(() => (addressLive ? ["import-address"] : []), [addressLive]);
+  const kind = patientIdKind(country);
+  const fieldLabel = (f: ImportField) => FIELD_KEY[f] ? t(FIELD_KEY[f]!) : f === "cns" ? tAddr("cns") : tAddr(`${kind}_${ADDRESS_PART[f]}`);
   const prefix = locale === "en" ? "" : `/${locale}`;
   const db = useMemo(() => injected ?? (createClient() as unknown as ImportDb), [injected]);
   const [step, setStep] = useState<Step>("file");
@@ -67,6 +80,9 @@ export function ImportClient({ locale, country, canMerge = false, db: injected }
   // Excel and still failed the check digits after 130 padded it: say how to
   // export it properly.
   const reason = (code: string, row?: PreviewRow) => {
+    // address_<part>_invalid: that part, too long.
+    const part = code.match(/^(address_[a-z_]+)_invalid$/)?.[1];
+    if (part && ADDRESS_PART[part]) return t("code_address_invalid", { field: fieldLabel(part as ImportField) });
     const text = ROW_CODES.includes(code) ? t(`code_${code}`) : code;
     return code === "cpf_invalid" && lostLeadingZero(row?.input?.cpf) ? `${text}. ${t("cpfExcelHint")}` : text;
   };
@@ -83,17 +99,17 @@ export function ImportClient({ locale, country, canMerge = false, db: injected }
     try { r = await readInWorker(file, ["\t", ";", ","]); } catch { r = { ok: false, error: "unreadable" }; }
     setBusy(null);
     if (!r.ok) { setError(t(`file_${r.error}`)); return; }
-    const detected = detectSource(r.headers, file.name);
+    const detected = detectSource(r.headers, file.name, [], caps);
     setSheet({ name: file.name, headers: r.headers, rows: r.rows });
     setSource(detected);
-    setPlan(planColumns(detected, r.headers));
+    setPlan(planColumns(detected, r.headers, caps));
     setStep("map");
   }
 
   function changeSource(s: ImportSource) {
     if (!sheet) return;
     setSource(s);
-    setPlan(planColumns(s, sheet.headers));
+    setPlan(planColumns(s, sheet.headers, caps));
   }
 
   // The doctor's choice for one column: a field, imported data, or ignore.
@@ -194,7 +210,7 @@ export function ImportClient({ locale, country, canMerge = false, db: injected }
                 {t("chooseFile")}
                 <input ref={fileInput} type="file" accept=".csv,.txt,.xlsx,.xls,.ods" className="sr-only" onChange={(e) => onFile(e.target.files?.[0])} />
               </label>
-              <button type="button" className={btn2} onClick={() => { const { fileName, csv } = templateCsv(locale, country); download(fileName, csv); }}>
+              <button type="button" className={btn2} onClick={() => { const { fileName, csv } = templateCsv(locale, country, addressLive); download(fileName, csv); }}>
                 {t("template")}
               </button>
             </div>
@@ -212,7 +228,7 @@ export function ImportClient({ locale, country, canMerge = false, db: injected }
               <label className="text-sm text-slate-600">
                 <span className="mr-2 font-semibold">{t("source")}</span>
                 <select value={source} onChange={(e) => changeSource(e.target.value as ImportSource)} className="rounded-lg border border-slate-300 px-2 py-1.5 text-sm">
-                  {SOURCES.map((s) => <option key={s} value={s}>{s === "generic" ? t("sourceGeneric") : presetFor(s).label}</option>)}
+                  {SOURCES.map((s) => <option key={s} value={s}>{s === "generic" ? t("sourceGeneric") : presetFor(s, caps).label}</option>)}
                 </select>
               </label>
             </div>
@@ -241,7 +257,7 @@ export function ImportClient({ locale, country, canMerge = false, db: injected }
                           <span className="text-slate-700">{t("targetArchived")}</span>
                         ) : (
                           <select aria-label={c.header} value={c.kind === "field" ? c.field : c.kind} onChange={(e) => changeTarget(c.index, e.target.value)} className="rounded-lg border border-slate-300 px-2 py-1.5 text-sm">
-                            {IMPORT_FIELDS.map((f) => <option key={f} value={f}>{t(FIELD_KEY[f])}</option>)}
+                            {importFields(caps).map((f) => <option key={f} value={f}>{fieldLabel(f)}</option>)}
                             <option value="extra">{t("targetExtra")}</option>
                             <option value="ignore">{t("targetIgnore")}</option>
                           </select>
@@ -281,6 +297,7 @@ export function ImportClient({ locale, country, canMerge = false, db: injected }
               {summary.with_warnings > 0 && <li>{t("summaryWarnings", { n: summary.with_warnings })}</li>}
               {(summary.archived ?? 0) > 0 && <li>{t("summaryArchived", { n: summary.archived ?? 0 })}</li>}
               {(summary.cpf_zero_padded ?? 0) > 0 && <li>{t("summaryCpfPadded", { n: summary.cpf_zero_padded ?? 0 })}</li>}
+              {(summary.cep_zero_padded ?? 0) > 0 && <li>{t("summaryCepPadded", { n: summary.cep_zero_padded ?? 0 })}</li>}
             </ul>
             <fieldset>
               <legend className="text-sm font-semibold text-slate-800">{t("existingTitle")}</legend>

@@ -18,5 +18,5 @@ export default async function ImportPatientsPage({ params }: { params: Promise<{
   if ((await isProfessionalRole(supabase, user.id)) !== true) redirect(`${prefix}/dashboard/patients`);
   // The template's ID columns follow the practice country.
   const country = await getPracticeCountry(supabase, user.id, user.id);
-  return <ImportClient locale={locale} country={country} canMerge={await mergeAvailable()} />;
+  return <ImportClient locale={locale} country={country} canMerge={await mergeAvailable()} addressLive={conditionMet("patient-address-live")} />;
 }

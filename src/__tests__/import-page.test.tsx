@@ -116,4 +116,20 @@ describe("Importar pacientes", () => {
     // An 11-digit invalid CPF didn't lose a zero: no Excel hint.
     expect(screen.getAllByText(pt.patientImport.code_cpf_invalid)).toHaveLength(1);
   });
+
+  it("139 (address live): the CEP line, a too-long address part named by its label, CNS warnings", async () => {
+    const { db } = fakeDb({ total: 1, new: 1, invalid: 0, with_warnings: 1, cep_zero_padded: 2 }, [
+      { row_no: 2, outcome: "new", duplicate_of_row: null, warnings: ["address_street_invalid", "cep_zero_padded", "cns_invalid"], errors: [], input: { full_name: "Ana" } },
+    ]);
+    const { container } = render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <ImportClient locale="pt-BR" country="BR" addressLive db={db} />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.change(container.querySelector('input[type="file"]')!, { target: { files: [csvFile("Nome;CEP\nAna;1310100\n")] } });
+    expect(await screen.findByLabelText("CEP")).toHaveValue("address_postal_code");
+    fireEvent.click(screen.getByText("Verificar planilha"));
+    expect(await screen.findByText("2 CEPs estavam sem o zero inicial (o Excel remove) e foram completados.")).toBeInTheDocument();
+    expect(screen.getByText(`Rua: texto longo demais (não importado) · ${pt.patientImport.code_cep_zero_padded} · ${pt.patientImport.code_cns_invalid}`)).toBeInTheDocument();
+  });
 });

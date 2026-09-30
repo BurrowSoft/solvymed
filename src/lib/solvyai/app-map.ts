@@ -265,6 +265,13 @@ export const ACTIONS: AppMapAction[] = [
 export const GENERAL: { rule: Rule; help: string }[] = [
   {
     rule: {
+      text: "The patient import also brings the address (postal code, street, number, complement, neighbourhood, city, state) and the CNS: iClinic and Prontuário Verde map them, and our template has the columns; a CEP that lost its leading zero in Excel is completed. The previous system's own notes stay imported data (doctor only), never Observações.",
+      pending: ["patient-import-live", "patient-address-live"],
+    },
+    help: "P13",
+  },
+  {
+    rule: {
       text: "Patient address, CNS and Observações (website; the patient form and page): \"Endereço\" / \"Address\" (collapsed while empty; fields by the practice's country), the CNS for clinics in Brazil (15 digits, checked), and \"Observações\" / \"Notes\" for administrative information only (never clinical details: those go in the medical record). The doctor and the secretary see and edit them; the address prints on one line under the patient's name on the prescription. When merging duplicates, the address is taken as a whole from one record, and differing Observações can be kept joined (\"As duas, juntas\" / \"Both, joined\") when they fit in 2,000 characters. SolvyAI doesn't fill them in; it points to the patient's page.",
       pending: ["patient-address-live"],
     },
