@@ -9,6 +9,11 @@ import type { Attribution } from "./attribution";
 // brand kit's blue banner (UX, 1 Oct). A page-level openGraph/twitter
 // replaces the layout's whole object, so the site-wide fields are repeated.
 export const FOUNDERS_OG_IMAGE = "/og/solvymed-og-share-blue.png";
+// The public URL of a Founders page (canonical and share links): English
+// has no locale prefix. sub: "" (the page) or "/rules".
+export function foundersUrl(locale: string, sub = ""): string {
+  return `https://www.solvymed.com${locale === "en" ? "" : `/${locale}`}/founders${sub}`;
+}
 export function foundersShareMeta(a: { locale: string; url: string; title: string; description: string }): Pick<Metadata, "openGraph" | "twitter"> {
   return {
     openGraph: {
