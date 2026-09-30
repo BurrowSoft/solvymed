@@ -11,10 +11,9 @@ export const thaiLanguagePublic = process.env.NEXT_PUBLIC_THAI_ENABLED?.trim() !
 
 // The Thai MARKET (Sprint TH: the signup's practice-country picker, the
 // pricing page's country switch with Thailand / Other prices, the Thai
-// landing section) still ships with the Thai release: only when the
-// variable is "1" (set on Vercel Preview for the reviewers and testers;
-// Production gets it with UX's go).
-export const thaiEnabled = process.env.NEXT_PUBLIC_THAI_ENABLED?.trim() === "1";
+// landing section) is open too (Vitor, 2026-10-01: with 1.4.0). The same
+// "0" is the off switch for both.
+export const thaiEnabled = thaiLanguagePublic;
 
 export function isPublicLocale(locale: string, enabled = thaiLanguagePublic): boolean {
   return locale !== "th" || enabled;

@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Vitor (2026-10-01): the Thai language stays public; "0" is its off switch.
-// The Thai MARKET (signup country picker, TH/Other pricing, landing) still
-// needs "1", so making the language public never launches the market.
+// The Thai MARKET (signup country picker, TH/Other pricing, landing) is open
+// too (Vitor, 2026-10-01, with 1.4.0); "0" closes both.
 
 async function load(value: string | undefined) {
   if (value === undefined) vi.stubEnv("NEXT_PUBLIC_THAI_ENABLED", undefined as unknown as string);
@@ -13,11 +13,11 @@ async function load(value: string | undefined) {
 afterEach(() => { vi.unstubAllEnvs(); });
 
 describe("NEXT_PUBLIC_THAI_ENABLED", () => {
-  it("unset (Production): Thai language public, Thai market off", async () => {
+  it("unset (Production): Thai language and Thai market both on", async () => {
     const m = await load(undefined);
     expect(m.thaiLanguagePublic).toBe(true);
     expect(m.publicLocales()).toContain("th");
-    expect(m.thaiEnabled).toBe(false);
+    expect(m.thaiEnabled).toBe(true);
   });
 
   it('"1" (Preview): both on', async () => {
