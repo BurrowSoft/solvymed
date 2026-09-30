@@ -6,6 +6,7 @@ import { UpdateCardButton } from "@/components/UpdateCardButton";
 import { isAccessAllowed, isPaidActive, trialDaysRemaining, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
 import { ActivationStatus } from "./ActivationStatus";
 import { SignOutButton } from "@/components/SignOutButton";
+import { SubscribeHeader } from "./SubscribeHeader";
 import { retrieveStoredStripeSubscription, isLive, needsCardFix } from "@/lib/stripeBilling";
 
 export default async function SubscribePage({
@@ -83,12 +84,12 @@ export default async function SubscribePage({
 
   const daysLeft = trialDaysRemaining(sub);
   // The way out of every state (Vitor, live test): the dashboard while it
-  // lets them in, else the home page (an ended trial is sent back here).
+  // lets them in; none when it wouldn't (see SubscribeHeader).
   const prefix = locale === "en" ? "" : `/${locale}`;
   // Not "just paid": an ended trial back from checkout before the webhook
   // lands would bounce from the dashboard to this paywall (9a).
   const canEnter = !!sub && isAccessAllowed(sub);
-  const exitHref = canEnter ? `${prefix}/dashboard` : `${prefix}/`;
+  const exitHref = canEnter ? `${prefix}/dashboard` : null;
   // Locked out (an ended trial, a failed renewal): a way to get help and
   // to close the account, which Settings can't offer while it's locked.
   const locked = !!sub && !isAccessAllowed(sub) && sp.success !== "1";
@@ -115,14 +116,7 @@ export default async function SubscribePage({
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="mb-8 flex items-center justify-between">
-          <a href={exitHref} className="text-sm font-semibold text-slate-600 hover:text-slate-900">← {t("back")}</a>
-          <a href={exitHref} className="text-center" aria-label="SolvyMed">
-            <span className="text-5xl font-black text-teal-600">S</span>
-            <p className="mt-1 text-lg font-bold text-slate-800">SolvyMed</p>
-          </a>
-          <span className="w-12" aria-hidden="true" />
-        </div>
+        <SubscribeHeader exitHref={exitHref} backLabel={t("back")} />
 
         {/* Back from checkout: "activated" only once the database says so
             (the webhook writes it); until then "activating…". */}
