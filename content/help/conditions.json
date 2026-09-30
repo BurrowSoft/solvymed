@@ -56,7 +56,7 @@
     "what": "Merging duplicate patients is live: migration 133 (merge_patients / merge_patients_preview, access kind 'merged') is applied on production AND the app build with \"Mesclar com outro paciente…\" (mobile feat/merge-patients-app) is released on Google Play."
   },
   "patient-import-live": {
-    "met": false,
+    "met": true,
     "what": "The patient import is live: migrations 130 (staging + validation) and 131 (commit + undo, patient_import_extras, patients.archived_reason) are applied on production. Gates the website import (Pacientes → Importar pacientes, the archived-reason labels) and Help P13."
   },
   "notice-outbox-live": {
