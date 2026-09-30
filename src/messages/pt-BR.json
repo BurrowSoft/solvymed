@@ -1494,6 +1494,8 @@
     "field_profession": "Profissão",
     "field_convenio_type": "Tipo de convênio",
     "field_photo": "Foto",
+    "pickBoth": "As duas, juntas",
+    "notesTooLong": "As observações juntas passam de 2.000 caracteres; escolha uma ou edite depois.",
     "search": "Buscar por nome ou documento…",
     "archivedTag": "arquivado",
     "back": "Voltar",

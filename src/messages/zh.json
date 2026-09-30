@@ -1494,6 +1494,8 @@
     "field_profession": "职业",
     "field_convenio_type": "保险类型",
     "field_photo": "照片",
+    "pickBoth": "两者合并",
+    "notesTooLong": "合并后的备注超过 2,000 个字符;请选择其一,或稍后再编辑。",
     "search": "按姓名或证件号搜索…",
     "archivedTag": "已归档",
     "back": "返回",

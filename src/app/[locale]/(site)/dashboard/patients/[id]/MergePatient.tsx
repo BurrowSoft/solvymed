@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { formatShortDate } from "@/lib/dateLabels";
-import { MERGE_FIELDS, mergeChoices, mergeDiff, type MergeErrorCode, type MergeFieldKey, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
+import { addressDisplay, defaultPick, mergeChoices, mergeDiff, mergeFields, notesFitBoth, type MergeErrorCode, type MergeFieldKey, type MergePick, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
 import { loadMergeComparison, mergePatientsAction, searchMergeCandidates } from "../actions";
 
 // "Mesclar com outro paciente…" (migration 133; the app's MergePatientsModal):
@@ -19,15 +19,18 @@ type Candidate = { id: string; full_name: string; birth_date: string | null; arc
 export function MergePatientButton({ patientId, patientName, locale }: { patientId: string; patientName: string; locale: string }) {
   const t = useTranslations("patientMerge");
   const tp = useTranslations("patientDetail");
+  const tAddr = useTranslations("patientAddress");
+  // 139's fields use 138's labels (as the app does).
+  const fieldLabel = (key: MergeFieldKey) => key === "address" ? tAddr("section") : key === "cns" ? tAddr("cns") : key === "notes_admin" ? tAddr("notes") : t(`field_${key}`);
   const router = useRouter();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<Step>("pick");
   const [q, setQ] = useState("");
   const [candidates, setCandidates] = useState<Candidate[] | null>(null);
-  const [data, setData] = useState<{ rows: MergeRow[]; preview: Record<string, MergePreviewSide> } | null>(null);
+  const [data, setData] = useState<{ rows: MergeRow[]; preview: Record<string, MergePreviewSide>; address?: boolean } | null>(null);
   const [keptId, setKeptId] = useState(patientId);
-  const [picks, setPicks] = useState<Partial<Record<MergeFieldKey, "kept" | "merged">>>({});
+  const [picks, setPicks] = useState<Partial<Record<MergeFieldKey, MergePick>>>({});
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
 
@@ -38,7 +41,7 @@ export function MergePatientButton({ patientId, patientName, locale }: { patient
   }, [open, step, q, patientId]);
 
   const errorText = (c: MergeErrorCode) =>
-    c === "both_have_app_accounts" ? t("errBothApp") : c === "kept_patient_archived" ? t("errArchived") : c === "merged_patient_deceased" ? t("errDeceased") : t("errGeneric");
+    c === "both_have_app_accounts" ? t("errBothApp") : c === "kept_patient_archived" ? t("errArchived") : c === "merged_patient_deceased" ? t("errDeceased") : c === "notes_too_long" ? t("notesTooLong") : t("errGeneric");
 
   function close() {
     setOpen(false); setStep("pick"); setQ(""); setCandidates(null); setData(null); setPicks({}); setError(""); setKeptId(patientId);
@@ -60,11 +63,15 @@ export function MergePatientButton({ patientId, patientName, locale }: { patient
 
   const kept = data?.rows.find((r) => r.id === keptId) ?? null;
   const merged = data?.rows.find((r) => r.id !== keptId) ?? null;
-  const diff = kept && merged ? mergeDiff(kept, merged) : null;
+  // 139's address / CNS / Observações once 138 + 139 are applied.
+  const fields = mergeFields(!!data?.address);
+  const diff = kept && merged ? mergeDiff(kept, merged, fields) : null;
+  const notesFit = !!kept && !!merged && notesFitBoth(kept, merged);
   const usesApp = !!data && data.rows.some((r) => data.preview[r.id]?.hasAppAccount);
 
   const show = (key: MergeFieldKey, p: MergeRow): string => {
-    const v = MERGE_FIELDS.find((f) => f.key === key)!.get(p);
+    if (key === "address") return addressDisplay(p) || "—";
+    const v = fields.find((f) => f.key === key)!.get(p);
     if (!v) return "—";
     if (key === "sex") return v === "male" ? tp("male") : v === "female" ? tp("female") : v === "other" ? tp("other") : v;
     if (key === "convenio_type") return v === "health_plan" ? tp("healthPlan") : v === "particular" ? tp("privateInsurance") : v;
@@ -72,10 +79,9 @@ export function MergePatientButton({ patientId, patientName, locale }: { patient
     if (key === "photo") return t("photoYes");
     return v;
   };
-  const pickOf = (key: MergeFieldKey): "kept" | "merged" => {
+  const pickOf = (key: MergeFieldKey): MergePick => {
     if (!kept || !merged) return "kept";
-    const k = MERGE_FIELDS.find((f) => f.key === key)!;
-    return picks[key] ?? (!String(k.get(kept) ?? "").trim() && String(k.get(merged) ?? "").trim() ? "merged" : "kept");
+    return picks[key] ?? defaultPick(key, kept, merged, fields);
   };
 
   function submit(appConfirmed: boolean) {
@@ -83,7 +89,7 @@ export function MergePatientButton({ patientId, patientName, locale }: { patient
     setError("");
     setStep("saving");
     start(async () => {
-      const r = await mergePatientsAction(kept.id, merged.id, mergeChoices(kept, merged, picks), appConfirmed).catch(() => ({ ok: false as const, code: "generic" as const }));
+      const r = await mergePatientsAction(kept.id, merged.id, mergeChoices(kept, merged, picks, fields), appConfirmed).catch(() => ({ ok: false as const, code: "generic" as const }));
       if (r.ok) {
         close();
         router.push(`${prefix}/dashboard/patients/${r.keptId}?merged=1`);
@@ -153,13 +159,13 @@ export function MergePatientButton({ patientId, patientName, locale }: { patient
                     <tbody>
                       {diff.differing.map((key) => (
                         <tr key={key} className="border-t border-slate-100 align-top">
-                          <th className="py-2 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">{t(`field_${key}`)}</th>
+                          <th className="py-2 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">{fieldLabel(key)}</th>
                           {(["kept", "merged"] as const).map((side) => (
                             <td key={side} className="py-2 pr-3">
                               <label className="flex items-center gap-2">
                                 <input type="radio" name={`f-${key}`} checked={pickOf(key) === side} disabled={step !== "compare"}
                                   onChange={() => setPicks((p) => ({ ...p, [key]: side }))} />
-                                <span className="text-slate-800">{show(key, side === "kept" ? kept : merged)}</span>
+                                <span className={`text-slate-800 ${key === "notes_admin" ? "whitespace-pre-line" : ""}`}>{show(key, side === "kept" ? kept : merged)}</span>
                               </label>
                             </td>
                           ))}
@@ -167,6 +173,18 @@ export function MergePatientButton({ patientId, patientName, locale }: { patient
                       ))}
                     </tbody>
                   </table>
+                )}
+                {diff.differing.includes("notes_admin") && !!kept.notes_admin && !!merged.notes_admin && (
+                  <div className="text-sm">
+                    {/* Too long to join: UX's text in place of "both" (the kept notes are pre-selected). */}
+                    {notesFit ? (
+                      <label className="flex items-center gap-2">
+                        <input type="radio" name="f-notes_admin" checked={pickOf("notes_admin") === "both"} disabled={step !== "compare"}
+                          onChange={() => setPicks((p) => ({ ...p, notes_admin: "both" }))} />
+                        <span className="text-slate-800">{t("pickBoth")}</span>
+                      </label>
+                    ) : <p className="text-xs text-amber-700">{t("notesTooLong")}</p>}
+                  </div>
                 )}
                 {diff.same > 0 && <p className="text-xs text-slate-500">{t("sameFields", { n: diff.same })}</p>}
                 <p className="text-xs text-slate-500">{moves}</p>
