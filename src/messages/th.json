@@ -225,7 +225,13 @@
     "pixQrTitle": "Pix QR code",
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "คัดลอก",
-    "durationMinutes": "{n} นาที"
+    "durationMinutes": "{n} นาที",
+    "undoBooked": "นัดหมายแล้ว",
+    "undoMoved": "เลื่อนนัดแล้ว",
+    "undoCancelled": "ยกเลิกนัดแล้ว",
+    "undoAction": "ยกเลิก ({s} วิ)",
+    "undoDone": "ยกเลิกแล้ว",
+    "undoFailed": "เลิกทำไม่ได้ โปรดเปิดรายการเพื่อแก้ไข"
   },
   "payments": {
     "thisWeek": "สัปดาห์นี้",

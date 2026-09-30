@@ -104,6 +104,67 @@ describe("tellPatient", () => {
 
   it("never throws: a failing read is swallowed", async () => {
     const broken = { from: () => { throw new Error("x"); }, rpc: async () => { throw new Error("y"); } } as unknown as SupabaseClient;
-    await expect(tellPatient(broken, { kind: "booked", patientId: "p-1", ...future })).resolves.toBeUndefined();
+    await expect(tellPatient(broken, { kind: "booked", patientId: "p-1", ...future })).resolves.toBeNull();
+  });
+});
+
+describe("the notice outbox (135)", async () => {
+  const { resetNoticeOutboxProbe } = await import("@/lib/patientNotice");
+  beforeEach(() => resetNoticeOutboxProbe());
+  const outboxDb = (reply: () => { data: unknown; error: { code?: string; message?: string } | null }) => {
+    const d = db();
+    const calls: { fn: string; args: unknown }[] = [];
+    const base = d.client.rpc.bind(d.client) as unknown as (fn: string) => Promise<unknown>;
+    (d.client as unknown as { rpc: unknown }).rpc = async (fn: string, args: unknown) => {
+      calls.push({ fn, args });
+      return fn === "enqueue_patient_notice" ? reply() : base(fn);
+    };
+    return { client: d.client, calls };
+  };
+
+  it("queued: the ids (a series in one call; a move with where it was); nothing pushed from here", async () => {
+    const d = outboxDb(() => ({ data: 42, error: null }));
+    expect(await tellPatient(d.client, { kind: "booked", patientId: "p-1", ...future, appointmentIds: ["a1", "a2"] })).toBe(42);
+    expect(await tellPatient(d.client, { kind: "moved", patientId: "p-1", ...future, from: { date: "2026-09-29", startTime: "09:00:00" }, appointmentIds: ["a1"] })).toBe(42);
+    expect(d.calls.map((c) => c.args)).toEqual([
+      { p_kind: "booked", p_appointment_ids: ["a1", "a2"], p_from_date: null, p_from_time: null },
+      { p_kind: "moved", p_appointment_ids: ["a1"], p_from_date: "2026-09-29", p_from_time: "09:00" },
+    ]);
+    expect(sent).toEqual([]);
+    // null: nobody to tell (the server's own rules).
+    const none = outboxDb(() => ({ data: null, error: null }));
+    expect(await tellPatient(none.client, { kind: "cancelled", patientId: "p-1", ...future, appointmentIds: ["a1"] })).toBeNull();
+    expect(sent).toEqual([]);
+  });
+
+  it("not live yet: sent directly as before, and asked again next time", async () => {
+    const d = outboxDb(() => ({ data: null, error: { code: "55000", message: "outbox_not_live" } }));
+    expect(await tellPatient(d.client, { kind: "booked", patientId: "p-1", ...future, appointmentIds: ["a1"] })).toBe("direct");
+    await tellPatient(d.client, { kind: "booked", patientId: "p-1", ...future, appointmentIds: ["a1"] });
+    expect(sent.length).toBe(2);
+    expect(d.calls.filter((c) => c.fn === "enqueue_patient_notice").length).toBe(2);
+  });
+
+  it("a lost response once the outbox works: asked once more, never a direct push too", async () => {
+    let n = 0;
+    const d = outboxDb(() => (++n === 2 ? { data: null, error: { message: "fetch failed" } } : { data: 7, error: null }));
+    expect(await tellPatient(d.client, { kind: "booked", patientId: "p-1", ...future, appointmentIds: ["a1"] })).toBe(7);
+    // The second call's response is lost: retried (the server returns the same notice).
+    expect(await tellPatient(d.client, { kind: "booked", patientId: "p-1", ...future, appointmentIds: ["a1"] })).toBe(7);
+    expect(sent).toEqual([]);
+    expect(d.calls.filter((c) => c.fn === "enqueue_patient_notice").length).toBe(3);
+  });
+
+  it("nobody to tell (no account, the past): null, never direct", async () => {
+    expect(await tellPatient(db({ authId: null }).client, { kind: "booked", patientId: "p-1", ...future })).toBeNull();
+    expect(await tellPatient(db().client, { kind: "booked", patientId: "p-1", practiceId: "doc-1", date: "2026-09-28", startTime: "09:00:00" })).toBeNull();
+  });
+
+  it("an older database (no function): direct, and not asked again", async () => {
+    const d = outboxDb(() => ({ data: null, error: { code: "PGRST202", message: "Could not find the function" } }));
+    await tellPatient(d.client, { kind: "booked", patientId: "p-1", ...future, appointmentIds: ["a1"] });
+    await tellPatient(d.client, { kind: "booked", patientId: "p-1", ...future, appointmentIds: ["a1"] });
+    expect(sent.length).toBe(2);
+    expect(d.calls.filter((c) => c.fn === "enqueue_patient_notice").length).toBe(1);
   });
 });

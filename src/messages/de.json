@@ -225,7 +225,13 @@
     "pixQrTitle": "Pix QR code",
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Kopieren",
-    "durationMinutes": "{n} Min."
+    "durationMinutes": "{n} Min.",
+    "undoBooked": "Termin gebucht",
+    "undoMoved": "Termin verschoben",
+    "undoCancelled": "Termin abgesagt",
+    "undoAction": "Rückgängig ({s} s)",
+    "undoDone": "Rückgängig gemacht.",
+    "undoFailed": "Rückgängig machen nicht möglich. Öffnen Sie den Eintrag, um ihn anzupassen."
   },
   "payments": {
     "thisWeek": "Diese Woche",

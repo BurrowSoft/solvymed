@@ -225,7 +225,13 @@
     "pixQrTitle": "Pix QR code",
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "نسخ",
-    "durationMinutes": "{n} دقيقة"
+    "durationMinutes": "{n} دقيقة",
+    "undoBooked": "تم حجز الموعد",
+    "undoMoved": "تم نقل الموعد",
+    "undoCancelled": "تم إلغاء الموعد",
+    "undoAction": "تراجع ({s} ث)",
+    "undoDone": "تم التراجع.",
+    "undoFailed": "تعذّر التراجع. افتح العنصر لتعديله."
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",

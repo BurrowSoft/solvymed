@@ -225,7 +225,13 @@
     "pixQrTitle": "Pix QR code",
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "コピー",
-    "durationMinutes": "{n}分"
+    "durationMinutes": "{n}分",
+    "undoBooked": "予約しました",
+    "undoMoved": "予約を変更しました",
+    "undoCancelled": "予約をキャンセルしました",
+    "undoAction": "取り消す（{s} 秒）",
+    "undoDone": "取り消しました。",
+    "undoFailed": "元に戻せませんでした。項目を開いて調整してください。"
   },
   "payments": {
     "thisWeek": "今週",
