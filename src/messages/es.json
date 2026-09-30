@@ -658,7 +658,8 @@
     "customTime": "Hora personalizada",
     "orCustomTime": "O elige una hora",
     "professionalFallback": "Profesional",
-    "errorArchived": "Esta clínica no está aceptando nuevas reservas para tu cuenta. Ponte en contacto con la clínica."
+    "errorArchived": "Esta clínica no está aceptando nuevas reservas para tu cuenta. Ponte en contacto con la clínica.",
+    "practiceInactive": "Esta clínica no está aceptando reservas en línea en este momento."
   },
   "auth": {
     "passwordTooShort": "La contraseña debe tener al menos {min} caracteres.",

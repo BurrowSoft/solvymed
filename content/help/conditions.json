@@ -86,5 +86,9 @@
   "notice-queue-on": {
     "met": false,
     "what": "The patient notice queue is actually running: patient_notify_secret is set in Vault (after the 1.4.0 cut deploys privacy §6e via notice-outbox-live) and one queued notice was verified sent (38 runbook). Gates every \"Desfazer\" / \"Undo\" claim for manual book / move / cancel (01-agenda, the App Map undo rules), since the undo is only possible while a notice is held. Flip only after that check; if the secret is ever removed, flip it back."
+  },
+  "booking-check-live": {
+    "met": false,
+    "what": "Migration 141 (get_practice_accepts_bookings, mobile #196) is applied on production: the website's booking page then tells a patient that a practice with an inactive subscription \"isn't taking online bookings right now\" instead of showing times (before 141 it books as before). Gates the Help K1 / App Map lines about it; the app's line also waits on app-1.4.0. 142 (create_public_booking refusing 'practice_inactive') is the server guard, gated separately by 38."
   }
 }

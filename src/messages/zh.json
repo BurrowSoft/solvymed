@@ -658,7 +658,8 @@
     "customTime": "自定义时间",
     "orCustomTime": "或选择自定义时间",
     "professionalFallback": "专业人员",
-    "errorArchived": "该诊所目前不接受您账户的新预约。请联系诊所。"
+    "errorArchived": "该诊所目前不接受您账户的新预约。请联系诊所。",
+    "practiceInactive": "该诊所目前不接受在线预约。"
   },
   "auth": {
     "passwordTooShort": "密码至少需要{min}个字符。",

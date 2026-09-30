@@ -658,7 +658,8 @@
     "customTime": "Orario personalizzato",
     "orCustomTime": "O scegli un orario",
     "professionalFallback": "Professionista",
-    "errorArchived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio."
+    "errorArchived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio.",
+    "practiceInactive": "Questo studio non accetta prenotazioni online al momento."
   },
   "auth": {
     "passwordTooShort": "La password deve essere lunga almeno {min} caratteri.",

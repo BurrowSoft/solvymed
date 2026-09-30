@@ -658,7 +658,8 @@
     "customTime": "Thời gian tùy chỉnh",
     "orCustomTime": "Hoặc chọn giờ khác",
     "professionalFallback": "Chuyên gia",
-    "errorArchived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám."
+    "errorArchived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám.",
+    "practiceInactive": "Phòng khám này hiện không nhận đặt lịch trực tuyến."
   },
   "auth": {
     "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
