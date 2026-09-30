@@ -246,7 +246,7 @@
     "revert": "撤销",
     "confirm": "确认",
     "cancel": "取消",
-    "amountPlaceholder": "金额",
+    "amountPlaceholder": "金额 ({symbol})",
     "revertConfirm": "将此付款恢复为待付款状态？",
     "errorInvalidAmount": "请输入有效金额。",
     "errorGeneric": "出现问题，请重试。"
@@ -510,7 +510,7 @@
     "procedureName": "名称",
     "procedureNamePlaceholder": "初诊、复诊…",
     "durationLabel": "时长（分钟）",
-    "priceLabel": "价格（R$）",
+    "priceLabel": "价格（{symbol}）",
     "paymentTypeLabel": "支付方式",
     "private": "自费",
     "insurance": "保险",
@@ -565,7 +565,7 @@
     "manageSubscription": "管理订阅",
     "subscriptionSubscribe": "查看套餐",
     "practiceCountryOther": "其他国家",
-    "fullNameHint": "如需要，可加上头衔（Dr.、Prof.），会显示在问候语中。",
+    "fullNameHint": "如需要，可加上头衔（{titles}），会显示在问候语中。",
     "cnpjInvalid": "CNPJ 无效,请检查号码。",
     "appearanceTitle": "外观",
     "appearanceHint": "此浏览器中的面板主题。打印内容和电子邮件始终为浅色。",
@@ -573,7 +573,14 @@
     "themeLight": "浅色",
     "themeDark": "深色",
     "pixKey": "Pix 密钥",
-    "pixKeyPlaceholder": "CPF、CNPJ、电子邮件、电话或随机密钥"
+    "pixKeyPlaceholder": "CPF、CNPJ、电子邮件、电话或随机密钥",
+    "fullNameTitles": "Dr.、Prof.",
+    "registrationPlaceholderTH": "例如：ว.12345（医学委员会执照）",
+    "registrationPlaceholderOther": "例如：你的执业证号",
+    "clinicNamePlaceholderTH": "素坤逸诊所",
+    "clinicNamePlaceholderOther": "康健诊所",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "主街123号"
   },
   "clinics": {
     "title": "我的诊所",

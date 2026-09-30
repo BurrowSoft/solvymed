@@ -200,6 +200,7 @@ export default async function SettingsPage({
           fullName={prof.full_name}
           specialty={prof.specialty ?? undefined}
           registration={(prof as { professional_registration?: string | null }).professional_registration ?? undefined}
+          country={practiceCountry}
         />
 
         {!locked && <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} />}

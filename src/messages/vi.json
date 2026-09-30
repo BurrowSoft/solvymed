@@ -246,7 +246,7 @@
     "revert": "Hoàn nguyên",
     "confirm": "Xác nhận",
     "cancel": "Hủy",
-    "amountPlaceholder": "Số tiền",
+    "amountPlaceholder": "Số tiền ({symbol})",
     "revertConfirm": "Hoàn nguyên khoản thanh toán này về chờ xử lý?",
     "errorInvalidAmount": "Vui lòng nhập số tiền hợp lệ.",
     "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
@@ -510,7 +510,7 @@
     "procedureName": "Tên",
     "procedureNamePlaceholder": "Khám lần đầu, Tái khám…",
     "durationLabel": "Thời gian (phút)",
-    "priceLabel": "Giá (R$)",
+    "priceLabel": "Giá ({symbol})",
     "paymentTypeLabel": "Loại thanh toán",
     "private": "Tư nhân",
     "insurance": "Bảo hiểm",
@@ -565,7 +565,7 @@
     "manageSubscription": "Quản lý gói đăng ký",
     "subscriptionSubscribe": "Xem gói",
     "practiceCountryOther": "Quốc gia khác",
-    "fullNameHint": "Bạn có thể thêm danh xưng (Dr., Prof.); danh xưng sẽ hiện trong lời chào.",
+    "fullNameHint": "Bạn có thể thêm danh xưng ({titles}); danh xưng sẽ hiện trong lời chào.",
     "cnpjInvalid": "CNPJ không hợp lệ. Hãy kiểm tra lại số.",
     "appearanceTitle": "Giao diện",
     "appearanceHint": "Chủ đề bảng điều khiển trên trình duyệt này. Bản in và email luôn ở chế độ sáng.",
@@ -573,7 +573,14 @@
     "themeLight": "Sáng",
     "themeDark": "Tối",
     "pixKey": "Khóa Pix",
-    "pixKeyPlaceholder": "CPF, CNPJ, email, số điện thoại hoặc khóa ngẫu nhiên"
+    "pixKeyPlaceholder": "CPF, CNPJ, email, số điện thoại hoặc khóa ngẫu nhiên",
+    "fullNameTitles": "Dr., Prof.",
+    "registrationPlaceholderTH": "vd: ว.12345 (giấy phép Hội đồng Y khoa)",
+    "registrationPlaceholderOther": "vd: số giấy phép hành nghề",
+    "clinicNamePlaceholderTH": "Phòng khám Sukhumvit",
+    "clinicNamePlaceholderOther": "Phòng khám An Khang",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "123 Đường Chính"
   },
   "clinics": {
     "title": "Phòng khám của tôi",
