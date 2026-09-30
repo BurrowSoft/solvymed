@@ -1044,7 +1044,8 @@
     "pushClosedTitle": "Studio chiuso",
     "pushClosedBody": "Il tuo studio ha chiuso il suo account SolvyMed. I tuoi appuntamenti futuri sono stati annullati. Per una copia della tua cartella, scrivi a support@solvymed.com.",
     "pushCancelledTitle": "Appuntamento annullato",
-    "pushCancelledBody": "Il tuo appuntamento del {date} alle {time} è stato annullato dallo studio."
+    "pushCancelledBody": "Il tuo appuntamento del {date} alle {time} è stato annullato dallo studio.",
+    "closedNotice": "Il tuo account è stato chiuso."
   },
   "setup": {
     "title": "Configura il tuo studio",

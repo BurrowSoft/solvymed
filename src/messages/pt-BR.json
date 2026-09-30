@@ -1044,7 +1044,8 @@
     "pushClosedTitle": "Clínica encerrada",
     "pushClosedBody": "Sua clínica encerrou a conta no SolvyMed. Suas consultas futuras foram canceladas. Para obter uma cópia do seu prontuário, fale com support@solvymed.com.",
     "pushCancelledTitle": "Consulta cancelada",
-    "pushCancelledBody": "Sua consulta de {date} às {time} foi cancelada pela clínica."
+    "pushCancelledBody": "Sua consulta de {date} às {time} foi cancelada pela clínica.",
+    "closedNotice": "Sua conta foi encerrada."
   },
   "setup": {
     "title": "Configure sua clínica",

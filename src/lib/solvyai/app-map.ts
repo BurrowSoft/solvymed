@@ -363,7 +363,7 @@ export const NEVER: { what: string; help: string }[] = [
   { what: "Exams and files (photos or PDFs; the doctor adds them in the patient's Exams or Files tab, in the app or on the website; within 24 h of upload a file can be deleted, after that only hidden with a reason).", help: "P7" },
   { what: "Exporting a patient's history (on the website, \"PDF do histórico\" / \"History PDF\" at the top of the patient opens a print view: \"Imprimir / Salvar PDF\").", help: "P8" },
   { what: "Deleting or archiving a patient.", help: "P3" },
-  { what: "Closing the account.", help: "K4" },
+  { what: "Closing the account (on the website the user is then signed out and lands on the home page with \"Sua conta foi encerrada.\" / \"Your account has been closed.\").", help: "K4" },
   { what: "Changing the password (Settings → Change password, on the app and the website; the other devices are signed out).", help: "K2" },
   { what: "Payment and Pix / PromptPay settings.", help: "G3" },
   { what: "Receipts (on the website: Payments → a received appointment → \"Recibo\" / \"Receipt\", a print view, for the doctor and the secretary; a Thai practice's numbered receipts are issued in the app).", help: "G5" },

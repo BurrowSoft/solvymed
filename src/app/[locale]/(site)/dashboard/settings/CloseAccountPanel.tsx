@@ -52,9 +52,11 @@ export function CloseAccountPanel({ preview, locale }: { preview: ClosurePreview
       setPending(false);
       return;
     }
-    // The account is gone; drop the local session and leave the dashboard.
-    await createClient().auth.signOut().catch(() => {});
-    window.location.href = locale === "en" ? "/" : `/${locale}`;
+    // The account is gone; the response already cleared the auth cookies.
+    // Drop the local session too (scope "local": no call to Auth, which can
+    // refuse for a closed user) and land on the home page with the notice.
+    await createClient().auth.signOut({ scope: "local" }).catch(() => {});
+    window.location.href = `${locale === "en" ? "/" : `/${locale}`}?closed=1`;
   }
 
   const errorText =

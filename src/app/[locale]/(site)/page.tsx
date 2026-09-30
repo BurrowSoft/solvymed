@@ -59,10 +59,14 @@ const FEATURE_KEYS: FeatureKey[] = ["scheduling", "patients", "records", "prescr
 
 export default async function HomePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams?: Promise<{ closed?: string }>;
 }) {
   const { locale } = await params;
+  // Right after closing or deleting the account (Settings): a short note.
+  const closed = (await searchParams)?.closed === "1";
   const prefix = locale === "en" ? "" : `/${locale}`;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -111,6 +115,12 @@ export default async function HomePage({
   return (
     <>
       <SiteHeader />
+
+      {closed && (
+        <div role="status" className="bg-slate-100 px-4 py-3 text-center text-sm font-medium text-slate-800">
+          {t("accountClose.closedNotice")}
+        </div>
+      )}
 
       <main>
         {/* Hero */}

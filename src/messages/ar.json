@@ -1044,7 +1044,8 @@
     "pushClosedTitle": "أُغلقت العيادة",
     "pushClosedBody": "أغلقت عيادتك حسابها في SolvyMed. أُلغيت مواعيدك القادمة. للحصول على نسخة من سجلك، راسل support@solvymed.com.",
     "pushCancelledTitle": "أُلغي الموعد",
-    "pushCancelledBody": "ألغت العيادة موعدك في {date} الساعة {time}."
+    "pushCancelledBody": "ألغت العيادة موعدك في {date} الساعة {time}.",
+    "closedNotice": "تم إغلاق حسابك."
   },
   "setup": {
     "title": "جهّز عيادتك",
