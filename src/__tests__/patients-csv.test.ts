@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { CSV_COLUMNS, csvCell, csvSeparator, patientsCsv, type CsvLabels } from "@/lib/patientsCsv";
+import { CSV_COLUMNS, csvCell, csvColumns, csvSeparator, patientsCsv, type CsvLabels } from "@/lib/patientsCsv";
 
 // The patient CSV (Help P10): the app's rules, and fail closed on the
 // access log (UX 36, migration 126).
@@ -32,17 +32,31 @@ describe("patientsCsv", () => {
     expect(th.slice(1).split("\r\n")[0]).toContain('"Thai ID","Passaporte"');
     expect(th).toContain('"01/02/2523"');
   });
+
+  it("138: the address columns and the CNS (Brazil only), never Observações", () => {
+    const A = ["CEP", "Rua", "Número", "Complemento", "Bairro", "Cidade", "UF"];
+    const p = { full_name: "Ana", cpf: "1", address_street: "Rua A", address_city: "Santos", address_state: "SP", cns: "700000000000005", notes_admin: "segredo" };
+    const br = patientsCsv([p], { ...L, address: A, cns: "CNS" }, "BR", "pt-BR");
+    const [head, row] = br.slice(1).split("\r\n");
+    expect(head.endsWith('"Arquivado em";"CEP";"Rua";"Número";"Complemento";"Bairro";"Cidade";"UF";"CNS"')).toBe(true);
+    expect(row.endsWith('"";"Rua A";"";"";"";"Santos";"SP";"700000000000005"')).toBe(true);
+    expect(br).not.toContain("segredo");
+    const th = patientsCsv([p], { ...L, address: A, cns: "CNS" }, "TH", "en");
+    expect(th.slice(1).split("\r\n")[0]).not.toContain("CNS");
+    expect(patientsCsv([p], L, "BR", "pt-BR")).not.toContain("Rua A");
+  });
 });
 
 const h = vi.hoisted(() => ({
   met: true,
+  address: false,
   role: "professional",
   patients: [] as Record<string, unknown>[],
   rpc: [] as { fn: string; args: Record<string, unknown> }[],
   logError: null as unknown,
   selects: [] as string[],
 }));
-vi.mock("@/lib/conditions", () => ({ conditionMet: () => h.met }));
+vi.mock("@/lib/conditions", () => ({ conditionMet: (id: string) => (id === "patient-address-live" ? h.address : h.met) }));
 const country = vi.hoisted(() => ({ code: "BR" as string | null }));
 vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => (country.code ? { ok: true, country: country.code } : { ok: false, code: "exception" }) }));
 vi.mock("next-intl/server", () => ({ getTranslations: async () => (k: string) => k }));
@@ -71,12 +85,21 @@ const req = () => new NextRequest("https://www.solvymed.com/api/patients/export?
 const P = (i: number) => ({ id: `p-${i}`, full_name: `Paciente ${i}`, cpf: null });
 
 describe("GET /api/patients/export", () => {
-  beforeEach(() => { h.met = true; h.role = "professional"; h.patients = [P(1), P(2)]; h.rpc = []; h.logError = null; h.selects = []; });
+  beforeEach(() => { h.met = true; h.address = false; h.role = "professional"; h.patients = [P(1), P(2)]; h.rpc = []; h.logError = null; h.selects = []; });
 
   it("reads an explicit column list, never *", async () => {
     expect((await GET(req())).status).toBe(200);
     expect(h.selects).toEqual([CSV_COLUMNS]);
     expect(CSV_COLUMNS).not.toMatch(/\*|import|note/);
+  });
+
+  it("with 138 + 139: the address and CNS columns too, still never the notes", async () => {
+    h.address = true;
+    expect((await GET(req())).status).toBe(200);
+    expect(h.selects[0]).toBe(csvColumns(true));
+    expect(h.selects[0]).toContain("address_postal_code");
+    expect(h.selects[0]).toContain("cns");
+    expect(h.selects[0]).not.toMatch(/\*|notes/);
   });
 
   it("off until migration 126", async () => {

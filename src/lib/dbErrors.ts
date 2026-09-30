@@ -12,7 +12,8 @@ export type KnownDbError =
   | "prescription_not_found"
   | "subscription_active"
   | "invalid_th_id"
-  | "invalid_birth_date";
+  | "invalid_birth_date"
+  | "invalid_cns";
 
 const KNOWN: KnownDbError[] = [
   "patient_archived",
@@ -27,6 +28,8 @@ const KNOWN: KnownDbError[] = [
   "invalid_th_id",
   // A birth date outside 1900..today (116).
   "invalid_birth_date",
+  // A CNS failing its check (138).
+  "invalid_cns",
 ];
 
 // The code when a Postgres/PostgREST error message carries one, else null.

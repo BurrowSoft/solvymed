@@ -1,0 +1,181 @@
+{
+  "source": "generic",
+  "version": 3,
+  "label": "Planilha",
+  "spec": "integrations/generic-spreadsheet.md (our template + header auto-suggestion)",
+  "requires": [
+    "import-address"
+  ],
+  "read": {
+    "encodings": [
+      "utf-8",
+      "windows-1252"
+    ],
+    "delimiters": [
+      ";",
+      ",",
+      "\t"
+    ]
+  },
+  "suggest": {
+    "full_name": [
+      "nome",
+      "nome completo",
+      "paciente",
+      "nome do paciente",
+      "name",
+      "patient",
+      "patient name",
+      "full name",
+      "ชื่อ-นามสกุล",
+      "ชื่อ นามสกุล",
+      "ชื่อผู้ป่วย"
+    ],
+    "cpf": [
+      "cpf",
+      "cpf do paciente",
+      "documento"
+    ],
+    "th_national_id": [
+      "thai id",
+      "national id",
+      "thai national id",
+      "identidade tailandesa",
+      "identidade tailandes",
+      "no de identidade tailandes",
+      "เลขประจำตัวประชาชน",
+      "บัตรประชาชน"
+    ],
+    "passport_number": [
+      "passaporte",
+      "passport",
+      "passport number",
+      "หนังสือเดินทาง"
+    ],
+    "birth_date": [
+      "nascimento",
+      "data de nascimento",
+      "dt nasc",
+      "data nasc",
+      "birth date",
+      "dob",
+      "birthday",
+      "วันเกิด"
+    ],
+    "sex": [
+      "sexo",
+      "genero",
+      "gender",
+      "sex",
+      "เพศ"
+    ],
+    "phone": [
+      "celular",
+      "telefone",
+      "fone",
+      "whatsapp",
+      "telefone1",
+      "mobile phone",
+      "phone",
+      "โทรศัพท์",
+      "เบอร์โทร"
+    ],
+    "email": [
+      "email",
+      "e mail",
+      "correio eletronico",
+      "อีเมล"
+    ],
+    "rg": [
+      "rg",
+      "identidade"
+    ],
+    "profession": [
+      "profissao",
+      "ocupacao",
+      "occupation",
+      "อาชีพ"
+    ],
+    "tags": [
+      "etiquetas",
+      "tags",
+      "grupos",
+      "แท็ก",
+      "ป้ายกำกับ"
+    ],
+    "address_postal_code": [
+      "cep",
+      "zip",
+      "zip code",
+      "codigo postal",
+      "postal code",
+      "postcode",
+      "รหัสไปรษณีย์"
+    ],
+    "address_street": [
+      "endereco",
+      "address",
+      "logradouro",
+      "ที่อยู่",
+      "rua",
+      "street",
+      "ถนน",
+      "ถนน ซอย"
+    ],
+    "address_number": [
+      "numero",
+      "number",
+      "house number",
+      "บ้านเลขที่",
+      "เลขที่"
+    ],
+    "address_complement": [
+      "complemento",
+      "complement",
+      "apartment",
+      "suite",
+      "อาคาร ชั้น ห้อง"
+    ],
+    "address_neighborhood": [
+      "bairro",
+      "neighborhood",
+      "neighbourhood",
+      "distrito",
+      "district",
+      "แขวง ตำบล",
+      "แขวง",
+      "ตำบล"
+    ],
+    "address_city": [
+      "cidade",
+      "municipio",
+      "city",
+      "เขต อำเภอ",
+      "อำเภอ",
+      "เขต"
+    ],
+    "address_state": [
+      "uf",
+      "estado",
+      "state",
+      "provincia",
+      "province",
+      "จังหวัด"
+    ],
+    "cns": [
+      "cns",
+      "cartao sus",
+      "cartao nacional de saude"
+    ]
+  },
+  "extra_suggest": {
+    "Observações": [
+      "observacoes",
+      "obs",
+      "notas",
+      "observation",
+      "notes",
+      "หมายเหตุ"
+    ]
+  }
+}

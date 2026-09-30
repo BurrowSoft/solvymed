@@ -16,6 +16,7 @@ import { CloseAccountPanel, type ClosurePreview } from "./CloseAccountPanel";
 import { ChangePasswordPanel } from "./ChangePasswordPanel";
 import { ExportPatientsCard } from "./ExportPatientsCard";
 import { conditionMet } from "@/lib/conditions";
+import { AppearanceCard } from "./AppearanceCard";
 import { SubscriptionPanel } from "./SubscriptionPanel";
 import { planSummary, type EffectiveSub } from "@/lib/subscription";
 
@@ -55,6 +56,9 @@ export default async function SettingsPage({
           <h1 className="text-2xl font-extrabold text-slate-900">{t("pageTitle")}</h1>
         </div>
         <SecretarySettings supabase={supabase} doctorId={userRoleData.invited_by_professional_id as string} locale={locale} />
+        <div className="mt-6">
+          <AppearanceCard />
+        </div>
         <div className="mt-6">
           <TourSettingsCard />
         </div>
@@ -170,6 +174,7 @@ export default async function SettingsPage({
       <div className="space-y-6">
         {offerShowSetup && <ShowSetupRow />}
 
+        <AppearanceCard />
         <TourSettingsCard />
         {liveFeatures.news && <NewsSettingsCard />}
         {liveFeatures.solvyAi && <SolvyAiSettingsCard prefix={locale === "en" ? "" : `/${locale}`} />}

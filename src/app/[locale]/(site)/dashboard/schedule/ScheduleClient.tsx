@@ -5,7 +5,8 @@ import { useState, useTransition, useRef, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDateLabel } from "@/lib/dateLabels";
 import { DateInput } from "@/components/DateInput";
-import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime, moveAppointment, searchPatientsForPicker } from "./actions";
+import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime, moveAppointment, searchPatientsForPicker, undoScheduleChange } from "./actions";
+import { UNDO_EVENT, offerUndo, type UndoToken } from "@/lib/scheduleUndo";
 import { generatePixString, pixQrDataUrl } from "@/lib/pix";
 import { generatePromptPayString } from "@/lib/promptpay";
 import { toLocalDateString } from "@/lib/slots";
@@ -76,6 +77,59 @@ function Select({ className = "", children, ...props }: React.SelectHTMLAttribut
     <select className={`w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 bg-white ${className}`} {...props}>
       {children}
     </select>
+  );
+}
+
+// Desfazer (UX 2026-09-30, the app's Agenda toast): 10 s after a manual book,
+// move or cancel, unless a push already went out. One run per offer; the
+// day reloads after it either way.
+export function ScheduleUndoToast() {
+  const t = useTranslations("schedule");
+  const router = useRouter();
+  const [token, setToken] = useState<UndoToken | null>(null);
+  const [left, setLeft] = useState(0);
+  const [phase, setPhase] = useState<"offer" | "undoing" | "done" | "failed">("offer");
+  const claimed = useRef<UndoToken | null>(null);
+  useEffect(() => {
+    const on = (e: Event) => { setToken((e as CustomEvent<UndoToken>).detail); setPhase("offer"); setLeft(10); };
+    window.addEventListener(UNDO_EVENT, on);
+    return () => window.removeEventListener(UNDO_EVENT, on);
+  }, []);
+  useEffect(() => {
+    if (!token || phase === "undoing") return;
+    if (left <= 0) { setToken(null); return; }
+    const id = setTimeout(() => setLeft((n) => n - 1), 1000);
+    return () => clearTimeout(id);
+  }, [token, left, phase]);
+
+  async function undo() {
+    const x = token;
+    // Claimed synchronously: a second tap runs nothing.
+    if (!x || phase !== "offer" || claimed.current === x) return;
+    claimed.current = x;
+    setPhase("undoing");
+    let ok = false;
+    try { ok = (await undoScheduleChange(x)).ok; } catch { ok = false; }
+    setPhase(ok ? "done" : "failed");
+    setLeft(ok ? 4 : 8);
+    router.refresh();
+  }
+
+  if (!token) return null;
+  const what = token.kind === "booked" ? t("undoBooked") : token.kind === "moved" ? t("undoMoved") : t("undoCancelled");
+  return (
+    <div role="status" className="fixed bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-xl bg-slate-900 px-4 py-3 text-sm text-white shadow-lg">
+      {phase === "done" ? <span>{t("undoDone")}</span>
+        : phase === "failed" ? <span>{t("undoFailed")}</span>
+          : (
+            <>
+              <span>{what}</span>
+              <button type="button" onClick={undo} disabled={phase === "undoing"} className="font-bold text-teal-300 hover:text-teal-200 disabled:opacity-60">
+                {phase === "undoing" ? "…" : t("undoAction", { s: left })}
+              </button>
+            </>
+          )}
+    </div>
   );
 }
 
@@ -173,6 +227,8 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
   const [status, setStatus] = useState(current);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
+  // The server's value after a refresh (a Desfazer puts the old one back).
+  useEffect(() => { setStatus(current); }, [current]);
 
   // A tentative/proposal request must go through the booking request card
   // (confirm/reject/propose), which links the patient and notifies them —
@@ -196,7 +252,9 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
       if (result?.error) {
         setStatus(previous);
         setError(actionErrorMessage(t, result.code));
+        return;
       }
+      if ("undo" in result) offerUndo(result.undo);
     });
   }
 
@@ -251,6 +309,7 @@ export function RescheduleButton({ id, date, start }: { id: string; date: string
       }
       if (result?.error) { setError(result.code === "not_movable" ? t("notMovableError") : actionErrorMessage(t, result.code, tDate)); return; }
       setOpen(false);
+      if (result && "undo" in result) offerUndo(result.undo);
     });
   }
 
@@ -437,6 +496,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
       if (result?.code === "invalid_occurrences") { setError(t("occurrencesRange", { min: MIN_OCCURRENCES, max: MAX_OCCURRENCES })); return; }
       if (result?.error) { setError(actionErrorMessage(t, result.code, tDate)); return; }
       setOpen(false);
+      if (result && "undo" in result) offerUndo(result.undo);
     });
   }
 

@@ -3,7 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { conditionMet } from "@/lib/conditions";
-import { CSV_COLUMNS, patientsCsv, type CsvPatient } from "@/lib/patientsCsv";
+import { csvColumns, patientsCsv, type CsvPatient } from "@/lib/patientsCsv";
+import { patientIdKind } from "@/lib/patientIds";
 import { routing } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
 
@@ -33,16 +34,18 @@ export async function GET(request: NextRequest) {
   if (!lookup.ok) return NextResponse.json({ code: "country_failed" }, { status: 503 });
   const country = lookup.country;
 
+  // The address and CNS columns only once 138 + 139 are applied.
+  const address = conditionMet("patient-address-live");
   const patients: (CsvPatient & { id: string })[] = [];
   for (let from = 0; ; from += PAGE) {
     const { data, error } = await supabase
       .from("patients")
-      .select(CSV_COLUMNS)
+      .select(csvColumns(address))
       .eq("professional_id", user.id)
       .order("full_name")
       .range(from, from + PAGE - 1);
     if (error) return NextResponse.json({ code: "generic" }, { status: 500 });
-    patients.push(...((data ?? []) as (CsvPatient & { id: string })[]));
+    patients.push(...((data ?? []) as unknown as (CsvPatient & { id: string })[]));
     if (!data || data.length < PAGE) break;
   }
 
@@ -54,15 +57,21 @@ export async function GET(request: NextRequest) {
     if (error) return NextResponse.json({ code: "access_log_failed" }, { status: 503 });
   }
 
-  const [t, tIds, tSet] = await Promise.all([
+  const [t, tIds, tSet, tAddr] = await Promise.all([
     getTranslations({ locale, namespace: "patientDetail" }),
     getTranslations({ locale, namespace: "patientIds" }),
     getTranslations({ locale, namespace: "settings" }),
+    getTranslations({ locale, namespace: "patientAddress" }),
   ]);
+  const kind = patientIdKind(country);
   const csv = patientsCsv(patients, {
     fullName: t("fullName"), cpf: tIds("cpf"), thaiId: tIds("thaiId"), passport: country === "TH" ? tIds("passport") : tIds("passportOrId"),
     sex: t("sex"), birthDate: t("dateOfBirth"), phone: t("phone"), email: t("email"), profession: t("profession"),
     tags: tSet("csvTags"), archivedOn: tSet("csvArchivedOn"), male: t("male"), female: t("female"), other: t("other"),
+    ...(address ? {
+      address: ["postal", "street", "number", "complement", "neighborhood", "city", "state"].map((part) => tAddr(`${kind}_${part}`)),
+      cns: tAddr("cns"),
+    } : {}),
   }, country, locale);
 
   return new NextResponse(csv, {

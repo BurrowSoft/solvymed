@@ -11,8 +11,8 @@ type Middleware = (req: NextRequest) => Promise<Response>;
 let middleware: Middleware;
 
 beforeAll(async () => {
-  // Production today: Thai hidden (the flag is read when the module loads).
-  vi.stubEnv("NEXT_PUBLIC_THAI_ENABLED", "");
+  // The off switch: Thai hidden (the flag is read when the module loads).
+  vi.stubEnv("NEXT_PUBLIC_THAI_ENABLED", "0");
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://localhost:54321");
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "test");
   vi.resetModules();

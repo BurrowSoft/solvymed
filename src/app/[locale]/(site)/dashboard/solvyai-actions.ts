@@ -213,6 +213,20 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
   }
 }
 
+// A patient SolvyAI just added may be deleted by Desfazer only while nothing
+// uses it: no appointment at all (one booked meanwhile, in another tab or by
+// the next card, would be orphaned: appointments.patient_id is ON DELETE SET
+// NULL) and no clinical history (094 refuses that anyway). Any failed check
+// counts as in use (the app's rule, mobile #141).
+async function patientUnused(id: string): Promise<boolean> {
+  const supabase = await createClient();
+  const { count, error } = await supabase.from("appointments").select("id", { count: "exact", head: true }).eq("patient_id", id);
+  if (error || count !== 0) return false;
+  const { data, error: previewError } = await supabase.rpc("get_patient_archive_preview", { p_patient_id: id });
+  const row = (Array.isArray(data) ? data[0] : data) as { has_clinical_history?: boolean } | null;
+  return !previewError && !!row && row.has_clinical_history === false;
+}
+
 // Desfazer, within 10 s: the inverse through the same paths.
 export async function undoSolvyAiAction(action: CardAction, id: string, prev?: string): Promise<SolvyAiSaveResult> {
   if (!UUIDISH.test(str(id))) return { ok: false, code: "generic" };
@@ -245,6 +259,7 @@ export async function undoSolvyAiAction(action: CardAction, id: string, prev?: s
       return "success" in r && r.success ? { ok: true, id: r.id } : mapError(r);
     }
     case "add_patient": {
+      if (!(await patientUnused(id))) return { ok: false, code: "generic" };
       const r = await deletePatient(id);
       return "success" in r && r.success ? { ok: true, id } : { ok: false, code: "generic" };
     }

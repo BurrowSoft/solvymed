@@ -4,6 +4,7 @@ import { patientPushTargets } from "./pushRecipient";
 import { formatShortDate } from "./dateLabels";
 import { pushText } from "./pushText";
 import { clinicDate, clinicTime, getClinicTimeZone } from "./clinicTime";
+import { enqueuePatientNotice } from "./patientNotice";
 
 // Telling a patient what the clinic did to their appointment from the
 // website (UX 2026-09-29, 08's texts; the app does the same, mobile #111):
@@ -11,6 +12,10 @@ import { clinicDate, clinicTime, getClinicTimeZone } from "./clinicTime";
 // app account hears it, in their language, the clinic named as patients see
 // it; never for blocked time or anything already past. Best effort: nothing
 // here ever fails the save.
+//
+// With migration 135 live, the notice goes through the outbox instead (sent
+// ~60 s later, so a Desfazer can drop it): the server applies the same rules
+// and texts. Until then, or if the outbox can't take it, it's sent here.
 
 // The name patients see: the practice's profile name, else its first
 // location's (by name), else the doctor's (the app's clinic-name.ts).
@@ -53,11 +58,31 @@ export type ClinicChange = {
   // A booked series: all its dates (UX: only the FUTURE ones are announced,
   // one push naming the first future date and counting the future ones).
   dates?: string[];
+  // The appointment(s) changed, for the outbox (a series: all its ids).
+  appointmentIds?: string[];
 };
 
-export async function tellPatient(db: SupabaseClient, change: ClinicChange): Promise<void> {
+// What the patient was told (the app's Told): a queued notice's id, null
+// when nobody is to be told, or "direct" when a push went out from here (no
+// undo can stop that one).
+export type Told = number | null | "direct";
+
+export async function tellPatient(db: SupabaseClient, change: ClinicChange): Promise<Told> {
+  if (change.appointmentIds?.length) {
+    try {
+      return await enqueuePatientNotice(db, change.kind, change.appointmentIds, change.kind === "moved" ? change.from : undefined);
+    } catch {
+      // Not live (or unreachable): send directly.
+    }
+  }
+  return (await tellPatientDirectly(db, change)) ? "direct" : null;
+}
+
+// true once a push was attempted (a failed send may still have gone out).
+async function tellPatientDirectly(db: SupabaseClient, change: ClinicChange): Promise<boolean> {
+  let sending = false;
   try {
-    if (change.status === "blocked") return;
+    if (change.status === "blocked") return false;
     // Never for the past, by the clinic's clock.
     const tz = await getClinicTimeZone(db, { professionalId: change.practiceId, isSecretary: change.isSecretary === true });
     const now = new Date();
@@ -65,7 +90,7 @@ export async function tellPatient(db: SupabaseClient, change: ClinicChange): Pro
     const today = clinicDate(now, tz);
     const nowTime = clinicTime(now, tz);
     const future = (change.dates ?? [change.date]).filter((d) => d > today || (d === today && start > nowTime)).sort();
-    if (!future.length) return;
+    if (!future.length) return false;
     const date = future[0];
     const count = future.length;
 
@@ -74,10 +99,11 @@ export async function tellPatient(db: SupabaseClient, change: ClinicChange): Pro
       const { data } = await db.rpc("get_patient_auth_id", { p_patient_id: change.patientId });
       account = (data as string | null) ?? null;
     }
-    if (!account) return;
+    if (!account) return false;
     const targets = await patientPushTargets(db, account, change.practiceId);
-    if (!targets.length) return;
+    if (!targets.length) return false;
     const clinic = await clinicName(db, change.practiceId);
+    sending = true;
     // Each device in its reader's language, the date in its format.
     for (const { locale, tokens } of targets) {
       const kind = change.kind === "booked" ? (count > 1 ? "apptBookedSeriesByClinic" : "apptBookedByClinic")
@@ -88,7 +114,9 @@ export async function tellPatient(db: SupabaseClient, change: ClinicChange): Pro
       });
       await sendExpoPush(tokens, title, body);
     }
+    return true;
   } catch {
     // Best effort.
+    return sending;
   }
 }

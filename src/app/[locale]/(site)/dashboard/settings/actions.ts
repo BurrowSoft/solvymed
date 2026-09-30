@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole, getEffectiveProfId } from "@/lib/effectiveProfId";
 import { normalizePromptPayId } from "@/lib/promptpay";
 import { isValidThaiId } from "@/lib/patientIds";
+import { formatCnpj, isValidCnpj } from "@/lib/cnpj";
 import { parseMoney } from "@/lib/money";
 
 export async function updateProfile(formData: FormData) {
@@ -55,11 +56,24 @@ export async function updateClinic(formData: FormData) {
     taxId = { clinic_tax_id: digits || null };
   }
 
+  // Only Brazilian practices have the CNPJ field; a form without it leaves
+  // the stored value untouched. Checked (the app's rule, alphanumeric CNPJ
+  // included) and saved formatted only when it changed from what's stored,
+  // so an old bad value never blocks other edits (UX, as the app).
+  let cnpj: { clinic_cnpj?: string | null } = {};
+  if (formData.has("clinic_cnpj")) {
+    const raw = ((formData.get("clinic_cnpj") as string) ?? "").trim();
+    const { data: current } = await supabase.from("professionals").select("clinic_cnpj").eq("id", user.id).maybeSingle();
+    const stored = ((current as { clinic_cnpj?: string | null } | null)?.clinic_cnpj ?? "").trim();
+    if (formatCnpj(raw) !== formatCnpj(stored)) {
+      if (raw && !isValidCnpj(raw)) return { error: "invalid_cnpj" };
+      cnpj = { clinic_cnpj: raw ? formatCnpj(raw) : null };
+    }
+  }
+
   const { error } = await supabase.from("professionals").update({
     clinic_name: (formData.get("clinic_name") as string)?.trim() || null,
-    // Only Brazilian practices have the CNPJ field; a form without it
-    // leaves the stored value untouched.
-    ...(formData.has("clinic_cnpj") ? { clinic_cnpj: (formData.get("clinic_cnpj") as string)?.trim() || null } : {}),
+    ...cnpj,
     clinic_phone: (formData.get("clinic_phone") as string)?.trim() || null,
     clinic_website: (formData.get("clinic_website") as string)?.trim() || null,
     clinic_address: (formData.get("clinic_address") as string)?.trim() || null,

@@ -385,8 +385,8 @@
           ]
         },
         "web": {
-          "pt": "Em **Pacientes**, clique em **Novo Paciente**, preencha os dados e clique em **Salvar Paciente**. Os mesmos avisos de CPF repetido e de paciente parecido aparecem no site.",
-          "en": "In **Patients**, click **New Patient**, fill in the details and click **Save Patient**. The same duplicate-CPF and similar-patient warnings appear on the website."
+          "pt": "Em **Pacientes**, clique em **Novo Paciente**, preencha os dados e clique em **Salvar Paciente**. Os mesmos avisos de CPF repetido e de paciente parecido aparecem no site. Em **Endereço** (fechado enquanto vazio) ficam CEP, rua, número, complemento, bairro, cidade e UF (numa clínica fora do Brasil, os campos do país: na Tailândia, บ้านเลขที่, ซอย, ตำบล, อำเภอ, จังหวัด). Clínicas no Brasil têm também o **CNS** (15 dígitos, no cartão do SUS). **Observações** é para informações administrativas: não escreva dados clínicos ali, use o prontuário. A secretária vê e edita esses campos. O endereço aparece numa linha na página do paciente (com **Editar**) e na receita impressa, abaixo do nome.",
+          "en": "In **Patients**, click **New Patient**, fill in the details and click **Save Patient**. The same duplicate-CPF and similar-patient warnings appear on the website. **Address** (collapsed while empty) has the postal code, street, number, complement, neighbourhood, city and state (in a clinic outside Brazil, that country's fields: in Thailand, house number, soi, subdistrict, district, province). Clinics in Brazil also have the **CNS** (15 digits, on the SUS card). **Notes** is for administrative information: don't write clinical details there, use the medical record. The secretary sees and edits these fields. The address shows on one line on the patient's page (with **Edit**) and on the printed prescription, under the name."
         },
         "webUnavailable": false,
         "open": "new-patient",
@@ -461,8 +461,8 @@
           ]
         },
         "web": {
-          "pt": "Abra o paciente e, na aba **Informações**, clique em **Arquivar cadastro** e confirme. Para ver arquivados: em **Pacientes**, clique em **Arquivados**; abra o paciente e clique em **Restaurar**.",
-          "en": "Open the patient and, on the **Info** tab, click **Archive patient** and confirm. To see archived patients: in **Patients**, click **Archived**; open the patient and click **Restore**."
+          "pt": "Abra o paciente e, na aba **Informações**, clique em **Arquivar cadastro** e confirme. Para ver arquivados: em **Pacientes**, clique em **Arquivados**; abra o paciente e clique em **Restaurar**. **Excluir cadastro** só aparece para pacientes sem prontuário, receita, arquivo e sem nenhuma consulta; os demais só podem ser arquivados.",
+          "en": "Open the patient and, on the **Info** tab, click **Archive patient** and confirm. To see archived patients: in **Patients**, click **Archived**; open the patient and click **Restore**. **Delete patient** shows only for patients with no record, prescription, file or appointment; the others can only be archived."
         },
         "webUnavailable": false,
         "open": "patients",
@@ -720,6 +720,60 @@
         },
         "webUnavailable": true,
         "open": "settings",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "P12",
+        "category": "pacientes",
+        "title": {
+          "pt": "Mesclar pacientes duplicados",
+          "en": "Merge duplicate patients"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Quando a mesma pessoa tem dois cadastros, você pode mesclá-los: tudo passa para o cadastro que fica."
+            },
+            {
+              "type": "p",
+              "text": "Consultas, prontuários, receitas e arquivos passam para o cadastro que fica (os arquivos podem levar alguns segundos). A mesclagem não pode ser desfeita. A aba **Acessos** registra \"Mesclou com «nome»\"."
+            },
+            {
+              "type": "p",
+              "text": "Se um dos cadastros estava com o agendamento bloqueado, o que fica continua bloqueado. Um cadastro importado como falecido precisa ser restaurado antes de mesclar. O código de convite do cadastro removido deixa de valer. Para auditoria, uma cópia do cadastro removido é guardada enquanto a clínica existir."
+            },
+            {
+              "type": "p",
+              "text": "O **Endereço** é escolhido inteiro, de um cadastro ou do outro; o **CNS** como os outros campos. Em **Observações** diferentes, vem marcado **As duas, juntas** (a do cadastro que fica primeiro); se juntas passarem de 2.000 caracteres, escolha uma (e edite depois, se quiser)."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "When the same person has two records, you can merge them: everything moves to the record that stays."
+            },
+            {
+              "type": "p",
+              "text": "Appointments, records, prescriptions and files move to the record that stays (files can take a few seconds). A merge can't be undone. The **Access** tab records \"Merged with “name”\"."
+            },
+            {
+              "type": "p",
+              "text": "If either record had booking blocked, the one that stays remains blocked. A record imported as deceased must be restored before merging. The removed record's invite code stops working. For auditing, a copy of the removed record is kept while the practice exists."
+            },
+            {
+              "type": "p",
+              "text": "The **Address** is chosen as a whole, from one record or the other; the **CNS** like the other fields. When the **Notes** differ, **Both, joined** is preselected (the kept record's first); if together they exceed 2,000 characters, pick one (and edit it afterwards if you like)."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Abra o paciente e, na aba **Informações**, clique em **Mesclar com outro paciente…** (só o médico). Busque o outro cadastro (os arquivados também aparecem), escolha em **Manter este cadastro** qual fica, marque o valor que quer manter em cada campo diferente e clique em **Mesclar**; se um dos cadastros usa o app, confirme em **São a mesma pessoa**.",
+          "en": "Open the patient and, on the **Info** tab, click **Merge with another patient…** (doctor only). Search for the other record (archived ones are listed too), choose under **Keep this record** which one stays, mark the value to keep in each field that differs and click **Merge**; if either record uses the app, confirm with **Same person**."
+        },
+        "webUnavailable": false,
+        "open": "patients",
         "appOnly": null,
         "appTitle": null
       }
@@ -1219,8 +1273,8 @@
           ]
         },
         "web": {
-          "pt": "O idioma muda no seletor de idioma do menu lateral. O site não tem tema escuro.",
-          "en": "Change the language with the language selector in the side menu. The website has no dark theme."
+          "pt": "O idioma muda no seletor de idioma do menu lateral. O tema fica em **Configurações → Aparência** (Automático, Claro ou Escuro) e vale para este navegador; impressões e e-mails ficam sempre claros.",
+          "en": "Change the language with the language selector in the side menu. The theme is in **Settings → Appearance** (Automatic, Light or Dark) and applies to this browser; prints and emails always stay light."
         },
         "webUnavailable": false,
         "open": "settings",

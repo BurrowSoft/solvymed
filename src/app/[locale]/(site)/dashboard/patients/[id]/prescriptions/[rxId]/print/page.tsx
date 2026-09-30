@@ -7,6 +7,9 @@ import { PRINT_CSS, docDate, toDocTemplate } from "@/lib/prescriptionDoc";
 import { PrescriptionDocument } from "./PrescriptionDocument";
 import { AccessLogFailed, logAccesses } from "@/components/printAccess";
 import { PrintToolbar } from "@/components/PrintToolbar";
+import { conditionMet } from "@/lib/conditions";
+import { ADDRESS_FIELDS, addressLine, type AddressColumns } from "@/lib/patientAddress";
+import { patientIdKind } from "@/lib/patientIds";
 
 // The prescription's print view (Help P6 on the website): the same layout
 // as the app's PDF; "Imprimir / Salvar PDF" opens the print window, where
@@ -26,7 +29,8 @@ export default async function PrescriptionPrintPage({
   if ((await isProfessionalRole(supabase, user.id)) !== true) notFound();
 
   const [patientResult, rxResult, correctionResult, profResult, templateResult, t] = await Promise.all([
-    supabase.from("patients").select("id, full_name").eq("id", id).eq("professional_id", user.id).maybeSingle(),
+    // The address columns only exist once 138 is applied.
+    supabase.from("patients").select(conditionMet("patient-address-live") ? `id, full_name, ${ADDRESS_FIELDS.map((f) => f.name).join(", ")}` : "id, full_name").eq("id", id).eq("professional_id", user.id).maybeSingle(),
     supabase.from("prescriptions").select("id, date, notes, prescription_items(name, dosage, frequency, duration)").eq("id", rxId).eq("patient_id", id).maybeSingle(),
     // Replaced by a later correction (097): marked "(corrigido)", like the app.
     supabase.from("prescriptions").select("id").eq("corrects_id", rxId).limit(1),
@@ -34,7 +38,7 @@ export default async function PrescriptionPrintPage({
     supabase.from("document_templates").select("primary_color, accent_color, logo_url, header_text, footer_text").eq("professional_id", user.id).eq("document_type", "prescription").maybeSingle(),
     getTranslations({ locale, namespace: "prescriptionDoc" }),
   ]);
-  const patient = patientResult.data as { id: string; full_name: string } | null;
+  const patient = patientResult.data as unknown as ({ id: string; full_name: string } & AddressColumns) | null;
   const rx = rxResult.data as { id: string; date: string; notes: string | null; prescription_items: { name: string; dosage: string; frequency: string; duration: string }[] | null } | null;
   if (!patient || !rx) notFound();
 
@@ -54,6 +58,8 @@ export default async function PrescriptionPrintPage({
   const prof = profResult.data as { full_name: string | null; professional_registration: string | null } | null;
 
   return (
+    // A light scope: the print view stays light in the dashboard's dark
+    // theme, on screen and in the PDF (Help C8).
     <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
       <PrintToolbar backHref={`${prefix}/dashboard/patients/${patient.id}`} />
@@ -66,6 +72,7 @@ export default async function PrescriptionPrintPage({
             notes: t("notes"), footer: t("footer"), corrected: t("corrected"),
           }}
           patientName={patient.full_name}
+          patientAddress={addressLine(patient, patientIdKind(country))}
           date={docDate(country, rx.date)}
           corrected={(correctionResult.data ?? []).length > 0}
           items={rx.prescription_items ?? []}
