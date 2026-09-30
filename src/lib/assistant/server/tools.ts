@@ -376,6 +376,12 @@ async function ambiguousTarget(ctx: ToolContext, a: ApptRow, from: string, to: s
     block: { type: "pick", question: T[ctx.lang].pickAppointment, options: fits.slice(0, 8).map((r) => ({ id: r.id, title: appointmentTitle(ctx, r), detail: "" })) },
   };
 }
+// A time chip as the client sends it (assistant.chipAt: "{date} às {time}",
+// the date as "quarta-feira, 07/10/2026" in any locale): one full date and a
+// time, nothing else.
+export const isChipTap = (text: string | undefined) =>
+  !!text && text.length <= 80 && /\d{1,2}[/.]\d{1,2}[/.]\d{4}/.test(text) && /\b\d{1,2}:\d{2}\s*$/.test(text.trim()) && !/\d{1,2}:\d{2}.*\d{1,2}:\d{2}/.test(text);
+
 // For a move, the part that says WHERE TO ("… para quinta às 15") doesn't
 // identify the appointment being moved: only what's before it counts.
 const stripNewWhen = (text: string | undefined) => (text ?? "").split(/\b(?:para|pra|to|al|au|auf|nach|ไป|เป็น)\b/i)[0];
@@ -547,7 +553,10 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
   const end = fromMinutes(endMin);
 
   // A series (the website's Repetir): every week / 2 weeks / month, 2–52.
-  const repeat = parseRepeat(input.repeat);
+  // A tapped time chip is ONE appointment (3e: the "Outro horário" chip was
+  // turned back into the original series and double-booked): when the
+  // user's message is just a chip, any repeat from the model is dropped.
+  const repeat = isChipTap(ctx.userText) ? null : parseRepeat(input.repeat);
   if (repeat === "invalid") return err(`Repeat is { every: "week" | "2weeks" | "month", count: ${MIN_OCCURRENCES}–${MAX_OCCURRENCES} }; ask the user.`);
   const seriesDates = repeat ? recurrenceDates(date, REPEAT_TO_RECURRENCE[repeat.every], repeat.count) : [date];
   let dates = seriesDates;

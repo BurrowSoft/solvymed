@@ -668,6 +668,19 @@ describe("SolvyAI actions mode: a recurring series (the website's Repetir)", () 
     expect(textOf(r.chunks)).toBe("Confira os detalhes e toque em Confirmar.");
   });
 
+  it("a tapped time chip is ONE appointment: the server drops a replayed series (3e: the double booking)", async () => {
+    // The model replays the earlier "toda quarta, 3 vezes" at the chip's time.
+    const replay = () => withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-07", start: "09:00", durationMin: 30, repeat: { every: "week", count: 3 } } }));
+    const t = setup(replay());
+    const card = cardOf((await run(t, ask("quarta-feira, 07/10/2026 às 09:00"))).blocks)!;
+    expect(card.fields.find((f) => f.label === "Repetir")).toBeUndefined();
+    expect(card.fields.find((f) => f.label === "Quando")!.value).toBe("Quarta-feira, 07/10/2026, 09:00–09:30");
+    expect(card.action.args).not.toHaveProperty("repeat");
+    // A typed series request is still a series.
+    const s = setup(replay());
+    expect(cardOf((await run(s, ask("Marca a Maria toda quarta às 9h, 3 vezes"))).blocks)!.action.args).toHaveProperty("repeat");
+  });
+
   it("the series' FIRST date taken (9a: the loop): the card starts on the next date, never re-finding the skipped one", async () => {
     const t = setup(series({ every: "week", count: 3 }));
     t.tables.appointments.push({ id: "a-first", professional_id: "doc-1", patient_id: null, patient_name: "Rui", date: "2026-10-07", start_time: "14:00:00", end_time: "14:30:00", status: "scheduled", payment_status: "pending", payment_amount: null });

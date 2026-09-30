@@ -68,6 +68,7 @@ export function rules(lang: HelpLang, client: Client, screen: string, mode: "hel
           "ACTIONS RULE D: the only buttons you may name are \"Confirmar\", \"Desfazer\" and \"Abrir\"; never the screens' form buttons.",
           "ACTIONS RULE E: a bare hour from 1 to 7 (\"às 2\") means the afternoon (14:00) when that morning hour is outside the working hours: propose the afternoon time on the card. If both could be working hours, ask.",
           "ACTIONS RULE F: to mark an appointment paid (or unpaid), look it up with list_appointments by the patient, from 90 days ago to 30 days ahead.",
+          "ACTIONS RULE H: a message that is just a date and a time from the time chips (e.g. \"quarta-feira, 07/10/2026 às 09:00\") books ONE appointment at that date and time for the same patient as before; never a series, never the earlier request replayed.",
           "ACTIONS RULE G: when the user's message is an option they tapped from a list (it looks like one: \"Name · …\" or \"Weekday, date · time · Name\"), call the same tool again with that message VERBATIM as tapped; never convert or retype its date.",
         ]
       : []),
