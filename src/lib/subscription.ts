@@ -37,6 +37,27 @@ export function trialDaysRemaining(sub: EffectiveSub | null): number | null {
   return Math.ceil(ms / (1000 * 60 * 60 * 24));
 }
 
+// A doctor who subscribes during the free trial keeps it (UX, 1 Oct): the
+// Stripe subscription starts trialing until trial_ends_at, so nothing is
+// charged today and the first charge is when the trial ends. Only with
+// more than 48 h left (Stripe needs trial_end ≥ 48 h ahead for Checkout);
+// null = charge now, as before.
+export const KEEP_TRIAL_MIN_MS = 48 * 60 * 60 * 1000;
+export function checkoutTrialEnd(sub: EffectiveSub | null, now = Date.now()): Date | null {
+  if (!sub || sub.subscription_status !== 'trial' || !sub.trial_ends_at) return null;
+  const end = new Date(sub.trial_ends_at);
+  if (!(end.getTime() - now > KEEP_TRIAL_MIN_MS)) return null;
+  return end;
+}
+
+// A Stripe subscription that dies while the doctor's own trial is still
+// running (they subscribed during the trial, then cancelled before it
+// ended): back to "trial" until trial_ends_at, never "expired". No extra
+// days: the trial end is the original one.
+export function statusWhenSubscriptionDies(trialEndsAt: string | null | undefined, now = Date.now()): 'trial' | 'expired' {
+  return trialEndsAt && new Date(trialEndsAt).getTime() > now ? 'trial' : 'expired';
+}
+
 // What Settings → Assinatura says about the plan: active, lifetime, the
 // trial with its days left, or nothing running (ended trial or expired).
 export type PlanSummary =
