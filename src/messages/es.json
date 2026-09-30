@@ -1396,7 +1396,7 @@
     "summaryDuplicates": "{n} repetidos en el archivo (solo se importa el primero)",
     "summaryWarnings": "{n} con avisos (se importan; ver la lista)",
     "summaryArchived": "{n} se importarán como archivados (inactivos o fallecidos)",
-    "summaryCpfPadded": "A {n} CPF les faltaba el cero inicial (Excel lo elimina) y se completaron.",
+    "summaryCpfPadded": "{n, plural, one {A # CPF le faltaba el cero inicial (Excel lo elimina) y se completó.} other {A # CPF les faltaba el cero inicial (Excel lo elimina) y se completaron.}}",
     "summaryFill": "{n} registros existentes tendrán sus campos vacíos completados",
     "colRow": "Fila",
     "colName": "Nombre",

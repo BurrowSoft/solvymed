@@ -1396,7 +1396,7 @@
     "summaryDuplicates": "{n} en double dans le fichier (seul le premier est importé)",
     "summaryWarnings": "{n} avec des avertissements (importés ; voir la liste)",
     "summaryArchived": "{n} seront importés comme archivés (inactifs ou décédés)",
-    "summaryCpfPadded": "{n} CPF n'avaient plus le zéro initial (Excel le supprime) et ont été complétés.",
+    "summaryCpfPadded": "{n, plural, one {# CPF n'avait plus le zéro initial (Excel le supprime) et a été complété.} other {# CPF n'avaient plus le zéro initial (Excel le supprime) et ont été complétés.}}",
     "summaryFill": "{n} dossiers existants auront leurs champs vides complétés",
     "colRow": "Ligne",
     "colName": "Nom",

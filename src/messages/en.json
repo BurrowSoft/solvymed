@@ -1426,7 +1426,7 @@
     "summaryDuplicates": "{n} repeated in the file (only the first is imported)",
     "summaryWarnings": "{n} with warnings (imported; see the list)",
     "summaryArchived": "{n} will be imported as archived (inactive or deceased)",
-    "summaryCpfPadded": "{n} CPFs were missing the leading zero (Excel removes it) and were completed.",
+    "summaryCpfPadded": "{n, plural, one {# CPF was missing the leading zero (Excel removes it) and was completed.} other {# CPFs were missing the leading zero (Excel removes it) and were completed.}}",
     "summaryFill": "{n} existing records will have their empty fields filled in",
     "colRow": "Row",
     "colName": "Name",

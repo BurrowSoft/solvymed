@@ -1396,7 +1396,7 @@
     "summaryDuplicates": "{n} doppelt in der Datei (nur der erste wird importiert)",
     "summaryWarnings": "{n} mit Hinweisen (werden importiert; siehe Liste)",
     "summaryArchived": "{n} werden als archiviert importiert (inaktiv oder verstorben)",
-    "summaryCpfPadded": "{n} CPF fehlte die führende Null (Excel entfernt sie); sie wurden ergänzt.",
+    "summaryCpfPadded": "{n, plural, one {# CPF fehlte die führende Null (Excel entfernt sie); sie wurde ergänzt.} other {# CPF fehlte die führende Null (Excel entfernt sie); sie wurden ergänzt.}}",
     "summaryFill": "Bei {n} vorhandenen Akten werden leere Felder ergänzt",
     "colRow": "Zeile",
     "colName": "Name",

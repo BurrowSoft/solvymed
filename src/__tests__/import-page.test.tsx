@@ -109,7 +109,7 @@ describe("Importar pacientes", () => {
     );
     fireEvent.change(container.querySelector('input[type="file"]')!, { target: { files: [csvFile("Nome;CPF\nAna;1234567890\n")] } });
     fireEvent.click(await screen.findByText("Verificar planilha"));
-    expect(await screen.findByText("1 CPFs estavam sem o zero inicial (o Excel remove) e foram completados.")).toBeInTheDocument();
+    expect(await screen.findByText("1 CPF estava sem o zero inicial (o Excel remove) e foi completado.")).toBeInTheDocument();
     expect(screen.getByText(pt.patientImport.code_cpf_zero_padded)).toBeInTheDocument();
     const hint = `${pt.patientImport.code_cpf_invalid}. ${pt.patientImport.cpfExcelHint}`;
     expect(screen.getByText(hint)).toBeInTheDocument();
