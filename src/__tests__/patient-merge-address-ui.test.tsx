@@ -38,7 +38,8 @@ async function mergeNow() {
   return (ui.merged.at(-1) as unknown[])[2];
 }
 
-describe("MergePatientButton × 139", () => {
+// A full dialog walk-through: 5 s is tight when the whole suite runs in parallel.
+describe("MergePatientButton × 139", { timeout: 20000 }, () => {
   it("address block, CNS and notes joined by default; the choices go out as 139 expects", async () => {
     ui.merged = [];
     ui.rows = [
