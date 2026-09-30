@@ -18,4 +18,13 @@ describe("SubscribeHeader", () => {
     expect(container.querySelectorAll("a")).toHaveLength(0);
     expect(screen.getByText("SolvyMed")).toBeInTheDocument();
   });
+
+  it("sign out sits in the header (top right), in either state", () => {
+    for (const exitHref of [null, "/pt-BR/dashboard"]) {
+      const { container, unmount } = render(<SubscribeHeader exitHref={exitHref} backLabel="Voltar" signOut={<button>Sair</button>} />);
+      const header = container.firstElementChild!;
+      expect(header.lastElementChild?.textContent).toBe("Sair");
+      unmount();
+    }
+  });
 });
