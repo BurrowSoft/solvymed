@@ -1285,12 +1285,16 @@
       "payments": {
         "a": "Wie viel ist diese Woche offen?",
         "b": "Pix an einen Patienten senden",
-        "c": "Als bezahlt markieren"
+        "c": "Als bezahlt markieren",
+        "bPromptPay": "PromptPay-QR an einen Patienten senden",
+        "bNone": "Unbezahlte Termine anzeigen"
       },
       "settings": {
         "a": "Wie lade ich meine Praxiskraft ein?",
         "b": "Pix einrichten",
-        "c": "Sprechzeiten ändern"
+        "c": "Sprechzeiten ändern",
+        "bPromptPay": "PromptPay einrichten",
+        "bNone": "Praxisdaten ändern"
       },
       "other": {
         "a": "Was habe ich morgen?",

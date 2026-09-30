@@ -1285,12 +1285,16 @@
       "payments": {
         "a": "本週待收多少？",
         "b": "傳送 Pix 給病患",
-        "c": "標記為已付款"
+        "c": "標記為已付款",
+        "bPromptPay": "傳送 PromptPay QR 碼給病患",
+        "bNone": "查看未付款的預約"
       },
       "settings": {
         "a": "如何邀請助理？",
         "b": "設定 Pix",
-        "c": "修改看診時間"
+        "c": "修改看診時間",
+        "bPromptPay": "設定 PromptPay",
+        "bNone": "修改診所資料"
       },
       "other": {
         "a": "我明天有什麼安排？",

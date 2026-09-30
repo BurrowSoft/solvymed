@@ -1285,12 +1285,16 @@
       "payments": {
         "a": "Berapa yang harus diterima minggu ini?",
         "b": "Kirim Pix ke pasien",
-        "c": "Tandai sudah dibayar"
+        "c": "Tandai sudah dibayar",
+        "bPromptPay": "Kirim QR PromptPay ke pasien",
+        "bNone": "Lihat janji yang belum dibayar"
       },
       "settings": {
         "a": "Bagaimana mengundang asisten?",
         "b": "Atur Pix",
-        "c": "Ubah jam praktik"
+        "c": "Ubah jam praktik",
+        "bPromptPay": "Atur PromptPay",
+        "bNone": "Ubah data klinik"
       },
       "other": {
         "a": "Apa jadwal saya besok?",
