@@ -36,12 +36,12 @@ describe("privacy policy: SolvyAI / LINE blocks follow their conditions", () => 
     r.unmount();
   });
 
-  it("with SolvyAI: Anthropic's 30-day retention and no training, in both languages; never with LINE alone", () => {
+  it("with SolvyAI: Anthropic's deletion within 30 days (with its exceptions) and no training, in both languages; never with LINE alone", () => {
     let r = render(<PrivacyEn turnstile={false} solvyai />);
-    expect(r.container.textContent).toContain("Anthropic keeps what is sent to SolvyAI for up to 30 days for safety and security purposes, and then deletes it. It is not used to train AI models.");
+    expect(r.container.textContent).toContain("Anthropic deletes what is sent to SolvyAI within 30 days, except content flagged for violating its usage policies (kept for up to 2 years) or where the law requires longer retention. It is not used to train AI models.");
     r.unmount();
     r = render(<PrivacyPtBR turnstile={false} solvyai line />);
-    expect(r.container.textContent).toContain("A Anthropic guarda o que é enviado ao SolvyAI por até 30 dias, para fins de segurança, e depois apaga. Esses dados não são usados para treinar modelos de IA.");
+    expect(r.container.textContent).toContain("A Anthropic apaga o que é enviado ao SolvyAI em até 30 dias, exceto conteúdo sinalizado por violar suas políticas de uso (guardado por até 2 anos) ou quando a lei exigir guardar por mais tempo. Esses dados não são usados para treinar modelos de IA.");
     r.unmount();
     r = render(<PrivacyEn turnstile={false} line />);
     expect(r.container.textContent).not.toContain("30 days");

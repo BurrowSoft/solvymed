@@ -102,7 +102,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
               {/* Anthropic's retention for this organization (Vitor's Console, 1 Oct: the 30-day
                   default, no zero-retention agreement). If ZDR is granted later, this becomes
                   "not stored by Anthropic" (UX). */}
-              {solvyai && " Anthropic keeps what is sent to SolvyAI for up to 30 days for safety and security purposes, and then deletes it. It is not used to train AI models."}
+              {solvyai && " Anthropic deletes what is sent to SolvyAI within 30 days, except content flagged for violating its usage policies (kept for up to 2 years) or where the law requires longer retention. It is not used to train AI models."}
             </>
           )}
         </p>

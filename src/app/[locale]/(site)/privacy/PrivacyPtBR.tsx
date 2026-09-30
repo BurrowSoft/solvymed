@@ -102,7 +102,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
               {/* A retenção da Anthropic para esta organização (Console do Vitor, 1/10: o padrão de
                   30 dias, sem acordo de retenção zero). Se a retenção zero vier, vira
                   "não é armazenado pela Anthropic" (UX). */}
-              {solvyai && " A Anthropic guarda o que é enviado ao SolvyAI por até 30 dias, para fins de segurança, e depois apaga. Esses dados não são usados para treinar modelos de IA."}
+              {solvyai && " A Anthropic apaga o que é enviado ao SolvyAI em até 30 dias, exceto conteúdo sinalizado por violar suas políticas de uso (guardado por até 2 anos) ou quando a lei exigir guardar por mais tempo. Esses dados não são usados para treinar modelos de IA."}
             </>
           )}
         </p>
