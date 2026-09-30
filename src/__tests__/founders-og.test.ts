@@ -26,6 +26,8 @@ describe("the Founders share preview", () => {
     expect(og.images[0].url).toBe("/og/solvymed-og-share-blue.png");
     expect(og.title).toBe("founders.rulesTitle");
     expect(og.url).toBe("https://www.solvymed.com/th/founders/rules");
+    // Its own canonical, never the home page's (3e).
+    expect(m.alternates).toMatchObject({ canonical: "https://www.solvymed.com/th/founders/rules" });
     expect(m.twitter).toMatchObject({ card: "summary_large_image" });
   });
 
