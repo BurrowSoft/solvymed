@@ -477,6 +477,15 @@ describe("SolvyAI actions mode: other proposals", () => {
     expect(free.free[0]).toBe("08:00");
   });
 
+  it("free times never ask for a length: the default procedure's (UX), said in the answer", async () => {
+    const t = setup(listThen("2026-09-30", { name: "find_free_slots", input: { date: "2026-09-30" } }));
+    await run(t, ask("Tenho horário livre amanhã?"));
+    const free = JSON.parse(String((resultsIn(t.model.calls[2])[0] as { content: string }).content)) as { durationMin: number; free: string[]; note: string };
+    expect(free.durationMin).toBe(50);
+    expect(free.free.length).toBeGreaterThan(0);
+    expect(free.note).toContain("durationMin");
+  });
+
   it("cancel: a card; a booking request is a hard stop (it's declined on the request)", async () => {
     let t = setup(listThen("2026-09-30", { name: "propose_cancel_appointment", input: { appointmentId: "a-joao" } }));
     let card = cardOf((await run(t, ask("Cancela o Mario"))).blocks)!;
@@ -718,6 +727,18 @@ describe("SolvyAI actions mode: a recurring series (the website's Repetir)", () 
     // The chip for another time than the proposal's isn't this one.
     const other = setup(replay());
     expect(cardOf((await run(other, ask("quarta-feira, 07/10/2026 às 10:00"))).blocks)!.action.args).toHaveProperty("repeat");
+  });
+
+  it("rule 10a: \"next Friday\" in any language shows the two Fridays, never a card", async () => {
+    for (const [locale, text] of [["pt-BR", "Marca a Maria Silva próxima sexta às 10h"], ["pt-BR", "Marca a Maria Silva sexta que vem às 10h"], ["en", "Book Maria Silva next Friday at 10"], ["th", "นัดมาเรีย ซิลวา ศุกร์หน้า 10 โมง"]]) {
+      const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-02", start: "10:00", durationMin: 30 } })));
+      const r = await run(t, { ...ask(text), locale });
+      expect(cardOf(r.blocks), text).toBeUndefined();
+      expect((r.blocks.find((b) => b.type === "pick") as { options: { id: string }[] }).options.map((o) => o.id)).toEqual(["2026-10-02", "2026-10-09"]);
+    }
+    // A bare weekday is the coming one: a card.
+    const bare = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-02", start: "10:00", durationMin: 30 } })));
+    expect(cardOf((await run(bare, ask("Marca a Maria Silva sexta às 10h"))).blocks)).toBeDefined();
   });
 
   it("the chip is matched in the UI's language (en)", async () => {
