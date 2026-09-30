@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { dateLocale } from "@/lib/dateLabels";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -9,8 +10,8 @@ import type { ReadResult, SheetCell } from "@/lib/import/readFile";
 import { buildRows, detectSource, importFields, planColumns, presetFor, separateNames, type ColumnPlan, type ImportCap, type ImportField, type ImportSource } from "@/lib/import/plan";
 import { patientIdKind } from "@/lib/patientIds";
 import {
-  ImportError, commitImport, discardImport, previewRows, problemRows, stageImport, undoImport, validateImport,
-  type CommitSummary, type ImportDb, type PreviewRow, type ValidateSummary,
+  ImportError, commitImport, discardImport, lastUndoableImport, previewRows, problemRows, stageImport, undoImport, validateImport,
+  type CommitSummary, type ImportDb, type LastImport, type PreviewRow, type ValidateSummary,
 } from "@/lib/import/api";
 import { templateCsv } from "@/lib/import/template";
 import { errorListCsv, lostLeadingZero } from "@/lib/import/errorList";
@@ -54,7 +55,8 @@ function download(fileName: string, text: string) {
 }
 
 // addressLive: 138 + 139 applied, so the v3 presets (address + CNS) are usable.
-export function ImportClient({ locale, country, canMerge = false, addressLive = false, db: injected }: { locale: string; country: string; canMerge?: boolean; addressLive?: boolean; db?: ImportDb }) {
+// timeZone: the clinic's, for the "Última importação" card's times.
+export function ImportClient({ locale, country, canMerge = false, addressLive = false, timeZone, db: injected }: { locale: string; country: string; canMerge?: boolean; addressLive?: boolean; timeZone?: string; db?: ImportDb }) {
   const t = useTranslations("patientImport");
   const tAddr = useTranslations("patientAddress");
   const caps: ImportCap[] = useMemo(() => (addressLive ? ["import-address"] : []), [addressLive]);
@@ -72,6 +74,20 @@ export function ImportClient({ locale, country, canMerge = false, addressLive = 
   const [preview, setPreview] = useState<PreviewRow[]>([]);
   const [result, setResult] = useState<CommitSummary | null>(null);
   const [undone, setUndone] = useState<{ deleted: number; kept: number } | null>(null);
+  // "Última importação" (UX): the last import of the past 24 h, so its
+  // Desfazer stays reachable after leaving this page. Loaded after mount.
+  const [last, setLast] = useState<LastImport | null>(null);
+  const [lastUndone, setLastUndone] = useState<{ deleted: number; kept: number } | null>(null);
+  useEffect(() => {
+    let alive = true;
+    lastUndoableImport(db).then((l) => { if (alive) setLast(l); });
+    return () => { alive = false; };
+  }, [db]);
+  const when = (iso: string) => ({
+    date: new Intl.DateTimeFormat(dateLocale(locale), { day: "2-digit", month: "2-digit", year: "numeric", timeZone }).format(new Date(iso)),
+    time: new Intl.DateTimeFormat(dateLocale(locale), { hour: "2-digit", minute: "2-digit", timeZone }).format(new Date(iso)),
+  });
+  const systemName = (source: string) => (source === "generic" || !SOURCES.includes(source as ImportSource) ? t("sourceGeneric") : presetFor(source as ImportSource).label);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
@@ -177,6 +193,14 @@ export function ImportClient({ locale, country, canMerge = false, addressLive = 
     try { setUndone(await undoImport(db, importId)); } catch (e) { setError(failText(e)); } finally { setBusy(null); }
   }
 
+  // The card's Desfazer: the same confirmation and rules as on the Done step.
+  async function undoLast() {
+    if (!last || !confirm(t("undoConfirm"))) return;
+    setError("");
+    setBusy(t("undoing"));
+    try { setLastUndone(await undoImport(db, last.id)); setLast(null); } catch (e) { setError(failText(e)); } finally { setBusy(null); }
+  }
+
   async function cancel() {
     if (importId && step !== "done") await discardImport(db, importId).catch(() => {});
     setImportId(null); setSheet(null); setPlan([]); setSummary(null); setPreview([]); setError(""); setStep("file");
@@ -203,6 +227,17 @@ export function ImportClient({ locale, country, canMerge = false, addressLive = 
       <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
         {step === "file" && (
           <div className="space-y-4">
+            {last && (
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm">
+                <p className="font-semibold text-slate-900">{t("lastTitle")}</p>
+                <p className="mt-1 text-slate-700">{t("lastLine", { ...when(last.committedAt), n: last.created, system: systemName(last.source) })}</p>
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <button type="button" className={btn2} disabled={!!busy} onClick={undoLast}>{t("undo")}</button>
+                  <span className="text-xs text-slate-500">{t("lastUntil", when(last.until))}</span>
+                </div>
+              </div>
+            )}
+            {lastUndone && <p className="text-sm font-semibold text-slate-700">{t("undone", { deleted: lastUndone.deleted, kept: lastUndone.kept })}</p>}
             <h2 className="text-base font-bold text-slate-900">{t("stepFile")}</h2>
             <p className="text-sm text-slate-600">{t("fileHint")}</p>
             <div className="flex flex-wrap items-center gap-3">

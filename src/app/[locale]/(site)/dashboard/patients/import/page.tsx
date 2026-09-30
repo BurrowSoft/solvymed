@@ -5,6 +5,7 @@ import { getPracticeCountry } from "@/lib/practiceCountry";
 import { conditionMet } from "@/lib/conditions";
 import { ImportClient } from "./ImportClient";
 import { mergeAvailable } from "../actions";
+import { getClinicTimeZone } from "@/lib/clinicTime";
 
 // Importar pacientes: the doctor only (130/131 refuse anyone else), and only
 // once migrations 130 + 131 are on production (patient-import-live).
@@ -18,5 +19,5 @@ export default async function ImportPatientsPage({ params }: { params: Promise<{
   if ((await isProfessionalRole(supabase, user.id)) !== true) redirect(`${prefix}/dashboard/patients`);
   // The template's ID columns follow the practice country.
   const country = await getPracticeCountry(supabase, user.id, user.id);
-  return <ImportClient locale={locale} country={country} canMerge={await mergeAvailable()} addressLive={conditionMet("patient-address-live")} />;
+  return <ImportClient locale={locale} country={country} canMerge={await mergeAvailable()} addressLive={conditionMet("patient-address-live")} timeZone={await getClinicTimeZone(supabase, { professionalId: user.id, isSecretary: false })} />;
 }
