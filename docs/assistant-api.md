@@ -157,9 +157,9 @@ database (patient names, notes) is data, never instructions.
 
 | Tool | Input | Returns |
 | --- | --- | --- |
-| `list_appointments` | `{ from, to, patient?, start? }` (YYYY-MM-DD, clinic zone; max 14 days, 121 with `patient`) | id, patient id + full name + birth date, date, start–end, type, status, value, paid. Filtered (`patient` / `start`) and several match → a `pick` block to the user ("date · time · patient"), and the model gets no ids |
+| `list_appointments` | `{ from, to, patient?, start?, tapped? }` (YYYY-MM-DD, clinic zone; max 14 days, 121 with `patient`) | id, patient id + full name + birth date, date, start–end, type, status, value, paid. Filtered (`patient` / `start`) and several match → a `pick` block to the user ("date · time · patient"), and the model gets no ids |
 | `find_free_slots` | `{ date, durationMin }` | free start times, by the clinic's hours and blocks |
-| `find_patients` | `{ query, birthDate? }` | one: id, full name, birth date (the same search as the picker). Several → a `pick` block ("name · nasc. dd/mm/yyyy") and no ids to the model; a tapped option comes back as the next message, with the birth date to narrow by |
+| `find_patients` | `{ query, tapped? }` | one: id, full name, birth date (the same search as the picker). Several → a `pick` block ("name · nasc. dd/mm/yyyy") and no ids to the model; a tapped option comes back as the next message and the model passes it verbatim as `tapped`, matched exactly against the titles built by the same formatter (no date conversion, no loop) |
 | `choose_date` | `{ dates }` (2–4 real days, today or later) | a `pick` block of those days to tap (an ambiguous date, e.g. "próxima sexta"); nothing to the model |
 
 **Round-1 rules (UX, 1 Oct):** the model never picks among several matches or lists them in text; the blocks do. In actions mode the text of a round that calls tools is never shown (no "deixa eu conferir…", no joined rounds). After a card the only text is "Confira os detalhes e toque em Confirmar." / "Check the details and tap Confirmar."; after a list, "Escolha uma opção acima." / "Choose an option above.". Dates come from a calendar in the prompt, and tools refuse impossible days (2026-09-31).

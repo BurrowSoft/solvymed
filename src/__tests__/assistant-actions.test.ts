@@ -186,12 +186,33 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     expect(textOf(r.chunks)).toBe("Escolha uma opção acima.");
   });
 
-  it("a tapped patient comes back with its birth date: the search narrows to one", async () => {
-    const t = setup((_r, round) =>
-      round === 0 ? { tools: [{ name: "find_patients", input: { query: "Maria Silva · nasc. 02/05/1980", birthDate: "1980-05-02" } }] } : "ok");
-    await run(t, ask("Maria Silva · nasc. 02/05/1980"));
-    const found = JSON.parse((resultsIn(t.model.calls[1])[0] as { content: string }).content);
-    expect(found).toEqual([{ id: "p-maria", name: "Maria Silva", birthDate: "02/05/1980" }]);
+  it("two patients with the same name: the tapped option comes back verbatim and matches exactly one (pt and th, no date conversion)", async () => {
+    for (const [locale, tappedTitle] of [["pt-BR", "Maria Silva · nasc. 02/05/1980"], ["th", null]] as const) {
+      const first = setup((_r, round) => (round === 0 ? { tools: [{ name: "find_patients", input: { query: "Maria Silva" } }] } : "ok"));
+      first.tables.patients.push({ id: "p-maria2", professional_id: "doc-1", full_name: "Maria Silva", birth_date: "1991-07-01", archived_at: null });
+      const listed = await run(first, { ...ask("Marca a Maria Silva"), locale });
+      const options = (listed.blocks.find((b) => b.type === "pick") as { options: { id: string; title: string }[] }).options;
+      expect(options.map((o) => o.id).sort()).toEqual(["p-maria", "p-maria2"]);
+      // The user taps the first; the model passes the text back as tapped.
+      const tapped = tappedTitle ?? options.find((o) => o.id === "p-maria")!.title;
+      if (tappedTitle) expect(options.find((o) => o.id === "p-maria")!.title).toBe(tappedTitle);
+      const again = setup((_r, round) => (round === 0 ? { tools: [{ name: "find_patients", input: { query: "Maria Silva", tapped } }] } : "ok"));
+      again.tables.patients.push({ id: "p-maria2", professional_id: "doc-1", full_name: "Maria Silva", birth_date: "1991-07-01", archived_at: null });
+      const r = await run(again, { ...ask(tapped), locale });
+      expect(r.blocks.find((b) => b.type === "pick")).toBeUndefined();
+      const found = JSON.parse((resultsIn(again.model.calls[1])[0] as { content: string }).content) as { id: string }[];
+      expect(found.map((p) => p.id)).toEqual(["p-maria"]);
+    }
+  });
+
+  it("a tapped appointment comes back verbatim: exactly that one", async () => {
+    const extra = { id: "a-maria10", professional_id: "doc-1", patient_id: "p-maria", patient_name: "Maria Silva", date: "2026-09-30", start_time: "10:00:00", end_time: "10:30:00", status: "scheduled", payment_status: "pending", payment_amount: null };
+    const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30", start: "10:00", tapped: "Quarta-feira, 30/09/2026 · 10:00 · Maria Silva" } }] } : "ok"));
+    t.tables.appointments.push(extra);
+    const r = await run(t, ask("Quarta-feira, 30/09/2026 · 10:00 · Maria Silva"));
+    expect(r.blocks.find((b) => b.type === "pick")).toBeUndefined();
+    const found = JSON.parse((resultsIn(t.model.calls[1])[0] as { content: string }).content) as { id: string }[];
+    expect(found.map((a) => a.id)).toEqual(["a-maria10"]);
   });
 
   it("several appointments at the time given: a list with date · time · patient, never a guess", async () => {

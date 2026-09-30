@@ -56,13 +56,13 @@ const obj = (properties: Record<string, unknown>, required: string[]) =>
 export const TOOL_DEFS: ToolDef[] = [
   {
     name: "find_patients",
-    description: "Search this clinic's patients by name (or ID / phone digits). Use it before any action that needs a patient; never guess an id. If several match, the USER gets a list to choose from and you get nothing to pick: wait for their choice. When the user chose from such a list (their message has a birth date), pass it as birthDate (YYYY-MM-DD).",
-    input_schema: obj({ query: { type: "string" }, birthDate: { type: "string" } }, ["query"]),
+    description: "Search this clinic's patients by name (or ID / phone digits). Use it before any action that needs a patient; never guess an id. If several match, the USER gets a list to choose from and you get nothing to pick: wait for their choice. When the user's message is an option they tapped from such a list, pass that message verbatim as tapped (and the name as query).",
+    input_schema: obj({ query: { type: "string" }, tapped: { type: "string" } }, ["query"]),
   },
   {
     name: "list_appointments",
-    description: "The clinic's appointments and blocked times between two dates (YYYY-MM-DD, the clinic's time zone, at most 14 days; up to 121 days when filtered by patient). To act on ONE appointment, always pass what the user said (patient and/or start HH:MM): if several match, the USER gets a list to choose from; never pick one yourself. Returns ids, patient, date, times, status and payment.",
-    input_schema: obj({ from: { type: "string" }, to: { type: "string" }, patient: { type: "string" }, start: { type: "string" } }, ["from", "to"]),
+    description: "The clinic's appointments and blocked times between two dates (YYYY-MM-DD, the clinic's time zone, at most 14 days; up to 121 days when filtered by patient). To act on ONE appointment, always pass what the user said (patient and/or start HH:MM): if several match, the USER gets a list to choose from; never pick one yourself. When the user's message is an option they tapped from such a list, pass that message verbatim as tapped (with the same from/to/patient/start as before). Returns ids, patient, date, times, status and payment.",
+    input_schema: obj({ from: { type: "string" }, to: { type: "string" }, patient: { type: "string" }, start: { type: "string" }, tapped: { type: "string" } }, ["from", "to"]),
   },
   {
     name: "choose_date",
@@ -308,24 +308,34 @@ const patientOption = (ctx: ToolContext, p: { id: string; full_name: string; bir
   title: p.birth_date ? `${p.full_name} · ${T[ctx.lang].born(formatShortDate(ctx.locale, p.birth_date))}` : p.full_name,
   detail: "",
 });
-const CHOOSE_NOTE = "The user was shown a list to choose from. Don't list the options, don't pick one and don't repeat any detail; wait for their choice.";
+// An appointment as the user taps it: "Quarta-feira, 30/09/2026 · 10:00 · Maria Silva".
+const appointmentTitle = (ctx: ToolContext, r: { date: string; start_time: string; status: string; patient_name: string | null }) =>
+  `${whenLabel(ctx, r.date)} · ${hhmm(r.start_time)} · ${r.status === "blocked" ? "—" : r.patient_name ?? "—"}`;
+const CHOOSE_NOTE ="The user was shown a list to choose from. Don't list the options, don't pick one and don't repeat any detail; wait for their choice.";
 
 async function findPatients(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
   const q = cleanSearchText(String(input.query ?? "").replace(/·.*$/, ""));
   // The practice country decides which ID column is searched (the picker's rule).
   const filter = patientSearchFilter(q, patientIdKind(await practiceCountry(ctx)));
   if (!q || !filter) return err("Say who: ask the user for the patient's name.");
-  const birthDate = isDate(input.birthDate) ? input.birthDate : null;
-  let query = ctx.db
+  const { data, error } = await ctx.db
     .from("patients")
     .select("id, full_name, birth_date")
     .eq("professional_id", ctx.profId)
     .is("archived_at", null)
-    .or(filter);
-  if (birthDate) query = query.eq("birth_date", birthDate);
-  const { data, error } = await query.order("full_name").limit(5);
+    .or(filter)
+    .order("full_name")
+    .limit(5);
   if (error) return err("The patient search failed; say so and suggest the Patients screen.");
-  const rows = (data ?? []) as { id: string; full_name: string; birth_date: string | null }[];
+  let rows = (data ?? []) as { id: string; full_name: string; birth_date: string | null }[];
+  // A tapped option comes back verbatim: matched against the titles built
+  // here by the same formatter, so no date is ever converted (a Buddhist-era
+  // Thai date included) and the list never loops (9a).
+  const tapped = typeof input.tapped === "string" ? input.tapped.trim() : "";
+  if (tapped) {
+    const hit = rows.filter((r) => patientOption(ctx, r).title === tapped);
+    if (hit.length === 1) rows = hit;
+  }
   // Several: the user chooses (UX: always a list, never a guess or a text list).
   if (rows.length > 1) {
     return { forModel: `${rows.length} patients match. ${CHOOSE_NOTE}`, block: { type: "pick", question: T[ctx.lang].pickPatient, options: rows.map((r) => patientOption(ctx, r)) } };
@@ -366,6 +376,12 @@ async function listAppointments(ctx: ToolContext, input: Record<string, unknown>
   let rows = (data ?? []) as ApptRow[];
   if (patient) rows = rows.filter((r) => r.status !== "blocked" && (r.patient_name ?? "").toLowerCase().includes(patient));
   if (start) rows = rows.filter((r) => hhmm(r.start_time) === start);
+  // A tapped option comes back verbatim: the one whose title it is (9a).
+  const tapped = typeof input.tapped === "string" ? input.tapped.trim() : "";
+  if (tapped) {
+    const hit = rows.filter((r) => appointmentTitle(ctx, r) === tapped);
+    if (hit.length === 1) rows = hit;
+  }
   // Looking for one and several match: the user chooses (UX: a list with
   // date · time · patient, never a guess or a text list).
   if ((patient || start) && rows.length > 1) {
@@ -374,11 +390,7 @@ async function listAppointments(ctx: ToolContext, input: Record<string, unknown>
       block: {
         type: "pick",
         question: T[ctx.lang].pickAppointment,
-        options: rows.slice(0, 8).map((r) => ({
-          id: r.id,
-          title: `${whenLabel(ctx, r.date)} · ${hhmm(r.start_time)} · ${r.status === "blocked" ? "—" : r.patient_name ?? "—"}`,
-          detail: "",
-        })),
+        options: rows.slice(0, 8).map((r) => ({ id: r.id, title: appointmentTitle(ctx, r), detail: "" })),
       },
     };
   }
