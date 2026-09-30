@@ -168,7 +168,8 @@ database (patient names, notes) is data, never instructions.
 - **The guard:** when the user's message names no day ("a das 10", "a do Mario") and more than one eligible appointment in the window fits the time and/or patient it mentions, `propose_cancel/move/mark_paid` build no card and return the list. The server reads the message itself; the model can't bypass it.
 - **Filtered lookups** with no day named search today..+13 days whatever window the model sent.
 - **One list per answer:** a second `pick`/`slot_choice` in the same answer isn't shown ("Not shown" to the model), and a slot choice gets no pointer text.
-- **A taken date in a series:** a `pick` with "Pular {datas} e marcar as outras" / "Outro horário para {datas}". The model re-proposes with the tapped text as `tapped`, and only the server turns it into `repeat.skip` (the card: "…, pulando 14/10"; Confirmar sends `skip_dates` to the series save). "Outro horário" also shows free times on that date for a separate single appointment.
+- **A taken date in a series (round 3):** no round trip. At once, the series card WITHOUT the taken dates ("…, pulando 14/10"; `repeat.skip`, set by the server; Confirmar sends `skip_dates` to the series save), and "Outro horário para 14/10:" with the free times on that date for a separate single appointment. Everything after a skip is anchored on the first date left; the action keeps the series' original first date + the skip list.
+- **No text after a list or a time choice** (each carries its own question); a card gets "Confira os detalhes e toque em Confirmar.".
 | `payments_summary` | `{ period: "week" \| "month" }` | totals to receive / received, counts |
 
 **Proposal tools** (never write; each returns one card):

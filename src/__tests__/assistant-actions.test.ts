@@ -183,7 +183,7 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     expect(found.content).not.toContain("p-maria");
     // A guessed id is refused: no card.
     expect(cardOf(r.blocks)).toBeUndefined();
-    expect(textOf(r.chunks)).toBe("Escolha uma opção acima.");
+    expect(textOf(r.chunks)).toBe("");
   });
 
   it("two patients with the same name: the tapped option comes back verbatim and matches exactly one (pt and th, no date conversion)", async () => {
@@ -222,7 +222,7 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     const pick = r.blocks.find((b) => b.type === "pick") as { question: string; options: { title: string }[] };
     expect(pick.question).toBe("Qual consulta?");
     expect(pick.options.map((o) => o.title).sort()).toEqual(["Quarta-feira, 30/09/2026 · 10:00 · Maria Silva", "Quarta-feira, 30/09/2026 · 10:00 · Mario Souza"]);
-    expect(textOf(r.chunks)).toBe("Escolha uma opção acima.");
+    expect(textOf(r.chunks)).toBe("");
   });
 
   it("an ambiguous date: choose_date shows real days to tap; an impossible or past day is refused", async () => {
@@ -589,7 +589,7 @@ describe("SolvyAI actions mode: part 2 (unblock, booking decision, add patient)"
       type: "pick", question: "Já existe um cadastro parecido. É a mesma pessoa?",
       options: [{ id: "p-maria", title: "Maria Silva · nasc. 02/05/1980", detail: "" }, { id: "new", title: "É outra pessoa", detail: "" }],
     });
-    expect(textOf(dup.chunks)).toBe("Escolha uma opção acima.");
+    expect(textOf(dup.chunks)).toBe("");
     t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "Maria Silva", createAnyway: true } }] } : "ok"));
     card = cardOf((await run(t, ask("É outra pessoa"))).blocks)!;
     expect(card.fields.find((f) => f.label === "Parecidos já cadastrados")!.value).toBe("Maria Silva (02/05/1980)");
@@ -652,40 +652,31 @@ describe("SolvyAI actions mode: a recurring series (the website's Repetir)", () 
     expect(card.action.args.repeat).toEqual({ every: "week", count: 3 });
   });
 
-  it("a taken date in the series: no card, two real options (UX); the tapped one comes back and the server skips the date", async () => {
+  it("a taken date in the series: at once, the series card without it (\"pulando 14/10\") and free times on 14/10 for a separate appointment; no round trip", async () => {
     const rui = { id: "a-x", professional_id: "doc-1", patient_id: null, patient_name: "Rui", date: "2026-10-14", start_time: "14:00:00", end_time: "14:30:00", status: "scheduled", payment_status: "pending", payment_amount: null };
-    let t = setup(series({ every: "week", count: 3 }));
+    const t = setup(series({ every: "week", count: 3 }));
     t.tables.appointments.push(rui);
-    let r = await run(t, ask("…"));
-    expect(cardOf(r.blocks)).toBeUndefined();
-    expect(r.blocks.find((b) => b.type === "pick")).toEqual({
-      type: "pick", question: "Uma das datas está ocupada. Escolha uma opção.",
-      options: [{ id: "skip", title: "Pular 14/10 e marcar as outras", detail: "" }, { id: "other", title: "Outro horário para 14/10", detail: "" }],
-    });
-    expect(textOf(r.chunks)).toBe("Escolha uma opção acima.");
-    // "Pular": the series without 14/10, said on the card; the action skips it.
-    const again = (tapped: string) => withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-07", start: "14:00", durationMin: 30, repeat: { every: "week", count: 3 }, tapped } }));
-    t = setup(again("Pular 14/10 e marcar as outras"));
-    t.tables.appointments.push(rui);
-    r = await run(t, ask("Pular 14/10 e marcar as outras"));
-    let card = cardOf(r.blocks)!;
+    const r = await run(t, ask("Marca a Maria toda quarta às 14h, 3 vezes"));
+    const card = cardOf(r.blocks)!;
     expect(card.fields.find((f) => f.label === "Repetir")!.value).toBe("Semanal, 2 consultas (até 21/10/2026), pulando 14/10");
     expect(card.action.args.repeat).toEqual({ every: "week", count: 3, skip: ["2026-10-14"] });
-    expect(choiceOf(r.blocks)).toBeUndefined();
-    // "Outro horário": the same card, plus free times on 14/10 for a separate appointment.
-    t = setup(again("Outro horário para 14/10"));
-    t.tables.appointments.push(rui);
-    r = await run(t, ask("Outro horário para 14/10"));
-    card = cardOf(r.blocks)!;
-    expect(card.action.args.repeat).toEqual({ every: "week", count: 3, skip: ["2026-10-14"] });
     const free = choiceOf(r.blocks)!;
-    expect(free.text).toBe("Horários livres em Quarta-feira, 14/10/2026:");
-    expect(free.alternatives.every((a) => a.date === "2026-10-14" && a.start !== "14:00")).toBe(true);
+    expect(free.text).toBe("Outro horário para 14/10:");
     expect(free.alternatives.length).toBeGreaterThan(0);
-    // A skip is never taken from the model: an unrelated "tapped" changes nothing.
-    t = setup(again("Pula tudo"));
-    t.tables.appointments.push(rui);
-    expect(cardOf((await run(t, ask("Pula tudo"))).blocks)).toBeUndefined();
+    expect(free.alternatives.every((a) => a.date === "2026-10-14" && a.start !== "14:00")).toBe(true);
+    expect(textOf(r.chunks)).toBe("Confira os detalhes e toque em Confirmar.");
+  });
+
+  it("the series' FIRST date taken (9a: the loop): the card starts on the next date, never re-finding the skipped one", async () => {
+    const t = setup(series({ every: "week", count: 3 }));
+    t.tables.appointments.push({ id: "a-first", professional_id: "doc-1", patient_id: null, patient_name: "Rui", date: "2026-10-07", start_time: "14:00:00", end_time: "14:30:00", status: "scheduled", payment_status: "pending", payment_amount: null });
+    const r = await run(t, ask("…"));
+    const card = cardOf(r.blocks)!;
+    expect(card.fields.find((f) => f.label === "Quando")!.value).toBe("Quarta-feira, 14/10/2026, 14:00–14:30");
+    expect(card.fields.find((f) => f.label === "Repetir")!.value).toBe("Semanal, 2 consultas (até 21/10/2026), pulando 07/10");
+    // The series stays anchored on 07/10 with the skip: the save expands it the same way.
+    expect(card.action.args).toMatchObject({ date: "2026-10-07", repeat: { every: "week", count: 3, skip: ["2026-10-07"] } });
+    expect(choiceOf(r.blocks)!.alternatives.every((a) => a.date === "2026-10-07")).toBe(true);
   });
 
   it("blocked time on a later date: the second question names that date", async () => {

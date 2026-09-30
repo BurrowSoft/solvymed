@@ -35,7 +35,6 @@ export type Outcome =
 // block and names the real button, never repeats its details.
 const POINTER = {
   card: { pt: "Confira os detalhes e toque em Confirmar.", en: "Check the details and tap Confirmar." },
-  choice: { pt: "Escolha uma opção acima.", en: "Choose an option above." },
 } as const;
 
 const SCREENS: AssistantScreen[] =["home", "schedule", "patients", "payments", "settings", "other"];
@@ -324,7 +323,10 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
             // A slot choice carries its own question and buttons: no text at
             // all after it (UX: never "Escolha uma opção acima" over a lone
             // "Outro horário").
-            const text = shown === "slot" ? "" : shown === "card" ? POINTER.card[lang] : shown === "choice" ? POINTER.choice[lang] : roundText.trim();
+            // A list or a time choice carries its own question ("Qual
+            // paciente?"): no text after it (3e: never a second "Escolha uma
+            // opção" line). A card gets the one pointer line.
+            const text = shown === "card" ? POINTER.card[lang] : shown ? "" : roundText.trim();
             if (text) { answered = true; yield { kind: "delta", text }; }
             break;
           }
