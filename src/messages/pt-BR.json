@@ -29,7 +29,7 @@
     "heading": "Tudo o que sua clínica precisa",
     "sub": "Desenvolvido para clínicos e profissionais independentes que querem menos burocracia e mais tempo com os pacientes.",
     "scheduling_title": "Agendamento Inteligente",
-    "scheduling_desc": "Visualização completa da agenda em modos diário, semanal e mensal. Gerencie consultas presenciais e online, bloqueie horários e envie lembretes automáticos.",
+    "scheduling_desc": "Visualização completa da agenda em modos diário, semanal e mensal. Gerencie consultas presenciais e online, bloqueie horários e receba lembretes automáticos das suas consultas no celular.",
     "patients_title": "Gestão de Pacientes",
     "patients_desc": "Fichas completas com dados pessoais, contato, histórico de consultas e tags personalizadas. Pesquise e filtre toda a sua base de pacientes.",
     "records_title": "Prontuário Clínico",
@@ -571,7 +571,9 @@
     "appearanceHint": "O tema do painel neste navegador. Impressões e e-mails ficam sempre claros.",
     "themeAuto": "Automático",
     "themeLight": "Claro",
-    "themeDark": "Escuro"
+    "themeDark": "Escuro",
+    "pixKey": "Chave Pix",
+    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, telefone ou chave aleatória"
   },
   "clinics": {
     "title": "Minhas Clínicas",
@@ -658,7 +660,8 @@
     "customTime": "Horário personalizado",
     "orCustomTime": "Ou escolha um horário específico",
     "professionalFallback": "Profissional",
-    "errorArchived": "Esta clínica não está aceitando novos agendamentos para a sua conta. Entre em contato com a clínica."
+    "errorArchived": "Esta clínica não está aceitando novos agendamentos para a sua conta. Entre em contato com a clínica.",
+    "practiceInactive": "A clínica não está recebendo agendamentos online no momento."
   },
   "auth": {
     "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",
@@ -767,8 +770,8 @@
       "decline": "Recusar"
     },
     "professionalWelcome": {
-      "title": "Boas-vindas ao SolvyMed, {firstName}!",
-      "titleNoName": "Boas-vindas ao SolvyMed!",
+      "title": "Bem-vindo(a) ao SolvyMed, {firstName}!",
+      "titleNoName": "Bem-vindo(a) ao SolvyMed!",
       "body": "Vamos configurar sua clínica em poucos passos, para você marcar sua primeira consulta.",
       "startSetup": "Começar configuração",
       "skip": "Agora não"
@@ -827,7 +830,9 @@
     "clinics": "Clínicas",
     "payments": "Pagamentos",
     "settings": "Configurações",
-    "signOut": "Sair"
+    "signOut": "Sair",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu"
   },
   "join": {
     "notFound": "Link de convite não encontrado",
@@ -850,15 +855,14 @@
     "feature1": "Consultas e agendamentos ilimitados",
     "feature2": "Prontuários, receitas e exames",
     "feature3": "Relatórios de receita e controle de pagamentos",
-    "feature4": "Lembretes automáticos de consultas",
+    "feature4": "Lembretes das suas consultas no celular",
     "feature5": "Acesso incluso para suas secretárias",
     "payCard": "Assinar com Cartão",
     "payCardSub": "Cartão de crédito",
     "or": "ou",
     "cancelAnytime": "Cancele quando quiser. Sem fidelidade.",
-    "lockedSettingsHint": "Seus dados continuam acessíveis: exporte seus pacientes, gerencie a assinatura ou encerre a conta em",
-    "lockedSettingsLink": "Configurações",
-    "successMessage": "Assinatura ativada! Boas-vindas ao SolvyMed Pro.",
+    "startsAfterTrial": "Sua assinatura começa em {date}, quando o teste grátis termina. Nada é cobrado hoje.",
+    "successMessage": "Assinatura ativada! Bem-vindo(a) ao SolvyMed Pro.",
     "activationPending": "Pagamento recebido! Ativando sua assinatura…",
     "activationSlow": "Recebemos seu pagamento, mas a ativação está demorando. Ela costuma concluir em alguns minutos; se o plano não aparecer, fale com o suporte:",
     "trialDaysLeft": "Você tem {n} dias restantes no seu período de teste.",
@@ -881,7 +885,13 @@
     "paymentActivating": "Pagamento recebido. Seu acesso está sendo restaurado. Atualize esta página em instantes.",
     "chipDays": "Teste grátis: faltam {n} dias · Ver plano",
     "chipUrgentDays": "Teste grátis: faltam {n} dias · Assinar",
-    "chipLastDay": "Teste grátis: último dia · Assinar"
+    "chipLastDay": "Teste grátis: último dia · Assinar",
+    "goToDashboard": "Ir para o painel",
+    "backToDashboard": "Voltar ao painel",
+    "back": "Voltar",
+    "needHelp": "Precisa de ajuda?",
+    "lockedSettingsHint": "Seus dados continuam acessíveis: exporte seus pacientes, gerencie a assinatura ou encerre a conta em",
+    "lockedSettingsLink": "Configurações"
   },
   "secretary": {
     "notConnectedTitle": "Sua conta ainda não está conectada a uma clínica",
@@ -1039,7 +1049,9 @@
     "pushClosedTitle": "Clínica encerrada",
     "pushClosedBody": "Sua clínica encerrou a conta no SolvyMed. Suas consultas futuras foram canceladas. Para obter uma cópia do seu prontuário, fale com support@solvymed.com.",
     "pushCancelledTitle": "Consulta cancelada",
-    "pushCancelledBody": "Sua consulta de {date} às {time} foi cancelada pela clínica."
+    "pushCancelledBody": "Sua consulta de {date} às {time} foi cancelada pela clínica.",
+    "closedNotice": "Sua conta foi encerrada.",
+    "deletedNotice": "Sua conta foi excluída."
   },
   "setup": {
     "title": "Configure sua clínica",
@@ -1654,7 +1666,11 @@
     "search": "Buscar por nome ou documento…",
     "archivedTag": "arquivado",
     "back": "Voltar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "subBirth": "Nasc. {date}",
+    "subPhone": "Tel. …{last4}",
+    "subImported": "Importado em {date}",
+    "subCreated": "Cadastrado em {date}"
   },
   "patientAddress": {
     "section": "Endereço",

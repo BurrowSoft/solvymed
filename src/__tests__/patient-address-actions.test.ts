@@ -7,6 +7,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const h = vi.hoisted(() => ({ live: true, updates: [] as Record<string, unknown>[], error: null as unknown, country: "BR" }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/effectiveProfId", () => ({ getEffectiveProfId: async () => "doc-1", isProfessionalRole: async () => true }));
+vi.mock("@/lib/activeAccess", () => ({ getActiveProfId: async () => "doc-1", isActiveProfessional: async () => true, isLockedOut: async () => false }));
 vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => ({ ok: true, country: h.country }) }));
 vi.mock("@/lib/conditions", async (orig) => {
   const real = await orig<typeof import("@/lib/conditions")>();

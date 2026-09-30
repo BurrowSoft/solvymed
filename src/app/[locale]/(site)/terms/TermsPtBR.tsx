@@ -54,7 +54,9 @@ export function TermsPtBR() {
           Os recursos para profissionais exigem uma assinatura ativa do SolvyMed Pro. Novas contas de profissional têm
           15 dias de teste grátis. A assinatura é cobrada mensalmente, de forma antecipada, no cartão, pela Stripe. O
           preço depende do país do seu consultório: R$ 89 por mês no Brasil, ฿690 por mês na Tailândia e US$ 19 por mês
-          nos demais países; o preço é sempre exibido antes do pagamento.
+          nos demais países; o preço é sempre exibido antes do pagamento. Se você assinar durante o teste grátis com mais
+          de 2 dias restantes, o teste continua e a primeira cobrança é feita quando ele termina; se cancelar antes
+          disso, você mantém o teste até o fim.
         </p>
         <p>
           A assinatura é renovada automaticamente todo mês até que você a cancele. Você pode cancelar a qualquer

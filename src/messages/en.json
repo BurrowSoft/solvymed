@@ -29,7 +29,7 @@
     "heading": "Everything your practice needs",
     "sub": "Built for clinicians and independent practitioners who want less admin work and more time with patients.",
     "scheduling_title": "Smart Scheduling",
-    "scheduling_desc": "Full calendar view with daily, weekly, and monthly modes. Manage in-person and online appointments, block time, and send automated reminders.",
+    "scheduling_desc": "Full calendar view with daily, weekly, and monthly modes. Manage in-person and online appointments, block time, and get automatic reminders of your appointments on your phone.",
     "patients_title": "Patient Management",
     "patients_desc": "Complete patient profiles with personal data, contact info, appointment history, and custom tags. Search and filter across your entire patient base.",
     "records_title": "Clinical Records",
@@ -571,7 +571,9 @@
     "appearanceHint": "The dashboard's theme in this browser. Prints and emails always stay light.",
     "themeAuto": "Automatic",
     "themeLight": "Light",
-    "themeDark": "Dark"
+    "themeDark": "Dark",
+    "pixKey": "Pix key",
+    "pixKeyPlaceholder": "CPF, CNPJ, email, phone or random key"
   },
   "clinics": {
     "title": "My Clinics",
@@ -658,7 +660,8 @@
     "customTime": "Custom time",
     "orCustomTime": "Or pick a custom time",
     "professionalFallback": "Professional",
-    "errorArchived": "This clinic isn't taking new bookings for your account. Please contact the clinic."
+    "errorArchived": "This clinic isn't taking new bookings for your account. Please contact the clinic.",
+    "practiceInactive": "This clinic isn't taking online bookings right now."
   },
   "auth": {
     "passwordTooShort": "Password must be at least {min} characters.",
@@ -827,7 +830,9 @@
     "clinics": "Clinics",
     "payments": "Payments",
     "settings": "Settings",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "join": {
     "notFound": "Invite link not found",
@@ -850,14 +855,13 @@
     "feature1": "Unlimited appointments & scheduling",
     "feature2": "Patient records, prescriptions & exams",
     "feature3": "Revenue reports & payment tracking",
-    "feature4": "Automated appointment reminders",
+    "feature4": "Appointment reminders on your phone",
     "feature5": "Includes access for your secretaries",
     "payCard": "Subscribe with Card",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "or",
     "cancelAnytime": "Cancel anytime. No commitments.",
-    "lockedSettingsHint": "Your data stays yours: export your patients, manage the subscription or close your account in",
-    "lockedSettingsLink": "Settings",
+    "startsAfterTrial": "Your subscription starts on {date}, when your free trial ends. You won't be charged today.",
     "errorAlreadySubscribed": "You're already subscribed.",
     "errorWrongRole": "Only professionals can subscribe.",
     "errorCheckFailed": "Could not verify your subscription status. Please try again.",
@@ -881,7 +885,13 @@
     "paymentActivating": "Payment received. Your access is being restored, so refresh this page in a moment.",
     "chipDays": "Free trial: {n} days left · See plan",
     "chipUrgentDays": "Free trial: {n} days left · Subscribe",
-    "chipLastDay": "Free trial: last day · Subscribe"
+    "chipLastDay": "Free trial: last day · Subscribe",
+    "lockedSettingsHint": "Your data stays yours: export your patients, manage the subscription or close your account in",
+    "lockedSettingsLink": "Settings",
+    "goToDashboard": "Go to dashboard",
+    "backToDashboard": "Back to dashboard",
+    "back": "Back",
+    "needHelp": "Need help?"
   },
   "secretary": {
     "notConnectedTitle": "Not connected to a clinic yet",
@@ -1039,7 +1049,9 @@
     "pushClosedTitle": "Clinic closed",
     "pushClosedBody": "Your clinic has closed its SolvyMed account. Your upcoming appointments are cancelled. For a copy of your records, contact support@solvymed.com.",
     "pushCancelledTitle": "Appointment cancelled",
-    "pushCancelledBody": "Your appointment on {date} at {time} has been cancelled by the clinic."
+    "pushCancelledBody": "Your appointment on {date} at {time} has been cancelled by the clinic.",
+    "closedNotice": "Your account has been closed.",
+    "deletedNotice": "Your account has been deleted."
   },
   "setup": {
     "title": "Set up your clinic",
@@ -1684,7 +1696,11 @@
     "search": "Search by name or ID…",
     "archivedTag": "archived",
     "back": "Back",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "subBirth": "Born {date}",
+    "subPhone": "Phone …{last4}",
+    "subImported": "Imported {date}",
+    "subCreated": "Added {date}"
   },
   "patientAddress": {
     "section": "Address",

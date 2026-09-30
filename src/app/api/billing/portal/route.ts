@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { stripe, retrieveSubscriptionOrNull } from "@/lib/stripeBilling";
+import { stripe, retrieveSubscriptionOrNull, stripeLocale } from "@/lib/stripeBilling";
 import { routing } from "@/i18n/routing";
 
 // Opens the Stripe Customer Portal so a professional can update the card on
@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
   try {
     const portal = await stripe.billingPortal.sessions.create({
       customer: customerId,
+      locale: stripeLocale(locale),
       // Back where the doctor came from: Settings (an active subscriber;
       // /subscribe would bounce them) or /subscribe. Only these two.
       return_url: `${origin}/${locale === "en" ? "" : locale + "/"}${body.returnTo === "settings" ? "dashboard/settings" : "subscribe"}`,

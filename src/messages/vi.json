@@ -29,7 +29,7 @@
     "heading": "Tất cả những gì phòng khám của bạn cần",
     "sub": "Được xây dựng cho các bác sĩ lâm sàng và người hành nghề độc lập muốn giảm công việc hành chính và dành nhiều thời gian hơn cho bệnh nhân.",
     "scheduling_title": "Lịch Hẹn Thông Minh",
-    "scheduling_desc": "Chế độ xem lịch đầy đủ theo ngày, tuần và tháng. Quản lý các cuộc hẹn trực tiếp và trực tuyến, chặn thời gian và gửi nhắc nhở tự động.",
+    "scheduling_desc": "Chế độ xem lịch đầy đủ theo ngày, tuần và tháng. Quản lý các cuộc hẹn trực tiếp và trực tuyến, chặn thời gian và nhận nhắc nhở tự động về lịch hẹn trên điện thoại.",
     "patients_title": "Quản Lý Bệnh Nhân",
     "patients_desc": "Hồ sơ bệnh nhân đầy đủ với thông tin cá nhân, liên hệ, lịch sử hẹn và thẻ tùy chỉnh. Tìm kiếm và lọc toàn bộ cơ sở bệnh nhân của bạn.",
     "records_title": "Hồ Sơ Lâm Sàng",
@@ -571,7 +571,9 @@
     "appearanceHint": "Chủ đề bảng điều khiển trên trình duyệt này. Bản in và email luôn ở chế độ sáng.",
     "themeAuto": "Tự động",
     "themeLight": "Sáng",
-    "themeDark": "Tối"
+    "themeDark": "Tối",
+    "pixKey": "Khóa Pix",
+    "pixKeyPlaceholder": "CPF, CNPJ, email, số điện thoại hoặc khóa ngẫu nhiên"
   },
   "clinics": {
     "title": "Phòng khám của tôi",
@@ -658,7 +660,8 @@
     "customTime": "Thời gian tùy chỉnh",
     "orCustomTime": "Hoặc chọn giờ khác",
     "professionalFallback": "Chuyên gia",
-    "errorArchived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám."
+    "errorArchived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám.",
+    "practiceInactive": "Phòng khám này hiện không nhận đặt lịch trực tuyến."
   },
   "auth": {
     "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
@@ -827,7 +830,9 @@
     "clinics": "Phòng khám",
     "payments": "Thanh toán",
     "settings": "Cài đặt",
-    "signOut": "Đăng xuất"
+    "signOut": "Đăng xuất",
+    "openMenu": "Mở menu",
+    "closeMenu": "Đóng menu"
   },
   "join": {
     "notFound": "Không tìm thấy liên kết mời",
@@ -850,14 +855,13 @@
     "feature1": "Lịch hẹn và lịch trình không giới hạn",
     "feature2": "Hồ sơ bệnh nhân, đơn thuốc và xét nghiệm",
     "feature3": "Báo cáo doanh thu và theo dõi thanh toán",
-    "feature4": "Nhắc nhở lịch hẹn tự động",
+    "feature4": "Nhắc lịch hẹn trên điện thoại của bạn",
     "feature5": "Quyền truy cập cho thư ký được tính gộp",
     "payCard": "Đăng ký bằng thẻ",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "hoặc",
     "cancelAnytime": "Hủy bất cứ lúc nào. Không ràng buộc.",
-    "lockedSettingsHint": "Dữ liệu vẫn là của bạn: xuất danh sách bệnh nhân, quản lý gói đăng ký hoặc đóng tài khoản tại",
-    "lockedSettingsLink": "Cài đặt",
+    "startsAfterTrial": "Gói đăng ký của bạn bắt đầu vào {date}, khi thời gian dùng thử miễn phí kết thúc. Hôm nay bạn chưa bị trừ tiền.",
     "successMessage": "Đăng ký đã được kích hoạt! Chào mừng đến với SolvyMed Pro.",
     "activationPending": "Đã nhận thanh toán! Đang kích hoạt gói đăng ký của bạn…",
     "activationSlow": "Chúng tôi đã nhận thanh toán của bạn, nhưng việc kích hoạt đang lâu hơn bình thường. Thường sẽ hoàn tất trong vài phút; nếu gói của bạn không hiển thị, hãy liên hệ hỗ trợ:",
@@ -881,7 +885,13 @@
     "paymentActivating": "Đã nhận thanh toán. Quyền truy cập của bạn đang được khôi phục, vui lòng tải lại trang sau giây lát.",
     "chipDays": "Dùng thử miễn phí: còn {n} ngày · Xem gói",
     "chipUrgentDays": "Dùng thử miễn phí: còn {n} ngày · Đăng ký",
-    "chipLastDay": "Dùng thử miễn phí: ngày cuối · Đăng ký"
+    "chipLastDay": "Dùng thử miễn phí: ngày cuối · Đăng ký",
+    "lockedSettingsHint": "Dữ liệu vẫn là của bạn: xuất danh sách bệnh nhân, quản lý gói đăng ký hoặc đóng tài khoản tại",
+    "lockedSettingsLink": "Cài đặt",
+    "goToDashboard": "Đến bảng điều khiển",
+    "backToDashboard": "Quay lại bảng điều khiển",
+    "back": "Quay lại",
+    "needHelp": "Cần trợ giúp?"
   },
   "secretary": {
     "notConnectedTitle": "Chưa được kết nối với phòng khám",
@@ -1039,7 +1049,9 @@
     "pushClosedTitle": "Phòng khám đã đóng",
     "pushClosedBody": "Phòng khám của bạn đã đóng tài khoản SolvyMed. Các lịch hẹn sắp tới của bạn đã bị hủy. Để nhận bản sao hồ sơ, hãy liên hệ support@solvymed.com.",
     "pushCancelledTitle": "Lịch hẹn đã bị hủy",
-    "pushCancelledBody": "Lịch hẹn của bạn vào {date} lúc {time} đã bị phòng khám hủy."
+    "pushCancelledBody": "Lịch hẹn của bạn vào {date} lúc {time} đã bị phòng khám hủy.",
+    "closedNotice": "Tài khoản của bạn đã được đóng.",
+    "deletedNotice": "Tài khoản của bạn đã bị xóa."
   },
   "setup": {
     "title": "Thiết lập phòng khám của bạn",
@@ -1654,7 +1666,11 @@
     "search": "Tìm theo tên hoặc số giấy tờ…",
     "archivedTag": "đã lưu trữ",
     "back": "Quay lại",
-    "cancel": "Hủy"
+    "cancel": "Hủy",
+    "subBirth": "Sinh {date}",
+    "subPhone": "ĐT …{last4}",
+    "subImported": "Nhập {date}",
+    "subCreated": "Thêm {date}"
   },
   "patientAddress": {
     "section": "Địa chỉ",

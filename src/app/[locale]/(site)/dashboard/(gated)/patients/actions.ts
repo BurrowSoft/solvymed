@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getEffectiveProfId, isProfessionalRole } from "@/lib/effectiveProfId";
+import { getActiveProfId, isActiveProfessional, isLockedOut } from "@/lib/activeAccess";
+import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { tellPatient } from "@/lib/clinicNotify";
 import { actionError } from "@/lib/dbErrors";
 import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
@@ -37,7 +38,7 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
   // A secretary manages their doctor's patients, not their own (empty) id.
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const fullName = (formData.get("full_name") as string)?.trim();
@@ -150,7 +151,7 @@ export async function updatePatient(id: string, formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "unauthorized" };
   // A secretary manages their doctor's patients, not their own (empty) id.
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "check_failed" };
 
   const fullName = (formData.get("full_name") as string)?.trim();
@@ -199,7 +200,7 @@ export async function deletePatient(id: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "unauthorized" };
   // A secretary manages their doctor's patients, not their own (empty) id.
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "check_failed" };
 
   const { error } = await supabase.from("patients").delete().eq("id", id).eq("professional_id", effectiveProfId);
@@ -253,7 +254,7 @@ export type ArchiveResult =
 export async function archivePatient(patientId: string): Promise<ArchiveResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "generic" };
+  if (!user || (await isLockedOut(supabase, user.id))) return { error: "generic" };
 
   // The RPC scopes to the caller's practice (doctor or linked secretary),
   // cancels upcoming appointments in the same transaction and returns them,
@@ -289,7 +290,7 @@ export type RestoreResult = { success: true } | { error: "patient_not_found" | "
 export async function restorePatient(patientId: string): Promise<RestoreResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "generic" };
+  if (!user || (await isLockedOut(supabase, user.id))) return { error: "generic" };
 
   const { error } = await supabase.rpc("restore_patient", { p_patient_id: patientId });
   if (error) {
@@ -309,7 +310,7 @@ export async function createRecord(patientId: string, formData: FormData) {
   if (!user) return { error: "unauthorized" };
   // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
   // not a boundary, since these actions are directly callable.
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
+  if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const content = (formData.get("content") as string)?.trim();
   if (!content) return { error: "content_required" };
@@ -336,7 +337,7 @@ export async function updateRecord(id: string, patientId: string, formData: Form
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "unauthorized" };
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
+  if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const content = (formData.get("content") as string)?.trim();
   if (!content) return { error: "content_required" };
@@ -357,7 +358,7 @@ export async function addRecordCorrection(recordId: string, patientId: string, f
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "unauthorized" };
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
+  if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const content = (formData.get("content") as string)?.trim();
   const reason = (formData.get("reason") as string)?.trim();
@@ -380,7 +381,7 @@ export async function deleteRecord(id: string, patientId: string) {
   if (!user) return { error: "unauthorized" };
   // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
   // not a boundary, since these actions are directly callable.
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
+  if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const { error } = await supabase.from("medical_records").delete().eq("id", id).eq("professional_id", user.id);
   if (error) return { error: actionError(error.message) };
@@ -394,7 +395,7 @@ export async function createPrescription(patientId: string, formData: FormData) 
   if (!user) return { error: "unauthorized" };
   // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
   // not a boundary, since these actions are directly callable.
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
+  if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const notes = (formData.get("notes") as string)?.trim() || null;
   const date = clinicDate();
@@ -426,7 +427,7 @@ export async function toggleBookingBlock(patientId: string, blocked: boolean) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "unauthorized" };
   // A secretary manages their doctor's patients, not their own (empty) id.
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "check_failed" };
 
   const { error } = await supabase
@@ -444,7 +445,7 @@ export async function toggleBookingBlock(patientId: string, blocked: boolean) {
 export async function generatePatientInviteCode(patientId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "unauthorized" };
+  if (!user || (await isLockedOut(supabase, user.id))) return { error: "unauthorized" };
 
   const { data, error } = await supabase.rpc("generate_patient_invite_code", { p_patient_id: patientId });
   if (error) return { error: actionError(error.message) };
@@ -459,7 +460,7 @@ export async function deletePrescription(id: string, patientId: string) {
   if (!user) return { error: "unauthorized" };
   // Clinical data is doctor-only. RLS enforces it too; the hidden tabs are
   // not a boundary, since these actions are directly callable.
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
+  if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   // The items go first; stop if that's refused (e.g. clinical_record_locked
   // after 24 hours) instead of trying the prescription anyway.
@@ -495,7 +496,7 @@ export async function updatePrescription(id: string, patientId: string, formData
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "unauthorized" };
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
+  if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const meds = parseMedications(formData);
   if (meds.length === 0) return { error: "medication_required" };
@@ -523,7 +524,7 @@ export async function addPrescriptionCorrection(prescriptionId: string, patientI
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "unauthorized" };
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "not_doctor" };
+  if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const meds = parseMedications(formData);
   const reason = (formData.get("reason") as string)?.trim();
@@ -556,7 +557,7 @@ export async function searchMergeCandidates(patientId: string, q: string): Promi
   if (!UUIDISH_MERGE.test(patientId)) return [];
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user || (await isProfessionalRole(supabase, user.id)) !== true) return [];
+  if (!user || (await isActiveProfessional(supabase, user.id)) !== true) return [];
   // The practice country picks which ID the search also matches (never
   // assumed: unknown searches by name and passport only).
   const lookup = await lookupPracticeCountry(supabase, user.id, user.id);
@@ -576,7 +577,7 @@ export async function loadMergeComparison(a: string, b: string): Promise<{ rows:
   const address = conditionMet("patient-address-live");
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user || (await isProfessionalRole(supabase, user.id)) !== true) return null;
+  if (!user || (await isActiveProfessional(supabase, user.id)) !== true) return null;
   const [{ data: rows, error }, { data: prev, error: prevError }] = await Promise.all([
     // The address, CNS and Observações too once 138 + 139 are applied.
     supabase.from("patients").select(mergeColumns(address)).eq("professional_id", user.id).in("id", [a, b]),
@@ -610,7 +611,7 @@ export async function mergePatientsAction(keptId: string, mergedId: string, choi
   }
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { ok: false, code: "not_allowed" };
+  if (!user || (await isLockedOut(supabase, user.id))) return { ok: false, code: "not_allowed" };
   const { data, error } = await supabase.rpc("merge_patients", {
     p_kept_id: keptId, p_merged_id: mergedId, p_choices: clean, p_app_account_confirmed: appAccountConfirmed === true,
   });

@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
+import en from "@/messages/en.json";
+import th from "@/messages/th.json";
 
 // Settings → Clinic follows the practice country (the app's rule, UX): the
 // state label and the sample placeholders.
@@ -49,6 +51,19 @@ describe("ClinicForm by practice country", () => {
     expect(input("clinic_phone", container).placeholder).not.toContain("(11)");
     expect(input("clinic_cnpj", container)).toBeNull();
     expect(screen.getByText("Nº de identificação fiscal (13 dígitos)")).toBeInTheDocument();
+  });
+
+  it("the Pix field (BR only) is in the UI language, e.g. Thai or English", () => {
+    for (const [loc, msgs, label, hint] of [["th", th, "คีย์ Pix", "CPF, CNPJ, อีเมล, เบอร์โทร หรือคีย์สุ่ม"], ["en", en, "Pix key", "CPF, CNPJ, email, phone or random key"]] as const) {
+      const { container, unmount } = render(
+        <NextIntlClientProvider locale={loc} messages={msgs}>
+          <ClinicForm data={{}} country="BR" showPix showPromptPay={false} showTaxId={false} />
+        </NextIntlClientProvider>,
+      );
+      expect(screen.getByText(label)).toBeInTheDocument();
+      expect(input("pix_key", container).placeholder).toBe(hint);
+      unmount();
+    }
   });
 
   it("elsewhere: Estado ou província and a country-code phone hint", () => {

@@ -37,13 +37,17 @@ export function CloseAccountPanel({ preview, locale }: { preview: ClosurePreview
     setPending(true);
     setError(null);
     let code: CloseCode | null = null;
+    // What actually happened (UX): "deleted" (no records) or "closed" (kept).
+    let deleted = false;
     try {
       const res = await fetch("/api/account/close", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ locale }),
       });
-      if (!res.ok) code = ((await res.json().catch(() => null))?.code as CloseCode | undefined) ?? "generic";
+      const body = await res.json().catch(() => null);
+      if (!res.ok) code = (body?.code as CloseCode | undefined) ?? "generic";
+      else deleted = body?.outcome === "deleted";
     } catch {
       code = "generic";
     }
@@ -52,9 +56,11 @@ export function CloseAccountPanel({ preview, locale }: { preview: ClosurePreview
       setPending(false);
       return;
     }
-    // The account is gone; drop the local session and leave the dashboard.
-    await createClient().auth.signOut().catch(() => {});
-    window.location.href = locale === "en" ? "/" : `/${locale}`;
+    // The account is gone; the response already cleared the auth cookies.
+    // Drop the local session too (scope "local": no call to Auth, which can
+    // refuse for a closed user) and land on the home page with the notice.
+    await createClient().auth.signOut({ scope: "local" }).catch(() => {});
+    window.location.href = `${locale === "en" ? "/" : `/${locale}`}?${deleted ? "deleted" : "closed"}=1`;
   }
 
   const errorText =

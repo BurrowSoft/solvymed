@@ -5,7 +5,7 @@
 // list). A new text = a new date here AND a migration adding it to that
 // list (mobile dev), shipped together.
 export const PRIVACY_VERSION = "2026-09-28";
-export const TERMS_VERSION = "2026-09-28";
+export const TERMS_VERSION = "2026-10-01";
 
 // Sent with every web signup (the checkbox is required, so it's sent only
 // on acceptance).

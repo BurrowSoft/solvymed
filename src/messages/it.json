@@ -29,7 +29,7 @@
     "heading": "Tutto ciò di cui il tuo studio ha bisogno",
     "sub": "Progettato per clinici e professionisti indipendenti che vogliono meno burocrazia e più tempo con i pazienti.",
     "scheduling_title": "Agenda Intelligente",
-    "scheduling_desc": "Vista completa del calendario in modalità giornaliera, settimanale e mensile. Gestisci appuntamenti in presenza e online, blocca gli orari e invia promemoria automatici.",
+    "scheduling_desc": "Vista completa del calendario in modalità giornaliera, settimanale e mensile. Gestisci appuntamenti in presenza e online, blocca gli orari e ricevi promemoria automatici dei tuoi appuntamenti sul telefono.",
     "patients_title": "Gestione dei Pazienti",
     "patients_desc": "Schede pazienti complete con dati personali, recapiti, storico degli appuntamenti e tag personalizzate. Cerca e filtra in tutta la tua base di pazienti.",
     "records_title": "Cartelle Cliniche",
@@ -571,7 +571,9 @@
     "appearanceHint": "Il tema della dashboard in questo browser. Stampe ed e-mail restano sempre chiare.",
     "themeAuto": "Automatico",
     "themeLight": "Chiaro",
-    "themeDark": "Scuro"
+    "themeDark": "Scuro",
+    "pixKey": "Chiave Pix",
+    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, telefono o chiave casuale"
   },
   "clinics": {
     "title": "Le mie cliniche",
@@ -658,7 +660,8 @@
     "customTime": "Orario personalizzato",
     "orCustomTime": "O scegli un orario",
     "professionalFallback": "Professionista",
-    "errorArchived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio."
+    "errorArchived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio.",
+    "practiceInactive": "Questo studio non accetta prenotazioni online al momento."
   },
   "auth": {
     "passwordTooShort": "La password deve essere lunga almeno {min} caratteri.",
@@ -827,7 +830,9 @@
     "clinics": "Cliniche",
     "payments": "Pagamenti",
     "settings": "Impostazioni",
-    "signOut": "Esci"
+    "signOut": "Esci",
+    "openMenu": "Apri menu",
+    "closeMenu": "Chiudi menu"
   },
   "join": {
     "notFound": "Link d'invito non trovato",
@@ -850,14 +855,13 @@
     "feature1": "Appuntamenti e pianificazione illimitati",
     "feature2": "Cartelle cliniche, ricette ed esami",
     "feature3": "Report sui ricavi e monitoraggio pagamenti",
-    "feature4": "Promemoria automatici degli appuntamenti",
+    "feature4": "Promemoria dei tuoi appuntamenti sul telefono",
     "feature5": "Accesso incluso per le tue segretarie",
     "payCard": "Abbonati con carta",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "o",
     "cancelAnytime": "Annulla quando vuoi. Nessun impegno.",
-    "lockedSettingsHint": "I tuoi dati restano tuoi: esporta i pazienti, gestisci l'abbonamento o chiudi l'account in",
-    "lockedSettingsLink": "Impostazioni",
+    "startsAfterTrial": "Il tuo abbonamento inizia il {date}, quando finisce la prova gratuita. Oggi non ti viene addebitato nulla.",
     "successMessage": "Abbonamento attivato! Ti diamo il benvenuto in SolvyMed Pro.",
     "activationPending": "Pagamento ricevuto! Attivazione dell’abbonamento in corso…",
     "activationSlow": "Abbiamo ricevuto il pagamento, ma l’attivazione sta richiedendo più tempo del solito. Di solito si completa in pochi minuti; se il piano non compare, contatta l’assistenza:",
@@ -881,7 +885,13 @@
     "paymentActivating": "Pagamento ricevuto. Il tuo accesso è in fase di ripristino. Aggiorna questa pagina tra poco.",
     "chipDays": "Prova gratuita: {n} giorni rimasti · Vedi il piano",
     "chipUrgentDays": "Prova gratuita: {n} giorni rimasti · Abbonati",
-    "chipLastDay": "Prova gratuita: ultimo giorno · Abbonati"
+    "chipLastDay": "Prova gratuita: ultimo giorno · Abbonati",
+    "lockedSettingsHint": "I tuoi dati restano tuoi: esporta i pazienti, gestisci l'abbonamento o chiudi l'account in",
+    "lockedSettingsLink": "Impostazioni",
+    "goToDashboard": "Vai alla dashboard",
+    "backToDashboard": "Torna alla dashboard",
+    "back": "Indietro",
+    "needHelp": "Serve aiuto?"
   },
   "secretary": {
     "notConnectedTitle": "Non ancora collegato/a a uno studio",
@@ -1039,7 +1049,9 @@
     "pushClosedTitle": "Studio chiuso",
     "pushClosedBody": "Il tuo studio ha chiuso il suo account SolvyMed. I tuoi appuntamenti futuri sono stati annullati. Per una copia della tua cartella, scrivi a support@solvymed.com.",
     "pushCancelledTitle": "Appuntamento annullato",
-    "pushCancelledBody": "Il tuo appuntamento del {date} alle {time} è stato annullato dallo studio."
+    "pushCancelledBody": "Il tuo appuntamento del {date} alle {time} è stato annullato dallo studio.",
+    "closedNotice": "Il tuo account è stato chiuso.",
+    "deletedNotice": "Il tuo account è stato eliminato."
   },
   "setup": {
     "title": "Configura il tuo studio",
@@ -1654,7 +1666,11 @@
     "search": "Cerca per nome o documento…",
     "archivedTag": "archiviato",
     "back": "Indietro",
-    "cancel": "Annulla"
+    "cancel": "Annulla",
+    "subBirth": "Nato/a il {date}",
+    "subPhone": "Tel. …{last4}",
+    "subImported": "Importato il {date}",
+    "subCreated": "Registrato il {date}"
   },
   "patientAddress": {
     "section": "Indirizzo",

@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { formatShortDate } from "@/lib/dateLabels";
-import { addressDisplay, defaultPick, mergeChoices, mergeDiff, mergeFields, notesFitBoth, type MergeErrorCode, type MergeFieldKey, type MergePick, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
+import { addressDisplay, defaultPick, distinguishingMarks, mergeChoices, mergeDiff, mergeFields, notesFitBoth, recordMarks, swapPicks, type MergeErrorCode, type MergeFieldKey, type MergePick, type MergePreviewSide, type MergeRow, type RecordMark } from "@/lib/patientMerge";
 import { loadMergeComparison, mergePatientsAction, searchMergeCandidates } from "../actions";
 
 // "Mesclar com outro paciente…" (migration 133; the app's MergePatientsModal):
@@ -79,6 +79,22 @@ export function MergePatientButton({ patientId, patientName, locale }: { patient
     if (key === "photo") return t("photoYes");
     return v;
   };
+  // A card's subtitle and the confirm sentence's qualifier (UX, the app's #181).
+  const markText = (m: RecordMark): string =>
+    m.kind === "birth" ? t("subBirth", { date: formatShortDate(locale, m.date) })
+      : m.kind === "phone" ? t("subPhone", { last4: m.last4 })
+      : t(m.kind === "imported" ? "subImported" : "subCreated", { date: formatShortDate(locale, m.date) });
+  // Two same-name records, each named by the first mark that differs:
+  // «Maria Silva (nasc. 12/03/1980)», the qualifier's first letter lowercased.
+  const confirmNames = (k: MergeRow, m: MergeRow) => {
+    const marks = distinguishingMarks(k, m);
+    const named = (p: MergeRow, mark?: RecordMark) => {
+      if (!mark) return p.full_name;
+      const q = markText(mark);
+      return `${p.full_name} (${q.charAt(0).toLocaleLowerCase(locale) + q.slice(1)})`;
+    };
+    return { kept: named(k, marks?.[0]), merged: named(m, marks?.[1]) };
+  };
   const pickOf = (key: MergeFieldKey): MergePick => {
     if (!kept || !merged) return "kept";
     return picks[key] ?? defaultPick(key, kept, merged, fields);
@@ -146,10 +162,11 @@ export function MergePatientButton({ patientId, patientName, locale }: { patient
                   {[kept, merged].map((r) => (
                     <label key={r.id} className={`rounded-xl border p-3 text-sm ${r.id === kept.id ? "border-teal-400 bg-teal-50" : "border-slate-200"}`}>
                       <span className="flex items-center gap-2">
-                        <input type="radio" name="keep" checked={r.id === kept.id} disabled={step !== "compare"} onChange={() => { setKeptId(r.id); setPicks({}); }} />
+                        <input type="radio" name="keep" checked={r.id === kept.id} disabled={step !== "compare"} onChange={() => { setKeptId(r.id); setPicks(swapPicks); }} />
                         <span className="font-semibold text-slate-900">{t("keepThis")}</span>
                       </span>
                       <span className="mt-1 block text-slate-700">{r.full_name}</span>
+                      {recordMarks(r).length > 0 && <span className="mt-0.5 block text-xs text-slate-500">{recordMarks(r).map(markText).join(" · ")}</span>}
                       {data.preview[r.id]?.hasAppAccount && <span className="mt-1 inline-block rounded-full bg-teal-100 px-2 py-0.5 text-xs font-semibold text-teal-800">{t("usesApp")}</span>}
                     </label>
                   ))}
@@ -193,7 +210,7 @@ export function MergePatientButton({ patientId, patientName, locale }: { patient
                 {step === "confirm" && (
                   <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm">
                     <p className="font-bold text-slate-900">{t("confirmTitle")}</p>
-                    <p className="mt-1 text-slate-700">{t("confirmBody", { merged: merged.full_name, kept: kept.full_name })}</p>
+                    <p className="mt-1 text-slate-700">{t("confirmBody", confirmNames(kept, merged))}</p>
                   </div>
                 )}
                 {step === "app" && (

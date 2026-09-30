@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mergeChoices, mergeDiff, type MergeRow } from "@/lib/patientMerge";
+import { distinguishingMarks, mergeChoices, mergeDiff, recordMarks, swapPicks, type MergeRow } from "@/lib/patientMerge";
 import { mergeSupported, resetMergeProbe } from "@/lib/mergeProbe";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -8,7 +8,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 const row = (o: Partial<MergeRow>): MergeRow => ({
   id: "x", full_name: "", cpf: null, th_national_id: null, passport_number: null, birth_date: null, sex: null, phone: null,
-  emergency_phone: null, email: null, rg: null, profession: null, convenio_type: null, photo_url: null, archived_at: null, booking_blocked: false, ...o,
+  emergency_phone: null, email: null, rg: null, profession: null, convenio_type: null, photo_url: null, archived_at: null, booking_blocked: false,
+  created_at: null, import_id: null, ...o,
 });
 const A = row({ id: "a", full_name: "Bia Souza", cpf: "529.982.247-25", email: "a@x.invalid" });
 const B = row({ id: "b", full_name: "bia souza", email: "b@x.invalid", phone: "+5511955550133" });
@@ -25,6 +26,37 @@ describe("mergeDiff / mergeChoices (the app's cases)", () => {
   it("an empty kept value takes the other one by default; a picked \"kept\" wins over that", () => {
     expect(mergeChoices(A, B, {})).toEqual({ phone: "merged" });
     expect(mergeChoices(A, B, { phone: "kept" })).toEqual({});
+  });
+});
+
+describe("swapPicks / recordMarks / distinguishingMarks (the app's #181)", () => {
+  it("swapping the record that stays keeps each chosen value chosen; 'both' stays", () => {
+    expect(swapPicks({ email: "merged", phone: "kept", notes_admin: "both" })).toEqual({ email: "kept", phone: "merged", notes_admin: "both" });
+    // The value follows: B's email picked while A stays = B's email once B stays.
+    expect(mergeChoices(B, A, swapPicks({ email: "merged" }))).not.toHaveProperty("email");
+  });
+
+  it("marks: birth date, the phone's last 4 digits, then imported or added (the local day)", () => {
+    const local = new Date(2026, 8, 20, 23, 30).toISOString();
+    expect(recordMarks(row({ birth_date: "1980-03-12", phone: "+55 (11) 95555-0133", created_at: local }))).toEqual([
+      { kind: "birth", date: "1980-03-12" }, { kind: "phone", last4: "0133" }, { kind: "created", date: "2026-09-20" },
+    ]);
+    expect(recordMarks(row({ phone: "123", created_at: local, import_id: "imp-1" }))).toEqual([{ kind: "imported", date: "2026-09-20" }]);
+    expect(recordMarks(row({}))).toEqual([]);
+  });
+
+  it("same names: the first differing mark names each record; else the added date; different names: none", () => {
+    const d1 = new Date(2026, 0, 5, 10).toISOString(), d2 = new Date(2026, 5, 7, 10).toISOString();
+    const a = row({ full_name: "Maria Silva", birth_date: "1980-03-12", phone: "11 90000-1111", created_at: d1 });
+    const b = row({ full_name: "maria silva ", birth_date: "1980-03-12", phone: "11 90000-2222", created_at: d2 });
+    expect(distinguishingMarks(a, b)).toEqual([{ kind: "phone", last4: "1111" }, { kind: "phone", last4: "2222" }]);
+    // Imported vs added the same day still tells them apart.
+    const c = row({ full_name: "Maria Silva", created_at: d1, import_id: "imp" });
+    const e = row({ full_name: "Maria Silva", created_at: d1 });
+    expect(distinguishingMarks(c, e)).toEqual([{ kind: "imported", date: "2026-01-05" }, { kind: "created", date: "2026-01-05" }]);
+    // Nothing differs: the added dates.
+    expect(distinguishingMarks(row({ full_name: "Ana", created_at: d1 }), row({ full_name: "Ana", created_at: d1 }))).toEqual([{ kind: "created", date: "2026-01-05" }, { kind: "created", date: "2026-01-05" }]);
+    expect(distinguishingMarks(a, row({ full_name: "Maria Souza", birth_date: "1990-01-01" }))).toBeNull();
   });
 });
 
@@ -51,7 +83,8 @@ describe("mergeSupported: Mesclar hidden until 133 is on the database", () => {
 });
 
 // The action (client choices re-validated; refusals mapped).
-const h = vi.hoisted(() => ({ rpcs: [] as { fn: string; args: unknown }[], reply: { data: { kept_id: "a" } as unknown, error: null as unknown } }));
+const h = vi.hoisted(() => ({ rpcs: [] as { fn: string; args: unknown }[], reply: { data: { kept_id: "a" } as unknown, error: null as unknown }, locked: false }));
+vi.mock("@/lib/activeAccess", () => ({ isLockedOut: async () => h.locked, getActiveProfId: async () => (h.locked ? null : "doc-1"), isActiveProfessional: async () => !h.locked }));
 vi.mock("next/cache", () => ({ revalidatePath: () => {} }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
@@ -63,7 +96,13 @@ vi.mock("@/lib/supabase/server", () => ({
 describe("mergePatientsAction", async () => {
   const { mergePatientsAction } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions");
   const K = "0f3b9c2e-1111-4222-8333-444455556666", M = "1f3b9c2e-1111-4222-8333-444455556666";
-  beforeEach(() => { h.rpcs = []; h.reply = { data: { kept_id: K }, error: null }; });
+  beforeEach(() => { h.rpcs = []; h.reply = { data: { kept_id: K }, error: null }; h.locked = false; });
+
+  it("a locked-out practice (the paywall) merges nothing", async () => {
+    h.locked = true;
+    expect(await mergePatientsAction(K, M, { email: "merged" }, true)).toEqual({ ok: false, code: "not_allowed" });
+    expect(h.rpcs).toEqual([]);
+  });
 
   it("sends kept / merged / choices / the app confirmation; returns the kept id", async () => {
     expect(await mergePatientsAction(K, M, { email: "merged" }, true)).toEqual({ ok: true, keptId: K });

@@ -29,7 +29,7 @@
     "heading": "Semua yang praktik Anda butuhkan",
     "sub": "Dibuat untuk klinisi dan praktisi mandiri yang ingin lebih sedikit pekerjaan administratif dan lebih banyak waktu bersama pasien.",
     "scheduling_title": "Penjadwalan Cerdas",
-    "scheduling_desc": "Tampilan kalender penuh dengan mode harian, mingguan, dan bulanan. Kelola janji temu tatap muka dan online, blokir waktu, dan kirim pengingat otomatis.",
+    "scheduling_desc": "Tampilan kalender penuh dengan mode harian, mingguan, dan bulanan. Kelola janji temu tatap muka dan online, blokir waktu, dan terima pengingat otomatis janji temu di ponsel Anda.",
     "patients_title": "Manajemen Pasien",
     "patients_desc": "Profil pasien lengkap dengan data pribadi, informasi kontak, riwayat janji, dan tag khusus. Cari dan filter di seluruh basis pasien Anda.",
     "records_title": "Rekam Medis",
@@ -571,7 +571,9 @@
     "appearanceHint": "Tema dasbor di browser ini. Cetakan dan email selalu terang.",
     "themeAuto": "Otomatis",
     "themeLight": "Terang",
-    "themeDark": "Gelap"
+    "themeDark": "Gelap",
+    "pixKey": "Kunci Pix",
+    "pixKeyPlaceholder": "CPF, CNPJ, email, telepon, atau kunci acak"
   },
   "clinics": {
     "title": "Klinik Saya",
@@ -658,7 +660,8 @@
     "customTime": "Waktu khusus",
     "orCustomTime": "Atau pilih waktu khusus",
     "professionalFallback": "Tenaga profesional",
-    "errorArchived": "Klinik ini tidak menerima pemesanan baru untuk akun Anda. Silakan hubungi klinik."
+    "errorArchived": "Klinik ini tidak menerima pemesanan baru untuk akun Anda. Silakan hubungi klinik.",
+    "practiceInactive": "Klinik ini sedang tidak menerima pemesanan online."
   },
   "auth": {
     "passwordTooShort": "Kata sandi harus minimal {min} karakter.",
@@ -827,7 +830,9 @@
     "clinics": "Klinik",
     "payments": "Pembayaran",
     "settings": "Pengaturan",
-    "signOut": "Keluar"
+    "signOut": "Keluar",
+    "openMenu": "Buka menu",
+    "closeMenu": "Tutup menu"
   },
   "join": {
     "notFound": "Tautan undangan tidak ditemukan",
@@ -850,14 +855,13 @@
     "feature1": "Janji temu dan penjadwalan tak terbatas",
     "feature2": "Rekam medis, resep, dan pemeriksaan",
     "feature3": "Laporan pendapatan dan pelacakan pembayaran",
-    "feature4": "Pengingat janji temu otomatis",
+    "feature4": "Pengingat janji temu di ponsel Anda",
     "feature5": "Akses untuk sekretaris termasuk",
     "payCard": "Berlangganan dengan Kartu",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "atau",
     "cancelAnytime": "Batalkan kapan saja. Tanpa komitmen.",
-    "lockedSettingsHint": "Data Anda tetap milik Anda: ekspor pasien, kelola langganan, atau tutup akun di",
-    "lockedSettingsLink": "Pengaturan",
+    "startsAfterTrial": "Langganan Anda dimulai pada {date}, saat uji coba gratis berakhir. Tidak ada tagihan hari ini.",
     "successMessage": "Langganan diaktifkan! Selamat datang di SolvyMed Pro.",
     "activationPending": "Pembayaran diterima! Mengaktifkan langganan Anda…",
     "activationSlow": "Kami telah menerima pembayaran Anda, tetapi aktivasi memakan waktu lebih lama dari biasanya. Biasanya selesai dalam beberapa menit; jika paket Anda tidak muncul, hubungi dukungan:",
@@ -881,7 +885,13 @@
     "paymentActivating": "Pembayaran diterima. Akses Anda sedang dipulihkan, silakan muat ulang halaman ini sebentar lagi.",
     "chipDays": "Uji coba gratis: sisa {n} hari · Lihat paket",
     "chipUrgentDays": "Uji coba gratis: sisa {n} hari · Berlangganan",
-    "chipLastDay": "Uji coba gratis: hari terakhir · Berlangganan"
+    "chipLastDay": "Uji coba gratis: hari terakhir · Berlangganan",
+    "lockedSettingsHint": "Data Anda tetap milik Anda: ekspor pasien, kelola langganan, atau tutup akun di",
+    "lockedSettingsLink": "Pengaturan",
+    "goToDashboard": "Ke dasbor",
+    "backToDashboard": "Kembali ke dasbor",
+    "back": "Kembali",
+    "needHelp": "Butuh bantuan?"
   },
   "secretary": {
     "notConnectedTitle": "Belum terhubung ke klinik",
@@ -1039,7 +1049,9 @@
     "pushClosedTitle": "Klinik ditutup",
     "pushClosedBody": "Klinik Anda telah menutup akun SolvyMed-nya. Janji temu mendatang Anda dibatalkan. Untuk salinan rekam medis, hubungi support@solvymed.com.",
     "pushCancelledTitle": "Janji temu dibatalkan",
-    "pushCancelledBody": "Janji temu Anda pada {date} pukul {time} dibatalkan oleh klinik."
+    "pushCancelledBody": "Janji temu Anda pada {date} pukul {time} dibatalkan oleh klinik.",
+    "closedNotice": "Akun Anda telah ditutup.",
+    "deletedNotice": "Akun Anda telah dihapus."
   },
   "setup": {
     "title": "Siapkan klinik Anda",
@@ -1654,7 +1666,11 @@
     "search": "Cari berdasarkan nama atau nomor identitas…",
     "archivedTag": "diarsipkan",
     "back": "Kembali",
-    "cancel": "Batal"
+    "cancel": "Batal",
+    "subBirth": "Lahir {date}",
+    "subPhone": "Telp. …{last4}",
+    "subImported": "Diimpor {date}",
+    "subCreated": "Ditambahkan {date}"
   },
   "patientAddress": {
     "section": "Alamat",

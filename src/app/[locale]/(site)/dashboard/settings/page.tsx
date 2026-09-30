@@ -19,7 +19,7 @@ import { ExportPatientsCard } from "./ExportPatientsCard";
 import { AppearanceCard } from "./AppearanceCard";
 import { SubscriptionPanel } from "./SubscriptionPanel";
 import { FoundersCard } from "./FoundersCard";
-import { planSummary, type EffectiveSub } from "@/lib/subscription";
+import { isAccessAllowed, planSummary, type EffectiveSub } from "@/lib/subscription";
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 type WorkingHours = Record<DayKey, { enabled: boolean; start: string; end: string }>;
@@ -117,7 +117,11 @@ export default async function SettingsPage({
   ]);
   // Settings → Assinatura: no card if the plan can't be read. The portal
   // button only for a Stripe subscription (the route re-checks all of it).
-  const plan = subResult.error ? null : planSummary((subResult.data?.[0] ?? null) as EffectiveSub | null);
+  const effSub = subResult.error ? null : ((subResult.data?.[0] ?? null) as EffectiveSub | null);
+  const plan = subResult.error ? null : planSummary(effSub);
+  // Locked (the paywall's rule): Settings stays open, but no patient invite
+  // code/link: new patients shouldn't join a practice that can't see them (UX).
+  const locked = !!effSub && !isAccessAllowed(effSub);
   const profBilling = profResult.data as { subscription_provider?: string | null; subscription_id?: string | null } | null;
   const canManageBilling = profBilling?.subscription_provider === "stripe" && !!profBilling.subscription_id;
   // "Show setup checklist": only when the doctor hid it before finishing.
@@ -198,7 +202,7 @@ export default async function SettingsPage({
           registration={(prof as { professional_registration?: string | null }).professional_registration ?? undefined}
         />
 
-        <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} />
+        {!locked && <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} />}
 
         <TeamPanel rows={teamRows} loadFailed={!!teamResult.error} />
 

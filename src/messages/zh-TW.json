@@ -29,7 +29,7 @@
     "heading": "診所所需的一切",
     "sub": "專為希望減少行政工作、將更多時間用於患者的臨床醫師和獨立執業者打造。",
     "scheduling_title": "智慧排程",
-    "scheduling_desc": "完整的日曆檢視，支援日、週、月模式。管理現場和線上預約，封鎖時段，並發送自動提醒。",
+    "scheduling_desc": "完整的日曆檢視，支援日、週、月模式。管理現場和線上預約，封鎖時段，並在手機上自動收到預約提醒。",
     "patients_title": "患者管理",
     "patients_desc": "包含個人資訊、聯絡方式、預約記錄和自訂標籤的完整患者檔案。可在整個患者庫中搜尋和篩選。",
     "records_title": "臨床記錄",
@@ -571,7 +571,9 @@
     "appearanceHint": "此瀏覽器中的面板主題。列印內容和電子郵件一律為淺色。",
     "themeAuto": "自動",
     "themeLight": "淺色",
-    "themeDark": "深色"
+    "themeDark": "深色",
+    "pixKey": "Pix 金鑰",
+    "pixKeyPlaceholder": "CPF、CNPJ、電子郵件、電話或隨機金鑰"
   },
   "clinics": {
     "title": "我的診所",
@@ -658,7 +660,8 @@
     "customTime": "自訂時間",
     "orCustomTime": "或選擇自訂時間",
     "professionalFallback": "專業人員",
-    "errorArchived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。"
+    "errorArchived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。",
+    "practiceInactive": "這家診所目前不接受線上預約。"
   },
   "auth": {
     "passwordTooShort": "密碼至少需要{min}個字元。",
@@ -827,7 +830,9 @@
     "clinics": "診所",
     "payments": "付款",
     "settings": "設定",
-    "signOut": "登出"
+    "signOut": "登出",
+    "openMenu": "開啟選單",
+    "closeMenu": "關閉選單"
   },
   "join": {
     "notFound": "找不到邀請連結",
@@ -850,14 +855,13 @@
     "feature1": "無限預約和日程管理",
     "feature2": "患者病歷、處方和檢查",
     "feature3": "收入報告和付款追蹤",
-    "feature4": "自動預約提醒",
+    "feature4": "手機上的預約提醒",
     "feature5": "包含秘書存取權限",
     "payCard": "使用卡片訂閱",
     "payCardSub": "Visa、Mastercard、American Express",
     "or": "或",
     "cancelAnytime": "隨時取消。無需承諾。",
-    "lockedSettingsHint": "你的資料仍屬於你:可在以下位置匯出病患、管理訂閱或關閉帳戶:",
-    "lockedSettingsLink": "設定",
+    "startsAfterTrial": "你的訂閱將於 {date} 免費試用結束時開始。今天不會扣款。",
     "successMessage": "訂閱已啟用！歡迎使用SolvyMed Pro。",
     "activationPending": "已收到付款！正在啟用您的訂閱…",
     "activationSlow": "我們已收到您的付款，但啟用時間比平常久。通常幾分鐘內即可完成；如果您的方案沒有顯示，請聯絡客服：",
@@ -881,7 +885,13 @@
     "paymentActivating": "已收到付款。正在恢復您的存取權限，請稍後重新整理此頁面。",
     "chipDays": "免費試用：剩餘 {n} 天 · 查看方案",
     "chipUrgentDays": "免費試用：剩餘 {n} 天 · 立即訂閱",
-    "chipLastDay": "免費試用：最後一天 · 立即訂閱"
+    "chipLastDay": "免費試用：最後一天 · 立即訂閱",
+    "lockedSettingsHint": "你的資料仍屬於你:可在以下位置匯出病患、管理訂閱或關閉帳戶:",
+    "lockedSettingsLink": "設定",
+    "goToDashboard": "前往控制台",
+    "backToDashboard": "返回控制台",
+    "back": "返回",
+    "needHelp": "需要協助?"
   },
   "secretary": {
     "notConnectedTitle": "尚未連接到診所",
@@ -1039,7 +1049,9 @@
     "pushClosedTitle": "診所已關閉",
     "pushClosedBody": "您的診所已關閉其 SolvyMed 帳戶。您的後續預約已取消。如需病歷副本，請聯絡 support@solvymed.com。",
     "pushCancelledTitle": "預約已取消",
-    "pushCancelledBody": "您在 {date} {time} 的預約已被診所取消。"
+    "pushCancelledBody": "您在 {date} {time} 的預約已被診所取消。",
+    "closedNotice": "你的帳戶已關閉。",
+    "deletedNotice": "你的帳戶已刪除。"
   },
   "setup": {
     "title": "設定您的診所",
@@ -1654,7 +1666,11 @@
     "search": "依姓名或證件號搜尋…",
     "archivedTag": "已封存",
     "back": "返回",
-    "cancel": "取消"
+    "cancel": "取消",
+    "subBirth": "出生 {date}",
+    "subPhone": "電話 …{last4}",
+    "subImported": "匯入於 {date}",
+    "subCreated": "新增於 {date}"
   },
   "patientAddress": {
     "section": "地址",

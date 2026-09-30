@@ -273,8 +273,8 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
           {/* Pix is Brazil's payment QR: only for Brazilian practices. */}
           {showPix && (
             <div className="sm:col-span-2">
-              <Label>Chave Pix</Label>
-              <Input name="pix_key" defaultValue={data.pix_key ?? ""} placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória" />
+              <Label>{t("pixKey")}</Label>
+              <Input name="pix_key" defaultValue={data.pix_key ?? ""} placeholder={t("pixKeyPlaceholder")} />
             </div>
           )}
           {/* PromptPay is Thailand's payment QR: only for Thai practices. */}

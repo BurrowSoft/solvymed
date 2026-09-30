@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { isAccessAllowed, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
+import { isAccessAllowed, getPlanPrice, checkoutTrialEnd, type EffectiveSub } from "@/lib/subscription";
 import { stripe, retrieveStoredStripeSubscription, isLive, needsCardFix } from "@/lib/stripeBilling";
 import { routing } from "@/i18n/routing";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
@@ -132,6 +132,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Could not verify the practice country", code: "check_failed" }, { status: 503 });
   }
   const plan = getPlanPrice(country.country);
+  // Subscribing during the free trial keeps it: the first charge is when
+  // the trial ends (UX). Null: charged now.
+  const trialEnd = checkoutTrialEnd(sub);
 
   // Collapses concurrent duplicate requests (double-click racing the
   // redirect, a retried request) into the same Checkout Session. Scoped to
@@ -142,7 +145,7 @@ export async function POST(request: NextRequest) {
   // reason.
   const WINDOW_MS = 10 * 60 * 1000;
   const windowStart = Math.floor(Date.now() / WINDOW_MS) * WINDOW_MS;
-  const idempotencyKey = `checkout-stripe-${user.id}-${locale}-${plan.currency}-${windowStart / WINDOW_MS}`;
+  const idempotencyKey = `checkout-stripe-${user.id}-${locale}-${plan.currency}-${trialEnd ? `t${trialEnd.getTime()}` : "now"}-${windowStart / WINDOW_MS}`;
   // 70 min after the window start = 60-70 min from now, inside Stripe's
   // allowed 30 min to 24 h.
   const expiresAt = Math.floor(windowStart / 1000) + 70 * 60;
@@ -214,7 +217,10 @@ export async function POST(request: NextRequest) {
         // belongs to. Without this, current_period_end could never be set,
         // and an active subscription with a null period end reads as
         // unlimited access.
-        subscription_data: { metadata: { user_id: userId } },
+        subscription_data: {
+          metadata: { user_id: userId },
+          ...(trialEnd ? { trial_end: Math.floor(trialEnd.getTime() / 1000) } : {}),
+        },
         metadata: { user_id: userId, checkout_key: key },
         success_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?success=1`,
         cancel_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?cancelled=1`,

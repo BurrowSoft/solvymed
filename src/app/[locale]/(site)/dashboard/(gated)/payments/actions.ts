@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getEffectiveProfId } from "@/lib/effectiveProfId";
+import { getActiveProfId } from "@/lib/activeAccess";
 
 function isValidAmount(amount: number): boolean {
   return Number.isFinite(amount) && amount >= 0 && amount <= 1_000_000;
@@ -18,7 +18,7 @@ export async function markPaid(id: string, amount?: number) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const update: Record<string, unknown> = { payment_status: "paid" };
@@ -39,7 +39,7 @@ export async function markUnpaid(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const { error } = await supabase
@@ -59,7 +59,7 @@ export async function setPaymentAmount(id: string, amount: number) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const { error } = await supabase

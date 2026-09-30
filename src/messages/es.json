@@ -29,7 +29,7 @@
     "heading": "Todo lo que tu consulta necesita",
     "sub": "Diseñado para clínicos y profesionales independientes que quieren menos papeleo y más tiempo con sus pacientes.",
     "scheduling_title": "Agenda Inteligente",
-    "scheduling_desc": "Vista completa del calendario en modos diario, semanal y mensual. Gestiona citas presenciales y en línea, bloquea horarios y envía recordatorios automáticos.",
+    "scheduling_desc": "Vista completa del calendario en modos diario, semanal y mensual. Gestiona citas presenciales y en línea, bloquea horarios y recibe recordatorios automáticos de tus citas en el móvil.",
     "patients_title": "Gestión de Pacientes",
     "patients_desc": "Fichas completas con datos personales, contacto, historial de citas y etiquetas personalizadas. Busca y filtra toda tu base de pacientes.",
     "records_title": "Historial Clínico",
@@ -571,7 +571,9 @@
     "appearanceHint": "El tema del panel en este navegador. Las impresiones y los correos siempre son claros.",
     "themeAuto": "Automático",
     "themeLight": "Claro",
-    "themeDark": "Oscuro"
+    "themeDark": "Oscuro",
+    "pixKey": "Clave Pix",
+    "pixKeyPlaceholder": "CPF, CNPJ, correo, teléfono o clave aleatoria"
   },
   "clinics": {
     "title": "Mis Clínicas",
@@ -658,7 +660,8 @@
     "customTime": "Hora personalizada",
     "orCustomTime": "O elige una hora",
     "professionalFallback": "Profesional",
-    "errorArchived": "Esta clínica no está aceptando nuevas reservas para tu cuenta. Ponte en contacto con la clínica."
+    "errorArchived": "Esta clínica no está aceptando nuevas reservas para tu cuenta. Ponte en contacto con la clínica.",
+    "practiceInactive": "Esta clínica no está aceptando reservas en línea en este momento."
   },
   "auth": {
     "passwordTooShort": "La contraseña debe tener al menos {min} caracteres.",
@@ -827,7 +830,9 @@
     "clinics": "Clínicas",
     "payments": "Pagos",
     "settings": "Configuración",
-    "signOut": "Cerrar sesión"
+    "signOut": "Cerrar sesión",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú"
   },
   "join": {
     "notFound": "Enlace de invitación no encontrado",
@@ -850,14 +855,13 @@
     "feature1": "Citas y agenda ilimitadas",
     "feature2": "Historiales, recetas y exámenes",
     "feature3": "Informes de ingresos y seguimiento de pagos",
-    "feature4": "Recordatorios automáticos de citas",
+    "feature4": "Recordatorios de tus citas en el móvil",
     "feature5": "Acceso incluido para tus secretarias",
     "payCard": "Suscribirse con tarjeta",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "o",
     "cancelAnytime": "Cancela cuando quieras. Sin compromisos.",
-    "lockedSettingsHint": "Tus datos siguen siendo tuyos: exporta tus pacientes, gestiona la suscripción o cierra tu cuenta en",
-    "lockedSettingsLink": "Configuración",
+    "startsAfterTrial": "Tu suscripción empieza el {date}, cuando termina la prueba gratuita. Hoy no se cobra nada.",
     "successMessage": "¡Suscripción activada! Te damos la bienvenida a SolvyMed Pro.",
     "activationPending": "¡Pago recibido! Activando tu suscripción…",
     "activationSlow": "Recibimos tu pago, pero la activación está tardando más de lo habitual. Suele completarse en unos minutos; si tu plan no aparece, contacta con soporte:",
@@ -881,7 +885,13 @@
     "paymentActivating": "Pago recibido. Tu acceso se está restableciendo. Actualiza esta página en un momento.",
     "chipDays": "Prueba gratis: quedan {n} días · Ver plan",
     "chipUrgentDays": "Prueba gratis: quedan {n} días · Suscribirse",
-    "chipLastDay": "Prueba gratis: último día · Suscribirse"
+    "chipLastDay": "Prueba gratis: último día · Suscribirse",
+    "lockedSettingsHint": "Tus datos siguen siendo tuyos: exporta tus pacientes, gestiona la suscripción o cierra tu cuenta en",
+    "lockedSettingsLink": "Configuración",
+    "goToDashboard": "Ir al panel",
+    "backToDashboard": "Volver al panel",
+    "back": "Volver",
+    "needHelp": "¿Necesitas ayuda?"
   },
   "secretary": {
     "notConnectedTitle": "Tu cuenta aún no está conectada a una clínica",
@@ -1039,7 +1049,9 @@
     "pushClosedTitle": "Clínica cerrada",
     "pushClosedBody": "Tu clínica cerró su cuenta de SolvyMed. Tus citas futuras se cancelaron. Para obtener una copia de tu historia clínica, escribe a support@solvymed.com.",
     "pushCancelledTitle": "Cita cancelada",
-    "pushCancelledBody": "Tu cita del {date} a las {time} fue cancelada por la clínica."
+    "pushCancelledBody": "Tu cita del {date} a las {time} fue cancelada por la clínica.",
+    "closedNotice": "Tu cuenta ha sido cerrada.",
+    "deletedNotice": "Tu cuenta ha sido eliminada."
   },
   "setup": {
     "title": "Configura tu clínica",
@@ -1654,7 +1666,11 @@
     "search": "Buscar por nombre o documento…",
     "archivedTag": "archivado",
     "back": "Volver",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "subBirth": "Nac. {date}",
+    "subPhone": "Tel. …{last4}",
+    "subImported": "Importado el {date}",
+    "subCreated": "Registrado el {date}"
   },
   "patientAddress": {
     "section": "Dirección",
