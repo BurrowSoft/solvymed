@@ -637,8 +637,8 @@
       "decline": "Recusar"
     },
     "professionalWelcome": {
-      "title": "Boas-vindas ao SolvyMed, {firstName}!",
-      "titleNoName": "Boas-vindas ao SolvyMed!",
+      "title": "Bem-vindo ao SolvyMed, {firstName}!",
+      "titleNoName": "Bem-vindo ao SolvyMed!",
       "body": "Vamos configurar sua clínica em poucos passos, para você marcar sua primeira consulta.",
       "startSetup": "Começar configuração",
       "skip": "Agora não"
@@ -726,7 +726,7 @@
     "payCardSub": "Cartão de crédito",
     "or": "ou",
     "cancelAnytime": "Cancele quando quiser. Sem fidelidade.",
-    "successMessage": "Assinatura ativada! Boas-vindas ao SolvyMed Pro.",
+    "successMessage": "Assinatura ativada! Bem-vindo ao SolvyMed Pro.",
     "goToDashboard": "Ir para o painel",
     "backToDashboard": "Voltar ao painel",
     "back": "Voltar",
