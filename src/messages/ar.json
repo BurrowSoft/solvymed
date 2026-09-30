@@ -1659,7 +1659,11 @@
     "search": "ابحث بالاسم أو رقم الهوية…",
     "archivedTag": "مؤرشف",
     "back": "رجوع",
-    "cancel": "إلغاء"
+    "cancel": "إلغاء",
+    "subBirth": "الميلاد {date}",
+    "subPhone": "الهاتف …{last4}",
+    "subImported": "استيراد {date}",
+    "subCreated": "أضيف {date}"
   },
   "patientAddress": {
     "section": "العنوان",

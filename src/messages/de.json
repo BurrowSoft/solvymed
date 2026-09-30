@@ -1659,7 +1659,11 @@
     "search": "Nach Name oder Ausweis suchen…",
     "archivedTag": "archiviert",
     "back": "Zurück",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "subBirth": "Geb. {date}",
+    "subPhone": "Tel. …{last4}",
+    "subImported": "Importiert am {date}",
+    "subCreated": "Angelegt am {date}"
   },
   "patientAddress": {
     "section": "Adresse",

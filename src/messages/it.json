@@ -1659,7 +1659,11 @@
     "search": "Cerca per nome o documento…",
     "archivedTag": "archiviato",
     "back": "Indietro",
-    "cancel": "Annulla"
+    "cancel": "Annulla",
+    "subBirth": "Nato/a il {date}",
+    "subPhone": "Tel. …{last4}",
+    "subImported": "Importato il {date}",
+    "subCreated": "Registrato il {date}"
   },
   "patientAddress": {
     "section": "Indirizzo",

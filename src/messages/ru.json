@@ -1659,7 +1659,11 @@
     "search": "Поиск по имени или документу…",
     "archivedTag": "в архиве",
     "back": "Назад",
-    "cancel": "Отмена"
+    "cancel": "Отмена",
+    "subBirth": "Дата рожд. {date}",
+    "subPhone": "Тел. …{last4}",
+    "subImported": "Импортирован {date}",
+    "subCreated": "Добавлен {date}"
   },
   "patientAddress": {
     "section": "Адрес",

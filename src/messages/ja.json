@@ -1659,7 +1659,11 @@
     "search": "氏名または身分証番号で検索…",
     "archivedTag": "アーカイブ済み",
     "back": "戻る",
-    "cancel": "キャンセル"
+    "cancel": "キャンセル",
+    "subBirth": "生年月日 {date}",
+    "subPhone": "電話 …{last4}",
+    "subImported": "インポート {date}",
+    "subCreated": "登録 {date}"
   },
   "patientAddress": {
     "section": "住所",

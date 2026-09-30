@@ -1659,7 +1659,11 @@
     "search": "이름 또는 신분증 번호로 검색…",
     "archivedTag": "보관됨",
     "back": "뒤로",
-    "cancel": "취소"
+    "cancel": "취소",
+    "subBirth": "생년월일 {date}",
+    "subPhone": "전화 …{last4}",
+    "subImported": "가져옴 {date}",
+    "subCreated": "등록 {date}"
   },
   "patientAddress": {
     "section": "주소",
