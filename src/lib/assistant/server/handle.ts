@@ -31,7 +31,14 @@ export type Outcome =
   // started (a9).
   | { status: 200; stream: AsyncIterable<AnswerChunk>; settle?: () => Promise<void> };
 
-const SCREENS: AssistantScreen[] = ["home", "schedule", "patients", "payments", "settings", "other"];
+// The only text after a card / a list to choose from (UX): it points to the
+// block and names the real button, never repeats its details.
+const POINTER = {
+  card: { pt: "Confira os detalhes e toque em Confirmar.", en: "Check the details and tap Confirmar." },
+  choice: { pt: "Escolha uma opção acima.", en: "Choose an option above." },
+} as const;
+
+const SCREENS: AssistantScreen[] =["home", "schedule", "patients", "payments", "settings", "other"];
 const KEEP_MESSAGES = 6;
 const MAX_TOKENS = 800;
 // Model calls per answer in actions mode (reads, then a proposal or text).
@@ -64,6 +71,18 @@ async function toolContext(db: unknown, profId: string, locale: string, client: 
     client,
     tz,
   };
+}
+
+// The real dates around today, so the model looks a date up instead of
+// computing it (UX: "31/09" must be impossible): a week back, three ahead.
+export function calendarLine(today: string): string {
+  const base = Date.parse(`${today}T12:00:00Z`);
+  const days: string[] = [];
+  for (let i = -7; i <= 21; i++) {
+    const iso = new Date(base + i * 86_400_000).toISOString().slice(0, 10);
+    days.push(`${formatDateLabel("en-US", iso, { weekday: "short" })} ${iso}${i === 0 ? " (today)" : ""}`);
+  }
+  return `Calendar (take every date from here; never compute one): ${days.join(", ")}.`;
 }
 
 // The Help Center links only lead somewhere once it's published.
@@ -257,10 +276,12 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       const seen: string[] = [];
       const usage: ModelUsage = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
       let answered = false;
+      // What this answer has put on screen for the user to act on.
+      let shown: "card" | "choice" | null = null;
       try {
         const ctx = mode === "actions" ? await toolContext(deps.db, userId, req.locale, deps.client) : null;
         let system = rules(lang, deps.client, req.screen, mode);
-        if (ctx) system += `\nToday at the clinic: ${formatDateLabel("en-US", ctx.today, { weekday: "long" })} ${ctx.today}, ${ctx.nowTime} (${ctx.tz}). Dates for the tools are YYYY-MM-DD in this calendar.`;
+        if (ctx) system += `\nToday at the clinic: ${formatDateLabel("en-US", ctx.today, { weekday: "long" })} ${ctx.today}, ${ctx.nowTime} (${ctx.tz}). Dates for the tools are YYYY-MM-DD in this calendar.\n${calendarLine(ctx.today)}`;
         const history: ModelMessage[] = [...messages];
         for (let round = 0; round < (ctx ? MAX_ROUNDS : 1); round++) {
           let said = "";
@@ -281,18 +302,40 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
               }
             }
           }
-          for await (const t of filterMarkers(texts(), seen)) {
-            answered = true;
-            yield { kind: "delta", text: t };
+          if (!ctx) {
+            // Help mode: one round, streamed as it comes.
+            for await (const t of filterMarkers(texts(), seen)) {
+              answered = true;
+              yield { kind: "delta", text: t };
+            }
+            break;
           }
-          if (!ctx || calls.length === 0) break;
-          // The tools, as the user; their blocks (a card, time chips) go
-          // straight to the user, the text back to the model.
+          // Actions mode (UX, the round-1 tests): a round that calls tools is
+          // the model working ("deixa eu conferir…"), and its text is never
+          // shown, so no reasoning leaks and no two rounds' texts run
+          // together. The last round's text is shown; but once a card or a
+          // list to choose from is on screen, that block is the single source
+          // of truth and the text is a fixed pointer to it, never the model
+          // restating (or contradicting) a patient, date or time.
+          let roundText = "";
+          for await (const t of filterMarkers(texts(), seen)) roundText += t;
+          if (calls.length === 0) {
+            const pointer = shown === "card" ? POINTER.card[lang] : shown === "choice" ? POINTER.choice[lang] : null;
+            const text = pointer ?? roundText.trim();
+            if (text) { answered = true; yield { kind: "delta", text }; }
+            break;
+          }
+          // The tools, as the user; their blocks (a card, a list to choose
+          // from, time chips) go straight to the user, the text to the model.
           const results: ContentBlock[] = [];
           for (const call of calls) {
             const out = await runTool(ctx, call.name, call.input);
-            if (out.block) { answered = true; yield { kind: "block", block: out.block }; }
-            for (const b of out.blocks ?? []) { answered = true; yield { kind: "block", block: b }; }
+            for (const b of [...(out.block ? [out.block] : []), ...(out.blocks ?? [])]) {
+              answered = true;
+              if (b.type === "card") shown = "card";
+              else if ((b.type === "pick" || b.type === "slot_choice") && shown !== "card") shown = "choice";
+              yield { kind: "block", block: b };
+            }
             results.push({ type: "tool_result", tool_use_id: call.id, content: out.forModel, ...(out.isError ? { is_error: true } : {}) });
           }
           history.push({ role: "assistant", content: [...(said ? [{ type: "text" as const, text: said }] : []), ...calls.map((t) => ({ type: "tool_use" as const, ...t }))] });

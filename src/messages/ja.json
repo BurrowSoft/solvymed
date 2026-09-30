@@ -660,7 +660,8 @@
     "customTime": "カスタム時間",
     "orCustomTime": "または時間を指定する",
     "professionalFallback": "担当者",
-    "errorArchived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。"
+    "errorArchived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。",
+    "practiceInactive": "このクリニックは現在オンライン予約を受け付けていません。"
   },
   "auth": {
     "passwordTooShort": "パスワードは{min}文字以上である必要があります。",
@@ -829,7 +830,9 @@
     "clinics": "クリニック",
     "payments": "支払い",
     "settings": "設定",
-    "signOut": "ログアウト"
+    "signOut": "ログアウト",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる"
   },
   "join": {
     "notFound": "招待リンクが見つかりません",
@@ -1047,7 +1050,8 @@
     "pushClosedBody": "ご利用の診療所が SolvyMed のアカウントを閉鎖しました。今後の予約はキャンセルされました。診療記録の写しは support@solvymed.com までご請求ください。",
     "pushCancelledTitle": "予約のキャンセル",
     "pushCancelledBody": "{date} {time} の予約は診療所によりキャンセルされました。",
-    "closedNotice": "アカウントは閉鎖されました。"
+    "closedNotice": "アカウントは閉鎖されました。",
+    "deletedNotice": "アカウントは削除されました。"
   },
   "setup": {
     "title": "診療所を設定しましょう",

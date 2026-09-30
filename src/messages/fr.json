@@ -660,7 +660,8 @@
     "customTime": "Heure personnalisée",
     "orCustomTime": "Ou choisir une heure",
     "professionalFallback": "Professionnel(le)",
-    "errorArchived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet."
+    "errorArchived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet.",
+    "practiceInactive": "Ce cabinet ne prend pas de rendez-vous en ligne pour le moment."
   },
   "auth": {
     "passwordTooShort": "Le mot de passe doit comporter au moins {min} caractères.",
@@ -829,7 +830,9 @@
     "clinics": "Cliniques",
     "payments": "Paiements",
     "settings": "Paramètres",
-    "signOut": "Se déconnecter"
+    "signOut": "Se déconnecter",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu"
   },
   "join": {
     "notFound": "Lien d'invitation introuvable",
@@ -1047,7 +1050,8 @@
     "pushClosedBody": "Votre cabinet a fermé son compte SolvyMed. Vos rendez-vous à venir sont annulés. Pour obtenir une copie de votre dossier, écrivez à support@solvymed.com.",
     "pushCancelledTitle": "Rendez-vous annulé",
     "pushCancelledBody": "Votre rendez-vous du {date} à {time} a été annulé par le cabinet.",
-    "closedNotice": "Votre compte a été fermé."
+    "closedNotice": "Votre compte a été fermé.",
+    "deletedNotice": "Votre compte a été supprimé."
   },
   "setup": {
     "title": "Configurez votre cabinet",

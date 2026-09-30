@@ -660,7 +660,8 @@
     "customTime": "自定义时间",
     "orCustomTime": "或选择自定义时间",
     "professionalFallback": "专业人员",
-    "errorArchived": "该诊所目前不接受您账户的新预约。请联系诊所。"
+    "errorArchived": "该诊所目前不接受您账户的新预约。请联系诊所。",
+    "practiceInactive": "该诊所目前不接受在线预约。"
   },
   "auth": {
     "passwordTooShort": "密码至少需要{min}个字符。",
@@ -829,7 +830,9 @@
     "clinics": "诊所",
     "payments": "付款",
     "settings": "设置",
-    "signOut": "退出登录"
+    "signOut": "退出登录",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单"
   },
   "join": {
     "notFound": "找不到邀请链接",
@@ -1047,7 +1050,8 @@
     "pushClosedBody": "您的诊所已关闭其 SolvyMed 账户。您的后续预约已取消。如需病历副本，请联系 support@solvymed.com。",
     "pushCancelledTitle": "预约已取消",
     "pushCancelledBody": "您在 {date} {time} 的预约已被诊所取消。",
-    "closedNotice": "你的账户已关闭。"
+    "closedNotice": "你的账户已关闭。",
+    "deletedNotice": "你的账户已删除。"
   },
   "setup": {
     "title": "设置您的诊所",

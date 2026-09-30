@@ -660,7 +660,8 @@
     "customTime": "وقت مخصص",
     "orCustomTime": "أو اختر وقتاً مخصصاً",
     "professionalFallback": "المختص(ة)",
-    "errorArchived": "لا تقبل هذه العيادة حجوزات جديدة لحسابك. يُرجى التواصل مع العيادة."
+    "errorArchived": "لا تقبل هذه العيادة حجوزات جديدة لحسابك. يُرجى التواصل مع العيادة.",
+    "practiceInactive": "لا تقبل هذه العيادة الحجوزات عبر الإنترنت حاليًا."
   },
   "auth": {
     "passwordTooShort": "يجب أن تتكون كلمة المرور من {min} أحرف على الأقل.",
@@ -829,7 +830,9 @@
     "clinics": "العيادات",
     "payments": "المدفوعات",
     "settings": "الإعدادات",
-    "signOut": "تسجيل الخروج"
+    "signOut": "تسجيل الخروج",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة"
   },
   "join": {
     "notFound": "رابط الدعوة غير موجود",
@@ -1047,7 +1050,8 @@
     "pushClosedBody": "أغلقت عيادتك حسابها في SolvyMed. أُلغيت مواعيدك القادمة. للحصول على نسخة من سجلك، راسل support@solvymed.com.",
     "pushCancelledTitle": "أُلغي الموعد",
     "pushCancelledBody": "ألغت العيادة موعدك في {date} الساعة {time}.",
-    "closedNotice": "تم إغلاق حسابك."
+    "closedNotice": "تم إغلاق حسابك.",
+    "deletedNotice": "تم حذف حسابك."
   },
   "setup": {
     "title": "جهّز عيادتك",

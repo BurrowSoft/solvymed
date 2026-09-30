@@ -660,7 +660,8 @@
     "customTime": "Benutzerdefinierte Zeit",
     "orCustomTime": "Oder eigene Uhrzeit",
     "professionalFallback": "Gesundheitsfachkraft",
-    "errorArchived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis."
+    "errorArchived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis.",
+    "practiceInactive": "Diese Praxis nimmt derzeit keine Online-Buchungen an."
   },
   "auth": {
     "passwordTooShort": "Das Passwort muss mindestens {min} Zeichen lang sein.",
@@ -829,7 +830,9 @@
     "clinics": "Kliniken",
     "payments": "Zahlungen",
     "settings": "Einstellungen",
-    "signOut": "Abmelden"
+    "signOut": "Abmelden",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
   },
   "join": {
     "notFound": "Einladungslink nicht gefunden",
@@ -1047,7 +1050,8 @@
     "pushClosedBody": "Ihre Praxis hat ihr SolvyMed-Konto geschlossen. Ihre anstehenden Termine wurden abgesagt. Eine Kopie Ihrer Akte erhalten Sie über support@solvymed.com.",
     "pushCancelledTitle": "Termin abgesagt",
     "pushCancelledBody": "Ihr Termin am {date} um {time} wurde von der Praxis abgesagt.",
-    "closedNotice": "Ihr Konto wurde geschlossen."
+    "closedNotice": "Ihr Konto wurde geschlossen.",
+    "deletedNotice": "Ihr Konto wurde gelöscht."
   },
   "setup": {
     "title": "Richten Sie Ihre Praxis ein",

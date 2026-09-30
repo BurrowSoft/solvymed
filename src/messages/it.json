@@ -660,7 +660,8 @@
     "customTime": "Orario personalizzato",
     "orCustomTime": "O scegli un orario",
     "professionalFallback": "Professionista",
-    "errorArchived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio."
+    "errorArchived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio.",
+    "practiceInactive": "Questo studio non accetta prenotazioni online al momento."
   },
   "auth": {
     "passwordTooShort": "La password deve essere lunga almeno {min} caratteri.",
@@ -829,7 +830,9 @@
     "clinics": "Cliniche",
     "payments": "Pagamenti",
     "settings": "Impostazioni",
-    "signOut": "Esci"
+    "signOut": "Esci",
+    "openMenu": "Apri menu",
+    "closeMenu": "Chiudi menu"
   },
   "join": {
     "notFound": "Link d'invito non trovato",
@@ -1047,7 +1050,8 @@
     "pushClosedBody": "Il tuo studio ha chiuso il suo account SolvyMed. I tuoi appuntamenti futuri sono stati annullati. Per una copia della tua cartella, scrivi a support@solvymed.com.",
     "pushCancelledTitle": "Appuntamento annullato",
     "pushCancelledBody": "Il tuo appuntamento del {date} alle {time} è stato annullato dallo studio.",
-    "closedNotice": "Il tuo account è stato chiuso."
+    "closedNotice": "Il tuo account è stato chiuso.",
+    "deletedNotice": "Il tuo account è stato eliminato."
   },
   "setup": {
     "title": "Configura il tuo studio",

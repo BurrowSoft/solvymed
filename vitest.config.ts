@@ -15,6 +15,10 @@ export default defineConfig({
     // e2e/ holds Playwright specs (run with `npx playwright test`); vitest
     // must not collect them.
     include: ['src/**/*.test.{ts,tsx}'],
+    // The full suite runs ~110 files in parallel; under that load a test that
+    // takes under a second alone (app-map, pix-qr) sometimes passed the 5 s
+    // default and failed. 15 s keeps those green without hiding a real hang.
+    testTimeout: 15_000,
     // next-intl's middleware imports "next/server" without an extension,
     // which Node's ESM loader can't resolve; let Vite resolve it (the
     // middleware tests).

@@ -267,6 +267,8 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   { rule: { text: "The app (1.4.0) is in 7 languages: Portuguese, English, Spanish, French, German, Italian and Thai (ไทย), in the first-run choice, the language picker and Settings → Language; a phone set to Thai opens it in Thai.", pending: ["app-1.4.0"] }, help: "C8" },
   { rule: { text: "In the app too (1.4.0): a doctor's signup shows the same practice-country choice (Brasil / ประเทศไทย / Other), preselected from the phone's region.", pending: ["app-1.4.0"] }, help: "C1" },
   { rule: { text: "In the app (1.4.0), an inactive subscription shows a full screen: the doctor's says \"Your SolvyMed subscription is inactive.\" with \"Questions? Write to support@solvymed.com.\" (tap to email) and Sign Out; a secretary's says \"Subscription inactive\" (access resumes once the doctor's subscription is renewed), with the same support line. No price, plan or website on either (store rules).", pending: ["app-1.4.0"] }, help: "K1" },
+  { rule: { text: "While a practice's subscription is inactive, a patient trying to book with it online on the website sees \"A clínica não está recebendo agendamentos online no momento.\" / \"This clinic isn't taking online bookings right now.\" instead of the times.", pending: ["booking-check-live"] }, help: "K1" },
+  { rule: { text: "In the patient's app (1.4.0), booking with a practice whose subscription is inactive shows the same message.", pending: ["booking-check-live", "app-1.4.0"] }, help: "K1" },
   {
     rule: {
       text: "The patient import also brings the address (postal code, street, number, complement, neighbourhood, city, state) and the CNS: iClinic and Prontuário Verde map them, and our template has the columns; a CEP that lost its leading zero in Excel is completed. The previous system's own notes stay imported data (doctor only), never Observações.",
@@ -363,7 +365,7 @@ export const NEVER: { what: string; help: string }[] = [
   { what: "Exams and files (photos or PDFs; the doctor adds them in the patient's Exams or Files tab, in the app or on the website; within 24 h of upload a file can be deleted, after that only hidden with a reason).", help: "P7" },
   { what: "Exporting a patient's history (on the website, \"PDF do histórico\" / \"History PDF\" at the top of the patient opens a print view: \"Imprimir / Salvar PDF\").", help: "P8" },
   { what: "Deleting or archiving a patient.", help: "P3" },
-  { what: "Closing the account (on the website the user is then signed out and lands on the home page with \"Sua conta foi encerrada.\" / \"Your account has been closed.\").", help: "K4" },
+  { what: "Closing the account (on the website the user is then signed out and lands on the home page with \"Sua conta foi excluída.\" / \"Your account has been deleted.\" or, when it was closed and kept, \"Sua conta foi encerrada.\" / \"Your account has been closed.\").", help: "K4" },
   { what: "Changing the password (Settings → Change password, on the app and the website; the other devices are signed out).", help: "K2" },
   { what: "Payment and Pix / PromptPay settings.", help: "G3" },
   { what: "Receipts (on the website: Payments → a received appointment → \"Recibo\" / \"Receipt\", a print view, for the doctor and the secretary; a Thai practice's numbered receipts are issued in the app).", help: "G5" },
