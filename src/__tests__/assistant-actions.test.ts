@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { handleAssistant, type Deps } from "@/lib/assistant/server/handle";
+import { loadTexts } from "@/lib/assistant/server/texts";
 import { fakeModelClient, type FakeTurn, type ModelRequest } from "@/lib/assistant/server/model";
 import type { AnswerBlock, AnswerChunk, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
 
@@ -323,7 +324,28 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     expect(system).toContain("Fri 2026-10-02");
     expect(system).not.toContain("2026-09-31");
     expect(system).toContain("ACTIONS RULE A");
-    expect(system).toContain("\"Confirmar\", \"Desfazer\" and \"Abrir\"");
+    expect(system).toContain("\"Confirmar\", \"Desfazer\", \"Abrir\"");
+    expect(system).toContain("Reply in Brazilian Portuguese");
+  });
+
+  it("a Thai UI gets Thai: the card, the pointer with the real button, and the model's language (e7)", async () => {
+    const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-07", start: "14:00", durationMin: 30 } })));
+    const r = await run(t, { ...ask("นัดคุณมาเรียวันพุธ 14:00"), locale: "th" });
+    const card = cardOf(r.blocks)!;
+    expect(card.title).toBe("นัดหมายใหม่");
+    expect(card.fields.map((f) => f.label)).toContain("ผู้ป่วย");
+    expect(textOf(r.chunks)).toBe("ตรวจสอบรายละเอียดแล้วแตะ ยืนยัน");
+    const system = t.model.calls[0].system;
+    expect(system).toContain("Reply in Thai");
+    expect(system).toContain("\"ยืนยัน\"");
+    expect(system).not.toContain("\"Confirmar\"");
+  });
+
+  it("English names the real button (d7: never \"tap Confirmar\")", async () => {
+    const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-07", start: "14:00", durationMin: 30 } })));
+    const r = await run(t, { ...ask("Book Maria on Wednesday at 2pm"), locale: "en" });
+    expect(textOf(r.chunks)).toBe("Check the details and tap Confirm.");
+    expect(cardOf(r.blocks)!.title).toBe("New appointment");
   });
 });
 
@@ -679,6 +701,19 @@ describe("SolvyAI actions mode: a recurring series (the website's Repetir)", () 
     // A typed series request is still a series.
     const s = setup(replay());
     expect(cardOf((await run(s, ask("Marca a Maria toda quarta às 9h, 3 vezes"))).blocks)!.action.args).toHaveProperty("repeat");
+    // Typed with a full date and a time at the end: not a chip (9a).
+    const typed = setup(replay());
+    expect(cardOf((await run(typed, ask("toda quarta, começando 07/10/2026 às 09:00"))).blocks)!.action.args).toHaveProperty("repeat");
+    // The chip for another time than the proposal's isn't this one.
+    const other = setup(replay());
+    expect(cardOf((await run(other, ask("quarta-feira, 07/10/2026 às 10:00"))).blocks)!.action.args).toHaveProperty("repeat");
+  });
+
+  it("the chip is matched in the UI's language (en)", async () => {
+    const chip = (await loadTexts("en")).chipAt("2026-10-07", "09:00");
+    const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-07", start: "09:00", durationMin: 30, repeat: { every: "week", count: 3 } } })));
+    const card = cardOf((await run(t, { ...ask(chip), locale: "en" })).blocks)!;
+    expect(card.action.args).not.toHaveProperty("repeat");
   });
 
   it("the series' FIRST date taken (9a: the loop): the card starts on the next date, never re-finding the skipped one", async () => {
