@@ -10124,6 +10124,7 @@ Merged at `c373d7b` (evidence: PR comment 5905026304).
 
 Merged into `release` at `e9762bd` (evidence: PR comment 5905213577).
 
+
 ## Batch 7: web PRs #211–#254 + the master → Production switch (web tester 1 + web tester 2, 2026-09-30)
 
 Evidence: each PR's tester comment (SHA + what was checked). Merged commits from GitHub. WT1 = web tester 1, WT2 = web tester 2.
@@ -10133,13 +10134,13 @@ Evidence: each PR's tester comment (SHA + what was checked). Merged commits from
 | #211 | Setup card: the payment chip follows the practice country | WT2 🟢 `6278fab` (comment 5905364558) | `6daa567` into master |
 | #213 | Hotfix (release): /subscribe always has a way out; reminders say what'… | WT2 🟢 `20bcc9f` (comment 5906143214; earlier ❌ 5905814873) | `88898b3` into release |
 | #214 | Hotfix (release): Settings → Assinatura (backport of #149) | WT2 🟢 `1f7ec19` (comment 5906019682) | `af4f123` into release |
-| #215 | Subscribing during the free trial keeps it; cancelling before it ends… | WT2 🟢 `3fe893b` (comment 5906481234) | `71ed8d6` into master |
+| #215 | Subscribing during the free trial keeps it; cancelling before it ends… | WT2 🟢 `3fe893b` (comment 5906481234)<br>merged head `b7922b3`; 🟢 carried by the reviewer's mechanical check | `71ed8d6` into master |
 | #216 | A locked doctor still reaches Settings (and only Settings) | WT2 🟢 `96e4305` (comment 5907154629) | `a23aa3d` into master |
-| #217 | Merge-back: release hotfixes #213 + #214 into master | WT2 🟢 `8e173d9` (comment 5907228983) | `2212e2d` into master |
-| #218 | Recibo: council registration + Receita Saúde note (parity with mobile… | WT2 🟢 `a161c4d` (comment 5909217315) | `bb41155` into master |
+| #217 | Merge-back: release hotfixes #213 + #214 into master | WT2 🟢 `8e173d9` (comment 5907228983)<br>merged head `bd2aadc`; 🟢 carried by the reviewer's mechanical check | `2212e2d` into master |
+| #218 | Recibo: council registration + Receita Saúde note (parity with mobile… | WT2 🟢 `a161c4d` (comment 5909217315)<br>merged head `9611156`; 🟢 carried by the reviewer's mechanical check | `bb41155` into master |
 | #219 | Paywall: the gated pages' server actions refuse a locked practice (sta… | WT1 🟢 `9014053` (comment 5909177346) | `18ffe9a` into master |
 | #220 | Help K1 + App Map: the app's inactive-subscription screens (mobile #18… | WT2 🟢 `2017cda` (comment 5907258855) | `8fa4607` into master |
-| #221 | Merge: parity with the app's #181 (card subtitles, swap keeps picks, c… | WT2 🟢 `984fb62` (comment 5907310663) | `abc0a56` into master |
+| #221 | Merge: parity with the app's #181 (card subtitles, swap keeps picks, c… | WT2 🟢 `984fb62` (comment 5907310663)<br>merged head `ecfd7ce`; 🟢 carried by the reviewer's mechanical check | `abc0a56` into master |
 | #222 | Billing portal opens in the dashboard's language | WT2 🟢 `4f472fd` (comment 5907526518) | `4088d19` into master |
 | #224 | /subscribe: Sair top right; locked help + Encerrar conta above the pla… | WT1 🟢 `a38e748` (comment 5908223708) | `b7a648f` into master |
 | #225 | Closing the account signs out and lands on the home page | WT1 🟢 `eea7dd2` (comment 5908155250) | `bbbf64f` into master |
@@ -10161,12 +10162,12 @@ Evidence: each PR's tester comment (SHA + what was checked). Merged commits from
 | #243 | Signup: the title hint follows the practice-country picker (stacked on… | WT1 🟢 `af6597f` (comment 5911216519) | `7b79dbb` into master |
 | #244 | Other-country practices: plain amounts (no guessed \$); procedure exam… | WT1 🟢 `8f340b2` (comment 5911371619) | `70ceb30` into master |
 | #245 | Hotfix: Thai patient search (keep vowel/tone marks) | WT2 🟢 `bef7daa` (comment 5912508212) | `a00a51d` into master |
-| #246 | Phone examples by practice country; booking dial code from the practic… | WT2 🟢 `0e4424e` (comment 5913888845) | `213fdcb` into master |
+| #246 | Phone examples by practice country; booking dial code from the practic… | WT2 🟢 `0e4424e` (comment 5913888845)<br>merged head `6df93f5`; 🟢 carried by the reviewer's mechanical check | `213fdcb` into master |
 | #247 | SolvyAI: card duration in the UI language; one reply language (d7 mino… | WT2 🟢 `f0f1438` (comment 5914743488; earlier ❌ 5914414988) | `cd63ae5` into master |
 | #248 | Meet SolvyAI ✦: one-time card for doctors at go-live (UX) | WT1 🟢 `e103577` (comment 5914562143) | `0d7e368` into master |
 | #249 | Country registry part 1: push fallback, receipts, tax ID, Pix check (#… | WT1 🟢 `54f3cc5` (comment 5914948557) | `4fe5e93` into master |
 | #250 | Country registry part 2: printed year and recibo lines (#239) | WT1 🟢 `0373eac` (comment 5915140077) | `f4cd863` into master |
-| #251 | Country registry part 3a: patient ID fields (#239) | WT2 🟢 `55be7f4` (comment 5915333022) | `556f9d1` into master |
+| #251 | Country registry part 3a: patient ID fields (#239) | WT2 🟢 `55be7f4` (comment 5915333022)<br>merged head `5458fd0`; 🟢 carried by the reviewer's mechanical check | `556f9d1` into master |
 | #252 | Country registry part 3b: search, CSV/export, history print, booking c… | WT2 🟢 `0206096` (comment 5915540194) | `38f1539` into master |
 | #253 | Thai receipt note: no Print button (3e nit) | WT1 🟢 `d3774df` (comment 5915560299) | `bf126ba` into master |
 | #254 | Country registry part 4: CNS and address order (#239) | WT2 🟢 `a0f9aaa` (comment 5916218652) | `7342905` into master |
