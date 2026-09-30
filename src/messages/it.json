@@ -29,7 +29,7 @@
     "heading": "Tutto ciò di cui il tuo studio ha bisogno",
     "sub": "Progettato per clinici e professionisti indipendenti che vogliono meno burocrazia e più tempo con i pazienti.",
     "scheduling_title": "Agenda Intelligente",
-    "scheduling_desc": "Vista completa del calendario in modalità giornaliera, settimanale e mensile. Gestisci appuntamenti in presenza e online, blocca gli orari e invia promemoria automatici.",
+    "scheduling_desc": "Vista completa del calendario in modalità giornaliera, settimanale e mensile. Gestisci appuntamenti in presenza e online, blocca gli orari e ricevi promemoria automatici dei tuoi appuntamenti sul telefono.",
     "patients_title": "Gestione dei Pazienti",
     "patients_desc": "Schede pazienti complete con dati personali, recapiti, storico degli appuntamenti e tag personalizzate. Cerca e filtra in tutta la tua base di pazienti.",
     "records_title": "Cartelle Cliniche",
@@ -850,7 +850,7 @@
     "feature1": "Appuntamenti e pianificazione illimitati",
     "feature2": "Cartelle cliniche, ricette ed esami",
     "feature3": "Report sui ricavi e monitoraggio pagamenti",
-    "feature4": "Promemoria automatici degli appuntamenti",
+    "feature4": "Promemoria dei tuoi appuntamenti sul telefono",
     "feature5": "Accesso incluso per le tue segretarie",
     "payCard": "Abbonati con carta",
     "payCardSub": "Visa, Mastercard, American Express",
@@ -880,7 +880,13 @@
     "paymentActivating": "Pagamento ricevuto. Il tuo accesso è in fase di ripristino. Aggiorna questa pagina tra poco.",
     "chipDays": "Prova gratuita: {n} giorni rimasti · Vedi il piano",
     "chipUrgentDays": "Prova gratuita: {n} giorni rimasti · Abbonati",
-    "chipLastDay": "Prova gratuita: ultimo giorno · Abbonati"
+    "chipLastDay": "Prova gratuita: ultimo giorno · Abbonati",
+    "lockedSettingsHint": "I tuoi dati restano tuoi: esporta i pazienti, gestisci l'abbonamento o chiudi l'account in",
+    "lockedSettingsLink": "Impostazioni",
+    "goToDashboard": "Vai alla dashboard",
+    "backToDashboard": "Torna alla dashboard",
+    "back": "Indietro",
+    "needHelp": "Serve aiuto?"
   },
   "secretary": {
     "notConnectedTitle": "Non ancora collegato/a a uno studio",

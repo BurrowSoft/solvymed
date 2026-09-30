@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { IconBadge } from "@/components/IconBadge";
-import { acceptProposal, declineProposal } from "@/app/[locale]/(site)/dashboard/schedule/booking-actions";
+import { acceptProposal, declineProposal } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions";
 import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
 
 

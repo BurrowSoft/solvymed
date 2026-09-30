@@ -14,6 +14,13 @@ export const stripe: Stripe = new Proxy({} as Stripe, {
   get: (_target, key) => Reflect.get(getStripe(), key),
 });
 
+// Stripe's page in the doctor's language: every app locale Stripe has, the
+// rest (Arabic) on "auto" (the browser's language).
+const STRIPE_LOCALES = new Set(["pt-BR", "en", "es", "fr", "de", "it", "th", "id", "ja", "ko", "ru", "vi", "zh", "zh-TW"]);
+export function stripeLocale(appLocale: string): Stripe.BillingPortal.SessionCreateParams.Locale {
+  return (STRIPE_LOCALES.has(appLocale) ? appLocale : "auto") as Stripe.BillingPortal.SessionCreateParams.Locale;
+}
+
 /**
  * Retrieves a subscription by id, returning null when Stripe says it
  * doesn't exist (resource_missing). That's not a transient error: e.g. an
