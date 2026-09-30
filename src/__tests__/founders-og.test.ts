@@ -19,6 +19,16 @@ describe("the Founders share preview", () => {
     expect(m.twitter).toMatchObject({ card: "summary_large_image", images: ["/og/solvymed-og-share-blue.png"] });
   });
 
+  it("the rules page shares the same banner, with its own title and URL (UX)", async () => {
+    const { generateMetadata } = await import("@/app/[locale]/(site)/founders/rules/page");
+    const m = await generateMetadata({ params: Promise.resolve({ locale: "th" }) });
+    const og = m.openGraph as { images: { url: string }[]; title: string; url: string };
+    expect(og.images[0].url).toBe("/og/solvymed-og-share-blue.png");
+    expect(og.title).toBe("founders.rulesTitle");
+    expect(og.url).toBe("https://www.solvymed.com/th/founders/rules");
+    expect(m.twitter).toMatchObject({ card: "summary_large_image" });
+  });
+
   it("the image file is in public/ and is a PNG", () => {
     const p = join(process.cwd(), "public", "og", "solvymed-og-share-blue.png");
     expect(existsSync(p)).toBe(true);

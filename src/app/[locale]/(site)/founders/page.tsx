@@ -5,7 +5,7 @@ import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { Link } from "@/i18n/navigation";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { createClient } from "@/lib/supabase/server";
-import { defaultFoundersCountry } from "@/lib/founders";
+import { defaultFoundersCountry, foundersShareMeta } from "@/lib/founders";
 import { readPlaces, type Place } from "@/lib/foundersPlaces";
 import { FoundersForm } from "./FoundersForm";
 import { FoundersPageView } from "./FoundersPageView";
@@ -17,30 +17,16 @@ import { FoundersPageView } from "./FoundersPageView";
 // privacy line). The rules link waits for foundersRules (Vitor's go).
 
 const BASE = "https://www.solvymed.com";
-const FOUNDERS_OG_IMAGE = "/og/solvymed-og-share-blue.png";
 const pathFor = (locale: string) => (locale === "en" ? `${BASE}/founders` : `${BASE}/${locale}/founders`);
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "founders" });
-  // The share preview: the brand kit's blue banner (UX, 1 Oct). A
-  // page-level openGraph/twitter replaces the layout's whole object, so the
-  // site-wide fields are repeated here.
-  const image = { url: FOUNDERS_OG_IMAGE, width: 1200, height: 630, alt: t("metaTitle") };
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
     alternates: { canonical: pathFor(locale) },
-    openGraph: {
-      type: "website",
-      siteName: "Solvymed",
-      locale: locale.replace("-", "_"),
-      url: pathFor(locale),
-      title: t("metaTitle"),
-      description: t("metaDescription"),
-      images: [image],
-    },
-    twitter: { card: "summary_large_image", title: t("metaTitle"), description: t("metaDescription"), images: [FOUNDERS_OG_IMAGE] },
+    ...foundersShareMeta({ locale, url: pathFor(locale), title: t("metaTitle"), description: t("metaDescription") }),
   };
 }
 
