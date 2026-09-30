@@ -4,6 +4,7 @@
 // request and maps its answers to the form's messages.
 import type { Metadata } from "next";
 import type { Attribution } from "./attribution";
+import { publicLocales } from "./publicLocales";
 
 // The share preview of the Founders pages (/founders and its rules): the
 // brand kit's blue banner (UX, 1 Oct). A page-level openGraph/twitter
@@ -13,6 +14,13 @@ export const FOUNDERS_OG_IMAGE = "/og/solvymed-og-share-blue.png";
 // has no locale prefix. sub: "" (the page) or "/rules".
 export function foundersUrl(locale: string, sub = ""): string {
   return `https://www.solvymed.com${locale === "en" ? "" : `/${locale}`}/founders${sub}`;
+}
+// Its canonical and hreflang set (UX: the page is shared in three markets):
+// every offered language, plus x-default = English.
+export function foundersAlternates(locale: string, sub = ""): NonNullable<Metadata["alternates"]> {
+  const languages: Record<string, string> = Object.fromEntries(publicLocales().map((l) => [l, foundersUrl(l, sub)]));
+  languages["x-default"] = foundersUrl("en", sub);
+  return { canonical: foundersUrl(locale, sub), languages };
 }
 export function foundersShareMeta(a: { locale: string; url: string; title: string; description: string }): Pick<Metadata, "openGraph" | "twitter"> {
   return {
