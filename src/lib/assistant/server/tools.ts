@@ -79,9 +79,9 @@ export const TOOL_DEFS: ToolDef[] = [
   },
   {
     name: "propose_book_appointment",
-    description: "Propose booking an appointment. Shows the user a card to confirm; nothing is saved. patientId must come from find_patients. Ask for anything missing (never invent a time or a patient). When a series has taken dates, the user gets two options to tap; propose the same series again with their tapped message verbatim as tapped.",
+    description: "Propose booking an appointment. Shows the user a card to confirm; nothing is saved. patientId must come from find_patients. Ask for anything missing (never invent a time or a patient). A series with taken dates comes back as a card without them plus free times on the (first) taken date; don't propose it again.",
     input_schema: obj({
-      patientId: { type: "string" }, date: { type: "string" }, start: { type: "string" }, durationMin: { type: "integer" }, tapped: { type: "string" },
+      patientId: { type: "string" }, date: { type: "string" }, start: { type: "string" }, durationMin: { type: "integer" },
       // A series only when the user asked for one (every week / 2 weeks / month, how many).
       repeat: obj({ every: { type: "string", enum: ["week", "2weeks", "month"] }, count: { type: "integer" } }, ["every", "count"]),
     }, ["patientId", "date", "start"]),
@@ -160,9 +160,7 @@ const T = {
     addPatient: "Novo paciente", fullName: "Nome", birth: "Nascimento",
     similar: "Parecidos já cadastrados",
     proposalConfirmStop: "Este pedido está aguardando a resposta do paciente à nova proposta; só é possível recusar.",
-    seriesTakenOne: "Uma das datas está ocupada. Escolha uma opção.", seriesTakenMany: "Algumas datas estão ocupadas. Escolha uma opção.",
-    seriesSkip: (d: string) => `Pular ${d} e marcar as outras`, seriesOther: (d: string) => `Outro horário para ${d}`,
-    freeOn: (d: string) => `Horários livres em ${d}:`, skipping: (d: string) => `pulando ${d}`,
+    seriesOther: (d: string) => `Outro horário para ${d}`, skipping: (d: string) => `pulando ${d}`,
     pickPatient: "Qual paciente?", pickAppointment: "Qual consulta?", pickDate: "Qual data?",
     pickSimilar: "Já existe um cadastro parecido. É a mesma pessoa?", someoneElse: "É outra pessoa",
     born: (d: string) => `nasc. ${d}`,
@@ -198,9 +196,7 @@ const T = {
     addPatient: "New patient", fullName: "Name", birth: "Date of birth",
     similar: "Similar patients already registered",
     proposalConfirmStop: "This request is waiting for the patient's answer to the new time; it can only be declined.",
-    seriesTakenOne: "One of the dates is taken. Choose an option.", seriesTakenMany: "Some of the dates are taken. Choose an option.",
-    seriesSkip: (d: string) => `Skip ${d} and book the rest`, seriesOther: (d: string) => `Another time for ${d}`,
-    freeOn: (d: string) => `Free times on ${d}:`, skipping: (d: string) => `skipping ${d}`,
+    seriesOther: (d: string) => `Another time for ${d}`, skipping: (d: string) => `skipping ${d}`,
     pickPatient: "Which patient?", pickAppointment: "Which appointment?", pickDate: "Which date?",
     pickSimilar: "A similar patient is already registered. Is it the same person?", someoneElse: "It's someone else",
     born: (d: string) => `born ${d}`,
@@ -554,9 +550,8 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
   const seriesDates = repeat ? recurrenceDates(date, REPEAT_TO_RECURRENCE[repeat.every], repeat.count) : [date];
   let dates = seriesDates;
   // Dates the series skips (UX: "Pular 08/10 e marcar as outras"), set only
-  // by the server from the user's tap below, never taken from the model.
+  // by the server from the taken dates below, never taken from the model.
   let skip: string[] = [];
-  const tapped = typeof input.tapped === "string" ? input.tapped.trim() : "";
 
   const { data: p } = await ctx.db.from("patients").select("id, full_name, birth_date, archived_at").eq("id", patientId).eq("professional_id", ctx.profId).maybeSingle();
   const patient = p as { id: string; full_name: string; birth_date: string | null; archived_at: string | null } | null;
@@ -570,50 +565,42 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
     .in("date", dates)
     .not("status", "in", "(cancelled,rejected)");
   const all = (sameDays ?? []) as ApptRow[];
-  const day = all.filter((r) => r.date === date);
   const overlaps = (r: ApptRow) => toMinutes(hhmm(r.start_time)) < endMin && toMinutes(start) < toMinutes(hhmm(r.end_time));
   const extra: AnswerBlock[] = [];
   if (repeat) {
-    // Taken dates in the series (UX): two real options, "Pular {data} e
-    // marcar as outras" and "Outro horário para {data}"; the tap comes back
-    // verbatim as `tapped` and only the server turns it into a skip.
+    // Taken dates in the series (UX's two options, 3e's round 3): both are
+    // shown at once, with no tap round trip that the model would have to
+    // rebuild the series from: the series card WITHOUT the taken dates
+    // ("Pular {data} e marcar as outras": Confirmar saves the rest) and, for
+    // "Outro horário para {data}", the free times on that date as a separate
+    // single appointment.
     const clashes = all.filter((r) => r.status !== "blocked" && overlaps(r)).sort((a, b) => a.date.localeCompare(b.date));
     if (clashes.length) {
-      const clashDates = [...new Set(clashes.map((r) => r.date))];
-      const shown = clashDates.map((d) => formatShortDate(ctx.locale, d).slice(0, 5)).join(", ");
-      const skipTitle = t.seriesSkip(shown);
-      const otherTitle = t.seriesOther(shown);
-      if (tapped === skipTitle || tapped === otherTitle) {
-        skip = clashDates;
-        dates = seriesDates.filter((d) => !skip.includes(d));
-        if (!dates.length) return err("Every date of the series is taken; ask the user for another time.");
-        if (tapped === otherTitle) {
-          // Free times on the (first) skipped date, for a second card: a
-          // single appointment there, after the series is saved.
-          const alternatives = await nearestFree(ctx, clashDates[0], start, dur, 4);
-          extra.push({ type: "slot_choice", reason: "conflict", text: t.freeOn(whenLabel(ctx, clashDates[0])), conflicts: [], alternatives, other: true });
-        }
-      } else {
-        return {
-          forModel: `Series conflict on ${clashDates.join(", ")} (nothing saved). The user was shown two options to tap. ${CHOOSE_NOTE} When they tap one, propose the SAME series again with their message verbatim as tapped.`,
-          block: { type: "pick", question: clashDates.length > 1 ? t.seriesTakenMany : t.seriesTakenOne, options: [{ id: "skip", title: skipTitle, detail: "" }, { id: "other", title: otherTitle, detail: "" }] },
-        };
-      }
+      skip = [...new Set(clashes.map((r) => r.date))];
+      dates = seriesDates.filter((d) => !skip.includes(d));
+      if (!dates.length) return err("Every date of the series is taken; ask the user for another time.");
+      const alternatives = await nearestFree(ctx, skip[0], start, dur, 4);
+      extra.push({ type: "slot_choice", reason: "conflict", text: t.seriesOther(formatShortDate(ctx.locale, skip[0]).slice(0, 5)) + ":", conflicts: [], alternatives, other: false });
     }
   }
-  const clash = day.find((r) => r.status !== "blocked" && overlaps(r));
+  // Everything below is about the dates that will be saved: after a skip,
+  // the first one left, never the skipped first date (9a: re-checking the
+  // skipped date re-found the same conflict, which looped).
+  const first = dates[0];
+  const saved = all.filter((r) => dates.includes(r.date));
+  const clash = saved.find((r) => r.date === first && r.status !== "blocked" && overlaps(r));
   if (clash) {
-    const alternatives = await nearestFree(ctx, date, start, dur);
+    const alternatives = await nearestFree(ctx, first, start, dur);
     const s = hhmm(clash.start_time);
     const e = hhmm(clash.end_time);
     const what = clash.patient_name ?? "—";
     return {
-      forModel: `Conflict: ${date} ${s}–${e} is taken (${what}). The user was shown the nearest free times as choices; ask which one (never pick).`,
+      forModel: `Conflict: ${first} ${s}–${e} is taken (${what}). The user was shown the nearest free times as choices; ask which one (never pick).`,
       block: {
         type: "slot_choice",
         reason: "conflict",
-        text: (alternatives.length ? t.conflict : t.conflictNone)(whenLabel(ctx, date), what, s, e),
-        conflicts: [{ date, start: s, end: e, what }],
+        text: (alternatives.length ? t.conflict : t.conflictNone)(whenLabel(ctx, first), what, s, e),
+        conflicts: [{ date: first, start: s, end: e, what }],
         alternatives,
         other: true,
       },
@@ -624,14 +611,14 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
   const asks: string[] = [];
   // In a series, the first date with a block / outside the hours, named.
   const onDate = (d: string) => (repeat ? `${formatShortDate(ctx.locale, d)}: ` : "");
-  const block = all.filter((r) => r.status === "blocked" && overlaps(r)).sort((a, b) => a.date.localeCompare(b.date))[0];
+  const block = saved.filter((r) => r.status === "blocked" && overlaps(r)).sort((a, b) => a.date.localeCompare(b.date))[0];
   if (block) {
     warnings.push({ code: "blocked", text: onDate(block.date) + t.blockedWarn(hhmm(block.start_time), hhmm(block.end_time)) });
     asks.push(onDate(block.date) + t.blockedAsk(hhmm(block.start_time), hhmm(block.end_time)));
   }
   const wh = await workingHours(ctx);
   let hours: ReturnType<typeof hoursWarning> = null;
-  let hoursDate = date;
+  let hoursDate = first;
   for (const d of dates) { hours = hoursWarning(d, start, end, wh); if (hours) { hoursDate = d; break; } }
   if (hours?.kind === "outside") {
     warnings.push({ code: "outside_hours", text: onDate(hoursDate) + t.outsideWarn(hours.start, hours.end) });
@@ -647,20 +634,20 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
     .sort((a, b) => a.date.localeCompare(b.date) || a.start_time.localeCompare(b.start_time))[0];
   if (already) warnings.push({ code: "same_patient_day", text: onDate(already.date) + t.samePatientWarn(patient.full_name, hhmm(already.start_time)) });
 
-  const past = date < ctx.today || (date === ctx.today && start <= ctx.nowTime);
+  const past = first < ctx.today || (first === ctx.today && start <= ctx.nowTime);
   const stop = past
     ? { code: "past_time" as const, text: t.pastStop }
     : patient.archived_at
       ? { code: "patient_archived" as const, text: t.archivedStop }
       : undefined;
 
-  const view: ScreenTarget = { screen: "schedule", date };
+  const view: ScreenTarget = { screen: "schedule", date: first };
   const c = card(ctx, {
     icon: "calendar",
     title: t.newAppt,
     fields: [
       { label: t.patient, value: personLabel(ctx, patient.full_name, patient.birth_date) },
-      { label: t.when, value: `${whenLabel(ctx, date)}, ${start}–${end}` },
+      { label: t.when, value: `${whenLabel(ctx, first)}, ${start}–${end}` },
       ...(proc ? [{ label: t.procedure, value: proc.name, isDefault: true }] : []),
       ...(proc?.price ? [{ label: t.value, value: money(proc.price, await practiceCountry(ctx)), isDefault: true }] : []),
       { label: t.type, value: t.inPerson, isDefault: true },
@@ -675,9 +662,11 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
     ...(asks.length ? { secondConfirm: { question: `${asks.join(" ")} ${t.bookAnyway}`, confirmLabel: t.bookLabel } } : {}),
     hardStop: !!stop,
     ...(stop ? { stop } : {}),
-    editTarget: { screen: "schedule", date, params: { new: "1", start } },
+    editTarget: { screen: "schedule", date: first, params: { new: "1", start } },
     viewTarget: view,
-    after: { screen: "schedule", date, highlight: { kind: "appointment" } },
+    after: { screen: "schedule", date: first, highlight: { kind: "appointment" } },
+    // The series stays anchored on its first date (recurrenceDates), with
+    // the skipped dates listed; the save leaves them out.
     action: { kind: "book_appointment", args: { patientId, date, start, durationMin: dur, ...(proc ? { procedureId: proc.id } : {}), ...(repeat ? { repeat: { ...repeat, ...(skip.length ? { skip } : {}) } } : {}) } },
   });
   return {
