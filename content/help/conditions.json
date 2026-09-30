@@ -16,7 +16,7 @@
     "what": "The app's Settings → SolvyAI (the button switch and the actions opt-in, mobile #99) is in a RELEASED store build (not just merged)."
   },
   "migration-126": {
-    "met": false,
+    "met": true,
     "what": "Migration 126 (access_log_export: kind 'export' and log_record_access_batch) is applied on production. Gates the website's patient CSV export (Help P10), which logs every exported patient first."
   },
   "migration-115": {

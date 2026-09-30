@@ -67,10 +67,16 @@ describe("the mock follows the spec's rules", () => {
   });
 
   it("no Open screen for what the website doesn't have", () => {
-    // P10 (the patient list as a spreadsheet) is still app-only.
+    // C6 (the app lock) is app-only.
+    const blocks = mockAnswer("How do I turn on the app lock?", "en", "");
+    expect(JSON.stringify(blocks)).toMatch(/lock|bloqueio/i);
+    expect(blocks.some((b) => b.type === "open")).toBe(false);
+  });
+
+  it("the CSV export is on the website now (migration 126): it gets Open", () => {
     const blocks = mockAnswer("How do I export my patient list as a CSV spreadsheet?", "en", "");
     expect(JSON.stringify(blocks)).toMatch(/CSV|planilha|spreadsheet/i);
-    expect(blocks.some((b) => b.type === "open")).toBe(false);
+    expect(blocks.some((b) => b.type === "open")).toBe(true);
   });
 
   it("a missing time is asked for, never picked (rule 3)", () => {
