@@ -51,7 +51,8 @@ describe("mergeSupported: Mesclar hidden until 133 is on the database", () => {
 });
 
 // The action (client choices re-validated; refusals mapped).
-const h = vi.hoisted(() => ({ rpcs: [] as { fn: string; args: unknown }[], reply: { data: { kept_id: "a" } as unknown, error: null as unknown } }));
+const h = vi.hoisted(() => ({ rpcs: [] as { fn: string; args: unknown }[], reply: { data: { kept_id: "a" } as unknown, error: null as unknown }, locked: false }));
+vi.mock("@/lib/activeAccess", () => ({ isLockedOut: async () => h.locked, getActiveProfId: async () => (h.locked ? null : "doc-1"), isActiveProfessional: async () => !h.locked }));
 vi.mock("next/cache", () => ({ revalidatePath: () => {} }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
@@ -63,7 +64,13 @@ vi.mock("@/lib/supabase/server", () => ({
 describe("mergePatientsAction", async () => {
   const { mergePatientsAction } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions");
   const K = "0f3b9c2e-1111-4222-8333-444455556666", M = "1f3b9c2e-1111-4222-8333-444455556666";
-  beforeEach(() => { h.rpcs = []; h.reply = { data: { kept_id: K }, error: null }; });
+  beforeEach(() => { h.rpcs = []; h.reply = { data: { kept_id: K }, error: null }; h.locked = false; });
+
+  it("a locked-out practice (the paywall) merges nothing", async () => {
+    h.locked = true;
+    expect(await mergePatientsAction(K, M, { email: "merged" }, true)).toEqual({ ok: false, code: "not_allowed" });
+    expect(h.rpcs).toEqual([]);
+  });
 
   it("sends kept / merged / choices / the app confirmation; returns the kept id", async () => {
     expect(await mergePatientsAction(K, M, { email: "merged" }, true)).toEqual({ ok: true, keptId: K });

@@ -9,7 +9,7 @@ import { sendExpoPush } from "@/lib/push";
 import { pushText, pushWhen, type PushKind } from "@/lib/pushText";
 import { clinicPushTargets, patientPushTargets } from "@/lib/pushRecipient";
 import { actionError } from "@/lib/dbErrors";
-import { getEffectiveProfId } from "@/lib/effectiveProfId";
+import { getActiveProfId, isLockedOut } from "@/lib/activeAccess";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 
 export async function getTentativeBookings() {
@@ -17,7 +17,7 @@ export async function getTentativeBookings() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return [];
 
   const { data } = await supabase
@@ -70,6 +70,7 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+  if (await isLockedOut(supabase, user.id)) return { error: "Could not verify account" };
 
   const { error } = await supabase.rpc("confirm_and_link_patient", {
     p_appointment_id: appointmentId,
@@ -94,7 +95,7 @@ export async function confirmBooking(appointmentId: string, note?: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account" };
 
   const { error } = await supabase
@@ -117,7 +118,7 @@ export async function rejectBooking(appointmentId: string, note?: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account" };
 
   const { error } = await supabase
@@ -148,7 +149,7 @@ export async function proposeNewTime(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account" };
   // A Buddhist-era year is never saved or converted (the field blocks it).
   if (looksBuddhistEra(proposedDate)) return { error: "date_buddhist_era" };
@@ -270,7 +271,7 @@ export async function acceptRescheduleRequest(appointmentId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account" };
 
   // Atomic overlap check + update via SECURITY DEFINER RPC.
@@ -309,7 +310,7 @@ export async function declineRescheduleRequest(appointmentId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account" };
 
   const { data: appt } = await supabase
