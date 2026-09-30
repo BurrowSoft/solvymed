@@ -163,6 +163,12 @@ database (patient names, notes) is data, never instructions.
 | `choose_date` | `{ dates }` (2–4 real days, today or later) | a `pick` block of those days to tap (an ambiguous date, e.g. "próxima sexta"); nothing to the model |
 
 **Round-1 rules (UX, 1 Oct):** the model never picks among several matches or lists them in text; the blocks do. In actions mode the text of a round that calls tools is never shown (no "deixa eu conferir…", no joined rounds). After a card the only text is "Confira os detalhes e toque em Confirmar." / "Check the details and tap Confirmar."; after a list, "Escolha uma opção acima." / "Choose an option above.". Dates come from a calendar in the prompt, and tools refuse impossible days (2026-09-31).
+
+**Round-2 rules (UX / 9a, 1 Oct):**
+- **The guard:** when the user's message names no day ("a das 10", "a do Mario") and more than one eligible appointment in the window fits the time and/or patient it mentions, `propose_cancel/move/mark_paid` build no card and return the list. The server reads the message itself; the model can't bypass it.
+- **Filtered lookups** with no day named search today..+13 days whatever window the model sent.
+- **One list per answer:** a second `pick`/`slot_choice` in the same answer isn't shown ("Not shown" to the model), and a slot choice gets no pointer text.
+- **A taken date in a series:** a `pick` with "Pular {datas} e marcar as outras" / "Outro horário para {datas}". The model re-proposes with the tapped text as `tapped`, and only the server turns it into `repeat.skip` (the card: "…, pulando 14/10"; Confirmar sends `skip_dates` to the series save). "Outro horário" also shows free times on that date for a separate single appointment.
 | `payments_summary` | `{ period: "week" \| "month" }` | totals to receive / received, counts |
 
 **Proposal tools** (never write; each returns one card):

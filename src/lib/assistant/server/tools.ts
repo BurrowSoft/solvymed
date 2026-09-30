@@ -35,6 +35,9 @@ export type ToolContext = {
   country?: string;
   // Who asked: the website or the app (sending Pix by WhatsApp is app-only).
   client: "web" | "app";
+  // The user's last message (masked): the server reads from it whether a day
+  // was named, so a partial reference can't become a guessed card (UX).
+  userText?: string;
 };
 
 // What a tool gives back: text for the model (and whether it's an error the
@@ -76,9 +79,9 @@ export const TOOL_DEFS: ToolDef[] = [
   },
   {
     name: "propose_book_appointment",
-    description: "Propose booking an appointment. Shows the user a card to confirm; nothing is saved. patientId must come from find_patients. Ask for anything missing (never invent a time or a patient).",
+    description: "Propose booking an appointment. Shows the user a card to confirm; nothing is saved. patientId must come from find_patients. Ask for anything missing (never invent a time or a patient). When a series has taken dates, the user gets two options to tap; propose the same series again with their tapped message verbatim as tapped.",
     input_schema: obj({
-      patientId: { type: "string" }, date: { type: "string" }, start: { type: "string" }, durationMin: { type: "integer" },
+      patientId: { type: "string" }, date: { type: "string" }, start: { type: "string" }, durationMin: { type: "integer" }, tapped: { type: "string" },
       // A series only when the user asked for one (every week / 2 weeks / month, how many).
       repeat: obj({ every: { type: "string", enum: ["week", "2weeks", "month"] }, count: { type: "integer" } }, ["every", "count"]),
     }, ["patientId", "date", "start"]),
@@ -157,6 +160,9 @@ const T = {
     addPatient: "Novo paciente", fullName: "Nome", birth: "Nascimento",
     similar: "Parecidos já cadastrados",
     proposalConfirmStop: "Este pedido está aguardando a resposta do paciente à nova proposta; só é possível recusar.",
+    seriesTakenOne: "Uma das datas está ocupada. Escolha uma opção.", seriesTakenMany: "Algumas datas estão ocupadas. Escolha uma opção.",
+    seriesSkip: (d: string) => `Pular ${d} e marcar as outras`, seriesOther: (d: string) => `Outro horário para ${d}`,
+    freeOn: (d: string) => `Horários livres em ${d}:`, skipping: (d: string) => `pulando ${d}`,
     pickPatient: "Qual paciente?", pickAppointment: "Qual consulta?", pickDate: "Qual data?",
     pickSimilar: "Já existe um cadastro parecido. É a mesma pessoa?", someoneElse: "É outra pessoa",
     born: (d: string) => `nasc. ${d}`,
@@ -192,6 +198,9 @@ const T = {
     addPatient: "New patient", fullName: "Name", birth: "Date of birth",
     similar: "Similar patients already registered",
     proposalConfirmStop: "This request is waiting for the patient's answer to the new time; it can only be declined.",
+    seriesTakenOne: "One of the dates is taken. Choose an option.", seriesTakenMany: "Some of the dates are taken. Choose an option.",
+    seriesSkip: (d: string) => `Skip ${d} and book the rest`, seriesOther: (d: string) => `Another time for ${d}`,
+    freeOn: (d: string) => `Free times on ${d}:`, skipping: (d: string) => `skipping ${d}`,
     pickPatient: "Which patient?", pickAppointment: "Which appointment?", pickDate: "Which date?",
     pickSimilar: "A similar patient is already registered. Is it the same person?", someoneElse: "It's someone else",
     born: (d: string) => `born ${d}`,
@@ -308,6 +317,72 @@ const patientOption = (ctx: ToolContext, p: { id: string; full_name: string; bir
   title: p.birth_date ? `${p.full_name} · ${T[ctx.lang].born(formatShortDate(ctx.locale, p.birth_date))}` : p.full_name,
   detail: "",
 });
+// Whether the user's message names a day (UX: "a das 10" names none, so
+// several 10:00s in the next days mean a list, never today's by default).
+// Deliberately broad: a false "named" only keeps the model's own lookup.
+const DAY_WORDS = [
+  // pt / es / fr / de / it / en: relative days and weekdays
+  "hoje", "amanh[ãa]", "ontem", "anteontem", "segunda", "ter[çc]a", "quarta", "quinta", "sexta", "s[áa]bado", "domingo",
+  "hoy", "ma[ñn]ana", "ayer", "lunes", "martes", "mi[ée]rcoles", "jueves", "viernes",
+  "aujourd", "demain", "hier", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche",
+  "heute", "morgen", "gestern", "montag", "dienstag", "mittwoch", "donnerstag", "freitag", "samstag", "sonntag",
+  "oggi", "domani", "ieri", "luned[ìi]", "marted[ìi]", "mercoled[ìi]", "gioved[ìi]", "venerd[ìi]",
+  "today", "tomorrow", "yesterday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+  "\\bseg\\b", "\\bter\\b", "\\bqua\\b", "\\bqui\\b", "\\bsex\\b", "\\bs[áa]b\\b", "\\bdom\\b", "\\bmon\\b", "\\btue\\b", "\\bwed\\b", "\\bthu\\b", "\\bfri\\b", "\\bsat\\b", "\\bsun\\b",
+  "\\bdia \\d{1,2}\\b", "\\bday \\d{1,2}\\b",
+];
+const DAY_RE = new RegExp(`${DAY_WORDS.join("|")}|\\b\\d{1,2}/\\d{1,2}\\b|\\b\\d{4}-\\d{2}-\\d{2}\\b|วันนี้|พรุ่งนี้|มะรืน|เมื่อวาน|วันจันทร์|วันอังคาร|วันพุธ|วันพฤหัส|วันศุกร์|วันเสาร์|วันอาทิตย์|จันทร์|อังคาร|พุธ|พฤหัส|ศุกร์|เสาร์|อาทิตย์`, "i");
+export const namesDay = (text: string | undefined) => !!text && DAY_RE.test(text);
+// The hours the message mentions ("10", "10h", "às 10:30", "10 am").
+const hoursIn = (text: string) => [...text.matchAll(/\b([01]?\d|2[0-3])(?:[:h.](\d{2}))?\b/g)].map((m) => ({ h: Number(m[1]), m: m[2] ? Number(m[2]) : null }));
+const mentionsTime = (text: string, start: string) => {
+  const [h, m] = start.split(":").map(Number);
+  return hoursIn(text).some((x) => (x.h === h || x.h + 12 === h) && (x.m === null || x.m === m));
+};
+const fold = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const mentionsName = (text: string, name: string | null) => {
+  const first = fold((name ?? "").trim().split(/\s+/)[0] ?? "");
+  return first.length >= 2 && new RegExp(`(^|[^\\p{L}])${first.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^\\p{L}]|$)`, "u").test(fold(text));
+};
+
+// The guard before any card for ONE existing appointment (UX, a launch
+// blocker): when the user named no day and referred to it only by time
+// and/or patient, and more than one live appointment in the window fits
+// that, no card: the list to tap. The model can't bypass it.
+// eligible: only appointments the action could apply to count (a completed
+// one isn't cancelled or moved; an already-paid one isn't "paid" again).
+async function ambiguousTarget(ctx: ToolContext, a: ApptRow, from: string, to: string, eligible: (r: ApptRow) => boolean): Promise<ToolOutcome | null> {
+  const text = ctx.userText ?? "";
+  if (!text || namesDay(text)) return null;
+  const byTime = mentionsTime(text, hhmm(a.start_time));
+  const byName = mentionsName(text, a.patient_name);
+  if (!byTime && !byName) return null;
+  const { data } = await ctx.db
+    .from("appointments")
+    .select(APPT_COLS)
+    .eq("professional_id", ctx.profId)
+    .gte("date", from)
+    .lte("date", to)
+    .not("status", "in", "(cancelled,rejected)")
+    .order("date")
+    .order("start_time")
+    .limit(400);
+  const fits = ((data ?? []) as ApptRow[]).filter((r) =>
+    r.status !== "blocked"
+    && (r.id === a.id || eligible(r))
+    && (!byTime || hhmm(r.start_time) === hhmm(a.start_time))
+    && (!byName || r.patient_id === a.patient_id));
+  if (fits.length < 2 || !fits.some((r) => r.id === a.id)) return null;
+  return {
+    forModel: `${fits.length} appointments fit what the user said (no day was named), so no card was built. ${CHOOSE_NOTE}`,
+    block: { type: "pick", question: T[ctx.lang].pickAppointment, options: fits.slice(0, 8).map((r) => ({ id: r.id, title: appointmentTitle(ctx, r), detail: "" })) },
+  };
+}
+// For a move, the part that says WHERE TO ("… para quinta às 15") doesn't
+// identify the appointment being moved: only what's before it counts.
+const stripNewWhen = (text: string | undefined) => (text ?? "").split(/\b(?:para|pra|to|al|au|auf|nach|ไป|เป็น)\b/i)[0];
+const addDays = (date: string, n: number) => new Date(Date.parse(`${date}T12:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+
 // An appointment as the user taps it: "Quarta-feira, 30/09/2026 · 10:00 · Maria Silva".
 const appointmentTitle = (ctx: ToolContext, r: { date: string; start_time: string; status: string; patient_name: string | null }) =>
   `${whenLabel(ctx, r.date)} · ${hhmm(r.start_time)} · ${r.status === "blocked" ? "—" : r.patient_name ?? "—"}`;
@@ -362,12 +437,21 @@ async function listAppointments(ctx: ToolContext, input: Record<string, unknown>
   // 90 days back to 30 ahead).
   const maxDays = patient ? MAX_PATIENT_DAYS : MAX_LIST_DAYS;
   if (daysBetween(from, to) > maxDays - 1) return err(`At most ${maxDays} days at a time${patient ? "" : ` (up to ${MAX_PATIENT_DAYS} when you pass the patient)`}.`);
+  // Looking for one with no day named ("a das 10"): the server searches the
+  // next two weeks itself, whatever window the model assumed (9a/UX).
+  let lo = from;
+  let hi = to;
+  if ((patient || start) && !namesDay(ctx.userText)) {
+    lo = from < ctx.today ? from : ctx.today;
+    hi = to > addDays(ctx.today, 13) ? to : addDays(ctx.today, 13);
+    if (daysBetween(lo, hi) > maxDays - 1) lo = ctx.today;
+  }
   const { data, error } = await ctx.db
     .from("appointments")
     .select(APPT_COLS)
     .eq("professional_id", ctx.profId)
-    .gte("date", from)
-    .lte("date", to)
+    .gte("date", lo)
+    .lte("date", hi)
     .not("status", "in", "(cancelled,rejected)")
     .order("date")
     .order("start_time")
@@ -467,7 +551,12 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
   // A series (the website's Repetir): every week / 2 weeks / month, 2–52.
   const repeat = parseRepeat(input.repeat);
   if (repeat === "invalid") return err(`Repeat is { every: "week" | "2weeks" | "month", count: ${MIN_OCCURRENCES}–${MAX_OCCURRENCES} }; ask the user.`);
-  const dates = repeat ? recurrenceDates(date, REPEAT_TO_RECURRENCE[repeat.every], repeat.count) : [date];
+  const seriesDates = repeat ? recurrenceDates(date, REPEAT_TO_RECURRENCE[repeat.every], repeat.count) : [date];
+  let dates = seriesDates;
+  // Dates the series skips (UX: "Pular 08/10 e marcar as outras"), set only
+  // by the server from the user's tap below, never taken from the model.
+  let skip: string[] = [];
+  const tapped = typeof input.tapped === "string" ? input.tapped.trim() : "";
 
   const { data: p } = await ctx.db.from("patients").select("id, full_name, birth_date, archived_at").eq("id", patientId).eq("professional_id", ctx.profId).maybeSingle();
   const patient = p as { id: string; full_name: string; birth_date: string | null; archived_at: string | null } | null;
@@ -483,22 +572,33 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
   const all = (sameDays ?? []) as ApptRow[];
   const day = all.filter((r) => r.date === date);
   const overlaps = (r: ApptRow) => toMinutes(hhmm(r.start_time)) < endMin && toMinutes(start) < toMinutes(hhmm(r.end_time));
+  const extra: AnswerBlock[] = [];
   if (repeat) {
-    // The app's "none are saved": name the conflicting dates, ask how to go on.
+    // Taken dates in the series (UX): two real options, "Pular {data} e
+    // marcar as outras" and "Outro horário para {data}"; the tap comes back
+    // verbatim as `tapped` and only the server turns it into a skip.
     const clashes = all.filter((r) => r.status !== "blocked" && overlaps(r)).sort((a, b) => a.date.localeCompare(b.date));
     if (clashes.length) {
-      const first = clashes[0];
-      return {
-        forModel: `Series conflict on ${clashes.map((r) => r.date).join(", ")} (nothing saved). The user was shown the dates; ask how to go on (another time, fewer dates, or skip) — never pick.`,
-        block: {
-          type: "slot_choice",
-          reason: "recurring_conflict",
-          text: t.seriesConflict(whenLabel(ctx, first.date), hhmm(first.start_time), first.patient_name ?? "—"),
-          conflicts: clashes.slice(0, 5).map((r) => ({ date: r.date, start: hhmm(r.start_time), end: hhmm(r.end_time), what: r.patient_name ?? "—" })),
-          alternatives: [],
-          other: true,
-        },
-      };
+      const clashDates = [...new Set(clashes.map((r) => r.date))];
+      const shown = clashDates.map((d) => formatShortDate(ctx.locale, d).slice(0, 5)).join(", ");
+      const skipTitle = t.seriesSkip(shown);
+      const otherTitle = t.seriesOther(shown);
+      if (tapped === skipTitle || tapped === otherTitle) {
+        skip = clashDates;
+        dates = seriesDates.filter((d) => !skip.includes(d));
+        if (!dates.length) return err("Every date of the series is taken; ask the user for another time.");
+        if (tapped === otherTitle) {
+          // Free times on the (first) skipped date, for a second card: a
+          // single appointment there, after the series is saved.
+          const alternatives = await nearestFree(ctx, clashDates[0], start, dur, 4);
+          extra.push({ type: "slot_choice", reason: "conflict", text: t.freeOn(whenLabel(ctx, clashDates[0])), conflicts: [], alternatives, other: true });
+        }
+      } else {
+        return {
+          forModel: `Series conflict on ${clashDates.join(", ")} (nothing saved). The user was shown two options to tap. ${CHOOSE_NOTE} When they tap one, propose the SAME series again with their message verbatim as tapped.`,
+          block: { type: "pick", question: clashDates.length > 1 ? t.seriesTakenMany : t.seriesTakenOne, options: [{ id: "skip", title: skipTitle, detail: "" }, { id: "other", title: otherTitle, detail: "" }] },
+        };
+      }
     }
   }
   const clash = day.find((r) => r.status !== "blocked" && overlaps(r));
@@ -565,7 +665,11 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
       ...(proc?.price ? [{ label: t.value, value: money(proc.price, await practiceCountry(ctx)), isDefault: true }] : []),
       { label: t.type, value: t.inPerson, isDefault: true },
       { label: t.duration, value: `${dur} min`, ...(durGiven ? {} : { isDefault: true }) },
-      ...(repeat ? [{ label: t.repeatLabel, value: t.repeatValue(repeat.every, repeat.count, formatShortDate(ctx.locale, dates[dates.length - 1])) }] : []),
+      ...(repeat ? [{
+        label: t.repeatLabel,
+        value: t.repeatValue(repeat.every, dates.length, formatShortDate(ctx.locale, dates[dates.length - 1]))
+          + (skip.length ? `, ${t.skipping(skip.map((d) => formatShortDate(ctx.locale, d).slice(0, 5)).join(", "))}` : ""),
+      }] : []),
     ],
     warnings,
     ...(asks.length ? { secondConfirm: { question: `${asks.join(" ")} ${t.bookAnyway}`, confirmLabel: t.bookLabel } } : {}),
@@ -574,9 +678,12 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
     editTarget: { screen: "schedule", date, params: { new: "1", start } },
     viewTarget: view,
     after: { screen: "schedule", date, highlight: { kind: "appointment" } },
-    action: { kind: "book_appointment", args: { patientId, date, start, durationMin: dur, ...(proc ? { procedureId: proc.id } : {}), ...(repeat ? { repeat } : {}) } },
+    action: { kind: "book_appointment", args: { patientId, date, start, durationMin: dur, ...(proc ? { procedureId: proc.id } : {}), ...(repeat ? { repeat: { ...repeat, ...(skip.length ? { skip } : {}) } } : {}) } },
   });
-  return { forModel: `Card shown (${c.id}${stop ? `, blocked: ${stop.code}` : ""}${warnings.length ? `, warnings: ${warnings.map((w) => w.code).join(",")}` : ""}). Tell the user to check it and tap Confirmar; don't repeat the details.`, block: { type: "card", card: c } };
+  return {
+    forModel: `Card shown (${c.id}${stop ? `, blocked: ${stop.code}` : ""}${warnings.length ? `, warnings: ${warnings.map((w) => w.code).join(",")}` : ""}${extra.length ? "; free times for the skipped date shown: a time tapped there is a separate single appointment, proposed after this one is saved" : ""}). Tell the user to check it and tap Confirmar; don't repeat the details.`,
+    blocks: [{ type: "card", card: c }, ...extra],
+  };
 }
 
 async function readAppointment(ctx: ToolContext, id: unknown): Promise<ApptRow | null> {
@@ -600,6 +707,11 @@ async function proposeMove(ctx: ToolContext, input: Record<string, unknown>): Pr
   if (a.status === "absent") return err("A no-show isn't moved (it stays on record): offer to book this patient again instead (find_patients, then propose_book_appointment).");
   if (a.status === "tentative" || a.status === "proposal") return err("That's a booking request: it's answered on the request (propose_booking_decision), not moved.");
   if (!MOVABLE_STATUSES.includes(a.status)) return err(`A ${a.status} appointment can't be moved; tell the user.`);
+  // Which appointment: guarded on what identifies IT (the new day in the
+  // message doesn't say which one to move), so only a named current day or
+  // date counts; a weekday for the new date doesn't.
+  const ambiguous = await ambiguousTarget({ ...ctx, userText: stripNewWhen(ctx.userText) }, a, ctx.today, addDays(ctx.today, 13), (r) => MOVABLE_STATUSES.includes(r.status));
+  if (ambiguous) return ambiguous;
   const { date, start } = input;
   if (!isDate(date)) return err("The date must be YYYY-MM-DD in the Gregorian calendar; ask the user if unsure.");
   if (!isTime(start)) return err("The start must be HH:MM; ask the user for the time.");
@@ -678,6 +790,8 @@ async function proposeCancel(ctx: ToolContext, input: Record<string, unknown>): 
   // Completed / absent (and anything else not live): the same rule as the
   // app's executor (only scheduled, confirmed or late).
   if (!isRequest && !MOVABLE_STATUSES.includes(a.status)) return err("Only scheduled, confirmed or late appointments can be cancelled; this one is " + a.status + ". Tell the user.");
+  const ambiguous = await ambiguousTarget(ctx, a, ctx.today, addDays(ctx.today, 13), (r) => MOVABLE_STATUSES.includes(r.status));
+  if (ambiguous) return ambiguous;
   const c = card(ctx, {
     icon: "calendar-x",
     title: t.cancelAppt,
@@ -740,6 +854,8 @@ async function proposeMarkPaid(ctx: ToolContext, input: Record<string, unknown>)
   const amount = input.amount === undefined || input.amount === null ? null : Number(input.amount);
   if (amount !== null && (!Number.isFinite(amount) || amount <= 0 || amount > 1_000_000)) return err("The amount must be a positive number.");
   if ((a.payment_status === "paid") === paid) return err(`It's already marked ${paid ? "paid" : "unpaid"}; tell the user.`);
+  const ambiguous = await ambiguousTarget(ctx, a, addDays(ctx.today, -90), addDays(ctx.today, 30), (r) => (r.payment_status === "paid") !== paid && !["tentative", "proposal"].includes(r.status));
+  if (ambiguous) return ambiguous;
   const value = amount ?? a.payment_amount;
   if (paid && !value) return err("This appointment has no value: ask the user for the amount, then propose again with it.");
   const c = card(ctx, {

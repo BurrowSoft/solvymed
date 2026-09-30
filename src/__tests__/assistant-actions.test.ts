@@ -255,6 +255,66 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     expect(resultsIn(t.model.calls[1])[0]).toMatchObject({ is_error: true });
   });
 
+  // Round 2 (3e's ❌, UX/9a): "a das 10" names no day.
+  const tens = [
+    { id: "t-today", date: "2026-09-29", name: "Ana Um" },
+    { id: "t-plus2", date: "2026-10-01", name: "Bia Dois" },
+    { id: "t-plus7", date: "2026-10-06", name: "Caio Tres" },
+  ].map((x) => ({ id: x.id, professional_id: "doc-1", patient_id: null, patient_name: x.name, date: x.date, start_time: "16:00:00", end_time: "16:30:00", status: "scheduled", payment_status: "pending", payment_amount: null }));
+
+  it("a time with no day: the server searches the next two weeks itself, three 16:00s → a list (the model assumed today)", async () => {
+    const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-29", to: "2026-09-29", start: "16:00" } }] } : "ok"));
+    t.tables.appointments.push(...tens);
+    const r = await run(t, ask("Cancela a das 16"));
+    const pick = r.blocks.find((b) => b.type === "pick") as { options: { id: string }[] };
+    expect(pick.options.map((o) => o.id).sort()).toEqual(["t-plus2", "t-plus7", "t-today"]);
+  });
+
+  it("the guard: even with an id in hand, no card for a partial reference with several matches; a named day gets its card", async () => {
+    // The model listed today's agenda (so it has t-today's id) and proposes it.
+    const guess = (text: string) => {
+      const t = setup((_r, round) =>
+        round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-29", to: "2026-09-29" } }] }
+        : round === 1 ? { tools: [{ name: "propose_cancel_appointment", input: { appointmentId: "t-today" } }] }
+        : "ok");
+      t.tables.appointments.push(...tens);
+      return run(t, ask(text));
+    };
+    let r = await guess("Cancela a das 16");
+    expect(cardOf(r.blocks)).toBeUndefined();
+    expect((r.blocks.find((b) => b.type === "pick") as { options: unknown[] }).options).toHaveLength(3);
+    r = await guess("Cancela a das 16 de hoje");
+    expect(cardOf(r.blocks)?.action).toEqual({ kind: "cancel_appointment", args: { appointmentId: "t-today" } });
+    r = await guess("Cancel today's 4 pm");
+    expect(cardOf(r.blocks)).toBeDefined();
+  });
+
+  it("a move named only by patient, with two upcoming: the list first; the new day in the message doesn't count", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-29", to: "2026-10-12" } }] }
+      : round === 1 ? { tools: [{ name: "propose_move_appointment", input: { appointmentId: "a-joao", date: "2026-10-01", start: "15:00" } }] }
+      : "ok");
+    t.tables.appointments.push({ id: "a-joao2", professional_id: "doc-1", patient_id: "p-mario", patient_name: "Mario Souza", date: "2026-10-05", start_time: "09:00:00", end_time: "09:30:00", status: "scheduled", payment_status: "pending", payment_amount: null });
+    const r = await run(t, ask("Muda a consulta do Mario para quinta às 15h"));
+    expect(cardOf(r.blocks)).toBeUndefined();
+    expect((r.blocks.find((b) => b.type === "pick") as { options: { id: string }[] }).options.map((o) => o.id).sort()).toEqual(["a-joao", "a-joao2"]);
+  });
+
+  it("one question at a time: a second list in the same answer waits", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { tools: [{ name: "find_patients", input: { query: "Mari" } }, { name: "choose_date", input: { dates: ["2026-10-01", "2026-10-08"] } }] } : "ok");
+    const r = await run(t, ask("Muda a da Mari para quinta"));
+    expect(r.blocks.filter((b) => b.type === "pick")).toHaveLength(1);
+    expect((resultsIn(t.model.calls[1])[1] as { content: string }).content).toContain("Not shown");
+  });
+
+  it("after a time choice (its own question), no pointer text at all", async () => {
+    const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "find_patients", input: { query: "Maria Silva" } }] } : round === 1 ? { tools: [{ name: "propose_book_appointment", input: { patientId: "p-maria", date: "2026-09-30", start: "10:00" } }] } : "Escolha um horário acima."));
+    const r = await run(t, ask("Marca a Maria Silva amanhã às 10h"));
+    expect(choiceOf(r.blocks)?.reason).toBe("conflict");
+    expect(textOf(r.chunks)).toBe("");
+  });
+
   it("the prompt carries a real calendar to look dates up in, and the actions rules", async () => {
     const t = setup(() => "ok");
     await run(t, ask("Marca uma consulta"));
@@ -592,16 +652,40 @@ describe("SolvyAI actions mode: a recurring series (the website's Repetir)", () 
     expect(card.action.args.repeat).toEqual({ every: "week", count: 3 });
   });
 
-  it("another appointment on any date: no card, the conflicting dates named (recurring_conflict)", async () => {
-    const t = setup(series({ every: "week", count: 3 }));
-    t.tables.appointments.push({ id: "a-x", professional_id: "doc-1", patient_id: null, patient_name: "Rui", date: "2026-10-14", start_time: "14:00:00", end_time: "14:30:00", status: "scheduled", payment_status: "pending", payment_amount: null });
-    const r = await run(t, ask("…"));
+  it("a taken date in the series: no card, two real options (UX); the tapped one comes back and the server skips the date", async () => {
+    const rui = { id: "a-x", professional_id: "doc-1", patient_id: null, patient_name: "Rui", date: "2026-10-14", start_time: "14:00:00", end_time: "14:30:00", status: "scheduled", payment_status: "pending", payment_amount: null };
+    let t = setup(series({ every: "week", count: 3 }));
+    t.tables.appointments.push(rui);
+    let r = await run(t, ask("…"));
     expect(cardOf(r.blocks)).toBeUndefined();
-    const c = choiceOf(r.blocks)!;
-    expect(c.reason).toBe("recurring_conflict");
-    expect(c.conflicts).toEqual([{ date: "2026-10-14", start: "14:00", end: "14:30", what: "Rui" }]);
-    expect(c.text).toContain("Nada foi salvo");
-    expect(c.alternatives).toEqual([]);
+    expect(r.blocks.find((b) => b.type === "pick")).toEqual({
+      type: "pick", question: "Uma das datas está ocupada. Escolha uma opção.",
+      options: [{ id: "skip", title: "Pular 14/10 e marcar as outras", detail: "" }, { id: "other", title: "Outro horário para 14/10", detail: "" }],
+    });
+    expect(textOf(r.chunks)).toBe("Escolha uma opção acima.");
+    // "Pular": the series without 14/10, said on the card; the action skips it.
+    const again = (tapped: string) => withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-07", start: "14:00", durationMin: 30, repeat: { every: "week", count: 3 }, tapped } }));
+    t = setup(again("Pular 14/10 e marcar as outras"));
+    t.tables.appointments.push(rui);
+    r = await run(t, ask("Pular 14/10 e marcar as outras"));
+    let card = cardOf(r.blocks)!;
+    expect(card.fields.find((f) => f.label === "Repetir")!.value).toBe("Semanal, 2 consultas (até 21/10/2026), pulando 14/10");
+    expect(card.action.args.repeat).toEqual({ every: "week", count: 3, skip: ["2026-10-14"] });
+    expect(choiceOf(r.blocks)).toBeUndefined();
+    // "Outro horário": the same card, plus free times on 14/10 for a separate appointment.
+    t = setup(again("Outro horário para 14/10"));
+    t.tables.appointments.push(rui);
+    r = await run(t, ask("Outro horário para 14/10"));
+    card = cardOf(r.blocks)!;
+    expect(card.action.args.repeat).toEqual({ every: "week", count: 3, skip: ["2026-10-14"] });
+    const free = choiceOf(r.blocks)!;
+    expect(free.text).toBe("Horários livres em Quarta-feira, 14/10/2026:");
+    expect(free.alternatives.every((a) => a.date === "2026-10-14" && a.start !== "14:00")).toBe(true);
+    expect(free.alternatives.length).toBeGreaterThan(0);
+    // A skip is never taken from the model: an unrelated "tapped" changes nothing.
+    t = setup(again("Pula tudo"));
+    t.tables.appointments.push(rui);
+    expect(cardOf((await run(t, ask("Pula tudo"))).blocks)).toBeUndefined();
   });
 
   it("blocked time on a later date: the second question names that date", async () => {

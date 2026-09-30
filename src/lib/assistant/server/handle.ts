@@ -56,7 +56,7 @@ const localeOf = (v: unknown) => (typeof v === "string" && (routing.locales as r
 const prefixOf = (locale: string) => (locale === routing.defaultLocale ? "" : `/${locale}`);
 
 // The clinic's "now" and the tool context for one request.
-async function toolContext(db: unknown, profId: string, locale: string, client: Client): Promise<ToolContext & { tz: string }> {
+async function toolContext(db: unknown, profId: string, locale: string, client: Client, userText = ""): Promise<ToolContext & { tz: string }> {
   const tz = await getClinicTimeZone(db, { professionalId: profId, isSecretary: false });
   const now = new Date();
   return {
@@ -69,6 +69,7 @@ async function toolContext(db: unknown, profId: string, locale: string, client: 
     nowTime: clinicTime(now, tz),
     seen: new Set(),
     client,
+    userText,
     tz,
   };
 }
@@ -277,9 +278,9 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       const usage: ModelUsage = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
       let answered = false;
       // What this answer has put on screen for the user to act on.
-      let shown: "card" | "choice" | null = null;
+      let shown: "card" | "choice" | "slot" | null = null;
       try {
-        const ctx = mode === "actions" ? await toolContext(deps.db, userId, req.locale, deps.client) : null;
+        const ctx = mode === "actions" ? await toolContext(deps.db, userId, req.locale, deps.client, messages[messages.length - 1].content) : null;
         let system = rules(lang, deps.client, req.screen, mode);
         if (ctx) system += `\nToday at the clinic: ${formatDateLabel("en-US", ctx.today, { weekday: "long" })} ${ctx.today}, ${ctx.nowTime} (${ctx.tz}). Dates for the tools are YYYY-MM-DD in this calendar.\n${calendarLine(ctx.today)}`;
         const history: ModelMessage[] = [...messages];
@@ -320,23 +321,34 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
           let roundText = "";
           for await (const t of filterMarkers(texts(), seen)) roundText += t;
           if (calls.length === 0) {
-            const pointer = shown === "card" ? POINTER.card[lang] : shown === "choice" ? POINTER.choice[lang] : null;
-            const text = pointer ?? roundText.trim();
+            // A slot choice carries its own question and buttons: no text at
+            // all after it (UX: never "Escolha uma opção acima" over a lone
+            // "Outro horário").
+            const text = shown === "slot" ? "" : shown === "card" ? POINTER.card[lang] : shown === "choice" ? POINTER.choice[lang] : roundText.trim();
             if (text) { answered = true; yield { kind: "delta", text }; }
             break;
           }
           // The tools, as the user; their blocks (a card, a list to choose
           // from, time chips) go straight to the user, the text to the model.
+          // One question at a time (UX): once a list or time choice is on
+          // screen, a second one waits for the answer to the first.
           const results: ContentBlock[] = [];
           for (const call of calls) {
             const out = await runTool(ctx, call.name, call.input);
+            let forModel = out.forModel;
             for (const b of [...(out.block ? [out.block] : []), ...(out.blocks ?? [])]) {
+              const asks = b.type === "pick" || b.type === "slot_choice";
+              if (asks && (shown === "choice" || shown === "slot")) {
+                forModel = "Not shown: the user must first answer the list already on screen. Ask nothing else now.";
+                continue;
+              }
               answered = true;
               if (b.type === "card") shown = "card";
-              else if ((b.type === "pick" || b.type === "slot_choice") && shown !== "card") shown = "choice";
+              else if (b.type === "pick" && shown !== "card") shown = "choice";
+              else if (b.type === "slot_choice" && shown !== "card") shown = "slot";
               yield { kind: "block", block: b };
             }
-            results.push({ type: "tool_result", tool_use_id: call.id, content: out.forModel, ...(out.isError ? { is_error: true } : {}) });
+            results.push({ type: "tool_result", tool_use_id: call.id, content: forModel, ...(out.isError ? { is_error: true } : {}) });
           }
           history.push({ role: "assistant", content: [...(said ? [{ type: "text" as const, text: said }] : []), ...calls.map((t) => ({ type: "tool_use" as const, ...t }))] });
           history.push({ role: "user", content: results });

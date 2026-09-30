@@ -105,11 +105,16 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
       // A series (the card's Repetir): the website's own recurrence fields,
       // re-validated by createAppointment (every / 2–52).
       const REPEAT: Record<string, string> = { week: "weekly", "2weeks": "biweekly", month: "monthly" };
-      const rep = a.repeat as { every?: unknown; count?: unknown } | undefined;
+      const rep = a.repeat as { every?: unknown; count?: unknown; skip?: unknown } | undefined;
       if (rep !== undefined && (typeof rep !== "object" || rep === null || !REPEAT[str(rep.every)] || !Number.isInteger(rep.count))) return { ok: false, code: "generic" };
+      // Dates the series skips (the card's "pulando …"): real dates only;
+      // createAppointment drops any that aren't in the series.
+      const skip = rep?.skip;
+      if (skip !== undefined && (!Array.isArray(skip) || skip.length > 52 || !skip.every((d) => typeof d === "string" && DATE.test(d)))) return { ok: false, code: "generic" };
       const r = await createAppointment(form({
         patient_id: patientId, date, start_time: start, duration_minutes: String(dur), type: "in-person", ...procedure,
         ...(rep ? { recurrence: REPEAT[str(rep.every)], occurrences: String(rep.count) } : {}),
+        ...(Array.isArray(skip) && skip.length ? { skip_dates: (skip as string[]).join(",") } : {}),
         ...(warningsAsked ? { confirm_warnings: "1" } : {}),
       }));
       if (!("success" in r && r.success)) return mapError(r);
