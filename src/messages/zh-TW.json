@@ -571,7 +571,9 @@
     "appearanceHint": "此瀏覽器中的面板主題。列印內容和電子郵件一律為淺色。",
     "themeAuto": "自動",
     "themeLight": "淺色",
-    "themeDark": "深色"
+    "themeDark": "深色",
+    "pixKey": "Pix 金鑰",
+    "pixKeyPlaceholder": "CPF、CNPJ、電子郵件、電話或隨機金鑰"
   },
   "clinics": {
     "title": "我的診所",

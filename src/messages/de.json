@@ -571,7 +571,9 @@
     "appearanceHint": "Das Design des Dashboards in diesem Browser. Ausdrucke und E-Mails bleiben immer hell.",
     "themeAuto": "Automatisch",
     "themeLight": "Hell",
-    "themeDark": "Dunkel"
+    "themeDark": "Dunkel",
+    "pixKey": "Pix-Schlüssel",
+    "pixKeyPlaceholder": "CPF, CNPJ, E-Mail, Telefon oder zufälliger Schlüssel"
   },
   "clinics": {
     "title": "Meine Kliniken",

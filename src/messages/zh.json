@@ -571,7 +571,9 @@
     "appearanceHint": "此浏览器中的面板主题。打印内容和电子邮件始终为浅色。",
     "themeAuto": "自动",
     "themeLight": "浅色",
-    "themeDark": "深色"
+    "themeDark": "深色",
+    "pixKey": "Pix 密钥",
+    "pixKeyPlaceholder": "CPF、CNPJ、电子邮件、电话或随机密钥"
   },
   "clinics": {
     "title": "我的诊所",

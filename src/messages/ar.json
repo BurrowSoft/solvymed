@@ -571,7 +571,9 @@
     "appearanceHint": "سمة لوحة التحكم في هذا المتصفح. تبقى المطبوعات والرسائل الإلكترونية فاتحة دائمًا.",
     "themeAuto": "تلقائي",
     "themeLight": "فاتح",
-    "themeDark": "داكن"
+    "themeDark": "داكن",
+    "pixKey": "مفتاح Pix",
+    "pixKeyPlaceholder": "CPF أو CNPJ أو البريد الإلكتروني أو الهاتف أو مفتاح عشوائي"
   },
   "clinics": {
     "title": "عياداتي",

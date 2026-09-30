@@ -571,7 +571,9 @@
     "appearanceHint": "ธีมของแดชบอร์ดในเบราว์เซอร์นี้ งานพิมพ์และอีเมลเป็นโหมดสว่างเสมอ",
     "themeAuto": "อัตโนมัติ",
     "themeLight": "สว่าง",
-    "themeDark": "มืด"
+    "themeDark": "มืด",
+    "pixKey": "คีย์ Pix",
+    "pixKeyPlaceholder": "CPF, CNPJ, อีเมล, เบอร์โทร หรือคีย์สุ่ม"
   },
   "clinics": {
     "title": "คลินิกของฉัน",
