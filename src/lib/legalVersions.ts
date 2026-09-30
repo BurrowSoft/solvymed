@@ -4,7 +4,9 @@
 // handle_new_user; it only records versions in its _privacy_versions()
 // list). A new text = a new date here AND a migration adding it to that
 // list (mobile dev), shipped together.
-export const PRIVACY_VERSION = "2026-09-28";
+// 2026-10-01: §6e names WhatsApp (whatsapp-outbox-live). Needs mobile's
+// migration adding ('privacy','2026-10-01') applied FIRST.
+export const PRIVACY_VERSION = "2026-10-01";
 export const TERMS_VERSION = "2026-10-01";
 
 // Sent with every web signup (the checkbox is required, so it's sent only
