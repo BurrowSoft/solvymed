@@ -769,8 +769,8 @@
           ]
         },
         "web": {
-          "pt": "Abra o paciente e, na aba **Informações**, clique em **Mesclar com outro paciente…** (só o médico). Busque o outro cadastro (os arquivados também aparecem), escolha em **Manter este cadastro** qual fica, marque o valor que quer manter em cada campo diferente e clique em **Mesclar**; se um dos cadastros usa o app, confirme em **São a mesma pessoa**.",
-          "en": "Open the patient and, on the **Info** tab, click **Merge with another patient…** (doctor only). Search for the other record (archived ones are listed too), choose under **Keep this record** which one stays, mark the value to keep in each field that differs and click **Merge**; if either record uses the app, confirm with **Same person**."
+          "pt": "Abra o paciente e, na aba **Informações**, clique em **Mesclar com outro paciente…** (só o médico). Busque o outro cadastro (os arquivados também aparecem), escolha em **Manter este cadastro** qual fica, marque o valor que quer manter em cada campo diferente e clique em **Mesclar**; se um dos cadastros usa o app, confirme em **São a mesma pessoa**. Cada cadastro mostra a data de nascimento, o final do telefone e quando foi cadastrado ou importado; ao trocar qual fica, os valores marcados continuam marcados. Dois cadastros com o mesmo nome aparecem na confirmação com o que os diferencia, por exemplo «Maria Silva (nasc. 12/03/1980)».",
+          "en": "Open the patient and, on the **Info** tab, click **Merge with another patient…** (doctor only). Search for the other record (archived ones are listed too), choose under **Keep this record** which one stays, mark the value to keep in each field that differs and click **Merge**; if either record uses the app, confirm with **Same person**. Each record shows its birth date, the end of its phone number and when it was added or imported; switching which one stays keeps the values you marked. Two records with the same name are named in the confirmation by what tells them apart, for example «Maria Silva (born 12/03/1980)»."
         },
         "webUnavailable": false,
         "open": "patients",
@@ -1350,8 +1350,8 @@
           ]
         },
         "web": {
-          "pt": "Durante o teste, o contador de dias fica no topo do painel. Clique nele para ver o plano e assinar com cartão. A situação do plano fica em **Configurações → Assinatura**; se você assina com cartão, **Gerenciar assinatura** abre a página do Stripe para gerenciá-la (por exemplo, trocar o cartão).",
-          "en": "During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card. Your plan's status is in **Settings → Subscription**; if you subscribe by card, **Manage subscription** opens Stripe's page to manage it (for example, to change the card)."
+          "pt": "Durante o teste, o contador de dias fica no topo do painel. Clique nele para ver o plano e assinar com cartão. Se você assinar com mais de 2 dias de teste pela frente, ele continua: a assinatura começa (e a primeira cobrança acontece) quando o teste termina, e se cancelar antes disso você fica no teste até o fim. Com 2 dias ou menos, a cobrança é feita na hora. A situação do plano fica em **Configurações → Assinatura**; se você assina com cartão, **Gerenciar assinatura** abre a página do Stripe para gerenciá-la (por exemplo, trocar o cartão).",
+          "en": "During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card. If you subscribe with more than 2 days of trial left, you keep it: the subscription starts (and is first charged) when the trial ends, and if you cancel before then you stay on the trial until it ends. With 2 days or less left, you are charged right away. Your plan's status is in **Settings → Subscription**; if you subscribe by card, **Manage subscription** opens Stripe's page to manage it (for example, to change the card)."
         },
         "webUnavailable": false,
         "open": null,

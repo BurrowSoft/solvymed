@@ -856,13 +856,8 @@
     "payCardSub": "Cartão de crédito",
     "or": "ou",
     "cancelAnytime": "Cancele quando quiser. Sem fidelidade.",
+    "startsAfterTrial": "Sua assinatura começa em {date}, quando o teste grátis termina. Nada é cobrado hoje.",
     "successMessage": "Assinatura ativada! Bem-vindo(a) ao SolvyMed Pro.",
-    "goToDashboard": "Ir para o painel",
-    "backToDashboard": "Voltar ao painel",
-    "back": "Voltar",
-    "needHelp": "Precisa de ajuda?",
-    "lockedSettingsHint": "Seus dados continuam acessíveis: exporte seus pacientes, gerencie a assinatura ou encerre a conta em",
-    "lockedSettingsLink": "Configurações",
     "activationPending": "Pagamento recebido! Ativando sua assinatura…",
     "activationSlow": "Recebemos seu pagamento, mas a ativação está demorando. Ela costuma concluir em alguns minutos; se o plano não aparecer, fale com o suporte:",
     "trialDaysLeft": "Você tem {n} dias restantes no seu período de teste.",
@@ -885,7 +880,13 @@
     "paymentActivating": "Pagamento recebido. Seu acesso está sendo restaurado. Atualize esta página em instantes.",
     "chipDays": "Teste grátis: faltam {n} dias · Ver plano",
     "chipUrgentDays": "Teste grátis: faltam {n} dias · Assinar",
-    "chipLastDay": "Teste grátis: último dia · Assinar"
+    "chipLastDay": "Teste grátis: último dia · Assinar",
+    "goToDashboard": "Ir para o painel",
+    "backToDashboard": "Voltar ao painel",
+    "back": "Voltar",
+    "needHelp": "Precisa de ajuda?",
+    "lockedSettingsHint": "Seus dados continuam acessíveis: exporte seus pacientes, gerencie a assinatura ou encerre a conta em",
+    "lockedSettingsLink": "Configurações"
   },
   "secretary": {
     "notConnectedTitle": "Sua conta ainda não está conectada a uma clínica",
@@ -1659,7 +1660,11 @@
     "search": "Buscar por nome ou documento…",
     "archivedTag": "arquivado",
     "back": "Voltar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "subBirth": "Nasc. {date}",
+    "subPhone": "Tel. …{last4}",
+    "subImported": "Importado em {date}",
+    "subCreated": "Cadastrado em {date}"
   },
   "patientAddress": {
     "section": "Endereço",

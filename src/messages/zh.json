@@ -856,13 +856,8 @@
     "payCardSub": "Visa、Mastercard、美国运通",
     "or": "或",
     "cancelAnytime": "随时取消。无需承诺。",
-    "lockedSettingsHint": "你的数据仍属于你:可在以下位置导出患者、管理订阅或关闭账户:",
-    "lockedSettingsLink": "设置",
+    "startsAfterTrial": "你的订阅将于 {date} 免费试用结束时开始。今天不会扣款。",
     "successMessage": "订阅已激活！欢迎使用SolvyMed Pro。",
-    "goToDashboard": "前往控制台",
-    "backToDashboard": "返回控制台",
-    "back": "返回",
-    "needHelp": "需要帮助?",
     "activationPending": "已收到付款！正在激活您的订阅…",
     "activationSlow": "我们已收到您的付款，但激活时间比平时长。通常几分钟内即可完成；如果您的套餐没有显示，请联系支持：",
     "trialDaysLeft": "您的免费试用还剩{n}天。",
@@ -885,7 +880,13 @@
     "paymentActivating": "已收到付款。正在恢复您的访问权限，请稍后刷新此页面。",
     "chipDays": "免费试用：剩余 {n} 天 · 查看方案",
     "chipUrgentDays": "免费试用：剩余 {n} 天 · 立即订阅",
-    "chipLastDay": "免费试用：最后一天 · 立即订阅"
+    "chipLastDay": "免费试用：最后一天 · 立即订阅",
+    "lockedSettingsHint": "你的数据仍属于你:可在以下位置导出患者、管理订阅或关闭账户:",
+    "lockedSettingsLink": "设置",
+    "goToDashboard": "前往控制台",
+    "backToDashboard": "返回控制台",
+    "back": "返回",
+    "needHelp": "需要帮助?"
   },
   "secretary": {
     "notConnectedTitle": "尚未连接到诊所",
@@ -1659,7 +1660,11 @@
     "search": "按姓名或证件号搜索…",
     "archivedTag": "已归档",
     "back": "返回",
-    "cancel": "取消"
+    "cancel": "取消",
+    "subBirth": "出生 {date}",
+    "subPhone": "电话 …{last4}",
+    "subImported": "导入于 {date}",
+    "subCreated": "添加于 {date}"
   },
   "patientAddress": {
     "section": "地址",

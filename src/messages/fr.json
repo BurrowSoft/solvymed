@@ -856,13 +856,8 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "ou",
     "cancelAnytime": "Résiliation à tout moment. Sans engagement.",
-    "lockedSettingsHint": "Vos données restent à vous : exportez vos patients, gérez l'abonnement ou fermez votre compte dans",
-    "lockedSettingsLink": "Paramètres",
+    "startsAfterTrial": "Votre abonnement commence le {date}, à la fin de votre essai gratuit. Rien n'est prélevé aujourd'hui.",
     "successMessage": "Abonnement activé ! Bienvenue dans SolvyMed Pro.",
-    "goToDashboard": "Aller au tableau de bord",
-    "backToDashboard": "Retour au tableau de bord",
-    "back": "Retour",
-    "needHelp": "Besoin d'aide ?",
     "activationPending": "Paiement reçu ! Activation de votre abonnement…",
     "activationSlow": "Nous avons reçu votre paiement, mais l’activation prend plus de temps que d’habitude. Elle se termine en général en quelques minutes ; si votre forfait n’apparaît pas, contactez le support :",
     "trialDaysLeft": "Il vous reste {n} jours dans votre période d'essai.",
@@ -885,7 +880,13 @@
     "paymentActivating": "Paiement reçu. Votre accès est en cours de rétablissement. Actualisez cette page dans un instant.",
     "chipDays": "Essai gratuit : {n} jours restants · Voir l'offre",
     "chipUrgentDays": "Essai gratuit : {n} jours restants · S'abonner",
-    "chipLastDay": "Essai gratuit : dernier jour · S'abonner"
+    "chipLastDay": "Essai gratuit : dernier jour · S'abonner",
+    "lockedSettingsHint": "Vos données restent à vous : exportez vos patients, gérez l'abonnement ou fermez votre compte dans",
+    "lockedSettingsLink": "Paramètres",
+    "goToDashboard": "Aller au tableau de bord",
+    "backToDashboard": "Retour au tableau de bord",
+    "back": "Retour",
+    "needHelp": "Besoin d'aide ?"
   },
   "secretary": {
     "notConnectedTitle": "Pas encore connecté(e) à un cabinet",
@@ -1659,7 +1660,11 @@
     "search": "Rechercher par nom ou pièce d'identité…",
     "archivedTag": "archivé",
     "back": "Retour",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "subBirth": "Né(e) le {date}",
+    "subPhone": "Tél. …{last4}",
+    "subImported": "Importé le {date}",
+    "subCreated": "Enregistré le {date}"
   },
   "patientAddress": {
     "section": "Adresse",

@@ -312,14 +312,14 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
-      text: "Merging duplicate patients (in the app: Pacientes → the patient's ⋯ → \"Mesclar com outro paciente…\" / \"Merge with another patient…\", doctor only): pick the other record, keep the differing values you want, choose the record that stays, confirm (a second \"São a mesma pessoa\" / \"Same person\" confirm when an app account is involved). Everything moves to the record that stays; it can't be undone; the Access tab shows \"Mesclou com «nome»\". SolvyAI never merges; send the doctor there.",
+      text: "Merging duplicate patients (in the app: Pacientes → the patient's ⋯ → \"Mesclar com outro paciente…\" / \"Merge with another patient…\", doctor only): pick the other record, keep the differing values you want, choose the record that stays, confirm (a second \"São a mesma pessoa\" / \"Same person\" confirm when an app account is involved). Each record shows its birth date, the phone's last 4 digits and when it was added or imported; switching the record that stays keeps the chosen values; same-name records are named in the confirmation by what differs. Everything moves to the record that stays; it can't be undone; the Access tab shows \"Mesclou com «nome»\". SolvyAI never merges; send the doctor there.",
       pending: ["merge-patients-live"],
     },
     help: "P12",
   },
   {
     rule: {
-      text: "The website has it too (doctor only): open the patient, Info tab → \"Mesclar com outro paciente…\" / \"Merge with another patient…\": the same flow (only the differing fields, \"Manter este cadastro\" / \"Keep this record\", \"Mesclar\" / \"Merge\", a second \"São a mesma pessoa\" / \"Same person\" when an app account is involved). SolvyAI never merges; send the doctor there.",
+      text: "The website has it too (doctor only): open the patient, Info tab → \"Mesclar com outro paciente…\" / \"Merge with another patient…\": the same flow (only the differing fields, \"Manter este cadastro\" / \"Keep this record\", \"Mesclar\" / \"Merge\", a second \"São a mesma pessoa\" / \"Same person\" when an app account is involved). Each record's card shows its birth date, the phone's last 4 digits and when it was added or imported; switching which record stays keeps the marked values; two same-name records are named in the confirmation by what differs (e.g. \"Maria Silva (nasc. 12/03/1980)\"). SolvyAI never merges; send the doctor there.",
       pending: ["merge-web-live"],
     },
     help: "P12",
@@ -367,7 +367,7 @@ export const NEVER: { what: string; help: string }[] = [
   { what: "Changing the password (Settings → Change password, on the app and the website; the other devices are signed out).", help: "K2" },
   { what: "Payment and Pix / PromptPay settings.", help: "G3" },
   { what: "Receipts (on the website: Payments → a received appointment → \"Recibo\" / \"Receipt\", a print view, for the doctor and the secretary; a Thai practice's numbered receipts are issued in the app).", help: "G5" },
-  { what: "The subscription and plan (the doctor sees the plan's status in Settings → Subscription on the website; \"Manage subscription\" opens Stripe's page for a card subscription).", help: "K1" },
+  { what: "The subscription and plan (the doctor sees the plan's status in Settings → Subscription on the website; \"Manage subscription\" opens Stripe's page for a card subscription; subscribing with more than 48 h of free trial left keeps the trial: the first charge is when it ends, and cancelling before then keeps the trial until its end; with 48 h or less, the charge is immediate).", help: "K1" },
   { what: "Team members (inviting or removing a secretary).", help: "C4" },
   { what: "The clinic's country.", help: "C1" },
 ];
