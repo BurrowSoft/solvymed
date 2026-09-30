@@ -6,6 +6,7 @@ import { render } from "@testing-library/react";
 // and no unnumbered recibo for a Thai practice.
 
 const h = vi.hoisted(() => ({
+  toolbar: [] as { printable?: boolean }[],
   profId: "doc-1" as string | null,
   appt: null as Record<string, unknown> | null,
   patient: { full_name: "Maria Silva", cpf: "123.456.789-00", passport_number: "X1" } as unknown,
@@ -40,7 +41,7 @@ vi.mock("next/navigation", () => ({
   notFound: () => { throw new Error("NOT_FOUND"); },
   redirect: () => { throw new Error("REDIRECT"); },
 }));
-vi.mock("@/components/PrintToolbar", () => ({ PrintToolbar: () => null }));
+vi.mock("@/components/PrintToolbar", () => ({ PrintToolbar: (p: { printable?: boolean }) => { h.toolbar.push(p); return null; } }));
 
 import ReceiptPage from "@/app/[locale]/(site)/dashboard/(gated)/payments/[apptId]/receipt/page";
 import { RECEITA_SAUDE_NOTE } from "@/app/[locale]/(site)/dashboard/(gated)/payments/[apptId]/receipt/ReceiptDocument";
@@ -114,6 +115,8 @@ describe("recibo print page", () => {
     const { container } = render(await ReceiptPage({ params }));
     expect(container.textContent).toContain("receiptThaiHint");
     expect(container.querySelector("#print-doc")).toBeNull();
+    // Nothing to print: only the way back, no Print button (3e).
+    expect(h.toolbar.at(-1)).toMatchObject({ printable: false });
     expect(h.headerFor).toEqual([]);
   });
 

@@ -54,7 +54,7 @@ export default async function ReceiptPrintPage({
   if (profile.receipts === "app") {
     return (
       <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
-        <PrintToolbar backHref={back} backLabel={t("backToPayments")} />
+        <PrintToolbar backHref={back} backLabel={t("backToPayments")} printable={false} />
         <p className="mx-auto max-w-[680px] rounded-2xl bg-white p-6 text-sm text-slate-600 shadow-sm">{t("receiptThaiHint")}</p>
       </div>
     );
