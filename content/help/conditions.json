@@ -76,7 +76,7 @@
     "what": "Mesclar pacientes on the website: migration 133 (merge_patients / merge_patients_preview) is applied on production AND the web tester's 133 rows are 🟢 there (testers force this condition in a local build to test on prod). Flip by hand, never automatically (9a / 38). Independent of the app (UX: the web may launch first). Gates \"Mesclar com outro paciente…\" (together with its probe) and Help P12 with the website's steps; the app's steps wait on merge-patients-live."
   },
   "whatsapp-outbox-live": {
-    "met": false,
+    "met": true,
     "what": "Migration 137 applied, send-whatsapp deployed with its outbox mode, and the Vault secret 'whatsapp_notify_secret' set (from then on the app queues the automatic WhatsApp confirmation/cancellation for ~60 s instead of sending it at once). Rows hold no phone and no text (which appointment, the kind, when, whether it was sent), kept 30 days. Gates privacy §6e naming WhatsApp (and §6e itself when notice-outbox-live isn't met). Flip and deploy BEFORE the Vault secret is set."
   },
   "patient-address-live": {
