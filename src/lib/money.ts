@@ -19,12 +19,14 @@ export function formatMoney(amount: number, currency: Currency = "BRL"): string 
 // "Preço (R$)" / "0,00" in Brazil, "(฿)" / "0.00" in Thailand, "($)" / "0.00"
 // elsewhere. parseMoney reads either decimal style.
 const SYMBOL: Record<Currency, string> = { BRL: "R$", THB: "฿", USD: "$" };
-export function currencySymbol(currency: Currency = "BRL"): string {
+// No default: the caller always passes the PRACTICE currency (9a: a default
+// would silently pick one country's convention).
+export function currencySymbol(currency: Currency): string {
   return SYMBOL[currency];
 }
 // The example amount in the currency's own decimal style.
 const EXAMPLE: Record<Currency, string> = { BRL: "0,00", THB: "0.00", USD: "0.00" };
-export function amountExample(currency: Currency = "BRL"): string {
+export function amountExample(currency: Currency): string {
   return EXAMPLE[currency];
 }
 
