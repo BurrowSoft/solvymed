@@ -76,8 +76,8 @@ export const TOOL_DEFS: ToolDef[] = [
   },
   {
     name: "find_free_slots",
-    description: "Free start times on a date (YYYY-MM-DD) for a duration in minutes, by the clinic's working hours and existing appointments/blocks.",
-    input_schema: obj({ date: { type: "string" }, durationMin: { type: "integer" } }, ["date", "durationMin"]),
+    description: "Free start times on a date (YYYY-MM-DD), by the clinic's working hours and existing appointments/blocks. Pass durationMin only if the user said a length; otherwise the clinic's default appointment length is used: never ask for one. Say the length in the answer.",
+    input_schema: obj({ date: { type: "string" }, durationMin: { type: "integer" } }, ["date"]),
   },
   {
     name: "propose_book_appointment",
@@ -450,11 +450,14 @@ async function chooseDate(ctx: ToolContext, input: Record<string, unknown>): Pro
 
 async function findFreeSlots(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
   const { date } = input;
-  const dur = Number(input.durationMin);
+  // Read-only, so no question about the length (UX): the default
+  // procedure's, else 30 min, said in the answer.
+  const given = input.durationMin !== undefined && input.durationMin !== null;
+  const dur = given ? Number(input.durationMin) : (await defaultProcedure(ctx))?.duration_minutes ?? 30;
   if (!isDate(date)) return err("The date must be YYYY-MM-DD (Gregorian).");
   if (!Number.isInteger(dur) || dur < 5 || dur > 480) return err("The duration is 5–480 minutes.");
   const free = await freeStarts(ctx, date, dur);
-  return { forModel: JSON.stringify({ when: whenLabel(ctx, date), free: free.slice(0, 24) }) };
+  return { forModel: JSON.stringify({ when: whenLabel(ctx, date), durationMin: dur, free: free.slice(0, 24), note: "Say these are free times for an appointment of durationMin minutes." }) };
 }
 
 // ── Proposals ────────────────────────────────────────────────────────────
@@ -962,9 +965,49 @@ const RUN: Record<string, (ctx: ToolContext, input: Record<string, unknown>) => 
 // The tools a client gets: sending Pix by WhatsApp only in the app.
 export const toolDefsFor = (client: "web" | "app") => TOOL_DEFS.filter((d) => client === "app" || d.name !== "propose_send_pix");
 
+// Rule 10a (UX, one rule for every language): "next Friday" / "próxima
+// sexta" / "sexta que vem" / "ศุกร์หน้า" could be the coming Friday or the
+// one after; a bare weekday said on that same weekday could be today or
+// next week. Unless the message writes a date, the two days are shown to
+// tap. Weekdays from Sunday (0), as getUTCDay.
+const WEEKDAYS = [
+  "sunday|domingo|dimanche|sonntag|domenica|อาทิตย์",
+  "monday|segunda|lunes|lundi|montag|luned[ìi]|จันทร์",
+  "tuesday|ter[çc]a|martes|mardi|dienstag|marted[ìi]|อังคาร",
+  "wednesday|quarta|mi[ée]rcoles|mercredi|mittwoch|mercoled[ìi]|พุธ",
+  "thursday|quinta|jueves|jeudi|donnerstag|gioved[ìi]|พฤหัส(?:บดี)?",
+  "friday|sexta|viernes|vendredi|freitag|venerd[ìi]|ศุกร์",
+  "saturday|s[áa]bado|samedi|samstag|sabato|เสาร์",
+];
+const nextFormOf = (w: string) => new RegExp(
+  `\\bnext (?:${w})|pr[óo]xim[oa] (?:${w})|(?:${w})(?:-feira)? que (?:vem|viene)|(?:${w}) prochain|n[äa]chste[nrs]? (?:${w})|prossim[oa] (?:${w})|(?:${w}) prossim[oa]|(?:วัน)?(?:${w})หน้า`,
+);
+const WRITTEN_DATE = /\b\d{1,2}[/.]\d{1,2}\b|\b\d{4}-\d{2}-\d{2}\b/;
+const TODAY_WORD = /\b(?:today|hoje|hoy|aujourd|heute|oggi)|วันนี้/;
+const weekdayOf = (date: string) => new Date(`${date}T12:00:00Z`).getUTCDay();
+export function ambiguousDays(text: string | undefined, today: string): [string, string] | null {
+  const s = (text ?? "").toLowerCase();
+  if (!s || WRITTEN_DATE.test(s)) return null;
+  const now = weekdayOf(today);
+  for (let w = 0; w < 7; w++) {
+    if (nextFormOf(WEEKDAYS[w]).test(s)) {
+      const first = addDays(today, ((w - now + 7) % 7) || 7);
+      return [first, addDays(first, 7)];
+    }
+  }
+  if (!TODAY_WORD.test(s) && new RegExp(`(?:${WEEKDAYS[now]})`).test(s)) return [today, addDays(today, 7)];
+  return null;
+}
+const DATED_TOOLS = new Set(["find_free_slots", "propose_book_appointment", "propose_move_appointment", "propose_block_time"]);
+
 export async function runTool(ctx: ToolContext, name: string, input: Record<string, unknown>): Promise<ToolOutcome> {
   const run = RUN[name];
   if (!run) return err(`There's no tool "${name}". Explain the steps on the screen instead.`);
+  const days = DATED_TOOLS.has(name) && typeof input?.date === "string" ? ambiguousDays(ctx.userText, ctx.today) : null;
+  if (days && days.includes(input.date as string)) {
+    const shown = await chooseDate(ctx, { dates: days });
+    return { ...shown, forModel: `The day the user said could be either of two dates; they were shown both to tap. ${CHOOSE_NOTE}` };
+  }
   try {
     return await run(ctx, input ?? {});
   } catch {

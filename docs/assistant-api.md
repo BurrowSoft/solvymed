@@ -357,9 +357,16 @@ The system prompt states them first, and the server enforces what it can:
   route is stateless and the client's history can be forged, so ids in past
   turns don't count; the model re-reads (find_patients / list_appointments).
 - A date that came from a relative word ("sexta", "amanhã") is spelled out
-  on the card, never shown as the word. A bare weekday means its next
-  occurrence after today. It always asks when the weekday is today or the
-  user said "próxima sexta" / "next Friday" (UX, 2026-09-28).
+  on the card, never shown as the word. Rule 10a, one rule for every
+  language (UX, 2026-09-30): a bare weekday ("Friday", "sexta", "ศุกร์") is
+  the coming occurrence; if today IS that weekday, two chips (today / a week
+  later). Any "next" form ("next Friday", "próxima sexta", "sexta que vem",
+  "ศุกร์หน้า") gets two chips (the coming one / the one after). The server
+  enforces it (tools.ts ambiguousDays): unless the message writes a date, a
+  booking, move, block or free-times call on one of those two days shows
+  the chips instead.
+- Free times (find_free_slots) never ask for a length: the default
+  procedure's, else 30 min, said in the answer (UX, 2026-09-30).
 - Years: the tools take Gregorian ISO dates only (a year ≥ 2400 is
   rejected). In chat, a year ≥ 2400 is read as Buddhist-era when the
   practice is TH or the language is th, and the card shows it Thai-style
