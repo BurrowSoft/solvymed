@@ -75,6 +75,7 @@ function textsFrom(locale: string, messages: typeof en) {
     pickPatient: s("pickPatient"), pickAppointment: s("pickAppointment"), pickDate: s("pickDate"),
     pickSimilar: s("pickSimilar"), someoneElse: s("someoneElse"),
     born: (d: string) => tr("born", { d }),
+    minutes: (n: number) => tr("minutes", { n }),
     // The one line after a card, naming the card's real button.
     pointerCard: tr("pointerCard", { button: as("confirm").replace(/\s*✓\s*$/, "") }),
     promptPayText: s("promptPayText"), promptPayOpen: s("promptPayOpen"), openScreen: s("openScreen"),

@@ -1789,6 +1789,7 @@
     "unavailableLater": "SolvyAI를 일시적으로 사용할 수 없습니다. 나중에 다시 시도하세요.",
     "couldntFinish": "완료하지 못했습니다. 환자 이름, 날짜, 시간과 함께 다르게 말씀해 주시겠어요?",
     "onlySolvyMed": "SolvyMed 관련 도움만 드릴 수 있습니다.",
-    "noClinical": "임상 관련 질문은 도와드릴 수 없습니다."
+    "noClinical": "임상 관련 질문은 도와드릴 수 없습니다.",
+    "minutes": "{n}분"
   }
 }

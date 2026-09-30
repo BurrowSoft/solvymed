@@ -590,7 +590,7 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
       ...(proc ? [{ label: t.procedure, value: proc.name, isDefault: true }] : []),
       ...(proc?.price ? [{ label: t.value, value: money(proc.price, await practiceCountry(ctx)), isDefault: true }] : []),
       { label: t.type, value: t.inPerson, isDefault: true },
-      { label: t.duration, value: `${dur} min`, ...(durGiven ? {} : { isDefault: true }) },
+      { label: t.duration, value: t.minutes(dur), ...(durGiven ? {} : { isDefault: true }) },
       ...(repeat ? [{
         label: t.repeatLabel,
         value: t.repeatValue(repeat.every, dates.length, formatShortDate(ctx.locale, dates[dates.length - 1])),
