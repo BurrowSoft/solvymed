@@ -9503,3 +9503,174 @@ Merged at `e32e087`, hidden (evidence: PR comments 5900370925 / 5900568336).
 CI ✅.
 
 Merged at `6d6dfe9` (evidence: PR comment 5900313440).
+
+## #179 Patient notices through 135's outbox (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `1b3732064e09e49eefb634d1b1d00ca9cd507cb7`** (patient notices through 135's outbox; today, with 135 not live, everything goes out directly as before)
+
+**How it was tested:**
+- **Server:** a local `next dev` at this head with a test-only Expo sink
+  (pushes are logged with a timestamp, never sent).
+- **Data:** the prod DB (135 isn't applied, so enqueue answers
+  `outbox_not_live`), with a throwaway doctor and a patient with the app
+  (linked, with a device token), all deleted afterwards.
+- **Flow:** everything through the website's own screens.
+
+| Action | Push (time from the click, on `next dev`) |
+|---|---|
+| Nova Consulta for the patient | ✅ at once (+7.2 s, incl. dev compile): "Nova consulta · Clínica Opus Outbox marcou uma consulta para você em 06/10/2026 às 10:00." |
+| Remarcar → Wed 11:00 | ✅ +6.1 s: "Consulta remarcada · …mudou sua consulta de 06/10/2026 às 10:00 para 07/10/2026 às 11:00." |
+| Status → Cancelado | ✅ +5.6 s: "Consulta cancelada · …cancelou sua consulta de 07/10/2026 às 11:00. Para marcar outra, abra o app." (row `cancelled`) |
+| Arquivar cadastro (with a future appointment) | ✅ +4.7 s: the appointment is `cancelled` + its "Consulta cancelada" push |
+
+- **No hold:** there's no 60 s wait and nothing is duplicated. The direct
+  path behaves as before; the outbox itself is ⏳ post-135.
+- **Hydration:** the local `next dev` logged a hydration mismatch on the
+  patient page. The production builds of this PR's Preview and of master
+  show **no** error (no React #418), so it's dev-only noise and not from
+  this PR.
+
+Merged at `1b37320` (evidence: PR comment 5901094904).
+
+## #180 The Schedule's manual Desfazer (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `b648044b05465a5dae40f5d57cc34dfbbab0970f`** (the Schedule's manual Desfazer; stacked on #179)
+
+**How it was tested:**
+- **Server:** a local `next dev` at this head with a test-only Expo sink
+  (pushes are logged, never sent).
+- **Data:** the prod DB (135 not live), with a throwaway doctor, a patient
+  **without** the app and one **with** it (linked + token), all deleted
+  afterwards.
+- **Flow:** everything through the Schedule's own screens.
+
+| Row | Result |
+|---|---|
+| Book (no app) | ✅ "Consulta marcada · Desfazer (10 s)" → Desfazer → "Desfeito."; the row is deleted; no push |
+| A weekly series ×3 (no app) | ✅ one toast → Desfazer → **all 3** rows deleted |
+| Remarcar 06/10 14:00 → 07/10 15:00 (no app) | ✅ "Consulta remarcada" → Desfazer → back to 06/10 14:00 |
+| Status → Cancelado (no app), **double-click** Desfazer | ✅ "Consulta cancelada" → the button turns "…" at once → "Desfeito."; status restored to `scheduled` once |
+| Book for the patient WITH the app | ✅ the push goes out directly ("Nova consulta"), and **no toast** is offered |
+| Token tampered (`iat` −1 ms) | ✅ replaying the captured undo request → `{"ok":false}`; the status stays cancelled |
+| Token tampered (the last chars of `sig`) | ✅ `{"ok":false}`; nothing reverted |
+| The original token replayed within the TTL (control) | ✅ `{"ok":true}`; restored (proves the replay path is real) |
+| The original token replayed after **2 min 5 s** | ✅ `{"ok":false}`; the status stays cancelled |
+| Help A1 / A4 Desfazer lines | ✅ hidden: `{pending:notice-outbox-live}` (and app-1.4.0), so `helpArticles.json` doesn't contain them |
+
+**Note for UX (not blocking):** the website's toast already works today for
+patients without the app, but Help A1 / A4 describe it only once
+`notice-outbox-live` is met. The PR body's "live with this web release"
+doesn't match the gating in the content.
+
+Merged at `b648044` (evidence: PR comment 5901209770).
+
+## #181 The tour card + Novidades popup follow the dark theme (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `de8222043a0d784ba06dd2ac78a4c3270681eeeb`** (the tour card + Novidades popup follow the dark theme; my #161 follow-up)
+
+**How it was tested:**
+- **Tour card:** on the Vercel Preview, with a fresh doctor per theme
+  (the first-visit tour, steps 1 and 2).
+- **Novidades popup:** on a local `next dev` at this head with
+  `NEXT_PUBLIC_NEWS_ENABLED=1` and `/dashboard?news=1`, since the flag is
+  off on the Preview.
+- Colours were resolved through a canvas and the contrast computed per
+  text.
+
+| Theme | Tour card | Novidades popup |
+|---|---|---|
+| Escuro | ✅ bg **rgb(15,23,43)** (dark), portalled inside `[data-theme-root=dark]` | ✅ bg rgb(15,23,43), inside the dark root |
+| Automático + OS dark | ✅ dark, inside `[data-theme-root=auto]` | ✅ dark |
+| Claro | ✅ white (light) | ✅ white |
+| Automático + OS light | ✅ white | — |
+
+- **Positioning unchanged:** the tour card is at 650,70 (step 1) and
+  944,134 (step 2), 320×204, in every theme. The popup is centred at
+  416,308, 448×284, in every theme.
+- **Contrast:** in dark the lowest texts are "Pular tour" / "Próximo" /
+  "Ver as novidades" at 3.74 (the white-on-teal-600 button noted in
+  #161). In light, "Pular tour" is 2.63. Nothing new.
+
+Merged at `de82220` (evidence: PR comment 5901315961).
+
+## #183 Mesclar pacientes on the website (migration 133), hidden until 133 (web tester 1, 2026-09-29)
+
+**Web tester 1: the hidden-until-133 parts are 🟢 at `0ec6b4971311b9042a8d4af6a0313c4882300556`. Everything that needs migration 133 is ⏳** (not applied; there's no staging DB). #183 can merge hidden, like #177.
+
+**How it was tested:** the Vercel Preview (Playwright) against the prod DB, which has no 133, so the probe gets "function missing". A throwaway doctor with two same-name patients, pt-BR and en.
+
+| Row | Result |
+|---|---|
+| The patient page → Informações | ✅ **no "Mesclar com outro paciente…"** (pt and en). The buttons are the same as master: Registro de acessos, Gerar código, Editar Paciente, Bloquear agendamentos, Arquivar cadastro, Excluir cadastro |
+| Page load with the probe | ✅ no extra cost visible (3.3–5.6 s on a cold Preview, the same as master's 3.3–5.9 s); no new console errors (see the note) |
+| Help P12 | ✅ `/pt-BR/help/p12` and `/help/p12` → 404; not in the Help index |
+| The built Help while unmet | ✅ `help-build` at this head → `helpArticles.json` has **no content change** (`--ignore-cr-at-eol`). P12 is `requires:migration-133` (met: false), with the app's steps `{pending:merge-patients-live}` |
+| App Map | ✅ the new web rule is `pending: ["migration-133"]` |
+
+**Notes:**
+- **The probe caches any error that has a code as "supported":** `if (!error \|\| error.code) return (known = true)`. Only PGRST202 / "does not exist" means hidden. A transient DB error with a code (e.g. 57014 timeout) on the first probe would show Mesclar until that server instance restarts, and the actions would then fail with the generic error. Minor; your call.
+- **Pre-existing, not this PR:** the patient page logs React **#418** (hydration text mismatch) on **master** too, in pt and en. The "400" in the console is an `OPTIONS` preflight to `/pt-BR`, from my test harness's bypass header, not the app.
+
+**⏳ Needs migration 133 (run when mobile dev 38 applies it, on Vitor's OK):**
+- search by name / ID, archived patients included and tagged;
+- the comparison shows only differing fields; the kept side defaults to the app user; the "{n} campos iguais" / holdings / booking-blocked lines;
+- the Mesclar? confirmation; the second "São a mesma pessoa" step when an app account is involved;
+- the kept record opens with "Cadastros mesclados."; the Access tab shows "Mesclou com «…»";
+- the error texts (both use the app / kept archived / deceased / generic);
+- the importer's Done hint "…use Mesclar com outro paciente." (needs 130/131 too).
+
+Merged at `0ec6b49`, hidden (evidence: PR comment 5901165874).
+
+**⏳ After migration 133:** the merge flow rows listed above, live on prod.
+
+## #185 Importer: CPFs that lost the leading zero in Excel (130's `cpf_zero_padded`) (web tester 1, 2026-09-29)
+
+**First round (`e3b4276`):**
+
+**Web tester 1: the website's rendering is 🟢 at `e3b4276314e0df0d92dba182ab138bc5d2b754f0`, against SIMULATED 130 responses. The live rows are ⏳ until 130 @ `ec6fa90` is applied** (there's no staging DB).
+
+**How it was tested:**
+- **Setup:** a local `next dev` from an isolated clone at this head, with `patient-import-live` flipped only in the clone and `NEXT_PUBLIC_THAI_ENABLED=1` for th.
+- **Migration 130** isn't on any DB I can use, so Playwright answers its RPCs in the browser:
+  - the rows the page really uploads (`import_patients_add_rows`) are echoed back;
+  - 130's rule is applied to their CPF: 9–10 digits that validate once zero-padded → warning `cpf_zero_padded`; otherwise an invalid CPF → `cpf_invalid`;
+  - the summary gets `cpf_zero_padded`.
+- **What this checks:** only the website side (the summary line, the row reasons, the hint rule, the error list), not 130 itself.
+- **The file:** an XLSX with the CPF cells stored as **numbers** (as Excel leaves them): 1234567890 (valid once padded), 1234567891 (10 digits, invalid once padded), "123.456.789-00" (11 digits, invalid), 529.982.247-25 (valid). The page uploaded exactly `1234567890`, `1234567891`, `123.456.789-00`, `529.982.247-25`.
+
+| Row | pt-BR | en | th |
+|---|---|---|---|
+| (1) Summary line | ✅ "1 CPFs estavam sem o zero inicial (o Excel remove) e foram completados." | ✅ "1 CPFs were missing the leading zero (Excel removes it) and were completed." | ✅ "CPF 1 รายการไม่มีเลข 0 นำหน้า (Excel ลบออก) ระบบเติมให้แล้ว" |
+| (1) The padded row's reason | ✅ "CPF sem o zero à esquerda (o Excel remove): completado; confira" (outcome Novo) | ✅ "CPF was missing the leading zero (Excel removes it): completed; please check" | ✅ "CPF ไม่มีเลข 0 นำหน้า (Excel ลบออก): ระบบเติมให้แล้ว โปรดตรวจสอบ" |
+| (2) 10-digit, still invalid | ✅ "CPF inválido (não importado). Se o arquivo veio do Excel, formate a coluna do CPF como Texto e exporte de novo." | ✅ "Invalid CPF (left out). If the file came from Excel, format the CPF column as Text and export again." | ✅ "CPF ไม่ถูกต้อง (ไม่นำเข้า). หากไฟล์มาจาก Excel ให้ตั้งรูปแบบคอลัมน์ CPF เป็นข้อความ แล้วส่งออกใหม่" |
+| (3) 11-digit invalid | ✅ "CPF inválido (não importado)", **no hint** | ✅ no hint | ✅ no hint |
+| (2)/(3) The downloaded error list | ✅ `"Linha";"Nome";"Motivo"` (BOM, `;`): row 1 the padded warning, row 2 **with** the Excel hint, row 3 without | ✅ the same (`,`) | ✅ the same (`"แถว";"ชื่อ";"เหตุผล"`) |
+
+**⏳ Live, after 130 @ `ec6fa90`:** that 130 itself pads and validates. The same file should give the same summary / reasons from the real DB, and the stored CPF should be `012.345.678-90`. This is part of #177's steps 3–4, which gate `patient-import-live`.
+
+**The summary line as an ICU plural (`2e13bd1`):**
+
+**Web tester 1: 🟢 at `2e13bd1`** (the website side; the live 130 rows are still ⏳, as in my previous comment).
+
+**What changed since `e3b4276`:** 9 message files only; `patientImport.summaryCpfPadded` is now an ICU plural. The rest of my `e3b4276` rows (reasons, hint rule, error list) carry over.
+
+**The check:** `patientImport.summaryCpfPadded` formatted with the app's own `use-intl` (`createTranslator` with `onError`) for n = 0 / 1 / 2 / 5, in **all 15 locales**. **0 ICU errors.**
+
+| Locale | n = 1 | n = 2 |
+|---|---|---|
+| pt-BR | ✅ "1 CPF estava sem o zero inicial (o Excel remove) e foi completado." | ✅ "2 CPFs estavam sem o zero inicial (o Excel remove) e foram completados." |
+| en | ✅ "1 CPF was missing the leading zero (Excel removes it) and was completed." | ✅ "2 CPFs were missing the leading zero (Excel removes it) and were completed." |
+| th | ✅ "CPF 1 รายการไม่มีเลข 0 นำหน้า (Excel ลบออก) ระบบเติมให้แล้ว" | ✅ (same form, n=2) |
+| fr / es / ru / ar | ✅ singular / plural forms differ correctly | ✅ |
+
+**de / it (corrected):** my PR comment flagged de "2 CPF fehlte die
+führende Null…" and it "A 2 CPF mancava lo zero iniziale…" as plural
+errors. That was **wrong**: the subject is the singular zero, and the CPFs
+are dative / indirect, so both are grammatical. It's not a defect (the
+reviewer 9a caught it), and #187 was not merged for it.
+
+(pt `=0` reads "Nenhum CPF precisou do zero inicial.", but the line only shows when n > 0.)
+
+Merged at `2e13bd1`, hidden (evidence: PR comments 5901841534 / 5901852795).
+
+**⏳ After migration 130 @ `ec6fa90`:** the same file against the real DB, with #177's steps 3–4.
