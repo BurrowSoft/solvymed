@@ -571,7 +571,9 @@
     "appearanceHint": "이 브라우저에서 사용할 대시보드 테마입니다. 인쇄물과 이메일은 항상 밝은 모드입니다.",
     "themeAuto": "자동",
     "themeLight": "라이트",
-    "themeDark": "다크"
+    "themeDark": "다크",
+    "pixKey": "Pix 키",
+    "pixKeyPlaceholder": "CPF, CNPJ, 이메일, 전화번호 또는 임의 키"
   },
   "clinics": {
     "title": "내 클리닉",

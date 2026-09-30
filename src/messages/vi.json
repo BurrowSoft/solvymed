@@ -571,7 +571,9 @@
     "appearanceHint": "Chủ đề bảng điều khiển trên trình duyệt này. Bản in và email luôn ở chế độ sáng.",
     "themeAuto": "Tự động",
     "themeLight": "Sáng",
-    "themeDark": "Tối"
+    "themeDark": "Tối",
+    "pixKey": "Khóa Pix",
+    "pixKeyPlaceholder": "CPF, CNPJ, email, số điện thoại hoặc khóa ngẫu nhiên"
   },
   "clinics": {
     "title": "Phòng khám của tôi",

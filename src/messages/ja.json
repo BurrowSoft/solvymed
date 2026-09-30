@@ -571,7 +571,9 @@
     "appearanceHint": "このブラウザでのダッシュボードのテーマ。印刷物とメールは常にライトです。",
     "themeAuto": "自動",
     "themeLight": "ライト",
-    "themeDark": "ダーク"
+    "themeDark": "ダーク",
+    "pixKey": "Pixキー",
+    "pixKeyPlaceholder": "CPF、CNPJ、メール、電話番号、またはランダムキー"
   },
   "clinics": {
     "title": "マイクリニック",

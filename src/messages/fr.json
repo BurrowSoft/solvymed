@@ -571,7 +571,9 @@
     "appearanceHint": "Le thème du tableau de bord dans ce navigateur. Les impressions et les e-mails restent toujours clairs.",
     "themeAuto": "Automatique",
     "themeLight": "Clair",
-    "themeDark": "Sombre"
+    "themeDark": "Sombre",
+    "pixKey": "Clé Pix",
+    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, téléphone ou clé aléatoire"
   },
   "clinics": {
     "title": "Mes Cliniques",

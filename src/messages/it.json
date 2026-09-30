@@ -571,7 +571,9 @@
     "appearanceHint": "Il tema della dashboard in questo browser. Stampe ed e-mail restano sempre chiare.",
     "themeAuto": "Automatico",
     "themeLight": "Chiaro",
-    "themeDark": "Scuro"
+    "themeDark": "Scuro",
+    "pixKey": "Chiave Pix",
+    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, telefono o chiave casuale"
   },
   "clinics": {
     "title": "Le mie cliniche",

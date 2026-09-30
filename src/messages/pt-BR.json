@@ -571,7 +571,9 @@
     "appearanceHint": "O tema do painel neste navegador. Impressões e e-mails ficam sempre claros.",
     "themeAuto": "Automático",
     "themeLight": "Claro",
-    "themeDark": "Escuro"
+    "themeDark": "Escuro",
+    "pixKey": "Chave Pix",
+    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, telefone ou chave aleatória"
   },
   "clinics": {
     "title": "Minhas Clínicas",

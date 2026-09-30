@@ -571,7 +571,9 @@
     "appearanceHint": "Tema dasbor di browser ini. Cetakan dan email selalu terang.",
     "themeAuto": "Otomatis",
     "themeLight": "Terang",
-    "themeDark": "Gelap"
+    "themeDark": "Gelap",
+    "pixKey": "Kunci Pix",
+    "pixKeyPlaceholder": "CPF, CNPJ, email, telepon, atau kunci acak"
   },
   "clinics": {
     "title": "Klinik Saya",
