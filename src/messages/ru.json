@@ -317,7 +317,9 @@
     "pageInfo": "{from}–{to} из {total}",
     "prevPage": "Назад",
     "nextPage": "Далее",
-    "pagesLabel": "Страницы"
+    "pagesLabel": "Страницы",
+    "fullNamePlaceholder": "Полное имя пациента",
+    "professionPlaceholder": "напр. инженер, учитель…"
   },
   "patientDetail": {
     "tabInfo": "Инфо",
@@ -603,7 +605,6 @@
     "countryLabel": "Страна",
     "countryPlaceholder": "Страна",
     "phoneLabel": "Телефон",
-    "phonePlaceholder": "+7 495 000-00-00",
     "locationNote": "Местоположение на карте определяется автоматически по указанному адресу.",
     "noAddress": "Нет адреса",
     "onMap": "На карте",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "Ваше полное имя",
     "emailLabel": "Электронная почта",
     "phoneLabel": "Телефон",
-    "phonePlaceholder": "912 345 6789",
     "dobLabel": "Дата рождения",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -1715,5 +1715,8 @@
     "OTHER_neighborhood": "Район или округ",
     "OTHER_city": "Город",
     "OTHER_state": "Штат или провинция"
+  },
+  "countryExamples": {
+    "phone": "Номер телефона"
   }
 }

@@ -317,7 +317,9 @@
     "pageInfo": "{from}–{to} من {total}",
     "prevPage": "السابق",
     "nextPage": "التالي",
-    "pagesLabel": "الصفحات"
+    "pagesLabel": "الصفحات",
+    "fullNamePlaceholder": "الاسم الكامل للمريض",
+    "professionPlaceholder": "مثال: مهندس، معلمة…"
   },
   "patientDetail": {
     "tabInfo": "معلومات",
@@ -603,7 +605,6 @@
     "countryLabel": "الدولة",
     "countryPlaceholder": "الدولة",
     "phoneLabel": "الهاتف",
-    "phonePlaceholder": "+966 50 000 0000",
     "locationNote": "يتم رصد الموقع على الخريطة تلقائياً من العنوان الذي تقدمه.",
     "noAddress": "لا يوجد عنوان",
     "onMap": "على الخريطة",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "اسمك الكامل",
     "emailLabel": "البريد الإلكتروني",
     "phoneLabel": "الهاتف",
-    "phonePlaceholder": "رقم الهاتف",
     "dobLabel": "تاريخ الميلاد",
     "cpfLabel": "رقم التعريف",
     "cpfPlaceholder": "000.000.000-00",
@@ -1715,5 +1715,8 @@
     "OTHER_neighborhood": "الحي أو المنطقة",
     "OTHER_city": "المدينة",
     "OTHER_state": "الولاية أو المقاطعة"
+  },
+  "countryExamples": {
+    "phone": "رقم الهاتف"
   }
 }

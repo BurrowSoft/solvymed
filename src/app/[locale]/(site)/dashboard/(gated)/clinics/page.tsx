@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
+import { getPracticeCountry } from "@/lib/practiceCountry";
+import { countryProfile } from "@/lib/country";
 import { ClinicsClient } from "./ClinicsClient";
 
 export default async function ClinicsPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -19,5 +21,8 @@ export default async function ClinicsPage({ params }: { params: Promise<{ locale
     .eq("professional_id", user.id)
     .order("created_at", { ascending: false });
 
-  return <ClinicsClient clinics={clinics ?? []} />;
+  // The phone example follows the practice country, never the UI language.
+  const phoneExample = countryProfile(await getPracticeCountry(supabase, user.id, user.id)).examples.phone;
+
+  return <ClinicsClient clinics={clinics ?? []} phoneExample={phoneExample} />;
 }

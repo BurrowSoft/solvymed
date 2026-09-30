@@ -317,7 +317,9 @@
     "pageInfo": "{from}–{to} of {total}",
     "prevPage": "Previous",
     "nextPage": "Next",
-    "pagesLabel": "Pages"
+    "pagesLabel": "Pages",
+    "fullNamePlaceholder": "Patient's full name",
+    "professionPlaceholder": "e.g. Engineer, Teacher…"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -603,7 +605,6 @@
     "countryLabel": "Country",
     "countryPlaceholder": "Country",
     "phoneLabel": "Phone",
-    "phonePlaceholder": "+1 555 000 0000",
     "locationNote": "Location on the map is detected automatically from the address you provide.",
     "noAddress": "No address",
     "onMap": "On map",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "Your full name",
     "emailLabel": "Email",
     "phoneLabel": "Phone",
-    "phonePlaceholder": "Phone number",
     "dobLabel": "Date of birth",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -1745,5 +1745,8 @@
     "OTHER_neighborhood": "Neighbourhood or district",
     "OTHER_city": "City",
     "OTHER_state": "State or province"
+  },
+  "countryExamples": {
+    "phone": "Phone number"
   }
 }

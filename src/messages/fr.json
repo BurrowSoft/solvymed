@@ -317,7 +317,9 @@
     "pageInfo": "{from}–{to} sur {total}",
     "prevPage": "Précédent",
     "nextPage": "Suivant",
-    "pagesLabel": "Pages"
+    "pagesLabel": "Pages",
+    "fullNamePlaceholder": "Nom complet du patient",
+    "professionPlaceholder": "ex. : Ingénieur, Enseignante…"
   },
   "patientDetail": {
     "tabInfo": "Infos",
@@ -603,7 +605,6 @@
     "countryLabel": "Pays",
     "countryPlaceholder": "Pays",
     "phoneLabel": "Téléphone",
-    "phonePlaceholder": "+33 1 23 45 67 89",
     "locationNote": "La localisation sur la carte est détectée automatiquement à partir de l'adresse que vous fournissez.",
     "noAddress": "Aucune adresse",
     "onMap": "Sur la carte",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "Votre nom complet",
     "emailLabel": "E-mail",
     "phoneLabel": "Téléphone",
-    "phonePlaceholder": "6 12 34 56 78",
     "dobLabel": "Date de naissance",
     "cpfLabel": "Numéro d'identification",
     "cpfPlaceholder": "000.000.000-00",
@@ -1715,5 +1715,8 @@
     "OTHER_neighborhood": "Quartier ou district",
     "OTHER_city": "Ville",
     "OTHER_state": "État ou province"
+  },
+  "countryExamples": {
+    "phone": "Numéro de téléphone"
   }
 }

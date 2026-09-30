@@ -317,7 +317,9 @@
     "pageInfo": "{from}–{to} trên {total}",
     "prevPage": "Trước",
     "nextPage": "Tiếp",
-    "pagesLabel": "Trang"
+    "pagesLabel": "Trang",
+    "fullNamePlaceholder": "Họ và tên bệnh nhân",
+    "professionPlaceholder": "vd. Kỹ sư, Giáo viên…"
   },
   "patientDetail": {
     "tabInfo": "Thông tin",
@@ -603,7 +605,6 @@
     "countryLabel": "Quốc gia",
     "countryPlaceholder": "Quốc gia",
     "phoneLabel": "Điện thoại",
-    "phonePlaceholder": "+84 28 0000 0000",
     "locationNote": "Vị trí trên bản đồ được phát hiện tự động từ địa chỉ bạn cung cấp.",
     "noAddress": "Không có địa chỉ",
     "onMap": "Trên bản đồ",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "Họ và tên của bạn",
     "emailLabel": "Email",
     "phoneLabel": "Điện thoại",
-    "phonePlaceholder": "90 123 4567",
     "dobLabel": "Ngày sinh",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -1715,5 +1715,8 @@
     "OTHER_neighborhood": "Khu phố hoặc quận",
     "OTHER_city": "Thành phố",
     "OTHER_state": "Bang hoặc tỉnh"
+  },
+  "countryExamples": {
+    "phone": "Số điện thoại"
   }
 }

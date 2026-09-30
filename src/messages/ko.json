@@ -317,7 +317,9 @@
     "pageInfo": "{total}명 중 {from}–{to}",
     "prevPage": "이전",
     "nextPage": "다음",
-    "pagesLabel": "페이지"
+    "pagesLabel": "페이지",
+    "fullNamePlaceholder": "환자 성명",
+    "professionPlaceholder": "예: 엔지니어, 교사…"
   },
   "patientDetail": {
     "tabInfo": "정보",
@@ -603,7 +605,6 @@
     "countryLabel": "국가",
     "countryPlaceholder": "국가",
     "phoneLabel": "전화",
-    "phonePlaceholder": "+82 2-0000-0000",
     "locationNote": "입력한 주소에서 지도 위치가 자동으로 감지됩니다.",
     "noAddress": "주소 없음",
     "onMap": "지도에 표시됨",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "성명을 입력하세요",
     "emailLabel": "이메일",
     "phoneLabel": "전화번호",
-    "phonePlaceholder": "10-1234-5678",
     "dobLabel": "생년월일",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -1715,5 +1715,8 @@
     "OTHER_neighborhood": "동네 또는 구",
     "OTHER_city": "도시",
     "OTHER_state": "주 또는 도"
+  },
+  "countryExamples": {
+    "phone": "전화번호"
   }
 }

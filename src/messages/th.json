@@ -317,7 +317,9 @@
     "pageInfo": "{from}–{to} จาก {total}",
     "prevPage": "ก่อนหน้า",
     "nextPage": "ถัดไป",
-    "pagesLabel": "หน้า"
+    "pagesLabel": "หน้า",
+    "fullNamePlaceholder": "ชื่อ-นามสกุลผู้ป่วย",
+    "professionPlaceholder": "เช่น วิศวกร, ครู…"
   },
   "patientDetail": {
     "tabInfo": "ข้อมูล",
@@ -603,7 +605,6 @@
     "countryLabel": "ประเทศ",
     "countryPlaceholder": "ประเทศ",
     "phoneLabel": "โทรศัพท์",
-    "phonePlaceholder": "+66 2 000 0000",
     "locationNote": "ตำแหน่งบนแผนที่จะถูกตรวจจับโดยอัตโนมัติจากที่อยู่ที่คุณระบุ",
     "noAddress": "ไม่มีที่อยู่",
     "onMap": "บนแผนที่",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "ชื่อ-นามสกุลของคุณ",
     "emailLabel": "อีเมล",
     "phoneLabel": "โทรศัพท์",
-    "phonePlaceholder": "81 234 5678",
     "dobLabel": "วันเกิด",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -1745,5 +1745,8 @@
     "OTHER_neighborhood": "ย่านหรือเขต",
     "OTHER_city": "เมือง",
     "OTHER_state": "รัฐหรือจังหวัด"
+  },
+  "countryExamples": {
+    "phone": "หมายเลขโทรศัพท์"
   }
 }
