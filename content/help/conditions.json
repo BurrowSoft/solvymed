@@ -74,5 +74,9 @@
   "patient-address-live": {
     "met": true,
     "what": "Migrations 138 (the patient address, CNS for Brazilian practices, and Observações columns on patients, with the server-side trim and CNS check) AND 139 (merge_patients carries the address, CNS and Observações, so merging duplicates never drops them) are applied on production. Until both are, the website neither shows nor writes these fields."
+  },
+  "notice-queue-on": {
+    "met": false,
+    "what": "The patient notice queue is actually running: patient_notify_secret is set in Vault (after the 1.4.0 cut deploys privacy §6e via notice-outbox-live) and one queued notice was verified sent (38 runbook). Gates every \"Desfazer\" / \"Undo\" claim for manual book / move / cancel (01-agenda, the App Map undo rules), since the undo is only possible while a notice is held. Flip only after that check; if the secret is ever removed, flip it back."
   }
 }
