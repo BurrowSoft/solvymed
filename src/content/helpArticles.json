@@ -1221,8 +1221,8 @@
           ]
         },
         "web": {
-          "pt": "Em **Agenda**, clique em **Compartilhar link de convite**, ou em **Configurações → Seu código de convite**, use **Copiar** ou **Copiar link**. **Gerar novo** cria um código novo e o anterior deixa de funcionar.",
-          "en": "In the **Schedule**, click **Share invite link**, or in **Settings → Your invite code**, use **Copy** or **Copy link**. **Regenerate** creates a new code and the old one stops working."
+          "pt": "Em **Agenda**, clique em **Compartilhar link de convite**, ou em **Configurações → Seu código de convite**, use **Copiar** ou **Copiar link**. **Gerar novo** cria um código novo e o anterior deixa de funcionar. Com a assinatura inativa, o código de convite não aparece em Configurações.",
+          "en": "In the **Schedule**, click **Share invite link**, or in **Settings → Your invite code**, use **Copy** or **Copy link**. **Regenerate** creates a new code and the old one stops working. While the subscription is inactive, the invite code isn't shown in Settings."
         },
         "webUnavailable": false,
         "open": "home",
