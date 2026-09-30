@@ -1485,7 +1485,8 @@
     "emailWaitlist": "As vagas para {system} estão preenchidas no momento, então você está na lista de espera.",
     "emailNoFiles": "Por favor, não envie arquivos ainda: se você for aceito, explicamos como criar uma exportação de teste.",
     "emailSign": "Equipe SolvyMed",
-    "emailTagline": "Gestão de clínica simplificada"
+    "emailTagline": "Gestão de clínica simplificada",
+    "emailHelloTitled": "Olá, {title} {name}!"
   },
   "foundersCard": {
     "cardTitle": "Programa Fundadores",

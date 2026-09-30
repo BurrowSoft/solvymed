@@ -27,6 +27,22 @@ export function doctorDisplayName(name: string | null | undefined, opts: { first
   return [...titles, shown].filter(Boolean).join(" ");
 }
 
+// Thai professional titles, typed before the name with or without a space
+// ("นพ.สมชาย", "พญ. สุดา"): the ones the practice-country examples suggest
+// (lib/country), plus ดร. Kept exactly as typed.
+const THAI_TITLE = /^(นพ\.|พญ\.|ทพ\.|ทญ\.|ภก\.|ภญ\.|ดร\.)\s*/;
+
+// For a greeting (UX, "Olá, Dra. Ana!", "เรียน นพ.สมชาย"): the typed
+// title(s), as doctorDisplayName shows them, and the first name. Never a
+// title we add.
+export function greetingName(name: string | null | undefined): { title: string; first: string } {
+  const typed = (name ?? "").trim().replace(/\s+/g, " ");
+  const thai = typed.match(THAI_TITLE);
+  if (thai) return { title: thai[1], first: typed.slice(thai[0].length).split(" ")[0] ?? "" };
+  const { titles, rest } = splitTitles(typed);
+  return { title: titles.join(" "), first: rest.split(" ")[0] ?? "" };
+}
+
 // The avatar letter: the name's, never a title's ("Dra. Beatriz" → "B",
 // "Prof. Dr. carlos" → "C"); a bare title keeps its own letter.
 export function nameInitial(name: string | null | undefined): string {

@@ -1485,7 +1485,8 @@
     "emailWaitlist": "現在 {system} の枠は満員のため、キャンセル待ちに登録されています。",
     "emailNoFiles": "まだファイルは送らないでください。採用された場合、テスト用エクスポートの作成方法をご説明します。",
     "emailSign": "SolvyMed チーム",
-    "emailTagline": "クリニック管理をシンプルに"
+    "emailTagline": "クリニック管理をシンプルに",
+    "emailHelloTitled": "{title} {name} 様"
   },
   "foundersCard": {
     "cardTitle": "ファウンダープログラム",

@@ -1485,7 +1485,8 @@
     "emailWaitlist": "مقاعد {system} مكتملة حاليًا، لذا أنت في قائمة الانتظار.",
     "emailNoFiles": "يُرجى عدم إرسال أي ملفات الآن؛ إذا قُبل طلبك، فسنشرح لك كيفية إنشاء ملف تصدير تجريبي.",
     "emailSign": "فريق SolvyMed",
-    "emailTagline": "إدارة العيادة ببساطة"
+    "emailTagline": "إدارة العيادة ببساطة",
+    "emailHelloTitled": "مرحبًا {title} {name}،"
   },
   "foundersCard": {
     "cardTitle": "برنامج المؤسسين",

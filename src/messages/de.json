@@ -1481,11 +1481,12 @@
     "rule8": "<b>Daten:</b> Beispieldateien werden nur zum Bauen und Testen des Imports verwendet, an einem privaten Ort aufbewahrt und gelöscht, sobald der Import veröffentlicht ist.",
     "emailSubject": "Wir haben Ihre Bewerbung für das SolvyMed-Gründerprogramm erhalten",
     "emailHello": "Hallo {name},",
-    "emailBody": "vielen Dank für Ihre Bewerbung zum SolvyMed-Gründerprogramm für {system}. Wir antworten innerhalb von 5 Werktagen.",
+    "emailBody": "Vielen Dank für Ihre Bewerbung zum SolvyMed-Gründerprogramm für {system}. Wir antworten innerhalb von 5 Werktagen.",
     "emailWaitlist": "Die Plätze für {system} sind derzeit vergeben, daher stehen Sie auf der Warteliste.",
     "emailNoFiles": "Bitte senden Sie noch keine Dateien; wenn Sie angenommen werden, erklären wir Ihnen, wie Sie einen Testexport erstellen.",
     "emailSign": "Das SolvyMed-Team",
-    "emailTagline": "Praxisverwaltung, ganz einfach"
+    "emailTagline": "Praxisverwaltung, ganz einfach",
+    "emailHelloTitled": "Hallo {title} {name},"
   },
   "foundersCard": {
     "cardTitle": "Gründerprogramm",

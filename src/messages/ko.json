@@ -1485,7 +1485,8 @@
     "emailWaitlist": "현재 {system} 자리가 마감되어 대기자 명단에 등록되었습니다.",
     "emailNoFiles": "아직 파일은 보내지 마세요. 선정되시면 테스트 내보내기 파일을 만드는 방법을 안내해 드리겠습니다.",
     "emailSign": "SolvyMed 팀",
-    "emailTagline": "간편한 병원 관리"
+    "emailTagline": "간편한 병원 관리",
+    "emailHelloTitled": "{title} {name}님, 안녕하세요."
   },
   "foundersCard": {
     "cardTitle": "파운더 프로그램",
