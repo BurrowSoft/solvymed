@@ -984,6 +984,11 @@ const nextFormOf = (w: string) => new RegExp(
 );
 const WRITTEN_DATE = /\b\d{1,2}[/.]\d{1,2}\b|\b\d{4}-\d{2}-\d{2}\b/;
 const TODAY_WORD = /\b(?:today|hoje|hoy|aujourd|heute|oggi)|วันนี้/;
+// "this Wednesday" / "nesta quarta" / "พุธนี้" = the one of this week (UX):
+// no chips, and said on a Wednesday it is today.
+const thisFormOf = (w: string) => new RegExp(
+  `\\bthis (?:${w})|\\bn?est[ae] (?:${w})|\\beste (?:${w})|\\bce (?:${w})|\\bdiese[nm]? (?:${w})|\\bquest[oa] (?:${w})|(?:${w})นี้`,
+);
 const weekdayOf = (date: string) => new Date(`${date}T12:00:00Z`).getUTCDay();
 export function ambiguousDays(text: string | undefined, today: string): [string, string] | null {
   const s = (text ?? "").toLowerCase();
@@ -995,6 +1000,7 @@ export function ambiguousDays(text: string | undefined, today: string): [string,
       return [first, addDays(first, 7)];
     }
   }
+  if (WEEKDAYS.some((w) => thisFormOf(w).test(s))) return null;
   if (!TODAY_WORD.test(s) && new RegExp(`(?:${WEEKDAYS[now]})`).test(s)) return [today, addDays(today, 7)];
   return null;
 }

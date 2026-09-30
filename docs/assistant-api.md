@@ -360,7 +360,8 @@ The system prompt states them first, and the server enforces what it can:
   on the card, never shown as the word. Rule 10a, one rule for every
   language (UX, 2026-09-30): a bare weekday ("Friday", "sexta", "ศุกร์") is
   the coming occurrence; if today IS that weekday, two chips (today / a week
-  later). Any "next" form ("next Friday", "próxima sexta", "sexta que vem",
+  later). "This" + a weekday ("this Wednesday", "nesta quarta", "พุธนี้")
+  is the one of this week, no chips (today, if it is that weekday). Any "next" form ("next Friday", "próxima sexta", "sexta que vem",
   "ศุกร์หน้า") gets two chips (the coming one / the one after). The server
   enforces it (tools.ts ambiguousDays): unless the message writes a date, a
   booking, move, block or free-times call on one of those two days shows
