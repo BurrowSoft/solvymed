@@ -63,7 +63,8 @@ describe("privacy policy: SolvyAI / LINE blocks follow their conditions", () => 
   });
 
   it("§6e names WhatsApp only once its outbox (137) is live, with only the live channels", () => {
-    expect(conditionMet("whatsapp-outbox-live")).toBe(false);
+    // Met since 1 Oct (published before whatsapp_notify_secret, 38's runbook).
+    expect(conditionMet("whatsapp-outbox-live")).toBe(true);
     // Never LINE, even when it's live: its record is 90 days and its hold
     // another migration (§6c covers LINE).
     let r = render(<PrivacyPtBR turnstile={false} notices line whatsapp />);
