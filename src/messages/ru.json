@@ -318,7 +318,7 @@
     "prevPage": "Назад",
     "nextPage": "Далее",
     "pagesLabel": "Страницы",
-    "fullNamePlaceholder": "Полное имя пациента",
+    "fullNamePlaceholder": "Полное имя",
     "professionPlaceholder": "напр. инженер, учитель…"
   },
   "patientDetail": {

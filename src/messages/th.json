@@ -318,8 +318,8 @@
     "prevPage": "ก่อนหน้า",
     "nextPage": "ถัดไป",
     "pagesLabel": "หน้า",
-    "fullNamePlaceholder": "ชื่อ-นามสกุลผู้ป่วย",
-    "professionPlaceholder": "เช่น วิศวกร, ครู…"
+    "fullNamePlaceholder": "ชื่อ-นามสกุล",
+    "professionPlaceholder": "เช่น วิศวกร ครู…"
   },
   "patientDetail": {
     "tabInfo": "ข้อมูล",

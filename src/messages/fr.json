@@ -318,8 +318,8 @@
     "prevPage": "Précédent",
     "nextPage": "Suivant",
     "pagesLabel": "Pages",
-    "fullNamePlaceholder": "Nom complet du patient",
-    "professionPlaceholder": "ex. : Ingénieur, Enseignante…"
+    "fullNamePlaceholder": "Nom complet",
+    "professionPlaceholder": "ex : Ingénieur, Enseignant…"
   },
   "patientDetail": {
     "tabInfo": "Infos",

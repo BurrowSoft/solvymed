@@ -318,7 +318,7 @@
     "prevPage": "Previous",
     "nextPage": "Next",
     "pagesLabel": "Pages",
-    "fullNamePlaceholder": "Patient's full name",
+    "fullNamePlaceholder": "Full name",
     "professionPlaceholder": "e.g. Engineer, Teacher…"
   },
   "patientDetail": {

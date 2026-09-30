@@ -318,8 +318,8 @@
     "prevPage": "السابق",
     "nextPage": "التالي",
     "pagesLabel": "الصفحات",
-    "fullNamePlaceholder": "الاسم الكامل للمريض",
-    "professionPlaceholder": "مثال: مهندس، معلمة…"
+    "fullNamePlaceholder": "الاسم الكامل",
+    "professionPlaceholder": "مثال: مهندس، معلم…"
   },
   "patientDetail": {
     "tabInfo": "معلومات",
