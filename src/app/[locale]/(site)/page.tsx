@@ -62,11 +62,13 @@ export default async function HomePage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams?: Promise<{ closed?: string }>;
+  searchParams?: Promise<{ closed?: string; deleted?: string }>;
 }) {
   const { locale } = await params;
-  // Right after closing or deleting the account (Settings): a short note.
-  const closed = (await searchParams)?.closed === "1";
+  // Right after closing or deleting the account (Settings): a short note
+  // saying which happened (UX).
+  const sp = await searchParams;
+  const accountNotice = sp?.deleted === "1" ? "accountClose.deletedNotice" : sp?.closed === "1" ? "accountClose.closedNotice" : null;
   const prefix = locale === "en" ? "" : `/${locale}`;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -116,9 +118,9 @@ export default async function HomePage({
     <>
       <SiteHeader />
 
-      {closed && (
+      {accountNotice && (
         <div role="status" className="bg-slate-100 px-4 py-3 text-center text-sm font-medium text-slate-800">
-          {t("accountClose.closedNotice")}
+          {t(accountNotice)}
         </div>
       )}
 

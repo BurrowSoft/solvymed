@@ -1047,7 +1047,8 @@
     "pushClosedBody": "ご利用の診療所が SolvyMed のアカウントを閉鎖しました。今後の予約はキャンセルされました。診療記録の写しは support@solvymed.com までご請求ください。",
     "pushCancelledTitle": "予約のキャンセル",
     "pushCancelledBody": "{date} {time} の予約は診療所によりキャンセルされました。",
-    "closedNotice": "アカウントは閉鎖されました。"
+    "closedNotice": "アカウントは閉鎖されました。",
+    "deletedNotice": "アカウントは削除されました。"
   },
   "setup": {
     "title": "診療所を設定しましょう",

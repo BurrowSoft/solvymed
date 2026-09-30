@@ -1047,7 +1047,8 @@
     "pushClosedBody": "이용하시던 진료소가 SolvyMed 계정을 폐쇄했습니다. 예정된 예약은 취소되었습니다. 진료 기록 사본은 support@solvymed.com으로 요청하세요.",
     "pushCancelledTitle": "예약 취소",
     "pushCancelledBody": "{date} {time} 예약이 진료소에 의해 취소되었습니다.",
-    "closedNotice": "계정이 해지되었습니다."
+    "closedNotice": "계정이 해지되었습니다.",
+    "deletedNotice": "계정이 삭제되었습니다."
   },
   "setup": {
     "title": "진료소 설정하기",

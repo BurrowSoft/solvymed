@@ -1047,7 +1047,8 @@
     "pushClosedBody": "Ваша клиника закрыла свой аккаунт в SolvyMed. Ваши предстоящие приёмы отменены. Чтобы получить копию медицинской карты, напишите на support@solvymed.com.",
     "pushCancelledTitle": "Приём отменён",
     "pushCancelledBody": "Ваш приём {date} в {time} отменён клиникой.",
-    "closedNotice": "Ваш аккаунт закрыт."
+    "closedNotice": "Ваш аккаунт закрыт.",
+    "deletedNotice": "Ваш аккаунт удалён."
   },
   "setup": {
     "title": "Настройте клинику",

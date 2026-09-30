@@ -1047,7 +1047,8 @@
     "pushClosedBody": "您的诊所已关闭其 SolvyMed 账户。您的后续预约已取消。如需病历副本，请联系 support@solvymed.com。",
     "pushCancelledTitle": "预约已取消",
     "pushCancelledBody": "您在 {date} {time} 的预约已被诊所取消。",
-    "closedNotice": "你的账户已关闭。"
+    "closedNotice": "你的账户已关闭。",
+    "deletedNotice": "你的账户已删除。"
   },
   "setup": {
     "title": "设置您的诊所",

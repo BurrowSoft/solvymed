@@ -33,19 +33,22 @@ describe("closing the account signs out", () => {
     expect(set.some((c) => c.startsWith("NEXT_LOCALE"))).toBe(false);
   });
 
-  it("the panel signs out locally and lands on the home page with the notice", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ outcome: "deleted" }), { status: 200 })));
-    const loc = { href: "" };
-    vi.stubGlobal("location", loc);
-    render(
-      <NextIntlClientProvider locale="pt-BR" messages={pt}>
-        <CloseAccountPanel locale="pt-BR" preview={{ role: "secretary", has_clinical_history: false, subscription_active: false, patients: 0, upcoming_appointments: 0, secretaries: 0 }} />
-      </NextIntlClientProvider>,
-    );
-    fireEvent.click(screen.getByRole("checkbox"));
-    fireEvent.click(screen.getByRole("button"));
-    await waitFor(() => expect(loc.href).toBe("/pt-BR?closed=1"));
-    expect(h.signOut).toHaveBeenCalledWith({ scope: "local" });
+  it("the panel signs out locally and lands on the home page with the note for what happened", async () => {
+    for (const [outcome, href] of [["deleted", "/pt-BR?deleted=1"], ["closed", "/pt-BR?closed=1"]] as const) {
+      vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ outcome }), { status: 200 })));
+      const loc = { href: "" };
+      vi.stubGlobal("location", loc);
+      const { unmount } = render(
+        <NextIntlClientProvider locale="pt-BR" messages={pt}>
+          <CloseAccountPanel locale="pt-BR" preview={{ role: "secretary", has_clinical_history: false, subscription_active: false, patients: 0, upcoming_appointments: 0, secretaries: 0 }} />
+        </NextIntlClientProvider>,
+      );
+      fireEvent.click(screen.getByRole("checkbox"));
+      fireEvent.click(screen.getByRole("button"));
+      await waitFor(() => expect(loc.href).toBe(href));
+      expect(h.signOut).toHaveBeenCalledWith({ scope: "local" });
+      unmount();
+    }
   });
 
   it("a failed close keeps the session and shows the error", async () => {
