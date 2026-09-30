@@ -336,7 +336,7 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
-      text: "Importing patients from another system (website only, doctor: Pacientes → \"Importar pacientes\" / \"Import patients\"): a CSV or Excel file (iClinic and Prontuário Verde recognised, or our template); columns are mapped, the sheet is checked (new / already exist / with errors, with a downloadable error list) and nothing is saved until \"Importar\"; \"Desfazer importação\" works for 24 hours on the new patients not yet edited or used; a CPF that lost its leading zero in Excel (9 or 10 digits) is completed when its check digits match, otherwise the doctor formats the CPF column as Text and exports again. SolvyAI never imports; send the doctor there.",
+      text: "Importing patients from another system (website only, doctor: Pacientes → \"Importar pacientes\" / \"Import patients\"): a CSV or Excel file (iClinic and Prontuário Verde recognised, or our template); columns are mapped, the sheet is checked (new / already exist / with errors, with a downloadable error list) and nothing is saved until \"Importar\"; \"Desfazer importação\" works for 24 hours on the new patients not yet edited or used (after leaving the page: Importar pacientes → \"Última importação\" / \"Last import\", the most recent import only); a CPF that lost its leading zero in Excel (9 or 10 digits) is completed when its check digits match, otherwise the doctor formats the CPF column as Text and exports again. SolvyAI never imports; send the doctor there.",
       pending: ["patient-import-live"],
     },
     help: "P13",
