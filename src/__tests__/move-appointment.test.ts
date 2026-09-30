@@ -58,7 +58,7 @@ vi.mock("@/lib/effectiveProfId", () => ({ getEffectiveProfId: async () => "doc-1
 vi.mock("@/lib/clinicNotify", () => ({ tellPatient: async (_db: unknown, change: unknown) => { h.state.told.push(change); } }));
 vi.mock("next/cache", () => ({ revalidatePath: () => {} }));
 
-import { moveAppointment } from "@/app/[locale]/(site)/dashboard/schedule/actions";
+import { moveAppointment } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/actions";
 
 const appt = (over: Record<string, unknown> = {}) => ({
   id: "a-1", professional_id: "doc-1", status: "scheduled", date: "2026-10-05", start_time: "09:00:00", end_time: "09:50:00",

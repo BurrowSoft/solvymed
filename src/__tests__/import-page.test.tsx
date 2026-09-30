@@ -10,7 +10,7 @@ import type { ImportDb } from "@/lib/import/api";
 vi.mock("next/link", () => ({ default: ({ href, children, ...p }: { href: string; children: React.ReactNode }) => <a href={href} {...p}>{children}</a> }));
 vi.mock("@/lib/supabase/client", () => ({ createClient: () => ({}) }));
 
-import { ImportClient } from "@/app/[locale]/(site)/dashboard/patients/import/ImportClient";
+import { ImportClient } from "@/app/[locale]/(site)/dashboard/(gated)/patients/import/ImportClient";
 
 type Row = { row_no: number; outcome: string; duplicate_of_row: number | null; warnings: string[]; errors: string[]; input: Record<string, unknown> };
 const ROWS: Row[] = [

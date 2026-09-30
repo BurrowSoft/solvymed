@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { DEFAULT_TEMPLATE } from "@/lib/prescriptionDoc";
-import { HistoryDocument, type HistoryLabels } from "@/app/[locale]/(site)/dashboard/patients/[id]/history/print/HistoryDocument";
+import { HistoryDocument, type HistoryLabels } from "@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/history/print/HistoryDocument";
 
 // The website's patient history print view (Help P8): the app's export,
 // every record and prescription, doctor-only, never partial.
@@ -88,7 +88,7 @@ vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => (co
 vi.mock("@/components/PrintToolbar", () => ({ PrintToolbar: () => null }));
 vi.mock("@/lib/clinicTime", () => ({ getClinicTimeZone: async () => "America/Sao_Paulo" }));
 
-import HistoryPage from "@/app/[locale]/(site)/dashboard/patients/[id]/history/print/page";
+import HistoryPage from "@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/history/print/page";
 
 describe("history print page", () => {
   const params = Promise.resolve({ locale: "pt-BR", id: "p-1" });
