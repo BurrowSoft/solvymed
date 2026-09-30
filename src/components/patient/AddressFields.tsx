@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { ADDRESS_FIELDS, ADDRESS_MARKER, NOTES_ADMIN_MAX, isValidCns, type AddressColumns } from "@/lib/patientAddress";
 import type { PatientIdKind } from "@/lib/patientIds";
+import { profileOfKind } from "@/lib/country";
 
 // Migration 138 in the patient forms (create and edit): the Endereço section
 // (collapsed while empty; labels by the practice's country), the CNS for a
@@ -40,7 +41,7 @@ export function AddressFields({ kind, values = {} }: { kind: PatientIdKind; valu
           ))}
         </div>
       </details>
-      {kind === "BR" && (
+      {profileOfKind(kind).healthCard === "cns" && (
         <div>
           <label htmlFor="pa-cns" className={labelClass}>{t("cns")}</label>
           <input id="pa-cns" name="cns" defaultValue={values.cns ?? ""} inputMode="numeric" maxLength={20} className={inputClass}

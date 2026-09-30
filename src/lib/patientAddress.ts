@@ -4,6 +4,9 @@
 // only: 'cns_not_used' elsewhere, 'invalid_cns' on a bad check); these
 // helpers mirror that so the form can say so before saving.
 
+import { profileOfKind } from "./country";
+import type { PatientIdKind } from "./patientIds";
+
 export const ADDRESS_FIELDS = [
   { name: "address_postal_code", max: 20 },
   { name: "address_street", max: 200 },
@@ -41,15 +44,19 @@ export function isValidCns(value: string): boolean {
   return sum % 11 === 0;
 }
 
+// kind: the practice's kind (lib/patientIds: BR / TH / OTHER), as the
+// callers have it; anything else is the OTHER default, never Brazil.
+const profileOf = (kind: string) => profileOfKind(kind as PatientIdKind);
+
 // The columns to write, or null when the form didn't show the section.
-// The CNS is only read for a Brazilian practice (the server refuses it
-// elsewhere); an empty field clears it.
-export function readAddress(formData: FormData, country: string): AddressColumns | null {
+// The CNS is only read where the country has it (Brazil; the server refuses
+// it elsewhere); an empty field clears it.
+export function readAddress(formData: FormData, kind: string): AddressColumns | null {
   if (formData.get(ADDRESS_MARKER) !== "1") return null;
   const out: AddressColumns = {};
   for (const f of ADDRESS_FIELDS) out[f.name] = clean(formData.get(f.name), f.max);
   out.notes_admin = clean(formData.get("notes_admin"), NOTES_ADMIN_MAX);
-  if (country === "BR") {
+  if (profileOf(kind).healthCard === "cns") {
     const cns = clean(formData.get("cns"), 40);
     out.cns = cns ? cnsDigits(cns) : null;
   }
@@ -68,13 +75,14 @@ const join = (parts: (string | null | undefined)[], sep: string) => parts.filter
 //   BR:    Rua X, 123, apto 4 – Bairro – Cidade/UF – CEP 01234-567
 //   TH:    house number, building, street/soi, subdistrict, district, province, postal code
 //   other: street, number, complement – neighbourhood – city, state – postal code
-export function addressLine(p: AddressColumns, country: string): string {
+export function addressLine(p: AddressColumns, kind: string): string {
   if (!p.address_street?.trim() && !p.address_city?.trim()) return "";
-  if (country === "TH") {
+  const format = profileOf(kind).addressFormat;
+  if (format === "th") {
     return join([p.address_number, p.address_complement, p.address_street, p.address_neighborhood, p.address_city, p.address_state, p.address_postal_code], ", ");
   }
   const first = join([p.address_street, p.address_number, p.address_complement], ", ");
-  if (country === "BR") {
+  if (format === "br") {
     return join([first, p.address_neighborhood, join([p.address_city, p.address_state], "/"), p.address_postal_code ? `CEP ${p.address_postal_code}` : null], " – ");
   }
   return join([first, p.address_neighborhood, join([p.address_city, p.address_state], ", "), p.address_postal_code], " – ");

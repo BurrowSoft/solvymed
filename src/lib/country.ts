@@ -55,6 +55,10 @@ export type CountryProfile = {
   receipts: "web" | "app";
   // The year printed on documents: Gregorian, or the Buddhist era (+543).
   calendar: "gregorian" | "buddhist";
+  // The public health card the patient form takes (Brazil's CNS), if any.
+  healthCard: "cns" | null;
+  // The order of a printed/one-line address (lib/patientAddress addressLine).
+  addressFormat: "br" | "th" | "intl";
   // Examples and labels in the practice's forms (UX: they follow the
   // practice country, never the UI language). null = the generic wording.
   examples: {
@@ -79,6 +83,7 @@ const BR: CountryProfile = {
   idFields: [{ name: "cpf", label: "cpf", placeholder: "000.000.000-00", store: "text", maxLength: 20, search: "digits" }],
   phonePrefix: "+55", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo",
   clinicTaxId: "cnpj", fallbackLocale: "pt-BR", receipts: "web", calendar: "gregorian",
+  healthCard: "cns", addressFormat: "br",
   examples: {
     titles: { other: "Dr., Dra., Prof." },
     registration: "registrationPlaceholder", clinicName: "clinicNamePlaceholder", address: "addressPlaceholder",
@@ -94,6 +99,7 @@ const TH: CountryProfile = {
   ],
   phonePrefix: "+66", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok",
   clinicTaxId: "th_tax_id", fallbackLocale: "th", receipts: "app", calendar: "buddhist",
+  healthCard: null, addressFormat: "th",
   examples: {
     titles: { th: "นพ., พญ., ทพ., ทญ.", other: "Dr." },
     registration: "registrationPlaceholderTH", clinicName: "clinicNamePlaceholderTH", address: "addressPlaceholderTH",
@@ -107,6 +113,7 @@ const OTHER: CountryProfile = {
   idFields: [{ name: "passport_number", label: "passportOrId", placeholder: "", store: "text", maxLength: 30, keep: 30, search: "text" }],
   phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
   clinicTaxId: null, fallbackLocale: "en", receipts: "web", calendar: "gregorian",
+  healthCard: null, addressFormat: "intl",
   examples: {
     titles: null,
     registration: "registrationPlaceholderOther", clinicName: "clinicNamePlaceholderOther", address: "addressPlaceholderOther",

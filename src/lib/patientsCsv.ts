@@ -56,7 +56,7 @@ export function patientsCsv(patients: CsvPatient[], labels: CsvLabels, country: 
   const sex = (s?: string | null) => (s === "male" ? labels.male : s === "female" ? labels.female : s === "other" ? labels.other : "");
   const date = (iso?: string | null) => (iso ? docDate(country, iso.slice(0, 10)) : "");
   const addr = labels.address?.length === ADDRESS_FIELDS.length ? ADDRESS_FIELDS.map((f) => f.name) : [];
-  const withCns = !!labels.cns && country === "BR";
+  const withCns = !!labels.cns && countryProfile(country).healthCard === "cns";
   const headers = [labels.fullName, ...ids.map((f) => idHeader[f]), labels.sex, labels.birthDate, labels.phone, labels.email, labels.profession, labels.tags, labels.archivedOn,
     ...(addr.length ? labels.address! : []), ...(withCns ? [labels.cns!] : [])];
   const rows = patients.map((p) => [
