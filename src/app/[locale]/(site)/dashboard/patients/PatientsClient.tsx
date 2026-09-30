@@ -9,22 +9,27 @@ import { dropQueryParam } from "@/lib/dropQueryParam";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
+import { AddressFields } from "@/components/patient/AddressFields";
 import { dateLocale, formatShortDate } from "@/lib/dateLabels";
 
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
   sex?: string; birth_date?: string; created_at: string;
-  archived_at?: string | null; archived_by_name?: string | null;
+  archived_at?: string | null; archived_by_name?: string | null; archived_reason?: string | null;
 };
 
 // "Archived {date} by {name}". The name is stored at archive time, so it
-// survives the secretary who archived leaving the clinic.
+// survives the secretary who archived leaving the clinic. A patient the
+// import archived (131) says why instead.
 export function archivedLabel(
   t: ReturnType<typeof useTranslations>,
   archivedAt: string,
   byName: string | null | undefined,
   locale: string,
+  reason?: string | null,
 ) {
+  if (reason === "imported_inactive") return t("archivedImportedInactive");
+  if (reason === "imported_deceased") return t("archivedImportedDeceased");
   const date = new Date(archivedAt).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric" });
   return byName?.trim() ? t("archivedOnBy", { date, name: byName.trim() }) : t("archivedOn", { date });
 }
@@ -62,7 +67,7 @@ function Select({ children, ...props }: React.SelectHTMLAttributes<HTMLSelectEle
   );
 }
 
-function PatientForm({ onSubmit, pending, error, id, idKind }: { onSubmit: (fd: FormData) => void; pending: boolean; error: string; id?: string; idKind: PatientIdKind }) {
+function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false }: { onSubmit: (fd: FormData) => void; pending: boolean; error: string; id?: string; idKind: PatientIdKind; addressLive?: boolean }) {
   const t = useTranslations("patients");
   // CPF, Thai ID/passport or passport/ID, by the practice's country.
   const idFields = usePatientIdFields(idKind);
@@ -124,6 +129,7 @@ function PatientForm({ onSubmit, pending, error, id, idKind }: { onSubmit: (fd: 
           <Input name="emergency_phone" placeholder="+55 11 99999-9999" />
         </div>
       </div>
+      {addressLive && <AddressFields kind={idKind} />}
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3 pt-2">
         <button type="submit" disabled={pending} className="w-full rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
@@ -177,8 +183,10 @@ const NEW_PATIENT_FORM_ID = "new-patient-form";
 
 // autoOpen: the setup checklist links here with ?new=1 (first patient).
 // idKind: the practice country's patient identifier (lib/patientIds).
-export function NewPatientButton({ locale, autoOpen = false, idKind = "BR" }: { locale: string; autoOpen?: boolean; idKind?: PatientIdKind }) {
+// addressLive: address, CNS and Observações (138) are in the form.
+export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addressLive = false }: { locale: string; autoOpen?: boolean; idKind?: PatientIdKind; addressLive?: boolean }) {
   const t = useTranslations("patients");
+  const tAddr = useTranslations("patientAddress");
   const tIds = useTranslations("patientIds");
   const tBirth = useTranslations("dateInput");
   const [open, setOpen] = useState(autoOpen);
@@ -217,7 +225,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR" }: { 
       // The fields shown were for another country: reload them (the typed
       // values stay in the open form) and let the user save again.
       if (result.code === "id_kind_mismatch") router.refresh();
-      setError(result.code === "invalid_th_id" ? tIds("thaiIdInvalid") : result.code === "birth_year_buddhist" ? tBirth("buddhistYear") : result.code === "invalid_birth_date" ? tBirth("invalidBirthDate") : t(result.code === "name_required" ? "nameRequired" : "saveError"));
+      setError(result.code === "invalid_th_id" ? tIds("thaiIdInvalid") : result.code === "birth_year_buddhist" ? tBirth("buddhistYear") : result.code === "invalid_birth_date" ? tBirth("invalidBirthDate") : result.code === "invalid_cns" ? tAddr("invalidCns") : t(result.code === "name_required" ? "nameRequired" : "saveError"));
     });
   }
 
@@ -300,7 +308,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR" }: { 
             {t("openPatient")}
           </Link>
         )}
-        <PatientForm id={NEW_PATIENT_FORM_ID} onSubmit={submit} pending={pending} error={error} idKind={idKind} />
+        <PatientForm id={NEW_PATIENT_FORM_ID} onSubmit={submit} pending={pending} error={error} idKind={idKind} addressLive={addressLive} />
       </Dialog>
     </>
   );
@@ -325,7 +333,7 @@ export function PatientCard({ patient, locale }: { patient: Patient; locale: str
           {[patient.email, age ? t("age", { n: age }) : null, patient.phone].filter(Boolean).join(" · ")}
         </p>
         {patient.archived_at && (
-          <p className="text-xs text-slate-400 truncate mt-0.5">{archivedLabel(t, patient.archived_at, patient.archived_by_name, locale)}</p>
+          <p className="text-xs text-slate-400 truncate mt-0.5">{archivedLabel(t, patient.archived_at, patient.archived_by_name, locale, patient.archived_reason)}</p>
         )}
       </div>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-300 group-hover:text-teal-400 transition shrink-0">

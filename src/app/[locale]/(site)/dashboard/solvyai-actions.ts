@@ -20,7 +20,8 @@ import { MASK_TOKEN } from "@/lib/assistant/server/tools";
 //
 // Results: { ok, id?, prev? } where prev is what Desfazer restores, or
 // { ok: false, code } — slot_taken (the time was just taken: the panel asks
-// the route for fresh times), needs_confirm (a block / outside hours
+// the route for fresh times), appointment_not_cancellable (a cancel of one
+// no longer scheduled / confirmed / late: the route says so), needs_confirm (a block / outside hours
 // appeared after the card: nothing saved), or generic.
 
 // noUndo: the save may already have told the patient (a booking decision,
@@ -119,6 +120,8 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
       if (!UUIDISH.test(id)) return { ok: false, code: "generic" };
       const before = await currentRow(id);
       if (!before) return { ok: false, code: "generic" };
+      // Only a live appointment (the app's executor refuses the same way).
+      if (!MOVABLE_STATUSES.includes(before.status)) return { ok: false, code: "appointment_not_cancellable" };
       const r = await updateAppointmentStatus(id, "cancelled");
       if (!("success" in r && r.success)) return mapError(r);
       return (await patientConnected(before.patient_id)) ? { ok: true, id, noUndo: true } : { ok: true, id, prev: before.status };
@@ -210,6 +213,20 @@ export async function executeSolvyAiAction(action: CardAction, warningsAsked: bo
   }
 }
 
+// A patient SolvyAI just added may be deleted by Desfazer only while nothing
+// uses it: no appointment at all (one booked meanwhile, in another tab or by
+// the next card, would be orphaned: appointments.patient_id is ON DELETE SET
+// NULL) and no clinical history (094 refuses that anyway). Any failed check
+// counts as in use (the app's rule, mobile #141).
+async function patientUnused(id: string): Promise<boolean> {
+  const supabase = await createClient();
+  const { count, error } = await supabase.from("appointments").select("id", { count: "exact", head: true }).eq("patient_id", id);
+  if (error || count !== 0) return false;
+  const { data, error: previewError } = await supabase.rpc("get_patient_archive_preview", { p_patient_id: id });
+  const row = (Array.isArray(data) ? data[0] : data) as { has_clinical_history?: boolean } | null;
+  return !previewError && !!row && row.has_clinical_history === false;
+}
+
 // Desfazer, within 10 s: the inverse through the same paths.
 export async function undoSolvyAiAction(action: CardAction, id: string, prev?: string): Promise<SolvyAiSaveResult> {
   if (!UUIDISH.test(str(id))) return { ok: false, code: "generic" };
@@ -242,6 +259,7 @@ export async function undoSolvyAiAction(action: CardAction, id: string, prev?: s
       return "success" in r && r.success ? { ok: true, id: r.id } : mapError(r);
     }
     case "add_patient": {
+      if (!(await patientUnused(id))) return { ok: false, code: "generic" };
       const r = await deletePatient(id);
       return "success" in r && r.success ? { ok: true, id } : { ok: false, code: "generic" };
     }

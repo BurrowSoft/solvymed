@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { portalRoot } from "./portalRoot";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { TourFallback, TourStep } from "@/lib/tour";
@@ -319,6 +320,6 @@ export function TourOverlay({
         </div>
       )}
     </div>,
-    document.body,
+    portalRoot(),
   );
 }

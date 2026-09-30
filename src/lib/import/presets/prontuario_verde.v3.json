@@ -1,0 +1,143 @@
+{
+  "source": "prontuario_verde",
+  "version": 3,
+  "label": "Prontuário Verde",
+  "spec": "integrations/prontuario-verde.md (the official export model); to confirm the encoding and date format with a real export",
+  "requires": [
+    "import-address"
+  ],
+  "fingerprint": {
+    "files": [
+      "PACIENTE.csv"
+    ],
+    "headers_all": [
+      "Nome",
+      "Nascimento"
+    ],
+    "headers_any": [
+      "PAC_ID",
+      "CLI_ID",
+      [
+        "Prontuário",
+        "Telefone1"
+      ]
+    ]
+  },
+  "unlisted": "generic_suggest",
+  "read": {
+    "encodings": [
+      "utf-8",
+      "windows-1252"
+    ],
+    "delimiters": [
+      ";"
+    ]
+  },
+  "columns": {
+    "Nome": {
+      "field": "full_name"
+    },
+    "Nascimento": {
+      "field": "birth_date"
+    },
+    "Sexo": {
+      "field": "sex"
+    },
+    "CPF": {
+      "field": "cpf"
+    },
+    "RG": {
+      "field": "rg"
+    },
+    "Telefone1": {
+      "field": "phone",
+      "priority": 1,
+      "else_extra": "Telefone 1"
+    },
+    "Telefone2": {
+      "field": "phone",
+      "priority": 2,
+      "else_extra": "Telefone 2"
+    },
+    "Telefone3": {
+      "field": "phone",
+      "priority": 3,
+      "else_extra": "Telefone 3"
+    },
+    "E-mail": {
+      "field": "email"
+    },
+    "Profissão": {
+      "field": "profession"
+    },
+    "Mãe": {
+      "extra": "Nome da mãe"
+    },
+    "Pai": {
+      "extra": "Nome do pai",
+      "sensitive": true
+    },
+    "CNS": {
+      "field": "cns"
+    },
+    "Logradouro": {
+      "field": "address_street"
+    },
+    "Número Logradouro": {
+      "field": "address_number"
+    },
+    "Complemento Logradouro": {
+      "field": "address_complement"
+    },
+    "Bairro": {
+      "field": "address_neighborhood"
+    },
+    "Cidade": {
+      "field": "address_city"
+    },
+    "UF": {
+      "field": "address_state"
+    },
+    "CEP": {
+      "field": "address_postal_code"
+    },
+    "Observações": {
+      "extra": "Observações"
+    },
+    "Estado Civil": {
+      "extra": "Estado civil"
+    },
+    "Origem do paciente": {
+      "extra": "Origem do paciente"
+    },
+    "Data de cadastro": {
+      "extra": "Cadastrado em (sistema anterior)"
+    },
+    "Prontuário": {
+      "extra": "Nº do prontuário (sistema anterior)"
+    },
+    "PAC_ID": {
+      "extra": "Código no Prontuário Verde"
+    },
+    "Nome Responsável": {
+      "extra": "Responsável"
+    },
+    "CPF Responsável": {
+      "extra": "CPF do responsável"
+    },
+    "Estado Civil Responsável": {
+      "extra": "Estado civil do responsável",
+      "sensitive": true
+    },
+    "Profissão Responsável": {
+      "extra": "Profissão do responsável",
+      "sensitive": true
+    },
+    "CLI_ID": {
+      "ignore": true
+    },
+    "Foto": {
+      "ignore": true
+    }
+  }
+}

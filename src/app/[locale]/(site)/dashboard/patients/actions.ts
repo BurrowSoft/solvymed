@@ -11,6 +11,13 @@ import { routing } from "@/i18n/routing";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { formIdKindMatches, patientIdError, patientIdKind, readPatientIds, sameIdentifier, similarPatientArgs } from "@/lib/patientIds";
+import { patientSearchFilter } from "@/lib/patientSearch";
+import { mergeSupported } from "@/lib/mergeProbe";
+import { conditionMet } from "@/lib/conditions";
+import { addressError, readAddress } from "@/lib/patientAddress";
+import { MERGE_ADDRESS_KEYS, MERGE_ERRORS, MERGE_FIELD_KEYS, mergeColumns, type MergeErrorCode, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
+
+const UUIDISH_MERGE = /^[0-9a-f-]{8,64}$/i;
 
 // archived_at is set for an archived match, so the warning can offer
 // Restore instead of creating a second record for the same person.
@@ -18,7 +25,7 @@ export type PatientMatch = { id: string; full_name: string; phone: string | null
 
 export type CreatePatientResult =
   | { success: true; id?: string }
-  | { error: string; code: "generic" | "name_required" | "invalid_th_id" | "id_kind_mismatch" | "birth_year_buddhist" | "invalid_birth_date" }
+  | { error: string; code: "generic" | "name_required" | "invalid_th_id" | "id_kind_mismatch" | "birth_year_buddhist" | "invalid_birth_date" | "invalid_cns" }
   // Possible duplicates found before saving. The user chooses "Open
   // existing" or "Create anyway" (resubmits with force=1).
   | { error: string; code: "possible_match"; matches: PatientMatch[] }
@@ -50,6 +57,10 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
   if (patientIdError(ids)) return { error: "Invalid Thai ID", code: "invalid_th_id" };
   const birthDate = (formData.get("birth_date") as string) || null;
   if (looksBuddhistEra(birthDate)) return { error: "Buddhist-era birth year", code: "birth_year_buddhist" };
+  // Address, CNS and Observações (138): only once it's applied, and only
+  // when the form showed them.
+  const address = conditionMet("patient-address-live") ? readAddress(formData, idKind) : null;
+  if (addressError(address)) return { error: "Invalid CNS", code: "invalid_cns" };
   const force = formData.get("force") === "1";
 
   // Email must be unique per doctor.
@@ -93,6 +104,7 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
     profession: (formData.get("profession") as string)?.trim() || null,
     emergency_phone: (formData.get("emergency_phone") as string)?.trim() || null,
     convenio_type: (formData.get("convenio_type") as string) || null,
+    ...(address ?? {}),
   }).select("id").single();
 
   if (error) {
@@ -126,6 +138,7 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
     }
     // A birth date outside 1900..today (the database refuses it, 116).
     if (error.message?.includes("invalid_birth_date")) return { error: "Invalid date of birth", code: "invalid_birth_date" };
+    if (error.message?.includes("invalid_cns")) return { error: "Invalid CNS", code: "invalid_cns" };
     return { error: error.message, code: "generic" };
   }
   revalidatePath("/dashboard/patients");
@@ -156,6 +169,11 @@ export async function updatePatient(id: string, formData: FormData) {
   const ids = readPatientIds(formData, idKind);
   const idError = patientIdError(ids);
   if (idError) return { error: idError };
+  // Address, CNS and Observações (138): only once it's applied, and only
+  // when the form showed them (else stored values stay as they are).
+  const address = conditionMet("patient-address-live") ? readAddress(formData, idKind) : null;
+  const addrError = addressError(address);
+  if (addrError) return { error: addrError };
 
   const { error } = await supabase.from("patients").update({
     full_name: fullName,
@@ -167,6 +185,7 @@ export async function updatePatient(id: string, formData: FormData) {
     profession: (formData.get("profession") as string)?.trim() || null,
     emergency_phone: (formData.get("emergency_phone") as string)?.trim() || null,
     convenio_type: (formData.get("convenio_type") as string) || null,
+    ...(address ?? {}),
   }).eq("id", id).eq("professional_id", effectiveProfId);
 
   if (error) return { error: actionError(error.message) };
@@ -189,6 +208,8 @@ export async function deletePatient(id: string) {
     // (records, prescriptions or files); the UI offers Archive instead, but
     // its preview can be stale.
     if (error.message?.includes("patient_has_clinical_history")) return { error: "patient_has_clinical_history" };
+    // Any appointment at all (the server guard, UX): archive instead.
+    if (error.message?.includes("patient_has_appointments")) return { error: "patient_has_appointments" };
     return { error: actionError(error.message) };
   }
   revalidatePath("/dashboard/patients");
@@ -207,19 +228,22 @@ export async function loadAccessLog(patientId: string, before: string, locale: s
   return readAccessLog(supabase, patientId, { before, locale: safeLocale, timeZone });
 }
 
-export type ArchivePreview = { hasClinicalHistory: boolean; upcomingAppointments: number };
+export type ArchivePreview = { hasClinicalHistory: boolean; hasAppointments: boolean; upcomingAppointments: number };
 
 // Drives Delete-vs-Archive and the "{n} upcoming appointments will be
-// cancelled" line. Never exposes clinical content. Null on any error, and
-// callers then hide Delete (the delete trigger is the real boundary).
+// cancelled" line. Delete is offered only with no clinical history and no
+// appointment at all, past ones included (UX). Never exposes clinical
+// content. Null on any error, and callers then hide Delete (the server
+// guards are the real boundary).
 export async function getArchivePreview(patientId: string): Promise<ArchivePreview | null> {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .rpc("get_patient_archive_preview", { p_patient_id: patientId })
-    .maybeSingle();
-  if (error || !data) return null;
+  const [{ data, error }, appts] = await Promise.all([
+    supabase.rpc("get_patient_archive_preview", { p_patient_id: patientId }).maybeSingle(),
+    supabase.from("appointments").select("id", { count: "exact", head: true }).eq("patient_id", patientId),
+  ]);
+  if (error || !data || appts.error || appts.count === null) return null;
   const row = data as { has_clinical_history: boolean; upcoming_appointments: number };
-  return { hasClinicalHistory: row.has_clinical_history, upcomingAppointments: row.upcoming_appointments ?? 0 };
+  return { hasClinicalHistory: row.has_clinical_history, hasAppointments: appts.count > 0, upcomingAppointments: row.upcoming_appointments ?? 0 };
 }
 
 export type ArchiveResult =
@@ -251,6 +275,7 @@ export async function archivePatient(patientId: string): Promise<ArchiveResult> 
     .map((a) => tellPatient(supabase, {
       kind: "cancelled", practiceId, isSecretary: user.id !== practiceId,
       patientAuthId: a.patient_auth_id, date: a.date, startTime: a.start_time,
+      appointmentIds: [a.appointment_id],
     })));
 
   revalidatePath("/dashboard/patients");
@@ -514,4 +539,83 @@ export async function addPrescriptionCorrection(prescriptionId: string, patientI
   if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
+}
+
+// ── Merge duplicate patients (migration 133; the app's lib/patient-merge.ts) ──
+
+// Mesclar shows only once the database has merge_patients (lib/mergeProbe)
+// AND merge-web-live is flipped by hand after the testers' 133 run (9a: the
+// probe alone would switch it on untested the moment 133 is applied).
+export async function mergeAvailable(): Promise<boolean> {
+  if (!conditionMet("merge-web-live")) return false;
+  return mergeSupported(await createClient());
+}
+
+// The other records the doctor may pick (archived ones too), by name or ID.
+export async function searchMergeCandidates(patientId: string, q: string): Promise<{ id: string; full_name: string; birth_date: string | null; archived: boolean }[]> {
+  if (!UUIDISH_MERGE.test(patientId)) return [];
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || (await isProfessionalRole(supabase, user.id)) !== true) return [];
+  // The practice country picks which ID the search also matches (never
+  // assumed: unknown searches by name and passport only).
+  const lookup = await lookupPracticeCountry(supabase, user.id, user.id);
+  const kind = patientIdKind(lookup.ok ? lookup.country : "ZZ");
+  const filter = patientSearchFilter(q, kind);
+  let query = supabase.from("patients").select("id, full_name, birth_date, archived_at")
+    .eq("professional_id", user.id).neq("id", patientId).order("full_name").limit(20);
+  if (filter) query = query.or(filter);
+  const { data } = await query;
+  return ((data ?? []) as { id: string; full_name: string; birth_date: string | null; archived_at: string | null }[])
+    .map((p) => ({ id: p.id, full_name: p.full_name, birth_date: p.birth_date, archived: !!p.archived_at }));
+}
+
+// Both records (the compared fields only) and what each one holds.
+export async function loadMergeComparison(a: string, b: string): Promise<{ rows: MergeRow[]; preview: Record<string, MergePreviewSide>; address: boolean } | null> {
+  if (!UUIDISH_MERGE.test(a) || !UUIDISH_MERGE.test(b) || a === b) return null;
+  const address = conditionMet("patient-address-live");
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || (await isProfessionalRole(supabase, user.id)) !== true) return null;
+  const [{ data: rows, error }, { data: prev, error: prevError }] = await Promise.all([
+    // The address, CNS and Observações too once 138 + 139 are applied.
+    supabase.from("patients").select(mergeColumns(address)).eq("professional_id", user.id).in("id", [a, b]),
+    supabase.rpc("merge_patients_preview", { p_a: a, p_b: b }),
+  ]);
+  if (error || prevError || (rows ?? []).length !== 2) return null;
+  const preview: Record<string, MergePreviewSide> = {};
+  for (const r of (prev ?? []) as Record<string, unknown>[]) {
+    preview[String(r.patient_id)] = {
+      appointments: Number(r.appointments ?? 0), records: Number(r.records ?? 0), prescriptions: Number(r.prescriptions ?? 0),
+      files: Number(r.files ?? 0), hasAppAccount: !!r.has_app_account,
+    };
+  }
+  return { rows: rows as unknown as MergeRow[], preview, address };
+}
+
+// merge_patients: the kept record gets everything; choices only name fields
+// taken from the removed one. The client's choices are re-validated.
+export async function mergePatientsAction(keptId: string, mergedId: string, choices: Record<string, string>, appAccountConfirmed: boolean): Promise<{ ok: true; keptId: string } | { ok: false; code: MergeErrorCode }> {
+  if (!UUIDISH_MERGE.test(keptId) || !UUIDISH_MERGE.test(mergedId) || keptId === mergedId) return { ok: false, code: "invalid" };
+  // 139's keys only once it's applied: 'address' / 'cns' take 'merged';
+  // Observações also 'kept' or 'both'.
+  const address = conditionMet("patient-address-live");
+  const clean: Record<string, string> = {};
+  for (const [k, v] of Object.entries(choices ?? {})) {
+    const ok = MERGE_FIELD_KEYS.includes(k) ? v === "merged"
+      : address && MERGE_ADDRESS_KEYS.includes(k) ? (k === "notes_admin" ? ["kept", "merged", "both"].includes(v) : v === "merged")
+      : false;
+    if (!ok) return { ok: false, code: "invalid" };
+    clean[k] = v;
+  }
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false, code: "not_allowed" };
+  const { data, error } = await supabase.rpc("merge_patients", {
+    p_kept_id: keptId, p_merged_id: mergedId, p_choices: clean, p_app_account_confirmed: appAccountConfirmed === true,
+  });
+  if (error) return { ok: false, code: MERGE_ERRORS.find((c) => (error.message ?? "").includes(c)) ?? "generic" };
+  const r = (data ?? {}) as { kept_id?: string };
+  revalidatePath("/dashboard/patients");
+  return { ok: true, keptId: r.kept_id ?? keptId };
 }

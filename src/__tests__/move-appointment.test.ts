@@ -51,6 +51,8 @@ const h = vi.hoisted(() => {
   return { state, client };
 });
 
+// The Agenda Desfazer token is signed with a key derived from this.
+process.env.SUPABASE_SERVICE_ROLE_KEY = "test-secret";
 vi.mock("@/lib/supabase/server", () => ({ createClient: async () => h.client }));
 vi.mock("@/lib/effectiveProfId", () => ({ getEffectiveProfId: async () => "doc-1" }));
 vi.mock("@/lib/clinicNotify", () => ({ tellPatient: async (_db: unknown, change: unknown) => { h.state.told.push(change); } }));
@@ -78,13 +80,13 @@ beforeEach(() => {
 
 describe("moveAppointment", () => {
   it("moves the date and start, keeps the duration, and tells the patient old → new", async () => {
-    expect(await move({ date: "2026-10-06", start_time: "14:00" })).toEqual({ success: true, id: "a-1" });
+    expect(await move({ date: "2026-10-06", start_time: "14:00" })).toMatchObject({ success: true, id: "a-1", undo: { kind: "moved", ids: ["a-1"], dates: ["2026-10-06"], start: "14:00", prevDate: "2026-10-05", prevStart: "09:00" } });
     expect(h.state.updates[0].values).toEqual({ date: "2026-10-06", start_time: "14:00", end_time: "14:50" });
     // Only while it's still movable (the write itself checks).
     expect(h.state.updates[0].filters).toContainEqual(["in", "status", ["scheduled", "confirmed", "late"]]);
     expect(h.state.told).toEqual([{
       kind: "moved", practiceId: "doc-1", isSecretary: false, patientAuthId: null, patientId: "p-1", status: "scheduled",
-      date: "2026-10-06", startTime: "14:00", from: { date: "2026-10-05", startTime: "09:00:00" },
+      date: "2026-10-06", startTime: "14:00", from: { date: "2026-10-05", startTime: "09:00:00" }, appointmentIds: ["a-1"],
     }]);
   });
 

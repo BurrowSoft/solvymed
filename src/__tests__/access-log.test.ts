@@ -1,9 +1,12 @@
+import fs from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const captureMessage = vi.fn();
 vi.mock("@sentry/nextjs", () => ({ captureMessage: (...a: unknown[]) => captureMessage(...a) }));
 
-import { fileNameFromRef, isMissingFunction, logPatientOpen, readAccessLog } from "@/lib/accessLog";
+import { accessKindLabelKey, fileNameFromRef, isMissingFunction, logPatientOpen, readAccessLog } from "@/lib/accessLog";
+import en from "@/messages/en.json";
+import pt from "@/messages/pt-BR.json";
 
 const db = (result: { data?: unknown; error?: { code?: string; message?: string } | null }) => {
   const rpc = vi.fn().mockResolvedValue({ data: result.data ?? null, error: result.error ?? null });
@@ -68,5 +71,20 @@ describe("helpers", () => {
     expect(fileNameFromRef("prof/pat/sub/x.png")).toBe("sub/x.png");
     expect(fileNameFromRef("prof/pat")).toBeNull();
     expect(fileNameFromRef(null)).toBeNull();
+  });
+
+  it("the CSV export (126) and imported data (131) have their own labels, never \"the patient\"", () => {
+    expect(accessKindLabelKey("export")).toBe("accessKindExport");
+    expect(accessKindLabelKey("imported")).toBe("accessKindImported");
+    expect(accessKindLabelKey("patient")).toBe("accessKindPatient");
+    expect(accessKindLabelKey("merged")).toBe("accessKindMerged");
+    expect(pt.patientDetail.accessKindExport).toBe("Exportado na lista de pacientes (CSV)");
+    expect(pt.patientDetail.accessKindImported).toBe("Abriu os dados importados");
+    expect(en.patientDetail.accessKindImported).toBe("Opened the imported data");
+  });
+
+  it("a merge (133) names the removed record, in every locale", () => {
+    expect(pt.patientDetail.accessKindMerged).toBe("Mesclou com «{name}»");
+    for (const f of fs.readdirSync("src/messages")) expect(JSON.parse(fs.readFileSync(`src/messages/${f}`, "utf8").replace(/^﻿/, "")).patientDetail.accessKindMerged, f).toContain("{name}");
   });
 });

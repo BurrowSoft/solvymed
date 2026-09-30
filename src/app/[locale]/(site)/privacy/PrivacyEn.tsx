@@ -1,9 +1,10 @@
 import { Mail, Section, Table } from "@/components/LegalDoc";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
+import { noticeChannels } from "@/lib/noticeChannels";
 
 // English Privacy Policy (authoritative with pt-BR; keep both in step).
 // Every statement here must match what the Service enforces today.
-export function PrivacyEn({ turnstile, solvyai = false, line = false, founders = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; founders?: boolean }) {
+export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean }) {
   return (
     <>
       <Section title="1. Overview">
@@ -33,7 +34,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, founders =
 
       <Section title="3. Information we collect">
         <p><strong>3.1 Account information:</strong> name, email and password (stored only as a secure hash). Professionals may add their specialty, professional registration, clinic name, address, phone, CNPJ (tax ID) and a Pix key. We also store the practice&apos;s country and time zone, chosen at sign-up (for &quot;Other country&quot;, the country detected from the connection at sign-up). When someone creates an account, we record which version of the Terms of Use and Privacy Policy they accepted, and when.</p>
-        <p><strong>3.2 Patient data entered by professionals or their secretaries:</strong> identification and contact data (name, CPF or, for clinics outside Brazil, a national ID or passport number, date of birth, sex, phone, email) and health data (notes, diagnoses, prescriptions, exams, files, appointment history). Health data is sensitive personal data under the LGPD.</p>
+        <p><strong>3.2 Patient data entered by professionals or their secretaries:</strong> identification and contact data (name, CPF or, for clinics outside Brazil, a national ID or passport number, date of birth, sex, phone, email{address && ", address, CNS (the Brazilian national health card number, Brazilian clinics only) and administrative notes"}) and health data (notes, diagnoses, prescriptions, exams, files, appointment history). Health data is sensitive personal data under the LGPD.</p>
         <p><strong>3.3 Appointments and payments:</strong> dates, times, status, amounts and payment status. Clinics in Thailand may add a PromptPay ID (a mobile number or national / tax ID), used only to build the appointment payment QR.</p>
         <p><strong>3.4 Subscription billing:</strong> handled by Stripe. We never see or store full card numbers; we keep only a Stripe reference and your subscription status.</p>
         <p><strong>3.5 Device and technical data:</strong> device type, operating system version, app version, push notification tokens, and technical error reports.</p>
@@ -130,6 +131,12 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, founders =
         <Section title="6d. Founders Program applications">
           <p>Founders Program: if you apply, we process your name, email, phone, profession and registration number, the clinic system you use, your practice size and how you found us, to assess your application and contact you. Applications that aren&rsquo;t accepted are deleted 12 months after their last update; accepted founders&rsquo; applications are kept while their account exists (or deleted 12 months after acceptance if no account was ever linked).</p>
           <p className="mt-2">To stop abuse, we keep a scrambled (salted hash) form of your IP address for 2 days, never the address itself. To have your application deleted sooner, write to support@solvymed.com.</p>
+        </Section>
+      )}
+
+      {(notices || whatsapp) && (
+        <Section title="6e. Patient notices">
+          <p>Patient notices: when the clinic books, moves or cancels an appointment, the notice to the patient{whatsapp && ` (${noticeChannels(notices, "or")})`} waits about 1 minute before it&rsquo;s sent, so the clinic can undo a mistake. We keep a record of each notice (which appointment, the kind of notice, the time slot and whether it was sent), with no names or clinical data, for 30 days, and then delete it.</p>
         </Section>
       )}
 

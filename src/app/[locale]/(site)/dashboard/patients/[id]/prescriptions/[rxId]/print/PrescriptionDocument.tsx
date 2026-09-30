@@ -8,10 +8,12 @@ export type RxDocLabels = {
   dosage: string; frequency: string; duration: string; notes: string; footer: string; corrected: string;
 };
 
-export function PrescriptionDocument({ template, labels, patientName, date, corrected, items, notes, signerName, signerRegistration }: {
+export function PrescriptionDocument({ template, labels, patientName, patientAddress = "", date, corrected, items, notes, signerName, signerRegistration }: {
   template: DocTemplate;
   labels: RxDocLabels;
   patientName: string;
+  // One line under the name (138; empty = not printed).
+  patientAddress?: string;
   date: string;
   corrected: boolean;
   items: { name: string; dosage: string; frequency: string; duration: string }[];
@@ -37,6 +39,7 @@ export function PrescriptionDocument({ template, labels, patientName, date, corr
       <section className="mb-5">
         <div className={label}>{labels.patient}</div>
         <div className="text-sm">{patientName}</div>
+        {patientAddress && <div className="text-xs text-[#6B7A99]">{patientAddress}</div>}
       </section>
       <section className="mb-5">
         <div className={label}>{labels.date}</div>

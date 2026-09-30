@@ -14,7 +14,7 @@ import { FoundersPageView } from "./FoundersPageView";
 // what founders get and give, how it works, the live places per system,
 // the application form, the FAQ. Public marketing, off until
 // liveFeatures.founders (Vitor's OK, migration 129, the mailbox, the
-// privacy line, the Thai review). The rules link waits for the lawyer.
+// privacy line). The rules link waits for foundersRules (Vitor's go).
 
 const BASE = "https://www.solvymed.com";
 const pathFor = (locale: string) => (locale === "en" ? `${BASE}/founders` : `${BASE}/${locale}/founders`);
