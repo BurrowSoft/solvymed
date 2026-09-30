@@ -249,7 +249,8 @@
     "amountPlaceholder": "Amount ({symbol})",
     "revertConfirm": "Revert this payment to pending?",
     "errorInvalidAmount": "Please enter a valid amount.",
-    "errorGeneric": "Something went wrong. Please try again."
+    "errorGeneric": "Something went wrong. Please try again.",
+    "amountPlaceholderPlain": "Amount"
   },
   "paymentsPage": {
     "title": "Payments",
@@ -514,7 +515,7 @@
     "noProcedures": "No procedures yet. Add your first one below.",
     "newProcedure": "New procedure",
     "procedureName": "Name",
-    "procedureNamePlaceholder": "Initial consultation, Follow-up…",
+    "procedureNamePlaceholder": "e.g. First visit – Adult",
     "durationLabel": "Duration (minutes)",
     "priceLabel": "Price ({symbol})",
     "paymentTypeLabel": "Payment type",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "Sukhumvit Clinic",
     "clinicNamePlaceholderOther": "Wellness Clinic",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "123 Main Street"
+    "addressPlaceholderOther": "123 Main Street",
+    "priceLabelPlain": "Price"
   },
   "clinics": {
     "title": "My Clinics",

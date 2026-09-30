@@ -249,7 +249,8 @@
     "amountPlaceholder": "Importo ({symbol})",
     "revertConfirm": "Riportare questo pagamento a in sospeso?",
     "errorInvalidAmount": "Inserisci un importo valido.",
-    "errorGeneric": "Qualcosa è andato storto. Riprova."
+    "errorGeneric": "Qualcosa è andato storto. Riprova.",
+    "amountPlaceholderPlain": "Importo"
   },
   "paymentsPage": {
     "title": "Pagamenti",
@@ -508,7 +509,7 @@
     "noProcedures": "Nessuna procedura ancora. Aggiungine una qui sotto.",
     "newProcedure": "Nuova procedura",
     "procedureName": "Nome",
-    "procedureNamePlaceholder": "Prima visita, Follow-up…",
+    "procedureNamePlaceholder": "es. Prima visita – Adulto",
     "durationLabel": "Durata (minuti)",
     "priceLabel": "Tariffa ({symbol})",
     "paymentTypeLabel": "Tipo di pagamento",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "Clinica Sukhumvit",
     "clinicNamePlaceholderOther": "Studio Benessere",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "Via Principale 123"
+    "addressPlaceholderOther": "Via Principale 123",
+    "priceLabelPlain": "Tariffa"
   },
   "clinics": {
     "title": "Le mie cliniche",

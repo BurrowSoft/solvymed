@@ -249,7 +249,8 @@
     "amountPlaceholder": "Montant ({symbol})",
     "revertConfirm": "Remettre ce paiement en attente ?",
     "errorInvalidAmount": "Veuillez saisir un montant valide.",
-    "errorGeneric": "Une erreur s'est produite. Réessayez."
+    "errorGeneric": "Une erreur s'est produite. Réessayez.",
+    "amountPlaceholderPlain": "Montant"
   },
   "paymentsPage": {
     "title": "Paiements",
@@ -508,7 +509,7 @@
     "noProcedures": "Aucun acte pour l'instant. Ajoutez le premier ci-dessous.",
     "newProcedure": "Nouvel acte",
     "procedureName": "Nom",
-    "procedureNamePlaceholder": "Consultation initiale, Suivi…",
+    "procedureNamePlaceholder": "ex. Première consultation – Adulte",
     "durationLabel": "Durée (minutes)",
     "priceLabel": "Tarif ({symbol})",
     "paymentTypeLabel": "Mode de paiement",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "Clinique Sukhumvit",
     "clinicNamePlaceholderOther": "Cabinet Bien-Être",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "123 rue Principale"
+    "addressPlaceholderOther": "123 rue Principale",
+    "priceLabelPlain": "Tarif"
   },
   "clinics": {
     "title": "Mes Cliniques",
