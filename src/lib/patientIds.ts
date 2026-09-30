@@ -1,4 +1,4 @@
-import { countryProfile } from "./country";
+import { countryProfile, profileOfKind } from "./country";
 
 // Patient identifiers by the PRACTICE's country (Sprint TH, TH-1; migration
 // 110), never the UI language:
@@ -46,13 +46,15 @@ export function formIdKindMatches(formData: FormData, kind: PatientIdKind): bool
 
 // The columns to write from a patient form, for the practice's country.
 export function readPatientIds(formData: FormData, kind: PatientIdKind): PatientIdColumns {
-  if (kind === "BR") return { cpf: text(formData.get("cpf")) || null };
-  const passport = text(formData.get("passport_number")).slice(0, 30) || null;
-  if (kind === "TH") {
-    const th = digitsOnly(text(formData.get("th_national_id")));
-    return { th_national_id: th || null, passport_number: passport };
+  // Exactly the practice country's columns (lib/country idFields), each
+  // stored as digits or as text (cut to its length).
+  const out: Record<string, string | null> = {};
+  for (const f of profileOfKind(kind).idFields) {
+    const raw = text(formData.get(f.name));
+    const v = f.store === "digits" ? digitsOnly(raw) : f.keep ? raw.slice(0, f.keep) : raw;
+    out[f.name] = v || null;
   }
-  return { passport_number: passport };
+  return out as PatientIdColumns;
 }
 
 // A Thai ID that fails the checksum (checked before saving, with the same

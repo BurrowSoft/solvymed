@@ -126,3 +126,11 @@ describe("push fallback language and receipts by country (#239)", () => {
     expect(countryProfile(null).fallbackLocale).toBe("pt-BR");
   });
 });
+
+describe("patient identifier fields by country (#239)", () => {
+  it("BR CPF; TH Thai ID (digits) + passport; Other passport/ID", () => {
+    expect(profileOfKind("BR").idFields.map((f) => f.name)).toEqual(["cpf"]);
+    expect(profileOfKind("TH").idFields.map((f) => [f.name, f.label, f.store])).toEqual([["th_national_id", "thaiId", "digits"], ["passport_number", "passport", "text"]]);
+    expect(profileOfKind("OTHER").idFields.map((f) => [f.name, f.label])).toEqual([["passport_number", "passportOrId"]]);
+  });
+});

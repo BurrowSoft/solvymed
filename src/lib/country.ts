@@ -19,10 +19,25 @@ type SettingsKey =
   | "addressPlaceholder" | "addressPlaceholderTH" | "addressPlaceholderOther"
   | "state" | "stateProvince" | "stateOrProvince";
 
+// A patient identifier field (migration 110 columns): its label key in the
+// patientIds messages, the example, how it's stored (digits only, or text)
+// and its length.
+export type IdField = {
+  name: "cpf" | "th_national_id" | "passport_number";
+  label: "cpf" | "thaiId" | "passport" | "passportOrId";
+  placeholder: string;
+  store: "text" | "digits";
+  maxLength: number;   // what the input accepts
+  keep?: number;       // what is stored (text is cut to it)
+  numeric?: boolean;
+};
+
 export type CountryProfile = {
   kind: "BR" | "TH" | "OTHER";
   currency: Currency;
   patientId: "cpf" | "thai_id" | "passport";
+  // The identifier fields the patient forms show and write, in order.
+  idFields: IdField[];
   phonePrefix: "+55" | "+66" | null;
   paymentQr: "pix" | "promptpay" | null;
   defaultTimeZone: string;
@@ -53,7 +68,9 @@ export type CountryProfile = {
 };
 
 const BR: CountryProfile = {
-  kind: "BR", currency: "BRL", patientId: "cpf", phonePrefix: "+55", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo",
+  kind: "BR", currency: "BRL", patientId: "cpf",
+  idFields: [{ name: "cpf", label: "cpf", placeholder: "000.000.000-00", store: "text", maxLength: 20 }],
+  phonePrefix: "+55", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo",
   clinicTaxId: "cnpj", fallbackLocale: "pt-BR", receipts: "web",
   examples: {
     titles: { other: "Dr., Dra., Prof." },
@@ -63,7 +80,12 @@ const BR: CountryProfile = {
   },
 };
 const TH: CountryProfile = {
-  kind: "TH", currency: "THB", patientId: "thai_id", phonePrefix: "+66", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok",
+  kind: "TH", currency: "THB", patientId: "thai_id",
+  idFields: [
+    { name: "th_national_id", label: "thaiId", placeholder: "1-2345-67890-12-3", store: "digits", maxLength: 17, numeric: true },
+    { name: "passport_number", label: "passport", placeholder: "", store: "text", maxLength: 30, keep: 30 },
+  ],
+  phonePrefix: "+66", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok",
   clinicTaxId: "th_tax_id", fallbackLocale: "th", receipts: "app",
   examples: {
     titles: { th: "นพ., พญ., ทพ., ทญ.", other: "Dr." },
@@ -74,7 +96,9 @@ const TH: CountryProfile = {
 };
 // The explicit default: any country without its own entry (or the unknown 'ZZ').
 const OTHER: CountryProfile = {
-  kind: "OTHER", currency: "NONE", patientId: "passport", phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
+  kind: "OTHER", currency: "NONE", patientId: "passport",
+  idFields: [{ name: "passport_number", label: "passportOrId", placeholder: "", store: "text", maxLength: 30, keep: 30 }],
+  phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
   clinicTaxId: null, fallbackLocale: "en", receipts: "web",
   examples: {
     titles: null,
