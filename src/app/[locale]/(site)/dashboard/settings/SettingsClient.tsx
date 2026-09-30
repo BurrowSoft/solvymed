@@ -1,7 +1,7 @@
 "use client";
 
 import { amountExample, currencySymbol, formatMoney, parseMoney } from "@/lib/money";
-import { countryProfile, type Currency } from "@/lib/country";
+import { countryProfile, titleExamples, type Currency } from "@/lib/country";
 import { useTransition, useState, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { markInviteShared } from "@/lib/setupActions";
@@ -67,7 +67,7 @@ export function ProfileForm({ fullName, specialty, registration, country }: { fu
   const ex = countryProfile(country).examples;
   // The country's titles (in the UI language when it has them), else the
   // locale's own list.
-  const titles = ex.titles ? (ex.titles as Record<string, string | undefined>)[locale] ?? ex.titles.other : t("fullNameTitles");
+  const titles = titleExamples(country, locale) ?? t("fullNameTitles");
   const registrationExample = t(ex.registration);
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
@@ -494,7 +494,8 @@ export function ProceduresPanel({ procedures, currency = "BRL" }: { procedures: 
               <Input name="duration_minutes" type="number" defaultValue="60" placeholder="60" />
             </div>
             <div>
-              <Label>{t("priceLabel", { symbol: currencySymbol(currency) })}</Label>
+              {/* No symbol for a currency we don't know (practices outside BR/TH; UX). */}
+              <Label>{currencySymbol(currency) ? t("priceLabel", { symbol: currencySymbol(currency) }) : t("priceLabelPlain")}</Label>
               {/* Text, not type="number": Chrome reads "150,50" as 15050,
                   and a number input without a step refuses cents. */}
               <input

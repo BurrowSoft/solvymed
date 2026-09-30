@@ -249,7 +249,8 @@
     "amountPlaceholder": "Сумма ({symbol})",
     "revertConfirm": "Вернуть платёж в статус ожидания?",
     "errorInvalidAmount": "Пожалуйста, введите корректную сумму.",
-    "errorGeneric": "Что-то пошло не так. Попробуйте снова."
+    "errorGeneric": "Что-то пошло не так. Попробуйте снова.",
+    "amountPlaceholderPlain": "Сумма"
   },
   "paymentsPage": {
     "title": "Платежи",
@@ -508,7 +509,7 @@
     "noProcedures": "Услуг пока нет. Добавьте первую ниже.",
     "newProcedure": "Новая услуга",
     "procedureName": "Название",
-    "procedureNamePlaceholder": "Первичный приём, Повторный…",
+    "procedureNamePlaceholder": "напр. Первичный приём – взрослый",
     "durationLabel": "Длительность (минут)",
     "priceLabel": "Цена ({symbol})",
     "paymentTypeLabel": "Тип оплаты",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "Клиника Сукхумвит",
     "clinicNamePlaceholderOther": "Клиника Здоровье",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "ул. Центральная, 123"
+    "addressPlaceholderOther": "ул. Центральная, 123",
+    "priceLabelPlain": "Цена"
   },
   "clinics": {
     "title": "Мои клиники",
@@ -715,7 +717,7 @@
       "country": "Где находится ваша практика?",
       "countryOther": "Другая страна",
       "countryHint": "Определяет валюту, цену тарифа, документ пациента и QR для оплаты. Чтобы изменить позже, обратитесь в поддержку.",
-      "fullNameHint": "При желании добавьте звание (Dr., Prof.): оно появится в приветствиях."
+      "fullNameHint": "При желании добавьте звание ({titles}): оно появится в приветствиях."
     },
     "forgotPassword": {
       "title": "Забыли пароль?",

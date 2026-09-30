@@ -18,6 +18,7 @@ import { track } from "@/lib/track";
 import { browserTimeZone, initialCountryChoice, signupCountryMetadata, type CountryChoice } from "@/lib/signupCountry";
 import { thaiEnabled } from "@/lib/publicLocales";
 import { consentMetadata } from "@/lib/legalVersions";
+import { titleExamples } from "@/lib/country";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -67,6 +68,11 @@ export default function SignupPage() {
   const [detectedCountry, setDetectedCountry] = useState<string | null>(null);
   const [countryChoice, setCountryChoice] = useState<CountryChoice>(() => initialCountryChoice(null, locale));
   const countryTouched = useRef(false);
+  // The title examples follow the country picked here, live (UX): the
+  // registry's, or the locale's own list for "Other" ("OTHER" isn't an ISO
+  // code, so it's looked up as the unknown "ZZ", never read as Brazil).
+  const tSettings = useTranslations("settings");
+  const signupTitles = titleExamples(countryChoice === "OTHER" ? "ZZ" : countryChoice, locale) ?? tSettings("fullNameTitles");
   useEffect(() => {
     // No picker before the Thai release, so no lookup either.
     if (!thaiEnabled) return;
@@ -328,7 +334,7 @@ export default function SignupPage() {
             />
             {/* Doctors: a title is never added for them (lib/doctorName); they may type one. */}
             {role === "professional" && !isSecretaryFlow && !isJoinFlow && (
-              <p className="mt-1.5 text-xs text-slate-500">{t("signup.fullNameHint")}</p>
+              <p className="mt-1.5 text-xs text-slate-500">{t("signup.fullNameHint", { titles: signupTitles })}</p>
             )}
           </div>
           <div>

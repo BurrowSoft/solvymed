@@ -249,7 +249,8 @@
     "amountPlaceholder": "Jumlah ({symbol})",
     "revertConfirm": "Kembalikan pembayaran ini ke tertunda?",
     "errorInvalidAmount": "Silakan masukkan jumlah yang valid.",
-    "errorGeneric": "Terjadi kesalahan. Silakan coba lagi."
+    "errorGeneric": "Terjadi kesalahan. Silakan coba lagi.",
+    "amountPlaceholderPlain": "Jumlah"
   },
   "paymentsPage": {
     "title": "Pembayaran",
@@ -508,7 +509,7 @@
     "noProcedures": "Belum ada prosedur. Tambahkan yang pertama di bawah.",
     "newProcedure": "Prosedur baru",
     "procedureName": "Nama",
-    "procedureNamePlaceholder": "Konsultasi awal, Tindak lanjut…",
+    "procedureNamePlaceholder": "mis. Kunjungan pertama – Dewasa",
     "durationLabel": "Durasi (menit)",
     "priceLabel": "Harga ({symbol})",
     "paymentTypeLabel": "Jenis pembayaran",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "Klinik Sukhumvit",
     "clinicNamePlaceholderOther": "Klinik Sehat",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "Jl. Utama No. 123"
+    "addressPlaceholderOther": "Jl. Utama No. 123",
+    "priceLabelPlain": "Harga"
   },
   "clinics": {
     "title": "Klinik Saya",
@@ -715,7 +717,7 @@
       "country": "Di mana praktik Anda?",
       "countryOther": "Negara lain",
       "countryHint": "Menentukan mata uang, harga paket, identitas pasien, dan QR pembayaran. Untuk mengubahnya nanti, hubungi dukungan.",
-      "fullNameHint": "Tambahkan gelar Anda jika mau (Dr., Prof.); gelar akan muncul di sapaan."
+      "fullNameHint": "Tambahkan gelar Anda jika mau ({titles}); gelar akan muncul di sapaan."
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",

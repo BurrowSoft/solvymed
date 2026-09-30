@@ -249,7 +249,8 @@
     "amountPlaceholder": "Monto ({symbol})",
     "revertConfirm": "¿Revertir este pago a pendiente?",
     "errorInvalidAmount": "Introduce un importe válido.",
-    "errorGeneric": "Algo salió mal. Inténtalo de nuevo."
+    "errorGeneric": "Algo salió mal. Inténtalo de nuevo.",
+    "amountPlaceholderPlain": "Monto"
   },
   "paymentsPage": {
     "title": "Pagos",
@@ -508,7 +509,7 @@
     "noProcedures": "Aún no hay procedimientos. Añade el primero a continuación.",
     "newProcedure": "Nuevo procedimiento",
     "procedureName": "Nombre",
-    "procedureNamePlaceholder": "Consulta inicial, Seguimiento…",
+    "procedureNamePlaceholder": "p. ej. Primera consulta – Adulto",
     "durationLabel": "Duración (minutos)",
     "priceLabel": "Precio ({symbol})",
     "paymentTypeLabel": "Tipo de pago",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "Clínica Sukhumvit",
     "clinicNamePlaceholderOther": "Clínica Bienestar",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "Calle Mayor 123"
+    "addressPlaceholderOther": "Calle Mayor 123",
+    "priceLabelPlain": "Precio"
   },
   "clinics": {
     "title": "Mis Clínicas",
@@ -715,7 +717,7 @@
       "country": "¿Dónde está tu consulta?",
       "countryOther": "Otro país",
       "countryHint": "Define la moneda, el precio del plan, el documento del paciente y el QR de pago. Para cambiarlo después, contacta con soporte.",
-      "fullNameHint": "Si quieres, añade tu título (Dr., Dra., Prof.): aparece en los saludos."
+      "fullNameHint": "Si quieres, añade tu título ({titles}): aparece en los saludos."
     },
     "forgotPassword": {
       "title": "¿Olvidaste tu contraseña?",

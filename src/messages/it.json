@@ -249,7 +249,8 @@
     "amountPlaceholder": "Importo ({symbol})",
     "revertConfirm": "Riportare questo pagamento a in sospeso?",
     "errorInvalidAmount": "Inserisci un importo valido.",
-    "errorGeneric": "Qualcosa è andato storto. Riprova."
+    "errorGeneric": "Qualcosa è andato storto. Riprova.",
+    "amountPlaceholderPlain": "Importo"
   },
   "paymentsPage": {
     "title": "Pagamenti",
@@ -508,7 +509,7 @@
     "noProcedures": "Nessuna procedura ancora. Aggiungine una qui sotto.",
     "newProcedure": "Nuova procedura",
     "procedureName": "Nome",
-    "procedureNamePlaceholder": "Prima visita, Follow-up…",
+    "procedureNamePlaceholder": "es. Prima visita – Adulto",
     "durationLabel": "Durata (minuti)",
     "priceLabel": "Tariffa ({symbol})",
     "paymentTypeLabel": "Tipo di pagamento",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "Clinica Sukhumvit",
     "clinicNamePlaceholderOther": "Studio Benessere",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "Via Principale 123"
+    "addressPlaceholderOther": "Via Principale 123",
+    "priceLabelPlain": "Tariffa"
   },
   "clinics": {
     "title": "Le mie cliniche",
@@ -715,7 +717,7 @@
       "country": "Dove si trova il tuo studio?",
       "countryOther": "Altro paese",
       "countryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza.",
-      "fullNameHint": "Se vuoi, aggiungi il tuo titolo (Dott., Dott.ssa, Prof.): compare nei saluti."
+      "fullNameHint": "Se vuoi, aggiungi il tuo titolo ({titles}): compare nei saluti."
     },
     "forgotPassword": {
       "title": "Password dimenticata?",

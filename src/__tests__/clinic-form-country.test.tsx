@@ -112,6 +112,19 @@ describe("ClinicForm by practice country", () => {
     expect((document.querySelector('input[name="price"]') as HTMLInputElement).placeholder).toBe("0.00");
   });
 
+  it("elsewhere: the procedure price has no currency symbol (UX); the example follows the UI language", () => {
+    render(
+      <NextIntlClientProvider locale="en" messages={en}>
+        <ProceduresPanel procedures={[{ id: "p1", name: "Visit", duration_minutes: 30, price: 1500.5, payment_type: "private", active: true }]} currency="NONE" />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByText(/30 min · 1,500\.50 · Private/)).toBeInTheDocument();
+    fireEvent.click(screen.getByText(en.settings.addProcedure));
+    expect(screen.getByText("Price")).toBeInTheDocument();
+    expect(screen.queryByText(/\(\$\)|\(\)/)).toBeNull();
+    expect((document.querySelector('input[name="name"]') as HTMLInputElement).placeholder).toBe("e.g. First visit – Adult");
+  });
+
   it("elsewhere: Estado ou província and a country-code phone hint", () => {
     const { container } = show("US");
     expect(screen.getByText("Estado ou província")).toBeInTheDocument();

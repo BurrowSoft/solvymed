@@ -249,7 +249,8 @@
     "amountPlaceholder": "金額 ({symbol})",
     "revertConfirm": "このお支払いを未払いに戻しますか？",
     "errorInvalidAmount": "有効な金額を入力してください。",
-    "errorGeneric": "問題が発生しました。もう一度お試しください。"
+    "errorGeneric": "問題が発生しました。もう一度お試しください。",
+    "amountPlaceholderPlain": "金額"
   },
   "paymentsPage": {
     "title": "支払い",
@@ -508,7 +509,7 @@
     "noProcedures": "まだ施術メニューがありません。以下から追加してください。",
     "newProcedure": "新規メニュー",
     "procedureName": "名前",
-    "procedureNamePlaceholder": "初診、再診…",
+    "procedureNamePlaceholder": "例：初診 – 成人",
     "durationLabel": "所要時間（分）",
     "priceLabel": "料金（{symbol}）",
     "paymentTypeLabel": "支払い種別",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "スクンビット・クリニック",
     "clinicNamePlaceholderOther": "ウェルネス・クリニック",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "本町1-2-3"
+    "addressPlaceholderOther": "本町1-2-3",
+    "priceLabelPlain": "料金"
   },
   "clinics": {
     "title": "マイクリニック",
@@ -715,7 +717,7 @@
       "country": "クリニックの所在国は？",
       "countryOther": "その他の国",
       "countryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。後で変更するにはサポートにご連絡ください。",
-      "fullNameHint": "必要に応じて肩書き（Dr.、Prof.）を付けてください。あいさつに表示されます。"
+      "fullNameHint": "必要に応じて肩書き（{titles}）を付けてください。あいさつに表示されます。"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",
