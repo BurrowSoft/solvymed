@@ -127,6 +127,16 @@ describe("push fallback language and receipts by country (#239)", () => {
   });
 });
 
+describe("the printed year by country (#239)", () => {
+  it("Buddhist era for TH, Gregorian elsewhere, via the registry", async () => {
+    const { docDate } = await import("@/lib/prescriptionDoc");
+    expect(countryProfile("TH").calendar).toBe("buddhist");
+    expect(docDate("TH", "2026-10-01")).toBe("01/10/2569");
+    expect(docDate("BR", "2026-10-01")).toBe("01/10/2026");
+    expect(docDate("ZZ", "2026-10-01")).toBe("01/10/2026");
+  });
+});
+
 describe("patient identifier fields by country (#239)", () => {
   it("BR CPF; TH Thai ID (digits) + passport; Other passport/ID", () => {
     expect(profileOfKind("BR").idFields.map((f) => f.name)).toEqual(["cpf"]);

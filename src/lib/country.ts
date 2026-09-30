@@ -48,6 +48,8 @@ export type CountryProfile = {
   // Where a paid appointment's receipt is issued: the website's simple
   // recibo, or only the app (Thailand: numbered receipts).
   receipts: "web" | "app";
+  // The year printed on documents: Gregorian, or the Buddhist era (+543).
+  calendar: "gregorian" | "buddhist";
   // Examples and labels in the practice's forms (UX: they follow the
   // practice country, never the UI language). null = the generic wording.
   examples: {
@@ -71,7 +73,7 @@ const BR: CountryProfile = {
   kind: "BR", currency: "BRL", patientId: "cpf",
   idFields: [{ name: "cpf", label: "cpf", placeholder: "000.000.000-00", store: "text", maxLength: 20 }],
   phonePrefix: "+55", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo",
-  clinicTaxId: "cnpj", fallbackLocale: "pt-BR", receipts: "web",
+  clinicTaxId: "cnpj", fallbackLocale: "pt-BR", receipts: "web", calendar: "gregorian",
   examples: {
     titles: { other: "Dr., Dra., Prof." },
     registration: "registrationPlaceholder", clinicName: "clinicNamePlaceholder", address: "addressPlaceholder",
@@ -86,7 +88,7 @@ const TH: CountryProfile = {
     { name: "passport_number", label: "passport", placeholder: "", store: "text", maxLength: 30, keep: 30 },
   ],
   phonePrefix: "+66", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok",
-  clinicTaxId: "th_tax_id", fallbackLocale: "th", receipts: "app",
+  clinicTaxId: "th_tax_id", fallbackLocale: "th", receipts: "app", calendar: "buddhist",
   examples: {
     titles: { th: "นพ., พญ., ทพ., ทญ.", other: "Dr." },
     registration: "registrationPlaceholderTH", clinicName: "clinicNamePlaceholderTH", address: "addressPlaceholderTH",
@@ -99,7 +101,7 @@ const OTHER: CountryProfile = {
   kind: "OTHER", currency: "NONE", patientId: "passport",
   idFields: [{ name: "passport_number", label: "passportOrId", placeholder: "", store: "text", maxLength: 30, keep: 30 }],
   phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
-  clinicTaxId: null, fallbackLocale: "en", receipts: "web",
+  clinicTaxId: null, fallbackLocale: "en", receipts: "web", calendar: "gregorian",
   examples: {
     titles: null,
     registration: "registrationPlaceholderOther", clinicName: "clinicNamePlaceholderOther", address: "addressPlaceholderOther",
