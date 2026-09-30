@@ -79,6 +79,10 @@ export default async function SubscribePage({
   }
 
   const daysLeft = trialDaysRemaining(sub);
+  // The way out of every state (Vitor, live test): the dashboard while it
+  // lets them in, else the home page (an ended trial is sent back here).
+  const prefix = locale === "en" ? "" : `/${locale}`;
+  const exitHref = sp.success === "1" || (sub && isAccessAllowed(sub)) ? `${prefix}/dashboard` : `${prefix}/`;
   const plan = getPlanPrice(locale);
 
   const { data: professional } = await supabase
@@ -102,14 +106,18 @@ export default async function SubscribePage({
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <span className="text-5xl font-black text-teal-600">S</span>
-          <p className="mt-1 text-lg font-bold text-slate-800">SolvyMed</p>
+        <div className="mb-8 flex items-center justify-between">
+          <a href={exitHref} className="text-sm font-semibold text-slate-600 hover:text-slate-900">← {t("back")}</a>
+          <a href={exitHref} className="text-center" aria-label="SolvyMed">
+            <span className="text-5xl font-black text-teal-600">S</span>
+            <p className="mt-1 text-lg font-bold text-slate-800">SolvyMed</p>
+          </a>
+          <span className="w-12" aria-hidden="true" />
         </div>
 
         {/* Back from checkout: "activated" only once the database says so
             (the webhook writes it); until then "activating…". */}
-        {sp.success === "1" && <ActivationStatus initiallyActive={isPaidActive(sub)} />}
+        {sp.success === "1" && <ActivationStatus initiallyActive={isPaidActive(sub)} dashboardHref={`${prefix}/dashboard`} />}
 
         {/* Trial status */}
         {daysLeft !== null && daysLeft > 0 && sp.success !== "1" && (
@@ -133,8 +141,8 @@ export default async function SubscribePage({
           </div>
         )}
 
-        {/* Plan card */}
-        <div className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 overflow-hidden">
+        {/* Plan card (not once they've just paid: they're subscribed) */}
+        {sp.success !== "1" && <div className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 overflow-hidden">
           <div className="bg-teal-600 p-6 text-white">
             <h1 className="text-xl font-extrabold">{t("planName")}</h1>
             <div className="mt-2 flex items-baseline gap-1">
@@ -179,7 +187,7 @@ export default async function SubscribePage({
 
             <p className="text-center text-xs text-slate-400">{t("cancelAnytime")}</p>
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );
