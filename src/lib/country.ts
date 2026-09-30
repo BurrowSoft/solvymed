@@ -78,6 +78,13 @@ export function normalizeCountry(country: string | null | undefined): string {
   return /^[A-Z]{2}$/.test(c) ? c : "BR";
 }
 
+// The name-title examples for a practice country, in the UI language when
+// the country has them there; null = use the locale's own list.
+export function titleExamples(country: string | null | undefined, locale: string): string | null {
+  const titles = countryProfile(country).examples.titles;
+  return titles ? (titles as Record<string, string | undefined>)[locale] ?? titles.other : null;
+}
+
 export function countryProfile(country: string | null | undefined): CountryProfile {
   return PROFILES[normalizeCountry(country)] ?? OTHER;
 }

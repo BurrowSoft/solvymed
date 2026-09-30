@@ -715,7 +715,7 @@
       "country": "Où se trouve votre cabinet ?",
       "countryOther": "Autre pays",
       "countryHint": "Définit la devise, le prix de l'abonnement, la pièce d'identité du patient et le QR de paiement. Pour le changer ensuite, contactez le support.",
-      "fullNameHint": "Ajoutez votre titre si vous le souhaitez (Dr, Pr) : il apparaît dans les salutations."
+      "fullNameHint": "Ajoutez votre titre si vous le souhaitez ({titles}) : il apparaît dans les salutations."
     },
     "forgotPassword": {
       "title": "Mot de passe oublié ?",

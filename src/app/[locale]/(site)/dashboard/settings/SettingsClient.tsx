@@ -1,7 +1,7 @@
 "use client";
 
 import { amountExample, currencySymbol, formatMoney, parseMoney } from "@/lib/money";
-import { countryProfile, type Currency } from "@/lib/country";
+import { countryProfile, titleExamples, type Currency } from "@/lib/country";
 import { useTransition, useState, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { markInviteShared } from "@/lib/setupActions";
@@ -67,7 +67,7 @@ export function ProfileForm({ fullName, specialty, registration, country }: { fu
   const ex = countryProfile(country).examples;
   // The country's titles (in the UI language when it has them), else the
   // locale's own list.
-  const titles = ex.titles ? (ex.titles as Record<string, string | undefined>)[locale] ?? ex.titles.other : t("fullNameTitles");
+  const titles = titleExamples(country, locale) ?? t("fullNameTitles");
   const registrationExample = t(ex.registration);
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
