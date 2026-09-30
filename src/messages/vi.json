@@ -856,6 +856,8 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "hoặc",
     "cancelAnytime": "Hủy bất cứ lúc nào. Không ràng buộc.",
+    "lockedSettingsHint": "Dữ liệu vẫn là của bạn: xuất danh sách bệnh nhân, quản lý gói đăng ký hoặc đóng tài khoản tại",
+    "lockedSettingsLink": "Cài đặt",
     "successMessage": "Đăng ký đã được kích hoạt! Chào mừng đến với SolvyMed Pro.",
     "goToDashboard": "Đến bảng điều khiển",
     "backToDashboard": "Quay lại bảng điều khiển",

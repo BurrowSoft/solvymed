@@ -856,6 +856,8 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "o",
     "cancelAnytime": "Cancela cuando quieras. Sin compromisos.",
+    "lockedSettingsHint": "Tus datos siguen siendo tuyos: exporta tus pacientes, gestiona la suscripción o cierra tu cuenta en",
+    "lockedSettingsLink": "Configuración",
     "successMessage": "¡Suscripción activada! Te damos la bienvenida a SolvyMed Pro.",
     "goToDashboard": "Ir al panel",
     "backToDashboard": "Volver al panel",

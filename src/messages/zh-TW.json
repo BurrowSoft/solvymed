@@ -856,6 +856,8 @@
     "payCardSub": "Visa、Mastercard、American Express",
     "or": "或",
     "cancelAnytime": "隨時取消。無需承諾。",
+    "lockedSettingsHint": "你的資料仍屬於你:可在以下位置匯出病患、管理訂閱或關閉帳戶:",
+    "lockedSettingsLink": "設定",
     "successMessage": "訂閱已啟用！歡迎使用SolvyMed Pro。",
     "goToDashboard": "前往控制台",
     "backToDashboard": "返回控制台",

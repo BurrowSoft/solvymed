@@ -856,6 +856,8 @@
     "payCardSub": "Visa وMastercard وAmerican Express",
     "or": "أو",
     "cancelAnytime": "إلغاء في أي وقت. بدون التزامات.",
+    "lockedSettingsHint": "بياناتك تبقى ملكك: صدّر مرضاك أو أدر الاشتراك أو أغلق حسابك من",
+    "lockedSettingsLink": "الإعدادات",
     "successMessage": "تم تفعيل الاشتراك! مرحبًا بك في SolvyMed Pro.",
     "goToDashboard": "الانتقال إلى لوحة التحكم",
     "backToDashboard": "العودة إلى لوحة التحكم",

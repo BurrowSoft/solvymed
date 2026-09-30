@@ -7,7 +7,7 @@ import en from "@/messages/en.json";
 // the new tab, and the SolvyMed tab never navigates away from the patient.
 
 const h = vi.hoisted(() => ({ openResult: { ok: true, data: "https://signed/url" } as { ok: boolean; data?: string; code?: string } }));
-vi.mock("@/app/[locale]/(site)/dashboard/patients/files-actions", () => ({
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/files-actions", () => ({
   listPatientFiles: async () => ({ ok: true, data: [{ name: "a.pdf", path: "d/p/a.pdf", mimeType: "application/pdf", size: 10, createdAt: "2026-01-01T00:00:00Z" }] }),
   openPatientFile: async () => h.openResult,
   deletePatientFile: async () => ({ ok: true, data: null }),
@@ -15,7 +15,7 @@ vi.mock("@/app/[locale]/(site)/dashboard/patients/files-actions", () => ({
 }));
 vi.mock("@/lib/supabase/client", () => ({ createClient: () => ({}) }));
 
-import { FilesTab } from "@/app/[locale]/(site)/dashboard/patients/[id]/FilesTab";
+import { FilesTab } from "@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/FilesTab";
 
 const show = () => render(
   <NextIntlClientProvider locale="en" messages={en}>
