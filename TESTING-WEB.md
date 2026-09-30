@@ -9772,3 +9772,275 @@ scanned for raw keys (none found anywhere).
 "，" would match the other zh-TW strings.
 
 Merged at `906131f` (evidence: PR comment 5902287757).
+
+## #191 Mesclar + address / CNS / Observações (web tester 1, 2026-09-30)
+
+**First round, the dialog with 133/138/139 simulated (`bd17b53`):**
+
+**Web tester 1: 🟢 at `bd17b53` for the website's dialog, against SIMULATED 133/138/139. The live DB rows are ⏳** (133/138/139 aren't on any DB I can use). Today nothing changes: `merge-web-live` / `patient-address-live` are unmet, and with master's conditions P12 isn't built.
+
+**How it was tested:**
+- **Setup:** a local `next dev` from an isolated clone at `bd17b53`, with `merge-web-live` and `patient-address-live` **forced only in that clone** and Thai enabled.
+- **Simulation:** a test-only server preload stands in for the migrations:
+  - `merge_patients_preview` (the probe + the holdings);
+  - the patients read with 139's columns (the **real** rows from the DB plus simulated address / CNS / Observações);
+  - `merge_patients` (its payload is logged).
+- **What this checks:** the website's dialog and what it sends, not 133/139 themselves.
+- **Data:** a throwaway doctor with four real patients.
+
+| Row | pt-BR | en | th |
+|---|---|---|---|
+| (1) `patient-address-live` off | ✅ exactly as before: only the old fields (here Nome completo), no Endereço / CNS / Observações; `p_choices: {}`; no patients read with 139's columns | | |
+| (2) Different addresses + CNS (A kept vs B) | ✅ **one** "Endereço" row with the whole block ("01000-000, Rua A, 1, São Paulo, SP" vs "13000-000, Rua B, 2, Campinas, SP"), kept pre-selected; a separate "CNS (Cartão Nacional de Saúde)" row | ✅ "Address" / "CNS (Brazil's National Health Card)" | ✅ "ที่อยู่" / "CNS (บัตรสุขภาพแห่งชาติบราซิล)" |
+| (2) The kept address empty, the other filled (C kept vs D) | ✅ Endereço "—" vs the block, with **the other side pre-selected** → payload `address: "merged"` | ✅ | ✅ |
+| (3) Different notes that fit | ✅ the extra option **"As duas, juntas" pre-selected** → payload `p_choices: {notes_admin: "both"}` | ✅ "Both, joined" | ✅ "ทั้งสอง รวมกัน" |
+| (4) Notes too long together (1,500 + 600) | ✅ UX's "As observações juntas passam de 2.000 caracteres; escolha uma ou edite depois." replaces the option; **kept pre-selected** → payload `notes_admin: "kept"` (always sent) | ✅ | ✅ |
+| (6) Help P12 (`help-build` with the conditions on) | ✅ "O **Endereço** é escolhido inteiro, de um cadastro ou do outro; o **CNS** como os outros campos. Em **Observações** diferentes, vem marcado **As duas, juntas**…; se juntas passarem de 2.000 caracteres, escolha uma…". With `patient-address-live` off, P12 has no such paragraph; with master's conditions, P12 isn't built at all | ✅ "The **Address** is chosen as a whole…" | |
+
+**Not checked:** the kept record's notes as `kept + "\n—\n" + removed` after a merge. That's 139's server side, ⏳ with the live rows.
+
+**⏳ Live, after 133 + 138 + 139:**
+- the same rows against the real preview / read / merge;
+- the stored joined notes;
+- the `notes_too_long` error from the server.
+
+Merged at `bd17b53` (evidence: PR comment 5902402121). The live rows are in the LIVE entry below.
+
+## #193 Importer presets v3: address + CNS (web tester 2, 2026-09-30)
+
+**Web tester 2: 🟢 at `0a9325f1c20eea99c8452946abc67e96a5645e9f`** (importer presets v3: address + CNS)
+
+**How it was tested:**
+- **Setup:** a local `next dev` at this head with `NEXT_PUBLIC_THAI_ENABLED=1`. `patient-import-live` was forced on, and `patient-address-live` was run once off and once on. `conditions.json` was restored afterwards (`git status` clean).
+- **Doctors:** throwaway BR and TH doctors, deleted afterwards.
+- **Files:** a sample iClinic `patient.csv` and a Prontuário Verde `PACIENTE.csv` (`;`-delimited).
+- **Warnings (row 3) are simulated.** Migrations 130/131/138 aren't on prod, so the browser's `import_patients_begin` / `add_rows` / `validate` and `patient_import_rows` calls were intercepted. They returned rows carrying `address_street_invalid`, `cep_zero_padded`, `cns_invalid` and `cns_not_used`, with `cep_zero_padded: 2` in the summary. The real DB validation still needs a ⏳ live check once those migrations are applied.
+
+| # | Check | Result |
+|---|---|---|
+| 1 | **address-live OFF**: iClinic `zip_code / address / number / complement / neighborhood / city / state / cns` | ✅ all "Guardar como dado importado" (en "Keep as imported data", th "เก็บเป็นข้อมูลที่นำเข้า") |
+| 1 | OFF: Prontuário Verde `CEP / Logradouro / … / UF / CNS` | ✅ all imported data |
+| 1 | OFF: dropdown options | ✅ no address or CNS options |
+| 1 | OFF: template | ✅ no address columns (pt-BR `Nome;…;Etiquetas;Observações`; en and th the same shape) |
+| 2 | **ON**: iClinic mapping (pt-BR, BR doctor) | ✅ CEP / Rua / Número / Complemento / Bairro / Cidade / UF / "CNS (Cartão Nacional de Saúde)" |
+| 2 | ON: Prontuário Verde mapping | ✅ CNS→cns, Logradouro→Rua, Número Logradouro→Número, Complemento Logradouro→Complemento, Bairro, Cidade, UF, CEP→CEP |
+| 2 | ON: template, BR doctor | ✅ pt-BR `…;Etiquetas;CEP;Rua;Número;Complemento;Bairro;Cidade;UF;CNS;Observações`; en `…,Postal code,Street,…,State,CNS,Notes` |
+| 2 | ON: template, TH doctor (th) | ✅ `…;รหัสไปรษณีย์;ถนน/ซอย;บ้านเลขที่;อาคาร ชั้น ห้อง;แขวง/ตำบล;เขต/อำเภอ;จังหวัด;หมายเหตุ`, **no CNS** |
+| 2 | ON: re-uploading the pt-BR template | ✅ every column maps itself, CEP…CNS included |
+| 2 | ON: labels in th for a TH doctor | ✅ Thai address labels. The iClinic `cns` column still maps to CNS; the server then drops it with `cns_not_used` (row 3), which matches the design |
+| 3 | Preview reasons (simulated) | ✅ "Rua longo demais (não importado)", "CEP sem o zero à esquerda (o Excel remove): completado; confira", "CNS inválido: confira os 15 dígitos (não importado)", "CNS não importado (a clínica não é do Brasil)" |
+| 3 | Summary line (simulated) | ✅ "2 CEPs estavam sem o zero inicial…" |
+| 3 | Error-list CSV (`erros-importacao.csv`) | ✅ row 1: the three reasons joined by ` · `; row 2: `cns_not_used`; row 3: "Sem nome" |
+| 4 | Source Observações / `observation` | ✅ stays "Guardar como dado importado" (OFF and ON, both presets) |
+| 5 | pt-BR / en / th | ✅ as above. The 4 new codes + `summaryCepPadded` are present in all 15 locales |
+
+**Nit (pt copy, not blocking):** `code_address_invalid` = "{field} longo demais" reads wrong for feminine fields: "Rua / Cidade / UF longo demais". A form without gender, e.g. "{field}: texto longo demais (não importado)", would fit every field. UX's call.
+
+CI ✅.
+
+Merged at `0a9325f` (evidence: PR comment 5902535017).
+
+## #194 Patient-page dates in the clinic's time zone (React #418) (web tester 1, 2026-09-30)
+
+**Web tester 1: 🟢 at `fc525bf3c17e22d2bc2586b6dd015bc28794822b`**. The React #418 on the patient page is gone, and the dates follow the clinic's day.
+
+**How it was tested:** the PR's Vercel Preview **and master's (the control)**, Playwright, with the browser's `timezoneId` set on purpose.
+- **Patient (BR clinic):** created **by the secretary** (her token), then `created_at` set to **2026-09-29 20:00 UTC**. That's 29/09 in UTC and in the clinic (São Paulo), but **30/09 in Bangkok**.
+- **Corrections:** the kept #150 fixture (BR clinic), whose record correction was made on 29/09 around 15:00 UTC, which is **30/09 in Kiritimati (UTC+14)**.
+
+| Row | PR `fc525bf` | master (before) |
+|---|---|---|
+| (1) Browser Asia/Bangkok: "Paciente desde" | ✅ **29 de setembro de 2026** (the clinic's day); **no #418** | ❌ 30 de setembro de 2026 (the browser's day) + **React #418** |
+| (2) Browser Asia/Bangkok: "Adicionado por" | ✅ "Sec Opus Fuso (secretaria), **29** de set. de 2026" | ❌ "…, 30 de set. de 2026" |
+| (2) Browser Pacific/Kiritimati: a correction in Registros | ✅ "Corrigido em **29** de set. de 2026 por Dra Ana Opus Receita: Dados errados"; **no #418** | ❌ "Corrigido em 30 de set. …" + **React #418** |
+| Browser America/Sao_Paulo (same as the clinic) | ✅ 29 / 29, no #418 | 29 / 29, no #418 (the bug only shows when the zones differ) |
+| (3) Appointment chips | ✅ unchanged: the diff only touches the three timestamp dates (`patientSince`, "Adicionado por", `CorrectionTrail`). Appointment dates are noon-anchored date strings, and I didn't observe them separately | |
+| (4) zh-TW `patientMerge.errArchived` | ✅ now "請先還原此病患資料**，**再合併到其中。" (a full-width comma; it was ",") | |
+
+Merged at `fc525bf` (evidence: PR comment 5902559472).
+
+## #195 The importer's too-long-address warning in es / fr / it / ar (web tester 2, 2026-09-30)
+
+**Web tester 2: 🟢 at `8c98639596abda0d43ec33999fe4640310b4ca86`** (es / fr / it / ar: the too-long address warning is neutral for any field's gender)
+
+**How it was tested:**
+- **Setup:** a local `next dev` at this head with `patient-import-live` and `patient-address-live` forced on. `conditions.json` was restored afterwards.
+- **Doctors:** throwaway BR doctors, one per locale, deleted afterwards.
+- **Warnings are simulated**, as in #193: the import RPCs and `patient_import_rows` were intercepted to return `address_street_invalid` (row 1) and `address_city_invalid` + `address_neighborhood_invalid` (row 2).
+
+| Locale | Preview (feminine fields first) | Error-list CSV | Raw keys / `{field}` |
+|---|---|---|---|
+| es | ✅ "Calle: texto demasiado largo (no importado)", "Ciudad: …", "Barrio: …" | ✅ same, row 2 joined with ` · ` | none |
+| fr | ✅ "Rue : texte trop long (non importé)", "Ville : …", "Quartier : …" | ✅ | none |
+| it | ✅ "Via: testo troppo lungo (non importato)", "Città: …", "Quartiere: …" | ✅ | none |
+| ar | ✅ "الشارع: النص طويل جدًا (لم يُستورد)", "المدينة: …", "الحي: …" | ✅ | none |
+
+CI ✅.
+
+Merged at `8c98639` (evidence: PR comment 5902661903).
+
+## LIVE on prod after migrations 122–139 (not 134), 2026-09-30
+
+Migrations applied by the mobile dev (38) on Vitor's OK. Local `next dev` at master `5435bdd` against the prod DB, with the conditions forced locally. These results are the gates for flipping `merge-web-live`, `patient-address-live` and `patient-import-live`.
+
+### #183 + #191 Mesclar, live (web tester 1)
+
+**Web tester 1: LIVE 🟢 on prod (migrations 133 + 138 + 139 applied), with master `5435bdd`**. This covers the ⏳ rows of #183 (Mesclar) and #191 (address / CNS / Observações in the merge). **Gate met for `merge-web-live`.**
+
+**How it was tested:**
+- **Setup:** a local `next dev` at master `5435bdd` against the **prod DB**, with `merge-web-live` + `patient-address-live` forced only in that local copy (`patient-import-live` too, only to create one deceased record).
+- **No simulation:** real `merge_patients_preview` / `merge_patients`.
+- **Data:** throwaway doctors and patients (cleaned up); archived via the doctor's `archive_patient`.
+
+| Row | Result |
+|---|---|
+| Mesclar on the patient page | ✅ "Mesclar com outro paciente…" (the probe sees 133) |
+| Search | ✅ by name, including the archived record, tagged "01/01/1980 · **arquivado**" |
+| Compare A vs B | ✅ **only the differing fields**: Nome completo, Telefone, E-mail, **Endereço (one block)** "13000-000, Rua B, 2, Campinas, SP ‖ 01000-000, Rua A, 1, São Paulo, SP", CNS, Observações; "1 campo igual" |
+| Which record stays | ✅ "Manter este cadastro" defaults to the one that **uses the app** (B, "usa o app") |
+| The pre-selected values | ✅ the kept side's value; E-mail (kept empty) → the other side; Observações → "**As duas, juntas**" |
+| Holdings + blocked | ✅ "Consultas 2 + 1 · Prontuários 0 + 0 · Receitas 0 + 0 · Arquivos 0 + 0"; "Agendamento online: bloqueado (um dos cadastros estava bloqueado)" |
+| Confirm | ✅ "Mesclar? — Tudo de «Opus Viva Manter» passa para «Opus Viva Outro» e «Opus Viva Manter» deixa de existir. Isso não pode ser desfeito." |
+| An app account involved | ✅ the second step: "«Opus Viva Outro» usa o app. Depois de mesclar, essa pessoa verá as consultas dos dois cadastros. Confirme que são a mesma pessoa." → **São a mesma pessoa** |
+| Done | ✅ redirected to the **kept** record's page with "**Cadastros mesclados.**" |
+| The DB after the merge | ✅ one record remains (B): phone B's, **e-mail A's** (filled the empty one), address / CNS B's, **notes_admin "Nota B\n—\nNota A"** (kept first), booking_blocked true. **All 3 appointments** moved to B (patient_name updated). The app link still on B |
+| Acessos on the kept record | ✅ "29 de set. de 2026, 23:57 · Dra Opus Mescla Viva · Profissional · **Mesclou com «Opus Viva Manter»**" |
+| Kept record archived | ✅ "Restaure este cadastro antes de mesclar nele." |
+| Both records use the app | ✅ "Os dois cadastros usam o app; não é possível mesclar." |
+| A deceased record (imported with died=1 → `archived_reason imported_deceased`) | ✅ "Um dos cadastros está marcado como falecido no sistema anterior. Se isso estiver errado, restaure esse cadastro antes de mesclar."; both records remain |
+
+**Not run live:**
+- the server's `notes_too_long` (the dialog never sends "both" when too long, as checked in #191);
+- the importer's Done-step Mesclar hint (web tester 2's importer rows).
+
+Evidence: PR comments 5903223783 (#183) / 5903224332 (#191).
+
+### #189 Address / CNS / Observações, live (web tester 1)
+
+**Web tester 1: LIVE 🟢 on prod (138 + 139 applied), with master `5435bdd`**. This covers #189's ⏳ rows. **Gate met for `patient-address-live`.**
+
+**How it was tested:** a local `next dev` at master `5435bdd` against the **prod DB**, with `patient-address-live` forced only in that local copy. A throwaway doctor + secretary, plus the kept #150 fixtures for the prescription print (their addresses were cleared again afterwards).
+
+| Row | Result |
+|---|---|
+| New patient with the address, CNS "898 0012 3456 7891", Observações | ✅ saved: CEP 01310-100, Avenida Paulista, 1000, Sala 5, Bela Vista, São Paulo, SP; **cns "898001234567891"** (digits); notes_admin |
+| The patient page | ✅ "ENDEREÇO: Avenida Paulista, 1000, Sala 5 – Bela Vista – São Paulo/SP – CEP 01310-100 · **Editar**"; CNS; Observações |
+| An edit changing only Observações | ✅ the address + CNS unchanged |
+| A **stale form** (the `address_fields` marker and the address inputs removed) | ✅ saving it changed only the name; **the address, CNS and notes were kept** |
+| The DB's CNS rule (138) | ✅ PATCH `cns = 123456789012345` as the doctor → 400 `invalid_cns` |
+| Secretary | ✅ sees Endereço / CNS / Observações (no Mesclar, which is doctor-only), and **edits Observações** ("Editado pela secretária." saved) |
+| Rx print, BR clinic | ✅ under the patient: "Avenida Paulista, 1000, Sala 5 – Bela Vista – São Paulo/SP – CEP 01310-100" |
+| Rx print, TH clinic | ✅ the Thai order: "99/1, Floor 3, Soi Sukhumvit 11, Khlong Toei Nuea, Watthana, Bangkok, 10110" |
+| Rx print, only the postal code filled | ✅ no address line (BR and TH) |
+| Privacy §3.2 (the condition on) | ✅ lists the address / CNS in "Dados de pacientes registrados…" |
+
+**Not run live:** the website's mapping of the server's `invalid_cns`. The action's own check stops a bad CNS before the DB, as shown in my first #189 comment, so the UI never reaches it; the DB rule itself is confirmed above.
+
+Evidence: PR comment 5903277621.
+
+### #177 Importer steps 3–4, live (web tester 2)
+
+**Web tester 2: LIVE steps 3–4 on production (130/131/138/139 applied), master `5435bdd712eb341d76f8b0f4de03440a07c615df`.** 🟢 on everything **except one ❌: the "24 h" Desfazer.**
+
+**How it was tested:**
+- **Setup:** a local `next dev` at master against the **prod DB**, with `patient-import-live` + `patient-address-live` forced in the clone only (restored afterwards).
+- **Accounts:** throwaway BR and TH doctors, deleted afterwards (the imported patients went with them).
+- **The file:** a real iClinic `patient.csv` with 9 rows:
+  - one clean row (full address + a valid CNS + Observações);
+  - a CPF missing its 0 (10 digits) plus a 7-digit CEP;
+  - an invalid CNS;
+  - a street of ~700 characters;
+  - `active=0` (inactive) and `died=1` (deceased);
+  - a repeat of row 1's CPF;
+  - a row with no name;
+  - the CPF of a patient who already exists.
+
+| Row | Result |
+|---|---|
+| Staging + validate | ✅ `import_patients_begin` / `_add_rows` / `_validate` all return 200 |
+| Summary | ✅ "6 novos · 1 já existem · 1 com erro", "1 repetidos na planilha…", "3 com avisos…", "2 serão importados como arquivados…", "1 CPF estava sem o zero inicial…", "1 CEP estava sem o zero inicial…" |
+| Row outcomes (UI = DB) | ✅ Novo ×6; "Repete a linha 2" (`duplicate_in_file`, dup 2); "Sem nome (linha não importada)" (`full_name_missing`); "Já existe" |
+| Warnings (DB) | ✅ `cpf_zero_padded` + `cep_zero_padded` (the CPF stored as `074.474.993-07`, the CEP as `01310-100`); `cns_invalid`; `address_street_invalid` |
+| Error-list CSV | ✅ 5 lines, e.g. "CPF sem o zero à esquerda (o Excel remove): completado; confira · CEP sem o zero…", "CNS inválido: confira os 15 dígitos (não importado)", "Rua: texto longo demais (não importado)", "Repete a linha 2", "Sem nome (linha não importada)" |
+| Commit | ✅ "Importar 6 pacientes" → "6 pacientes cadastrados · 1 já existiam (pulados) · 2 importados como arquivados · 2 não importados" |
+| What was stored | ✅ the full address + CNS on the clean row; the bad CNS and the long street **left out** (null), the rest of each row kept; Observações → `patient_import_extras` {"Observações":"Obs um"} |
+| Archived codes | ✅ `archived_reason` = `imported_inactive` / `imported_deceased`. The archived list shows "Importado como inativo" / "Importado: falecido no sistema anterior"; the deceased patient's banner shows the same |
+| Desfazer on the Done step | ✅ the confirm text is right. With one new patient already used (an appointment): "Importação desfeita: 1 removidos · 1 mantidos (já em uso)", matching the DB |
+| **Desfazer "por 24 horas"** | ❌ **only on the Done step.** Leave or reload `/dashboard/patients/import` and there's no Desfazer anywhere (the page is back at step 1; nothing on Pacientes). The RPC still works (`import_patients_undo` as the doctor → `{"kept":0,"deleted":6}`), but a doctor can't reach it. The Done text ("Você pode desfazer esta importação por 24 horas") and **Help P13** ("Por 24 horas, **Desfazer importação** remove…") promise more than the UI gives. **Before the flip:** either a way back to the last import's Desfazer for 24 h, or the copy + P13 say it's only right after importing. Product call for UX |
+| Discard | ✅ "Cancelar importação" after the check → `import_patients_discard` 204, the staged rows are gone, and no patient is created |
+| TH practice (en) | ✅ a CNS column → "CNS left out (the clinic isn't in Brazil)" (`cns_not_used`); the TH postal code kept as `10110` |
+
+Screens and logs are in my scratchpad (live/).
+
+Evidence: PR comment 5903196162. The ❌ (the 24 h Desfazer only on the Done step) is closed by #202 below.
+
+## #197 Thai language public by default; the Thai market only with "1" (web tester 1, 2026-09-30)
+
+**Web tester 1: 🟢 at `9f4f580621cf13826ab236d9b95bc353b3fca214`**. The Thai language and the Thai market split exactly as in the PR's table.
+
+**How it was tested:** a local `next dev` at this head, restarted (with `.next` cleared) for each value of `NEXT_PUBLIC_THAI_ENABLED`.
+- **Requests:** raw, with no redirect following, plus the rendered HTML (a local server, because Vercel overwrites `x-vercel-ip-country`).
+- **Landing section:** counted only when rendered (`>title<`); its title also sits in the serialized messages JSON.
+
+| Check | unset (Production today) | `"1"` (Preview) | `"0"` (off switch) |
+|---|---|---|---|
+| `/th` | ✅ 200, `<html lang="th">` | ✅ 200 | ✅ **307 → /** |
+| `/th/pricing?c=x` | ✅ 200 | ✅ 200 | ✅ 307 → `/pricing?c=x` (the query kept) |
+| First visit, Accept-Language th | ✅ 302 → /th | ✅ 302 → /th | ✅ 200 English (no /th) |
+| First visit, th + `x-vercel-ip-country: TH` | ✅ 302 → /th | ✅ 302 → /th | ✅ 200 English |
+| First visit pt-BR / es | ✅ → /pt-BR / /es | ✅ | ✅ (detection intact) |
+| ภาษาไทย in the home + /auth/login switchers | ✅ yes | ✅ yes | ✅ no |
+| hreflang | ✅ includes **th** (+ the 14 others + x-default) | ✅ includes th | ✅ **no th** |
+| **Market:** the signup practice-country picker (`#signup-country`) | ✅ **none** | ✅ shown | ✅ none |
+| **Market:** the pricing country switch | ✅ **none** | ✅ `?c=BR` / `?c=TH` / `?c=OTHER` | ✅ none |
+| **Market:** the Thai landing section on /th | ✅ **not rendered** | ✅ rendered | ✅ n/a (no /th) |
+| A leftover `NEXT_LOCALE=th` cookie | (Thai is public) | | ✅ `/th/pricing?x=1` → 307 `/pricing?x=1` and `NEXT_LOCALE` cleared; no loop |
+
+So with the production value (unset), Thai stays public as Vitor wants, and no Thai pricing or practice country leaks.
+
+Merged at `9f4f580` (evidence: PR comment 5903628922). #196 (hide Thai on www) was closed unmerged: Vitor keeps Thai public.
+
+## #201 Help + App Map: Desfazer for a whole series, the refusal text (web tester 1, 2026-09-30)
+
+**Web tester 1: 🟢 at `e0865e999814b680ca7fa028ac3494791ffd546a`**. Nothing new renders.
+
+**How it was checked (offline, the Help build):**
+- `node scripts/help-build.mjs` at this head → the committed `src/content/helpArticles.json` matches the rebuild (`git diff --ignore-cr-at-eol` is empty).
+- **The new text isn't built today:** the series sentence ("Desfazer uma série remove a série inteira" / "Undoing a series removes the whole series") and the refusal text are `{pending:app-1.4.0,notice-queue-on}` / `{pending:notice-queue-on}`, and `notice-queue-on` is `met: false` (new in `conditions.json`).
+- **The App Map:** the two changed rules are `pending: ["notice-queue-on"]` and `["app-1.4.0", "notice-queue-on"]`.
+
+**One visible change (intended, per the commit "every manual Desfazer/Undo claim waits for the running queue"):**
+- **What goes:** the website notes of A2 (Nova Consulta) and A4 (Remarcar) **lose** the sentence master shows today: "Logo depois de marcar, remarcar ou cancelar, **Desfazer** aparece por 10 segundos, enquanto o aviso ao paciente ainda não saiu." (en likewise).
+- **What stays:** the rest of those notes still renders (the base line has no condition).
+- **Worth knowing:** the Schedule's Desfazer toast itself is **not** condition-gated in code. `undoToken` is issued whenever no push went out directly, so until `notice-queue-on` flips, the website shows a Desfazer the Help no longer mentions. That's under-documenting, not overclaiming, so it's not blocking. UX's call.
+
+Merged at `e0865e9` (evidence: PR comment 5904148562).
+
+## #202 The "Última importação" undo card (web tester 2, 2026-09-30)
+
+**Web tester 2: 🟢 at `a03f9ce15cd8209e6461f6e462c2e87a6da4490e`** ("Última importação" card; closes my #177 ❌). LIVE against the prod DB.
+
+**How it was tested:**
+- **Setup:** a local `next dev` with `patient-import-live` forced (restored afterwards) and `NEXT_PUBLIC_THAI_ENABLED=1`. The code rows were run at `d3af317`; `a03f9ce` only changes Help P13 + the App Map text, and those were re-read at `a03f9ce`.
+- **The browser runs in UTC**, so a card in the browser's zone instead of the clinic's would show.
+- **Accounts:** throwaway doctors + a secretary, all purged.
+
+| # | Row | Result |
+|---|---|---|
+| 0 | No import yet | ✅ no card |
+| 1 | Import 2 (PV) → leave to Pacientes → come back | ✅ "Última importação · 30/09/2026 às 01:27 · 2 pacientes de Prontuário Verde · Desfazer importação · Disponível até 01/10/2026 às 01:27." `committed_at` 04:27 UTC = 01:27 São Paulo; until = + 24 h |
+| 1 | Reload | ✅ the same card |
+| 2 | Desfazer from the card, with one patient already used (an appointment) | ✅ the same confirm ("Desfazer a importação? Os pacientes novos…") → "Importação desfeita: 1 removidos · 1 mantidos (já em uso)"; DB: only the used one left, import `status = undone`; the card is gone |
+| 3 | An undone import, after reload | ✅ no card |
+| 3 | A new import with `committed_at` backdated 25 h (service role) | ✅ fresh: the card shows; 25 h old: **no card** |
+| 3 | 0 created (the file only has an existing patient) | ✅ "Importar 0 pacientes" is disabled, nothing is committed, no card |
+| — | Secretary opens `/dashboard/patients/import` | ✅ redirected to `/pt-BR/dashboard/patients`, no card, no file input |
+| 4 | en, TH clinic (`time_zone` Asia/Bangkok) | ✅ "Last import · 09/30/2026 at 11:32 AM · 1 patient from Prontuário Verde · Undo the import · Can be undone until 10/01/2026 at 11:32 AM." (Bangkok, while the browser is in UTC) → undo "Import undone: 1 removed · 0 kept (already in use)", card gone |
+| 4 | th, TH clinic | ✅ "การนำเข้าครั้งล่าสุด · 30/09/2569 เวลา 11:33 · ผู้ป่วย 1 รายจาก Prontuário Verde · ย้อนการนำเข้า · ยกเลิกได้ถึง 01/10/2569 เวลา 11:33" (BE year) → "ย้อนการนำเข้าแล้ว: ลบ 1 · เก็บไว้ 0 (มีการใช้งานแล้ว)", card gone |
+| — | Help P13 (`a03f9ce`) | ✅ "…depois de sair da página, ele fica em **Importar pacientes**, no quadro **Última importação** (a importação mais recente)." |
+
+**Note (not a finding):** the times follow `professionals.time_zone`, not the country. A fixture with country TH but no time zone showed São Paulo time; with `Asia/Bangkok` set (as a real TH signup has), it's Bangkok.
+
+**Nit (not blocking):** en "Undo the import" (the button) vs "Import undone" is fine; pt "1 removidos" keeps the existing `undone` string's non-plural form (as on the Done step).
+
+Merged at `a03f9ce` (evidence: PR comment 5904137494). Closes #177's ❌.
