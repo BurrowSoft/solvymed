@@ -52,7 +52,8 @@ describe("AddressFields", () => {
 
 describe("privacy §3.2: address, CNS and notes only once 138 is live", () => {
   it("both languages", () => {
-    expect(conditionMet("patient-address-live")).toBe(false);
+    // Live since the flip (138 + 139 on prod, 3e's live 🟢).
+    expect(conditionMet("patient-address-live")).toBe(true);
     let r = render(<PrivacyEn turnstile={false} />);
     expect(r.container.textContent).not.toContain("CNS");
     r.unmount();
