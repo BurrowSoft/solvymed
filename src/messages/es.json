@@ -1045,7 +1045,8 @@
     "pushClosedBody": "Tu clínica cerró su cuenta de SolvyMed. Tus citas futuras se cancelaron. Para obtener una copia de tu historia clínica, escribe a support@solvymed.com.",
     "pushCancelledTitle": "Cita cancelada",
     "pushCancelledBody": "Tu cita del {date} a las {time} fue cancelada por la clínica.",
-    "closedNotice": "Tu cuenta ha sido cerrada."
+    "closedNotice": "Tu cuenta ha sido cerrada.",
+    "deletedNotice": "Tu cuenta ha sido eliminada."
   },
   "setup": {
     "title": "Configura tu clínica",

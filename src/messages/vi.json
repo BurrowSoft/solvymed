@@ -1045,7 +1045,8 @@
     "pushClosedBody": "Phòng khám của bạn đã đóng tài khoản SolvyMed. Các lịch hẹn sắp tới của bạn đã bị hủy. Để nhận bản sao hồ sơ, hãy liên hệ support@solvymed.com.",
     "pushCancelledTitle": "Lịch hẹn đã bị hủy",
     "pushCancelledBody": "Lịch hẹn của bạn vào {date} lúc {time} đã bị phòng khám hủy.",
-    "closedNotice": "Tài khoản của bạn đã được đóng."
+    "closedNotice": "Tài khoản của bạn đã được đóng.",
+    "deletedNotice": "Tài khoản của bạn đã bị xóa."
   },
   "setup": {
     "title": "Thiết lập phòng khám của bạn",

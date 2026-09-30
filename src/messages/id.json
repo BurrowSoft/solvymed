@@ -1045,7 +1045,8 @@
     "pushClosedBody": "Klinik Anda telah menutup akun SolvyMed-nya. Janji temu mendatang Anda dibatalkan. Untuk salinan rekam medis, hubungi support@solvymed.com.",
     "pushCancelledTitle": "Janji temu dibatalkan",
     "pushCancelledBody": "Janji temu Anda pada {date} pukul {time} dibatalkan oleh klinik.",
-    "closedNotice": "Akun Anda telah ditutup."
+    "closedNotice": "Akun Anda telah ditutup.",
+    "deletedNotice": "Akun Anda telah dihapus."
   },
   "setup": {
     "title": "Siapkan klinik Anda",

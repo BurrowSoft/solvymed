@@ -1045,7 +1045,8 @@
     "pushClosedBody": "Your clinic has closed its SolvyMed account. Your upcoming appointments are cancelled. For a copy of your records, contact support@solvymed.com.",
     "pushCancelledTitle": "Appointment cancelled",
     "pushCancelledBody": "Your appointment on {date} at {time} has been cancelled by the clinic.",
-    "closedNotice": "Your account has been closed."
+    "closedNotice": "Your account has been closed.",
+    "deletedNotice": "Your account has been deleted."
   },
   "setup": {
     "title": "Set up your clinic",

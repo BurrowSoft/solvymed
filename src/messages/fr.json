@@ -1045,7 +1045,8 @@
     "pushClosedBody": "Votre cabinet a fermé son compte SolvyMed. Vos rendez-vous à venir sont annulés. Pour obtenir une copie de votre dossier, écrivez à support@solvymed.com.",
     "pushCancelledTitle": "Rendez-vous annulé",
     "pushCancelledBody": "Votre rendez-vous du {date} à {time} a été annulé par le cabinet.",
-    "closedNotice": "Votre compte a été fermé."
+    "closedNotice": "Votre compte a été fermé.",
+    "deletedNotice": "Votre compte a été supprimé."
   },
   "setup": {
     "title": "Configurez votre cabinet",
