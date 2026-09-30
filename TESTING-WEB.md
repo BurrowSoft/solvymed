@@ -9072,3 +9072,703 @@ type-filter label, per my nit. Thai Pagamentos now shows "สัปดาห์�
 - **Coverage:** #158 also touches Pagamentos (the Todos / Particular /
   Convênio filter). The rows above ran at `90065f5`, before that merge.
 **Review: clean (9a).** **Merge gate: 🟢 for `90065f5`.**
+
+## #169 Settings → Clinic: the state label and samples follow the practice country (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `9474d92`, on its Vercel Preview (Playwright).
+- **Accounts:** throwaway doctors with the practice country BR, TH and GB
+  ("any other country"). Each was checked in pt-BR, en and th.
+- **Read on each page:** the label and the placeholder of each clinic
+  field.
+
+| Practice | State label (pt-BR / en / th) | State sample | City sample | Phone sample | Website sample |
+|---|---|---|---|---|---|
+| BR | ✅ "Estado" / "State" / "จังหวัด" | SP | São Paulo | (11) 3000-0000 | www.example.com.br |
+| TH | ✅ "Província" / "Province" / "จังหวัด" | none | Bangkok | 02 000 0000 | www.example.com |
+| GB | ✅ "Estado ou província" / "State or province" / "รัฐหรือจังหวัด" | none | none | "+ código do país e número" / "+ country code and number" / "+ รหัสประเทศและหมายเลข" | www.example.com |
+
+**Also checked:**
+- **Saving:** the state value still saves for each country (BR "RJ", TH
+  "Chiang Mai", GB "Greater London" round-trip to `professionals`).
+- **Locales:** `stateProvince`, `stateOrProvince` and
+  `phoneIntlPlaceholder` are in all 15 locales.
+
+**Known (not in this PR, and the PR says so):** the **CNPJ** field, with its
+"00.000.000/0001-00" sample, still shows for TH and GB practices. That's an
+open question for UX.
+
+**The branch** was up to date with master; this docs commit sits on the PR
+head.
+**Review: clean (9a).** **Merge gate: 🟢 for `9474d92`.**
+
+## PR #170 (`feat/import-extra-knowhow`, base master) — imported-data know-how (Help P11, gated) + access-log labels for `export` / `imported`, 🟢 at `0e7b9ea`
+
+Tested by web tester 2 on the Vercel Preview, with the #147 fixture
+doctor (existing access rows).
+
+| Row | Result |
+|---|---|
+| Help P11 is not public yet (`requires:import-extras-live`, unmet) | ✅ `/pt-BR/help/p11` and `/help/p11` → **404**; P6 / P7 → 200. `helpArticles.json` is unchanged in the diff |
+| Existing Acessos labels unchanged | ✅ pt "Ficha do paciente", "Receita · 29 de set. de 2026", "Arquivo · exams/raio-x opus (2).png"; en "Patient record", "Prescription · Sep 29, 2026", "File · …" |
+| New labels | ✅ `accessKindExport` / `accessKindImported`: pt "Exportado na lista de pacientes (CSV)" / "Abriu os dados importados"; en "Exported in the patient list (CSV)" / "Opened the imported data"; th "ส่งออกในรายชื่อผู้ป่วย (CSV)" / "เปิดข้อมูลที่นำเข้า". The mapping is unit-tested (`accessKindLabelKey`) |
+| Live rows of the new kinds | ⏳ not possible yet: prod's `record_access_log` check refuses `kind = 'export'` / `'imported'` (23514) until migrations 126 / 131 are applied. No row was written. Re-check the Acessos tab once they're live |
+
+**CI at `0e7b9ea`:** ✅. **Review: clean (9a).** **Merge gate: 🟢 for
+`0e7b9ea`**, with the ⏳ row above for after 126 / 131.
+
+## #171 Settings → Clinic: CNPJ only in Brazil, the Thai clinic tax ID in Thailand (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `7b49fce`, on its Vercel Preview (Playwright),
+against the prod DB (migration 112 applied).
+- **Accounts:** throwaway doctors with the practice country BR, TH and GB.
+- **Setup:** each **started with a stored CNPJ** (11.222.333/0001-81), to
+  prove that no save wipes it.
+
+| Row | Result |
+|---|---|
+| BR (pt-BR / en / th) | ✅ **CNPJ** shown (sample 00.000.000/0001-00); no tax ID field. Saving keeps the CNPJ. |
+| TH (pt-BR / en / th) | ✅ no CNPJ field; **"Nº de identificação fiscal (13 dígitos)" / "Tax ID (13 digits)" / "เลขประจำตัวผู้เสียภาษี (13 หลัก)"** |
+| GB (pt-BR / en / th) | ✅ neither field. Saving keeps the stored CNPJ. |
+| TH: 1234567890121 | ✅ saved as `clinic_tax_id = 1234567890121`, shown again after a reload |
+| TH: dashes (1-2345-67890-12-1, 3-1012-00456-78-9) | ✅ saved as digits only |
+| TH: bad checksum 1234567890123 | ✅ pt "Digite um número de identificação fiscal válido, com 13 dígitos." / en "Enter a valid 13-digit tax ID." / th "กรอกเลขประจำตัวผู้เสียภาษี 13 หลักที่ถูกต้อง"; **nothing saved** (the other fields weren't saved either) |
+| TH: 12 digits | ✅ the same error; nothing saved |
+| TH: emptied | ✅ `clinic_tax_id` cleared (null); saving it again works |
+| CNPJ after every TH / GB save | ✅ still 11.222.333/0001-81 |
+
+**Not covered here:** the Thai receipt reading the tax ID is app-only (the
+website's recibo sends Thai practices to the app). That's for the mobile
+testers.
+
+**Master sync:** master (#169, #170) merged in under this docs commit,
+cleanly.
+**Review: clean (9a).** **Merge gate: 🟢 for `7b49fce`.**
+
+## PR #168 (`fix/solvyai-cancel-status`, base master) — SolvyAI cancels only scheduled / confirmed / late appointments (app parity), 🟢 at `18b6c32`
+
+Tested by web tester 2.
+
+**Setup:**
+- **Server:** a local `next dev` with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts `list_appointments` →
+  `propose_cancel_appointment`.
+- **Data:** the prod DB, with a throwaway doctor and one appointment each:
+  completed, absent, scheduled, confirmed and tentative (deleted
+  afterwards).
+
+| Row | Result |
+|---|---|
+| C1 completed | ✅ no card; the model gets "Only scheduled, confirmed or late appointments can be cancelled; this one is completed. Tell the user." Status unchanged |
+| C2 absent | ✅ the same, "…this one is absent" |
+| C6 tentative (unchanged) | ✅ the card hard-stops: "Pedidos de consulta são aceitos ou recusados no próprio pedido.", Confirmar disabled |
+| C3 scheduled | ✅ card → Confirmar → `cancelled` |
+| C4 confirmed, turned completed before Confirmar | ✅ the executor refuses and the status stays `completed`. The panel reports `confirm_failed {appointment_not_cancellable}`; the route answers the fixed line with **0 model calls**, and the panel shows **"Só é possível cancelar consultas agendadas, confirmadas ou atrasadas. Nada foi salvo."** once, after the card's "Não foi possível salvar." |
+| Streamed answer | ✅ a normal model answer shows exactly once (no doubling from `current \|\| block.text`) |
+
+**Finding at `1c5120d`** (9a: BLOCKING, fixed at `18b6c32`): the panel's
+`play()` built a text block from the streamed deltas only. The fixed line,
+a whole text block with no deltas, rendered empty, so only "Não foi
+possível salvar." showed.
+
+**CI at `18b6c32`:** ✅. **Review: clean (9a).** **Merge gate: 🟢 for `18b6c32`.** This docs commit sits on top of a master sync (12 behind; clean).
+
+## #172 Settings → Clinic: the CNPJ validated and masked like the app (alphanumeric) (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `d69ef5b`, on its Vercel Preview (Playwright).
+- **Account:** a throwaway BR doctor.
+- **Each row:** type the CNPJ and a marker in the state field, then save.
+  Read the error, whether the marker saved, the stored `clinic_cnpj`, and
+  the field after a reload.
+
+| Row | Result |
+|---|---|
+| 11.222.333/0001-81 | ✅ saved "11.222.333/0001-81" |
+| 12.abc.345/01de-35 (lower case) | ✅ saved "12.ABC.345/01DE-35" |
+| 11222333000181 (digits only) | ✅ saved masked "11.222.333/0001-81" |
+| 11.222.333/0001-82 (bad check digit) | ✅ "O CNPJ não é válido. Confira o número." / en "The CNPJ isn't valid. Check the number."; **nothing saved** (the marker wasn't saved either) |
+| 00.000.000/0000-00 (repeated) | ✅ the same error; nothing saved |
+| 12.ABC.345/01DE-36 (alphanumeric, bad check) | ✅ the same error; nothing saved |
+| A bad CNPJ already stored (seeded "11.222.333/0001-99", and the raw "11222333000199"), editing only the state | ✅ the state saves, and the stored CNPJ is left as it was (the field shows it masked) |
+| The stored bad value → another bad value (…-98) | ✅ refused with the error |
+| Emptied | ✅ `clinic_cnpj` → null |
+| The recibo header with a raw stored CNPJ | ✅ "Clínica Opus CNPJ · CNPJ 12.ABC.345/01DE-35" (stored "12abc34501de35") and "· CNPJ 11.222.333/0001-81" (stored "11222333000181") |
+
+**Note:** in the first full run, the stored-bad-value row once came back
+with the state not saved and no error shown. It didn't reproduce in three
+more saves (both seeds, plus a valid stored CNPJ), each of which saved.
+Most likely the save's response arrived after the test's 3.5 s check.
+
+**Master sync:** master (#168, #171) merged in under this docs commit,
+cleanly.
+**Review: clean (9a).** **Merge gate: 🟢 for `d69ef5b`.**
+
+## PR #164 (`feat/solvyai-send-pix-route`, base master) — `propose_send_pix` for the app's SolvyAI (BR card; TH PromptPay answer; never on the website), 🟢 at `76ceb35`
+
+Tested by web tester 2, over HTTP against `/api/assistant`.
+
+**Setup:**
+- **Server:** a local `next dev` at `76ceb35` with `SOLVYAI_API_ENABLED=1`
+  and a fake key.
+- **Test-only preload:** it scripts `list_appointments` →
+  `propose_send_pix`.
+- **Clients:** the **app** client uses a Bearer token; the **website**
+  client uses the SSR session cookie (no Bearer).
+- **Data:** the prod DB, with throwaway doctors, one BR and one `country =
+  TH` (deleted afterwards).
+
+| Row | Result |
+|---|---|
+| BR, app, value + Pix key + patient phone | ✅ the tool is offered. Card "Enviar Pix por WhatsApp": Paciente / Consulta "Terça-feira, 06/10/2026, 09:00–09:30" / Valor "R$ 150,00" / Chave Pix. `action {kind: send_pix, args: {appointmentId}}`; `after {screen: whatsapp, highlight: appointment, then: payments}` |
+| No patient phone | ✅ no card; the model is told to offer the QR / Pix Copia e Cola |
+| Already paid | ✅ no card; "It's already paid" |
+| No value | ✅ no card; "set it first" |
+| No Pix key | ✅ no card; "add it in Settings (Help G3)" |
+| **Website** client | ✅ `propose_send_pix` is **not among the 11 tools** sent to the model. A forced call is refused: "On the website Pix isn't sent by WhatsApp… Help G4" |
+| TH practice (pt-BR / en / th) | ✅ **never a card**. Text "Em clínicas na Tailândia, o paciente paga escaneando o QR PromptPay da consulta." / en / th, plus an `open` block "Abrir QR" / "Open QR" / "เปิด QR" → `{screen: schedule, date, id, params: {sheet: "1"}}` (web href `…/dashboard/schedule?date=…&sheet=1&highlight=<id>`). The model is told to add nothing |
+
+**CI at `76ceb35`:** ✅. **Review: clean (9a).** **Merge gate: 🟢 for `76ceb35`.** This docs commit sits directly on the PR head. The branch is 25 behind master, and a master merge conflicts in code (src/lib/assistant/server/handle.ts), so the web dev syncs it.
+
+## #160 Help A8 / C9 + App Map know-how for app 1.4.0 (mobile #137 / #141), pending `app-1.4.0` (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `3937f0b`. It's know-how only
+(`content/help/01-agenda.md`, `04-configuracoes.md`, `conditions.json`,
+`src/lib/solvyai/app-map.ts`), so it was checked offline.
+
+| Row | Result |
+|---|---|
+| New condition | ✅ `app-1.4.0` is `met: false` ("App 1.4.0 is released on Google Play…") |
+| Help lines | ✅ each new line (A8 in the patient's app; C9 in the app's Desfazer / Abrir toast, pt + en) is `{pending:app-1.4.0}` |
+| The built Help while unmet | ✅ `node scripts/help-build.mjs` at the PR head → `src/content/helpArticles.json` has **no content change** (`git diff --ignore-cr-at-eol` is empty; the only difference is LF vs CRLF). The built JSON isn't in the PR, as expected. |
+| App Map | ✅ the new booking-decision rule is `pending: ["app-1.4.0"]`, and the new GENERAL C9 rule is `pending: ["app-1.4.0", "solvyai-live"]`. Nothing new is live (`ruleIsLive` needs every condition met). |
+| Tests | ✅ `help-articles` + the App Map tests: 28/28 (vitest exit 0) |
+
+**Not synced:** a master merge **conflicts in `src/lib/solvyai/app-map.ts`**
+(code), so the web dev syncs it. This docs commit sits directly on the PR
+head. A re-check of the built JSON after the sync is quick.
+**Review: clean (9a).** **Merge gate: 🟢 for `3937f0b`.**
+
+## #161 Dark theme (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `3b060e32d9cd84c0c754d8c05aac3d16cb583ddf`** (the dark theme, synced head)
+
+**How it was tested:**
+- **Where:** the Vercel Preview, plus a local `next dev` at the same head
+  for the SolvyAI panel, since SolvyAI is off on the Preview.
+- **Data:** the #147 fixture doctor, with one appointment per status for
+  the badges, and throwaway doctors / a secretary (deleted afterwards).
+
+| Row | Result |
+|---|---|
+| Configurações → Aparência | ✅ "Aparência · O tema do painel neste navegador. Impressões e e-mails ficam sempre claros. · Automático · Claro · Escuro". Escuro applies at once, with cookie `sm_theme=dark` |
+| No flash / persisted | ✅ the server-rendered HTML of /dashboard already has `data-theme="dark"`; it holds after a reload |
+| Readability (dark) | ✅ an automated contrast scan of every visible text element (colours resolved through a canvas, so oklch works) found **0 below 3:1** on: Início, Agenda (lista + semana), Pacientes, the patient page + tabs Receitas / Exames / Arquivos / Registro de acessos, Pagamentos, Configurações, Clínicas. Screenshots checked |
+| Status badges | ✅ Agendado / Confirmado / Concluído / Cancelado / Ausente / Atrasado / Solicitado each keep a distinct dark-tinted chip with light text |
+| Claro with the OS in dark | ✅ stays light (`data-theme=light`, white cards) |
+| Automático | ✅ follows the OS: dark cards when the OS is dark; white after `colorScheme → light` |
+| Secretary | ✅ has Aparência |
+| Print view under Escuro and under Automático + OS dark | ✅ `#print-doc` is scoped `data-theme=light`, white background, dark text. In print media only the document is visible (checked after the nav's CSS transition settles). The Chromium PDF is 1 page |
+| Public site / Help / login (signed-out visitor with `sm_theme=dark`) | ✅ not themed (no theme root; white pages) |
+| The tour in dark | ✅ works. **Nit:** its step card stays white with dark text on the dark dashboard (readable, but not themed); the "Continuar o tour?" toast is themed |
+| SolvyAI panel in dark (local) | ✅ the panel surface is dark, and the answer, card and chips are readable. Items under 4.5:1 are the known white-on-teal-600 (3.74, both themes, as the PR notes), the small grey footnotes (3.74; lighter than slate-400 on white in light mode), and the disabled Enviar |
+| Console | ✅ no errors |
+
+Merged at `3b060e3` (evidence: PR comment 5898934052).
+
+## #165 A clinic proposal shows the proposed time; the pt-BR trial "=0" plural (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `6033260`, on its Vercel Preview (Playwright).
+- **Account:** a throwaway doctor.
+- **Seeded requests** (all for 13/10), shown in "Solicitações de consulta":
+  - a clinic proposal with a proposed date + time (14/10 15:30);
+  - a patient's reschedule request (`scheduled_by = patient`);
+  - a clinic proposal with a date but **no** proposed time;
+  - a plain tentative request.
+
+| Row | pt-BR | en | th |
+|---|---|---|---|
+| Clinic proposal (date + time) | ✅ "Aguardando resposta do paciente / **Proposto: qua., 14 de out. · 15:30**" | ✅ "Proposed: Wed, Oct 14 · 3:30 PM" | ✅ "เสนอ: พุธ 14 ต.ค. · 15:30" |
+| The patient's reschedule request | ✅ no "Proposto" (it keeps "Remarcação solicitada / Solicitado: qui., 15 de out. · 11:00") | ✅ | ✅ |
+| Clinic proposal without a proposed time | ✅ shown, with no proposed line | ✅ | ✅ |
+| Plain request | ✅ no proposed line | ✅ | ✅ |
+| Proposed lines in the panel | ✅ exactly 1 | ✅ 1 | ✅ 1 |
+
+**The pt-BR trial plural (`settings.subscriptionTrial`):**
+- **How it was checked:** formatted with the app's `use-intl`.
+- **This PR:** n=0 "Teste grátis: **faltam 0 dias**", 1 "falta 1 dia", 2
+  "faltam 2 dias", 15 "faltam 15 dias".
+- **Master, before:** gave "**falta 0 dia**".
+- **en / th:** unchanged ("0 days left" / "เหลืออีก 0 วัน").
+- **Live:** the web's Settings → Assinatura only shows the trial line
+  while days > 0 (`subscriptionPlan`), so 0 can't be seen there today.
+  The fix is for parity with the app.
+
+**Master sync:** master merged in under this docs commit, cleanly.
+**Review: clean (9a).** **Merge gate: 🟢 for `6033260`.**
+
+Merged at `376cdd9` (the docs commit was dropped at merge; restored here).
+
+## #166 The recibo's back link says "Voltar aos pagamentos" (web tester 1, 2026-09-30)
+
+**What was tested:** PR head `bbbc0c4`, on its Vercel Preview (Playwright).
+- **Accounts:** throwaway BR and TH doctors, each with a paid appointment.
+- **Regression check:** P8, on the kept #150 fixture.
+
+| Page | pt-BR | en | th |
+|---|---|---|---|
+| BR recibo (the document shows) | ✅ "← Voltar aos pagamentos" → /pt-BR/dashboard/payments | ✅ "← Back to payments" → /dashboard/payments | ✅ "← กลับไปที่การชำระเงิน" → /th/dashboard/payments |
+| TH practice recibo URL (hint, no document) | ✅ the same label → Pagamentos | ✅ | ✅ |
+| P8 history print (regression) | ✅ still "← Voltar ao paciente" → the patient's page | | |
+
+**Not run live:** the recibo's country-error page. It passes the same
+`backToPayments` label per the diff; the injection runs are in #153 / #162.
+
+**Master sync:** master merged in under this docs commit, cleanly.
+**Review: clean (9a).** **Merge gate: 🟢 for `bbbc0c4`.**
+
+Merged at `1b92b9e` (the docs commit was dropped at merge; restored here).
+
+## #173 SolvyAI add_patient Desfazer never deletes a patient in use (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `1a50a5390867812d117d9d5f02b012d1a1a04a49`** (SolvyAI's `add_patient` Desfazer never deletes a patient in use)
+
+**How it was tested:**
+- **Server:** a local `next dev` at this head with `SOLVYAI_API_ENABLED=1`,
+  `NEXT_PUBLIC_SOLVYAI_ENABLED=1` and a fake key.
+- **Test-only preload:** it scripts `propose_add_patient`.
+- **Data:** the prod DB, with a throwaway doctor (deleted afterwards).
+
+| Row | Result |
+|---|---|
+| Add a patient → an appointment is booked for them before Desfazer (a REST insert standing in for another tab) → Desfazer | ✅ the toast goes "…" (pending), then **"Não foi possível desfazer. Abra o item para ajustar."** + **Abrir**. The patient **stays**, and the appointment keeps its `patient_id` (not orphaned). Abrir → `/pt-BR/dashboard/patients/<id>?highlight=<id>` |
+| Add a patient, unused → Desfazer | ✅ the patient row is deleted; the toast says "Desfeito" |
+
+**FYI (not this PR):** after SolvyAI saves a new doctor's first patient,
+the page ended on `/pt-BR/dashboard?setup=1` instead of the patient's page.
+It's likely the setup checklist's own navigation; #134 also stayed on the
+dashboard.
+
+Merged at `1a50a53` (evidence: PR comment 5899224987).
+
+## #174 Patient Delete only with no history and no appointments (web tester 1, 2026-09-29)
+
+**First round:**
+
+**Web tester 1: ❌ at `6587772078aab7def5207d4b9fe5408dccf27450`**. One Help label finding; everything else works.
+
+**How it was tested:**
+- **Where:** the Vercel Preview (Playwright), plus a local `next dev` at the same head.
+- **Migration 134** isn't applied, so a test-only preload answers the patients DELETE with its `patient_has_appointments` error for one patient.
+- **Accounts:** throwaway doctors, cleaned up, and the kept #150 fixture for a patient with records.
+
+| Row | Result |
+|---|---|
+| A patient with nothing | ✅ Informações shows **Arquivar cadastro** + **Excluir Paciente**. Excluir → confirm "Excluir Opus Limpo? Esta ação não pode ser desfeita." → deleted |
+| Only a past **cancelled** appointment | ✅ only Arquivar cadastro |
+| A future appointment | ✅ only Arquivar cadastro |
+| A patient with records (fixture) | ✅ only Arquivar cadastro |
+| Race: the page is open, an appointment is added elsewhere, then Excluir | ✅ as expected before 134: the delete goes through, and the appointment stays with `patient_id = null`. **Re-check after 134** (it should refuse) ⏳ |
+| 134's refusal (local injection) | ✅ pt "Este paciente tem consultas registradas, então não pode ser excluído. Você pode arquivá-lo." + an **Arquivar cadastro** button that opens the archive dialog ("Arquivar Opus Guarda 134? …"); the patient isn't deleted. en: "This patient has appointments on record, so they can't be deleted. You can archive them instead." + **Archive patient** |
+
+**❌ Help P3, pt:**
+- **What:** the new web note says "**Excluir cadastro** só aparece para pacientes sem prontuário, receita, arquivo e sem nenhuma consulta…". The button on screen reads **"Excluir Paciente"** (`patientDetail.deletePatient`). ("Arquivar cadastro" does match.)
+- **en:** "**Delete patient** shows only…" vs the button "Delete Patient" differs only in case, which is fine.
+- **Fix:** either say **Excluir Paciente** in the Help, or rename the button (for example to "Excluir cadastro", to pair with "Arquivar cadastro"). Check with UX / the app's wording.
+
+**Re-check:**
+
+**Web tester 1: 🟢 at `f8788c9270ec76e293124571fd795c6a4410d26b`**. This resolves the ❌ on `6587772`.
+
+**What changed since `6587772`:** the button's wording, per UX. It now pairs with Arquivar cadastro, and Help P3 is unchanged. It was checked on the Vercel Preview (Playwright) with a clean patient:
+
+| Locale | Info buttons | Help P3 web note |
+|---|---|---|
+| pt-BR | ✅ **Arquivar cadastro** · **Excluir cadastro** | ✅ "…clique em **Arquivar cadastro**… **Excluir cadastro** só aparece para pacientes sem prontuário, receita, arquivo e sem nenhuma consulta; os demais só podem ser arquivados." |
+| en | ✅ **Archive patient** · **Delete patient** | ✅ "…click **Archive patient**… **Delete patient** shows only for patients with no record, prescription, file or appointment; the others can only be archived." |
+| th | ✅ **เก็บประวัติผู้ป่วยเข้าคลัง** · **ลบประวัติผู้ป่วย** | (no th Help) |
+
+**Carried over from `6587772`:** the commits since only change message strings (the button labels, plus `deleteHasAppointments` wording in th/fr/de/es). So the behaviour rows in my previous comment still hold:
+- Delete shows only with no history and no appointment (past or cancelled ones count);
+- 134's refusal gives the message + an Arquivar button → the archive dialog.
+
+**Still ⏳:** re-check the open-page race after migration 134 is applied; it should then refuse.
+
+Merged at `f8788c9` (evidence: PR comments 5899204969 / 5899348036).
+
+## #175 Imported-data merge know-how: Help P12 gated + the "merged" access label (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `85940262b7eebdaa7912c78002dd448562f3e008`** (the merge know-how: Help P12 gated + the `merged` access label), with one ⏳ for after migration 133
+
+Tested on the Vercel Preview with the #147 fixture doctor (existing access
+rows).
+
+| Row | Result |
+|---|---|
+| Help P12 not public yet (`merge-patients-live` unmet) | ✅ `/pt-BR/help/p12` and `/help/p12` → **404** (P6 → 200). `src/content/helpArticles.json` is unchanged in the diff |
+| App Map rule | ✅ pending on `merge-patients-live` (conditions.json `met: false`) |
+| Existing Acessos labels | ✅ unchanged: pt "Ficha do paciente / Receita · … / Arquivo · …", en "Patient record / Prescription · … / File · …" |
+| New label `accessKindMerged` | ✅ present in **all 15 locales**: pt "Mesclou com «{name}»", en "Merged with “{name}”", th "รวมกับ «{name}»" |
+| A live `merged` row in the Acessos tab | ⏳ not possible yet: prod's `record_access_log` kind check refuses `'merged'` (23514, checked just now; nothing written). Re-check "Mesclou com «Nome Teste»" once migration 133 is applied |
+
+CI ✅ (lint, typecheck + unit tests, Vercel).
+
+Merged at `8594026` (evidence: PR comment 5899445557).
+
+## #177 Import patients from another system (migrations 130/131), behind `patient-import-live` (web tester 1, 2026-09-29)
+
+**First round (`c710bd6`):**
+
+**Web tester 1: not 🟢 yet at `c710bd6cbdc80d5db27f0fbe1015096028295442`**. Steps 1–2 are ✅ with **one detection finding** (⚠, for UX / mobile dev 38). Steps 3–4 are ⏳ because **migrations 130/131 aren't applied** (there's no staging DB; prod only, waiting for Vitor's OK).
+
+**How it was tested:**
+- **The Preview (condition unmet):** the gating.
+- **Steps 1–2:** a local `next dev` from an isolated clone at this head (`npm ci`, since SheetJS is new). `patient-import-live` was flipped **only in that clone** (uncommitted), against the prod DB.
+- **Accounts:** throwaway, and cleaned up.
+
+**Gated off (Preview, condition unmet):**
+
+| Row | Result |
+|---|---|
+| Pacientes (empty and with a patient) | ✅ no "Importar pacientes" and no "Vindo de outro sistema?" link |
+| `/pt-BR/dashboard/patients/import` | ✅ 404 |
+| Help P13 | ✅ `/pt-BR/help/p13` and `/help/p13` → 404; not in the Help index |
+
+**Steps 1–2 (local, condition met):**
+
+| Row | Result |
+|---|---|
+| Entry points | ✅ "Importar pacientes" on Pacientes + "Vindo de outro sistema? Importe seus pacientes." on the empty list → `/pt-BR/dashboard/patients/import` |
+| Step 1 | ✅ "Nada é salvo até você confirmar a importação." banner |
+| The template | ✅ "Baixar modelo de planilha" → `solvymed-pacientes-modelo.csv` (UTF-8 BOM, `;`): Nome, CPF, Data de nascimento, Sexo, Celular, E-mail, RG, Profissão, Etiquetas, Observações + one invented row (the BR practice's ID column) |
+| A `.zip` | ✅ "Descompacte o arquivo .zip e envie a planilha de pacientes (por exemplo, patient.csv ou PACIENTE.csv)." |
+| iClinic `patient.csv` | ✅ detected "iClinic". `name` and `civil_name` → Nome completo (priorities). `active` / `died` → "Situação no sistema anterior (inativo / falecido → arquivado)". cns / patient_code / social_gender → Guardar como dado importado |
+| Sensitive column, off + keep switch | ✅ iClinic `ethnicity` starts **off**; switched on → "Será guardado como dado importado". PV `Pai` starts off. PV `CLI_ID` → Ignorar |
+| Prontuário Verde `PACIENTE.csv` (`;`) | ✅ detected "Prontuário Verde". Nome / Nascimento / Sexo / CPF / Telefone1 mapped, and Mãe / CNS / PAC_ID kept as imported data |
+| XLSX, General-format numbers | ✅ examples show the **exact digits**: phone `5511987654321` (13), CNS `898001234567890` (15); a CPF number in a `00000000000`-formatted cell shows `01234567890` (**leading zero kept**). The date arrives as the Excel serial (31173), converted by the DB per the PR |
+| First + last name | ✅ "Nome completo = Nome + Sobrenome"; "Usar colunas separadas" → Nome → Nome completo, Sobrenome → Guardar como dado importado |
+| Secretary | ✅ `/patients/import` → redirected to `/pt-BR/dashboard/patients`; no import button |
+
+**⚠ Finding: a generic sheet is detected as Prontuário Verde:**
+- **Why:** `detectSource` matches on headers only. PV's fingerprint is `headers_all: [Nome, Nascimento]` + `headers_any: [CLI_ID, PAC_ID, Prontuário, Mãe, CNS]`, and the `files: ["PACIENTE.csv"]` hint isn't used.
+- **What happens:**
+  - a sheet `Nome | Telefone | CNS | Nascimento` (any file name) → **"Prontuário Verde"**, and its **Telefone** column defaults to "Guardar como dado importado" instead of Telefone (PV only knows Telefone1–3). Columns like E-mail / Celular would miss the same way;
+  - without the CNS column → "Planilha (outro sistema)", and Telefone → Telefone ✅;
+  - switching **Origem** to "Planilha" by hand fixes the mapping ✅.
+- **Why it matters:** Nome + Nascimento + Mãe/CNS is common in any Brazilian clinic spreadsheet. The doctor has to notice the wrong Origem in the table.
+- **Suggestion:** require a PV-only header (PAC_ID / CLI_ID / Prontuário) rather than the generic Mãe / CNS, or use the file name. The presets are copied from mobile (`feat/import-presets`), so the app likely has the same detection.
+
+**⏳ 130/131 not applied (steps 3–4, to run live when mobile dev 38 applies them):**
+- staging + validate: the summary counts and the first 50 rows with the error / warning codes;
+- the **error-list CSV** opening in Excel with names formula-neutralised;
+- archived codes (active=1 / died=0 → nothing; active=0 / died=1 → archived with its reason, and the "Importado como inativo" / "falecido" labels);
+- the stored digits (phone / CNS / CPF with its zero) after commit;
+- commit → the 24 h **Desfazer** (confirm) deletes only untouched patients;
+- Cancelar → discard.
+
+**Re-check after presets v2 (`276a118`; `e32e087` only adds the master merge of #178):**
+
+**Web tester 1: steps 1–2 🟢 at `276a118`** (presets v2). The ⚠ detection finding from my previous comment is resolved. **Steps 3–4 are still ⏳ until 130/131 are applied**, so #177 as a whole stays ⏳.
+
+**How it was tested:** the same local setup as before (an isolated clone at `276a118`, `patient-import-live` flipped only in that clone). Each file was uploaded in step 1 and the detected **Origem** and the mapping read in step 2.
+
+| File (name → headers) | Detected | Mapping |
+|---|---|---|
+| `clinica-mae-cns.xlsx` → Nome, Nascimento, Mãe, CNS, Telefone (the case that was wrong) | ✅ **Planilha (outro sistema)** | ✅ **Telefone → Telefone**; Mãe / CNS → Guardar como dado importado |
+| `generic-numbers.xlsx` → Nome, Sobrenome, Telefone, CNS, CPF, Nascimento (was PV before) | ✅ Planilha | ✅ Telefone → Telefone; Nome + Sobrenome joined; the exact digits (5511987654321, 898001234567890, CPF **0**1234567890) |
+| `export-pv.csv` → a real PV header set (PAC_ID, CLI_ID, Telefone1, …) | ✅ **Prontuário Verde** | ✅ Telefone1 → Telefone, CLI_ID → Ignorar, PAC_ID → Guardar. An extra plain "Telefone" column → Guardar, since Telefone1 already fills the phone (priority) |
+| `PACIENTE.csv` (a real PV export) | ✅ Prontuário Verde | ✅ as before; Pai (sensitive) off |
+| `PACIENTE.csv` with generic headers (Nome, Nascimento, Telefone) | ✅ Prontuário Verde (by the file name) | ✅ Telefone → Telefone (the generic guess for a column the preset doesn't know) |
+| the same file named `paciente.csv` | ✅ **Planilha** | ✅ |
+| `ic-civil.csv` → name, civil_name, birth_date, mobile_phone | ✅ **iClinic** | ✅ both names → Nome completo; mobile_phone → Telefone |
+| `ic-social.csv` → name, birth_date, social_gender, mobile_phone | ✅ iClinic | ✅ |
+| `patient.csv` (a real iClinic export) | ✅ iClinic | ✅ as before |
+| `patient.csv` with generic headers (name, birth_date, phone) | ✅ **Planilha** (the file name alone no longer means iClinic outside a ZIP) | ✅ phone → Telefone |
+
+**⏳ 130/131 not applied:** steps 3–4 (staging / validate, the error-list CSV, archived codes, the stored digits, commit → 24 h Desfazer, discard). These run live when mobile dev 38 applies 130/131 on Vitor's OK.
+
+Merged at `e32e087`, hidden (evidence: PR comments 5900370925 / 5900568336).
+
+**⏳ The gate for flipping `patient-import-live`:** steps 3–4 live on prod once 130/131 are applied (mobile dev 38, on Vitor's OK).
+
+## #178 Privacy §6e: patient notices, behind `notice-outbox-live` (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `6d6dfe9e91200364b0be04e7f4db8528b3f6b0c1`** (privacy §6e, patient notices, gated on `notice-outbox-live`)
+
+| Row | Result |
+|---|---|
+| Today (the gate unmet), Preview vs the master Preview | ✅ `/pt-BR/privacy`, `/privacy`, `/pt-BR/terms`, `/terms`: the main text is **identical** (137 / 61 lines). The source has 0 hits for "6e.", "Avisos ao paciente", "Patient notices", "cerca de 1 minuto", "about 1 minute", "sem nomes nem dados" |
+| Gate forced (local `next dev` at this head, `notice-outbox-live` → true, reverted afterwards) vs today | ✅ in each language exactly **two lines are added** and none changed: pt "6e. Avisos ao paciente" + the paragraph ("…espera cerca de 1 minuto… sem nomes nem dados clínicos, por 30 dias, e depois o apagamos."); en "6e. Patient notices" + "…waits about 1 minute… with no names or clinical data, for 30 days, and then delete it." Placed after §6's international-transfer paragraph, before "7." |
+| Policy = what runs (migration 135 on mobile `feat/notice-outbox`) | ✅ `send_after` defaults to now() + **60 s**. The `patient_notice_outbox` columns are ids, `kind` (booked / moved / cancelled), slot date / time, status, timestamps and a ≤300-char error, with **no names or clinical fields** (recipient / created_by are user ids). "every row is deleted **30 days** after it was queued" (the daily purge). The §6e wording (which appointment, the kind, the time, whether sent) matches |
+
+CI ✅.
+
+Merged at `6d6dfe9` (evidence: PR comment 5900313440).
+
+## #179 Patient notices through 135's outbox (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `1b3732064e09e49eefb634d1b1d00ca9cd507cb7`** (patient notices through 135's outbox; today, with 135 not live, everything goes out directly as before)
+
+**How it was tested:**
+- **Server:** a local `next dev` at this head with a test-only Expo sink
+  (pushes are logged with a timestamp, never sent).
+- **Data:** the prod DB (135 isn't applied, so enqueue answers
+  `outbox_not_live`), with a throwaway doctor and a patient with the app
+  (linked, with a device token), all deleted afterwards.
+- **Flow:** everything through the website's own screens.
+
+| Action | Push (time from the click, on `next dev`) |
+|---|---|
+| Nova Consulta for the patient | ✅ at once (+7.2 s, incl. dev compile): "Nova consulta · Clínica Opus Outbox marcou uma consulta para você em 06/10/2026 às 10:00." |
+| Remarcar → Wed 11:00 | ✅ +6.1 s: "Consulta remarcada · …mudou sua consulta de 06/10/2026 às 10:00 para 07/10/2026 às 11:00." |
+| Status → Cancelado | ✅ +5.6 s: "Consulta cancelada · …cancelou sua consulta de 07/10/2026 às 11:00. Para marcar outra, abra o app." (row `cancelled`) |
+| Arquivar cadastro (with a future appointment) | ✅ +4.7 s: the appointment is `cancelled` + its "Consulta cancelada" push |
+
+- **No hold:** there's no 60 s wait and nothing is duplicated. The direct
+  path behaves as before; the outbox itself is ⏳ post-135.
+- **Hydration:** the local `next dev` logged a hydration mismatch on the
+  patient page. The production builds of this PR's Preview and of master
+  show **no** error (no React #418), so it's dev-only noise and not from
+  this PR.
+
+Merged at `1b37320` (evidence: PR comment 5901094904).
+
+## #180 The Schedule's manual Desfazer (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `b648044b05465a5dae40f5d57cc34dfbbab0970f`** (the Schedule's manual Desfazer; stacked on #179)
+
+**How it was tested:**
+- **Server:** a local `next dev` at this head with a test-only Expo sink
+  (pushes are logged, never sent).
+- **Data:** the prod DB (135 not live), with a throwaway doctor, a patient
+  **without** the app and one **with** it (linked + token), all deleted
+  afterwards.
+- **Flow:** everything through the Schedule's own screens.
+
+| Row | Result |
+|---|---|
+| Book (no app) | ✅ "Consulta marcada · Desfazer (10 s)" → Desfazer → "Desfeito."; the row is deleted; no push |
+| A weekly series ×3 (no app) | ✅ one toast → Desfazer → **all 3** rows deleted |
+| Remarcar 06/10 14:00 → 07/10 15:00 (no app) | ✅ "Consulta remarcada" → Desfazer → back to 06/10 14:00 |
+| Status → Cancelado (no app), **double-click** Desfazer | ✅ "Consulta cancelada" → the button turns "…" at once → "Desfeito."; status restored to `scheduled` once |
+| Book for the patient WITH the app | ✅ the push goes out directly ("Nova consulta"), and **no toast** is offered |
+| Token tampered (`iat` −1 ms) | ✅ replaying the captured undo request → `{"ok":false}`; the status stays cancelled |
+| Token tampered (the last chars of `sig`) | ✅ `{"ok":false}`; nothing reverted |
+| The original token replayed within the TTL (control) | ✅ `{"ok":true}`; restored (proves the replay path is real) |
+| The original token replayed after **2 min 5 s** | ✅ `{"ok":false}`; the status stays cancelled |
+| Help A1 / A4 Desfazer lines | ✅ hidden: `{pending:notice-outbox-live}` (and app-1.4.0), so `helpArticles.json` doesn't contain them |
+
+**Note for UX (not blocking):** the website's toast already works today for
+patients without the app, but Help A1 / A4 describe it only once
+`notice-outbox-live` is met. The PR body's "live with this web release"
+doesn't match the gating in the content.
+
+Merged at `b648044` (evidence: PR comment 5901209770).
+
+## #181 The tour card + Novidades popup follow the dark theme (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `de8222043a0d784ba06dd2ac78a4c3270681eeeb`** (the tour card + Novidades popup follow the dark theme; my #161 follow-up)
+
+**How it was tested:**
+- **Tour card:** on the Vercel Preview, with a fresh doctor per theme
+  (the first-visit tour, steps 1 and 2).
+- **Novidades popup:** on a local `next dev` at this head with
+  `NEXT_PUBLIC_NEWS_ENABLED=1` and `/dashboard?news=1`, since the flag is
+  off on the Preview.
+- Colours were resolved through a canvas and the contrast computed per
+  text.
+
+| Theme | Tour card | Novidades popup |
+|---|---|---|
+| Escuro | ✅ bg **rgb(15,23,43)** (dark), portalled inside `[data-theme-root=dark]` | ✅ bg rgb(15,23,43), inside the dark root |
+| Automático + OS dark | ✅ dark, inside `[data-theme-root=auto]` | ✅ dark |
+| Claro | ✅ white (light) | ✅ white |
+| Automático + OS light | ✅ white | — |
+
+- **Positioning unchanged:** the tour card is at 650,70 (step 1) and
+  944,134 (step 2), 320×204, in every theme. The popup is centred at
+  416,308, 448×284, in every theme.
+- **Contrast:** in dark the lowest texts are "Pular tour" / "Próximo" /
+  "Ver as novidades" at 3.74 (the white-on-teal-600 button noted in
+  #161). In light, "Pular tour" is 2.63. Nothing new.
+
+Merged at `de82220` (evidence: PR comment 5901315961).
+
+## #183 Mesclar pacientes on the website (migration 133), hidden until 133 (web tester 1, 2026-09-29)
+
+**Web tester 1: the hidden-until-133 parts are 🟢 at `0ec6b4971311b9042a8d4af6a0313c4882300556`. Everything that needs migration 133 is ⏳** (not applied; there's no staging DB). #183 can merge hidden, like #177.
+
+**How it was tested:** the Vercel Preview (Playwright) against the prod DB, which has no 133, so the probe gets "function missing". A throwaway doctor with two same-name patients, pt-BR and en.
+
+| Row | Result |
+|---|---|
+| The patient page → Informações | ✅ **no "Mesclar com outro paciente…"** (pt and en). The buttons are the same as master: Registro de acessos, Gerar código, Editar Paciente, Bloquear agendamentos, Arquivar cadastro, Excluir cadastro |
+| Page load with the probe | ✅ no extra cost visible (3.3–5.6 s on a cold Preview, the same as master's 3.3–5.9 s); no new console errors (see the note) |
+| Help P12 | ✅ `/pt-BR/help/p12` and `/help/p12` → 404; not in the Help index |
+| The built Help while unmet | ✅ `help-build` at this head → `helpArticles.json` has **no content change** (`--ignore-cr-at-eol`). P12 is `requires:migration-133` (met: false), with the app's steps `{pending:merge-patients-live}` |
+| App Map | ✅ the new web rule is `pending: ["migration-133"]` |
+
+**Notes:**
+- **The probe caches any error that has a code as "supported":** `if (!error \|\| error.code) return (known = true)`. Only PGRST202 / "does not exist" means hidden. A transient DB error with a code (e.g. 57014 timeout) on the first probe would show Mesclar until that server instance restarts, and the actions would then fail with the generic error. Minor; your call.
+- **Pre-existing, not this PR:** the patient page logs React **#418** (hydration text mismatch) on **master** too, in pt and en. The "400" in the console is an `OPTIONS` preflight to `/pt-BR`, from my test harness's bypass header, not the app.
+
+**⏳ Needs migration 133 (run when mobile dev 38 applies it, on Vitor's OK):**
+- search by name / ID, archived patients included and tagged;
+- the comparison shows only differing fields; the kept side defaults to the app user; the "{n} campos iguais" / holdings / booking-blocked lines;
+- the Mesclar? confirmation; the second "São a mesma pessoa" step when an app account is involved;
+- the kept record opens with "Cadastros mesclados."; the Access tab shows "Mesclou com «…»";
+- the error texts (both use the app / kept archived / deceased / generic);
+- the importer's Done hint "…use Mesclar com outro paciente." (needs 130/131 too).
+
+Merged at `0ec6b49`, hidden (evidence: PR comment 5901165874).
+
+**⏳ After migration 133:** the merge flow rows listed above, live on prod.
+
+## #185 Importer: CPFs that lost the leading zero in Excel (130's `cpf_zero_padded`) (web tester 1, 2026-09-29)
+
+**First round (`e3b4276`):**
+
+**Web tester 1: the website's rendering is 🟢 at `e3b4276314e0df0d92dba182ab138bc5d2b754f0`, against SIMULATED 130 responses. The live rows are ⏳ until 130 @ `ec6fa90` is applied** (there's no staging DB).
+
+**How it was tested:**
+- **Setup:** a local `next dev` from an isolated clone at this head, with `patient-import-live` flipped only in the clone and `NEXT_PUBLIC_THAI_ENABLED=1` for th.
+- **Migration 130** isn't on any DB I can use, so Playwright answers its RPCs in the browser:
+  - the rows the page really uploads (`import_patients_add_rows`) are echoed back;
+  - 130's rule is applied to their CPF: 9–10 digits that validate once zero-padded → warning `cpf_zero_padded`; otherwise an invalid CPF → `cpf_invalid`;
+  - the summary gets `cpf_zero_padded`.
+- **What this checks:** only the website side (the summary line, the row reasons, the hint rule, the error list), not 130 itself.
+- **The file:** an XLSX with the CPF cells stored as **numbers** (as Excel leaves them): 1234567890 (valid once padded), 1234567891 (10 digits, invalid once padded), "123.456.789-00" (11 digits, invalid), 529.982.247-25 (valid). The page uploaded exactly `1234567890`, `1234567891`, `123.456.789-00`, `529.982.247-25`.
+
+| Row | pt-BR | en | th |
+|---|---|---|---|
+| (1) Summary line | ✅ "1 CPFs estavam sem o zero inicial (o Excel remove) e foram completados." | ✅ "1 CPFs were missing the leading zero (Excel removes it) and were completed." | ✅ "CPF 1 รายการไม่มีเลข 0 นำหน้า (Excel ลบออก) ระบบเติมให้แล้ว" |
+| (1) The padded row's reason | ✅ "CPF sem o zero à esquerda (o Excel remove): completado; confira" (outcome Novo) | ✅ "CPF was missing the leading zero (Excel removes it): completed; please check" | ✅ "CPF ไม่มีเลข 0 นำหน้า (Excel ลบออก): ระบบเติมให้แล้ว โปรดตรวจสอบ" |
+| (2) 10-digit, still invalid | ✅ "CPF inválido (não importado). Se o arquivo veio do Excel, formate a coluna do CPF como Texto e exporte de novo." | ✅ "Invalid CPF (left out). If the file came from Excel, format the CPF column as Text and export again." | ✅ "CPF ไม่ถูกต้อง (ไม่นำเข้า). หากไฟล์มาจาก Excel ให้ตั้งรูปแบบคอลัมน์ CPF เป็นข้อความ แล้วส่งออกใหม่" |
+| (3) 11-digit invalid | ✅ "CPF inválido (não importado)", **no hint** | ✅ no hint | ✅ no hint |
+| (2)/(3) The downloaded error list | ✅ `"Linha";"Nome";"Motivo"` (BOM, `;`): row 1 the padded warning, row 2 **with** the Excel hint, row 3 without | ✅ the same (`,`) | ✅ the same (`"แถว";"ชื่อ";"เหตุผล"`) |
+
+**⏳ Live, after 130 @ `ec6fa90`:** that 130 itself pads and validates. The same file should give the same summary / reasons from the real DB, and the stored CPF should be `012.345.678-90`. This is part of #177's steps 3–4, which gate `patient-import-live`.
+
+**The summary line as an ICU plural (`2e13bd1`):**
+
+**Web tester 1: 🟢 at `2e13bd1`** (the website side; the live 130 rows are still ⏳, as in my previous comment).
+
+**What changed since `e3b4276`:** 9 message files only; `patientImport.summaryCpfPadded` is now an ICU plural. The rest of my `e3b4276` rows (reasons, hint rule, error list) carry over.
+
+**The check:** `patientImport.summaryCpfPadded` formatted with the app's own `use-intl` (`createTranslator` with `onError`) for n = 0 / 1 / 2 / 5, in **all 15 locales**. **0 ICU errors.**
+
+| Locale | n = 1 | n = 2 |
+|---|---|---|
+| pt-BR | ✅ "1 CPF estava sem o zero inicial (o Excel remove) e foi completado." | ✅ "2 CPFs estavam sem o zero inicial (o Excel remove) e foram completados." |
+| en | ✅ "1 CPF was missing the leading zero (Excel removes it) and was completed." | ✅ "2 CPFs were missing the leading zero (Excel removes it) and were completed." |
+| th | ✅ "CPF 1 รายการไม่มีเลข 0 นำหน้า (Excel ลบออก) ระบบเติมให้แล้ว" | ✅ (same form, n=2) |
+| fr / es / ru / ar | ✅ singular / plural forms differ correctly | ✅ |
+
+**de / it (corrected):** my PR comment flagged de "2 CPF fehlte die
+führende Null…" and it "A 2 CPF mancava lo zero iniziale…" as plural
+errors. That was **wrong**: the subject is the singular zero, and the CPFs
+are dative / indirect, so both are grammatical. It's not a defect (the
+reviewer 9a caught it), and #187 was not merged for it.
+
+(pt `=0` reads "Nenhum CPF precisou do zero inicial.", but the line only shows when n > 0.)
+
+Merged at `2e13bd1`, hidden (evidence: PR comments 5901841534 / 5901852795).
+
+**⏳ After migration 130 @ `ec6fa90`:** the same file against the real DB, with #177's steps 3–4.
+
+## #186 Privacy §6e names only the notice channels that are live (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `4ac82b45dd9f2d208eb8182566bdaaa3ecc5ee2f`** (privacy §6e names only the channels that are live: push / WhatsApp, never LINE)
+
+**Today** (the Preview vs the master Preview, all conditions off): ✅
+`/pt-BR/privacy`, `/privacy`, `/pt-BR/terms` and `/terms` are
+**identical** (137 / 61 lines).
+
+**Forced locally:**
+- **Setup:** a local `next dev` at this head. For each combination,
+  `content/help/conditions.json` was set, the page re-fetched, and the file
+  restored afterwards (`git status` clean).
+- **What was read:** the §6e heading and its paragraph, joined across
+  React's split text nodes.
+
+| `notice-outbox-live` | `whatsapp-outbox-live` | `line-live` | pt-BR §6e | en §6e | "LINE" in §6e | §6c |
+|---|---|---|---|---|---|---|
+| – | – | – | ✅ none | ✅ none | – | – |
+| ✓ | – | – | ✅ "o aviso ao paciente espera cerca de 1 minuto…" (no channel list, as before) | ✅ "the notice to the patient waits about 1 minute…" | no | – |
+| – | ✓ | – | ✅ "o aviso ao paciente **(WhatsApp)** espera…" | ✅ "the notice to the patient **(WhatsApp)** waits…" | no | – |
+| ✓ | ✓ | – | ✅ "**(push ou WhatsApp)**" | ✅ "**(push or WhatsApp)**" | no | – |
+| ✓ | ✓ | ✓ | ✅ "(push ou WhatsApp)" | ✅ "(push or WhatsApp)" | ✅ **no** | shown (LINE covered there) |
+| – | – | ✓ | ✅ no §6e | ✅ no §6e | – | shown |
+
+CI ✅.
+
+Merged at `4ac82b4` (evidence: PR comment 5901966780).
+
+## #189 Patient address, CNS and Observações (migrations 138 + 139), behind `patient-address-live` (web tester 1, 2026-09-29)
+
+**Web tester 1: 🟢 at `76eb769` for everything testable without 138/139. The DB rows are ⏳** (138 + 139 aren't on any DB I can use). It can merge hidden.
+
+**How it was tested:**
+- **The Vercel Preview (Playwright):** `patient-address-live` unmet.
+- **A local `next dev`** from an isolated clone at `76eb769`, with the condition **forced only in that clone** and Thai enabled, against the prod DB without 138. That checks the form UI and the server's CNS refusal (which runs before any write).
+- **The Help:** `help-build` at the head.
+- **Accounts:** throwaway, and cleaned up.
+- **Head:** the first Preview run was at `377c12b`; `76eb769` only edits the condition's description.
+
+**Hidden today (Preview):**
+
+| Row | Result |
+|---|---|
+| New patient form | ✅ no Endereço / CNS / Observações. The fields are id_kind, full_name, email, phone, cpf, birth_date, sex, convenio_type, profession, emergency_phone (no `address_fields` marker) |
+| Create a patient | ✅ saves (no new columns sent); the patient page shows none of the fields |
+| Edit a patient | ✅ same fields; the edit saves; no errors |
+| Privacy (pt-BR / en) | ✅ no address / CNS mention (§3.2 unchanged) |
+| Help P1 | ✅ `/pt-BR/help/p1` and `/help/p1` render **identical to master** (the new web note is `{pending:patient-address-live}`); `helpArticles.json` has no content change |
+| App Map | ✅ the new rule is `pending: ["patient-address-live"]` |
+
+**The form UI (local, condition forced):**
+
+| Row | Result |
+|---|---|
+| BR, pt-BR | ✅ **Endereço** collapsed, then open: CEP · Rua · Número · Complemento · Bairro · Cidade · UF. **CNS (Cartão Nacional de Saúde)**, "15 dígitos, no cartão do SUS". **Observações**, "Informações administrativas. Não escreva dados clínicos aqui; use o prontuário." with **0/2000** |
+| TH, th | ✅ ที่อยู่: รหัสไปรษณีย์ · ถนน/ซอย · บ้านเลขที่ · อาคาร ชั้น ห้อง · แขวง/ตำบล · เขต/อำเภอ · จังหวัด; **no CNS field**; หมายเหตุ with its hint |
+| Other (GB), en | ✅ Postal code · Street · Number · Apartment, suite · Neighbourhood or district · City · State or province; **no CNS**; Notes with its hint |
+| CNS check on blur | ✅ 123456789012345 → "CNS inválido: confira os 15 dígitos do cartão do SUS."; a valid 898001234567891 → just the hint |
+| Observações cap | ✅ typing 2,010 characters keeps 2,000, and the counter shows 2000/2000 (BR, TH, GB) |
+| Server refuses a bad CNS | ✅ a bad CNS submitted with the browser check bypassed → "CNS inválido…"; **no patient saved** (the action refuses before writing) |
+
+**⏳ Needs 138 + 139 on a DB:**
+- the fields save and show;
+- a stale form doesn't clear stored values;
+- the server's `invalid_cns` mapping;
+- the one-line address with **Editar** on the patient page;
+- the address on the Rx print (per country, only with a street or city);
+- a secretary sees and edits them;
+- privacy §3.2 and Help P1 once live.
+
+Merged at `76eb769`, hidden (evidence: PR comment 5902218726).
+
+**⏳ After 138 + 139:** the DB rows listed above, live on prod.
+
+## #190 Archive / delete / restore wording in id / ja / ko / zh-TW (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `906131fc923d062721907f2ff8b7158784d75e76`** (id / ja / ko / zh-TW: archive / delete / restore say "patient", not "medical record / chart")
+
+**How it was tested:** on the Vercel Preview, with a throwaway doctor
+(deleted afterwards). The UI was switched per locale (`NEXT_LOCALE`), each
+string was compared with the branch's message file, and every page was
+scanned for raw keys (none found anywhere).
+
+| # | Surface | id | ja | ko | zh-TW |
+|---|---|---|---|---|---|
+| 1 | Patient page buttons | ✅ "Arsipkan data pasien" / "Hapus data pasien" | ✅ "患者情報をアーカイブ" / "患者情報を削除" | ✅ "환자 정보 보관" / "환자 정보 삭제" | ✅ "封存病患資料" / "刪除病患資料" |
+| 1 | Archive dialog body | ✅ "Data pasien yang diarsipkan disembunyikan…" | ✅ "アーカイブした患者は一覧、検索、予約から非表示…" | ✅ "보관된 환자는 목록, 검색, 일정에서 숨겨집니다…" | ✅ "已封存的病患不會出現在清單、搜尋和行程中…" (confirm "封存") |
+| 2 | Archived banner | ✅ "Pasien yang diarsipkan tidak dapat menerima…" | ✅ "アーカイブ済みの患者には、新しい予約…" | ✅ "보관된 환자에게는 새 예약…" | ✅ "已封存的病患無法新增預約、紀錄或處方。" |
+| 3 | Pacientes → archived: title + empty state | ✅ "Pasien yang diarsipkan" / "Tidak ada pasien yang diarsipkan" | ✅ "アーカイブ済みの患者" / "…はいません" | ✅ "보관된 환자" / "…가 없습니다" | ✅ "已封存的病患" / "沒有已封存的病患" |
+| 3 | The archived list with one patient | ✅ title + the patient | ✅ | ✅ | ✅ |
+| 4 | Schedule: booking the archived patient | ✅ "Data pasien ini diarsipkan. Pulihkan di menu Pasien…" | ✅ "この患者情報はアーカイブ済みです…" | ✅ "이 환자 정보는 보관되어 있습니다…" | ✅ "此病患資料已封存。請在「病患」中還原後再預約。" |
+| 5 | Merge `patientMerge.errArchived` | (not reachable: merge waits on 133) "Pulihkan data ini sebelum menggabungkan ke dalamnya." | "この患者情報を復元してから統合してください。" | "이 환자 정보를 복원한 후 병합하세요." | "請先還原此病患資料,再合併到其中。" |
+
+**Nit (zh-TW, row 5):** it uses an ASCII comma ("資料,再"); the full-width
+"，" would match the other zh-TW strings.
+
+Merged at `906131f` (evidence: PR comment 5902287757).

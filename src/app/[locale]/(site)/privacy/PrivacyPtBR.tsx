@@ -1,9 +1,10 @@
 import { Mail, Section, Table } from "@/components/LegalDoc";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
+import { noticeChannels } from "@/lib/noticeChannels";
 
 // Política de Privacidade em português (Brasil). Autoritativa junto com a
 // versão em inglês; mantenha as duas alinhadas.
-export function PrivacyPtBR({ turnstile, solvyai = false, line = false, founders = false, founderUploads = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; founders?: boolean; founderUploads?: boolean }) {
+export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Visão geral">
@@ -33,7 +34,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, founders
 
       <Section title="3. Dados que coletamos">
         <p><strong>3.1 Dados de conta:</strong> nome, e-mail e senha (armazenada somente como hash seguro). Profissionais podem incluir especialidade, registro profissional, nome da clínica, endereço, telefone, CNPJ e uma chave Pix. Também guardamos o país e o fuso horário do consultório, escolhidos no cadastro (para &quot;Outro país&quot;, o país detectado pela conexão no cadastro). Quando alguém cria uma conta, registramos qual versão dos Termos de Uso e da Política de Privacidade foi aceita, e quando.</p>
-        <p><strong>3.2 Dados de pacientes registrados por profissionais ou suas secretárias:</strong> dados de identificação e contato (nome, CPF ou, para clínicas fora do Brasil, um documento de identidade nacional ou número de passaporte, data de nascimento, sexo, telefone, e-mail) e dados de saúde (anotações, diagnósticos, receitas, exames, arquivos, histórico de consultas). Dados de saúde são dados pessoais sensíveis segundo a LGPD.</p>
+        <p><strong>3.2 Dados de pacientes registrados por profissionais ou suas secretárias:</strong> dados de identificação e contato (nome, CPF ou, para clínicas fora do Brasil, um documento de identidade nacional ou número de passaporte, data de nascimento, sexo, telefone, e-mail{address && ", endereço, CNS (Cartão Nacional de Saúde, só clínicas no Brasil) e observações administrativas"}) e dados de saúde (anotações, diagnósticos, receitas, exames, arquivos, histórico de consultas). Dados de saúde são dados pessoais sensíveis segundo a LGPD.</p>
         <p><strong>3.3 Consultas e pagamentos:</strong> datas, horários, status, valores e situação do pagamento. Clínicas na Tailândia podem incluir um ID PromptPay (celular ou ID nacional / fiscal), usado apenas para gerar o QR de pagamento das consultas.</p>
         <p><strong>3.4 Cobrança da assinatura:</strong> feita pela Stripe. Nunca vemos nem armazenamos o número completo do cartão; guardamos apenas uma referência da Stripe e o status da sua assinatura.</p>
         <p><strong>3.5 Dados técnicos e do dispositivo:</strong> tipo de dispositivo, versão do sistema operacional, versão do aplicativo, tokens de notificação push e relatórios técnicos de erro.</p>
@@ -131,6 +132,12 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, founders
           <p>Programa Fundadores: se você se inscrever, tratamos seu nome, e-mail, telefone, profissão e registro profissional, o sistema de clínica que você usa, o porte do consultório e como nos conheceu, para avaliar a inscrição e falar com você. Inscrições não aceitas são apagadas 12 meses após a última atualização; as de fundadores aceitos ficam guardadas enquanto a conta existir (ou são apagadas 12 meses após a aceitação, se nenhuma conta for vinculada).</p>
           <p className="mt-2">Para evitar abuso, guardamos por 2 dias uma forma embaralhada (hash com sal) do seu endereço IP, nunca o endereço em si. Para apagar sua inscrição antes, escreva para support@solvymed.com.</p>
           {founderUploads && <p className="mt-2">Exportações de teste: fundadores aceitos podem enviar em Configurações arquivos de exportação de teste (CSV, Excel ou ZIP) do sistema que usam, para construirmos a importação. Antes de cada envio, o fundador confirma que o arquivo contém só pacientes de teste que ele criou; não verificamos o conteúdo antes de guardá-lo. Os arquivos ficam num local privado que só a equipe SolvyMed acessa, com registro de quem enviou e quando, e são apagados 180 dias após o envio, ou antes: quando a importação daquele sistema fica pronta, quando o fundador deixa de ser aceito ou quando a conta é excluída.</p>}
+        </Section>
+      )}
+
+      {(notices || whatsapp) && (
+        <Section title="6e. Avisos ao paciente">
+          <p>Avisos ao paciente: quando a clínica marca, remarca ou cancela uma consulta, o aviso ao paciente{whatsapp && ` (${noticeChannels(notices, "ou")})`} espera cerca de 1 minuto antes de ser enviado, para a clínica poder desfazer um engano. Guardamos um registro de cada aviso (qual consulta, o tipo de aviso, o horário e se foi enviado), sem nomes nem dados clínicos, por 30 dias, e depois o apagamos.</p>
         </Section>
       )}
 

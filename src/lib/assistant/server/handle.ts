@@ -8,7 +8,7 @@ import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
 import { formatDateLabel } from "@/lib/dateLabels";
 import { cachedSystem, rules, type Client } from "./knowledge";
 import type { ContentBlock, ModelClient, ModelMessage, ModelUsage } from "./model";
-import { TOOL_DEFS, confirmFailedBlock, runTool, type ToolContext } from "./tools";
+import { confirmFailedBlock, runTool, toolDefsFor, type ToolContext } from "./tools";
 
 // POST /api/assistant, without the HTTP (docs/assistant-api.md §3): the
 // checks in the contract's order, then the streamed answer. Everything it
@@ -49,7 +49,7 @@ const localeOf = (v: unknown) => (typeof v === "string" && (routing.locales as r
 const prefixOf = (locale: string) => (locale === routing.defaultLocale ? "" : `/${locale}`);
 
 // The clinic's "now" and the tool context for one request.
-async function toolContext(db: unknown, profId: string, locale: string): Promise<ToolContext & { tz: string }> {
+async function toolContext(db: unknown, profId: string, locale: string, client: Client): Promise<ToolContext & { tz: string }> {
   const tz = await getClinicTimeZone(db, { professionalId: profId, isSecretary: false });
   const now = new Date();
   return {
@@ -61,6 +61,7 @@ async function toolContext(db: unknown, profId: string, locale: string): Promise
     today: clinicDate(now, tz),
     nowTime: clinicTime(now, tz),
     seen: new Set(),
+    client,
     tz,
   };
 }
@@ -162,8 +163,8 @@ async function confirmFailed(body: Body, deps: Deps, userId: string): Promise<Ou
   // Cards only exist in actions mode; a help-mode doctor can't have one.
   if (c.allowed && c.actions !== true) return fail(400, "bad_request");
   const locale = localeOf(body.locale);
-  const ctx = await toolContext(deps.db, userId, locale);
-  const block = await confirmFailedBlock(ctx, ev.action);
+  const ctx = await toolContext(deps.db, userId, locale, deps.client);
+  const block = await confirmFailedBlock(ctx, ev.action, ev.code);
   if (!block) return fail(400, "bad_request");
   async function* stream(): AsyncIterable<AnswerChunk> {
     yield { kind: "meta", mode: "actions" };
@@ -257,7 +258,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       const usage: ModelUsage = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
       let answered = false;
       try {
-        const ctx = mode === "actions" ? await toolContext(deps.db, userId, req.locale) : null;
+        const ctx = mode === "actions" ? await toolContext(deps.db, userId, req.locale, deps.client) : null;
         let system = rules(lang, deps.client, req.screen, mode);
         if (ctx) system += `\nToday at the clinic: ${formatDateLabel("en-US", ctx.today, { weekday: "long" })} ${ctx.today}, ${ctx.nowTime} (${ctx.tz}). Dates for the tools are YYYY-MM-DD in this calendar.`;
         const history: ModelMessage[] = [...messages];
@@ -269,7 +270,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
               cachedSystem: cachedSystem(lang, deps.client),
               system,
               messages: history,
-              ...(ctx ? { tools: TOOL_DEFS } : {}),
+              ...(ctx ? { tools: toolDefsFor(deps.client) } : {}),
               maxTokens: MAX_TOKENS,
             })) {
               if (ev.type === "text") { said += ev.text; yield ev.text; }
@@ -291,6 +292,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
           for (const call of calls) {
             const out = await runTool(ctx, call.name, call.input);
             if (out.block) { answered = true; yield { kind: "block", block: out.block }; }
+            for (const b of out.blocks ?? []) { answered = true; yield { kind: "block", block: b }; }
             results.push({ type: "tool_result", tool_use_id: call.id, content: out.forModel, ...(out.isError ? { is_error: true } : {}) });
           }
           history.push({ role: "assistant", content: [...(said ? [{ type: "text" as const, text: said }] : []), ...calls.map((t) => ({ type: "tool_use" as const, ...t }))] });

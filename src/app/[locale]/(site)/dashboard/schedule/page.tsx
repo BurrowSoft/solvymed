@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, RescheduleButton, ViewToggle, PixQrButton, PromptPayQrButton } from "./ScheduleClient";
+import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, RescheduleButton, ViewToggle, PixQrButton, PromptPayQrButton, ScheduleUndoToast } from "./ScheduleClient";
 import { MOVABLE_STATUSES } from "@/lib/scheduleChecks";
 import { normalizePromptPayId } from "@/lib/promptpay";
 import { BookingRequestsPanel } from "./BookingRequestsPanel";
@@ -271,6 +271,7 @@ export default async function SchedulePage({
           procedures={procedures}
         />
       )}
+      <ScheduleUndoToast />
     </div>
   );
 }

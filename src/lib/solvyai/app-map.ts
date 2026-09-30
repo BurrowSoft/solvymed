@@ -125,6 +125,7 @@ export const ACTIONS: AppMapAction[] = [
     inputs: { required: ["which appointment"], optional: [], defaults: [] },
     rules: [
       "Booking requests (tentative / proposal) are never cancelled this way: they're rejected on the request card.",
+      "Only scheduled, confirmed or late appointments can be cancelled; completed, absent, cancelled or rejected ones can't (SolvyAI says so; nothing is saved).",
       "A cancelled appointment no longer counts as 'to receive' and frees the time.",
       "Deleting an appointment is a different action and never done by SolvyAI.",
       "Archiving a patient on the website cancels their upcoming appointments.",
@@ -181,6 +182,7 @@ export const ACTIONS: AppMapAction[] = [
       "Confirming also adds (or links) the patient to the practice in the same step and notifies them.",
       "Rejecting only works while it's still a request (tentative or proposal) and notifies the patient.",
       "Proposing another time is done on the request card, not by SolvyAI.",
+      { text: "In the patient's app: a patient can cancel their own pending request, accept or decline a time the clinic proposed, and ask to reschedule a scheduled or confirmed appointment only before it starts; they can't cancel a booked appointment themselves (the app tells them to talk to the clinic).", pending: ["app-1.4.0"] },
       "A decision made through SolvyAI has no Desfazer: the patient is notified at once.",
     ],
     card: ["patient", "when (weekday, date, time)", "confirm or reject", "note"],
@@ -248,7 +250,7 @@ export const ACTIONS: AppMapAction[] = [
       "Only for Brazilian practices with a Pix key; it opens WhatsApp with the patient's number and the Pix message.",
       "It needs the patient's phone number; without one, say so and offer the QR / Pix Copia e Cola on the appointment instead.",
       "On the website SolvyAI doesn't send it: it's only in the app for now (say so, with the Help link).",
-      "Thai practices show a PromptPay QR on the appointment instead; there's no WhatsApp PromptPay message.",
+      "Thai practices show a PromptPay QR on the appointment instead; there's no WhatsApp PromptPay message. Asked to send it for a Thai practice, SolvyAI never proposes it: it answers \"Em clínicas na Tailândia, o paciente paga escaneando o QR PromptPay da consulta.\" with an \"Abrir QR\" link to that appointment.",
       "The payment method always follows the PRACTICE's country.",
     ],
     card: ["patient", "appointment", "value", "Pix key"],
@@ -261,6 +263,20 @@ export const ACTIONS: AppMapAction[] = [
 
 // Rules about SolvyAI itself (not one action).
 export const GENERAL: { rule: Rule; help: string }[] = [
+  {
+    rule: {
+      text: "The patient import also brings the address (postal code, street, number, complement, neighbourhood, city, state) and the CNS: iClinic and Prontuário Verde map them, and our template has the columns; a CEP that lost its leading zero in Excel is completed. The previous system's own notes stay imported data (doctor only), never Observações.",
+      pending: ["patient-import-live", "patient-address-live"],
+    },
+    help: "P13",
+  },
+  {
+    rule: {
+      text: "Patient address, CNS and Observações (website; the patient form and page): \"Endereço\" / \"Address\" (collapsed while empty; fields by the practice's country), the CNS for clinics in Brazil (15 digits, checked), and \"Observações\" / \"Notes\" for administrative information only (never clinical details: those go in the medical record). The doctor and the secretary see and edit them; the address prints on one line under the patient's name on the prescription. When merging duplicates, the address is taken as a whole from one record, and differing Observações can be kept joined (\"As duas, juntas\" / \"Both, joined\") when they fit in 2,000 characters. SolvyAI doesn't fill them in; it points to the patient's page.",
+      pending: ["patient-address-live"],
+    },
+    help: "P1",
+  },
   { rule: "SolvyAI is for doctors only; secretaries and patients don't have it.", help: "C9" },
   {
     rule: {
@@ -275,6 +291,55 @@ export const GENERAL: { rule: Rule; help: string }[] = [
       pending: ["solvyai-live"],
     },
     help: "C9",
+  },
+  {
+    rule: {
+      text: "In the app too (1.4.0): after a SolvyAI save the toast offers \"Desfazer\" / \"Undo\" for 10 s only when nothing reached the patient yet, and \"Abrir\" / \"Open\" when the patient may already have been told (same rule as the website).",
+      pending: ["app-1.4.0", "solvyai-live"],
+    },
+    help: "C9",
+  },
+  {
+    rule: {
+      text: "Imported data (\"Dados importados\" / \"Imported data\"): a patient brought from another system may have extra spreadsheet columns kept as imported data. Only the doctor sees them (in the app: open the patient → Dados importados, with \"Importado de … em …\"); opening it is logged in the patient's Access tab (\"Abriu os dados importados\" / \"Opened the imported data\"; repeated openings within a minute count once). SolvyAI never reads them; send the doctor there.",
+      pending: ["import-extras-live"],
+    },
+    help: "P11",
+  },
+  {
+    rule: {
+      text: "Merging duplicate patients (in the app: Pacientes → the patient's ⋯ → \"Mesclar com outro paciente…\" / \"Merge with another patient…\", doctor only): pick the other record, keep the differing values you want, choose the record that stays, confirm (a second \"São a mesma pessoa\" / \"Same person\" confirm when an app account is involved). Everything moves to the record that stays; it can't be undone; the Access tab shows \"Mesclou com «nome»\". SolvyAI never merges; send the doctor there.",
+      pending: ["merge-patients-live"],
+    },
+    help: "P12",
+  },
+  {
+    rule: {
+      text: "The website has it too (doctor only): open the patient, Info tab → \"Mesclar com outro paciente…\" / \"Merge with another patient…\": the same flow (only the differing fields, \"Manter este cadastro\" / \"Keep this record\", \"Mesclar\" / \"Merge\", a second \"São a mesma pessoa\" / \"Same person\" when an app account is involved). SolvyAI never merges; send the doctor there.",
+      pending: ["merge-web-live"],
+    },
+    help: "P12",
+  },
+  {
+    rule: {
+      text: "On the website's Schedule, right after a manual book, move or cancel, \"Desfazer\" / \"Undo\" shows for 10 s, while the notice to the patient hasn't gone out yet. It first checks the appointment wasn't changed again; if it was, or the notice is already on its way, it says \"Não foi possível desfazer. Abra o item para ajustar.\". A booked series is undone whole.",
+      pending: ["notice-queue-on"],
+    },
+    help: "A4",
+  },
+  {
+    rule: {
+      text: "In the app too (1.4.0): right after a manual book, move or cancel in the Agenda, \"Desfazer\" / \"Undo\" shows for 10 s, while the notice to the patient hasn't gone out yet; undoing a series removes the whole series; if the notice already went out or the appointment changed, it's refused (\"Não foi possível desfazer. Abra o item para ajustar.\") and the doctor adjusts the item instead.",
+      pending: ["app-1.4.0", "notice-queue-on"],
+    },
+    help: "A4",
+  },
+  {
+    rule: {
+      text: "Importing patients from another system (website only, doctor: Pacientes → \"Importar pacientes\" / \"Import patients\"): a CSV or Excel file (iClinic and Prontuário Verde recognised, or our template); columns are mapped, the sheet is checked (new / already exist / with errors, with a downloadable error list) and nothing is saved until \"Importar\"; \"Desfazer importação\" works for 24 hours on the new patients not yet edited or used (after leaving the page: Importar pacientes → \"Última importação\" / \"Last import\", the most recent import only); a CPF that lost its leading zero in Excel (9 or 10 digits) is completed when its check digits match, otherwise the doctor formats the CPF column as Text and exports again. SolvyAI never imports; send the doctor there.",
+      pending: ["patient-import-live"],
+    },
+    help: "P13",
   },
   {
     rule: { text: "\"Mostrar botão do assistente\" / \"Show the assistant button\" (Settings → SolvyAI; per phone in the app, per browser on the website) hides or shows the ✦ button.", pending: ["mobile#99", "solvyai-live"] },

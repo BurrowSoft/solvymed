@@ -1,16 +1,19 @@
 "use client";
 
-import { useState, useTransition, useRef, useEffect } from "react";
+import { createContext, useContext, useState, useTransition, useRef, useEffect } from "react";
+import { MergePatientButton } from "./MergePatient";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPrescription, deletePrescription, updatePrescription, addPrescriptionCorrection, updatePatient, deletePatient, toggleBookingBlock, generatePatientInviteCode, getArchivePreview, archivePatient, restorePatient, loadAccessLog } from "../actions";
 import { archivedLabel } from "../PatientsClient";
-import { fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
+import { accessKindLabelKey, fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
 import { dateLocale, formatDateLabel, formatShortDate } from "@/lib/dateLabels";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
 import { FilesTab } from "./FilesTab";
+import { AddressFields } from "@/components/patient/AddressFields";
+import { addressLine, type AddressColumns } from "@/lib/patientAddress";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -35,7 +38,12 @@ type Patient = {
   booking_blocked?: boolean;
   // Set by a server trigger on insert (migration 088); can't be forged.
   professional_id?: string; created_by?: string | null; created_by_name?: string | null;
-};
+} & AddressColumns;
+
+// The clinic's time zone for timestamps shown as dates ("Paciente desde",
+// corrections): formatting in the runtime's zone gave the server (UTC) and
+// the browser different days near midnight (React #418).
+const TimeZoneContext = createContext<string | undefined>(undefined);
 
 function Dialog({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
   if (!open) return null;
@@ -80,7 +88,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, currentUserId, idKind = "BR", accessLog = null }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, canMerge = false, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -92,6 +100,8 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   isArchived?: boolean;
   // Only a patient without clinical history can be deleted.
   canDelete?: boolean;
+  // Mesclar com outro paciente (133): the doctor, once the database has it.
+  canMerge?: boolean;
   // Records and prescriptions can be edited or deleted only by their author.
   currentUserId: string;
   // The practice country's patient ID (lib/patientIds).
@@ -99,6 +109,10 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   // The access log's first page (doctor only; null = no tab: before
   // migration 111, or a secretary).
   accessLog?: AccessLogPage | "failed" | null;
+  // Address, CNS and Observações (138): shown and edited once it's applied.
+  addressLive?: boolean;
+  // The clinic's (IANA); dates of timestamps are shown in it.
+  timeZone?: string;
 }) {
   const t = useTranslations("patientDetail");
   const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "exams" | "files" | "appointments" | "access">("info");
@@ -117,6 +131,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   );
 
   return (
+    <TimeZoneContext.Provider value={timeZone}>
     <div>
       {/* Tab bar */}
       <div className="flex border-b border-slate-100 mb-6 overflow-x-auto">
@@ -135,7 +150,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         ))}
       </div>
 
-      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} idKind={idKind} />}
+      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} canMerge={canMerge} idKind={idKind} addressLive={addressLive} />}
       {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {(tab === "exams" || tab === "files") && !isSecretary && (
@@ -146,6 +161,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         <AccessLogTab patientId={patient.id} initial={accessLog} records={records} prescriptions={prescriptions} locale={locale} />
       )}
     </div>
+    </TimeZoneContext.Provider>
   );
 }
 
@@ -195,7 +211,8 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
       const name = fileNameFromRef(r.objectRef);
       return name ? `${t("accessKindFile")} · ${name}` : t("accessKindFile");
     }
-    return t("accessKindPatient");
+    // {name}: a merge's ref is the removed record's name (133).
+    return t(accessKindLabelKey(r.kind), { name: r.objectRef || "—" });
   };
 
   return (
@@ -239,23 +256,30 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
   );
 }
 
-function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; idKind: PatientIdKind }) {
+function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = false, idKind, addressLive = false }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; canMerge?: boolean; idKind: PatientIdKind; addressLive?: boolean }) {
   const t = useTranslations("patientDetail");
   const tIds = useTranslations("patientIds");
   const tBirth = useTranslations("dateInput");
+  const tAddr = useTranslations("patientAddress");
+  const timeZone = useContext(TimeZoneContext);
   // CPF, Thai ID/passport or passport/ID, by the practice's country.
   const idFields = usePatientIdFields(idKind, patient);
   // Server codes become translated copy, never raw codes or database text.
   const errorText = (e: string) =>
     e === "patient_archived" ? t("archivedNoNew")
     : e === "patient_has_clinical_history" ? t("deleteHasHistory")
+    : e === "patient_has_appointments" ? t("deleteHasAppointments")
     : e === "name_required" ? t("nameRequired")
     : e === "invalid_th_id" ? tIds("thaiIdInvalid")
     : e === "invalid_birth_date" ? tBirth("invalidBirthDate")
     : e === "birth_year_buddhist" ? tBirth("buddhistYear")
+    : e === "invalid_cns" ? tAddr("invalidCns")
     : e === "unauthorized" ? t("sessionError")
     : t("genericError");
   const [archiveOpen, setArchiveOpen] = useState(false);
+  // Delete refused (history or appointments added since the page loaded):
+  // the message comes with an Arquivar button.
+  const [offerArchive, setOfferArchive] = useState(false);
   const [editing, setEditing] = useState(false);
   const [pending, startTransition] = useTransition();
   const [blockPending, startBlockTransition] = useTransition();
@@ -311,11 +335,15 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
   function handleDelete() {
     if (!confirm(t("deleteNoHistoryConfirm", { name: patient.full_name }))) return;
     setError("");
+    setOfferArchive(false);
     startTransition(async () => {
       const result = await deletePatient(patient.id);
       if (result?.error) {
-        // History was added since the page loaded: archive instead.
-        setError(result.error === "patient_has_clinical_history" ? t("deleteHasHistory") : t("deleteError"));
+        // History or an appointment was added since the page loaded:
+        // archive instead.
+        const inUse = result.error === "patient_has_clinical_history" || result.error === "patient_has_appointments";
+        setError(result.error === "patient_has_clinical_history" ? t("deleteHasHistory") : result.error === "patient_has_appointments" ? t("deleteHasAppointments") : t("deleteError"));
+        setOfferArchive(inUse && !isArchived);
         return;
       }
       router.push(`${prefix}/dashboard/patients`);
@@ -334,8 +362,12 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
     { label: t("sex"), value: patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null },
     { label: t("profession"), value: patient.profession },
     { label: t("emergencyPhone"), value: patient.emergency_phone },
+    ...(addressLive ? [
+      { label: tAddr("cns"), value: idKind === "BR" ? patient.cns ?? null : null },
+      { label: tAddr("notes"), value: patient.notes_admin ?? null },
+    ] : []),
     { label: t("insurance"), value: patient.convenio_type === "health_plan" ? t("healthPlan") : patient.convenio_type === "particular" ? t("privateInsurance") : null },
-    { label: t("patientSince"), value: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "long", day: "numeric" }) },
+    { label: t("patientSince"), value: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "long", day: "numeric", timeZone }) },
     // Only when someone other than the doctor (i.e. a secretary) added
     // the patient.
     {
@@ -343,7 +375,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
       value: patient.created_by && patient.created_by !== patient.professional_id && patient.created_by_name
         ? t("addedBySecretary", {
             name: patient.created_by_name,
-            date: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric" }),
+            date: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric", timeZone }),
           })
         : null,
     },
@@ -389,6 +421,15 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
           )}
           {codeError && <p className="mt-2 text-xs text-red-600">{codeError}</p>}
         </div>}
+        {addressLive && addressLine(patient, idKind) && (
+          <div className="mb-3 flex items-start justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{tAddr("section")}</p>
+              <p className="mt-1 text-sm font-medium text-slate-900">{addressLine(patient, idKind)}</p>
+            </div>
+            <button type="button" onClick={() => setEditing(true)} className="shrink-0 text-sm font-semibold text-teal-600 hover:text-teal-700 transition">{tAddr("editAddress")}</button>
+          </div>
+        )}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {fields.map(({ label, value }) => value ? (
             <div key={label} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
@@ -417,6 +458,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
               {t("archivePatient")}
             </button>
           )}
+          {canMerge && <MergePatientButton patientId={patient.id} patientName={patient.full_name} locale={locale} />}
           {canDelete && (
             <button onClick={handleDelete} disabled={pending} className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60">
               {t("deletePatient")}
@@ -424,6 +466,11 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
           )}
         </div>
         {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        {offerArchive && (
+          <button onClick={() => { setOfferArchive(false); setError(""); setArchiveOpen(true); }} className="mt-2 rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+            {t("archivePatient")}
+          </button>
+        )}
         <ArchiveDialog open={archiveOpen} onClose={() => setArchiveOpen(false)} patient={patient} />
       </div>
     );
@@ -482,6 +529,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
           <Input name="emergency_phone" defaultValue={patient.emergency_phone ?? ""} />
         </div>
       </div>
+      {addressLive && <AddressFields kind={idKind} values={patient} />}
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3 pt-2">
         <button type="button" onClick={() => setEditing(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
@@ -547,7 +595,8 @@ function useClinicalErrorText() {
 
 function CorrectionTrail({ correction, locale }: { correction: ClinicalMeta; locale: string }) {
   const t = useTranslations("patientDetail");
-  const date = new Date(correction.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric" });
+  const timeZone = useContext(TimeZoneContext);
+  const date = new Date(correction.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric", timeZone });
   const reason = correction.correction_reason ?? "";
   return (
     <p className="text-xs font-medium text-amber-800">
@@ -989,8 +1038,8 @@ function ArchiveDialog({ open, onClose, patient }: { open: boolean; onClose: () 
   );
 }
 
-export function ArchivedBanner({ patientId, archivedAt, archivedByName, locale }: {
-  patientId: string; archivedAt: string; archivedByName: string | null; locale: string;
+export function ArchivedBanner({ patientId, archivedAt, archivedByName, archivedReason = null, locale }: {
+  patientId: string; archivedAt: string; archivedByName: string | null; archivedReason?: string | null; locale: string;
 }) {
   const t = useTranslations("patientDetail");
   const tPatients = useTranslations("patients");
@@ -1010,7 +1059,7 @@ export function ArchivedBanner({ patientId, archivedAt, archivedByName, locale }
   return (
     <div role="status" className="mb-6 flex flex-wrap items-start justify-between gap-3 rounded-xl border border-slate-200 bg-slate-100 px-4 py-3.5">
       <div>
-        <p className="text-sm font-bold text-slate-800">{archivedLabel(tPatients, archivedAt, archivedByName, locale)}</p>
+        <p className="text-sm font-bold text-slate-800">{archivedLabel(tPatients, archivedAt, archivedByName, locale, archivedReason)}</p>
         <p className="mt-0.5 text-xs text-slate-600">{t("archivedSub")}</p>
         {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
       </div>

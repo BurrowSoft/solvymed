@@ -39,6 +39,7 @@ function world() {
       { id: "b-lunch", professional_id: "doc-1", patient_id: null, patient_name: null, date: "2026-09-30", start_time: "12:00:00", end_time: "13:00:00", status: "blocked", payment_status: null, payment_amount: null },
       { id: "a-req", professional_id: "doc-1", patient_id: "p-maria", patient_name: "Maria Silva", date: "2026-10-01", start_time: "09:00:00", end_time: "09:30:00", status: "tentative", payment_status: "pending", payment_amount: null },
       { id: "a-arch", professional_id: "doc-1", patient_id: "p-arch", patient_name: "Ana Antiga", date: "2026-10-01", start_time: "11:00:00", end_time: "11:30:00", status: "scheduled", payment_status: "pending", payment_amount: null },
+      { id: "a-done", professional_id: "doc-1", patient_id: "p-mario", patient_name: "Mario Souza", date: "2026-10-03", start_time: "08:00:00", end_time: "08:30:00", status: "completed", payment_status: "paid", payment_amount: 200 },
       { id: "a-prop", professional_id: "doc-1", patient_id: null, patient_name: "Rui Novo", date: "2026-10-01", start_time: "15:00:00", end_time: "15:30:00", status: "proposal", payment_status: "pending", payment_amount: null },
     ],
   };
@@ -274,6 +275,11 @@ describe("SolvyAI actions mode: other proposals", () => {
     t = setup(listThen("2026-10-01", { name: "propose_cancel_appointment", input: { appointmentId: "a-req" } }));
     card = cardOf((await run(t, ask("Cancela a Maria"))).blocks)!;
     expect(card.stop?.code).toBe("not_allowed");
+    // Completed: no card; the model is told only live ones can be cancelled.
+    t = setup(listThen("2026-10-03", { name: "propose_cancel_appointment", input: { appointmentId: "a-done" } }));
+    const r = await run(t, ask("Cancela a do Mario"));
+    expect(cardOf(r.blocks)).toBeUndefined();
+    expect(JSON.stringify(t.model.calls.at(-1))).toContain("Only scheduled, confirmed or late appointments can be cancelled");
   });
 
   it("block time: refused over appointments, a card otherwise", async () => {
@@ -327,6 +333,13 @@ describe("SolvyAI actions mode: Confirmar failed", () => {
     expect(choice.reason).toBe("confirm_failed");
     expect(choice.text).toBe("Esse horário acabou de ser ocupado. Nada foi salvo. Qual destes horários?");
     expect(choice.alternatives.map((a) => a.start)).toEqual(["09:00", "09:30", "10:30"]);
+  });
+
+  it("a cancel that's no longer allowed: a fixed line, no model", async () => {
+    const t = setup(() => "never");
+    const r = await run(t, { event: { type: "confirm_failed", code: "appointment_not_cancellable", action: { kind: "cancel_appointment", args: { appointmentId: "a-done" } } }, screen: "schedule", locale: "pt-BR" });
+    expect(t.model.calls).toEqual([]);
+    expect(r.chunks.filter((c) => c.kind === "block")).toEqual([{ kind: "block", block: { type: "text", text: "Só é possível cancelar consultas agendadas, confirmadas ou atrasadas. Nada foi salvo." } }]);
   });
 
   it("refused: a bad action, help mode, and the anti-spam limit", async () => {
@@ -485,6 +498,73 @@ describe("SolvyAI actions mode: a recurring series (the website's Repetir)", () 
   it("a bad repeat goes back to the model", async () => {
     const t = setup(series({ every: "day", count: 3 }));
     expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
+    expect(resultsIn(t.model.calls[2])[0]).toMatchObject({ is_error: true });
+  });
+});
+
+describe("SolvyAI actions mode: send Pix (app only; Brazil only; Thai practices get the PromptPay answer)", () => {
+  // Read the day, then propose sending Pix for Mario's appointment.
+  const pix = (req: ModelRequest, round: number): FakeTurn => {
+    if (round === 0) return { tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }] };
+    if (round === 1) return { tools: [{ name: "propose_send_pix", input: { appointmentId: "a-joao" } }] };
+    return "Confira.";
+  };
+  const inApp = (t: ReturnType<typeof setup>) => {
+    (t.d as { client: string }).client = "app";
+    t.tables.professionals[0].pix_key = "pix@clinica.com";
+    t.tables.patients.find((p) => p.id === "p-mario")!.phone = "+55 11 99999-0000";
+    return t;
+  };
+
+  it("the website never gets the tool", async () => {
+    const t = setup(pix);
+    await run(t, ask("Manda o Pix do Mario"));
+    expect(t.model.calls[0].tools?.map((d) => d.name)).not.toContain("propose_send_pix");
+  });
+
+  it("app, Brazil: a card (patient, appointment, value, Pix key) that opens WhatsApp, then Payments", async () => {
+    const t = inApp(setup(pix));
+    expect(t.model.calls.length).toBe(0);
+    const r = await run(t, ask("Manda o Pix do Mario"));
+    expect(t.model.calls[0].tools?.map((d) => d.name)).toContain("propose_send_pix");
+    const card = cardOf(r.blocks)!;
+    expect(card.action).toEqual({ kind: "send_pix", args: { appointmentId: "a-joao" } });
+    expect(card.fields.map((f) => f.label)).toEqual(["Paciente", "Consulta", "Valor", "Chave Pix"]);
+    expect(card.fields[3].value).toBe("pix@clinica.com");
+    expect(card.after).toEqual({ screen: "whatsapp", highlight: { kind: "appointment", id: "a-joao" }, then: { screen: "payments" } });
+  });
+
+  it("app, Thailand: no card, the PromptPay answer and an Open QR link to the appointment's sheet", async () => {
+    const t = inApp(setup(pix));
+    t.tables.professionals[0].country = "TH";
+    const r = await run(t, ask("Manda o Pix do Mario"));
+    expect(cardOf(r.blocks)).toBeUndefined();
+    const texts = r.chunks.flatMap((c) => (c.kind === "block" && c.block.type === "text" ? [c.block.text] : []));
+    expect(texts).toContain("Em clínicas na Tailândia, o paciente paga escaneando o QR PromptPay da consulta.");
+    const open = r.blocks.find((b) => b.type === "open") as Extract<AnswerBlock, { type: "open" }>;
+    expect(open.label).toBe("Abrir QR");
+    expect(open.target).toEqual({ screen: "schedule", date: "2026-09-30", id: "a-joao", params: { sheet: "1" } });
+    expect(open.href).toContain("sheet=1");
+  });
+
+  it("app, Brazil: no Pix key, no phone, or already paid → back to the model, no card", async () => {
+    let t = inApp(setup(pix));
+    t.tables.professionals[0].pix_key = null;
+    expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
+    expect(resultsIn(t.model.calls[2])[0]).toMatchObject({ is_error: true });
+    t = inApp(setup(pix));
+    t.tables.patients.find((p) => p.id === "p-mario")!.phone = null;
+    expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
+    t = inApp(setup(pix));
+    t.tables.appointments.find((a) => a.id === "a-joao")!.payment_status = "paid";
+    expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
+  });
+
+  it("an unknown practice country: no card at all (never a guessed Pix path)", async () => {
+    const t = inApp(setup(pix));
+    t.tables.professionals[0].id = "someone-else";
+    const r = await run(t, ask("Manda o Pix do Mario"));
+    expect(cardOf(r.blocks)).toBeUndefined();
     expect(resultsIn(t.model.calls[2])[0]).toMatchObject({ is_error: true });
   });
 });

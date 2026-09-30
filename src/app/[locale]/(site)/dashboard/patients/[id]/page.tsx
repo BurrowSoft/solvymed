@@ -1,11 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
+import { conditionMet } from "@/lib/conditions";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { PatientTabs, ArchivedBanner, type MedRecord, type Rx } from "./PatientDetailClient";
-import { getArchivePreview } from "../actions";
+import { getArchivePreview, mergeAvailable } from "../actions";
+import { MergedNotice } from "./MergeNotice";
 import { logPatientOpen, readAccessLog } from "@/lib/accessLog";
 import { getClinicTimeZone } from "@/lib/clinicTime";
 
@@ -58,19 +60,17 @@ export default async function PatientDetailPage({
   // Secretaries never see the log. Logged first, so the log shown
   // includes this open.
   await logPatientOpen(supabase, id);
-  const accessLog = isSecretary
-    ? null
-    : await readAccessLog(supabase, id, {
-        locale,
-        timeZone: await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary }),
-      });
+  // The clinic's time zone: the access log's times, and the page's dates
+  // (the same on the server and in the browser, so no hydration mismatch).
+  const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
+  const accessLog = isSecretary ? null : await readAccessLog(supabase, id, { locale, timeZone });
 
   const patient = patientResult.data as {
     id: string; full_name: string; email?: string; phone?: string; cpf?: string;
     sex?: string; birth_date?: string; profession?: string; emergency_phone?: string;
     convenio_type?: string; invite_code?: string; created_at: string;
     booking_blocked?: boolean;
-    archived_at?: string | null; archived_by_name?: string | null;
+    archived_at?: string | null; archived_by_name?: string | null; archived_reason?: string | null;
   };
   const isArchived = !!patient.archived_at;
   const records = (recordsResult.data ?? []) as MedRecord[];
@@ -125,12 +125,14 @@ export default async function PatientDetailPage({
           patientId={patient.id}
           archivedAt={patient.archived_at!}
           archivedByName={patient.archived_by_name ?? null}
+          archivedReason={patient.archived_reason ?? null}
           locale={locale}
         />
       )}
 
       {/* Tabs */}
       <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-6">
+        <MergedNotice />
         <PatientTabs
           patient={patient}
           records={records}
@@ -141,8 +143,11 @@ export default async function PatientDetailPage({
           isArchived={isArchived}
           currentUserId={user.id}
           idKind={patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId))}
-          canDelete={preview?.hasClinicalHistory === false}
+          canMerge={!isSecretary && (await mergeAvailable())}
+          canDelete={preview?.hasClinicalHistory === false && preview.hasAppointments === false}
           accessLog={accessLog}
+          timeZone={timeZone}
+          addressLive={conditionMet("patient-address-live")}
         />
       </div>
     </div>

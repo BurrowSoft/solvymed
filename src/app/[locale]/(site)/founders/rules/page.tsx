@@ -6,7 +6,8 @@ import { Link } from "@/i18n/navigation";
 import { liveFeatures } from "@/lib/liveFeatures";
 
 // The Founders Program rules (the brief's "Program rules", verbatim per
-// language). Published only after the lawyer's check (foundersRules);
+// language). Published only with Vitor's go (foundersRules; the lawyer
+// review is post-launch, 2026-10-01);
 // until then the page says they're coming. Any other language says it's a
 // translation of the reference versions (UX).
 const REFERENCE_LOCALES = ["pt-BR", "en"];

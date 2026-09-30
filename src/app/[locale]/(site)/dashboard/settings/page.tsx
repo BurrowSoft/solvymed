@@ -15,6 +15,7 @@ import { getPracticeCountry } from "@/lib/practiceCountry";
 import { getSetupProgress } from "@/lib/setup";
 import { CloseAccountPanel, type ClosurePreview } from "./CloseAccountPanel";
 import { ChangePasswordPanel } from "./ChangePasswordPanel";
+import { AppearanceCard } from "./AppearanceCard";
 import { SubscriptionPanel } from "./SubscriptionPanel";
 import { FoundersCard } from "./FoundersCard";
 import { planSummary, type EffectiveSub } from "@/lib/subscription";
@@ -66,6 +67,9 @@ export default async function SettingsPage({
           <h1 className="text-2xl font-extrabold text-slate-900">{t("pageTitle")}</h1>
         </div>
         <SecretarySettings supabase={supabase} doctorId={userRoleData.invited_by_professional_id as string} locale={locale} />
+        <div className="mt-6">
+          <AppearanceCard />
+        </div>
         <div className="mt-6">
           <TourSettingsCard />
         </div>
@@ -165,6 +169,11 @@ export default async function SettingsPage({
     ? await supabase.from("professionals").select("promptpay_id").eq("id", user.id).maybeSingle()
     : null;
   const showPromptPay = !!promptPayResult && !promptPayResult.error;
+  // The clinic tax ID (Thai practices; migration 112), read the same way.
+  const taxIdResult = practiceCountry === "TH"
+    ? await supabase.from("professionals").select("clinic_tax_id").eq("id", user.id).maybeSingle()
+    : null;
+  const showTaxId = !!taxIdResult && !taxIdResult.error;
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl">
@@ -176,6 +185,7 @@ export default async function SettingsPage({
       <div className="space-y-6">
         {offerShowSetup && <ShowSetupRow />}
 
+        <AppearanceCard />
         <TourSettingsCard />
         {liveFeatures.news && <NewsSettingsCard />}
         {liveFeatures.solvyAi && <SolvyAiSettingsCard prefix={locale === "en" ? "" : `/${locale}`} />}
@@ -198,8 +208,10 @@ export default async function SettingsPage({
         </Card>
 
         <ClinicForm
+          country={practiceCountry}
           showPix={practiceProfile.paymentQr === "pix"}
           showPromptPay={showPromptPay}
+          showTaxId={showTaxId}
           data={{
             clinic_name: prof.clinic_name ?? undefined,
             clinic_cnpj: prof.clinic_cnpj ?? undefined,
@@ -209,6 +221,7 @@ export default async function SettingsPage({
             clinic_city: prof.clinic_city ?? undefined,
             clinic_state: prof.clinic_state ?? undefined,
             pix_key: (prof as { pix_key?: string | null }).pix_key ?? undefined,
+            clinic_tax_id: (taxIdResult?.data as { clinic_tax_id?: string | null } | null)?.clinic_tax_id ?? undefined,
             promptpay_id: (promptPayResult?.data as { promptpay_id?: string | null } | null)?.promptpay_id ?? undefined,
           }}
         />

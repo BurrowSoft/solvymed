@@ -46,4 +46,38 @@ describe("privacy policy: SolvyAI / LINE blocks follow their conditions", () => 
     expect(r.container.textContent).toContain("Exportações de teste");
     r.unmount();
   });
+
+  it("the patient notice record (135) only once the outbox is live", () => {
+    // Live since the flip (runbook: §6e published before the Vault secret).
+    expect(conditionMet("notice-outbox-live")).toBe(true);
+    for (const [Doc, title] of [[PrivacyEn, "6e. Patient notices"], [PrivacyPtBR, "6e. Avisos ao paciente"]] as const) {
+      let r = render(<Doc turnstile={false} />);
+      expect(r.container.textContent).not.toContain(title);
+      r.unmount();
+      r = render(<Doc turnstile={false} notices />);
+      expect(r.container.textContent).toContain(title);
+      expect(r.container.textContent).toMatch(/30 (days|dias)/);
+      expect(r.container.textContent).not.toContain("WhatsApp");
+      r.unmount();
+    }
+  });
+
+  it("§6e names WhatsApp only once its outbox (137) is live, with only the live channels", () => {
+    expect(conditionMet("whatsapp-outbox-live")).toBe(false);
+    // Never LINE, even when it's live: its record is 90 days and its hold
+    // another migration (§6c covers LINE).
+    let r = render(<PrivacyPtBR turnstile={false} notices line whatsapp />);
+    expect(r.container.textContent).toContain("o aviso ao paciente (push ou WhatsApp) espera cerca de 1 minuto");
+    expect(r.container.textContent).not.toMatch(/push, LINE|LINE ou WhatsApp/);
+    r.unmount();
+    r = render(<PrivacyEn turnstile={false} notices line whatsapp />);
+    expect(r.container.textContent).toContain("the notice to the patient (push or WhatsApp) waits about 1 minute");
+    expect(r.container.textContent).not.toMatch(/push, LINE|LINE or WhatsApp/);
+    r.unmount();
+    // WhatsApp's outbox alone still publishes §6e, without claiming push waits.
+    r = render(<PrivacyEn turnstile={false} whatsapp />);
+    expect(r.container.textContent).toContain("6e. Patient notices");
+    expect(r.container.textContent).toContain("the notice to the patient (WhatsApp) waits");
+    r.unmount();
+  });
 });

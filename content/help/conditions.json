@@ -46,5 +46,41 @@
   "founders-upload-live": {
     "met": false,
     "what": "Founders stage 2 is live: the Founders page is on (liveFeatures.founders), migration 132 is applied on production and the founder-samples-purge function is deployed with its Vault secret (founder_purge_secret), including the purge of a deleted account’s files. Gates Settings → Founders Program (C10) and the privacy policy’s §6d test-export paragraph (through founders)."
+  },
+  "app-1.4.0": {
+    "met": false,
+    "what": "App 1.4.0 is released on Google Play (iOS is TestFlight-only for now, so Play alone flips it). Includes mobile #137, the patient's appointment view: their pending request can be cancelled ('Cancelar pedido'), a clinic's proposed time can be accepted or declined, an upcoming scheduled/confirmed appointment offers 'Pedir remarcação' only before it starts, and cancelling means talking to the clinic."
+  },
+  "import-extras-live": {
+    "met": false,
+    "what": "Imported data is live: migration 131 (patient_import_extras, get_patient_import_extra, access kind 'imported') is applied on production AND the app build with \"Dados importados\" on the patient (mobile feat/import-extra-app) is released on Google Play."
+  },
+  "merge-patients-live": {
+    "met": false,
+    "what": "Merging duplicate patients is live: migration 133 (merge_patients / merge_patients_preview, access kind 'merged') is applied on production AND the app build with \"Mesclar com outro paciente…\" (mobile feat/merge-patients-app) is released on Google Play."
+  },
+  "patient-import-live": {
+    "met": true,
+    "what": "The patient import is live: migrations 130 (staging + validation) and 131 (commit + undo, patient_import_extras, patients.archived_reason) are applied on production. Gates the website import (Pacientes → Importar pacientes, the archived-reason labels) and Help P13."
+  },
+  "notice-outbox-live": {
+    "met": true,
+    "what": "The patient notice outbox is about to go live: migration 135 (enqueue_patient_notice / cancel_patient_notice, the ~1-minute hold, the 30-day delivery record with its purge) is applied on production. Flip this and deploy BEFORE the sender is switched on (the function's Vault secret set LAST, per 38's runbook), so privacy §6e is published before any notice waits or is recorded."
+  },
+  "merge-web-live": {
+    "met": true,
+    "what": "Mesclar pacientes on the website: migration 133 (merge_patients / merge_patients_preview) is applied on production AND the web tester's 133 rows are 🟢 there (testers force this condition in a local build to test on prod). Flip by hand, never automatically (9a / 38). Independent of the app (UX: the web may launch first). Gates \"Mesclar com outro paciente…\" (together with its probe) and Help P12 with the website's steps; the app's steps wait on merge-patients-live."
+  },
+  "whatsapp-outbox-live": {
+    "met": false,
+    "what": "Migration 137 applied, send-whatsapp deployed with its outbox mode, and the Vault secret 'whatsapp_notify_secret' set (from then on the app queues the automatic WhatsApp confirmation/cancellation for ~60 s instead of sending it at once). Rows hold no phone and no text (which appointment, the kind, when, whether it was sent), kept 30 days. Gates privacy §6e naming WhatsApp (and §6e itself when notice-outbox-live isn't met). Flip and deploy BEFORE the Vault secret is set."
+  },
+  "patient-address-live": {
+    "met": true,
+    "what": "Migrations 138 (the patient address, CNS for Brazilian practices, and Observações columns on patients, with the server-side trim and CNS check) AND 139 (merge_patients carries the address, CNS and Observações, so merging duplicates never drops them) are applied on production. Until both are, the website neither shows nor writes these fields."
+  },
+  "notice-queue-on": {
+    "met": false,
+    "what": "The patient notice queue is actually running: patient_notify_secret is set in Vault (after the 1.4.0 cut deploys privacy §6e via notice-outbox-live) and one queued notice was verified sent (38 runbook). Gates every \"Desfazer\" / \"Undo\" claim for manual book / move / cancel (01-agenda, the App Map undo rules), since the undo is only possible while a notice is held. Flip only after that check; if the secret is ever removed, flip it back."
   }
 }
