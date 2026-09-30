@@ -494,7 +494,8 @@ export function ProceduresPanel({ procedures, currency = "BRL" }: { procedures: 
               <Input name="duration_minutes" type="number" defaultValue="60" placeholder="60" />
             </div>
             <div>
-              <Label>{t("priceLabel", { symbol: currencySymbol(currency) })}</Label>
+              {/* No symbol for a currency we don't know (practices outside BR/TH; UX). */}
+              <Label>{currencySymbol(currency) ? t("priceLabel", { symbol: currencySymbol(currency) }) : t("priceLabelPlain")}</Label>
               {/* Text, not type="number": Chrome reads "150,50" as 15050,
                   and a number input without a step refuses cents. */}
               <input

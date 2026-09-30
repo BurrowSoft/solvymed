@@ -249,7 +249,8 @@
     "amountPlaceholder": "金额 ({symbol})",
     "revertConfirm": "将此付款恢复为待付款状态？",
     "errorInvalidAmount": "请输入有效金额。",
-    "errorGeneric": "出现问题，请重试。"
+    "errorGeneric": "出现问题，请重试。",
+    "amountPlaceholderPlain": "金额"
   },
   "paymentsPage": {
     "title": "付款",
@@ -508,7 +509,7 @@
     "noProcedures": "暂无诊疗项目。请在下方添加第一个。",
     "newProcedure": "新建项目",
     "procedureName": "名称",
-    "procedureNamePlaceholder": "初诊、复诊…",
+    "procedureNamePlaceholder": "例如：初诊 – 成人",
     "durationLabel": "时长（分钟）",
     "priceLabel": "价格（{symbol}）",
     "paymentTypeLabel": "支付方式",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "素坤逸诊所",
     "clinicNamePlaceholderOther": "康健诊所",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "主街123号"
+    "addressPlaceholderOther": "主街123号",
+    "priceLabelPlain": "价格"
   },
   "clinics": {
     "title": "我的诊所",

@@ -249,7 +249,8 @@
     "amountPlaceholder": "Valor ({symbol})",
     "revertConfirm": "Reverter este pagamento para pendente?",
     "errorInvalidAmount": "Informe um valor válido.",
-    "errorGeneric": "Algo deu errado. Tente novamente."
+    "errorGeneric": "Algo deu errado. Tente novamente.",
+    "amountPlaceholderPlain": "Valor"
   },
   "paymentsPage": {
     "title": "Pagamentos",
@@ -508,7 +509,7 @@
     "noProcedures": "Nenhum procedimento ainda. Adicione o primeiro abaixo.",
     "newProcedure": "Novo procedimento",
     "procedureName": "Nome",
-    "procedureNamePlaceholder": "Consulta inicial, Retorno…",
+    "procedureNamePlaceholder": "ex.: Primeira consulta – Adulto",
     "durationLabel": "Duração (minutos)",
     "priceLabel": "Preço ({symbol})",
     "paymentTypeLabel": "Tipo de pagamento",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "Clínica Sukhumvit",
     "clinicNamePlaceholderOther": "Clínica Bem-Estar",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "Rua Principal, 123"
+    "addressPlaceholderOther": "Rua Principal, 123",
+    "priceLabelPlain": "Preço"
   },
   "clinics": {
     "title": "Minhas Clínicas",

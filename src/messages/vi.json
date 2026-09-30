@@ -249,7 +249,8 @@
     "amountPlaceholder": "Số tiền ({symbol})",
     "revertConfirm": "Hoàn nguyên khoản thanh toán này về chờ xử lý?",
     "errorInvalidAmount": "Vui lòng nhập số tiền hợp lệ.",
-    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
+    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "amountPlaceholderPlain": "Số tiền"
   },
   "paymentsPage": {
     "title": "Thanh toán",
@@ -508,7 +509,7 @@
     "noProcedures": "Chưa có dịch vụ. Thêm dịch vụ đầu tiên bên dưới.",
     "newProcedure": "Dịch vụ mới",
     "procedureName": "Tên",
-    "procedureNamePlaceholder": "Khám lần đầu, Tái khám…",
+    "procedureNamePlaceholder": "vd: Khám lần đầu – Người lớn",
     "durationLabel": "Thời gian (phút)",
     "priceLabel": "Giá ({symbol})",
     "paymentTypeLabel": "Loại thanh toán",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "Phòng khám Sukhumvit",
     "clinicNamePlaceholderOther": "Phòng khám An Khang",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "123 Đường Chính"
+    "addressPlaceholderOther": "123 Đường Chính",
+    "priceLabelPlain": "Giá"
   },
   "clinics": {
     "title": "Phòng khám của tôi",

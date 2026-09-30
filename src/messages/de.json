@@ -249,7 +249,8 @@
     "amountPlaceholder": "Betrag ({symbol})",
     "revertConfirm": "Diese Zahlung auf ausstehend zurücksetzen?",
     "errorInvalidAmount": "Bitte geben Sie einen gültigen Betrag ein.",
-    "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "amountPlaceholderPlain": "Betrag"
   },
   "paymentsPage": {
     "title": "Zahlungen",
@@ -508,7 +509,7 @@
     "noProcedures": "Noch keine Leistungen. Fügen Sie unten die erste hinzu.",
     "newProcedure": "Neue Leistung",
     "procedureName": "Name",
-    "procedureNamePlaceholder": "Erstgespräch, Nachsorge…",
+    "procedureNamePlaceholder": "z. B. Erstuntersuchung – Erwachsene",
     "durationLabel": "Dauer (Minuten)",
     "priceLabel": "Preis ({symbol})",
     "paymentTypeLabel": "Zahlungsart",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "Sukhumvit-Klinik",
     "clinicNamePlaceholderOther": "Praxis Wohlbefinden",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "Hauptstraße 123"
+    "addressPlaceholderOther": "Hauptstraße 123",
+    "priceLabelPlain": "Preis"
   },
   "clinics": {
     "title": "Meine Kliniken",

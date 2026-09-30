@@ -128,7 +128,7 @@ export function MarkPaidButton({ id, amount, currency = "BRL" }: { id: string; a
             autoComplete="off"
             value={inputVal}
             onChange={e => { setInputVal(e.target.value); setError(""); }}
-            placeholder={t("amountPlaceholder", { symbol: currencySymbol(currency) })}
+            placeholder={currencySymbol(currency) ? t("amountPlaceholder", { symbol: currencySymbol(currency) }) : t("amountPlaceholderPlain")}
             className="w-28 rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
             autoFocus
           />

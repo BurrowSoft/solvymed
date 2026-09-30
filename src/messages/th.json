@@ -249,7 +249,8 @@
     "amountPlaceholder": "จำนวนเงิน ({symbol})",
     "revertConfirm": "คืนสถานะการชำระเงินนี้เป็นรอชำระ?",
     "errorInvalidAmount": "กรุณากรอกจำนวนเงินที่ถูกต้อง",
-    "errorGeneric": "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง"
+    "errorGeneric": "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
+    "amountPlaceholderPlain": "จำนวนเงิน"
   },
   "paymentsPage": {
     "title": "การชำระเงิน",
@@ -508,7 +509,7 @@
     "noProcedures": "ยังไม่มีหัตถการ เพิ่มรายการแรกด้านล่าง",
     "newProcedure": "หัตถการใหม่",
     "procedureName": "ชื่อ",
-    "procedureNamePlaceholder": "ปรึกษาครั้งแรก, ติดตามผล…",
+    "procedureNamePlaceholder": "เช่น ตรวจครั้งแรก - ผู้ใหญ่",
     "durationLabel": "ระยะเวลา (นาที)",
     "priceLabel": "ราคา ({symbol})",
     "paymentTypeLabel": "ประเภทการชำระเงิน",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "คลินิกสุขุมวิท",
     "clinicNamePlaceholderOther": "คลินิกสุขภาพดี",
     "addressPlaceholderTH": "123 ถนนสุขุมวิท",
-    "addressPlaceholderOther": "123 ถนนหลัก"
+    "addressPlaceholderOther": "123 ถนนหลัก",
+    "priceLabelPlain": "ราคา"
   },
   "clinics": {
     "title": "คลินิกของฉัน",

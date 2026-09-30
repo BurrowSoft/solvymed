@@ -249,7 +249,8 @@
     "amountPlaceholder": "المبلغ ({symbol})",
     "revertConfirm": "إعادة هذه الدفعة إلى معلقة؟",
     "errorInvalidAmount": "يرجى إدخال مبلغ صالح.",
-    "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+    "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "amountPlaceholderPlain": "المبلغ"
   },
   "paymentsPage": {
     "title": "المدفوعات",
@@ -508,7 +509,7 @@
     "noProcedures": "لا توجد إجراءات بعد. أضف الأول أدناه.",
     "newProcedure": "إجراء جديد",
     "procedureName": "الاسم",
-    "procedureNamePlaceholder": "استشارة أولية، متابعة…",
+    "procedureNamePlaceholder": "مثال: الزيارة الأولى – بالغ",
     "durationLabel": "المدة (دقيقة)",
     "priceLabel": "السعر ({symbol})",
     "paymentTypeLabel": "طريقة الدفع",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "عيادة سوخومفيت",
     "clinicNamePlaceholderOther": "عيادة العافية",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "123 الشارع الرئيسي"
+    "addressPlaceholderOther": "123 الشارع الرئيسي",
+    "priceLabelPlain": "السعر"
   },
   "clinics": {
     "title": "عياداتي",

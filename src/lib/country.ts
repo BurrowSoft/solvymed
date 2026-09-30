@@ -5,7 +5,11 @@
 // unknown 'ZZ') is "Other". Stored as ISO-3166 alpha-2 in
 // professionals.country (migration 110); 'BR' until then.
 
-export type Currency = "BRL" | "THB" | "USD";
+// "NONE": practices outside the countries we support by name price in their
+// own currency, which we don't know, so their prices show as plain numbers
+// ("1,500.50"), never with a guessed "$" (UX, 1 Oct). The SolvyMed plan is
+// priced separately (lib/subscription getPlanPrice: US$ 19).
+export type Currency = "BRL" | "THB" | "USD" | "NONE";
 
 // The settings message keys a country's form examples use (Settings →
 // Profile / Clinic). Adding a country = adding its keys to the messages.
@@ -59,7 +63,7 @@ const TH: CountryProfile = {
 };
 // The explicit default: any country without its own entry (or the unknown 'ZZ').
 const OTHER: CountryProfile = {
-  kind: "OTHER", currency: "USD", patientId: "passport", phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
+  kind: "OTHER", currency: "NONE", patientId: "passport", phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
   clinicTaxId: null,
   examples: {
     titles: null,

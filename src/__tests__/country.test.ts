@@ -11,7 +11,8 @@ describe("countryProfile", () => {
   it("maps BR, TH and everything else", () => {
     expect(countryProfile("BR")).toMatchObject({ currency: "BRL", patientId: "cpf", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo" });
     expect(countryProfile("th")).toMatchObject({ currency: "THB", patientId: "thai_id", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok" });
-    for (const c of ["PT", "US", "ZZ"]) expect(countryProfile(c)).toMatchObject({ kind: "OTHER", currency: "USD", paymentQr: null });
+    // Outside BR/TH the clinic's own currency is unknown: plain numbers (UX).
+    for (const c of ["PT", "US", "ZZ"]) expect(countryProfile(c)).toMatchObject({ kind: "OTHER", currency: "NONE", paymentQr: null });
   });
 
   it("is ONE registry: every country without its own entry gets the explicit default, never BR's or TH's rules", () => {
@@ -37,6 +38,12 @@ describe("formatMoney", () => {
     expect(plain(formatMoney(690, "THB"))).toBe("฿690.00");
     expect(plain(formatMoney(19, "USD"))).toBe("$19.00");
     expect(plain(formatMoney(150))).toBe("R$ 150,00");
+  });
+
+  it("a practice outside BR/TH: plain numbers, no symbol; Thai money in its own format whatever the UI", () => {
+    expect(formatMoney(1500.5, "NONE")).toBe("1,500.50");
+    expect([currencySymbol("NONE"), amountExample("NONE")]).toEqual(["", "0.00"]);
+    expect(plain(formatMoney(1500.5, "THB"))).toBe("฿1,500.50");
   });
 
   it("a money input's symbol and example follow the currency (0,00 only for BRL)", () => {

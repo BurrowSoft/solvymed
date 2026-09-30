@@ -249,7 +249,8 @@
     "amountPlaceholder": "금액 ({symbol})",
     "revertConfirm": "이 결제를 미결제로 되돌리시겠습니까?",
     "errorInvalidAmount": "유효한 금액을 입력하세요.",
-    "errorGeneric": "문제가 발생했습니다. 다시 시도해 주세요."
+    "errorGeneric": "문제가 발생했습니다. 다시 시도해 주세요.",
+    "amountPlaceholderPlain": "금액"
   },
   "paymentsPage": {
     "title": "결제",
@@ -508,7 +509,7 @@
     "noProcedures": "아직 진료 항목이 없습니다. 아래에 추가해주세요.",
     "newProcedure": "새 진료 항목",
     "procedureName": "이름",
-    "procedureNamePlaceholder": "초진, 재진…",
+    "procedureNamePlaceholder": "예: 첫 진료 – 성인",
     "durationLabel": "소요 시간 (분)",
     "priceLabel": "가격 ({symbol})",
     "paymentTypeLabel": "결제 유형",
@@ -580,7 +581,8 @@
     "clinicNamePlaceholderTH": "수쿰빗 클리닉",
     "clinicNamePlaceholderOther": "웰니스 클리닉",
     "addressPlaceholderTH": "123 Sukhumvit Road",
-    "addressPlaceholderOther": "중앙로 123"
+    "addressPlaceholderOther": "중앙로 123",
+    "priceLabelPlain": "가격"
   },
   "clinics": {
     "title": "내 클리닉",
