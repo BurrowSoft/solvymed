@@ -1794,5 +1794,12 @@
   },
   "countryExamples": {
     "phone": "Numero di telefono"
+  },
+  "solvyaiIntro": {
+    "title": "Ecco SolvyAI ✦",
+    "body": "Chiedi con parole tue: \"Fissa Maria venerdì alle 11\". SolvyAI ti mostra ogni dettaglio e agisce solo dopo la tua conferma.",
+    "tryNow": "Prova ora",
+    "later": "Più tardi",
+    "whatCanDo": "Cosa può fare SolvyAI?"
   }
 }

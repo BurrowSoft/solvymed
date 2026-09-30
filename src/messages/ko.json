@@ -1794,5 +1794,12 @@
   },
   "countryExamples": {
     "phone": "전화번호"
+  },
+  "solvyaiIntro": {
+    "title": "SolvyAI를 만나보세요 ✦",
+    "body": "평소 말투로 요청하세요: \"금요일 11시에 마리아 예약해 줘\". SolvyAI가 모든 내용을 보여 주고, 확인한 뒤에만 실행합니다.",
+    "tryNow": "지금 사용해 보기",
+    "later": "나중에",
+    "whatCanDo": "SolvyAI는 무엇을 할 수 있나요?"
   }
 }

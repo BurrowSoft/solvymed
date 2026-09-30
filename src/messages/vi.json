@@ -1794,5 +1794,12 @@
   },
   "countryExamples": {
     "phone": "Số điện thoại"
+  },
+  "solvyaiIntro": {
+    "title": "Làm quen với SolvyAI ✦",
+    "body": "Chỉ cần nói theo cách của bạn: \"Đặt lịch cho Maria thứ Sáu lúc 11 giờ\". SolvyAI hiển thị mọi chi tiết và chỉ thực hiện sau khi bạn xác nhận.",
+    "tryNow": "Thử ngay",
+    "later": "Để sau",
+    "whatCanDo": "SolvyAI làm được gì?"
   }
 }

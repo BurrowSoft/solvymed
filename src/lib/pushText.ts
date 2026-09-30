@@ -1,4 +1,5 @@
 import { formatShortDate } from "./dateLabels";
+import { countryProfile } from "./country";
 
 // Push notifications sent by the website's server actions, in the
 // RECIPIENT's language (UX 2026-09-29), with dates in that language's
@@ -165,7 +166,7 @@ export function pushLocale(stored: string | null | undefined): PushLocale | null
 
 // UX's fallback when the recipient's language isn't known: the practice's.
 export function practiceFallbackLocale(country: string | null | undefined): PushLocale {
-  return country === "TH" ? "th" : country === "BR" || !country ? "pt-BR" : "en";
+  return countryProfile(country).fallbackLocale;
 }
 
 export function pushWhen(locale: PushLocale, date: string, time?: string | null): string {
