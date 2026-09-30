@@ -116,3 +116,13 @@ describe("phone examples by country (UX, app #206 shape)", () => {
     expect(profileOfPhonePrefix("+1").kind).toBe("OTHER");
   });
 });
+
+describe("push fallback language and receipts by country (#239)", () => {
+  it("BR pt-BR + the web recibo; TH th + receipts in the app; Other en + the web recibo", () => {
+    expect([countryProfile("BR").fallbackLocale, countryProfile("BR").receipts]).toEqual(["pt-BR", "web"]);
+    expect([countryProfile("TH").fallbackLocale, countryProfile("TH").receipts]).toEqual(["th", "app"]);
+    expect([countryProfile("US").fallbackLocale, countryProfile("US").receipts]).toEqual(["en", "web"]);
+    // Unknown (no row yet) is Brazil, as before migration 110.
+    expect(countryProfile(null).fallbackLocale).toBe("pt-BR");
+  });
+});
