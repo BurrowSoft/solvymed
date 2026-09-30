@@ -736,6 +736,11 @@ describe("SolvyAI actions mode: a recurring series (the website's Repetir)", () 
       expect(cardOf(r.blocks), text).toBeUndefined();
       expect((r.blocks.find((b) => b.type === "pick") as { options: { id: string }[] }).options.map((o) => o.id)).toEqual(["2026-10-02", "2026-10-09"]);
     }
+    // "This Friday" is this week's: a card (UX), in en/pt/th.
+    for (const [locale, text] of [["pt-BR", "Marca a Maria Silva nesta sexta às 10h"], ["en", "Book Maria Silva this Friday at 10"], ["th", "นัดมาเรีย ซิลวา ศุกร์นี้ 10 โมง"]]) {
+      const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-02", start: "10:00", durationMin: 30 } })));
+      expect(cardOf((await run(t, { ...ask(text), locale })).blocks), text).toBeDefined();
+    }
     // A bare weekday is the coming one: a card.
     const bare = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-02", start: "10:00", durationMin: 30 } })));
     expect(cardOf((await run(bare, ask("Marca a Maria Silva sexta às 10h"))).blocks)).toBeDefined();

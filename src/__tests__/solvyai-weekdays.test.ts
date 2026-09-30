@@ -22,6 +22,12 @@ describe("ambiguousDays", () => {
     expect(ambiguousDays("วันอังคาร บ่ายสาม", TODAY)).toEqual(["2026-09-29", "2026-10-06"]);
   });
 
+  it("\"this <weekday>\" is this week's, no chips; on that weekday it's today (UX)", () => {
+    for (const text of ["livres nesta terça?", "esta terça às 15h", "this Tuesday at 3", "อังคารนี้ บ่ายสาม", "this Friday", "nesta sexta", "ศุกร์นี้"]) {
+      expect(ambiguousDays(text, TODAY), text).toBeNull();
+    }
+  });
+
   it("a written date or \"today\" settles it", () => {
     expect(ambiguousDays("próxima sexta, 02/10", TODAY)).toBeNull();
     expect(ambiguousDays("next Friday 2026-10-09", TODAY)).toBeNull();
