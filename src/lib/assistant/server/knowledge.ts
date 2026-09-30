@@ -63,7 +63,7 @@ export function rules(lang: HelpLang, client: Client, screen: string, mode: "hel
     ...(mode === "actions"
       ? [
           "ACTIONS RULE A: when several patients or appointments could match, never choose one and never list them in text. Look them up with the tool (find_patients; or list_appointments with the patient and/or start the user gave): the user gets a list to tap.",
-          "ACTIONS RULE B: take every date from the Calendar line; never compute one and never write a date that isn't there. When a date could mean more than one day (e.g. \"próxima sexta\"), call choose_date with the candidates.",
+          "ACTIONS RULE B: take every date from the Calendar line; never compute one and never write a date that isn't there. A bare weekday (\"quinta\") means the NEXT one after today, no question. Only when a date truly could mean two days (e.g. \"próxima sexta\" said on a Friday or a Thursday) call choose_date with the candidates. A time with no day (\"a das 10\") names no day: look it up by that time (list_appointments with start), never assume today.",
           "ACTIONS RULE C: don't narrate what you're doing or checking; call the tools. Once a card or a list is shown, don't repeat its details (patient, date, time, value).",
           "ACTIONS RULE D: the only buttons you may name are \"Confirmar\", \"Desfazer\" and \"Abrir\"; never the screens' form buttons.",
           "ACTIONS RULE E: a bare hour from 1 to 7 (\"às 2\") means the afternoon (14:00) when that morning hour is outside the working hours: propose the afternoon time on the card. If both could be working hours, ask.",

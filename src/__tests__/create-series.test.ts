@@ -95,6 +95,17 @@ describe("createAppointment: a recurring series", () => {
     expect(await book({ recurrence: "monthly", occurrences: "3" })).toMatchObject({ code: "needs_confirm", hours: { kind: "day_off" }, hoursDate: "2026-12-05" });
   });
 
+  it("skip_dates (SolvyAI's \"Pular {data}\"): the taken date is left out and the rest saved; the push names the first saved date", async () => {
+    h.state.appointments.push({ professional_id: "doc-1", date: "2026-10-05", start_time: "10:00:00", end_time: "10:30:00", status: "scheduled", patient_name: "João", duration_minutes: 30 });
+    expect(await book({ recurrence: "weekly", occurrences: "3", skip_dates: "2026-10-05,2099-01-01" })).toMatchObject({ success: true, count: 2 });
+    expect(h.state.inserts[0].map((r) => r.date)).toEqual(["2026-10-12", "2026-10-19"]);
+    expect(h.state.told).toEqual([expect.objectContaining({ date: "2026-10-12", dates: ["2026-10-12", "2026-10-19"] })]);
+    // Skipping every date saves nothing.
+    h.state.inserts = [];
+    expect(await book({ recurrence: "weekly", occurrences: "2", skip_dates: "2026-10-05,2026-10-12" })).toMatchObject({ code: "invalid_occurrences" });
+    expect(h.state.inserts).toEqual([]);
+  });
+
   it("taken between the check and the insert (23P01): nothing saved (one statement)", async () => {
     h.state.insertError = { code: "23P01", message: "conflicting key value violates exclusion constraint" };
     expect(await book({ recurrence: "biweekly", occurrences: "3" })).toMatchObject({ code: "slot_overlap" });
