@@ -36,6 +36,17 @@ describe("privacy policy: SolvyAI / LINE blocks follow their conditions", () => 
     r.unmount();
   });
 
+  it("§6d's test-export paragraph only once uploads are live (founders-upload-live)", () => {
+    expect(conditionMet("founders-upload-live")).toBe(false);
+    let r = render(<PrivacyEn turnstile={false} founders />);
+    expect(r.container.textContent).toContain("6d. Founders Program applications");
+    expect(r.container.textContent).not.toContain("Test exports");
+    r.unmount();
+    r = render(<PrivacyPtBR turnstile={false} founders founderUploads />);
+    expect(r.container.textContent).toContain("Exportações de teste");
+    r.unmount();
+  });
+
   it("the patient notice record (135) only once the outbox is live", () => {
     // Live since the flip (runbook: §6e published before the Vault secret).
     expect(conditionMet("notice-outbox-live")).toBe(true);

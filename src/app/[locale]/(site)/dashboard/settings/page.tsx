@@ -7,6 +7,7 @@ import { SecretarySettings } from "./SecretarySettings";
 import { ShowSetupRow } from "./ShowSetupRow";
 import { NewsSettingsCard, TourSettingsCard } from "@/components/tour/TourProvider";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { conditionMet } from "@/lib/conditions";
 import { SolvyAiSettingsCard } from "@/components/solvyai/SolvyAiSettings";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 import { countryProfile } from "@/lib/country";
@@ -15,9 +16,9 @@ import { getSetupProgress } from "@/lib/setup";
 import { CloseAccountPanel, type ClosurePreview } from "./CloseAccountPanel";
 import { ChangePasswordPanel } from "./ChangePasswordPanel";
 import { ExportPatientsCard } from "./ExportPatientsCard";
-import { conditionMet } from "@/lib/conditions";
 import { AppearanceCard } from "./AppearanceCard";
 import { SubscriptionPanel } from "./SubscriptionPanel";
+import { FoundersCard } from "./FoundersCard";
 import { planSummary, type EffectiveSub } from "@/lib/subscription";
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
@@ -40,6 +41,17 @@ export default async function SettingsPage({
     .select("role, invited_by_professional_id")
     .eq("user_id", user.id)
     .maybeSingle();
+
+  // Programa Fundadores (stage 2, migration 132): the card only for an
+  // accepted founder with uploads allowed (founder_upload_check, as the
+  // doctor); nothing when the function is missing, the page isn't live or
+  // uploads aren't (founders-upload-live: 132 + the purge deployed).
+  let founder: { uploadsLeft: number } | null = null;
+  if (liveFeatures.founders && conditionMet("founders-upload-live") && userRoleData?.role !== "secretary") {
+    const { data: fc, error: fcError } = await supabase.rpc("founder_upload_check");
+    const row = (Array.isArray(fc) ? fc[0] : fc) as { allowed?: boolean; uploads_left?: number } | null;
+    if (!fcError && row?.allowed === true) founder = { uploadsLeft: Number(row.uploads_left ?? 0) };
+  }
 
   // Close/delete account (migration 102). No panel if the preview can't
   // load: the page must never offer an action it can't describe.
@@ -178,6 +190,7 @@ export default async function SettingsPage({
         <TourSettingsCard />
         {liveFeatures.news && <NewsSettingsCard />}
         {liveFeatures.solvyAi && <SolvyAiSettingsCard prefix={locale === "en" ? "" : `/${locale}`} />}
+        {founder && <FoundersCard uploadsLeft={founder.uploadsLeft} bookingUrl={process.env.NEXT_PUBLIC_FOUNDERS_BOOKING_URL || undefined} />}
 
         <ProfileForm
           fullName={prof.full_name}

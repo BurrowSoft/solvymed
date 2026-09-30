@@ -14,7 +14,7 @@ export const liveFeatures = {
   // nobody sets it on Production until the release.
   solvyAi: process.env.NEXT_PUBLIC_SOLVYAI_ENABLED === "1",
   // "Built for PDPA": consent at signup + the record access log live
-  // (TH-3) and the Thai lawyer's OK on the wording.
+  // (TH-3) and Vitor's go (lawyer reviews are post-launch, 2026-10-01).
   pdpa: false,
   // The "Novidades" popup + new-feature tour (walkthrough §4a): on with the
   // release that announces something (and migration 113 for its state).
@@ -29,6 +29,12 @@ export const liveFeatures = {
   // The app's PDFs (prescriptions, receipts, history) in Thai, with
   // Buddhist-year dates (the app's TH-2).
   thaiPdfs: false,
+  // The Founders Program page (/founders) and its application form: on
+  // only with Vitor's OK, migration 129 applied, the mailbox + Resend key
+  // and the privacy-policy line. Its rules page (foundersRules) waits only
+  // on Vitor's go too: lawyer reviews are post-launch (2026-10-01).
+  founders: false,
+  foundersRules: false,
 } as const;
 
 // The languages the app's PDFs are generated in today (UX, verified on the

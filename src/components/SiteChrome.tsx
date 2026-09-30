@@ -4,6 +4,7 @@ import { LegalLinks } from "@/components/LegalLinks";
 import { SignupCta } from "@/components/SignupCta";
 import { Link } from "@/i18n/navigation";
 import { publicLocales } from "@/lib/publicLocales";
+import { liveFeatures } from "@/lib/liveFeatures";
 
 // The public pages' header and footer (home, /pricing).
 
@@ -64,6 +65,12 @@ export async function SiteFooter() {
           <Link href="/pricing" className="text-sm text-slate-400 transition hover:text-teal-600">
             {t("pricing.navLabel")}
           </Link>
+          {/* The Founders Program (off until its launch). */}
+          {liveFeatures.founders && (
+            <Link href="/founders" className="text-sm text-slate-400 transition hover:text-teal-600">
+              {t("founders.footerLink")}
+            </Link>
+          )}
           <LegalLinks />
           <a
             href="mailto:support@solvymed.com"
