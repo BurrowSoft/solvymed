@@ -1444,7 +1444,7 @@
     "code_cep_zero_padded": "CEP sem o zero à esquerda (o Excel remove): completado; confira",
     "code_cns_invalid": "CNS inválido: confira os 15 dígitos (não importado)",
     "code_cns_not_used": "CNS não importado (a clínica não é do Brasil)",
-    "code_address_invalid": "{field} longo demais (não importado)",
+    "code_address_invalid": "{field}: texto longo demais (não importado)",
     "cpfExcelHint": "Se o arquivo veio do Excel, formate a coluna do CPF como Texto e exporte de novo.",
     "code_cpf_not_used": "CPF não usado (a clínica não é do Brasil)",
     "code_th_national_id_invalid": "Nº de identidade tailandês inválido (não importado)",

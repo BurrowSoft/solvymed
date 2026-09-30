@@ -130,6 +130,6 @@ describe("Importar pacientes", () => {
     expect(await screen.findByLabelText("CEP")).toHaveValue("address_postal_code");
     fireEvent.click(screen.getByText("Verificar planilha"));
     expect(await screen.findByText("2 CEPs estavam sem o zero inicial (o Excel remove) e foram completados.")).toBeInTheDocument();
-    expect(screen.getByText(`Rua longo demais (não importado) · ${pt.patientImport.code_cep_zero_padded} · ${pt.patientImport.code_cns_invalid}`)).toBeInTheDocument();
+    expect(screen.getByText(`Rua: texto longo demais (não importado) · ${pt.patientImport.code_cep_zero_padded} · ${pt.patientImport.code_cns_invalid}`)).toBeInTheDocument();
   });
 });
