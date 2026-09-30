@@ -1457,7 +1457,8 @@
     "emailBody": "gracias por solicitar el Programa Fundadores de SolvyMed para {system}. Te responderemos en un plazo de 5 días hábiles.",
     "emailWaitlist": "Las plazas para {system} están completas por ahora, así que estás en la lista de espera.",
     "emailNoFiles": "Por favor, no envíes ningún archivo todavía; si te aceptamos, te explicaremos cómo crear una exportación de prueba.",
-    "emailSign": "El equipo de SolvyMed"
+    "emailSign": "El equipo de SolvyMed",
+    "emailTagline": "Gestión de clínica simplificada"
   },
   "foundersCard": {
     "cardTitle": "Programa Fundadores",

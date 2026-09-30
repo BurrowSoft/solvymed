@@ -1457,7 +1457,8 @@
     "emailBody": "terima kasih telah mendaftar ke Program Pendiri SolvyMed untuk {system}. Kami akan membalas dalam 5 hari kerja.",
     "emailWaitlist": "Tempat untuk {system} saat ini sudah penuh, jadi Anda masuk daftar tunggu.",
     "emailNoFiles": "Mohon jangan kirim file apa pun dulu; jika Anda diterima, kami akan menjelaskan cara membuat ekspor uji.",
-    "emailSign": "Tim SolvyMed"
+    "emailSign": "Tim SolvyMed",
+    "emailTagline": "Manajemen klinik jadi mudah"
   },
   "foundersCard": {
     "cardTitle": "Program Pendiri",
