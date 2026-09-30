@@ -14,6 +14,7 @@ import { DateInput } from "@/components/DateInput";
 import { FilesTab } from "./FilesTab";
 import { AddressFields } from "@/components/patient/AddressFields";
 import { addressLine, type AddressColumns } from "@/lib/patientAddress";
+import { profileOfKind } from "@/lib/country";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -363,7 +364,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = fal
     { label: t("profession"), value: patient.profession },
     { label: t("emergencyPhone"), value: patient.emergency_phone },
     ...(addressLive ? [
-      { label: tAddr("cns"), value: idKind === "BR" ? patient.cns ?? null : null },
+      { label: tAddr("cns"), value: profileOfKind(idKind).healthCard === "cns" ? patient.cns ?? null : null },
       { label: tAddr("notes"), value: patient.notes_admin ?? null },
     ] : []),
     { label: t("insurance"), value: patient.convenio_type === "health_plan" ? t("healthPlan") : patient.convenio_type === "particular" ? t("privateInsurance") : null },

@@ -155,3 +155,13 @@ describe("how each ID field is searched and checked (#239)", () => {
     ]);
   });
 });
+
+describe("health card and address order by country (#239)", () => {
+  it("BR has the CNS and the Brazilian line; TH its own order; Other the international one", () => {
+    expect([countryProfile("BR").healthCard, countryProfile("BR").addressFormat]).toEqual(["cns", "br"]);
+    expect([countryProfile("TH").healthCard, countryProfile("TH").addressFormat]).toEqual([null, "th"]);
+    expect([countryProfile("GB").healthCard, countryProfile("GB").addressFormat]).toEqual([null, "intl"]);
+    // The address helpers take the kind: OTHER is the default, never Brazil.
+    expect(profileOfKind("OTHER").healthCard).toBeNull();
+  });
+});

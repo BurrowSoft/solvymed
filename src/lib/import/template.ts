@@ -3,6 +3,7 @@
 // (pt / en / th; others get en), the ID columns of the practice country, and
 // one example row of invented data. Every header is one the generic preset
 // recognises, so the columns map themselves. Built in the browser.
+import { countryProfile } from "@/lib/country";
 
 // Every cell quoted (our own fixed text: no formulas to neutralise).
 export const csvCell = (v: string) => `"${v.replace(/"/g, "\"\"")}"`;
@@ -52,7 +53,7 @@ export function templateCsv(locale: string, country: string, address = false): {
   const lang = templateLang(locale);
   const ids = IDS[country] ?? ["passport"];
   const base = COLS.filter((c) => !["cpf", "rg", "thId", "passport"].includes(c.key) || ids.includes(c.key));
-  const addr = address ? ADDRESS_COLS.filter((c) => c.key !== "cns" || country === "BR") : [];
+  const addr = address ? ADDRESS_COLS.filter((c) => c.key !== "cns" || countryProfile(country).healthCard === "cns") : [];
   const cols = [...base.filter((c) => c.key !== "notes"), ...addr, ...base.filter((c) => c.key === "notes")];
   // ";" where Excel expects it (decimal-comma locales), "," in English.
   const sep = lang === "en" ? "," : ";";
