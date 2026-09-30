@@ -34,7 +34,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No subscription to manage", code: "no_subscription" }, { status: 404 });
   }
 
-  const requestedLocale = (await request.json().catch(() => ({}))).locale;
+  const body = await request.json().catch(() => ({}));
+  const requestedLocale = body.locale;
   const locale = (routing.locales as readonly string[]).includes(requestedLocale)
     ? (requestedLocale as string)
     : routing.defaultLocale;
@@ -58,7 +59,9 @@ export async function POST(request: NextRequest) {
   try {
     const portal = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe`,
+      // Back where the doctor came from: Settings (an active subscriber;
+      // /subscribe would bounce them) or /subscribe. Only these two.
+      return_url: `${origin}/${locale === "en" ? "" : locale + "/"}${body.returnTo === "settings" ? "dashboard/settings" : "subscribe"}`,
     });
     return NextResponse.json({ url: portal.url });
   } catch (err) {

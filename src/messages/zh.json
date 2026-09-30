@@ -451,7 +451,14 @@
     "regenerateError": "无法生成新的邀请码，请重试。",
     "showSetup": "显示设置清单",
     "registration": "执业注册号",
-    "registrationPlaceholder": "例如 CRM 12345/SP"
+    "registrationPlaceholder": "例如 CRM 12345/SP",
+    "subscriptionTitle": "订阅",
+    "subscriptionActive": "Pro 套餐 · 有效",
+    "subscriptionLifetime": "Pro 套餐 · 终身",
+    "subscriptionTrial": "免费试用：剩余 {n} 天",
+    "subscriptionInactive": "没有有效的订阅",
+    "manageSubscription": "管理订阅",
+    "subscriptionSubscribe": "查看套餐"
   },
   "clinics": {
     "title": "我的诊所",

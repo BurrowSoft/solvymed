@@ -451,7 +451,14 @@
     "regenerateError": "새 코드를 생성하지 못했습니다. 다시 시도해 주세요.",
     "showSetup": "설정 체크리스트 보기",
     "registration": "면허 번호",
-    "registrationPlaceholder": "예: CRM 12345/SP"
+    "registrationPlaceholder": "예: CRM 12345/SP",
+    "subscriptionTitle": "구독",
+    "subscriptionActive": "Pro 요금제 · 활성",
+    "subscriptionLifetime": "Pro 요금제 · 평생",
+    "subscriptionTrial": "무료 체험: {n}일 남음",
+    "subscriptionInactive": "활성 구독 없음",
+    "manageSubscription": "구독 관리",
+    "subscriptionSubscribe": "요금제 보기"
   },
   "clinics": {
     "title": "내 클리닉",

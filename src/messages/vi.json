@@ -451,7 +451,14 @@
     "regenerateError": "Không thể tạo mã mới. Vui lòng thử lại.",
     "showSetup": "Hiện danh sách thiết lập",
     "registration": "Số đăng ký hành nghề",
-    "registrationPlaceholder": "vd. CRM 12345/SP"
+    "registrationPlaceholder": "vd. CRM 12345/SP",
+    "subscriptionTitle": "Gói đăng ký",
+    "subscriptionActive": "Gói Pro · đang hoạt động",
+    "subscriptionLifetime": "Gói Pro · trọn đời",
+    "subscriptionTrial": "Dùng thử miễn phí: còn {n} ngày",
+    "subscriptionInactive": "Không có gói đăng ký đang hoạt động",
+    "manageSubscription": "Quản lý gói đăng ký",
+    "subscriptionSubscribe": "Xem gói"
   },
   "clinics": {
     "title": "Phòng khám của tôi",

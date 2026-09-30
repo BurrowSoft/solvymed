@@ -451,7 +451,14 @@
     "regenerateError": "無法產生新的邀請碼，請重試。",
     "showSetup": "顯示設定清單",
     "registration": "執業登記號碼",
-    "registrationPlaceholder": "例如 CRM 12345/SP"
+    "registrationPlaceholder": "例如 CRM 12345/SP",
+    "subscriptionTitle": "訂閱",
+    "subscriptionActive": "Pro 方案 · 有效",
+    "subscriptionLifetime": "Pro 方案 · 終身",
+    "subscriptionTrial": "免費試用：剩餘 {n} 天",
+    "subscriptionInactive": "沒有有效的訂閱",
+    "manageSubscription": "管理訂閱",
+    "subscriptionSubscribe": "查看方案"
   },
   "clinics": {
     "title": "我的診所",

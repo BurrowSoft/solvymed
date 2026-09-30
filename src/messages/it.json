@@ -451,7 +451,14 @@
     "regenerateError": "Impossibile generare un nuovo codice. Riprova.",
     "showSetup": "Mostra la lista di configurazione",
     "registration": "Iscrizione all'albo",
-    "registrationPlaceholder": "es. CRM 12345/SP"
+    "registrationPlaceholder": "es. CRM 12345/SP",
+    "subscriptionTitle": "Abbonamento",
+    "subscriptionActive": "Piano Pro · attivo",
+    "subscriptionLifetime": "Piano Pro · a vita",
+    "subscriptionTrial": "Prova gratuita: {n, plural, one {manca # giorno} other {mancano # giorni}}",
+    "subscriptionInactive": "Nessun abbonamento attivo",
+    "manageSubscription": "Gestisci abbonamento",
+    "subscriptionSubscribe": "Vedi il piano"
   },
   "clinics": {
     "title": "Le mie cliniche",

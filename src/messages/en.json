@@ -451,7 +451,14 @@
     "regenerateError": "Couldn't generate a new code. Please try again.",
     "showSetup": "Show setup checklist",
     "registration": "Professional registration",
-    "registrationPlaceholder": "e.g. CRM 12345/SP"
+    "registrationPlaceholder": "e.g. CRM 12345/SP",
+    "subscriptionTitle": "Subscription",
+    "subscriptionActive": "Pro plan · active",
+    "subscriptionLifetime": "Pro plan · lifetime",
+    "subscriptionTrial": "Free trial: {n, plural, one {# day} other {# days}} left",
+    "subscriptionInactive": "No active subscription",
+    "manageSubscription": "Manage subscription",
+    "subscriptionSubscribe": "See the plan"
   },
   "clinics": {
     "title": "My Clinics",
