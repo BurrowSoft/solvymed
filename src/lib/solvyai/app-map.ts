@@ -323,14 +323,14 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   {
     rule: {
       text: "On the website's Schedule, right after a manual book, move or cancel, \"Desfazer\" / \"Undo\" shows for 10 s, while the notice to the patient hasn't gone out yet. It first checks the appointment wasn't changed again; if it was, or the notice is already on its way, it says \"Não foi possível desfazer. Abra o item para ajustar.\". A booked series is undone whole.",
-      pending: ["notice-outbox-live"],
+      pending: ["notice-queue-on"],
     },
     help: "A4",
   },
   {
     rule: {
-      text: "In the app too (1.4.0): right after a manual book, move or cancel in the Agenda, \"Desfazer\" / \"Undo\" shows for 10 s, while the notice to the patient hasn't gone out yet.",
-      pending: ["app-1.4.0", "notice-outbox-live"],
+      text: "In the app too (1.4.0): right after a manual book, move or cancel in the Agenda, \"Desfazer\" / \"Undo\" shows for 10 s, while the notice to the patient hasn't gone out yet; undoing a series removes the whole series; if the notice already went out or the appointment changed, it's refused (\"Não foi possível desfazer. Abra o item para ajustar.\") and the doctor adjusts the item instead.",
+      pending: ["app-1.4.0", "notice-queue-on"],
     },
     help: "A4",
   },
