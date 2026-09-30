@@ -660,7 +660,8 @@
     "customTime": "カスタム時間",
     "orCustomTime": "または時間を指定する",
     "professionalFallback": "担当者",
-    "errorArchived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。"
+    "errorArchived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。",
+    "practiceInactive": "このクリニックは現在オンライン予約を受け付けていません。"
   },
   "auth": {
     "passwordTooShort": "パスワードは{min}文字以上である必要があります。",

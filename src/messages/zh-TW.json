@@ -660,7 +660,8 @@
     "customTime": "自訂時間",
     "orCustomTime": "或選擇自訂時間",
     "professionalFallback": "專業人員",
-    "errorArchived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。"
+    "errorArchived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。",
+    "practiceInactive": "這家診所目前不接受線上預約。"
   },
   "auth": {
     "passwordTooShort": "密碼至少需要{min}個字元。",

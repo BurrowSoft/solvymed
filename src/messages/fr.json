@@ -660,7 +660,8 @@
     "customTime": "Heure personnalisée",
     "orCustomTime": "Ou choisir une heure",
     "professionalFallback": "Professionnel(le)",
-    "errorArchived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet."
+    "errorArchived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet.",
+    "practiceInactive": "Ce cabinet ne prend pas de rendez-vous en ligne pour le moment."
   },
   "auth": {
     "passwordTooShort": "Le mot de passe doit comporter au moins {min} caractères.",

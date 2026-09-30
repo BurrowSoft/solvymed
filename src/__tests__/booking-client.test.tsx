@@ -39,6 +39,7 @@ vi.mock("next-intl", () => ({
       "book.errorBlocked": "Your bookings with this professional are currently restricted.",
       "book.errorMaxBookings": "You already have the maximum number of active appointments with this professional.",
       "book.errorGeneric": "Could not send booking request. Please try again.",
+      "book.practiceInactive": "This clinic isn't taking online bookings right now.",
       "book.patientDetails": "Your details",
       "book.patientDetailsHint": "This information helps the doctor prepare for your appointment.",
       "book.fullNameLabel": "Full name",
@@ -228,6 +229,18 @@ describe("BookingClient", () => {
     await waitFor(() =>
       expect(screen.getByText(/slot was just taken/i)).toBeInTheDocument(),
     );
+  });
+
+  it("a locked practice (142's practice_inactive): says the clinic isn't taking online bookings", async () => {
+    setupMocks({ busySlots: [], bookingError: { message: "practice_inactive" }, profile: FULL_PROFILE });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
+    fireEvent.click(screen.getAllByText("Consultation")[0]);
+    await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
+    fireEvent.click(screen.getByText(/9:00/));
+    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("This clinic isn't taking online bookings right now.")).toBeInTheDocument());
   });
 
   it("shows max_bookings error when that error is returned", async () => {

@@ -5,9 +5,13 @@
 **pt-BR**
 Você tem 15 dias grátis, sem cartão. Para continuar depois, assine pelo site solvymed.com, entrando com sua conta. O plano inclui tudo, com até 3 secretárias(os).
 {pending:app-1.4.0} Com a assinatura inativa, o app mostra "Sua assinatura do SolvyMed está inativa." e a linha "Dúvidas? Escreva para support@solvymed.com." (toque para abrir o e-mail), com o botão **Sair**. A secretária(o) vê "Assinatura inativa": o acesso volta assim que a assinatura do médico for renovada, com a mesma linha de suporte.
+{pending:booking-check-live} Com a assinatura inativa, quem tentar agendar online com você pelo site vê "A clínica não está recebendo agendamentos online no momento." em vez dos horários.
+{pending:booking-check-live,app-1.4.0} No app do paciente, o agendamento mostra a mesma mensagem.
 **en**
 You get 15 days free, with no card. To continue afterwards, subscribe on solvymed.com, signed in with your account. The plan includes everything, with up to 3 secretaries.
 {pending:app-1.4.0} With the subscription inactive, the app shows "Your SolvyMed subscription is inactive." and the line "Questions? Write to support@solvymed.com." (tap it to open your email), with a **Sign Out** button. A secretary sees "Subscription inactive": access resumes once the doctor's subscription is renewed, with the same support line.
+{pending:booking-check-live} While the subscription is inactive, anyone trying to book with you online on the website sees "This clinic isn't taking online bookings right now." instead of the times.
+{pending:booking-check-live,app-1.4.0} In the patient's app, booking shows the same message.
 **No site:** Durante o teste, o contador de dias fica no topo do painel. Clique nele para ver o plano e assinar com cartão. Se você assinar com mais de 2 dias de teste pela frente, ele continua: a assinatura começa (e a primeira cobrança acontece) quando o teste termina, e se cancelar antes disso você fica no teste até o fim. Com 2 dias ou menos, a cobrança é feita na hora. A situação do plano fica em **Configurações → Assinatura**; se você assina com cartão, **Gerenciar assinatura** abre a página do Stripe para gerenciá-la (por exemplo, trocar o cartão).
 **On the website:** During the trial, the days counter is at the top of the dashboard. Click it to see the plan and subscribe by card. If you subscribe with more than 2 days of trial left, you keep it: the subscription starts (and is first charged) when the trial ends, and if you cancel before then you stay on the trial until it ends. With 2 days or less left, you are charged right away. Your plan's status is in **Settings → Subscription**; if you subscribe by card, **Manage subscription** opens Stripe's page to manage it (for example, to change the card).
 `open:none`

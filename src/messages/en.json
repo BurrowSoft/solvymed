@@ -660,7 +660,8 @@
     "customTime": "Custom time",
     "orCustomTime": "Or pick a custom time",
     "professionalFallback": "Professional",
-    "errorArchived": "This clinic isn't taking new bookings for your account. Please contact the clinic."
+    "errorArchived": "This clinic isn't taking new bookings for your account. Please contact the clinic.",
+    "practiceInactive": "This clinic isn't taking online bookings right now."
   },
   "auth": {
     "passwordTooShort": "Password must be at least {min} characters.",

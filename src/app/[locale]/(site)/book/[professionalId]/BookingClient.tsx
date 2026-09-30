@@ -362,7 +362,10 @@ export function BookingClient({
       });
       if (rpcError) {
         const msg = rpcError.message ?? "";
-        if (msg.includes("patient_archived")) {
+        if (msg.includes("practice_inactive")) {
+          // The practice's subscription is locked (migration 142).
+          setError(t("practiceInactive"));
+        } else if (msg.includes("patient_archived")) {
           // The clinic archived this patient's record there.
           setError(t("errorArchived"));
         } else if (msg.includes("slot_taken")) {

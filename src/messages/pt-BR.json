@@ -660,7 +660,8 @@
     "customTime": "Horário personalizado",
     "orCustomTime": "Ou escolha um horário específico",
     "professionalFallback": "Profissional",
-    "errorArchived": "Esta clínica não está aceitando novos agendamentos para a sua conta. Entre em contato com a clínica."
+    "errorArchived": "Esta clínica não está aceitando novos agendamentos para a sua conta. Entre em contato com a clínica.",
+    "practiceInactive": "A clínica não está recebendo agendamentos online no momento."
   },
   "auth": {
     "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",

@@ -660,7 +660,8 @@
     "customTime": "Benutzerdefinierte Zeit",
     "orCustomTime": "Oder eigene Uhrzeit",
     "professionalFallback": "Gesundheitsfachkraft",
-    "errorArchived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis."
+    "errorArchived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis.",
+    "practiceInactive": "Diese Praxis nimmt derzeit keine Online-Buchungen an."
   },
   "auth": {
     "passwordTooShort": "Das Passwort muss mindestens {min} Zeichen lang sein.",
