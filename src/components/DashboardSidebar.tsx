@@ -97,6 +97,10 @@ function LanguageSwitcher({ locale }: { locale: string }) {
     const pathWithoutLocale = pathname.replace(LOCALE_RE, "/");
     const newPath = newLocale === "en" ? pathWithoutLocale : `/${newLocale}${pathWithoutLocale}`;
     setOpen(false);
+    // The choice is the new NEXT_LOCALE before navigating: English has no
+    // prefix, so with the old cookie (e.g. pt-BR) the middleware sent the
+    // unprefixed URL straight back to /pt-BR/… (d7).
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; samesite=lax`;
     router.push(newPath);
   }
 
