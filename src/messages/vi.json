@@ -829,7 +829,9 @@
     "clinics": "Phòng khám",
     "payments": "Thanh toán",
     "settings": "Cài đặt",
-    "signOut": "Đăng xuất"
+    "signOut": "Đăng xuất",
+    "openMenu": "Mở menu",
+    "closeMenu": "Đóng menu"
   },
   "join": {
     "notFound": "Không tìm thấy liên kết mời",

@@ -829,7 +829,9 @@
     "clinics": "Cliniche",
     "payments": "Pagamenti",
     "settings": "Impostazioni",
-    "signOut": "Esci"
+    "signOut": "Esci",
+    "openMenu": "Apri menu",
+    "closeMenu": "Chiudi menu"
   },
   "join": {
     "notFound": "Link d'invito non trovato",

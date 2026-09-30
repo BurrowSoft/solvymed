@@ -829,7 +829,9 @@
     "clinics": "คลินิก",
     "payments": "การชำระเงิน",
     "settings": "การตั้งค่า",
-    "signOut": "ออกจากระบบ"
+    "signOut": "ออกจากระบบ",
+    "openMenu": "เปิดเมนู",
+    "closeMenu": "ปิดเมนู"
   },
   "join": {
     "notFound": "ไม่พบลิงก์เชิญ",
