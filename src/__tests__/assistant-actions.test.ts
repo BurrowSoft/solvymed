@@ -351,6 +351,10 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     expect(system).toContain("Reply in Thai");
     expect(system).toContain("\"ยืนยัน\"");
     expect(system).not.toContain("\"Confirmar\"");
+    // The screens' Thai labels ride in the cached prefix, not every request (9a).
+    expect(t.model.calls[0].cachedSystem).toContain("# Screen labels (English = Thai)");
+    expect(t.model.calls[0].cachedSystem).toContain("\"Settings\" = \"การตั้งค่า\"");
+    expect(system).not.toContain("\"Settings\" = ");
   });
 
   it("English names the real button (d7: never \"tap Confirmar\")", async () => {
