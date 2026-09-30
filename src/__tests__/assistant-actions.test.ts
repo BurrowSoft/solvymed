@@ -658,7 +658,8 @@ describe("SolvyAI actions mode: a recurring series (the website's Repetir)", () 
     t.tables.appointments.push(rui);
     const r = await run(t, ask("Marca a Maria toda quarta às 14h, 3 vezes"));
     const card = cardOf(r.blocks)!;
-    expect(card.fields.find((f) => f.label === "Repetir")!.value).toBe("Semanal, 2 consultas (até 21/10/2026), pulando 14/10");
+    expect(card.fields.find((f) => f.label === "Repetir")!.value).toBe("Semanal, 2 consultas (até 21/10/2026)");
+    expect(card.fields.find((f) => f.label === "Fica de fora")!.value).toBe("14/10 (horário ocupado)");
     expect(card.action.args.repeat).toEqual({ every: "week", count: 3, skip: ["2026-10-14"] });
     const free = choiceOf(r.blocks)!;
     expect(free.text).toBe("Outro horário para 14/10:");
@@ -673,7 +674,8 @@ describe("SolvyAI actions mode: a recurring series (the website's Repetir)", () 
     const r = await run(t, ask("…"));
     const card = cardOf(r.blocks)!;
     expect(card.fields.find((f) => f.label === "Quando")!.value).toBe("Quarta-feira, 14/10/2026, 14:00–14:30");
-    expect(card.fields.find((f) => f.label === "Repetir")!.value).toBe("Semanal, 2 consultas (até 21/10/2026), pulando 07/10");
+    expect(card.fields.find((f) => f.label === "Repetir")!.value).toBe("Semanal, 2 consultas (até 21/10/2026)");
+    expect(card.fields.find((f) => f.label === "Fica de fora")!.value).toBe("07/10 (horário ocupado)");
     // The series stays anchored on 07/10 with the skip: the save expands it the same way.
     expect(card.action.args).toMatchObject({ date: "2026-10-07", repeat: { every: "week", count: 3, skip: ["2026-10-07"] } });
     expect(choiceOf(r.blocks)!.alternatives.every((a) => a.date === "2026-10-07")).toBe(true);
