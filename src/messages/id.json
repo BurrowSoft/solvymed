@@ -1481,11 +1481,12 @@
     "rule8": "<b>Data:</b> file contoh hanya dipakai untuk membangun dan menguji fitur impor, disimpan di lokasi privat, dan dihapus setelah fitur impor dirilis.",
     "emailSubject": "Kami telah menerima pendaftaran Program Pendiri SolvyMed Anda",
     "emailHello": "Halo {name},",
-    "emailBody": "terima kasih telah mendaftar ke Program Pendiri SolvyMed untuk {system}. Kami akan membalas dalam 5 hari kerja.",
+    "emailBody": "Terima kasih telah mendaftar ke Program Pendiri SolvyMed untuk {system}. Kami akan membalas dalam 5 hari kerja.",
     "emailWaitlist": "Tempat untuk {system} saat ini sudah penuh, jadi Anda masuk daftar tunggu.",
     "emailNoFiles": "Mohon jangan kirim file apa pun dulu; jika Anda diterima, kami akan menjelaskan cara membuat ekspor uji.",
     "emailSign": "Tim SolvyMed",
-    "emailTagline": "Manajemen klinik jadi mudah"
+    "emailTagline": "Manajemen klinik jadi mudah",
+    "emailHelloTitled": "Halo {title} {name},"
   },
   "foundersCard": {
     "cardTitle": "Program Pendiri",

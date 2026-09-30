@@ -8,6 +8,8 @@
 // The titles are the ones the name field's hint suggests: Dr/Dra/Prof/Profa
 // (+ ª forms), fr Pr, it Dott./Dott.ssa. The same regex as the app's;
 // change both together.
+import { THAI_TITLES } from "./country";
+
 const TITLE = /^(dott\.ssa|dott|dra|dr|profa|prof|pr)(?:(\.?ª\.?|\.)\s*|\s+|$)/i;
 const MAX_TITLES = 3;
 
@@ -25,6 +27,25 @@ export function doctorDisplayName(name: string | null | undefined, opts: { first
   const { titles, rest } = splitTitles(name);
   const shown = opts.firstOnly ? rest.split(" ")[0] ?? "" : rest;
   return [...titles, shown].filter(Boolean).join(" ");
+}
+
+// Thai professional titles, typed before the name with or without a space
+// ("นพ.สมชาย", "พญ. สุดา"): the ones the practice-country examples suggest
+// (lib/country THAI_TITLES, one list; 9a), plus ภก./ภญ./ดร. Kept exactly as
+// typed.
+const THAI_TITLE = new RegExp(
+  `^(${[...THAI_TITLES, "ภก.", "ภญ.", "ดร."].map((s) => s.replace(/\./g, "\\.")).join("|")})\\s*`,
+);
+
+// For a greeting (UX, "Olá, Dra. Ana!", "เรียน นพ.สมชาย"): the typed
+// title(s), as doctorDisplayName shows them, and the first name. Never a
+// title we add.
+export function greetingName(name: string | null | undefined): { title: string; first: string } {
+  const typed = (name ?? "").trim().replace(/\s+/g, " ");
+  const thai = typed.match(THAI_TITLE);
+  if (thai) return { title: thai[1], first: typed.slice(thai[0].length).split(" ")[0] ?? "" };
+  const { titles, rest } = splitTitles(typed);
+  return { title: titles.join(" "), first: rest.split(" ")[0] ?? "" };
 }
 
 // The avatar letter: the name's, never a title's ("Dra. Beatriz" → "B",

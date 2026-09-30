@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { systemName } from "./founders";
+import { greetingName } from "./doctorName";
 import { brandedHtml, escapeHtml } from "./brandedEmail";
 
 // The Founders application's two emails (spec: Resend, from
@@ -29,8 +30,12 @@ export async function sendFounderEmails(a: {
   try {
     const t = await getTranslations({ locale: a.locale, namespace: "founders" });
     const system = a.system === "other" && a.systemOther ? a.systemOther : systemName(a.system);
-    const first = a.fullName.trim().split(/\s+/)[0] ?? "";
-    const hello = t("emailHello", { name: first });
+    // The typed title kept + the first name (UX: "Olá, Dra. Ana!", "เรียน
+    // นพ.สมชาย"); never the first word, which may be the title itself.
+    const { title, first } = greetingName(a.fullName);
+    // A title alone ("Dra") has no first name to go with it: the name as
+    // typed, never "Olá, Dra !" (9a).
+    const hello = title && first ? t("emailHelloTitled", { title, name: first }) : t("emailHello", { name: first || a.fullName.trim() });
     const paragraphs = [
       [t("emailBody", { system }), a.status === "waitlist" ? t("emailWaitlist", { system }) : ""].filter(Boolean).join(" "),
       t("emailNoFiles"),

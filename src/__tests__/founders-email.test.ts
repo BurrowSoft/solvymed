@@ -1,14 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createTranslator } from "next-intl";
 import pt from "@/messages/pt-BR.json";
+import en from "@/messages/en.json";
+import th from "@/messages/th.json";
 import { brandedHtml } from "@/lib/brandedEmail";
 
 // The Founders applicant's confirmation in the Auth emails' branded layout
 // (the app's brandedHtml); the team's summary stays plain. Off without
 // RESEND_API_KEY.
 
+const BY_LOCALE: Record<string, typeof pt> = { "pt-BR": pt, en: en as unknown as typeof pt, th: th as unknown as typeof pt };
 vi.mock("next-intl/server", () => ({
-  getTranslations: async ({ namespace }: { namespace: string }) => createTranslator({ locale: "pt-BR", messages: pt, namespace: namespace as "founders" }),
+  getTranslations: async ({ locale, namespace }: { locale: string; namespace: string }) =>
+    createTranslator({ locale, messages: BY_LOCALE[locale] ?? pt, namespace: namespace as "founders" }),
 }));
 
 import { sendFounderEmails } from "@/lib/foundersEmail";
@@ -50,5 +54,40 @@ describe("Founders emails", () => {
 
   it("brandedHtml escapes the language too", () => {
     expect(brandedHtml({ lang: 'x"><script>', heading: "h", paragraphs: [], tagline: "t" })).not.toContain("<script>");
+  });
+});
+
+// UX (1 Oct, 3e on #223): the typed title kept + the first name, never the
+// first word; Thai "เรียน" with the title, or "คุณ" without one.
+describe("the applicant's greeting", () => {
+  const firstTwo = async (fullName: string, locale: string) => {
+    sent = [];
+    vi.stubEnv("RESEND_API_KEY", "test-key");
+    await sendFounderEmails({ ...APP, fullName, locale, status: "new" });
+    return sent.find((m) => m.to[0] === APP.email)!.text.split("\n\n");
+  };
+  const hello = async (fullName: string, locale: string) => (await firstTwo(fullName, locale))[0];
+
+  it("keeps a typed title with the first name", async () => {
+    expect(await hello("Dra Ana Souza", "pt-BR")).toBe("Olá, Dra Ana!");
+    expect(await hello("Dra. Ana Souza", "pt-BR")).toBe("Olá, Dra. Ana!");
+    expect(await hello("dr. John Smith", "en")).toBe("Hi Dr. John,");
+    expect(await hello("นพ.สมชาย ใจดี", "th")).toBe("เรียน นพ.สมชาย");
+    expect(await hello("พญ. สุดา ดีงาม", "th")).toBe("เรียน พญ.สุดา");
+  });
+
+  it("a title alone falls back to the name as typed (9a)", async () => {
+    expect(await hello("Dra", "pt-BR")).toBe("Olá, Dra!");
+    expect(await hello("Dr.", "en")).toBe("Hi Dr.,");
+  });
+
+  it("without a title: the first name", async () => {
+    expect(await hello("Ana Souza", "pt-BR")).toBe("Olá, Ana!");
+    expect(await hello("John Smith", "en")).toBe("Hi John,");
+    expect(await hello("สมชาย ใจดี", "th")).toBe("เรียน คุณสมชาย");
+  });
+
+  it("the paragraph after the greeting starts with a capital (en)", async () => {
+    expect((await firstTwo("John Smith", "en"))[1]).toMatch(/^Thank you/);
   });
 });
