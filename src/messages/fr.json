@@ -856,6 +856,7 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "ou",
     "cancelAnytime": "Résiliation à tout moment. Sans engagement.",
+    "startsAfterTrial": "Votre abonnement commence le {date}, à la fin de votre essai gratuit. Rien n'est prélevé aujourd'hui.",
     "successMessage": "Abonnement activé ! Bienvenue dans SolvyMed Pro.",
     "activationPending": "Paiement reçu ! Activation de votre abonnement…",
     "activationSlow": "Nous avons reçu votre paiement, mais l’activation prend plus de temps que d’habitude. Elle se termine en général en quelques minutes ; si votre forfait n’apparaît pas, contactez le support :",

@@ -856,6 +856,7 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "or",
     "cancelAnytime": "Cancel anytime. No commitments.",
+    "startsAfterTrial": "Your subscription starts on {date}, when your free trial ends. You won't be charged today.",
     "errorAlreadySubscribed": "You're already subscribed.",
     "errorWrongRole": "Only professionals can subscribe.",
     "errorCheckFailed": "Could not verify your subscription status. Please try again.",

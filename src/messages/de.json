@@ -856,6 +856,7 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "oder",
     "cancelAnytime": "Jederzeit kündbar. Keine Verpflichtungen.",
+    "startsAfterTrial": "Ihr Abonnement beginnt am {date}, wenn Ihre kostenlose Testphase endet. Heute wird nichts berechnet.",
     "successMessage": "Abonnement aktiviert! Willkommen bei SolvyMed Pro.",
     "activationPending": "Zahlung erhalten! Ihr Abonnement wird aktiviert…",
     "activationSlow": "Wir haben Ihre Zahlung erhalten, aber die Aktivierung dauert länger als üblich. Sie ist meist in wenigen Minuten abgeschlossen; wenn Ihr Tarif nicht erscheint, wenden Sie sich an den Support:",

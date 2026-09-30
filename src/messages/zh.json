@@ -856,6 +856,7 @@
     "payCardSub": "Visa、Mastercard、美国运通",
     "or": "或",
     "cancelAnytime": "随时取消。无需承诺。",
+    "startsAfterTrial": "你的订阅将于 {date} 免费试用结束时开始。今天不会扣款。",
     "successMessage": "订阅已激活！欢迎使用SolvyMed Pro。",
     "activationPending": "已收到付款！正在激活您的订阅…",
     "activationSlow": "我们已收到您的付款，但激活时间比平时长。通常几分钟内即可完成；如果您的套餐没有显示，请联系支持：",

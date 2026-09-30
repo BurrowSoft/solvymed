@@ -856,6 +856,7 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "hoặc",
     "cancelAnytime": "Hủy bất cứ lúc nào. Không ràng buộc.",
+    "startsAfterTrial": "Gói đăng ký của bạn bắt đầu vào {date}, khi thời gian dùng thử miễn phí kết thúc. Hôm nay bạn chưa bị trừ tiền.",
     "successMessage": "Đăng ký đã được kích hoạt! Chào mừng đến với SolvyMed Pro.",
     "activationPending": "Đã nhận thanh toán! Đang kích hoạt gói đăng ký của bạn…",
     "activationSlow": "Chúng tôi đã nhận thanh toán của bạn, nhưng việc kích hoạt đang lâu hơn bình thường. Thường sẽ hoàn tất trong vài phút; nếu gói của bạn không hiển thị, hãy liên hệ hỗ trợ:",
