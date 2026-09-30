@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useRef, useEffect } from "react";
+import { createContext, useContext, useState, useTransition, useRef, useEffect } from "react";
 import { MergePatientButton } from "./MergePatient";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
@@ -39,6 +39,11 @@ type Patient = {
   // Set by a server trigger on insert (migration 088); can't be forged.
   professional_id?: string; created_by?: string | null; created_by_name?: string | null;
 } & AddressColumns;
+
+// The clinic's time zone for timestamps shown as dates ("Paciente desde",
+// corrections): formatting in the runtime's zone gave the server (UTC) and
+// the browser different days near midnight (React #418).
+const TimeZoneContext = createContext<string | undefined>(undefined);
 
 function Dialog({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
   if (!open) return null;
@@ -83,7 +88,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, canMerge = false, currentUserId, idKind = "BR", accessLog = null, addressLive = false }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, canMerge = false, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -106,6 +111,8 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   accessLog?: AccessLogPage | "failed" | null;
   // Address, CNS and Observações (138): shown and edited once it's applied.
   addressLive?: boolean;
+  // The clinic's (IANA); dates of timestamps are shown in it.
+  timeZone?: string;
 }) {
   const t = useTranslations("patientDetail");
   const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "exams" | "files" | "appointments" | "access">("info");
@@ -124,6 +131,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   );
 
   return (
+    <TimeZoneContext.Provider value={timeZone}>
     <div>
       {/* Tab bar */}
       <div className="flex border-b border-slate-100 mb-6 overflow-x-auto">
@@ -153,6 +161,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         <AccessLogTab patientId={patient.id} initial={accessLog} records={records} prescriptions={prescriptions} locale={locale} />
       )}
     </div>
+    </TimeZoneContext.Provider>
   );
 }
 
@@ -252,6 +261,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = fal
   const tIds = useTranslations("patientIds");
   const tBirth = useTranslations("dateInput");
   const tAddr = useTranslations("patientAddress");
+  const timeZone = useContext(TimeZoneContext);
   // CPF, Thai ID/passport or passport/ID, by the practice's country.
   const idFields = usePatientIdFields(idKind, patient);
   // Server codes become translated copy, never raw codes or database text.
@@ -357,7 +367,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = fal
       { label: tAddr("notes"), value: patient.notes_admin ?? null },
     ] : []),
     { label: t("insurance"), value: patient.convenio_type === "health_plan" ? t("healthPlan") : patient.convenio_type === "particular" ? t("privateInsurance") : null },
-    { label: t("patientSince"), value: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "long", day: "numeric" }) },
+    { label: t("patientSince"), value: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "long", day: "numeric", timeZone }) },
     // Only when someone other than the doctor (i.e. a secretary) added
     // the patient.
     {
@@ -365,7 +375,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = fal
       value: patient.created_by && patient.created_by !== patient.professional_id && patient.created_by_name
         ? t("addedBySecretary", {
             name: patient.created_by_name,
-            date: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric" }),
+            date: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric", timeZone }),
           })
         : null,
     },
@@ -585,7 +595,8 @@ function useClinicalErrorText() {
 
 function CorrectionTrail({ correction, locale }: { correction: ClinicalMeta; locale: string }) {
   const t = useTranslations("patientDetail");
-  const date = new Date(correction.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric" });
+  const timeZone = useContext(TimeZoneContext);
+  const date = new Date(correction.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric", timeZone });
   const reason = correction.correction_reason ?? "";
   return (
     <p className="text-xs font-medium text-amber-800">

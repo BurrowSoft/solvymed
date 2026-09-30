@@ -60,12 +60,10 @@ export default async function PatientDetailPage({
   // Secretaries never see the log. Logged first, so the log shown
   // includes this open.
   await logPatientOpen(supabase, id);
-  const accessLog = isSecretary
-    ? null
-    : await readAccessLog(supabase, id, {
-        locale,
-        timeZone: await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary }),
-      });
+  // The clinic's time zone: the access log's times, and the page's dates
+  // (the same on the server and in the browser, so no hydration mismatch).
+  const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
+  const accessLog = isSecretary ? null : await readAccessLog(supabase, id, { locale, timeZone });
 
   const patient = patientResult.data as {
     id: string; full_name: string; email?: string; phone?: string; cpf?: string;
@@ -148,6 +146,7 @@ export default async function PatientDetailPage({
           canMerge={!isSecretary && (await mergeAvailable())}
           canDelete={preview?.hasClinicalHistory === false && preview.hasAppointments === false}
           accessLog={accessLog}
+          timeZone={timeZone}
           addressLive={conditionMet("patient-address-live")}
         />
       </div>

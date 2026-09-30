@@ -1476,7 +1476,7 @@
     "samePerson": "是同一個人",
     "done": "病歷已合併。",
     "errBothApp": "兩份病歷都在使用 App,無法合併。",
-    "errArchived": "請先還原此病患資料,再合併到其中。",
+    "errArchived": "請先還原此病患資料，再合併到其中。",
     "errDeceased": "其中一份病歷在原系統中標記為已故。如有誤,請先還原該病歷再合併。",
     "errGeneric": "發生錯誤,請再試一次。",
     "photoYes": "有照片",
