@@ -56,8 +56,8 @@ You can have up to 3 secretaries. They manage the schedule, patients and payment
 Em **Início**, na lista para configurar a clínica, toque em **Compartilhar link de convite**. Ou em **Configurações → Seu código de convite para pacientes**, toque em **Compartilhar** (sem código ainda? toque em **Gerar código de convite**). Quem abrir o link baixa o app ou entra pelo site e pede consultas com você. **Novo** gera um código novo e o anterior deixa de funcionar.
 **en**
 On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings → Your patient invite code**, tap **Share** (no code yet? tap **Generate invite code**). Anyone who opens the link gets the app or the website and can request appointments with you. **New** creates a new code and the old one stops working.
-**No site:** Em **Agenda**, clique em **Compartilhar link de convite**, ou em **Configurações → Seu código de convite**, use **Copiar** ou **Copiar link**. **Gerar novo** cria um código novo e o anterior deixa de funcionar.
-**On the website:** In the **Schedule**, click **Share invite link**, or in **Settings → Your invite code**, use **Copy** or **Copy link**. **Regenerate** creates a new code and the old one stops working.
+**No site:** Em **Agenda**, clique em **Compartilhar link de convite**, ou em **Configurações → Seu código de convite**, use **Copiar** ou **Copiar link**. **Gerar novo** cria um código novo e o anterior deixa de funcionar. Com a assinatura inativa, o código de convite não aparece em Configurações.
+**On the website:** In the **Schedule**, click **Share invite link**, or in **Settings → Your invite code**, use **Copy** or **Copy link**. **Regenerate** creates a new code and the old one stops working. While the subscription is inactive, the invite code isn't shown in Settings.
 `open:home`
 
 ---
