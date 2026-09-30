@@ -317,7 +317,9 @@
     "pageInfo": "{from}–{to} of {total}",
     "prevPage": "Previous",
     "nextPage": "Next",
-    "pagesLabel": "Pages"
+    "pagesLabel": "Pages",
+    "fullNamePlaceholder": "Full name",
+    "professionPlaceholder": "e.g. Engineer, Teacher…"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -603,7 +605,6 @@
     "countryLabel": "Country",
     "countryPlaceholder": "Country",
     "phoneLabel": "Phone",
-    "phonePlaceholder": "+1 555 000 0000",
     "locationNote": "Location on the map is detected automatically from the address you provide.",
     "noAddress": "No address",
     "onMap": "On map",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "Your full name",
     "emailLabel": "Email",
     "phoneLabel": "Phone",
-    "phonePlaceholder": "Phone number",
     "dobLabel": "Date of birth",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -1821,5 +1821,8 @@
     "onlySolvyMed": "I can only help with SolvyMed.",
     "noClinical": "I can't help with clinical questions.",
     "minutes": "{n} min"
+  },
+  "countryExamples": {
+    "phone": "Phone number"
   }
 }

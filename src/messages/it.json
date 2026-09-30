@@ -317,7 +317,9 @@
     "pageInfo": "{from}–{to} di {total}",
     "prevPage": "Precedente",
     "nextPage": "Successiva",
-    "pagesLabel": "Pagine"
+    "pagesLabel": "Pagine",
+    "fullNamePlaceholder": "Nome completo",
+    "professionPlaceholder": "es. Ingegnere, Insegnante…"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -603,7 +605,6 @@
     "countryLabel": "Paese",
     "countryPlaceholder": "Paese",
     "phoneLabel": "Telefono",
-    "phonePlaceholder": "+39 02 1234567",
     "locationNote": "La posizione sulla mappa viene rilevata automaticamente dall'indirizzo fornito.",
     "noAddress": "Nessun indirizzo",
     "onMap": "Sulla mappa",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "Il tuo nome completo",
     "emailLabel": "Email",
     "phoneLabel": "Telefono",
-    "phonePlaceholder": "333 1234567",
     "dobLabel": "Data di nascita",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -1791,5 +1791,8 @@
     "onlySolvyMed": "Posso aiutare solo con SolvyMed.",
     "noClinical": "Non posso aiutare con questioni cliniche.",
     "minutes": "{n} min"
+  },
+  "countryExamples": {
+    "phone": "Numero di telefono"
   }
 }

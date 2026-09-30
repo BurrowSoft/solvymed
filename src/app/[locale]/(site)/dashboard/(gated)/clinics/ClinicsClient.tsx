@@ -34,8 +34,10 @@ function errorMessage(t: (key: string) => string, code: string | undefined): str
   return t(ERROR_CODE_KEY[code ?? ""] ?? "genericError");
 }
 
-export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
+// phoneExample: the practice country's (lib/country); null = the neutral text.
+export function ClinicsClient({ clinics: initial, phoneExample = null }: { clinics: Clinic[]; phoneExample?: string | null }) {
   const t = useTranslations("clinics");
+  const tEx = useTranslations("countryExamples");
   const router = useRouter();
   const [clinics, setClinics] = useState(initial);
   // router.refresh() after adding passes a new list; useState alone would
@@ -178,7 +180,7 @@ export function ClinicsClient({ clinics: initial }: { clinics: Clinic[] }) {
             </div>
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-1">{t("phoneLabel")}</label>
-              <input name="phone" type="tel" placeholder={t("phonePlaceholder")} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
+              <input name="phone" type="tel" placeholder={phoneExample ?? tEx("phone")} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
             </div>
             <p className="sm:col-span-2 text-xs text-slate-400">
               📍 {t("locationNote")}

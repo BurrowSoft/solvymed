@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("@sentry/nextjs", () => ({ captureMessage: vi.fn() }));
 
 import * as Sentry from "@sentry/nextjs";
-import { countryProfile, normalizeCountry, titleExamples } from "@/lib/country";
+import { countryProfile, normalizeCountry, profileOfKind, profileOfPhonePrefix, titleExamples } from "@/lib/country";
 import { amountExample, currencySymbol, formatMoney } from "@/lib/money";
 import { getPracticeCountry, lookupPracticeCountry } from "@/lib/practiceCountry";
 
@@ -94,5 +94,25 @@ describe("practice country lookup", () => {
   it("display falls back to BR on an unknown failure and reports it (code only)", async () => {
     expect(await getPracticeCountry(doctor({ data: null, error: { code: "PGRST301" } }) as never, "u1", "u1")).toBe("BR");
     expect(Sentry.captureMessage).toHaveBeenCalledWith("practice_country_lookup_failed", { level: "warning", tags: { code: "PGRST301" } });
+  });
+});
+
+describe("phone examples by country (UX, app #206 shape)", () => {
+  it("BR and TH have their own; Other has none (a neutral text instead)", () => {
+    expect(countryProfile("BR").examples.mobile).toEqual({ local: "(11) 99999-9999", intl: "+55 (11) 99999-9999", national: "11 99999-9999" });
+    expect(countryProfile("TH").examples.mobile).toEqual({ local: "081 234 5678", intl: "+66 81 234 5678", national: "81 234 5678" });
+    expect(countryProfile("GB").examples.mobile).toBeNull();
+  });
+
+  it("by kind: OTHER is the explicit default, never read as a country code (which would be BR)", () => {
+    expect(profileOfKind("OTHER").kind).toBe("OTHER");
+    expect(profileOfKind("TH").kind).toBe("TH");
+    expect(profileOfKind("BR").kind).toBe("BR");
+  });
+
+  it("by a dial code: +55 BR, +66 TH, anything else Other", () => {
+    expect(profileOfPhonePrefix("+55").kind).toBe("BR");
+    expect(profileOfPhonePrefix("+66").kind).toBe("TH");
+    expect(profileOfPhonePrefix("+1").kind).toBe("OTHER");
   });
 });

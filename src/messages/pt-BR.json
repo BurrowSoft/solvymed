@@ -317,7 +317,9 @@
     "pageInfo": "{from}–{to} de {total}",
     "prevPage": "Anterior",
     "nextPage": "Próxima",
-    "pagesLabel": "Páginas"
+    "pagesLabel": "Páginas",
+    "fullNamePlaceholder": "Nome completo",
+    "professionPlaceholder": "ex: Engenheiro, Professor…"
   },
   "patientDetail": {
     "tabInfo": "Informações",
@@ -603,7 +605,6 @@
     "countryLabel": "País",
     "countryPlaceholder": "País",
     "phoneLabel": "Telefone",
-    "phonePlaceholder": "+55 11 9 9999-9999",
     "locationNote": "A localização no mapa é detectada automaticamente a partir do endereço fornecido.",
     "noAddress": "Sem endereço",
     "onMap": "No mapa",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "Seu nome completo",
     "emailLabel": "E-mail",
     "phoneLabel": "Telefone",
-    "phonePlaceholder": "11 99999-9999",
     "dobLabel": "Data de nascimento",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -1791,5 +1791,8 @@
     "onlySolvyMed": "Só posso ajudar com o SolvyMed.",
     "noClinical": "Não posso ajudar com questões clínicas.",
     "minutes": "{n} min"
+  },
+  "countryExamples": {
+    "phone": "Número com DDD/código de área"
   }
 }
