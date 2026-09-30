@@ -266,6 +266,7 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   { rule: "The practice country is chosen when the doctor creates the account on the website (Brazil / Thailand / Other); it sets the currency, the plan price, the patient ID field and the payment QR, and shows in Settings → \"País do consultório\" / \"Practice country\". To change it later, the doctor contacts support@solvymed.com (SolvyAI can't change it). Patients and secretaries don't choose it.", help: "C1" },
   { rule: { text: "The app (1.4.0) is in 7 languages: Portuguese, English, Spanish, French, German, Italian and Thai (ไทย), in the first-run choice, the language picker and Settings → Language; a phone set to Thai opens it in Thai.", pending: ["app-1.4.0"] }, help: "C8" },
   { rule: { text: "In the app too (1.4.0): a doctor's signup shows the same practice-country choice (Brasil / ประเทศไทย / Other), preselected from the phone's region.", pending: ["app-1.4.0"] }, help: "C1" },
+  { rule: { text: "In the app too (1.4.0): the receipt PDF shows the doctor's council registration next to their name when on file, and in Brazil with no clinic CNPJ the Portuguese Receita Saúde note, same as the website's receipt.", pending: ["app-1.4.0"] }, help: "G5" },
   {
     rule: {
       text: "The patient import also brings the address (postal code, street, number, complement, neighbourhood, city, state) and the CNS: iClinic and Prontuário Verde map them, and our template has the columns; a CEP that lost its leading zero in Excel is completed. The previous system's own notes stay imported data (doctor only), never Observações.",
@@ -365,7 +366,7 @@ export const NEVER: { what: string; help: string }[] = [
   { what: "Closing the account.", help: "K4" },
   { what: "Changing the password (Settings → Change password, on the app and the website; the other devices are signed out).", help: "K2" },
   { what: "Payment and Pix / PromptPay settings.", help: "G3" },
-  { what: "Receipts (on the website: Payments → a received appointment → \"Recibo\" / \"Receipt\", a print view, for the doctor and the secretary; a Thai practice's numbered receipts are issued in the app).", help: "G5" },
+  { what: "Receipts (on the website: Payments → a received appointment → \"Recibo\" / \"Receipt\", a print view, for the doctor and the secretary; it shows the doctor's council registration next to their name when on file, and in Brazil with no clinic CNPJ a Portuguese note that it's proof of payment and the official income-tax receipt comes from the Receita Saúde app; a Thai practice's numbered receipts are issued in the app).", help: "G5" },
   { what: "The subscription and plan (the doctor sees the plan's status in Settings → Subscription on the website; \"Manage subscription\" opens Stripe's page for a card subscription).", help: "K1" },
   { what: "Team members (inviting or removing a secretary).", help: "C4" },
   { what: "The clinic's country.", help: "C1" },
