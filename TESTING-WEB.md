@@ -10044,3 +10044,82 @@ Merged at `e0865e9` (evidence: PR comment 5904148562).
 **Nit (not blocking):** en "Undo the import" (the button) vs "Import undone" is fine; pt "1 removidos" keeps the existing `undone` string's non-plural form (as on the Done step).
 
 Merged at `a03f9ce` (evidence: PR comment 5904137494). Closes #177's ❌.
+
+## #163 Patients CSV export on the website (migration 126), live (web tester 1, 2026-09-30)
+
+**Web tester 1: LIVE 🟢 at `f6300b7f47e31ddd9d63582ccba20a98dcdd274e`** (prod DB with 126 + 138 applied). **Gate met for `migration-126`.**
+
+**How it was tested:**
+- **Setup:** a local `next dev` at this head against the **prod DB**, with `migration-126` forced only in that local copy (`patient-address-live` is already on).
+- **Fail-closed row:** a test-only server preload fails `log_record_access_batch` on demand.
+- **Data:** throwaway BR and TH doctors plus a secretary (cleaned up).
+- **The BR patients:** one complete one (CPF, sex, birth date, phone, e-mail, profession, tags, address, CNS and an Observações "NOTA_SECRETA_NAO_EXPORTAR"), one archived (via `archive_patient`), and one with formula-looking values.
+
+| Row | Result |
+|---|---|
+| (1) Configurações → **Exportar pacientes (CSV)**, doctor | ✅ downloads `solvymed-pacientes-2026-09-30.csv` (en `solvymed-patients-…`) with **all 3 patients, active + archived** (the archived one with "Arquivado em 30/09/2026") |
+| (2) Acessos | ✅ every exported patient gets a `record_access_log` row (kind `export`, ref `csv`), one per export; P1's Acessos shows "Dra Opus Exporta · Profissional · **Exportado na lista de pacientes (CSV)**" |
+| (2) The log fails (injected) | ✅ **no file**; "Não foi possível registrar o acesso. Tente novamente."; **no new log rows** |
+| (3) BR columns | ✅ Nome Completo · CPF · Sexo · Data de Nascimento · Telefone · E-mail · Profissão · Etiquetas ("retorno, vip") · Arquivado em · CEP · Rua · Número · Complemento · Bairro · Cidade · UF · **CNS**. **No Observações** (the secret note appears nowhere) |
+| (3) TH practice (en UI) | ✅ Full Name · **Thai national ID** · **Passport number** · Sex · Date of Birth **04/04/2523 (BE)** · … · Postal code · Street / soi · House number · Building, floor, room · Subdistrict · District · Province; **no CNS, no Observações** |
+| (4) Format | ✅ **pt-BR `;`**, **en `,`**; a UTF-8 **BOM** in both; every cell quoted |
+| (4) Formula cells | ✅ neutralised with a leading `'`: `'=HYPERLINK(""http://x"",""clique"")`, `'@SUM(1)`, `'+cmd@example.com`, `'-2+3` |
+| (5) Secretary | ✅ no export card; `GET /api/patients/export` → **403** `{"code":"not_doctor"}` |
+
+**Not run live:** the gate off (`migration-126` unmet → 404, no card) and the >5,000-row chunking. The PR's unit tests cover both.
+
+Merged at `f6300b7` (evidence: PR comment 5904641268).
+
+## #203 The Thai market open by default (web tester 2, 2026-09-30)
+
+**Web tester 2: 🟢 at `9a2ea2428cd8453ce7a6fc041ba3055a7b79eb18`** (the Thai market opens by default; "0" closes the language and the market together)
+
+**How it was tested:**
+- **Setup:** a local `next dev` at this head, restarted per mode with a clean `.next`. `.env.local` has no `NEXT_PUBLIC_THAI_ENABLED`.
+- **Unset and "1":** Playwright.
+- **"0":** the server-rendered HTML, via curl. Playwright kept timing out on the cold compile here (a local slowness, not the app: `/pricing` answered 200 in ~3 s).
+
+| Row | unset (Production-like) | `"1"` | `"0"` |
+|---|---|---|---|
+| (1) Doctor signup: practice-country picker | ✅ Brasil / ประเทศไทย / Outro país (pt-BR), Other country (en) | ✅ same | ✅ **no picker** (pt-BR + en) |
+| (2) `/pricing` country switch | ✅ "Prices for: Brasil · ประเทศไทย · Other countries" | ✅ same | ✅ **no switch** |
+| (2) prices | ✅ `?c=BR` R$ 89 · `?c=TH` ฿690 · `?c=OTHER` US$ 19 (the default for an en visitor with no `c`: US$ 19) | ✅ same | ✅ R$ 89 for every `c` (BR only) |
+| (3) `/th` Thai landing | ✅ 200, `<html lang="th">`, the section "ระบบคลินิกที่ออกแบบมาเพื่อแพทย์ไทย" shown; `/th/pricing?c=TH` → ฿690 | ✅ same | ✅ `/th` → **307 `/`**; `/th/pricing?c=TH` → 307 `/pricing?c=TH` (query kept) |
+| Home: ภาษาไทย in the switcher, hreflang `th` | ✅ both present | ✅ both | ✅ **neither** |
+
+CI ✅ (lint, typecheck + unit tests, Vercel).
+
+Merged at `9a2ea24` (evidence: PR comment 5905200926).
+
+## #207 Lazy Stripe client: merge-gate smoke (web tester 1, 2026-09-30)
+
+**Web tester 1: 🟢 at `c373d7b`**, on the PR's Vercel Preview (Stripe test keys).
+
+| Row | Result |
+|---|---|
+| A trial doctor on /pt-BR/subscribe | ✅ R$ 89; **Assinar com Cartão** → `/api/checkout/stripe` 200 → a `checkout.stripe.com` session in **TEST mode (`cs_test_…`)**. The navigation to Stripe was recorded and aborted: not loaded, nothing paid |
+| POST `/api/webhooks/stripe` with a bad `stripe-signature` | ✅ 400 `{"error":"Invalid signature"}` (no header → 400 `No signature`) |
+
+Merged at `c373d7b` (evidence: PR comment 5905026304).
+
+## #209 (release hotfix) The e-mail logos at stable www URLs (web tester 2 + web tester 1, 2026-09-30)
+
+**Preview (web tester 2):**
+
+**Web tester 2: 🟢 at `3683190`** (release hotfix: the e-mail logos), on the PR's Vercel Preview.
+
+| Row | Result |
+|---|---|
+| `/email/solvymed-logo-white.png` | ✅ 200 `image/png`, no `Location`; the bytes equal the PR's file; the white logo is transparent |
+| `/email/solvymed-mark-blue.png` | ✅ 200 `image/png`, no `Location`; the bytes equal the PR's file |
+
+⏳ The re-check on www after the release deploy.
+
+**Prod check (web tester 1): 🟢 on www**, release `e9762bd` (the production deployment of #209's merge).
+
+| URL | Result |
+|---|---|
+| https://www.solvymed.com/email/solvymed-logo-white.png | ✅ 200 `image/png`, no `Location`, 66,450 bytes; sha256 = `release:public/email/solvymed-logo-white.png` |
+| https://www.solvymed.com/email/solvymed-mark-blue.png | ✅ 200 `image/png`, no `Location`, 30,619 bytes; sha256 = the repo file |
+
+Merged into `release` at `e9762bd` (evidence: PR comment 5905213577).
