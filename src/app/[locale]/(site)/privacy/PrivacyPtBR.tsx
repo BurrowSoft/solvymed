@@ -129,7 +129,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
 
       {(notices || whatsapp) && (
         <Section title="6e. Avisos ao paciente">
-          <p>Avisos ao paciente: quando a clínica marca, remarca ou cancela uma consulta, o aviso ao paciente{whatsapp && ` (${noticeChannels(notices, line, "ou")})`} espera cerca de 1 minuto antes de ser enviado, para a clínica poder desfazer um engano. Guardamos um registro de cada aviso (qual consulta, o tipo de aviso, o horário e se foi enviado), sem nomes nem dados clínicos, por 30 dias, e depois o apagamos.</p>
+          <p>Avisos ao paciente: quando a clínica marca, remarca ou cancela uma consulta, o aviso ao paciente{whatsapp && ` (${noticeChannels(notices, "ou")})`} espera cerca de 1 minuto antes de ser enviado, para a clínica poder desfazer um engano. Guardamos um registro de cada aviso (qual consulta, o tipo de aviso, o horário e se foi enviado), sem nomes nem dados clínicos, por 30 dias, e depois o apagamos.</p>
         </Section>
       )}
 

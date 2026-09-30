@@ -129,7 +129,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
 
       {(notices || whatsapp) && (
         <Section title="6e. Patient notices">
-          <p>Patient notices: when the clinic books, moves or cancels an appointment, the notice to the patient{whatsapp && ` (${noticeChannels(notices, line, "or")})`} waits about 1 minute before it&rsquo;s sent, so the clinic can undo a mistake. We keep a record of each notice (which appointment, the kind of notice, the time slot and whether it was sent), with no names or clinical data, for 30 days, and then delete it.</p>
+          <p>Patient notices: when the clinic books, moves or cancels an appointment, the notice to the patient{whatsapp && ` (${noticeChannels(notices, "or")})`} waits about 1 minute before it&rsquo;s sent, so the clinic can undo a mistake. We keep a record of each notice (which appointment, the kind of notice, the time slot and whether it was sent), with no names or clinical data, for 30 days, and then delete it.</p>
         </Section>
       )}
 
