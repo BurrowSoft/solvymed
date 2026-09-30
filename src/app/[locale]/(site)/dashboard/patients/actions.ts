@@ -14,6 +14,7 @@ import { formIdKindMatches, patientIdError, patientIdKind, readPatientIds, sameI
 import { patientSearchFilter } from "@/lib/patientSearch";
 import { mergeSupported } from "@/lib/mergeProbe";
 import { conditionMet } from "@/lib/conditions";
+import { addressError, readAddress } from "@/lib/patientAddress";
 import { MERGE_COLUMNS, MERGE_ERRORS, MERGE_FIELD_KEYS, type MergeErrorCode, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
 
 const UUIDISH_MERGE = /^[0-9a-f-]{8,64}$/i;
@@ -24,7 +25,7 @@ export type PatientMatch = { id: string; full_name: string; phone: string | null
 
 export type CreatePatientResult =
   | { success: true; id?: string }
-  | { error: string; code: "generic" | "name_required" | "invalid_th_id" | "id_kind_mismatch" | "birth_year_buddhist" | "invalid_birth_date" }
+  | { error: string; code: "generic" | "name_required" | "invalid_th_id" | "id_kind_mismatch" | "birth_year_buddhist" | "invalid_birth_date" | "invalid_cns" }
   // Possible duplicates found before saving. The user chooses "Open
   // existing" or "Create anyway" (resubmits with force=1).
   | { error: string; code: "possible_match"; matches: PatientMatch[] }
@@ -56,6 +57,10 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
   if (patientIdError(ids)) return { error: "Invalid Thai ID", code: "invalid_th_id" };
   const birthDate = (formData.get("birth_date") as string) || null;
   if (looksBuddhistEra(birthDate)) return { error: "Buddhist-era birth year", code: "birth_year_buddhist" };
+  // Address, CNS and Observações (138): only once it's applied, and only
+  // when the form showed them.
+  const address = conditionMet("patient-address-live") ? readAddress(formData, idKind) : null;
+  if (addressError(address)) return { error: "Invalid CNS", code: "invalid_cns" };
   const force = formData.get("force") === "1";
 
   // Email must be unique per doctor.
@@ -99,6 +104,7 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
     profession: (formData.get("profession") as string)?.trim() || null,
     emergency_phone: (formData.get("emergency_phone") as string)?.trim() || null,
     convenio_type: (formData.get("convenio_type") as string) || null,
+    ...(address ?? {}),
   }).select("id").single();
 
   if (error) {
@@ -132,6 +138,7 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
     }
     // A birth date outside 1900..today (the database refuses it, 116).
     if (error.message?.includes("invalid_birth_date")) return { error: "Invalid date of birth", code: "invalid_birth_date" };
+    if (error.message?.includes("invalid_cns")) return { error: "Invalid CNS", code: "invalid_cns" };
     return { error: error.message, code: "generic" };
   }
   revalidatePath("/dashboard/patients");
@@ -162,6 +169,11 @@ export async function updatePatient(id: string, formData: FormData) {
   const ids = readPatientIds(formData, idKind);
   const idError = patientIdError(ids);
   if (idError) return { error: idError };
+  // Address, CNS and Observações (138): only once it's applied, and only
+  // when the form showed them (else stored values stay as they are).
+  const address = conditionMet("patient-address-live") ? readAddress(formData, idKind) : null;
+  const addrError = addressError(address);
+  if (addrError) return { error: addrError };
 
   const { error } = await supabase.from("patients").update({
     full_name: fullName,
@@ -173,6 +185,7 @@ export async function updatePatient(id: string, formData: FormData) {
     profession: (formData.get("profession") as string)?.trim() || null,
     emergency_phone: (formData.get("emergency_phone") as string)?.trim() || null,
     convenio_type: (formData.get("convenio_type") as string) || null,
+    ...(address ?? {}),
   }).eq("id", id).eq("professional_id", effectiveProfId);
 
   if (error) return { error: actionError(error.message) };

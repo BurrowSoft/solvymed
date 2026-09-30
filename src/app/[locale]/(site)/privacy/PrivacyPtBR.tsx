@@ -4,7 +4,7 @@ import { noticeChannels } from "@/lib/noticeChannels";
 
 // Política de Privacidade em português (Brasil). Autoritativa junto com a
 // versão em inglês; mantenha as duas alinhadas.
-export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean }) {
+export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean }) {
   return (
     <>
       <Section title="1. Visão geral">
@@ -34,7 +34,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
 
       <Section title="3. Dados que coletamos">
         <p><strong>3.1 Dados de conta:</strong> nome, e-mail e senha (armazenada somente como hash seguro). Profissionais podem incluir especialidade, registro profissional, nome da clínica, endereço, telefone, CNPJ e uma chave Pix. Também guardamos o país e o fuso horário do consultório, escolhidos no cadastro (para &quot;Outro país&quot;, o país detectado pela conexão no cadastro). Quando alguém cria uma conta, registramos qual versão dos Termos de Uso e da Política de Privacidade foi aceita, e quando.</p>
-        <p><strong>3.2 Dados de pacientes registrados por profissionais ou suas secretárias:</strong> dados de identificação e contato (nome, CPF ou, para clínicas fora do Brasil, um documento de identidade nacional ou número de passaporte, data de nascimento, sexo, telefone, e-mail) e dados de saúde (anotações, diagnósticos, receitas, exames, arquivos, histórico de consultas). Dados de saúde são dados pessoais sensíveis segundo a LGPD.</p>
+        <p><strong>3.2 Dados de pacientes registrados por profissionais ou suas secretárias:</strong> dados de identificação e contato (nome, CPF ou, para clínicas fora do Brasil, um documento de identidade nacional ou número de passaporte, data de nascimento, sexo, telefone, e-mail{address && ", endereço, CNS (Cartão Nacional de Saúde, só clínicas no Brasil) e observações administrativas"}) e dados de saúde (anotações, diagnósticos, receitas, exames, arquivos, histórico de consultas). Dados de saúde são dados pessoais sensíveis segundo a LGPD.</p>
         <p><strong>3.3 Consultas e pagamentos:</strong> datas, horários, status, valores e situação do pagamento. Clínicas na Tailândia podem incluir um ID PromptPay (celular ou ID nacional / fiscal), usado apenas para gerar o QR de pagamento das consultas.</p>
         <p><strong>3.4 Cobrança da assinatura:</strong> feita pela Stripe. Nunca vemos nem armazenamos o número completo do cartão; guardamos apenas uma referência da Stripe e o status da sua assinatura.</p>
         <p><strong>3.5 Dados técnicos e do dispositivo:</strong> tipo de dispositivo, versão do sistema operacional, versão do aplicativo, tokens de notificação push e relatórios técnicos de erro.</p>

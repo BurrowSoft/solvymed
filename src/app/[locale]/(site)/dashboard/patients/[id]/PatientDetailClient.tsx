@@ -12,6 +12,8 @@ import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
 import { FilesTab } from "./FilesTab";
+import { AddressFields } from "@/components/patient/AddressFields";
+import { addressLine, type AddressColumns } from "@/lib/patientAddress";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -36,7 +38,7 @@ type Patient = {
   booking_blocked?: boolean;
   // Set by a server trigger on insert (migration 088); can't be forged.
   professional_id?: string; created_by?: string | null; created_by_name?: string | null;
-};
+} & AddressColumns;
 
 function Dialog({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
   if (!open) return null;
@@ -81,7 +83,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, canMerge = false, currentUserId, idKind = "BR", accessLog = null }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, canMerge = false, currentUserId, idKind = "BR", accessLog = null, addressLive = false }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -102,6 +104,8 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   // The access log's first page (doctor only; null = no tab: before
   // migration 111, or a secretary).
   accessLog?: AccessLogPage | "failed" | null;
+  // Address, CNS and Observações (138): shown and edited once it's applied.
+  addressLive?: boolean;
 }) {
   const t = useTranslations("patientDetail");
   const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "exams" | "files" | "appointments" | "access">("info");
@@ -138,7 +142,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         ))}
       </div>
 
-      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} canMerge={canMerge} idKind={idKind} />}
+      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} canMerge={canMerge} idKind={idKind} addressLive={addressLive} />}
       {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {(tab === "exams" || tab === "files") && !isSecretary && (
@@ -243,10 +247,11 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
   );
 }
 
-function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = false, idKind }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; canMerge?: boolean; idKind: PatientIdKind }) {
+function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = false, idKind, addressLive = false }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; canMerge?: boolean; idKind: PatientIdKind; addressLive?: boolean }) {
   const t = useTranslations("patientDetail");
   const tIds = useTranslations("patientIds");
   const tBirth = useTranslations("dateInput");
+  const tAddr = useTranslations("patientAddress");
   // CPF, Thai ID/passport or passport/ID, by the practice's country.
   const idFields = usePatientIdFields(idKind, patient);
   // Server codes become translated copy, never raw codes or database text.
@@ -258,6 +263,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = fal
     : e === "invalid_th_id" ? tIds("thaiIdInvalid")
     : e === "invalid_birth_date" ? tBirth("invalidBirthDate")
     : e === "birth_year_buddhist" ? tBirth("buddhistYear")
+    : e === "invalid_cns" ? tAddr("invalidCns")
     : e === "unauthorized" ? t("sessionError")
     : t("genericError");
   const [archiveOpen, setArchiveOpen] = useState(false);
@@ -346,6 +352,10 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = fal
     { label: t("sex"), value: patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null },
     { label: t("profession"), value: patient.profession },
     { label: t("emergencyPhone"), value: patient.emergency_phone },
+    ...(addressLive ? [
+      { label: tAddr("cns"), value: idKind === "BR" ? patient.cns ?? null : null },
+      { label: tAddr("notes"), value: patient.notes_admin ?? null },
+    ] : []),
     { label: t("insurance"), value: patient.convenio_type === "health_plan" ? t("healthPlan") : patient.convenio_type === "particular" ? t("privateInsurance") : null },
     { label: t("patientSince"), value: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "long", day: "numeric" }) },
     // Only when someone other than the doctor (i.e. a secretary) added
@@ -401,6 +411,15 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = fal
           )}
           {codeError && <p className="mt-2 text-xs text-red-600">{codeError}</p>}
         </div>}
+        {addressLive && addressLine(patient, idKind) && (
+          <div className="mb-3 flex items-start justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{tAddr("section")}</p>
+              <p className="mt-1 text-sm font-medium text-slate-900">{addressLine(patient, idKind)}</p>
+            </div>
+            <button type="button" onClick={() => setEditing(true)} className="shrink-0 text-sm font-semibold text-teal-600 hover:text-teal-700 transition">{tAddr("editAddress")}</button>
+          </div>
+        )}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {fields.map(({ label, value }) => value ? (
             <div key={label} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
@@ -500,6 +519,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = fal
           <Input name="emergency_phone" defaultValue={patient.emergency_phone ?? ""} />
         </div>
       </div>
+      {addressLive && <AddressFields kind={idKind} values={patient} />}
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3 pt-2">
         <button type="button" onClick={() => setEditing(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>

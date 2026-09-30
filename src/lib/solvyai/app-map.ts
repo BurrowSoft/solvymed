@@ -263,6 +263,13 @@ export const ACTIONS: AppMapAction[] = [
 
 // Rules about SolvyAI itself (not one action).
 export const GENERAL: { rule: Rule; help: string }[] = [
+  {
+    rule: {
+      text: "Patient address, CNS and Observações (website; the patient form and page): \"Endereço\" / \"Address\" (collapsed while empty; fields by the practice's country), the CNS for clinics in Brazil (15 digits, checked), and \"Observações\" / \"Notes\" for administrative information only (never clinical details: those go in the medical record). The doctor and the secretary see and edit them; the address prints on one line under the patient's name on the prescription. SolvyAI doesn't fill them in; it points to the patient's page.",
+      pending: ["patient-address-live"],
+    },
+    help: "P1",
+  },
   { rule: "SolvyAI is for doctors only; secretaries and patients don't have it.", help: "C9" },
   {
     rule: {

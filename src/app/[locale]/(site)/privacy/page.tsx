@@ -22,13 +22,15 @@ export default async function PrivacyPage({
   // The automatic WhatsApp confirmation/cancellation waits in the same kind
   // of outbox (migration 137): §6e shows for either, naming WhatsApp.
   const whatsapp = conditionMet("whatsapp-outbox-live");
+  // Patient address, CNS and administrative notes (migration 138) in §3.2.
+  const address = conditionMet("patient-address-live");
   return legalLangFor(locale) === "pt-BR" ? (
     <LegalDoc locale={locale} title="Política de Privacidade" updated={`Última atualização: ${legalDateLabel("pt-BR", PRIVACY_VERSION)}`}>
-      <PrivacyPtBR turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} />
+      <PrivacyPtBR turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} />
     </LegalDoc>
   ) : (
     <LegalDoc locale={locale} title="Privacy Policy" updated={`Last updated: ${legalDateLabel("en", PRIVACY_VERSION)}`}>
-      <PrivacyEn turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} />
+      <PrivacyEn turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} />
     </LegalDoc>
   );
 }

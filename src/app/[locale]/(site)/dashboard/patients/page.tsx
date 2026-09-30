@@ -128,7 +128,7 @@ export default async function PatientsPage({
                 {t("importButton")}
               </Link>
             )}
-            <NewPatientButton locale={locale} autoOpen={sp.new === "1"} idKind={idKind} />
+            <NewPatientButton locale={locale} autoOpen={sp.new === "1"} idKind={idKind} addressLive={conditionMet("patient-address-live")} />
           </div>
         )}
       </div>

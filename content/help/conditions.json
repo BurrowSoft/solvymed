@@ -70,5 +70,9 @@
   "whatsapp-outbox-live": {
     "met": false,
     "what": "Migration 137 applied, send-whatsapp deployed with its outbox mode, and the Vault secret 'whatsapp_notify_secret' set (from then on the app queues the automatic WhatsApp confirmation/cancellation for ~60 s instead of sending it at once). Rows hold no phone and no text (which appointment, the kind, when, whether it was sent), kept 30 days. Gates privacy §6e naming WhatsApp (and §6e itself when notice-outbox-live isn't met). Flip and deploy BEFORE the Vault secret is set."
+  },
+  "patient-address-live": {
+    "met": false,
+    "what": "Migrations 138 (the patient address, CNS for Brazilian practices, and Observações columns on patients, with the server-side trim and CNS check) AND 139 (merge_patients carries the address, CNS and Observações, so merging duplicates never drops them) are applied on production. Until both are, the website neither shows nor writes these fields."
   }
 }
