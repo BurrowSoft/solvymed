@@ -9,6 +9,7 @@ import { isAccessAllowed, trialDaysRemaining, type EffectiveSub } from "@/lib/su
 import { doctorDisplayName } from "@/lib/doctorName";
 import { TourProvider } from "@/components/tour/TourProvider";
 import { readTourState, tourEntry } from "@/lib/tourState";
+import { SOLVYAI_INTRO_TOUR, solvyAiIntroOn } from "@/lib/solvyaiIntro";
 import { CURRENT_NEWS, newsTourId } from "@/lib/news";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { SolvyAi } from "@/components/solvyai/SolvyAi";
@@ -165,6 +166,9 @@ export default async function DashboardLayout({
   // announcement has no saved state yet (before 113: unavailable, so never).
   const newsPending = liveFeatures.news
     && (await readTourState(supabase, user.id, newsTourId(CURRENT_NEWS.release))).kind === "none";
+  // "Meet SolvyAI ✦": doctors, once SolvyAI is live, until seen (113).
+  const introPending = !isSecretary && solvyAiIntroOn()
+    && (await readTourState(supabase, user.id, SOLVYAI_INTRO_TOUR)).kind === "none";
   const paymentQr = isSecretary ? null : countryProfile(await getPracticeCountry(supabase, user.id, user.id)).paymentQr;
 
   let trialChipText = "";
@@ -188,6 +192,7 @@ export default async function DashboardLayout({
       entry={tourEntry(tourState)}
       resumeStep={tourState.kind === "row" ? tourState.step : 0}
       newsPending={newsPending}
+      introPending={introPending}
     >
       <div className="flex h-screen overflow-hidden bg-slate-50">
         <DashboardSidebar

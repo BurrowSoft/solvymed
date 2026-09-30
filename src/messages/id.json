@@ -1793,5 +1793,12 @@
   },
   "countryExamples": {
     "phone": "Nomor telepon"
+  },
+  "solvyaiIntro": {
+    "title": "Kenalan dengan SolvyAI ✦",
+    "body": "Minta saja dengan kata-kata Anda: \"Buat janji Maria hari Jumat jam 11\". SolvyAI menampilkan semua detail dan hanya bertindak setelah Anda konfirmasi.",
+    "tryNow": "Coba sekarang",
+    "later": "Nanti",
+    "whatCanDo": "Apa yang bisa dilakukan SolvyAI?"
   }
 }

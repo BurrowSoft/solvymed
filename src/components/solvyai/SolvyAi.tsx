@@ -65,6 +65,8 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
     [remote, lang, prefix, dailyLimit],
   );
   const [open, setOpen] = useState(false);
+  // A chip shown first in the empty panel (set by whoever opened it).
+  const [leadChip, setLeadChip] = useState<string | null>(null);
   const [minimized, setMinimized] = useState(false);
   const [hint, setHint] = useState(false);
   // Configurações › SolvyAI › "Mostrar botão do assistente" (this browser).
@@ -243,7 +245,10 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
   sendRef.current = send;
   useEffect(() => {
     const on = (e: Event) => {
-      const text = (e as CustomEvent<{ text?: string }>).detail?.text;
+      const detail = (e as CustomEvent<{ text?: string; chip?: string }>).detail;
+      const text = detail?.text;
+      // "Meet SolvyAI" → Try it now: its question as the first chip (the app's).
+      if (detail?.chip) setLeadChip(detail.chip);
       setOpen(true);
       setMinimized(false);
       if (text) setTimeout(() => void sendRef.current(text), 0);
@@ -261,7 +266,8 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
   const bKey = (screen === "payments" || screen === "settings")
     ? (paymentQr === "pix" ? "b" : paymentQr === "promptpay" ? "bPromptPay" : "bNone")
     : "b";
-  const chips = [t(`chips.${screen}.a`), t(`chips.${screen}.${bKey}`), t(`chips.${screen}.c`)];
+  const screenChips = [t(`chips.${screen}.a`), t(`chips.${screen}.${bKey}`), t(`chips.${screen}.c`)];
+  const chips = leadChip ? [leadChip, ...screenChips.filter((c) => c !== leadChip)] : screenChips;
 
   return (
     <>

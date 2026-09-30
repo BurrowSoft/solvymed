@@ -1823,5 +1823,12 @@
   },
   "countryExamples": {
     "phone": "Phone number"
+  },
+  "solvyaiIntro": {
+    "title": "Meet SolvyAI ✦",
+    "body": "Just ask in your own words: \"Book Maria for Friday at 11\". SolvyAI shows you every detail and only acts after you confirm.",
+    "tryNow": "Try it now",
+    "later": "Later",
+    "whatCanDo": "What can SolvyAI do?"
   }
 }

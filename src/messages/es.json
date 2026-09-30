@@ -1793,5 +1793,12 @@
   },
   "countryExamples": {
     "phone": "Número de teléfono"
+  },
+  "solvyaiIntro": {
+    "title": "Conoce SolvyAI ✦",
+    "body": "Pídelo con tus palabras: \"Agenda a María el viernes a las 11\". SolvyAI te muestra todos los detalles y solo actúa cuando confirmas.",
+    "tryNow": "Probar ahora",
+    "later": "Más tarde",
+    "whatCanDo": "¿Qué puede hacer SolvyAI?"
   }
 }
