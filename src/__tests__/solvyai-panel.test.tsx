@@ -83,6 +83,16 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
     window.removeEventListener(CLOSED_EVENT, closed);
   });
 
+  it("\"Meet SolvyAI\" → Try it now: the panel opens with its question as the FIRST chip, not sent", async () => {
+    const { OPEN_EVENT } = await import("@/components/solvyai/SolvyAiSettings");
+    render(<SolvyAi locale="pt-BR" prefix="/pt-BR" dailyLimit={20} />);
+    act(() => { window.dispatchEvent(new CustomEvent(OPEN_EVENT, { detail: { chip: "O que o SolvyAI pode fazer?" } })); });
+    const chip = await screen.findByRole("button", { name: "O que o SolvyAI pode fazer?" });
+    const chips = chip.parentElement!.querySelectorAll("button");
+    expect(chips[0]).toBe(chip);
+    expect(chips.length).toBe(4);
+  });
+
   async function ask(text: string) {
     fireEvent.change(screen.getByLabelText("assistant.placeholder"), { target: { value: text } });
     fireEvent.click(screen.getByText("assistant.send"));

@@ -9,6 +9,7 @@ import { isAccessAllowed, trialDaysRemaining, type EffectiveSub } from "@/lib/su
 import { doctorDisplayName } from "@/lib/doctorName";
 import { TourProvider } from "@/components/tour/TourProvider";
 import { readTourState, tourEntry } from "@/lib/tourState";
+import { SOLVYAI_INTRO_TOUR, solvyAiIntroOn, solvyAiPanelOn } from "@/lib/solvyaiIntro";
 import { CURRENT_NEWS, newsTourId } from "@/lib/news";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { SolvyAi } from "@/components/solvyai/SolvyAi";
@@ -165,6 +166,11 @@ export default async function DashboardLayout({
   // announcement has no saved state yet (before 113: unavailable, so never).
   const newsPending = liveFeatures.news
     && (await readTourState(supabase, user.id, newsTourId(CURRENT_NEWS.release))).kind === "none";
+  // The SolvyAI panel (doctors, not while locked) and "Meet SolvyAI ✦":
+  // once SolvyAI is live, where the panel is, until seen (113).
+  const panelOn = solvyAiPanelOn({ isSecretary, sub });
+  const introPending = solvyAiIntroOn({ isSecretary, sub })
+    && (await readTourState(supabase, user.id, SOLVYAI_INTRO_TOUR)).kind === "none";
   const paymentQr = isSecretary ? null : countryProfile(await getPracticeCountry(supabase, user.id, user.id)).paymentQr;
 
   let trialChipText = "";
@@ -188,6 +194,8 @@ export default async function DashboardLayout({
       entry={tourEntry(tourState)}
       resumeStep={tourState.kind === "row" ? tourState.step : 0}
       newsPending={newsPending}
+      introPending={introPending}
+      introTestable={panelOn && process.env.VERCEL_ENV !== "production"}
     >
       <div className="flex h-screen overflow-hidden bg-slate-50">
         <DashboardSidebar
@@ -217,7 +225,7 @@ export default async function DashboardLayout({
             panel sits here so it pushes the content on wide screens.
             10 messages a day during the trial, 20 on a paid plan. */}
         {/* Not while locked: only Settings is open then, and SolvyAI acts on the agenda. */}
-        {liveFeatures.solvyAi && !isSecretary && !(sub && !isAccessAllowed(sub)) && (
+        {panelOn && (
           <>
             <SolvyAi locale={locale} prefix={locale === "en" ? "" : `/${locale}`} dailyLimit={sub?.subscription_status === "trial" ? 10 : 20} remote={assistantApiEnabled()} paymentQr={paymentQr} />
             {/* The item a SolvyAI save lands on, ringed for 3 s. */}

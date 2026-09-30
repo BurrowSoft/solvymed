@@ -1793,5 +1793,12 @@
   },
   "countryExamples": {
     "phone": "电话号码"
+  },
+  "solvyaiIntro": {
+    "title": "认识 SolvyAI ✦",
+    "body": "用你自己的话说就行：“给玛丽亚约周五 11 点”。SolvyAI 会显示所有细节，只有在你确认后才会执行。",
+    "tryNow": "立即试用",
+    "later": "以后再说",
+    "whatCanDo": "SolvyAI 能做什么？"
   }
 }

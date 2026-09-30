@@ -1793,5 +1793,12 @@
   },
   "countryExamples": {
     "phone": "Numéro de téléphone"
+  },
+  "solvyaiIntro": {
+    "title": "Découvrez SolvyAI ✦",
+    "body": "Demandez simplement : « Mets Maria vendredi à 11 h ». SolvyAI vous montre tous les détails et n'agit qu'après votre confirmation.",
+    "tryNow": "Essayer maintenant",
+    "later": "Plus tard",
+    "whatCanDo": "Que peut faire SolvyAI ?"
   }
 }

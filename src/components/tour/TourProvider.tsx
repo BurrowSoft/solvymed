@@ -7,6 +7,8 @@ import { TourOverlay } from "./TourOverlay";
 import { tourSteps, TOUR_EVENTS, type PaymentQr, type TourRole, type TourStep } from "@/lib/tour";
 import { CURRENT_NEWS, NEWS, newsItemsFor, newsSteps, newsTourId } from "@/lib/news";
 import { NewsPopup } from "./NewsPopup";
+import { SolvyAiIntroPopup } from "./SolvyAiIntroPopup";
+import { SOLVYAI_INTRO_TOUR } from "@/lib/solvyaiIntro";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { saveTourProgress } from "@/lib/tourActions";
 import { CLOSED_EVENT, OPEN_EVENT } from "@/components/solvyai/SolvyAiSettings";
@@ -40,6 +42,8 @@ export function TourProvider({
   entry,
   resumeStep = 0,
   newsPending = false,
+  introPending = false,
+  introTestable = false,
   children,
 }: {
   role: TourRole;
@@ -49,9 +53,14 @@ export function TourProvider({
   resumeStep?: number;
   // The current release's Novidades haven't been seen (and the popup is on).
   newsPending?: boolean;
+  // "Meet SolvyAI" hasn't been seen and SolvyAI is live (lib/solvyaiIntro).
+  introPending?: boolean;
+  // ?solvyai-intro=1 works (not Production; the layout decides).
+  introTestable?: boolean;
   children: ReactNode;
 }) {
   const t = useTranslations("tour");
+  const tIntro = useTranslations("solvyaiIntro");
   const router = useRouter();
   const pathname = usePathname();
   const steps = useMemo(() => tourSteps(role, paymentQr), [role, paymentQr]);
@@ -68,6 +77,17 @@ export function TourProvider({
       newsWaiting.current = true;
     }
   }, [newsItems.length]);
+  // "Meet SolvyAI ✦" (UX, go-live): doctors, once, after the tour and the
+  // Novidades popup, never on top of them. Testing (panel flag on, and
+  // never on Production: introTestable, from the server's VERCEL_ENV; UX):
+  // /dashboard?solvyai-intro=1 opens it even when already seen.
+  const [introPopup, setIntroPopup] = useState(false);
+  const introWaiting = useRef(introPending && role === "professional");
+  useEffect(() => {
+    if (introTestable && liveFeatures.solvyAi && role === "professional" && new URLSearchParams(window.location.search).get("solvyai-intro") === "1") {
+      introWaiting.current = true;
+    }
+  }, [role, introTestable]);
   const [offerResume, setOfferResume] = useState(entry === "resume");
   // Where "Continuar" picks up: the saved step, or the step after SolvyAI
   // when "Experimentar agora" paused the tour (UX 36, like the app).
@@ -118,10 +138,38 @@ export function TourProvider({
       if (!newsWaiting.current || document.querySelector("[data-tour-block]")) return;
       newsWaiting.current = false;
       setNewsPopup(true);
+      // The Novidades already announced SolvyAI: "Meet SolvyAI" counts as seen (the app's rule).
+      if (newsItems.some((i) => i.id === "solvyai")) {
+        introWaiting.current = false;
+        void saveTourProgress("skipped", 0, SOLVYAI_INTRO_TOUR);
+      }
       track("news_shown", { release: CURRENT_NEWS.release, role });
     }, 800);
     return () => clearTimeout(id);
-  }, [active, newsTour, newsPopup, pathname, home, entry, role]);
+  }, [active, newsTour, newsPopup, pathname, home, entry, role, newsItems]);
+
+  // "Meet SolvyAI": on the home page, after everything else. It counts as
+  // seen once shown (skipped; completed on Try it now), like the app.
+  useEffect(() => {
+    if (!introWaiting.current || active || newsTour || newsPopup || introPopup || newsWaiting.current || pathname !== home) return;
+    if (entry === "auto" && !autoTried.current) return;
+    const id = setTimeout(() => {
+      if (!introWaiting.current || newsWaiting.current || document.querySelector("[data-tour-block]")) return;
+      introWaiting.current = false;
+      setIntroPopup(true);
+      track("solvyai_intro_shown", { role });
+      void saveTourProgress("skipped", 0, SOLVYAI_INTRO_TOUR);
+    }, 900);
+    return () => clearTimeout(id);
+  }, [active, newsTour, newsPopup, introPopup, pathname, home, entry, role]);
+
+  const introTry = useCallback(() => {
+    setIntroPopup(false);
+    track("solvyai_intro_try", { role });
+    void saveTourProgress("completed", 0, SOLVYAI_INTRO_TOUR);
+    window.dispatchEvent(new CustomEvent(OPEN_EVENT, { detail: { chip: tIntro("whatCanDo") } }));
+  }, [role, tIntro]);
+  const introLater = useCallback(() => setIntroPopup(false), []);
 
   // replay: from Settings → What's new (the release was already seen, so
   // nothing is re-saved as "started").
@@ -192,6 +240,9 @@ export function TourProvider({
       )}
       {newsPopup && !active && !newsTour && (
         <NewsPopup items={newsItems} onSee={() => startNews(CURRENT_NEWS.release)} onLater={closeNewsPopup} />
+      )}
+      {introPopup && !active && !newsTour && !newsPopup && (
+        <SolvyAiIntroPopup onTry={introTry} onLater={introLater} />
       )}
       {offerResume && !active && pathname === home && (
         <div role="status" className="fixed bottom-4 right-4 z-50 w-72 rounded-2xl border border-slate-100 bg-white p-4 shadow-xl">
