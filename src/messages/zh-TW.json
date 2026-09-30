@@ -1494,6 +1494,8 @@
     "field_profession": "職業",
     "field_convenio_type": "保險類型",
     "field_photo": "照片",
+    "pickBoth": "兩者合併",
+    "notesTooLong": "合併後的備註超過 2,000 個字元;請選擇其一,或稍後再編輯。",
     "search": "依姓名或證件號搜尋…",
     "archivedTag": "已封存",
     "back": "返回",

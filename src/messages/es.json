@@ -1494,6 +1494,8 @@
     "field_profession": "Profesión",
     "field_convenio_type": "Tipo de cobertura",
     "field_photo": "Foto",
+    "pickBoth": "Ambas, juntas",
+    "notesTooLong": "Las observaciones juntas superan los 2.000 caracteres; elige una o edítalas después.",
     "search": "Buscar por nombre o documento…",
     "archivedTag": "archivado",
     "back": "Volver",

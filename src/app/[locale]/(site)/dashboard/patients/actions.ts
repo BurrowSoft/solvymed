@@ -15,7 +15,7 @@ import { patientSearchFilter } from "@/lib/patientSearch";
 import { mergeSupported } from "@/lib/mergeProbe";
 import { conditionMet } from "@/lib/conditions";
 import { addressError, readAddress } from "@/lib/patientAddress";
-import { MERGE_COLUMNS, MERGE_ERRORS, MERGE_FIELD_KEYS, type MergeErrorCode, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
+import { MERGE_ADDRESS_KEYS, MERGE_ERRORS, MERGE_FIELD_KEYS, mergeColumns, type MergeErrorCode, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
 
 const UUIDISH_MERGE = /^[0-9a-f-]{8,64}$/i;
 
@@ -571,13 +571,15 @@ export async function searchMergeCandidates(patientId: string, q: string): Promi
 }
 
 // Both records (the compared fields only) and what each one holds.
-export async function loadMergeComparison(a: string, b: string): Promise<{ rows: MergeRow[]; preview: Record<string, MergePreviewSide> } | null> {
+export async function loadMergeComparison(a: string, b: string): Promise<{ rows: MergeRow[]; preview: Record<string, MergePreviewSide>; address: boolean } | null> {
   if (!UUIDISH_MERGE.test(a) || !UUIDISH_MERGE.test(b) || a === b) return null;
+  const address = conditionMet("patient-address-live");
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user || (await isProfessionalRole(supabase, user.id)) !== true) return null;
   const [{ data: rows, error }, { data: prev, error: prevError }] = await Promise.all([
-    supabase.from("patients").select(MERGE_COLUMNS).eq("professional_id", user.id).in("id", [a, b]),
+    // The address, CNS and Observações too once 138 + 139 are applied.
+    supabase.from("patients").select(mergeColumns(address)).eq("professional_id", user.id).in("id", [a, b]),
     supabase.rpc("merge_patients_preview", { p_a: a, p_b: b }),
   ]);
   if (error || prevError || (rows ?? []).length !== 2) return null;
@@ -588,17 +590,23 @@ export async function loadMergeComparison(a: string, b: string): Promise<{ rows:
       files: Number(r.files ?? 0), hasAppAccount: !!r.has_app_account,
     };
   }
-  return { rows: rows as unknown as MergeRow[], preview };
+  return { rows: rows as unknown as MergeRow[], preview, address };
 }
 
 // merge_patients: the kept record gets everything; choices only name fields
 // taken from the removed one. The client's choices are re-validated.
 export async function mergePatientsAction(keptId: string, mergedId: string, choices: Record<string, string>, appAccountConfirmed: boolean): Promise<{ ok: true; keptId: string } | { ok: false; code: MergeErrorCode }> {
   if (!UUIDISH_MERGE.test(keptId) || !UUIDISH_MERGE.test(mergedId) || keptId === mergedId) return { ok: false, code: "invalid" };
-  const clean: Record<string, "merged"> = {};
+  // 139's keys only once it's applied: 'address' / 'cns' take 'merged';
+  // Observações also 'kept' or 'both'.
+  const address = conditionMet("patient-address-live");
+  const clean: Record<string, string> = {};
   for (const [k, v] of Object.entries(choices ?? {})) {
-    if (!MERGE_FIELD_KEYS.includes(k) || v !== "merged") return { ok: false, code: "invalid" };
-    clean[k] = "merged";
+    const ok = MERGE_FIELD_KEYS.includes(k) ? v === "merged"
+      : address && MERGE_ADDRESS_KEYS.includes(k) ? (k === "notes_admin" ? ["kept", "merged", "both"].includes(v) : v === "merged")
+      : false;
+    if (!ok) return { ok: false, code: "invalid" };
+    clean[k] = v;
   }
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

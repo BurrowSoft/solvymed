@@ -1524,6 +1524,8 @@
     "field_profession": "Profession",
     "field_convenio_type": "Insurance Type",
     "field_photo": "Photo",
+    "pickBoth": "Both, joined",
+    "notesTooLong": "The combined notes exceed 2,000 characters; pick one or edit them afterwards.",
     "search": "Search by name or ID…",
     "archivedTag": "archived",
     "back": "Back",

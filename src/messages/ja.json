@@ -1494,6 +1494,8 @@
     "field_profession": "職業",
     "field_convenio_type": "保険の種類",
     "field_photo": "写真",
+    "pickBoth": "両方を結合",
+    "notesTooLong": "結合した備考が 2,000 文字を超えます。どちらかを選ぶか、後で編集してください。",
     "search": "氏名または身分証番号で検索…",
     "archivedTag": "アーカイブ済み",
     "back": "戻る",
