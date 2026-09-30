@@ -9674,3 +9674,77 @@ reviewer 9a caught it), and #187 was not merged for it.
 Merged at `2e13bd1`, hidden (evidence: PR comments 5901841534 / 5901852795).
 
 **⏳ After migration 130 @ `ec6fa90`:** the same file against the real DB, with #177's steps 3–4.
+
+## #186 Privacy §6e names only the notice channels that are live (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `4ac82b45dd9f2d208eb8182566bdaaa3ecc5ee2f`** (privacy §6e names only the channels that are live: push / WhatsApp, never LINE)
+
+**Today** (the Preview vs the master Preview, all conditions off): ✅
+`/pt-BR/privacy`, `/privacy`, `/pt-BR/terms` and `/terms` are
+**identical** (137 / 61 lines).
+
+**Forced locally:**
+- **Setup:** a local `next dev` at this head. For each combination,
+  `content/help/conditions.json` was set, the page re-fetched, and the file
+  restored afterwards (`git status` clean).
+- **What was read:** the §6e heading and its paragraph, joined across
+  React's split text nodes.
+
+| `notice-outbox-live` | `whatsapp-outbox-live` | `line-live` | pt-BR §6e | en §6e | "LINE" in §6e | §6c |
+|---|---|---|---|---|---|---|
+| – | – | – | ✅ none | ✅ none | – | – |
+| ✓ | – | – | ✅ "o aviso ao paciente espera cerca de 1 minuto…" (no channel list, as before) | ✅ "the notice to the patient waits about 1 minute…" | no | – |
+| – | ✓ | – | ✅ "o aviso ao paciente **(WhatsApp)** espera…" | ✅ "the notice to the patient **(WhatsApp)** waits…" | no | – |
+| ✓ | ✓ | – | ✅ "**(push ou WhatsApp)**" | ✅ "**(push or WhatsApp)**" | no | – |
+| ✓ | ✓ | ✓ | ✅ "(push ou WhatsApp)" | ✅ "(push or WhatsApp)" | ✅ **no** | shown (LINE covered there) |
+| – | – | ✓ | ✅ no §6e | ✅ no §6e | – | shown |
+
+CI ✅.
+
+Merged at `4ac82b4` (evidence: PR comment 5901966780).
+
+## #189 Patient address, CNS and Observações (migrations 138 + 139), behind `patient-address-live` (web tester 1, 2026-09-29)
+
+**Web tester 1: 🟢 at `76eb769` for everything testable without 138/139. The DB rows are ⏳** (138 + 139 aren't on any DB I can use). It can merge hidden.
+
+**How it was tested:**
+- **The Vercel Preview (Playwright):** `patient-address-live` unmet.
+- **A local `next dev`** from an isolated clone at `76eb769`, with the condition **forced only in that clone** and Thai enabled, against the prod DB without 138. That checks the form UI and the server's CNS refusal (which runs before any write).
+- **The Help:** `help-build` at the head.
+- **Accounts:** throwaway, and cleaned up.
+- **Head:** the first Preview run was at `377c12b`; `76eb769` only edits the condition's description.
+
+**Hidden today (Preview):**
+
+| Row | Result |
+|---|---|
+| New patient form | ✅ no Endereço / CNS / Observações. The fields are id_kind, full_name, email, phone, cpf, birth_date, sex, convenio_type, profession, emergency_phone (no `address_fields` marker) |
+| Create a patient | ✅ saves (no new columns sent); the patient page shows none of the fields |
+| Edit a patient | ✅ same fields; the edit saves; no errors |
+| Privacy (pt-BR / en) | ✅ no address / CNS mention (§3.2 unchanged) |
+| Help P1 | ✅ `/pt-BR/help/p1` and `/help/p1` render **identical to master** (the new web note is `{pending:patient-address-live}`); `helpArticles.json` has no content change |
+| App Map | ✅ the new rule is `pending: ["patient-address-live"]` |
+
+**The form UI (local, condition forced):**
+
+| Row | Result |
+|---|---|
+| BR, pt-BR | ✅ **Endereço** collapsed, then open: CEP · Rua · Número · Complemento · Bairro · Cidade · UF. **CNS (Cartão Nacional de Saúde)**, "15 dígitos, no cartão do SUS". **Observações**, "Informações administrativas. Não escreva dados clínicos aqui; use o prontuário." with **0/2000** |
+| TH, th | ✅ ที่อยู่: รหัสไปรษณีย์ · ถนน/ซอย · บ้านเลขที่ · อาคาร ชั้น ห้อง · แขวง/ตำบล · เขต/อำเภอ · จังหวัด; **no CNS field**; หมายเหตุ with its hint |
+| Other (GB), en | ✅ Postal code · Street · Number · Apartment, suite · Neighbourhood or district · City · State or province; **no CNS**; Notes with its hint |
+| CNS check on blur | ✅ 123456789012345 → "CNS inválido: confira os 15 dígitos do cartão do SUS."; a valid 898001234567891 → just the hint |
+| Observações cap | ✅ typing 2,010 characters keeps 2,000, and the counter shows 2000/2000 (BR, TH, GB) |
+| Server refuses a bad CNS | ✅ a bad CNS submitted with the browser check bypassed → "CNS inválido…"; **no patient saved** (the action refuses before writing) |
+
+**⏳ Needs 138 + 139 on a DB:**
+- the fields save and show;
+- a stale form doesn't clear stored values;
+- the server's `invalid_cns` mapping;
+- the one-line address with **Editar** on the patient page;
+- the address on the Rx print (per country, only with a street or city);
+- a secretary sees and edits them;
+- privacy §3.2 and Help P1 once live.
+
+Merged at `76eb769`, hidden (evidence: PR comment 5902218726).
+
+**⏳ After 138 + 139:** the DB rows listed above, live on prod.
