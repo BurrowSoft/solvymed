@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient as createServerClient } from "@supabase/supabase-js";
-import { retrieveSubscriptionOrNull } from "@/lib/stripeBilling";
+import { stripe, retrieveSubscriptionOrNull } from "@/lib/stripeBilling";
 import { reportWebhookFailure } from "@/lib/stripeWebhookReport";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-05-27.dahlia" });
 
 function adminClient() {
   return createServerClient(

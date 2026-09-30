@@ -15,6 +15,7 @@ import { getPracticeCountry } from "@/lib/practiceCountry";
 import { getSetupProgress } from "@/lib/setup";
 import { CloseAccountPanel, type ClosurePreview } from "./CloseAccountPanel";
 import { ChangePasswordPanel } from "./ChangePasswordPanel";
+import { ExportPatientsCard } from "./ExportPatientsCard";
 import { AppearanceCard } from "./AppearanceCard";
 import { SubscriptionPanel } from "./SubscriptionPanel";
 import { FoundersCard } from "./FoundersCard";
@@ -233,6 +234,9 @@ export default async function SettingsPage({
         <BlockedPatientsPanel patients={blockedPatients} locale={locale} />
 
         <ProceduresPanel procedures={procedures} currency={practiceProfile.currency} />
+
+        {/* Help P10: live once migration 126 (the export access log) is. */}
+        {conditionMet("migration-126") && <ExportPatientsCard locale={locale} />}
 
         <CookieSettingsButton className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-3 text-left text-sm font-semibold text-slate-700 transition hover:bg-slate-50" />
 
