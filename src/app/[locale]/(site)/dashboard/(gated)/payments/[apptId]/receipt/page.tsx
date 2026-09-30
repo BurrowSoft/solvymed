@@ -10,7 +10,7 @@ import { formatMoney } from "@/lib/money";
 import { PRINT_CSS, docDate, docTime, toDocTemplate } from "@/lib/prescriptionDoc";
 import { readPracticeHeader } from "@/lib/practiceHeader";
 import { PrintToolbar } from "@/components/PrintToolbar";
-import { ReceiptDocument } from "./ReceiptDocument";
+import { RECEITA_SAUDE_NOTE, ReceiptDocument } from "./ReceiptDocument";
 
 // The recibo's print view (Help G5 on the website; UX 36): the app's simple
 // recibo, for the doctor AND the secretary (payments are their job). A Thai
@@ -93,7 +93,7 @@ export default async function ReceiptPrintPage({
           idLines={idLines}
           number={`${date.replace(/-/g, "")}-${apptId.slice(0, 6).toUpperCase()}`}
           date={docDate(country, date)}
-          provider={[header.fullName, header.specialty].filter(Boolean).join(" — ")}
+          provider={[[header.fullName, header.registration].filter(Boolean).join(" · "), header.specialty].filter(Boolean).join(" — ")}
           clinic={[header.clinicName, country === "BR" && header.clinicCnpj ? `CNPJ ${formatCnpj(header.clinicCnpj)}` : null].filter(Boolean).join(" · ")}
           address={[header.address, header.city, header.state].filter(Boolean).join(", ")}
           service={String(a.consultation_type ?? "")}
@@ -103,6 +103,7 @@ export default async function ReceiptPrintPage({
           total={money(base + extrasTotal)}
           privatePay={a.payment_type === "private"}
           paid={a.payment_status === "paid"}
+          note={country === "BR" && !str(header.clinicCnpj) ? RECEITA_SAUDE_NOTE : null}
         />
       </div>
     </div>

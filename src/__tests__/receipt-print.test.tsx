@@ -10,6 +10,8 @@ const h = vi.hoisted(() => ({
   appt: null as Record<string, unknown> | null,
   patient: { full_name: "Maria Silva", cpf: "123.456.789-00", passport_number: "X1" } as unknown,
   country: "BR" as string | null,
+  registration: null as string | null,
+  cnpj: "12.345.678/0001-90" as string | null,
   headerFor: [] as string[],
   filters: [] as [string, string, unknown][],
 }));
@@ -30,7 +32,7 @@ vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => (h.
 vi.mock("@/lib/practiceHeader", () => ({
   readPracticeHeader: async (id: string) => {
     h.headerFor.push(id);
-    return { fullName: "Dra. Ana Souza", specialty: "Clínica geral", clinicName: "Clínica Bem-Estar", clinicCnpj: "12.345.678/0001-90", address: "Rua A, 10", city: "São Paulo", state: "SP", template: { primary_color: "#0f766e" } };
+    return { fullName: "Dra. Ana Souza", registration: h.registration, specialty: "Clínica geral", clinicName: "Clínica Bem-Estar", clinicCnpj: h.cnpj, address: "Rua A, 10", city: "São Paulo", state: "SP", template: { primary_color: "#0f766e" } };
   },
 }));
 vi.mock("next-intl/server", () => ({ getTranslations: async () => (k: string) => k }));
@@ -41,11 +43,13 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/components/PrintToolbar", () => ({ PrintToolbar: () => null }));
 
 import ReceiptPage from "@/app/[locale]/(site)/dashboard/(gated)/payments/[apptId]/receipt/page";
+import { RECEITA_SAUDE_NOTE } from "@/app/[locale]/(site)/dashboard/(gated)/payments/[apptId]/receipt/ReceiptDocument";
 
 const APPT = "abcdef12-1111-4222-8333-444455556666";
 const params = Promise.resolve({ locale: "pt-BR", apptId: APPT });
 beforeEach(() => {
   h.profId = "doc-1"; h.country = "BR"; h.headerFor = []; h.filters = [];
+  h.registration = null; h.cnpj = "12.345.678/0001-90";
   h.patient = { full_name: "Maria Silva", cpf: "123.456.789-00", passport_number: "X1" };
   h.appt = {
     id: APPT, professional_id: "doc-1", patient_id: "p-1", patient_name: "Maria Silva", date: "2026-10-01", start_time: "09:05:00",
@@ -71,6 +75,28 @@ describe("recibo print page", () => {
     expect(text).toMatch(/R\$\s?290,00/);
     expect(text).toContain("privatePay");
     expect(text).toContain("paid");
+  });
+
+  it("the council registration sits after the doctor's name; a clinic with a CNPJ gets no Receita Saúde note", async () => {
+    h.registration = "CRM 12345/SP";
+    const { container } = render(await ReceiptPage({ params }));
+    const text = container.textContent ?? "";
+    expect(text).toContain("Dra. Ana Souza · CRM 12345/SP — Clínica geral");
+    expect(text).not.toContain("Receita Saúde");
+  });
+
+  it("a Brazilian doctor without a CNPJ: the Receita Saúde note, in Portuguese whatever the UI language", async () => {
+    h.cnpj = null;
+    const { container } = render(await ReceiptPage({ params: Promise.resolve({ locale: "en", apptId: APPT }) }));
+    const note = [...container.querySelectorAll("p[lang='pt-BR']")].find(p => p.textContent?.includes("Receita Saúde"));
+    expect(note?.textContent).toBe(RECEITA_SAUDE_NOTE);
+    expect(container.textContent).not.toContain("CNPJ");
+  });
+
+  it("outside Brazil: never the Receita Saúde note", async () => {
+    h.country = "ZZ"; h.cnpj = null;
+    const { container } = render(await ReceiptPage({ params }));
+    expect(container.textContent).not.toContain("Receita Saúde");
   });
 
   it("another practice's appointment (or none) → 404; blocked time is never a recibo", async () => {
