@@ -46,7 +46,9 @@ export async function stageImport(db: ImportDb, source: ImportSource, fileName: 
   return id;
 }
 
-export type ValidateSummary = { total: number; new: number; existing: number; duplicate_in_file: number; invalid: number; with_warnings: number; existing_to_fill: number; archived?: number };
+export type ValidateSummary = { total: number; new: number; existing: number; duplicate_in_file: number; invalid: number; with_warnings: number; existing_to_fill: number; archived?: number;
+  // 130: CPFs that lost their leading zero (Excel) and were completed.
+  cpf_zero_padded?: number };
 export async function validateImport(db: ImportDb, id: string, onExisting: "skip" | "fill_empty"): Promise<ValidateSummary> {
   const r = await db.rpc("import_patients_validate", { p_import_id: id, p_on_existing: onExisting });
   if (r.error || !r.data || typeof r.data !== "object") fail(r.error);

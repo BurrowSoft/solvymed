@@ -12,7 +12,13 @@ vi.mock("@/lib/supabase/client", () => ({ createClient: () => ({}) }));
 
 import { ImportClient } from "@/app/[locale]/(site)/dashboard/patients/import/ImportClient";
 
-function fakeDb() {
+type Row = { row_no: number; outcome: string; duplicate_of_row: number | null; warnings: string[]; errors: string[]; input: Record<string, unknown> };
+const ROWS: Row[] = [
+  { row_no: 2, outcome: "new", duplicate_of_row: null, warnings: [], errors: [], input: { full_name: "Maria Silva" } },
+  { row_no: 3, outcome: "invalid", duplicate_of_row: null, warnings: [], errors: ["full_name_missing"], input: {} },
+];
+
+function fakeDb(summary: Record<string, number> = {}, previewRows: Row[] = ROWS) {
   const calls: { fn: string; args?: Record<string, unknown> }[] = [];
   const staged: { row: number; full_name?: string }[] = [];
   const db: ImportDb = {
@@ -20,7 +26,7 @@ function fakeDb() {
       calls.push({ fn, args });
       if (fn === "import_patients_begin") return Promise.resolve({ data: "imp-1", error: null });
       if (fn === "import_patients_add_rows") { staged.push(...(args!.p_rows as typeof staged)); return Promise.resolve({ data: 2, error: null }); }
-      if (fn === "import_patients_validate") return Promise.resolve({ data: { total: 2, new: 1, existing: 0, duplicate_in_file: 0, invalid: 1, with_warnings: 0, existing_to_fill: 0 }, error: null });
+      if (fn === "import_patients_validate") return Promise.resolve({ data: { total: 2, new: 1, existing: 0, duplicate_in_file: 0, invalid: 1, with_warnings: 0, existing_to_fill: 0, ...summary }, error: null });
       if (fn === "import_patients_commit") return Promise.resolve({ data: { total: 2, created: 1, filled: 0, existing_skipped: 0, duplicate_in_file: 0, invalid: 1, conflicts: 0 }, error: null });
       if (fn === "import_patients_undo") return Promise.resolve({ data: { deleted: 1, kept: 0 }, error: null });
       return Promise.resolve({ data: null, error: null });
@@ -28,10 +34,7 @@ function fakeDb() {
     from: () => ({
       select: () => ({
         eq: () => {
-          const rows = [
-            { row_no: 2, outcome: "new", duplicate_of_row: null, warnings: [], errors: [], input: { full_name: "Maria Silva" } },
-            { row_no: 3, outcome: "invalid", duplicate_of_row: null, warnings: [], errors: ["full_name_missing"], input: {} },
-          ];
+          const rows = previewRows;
           const range = () => Promise.resolve({ data: rows, error: null });
           return { or: () => ({ order: () => ({ range }) }), order: () => ({ range }) };
         },
@@ -91,5 +94,26 @@ describe("Importar pacientes", () => {
     fireEvent.change(container.querySelector('input[type="file"]')!, { target: { files: [csvFile("x", "export.zip")] } });
     expect(await screen.findByText(pt.patientImport.file_zip)).toBeInTheDocument();
     expect(calls).toEqual([]);
+  });
+
+  it("CPFs Excel stripped of the leading zero: 130's count line, the row's warning, and the Excel hint on a 9/10-digit CPF still invalid", async () => {
+    const { db } = fakeDb({ total: 3, new: 2, invalid: 1, with_warnings: 1, cpf_zero_padded: 1 }, [
+      { row_no: 2, outcome: "new", duplicate_of_row: null, warnings: ["cpf_zero_padded"], errors: [], input: { full_name: "Ana Zero", cpf: "1234567890" } },
+      { row_no: 3, outcome: "new", duplicate_of_row: null, warnings: [], errors: ["cpf_invalid"], input: { full_name: "Bia Dez", cpf: "1234567891" } },
+      { row_no: 4, outcome: "new", duplicate_of_row: null, warnings: [], errors: ["cpf_invalid"], input: { full_name: "Caio Onze", cpf: "123.456.789-00" } },
+    ]);
+    const { container } = render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <ImportClient locale="pt-BR" country="BR" db={db} />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.change(container.querySelector('input[type="file"]')!, { target: { files: [csvFile("Nome;CPF\nAna;1234567890\n")] } });
+    fireEvent.click(await screen.findByText("Verificar planilha"));
+    expect(await screen.findByText("1 CPF estava sem o zero inicial (o Excel remove) e foi completado.")).toBeInTheDocument();
+    expect(screen.getByText(pt.patientImport.code_cpf_zero_padded)).toBeInTheDocument();
+    const hint = `${pt.patientImport.code_cpf_invalid}. ${pt.patientImport.cpfExcelHint}`;
+    expect(screen.getByText(hint)).toBeInTheDocument();
+    // An 11-digit invalid CPF didn't lose a zero: no Excel hint.
+    expect(screen.getAllByText(pt.patientImport.code_cpf_invalid)).toHaveLength(1);
   });
 });

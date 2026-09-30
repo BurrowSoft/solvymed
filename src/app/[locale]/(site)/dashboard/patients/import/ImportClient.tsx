@@ -12,7 +12,7 @@ import {
   type CommitSummary, type ImportDb, type PreviewRow, type ValidateSummary,
 } from "@/lib/import/api";
 import { templateCsv } from "@/lib/import/template";
-import { errorListCsv } from "@/lib/import/errorList";
+import { errorListCsv, lostLeadingZero } from "@/lib/import/errorList";
 
 // Importar pacientes (UX, migrations 130/131): the file is read in the
 // browser, the columns are mapped (a preset for iClinic / Prontuário Verde,
@@ -30,7 +30,7 @@ const FIELD_KEY: Record<ImportField, string> = {
 const SOURCES: ImportSource[] = ["generic", "iclinic", "prontuario_verde"];
 const ROW_CODES = [
   "full_name_missing", "full_name_too_long", "unknown_field", "row_invalid",
-  "cpf_invalid", "cpf_not_used", "th_national_id_invalid", "th_national_id_not_used", "passport_invalid", "passport_not_used",
+  "cpf_invalid", "cpf_zero_padded", "cpf_not_used", "th_national_id_invalid", "th_national_id_not_used", "passport_invalid", "passport_not_used",
   "birth_date_invalid", "birth_date_be_converted", "sex_unknown", "phone_invalid", "phone_unverified", "phone_matches_existing",
   "email_invalid", "rg_invalid", "profession_invalid", "tags_trimmed", "extra_trimmed", "archived_unknown",
 ];
@@ -63,7 +63,13 @@ export function ImportClient({ locale, country, canMerge = false, db: injected }
   const [error, setError] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
 
-  const reason = (code: string) => (ROW_CODES.includes(code) ? t(`code_${code}`) : code);
+  // An invalid CPF of 9 or 10 digits most likely lost its leading zero in
+  // Excel and still failed the check digits after 130 padded it: say how to
+  // export it properly.
+  const reason = (code: string, row?: PreviewRow) => {
+    const text = ROW_CODES.includes(code) ? t(`code_${code}`) : code;
+    return code === "cpf_invalid" && lostLeadingZero(row?.input?.cpf) ? `${text}. ${t("cpfExcelHint")}` : text;
+  };
   const failText = (e: unknown) => {
     const code = e instanceof ImportError ? e.code : "generic";
     return t(`err_${code}`);
@@ -274,6 +280,7 @@ export function ImportClient({ locale, country, canMerge = false, db: injected }
               {summary.duplicate_in_file > 0 && <li>{t("summaryDuplicates", { n: summary.duplicate_in_file })}</li>}
               {summary.with_warnings > 0 && <li>{t("summaryWarnings", { n: summary.with_warnings })}</li>}
               {(summary.archived ?? 0) > 0 && <li>{t("summaryArchived", { n: summary.archived ?? 0 })}</li>}
+              {(summary.cpf_zero_padded ?? 0) > 0 && <li>{t("summaryCpfPadded", { n: summary.cpf_zero_padded ?? 0 })}</li>}
             </ul>
             <fieldset>
               <legend className="text-sm font-semibold text-slate-800">{t("existingTitle")}</legend>
@@ -298,7 +305,7 @@ export function ImportClient({ locale, country, canMerge = false, db: injected }
                       <td className="py-2">
                         <span className={r.outcome === "invalid" ? "font-semibold text-red-600" : "text-slate-700"}>{outcome(r)}</span>
                         {[...r.errors, ...r.warnings].length > 0 && (
-                          <span className="block text-xs text-slate-500">{[...r.errors, ...r.warnings].map(reason).join(" · ")}</span>
+                          <span className="block text-xs text-slate-500">{[...r.errors, ...r.warnings].map((c) => reason(c, r)).join(" · ")}</span>
                         )}
                       </td>
                     </tr>
