@@ -1484,7 +1484,8 @@
     "emailBody": "{system} での SolvyMed ファウンダープログラムへのご応募ありがとうございます。5営業日以内にご返信します。",
     "emailWaitlist": "現在 {system} の枠は満員のため、キャンセル待ちに登録されています。",
     "emailNoFiles": "まだファイルは送らないでください。採用された場合、テスト用エクスポートの作成方法をご説明します。",
-    "emailSign": "SolvyMed チーム"
+    "emailSign": "SolvyMed チーム",
+    "emailTagline": "クリニック管理をシンプルに"
   },
   "foundersCard": {
     "cardTitle": "ファウンダープログラム",

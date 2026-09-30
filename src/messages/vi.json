@@ -1484,7 +1484,8 @@
     "emailBody": "cảm ơn bạn đã đăng ký Chương trình Nhà sáng lập SolvyMed cho {system}. Chúng tôi sẽ trả lời trong vòng 5 ngày làm việc.",
     "emailWaitlist": "Các suất cho {system} hiện đã đủ, nên bạn đang trong danh sách chờ.",
     "emailNoFiles": "Vui lòng chưa gửi tệp nào; nếu được chấp nhận, chúng tôi sẽ hướng dẫn cách tạo bản xuất thử.",
-    "emailSign": "Đội ngũ SolvyMed"
+    "emailSign": "Đội ngũ SolvyMed",
+    "emailTagline": "Quản lý phòng khám thật đơn giản"
   },
   "foundersCard": {
     "cardTitle": "Chương trình Nhà sáng lập",
