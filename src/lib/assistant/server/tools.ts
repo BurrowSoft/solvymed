@@ -160,7 +160,8 @@ const T = {
     addPatient: "Novo paciente", fullName: "Nome", birth: "Nascimento",
     similar: "Parecidos já cadastrados",
     proposalConfirmStop: "Este pedido está aguardando a resposta do paciente à nova proposta; só é possível recusar.",
-    seriesOther: (d: string) => `Outro horário para ${d}`, skipping: (d: string) => `pulando ${d}`,
+    seriesOther: (d: string) => `Outro horário para ${d}`,
+    skippedLabel: "Fica de fora", skippedValue: (d: string) => `${d} (horário ocupado)`,
     pickPatient: "Qual paciente?", pickAppointment: "Qual consulta?", pickDate: "Qual data?",
     pickSimilar: "Já existe um cadastro parecido. É a mesma pessoa?", someoneElse: "É outra pessoa",
     born: (d: string) => `nasc. ${d}`,
@@ -196,7 +197,8 @@ const T = {
     addPatient: "New patient", fullName: "Name", birth: "Date of birth",
     similar: "Similar patients already registered",
     proposalConfirmStop: "This request is waiting for the patient's answer to the new time; it can only be declined.",
-    seriesOther: (d: string) => `Another time for ${d}`, skipping: (d: string) => `skipping ${d}`,
+    seriesOther: (d: string) => `Another time for ${d}`,
+    skippedLabel: "Left out", skippedValue: (d: string) => `${d} (time taken)`,
     pickPatient: "Which patient?", pickAppointment: "Which appointment?", pickDate: "Which date?",
     pickSimilar: "A similar patient is already registered. Is it the same person?", someoneElse: "It's someone else",
     born: (d: string) => `born ${d}`,
@@ -654,9 +656,11 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
       { label: t.duration, value: `${dur} min`, ...(durGiven ? {} : { isDefault: true }) },
       ...(repeat ? [{
         label: t.repeatLabel,
-        value: t.repeatValue(repeat.every, dates.length, formatShortDate(ctx.locale, dates[dates.length - 1]))
-          + (skip.length ? `, ${t.skipping(skip.map((d) => formatShortDate(ctx.locale, d).slice(0, 5)).join(", "))}` : ""),
+        value: t.repeatValue(repeat.every, dates.length, formatShortDate(ctx.locale, dates[dates.length - 1])),
       }] : []),
+      // The skipped dates in their own row, not buried in Repetir (UX):
+      // Confirmar books the others and leaves these out.
+      ...(skip.length ? [{ label: t.skippedLabel, value: t.skippedValue(skip.map((d) => formatShortDate(ctx.locale, d).slice(0, 5)).join(", ")) }] : []),
     ],
     warnings,
     ...(asks.length ? { secondConfirm: { question: `${asks.join(" ")} ${t.bookAnyway}`, confirmLabel: t.bookLabel } } : {}),
