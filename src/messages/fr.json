@@ -1652,7 +1652,11 @@
     "search": "Rechercher par nom ou pièce d'identité…",
     "archivedTag": "archivé",
     "back": "Retour",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "subBirth": "Né(e) le {date}",
+    "subPhone": "Tél. …{last4}",
+    "subImported": "Importé le {date}",
+    "subCreated": "Enregistré le {date}"
   },
   "patientAddress": {
     "section": "Adresse",

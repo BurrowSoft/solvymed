@@ -1652,7 +1652,11 @@
     "search": "Cari berdasarkan nama atau nomor identitas…",
     "archivedTag": "diarsipkan",
     "back": "Kembali",
-    "cancel": "Batal"
+    "cancel": "Batal",
+    "subBirth": "Lahir {date}",
+    "subPhone": "Telp. …{last4}",
+    "subImported": "Diimpor {date}",
+    "subCreated": "Ditambahkan {date}"
   },
   "patientAddress": {
     "section": "Alamat",

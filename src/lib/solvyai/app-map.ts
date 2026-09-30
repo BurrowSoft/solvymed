@@ -318,7 +318,7 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
-      text: "The website has it too (doctor only): open the patient, Info tab → \"Mesclar com outro paciente…\" / \"Merge with another patient…\": the same flow (only the differing fields, \"Manter este cadastro\" / \"Keep this record\", \"Mesclar\" / \"Merge\", a second \"São a mesma pessoa\" / \"Same person\" when an app account is involved). SolvyAI never merges; send the doctor there.",
+      text: "The website has it too (doctor only): open the patient, Info tab → \"Mesclar com outro paciente…\" / \"Merge with another patient…\": the same flow (only the differing fields, \"Manter este cadastro\" / \"Keep this record\", \"Mesclar\" / \"Merge\", a second \"São a mesma pessoa\" / \"Same person\" when an app account is involved). Each record's card shows its birth date, the phone's last 4 digits and when it was added or imported; switching which record stays keeps the marked values; two same-name records are named in the confirmation by what differs (e.g. \"Maria Silva (nasc. 12/03/1980)\"). SolvyAI never merges; send the doctor there.",
       pending: ["merge-web-live"],
     },
     help: "P12",

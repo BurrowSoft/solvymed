@@ -9,10 +9,12 @@ export type MergeRow = {
   birth_date: string | null; sex: string | null; phone: string | null; emergency_phone: string | null; email: string | null;
   rg: string | null; profession: string | null; convenio_type: string | null; photo_url: string | null;
   archived_at: string | null; booking_blocked: boolean | null;
+  // For the cards' subtitles and the confirm sentence (recordMarks); never a merge field.
+  created_at?: string | null; import_id?: string | null;
 } & AddressColumns;
 
 // The columns read for the comparison (never "*": nothing else leaks in).
-export const MERGE_COLUMNS = "id, full_name, cpf, th_national_id, passport_number, birth_date, sex, phone, emergency_phone, email, rg, profession, convenio_type, photo_url, archived_at, booking_blocked";
+export const MERGE_COLUMNS = "id, full_name, cpf, th_national_id, passport_number, birth_date, sex, phone, emergency_phone, email, rg, profession, convenio_type, photo_url, archived_at, booking_blocked, created_at, import_id";
 // Once 138 + 139 are applied (patient-address-live): the address, CNS and
 // Observações are compared and chosen too.
 export const MERGE_ADDRESS_COLUMNS = `${ADDRESS_FIELDS.map((f) => f.name).join(", ")}, cns, notes_admin`;
@@ -114,6 +116,60 @@ export function mergeChoices(kept: MergeRow, merged: MergeRow, picks: Partial<Re
     else if (pick === "merged") out[f.key] = "merged";
   }
   return out;
+}
+
+/** The picks after swapping which record stays: each chosen value stays chosen (UX, the app's swapPicks). */
+export function swapPicks(picks: Partial<Record<MergeFieldKey, MergePick>>): Partial<Record<MergeFieldKey, MergePick>> {
+  const out: Partial<Record<MergeFieldKey, MergePick>> = {};
+  for (const [k, v] of Object.entries(picks) as [MergeFieldKey, MergePick][]) {
+    out[k] = v === "kept" ? "merged" : v === "merged" ? "kept" : v;
+  }
+  return out;
+}
+
+/**
+ * What tells a record apart (UX; the app's recordMarks): its birth date, its
+ * phone's last 4 digits, and when it was imported or added. Dates are
+ * YYYY-MM-DD; the added date is the viewer's local day of created_at (an
+ * imported record was created by the import, so that's its import date).
+ */
+export type RecordMark =
+  | { kind: "birth"; date: string }
+  | { kind: "phone"; last4: string }
+  | { kind: "imported" | "created"; date: string };
+
+export function recordMarks(p: MergeRow): RecordMark[] {
+  const marks: RecordMark[] = [];
+  if (p.birth_date) marks.push({ kind: "birth", date: p.birth_date.slice(0, 10) });
+  const digits = (p.phone ?? "").replace(/\D/g, "");
+  if (digits.length >= 4) marks.push({ kind: "phone", last4: digits.slice(-4) });
+  const d = new Date(p.created_at ?? "");
+  if (!isNaN(d.getTime())) {
+    const day = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    marks.push({ kind: p.import_id ? "imported" : "created", date: day });
+  }
+  return marks;
+}
+
+const markValue = (m: RecordMark) => ("last4" in m ? m.last4 : m.date);
+const markGroup = (m: RecordMark) => (m.kind === "imported" ? "created" : m.kind);
+
+/**
+ * The confirm sentence names two same-name records by the first mark that
+ * differs between them (birth date, then phone, then imported/added date);
+ * if none does, by the added date (UX). Null when the names already differ.
+ */
+export function distinguishingMarks(a: MergeRow, b: MergeRow): [RecordMark, RecordMark] | null {
+  if (norm(a.full_name) !== norm(b.full_name)) return null;
+  const ma = recordMarks(a);
+  const mb = recordMarks(b);
+  for (const x of ma) {
+    const y = mb.find((m) => markGroup(m) === markGroup(x));
+    if (y && (markValue(x) !== markValue(y) || x.kind !== y.kind)) return [x, y];
+  }
+  const ca = ma.find((m) => markGroup(m) === "created");
+  const cb = mb.find((m) => markGroup(m) === "created");
+  return ca && cb ? [ca, cb] : null;
 }
 
 export type MergePreviewSide = { appointments: number; records: number; prescriptions: number; files: number; hasAppAccount: boolean };

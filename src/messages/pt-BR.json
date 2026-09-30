@@ -1652,7 +1652,11 @@
     "search": "Buscar por nome ou documento…",
     "archivedTag": "arquivado",
     "back": "Voltar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "subBirth": "Nasc. {date}",
+    "subPhone": "Tel. …{last4}",
+    "subImported": "Importado em {date}",
+    "subCreated": "Cadastrado em {date}"
   },
   "patientAddress": {
     "section": "Endereço",

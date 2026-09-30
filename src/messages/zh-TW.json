@@ -1652,7 +1652,11 @@
     "search": "依姓名或證件號搜尋…",
     "archivedTag": "已封存",
     "back": "返回",
-    "cancel": "取消"
+    "cancel": "取消",
+    "subBirth": "出生 {date}",
+    "subPhone": "電話 …{last4}",
+    "subImported": "匯入於 {date}",
+    "subCreated": "新增於 {date}"
   },
   "patientAddress": {
     "section": "地址",

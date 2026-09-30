@@ -1652,7 +1652,11 @@
     "search": "Tìm theo tên hoặc số giấy tờ…",
     "archivedTag": "đã lưu trữ",
     "back": "Quay lại",
-    "cancel": "Hủy"
+    "cancel": "Hủy",
+    "subBirth": "Sinh {date}",
+    "subPhone": "ĐT …{last4}",
+    "subImported": "Nhập {date}",
+    "subCreated": "Thêm {date}"
   },
   "patientAddress": {
     "section": "Địa chỉ",

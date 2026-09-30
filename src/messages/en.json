@@ -1682,7 +1682,11 @@
     "search": "Search by name or ID…",
     "archivedTag": "archived",
     "back": "Back",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "subBirth": "Born {date}",
+    "subPhone": "Phone …{last4}",
+    "subImported": "Imported {date}",
+    "subCreated": "Added {date}"
   },
   "patientAddress": {
     "section": "Address",
