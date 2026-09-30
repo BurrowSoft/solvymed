@@ -71,11 +71,49 @@ describe("Meet SolvyAI", () => {
     vi.useRealTimers();
   });
 
+  it("?solvyai-intro=1 only where the server allows it (never Production, UX)", async () => {
+    vi.useFakeTimers();
+    window.history.pushState({}, "", "/dashboard?solvyai-intro=1");
+    const off = renderProvider({ introPending: false, introTestable: false });
+    await act(async () => { vi.advanceTimersByTime(1000); });
+    expect(screen.queryByText("solvyaiIntro.title")).not.toBeInTheDocument();
+    off.unmount();
+    window.history.pushState({}, "", "/dashboard");
+    vi.useRealTimers();
+  });
+
   it("never for secretaries", async () => {
     vi.useFakeTimers();
     renderProvider({ role: "secretary", paymentQr: null });
     await act(async () => { vi.advanceTimersByTime(1000); });
     expect(screen.queryByText("solvyaiIntro.title")).not.toBeInTheDocument();
     vi.useRealTimers();
+  });
+});
+
+// 9a: the card and the panel share one condition, so a locked doctor (only
+// Settings open, no panel) never gets a card whose Try would do nothing.
+describe("where the card may show (solvyAiPanelOn / solvyAiIntroOn)", () => {
+  it("doctors with access, not secretaries, never while locked; the card also needs solvyai-live", async () => {
+    vi.resetModules();
+    vi.doMock("@/lib/liveFeatures", () => ({ liveFeatures: { solvyAi: true } }));
+    vi.doMock("@/lib/conditions", () => ({ conditionMet: (id: string) => id === "solvyai-live" }));
+    const { solvyAiPanelOn, solvyAiIntroOn } = await import("@/lib/solvyaiIntro");
+    const active = { subscription_status: "active", trial_ends_at: null, current_period_end: null } as never;
+    const locked = { subscription_status: "canceled", trial_ends_at: null, current_period_end: null } as never;
+    expect(solvyAiPanelOn({ isSecretary: false, sub: active })).toBe(true);
+    expect(solvyAiIntroOn({ isSecretary: false, sub: active })).toBe(true);
+    expect(solvyAiPanelOn({ isSecretary: false, sub: locked })).toBe(false);
+    expect(solvyAiIntroOn({ isSecretary: false, sub: locked })).toBe(false);
+    expect(solvyAiIntroOn({ isSecretary: true, sub: active })).toBe(false);
+    vi.doUnmock("@/lib/conditions");
+    vi.resetModules();
+    vi.doMock("@/lib/liveFeatures", () => ({ liveFeatures: { solvyAi: true } }));
+    vi.doMock("@/lib/conditions", () => ({ conditionMet: () => false }));
+    const off = await import("@/lib/solvyaiIntro");
+    expect(off.solvyAiPanelOn({ isSecretary: false, sub: active })).toBe(true);
+    expect(off.solvyAiIntroOn({ isSecretary: false, sub: active })).toBe(false);
+    vi.doUnmock("@/lib/liveFeatures");
+    vi.doUnmock("@/lib/conditions");
   });
 });

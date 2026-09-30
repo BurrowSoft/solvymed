@@ -43,6 +43,7 @@ export function TourProvider({
   resumeStep = 0,
   newsPending = false,
   introPending = false,
+  introTestable = false,
   children,
 }: {
   role: TourRole;
@@ -54,6 +55,8 @@ export function TourProvider({
   newsPending?: boolean;
   // "Meet SolvyAI" hasn't been seen and SolvyAI is live (lib/solvyaiIntro).
   introPending?: boolean;
+  // ?solvyai-intro=1 works (not Production; the layout decides).
+  introTestable?: boolean;
   children: ReactNode;
 }) {
   const t = useTranslations("tour");
@@ -75,15 +78,16 @@ export function TourProvider({
     }
   }, [newsItems.length]);
   // "Meet SolvyAI ✦" (UX, go-live): doctors, once, after the tour and the
-  // Novidades popup, never on top of them. Testing (panel flag on only):
+  // Novidades popup, never on top of them. Testing (panel flag on, and
+  // never on Production: introTestable, from the server's VERCEL_ENV; UX):
   // /dashboard?solvyai-intro=1 opens it even when already seen.
   const [introPopup, setIntroPopup] = useState(false);
   const introWaiting = useRef(introPending && role === "professional");
   useEffect(() => {
-    if (liveFeatures.solvyAi && role === "professional" && new URLSearchParams(window.location.search).get("solvyai-intro") === "1") {
+    if (introTestable && liveFeatures.solvyAi && role === "professional" && new URLSearchParams(window.location.search).get("solvyai-intro") === "1") {
       introWaiting.current = true;
     }
-  }, [role]);
+  }, [role, introTestable]);
   const [offerResume, setOfferResume] = useState(entry === "resume");
   // Where "Continuar" picks up: the saved step, or the step after SolvyAI
   // when "Experimentar agora" paused the tour (UX 36, like the app).
