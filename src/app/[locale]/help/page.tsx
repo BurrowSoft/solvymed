@@ -3,6 +3,7 @@ import { HelpFrame, HelpLink } from "@/components/help/HelpChrome";
 import { HelpSearch } from "@/components/help/HelpSearch";
 import { articleSlug, articleTitle, HELP, HELP_UI, helpLang } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { localeAlternates } from "@/lib/seo";
 
 // Not indexed (and not linked) until UX confirms the label check
 // (liveFeatures.helpCenter); the app-opened variant is never indexed.
@@ -13,6 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title: ui.title,
     description: ui.subtitle,
     robots: liveFeatures.helpCenter ? undefined : { index: false, follow: false },
+    alternates: localeAlternates(locale, "/help"),
   };
 }
 

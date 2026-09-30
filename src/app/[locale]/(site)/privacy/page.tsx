@@ -5,6 +5,14 @@ import { LegalDoc, legalLangFor } from "@/components/LegalDoc";
 import { PrivacyEn } from "./PrivacyEn";
 import { PrivacyPtBR } from "./PrivacyPtBR";
 import { legalDateLabel, PRIVACY_VERSION } from "@/lib/legalVersions";
+import type { Metadata } from "next";
+import { localeAlternates } from "@/lib/seo";
+
+// Its own canonical + hreflang (lib/seo; the layout sets none, 3e).
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return { alternates: localeAlternates(locale, "/privacy") };
+}
 
 export default async function PrivacyPage({
   params,

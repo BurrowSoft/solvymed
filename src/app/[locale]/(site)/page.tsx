@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { localeAlternates } from "@/lib/seo";
 import { redirect } from "next/navigation";
 import { thaiEnabled } from "@/lib/publicLocales";
 import { AppDownloadButtons } from "@/components/AppDownloadButtons";
@@ -56,6 +58,13 @@ const FEATURE_ICONS: Record<FeatureKey, React.ReactNode> = {
 };
 
 const FEATURE_KEYS: FeatureKey[] = ["scheduling", "patients", "records", "prescriptions", "payments", "analytics"];
+
+
+// Its own canonical + hreflang (lib/seo; the layout sets none, 3e).
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return { alternates: localeAlternates(locale, "") };
+}
 
 export default async function HomePage({
   params,

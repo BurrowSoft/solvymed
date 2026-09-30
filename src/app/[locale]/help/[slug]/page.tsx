@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { HelpBlocks, HelpFrame, HelpLink, Inline } from "@/components/help/HelpChrome";
-import { articleTitle, findArticle, HELP_UI, helpLang, webScreen } from "@/lib/help";
+import { articleSlug, articleTitle, findArticle, HELP_UI, helpLang, webScreen } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { localeAlternates } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -20,6 +21,8 @@ export async function generateMetadata({
     title: found ? articleTitle(found.article, lang, app) : HELP_UI[lang].title,
     // Not indexed until UX confirms the label check (liveFeatures.helpCenter).
     robots: liveFeatures.helpCenter ? undefined : { index: false, follow: false },
+    // The article's own URL (its canonical slug), never the home page's.
+    ...(found ? { alternates: localeAlternates(locale, `/help/${articleSlug(found.article)}`) } : {}),
   };
 }
 

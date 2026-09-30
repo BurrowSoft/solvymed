@@ -13,7 +13,7 @@ import { ConsentBanner } from "@/components/ConsentBanner";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
-import { isPublicLocale, publicLocales } from "@/lib/publicLocales";
+import { isPublicLocale } from "@/lib/publicLocales";
 import { pickMessages } from "@/lib/pickMessages";
 import "../globals.css";
 
@@ -48,13 +48,6 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const canonical = locale === "en" ? `${BASE}/` : `${BASE}/${locale}/`;
-  // Only offered languages (Thai stays out until the Thai release).
-  const languages = Object.fromEntries(
-    publicLocales().map((l) => [l, l === "en" ? `${BASE}/` : `${BASE}/${l}/`])
-  );
-  languages["x-default"] = `${BASE}/`;
-
   return {
     metadataBase: new URL(BASE),
     title: {
@@ -72,11 +65,12 @@ export async function generateMetadata({
       "healthcare app",
       "medical billing",
     ],
-    alternates: { canonical, languages },
+    // No canonical, hreflang or og:url here: each public page sets its own
+    // (lib/seo localeAlternates). A layout-level one applied the HOME page's
+    // to every page without its own (3e).
     openGraph: {
       type: "website",
       locale: locale.replace("-", "_"),
-      url: canonical,
       siteName: "Solvymed",
       title: "Solvymed — Medical Practice Management",
       description: "The all-in-one practice management app for healthcare professionals.",

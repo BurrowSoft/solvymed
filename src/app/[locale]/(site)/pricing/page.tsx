@@ -6,22 +6,19 @@ import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { Link } from "@/i18n/navigation";
 import { liveFeatures, pdfsInLocale } from "@/lib/liveFeatures";
 import { pricingCountry, pricingCountryCode, type PricingChoice } from "@/lib/pricingCountry";
-import { publicLocales, thaiEnabled } from "@/lib/publicLocales";
+import { thaiEnabled } from "@/lib/publicLocales";
 import { getPlanPrice } from "@/lib/subscription";
+import { localeAlternates } from "@/lib/seo";
 
-const BASE = "https://www.solvymed.com";
-const pathFor = (locale: string) => (locale === "en" ? `${BASE}/pricing` : `${BASE}/${locale}/pricing`);
 
-// Its own canonical and hreflang set (the layout's point at the home page).
+// Its own canonical and hreflang set (lib/seo).
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "pricing" });
-  const languages: Record<string, string> = Object.fromEntries(publicLocales().map((l) => [l, pathFor(l)]));
-  languages["x-default"] = pathFor("en");
   return {
     title: t("navLabel"),
     description: t("subtitle"),
-    alternates: { canonical: pathFor(locale), languages },
+    alternates: localeAlternates(locale, "/pricing"),
   };
 }
 
