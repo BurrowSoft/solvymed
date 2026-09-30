@@ -76,6 +76,11 @@ describe("the applicant's greeting", () => {
     expect(await hello("พญ. สุดา ดีงาม", "th")).toBe("เรียน พญ.สุดา");
   });
 
+  it("a title alone falls back to the name as typed (9a)", async () => {
+    expect(await hello("Dra", "pt-BR")).toBe("Olá, Dra!");
+    expect(await hello("Dr.", "en")).toBe("Hi Dr.,");
+  });
+
   it("without a title: the first name", async () => {
     expect(await hello("Ana Souza", "pt-BR")).toBe("Olá, Ana!");
     expect(await hello("John Smith", "en")).toBe("Hi John,");

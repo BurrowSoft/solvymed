@@ -8,6 +8,8 @@
 // The titles are the ones the name field's hint suggests: Dr/Dra/Prof/Profa
 // (+ ª forms), fr Pr, it Dott./Dott.ssa. The same regex as the app's;
 // change both together.
+import { THAI_TITLES } from "./country";
+
 const TITLE = /^(dott\.ssa|dott|dra|dr|profa|prof|pr)(?:(\.?ª\.?|\.)\s*|\s+|$)/i;
 const MAX_TITLES = 3;
 
@@ -29,8 +31,11 @@ export function doctorDisplayName(name: string | null | undefined, opts: { first
 
 // Thai professional titles, typed before the name with or without a space
 // ("นพ.สมชาย", "พญ. สุดา"): the ones the practice-country examples suggest
-// (lib/country), plus ดร. Kept exactly as typed.
-const THAI_TITLE = /^(นพ\.|พญ\.|ทพ\.|ทญ\.|ภก\.|ภญ\.|ดร\.)\s*/;
+// (lib/country THAI_TITLES, one list; 9a), plus ภก./ภญ./ดร. Kept exactly as
+// typed.
+const THAI_TITLE = new RegExp(
+  `^(${[...THAI_TITLES, "ภก.", "ภญ.", "ดร."].map((s) => s.replace(/\./g, "\\.")).join("|")})\\s*`,
+);
 
 // For a greeting (UX, "Olá, Dra. Ana!", "เรียน นพ.สมชาย"): the typed
 // title(s), as doctorDisplayName shows them, and the first name. Never a

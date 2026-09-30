@@ -11,6 +11,10 @@
 // priced separately (lib/subscription getPlanPrice: US$ 19).
 export type Currency = "BRL" | "THB" | "USD" | "NONE";
 
+// The Thai professional titles (doctors, dentists): the examples below and
+// the greeting's title detection (lib/doctorName) use this one list.
+export const THAI_TITLES = ["นพ.", "พญ.", "ทพ.", "ทญ."] as const;
+
 // The settings message keys a country's form examples use (Settings →
 // Profile / Clinic). Adding a country = adding its keys to the messages.
 type SettingsKey =
@@ -101,7 +105,7 @@ const TH: CountryProfile = {
   clinicTaxId: "th_tax_id", fallbackLocale: "th", receipts: "app", calendar: "buddhist",
   healthCard: null, addressFormat: "th",
   examples: {
-    titles: { th: "นพ., พญ., ทพ., ทญ.", other: "Dr." },
+    titles: { th: THAI_TITLES.join(", "), other: "Dr." },
     registration: "registrationPlaceholderTH", clinicName: "clinicNamePlaceholderTH", address: "addressPlaceholderTH",
     stateLabel: "stateProvince", state: null, city: "Bangkok", phone: "02 000 0000", website: "www.example.com",
     mobile: { local: "081 234 5678", intl: "+66 81 234 5678", national: "81 234 5678" },
