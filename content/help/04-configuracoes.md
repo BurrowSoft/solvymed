@@ -5,11 +5,13 @@
 **pt-BR**
 1. **Configurações → Meu perfil**: nome e especialidade.
 2. **Configurações → Cadastros**: seu registro profissional (ex.: "CRM 12345/SP"). Ele aparece nas receitas e documentos em PDF.
+{pending:app-1.4.0} Ao criar a conta de médico no app, você escolhe o país da clínica (Brasil, Tailândia ou Outro), já sugerido pela região do celular. Ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar depois, fale com support@solvymed.com. Pacientes e secretárias não fazem essa escolha.
 **en**
 1. **Settings → My profile**: name and specialty.
 2. **Settings → Registrations**: your professional registration (e.g. "CRM 12345/SP"). It appears on prescriptions and PDF documents.
-**No site:** **Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: "CRM 12345/SP"), no mesmo cartão. Em **Configurações → Clínica**: o **CNPJ** (clínicas no Brasil) ou o **Nº de identificação fiscal (13 dígitos)** (clínicas na Tailândia).
-**On the website:** **Settings → Profile**: name, specialty and **Professional registration** (e.g. "CRM 12345/SP"), on the same card. In **Settings → Clinic**: the **CNPJ** (clinics in Brazil) or the **Tax ID (13 digits)** (clinics in Thailand).
+{pending:app-1.4.0} When you create a doctor account in the app, you choose the clinic's country (Brazil, Thailand or Other), preselected from the phone's region. It sets the currency, the plan price, the patient ID field and the payment QR. To change it later, contact support@solvymed.com. Patients and secretaries don't make this choice.
+**No site:** **Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: "CRM 12345/SP"), no mesmo cartão. Em **Configurações → Clínica**: o **CNPJ** (clínicas no Brasil) ou o **Nº de identificação fiscal (13 dígitos)** (clínicas na Tailândia). O país da clínica é escolhido ao criar a conta de médico (Brasil, Tailândia ou Outro) e aparece em **Configurações → País do consultório**; ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar, fale com support@solvymed.com.
+**On the website:** **Settings → Profile**: name, specialty and **Professional registration** (e.g. "CRM 12345/SP"), on the same card. In **Settings → Clinic**: the **CNPJ** (clinics in Brazil) or the **Tax ID (13 digits)** (clinics in Thailand). The clinic's country is chosen when the doctor account is created (Brazil, Thailand or Other) and shows in **Settings → Practice country**; it sets the currency, the plan price, the patient ID field and the payment QR. To change it, contact support@solvymed.com.
 `open:settings-profile`
 
 ---
