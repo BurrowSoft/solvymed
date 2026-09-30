@@ -1,4 +1,5 @@
 import type { PatientIdKind } from "./patientIds";
+import { profileOfKind } from "./country";
 
 // Server-side patient search and paging (the patient list, the appointment
 // picker). Supabase caps a response at 1000 rows, so lists are paged and
@@ -8,13 +9,17 @@ export const PATIENTS_PAGE_SIZE = 50;
 export const PICKER_LIMIT = 20;
 
 // What a search box may pass into a PostgREST filter: letters (any
-// script), digits, spaces and the few symbols names, CPFs and phones use.
-// Everything else (commas, parentheses, quotes, backslashes, wildcards)
-// is dropped, so the text can't change the filter's structure.
+// script) with their combining marks, digits, spaces and the few symbols
+// names, CPFs and phones use. Everything else (commas, parentheses,
+// quotes, backslashes, wildcards) is dropped, so the text can't change the
+// filter's structure. The marks (\p{M}) matter: Thai vowels and tone marks
+// (้ ี ั ์ …) are combining marks, and dropping them made "แก้วมณี" search
+// for "แก ว มณ" and find nothing (d7). NFC first, so a decomposed "José"
+// becomes the stored "José".
 export function cleanSearchText(q: string): string {
   return q
     .normalize("NFC")
-    .replace(/[^\p{L}\p{N} .'@+-]/gu, " ")
+    .replace(/[^\p{L}\p{M}\p{N} .'@+-]/gu, " ")
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, 60);
@@ -33,13 +38,15 @@ export function patientSearchFilter(q: string | null | undefined, idKind: Patien
   if (!text) return null;
   const clauses = [`full_name.ilike."*${text}*"`];
   const digits = text.replace(/\D/g, "");
+  // The practice country's ID columns (lib/country idFields), each matched
+  // as its field says.
+  const idFields = profileOfKind(idKind).idFields;
   if (digits.length >= 3) {
     const pattern = digits.split("").join("[^0-9]*");
     clauses.push(`phone.imatch."${pattern}"`);
-    if (idKind === "BR") clauses.push(`cpf.imatch."${pattern}"`);
-    if (idKind === "TH") clauses.push(`th_national_id.imatch."${pattern}"`);
+    for (const f of idFields) if (f.search === "digits") clauses.push(`${f.name}.imatch."${pattern}"`);
   }
-  if (idKind !== "BR" && text.length >= 3) clauses.push(`passport_number.ilike."*${text}*"`);
+  if (text.length >= 3) for (const f of idFields) if (f.search === "text") clauses.push(`${f.name}.ilike."*${text}*"`);
   return clauses.join(",");
 }
 

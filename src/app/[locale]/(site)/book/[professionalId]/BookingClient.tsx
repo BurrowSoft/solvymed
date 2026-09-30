@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { computeSlots, toMinutes, filterPastSlots, toLocalDateString } from "@/lib/slots";
 import { formatMoney } from "@/lib/money";
-import type { Currency } from "@/lib/country";
+import { profileOfKind, profileOfPhonePrefix, type Currency } from "@/lib/country";
 import { isValidThaiId, type PatientIdKind } from "@/lib/patientIds";
 import { usePatientIdFields, type PatientIdValues } from "@/lib/usePatientIdFields";
 import { dateLocale, formatTimeLabel } from "@/lib/dateLabels";
@@ -53,7 +53,12 @@ const LOCALE_TO_COUNTRY: Record<string, string> = {
   ko: "KR", ar: "SA", ru: "RU", id: "ID", vi: "VN",
 };
 
-function getDefaultCountry(locale: string) {
+// The dial code the phone starts at: the booked practice's country (UX);
+// for a practice outside the named countries, a guess from the UI language.
+function getDefaultCountry(locale: string, idKind: PatientIdKind) {
+  const prefix = profileOfKind(idKind).phonePrefix;
+  const practice = prefix ? COUNTRIES.find((c) => c.dialCode === prefix) : undefined;
+  if (practice) return practice;
   const code = LOCALE_TO_COUNTRY[locale] ?? "US";
   return COUNTRIES.find((c) => c.code === code) ?? COUNTRIES[2];
 }
@@ -143,6 +148,7 @@ export function BookingClient({
 }) {
   const router = useRouter();
   const t = useTranslations("book");
+  const tEx = useTranslations("countryExamples");
   const tIds = useTranslations("patientIds");
   const tDate = useTranslations("dateInput");
   const tConsult = useTranslations("consultType");
@@ -195,7 +201,7 @@ export function BookingClient({
 
   // Patient profile — pre-loaded from patient_profiles, editable before booking
   const [patientFullName, setPatientFullName] = useState(patientEmail.split("@")[0]);
-  const [phoneCountry, setPhoneCountry] = useState(() => getDefaultCountry(locale));
+  const [phoneCountry, setPhoneCountry] = useState(() => getDefaultCountry(locale, idKind));
   const [patientPhoneLocal, setPatientPhoneLocal] = useState("");
   const [patientDob, setPatientDob] = useState("");
   // The identifier(s) the booked practice's country uses (CPF / Thai ID +
@@ -318,7 +324,9 @@ export function BookingClient({
   async function handleBook() {
     if (!selectedSlot) return;
     // A Thai ID must pass its checksum (the database refuses it otherwise).
-    if (idKind === "TH" && patientIds.th_national_id?.trim() && !isValidThaiId(patientIds.th_national_id)) {
+    const thaiId = profileOfKind(idKind).idFields.find((f) => f.checksum === "thai");
+    const thaiValue = thaiId ? patientIds[thaiId.name]?.trim() : "";
+    if (thaiValue && !isValidThaiId(thaiValue)) {
       setError(tIds("thaiIdInvalid"));
       return;
     }
@@ -362,7 +370,10 @@ export function BookingClient({
       });
       if (rpcError) {
         const msg = rpcError.message ?? "";
-        if (msg.includes("patient_archived")) {
+        if (msg.includes("practice_inactive")) {
+          // The practice's subscription is locked (migration 142).
+          setError(t("practiceInactive"));
+        } else if (msg.includes("patient_archived")) {
           // The clinic archived this patient's record there.
           setError(t("errorArchived"));
         } else if (msg.includes("slot_taken")) {
@@ -678,7 +689,7 @@ export function BookingClient({
                     type="tel"
                     value={patientPhoneLocal}
                     onChange={e => setPatientPhoneLocal(e.target.value)}
-                    placeholder={t("phonePlaceholder")}
+                    placeholder={profileOfPhonePrefix(phoneCountry.dialCode).examples.mobile?.national ?? tEx("phone")}
                     className="flex-1 min-w-0 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                   />
                 </div>

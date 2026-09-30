@@ -21,6 +21,23 @@ describe("patientSearchFilter", () => {
     expect(pattern.test("(11) 99939-9888")).toBe(false);
   });
 
+  it("keeps Thai vowel and tone marks (combining \\p{M}): full Thai names are searchable (d7)", () => {
+    for (const name of ["แก้วมณี", "วงศ์สา", "สมชาย ใจดี", "สมศักดิ์ รักษ์ไทย", "นก วงศ์สา"]) {
+      expect(cleanSearchText(name)).toBe(name);
+      expect(patientSearchFilter(name, "TH")).toContain(`full_name.ilike."*${name}*"`);
+    }
+    // A TH practice's search still adds the passport clause, marks intact.
+    expect(patientSearchFilter("แก้วมณี", "TH")).toBe('full_name.ilike."*แก้วมณี*",passport_number.ilike."*แก้วมณี*"');
+  });
+
+  it("Portuguese accents: precomposed and decomposed input both search the stored name", () => {
+    expect(cleanSearchText("José Conceição")).toBe("José Conceição");
+    // "José" typed with a combining acute (e + U+0301) becomes the precomposed é.
+    const decomposed = "José";
+    expect(cleanSearchText(decomposed)).toBe("José");
+    expect(cleanSearchText(decomposed)).toBe("José".normalize("NFC"));
+  });
+
   it("strips anything that could change the filter's structure", () => {
     const f = patientSearchFilter('a"),id.eq.1,(b*%\\')!;
     expect(f).toBe('full_name.ilike."*a id.eq.1 b*"');

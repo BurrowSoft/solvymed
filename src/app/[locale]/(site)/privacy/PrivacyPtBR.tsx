@@ -99,7 +99,10 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
                 : solvyai
                   ? "Os pedidos ao SolvyAI são processados pela Anthropic nos Estados Unidos, com as salvaguardas contratuais exigidas pela LGPD (art. 33) e pela PDPA."
                   : "Os avisos LINE são processados pela LY Corporation, com as salvaguardas contratuais exigidas pela LGPD (art. 33) e pela PDPA."}
-              {/* TODO(Vitor): os termos de retenção da Anthropic entram aqui antes de solvyai-live. */}
+              {/* A retenção da Anthropic para esta organização (Console do Vitor, 1/10: o padrão de
+                  30 dias, sem acordo de retenção zero). Se a retenção zero vier, vira
+                  "não é armazenado pela Anthropic" (UX). */}
+              {solvyai && " A Anthropic apaga o que é enviado ao SolvyAI em até 30 dias, exceto conteúdo sinalizado por violar suas políticas de uso (guardado por até 2 anos) ou quando a lei exigir guardar por mais tempo. Esses dados não são usados para treinar modelos de IA."}
             </>
           )}
         </p>

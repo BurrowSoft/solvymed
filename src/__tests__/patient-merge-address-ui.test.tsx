@@ -13,7 +13,7 @@ const row = (o: Partial<MergeRow>): MergeRow => ({
 });
 const ui = vi.hoisted(() => ({ merged: [] as unknown[], rows: [] as unknown[] }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }) }));
-vi.mock("@/app/[locale]/(site)/dashboard/patients/actions", async (orig) => ({
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/actions", async (orig) => ({
   ...(await orig<Record<string, unknown>>()),
   searchMergeCandidates: async () => [{ id: "b", full_name: "Bia B", birth_date: null, archived: false }],
   loadMergeComparison: async () => ({
@@ -26,7 +26,7 @@ vi.mock("@/app/[locale]/(site)/dashboard/patients/actions", async (orig) => ({
 
 // Imported once, after the mocks (vi.mock is hoisted): compiling the dialog
 // inside a test ate its time budget when the whole suite ran in parallel.
-import { MergePatientButton } from "@/app/[locale]/(site)/dashboard/patients/[id]/MergePatient";
+import { MergePatientButton } from "@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/MergePatient";
 
 async function open() {
   render(<NextIntlClientProvider locale="pt-BR" messages={pt}><MergePatientButton patientId="a" patientName="Bia" locale="pt-BR" /></NextIntlClientProvider>);

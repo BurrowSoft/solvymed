@@ -1,0 +1,247 @@
+import { createClient } from "@/lib/supabase/server";
+import { getEffectiveProfId } from "@/lib/effectiveProfId";
+import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import Link from "next/link";
+import { PeriodFilter, TypeFilter, MarkPaidButton, MarkUnpaidButton } from "./PaymentsClient";
+import { clinicDate, getClinicTimeZone, previousMonthRange, weekRange } from "@/lib/clinicTime";
+import { formatMoney } from "@/lib/money";
+import { formatDateLabel } from "@/lib/dateLabels";
+import { countryProfile } from "@/lib/country";
+import { getPracticeCountry } from "@/lib/practiceCountry";
+import { RECEIVABLE_STATUSES } from "@/lib/paymentRules";
+
+type Period = "week" | "month" | "last_month" | "all";
+
+
+// Ranges on the practice's calendar, not the server's (UTC).
+function getDateRange(period: Period, timeZone: string): { from: string; to: string } {
+  const today = clinicDate(new Date(), timeZone);
+  if (period === "week") return weekRange(today);
+  if (period === "month") return { from: `${today.slice(0, 7)}-01`, to: today };
+  if (period === "last_month") return previousMonthRange(today);
+  return { from: "2000-01-01", to: today };
+}
+
+export default async function PaymentsPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ period?: string; type?: string }>;
+}) {
+  const { locale } = await params;
+  const { period: periodParam, type: typeParam } = await searchParams;
+  // Particular / convênio (Help G6): anything not private is insurance.
+  const payType: "all" | "private" | "insurance" = typeParam === "private" || typeParam === "insurance" ? typeParam : "all";
+  const TYPE_FILTER = payType === "private" ? "payment_type.eq.private" : payType === "insurance" ? "payment_type.is.null,payment_type.neq.private" : null;
+  const period: Period = (["week", "month", "last_month", "all"].includes(periodParam ?? "") ? periodParam : "month") as Period;
+
+  const [supabase, t, tFirstRun] = await Promise.all([
+    createClient(),
+    getTranslations("paymentsPage"),
+    getTranslations("firstRun"),
+  ]);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
+  // A secretary works their doctor's payments (view, mark paid), not their
+  // own (empty) id.
+  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  if (!effectiveProfId) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
+  // Amounts are in the practice's currency (its country), not the UI's.
+  const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
+  const { currency, receipts } = countryProfile(practiceCountry);
+  // The recibo (Help G5): a print view for every non-Thai practice; a Thai
+  // practice's receipt is the numbered one, issued in the app (UX 36).
+  const tDoc = await getTranslations({ locale, namespace: "prescriptionDoc" });
+  const receiptPrefix = locale === "en" ? "" : `/${locale}`;
+  const formatAmount = (n: number) => formatMoney(n, currency);
+  const isSecretary = effectiveProfId !== user.id;
+
+  const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
+  const { from, to } = getDateRange(period, timeZone);
+
+  const byStatus = (status: "pending" | "paid") => {
+    let q = supabase
+      .from("appointments")
+      .select("id, patient_name, date, start_time, consultation_type, payment_amount, payment_type")
+      .eq("professional_id", effectiveProfId)
+      .eq("payment_status", status);
+    if (TYPE_FILTER) q = q.or(TYPE_FILTER);
+    return q;
+  };
+  const [pendingResult, paidResult] = await Promise.all([
+    byStatus("pending")
+      // "To receive": the app's rule (lib/paymentRules); requests, cancelled,
+      // rejected and no-shows don't count.
+      .in("status", [...RECEIVABLE_STATUSES])
+      .gte("date", from)
+      .lte("date", to)
+      .order("date", { ascending: false }),
+    byStatus("paid")
+      .gte("date", from)
+      .lte("date", to)
+      .order("date", { ascending: false }),
+  ]);
+
+  const pending = (pendingResult.data ?? []) as {
+    id: string; patient_name: string; date: string; start_time: string;
+    consultation_type: string; payment_amount?: number; payment_type: string;
+  }[];
+  const paid = (paidResult.data ?? []) as typeof pending;
+
+  // No payment of any period yet: the first-run empty state instead of two
+  // empty columns. Only checked when the chosen period itself is empty.
+  if (pending.length === 0 && paid.length === 0) {
+    const { count, error: countError } = await supabase
+      .from("appointments")
+      .select("id", { count: "exact", head: true })
+      .eq("professional_id", effectiveProfId)
+      .in("payment_status", ["pending", "paid"])
+      .neq("status", "blocked");
+    if (!countError && (count ?? 0) === 0) {
+      const prefix = locale === "en" ? "" : `/${locale}`;
+      return (
+        <div className="p-6 lg:p-8 max-w-5xl">
+          <div className="mb-6">
+            <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
+            <p className="text-sm text-slate-500 mt-0.5">{t("subtitle")}</p>
+          </div>
+          <div className="rounded-2xl border border-slate-100 bg-white p-12 text-center">
+            <p className="font-semibold text-slate-700">{tFirstRun("paymentsEmptyTitle")}</p>
+            <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">{tFirstRun("paymentsEmptyBody")}</p>
+            {/* Prices live in the doctor's settings, which a secretary can't edit. */}
+            {!isSecretary && (
+              <Link
+                href={`${prefix}/dashboard/settings`}
+                className="mt-6 inline-flex items-center justify-center rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-teal-700"
+              >
+                {tFirstRun("setYourPrices")}
+              </Link>
+            )}
+          </div>
+        </div>
+      );
+    }
+  }
+
+  const totalPending = pending.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
+  const totalPaid = paid.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
+
+  return (
+    <div className="p-6 lg:p-8 max-w-5xl">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
+        <p className="text-sm text-slate-500 mt-0.5">{t("subtitle")}</p>
+      </div>
+
+      {/* Period filter */}
+      <div className="mb-6 flex flex-wrap gap-3 overflow-x-auto">
+        <PeriodFilter current={period} />
+        <TypeFilter current={payType} />
+      </div>
+
+      {/* Summary cards */}
+      <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border border-orange-100 bg-orange-50 p-5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">{t("pendingLabel")}</p>
+          <p className="mt-1 text-2xl font-extrabold text-orange-900">{formatAmount(totalPending)}</p>
+          <p className="text-xs text-orange-600">{t("sessions", { n: pending.length })}</p>
+        </div>
+        {/* Received/total sums are the practice's revenue: doctor only. */}
+        {!isSecretary && (
+          <>
+            <div className="rounded-2xl border border-green-100 bg-green-50 p-5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-green-600">{t("receivedLabel")}</p>
+              <p className="mt-1 text-2xl font-extrabold text-green-900">{formatAmount(totalPaid)}</p>
+              <p className="text-xs text-green-600">{t("sessions", { n: paid.length })}</p>
+            </div>
+            <div className="rounded-2xl border border-teal-100 bg-teal-50 p-5 col-span-2 sm:col-span-1">
+              <p className="text-xs font-semibold uppercase tracking-wide text-teal-600">{t("totalLabel")}</p>
+              <p className="mt-1 text-2xl font-extrabold text-teal-900">{formatAmount(totalPending + totalPaid)}</p>
+              <p className="text-xs text-teal-600">{t("sessions", { n: pending.length + paid.length })}</p>
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Pending */}
+        <div>
+          <h2 className="mb-3 text-base font-bold text-slate-900 flex items-center gap-2">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-700">{pending.length}</span>
+            {t("pendingLabel")}
+          </h2>
+          {pending.length === 0 ? (
+            <div className="rounded-2xl border border-slate-100 bg-white p-10 text-center">
+              <p className="text-sm text-slate-400">{t("allPaidUp")}</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {pending.map(p => (
+                <div key={p.id} data-highlight-id={p.id} className="rounded-2xl border border-orange-100 bg-white p-4 shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-slate-900 text-sm truncate">{p.patient_name}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{formatDateLabel(locale, p.date)} · {p.start_time?.slice(0, 5)} · {p.consultation_type}</p>
+                      {p.payment_amount ? (
+                        <p className="text-sm font-bold text-orange-600 mt-1">{formatAmount(p.payment_amount)}</p>
+                      ) : (
+                        <p className="text-xs text-slate-400 mt-1">{t("noAmountSet")}</p>
+                      )}
+                    </div>
+                    <div className="shrink-0">
+                      <MarkPaidButton id={p.id} amount={p.payment_amount} currency={currency} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Paid */}
+        <div>
+          <h2 className="mb-3 text-base font-bold text-slate-900 flex items-center gap-2">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">{paid.length}</span>
+            {t("receivedLabel")}
+          </h2>
+          {receipts === "app" && paid.length > 0 && (
+            <p className="mb-3 text-xs text-slate-500">{tDoc("receiptThaiHint")}</p>
+          )}
+          {paid.length === 0 ? (
+            <div className="rounded-2xl border border-slate-100 bg-white p-10 text-center">
+              <p className="text-sm text-slate-400">{t("noPaidYet")}</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {paid.map(p => (
+                <div key={p.id} data-highlight-id={p.id} className="rounded-2xl border border-green-100 bg-white p-4 shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-slate-900 text-sm truncate">{p.patient_name}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{formatDateLabel(locale, p.date)} · {p.start_time?.slice(0, 5)} · {p.consultation_type}</p>
+                      {p.payment_amount ? (
+                        <p className="text-sm font-bold text-green-600 mt-1">{formatAmount(p.payment_amount)}</p>
+                      ) : null}
+                    </div>
+                    <div className="flex flex-col items-end gap-2 shrink-0">
+                      <span className="text-xs font-semibold text-green-600">{t("paidBadge")}</span>
+                      <MarkUnpaidButton id={p.id} />
+                      {receipts === "web" && (
+                        <Link href={`${receiptPrefix}/dashboard/payments/${p.id}/receipt`} className="text-xs font-semibold text-teal-700 hover:underline">
+                          {tDoc("receiptLink")}
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

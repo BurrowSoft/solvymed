@@ -39,6 +39,23 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
     expect(screen.getByText("assistant.noPatientData")).toBeInTheDocument();
   });
 
+  it("the payments / settings chips name the PRACTICE country's QR: Pix (BR), PromptPay (TH), none elsewhere", () => {
+    for (const [qr, key] of [["pix", "b"], ["promptpay", "bPromptPay"], [null, "bNone"]] as const) {
+      for (const scr of ["payments", "settings"]) {
+        pathname = `/pt-BR/dashboard/${scr}`;
+        const { unmount } = render(<SolvyAi locale="pt-BR" prefix="/pt-BR" dailyLimit={20} paymentQr={qr} />);
+        fireEvent.click(screen.getByLabelText("assistant.open"));
+        expect(screen.getByText(`assistant.chips.${scr}.${key}`)).toBeInTheDocument();
+        unmount();
+      }
+    }
+    // Other screens keep their own "b" chip.
+    pathname = "/pt-BR/dashboard/schedule";
+    render(<SolvyAi locale="pt-BR" prefix="/pt-BR" dailyLimit={20} paymentQr="promptpay" />);
+    fireEvent.click(screen.getByLabelText("assistant.open"));
+    expect(screen.getByText("assistant.chips.schedule.b")).toBeInTheDocument();
+  });
+
   it("a help question streams an answer from the Help articles with steps and feedback", async () => {
     openPanel();
     fireEvent.change(screen.getByLabelText("assistant.placeholder"), { target: { value: "Como bloquear horário na agenda?" } });
@@ -64,6 +81,16 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
     fireEvent.click(screen.getByLabelText("assistant.close"));
     expect(closed).toHaveBeenCalledTimes(1);
     window.removeEventListener(CLOSED_EVENT, closed);
+  });
+
+  it("\"Meet SolvyAI\" → Try it now: the panel opens with its question as the FIRST chip, not sent", async () => {
+    const { OPEN_EVENT } = await import("@/components/solvyai/SolvyAiSettings");
+    render(<SolvyAi locale="pt-BR" prefix="/pt-BR" dailyLimit={20} />);
+    act(() => { window.dispatchEvent(new CustomEvent(OPEN_EVENT, { detail: { chip: "O que o SolvyAI pode fazer?" } })); });
+    const chip = await screen.findByRole("button", { name: "O que o SolvyAI pode fazer?" });
+    const chips = chip.parentElement!.querySelectorAll("button");
+    expect(chips[0]).toBe(chip);
+    expect(chips.length).toBe(4);
   });
 
   async function ask(text: string) {

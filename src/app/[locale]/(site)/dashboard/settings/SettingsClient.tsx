@@ -1,9 +1,9 @@
 "use client";
 
-import { formatMoney, parseMoney } from "@/lib/money";
-import type { Currency } from "@/lib/country";
+import { amountExample, currencySymbol, formatMoney, parseMoney } from "@/lib/money";
+import { countryProfile, titleExamples, type Currency } from "@/lib/country";
 import { useTransition, useState, useRef } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { markInviteShared } from "@/lib/setupActions";
 import { formatCnpj, isValidCnpj } from "@/lib/cnpj";
 import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient, generatePublicInviteCode } from "./actions";
@@ -59,8 +59,16 @@ export function Card({ title, description, children, id, tour }: { title: string
 }
 
 /* ─── Profile form ──────────────────────────────────────────────── */
-export function ProfileForm({ fullName, specialty, registration }: { fullName: string; specialty?: string; registration?: string }) {
+// country: the PRACTICE's. The title and registration examples follow it
+// (UX): Brazilian titles and a CRM in Brazil, Thai ones in Thailand.
+export function ProfileForm({ fullName, specialty, registration, country }: { fullName: string; specialty?: string; registration?: string; country?: string | null }) {
   const t = useTranslations("settings");
+  const locale = useLocale();
+  const ex = countryProfile(country).examples;
+  // The country's titles (in the UI language when it has them), else the
+  // locale's own list.
+  const titles = titleExamples(country, locale) ?? t("fullNameTitles");
+  const registrationExample = t(ex.registration);
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
 
@@ -82,7 +90,7 @@ export function ProfileForm({ fullName, specialty, registration }: { fullName: s
             <Label>{t("fullName")}</Label>
             <Input name="full_name" defaultValue={fullName} placeholder={t("fullNamePlaceholder")} required />
             {/* A title is never added for them (lib/doctorName): they may type one. */}
-            <p className="mt-1 text-xs text-slate-400">{t("fullNameHint")}</p>
+            <p className="mt-1 text-xs text-slate-400">{t("fullNameHint", { titles })}</p>
           </div>
           <div>
             <Label>{t("specialty")}</Label>
@@ -91,7 +99,7 @@ export function ProfileForm({ fullName, specialty, registration }: { fullName: s
           {/* The council registration shown on documents (e.g. CRM 12345/SP). Optional. */}
           <div className="sm:col-span-2">
             <Label>{t("registration")}</Label>
-            <Input name="professional_registration" defaultValue={registration ?? ""} placeholder={t("registrationPlaceholder")} />
+            <Input name="professional_registration" defaultValue={registration ?? ""} placeholder={registrationExample} />
           </div>
         </div>
         <SaveRow pending={pending} saved={saved} />
@@ -202,10 +210,16 @@ type ClinicData = {
 // empty field would clear it), none elsewhere (UX).
 export function ClinicForm({ data, showPix = true, showPromptPay = false, showTaxId = false, country = "BR" }: { data: ClinicData; showPix?: boolean; showPromptPay?: boolean; showTaxId?: boolean; country?: string }) {
   const t = useTranslations("settings");
-  const br = country === "BR";
-  const th = country === "TH";
-  const stateLabel = br ? t("state") : th ? t("stateProvince") : t("stateOrProvince");
-  const phonePlaceholder = br ? "(11) 3000-0000" : th ? "02 000 0000" : t("phoneIntlPlaceholder");
+  // Everything country-specific comes from the practice's profile
+  // (lib/country), never an if/else on the country (UX).
+  const profile = countryProfile(country);
+  const ex = profile.examples;
+  const cnpjField = profile.clinicTaxId === "cnpj";
+  const thTaxIdField = profile.clinicTaxId === "th_tax_id";
+  const stateLabel = t(ex.stateLabel);
+  const phonePlaceholder = ex.phone ?? t("phoneIntlPlaceholder");
+  const clinicNameExample = t(ex.clinicName);
+  const addressExample = t(ex.address);
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
@@ -218,7 +232,7 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
     const fd = new FormData(e.currentTarget);
     setError("");
     const cnpj = ((fd.get("clinic_cnpj") as string | null) ?? "").trim();
-    if (br && cnpj && formatCnpj(cnpj) !== loadedCnpj && !isValidCnpj(cnpj)) { setError(t("cnpjInvalid")); return; }
+    if (cnpjField && cnpj && formatCnpj(cnpj) !== loadedCnpj && !isValidCnpj(cnpj)) { setError(t("cnpjInvalid")); return; }
     start(async () => {
       const result = await updateClinic(fd);
       if ("error" in result && result.error) {
@@ -236,15 +250,15 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Label>{t("clinicName")}</Label>
-            <Input name="clinic_name" defaultValue={data.clinic_name ?? ""} placeholder={t("clinicNamePlaceholder")} />
+            <Input name="clinic_name" defaultValue={data.clinic_name ?? ""} placeholder={clinicNameExample} />
           </div>
-          {br && (
+          {cnpjField && (
             <div>
               <Label>{t("cnpj")}</Label>
               <Input name="clinic_cnpj" defaultValue={loadedCnpj} placeholder="00.000.000/0001-00" />
             </div>
           )}
-          {th && showTaxId && (
+          {thTaxIdField && showTaxId && (
             <div>
               <Label>{t("taxIdLabel")}</Label>
               <Input name="clinic_tax_id" defaultValue={data.clinic_tax_id ?? ""} />
@@ -256,25 +270,25 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
           </div>
           <div>
             <Label>{t("website")}</Label>
-            <Input name="clinic_website" defaultValue={data.clinic_website ?? ""} placeholder={br ? "www.example.com.br" : "www.example.com"} />
+            <Input name="clinic_website" defaultValue={data.clinic_website ?? ""} placeholder={ex.website} />
           </div>
           <div className="sm:col-span-2">
             <Label>{t("address")}</Label>
-            <Input name="clinic_address" defaultValue={data.clinic_address ?? ""} placeholder={t("addressPlaceholder")} />
+            <Input name="clinic_address" defaultValue={data.clinic_address ?? ""} placeholder={addressExample} />
           </div>
           <div>
             <Label>{t("city")}</Label>
-            <Input name="clinic_city" defaultValue={data.clinic_city ?? ""} placeholder={br ? "São Paulo" : th ? "Bangkok" : undefined} />
+            <Input name="clinic_city" defaultValue={data.clinic_city ?? ""} placeholder={ex.city ?? undefined} />
           </div>
           <div>
             <Label>{stateLabel}</Label>
-            <Input name="clinic_state" defaultValue={data.clinic_state ?? ""} placeholder={br ? "SP" : undefined} />
+            <Input name="clinic_state" defaultValue={data.clinic_state ?? ""} placeholder={ex.state ?? undefined} />
           </div>
           {/* Pix is Brazil's payment QR: only for Brazilian practices. */}
           {showPix && (
             <div className="sm:col-span-2">
-              <Label>Chave Pix</Label>
-              <Input name="pix_key" defaultValue={data.pix_key ?? ""} placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória" />
+              <Label>{t("pixKey")}</Label>
+              <Input name="pix_key" defaultValue={data.pix_key ?? ""} placeholder={t("pixKeyPlaceholder")} />
             </div>
           )}
           {/* PromptPay is Thailand's payment QR: only for Thai practices. */}
@@ -480,7 +494,8 @@ export function ProceduresPanel({ procedures, currency = "BRL" }: { procedures: 
               <Input name="duration_minutes" type="number" defaultValue="60" placeholder="60" />
             </div>
             <div>
-              <Label>{t("priceLabel")}</Label>
+              {/* No symbol for a currency we don't know (practices outside BR/TH; UX). */}
+              <Label>{currencySymbol(currency) ? t("priceLabel", { symbol: currencySymbol(currency) }) : t("priceLabelPlain")}</Label>
               {/* Text, not type="number": Chrome reads "150,50" as 15050,
                   and a number input without a step refuses cents. */}
               <input
@@ -490,7 +505,7 @@ export function ProceduresPanel({ procedures, currency = "BRL" }: { procedures: 
                 autoComplete="off"
                 value={priceText}
                 onChange={(e) => { setPriceText(e.target.value); setError(""); }}
-                placeholder="0,00"
+                placeholder={amountExample(currency)}
                 className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-100 transition"
               />
               {parsedPrice !== null && <p className="mt-1 text-xs text-slate-500">= {formatMoney(parsedPrice, currency)}</p>}
@@ -580,7 +595,7 @@ function ProcedureRow({ proc, currency }: { proc: Procedure; currency: Currency 
       <div className="min-w-0">
         <p className="text-sm font-semibold text-slate-900">{proc.name}</p>
         <p className="text-xs text-slate-500 mt-0.5">
-          {proc.duration_minutes} min · {formatPrice(proc.price, currency)} · {proc.payment_type}
+          {proc.duration_minutes} min · {formatPrice(proc.price, currency)} · {t(proc.payment_type === "insurance" ? "insurance" : "private")}
         </p>
       </div>
       <div className="flex items-center gap-2 shrink-0">

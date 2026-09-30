@@ -29,7 +29,7 @@
     "heading": "診所所需的一切",
     "sub": "專為希望減少行政工作、將更多時間用於患者的臨床醫師和獨立執業者打造。",
     "scheduling_title": "智慧排程",
-    "scheduling_desc": "完整的日曆檢視，支援日、週、月模式。管理現場和線上預約，封鎖時段，並發送自動提醒。",
+    "scheduling_desc": "完整的日曆檢視，支援日、週、月模式。管理現場和線上預約，封鎖時段，並在手機上自動收到預約提醒。",
     "patients_title": "患者管理",
     "patients_desc": "包含個人資訊、聯絡方式、預約記錄和自訂標籤的完整患者檔案。可在整個患者庫中搜尋和篩選。",
     "records_title": "臨床記錄",
@@ -246,10 +246,11 @@
     "revert": "撤銷",
     "confirm": "確認",
     "cancel": "取消",
-    "amountPlaceholder": "金額",
+    "amountPlaceholder": "金額 ({symbol})",
     "revertConfirm": "將此付款恢復為待付款狀態？",
     "errorInvalidAmount": "請輸入有效金額。",
-    "errorGeneric": "發生問題，請重試。"
+    "errorGeneric": "發生問題，請重試。",
+    "amountPlaceholderPlain": "金額"
   },
   "paymentsPage": {
     "title": "付款",
@@ -316,7 +317,9 @@
     "pageInfo": "第 {from}–{to} 筆，共 {total} 筆",
     "prevPage": "上一頁",
     "nextPage": "下一頁",
-    "pagesLabel": "分頁"
+    "pagesLabel": "分頁",
+    "fullNamePlaceholder": "全名",
+    "professionPlaceholder": "例如：工程師、教師…"
   },
   "patientDetail": {
     "tabInfo": "資訊",
@@ -508,9 +511,9 @@
     "noProcedures": "暫無診療項目。請在下方新增第一個。",
     "newProcedure": "新增項目",
     "procedureName": "名稱",
-    "procedureNamePlaceholder": "初診、複診…",
+    "procedureNamePlaceholder": "例如：初診 – 成人",
     "durationLabel": "時長（分鐘）",
-    "priceLabel": "價格（R$）",
+    "priceLabel": "價格（{symbol}）",
     "paymentTypeLabel": "付款方式",
     "private": "自費",
     "insurance": "保險",
@@ -565,13 +568,23 @@
     "manageSubscription": "管理訂閱",
     "subscriptionSubscribe": "查看方案",
     "practiceCountryOther": "其他國家",
-    "fullNameHint": "如有需要，可加上頭銜（Dr.、Prof.），會顯示在問候語中。",
+    "fullNameHint": "如有需要，可加上頭銜（{titles}），會顯示在問候語中。",
     "cnpjInvalid": "CNPJ 無效,請檢查號碼。",
     "appearanceTitle": "外觀",
     "appearanceHint": "此瀏覽器中的面板主題。列印內容和電子郵件一律為淺色。",
     "themeAuto": "自動",
     "themeLight": "淺色",
-    "themeDark": "深色"
+    "themeDark": "深色",
+    "pixKey": "Pix 金鑰",
+    "pixKeyPlaceholder": "CPF、CNPJ、電子郵件、電話或隨機金鑰",
+    "fullNameTitles": "Dr.、Prof.",
+    "registrationPlaceholderTH": "例如：ว.12345（醫學委員會執照）",
+    "registrationPlaceholderOther": "例如：你的執業證號",
+    "clinicNamePlaceholderTH": "素坤逸診所",
+    "clinicNamePlaceholderOther": "康健診所",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "主街123號",
+    "priceLabelPlain": "價格"
   },
   "clinics": {
     "title": "我的診所",
@@ -592,7 +605,6 @@
     "countryLabel": "國家",
     "countryPlaceholder": "國家",
     "phoneLabel": "電話",
-    "phonePlaceholder": "+886 2 0000 0000",
     "locationNote": "地圖上的位置將根據您提供的地址自動偵測。",
     "noAddress": "無地址",
     "onMap": "在地圖上",
@@ -650,7 +662,6 @@
     "fullNamePlaceholder": "您的姓名",
     "emailLabel": "電子郵件",
     "phoneLabel": "電話",
-    "phonePlaceholder": "912 345 678",
     "dobLabel": "出生日期",
     "cpfLabel": "身份證號",
     "cpfPlaceholder": "000.000.000-00",
@@ -658,7 +669,8 @@
     "customTime": "自訂時間",
     "orCustomTime": "或選擇自訂時間",
     "professionalFallback": "專業人員",
-    "errorArchived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。"
+    "errorArchived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。",
+    "practiceInactive": "這家診所目前不接受線上預約。"
   },
   "auth": {
     "passwordTooShort": "密碼至少需要{min}個字元。",
@@ -705,7 +717,7 @@
       "country": "您的診所在哪裡？",
       "countryOther": "其他國家",
       "countryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。之後如需變更，請聯絡客服。",
-      "fullNameHint": "如有需要，可加上頭銜（Dr.、Prof.），會顯示在問候語中。"
+      "fullNameHint": "如有需要，可加上頭銜（{titles}），會顯示在問候語中。"
     },
     "forgotPassword": {
       "title": "忘記密碼？",
@@ -827,7 +839,9 @@
     "clinics": "診所",
     "payments": "付款",
     "settings": "設定",
-    "signOut": "登出"
+    "signOut": "登出",
+    "openMenu": "開啟選單",
+    "closeMenu": "關閉選單"
   },
   "join": {
     "notFound": "找不到邀請連結",
@@ -850,12 +864,13 @@
     "feature1": "無限預約和日程管理",
     "feature2": "患者病歷、處方和檢查",
     "feature3": "收入報告和付款追蹤",
-    "feature4": "自動預約提醒",
+    "feature4": "手機上的預約提醒",
     "feature5": "包含秘書存取權限",
     "payCard": "使用卡片訂閱",
     "payCardSub": "Visa、Mastercard、American Express",
     "or": "或",
     "cancelAnytime": "隨時取消。無需承諾。",
+    "startsAfterTrial": "你的訂閱將於 {date} 免費試用結束時開始。今天不會扣款。",
     "successMessage": "訂閱已啟用！歡迎使用SolvyMed Pro。",
     "activationPending": "已收到付款！正在啟用您的訂閱…",
     "activationSlow": "我們已收到您的付款，但啟用時間比平常久。通常幾分鐘內即可完成；如果您的方案沒有顯示，請聯絡客服：",
@@ -879,7 +894,13 @@
     "paymentActivating": "已收到付款。正在恢復您的存取權限，請稍後重新整理此頁面。",
     "chipDays": "免費試用：剩餘 {n} 天 · 查看方案",
     "chipUrgentDays": "免費試用：剩餘 {n} 天 · 立即訂閱",
-    "chipLastDay": "免費試用：最後一天 · 立即訂閱"
+    "chipLastDay": "免費試用：最後一天 · 立即訂閱",
+    "lockedSettingsHint": "你的資料仍屬於你:可在以下位置匯出病患、管理訂閱或關閉帳戶:",
+    "lockedSettingsLink": "設定",
+    "goToDashboard": "前往控制台",
+    "backToDashboard": "返回控制台",
+    "back": "返回",
+    "needHelp": "需要協助?"
   },
   "secretary": {
     "notConnectedTitle": "尚未連接到診所",
@@ -1037,7 +1058,9 @@
     "pushClosedTitle": "診所已關閉",
     "pushClosedBody": "您的診所已關閉其 SolvyMed 帳戶。您的後續預約已取消。如需病歷副本，請聯絡 support@solvymed.com。",
     "pushCancelledTitle": "預約已取消",
-    "pushCancelledBody": "您在 {date} {time} 的預約已被診所取消。"
+    "pushCancelledBody": "您在 {date} {time} 的預約已被診所取消。",
+    "closedNotice": "你的帳戶已關閉。",
+    "deletedNotice": "你的帳戶已刪除。"
   },
   "setup": {
     "title": "設定您的診所",
@@ -1271,12 +1294,16 @@
       "payments": {
         "a": "本週待收多少？",
         "b": "傳送 Pix 給病患",
-        "c": "標記為已付款"
+        "c": "標記為已付款",
+        "bPromptPay": "傳送 PromptPay QR 碼給病患",
+        "bNone": "查看未付款的預約"
       },
       "settings": {
         "a": "如何邀請助理？",
         "b": "設定 Pix",
-        "c": "修改看診時間"
+        "c": "修改看診時間",
+        "bPromptPay": "設定 PromptPay",
+        "bNone": "修改診所資料"
       },
       "other": {
         "a": "我明天有什麼安排？",
@@ -1653,7 +1680,11 @@
     "search": "依姓名或證件號搜尋…",
     "archivedTag": "已封存",
     "back": "返回",
-    "cancel": "取消"
+    "cancel": "取消",
+    "subBirth": "出生 {date}",
+    "subPhone": "電話 …{last4}",
+    "subImported": "匯入於 {date}",
+    "subCreated": "新增於 {date}"
   },
   "patientAddress": {
     "section": "地址",
@@ -1685,5 +1716,91 @@
     "OTHER_neighborhood": "街區或區",
     "OTHER_city": "城市",
     "OTHER_state": "州或省"
+  },
+  "solvyaiServer": {
+    "sendPix": "透過 WhatsApp 傳送 Pix",
+    "pixKey": "Pix 金鑰",
+    "newAppt": "新預約",
+    "cancelAppt": "取消預約",
+    "block": "封鎖時段",
+    "paid": "標記為已付",
+    "unpaid": "標記為未付",
+    "patient": "病患",
+    "when": "時間",
+    "duration": "時長",
+    "period": "時段",
+    "reason": "原因",
+    "appointment": "預約",
+    "value": "金額",
+    "procedure": "項目",
+    "type": "類型",
+    "inPerson": "到診",
+    "blockedWarn": "⚠ 已封鎖時段（{s}–{e}）",
+    "outsideWarn": "⚠ 不在看診時間（{s}–{e}）",
+    "dayOffWarn": "⚠ {d}不是看診日",
+    "samePatientWarn": "⚠ {n}當天{t}已有預約",
+    "blockedAsk": "此時段已封鎖（{s}–{e}）。",
+    "outsideAsk": "此時段不在看診時間（{s}–{e}）。",
+    "dayOffAsk": "{d}不是看診日。",
+    "bookAnyway": "仍要預約嗎？",
+    "bookLabel": "預約",
+    "repeatLabel": "重複",
+    "repeatValue": "{every, select, week {每週} biweekly {每 2 週} other {每月}}，{n} 次（至 {last}）",
+    "moveAppt": "改約",
+    "from": "原時間",
+    "to": "新時間",
+    "moveAnyway": "仍要改約嗎？",
+    "moveLabel": "改約",
+    "notMovable": "此預約無法改約。",
+    "pastStop": "該時間已過。請選擇其他時間。",
+    "archivedStop": "此病患已封存。預約前請先還原病歷。",
+    "requestStop": "預約請求需在請求中接受或拒絕。",
+    "conflict": "{when} {s} 已有{what}（{s}–{e}）。選哪個時間？",
+    "conflictNone": "{when} {s} 已有{what}（{s}–{e}）。換哪個時間？",
+    "slotTaken": "該時間剛被佔用。未儲存任何內容。選哪個時間？",
+    "slotTakenNone": "該時間剛被佔用。未儲存任何內容。換哪個時間？",
+    "notCancellable": "只能取消已安排、已確認或遲到的預約。未儲存任何內容。",
+    "unblock": "解除封鎖",
+    "confirmReq": "確認請求",
+    "rejectReq": "拒絕請求",
+    "decision": "決定",
+    "confirmIt": "確認",
+    "rejectIt": "拒絕",
+    "note": "備註",
+    "addPatient": "新病患",
+    "fullName": "姓名",
+    "birth": "出生日期",
+    "similar": "已登記的相似病患",
+    "archived": "已封存",
+    "proposalConfirmStop": "此請求正在等待病患回覆新時間，只能拒絕。",
+    "seriesOther": "{d}的其他時間",
+    "skippedLabel": "略過",
+    "skippedValue": "{d}（時段已滿）",
+    "pickPatient": "哪位病患？",
+    "pickAppointment": "哪個預約？",
+    "pickDate": "哪一天？",
+    "pickSimilar": "已有相似病患登記。是同一個人嗎？",
+    "someoneElse": "是另一個人",
+    "born": "{d}出生",
+    "pointerCard": "核對詳情後點「{button}」。",
+    "promptPayText": "在泰國的診所，病患掃描預約的 PromptPay QR 碼付款。",
+    "promptPayOpen": "開啟 QR 碼",
+    "openScreen": "開啟頁面",
+    "unavailableArticles": "SolvyAI 暫時無法使用。這些文章或許有幫助：",
+    "unavailableLater": "SolvyAI 暫時無法使用。請稍後再試。",
+    "couldntFinish": "沒能完成。能換個說法，並附上病患姓名、日期和時間嗎？",
+    "onlySolvyMed": "我只能協助處理 SolvyMed 相關問題。",
+    "noClinical": "我無法回答臨床問題。",
+    "minutes": "{n} 分鐘"
+  },
+  "countryExamples": {
+    "phone": "電話號碼"
+  },
+  "solvyaiIntro": {
+    "title": "認識 SolvyAI ✦",
+    "body": "用你自己的話說就行：「幫瑪麗亞約週五 11 點」。SolvyAI 會顯示所有細節，只有在你確認後才會執行。",
+    "tryNow": "立即試用",
+    "later": "稍後再說",
+    "whatCanDo": "SolvyAI 能做什麼？"
   }
 }

@@ -76,7 +76,7 @@
     "what": "Mesclar pacientes on the website: migration 133 (merge_patients / merge_patients_preview) is applied on production AND the web tester's 133 rows are 🟢 there (testers force this condition in a local build to test on prod). Flip by hand, never automatically (9a / 38). Independent of the app (UX: the web may launch first). Gates \"Mesclar com outro paciente…\" (together with its probe) and Help P12 with the website's steps; the app's steps wait on merge-patients-live."
   },
   "whatsapp-outbox-live": {
-    "met": false,
+    "met": true,
     "what": "Migration 137 applied, send-whatsapp deployed with its outbox mode, and the Vault secret 'whatsapp_notify_secret' set (from then on the app queues the automatic WhatsApp confirmation/cancellation for ~60 s instead of sending it at once). Rows hold no phone and no text (which appointment, the kind, when, whether it was sent), kept 30 days. Gates privacy §6e naming WhatsApp (and §6e itself when notice-outbox-live isn't met). Flip and deploy BEFORE the Vault secret is set."
   },
   "patient-address-live": {
@@ -84,7 +84,11 @@
     "what": "Migrations 138 (the patient address, CNS for Brazilian practices, and Observações columns on patients, with the server-side trim and CNS check) AND 139 (merge_patients carries the address, CNS and Observações, so merging duplicates never drops them) are applied on production. Until both are, the website neither shows nor writes these fields."
   },
   "notice-queue-on": {
-    "met": false,
+    "met": true,
     "what": "The patient notice queue is actually running: patient_notify_secret is set in Vault (after the 1.4.0 cut deploys privacy §6e via notice-outbox-live) and one queued notice was verified sent (38 runbook). Gates every \"Desfazer\" / \"Undo\" claim for manual book / move / cancel (01-agenda, the App Map undo rules), since the undo is only possible while a notice is held. Flip only after that check; if the secret is ever removed, flip it back."
+  },
+  "booking-check-live": {
+    "met": false,
+    "what": "Migration 141 (get_practice_accepts_bookings, mobile #196) is applied on production: the website's booking page then tells a patient that a practice with an inactive subscription \"isn't taking online bookings right now\" instead of showing times (before 141 it books as before). Gates the Help K1 / App Map lines about it; the app's line also waits on app-1.4.0. 142 (create_public_booking refusing 'practice_inactive') is the server guard, gated separately by 38."
   }
 }

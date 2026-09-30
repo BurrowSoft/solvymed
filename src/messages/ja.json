@@ -29,7 +29,7 @@
     "heading": "クリニックに必要なすべて",
     "sub": "管理業務を減らし患者との時間を増やしたい、臨床医や独立開業医のために作られています。",
     "scheduling_title": "スマート予約管理",
-    "scheduling_desc": "日・週・月の完全なカレンダービュー。対面とオンラインの予約管理、時間ブロック、自動リマインダーの送信が可能です。",
+    "scheduling_desc": "日・週・月の完全なカレンダービュー。対面とオンラインの予約管理、時間ブロックに加え、予約の自動リマインダーをスマートフォンで受け取れます。",
     "patients_title": "患者管理",
     "patients_desc": "個人情報、連絡先、予約履歴、カスタムタグを含む完全な患者プロフィール。全患者ベースを検索・フィルタリングできます。",
     "records_title": "診療記録",
@@ -246,10 +246,11 @@
     "revert": "取り消し",
     "confirm": "確認",
     "cancel": "キャンセル",
-    "amountPlaceholder": "金額",
+    "amountPlaceholder": "金額 ({symbol})",
     "revertConfirm": "このお支払いを未払いに戻しますか？",
     "errorInvalidAmount": "有効な金額を入力してください。",
-    "errorGeneric": "問題が発生しました。もう一度お試しください。"
+    "errorGeneric": "問題が発生しました。もう一度お試しください。",
+    "amountPlaceholderPlain": "金額"
   },
   "paymentsPage": {
     "title": "支払い",
@@ -316,7 +317,9 @@
     "pageInfo": "{total}件中 {from}–{to}件",
     "prevPage": "前へ",
     "nextPage": "次へ",
-    "pagesLabel": "ページ"
+    "pagesLabel": "ページ",
+    "fullNamePlaceholder": "氏名",
+    "professionPlaceholder": "例：エンジニア、教師…"
   },
   "patientDetail": {
     "tabInfo": "情報",
@@ -508,9 +511,9 @@
     "noProcedures": "まだ施術メニューがありません。以下から追加してください。",
     "newProcedure": "新規メニュー",
     "procedureName": "名前",
-    "procedureNamePlaceholder": "初診、再診…",
+    "procedureNamePlaceholder": "例：初診 – 成人",
     "durationLabel": "所要時間（分）",
-    "priceLabel": "料金（R$）",
+    "priceLabel": "料金（{symbol}）",
     "paymentTypeLabel": "支払い種別",
     "private": "自費",
     "insurance": "保険",
@@ -565,13 +568,23 @@
     "manageSubscription": "サブスクリプションを管理",
     "subscriptionSubscribe": "プランを見る",
     "practiceCountryOther": "その他の国",
-    "fullNameHint": "必要に応じて肩書き（Dr.、Prof.）を付けてください。あいさつに表示されます。",
+    "fullNameHint": "必要に応じて肩書き（{titles}）を付けてください。あいさつに表示されます。",
     "cnpjInvalid": "CNPJ が正しくありません。番号を確認してください。",
     "appearanceTitle": "外観",
     "appearanceHint": "このブラウザでのダッシュボードのテーマ。印刷物とメールは常にライトです。",
     "themeAuto": "自動",
     "themeLight": "ライト",
-    "themeDark": "ダーク"
+    "themeDark": "ダーク",
+    "pixKey": "Pixキー",
+    "pixKeyPlaceholder": "CPF、CNPJ、メール、電話番号、またはランダムキー",
+    "fullNameTitles": "Dr.、Prof.",
+    "registrationPlaceholderTH": "例：ว.12345（医師会の免許）",
+    "registrationPlaceholderOther": "例：免許番号",
+    "clinicNamePlaceholderTH": "スクンビット・クリニック",
+    "clinicNamePlaceholderOther": "ウェルネス・クリニック",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "本町1-2-3",
+    "priceLabelPlain": "料金"
   },
   "clinics": {
     "title": "マイクリニック",
@@ -592,7 +605,6 @@
     "countryLabel": "国",
     "countryPlaceholder": "国",
     "phoneLabel": "電話番号",
-    "phonePlaceholder": "+81 3-0000-0000",
     "locationNote": "入力した住所から地図上の位置が自動的に検出されます。",
     "noAddress": "住所なし",
     "onMap": "地図上に表示",
@@ -650,7 +662,6 @@
     "fullNamePlaceholder": "お名前（フルネーム）",
     "emailLabel": "メール",
     "phoneLabel": "電話番号",
-    "phonePlaceholder": "90-1234-5678",
     "dobLabel": "生年月日",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -658,7 +669,8 @@
     "customTime": "カスタム時間",
     "orCustomTime": "または時間を指定する",
     "professionalFallback": "担当者",
-    "errorArchived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。"
+    "errorArchived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。",
+    "practiceInactive": "このクリニックは現在オンライン予約を受け付けていません。"
   },
   "auth": {
     "passwordTooShort": "パスワードは{min}文字以上である必要があります。",
@@ -705,7 +717,7 @@
       "country": "クリニックの所在国は？",
       "countryOther": "その他の国",
       "countryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。後で変更するにはサポートにご連絡ください。",
-      "fullNameHint": "必要に応じて肩書き（Dr.、Prof.）を付けてください。あいさつに表示されます。"
+      "fullNameHint": "必要に応じて肩書き（{titles}）を付けてください。あいさつに表示されます。"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",
@@ -827,7 +839,9 @@
     "clinics": "クリニック",
     "payments": "支払い",
     "settings": "設定",
-    "signOut": "ログアウト"
+    "signOut": "ログアウト",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる"
   },
   "join": {
     "notFound": "招待リンクが見つかりません",
@@ -850,12 +864,13 @@
     "feature1": "無制限の予約とスケジュール管理",
     "feature2": "患者記録、処方箋、検査",
     "feature3": "収益レポートと支払い追跡",
-    "feature4": "自動予約リマインダー",
+    "feature4": "スマートフォンで予約リマインダー",
     "feature5": "受付スタッフのアクセス込み",
     "payCard": "カードで購読",
     "payCardSub": "Visa、Mastercard、American Express",
     "or": "または",
     "cancelAnytime": "いつでもキャンセル可能。縛りなし。",
+    "startsAfterTrial": "サブスクリプションは無料トライアルが終わる {date} に始まります。本日の請求はありません。",
     "successMessage": "購読が有効化されました！SolvyMed Proへようこそ。",
     "activationPending": "お支払いを受け付けました。サブスクリプションを有効化しています…",
     "activationSlow": "お支払いは受け付けましたが、有効化に通常より時間がかかっています。通常は数分で完了します。プランが表示されない場合はサポートにご連絡ください：",
@@ -879,7 +894,13 @@
     "paymentActivating": "お支払いを受け付けました。アクセスを復元しています。しばらくしてからこのページを更新してください。",
     "chipDays": "無料トライアル: 残り {n} 日 · プランを見る",
     "chipUrgentDays": "無料トライアル: 残り {n} 日 · 登録する",
-    "chipLastDay": "無料トライアル: 最終日 · 登録する"
+    "chipLastDay": "無料トライアル: 最終日 · 登録する",
+    "lockedSettingsHint": "データはあなたのものです。患者のエクスポート、サブスクリプションの管理、アカウントの閉鎖は次から:",
+    "lockedSettingsLink": "設定",
+    "goToDashboard": "ダッシュボードへ",
+    "backToDashboard": "ダッシュボードに戻る",
+    "back": "戻る",
+    "needHelp": "お困りですか?"
   },
   "secretary": {
     "notConnectedTitle": "まだクリニックに接続されていません",
@@ -1037,7 +1058,9 @@
     "pushClosedTitle": "診療所の閉鎖",
     "pushClosedBody": "ご利用の診療所が SolvyMed のアカウントを閉鎖しました。今後の予約はキャンセルされました。診療記録の写しは support@solvymed.com までご請求ください。",
     "pushCancelledTitle": "予約のキャンセル",
-    "pushCancelledBody": "{date} {time} の予約は診療所によりキャンセルされました。"
+    "pushCancelledBody": "{date} {time} の予約は診療所によりキャンセルされました。",
+    "closedNotice": "アカウントは閉鎖されました。",
+    "deletedNotice": "アカウントは削除されました。"
   },
   "setup": {
     "title": "診療所を設定しましょう",
@@ -1271,12 +1294,16 @@
       "payments": {
         "a": "今週の未収はいくら？",
         "b": "患者に Pix を送る",
-        "c": "支払い済みにする"
+        "c": "支払い済みにする",
+        "bPromptPay": "患者にPromptPay QRを送る",
+        "bNone": "未払いの予約を表示"
       },
       "settings": {
         "a": "スタッフを招待するには？",
         "b": "Pix を設定",
-        "c": "診療時間を変更"
+        "c": "診療時間を変更",
+        "bPromptPay": "PromptPayを設定",
+        "bNone": "クリニック情報を変更"
       },
       "other": {
         "a": "明日の予定は？",
@@ -1653,7 +1680,11 @@
     "search": "氏名または身分証番号で検索…",
     "archivedTag": "アーカイブ済み",
     "back": "戻る",
-    "cancel": "キャンセル"
+    "cancel": "キャンセル",
+    "subBirth": "生年月日 {date}",
+    "subPhone": "電話 …{last4}",
+    "subImported": "インポート {date}",
+    "subCreated": "登録 {date}"
   },
   "patientAddress": {
     "section": "住所",
@@ -1685,5 +1716,91 @@
     "OTHER_neighborhood": "地区",
     "OTHER_city": "市区町村",
     "OTHER_state": "州・県"
+  },
+  "solvyaiServer": {
+    "sendPix": "WhatsAppでPixを送る",
+    "pixKey": "Pixキー",
+    "newAppt": "新しい予約",
+    "cancelAppt": "予約をキャンセル",
+    "block": "時間をブロック",
+    "paid": "支払い済みにする",
+    "unpaid": "未払いにする",
+    "patient": "患者",
+    "when": "日時",
+    "duration": "所要時間",
+    "period": "期間",
+    "reason": "理由",
+    "appointment": "予約",
+    "value": "金額",
+    "procedure": "処置",
+    "type": "種類",
+    "inPerson": "来院",
+    "blockedWarn": "⚠ ブロック済みの時間（{s}–{e}）",
+    "outsideWarn": "⚠ 診療時間外（{s}–{e}）",
+    "dayOffWarn": "⚠ {d}は診療日ではありません",
+    "samePatientWarn": "⚠ {n}さんはその日の{t}に予約があります",
+    "blockedAsk": "この時間はブロックされています（{s}–{e}）。",
+    "outsideAsk": "この時間は診療時間外です（{s}–{e}）。",
+    "dayOffAsk": "{d}は診療日ではありません。",
+    "bookAnyway": "このまま予約しますか？",
+    "bookLabel": "予約する",
+    "repeatLabel": "繰り返し",
+    "repeatValue": "{every, select, week {毎週} biweekly {2週間ごと} other {毎月}}、{n}件（{last}まで）",
+    "moveAppt": "予約を変更",
+    "from": "変更前",
+    "to": "変更後",
+    "moveAnyway": "このまま変更しますか？",
+    "moveLabel": "変更する",
+    "notMovable": "この予約は変更できません。",
+    "pastStop": "その時間は過ぎています。別の時間を選んでください。",
+    "archivedStop": "この患者はアーカイブされています。予約の前に記録を復元してください。",
+    "requestStop": "予約リクエストはリクエスト上で承認・却下します。",
+    "conflict": "{when} {s}には{what}があります（{s}–{e}）。どの時間にしますか？",
+    "conflictNone": "{when} {s}には{what}があります（{s}–{e}）。ほかの時間にしますか？",
+    "slotTaken": "その時間はたった今埋まりました。何も保存されていません。どの時間にしますか？",
+    "slotTakenNone": "その時間はたった今埋まりました。何も保存されていません。ほかの時間にしますか？",
+    "notCancellable": "キャンセルできるのは、予定・確定・遅刻の予約だけです。何も保存されていません。",
+    "unblock": "ブロックを解除",
+    "confirmReq": "リクエストを承認",
+    "rejectReq": "リクエストを却下",
+    "decision": "判断",
+    "confirmIt": "承認",
+    "rejectIt": "却下",
+    "note": "メモ",
+    "addPatient": "新しい患者",
+    "fullName": "氏名",
+    "birth": "生年月日",
+    "similar": "登録済みの似た患者",
+    "archived": "アーカイブ済み",
+    "proposalConfirmStop": "このリクエストは新しい時間への患者の返答待ちです。却下のみ可能です。",
+    "seriesOther": "{d}の別の時間",
+    "skippedLabel": "対象外",
+    "skippedValue": "{d}（埋まっています）",
+    "pickPatient": "どの患者ですか？",
+    "pickAppointment": "どの予約ですか？",
+    "pickDate": "どの日付ですか？",
+    "pickSimilar": "似た患者がすでに登録されています。同じ人ですか？",
+    "someoneElse": "別の人です",
+    "born": "{d}生まれ",
+    "pointerCard": "内容を確認して「{button}」をタップしてください。",
+    "promptPayText": "タイの診療所では、患者は予約のPromptPay QRを読み取って支払います。",
+    "promptPayOpen": "QRを開く",
+    "openScreen": "画面を開く",
+    "unavailableArticles": "SolvyAIは一時的に利用できません。こちらの記事が役立つかもしれません：",
+    "unavailableLater": "SolvyAIは一時的に利用できません。後でもう一度お試しください。",
+    "couldntFinish": "完了できませんでした。患者名・日付・時刻を添えて、別の言い方で教えてください。",
+    "onlySolvyMed": "SolvyMedに関することのみお手伝いできます。",
+    "noClinical": "臨床的な質問にはお答えできません。",
+    "minutes": "{n}分"
+  },
+  "countryExamples": {
+    "phone": "電話番号"
+  },
+  "solvyaiIntro": {
+    "title": "SolvyAI のご紹介 ✦",
+    "body": "普段の言葉で頼むだけ：「金曜11時にマリアさんを予約して」。SolvyAI はすべての内容を表示し、あなたが確認してから実行します。",
+    "tryNow": "今すぐ試す",
+    "later": "あとで",
+    "whatCanDo": "SolvyAI で何ができる？"
   }
 }

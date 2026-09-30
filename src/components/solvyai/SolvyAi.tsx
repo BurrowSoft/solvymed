@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createMockBackend } from "@/lib/assistant/mockBackend";
 import { createRemoteBackend, type RemoteError } from "@/lib/assistant/remoteBackend";
+import { answerText } from "@/lib/assistant/answerText";
 import { maskPersonalData, MAX_MESSAGE_CHARS, MAX_TURNS, MIN_SECONDS_BETWEEN } from "@/lib/assistant/mask";
 import type { AnswerBlock, AnswerChunk, AssistantBackend, AssistantScreen, AssistantUsage, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
 import { isInternalHref, webPath } from "@/lib/assistant/targets";
@@ -54,7 +55,7 @@ export function hoursUntil(resetsAt: string, now = Date.now()): number {
 
 // remote: the real route is on (SOLVYAI_API_ENABLED, read on the server);
 // otherwise the mock, labelled "Prévia".
-export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale: string; prefix: string; dailyLimit: number; remote?: boolean }) {
+export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr = null }: { locale: string; prefix: string; dailyLimit: number; remote?: boolean; paymentQr?: "pix" | "promptpay" | null }) {
   const t = useTranslations("assistant");
   const router = useRouter();
   const pathname = usePathname();
@@ -64,6 +65,8 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
     [remote, lang, prefix, dailyLimit],
   );
   const [open, setOpen] = useState(false);
+  // A chip shown first in the empty panel (set by whoever opened it).
+  const [leadChip, setLeadChip] = useState<string | null>(null);
   const [minimized, setMinimized] = useState(false);
   const [hint, setHint] = useState(false);
   // Configurações › SolvyAI › "Mostrar botão do assistente" (this browser).
@@ -123,7 +126,7 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
       .filter((x) => x.role === "user" || !x.failed)
       .slice(-8)
       .map((x) =>
-        x.role === "user" ? { role: "user" as const, text: x.text } : { role: "assistant" as const, text: x.blocks.map((b) => (b.type === "text" ? b.text : "")).join(" ").trim() },
+        x.role === "user" ? { role: "user" as const, text: x.text } : { role: "assistant" as const, text: answerText(x.blocks) },
       );
     await play(history, backend.ask({ messages, screen, locale, turns: userTurns }));
   }, [busy, atLimit, outOfTurns, turns, userTurns, backend, screen, locale]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -242,7 +245,10 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
   sendRef.current = send;
   useEffect(() => {
     const on = (e: Event) => {
-      const text = (e as CustomEvent<{ text?: string }>).detail?.text;
+      const detail = (e as CustomEvent<{ text?: string; chip?: string }>).detail;
+      const text = detail?.text;
+      // "Meet SolvyAI" → Try it now: its question as the first chip (the app's).
+      if (detail?.chip) setLeadChip(detail.chip);
       setOpen(true);
       setMinimized(false);
       if (text) setTimeout(() => void sendRef.current(text), 0);
@@ -255,7 +261,13 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
 
   const openScreen = (href: string) => { if (!isInternalHref(href)) return; setMinimized(true); router.push(href); };
 
-  const chips = [t(`chips.${screen}.a`), t(`chips.${screen}.b`), t(`chips.${screen}.c`)];
+  // The payments / settings "b" chips name the payment QR: the PRACTICE
+  // country's (Pix in Brazil, PromptPay in Thailand), none elsewhere (UX).
+  const bKey = (screen === "payments" || screen === "settings")
+    ? (paymentQr === "pix" ? "b" : paymentQr === "promptpay" ? "bPromptPay" : "bNone")
+    : "b";
+  const screenChips = [t(`chips.${screen}.a`), t(`chips.${screen}.${bKey}`), t(`chips.${screen}.c`)];
+  const chips = leadChip ? [leadChip, ...screenChips.filter((c) => c !== leadChip)] : screenChips;
 
   return (
     <>

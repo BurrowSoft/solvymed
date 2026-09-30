@@ -58,10 +58,12 @@ SolvyMed doesn't receive the money: Pix goes straight to your account.
 ## G5. Recibo em PDF / Receipt PDF
 **pt-BR**
 Abra uma consulta paga e toque em **Gerar recibo em PDF**. Compartilhe pelo WhatsApp, e-mail ou outro app.
+{pending:app-1.4.0} O recibo traz o seu registro no conselho (ex.: CRM) ao lado do nome, quando cadastrado no perfil. No Brasil, sem CNPJ da clínica, ele inclui a nota: "Este recibo é um comprovante de pagamento. Para dedução no Imposto de Renda, o profissional pessoa física emite o recibo oficial pelo app Receita Saúde."
 **en**
 Open a paid appointment and tap **Create receipt PDF**. Share it by WhatsApp, email or another app.
-**No site:** Em **Pagamentos**, na consulta recebida, clique em **Recibo** e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Médico e secretária(o) podem emitir. Clínicas na Tailândia: os recibos numerados são emitidos no app.
-**On the website:** In **Payments**, on the received appointment, click **Receipt** and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. The doctor and the secretary can create it. Clinics in Thailand: numbered receipts are issued in the app.
+{pending:app-1.4.0} The receipt shows your council registration (e.g. CRM) next to your name, when it's in your profile. In Brazil, with no clinic CNPJ, it adds a note (in Portuguese) that it's proof of payment, and that for the income-tax deduction a self-employed doctor issues the official receipt in the Receita Saúde app.
+**No site:** Em **Pagamentos**, na consulta recebida, clique em **Recibo** e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Médico e secretária(o) podem emitir. O recibo traz o registro no conselho (ex.: CRM) ao lado do nome do médico, quando cadastrado; no Brasil, sem CNPJ da clínica, inclui a nota sobre o recibo oficial pelo app Receita Saúde. Clínicas na Tailândia: os recibos numerados são emitidos no app.
+**On the website:** In **Payments**, on the received appointment, click **Receipt** and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. The doctor and the secretary can create it. The receipt shows the doctor's council registration (e.g. CRM) next to their name, when it's on file; in Brazil, with no clinic CNPJ, it adds the note (in Portuguese) about the official receipt in the Receita Saúde app. Clinics in Thailand: numbered receipts are issued in the app.
 `open:payments`
 
 ---

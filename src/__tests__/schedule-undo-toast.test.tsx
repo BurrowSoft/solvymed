@@ -11,11 +11,11 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: h.refresh, push: vi.fn() }),
   useSearchParams: () => new URLSearchParams(), usePathname: () => "/pt-BR/dashboard/schedule", useParams: () => ({}),
 }));
-vi.mock("@/app/[locale]/(site)/dashboard/schedule/actions", () => ({
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/schedule/actions", () => ({
   undoScheduleChange: async () => { h.calls++; await new Promise((r) => setTimeout(r, 20)); return { ok: true }; },
 }));
 
-import { ScheduleUndoToast } from "@/app/[locale]/(site)/dashboard/schedule/ScheduleClient";
+import { ScheduleUndoToast } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/ScheduleClient";
 import { offerUndo } from "@/lib/scheduleUndo";
 
 describe("ScheduleUndoToast", () => {

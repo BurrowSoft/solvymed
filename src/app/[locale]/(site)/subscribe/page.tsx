@@ -3,9 +3,13 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { SubscribeButton } from "@/components/SubscribeButton";
 import { UpdateCardButton } from "@/components/UpdateCardButton";
-import { isAccessAllowed, isPaidActive, trialDaysRemaining, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
+import { isAccessAllowed, isPaidActive, trialDaysRemaining, getPlanPrice, checkoutTrialEnd, type EffectiveSub } from "@/lib/subscription";
+import { getClinicTimeZone } from "@/lib/clinicTime";
+import { dateLocale } from "@/lib/dateLabels";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { ActivationStatus } from "./ActivationStatus";
+import { SignOutButton } from "@/components/SignOutButton";
+import { SubscribeHeader } from "./SubscribeHeader";
 import { retrieveStoredStripeSubscription, isLive, needsCardFix } from "@/lib/stripeBilling";
 
 export default async function SubscribePage({
@@ -18,6 +22,8 @@ export default async function SubscribePage({
   const { locale } = await params;
   const sp = await searchParams;
   const t = await getTranslations({ locale, namespace: "subscription" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
+  const tClose = await getTranslations({ locale, namespace: "accountClose" });
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -80,11 +86,27 @@ export default async function SubscribePage({
   }
 
   const daysLeft = trialDaysRemaining(sub);
+  // Subscribing now keeps the free trial: the plan starts (and is first
+  // charged) when it ends (UX; the checkout sets the same date).
+  const keptTrialEnd = checkoutTrialEnd(sub);
+  const startsOn = keptTrialEnd
+    ? keptTrialEnd.toLocaleDateString(dateLocale(locale), { day: "numeric", month: "long", year: "numeric", timeZone: await getClinicTimeZone(supabase, { professionalId: user.id, isSecretary: false }) })
+    : null;
   // Priced by the practice's country (only a doctor subscribes here). Money
   // fails closed: if the country can't be read (other than "no country
   // column yet"), no price and no checkout, rather than the wrong currency.
   const countryLookup = await lookupPracticeCountry(supabase, user.id, user.id);
   const plan = countryLookup.ok ? getPlanPrice(countryLookup.country) : null;
+  // The way out of every state (Vitor, live test): the dashboard while it
+  // lets them in; none when it wouldn't (see SubscribeHeader).
+  const prefix = locale === "en" ? "" : `/${locale}`;
+  // Not "just paid": an ended trial back from checkout before the webhook
+  // lands would bounce from the dashboard to this paywall (9a).
+  const canEnter = !!sub && isAccessAllowed(sub);
+  const exitHref = canEnter ? `${prefix}/dashboard` : null;
+  // Locked out (an ended trial, a failed renewal): a way to get help and
+  // to close the account, which Settings can't offer while it's locked.
+  const locked = !!sub && !isAccessAllowed(sub) && sp.success !== "1";
 
   const { data: professional } = await supabase
     .from("professionals")
@@ -107,14 +129,12 @@ export default async function SubscribePage({
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <span className="text-5xl font-black text-teal-600">S</span>
-          <p className="mt-1 text-lg font-bold text-slate-800">SolvyMed</p>
-        </div>
+        {/* Every state: a way to sign out, top right (Vitor was stuck on the paywall). */}
+        <SubscribeHeader exitHref={exitHref} backLabel={t("back")} signOut={<SignOutButton label={tNav("signOut")} />} />
 
         {/* Back from checkout: "activated" only once the database says so
             (the webhook writes it); until then "activating…". */}
-        {sp.success === "1" && <ActivationStatus initiallyActive={isPaidActive(sub)} />}
+        {sp.success === "1" && <ActivationStatus initiallyActive={isPaidActive(sub)} dashboardHref={`${prefix}/dashboard`} canGoBack={canEnter} />}
 
         {/* Trial status */}
         {daysLeft !== null && daysLeft > 0 && sp.success !== "1" && (
@@ -138,8 +158,26 @@ export default async function SubscribePage({
           </div>
         )}
 
-        {/* Plan card */}
-        <div className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 overflow-hidden">
+        {/* Locked: help and "Encerrar conta" above the plan, visible
+            without scrolling (UX). */}
+        {locked && (
+          <p className="mb-6 text-center text-sm text-slate-600">
+            {t("needHelp")} <a href="mailto:support@solvymed.com" className="font-semibold text-teal-700 underline">support@solvymed.com</a>
+            {" · "}
+            <a href={`${prefix}/account/delete`} className="text-slate-500 underline">{tClose("titleClose")}</a>
+          </p>
+        )}
+        {/* Locked: Settings stays open (export, subscription, close the
+            account, password); the rest of the dashboard doesn't. */}
+        {sub && !isAccessAllowed(sub) && sp.success !== "1" && (
+          <p className="mb-6 text-center text-sm text-slate-600">
+            {t("lockedSettingsHint")}{" "}
+            <a href={`/${locale === "en" ? "" : locale + "/"}dashboard/settings`} className="font-semibold text-teal-700 underline">{t("lockedSettingsLink")}</a>
+          </p>
+        )}
+
+        {/* Plan card (not once they've just paid: they're subscribed) */}
+        {sp.success !== "1" && <div className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 overflow-hidden">
           <div className="bg-teal-600 p-6 text-white">
             <h1 className="text-xl font-extrabold">{t("planName")}</h1>
             <div className="mt-2 flex items-baseline gap-1">
@@ -184,9 +222,11 @@ export default async function SubscribePage({
               )}
             </div>
 
+            {startsOn && sp.success !== "1" && <p className="text-center text-sm text-slate-600">{t("startsAfterTrial", { date: startsOn })}</p>}
             <p className="text-center text-xs text-slate-400">{t("cancelAnytime")}</p>
           </div>
-        </div>
+        </div>}
+
       </div>
     </div>
   );

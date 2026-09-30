@@ -9,6 +9,7 @@ import { isAccessAllowed, trialDaysRemaining, type EffectiveSub } from "@/lib/su
 import { doctorDisplayName } from "@/lib/doctorName";
 import { TourProvider } from "@/components/tour/TourProvider";
 import { readTourState, tourEntry } from "@/lib/tourState";
+import { SOLVYAI_INTRO_TOUR, solvyAiIntroOn, solvyAiPanelOn } from "@/lib/solvyaiIntro";
 import { CURRENT_NEWS, newsTourId } from "@/lib/news";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { SolvyAi } from "@/components/solvyai/SolvyAi";
@@ -122,12 +123,17 @@ export default async function DashboardLayout({
   const { data: subRows } = await supabase.rpc("get_effective_subscription", { p_user_id: user.id });
   const sub = (subRows?.[0] ?? null) as EffectiveSub | null;
 
-  if (sub && !isAccessAllowed(sub)) {
+  if (sub && !isAccessAllowed(sub) && isSecretary) {
     // get_effective_subscription resolves a linked secretary to their
     // doctor's subscription. A secretary can't pay for it, so they never see
     // the paywall, just a note that the doctor's subscription is inactive.
-    redirect(`/${locale === "en" ? "" : locale + "/"}${isSecretary ? "auth/clinic-inactive" : "subscribe"}`);
+    redirect(`/${locale === "en" ? "" : locale + "/"}auth/clinic-inactive`);
   }
+  // A locked doctor (ended trial, failed renewal) still reaches Settings:
+  // their data is theirs (export the patient list, manage the subscription,
+  // close the account, change the password), and a paywall must never hold
+  // it hostage (UX, LGPD/PDPA). Every other section is behind the paywall in
+  // (gated)/layout.tsx.
 
   const daysLeft = trialDaysRemaining(sub);
   // The one trial indicator, for the whole trial (first-run spec §4). A
@@ -160,6 +166,11 @@ export default async function DashboardLayout({
   // announcement has no saved state yet (before 113: unavailable, so never).
   const newsPending = liveFeatures.news
     && (await readTourState(supabase, user.id, newsTourId(CURRENT_NEWS.release))).kind === "none";
+  // The SolvyAI panel (doctors, not while locked) and "Meet SolvyAI ✦":
+  // once SolvyAI is live, where the panel is, until seen (113).
+  const panelOn = solvyAiPanelOn({ isSecretary, sub });
+  const introPending = solvyAiIntroOn({ isSecretary, sub })
+    && (await readTourState(supabase, user.id, SOLVYAI_INTRO_TOUR)).kind === "none";
   const paymentQr = isSecretary ? null : countryProfile(await getPracticeCountry(supabase, user.id, user.id)).paymentQr;
 
   let trialChipText = "";
@@ -183,6 +194,8 @@ export default async function DashboardLayout({
       entry={tourEntry(tourState)}
       resumeStep={tourState.kind === "row" ? tourState.step : 0}
       newsPending={newsPending}
+      introPending={introPending}
+      introTestable={panelOn && process.env.VERCEL_ENV !== "production"}
     >
       <div className="flex h-screen overflow-hidden bg-slate-50">
         <DashboardSidebar
@@ -200,7 +213,9 @@ export default async function DashboardLayout({
               </span>
             </div>
           )}
-          <main className="flex-1 overflow-auto lg:pl-0 pt-0">
+          {/* Below lg the fixed ☰ button sits top left: room for it, so it
+              never covers the page title (3e). */}
+          <main className={`flex-1 overflow-auto lg:pl-0 lg:pt-0 ${showTrialChip ? "pt-4" : "pt-14"}`}>
             <div className="min-h-full">
               {children}
             </div>
@@ -209,9 +224,10 @@ export default async function DashboardLayout({
         {/* SolvyAI (specs/assistant.md): doctors only, behind its flag; its
             panel sits here so it pushes the content on wide screens.
             10 messages a day during the trial, 20 on a paid plan. */}
-        {liveFeatures.solvyAi && !isSecretary && (
+        {/* Not while locked: only Settings is open then, and SolvyAI acts on the agenda. */}
+        {panelOn && (
           <>
-            <SolvyAi locale={locale} prefix={locale === "en" ? "" : `/${locale}`} dailyLimit={sub?.subscription_status === "trial" ? 10 : 20} remote={assistantApiEnabled()} />
+            <SolvyAi locale={locale} prefix={locale === "en" ? "" : `/${locale}`} dailyLimit={sub?.subscription_status === "trial" ? 10 : 20} remote={assistantApiEnabled()} paymentQr={paymentQr} />
             {/* The item a SolvyAI save lands on, ringed for 3 s. */}
             <Suspense fallback={null}><HighlightFromQuery /></Suspense>
           </>

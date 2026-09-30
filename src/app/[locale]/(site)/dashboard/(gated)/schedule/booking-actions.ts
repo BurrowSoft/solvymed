@@ -1,0 +1,422 @@
+"use server";
+
+import { myAppointment } from "@/lib/myAppointments";
+import { revalidatePath } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import { computeSlots, toMinutes, getDayHours } from "@/lib/slots";
+import type { WorkingHours } from "@/lib/slots";
+import { sendExpoPush } from "@/lib/push";
+import { pushText, pushWhen, type PushKind } from "@/lib/pushText";
+import { clinicPushTargets, patientPushTargets } from "@/lib/pushRecipient";
+import { actionError } from "@/lib/dbErrors";
+import { getActiveProfId, isLockedOut } from "@/lib/activeAccess";
+import { looksBuddhistEra } from "@/lib/buddhistEra";
+
+export async function getTentativeBookings() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
+  if (!effectiveProfId) return [];
+
+  const { data } = await supabase
+    .from("appointments")
+    .select("*")
+    .eq("professional_id", effectiveProfId)
+    .in("status", ["tentative", "proposal"])
+    .order("date")
+    .order("start_time");
+
+  const bookings = data ?? [];
+
+  // Determine which patients are already linked to this doctor. Direct
+  // user_roles reads for other users' rows are RLS-blocked (own-row-only
+  // policy), so this goes through a SECURITY DEFINER RPC instead — see
+  // mob dev's migration (get_known_patients). Returns the linked
+  // patients-table id when there is one, otherwise the id tied to an
+  // earlier appointment with this professional.
+  const authIds = bookings
+    .map((b: Record<string, unknown>) => b.patient_auth_id as string)
+    .filter(Boolean);
+
+  const knownMap = new Map<string, string>();
+  if (authIds.length > 0) {
+    const { data: known } = await supabase.rpc("get_known_patients", {
+      p_patient_auth_ids: authIds,
+    });
+    for (const row of (known ?? []) as Array<{ patient_auth_id: string; patient_id: string }>) {
+      knownMap.set(row.patient_auth_id, row.patient_id);
+    }
+  }
+
+  return bookings.map((b: Record<string, unknown>) => {
+    const authId = b.patient_auth_id as string | null;
+    const isNew = authId ? !knownMap.has(authId) : false;
+    return {
+      ...b,
+      is_new_patient: isNew,
+      patient_id: authId && !isNew ? (knownMap.get(authId) ?? null) : null,
+    };
+  });
+}
+
+// For tentative (patient-originated) booking requests only. Confirming and
+// linking the patient record now happens server-side in one RPC call — see
+// mob dev's migration 075 (_link_patient_account, shared with
+// accept_appointment_proposal). Doctor-created appointments that don't need
+// patient-linking go through the plain confirmBooking() below instead.
+export async function confirmBookingAndAddPatient(appointmentId: string, note?: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+  if (await isLockedOut(supabase, user.id)) return { error: "Could not verify account" };
+
+  const { error } = await supabase.rpc("confirm_and_link_patient", {
+    p_appointment_id: appointmentId,
+  });
+
+  if (error) {
+    if (error.message?.includes("appointment_not_confirmable")) {
+      return { error: "This request can no longer be confirmed" };
+    }
+    return { error: actionError(error.message) };
+  }
+
+  await notifyPatient(supabase, appointmentId, "apptConfirmed", { note });
+
+  revalidatePath("/dashboard/schedule");
+  revalidatePath("/dashboard/patients");
+  return { error: null };
+}
+
+export async function confirmBooking(appointmentId: string, note?: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
+
+  const { error } = await supabase
+    .from("appointments")
+    .update({ status: "confirmed" })
+    .eq("id", appointmentId)
+    .eq("professional_id", effectiveProfId);
+
+  if (error) return { error: actionError(error.message) };
+
+  // Notify patient via push
+  await notifyPatient(supabase, appointmentId, "apptConfirmed", { note });
+
+  revalidatePath("/dashboard/schedule");
+  return { error: null };
+}
+
+export async function rejectBooking(appointmentId: string, note?: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
+
+  const { error } = await supabase
+    .from("appointments")
+    .update({ status: "rejected" })
+    .eq("id", appointmentId)
+    .eq("professional_id", effectiveProfId);
+
+  if (error) return { error: actionError(error.message) };
+
+  // A rejected request never becomes an appointment — don't create a patient
+  // record for it. Linking only happens on accept/confirm, server-side.
+  await notifyPatient(supabase, appointmentId, "bookingNotAvailable", { note });
+
+  revalidatePath("/dashboard/schedule");
+  revalidatePath("/dashboard/patients");
+  return { error: null };
+}
+
+export async function proposeNewTime(
+  appointmentId: string,
+  proposedDate: string,
+  proposedStart: string,
+  proposedEnd: string,
+  note?: string,
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
+  // A Buddhist-era year is never saved or converted (the field blocks it).
+  if (looksBuddhistEra(proposedDate)) return { error: "date_buddhist_era" };
+
+  const { error } = await supabase
+    .from("appointments")
+    .update({
+      status: "proposal",
+      proposed_date: proposedDate,
+      proposed_start_time: proposedStart,
+      proposed_end_time: proposedEnd,
+    })
+    .eq("id", appointmentId)
+    .eq("professional_id", effectiveProfId);
+
+  if (error) return { error: actionError(error.message) };
+
+  // A proposal isn't a confirmed appointment yet — don't create a patient
+  // record until the patient accepts (accept_appointment_proposal links via
+  // the same shared _link_patient_account() as confirm_and_link_patient).
+  await notifyPatient(supabase, appointmentId, "newTimeProposed", { note, date: proposedDate, time: proposedStart });
+
+  revalidatePath("/dashboard/schedule");
+  revalidatePath("/dashboard/patients");
+  return { error: null };
+}
+
+export async function acceptProposal(appointmentId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  // The patient's own row, only through get_my_appointments (106).
+  const appt = await myAppointment(supabase, appointmentId);
+
+  if (!appt) return { error: "Appointment not found" };
+
+  const { error } = await supabase.rpc("accept_appointment_proposal", {
+    p_appointment_id: appointmentId,
+  });
+
+  if (error) return { error: actionError(error.message) };
+
+  await notifyProfessional(supabase, appt.professional_id as string, "proposalAccepted", { name: appt.patient_name as string, date: appt.proposed_date as string, time: appt.proposed_start_time as string });
+
+  revalidatePath("/my-appointments");
+  return { error: null };
+}
+
+export async function declineProposal(appointmentId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const appt = await myAppointment(supabase, appointmentId);
+
+  const { error } = await supabase.rpc("decline_appointment_proposal", {
+    p_appointment_id: appointmentId,
+  });
+
+  if (error) return { error: actionError(error.message) };
+
+  if (appt) {
+    await notifyProfessional(supabase, appt.professional_id as string, "proposalDeclined", { name: appt.patient_name as string });
+  }
+
+  revalidatePath("/my-appointments");
+  return { error: null };
+}
+
+// SQL migrations for the RPCs called below (request_appointment_reschedule,
+// accept_patient_reschedule) live in the mobile repo at
+// solvymed-mobile/apps/solvymed/supabase/migrations/025_* and 026_*.
+// Both repos share the same Supabase project.
+export async function requestReschedule(
+  appointmentId: string,
+  newDate: string,
+  newStartTime: string,
+  newEndTime: string,
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+  if (looksBuddhistEra(newDate)) return { error: "date_buddhist_era" };
+
+  const appt = await myAppointment(supabase, appointmentId);
+
+  if (!appt) return { error: "Appointment not found" };
+
+  // Use SECURITY DEFINER RPC — the patient UPDATE RLS policy only permits
+  // rows already in tentative/proposal, so a direct update on a confirmed
+  // appointment would be silently dropped.
+  const { error } = await supabase.rpc("request_appointment_reschedule", {
+    p_appointment_id: appointmentId,
+    p_proposed_date: newDate,
+    p_proposed_start: newStartTime,
+    p_proposed_end: newEndTime,
+  });
+
+  if (error) {
+    if (error.message?.includes("appointment_not_found_or_not_reschedulable")) {
+      return { error: "Appointment cannot be rescheduled" };
+    }
+    return { error: actionError(error.message) };
+  }
+
+  await notifyProfessional(supabase, appt.professional_id as string, "rescheduleRequested", {
+    name: appt.patient_name as string,
+    date: newDate,
+    time: newStartTime,
+  });
+
+  revalidatePath("/my-appointments");
+  return { error: null };
+}
+
+export async function acceptRescheduleRequest(appointmentId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
+
+  // Atomic overlap check + update via SECURITY DEFINER RPC.
+  // RPC returns notification fields so we never pre-fetch from the client
+  // (pre-fetch is a spoofing surface: data can change between read and accept).
+  // Pass p_acting_as_professional when the caller is a secretary so the RPC can
+  // verify delegation and check the appointment against the correct professional.
+  const { data: rpcData, error } = await supabase.rpc("accept_patient_reschedule", {
+    p_appointment_id: appointmentId,
+    ...(effectiveProfId !== user.id ? { p_acting_as_professional: effectiveProfId } : {}),
+  });
+
+  if (error) {
+    if (error.message?.includes("slot_taken")) return { error: "slot_taken" };
+    if (error.message?.includes("appointment_not_found_or_not_pending")) return { error: "Appointment not found" };
+    if (error.message?.includes("proposed_time_expired")) return { error: "proposed_time_expired" };
+    return { error: actionError(error.message) };
+  }
+
+  const row = Array.isArray(rpcData) && rpcData.length > 0 ? rpcData[0] as Record<string, unknown> : null;
+  const newDate = row?.out_new_date as string | undefined;
+  const newStart = row?.out_new_start_time as string | undefined;
+  await notifyPatient(
+    supabase,
+    appointmentId,
+    newDate && newStart ? "rescheduleConfirmed" : "rescheduleConfirmedNoTime",
+    { date: newDate ?? null, time: newStart ?? null },
+  );
+
+  revalidatePath("/dashboard/schedule");
+  return { error: null };
+}
+
+export async function declineRescheduleRequest(appointmentId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
+  if (!effectiveProfId) return { error: "Could not verify account" };
+
+  const { data: appt } = await supabase
+    .from("appointments")
+    .select("patient_auth_id")
+    .eq("id", appointmentId)
+    .eq("professional_id", effectiveProfId)
+    .maybeSingle();
+
+  if (!appt) return { error: "Appointment not found" };
+
+  const { data: updateData, error } = await supabase
+    .from("appointments")
+    .update({
+      status: "confirmed",
+      scheduled_by: null,
+      proposed_date: null,
+      proposed_start_time: null,
+      proposed_end_time: null,
+    })
+    .eq("id", appointmentId)
+    .eq("professional_id", effectiveProfId)
+    .eq("status", "proposal")
+    .eq("scheduled_by", "patient")
+    .select("id");
+
+  if (error) return { error: actionError(error.message) };
+
+  // Only notify when a row was actually updated (guard against concurrent declines)
+  if (updateData && updateData.length > 0) {
+    await notifyPatient(supabase, appointmentId, "rescheduleDeclined");
+  }
+
+  revalidatePath("/dashboard/schedule");
+  return { error: null };
+}
+
+export async function getAvailableSlotsForDate(
+  professionalId: string,
+  date: string,
+  durationMinutes: number,
+) {
+  if (!durationMinutes || durationMinutes <= 0 || !Number.isInteger(durationMinutes) || durationMinutes > 480) return [];
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data: profData } = await supabase.rpc("get_professional_working_hours", {
+    p_professional_id: professionalId,
+  });
+
+  const wh = (profData ?? {}) as WorkingHours;
+
+  // Short-circuit before the get_busy_slots round trip for a closed day —
+  // computeSlots would return [] anyway, but only after paying for the RPC.
+  if (!getDayHours(date, wh)?.enabled) return [];
+
+  const { data: busy } = await supabase.rpc("get_busy_slots", {
+    p_professional_id: professionalId,
+    p_date: date,
+  });
+
+  const busyRanges = (busy ?? []).map((r: Record<string, unknown>) => ({
+    start: toMinutes(r.slot_start as string),
+    end: toMinutes(r.slot_end as string),
+  }));
+
+  const slots = computeSlots(date, durationMinutes, wh, busyRanges);
+  return slots;
+}
+
+// ─── Push helper ─────────────────────────────────────────────────────────────
+
+// Every push is written in the recipient's language, dates in its format
+// (lib/pushText, lib/pushRecipient).
+async function notifyPatient(
+  supabase: Awaited<ReturnType<typeof import("@/lib/supabase/server").createClient>>,
+  appointmentId: string,
+  kind: PushKind,
+  extra: { note?: string | null; date?: string | null; time?: string | null } = {},
+) {
+  const { data: appt } = await supabase
+    .from("appointments")
+    .select("patient_auth_id, professional_id")
+    .eq("id", appointmentId)
+    .maybeSingle();
+
+  const patientAuthId = appt?.patient_auth_id as string | null;
+  if (!patientAuthId) return;
+
+  for (const { locale, tokens } of await patientPushTargets(supabase, patientAuthId, appt?.professional_id as string)) {
+    const when = extra.date ? pushWhen(locale, extra.date, extra.time) : undefined;
+    const { title, body } = pushText(locale, kind, { when, note: extra.note });
+    await sendExpoPush(tokens, title, body);
+  }
+}
+
+async function notifyProfessional(
+  supabase: Awaited<ReturnType<typeof import("@/lib/supabase/server").createClient>>,
+  professionalId: string,
+  kind: PushKind,
+  extra: { name?: string | null; date?: string | null; time?: string | null } = {},
+) {
+  for (const { locale, tokens } of await clinicPushTargets(supabase, professionalId)) {
+    const when = extra.date ? pushWhen(locale, extra.date, extra.time) : undefined;
+    const { title, body } = pushText(locale, kind, { name: extra.name ?? "", when });
+    await sendExpoPush(tokens, title, body);
+  }
+}

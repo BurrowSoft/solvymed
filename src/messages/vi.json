@@ -29,7 +29,7 @@
     "heading": "Tất cả những gì phòng khám của bạn cần",
     "sub": "Được xây dựng cho các bác sĩ lâm sàng và người hành nghề độc lập muốn giảm công việc hành chính và dành nhiều thời gian hơn cho bệnh nhân.",
     "scheduling_title": "Lịch Hẹn Thông Minh",
-    "scheduling_desc": "Chế độ xem lịch đầy đủ theo ngày, tuần và tháng. Quản lý các cuộc hẹn trực tiếp và trực tuyến, chặn thời gian và gửi nhắc nhở tự động.",
+    "scheduling_desc": "Chế độ xem lịch đầy đủ theo ngày, tuần và tháng. Quản lý các cuộc hẹn trực tiếp và trực tuyến, chặn thời gian và nhận nhắc nhở tự động về lịch hẹn trên điện thoại.",
     "patients_title": "Quản Lý Bệnh Nhân",
     "patients_desc": "Hồ sơ bệnh nhân đầy đủ với thông tin cá nhân, liên hệ, lịch sử hẹn và thẻ tùy chỉnh. Tìm kiếm và lọc toàn bộ cơ sở bệnh nhân của bạn.",
     "records_title": "Hồ Sơ Lâm Sàng",
@@ -246,10 +246,11 @@
     "revert": "Hoàn nguyên",
     "confirm": "Xác nhận",
     "cancel": "Hủy",
-    "amountPlaceholder": "Số tiền",
+    "amountPlaceholder": "Số tiền ({symbol})",
     "revertConfirm": "Hoàn nguyên khoản thanh toán này về chờ xử lý?",
     "errorInvalidAmount": "Vui lòng nhập số tiền hợp lệ.",
-    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
+    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "amountPlaceholderPlain": "Số tiền"
   },
   "paymentsPage": {
     "title": "Thanh toán",
@@ -316,7 +317,9 @@
     "pageInfo": "{from}–{to} trên {total}",
     "prevPage": "Trước",
     "nextPage": "Tiếp",
-    "pagesLabel": "Trang"
+    "pagesLabel": "Trang",
+    "fullNamePlaceholder": "Họ và tên",
+    "professionPlaceholder": "vd. Kỹ sư, Giáo viên…"
   },
   "patientDetail": {
     "tabInfo": "Thông tin",
@@ -508,9 +511,9 @@
     "noProcedures": "Chưa có dịch vụ. Thêm dịch vụ đầu tiên bên dưới.",
     "newProcedure": "Dịch vụ mới",
     "procedureName": "Tên",
-    "procedureNamePlaceholder": "Khám lần đầu, Tái khám…",
+    "procedureNamePlaceholder": "vd: Khám lần đầu – Người lớn",
     "durationLabel": "Thời gian (phút)",
-    "priceLabel": "Giá (R$)",
+    "priceLabel": "Giá ({symbol})",
     "paymentTypeLabel": "Loại thanh toán",
     "private": "Tư nhân",
     "insurance": "Bảo hiểm",
@@ -565,13 +568,23 @@
     "manageSubscription": "Quản lý gói đăng ký",
     "subscriptionSubscribe": "Xem gói",
     "practiceCountryOther": "Quốc gia khác",
-    "fullNameHint": "Bạn có thể thêm danh xưng (Dr., Prof.); danh xưng sẽ hiện trong lời chào.",
+    "fullNameHint": "Bạn có thể thêm danh xưng ({titles}); danh xưng sẽ hiện trong lời chào.",
     "cnpjInvalid": "CNPJ không hợp lệ. Hãy kiểm tra lại số.",
     "appearanceTitle": "Giao diện",
     "appearanceHint": "Chủ đề bảng điều khiển trên trình duyệt này. Bản in và email luôn ở chế độ sáng.",
     "themeAuto": "Tự động",
     "themeLight": "Sáng",
-    "themeDark": "Tối"
+    "themeDark": "Tối",
+    "pixKey": "Khóa Pix",
+    "pixKeyPlaceholder": "CPF, CNPJ, email, số điện thoại hoặc khóa ngẫu nhiên",
+    "fullNameTitles": "Dr., Prof.",
+    "registrationPlaceholderTH": "vd: ว.12345 (giấy phép Hội đồng Y khoa)",
+    "registrationPlaceholderOther": "vd: số giấy phép hành nghề",
+    "clinicNamePlaceholderTH": "Phòng khám Sukhumvit",
+    "clinicNamePlaceholderOther": "Phòng khám An Khang",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "123 Đường Chính",
+    "priceLabelPlain": "Giá"
   },
   "clinics": {
     "title": "Phòng khám của tôi",
@@ -592,7 +605,6 @@
     "countryLabel": "Quốc gia",
     "countryPlaceholder": "Quốc gia",
     "phoneLabel": "Điện thoại",
-    "phonePlaceholder": "+84 28 0000 0000",
     "locationNote": "Vị trí trên bản đồ được phát hiện tự động từ địa chỉ bạn cung cấp.",
     "noAddress": "Không có địa chỉ",
     "onMap": "Trên bản đồ",
@@ -650,7 +662,6 @@
     "fullNamePlaceholder": "Họ và tên của bạn",
     "emailLabel": "Email",
     "phoneLabel": "Điện thoại",
-    "phonePlaceholder": "90 123 4567",
     "dobLabel": "Ngày sinh",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -658,7 +669,8 @@
     "customTime": "Thời gian tùy chỉnh",
     "orCustomTime": "Hoặc chọn giờ khác",
     "professionalFallback": "Chuyên gia",
-    "errorArchived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám."
+    "errorArchived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám.",
+    "practiceInactive": "Phòng khám này hiện không nhận đặt lịch trực tuyến."
   },
   "auth": {
     "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
@@ -705,7 +717,7 @@
       "country": "Phòng khám của bạn ở đâu?",
       "countryOther": "Quốc gia khác",
       "countryHint": "Xác định tiền tệ, giá gói, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi sau, hãy liên hệ bộ phận hỗ trợ.",
-      "fullNameHint": "Bạn có thể thêm danh xưng (Dr., Prof.); danh xưng sẽ hiện trong lời chào."
+      "fullNameHint": "Bạn có thể thêm danh xưng ({titles}); danh xưng sẽ hiện trong lời chào."
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",
@@ -827,7 +839,9 @@
     "clinics": "Phòng khám",
     "payments": "Thanh toán",
     "settings": "Cài đặt",
-    "signOut": "Đăng xuất"
+    "signOut": "Đăng xuất",
+    "openMenu": "Mở menu",
+    "closeMenu": "Đóng menu"
   },
   "join": {
     "notFound": "Không tìm thấy liên kết mời",
@@ -850,12 +864,13 @@
     "feature1": "Lịch hẹn và lịch trình không giới hạn",
     "feature2": "Hồ sơ bệnh nhân, đơn thuốc và xét nghiệm",
     "feature3": "Báo cáo doanh thu và theo dõi thanh toán",
-    "feature4": "Nhắc nhở lịch hẹn tự động",
+    "feature4": "Nhắc lịch hẹn trên điện thoại của bạn",
     "feature5": "Quyền truy cập cho thư ký được tính gộp",
     "payCard": "Đăng ký bằng thẻ",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "hoặc",
     "cancelAnytime": "Hủy bất cứ lúc nào. Không ràng buộc.",
+    "startsAfterTrial": "Gói đăng ký của bạn bắt đầu vào {date}, khi thời gian dùng thử miễn phí kết thúc. Hôm nay bạn chưa bị trừ tiền.",
     "successMessage": "Đăng ký đã được kích hoạt! Chào mừng đến với SolvyMed Pro.",
     "activationPending": "Đã nhận thanh toán! Đang kích hoạt gói đăng ký của bạn…",
     "activationSlow": "Chúng tôi đã nhận thanh toán của bạn, nhưng việc kích hoạt đang lâu hơn bình thường. Thường sẽ hoàn tất trong vài phút; nếu gói của bạn không hiển thị, hãy liên hệ hỗ trợ:",
@@ -879,7 +894,13 @@
     "paymentActivating": "Đã nhận thanh toán. Quyền truy cập của bạn đang được khôi phục, vui lòng tải lại trang sau giây lát.",
     "chipDays": "Dùng thử miễn phí: còn {n} ngày · Xem gói",
     "chipUrgentDays": "Dùng thử miễn phí: còn {n} ngày · Đăng ký",
-    "chipLastDay": "Dùng thử miễn phí: ngày cuối · Đăng ký"
+    "chipLastDay": "Dùng thử miễn phí: ngày cuối · Đăng ký",
+    "lockedSettingsHint": "Dữ liệu vẫn là của bạn: xuất danh sách bệnh nhân, quản lý gói đăng ký hoặc đóng tài khoản tại",
+    "lockedSettingsLink": "Cài đặt",
+    "goToDashboard": "Đến bảng điều khiển",
+    "backToDashboard": "Quay lại bảng điều khiển",
+    "back": "Quay lại",
+    "needHelp": "Cần trợ giúp?"
   },
   "secretary": {
     "notConnectedTitle": "Chưa được kết nối với phòng khám",
@@ -1037,7 +1058,9 @@
     "pushClosedTitle": "Phòng khám đã đóng",
     "pushClosedBody": "Phòng khám của bạn đã đóng tài khoản SolvyMed. Các lịch hẹn sắp tới của bạn đã bị hủy. Để nhận bản sao hồ sơ, hãy liên hệ support@solvymed.com.",
     "pushCancelledTitle": "Lịch hẹn đã bị hủy",
-    "pushCancelledBody": "Lịch hẹn của bạn vào {date} lúc {time} đã bị phòng khám hủy."
+    "pushCancelledBody": "Lịch hẹn của bạn vào {date} lúc {time} đã bị phòng khám hủy.",
+    "closedNotice": "Tài khoản của bạn đã được đóng.",
+    "deletedNotice": "Tài khoản của bạn đã bị xóa."
   },
   "setup": {
     "title": "Thiết lập phòng khám của bạn",
@@ -1271,12 +1294,16 @@
       "payments": {
         "a": "Tuần này còn phải thu bao nhiêu?",
         "b": "Gửi Pix cho bệnh nhân",
-        "c": "Đánh dấu đã thanh toán"
+        "c": "Đánh dấu đã thanh toán",
+        "bPromptPay": "Gửi mã QR PromptPay cho bệnh nhân",
+        "bNone": "Xem lịch hẹn chưa thanh toán"
       },
       "settings": {
         "a": "Làm sao mời trợ lý?",
         "b": "Thiết lập Pix",
-        "c": "Đổi giờ làm việc"
+        "c": "Đổi giờ làm việc",
+        "bPromptPay": "Thiết lập PromptPay",
+        "bNone": "Sửa thông tin phòng khám"
       },
       "other": {
         "a": "Ngày mai tôi có lịch gì?",
@@ -1653,7 +1680,11 @@
     "search": "Tìm theo tên hoặc số giấy tờ…",
     "archivedTag": "đã lưu trữ",
     "back": "Quay lại",
-    "cancel": "Hủy"
+    "cancel": "Hủy",
+    "subBirth": "Sinh {date}",
+    "subPhone": "ĐT …{last4}",
+    "subImported": "Nhập {date}",
+    "subCreated": "Thêm {date}"
   },
   "patientAddress": {
     "section": "Địa chỉ",
@@ -1685,5 +1716,91 @@
     "OTHER_neighborhood": "Khu phố hoặc quận",
     "OTHER_city": "Thành phố",
     "OTHER_state": "Bang hoặc tỉnh"
+  },
+  "solvyaiServer": {
+    "sendPix": "Gửi Pix qua WhatsApp",
+    "pixKey": "Khóa Pix",
+    "newAppt": "Lịch hẹn mới",
+    "cancelAppt": "Hủy lịch hẹn",
+    "block": "Chặn giờ",
+    "paid": "Đánh dấu đã thanh toán",
+    "unpaid": "Đánh dấu chưa thanh toán",
+    "patient": "Bệnh nhân",
+    "when": "Khi nào",
+    "duration": "Thời lượng",
+    "period": "Khoảng thời gian",
+    "reason": "Lý do",
+    "appointment": "Lịch hẹn",
+    "value": "Số tiền",
+    "procedure": "Thủ thuật",
+    "type": "Loại",
+    "inPerson": "Tại phòng khám",
+    "blockedWarn": "⚠ Giờ đã chặn ({s}–{e})",
+    "outsideWarn": "⚠ Ngoài giờ làm việc ({s}–{e})",
+    "dayOffWarn": "⚠ {d} không phải ngày làm việc",
+    "samePatientWarn": "⚠ {n} đã có lịch hẹn ngày đó lúc {t}",
+    "blockedAsk": "Giờ này đã bị chặn ({s}–{e}).",
+    "outsideAsk": "Giờ này ngoài giờ làm việc ({s}–{e}).",
+    "dayOffAsk": "{d} không phải ngày làm việc.",
+    "bookAnyway": "Vẫn đặt lịch?",
+    "bookLabel": "Đặt lịch",
+    "repeatLabel": "Lặp lại",
+    "repeatValue": "{every, select, week {Hàng tuần} biweekly {Mỗi 2 tuần} other {Hàng tháng}}, {n} lịch hẹn (đến {last})",
+    "moveAppt": "Dời lịch hẹn",
+    "from": "Từ",
+    "to": "Sang",
+    "moveAnyway": "Vẫn dời lịch?",
+    "moveLabel": "Dời lịch",
+    "notMovable": "Không thể dời lịch hẹn này.",
+    "pastStop": "Giờ đó đã qua. Hãy chọn giờ khác.",
+    "archivedStop": "Bệnh nhân này đã được lưu trữ. Khôi phục hồ sơ trước khi đặt lịch.",
+    "requestStop": "Yêu cầu đặt lịch được chấp nhận hoặc từ chối ngay trên yêu cầu.",
+    "conflict": "{when} lúc {s} đã có {what} ({s}–{e}). Chọn giờ nào?",
+    "conflictNone": "{when} lúc {s} đã có {what} ({s}–{e}). Giờ khác nào?",
+    "slotTaken": "Giờ đó vừa có người đặt. Chưa lưu gì. Chọn giờ nào?",
+    "slotTakenNone": "Giờ đó vừa có người đặt. Chưa lưu gì. Giờ khác nào?",
+    "notCancellable": "Chỉ hủy được lịch đã hẹn, đã xác nhận hoặc đến muộn. Chưa lưu gì.",
+    "unblock": "Bỏ chặn giờ",
+    "confirmReq": "Xác nhận yêu cầu",
+    "rejectReq": "Từ chối yêu cầu",
+    "decision": "Quyết định",
+    "confirmIt": "Xác nhận",
+    "rejectIt": "Từ chối",
+    "note": "Ghi chú",
+    "addPatient": "Bệnh nhân mới",
+    "fullName": "Tên",
+    "birth": "Ngày sinh",
+    "similar": "Bệnh nhân tương tự đã đăng ký",
+    "archived": "đã lưu trữ",
+    "proposalConfirmStop": "Yêu cầu này đang chờ bệnh nhân trả lời giờ mới; chỉ có thể từ chối.",
+    "seriesOther": "Giờ khác cho {d}",
+    "skippedLabel": "Bỏ qua",
+    "skippedValue": "{d} (giờ đã kín)",
+    "pickPatient": "Bệnh nhân nào?",
+    "pickAppointment": "Lịch hẹn nào?",
+    "pickDate": "Ngày nào?",
+    "pickSimilar": "Đã có bệnh nhân tương tự. Có phải cùng một người?",
+    "someoneElse": "Là người khác",
+    "born": "sinh {d}",
+    "pointerCard": "Kiểm tra chi tiết rồi chạm {button}.",
+    "promptPayText": "Ở phòng khám tại Thái Lan, bệnh nhân thanh toán bằng cách quét mã QR PromptPay của lịch hẹn.",
+    "promptPayOpen": "Mở QR",
+    "openScreen": "Mở màn hình",
+    "unavailableArticles": "SolvyAI tạm thời không khả dụng. Các bài viết này có thể giúp:",
+    "unavailableLater": "SolvyAI tạm thời không khả dụng. Vui lòng thử lại sau.",
+    "couldntFinish": "Tôi chưa làm được. Bạn có thể nói cách khác, kèm tên bệnh nhân, ngày và giờ không?",
+    "onlySolvyMed": "Tôi chỉ có thể giúp về SolvyMed.",
+    "noClinical": "Tôi không thể giúp về các vấn đề lâm sàng.",
+    "minutes": "{n} phút"
+  },
+  "countryExamples": {
+    "phone": "Số điện thoại"
+  },
+  "solvyaiIntro": {
+    "title": "Làm quen với SolvyAI ✦",
+    "body": "Chỉ cần nói theo cách của bạn: \"Đặt lịch cho Maria thứ Sáu lúc 11 giờ\". SolvyAI hiển thị mọi chi tiết và chỉ thực hiện sau khi bạn xác nhận.",
+    "tryNow": "Thử ngay",
+    "later": "Để sau",
+    "whatCanDo": "SolvyAI làm được gì?"
   }
 }

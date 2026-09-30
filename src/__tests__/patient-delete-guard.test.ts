@@ -28,7 +28,7 @@ vi.mock("@/lib/supabase/server", () => ({
   }),
 }));
 
-import { deletePatient, getArchivePreview } from "@/app/[locale]/(site)/dashboard/patients/actions";
+import { deletePatient, getArchivePreview } from "@/app/[locale]/(site)/dashboard/(gated)/patients/actions";
 
 beforeEach(() => {
   h.preview = { has_clinical_history: false, upcoming_appointments: 0 };

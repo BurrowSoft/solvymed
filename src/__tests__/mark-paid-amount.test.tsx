@@ -10,12 +10,12 @@ vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }));
 const markPaid = vi.fn().mockResolvedValue({ success: true });
-vi.mock("@/app/[locale]/(site)/dashboard/payments/actions", () => ({
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/payments/actions", () => ({
   markPaid: (...a: unknown[]) => markPaid(...a),
   markUnpaid: vi.fn(),
 }));
 
-import { MarkPaidButton } from "@/app/[locale]/(site)/dashboard/payments/PaymentsClient";
+import { MarkPaidButton } from "@/app/[locale]/(site)/dashboard/(gated)/payments/PaymentsClient";
 
 beforeEach(() => markPaid.mockClear());
 

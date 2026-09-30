@@ -39,13 +39,14 @@ vi.mock("next-intl", () => ({
       "book.errorBlocked": "Your bookings with this professional are currently restricted.",
       "book.errorMaxBookings": "You already have the maximum number of active appointments with this professional.",
       "book.errorGeneric": "Could not send booking request. Please try again.",
+      "book.practiceInactive": "This clinic isn't taking online bookings right now.",
       "book.patientDetails": "Your details",
       "book.patientDetailsHint": "This information helps the doctor prepare for your appointment.",
       "book.fullNameLabel": "Full name",
       "book.fullNamePlaceholder": "Your full name",
       "book.emailLabel": "Email",
       "book.phoneLabel": "Phone",
-      "book.phonePlaceholder": "Phone number",
+      "countryExamples.phone": "Phone number",
       "book.dobLabel": "Date of birth",
       "book.cpfLabel": "CPF",
       "patientIds.cpf": "CPF",
@@ -230,6 +231,18 @@ describe("BookingClient", () => {
     );
   });
 
+  it("a locked practice (142's practice_inactive): says the clinic isn't taking online bookings", async () => {
+    setupMocks({ busySlots: [], bookingError: { message: "practice_inactive" }, profile: FULL_PROFILE });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getAllByText("Consultation")[0]).toBeInTheDocument());
+    fireEvent.click(screen.getAllByText("Consultation")[0]);
+    await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
+    fireEvent.click(screen.getByText(/9:00/));
+    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("This clinic isn't taking online bookings right now.")).toBeInTheDocument());
+  });
+
   it("shows max_bookings error when that error is returned", async () => {
     setupMocks({ busySlots: [], bookingError: { message: "Max concurrent bookings reached" }, profile: FULL_PROFILE });
     render(<BookingClient {...BASE_PROPS} />);
@@ -309,8 +322,29 @@ describe("BookingClient", () => {
     await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
     // Fill name and phone but not DOB → still disabled
     fireEvent.change(screen.getByPlaceholderText("Your full name"), { target: { value: "Maria" } });
-    fireEvent.change(screen.getByPlaceholderText("Phone number"), { target: { value: "11999887766" } });
+    fireEvent.change(screen.getByPlaceholderText("11 99999-9999"), { target: { value: "11999887766" } });
     await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
+  });
+
+  // UX: the dial code starts at the PRACTICE country, never the UI
+  // language; the example follows the selected code (Other: a neutral text).
+  it("the phone starts at the practice country's code, with its example", async () => {
+    const dial = () => (screen.getByPlaceholderText(/99999|234 5678|Phone number/).previousElementSibling as HTMLSelectElement).value;
+    setupMocks({ busySlots: [] });
+    const { unmount } = render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByPlaceholderText("11 99999-9999")).toBeInTheDocument());
+    expect(dial()).toBe("BR");
+    unmount();
+    setupMocks({ busySlots: [] });
+    const th = render(<BookingClient {...BASE_PROPS} idKind="TH" currency="THB" />);
+    await waitFor(() => expect(screen.getByPlaceholderText("81 234 5678")).toBeInTheDocument());
+    expect(dial()).toBe("TH");
+    th.unmount();
+    // An Other practice: the UI language's guess (en → +1) and the neutral text.
+    setupMocks({ busySlots: [] });
+    render(<BookingClient {...BASE_PROPS} idKind="OTHER" currency="NONE" />);
+    await waitFor(() => expect(screen.getByPlaceholderText("Phone number")).toBeInTheDocument());
+    expect(dial()).toBe("US");
   });
 
   it("upserts patient profile before calling create_public_booking", async () => {

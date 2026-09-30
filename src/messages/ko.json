@@ -29,7 +29,7 @@
     "heading": "진료에 필요한 모든 것",
     "sub": "행정 업무를 줄이고 환자와 더 많은 시간을 보내고 싶은 임상의와 독립 개업의를 위해 만들었습니다.",
     "scheduling_title": "스마트 일정 관리",
-    "scheduling_desc": "일간, 주간, 월간 모드의 전체 캘린더 뷰. 대면 및 온라인 예약 관리, 시간 차단, 자동 알림 전송이 가능합니다.",
+    "scheduling_desc": "일간, 주간, 월간 모드의 전체 캘린더 뷰. 대면 및 온라인 예약 관리, 시간 차단은 물론 휴대폰으로 예약 자동 알림을 받을 수 있습니다.",
     "patients_title": "환자 관리",
     "patients_desc": "개인 정보, 연락처, 예약 이력, 맞춤 태그를 포함한 완전한 환자 프로필. 전체 환자 기반에서 검색 및 필터링할 수 있습니다.",
     "records_title": "임상 기록",
@@ -246,10 +246,11 @@
     "revert": "되돌리기",
     "confirm": "확인",
     "cancel": "취소",
-    "amountPlaceholder": "금액",
+    "amountPlaceholder": "금액 ({symbol})",
     "revertConfirm": "이 결제를 미결제로 되돌리시겠습니까?",
     "errorInvalidAmount": "유효한 금액을 입력하세요.",
-    "errorGeneric": "문제가 발생했습니다. 다시 시도해 주세요."
+    "errorGeneric": "문제가 발생했습니다. 다시 시도해 주세요.",
+    "amountPlaceholderPlain": "금액"
   },
   "paymentsPage": {
     "title": "결제",
@@ -316,7 +317,9 @@
     "pageInfo": "{total}명 중 {from}–{to}",
     "prevPage": "이전",
     "nextPage": "다음",
-    "pagesLabel": "페이지"
+    "pagesLabel": "페이지",
+    "fullNamePlaceholder": "성명",
+    "professionPlaceholder": "예: 엔지니어, 교사…"
   },
   "patientDetail": {
     "tabInfo": "정보",
@@ -508,9 +511,9 @@
     "noProcedures": "아직 진료 항목이 없습니다. 아래에 추가해주세요.",
     "newProcedure": "새 진료 항목",
     "procedureName": "이름",
-    "procedureNamePlaceholder": "초진, 재진…",
+    "procedureNamePlaceholder": "예: 첫 진료 – 성인",
     "durationLabel": "소요 시간 (분)",
-    "priceLabel": "가격 (R$)",
+    "priceLabel": "가격 ({symbol})",
     "paymentTypeLabel": "결제 유형",
     "private": "자비",
     "insurance": "보험",
@@ -565,13 +568,23 @@
     "manageSubscription": "구독 관리",
     "subscriptionSubscribe": "요금제 보기",
     "practiceCountryOther": "기타 국가",
-    "fullNameHint": "원하면 호칭(Dr., Prof.)을 붙이세요. 인사말에 표시됩니다.",
+    "fullNameHint": "원하면 호칭({titles})을 붙이세요. 인사말에 표시됩니다.",
     "cnpjInvalid": "CNPJ가 올바르지 않습니다. 번호를 확인하세요.",
     "appearanceTitle": "화면 모드",
     "appearanceHint": "이 브라우저에서 사용할 대시보드 테마입니다. 인쇄물과 이메일은 항상 밝은 모드입니다.",
     "themeAuto": "자동",
     "themeLight": "라이트",
-    "themeDark": "다크"
+    "themeDark": "다크",
+    "pixKey": "Pix 키",
+    "pixKeyPlaceholder": "CPF, CNPJ, 이메일, 전화번호 또는 임의 키",
+    "fullNameTitles": "Dr., Prof.",
+    "registrationPlaceholderTH": "예: ว.12345 (의료위원회 면허)",
+    "registrationPlaceholderOther": "예: 면허 번호",
+    "clinicNamePlaceholderTH": "수쿰빗 클리닉",
+    "clinicNamePlaceholderOther": "웰니스 클리닉",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "중앙로 123",
+    "priceLabelPlain": "가격"
   },
   "clinics": {
     "title": "내 클리닉",
@@ -592,7 +605,6 @@
     "countryLabel": "국가",
     "countryPlaceholder": "국가",
     "phoneLabel": "전화",
-    "phonePlaceholder": "+82 2-0000-0000",
     "locationNote": "입력한 주소에서 지도 위치가 자동으로 감지됩니다.",
     "noAddress": "주소 없음",
     "onMap": "지도에 표시됨",
@@ -650,7 +662,6 @@
     "fullNamePlaceholder": "성명을 입력하세요",
     "emailLabel": "이메일",
     "phoneLabel": "전화번호",
-    "phonePlaceholder": "10-1234-5678",
     "dobLabel": "생년월일",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -658,7 +669,8 @@
     "customTime": "사용자 지정 시간",
     "orCustomTime": "또는 시간 직접 선택",
     "professionalFallback": "담당 전문가",
-    "errorArchived": "이 클리닉은 회원님 계정의 새 예약을 받지 않습니다. 클리닉에 문의해 주세요."
+    "errorArchived": "이 클리닉은 회원님 계정의 새 예약을 받지 않습니다. 클리닉에 문의해 주세요.",
+    "practiceInactive": "이 병원은 현재 온라인 예약을 받지 않습니다."
   },
   "auth": {
     "passwordTooShort": "비밀번호는 최소 {min}자 이상이어야 합니다.",
@@ -705,7 +717,7 @@
       "country": "진료소는 어디에 있나요?",
       "countryOther": "기타 국가",
       "countryHint": "통화, 요금제 가격, 환자 신분증, 결제 QR이 정해집니다. 나중에 변경하려면 지원팀에 문의하세요.",
-      "fullNameHint": "원하면 호칭(Dr., Prof.)을 붙이세요. 인사말에 표시됩니다."
+      "fullNameHint": "원하면 호칭({titles})을 붙이세요. 인사말에 표시됩니다."
     },
     "forgotPassword": {
       "title": "비밀번호를 잊으셨나요?",
@@ -827,7 +839,9 @@
     "clinics": "클리닉",
     "payments": "결제",
     "settings": "설정",
-    "signOut": "로그아웃"
+    "signOut": "로그아웃",
+    "openMenu": "메뉴 열기",
+    "closeMenu": "메뉴 닫기"
   },
   "join": {
     "notFound": "초대 링크를 찾을 수 없습니다",
@@ -850,12 +864,13 @@
     "feature1": "무제한 예약 및 일정 관리",
     "feature2": "환자 기록, 처방전, 검사",
     "feature3": "수익 보고서 및 결제 추적",
-    "feature4": "자동 예약 알림",
+    "feature4": "휴대폰으로 받는 예약 알림",
     "feature5": "비서 접근 포함",
     "payCard": "카드로 구독",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "또는",
     "cancelAnytime": "언제든지 취소 가능. 약정 없음.",
+    "startsAfterTrial": "구독은 무료 체험이 끝나는 {date}에 시작됩니다. 오늘은 청구되지 않습니다.",
     "successMessage": "구독이 활성화되었습니다! SolvyMed Pro에 오신 것을 환영합니다.",
     "activationPending": "결제가 완료되었습니다! 구독을 활성화하는 중…",
     "activationSlow": "결제는 받았지만 활성화가 평소보다 오래 걸리고 있습니다. 보통 몇 분 안에 완료됩니다. 요금제가 표시되지 않으면 지원팀에 문의하세요:",
@@ -879,7 +894,13 @@
     "paymentActivating": "결제가 확인되었습니다. 접근 권한을 복원하는 중이니 잠시 후 이 페이지를 새로고침해 주세요.",
     "chipDays": "무료 체험: {n}일 남음 · 요금제 보기",
     "chipUrgentDays": "무료 체험: {n}일 남음 · 구독하기",
-    "chipLastDay": "무료 체험: 마지막 날 · 구독하기"
+    "chipLastDay": "무료 체험: 마지막 날 · 구독하기",
+    "lockedSettingsHint": "데이터는 여전히 귀하의 것입니다. 환자 내보내기, 구독 관리, 계정 해지는 다음에서:",
+    "lockedSettingsLink": "설정",
+    "goToDashboard": "대시보드로 이동",
+    "backToDashboard": "대시보드로 돌아가기",
+    "back": "돌아가기",
+    "needHelp": "도움이 필요하신가요?"
   },
   "secretary": {
     "notConnectedTitle": "아직 병원에 연결되지 않았습니다",
@@ -1037,7 +1058,9 @@
     "pushClosedTitle": "진료소 폐쇄",
     "pushClosedBody": "이용하시던 진료소가 SolvyMed 계정을 폐쇄했습니다. 예정된 예약은 취소되었습니다. 진료 기록 사본은 support@solvymed.com으로 요청하세요.",
     "pushCancelledTitle": "예약 취소",
-    "pushCancelledBody": "{date} {time} 예약이 진료소에 의해 취소되었습니다."
+    "pushCancelledBody": "{date} {time} 예약이 진료소에 의해 취소되었습니다.",
+    "closedNotice": "계정이 해지되었습니다.",
+    "deletedNotice": "계정이 삭제되었습니다."
   },
   "setup": {
     "title": "진료소 설정하기",
@@ -1271,12 +1294,16 @@
       "payments": {
         "a": "이번 주 받을 금액은?",
         "b": "환자에게 Pix 보내기",
-        "c": "결제 완료로 표시"
+        "c": "결제 완료로 표시",
+        "bPromptPay": "환자에게 PromptPay QR 보내기",
+        "bNone": "미결제 예약 보기"
       },
       "settings": {
         "a": "직원을 어떻게 초대해?",
         "b": "Pix 설정",
-        "c": "진료 시간 변경"
+        "c": "진료 시간 변경",
+        "bPromptPay": "PromptPay 설정",
+        "bNone": "병원 정보 변경"
       },
       "other": {
         "a": "내일 일정이 뭐야?",
@@ -1653,7 +1680,11 @@
     "search": "이름 또는 신분증 번호로 검색…",
     "archivedTag": "보관됨",
     "back": "뒤로",
-    "cancel": "취소"
+    "cancel": "취소",
+    "subBirth": "생년월일 {date}",
+    "subPhone": "전화 …{last4}",
+    "subImported": "가져옴 {date}",
+    "subCreated": "등록 {date}"
   },
   "patientAddress": {
     "section": "주소",
@@ -1685,5 +1716,91 @@
     "OTHER_neighborhood": "동네 또는 구",
     "OTHER_city": "도시",
     "OTHER_state": "주 또는 도"
+  },
+  "solvyaiServer": {
+    "sendPix": "WhatsApp으로 Pix 보내기",
+    "pixKey": "Pix 키",
+    "newAppt": "새 예약",
+    "cancelAppt": "예약 취소",
+    "block": "시간 차단",
+    "paid": "결제 완료로 표시",
+    "unpaid": "미결제로 표시",
+    "patient": "환자",
+    "when": "일시",
+    "duration": "소요 시간",
+    "period": "기간",
+    "reason": "사유",
+    "appointment": "예약",
+    "value": "금액",
+    "procedure": "시술",
+    "type": "유형",
+    "inPerson": "내원",
+    "blockedWarn": "⚠ 차단된 시간 ({s}–{e})",
+    "outsideWarn": "⚠ 진료 시간 외 ({s}–{e})",
+    "dayOffWarn": "⚠ {d}은(는) 진료일이 아닙니다",
+    "samePatientWarn": "⚠ {n} 님은 그날 {t}에 예약이 있습니다",
+    "blockedAsk": "이 시간은 차단되어 있습니다 ({s}–{e}).",
+    "outsideAsk": "이 시간은 진료 시간 외입니다 ({s}–{e}).",
+    "dayOffAsk": "{d}은(는) 진료일이 아닙니다.",
+    "bookAnyway": "그래도 예약할까요?",
+    "bookLabel": "예약",
+    "repeatLabel": "반복",
+    "repeatValue": "{every, select, week {매주} biweekly {2주마다} other {매월}}, {n}건 ({last}까지)",
+    "moveAppt": "예약 변경",
+    "from": "기존",
+    "to": "변경",
+    "moveAnyway": "그래도 변경할까요?",
+    "moveLabel": "변경",
+    "notMovable": "이 예약은 변경할 수 없습니다.",
+    "pastStop": "이미 지난 시간입니다. 다른 시간을 선택하세요.",
+    "archivedStop": "이 환자는 보관되었습니다. 예약 전에 기록을 복원하세요.",
+    "requestStop": "예약 요청은 요청 화면에서 수락하거나 거절합니다.",
+    "conflict": "{when} {s}에 이미 {what}이(가) 있습니다 ({s}–{e}). 어느 시간으로 할까요?",
+    "conflictNone": "{when} {s}에 이미 {what}이(가) 있습니다 ({s}–{e}). 다른 시간은요?",
+    "slotTaken": "방금 그 시간이 찼습니다. 저장된 것은 없습니다. 어느 시간으로 할까요?",
+    "slotTakenNone": "방금 그 시간이 찼습니다. 저장된 것은 없습니다. 다른 시간은요?",
+    "notCancellable": "예정·확정·지연된 예약만 취소할 수 있습니다. 저장된 것은 없습니다.",
+    "unblock": "차단 해제",
+    "confirmReq": "요청 수락",
+    "rejectReq": "요청 거절",
+    "decision": "결정",
+    "confirmIt": "수락",
+    "rejectIt": "거절",
+    "note": "메모",
+    "addPatient": "새 환자",
+    "fullName": "이름",
+    "birth": "생년월일",
+    "similar": "이미 등록된 비슷한 환자",
+    "archived": "보관됨",
+    "proposalConfirmStop": "이 요청은 새 시간에 대한 환자의 답을 기다리고 있어 거절만 가능합니다.",
+    "seriesOther": "{d}의 다른 시간",
+    "skippedLabel": "제외",
+    "skippedValue": "{d} (예약 불가)",
+    "pickPatient": "어느 환자인가요?",
+    "pickAppointment": "어느 예약인가요?",
+    "pickDate": "어느 날짜인가요?",
+    "pickSimilar": "비슷한 환자가 이미 등록되어 있습니다. 같은 사람인가요?",
+    "someoneElse": "다른 사람입니다",
+    "born": "{d}생",
+    "pointerCard": "내용을 {button}하고 확인을 누르세요.",
+    "promptPayText": "태국 병원에서는 환자가 예약의 PromptPay QR을 스캔해 결제합니다.",
+    "promptPayOpen": "QR 열기",
+    "openScreen": "화면 열기",
+    "unavailableArticles": "SolvyAI를 일시적으로 사용할 수 없습니다. 이 도움말이 도움이 될 수 있습니다:",
+    "unavailableLater": "SolvyAI를 일시적으로 사용할 수 없습니다. 나중에 다시 시도하세요.",
+    "couldntFinish": "완료하지 못했습니다. 환자 이름, 날짜, 시간과 함께 다르게 말씀해 주시겠어요?",
+    "onlySolvyMed": "SolvyMed 관련 도움만 드릴 수 있습니다.",
+    "noClinical": "임상 관련 질문은 도와드릴 수 없습니다.",
+    "minutes": "{n}분"
+  },
+  "countryExamples": {
+    "phone": "전화번호"
+  },
+  "solvyaiIntro": {
+    "title": "SolvyAI를 만나보세요 ✦",
+    "body": "평소 말투로 요청하세요: \"금요일 11시에 마리아 예약해 줘\". SolvyAI가 모든 내용을 보여 주고, 확인한 뒤에만 실행합니다.",
+    "tryNow": "지금 사용해 보기",
+    "later": "나중에",
+    "whatCanDo": "SolvyAI는 무엇을 할 수 있나요?"
   }
 }

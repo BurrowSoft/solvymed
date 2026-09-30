@@ -3,6 +3,7 @@
 // language writes decimals with a comma (Excel's list separator there), a
 // UTF-8 BOM so accents open right, the practice country's ID columns, and
 // dates in the practice country's format (lib/prescriptionDoc docDate).
+import { countryProfile } from "./country";
 import { docDate } from "./prescriptionDoc";
 import { dateLocale } from "./dateLabels";
 import { ADDRESS_FIELDS, type AddressColumns } from "./patientAddress";
@@ -49,13 +50,13 @@ export type CsvLabels = {
 };
 
 export function patientsCsv(patients: CsvPatient[], labels: CsvLabels, country: string, locale: string): string {
-  const ids: ("cpf" | "th_national_id" | "passport_number")[] =
-    country === "BR" ? ["cpf"] : country === "TH" ? ["th_national_id", "passport_number"] : ["passport_number"];
+  // The practice country's ID columns (lib/country idFields).
+  const ids = countryProfile(country).idFields.map((f) => f.name);
   const idHeader = { cpf: labels.cpf, th_national_id: labels.thaiId, passport_number: labels.passport };
   const sex = (s?: string | null) => (s === "male" ? labels.male : s === "female" ? labels.female : s === "other" ? labels.other : "");
   const date = (iso?: string | null) => (iso ? docDate(country, iso.slice(0, 10)) : "");
   const addr = labels.address?.length === ADDRESS_FIELDS.length ? ADDRESS_FIELDS.map((f) => f.name) : [];
-  const withCns = !!labels.cns && country === "BR";
+  const withCns = !!labels.cns && countryProfile(country).healthCard === "cns";
   const headers = [labels.fullName, ...ids.map((f) => idHeader[f]), labels.sex, labels.birthDate, labels.phone, labels.email, labels.profession, labels.tags, labels.archivedOn,
     ...(addr.length ? labels.address! : []), ...(withCns ? [labels.cns!] : [])];
   const rows = patients.map((p) => [

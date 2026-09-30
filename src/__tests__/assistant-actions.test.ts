@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { handleAssistant, type Deps } from "@/lib/assistant/server/handle";
+import { loadTexts } from "@/lib/assistant/server/texts";
 import { fakeModelClient, type FakeTurn, type ModelRequest } from "@/lib/assistant/server/model";
 import type { AnswerBlock, AnswerChunk, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
 
@@ -110,6 +111,7 @@ async function run(t: ReturnType<typeof setup>, body: unknown) {
   const blocks = chunks.flatMap((c) => (c.kind === "block" && c.block.type !== "text" ? [c.block] : []));
   return { status: 200, json: null, chunks, blocks };
 }
+const textOf = (chunks: AnswerChunk[]) => chunks.filter((c) => c.kind === "delta").map((c) => (c.kind === "delta" ? c.text : "")).join("");
 const cardOf = (blocks: AnswerBlock[]) => (blocks.find((b) => b.type === "card") as { card: ConfirmationCard } | undefined)?.card;
 const choiceOf = (blocks: AnswerBlock[]) => blocks.find((b) => b.type === "slot_choice") as SlotChoice | undefined;
 // The tool results the model got back in round n.
@@ -142,11 +144,224 @@ describe("SolvyAI actions mode: the mode", () => {
     const r = await run(t, ask("Marca uma consulta"));
     expect(r.chunks[0]).toEqual({ kind: "meta", mode: "actions" });
     expect(t.model.calls[0].tools?.map((x) => x.name)).toEqual([
-      "find_patients", "list_appointments", "find_free_slots",
+      "find_patients", "list_appointments", "choose_date", "find_free_slots",
       "propose_book_appointment", "propose_move_appointment", "propose_cancel_appointment", "propose_block_time", "propose_mark_paid",
       "propose_unblock_time", "propose_booking_decision", "propose_add_patient",
     ]);
     expect(t.model.calls[0].system).toContain("Today at the clinic: Tuesday 2026-09-29, 10:00 (America/Sao_Paulo)");
+  });
+});
+
+describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
+  it("text from rounds that call tools is never shown; after a card, only the pointer line (no restated or wrong details)", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { text: "Só um instante, deixa eu conferir a data.", tools: [{ name: "find_patients", input: { query: "Maria Silva" } }] }
+      : round === 1 ? { text: "Encontrei:", tools: [{ name: "propose_book_appointment", input: { patientId: "p-maria", date: "2026-09-30", start: "14:00" } }] }
+      : "Prontinho! Marquei a Ana Costa em 31/09 às 10h, é só Salvar Consulta.");
+    const r = await run(t, ask("Marca a Maria Silva amanhã às 14h"));
+    expect(cardOf(r.blocks)).toBeDefined();
+    expect(textOf(r.chunks)).toBe("Confira os detalhes e toque em Confirmar.");
+  });
+
+  it("with no card or list, the last round's text is shown alone (no joined rounds)", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { text: "Vou olhar a agenda:", tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }] }
+      : "Amanhã você tem 1 consulta e 1 horário bloqueado.");
+    expect(textOf((await run(t, ask("O que tenho amanhã?"))).chunks)).toBe("Amanhã você tem 1 consulta e 1 horário bloqueado.");
+  });
+
+  it("several patients match: a list to tap, and the model gets no ids to guess with", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { tools: [{ name: "find_patients", input: { query: "Mari" } }] }
+      : round === 1 ? { tools: [{ name: "propose_book_appointment", input: { patientId: "p-maria", date: "2026-09-30", start: "14:00" } }] }
+      : "ok");
+    const r = await run(t, ask("Marca a Mari amanhã às 14h"));
+    expect(r.blocks.find((b) => b.type === "pick")).toEqual({
+      type: "pick", question: "Qual paciente?",
+      options: [{ id: "p-maria", title: "Maria Silva · nasc. 02/05/1980", detail: "" }, { id: "p-mario", title: "Mario Souza", detail: "" }],
+    });
+    const found = resultsIn(t.model.calls[1])[0] as { content: string };
+    expect(found.content).not.toContain("p-maria");
+    // A guessed id is refused: no card.
+    expect(cardOf(r.blocks)).toBeUndefined();
+    expect(textOf(r.chunks)).toBe("");
+  });
+
+  it("two patients with the same name: the tapped option comes back verbatim and matches exactly one (pt and th, no date conversion)", async () => {
+    for (const [locale, tappedTitle] of [["pt-BR", "Maria Silva · nasc. 02/05/1980"], ["th", null]] as const) {
+      const first = setup((_r, round) => (round === 0 ? { tools: [{ name: "find_patients", input: { query: "Maria Silva" } }] } : "ok"));
+      first.tables.patients.push({ id: "p-maria2", professional_id: "doc-1", full_name: "Maria Silva", birth_date: "1991-07-01", archived_at: null });
+      const listed = await run(first, { ...ask("Marca a Maria Silva"), locale });
+      const options = (listed.blocks.find((b) => b.type === "pick") as { options: { id: string; title: string }[] }).options;
+      expect(options.map((o) => o.id).sort()).toEqual(["p-maria", "p-maria2"]);
+      // The user taps the first; the model passes the text back as tapped.
+      const tapped = tappedTitle ?? options.find((o) => o.id === "p-maria")!.title;
+      if (tappedTitle) expect(options.find((o) => o.id === "p-maria")!.title).toBe(tappedTitle);
+      const again = setup((_r, round) => (round === 0 ? { tools: [{ name: "find_patients", input: { query: "Maria Silva", tapped } }] } : "ok"));
+      again.tables.patients.push({ id: "p-maria2", professional_id: "doc-1", full_name: "Maria Silva", birth_date: "1991-07-01", archived_at: null });
+      const r = await run(again, { ...ask(tapped), locale });
+      expect(r.blocks.find((b) => b.type === "pick")).toBeUndefined();
+      const found = JSON.parse((resultsIn(again.model.calls[1])[0] as { content: string }).content) as { id: string }[];
+      expect(found.map((p) => p.id)).toEqual(["p-maria"]);
+    }
+  });
+
+  it("a tapped appointment comes back verbatim: exactly that one", async () => {
+    const extra = { id: "a-maria10", professional_id: "doc-1", patient_id: "p-maria", patient_name: "Maria Silva", date: "2026-09-30", start_time: "10:00:00", end_time: "10:30:00", status: "scheduled", payment_status: "pending", payment_amount: null };
+    const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30", start: "10:00", tapped: "Quarta-feira, 30/09/2026 · 10:00 · Maria Silva" } }] } : "ok"));
+    t.tables.appointments.push(extra);
+    const r = await run(t, ask("Quarta-feira, 30/09/2026 · 10:00 · Maria Silva"));
+    expect(r.blocks.find((b) => b.type === "pick")).toBeUndefined();
+    const found = JSON.parse((resultsIn(t.model.calls[1])[0] as { content: string }).content) as { id: string }[];
+    expect(found.map((a) => a.id)).toEqual(["a-maria10"]);
+  });
+
+  it("several appointments at the time given: a list with date · time · patient, never a guess", async () => {
+    const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30", start: "10:00" } }] } : "Qual delas? 1) Mario 2) Maria"));
+    t.tables.appointments.push({ id: "a-maria10", professional_id: "doc-1", patient_id: "p-maria", patient_name: "Maria Silva", date: "2026-09-30", start_time: "10:00:00", end_time: "10:30:00", status: "scheduled", payment_status: "pending", payment_amount: null });
+    const r = await run(t, ask("Cancela a das 10 amanhã"));
+    const pick = r.blocks.find((b) => b.type === "pick") as { question: string; options: { title: string }[] };
+    expect(pick.question).toBe("Qual consulta?");
+    expect(pick.options.map((o) => o.title).sort()).toEqual(["Quarta-feira, 30/09/2026 · 10:00 · Maria Silva", "Quarta-feira, 30/09/2026 · 10:00 · Mario Souza"]);
+    expect(textOf(r.chunks)).toBe("");
+  });
+
+  it("an ambiguous date: choose_date shows real days to tap; an impossible or past day is refused", async () => {
+    let t = setup((_r, round) => (round === 0 ? { tools: [{ name: "choose_date", input: { dates: ["2026-10-09", "2026-10-02"] } }] } : "ok"));
+    let r = await run(t, ask("Marca a Maria na próxima sexta"));
+    expect(r.blocks.find((b) => b.type === "pick")).toEqual({
+      type: "pick", question: "Qual data?",
+      options: [{ id: "2026-10-02", title: "Sexta-feira, 02/10/2026", detail: "" }, { id: "2026-10-09", title: "Sexta-feira, 09/10/2026", detail: "" }],
+    });
+    t = setup((_r, round) => (round === 0 ? { tools: [{ name: "choose_date", input: { dates: ["2026-09-31", "2026-09-01", "2026-10-02"] } }] } : "ok"));
+    r = await run(t, ask("…"));
+    expect(r.blocks.find((b) => b.type === "pick")).toBeUndefined();
+    expect(resultsIn(t.model.calls[1])[0]).toMatchObject({ is_error: true });
+  });
+
+  it("dates are real calendar days: 2026-09-31 is refused, never rolled over to 1 October", async () => {
+    const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-31", to: "2026-09-31" } }] } : "ok"));
+    await run(t, ask("…"));
+    expect(resultsIn(t.model.calls[1])[0]).toMatchObject({ is_error: true });
+  });
+
+  it("mark paid: filtered by patient, the lookup reaches 90 days back and 30 ahead; unfiltered stays at 14 days", async () => {
+    let t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-07-01", to: "2026-10-29", patient: "Mario" } }] } : "ok"));
+    const r = await run(t, ask("Marca como pago o Mario"));
+    // Both of Mario's appointments in the window (today's week and the next): the user taps one.
+    const pick = r.blocks.find((b) => b.type === "pick") as { options: { id: string }[] };
+    expect(pick.options.map((o) => o.id).sort()).toEqual(["a-done", "a-joao"]);
+    t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-07-01", to: "2026-10-29" } }] } : "ok"));
+    await run(t, ask("…"));
+    expect(resultsIn(t.model.calls[1])[0]).toMatchObject({ is_error: true });
+  });
+
+  // Round 2 (3e's ❌, UX/9a): "a das 10" names no day.
+  const tens = [
+    { id: "t-today", date: "2026-09-29", name: "Ana Um" },
+    { id: "t-plus2", date: "2026-10-01", name: "Bia Dois" },
+    { id: "t-plus7", date: "2026-10-06", name: "Caio Tres" },
+  ].map((x) => ({ id: x.id, professional_id: "doc-1", patient_id: null, patient_name: x.name, date: x.date, start_time: "16:00:00", end_time: "16:30:00", status: "scheduled", payment_status: "pending", payment_amount: null }));
+
+  it("a time with no day: the server searches the next two weeks itself, three 16:00s → a list (the model assumed today)", async () => {
+    const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-29", to: "2026-09-29", start: "16:00" } }] } : "ok"));
+    t.tables.appointments.push(...tens);
+    const r = await run(t, ask("Cancela a das 16"));
+    const pick = r.blocks.find((b) => b.type === "pick") as { options: { id: string }[] };
+    expect(pick.options.map((o) => o.id).sort()).toEqual(["t-plus2", "t-plus7", "t-today"]);
+  });
+
+  it("the guard: even with an id in hand, no card for a partial reference with several matches; a named day gets its card", async () => {
+    // The model listed today's agenda (so it has t-today's id) and proposes it.
+    const guess = (text: string) => {
+      const t = setup((_r, round) =>
+        round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-29", to: "2026-09-29" } }] }
+        : round === 1 ? { tools: [{ name: "propose_cancel_appointment", input: { appointmentId: "t-today" } }] }
+        : "ok");
+      t.tables.appointments.push(...tens);
+      return run(t, ask(text));
+    };
+    let r = await guess("Cancela a das 16");
+    expect(cardOf(r.blocks)).toBeUndefined();
+    expect((r.blocks.find((b) => b.type === "pick") as { options: unknown[] }).options).toHaveLength(3);
+    r = await guess("Cancela a das 16 de hoje");
+    expect(cardOf(r.blocks)?.action).toEqual({ kind: "cancel_appointment", args: { appointmentId: "t-today" } });
+    r = await guess("Cancel today's 4 pm");
+    expect(cardOf(r.blocks)).toBeDefined();
+  });
+
+  it("a move named only by patient, with two upcoming: the list first; the new day in the message doesn't count", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-29", to: "2026-10-12" } }] }
+      : round === 1 ? { tools: [{ name: "propose_move_appointment", input: { appointmentId: "a-joao", date: "2026-10-01", start: "15:00" } }] }
+      : "ok");
+    t.tables.appointments.push({ id: "a-joao2", professional_id: "doc-1", patient_id: "p-mario", patient_name: "Mario Souza", date: "2026-10-05", start_time: "09:00:00", end_time: "09:30:00", status: "scheduled", payment_status: "pending", payment_amount: null });
+    const r = await run(t, ask("Muda a consulta do Mario para quinta às 15h"));
+    expect(cardOf(r.blocks)).toBeUndefined();
+    expect((r.blocks.find((b) => b.type === "pick") as { options: { id: string }[] }).options.map((o) => o.id).sort()).toEqual(["a-joao", "a-joao2"]);
+  });
+
+  it("one question at a time: a second list in the same answer waits", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { tools: [{ name: "find_patients", input: { query: "Mari" } }, { name: "choose_date", input: { dates: ["2026-10-01", "2026-10-08"] } }] } : "ok");
+    const r = await run(t, ask("Muda a da Mari para quinta"));
+    expect(r.blocks.filter((b) => b.type === "pick")).toHaveLength(1);
+    expect((resultsIn(t.model.calls[1])[1] as { content: string }).content).toContain("Not shown");
+  });
+
+  it("a card after a list in the same answer waits too (d7: the model chose from its own list)", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { tools: [{ name: "find_patients", input: { query: "Maria Silva" } }, { name: "choose_date", input: { dates: ["2026-10-01", "2026-10-08"] } }] }
+      : round === 1 ? { tools: [{ name: "propose_book_appointment", input: { patientId: "p-maria", date: "2026-10-01", start: "10:00" } }] }
+      : "ok");
+    const r = await run(t, ask("Marca a Maria Silva quinta às 10h"));
+    expect(r.blocks.filter((b) => b.type === "pick")).toHaveLength(1);
+    expect(cardOf(r.blocks)).toBeUndefined();
+    expect((resultsIn(t.model.calls[2])[0] as { content: string }).content).toContain("Not shown");
+  });
+
+  it("after a time choice (its own question), no pointer text at all", async () => {
+    const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "find_patients", input: { query: "Maria Silva" } }] } : round === 1 ? { tools: [{ name: "propose_book_appointment", input: { patientId: "p-maria", date: "2026-09-30", start: "10:00" } }] } : "Escolha um horário acima."));
+    const r = await run(t, ask("Marca a Maria Silva amanhã às 10h"));
+    expect(choiceOf(r.blocks)?.reason).toBe("conflict");
+    expect(textOf(r.chunks)).toBe("");
+  });
+
+  it("the prompt carries a real calendar to look dates up in, and the actions rules", async () => {
+    const t = setup(() => "ok");
+    await run(t, ask("Marca uma consulta"));
+    const system = t.model.calls[0].system;
+    expect(system).toContain("Tue 2026-09-29 (today)");
+    expect(system).toContain("Fri 2026-10-02");
+    expect(system).not.toContain("2026-09-31");
+    expect(system).toContain("ACTIONS RULE A");
+    expect(system).toContain("\"Confirmar\", \"Desfazer\", \"Abrir\"");
+    expect(system).toContain("Reply in Brazilian Portuguese");
+  });
+
+  it("a Thai UI gets Thai: the card, the pointer with the real button, and the model's language (e7)", async () => {
+    const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-07", start: "14:00", durationMin: 30 } })));
+    const r = await run(t, { ...ask("นัดคุณมาเรียวันพุธ 14:00"), locale: "th" });
+    const card = cardOf(r.blocks)!;
+    expect(card.title).toBe("นัดหมายใหม่");
+    expect(card.fields.map((f) => f.label)).toContain("ผู้ป่วย");
+    expect(card.fields.find((f) => f.label === "ระยะเวลา")!.value).toBe("30 นาที");
+    expect(textOf(r.chunks)).toBe("ตรวจสอบรายละเอียดแล้วแตะ ยืนยัน");
+    const system = t.model.calls[0].system;
+    expect(system).toContain("Reply in Thai");
+    expect(system).toContain("\"ยืนยัน\"");
+    expect(system).not.toContain("\"Confirmar\"");
+    // The screens' Thai labels ride in the cached prefix, not every request (9a).
+    expect(t.model.calls[0].cachedSystem).toContain("# Screen labels (English = Thai)");
+    expect(t.model.calls[0].cachedSystem).toContain("\"Settings\" = \"การตั้งค่า\"");
+    expect(system).not.toContain("\"Settings\" = ");
+  });
+
+  it("English names the real button (d7: never \"tap Confirmar\")", async () => {
+    const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-07", start: "14:00", durationMin: 30 } })));
+    const r = await run(t, { ...ask("Book Maria on Wednesday at 2pm"), locale: "en" });
+    expect(textOf(r.chunks)).toBe("Check the details and tap Confirm.");
+    expect(cardOf(r.blocks)!.title).toBe("New appointment");
   });
 });
 
@@ -265,6 +480,15 @@ describe("SolvyAI actions mode: other proposals", () => {
     expect(free.free).not.toContain("10:00");
     expect(free.free).not.toContain("12:00");
     expect(free.free[0]).toBe("08:00");
+  });
+
+  it("free times never ask for a length: the default procedure's (UX), said in the answer", async () => {
+    const t = setup(listThen("2026-09-30", { name: "find_free_slots", input: { date: "2026-09-30" } }));
+    await run(t, ask("Tenho horário livre amanhã?"));
+    const free = JSON.parse(String((resultsIn(t.model.calls[2])[0] as { content: string }).content)) as { durationMin: number; free: string[]; note: string };
+    expect(free.durationMin).toBe(50);
+    expect(free.free.length).toBeGreaterThan(0);
+    expect(free.note).toContain("durationMin");
   });
 
   it("cancel: a card; a booking request is a hard stop (it's declined on the request)", async () => {
@@ -403,10 +627,16 @@ describe("SolvyAI actions mode: part 2 (unblock, booking decision, add patient)"
     const addTool = t.model.calls[0].tools!.find((x) => x.name === "propose_add_patient")!;
     expect(Object.keys((addTool.input_schema as { properties: object }).properties)).toEqual(["fullName", "birthDate", "createAnyway"]);
     expect(card.after).toEqual({ screen: "patient", highlight: { kind: "patient" } });
-    // Maria Silva exists: back to the model, no card, until the user says it's someone else.
-    t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "Maria Silva" } }] } : "ok"));
-    expect(cardOf((await run(t, ask("Cadastra a Maria Silva"))).blocks)).toBeUndefined();
-    expect(resultsIn(t.model.calls[1])[0]).toMatchObject({ is_error: true });
+    // Maria Silva exists: no card; the user taps the existing one or "É outra
+    // pessoa" (UX: a list, never a text list), and the text only points to it.
+    t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "Maria Silva" } }] } : "A Maria Silva (02/05/1980) já existe."));
+    const dup = await run(t, ask("Cadastra a Maria Silva"));
+    expect(cardOf(dup.blocks)).toBeUndefined();
+    expect(dup.blocks.find((b) => b.type === "pick")).toEqual({
+      type: "pick", question: "Já existe um cadastro parecido. É a mesma pessoa?",
+      options: [{ id: "p-maria", title: "Maria Silva · nasc. 02/05/1980", detail: "" }, { id: "new", title: "É outra pessoa", detail: "" }],
+    });
+    expect(textOf(dup.chunks)).toBe("");
     t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "Maria Silva", createAnyway: true } }] } : "ok"));
     card = cardOf((await run(t, ask("É outra pessoa"))).blocks)!;
     expect(card.fields.find((f) => f.label === "Parecidos já cadastrados")!.value).toBe("Maria Silva (02/05/1980)");
@@ -469,16 +699,76 @@ describe("SolvyAI actions mode: a recurring series (the website's Repetir)", () 
     expect(card.action.args.repeat).toEqual({ every: "week", count: 3 });
   });
 
-  it("another appointment on any date: no card, the conflicting dates named (recurring_conflict)", async () => {
+  it("a taken date in the series: at once, the series card without it (\"pulando 14/10\") and free times on 14/10 for a separate appointment; no round trip", async () => {
+    const rui = { id: "a-x", professional_id: "doc-1", patient_id: null, patient_name: "Rui", date: "2026-10-14", start_time: "14:00:00", end_time: "14:30:00", status: "scheduled", payment_status: "pending", payment_amount: null };
     const t = setup(series({ every: "week", count: 3 }));
-    t.tables.appointments.push({ id: "a-x", professional_id: "doc-1", patient_id: null, patient_name: "Rui", date: "2026-10-14", start_time: "14:00:00", end_time: "14:30:00", status: "scheduled", payment_status: "pending", payment_amount: null });
+    t.tables.appointments.push(rui);
+    const r = await run(t, ask("Marca a Maria toda quarta às 14h, 3 vezes"));
+    const card = cardOf(r.blocks)!;
+    expect(card.fields.find((f) => f.label === "Repetir")!.value).toBe("Semanal, 2 consultas (até 21/10/2026)");
+    expect(card.fields.find((f) => f.label === "Fica de fora")!.value).toBe("14/10 (horário ocupado)");
+    expect(card.action.args.repeat).toEqual({ every: "week", count: 3, skip: ["2026-10-14"] });
+    const free = choiceOf(r.blocks)!;
+    expect(free.text).toBe("Outro horário para 14/10:");
+    expect(free.alternatives.length).toBeGreaterThan(0);
+    expect(free.alternatives.every((a) => a.date === "2026-10-14" && a.start !== "14:00")).toBe(true);
+    expect(textOf(r.chunks)).toBe("Confira os detalhes e toque em Confirmar.");
+  });
+
+  it("a tapped time chip is ONE appointment: the server drops a replayed series (3e: the double booking)", async () => {
+    // The model replays the earlier "toda quarta, 3 vezes" at the chip's time.
+    const replay = () => withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-07", start: "09:00", durationMin: 30, repeat: { every: "week", count: 3 } } }));
+    const t = setup(replay());
+    const card = cardOf((await run(t, ask("quarta-feira, 07/10/2026 às 09:00"))).blocks)!;
+    expect(card.fields.find((f) => f.label === "Repetir")).toBeUndefined();
+    expect(card.fields.find((f) => f.label === "Quando")!.value).toBe("Quarta-feira, 07/10/2026, 09:00–09:30");
+    expect(card.action.args).not.toHaveProperty("repeat");
+    // A typed series request is still a series.
+    const s = setup(replay());
+    expect(cardOf((await run(s, ask("Marca a Maria toda quarta às 9h, 3 vezes"))).blocks)!.action.args).toHaveProperty("repeat");
+    // Typed with a full date and a time at the end: not a chip (9a).
+    const typed = setup(replay());
+    expect(cardOf((await run(typed, ask("toda quarta, começando 07/10/2026 às 09:00"))).blocks)!.action.args).toHaveProperty("repeat");
+    // The chip for another time than the proposal's isn't this one.
+    const other = setup(replay());
+    expect(cardOf((await run(other, ask("quarta-feira, 07/10/2026 às 10:00"))).blocks)!.action.args).toHaveProperty("repeat");
+  });
+
+  it("rule 10a: \"next Friday\" in any language shows the two Fridays, never a card", async () => {
+    for (const [locale, text] of [["pt-BR", "Marca a Maria Silva próxima sexta às 10h"], ["pt-BR", "Marca a Maria Silva sexta que vem às 10h"], ["en", "Book Maria Silva next Friday at 10"], ["th", "นัดมาเรีย ซิลวา ศุกร์หน้า 10 โมง"]]) {
+      const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-02", start: "10:00", durationMin: 30 } })));
+      const r = await run(t, { ...ask(text), locale });
+      expect(cardOf(r.blocks), text).toBeUndefined();
+      expect((r.blocks.find((b) => b.type === "pick") as { options: { id: string }[] }).options.map((o) => o.id)).toEqual(["2026-10-02", "2026-10-09"]);
+    }
+    // "This Friday" is this week's: a card (UX), in en/pt/th.
+    for (const [locale, text] of [["pt-BR", "Marca a Maria Silva nesta sexta às 10h"], ["en", "Book Maria Silva this Friday at 10"], ["th", "นัดมาเรีย ซิลวา ศุกร์นี้ 10 โมง"]]) {
+      const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-02", start: "10:00", durationMin: 30 } })));
+      expect(cardOf((await run(t, { ...ask(text), locale })).blocks), text).toBeDefined();
+    }
+    // A bare weekday is the coming one: a card.
+    const bare = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-02", start: "10:00", durationMin: 30 } })));
+    expect(cardOf((await run(bare, ask("Marca a Maria Silva sexta às 10h"))).blocks)).toBeDefined();
+  });
+
+  it("the chip is matched in the UI's language (en)", async () => {
+    const chip = (await loadTexts("en")).chipAt("2026-10-07", "09:00");
+    const t = setup(withMaria((id) => ({ name: "propose_book_appointment", input: { patientId: id, date: "2026-10-07", start: "09:00", durationMin: 30, repeat: { every: "week", count: 3 } } })));
+    const card = cardOf((await run(t, { ...ask(chip), locale: "en" })).blocks)!;
+    expect(card.action.args).not.toHaveProperty("repeat");
+  });
+
+  it("the series' FIRST date taken (9a: the loop): the card starts on the next date, never re-finding the skipped one", async () => {
+    const t = setup(series({ every: "week", count: 3 }));
+    t.tables.appointments.push({ id: "a-first", professional_id: "doc-1", patient_id: null, patient_name: "Rui", date: "2026-10-07", start_time: "14:00:00", end_time: "14:30:00", status: "scheduled", payment_status: "pending", payment_amount: null });
     const r = await run(t, ask("…"));
-    expect(cardOf(r.blocks)).toBeUndefined();
-    const c = choiceOf(r.blocks)!;
-    expect(c.reason).toBe("recurring_conflict");
-    expect(c.conflicts).toEqual([{ date: "2026-10-14", start: "14:00", end: "14:30", what: "Rui" }]);
-    expect(c.text).toContain("Nada foi salvo");
-    expect(c.alternatives).toEqual([]);
+    const card = cardOf(r.blocks)!;
+    expect(card.fields.find((f) => f.label === "Quando")!.value).toBe("Quarta-feira, 14/10/2026, 14:00–14:30");
+    expect(card.fields.find((f) => f.label === "Repetir")!.value).toBe("Semanal, 2 consultas (até 21/10/2026)");
+    expect(card.fields.find((f) => f.label === "Fica de fora")!.value).toBe("07/10 (horário ocupado)");
+    // The series stays anchored on 07/10 with the skip: the save expands it the same way.
+    expect(card.action.args).toMatchObject({ date: "2026-10-07", repeat: { every: "week", count: 3, skip: ["2026-10-07"] } });
+    expect(choiceOf(r.blocks)!.alternatives.every((a) => a.date === "2026-10-07")).toBe(true);
   });
 
   it("blocked time on a later date: the second question names that date", async () => {

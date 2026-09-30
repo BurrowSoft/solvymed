@@ -29,7 +29,7 @@
     "heading": "كل ما تحتاجه عيادتك",
     "sub": "مُصمَّم للأطباء والممارسين المستقلين الذين يريدون أعمالاً إدارية أقل ووقتاً أكثر مع المرضى.",
     "scheduling_title": "جدولة ذكية",
-    "scheduling_desc": "عرض تقويم كامل بأوضاع يومية وأسبوعية وشهرية. أدر المواعيد الحضورية والإلكترونية، احجز أوقاتاً، وأرسل تذكيرات تلقائية.",
+    "scheduling_desc": "عرض تقويم كامل بأوضاع يومية وأسبوعية وشهرية. أدر المواعيد الحضورية والإلكترونية، احجز أوقاتاً، واحصل على تذكيرات تلقائية بمواعيدك على هاتفك.",
     "patients_title": "إدارة المرضى",
     "patients_desc": "ملفات مرضى كاملة تشمل البيانات الشخصية ومعلومات الاتصال وتاريخ المواعيد والعلامات المخصصة. ابحث وفلتر في كامل قاعدة مرضاك.",
     "records_title": "السجلات السريرية",
@@ -246,10 +246,11 @@
     "revert": "تراجع",
     "confirm": "تأكيد",
     "cancel": "إلغاء",
-    "amountPlaceholder": "المبلغ",
+    "amountPlaceholder": "المبلغ ({symbol})",
     "revertConfirm": "إعادة هذه الدفعة إلى معلقة؟",
     "errorInvalidAmount": "يرجى إدخال مبلغ صالح.",
-    "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+    "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "amountPlaceholderPlain": "المبلغ"
   },
   "paymentsPage": {
     "title": "المدفوعات",
@@ -316,7 +317,9 @@
     "pageInfo": "{from}–{to} من {total}",
     "prevPage": "السابق",
     "nextPage": "التالي",
-    "pagesLabel": "الصفحات"
+    "pagesLabel": "الصفحات",
+    "fullNamePlaceholder": "الاسم الكامل",
+    "professionPlaceholder": "مثال: مهندس، معلم…"
   },
   "patientDetail": {
     "tabInfo": "معلومات",
@@ -508,9 +511,9 @@
     "noProcedures": "لا توجد إجراءات بعد. أضف الأول أدناه.",
     "newProcedure": "إجراء جديد",
     "procedureName": "الاسم",
-    "procedureNamePlaceholder": "استشارة أولية، متابعة…",
+    "procedureNamePlaceholder": "مثال: الزيارة الأولى – بالغ",
     "durationLabel": "المدة (دقيقة)",
-    "priceLabel": "السعر (R$)",
+    "priceLabel": "السعر ({symbol})",
     "paymentTypeLabel": "طريقة الدفع",
     "private": "خاص",
     "insurance": "تأمين",
@@ -565,13 +568,23 @@
     "manageSubscription": "إدارة الاشتراك",
     "subscriptionSubscribe": "عرض الخطة",
     "practiceCountryOther": "دولة أخرى",
-    "fullNameHint": "أضف لقبك إن أردت (Dr.، Prof.)؛ يظهر في التحيات.",
+    "fullNameHint": "أضف لقبك إن أردت ({titles})؛ يظهر في التحيات.",
     "cnpjInvalid": "رقم CNPJ غير صالح. تحقّق من الرقم.",
     "appearanceTitle": "المظهر",
     "appearanceHint": "سمة لوحة التحكم في هذا المتصفح. تبقى المطبوعات والرسائل الإلكترونية فاتحة دائمًا.",
     "themeAuto": "تلقائي",
     "themeLight": "فاتح",
-    "themeDark": "داكن"
+    "themeDark": "داكن",
+    "pixKey": "مفتاح Pix",
+    "pixKeyPlaceholder": "CPF أو CNPJ أو البريد الإلكتروني أو الهاتف أو مفتاح عشوائي",
+    "fullNameTitles": "Dr.، Prof.",
+    "registrationPlaceholderTH": "مثال: ว.12345 (ترخيص المجلس الطبي)",
+    "registrationPlaceholderOther": "مثال: رقم ترخيصك",
+    "clinicNamePlaceholderTH": "عيادة سوخومفيت",
+    "clinicNamePlaceholderOther": "عيادة العافية",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "123 الشارع الرئيسي",
+    "priceLabelPlain": "السعر"
   },
   "clinics": {
     "title": "عياداتي",
@@ -592,7 +605,6 @@
     "countryLabel": "الدولة",
     "countryPlaceholder": "الدولة",
     "phoneLabel": "الهاتف",
-    "phonePlaceholder": "+966 50 000 0000",
     "locationNote": "يتم رصد الموقع على الخريطة تلقائياً من العنوان الذي تقدمه.",
     "noAddress": "لا يوجد عنوان",
     "onMap": "على الخريطة",
@@ -650,7 +662,6 @@
     "fullNamePlaceholder": "اسمك الكامل",
     "emailLabel": "البريد الإلكتروني",
     "phoneLabel": "الهاتف",
-    "phonePlaceholder": "رقم الهاتف",
     "dobLabel": "تاريخ الميلاد",
     "cpfLabel": "رقم التعريف",
     "cpfPlaceholder": "000.000.000-00",
@@ -658,7 +669,8 @@
     "customTime": "وقت مخصص",
     "orCustomTime": "أو اختر وقتاً مخصصاً",
     "professionalFallback": "المختص(ة)",
-    "errorArchived": "لا تقبل هذه العيادة حجوزات جديدة لحسابك. يُرجى التواصل مع العيادة."
+    "errorArchived": "لا تقبل هذه العيادة حجوزات جديدة لحسابك. يُرجى التواصل مع العيادة.",
+    "practiceInactive": "لا تقبل هذه العيادة الحجوزات عبر الإنترنت حاليًا."
   },
   "auth": {
     "passwordTooShort": "يجب أن تتكون كلمة المرور من {min} أحرف على الأقل.",
@@ -705,7 +717,7 @@
       "country": "أين تقع عيادتك؟",
       "countryOther": "دولة أخرى",
       "countryHint": "يحدد العملة وسعر الباقة وهوية المريض ورمز الدفع. لتغييره لاحقًا، تواصل مع الدعم.",
-      "fullNameHint": "أضف لقبك إن أردت (Dr.، Prof.)؛ يظهر في التحيات."
+      "fullNameHint": "أضف لقبك إن أردت ({titles})؛ يظهر في التحيات."
     },
     "forgotPassword": {
       "title": "نسيت كلمة المرور؟",
@@ -827,7 +839,9 @@
     "clinics": "العيادات",
     "payments": "المدفوعات",
     "settings": "الإعدادات",
-    "signOut": "تسجيل الخروج"
+    "signOut": "تسجيل الخروج",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة"
   },
   "join": {
     "notFound": "رابط الدعوة غير موجود",
@@ -850,12 +864,13 @@
     "feature1": "مواعيد وجدولة غير محدودة",
     "feature2": "سجلات المرضى والوصفات والفحوصات",
     "feature3": "تقارير الإيرادات وتتبع المدفوعات",
-    "feature4": "تذكيرات مواعيد تلقائية",
+    "feature4": "تذكيرات بمواعيدك على هاتفك",
     "feature5": "وصول مضمن للسكرتيرات",
     "payCard": "الاشتراك بالبطاقة",
     "payCardSub": "Visa وMastercard وAmerican Express",
     "or": "أو",
     "cancelAnytime": "إلغاء في أي وقت. بدون التزامات.",
+    "startsAfterTrial": "يبدأ اشتراكك في {date} عند انتهاء الفترة التجريبية المجانية. لن يُخصم منك أي مبلغ اليوم.",
     "successMessage": "تم تفعيل الاشتراك! مرحبًا بك في SolvyMed Pro.",
     "activationPending": "تم استلام الدفع! جارٍ تفعيل اشتراكك…",
     "activationSlow": "استلمنا دفعتك، لكن التفعيل يستغرق وقتًا أطول من المعتاد. يكتمل عادةً خلال دقائق قليلة؛ وإذا لم تظهر خطتك، فتواصل مع الدعم:",
@@ -879,7 +894,13 @@
     "paymentActivating": "تم استلام الدفعة. تتم استعادة وصولك، يرجى تحديث هذه الصفحة بعد قليل.",
     "chipDays": "تجربة مجانية: {n} يوم متبقٍ · عرض الخطة",
     "chipUrgentDays": "تجربة مجانية: {n} يوم متبقٍ · اشترك",
-    "chipLastDay": "تجربة مجانية: اليوم الأخير · اشترك"
+    "chipLastDay": "تجربة مجانية: اليوم الأخير · اشترك",
+    "lockedSettingsHint": "بياناتك تبقى ملكك: صدّر مرضاك أو أدر الاشتراك أو أغلق حسابك من",
+    "lockedSettingsLink": "الإعدادات",
+    "goToDashboard": "الانتقال إلى لوحة التحكم",
+    "backToDashboard": "العودة إلى لوحة التحكم",
+    "back": "رجوع",
+    "needHelp": "هل تحتاج إلى مساعدة؟"
   },
   "secretary": {
     "notConnectedTitle": "لم يتم ربطك بعيادة بعد",
@@ -1037,7 +1058,9 @@
     "pushClosedTitle": "أُغلقت العيادة",
     "pushClosedBody": "أغلقت عيادتك حسابها في SolvyMed. أُلغيت مواعيدك القادمة. للحصول على نسخة من سجلك، راسل support@solvymed.com.",
     "pushCancelledTitle": "أُلغي الموعد",
-    "pushCancelledBody": "ألغت العيادة موعدك في {date} الساعة {time}."
+    "pushCancelledBody": "ألغت العيادة موعدك في {date} الساعة {time}.",
+    "closedNotice": "تم إغلاق حسابك.",
+    "deletedNotice": "تم حذف حسابك."
   },
   "setup": {
     "title": "جهّز عيادتك",
@@ -1271,12 +1294,16 @@
       "payments": {
         "a": "كم لي للتحصيل هذا الأسبوع؟",
         "b": "إرسال Pix لمريض",
-        "c": "تسجيل كمدفوع"
+        "c": "تسجيل كمدفوع",
+        "bPromptPay": "أرسل رمز PromptPay QR إلى مريض",
+        "bNone": "اعرض المواعيد غير المدفوعة"
       },
       "settings": {
         "a": "كيف أدعو السكرتير/ة؟",
         "b": "إعداد Pix",
-        "c": "تغيير ساعات العمل"
+        "c": "تغيير ساعات العمل",
+        "bPromptPay": "إعداد PromptPay",
+        "bNone": "تغيير بيانات العيادة"
       },
       "other": {
         "a": "ما مواعيدي غدًا؟",
@@ -1653,7 +1680,11 @@
     "search": "ابحث بالاسم أو رقم الهوية…",
     "archivedTag": "مؤرشف",
     "back": "رجوع",
-    "cancel": "إلغاء"
+    "cancel": "إلغاء",
+    "subBirth": "الميلاد {date}",
+    "subPhone": "الهاتف …{last4}",
+    "subImported": "استيراد {date}",
+    "subCreated": "أضيف {date}"
   },
   "patientAddress": {
     "section": "العنوان",
@@ -1685,5 +1716,91 @@
     "OTHER_neighborhood": "الحي أو المنطقة",
     "OTHER_city": "المدينة",
     "OTHER_state": "الولاية أو المقاطعة"
+  },
+  "solvyaiServer": {
+    "sendPix": "إرسال Pix عبر واتساب",
+    "pixKey": "مفتاح Pix",
+    "newAppt": "موعد جديد",
+    "cancelAppt": "إلغاء الموعد",
+    "block": "حجب وقت",
+    "paid": "تعليم كمدفوع",
+    "unpaid": "تعليم كغير مدفوع",
+    "patient": "المريض",
+    "when": "متى",
+    "duration": "المدة",
+    "period": "الفترة",
+    "reason": "السبب",
+    "appointment": "الموعد",
+    "value": "المبلغ",
+    "procedure": "الإجراء",
+    "type": "النوع",
+    "inPerson": "حضوري",
+    "blockedWarn": "⚠ وقت محجوب ({s}–{e})",
+    "outsideWarn": "⚠ خارج ساعات العمل ({s}–{e})",
+    "dayOffWarn": "⚠ {d} ليس يوم عمل",
+    "samePatientWarn": "⚠ لدى {n} موعد في ذلك اليوم الساعة {t}",
+    "blockedAsk": "هذا الوقت محجوب ({s}–{e}).",
+    "outsideAsk": "هذا الوقت خارج ساعات العمل ({s}–{e}).",
+    "dayOffAsk": "{d} ليس يوم عمل.",
+    "bookAnyway": "الحجز على أي حال؟",
+    "bookLabel": "حجز",
+    "repeatLabel": "تكرار",
+    "repeatValue": "{every, select, week {أسبوعي} biweekly {كل أسبوعين} other {شهري}}، {n} مواعيد (حتى {last})",
+    "moveAppt": "إعادة جدولة الموعد",
+    "from": "من",
+    "to": "إلى",
+    "moveAnyway": "إعادة الجدولة على أي حال؟",
+    "moveLabel": "إعادة جدولة",
+    "notMovable": "لا يمكن إعادة جدولة هذا الموعد.",
+    "pastStop": "هذا الوقت قد مضى. اختر وقتًا آخر.",
+    "archivedStop": "هذا المريض مؤرشف. استعد السجل قبل الحجز.",
+    "requestStop": "تُقبل طلبات المواعيد أو تُرفض من الطلب نفسه.",
+    "conflict": "{when} الساعة {s} يوجد {what} ({s}–{e}). أي من هذه الأوقات؟",
+    "conflictNone": "{when} الساعة {s} يوجد {what} ({s}–{e}). أي وقت آخر؟",
+    "slotTaken": "حُجز هذا الوقت للتو. لم يُحفظ شيء. أي من هذه الأوقات؟",
+    "slotTakenNone": "حُجز هذا الوقت للتو. لم يُحفظ شيء. أي وقت آخر؟",
+    "notCancellable": "يمكن إلغاء المواعيد المجدولة أو المؤكدة أو المتأخرة فقط. لم يُحفظ شيء.",
+    "unblock": "إلغاء حجب الوقت",
+    "confirmReq": "تأكيد الطلب",
+    "rejectReq": "رفض الطلب",
+    "decision": "القرار",
+    "confirmIt": "تأكيد",
+    "rejectIt": "رفض",
+    "note": "ملاحظة",
+    "addPatient": "مريض جديد",
+    "fullName": "الاسم",
+    "birth": "تاريخ الميلاد",
+    "similar": "مرضى مشابهون مسجلون بالفعل",
+    "archived": "مؤرشف",
+    "proposalConfirmStop": "هذا الطلب بانتظار رد المريض على الوقت الجديد؛ يمكن رفضه فقط.",
+    "seriesOther": "وقت آخر في {d}",
+    "skippedLabel": "مستبعد",
+    "skippedValue": "{d} (الوقت محجوز)",
+    "pickPatient": "أي مريض؟",
+    "pickAppointment": "أي موعد؟",
+    "pickDate": "أي تاريخ؟",
+    "pickSimilar": "يوجد مريض مشابه مسجل. هل هو الشخص نفسه؟",
+    "someoneElse": "شخص آخر",
+    "born": "مواليد {d}",
+    "pointerCard": "راجع التفاصيل ثم اضغط {button}.",
+    "promptPayText": "في عيادات تايلاند، يدفع المريض بمسح رمز PromptPay QR للموعد.",
+    "promptPayOpen": "فتح QR",
+    "openScreen": "فتح الشاشة",
+    "unavailableArticles": "SolvyAI غير متاح مؤقتًا. قد تساعدك هذه المقالات:",
+    "unavailableLater": "SolvyAI غير متاح مؤقتًا. حاول لاحقًا.",
+    "couldntFinish": "لم أتمكن من إتمام ذلك. هل يمكنك قوله بطريقة أخرى مع اسم المريض والتاريخ والوقت؟",
+    "onlySolvyMed": "يمكنني المساعدة في SolvyMed فقط.",
+    "noClinical": "لا يمكنني المساعدة في المسائل السريرية.",
+    "minutes": "{n} دقيقة"
+  },
+  "countryExamples": {
+    "phone": "رقم الهاتف"
+  },
+  "solvyaiIntro": {
+    "title": "تعرّف على SolvyAI ✦",
+    "body": "اطلب بكلماتك: \"احجز لماريا يوم الجمعة الساعة 11\". يعرض لك SolvyAI كل التفاصيل ولا ينفّذ شيئًا إلا بعد تأكيدك.",
+    "tryNow": "جرّبه الآن",
+    "later": "لاحقًا",
+    "whatCanDo": "ماذا يستطيع SolvyAI أن يفعل؟"
   }
 }

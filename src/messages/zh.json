@@ -29,7 +29,7 @@
     "heading": "诊所所需的一切",
     "sub": "专为希望减少行政工作、将更多时间用于患者的临床医生和独立从业者打造。",
     "scheduling_title": "智能排程",
-    "scheduling_desc": "完整的日历视图，支持日、周、月模式。管理线下和在线预约，屏蔽时间段，并发送自动提醒。",
+    "scheduling_desc": "完整的日历视图，支持日、周、月模式。管理线下和在线预约，屏蔽时间段，并在手机上自动收到预约提醒。",
     "patients_title": "患者管理",
     "patients_desc": "包含个人信息、联系方式、预约历史和自定义标签的完整患者档案。可在整个患者库中搜索和筛选。",
     "records_title": "临床记录",
@@ -246,10 +246,11 @@
     "revert": "撤销",
     "confirm": "确认",
     "cancel": "取消",
-    "amountPlaceholder": "金额",
+    "amountPlaceholder": "金额 ({symbol})",
     "revertConfirm": "将此付款恢复为待付款状态？",
     "errorInvalidAmount": "请输入有效金额。",
-    "errorGeneric": "出现问题，请重试。"
+    "errorGeneric": "出现问题，请重试。",
+    "amountPlaceholderPlain": "金额"
   },
   "paymentsPage": {
     "title": "付款",
@@ -316,7 +317,9 @@
     "pageInfo": "第 {from}–{to} 条，共 {total} 条",
     "prevPage": "上一页",
     "nextPage": "下一页",
-    "pagesLabel": "分页"
+    "pagesLabel": "分页",
+    "fullNamePlaceholder": "全名",
+    "professionPlaceholder": "例如：工程师、教师…"
   },
   "patientDetail": {
     "tabInfo": "信息",
@@ -508,9 +511,9 @@
     "noProcedures": "暂无诊疗项目。请在下方添加第一个。",
     "newProcedure": "新建项目",
     "procedureName": "名称",
-    "procedureNamePlaceholder": "初诊、复诊…",
+    "procedureNamePlaceholder": "例如：初诊 – 成人",
     "durationLabel": "时长（分钟）",
-    "priceLabel": "价格（R$）",
+    "priceLabel": "价格（{symbol}）",
     "paymentTypeLabel": "支付方式",
     "private": "自费",
     "insurance": "保险",
@@ -565,13 +568,23 @@
     "manageSubscription": "管理订阅",
     "subscriptionSubscribe": "查看套餐",
     "practiceCountryOther": "其他国家",
-    "fullNameHint": "如需要，可加上头衔（Dr.、Prof.），会显示在问候语中。",
+    "fullNameHint": "如需要，可加上头衔（{titles}），会显示在问候语中。",
     "cnpjInvalid": "CNPJ 无效,请检查号码。",
     "appearanceTitle": "外观",
     "appearanceHint": "此浏览器中的面板主题。打印内容和电子邮件始终为浅色。",
     "themeAuto": "自动",
     "themeLight": "浅色",
-    "themeDark": "深色"
+    "themeDark": "深色",
+    "pixKey": "Pix 密钥",
+    "pixKeyPlaceholder": "CPF、CNPJ、电子邮件、电话或随机密钥",
+    "fullNameTitles": "Dr.、Prof.",
+    "registrationPlaceholderTH": "例如：ว.12345（医学委员会执照）",
+    "registrationPlaceholderOther": "例如：你的执业证号",
+    "clinicNamePlaceholderTH": "素坤逸诊所",
+    "clinicNamePlaceholderOther": "康健诊所",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "主街123号",
+    "priceLabelPlain": "价格"
   },
   "clinics": {
     "title": "我的诊所",
@@ -592,7 +605,6 @@
     "countryLabel": "国家",
     "countryPlaceholder": "国家",
     "phoneLabel": "电话",
-    "phonePlaceholder": "+86 10 0000 0000",
     "locationNote": "地图上的位置将根据您提供的地址自动检测。",
     "noAddress": "无地址",
     "onMap": "在地图上",
@@ -650,7 +662,6 @@
     "fullNamePlaceholder": "您的姓名",
     "emailLabel": "电子邮件",
     "phoneLabel": "电话",
-    "phonePlaceholder": "138 0000 0000",
     "dobLabel": "出生日期",
     "cpfLabel": "身份证号",
     "cpfPlaceholder": "000.000.000-00",
@@ -658,7 +669,8 @@
     "customTime": "自定义时间",
     "orCustomTime": "或选择自定义时间",
     "professionalFallback": "专业人员",
-    "errorArchived": "该诊所目前不接受您账户的新预约。请联系诊所。"
+    "errorArchived": "该诊所目前不接受您账户的新预约。请联系诊所。",
+    "practiceInactive": "该诊所目前不接受在线预约。"
   },
   "auth": {
     "passwordTooShort": "密码至少需要{min}个字符。",
@@ -705,7 +717,7 @@
       "country": "您的诊所在哪里？",
       "countryOther": "其他国家",
       "countryHint": "用于设定货币、套餐价格、患者证件和付款二维码。之后如需更改，请联系客服。",
-      "fullNameHint": "如需要，可加上头衔（Dr.、Prof.），会显示在问候语中。"
+      "fullNameHint": "如需要，可加上头衔（{titles}），会显示在问候语中。"
     },
     "forgotPassword": {
       "title": "忘记密码？",
@@ -827,7 +839,9 @@
     "clinics": "诊所",
     "payments": "付款",
     "settings": "设置",
-    "signOut": "退出登录"
+    "signOut": "退出登录",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单"
   },
   "join": {
     "notFound": "找不到邀请链接",
@@ -850,12 +864,13 @@
     "feature1": "无限预约和日程管理",
     "feature2": "患者病历、处方和检查",
     "feature3": "收入报告和付款跟踪",
-    "feature4": "自动预约提醒",
+    "feature4": "手机上的预约提醒",
     "feature5": "包含秘书访问权限",
     "payCard": "使用卡片订阅",
     "payCardSub": "Visa、Mastercard、美国运通",
     "or": "或",
     "cancelAnytime": "随时取消。无需承诺。",
+    "startsAfterTrial": "你的订阅将于 {date} 免费试用结束时开始。今天不会扣款。",
     "successMessage": "订阅已激活！欢迎使用SolvyMed Pro。",
     "activationPending": "已收到付款！正在激活您的订阅…",
     "activationSlow": "我们已收到您的付款，但激活时间比平时长。通常几分钟内即可完成；如果您的套餐没有显示，请联系支持：",
@@ -879,7 +894,13 @@
     "paymentActivating": "已收到付款。正在恢复您的访问权限，请稍后刷新此页面。",
     "chipDays": "免费试用：剩余 {n} 天 · 查看方案",
     "chipUrgentDays": "免费试用：剩余 {n} 天 · 立即订阅",
-    "chipLastDay": "免费试用：最后一天 · 立即订阅"
+    "chipLastDay": "免费试用：最后一天 · 立即订阅",
+    "lockedSettingsHint": "你的数据仍属于你:可在以下位置导出患者、管理订阅或关闭账户:",
+    "lockedSettingsLink": "设置",
+    "goToDashboard": "前往控制台",
+    "backToDashboard": "返回控制台",
+    "back": "返回",
+    "needHelp": "需要帮助?"
   },
   "secretary": {
     "notConnectedTitle": "尚未连接到诊所",
@@ -1037,7 +1058,9 @@
     "pushClosedTitle": "诊所已关闭",
     "pushClosedBody": "您的诊所已关闭其 SolvyMed 账户。您的后续预约已取消。如需病历副本，请联系 support@solvymed.com。",
     "pushCancelledTitle": "预约已取消",
-    "pushCancelledBody": "您在 {date} {time} 的预约已被诊所取消。"
+    "pushCancelledBody": "您在 {date} {time} 的预约已被诊所取消。",
+    "closedNotice": "你的账户已关闭。",
+    "deletedNotice": "你的账户已删除。"
   },
   "setup": {
     "title": "设置您的诊所",
@@ -1271,12 +1294,16 @@
       "payments": {
         "a": "本周待收多少？",
         "b": "给患者发送 Pix",
-        "c": "标记为已付款"
+        "c": "标记为已付款",
+        "bPromptPay": "向患者发送 PromptPay 二维码",
+        "bNone": "查看未付款的预约"
       },
       "settings": {
         "a": "如何邀请助理？",
         "b": "设置 Pix",
-        "c": "修改出诊时间"
+        "c": "修改出诊时间",
+        "bPromptPay": "设置 PromptPay",
+        "bNone": "修改诊所信息"
       },
       "other": {
         "a": "我明天有什么安排？",
@@ -1653,7 +1680,11 @@
     "search": "按姓名或证件号搜索…",
     "archivedTag": "已归档",
     "back": "返回",
-    "cancel": "取消"
+    "cancel": "取消",
+    "subBirth": "出生 {date}",
+    "subPhone": "电话 …{last4}",
+    "subImported": "导入于 {date}",
+    "subCreated": "添加于 {date}"
   },
   "patientAddress": {
     "section": "地址",
@@ -1685,5 +1716,91 @@
     "OTHER_neighborhood": "街区或区",
     "OTHER_city": "城市",
     "OTHER_state": "州或省"
+  },
+  "solvyaiServer": {
+    "sendPix": "通过 WhatsApp 发送 Pix",
+    "pixKey": "Pix 密钥",
+    "newAppt": "新预约",
+    "cancelAppt": "取消预约",
+    "block": "屏蔽时段",
+    "paid": "标记为已付",
+    "unpaid": "标记为未付",
+    "patient": "患者",
+    "when": "时间",
+    "duration": "时长",
+    "period": "时段",
+    "reason": "原因",
+    "appointment": "预约",
+    "value": "金额",
+    "procedure": "项目",
+    "type": "类型",
+    "inPerson": "到诊",
+    "blockedWarn": "⚠ 已屏蔽时段（{s}–{e}）",
+    "outsideWarn": "⚠ 不在工作时间（{s}–{e}）",
+    "dayOffWarn": "⚠ {d}不是出诊日",
+    "samePatientWarn": "⚠ {n}当天{t}已有预约",
+    "blockedAsk": "该时段已屏蔽（{s}–{e}）。",
+    "outsideAsk": "该时段不在工作时间（{s}–{e}）。",
+    "dayOffAsk": "{d}不是出诊日。",
+    "bookAnyway": "仍要预约吗？",
+    "bookLabel": "预约",
+    "repeatLabel": "重复",
+    "repeatValue": "{every, select, week {每周} biweekly {每 2 周} other {每月}}，{n} 次（至 {last}）",
+    "moveAppt": "改约",
+    "from": "原时间",
+    "to": "新时间",
+    "moveAnyway": "仍要改约吗？",
+    "moveLabel": "改约",
+    "notMovable": "此预约无法改约。",
+    "pastStop": "该时间已过。请选择其他时间。",
+    "archivedStop": "该患者已归档。预约前请先恢复档案。",
+    "requestStop": "预约请求需在请求中接受或拒绝。",
+    "conflict": "{when} {s} 已有{what}（{s}–{e}）。选哪个时间？",
+    "conflictNone": "{when} {s} 已有{what}（{s}–{e}）。换哪个时间？",
+    "slotTaken": "该时间刚被占用。未保存任何内容。选哪个时间？",
+    "slotTakenNone": "该时间刚被占用。未保存任何内容。换哪个时间？",
+    "notCancellable": "只能取消已安排、已确认或迟到的预约。未保存任何内容。",
+    "unblock": "解除屏蔽",
+    "confirmReq": "确认请求",
+    "rejectReq": "拒绝请求",
+    "decision": "决定",
+    "confirmIt": "确认",
+    "rejectIt": "拒绝",
+    "note": "备注",
+    "addPatient": "新患者",
+    "fullName": "姓名",
+    "birth": "出生日期",
+    "similar": "已登记的相似患者",
+    "archived": "已归档",
+    "proposalConfirmStop": "此请求正在等待患者对新时间的回复，只能拒绝。",
+    "seriesOther": "{d}的其他时间",
+    "skippedLabel": "跳过",
+    "skippedValue": "{d}（时段已满）",
+    "pickPatient": "哪位患者？",
+    "pickAppointment": "哪个预约？",
+    "pickDate": "哪一天？",
+    "pickSimilar": "已有相似患者登记。是同一个人吗？",
+    "someoneElse": "是另一个人",
+    "born": "{d}出生",
+    "pointerCard": "核对详情后点“{button}”。",
+    "promptPayText": "在泰国的诊所，患者扫描预约的 PromptPay 二维码付款。",
+    "promptPayOpen": "打开二维码",
+    "openScreen": "打开页面",
+    "unavailableArticles": "SolvyAI 暂时不可用。这些文章或许有帮助：",
+    "unavailableLater": "SolvyAI 暂时不可用。请稍后再试。",
+    "couldntFinish": "没能完成。能换个说法，并附上患者姓名、日期和时间吗？",
+    "onlySolvyMed": "我只能帮助处理 SolvyMed 相关问题。",
+    "noClinical": "我无法回答临床问题。",
+    "minutes": "{n} 分钟"
+  },
+  "countryExamples": {
+    "phone": "电话号码"
+  },
+  "solvyaiIntro": {
+    "title": "认识 SolvyAI ✦",
+    "body": "用你自己的话说就行：“给玛丽亚约周五 11 点”。SolvyAI 会显示所有细节，只有在你确认后才会执行。",
+    "tryNow": "立即试用",
+    "later": "以后再说",
+    "whatCanDo": "SolvyAI 能做什么？"
   }
 }

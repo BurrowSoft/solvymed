@@ -29,7 +29,7 @@
     "heading": "Todo lo que tu consulta necesita",
     "sub": "Diseñado para clínicos y profesionales independientes que quieren menos papeleo y más tiempo con sus pacientes.",
     "scheduling_title": "Agenda Inteligente",
-    "scheduling_desc": "Vista completa del calendario en modos diario, semanal y mensual. Gestiona citas presenciales y en línea, bloquea horarios y envía recordatorios automáticos.",
+    "scheduling_desc": "Vista completa del calendario en modos diario, semanal y mensual. Gestiona citas presenciales y en línea, bloquea horarios y recibe recordatorios automáticos de tus citas en el móvil.",
     "patients_title": "Gestión de Pacientes",
     "patients_desc": "Fichas completas con datos personales, contacto, historial de citas y etiquetas personalizadas. Busca y filtra toda tu base de pacientes.",
     "records_title": "Historial Clínico",
@@ -246,10 +246,11 @@
     "revert": "Revertir",
     "confirm": "Confirmar",
     "cancel": "Cancelar",
-    "amountPlaceholder": "Monto",
+    "amountPlaceholder": "Monto ({symbol})",
     "revertConfirm": "¿Revertir este pago a pendiente?",
     "errorInvalidAmount": "Introduce un importe válido.",
-    "errorGeneric": "Algo salió mal. Inténtalo de nuevo."
+    "errorGeneric": "Algo salió mal. Inténtalo de nuevo.",
+    "amountPlaceholderPlain": "Monto"
   },
   "paymentsPage": {
     "title": "Pagos",
@@ -316,7 +317,9 @@
     "pageInfo": "{from}–{to} de {total}",
     "prevPage": "Anterior",
     "nextPage": "Siguiente",
-    "pagesLabel": "Páginas"
+    "pagesLabel": "Páginas",
+    "fullNamePlaceholder": "Nombre completo",
+    "professionPlaceholder": "ej. Ingeniero, Profesor…"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -508,9 +511,9 @@
     "noProcedures": "Aún no hay procedimientos. Añade el primero a continuación.",
     "newProcedure": "Nuevo procedimiento",
     "procedureName": "Nombre",
-    "procedureNamePlaceholder": "Consulta inicial, Seguimiento…",
+    "procedureNamePlaceholder": "p. ej. Primera consulta – Adulto",
     "durationLabel": "Duración (minutos)",
-    "priceLabel": "Precio (R$)",
+    "priceLabel": "Precio ({symbol})",
     "paymentTypeLabel": "Tipo de pago",
     "private": "Privado",
     "insurance": "Seguro",
@@ -565,13 +568,23 @@
     "manageSubscription": "Gestionar suscripción",
     "subscriptionSubscribe": "Ver el plan",
     "practiceCountryOther": "Otro país",
-    "fullNameHint": "Si quieres, añade tu título (Dr., Dra., Prof.): aparece en los saludos.",
+    "fullNameHint": "Si quieres, añade tu título ({titles}): aparece en los saludos.",
     "cnpjInvalid": "El CNPJ no es válido. Revisa el número.",
     "appearanceTitle": "Apariencia",
     "appearanceHint": "El tema del panel en este navegador. Las impresiones y los correos siempre son claros.",
     "themeAuto": "Automático",
     "themeLight": "Claro",
-    "themeDark": "Oscuro"
+    "themeDark": "Oscuro",
+    "pixKey": "Clave Pix",
+    "pixKeyPlaceholder": "CPF, CNPJ, correo, teléfono o clave aleatoria",
+    "fullNameTitles": "Dr., Dra., Prof.",
+    "registrationPlaceholderTH": "p. ej. ว.12345 (licencia del Consejo Médico)",
+    "registrationPlaceholderOther": "p. ej. tu número de colegiado",
+    "clinicNamePlaceholderTH": "Clínica Sukhumvit",
+    "clinicNamePlaceholderOther": "Clínica Bienestar",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "Calle Mayor 123",
+    "priceLabelPlain": "Precio"
   },
   "clinics": {
     "title": "Mis Clínicas",
@@ -592,7 +605,6 @@
     "countryLabel": "País",
     "countryPlaceholder": "País",
     "phoneLabel": "Teléfono",
-    "phonePlaceholder": "+34 91 000 0000",
     "locationNote": "La ubicación en el mapa se detecta automáticamente a partir de la dirección que proporciones.",
     "noAddress": "Sin dirección",
     "onMap": "En el mapa",
@@ -650,7 +662,6 @@
     "fullNamePlaceholder": "Tu nombre completo",
     "emailLabel": "Correo electrónico",
     "phoneLabel": "Teléfono",
-    "phonePlaceholder": "612 345 678",
     "dobLabel": "Fecha de nacimiento",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -658,7 +669,8 @@
     "customTime": "Hora personalizada",
     "orCustomTime": "O elige una hora",
     "professionalFallback": "Profesional",
-    "errorArchived": "Esta clínica no está aceptando nuevas reservas para tu cuenta. Ponte en contacto con la clínica."
+    "errorArchived": "Esta clínica no está aceptando nuevas reservas para tu cuenta. Ponte en contacto con la clínica.",
+    "practiceInactive": "Esta clínica no está aceptando reservas en línea en este momento."
   },
   "auth": {
     "passwordTooShort": "La contraseña debe tener al menos {min} caracteres.",
@@ -705,7 +717,7 @@
       "country": "¿Dónde está tu consulta?",
       "countryOther": "Otro país",
       "countryHint": "Define la moneda, el precio del plan, el documento del paciente y el QR de pago. Para cambiarlo después, contacta con soporte.",
-      "fullNameHint": "Si quieres, añade tu título (Dr., Dra., Prof.): aparece en los saludos."
+      "fullNameHint": "Si quieres, añade tu título ({titles}): aparece en los saludos."
     },
     "forgotPassword": {
       "title": "¿Olvidaste tu contraseña?",
@@ -827,7 +839,9 @@
     "clinics": "Clínicas",
     "payments": "Pagos",
     "settings": "Configuración",
-    "signOut": "Cerrar sesión"
+    "signOut": "Cerrar sesión",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú"
   },
   "join": {
     "notFound": "Enlace de invitación no encontrado",
@@ -850,12 +864,13 @@
     "feature1": "Citas y agenda ilimitadas",
     "feature2": "Historiales, recetas y exámenes",
     "feature3": "Informes de ingresos y seguimiento de pagos",
-    "feature4": "Recordatorios automáticos de citas",
+    "feature4": "Recordatorios de tus citas en el móvil",
     "feature5": "Acceso incluido para tus secretarias",
     "payCard": "Suscribirse con tarjeta",
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "o",
     "cancelAnytime": "Cancela cuando quieras. Sin compromisos.",
+    "startsAfterTrial": "Tu suscripción empieza el {date}, cuando termina la prueba gratuita. Hoy no se cobra nada.",
     "successMessage": "¡Suscripción activada! Te damos la bienvenida a SolvyMed Pro.",
     "activationPending": "¡Pago recibido! Activando tu suscripción…",
     "activationSlow": "Recibimos tu pago, pero la activación está tardando más de lo habitual. Suele completarse en unos minutos; si tu plan no aparece, contacta con soporte:",
@@ -879,7 +894,13 @@
     "paymentActivating": "Pago recibido. Tu acceso se está restableciendo. Actualiza esta página en un momento.",
     "chipDays": "Prueba gratis: quedan {n} días · Ver plan",
     "chipUrgentDays": "Prueba gratis: quedan {n} días · Suscribirse",
-    "chipLastDay": "Prueba gratis: último día · Suscribirse"
+    "chipLastDay": "Prueba gratis: último día · Suscribirse",
+    "lockedSettingsHint": "Tus datos siguen siendo tuyos: exporta tus pacientes, gestiona la suscripción o cierra tu cuenta en",
+    "lockedSettingsLink": "Configuración",
+    "goToDashboard": "Ir al panel",
+    "backToDashboard": "Volver al panel",
+    "back": "Volver",
+    "needHelp": "¿Necesitas ayuda?"
   },
   "secretary": {
     "notConnectedTitle": "Tu cuenta aún no está conectada a una clínica",
@@ -1037,7 +1058,9 @@
     "pushClosedTitle": "Clínica cerrada",
     "pushClosedBody": "Tu clínica cerró su cuenta de SolvyMed. Tus citas futuras se cancelaron. Para obtener una copia de tu historia clínica, escribe a support@solvymed.com.",
     "pushCancelledTitle": "Cita cancelada",
-    "pushCancelledBody": "Tu cita del {date} a las {time} fue cancelada por la clínica."
+    "pushCancelledBody": "Tu cita del {date} a las {time} fue cancelada por la clínica.",
+    "closedNotice": "Tu cuenta ha sido cerrada.",
+    "deletedNotice": "Tu cuenta ha sido eliminada."
   },
   "setup": {
     "title": "Configura tu clínica",
@@ -1271,12 +1294,16 @@
       "payments": {
         "a": "¿Cuánto tengo por cobrar esta semana?",
         "b": "Enviar Pix a un paciente",
-        "c": "Marcar como pagado"
+        "c": "Marcar como pagado",
+        "bPromptPay": "Enviar un QR de PromptPay a un paciente",
+        "bNone": "Ver citas sin pagar"
       },
       "settings": {
         "a": "¿Cómo invito a mi secretaria?",
         "b": "Configurar Pix",
-        "c": "Cambiar el horario de atención"
+        "c": "Cambiar el horario de atención",
+        "bPromptPay": "Configurar PromptPay",
+        "bNone": "Cambiar los datos de la clínica"
       },
       "other": {
         "a": "¿Qué tengo mañana?",
@@ -1653,7 +1680,11 @@
     "search": "Buscar por nombre o documento…",
     "archivedTag": "archivado",
     "back": "Volver",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "subBirth": "Nac. {date}",
+    "subPhone": "Tel. …{last4}",
+    "subImported": "Importado el {date}",
+    "subCreated": "Registrado el {date}"
   },
   "patientAddress": {
     "section": "Dirección",
@@ -1685,5 +1716,91 @@
     "OTHER_neighborhood": "Barrio o distrito",
     "OTHER_city": "Ciudad",
     "OTHER_state": "Estado o provincia"
+  },
+  "solvyaiServer": {
+    "sendPix": "Enviar Pix por WhatsApp",
+    "pixKey": "Clave Pix",
+    "newAppt": "Nueva cita",
+    "cancelAppt": "Cancelar cita",
+    "block": "Bloquear horario",
+    "paid": "Marcar como pagado",
+    "unpaid": "Marcar como no pagado",
+    "patient": "Paciente",
+    "when": "Cuándo",
+    "duration": "Duración",
+    "period": "Periodo",
+    "reason": "Motivo",
+    "appointment": "Cita",
+    "value": "Importe",
+    "procedure": "Procedimiento",
+    "type": "Tipo",
+    "inPerson": "Presencial",
+    "blockedWarn": "⚠ Horario bloqueado ({s}–{e})",
+    "outsideWarn": "⚠ Fuera del horario de atención ({s}–{e})",
+    "dayOffWarn": "⚠ {d} no es día de atención",
+    "samePatientWarn": "⚠ {n} ya tiene cita ese día a las {t}",
+    "blockedAsk": "Este horario está bloqueado ({s}–{e}).",
+    "outsideAsk": "Este horario está fuera del horario de atención ({s}–{e}).",
+    "dayOffAsk": "{d} no es día de atención.",
+    "bookAnyway": "¿Agendar de todos modos?",
+    "bookLabel": "Agendar",
+    "repeatLabel": "Repetir",
+    "repeatValue": "{every, select, week {Semanal} biweekly {Cada 2 semanas} other {Mensual}}, {n} citas (hasta {last})",
+    "moveAppt": "Reprogramar cita",
+    "from": "De",
+    "to": "A",
+    "moveAnyway": "¿Reprogramar de todos modos?",
+    "moveLabel": "Reprogramar",
+    "notMovable": "Esta cita no se puede reprogramar.",
+    "pastStop": "Ese horario ya pasó. Elige otro.",
+    "archivedStop": "Este paciente está archivado. Restaura el registro antes de agendar.",
+    "requestStop": "Las solicitudes de cita se aceptan o rechazan en la propia solicitud.",
+    "conflict": "{when} a las {s} ya hay {what} ({s}–{e}). ¿Cuál de estos horarios?",
+    "conflictNone": "{when} a las {s} ya hay {what} ({s}–{e}). ¿Qué otro horario?",
+    "slotTaken": "Ese horario acaba de ocuparse. No se guardó nada. ¿Cuál de estos horarios?",
+    "slotTakenNone": "Ese horario acaba de ocuparse. No se guardó nada. ¿Qué otro horario?",
+    "notCancellable": "Solo se pueden cancelar citas agendadas, confirmadas o con retraso. No se guardó nada.",
+    "unblock": "Desbloquear horario",
+    "confirmReq": "Confirmar solicitud",
+    "rejectReq": "Rechazar solicitud",
+    "decision": "Decisión",
+    "confirmIt": "Confirmar",
+    "rejectIt": "Rechazar",
+    "note": "Nota",
+    "addPatient": "Nuevo paciente",
+    "fullName": "Nombre",
+    "birth": "Fecha de nacimiento",
+    "similar": "Pacientes parecidos ya registrados",
+    "archived": "archivado",
+    "proposalConfirmStop": "Esta solicitud espera la respuesta del paciente al nuevo horario; solo se puede rechazar.",
+    "seriesOther": "Otro horario para {d}",
+    "skippedLabel": "Queda fuera",
+    "skippedValue": "{d} (horario ocupado)",
+    "pickPatient": "¿Qué paciente?",
+    "pickAppointment": "¿Qué cita?",
+    "pickDate": "¿Qué fecha?",
+    "pickSimilar": "Ya hay un paciente parecido registrado. ¿Es la misma persona?",
+    "someoneElse": "Es otra persona",
+    "born": "nac. {d}",
+    "pointerCard": "Revisa los detalles y toca {button}.",
+    "promptPayText": "En las clínicas de Tailandia, el paciente paga escaneando el QR de PromptPay de la cita.",
+    "promptPayOpen": "Abrir QR",
+    "openScreen": "Abrir pantalla",
+    "unavailableArticles": "SolvyAI no está disponible por ahora. Estos artículos pueden ayudar:",
+    "unavailableLater": "SolvyAI no está disponible por ahora. Inténtalo más tarde.",
+    "couldntFinish": "No pude completarlo. ¿Puedes decirlo de otra forma, con el nombre del paciente, la fecha y la hora?",
+    "onlySolvyMed": "Solo puedo ayudar con SolvyMed.",
+    "noClinical": "No puedo ayudar con cuestiones clínicas.",
+    "minutes": "{n} min"
+  },
+  "countryExamples": {
+    "phone": "Número de teléfono"
+  },
+  "solvyaiIntro": {
+    "title": "Conoce SolvyAI ✦",
+    "body": "Pídelo con tus palabras: \"Agenda a María el viernes a las 11\". SolvyAI te muestra todos los detalles y solo actúa cuando confirmas.",
+    "tryNow": "Probar ahora",
+    "later": "Más tarde",
+    "whatCanDo": "¿Qué puede hacer SolvyAI?"
   }
 }
