@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getEffectiveProfId } from "@/lib/effectiveProfId";
+import { getActiveProfId } from "@/lib/activeAccess";
 import { knownDbError } from "@/lib/dbErrors";
 import { PICKER_LIMIT, cleanSearchText, patientSearchFilter } from "@/lib/patientSearch";
 import { getPracticeCountry } from "@/lib/practiceCountry";
@@ -24,7 +24,7 @@ export async function searchPatientsForPicker(q: string): Promise<{ id: string; 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return [];
   // The practice country decides which ID column is searched.
   const filter = patientSearchFilter(q, patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId)));
@@ -58,7 +58,7 @@ export async function createAppointment(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   let patientName = formData.get("patient_name") as string;
@@ -248,7 +248,7 @@ export async function moveAppointment(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const id = formData.get("id") as string;
@@ -375,7 +375,7 @@ export async function updateAppointmentStatus(id: string, status: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   // A cancel tells the patient (below): what it was before, read first.
@@ -464,7 +464,7 @@ export async function undoScheduleChange(token: UndoToken): Promise<{ ok: boolea
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false };
-  const prof = await getEffectiveProfId(supabase, user.id);
+  const prof = await getActiveProfId(supabase, user.id);
   if (!prof || !verifyUndo(token, prof)) return { ok: false };
 
   // 1. Still as the action left it.
@@ -521,7 +521,7 @@ export async function deleteAppointment(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const { error } = await supabase
@@ -539,7 +539,7 @@ export async function blockTime(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized", code: "generic" };
-  const effectiveProfId = await getEffectiveProfId(supabase, user.id);
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account", code: "generic" };
 
   const date = formData.get("date") as string;

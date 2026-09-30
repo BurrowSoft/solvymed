@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { isProfessionalRole } from "@/lib/effectiveProfId";
+import { isActiveProfessional } from "@/lib/activeAccess";
 import {
   BUCKET, SIGNED_URL_SECONDS, folderFor, isFileDeletable, isUuid, pathBelongs,
   type FileKind, type PatientFile,
@@ -21,7 +21,7 @@ async function doctor(patientId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
-  if ((await isProfessionalRole(supabase, user.id)) !== true) return null;
+  if ((await isActiveProfessional(supabase, user.id)) !== true) return null;
   return { supabase, uid: user.id };
 }
 

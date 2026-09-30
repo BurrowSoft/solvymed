@@ -43,6 +43,11 @@ const h = vi.hoisted(() => {
 });
 
 vi.mock("@/lib/supabase/server", () => ({ createClient: async () => h.client }));
+// Not locked out (lib/activeAccess has its own test): the plain role check.
+vi.mock("@/lib/activeAccess", async () => {
+  const e = await import("@/lib/effectiveProfId");
+  return { isLockedOut: async () => false, getActiveProfId: e.getEffectiveProfId, isActiveProfessional: e.isProfessionalRole };
+});
 
 import { deletePatientFile, hidePatientFile, listPatientFiles, openPatientFile } from "@/app/[locale]/(site)/dashboard/(gated)/patients/files-actions";
 
