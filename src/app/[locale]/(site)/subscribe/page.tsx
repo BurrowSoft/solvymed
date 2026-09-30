@@ -121,7 +121,8 @@ export default async function SubscribePage({
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <SubscribeHeader exitHref={exitHref} backLabel={t("back")} />
+        {/* Every state: a way to sign out, top right (Vitor was stuck on the paywall). */}
+        <SubscribeHeader exitHref={exitHref} backLabel={t("back")} signOut={<SignOutButton label={tNav("signOut")} />} />
 
         {/* Back from checkout: "activated" only once the database says so
             (the webhook writes it); until then "activating…". */}
@@ -147,6 +148,24 @@ export default async function SubscribePage({
           <div className="mb-6 rounded-xl bg-red-50 border border-red-200 p-4 text-center text-sm text-red-800 font-medium">
             {t("trialExpired")}
           </div>
+        )}
+
+        {/* Locked: help and "Encerrar conta" above the plan, visible
+            without scrolling (UX). */}
+        {locked && (
+          <p className="mb-6 text-center text-sm text-slate-600">
+            {t("needHelp")} <a href="mailto:support@solvymed.com" className="font-semibold text-teal-700 underline">support@solvymed.com</a>
+            {" · "}
+            <a href={`${prefix}/account/delete`} className="text-slate-500 underline">{tClose("titleClose")}</a>
+          </p>
+        )}
+        {/* Locked: Settings stays open (export, subscription, close the
+            account, password); the rest of the dashboard doesn't. */}
+        {sub && !isAccessAllowed(sub) && sp.success !== "1" && (
+          <p className="mb-6 text-center text-sm text-slate-600">
+            {t("lockedSettingsHint")}{" "}
+            <a href={`/${locale === "en" ? "" : locale + "/"}dashboard/settings`} className="font-semibold text-teal-700 underline">{t("lockedSettingsLink")}</a>
+          </p>
         )}
 
         {/* Plan card (not once they've just paid: they're subscribed) */}
@@ -199,26 +218,6 @@ export default async function SubscribePage({
           </div>
         </div>}
 
-        {locked && (
-          <p className="mt-6 text-center text-sm text-slate-600">
-            {t("needHelp")} <a href="mailto:support@solvymed.com" className="font-semibold text-teal-700 underline">support@solvymed.com</a>
-            {" · "}
-            <a href={`${prefix}/account/delete`} className="text-slate-500 underline">{tClose("titleClose")}</a>
-          </p>
-        )}
-        {/* Every state: a way to sign out (Vitor was stuck on the paywall). */}
-        <div className="mt-4 flex justify-center">
-          <SignOutButton label={tNav("signOut")} />
-        </div>
-
-        {/* Locked: Settings stays open (export, subscription, close the
-            account, password); the rest of the dashboard doesn't. */}
-        {sub && !isAccessAllowed(sub) && sp.success !== "1" && (
-          <p className="mt-6 text-center text-sm text-slate-600">
-            {t("lockedSettingsHint")}{" "}
-            <a href={`/${locale === "en" ? "" : locale + "/"}dashboard/settings`} className="font-semibold text-teal-700 underline">{t("lockedSettingsLink")}</a>
-          </p>
-        )}
       </div>
     </div>
   );
