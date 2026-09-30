@@ -9,6 +9,7 @@ import { formatDateLabel } from "@/lib/dateLabels";
 import { cachedSystem, rules, type Client } from "./knowledge";
 import type { ContentBlock, ModelClient, ModelMessage, ModelUsage } from "./model";
 import { confirmFailedBlock, runTool, toolDefsFor, type ToolContext } from "./tools";
+import { loadTexts } from "./texts";
 
 // POST /api/assistant, without the HTTP (docs/assistant-api.md §3): the
 // checks in the contract's order, then the streamed answer. Everything it
@@ -30,12 +31,6 @@ export type Outcome =
   // it; the route calls it on cancel, which may come before the stream
   // started (a9).
   | { status: 200; stream: AsyncIterable<AnswerChunk>; settle?: () => Promise<void> };
-
-// The only text after a card / a list to choose from (UX): it points to the
-// block and names the real button, never repeats its details.
-const POINTER = {
-  card: { pt: "Confira os detalhes e toque em Confirmar.", en: "Check the details and tap Confirmar." },
-} as const;
 
 const SCREENS: AssistantScreen[] =["home", "schedule", "patients", "payments", "settings", "other"];
 const KEEP_MESSAGES = 6;
@@ -61,7 +56,7 @@ async function toolContext(db: unknown, profId: string, locale: string, client: 
   return {
     db: db as ToolContext["db"],
     profId,
-    lang: helpLang(locale),
+    t: await loadTexts(locale),
     locale,
     prefix: prefixOf(locale),
     today: clinicDate(now, tz),
@@ -121,15 +116,14 @@ function targetOf(path: string): TargetScreen {
 // The model ends a help answer with [[open:A1]]: an "Open screen" button to
 // that article's screen, built here from the Help data (never from model
 // text). Unknown ids, and screens the website doesn't have, are dropped.
-function openBlock(id: string, locale: string, client: Client): AnswerChunk | null {
+function openBlock(id: string, locale: string, client: Client, label: string): AnswerChunk | null {
   const article = HELP.flatMap((c) => c.articles).find((a) => a.id === id);
   if (!article) return null;
   const path = client === "web" && article.webUnavailable ? null : webScreen(article.open);
   if (!path) return null;
   const href = `${locale === routing.defaultLocale ? "" : `/${locale}`}${path}`;
   if (!isInternalHref(href)) return null;
-  const lang = helpLang(locale);
-  return { kind: "block", block: { type: "open", label: lang === "pt" ? "Abrir tela" : "Open screen", href, target: { screen: targetOf(path) } } };
+  return { kind: "block", block: { type: "open", label, href, target: { screen: targetOf(path) } } };
 }
 
 // Streams the model's text while holding back anything from "[[" until its
@@ -229,6 +223,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
   // the database reports per request (115); never from the client.
   const mode: "help" | "actions" = c.actions === true ? "actions" : "help";
   const lang = helpLang(req.locale);
+  const tx = await loadTexts(req.locale);
   const model = deps.model;
   const userId = deps.userId;
 
@@ -246,8 +241,8 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       yield {
         kind: "delta",
         text: found.length
-          ? (lang === "pt" ? "O SolvyAI está temporariamente indisponível. Estes artigos podem ajudar:" : "SolvyAI is temporarily unavailable. These articles may help:")
-          : (lang === "pt" ? "O SolvyAI está temporariamente indisponível. Tente novamente mais tarde." : "SolvyAI is temporarily unavailable. Please try again later."),
+          ? tx.unavailableArticles
+          : tx.unavailableLater,
       };
       yield { kind: "block", block: { type: "text", text: "" } };
       for (const a of found) {
@@ -280,7 +275,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       let shown: "card" | "choice" | "slot" | null = null;
       try {
         const ctx = mode === "actions" ? await toolContext(deps.db, userId, req.locale, deps.client, messages[messages.length - 1].content) : null;
-        let system = rules(lang, deps.client, req.screen, mode);
+        let system = rules(lang, deps.client, req.screen, mode, tx.reply);
         if (ctx) system += `\nToday at the clinic: ${formatDateLabel("en-US", ctx.today, { weekday: "long" })} ${ctx.today}, ${ctx.nowTime} (${ctx.tz}). Dates for the tools are YYYY-MM-DD in this calendar.\n${calendarLine(ctx.today)}`;
         const history: ModelMessage[] = [...messages];
         for (let round = 0; round < (ctx ? MAX_ROUNDS : 1); round++) {
@@ -325,23 +320,25 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
             // "Outro horário").
             // A list or a time choice carries its own question ("Qual
             // paciente?"): no text after it (3e: never a second "Escolha uma
-            // opção" line). A card gets the one pointer line.
-            const text = shown === "card" ? POINTER.card[lang] : shown ? "" : roundText.trim();
+            // opção" line). A card gets the one pointer line, naming the card's
+            // real button in the user's language.
+            const text = shown === "card" ? tx.pointerCard : shown ? "" : roundText.trim();
             if (text) { answered = true; yield { kind: "delta", text }; }
             break;
           }
           // The tools, as the user; their blocks (a card, a list to choose
           // from, time chips) go straight to the user, the text to the model.
           // One question at a time (UX): once a list or time choice is on
-          // screen, a second one waits for the answer to the first.
+          // screen, a second one, or a card (the model choosing from its own
+          // list; d7, th cancel), waits for the answer to the first.
           const results: ContentBlock[] = [];
           for (const call of calls) {
             const out = await runTool(ctx, call.name, call.input);
             let forModel = out.forModel;
             for (const b of [...(out.block ? [out.block] : []), ...(out.blocks ?? [])]) {
-              const asks = b.type === "pick" || b.type === "slot_choice";
-              if (asks && (shown === "choice" || shown === "slot")) {
-                forModel = "Not shown: the user must first answer the list already on screen. Ask nothing else now.";
+              const waits = b.type === "pick" || b.type === "slot_choice" || b.type === "card";
+              if (waits && (shown === "choice" || shown === "slot")) {
+                forModel = "Not shown: the user must first answer the list already on screen. Don't choose for them; ask nothing else now.";
                 continue;
               }
               answered = true;
@@ -358,7 +355,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
           // (the model did answer; its usage is recorded).
           if (round === MAX_ROUNDS - 1 && !answered) {
             answered = true;
-            yield { kind: "delta", text: lang === "pt" ? "Não consegui concluir isso. Pode dizer de outro jeito, com o nome do paciente, a data e o horário?" : "I couldn't finish that. Could you say it another way, with the patient's name, the date and the time?" };
+            yield { kind: "delta", text: tx.couldntFinish };
           }
         }
         yield { kind: "block", block: { type: "text", text: "" } };
@@ -381,7 +378,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
         p_professional_id: userId,
         p_input: u.input, p_output: u.output, p_cache_read: u.cacheRead, p_cache_write: u.cacheWrite,
       });
-      const open = seen.length ? openBlock(seen[0], req.locale, deps.client) : null;
+      const open = seen.length ? openBlock(seen[0], req.locale, deps.client, tx.openScreen) : null;
       if (open) yield open;
       yield { kind: "block", block: { type: "feedback" } };
       yield { kind: "usage", used: c.used ?? 0, limit: c.limit ?? 0, extra: 0, resetsAt: c.resets_at ?? "" };
