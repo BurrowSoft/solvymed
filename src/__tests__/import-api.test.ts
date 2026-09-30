@@ -1,15 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { ADD_ROWS_BATCH, ImportError, commitImport, problemRows, stageImport, undoImport, validateImport, type ImportDb } from "@/lib/import/api";
+import { ADD_ROWS_BATCH, ImportError, commitImport, lastUndoableImport, problemRows, stageImport, undoImport, validateImport, type ImportDb } from "@/lib/import/api";
 
 // The import's calls to 130/131, as the doctor, against a fake client.
 
-function fakeDb(results: Record<string, { data?: unknown; error?: { message: string } | null }>, rows: unknown[] = []) {
+function fakeDb(results: Record<string, { data?: unknown; error?: { message: string } | null }>, rows: unknown[] = [], last: { data: unknown; error: unknown } = { data: [], error: null }) {
   const calls: { fn: string; args?: Record<string, unknown> }[] = [];
   const filters: string[] = [];
   const range = (a: number, b: number) => Promise.resolve({ data: rows.slice(a, b + 1), error: null });
   const db: ImportDb = {
     rpc: (fn, args) => { calls.push({ fn, args }); const r = results[fn] ?? { data: null }; return Promise.resolve({ data: r.data ?? null, error: r.error ?? null }); },
-    from: () => ({ select: () => ({ eq: () => ({ or: (f: string) => { filters.push(f); return { order: () => ({ range }) }; }, order: () => ({ range }) }) }) }),
+    from: () => ({ select: () => ({ eq: (col: string, v: unknown) => ({
+      or: (f: string) => { filters.push(f); return { order: () => ({ range }) }; }, order: () => ({ range }),
+      gte: (c: string, since: unknown) => { filters.push(`${col}=${String(v)};${c}>=${String(since)}`); return { order: () => ({ limit: () => Promise.resolve(last) }) }; },
+    }) }) }),
   };
   return { db, calls, filters };
 }
@@ -44,5 +47,19 @@ describe("the import's calls", () => {
     const f = fakeDb({}, rows);
     expect((await problemRows(f.db, "imp-1")).length).toBe(1500);
     expect(f.filters[0]).toBe("outcome.eq.invalid,outcome.eq.duplicate_in_file,warnings.neq.{}");
+  });
+
+  it("the last import of the past 24 h (Desfazer after leaving the page): committed only, newest, with patients created", async () => {
+    const now = Date.parse("2026-10-01T12:00:00Z");
+    const row = { id: "imp-9", source: "iclinic", committed_at: "2026-10-01T02:30:00Z", summary: { created: 12 } };
+    let t = fakeDb({}, [], { data: [row], error: null });
+    expect(await lastUndoableImport(t.db, now)).toEqual({ id: "imp-9", source: "iclinic", committedAt: row.committed_at, created: 12, until: "2026-10-02T02:30:00.000Z" });
+    expect(t.filters).toEqual(["status=committed;committed_at>=2026-09-30T12:00:00.000Z"]);
+    t = fakeDb({}, [], { data: [{ ...row, summary: { created: 0 } }], error: null });
+    expect(await lastUndoableImport(t.db, now)).toBeNull();
+    t = fakeDb({}, [], { data: [], error: null });
+    expect(await lastUndoableImport(t.db, now)).toBeNull();
+    t = fakeDb({}, [], { data: null, error: { message: "boom" } });
+    expect(await lastUndoableImport(t.db, now)).toBeNull();
   });
 });

@@ -13,6 +13,9 @@ export type ImportDb = {
       eq: (col: string, v: unknown) => {
         or: (f: string) => { order: (col: string) => { range: (a: number, b: number) => PromiseLike<{ data: unknown; error: unknown }> } };
         order: (col: string) => { range: (a: number, b: number) => PromiseLike<{ data: unknown; error: unknown }> };
+        gte: (col: string, v: unknown) => {
+          order: (col: string, opts: { ascending: boolean }) => { limit: (n: number) => PromiseLike<{ data: unknown; error: unknown }> };
+        };
       };
     };
   };
@@ -98,6 +101,28 @@ export async function undoImport(db: ImportDb, id: string): Promise<{ deleted: n
   const r = await db.rpc("import_patients_undo", { p_import_id: id });
   if (r.error || !r.data || typeof r.data !== "object") fail(r.error);
   return r.data as { deleted: number; kept: number };
+}
+
+// "Última importação" (UX): the doctor's latest import committed in the
+// last 24 hours, so Desfazer stays reachable after leaving the page (131
+// allows the undo for 24 h). RLS: the doctor's own imports only. Null when
+// there's none or it can't be read (the card just doesn't show).
+export const UNDO_WINDOW_MS = 24 * 60 * 60 * 1000;
+export type LastImport = { id: string; source: string; committedAt: string; created: number; until: string };
+export async function lastUndoableImport(db: ImportDb, now = Date.now()): Promise<LastImport | null> {
+  try {
+    const since = new Date(now - UNDO_WINDOW_MS).toISOString();
+    const r = await db.from("patient_imports").select("id, source, committed_at, summary")
+      .eq("status", "committed").gte("committed_at", since).order("committed_at", { ascending: false }).limit(1);
+    const row = (Array.isArray(r.data) ? r.data[0] : null) as { id: string; source: string; committed_at: string; summary: { created?: number } | null } | undefined;
+    if (r.error || !row?.committed_at) return null;
+    const created = Number(row.summary?.created ?? 0);
+    // Nothing new to remove: no card.
+    if (!(created > 0)) return null;
+    return { id: row.id, source: row.source, committedAt: row.committed_at, created, until: new Date(new Date(row.committed_at).getTime() + UNDO_WINDOW_MS).toISOString() };
+  } catch {
+    return null;
+  }
 }
 
 // Cancelar importação: the staged rows are deleted (130 also purges an

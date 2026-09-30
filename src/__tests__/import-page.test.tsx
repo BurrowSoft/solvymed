@@ -18,7 +18,7 @@ const ROWS: Row[] = [
   { row_no: 3, outcome: "invalid", duplicate_of_row: null, warnings: [], errors: ["full_name_missing"], input: {} },
 ];
 
-function fakeDb(summary: Record<string, number> = {}, previewRows: Row[] = ROWS) {
+function fakeDb(summary: Record<string, number> = {}, previewRows: Row[] = ROWS, lastImports: unknown[] = []) {
   const calls: { fn: string; args?: Record<string, unknown> }[] = [];
   const staged: { row: number; full_name?: string }[] = [];
   const db: ImportDb = {
@@ -36,7 +36,8 @@ function fakeDb(summary: Record<string, number> = {}, previewRows: Row[] = ROWS)
         eq: () => {
           const rows = previewRows;
           const range = () => Promise.resolve({ data: rows, error: null });
-          return { or: () => ({ order: () => ({ range }) }), order: () => ({ range }) };
+          const limit = () => Promise.resolve({ data: lastImports, error: null });
+          return { or: () => ({ order: () => ({ range }) }), order: () => ({ range }), gte: () => ({ order: () => ({ limit }) }) };
         },
       }),
     }),
@@ -131,5 +132,22 @@ describe("Importar pacientes", () => {
     fireEvent.click(screen.getByText("Verificar planilha"));
     expect(await screen.findByText("2 CEPs estavam sem o zero inicial (o Excel remove) e foram completados.")).toBeInTheDocument();
     expect(screen.getByText(`Rua: texto longo demais (não importado) · ${pt.patientImport.code_cep_zero_padded} · ${pt.patientImport.code_cns_invalid}`)).toBeInTheDocument();
+  });
+
+  it("Última importação: the card undoes the last import after leaving the page, then goes away", async () => {
+    const { db, calls } = fakeDb({}, ROWS, [{ id: "imp-7", source: "prontuario_verde", committed_at: "2026-10-01T02:30:00Z", summary: { created: 12 } }]);
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <ImportClient locale="pt-BR" country="BR" timeZone="America/Sao_Paulo" db={db} />
+      </NextIntlClientProvider>,
+    );
+    expect(await screen.findByText("Última importação")).toBeInTheDocument();
+    expect(screen.getByText("30/09/2026 às 23:30 · 12 pacientes de Prontuário Verde")).toBeInTheDocument();
+    expect(screen.getByText("Disponível até 01/10/2026 às 23:30.")).toBeInTheDocument();
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    fireEvent.click(screen.getByText("Desfazer importação"));
+    await waitFor(() => expect(screen.getByText("Importação desfeita: 1 removidos · 0 mantidos (já em uso)")).toBeInTheDocument());
+    expect(calls.find((c) => c.fn === "import_patients_undo")?.args).toEqual({ p_import_id: "imp-7" });
+    expect(screen.queryByText("Última importação")).toBeNull();
   });
 });
