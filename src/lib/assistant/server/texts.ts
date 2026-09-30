@@ -2,6 +2,7 @@ import { createTranslator } from "next-intl";
 import { formatDateLabel } from "@/lib/dateLabels";
 import { routing } from "@/i18n/routing";
 import type en from "@/messages/en.json";
+import { labelGlossary, labelMap } from "./uiLabels";
 
 // Every fixed text SolvyAI's server shows (card labels, warnings, questions,
 // the pointer after a card) comes from the user's locale file, namespace
@@ -38,7 +39,9 @@ const replyLanguage = (locale: string) => LANGUAGE[locale] ?? LANGUAGE[routing.d
 
 // What the model's rules quote (knowledge.ts): its reply language, the two
 // fixed refusals and the real names of the buttons it may mention.
-export type ReplyTexts = { language: string; onlySolvyMed: string; noClinical: string; buttons: string[] };
+// labels: the screens' labels the Help/App Map name, in the user's language.
+// labelMap: the same, English (lowercase) → local, to rewrite the Help/App Map text.
+export type ReplyTexts = { language: string; onlySolvyMed: string; noClinical: string; buttons: string[]; labels: string[]; labelMap: ReadonlyMap<string, string> };
 
 function textsFrom(locale: string, messages: typeof en) {
   const tr = createTranslator({ locale, messages, namespace: "solvyaiServer" });
@@ -75,6 +78,7 @@ function textsFrom(locale: string, messages: typeof en) {
     pickPatient: s("pickPatient"), pickAppointment: s("pickAppointment"), pickDate: s("pickDate"),
     pickSimilar: s("pickSimilar"), someoneElse: s("someoneElse"),
     born: (d: string) => tr("born", { d }),
+    minutes: (n: number) => tr("minutes", { n }),
     // The one line after a card, naming the card's real button.
     pointerCard: tr("pointerCard", { button: as("confirm").replace(/\s*✓\s*$/, "") }),
     promptPayText: s("promptPayText"), promptPayOpen: s("promptPayOpen"), openScreen: s("openScreen"),
@@ -82,6 +86,8 @@ function textsFrom(locale: string, messages: typeof en) {
       language: replyLanguage(locale),
       onlySolvyMed: s("onlySolvyMed"),
       noClinical: s("noClinical"),
+      labels: labelGlossary(locale, messages),
+      labelMap: labelMap(locale, messages),
       buttons: [as("confirm"), as("undo", { s: 5 }), as("openItem")].map((b) => b.replace(/\s*✓\s*$/, "").replace(/\s*[(（].*$/, "")),
     } satisfies ReplyTexts,
     unavailableArticles: s("unavailableArticles"), unavailableLater: s("unavailableLater"), couldntFinish: s("couldntFinish"),

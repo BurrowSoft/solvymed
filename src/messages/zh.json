@@ -1789,7 +1789,8 @@
     "unavailableLater": "SolvyAI 暂时不可用。请稍后再试。",
     "couldntFinish": "没能完成。能换个说法，并附上患者姓名、日期和时间吗？",
     "onlySolvyMed": "我只能帮助处理 SolvyMed 相关问题。",
-    "noClinical": "我无法回答临床问题。"
+    "noClinical": "我无法回答临床问题。",
+    "minutes": "{n} 分钟"
   },
   "countryExamples": {
     "phone": "电话号码"

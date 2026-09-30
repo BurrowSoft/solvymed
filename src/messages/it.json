@@ -1789,7 +1789,8 @@
     "unavailableLater": "SolvyAI non è disponibile al momento. Riprova più tardi.",
     "couldntFinish": "Non sono riuscito a completarlo. Puoi dirlo in un altro modo, con nome del paziente, data e ora?",
     "onlySolvyMed": "Posso aiutare solo con SolvyMed.",
-    "noClinical": "Non posso aiutare con questioni cliniche."
+    "noClinical": "Non posso aiutare con questioni cliniche.",
+    "minutes": "{n} min"
   },
   "countryExamples": {
     "phone": "Numero di telefono"
