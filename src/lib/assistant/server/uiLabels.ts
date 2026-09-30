@@ -66,24 +66,49 @@ function labelIndex(): Map<string, string[]> {
   return index;
 }
 
-const cache = new Map<string, string[]>();
+const cache = new Map<string, Map<string, string>>();
 
-// `"English" = "ภาษาไทย"` pairs for the labels the Help and App Map name;
-// empty for pt/en, which the articles already use.
-export function labelGlossary(locale: string, messages: Messages): string[] {
-  if (locale === "en" || locale === "pt-BR") return [];
+// English label (lowercase) → the locale's, for the labels the Help and
+// App Map name; empty for pt/en, which the articles already use.
+export function labelMap(locale: string, messages: Messages): Map<string, string> {
+  if (locale === "en" || locale === "pt-BR") return new Map();
   const hit = cache.get(locale);
   if (hit) return hit;
   const idx = labelIndex();
-  const pairs: string[] = [];
+  const map = new Map<string, string>();
   for (const label of mentionedLabels()) {
     const path = idx.get(label.toLowerCase());
     if (!path) continue;
     const value = path.reduce<unknown>((o, k) => (o && typeof o === "object" ? (o as Record<string, unknown>)[k] : undefined), messages);
     if (typeof value !== "string") continue;
     const local = value.replace(/\s*✓\s*$/, "").trim();
-    if (local && local.toLowerCase() !== label.toLowerCase()) pairs.push(`"${label}" = "${local}"`);
+    if (local && local.toLowerCase() !== label.toLowerCase()) map.set(label.toLowerCase(), local);
   }
-  cache.set(locale, pairs);
-  return pairs;
+  cache.set(locale, map);
+  return map;
+}
+
+// `"English" = "ภาษาไทย"` pairs, for the list at the end of the prefix.
+export function labelGlossary(locale: string, messages: Messages): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const label of mentionedLabels()) {
+    const local = labelMap(locale, messages).get(label.toLowerCase());
+    if (local && !seen.has(label.toLowerCase())) { seen.add(label.toLowerCase()); out.push(`"${label}" = "${local}"`); }
+  }
+  return out;
+}
+
+// The Help and App Map text with their labels already in the user's
+// language (d7: the model copied the English **labels** verbatim even with
+// the list): each **bold** label and each screen path ("A › B", "A → B")
+// is rewritten part by part; a part with no translation stays as it was.
+export function localizeLabels(text: string, map: ReadonlyMap<string, string>): string {
+  if (!map.size) return text;
+  const part = (p: string) => map.get(p.trim().toLowerCase()) ?? p;
+  const path = (s: string) => s.split(/(\s*[→›]\s*)/).map((x, i) => (i % 2 ? x : part(x))).join("");
+  return text
+    .replace(/\*\*([^*\n]{2,80})\*\*/g, (_, inner: string) => `**${path(inner)}**`)
+    .replace(/(Screen: app )"([^"]+)"(?:(, web )"([^"]+)")?/g, (_, a: string, app: string, b?: string, web?: string) =>
+      `${a}"${path(app)}"${b ? `${b}"${path(web!)}"` : ""}`);
 }
