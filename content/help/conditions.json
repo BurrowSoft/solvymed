@@ -1,8 +1,4 @@
 {
-  "app-1.4.0": {
-    "met": false,
-    "what": "App 1.4.0 is released on Google Play (iOS is TestFlight-only for now, so Play alone flips it). Includes mobile #137, the patient's appointment view: their pending request can be cancelled ('Cancelar pedido'), a clinic's proposed time can be accepted or declined, an upcoming scheduled/confirmed appointment offers 'Pedir remarcação' only before it starts, and cancelling means talking to the clinic."
-  },
   "mobile#91": {
     "met": false,
     "what": "The app asks before booking outside the working hours or on a day off, also when moving (mobile #91), in a RELEASED store build (not just merged)."
@@ -46,6 +42,14 @@
   "line-live": {
     "met": false,
     "what": "LINE notices for Thai clinics are live in production: migrations 114, 122 (the 90-day delivery-history purge), 124 and 125 (notices in the recipient's saved language) applied, the LINE channel secret in Vault, the flag and webhook on, and the app's connect/disconnect flow released. Gates the privacy policy's LINE row (§5), the §6 sentence and §6c."
+  },
+  "founders-upload-live": {
+    "met": false,
+    "what": "Founders stage 2 is live: the Founders page is on (liveFeatures.founders), migration 132 is applied on production and the founder-samples-purge function is deployed with its Vault secret (founder_purge_secret), including the purge of a deleted account’s files. Gates Settings → Founders Program (C10) and the privacy policy’s §6d test-export paragraph (through founders)."
+  },
+  "app-1.4.0": {
+    "met": false,
+    "what": "App 1.4.0 is released on Google Play (iOS is TestFlight-only for now, so Play alone flips it). Includes mobile #137, the patient's appointment view: their pending request can be cancelled ('Cancelar pedido'), a clinic's proposed time can be accepted or declined, an upcoming scheduled/confirmed appointment offers 'Pedir remarcação' only before it starts, and cancelling means talking to the clinic."
   },
   "import-extras-live": {
     "met": false,

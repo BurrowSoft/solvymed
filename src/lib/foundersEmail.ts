@@ -45,3 +45,17 @@ export async function sendFounderEmails(a: {
     // Email is best effort: the application is already saved.
   }
 }
+
+// Stage 2: a founder uploaded a test export. The team hears which account
+// and where the file is (in the private bucket); nothing about its contents.
+export async function sendFounderUploadNotice(a: { userId: string; email: string; path: string; sampleId: string }): Promise<void> {
+  const key = process.env.RESEND_API_KEY?.trim();
+  if (!key) return;
+  try {
+    await send(key, TEAM, `Founders upload: ${a.email || a.userId}`, [
+      `Account: ${a.email || "—"} (${a.userId})`, `File: founder-samples/${a.path}`, `Sample id: ${a.sampleId || "—"}`,
+    ].join("\n"));
+  } catch {
+    // Best effort: the upload is already registered.
+  }
+}

@@ -345,6 +345,10 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     rule: { text: "\"Mostrar botão do assistente\" / \"Show the assistant button\" (Settings → SolvyAI; per phone in the app, per browser on the website) hides or shows the ✦ button.", pending: ["mobile#99", "solvyai-live"] },
     help: "C9",
   },
+  {
+    rule: { text: "Founders Program (accepted founders, doctors only, website only): Settings → \"Programa Fundadores\" / \"Founders Program\" has the steps to create a TEST export (fake patients only), the call link and the upload (CSV, XLSX, XLS or ZIP, up to 20 MB, 20 files; the doctor confirms before each file that it has only test patients). SolvyAI can’t upload files; it explains where to do it.", pending: ["founders-upload-live"] },
+    help: "C10",
+  },
 ];
 
 // Things SolvyAI never does, not even with confirmation (spec §3 "Never"):
