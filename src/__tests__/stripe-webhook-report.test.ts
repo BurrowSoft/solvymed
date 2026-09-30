@@ -26,7 +26,14 @@ vi.mock("@supabase/supabase-js", () => {
   q.select = async () => ({ data: h.rows, error: null });
   return { createClient: () => q };
 });
-vi.mock("@/lib/stripeBilling", () => ({ retrieveSubscriptionOrNull: async () => null }));
+// The route's Stripe client now comes from lib/stripeBilling (built lazily).
+vi.mock("@/lib/stripeBilling", () => ({
+  retrieveSubscriptionOrNull: async () => null,
+  stripe: {
+    webhooks: { constructEvent: (body: string) => h.constructEvent(body) },
+    subscriptions: { retrieve: (id: string) => h.retrieve(id) },
+  },
+}));
 
 import { POST } from "@/app/api/webhooks/stripe/route";
 

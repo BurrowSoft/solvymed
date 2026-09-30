@@ -1,7 +1,18 @@
 import Stripe from "stripe";
 import type { EffectiveSub } from "@/lib/subscription";
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-05-27.dahlia" });
+// Built on first use, not when the module loads: Next collects route data
+// at build time, and a client built then without STRIPE_SECRET_KEY (a
+// Preview without the test key) failed the whole build. A missing key now
+// fails only the Stripe call that needs it, at request time.
+let client: Stripe | null = null;
+export function getStripe(): Stripe {
+  client ??= new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-05-27.dahlia" });
+  return client;
+}
+export const stripe: Stripe = new Proxy({} as Stripe, {
+  get: (_target, key) => Reflect.get(getStripe(), key),
+});
 
 /**
  * Retrieves a subscription by id, returning null when Stripe says it
