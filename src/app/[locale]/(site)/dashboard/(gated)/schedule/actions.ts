@@ -101,6 +101,14 @@ export async function createAppointment(formData: FormData) {
     const n = parseInt((formData.get("occurrences") as string) ?? "", 10);
     if (!Number.isInteger(n) || n < MIN_OCCURRENCES || n > MAX_OCCURRENCES) return { error: "Invalid number of appointments", code: "invalid_occurrences" };
     dates = recurrenceDates(date, recurrence, n);
+    // Dates to leave out of the series (SolvyAI's "Pular {data} e marcar as
+    // outras"; the Agenda's form doesn't send it yet). Only real series
+    // dates count; at least one date must remain.
+    const skip = String(formData.get("skip_dates") ?? "").split(",").map((d) => d.trim()).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d));
+    if (skip.length) {
+      dates = dates.filter((d) => !skip.includes(d));
+      if (!dates.length) return { error: "Every date of the series was skipped", code: "invalid_occurrences" };
+    }
   }
   // In a series, the messages name the date that has the problem.
   const onDate = (d: string) => (dates.length > 1 ? d : null);
@@ -232,7 +240,8 @@ export async function createAppointment(formData: FormData) {
   const ids = ((savedRows ?? []) as { id: string }[]).map((r) => r.id);
   const told = await tellPatient(supabase, {
     kind: "booked", practiceId: effectiveProfId, isSecretary: user.id !== effectiveProfId,
-    patientId, date, startTime, ...(dates.length > 1 ? { dates } : {}),
+    // The first date actually saved (a skipped first date isn't one).
+    patientId, date: dates[0], startTime, ...(dates.length > 1 ? { dates } : {}),
     appointmentIds: ids,
   });
   revalidatePath("/dashboard/schedule");
