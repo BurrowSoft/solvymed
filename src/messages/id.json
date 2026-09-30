@@ -714,7 +714,7 @@
       "country": "Di mana praktik Anda?",
       "countryOther": "Negara lain",
       "countryHint": "Menentukan mata uang, harga paket, identitas pasien, dan QR pembayaran. Untuk mengubahnya nanti, hubungi dukungan.",
-      "fullNameHint": "Tambahkan gelar Anda jika mau (Dr., Prof.); gelar akan muncul di sapaan."
+      "fullNameHint": "Tambahkan gelar Anda jika mau ({titles}); gelar akan muncul di sapaan."
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",

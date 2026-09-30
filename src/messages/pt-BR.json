@@ -714,7 +714,7 @@
       "country": "Onde fica seu consultório?",
       "countryOther": "Outro país",
       "countryHint": "Define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar depois, fale com o suporte.",
-      "fullNameHint": "Se quiser, inclua seu título (Dr., Dra., Prof.): ele aparece nas saudações."
+      "fullNameHint": "Se quiser, inclua seu título ({titles}): ele aparece nas saudações."
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",

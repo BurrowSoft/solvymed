@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("@sentry/nextjs", () => ({ captureMessage: vi.fn() }));
 
 import * as Sentry from "@sentry/nextjs";
-import { countryProfile, normalizeCountry } from "@/lib/country";
+import { countryProfile, normalizeCountry, titleExamples } from "@/lib/country";
 import { amountExample, currencySymbol, formatMoney } from "@/lib/money";
 import { getPracticeCountry, lookupPracticeCountry } from "@/lib/practiceCountry";
 
@@ -22,6 +22,14 @@ describe("countryProfile", () => {
     }
     expect(countryProfile("BR")).toMatchObject({ clinicTaxId: "cnpj", examples: { registration: "registrationPlaceholder", state: "SP", website: "www.example.com.br" } });
     expect(countryProfile("TH")).toMatchObject({ clinicTaxId: "th_tax_id", examples: { titles: { th: "นพ., พญ., ทพ., ทญ.", other: "Dr." }, registration: "registrationPlaceholderTH" } });
+  });
+
+  it("title examples: Brazil's, Thailand's in Thai (else Dr.), and null elsewhere (the locale's own list)", () => {
+    expect(titleExamples("BR", "en")).toBe("Dr., Dra., Prof.");
+    expect(titleExamples("TH", "th")).toBe("นพ., พญ., ทพ., ทญ.");
+    expect(titleExamples("TH", "en")).toBe("Dr.");
+    expect(titleExamples("ZZ", "th")).toBeNull();
+    expect(titleExamples("US", "pt-BR")).toBeNull();
   });
 
   it("treats a missing or malformed country as BR (every practice before migration 110)", () => {

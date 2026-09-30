@@ -714,7 +714,7 @@
       "country": "Phòng khám của bạn ở đâu?",
       "countryOther": "Quốc gia khác",
       "countryHint": "Xác định tiền tệ, giá gói, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi sau, hãy liên hệ bộ phận hỗ trợ.",
-      "fullNameHint": "Bạn có thể thêm danh xưng (Dr., Prof.); danh xưng sẽ hiện trong lời chào."
+      "fullNameHint": "Bạn có thể thêm danh xưng ({titles}); danh xưng sẽ hiện trong lời chào."
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",

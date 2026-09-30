@@ -714,7 +714,7 @@
       "country": "您的診所在哪裡？",
       "countryOther": "其他國家",
       "countryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。之後如需變更，請聯絡客服。",
-      "fullNameHint": "如有需要，可加上頭銜（Dr.、Prof.），會顯示在問候語中。"
+      "fullNameHint": "如有需要，可加上頭銜（{titles}），會顯示在問候語中。"
     },
     "forgotPassword": {
       "title": "忘記密碼？",

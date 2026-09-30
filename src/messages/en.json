@@ -714,7 +714,7 @@
       "country": "Where is your practice?",
       "countryOther": "Other country",
       "countryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it later, contact support.",
-      "fullNameHint": "Add your title if you like (Dr., Prof.); it appears in greetings."
+      "fullNameHint": "Add your title if you like ({titles}); it appears in greetings."
     },
     "forgotPassword": {
       "title": "Forgot your password?",
