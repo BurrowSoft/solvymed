@@ -144,3 +144,14 @@ describe("patient identifier fields by country (#239)", () => {
     expect(profileOfKind("OTHER").idFields.map((f) => [f.name, f.label])).toEqual([["passport_number", "passportOrId"]]);
   });
 });
+
+describe("how each ID field is searched and checked (#239)", () => {
+  it("CPF and the Thai ID by digits, passports as text; only the Thai ID has a checksum", () => {
+    const all = ["BR", "TH", "OTHER"].flatMap((k) => profileOfKind(k as "BR" | "TH" | "OTHER").idFields);
+    expect(all.map((f) => [f.name, f.search, f.checksum ?? null])).toEqual([
+      ["cpf", "digits", null],
+      ["th_national_id", "digits", "thai"], ["passport_number", "text", null],
+      ["passport_number", "text", null],
+    ]);
+  });
+});
