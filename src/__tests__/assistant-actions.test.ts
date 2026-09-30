@@ -110,6 +110,7 @@ async function run(t: ReturnType<typeof setup>, body: unknown) {
   const blocks = chunks.flatMap((c) => (c.kind === "block" && c.block.type !== "text" ? [c.block] : []));
   return { status: 200, json: null, chunks, blocks };
 }
+const textOf = (chunks: AnswerChunk[]) => chunks.filter((c) => c.kind === "delta").map((c) => (c.kind === "delta" ? c.text : "")).join("");
 const cardOf = (blocks: AnswerBlock[]) => (blocks.find((b) => b.type === "card") as { card: ConfirmationCard } | undefined)?.card;
 const choiceOf = (blocks: AnswerBlock[]) => blocks.find((b) => b.type === "slot_choice") as SlotChoice | undefined;
 // The tool results the model got back in round n.
@@ -142,11 +143,106 @@ describe("SolvyAI actions mode: the mode", () => {
     const r = await run(t, ask("Marca uma consulta"));
     expect(r.chunks[0]).toEqual({ kind: "meta", mode: "actions" });
     expect(t.model.calls[0].tools?.map((x) => x.name)).toEqual([
-      "find_patients", "list_appointments", "find_free_slots",
+      "find_patients", "list_appointments", "choose_date", "find_free_slots",
       "propose_book_appointment", "propose_move_appointment", "propose_cancel_appointment", "propose_block_time", "propose_mark_paid",
       "propose_unblock_time", "propose_booking_decision", "propose_add_patient",
     ]);
     expect(t.model.calls[0].system).toContain("Today at the clinic: Tuesday 2026-09-29, 10:00 (America/Sao_Paulo)");
+  });
+});
+
+describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
+  it("text from rounds that call tools is never shown; after a card, only the pointer line (no restated or wrong details)", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { text: "Só um instante, deixa eu conferir a data.", tools: [{ name: "find_patients", input: { query: "Maria Silva" } }] }
+      : round === 1 ? { text: "Encontrei:", tools: [{ name: "propose_book_appointment", input: { patientId: "p-maria", date: "2026-09-30", start: "14:00" } }] }
+      : "Prontinho! Marquei a Ana Costa em 31/09 às 10h, é só Salvar Consulta.");
+    const r = await run(t, ask("Marca a Maria Silva amanhã às 14h"));
+    expect(cardOf(r.blocks)).toBeDefined();
+    expect(textOf(r.chunks)).toBe("Confira os detalhes e toque em Confirmar.");
+  });
+
+  it("with no card or list, the last round's text is shown alone (no joined rounds)", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { text: "Vou olhar a agenda:", tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }] }
+      : "Amanhã você tem 1 consulta e 1 horário bloqueado.");
+    expect(textOf((await run(t, ask("O que tenho amanhã?"))).chunks)).toBe("Amanhã você tem 1 consulta e 1 horário bloqueado.");
+  });
+
+  it("several patients match: a list to tap, and the model gets no ids to guess with", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { tools: [{ name: "find_patients", input: { query: "Mari" } }] }
+      : round === 1 ? { tools: [{ name: "propose_book_appointment", input: { patientId: "p-maria", date: "2026-09-30", start: "14:00" } }] }
+      : "ok");
+    const r = await run(t, ask("Marca a Mari amanhã às 14h"));
+    expect(r.blocks.find((b) => b.type === "pick")).toEqual({
+      type: "pick", question: "Qual paciente?",
+      options: [{ id: "p-maria", title: "Maria Silva · nasc. 02/05/1980", detail: "" }, { id: "p-mario", title: "Mario Souza", detail: "" }],
+    });
+    const found = resultsIn(t.model.calls[1])[0] as { content: string };
+    expect(found.content).not.toContain("p-maria");
+    // A guessed id is refused: no card.
+    expect(cardOf(r.blocks)).toBeUndefined();
+    expect(textOf(r.chunks)).toBe("Escolha uma opção acima.");
+  });
+
+  it("a tapped patient comes back with its birth date: the search narrows to one", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { tools: [{ name: "find_patients", input: { query: "Maria Silva · nasc. 02/05/1980", birthDate: "1980-05-02" } }] } : "ok");
+    await run(t, ask("Maria Silva · nasc. 02/05/1980"));
+    const found = JSON.parse((resultsIn(t.model.calls[1])[0] as { content: string }).content);
+    expect(found).toEqual([{ id: "p-maria", name: "Maria Silva", birthDate: "02/05/1980" }]);
+  });
+
+  it("several appointments at the time given: a list with date · time · patient, never a guess", async () => {
+    const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30", start: "10:00" } }] } : "Qual delas? 1) Mario 2) Maria"));
+    t.tables.appointments.push({ id: "a-maria10", professional_id: "doc-1", patient_id: "p-maria", patient_name: "Maria Silva", date: "2026-09-30", start_time: "10:00:00", end_time: "10:30:00", status: "scheduled", payment_status: "pending", payment_amount: null });
+    const r = await run(t, ask("Cancela a das 10 amanhã"));
+    const pick = r.blocks.find((b) => b.type === "pick") as { question: string; options: { title: string }[] };
+    expect(pick.question).toBe("Qual consulta?");
+    expect(pick.options.map((o) => o.title).sort()).toEqual(["Quarta-feira, 30/09/2026 · 10:00 · Maria Silva", "Quarta-feira, 30/09/2026 · 10:00 · Mario Souza"]);
+    expect(textOf(r.chunks)).toBe("Escolha uma opção acima.");
+  });
+
+  it("an ambiguous date: choose_date shows real days to tap; an impossible or past day is refused", async () => {
+    let t = setup((_r, round) => (round === 0 ? { tools: [{ name: "choose_date", input: { dates: ["2026-10-09", "2026-10-02"] } }] } : "ok"));
+    let r = await run(t, ask("Marca a Maria na próxima sexta"));
+    expect(r.blocks.find((b) => b.type === "pick")).toEqual({
+      type: "pick", question: "Qual data?",
+      options: [{ id: "2026-10-02", title: "Sexta-feira, 02/10/2026", detail: "" }, { id: "2026-10-09", title: "Sexta-feira, 09/10/2026", detail: "" }],
+    });
+    t = setup((_r, round) => (round === 0 ? { tools: [{ name: "choose_date", input: { dates: ["2026-09-31", "2026-09-01", "2026-10-02"] } }] } : "ok"));
+    r = await run(t, ask("…"));
+    expect(r.blocks.find((b) => b.type === "pick")).toBeUndefined();
+    expect(resultsIn(t.model.calls[1])[0]).toMatchObject({ is_error: true });
+  });
+
+  it("dates are real calendar days: 2026-09-31 is refused, never rolled over to 1 October", async () => {
+    const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-31", to: "2026-09-31" } }] } : "ok"));
+    await run(t, ask("…"));
+    expect(resultsIn(t.model.calls[1])[0]).toMatchObject({ is_error: true });
+  });
+
+  it("mark paid: filtered by patient, the lookup reaches 90 days back and 30 ahead; unfiltered stays at 14 days", async () => {
+    let t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-07-01", to: "2026-10-29", patient: "Mario" } }] } : "ok"));
+    const r = await run(t, ask("Marca como pago o Mario"));
+    // Both of Mario's appointments in the window (today's week and the next): the user taps one.
+    const pick = r.blocks.find((b) => b.type === "pick") as { options: { id: string }[] };
+    expect(pick.options.map((o) => o.id).sort()).toEqual(["a-done", "a-joao"]);
+    t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-07-01", to: "2026-10-29" } }] } : "ok"));
+    await run(t, ask("…"));
+    expect(resultsIn(t.model.calls[1])[0]).toMatchObject({ is_error: true });
+  });
+
+  it("the prompt carries a real calendar to look dates up in, and the actions rules", async () => {
+    const t = setup(() => "ok");
+    await run(t, ask("Marca uma consulta"));
+    const system = t.model.calls[0].system;
+    expect(system).toContain("Tue 2026-09-29 (today)");
+    expect(system).toContain("Fri 2026-10-02");
+    expect(system).not.toContain("2026-09-31");
+    expect(system).toContain("ACTIONS RULE A");
+    expect(system).toContain("\"Confirmar\", \"Desfazer\" and \"Abrir\"");
   });
 });
 
@@ -403,10 +499,16 @@ describe("SolvyAI actions mode: part 2 (unblock, booking decision, add patient)"
     const addTool = t.model.calls[0].tools!.find((x) => x.name === "propose_add_patient")!;
     expect(Object.keys((addTool.input_schema as { properties: object }).properties)).toEqual(["fullName", "birthDate", "createAnyway"]);
     expect(card.after).toEqual({ screen: "patient", highlight: { kind: "patient" } });
-    // Maria Silva exists: back to the model, no card, until the user says it's someone else.
-    t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "Maria Silva" } }] } : "ok"));
-    expect(cardOf((await run(t, ask("Cadastra a Maria Silva"))).blocks)).toBeUndefined();
-    expect(resultsIn(t.model.calls[1])[0]).toMatchObject({ is_error: true });
+    // Maria Silva exists: no card; the user taps the existing one or "É outra
+    // pessoa" (UX: a list, never a text list), and the text only points to it.
+    t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "Maria Silva" } }] } : "A Maria Silva (02/05/1980) já existe."));
+    const dup = await run(t, ask("Cadastra a Maria Silva"));
+    expect(cardOf(dup.blocks)).toBeUndefined();
+    expect(dup.blocks.find((b) => b.type === "pick")).toEqual({
+      type: "pick", question: "Já existe um cadastro parecido. É a mesma pessoa?",
+      options: [{ id: "p-maria", title: "Maria Silva · nasc. 02/05/1980", detail: "" }, { id: "new", title: "É outra pessoa", detail: "" }],
+    });
+    expect(textOf(dup.chunks)).toBe("Escolha uma opção acima.");
     t = setup((_r, round) => (round === 0 ? { tools: [{ name: "propose_add_patient", input: { fullName: "Maria Silva", createAnyway: true } }] } : "ok"));
     card = cardOf((await run(t, ask("É outra pessoa"))).blocks)!;
     expect(card.fields.find((f) => f.label === "Parecidos já cadastrados")!.value).toBe("Maria Silva (02/05/1980)");

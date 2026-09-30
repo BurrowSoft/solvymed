@@ -47,6 +47,7 @@ const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
 // The placeholders maskPersonalData puts in the chat (lib/assistant/mask).
 export const MASK_TOKEN = /\[(?:email|cpf|phone|id)\]/i;
 const MAX_LIST_DAYS = 14;
+const MAX_PATIENT_DAYS = 121;
 const CARD_MINUTES = 15;
 
 const obj = (properties: Record<string, unknown>, required: string[]) =>
@@ -55,13 +56,18 @@ const obj = (properties: Record<string, unknown>, required: string[]) =>
 export const TOOL_DEFS: ToolDef[] = [
   {
     name: "find_patients",
-    description: "Search this clinic's patients by name (or ID / phone digits). Returns up to 5 with their id and birth date. Use it before any action that needs a patient; never guess an id.",
-    input_schema: obj({ query: { type: "string" } }, ["query"]),
+    description: "Search this clinic's patients by name (or ID / phone digits). Use it before any action that needs a patient; never guess an id. If several match, the USER gets a list to choose from and you get nothing to pick: wait for their choice. When the user chose from such a list (their message has a birth date), pass it as birthDate (YYYY-MM-DD).",
+    input_schema: obj({ query: { type: "string" }, birthDate: { type: "string" } }, ["query"]),
   },
   {
     name: "list_appointments",
-    description: "The clinic's appointments and blocked times between two dates (YYYY-MM-DD, the clinic's time zone, at most 14 days). Returns ids, patient, date, times, status and payment.",
-    input_schema: obj({ from: { type: "string" }, to: { type: "string" } }, ["from", "to"]),
+    description: "The clinic's appointments and blocked times between two dates (YYYY-MM-DD, the clinic's time zone, at most 14 days; up to 121 days when filtered by patient). To act on ONE appointment, always pass what the user said (patient and/or start HH:MM): if several match, the USER gets a list to choose from; never pick one yourself. Returns ids, patient, date, times, status and payment.",
+    input_schema: obj({ from: { type: "string" }, to: { type: "string" }, patient: { type: "string" }, start: { type: "string" } }, ["from", "to"]),
+  },
+  {
+    name: "choose_date",
+    description: "When a date the user gave could mean more than one day (e.g. \"próxima sexta\" / \"next Friday\"), show them the candidate dates (2 to 4, YYYY-MM-DD from the Calendar) to tap. Never pick one yourself.",
+    input_schema: obj({ dates: { type: "array", items: { type: "string" } } }, ["dates"]),
   },
   {
     name: "find_free_slots",
@@ -151,6 +157,9 @@ const T = {
     addPatient: "Novo paciente", fullName: "Nome", birth: "Nascimento",
     similar: "Parecidos já cadastrados",
     proposalConfirmStop: "Este pedido está aguardando a resposta do paciente à nova proposta; só é possível recusar.",
+    pickPatient: "Qual paciente?", pickAppointment: "Qual consulta?", pickDate: "Qual data?",
+    pickSimilar: "Já existe um cadastro parecido. É a mesma pessoa?", someoneElse: "É outra pessoa",
+    born: (d: string) => `nasc. ${d}`,
   },
   en: {
     sendPix: "Send Pix on WhatsApp", pixKey: "Pix key",
@@ -183,11 +192,20 @@ const T = {
     addPatient: "New patient", fullName: "Name", birth: "Date of birth",
     similar: "Similar patients already registered",
     proposalConfirmStop: "This request is waiting for the patient's answer to the new time; it can only be declined.",
+    pickPatient: "Which patient?", pickAppointment: "Which appointment?", pickDate: "Which date?",
+    pickSimilar: "A similar patient is already registered. Is it the same person?", someoneElse: "It's someone else",
+    born: (d: string) => `born ${d}`,
   },
 };
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-const isDate = (v: unknown): v is string => typeof v === "string" && DATE.test(v) && !looksBuddhistEra(v) && !Number.isNaN(Date.parse(`${v}T12:00:00Z`));
+// A real calendar day: "2026-09-31" is refused (Date.parse would roll it
+// over to 1 October; UX: "31/09" must be impossible).
+const isDate = (v: unknown): v is string => {
+  if (typeof v !== "string" || !DATE.test(v) || looksBuddhistEra(v)) return false;
+  const t = Date.parse(`${v}T12:00:00Z`);
+  return !Number.isNaN(t) && new Date(t).toISOString().slice(0, 10) === v;
+};
 const isTime = (v: unknown): v is string => typeof v === "string" && TIME.test(v);
 const hhmm = (t: string | null | undefined) => (t ?? "").slice(0, 5);
 const weekdayName = (ctx: ToolContext, date: string) => cap(formatDateLabel(ctx.locale, date, { weekday: "long" }));
@@ -283,21 +301,35 @@ async function nearestFree(ctx: ToolContext, date: string, start: string, durati
     .map((s) => ({ date, start: s }));
 }
 
+// A patient as the user taps it in a list: the name and the birth date, so
+// the tapped text names one person when it comes back as the next message.
+const patientOption = (ctx: ToolContext, p: { id: string; full_name: string; birth_date: string | null }) => ({
+  id: p.id,
+  title: p.birth_date ? `${p.full_name} · ${T[ctx.lang].born(formatShortDate(ctx.locale, p.birth_date))}` : p.full_name,
+  detail: "",
+});
+const CHOOSE_NOTE = "The user was shown a list to choose from. Don't list the options, don't pick one and don't repeat any detail; wait for their choice.";
+
 async function findPatients(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
-  const q = cleanSearchText(String(input.query ?? ""));
+  const q = cleanSearchText(String(input.query ?? "").replace(/·.*$/, ""));
   // The practice country decides which ID column is searched (the picker's rule).
   const filter = patientSearchFilter(q, patientIdKind(await practiceCountry(ctx)));
   if (!q || !filter) return err("Say who: ask the user for the patient's name.");
-  const { data, error } = await ctx.db
+  const birthDate = isDate(input.birthDate) ? input.birthDate : null;
+  let query = ctx.db
     .from("patients")
     .select("id, full_name, birth_date")
     .eq("professional_id", ctx.profId)
     .is("archived_at", null)
-    .or(filter)
-    .order("full_name")
-    .limit(5);
+    .or(filter);
+  if (birthDate) query = query.eq("birth_date", birthDate);
+  const { data, error } = await query.order("full_name").limit(5);
   if (error) return err("The patient search failed; say so and suggest the Patients screen.");
   const rows = (data ?? []) as { id: string; full_name: string; birth_date: string | null }[];
+  // Several: the user chooses (UX: always a list, never a guess or a text list).
+  if (rows.length > 1) {
+    return { forModel: `${rows.length} patients match. ${CHOOSE_NOTE}`, block: { type: "pick", question: T[ctx.lang].pickPatient, options: rows.map((r) => patientOption(ctx, r)) } };
+  }
   rows.forEach((r) => ctx.seen.add(r.id));
   return { forModel: JSON.stringify(rows.map((r) => ({ id: r.id, name: r.full_name, birthDate: r.birth_date ? formatShortDate(ctx.locale, r.birth_date) : null }))) };
 }
@@ -311,7 +343,15 @@ const APPT_COLS = "id, patient_id, patient_name, date, start_time, end_time, sta
 async function listAppointments(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
   const { from, to } = input;
   if (!isDate(from) || !isDate(to) || to < from) return err("Dates must be YYYY-MM-DD (Gregorian), from ≤ to.");
-  if (daysBetween(from, to) > MAX_LIST_DAYS - 1) return err(`At most ${MAX_LIST_DAYS} days at a time.`);
+  // Filters for acting on ONE appointment: the patient's name (a tapped
+  // list option carries "· nasc. …", ignored here) and/or the start time.
+  const patient = typeof input.patient === "string" ? cleanSearchText(input.patient.replace(/·.*$/, "")).toLowerCase() : "";
+  const start = isTime(input.start) ? input.start : null;
+  if (input.start !== undefined && !start) return err("The start must be HH:MM (24 h).");
+  // Filtered by patient, a longer window (UX: marking one paid looks from
+  // 90 days back to 30 ahead).
+  const maxDays = patient ? MAX_PATIENT_DAYS : MAX_LIST_DAYS;
+  if (daysBetween(from, to) > maxDays - 1) return err(`At most ${maxDays} days at a time${patient ? "" : ` (up to ${MAX_PATIENT_DAYS} when you pass the patient)`}.`);
   const { data, error } = await ctx.db
     .from("appointments")
     .select(APPT_COLS)
@@ -321,9 +361,27 @@ async function listAppointments(ctx: ToolContext, input: Record<string, unknown>
     .not("status", "in", "(cancelled,rejected)")
     .order("date")
     .order("start_time")
-    .limit(80);
+    .limit(patient ? 400 : 80);
   if (error) return err("The schedule couldn't be read; say so and suggest the Schedule screen.");
-  const rows = (data ?? []) as ApptRow[];
+  let rows = (data ?? []) as ApptRow[];
+  if (patient) rows = rows.filter((r) => r.status !== "blocked" && (r.patient_name ?? "").toLowerCase().includes(patient));
+  if (start) rows = rows.filter((r) => hhmm(r.start_time) === start);
+  // Looking for one and several match: the user chooses (UX: a list with
+  // date · time · patient, never a guess or a text list).
+  if ((patient || start) && rows.length > 1) {
+    return {
+      forModel: `${rows.length} appointments match. ${CHOOSE_NOTE}`,
+      block: {
+        type: "pick",
+        question: T[ctx.lang].pickAppointment,
+        options: rows.slice(0, 8).map((r) => ({
+          id: r.id,
+          title: `${whenLabel(ctx, r.date)} · ${hhmm(r.start_time)} · ${r.status === "blocked" ? "—" : r.patient_name ?? "—"}`,
+          detail: "",
+        })),
+      },
+    };
+  }
   const ids = [...new Set(rows.map((r) => r.patient_id).filter((x): x is string => !!x))];
   const births = new Map<string, string | null>();
   if (ids.length) {
@@ -350,6 +408,18 @@ async function listAppointments(ctx: ToolContext, input: Record<string, unknown>
             value: r.payment_amount === null ? null : money(r.payment_amount, country),
           }),
     }))),
+  };
+}
+
+// A date that could mean more than one day: the user taps one (UX, spec
+// rule 10a). Only real days from today on; each shown as "Sexta-feira,
+// 02/10/2026", which comes back as the next message.
+async function chooseDate(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
+  const dates = Array.isArray(input.dates) ? [...new Set(input.dates.filter((d): d is string => isDate(d) && d >= ctx.today))].sort() : [];
+  if (dates.length < 2 || dates.length > 4) return err("Give 2 to 4 real dates from the Calendar (today or later), YYYY-MM-DD.");
+  return {
+    forModel: `Dates shown. ${CHOOSE_NOTE}`,
+    block: { type: "pick", question: T[ctx.lang].pickDate, options: dates.map((d) => ({ id: d, title: whenLabel(ctx, d), detail: "" })) },
   };
 }
 
@@ -743,7 +813,16 @@ async function proposeAddPatient(ctx: ToolContext, input: Record<string, unknown
   matches.forEach((m) => ctx.seen.add(m.id));
   const listed = matches.slice(0, 5).map((m) => `${personLabel(ctx, m.full_name, m.birth_date)}${m.archived_at ? (ctx.lang === "pt" ? " (arquivado)" : " (archived)") : ""}`).join("; ");
   if (matches.length && input.createAnyway !== true) {
-    return err(`Possible duplicates: ${JSON.stringify(matches.slice(0, 5).map((m) => ({ id: m.id, name: m.full_name, birthDate: m.birth_date ? formatShortDate(ctx.locale, m.birth_date) : null, archived: !!m.archived_at })))}. Tell the user; if one is the same person, don't add. Only if they say it's someone else, propose again with createAnyway=true.`);
+    // The user sees the similar patients and "É outra pessoa" to tap (UX:
+    // a list, never a text list).
+    return {
+      forModel: `Possible duplicates were shown with an "it's someone else" option. ${CHOOSE_NOTE} If they choose an existing patient, don't add; only if they say it's someone else, propose again with createAnyway=true.`,
+      block: {
+        type: "pick",
+        question: t.pickSimilar,
+        options: [...matches.slice(0, 5).map((m) => patientOption(ctx, m)), { id: "new", title: t.someoneElse, detail: "" }],
+      },
+    };
   }
   const c = card(ctx, {
     icon: "user-plus",
@@ -823,6 +902,7 @@ const RUN: Record<string, (ctx: ToolContext, input: Record<string, unknown>) => 
   find_patients: findPatients,
   list_appointments: listAppointments,
   find_free_slots: findFreeSlots,
+  choose_date: chooseDate,
   propose_book_appointment: proposeBook,
   propose_move_appointment: proposeMove,
   propose_cancel_appointment: proposeCancel,

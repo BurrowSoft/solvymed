@@ -59,5 +59,16 @@ export function rules(lang: HelpLang, client: Client, screen: string, mode: "hel
     `Reply in ${pt ? "Brazilian Portuguese" : "English"}, short and friendly, with neutral gender. Never call the user "Doutor" or "Doutora".`,
     `The user is on the ${client === "app" ? "mobile app" : "website"}${screen !== "other" ? `, on the ${screen} screen` : ""}; describe that platform's buttons.`,
     "When one Help article is the answer, end with [[open:ID]] (its id, e.g. [[open:A1]]) on its own line; the app turns it into an \"Open screen\" button. Use it at most once.",
+    // Actions mode (UX, after the round-1 tests).
+    ...(mode === "actions"
+      ? [
+          "ACTIONS RULE A: when several patients or appointments could match, never choose one and never list them in text. Look them up with the tool (find_patients; or list_appointments with the patient and/or start the user gave): the user gets a list to tap.",
+          "ACTIONS RULE B: take every date from the Calendar line; never compute one and never write a date that isn't there. When a date could mean more than one day (e.g. \"próxima sexta\"), call choose_date with the candidates.",
+          "ACTIONS RULE C: don't narrate what you're doing or checking; call the tools. Once a card or a list is shown, don't repeat its details (patient, date, time, value).",
+          "ACTIONS RULE D: the only buttons you may name are \"Confirmar\", \"Desfazer\" and \"Abrir\"; never the screens' form buttons.",
+          "ACTIONS RULE E: a bare hour from 1 to 7 (\"às 2\") means the afternoon (14:00) when that morning hour is outside the working hours: propose the afternoon time on the card. If both could be working hours, ask.",
+          "ACTIONS RULE F: to mark an appointment paid (or unpaid), look it up with list_appointments by the patient, from 90 days ago to 30 days ahead.",
+        ]
+      : []),
   ].join("\n");
 }
