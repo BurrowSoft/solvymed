@@ -136,3 +136,11 @@ describe("the printed year by country (#239)", () => {
     expect(docDate("ZZ", "2026-10-01")).toBe("01/10/2026");
   });
 });
+
+describe("patient identifier fields by country (#239)", () => {
+  it("BR CPF; TH Thai ID (digits) + passport; Other passport/ID", () => {
+    expect(profileOfKind("BR").idFields.map((f) => f.name)).toEqual(["cpf"]);
+    expect(profileOfKind("TH").idFields.map((f) => [f.name, f.label, f.store])).toEqual([["th_national_id", "thaiId", "digits"], ["passport_number", "passport", "text"]]);
+    expect(profileOfKind("OTHER").idFields.map((f) => [f.name, f.label])).toEqual([["passport_number", "passportOrId"]]);
+  });
+});
