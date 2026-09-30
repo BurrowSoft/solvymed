@@ -1010,8 +1010,8 @@
           ]
         },
         "web": {
-          "pt": "Em **Pagamentos**, na consulta recebida, clique em **Recibo** e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Médico e secretária(o) podem emitir. Clínicas na Tailândia: os recibos numerados são emitidos no app.",
-          "en": "In **Payments**, on the received appointment, click **Receipt** and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. The doctor and the secretary can create it. Clinics in Thailand: numbered receipts are issued in the app."
+          "pt": "Em **Pagamentos**, na consulta recebida, clique em **Recibo** e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Médico e secretária(o) podem emitir. O recibo traz o registro no conselho (ex.: CRM) ao lado do nome do médico, quando cadastrado; no Brasil, sem CNPJ da clínica, inclui a nota sobre o recibo oficial pelo app Receita Saúde. Clínicas na Tailândia: os recibos numerados são emitidos no app.",
+          "en": "In **Payments**, on the received appointment, click **Receipt** and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. The doctor and the secretary can create it. The receipt shows the doctor's council registration (e.g. CRM) next to their name, when it's on file; in Brazil, with no clinic CNPJ, it adds the note (in Portuguese) about the official receipt in the Receita Saúde app. Clinics in Thailand: numbered receipts are issued in the app."
         },
         "webUnavailable": false,
         "open": "payments",
