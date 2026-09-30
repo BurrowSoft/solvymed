@@ -1,9 +1,10 @@
 import { Mail, Section, Table } from "@/components/LegalDoc";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
+import { noticeChannels } from "@/lib/noticeChannels";
 
 // Política de Privacidade em português (Brasil). Autoritativa junto com a
 // versão em inglês; mantenha as duas alinhadas.
-export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; notices?: boolean }) {
+export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean }) {
   return (
     <>
       <Section title="1. Visão geral">
@@ -126,9 +127,9 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
         </Section>
       )}
 
-      {notices && (
+      {(notices || whatsapp) && (
         <Section title="6e. Avisos ao paciente">
-          <p>Avisos ao paciente: quando a clínica marca, remarca ou cancela uma consulta, o aviso ao paciente espera cerca de 1 minuto antes de ser enviado, para a clínica poder desfazer um engano. Guardamos um registro de cada aviso (qual consulta, o tipo de aviso, o horário e se foi enviado), sem nomes nem dados clínicos, por 30 dias, e depois o apagamos.</p>
+          <p>Avisos ao paciente: quando a clínica marca, remarca ou cancela uma consulta, o aviso ao paciente{whatsapp && ` (${noticeChannels(notices, "ou")})`} espera cerca de 1 minuto antes de ser enviado, para a clínica poder desfazer um engano. Guardamos um registro de cada aviso (qual consulta, o tipo de aviso, o horário e se foi enviado), sem nomes nem dados clínicos, por 30 dias, e depois o apagamos.</p>
         </Section>
       )}
 

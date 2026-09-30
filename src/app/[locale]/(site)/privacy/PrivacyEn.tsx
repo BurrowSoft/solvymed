@@ -1,9 +1,10 @@
 import { Mail, Section, Table } from "@/components/LegalDoc";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
+import { noticeChannels } from "@/lib/noticeChannels";
 
 // English Privacy Policy (authoritative with pt-BR; keep both in step).
 // Every statement here must match what the Service enforces today.
-export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; notices?: boolean }) {
+export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean }) {
   return (
     <>
       <Section title="1. Overview">
@@ -126,9 +127,9 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
         </Section>
       )}
 
-      {notices && (
+      {(notices || whatsapp) && (
         <Section title="6e. Patient notices">
-          <p>Patient notices: when the clinic books, moves or cancels an appointment, the notice to the patient waits about 1 minute before it&rsquo;s sent, so the clinic can undo a mistake. We keep a record of each notice (which appointment, the kind of notice, the time slot and whether it was sent), with no names or clinical data, for 30 days, and then delete it.</p>
+          <p>Patient notices: when the clinic books, moves or cancels an appointment, the notice to the patient{whatsapp && ` (${noticeChannels(notices, "or")})`} waits about 1 minute before it&rsquo;s sent, so the clinic can undo a mistake. We keep a record of each notice (which appointment, the kind of notice, the time slot and whether it was sent), with no names or clinical data, for 30 days, and then delete it.</p>
         </Section>
       )}
 
