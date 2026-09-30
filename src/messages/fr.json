@@ -246,10 +246,11 @@
     "revert": "Annuler",
     "confirm": "Confirmer",
     "cancel": "Annuler",
-    "amountPlaceholder": "Montant €",
+    "amountPlaceholder": "Montant ({symbol})",
     "revertConfirm": "Remettre ce paiement en attente ?",
     "errorInvalidAmount": "Veuillez saisir un montant valide.",
-    "errorGeneric": "Une erreur s'est produite. Réessayez."
+    "errorGeneric": "Une erreur s'est produite. Réessayez.",
+    "amountPlaceholderPlain": "Montant"
   },
   "paymentsPage": {
     "title": "Paiements",
@@ -508,9 +509,9 @@
     "noProcedures": "Aucun acte pour l'instant. Ajoutez le premier ci-dessous.",
     "newProcedure": "Nouvel acte",
     "procedureName": "Nom",
-    "procedureNamePlaceholder": "Consultation initiale, Suivi…",
+    "procedureNamePlaceholder": "ex. Première consultation – Adulte",
     "durationLabel": "Durée (minutes)",
-    "priceLabel": "Tarif (R$)",
+    "priceLabel": "Tarif ({symbol})",
     "paymentTypeLabel": "Mode de paiement",
     "private": "Privé",
     "insurance": "Assurance",
@@ -565,7 +566,7 @@
     "manageSubscription": "Gérer l’abonnement",
     "subscriptionSubscribe": "Voir le forfait",
     "practiceCountryOther": "Autre pays",
-    "fullNameHint": "Ajoutez votre titre si vous le souhaitez (Dr, Pr) : il apparaît dans les salutations.",
+    "fullNameHint": "Ajoutez votre titre si vous le souhaitez ({titles}) : il apparaît dans les salutations.",
     "cnpjInvalid": "Le CNPJ n'est pas valide. Vérifiez le numéro.",
     "appearanceTitle": "Apparence",
     "appearanceHint": "Le thème du tableau de bord dans ce navigateur. Les impressions et les e-mails restent toujours clairs.",
@@ -573,7 +574,15 @@
     "themeLight": "Clair",
     "themeDark": "Sombre",
     "pixKey": "Clé Pix",
-    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, téléphone ou clé aléatoire"
+    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, téléphone ou clé aléatoire",
+    "fullNameTitles": "Dr, Pr",
+    "registrationPlaceholderTH": "ex. ว.12345 (licence du Conseil médical)",
+    "registrationPlaceholderOther": "ex. votre numéro d'inscription",
+    "clinicNamePlaceholderTH": "Clinique Sukhumvit",
+    "clinicNamePlaceholderOther": "Cabinet Bien-Être",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "123 rue Principale",
+    "priceLabelPlain": "Tarif"
   },
   "clinics": {
     "title": "Mes Cliniques",
@@ -708,7 +717,7 @@
       "country": "Où se trouve votre cabinet ?",
       "countryOther": "Autre pays",
       "countryHint": "Définit la devise, le prix de l'abonnement, la pièce d'identité du patient et le QR de paiement. Pour le changer ensuite, contactez le support.",
-      "fullNameHint": "Ajoutez votre titre si vous le souhaitez (Dr, Pr) : il apparaît dans les salutations."
+      "fullNameHint": "Ajoutez votre titre si vous le souhaitez ({titles}) : il apparaît dans les salutations."
     },
     "forgotPassword": {
       "title": "Mot de passe oublié ?",
@@ -1285,12 +1294,16 @@
       "payments": {
         "a": "Combien reste-t-il à encaisser cette semaine ?",
         "b": "Envoyer un Pix à un patient",
-        "c": "Marquer comme payé"
+        "c": "Marquer comme payé",
+        "bPromptPay": "Envoyer un QR PromptPay à un patient",
+        "bNone": "Voir les rendez-vous impayés"
       },
       "settings": {
         "a": "Comment inviter ma secrétaire ?",
         "b": "Configurer Pix",
-        "c": "Modifier les horaires"
+        "c": "Modifier les horaires",
+        "bPromptPay": "Configurer PromptPay",
+        "bNone": "Modifier les infos du cabinet"
       },
       "other": {
         "a": "Qu'est-ce que j'ai demain ?",

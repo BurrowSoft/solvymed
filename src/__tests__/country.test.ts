@@ -3,15 +3,34 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("@sentry/nextjs", () => ({ captureMessage: vi.fn() }));
 
 import * as Sentry from "@sentry/nextjs";
-import { countryProfile, normalizeCountry } from "@/lib/country";
-import { formatMoney } from "@/lib/money";
+import { countryProfile, normalizeCountry, titleExamples } from "@/lib/country";
+import { amountExample, currencySymbol, formatMoney } from "@/lib/money";
 import { getPracticeCountry, lookupPracticeCountry } from "@/lib/practiceCountry";
 
 describe("countryProfile", () => {
   it("maps BR, TH and everything else", () => {
     expect(countryProfile("BR")).toMatchObject({ currency: "BRL", patientId: "cpf", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo" });
     expect(countryProfile("th")).toMatchObject({ currency: "THB", patientId: "thai_id", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok" });
-    for (const c of ["PT", "US", "ZZ"]) expect(countryProfile(c)).toMatchObject({ kind: "OTHER", currency: "USD", paymentQr: null });
+    // Outside BR/TH the clinic's own currency is unknown: plain numbers (UX).
+    for (const c of ["PT", "US", "ZZ"]) expect(countryProfile(c)).toMatchObject({ kind: "OTHER", currency: "NONE", paymentQr: null });
+  });
+
+  it("is ONE registry: every country without its own entry gets the explicit default, never BR's or TH's rules", () => {
+    for (const c of ["PT", "US", "JP", "ZZ"]) {
+      const p = countryProfile(c);
+      expect(p.clinicTaxId).toBeNull();
+      expect(p.examples).toMatchObject({ titles: null, registration: "registrationPlaceholderOther", clinicName: "clinicNamePlaceholderOther", phone: null, state: null, city: null });
+    }
+    expect(countryProfile("BR")).toMatchObject({ clinicTaxId: "cnpj", examples: { registration: "registrationPlaceholder", state: "SP", website: "www.example.com.br" } });
+    expect(countryProfile("TH")).toMatchObject({ clinicTaxId: "th_tax_id", examples: { titles: { th: "นพ., พญ., ทพ., ทญ.", other: "Dr." }, registration: "registrationPlaceholderTH" } });
+  });
+
+  it("title examples: Brazil's, Thailand's in Thai (else Dr.), and null elsewhere (the locale's own list)", () => {
+    expect(titleExamples("BR", "en")).toBe("Dr., Dra., Prof.");
+    expect(titleExamples("TH", "th")).toBe("นพ., พญ., ทพ., ทญ.");
+    expect(titleExamples("TH", "en")).toBe("Dr.");
+    expect(titleExamples("ZZ", "th")).toBeNull();
+    expect(titleExamples("US", "pt-BR")).toBeNull();
   });
 
   it("treats a missing or malformed country as BR (every practice before migration 110)", () => {
@@ -27,6 +46,18 @@ describe("formatMoney", () => {
     expect(plain(formatMoney(690, "THB"))).toBe("฿690.00");
     expect(plain(formatMoney(19, "USD"))).toBe("$19.00");
     expect(plain(formatMoney(150))).toBe("R$ 150,00");
+  });
+
+  it("a practice outside BR/TH: plain numbers, no symbol; Thai money in its own format whatever the UI", () => {
+    expect(formatMoney(1500.5, "NONE")).toBe("1,500.50");
+    expect([currencySymbol("NONE"), amountExample("NONE")]).toEqual(["", "0.00"]);
+    expect(plain(formatMoney(1500.5, "THB"))).toBe("฿1,500.50");
+  });
+
+  it("a money input's symbol and example follow the currency (0,00 only for BRL)", () => {
+    expect([currencySymbol("BRL"), amountExample("BRL")]).toEqual(["R$", "0,00"]);
+    expect([currencySymbol("THB"), amountExample("THB")]).toEqual(["฿", "0.00"]);
+    expect([currencySymbol("USD"), amountExample("USD")]).toEqual(["$", "0.00"]);
   });
 });
 

@@ -246,10 +246,11 @@
     "revert": "取り消し",
     "confirm": "確認",
     "cancel": "キャンセル",
-    "amountPlaceholder": "金額",
+    "amountPlaceholder": "金額 ({symbol})",
     "revertConfirm": "このお支払いを未払いに戻しますか？",
     "errorInvalidAmount": "有効な金額を入力してください。",
-    "errorGeneric": "問題が発生しました。もう一度お試しください。"
+    "errorGeneric": "問題が発生しました。もう一度お試しください。",
+    "amountPlaceholderPlain": "金額"
   },
   "paymentsPage": {
     "title": "支払い",
@@ -508,9 +509,9 @@
     "noProcedures": "まだ施術メニューがありません。以下から追加してください。",
     "newProcedure": "新規メニュー",
     "procedureName": "名前",
-    "procedureNamePlaceholder": "初診、再診…",
+    "procedureNamePlaceholder": "例：初診 – 成人",
     "durationLabel": "所要時間（分）",
-    "priceLabel": "料金（R$）",
+    "priceLabel": "料金（{symbol}）",
     "paymentTypeLabel": "支払い種別",
     "private": "自費",
     "insurance": "保険",
@@ -565,7 +566,7 @@
     "manageSubscription": "サブスクリプションを管理",
     "subscriptionSubscribe": "プランを見る",
     "practiceCountryOther": "その他の国",
-    "fullNameHint": "必要に応じて肩書き（Dr.、Prof.）を付けてください。あいさつに表示されます。",
+    "fullNameHint": "必要に応じて肩書き（{titles}）を付けてください。あいさつに表示されます。",
     "cnpjInvalid": "CNPJ が正しくありません。番号を確認してください。",
     "appearanceTitle": "外観",
     "appearanceHint": "このブラウザでのダッシュボードのテーマ。印刷物とメールは常にライトです。",
@@ -573,7 +574,15 @@
     "themeLight": "ライト",
     "themeDark": "ダーク",
     "pixKey": "Pixキー",
-    "pixKeyPlaceholder": "CPF、CNPJ、メール、電話番号、またはランダムキー"
+    "pixKeyPlaceholder": "CPF、CNPJ、メール、電話番号、またはランダムキー",
+    "fullNameTitles": "Dr.、Prof.",
+    "registrationPlaceholderTH": "例：ว.12345（医師会の免許）",
+    "registrationPlaceholderOther": "例：免許番号",
+    "clinicNamePlaceholderTH": "スクンビット・クリニック",
+    "clinicNamePlaceholderOther": "ウェルネス・クリニック",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "本町1-2-3",
+    "priceLabelPlain": "料金"
   },
   "clinics": {
     "title": "マイクリニック",
@@ -708,7 +717,7 @@
       "country": "クリニックの所在国は？",
       "countryOther": "その他の国",
       "countryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。後で変更するにはサポートにご連絡ください。",
-      "fullNameHint": "必要に応じて肩書き（Dr.、Prof.）を付けてください。あいさつに表示されます。"
+      "fullNameHint": "必要に応じて肩書き（{titles}）を付けてください。あいさつに表示されます。"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",
@@ -1285,12 +1294,16 @@
       "payments": {
         "a": "今週の未収はいくら？",
         "b": "患者に Pix を送る",
-        "c": "支払い済みにする"
+        "c": "支払い済みにする",
+        "bPromptPay": "患者にPromptPay QRを送る",
+        "bNone": "未払いの予約を表示"
       },
       "settings": {
         "a": "スタッフを招待するには？",
         "b": "Pix を設定",
-        "c": "診療時間を変更"
+        "c": "診療時間を変更",
+        "bPromptPay": "PromptPayを設定",
+        "bNone": "クリニック情報を変更"
       },
       "other": {
         "a": "明日の予定は？",

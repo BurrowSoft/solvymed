@@ -219,7 +219,7 @@ export default async function DashboardLayout({
         {/* Not while locked: only Settings is open then, and SolvyAI acts on the agenda. */}
         {liveFeatures.solvyAi && !isSecretary && !(sub && !isAccessAllowed(sub)) && (
           <>
-            <SolvyAi locale={locale} prefix={locale === "en" ? "" : `/${locale}`} dailyLimit={sub?.subscription_status === "trial" ? 10 : 20} remote={assistantApiEnabled()} />
+            <SolvyAi locale={locale} prefix={locale === "en" ? "" : `/${locale}`} dailyLimit={sub?.subscription_status === "trial" ? 10 : 20} remote={assistantApiEnabled()} paymentQr={paymentQr} />
             {/* The item a SolvyAI save lands on, ringed for 3 s. */}
             <Suspense fallback={null}><HighlightFromQuery /></Suspense>
           </>

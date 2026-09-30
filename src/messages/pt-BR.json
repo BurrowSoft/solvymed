@@ -246,10 +246,11 @@
     "revert": "Reverter",
     "confirm": "Confirmar",
     "cancel": "Cancelar",
-    "amountPlaceholder": "Valor R$",
+    "amountPlaceholder": "Valor ({symbol})",
     "revertConfirm": "Reverter este pagamento para pendente?",
     "errorInvalidAmount": "Informe um valor válido.",
-    "errorGeneric": "Algo deu errado. Tente novamente."
+    "errorGeneric": "Algo deu errado. Tente novamente.",
+    "amountPlaceholderPlain": "Valor"
   },
   "paymentsPage": {
     "title": "Pagamentos",
@@ -508,9 +509,9 @@
     "noProcedures": "Nenhum procedimento ainda. Adicione o primeiro abaixo.",
     "newProcedure": "Novo procedimento",
     "procedureName": "Nome",
-    "procedureNamePlaceholder": "Consulta inicial, Retorno…",
+    "procedureNamePlaceholder": "ex.: Primeira consulta – Adulto",
     "durationLabel": "Duração (minutos)",
-    "priceLabel": "Preço (R$)",
+    "priceLabel": "Preço ({symbol})",
     "paymentTypeLabel": "Tipo de pagamento",
     "private": "Particular",
     "insurance": "Convênio",
@@ -565,7 +566,7 @@
     "manageSubscription": "Gerenciar assinatura",
     "subscriptionSubscribe": "Ver o plano",
     "practiceCountryOther": "Outro país",
-    "fullNameHint": "Se quiser, inclua seu título (Dr., Dra., Prof.): ele aparece nas saudações.",
+    "fullNameHint": "Se quiser, inclua seu título ({titles}): ele aparece nas saudações.",
     "cnpjInvalid": "O CNPJ não é válido. Confira o número.",
     "appearanceTitle": "Aparência",
     "appearanceHint": "O tema do painel neste navegador. Impressões e e-mails ficam sempre claros.",
@@ -573,7 +574,15 @@
     "themeLight": "Claro",
     "themeDark": "Escuro",
     "pixKey": "Chave Pix",
-    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, telefone ou chave aleatória"
+    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, telefone ou chave aleatória",
+    "fullNameTitles": "Dr., Dra., Prof.",
+    "registrationPlaceholderTH": "ex.: ว.12345 (licença do Conselho Médico)",
+    "registrationPlaceholderOther": "ex.: o número do seu registro profissional",
+    "clinicNamePlaceholderTH": "Clínica Sukhumvit",
+    "clinicNamePlaceholderOther": "Clínica Bem-Estar",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "Rua Principal, 123",
+    "priceLabelPlain": "Preço"
   },
   "clinics": {
     "title": "Minhas Clínicas",
@@ -708,7 +717,7 @@
       "country": "Onde fica seu consultório?",
       "countryOther": "Outro país",
       "countryHint": "Define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar depois, fale com o suporte.",
-      "fullNameHint": "Se quiser, inclua seu título (Dr., Dra., Prof.): ele aparece nas saudações."
+      "fullNameHint": "Se quiser, inclua seu título ({titles}): ele aparece nas saudações."
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",
@@ -1285,12 +1294,16 @@
       "payments": {
         "a": "Quanto tenho a receber esta semana?",
         "b": "Enviar Pix para um paciente",
-        "c": "Marcar como pago"
+        "c": "Marcar como pago",
+        "bPromptPay": "Enviar QR PromptPay ao paciente",
+        "bNone": "Ver consultas não pagas"
       },
       "settings": {
         "a": "Como convido minha secretária?",
         "b": "Configurar Pix",
-        "c": "Mudar horário de atendimento"
+        "c": "Mudar horário de atendimento",
+        "bPromptPay": "Configurar o PromptPay",
+        "bNone": "Alterar os dados da clínica"
       },
       "other": {
         "a": "O que tenho amanhã?",

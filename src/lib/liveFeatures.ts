@@ -3,8 +3,9 @@
 // the feature is live for customers, not when the code is merged.
 export const liveFeatures = {
   // PromptPay QR for Thai practices: after migration 110 + a real Thai
-  // banking-app scan (TH-4).
-  promptPay: false,
+  // banking-app scan (TH-4). Live: Vitor's Thai bank app paid a SolvyMed
+  // PromptPay QR from www (฿10.00, 1 Oct).
+  promptPay: true,
   // Appointment reminders on LINE (TH-6).
   lineReminders: false,
   // SolvyAI, the AI assistant (Enhancing UX): its panel for doctors, the

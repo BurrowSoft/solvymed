@@ -55,7 +55,7 @@ export function hoursUntil(resetsAt: string, now = Date.now()): number {
 
 // remote: the real route is on (SOLVYAI_API_ENABLED, read on the server);
 // otherwise the mock, labelled "Prévia".
-export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale: string; prefix: string; dailyLimit: number; remote?: boolean }) {
+export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr = null }: { locale: string; prefix: string; dailyLimit: number; remote?: boolean; paymentQr?: "pix" | "promptpay" | null }) {
   const t = useTranslations("assistant");
   const router = useRouter();
   const pathname = usePathname();
@@ -256,7 +256,12 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
 
   const openScreen = (href: string) => { if (!isInternalHref(href)) return; setMinimized(true); router.push(href); };
 
-  const chips = [t(`chips.${screen}.a`), t(`chips.${screen}.b`), t(`chips.${screen}.c`)];
+  // The payments / settings "b" chips name the payment QR: the PRACTICE
+  // country's (Pix in Brazil, PromptPay in Thailand), none elsewhere (UX).
+  const bKey = (screen === "payments" || screen === "settings")
+    ? (paymentQr === "pix" ? "b" : paymentQr === "promptpay" ? "bPromptPay" : "bNone")
+    : "b";
+  const chips = [t(`chips.${screen}.a`), t(`chips.${screen}.${bKey}`), t(`chips.${screen}.c`)];
 
   return (
     <>

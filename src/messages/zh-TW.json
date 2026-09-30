@@ -246,10 +246,11 @@
     "revert": "撤銷",
     "confirm": "確認",
     "cancel": "取消",
-    "amountPlaceholder": "金額",
+    "amountPlaceholder": "金額 ({symbol})",
     "revertConfirm": "將此付款恢復為待付款狀態？",
     "errorInvalidAmount": "請輸入有效金額。",
-    "errorGeneric": "發生問題，請重試。"
+    "errorGeneric": "發生問題，請重試。",
+    "amountPlaceholderPlain": "金額"
   },
   "paymentsPage": {
     "title": "付款",
@@ -508,9 +509,9 @@
     "noProcedures": "暫無診療項目。請在下方新增第一個。",
     "newProcedure": "新增項目",
     "procedureName": "名稱",
-    "procedureNamePlaceholder": "初診、複診…",
+    "procedureNamePlaceholder": "例如：初診 – 成人",
     "durationLabel": "時長（分鐘）",
-    "priceLabel": "價格（R$）",
+    "priceLabel": "價格（{symbol}）",
     "paymentTypeLabel": "付款方式",
     "private": "自費",
     "insurance": "保險",
@@ -565,7 +566,7 @@
     "manageSubscription": "管理訂閱",
     "subscriptionSubscribe": "查看方案",
     "practiceCountryOther": "其他國家",
-    "fullNameHint": "如有需要，可加上頭銜（Dr.、Prof.），會顯示在問候語中。",
+    "fullNameHint": "如有需要，可加上頭銜（{titles}），會顯示在問候語中。",
     "cnpjInvalid": "CNPJ 無效,請檢查號碼。",
     "appearanceTitle": "外觀",
     "appearanceHint": "此瀏覽器中的面板主題。列印內容和電子郵件一律為淺色。",
@@ -573,7 +574,15 @@
     "themeLight": "淺色",
     "themeDark": "深色",
     "pixKey": "Pix 金鑰",
-    "pixKeyPlaceholder": "CPF、CNPJ、電子郵件、電話或隨機金鑰"
+    "pixKeyPlaceholder": "CPF、CNPJ、電子郵件、電話或隨機金鑰",
+    "fullNameTitles": "Dr.、Prof.",
+    "registrationPlaceholderTH": "例如：ว.12345（醫學委員會執照）",
+    "registrationPlaceholderOther": "例如：你的執業證號",
+    "clinicNamePlaceholderTH": "素坤逸診所",
+    "clinicNamePlaceholderOther": "康健診所",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "主街123號",
+    "priceLabelPlain": "價格"
   },
   "clinics": {
     "title": "我的診所",
@@ -708,7 +717,7 @@
       "country": "您的診所在哪裡？",
       "countryOther": "其他國家",
       "countryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。之後如需變更，請聯絡客服。",
-      "fullNameHint": "如有需要，可加上頭銜（Dr.、Prof.），會顯示在問候語中。"
+      "fullNameHint": "如有需要，可加上頭銜（{titles}），會顯示在問候語中。"
     },
     "forgotPassword": {
       "title": "忘記密碼？",
@@ -1285,12 +1294,16 @@
       "payments": {
         "a": "本週待收多少？",
         "b": "傳送 Pix 給病患",
-        "c": "標記為已付款"
+        "c": "標記為已付款",
+        "bPromptPay": "傳送 PromptPay QR 碼給病患",
+        "bNone": "查看未付款的預約"
       },
       "settings": {
         "a": "如何邀請助理？",
         "b": "設定 Pix",
-        "c": "修改看診時間"
+        "c": "修改看診時間",
+        "bPromptPay": "設定 PromptPay",
+        "bNone": "修改診所資料"
       },
       "other": {
         "a": "我明天有什麼安排？",

@@ -246,10 +246,11 @@
     "revert": "تراجع",
     "confirm": "تأكيد",
     "cancel": "إلغاء",
-    "amountPlaceholder": "المبلغ",
+    "amountPlaceholder": "المبلغ ({symbol})",
     "revertConfirm": "إعادة هذه الدفعة إلى معلقة؟",
     "errorInvalidAmount": "يرجى إدخال مبلغ صالح.",
-    "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+    "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "amountPlaceholderPlain": "المبلغ"
   },
   "paymentsPage": {
     "title": "المدفوعات",
@@ -508,9 +509,9 @@
     "noProcedures": "لا توجد إجراءات بعد. أضف الأول أدناه.",
     "newProcedure": "إجراء جديد",
     "procedureName": "الاسم",
-    "procedureNamePlaceholder": "استشارة أولية، متابعة…",
+    "procedureNamePlaceholder": "مثال: الزيارة الأولى – بالغ",
     "durationLabel": "المدة (دقيقة)",
-    "priceLabel": "السعر (R$)",
+    "priceLabel": "السعر ({symbol})",
     "paymentTypeLabel": "طريقة الدفع",
     "private": "خاص",
     "insurance": "تأمين",
@@ -565,7 +566,7 @@
     "manageSubscription": "إدارة الاشتراك",
     "subscriptionSubscribe": "عرض الخطة",
     "practiceCountryOther": "دولة أخرى",
-    "fullNameHint": "أضف لقبك إن أردت (Dr.، Prof.)؛ يظهر في التحيات.",
+    "fullNameHint": "أضف لقبك إن أردت ({titles})؛ يظهر في التحيات.",
     "cnpjInvalid": "رقم CNPJ غير صالح. تحقّق من الرقم.",
     "appearanceTitle": "المظهر",
     "appearanceHint": "سمة لوحة التحكم في هذا المتصفح. تبقى المطبوعات والرسائل الإلكترونية فاتحة دائمًا.",
@@ -573,7 +574,15 @@
     "themeLight": "فاتح",
     "themeDark": "داكن",
     "pixKey": "مفتاح Pix",
-    "pixKeyPlaceholder": "CPF أو CNPJ أو البريد الإلكتروني أو الهاتف أو مفتاح عشوائي"
+    "pixKeyPlaceholder": "CPF أو CNPJ أو البريد الإلكتروني أو الهاتف أو مفتاح عشوائي",
+    "fullNameTitles": "Dr.، Prof.",
+    "registrationPlaceholderTH": "مثال: ว.12345 (ترخيص المجلس الطبي)",
+    "registrationPlaceholderOther": "مثال: رقم ترخيصك",
+    "clinicNamePlaceholderTH": "عيادة سوخومفيت",
+    "clinicNamePlaceholderOther": "عيادة العافية",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "123 الشارع الرئيسي",
+    "priceLabelPlain": "السعر"
   },
   "clinics": {
     "title": "عياداتي",
@@ -708,7 +717,7 @@
       "country": "أين تقع عيادتك؟",
       "countryOther": "دولة أخرى",
       "countryHint": "يحدد العملة وسعر الباقة وهوية المريض ورمز الدفع. لتغييره لاحقًا، تواصل مع الدعم.",
-      "fullNameHint": "أضف لقبك إن أردت (Dr.، Prof.)؛ يظهر في التحيات."
+      "fullNameHint": "أضف لقبك إن أردت ({titles})؛ يظهر في التحيات."
     },
     "forgotPassword": {
       "title": "نسيت كلمة المرور؟",
@@ -1285,12 +1294,16 @@
       "payments": {
         "a": "كم لي للتحصيل هذا الأسبوع؟",
         "b": "إرسال Pix لمريض",
-        "c": "تسجيل كمدفوع"
+        "c": "تسجيل كمدفوع",
+        "bPromptPay": "أرسل رمز PromptPay QR إلى مريض",
+        "bNone": "اعرض المواعيد غير المدفوعة"
       },
       "settings": {
         "a": "كيف أدعو السكرتير/ة؟",
         "b": "إعداد Pix",
-        "c": "تغيير ساعات العمل"
+        "c": "تغيير ساعات العمل",
+        "bPromptPay": "إعداد PromptPay",
+        "bNone": "تغيير بيانات العيادة"
       },
       "other": {
         "a": "ما مواعيدي غدًا؟",

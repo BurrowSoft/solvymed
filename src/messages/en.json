@@ -246,10 +246,11 @@
     "revert": "Revert",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "amountPlaceholder": "Amount R$",
+    "amountPlaceholder": "Amount ({symbol})",
     "revertConfirm": "Revert this payment to pending?",
     "errorInvalidAmount": "Please enter a valid amount.",
-    "errorGeneric": "Something went wrong. Please try again."
+    "errorGeneric": "Something went wrong. Please try again.",
+    "amountPlaceholderPlain": "Amount"
   },
   "paymentsPage": {
     "title": "Payments",
@@ -514,9 +515,9 @@
     "noProcedures": "No procedures yet. Add your first one below.",
     "newProcedure": "New procedure",
     "procedureName": "Name",
-    "procedureNamePlaceholder": "Initial consultation, Follow-up…",
+    "procedureNamePlaceholder": "e.g. First visit – Adult",
     "durationLabel": "Duration (minutes)",
-    "priceLabel": "Price (R$)",
+    "priceLabel": "Price ({symbol})",
     "paymentTypeLabel": "Payment type",
     "private": "Private",
     "insurance": "Insurance",
@@ -565,7 +566,7 @@
     "manageSubscription": "Manage subscription",
     "subscriptionSubscribe": "See the plan",
     "practiceCountryOther": "Other country",
-    "fullNameHint": "Add your title if you like (Dr., Prof.); it appears in greetings.",
+    "fullNameHint": "Add your title if you like ({titles}); it appears in greetings.",
     "cnpjInvalid": "The CNPJ isn't valid. Check the number.",
     "appearanceTitle": "Appearance",
     "appearanceHint": "The dashboard's theme in this browser. Prints and emails always stay light.",
@@ -573,7 +574,15 @@
     "themeLight": "Light",
     "themeDark": "Dark",
     "pixKey": "Pix key",
-    "pixKeyPlaceholder": "CPF, CNPJ, email, phone or random key"
+    "pixKeyPlaceholder": "CPF, CNPJ, email, phone or random key",
+    "fullNameTitles": "Dr., Prof.",
+    "registrationPlaceholderTH": "e.g. ว.12345 (Medical Council licence)",
+    "registrationPlaceholderOther": "e.g. your licence number",
+    "clinicNamePlaceholderTH": "Sukhumvit Clinic",
+    "clinicNamePlaceholderOther": "Wellness Clinic",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "123 Main Street",
+    "priceLabelPlain": "Price"
   },
   "clinics": {
     "title": "My Clinics",
@@ -708,7 +717,7 @@
       "country": "Where is your practice?",
       "countryOther": "Other country",
       "countryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it later, contact support.",
-      "fullNameHint": "Add your title if you like (Dr., Prof.); it appears in greetings."
+      "fullNameHint": "Add your title if you like ({titles}); it appears in greetings."
     },
     "forgotPassword": {
       "title": "Forgot your password?",
@@ -1315,12 +1324,16 @@
       "payments": {
         "a": "How much is to receive this week?",
         "b": "Send Pix to a patient",
-        "c": "Mark as paid"
+        "c": "Mark as paid",
+        "bPromptPay": "Send a PromptPay QR to a patient",
+        "bNone": "Show unpaid appointments"
       },
       "settings": {
         "a": "How do I invite my secretary?",
         "b": "Set up Pix",
-        "c": "Change working hours"
+        "c": "Change working hours",
+        "bPromptPay": "Set up PromptPay",
+        "bNone": "Change my clinic details"
       },
       "other": {
         "a": "What do I have tomorrow?",

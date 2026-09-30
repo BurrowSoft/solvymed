@@ -2,7 +2,7 @@ import "server-only";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
 // The practice's header for a printed document (the recibo, Help G5): the
-// doctor's name and specialty, the clinic's name, CNPJ and address, and the
+// doctor's name, council registration and specialty, the clinic's name, CNPJ and address, and the
 // clinic's document template. A secretary can't read the doctor's
 // professionals row or templates (RLS), so the recibo lost its header when
 // she printed it (8d, in the app). This reads ONLY those fields, with the
@@ -11,6 +11,8 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
 export type PracticeHeader = {
   fullName: string | null;
+  // The council registration (e.g. "CRM 12345/SP"), when on file.
+  registration: string | null;
   specialty: string | null;
   clinicName: string | null;
   clinicCnpj: string | null;
@@ -26,7 +28,7 @@ export async function readPracticeHeader(professionalId: string, documentType: "
   });
   const [prof, template] = await Promise.all([
     db.from("professionals")
-      .select("full_name, specialty, clinic_name, clinic_cnpj, clinic_address, clinic_city, clinic_state")
+      .select("full_name, professional_registration, specialty, clinic_name, clinic_cnpj, clinic_address, clinic_city, clinic_state")
       .eq("id", professionalId)
       .maybeSingle(),
     db.from("document_templates")
@@ -38,6 +40,7 @@ export async function readPracticeHeader(professionalId: string, documentType: "
   const p = (prof.data ?? {}) as Record<string, string | null>;
   return {
     fullName: p.full_name ?? null,
+    registration: p.professional_registration?.trim() || null,
     specialty: p.specialty ?? null,
     clinicName: p.clinic_name ?? null,
     clinicCnpj: p.clinic_cnpj ?? null,

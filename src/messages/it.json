@@ -246,10 +246,11 @@
     "revert": "Annulla pagamento",
     "confirm": "Conferma",
     "cancel": "Annulla",
-    "amountPlaceholder": "Importo €",
+    "amountPlaceholder": "Importo ({symbol})",
     "revertConfirm": "Riportare questo pagamento a in sospeso?",
     "errorInvalidAmount": "Inserisci un importo valido.",
-    "errorGeneric": "Qualcosa è andato storto. Riprova."
+    "errorGeneric": "Qualcosa è andato storto. Riprova.",
+    "amountPlaceholderPlain": "Importo"
   },
   "paymentsPage": {
     "title": "Pagamenti",
@@ -508,9 +509,9 @@
     "noProcedures": "Nessuna procedura ancora. Aggiungine una qui sotto.",
     "newProcedure": "Nuova procedura",
     "procedureName": "Nome",
-    "procedureNamePlaceholder": "Prima visita, Follow-up…",
+    "procedureNamePlaceholder": "es. Prima visita – Adulto",
     "durationLabel": "Durata (minuti)",
-    "priceLabel": "Tariffa (R$)",
+    "priceLabel": "Tariffa ({symbol})",
     "paymentTypeLabel": "Tipo di pagamento",
     "private": "Privato",
     "insurance": "Assicurazione",
@@ -565,7 +566,7 @@
     "manageSubscription": "Gestisci abbonamento",
     "subscriptionSubscribe": "Vedi il piano",
     "practiceCountryOther": "Altro paese",
-    "fullNameHint": "Se vuoi, aggiungi il tuo titolo (Dott., Dott.ssa, Prof.): compare nei saluti.",
+    "fullNameHint": "Se vuoi, aggiungi il tuo titolo ({titles}): compare nei saluti.",
     "cnpjInvalid": "Il CNPJ non è valido. Controlla il numero.",
     "appearanceTitle": "Aspetto",
     "appearanceHint": "Il tema della dashboard in questo browser. Stampe ed e-mail restano sempre chiare.",
@@ -573,7 +574,15 @@
     "themeLight": "Chiaro",
     "themeDark": "Scuro",
     "pixKey": "Chiave Pix",
-    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, telefono o chiave casuale"
+    "pixKeyPlaceholder": "CPF, CNPJ, e-mail, telefono o chiave casuale",
+    "fullNameTitles": "Dott., Dott.ssa, Prof.",
+    "registrationPlaceholderTH": "es. ว.12345 (licenza del Consiglio medico)",
+    "registrationPlaceholderOther": "es. il tuo numero di iscrizione",
+    "clinicNamePlaceholderTH": "Clinica Sukhumvit",
+    "clinicNamePlaceholderOther": "Studio Benessere",
+    "addressPlaceholderTH": "123 Sukhumvit Road",
+    "addressPlaceholderOther": "Via Principale 123",
+    "priceLabelPlain": "Tariffa"
   },
   "clinics": {
     "title": "Le mie cliniche",
@@ -708,7 +717,7 @@
       "country": "Dove si trova il tuo studio?",
       "countryOther": "Altro paese",
       "countryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza.",
-      "fullNameHint": "Se vuoi, aggiungi il tuo titolo (Dott., Dott.ssa, Prof.): compare nei saluti."
+      "fullNameHint": "Se vuoi, aggiungi il tuo titolo ({titles}): compare nei saluti."
     },
     "forgotPassword": {
       "title": "Password dimenticata?",
@@ -1285,12 +1294,16 @@
       "payments": {
         "a": "Quanto devo incassare questa settimana?",
         "b": "Invia un Pix a un paziente",
-        "c": "Segna come pagato"
+        "c": "Segna come pagato",
+        "bPromptPay": "Invia un QR PromptPay a un paziente",
+        "bNone": "Mostra gli appuntamenti non pagati"
       },
       "settings": {
         "a": "Come invito la mia segretaria?",
         "b": "Configura Pix",
-        "c": "Cambia orari"
+        "c": "Cambia orari",
+        "bPromptPay": "Configura PromptPay",
+        "bNone": "Modifica i dati dello studio"
       },
       "other": {
         "a": "Cosa ho domani?",

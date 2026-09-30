@@ -9,7 +9,13 @@ export type ReceiptLabels = {
   payment: string; online: string; inPerson: string; privatePay: string; insurance: string; paid: string; pending: string; footer: string;
 };
 
-export function ReceiptDocument({ template, labels, patientName, idLines, number, date, provider, clinic, address, service, serviceDetail, amount, extras, total, privatePay, paid }: {
+// A Brazilian practice without a CNPJ (a doctor as a natural person): the
+// recibo is proof of payment, not the official IR receipt, which that doctor
+// issues in the Receita Saúde app (UX; the app's mobile #184). Verbatim, in
+// Portuguese whatever the UI language.
+export const RECEITA_SAUDE_NOTE = "Este recibo é um comprovante de pagamento. Para dedução no Imposto de Renda, o profissional pessoa física emite o recibo oficial pelo app Receita Saúde.";
+
+export function ReceiptDocument({ template, labels, patientName, idLines, number, date, provider, clinic, address, service, serviceDetail, amount, extras, total, privatePay, paid, note }: {
   template: DocTemplate;
   labels: ReceiptLabels;
   patientName: string;
@@ -26,6 +32,7 @@ export function ReceiptDocument({ template, labels, patientName, idLines, number
   total: string;
   privatePay: boolean;
   paid: boolean;
+  note?: string | null;
 }) {
   const { primaryColor, accentColor } = template;
   const label = "mb-1.5 text-[11px] uppercase tracking-[0.5px] text-[#A0ABBE]";
@@ -98,6 +105,7 @@ export function ReceiptDocument({ template, labels, patientName, idLines, number
         <div className="text-sm">
           {privatePay ? labels.privatePay : labels.insurance} · <span className="font-semibold" style={{ color: paid ? "#16A34A" : "#D97706" }}>{paid ? labels.paid : labels.pending}</span>
         </div>
+        {note && <p lang="pt-BR" className="mt-3 text-xs text-[#6B7A99]">{note}</p>}
       </section>
 
       <footer className="mt-8 border-t border-[#E5E9F0] pt-4 text-center text-[11px] text-[#A0ABBE]">
