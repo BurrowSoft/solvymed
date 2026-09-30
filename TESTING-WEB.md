@@ -9394,3 +9394,112 @@ Merged at `1a50a53` (evidence: PR comment 5899224987).
 **Still ⏳:** re-check the open-page race after migration 134 is applied; it should then refuse.
 
 Merged at `f8788c9` (evidence: PR comments 5899204969 / 5899348036).
+
+## #175 Imported-data merge know-how: Help P12 gated + the "merged" access label (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `85940262b7eebdaa7912c78002dd448562f3e008`** (the merge know-how: Help P12 gated + the `merged` access label), with one ⏳ for after migration 133
+
+Tested on the Vercel Preview with the #147 fixture doctor (existing access
+rows).
+
+| Row | Result |
+|---|---|
+| Help P12 not public yet (`merge-patients-live` unmet) | ✅ `/pt-BR/help/p12` and `/help/p12` → **404** (P6 → 200). `src/content/helpArticles.json` is unchanged in the diff |
+| App Map rule | ✅ pending on `merge-patients-live` (conditions.json `met: false`) |
+| Existing Acessos labels | ✅ unchanged: pt "Ficha do paciente / Receita · … / Arquivo · …", en "Patient record / Prescription · … / File · …" |
+| New label `accessKindMerged` | ✅ present in **all 15 locales**: pt "Mesclou com «{name}»", en "Merged with “{name}”", th "รวมกับ «{name}»" |
+| A live `merged` row in the Acessos tab | ⏳ not possible yet: prod's `record_access_log` kind check refuses `'merged'` (23514, checked just now; nothing written). Re-check "Mesclou com «Nome Teste»" once migration 133 is applied |
+
+CI ✅ (lint, typecheck + unit tests, Vercel).
+
+Merged at `8594026` (evidence: PR comment 5899445557).
+
+## #177 Import patients from another system (migrations 130/131), behind `patient-import-live` (web tester 1, 2026-09-29)
+
+**First round (`c710bd6`):**
+
+**Web tester 1: not 🟢 yet at `c710bd6cbdc80d5db27f0fbe1015096028295442`**. Steps 1–2 are ✅ with **one detection finding** (⚠, for UX / mobile dev 38). Steps 3–4 are ⏳ because **migrations 130/131 aren't applied** (there's no staging DB; prod only, waiting for Vitor's OK).
+
+**How it was tested:**
+- **The Preview (condition unmet):** the gating.
+- **Steps 1–2:** a local `next dev` from an isolated clone at this head (`npm ci`, since SheetJS is new). `patient-import-live` was flipped **only in that clone** (uncommitted), against the prod DB.
+- **Accounts:** throwaway, and cleaned up.
+
+**Gated off (Preview, condition unmet):**
+
+| Row | Result |
+|---|---|
+| Pacientes (empty and with a patient) | ✅ no "Importar pacientes" and no "Vindo de outro sistema?" link |
+| `/pt-BR/dashboard/patients/import` | ✅ 404 |
+| Help P13 | ✅ `/pt-BR/help/p13` and `/help/p13` → 404; not in the Help index |
+
+**Steps 1–2 (local, condition met):**
+
+| Row | Result |
+|---|---|
+| Entry points | ✅ "Importar pacientes" on Pacientes + "Vindo de outro sistema? Importe seus pacientes." on the empty list → `/pt-BR/dashboard/patients/import` |
+| Step 1 | ✅ "Nada é salvo até você confirmar a importação." banner |
+| The template | ✅ "Baixar modelo de planilha" → `solvymed-pacientes-modelo.csv` (UTF-8 BOM, `;`): Nome, CPF, Data de nascimento, Sexo, Celular, E-mail, RG, Profissão, Etiquetas, Observações + one invented row (the BR practice's ID column) |
+| A `.zip` | ✅ "Descompacte o arquivo .zip e envie a planilha de pacientes (por exemplo, patient.csv ou PACIENTE.csv)." |
+| iClinic `patient.csv` | ✅ detected "iClinic". `name` and `civil_name` → Nome completo (priorities). `active` / `died` → "Situação no sistema anterior (inativo / falecido → arquivado)". cns / patient_code / social_gender → Guardar como dado importado |
+| Sensitive column, off + keep switch | ✅ iClinic `ethnicity` starts **off**; switched on → "Será guardado como dado importado". PV `Pai` starts off. PV `CLI_ID` → Ignorar |
+| Prontuário Verde `PACIENTE.csv` (`;`) | ✅ detected "Prontuário Verde". Nome / Nascimento / Sexo / CPF / Telefone1 mapped, and Mãe / CNS / PAC_ID kept as imported data |
+| XLSX, General-format numbers | ✅ examples show the **exact digits**: phone `5511987654321` (13), CNS `898001234567890` (15); a CPF number in a `00000000000`-formatted cell shows `01234567890` (**leading zero kept**). The date arrives as the Excel serial (31173), converted by the DB per the PR |
+| First + last name | ✅ "Nome completo = Nome + Sobrenome"; "Usar colunas separadas" → Nome → Nome completo, Sobrenome → Guardar como dado importado |
+| Secretary | ✅ `/patients/import` → redirected to `/pt-BR/dashboard/patients`; no import button |
+
+**⚠ Finding: a generic sheet is detected as Prontuário Verde:**
+- **Why:** `detectSource` matches on headers only. PV's fingerprint is `headers_all: [Nome, Nascimento]` + `headers_any: [CLI_ID, PAC_ID, Prontuário, Mãe, CNS]`, and the `files: ["PACIENTE.csv"]` hint isn't used.
+- **What happens:**
+  - a sheet `Nome | Telefone | CNS | Nascimento` (any file name) → **"Prontuário Verde"**, and its **Telefone** column defaults to "Guardar como dado importado" instead of Telefone (PV only knows Telefone1–3). Columns like E-mail / Celular would miss the same way;
+  - without the CNS column → "Planilha (outro sistema)", and Telefone → Telefone ✅;
+  - switching **Origem** to "Planilha" by hand fixes the mapping ✅.
+- **Why it matters:** Nome + Nascimento + Mãe/CNS is common in any Brazilian clinic spreadsheet. The doctor has to notice the wrong Origem in the table.
+- **Suggestion:** require a PV-only header (PAC_ID / CLI_ID / Prontuário) rather than the generic Mãe / CNS, or use the file name. The presets are copied from mobile (`feat/import-presets`), so the app likely has the same detection.
+
+**⏳ 130/131 not applied (steps 3–4, to run live when mobile dev 38 applies them):**
+- staging + validate: the summary counts and the first 50 rows with the error / warning codes;
+- the **error-list CSV** opening in Excel with names formula-neutralised;
+- archived codes (active=1 / died=0 → nothing; active=0 / died=1 → archived with its reason, and the "Importado como inativo" / "falecido" labels);
+- the stored digits (phone / CNS / CPF with its zero) after commit;
+- commit → the 24 h **Desfazer** (confirm) deletes only untouched patients;
+- Cancelar → discard.
+
+**Re-check after presets v2 (`276a118`; `e32e087` only adds the master merge of #178):**
+
+**Web tester 1: steps 1–2 🟢 at `276a118`** (presets v2). The ⚠ detection finding from my previous comment is resolved. **Steps 3–4 are still ⏳ until 130/131 are applied**, so #177 as a whole stays ⏳.
+
+**How it was tested:** the same local setup as before (an isolated clone at `276a118`, `patient-import-live` flipped only in that clone). Each file was uploaded in step 1 and the detected **Origem** and the mapping read in step 2.
+
+| File (name → headers) | Detected | Mapping |
+|---|---|---|
+| `clinica-mae-cns.xlsx` → Nome, Nascimento, Mãe, CNS, Telefone (the case that was wrong) | ✅ **Planilha (outro sistema)** | ✅ **Telefone → Telefone**; Mãe / CNS → Guardar como dado importado |
+| `generic-numbers.xlsx` → Nome, Sobrenome, Telefone, CNS, CPF, Nascimento (was PV before) | ✅ Planilha | ✅ Telefone → Telefone; Nome + Sobrenome joined; the exact digits (5511987654321, 898001234567890, CPF **0**1234567890) |
+| `export-pv.csv` → a real PV header set (PAC_ID, CLI_ID, Telefone1, …) | ✅ **Prontuário Verde** | ✅ Telefone1 → Telefone, CLI_ID → Ignorar, PAC_ID → Guardar. An extra plain "Telefone" column → Guardar, since Telefone1 already fills the phone (priority) |
+| `PACIENTE.csv` (a real PV export) | ✅ Prontuário Verde | ✅ as before; Pai (sensitive) off |
+| `PACIENTE.csv` with generic headers (Nome, Nascimento, Telefone) | ✅ Prontuário Verde (by the file name) | ✅ Telefone → Telefone (the generic guess for a column the preset doesn't know) |
+| the same file named `paciente.csv` | ✅ **Planilha** | ✅ |
+| `ic-civil.csv` → name, civil_name, birth_date, mobile_phone | ✅ **iClinic** | ✅ both names → Nome completo; mobile_phone → Telefone |
+| `ic-social.csv` → name, birth_date, social_gender, mobile_phone | ✅ iClinic | ✅ |
+| `patient.csv` (a real iClinic export) | ✅ iClinic | ✅ as before |
+| `patient.csv` with generic headers (name, birth_date, phone) | ✅ **Planilha** (the file name alone no longer means iClinic outside a ZIP) | ✅ phone → Telefone |
+
+**⏳ 130/131 not applied:** steps 3–4 (staging / validate, the error-list CSV, archived codes, the stored digits, commit → 24 h Desfazer, discard). These run live when mobile dev 38 applies 130/131 on Vitor's OK.
+
+Merged at `e32e087`, hidden (evidence: PR comments 5900370925 / 5900568336).
+
+**⏳ The gate for flipping `patient-import-live`:** steps 3–4 live on prod once 130/131 are applied (mobile dev 38, on Vitor's OK).
+
+## #178 Privacy §6e: patient notices, behind `notice-outbox-live` (web tester 2, 2026-09-29)
+
+**Web tester 2: 🟢 at `6d6dfe9e91200364b0be04e7f4db8528b3f6b0c1`** (privacy §6e, patient notices, gated on `notice-outbox-live`)
+
+| Row | Result |
+|---|---|
+| Today (the gate unmet), Preview vs the master Preview | ✅ `/pt-BR/privacy`, `/privacy`, `/pt-BR/terms`, `/terms`: the main text is **identical** (137 / 61 lines). The source has 0 hits for "6e.", "Avisos ao paciente", "Patient notices", "cerca de 1 minuto", "about 1 minute", "sem nomes nem dados" |
+| Gate forced (local `next dev` at this head, `notice-outbox-live` → true, reverted afterwards) vs today | ✅ in each language exactly **two lines are added** and none changed: pt "6e. Avisos ao paciente" + the paragraph ("…espera cerca de 1 minuto… sem nomes nem dados clínicos, por 30 dias, e depois o apagamos."); en "6e. Patient notices" + "…waits about 1 minute… with no names or clinical data, for 30 days, and then delete it." Placed after §6's international-transfer paragraph, before "7." |
+| Policy = what runs (migration 135 on mobile `feat/notice-outbox`) | ✅ `send_after` defaults to now() + **60 s**. The `patient_notice_outbox` columns are ids, `kind` (booked / moved / cancelled), slot date / time, status, timestamps and a ≤300-char error, with **no names or clinical fields** (recipient / created_by are user ids). "every row is deleted **30 days** after it was queued" (the daily purge). The §6e wording (which appointment, the kind, the time, whether sent) matches |
+
+CI ✅.
+
+Merged at `6d6dfe9` (evidence: PR comment 5900313440).
