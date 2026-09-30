@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, useRef, useEffect } from "react";
+import { MergePatientButton } from "./MergePatient";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPrescription, deletePrescription, updatePrescription, addPrescriptionCorrection, updatePatient, deletePatient, toggleBookingBlock, generatePatientInviteCode, getArchivePreview, archivePatient, restorePatient, loadAccessLog } from "../actions";
@@ -80,7 +81,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, currentUserId, idKind = "BR", accessLog = null }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, canMerge = false, currentUserId, idKind = "BR", accessLog = null }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -92,6 +93,8 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   isArchived?: boolean;
   // Only a patient without clinical history can be deleted.
   canDelete?: boolean;
+  // Mesclar com outro paciente (133): the doctor, once the database has it.
+  canMerge?: boolean;
   // Records and prescriptions can be edited or deleted only by their author.
   currentUserId: string;
   // The practice country's patient ID (lib/patientIds).
@@ -135,7 +138,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         ))}
       </div>
 
-      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} idKind={idKind} />}
+      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} canMerge={canMerge} idKind={idKind} />}
       {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {(tab === "exams" || tab === "files") && !isSecretary && (
@@ -240,7 +243,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
   );
 }
 
-function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; idKind: PatientIdKind }) {
+function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = false, idKind }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; canMerge?: boolean; idKind: PatientIdKind }) {
   const t = useTranslations("patientDetail");
   const tIds = useTranslations("patientIds");
   const tBirth = useTranslations("dateInput");
@@ -426,6 +429,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, idKind }: { pa
               {t("archivePatient")}
             </button>
           )}
+          {canMerge && <MergePatientButton patientId={patient.id} patientName={patient.full_name} locale={locale} />}
           {canDelete && (
             <button onClick={handleDelete} disabled={pending} className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60">
               {t("deletePatient")}

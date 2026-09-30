@@ -62,5 +62,9 @@
   "notice-outbox-live": {
     "met": false,
     "what": "The patient notice outbox is about to go live: migration 135 (enqueue_patient_notice / cancel_patient_notice, the ~1-minute hold, the 30-day delivery record with its purge) is applied on production. Flip this and deploy BEFORE the sender is switched on (the function's Vault secret set LAST, per 38's runbook), so privacy §6e is published before any notice waits or is recorded."
+  },
+  "merge-web-live": {
+    "met": false,
+    "what": "Mesclar pacientes on the website: migration 133 (merge_patients / merge_patients_preview) is applied on production AND the web tester's 133 rows are 🟢 there (testers force this condition in a local build to test on prod). Flip by hand, never automatically (9a / 38). Independent of the app (UX: the web may launch first). Gates \"Mesclar com outro paciente…\" (together with its probe) and Help P12 with the website's steps; the app's steps wait on merge-patients-live."
   }
 }

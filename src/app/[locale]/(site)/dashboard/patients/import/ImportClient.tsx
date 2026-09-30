@@ -45,7 +45,7 @@ function download(fileName: string, text: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export function ImportClient({ locale, country, db: injected }: { locale: string; country: string; db?: ImportDb }) {
+export function ImportClient({ locale, country, canMerge = false, db: injected }: { locale: string; country: string; canMerge?: boolean; db?: ImportDb }) {
   const t = useTranslations("patientImport");
   const prefix = locale === "en" ? "" : `/${locale}`;
   const db = useMemo(() => injected ?? (createClient() as unknown as ImportDb), [injected]);
@@ -330,6 +330,8 @@ export function ImportClient({ locale, country, db: injected }: { locale: string
               {result.invalid + result.duplicate_in_file > 0 && <li>{t("doneNotImported", { n: result.invalid + result.duplicate_in_file })}</li>}
               {result.conflicts > 0 && <li>{t("doneConflicts", { n: result.conflicts })}</li>}
             </ul>
+            {/* Rows that already existed: how to join a duplicate afterwards (UX). */}
+            {canMerge && result.existing_skipped + result.filled > 0 && <p className="text-sm text-slate-600">{t("doneMergeHint")}</p>}
             {undone ? (
               <p className="text-sm font-semibold text-slate-700">{t("undone", { deleted: undone.deleted, kept: undone.kept })}</p>
             ) : (

@@ -301,6 +301,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
+      text: "On the website: open the patient, Info tab → \"Mesclar com outro paciente…\" / \"Merge with another patient…\" (doctor only): the same flow (only the differing fields, \"Manter este cadastro\" / \"Keep this record\", \"Mesclar\" / \"Merge\", a second \"São a mesma pessoa\" / \"Same person\" when an app account is involved). SolvyAI never merges; send the doctor there.",
+      pending: ["merge-web-live"],
+    },
+    help: "P12",
+  },
+  {
+    rule: {
       text: "On the website's Schedule, right after a manual book, move or cancel, \"Desfazer\" / \"Undo\" shows for 10 s, while the notice to the patient hasn't gone out yet. It first checks the appointment wasn't changed again; if it was, or the notice is already on its way, it says \"Não foi possível desfazer. Abra o item para ajustar.\". A booked series is undone whole.",
       pending: ["notice-outbox-live"],
     },
