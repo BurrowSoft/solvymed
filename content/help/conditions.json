@@ -73,6 +73,6 @@
   },
   "patient-address-live": {
     "met": false,
-    "what": "Migration 138 (the patient address, CNS for Brazilian practices, and Observações columns on patients, with the server-side trim and CNS check) is applied on production. Until then the website neither shows nor writes these fields."
+    "what": "Migrations 138 (the patient address, CNS for Brazilian practices, and Observações columns on patients, with the server-side trim and CNS check) AND 139 (merge_patients carries the address, CNS and Observações, so merging duplicates never drops them) are applied on production. Until both are, the website neither shows nor writes these fields."
   }
 }
