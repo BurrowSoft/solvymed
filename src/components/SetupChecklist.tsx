@@ -10,11 +10,14 @@ import { ShareInviteLinkButton } from "@/components/ShareInviteLinkButton";
 // The doctor's first-run checklist on Home (first-run spec §2). The state
 // comes from get_setup_progress(); each CTA goes to the page that completes
 // the step. "Start setup" on the welcome page opens it expanded (?setup=1).
-export function SetupChecklist({ progress, locale, inviteCode, expanded: initiallyExpanded }: {
+// paymentQr: the practice country's payment QR (Pix in Brazil, PromptPay in
+// Thailand, none elsewhere): the "Also useful" payment chip follows it.
+export function SetupChecklist({ progress, locale, inviteCode, expanded: initiallyExpanded, paymentQr = null }: {
   progress: SetupProgress;
   locale: string;
   inviteCode: string | null;
   expanded: boolean;
+  paymentQr?: "pix" | "promptpay" | null;
 }) {
   const t = useTranslations("setup");
   const prefix = locale === "en" ? "" : `/${locale}`;
@@ -102,7 +105,7 @@ export function SetupChecklist({ progress, locale, inviteCode, expanded: initial
           <div className="mt-4 border-t border-slate-100 pt-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{t("alsoUseful")}</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              <CtaLink href={`${prefix}/dashboard/settings#clinic`}>{t("pix")}</CtaLink>
+              {paymentQr && <CtaLink href={`${prefix}/dashboard/settings#clinic`}>{t(paymentQr === "promptpay" ? "promptpay" : "pix")}</CtaLink>}
               <CtaLink href={`${prefix}/dashboard/settings#team`}>{t("secretary")}</CtaLink>
             </div>
           </div>
