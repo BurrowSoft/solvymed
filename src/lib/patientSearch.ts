@@ -8,13 +8,17 @@ export const PATIENTS_PAGE_SIZE = 50;
 export const PICKER_LIMIT = 20;
 
 // What a search box may pass into a PostgREST filter: letters (any
-// script), digits, spaces and the few symbols names, CPFs and phones use.
-// Everything else (commas, parentheses, quotes, backslashes, wildcards)
-// is dropped, so the text can't change the filter's structure.
+// script) with their combining marks, digits, spaces and the few symbols
+// names, CPFs and phones use. Everything else (commas, parentheses,
+// quotes, backslashes, wildcards) is dropped, so the text can't change the
+// filter's structure. The marks (\p{M}) matter: Thai vowels and tone marks
+// (้ ี ั ์ …) are combining marks, and dropping them made "แก้วมณี" search
+// for "แก ว มณ" and find nothing (d7). NFC first, so a decomposed "José"
+// becomes the stored "José".
 export function cleanSearchText(q: string): string {
   return q
     .normalize("NFC")
-    .replace(/[^\p{L}\p{N} .'@+-]/gu, " ")
+    .replace(/[^\p{L}\p{M}\p{N} .'@+-]/gu, " ")
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, 60);
