@@ -1421,5 +1421,29 @@
     "emailWaitlist": "Các suất cho {system} hiện đã đủ, nên bạn đang trong danh sách chờ.",
     "emailNoFiles": "Vui lòng chưa gửi tệp nào; nếu được chấp nhận, chúng tôi sẽ hướng dẫn cách tạo bản xuất thử.",
     "emailSign": "Đội ngũ SolvyMed"
+  },
+  "foundersCard": {
+    "cardTitle": "Chương trình Nhà sáng lập",
+    "cardIntro": "Cảm ơn bạn đã giúp xây dựng SolvyMed! Quyền truy cập trọn đời của bạn đã được kích hoạt.",
+    "howTitle": "Cách tạo tệp xuất thử nghiệm",
+    "step1": "<b>Tạo 5–10 bệnh nhân thử nghiệm</b> trong hệ thống bạn đang dùng, với dữ liệu rõ ràng là giả: tên như \"Thử Silva 01\", số điện thoại bịa ra và email như test01@example.com. Với số giấy tờ tùy thân (như CPF), hãy dùng công cụ tạo số thử nghiệm, không bao giờ dùng số của người thật. Điền các trường bạn thường dùng: ngày sinh, địa chỉ, ghi chú, nhãn.",
+    "step2": "<b>Thêm vài lịch hẹn</b> cho các bệnh nhân này: 2–3 lịch đã qua (một đã khám, một đã hủy, một vắng mặt) và 2 lịch sắp tới.",
+    "step3": "<b>Tùy chọn, nếu hệ thống cho phép:</b> một hồ sơ bệnh án và một đơn thuốc thử nghiệm cho một bệnh nhân, kèm tệp PDF hoặc ảnh mẫu (không phải kết quả xét nghiệm thật).",
+    "step4": "<b>Xuất dữ liệu</b> bằng tính năng xuất hoặc báo cáo của hệ thống, tốt nhất ở dạng CSV hoặc Excel: bệnh nhân, lịch hẹn và nếu được, hồ sơ bệnh án.",
+    "step5": "<b>Kiểm tra tệp</b> trước khi gửi: mở tệp và bảo đảm chỉ có bệnh nhân thử nghiệm của bạn. Nếu có bệnh nhân thật, hãy xóa tệp và xuất lại chỉ với bệnh nhân thử nghiệm, hoặc báo cho chúng tôi để được hỗ trợ trong cuộc gọi.",
+    "bookCall": "Đặt cuộc gọi 30 phút",
+    "callByEmail": "Chúng tôi sẽ hẹn cuộc gọi qua email: founders@solvymed.com",
+    "confirm": "Tệp này chỉ chứa bệnh nhân thử nghiệm do tôi tạo. Không có dữ liệu bệnh nhân thật.",
+    "upload": "Tải lên tệp xuất thử nghiệm",
+    "hint": "CSV, XLSX, XLS hoặc ZIP, tối đa 20 MB mỗi tệp.",
+    "left": "Lượt tải lên còn lại: {n}",
+    "success": "Chúng tôi đã nhận được tệp của bạn, cảm ơn! Chúng tôi sẽ xem xét và liên hệ lại.",
+    "errNotAccepted": "Chỉ nhà sáng lập đã được chấp nhận mới có thể tải lên.",
+    "errLimit": "Bạn đã tải lên 20 tệp. Nếu cần gửi thêm, hãy viết cho founders@solvymed.com.",
+    "errType": "Không chấp nhận loại tệp này. Hãy tải lên CSV, XLSX, XLS hoặc ZIP.",
+    "errSize": "Tệp lớn hơn 20 MB. Hãy nén thành ZIP hoặc chia thành nhiều phần.",
+    "errGeneric": "Không thể tải tệp lên. Vui lòng thử lại.",
+    "retention": "Tệp của bạn được lưu ở nơi riêng tư mà chỉ nhóm SolvyMed xem được, chỉ dùng để xây dựng tính năng nhập và bị xóa sau 180 ngày, hoặc sớm hơn: khi tính năng nhập cho hệ thống của bạn sẵn sàng, nếu bạn rời chương trình hoặc nếu bạn xóa tài khoản.",
+    "errDaily": "Quá nhiều lượt tải lên trong 24 giờ qua. Vui lòng thử lại sau."
   }
 }

@@ -1451,5 +1451,29 @@
     "emailWaitlist": "The places for {system} are currently full, so you're on the waitlist.",
     "emailNoFiles": "Please don't send any files yet; if you're accepted, we'll explain how to create a test export.",
     "emailSign": "The SolvyMed team"
+  },
+  "foundersCard": {
+    "cardTitle": "Founders Program",
+    "cardIntro": "Thank you for helping build SolvyMed! Your lifetime access is active.",
+    "howTitle": "How to create your test export",
+    "step1": "<b>Create 5–10 test patients</b> in your current system. Use obviously fake data: names like \"Teste Silva 01\", invented phone numbers, and a fake email such as teste01@exemplo.com. For CPF, use a CPF generator for tests, never a real person's. Fill in as many fields as you normally use: birth date, address, notes, tags.",
+    "step2": "<b>Add a few appointments</b> for those test patients: 2–3 past ones (mark one as completed, one cancelled, one no-show) and 2 future ones.",
+    "step3": "<b>Optional, if your system allows:</b> write a short test record and a test prescription for one of them, and attach a sample PDF or image, but not a real exam.",
+    "step4": "<b>Export</b> from your system, using its usual export or report feature, in the format it offers (CSV or Excel preferred). Export patients, appointments and, if possible, records.",
+    "step5": "<b>Check the file</b> before sending: open it and make sure only your test patients are in it. If real patients appear, delete the file and export again with only the test ones, or tell us and we'll help on the call.",
+    "bookCall": "Book the 30-minute call",
+    "callByEmail": "We'll arrange the call by email: founders@solvymed.com",
+    "confirm": "This file contains only test patients I created. No real patient data.",
+    "upload": "Upload test export",
+    "hint": "CSV, XLSX, XLS or ZIP, up to 20 MB per file.",
+    "left": "Uploads left: {n}",
+    "success": "We received your file, thank you! We'll take a look and get in touch.",
+    "errNotAccepted": "Uploads are only available to accepted founders.",
+    "errLimit": "You've already uploaded 20 files. If you need to send more, write to founders@solvymed.com.",
+    "errType": "File type not accepted. Upload CSV, XLSX, XLS or ZIP.",
+    "errSize": "The file is over 20 MB. Zip it or split it into parts.",
+    "errGeneric": "Couldn't upload the file. Please try again.",
+    "retention": "Your files are kept in a private place only the SolvyMed team can see, used only to build the importer, and deleted after 180 days, or sooner: when your system's importer ships, if you leave the program, or if you delete your account.",
+    "errDaily": "Too many uploads in the last 24 hours. Please try again later."
   }
 }

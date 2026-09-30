@@ -1421,5 +1421,29 @@
     "emailWaitlist": "Les places pour {system} sont actuellement complètes, vous êtes donc sur la liste d'attente.",
     "emailNoFiles": "Merci de ne pas encore envoyer de fichiers ; si vous êtes accepté, nous vous expliquerons comment créer un export de test.",
     "emailSign": "L'équipe SolvyMed"
+  },
+  "foundersCard": {
+    "cardTitle": "Programme Fondateurs",
+    "cardIntro": "Merci de nous aider à construire SolvyMed ! Votre accès à vie est actif.",
+    "howTitle": "Comment créer votre export de test",
+    "step1": "<b>Créez 5 à 10 patients de test</b> dans votre logiciel actuel, avec des données manifestement fictives : des noms comme « Test Silva 01 », des numéros de téléphone inventés et un e-mail comme test01@exemple.com. Pour les numéros d'identité (comme le CPF), utilisez un générateur de test, jamais celui d'une personne réelle. Remplissez les champs que vous utilisez d'habitude : date de naissance, adresse, notes, étiquettes.",
+    "step2": "<b>Ajoutez quelques rendez-vous</b> pour ces patients : 2–3 passés (un honoré, un annulé, une absence) et 2 à venir.",
+    "step3": "<b>Facultatif, si votre logiciel le permet :</b> un dossier et une ordonnance de test pour l'un d'eux, avec un PDF ou une image d'exemple en pièce jointe (pas un vrai examen).",
+    "step4": "<b>Exportez</b> avec la fonction d'export ou de rapports de votre logiciel, de préférence en CSV ou Excel : patients, rendez-vous et, si possible, dossiers.",
+    "step5": "<b>Vérifiez le fichier</b> avant l'envoi : ouvrez-le et assurez-vous qu'il ne contient que vos patients de test. Si de vrais patients apparaissent, supprimez le fichier et refaites l'export avec les patients de test uniquement, ou prévenez-nous et nous vous aiderons pendant l'appel.",
+    "bookCall": "Réserver l'appel de 30 minutes",
+    "callByEmail": "Nous fixerons l'appel par e-mail : founders@solvymed.com",
+    "confirm": "Ce fichier ne contient que des patients de test que j'ai créés. Aucune donnée réelle de patient.",
+    "upload": "Envoyer l'export de test",
+    "hint": "CSV, XLSX, XLS ou ZIP, jusqu'à 20 Mo par fichier.",
+    "left": "Envois restants : {n}",
+    "success": "Nous avons bien reçu votre fichier, merci ! Nous allons l'examiner et revenir vers vous.",
+    "errNotAccepted": "L'envoi est réservé aux fondateurs acceptés.",
+    "errLimit": "Vous avez déjà envoyé 20 fichiers. Pour en envoyer d'autres, écrivez à founders@solvymed.com.",
+    "errType": "Type de fichier non accepté. Envoyez un CSV, XLSX, XLS ou ZIP.",
+    "errSize": "Le fichier dépasse 20 Mo. Compressez-le en ZIP ou divisez-le en plusieurs parties.",
+    "errGeneric": "Impossible d'envoyer le fichier. Veuillez réessayer.",
+    "retention": "Vos fichiers sont conservés dans un espace privé visible uniquement par l'équipe SolvyMed, utilisés seulement pour construire l'import et supprimés après 180 jours, ou plus tôt : quand l'import de votre logiciel est disponible, si vous quittez le programme ou si vous supprimez votre compte.",
+    "errDaily": "Trop d'envois au cours des dernières 24 heures. Réessayez plus tard."
   }
 }

@@ -104,3 +104,15 @@ On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings
 **On the website:** **Settings → SolvyAI** has the same two options; on the website, **Show the assistant button** applies to this browser. After saving through SolvyAI, **Undo** shows for 10 seconds only when nothing reached the patient (a new patient, a payment, a block, or an appointment of a patient without a SolvyMed account); if the patient may have been told, **Open** lets you adjust the item instead. In the guided tour, the SolvyAI step has **Try it now**: it opens SolvyAI with the question "What can SolvyAI do?", and when you close SolvyAI the website offers to continue the tour from the next step.
 `open:settings`
 `requires:solvyai-live`
+
+---
+
+## C10. Programa Fundadores / Founders Program
+**pt-BR**
+Para fundadores aceitos (só médicos), no site: **Configurações → Programa Fundadores** mostra os passos para criar uma **exportação de teste** no sistema que você usa hoje, só com pacientes de teste que você criou (dados claramente fictícios, nunca de pacientes reais), o link para agendar a chamada de 30 minutos e o envio do arquivo.
+Envie CSV, XLSX, XLS ou ZIP, até 20 MB por arquivo e até 20 arquivos. Antes de cada envio, marque a confirmação de que o arquivo contém só pacientes de teste. Os arquivos ficam num local privado que só a equipe SolvyMed vê e são apagados após 180 dias, ou antes: quando a importação do seu sistema ficar pronta, se você deixar o programa ou se excluir sua conta.
+**en**
+For accepted founders (doctors only), on the website: **Settings → Founders Program** shows the steps to create a **test export** in the system you use today, with only test patients you created (obviously fake data, never real patients), the link to book the 30-minute call, and the file upload.
+Upload CSV, XLSX, XLS or ZIP, up to 20 MB per file and up to 20 files. Before each upload, tick the confirmation that the file contains only test patients. Files are kept in a private place only the SolvyMed team can see and are deleted after 180 days, or sooner: when your system’s importer ships, if you leave the program, or if you delete your account.
+`open:settings`
+`requires:founders-upload-live`

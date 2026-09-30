@@ -1421,5 +1421,29 @@
     "emailWaitlist": "As vagas para {system} estão preenchidas no momento, então você está na lista de espera.",
     "emailNoFiles": "Por favor, não envie arquivos ainda: se você for aceito, explicamos como criar uma exportação de teste.",
     "emailSign": "Equipe SolvyMed"
+  },
+  "foundersCard": {
+    "cardTitle": "Programa Fundadores",
+    "cardIntro": "Obrigado por ajudar a construir o SolvyMed! Seu acesso vitalício está ativo.",
+    "howTitle": "Como criar sua exportação de teste",
+    "step1": "<b>Crie de 5 a 10 pacientes de teste</b> no seu sistema atual, com dados claramente fictícios: nomes como \"Teste Silva 01\", telefones inventados, e-mail como teste01@exemplo.com. Para o CPF, use um gerador de CPF para testes, nunca o de uma pessoa real. Preencha os campos que você costuma usar: nascimento, endereço, observações, etiquetas.",
+    "step2": "<b>Crie alguns agendamentos</b> para eles: 2–3 passados (um realizado, um cancelado, uma falta) e 2 futuros.",
+    "step3": "<b>Opcional:</b> um registro de prontuário e uma receita de teste para um paciente, com um PDF ou imagem de exemplo anexado (não um exame real).",
+    "step4": "<b>Exporte</b> pelo recurso de exportação ou relatórios do seu sistema, em CSV ou Excel de preferência: pacientes, agendamentos e, se possível, prontuários.",
+    "step5": "<b>Confira o arquivo</b> antes de enviar: abra e verifique se só aparecem os pacientes de teste.",
+    "bookCall": "Agendar a chamada de 30 minutos",
+    "callByEmail": "Vamos combinar a chamada por e-mail: founders@solvymed.com",
+    "confirm": "Este arquivo contém só pacientes de teste que eu criei. Nenhum dado real de paciente.",
+    "upload": "Enviar exportação de teste",
+    "hint": "CSV, XLSX, XLS ou ZIP, até 20 MB por arquivo.",
+    "left": "Envios restantes: {n}",
+    "success": "Recebemos seu arquivo, obrigado! Vamos olhar e falar com você.",
+    "errNotAccepted": "O envio só está disponível para fundadores aceitos.",
+    "errLimit": "Você já enviou 20 arquivos. Se precisar enviar mais, escreva para founders@solvymed.com.",
+    "errType": "Tipo de arquivo não aceito. Envie CSV, XLSX, XLS ou ZIP.",
+    "errSize": "O arquivo passa de 20 MB. Compacte em ZIP ou divida em partes.",
+    "errGeneric": "Não foi possível enviar o arquivo. Tente novamente.",
+    "retention": "Seus arquivos ficam num local privado que só a equipe SolvyMed vê, são usados só para construir a importação e são apagados após 180 dias, ou antes: quando a importação do seu sistema ficar pronta, se você deixar o programa ou se excluir sua conta.",
+    "errDaily": "Muitos envios nas últimas 24 horas. Tente novamente mais tarde."
   }
 }

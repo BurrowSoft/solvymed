@@ -1421,5 +1421,29 @@
     "emailWaitlist": "Las plazas para {system} están completas por ahora, así que estás en la lista de espera.",
     "emailNoFiles": "Por favor, no envíes ningún archivo todavía; si te aceptamos, te explicaremos cómo crear una exportación de prueba.",
     "emailSign": "El equipo de SolvyMed"
+  },
+  "foundersCard": {
+    "cardTitle": "Programa Fundadores",
+    "cardIntro": "¡Gracias por ayudar a construir SolvyMed! Tu acceso de por vida está activo.",
+    "howTitle": "Cómo crear tu exportación de prueba",
+    "step1": "<b>Crea de 5 a 10 pacientes de prueba</b> en tu sistema actual, con datos claramente ficticios: nombres como \"Prueba Silva 01\", teléfonos inventados y un correo como prueba01@ejemplo.com. Para números de identificación (como el CPF), usa un generador de pruebas, nunca el de una persona real. Rellena los campos que sueles usar: fecha de nacimiento, dirección, notas, etiquetas.",
+    "step2": "<b>Crea algunas citas</b> para esos pacientes: 2–3 pasadas (una realizada, una cancelada, una inasistencia) y 2 futuras.",
+    "step3": "<b>Opcional, si tu sistema lo permite:</b> un registro clínico y una receta de prueba para uno de ellos, con un PDF o imagen de ejemplo adjunto (no un examen real).",
+    "step4": "<b>Exporta</b> con la función de exportación o informes de tu sistema, preferiblemente en CSV o Excel: pacientes, citas y, si es posible, historias clínicas.",
+    "step5": "<b>Revisa el archivo</b> antes de enviarlo: ábrelo y comprueba que solo aparecen tus pacientes de prueba. Si aparecen pacientes reales, borra el archivo y exporta de nuevo solo los de prueba, o avísanos y te ayudamos en la llamada.",
+    "bookCall": "Reservar la llamada de 30 minutos",
+    "callByEmail": "Acordaremos la llamada por correo: founders@solvymed.com",
+    "confirm": "Este archivo contiene solo pacientes de prueba que yo creé. Ningún dato real de pacientes.",
+    "upload": "Subir exportación de prueba",
+    "hint": "CSV, XLSX, XLS o ZIP, hasta 20 MB por archivo.",
+    "left": "Envíos restantes: {n}",
+    "success": "¡Recibimos tu archivo, gracias! Lo revisaremos y te contactaremos.",
+    "errNotAccepted": "La subida solo está disponible para fundadores aceptados.",
+    "errLimit": "Ya subiste 20 archivos. Si necesitas enviar más, escribe a founders@solvymed.com.",
+    "errType": "Tipo de archivo no aceptado. Sube CSV, XLSX, XLS o ZIP.",
+    "errSize": "El archivo supera los 20 MB. Comprímelo en ZIP o divídelo en partes.",
+    "errGeneric": "No se pudo subir el archivo. Inténtalo de nuevo.",
+    "retention": "Tus archivos se guardan en un lugar privado que solo ve el equipo de SolvyMed, se usan solo para construir la importación y se eliminan a los 180 días, o antes: cuando la importación de tu sistema esté lista, si dejas el programa o si eliminas tu cuenta.",
+    "errDaily": "Demasiadas subidas en las últimas 24 horas. Inténtalo de nuevo más tarde."
   }
 }

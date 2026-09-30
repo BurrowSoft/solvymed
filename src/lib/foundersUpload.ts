@@ -5,6 +5,8 @@
 
 export const FOUNDER_BUCKET = "founder-samples";
 export const FOUNDER_MAX_BYTES = 20 * 1024 * 1024;
+// Files per founder (founder_register_sample refuses the 21st).
+export const FOUNDER_MAX_FILES = 20;
 // Uploads one founder may make in 24 hours, counted from the objects in
 // their folder: an unregistered upload survives a day at 20 MB, so this
 // bounds what a single account can park in the bucket (9a). A new signed

@@ -1421,5 +1421,29 @@
     "emailWaitlist": "Die Plätze für {system} sind derzeit vergeben, daher stehen Sie auf der Warteliste.",
     "emailNoFiles": "Bitte senden Sie noch keine Dateien; wenn Sie angenommen werden, erklären wir Ihnen, wie Sie einen Testexport erstellen.",
     "emailSign": "Das SolvyMed-Team"
+  },
+  "foundersCard": {
+    "cardTitle": "Gründerprogramm",
+    "cardIntro": "Danke, dass Sie SolvyMed mit aufbauen! Ihr lebenslanger Zugang ist aktiv.",
+    "howTitle": "So erstellen Sie Ihren Testexport",
+    "step1": "<b>Legen Sie 5–10 Testpatienten an</b> in Ihrem aktuellen System, mit eindeutig erfundenen Daten: Namen wie „Test Silva 01“, ausgedachte Telefonnummern und eine E-Mail wie test01@beispiel.de. Für Ausweisnummern (wie die CPF) nutzen Sie einen Testgenerator, niemals die Nummer einer echten Person. Füllen Sie die Felder aus, die Sie sonst auch nutzen: Geburtsdatum, Adresse, Notizen, Etiketten.",
+    "step2": "<b>Legen Sie einige Termine an</b> für diese Patienten: 2–3 vergangene (einer wahrgenommen, einer abgesagt, einer nicht erschienen) und 2 künftige.",
+    "step3": "<b>Optional, wenn Ihr System es erlaubt:</b> ein Testeintrag in der Akte und ein Testrezept für einen Patienten, mit einer Beispiel-PDF oder einem Beispielbild im Anhang (kein echter Befund).",
+    "step4": "<b>Exportieren</b> Sie über die Export- oder Berichtsfunktion Ihres Systems, am besten als CSV oder Excel: Patienten, Termine und wenn möglich Akten.",
+    "step5": "<b>Prüfen Sie die Datei</b> vor dem Senden: Öffnen Sie sie und stellen Sie sicher, dass nur Ihre Testpatienten enthalten sind. Tauchen echte Patienten auf, löschen Sie die Datei und exportieren Sie erneut nur die Testpatienten, oder sagen Sie uns Bescheid und wir helfen im Gespräch.",
+    "bookCall": "30-minütiges Gespräch buchen",
+    "callByEmail": "Wir vereinbaren das Gespräch per E-Mail: founders@solvymed.com",
+    "confirm": "Diese Datei enthält nur von mir angelegte Testpatienten. Keine echten Patientendaten.",
+    "upload": "Testexport hochladen",
+    "hint": "CSV, XLSX, XLS oder ZIP, bis zu 20 MB pro Datei.",
+    "left": "Verbleibende Uploads: {n}",
+    "success": "Wir haben Ihre Datei erhalten, danke! Wir sehen sie uns an und melden uns.",
+    "errNotAccepted": "Uploads sind nur für aufgenommene Gründer möglich.",
+    "errLimit": "Sie haben bereits 20 Dateien hochgeladen. Wenn Sie mehr senden müssen, schreiben Sie an founders@solvymed.com.",
+    "errType": "Dateityp nicht zulässig. Laden Sie CSV, XLSX, XLS oder ZIP hoch.",
+    "errSize": "Die Datei ist größer als 20 MB. Packen Sie sie als ZIP oder teilen Sie sie auf.",
+    "errGeneric": "Die Datei konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.",
+    "retention": "Ihre Dateien liegen an einem privaten Ort, den nur das SolvyMed-Team sieht, werden nur für den Aufbau des Imports genutzt und nach 180 Tagen gelöscht, oder früher: wenn der Import für Ihr System fertig ist, wenn Sie das Programm verlassen oder wenn Sie Ihr Konto löschen.",
+    "errDaily": "Zu viele Uploads in den letzten 24 Stunden. Bitte versuchen Sie es später erneut."
   }
 }
