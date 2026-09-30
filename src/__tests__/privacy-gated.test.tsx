@@ -37,7 +37,8 @@ describe("privacy policy: SolvyAI / LINE blocks follow their conditions", () => 
   });
 
   it("the patient notice record (135) only once the outbox is live", () => {
-    expect(conditionMet("notice-outbox-live")).toBe(false);
+    // Live since the flip (runbook: §6e published before the Vault secret).
+    expect(conditionMet("notice-outbox-live")).toBe(true);
     for (const [Doc, title] of [[PrivacyEn, "6e. Patient notices"], [PrivacyPtBR, "6e. Avisos ao paciente"]] as const) {
       let r = render(<Doc turnstile={false} />);
       expect(r.container.textContent).not.toContain(title);
