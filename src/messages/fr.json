@@ -1444,7 +1444,7 @@
     "code_cep_zero_padded": "Le CEP n'avait plus le zéro initial (Excel le supprime) : complété ; à vérifier",
     "code_cns_invalid": "CNS invalide : vérifiez les 15 chiffres (non importé)",
     "code_cns_not_used": "CNS non importé (la clinique n'est pas au Brésil)",
-    "code_address_invalid": "{field} trop long (non importé)",
+    "code_address_invalid": "{field} : texte trop long (non importé)",
     "cpfExcelHint": "Si le fichier vient d'Excel, mettez la colonne du CPF au format Texte et exportez à nouveau.",
     "code_cpf_not_used": "CPF non utilisé (le cabinet n'est pas au Brésil)",
     "code_th_national_id_invalid": "N° d'identité thaïlandais invalide (non importé)",

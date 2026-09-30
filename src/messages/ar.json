@@ -1444,7 +1444,7 @@
     "code_cep_zero_padded": "كان CEP بلا الصفر في البداية (يحذفه Excel): تم إكماله؛ يُرجى التحقق",
     "code_cns_invalid": "CNS غير صالح: تحقّق من الأرقام الخمسة عشر (لم يُستورد)",
     "code_cns_not_used": "لم يُستورد CNS (العيادة ليست في البرازيل)",
-    "code_address_invalid": "{field} طويل جدًا (لم يُستورد)",
+    "code_address_invalid": "{field}: النص طويل جدًا (لم يُستورد)",
     "cpfExcelHint": "إن كان الملف من Excel، فاجعل تنسيق عمود CPF نصًا وصدّره من جديد.",
     "code_cpf_not_used": "لم يُستخدم CPF (العيادة ليست في البرازيل)",
     "code_th_national_id_invalid": "رقم هوية تايلاندية غير صالح (لم يُستورد)",
