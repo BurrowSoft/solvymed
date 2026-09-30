@@ -283,7 +283,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
           const calls: { id: string; name: string; input: Record<string, unknown> }[] = [];
           async function* texts(): AsyncIterable<string> {
             for await (const ev of model.stream({
-              cachedSystem: cachedSystem(lang, deps.client),
+              cachedSystem: cachedSystem(lang, deps.client, tx.reply),
               system,
               messages: history,
               ...(ctx ? { tools: toolDefsFor(deps.client) } : {}),
