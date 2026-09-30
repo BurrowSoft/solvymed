@@ -827,7 +827,9 @@
     "clinics": "クリニック",
     "payments": "支払い",
     "settings": "設定",
-    "signOut": "ログアウト"
+    "signOut": "ログアウト",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる"
   },
   "join": {
     "notFound": "招待リンクが見つかりません",

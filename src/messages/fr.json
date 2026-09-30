@@ -827,7 +827,9 @@
     "clinics": "Cliniques",
     "payments": "Paiements",
     "settings": "Paramètres",
-    "signOut": "Se déconnecter"
+    "signOut": "Se déconnecter",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu"
   },
   "join": {
     "notFound": "Lien d'invitation introuvable",

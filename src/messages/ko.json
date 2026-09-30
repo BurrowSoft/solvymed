@@ -827,7 +827,9 @@
     "clinics": "클리닉",
     "payments": "결제",
     "settings": "설정",
-    "signOut": "로그아웃"
+    "signOut": "로그아웃",
+    "openMenu": "메뉴 열기",
+    "closeMenu": "메뉴 닫기"
   },
   "join": {
     "notFound": "초대 링크를 찾을 수 없습니다",

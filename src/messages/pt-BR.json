@@ -827,7 +827,9 @@
     "clinics": "Clínicas",
     "payments": "Pagamentos",
     "settings": "Configurações",
-    "signOut": "Sair"
+    "signOut": "Sair",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu"
   },
   "join": {
     "notFound": "Link de convite não encontrado",

@@ -827,7 +827,9 @@
     "clinics": "Kliniken",
     "payments": "Zahlungen",
     "settings": "Einstellungen",
-    "signOut": "Abmelden"
+    "signOut": "Abmelden",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
   },
   "join": {
     "notFound": "Einladungslink nicht gefunden",

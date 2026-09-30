@@ -827,7 +827,9 @@
     "clinics": "诊所",
     "payments": "付款",
     "settings": "设置",
-    "signOut": "退出登录"
+    "signOut": "退出登录",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单"
   },
   "join": {
     "notFound": "找不到邀请链接",

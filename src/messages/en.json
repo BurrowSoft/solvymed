@@ -827,7 +827,9 @@
     "clinics": "Clinics",
     "payments": "Payments",
     "settings": "Settings",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "join": {
     "notFound": "Invite link not found",

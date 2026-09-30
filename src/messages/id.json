@@ -827,7 +827,9 @@
     "clinics": "Klinik",
     "payments": "Pembayaran",
     "settings": "Pengaturan",
-    "signOut": "Keluar"
+    "signOut": "Keluar",
+    "openMenu": "Buka menu",
+    "closeMenu": "Tutup menu"
   },
   "join": {
     "notFound": "Tautan undangan tidak ditemukan",

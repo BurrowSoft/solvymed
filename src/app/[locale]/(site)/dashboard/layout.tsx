@@ -205,7 +205,9 @@ export default async function DashboardLayout({
               </span>
             </div>
           )}
-          <main className="flex-1 overflow-auto lg:pl-0 pt-0">
+          {/* Below lg the fixed ☰ button sits top left: room for it, so it
+              never covers the page title (3e). */}
+          <main className={`flex-1 overflow-auto lg:pl-0 lg:pt-0 ${showTrialChip ? "pt-4" : "pt-14"}`}>
             <div className="min-h-full">
               {children}
             </div>
