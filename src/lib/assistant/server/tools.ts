@@ -908,7 +908,8 @@ async function proposeSendPix(ctx: ToolContext, input: Record<string, unknown>):
   const a = await readAppointment(ctx, input.appointmentId);
   if (!a || a.status === "blocked") return unseen("appointment");
   const country = await practiceCountry(ctx);
-  if (country === "TH") {
+  const { paymentQr } = countryProfile(country);
+  if (paymentQr === "promptpay") {
     // Never a Pix card for a Thai practice: the answer and the way to the QR.
     const [text, label] = [t.promptPayText, t.promptPayOpen];
     const target: ScreenTarget = { screen: "schedule", date: a.date, id: a.id, params: { sheet: "1" } };
@@ -918,7 +919,7 @@ async function proposeSendPix(ctx: ToolContext, input: Record<string, unknown>):
       blocks: [{ type: "text", text }, ...(href ? [{ type: "open" as const, label, href, target }] : [])],
     };
   }
-  if (country !== "BR") return err("Pix is only for practices in Brazil; say so (there's no payment message to send for this practice).");
+  if (paymentQr !== "pix") return err("Pix is only for practices in Brazil; say so (there's no payment message to send for this practice).");
   if (a.payment_status === "paid") return err("It's already paid; tell the user.");
   if (!a.payment_amount) return err("This appointment has no value: tell the user to set it first (on the appointment), then ask again.");
   const [{ data: prof }, { data: pat }] = await Promise.all([

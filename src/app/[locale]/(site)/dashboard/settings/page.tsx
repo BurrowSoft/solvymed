@@ -175,7 +175,7 @@ export default async function SettingsPage({
     : null;
   const showPromptPay = !!promptPayResult && !promptPayResult.error;
   // The clinic tax ID (Thai practices; migration 112), read the same way.
-  const taxIdResult = practiceCountry === "TH"
+  const taxIdResult = practiceProfile.clinicTaxId === "th_tax_id"
     ? await supabase.from("professionals").select("clinic_tax_id").eq("id", user.id).maybeSingle()
     : null;
   const showTaxId = !!taxIdResult && !taxIdResult.error;
