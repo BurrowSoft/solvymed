@@ -3,7 +3,7 @@ import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 
 // English Privacy Policy (authoritative with pt-BR; keep both in step).
 // Every statement here must match what the Service enforces today.
-export function PrivacyEn({ turnstile, solvyai = false, line = false, founders = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; founders?: boolean }) {
+export function PrivacyEn({ turnstile, solvyai = false, line = false, founders = false, founderUploads = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Overview">
@@ -130,7 +130,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, founders =
         <Section title="6d. Founders Program applications">
           <p>Founders Program: if you apply, we process your name, email, phone, profession and registration number, the clinic system you use, your practice size and how you found us, to assess your application and contact you. Applications that aren&rsquo;t accepted are deleted 12 months after their last update; accepted founders&rsquo; applications are kept while their account exists (or deleted 12 months after acceptance if no account was ever linked).</p>
           <p className="mt-2">To stop abuse, we keep a scrambled (salted hash) form of your IP address for 2 days, never the address itself. To have your application deleted sooner, write to support@solvymed.com.</p>
-          <p className="mt-2">Test exports: accepted founders can upload test export files (CSV, Excel or ZIP) from the system they use, in Settings, so we can build the importer. Before each upload the founder confirms the file contains only test patients they created; we don&rsquo;t check the contents before storing it. Files are kept in a private place only the SolvyMed team can access, with a record of who uploaded them and when, and are deleted 180 days after upload, or sooner: when that system&rsquo;s importer ships, when the founder is no longer accepted, or when the account is deleted.</p>
+          {founderUploads && <p className="mt-2">Test exports: accepted founders can upload test export files (CSV, Excel or ZIP) from the system they use, in Settings, so we can build the importer. Before each upload the founder confirms the file contains only test patients they created; we don&rsquo;t check the contents before storing it. Files are kept in a private place only the SolvyMed team can access, with a record of who uploaded them and when, and are deleted 180 days after upload, or sooner: when that system&rsquo;s importer ships, when the founder is no longer accepted, or when the account is deleted.</p>}
         </Section>
       )}
 

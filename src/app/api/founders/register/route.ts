@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { conditionMet } from "@/lib/conditions";
 import { mapRegisterError } from "@/lib/foundersUpload";
 import { sendFounderUploadNotice } from "@/lib/foundersEmail";
 
@@ -11,7 +12,7 @@ import { sendFounderUploadNotice } from "@/lib/foundersEmail";
 // told by email (off until RESEND_API_KEY).
 
 export async function POST(request: NextRequest) {
-  if (!liveFeatures.founders) return NextResponse.json({ code: "not_found" }, { status: 404 });
+  if (!liveFeatures.founders || !conditionMet("founders-upload-live")) return NextResponse.json({ code: "not_found" }, { status: 404 });
   const body = (await request.json().catch(() => null)) as { path?: unknown; confirmed?: unknown } | null;
   const path = typeof body?.path === "string" ? body.path : "";
   if (body?.confirmed !== true) return NextResponse.json({ code: "confirmation_required" }, { status: 400 });

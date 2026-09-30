@@ -7,6 +7,7 @@ import { SecretarySettings } from "./SecretarySettings";
 import { ShowSetupRow } from "./ShowSetupRow";
 import { NewsSettingsCard, TourSettingsCard } from "@/components/tour/TourProvider";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { conditionMet } from "@/lib/conditions";
 import { SolvyAiSettingsCard } from "@/components/solvyai/SolvyAiSettings";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 import { countryProfile } from "@/lib/country";
@@ -41,9 +42,10 @@ export default async function SettingsPage({
 
   // Programa Fundadores (stage 2, migration 132): the card only for an
   // accepted founder with uploads allowed (founder_upload_check, as the
-  // doctor); nothing when the function is missing or the page isn't live.
+  // doctor); nothing when the function is missing, the page isn't live or
+  // uploads aren't (founders-upload-live: 132 + the purge deployed).
   let founder: { uploadsLeft: number } | null = null;
-  if (liveFeatures.founders && userRoleData?.role !== "secretary") {
+  if (liveFeatures.founders && conditionMet("founders-upload-live") && userRoleData?.role !== "secretary") {
     const { data: fc, error: fcError } = await supabase.rpc("founder_upload_check");
     const row = (Array.isArray(fc) ? fc[0] : fc) as { allowed?: boolean; uploads_left?: number } | null;
     if (!fcError && row?.allowed === true) founder = { uploadsLeft: Number(row.uploads_left ?? 0) };

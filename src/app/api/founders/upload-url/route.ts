@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { conditionMet } from "@/lib/conditions";
 import { FOUNDER_BUCKET, FOUNDER_DAILY_URLS, FOUNDER_MAX_BYTES, contentTypeFor, safeFileName } from "@/lib/foundersUpload";
 
 // Founders stage 2 (migration 132): a signed upload URL for one test export.
@@ -14,7 +15,7 @@ import { FOUNDER_BUCKET, FOUNDER_DAILY_URLS, FOUNDER_MAX_BYTES, contentTypeFor, 
 // the upload; the file never passes through this server (Vercel's 4.5 MB).
 
 export async function POST(request: NextRequest) {
-  if (!liveFeatures.founders) return NextResponse.json({ code: "not_found" }, { status: 404 });
+  if (!liveFeatures.founders || !conditionMet("founders-upload-live")) return NextResponse.json({ code: "not_found" }, { status: 404 });
   const body = (await request.json().catch(() => null)) as { fileName?: unknown; size?: unknown; confirmed?: unknown } | null;
   const fileName = typeof body?.fileName === "string" ? body.fileName.trim() : "";
   const size = typeof body?.size === "number" ? body.size : NaN;

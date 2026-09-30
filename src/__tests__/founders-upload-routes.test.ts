@@ -4,7 +4,11 @@ import { FOUNDER_DAILY_URLS, contentTypeFor, mapRegisterError, safeFileName } fr
 
 // Founders stage 2 (migration 132): the signed-URL and register routes.
 
-const flags = vi.hoisted(() => ({ founders: true }));
+const flags = vi.hoisted(() => ({ founders: true, uploadsLive: true }));
+vi.mock("@/lib/conditions", async (orig) => {
+  const real = await orig<typeof import("@/lib/conditions")>();
+  return { ...real, conditionMet: (id: Parameters<typeof real.conditionMet>[0]) => (id === "founders-upload-live" ? flags.uploadsLive : real.conditionMet(id)) };
+});
 vi.mock("@/lib/liveFeatures", async (orig) => {
   const real = await orig<typeof import("@/lib/liveFeatures")>();
   return { ...real, liveFeatures: new Proxy(real.liveFeatures, { get: (t, k) => (k === "founders" ? flags.founders : (t as Record<string, unknown>)[k as string]) }) };
@@ -48,7 +52,7 @@ const req = (url: string, body: unknown) =>
 const ask = (body: unknown = { fileName: "Pacientes Exportação.xlsx", size: 1000, confirmed: true }) => uploadUrl(req("/api/founders/upload-url", body));
 
 beforeEach(() => {
-  flags.founders = true;
+  flags.founders = true; flags.uploadsLive = true;
   h.user = { id: "u1", email: "doc@example.com" };
   h.check = { data: { allowed: true, folder: "u1/", uploads_left: 20 }, error: null };
   h.register = { data: "sample-1", error: null };
@@ -76,9 +80,13 @@ describe("founders upload helpers", () => {
 });
 
 describe("POST /api/founders/upload-url", () => {
-  it("404 while the Founders page isn't live", async () => {
+  it("404 while the Founders page or the uploads (founders-upload-live) aren't live", async () => {
     flags.founders = false;
     expect((await ask()).status).toBe(404);
+    flags.founders = true; flags.uploadsLive = false;
+    expect((await ask()).status).toBe(404);
+    expect((await register(req("/api/founders/register", { path: "u1/x.csv", confirmed: true }))).status).toBe(404);
+    expect(h.rpc).toEqual([]);
   });
 
   it("needs the re-confirmation, a known type and a size up to 20 MB, before touching the database", async () => {
