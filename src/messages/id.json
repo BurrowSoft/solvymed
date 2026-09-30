@@ -1499,6 +1499,8 @@
     "field_profession": "Pekerjaan",
     "field_convenio_type": "Jenis asuransi",
     "field_photo": "Foto",
+    "pickBoth": "Keduanya, digabung",
+    "notesTooLong": "Catatan gabungan melebihi 2.000 karakter; pilih salah satu atau ubah nanti.",
     "search": "Cari berdasarkan nama atau nomor identitas…",
     "archivedTag": "diarsipkan",
     "back": "Kembali",

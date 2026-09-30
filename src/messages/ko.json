@@ -1499,6 +1499,8 @@
     "field_profession": "직업",
     "field_convenio_type": "보험 유형",
     "field_photo": "사진",
+    "pickBoth": "둘 다 합치기",
+    "notesTooLong": "합친 메모가 2,000자를 넘습니다. 하나를 선택하거나 나중에 수정하세요.",
     "search": "이름 또는 신분증 번호로 검색…",
     "archivedTag": "보관됨",
     "back": "뒤로",

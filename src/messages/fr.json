@@ -1499,6 +1499,8 @@
     "field_profession": "Profession",
     "field_convenio_type": "Type de couverture",
     "field_photo": "Photo",
+    "pickBoth": "Les deux, réunies",
+    "notesTooLong": "Les remarques réunies dépassent 2 000 caractères ; choisissez-en une ou modifiez-les ensuite.",
     "search": "Rechercher par nom ou pièce d'identité…",
     "archivedTag": "archivé",
     "back": "Retour",

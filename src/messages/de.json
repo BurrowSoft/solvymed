@@ -1499,6 +1499,8 @@
     "field_profession": "Beruf",
     "field_convenio_type": "Versicherungsart",
     "field_photo": "Foto",
+    "pickBoth": "Beide, zusammengeführt",
+    "notesTooLong": "Die zusammengeführten Anmerkungen überschreiten 2.000 Zeichen; wählen Sie eine aus oder bearbeiten Sie sie danach.",
     "search": "Nach Name oder Ausweis suchen…",
     "archivedTag": "archiviert",
     "back": "Zurück",

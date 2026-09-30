@@ -1499,6 +1499,8 @@
     "field_profession": "Professione",
     "field_convenio_type": "Tipo di copertura",
     "field_photo": "Foto",
+    "pickBoth": "Entrambe, unite",
+    "notesTooLong": "Le note unite superano i 2.000 caratteri; scegline una o modificale dopo.",
     "search": "Cerca per nome o documento…",
     "archivedTag": "archiviato",
     "back": "Indietro",

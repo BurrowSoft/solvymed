@@ -1499,6 +1499,8 @@
     "field_profession": "Nghề nghiệp",
     "field_convenio_type": "Loại bảo hiểm",
     "field_photo": "Ảnh",
+    "pickBoth": "Cả hai, gộp lại",
+    "notesTooLong": "Ghi chú gộp lại vượt quá 2.000 ký tự; hãy chọn một hoặc chỉnh sửa sau.",
     "search": "Tìm theo tên hoặc số giấy tờ…",
     "archivedTag": "đã lưu trữ",
     "back": "Quay lại",
