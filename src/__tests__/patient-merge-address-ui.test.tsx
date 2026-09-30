@@ -24,8 +24,11 @@ vi.mock("@/app/[locale]/(site)/dashboard/patients/actions", async (orig) => ({
   mergePatientsAction: async (...args: unknown[]) => { ui.merged.push(args); return { ok: true, keptId: "a" }; },
 }));
 
+// Imported once, after the mocks (vi.mock is hoisted): compiling the dialog
+// inside a test ate its time budget when the whole suite ran in parallel.
+import { MergePatientButton } from "@/app/[locale]/(site)/dashboard/patients/[id]/MergePatient";
+
 async function open() {
-  const { MergePatientButton } = await import("@/app/[locale]/(site)/dashboard/patients/[id]/MergePatient");
   render(<NextIntlClientProvider locale="pt-BR" messages={pt}><MergePatientButton patientId="a" patientName="Bia" locale="pt-BR" /></NextIntlClientProvider>);
   fireEvent.click(screen.getByText("Mesclar com outro paciente…"));
   fireEvent.click(await screen.findByText("Bia B"));
