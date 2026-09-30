@@ -324,7 +324,9 @@ export function BookingClient({
   async function handleBook() {
     if (!selectedSlot) return;
     // A Thai ID must pass its checksum (the database refuses it otherwise).
-    if (idKind === "TH" && patientIds.th_national_id?.trim() && !isValidThaiId(patientIds.th_national_id)) {
+    const thaiId = profileOfKind(idKind).idFields.find((f) => f.checksum === "thai");
+    const thaiValue = thaiId ? patientIds[thaiId.name]?.trim() : "";
+    if (thaiValue && !isValidThaiId(thaiValue)) {
       setError(tIds("thaiIdInvalid"));
       return;
     }

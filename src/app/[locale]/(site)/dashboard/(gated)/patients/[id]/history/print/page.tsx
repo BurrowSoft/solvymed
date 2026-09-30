@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { PRINT_CSS, docDate, docTime, docToday, toDocTemplate } from "@/lib/prescriptionDoc";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
-import { patientIdKind } from "@/lib/patientIds";
+import { countryProfile } from "@/lib/country";
 import { getClinicTimeZone } from "@/lib/clinicTime";
 import { PrintToolbar } from "@/components/PrintToolbar";
 import { HistoryDocument } from "./HistoryDocument";
@@ -75,10 +75,11 @@ export default async function HistoryPrintPage({
     const age = Math.floor((Date.now() - new Date(birth).getTime()) / (365.25 * 24 * 3600 * 1000));
     lines.push(`${t("birthDate", { value: docDate(country, birth) })}${age >= 0 ? ` (${tp("age", { n: age })})` : ""}`);
   }
-  const idKind = patientIdKind(country);
-  if (idKind === "BR" && str(patient.cpf)) lines.push(`${tIds("cpf")}: ${patient.cpf}`);
-  if (idKind === "TH" && str(patient.th_national_id)) lines.push(`${tIds("thaiId")}: ${patient.th_national_id}`);
-  if (idKind !== "BR" && str(patient.passport_number)) lines.push(`${idKind === "TH" ? tIds("passport") : tIds("passportOrId")}: ${patient.passport_number}`);
+  // The practice country's ID fields (lib/country idFields), in order.
+  for (const f of countryProfile(country).idFields) {
+    const v = str(patient[f.name]);
+    if (v) lines.push(`${tIds(f.label)}: ${v}`);
+  }
   if (str(patient.phone)) lines.push(t("phone", { value: patient.phone as string }));
   const sex = str(patient.sex);
   if (sex) lines.push(sex === "male" || sex === "female" || sex === "other" ? tp(sex) : sex);

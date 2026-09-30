@@ -30,6 +30,11 @@ export type IdField = {
   maxLength: number;   // what the input accepts
   keep?: number;       // what is stored (text is cut to it)
   numeric?: boolean;
+  // How the patient search matches it: the digits typed, in order, with
+  // any separators between (3+ digits), or the text (3+ characters).
+  search: "digits" | "text";
+  // The checksum it must pass before saving (the database checks it too).
+  checksum?: "thai";
 };
 
 export type CountryProfile = {
@@ -71,7 +76,7 @@ export type CountryProfile = {
 
 const BR: CountryProfile = {
   kind: "BR", currency: "BRL", patientId: "cpf",
-  idFields: [{ name: "cpf", label: "cpf", placeholder: "000.000.000-00", store: "text", maxLength: 20 }],
+  idFields: [{ name: "cpf", label: "cpf", placeholder: "000.000.000-00", store: "text", maxLength: 20, search: "digits" }],
   phonePrefix: "+55", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo",
   clinicTaxId: "cnpj", fallbackLocale: "pt-BR", receipts: "web", calendar: "gregorian",
   examples: {
@@ -84,8 +89,8 @@ const BR: CountryProfile = {
 const TH: CountryProfile = {
   kind: "TH", currency: "THB", patientId: "thai_id",
   idFields: [
-    { name: "th_national_id", label: "thaiId", placeholder: "1-2345-67890-12-3", store: "digits", maxLength: 17, numeric: true },
-    { name: "passport_number", label: "passport", placeholder: "", store: "text", maxLength: 30, keep: 30 },
+    { name: "th_national_id", label: "thaiId", placeholder: "1-2345-67890-12-3", store: "digits", maxLength: 17, numeric: true, search: "digits", checksum: "thai" },
+    { name: "passport_number", label: "passport", placeholder: "", store: "text", maxLength: 30, keep: 30, search: "text" },
   ],
   phonePrefix: "+66", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok",
   clinicTaxId: "th_tax_id", fallbackLocale: "th", receipts: "app", calendar: "buddhist",
@@ -99,7 +104,7 @@ const TH: CountryProfile = {
 // The explicit default: any country without its own entry (or the unknown 'ZZ').
 const OTHER: CountryProfile = {
   kind: "OTHER", currency: "NONE", patientId: "passport",
-  idFields: [{ name: "passport_number", label: "passportOrId", placeholder: "", store: "text", maxLength: 30, keep: 30 }],
+  idFields: [{ name: "passport_number", label: "passportOrId", placeholder: "", store: "text", maxLength: 30, keep: 30, search: "text" }],
   phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
   clinicTaxId: null, fallbackLocale: "en", receipts: "web", calendar: "gregorian",
   examples: {

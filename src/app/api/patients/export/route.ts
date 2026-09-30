@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
+import { countryProfile } from "@/lib/country";
 import { conditionMet } from "@/lib/conditions";
 import { csvColumns, patientsCsv, type CsvPatient } from "@/lib/patientsCsv";
 import { patientIdKind } from "@/lib/patientIds";
@@ -65,7 +66,7 @@ export async function GET(request: NextRequest) {
   ]);
   const kind = patientIdKind(country);
   const csv = patientsCsv(patients, {
-    fullName: t("fullName"), cpf: tIds("cpf"), thaiId: tIds("thaiId"), passport: country === "TH" ? tIds("passport") : tIds("passportOrId"),
+    fullName: t("fullName"), cpf: tIds("cpf"), thaiId: tIds("thaiId"), passport: tIds(countryProfile(country).idFields.find((f) => f.name === "passport_number")?.label ?? "passportOrId"),
     sex: t("sex"), birthDate: t("dateOfBirth"), phone: t("phone"), email: t("email"), profession: t("profession"),
     tags: tSet("csvTags"), archivedOn: tSet("csvArchivedOn"), male: t("male"), female: t("female"), other: t("other"),
     ...(address ? {
