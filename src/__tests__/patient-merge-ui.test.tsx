@@ -16,7 +16,7 @@ const B = row({ id: "b", full_name: "bia souza", email: "b@x.invalid", phone: "+
 // The dialog: pick → only the differing fields → Mesclar? → São a mesma pessoa.
 const ui = vi.hoisted(() => ({ merged: [] as unknown[], push: vi.fn() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: ui.push, refresh: vi.fn() }) }));
-vi.mock("@/app/[locale]/(site)/dashboard/patients/actions", async (orig) => ({
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/actions", async (orig) => ({
   ...(await orig<Record<string, unknown>>()),
   searchMergeCandidates: async () => [{ id: "b", full_name: "bia souza", birth_date: null, archived: true }],
   loadMergeComparison: async () => ({
@@ -27,7 +27,7 @@ vi.mock("@/app/[locale]/(site)/dashboard/patients/actions", async (orig) => ({
 }));
 
 describe("MergePatientButton", async () => {
-  const { MergePatientButton } = await import("@/app/[locale]/(site)/dashboard/patients/[id]/MergePatient");
+  const { MergePatientButton } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/MergePatient");
   it("keeps the record that uses the app by default, shows only the differing fields, asks twice when the app is involved", async () => {
     render(<NextIntlClientProvider locale="pt-BR" messages={pt}><MergePatientButton patientId="a" patientName="Bia Souza" locale="pt-BR" /></NextIntlClientProvider>);
     fireEvent.click(screen.getByText("Mesclar com outro paciente…"));

@@ -856,6 +856,8 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "or",
     "cancelAnytime": "Cancel anytime. No commitments.",
+    "lockedSettingsHint": "Your data stays yours: export your patients, manage the subscription or close your account in",
+    "lockedSettingsLink": "Settings",
     "errorAlreadySubscribed": "You're already subscribed.",
     "errorWrongRole": "Only professionals can subscribe.",
     "errorCheckFailed": "Could not verify your subscription status. Please try again.",

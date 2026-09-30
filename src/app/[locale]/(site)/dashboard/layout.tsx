@@ -122,12 +122,17 @@ export default async function DashboardLayout({
   const { data: subRows } = await supabase.rpc("get_effective_subscription", { p_user_id: user.id });
   const sub = (subRows?.[0] ?? null) as EffectiveSub | null;
 
-  if (sub && !isAccessAllowed(sub)) {
+  if (sub && !isAccessAllowed(sub) && isSecretary) {
     // get_effective_subscription resolves a linked secretary to their
     // doctor's subscription. A secretary can't pay for it, so they never see
     // the paywall, just a note that the doctor's subscription is inactive.
-    redirect(`/${locale === "en" ? "" : locale + "/"}${isSecretary ? "auth/clinic-inactive" : "subscribe"}`);
+    redirect(`/${locale === "en" ? "" : locale + "/"}auth/clinic-inactive`);
   }
+  // A locked doctor (ended trial, failed renewal) still reaches Settings:
+  // their data is theirs (export the patient list, manage the subscription,
+  // close the account, change the password), and a paywall must never hold
+  // it hostage (UX, LGPD/PDPA). Every other section is behind the paywall in
+  // (gated)/layout.tsx.
 
   const daysLeft = trialDaysRemaining(sub);
   // The one trial indicator, for the whole trial (first-run spec §4). A
@@ -209,7 +214,8 @@ export default async function DashboardLayout({
         {/* SolvyAI (specs/assistant.md): doctors only, behind its flag; its
             panel sits here so it pushes the content on wide screens.
             10 messages a day during the trial, 20 on a paid plan. */}
-        {liveFeatures.solvyAi && !isSecretary && (
+        {/* Not while locked: only Settings is open then, and SolvyAI acts on the agenda. */}
+        {liveFeatures.solvyAi && !isSecretary && !(sub && !isAccessAllowed(sub)) && (
           <>
             <SolvyAi locale={locale} prefix={locale === "en" ? "" : `/${locale}`} dailyLimit={sub?.subscription_status === "trial" ? 10 : 20} remote={assistantApiEnabled()} />
             {/* The item a SolvyAI save lands on, ringed for 3 s. */}

@@ -56,7 +56,7 @@ vi.mock("@/lib/effectiveProfId", () => ({ getEffectiveProfId: async () => "doc-1
 vi.mock("@/lib/clinicNotify", () => ({ tellPatient: async (_db: unknown, change: unknown) => { h.state.told.push(change); } }));
 vi.mock("next/cache", () => ({ revalidatePath: () => {} }));
 
-import { createAppointment } from "@/app/[locale]/(site)/dashboard/schedule/actions";
+import { createAppointment } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/actions";
 
 const book = (fields: Record<string, string>) => {
   const f = new FormData();

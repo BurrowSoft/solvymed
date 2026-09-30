@@ -856,6 +856,8 @@
     "payCardSub": "Visa、Mastercard、American Express",
     "or": "または",
     "cancelAnytime": "いつでもキャンセル可能。縛りなし。",
+    "lockedSettingsHint": "データはあなたのものです。患者のエクスポート、サブスクリプションの管理、アカウントの閉鎖は次から:",
+    "lockedSettingsLink": "設定",
     "successMessage": "購読が有効化されました！SolvyMed Proへようこそ。",
     "activationPending": "お支払いを受け付けました。サブスクリプションを有効化しています…",
     "activationSlow": "お支払いは受け付けましたが、有効化に通常より時間がかかっています。通常は数分で完了します。プランが表示されない場合はサポートにご連絡ください：",

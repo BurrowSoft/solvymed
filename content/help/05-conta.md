@@ -38,8 +38,8 @@ On the sign-in screen, tap **Forgot your password?**, enter your email and open 
 **Configurações → Excluir conta**. Se ainda não houver prontuários, a conta é excluída. Se houver, ela é encerrada: seus dados de acesso e a assinatura são cancelados, e os prontuários ficam guardados e bloqueados pelo prazo exigido por lei (ninguém acessa pelo app) e depois são apagados.
 **en**
 **Settings → Delete account**. If there are no records yet, the account is deleted. If there are, it's closed: your login and subscription are cancelled, and the records are kept locked for the legally required period (nobody can open them in the app) and then erased.
-**No site:** **Configurações → Encerrar conta** (ou **Excluir conta**, se ainda não houver prontuários), no fim da página: funciona igual ao app.
-**On the website:** **Settings → Close account** (or **Delete account** if there are no records yet), at the bottom of the page: it works the same as in the app.
+**No site:** **Configurações → Encerrar conta** (ou **Excluir conta**, se ainda não houver prontuários), no fim da página: funciona igual ao app. Mesmo com o teste ou a assinatura encerrados, as **Configurações** continuam abertas (o link fica na página de assinatura): exporte seus pacientes, gerencie a assinatura, troque a senha ou encerre a conta.
+**On the website:** **Settings → Close account** (or **Delete account** if there are no records yet), at the bottom of the page: it works the same as in the app. Even after the trial or subscription ends, **Settings** stays open (linked from the subscription page): export your patients, manage the subscription, change the password or close the account.
 `open:settings`
 
 ---

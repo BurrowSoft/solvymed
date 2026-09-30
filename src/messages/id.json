@@ -856,6 +856,8 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "atau",
     "cancelAnytime": "Batalkan kapan saja. Tanpa komitmen.",
+    "lockedSettingsHint": "Data Anda tetap milik Anda: ekspor pasien, kelola langganan, atau tutup akun di",
+    "lockedSettingsLink": "Pengaturan",
     "successMessage": "Langganan diaktifkan! Selamat datang di SolvyMed Pro.",
     "activationPending": "Pembayaran diterima! Mengaktifkan langganan Anda…",
     "activationSlow": "Kami telah menerima pembayaran Anda, tetapi aktivasi memakan waktu lebih lama dari biasanya. Biasanya selesai dalam beberapa menit; jika paket Anda tidak muncul, hubungi dukungan:",

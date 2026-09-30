@@ -31,8 +31,8 @@ vi.mock("@/lib/practiceCountry", () => ({ getPracticeCountry: async () => "BR" }
 vi.mock("@/lib/clinicTime", async (orig) => ({ ...(await orig<typeof import("@/lib/clinicTime")>()), getClinicTimeZone: async () => "America/Sao_Paulo" }));
 vi.mock("next-intl/server", () => ({ getTranslations: async () => (k: string) => k }));
 
-import { TypeFilter } from "@/app/[locale]/(site)/dashboard/payments/PaymentsClient";
-import PaymentsPage from "@/app/[locale]/(site)/dashboard/payments/page";
+import { TypeFilter } from "@/app/[locale]/(site)/dashboard/(gated)/payments/PaymentsClient";
+import PaymentsPage from "@/app/[locale]/(site)/dashboard/(gated)/payments/page";
 
 beforeEach(() => { nav.push.mockClear(); nav.search = "period=month"; h.ors = []; });
 
