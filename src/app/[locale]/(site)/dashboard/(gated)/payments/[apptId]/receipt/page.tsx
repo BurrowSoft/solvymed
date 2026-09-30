@@ -49,8 +49,9 @@ export default async function ReceiptPrintPage({
   const lookup = await lookupPracticeCountry(supabase, user.id, profId);
   if (!lookup.ok) return <AccessLogFailed backHref={back} text={t("countryFailed")} backLabel={t("backToPayments")} />;
   const country = lookup.country;
+  const profile = countryProfile(country);
 
-  if (country === "TH") {
+  if (profile.receipts === "app") {
     return (
       <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
         <PrintToolbar backHref={back} backLabel={t("backToPayments")} />
@@ -67,10 +68,10 @@ export default async function ReceiptPrintPage({
   ]);
   const patient = patientResult.data as { full_name: string; cpf: string | null; passport_number: string | null } | null;
   const idLines: string[] = [];
-  if (country === "BR" && str(patient?.cpf)) idLines.push(`${tIds("cpf")}: ${patient!.cpf}`);
-  if (country !== "BR" && str(patient?.passport_number)) idLines.push(`${tIds("passportOrId")}: ${patient!.passport_number}`);
+  if (profile.patientId === "cpf" && str(patient?.cpf)) idLines.push(`${tIds("cpf")}: ${patient!.cpf}`);
+  if (profile.patientId !== "cpf" && str(patient?.passport_number)) idLines.push(`${tIds("passportOrId")}: ${patient!.passport_number}`);
 
-  const { currency } = countryProfile(country);
+  const { currency } = profile;
   const money = (n: number) => formatMoney(n, currency);
   const base = typeof a.payment_amount === "number" ? a.payment_amount : 0;
   const extras = (Array.isArray(a.extra_items) ? a.extra_items : []) as { name?: unknown; price?: unknown }[];
@@ -94,7 +95,7 @@ export default async function ReceiptPrintPage({
           number={`${date.replace(/-/g, "")}-${apptId.slice(0, 6).toUpperCase()}`}
           date={docDate(country, date)}
           provider={[[header.fullName, header.registration].filter(Boolean).join(" · "), header.specialty].filter(Boolean).join(" — ")}
-          clinic={[header.clinicName, country === "BR" && header.clinicCnpj ? `CNPJ ${formatCnpj(header.clinicCnpj)}` : null].filter(Boolean).join(" · ")}
+          clinic={[header.clinicName, profile.clinicTaxId === "cnpj" && header.clinicCnpj ? `CNPJ ${formatCnpj(header.clinicCnpj)}` : null].filter(Boolean).join(" · ")}
           address={[header.address, header.city, header.state].filter(Boolean).join(", ")}
           service={String(a.consultation_type ?? "")}
           serviceDetail={`${a.type === "online" ? t("online") : t("inPerson")} · ${docTime(a.start_time as string)}`}
@@ -103,7 +104,7 @@ export default async function ReceiptPrintPage({
           total={money(base + extrasTotal)}
           privatePay={a.payment_type === "private"}
           paid={a.payment_status === "paid"}
-          note={country === "BR" && !str(header.clinicCnpj) ? RECEITA_SAUDE_NOTE : null}
+          note={profile.clinicTaxId === "cnpj" && !str(header.clinicCnpj) ? RECEITA_SAUDE_NOTE : null}
         />
       </div>
     </div>
