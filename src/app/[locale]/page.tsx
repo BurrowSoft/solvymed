@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { routing } from "@/i18n/routing";
+import { publicLocales } from "@/lib/publicLocales";
 import { LanguageSelector } from "@burrowsoft/shared";
 import { AppDownloadButtons } from "@/components/AppDownloadButtons";
 import { LegalLinks } from "@/components/LegalLinks";
@@ -8,7 +8,8 @@ import { SignupCta } from "@/components/SignupCta";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-const ALL_LOCALES = routing.locales as unknown as string[];
+// Only offered languages (Thai stays hidden until its release).
+const ALL_LOCALES = publicLocales();
 
 type FeatureKey = "scheduling" | "patients" | "records" | "prescriptions" | "payments" | "analytics";
 

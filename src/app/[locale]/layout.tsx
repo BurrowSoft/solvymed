@@ -13,6 +13,7 @@ import { ConsentBanner } from "@/components/ConsentBanner";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+import { publicLocales } from "@/lib/publicLocales";
 import "../globals.css";
 
 const inter   = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
@@ -46,7 +47,8 @@ export async function generateMetadata({
   const { locale } = await params;
   const canonical = locale === "en" ? `${BASE}/` : `${BASE}/${locale}/`;
   const languages = Object.fromEntries(
-    routing.locales.map((l) => [l, l === "en" ? `${BASE}/` : `${BASE}/${l}/`])
+    // Only offered languages in the hreflang alternates (no Thai before its release).
+    publicLocales().map((l) => [l, l === "en" ? `${BASE}/` : `${BASE}/${l}/`])
   );
   languages["x-default"] = `${BASE}/`;
 
