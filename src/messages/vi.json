@@ -1789,6 +1789,7 @@
     "unavailableLater": "SolvyAI tạm thời không khả dụng. Vui lòng thử lại sau.",
     "couldntFinish": "Tôi chưa làm được. Bạn có thể nói cách khác, kèm tên bệnh nhân, ngày và giờ không?",
     "onlySolvyMed": "Tôi chỉ có thể giúp về SolvyMed.",
-    "noClinical": "Tôi không thể giúp về các vấn đề lâm sàng."
+    "noClinical": "Tôi không thể giúp về các vấn đề lâm sàng.",
+    "minutes": "{n} phút"
   }
 }

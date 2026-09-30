@@ -1789,6 +1789,7 @@
     "unavailableLater": "SolvyAI sedang tidak tersedia. Coba lagi nanti.",
     "couldntFinish": "Saya tidak bisa menyelesaikannya. Bisa katakan dengan cara lain, dengan nama pasien, tanggal, dan jam?",
     "onlySolvyMed": "Saya hanya bisa membantu soal SolvyMed.",
-    "noClinical": "Saya tidak bisa membantu soal klinis."
+    "noClinical": "Saya tidak bisa membantu soal klinis.",
+    "minutes": "{n} menit"
   }
 }
