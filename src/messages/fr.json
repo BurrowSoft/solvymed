@@ -1284,12 +1284,16 @@
       "payments": {
         "a": "Combien reste-t-il à encaisser cette semaine ?",
         "b": "Envoyer un Pix à un patient",
-        "c": "Marquer comme payé"
+        "c": "Marquer comme payé",
+        "bPromptPay": "Envoyer un QR PromptPay à un patient",
+        "bNone": "Voir les rendez-vous impayés"
       },
       "settings": {
         "a": "Comment inviter ma secrétaire ?",
         "b": "Configurer Pix",
-        "c": "Modifier les horaires"
+        "c": "Modifier les horaires",
+        "bPromptPay": "Configurer PromptPay",
+        "bNone": "Modifier les infos du cabinet"
       },
       "other": {
         "a": "Qu'est-ce que j'ai demain ?",

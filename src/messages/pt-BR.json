@@ -1284,12 +1284,16 @@
       "payments": {
         "a": "Quanto tenho a receber esta semana?",
         "b": "Enviar Pix para um paciente",
-        "c": "Marcar como pago"
+        "c": "Marcar como pago",
+        "bPromptPay": "Enviar QR PromptPay ao paciente",
+        "bNone": "Ver consultas não pagas"
       },
       "settings": {
         "a": "Como convido minha secretária?",
         "b": "Configurar Pix",
-        "c": "Mudar horário de atendimento"
+        "c": "Mudar horário de atendimento",
+        "bPromptPay": "Configurar o PromptPay",
+        "bNone": "Alterar os dados da clínica"
       },
       "other": {
         "a": "O que tenho amanhã?",

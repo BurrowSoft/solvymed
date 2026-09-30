@@ -1284,12 +1284,16 @@
       "payments": {
         "a": "¿Cuánto tengo por cobrar esta semana?",
         "b": "Enviar Pix a un paciente",
-        "c": "Marcar como pagado"
+        "c": "Marcar como pagado",
+        "bPromptPay": "Enviar un QR de PromptPay a un paciente",
+        "bNone": "Ver citas sin pagar"
       },
       "settings": {
         "a": "¿Cómo invito a mi secretaria?",
         "b": "Configurar Pix",
-        "c": "Cambiar el horario de atención"
+        "c": "Cambiar el horario de atención",
+        "bPromptPay": "Configurar PromptPay",
+        "bNone": "Cambiar los datos de la clínica"
       },
       "other": {
         "a": "¿Qué tengo mañana?",

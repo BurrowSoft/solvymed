@@ -1284,12 +1284,16 @@
       "payments": {
         "a": "Tuần này còn phải thu bao nhiêu?",
         "b": "Gửi Pix cho bệnh nhân",
-        "c": "Đánh dấu đã thanh toán"
+        "c": "Đánh dấu đã thanh toán",
+        "bPromptPay": "Gửi mã QR PromptPay cho bệnh nhân",
+        "bNone": "Xem lịch hẹn chưa thanh toán"
       },
       "settings": {
         "a": "Làm sao mời trợ lý?",
         "b": "Thiết lập Pix",
-        "c": "Đổi giờ làm việc"
+        "c": "Đổi giờ làm việc",
+        "bPromptPay": "Thiết lập PromptPay",
+        "bNone": "Sửa thông tin phòng khám"
       },
       "other": {
         "a": "Ngày mai tôi có lịch gì?",

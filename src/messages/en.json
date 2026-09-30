@@ -1314,12 +1314,16 @@
       "payments": {
         "a": "How much is to receive this week?",
         "b": "Send Pix to a patient",
-        "c": "Mark as paid"
+        "c": "Mark as paid",
+        "bPromptPay": "Send a PromptPay QR to a patient",
+        "bNone": "Show unpaid appointments"
       },
       "settings": {
         "a": "How do I invite my secretary?",
         "b": "Set up Pix",
-        "c": "Change working hours"
+        "c": "Change working hours",
+        "bPromptPay": "Set up PromptPay",
+        "bNone": "Change my clinic details"
       },
       "other": {
         "a": "What do I have tomorrow?",
