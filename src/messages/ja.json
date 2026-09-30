@@ -317,7 +317,9 @@
     "pageInfo": "{total}件中 {from}–{to}件",
     "prevPage": "前へ",
     "nextPage": "次へ",
-    "pagesLabel": "ページ"
+    "pagesLabel": "ページ",
+    "fullNamePlaceholder": "氏名",
+    "professionPlaceholder": "例：エンジニア、教師…"
   },
   "patientDetail": {
     "tabInfo": "情報",
@@ -603,7 +605,6 @@
     "countryLabel": "国",
     "countryPlaceholder": "国",
     "phoneLabel": "電話番号",
-    "phonePlaceholder": "+81 3-0000-0000",
     "locationNote": "入力した住所から地図上の位置が自動的に検出されます。",
     "noAddress": "住所なし",
     "onMap": "地図上に表示",
@@ -661,7 +662,6 @@
     "fullNamePlaceholder": "お名前（フルネーム）",
     "emailLabel": "メール",
     "phoneLabel": "電話番号",
-    "phonePlaceholder": "90-1234-5678",
     "dobLabel": "生年月日",
     "cpfLabel": "CPF",
     "cpfPlaceholder": "000.000.000-00",
@@ -1791,5 +1791,8 @@
     "onlySolvyMed": "SolvyMedに関することのみお手伝いできます。",
     "noClinical": "臨床的な質問にはお答えできません。",
     "minutes": "{n}分"
+  },
+  "countryExamples": {
+    "phone": "電話番号"
   }
 }
