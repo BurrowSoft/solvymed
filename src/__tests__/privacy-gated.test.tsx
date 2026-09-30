@@ -36,6 +36,18 @@ describe("privacy policy: SolvyAI / LINE blocks follow their conditions", () => 
     r.unmount();
   });
 
+  it("with SolvyAI: Anthropic's 30-day retention and no training, in both languages; never with LINE alone", () => {
+    let r = render(<PrivacyEn turnstile={false} solvyai />);
+    expect(r.container.textContent).toContain("Anthropic keeps what is sent to SolvyAI for up to 30 days for safety and security purposes, and then deletes it. It is not used to train AI models.");
+    r.unmount();
+    r = render(<PrivacyPtBR turnstile={false} solvyai line />);
+    expect(r.container.textContent).toContain("A Anthropic guarda o que é enviado ao SolvyAI por até 30 dias, para fins de segurança, e depois apaga. Esses dados não são usados para treinar modelos de IA.");
+    r.unmount();
+    r = render(<PrivacyEn turnstile={false} line />);
+    expect(r.container.textContent).not.toContain("30 days");
+    r.unmount();
+  });
+
   it("§6d's test-export paragraph only once uploads are live (founders-upload-live)", () => {
     expect(conditionMet("founders-upload-live")).toBe(false);
     let r = render(<PrivacyEn turnstile={false} founders />);
