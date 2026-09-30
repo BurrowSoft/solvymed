@@ -9663,12 +9663,14 @@ Merged at `0ec6b49`, hidden (evidence: PR comment 5901165874).
 | th | ✅ "CPF 1 รายการไม่มีเลข 0 นำหน้า (Excel ลบออก) ระบบเติมให้แล้ว" | ✅ (same form, n=2) |
 | fr / es / ru / ar | ✅ singular / plural forms differ correctly | ✅ |
 
-**Nits (draft locales, not blocking):**
-- de "**2 CPF fehlte** die führende Null…" should be "fehlten";
-- it "**A 2 CPF mancava** lo zero iniziale…" should be "mancavano".
+**de / it (corrected):** my PR comment flagged de "2 CPF fehlte die
+führende Null…" and it "A 2 CPF mancava lo zero iniziale…" as plural
+errors. That was **wrong**: the subject is the singular zero, and the CPFs
+are dative / indirect, so both are grammatical. It's not a defect (the
+reviewer 9a caught it), and #187 was not merged for it.
 
 (pt `=0` reads "Nenhum CPF precisou do zero inicial.", but the line only shows when n > 0.)
 
-Merged at `2e13bd1`, hidden (evidence: PR comments 5901841534 / 5901852795). The de/it nits are fixed in #187.
+Merged at `2e13bd1`, hidden (evidence: PR comments 5901841534 / 5901852795).
 
 **⏳ After migration 130 @ `ec6fa90`:** the same file against the real DB, with #177's steps 3–4.
