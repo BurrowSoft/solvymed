@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createMockBackend } from "@/lib/assistant/mockBackend";
 import { createRemoteBackend, type RemoteError } from "@/lib/assistant/remoteBackend";
+import { answerText } from "@/lib/assistant/answerText";
 import { maskPersonalData, MAX_MESSAGE_CHARS, MAX_TURNS, MIN_SECONDS_BETWEEN } from "@/lib/assistant/mask";
 import type { AnswerBlock, AnswerChunk, AssistantBackend, AssistantScreen, AssistantUsage, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
 import { isInternalHref, webPath } from "@/lib/assistant/targets";
@@ -123,7 +124,7 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false }: { locale
       .filter((x) => x.role === "user" || !x.failed)
       .slice(-8)
       .map((x) =>
-        x.role === "user" ? { role: "user" as const, text: x.text } : { role: "assistant" as const, text: x.blocks.map((b) => (b.type === "text" ? b.text : "")).join(" ").trim() },
+        x.role === "user" ? { role: "user" as const, text: x.text } : { role: "assistant" as const, text: answerText(x.blocks) },
       );
     await play(history, backend.ask({ messages, screen, locale, turns: userTurns }));
   }, [busy, atLimit, outOfTurns, turns, userTurns, backend, screen, locale]); // eslint-disable-line react-hooks/exhaustive-deps

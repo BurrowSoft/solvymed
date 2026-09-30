@@ -309,6 +309,17 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     expect((resultsIn(t.model.calls[1])[1] as { content: string }).content).toContain("Not shown");
   });
 
+  it("a card after a list in the same answer waits too (d7: the model chose from its own list)", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { tools: [{ name: "find_patients", input: { query: "Maria Silva" } }, { name: "choose_date", input: { dates: ["2026-10-01", "2026-10-08"] } }] }
+      : round === 1 ? { tools: [{ name: "propose_book_appointment", input: { patientId: "p-maria", date: "2026-10-01", start: "10:00" } }] }
+      : "ok");
+    const r = await run(t, ask("Marca a Maria Silva quinta às 10h"));
+    expect(r.blocks.filter((b) => b.type === "pick")).toHaveLength(1);
+    expect(cardOf(r.blocks)).toBeUndefined();
+    expect((resultsIn(t.model.calls[2])[0] as { content: string }).content).toContain("Not shown");
+  });
+
   it("after a time choice (its own question), no pointer text at all", async () => {
     const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "find_patients", input: { query: "Maria Silva" } }] } : round === 1 ? { tools: [{ name: "propose_book_appointment", input: { patientId: "p-maria", date: "2026-09-30", start: "10:00" } }] } : "Escolha um horário acima."));
     const r = await run(t, ask("Marca a Maria Silva amanhã às 10h"));

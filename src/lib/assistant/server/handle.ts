@@ -329,15 +329,16 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
           // The tools, as the user; their blocks (a card, a list to choose
           // from, time chips) go straight to the user, the text to the model.
           // One question at a time (UX): once a list or time choice is on
-          // screen, a second one waits for the answer to the first.
+          // screen, a second one, or a card (the model choosing from its own
+          // list; d7, th cancel), waits for the answer to the first.
           const results: ContentBlock[] = [];
           for (const call of calls) {
             const out = await runTool(ctx, call.name, call.input);
             let forModel = out.forModel;
             for (const b of [...(out.block ? [out.block] : []), ...(out.blocks ?? [])]) {
-              const asks = b.type === "pick" || b.type === "slot_choice";
-              if (asks && (shown === "choice" || shown === "slot")) {
-                forModel = "Not shown: the user must first answer the list already on screen. Ask nothing else now.";
+              const waits = b.type === "pick" || b.type === "slot_choice" || b.type === "card";
+              if (waits && (shown === "choice" || shown === "slot")) {
+                forModel = "Not shown: the user must first answer the list already on screen. Don't choose for them; ask nothing else now.";
                 continue;
               }
               answered = true;
