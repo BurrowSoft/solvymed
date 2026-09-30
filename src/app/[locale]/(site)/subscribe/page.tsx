@@ -187,6 +187,15 @@ export default async function SubscribePage({
             <p className="text-center text-xs text-slate-400">{t("cancelAnytime")}</p>
           </div>
         </div>
+
+        {/* Locked: Settings stays open (export, subscription, close the
+            account, password); the rest of the dashboard doesn't. */}
+        {sub && !isAccessAllowed(sub) && sp.success !== "1" && (
+          <p className="mt-6 text-center text-sm text-slate-600">
+            {t("lockedSettingsHint")}{" "}
+            <a href={`/${locale === "en" ? "" : locale + "/"}dashboard/settings`} className="font-semibold text-teal-700 underline">{t("lockedSettingsLink")}</a>
+          </p>
+        )}
       </div>
     </div>
   );

@@ -54,7 +54,7 @@ vi.mock("@/lib/patientNotice", () => ({
 }));
 
 process.env.SUPABASE_SERVICE_ROLE_KEY = "test-secret";
-import { undoScheduleChange } from "@/app/[locale]/(site)/dashboard/schedule/actions";
+import { undoScheduleChange } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/actions";
 import type { UndoToken } from "@/lib/scheduleUndo";
 import { UNDO_TTL_MS, signUndo } from "@/lib/scheduleUndoSign";
 

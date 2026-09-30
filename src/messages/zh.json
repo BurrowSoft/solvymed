@@ -856,6 +856,8 @@
     "payCardSub": "Visa、Mastercard、美国运通",
     "or": "或",
     "cancelAnytime": "随时取消。无需承诺。",
+    "lockedSettingsHint": "你的数据仍属于你:可在以下位置导出患者、管理订阅或关闭账户:",
+    "lockedSettingsLink": "设置",
     "successMessage": "订阅已激活！欢迎使用SolvyMed Pro。",
     "activationPending": "已收到付款！正在激活您的订阅…",
     "activationSlow": "我们已收到您的付款，但激活时间比平时长。通常几分钟内即可完成；如果您的套餐没有显示，请联系支持：",

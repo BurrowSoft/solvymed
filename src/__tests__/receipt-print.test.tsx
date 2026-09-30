@@ -42,8 +42,8 @@ vi.mock("next/navigation", () => ({
 }));
 vi.mock("@/components/PrintToolbar", () => ({ PrintToolbar: () => null }));
 
-import ReceiptPage from "@/app/[locale]/(site)/dashboard/payments/[apptId]/receipt/page";
-import { RECEITA_SAUDE_NOTE } from "@/app/[locale]/(site)/dashboard/payments/[apptId]/receipt/ReceiptDocument";
+import ReceiptPage from "@/app/[locale]/(site)/dashboard/(gated)/payments/[apptId]/receipt/page";
+import { RECEITA_SAUDE_NOTE } from "@/app/[locale]/(site)/dashboard/(gated)/payments/[apptId]/receipt/ReceiptDocument";
 
 const APPT = "abcdef12-1111-4222-8333-444455556666";
 const params = Promise.resolve({ locale: "pt-BR", apptId: APPT });

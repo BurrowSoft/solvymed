@@ -44,7 +44,7 @@ const h = vi.hoisted(() => {
 
 vi.mock("@/lib/supabase/server", () => ({ createClient: async () => h.client }));
 
-import { deletePatientFile, hidePatientFile, listPatientFiles, openPatientFile } from "@/app/[locale]/(site)/dashboard/patients/files-actions";
+import { deletePatientFile, hidePatientFile, listPatientFiles, openPatientFile } from "@/app/[locale]/(site)/dashboard/(gated)/patients/files-actions";
 
 beforeEach(() => {
   Object.assign(h.state, { professional: true, objects: [], listed: [], removed: [], removeResult: [{}], rpcs: [], rpcError: null, logError: null, signed: [], states: [] });

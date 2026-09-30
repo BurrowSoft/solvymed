@@ -856,6 +856,8 @@
     "payCardSub": "Visa, Mastercard, American Express",
     "or": "o",
     "cancelAnytime": "Annulla quando vuoi. Nessun impegno.",
+    "lockedSettingsHint": "I tuoi dati restano tuoi: esporta i pazienti, gestisci l'abbonamento o chiudi l'account in",
+    "lockedSettingsLink": "Impostazioni",
     "successMessage": "Abbonamento attivato! Ti diamo il benvenuto in SolvyMed Pro.",
     "activationPending": "Pagamento ricevuto! Attivazione dell’abbonamento in corso…",
     "activationSlow": "Abbiamo ricevuto il pagamento, ma l’attivazione sta richiedendo più tempo del solito. Di solito si completa in pochi minuti; se il piano non compare, contatta l’assistenza:",

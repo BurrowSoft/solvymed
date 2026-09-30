@@ -1,12 +1,12 @@
 "use server";
 
-import { createAppointment, blockTime, moveAppointment, updateAppointmentStatus, deleteAppointment } from "./schedule/actions";
+import { createAppointment, blockTime, moveAppointment, updateAppointmentStatus, deleteAppointment } from "./(gated)/schedule/actions";
 import { MOVABLE_STATUSES } from "@/lib/scheduleChecks";
-import { confirmBookingAndAddPatient, rejectBooking } from "./schedule/booking-actions";
-import { createPatient, deletePatient } from "./patients/actions";
+import { confirmBookingAndAddPatient, rejectBooking } from "./(gated)/schedule/booking-actions";
+import { createPatient, deletePatient } from "./(gated)/patients/actions";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
-import { markPaid, markUnpaid } from "./payments/actions";
+import { markPaid, markUnpaid } from "./(gated)/payments/actions";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { toMinutes } from "@/lib/slots";
