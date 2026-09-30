@@ -5,6 +5,7 @@ import { SubscribeButton } from "@/components/SubscribeButton";
 import { UpdateCardButton } from "@/components/UpdateCardButton";
 import { isAccessAllowed, isPaidActive, trialDaysRemaining, getPlanPrice, type EffectiveSub } from "@/lib/subscription";
 import { ActivationStatus } from "./ActivationStatus";
+import { SignOutButton } from "@/components/SignOutButton";
 import { retrieveStoredStripeSubscription, isLive, needsCardFix } from "@/lib/stripeBilling";
 
 export default async function SubscribePage({
@@ -17,6 +18,8 @@ export default async function SubscribePage({
   const { locale } = await params;
   const sp = await searchParams;
   const t = await getTranslations({ locale, namespace: "subscription" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
+  const tClose = await getTranslations({ locale, namespace: "accountClose" });
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -82,7 +85,13 @@ export default async function SubscribePage({
   // The way out of every state (Vitor, live test): the dashboard while it
   // lets them in, else the home page (an ended trial is sent back here).
   const prefix = locale === "en" ? "" : `/${locale}`;
-  const exitHref = sp.success === "1" || (sub && isAccessAllowed(sub)) ? `${prefix}/dashboard` : `${prefix}/`;
+  // Not "just paid": an ended trial back from checkout before the webhook
+  // lands would bounce from the dashboard to this paywall (9a).
+  const canEnter = !!sub && isAccessAllowed(sub);
+  const exitHref = canEnter ? `${prefix}/dashboard` : `${prefix}/`;
+  // Locked out (an ended trial, a failed renewal): a way to get help and
+  // to close the account, which Settings can't offer while it's locked.
+  const locked = !!sub && !isAccessAllowed(sub) && sp.success !== "1";
   const plan = getPlanPrice(locale);
 
   const { data: professional } = await supabase
@@ -117,7 +126,7 @@ export default async function SubscribePage({
 
         {/* Back from checkout: "activated" only once the database says so
             (the webhook writes it); until then "activating…". */}
-        {sp.success === "1" && <ActivationStatus initiallyActive={isPaidActive(sub)} dashboardHref={`${prefix}/dashboard`} />}
+        {sp.success === "1" && <ActivationStatus initiallyActive={isPaidActive(sub)} dashboardHref={`${prefix}/dashboard`} canGoBack={canEnter} />}
 
         {/* Trial status */}
         {daysLeft !== null && daysLeft > 0 && sp.success !== "1" && (
@@ -188,6 +197,18 @@ export default async function SubscribePage({
             <p className="text-center text-xs text-slate-400">{t("cancelAnytime")}</p>
           </div>
         </div>}
+
+        {locked && (
+          <p className="mt-6 text-center text-sm text-slate-600">
+            {t("needHelp")} <a href="mailto:support@solvymed.com" className="font-semibold text-teal-700 underline">support@solvymed.com</a>
+            {" · "}
+            <a href={`${prefix}/account/delete`} className="text-slate-500 underline">{tClose("titleClose")}</a>
+          </p>
+        )}
+        {/* Every state: a way to sign out (Vitor was stuck on the paywall). */}
+        <div className="mt-4 flex justify-center">
+          <SignOutButton label={tNav("signOut")} />
+        </div>
       </div>
     </div>
   );

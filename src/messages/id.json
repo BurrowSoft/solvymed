@@ -730,6 +730,7 @@
     "goToDashboard": "Ke dasbor",
     "backToDashboard": "Kembali ke dasbor",
     "back": "Kembali",
+    "needHelp": "Butuh bantuan?",
     "activationPending": "Pembayaran diterima! Mengaktifkan langganan Anda…",
     "activationSlow": "Kami telah menerima pembayaran Anda, tetapi aktivasi memakan waktu lebih lama dari biasanya. Biasanya selesai dalam beberapa menit; jika paket Anda tidak muncul, hubungi dukungan:",
     "trialDaysLeft": "Anda memiliki {n} hari tersisa dalam uji coba gratis.",

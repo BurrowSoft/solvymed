@@ -730,6 +730,7 @@
     "goToDashboard": "Aller au tableau de bord",
     "backToDashboard": "Retour au tableau de bord",
     "back": "Retour",
+    "needHelp": "Besoin d'aide ?",
     "activationPending": "Paiement reçu ! Activation de votre abonnement…",
     "activationSlow": "Nous avons reçu votre paiement, mais l’activation prend plus de temps que d’habitude. Elle se termine en général en quelques minutes ; si votre forfait n’apparaît pas, contactez le support :",
     "trialDaysLeft": "Il vous reste {n} jours dans votre période d'essai.",

@@ -730,6 +730,7 @@
     "goToDashboard": "Đến bảng điều khiển",
     "backToDashboard": "Quay lại bảng điều khiển",
     "back": "Quay lại",
+    "needHelp": "Cần trợ giúp?",
     "activationPending": "Đã nhận thanh toán! Đang kích hoạt gói đăng ký của bạn…",
     "activationSlow": "Chúng tôi đã nhận thanh toán của bạn, nhưng việc kích hoạt đang lâu hơn bình thường. Thường sẽ hoàn tất trong vài phút; nếu gói của bạn không hiển thị, hãy liên hệ hỗ trợ:",
     "trialDaysLeft": "Bạn còn {n} ngày trong thời gian dùng thử miễn phí.",

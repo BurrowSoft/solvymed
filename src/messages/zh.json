@@ -730,6 +730,7 @@
     "goToDashboard": "前往控制台",
     "backToDashboard": "返回控制台",
     "back": "返回",
+    "needHelp": "需要帮助?",
     "activationPending": "已收到付款！正在激活您的订阅…",
     "activationSlow": "我们已收到您的付款，但激活时间比平时长。通常几分钟内即可完成；如果您的套餐没有显示，请联系支持：",
     "trialDaysLeft": "您的免费试用还剩{n}天。",

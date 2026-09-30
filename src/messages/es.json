@@ -730,6 +730,7 @@
     "goToDashboard": "Ir al panel",
     "backToDashboard": "Volver al panel",
     "back": "Volver",
+    "needHelp": "¿Necesitas ayuda?",
     "activationPending": "¡Pago recibido! Activando tu suscripción…",
     "activationSlow": "Recibimos tu pago, pero la activación está tardando más de lo habitual. Suele completarse en unos minutos; si tu plan no aparece, contacta con soporte:",
     "trialDaysLeft": "Te quedan {n} días en tu período de prueba.",

@@ -14,7 +14,10 @@ export const POLL_LIMIT_MS = 30000;
 export const REDIRECT_MS = 3000;
 
 // dashboardHref: the way out (Vitor, live test: the page had none).
-export function ActivationStatus({ initiallyActive, dashboardHref }: { initiallyActive: boolean; dashboardHref: string }) {
+// canGoBack: the dashboard lets them in right now (a trial still running).
+// An ended trial waiting for the webhook would bounce back to the paywall
+// (and its Assinar) from there, so it gets no back link (9a).
+export function ActivationStatus({ initiallyActive, dashboardHref, canGoBack = false }: { initiallyActive: boolean; dashboardHref: string; canGoBack?: boolean }) {
   const t = useTranslations("subscription");
   const router = useRouter();
   const [state, setState] = useState<"waiting" | "active" | "slow">(initiallyActive ? "active" : "waiting");
@@ -52,7 +55,7 @@ export function ActivationStatus({ initiallyActive, dashboardHref }: { initially
       </div>
     );
   }
-  const back = <a href={dashboardHref} className="mt-2 block text-center text-sm font-semibold text-teal-700 underline">{t("backToDashboard")}</a>;
+  const back = canGoBack ? <a href={dashboardHref} className="mt-2 block text-center text-sm font-semibold text-teal-700 underline">{t("backToDashboard")}</a> : null;
   if (state === "slow") {
     return (
       <div role="status" className="mb-6 rounded-xl bg-amber-50 border border-amber-200 p-4 text-center text-sm text-amber-800">

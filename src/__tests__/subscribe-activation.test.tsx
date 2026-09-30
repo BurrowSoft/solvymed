@@ -33,8 +33,8 @@ describe("isPaidActive", () => {
 describe("ActivationStatus", () => {
   beforeEach(() => { vi.useFakeTimers(); h.answers = []; h.pushed = []; });
   afterEach(() => { vi.useRealTimers(); });
-  const show = (initiallyActive: boolean) =>
-    render(<NextIntlClientProvider locale="en" messages={en}><ActivationStatus initiallyActive={initiallyActive} dashboardHref="/pt-BR/dashboard" /></NextIntlClientProvider>);
+  const show = (initiallyActive: boolean, canGoBack = true) =>
+    render(<NextIntlClientProvider locale="en" messages={en}><ActivationStatus initiallyActive={initiallyActive} dashboardHref="/pt-BR/dashboard" canGoBack={canGoBack} /></NextIntlClientProvider>);
   const tick = (ms: number) => act(async () => { await vi.advanceTimersByTimeAsync(ms); });
 
   it("says activated right away when it already is", () => {
@@ -66,6 +66,13 @@ describe("ActivationStatus", () => {
   it("while waiting: a way back to the dashboard", () => {
     show(false);
     expect(screen.getByText(en.subscription.backToDashboard).getAttribute("href")).toBe("/pt-BR/dashboard");
+  });
+
+  it("an ended trial waiting for the webhook gets no back link (the dashboard would bounce to the paywall)", async () => {
+    show(false, false);
+    expect(screen.queryByText(en.subscription.backToDashboard)).toBeNull();
+    await tick(31000);
+    expect(screen.queryByText(en.subscription.backToDashboard)).toBeNull();
   });
 
   it("once active: the Go to dashboard button, and the dashboard opens by itself after 3 s", async () => {

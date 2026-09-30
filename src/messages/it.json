@@ -730,6 +730,7 @@
     "goToDashboard": "Vai alla dashboard",
     "backToDashboard": "Torna alla dashboard",
     "back": "Indietro",
+    "needHelp": "Serve aiuto?",
     "activationPending": "Pagamento ricevuto! Attivazione dell’abbonamento in corso…",
     "activationSlow": "Abbiamo ricevuto il pagamento, ma l’attivazione sta richiedendo più tempo del solito. Di solito si completa in pochi minuti; se il piano non compare, contatta l’assistenza:",
     "trialDaysLeft": "Hai ancora {n} giorni nella tua prova gratuita.",

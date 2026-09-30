@@ -730,6 +730,7 @@
     "goToDashboard": "前往控制台",
     "backToDashboard": "返回控制台",
     "back": "返回",
+    "needHelp": "需要協助?",
     "activationPending": "已收到付款！正在啟用您的訂閱…",
     "activationSlow": "我們已收到您的付款，但啟用時間比平常久。通常幾分鐘內即可完成；如果您的方案沒有顯示，請聯絡客服：",
     "trialDaysLeft": "您的免費試用還剩{n}天。",
