@@ -1,6 +1,7 @@
 import { HELP, type HelpLang } from "@/lib/help";
 import { appMapText } from "@/lib/solvyai/app-map";
 import type { ReplyTexts } from "./texts";
+import { localizeLabels } from "./uiLabels";
 
 // What SolvyAI knows: the Help articles (only what's true today: the build
 // leaves out held text, content/help/conditions.json) and the App Map, as
@@ -35,11 +36,14 @@ export function helpText(lang: HelpLang, client: Client): string {
 // the same UI language and client, so the cache is shared. Outside pt/en it
 // ends with the screens' labels in that language (a stable list per locale,
 // so it's cached too; 9a: not paid on every request).
-export function cachedSystem(lang: HelpLang, client: Client, say?: Pick<ReplyTexts, "language" | "labels">): string {
+export function cachedSystem(lang: HelpLang, client: Client, say?: Pick<ReplyTexts, "language" | "labels" | "labelMap">): string {
+  // Outside pt/en the articles' and the map's labels are already in the
+  // user's language (d7: the model copied English labels despite the list).
+  const local = (text: string) => (say ? localizeLabels(text, say.labelMap) : text);
   return [
     "# SolvyMed Help articles",
-    helpText(lang, client),
-    appMapText(),
+    local(helpText(lang, client)),
+    local(appMapText()),
     ...(say?.labels.length ? [`# Screen labels (English = ${say.language})\n${say.labels.join("\n")}`] : []),
   ].join("\n\n");
 }
