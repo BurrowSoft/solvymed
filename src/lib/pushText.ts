@@ -15,7 +15,7 @@ export type PushKind =
   | "apptBookedByClinic" | "apptBookedSeriesByClinic" | "apptCancelledByClinic" | "apptMovedByClinic" | "newBookingRequest";
 
 type Text = { title: string; body: string };
-type Table = Record<PushKind, Text> & { note: string };
+type Table = Record<PushKind, Text> & { note: string; messageHint: string };
 
 // {when} = "29/09/2026 14:00" in the recipient's format; {name} = the patient.
 const T: Record<PushLocale, Table> = {
@@ -37,6 +37,7 @@ const T: Record<PushLocale, Table> = {
 
     apptMovedByClinic: { title: "Consulta remarcada", body: "{clinic} mudou sua consulta de {oldDate} às {oldTime} para {date} às {time}." },
     note: "Observação: {note}",
+    messageHint: "com uma mensagem da clínica",
   },
   en: {
     newBookingRequest: { title: "New booking request", body: "{name} requested an appointment on {when}." },
@@ -56,6 +57,7 @@ const T: Record<PushLocale, Table> = {
 
     apptMovedByClinic: { title: "Appointment moved", body: "{clinic} moved your appointment from {oldDate} at {oldTime} to {date} at {time}." },
     note: "Note: {note}",
+    messageHint: "with a message from the clinic",
   },
   es: {
     newBookingRequest: { title: "Nueva solicitud de cita", body: "{name} pidió una cita para el {when}." },
@@ -75,6 +77,7 @@ const T: Record<PushLocale, Table> = {
 
     apptMovedByClinic: { title: "Cita cambiada", body: "{clinic} cambió tu cita del {oldDate} a las {oldTime} al {date} a las {time}." },
     note: "Nota: {note}",
+    messageHint: "con un mensaje de la clínica",
   },
   fr: {
     newBookingRequest: { title: "Nouvelle demande de rendez-vous", body: "{name} a demandé un rendez-vous le {when}." },
@@ -94,6 +97,7 @@ const T: Record<PushLocale, Table> = {
 
     apptMovedByClinic: { title: "Rendez-vous déplacé", body: "{clinic} a déplacé votre rendez-vous du {oldDate} à {oldTime} au {date} à {time}." },
     note: "Remarque : {note}",
+    messageHint: "avec un message du cabinet",
   },
   de: {
     newBookingRequest: { title: "Neue Terminanfrage", body: "{name} hat einen Termin am {when} angefragt." },
@@ -113,6 +117,7 @@ const T: Record<PushLocale, Table> = {
 
     apptMovedByClinic: { title: "Termin verschoben", body: "{clinic} hat Ihren Termin vom {oldDate} um {oldTime} auf den {date} um {time} verschoben." },
     note: "Hinweis: {note}",
+    messageHint: "mit einer Nachricht der Praxis",
   },
   it: {
     newBookingRequest: { title: "Nuova richiesta di appuntamento", body: "{name} ha chiesto un appuntamento per il {when}." },
@@ -132,6 +137,7 @@ const T: Record<PushLocale, Table> = {
 
     apptMovedByClinic: { title: "Appuntamento spostato", body: "{clinic} ha spostato il tuo appuntamento dal {oldDate} alle {oldTime} al {date} alle {time}." },
     note: "Nota: {note}",
+    messageHint: "con un messaggio dello studio",
   },
   th: {
     newBookingRequest: { title: "คำขอนัดหมายใหม่", body: "{name} ขอนัดหมายวันที่ {when}" },
@@ -151,6 +157,7 @@ const T: Record<PushLocale, Table> = {
 
     apptMovedByClinic: { title: "เลื่อนนัดหมาย", body: "{clinic} ได้เลื่อนนัดหมายของคุณจากวันที่ {oldDate} เวลา {oldTime} เป็นวันที่ {date} เวลา {time}" },
     note: "หมายเหตุ: {note}",
+    messageHint: "พร้อมข้อความจากคลินิก",
   },
 };
 
@@ -179,7 +186,9 @@ export function pushText(
   kind: PushKind,
   // clinic / date / time: the clinic's own pushes (08's texts): the
   // clinic's patient-facing name, the date in the reader's format, HH:MM.
-  params: { name?: string; when?: string; note?: string | null; clinic?: string; date?: string; time?: string; oldDate?: string; oldTime?: string; n?: number } = {},
+  // hasMessage (150): the clinic left a message, shown on the patient's
+  // appointment; the push only says so, never its text.
+  params: { name?: string; when?: string; note?: string | null; hasMessage?: boolean; clinic?: string; date?: string; time?: string; oldDate?: string; oldTime?: string; n?: number } = {},
 ): Text {
   const t = T[locale];
   // Replacer functions: names are user text, and "$&" in a replacement
@@ -192,6 +201,8 @@ export function pushText(
   const body = fill(t[kind].body);
   return {
     title: t[kind].title,
-    body: params.note ? `${body} ${t.note.replace("{note}", () => params.note ?? "")}` : body,
+    body: params.hasMessage
+      ? `${body.replace(/\.$/, "")} ${t.messageHint}${locale === "th" ? "" : "."}`
+      : params.note ? `${body} ${t.note.replace("{note}", () => params.note ?? "")}` : body,
   };
 }

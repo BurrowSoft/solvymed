@@ -32,6 +32,10 @@
             {
               "type": "p",
               "text": "No site também: se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você agenda."
+            },
+            {
+              "type": "p",
+              "text": "No site, ao **Rejeitar** um pedido ou mudar uma consulta para **Cancelado**, você pode escrever um **Motivo (opcional)** de até 200 caracteres. No site (e no app a partir da versão 1.4.0), o paciente vê \"Recusado pela clínica: …\" ou \"Cancelado pela clínica: …\" na consulta dele (se foi ele quem cancelou, \"Você cancelou\"). Ao confirmar ou propor um horário, a **Mensagem ao paciente (opcional)** aparece para ele como \"Mensagem da clínica: …\". A notificação nunca traz o texto: só avisa que há uma mensagem da clínica."
             }
           ],
           "en": [
@@ -52,6 +56,10 @@
             {
               "type": "p",
               "text": "On the website too: if the patient has a SolvyMed account, they get a notification when you book."
+            },
+            {
+              "type": "p",
+              "text": "On the website, when you **Reject** a request or change an appointment to **Cancelled**, you can write a **Reason (optional)** of up to 200 characters. On the website (and in the app from version 1.4.0), the patient sees \"Declined by the clinic: …\" or \"Cancelled by the clinic: …\" on their appointment (\"You cancelled\" if they did). When you confirm or propose a time, the **Message to the patient (optional)** shows to them as \"Message from the clinic: …\". The notification never carries the text: it only says there's a message from the clinic."
             }
           ]
         },
