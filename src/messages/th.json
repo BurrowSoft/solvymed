@@ -253,7 +253,11 @@
     "reasonShort": "เหตุผล",
     "messagePlaceholder": "เช่น กรุณานำผลตรวจมาด้วย",
     "patientWillSee": "ผู้ป่วยจะเห็นข้อความนี้",
-    "qrNeedsAmount": "กำหนดจำนวนเงินเพื่อสร้าง QR ชำระเงิน"
+    "qrNeedsAmount": "กำหนดจำนวนเงินเพื่อสร้าง QR ชำระเงิน",
+    "showOutside": "แสดงนอกเวลาทำการ",
+    "showInside": "เฉพาะเวลาทำการ",
+    "otherTime": "เวลาอื่น…",
+    "slotTaken": "ไม่ว่าง"
   },
   "payments": {
     "thisWeek": "สัปดาห์นี้",
@@ -651,7 +655,7 @@
     "placePinFirst": "แตะแผนที่ตรงตำแหน่งคลินิก แล้วบันทึก"
   },
   "consultType": {
-    "consultation": "ปรึกษาแพทย์",
+    "consultation": "ตรวจทั่วไป",
     "followUp": "ติดตามอาการ",
     "examReview": "ตรวจสอบผลตรวจ",
     "procedure": "หัตถการ",
@@ -703,7 +707,8 @@
     "retry": "ลองอีกครั้ง",
     "chosenTime": "เวลาที่เลือก: {weekday} {day} {month} · {start}–{end}",
     "prevMonth": "เดือนก่อนหน้า",
-    "nextMonth": "เดือนถัดไป"
+    "nextMonth": "เดือนถัดไป",
+    "noTimesToday": "วันนี้ไม่มีเวลาว่างแล้ว"
   },
   "auth": {
     "passwordTooShort": "รหัสผ่านต้องมีอย่างน้อย {min} ตัวอักษร",

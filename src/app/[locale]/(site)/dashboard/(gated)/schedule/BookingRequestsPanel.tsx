@@ -11,8 +11,9 @@ import { createClient } from "@/lib/supabase/client";
 import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest } from "./booking-actions";
 import { toLocalDateString } from "@/lib/slots";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
-import { DateInput } from "@/components/DateInput";
 import { REASON_MAX, statusReasonLive } from "@/lib/statusReason";
+import { DoctorTimePicker } from "@/components/DoctorTimePicker";
+import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 type Booking = {
   id: string;
@@ -44,6 +45,18 @@ type PatientProfile = {
 };
 
 // idKind: the practice country's patient identifier (lib/patientIds).
+// A request's length in minutes (its start → end), 30 when unknown.
+function requestMinutes(b: { start_time: string; end_time: string }): number {
+  const m = (t: string) => { const [h, mm] = t.split(":").map(Number); return h * 60 + (mm || 0); };
+  const d = m(b.end_time) - m(b.start_time);
+  return d > 0 ? d : 30;
+}
+function addToTime(hhmm: string, mins: number): string {
+  const [h, m] = hhmm.split(":").map(Number);
+  const t = h * 60 + m + mins;
+  return `${String(Math.floor(t / 60) % 24).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
+}
+
 export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Booking[]; idKind?: PatientIdKind }) {
   const t = useTranslations("schedule");
   // Only the practice country's ID columns are read (pre-110: CPF only).
@@ -169,7 +182,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                   <p className="mt-0.5 text-sm text-slate-500">
                     {formatDateLabel(locale, b.date)} · {b.start_time.slice(0, 5)}–{b.end_time.slice(0, 5)}
                   </p>
-                  <p className="text-sm text-slate-500">{b.consultation_type}</p>
+                  <p className="text-sm text-slate-500"><ConsultTypeLabel value={b.consultation_type} /></p>
                   {b.patient_note && (
                     <p className="mt-1 text-xs text-slate-500"><span className="font-semibold">{t("patientMessage")}:</span> <span className="italic">{b.patient_note}</span></p>
                   )}
@@ -356,7 +369,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                           {!prof && <p className="col-span-2 text-xs text-slate-400 italic">{t("infoNoProfile")}</p>}
                         </div>
                         <div className="border-t border-slate-200 pt-2">
-                          <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoConsultation")}</span><br />{b.consultation_type} · {formatDateLabel(locale, b.date)} {b.start_time.slice(0, 5)}–{b.end_time.slice(0, 5)}</p>
+                          <p><span className="font-semibold text-slate-400 text-xs uppercase tracking-wide">{t("infoConsultation")}</span><br /><ConsultTypeLabel value={b.consultation_type} /> · {formatDateLabel(locale, b.date)} {b.start_time.slice(0, 5)}–{b.end_time.slice(0, 5)}</p>
                           {b.notes && <p className="mt-1 text-slate-400 italic text-xs">{b.notes}</p>}
                         </div>
                         <div className="flex items-center justify-between gap-2 border-t border-slate-200 pt-2">
@@ -386,24 +399,18 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
               {proposalId === b.id && (
                 <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
                   <p className="mb-2 text-xs font-semibold text-amber-800">{t("proposeFormTitle")}</p>
+                  {/* Item 10: the calendar + time grid; the end follows the request's length. */}
+                  <div className="mb-2 rounded-lg bg-white p-2">
+                    <DoctorTimePicker
+                      defaultDate={b.date}
+                      defaultStart={b.start_time}
+                      duration={requestMinutes(b)}
+                      dateName="propose_date"
+                      startName="propose_start"
+                      onChange={(d, s) => { setPropDate(d); setPropStart(s); if (s) setPropEnd(addToTime(s, requestMinutes(b))); }}
+                    />
+                  </div>
                   <div className="flex flex-wrap gap-2">
-                    <div>
-                      <label className="block text-xs text-slate-600 mb-1">{t("proposeDate")}</label>
-                      <DateInput
-                        value={propDate}
-                        onChange={setPropDate}
-                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-slate-600 mb-1">{t("proposeStart")}</label>
-                      <input
-                        type="time"
-                        value={propStart}
-                        onChange={e => setPropStart(e.target.value)}
-                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                      />
-                    </div>
                     <div>
                       <label className="block text-xs text-slate-600 mb-1">{t("proposeEnd")}</label>
                       <input

@@ -164,17 +164,13 @@ describe('BookingRequestsPanel', () => {
     expect(screen.queryByText('Propose a new time')).not.toBeInTheDocument();
   });
 
-  it('a Buddhist-era year in the proposed date disables Send (never saved or converted)', () => {
+  it('the proposed date comes from the calendar (no typed year), start + end prefilled from the request (item 10)', () => {
     const { container } = render(<BookingRequestsPanel bookings={[TENTATIVE_BOOKING]} />);
     fireEvent.click(screen.getByRole('button', { name: 'Propose new time' }));
-    const [start, end] = Array.from(container.querySelectorAll('input[type="time"]'));
-    fireEvent.change(start, { target: { value: '09:00' } });
-    fireEvent.change(end, { target: { value: '09:30' } });
-    const date = container.querySelector('input[type="date"]')!;
-    fireEvent.change(date, { target: { value: '2569-10-01' } });
-    expect(screen.getByRole('alert')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
-    fireEvent.change(date, { target: { value: '2026-10-01' } });
+    expect(screen.getByTestId('month-calendar')).toBeInTheDocument();
+    expect(container.querySelector('input[type="date"]')).toBeNull();
+    // The request (09:00–10:00) prefills start and the same length.
+    expect((container.querySelector('input[name="propose_start"]') as HTMLInputElement).value).toBe('09:00');
     expect(screen.getByRole('button', { name: 'Send' })).not.toBeDisabled();
   });
 

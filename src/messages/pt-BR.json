@@ -253,7 +253,11 @@
     "reasonShort": "Motivo",
     "messagePlaceholder": "Ex.: traga seus exames.",
     "patientWillSee": "O paciente verá esta mensagem.",
-    "qrNeedsAmount": "Defina o valor para gerar o QR de pagamento."
+    "qrNeedsAmount": "Defina o valor para gerar o QR de pagamento.",
+    "showOutside": "Mostrar fora do horário",
+    "showInside": "Só o horário de atendimento",
+    "otherTime": "Outro horário…",
+    "slotTaken": "Ocupado"
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -703,7 +707,8 @@
     "retry": "Tentar novamente",
     "chosenTime": "Horário escolhido: {weekday}, {day} {month} · {start}–{end}",
     "prevMonth": "Mês anterior",
-    "nextMonth": "Próximo mês"
+    "nextMonth": "Próximo mês",
+    "noTimesToday": "Não há mais horários hoje."
   },
   "auth": {
     "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",

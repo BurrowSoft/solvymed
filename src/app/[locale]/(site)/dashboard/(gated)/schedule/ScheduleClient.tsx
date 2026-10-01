@@ -17,6 +17,8 @@ import { formatMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
 import Link from "next/link";
 import { REASON_MAX, statusReasonLive } from "@/lib/statusReason";
+import { DoctorTimePicker } from "@/components/DoctorTimePicker";
+import { PLAIN_CONSULTATION } from "@/lib/consultType";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
@@ -318,7 +320,7 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
 // Remarcar (UX 36): a new date and start, the same duration and details.
 // The same checks as booking: another appointment there is a hard stop
 // saying with whom; blocked time / outside the working hours asked once.
-export function RescheduleButton({ id, date, start }: { id: string; date: string; start: string }) {
+export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: string; date: string; start: string; durationMin?: number }) {
   const t = useTranslations("schedule");
   const tDate = useTranslations("dateInput");
   const [open, setOpen] = useState(false);
@@ -372,15 +374,9 @@ export function RescheduleButton({ id, date, start }: { id: string; date: string
       <Dialog open={open} onClose={() => setOpen(false)} title={t("rescheduleTitle")}>
         <form ref={formRef} onSubmit={(e) => { e.preventDefault(); submit(new FormData(formRef.current!)); }} className="space-y-4">
           <input type="hidden" name="id" value={id} />
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <FieldLabel>{t("date")} *</FieldLabel>
-              <DateInput name="date" required defaultValue={date} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
-            </div>
-            <div>
-              <FieldLabel>{t("startTime")} *</FieldLabel>
-              <Input name="start_time" type="time" required defaultValue={start.slice(0, 5)} />
-            </div>
+          <div>
+            <FieldLabel>{t("date")} *</FieldLabel>
+            <DoctorTimePicker defaultDate={date} defaultStart={start} duration={durationMin} />
           </div>
           <p className="text-xs text-slate-500">{t("rescheduleHint")}</p>
           {error && <p className="text-sm text-red-600">{error}</p>}
@@ -438,6 +434,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
 }) {
   const t = useTranslations("schedule");
   const tDate = useTranslations("dateInput");
+  const tConsult = useTranslations("consultType");
   const { locale } = useParams<{ locale: string }>();
   const settingsProceduresHref = `${locale === "en" ? "" : `/${locale}`}/dashboard/settings#procedures`;
   const [open, setOpen] = useState(false);
@@ -458,7 +455,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   function handleOpen() {
     const same = prefill?.procedureName ? procedures.find((p) => p.name === prefill.procedureName) ?? null : null;
     const first = same ?? procedures[0] ?? null;
-    setSelectedProcName(first?.name ?? "");
+    setSelectedProcName(first?.name ?? PLAIN_CONSULTATION);
     setDuration(String(prefill?.duration ?? first?.duration_minutes ?? 30));
     setPaymentType(first?.payment_type ?? "private");
     setRecurrence("");
@@ -479,10 +476,14 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   function handleProcChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const name = e.target.value;
     setSelectedProcName(name);
-    const proc = procedures.find(p => p.name === name);
+    const proc = name === PLAIN_CONSULTATION ? undefined : procedures.find(p => p.name === name);
     if (proc) {
       setDuration(String(proc.duration_minutes));
       setPaymentType(proc.payment_type);
+    } else {
+      // A plain consultation (item 6.2, as the app): no procedure, no
+      // value ("Sem valor"), 30 minutes; the payment type stays.
+      setDuration("30");
     }
   }
 
@@ -569,34 +570,31 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
 
           <div>
             <FieldLabel>{t("procedure")} *</FieldLabel>
-            {procedures.length === 0 ? (
-              <div className="rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3 text-xs text-amber-700">
+            <Select name="consultation_type" value={selectedProcName} onChange={handleProcChange} required>
+              {/* A plain consultation, no procedure (item 6.2; stored as the
+                  app's "Consultation" key, no value). */}
+              <option value={PLAIN_CONSULTATION}>{tConsult("consultation")}</option>
+              {procedures.filter(p => p.name !== PLAIN_CONSULTATION).map(p => (
+                <option key={p.id} value={p.name}>
+                  {p.name}{p.price ? ` · ${formatMoney(p.price, currency)}` : ""}
+                </option>
+              ))}
+            </Select>
+            {procedures.length === 0 && (
+              <div className="mt-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3 text-xs text-amber-700">
                 {t("noProcedures")}{" "}
                 <Link href={settingsProceduresHref} className="font-semibold underline underline-offset-2">
                   {t("addProcSettings")}
                 </Link>{" "}
                 {t("beforeScheduling")}
               </div>
-            ) : (
-              <Select name="consultation_type" value={selectedProcName} onChange={handleProcChange} required>
-                {procedures.map(p => (
-                  <option key={p.id} value={p.name}>
-                    {p.name}{p.price ? ` · ${formatMoney(p.price, currency)}` : ""}
-                  </option>
-                ))}
-              </Select>
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <FieldLabel>{t("date")} *</FieldLabel>
-              <DateInput name="date" required defaultValue={defaultDate} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
-            </div>
-            <div>
-              <FieldLabel>{t("startTime")} *</FieldLabel>
-              <Input name="start_time" type="time" required defaultValue="09:00" />
-            </div>
+          {/* Item 10: a month calendar + the time grid (DoctorTimePicker). */}
+          <div>
+            <FieldLabel>{t("date")} *</FieldLabel>
+            <DoctorTimePicker defaultDate={defaultDate} defaultStart="09:00" duration={Number(duration) || 30} />
           </div>
 
           <div className="grid grid-cols-2 gap-3">

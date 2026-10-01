@@ -253,7 +253,11 @@
     "reasonShort": "Reason",
     "messagePlaceholder": "E.g. please bring your test results.",
     "patientWillSee": "The patient will see this.",
-    "qrNeedsAmount": "Set the amount to create the payment QR."
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken"
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -703,7 +707,8 @@
     "retry": "Try again",
     "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
     "prevMonth": "Previous month",
-    "nextMonth": "Next month"
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today."
   },
   "auth": {
     "passwordTooShort": "Kata sandi harus minimal {min} karakter.",
