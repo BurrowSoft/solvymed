@@ -887,7 +887,8 @@
     "cancelRequestBody": "A clínica será avisada e o horário fica livre.",
     "keepRequest": "Manter pedido",
     "requestCancelledToast": "Pedido cancelado.",
-    "rescheduleLapsed": "Seu pedido de remarcação expirou."
+    "rescheduleLapsed": "Seu pedido de remarcação expirou.",
+    "rescheduleStarted": "Esta consulta já começou. Para mudanças, fale com a clínica."
   },
   "nav": {
     "overview": "Visão geral",

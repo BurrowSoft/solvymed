@@ -309,6 +309,8 @@ export async function requestReschedule(
   });
 
   if (error) {
+    // The visit has started on the practice's clock (155).
+    if (error.message?.includes("appointment_already_started")) return { error: "appointment_already_started" };
     if (error.message?.includes("appointment_not_found_or_not_reschedulable")) {
       return { error: "Appointment cannot be rescheduled" };
     }
