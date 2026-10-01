@@ -6,7 +6,8 @@ import { render, screen, fireEvent, act } from "@testing-library/react";
 // SolvyAI pode fazer?", and closing SolvyAI offers "Continuar o tour?".
 
 const push = vi.fn();
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push }), usePathname: () => "/dashboard" }));
+const prefetch = vi.fn();
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push, prefetch }), usePathname: () => "/dashboard" }));
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string, v?: Record<string, unknown>) => (v ? `${key}:${JSON.stringify(v)}` : key),
 }));
