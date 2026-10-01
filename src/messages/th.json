@@ -886,7 +886,8 @@
     "cancelRequestTitle": "ยกเลิกคำขอนี้?",
     "cancelRequestBody": "คลินิกจะได้รับแจ้ง และเวลานี้จะว่างสำหรับผู้อื่น",
     "keepRequest": "เก็บคำขอไว้",
-    "requestCancelledToast": "ยกเลิกคำขอแล้ว"
+    "requestCancelledToast": "ยกเลิกคำขอแล้ว",
+    "rescheduleLapsed": "คำขอเลื่อนนัดของคุณหมดอายุแล้ว"
   },
   "nav": {
     "overview": "ภาพรวม",

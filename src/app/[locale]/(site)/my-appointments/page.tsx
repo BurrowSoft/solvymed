@@ -28,6 +28,7 @@ export type PatientAppointment = {
   status_reason?: string | null;
   status_by?: "clinic" | "patient" | null;
   clinic_message?: string | null;
+  reschedule_lapsed_at?: string | null;
 };
 
 export default async function MyAppointmentsPage({

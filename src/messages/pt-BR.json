@@ -886,7 +886,8 @@
     "cancelRequestTitle": "Cancelar este pedido?",
     "cancelRequestBody": "A clínica será avisada e o horário fica livre.",
     "keepRequest": "Manter pedido",
-    "requestCancelledToast": "Pedido cancelado."
+    "requestCancelledToast": "Pedido cancelado.",
+    "rescheduleLapsed": "Seu pedido de remarcação expirou."
   },
   "nav": {
     "overview": "Visão geral",
