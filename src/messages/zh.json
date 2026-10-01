@@ -1823,6 +1823,10 @@
     "later": "以后再说",
     "whatCanDo": "SolvyAI 能做什么？"
   },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
   "autoRefresh": {
     "refresh": "刷新"
   }

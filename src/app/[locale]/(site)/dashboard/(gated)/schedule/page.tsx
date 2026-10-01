@@ -185,7 +185,7 @@ export default async function SchedulePage({
               <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">{tFirstRun("scheduleEmptyBody")}</p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                 <NewAppointmentButton defaultDate={currentDate} currency={currency} procedures={procedures} label={tFirstRun("bookAppointment")} />
-                {!isSecretary && <ShareInviteLinkButton code={inviteCode} />}
+                {!isSecretary && <ShareInviteLinkButton code={inviteCode} country={practiceCountry} />}
               </div>
             </div>
           ) : appointments.length === 0 ? (
