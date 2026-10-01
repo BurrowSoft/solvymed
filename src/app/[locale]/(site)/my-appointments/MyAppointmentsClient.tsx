@@ -15,6 +15,7 @@ import { chosenTimeParts } from "@/lib/chosenTime";
 import { addDays, clinicDate, clinicTime, DEFAULT_CLINIC_TZ } from "@/lib/clinicTime";
 import { getDayHours, type WorkingHours } from "@/lib/slots";
 import { countryProfile } from "@/lib/country";
+import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 const STATUS_COLOR: Record<string, string> = {
   tentative: "bg-amber-50 text-amber-600 border-amber-200",
@@ -139,7 +140,7 @@ function RescheduleDialog({
             {Array.from({ length: 8 }, (_, i) => <div key={i} className="h-9 animate-pulse rounded-lg bg-slate-100" />)}
           </div>
         ) : slots.length === 0 ? (
-          <p className="text-sm text-slate-400 text-center py-4">{t("rescheduleNoSlots")}</p>
+          <p className="text-sm text-slate-400 text-center py-4">{selectedDate === days[0] ? tBook("noTimesToday") : t("rescheduleNoSlots")}</p>
         ) : (
           <div className="grid grid-cols-4 gap-2 sm:grid-cols-5 mb-4">
             {slots.map(slot => (
@@ -154,7 +155,7 @@ function RescheduleDialog({
                     : "border-slate-200 text-slate-600 hover:border-slate-300"
                 }`}
               >
-                {slot.start.slice(0, 5)}
+                {formatTimeLabel(locale, slot.start)}
               </button>
             ))}
           </div>
@@ -244,7 +245,7 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
     <div data-testid="appointment-card" data-status={lapsed ? "lapsed" : appt.status} className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <p className="font-bold text-slate-900">{appt.consultation_type}</p>
+          <p className="font-bold text-slate-900"><ConsultTypeLabel value={appt.consultation_type} /></p>
           <p className="text-sm text-slate-500 mt-0.5">
             {formatDate(locale, displayDate)} · {formatTime(locale, displayStart)} – {formatTime(locale, displayEnd)}
           </p>

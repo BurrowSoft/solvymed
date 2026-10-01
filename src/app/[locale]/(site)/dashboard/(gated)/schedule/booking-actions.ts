@@ -175,7 +175,7 @@ export async function proposeNewTime(
   const live = statusReasonLive();
   const message = live ? cleanReason(note) : null;
 
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("appointments")
     .update({
       status: "proposal",
@@ -189,9 +189,15 @@ export async function proposeNewTime(
       ...(live ? { clinic_message: message } : {}),
     })
     .eq("id", appointmentId)
-    .eq("professional_id", effectiveProfId);
+    .eq("professional_id", effectiveProfId)
+    // Only a request (or a proposal being replaced) becomes a proposal, as
+    // the app does: never a confirmed visit (38; 152 guards it too).
+    .in("status", ["tentative", "proposal"])
+    .select("id");
 
   if (error) return { error: actionError(error.message) };
+  // Nothing changed (no longer a request): no notice to the patient.
+  if (!updated?.length) return { error: "not_proposable" };
 
   // A proposal isn't a confirmed appointment yet — don't create a patient
   // record until the patient accepts (accept_appointment_proposal links via

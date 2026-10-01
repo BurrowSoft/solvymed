@@ -145,9 +145,6 @@
     "dur90": "1.5小时",
     "dur120": "2小时",
     "dur240": "4小时",
-    "noProcedures": "尚未配置处置项目。",
-    "addProcSettings": "在设置中添加处置项目",
-    "beforeScheduling": "在预约之前。",
     "cancel": "取消",
     "saveAppt": "保存预约",
     "repeat": "重复",
@@ -253,7 +250,12 @@
     "reasonShort": "Reason",
     "messagePlaceholder": "E.g. please bring your test results.",
     "patientWillSee": "The patient will see this.",
-    "qrNeedsAmount": "Set the amount to create the payment QR."
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "本周",
@@ -703,7 +705,8 @@
     "retry": "Try again",
     "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
     "prevMonth": "Previous month",
-    "nextMonth": "Next month"
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today."
   },
   "auth": {
     "passwordTooShort": "密码至少需要{min}个字符。",

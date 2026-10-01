@@ -8,7 +8,7 @@ import { PICKER_LIMIT, cleanSearchText, patientSearchFilter } from "@/lib/patien
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
 import { MOVABLE_STATUSES, hoursWarning, keptDuration } from "@/lib/scheduleChecks";
-import type { WorkingHours } from "@/lib/slots";
+import { getDayHours, type WorkingHours } from "@/lib/slots";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { MAX_OCCURRENCES, MIN_OCCURRENCES, RECURRENCES, recurrenceDates, type Recurrence } from "@/lib/recurrence";
 import { tellPatient, type Told } from "@/lib/clinicNotify";
@@ -587,4 +587,38 @@ export async function blockTime(formData: FormData) {
   if (error) return { error: error.message, code: knownDbError(error.message) ?? "generic" };
   revalidatePath("/dashboard/schedule");
   return { success: true, id: (saved as { id: string } | null)?.id };
+}
+
+// The doctor's time picker (item 10): this date's working hours (whether
+// the practice has any at all) and the times already taken (appointments
+// and blocked time), so the grid can grey and mark them. Read-only.
+// excludeId: the appointment being moved / answered, which never counts as
+// taken against itself (as the app does; 9a).
+export async function getScheduleDay(date: string, excludeId?: string): Promise<{
+  hoursSet: boolean;
+  day: { enabled: boolean; start: string; end: string } | null;
+  taken: { start: string; end: string }[];
+  openWeekdays: number[];
+  country: string;
+} | null> {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const effectiveProfId = await getActiveProfId(supabase, user.id);
+  if (!effectiveProfId) return null;
+  const [{ data: wh }, { data: rows }, country] = await Promise.all([
+    supabase.rpc("get_professional_working_hours", { p_professional_id: effectiveProfId }),
+    supabase.from("appointments").select("id, start_time, end_time, status").eq("professional_id", effectiveProfId).eq("date", date),
+    getPracticeCountry(supabase, user.id, effectiveProfId),
+  ]);
+  const hours = (wh ?? {}) as WorkingHours;
+  const hoursSet = Object.values(hours).some((d) => d?.enabled);
+  const d = getDayHours(date, hours);
+  const taken = ((rows ?? []) as { id: string; start_time: string; end_time: string; status: string }[])
+    .filter((r) => r.id !== excludeId && !["cancelled", "rejected"].includes(r.status))
+    .map((r) => ({ start: r.start_time.slice(0, 5), end: r.end_time.slice(0, 5) }));
+  // Weekdays (0 = Sunday) the practice opens: the calendar greys the rest.
+  const openWeekdays = [0, 1, 2, 3, 4, 5, 6].filter((w) => getDayHours(`2023-01-0${w + 1}`, hours)?.enabled);
+  return { hoursSet, day: d ? { enabled: !!d.enabled, start: d.start.slice(0, 5), end: d.end.slice(0, 5) } : null, taken, openWeekdays, country };
 }

@@ -11,6 +11,7 @@ import { formatMoney } from "@/lib/money";
 import { hasAmount } from "@/lib/paymentRules";
 import type { Currency } from "@/lib/country";
 import { dateLocale, plainSpaces } from "@/lib/dateLabels";
+import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 export type CalendarAppt = {
   id: string;
@@ -232,7 +233,7 @@ function TimeGrid({
                     <p className="text-[11px] font-bold leading-tight truncate">{appt.patient_name}</p>
                     {height >= 34 && (
                       <p className="text-[10px] leading-tight truncate opacity-75">
-                        {appt.start_time?.slice(0, 5)} · {appt.consultation_type}
+                        {appt.start_time?.slice(0, 5)} · <ConsultTypeLabel value={appt.consultation_type} />
                       </p>
                     )}
                   </button>
@@ -403,7 +404,7 @@ export function CalendarView({
             <div className="flex items-start justify-between mb-3">
               <div className="min-w-0 flex-1">
                 <p className="font-bold text-slate-900 truncate">{selected.patient_name}</p>
-                <p className="text-sm text-slate-500">{selected.consultation_type}</p>
+                <p className="text-sm text-slate-500"><ConsultTypeLabel value={selected.consultation_type} /></p>
               </div>
               <button onClick={() => setSelected(null)} className="ml-2 rounded-lg p-1 text-slate-400 hover:bg-slate-100 transition">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -436,7 +437,7 @@ export function CalendarView({
                 : <AppointmentStatusSelect id={selected.id} current={selected.status} />
               }
               <div className="flex items-center gap-1">
-                {MOVABLE_STATUSES.includes(selected.status) && <RescheduleButton id={selected.id} date={selected.date} start={selected.start_time} />}
+                {MOVABLE_STATUSES.includes(selected.status) && <RescheduleButton id={selected.id} date={selected.date} start={selected.start_time} durationMin={selected.duration_minutes ?? undefined} />}
                 {/* A no-show is never moved (UX 36): book again instead. */}
                 {selected.status === "absent" && (
                   <NewAppointmentButton defaultDate={today} currency={currency} procedures={procedures}

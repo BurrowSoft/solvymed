@@ -640,7 +640,8 @@ export function BookingClient({
                 </div>
               ) : slots.length === 0 ? (
                 <div className="rounded-xl bg-slate-50 border border-slate-200 py-8 text-center">
-                  <p className="text-sm text-slate-500 font-medium">{t("noSlots")}</p>
+                  {/* Today with nothing left says so (e7), not the general text. */}
+                  <p className="text-sm text-slate-500 font-medium">{selectedDate === days[0] ? t("noTimesToday") : t("noSlots")}</p>
                   <p className="text-xs text-slate-400 mt-1">{t("tryDifferentDate")}</p>
                 </div>
               ) : (
