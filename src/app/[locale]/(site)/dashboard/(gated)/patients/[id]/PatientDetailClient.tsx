@@ -90,7 +90,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, canMerge = false, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -104,6 +104,8 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   canDelete?: boolean;
   // Mesclar com outro paciente (133): the doctor, once the database has it.
   canMerge?: boolean;
+  // Open the merge with this record (the invited patient's same-email prompt).
+  mergeWith?: string | null;
   // Records and prescriptions can be edited or deleted only by their author.
   currentUserId: string;
   // The practice country's patient ID (lib/patientIds).
@@ -152,7 +154,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         ))}
       </div>
 
-      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} canMerge={canMerge} idKind={idKind} addressLive={addressLive} />}
+      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} canMerge={canMerge} mergeWith={mergeWith} idKind={idKind} addressLive={addressLive} />}
       {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {(tab === "exams" || tab === "files") && !isSecretary && (
@@ -258,7 +260,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
   );
 }
 
-function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = false, idKind, addressLive = false }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; canMerge?: boolean; idKind: PatientIdKind; addressLive?: boolean }) {
+function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = false, mergeWith = null, idKind, addressLive = false }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; canMerge?: boolean; mergeWith?: string | null; idKind: PatientIdKind; addressLive?: boolean }) {
   const t = useTranslations("patientDetail");
   const tIds = useTranslations("patientIds");
   const tBirth = useTranslations("dateInput");
@@ -460,7 +462,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = fal
               {t("archivePatient")}
             </button>
           )}
-          {canMerge && <MergePatientButton patientId={patient.id} patientName={patient.full_name} locale={locale} />}
+          {canMerge && <MergePatientButton patientId={patient.id} patientName={patient.full_name} locale={locale} pairWith={mergeWith} />}
           {canDelete && (
             <button onClick={handleDelete} disabled={pending} className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60">
               {t("deletePatient")}

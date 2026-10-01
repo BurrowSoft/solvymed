@@ -98,7 +98,16 @@
     "noUpcoming": "Sin citas próximas",
     "unpaidSessions": "{n, plural, one {# sesión no pagada} other {# sesiones no pagadas}}",
     "pendingCollection": "{amount} pendiente de cobro",
-    "managePayments": "Gestionar pagos"
+    "managePayments": "Gestionar pagos",
+    "invitedTitle": "{n, plural, one {# paciente nuevo por tu invitación} other {# pacientes nuevos por tu invitación}}",
+    "invitedHint": "Se unieron con el código de tu clínica. Conserva a tus pacientes; Quitar desconecta la cuenta (la ficha se archiva).",
+    "invitedKeep": "Mantener",
+    "invitedRemove": "Quitar",
+    "invitedError": "No se pudo guardar. Inténtalo de nuevo.",
+    "invitedSeeAll": "Ver todos en Pacientes",
+    "invitedSameEmail": "Mismo correo que {name}: ¿fusionar?",
+    "invitedRemoveConfirm": "¿Quitar a {name}? Su cuenta volverá a esperar tu confirmación y la ficha se archivará.",
+    "invitedRemoveConfirmDisconnect": "¿Quitar a {name}? La cuenta se desconectará de tu clínica, las solicitudes pendientes se cancelarán (se avisa al paciente) y la ficha se archivará. Para readmitirlo, comparte el código personal del paciente."
   },
   "schedule": {
     "patientMessage": "Mensaje del paciente",
@@ -323,7 +332,9 @@
     "nextPage": "Siguiente",
     "pagesLabel": "Páginas",
     "fullNamePlaceholder": "Nombre completo",
-    "professionPlaceholder": "ej. Ingeniero, Profesor…"
+    "professionPlaceholder": "ej. Ingeniero, Profesor…",
+    "invitedBadge": "Nuevo, por invitación",
+    "invitedSameEmail": "Mismo correo que {name}: ¿fusionar?"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -766,7 +777,12 @@
       "backToSignup": "Usar otra cuenta",
       "tooManyAttempts": "Demasiados intentos. Espera un momento antes de volver a intentarlo.",
       "alreadyInvitedByAnother": "Tu cuenta ya está conectada con otra clínica.",
-      "archived": "Esta clínica no está aceptando nuevas reservas para tu cuenta. Ponte en contacto con la clínica."
+      "archived": "Esta clínica no está aceptando nuevas reservas para tu cuenta. Ponte en contacto con la clínica.",
+      "alreadyConnected": "Ya estás conectado con {doctor}. Para cambiar, contacta con soporte.",
+      "alreadyConnectedNoName": "Ya estás conectado con otro médico. Para cambiar, contacta con soporte.",
+      "alreadyConnectedSamePractice": "Ya estás conectado con {doctor}. Pide a la clínica que una tus fichas.",
+      "alreadyConnectedSamePracticeNoName": "Ya estás conectado con esta clínica. Pide a la clínica que una tus fichas.",
+      "codeUnavailable": "No se pudo conectar con este código. Contacta con la clínica."
     },
     "pendingConfirmation": {
       "loading": "Verificando tu estado…",

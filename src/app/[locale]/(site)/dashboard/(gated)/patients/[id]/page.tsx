@@ -13,10 +13,15 @@ import { getClinicTimeZone } from "@/lib/clinicTime";
 
 export default async function PatientDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; id: string }>;
+  searchParams?: Promise<{ mergeWith?: string }>;
 }) {
   const { locale, id } = await params;
+  // "Mesmo e-mail de {nome}: mesclar?" opens the merge with that pair (145).
+  const mergeWithRaw = (await searchParams)?.mergeWith;
+  const mergeWith = typeof mergeWithRaw === "string" && /^[0-9a-f-]{36}$/i.test(mergeWithRaw) ? mergeWithRaw : null;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
@@ -144,6 +149,7 @@ export default async function PatientDetailPage({
           currentUserId={user.id}
           idKind={patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId))}
           canMerge={!isSecretary && (await mergeAvailable())}
+          mergeWith={mergeWith}
           canDelete={preview?.hasClinicalHistory === false && preview.hasAppointments === false}
           accessLog={accessLog}
           timeZone={timeZone}

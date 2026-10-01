@@ -98,7 +98,16 @@
     "noUpcoming": "Keine bevorstehenden Termine",
     "unpaidSessions": "{n, plural, one {# unbezahlte Sitzung} other {# unbezahlte Sitzungen}}",
     "pendingCollection": "{amount} ausstehende Zahlung",
-    "managePayments": "Zahlungen verwalten"
+    "managePayments": "Zahlungen verwalten",
+    "invitedTitle": "{n, plural, one {# neuer Patient über Ihre Einladung} other {# neue Patienten über Ihre Einladung}}",
+    "invitedHint": "Sie sind mit Ihrem Praxiscode beigetreten. Behalten Sie Ihre Patienten; Entfernen trennt das Konto (die Akte wird archiviert).",
+    "invitedKeep": "Behalten",
+    "invitedRemove": "Entfernen",
+    "invitedError": "Speichern fehlgeschlagen. Bitte erneut versuchen.",
+    "invitedSeeAll": "Alle in Patienten ansehen",
+    "invitedSameEmail": "Gleiche E-Mail wie {name}: zusammenführen?",
+    "invitedRemoveConfirm": "{name} entfernen? Das Konto wartet wieder auf Ihre Bestätigung, und der Eintrag wird archiviert.",
+    "invitedRemoveConfirmDisconnect": "{name} entfernen? Das Konto wird von Ihrer Praxis getrennt, offene Anfragen werden storniert (der Patient wird benachrichtigt) und der Eintrag archiviert. Um ihn wieder aufzunehmen, teilen Sie den persönlichen Code des Patienten."
   },
   "schedule": {
     "patientMessage": "Nachricht des Patienten",
@@ -323,7 +332,9 @@
     "nextPage": "Weiter",
     "pagesLabel": "Seiten",
     "fullNamePlaceholder": "Vollständiger Name",
-    "professionPlaceholder": "z.B. Ingenieur, Lehrer…"
+    "professionPlaceholder": "z.B. Ingenieur, Lehrer…",
+    "invitedBadge": "Neu, per Einladung",
+    "invitedSameEmail": "Gleiche E-Mail wie {name}: zusammenführen?"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -766,7 +777,12 @@
       "backToSignup": "Anderes Konto verwenden",
       "tooManyAttempts": "Zu viele Versuche. Bitte warten Sie einen Moment, bevor Sie es erneut versuchen.",
       "alreadyInvitedByAnother": "Ihr Konto ist bereits mit einer anderen Praxis verbunden.",
-      "archived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis."
+      "archived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis.",
+      "alreadyConnected": "Sie sind bereits mit {doctor} verbunden. Zum Wechseln wenden Sie sich an den Support.",
+      "alreadyConnectedNoName": "Sie sind bereits mit einer anderen Praxis verbunden. Zum Wechseln wenden Sie sich an den Support.",
+      "alreadyConnectedSamePractice": "Sie sind bereits mit {doctor} verbunden. Bitten Sie die Praxis, Ihre Einträge zusammenzuführen.",
+      "alreadyConnectedSamePracticeNoName": "Sie sind bereits mit dieser Praxis verbunden. Bitten Sie die Praxis, Ihre Einträge zusammenzuführen.",
+      "codeUnavailable": "Mit diesem Code ist keine Verbindung möglich. Bitte wenden Sie sich an die Praxis."
     },
     "pendingConfirmation": {
       "loading": "Status wird geprüft…",
