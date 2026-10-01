@@ -443,3 +443,30 @@ describe("BookingClient: items 7/10/16 + no hours / slow load", () => {
     expect(screen.getByTestId("chosen-time")).toHaveTextContent(/chosenTime/);
   });
 });
+
+describe("BookingClient: today isn't skipped before its times load", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2030, 0, 14, 6, 0, 0));
+    mockRpc.mockReset();
+    mockMaybeSingle.mockResolvedValue({ data: null, error: null });
+  });
+  afterEach(() => { vi.useRealTimers(); });
+
+  it("a slow slot load keeps today selected (it has times)", async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((r) => { release = r; });
+    mockRpc.mockImplementation(async (fn: string) => {
+      if (fn === "get_professional_working_hours") return { data: WORKING_HOURS, error: null };
+      if (fn === "get_busy_slots") { await gate; return { data: [], error: null }; }
+      return { data: [], error: null };
+    });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByTestId("month-calendar")).toBeInTheDocument());
+    await new Promise((r) => setTimeout(r, 30));
+    expect(screen.getByRole("button", { name: "14" })).toHaveAttribute("aria-pressed", "true");
+    release();
+    await waitFor(() => expect(screen.getByText("9:00 AM")).toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "14" })).toHaveAttribute("aria-pressed", "true");
+  });
+});

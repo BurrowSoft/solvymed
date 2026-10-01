@@ -204,6 +204,8 @@ export function BookingClient({
     setSelectedDate(d[0]);
   }, []);
   const [slots, setSlots] = useState<TimeSlot[]>([]);
+  // The date the shown slots were loaded for (null = none yet).
+  const [slotsFor, setSlotsFor] = useState<string | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [showCustomTime, setShowCustomTime] = useState(false);
@@ -329,6 +331,7 @@ export function BookingClient({
       try {
         const s = await withTimeout(fetchSlots(professionalId, date, dur, workingHours, clinicTz));
         setSlots(s);
+        setSlotsFor(date);
       } catch {
         setSlots([]);
         setLoadError(true);
@@ -357,12 +360,13 @@ export function BookingClient({
   const skippedToday = useRef(false);
   useEffect(() => {
     if (skippedToday.current || loadingSlots || loadingHours || loadError || !days.length) return;
-    if (selectedDate === days[0] && slots.length === 0) {
+    // Only once today's own slots have loaded (not the empty initial list).
+    if (selectedDate === days[0] && slotsFor === days[0] && slots.length === 0) {
       skippedToday.current = true;
       const next = days.slice(1).find(openDay);
       if (next) setSelectedDate(next);
     }
-  }, [loadingSlots, loadingHours, loadError, days, selectedDate, slots.length, openDay]);
+  }, [loadingSlots, loadingHours, loadError, days, selectedDate, slots.length, slotsFor, openDay]);
 
   async function handleBook() {
     if (!selectedSlot) return;
