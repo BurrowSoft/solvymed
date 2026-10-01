@@ -71,8 +71,23 @@ describe("middleware: a NEXT_LOCALE cookie for a hidden language (Thai, flag off
   });
 
   it("a public-language cookie is left alone", async () => {
+    const r = await browse("/", { NEXT_LOCALE: "pt-BR" });
+    expect(r.path).toBe("/pt-BR");
+    expect(r.cookie).toBe("pt-BR");
+  });
+});
+
+describe("middleware: a retired language (country first, Vitor 2026-10-01)", () => {
+  it("/de/pricing goes for good (308) to /pricing, keeping the query", async () => {
+    const res = await middleware(new NextRequest(new URL("https://solvymed.com/de/pricing?c=TH")));
+    expect(res.status).toBe(308);
+    expect(new URL(res.headers.get("location")!).pathname + new URL(res.headers.get("location")!).search).toBe("/pricing?c=TH");
+  });
+
+  it("a de cookie never sends the visitor back to /de", async () => {
     const r = await browse("/", { NEXT_LOCALE: "de" });
-    expect(r.path).toBe("/de");
-    expect(r.cookie).toBe("de");
+    expect(r.status).toBeLessThan(300);
+    expect(r.path.startsWith("/de")).toBe(false);
+    expect(r.cookie).not.toBe("de");
   });
 });

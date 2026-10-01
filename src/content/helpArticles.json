@@ -32,6 +32,10 @@
             {
               "type": "p",
               "text": "No site também: se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você agenda."
+            },
+            {
+              "type": "p",
+              "text": "No site, ao **Rejeitar** um pedido ou mudar uma consulta para **Cancelado**, você pode escrever um **Motivo (opcional)** de até 200 caracteres. No site (e no app a partir da versão 1.4.0), o paciente vê \"Recusado pela clínica: …\" ou \"Cancelado pela clínica: …\" na consulta dele (se foi ele quem cancelou, \"Você cancelou\"). Ao confirmar ou propor um horário, a **Mensagem ao paciente (opcional)** aparece para ele como \"Mensagem da clínica: …\". A notificação nunca traz o texto: só avisa que há uma mensagem da clínica."
             }
           ],
           "en": [
@@ -52,12 +56,16 @@
             {
               "type": "p",
               "text": "On the website too: if the patient has a SolvyMed account, they get a notification when you book."
+            },
+            {
+              "type": "p",
+              "text": "On the website, when you **Reject** a request or change an appointment to **Cancelled**, you can write a **Reason (optional)** of up to 200 characters. On the website (and in the app from version 1.4.0), the patient sees \"Declined by the clinic: …\" or \"Cancelled by the clinic: …\" on their appointment (\"You cancelled\" if they did). When you confirm or propose a time, the **Message to the patient (optional)** shows to them as \"Message from the clinic: …\". The notification never carries the text: it only says there's a message from the clinic."
             }
           ]
         },
         "web": {
-          "pt": "Em **Agenda**, clique em **Nova Consulta** (também há o botão na **Visão geral**). Escolha o paciente, a data, o início, a duração, o tipo, o procedimento e a forma de pagamento (particular ou convênio), e clique em **Salvar Consulta**. O valor vem do procedimento escolhido. Logo depois de marcar, remarcar ou cancelar, **Desfazer** aparece por 10 segundos, enquanto o aviso ao paciente ainda não saiu. Desfazer uma série remove a série inteira. Se o aviso já saiu ou a consulta mudou nesse meio-tempo, aparece \"Não foi possível desfazer. Abra o item para ajustar.\"",
-          "en": "In the **Schedule**, click **New Appointment** (there's also a button on the **Overview**). Choose the patient, date, start, duration, type, procedure and payment (private or insurance), and click **Save Appointment**. The amount comes from the chosen procedure. Right after you book, move or cancel, **Undo** shows for 10 seconds, while the notice to the patient hasn't gone out yet. Undoing a series removes the whole series. If the notice has already gone out or the appointment changed meanwhile, you see \"Couldn't undo. Open the item to adjust it.\""
+          "pt": "Em **Agenda**, clique em **Nova Consulta** (também há o botão na **Visão geral**). Escolha o paciente, a data, o início, a duração, o tipo, o procedimento e a forma de pagamento (particular ou convênio), e clique em **Salvar Consulta**. O valor vem do procedimento escolhido; **Consulta** (já selecionada) é sem procedimento: sem valor, 30 minutos. Sem procedimentos cadastrados, dá para marcar assim mesmo. Logo depois de marcar, remarcar ou cancelar, **Desfazer** aparece por 10 segundos, enquanto o aviso ao paciente ainda não saiu. Desfazer uma série remove a série inteira. Se o aviso já saiu ou a consulta mudou nesse meio-tempo, aparece \"Não foi possível desfazer. Abra o item para ajustar.\"",
+          "en": "In the **Schedule**, click **New Appointment** (there's also a button on the **Overview**). Choose the patient, date, start, duration, type, procedure and payment (private or insurance), and click **Save Appointment**. The amount comes from the chosen procedure; **Consultation** (selected by default) has no procedure: no amount, 30 minutes. You can book even before adding procedures. Right after you book, move or cancel, **Undo** shows for 10 seconds, while the notice to the patient hasn't gone out yet. Undoing a series removes the whole series. If the notice has already gone out or the appointment changed meanwhile, you see \"Couldn't undo. Open the item to adjust it.\""
         },
         "webUnavailable": false,
         "open": "new-appointment",
@@ -270,8 +278,8 @@
           ]
         },
         "web": {
-          "pt": "Os pedidos aparecem em **Agenda**, em **Solicitações de consulta**. Clique em **Confirmar**, **Rejeitar** ou **Propor novo horário** (dá para escrever uma mensagem ao paciente). Para um paciente novo, **Confirmar e Adicionar Paciente** já cria o cadastro.",
-          "en": "Requests show in the **Schedule**, under **Booking Requests**. Click **Confirm**, **Reject** or **Propose new time** (you can add a note for the patient). For a new patient, **Confirm and Add New Patient** also creates their record."
+          "pt": "Quando há pedidos aguardando sua resposta, a **Visão geral** mostra um aviso com quantos são (**Ver pedidos**). Os pedidos aparecem em **Agenda**, em **Solicitações de consulta**. Clique em **Confirmar**, **Rejeitar** ou **Propor novo horário** (dá para escrever uma mensagem ao paciente). Para um paciente novo, **Confirmar e Adicionar Paciente** já cria o cadastro. Se o horário de um pedido ou de um novo horário proposto passa sem resposta, o paciente vê **Não confirmado** em **Minhas Consultas**, sem ações. Enquanto o pedido está pendente, o paciente pode cancelá-lo em **Minhas Consultas** (**Cancelar pedido**); você recebe o aviso **Pedido cancelado**.",
+          "en": "When requests are waiting for your answer, the **Overview** shows a notice with how many (**See requests**). Requests show in the **Schedule**, under **Booking Requests**. Click **Confirm**, **Reject** or **Propose new time** (you can add a note for the patient). For a new patient, **Confirm and Add New Patient** also creates their record. If the time of a request or of a proposed new time passes without an answer, the patient sees **Not confirmed** in **My Appointments**, with no actions. While a request is pending, the patient can cancel it in **My Appointments** (**Cancel request**); you get a **Request cancelled** notification."
         },
         "webUnavailable": false,
         "open": "home",
@@ -1085,8 +1093,8 @@
           ]
         },
         "web": {
-          "pt": "**Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: \"CRM 12345/SP\"), no mesmo cartão. Em **Configurações → Clínica**: o **CNPJ** (clínicas no Brasil) ou o **Nº de identificação fiscal (13 dígitos)** (clínicas na Tailândia). O país da clínica é escolhido ao criar a conta de médico (Brasil, Tailândia ou Outro) e aparece em **Configurações → País do consultório**; ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar, fale com support@solvymed.com.",
-          "en": "**Settings → Profile**: name, specialty and **Professional registration** (e.g. \"CRM 12345/SP\"), on the same card. In **Settings → Clinic**: the **CNPJ** (clinics in Brazil) or the **Tax ID (13 digits)** (clinics in Thailand). The clinic's country is chosen when the doctor account is created (Brazil, Thailand or Other) and shows in **Settings → Practice country**; it sets the currency, the plan price, the patient ID field and the payment QR. To change it, contact support@solvymed.com."
+          "pt": "**Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: \"CRM 12345/SP\"), no mesmo cartão. Em **Configurações → Clínica**: o **CNPJ** (clínicas no Brasil) ou o **Nº de identificação fiscal (13 dígitos)** (clínicas na Tailândia). O país da clínica é o primeiro passo do cadastro (**Onde você está?** → **Brasil** ou **ประเทศไทย**; a seta ← volta a essa escolha) e aparece em **Configurações → País do consultório**; ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar, fale com support@solvymed.com.",
+          "en": "**Settings → Profile**: name, specialty and **Professional registration** (e.g. \"CRM 12345/SP\"), on the same card. In **Settings → Clinic**: the **CNPJ** (clinics in Brazil) or the **Tax ID (13 digits)** (clinics in Thailand). The clinic's country is the first step of signing up (**Where are you?** → **Brasil** or **ประเทศไทย**; the ← arrow goes back to that choice) and shows in **Settings → Practice country**; it sets the currency, the plan price, the patient ID field and the payment QR. To change it, contact support@solvymed.com."
         },
         "webUnavailable": false,
         "open": "settings-profile",
@@ -1211,18 +1219,26 @@
             {
               "type": "p",
               "text": "Em **Início**, na lista para configurar a clínica, toque em **Compartilhar link de convite**. Ou em **Configurações → Seu código de convite para pacientes**, toque em **Compartilhar** (sem código ainda? toque em **Gerar código de convite**). Quem abrir o link baixa o app ou entra pelo site e pede consultas com você. **Novo** gera um código novo e o anterior deixa de funcionar."
+            },
+            {
+              "type": "p",
+              "text": "Depois de **Remover**, a pessoa não consegue voltar com o código de convite da clínica. Para trazê-la de volta, restaure o cadastro em **Arquivados** e envie o código pessoal dele."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings → Your patient invite code**, tap **Share** (no code yet? tap **Generate invite code**). Anyone who opens the link gets the app or the website and can request appointments with you. **New** creates a new code and the old one stops working."
+            },
+            {
+              "type": "p",
+              "text": "After **Remove**, that person can't rejoin with your clinic's invite code. To bring them back, restore the record from **Archived** and share its personal code."
             }
           ]
         },
         "web": {
-          "pt": "Em **Agenda**, clique em **Compartilhar link de convite**, ou em **Configurações → Seu código de convite**, use **Copiar** ou **Copiar link**. **Gerar novo** cria um código novo e o anterior deixa de funcionar. Com a assinatura inativa, o código de convite não aparece em Configurações.",
-          "en": "In the **Schedule**, click **Share invite link**, or in **Settings → Your invite code**, use **Copy** or **Copy link**. **Regenerate** creates a new code and the old one stops working. While the subscription is inactive, the invite code isn't shown in Settings."
+          "pt": "Em **Agenda**, clique em **Compartilhar link de convite**, ou em **Configurações → Seu código de convite**, use **Copiar** ou **Copiar link**. **Gerar novo** cria um código novo e o anterior deixa de funcionar. Com a assinatura inativa, o código de convite não aparece em Configurações. Quem entra com o código aparece logo em **Pacientes** com o selo **Novo, via convite**; na **Visão geral**, **Manter** fica com o paciente e **Remover** desconecta a conta (o cadastro é arquivado). Com o e-mail de outro cadastro, aparece **Mesmo e-mail de {nome}: mesclar?**, que abre a mesclagem.",
+          "en": "In the **Schedule**, click **Share invite link**, or in **Settings → Your invite code**, use **Copy** or **Copy link**. **Regenerate** creates a new code and the old one stops working. While the subscription is inactive, the invite code isn't shown in Settings. Anyone who joins with the code shows up right away in **Patients** with the **New, via invite** badge; on the **Overview**, **Keep** keeps the patient and **Remove** disconnects the account (the record is archived). With another record's email, you see **Same email as {name}: merge?**, which opens the merge."
         },
         "webUnavailable": false,
         "open": "home",
@@ -1311,8 +1327,8 @@
           ]
         },
         "web": {
-          "pt": "O idioma muda no seletor de idioma do menu lateral. O tema fica em **Configurações → Aparência** (Automático, Claro ou Escuro) e vale para este navegador; impressões e e-mails ficam sempre claros.",
-          "en": "Change the language with the language selector in the side menu. The theme is in **Settings → Appearance** (Automatic, Light or Dark) and applies to this browser; prints and emails always stay light."
+          "pt": "O idioma muda no seletor de idioma do menu lateral: português ou inglês (clínicas no Brasil), tailandês ou inglês (clínicas na Tailândia). No cadastro, marque **Use SolvyMed in English** para usar em inglês. O tema fica em **Configurações → Aparência** (Automático, Claro ou Escuro) e vale para este navegador; impressões e e-mails ficam sempre claros.",
+          "en": "Change the language with the language selector in the side menu: Portuguese or English (clinics in Brazil), Thai or English (clinics in Thailand). When signing up, tick **Use SolvyMed in English** to use it in English. The theme is in **Settings → Appearance** (Automatic, Light or Dark) and applies to this browser; prints and emails always stay light."
         },
         "webUnavailable": false,
         "open": "settings",

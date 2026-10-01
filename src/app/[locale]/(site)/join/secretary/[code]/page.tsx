@@ -6,6 +6,7 @@ import { AuthCard } from "@/components/AuthCard";
 import { isWellFormedSecretaryCode, normalizeSecretaryCode } from "@/lib/secretary";
 import { InviteDecision } from "./InviteDecision";
 import { InviteHint } from "./InviteHint";
+import { withCountryHint } from "@/lib/signupCountry";
 
 type InvitePreview = { professional_name: string | null; clinic_name: string | null };
 
@@ -18,10 +19,13 @@ type InvitePreview = { professional_name: string | null; clinic_name: string | n
 // checks the email on accept anyway.
 export default async function SecretaryInvitePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; code: string }>;
+  searchParams?: Promise<{ c?: string | string[] }>;
 }) {
   const { locale, code: rawCode } = await params;
+  const hint = (await searchParams)?.c;
   const prefix = locale === "en" ? "" : `/${locale}`;
   // rawCode is untrusted URL input: malformed %-encoding makes
   // decodeURIComponent throw, which must show "invalid invite", not a 500.
@@ -52,7 +56,8 @@ export default async function SecretaryInvitePage({
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    const signupHref = `${prefix}/auth/signup?secretary=${encodeURIComponent(code)}`;
+    // ?c= (the practice's country hint) goes along to the signup.
+    const signupHref = withCountryHint(`${prefix}/auth/signup?secretary=${encodeURIComponent(code)}`, typeof hint === "string" ? hint : null);
     const loginHref = `${prefix}/auth/login?next=${encodeURIComponent(`${prefix}/join/secretary/${code}`)}`;
     return (
       <AuthPageShell>

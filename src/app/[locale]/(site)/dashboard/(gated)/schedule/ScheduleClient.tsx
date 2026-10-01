@@ -16,6 +16,9 @@ import { DEFAULT_OCCURRENCES, MAX_OCCURRENCES, MIN_OCCURRENCES } from "@/lib/rec
 import { formatMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
 import Link from "next/link";
+import { REASON_MAX, statusReasonLive } from "@/lib/statusReason";
+import { DoctorTimePicker } from "@/components/DoctorTimePicker";
+import { PLAIN_CONSULTATION } from "@/lib/consultType";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
@@ -230,6 +233,10 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
   const [status, setStatus] = useState(current);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
+  // 150 (item 12): a cancel first asks for an optional reason the patient sees.
+  const reasonsLive = statusReasonLive();
+  const [asking, setAsking] = useState<{ previous: string } | null>(null);
+  const [reason, setReason] = useState("");
   // The server's value after a refresh (a Desfazer puts the old one back).
   useEffect(() => { setStatus(current); }, [current]);
 
@@ -250,8 +257,18 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
     const previous = status;
     setStatus(newStatus);
     setError("");
+    if (reasonsLive && newStatus === "cancelled") {
+      setReason("");
+      setAsking({ previous });
+      return;
+    }
+    save(newStatus, previous);
+  }
+
+  function save(newStatus: string, previous: string, why?: string) {
+    setAsking(null);
     startTransition(async () => {
-      const result = await updateAppointmentStatus(id, newStatus);
+      const result = await updateAppointmentStatus(id, newStatus, why);
       if (result?.error) {
         setStatus(previous);
         setError(actionErrorMessage(t, result.code));
@@ -273,6 +290,28 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
           <option key={s} value={s}>{t(STATUS_KEY[s] ?? s)}</option>
         ))}
       </select>
+      {asking && (
+        <div className="mt-1 w-64 max-w-full rounded-lg border border-red-100 bg-white p-2 text-left shadow-sm">
+          <label htmlFor={`cancel-reason-${id}`} className="block text-xs font-semibold text-slate-700">{t("reasonLabel")}</label>
+          <textarea
+            id={`cancel-reason-${id}`}
+            rows={2}
+            maxLength={REASON_MAX}
+            placeholder={t("reasonPlaceholderCancel")}
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            className="mt-1 w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs text-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
+          />
+          <p className="mt-0.5 text-[11px] text-slate-500">{t("patientWillSee")}</p>
+          <div className="mt-1 flex items-center justify-between gap-2">
+            <span className="text-[11px] text-slate-400">{reason.length}/{REASON_MAX}</span>
+            <div className="flex gap-1">
+              <button type="button" onClick={() => { setStatus(asking.previous); setAsking(null); }} className="rounded-lg px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100">{t("keepAppointment")}</button>
+              <button type="button" onClick={() => save("cancelled", asking.previous, reason)} className="rounded-lg bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700">{t("confirmCancel")}</button>
+            </div>
+          </div>
+        </div>
+      )}
       {error && <p className="text-xs text-red-600 text-right max-w-[160px]">{error}</p>}
     </div>
   );
@@ -281,7 +320,7 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
 // Remarcar (UX 36): a new date and start, the same duration and details.
 // The same checks as booking: another appointment there is a hard stop
 // saying with whom; blocked time / outside the working hours asked once.
-export function RescheduleButton({ id, date, start }: { id: string; date: string; start: string }) {
+export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: string; date: string; start: string; durationMin?: number }) {
   const t = useTranslations("schedule");
   const tDate = useTranslations("dateInput");
   const [open, setOpen] = useState(false);
@@ -335,15 +374,9 @@ export function RescheduleButton({ id, date, start }: { id: string; date: string
       <Dialog open={open} onClose={() => setOpen(false)} title={t("rescheduleTitle")}>
         <form ref={formRef} onSubmit={(e) => { e.preventDefault(); submit(new FormData(formRef.current!)); }} className="space-y-4">
           <input type="hidden" name="id" value={id} />
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <FieldLabel>{t("date")} *</FieldLabel>
-              <DateInput name="date" required defaultValue={date} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
-            </div>
-            <div>
-              <FieldLabel>{t("startTime")} *</FieldLabel>
-              <Input name="start_time" type="time" required defaultValue={start.slice(0, 5)} />
-            </div>
+          <div>
+            <FieldLabel>{t("date")} *</FieldLabel>
+            <DoctorTimePicker defaultDate={date} defaultStart={start} duration={durationMin} excludeId={id} />
           </div>
           <p className="text-xs text-slate-500">{t("rescheduleHint")}</p>
           {error && <p className="text-sm text-red-600">{error}</p>}
@@ -401,6 +434,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
 }) {
   const t = useTranslations("schedule");
   const tDate = useTranslations("dateInput");
+  const tConsult = useTranslations("consultType");
   const { locale } = useParams<{ locale: string }>();
   const settingsProceduresHref = `${locale === "en" ? "" : `/${locale}`}/dashboard/settings#procedures`;
   const [open, setOpen] = useState(false);
@@ -420,8 +454,10 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
 
   function handleOpen() {
     const same = prefill?.procedureName ? procedures.find((p) => p.name === prefill.procedureName) ?? null : null;
-    const first = same ?? procedures[0] ?? null;
-    setSelectedProcName(first?.name ?? "");
+    // The plain Consulta by default: picking a procedure (its price and
+    // length) is a deliberate act (e7); a prefill keeps its own.
+    const first = same;
+    setSelectedProcName(first?.name ?? PLAIN_CONSULTATION);
     setDuration(String(prefill?.duration ?? first?.duration_minutes ?? 30));
     setPaymentType(first?.payment_type ?? "private");
     setRecurrence("");
@@ -442,10 +478,14 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   function handleProcChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const name = e.target.value;
     setSelectedProcName(name);
-    const proc = procedures.find(p => p.name === name);
+    const proc = name === PLAIN_CONSULTATION ? undefined : procedures.find(p => p.name === name);
     if (proc) {
       setDuration(String(proc.duration_minutes));
       setPaymentType(proc.payment_type);
+    } else {
+      // A plain consultation (item 6.2, as the app): no procedure, no
+      // value ("Sem valor"), 30 minutes; the payment type stays.
+      setDuration("30");
     }
   }
 
@@ -532,34 +572,29 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
 
           <div>
             <FieldLabel>{t("procedure")} *</FieldLabel>
-            {procedures.length === 0 ? (
-              <div className="rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3 text-xs text-amber-700">
-                {t("noProcedures")}{" "}
-                <Link href={settingsProceduresHref} className="font-semibold underline underline-offset-2">
-                  {t("addProcSettings")}
-                </Link>{" "}
-                {t("beforeScheduling")}
-              </div>
-            ) : (
-              <Select name="consultation_type" value={selectedProcName} onChange={handleProcChange} required>
-                {procedures.map(p => (
-                  <option key={p.id} value={p.name}>
-                    {p.name}{p.price ? ` · ${formatMoney(p.price, currency)}` : ""}
-                  </option>
-                ))}
-              </Select>
+            <Select name="consultation_type" value={selectedProcName} onChange={handleProcChange} required>
+              {/* A plain consultation, no procedure (item 6.2; stored as the
+                  app's "Consultation" key, no value). */}
+              <option value={PLAIN_CONSULTATION}>{tConsult("consultation")}</option>
+              {procedures.filter(p => p.name !== PLAIN_CONSULTATION).map(p => (
+                <option key={p.id} value={p.name}>
+                  {p.name}{p.price ? ` · ${formatMoney(p.price, currency)}` : ""}
+                </option>
+              ))}
+            </Select>
+            {procedures.length === 0 && (
+              <p data-testid="procedures-tip" className="mt-2 rounded-xl bg-slate-50 px-3.5 py-3 text-xs text-slate-600">
+                {t.rich("proceduresTip", {
+                  link: (chunks) => <Link href={settingsProceduresHref} className="font-semibold text-teal-700 underline underline-offset-2">{chunks}</Link>,
+                })}
+              </p>
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <FieldLabel>{t("date")} *</FieldLabel>
-              <DateInput name="date" required defaultValue={defaultDate} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
-            </div>
-            <div>
-              <FieldLabel>{t("startTime")} *</FieldLabel>
-              <Input name="start_time" type="time" required defaultValue="09:00" />
-            </div>
+          {/* Item 10: a month calendar + the time grid (DoctorTimePicker). */}
+          <div>
+            <FieldLabel>{t("date")} *</FieldLabel>
+            <DoctorTimePicker defaultDate={defaultDate} defaultStart="09:00" duration={Number(duration) || 30} />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -618,7 +653,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-            <button type="submit" disabled={pending || procedures.length === 0} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
+            <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
               {pending ? t("saving") : recurrence ? t("saveTimes", { n: parseInt(occurrences, 10) || DEFAULT_OCCURRENCES }) : t("saveAppt")}
             </button>
           </div>

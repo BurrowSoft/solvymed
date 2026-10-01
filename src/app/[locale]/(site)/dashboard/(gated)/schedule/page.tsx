@@ -14,6 +14,9 @@ import { clinicDate, getClinicTimeZone } from "@/lib/clinicTime";
 import { formatMoney } from "@/lib/money";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
+import { statusReasonLive } from "@/lib/statusReason";
+import { AutoRefresh } from "@/components/AutoRefresh";
+import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
 function addDaysTo(dateStr: string, n: number) {
@@ -98,10 +101,12 @@ export default async function SchedulePage({
     rangeEnd = isoDate(lastDay);
   }
 
+  // 150 (item 12): the reason a cancelled appointment shows staff.
+  const apptCols: string = `id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note${statusReasonLive() ? ", status_reason, status_by" : ""}`;
   const [apptsResult, procsResult, tentativeBookings, profResult, anyApptResult] = await Promise.all([
     supabase
       .from("appointments")
-      .select("id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note")
+      .select(apptCols)
       .eq("professional_id", effectiveProfId)
       .gte("date", rangeStart)
       .lte("date", rangeEnd)
@@ -142,7 +147,7 @@ export default async function SchedulePage({
   // No appointment ever: the first-run empty state instead of "nothing on this day".
   const noAppointmentsEver = !anyApptResult.error && (anyApptResult.count ?? 0) === 0;
 
-  const appointments = (apptsResult.data ?? []) as CalendarAppt[];
+  const appointments = (apptsResult.data ?? []) as unknown as CalendarAppt[];
   const procedures = (procsResult.data ?? []) as { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
 
   const todayCount = appointments.filter(a => a.date === today && a.status !== "blocked").length;
@@ -156,6 +161,8 @@ export default async function SchedulePage({
           <p className="text-sm text-slate-500 mt-0.5">{t("apptsToday", { count: todayCount })}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {/* The Agenda and its booking requests stay current (items 19/21). */}
+          <AutoRefresh />
           <ViewToggle currentView={view} currentDate={currentDate} />
           <BlockTimeButton defaultDate={currentDate} />
           <NewAppointmentButton defaultDate={currentDate} currency={currency} procedures={procedures} autoOpen={newParam === "1"} />
@@ -182,7 +189,7 @@ export default async function SchedulePage({
               <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">{tFirstRun("scheduleEmptyBody")}</p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                 <NewAppointmentButton defaultDate={currentDate} currency={currency} procedures={procedures} label={tFirstRun("bookAppointment")} />
-                {!isSecretary && <ShareInviteLinkButton code={inviteCode} />}
+                {!isSecretary && <ShareInviteLinkButton code={inviteCode} country={practiceCountry} />}
               </div>
             </div>
           ) : appointments.length === 0 ? (
@@ -207,7 +214,7 @@ export default async function SchedulePage({
                   <div className="shrink-0 text-right min-w-[52px]">
                     <p className="text-sm font-bold text-slate-900">{appt.start_time?.slice(0, 5)}</p>
                     <p className="text-xs text-slate-400">{appt.end_time?.slice(0, 5)}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{appt.duration_minutes}m</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{t("durationMinutes", { n: appt.duration_minutes ?? 0 })}</p>
                   </div>
                   <div className={`mt-1 h-full w-0.5 self-stretch rounded-full min-h-10 ${appt.status === "blocked" ? "bg-slate-200" : "bg-teal-200"}`} />
                   <div className="flex-1 min-w-0">
@@ -215,11 +222,14 @@ export default async function SchedulePage({
                       <div className="min-w-0">
                         <p className="font-bold text-slate-900 truncate">{appt.patient_name}</p>
                         <p className="text-sm text-slate-500 mt-0.5">
-                          {appt.consultation_type}
+                          <ConsultTypeLabel value={appt.consultation_type} />
                           {appt.type === "online" && <span className="ml-2 rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600 font-semibold">{t("onlineBadge")}</span>}
                         </p>
                         {appt.patient_note && <p className="text-xs text-slate-500 mt-1 truncate"><span className="font-semibold">{t("patientMessage")}:</span> {appt.patient_note}</p>}
                         {appt.notes && <p className="text-xs text-slate-400 mt-1 truncate">{appt.notes}</p>}
+                        {(appt as { status_reason?: string | null }).status_reason && (
+                          <p className="text-xs text-slate-500 mt-1 truncate"><span className="font-semibold">{t("reasonShort")}:</span> {(appt as { status_reason?: string | null }).status_reason}</p>
+                        )}
                       </div>
                       <div className="shrink-0 flex items-center gap-2">
                         {appt.status !== "blocked" && <AppointmentStatusSelect id={appt.id} current={appt.status} />}
@@ -237,7 +247,7 @@ export default async function SchedulePage({
                         {promptPayId && offersPaymentQr(appt) && (
                           <PromptPayQrButton promptPayId={promptPayId} amount={appt.payment_amount} />
                         )}
-                        {MOVABLE_STATUSES.includes(appt.status) && <RescheduleButton id={appt.id} date={appt.date} start={appt.start_time} />}
+                        {MOVABLE_STATUSES.includes(appt.status) && <RescheduleButton id={appt.id} date={appt.date} start={appt.start_time} durationMin={appt.duration_minutes ?? undefined} />}
                         {/* A no-show is never moved (UX 36): book again instead. */}
                         {appt.status === "absent" && (
                           <NewAppointmentButton defaultDate={today} currency={currency} procedures={procedures}
@@ -251,11 +261,15 @@ export default async function SchedulePage({
                         {appt.payment_status !== "paid" && !hasAmount(appt.payment_amount) ? (
                           // No amount yet (the app's #216): not to-receive; set one here,
                           // prefilled with the same-named procedure's price.
-                          <SetAmountButton
-                            id={appt.id}
-                            currency={currency}
-                            suggested={procedures.find((p) => p.name === appt.consultation_type && hasAmount(p.price))?.price ?? null}
-                          />
+                          <>
+                            <SetAmountButton
+                              id={appt.id}
+                              currency={currency}
+                              suggested={procedures.find((p) => p.name === appt.consultation_type && hasAmount(p.price))?.price ?? null}
+                            />
+                            {/* No QR without a value (e7): say why it's missing. */}
+                            {(pixKey || promptPayId) && <span className="text-xs text-slate-400">{t("qrNeedsAmount")}</span>}
+                          </>
                         ) : (
                           <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
                             {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}

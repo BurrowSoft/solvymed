@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -10,6 +10,8 @@ import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
+import { OpenInApp } from "@/components/OpenInApp";
+import { SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
@@ -23,6 +25,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  // One submit at a time: a double-click lands before the disabled button
+  // re-renders (Vitor 1.4.0).
+  const submitting = useRef(false);
   // Bot protection (dormant until a Turnstile site key is configured).
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaReset, setCaptchaReset] = useState(0);
@@ -37,6 +42,11 @@ export default function LoginPage() {
       setError(t("captchaFailed"));
       return;
     }
+    if (submitting.current) return;
+    submitting.current = true;
+    // A signup's country pick is for the account created here, not for
+    // whoever signs in next on this browser (9a).
+    document.cookie = `${SIGNUP_COUNTRY_COOKIE}=; path=/; max-age=0; samesite=lax`;
     setLoading(true);
     const supabase = createClient();
     const { data: signInData, error: authError } = await supabase.auth.signInWithPassword({
@@ -44,9 +54,15 @@ export default function LoginPage() {
       password,
       options: captchaToken ? { captchaToken } : undefined,
     });
-    setLoading(false);
     // A token is single-use: get a fresh one for the next attempt.
     if (turnstileEnabled) setCaptchaReset((n) => n + 1);
+    // The button keeps its spinner until the next page replaces this one
+    // (Vitor 1.4.0: it flipped back to "Sign in" while the dashboard loaded);
+    // only an error resets it.
+    if (authError || !signInData.user) {
+      submitting.current = false;
+      setLoading(false);
+    }
     if (authError) {
       setError(authErrorText(authError) ?? t("errors.generic"));
     } else if (signInData.user) {
@@ -84,6 +100,7 @@ export default function LoginPage() {
   return (
     <AuthPageShell>
       <AuthCard>
+        <OpenInApp />
         {/* Back to home */}
         <div className="mb-6">
           <Link

@@ -10,13 +10,19 @@ import { getArchivePreview, mergeAvailable } from "../actions";
 import { MergedNotice } from "./MergeNotice";
 import { logPatientOpen, readAccessLog } from "@/lib/accessLog";
 import { getClinicTimeZone } from "@/lib/clinicTime";
+import { AutoRefresh } from "@/components/AutoRefresh";
 
 export default async function PatientDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; id: string }>;
+  searchParams?: Promise<{ mergeWith?: string }>;
 }) {
   const { locale, id } = await params;
+  // "Mesmo e-mail de {nome}: mesclar?" opens the merge with that pair (145).
+  const mergeWithRaw = (await searchParams)?.mergeWith;
+  const mergeWith = typeof mergeWithRaw === "string" && /^[0-9a-f-]{36}$/i.test(mergeWithRaw) ? mergeWithRaw : null;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
@@ -98,6 +104,8 @@ export default async function PatientDetailPage({
         <div>
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl font-extrabold text-slate-900">{patient.full_name}</h1>
+            {/* The patient's appointments stay current (item 25). */}
+            <AutoRefresh />
             {patient.booking_blocked && (
               <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-700">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3 w-3"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -144,6 +152,7 @@ export default async function PatientDetailPage({
           currentUserId={user.id}
           idKind={patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId))}
           canMerge={!isSecretary && (await mergeAvailable())}
+          mergeWith={mergeWith}
           canDelete={preview?.hasClinicalHistory === false && preview.hasAppointments === false}
           accessLog={accessLog}
           timeZone={timeZone}

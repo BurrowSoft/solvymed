@@ -98,7 +98,18 @@
     "noUpcoming": "Nessun appuntamento in programma",
     "unpaidSessions": "{n, plural, one {# sessione non pagata} other {# sessioni non pagate}}",
     "pendingCollection": "{amount} in attesa di pagamento",
-    "managePayments": "Gestisci pagamenti"
+    "managePayments": "Gestisci pagamenti",
+    "invitedTitle": "{n, plural, one {# nuovo paziente tramite il tuo invito} other {# nuovi pazienti tramite il tuo invito}}",
+    "invitedHint": "Si sono uniti con il codice del tuo studio. Tieni i tuoi pazienti; Rimuovi scollega l'account (la scheda viene archiviata).",
+    "invitedKeep": "Mantieni",
+    "invitedRemove": "Rimuovi",
+    "invitedError": "Impossibile salvare. Riprova.",
+    "invitedSeeAll": "Vedi tutti in Pazienti",
+    "invitedSameEmail": "Stessa e-mail di {name}: unire?",
+    "invitedRemoveConfirm": "Rimuovere {name}? L'account tornerà in attesa della tua conferma e la scheda verrà archiviata.",
+    "invitedRemoveConfirmDisconnect": "Rimuovere {name}? L'account verrà scollegato dal tuo studio, le richieste in sospeso verranno annullate (il paziente viene avvisato) e la scheda archiviata. Per riammetterlo, ripristina la scheda da Archiviati e condividi il codice personale del paziente.",
+    "requestsWaiting": "{n, plural, one {# richiesta di appuntamento attende la tua conferma} other {# richieste di appuntamento attendono la tua conferma}}",
+    "requestsWaitingOpen": "Vedi richieste"
   },
   "schedule": {
     "patientMessage": "Messaggio del paziente",
@@ -134,9 +145,6 @@
     "dur90": "1h30",
     "dur120": "2 ore",
     "dur240": "4 ore",
-    "noProcedures": "Nessuna procedura configurata.",
-    "addProcSettings": "Aggiungi procedure nelle Impostazioni",
-    "beforeScheduling": "prima di programmare.",
     "cancel": "Annulla",
     "saveAppt": "Salva appuntamento",
     "repeat": "Ripeti",
@@ -232,7 +240,22 @@
     "undoAction": "Annulla ({s} s)",
     "undoDone": "Annullato.",
     "undoFailed": "Impossibile annullare. Apri l’elemento per modificarlo.",
-    "newPatientOption": "Prenota senza scheda: {name}"
+    "newPatientOption": "Prenota senza scheda: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "Questa settimana",
@@ -323,7 +346,9 @@
     "nextPage": "Successiva",
     "pagesLabel": "Pagine",
     "fullNamePlaceholder": "Nome completo",
-    "professionPlaceholder": "es. Ingegnere, Insegnante…"
+    "professionPlaceholder": "es. Ingegnere, Insegnante…",
+    "invitedBadge": "Nuovo, tramite invito",
+    "invitedSameEmail": "Stessa e-mail di {name}: unire?"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -674,7 +699,14 @@
     "orCustomTime": "O scegli un orario",
     "professionalFallback": "Professionista",
     "errorArchived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio.",
-    "practiceInactive": "Questo studio non accetta prenotazioni online al momento."
+    "practiceInactive": "Questo studio non accetta prenotazioni online al momento.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today."
   },
   "auth": {
     "passwordTooShort": "La password deve essere lunga almeno {min} caratteri.",
@@ -718,10 +750,8 @@
       "secretaryNeedsInvite": "Lavori in segreteria? Chiedi un link di invito al tuo studio.",
       "secretaryEmailMismatch": "Questa email non corrisponde all'invito, oppure l'invito non è più valido. Controlla l'email o chiedi un nuovo link allo studio.",
       "consentCheckbox": "Ho letto e accetto i <terms>Termini di utilizzo</terms> e l'<privacy>Informativa sulla privacy</privacy>",
-      "country": "Dove si trova il tuo studio?",
-      "countryOther": "Altro paese",
-      "countryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza.",
-      "fullNameHint": "Se vuoi, aggiungi il tuo titolo ({titles}): compare nei saluti."
+      "fullNameHint": "Se vuoi, aggiungi il tuo titolo ({titles}): compare nei saluti.",
+      "backToCountry": "Indietro"
     },
     "forgotPassword": {
       "title": "Password dimenticata?",
@@ -750,7 +780,9 @@
     "backToHome": "Torna alla home",
     "patientWelcome": {
       "countdown": "Ti stiamo portando ai tuoi appuntamenti tra {count, plural, one {# secondo} other {# secondi}}…",
-      "goToAppointments": "Vai ai miei appuntamenti"
+      "goToAppointments": "Vai ai miei appuntamenti",
+      "heading": "Tutto pronto!",
+      "confirmed": "Il tuo account è stato confermato."
     },
     "inviteRequired": {
       "heading": "È richiesto un codice invito",
@@ -766,7 +798,12 @@
       "backToSignup": "Usa un altro account",
       "tooManyAttempts": "Troppi tentativi. Attendi un momento prima di riprovare.",
       "alreadyInvitedByAnother": "Il tuo account è già collegato a un altro studio.",
-      "archived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio."
+      "archived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio.",
+      "alreadyConnected": "Sei già collegato a {doctor}. Per cambiare, contatta l'assistenza.",
+      "alreadyConnectedNoName": "Sei già collegato a un altro medico. Per cambiare, contatta l'assistenza.",
+      "alreadyConnectedSamePractice": "Sei già collegato a {doctor}. Chiedi allo studio di unire le tue schede.",
+      "alreadyConnectedSamePracticeNoName": "Sei già collegato a questo studio. Chiedi allo studio di unire le tue schede.",
+      "codeUnavailable": "Impossibile collegarsi con questo codice. Contatta lo studio."
     },
     "pendingConfirmation": {
       "loading": "Verifica dello stato…",
@@ -834,7 +871,22 @@
     "rescheduleRequestedLabel": "Riprogrammazione richiesta: {date} · {time}",
     "rescheduleButton": "Richiedi riprogrammazione",
     "closeDialog": "Chiudi",
-    "originallyLabel": "In origine: {date} · {time}"
+    "originallyLabel": "In origine: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "Rifiutato",
+    "cancelContactClinic": "To cancel, contact the clinic.",
+    "statusNotConfirmed": "Not confirmed",
+    "proposalPassed": "This time has already passed. Ask the clinic for a new time.",
+    "cancelRequest": "Cancel request",
+    "cancelRequestTitle": "Cancel this request?",
+    "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
+    "keepRequest": "Keep request",
+    "requestCancelledToast": "Request cancelled."
   },
   "nav": {
     "overview": "Panoramica",
@@ -1147,7 +1199,6 @@
   "pricing": {
     "navLabel": "Prezzi",
     "countryLabel": "Prezzi per:",
-    "countryOther": "Altri paesi",
     "title": "Un solo piano semplice. Tutto incluso.",
     "subtitle": "Nessun costo di attivazione, nessun costo per paziente, nessuna sorpresa.",
     "perMonth": "/mese",
@@ -1809,5 +1860,12 @@
     "tryNow": "Prova ora",
     "later": "Più tardi",
     "whatCanDo": "Cosa può fare SolvyAI?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "Aggiorna"
   }
 }

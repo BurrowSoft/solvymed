@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Card } from "./SettingsClient";
 import { createSecretaryInvite, revokeSecretaryInvite, removeSecretary } from "./team-actions";
 import { dateLocale } from "@/lib/dateLabels";
+import { withCountryHint } from "@/lib/signupCountry";
 
 export type TeamRow = {
   kind: "secretary" | "invite";
@@ -32,7 +33,9 @@ type Created = { code: string; email: string };
 // single-use, and expire in 7 days. Nothing is emailed: the doctor shares
 // the link or code (copy / WhatsApp). The code is only shown right after
 // creating it; "Resend" creates a fresh one for the same email.
-export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: boolean }) {
+// whatsapp: the share button only where the practice uses WhatsApp (not
+// in Thailand, item 12).
+export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }: { rows: TeamRow[]; loadFailed: boolean; whatsapp?: boolean; country?: string | null }) {
   const t = useTranslations("secretary");
   const router = useRouter();
   const { locale } = useParams<{ locale: string }>();
@@ -51,7 +54,7 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
   // email on accept. Unprefixed, like every link shared with someone else:
   // the recipient's own browser language decides.
   const shareLink = (c: Created) =>
-    `${window.location.origin}/join/secretary/${encodeURIComponent(c.code)}`;
+    withCountryHint(`${window.location.origin}/join/secretary/${encodeURIComponent(c.code)}`, country);
 
   function invite(targetEmail: string) {
     setError("");
@@ -172,14 +175,16 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
             <button type="button" onClick={() => copy(shareLink(created), "link")} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">
               {copied === "link" ? t("copied") : t("copyLink")}
             </button>
-            <a
-              href={`https://wa.me/?text=${encodeURIComponent(t("teamWhatsAppText", { link: shareLink(created) }))}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-50"
-            >
-              WhatsApp
-            </a>
+            {whatsapp && (
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(t("teamWhatsAppText", { link: shareLink(created) }))}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+              >
+                WhatsApp
+              </a>
+            )}
           </div>
         </div>
       )}
