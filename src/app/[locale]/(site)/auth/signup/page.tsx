@@ -63,12 +63,12 @@ export default function SignupPage() {
 
   // Country first (Vitor, 2026-10-01): the signup starts with "Where are
   // you?" (Brasil / ประเทศไทย + "Use SolvyMed in English"); the choice comes
-  // back as ?country= in the chosen language, and it's the practice country
+  // back as ?c= in the chosen language, and it's the practice country
   // (it locks after signup). Invite and join-link signups already belong to a
   // practice, so they skip it. Before the Thai release there's no step (every
   // practice is Brazilian, the database default).
   const router = useRouter();
-  const country = parseCountryChoice(searchParams.get("country"));
+  const country = parseCountryChoice(searchParams.get("c"));
   const countryStep = thaiEnabled && !isSecretaryFlow && !isJoinFlow;
   const [english, setEnglish] = useState(locale === "en");
   const goTo = (href: string, newLocale: string) => {

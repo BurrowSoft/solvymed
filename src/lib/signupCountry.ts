@@ -9,7 +9,9 @@ import { thaiEnabled } from "./publicLocales";
 
 export type CountryChoice = "BR" | "TH";
 
-// The country step's choice, read back from ?country= (anything else = none).
+// The country step's choice, read back from ?c= (anything else = none). Not
+// ?country=: the middleware reads that as a dev geo override. ?c= is also
+// the hint the share links carry (invite / join / secretary, 38).
 export function parseCountryChoice(raw: string | null | undefined): CountryChoice | null {
   const c = (raw ?? "").toUpperCase();
   return c === "BR" || c === "TH" ? c : null;
@@ -22,12 +24,12 @@ export const COUNTRY_STEP: readonly { code: CountryChoice; flag: string; label: 
   { code: "TH", flag: "🇹🇭", label: "ประเทศไทย", locale: "th" },
 ];
 
-// The signup page in a language, keeping its query, with ?country= set (a
+// The signup page in a language, keeping its query, with ?c= set (a
 // choice) or removed (back to the step).
 export function countryStepHref(country: CountryChoice | null, locale: string, params: { toString(): string }): string {
   const q = new URLSearchParams(params.toString());
-  if (country) q.set("country", country);
-  else q.delete("country");
+  if (country) q.set("c", country);
+  else q.delete("c");
   const qs = q.toString();
   return `${locale === "en" ? "" : `/${locale}`}/auth/signup${qs ? `?${qs}` : ""}`;
 }

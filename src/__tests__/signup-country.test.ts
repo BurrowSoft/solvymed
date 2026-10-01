@@ -20,7 +20,7 @@ describe("country first (Vitor, 2026-10-01): the signup's first step", () => {
     expect(COUNTRY_STEP.map((c) => [c.code, c.locale])).toEqual([["BR", "pt-BR"], ["TH", "th"]]);
   });
 
-  it("reads ?country= back; anything else is no choice (the step again)", () => {
+  it("reads ?c= back; anything else is no choice (the step again)", () => {
     expect(parseCountryChoice("br")).toBe("BR");
     expect(parseCountryChoice("TH")).toBe("TH");
     expect(parseCountryChoice("OTHER")).toBeNull();
@@ -29,9 +29,9 @@ describe("country first (Vitor, 2026-10-01): the signup's first step", () => {
   });
 
   it("the choice and the back arrow keep the rest of the query", () => {
-    expect(countryStepHref("BR", "pt-BR", new URLSearchParams("role=x"))).toBe("/pt-BR/auth/signup?role=x&country=BR");
-    expect(countryStepHref("TH", "en", new URLSearchParams())).toBe("/auth/signup?country=TH");
-    expect(countryStepHref(null, "th", new URLSearchParams("country=TH&a=1"))).toBe("/th/auth/signup?a=1");
+    expect(countryStepHref("BR", "pt-BR", new URLSearchParams("role=x"))).toBe("/pt-BR/auth/signup?role=x&c=BR");
+    expect(countryStepHref("TH", "en", new URLSearchParams())).toBe("/auth/signup?c=TH");
+    expect(countryStepHref(null, "th", new URLSearchParams("c=TH&a=1"))).toBe("/th/auth/signup?a=1");
   });
 });
 

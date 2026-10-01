@@ -5,7 +5,7 @@ import pt from "@/messages/pt-BR.json";
 
 // Country first (Vitor, 2026-10-01): the signup starts with "Where are you?"
 // (Brasil / ประเทศไทย + "Use SolvyMed in English"); the choice comes back as
-// ?country= in its language; ← returns to the step. Invite and join-link
+// ?c= in its language; ← returns to the step. Invite and join-link
 // signups skip it.
 
 const h = vi.hoisted(() => ({ params: new URLSearchParams(), push: vi.fn() }));
@@ -35,7 +35,7 @@ describe("signup: country first", () => {
     expect(screen.getByText("Onde você está? · คุณอยู่ที่ไหน? · Where are you?")).toBeInTheDocument();
     expect(screen.queryByLabelText(/e-mail/i)).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: /ประเทศไทย/ }));
-    expect(h.push).toHaveBeenCalledWith("/th/auth/signup?country=TH");
+    expect(h.push).toHaveBeenCalledWith("/th/auth/signup?c=TH");
     unmount();
   });
 
@@ -43,12 +43,12 @@ describe("signup: country first", () => {
     const { unmount } = show("");
     fireEvent.click(screen.getByLabelText("Use SolvyMed in English"));
     fireEvent.click(screen.getByRole("button", { name: /Brasil/ }));
-    expect(h.push).toHaveBeenCalledWith("/auth/signup?country=BR");
+    expect(h.push).toHaveBeenCalledWith("/auth/signup?c=BR");
     unmount();
   });
 
   it("with a country: the form, and ← back to the step (no country field)", () => {
-    const { unmount } = show("country=BR");
+    const { unmount } = show("c=BR");
     expect(screen.queryByText("Onde você está? · คุณอยู่ที่ไหน? · Where are you?")).toBeNull();
     const back = screen.getByRole("link", { name: pt.auth.signup.backToCountry });
     expect(back).toHaveAttribute("href", "/pt-BR/auth/signup");
