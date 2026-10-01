@@ -26,6 +26,9 @@ export type MyAppointment = {
   status_reason?: string | null;
   status_by?: "clinic" | "patient" | null;
   clinic_message?: string | null;
+  // 154: set when the patient's reschedule request lapsed unanswered (the
+  // server put the visit back); cleared when a new change is asked.
+  reschedule_lapsed_at?: string | null;
 };
 
 export async function myAppointments(db: SupabaseClient, appointmentId?: string): Promise<MyAppointment[]> {

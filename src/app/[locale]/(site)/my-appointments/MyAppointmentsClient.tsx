@@ -5,7 +5,7 @@ import { useState, useTransition, useCallback, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
-import { acceptProposal, declineProposal, requestReschedule, getAvailableSlotsForDate } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions";
+import { acceptProposal, cancelMyRequest, declineProposal, requestReschedule, getAvailableSlotsForDate } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions";
 import type { PatientAppointment } from "./page";
 import { OnboardingCard } from "@/components/OnboardingCard";
 import { AutoRefresh } from "@/components/AutoRefresh";
@@ -205,6 +205,23 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
   // has refreshed (Vitor, item 20), so a second tap can't land meanwhile.
   const [acting, setActing] = useState<"accept" | "decline" | null>(null);
   const [actError, setActError] = useState("");
+  // A new status from the refresh answers the error (e.g. the clinic had
+  // already confirmed: the card's own hint says it; 3e).
+  useEffect(() => setActError(""), [appt.status]);
+  // "Cancelar pedido" (a pending request only): confirm first.
+  const [askCancel, setAskCancel] = useState(false);
+  const [cancelling, startCancel] = useTransition();
+  const [cancelled, setCancelled] = useState(false);
+  const cancelRequest = () => {
+    setActError("");
+    startCancel(async () => {
+      const r = await cancelMyRequest(appt.id);
+      setAskCancel(false);
+      if (r?.error) { setActError(t("cancelContactClinic")); onMutate(); return; }
+      setCancelled(true);
+      onMutate();
+    });
+  };
   const act = (kind: "accept" | "decline") => {
     setActing(kind);
     setActError("");
@@ -229,6 +246,9 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
   const isPatientReschedule = appt.status === "proposal" && appt.scheduled_by === "patient";
   const apptEndDateTime = new Date(`${appt.date}T${appt.end_time}`);
   const canReschedule = (appt.status === "confirmed" || appt.status === "scheduled") && !isPatientReschedule && now !== null && apptEndDateTime > now;
+  // 154: the patient's reschedule request lapsed unanswered and the server
+  // put the visit back; a muted line while the visit is still ahead.
+  const rescheduleLapsed = !!appt.reschedule_lapsed_at && canReschedule;
 
   const displayDate = (isProfProposal && appt.proposed_date) ? appt.proposed_date : appt.date;
   const displayStart = (isProfProposal && appt.proposed_start_time) ? appt.proposed_start_time : appt.start_time;
@@ -273,6 +293,9 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
           {appt.clinic_message && appt.status !== "rejected" && appt.status !== "cancelled" && (
             <p data-testid="clinic-message" className="mt-2 break-words text-sm text-slate-600">{t("clinicMessage", { message: appt.clinic_message })}</p>
           )}
+          {rescheduleLapsed && (
+            <p data-testid="reschedule-lapsed" className="mt-2 text-sm text-slate-500">{t("rescheduleLapsed")}</p>
+          )}
           {appt.patient_note && (
             <p className="mt-2 text-sm text-slate-600 italic">&ldquo;{appt.patient_note}&rdquo;</p>
           )}
@@ -307,6 +330,30 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
         </div>
       )}
 
+      {appt.status === "tentative" && !lapsed && !cancelled && (
+        <div className="mt-3 pt-3 border-t border-slate-100">
+          {askCancel ? (
+            <div data-testid="cancel-request-confirm" className="rounded-xl bg-slate-50 p-3">
+              <p className="text-sm font-semibold text-slate-800">{t("cancelRequestTitle")}</p>
+              <p className="mt-1 text-xs text-slate-500">{t("cancelRequestBody")}</p>
+              <div className="mt-3 flex gap-2">
+                <button type="button" disabled={cancelling} aria-busy={cancelling} onClick={cancelRequest} className="flex-1 rounded-xl bg-red-600 px-3 py-2 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50 transition">
+                  {cancelling && <span className="spinner-current mr-2" aria-hidden="true" />}
+                  {t("cancelRequest")}
+                </button>
+                <button type="button" disabled={cancelling} onClick={() => setAskCancel(false)} className="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 hover:border-slate-300 disabled:opacity-50 transition">
+                  {t("keepRequest")}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button type="button" data-testid="cancel-request-button" onClick={() => setAskCancel(true)} className="text-sm font-medium text-red-600 hover:text-red-700 transition">
+              {t("cancelRequest")}
+            </button>
+          )}
+        </div>
+      )}
+      {cancelled && <p role="status" className="mt-2 text-sm font-medium text-slate-600">{t("requestCancelledToast")}</p>}
       {actError && <p role="alert" className="mt-2 text-sm text-red-600">{actError}</p>}
 
       {canReschedule && (

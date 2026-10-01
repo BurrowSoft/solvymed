@@ -882,7 +882,13 @@
     "statusDeclined": "Abgelehnt",
     "cancelContactClinic": "To cancel, contact the clinic.",
     "statusNotConfirmed": "Not confirmed",
-    "proposalPassed": "This time has already passed. Ask the clinic for a new time."
+    "proposalPassed": "This time has already passed. Ask the clinic for a new time.",
+    "cancelRequest": "Cancel request",
+    "cancelRequestTitle": "Cancel this request?",
+    "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
+    "keepRequest": "Keep request",
+    "requestCancelledToast": "Request cancelled.",
+    "rescheduleLapsed": "Your reschedule request expired."
   },
   "nav": {
     "overview": "Übersicht",

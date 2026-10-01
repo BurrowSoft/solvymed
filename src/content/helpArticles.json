@@ -278,8 +278,8 @@
           ]
         },
         "web": {
-          "pt": "Quando há pedidos aguardando sua resposta, a **Visão geral** mostra um aviso com quantos são (**Ver pedidos**). Os pedidos aparecem em **Agenda**, em **Solicitações de consulta**. Clique em **Confirmar**, **Rejeitar** ou **Propor novo horário** (dá para escrever uma mensagem ao paciente). Para um paciente novo, **Confirmar e Adicionar Paciente** já cria o cadastro. Se o horário de um pedido ou de um novo horário proposto passa sem resposta, o paciente vê **Não confirmado** em **Minhas Consultas**, sem ações.",
-          "en": "When requests are waiting for your answer, the **Overview** shows a notice with how many (**See requests**). Requests show in the **Schedule**, under **Booking Requests**. Click **Confirm**, **Reject** or **Propose new time** (you can add a note for the patient). For a new patient, **Confirm and Add New Patient** also creates their record. If the time of a request or of a proposed new time passes without an answer, the patient sees **Not confirmed** in **My Appointments**, with no actions."
+          "pt": "Quando há pedidos aguardando sua resposta, a **Visão geral** mostra um aviso com quantos são (**Ver pedidos**). Os pedidos aparecem em **Agenda**, em **Solicitações de consulta**. Clique em **Confirmar**, **Rejeitar** ou **Propor novo horário** (dá para escrever uma mensagem ao paciente). Para um paciente novo, **Confirmar e Adicionar Paciente** já cria o cadastro. Se o horário de um pedido ou de um novo horário proposto passa sem resposta, o paciente vê **Não confirmado** em **Minhas Consultas**, sem ações. Enquanto o pedido está pendente, o paciente pode cancelá-lo em **Minhas Consultas** (**Cancelar pedido**); você recebe o aviso **Pedido cancelado**.",
+          "en": "When requests are waiting for your answer, the **Overview** shows a notice with how many (**See requests**). Requests show in the **Schedule**, under **Booking Requests**. Click **Confirm**, **Reject** or **Propose new time** (you can add a note for the patient). For a new patient, **Confirm and Add New Patient** also creates their record. If the time of a request or of a proposed new time passes without an answer, the patient sees **Not confirmed** in **My Appointments**, with no actions. While a request is pending, the patient can cancel it in **My Appointments** (**Cancel request**); you get a **Request cancelled** notification."
         },
         "webUnavailable": false,
         "open": "home",
@@ -328,12 +328,20 @@
             {
               "type": "p",
               "text": "Quando um paciente pede para remarcar uma consulta confirmada, o pedido aparece em **Início**. **Aceitar** muda a consulta para o novo horário; **Recusar** mantém o horário original."
+            },
+            {
+              "type": "p",
+              "text": "Se ninguém responde até o horário pedido, o pedido expira sozinho: a consulta fica como estava e sai das solicitações, e o paciente vê \"Seu pedido de remarcação expirou.\" (no site; no app a partir da versão 1.4.0)."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "When a patient asks to reschedule a confirmed appointment, the request shows on **Home**. **Accept** moves the appointment to the new time; **Decline** keeps the original time."
+            },
+            {
+              "type": "p",
+              "text": "If nobody answers before the requested time, the request expires by itself: the appointment stays as it was and leaves the requests, and the patient sees \"Your reschedule request expired.\" (on the website; in the app from version 1.4.0)."
             }
           ]
         },
