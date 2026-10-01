@@ -52,7 +52,7 @@ describe("the dashboard card", () => {
     render(<InvitedPatientsCard patients={PATIENTS} total={2} prefix="" />);
     await act(async () => { fireEvent.click(screen.getAllByText("invitedRemove")[0]); });
     expect(h.calls).toEqual([]);
-    expect(confirm).toHaveBeenCalledWith('invitedRemoveConfirm:{"name":"Ana Nova"}');
+    expect(confirm).toHaveBeenCalledWith('invitedRemoveConfirmDisconnect:{"name":"Ana Nova"}'); // 147 live: e7's final text
     await act(async () => { fireEvent.click(screen.getAllByText("invitedRemove")[0]); });
     expect(h.calls).toEqual([["remove", "p1"]]);
     confirm.mockRestore();

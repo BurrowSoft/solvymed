@@ -1211,12 +1211,20 @@
             {
               "type": "p",
               "text": "Em **Início**, na lista para configurar a clínica, toque em **Compartilhar link de convite**. Ou em **Configurações → Seu código de convite para pacientes**, toque em **Compartilhar** (sem código ainda? toque em **Gerar código de convite**). Quem abrir o link baixa o app ou entra pelo site e pede consultas com você. **Novo** gera um código novo e o anterior deixa de funcionar."
+            },
+            {
+              "type": "p",
+              "text": "Depois de **Remover**, a pessoa não consegue voltar com o código de convite da clínica. Para trazê-la de volta, envie o código pessoal do cadastro dela."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings → Your patient invite code**, tap **Share** (no code yet? tap **Generate invite code**). Anyone who opens the link gets the app or the website and can request appointments with you. **New** creates a new code and the old one stops working."
+            },
+            {
+              "type": "p",
+              "text": "After **Remove**, that person can't rejoin with your clinic's invite code. To bring them back, share the personal code of their record."
             }
           ]
         },

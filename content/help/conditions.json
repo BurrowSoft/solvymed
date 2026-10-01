@@ -100,7 +100,7 @@
     "what": "Migration 146 is applied on production: link_patient_by_invite_code raises already_connected with HINT same_practice when the personal code is another record of the patient's own practice, so the website and the app say \"Ask the clinic to combine your records\" instead of contact support. Gates its Help C5 / App Map lines (the website maps the hint already; it's absent before 146)."
   },
   "invite-connect-live": {
-    "met": false,
+    "met": true,
     "what": "Migration 147 is applied on production: connect_with_code(p_code) links with a personal or public code in one call (one counted attempt), and remove_invited_patient enqueues the patient's cancellation notices. The website's /auth/invite-required switches to it when met (before: link_patient_by_invite_code then link_by_professional_public_code)."
   },
   "invite-joined-push-live": {
