@@ -695,7 +695,13 @@
     "orCustomTime": "Or pick a custom time",
     "professionalFallback": "Professional",
     "errorArchived": "This clinic isn't taking new bookings for your account. Please contact the clinic.",
-    "practiceInactive": "This clinic isn't taking online bookings right now."
+    "practiceInactive": "This clinic isn't taking online bookings right now.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "Password must be at least {min} characters.",

@@ -695,7 +695,13 @@
     "orCustomTime": "Ou escolha um horário específico",
     "professionalFallback": "Profissional",
     "errorArchived": "Esta clínica não está aceitando novos agendamentos para a sua conta. Entre em contato com a clínica.",
-    "practiceInactive": "A clínica não está recebendo agendamentos online no momento."
+    "practiceInactive": "A clínica não está recebendo agendamentos online no momento.",
+    "noHours": "Este profissional ainda não abriu horários para agendamento online. Tente mais tarde ou fale com a clínica.",
+    "loadFailed": "Não foi possível carregar os horários. Verifique sua internet.",
+    "retry": "Tentar novamente",
+    "chosenTime": "Horário escolhido: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Mês anterior",
+    "nextMonth": "Próximo mês"
   },
   "auth": {
     "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",

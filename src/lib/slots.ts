@@ -22,8 +22,9 @@ export function toLocalDateString(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export function filterPastSlots(slots: TimeSlot[], date: string, nowMinutes: number): TimeSlot[] {
-  const today = toLocalDateString(new Date());
+// today: the clinic's date when known (the booking page, item 10); else
+// the device's.
+export function filterPastSlots(slots: TimeSlot[], date: string, nowMinutes: number, today: string = toLocalDateString(new Date())): TimeSlot[] {
   if (date !== today) return slots;
   return slots.filter(s => toMinutes(s.start) > nowMinutes);
 }

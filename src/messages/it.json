@@ -695,7 +695,13 @@
     "orCustomTime": "O scegli un orario",
     "professionalFallback": "Professionista",
     "errorArchived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio.",
-    "practiceInactive": "Questo studio non accetta prenotazioni online al momento."
+    "practiceInactive": "Questo studio non accetta prenotazioni online al momento.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "La password deve essere lunga almeno {min} caratteri.",

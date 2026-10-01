@@ -695,7 +695,13 @@
     "orCustomTime": "或選擇自訂時間",
     "professionalFallback": "專業人員",
     "errorArchived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。",
-    "practiceInactive": "這家診所目前不接受線上預約。"
+    "practiceInactive": "這家診所目前不接受線上預約。",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "密碼至少需要{min}個字元。",
