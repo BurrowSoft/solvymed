@@ -873,7 +873,8 @@
     "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
     "youCancelled": "You cancelled",
     "clinicMessage": "Message from the clinic: {message}",
-    "statusDeclined": "Bị từ chối"
+    "statusDeclined": "Bị từ chối",
+    "cancelContactClinic": "To cancel, contact the clinic."
   },
   "nav": {
     "overview": "Tổng quan",

@@ -856,7 +856,7 @@
     "ctaSub": "Browse clinics on the map and book online",
     "accept": "Accept",
     "decline": "Decline",
-    "rescheduleTitle": "Request Reschedule",
+    "rescheduleTitle": "Request reschedule",
     "rescheduleSelectDate": "Select a new date",
     "rescheduleSelectTime": "Select a time",
     "rescheduleNoSlots": "No available slots for this day.",
@@ -873,7 +873,8 @@
     "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
     "youCancelled": "You cancelled",
     "clinicMessage": "Message from the clinic: {message}",
-    "statusDeclined": "Declined"
+    "statusDeclined": "Declined",
+    "cancelContactClinic": "To cancel, contact the clinic."
   },
   "nav": {
     "overview": "Overview",

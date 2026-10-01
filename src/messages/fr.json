@@ -873,7 +873,8 @@
     "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
     "youCancelled": "You cancelled",
     "clinicMessage": "Message from the clinic: {message}",
-    "statusDeclined": "Refusé"
+    "statusDeclined": "Refusé",
+    "cancelContactClinic": "To cancel, contact the clinic."
   },
   "nav": {
     "overview": "Accueil",

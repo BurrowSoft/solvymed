@@ -3,7 +3,7 @@
 import { myAppointment } from "@/lib/myAppointments";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { computeSlots, toMinutes, getDayHours } from "@/lib/slots";
+import { computeSlots, toMinutes, getDayHours, filterPastSlots } from "@/lib/slots";
 import type { WorkingHours } from "@/lib/slots";
 import { sendExpoPush } from "@/lib/push";
 import { pushText, pushWhen, type PushKind } from "@/lib/pushText";
@@ -11,6 +11,8 @@ import { clinicPushTargets, patientPushTargets } from "@/lib/pushRecipient";
 import { actionError } from "@/lib/dbErrors";
 import { getActiveProfId, isLockedOut } from "@/lib/activeAccess";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
+import { countryProfile } from "@/lib/country";
+import { clinicDate, clinicTime } from "@/lib/clinicTime";
 import { cleanReason, statusReasonLive } from "@/lib/statusReason";
 
 export async function getTentativeBookings() {
@@ -399,7 +401,15 @@ export async function getAvailableSlotsForDate(
   }));
 
   const slots = computeSlots(date, durationMinutes, wh, busyRanges);
-  return slots;
+  // Today (item 22) on the clinic's clock: only the times still ahead; a
+  // day already past offers none.
+  const { data: info } = await supabase.rpc("get_professional_public_info", { p_professional_id: professionalId }).maybeSingle();
+  const pub = info as { country?: string | null; time_zone?: string | null } | null;
+  const tz = pub?.time_zone || countryProfile(pub?.country).defaultTimeZone;
+  const now = new Date();
+  const today = clinicDate(now, tz);
+  if (date < today) return [];
+  return filterPastSlots(slots, date, toMinutes(clinicTime(now, tz)), today);
 }
 
 // ─── Push helper ─────────────────────────────────────────────────────────────

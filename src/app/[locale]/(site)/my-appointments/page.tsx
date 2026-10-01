@@ -8,6 +8,7 @@ import { statusReasonLive } from "@/lib/statusReason";
 import { SaveMyLocale } from "@/components/SaveMyLocale";
 import { cookies } from "next/headers";
 import { parseCountryChoice, patientLanguageTarget, pickApplies, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
+import { countryProfile } from "@/lib/country";
 
 export type PatientAppointment = {
   id: string;
@@ -87,11 +88,19 @@ export default async function MyAppointmentsPage({
   // working hours) — get_professional_public_info() is the matching
   // SECURITY DEFINER RPC for display info.
   let myProfessionalMeta: { name: string; specialty: string; clinicName?: string } | null = null;
+  // The clinic's zone (its own, else its country's): the reschedule's
+  // "today" (item 22); its country formats the chosen-time line.
+  let clinicTz: string = countryProfile(null).defaultTimeZone;
+  let practiceCountry: string | null = null;
   if (myProfessionalId) {
     const { data: profRowRaw } = await supabase
       .rpc("get_professional_public_info", { p_professional_id: myProfessionalId })
       .maybeSingle();
-    const profRow = profRowRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null } | null;
+    const profRow = profRowRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null; country?: string | null; time_zone?: string | null } | null;
+    if (profRow) {
+      clinicTz = profRow.time_zone || countryProfile(profRow.country).defaultTimeZone;
+      practiceCountry = profRow.country ?? null;
+    }
     if (profRow) {
       myProfessionalMeta = {
         // No hard-coded English "Doctor": /book resolves the name itself and
@@ -134,6 +143,8 @@ export default async function MyAppointmentsPage({
       userEmail={user.email ?? ""}
       myProfessionalId={myProfessionalId}
       myProfessionalMeta={myProfessionalMeta}
+      clinicTz={clinicTz}
+      practiceCountry={practiceCountry}
     />
     </>
   );

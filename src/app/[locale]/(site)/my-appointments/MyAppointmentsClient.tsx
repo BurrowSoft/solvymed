@@ -9,6 +9,11 @@ import { acceptProposal, declineProposal, requestReschedule, getAvailableSlotsFo
 import type { PatientAppointment } from "./page";
 import { OnboardingCard } from "@/components/OnboardingCard";
 import { AutoRefresh } from "@/components/AutoRefresh";
+import { MonthCalendar } from "@/components/MonthCalendar";
+import { chosenTimeParts } from "@/lib/chosenTime";
+import { addDays, clinicDate, DEFAULT_CLINIC_TZ } from "@/lib/clinicTime";
+import { getDayHours, type WorkingHours } from "@/lib/slots";
+import { countryProfile } from "@/lib/country";
 
 const STATUS_COLOR: Record<string, string> = {
   tentative: "bg-amber-50 text-amber-600 border-amber-200",
@@ -32,40 +37,49 @@ const STATUS_KEY: Record<string, string> = {
   late: "statusLate", absent: "statusAbsent", blocked: "statusBlocked",
 };
 
-const DAYS_AHEAD = 14;
+// The same range as the booking page (items 10/22).
+const DAYS_AHEAD = 30;
 
-function localDateStr(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
-
-function buildDays() {
-  const days: string[] = [];
-  const today = new Date();
-  for (let i = 1; i <= DAYS_AHEAD; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    days.push(localDateStr(d));
-  }
-  return days;
-}
-
-function dayLabel(locale: string, dateStr: string) {
-  return formatDateLabel(locale, dateStr);
+// The next DAYS_AHEAD days on the clinic's calendar, TODAY included (item
+// 22: today's remaining times; the server drops the ones already past).
+function buildDays(tz: string) {
+  const today = clinicDate(new Date(), tz);
+  return Array.from({ length: DAYS_AHEAD }, (_, i) => addDays(today, i));
 }
 
 function RescheduleDialog({
   appt,
   onClose,
   onSuccess,
+  clinicTz,
+  practiceCountry,
 }: {
   appt: PatientAppointment;
   onClose: () => void;
   onSuccess: () => void;
+  clinicTz: string;
+  practiceCountry: string | null;
 }) {
   const t = useTranslations("myAppointments");
+  const tBook = useTranslations("book");
   const locale = useLocale();
-  const days = buildDays();
+  const [days] = useState(() => buildDays(clinicTz));
   const [selectedDate, setSelectedDate] = useState(days[0]);
+  // The clinic's working hours: closed days are greyed in the calendar.
+  const [hours, setHours] = useState<WorkingHours | null>(null);
+  useEffect(() => {
+    let alive = true;
+    createClient().rpc("get_professional_working_hours", { p_professional_id: appt.professional_id })
+      .then(({ data }) => { if (alive) setHours((data ?? {}) as WorkingHours); }, () => { if (alive) setHours({}); });
+    return () => { alive = false; };
+  }, [appt.professional_id]);
+  const isOpen = useCallback((d: string) => hours === null || !!getDayHours(d, hours)?.enabled, [hours]);
+  useEffect(() => {
+    if (hours && !isOpen(selectedDate)) {
+      const first = days.find(isOpen);
+      if (first) setSelectedDate(first);
+    }
+  }, [hours, isOpen, selectedDate, days]);
   const [slots, setSlots] = useState<{ start: string; end: string }[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<{ start: string; end: string } | null>(null);
@@ -107,40 +121,33 @@ function RescheduleDialog({
         </div>
 
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">{t("rescheduleSelectDate")}</p>
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
-          {days.map(day => (
-            <button
-              key={day}
-              data-testid="reschedule-day-chip"
-              aria-pressed={selectedDate === day}
-              onClick={() => setSelectedDate(day)}
-              className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold border transition ${
-                selectedDate === day
-                  ? "bg-teal-600 border-teal-600 text-white"
-                  : "border-slate-200 text-slate-600 hover:border-slate-300"
-              }`}
-            >
-              {dayLabel(locale, day)}
-            </button>
-          ))}
+        <div className="mb-4">
+          <MonthCalendar
+            days={days}
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+            isOpen={isOpen}
+            locale={locale}
+            labels={{ prev: tBook("prevMonth"), next: tBook("nextMonth") }}
+          />
         </div>
 
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">{t("rescheduleSelectTime")}</p>
         {loadingSlots ? (
-          <div className="flex justify-center py-6">
-            <span className="h-5 w-5 animate-spin rounded-full border-2 border-slate-200 border-t-teal-600" />
+          <div data-testid="reschedule-skeleton" className="grid grid-cols-4 gap-2 sm:grid-cols-5 mb-4" aria-busy="true">
+            {Array.from({ length: 8 }, (_, i) => <div key={i} className="h-9 animate-pulse rounded-lg bg-slate-100" />)}
           </div>
         ) : slots.length === 0 ? (
           <p className="text-sm text-slate-400 text-center py-4">{t("rescheduleNoSlots")}</p>
         ) : (
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="grid grid-cols-4 gap-2 sm:grid-cols-5 mb-4">
             {slots.map(slot => (
               <button
                 key={slot.start}
                 data-testid="reschedule-slot-chip"
                 aria-pressed={selectedSlot?.start === slot.start}
                 onClick={() => setSelectedSlot(slot)}
-                className={`rounded-lg px-3 py-2 text-sm font-semibold border transition ${
+                className={`w-full rounded-lg px-2 py-2 text-sm font-semibold border transition ${
                   selectedSlot?.start === slot.start
                     ? "bg-teal-600 border-teal-600 text-white"
                     : "border-slate-200 text-slate-600 hover:border-slate-300"
@@ -152,6 +159,11 @@ function RescheduleDialog({
           </div>
         )}
 
+        {selectedSlot && (
+          <p data-testid="reschedule-chosen-time" className="mb-3 rounded-xl bg-teal-50 px-4 py-2.5 text-sm font-semibold text-teal-800">
+            {tBook("chosenTime", chosenTimeParts(selectedDate, selectedSlot.start, selectedSlot.end, countryProfile(practiceCountry)))}
+          </p>
+        )}
         <button
           disabled={!selectedSlot || pending}
           data-testid="reschedule-submit-button"
@@ -176,7 +188,7 @@ function RescheduleDialog({
   );
 }
 
-function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutate: () => void }) {
+function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practiceCountry = null }: { appt: PatientAppointment; onMutate: () => void; clinicTz?: string; practiceCountry?: string | null }) {
   const t = useTranslations("myAppointments");
   const tSchedule = useTranslations("schedule");
   const locale = useLocale();
@@ -286,6 +298,7 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
           >
             {t("rescheduleButton")}
           </button>
+          <p data-testid="cancel-hint" className="mt-1 text-xs text-slate-400">{t("cancelContactClinic")}</p>
         </div>
       )}
     </div>
@@ -294,6 +307,8 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
         appt={appt}
         onClose={() => setShowReschedule(false)}
         onSuccess={() => { setShowReschedule(false); onMutate(); }}
+        clinicTz={clinicTz}
+        practiceCountry={practiceCountry}
       />
     )}
     </>
@@ -306,6 +321,8 @@ export function MyAppointmentsClient({
   userEmail,
   myProfessionalId,
   myProfessionalMeta,
+  clinicTz = DEFAULT_CLINIC_TZ,
+  practiceCountry = null,
   connectedClinicName = null,
 }: {
   upcoming: PatientAppointment[];
@@ -313,6 +330,9 @@ export function MyAppointmentsClient({
   userEmail: string;
   myProfessionalId: string | null;
   myProfessionalMeta: { name: string; specialty: string; clinicName?: string } | null;
+  // The clinic's zone (its country's): the reschedule's "today".
+  clinicTz?: string;
+  practiceCountry?: string | null;
   // First-run: the one-time "You're connected to {clinic}" card (null = don't show).
   connectedClinicName?: string | null;
 }) {
@@ -403,7 +423,7 @@ export function MyAppointmentsClient({
             </div>
           ) : (
             <div className="space-y-3">
-              {upcoming.map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} />)}
+              {upcoming.map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} clinicTz={clinicTz} practiceCountry={practiceCountry} />)}
             </div>
           )}
         </section>
@@ -413,7 +433,7 @@ export function MyAppointmentsClient({
           <section>
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">{t("recentHistory")}</h2>
             <div className="space-y-3">
-              {past.map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} />)}
+              {past.map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} clinicTz={clinicTz} practiceCountry={practiceCountry} />)}
             </div>
           </section>
         )}
