@@ -231,7 +231,8 @@
     "undoCancelled": "Cita cancelada",
     "undoAction": "Deshacer ({s} s)",
     "undoDone": "Deshecho.",
-    "undoFailed": "No se pudo deshacer. Abre el elemento para ajustarlo."
+    "undoFailed": "No se pudo deshacer. Abre el elemento para ajustarlo.",
+    "newPatientOption": "Nuevo paciente: {name}"
   },
   "payments": {
     "thisWeek": "Esta semana",

@@ -231,7 +231,8 @@
     "undoCancelled": "Đã hủy lịch hẹn",
     "undoAction": "Hoàn tác ({s} giây)",
     "undoDone": "Đã hoàn tác.",
-    "undoFailed": "Không thể hoàn tác. Hãy mở mục đó để điều chỉnh."
+    "undoFailed": "Không thể hoàn tác. Hãy mở mục đó để điều chỉnh.",
+    "newPatientOption": "Bệnh nhân mới: {name}"
   },
   "payments": {
     "thisWeek": "Tuần này",

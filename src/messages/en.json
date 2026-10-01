@@ -231,7 +231,8 @@
     "undoCancelled": "Appointment cancelled",
     "undoAction": "Undo ({s} s)",
     "undoDone": "Undone.",
-    "undoFailed": "Couldn't undo. Open the item to adjust it."
+    "undoFailed": "Couldn't undo. Open the item to adjust it.",
+    "newPatientOption": "New patient: {name}"
   },
   "payments": {
     "thisWeek": "This week",

@@ -5,6 +5,7 @@ import { useState, useTransition, useRef, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDateLabel } from "@/lib/dateLabels";
 import { DateInput } from "@/components/DateInput";
+import { PatientPicker } from "./PatientPicker";
 import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime, moveAppointment, searchPatientsForPicker, undoScheduleChange } from "./actions";
 import { UNDO_EVENT, offerUndo, type UndoToken } from "@/lib/scheduleUndo";
 import { generatePixString, pixQrDataUrl } from "@/lib/pix";
@@ -16,7 +17,6 @@ import { formatMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
 import Link from "next/link";
 
-type Patient = { id: string; full_name: string };
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
   id: string;
@@ -413,26 +413,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
 
   // Patient suggestions come from a server search as the name is typed (a
   // clinic can have thousands of patients; loading all would be capped at
-  // 1000). Only the latest query's answer is kept.
-  const [matches, setMatches] = useState<Patient[]>([]);
-  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const latestQuery = useRef("");
-  useEffect(() => () => { if (searchTimer.current) clearTimeout(searchTimer.current); }, []);
-  function handlePatientInput(e: React.ChangeEvent<HTMLInputElement>) {
-    const q = e.target.value;
-    latestQuery.current = q;
-    if (searchTimer.current) clearTimeout(searchTimer.current);
-    if (q.trim().length < 2) { setMatches([]); return; }
-    searchTimer.current = setTimeout(async () => {
-      try {
-        const found = await searchPatientsForPicker(q);
-        if (latestQuery.current === q) setMatches(found);
-      } catch {
-        // Suggestions are optional: a failed lookup just shows none.
-        if (latestQuery.current === q) setMatches([]);
-      }
-    }, 250);
-  }
+  // 1000): see PatientPicker.
 
   function handleOpen() {
     const same = prefill?.procedureName ? procedures.find((p) => p.name === prefill.procedureName) ?? null : null;
@@ -537,11 +518,13 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
               // The same patient, by id: not editable here.
               <Input name="patient_name" required readOnly value={prefill.patientName} className="bg-slate-50" />
             ) : (
-              <Input name="patient_name" required list="patient-list" autoComplete="off" onChange={handlePatientInput} placeholder={t("patientNamePlaceholder")} defaultValue={prefill?.patientName} />
+              <PatientPicker
+                search={searchPatientsForPicker}
+                placeholder={t("patientNamePlaceholder")}
+                defaultValue={prefill?.patientName}
+                inputClassName="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              />
             )}
-            <datalist id="patient-list">
-              {matches.map(p => <option key={p.id} value={p.full_name} />)}
-            </datalist>
           </div>
 
           <div>

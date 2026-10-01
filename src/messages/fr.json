@@ -231,7 +231,8 @@
     "undoCancelled": "Rendez-vous annulé",
     "undoAction": "Annuler ({s} s)",
     "undoDone": "Annulé.",
-    "undoFailed": "Impossible d’annuler. Ouvrez l’élément pour l’ajuster."
+    "undoFailed": "Impossible d’annuler. Ouvrez l’élément pour l’ajuster.",
+    "newPatientOption": "Nouveau patient : {name}"
   },
   "payments": {
     "thisWeek": "Cette semaine",

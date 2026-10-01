@@ -231,7 +231,8 @@
     "undoCancelled": "예약 취소됨",
     "undoAction": "실행 취소 ({s}초)",
     "undoDone": "취소됨.",
-    "undoFailed": "실행 취소할 수 없습니다. 항목을 열어 조정하세요."
+    "undoFailed": "실행 취소할 수 없습니다. 항목을 열어 조정하세요.",
+    "newPatientOption": "새 환자: {name}"
   },
   "payments": {
     "thisWeek": "이번 주",

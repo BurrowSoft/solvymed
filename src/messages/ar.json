@@ -231,7 +231,8 @@
     "undoCancelled": "تم إلغاء الموعد",
     "undoAction": "تراجع ({s} ث)",
     "undoDone": "تم التراجع.",
-    "undoFailed": "تعذّر التراجع. افتح العنصر لتعديله."
+    "undoFailed": "تعذّر التراجع. افتح العنصر لتعديله.",
+    "newPatientOption": "مريض جديد: {name}"
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",

@@ -231,7 +231,8 @@
     "undoCancelled": "Termin abgesagt",
     "undoAction": "Rückgängig ({s} s)",
     "undoDone": "Rückgängig gemacht.",
-    "undoFailed": "Rückgängig machen nicht möglich. Öffnen Sie den Eintrag, um ihn anzupassen."
+    "undoFailed": "Rückgängig machen nicht möglich. Öffnen Sie den Eintrag, um ihn anzupassen.",
+    "newPatientOption": "Neuer Patient: {name}"
   },
   "payments": {
     "thisWeek": "Diese Woche",
