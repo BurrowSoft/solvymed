@@ -248,6 +248,31 @@ export async function declineProposal(appointmentId: string) {
   return { error: null };
 }
 
+// The patient cancels their own pending request (152: only a 'tentative'
+// row they asked for). [] = not cancellable (the clinic already answered).
+// The clinic gets "Pedido cancelado" (doctor + secretaries; never free text).
+export async function cancelMyRequest(appointmentId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const appt = await myAppointment(supabase, appointmentId);
+  if (!appt) return { error: "not_cancellable" };
+
+  const { data, error } = await supabase.rpc("cancel_my_booking", { p_appointment_id: appointmentId });
+  const row = ((data ?? []) as { professional_id: string; patient_name: string | null }[])[0];
+  if (error || !row) return { error: "not_cancellable" };
+
+  await notifyProfessional(supabase, row.professional_id, "requestCancelled", {
+    name: row.patient_name ?? (appt.patient_name as string),
+    date: appt.date as string,
+    time: appt.start_time as string,
+  });
+
+  revalidatePath("/my-appointments");
+  return { error: null };
+}
+
 // SQL migrations for the RPCs called below (request_appointment_reschedule,
 // accept_patient_reschedule) live in the mobile repo at
 // solvymed-mobile/apps/solvymed/supabase/migrations/025_* and 026_*.

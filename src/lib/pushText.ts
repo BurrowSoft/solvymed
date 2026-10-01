@@ -12,7 +12,8 @@ const LOCALES: PushLocale[] = ["pt-BR", "en", "es", "fr", "de", "it", "th"];
 export type PushKind =
   | "apptConfirmed" | "bookingNotAvailable" | "newTimeProposed" | "proposalAccepted" | "proposalDeclined"
   | "rescheduleRequested" | "rescheduleConfirmed" | "rescheduleConfirmedNoTime" | "rescheduleDeclined"
-  | "apptBookedByClinic" | "apptBookedSeriesByClinic" | "apptCancelledByClinic" | "apptMovedByClinic" | "newBookingRequest";
+  | "apptBookedByClinic" | "apptBookedSeriesByClinic" | "apptCancelledByClinic" | "apptMovedByClinic" | "newBookingRequest"
+  | "requestCancelled";
 
 type Text = { title: string; body: string };
 type Table = Record<PushKind, Text> & { note: string; messageHint: string };
@@ -21,6 +22,7 @@ type Table = Record<PushKind, Text> & { note: string; messageHint: string };
 const T: Record<PushLocale, Table> = {
   "pt-BR": {
     newBookingRequest: { title: "Novo pedido de consulta", body: "{name} pediu uma consulta para {when}." },
+    requestCancelled: { title: "Pedido cancelado", body: "{name} cancelou o pedido de {when}." },
     apptConfirmed: { title: "Consulta confirmada", body: "Sua consulta foi confirmada." },
     bookingNotAvailable: { title: "Pedido não aceito", body: "Não foi possível aceitar o seu pedido de consulta." },
     newTimeProposed: { title: "Novo horário proposto", body: "Foi proposto um novo horário: {when}." },
@@ -41,6 +43,7 @@ const T: Record<PushLocale, Table> = {
   },
   en: {
     newBookingRequest: { title: "New booking request", body: "{name} requested an appointment on {when}." },
+    requestCancelled: { title: "Request cancelled", body: "{name} cancelled their request for {when}." },
     apptConfirmed: { title: "Appointment confirmed", body: "Your appointment has been confirmed." },
     bookingNotAvailable: { title: "Request not accepted", body: "Your booking request couldn't be accepted." },
     newTimeProposed: { title: "New time proposed", body: "A new time was proposed: {when}." },
@@ -61,6 +64,7 @@ const T: Record<PushLocale, Table> = {
   },
   es: {
     newBookingRequest: { title: "Nueva solicitud de cita", body: "{name} pidió una cita para el {when}." },
+    requestCancelled: { title: "Solicitud cancelada", body: "{name} canceló su solicitud para el {when}." },
     apptConfirmed: { title: "Cita confirmada", body: "Tu cita ha sido confirmada." },
     bookingNotAvailable: { title: "Solicitud no aceptada", body: "No se pudo aceptar tu solicitud de cita." },
     newTimeProposed: { title: "Nuevo horario propuesto", body: "Se propuso un nuevo horario: {when}." },
@@ -81,6 +85,7 @@ const T: Record<PushLocale, Table> = {
   },
   fr: {
     newBookingRequest: { title: "Nouvelle demande de rendez-vous", body: "{name} a demandé un rendez-vous le {when}." },
+    requestCancelled: { title: "Demande annulée", body: "{name} a annulé sa demande pour le {when}." },
     apptConfirmed: { title: "Rendez-vous confirmé", body: "Votre rendez-vous a été confirmé." },
     bookingNotAvailable: { title: "Demande non acceptée", body: "Votre demande de rendez-vous n’a pas pu être acceptée." },
     newTimeProposed: { title: "Nouvel horaire proposé", body: "Un nouvel horaire a été proposé : {when}." },
@@ -101,6 +106,7 @@ const T: Record<PushLocale, Table> = {
   },
   de: {
     newBookingRequest: { title: "Neue Terminanfrage", body: "{name} hat einen Termin am {when} angefragt." },
+    requestCancelled: { title: "Anfrage storniert", body: "{name} hat die Anfrage für {when} storniert." },
     apptConfirmed: { title: "Termin bestätigt", body: "Ihr Termin wurde bestätigt." },
     bookingNotAvailable: { title: "Anfrage nicht angenommen", body: "Ihre Terminanfrage konnte nicht angenommen werden." },
     newTimeProposed: { title: "Neue Zeit vorgeschlagen", body: "Eine neue Zeit wurde vorgeschlagen: {when}." },
@@ -121,6 +127,7 @@ const T: Record<PushLocale, Table> = {
   },
   it: {
     newBookingRequest: { title: "Nuova richiesta di appuntamento", body: "{name} ha chiesto un appuntamento per il {when}." },
+    requestCancelled: { title: "Richiesta annullata", body: "{name} ha annullato la richiesta per il {when}." },
     apptConfirmed: { title: "Appuntamento confermato", body: "Il tuo appuntamento è stato confermato." },
     bookingNotAvailable: { title: "Richiesta non accettata", body: "Non è stato possibile accettare la tua richiesta di appuntamento." },
     newTimeProposed: { title: "Nuovo orario proposto", body: "È stato proposto un nuovo orario: {when}." },
@@ -141,6 +148,7 @@ const T: Record<PushLocale, Table> = {
   },
   th: {
     newBookingRequest: { title: "คำขอนัดหมายใหม่", body: "{name} ขอนัดหมายวันที่ {when}" },
+    requestCancelled: { title: "ยกเลิกคำขอ", body: "{name} ยกเลิกคำขอนัดวันที่ {when}" },
     apptConfirmed: { title: "ยืนยันนัดหมายแล้ว", body: "นัดหมายของคุณได้รับการยืนยันแล้ว" },
     bookingNotAvailable: { title: "ไม่สามารถรับคำขอได้", body: "ไม่สามารถรับคำขอนัดหมายของคุณได้" },
     newTimeProposed: { title: "เสนอเวลาใหม่", body: "มีการเสนอเวลาใหม่: {when}" },

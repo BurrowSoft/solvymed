@@ -878,7 +878,12 @@
     "statusDeclined": "ถูกปฏิเสธ",
     "cancelContactClinic": "หากต้องการยกเลิก กรุณาติดต่อคลินิก",
     "statusNotConfirmed": "ไม่ได้รับการยืนยัน",
-    "proposalPassed": "เวลานี้ผ่านไปแล้ว กรุณาขอเวลาใหม่จากคลินิก"
+    "proposalPassed": "เวลานี้ผ่านไปแล้ว กรุณาขอเวลาใหม่จากคลินิก",
+    "cancelRequest": "ยกเลิกคำขอ",
+    "cancelRequestTitle": "ยกเลิกคำขอนี้?",
+    "cancelRequestBody": "คลินิกจะได้รับแจ้ง และเวลานี้จะว่างสำหรับผู้อื่น",
+    "keepRequest": "เก็บคำขอไว้",
+    "requestCancelledToast": "ยกเลิกคำขอแล้ว"
   },
   "nav": {
     "overview": "ภาพรวม",

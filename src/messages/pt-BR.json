@@ -878,7 +878,12 @@
     "statusDeclined": "Recusado",
     "cancelContactClinic": "Para cancelar, fale com a clínica.",
     "statusNotConfirmed": "Não confirmado",
-    "proposalPassed": "Este horário já passou. Peça um novo horário à clínica."
+    "proposalPassed": "Este horário já passou. Peça um novo horário à clínica.",
+    "cancelRequest": "Cancelar pedido",
+    "cancelRequestTitle": "Cancelar este pedido?",
+    "cancelRequestBody": "A clínica será avisada e o horário fica livre.",
+    "keepRequest": "Manter pedido",
+    "requestCancelledToast": "Pedido cancelado."
   },
   "nav": {
     "overview": "Visão geral",
