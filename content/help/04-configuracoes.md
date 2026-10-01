@@ -41,11 +41,13 @@
 2. Compartilhe o código de convite (vale 7 dias, uso único).
 3. A pessoa cria a conta em "Trabalha na secretaria?" com esse código.
 Você pode ter até 3 secretárias(os). Elas(es) cuidam da agenda, dos pacientes e dos pagamentos, mas não veem prontuários, receitas, exames nem arquivos. Para remover alguém: **Equipe → Remover**.
+{pending:secretary-invite-email-live} O convite também chega por e-mail ao endereço informado. **Reenviar convite** envia um convite novo (no máximo um por hora, até 10 por dia; o código anterior deixa de funcionar). Quem cria a conta pelo convite já encontra o e-mail preenchido.
 **en**
 1. **Settings → Team → Invite**.
 2. Share the invite code (valid for 7 days, single use).
 3. The person signs up under "Work at the front desk?" with that code.
 You can have up to 3 secretaries. They manage the schedule, patients and payments, but can't see records, prescriptions, exams or files. To remove someone: **Team → Remove**.
+{pending:secretary-invite-email-live} The invite is also emailed to the address you entered. **Resend invite** sends a new one (at most once an hour, up to 10 a day; the previous code stops working). Whoever signs up from the invite finds the email already filled in.
 **No site:** **Configurações → Equipe**: digite o e-mail da pessoa e clique em **Convidar**. Compartilhe na hora o link ou o código que aparece (só aparece uma vez, vale 7 dias e só para esse e-mail). Para tirar alguém: **Remover**; para cancelar um convite pendente: **Revogar**.
 **On the website:** **Settings → Team**: type the person's email and click **Invite**. Share the link or code that appears right away (it's shown only once and works for 7 days, for that email only). To remove someone: **Remove**; to cancel a pending invite: **Revoke**.
 `open:settings-team`
