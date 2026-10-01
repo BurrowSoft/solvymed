@@ -107,7 +107,7 @@
     "invitedSeeAll": "See all in Patients",
     "invitedSameEmail": "Same email as {name}: merge?",
     "invitedRemoveConfirm": "Remove {name}? Their account goes back to waiting for your confirmation, and the record is archived.",
-    "invitedRemoveConfirmDisconnect": "Remove {name}? The account will be disconnected from your clinic, pending requests will be cancelled (the patient is notified) and the record archived. To let them back in, share the patient's personal code."
+    "invitedRemoveConfirmDisconnect": "Remove {name}? The account will be disconnected from your clinic, pending requests will be cancelled (the patient is notified) and the record archived. To let them back in, restore the record from Archived and share the patient's personal code."
   },
   "schedule": {
     "patientMessage": "Patient's message",
@@ -812,7 +812,7 @@
       "otherBody": "Tap Continue to finish.",
       "continue": "Continue",
       "expiredTitle": "This link has expired",
-      "expiredBody": "Request a new one from the sign-in page.",
+      "expiredBody": "This link was already used or has expired. Sign in with your email and password.",
       "goToSignIn": "Go to sign in"
     },
     "captchaFailed": "Please complete the verification and try again.",
@@ -1852,5 +1852,9 @@
     "tryNow": "Try it now",
     "later": "Later",
     "whatCanDo": "What can SolvyAI do?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
   }
 }

@@ -10,6 +10,8 @@ import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
+import { OpenInApp } from "@/components/OpenInApp";
+import { SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
@@ -42,6 +44,9 @@ export default function LoginPage() {
     }
     if (submitting.current) return;
     submitting.current = true;
+    // A signup's country pick is for the account created here, not for
+    // whoever signs in next on this browser (9a).
+    document.cookie = `${SIGNUP_COUNTRY_COOKIE}=; path=/; max-age=0; samesite=lax`;
     setLoading(true);
     const supabase = createClient();
     const { data: signInData, error: authError } = await supabase.auth.signInWithPassword({
@@ -95,6 +100,7 @@ export default function LoginPage() {
   return (
     <AuthPageShell>
       <AuthCard>
+        <OpenInApp />
         {/* Back to home */}
         <div className="mb-6">
           <Link

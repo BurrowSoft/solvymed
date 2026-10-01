@@ -107,7 +107,7 @@
     "invitedSeeAll": "Vedi tutti in Pazienti",
     "invitedSameEmail": "Stessa e-mail di {name}: unire?",
     "invitedRemoveConfirm": "Rimuovere {name}? L'account tornerà in attesa della tua conferma e la scheda verrà archiviata.",
-    "invitedRemoveConfirmDisconnect": "Rimuovere {name}? L'account verrà scollegato dal tuo studio, le richieste in sospeso verranno annullate (il paziente viene avvisato) e la scheda archiviata. Per riammetterlo, condividi il codice personale del paziente."
+    "invitedRemoveConfirmDisconnect": "Rimuovere {name}? L'account verrà scollegato dal tuo studio, le richieste in sospeso verranno annullate (il paziente viene avvisato) e la scheda archiviata. Per riammetterlo, ripristina la scheda da Archiviati e condividi il codice personale del paziente."
   },
   "schedule": {
     "patientMessage": "Messaggio del paziente",
@@ -1822,5 +1822,9 @@
     "tryNow": "Prova ora",
     "later": "Più tardi",
     "whatCanDo": "Cosa può fare SolvyAI?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
   }
 }

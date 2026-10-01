@@ -107,7 +107,7 @@
     "invitedSeeAll": "Lihat semua di Pasien",
     "invitedSameEmail": "Email sama dengan {name}: gabungkan?",
     "invitedRemoveConfirm": "Hapus {name}? Akunnya kembali menunggu konfirmasi Anda, dan datanya diarsipkan.",
-    "invitedRemoveConfirmDisconnect": "Hapus {name}? Akun akan diputus dari klinik Anda, permintaan yang tertunda dibatalkan (pasien diberi tahu), dan datanya diarsipkan. Untuk menerimanya kembali, bagikan kode pribadi pasien."
+    "invitedRemoveConfirmDisconnect": "Hapus {name}? Akun akan diputus dari klinik Anda, permintaan yang tertunda dibatalkan (pasien diberi tahu), dan datanya diarsipkan. Untuk menerimanya kembali, pulihkan data dari Diarsipkan dan bagikan kode pribadi pasien."
   },
   "schedule": {
     "patientMessage": "Pesan pasien",
@@ -1822,5 +1822,9 @@
     "tryNow": "Coba sekarang",
     "later": "Nanti",
     "whatCanDo": "Apa yang bisa dilakukan SolvyAI?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
   }
 }

@@ -142,20 +142,10 @@ export async function middleware(req: NextRequest) {
     return res;
   }
 
-  // ?country=XX dev simulation
-  const devCountry = searchParams.get("country");
-  if (devCountry) {
-    const intlRes = intlMiddleware(req);
-    if (intlRes.status >= 300 && intlRes.status < 400) return finalize(intlRes);
-    const newHeaders = new Headers(req.headers);
-    newHeaders.set("x-burrowsoft-geo", devCountry.toUpperCase());
-    const res = NextResponse.next({ request: { headers: newHeaders } });
-    intlRes.headers.forEach((value, key) => {
-      if (key === "set-cookie") res.headers.append(key, value);
-    });
-    return finalize(res);
-  }
-
+  // (A ?country=XX "dev simulation" branch used to sit here: it set a header
+  // nothing read and replaced next-intl's response, so any URL with
+  // ?country= lost its locale rewrite: a 404 in English, English text in
+  // pt/th (#279). Removed; geo testing uses local `next dev`.)
   return finalize(intlMiddleware(req));
 }
 

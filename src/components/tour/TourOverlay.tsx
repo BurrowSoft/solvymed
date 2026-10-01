@@ -17,7 +17,8 @@ import type { TourFallback, TourStep } from "@/lib/tour";
 const PAD = 8; // space around the spotlighted element
 const CARD_W = 320;
 const GAP = 16;
-const FIND_TIMEOUT_MS = 3000;
+// Then the step is dropped (UX: about 2 s, item 28).
+const FIND_TIMEOUT_MS = 2000;
 
 type Rect = { top: number; left: number; width: number; height: number };
 
@@ -122,6 +123,13 @@ export function TourOverlay({
 
   const step = steps[index];
   const total = steps.length;
+
+  // The next step's page is fetched ahead, so moving there (e.g. step 6 →
+  // Settings) doesn't wait for it (Vitor, item 28: ~3 s on a busy CPU).
+  const nextPath = steps[index + 1]?.path;
+  useEffect(() => {
+    if (nextPath && `${prefix}${nextPath}` !== pathname) router.prefetch(`${prefix}${nextPath}`);
+  }, [nextPath, pathname, prefix, router]);
 
   const measure = useCallback(() => {
     const el = targetRef.current;
@@ -228,7 +236,12 @@ export function TourOverlay({
     w: rect.width + 2 * PAD,
     h: rect.height + 2 * PAD,
   };
-  const pos = rect ? cardPosition(rect, cardH) : null;
+  // While the step's page loads or its element is found, the card waits in
+  // the middle (Skip always works; the dim swallows clicks, so a card-less
+  // wait looked frozen, item 28).
+  const pos = rect
+    ? cardPosition(rect, cardH)
+    : { top: Math.max(GAP, (window.innerHeight - cardH) / 2), left: Math.max(GAP, (window.innerWidth - Math.min(CARD_W, window.innerWidth - 2 * GAP)) / 2) };
   const title = tSteps(step.titleKey);
   // The fallback's text when the step's own target isn't on screen.
   const text = !usedFallback

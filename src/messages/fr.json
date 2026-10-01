@@ -107,7 +107,7 @@
     "invitedSeeAll": "Tout voir dans Patients",
     "invitedSameEmail": "Même e-mail que {name} : fusionner ?",
     "invitedRemoveConfirm": "Retirer {name} ? Son compte attendra à nouveau votre confirmation et la fiche sera archivée.",
-    "invitedRemoveConfirmDisconnect": "Retirer {name} ? Le compte sera déconnecté de votre cabinet, les demandes en attente seront annulées (le patient est prévenu) et la fiche archivée. Pour le réadmettre, partagez le code personnel du patient."
+    "invitedRemoveConfirmDisconnect": "Retirer {name} ? Le compte sera déconnecté de votre cabinet, les demandes en attente seront annulées (le patient est prévenu) et la fiche archivée. Pour le réadmettre, restaurez la fiche depuis Archivés et partagez le code personnel du patient."
   },
   "schedule": {
     "patientMessage": "Message du patient",
@@ -1822,5 +1822,9 @@
     "tryNow": "Essayer maintenant",
     "later": "Plus tard",
     "whatCanDo": "Que peut faire SolvyAI ?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
   }
 }

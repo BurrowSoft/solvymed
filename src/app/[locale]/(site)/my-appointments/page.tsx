@@ -6,7 +6,7 @@ import { clinicDate } from "@/lib/clinicTime";
 import { getOnboardingFlags } from "@/lib/setup";
 import { SaveMyLocale } from "@/components/SaveMyLocale";
 import { cookies } from "next/headers";
-import { parseCountryChoice, patientLanguageTarget, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
+import { parseCountryChoice, patientLanguageTarget, pickApplies, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 
 export type PatientAppointment = {
   id: string;
@@ -64,7 +64,7 @@ export default async function MyAppointmentsPage({
   // public (Thai switched off) is never forced.
   // A signup pick not saved yet (its cookie) wins: SaveMyLocale below saves
   // it with this page's language, then clears it.
-  const pick = parseCountryChoice((await cookies()).get(SIGNUP_COUNTRY_COOKIE)?.value);
+  const pick = pickApplies(user.created_at) ? parseCountryChoice((await cookies()).get(SIGNUP_COUNTRY_COOKIE)?.value) : null;
   const { data: savedCountry, error: countryError } = pick ? { data: pick, error: null } : await supabase.rpc("my_country");
   const target = countryError ? null : patientLanguageTarget(locale, savedCountry as string | null);
   if (target) redirect(`${target === "en" ? "" : `/${target}`}/my-appointments`);

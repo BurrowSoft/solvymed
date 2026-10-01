@@ -50,3 +50,17 @@ describe("the signup's ?c= routes like the bare page", () => {
     expect(r.rewrite).toBe("/en/auth/signup");
   });
 });
+
+describe("?country= is just a query parameter (the dev geo branch is gone)", () => {
+  it.each([
+    ["/auth/signup", "en"],
+    ["/th/auth/signup", "th"],
+    ["/pt-BR/pricing", "pt-BR"],
+  ])("%s?country=… routes like the bare page", async (path, locale) => {
+    const bare = await routing(path, locale);
+    const withCountry = await routing(`${path}?country=TH`, locale);
+    expect(withCountry.status).toBe(bare.status);
+    expect(withCountry.rewrite).toBe(bare.rewrite);
+    expect(withCountry.locale).toBe(bare.locale);
+  });
+});

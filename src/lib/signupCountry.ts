@@ -89,3 +89,12 @@ export function patientLanguageTarget(locale: string, country: string | null | u
   const pair = countryProfile(c).languages as readonly string[];
   return pair.includes(locale) || !isPublicLocale(pair[0]) ? null : pair[0];
 }
+
+// The pick is for the account just created in this browser: honoured only
+// while the account is younger than the cookie (a shared computer's next
+// patient never inherits it; signing in from the login page clears it too).
+export const SIGNUP_PICK_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
+export function pickApplies(accountCreatedAt: string | null | undefined, now: number = Date.now()): boolean {
+  const t = accountCreatedAt ? new Date(accountCreatedAt).getTime() : NaN;
+  return Number.isFinite(t) && now - t <= SIGNUP_PICK_MAX_AGE_MS;
+}

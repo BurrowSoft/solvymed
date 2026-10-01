@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { savedLocaleFor } from "@/lib/pushRecipient";
+import { pickApplies } from "@/lib/signupCountry";
 
 // Saves the signed-in user's language for the pushes and messages others
 // send them (migration 117, set_my_locale): at sign-in and on every language
@@ -15,7 +16,8 @@ export async function saveMyLocale(webLocale: string, country?: string | null): 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return false;
-  const c = country === "BR" || country === "TH" ? country : null;
+  // The signup pick only for a new account (lib/signupCountry pickApplies).
+  const c = (country === "BR" || country === "TH") && pickApplies(user.created_at) ? country : null;
   const { error } = await supabase.rpc("set_my_locale", c ? { p_locale: locale, p_country: c } : { p_locale: locale });
   return !error;
 }
