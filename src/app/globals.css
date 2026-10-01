@@ -64,6 +64,11 @@
   @apply h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent;
 }
 
+/* In the button's own text colour (any button, light or dark theme). */
+.spinner-current {
+  @apply inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent align-[-2px];
+}
+
 .link-teal {
   @apply text-teal-600 hover:underline;
 }

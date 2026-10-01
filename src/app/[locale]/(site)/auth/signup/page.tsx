@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useRef, useState } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
@@ -15,7 +15,7 @@ import { MIN_PASSWORD_LENGTH } from "@/lib/password";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
-import { browserTimeZone, initialCountryChoice, signupCountryMetadata, type CountryChoice } from "@/lib/signupCountry";
+import { browserTimeZone, COUNTRY_STEP, countryStepHref, parseCountryChoice, signupCountryMetadata } from "@/lib/signupCountry";
 import { thaiEnabled } from "@/lib/publicLocales";
 import { consentMetadata } from "@/lib/legalVersions";
 import { titleExamples } from "@/lib/country";
@@ -63,32 +63,24 @@ export default function SignupPage() {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaReset, setCaptchaReset] = useState(0);
 
-  // The practice's country (doctors only; secretaries and patients follow
-  // their practice). Pre-selected from the visitor's country, else the page
-  // language; it sets currency, patient ID and payment QR, and afterwards
-  // changes only through support.
-  const [detectedCountry, setDetectedCountry] = useState<string | null>(null);
-  const [countryChoice, setCountryChoice] = useState<CountryChoice>(() => initialCountryChoice(null, locale));
-  const countryTouched = useRef(false);
-  // The title examples follow the country picked here, live (UX): the
-  // registry's, or the locale's own list for "Other" ("OTHER" isn't an ISO
-  // code, so it's looked up as the unknown "ZZ", never read as Brazil).
+  // Country first (Vitor, 2026-10-01): the signup starts with "Where are
+  // you?" (Brasil / ประเทศไทย + "Use SolvyMed in English"); the choice comes
+  // back as ?c= in the chosen language, and it's the practice country
+  // (it locks after signup). Invite and join-link signups already belong to a
+  // practice, so they skip it. Before the Thai release there's no step (every
+  // practice is Brazilian, the database default).
+  const router = useRouter();
+  const country = parseCountryChoice(searchParams.get("c"));
+  const countryStep = thaiEnabled && !isSecretaryFlow && !isJoinFlow;
+  const [english, setEnglish] = useState(locale === "en");
+  const goTo = (href: string, newLocale: string) => {
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; samesite=lax`;
+    router.push(href);
+  };
+  // The title examples follow the country picked, live (UX): the registry's,
+  // or the locale's own list without one (the unknown "ZZ", never Brazil).
   const tSettings = useTranslations("settings");
-  const signupTitles = titleExamples(countryChoice === "OTHER" ? "ZZ" : countryChoice, locale) ?? tSettings("fullNameTitles");
-  useEffect(() => {
-    // No picker before the Thai release, so no lookup either.
-    if (!thaiEnabled) return;
-    let alive = true;
-    fetch("/api/geo")
-      .then((r) => r.json() as Promise<{ country: string | null }>)
-      .then(({ country }) => {
-        if (!alive) return;
-        setDetectedCountry(country);
-        if (!countryTouched.current) setCountryChoice(initialCountryChoice(country, locale));
-      })
-      .catch(() => {});
-    return () => { alive = false; };
-  }, [locale]);
+  const signupTitles = titleExamples(country ?? "ZZ", locale) ?? tSettings("fullNameTitles");
 
   const localePath = (path: string) =>
     locale === "en" ? path : `/${locale}${path}`;
@@ -161,7 +153,7 @@ export default function SignupPage() {
           // handle_new_user stores them (migration 110; ignored before it).
           // Nothing before the Thai release (the database default, BR).
           ...(role === "professional"
-            ? signupCountryMetadata(countryChoice, detectedCountry, browserTimeZone())
+            ? signupCountryMetadata(country ?? "BR", browserTimeZone())
             : {}),
           ...(role === "patient" && inviteCode.trim()
             ? { invite_code: inviteCode.toUpperCase().trim() }
@@ -214,23 +206,94 @@ export default function SignupPage() {
     );
   }
 
+  const backArrow = (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <path d="M19 12H5M12 5l-7 7 7 7" />
+    </svg>
+  );
+  // "Use SolvyMed in English": always in English (spec), on the country step
+  // and on the invite / join-link signups, which skip it.
+  const englishBox = (onChange: (checked: boolean) => void) => (
+    <label className="mt-5 flex items-center justify-center gap-2 text-sm text-slate-600">
+      <input type="checkbox" checked={english} onChange={(e) => { setEnglish(e.target.checked); onChange(e.target.checked); }} className="h-4 w-4 accent-teal-600" />
+      Use SolvyMed in English
+    </label>
+  );
+
+  // Step 1: "Where are you?", trilingual, with nothing else (spec).
+  if (countryStep && !country) {
+    return (
+      <AuthPageShell>
+        <AuthCard>
+          <div className="mb-6">
+            <Link href={localePath("/")} className="back-link">
+              {backArrow}
+              {t("backToHome")}
+            </Link>
+          </div>
+          <BrandMark />
+          <h1 className="mb-6 text-center text-lg font-bold text-slate-900">Onde você está? · คุณอยู่ที่ไหน? · Where are you?</h1>
+          <div className="grid gap-3">
+            {COUNTRY_STEP.map((c) => (
+              <button
+                key={c.code}
+                type="button"
+                onClick={() => {
+                  const next = english ? "en" : c.locale;
+                  goTo(countryStepHref(c.code, next, searchParams), next);
+                }}
+                className="flex items-center justify-center gap-3 rounded-2xl border-2 border-teal-200 bg-white px-6 py-5 text-xl font-bold text-slate-900 transition hover:border-teal-500 hover:bg-teal-50"
+              >
+                <span aria-hidden="true">{c.flag}</span>
+                {c.label}
+              </button>
+            ))}
+          </div>
+          {englishBox(() => {})}
+        </AuthCard>
+      </AuthPageShell>
+    );
+  }
+
   return (
     <AuthPageShell>
       <AuthCard>
-        {/* Back */}
+        {/* Back: to the country step when there is one (the country locks
+            after signup), else home. Browser Back does the same. */}
         <div className="mb-6">
-          <Link href={localePath("/")} className="back-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-              <path d="M19 12H5M12 5l-7 7 7 7" />
-            </svg>
-            {t("backToHome")}
-          </Link>
+          {countryStep ? (
+            <Link href={countryStepHref(null, locale, searchParams)} className="back-link" aria-label={t("signup.backToCountry")}>
+              {backArrow}
+              {t("signup.backToCountry")}
+            </Link>
+          ) : (
+            <Link href={localePath("/")} className="back-link">
+              {backArrow}
+              {t("backToHome")}
+            </Link>
+          )}
         </div>
 
         <BrandMark />
 
         <h1 className="mb-1 text-center text-2xl font-extrabold text-slate-900">{t("signup.title")}</h1>
         <p className="mb-6 text-center text-sm text-slate-500">{t("signup.subtitle")}</p>
+
+        {/* Invite / join-link signups: the practice's country, so only the
+            English switch (back to the language the link opened in). */}
+        {thaiEnabled && !countryStep && (
+          <div className="-mt-3 mb-6">
+            {englishBox((checked) => {
+              const q = new URLSearchParams(searchParams.toString());
+              const back = q.get("from") ?? "pt-BR";
+              if (checked) q.set("from", locale);
+              else q.delete("from");
+              const next = checked ? "en" : back;
+              const qs = q.toString();
+              goTo(`${next === "en" ? "" : `/${next}`}/auth/signup${qs ? `?${qs}` : ""}`, next);
+            })}
+          </div>
+        )}
 
         {/* Role picker — hidden when joining via invite link */}
         {isJoinFlow ? (
@@ -270,32 +333,6 @@ export default function SignupPage() {
           </div>
           <p className="mt-3 text-center text-xs text-slate-500">{t("signup.secretaryNeedsInvite")}</p>
         </div>
-        )}
-
-        {/* Practice country: doctors only, from the Thai release on (before
-            it every practice is Brazilian, the database default). */}
-        {thaiEnabled && role === "professional" && !isSecretaryFlow && !isJoinFlow && (
-          <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4">
-            <label htmlFor="signup-country" className="block text-sm font-semibold text-slate-700 mb-1">
-              {t("signup.country")}
-            </label>
-            <select
-              id="signup-country"
-              form="signup-form"
-              value={countryChoice}
-              onChange={(e) => {
-                countryTouched.current = true;
-                setCountryChoice(e.target.value as CountryChoice);
-              }}
-              className="w-full rounded-xl border border-teal-200 bg-white px-4 py-3 text-base text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-            >
-              {/* Country names in their own language, as in a language picker. */}
-              <option value="BR">Brasil</option>
-              <option value="TH">ประเทศไทย</option>
-              <option value="OTHER">{t("signup.countryOther")}</option>
-            </select>
-            <p className="mt-1.5 text-xs text-slate-500">{t("signup.countryHint")}</p>
-          </div>
         )}
 
         {/* Invite code — patients only, hidden when joining via link */}

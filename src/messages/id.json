@@ -729,10 +729,8 @@
       "secretaryNeedsInvite": "Sekretaris? Minta tautan undangan dari dokter Anda.",
       "secretaryEmailMismatch": "Email ini tidak cocok dengan undangan, atau undangan sudah tidak berlaku. Periksa email Anda atau minta tautan baru ke klinik.",
       "consentCheckbox": "Saya telah membaca dan menyetujui <terms>Ketentuan Penggunaan</terms> dan <privacy>Kebijakan Privasi</privacy>",
-      "country": "Di mana praktik Anda?",
-      "countryOther": "Negara lain",
-      "countryHint": "Menentukan mata uang, harga paket, identitas pasien, dan QR pembayaran. Untuk mengubahnya nanti, hubungi dukungan.",
-      "fullNameHint": "Tambahkan gelar Anda jika mau ({titles}); gelar akan muncul di sapaan."
+      "fullNameHint": "Tambahkan gelar Anda jika mau ({titles}); gelar akan muncul di sapaan.",
+      "backToCountry": "Kembali"
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",
@@ -1165,7 +1163,6 @@
   "pricing": {
     "navLabel": "Harga",
     "countryLabel": "Harga untuk:",
-    "countryOther": "Negara lainnya",
     "title": "Satu paket sederhana. Semua sudah termasuk.",
     "subtitle": "Tanpa biaya pendaftaran, tanpa biaya per pasien, tanpa kejutan.",
     "perMonth": "/bulan",
