@@ -112,7 +112,7 @@
     "what": "Migration 150 (mobile #238) is applied on production: appointments.status_reason (≤200, the clinic's reason on reject/cancel), status_by ('clinic' | 'patient', set by its trigger) and clinic_message (≤200, the clinic's message on Confirm/Propose), all returned by get_my_appointments. Gates the website's reason fields, the patient's \"Recusado/Cancelado pela clínica\" lines and \"Mensagem da clínica\", the push hint instead of the note text, and their Help / App Map lines."
   },
   "secretary-invite-email-live": {
-    "met": false,
+    "met": true,
     "what": "Secretary invites are emailed (migration 151 + the send-secretary-invite function, live) AND the privacy policy's secretary-invite text is live with PRIVACY_VERSION bumped, after mobile's accepting migration. Until then the website never calls the function: invites are shared by link/code only."
   }
 }
