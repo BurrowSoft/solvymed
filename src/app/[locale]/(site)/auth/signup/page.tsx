@@ -57,6 +57,8 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  // One submit at a time (a double-click lands before the disabled re-render).
+  const submitting = useRef(false);
   // Bot protection (dormant until a Turnstile site key is configured).
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaReset, setCaptchaReset] = useState(0);
@@ -107,6 +109,8 @@ export default function SignupPage() {
       return;
     }
 
+    if (submitting.current) return;
+    submitting.current = true;
     setLoading(true);
     const supabase = createClient();
 
@@ -123,6 +127,7 @@ export default function SignupPage() {
         p_email: email,
       });
       if (!matchError && matches === false) {
+        submitting.current = false;
         setLoading(false);
         setError(t("signup.secretaryEmailMismatch"));
         return;
@@ -165,6 +170,7 @@ export default function SignupPage() {
         ...(captchaToken ? { captchaToken } : {}),
       },
     });
+    submitting.current = false;
     setLoading(false);
     if (turnstileEnabled) setCaptchaReset((n) => n + 1);
 
