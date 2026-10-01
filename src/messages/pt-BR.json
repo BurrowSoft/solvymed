@@ -1790,7 +1790,8 @@
     "couldntFinish": "Não consegui concluir isso. Pode dizer de outro jeito, com o nome do paciente, a data e o horário?",
     "onlySolvyMed": "Só posso ajudar com o SolvyMed.",
     "noClinical": "Não posso ajudar com questões clínicas.",
-    "minutes": "{n} min"
+    "minutes": "{n} min",
+    "alreadyPaid": "Esta consulta já está paga."
   },
   "countryExamples": {
     "phone": "Número com DDD/código de área"

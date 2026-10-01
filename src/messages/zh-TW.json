@@ -1790,7 +1790,8 @@
     "couldntFinish": "沒能完成。能換個說法，並附上病患姓名、日期和時間嗎？",
     "onlySolvyMed": "我只能協助處理 SolvyMed 相關問題。",
     "noClinical": "我無法回答臨床問題。",
-    "minutes": "{n} 分鐘"
+    "minutes": "{n} 分鐘",
+    "alreadyPaid": "此預約已付款。"
   },
   "countryExamples": {
     "phone": "電話號碼"

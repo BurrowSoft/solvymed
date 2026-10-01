@@ -252,6 +252,7 @@ export const ACTIONS: AppMapAction[] = [
       "On the website SolvyAI doesn't send it: it's only in the app for now (say so, with the Help link).",
       "Thai practices show a PromptPay QR on the appointment instead; there's no WhatsApp PromptPay message. Asked to send it for a Thai practice, SolvyAI never proposes it: it answers \"Em clínicas na Tailândia, o paciente paga escaneando o QR PromptPay da consulta.\" with an \"Abrir QR\" link to that appointment.",
       "The payment method always follows the PRACTICE's country.",
+      "Never for a paid appointment, in any country: SolvyAI answers \"Esta consulta já está paga.\" and the screens don't show the QR once it's paid.",
     ],
     card: ["patient", "appointment", "value", "Pix key"],
     after: "whatsapp",

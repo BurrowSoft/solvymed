@@ -566,6 +566,16 @@ describe("SolvyAI actions mode: Confirmar failed", () => {
     expect(r.chunks.filter((c) => c.kind === "block")).toEqual([{ kind: "block", block: { type: "text", text: "Só é possível cancelar consultas agendadas, confirmadas ou atrasadas. Nada foi salvo." } }]);
   });
 
+  it("paid between the card and Confirmar (send_pix 'already_paid'): the fixed line, no model, not a 400", async () => {
+    for (const [locale, text] of [["pt-BR", "Esta consulta já está paga."], ["en", "This appointment is already paid."], ["th", "นัดหมายนี้ชำระแล้ว"]]) {
+      const t = setup(() => "never");
+      const r = await run(t, { event: { type: "confirm_failed", code: "already_paid", action: { kind: "send_pix", args: { appointmentId: "a-done" } } }, screen: "payments", locale });
+      expect(r.status, locale).toBe(200);
+      expect(t.model.calls).toEqual([]);
+      expect(r.chunks.filter((c) => c.kind === "block")).toEqual([{ kind: "block", block: { type: "text", text } }]);
+    }
+  });
+
   it("refused: a bad action, help mode, and the anti-spam limit", async () => {
     let t = setup(() => "never");
     expect((await run(t, failed({ args: { date: "30/09/2026", start: "10:00" } }))).status).toBe(400);
@@ -848,6 +858,19 @@ describe("SolvyAI actions mode: send Pix (app only; Brazil only; Thai practices 
     t = inApp(setup(pix));
     t.tables.appointments.find((a) => a.id === "a-joao")!.payment_status = "paid";
     expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
+  });
+
+  it("a paid appointment: UX's fixed line, never a card or a QR link, in any country (B7 / app #214)", async () => {
+    for (const country of ["BR", "TH"]) {
+      const t = inApp(setup(pix));
+      t.tables.professionals[0].country = country;
+      t.tables.appointments.find((a) => a.id === "a-joao")!.payment_status = "paid";
+      const r = await run(t, ask("Manda o Pix do Mario"));
+      expect(cardOf(r.blocks), country).toBeUndefined();
+      expect(r.blocks.find((b) => b.type === "open"), country).toBeUndefined();
+      const texts = r.chunks.flatMap((c) => (c.kind === "block" && c.block.type === "text" ? [c.block.text] : []));
+      expect(texts, country).toContain("Esta consulta já está paga.");
+    }
   });
 
   it("an unknown practice country: no card at all (never a guessed Pix path)", async () => {

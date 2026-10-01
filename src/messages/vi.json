@@ -1790,7 +1790,8 @@
     "couldntFinish": "Tôi chưa làm được. Bạn có thể nói cách khác, kèm tên bệnh nhân, ngày và giờ không?",
     "onlySolvyMed": "Tôi chỉ có thể giúp về SolvyMed.",
     "noClinical": "Tôi không thể giúp về các vấn đề lâm sàng.",
-    "minutes": "{n} phút"
+    "minutes": "{n} phút",
+    "alreadyPaid": "Lịch hẹn này đã được thanh toán."
   },
   "countryExamples": {
     "phone": "Số điện thoại"
