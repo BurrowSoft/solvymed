@@ -251,7 +251,10 @@
     "revertConfirm": "Reverter este pagamento para pendente?",
     "errorInvalidAmount": "Informe um valor válido.",
     "errorGeneric": "Algo deu errado. Tente novamente.",
-    "amountPlaceholderPlain": "Valor"
+    "amountPlaceholderPlain": "Valor",
+    "noAmount": "Sem valor",
+    "setAmount": "Definir valor",
+    "amountFirst": "Informe primeiro o valor recebido."
   },
   "paymentsPage": {
     "title": "Pagamentos",
@@ -1792,7 +1795,8 @@
     "onlySolvyMed": "Só posso ajudar com o SolvyMed.",
     "noClinical": "Não posso ajudar com questões clínicas.",
     "minutes": "{n} min",
-    "alreadyPaid": "Esta consulta já está paga."
+    "alreadyPaid": "Esta consulta já está paga.",
+    "noAmount": "Esta consulta não tem valor. Defina o valor na Agenda antes de marcar como paga."
   },
   "countryExamples": {
     "phone": "Número com DDD/código de área"

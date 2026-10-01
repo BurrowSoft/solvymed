@@ -251,7 +251,10 @@
     "revertConfirm": "將此付款恢復為待付款狀態？",
     "errorInvalidAmount": "請輸入有效金額。",
     "errorGeneric": "發生問題，請重試。",
-    "amountPlaceholderPlain": "金額"
+    "amountPlaceholderPlain": "金額",
+    "noAmount": "無金額",
+    "setAmount": "設定金額",
+    "amountFirst": "請先輸入已收金額。"
   },
   "paymentsPage": {
     "title": "付款",
@@ -1792,7 +1795,8 @@
     "onlySolvyMed": "我只能協助處理 SolvyMed 相關問題。",
     "noClinical": "我無法回答臨床問題。",
     "minutes": "{n} 分鐘",
-    "alreadyPaid": "此預約已付款。"
+    "alreadyPaid": "此預約已付款。",
+    "noAmount": "此預約沒有金額。請先在行程中設定金額，再標記為已付。"
   },
   "countryExamples": {
     "phone": "電話號碼"

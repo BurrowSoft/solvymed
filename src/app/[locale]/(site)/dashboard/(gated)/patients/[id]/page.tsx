@@ -46,7 +46,7 @@ export default async function PatientDetailPage({
     isSecretary
       ? noRows
       : supabase.from("prescriptions").select("id, date, notes, created_at, created_by, created_by_name, corrects_id, correction_reason, prescription_items(name, dosage, frequency, duration)").eq("patient_id", id).order("date", { ascending: false }),
-    supabase.from("appointments").select("id, date, start_time, consultation_type, status, payment_status").eq("patient_id", id).neq("status", "blocked").order("date", { ascending: false }).limit(50),
+    supabase.from("appointments").select("id, date, start_time, consultation_type, status, payment_status, payment_amount").eq("patient_id", id).neq("status", "blocked").order("date", { ascending: false }).limit(50),
     // Whether Delete is offered at all (only without clinical history).
     // Null on error: Delete stays hidden and Archive is always available.
     getArchivePreview(id),
@@ -75,7 +75,7 @@ export default async function PatientDetailPage({
   const isArchived = !!patient.archived_at;
   const records = (recordsResult.data ?? []) as MedRecord[];
   const prescriptions = (prescriptionsResult.data ?? []) as Rx[];
-  const appointments = (apptsResult.data ?? []) as { id: string; date: string; start_time: string; consultation_type: string; status: string; payment_status: string }[];
+  const appointments = (apptsResult.data ?? []) as { id: string; date: string; start_time: string; consultation_type: string; status: string; payment_status: string; payment_amount: number | null }[];
 
   const initials = patient.full_name.split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
   const age = patient.birth_date

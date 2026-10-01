@@ -251,7 +251,10 @@
     "revertConfirm": "Remettre ce paiement en attente ?",
     "errorInvalidAmount": "Veuillez saisir un montant valide.",
     "errorGeneric": "Une erreur s'est produite. Réessayez.",
-    "amountPlaceholderPlain": "Montant"
+    "amountPlaceholderPlain": "Montant",
+    "noAmount": "Sans montant",
+    "setAmount": "Définir le montant",
+    "amountFirst": "Indiquez d'abord le montant reçu."
   },
   "paymentsPage": {
     "title": "Paiements",
@@ -1792,7 +1795,8 @@
     "onlySolvyMed": "Je ne peux aider qu'avec SolvyMed.",
     "noClinical": "Je ne peux pas aider sur les questions cliniques.",
     "minutes": "{n} min",
-    "alreadyPaid": "Ce rendez-vous est déjà payé."
+    "alreadyPaid": "Ce rendez-vous est déjà payé.",
+    "noAmount": "Ce rendez-vous n'a pas de montant. Définissez-le dans l'Agenda avant de le marquer comme payé."
   },
   "countryExamples": {
     "phone": "Numéro de téléphone"

@@ -251,7 +251,10 @@
     "revertConfirm": "Revert this payment to pending?",
     "errorInvalidAmount": "Please enter a valid amount.",
     "errorGeneric": "Something went wrong. Please try again.",
-    "amountPlaceholderPlain": "Amount"
+    "amountPlaceholderPlain": "Amount",
+    "noAmount": "No amount",
+    "setAmount": "Set amount",
+    "amountFirst": "Enter the amount received first."
   },
   "paymentsPage": {
     "title": "Payments",
@@ -1822,7 +1825,8 @@
     "onlySolvyMed": "I can only help with SolvyMed.",
     "noClinical": "I can't help with clinical questions.",
     "minutes": "{n} min",
-    "alreadyPaid": "This appointment is already paid."
+    "alreadyPaid": "This appointment is already paid.",
+    "noAmount": "This appointment has no amount. Set it in the Agenda before marking it paid."
   },
   "countryExamples": {
     "phone": "Phone number"

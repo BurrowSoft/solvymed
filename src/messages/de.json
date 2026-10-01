@@ -251,7 +251,10 @@
     "revertConfirm": "Diese Zahlung auf ausstehend zurücksetzen?",
     "errorInvalidAmount": "Bitte geben Sie einen gültigen Betrag ein.",
     "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
-    "amountPlaceholderPlain": "Betrag"
+    "amountPlaceholderPlain": "Betrag",
+    "noAmount": "Kein Betrag",
+    "setAmount": "Betrag festlegen",
+    "amountFirst": "Geben Sie zuerst den erhaltenen Betrag ein."
   },
   "paymentsPage": {
     "title": "Zahlungen",
@@ -1792,7 +1795,8 @@
     "onlySolvyMed": "Ich kann nur bei SolvyMed helfen.",
     "noClinical": "Bei klinischen Fragen kann ich nicht helfen.",
     "minutes": "{n} Min.",
-    "alreadyPaid": "Dieser Termin ist bereits bezahlt."
+    "alreadyPaid": "Dieser Termin ist bereits bezahlt.",
+    "noAmount": "Dieser Termin hat keinen Betrag. Legen Sie ihn im Kalender fest, bevor Sie ihn als bezahlt markieren."
   },
   "countryExamples": {
     "phone": "Telefonnummer"

@@ -15,6 +15,7 @@ import { FilesTab } from "./FilesTab";
 import { AddressFields } from "@/components/patient/AddressFields";
 import { addressLine, type AddressColumns } from "@/lib/patientAddress";
 import { profileOfKind } from "@/lib/country";
+import { hasAmount } from "@/lib/paymentRules";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -29,7 +30,7 @@ type ClinicalMeta = {
 export type MedRecord = ClinicalMeta & { id: string; date: string; time: string; content: string; record_type?: string };
 type RxItem = { name: string; dosage: string; frequency: string; duration: string };
 export type Rx = ClinicalMeta & { id: string; date: string; notes?: string; prescription_items: RxItem[] };
-type Appt = { id: string; date: string; start_time: string; consultation_type: string; status: string; payment_status: string };
+type Appt = { id: string; date: string; start_time: string; consultation_type: string; status: string; payment_status: string; payment_amount?: number | null };
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string; cpf?: string;
   // Migration 110 (Thai / other-country practices); absent before it.
@@ -935,6 +936,7 @@ function PrescriptionsTab({ patientId, prescriptions, isArchived, currentUserId,
 
 function AppointmentsTab({ appointments, locale }: { appointments: Appt[]; locale: string }) {
   const t = useTranslations("patientDetail");
+  const tPay = useTranslations("payments");
 
   function statusBadgeClass(status: string) {
     switch (status) {
@@ -966,9 +968,14 @@ function AppointmentsTab({ appointments, locale }: { appointments: Appt[]; local
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${statusBadgeClass(appt.status)}`}>{appt.status}</span>
-                <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
-                  {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}
-                </span>
+                {appt.payment_status !== "paid" && !hasAmount(appt.payment_amount) ? (
+                  // No amount (the app's #216): not "Pendente".
+                  <span className="text-xs font-semibold text-slate-500">{tPay("noAmount")}</span>
+                ) : (
+                  <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
+                    {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}
+                  </span>
+                )}
               </div>
             </div>
           ))}

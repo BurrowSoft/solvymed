@@ -205,7 +205,9 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
     // the card).
     // (A series: one date's fresh times don't fit; the card just says it wasn't saved.)
     const notCancellable = code === "appointment_not_cancellable" && card.action.kind === "cancel_appointment";
-    if (!notCancellable && (code !== "slot_taken" || (card.action.kind !== "book_appointment" && card.action.kind !== "move_appointment") || card.action.args.repeat)) return;
+    // Mark paid with no amount (#216): the server's fixed line.
+    const noAmount = code === "no_amount" && card.action.kind === "mark_paid";
+    if (!notCancellable && !noAmount && (code !== "slot_taken" || (card.action.kind !== "book_appointment" && card.action.kind !== "move_appointment") || card.action.args.repeat)) return;
     setBusy(true);
     void play(turns, backend.reportConfirmFailed(code, card.action, locale));
   };
