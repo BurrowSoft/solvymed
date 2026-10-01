@@ -29,6 +29,7 @@ export function DoctorTimePicker({
   duration,
   dateName = "date",
   startName = "start_time",
+  excludeId,
   onChange,
 }: {
   defaultDate: string;
@@ -36,6 +37,8 @@ export function DoctorTimePicker({
   duration: number;
   dateName?: string;
   startName?: string;
+  /** The appointment being moved / answered: not taken against itself. */
+  excludeId?: string;
   onChange?: (date: string, start: string) => void;
 }) {
   const t = useTranslations("schedule");
@@ -50,8 +53,8 @@ export function DoctorTimePicker({
 
   useEffect(() => {
     const mine = ++seq.current;
-    getScheduleDay(date).then((d) => { if (mine === seq.current) setDay(d); }, () => { if (mine === seq.current) setDay(null); });
-  }, [date]);
+    getScheduleDay(date, excludeId).then((d) => { if (mine === seq.current) setDay(d); }, () => { if (mine === seq.current) setDay(null); });
+  }, [date, excludeId]);
   useEffect(() => { onChange?.(date, start); }, [date, start, onChange]);
 
   const chips = useMemo(

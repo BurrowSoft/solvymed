@@ -376,7 +376,7 @@ export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: st
           <input type="hidden" name="id" value={id} />
           <div>
             <FieldLabel>{t("date")} *</FieldLabel>
-            <DoctorTimePicker defaultDate={date} defaultStart={start} duration={durationMin} />
+            <DoctorTimePicker defaultDate={date} defaultStart={start} duration={durationMin} excludeId={id} />
           </div>
           <p className="text-xs text-slate-500">{t("rescheduleHint")}</p>
           {error && <p className="text-sm text-red-600">{error}</p>}

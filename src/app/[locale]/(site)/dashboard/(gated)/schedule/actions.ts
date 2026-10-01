@@ -592,7 +592,9 @@ export async function blockTime(formData: FormData) {
 // The doctor's time picker (item 10): this date's working hours (whether
 // the practice has any at all) and the times already taken (appointments
 // and blocked time), so the grid can grey and mark them. Read-only.
-export async function getScheduleDay(date: string): Promise<{
+// excludeId: the appointment being moved / answered, which never counts as
+// taken against itself (as the app does; 9a).
+export async function getScheduleDay(date: string, excludeId?: string): Promise<{
   hoursSet: boolean;
   day: { enabled: boolean; start: string; end: string } | null;
   taken: { start: string; end: string }[];
@@ -607,14 +609,14 @@ export async function getScheduleDay(date: string): Promise<{
   if (!effectiveProfId) return null;
   const [{ data: wh }, { data: rows }, country] = await Promise.all([
     supabase.rpc("get_professional_working_hours", { p_professional_id: effectiveProfId }),
-    supabase.from("appointments").select("start_time, end_time, status").eq("professional_id", effectiveProfId).eq("date", date),
+    supabase.from("appointments").select("id, start_time, end_time, status").eq("professional_id", effectiveProfId).eq("date", date),
     getPracticeCountry(supabase, user.id, effectiveProfId),
   ]);
   const hours = (wh ?? {}) as WorkingHours;
   const hoursSet = Object.values(hours).some((d) => d?.enabled);
   const d = getDayHours(date, hours);
-  const taken = ((rows ?? []) as { start_time: string; end_time: string; status: string }[])
-    .filter((r) => !["cancelled", "rejected"].includes(r.status))
+  const taken = ((rows ?? []) as { id: string; start_time: string; end_time: string; status: string }[])
+    .filter((r) => r.id !== excludeId && !["cancelled", "rejected"].includes(r.status))
     .map((r) => ({ start: r.start_time.slice(0, 5), end: r.end_time.slice(0, 5) }));
   // Weekdays (0 = Sunday) the practice opens: the calendar greys the rest.
   const openWeekdays = [0, 1, 2, 3, 4, 5, 6].filter((w) => getDayHours(`2023-01-0${w + 1}`, hours)?.enabled);

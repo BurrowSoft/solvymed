@@ -407,6 +407,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                       duration={requestMinutes(b)}
                       dateName="propose_date"
                       startName="propose_start"
+                      excludeId={b.id}
                       onChange={(d, s) => { setPropDate(d); setPropStart(s); if (s) setPropEnd(addToTime(s, requestMinutes(b))); }}
                     />
                   </div>

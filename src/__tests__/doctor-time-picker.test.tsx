@@ -14,7 +14,8 @@ const day = vi.hoisted(() => ({
   openWeekdays: [1, 2, 3, 4, 5],
   country: "BR",
 }));
-vi.mock("@/app/[locale]/(site)/dashboard/(gated)/schedule/actions", () => ({ getScheduleDay: async () => day }));
+const calls = vi.hoisted(() => [] as unknown[][]);
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/schedule/actions", () => ({ getScheduleDay: async (...a: unknown[]) => { calls.push(a); return day; } }));
 
 import { DoctorTimePicker } from "@/components/DoctorTimePicker";
 
@@ -48,5 +49,14 @@ describe("DoctorTimePicker", () => {
     fireEvent.click(screen.getByText("Outro horário…"));
     fireEvent.change(screen.getByLabelText("Outro horário…"), { target: { value: "13:07" } });
     expect(new FormData(screen.getByTestId("f") as HTMLFormElement).get("start_time")).toBe("13:07");
+  });
+
+  it("passes the appointment being moved, so it isn't taken against itself (9a)", async () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <DoctorTimePicker defaultDate="2030-01-14" defaultStart="10:00" duration={30} excludeId="appt-1" />
+      </NextIntlClientProvider>,
+    );
+    await waitFor(() => expect(calls.some((c) => c[0] === "2030-01-14" && c[1] === "appt-1")).toBe(true));
   });
 });
