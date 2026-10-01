@@ -15,6 +15,7 @@ import { formIdKindMatches, patientIdError, patientIdKind, readPatientIds, sameI
 import { patientSearchFilter } from "@/lib/patientSearch";
 import { mergeSupported } from "@/lib/mergeProbe";
 import { conditionMet } from "@/lib/conditions";
+import { inviteErrorCode, type InviteActionCode } from "@/lib/invitedPatients";
 import { addressError, readAddress } from "@/lib/patientAddress";
 import { MERGE_ADDRESS_KEYS, MERGE_ERRORS, MERGE_FIELD_KEYS, mergeColumns, type MergeErrorCode, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
 
@@ -619,4 +620,26 @@ export async function mergePatientsAction(keptId: string, mergedId: string, choi
   const r = (data ?? {}) as { kept_id?: string };
   revalidatePath("/dashboard/patients");
   return { ok: true, keptId: r.kept_id ?? keptId };
+}
+
+// Invited patients (migration 145): "Manter" marks the record reviewed (it
+// stays, without the badge); "Remover" unlinks the account and archives the
+// record (the patient is back to waiting). Doctor or secretary of the
+// practice; the RPCs check it. Never before invited-patients-live.
+export async function keepInvitedPatient(patientId: string): Promise<{ ok: true } | { ok: false; code: InviteActionCode }> {
+  return invitedPatientRpc("keep_invited_patient", patientId);
+}
+export async function removeInvitedPatient(patientId: string): Promise<{ ok: true } | { ok: false; code: InviteActionCode }> {
+  return invitedPatientRpc("remove_invited_patient", patientId);
+}
+async function invitedPatientRpc(fn: "keep_invited_patient" | "remove_invited_patient", patientId: string): Promise<{ ok: true } | { ok: false; code: InviteActionCode }> {
+  if (!conditionMet("invited-patients-live") || !/^[0-9a-f-]{36}$/i.test(patientId)) return { ok: false, code: "generic" };
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false, code: "generic" };
+  const { error } = await supabase.rpc(fn, { p_patient_id: patientId });
+  if (error) return { ok: false, code: inviteErrorCode(error.message) };
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/patients");
+  return { ok: true };
 }

@@ -98,7 +98,16 @@
     "noUpcoming": "今後の予約はありません",
     "unpaidSessions": "{n}件の未払いセッション",
     "pendingCollection": "{amount} が未回収",
-    "managePayments": "支払い管理"
+    "managePayments": "支払い管理",
+    "invitedTitle": "招待経由の新しい患者 {n} 人",
+    "invitedHint": "クリニックのコードで参加しました。自院の患者は「保持」、「削除」はアカウントの接続を解除します（記録はアーカイブされます）。",
+    "invitedKeep": "保持",
+    "invitedRemove": "削除",
+    "invitedError": "保存できませんでした。もう一度お試しください。",
+    "invitedSeeAll": "患者一覧ですべて表示",
+    "invitedSameEmail": "{name} と同じメール：統合しますか？",
+    "invitedRemoveConfirm": "{name} を削除しますか？アカウントはあなたの確認待ちに戻り、記録はアーカイブされます。",
+    "invitedRemoveConfirmDisconnect": "{name} を削除しますか？アカウントはクリニックから切断され、保留中のリクエストはキャンセルされ（患者に通知されます）、記録はアーカイブされます。再び受け入れるには、患者の個人コードを共有してください。"
   },
   "schedule": {
     "patientMessage": "患者からのメッセージ",
@@ -323,7 +332,9 @@
     "nextPage": "次へ",
     "pagesLabel": "ページ",
     "fullNamePlaceholder": "氏名",
-    "professionPlaceholder": "例：エンジニア、教師…"
+    "professionPlaceholder": "例：エンジニア、教師…",
+    "invitedBadge": "新規・招待経由",
+    "invitedSameEmail": "{name} と同じメール：統合しますか？"
   },
   "patientDetail": {
     "tabInfo": "情報",
@@ -768,7 +779,12 @@
       "backToSignup": "別のアカウントを使う",
       "tooManyAttempts": "試行回数が多すぎます。しばらくしてからもう一度お試しください。",
       "alreadyInvitedByAnother": "あなたのアカウントはすでに別の医師と連携しています。",
-      "archived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。"
+      "archived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。",
+      "alreadyConnected": "すでに {doctor} とつながっています。変更するにはサポートにお問い合わせください。",
+      "alreadyConnectedNoName": "すでに別の医師とつながっています。変更するにはサポートにお問い合わせください。",
+      "alreadyConnectedSamePractice": "すでに {doctor} とつながっています。クリニックに記録の統合を依頼してください。",
+      "alreadyConnectedSamePracticeNoName": "すでにこのクリニックとつながっています。クリニックに記録の統合を依頼してください。",
+      "codeUnavailable": "このコードでは接続できませんでした。クリニックにお問い合わせください。"
     },
     "pendingConfirmation": {
       "loading": "状況を確認しています…",

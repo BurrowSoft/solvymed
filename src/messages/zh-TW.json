@@ -98,7 +98,16 @@
     "noUpcoming": "暫無即將到來的預約",
     "unpaidSessions": "{n}次未付款",
     "pendingCollection": "{amount} 待收款",
-    "managePayments": "管理付款"
+    "managePayments": "管理付款",
+    "invitedTitle": "{n} 位透過您的邀請加入的新病患",
+    "invitedHint": "他們使用您的診所代碼加入。保留您的病患；「移除」會中斷帳戶連結（病歷會被封存）。",
+    "invitedKeep": "保留",
+    "invitedRemove": "移除",
+    "invitedError": "無法儲存，請再試一次。",
+    "invitedSeeAll": "在病患中查看全部",
+    "invitedSameEmail": "與 {name} 電子郵件相同：合併？",
+    "invitedRemoveConfirm": "移除 {name}？其帳戶將重新等待您的確認，病歷會被封存。",
+    "invitedRemoveConfirmDisconnect": "移除 {name}？其帳戶將與您的診所中斷連結，待處理的請求將被取消（會通知病患），病歷將被封存。如需重新接納，請分享該病患的個人代碼。"
   },
   "schedule": {
     "patientMessage": "患者留言",
@@ -323,7 +332,9 @@
     "nextPage": "下一頁",
     "pagesLabel": "分頁",
     "fullNamePlaceholder": "全名",
-    "professionPlaceholder": "例如：工程師、教師…"
+    "professionPlaceholder": "例如：工程師、教師…",
+    "invitedBadge": "新·透過邀請",
+    "invitedSameEmail": "與 {name} 電子郵件相同：合併？"
   },
   "patientDetail": {
     "tabInfo": "資訊",
@@ -768,7 +779,12 @@
       "backToSignup": "使用其他帳戶",
       "tooManyAttempts": "嘗試次數過多，請稍後再試。",
       "alreadyInvitedByAnother": "您的帳戶已與另一位醫生關聯。",
-      "archived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。"
+      "archived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。",
+      "alreadyConnected": "您已與 {doctor} 連結。如需更換，請聯絡客服。",
+      "alreadyConnectedNoName": "您已與其他醫師連結。如需更換，請聯絡客服。",
+      "alreadyConnectedSamePractice": "您已與 {doctor} 連結。請診所合併您的病歷。",
+      "alreadyConnectedSamePracticeNoName": "您已與此診所連結。請診所合併您的病歷。",
+      "codeUnavailable": "無法使用此代碼連結。請聯絡診所。"
     },
     "pendingConfirmation": {
       "loading": "正在檢查您的狀態…",

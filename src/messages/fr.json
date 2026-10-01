@@ -98,7 +98,16 @@
     "noUpcoming": "Pas de rendez-vous à venir",
     "unpaidSessions": "{n, plural, one {# séance non payée} other {# séances non payées}}",
     "pendingCollection": "{amount} en attente de paiement",
-    "managePayments": "Gérer les paiements"
+    "managePayments": "Gérer les paiements",
+    "invitedTitle": "{n, plural, one {# nouveau patient via votre invitation} other {# nouveaux patients via votre invitation}}",
+    "invitedHint": "Ils ont rejoint avec le code de votre cabinet. Gardez vos patients ; Retirer déconnecte le compte (la fiche est archivée).",
+    "invitedKeep": "Garder",
+    "invitedRemove": "Retirer",
+    "invitedError": "Échec de l'enregistrement. Réessayez.",
+    "invitedSeeAll": "Tout voir dans Patients",
+    "invitedSameEmail": "Même e-mail que {name} : fusionner ?",
+    "invitedRemoveConfirm": "Retirer {name} ? Son compte attendra à nouveau votre confirmation et la fiche sera archivée.",
+    "invitedRemoveConfirmDisconnect": "Retirer {name} ? Le compte sera déconnecté de votre cabinet, les demandes en attente seront annulées (le patient est prévenu) et la fiche archivée. Pour le réadmettre, partagez le code personnel du patient."
   },
   "schedule": {
     "patientMessage": "Message du patient",
@@ -323,7 +332,9 @@
     "nextPage": "Suivant",
     "pagesLabel": "Pages",
     "fullNamePlaceholder": "Nom complet",
-    "professionPlaceholder": "ex : Ingénieur, Enseignant…"
+    "professionPlaceholder": "ex : Ingénieur, Enseignant…",
+    "invitedBadge": "Nouveau, via invitation",
+    "invitedSameEmail": "Même e-mail que {name} : fusionner ?"
   },
   "patientDetail": {
     "tabInfo": "Infos",
@@ -768,7 +779,12 @@
       "backToSignup": "Utiliser un autre compte",
       "tooManyAttempts": "Trop de tentatives. Veuillez patienter avant de réessayer.",
       "alreadyInvitedByAnother": "Votre compte est déjà rattaché à un autre cabinet.",
-      "archived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet."
+      "archived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet.",
+      "alreadyConnected": "Vous êtes déjà connecté à {doctor}. Pour changer, contactez le support.",
+      "alreadyConnectedNoName": "Vous êtes déjà connecté à un autre médecin. Pour changer, contactez le support.",
+      "alreadyConnectedSamePractice": "Vous êtes déjà connecté à {doctor}. Demandez au cabinet de fusionner vos dossiers.",
+      "alreadyConnectedSamePracticeNoName": "Vous êtes déjà connecté à ce cabinet. Demandez au cabinet de fusionner vos dossiers.",
+      "codeUnavailable": "Impossible de se connecter avec ce code. Contactez le cabinet."
     },
     "pendingConfirmation": {
       "loading": "Vérification de votre statut…",

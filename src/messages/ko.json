@@ -98,7 +98,16 @@
     "noUpcoming": "예정된 예약 없음",
     "unpaidSessions": "{n}개 미결제 세션",
     "pendingCollection": "{amount} 미수금",
-    "managePayments": "결제 관리"
+    "managePayments": "결제 관리",
+    "invitedTitle": "초대로 가입한 새 환자 {n}명",
+    "invitedHint": "클리닉 코드로 가입했습니다. 내 환자는 유지하고, 삭제하면 계정 연결이 해제됩니다(기록은 보관됨).",
+    "invitedKeep": "유지",
+    "invitedRemove": "삭제",
+    "invitedError": "저장하지 못했습니다. 다시 시도하세요.",
+    "invitedSeeAll": "환자에서 모두 보기",
+    "invitedSameEmail": "{name}과(와) 같은 이메일: 병합할까요?",
+    "invitedRemoveConfirm": "{name}을(를) 삭제할까요? 계정은 다시 확인 대기 상태가 되고 기록은 보관됩니다.",
+    "invitedRemoveConfirmDisconnect": "{name}을(를) 삭제할까요? 계정은 클리닉에서 연결 해제되고, 대기 중인 요청은 취소되며(환자에게 알림), 기록은 보관됩니다. 다시 받으려면 환자의 개인 코드를 공유하세요."
   },
   "schedule": {
     "patientMessage": "환자 메시지",
@@ -323,7 +332,9 @@
     "nextPage": "다음",
     "pagesLabel": "페이지",
     "fullNamePlaceholder": "성명",
-    "professionPlaceholder": "예: 엔지니어, 교사…"
+    "professionPlaceholder": "예: 엔지니어, 교사…",
+    "invitedBadge": "신규 · 초대로 가입",
+    "invitedSameEmail": "{name}과(와) 같은 이메일: 병합할까요?"
   },
   "patientDetail": {
     "tabInfo": "정보",
@@ -768,7 +779,12 @@
       "backToSignup": "다른 계정 사용",
       "tooManyAttempts": "시도 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
       "alreadyInvitedByAnother": "계정이 이미 다른 의사와 연결되어 있습니다.",
-      "archived": "이 클리닉은 회원님 계정의 새 예약을 받지 않습니다. 클리닉에 문의해 주세요."
+      "archived": "이 클리닉은 회원님 계정의 새 예약을 받지 않습니다. 클리닉에 문의해 주세요.",
+      "alreadyConnected": "이미 {doctor}에 연결되어 있습니다. 변경하려면 지원팀에 문의하세요.",
+      "alreadyConnectedNoName": "이미 다른 의사에게 연결되어 있습니다. 변경하려면 지원팀에 문의하세요.",
+      "alreadyConnectedSamePractice": "이미 {doctor}에 연결되어 있습니다. 클리닉에 기록 병합을 요청하세요.",
+      "alreadyConnectedSamePracticeNoName": "이미 이 클리닉에 연결되어 있습니다. 클리닉에 기록 병합을 요청하세요.",
+      "codeUnavailable": "이 코드로 연결할 수 없습니다. 클리닉에 문의하세요."
     },
     "pendingConfirmation": {
       "loading": "상태 확인 중…",

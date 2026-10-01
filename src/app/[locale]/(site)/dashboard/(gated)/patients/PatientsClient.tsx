@@ -17,6 +17,8 @@ type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
   sex?: string; birth_date?: string; created_at: string;
   archived_at?: string | null; archived_by_name?: string | null; archived_reason?: string | null;
+  // Invited patients (145; only once invited-patients-live).
+  newInvited?: boolean; sameEmailAs?: { id: string; name: string } | null;
 };
 
 // "Archived {date} by {name}". The name is stored at archive time, so it
@@ -328,12 +330,20 @@ export function PatientCard({ patient, locale }: { patient: Patient; locale: str
     : null;
 
   return (
-    <Link href={`${prefix}/dashboard/patients/${patient.id}`} className="group flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm hover:border-teal-200 hover:shadow-md transition-all">
+    // A new invited patient with the same e-mail as another record opens
+    // straight on the merge with that record (UX, 145).
+    <Link href={`${prefix}/dashboard/patients/${patient.id}${patient.newInvited && patient.sameEmailAs ? `?mergeWith=${patient.sameEmailAs.id}` : ""}`} className="group flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm hover:border-teal-200 hover:shadow-md transition-all">
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-teal-100 text-sm font-bold text-teal-700">
         {initials}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-slate-900 truncate">{patient.full_name}</p>
+        <p className="flex items-center gap-2 font-semibold text-slate-900">
+          <span className="truncate">{patient.full_name}</span>
+          {patient.newInvited && <span className="shrink-0 rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-bold text-teal-700">{t("invitedBadge")}</span>}
+        </p>
+        {patient.newInvited && patient.sameEmailAs && (
+          <p className="mt-0.5 truncate text-xs font-semibold text-amber-700">{t("invitedSameEmail", { name: patient.sameEmailAs.name })}</p>
+        )}
         <p className="text-xs text-slate-500 truncate mt-0.5">
           {[patient.email, age ? t("age", { n: age }) : null, patient.phone].filter(Boolean).join(" · ")}
         </p>

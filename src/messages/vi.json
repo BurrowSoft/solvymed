@@ -98,7 +98,16 @@
     "noUpcoming": "Không có lịch hẹn sắp tới",
     "unpaidSessions": "{n} buổi chưa thanh toán",
     "pendingCollection": "{amount} chưa thu",
-    "managePayments": "Quản lý thanh toán"
+    "managePayments": "Quản lý thanh toán",
+    "invitedTitle": "{n} bệnh nhân mới qua lời mời của bạn",
+    "invitedHint": "Họ tham gia bằng mã phòng khám của bạn. Giữ bệnh nhân của bạn; Gỡ sẽ ngắt kết nối tài khoản (hồ sơ được lưu trữ).",
+    "invitedKeep": "Giữ",
+    "invitedRemove": "Gỡ",
+    "invitedError": "Không lưu được. Vui lòng thử lại.",
+    "invitedSeeAll": "Xem tất cả trong Bệnh nhân",
+    "invitedSameEmail": "Cùng email với {name}: gộp hồ sơ?",
+    "invitedRemoveConfirm": "Gỡ {name}? Tài khoản sẽ quay lại chờ bạn xác nhận và hồ sơ được lưu trữ.",
+    "invitedRemoveConfirmDisconnect": "Gỡ {name}? Tài khoản sẽ bị ngắt kết nối khỏi phòng khám của bạn, các yêu cầu đang chờ sẽ bị hủy (bệnh nhân được thông báo) và hồ sơ được lưu trữ. Để nhận lại, hãy chia sẻ mã cá nhân của bệnh nhân."
   },
   "schedule": {
     "patientMessage": "Lời nhắn của bệnh nhân",
@@ -323,7 +332,9 @@
     "nextPage": "Tiếp",
     "pagesLabel": "Trang",
     "fullNamePlaceholder": "Họ và tên",
-    "professionPlaceholder": "vd. Kỹ sư, Giáo viên…"
+    "professionPlaceholder": "vd. Kỹ sư, Giáo viên…",
+    "invitedBadge": "Mới, qua lời mời",
+    "invitedSameEmail": "Cùng email với {name}: gộp hồ sơ?"
   },
   "patientDetail": {
     "tabInfo": "Thông tin",
@@ -768,7 +779,12 @@
       "backToSignup": "Dùng tài khoản khác",
       "tooManyAttempts": "Quá nhiều lần thử. Vui lòng đợi một chút rồi thử lại.",
       "alreadyInvitedByAnother": "Tài khoản của bạn đã được liên kết với một bác sĩ khác.",
-      "archived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám."
+      "archived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám.",
+      "alreadyConnected": "Bạn đã kết nối với {doctor}. Để đổi, hãy liên hệ bộ phận hỗ trợ.",
+      "alreadyConnectedNoName": "Bạn đã kết nối với một bác sĩ khác. Để đổi, hãy liên hệ bộ phận hỗ trợ.",
+      "alreadyConnectedSamePractice": "Bạn đã kết nối với {doctor}. Hãy nhờ phòng khám gộp hồ sơ của bạn.",
+      "alreadyConnectedSamePracticeNoName": "Bạn đã kết nối với phòng khám này. Hãy nhờ phòng khám gộp hồ sơ của bạn.",
+      "codeUnavailable": "Không thể kết nối bằng mã này. Vui lòng liên hệ phòng khám."
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",

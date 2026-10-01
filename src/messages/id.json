@@ -98,7 +98,16 @@
     "noUpcoming": "Tidak ada janji mendatang",
     "unpaidSessions": "{n} sesi belum dibayar",
     "pendingCollection": "{amount} menunggu pembayaran",
-    "managePayments": "Kelola Pembayaran"
+    "managePayments": "Kelola Pembayaran",
+    "invitedTitle": "{n} pasien baru lewat undangan Anda",
+    "invitedHint": "Mereka bergabung dengan kode klinik Anda. Simpan pasien Anda; Hapus memutus akun (data diarsipkan).",
+    "invitedKeep": "Simpan",
+    "invitedRemove": "Hapus",
+    "invitedError": "Gagal menyimpan. Coba lagi.",
+    "invitedSeeAll": "Lihat semua di Pasien",
+    "invitedSameEmail": "Email sama dengan {name}: gabungkan?",
+    "invitedRemoveConfirm": "Hapus {name}? Akunnya kembali menunggu konfirmasi Anda, dan datanya diarsipkan.",
+    "invitedRemoveConfirmDisconnect": "Hapus {name}? Akun akan diputus dari klinik Anda, permintaan yang tertunda dibatalkan (pasien diberi tahu), dan datanya diarsipkan. Untuk menerimanya kembali, bagikan kode pribadi pasien."
   },
   "schedule": {
     "patientMessage": "Pesan pasien",
@@ -323,7 +332,9 @@
     "nextPage": "Berikutnya",
     "pagesLabel": "Halaman",
     "fullNamePlaceholder": "Nama lengkap",
-    "professionPlaceholder": "mis. Insinyur, Guru…"
+    "professionPlaceholder": "mis. Insinyur, Guru…",
+    "invitedBadge": "Baru, lewat undangan",
+    "invitedSameEmail": "Email sama dengan {name}: gabungkan?"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -768,7 +779,12 @@
       "backToSignup": "Gunakan akun lain",
       "tooManyAttempts": "Terlalu banyak percobaan. Harap tunggu sebentar sebelum mencoba lagi.",
       "alreadyInvitedByAnother": "Akun Anda sudah terhubung dengan dokter lain.",
-      "archived": "Klinik ini tidak menerima pemesanan baru untuk akun Anda. Silakan hubungi klinik."
+      "archived": "Klinik ini tidak menerima pemesanan baru untuk akun Anda. Silakan hubungi klinik.",
+      "alreadyConnected": "Anda sudah terhubung dengan {doctor}. Untuk mengganti, hubungi dukungan.",
+      "alreadyConnectedNoName": "Anda sudah terhubung dengan dokter lain. Untuk mengganti, hubungi dukungan.",
+      "alreadyConnectedSamePractice": "Anda sudah terhubung dengan {doctor}. Minta klinik untuk menggabungkan data Anda.",
+      "alreadyConnectedSamePracticeNoName": "Anda sudah terhubung dengan klinik ini. Minta klinik untuk menggabungkan data Anda.",
+      "codeUnavailable": "Tidak dapat terhubung dengan kode ini. Silakan hubungi klinik."
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",
