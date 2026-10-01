@@ -15,7 +15,7 @@ vi.mock("next/navigation", async (orig) => ({
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
 }));
 vi.mock("@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions", () => ({
-  acceptProposal: async () => ({ error: "proposal_time_passed" }),
+  acceptProposal: async () => ({ error: "proposed_time_expired" }),
   declineProposal: async () => ({ error: null }),
   requestReschedule: async () => ({ error: null }),
   getAvailableSlotsForDate: async () => [],
@@ -55,6 +55,12 @@ describe("a past request or proposal", () => {
     await waitFor(() => expect(screen.getAllByText("Não confirmado")).toHaveLength(2));
     expect(screen.queryByText("Aceitar")).toBeNull();
     expect(screen.queryByText("Recusar")).toBeNull();
+  });
+
+  it("a reschedule the patient asked for keeps its badge: the booking still stands (9a)", async () => {
+    show([{ ...base, id: "r", date: "2099-01-10", status: "proposal", scheduled_by: "patient", proposed_date: "2020-01-11", proposed_start_time: "10:00:00", proposed_end_time: "10:30:00" }]);
+    expect(await screen.findByText("Remarcação pendente")).toBeInTheDocument();
+    expect(screen.queryByText("Não confirmado")).toBeNull();
   });
 
   it("a future proposal keeps Aceitar; a refusal for a passed time says so", async () => {

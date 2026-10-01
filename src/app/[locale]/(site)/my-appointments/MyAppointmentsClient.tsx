@@ -208,8 +208,8 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
     setActError("");
     startTransition(async () => {
       const r = await (kind === "accept" ? acceptProposal(appt.id) : declineProposal(appt.id));
-      // The server refuses a proposal whose time has passed (38).
-      if (r?.error === "proposal_time_passed") setActError(t("proposalPassed"));
+      // The server refuses a proposal whose time has passed (153).
+      if (r?.error === "proposed_time_expired") setActError(t("proposalPassed"));
       onMutate();
     });
   };
@@ -232,10 +232,11 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
   const displayStart = (isProfProposal && appt.proposed_start_time) ? appt.proposed_start_time : appt.start_time;
   const displayEnd = (isProfProposal && appt.proposed_end_time) ? appt.proposed_end_time : appt.end_time;
   // A request or proposal whose time has passed (the clinic's clock): "Não
-  // confirmado", no actions (as the app; e7).
-  const askedDate = appt.status === "proposal" && appt.proposed_date ? appt.proposed_date : appt.date;
-  const askedStart = (appt.status === "proposal" && appt.proposed_date && appt.proposed_start_time ? appt.proposed_start_time : appt.start_time).slice(0, 5);
-  const lapsed = (appt.status === "tentative" || appt.status === "proposal") && now !== null && requestLapsed(askedDate, askedStart, now, clinicTz);
+  // confirmado", no actions (as the app; e7). A reschedule the patient asked
+  // for is not one: their booking still stands (9a).
+  const askedDate = isProfProposal && appt.proposed_date ? appt.proposed_date : appt.date;
+  const askedStart = (isProfProposal && appt.proposed_date && appt.proposed_start_time ? appt.proposed_start_time : appt.start_time).slice(0, 5);
+  const lapsed = (appt.status === "tentative" || isProfProposal) && now !== null && requestLapsed(askedDate, askedStart, now, clinicTz);
 
   return (
     <>
