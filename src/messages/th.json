@@ -855,7 +855,7 @@
     "ctaSub": "ค้นหาคลินิกบนแผนที่และนัดหมายออนไลน์",
     "accept": "ยอมรับ",
     "decline": "ปฏิเสธ",
-    "rescheduleTitle": "ขอนัดใหม่",
+    "rescheduleTitle": "ขอเลื่อนนัด",
     "rescheduleSelectDate": "เลือกวันใหม่",
     "rescheduleSelectTime": "เลือกเวลา",
     "rescheduleNoSlots": "ไม่มีช่วงเวลาว่างในวันนี้",
@@ -863,7 +863,7 @@
     "rescheduleSending": "กำลังส่ง…",
     "reschedulePending": "รอการยืนยัน",
     "rescheduleRequestedLabel": "คำขอเปลี่ยนนัด: {date} · {time}",
-    "rescheduleButton": "ขอเปลี่ยนนัดหมาย",
+    "rescheduleButton": "ขอเลื่อนนัด",
     "closeDialog": "ปิด",
     "originallyLabel": "เดิม: {date} · {time}",
     "declinedByClinic": "คลินิกปฏิเสธ",
@@ -872,7 +872,8 @@
     "cancelledByClinicReason": "คลินิกยกเลิก: {reason}",
     "youCancelled": "คุณยกเลิกแล้ว",
     "clinicMessage": "ข้อความจากคลินิก: {message}",
-    "statusDeclined": "ถูกปฏิเสธ"
+    "statusDeclined": "ถูกปฏิเสธ",
+    "cancelContactClinic": "หากต้องการยกเลิก กรุณาติดต่อคลินิก"
   },
   "nav": {
     "overview": "ภาพรวม",

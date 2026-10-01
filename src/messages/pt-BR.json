@@ -863,7 +863,7 @@
     "rescheduleSending": "Enviando…",
     "reschedulePending": "Remarcação pendente",
     "rescheduleRequestedLabel": "Reagendamento solicitado: {date} · {time}",
-    "rescheduleButton": "Solicitar reagendamento",
+    "rescheduleButton": "Solicitar remarcação",
     "closeDialog": "Fechar",
     "originallyLabel": "Originalmente: {date} · {time}",
     "declinedByClinic": "Recusado pela clínica",
@@ -872,7 +872,8 @@
     "cancelledByClinicReason": "Cancelado pela clínica: {reason}",
     "youCancelled": "Você cancelou",
     "clinicMessage": "Mensagem da clínica: {message}",
-    "statusDeclined": "Recusado"
+    "statusDeclined": "Recusado",
+    "cancelContactClinic": "Para cancelar, fale com a clínica."
   },
   "nav": {
     "overview": "Visão geral",

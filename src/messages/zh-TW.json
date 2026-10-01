@@ -872,7 +872,8 @@
     "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
     "youCancelled": "You cancelled",
     "clinicMessage": "Message from the clinic: {message}",
-    "statusDeclined": "已拒絕"
+    "statusDeclined": "已拒絕",
+    "cancelContactClinic": "To cancel, contact the clinic."
   },
   "nav": {
     "overview": "總覽",
