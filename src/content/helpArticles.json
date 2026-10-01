@@ -1085,8 +1085,8 @@
           ]
         },
         "web": {
-          "pt": "**Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: \"CRM 12345/SP\"), no mesmo cartão. Em **Configurações → Clínica**: o **CNPJ** (clínicas no Brasil) ou o **Nº de identificação fiscal (13 dígitos)** (clínicas na Tailândia). O país da clínica é escolhido ao criar a conta de médico (Brasil, Tailândia ou Outro) e aparece em **Configurações → País do consultório**; ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar, fale com support@solvymed.com.",
-          "en": "**Settings → Profile**: name, specialty and **Professional registration** (e.g. \"CRM 12345/SP\"), on the same card. In **Settings → Clinic**: the **CNPJ** (clinics in Brazil) or the **Tax ID (13 digits)** (clinics in Thailand). The clinic's country is chosen when the doctor account is created (Brazil, Thailand or Other) and shows in **Settings → Practice country**; it sets the currency, the plan price, the patient ID field and the payment QR. To change it, contact support@solvymed.com."
+          "pt": "**Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: \"CRM 12345/SP\"), no mesmo cartão. Em **Configurações → Clínica**: o **CNPJ** (clínicas no Brasil) ou o **Nº de identificação fiscal (13 dígitos)** (clínicas na Tailândia). O país da clínica é o primeiro passo do cadastro (**Onde você está?** → **Brasil** ou **ประเทศไทย**; a seta ← volta a essa escolha) e aparece em **Configurações → País do consultório**; ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar, fale com support@solvymed.com.",
+          "en": "**Settings → Profile**: name, specialty and **Professional registration** (e.g. \"CRM 12345/SP\"), on the same card. In **Settings → Clinic**: the **CNPJ** (clinics in Brazil) or the **Tax ID (13 digits)** (clinics in Thailand). The clinic's country is the first step of signing up (**Where are you?** → **Brasil** or **ประเทศไทย**; the ← arrow goes back to that choice) and shows in **Settings → Practice country**; it sets the currency, the plan price, the patient ID field and the payment QR. To change it, contact support@solvymed.com."
         },
         "webUnavailable": false,
         "open": "settings-profile",
@@ -1319,8 +1319,8 @@
           ]
         },
         "web": {
-          "pt": "O idioma muda no seletor de idioma do menu lateral. O tema fica em **Configurações → Aparência** (Automático, Claro ou Escuro) e vale para este navegador; impressões e e-mails ficam sempre claros.",
-          "en": "Change the language with the language selector in the side menu. The theme is in **Settings → Appearance** (Automatic, Light or Dark) and applies to this browser; prints and emails always stay light."
+          "pt": "O idioma muda no seletor de idioma do menu lateral: português ou inglês (clínicas no Brasil), tailandês ou inglês (clínicas na Tailândia). No cadastro, marque **Use SolvyMed in English** para usar em inglês. O tema fica em **Configurações → Aparência** (Automático, Claro ou Escuro) e vale para este navegador; impressões e e-mails ficam sempre claros.",
+          "en": "Change the language with the language selector in the side menu: Portuguese or English (clinics in Brazil), Thai or English (clinics in Thailand). When signing up, tick **Use SolvyMed in English** to use it in English. The theme is in **Settings → Appearance** (Automatic, Light or Dark) and applies to this browser; prints and emails always stay light."
         },
         "webUnavailable": false,
         "open": "settings",
