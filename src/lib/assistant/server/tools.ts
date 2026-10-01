@@ -106,8 +106,8 @@ export const TOOL_DEFS: ToolDef[] = [
   },
   {
     name: "propose_mark_paid",
-    description: "Propose marking an appointment (id from list_appointments) as paid (paid=true) or unpaid (paid=false). If it has no value, ask the user for the amount and pass it.",
-    input_schema: obj({ appointmentId: { type: "string" }, paid: { type: "boolean" }, amount: { type: "number" } }, ["appointmentId", "paid"]),
+    description: "Propose marking an appointment (id from list_appointments) as paid (paid=true) or unpaid (paid=false). An appointment with no value (value null) is never marked paid without an amount: first ask the user how much was received, then call with that amount (above zero); the card shows it and Confirmar saves the amount and paid together. Only if the user doesn't know or won't say the amount, call with amountUnknown=true: the user is then told to set it in the Agenda.",
+    input_schema: obj({ appointmentId: { type: "string" }, paid: { type: "boolean" }, amount: { type: "number" }, amountUnknown: { type: "boolean" } }, ["appointmentId", "paid"]),
   },
   {
     name: "propose_unblock_time",
@@ -783,15 +783,19 @@ async function proposeMarkPaid(ctx: ToolContext, input: Record<string, unknown>)
   if (typeof input.paid !== "boolean") return err("Say whether it's paid or unpaid.");
   const paid = input.paid;
   const amount = input.amount === undefined || input.amount === null ? null : Number(input.amount);
-  if (amount !== null && (!Number.isFinite(amount) || amount <= 0 || amount > 1_000_000)) return err("The amount must be a positive number.");
+  if (amount !== null && (!Number.isFinite(amount) || amount <= 0 || amount > 1_000_000)) return err("The amount must be a positive number: ask the user how much was received, then propose again with it.");
   if ((a.payment_status === "paid") === paid) return err(`It's already marked ${paid ? "paid" : "unpaid"}; tell the user.`);
   const ambiguous = await ambiguousTarget(ctx, a, addDays(ctx.today, -90), addDays(ctx.today, 30), (r) => (r.payment_status === "paid") !== paid && !["tentative", "proposal"].includes(r.status));
   if (ambiguous) return ambiguous;
   const value = amount ?? a.payment_amount;
-  // No amount (the app's #216, UX): never a card. UX's fixed line; with an
-  // amount the user gives, propose again with it (the card sets it).
+  // No amount (the app's #216; UX option b): ask how much was received and
+  // propose again with it (ONE card, amount + paid together). Only when the
+  // user won't say, UX's fixed line. Never a card without an amount.
   if (paid && !hasAmount(value)) {
-    return { forModel: "No amount: the user was told to set it first. If they tell you the amount received, propose again with it; otherwise add nothing.", block: { type: "text", text: t.noAmount } };
+    if (input.amountUnknown === true) {
+      return { forModel: "No amount and the user didn't give one: they were told to set it in the Agenda. Add nothing.", block: { type: "text", text: t.noAmount } };
+    }
+    return err("This appointment has no amount: ask the user how much was received, then propose again with amount. If they don't know or won't say, call again with amountUnknown=true.");
   }
   const c = card(ctx, {
     icon: "cash",

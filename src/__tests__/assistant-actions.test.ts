@@ -517,16 +517,31 @@ describe("SolvyAI actions mode: other proposals", () => {
   });
 
   it("mark paid: needs a value; with one, a card to Payments", async () => {
-    let t = setup(listThen("2026-10-01", { name: "propose_mark_paid", input: { appointmentId: "a-arch", paid: true } }));
-    let r = await run(t, ask("A Ana pagou"));
+    const said = (r: Awaited<ReturnType<typeof run>>) => r.chunks.flatMap((c) => (c.kind === "block" && c.block.type === "text" ? [c.block.text] : []));
+    const noAmountLine = "Esta consulta não tem valor. Defina o valor na Agenda antes de marcar como paga.";
+    // No amount (UX option b): no card, no fixed line; the model is told to
+    // ask how much was received. A zero or negative amount is the same.
+    for (const amount of [undefined, 0, -10]) {
+      const t = setup(listThen("2026-10-01", { name: "propose_mark_paid", input: { appointmentId: "a-arch", paid: true, ...(amount === undefined ? {} : { amount }) } }));
+      const r = await run(t, ask("A Ana pagou"));
+      expect(cardOf(r.blocks)).toBeUndefined();
+      expect(said(r)).not.toContain(noAmountLine);
+      const res = resultsIn(t.model.calls[2])[0] as { is_error?: boolean; content: string };
+      expect(res.is_error).toBe(true);
+      expect(String(res.content)).toContain("ask the user how much was received");
+    }
+    // The user won't say: UX's fixed line (the app's #216), never a card.
+    let t = setup(listThen("2026-10-01", { name: "propose_mark_paid", input: { appointmentId: "a-arch", paid: true, amountUnknown: true } }));
+    let r = await run(t, ask("Não sei quanto"));
     expect(cardOf(r.blocks)).toBeUndefined();
-    // UX's fixed line (the app's #216), never a card.
-    const said = r.chunks.flatMap((c) => (c.kind === "block" && c.block.type === "text" ? [c.block.text] : []));
-    expect(said).toContain("Esta consulta não tem valor. Defina o valor na Agenda antes de marcar como paga.");
-    // With an amount the user gives: a card that sets it.
+    expect(said(r)).toContain(noAmountLine);
+    // The amount the user gives: ONE card showing it in the practice's
+    // currency; Confirmar sets amount + paid together.
     t = setup(listThen("2026-10-01", { name: "propose_mark_paid", input: { appointmentId: "a-arch", paid: true, amount: 150 } }));
     r = await run(t, ask("A Ana pagou 150"));
+    expect(r.blocks.filter((b) => b.type === "card")).toHaveLength(1);
     expect(cardOf(r.blocks)!.action.args).toMatchObject({ appointmentId: "a-arch", paid: true, amount: 150 });
+    expect(cardOf(r.blocks)!.fields.find((f) => f.label === "Valor")!.value).toMatch(/^R\$\s150,00$/);
     t = setup(listThen("2026-09-30", { name: "propose_mark_paid", input: { appointmentId: "a-joao", paid: true } }));
     r = await run(t, ask("O Mario pagou"));
     expect(cardOf(r.blocks)!.after).toEqual({ screen: "payments", highlight: { kind: "appointment", id: "a-joao" } });

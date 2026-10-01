@@ -230,7 +230,7 @@ export const ACTIONS: AppMapAction[] = [
     inputs: { required: ["which appointment", "paid or unpaid"], optional: ["amount"], defaults: [] },
     rules: [
       "'To receive' counts unpaid appointments that are scheduled, confirmed, completed or late; requests, cancelled, rejected, absent and blocked never count.",
-      "An appointment without an amount (none or zero) is never marked paid: SolvyAI answers that it has no amount yet (set it in the Agenda); if the user says the amount received, the card sets it.",
+      "An appointment without an amount (none or zero) is never marked paid without one: SolvyAI asks how much was received, then shows ONE card with that amount (in the clinic's currency) and \"Marcar como pago\"; Confirmar saves the amount and paid together. Only if the user doesn't know or won't say, SolvyAI answers that it has no amount yet (set it in the Agenda).",
       "On the website, appointments without an amount don't count in To receive / Received and aren't in the Payments lists; the Agenda shows \"Sem valor · Definir valor\".",
       { text: "In the app too, an appointment without an amount shows \"Sem valor · Definir valor\", doesn't count, and \"Marcar como pago\" asks for the amount first.", pending: ["app-1.4.0"] },
       "Marking an appointment UNPAID again asks for a confirmation first (both platforms).",
