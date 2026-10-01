@@ -232,7 +232,7 @@
     "undoAction": "Undo ({s} s)",
     "undoDone": "Undone.",
     "undoFailed": "Couldn't undo. Open the item to adjust it.",
-    "newPatientOption": "New patient: {name}"
+    "newPatientOption": "Book without a record: {name}"
   },
   "payments": {
     "thisWeek": "This week",

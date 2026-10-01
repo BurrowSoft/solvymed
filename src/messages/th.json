@@ -232,7 +232,7 @@
     "undoAction": "ยกเลิก ({s} วิ)",
     "undoDone": "ยกเลิกแล้ว",
     "undoFailed": "เลิกทำไม่ได้ โปรดเปิดรายการเพื่อแก้ไข",
-    "newPatientOption": "ผู้ป่วยใหม่: {name}"
+    "newPatientOption": "นัดโดยไม่สร้างประวัติ: {name}"
   },
   "payments": {
     "thisWeek": "สัปดาห์นี้",

@@ -232,7 +232,7 @@
     "undoAction": "Отменить ({s} с)",
     "undoDone": "Отменено.",
     "undoFailed": "Не удалось отменить. Откройте запись, чтобы исправить её.",
-    "newPatientOption": "Новый пациент: {name}"
+    "newPatientOption": "Записать без карты: {name}"
   },
   "payments": {
     "thisWeek": "На этой неделе",

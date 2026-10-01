@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 
 vi.mock("next-intl", () => ({
-  useTranslations: () => (k: string, v?: Record<string, string>) => (k === "newPatientOption" ? `Novo paciente: ${v?.name}` : k),
+  useTranslations: () => (k: string, v?: Record<string, string>) => (k === "newPatientOption" ? `Agendar sem cadastro: ${v?.name}` : k),
 }));
 import { PatientPicker } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/PatientPicker";
 
@@ -17,16 +17,16 @@ async function typeIn(text: string) {
 
 // Vitor's test (29/30): typing "T" showed nothing (2-letter minimum and a
 // native <datalist>). Now: our own list from the first letter, plus
-// "Novo paciente: {texto}".
+// "Agendar sem cadastro: {texto}" (UX: it books without creating a record).
 describe("PatientPicker", () => {
-  it("searches from ONE letter and lists the matches + \"Novo paciente\"", async () => {
+  it("searches from ONE letter and lists the matches + \"Agendar sem cadastro\"", async () => {
     vi.useFakeTimers();
     const search = vi.fn(async () => PATIENTS);
     render(<form><PatientPicker search={search} /></form>);
     await typeIn("T");
     expect(search).toHaveBeenCalledWith("T");
     const options = screen.getAllByRole("option").map((o) => o.textContent);
-    expect(options).toEqual(["Tânia Lopes", "Beatriz Toledo", "Novo paciente: T"]);
+    expect(options).toEqual(["Tânia Lopes", "Beatriz Toledo", "Agendar sem cadastro: T"]);
     vi.useRealTimers();
   });
 
@@ -43,7 +43,7 @@ describe("PatientPicker", () => {
     vi.useRealTimers();
   });
 
-  it("keyboard: arrows + Enter choose; \"Novo paciente\" keeps the typed name, unlinked", async () => {
+  it("keyboard: arrows + Enter choose; \"Agendar sem cadastro\" keeps the typed name, unlinked", async () => {
     vi.useFakeTimers();
     const { container } = render(<form><PatientPicker search={async () => [PATIENTS[0]]} /></form>);
     const input = await typeIn("Tâ");
@@ -55,15 +55,15 @@ describe("PatientPicker", () => {
     vi.useRealTimers();
   });
 
-  it("an exact name hides \"Novo paciente\"; a failed search still offers it", async () => {
+  it("an exact name hides \"Agendar sem cadastro\"; a failed search still offers it", async () => {
     vi.useFakeTimers();
     const { unmount } = render(<form><PatientPicker search={async () => PATIENTS} /></form>);
     await typeIn("tânia lopes");
-    expect(screen.queryByText(/Novo paciente/)).toBeNull();
+    expect(screen.queryByText(/Agendar sem cadastro/)).toBeNull();
     unmount();
     render(<form><PatientPicker search={async () => { throw new Error("x"); }} /></form>);
     await typeIn("Zé");
-    expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Novo paciente: Zé"]);
+    expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Agendar sem cadastro: Zé"]);
     vi.useRealTimers();
   });
 });

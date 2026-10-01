@@ -232,7 +232,7 @@
     "undoAction": "取り消す（{s} 秒）",
     "undoDone": "取り消しました。",
     "undoFailed": "元に戻せませんでした。項目を開いて調整してください。",
-    "newPatientOption": "新しい患者：{name}"
+    "newPatientOption": "記録を作らずに予約：{name}"
   },
   "payments": {
     "thisWeek": "今週",

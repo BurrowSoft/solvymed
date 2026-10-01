@@ -232,7 +232,7 @@
     "undoAction": "تراجع ({s} ث)",
     "undoDone": "تم التراجع.",
     "undoFailed": "تعذّر التراجع. افتح العنصر لتعديله.",
-    "newPatientOption": "مريض جديد: {name}"
+    "newPatientOption": "حجز بدون سجل: {name}"
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",

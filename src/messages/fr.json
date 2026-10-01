@@ -232,7 +232,7 @@
     "undoAction": "Annuler ({s} s)",
     "undoDone": "Annulé.",
     "undoFailed": "Impossible d’annuler. Ouvrez l’élément pour l’ajuster.",
-    "newPatientOption": "Nouveau patient : {name}"
+    "newPatientOption": "Prendre rendez-vous sans fiche : {name}"
   },
   "payments": {
     "thisWeek": "Cette semaine",

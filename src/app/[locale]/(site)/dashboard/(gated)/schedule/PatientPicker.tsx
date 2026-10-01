@@ -8,9 +8,10 @@ type Patient = { id: string; full_name: string };
 // The New Appointment patient field (Vitor's test, 29/30): suggestions as
 // you type from the first letter (names containing it, from the server
 // search), in our own dropdown rather than a native <datalist> (which many
-// browsers barely show), plus "Novo paciente: {texto}" at the end. Picking
+// browsers barely show), plus "Agendar sem cadastro: {texto}" (UX: no record
+// is created) at the end. Picking
 // an existing patient books by id (two patients can share a name); typing
-// or picking "Novo paciente" books by the typed name, as before.
+// or picking "Agendar sem cadastro" books by the typed name, as before.
 export function PatientPicker({
   search,
   placeholder,
@@ -35,7 +36,7 @@ export function PatientPicker({
 
   const typed = text.trim();
   const exact = matches.some((m) => m.full_name.trim().toLowerCase() === typed.toLowerCase());
-  // The rows: the matches, then "Novo paciente: …" unless it's an exact name.
+  // The rows: the matches, then "Agendar sem cadastro: …" unless it is an exact name.
   const rows: ({ kind: "patient"; p: Patient } | { kind: "new" })[] = [
     ...matches.map((p) => ({ kind: "patient" as const, p })),
     ...(typed && !exact ? [{ kind: "new" as const }] : []),
@@ -55,7 +56,7 @@ export function PatientPicker({
         const found = await search(q);
         if (latest.current === q) setMatches(found);
       } catch {
-        // Suggestions are optional: a failed lookup shows only "Novo paciente".
+        // Suggestions are optional: a failed lookup shows only "Agendar sem cadastro".
         if (latest.current === q) setMatches([]);
       }
     }, 200);

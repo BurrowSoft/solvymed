@@ -232,7 +232,7 @@
     "undoAction": "Batalkan ({s} dtk)",
     "undoDone": "Dibatalkan.",
     "undoFailed": "Tidak dapat membatalkan. Buka item untuk menyesuaikannya.",
-    "newPatientOption": "Pasien baru: {name}"
+    "newPatientOption": "Buat janji tanpa data pasien: {name}"
   },
   "payments": {
     "thisWeek": "Minggu ini",

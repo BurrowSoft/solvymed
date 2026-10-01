@@ -232,7 +232,7 @@
     "undoAction": "Annulla ({s} s)",
     "undoDone": "Annullato.",
     "undoFailed": "Impossibile annullare. Apri l’elemento per modificarlo.",
-    "newPatientOption": "Nuovo paziente: {name}"
+    "newPatientOption": "Prenota senza scheda: {name}"
   },
   "payments": {
     "thisWeek": "Questa settimana",

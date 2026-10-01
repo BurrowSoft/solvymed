@@ -232,7 +232,7 @@
     "undoAction": "復原（{s} 秒）",
     "undoDone": "已復原。",
     "undoFailed": "無法復原。請開啟該項目進行調整。",
-    "newPatientOption": "新病患：{name}"
+    "newPatientOption": "不建檔直接預約：{name}"
   },
   "payments": {
     "thisWeek": "本週",
