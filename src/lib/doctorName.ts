@@ -33,3 +33,13 @@ export function nameInitial(name: string | null | undefined): string {
   const { titles, rest } = splitTitles(name);
   return (rest || titles[0] || "").charAt(0).toUpperCase();
 }
+
+// The first name to greet the signed-in user with: their own, or none
+// ("Good evening!") when it's empty or just their email's local part
+// (Vitor's secretary test: "Good evening, Here66443"; UX).
+export function greetingFirstName(name: string | null | undefined, email: string | null | undefined): string {
+  const shown = doctorDisplayName(name, { firstOnly: true });
+  const local = (email ?? "").split("@")[0].trim().toLowerCase();
+  if (!shown || (local && (name ?? "").trim().toLowerCase() === local)) return "";
+  return shown;
+}
