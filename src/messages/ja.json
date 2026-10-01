@@ -1822,5 +1822,9 @@
     "tryNow": "今すぐ試す",
     "later": "あとで",
     "whatCanDo": "SolvyAI で何ができる？"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
   }
 }

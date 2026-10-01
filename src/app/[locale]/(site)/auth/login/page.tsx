@@ -10,6 +10,7 @@ import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
+import { OpenInApp } from "@/components/OpenInApp";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
@@ -95,6 +96,7 @@ export default function LoginPage() {
   return (
     <AuthPageShell>
       <AuthCard>
+        <OpenInApp />
         {/* Back to home */}
         <div className="mb-6">
           <Link
