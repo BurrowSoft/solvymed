@@ -694,7 +694,13 @@
     "orCustomTime": "または時間を指定する",
     "professionalFallback": "担当者",
     "errorArchived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。",
-    "practiceInactive": "このクリニックは現在オンライン予約を受け付けていません。"
+    "practiceInactive": "このクリニックは現在オンライン予約を受け付けていません。",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "パスワードは{min}文字以上である必要があります。",

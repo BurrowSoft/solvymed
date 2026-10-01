@@ -694,7 +694,13 @@
     "orCustomTime": "أو اختر وقتاً مخصصاً",
     "professionalFallback": "المختص(ة)",
     "errorArchived": "لا تقبل هذه العيادة حجوزات جديدة لحسابك. يُرجى التواصل مع العيادة.",
-    "practiceInactive": "لا تقبل هذه العيادة الحجوزات عبر الإنترنت حاليًا."
+    "practiceInactive": "لا تقبل هذه العيادة الحجوزات عبر الإنترنت حاليًا.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "يجب أن تتكون كلمة المرور من {min} أحرف على الأقل.",

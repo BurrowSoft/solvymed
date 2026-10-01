@@ -694,7 +694,13 @@
     "orCustomTime": "Oder eigene Uhrzeit",
     "professionalFallback": "Gesundheitsfachkraft",
     "errorArchived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis.",
-    "practiceInactive": "Diese Praxis nimmt derzeit keine Online-Buchungen an."
+    "practiceInactive": "Diese Praxis nimmt derzeit keine Online-Buchungen an.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "Das Passwort muss mindestens {min} Zeichen lang sein.",

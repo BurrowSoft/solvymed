@@ -694,7 +694,13 @@
     "orCustomTime": "또는 시간 직접 선택",
     "professionalFallback": "담당 전문가",
     "errorArchived": "이 클리닉은 회원님 계정의 새 예약을 받지 않습니다. 클리닉에 문의해 주세요.",
-    "practiceInactive": "이 병원은 현재 온라인 예약을 받지 않습니다."
+    "practiceInactive": "이 병원은 현재 온라인 예약을 받지 않습니다.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "비밀번호는 최소 {min}자 이상이어야 합니다.",
