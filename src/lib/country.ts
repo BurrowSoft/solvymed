@@ -4,6 +4,7 @@
 // lib/country.ts: BR and TH have their own rules; any other country (or the
 // unknown 'ZZ') is "Other". Stored as ISO-3166 alpha-2 in
 // professionals.country (migration 110); 'BR' until then.
+import { liveFeatures } from "./liveFeatures";
 
 // "NONE": practices outside the countries we support by name price in their
 // own currency, which we don't know, so their prices show as plain numbers
@@ -50,6 +51,9 @@ export type CountryProfile = {
   clinicTaxId: "cnpj" | "th_tax_id" | null;
   // The language of a push when the recipient's own isn't known (UX).
   fallbackLocale: "pt-BR" | "th" | "en";
+  // The messaging app the practice's patient messages use (item 12, the
+  // app's #230): WhatsApp, or LINE in Thailand (none until LINE is live).
+  messagingApp: "whatsapp" | "line";
   // Where a paid appointment's receipt is issued: the website's simple
   // recibo, or only the app (Thailand: numbered receipts).
   receipts: "web" | "app";
@@ -82,7 +86,7 @@ const BR: CountryProfile = {
   kind: "BR", currency: "BRL", patientId: "cpf",
   idFields: [{ name: "cpf", label: "cpf", placeholder: "000.000.000-00", store: "text", maxLength: 20, search: "digits" }],
   phonePrefix: "+55", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo",
-  clinicTaxId: "cnpj", fallbackLocale: "pt-BR", receipts: "web", calendar: "gregorian",
+  clinicTaxId: "cnpj", fallbackLocale: "pt-BR", messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
   healthCard: "cns", addressFormat: "br",
   examples: {
     titles: { other: "Dr., Dra., Prof." },
@@ -98,7 +102,7 @@ const TH: CountryProfile = {
     { name: "passport_number", label: "passport", placeholder: "", store: "text", maxLength: 30, keep: 30, search: "text" },
   ],
   phonePrefix: "+66", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok",
-  clinicTaxId: "th_tax_id", fallbackLocale: "th", receipts: "app", calendar: "buddhist",
+  clinicTaxId: "th_tax_id", fallbackLocale: "th", messagingApp: "line", receipts: "app", calendar: "buddhist",
   healthCard: null, addressFormat: "th",
   examples: {
     titles: { th: "นพ., พญ., ทพ., ทญ.", other: "Dr." },
@@ -112,7 +116,7 @@ const OTHER: CountryProfile = {
   kind: "OTHER", currency: "NONE", patientId: "passport",
   idFields: [{ name: "passport_number", label: "passportOrId", placeholder: "", store: "text", maxLength: 30, keep: 30, search: "text" }],
   phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
-  clinicTaxId: null, fallbackLocale: "en", receipts: "web", calendar: "gregorian",
+  clinicTaxId: null, fallbackLocale: "en", messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
   healthCard: null, addressFormat: "intl",
   examples: {
     titles: null,
@@ -153,4 +157,12 @@ export function profileOfPhonePrefix(prefix: string): CountryProfile {
 // idKind): "OTHER" is the explicit default, never read as a country code.
 export function profileOfKind(kind: CountryProfile["kind"]): CountryProfile {
   return Object.values(PROFILES).find((p) => p.kind === kind) ?? OTHER;
+}
+
+// The messaging app a practice's WhatsApp/LINE items use today: its own,
+// with LINE only once it's live (TH-6), else none: Thai practices see no
+// WhatsApp item (Vitor, item 12; the app's #230).
+export function messagingChannel(profile: CountryProfile): "whatsapp" | "line" | null {
+  if (profile.messagingApp === "line") return liveFeatures.lineReminders ? "line" : null;
+  return profile.messagingApp;
 }
