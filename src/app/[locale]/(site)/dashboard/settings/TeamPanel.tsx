@@ -114,8 +114,15 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
     setCreated(null);
     start(async () => {
       const sent = await sendSecretaryInviteEmail({ resend_email: row.email });
-      if (!sent.ok) setError(emailError(sent));
-      else {
+      if (!sent.ok) {
+        setError(emailError(sent));
+        // The email failed (not a wait): a fresh code to share right here,
+        // as the message says ("…ou compartilhe o link"; e7).
+        if (!sent.nextAt) {
+          const fresh = await createSecretaryInvite(row.email);
+          if (fresh.ok) setCreated({ code: fresh.code, email: row.email });
+        }
+      } else {
         if (sent.code) setCreated({ code: sent.code, email: row.email });
         setNotice(t("teamEmailSent", { email: row.email }));
       }

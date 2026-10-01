@@ -109,6 +109,10 @@ describe("Team: live", () => {
     team([invite(null)]);
     fireEvent.click(screen.getByRole("button", { name: "Reenviar convite" }));
     expect(await screen.findByText("Não foi possível enviar o e-mail agora. Tente de novo ou compartilhe o link.")).toBeInTheDocument();
+    // …and the link to share is right there (e7); the daily cap above made none.
+    expect(await screen.findByText("S-ABCD2345")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: pt.secretary.copyLink })).toBeInTheDocument();
+    expect(h.creates).toEqual(["ana@x.co"]);
   });
 });
 
