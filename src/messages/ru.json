@@ -243,12 +243,14 @@
     "undoFailed": "Не удалось отменить. Откройте запись, чтобы исправить её.",
     "newPatientOption": "Записать без карты: {name}",
     "reasonLabel": "Reason (optional)",
-    "reasonPlaceholderDecline": "E.g. this time isn't available. The patient will see this.",
-    "reasonPlaceholderCancel": "E.g. a schedule change. The patient will see this.",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
     "messageLabel": "Message to the patient (optional)",
     "confirmCancel": "Cancel appointment",
     "keepAppointment": "Back",
-    "reasonShort": "Reason"
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this."
   },
   "payments": {
     "thisWeek": "На этой неделе",

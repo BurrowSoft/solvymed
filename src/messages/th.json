@@ -243,12 +243,14 @@
     "undoFailed": "เลิกทำไม่ได้ โปรดเปิดรายการเพื่อแก้ไข",
     "newPatientOption": "นัดโดยไม่สร้างประวัติ: {name}",
     "reasonLabel": "เหตุผล (ไม่บังคับ)",
-    "reasonPlaceholderDecline": "เช่น เวลานี้ไม่ว่าง ผู้ป่วยจะเห็นข้อความนี้",
-    "reasonPlaceholderCancel": "เช่น มีการเปลี่ยนแปลงตารางงาน ผู้ป่วยจะเห็นข้อความนี้",
+    "reasonPlaceholderDecline": "เช่น เวลานี้ไม่ว่าง",
+    "reasonPlaceholderCancel": "เช่น มีการเปลี่ยนแปลงตารางงาน",
     "messageLabel": "ข้อความถึงผู้ป่วย (ไม่บังคับ)",
     "confirmCancel": "ยกเลิกนัดหมาย",
     "keepAppointment": "ย้อนกลับ",
-    "reasonShort": "เหตุผล"
+    "reasonShort": "เหตุผล",
+    "messagePlaceholder": "เช่น กรุณานำผลตรวจมาด้วย",
+    "patientWillSee": "ผู้ป่วยจะเห็นข้อความนี้"
   },
   "payments": {
     "thisWeek": "สัปดาห์นี้",

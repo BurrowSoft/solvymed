@@ -300,6 +300,7 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
             onChange={(e) => setReason(e.target.value)}
             className="mt-1 w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs text-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
           />
+          <p className="mt-0.5 text-[11px] text-slate-500">{t("patientWillSee")}</p>
           <div className="mt-1 flex items-center justify-between gap-2">
             <span className="text-[11px] text-slate-400">{reason.length}/{REASON_MAX}</span>
             <div className="flex gap-1">

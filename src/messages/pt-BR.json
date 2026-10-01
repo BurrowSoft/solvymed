@@ -243,12 +243,14 @@
     "undoFailed": "Não foi possível desfazer. Abra o item para ajustar.",
     "newPatientOption": "Agendar sem cadastro: {name}",
     "reasonLabel": "Motivo (opcional)",
-    "reasonPlaceholderDecline": "Ex.: horário indisponível. O paciente verá esta mensagem.",
-    "reasonPlaceholderCancel": "Ex.: imprevisto na agenda. O paciente verá esta mensagem.",
+    "reasonPlaceholderDecline": "Ex.: horário indisponível.",
+    "reasonPlaceholderCancel": "Ex.: imprevisto na agenda.",
     "messageLabel": "Mensagem ao paciente (opcional)",
     "confirmCancel": "Cancelar consulta",
     "keepAppointment": "Voltar",
-    "reasonShort": "Motivo"
+    "reasonShort": "Motivo",
+    "messagePlaceholder": "Ex.: traga seus exames.",
+    "patientWillSee": "O paciente verá esta mensagem."
   },
   "payments": {
     "thisWeek": "Esta semana",

@@ -271,6 +271,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                         onChange={e => setReasons(prev => ({ ...prev, [b.id]: e.target.value }))}
                         className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
                       />
+                      <p className="mt-0.5 text-[11px] text-slate-500">{t("patientWillSee")}</p>
                       <div className="mt-1 flex items-center justify-between gap-2">
                         <span className="text-[11px] text-slate-400">{(reasons[b.id] ?? "").length}/{REASON_MAX}</span>
                         <div className="flex gap-2">
@@ -281,16 +282,22 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                     </div>
                   )}
 
+                  {b.status === "tentative" && reasonsLive && (
+                    <label htmlFor={`message-${b.id}`} className="mt-1 block text-xs font-semibold text-slate-700">{t("messageLabel")}</label>
+                  )}
                   {b.status === "tentative" && (
                     <textarea
+                      id={`message-${b.id}`}
                       rows={2}
                       maxLength={reasonsLive ? REASON_MAX : undefined}
-                      aria-label={reasonsLive ? t("messageLabel") : undefined}
-                      placeholder={reasonsLive ? t("messageLabel") : t("notePlaceholder")}
+                      placeholder={reasonsLive ? t("messagePlaceholder") : t("notePlaceholder")}
                       value={notes[b.id] ?? ""}
                       onChange={e => setNotes(prev => ({ ...prev, [b.id]: e.target.value }))}
                       className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
                     />
+                  )}
+                  {b.status === "tentative" && reasonsLive && (
+                    <p className="text-[11px] text-slate-500">{t("patientWillSee")} {(notes[b.id] ?? "").length}/{REASON_MAX}</p>
                   )}
                   {b.status === "proposal" && b.scheduled_by === "patient" && (
                     <div className="flex gap-2">
