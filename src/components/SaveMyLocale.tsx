@@ -10,17 +10,26 @@ import { saveMyLocale } from "@/app/[locale]/(site)/dashboard/locale-actions";
 const SAVED_KEY = "solvymed_saved_locale";
 const TRIED_KEY = "solvymed_saved_locale_tried";
 
+// The country a patient picked on the signup's first step (country first),
+// kept in this browser until it's saved with the language (149).
+export const SIGNUP_COUNTRY_KEY = "solvymed_signup_country";
+
 export function SaveMyLocale({ locale }: { locale: string }) {
   useEffect(() => {
+    let country: string | null = null;
+    try { country = localStorage.getItem(SIGNUP_COUNTRY_KEY); } catch { /* none */ }
     try {
-      if (localStorage.getItem(SAVED_KEY) === locale || sessionStorage.getItem(TRIED_KEY) === locale) return;
+      if (!country && (localStorage.getItem(SAVED_KEY) === locale || sessionStorage.getItem(TRIED_KEY) === locale)) return;
       sessionStorage.setItem(TRIED_KEY, locale);
     } catch {
       // No storage: still save once per page load.
     }
-    void saveMyLocale(locale).then((ok) => {
+    void saveMyLocale(locale, country).then((ok) => {
       if (!ok) return;
-      try { localStorage.setItem(SAVED_KEY, locale); } catch { /* none */ }
+      try {
+        localStorage.setItem(SAVED_KEY, locale);
+        if (country) localStorage.removeItem(SIGNUP_COUNTRY_KEY);
+      } catch { /* none */ }
     }).catch(() => {});
   }, [locale]);
   return null;

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Card } from "./SettingsClient";
 import { createSecretaryInvite, revokeSecretaryInvite, removeSecretary } from "./team-actions";
 import { dateLocale } from "@/lib/dateLabels";
+import { withCountryHint } from "@/lib/signupCountry";
 
 export type TeamRow = {
   kind: "secretary" | "invite";
@@ -34,7 +35,7 @@ type Created = { code: string; email: string };
 // creating it; "Resend" creates a fresh one for the same email.
 // whatsapp: the share button only where the practice uses WhatsApp (not
 // in Thailand, item 12).
-export function TeamPanel({ rows, loadFailed, whatsapp = true }: { rows: TeamRow[]; loadFailed: boolean; whatsapp?: boolean }) {
+export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }: { rows: TeamRow[]; loadFailed: boolean; whatsapp?: boolean; country?: string | null }) {
   const t = useTranslations("secretary");
   const router = useRouter();
   const { locale } = useParams<{ locale: string }>();
@@ -53,7 +54,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true }: { rows: TeamRow
   // email on accept. Unprefixed, like every link shared with someone else:
   // the recipient's own browser language decides.
   const shareLink = (c: Created) =>
-    `${window.location.origin}/join/secretary/${encodeURIComponent(c.code)}`;
+    withCountryHint(`${window.location.origin}/join/secretary/${encodeURIComponent(c.code)}`, country);
 
   function invite(targetEmail: string) {
     setError("");

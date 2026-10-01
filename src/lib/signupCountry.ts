@@ -57,3 +57,13 @@ export function browserTimeZone(): string | null {
     return null;
   }
 }
+
+// The country hint on a link shared with someone else (invite / join /
+// secretary; the app's #233 does the same): ?c=BR or ?c=TH for the
+// practice's country, nothing for the default. The app and the signup skip
+// the country step with it. Only a hint: staff follow the practice anyway.
+export function withCountryHint(url: string, country: string | null | undefined): string {
+  const c = parseCountryChoice(country);
+  if (!c) return url;
+  return `${url}${url.includes("?") ? "&" : "?"}c=${c}`;
+}

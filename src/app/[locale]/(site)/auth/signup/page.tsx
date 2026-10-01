@@ -19,6 +19,7 @@ import { browserTimeZone, COUNTRY_STEP, countryStepHref, parseCountryChoice, sig
 import { thaiEnabled } from "@/lib/publicLocales";
 import { consentMetadata } from "@/lib/legalVersions";
 import { titleExamples } from "@/lib/country";
+import { SIGNUP_COUNTRY_KEY } from "@/components/SaveMyLocale";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -239,6 +240,8 @@ export default function SignupPage() {
                 key={c.code}
                 type="button"
                 onClick={() => {
+                  // Saved with the language after the first sign-in (149).
+                  try { localStorage.setItem(SIGNUP_COUNTRY_KEY, c.code); } catch { /* none */ }
                   const next = english ? "en" : c.locale;
                   goTo(countryStepHref(c.code, next, searchParams), next);
                 }}
