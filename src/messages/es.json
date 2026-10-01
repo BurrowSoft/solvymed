@@ -747,7 +747,9 @@
     "backToHome": "Volver al inicio",
     "patientWelcome": {
       "countdown": "Te llevaremos a tus citas en {count, plural, one {# segundo} other {# segundos}}…",
-      "goToAppointments": "Ir a Mis Citas"
+      "goToAppointments": "Ir a Mis Citas",
+      "heading": "¡Todo listo!",
+      "confirmed": "Tu cuenta ha sido confirmada."
     },
     "inviteRequired": {
       "heading": "Se necesita un código de invitación",

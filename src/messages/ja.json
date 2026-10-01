@@ -747,7 +747,9 @@
     "backToHome": "ホームに戻る",
     "patientWelcome": {
       "countdown": "{count}秒後に予約一覧に移動します…",
-      "goToAppointments": "予約一覧へ"
+      "goToAppointments": "予約一覧へ",
+      "heading": "準備完了です！",
+      "confirmed": "アカウントが確認されました。"
     },
     "inviteRequired": {
       "heading": "招待コードが必要です",

@@ -747,7 +747,9 @@
     "backToHome": "返回首页",
     "patientWelcome": {
       "countdown": "{count}秒后将带您前往预约页面…",
-      "goToAppointments": "前往我的预约"
+      "goToAppointments": "前往我的预约",
+      "heading": "一切就绪！",
+      "confirmed": "您的账户已确认。"
     },
     "inviteRequired": {
       "heading": "需要邀请码",

@@ -17,6 +17,7 @@ const PROGRESS_WIDTH_CLASS = ["w-0", "w-1/5", "w-2/5", "w-3/5", "w-4/5", "w-full
 
 export default function PatientWelcomePage() {
   const t = useTranslations("auth");
+  const tNav = useTranslations("nav");
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const router = useRouter();
@@ -59,8 +60,8 @@ export default function PatientWelcomePage() {
           </svg>
         </IconBadge>
 
-        <h1 className="auth-heading">You&apos;re all set!</h1>
-        <p className="mb-1 text-slate-500">Your account has been confirmed.</p>
+        <h1 className="auth-heading">{t("patientWelcome.heading")}</h1>
+        <p className="mb-1 text-slate-500">{t("patientWelcome.confirmed")}</p>
         {email && (
           <p className="mb-1 text-sm font-medium text-slate-700">{email}</p>
         )}
@@ -91,7 +92,7 @@ export default function PatientWelcomePage() {
           onClick={handleSignOut}
           className="text-sm text-slate-400 hover:text-teal-600 transition"
         >
-          Sign out
+          {tNav("signOut")}
         </button>
       </AuthCard>
     </AuthPageShell>

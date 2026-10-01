@@ -747,7 +747,9 @@
     "backToHome": "กลับสู่หน้าหลัก",
     "patientWelcome": {
       "countdown": "กำลังพาคุณไปยังนัดหมายของคุณใน {count} วินาที…",
-      "goToAppointments": "ไปที่นัดหมายของฉัน"
+      "goToAppointments": "ไปที่นัดหมายของฉัน",
+      "heading": "เรียบร้อยแล้ว!",
+      "confirmed": "ยืนยันบัญชีของคุณแล้ว"
     },
     "inviteRequired": {
       "heading": "จำเป็นต้องมีรหัสเชิญ",

@@ -747,7 +747,9 @@
     "backToHome": "Về trang chủ",
     "patientWelcome": {
       "countdown": "Đang đưa bạn đến lịch hẹn trong {count} giây…",
-      "goToAppointments": "Đến lịch hẹn của tôi"
+      "goToAppointments": "Đến lịch hẹn của tôi",
+      "heading": "Đã xong!",
+      "confirmed": "Tài khoản của bạn đã được xác nhận."
     },
     "inviteRequired": {
       "heading": "Cần có mã mời",

@@ -747,7 +747,9 @@
     "backToHome": "العودة للرئيسية",
     "patientWelcome": {
       "countdown": "سنأخذك إلى مواعيدك خلال {count, plural, one {# ثانية} other {# ثوانٍ}}…",
-      "goToAppointments": "الذهاب إلى مواعيدي"
+      "goToAppointments": "الذهاب إلى مواعيدي",
+      "heading": "كل شيء جاهز!",
+      "confirmed": "تم تأكيد حسابك."
     },
     "inviteRequired": {
       "heading": "رمز الدعوة مطلوب",
