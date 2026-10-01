@@ -1822,5 +1822,8 @@
     "tryNow": "Probar ahora",
     "later": "Más tarde",
     "whatCanDo": "¿Qué puede hacer SolvyAI?"
+  },
+  "autoRefresh": {
+    "refresh": "Actualizar"
   }
 }

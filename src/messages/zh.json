@@ -1822,5 +1822,8 @@
     "tryNow": "立即试用",
     "later": "以后再说",
     "whatCanDo": "SolvyAI 能做什么？"
+  },
+  "autoRefresh": {
+    "refresh": "刷新"
   }
 }

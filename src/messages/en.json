@@ -1852,5 +1852,8 @@
     "tryNow": "Try it now",
     "later": "Later",
     "whatCanDo": "What can SolvyAI do?"
+  },
+  "autoRefresh": {
+    "refresh": "Refresh"
   }
 }

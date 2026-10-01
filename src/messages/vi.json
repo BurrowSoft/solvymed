@@ -1822,5 +1822,8 @@
     "tryNow": "Thử ngay",
     "later": "Để sau",
     "whatCanDo": "SolvyAI làm được gì?"
+  },
+  "autoRefresh": {
+    "refresh": "Làm mới"
   }
 }

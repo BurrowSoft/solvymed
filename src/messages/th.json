@@ -1852,5 +1852,8 @@
     "tryNow": "ลองเลย",
     "later": "ไว้ทีหลัง",
     "whatCanDo": "SolvyAI ทำอะไรได้บ้าง?"
+  },
+  "autoRefresh": {
+    "refresh": "รีเฟรช"
   }
 }

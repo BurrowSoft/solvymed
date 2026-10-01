@@ -43,10 +43,10 @@ describe("/.well-known/apple-app-site-association (iOS)", () => {
     expect(aasa.applinks.details[0].components.map((c) => c["/"])).toEqual(["/invite/*", "/join/*"]);
   });
 
-  it("is served as application/json", async () => {
-    const config = (await import("../../next.config")).default as { headers?: () => Promise<{ source: string; headers: { key: string; value: string }[] }[]> };
-    const rules = (await config.headers?.()) ?? [];
-    const rule = rules.find((r) => r.source === "/.well-known/apple-app-site-association");
-    expect(rule?.headers).toContainEqual({ key: "Content-Type", value: "application/json" });
+  it("is served as application/json", () => {
+    // Read as text: importing next.config loads the Sentry and next-intl
+    // plugins, which took longer than the test timeout under load.
+    const config = readFileSync(join(process.cwd(), "next.config.ts"), "utf8").replace(/\s+/g, " ");
+    expect(config).toContain('source: "/.well-known/apple-app-site-association", headers: [{ key: "Content-Type", value: "application/json" }]');
   });
 });

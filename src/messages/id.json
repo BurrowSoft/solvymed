@@ -1822,5 +1822,8 @@
     "tryNow": "Coba sekarang",
     "later": "Nanti",
     "whatCanDo": "Apa yang bisa dilakukan SolvyAI?"
+  },
+  "autoRefresh": {
+    "refresh": "Muat ulang"
   }
 }
