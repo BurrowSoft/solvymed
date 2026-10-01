@@ -16,7 +16,9 @@ import { loadMergeComparison, mergePatientsAction, searchMergeCandidates } from 
 type Step = "pick" | "compare" | "confirm" | "app" | "saving";
 type Candidate = { id: string; full_name: string; birth_date: string | null; archived: boolean };
 
-export function MergePatientButton({ patientId, patientName, locale }: { patientId: string; patientName: string; locale: string }) {
+// pairWith: open straight on the comparison with that record (the invited
+// patient's "Mesmo e-mail de {nome}: mesclar?", migration 145).
+export function MergePatientButton({ patientId, patientName, locale, pairWith = null }: { patientId: string; patientName: string; locale: string; pairWith?: string | null }) {
   const t = useTranslations("patientMerge");
   const tp = useTranslations("patientDetail");
   const tAddr = useTranslations("patientAddress");
@@ -39,6 +41,14 @@ export function MergePatientButton({ patientId, patientName, locale }: { patient
     const id = setTimeout(() => { searchMergeCandidates(patientId, q).then(setCandidates).catch(() => setCandidates([])); }, 250);
     return () => clearTimeout(id);
   }, [open, step, q, patientId]);
+
+  // Opened with a pair: once, on arrival.
+  useEffect(() => {
+    if (!pairWith || pairWith === patientId) return;
+    setOpen(true);
+    choose(pairWith);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const errorText = (c: MergeErrorCode) =>
     c === "both_have_app_accounts" ? t("errBothApp") : c === "kept_patient_archived" ? t("errArchived") : c === "merged_patient_deceased" ? t("errDeceased") : c === "notes_too_long" ? t("notesTooLong") : t("errGeneric");

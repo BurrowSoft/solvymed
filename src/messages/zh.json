@@ -98,7 +98,15 @@
     "noUpcoming": "暂无即将到来的预约",
     "unpaidSessions": "{n}次未付款",
     "pendingCollection": "{amount} 待收款",
-    "managePayments": "管理付款"
+    "managePayments": "管理付款",
+    "invitedTitle": "{n} 位通过您的邀请加入的新患者",
+    "invitedHint": "他们使用您的诊所代码加入。保留您的患者；“移除”会断开账户连接（档案会被归档）。",
+    "invitedKeep": "保留",
+    "invitedRemove": "移除",
+    "invitedError": "无法保存，请重试。",
+    "invitedSeeAll": "在患者中查看全部",
+    "invitedSameEmail": "与 {name} 邮箱相同：合并？",
+    "invitedRemoveConfirm": "移除 {name}？其账户将重新等待您的确认，档案会被归档。"
   },
   "schedule": {
     "patientMessage": "患者留言",
@@ -320,7 +328,9 @@
     "nextPage": "下一页",
     "pagesLabel": "分页",
     "fullNamePlaceholder": "全名",
-    "professionPlaceholder": "例如：工程师、教师…"
+    "professionPlaceholder": "例如：工程师、教师…",
+    "invitedBadge": "新·通过邀请",
+    "invitedSameEmail": "与 {name} 邮箱相同：合并？"
   },
   "patientDetail": {
     "tabInfo": "信息",
@@ -763,7 +773,9 @@
       "backToSignup": "使用其他账户",
       "tooManyAttempts": "尝试次数过多，请稍后再试。",
       "alreadyInvitedByAnother": "您的账户已与另一位医生关联。",
-      "archived": "该诊所目前不接受您账户的新预约。请联系诊所。"
+      "archived": "该诊所目前不接受您账户的新预约。请联系诊所。",
+      "alreadyConnected": "您已与 {doctor} 连接。如需更换，请联系客服。",
+      "alreadyConnectedNoName": "您已与其他医生连接。如需更换，请联系客服。"
     },
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",

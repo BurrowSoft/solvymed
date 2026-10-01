@@ -7,6 +7,7 @@ import { PATIENTS_PAGE_SIZE, pageRange, parsePage, patientSearchFilter } from "@
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
 import { conditionMet } from "@/lib/conditions";
+import { INVITE_COLUMNS, isNewInvited, type InviteFields } from "@/lib/invitedPatients";
 
 export default async function PatientsPage({
   params,
@@ -52,7 +53,9 @@ export default async function PatientsPage({
   // reason column, which exists only once 131 is applied.
   const importLive = conditionMet("patient-import-live");
   const isDoctor = userRoleData?.role !== "secretary";
-  const listCols: string = `id, full_name, email, phone, sex, birth_date, created_at, archived_at, archived_by_name${importLive ? ", archived_reason" : ""}`;
+  // Invited patients (145): only once invited-patients-live (the columns exist).
+  const invitedLive = conditionMet("invited-patients-live");
+  const listCols: string = `id, full_name, email, phone, sex, birth_date, created_at, archived_at, archived_by_name${importLive ? ", archived_reason" : ""}${invitedLive ? `, ${INVITE_COLUMNS}` : ""}`;
   let query = supabase
     .from("patients")
     .select(listCols, { count: "exact" })
@@ -74,11 +77,24 @@ export default async function PatientsPage({
     countQuery().not("archived_at", "is", null),
   ]);
 
-  const patientList = (patients ?? []) as unknown as {
+  const patientList = (patients ?? []) as unknown as ({
     id: string; full_name: string; email?: string; phone?: string;
     sex?: string; birth_date?: string; created_at: string;
     archived_at?: string | null; archived_by_name?: string | null; archived_reason?: string | null;
-  }[];
+  } & InviteFields)[];
+  // The same-e-mail records' names, for "Mesmo e-mail de {nome}: mesclar?".
+  const sameIds = invitedLive ? [...new Set(patientList.filter(isNewInvited).map((p) => p.invite_same_email_as).filter((x): x is string => !!x))] : [];
+  const sameNames = new Map<string, string>();
+  if (sameIds.length) {
+    const { data: others } = await supabase.from("patients").select("id, full_name").eq("professional_id", effectiveProfId).in("id", sameIds);
+    for (const o of (others ?? []) as { id: string; full_name: string }[]) sameNames.set(o.id, o.full_name);
+  }
+  const cards = patientList.map((p) => ({
+    ...p,
+    newInvited: invitedLive && isNewInvited(p),
+    sameEmailAs: invitedLive && isNewInvited(p) && p.invite_same_email_as && sameNames.has(p.invite_same_email_as)
+      ? { id: p.invite_same_email_as, name: sameNames.get(p.invite_same_email_as)! } : null,
+  }));
 
   const total = activeCount.count ?? 0;
   const archivedTotal = archivedCount.count ?? 0;
@@ -168,7 +184,7 @@ export default async function PatientsPage({
         </div>
       ) : (
         <div className="space-y-2">
-          {patientList.map(patient => (
+          {cards.map(patient => (
             <PatientCard key={patient.id} patient={patient} locale={locale} />
           ))}
         </div>

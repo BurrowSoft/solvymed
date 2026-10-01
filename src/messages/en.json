@@ -98,7 +98,15 @@
     "noUpcoming": "No upcoming appointments",
     "unpaidSessions": "{n, plural, one {# unpaid session} other {# unpaid sessions}}",
     "pendingCollection": "{amount} pending collection",
-    "managePayments": "Manage Payments"
+    "managePayments": "Manage Payments",
+    "invitedTitle": "{n, plural, one {# new patient via your invite} other {# new patients via your invite}}",
+    "invitedHint": "They joined with your clinic code. Keep your patients; Remove disconnects the account (the record is archived).",
+    "invitedKeep": "Keep",
+    "invitedRemove": "Remove",
+    "invitedError": "Couldn't save. Please try again.",
+    "invitedSeeAll": "See all in Patients",
+    "invitedSameEmail": "Same email as {name}: merge?",
+    "invitedRemoveConfirm": "Remove {name}? Their account goes back to waiting for your confirmation, and the record is archived."
   },
   "schedule": {
     "patientMessage": "Patient's message",
@@ -320,7 +328,9 @@
     "nextPage": "Next",
     "pagesLabel": "Pages",
     "fullNamePlaceholder": "Full name",
-    "professionPlaceholder": "e.g. Engineer, Teacher…"
+    "professionPlaceholder": "e.g. Engineer, Teacher…",
+    "invitedBadge": "New, via invite",
+    "invitedSameEmail": "Same email as {name}: merge?"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -763,7 +773,9 @@
       "tooManyAttempts": "Too many attempts. Please wait a while before trying again.",
       "alreadyInvitedByAnother": "Your account is already connected to a different doctor.",
       "backToSignup": "Use a different account",
-      "archived": "This clinic isn't taking new bookings for your account. Please contact the clinic."
+      "archived": "This clinic isn't taking new bookings for your account. Please contact the clinic.",
+      "alreadyConnected": "You're already connected to {doctor}. To switch, contact support.",
+      "alreadyConnectedNoName": "You are already connected to another doctor. To switch, contact support."
     },
     "pendingConfirmation": {
       "loading": "Checking your status…",

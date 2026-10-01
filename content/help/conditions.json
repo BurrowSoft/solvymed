@@ -90,5 +90,9 @@
   "booking-check-live": {
     "met": false,
     "what": "Migration 141 (get_practice_accepts_bookings, mobile #196) is applied on production: the website's booking page then tells a patient that a practice with an inactive subscription \"isn't taking online bookings right now\" instead of showing times (before 141 it books as before). Gates the Help K1 / App Map lines about it; the app's line also waits on app-1.4.0. 142 (create_public_booking refusing 'practice_inactive') is the server guard, gated separately by 38."
+  },
+  "invited-patients-live": {
+    "met": true,
+    "what": "Migration 145 (invited patients) is applied on production: an invite-code signup creates the practice's patient record at once (patients.invited_via_code_at / invite_reviewed_at / invite_same_email_as, keep_invited_patient / remove_invited_patient). Gates the website's \"Novo, via convite\" badge, the dashboard's new-invited-patients card and its Help / App Map lines (the app's lines also wait on app-1.4.0). The website never reads the new columns before this."
   }
 }

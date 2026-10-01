@@ -266,6 +266,8 @@ export const ACTIONS: AppMapAction[] = [
 
 // Rules about SolvyAI itself (not one action).
 export const GENERAL: { rule: Rule; help: string }[] = [
+  { rule: { text: "A patient who joins with the practice's invite code becomes a patient record at once, badged \"Novo, via convite\". On the website's Overview the clinic answers each: \"Manter\" keeps it, \"Remover\" disconnects the account (the record is archived, the patient waits again). If the patient's email was already on another record, \"Mesmo e-mail de {nome}: mesclar?\" opens the merge of the two. SolvyAI doesn't keep or remove them.", pending: ["invited-patients-live"] }, help: "C5" },
+  { rule: { text: "In the app too (1.4.0), Home shows the new invited patients with Manter / Remover.", pending: ["invited-patients-live", "app-1.4.0"] }, help: "C5" },
   { rule: "The practice country is chosen when the doctor creates the account on the website (Brazil / Thailand / Other); it sets the currency, the plan price, the patient ID field and the payment QR, and shows in Settings → \"País do consultório\" / \"Practice country\". To change it later, the doctor contacts support@solvymed.com (SolvyAI can't change it). Patients and secretaries don't choose it.", help: "C1" },
   { rule: { text: "The app (1.4.0) is in 7 languages: Portuguese, English, Spanish, French, German, Italian and Thai (ไทย), in the first-run choice, the language picker and Settings → Language; a phone set to Thai opens it in Thai.", pending: ["app-1.4.0"] }, help: "C8" },
   { rule: { text: "In the app too (1.4.0): a doctor's signup shows the same practice-country choice (Brasil / ประเทศไทย / Other), preselected from the phone's region.", pending: ["app-1.4.0"] }, help: "C1" },

@@ -11,6 +11,8 @@ import { formatMoney } from "@/lib/money";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { RECEIVABLE_STATUSES } from "@/lib/paymentRules";
+import { conditionMet } from "@/lib/conditions";
+import { InvitedPatientsCard } from "./InvitedPatientsCard";
 import { doctorDisplayName } from "@/lib/doctorName";
 import { dateLocale } from "@/lib/dateLabels";
 
@@ -117,6 +119,25 @@ export default async function DashboardPage({
   const patientCount = patientCountResult.count ?? 0;
   const monthRevenue = (monthRevenueResult.data ?? []) as { payment_amount: number }[];
 
+  // Patients who joined with the invite code, not yet kept or removed (145;
+  // only once invited-patients-live, before it the columns don't exist).
+  let invited: { id: string; full_name: string; sameEmailAs: { id: string; name: string } | null }[] = [];
+  let invitedTotal = 0;
+  if (conditionMet("invited-patients-live")) {
+    const { data: rows, count } = await supabase.from("patients").select("id, full_name, invite_same_email_as", { count: "exact" })
+      .eq("professional_id", effectiveProfId).not("invited_via_code_at", "is", null).is("invite_reviewed_at", null).is("archived_at", null)
+      .order("invited_via_code_at", { ascending: false }).limit(5);
+    const list = (rows ?? []) as { id: string; full_name: string; invite_same_email_as: string | null }[];
+    invitedTotal = count ?? list.length;
+    const sameIds = [...new Set(list.map((r) => r.invite_same_email_as).filter((x): x is string => !!x))];
+    const names = new Map<string, string>();
+    if (sameIds.length) {
+      const { data: others } = await supabase.from("patients").select("id, full_name").eq("professional_id", effectiveProfId).in("id", sameIds);
+      for (const o of (others ?? []) as { id: string; full_name: string }[]) names.set(o.id, o.full_name);
+    }
+    invited = list.map((r) => ({ id: r.id, full_name: r.full_name, sameEmailAs: r.invite_same_email_as && names.has(r.invite_same_email_as) ? { id: r.invite_same_email_as, name: names.get(r.invite_same_email_as)! } : null }));
+  }
+
   // A secretary has no professionals row: use the name they signed up with.
   const ownName = isSecretary
     ? (user.user_metadata?.full_name as string | undefined)?.trim()
@@ -159,6 +180,8 @@ export default async function DashboardPage({
       {onboardingFlags && !onboardingFlags.secretary_welcome_seen && onboardingFlags.clinic_professional_id && onboardingFlags.clinic_name && (
         <OnboardingCard kind="secretary_welcome" clinicName={onboardingFlags.clinic_name} />
       )}
+
+      {invitedTotal > 0 && <InvitedPatientsCard patients={invited} total={invitedTotal} prefix={prefix} />}
 
       {/* Stat Cards */}
       <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
