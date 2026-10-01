@@ -15,6 +15,7 @@ import { conditionMet } from "@/lib/conditions";
 import { InvitedPatientsCard } from "./InvitedPatientsCard";
 import { greetingFirstName } from "@/lib/doctorName";
 import { dateLocale } from "@/lib/dateLabels";
+import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 
 function statusBadge(status: string) {
@@ -67,7 +68,8 @@ export default async function DashboardPage({
   if (!effectiveProfId) redirect(`${prefix}/auth/login`);
   const isSecretary = effectiveProfId !== user.id;
   // Amounts are in the practice's currency (its country), not the UI's.
-  const { currency, paymentQr } = countryProfile(await getPracticeCountry(supabase, user.id, effectiveProfId));
+  const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
+  const { currency, paymentQr } = countryProfile(practiceCountry);
   const formatAmount = (n: number) => formatMoney(n, currency);
 
   // The practice's day and hour, not the server's (UTC).
@@ -98,6 +100,7 @@ export default async function DashboardPage({
     pendingPaymentsResult,
     patientCountResult,
     monthRevenueResult,
+    requestsResult,
   ] = await Promise.all([
     // The greeting is for the viewer, so this stays the caller's own row.
     supabase.from("professionals").select("full_name, specialty, photo_url, public_invite_code").eq("id", user.id).maybeSingle(),
@@ -110,6 +113,12 @@ export default async function DashboardPage({
     isSecretary
       ? Promise.resolve({ data: [] as { payment_amount: number }[] })
       : supabase.from("appointments").select("payment_amount").eq("professional_id", effectiveProfId).eq("payment_status", "paid").gt("payment_amount", 0).gte("date", monthStart).lte("date", today),
+    // Requests waiting for the clinic's answer (the Agenda's requests panel; the
+    // DB's rule, 076/082): a patient's booking request (tentative) or a
+    // proposal the PATIENT made; a clinic proposal (scheduled_by anything but
+    // 'patient', incl. null from the web) waits on the patient. Today or later.
+    supabase.from("appointments").select("id", { count: "exact", head: true }).eq("professional_id", effectiveProfId)
+      .or("status.eq.tentative,and(status.eq.proposal,scheduled_by.eq.patient)").gte("date", today),
   ]);
 
   const professional = professionalResult.data;
@@ -118,6 +127,7 @@ export default async function DashboardPage({
   const pendingPayments = (pendingPaymentsResult.data ?? []) as { patient_name: string; payment_amount: number; date: string }[];
   const patientCount = patientCountResult.count ?? 0;
   const monthRevenue = (monthRevenueResult.data ?? []) as { payment_amount: number }[];
+  const requestsWaiting = requestsResult.count ?? 0;
 
   // Patients who joined with the invite code, not yet kept or removed (145;
   // only once invited-patients-live, before it the columns don't exist).
@@ -170,6 +180,7 @@ export default async function DashboardPage({
       {/* First-run: the doctor's setup checklist, or a secretary's one-time welcome */}
       {setupProgress && showChecklist(setupProgress) && (
         <SetupChecklist
+          country={practiceCountry}
           progress={setupProgress}
           locale={locale}
           inviteCode={(professional as { public_invite_code?: string | null } | null)?.public_invite_code ?? null}
@@ -181,6 +192,12 @@ export default async function DashboardPage({
         <OnboardingCard kind="secretary_welcome" clinicName={onboardingFlags.clinic_name} />
       )}
 
+      {requestsWaiting > 0 && (
+        <Link href={`${prefix}/dashboard/schedule#requests`} className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-amber-900 hover:border-amber-300">
+          <span className="text-sm font-semibold">{t("requestsWaiting", { n: requestsWaiting })}</span>
+          <span className="shrink-0 text-sm font-bold underline">{t("requestsWaitingOpen")}</span>
+        </Link>
+      )}
       {invitedTotal > 0 && <InvitedPatientsCard patients={invited} total={invitedTotal} prefix={prefix} />}
 
       {/* Stat Cards */}
@@ -248,7 +265,7 @@ export default async function DashboardPage({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="truncate font-semibold text-slate-900 text-sm">{appt.patient_name}</p>
-                    <p className="text-xs text-slate-500 truncate">{appt.consultation_type}</p>
+                    <p className="text-xs text-slate-500 truncate"><ConsultTypeLabel value={appt.consultation_type} /></p>
                   </div>
                   <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusBadge(appt.status)}`}>{STATUS_LABELS[appt.status] ?? appt.status}</span>
                 </div>
@@ -280,7 +297,7 @@ export default async function DashboardPage({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="truncate font-semibold text-slate-900 text-sm">{appt.patient_name}</p>
-                    <p className="text-xs text-slate-500">{appt.start_time?.slice(0, 5)} · {appt.consultation_type}</p>
+                    <p className="text-xs text-slate-500">{appt.start_time?.slice(0, 5)} · <ConsultTypeLabel value={appt.consultation_type} /></p>
                   </div>
                   <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusBadge(appt.status)}`}>{STATUS_LABELS[appt.status] ?? appt.status}</span>
                 </div>

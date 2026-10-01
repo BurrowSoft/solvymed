@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["MWHGM7ZHML.com.burrowsoft.solvymed"],
+        "components": [
+          { "/": "/invite/*", "comment": "patient invite" },
+          { "/": "/join/*", "comment": "practice join and secretary invite" }
+        ]
+      }
+    ]
+  }
+}

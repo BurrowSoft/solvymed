@@ -10,7 +10,7 @@ import { liveFeatures } from "@/lib/liveFeatures";
 import { conditionMet } from "@/lib/conditions";
 import { SolvyAiSettingsCard } from "@/components/solvyai/SolvyAiSettings";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
-import { countryProfile } from "@/lib/country";
+import { countryProfile, messagingChannel } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { getSetupProgress } from "@/lib/setup";
 import { CloseAccountPanel, type ClosurePreview } from "./CloseAccountPanel";
@@ -203,9 +203,9 @@ export default async function SettingsPage({
           country={practiceCountry}
         />
 
-        {!locked && <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} />}
+        {!locked && <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} country={practiceCountry} />}
 
-        <TeamPanel rows={teamRows} loadFailed={!!teamResult.error} />
+        <TeamPanel rows={teamRows} loadFailed={!!teamResult.error} country={practiceCountry} whatsapp={messagingChannel(practiceProfile) === "whatsapp"} />
 
         {/* The practice country (set at signup, support-only to change). */}
         <Card title={t("practiceCountry")}>

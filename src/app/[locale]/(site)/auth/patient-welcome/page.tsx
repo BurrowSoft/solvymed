@@ -8,6 +8,7 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
+import { OpenInApp } from "@/components/OpenInApp";
 
 const COUNTDOWN = 5;
 
@@ -23,6 +24,9 @@ export default function PatientWelcomePage() {
   const router = useRouter();
 
   const [count, setCount] = useState(COUNTDOWN);
+  // On an Android phone "Abrir no app SolvyMed" is up: the move to the
+  // appointments waits for the patient (3e: the buttons lasted 5 s).
+  const [hold, setHold] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
 
   const myAppointmentsPath = `${prefix}/my-appointments`;
@@ -35,13 +39,14 @@ export default function PatientWelcomePage() {
   }, []);
 
   useEffect(() => {
+    if (hold) return;
     if (count <= 0) {
       router.push(myAppointmentsPath);
       return;
     }
     const t = setTimeout(() => setCount((c) => c - 1), 1000);
     return () => clearTimeout(t);
-  }, [count, myAppointmentsPath, router]);
+  }, [count, hold, myAppointmentsPath, router]);
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -53,6 +58,7 @@ export default function PatientWelcomePage() {
     <AuthPageShell>
       <AuthCard centered>
         <BrandMark />
+        <OpenInApp onShown={setHold} />
 
         <IconBadge>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="icon-status">

@@ -1,11 +1,14 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "com.burrowsoft.solvymed",
       "sha256_cert_fingerprints": [
-        "80:6E:69:E3:92:E1:48:79:83:27:C4:2B:59:CE:1E:E1:72:97:12:F1:B2:27:26:7F:49:A4:4A:74:B2:F3:98:DD"
+        "80:6E:69:E3:92:E1:48:79:83:27:C4:2B:59:CE:1E:E1:72:97:12:F1:B2:27:26:7F:49:A4:4A:74:B2:F3:98:DD",
+        "FF:77:A2:E6:09:D2:E9:49:C8:CC:BD:9C:6B:E7:9C:51:6E:51:17:59:F8:8F:8D:88:84:2A:41:35:60:02:8D:DA"
       ]
     }
   }

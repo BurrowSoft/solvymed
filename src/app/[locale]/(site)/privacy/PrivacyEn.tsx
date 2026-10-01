@@ -4,7 +4,7 @@ import { noticeChannels } from "@/lib/noticeChannels";
 
 // English Privacy Policy (authoritative with pt-BR; keep both in step).
 // Every statement here must match what the Service enforces today.
-export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
+export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false }: { turnstile: boolean; secretaryInvites?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Overview">
@@ -44,6 +44,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
           referring website), which is saved with your account when you sign up.{" "}
           <strong>Patient data is never used for analytics or marketing.</strong>
         </p>
+        {secretaryInvites && <p><strong>3.7 Secretary invitations:</strong> when a professional invites a secretary, we store the email address they enter and send the invitation to it (at most one resend an hour). The invitation expires after 7 days, and the address is deleted 30 days after the invitation expires or is cancelled.</p>}
       </Section>
 
       <Section title="4. How we use information">
@@ -66,7 +67,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             ["Supabase", "Database, authentication, file storage", "Brazil (São Paulo region)"],
             ["Vercel", "Website hosting; server processing in Brazil (São Paulo), static content via a global edge network", "Brazil / global"],
             ["Stripe", "Subscription payments", "USA / global"],
-            ["Resend", "Transactional email (confirmations, password resets)", "USA"],
+            ["Resend", secretaryInvites ? "Transactional email (confirmations, password resets) and invitations sent at a professional's request" : "Transactional email (confirmations, password resets)", "USA"],
             ["Expo", "Push notification delivery", "USA"],
             ["Sentry", "Error monitoring for the app and website (no patient data)", "USA"],
             ["PostHog", "Website usage statistics, only with your consent", "EU"],

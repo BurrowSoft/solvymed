@@ -4,6 +4,11 @@ import { createClient } from "@/lib/supabase/server";
 import { MyAppointmentsClient } from "./MyAppointmentsClient";
 import { clinicDate } from "@/lib/clinicTime";
 import { getOnboardingFlags } from "@/lib/setup";
+import { statusReasonLive } from "@/lib/statusReason";
+import { SaveMyLocale } from "@/components/SaveMyLocale";
+import { cookies } from "next/headers";
+import { parseCountryChoice, patientLanguageTarget, pickApplies, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
+import { countryProfile } from "@/lib/country";
 
 export type PatientAppointment = {
   id: string;
@@ -20,6 +25,10 @@ export type PatientAppointment = {
   scheduled_by: string | null;
   // The patient's own booking message (never the clinic's notes).
   patient_note: string | null;
+  status_reason?: string | null;
+  status_by?: "clinic" | "patient" | null;
+  clinic_message?: string | null;
+  reschedule_lapsed_at?: string | null;
 };
 
 export default async function MyAppointmentsPage({
@@ -59,6 +68,18 @@ export default async function MyAppointmentsPage({
     redirect(`${prefix}/dashboard`);
   }
 
+  // Country first (149): the patient's country (their choice, else the
+  // clinic's, else their language) sets the two languages they get. A page
+  // in another one moves to the country's language. On any error nothing
+  // happens (9a: never act on a failed lookup), and a language that isn't
+  // public (Thai switched off) is never forced.
+  // A signup pick not saved yet (its cookie) wins: SaveMyLocale below saves
+  // it with this page's language, then clears it.
+  const pick = pickApplies(user.created_at) ? parseCountryChoice((await cookies()).get(SIGNUP_COUNTRY_COOKIE)?.value) : null;
+  const { data: savedCountry, error: countryError } = pick ? { data: pick, error: null } : await supabase.rpc("my_country");
+  const target = countryError ? null : patientLanguageTarget(locale, savedCountry as string | null);
+  if (target) redirect(`${target === "en" ? "" : `/${target}`}/my-appointments`);
+
   let myProfessionalId = (userRoleData?.invited_by_professional_id as string | null) ?? null;
   if (!myProfessionalId && userRoleData?.linked_patient_id) {
     // Patients can't read the patients table directly via RLS, even their own
@@ -73,11 +94,19 @@ export default async function MyAppointmentsPage({
   // working hours) — get_professional_public_info() is the matching
   // SECURITY DEFINER RPC for display info.
   let myProfessionalMeta: { name: string; specialty: string; clinicName?: string } | null = null;
+  // The clinic's zone (its own, else its country's): the reschedule's
+  // "today" (item 22); its country formats the chosen-time line.
+  let clinicTz: string = countryProfile(null).defaultTimeZone;
+  let practiceCountry: string | null = null;
   if (myProfessionalId) {
     const { data: profRowRaw } = await supabase
       .rpc("get_professional_public_info", { p_professional_id: myProfessionalId })
       .maybeSingle();
-    const profRow = profRowRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null } | null;
+    const profRow = profRowRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null; country?: string | null; time_zone?: string | null } | null;
+    if (profRow) {
+      clinicTz = profRow.time_zone || countryProfile(profRow.country).defaultTimeZone;
+      practiceCountry = profRow.country ?? null;
+    }
     if (profRow) {
       myProfessionalMeta = {
         // No hard-coded English "Doctor": /book resolves the name itself and
@@ -97,7 +126,10 @@ export default async function MyAppointmentsPage({
   // Only through get_my_appointments (migration 106): explicit columns,
   // never the clinic's notes. It comes ordered by date and start.
   const mine = await myAppointments(supabase);
-  const upcoming = mine.filter((a) => a.date >= today && !["cancelled", "completed", "blocked", "rejected"].includes(a.status));
+  // 150: a declined or cancelled request/appointment still to come stays on
+  // the list with who did it and the reason (item 12); before it, hidden.
+  const hidden = statusReasonLive() ? ["completed", "blocked"] : ["cancelled", "completed", "blocked", "rejected"];
+  const upcoming = mine.filter((a) => a.date >= today && !hidden.includes(a.status));
   const past = mine
     .filter((a) => a.date < today && ["completed", "confirmed", "scheduled"].includes(a.status))
     .reverse()
@@ -108,6 +140,8 @@ export default async function MyAppointmentsPage({
   const connectedClinicName = flags && !flags.patient_connected_seen && flags.clinic_professional_id ? flags.clinic_name : null;
 
   return (
+    <>
+    <SaveMyLocale locale={locale} />
     <MyAppointmentsClient
       connectedClinicName={connectedClinicName}
       upcoming={upcoming ?? []}
@@ -115,6 +149,9 @@ export default async function MyAppointmentsPage({
       userEmail={user.email ?? ""}
       myProfessionalId={myProfessionalId}
       myProfessionalMeta={myProfessionalMeta}
+      clinicTz={clinicTz}
+      practiceCountry={practiceCountry}
     />
+    </>
   );
 }

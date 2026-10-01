@@ -27,10 +27,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 // The country switcher's options (from the Thai release on). Country
 // names in their own language, as in the signup picker.
-const SWITCHER: { choice: PricingChoice; label: string | null }[] = [
+const SWITCHER: { choice: PricingChoice; label: string }[] = [
   { choice: "BR", label: "Brasil" },
   { choice: "TH", label: "ประเทศไทย" },
-  { choice: "OTHER", label: null },
 ];
 
 export default async function PricingPage({
@@ -44,7 +43,7 @@ export default async function PricingPage({
   const { c } = await searchParams;
   const t = await getTranslations("pricing");
   const geo = (await headers()).get("x-vercel-ip-country");
-  const choice = pricingCountry({ chosen: c, geo });
+  const choice = pricingCountry({ chosen: c, geo, locale });
   // The same table checkout charges from (never a second hard-coded price).
   const plan = getPlanPrice(pricingCountryCode(choice));
 
@@ -84,7 +83,7 @@ export default async function PricingPage({
                   aria-current={s.choice === choice ? "true" : undefined}
                   className={`rounded-full border px-3 py-1 font-semibold transition ${s.choice === choice ? "border-teal-600 bg-teal-600 text-white" : "border-slate-200 bg-white text-slate-600 hover:border-teal-300"}`}
                 >
-                  {s.label ?? t("countryOther")}
+                  {s.label}
                 </Link>
               ))}
             </nav>

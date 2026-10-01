@@ -107,7 +107,9 @@
     "invitedSeeAll": "See all in Patients",
     "invitedSameEmail": "Same email as {name}: merge?",
     "invitedRemoveConfirm": "Remove {name}? Their account goes back to waiting for your confirmation, and the record is archived.",
-    "invitedRemoveConfirmDisconnect": "Remove {name}? The account will be disconnected from your clinic, pending requests will be cancelled (the patient is notified) and the record archived. To let them back in, share the patient's personal code."
+    "invitedRemoveConfirmDisconnect": "Remove {name}? The account will be disconnected from your clinic, pending requests will be cancelled (the patient is notified) and the record archived. To let them back in, restore the record from Archived and share the patient's personal code.",
+    "requestsWaiting": "{n, plural, one {# appointment request waiting for your confirmation} other {# appointment requests waiting for your confirmation}}",
+    "requestsWaitingOpen": "See requests"
   },
   "schedule": {
     "patientMessage": "Patient's message",
@@ -143,9 +145,6 @@
     "dur90": "1.5 hours",
     "dur120": "2 hours",
     "dur240": "4 hours",
-    "noProcedures": "No procedures configured.",
-    "addProcSettings": "Add procedures in Settings",
-    "beforeScheduling": "before scheduling.",
     "cancel": "Cancel",
     "saveAppt": "Save Appointment",
     "repeat": "Repeat",
@@ -241,7 +240,22 @@
     "undoAction": "Undo ({s} s)",
     "undoDone": "Undone.",
     "undoFailed": "Couldn't undo. Open the item to adjust it.",
-    "newPatientOption": "Book without a record: {name}"
+    "newPatientOption": "Book without a record: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "This week",
@@ -685,7 +699,14 @@
     "orCustomTime": "Or pick a custom time",
     "professionalFallback": "Professional",
     "errorArchived": "This clinic isn't taking new bookings for your account. Please contact the clinic.",
-    "practiceInactive": "This clinic isn't taking online bookings right now."
+    "practiceInactive": "This clinic isn't taking online bookings right now.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today."
   },
   "auth": {
     "passwordTooShort": "Password must be at least {min} characters.",
@@ -729,10 +750,9 @@
       "secretaryNeedsInvite": "Secretary? Ask your doctor for an invite link.",
       "secretaryEmailMismatch": "This email doesn't match the invitation, or the invitation is no longer valid. Check the email, or ask the clinic for a new link.",
       "consentCheckbox": "I have read and accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>",
-      "country": "Where is your practice?",
-      "countryOther": "Other country",
-      "countryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it later, contact support.",
-      "fullNameHint": "Add your title if you like ({titles}); it appears in greetings."
+      "fullNameHint": "Add your title if you like ({titles}); it appears in greetings.",
+      "backToCountry": "Back",
+      "secretaryInviteFor": "This invite is for {email}."
     },
     "forgotPassword": {
       "title": "Forgot your password?",
@@ -814,7 +834,7 @@
       "otherBody": "Tap Continue to finish.",
       "continue": "Continue",
       "expiredTitle": "This link has expired",
-      "expiredBody": "Request a new one from the sign-in page.",
+      "expiredBody": "This link was already used or has expired. Sign in with your email and password.",
       "goToSignIn": "Go to sign in"
     },
     "captchaFailed": "Please complete the verification and try again.",
@@ -842,7 +862,7 @@
     "ctaSub": "Browse clinics on the map and book online",
     "accept": "Accept",
     "decline": "Decline",
-    "rescheduleTitle": "Request Reschedule",
+    "rescheduleTitle": "Request reschedule",
     "rescheduleSelectDate": "Select a new date",
     "rescheduleSelectTime": "Select a time",
     "rescheduleNoSlots": "No available slots for this day.",
@@ -852,7 +872,24 @@
     "rescheduleRequestedLabel": "Reschedule requested: {date} · {time}",
     "rescheduleButton": "Request reschedule",
     "closeDialog": "Close",
-    "originallyLabel": "Originally: {date} · {time}"
+    "originallyLabel": "Originally: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "Declined",
+    "cancelContactClinic": "To cancel, contact the clinic.",
+    "statusNotConfirmed": "Not confirmed",
+    "proposalPassed": "This time has already passed. Ask the clinic for a new time.",
+    "cancelRequest": "Cancel request",
+    "cancelRequestTitle": "Cancel this request?",
+    "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
+    "keepRequest": "Keep request",
+    "requestCancelledToast": "Request cancelled.",
+    "rescheduleLapsed": "Your reschedule request expired.",
+    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic."
   },
   "nav": {
     "overview": "Overview",
@@ -994,7 +1031,13 @@
     "accountNotSecretary": "This account can't accept a secretary invite. Use a separate account created from the invite link.",
     "teamResendConfirm": "Send a new invite to {email}? The code you shared before will stop working.",
     "inviteFrom": "Invitation from {clinic}",
-    "inviteFor": "This invitation is for {email}. Sign up with that email address."
+    "inviteFor": "This invitation is for {email}. Sign up with that email address.",
+    "teamResendEmail": "Resend invite",
+    "teamResendAt": "You can resend at {time}",
+    "teamEmailSent": "Email sent to {email}",
+    "teamAlreadySent": "Invite sent. You can resend at {time}.",
+    "teamDailyLimit": "You've reached the limit of 10 invites a day. Try again at {time}.",
+    "teamSendFailed": "Couldn't send the email right now. Try again, or share the link."
   },
   "invitePage": {
     "metaTitle": "Your invitation",
@@ -1165,7 +1208,6 @@
   "pricing": {
     "navLabel": "Pricing",
     "countryLabel": "Prices for:",
-    "countryOther": "Other countries",
     "title": "One simple plan. Everything included.",
     "subtitle": "No setup fees, no per-patient charges, no surprises.",
     "perMonth": "/month",
@@ -1855,5 +1897,12 @@
     "tryNow": "Try it now",
     "later": "Later",
     "whatCanDo": "What can SolvyAI do?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "Refresh"
   }
 }

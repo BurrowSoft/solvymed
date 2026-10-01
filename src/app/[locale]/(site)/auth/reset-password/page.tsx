@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -27,6 +27,8 @@ export default function ResetPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  // One submit at a time (a double-click lands before the disabled re-render).
+  const submitting = useRef(false);
 
   const localePath = (path: string) =>
     locale === "en" ? path : `/${locale}${path}`;
@@ -73,11 +75,14 @@ export default function ResetPasswordPage() {
       return;
     }
 
+    if (submitting.current) return;
+    submitting.current = true;
     setLoading(true);
     const supabase = createClient();
     const { error: updateError } = await supabase.auth.updateUser({
       password: newPassword,
     });
+    submitting.current = false;
     setLoading(false);
 
     if (updateError) {

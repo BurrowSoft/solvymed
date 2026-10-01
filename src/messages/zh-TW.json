@@ -107,7 +107,9 @@
     "invitedSeeAll": "在病患中查看全部",
     "invitedSameEmail": "與 {name} 電子郵件相同：合併？",
     "invitedRemoveConfirm": "移除 {name}？其帳戶將重新等待您的確認，病歷會被封存。",
-    "invitedRemoveConfirmDisconnect": "移除 {name}？其帳戶將與您的診所中斷連結，待處理的請求將被取消（會通知病患），病歷將被封存。如需重新接納，請分享該病患的個人代碼。"
+    "invitedRemoveConfirmDisconnect": "移除 {name}？其帳戶將與您的診所中斷連結，待處理的請求將被取消（會通知病患），病歷將被封存。如需重新接納，請從已封存中還原病歷，並分享該病患的個人代碼。",
+    "requestsWaiting": "有 {n} 個預約請求等待您確認",
+    "requestsWaitingOpen": "查看請求"
   },
   "schedule": {
     "patientMessage": "患者留言",
@@ -143,9 +145,6 @@
     "dur90": "1.5小時",
     "dur120": "2小時",
     "dur240": "4小時",
-    "noProcedures": "尚未設定處置項目。",
-    "addProcSettings": "在設定中新增處置項目",
-    "beforeScheduling": "在預約之前。",
     "cancel": "取消",
     "saveAppt": "儲存預約",
     "repeat": "重複",
@@ -241,7 +240,22 @@
     "undoAction": "復原（{s} 秒）",
     "undoDone": "已復原。",
     "undoFailed": "無法復原。請開啟該項目進行調整。",
-    "newPatientOption": "不建檔直接預約：{name}"
+    "newPatientOption": "不建檔直接預約：{name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "本週",
@@ -685,7 +699,14 @@
     "orCustomTime": "或選擇自訂時間",
     "professionalFallback": "專業人員",
     "errorArchived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。",
-    "practiceInactive": "這家診所目前不接受線上預約。"
+    "practiceInactive": "這家診所目前不接受線上預約。",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today."
   },
   "auth": {
     "passwordTooShort": "密碼至少需要{min}個字元。",
@@ -729,10 +750,9 @@
       "secretaryNeedsInvite": "你是祕書？請向你的醫師索取邀請連結。",
       "secretaryEmailMismatch": "此電子郵件與邀請不符，或邀請已失效。請檢查電子郵件，或向診所索取新的連結。",
       "consentCheckbox": "我已閱讀並同意<terms>使用條款</terms>與<privacy>隱私權政策</privacy>",
-      "country": "您的診所在哪裡？",
-      "countryOther": "其他國家",
-      "countryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。之後如需變更，請聯絡客服。",
-      "fullNameHint": "如有需要，可加上頭銜（{titles}），會顯示在問候語中。"
+      "fullNameHint": "如有需要，可加上頭銜（{titles}），會顯示在問候語中。",
+      "backToCountry": "返回",
+      "secretaryInviteFor": "This invite is for {email}."
     },
     "forgotPassword": {
       "title": "忘記密碼？",
@@ -852,7 +872,24 @@
     "rescheduleRequestedLabel": "改期請求：{date} · {time}",
     "rescheduleButton": "請求改期",
     "closeDialog": "關閉",
-    "originallyLabel": "原定：{date} · {time}"
+    "originallyLabel": "原定：{date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "已拒絕",
+    "cancelContactClinic": "To cancel, contact the clinic.",
+    "statusNotConfirmed": "Not confirmed",
+    "proposalPassed": "This time has already passed. Ask the clinic for a new time.",
+    "cancelRequest": "Cancel request",
+    "cancelRequestTitle": "Cancel this request?",
+    "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
+    "keepRequest": "Keep request",
+    "requestCancelledToast": "Request cancelled.",
+    "rescheduleLapsed": "Your reschedule request expired.",
+    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic."
   },
   "nav": {
     "overview": "總覽",
@@ -994,7 +1031,13 @@
     "accountNotSecretary": "此帳戶無法接受祕書邀請。請使用透過邀請連結建立的另一個帳戶。",
     "teamResendConfirm": "要向 {email} 傳送新邀請嗎？先前分享的邀請碼將失效。",
     "inviteFrom": "來自 {clinic} 的邀請",
-    "inviteFor": "此邀請的對象是 {email}。請使用該電子郵件註冊。"
+    "inviteFor": "此邀請的對象是 {email}。請使用該電子郵件註冊。",
+    "teamResendEmail": "Resend invite",
+    "teamResendAt": "You can resend at {time}",
+    "teamEmailSent": "Email sent to {email}",
+    "teamAlreadySent": "Invite sent. You can resend at {time}.",
+    "teamDailyLimit": "You've reached the limit of 10 invites a day. Try again at {time}.",
+    "teamSendFailed": "Couldn't send the email right now. Try again, or share the link."
   },
   "invitePage": {
     "metaTitle": "邀請",
@@ -1165,7 +1208,6 @@
   "pricing": {
     "navLabel": "價格",
     "countryLabel": "價格適用於：",
-    "countryOther": "其他國家",
     "title": "一個簡單的方案，功能全包。",
     "subtitle": "無開通費，不按病患收費，沒有額外費用。",
     "perMonth": "/月",
@@ -1825,5 +1867,12 @@
     "tryNow": "立即試用",
     "later": "稍後再說",
     "whatCanDo": "SolvyAI 能做什麼？"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "重新整理"
   }
 }

@@ -107,7 +107,9 @@
     "invitedSeeAll": "Tout voir dans Patients",
     "invitedSameEmail": "Même e-mail que {name} : fusionner ?",
     "invitedRemoveConfirm": "Retirer {name} ? Son compte attendra à nouveau votre confirmation et la fiche sera archivée.",
-    "invitedRemoveConfirmDisconnect": "Retirer {name} ? Le compte sera déconnecté de votre cabinet, les demandes en attente seront annulées (le patient est prévenu) et la fiche archivée. Pour le réadmettre, partagez le code personnel du patient."
+    "invitedRemoveConfirmDisconnect": "Retirer {name} ? Le compte sera déconnecté de votre cabinet, les demandes en attente seront annulées (le patient est prévenu) et la fiche archivée. Pour le réadmettre, restaurez la fiche depuis Archivés et partagez le code personnel du patient.",
+    "requestsWaiting": "{n, plural, one {# demande de rendez-vous attend votre confirmation} other {# demandes de rendez-vous attendent votre confirmation}}",
+    "requestsWaitingOpen": "Voir les demandes"
   },
   "schedule": {
     "patientMessage": "Message du patient",
@@ -143,9 +145,6 @@
     "dur90": "1h30",
     "dur120": "2 heures",
     "dur240": "4 heures",
-    "noProcedures": "Aucune procédure configurée.",
-    "addProcSettings": "Ajoutez des procédures dans Paramètres",
-    "beforeScheduling": "avant de planifier.",
     "cancel": "Annuler",
     "saveAppt": "Enregistrer le rendez-vous",
     "repeat": "Répéter",
@@ -241,7 +240,22 @@
     "undoAction": "Annuler ({s} s)",
     "undoDone": "Annulé.",
     "undoFailed": "Impossible d’annuler. Ouvrez l’élément pour l’ajuster.",
-    "newPatientOption": "Prendre rendez-vous sans fiche : {name}"
+    "newPatientOption": "Prendre rendez-vous sans fiche : {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "Cette semaine",
@@ -685,7 +699,14 @@
     "orCustomTime": "Ou choisir une heure",
     "professionalFallback": "Professionnel(le)",
     "errorArchived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet.",
-    "practiceInactive": "Ce cabinet ne prend pas de rendez-vous en ligne pour le moment."
+    "practiceInactive": "Ce cabinet ne prend pas de rendez-vous en ligne pour le moment.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today."
   },
   "auth": {
     "passwordTooShort": "Le mot de passe doit comporter au moins {min} caractères.",
@@ -729,10 +750,9 @@
       "secretaryNeedsInvite": "Secrétaire ? Demandez un lien d'invitation au cabinet où vous travaillez.",
       "secretaryEmailMismatch": "Cet e-mail ne correspond pas à l'invitation, ou l'invitation n'est plus valide. Vérifiez l'e-mail ou demandez un nouveau lien au cabinet.",
       "consentCheckbox": "J'ai lu et j'accepte les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>",
-      "country": "Où se trouve votre cabinet ?",
-      "countryOther": "Autre pays",
-      "countryHint": "Définit la devise, le prix de l'abonnement, la pièce d'identité du patient et le QR de paiement. Pour le changer ensuite, contactez le support.",
-      "fullNameHint": "Ajoutez votre titre si vous le souhaitez ({titles}) : il apparaît dans les salutations."
+      "fullNameHint": "Ajoutez votre titre si vous le souhaitez ({titles}) : il apparaît dans les salutations.",
+      "backToCountry": "Retour",
+      "secretaryInviteFor": "This invite is for {email}."
     },
     "forgotPassword": {
       "title": "Mot de passe oublié ?",
@@ -852,7 +872,24 @@
     "rescheduleRequestedLabel": "Report demandé : {date} · {time}",
     "rescheduleButton": "Demander un report",
     "closeDialog": "Fermer",
-    "originallyLabel": "Initialement : {date} · {time}"
+    "originallyLabel": "Initialement : {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "Refusé",
+    "cancelContactClinic": "To cancel, contact the clinic.",
+    "statusNotConfirmed": "Not confirmed",
+    "proposalPassed": "This time has already passed. Ask the clinic for a new time.",
+    "cancelRequest": "Cancel request",
+    "cancelRequestTitle": "Cancel this request?",
+    "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
+    "keepRequest": "Keep request",
+    "requestCancelledToast": "Request cancelled.",
+    "rescheduleLapsed": "Your reschedule request expired.",
+    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic."
   },
   "nav": {
     "overview": "Accueil",
@@ -994,7 +1031,13 @@
     "accountNotSecretary": "Ce compte ne peut pas accepter une invitation de secrétaire. Utilisez un compte distinct créé depuis le lien d'invitation.",
     "teamResendConfirm": "Envoyer une nouvelle invitation à {email} ? Le code partagé précédemment ne fonctionnera plus.",
     "inviteFrom": "Invitation de {clinic}",
-    "inviteFor": "Cette invitation est destinée à {email}. Inscrivez-vous avec cette adresse e-mail."
+    "inviteFor": "Cette invitation est destinée à {email}. Inscrivez-vous avec cette adresse e-mail.",
+    "teamResendEmail": "Resend invite",
+    "teamResendAt": "You can resend at {time}",
+    "teamEmailSent": "Email sent to {email}",
+    "teamAlreadySent": "Invite sent. You can resend at {time}.",
+    "teamDailyLimit": "You've reached the limit of 10 invites a day. Try again at {time}.",
+    "teamSendFailed": "Couldn't send the email right now. Try again, or share the link."
   },
   "invitePage": {
     "metaTitle": "Votre invitation",
@@ -1165,7 +1208,6 @@
   "pricing": {
     "navLabel": "Tarifs",
     "countryLabel": "Tarifs pour :",
-    "countryOther": "Autres pays",
     "title": "Une seule formule. Tout compris.",
     "subtitle": "Pas de frais d'installation, pas de frais par patient, pas de surprises.",
     "perMonth": "/mois",
@@ -1825,5 +1867,12 @@
     "tryNow": "Essayer maintenant",
     "later": "Plus tard",
     "whatCanDo": "Que peut faire SolvyAI ?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "Actualiser"
   }
 }

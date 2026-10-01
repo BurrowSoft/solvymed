@@ -100,6 +100,11 @@ describe("invite code while already connected", () => {
     unmount = await submit();
     expect(await screen.findByText("Não foi possível conectar com este código. Fale com a clínica.")).toBeInTheDocument();
     unmount();
+    // An archived record's personal code (094): the same neutral text (e7).
+    h.connect = { data: null, error: { message: "patient_archived" } };
+    unmount = await submit();
+    expect(await screen.findByText("Não foi possível conectar com este código. Fale com a clínica.")).toBeInTheDocument();
+    unmount();
     h.connect = { data: null, error: null };
     unmount = await submit();
     expect(await screen.findByText(pt.auth.inviteRequired.codeInvalid)).toBeInTheDocument();

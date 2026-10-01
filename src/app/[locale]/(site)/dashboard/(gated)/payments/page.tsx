@@ -10,6 +10,7 @@ import { formatDateLabel } from "@/lib/dateLabels";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { RECEIVABLE_STATUSES } from "@/lib/paymentRules";
+import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 type Period = "week" | "month" | "last_month" | "all";
 
@@ -188,7 +189,7 @@ export default async function PaymentsPage({
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-semibold text-slate-900 text-sm truncate">{p.patient_name}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{formatDateLabel(locale, p.date)} · {p.start_time?.slice(0, 5)} · {p.consultation_type}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{formatDateLabel(locale, p.date)} · {p.start_time?.slice(0, 5)} · <ConsultTypeLabel value={p.consultation_type} /></p>
                       {p.payment_amount ? (
                         <p className="text-sm font-bold text-orange-600 mt-1">{formatAmount(p.payment_amount)}</p>
                       ) : (
@@ -225,7 +226,7 @@ export default async function PaymentsPage({
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-semibold text-slate-900 text-sm truncate">{p.patient_name}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{formatDateLabel(locale, p.date)} · {p.start_time?.slice(0, 5)} · {p.consultation_type}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{formatDateLabel(locale, p.date)} · {p.start_time?.slice(0, 5)} · <ConsultTypeLabel value={p.consultation_type} /></p>
                       {p.payment_amount ? (
                         <p className="text-sm font-bold text-green-600 mt-1">{formatAmount(p.payment_amount)}</p>
                       ) : null}

@@ -107,7 +107,9 @@
     "invitedSeeAll": "Ver todos em Pacientes",
     "invitedSameEmail": "Mesmo e-mail de {name}: mesclar?",
     "invitedRemoveConfirm": "Remover {name}? A conta volta a aguardar sua confirmação e o cadastro é arquivado.",
-    "invitedRemoveConfirmDisconnect": "Remover {name}? A conta será desconectada da sua clínica, os pedidos pendentes serão cancelados (o paciente é avisado) e o cadastro será arquivado. Para readmitir, compartilhe o código pessoal do paciente."
+    "invitedRemoveConfirmDisconnect": "Remover {name}? A conta será desconectada da sua clínica, os pedidos pendentes serão cancelados (o paciente é avisado) e o cadastro será arquivado. Para readmitir, restaure o cadastro em Arquivados e compartilhe o código pessoal do paciente.",
+    "requestsWaiting": "{n, plural, one {# pedido de consulta aguardando sua confirmação} other {# pedidos de consulta aguardando sua confirmação}}",
+    "requestsWaitingOpen": "Ver pedidos"
   },
   "schedule": {
     "patientMessage": "Mensagem do paciente",
@@ -143,9 +145,6 @@
     "dur90": "1h30",
     "dur120": "2 horas",
     "dur240": "4 horas",
-    "noProcedures": "Nenhum procedimento configurado.",
-    "addProcSettings": "Adicione procedimentos nas Configurações",
-    "beforeScheduling": "antes de agendar.",
     "cancel": "Cancelar",
     "saveAppt": "Salvar Consulta",
     "repeat": "Repetir",
@@ -241,7 +240,22 @@
     "undoAction": "Desfazer ({s} s)",
     "undoDone": "Desfeito.",
     "undoFailed": "Não foi possível desfazer. Abra o item para ajustar.",
-    "newPatientOption": "Agendar sem cadastro: {name}"
+    "newPatientOption": "Agendar sem cadastro: {name}",
+    "reasonLabel": "Motivo (opcional)",
+    "reasonPlaceholderDecline": "Ex.: horário indisponível.",
+    "reasonPlaceholderCancel": "Ex.: imprevisto na agenda.",
+    "messageLabel": "Mensagem ao paciente (opcional)",
+    "confirmCancel": "Cancelar consulta",
+    "keepAppointment": "Voltar",
+    "reasonShort": "Motivo",
+    "messagePlaceholder": "Ex.: traga seus exames.",
+    "patientWillSee": "O paciente verá esta mensagem.",
+    "qrNeedsAmount": "Defina o valor para gerar o QR de pagamento.",
+    "showOutside": "Mostrar fora do horário",
+    "showInside": "Só o horário de atendimento",
+    "otherTime": "Outro horário…",
+    "slotTaken": "Ocupado",
+    "proceduresTip": "Dica: cadastre seus procedimentos em <link>Configurações</link> para preencher duração e valor automaticamente."
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -685,7 +699,14 @@
     "orCustomTime": "Ou escolha um horário específico",
     "professionalFallback": "Profissional",
     "errorArchived": "Esta clínica não está aceitando novos agendamentos para a sua conta. Entre em contato com a clínica.",
-    "practiceInactive": "A clínica não está recebendo agendamentos online no momento."
+    "practiceInactive": "A clínica não está recebendo agendamentos online no momento.",
+    "noHours": "Este profissional ainda não abriu horários para agendamento online. Tente mais tarde ou fale com a clínica.",
+    "loadFailed": "Não foi possível carregar os horários. Verifique sua internet.",
+    "retry": "Tentar novamente",
+    "chosenTime": "Horário escolhido: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Mês anterior",
+    "nextMonth": "Próximo mês",
+    "noTimesToday": "Não há mais horários hoje."
   },
   "auth": {
     "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",
@@ -729,10 +750,9 @@
       "secretaryNeedsInvite": "Trabalha na secretaria? Peça um link de convite à clínica onde você trabalha.",
       "secretaryEmailMismatch": "Este e-mail não corresponde ao convite, ou o convite não é mais válido. Confira o e-mail ou peça um novo link à clínica.",
       "consentCheckbox": "Li e aceito os <terms>Termos de Uso</terms> e a <privacy>Política de Privacidade</privacy>",
-      "country": "Onde fica seu consultório?",
-      "countryOther": "Outro país",
-      "countryHint": "Define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar depois, fale com o suporte.",
-      "fullNameHint": "Se quiser, inclua seu título ({titles}): ele aparece nas saudações."
+      "fullNameHint": "Se quiser, inclua seu título ({titles}): ele aparece nas saudações.",
+      "backToCountry": "Voltar",
+      "secretaryInviteFor": "Este convite é para {email}."
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",
@@ -814,7 +834,7 @@
       "otherBody": "Toque em Continuar para concluir.",
       "continue": "Continuar",
       "expiredTitle": "Este link expirou",
-      "expiredBody": "Solicite um novo na página de login.",
+      "expiredBody": "Este link já foi usado ou expirou. Entre com seu e-mail e senha.",
       "goToSignIn": "Ir para o login"
     },
     "captchaFailed": "Conclua a verificação e tente novamente.",
@@ -850,9 +870,26 @@
     "rescheduleSending": "Enviando…",
     "reschedulePending": "Remarcação pendente",
     "rescheduleRequestedLabel": "Reagendamento solicitado: {date} · {time}",
-    "rescheduleButton": "Solicitar reagendamento",
+    "rescheduleButton": "Solicitar remarcação",
     "closeDialog": "Fechar",
-    "originallyLabel": "Originalmente: {date} · {time}"
+    "originallyLabel": "Originalmente: {date} · {time}",
+    "declinedByClinic": "Recusado pela clínica",
+    "declinedByClinicReason": "Recusado pela clínica: {reason}",
+    "cancelledByClinic": "Cancelado pela clínica",
+    "cancelledByClinicReason": "Cancelado pela clínica: {reason}",
+    "youCancelled": "Você cancelou",
+    "clinicMessage": "Mensagem da clínica: {message}",
+    "statusDeclined": "Recusado",
+    "cancelContactClinic": "Para cancelar, fale com a clínica.",
+    "statusNotConfirmed": "Não confirmado",
+    "proposalPassed": "Este horário já passou. Peça um novo horário à clínica.",
+    "cancelRequest": "Cancelar pedido",
+    "cancelRequestTitle": "Cancelar este pedido?",
+    "cancelRequestBody": "A clínica será avisada e o horário fica livre.",
+    "keepRequest": "Manter pedido",
+    "requestCancelledToast": "Pedido cancelado.",
+    "rescheduleLapsed": "Seu pedido de remarcação expirou.",
+    "rescheduleStarted": "Esta consulta já começou. Para mudanças, fale com a clínica."
   },
   "nav": {
     "overview": "Visão geral",
@@ -994,7 +1031,13 @@
     "accountNotSecretary": "Esta conta não pode aceitar um convite para a equipe. Use uma conta separada criada pelo link de convite.",
     "teamResendConfirm": "Enviar um novo convite para {email}? O código compartilhado antes deixará de funcionar.",
     "inviteFrom": "Convite de {clinic}",
-    "inviteFor": "Este convite é para {email}. Cadastre-se com esse e-mail."
+    "inviteFor": "Este convite é para {email}. Cadastre-se com esse e-mail.",
+    "teamResendEmail": "Reenviar convite",
+    "teamResendAt": "Você poderá reenviar às {time}",
+    "teamEmailSent": "E-mail enviado para {email}",
+    "teamAlreadySent": "Convite enviado. Você poderá reenviar às {time}.",
+    "teamDailyLimit": "Você atingiu o limite de 10 convites por dia. Tente novamente às {time}.",
+    "teamSendFailed": "Não foi possível enviar o e-mail agora. Tente de novo ou compartilhe o link."
   },
   "invitePage": {
     "metaTitle": "Seu convite",
@@ -1165,7 +1208,6 @@
   "pricing": {
     "navLabel": "Preços",
     "countryLabel": "Preços para:",
-    "countryOther": "Outros países",
     "title": "Um plano simples. Tudo incluído.",
     "subtitle": "Sem taxa de adesão, sem cobrança por paciente, sem surpresas.",
     "perMonth": "/mês",
@@ -1825,5 +1867,12 @@
     "tryNow": "Experimentar agora",
     "later": "Depois",
     "whatCanDo": "O que o SolvyAI pode fazer?"
+  },
+  "openInApp": {
+    "open": "Abrir no app SolvyMed",
+    "continue": "Continuar no site"
+  },
+  "autoRefresh": {
+    "refresh": "Atualizar"
   }
 }

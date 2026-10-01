@@ -107,7 +107,9 @@
     "invitedSeeAll": "Xem tất cả trong Bệnh nhân",
     "invitedSameEmail": "Cùng email với {name}: gộp hồ sơ?",
     "invitedRemoveConfirm": "Gỡ {name}? Tài khoản sẽ quay lại chờ bạn xác nhận và hồ sơ được lưu trữ.",
-    "invitedRemoveConfirmDisconnect": "Gỡ {name}? Tài khoản sẽ bị ngắt kết nối khỏi phòng khám của bạn, các yêu cầu đang chờ sẽ bị hủy (bệnh nhân được thông báo) và hồ sơ được lưu trữ. Để nhận lại, hãy chia sẻ mã cá nhân của bệnh nhân."
+    "invitedRemoveConfirmDisconnect": "Gỡ {name}? Tài khoản sẽ bị ngắt kết nối khỏi phòng khám của bạn, các yêu cầu đang chờ sẽ bị hủy (bệnh nhân được thông báo) và hồ sơ được lưu trữ. Để nhận lại, hãy khôi phục hồ sơ từ mục Đã lưu trữ và chia sẻ mã cá nhân của bệnh nhân.",
+    "requestsWaiting": "{n} yêu cầu đặt lịch đang chờ bạn xác nhận",
+    "requestsWaitingOpen": "Xem yêu cầu"
   },
   "schedule": {
     "patientMessage": "Lời nhắn của bệnh nhân",
@@ -143,9 +145,6 @@
     "dur90": "1,5 giờ",
     "dur120": "2 giờ",
     "dur240": "4 giờ",
-    "noProcedures": "Chưa có thủ thuật nào được cấu hình.",
-    "addProcSettings": "Thêm thủ thuật trong Cài đặt",
-    "beforeScheduling": "trước khi đặt lịch.",
     "cancel": "Hủy",
     "saveAppt": "Lưu lịch hẹn",
     "repeat": "Lặp lại",
@@ -241,7 +240,22 @@
     "undoAction": "Hoàn tác ({s} giây)",
     "undoDone": "Đã hoàn tác.",
     "undoFailed": "Không thể hoàn tác. Hãy mở mục đó để điều chỉnh.",
-    "newPatientOption": "Đặt lịch không tạo hồ sơ: {name}"
+    "newPatientOption": "Đặt lịch không tạo hồ sơ: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -685,7 +699,14 @@
     "orCustomTime": "Hoặc chọn giờ khác",
     "professionalFallback": "Chuyên gia",
     "errorArchived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám.",
-    "practiceInactive": "Phòng khám này hiện không nhận đặt lịch trực tuyến."
+    "practiceInactive": "Phòng khám này hiện không nhận đặt lịch trực tuyến.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today."
   },
   "auth": {
     "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
@@ -729,10 +750,9 @@
       "secretaryNeedsInvite": "Bạn là thư ký? Hãy xin bác sĩ một liên kết mời.",
       "secretaryEmailMismatch": "Email này không khớp với lời mời, hoặc lời mời không còn hiệu lực. Hãy kiểm tra email hoặc xin phòng khám một liên kết mới.",
       "consentCheckbox": "Tôi đã đọc và chấp nhận <terms>Điều khoản sử dụng</terms> và <privacy>Chính sách quyền riêng tư</privacy>",
-      "country": "Phòng khám của bạn ở đâu?",
-      "countryOther": "Quốc gia khác",
-      "countryHint": "Xác định tiền tệ, giá gói, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi sau, hãy liên hệ bộ phận hỗ trợ.",
-      "fullNameHint": "Bạn có thể thêm danh xưng ({titles}); danh xưng sẽ hiện trong lời chào."
+      "fullNameHint": "Bạn có thể thêm danh xưng ({titles}); danh xưng sẽ hiện trong lời chào.",
+      "backToCountry": "Quay lại",
+      "secretaryInviteFor": "This invite is for {email}."
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",
@@ -852,7 +872,24 @@
     "rescheduleRequestedLabel": "Yêu cầu đổi lịch: {date} · {time}",
     "rescheduleButton": "Yêu cầu đổi lịch",
     "closeDialog": "Đóng",
-    "originallyLabel": "Ban đầu: {date} · {time}"
+    "originallyLabel": "Ban đầu: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "Bị từ chối",
+    "cancelContactClinic": "To cancel, contact the clinic.",
+    "statusNotConfirmed": "Not confirmed",
+    "proposalPassed": "This time has already passed. Ask the clinic for a new time.",
+    "cancelRequest": "Cancel request",
+    "cancelRequestTitle": "Cancel this request?",
+    "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
+    "keepRequest": "Keep request",
+    "requestCancelledToast": "Request cancelled.",
+    "rescheduleLapsed": "Your reschedule request expired.",
+    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic."
   },
   "nav": {
     "overview": "Tổng quan",
@@ -994,7 +1031,13 @@
     "accountNotSecretary": "Tài khoản này không thể nhận lời mời làm thư ký. Hãy dùng tài khoản riêng được tạo từ liên kết mời.",
     "teamResendConfirm": "Gửi lời mời mới tới {email}? Mã bạn đã chia sẻ trước đó sẽ không còn dùng được.",
     "inviteFrom": "Lời mời từ {clinic}",
-    "inviteFor": "Lời mời này dành cho {email}. Hãy đăng ký bằng email đó."
+    "inviteFor": "Lời mời này dành cho {email}. Hãy đăng ký bằng email đó.",
+    "teamResendEmail": "Resend invite",
+    "teamResendAt": "You can resend at {time}",
+    "teamEmailSent": "Email sent to {email}",
+    "teamAlreadySent": "Invite sent. You can resend at {time}.",
+    "teamDailyLimit": "You've reached the limit of 10 invites a day. Try again at {time}.",
+    "teamSendFailed": "Couldn't send the email right now. Try again, or share the link."
   },
   "invitePage": {
     "metaTitle": "Lời mời",
@@ -1165,7 +1208,6 @@
   "pricing": {
     "navLabel": "Bảng giá",
     "countryLabel": "Giá cho:",
-    "countryOther": "Các quốc gia khác",
     "title": "Một gói đơn giản. Bao gồm tất cả.",
     "subtitle": "Không phí thiết lập, không tính phí theo bệnh nhân, không có bất ngờ.",
     "perMonth": "/tháng",
@@ -1825,5 +1867,12 @@
     "tryNow": "Thử ngay",
     "later": "Để sau",
     "whatCanDo": "SolvyAI làm được gì?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "Làm mới"
   }
 }
