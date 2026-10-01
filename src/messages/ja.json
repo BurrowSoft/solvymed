@@ -1792,7 +1792,8 @@
     "couldntFinish": "完了できませんでした。患者名・日付・時刻を添えて、別の言い方で教えてください。",
     "onlySolvyMed": "SolvyMedに関することのみお手伝いできます。",
     "noClinical": "臨床的な質問にはお答えできません。",
-    "minutes": "{n}分"
+    "minutes": "{n}分",
+    "alreadyPaid": "この予約は支払い済みです。"
   },
   "countryExamples": {
     "phone": "電話番号"

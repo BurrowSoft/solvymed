@@ -1792,7 +1792,8 @@
     "couldntFinish": "No pude completarlo. ¿Puedes decirlo de otra forma, con el nombre del paciente, la fecha y la hora?",
     "onlySolvyMed": "Solo puedo ayudar con SolvyMed.",
     "noClinical": "No puedo ayudar con cuestiones clínicas.",
-    "minutes": "{n} min"
+    "minutes": "{n} min",
+    "alreadyPaid": "Esta cita ya está pagada."
   },
   "countryExamples": {
     "phone": "Número de teléfono"
