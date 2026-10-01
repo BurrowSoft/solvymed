@@ -13,7 +13,7 @@ import { getPracticeCountry } from "@/lib/practiceCountry";
 import { RECEIVABLE_STATUSES } from "@/lib/paymentRules";
 import { conditionMet } from "@/lib/conditions";
 import { InvitedPatientsCard } from "./InvitedPatientsCard";
-import { doctorDisplayName } from "@/lib/doctorName";
+import { greetingFirstName } from "@/lib/doctorName";
 import { dateLocale } from "@/lib/dateLabels";
 
 
@@ -145,7 +145,7 @@ export default async function DashboardPage({
   // The doctor's own title if they typed one ("Dra. Beatriz"), never one we
   // add (lib/doctorName, the app's rule).
   // No name saved yet: no name at all ("Boa tarde!"), never the email (UX).
-  const firstName = doctorDisplayName(ownName, { firstOnly: true });
+  const firstName = greetingFirstName(ownName, user.email);
   const totalPending = pendingPayments.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
   const totalRevenue = monthRevenue.reduce((s, r) => s + (r.payment_amount ?? 0), 0);
   const todayFormatted = now.toLocaleDateString(dateLocale(locale), { timeZone, weekday: "long", year: "numeric", month: "long", day: "numeric" });
