@@ -879,7 +879,9 @@
     "youCancelled": "Você cancelou",
     "clinicMessage": "Mensagem da clínica: {message}",
     "statusDeclined": "Recusado",
-    "cancelContactClinic": "Para cancelar, fale com a clínica."
+    "cancelContactClinic": "Para cancelar, fale com a clínica.",
+    "statusNotConfirmed": "Não confirmado",
+    "proposalPassed": "Este horário já passou. Peça um novo horário à clínica."
   },
   "nav": {
     "overview": "Visão geral",

@@ -223,6 +223,8 @@ export async function acceptProposal(appointmentId: string) {
     p_appointment_id: appointmentId,
   });
 
+  // The proposed time has passed on the practice's clock (153, as 105).
+  if (error?.message?.includes("proposed_time_expired")) return { error: "proposed_time_expired" };
   if (error) return { error: actionError(error.message) };
 
   await notifyProfessional(supabase, appt.professional_id as string, "proposalAccepted", { name: appt.patient_name as string, date: appt.proposed_date as string, time: appt.proposed_start_time as string });

@@ -879,7 +879,9 @@
     "youCancelled": "คุณยกเลิกแล้ว",
     "clinicMessage": "ข้อความจากคลินิก: {message}",
     "statusDeclined": "ถูกปฏิเสธ",
-    "cancelContactClinic": "หากต้องการยกเลิก กรุณาติดต่อคลินิก"
+    "cancelContactClinic": "หากต้องการยกเลิก กรุณาติดต่อคลินิก",
+    "statusNotConfirmed": "ไม่ได้รับการยืนยัน",
+    "proposalPassed": "เวลานี้ผ่านไปแล้ว กรุณาขอเวลาใหม่จากคลินิก"
   },
   "nav": {
     "overview": "ภาพรวม",

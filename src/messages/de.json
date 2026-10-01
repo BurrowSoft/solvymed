@@ -879,7 +879,9 @@
     "youCancelled": "You cancelled",
     "clinicMessage": "Message from the clinic: {message}",
     "statusDeclined": "Abgelehnt",
-    "cancelContactClinic": "To cancel, contact the clinic."
+    "cancelContactClinic": "To cancel, contact the clinic.",
+    "statusNotConfirmed": "Not confirmed",
+    "proposalPassed": "This time has already passed. Ask the clinic for a new time."
   },
   "nav": {
     "overview": "Übersicht",

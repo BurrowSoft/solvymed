@@ -184,6 +184,8 @@ export const ACTIONS: AppMapAction[] = [
       "Proposing another time is done on the request card, not by SolvyAI.",
       "On the website, the Overview shows how many requests wait for the clinic's answer (a patient's request, or a reschedule the patient proposed), with \"Ver pedidos\" to the Schedule's requests.",
       { text: "In the patient's app: a patient can cancel their own pending request, accept or decline a time the clinic proposed, and ask to reschedule a scheduled or confirmed appointment only before it starts; they can't cancel a booked appointment themselves (the app tells them to talk to the clinic).", pending: ["app-1.4.0"] },
+      "On the website, a request or proposed time whose time has passed without an answer shows the patient \"Não confirmado\" / \"Not confirmed\" in Minhas Consultas, with no actions (no Aceitar / Recusar).",
+      { text: "In the patient's app too: a request or proposed time whose time has passed shows \"Não confirmado\" / \"Not confirmed\" with no actions.", pending: ["app-1.4.0"] },
       "A decision made through SolvyAI has no Desfazer: the patient is notified at once.",
     ],
     card: ["patient", "when (weekday, date, time)", "confirm or reject", "note"],
