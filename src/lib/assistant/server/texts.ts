@@ -68,7 +68,7 @@ function textsFrom(locale: string, messages: typeof en) {
     pastStop: s("pastStop"), archivedStop: s("archivedStop"), requestStop: s("requestStop"),
     conflict: (when: string, what: string, a: string, b: string) => tr("conflict", { when, what, s: a, e: b }),
     conflictNone: (when: string, what: string, a: string, b: string) => tr("conflictNone", { when, what, s: a, e: b }),
-    slotTaken: s("slotTaken"), slotTakenNone: s("slotTakenNone"), notCancellable: s("notCancellable"),
+    slotTaken: s("slotTaken"), slotTakenNone: s("slotTakenNone"), notCancellable: s("notCancellable"), alreadyPaid: s("alreadyPaid"),
     unblock: s("unblock"), confirmReq: s("confirmReq"), rejectReq: s("rejectReq"),
     decision: s("decision"), confirmIt: s("confirmIt"), rejectIt: s("rejectIt"), note: s("note"),
     addPatient: s("addPatient"), fullName: s("fullName"), birth: s("birth"), similar: s("similar"), archived: s("archived"),

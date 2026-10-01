@@ -907,6 +907,11 @@ async function proposeSendPix(ctx: ToolContext, input: Record<string, unknown>):
   const t = ctx.t;
   const a = await readAppointment(ctx, input.appointmentId);
   if (!a || a.status === "blocked") return unseen("appointment");
+  // No payment request at all on a paid appointment, in any country (UX,
+  // the app's B7 / #214): UX's fixed line, never a card or a QR link.
+  if (a.payment_status === "paid") {
+    return { forModel: "Already paid: the user was told so. Don't propose any payment request for it; add nothing.", block: { type: "text", text: t.alreadyPaid } };
+  }
   const country = await practiceCountry(ctx);
   const { paymentQr } = countryProfile(country);
   if (paymentQr === "promptpay") {
@@ -920,7 +925,6 @@ async function proposeSendPix(ctx: ToolContext, input: Record<string, unknown>):
     };
   }
   if (paymentQr !== "pix") return err("Pix is only for practices in Brazil; say so (there's no payment message to send for this practice).");
-  if (a.payment_status === "paid") return err("It's already paid; tell the user.");
   if (!a.payment_amount) return err("This appointment has no value: tell the user to set it first (on the appointment), then ask again.");
   const [{ data: prof }, { data: pat }] = await Promise.all([
     ctx.db.from("professionals").select("pix_key").eq("id", ctx.profId).maybeSingle(),
@@ -1028,6 +1032,8 @@ export async function runTool(ctx: ToolContext, name: string, input: Record<stri
 // used, re-validated (a9: the rest is untrusted).
 export async function confirmFailedBlock(ctx: ToolContext, action: unknown, code = "slot_taken"): Promise<AnswerBlock | null> {
   if (code === "appointment_not_cancellable") return { type: "text", text: ctx.t.notCancellable };
+  // Paid between the card and Confirmar (the app's send_pix, #214).
+  if (code === "already_paid") return { type: "text", text: ctx.t.alreadyPaid };
   const args = (action as { args?: Record<string, unknown> } | null)?.args ?? {};
   const { date, start } = args;
   if (!isDate(date) || !isTime(start)) return null;
