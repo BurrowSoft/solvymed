@@ -231,7 +231,8 @@
     "undoCancelled": "预约已取消",
     "undoAction": "撤销（{s} 秒）",
     "undoDone": "已撤销。",
-    "undoFailed": "无法撤销。请打开该项目进行调整。"
+    "undoFailed": "无法撤销。请打开该项目进行调整。",
+    "newPatientOption": "不建档直接预约：{name}"
   },
   "payments": {
     "thisWeek": "本周",
@@ -250,7 +251,10 @@
     "revertConfirm": "将此付款恢复为待付款状态？",
     "errorInvalidAmount": "请输入有效金额。",
     "errorGeneric": "出现问题，请重试。",
-    "amountPlaceholderPlain": "金额"
+    "amountPlaceholderPlain": "金额",
+    "noAmount": "无金额",
+    "setAmount": "设置金额",
+    "amountFirst": "请先输入已收金额。"
   },
   "paymentsPage": {
     "title": "付款",
@@ -1793,7 +1797,8 @@
     "onlySolvyMed": "我只能帮助处理 SolvyMed 相关问题。",
     "noClinical": "我无法回答临床问题。",
     "minutes": "{n} 分钟",
-    "alreadyPaid": "此预约已付款。"
+    "alreadyPaid": "此预约已付款。",
+    "noAmount": "此预约没有金额。请先在日程中设置金额，再标记为已付。"
   },
   "countryExamples": {
     "phone": "电话号码"

@@ -18,10 +18,12 @@ To undo, tap **Mark unpaid** and confirm.
 ## G2. A receber e recebido / To receive vs received
 **pt-BR**
 **A receber** soma as consultas não pagas do período que estão agendadas, confirmadas, concluídas ou atrasadas (pedidos ainda não aceitos, canceladas, rejeitadas e ausências não entram). **Recebido** soma tudo o que foi marcado como pago. Escolha o período: esta semana, este mês, mês passado ou todo o período.
+{pending:app-1.4.0} Consultas sem valor não entram: aparecem como **Sem valor · Definir valor**, e **Marcar como pago** pede o valor primeiro.
 **en**
 **To receive** adds up the period's unpaid appointments that are scheduled, confirmed, completed or late (requests not yet accepted, cancelled, rejected and no-shows don't count). **Received** adds up everything marked as paid. Choose the period: this week, this month, last month or all time.
-**No site:** Em **Pagamentos**, os totais se chamam **Pendente**, **Recebido** e **Total**, com os mesmos períodos. A regra é a mesma do app.
-**On the website:** In **Payments**, the totals are **Pending**, **Received** and **Total**, with the same periods. The rule is the same as in the app.
+{pending:app-1.4.0} Appointments without an amount don't count: they show **No amount · Set amount**, and **Mark as paid** asks for the amount first.
+**No site:** Em **Pagamentos**, os totais se chamam **Pendente**, **Recebido** e **Total**, com os mesmos períodos. Consultas sem valor não entram nos totais nem nas listas: na **Agenda** elas aparecem como **Sem valor · Definir valor**, e uma consulta só é marcada como paga depois de ter um valor.
+**On the website:** In **Payments**, the totals are **Pending**, **Received** and **Total**, with the same periods. Appointments without an amount aren't counted in the totals or the lists: in the **Schedule** they show **No amount · Set amount**, and an appointment is only marked paid once it has an amount.
 `open:payments`
 
 ---

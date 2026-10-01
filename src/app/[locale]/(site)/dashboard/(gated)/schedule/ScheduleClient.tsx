@@ -5,6 +5,7 @@ import { useState, useTransition, useRef, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDateLabel } from "@/lib/dateLabels";
 import { DateInput } from "@/components/DateInput";
+import { PatientPicker } from "./PatientPicker";
 import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTime, moveAppointment, searchPatientsForPicker, undoScheduleChange } from "./actions";
 import { UNDO_EVENT, offerUndo, type UndoToken } from "@/lib/scheduleUndo";
 import { generatePixString, pixQrDataUrl } from "@/lib/pix";
@@ -16,7 +17,6 @@ import { formatMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
 import Link from "next/link";
 
-type Patient = { id: string; full_name: string };
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
   id: string;
@@ -117,14 +117,17 @@ export function ScheduleUndoToast() {
 
   if (!token) return null;
   const what = token.kind === "booked" ? t("undoBooked") : token.kind === "moved" ? t("undoMoved") : t("undoCancelled");
+  // Fixed colours (Vitor 31): the dark theme remaps slate-900 to near-white
+  // while white text stays white, which left a blank white box. One line,
+  // centred, wrapping only on narrow screens; the button never squeezes.
   return (
-    <div role="status" className="fixed bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-xl bg-slate-900 px-4 py-3 text-sm text-white shadow-lg">
+    <div role="status" className="fixed bottom-6 left-1/2 z-40 flex w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center justify-center gap-3 rounded-xl bg-[#0f172a] px-4 py-3 text-sm text-[#ffffff] shadow-lg">
       {phase === "done" ? <span>{t("undoDone")}</span>
         : phase === "failed" ? <span>{t("undoFailed")}</span>
           : (
             <>
-              <span>{what}</span>
-              <button type="button" onClick={undo} disabled={phase === "undoing"} className="font-bold text-teal-300 hover:text-teal-200 disabled:opacity-60">
+              <span className="min-w-0">{what}</span>
+              <button type="button" onClick={undo} disabled={phase === "undoing"} className="shrink-0 whitespace-nowrap font-bold text-[#5eead4] hover:text-[#99f6e4] disabled:opacity-60">
                 {phase === "undoing" ? "…" : t("undoAction", { s: left })}
               </button>
             </>
@@ -413,26 +416,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
 
   // Patient suggestions come from a server search as the name is typed (a
   // clinic can have thousands of patients; loading all would be capped at
-  // 1000). Only the latest query's answer is kept.
-  const [matches, setMatches] = useState<Patient[]>([]);
-  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const latestQuery = useRef("");
-  useEffect(() => () => { if (searchTimer.current) clearTimeout(searchTimer.current); }, []);
-  function handlePatientInput(e: React.ChangeEvent<HTMLInputElement>) {
-    const q = e.target.value;
-    latestQuery.current = q;
-    if (searchTimer.current) clearTimeout(searchTimer.current);
-    if (q.trim().length < 2) { setMatches([]); return; }
-    searchTimer.current = setTimeout(async () => {
-      try {
-        const found = await searchPatientsForPicker(q);
-        if (latestQuery.current === q) setMatches(found);
-      } catch {
-        // Suggestions are optional: a failed lookup just shows none.
-        if (latestQuery.current === q) setMatches([]);
-      }
-    }, 250);
-  }
+  // 1000): see PatientPicker.
 
   function handleOpen() {
     const same = prefill?.procedureName ? procedures.find((p) => p.name === prefill.procedureName) ?? null : null;
@@ -537,11 +521,13 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
               // The same patient, by id: not editable here.
               <Input name="patient_name" required readOnly value={prefill.patientName} className="bg-slate-50" />
             ) : (
-              <Input name="patient_name" required list="patient-list" autoComplete="off" onChange={handlePatientInput} placeholder={t("patientNamePlaceholder")} defaultValue={prefill?.patientName} />
+              <PatientPicker
+                search={searchPatientsForPicker}
+                placeholder={t("patientNamePlaceholder")}
+                defaultValue={prefill?.patientName}
+                inputClassName="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              />
             )}
-            <datalist id="patient-list">
-              {matches.map(p => <option key={p.id} value={p.full_name} />)}
-            </datalist>
           </div>
 
           <div>
@@ -706,7 +692,7 @@ export function BlockTimeButton({ defaultDate }: { defaultDate: string }) {
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-            <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-slate-700 py-2.5 text-sm font-bold text-white hover:bg-slate-800 transition disabled:opacity-60">
+            <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-[#334155] py-2.5 text-sm font-bold text-[#ffffff] hover:bg-[#1e293b] transition disabled:opacity-60">
               {pending ? t("saving") : t("blockTime")}
             </button>
           </div>

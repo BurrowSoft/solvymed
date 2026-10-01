@@ -205,7 +205,9 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
     // the card).
     // (A series: one date's fresh times don't fit; the card just says it wasn't saved.)
     const notCancellable = code === "appointment_not_cancellable" && card.action.kind === "cancel_appointment";
-    if (!notCancellable && (code !== "slot_taken" || (card.action.kind !== "book_appointment" && card.action.kind !== "move_appointment") || card.action.args.repeat)) return;
+    // Mark paid with no amount (#216): the server's fixed line.
+    const noAmount = code === "no_amount" && card.action.kind === "mark_paid";
+    if (!notCancellable && !noAmount && (code !== "slot_taken" || (card.action.kind !== "book_appointment" && card.action.kind !== "move_appointment") || card.action.args.repeat)) return;
     setBusy(true);
     void play(turns, backend.reportConfirmFailed(code, card.action, locale));
   };
@@ -361,9 +363,10 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
       {/* The floating button (or the minimised pill after "Abrir tela"). */}
       {!(open && !minimized) && !buttonHidden && (
         <div className="fixed bottom-5 right-5 z-30 flex items-center gap-2">
-          {/* After a save: "✓ … + Desfazer" for 10 s (§2.3). */}
+          {/* After a save: "✓ … + Desfazer" for 10 s (§2.3). Fixed colours:
+              the dark theme remaps slate-900 to near-white (Vitor 31). */}
           {toast && toast.left > 0 && (
-            <p role="status" className="flex items-center gap-2 rounded-2xl bg-slate-900 px-3 py-2 text-xs text-white shadow-lg">
+            <p role="status" className="flex items-center gap-2 rounded-2xl bg-[#0f172a] px-3 py-2 text-xs text-[#ffffff] shadow-lg">
               <span>
                 {toast.phase === "undone" ? t("undone") : toast.phase === "failed" ? t("undoFailed") : t("saved")}
                 {toast.demo && ` (${t("simulated")})`}
@@ -374,13 +377,13 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
                   disabled={toast.phase === "undoing"}
                   aria-busy={toast.phase === "undoing"}
                   onClick={() => void runUndo()}
-                  className="rounded-lg px-2 py-0.5 font-semibold text-teal-300 hover:bg-white/10 disabled:opacity-60"
+                  className="shrink-0 whitespace-nowrap rounded-lg px-2 py-0.5 font-semibold text-[#5eead4] hover:bg-white/10 disabled:opacity-60"
                 >
                   {toast.phase === "undoing" ? "…" : t("undo", { s: toast.left })}
                 </button>
               )}
               {(toast.noUndo || toast.phase === "failed") && toast.path && (
-                <button type="button" onClick={() => { setToast(null); router.push(toast.path!); }} className="rounded-lg px-2 py-0.5 font-semibold text-teal-300 hover:bg-white/10">
+                <button type="button" onClick={() => { setToast(null); router.push(toast.path!); }} className="shrink-0 whitespace-nowrap rounded-lg px-2 py-0.5 font-semibold text-[#5eead4] hover:bg-white/10">
                   {t("openItem")}
                 </button>
               )}

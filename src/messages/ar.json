@@ -231,7 +231,8 @@
     "undoCancelled": "تم إلغاء الموعد",
     "undoAction": "تراجع ({s} ث)",
     "undoDone": "تم التراجع.",
-    "undoFailed": "تعذّر التراجع. افتح العنصر لتعديله."
+    "undoFailed": "تعذّر التراجع. افتح العنصر لتعديله.",
+    "newPatientOption": "حجز بدون سجل: {name}"
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",
@@ -250,7 +251,10 @@
     "revertConfirm": "إعادة هذه الدفعة إلى معلقة؟",
     "errorInvalidAmount": "يرجى إدخال مبلغ صالح.",
     "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
-    "amountPlaceholderPlain": "المبلغ"
+    "amountPlaceholderPlain": "المبلغ",
+    "noAmount": "بدون مبلغ",
+    "setAmount": "تحديد المبلغ",
+    "amountFirst": "أدخل المبلغ المستلم أولاً."
   },
   "paymentsPage": {
     "title": "المدفوعات",
@@ -1793,7 +1797,8 @@
     "onlySolvyMed": "يمكنني المساعدة في SolvyMed فقط.",
     "noClinical": "لا يمكنني المساعدة في المسائل السريرية.",
     "minutes": "{n} دقيقة",
-    "alreadyPaid": "هذا الموعد مدفوع بالفعل."
+    "alreadyPaid": "هذا الموعد مدفوع بالفعل.",
+    "noAmount": "هذا الموعد بلا مبلغ. حدّد المبلغ في جدول المواعيد قبل تعليمه كمدفوع."
   },
   "countryExamples": {
     "phone": "رقم الهاتف"

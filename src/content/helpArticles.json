@@ -890,8 +890,8 @@
           ]
         },
         "web": {
-          "pt": "Em **Pagamentos**, os totais se chamam **Pendente**, **Recebido** e **Total**, com os mesmos períodos. A regra é a mesma do app.",
-          "en": "In **Payments**, the totals are **Pending**, **Received** and **Total**, with the same periods. The rule is the same as in the app."
+          "pt": "Em **Pagamentos**, os totais se chamam **Pendente**, **Recebido** e **Total**, com os mesmos períodos. Consultas sem valor não entram nos totais nem nas listas: na **Agenda** elas aparecem como **Sem valor · Definir valor**, e uma consulta só é marcada como paga depois de ter um valor.",
+          "en": "In **Payments**, the totals are **Pending**, **Received** and **Total**, with the same periods. Appointments without an amount aren't counted in the totals or the lists: in the **Schedule** they show **No amount · Set amount**, and an appointment is only marked paid once it has an amount."
         },
         "webUnavailable": false,
         "open": "payments",

@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, RescheduleButton, ViewToggle, PixQrButton, PromptPayQrButton, ScheduleUndoToast } from "./ScheduleClient";
 import { MOVABLE_STATUSES, offersPaymentQr } from "@/lib/scheduleChecks";
+import { hasAmount } from "@/lib/paymentRules";
+import { SetAmountButton } from "../payments/PaymentsClient";
 import { normalizePromptPayId } from "@/lib/promptpay";
 import { BookingRequestsPanel } from "./BookingRequestsPanel";
 import { getTentativeBookings } from "./booking-actions";
@@ -246,10 +248,20 @@ export default async function SchedulePage({
                     </div>
                     {appt.status !== "blocked" && (
                       <div className="mt-2 flex items-center gap-3">
-                        <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
-                          {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}
-                          {appt.payment_amount ? ` · ${formatMoney(appt.payment_amount, currency)}` : ""}
-                        </span>
+                        {appt.payment_status !== "paid" && !hasAmount(appt.payment_amount) ? (
+                          // No amount yet (the app's #216): not to-receive; set one here,
+                          // prefilled with the same-named procedure's price.
+                          <SetAmountButton
+                            id={appt.id}
+                            currency={currency}
+                            suggested={procedures.find((p) => p.name === appt.consultation_type && hasAmount(p.price))?.price ?? null}
+                          />
+                        ) : (
+                          <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
+                            {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}
+                            {appt.payment_amount ? ` · ${formatMoney(appt.payment_amount, currency)}` : ""}
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>

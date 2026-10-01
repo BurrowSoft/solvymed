@@ -231,7 +231,8 @@
     "undoCancelled": "Janji temu dibatalkan",
     "undoAction": "Batalkan ({s} dtk)",
     "undoDone": "Dibatalkan.",
-    "undoFailed": "Tidak dapat membatalkan. Buka item untuk menyesuaikannya."
+    "undoFailed": "Tidak dapat membatalkan. Buka item untuk menyesuaikannya.",
+    "newPatientOption": "Buat janji tanpa data pasien: {name}"
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -250,7 +251,10 @@
     "revertConfirm": "Kembalikan pembayaran ini ke tertunda?",
     "errorInvalidAmount": "Silakan masukkan jumlah yang valid.",
     "errorGeneric": "Terjadi kesalahan. Silakan coba lagi.",
-    "amountPlaceholderPlain": "Jumlah"
+    "amountPlaceholderPlain": "Jumlah",
+    "noAmount": "Tanpa nominal",
+    "setAmount": "Atur nominal",
+    "amountFirst": "Masukkan dulu nominal yang diterima."
   },
   "paymentsPage": {
     "title": "Pembayaran",
@@ -1793,7 +1797,8 @@
     "onlySolvyMed": "Saya hanya bisa membantu soal SolvyMed.",
     "noClinical": "Saya tidak bisa membantu soal klinis.",
     "minutes": "{n} menit",
-    "alreadyPaid": "Janji ini sudah dibayar."
+    "alreadyPaid": "Janji ini sudah dibayar.",
+    "noAmount": "Janji ini belum punya nominal. Atur di Jadwal sebelum menandainya dibayar."
   },
   "countryExamples": {
     "phone": "Nomor telepon"

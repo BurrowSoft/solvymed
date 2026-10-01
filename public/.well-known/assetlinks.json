@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.burrowsoft.solvymed",
+      "sha256_cert_fingerprints": [
+        "80:6E:69:E3:92:E1:48:79:83:27:C4:2B:59:CE:1E:E1:72:97:12:F1:B2:27:26:7F:49:A4:4A:74:B2:F3:98:DD"
+      ]
+    }
+  }
+]
