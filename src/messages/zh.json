@@ -719,9 +719,9 @@
       "secretaryEmailMismatch": "该邮箱与邀请不匹配，或邀请已失效。请检查邮箱，或向诊所索取新的链接。",
       "consentCheckbox": "我已阅读并同意<terms>使用条款</terms>和<privacy>隐私政策</privacy>",
       "country": "您的诊所在哪里？",
-      "countryOther": "其他国家",
       "countryHint": "用于设定货币、套餐价格、患者证件和付款二维码。之后如需更改，请联系客服。",
-      "fullNameHint": "如需要，可加上头衔（{titles}），会显示在问候语中。"
+      "fullNameHint": "如需要，可加上头衔（{titles}），会显示在问候语中。",
+      "countryRequired": "请选择诊所所在的国家。"
     },
     "forgotPassword": {
       "title": "忘记密码？",
@@ -1149,7 +1149,6 @@
   "pricing": {
     "navLabel": "价格",
     "countryLabel": "价格适用于：",
-    "countryOther": "其他国家",
     "title": "一个简单的方案，功能全包。",
     "subtitle": "无开通费，不按患者收费，没有额外费用。",
     "perMonth": "/月",

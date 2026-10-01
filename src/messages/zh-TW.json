@@ -719,9 +719,9 @@
       "secretaryEmailMismatch": "此電子郵件與邀請不符，或邀請已失效。請檢查電子郵件，或向診所索取新的連結。",
       "consentCheckbox": "我已閱讀並同意<terms>使用條款</terms>與<privacy>隱私權政策</privacy>",
       "country": "您的診所在哪裡？",
-      "countryOther": "其他國家",
       "countryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。之後如需變更，請聯絡客服。",
-      "fullNameHint": "如有需要，可加上頭銜（{titles}），會顯示在問候語中。"
+      "fullNameHint": "如有需要，可加上頭銜（{titles}），會顯示在問候語中。",
+      "countryRequired": "請選擇診所所在的國家。"
     },
     "forgotPassword": {
       "title": "忘記密碼？",
@@ -1149,7 +1149,6 @@
   "pricing": {
     "navLabel": "價格",
     "countryLabel": "價格適用於：",
-    "countryOther": "其他國家",
     "title": "一個簡單的方案，功能全包。",
     "subtitle": "無開通費，不按病患收費，沒有額外費用。",
     "perMonth": "/月",

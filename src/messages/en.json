@@ -719,9 +719,9 @@
       "secretaryEmailMismatch": "This email doesn't match the invitation, or the invitation is no longer valid. Check the email, or ask the clinic for a new link.",
       "consentCheckbox": "I have read and accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>",
       "country": "Where is your practice?",
-      "countryOther": "Other country",
       "countryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it later, contact support.",
-      "fullNameHint": "Add your title if you like ({titles}); it appears in greetings."
+      "fullNameHint": "Add your title if you like ({titles}); it appears in greetings.",
+      "countryRequired": "Choose your clinic's country."
     },
     "forgotPassword": {
       "title": "Forgot your password?",
@@ -1149,7 +1149,6 @@
   "pricing": {
     "navLabel": "Pricing",
     "countryLabel": "Prices for:",
-    "countryOther": "Other countries",
     "title": "One simple plan. Everything included.",
     "subtitle": "No setup fees, no per-patient charges, no surprises.",
     "perMonth": "/month",

@@ -719,9 +719,9 @@
       "secretaryEmailMismatch": "Este e-mail não corresponde ao convite, ou o convite não é mais válido. Confira o e-mail ou peça um novo link à clínica.",
       "consentCheckbox": "Li e aceito os <terms>Termos de Uso</terms> e a <privacy>Política de Privacidade</privacy>",
       "country": "Onde fica seu consultório?",
-      "countryOther": "Outro país",
       "countryHint": "Define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar depois, fale com o suporte.",
-      "fullNameHint": "Se quiser, inclua seu título ({titles}): ele aparece nas saudações."
+      "fullNameHint": "Se quiser, inclua seu título ({titles}): ele aparece nas saudações.",
+      "countryRequired": "Escolha o país da clínica."
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",
@@ -1149,7 +1149,6 @@
   "pricing": {
     "navLabel": "Preços",
     "countryLabel": "Preços para:",
-    "countryOther": "Outros países",
     "title": "Um plano simples. Tudo incluído.",
     "subtitle": "Sem taxa de adesão, sem cobrança por paciente, sem surpresas.",
     "perMonth": "/mês",

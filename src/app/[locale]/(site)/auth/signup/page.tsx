@@ -65,14 +65,13 @@ export default function SignupPage() {
   // their practice). Pre-selected from the visitor's country, else the page
   // language; it sets currency, patient ID and payment QR, and afterwards
   // changes only through support.
-  const [detectedCountry, setDetectedCountry] = useState<string | null>(null);
-  const [countryChoice, setCountryChoice] = useState<CountryChoice>(() => initialCountryChoice(null, locale));
+  const [countryChoice, setCountryChoice] = useState<CountryChoice | null>(() => initialCountryChoice(null, locale));
   const countryTouched = useRef(false);
   // The title examples follow the country picked here, live (UX): the
-  // registry's, or the locale's own list for "Other" ("OTHER" isn't an ISO
-  // code, so it's looked up as the unknown "ZZ", never read as Brazil).
+  // registry's, or the locale's own list before a country is picked (looked
+  // up as the unknown "ZZ", never read as Brazil).
   const tSettings = useTranslations("settings");
-  const signupTitles = titleExamples(countryChoice === "OTHER" ? "ZZ" : countryChoice, locale) ?? tSettings("fullNameTitles");
+  const signupTitles = titleExamples(countryChoice ?? "ZZ", locale) ?? tSettings("fullNameTitles");
   useEffect(() => {
     // No picker before the Thai release, so no lookup either.
     if (!thaiEnabled) return;
@@ -81,7 +80,6 @@ export default function SignupPage() {
       .then((r) => r.json() as Promise<{ country: string | null }>)
       .then(({ country }) => {
         if (!alive) return;
-        setDetectedCountry(country);
         if (!countryTouched.current) setCountryChoice(initialCountryChoice(country, locale));
       })
       .catch(() => {});
@@ -102,6 +100,13 @@ export default function SignupPage() {
 
     if (password !== confirmPassword) {
       setError(t("signup.passwordMismatch"));
+      return;
+    }
+
+    // Brasil or Thailand, picked (no pre-selection outside BR/TH, Vitor).
+    const pickCountry = thaiEnabled && role === "professional" && !isSecretaryFlow && !isJoinFlow;
+    if (pickCountry && !countryChoice) {
+      setError(t("signup.countryRequired"));
       return;
     }
 
@@ -156,7 +161,7 @@ export default function SignupPage() {
           // handle_new_user stores them (migration 110; ignored before it).
           // Nothing before the Thai release (the database default, BR).
           ...(role === "professional"
-            ? signupCountryMetadata(countryChoice, detectedCountry, browserTimeZone())
+            ? signupCountryMetadata(countryChoice ?? "BR", browserTimeZone())
             : {}),
           ...(role === "patient" && inviteCode.trim()
             ? { invite_code: inviteCode.toUpperCase().trim() }
@@ -276,7 +281,7 @@ export default function SignupPage() {
             <select
               id="signup-country"
               form="signup-form"
-              value={countryChoice}
+              value={countryChoice ?? ""}
               onChange={(e) => {
                 countryTouched.current = true;
                 setCountryChoice(e.target.value as CountryChoice);
@@ -284,9 +289,9 @@ export default function SignupPage() {
               className="w-full rounded-xl border border-teal-200 bg-white px-4 py-3 text-base text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             >
               {/* Country names in their own language, as in a language picker. */}
+              {!countryChoice && <option value="" disabled>—</option>}
               <option value="BR">Brasil</option>
               <option value="TH">ประเทศไทย</option>
-              <option value="OTHER">{t("signup.countryOther")}</option>
             </select>
             <p className="mt-1.5 text-xs text-slate-500">{t("signup.countryHint")}</p>
           </div>
