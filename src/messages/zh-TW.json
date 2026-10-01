@@ -107,7 +107,7 @@
     "invitedSeeAll": "在病患中查看全部",
     "invitedSameEmail": "與 {name} 電子郵件相同：合併？",
     "invitedRemoveConfirm": "移除 {name}？其帳戶將重新等待您的確認，病歷會被封存。",
-    "invitedRemoveConfirmDisconnect": "移除 {name}？其帳戶將與您的診所中斷連結，待處理的請求將被取消（會通知病患），病歷將被封存。如需重新接納，請分享該病患的個人代碼。"
+    "invitedRemoveConfirmDisconnect": "移除 {name}？其帳戶將與您的診所中斷連結，待處理的請求將被取消（會通知病患），病歷將被封存。如需重新接納，請從已封存中還原病歷，並分享該病患的個人代碼。"
   },
   "schedule": {
     "patientMessage": "患者留言",
