@@ -1488,7 +1488,6 @@
     "placesUnavailable": "The places couldn't be loaded right now.",
     "countryBR": "Brazil",
     "countryTH": "Thailand",
-    "countryOTHER": "Other country",
     "formTitle": "Apply",
     "required": "required",
     "qName": "Full name",
@@ -1571,7 +1570,8 @@
     "emailNoFiles": "Please don't send any files yet; if you're accepted, we'll explain how to create a test export.",
     "emailSign": "The SolvyMed team",
     "emailTagline": "Clinic management made simple",
-    "emailHelloTitled": "Hi {title} {name},"
+    "emailHelloTitled": "Hi {title} {name},",
+    "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
   "foundersCard": {
     "cardTitle": "Founders Program",

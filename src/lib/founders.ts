@@ -37,9 +37,9 @@ export function foundersShareMeta(a: { locale: string; url: string; title: strin
   };
 }
 
-// Brazil and Thailand have places per system; other countries may apply,
-// with no counter (UX).
-export const FOUNDERS_COUNTRIES = ["BR", "TH", "OTHER"] as const;
+// Brazil and Thailand only, for now (e7, 10-01: country-first is BR/TH; no
+// "Other", no waitlist for other countries).
+export const FOUNDERS_COUNTRIES = ["BR", "TH"] as const;
 export type FoundersCountry = (typeof FOUNDERS_COUNTRIES)[number];
 
 // The clinic systems per country (UX's copy file; brand names aren't
@@ -86,8 +86,9 @@ export const OPTIONS = {
   team_size: ["alone", "one_secretary", "two_plus"],
 } as const;
 
-// The page's default country from its language.
-export const defaultFoundersCountry = (locale: string): FoundersCountry => (locale === "pt-BR" ? "BR" : locale === "th" ? "TH" : "OTHER");
+// The page's default country from its language; English picks nothing, so
+// the visitor chooses Brasil or ประเทศไทย (e7).
+export const defaultFoundersCountry = (locale: string): FoundersCountry | "" => (locale === "pt-BR" ? "BR" : locale === "th" ? "TH" : "");
 
 // What the form sends (the route adds the IP; the honeypot never reaches
 // the database).

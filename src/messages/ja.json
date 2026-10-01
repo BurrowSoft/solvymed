@@ -1458,7 +1458,6 @@
     "placesUnavailable": "現在、枠数を読み込めませんでした。",
     "countryBR": "ブラジル",
     "countryTH": "タイ",
-    "countryOTHER": "その他の国",
     "formTitle": "応募",
     "required": "必須",
     "qName": "氏名",
@@ -1541,7 +1540,8 @@
     "emailNoFiles": "まだファイルは送らないでください。採用された場合、テスト用エクスポートの作成方法をご説明します。",
     "emailSign": "SolvyMed チーム",
     "emailTagline": "クリニック管理をシンプルに",
-    "emailHelloTitled": "{title} {name} 様"
+    "emailHelloTitled": "{title} {name} 様",
+    "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
   "foundersCard": {
     "cardTitle": "ファウンダープログラム",
