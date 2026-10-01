@@ -98,7 +98,16 @@
     "noUpcoming": "Không có lịch hẹn sắp tới",
     "unpaidSessions": "{n} buổi chưa thanh toán",
     "pendingCollection": "{amount} chưa thu",
-    "managePayments": "Quản lý thanh toán"
+    "managePayments": "Quản lý thanh toán",
+    "invitedTitle": "{n} bệnh nhân mới qua lời mời của bạn",
+    "invitedHint": "Họ tham gia bằng mã phòng khám của bạn. Giữ bệnh nhân của bạn; Gỡ sẽ ngắt kết nối tài khoản (hồ sơ được lưu trữ).",
+    "invitedKeep": "Giữ",
+    "invitedRemove": "Gỡ",
+    "invitedError": "Không lưu được. Vui lòng thử lại.",
+    "invitedSeeAll": "Xem tất cả trong Bệnh nhân",
+    "invitedSameEmail": "Cùng email với {name}: gộp hồ sơ?",
+    "invitedRemoveConfirm": "Gỡ {name}? Tài khoản sẽ quay lại chờ bạn xác nhận và hồ sơ được lưu trữ.",
+    "invitedRemoveConfirmDisconnect": "Gỡ {name}? Tài khoản sẽ bị ngắt kết nối khỏi phòng khám của bạn, các yêu cầu đang chờ sẽ bị hủy (bệnh nhân được thông báo) và hồ sơ được lưu trữ. Để nhận lại, hãy khôi phục hồ sơ từ mục Đã lưu trữ và chia sẻ mã cá nhân của bệnh nhân."
   },
   "schedule": {
     "patientMessage": "Lời nhắn của bệnh nhân",
@@ -231,7 +240,17 @@
     "undoCancelled": "Đã hủy lịch hẹn",
     "undoAction": "Hoàn tác ({s} giây)",
     "undoDone": "Đã hoàn tác.",
-    "undoFailed": "Không thể hoàn tác. Hãy mở mục đó để điều chỉnh."
+    "undoFailed": "Không thể hoàn tác. Hãy mở mục đó để điều chỉnh.",
+    "newPatientOption": "Đặt lịch không tạo hồ sơ: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this."
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -250,7 +269,10 @@
     "revertConfirm": "Hoàn nguyên khoản thanh toán này về chờ xử lý?",
     "errorInvalidAmount": "Vui lòng nhập số tiền hợp lệ.",
     "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại.",
-    "amountPlaceholderPlain": "Số tiền"
+    "amountPlaceholderPlain": "Số tiền",
+    "noAmount": "Chưa có số tiền",
+    "setAmount": "Đặt số tiền",
+    "amountFirst": "Hãy nhập số tiền đã nhận trước."
   },
   "paymentsPage": {
     "title": "Thanh toán",
@@ -319,7 +341,9 @@
     "nextPage": "Tiếp",
     "pagesLabel": "Trang",
     "fullNamePlaceholder": "Họ và tên",
-    "professionPlaceholder": "vd. Kỹ sư, Giáo viên…"
+    "professionPlaceholder": "vd. Kỹ sư, Giáo viên…",
+    "invitedBadge": "Mới, qua lời mời",
+    "invitedSameEmail": "Cùng email với {name}: gộp hồ sơ?"
   },
   "patientDetail": {
     "tabInfo": "Thông tin",
@@ -670,7 +694,13 @@
     "orCustomTime": "Hoặc chọn giờ khác",
     "professionalFallback": "Chuyên gia",
     "errorArchived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám.",
-    "practiceInactive": "Phòng khám này hiện không nhận đặt lịch trực tuyến."
+    "practiceInactive": "Phòng khám này hiện không nhận đặt lịch trực tuyến.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
@@ -714,10 +744,8 @@
       "secretaryNeedsInvite": "Bạn là thư ký? Hãy xin bác sĩ một liên kết mời.",
       "secretaryEmailMismatch": "Email này không khớp với lời mời, hoặc lời mời không còn hiệu lực. Hãy kiểm tra email hoặc xin phòng khám một liên kết mới.",
       "consentCheckbox": "Tôi đã đọc và chấp nhận <terms>Điều khoản sử dụng</terms> và <privacy>Chính sách quyền riêng tư</privacy>",
-      "country": "Phòng khám của bạn ở đâu?",
-      "countryOther": "Quốc gia khác",
-      "countryHint": "Xác định tiền tệ, giá gói, giấy tờ của bệnh nhân và mã QR thanh toán. Để thay đổi sau, hãy liên hệ bộ phận hỗ trợ.",
-      "fullNameHint": "Bạn có thể thêm danh xưng ({titles}); danh xưng sẽ hiện trong lời chào."
+      "fullNameHint": "Bạn có thể thêm danh xưng ({titles}); danh xưng sẽ hiện trong lời chào.",
+      "backToCountry": "Quay lại"
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",
@@ -746,7 +774,9 @@
     "backToHome": "Về trang chủ",
     "patientWelcome": {
       "countdown": "Đang đưa bạn đến lịch hẹn trong {count} giây…",
-      "goToAppointments": "Đến lịch hẹn của tôi"
+      "goToAppointments": "Đến lịch hẹn của tôi",
+      "heading": "Đã xong!",
+      "confirmed": "Tài khoản của bạn đã được xác nhận."
     },
     "inviteRequired": {
       "heading": "Cần có mã mời",
@@ -762,7 +792,12 @@
       "backToSignup": "Dùng tài khoản khác",
       "tooManyAttempts": "Quá nhiều lần thử. Vui lòng đợi một chút rồi thử lại.",
       "alreadyInvitedByAnother": "Tài khoản của bạn đã được liên kết với một bác sĩ khác.",
-      "archived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám."
+      "archived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám.",
+      "alreadyConnected": "Bạn đã kết nối với {doctor}. Để đổi, hãy liên hệ bộ phận hỗ trợ.",
+      "alreadyConnectedNoName": "Bạn đã kết nối với một bác sĩ khác. Để đổi, hãy liên hệ bộ phận hỗ trợ.",
+      "alreadyConnectedSamePractice": "Bạn đã kết nối với {doctor}. Hãy nhờ phòng khám gộp hồ sơ của bạn.",
+      "alreadyConnectedSamePracticeNoName": "Bạn đã kết nối với phòng khám này. Hãy nhờ phòng khám gộp hồ sơ của bạn.",
+      "codeUnavailable": "Không thể kết nối bằng mã này. Vui lòng liên hệ phòng khám."
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",
@@ -830,7 +865,14 @@
     "rescheduleRequestedLabel": "Yêu cầu đổi lịch: {date} · {time}",
     "rescheduleButton": "Yêu cầu đổi lịch",
     "closeDialog": "Đóng",
-    "originallyLabel": "Ban đầu: {date} · {time}"
+    "originallyLabel": "Ban đầu: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "Bị từ chối"
   },
   "nav": {
     "overview": "Tổng quan",
@@ -1143,7 +1185,6 @@
   "pricing": {
     "navLabel": "Bảng giá",
     "countryLabel": "Giá cho:",
-    "countryOther": "Các quốc gia khác",
     "title": "Một gói đơn giản. Bao gồm tất cả.",
     "subtitle": "Không phí thiết lập, không tính phí theo bệnh nhân, không có bất ngờ.",
     "perMonth": "/tháng",
@@ -1791,7 +1832,8 @@
     "onlySolvyMed": "Tôi chỉ có thể giúp về SolvyMed.",
     "noClinical": "Tôi không thể giúp về các vấn đề lâm sàng.",
     "minutes": "{n} phút",
-    "alreadyPaid": "Lịch hẹn này đã được thanh toán."
+    "alreadyPaid": "Lịch hẹn này đã được thanh toán.",
+    "noAmount": "Lịch hẹn này chưa có số tiền. Hãy đặt số tiền trong Lịch trước khi đánh dấu đã thanh toán."
   },
   "countryExamples": {
     "phone": "Số điện thoại"
@@ -1802,5 +1844,12 @@
     "tryNow": "Thử ngay",
     "later": "Để sau",
     "whatCanDo": "SolvyAI làm được gì?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "Làm mới"
   }
 }

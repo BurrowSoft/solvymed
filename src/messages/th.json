@@ -98,7 +98,16 @@
     "noUpcoming": "ไม่มีนัดหมายที่กำลังจะมาถึง",
     "unpaidSessions": "{n} ครั้งที่ยังไม่ชำระ",
     "pendingCollection": "{amount} รอการเรียกเก็บ",
-    "managePayments": "จัดการการชำระเงิน"
+    "managePayments": "จัดการการชำระเงิน",
+    "invitedTitle": "ผู้ป่วยใหม่ {n} คนผ่านคำเชิญของคุณ",
+    "invitedHint": "เข้าร่วมด้วยรหัสคลินิกของคุณ เก็บผู้ป่วยของคุณไว้ ส่วน “นำออก” จะยกเลิกการเชื่อมบัญชี (ประวัติจะถูกเก็บถาวร)",
+    "invitedKeep": "เก็บไว้",
+    "invitedRemove": "นำออก",
+    "invitedError": "บันทึกไม่ได้ กรุณาลองใหม่",
+    "invitedSeeAll": "ดูทั้งหมดในผู้ป่วย",
+    "invitedSameEmail": "อีเมลเดียวกับ {name}: รวมประวัติ?",
+    "invitedRemoveConfirm": "นำ {name} ออกหรือไม่ บัญชีจะกลับไปรอการยืนยันจากคุณ และประวัติจะถูกเก็บถาวร",
+    "invitedRemoveConfirmDisconnect": "นำ {name} ออกหรือไม่ บัญชีจะถูกยกเลิกการเชื่อมกับคลินิกของคุณ คำขอที่รอดำเนินการจะถูกยกเลิก (ผู้ป่วยจะได้รับแจ้ง) และประวัติจะถูกเก็บถาวร หากต้องการให้กลับมา ให้กู้คืนประวัติจากรายการที่เก็บถาวร แล้วแชร์รหัสส่วนตัวของผู้ป่วย"
   },
   "schedule": {
     "patientMessage": "ข้อความจากผู้ป่วย",
@@ -231,7 +240,17 @@
     "undoCancelled": "ยกเลิกนัดแล้ว",
     "undoAction": "ยกเลิก ({s} วิ)",
     "undoDone": "ยกเลิกแล้ว",
-    "undoFailed": "เลิกทำไม่ได้ โปรดเปิดรายการเพื่อแก้ไข"
+    "undoFailed": "เลิกทำไม่ได้ โปรดเปิดรายการเพื่อแก้ไข",
+    "newPatientOption": "นัดโดยไม่สร้างประวัติ: {name}",
+    "reasonLabel": "เหตุผล (ไม่บังคับ)",
+    "reasonPlaceholderDecline": "เช่น เวลานี้ไม่ว่าง",
+    "reasonPlaceholderCancel": "เช่น มีการเปลี่ยนแปลงตารางงาน",
+    "messageLabel": "ข้อความถึงผู้ป่วย (ไม่บังคับ)",
+    "confirmCancel": "ยกเลิกนัดหมาย",
+    "keepAppointment": "ย้อนกลับ",
+    "reasonShort": "เหตุผล",
+    "messagePlaceholder": "เช่น กรุณานำผลตรวจมาด้วย",
+    "patientWillSee": "ผู้ป่วยจะเห็นข้อความนี้"
   },
   "payments": {
     "thisWeek": "สัปดาห์นี้",
@@ -250,7 +269,10 @@
     "revertConfirm": "คืนสถานะการชำระเงินนี้เป็นรอชำระ?",
     "errorInvalidAmount": "กรุณากรอกจำนวนเงินที่ถูกต้อง",
     "errorGeneric": "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
-    "amountPlaceholderPlain": "จำนวนเงิน"
+    "amountPlaceholderPlain": "จำนวนเงิน",
+    "noAmount": "ไม่มีจำนวนเงิน",
+    "setAmount": "กำหนดจำนวนเงิน",
+    "amountFirst": "กรุณาระบุจำนวนเงินที่ได้รับก่อน"
   },
   "paymentsPage": {
     "title": "การชำระเงิน",
@@ -319,7 +341,9 @@
     "nextPage": "ถัดไป",
     "pagesLabel": "หน้า",
     "fullNamePlaceholder": "ชื่อ-นามสกุล",
-    "professionPlaceholder": "เช่น วิศวกร ครู…"
+    "professionPlaceholder": "เช่น วิศวกร ครู…",
+    "invitedBadge": "ใหม่ ผ่านคำเชิญ",
+    "invitedSameEmail": "อีเมลเดียวกับ {name}: รวมประวัติ?"
   },
   "patientDetail": {
     "tabInfo": "ข้อมูล",
@@ -670,7 +694,13 @@
     "orCustomTime": "หรือเลือกเวลาเอง",
     "professionalFallback": "ผู้เชี่ยวชาญ",
     "errorArchived": "คลินิกนี้ไม่รับการจองใหม่สำหรับบัญชีของคุณ โปรดติดต่อคลินิก",
-    "practiceInactive": "คลินิกนี้ยังไม่เปิดรับการนัดหมายออนไลน์ในขณะนี้"
+    "practiceInactive": "คลินิกนี้ยังไม่เปิดรับการนัดหมายออนไลน์ในขณะนี้",
+    "noHours": "แพทย์ยังไม่ได้เปิดเวลานัดหมายออนไลน์ ลองใหม่ภายหลังหรือติดต่อคลินิก",
+    "loadFailed": "โหลดเวลาไม่ได้ กรุณาตรวจสอบอินเทอร์เน็ต",
+    "retry": "ลองอีกครั้ง",
+    "chosenTime": "เวลาที่เลือก: {weekday} {day} {month} · {start}–{end}",
+    "prevMonth": "เดือนก่อนหน้า",
+    "nextMonth": "เดือนถัดไป"
   },
   "auth": {
     "passwordTooShort": "รหัสผ่านต้องมีอย่างน้อย {min} ตัวอักษร",
@@ -714,10 +744,8 @@
       "secretaryNeedsInvite": "เป็นเลขานุการใช่ไหม? ขอลิงก์คำเชิญจากแพทย์ของคุณ",
       "secretaryEmailMismatch": "อีเมลนี้ไม่ตรงกับคำเชิญ หรือคำเชิญหมดอายุแล้ว โปรดตรวจสอบอีเมล หรือขอลิงก์ใหม่จากคลินิก",
       "consentCheckbox": "ฉันได้อ่านและยอมรับ<terms>ข้อกำหนดการใช้งาน</terms>และ<privacy>นโยบายความเป็นส่วนตัว</privacy>",
-      "country": "คลินิกของคุณอยู่ที่ไหน",
-      "countryOther": "ประเทศอื่น",
-      "countryHint": "ใช้กำหนดสกุลเงิน ราคาแพ็กเกจ เอกสารระบุตัวตนผู้ป่วย และ QR สำหรับชำระเงิน หากต้องการเปลี่ยนภายหลัง โปรดติดต่อฝ่ายสนับสนุน",
-      "fullNameHint": "ใส่คำนำหน้าได้ถ้าต้องการ ({titles}) จะแสดงในคำทักทาย"
+      "fullNameHint": "ใส่คำนำหน้าได้ถ้าต้องการ ({titles}) จะแสดงในคำทักทาย",
+      "backToCountry": "กลับ"
     },
     "forgotPassword": {
       "title": "ลืมรหัสผ่าน?",
@@ -746,7 +774,9 @@
     "backToHome": "กลับสู่หน้าหลัก",
     "patientWelcome": {
       "countdown": "กำลังพาคุณไปยังนัดหมายของคุณใน {count} วินาที…",
-      "goToAppointments": "ไปที่นัดหมายของฉัน"
+      "goToAppointments": "ไปที่นัดหมายของฉัน",
+      "heading": "เรียบร้อยแล้ว!",
+      "confirmed": "ยืนยันบัญชีของคุณแล้ว"
     },
     "inviteRequired": {
       "heading": "จำเป็นต้องมีรหัสเชิญ",
@@ -762,7 +792,12 @@
       "backToSignup": "ใช้บัญชีอื่น",
       "tooManyAttempts": "พยายามหลายครั้งเกินไป กรุณารอสักครู่แล้วลองใหม่อีกครั้ง",
       "alreadyInvitedByAnother": "บัญชีของคุณเชื่อมโยงกับแพทย์ท่านอื่นอยู่แล้ว",
-      "archived": "คลินิกนี้ไม่รับการจองใหม่สำหรับบัญชีของคุณ โปรดติดต่อคลินิก"
+      "archived": "คลินิกนี้ไม่รับการจองใหม่สำหรับบัญชีของคุณ โปรดติดต่อคลินิก",
+      "alreadyConnected": "คุณเชื่อมต่อกับ {doctor} อยู่แล้ว หากต้องการเปลี่ยน กรุณาติดต่อฝ่ายสนับสนุน",
+      "alreadyConnectedNoName": "คุณเชื่อมต่อกับแพทย์ท่านอื่นอยู่แล้ว หากต้องการเปลี่ยน กรุณาติดต่อฝ่ายสนับสนุน",
+      "alreadyConnectedSamePractice": "คุณเชื่อมต่อกับ {doctor} แล้ว กรุณาขอให้คลินิกรวมประวัติของคุณ",
+      "alreadyConnectedSamePracticeNoName": "คุณเชื่อมต่อกับคลินิกนี้แล้ว กรุณาขอให้คลินิกรวมประวัติของคุณ",
+      "codeUnavailable": "ไม่สามารถเชื่อมต่อด้วยรหัสนี้ได้ กรุณาติดต่อคลินิก"
     },
     "pendingConfirmation": {
       "loading": "กำลังตรวจสอบสถานะของคุณ…",
@@ -792,7 +827,7 @@
       "otherBody": "แตะดำเนินการต่อเพื่อทำให้เสร็จ",
       "continue": "ดำเนินการต่อ",
       "expiredTitle": "ลิงก์นี้หมดอายุแล้ว",
-      "expiredBody": "ขอลิงก์ใหม่ได้จากหน้าเข้าสู่ระบบ",
+      "expiredBody": "ลิงก์นี้ถูกใช้ไปแล้วหรือหมดอายุ กรุณาเข้าสู่ระบบด้วยอีเมลและรหัสผ่าน",
       "goToSignIn": "ไปที่หน้าเข้าสู่ระบบ"
     },
     "captchaFailed": "โปรดยืนยันให้เสร็จแล้วลองอีกครั้ง",
@@ -830,7 +865,14 @@
     "rescheduleRequestedLabel": "คำขอเปลี่ยนนัด: {date} · {time}",
     "rescheduleButton": "ขอเปลี่ยนนัดหมาย",
     "closeDialog": "ปิด",
-    "originallyLabel": "เดิม: {date} · {time}"
+    "originallyLabel": "เดิม: {date} · {time}",
+    "declinedByClinic": "คลินิกปฏิเสธ",
+    "declinedByClinicReason": "คลินิกปฏิเสธ: {reason}",
+    "cancelledByClinic": "คลินิกยกเลิก",
+    "cancelledByClinicReason": "คลินิกยกเลิก: {reason}",
+    "youCancelled": "คุณยกเลิกแล้ว",
+    "clinicMessage": "ข้อความจากคลินิก: {message}",
+    "statusDeclined": "ถูกปฏิเสธ"
   },
   "nav": {
     "overview": "ภาพรวม",
@@ -1143,7 +1185,6 @@
   "pricing": {
     "navLabel": "ราคา",
     "countryLabel": "ราคาสำหรับ:",
-    "countryOther": "ประเทศอื่นๆ",
     "title": "แพ็กเกจเดียว ครบทุกฟีเจอร์",
     "subtitle": "ไม่มีค่าติดตั้ง ไม่คิดเงินตามจำนวนคนไข้ ไม่มีค่าใช้จ่ายแอบแฝง",
     "perMonth": "/เดือน",
@@ -1821,7 +1862,8 @@
     "onlySolvyMed": "ช่วยได้เฉพาะเรื่อง SolvyMed เท่านั้น",
     "noClinical": "ช่วยเรื่องทางคลินิกไม่ได้",
     "minutes": "{n} นาที",
-    "alreadyPaid": "นัดหมายนี้ชำระแล้ว"
+    "alreadyPaid": "นัดหมายนี้ชำระแล้ว",
+    "noAmount": "นัดหมายนี้ยังไม่มีจำนวนเงิน กรุณาระบุจำนวนเงินในตารางนัดก่อนทำเครื่องหมายว่าชำระแล้ว"
   },
   "countryExamples": {
     "phone": "หมายเลขโทรศัพท์"
@@ -1832,5 +1874,12 @@
     "tryNow": "ลองเลย",
     "later": "ไว้ทีหลัง",
     "whatCanDo": "SolvyAI ทำอะไรได้บ้าง?"
+  },
+  "openInApp": {
+    "open": "เปิดในแอป SolvyMed",
+    "continue": "ดำเนินการต่อบนเว็บไซต์"
+  },
+  "autoRefresh": {
+    "refresh": "รีเฟรช"
   }
 }

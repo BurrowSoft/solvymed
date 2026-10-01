@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { IconBadge } from "@/components/IconBadge";
+import { conditionMet } from "@/lib/conditions";
 
 export default function InviteRequiredPage() {
   const t = useTranslations("auth");
@@ -71,10 +72,12 @@ export default function InviteRequiredPage() {
       setError(t("inviteRequired.notPendingPatient"));
       return;
     }
-    // Refuse to attach a code if this account already has a persisted role
-    // at all (including an already-linked patient), rather than silently
-    // overwriting it.
-    if (existingRole?.role) {
+    // Refuse to attach a code if this account already has a persisted
+    // non-patient role. A patient (already linked) goes on to the RPCs,
+    // which refuse to re-link it themselves (145: already_connected, 146:
+    // same_practice) so the message can name the doctor; nothing is
+    // overwritten.
+    if (existingRole?.role && existingRole.role !== "patient") {
       setLoading(false);
       setError(t("inviteRequired.alreadyHasRole"));
       return;
@@ -86,14 +89,80 @@ export default function InviteRequiredPage() {
     // code (sets invited_by_professional_id, pending until the doctor
     // confirms via confirm_and_link_patient). Both RPCs own the user_roles
     // write themselves now — atomic, no client-side race to handle.
+    // Already connected to a practice (145): name the doctor, like the app
+    // (get_linked_professional_id → the public info), or say it without a name.
+    // The same practice's code (146: HINT same_practice, absent before it's
+    // applied) asks the clinic to combine the records instead of support.
+    async function connectedTo(samePractice: boolean): Promise<string> {
+      const named = samePractice ? "inviteRequired.alreadyConnectedSamePractice" : "inviteRequired.alreadyConnected";
+      const noName = samePractice ? "inviteRequired.alreadyConnectedSamePracticeNoName" : "inviteRequired.alreadyConnectedNoName";
+      try {
+        const { data: pid } = await supabase.rpc("get_linked_professional_id");
+        if (typeof pid !== "string") return t(noName);
+        const { data: info } = await supabase.rpc("get_professional_public_info", { p_professional_id: pid }).maybeSingle();
+        const name = (info as { full_name?: string | null } | null)?.full_name?.trim();
+        return name ? t(named, { doctor: name }) : t(noName);
+      } catch {
+        return t(noName);
+      }
+    }
+    const samePractice = (e: { hint?: string | null } | null) => e?.hint === "same_practice";
+
+    // 147: one Connect = one attempt (connect_with_code tries the personal
+    // code, then the public one, server-side). Its errors are the old RPCs'.
+    if (conditionMet("invite-connect-live")) {
+      const { data: kind, error: connectError } = await supabase.rpc("connect_with_code", { p_code: code });
+      if (connectError) {
+        const m = connectError.message ?? "";
+        const text = m.includes("already_connected") || m.includes("already_invited_by_another_professional")
+          ? await connectedTo(samePractice(connectError))
+          : m.includes("too_many_attempts")
+          ? t("inviteRequired.tooManyAttempts")
+          // An archived record's personal code (094 refuses the link): the
+          // same neutral text as a removed patient's (e7, as the app).
+          : m.includes("patient_archived")
+          ? t("inviteRequired.codeUnavailable")
+          : m.includes("professional accounts cannot use")
+          ? t("inviteRequired.notPendingPatient")
+          : t("inviteRequired.linkFailed");
+        setLoading(false);
+        setError(text);
+        return;
+      }
+      if (kind === "personal") {
+        router.push(`${prefix}/auth/patient-welcome`);
+        return;
+      }
+      if (kind === "public") {
+        router.push(`${prefix}/auth/pending-confirmation`);
+        return;
+      }
+      // Removed by this clinic: its public code no longer re-admits (e7). A
+      // result, not an error, so the attempt still counts (38).
+      if (kind === "unavailable") {
+        setLoading(false);
+        setError(t("inviteRequired.codeUnavailable"));
+        return;
+      }
+      setLoading(false);
+      setError(t("inviteRequired.codeInvalid"));
+      return;
+    }
+
     const { data: fullyLinked, error: linkError } = await supabase.rpc("link_patient_by_invite_code", { p_code: code });
+    if (linkError?.message?.includes("already_connected")) {
+      const text = await connectedTo(samePractice(linkError));
+      setLoading(false);
+      setError(text);
+      return;
+    }
     if (linkError) {
       setLoading(false);
       setError(
         linkError.message?.includes("too_many_attempts")
           ? t("inviteRequired.tooManyAttempts")
           : linkError.message?.includes("patient_archived")
-          ? t("inviteRequired.archived")
+          ? t("inviteRequired.codeUnavailable")
           : t("inviteRequired.linkFailed"),
       );
       return;
@@ -104,13 +173,20 @@ export default function InviteRequiredPage() {
     }
 
     const { data: profId, error: profLinkError } = await supabase.rpc("link_by_professional_public_code", { p_public_code: code });
+    // Another practice's code while connected: the same message (38).
+    if (profLinkError?.message?.includes("already_invited_by_another_professional") || profLinkError?.message?.includes("already_connected")) {
+      const text = await connectedTo(samePractice(profLinkError));
+      setLoading(false);
+      setError(text);
+      return;
+    }
     if (profLinkError) {
       setLoading(false);
       setError(
         profLinkError.message?.includes("too_many_attempts")
           ? t("inviteRequired.tooManyAttempts")
           : profLinkError.message?.includes("patient_archived")
-          ? t("inviteRequired.archived")
+          ? t("inviteRequired.codeUnavailable")
           : profLinkError.message?.includes("already_invited_by_another_professional")
           ? t("inviteRequired.alreadyInvitedByAnother")
           : t("inviteRequired.linkFailed"),

@@ -8,6 +8,7 @@ import { AppointmentStatusSelect, DeleteAppointmentButton, NewAppointmentButton,
 import { MOVABLE_STATUSES } from "@/lib/scheduleChecks";
 import { toLocalDateString } from "@/lib/slots";
 import { formatMoney } from "@/lib/money";
+import { hasAmount } from "@/lib/paymentRules";
 import type { Currency } from "@/lib/country";
 import { dateLocale, plainSpaces } from "@/lib/dateLabels";
 
@@ -334,6 +335,7 @@ export function CalendarView({
   const pathname = usePathname();
   const locale = useLocale();
   const t = useTranslations("schedule");
+  const tPay = useTranslations("payments");
   const [selected, setSelected] = useState<CalendarAppt | null>(null);
 
   function go(date: string, v = view) {
@@ -416,7 +418,11 @@ export function CalendarView({
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 text-slate-400 shrink-0"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 {selected.start_time?.slice(0, 5)} – {selected.end_time?.slice(0, 5)} ({selected.duration_minutes} min)
               </div>
-              {selected.payment_amount != null && (
+              {/* No amount (the app's #216): "Sem valor", never "Pendente · R$ 0,00". */}
+              {selected.status !== "blocked" && selected.payment_status !== "paid" && !hasAmount(selected.payment_amount) && (
+                <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">{tPay("noAmount")}</div>
+              )}
+              {hasAmount(selected.payment_amount) && (
                 <div className={`flex items-center gap-2 text-xs font-semibold ${selected.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 shrink-0"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                   {selected.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")} · {formatMoney(selected.payment_amount, currency)}

@@ -98,7 +98,16 @@
     "noUpcoming": "No upcoming appointments",
     "unpaidSessions": "{n, plural, one {# unpaid session} other {# unpaid sessions}}",
     "pendingCollection": "{amount} pending collection",
-    "managePayments": "Manage Payments"
+    "managePayments": "Manage Payments",
+    "invitedTitle": "{n, plural, one {# new patient via your invite} other {# new patients via your invite}}",
+    "invitedHint": "They joined with your clinic code. Keep your patients; Remove disconnects the account (the record is archived).",
+    "invitedKeep": "Keep",
+    "invitedRemove": "Remove",
+    "invitedError": "Couldn't save. Please try again.",
+    "invitedSeeAll": "See all in Patients",
+    "invitedSameEmail": "Same email as {name}: merge?",
+    "invitedRemoveConfirm": "Remove {name}? Their account goes back to waiting for your confirmation, and the record is archived.",
+    "invitedRemoveConfirmDisconnect": "Remove {name}? The account will be disconnected from your clinic, pending requests will be cancelled (the patient is notified) and the record archived. To let them back in, restore the record from Archived and share the patient's personal code."
   },
   "schedule": {
     "patientMessage": "Patient's message",
@@ -231,7 +240,17 @@
     "undoCancelled": "Appointment cancelled",
     "undoAction": "Undo ({s} s)",
     "undoDone": "Undone.",
-    "undoFailed": "Couldn't undo. Open the item to adjust it."
+    "undoFailed": "Couldn't undo. Open the item to adjust it.",
+    "newPatientOption": "Book without a record: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this."
   },
   "payments": {
     "thisWeek": "This week",
@@ -250,7 +269,10 @@
     "revertConfirm": "Revert this payment to pending?",
     "errorInvalidAmount": "Please enter a valid amount.",
     "errorGeneric": "Something went wrong. Please try again.",
-    "amountPlaceholderPlain": "Amount"
+    "amountPlaceholderPlain": "Amount",
+    "noAmount": "No amount",
+    "setAmount": "Set amount",
+    "amountFirst": "Enter the amount received first."
   },
   "paymentsPage": {
     "title": "Payments",
@@ -319,7 +341,9 @@
     "nextPage": "Next",
     "pagesLabel": "Pages",
     "fullNamePlaceholder": "Full name",
-    "professionPlaceholder": "e.g. Engineer, Teacher…"
+    "professionPlaceholder": "e.g. Engineer, Teacher…",
+    "invitedBadge": "New, via invite",
+    "invitedSameEmail": "Same email as {name}: merge?"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -670,7 +694,13 @@
     "orCustomTime": "Or pick a custom time",
     "professionalFallback": "Professional",
     "errorArchived": "This clinic isn't taking new bookings for your account. Please contact the clinic.",
-    "practiceInactive": "This clinic isn't taking online bookings right now."
+    "practiceInactive": "This clinic isn't taking online bookings right now.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "Password must be at least {min} characters.",
@@ -714,10 +744,8 @@
       "secretaryNeedsInvite": "Secretary? Ask your doctor for an invite link.",
       "secretaryEmailMismatch": "This email doesn't match the invitation, or the invitation is no longer valid. Check the email, or ask the clinic for a new link.",
       "consentCheckbox": "I have read and accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>",
-      "country": "Where is your practice?",
-      "countryOther": "Other country",
-      "countryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it later, contact support.",
-      "fullNameHint": "Add your title if you like ({titles}); it appears in greetings."
+      "fullNameHint": "Add your title if you like ({titles}); it appears in greetings.",
+      "backToCountry": "Back"
     },
     "forgotPassword": {
       "title": "Forgot your password?",
@@ -746,7 +774,9 @@
     "backToHome": "Back to home",
     "patientWelcome": {
       "countdown": "Taking you to your appointments in {count, plural, one {# second} other {# seconds}}…",
-      "goToAppointments": "Go to My Appointments"
+      "goToAppointments": "Go to My Appointments",
+      "heading": "You're all set!",
+      "confirmed": "Your account has been confirmed."
     },
     "inviteRequired": {
       "heading": "An invite code is needed",
@@ -762,7 +792,12 @@
       "tooManyAttempts": "Too many attempts. Please wait a while before trying again.",
       "alreadyInvitedByAnother": "Your account is already connected to a different doctor.",
       "backToSignup": "Use a different account",
-      "archived": "This clinic isn't taking new bookings for your account. Please contact the clinic."
+      "archived": "This clinic isn't taking new bookings for your account. Please contact the clinic.",
+      "alreadyConnected": "You're already connected to {doctor}. To switch, contact support.",
+      "alreadyConnectedNoName": "You are already connected to another doctor. To switch, contact support.",
+      "alreadyConnectedSamePractice": "You're already connected to {doctor}. Ask the clinic to combine your records.",
+      "alreadyConnectedSamePracticeNoName": "You're already connected to this clinic. Ask the clinic to combine your records.",
+      "codeUnavailable": "Couldn't connect with this code. Please contact the clinic."
     },
     "pendingConfirmation": {
       "loading": "Checking your status…",
@@ -792,7 +827,7 @@
       "otherBody": "Tap Continue to finish.",
       "continue": "Continue",
       "expiredTitle": "This link has expired",
-      "expiredBody": "Request a new one from the sign-in page.",
+      "expiredBody": "This link was already used or has expired. Sign in with your email and password.",
       "goToSignIn": "Go to sign in"
     },
     "captchaFailed": "Please complete the verification and try again.",
@@ -830,7 +865,14 @@
     "rescheduleRequestedLabel": "Reschedule requested: {date} · {time}",
     "rescheduleButton": "Request reschedule",
     "closeDialog": "Close",
-    "originallyLabel": "Originally: {date} · {time}"
+    "originallyLabel": "Originally: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "Declined"
   },
   "nav": {
     "overview": "Overview",
@@ -1143,7 +1185,6 @@
   "pricing": {
     "navLabel": "Pricing",
     "countryLabel": "Prices for:",
-    "countryOther": "Other countries",
     "title": "One simple plan. Everything included.",
     "subtitle": "No setup fees, no per-patient charges, no surprises.",
     "perMonth": "/month",
@@ -1821,7 +1862,8 @@
     "onlySolvyMed": "I can only help with SolvyMed.",
     "noClinical": "I can't help with clinical questions.",
     "minutes": "{n} min",
-    "alreadyPaid": "This appointment is already paid."
+    "alreadyPaid": "This appointment is already paid.",
+    "noAmount": "This appointment has no amount. Set it in the Agenda before marking it paid."
   },
   "countryExamples": {
     "phone": "Phone number"
@@ -1832,5 +1874,12 @@
     "tryNow": "Try it now",
     "later": "Later",
     "whatCanDo": "What can SolvyAI do?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "Refresh"
   }
 }

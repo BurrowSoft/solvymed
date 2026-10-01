@@ -12,6 +12,7 @@ import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptResch
 import { toLocalDateString } from "@/lib/slots";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { DateInput } from "@/components/DateInput";
+import { REASON_MAX, statusReasonLive } from "@/lib/statusReason";
 
 type Booking = {
   id: string;
@@ -50,6 +51,16 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const [isPending, startTransition] = useTransition();
+  // Which button is working (Vitor, item 20): it shows a spinner while the
+  // transition runs, and every button stays disabled until the action and
+  // the list refresh are done.
+  const [acting, setActing] = useState<string | null>(null);
+  const spin = (key: string) => (isPending && acting === key ? <span className="spinner-current mr-1.5" aria-hidden="true" /> : null);
+  // 150 (item 12): Reject first asks for an optional reason the patient sees;
+  // the note below becomes the message to the patient (on their card).
+  const reasonsLive = statusReasonLive();
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [reasons, setReasons] = useState<Record<string, string>>({});
   // "Now" is read after mount: the server (UTC) and a browser in another
   // zone disagree on which requests are past, which would reorder and
   // restyle the list between the server render and hydration (React #418).
@@ -105,6 +116,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
 
   function handleConfirmClick(b: Booking) {
     const note = notes[b.id] || undefined;
+    setActing(`confirm:${b.id}`);
     startTransition(async () => {
       const result = await confirmBookingAndAddPatient(b.id, note);
       // The patient's record at this clinic is archived (server-enforced).
@@ -113,7 +125,9 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
   }
 
   function handleReject(id: string) {
-    const note = notes[id] || undefined;
+    const note = (reasonsLive ? reasons[id] : notes[id]) || undefined;
+    setRejectingId(null);
+    setActing(`reject:${id}`);
     startTransition(async () => { await rejectBooking(id, note); });
   }
 
@@ -210,11 +224,11 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                         {t("proposeNewTime")}
                       </button>
                       <button
-                        onClick={() => startTransition(async () => { await rejectBooking(b.id, undefined); })}
+                        onClick={() => { setActing(`dismiss:${b.id}`); startTransition(async () => { await rejectBooking(b.id, undefined); }); }}
                         disabled={isPending}
                         className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 disabled:opacity-50"
                       >
-                        {t("dismiss")}
+                        {spin(`dismiss:${b.id}`)}{t("dismiss")}
                       </button>
                     </div>
                   ) : (
@@ -226,7 +240,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                         disabled={isPending}
                         className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50"
                       >
-                        {t("confirm")}
+                        {spin(`confirm:${b.id}`)}{t("confirm")}
                       </button>
                       <button
                         onClick={() => setProposalId(proposalId === b.id ? null : b.id)}
@@ -236,28 +250,59 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                         {t("proposeNewTime")}
                       </button>
                       <button
-                        onClick={() => handleReject(b.id)}
+                        onClick={() => (reasonsLive ? setRejectingId(rejectingId === b.id ? null : b.id) : handleReject(b.id))}
                         disabled={isPending}
                         className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"
                       >
-                        {t("reject")}
+                        {spin(`reject:${b.id}`)}{t("reject")}
                       </button>
                     </div>
                   )}
 
+                  {reasonsLive && rejectingId === b.id && (
+                    <div className="mt-1 rounded-lg border border-red-100 bg-red-50/50 p-2">
+                      <label htmlFor={`reason-${b.id}`} className="block text-xs font-semibold text-slate-700">{t("reasonLabel")}</label>
+                      <textarea
+                        id={`reason-${b.id}`}
+                        rows={2}
+                        maxLength={REASON_MAX}
+                        placeholder={t("reasonPlaceholderDecline")}
+                        value={reasons[b.id] ?? ""}
+                        onChange={e => setReasons(prev => ({ ...prev, [b.id]: e.target.value }))}
+                        className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
+                      />
+                      <p className="mt-0.5 text-[11px] text-slate-500">{t("patientWillSee")}</p>
+                      <div className="mt-1 flex items-center justify-between gap-2">
+                        <span className="text-[11px] text-slate-400">{(reasons[b.id] ?? "").length}/{REASON_MAX}</span>
+                        <div className="flex gap-2">
+                          <button type="button" onClick={() => setRejectingId(null)} disabled={isPending} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 disabled:opacity-50">{t("keepAppointment")}</button>
+                          <button type="button" onClick={() => handleReject(b.id)} disabled={isPending} className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50">{spin(`reject:${b.id}`)}{t("reject")}</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {b.status === "tentative" && reasonsLive && (
+                    <label htmlFor={`message-${b.id}`} className="mt-1 block text-xs font-semibold text-slate-700">{t("messageLabel")}</label>
+                  )}
                   {b.status === "tentative" && (
                     <textarea
+                      id={`message-${b.id}`}
                       rows={2}
-                      placeholder={t("notePlaceholder")}
+                      maxLength={reasonsLive ? REASON_MAX : undefined}
+                      placeholder={reasonsLive ? t("messagePlaceholder") : t("notePlaceholder")}
                       value={notes[b.id] ?? ""}
                       onChange={e => setNotes(prev => ({ ...prev, [b.id]: e.target.value }))}
                       className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
                     />
                   )}
+                  {b.status === "tentative" && reasonsLive && (
+                    <p className="text-[11px] text-slate-500">{t("patientWillSee")} {(notes[b.id] ?? "").length}/{REASON_MAX}</p>
+                  )}
                   {b.status === "proposal" && b.scheduled_by === "patient" && (
                     <div className="flex gap-2">
                       <button
-                        onClick={() => startTransition(async () => {
+                        onClick={() => { setActing(`accept:${b.id}`); startTransition(async () => {
                           const result = await acceptRescheduleRequest(b.id);
                           if (result.error === "slot_taken") {
                             alert(t("slotTakenAlert"));
@@ -266,20 +311,20 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                           } else if (result.error === "patient_archived") {
                             alert(t("patientArchivedError"));
                           }
-                        })}
+                        }); }}
                         disabled={isPending}
                         data-testid="reschedule-accept-button"
                         className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50"
                       >
-                        {t("accept")}
+                        {spin(`accept:${b.id}`)}{t("accept")}
                       </button>
                       <button
-                        onClick={() => startTransition(async () => { await declineRescheduleRequest(b.id); })}
+                        onClick={() => { setActing(`decline:${b.id}`); startTransition(async () => { await declineRescheduleRequest(b.id); }); }}
                         disabled={isPending}
                         data-testid="reschedule-decline-button"
                         className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"
                       >
-                        {t("decline")}
+                        {spin(`decline:${b.id}`)}{t("decline")}
                       </button>
                     </div>
                   )}

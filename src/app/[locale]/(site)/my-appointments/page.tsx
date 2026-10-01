@@ -4,6 +4,10 @@ import { createClient } from "@/lib/supabase/server";
 import { MyAppointmentsClient } from "./MyAppointmentsClient";
 import { clinicDate } from "@/lib/clinicTime";
 import { getOnboardingFlags } from "@/lib/setup";
+import { statusReasonLive } from "@/lib/statusReason";
+import { SaveMyLocale } from "@/components/SaveMyLocale";
+import { cookies } from "next/headers";
+import { parseCountryChoice, patientLanguageTarget, pickApplies, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 
 export type PatientAppointment = {
   id: string;
@@ -20,6 +24,9 @@ export type PatientAppointment = {
   scheduled_by: string | null;
   // The patient's own booking message (never the clinic's notes).
   patient_note: string | null;
+  status_reason?: string | null;
+  status_by?: "clinic" | "patient" | null;
+  clinic_message?: string | null;
 };
 
 export default async function MyAppointmentsPage({
@@ -53,6 +60,18 @@ export default async function MyAppointmentsPage({
     // Professional/secretary landed here directly — this page is patient-only.
     redirect(`${prefix}/dashboard`);
   }
+
+  // Country first (149): the patient's country (their choice, else the
+  // clinic's, else their language) sets the two languages they get. A page
+  // in another one moves to the country's language. On any error nothing
+  // happens (9a: never act on a failed lookup), and a language that isn't
+  // public (Thai switched off) is never forced.
+  // A signup pick not saved yet (its cookie) wins: SaveMyLocale below saves
+  // it with this page's language, then clears it.
+  const pick = pickApplies(user.created_at) ? parseCountryChoice((await cookies()).get(SIGNUP_COUNTRY_COOKIE)?.value) : null;
+  const { data: savedCountry, error: countryError } = pick ? { data: pick, error: null } : await supabase.rpc("my_country");
+  const target = countryError ? null : patientLanguageTarget(locale, savedCountry as string | null);
+  if (target) redirect(`${target === "en" ? "" : `/${target}`}/my-appointments`);
 
   let myProfessionalId = (userRoleData?.invited_by_professional_id as string | null) ?? null;
   if (!myProfessionalId && userRoleData?.linked_patient_id) {
@@ -92,7 +111,10 @@ export default async function MyAppointmentsPage({
   // Only through get_my_appointments (migration 106): explicit columns,
   // never the clinic's notes. It comes ordered by date and start.
   const mine = await myAppointments(supabase);
-  const upcoming = mine.filter((a) => a.date >= today && !["cancelled", "completed", "blocked", "rejected"].includes(a.status));
+  // 150: a declined or cancelled request/appointment still to come stays on
+  // the list with who did it and the reason (item 12); before it, hidden.
+  const hidden = statusReasonLive() ? ["completed", "blocked"] : ["cancelled", "completed", "blocked", "rejected"];
+  const upcoming = mine.filter((a) => a.date >= today && !hidden.includes(a.status));
   const past = mine
     .filter((a) => a.date < today && ["completed", "confirmed", "scheduled"].includes(a.status))
     .reverse()
@@ -103,6 +125,8 @@ export default async function MyAppointmentsPage({
   const connectedClinicName = flags && !flags.patient_connected_seen && flags.clinic_professional_id ? flags.clinic_name : null;
 
   return (
+    <>
+    <SaveMyLocale locale={locale} />
     <MyAppointmentsClient
       connectedClinicName={connectedClinicName}
       upcoming={upcoming ?? []}
@@ -111,5 +135,6 @@ export default async function MyAppointmentsPage({
       myProfessionalId={myProfessionalId}
       myProfessionalMeta={myProfessionalMeta}
     />
+    </>
   );
 }

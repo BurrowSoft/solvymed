@@ -8,6 +8,7 @@ import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
 import { acceptProposal, declineProposal, requestReschedule, getAvailableSlotsForDate } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions";
 import type { PatientAppointment } from "./page";
 import { OnboardingCard } from "@/components/OnboardingCard";
+import { AutoRefresh } from "@/components/AutoRefresh";
 
 const STATUS_COLOR: Record<string, string> = {
   tentative: "bg-amber-50 text-amber-600 border-amber-200",
@@ -16,6 +17,7 @@ const STATUS_COLOR: Record<string, string> = {
   confirmed: "bg-teal-50 text-teal-700 border-teal-300",
   completed: "bg-slate-50 text-slate-500 border-slate-200",
   cancelled: "bg-red-50 text-red-500 border-red-200",
+  rejected: "bg-red-50 text-red-500 border-red-200",
 };
 
 function formatDate(locale: string, dateStr: string) {
@@ -179,6 +181,16 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
   const tSchedule = useTranslations("schedule");
   const locale = useLocale();
   const [pending, startTransition] = useTransition();
+  // The button tapped shows a spinner; both stay disabled until the list
+  // has refreshed (Vitor, item 20), so a second tap can't land meanwhile.
+  const [acting, setActing] = useState<"accept" | "decline" | null>(null);
+  const act = (kind: "accept" | "decline") => {
+    setActing(kind);
+    startTransition(async () => {
+      await (kind === "accept" ? acceptProposal(appt.id) : declineProposal(appt.id));
+      onMutate();
+    });
+  };
   const [showReschedule, setShowReschedule] = useState(false);
   // "Now" is read after mount: the server (UTC) and the browser can disagree
   // on whether an appointment has ended, and that must not change the
@@ -187,7 +199,8 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
   useEffect(() => setNow(new Date()), []);
 
   const color = STATUS_COLOR[appt.status] ?? "bg-slate-50 text-slate-500 border-slate-200";
-  const label = STATUS_KEY[appt.status] ? tSchedule(STATUS_KEY[appt.status]) : appt.status;
+  // A declined request (listed since 150): the patient-facing "Recusado".
+  const label = appt.status === "rejected" ? t("statusDeclined") : STATUS_KEY[appt.status] ? tSchedule(STATUS_KEY[appt.status]) : appt.status;
   const isProfProposal = appt.status === "proposal" && appt.scheduled_by !== "patient" && (!!appt.proposed_date || appt.scheduled_by === "professional");
   const isPatientReschedule = appt.status === "proposal" && appt.scheduled_by === "patient";
   const apptEndDateTime = new Date(`${appt.date}T${appt.end_time}`);
@@ -216,7 +229,20 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
               {t("rescheduleRequestedLabel", { date: formatDate(locale, appt.proposed_date), time: formatTime(locale, appt.proposed_start_time!) })}
             </p>
           )}
-          <p className="text-xs text-slate-400 mt-0.5 capitalize">{appt.type.replace("-", " ")}</p>
+          <p className="text-xs text-slate-400 mt-0.5">{appt.type === "online" ? tSchedule("online") : tSchedule("inPerson")}</p>
+          {/* 150 (item 12): who declined/cancelled, the clinic's reason, and its message. */}
+          {(appt.status === "rejected" || appt.status === "cancelled") && appt.status_by && (
+            <p data-testid="status-by" className="mt-2 break-words text-sm font-medium text-slate-700">
+              {appt.status_by === "patient"
+                ? t("youCancelled")
+                : appt.status === "rejected"
+                  ? (appt.status_reason ? t("declinedByClinicReason", { reason: appt.status_reason }) : t("declinedByClinic"))
+                  : (appt.status_reason ? t("cancelledByClinicReason", { reason: appt.status_reason }) : t("cancelledByClinic"))}
+            </p>
+          )}
+          {appt.clinic_message && appt.status !== "rejected" && appt.status !== "cancelled" && (
+            <p data-testid="clinic-message" className="mt-2 break-words text-sm text-slate-600">{t("clinicMessage", { message: appt.clinic_message })}</p>
+          )}
           {appt.patient_note && (
             <p className="mt-2 text-sm text-slate-600 italic">&ldquo;{appt.patient_note}&rdquo;</p>
           )}
@@ -232,16 +258,20 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
         <div className="flex gap-2 mt-4">
           <button
             disabled={pending}
-            onClick={() => startTransition(async () => { await acceptProposal(appt.id); onMutate(); })}
+            aria-busy={pending && acting === "accept"}
+            onClick={() => act("accept")}
             className="flex-1 rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50 transition"
           >
+            {pending && acting === "accept" && <span className="spinner-current mr-2" aria-hidden="true" />}
             {t("accept")}
           </button>
           <button
             disabled={pending}
-            onClick={() => startTransition(async () => { await declineProposal(appt.id); onMutate(); })}
+            aria-busy={pending && acting === "decline"}
+            onClick={() => act("decline")}
             className="flex-1 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-300 hover:text-slate-800 disabled:opacity-50 transition"
           >
+            {pending && acting === "decline" && <span className="spinner-current mr-2" aria-hidden="true" />}
             {t("decline")}
           </button>
         </div>
@@ -343,10 +373,13 @@ export function MyAppointmentsClient({
         {connectedClinicName && (
           <OnboardingCard kind="patient_connected" clinicName={connectedClinicName} bookHref={bookPath ?? undefined} />
         )}
-        {/* Greeting */}
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
-          <p className="text-sm text-slate-400 mt-0.5">{userEmail}</p>
+        {/* Greeting; the list stays current (item 33). */}
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
+            <p className="text-sm text-slate-400 mt-0.5">{userEmail}</p>
+          </div>
+          <AutoRefresh />
         </div>
 
         {/* Upcoming */}

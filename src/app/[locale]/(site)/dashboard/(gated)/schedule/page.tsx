@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, RescheduleButton, ViewToggle, PixQrButton, PromptPayQrButton, ScheduleUndoToast } from "./ScheduleClient";
 import { MOVABLE_STATUSES, offersPaymentQr } from "@/lib/scheduleChecks";
+import { hasAmount } from "@/lib/paymentRules";
+import { SetAmountButton } from "../payments/PaymentsClient";
 import { normalizePromptPayId } from "@/lib/promptpay";
 import { BookingRequestsPanel } from "./BookingRequestsPanel";
 import { getTentativeBookings } from "./booking-actions";
@@ -12,6 +14,8 @@ import { clinicDate, getClinicTimeZone } from "@/lib/clinicTime";
 import { formatMoney } from "@/lib/money";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
+import { statusReasonLive } from "@/lib/statusReason";
+import { AutoRefresh } from "@/components/AutoRefresh";
 
 function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
 function addDaysTo(dateStr: string, n: number) {
@@ -96,10 +100,12 @@ export default async function SchedulePage({
     rangeEnd = isoDate(lastDay);
   }
 
+  // 150 (item 12): the reason a cancelled appointment shows staff.
+  const apptCols: string = `id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note${statusReasonLive() ? ", status_reason, status_by" : ""}`;
   const [apptsResult, procsResult, tentativeBookings, profResult, anyApptResult] = await Promise.all([
     supabase
       .from("appointments")
-      .select("id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note")
+      .select(apptCols)
       .eq("professional_id", effectiveProfId)
       .gte("date", rangeStart)
       .lte("date", rangeEnd)
@@ -140,7 +146,7 @@ export default async function SchedulePage({
   // No appointment ever: the first-run empty state instead of "nothing on this day".
   const noAppointmentsEver = !anyApptResult.error && (anyApptResult.count ?? 0) === 0;
 
-  const appointments = (apptsResult.data ?? []) as CalendarAppt[];
+  const appointments = (apptsResult.data ?? []) as unknown as CalendarAppt[];
   const procedures = (procsResult.data ?? []) as { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
 
   const todayCount = appointments.filter(a => a.date === today && a.status !== "blocked").length;
@@ -154,6 +160,8 @@ export default async function SchedulePage({
           <p className="text-sm text-slate-500 mt-0.5">{t("apptsToday", { count: todayCount })}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {/* The Agenda and its booking requests stay current (items 19/21). */}
+          <AutoRefresh />
           <ViewToggle currentView={view} currentDate={currentDate} />
           <BlockTimeButton defaultDate={currentDate} />
           <NewAppointmentButton defaultDate={currentDate} currency={currency} procedures={procedures} autoOpen={newParam === "1"} />
@@ -180,7 +188,7 @@ export default async function SchedulePage({
               <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">{tFirstRun("scheduleEmptyBody")}</p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                 <NewAppointmentButton defaultDate={currentDate} currency={currency} procedures={procedures} label={tFirstRun("bookAppointment")} />
-                {!isSecretary && <ShareInviteLinkButton code={inviteCode} />}
+                {!isSecretary && <ShareInviteLinkButton code={inviteCode} country={practiceCountry} />}
               </div>
             </div>
           ) : appointments.length === 0 ? (
@@ -218,6 +226,9 @@ export default async function SchedulePage({
                         </p>
                         {appt.patient_note && <p className="text-xs text-slate-500 mt-1 truncate"><span className="font-semibold">{t("patientMessage")}:</span> {appt.patient_note}</p>}
                         {appt.notes && <p className="text-xs text-slate-400 mt-1 truncate">{appt.notes}</p>}
+                        {(appt as { status_reason?: string | null }).status_reason && (
+                          <p className="text-xs text-slate-500 mt-1 truncate"><span className="font-semibold">{t("reasonShort")}:</span> {(appt as { status_reason?: string | null }).status_reason}</p>
+                        )}
                       </div>
                       <div className="shrink-0 flex items-center gap-2">
                         {appt.status !== "blocked" && <AppointmentStatusSelect id={appt.id} current={appt.status} />}
@@ -246,10 +257,20 @@ export default async function SchedulePage({
                     </div>
                     {appt.status !== "blocked" && (
                       <div className="mt-2 flex items-center gap-3">
-                        <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
-                          {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}
-                          {appt.payment_amount ? ` · ${formatMoney(appt.payment_amount, currency)}` : ""}
-                        </span>
+                        {appt.payment_status !== "paid" && !hasAmount(appt.payment_amount) ? (
+                          // No amount yet (the app's #216): not to-receive; set one here,
+                          // prefilled with the same-named procedure's price.
+                          <SetAmountButton
+                            id={appt.id}
+                            currency={currency}
+                            suggested={procedures.find((p) => p.name === appt.consultation_type && hasAmount(p.price))?.price ?? null}
+                          />
+                        ) : (
+                          <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
+                            {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}
+                            {appt.payment_amount ? ` · ${formatMoney(appt.payment_amount, currency)}` : ""}
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>

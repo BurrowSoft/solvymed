@@ -8,6 +8,7 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
+import { OpenInApp } from "@/components/OpenInApp";
 
 const COUNTDOWN = 5;
 
@@ -17,11 +18,15 @@ const PROGRESS_WIDTH_CLASS = ["w-0", "w-1/5", "w-2/5", "w-3/5", "w-4/5", "w-full
 
 export default function PatientWelcomePage() {
   const t = useTranslations("auth");
+  const tNav = useTranslations("nav");
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const router = useRouter();
 
   const [count, setCount] = useState(COUNTDOWN);
+  // On an Android phone "Abrir no app SolvyMed" is up: the move to the
+  // appointments waits for the patient (3e: the buttons lasted 5 s).
+  const [hold, setHold] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
 
   const myAppointmentsPath = `${prefix}/my-appointments`;
@@ -34,13 +39,14 @@ export default function PatientWelcomePage() {
   }, []);
 
   useEffect(() => {
+    if (hold) return;
     if (count <= 0) {
       router.push(myAppointmentsPath);
       return;
     }
     const t = setTimeout(() => setCount((c) => c - 1), 1000);
     return () => clearTimeout(t);
-  }, [count, myAppointmentsPath, router]);
+  }, [count, hold, myAppointmentsPath, router]);
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -52,6 +58,7 @@ export default function PatientWelcomePage() {
     <AuthPageShell>
       <AuthCard centered>
         <BrandMark />
+        <OpenInApp onShown={setHold} />
 
         <IconBadge>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="icon-status">
@@ -59,8 +66,8 @@ export default function PatientWelcomePage() {
           </svg>
         </IconBadge>
 
-        <h1 className="auth-heading">You&apos;re all set!</h1>
-        <p className="mb-1 text-slate-500">Your account has been confirmed.</p>
+        <h1 className="auth-heading">{t("patientWelcome.heading")}</h1>
+        <p className="mb-1 text-slate-500">{t("patientWelcome.confirmed")}</p>
         {email && (
           <p className="mb-1 text-sm font-medium text-slate-700">{email}</p>
         )}
@@ -91,7 +98,7 @@ export default function PatientWelcomePage() {
           onClick={handleSignOut}
           className="text-sm text-slate-400 hover:text-teal-600 transition"
         >
-          Sign out
+          {tNav("signOut")}
         </button>
       </AuthCard>
     </AuthPageShell>

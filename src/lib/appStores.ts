@@ -43,3 +43,12 @@ export function iosAppLink(medium: StoreMedium, raw = process.env.NEXT_PUBLIC_IO
   }
   return { mode: "soon" };
 }
+
+// The app's own screen a web page hands over to ("Abrir no app SolvyMed").
+export const APP_OPEN_PATH = "login";
+
+// Android: an intent URL opens the SolvyMed app when it's installed, else
+// Chrome goes to its Play page (browser_fallback_url).
+export function appOpenUrl(path: string = APP_OPEN_PATH): string {
+  return `intent://${path}#Intent;scheme=solvymed;package=com.burrowsoft.solvymed;S.browser_fallback_url=${encodeURIComponent(playStoreUrl("invite"))};end`;
+}
