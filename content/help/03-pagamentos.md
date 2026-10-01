@@ -44,14 +44,16 @@ From then on, each appointment with a value shows the Pix QR code and the Pix Co
 1. Abra a consulta e toque em **QR Code Pix**. O paciente escaneia com o app do banco.
 2. Ou toque em **Enviar Pix por WhatsApp**: o paciente recebe o código para colar no app do banco.
 3. Quando o pagamento cair, marque a consulta como paga.
+{pending:app-1.4.0} Depois de paga, a consulta mostra **Pago** e o QR deixa de aparecer, para o paciente não pagar duas vezes.
 O SolvyMed não recebe o dinheiro: o Pix vai direto para a sua conta.
 **en**
 1. Open the appointment and tap **Pix QR code**. The patient scans it with their banking app.
 2. Or tap **Send Pix via WhatsApp**: the patient gets the code to paste in their banking app.
 3. When the payment arrives, mark the appointment as paid.
+{pending:app-1.4.0} Once paid, the appointment shows **Paid** and the QR is no longer offered, so the patient can't pay twice.
 SolvyMed doesn't receive the money: Pix goes straight to your account.
-**No site:** Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Pix Copia e Cola** (botão **Copiar**). O envio por WhatsApp está só no app. Quando o pagamento cair, marque como pago em **Pagamentos**.
-**On the website:** In the **Schedule**, click the QR icon next to the appointment: the **Pix QR code** and the **Pix Copia e Cola** code (with **Copy**) appear. Sending by WhatsApp is app-only. When the payment arrives, mark it as paid in **Payments**.
+**No site:** Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Pix Copia e Cola** (botão **Copiar**). O envio por WhatsApp está só no app. Quando o pagamento cair, marque como pago em **Pagamentos**: a consulta fica **Pago** e o QR deixa de aparecer, para o paciente não pagar duas vezes.
+**On the website:** In the **Schedule**, click the QR icon next to the appointment: the **Pix QR code** and the **Pix Copia e Cola** code (with **Copy**) appear. Sending by WhatsApp is app-only. When the payment arrives, mark it as paid in **Payments**: the appointment shows **Paid** and the QR is no longer offered, so the patient can't pay twice.
 `open:payments`
 
 ---

@@ -980,8 +980,8 @@
           ]
         },
         "web": {
-          "pt": "Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Pix Copia e Cola** (botão **Copiar**). O envio por WhatsApp está só no app. Quando o pagamento cair, marque como pago em **Pagamentos**.",
-          "en": "In the **Schedule**, click the QR icon next to the appointment: the **Pix QR code** and the **Pix Copia e Cola** code (with **Copy**) appear. Sending by WhatsApp is app-only. When the payment arrives, mark it as paid in **Payments**."
+          "pt": "Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Pix Copia e Cola** (botão **Copiar**). O envio por WhatsApp está só no app. Quando o pagamento cair, marque como pago em **Pagamentos**: a consulta fica **Pago** e o QR deixa de aparecer, para o paciente não pagar duas vezes.",
+          "en": "In the **Schedule**, click the QR icon next to the appointment: the **Pix QR code** and the **Pix Copia e Cola** code (with **Copy**) appear. Sending by WhatsApp is app-only. When the payment arrives, mark it as paid in **Payments**: the appointment shows **Paid** and the QR is no longer offered, so the patient can't pay twice."
         },
         "webUnavailable": false,
         "open": "payments",
