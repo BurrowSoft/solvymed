@@ -229,7 +229,7 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
               {t("rescheduleRequestedLabel", { date: formatDate(locale, appt.proposed_date), time: formatTime(locale, appt.proposed_start_time!) })}
             </p>
           )}
-          <p className="text-xs text-slate-400 mt-0.5 capitalize">{appt.type.replace("-", " ")}</p>
+          <p className="text-xs text-slate-400 mt-0.5">{appt.type === "online" ? tSchedule("online") : tSchedule("inPerson")}</p>
           {/* 150 (item 12): who declined/cancelled, the clinic's reason, and its message. */}
           {(appt.status === "rejected" || appt.status === "cancelled") && appt.status_by && (
             <p data-testid="status-by" className="mt-2 break-words text-sm font-medium text-slate-700">
