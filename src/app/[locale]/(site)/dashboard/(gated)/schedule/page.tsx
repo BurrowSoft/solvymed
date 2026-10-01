@@ -260,11 +260,15 @@ export default async function SchedulePage({
                         {appt.payment_status !== "paid" && !hasAmount(appt.payment_amount) ? (
                           // No amount yet (the app's #216): not to-receive; set one here,
                           // prefilled with the same-named procedure's price.
-                          <SetAmountButton
-                            id={appt.id}
-                            currency={currency}
-                            suggested={procedures.find((p) => p.name === appt.consultation_type && hasAmount(p.price))?.price ?? null}
-                          />
+                          <>
+                            <SetAmountButton
+                              id={appt.id}
+                              currency={currency}
+                              suggested={procedures.find((p) => p.name === appt.consultation_type && hasAmount(p.price))?.price ?? null}
+                            />
+                            {/* No QR without a value (e7): say why it's missing. */}
+                            {(pixKey || promptPayId) && <span className="text-xs text-slate-400">{t("qrNeedsAmount")}</span>}
+                          </>
                         ) : (
                           <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
                             {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}

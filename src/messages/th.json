@@ -250,7 +250,8 @@
     "keepAppointment": "ย้อนกลับ",
     "reasonShort": "เหตุผล",
     "messagePlaceholder": "เช่น กรุณานำผลตรวจมาด้วย",
-    "patientWillSee": "ผู้ป่วยจะเห็นข้อความนี้"
+    "patientWillSee": "ผู้ป่วยจะเห็นข้อความนี้",
+    "qrNeedsAmount": "กำหนดจำนวนเงินเพื่อสร้าง QR ชำระเงิน"
   },
   "payments": {
     "thisWeek": "สัปดาห์นี้",

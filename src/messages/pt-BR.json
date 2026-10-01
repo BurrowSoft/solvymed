@@ -250,7 +250,8 @@
     "keepAppointment": "Voltar",
     "reasonShort": "Motivo",
     "messagePlaceholder": "Ex.: traga seus exames.",
-    "patientWillSee": "O paciente verá esta mensagem."
+    "patientWillSee": "O paciente verá esta mensagem.",
+    "qrNeedsAmount": "Defina o valor para gerar o QR de pagamento."
   },
   "payments": {
     "thisWeek": "Esta semana",
