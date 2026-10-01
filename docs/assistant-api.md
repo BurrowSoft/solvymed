@@ -321,6 +321,13 @@ plus a `slot_choice` block with `reason: "confirm_failed"` and fresh
 alternatives, computed from the schedule as the user. It doesn't count
 against the quota. It is rate-limited like messages.
 
+Codes with a fixed line only (no slot choice): `appointment_not_cancellable`
+(a cancel of an appointment that's no longer live) and `already_paid` (the
+app's send_pix on an appointment paid since the card: "Esta consulta já
+está paga." / "This appointment is already paid." / "นัดหมายนี้ชำระแล้ว").
+A paid appointment never gets a payment request at all: `propose_send_pix`
+answers with that same line, in any country (UX, the app's B7 / #214).
+
 ### After saving (§2.3, Vitor 2026-09-28)
 
 After a **confirmed** action succeeds, the panel minimises to the pill, the

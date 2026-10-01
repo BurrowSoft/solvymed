@@ -1790,7 +1790,8 @@
     "couldntFinish": "Saya tidak bisa menyelesaikannya. Bisa katakan dengan cara lain, dengan nama pasien, tanggal, dan jam?",
     "onlySolvyMed": "Saya hanya bisa membantu soal SolvyMed.",
     "noClinical": "Saya tidak bisa membantu soal klinis.",
-    "minutes": "{n} menit"
+    "minutes": "{n} menit",
+    "alreadyPaid": "Janji ini sudah dibayar."
   },
   "countryExamples": {
     "phone": "Nomor telepon"
