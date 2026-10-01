@@ -88,3 +88,13 @@
 .icon-status {
   @apply h-8 w-8 text-teal-600;
 }
+
+/* The horizontal logo (components/BrandLogo): the blue one on light, the
+   white one in the dashboard's dark theme (Help C8). */
+.brand-logo-dark { display: none; }
+[data-theme="dark"] .brand-logo-light { display: none; }
+[data-theme="dark"] .brand-logo-dark { display: inline-block; }
+@media (prefers-color-scheme: dark) {
+  [data-theme="auto"] .brand-logo-light { display: none; }
+  [data-theme="auto"] .brand-logo-dark { display: inline-block; }
+}

@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useState, useRef, useEffect } from "react";
 import { nameInitial } from "@/lib/doctorName";
 import { OFFERED_LOCALES } from "@/lib/publicLocales";
+import { BrandLogo } from "@/components/BrandLogo";
 
 interface Props {
   locale: string;
@@ -68,11 +69,6 @@ const HomeIcon = () => (
 const MapPinIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-  </svg>
-);
-const LogoIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
   </svg>
 );
 const GlobeIcon = () => (
@@ -284,8 +280,7 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
       <aside className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-100 bg-white transition-transform duration-300 lg:static lg:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
         {/* Logo */}
         <div className="flex items-center gap-2.5 border-b border-slate-100 px-5 py-5">
-          <img src="/solvymed_logo.png" alt="SolvyMed" className="h-8 w-8 rounded-lg" />
-          <span className="text-xl font-bold tracking-tight text-slate-900">Solvymed</span>
+          <BrandLogo className="h-9" />
         </div>
 
         <NavLinks />
