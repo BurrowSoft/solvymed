@@ -253,4 +253,21 @@ describe('BookingRequestsPanel', () => {
     expect(names[0]).toBe('Maria Silva');  // future card first
     expect(names[1]).toBe('Ana Costa');   // past card last
   });
+
+  it("Confirm: a spinner on it, every button disabled until done (Vitor, item 20)", async () => {
+    let resolve!: () => void;
+    vi.mocked(bookingActions.confirmBookingAndAddPatient).mockImplementationOnce(() => new Promise<undefined>((r) => { resolve = () => r(undefined); }));
+    render(<BookingRequestsPanel bookings={[TENTATIVE_BOOKING]} />);
+    const confirm = screen.getByRole("button", { name: "Confirm" });
+    fireEvent.click(confirm);
+    await waitFor(() => expect(confirm).toBeDisabled());
+    expect(confirm.querySelector(".spinner-current")).not.toBeNull();
+    expect(screen.getByRole("button", { name: "Reject" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Reject" }).querySelector(".spinner-current")).toBeNull();
+    fireEvent.click(confirm);
+    expect(bookingActions.confirmBookingAndAddPatient).toHaveBeenCalledTimes(1);
+    resolve();
+    await waitFor(() => expect(confirm).not.toBeDisabled());
+    expect(confirm.querySelector(".spinner-current")).toBeNull();
+  });
 });
