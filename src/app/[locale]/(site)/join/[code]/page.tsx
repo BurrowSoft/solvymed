@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { utmQuerySuffix } from "@/lib/attribution";
+import { withCountryHint } from "@/lib/signupCountry";
 
 // Patient-only. Secretary linking has no equivalent RPC and has never
 // actually worked in any flow (confirmed by mob dev) — don't invent one
@@ -30,7 +31,9 @@ export default async function JoinPage({
     // Signup treats `join` the same as a manually-typed invite code (pre-
     // filled, role locked to patient) — no separate metadata shape.
     // Campaign links point here: keep their UTM values for attribution.
-    redirect(`${prefix}/auth/signup?join=${encodeURIComponent(code)}${utmQuerySuffix(await searchParams)}`);
+    // ?c= (the practice's country hint) goes along to the signup.
+    const sp = await searchParams;
+    redirect(withCountryHint(`${prefix}/auth/signup?join=${encodeURIComponent(code)}${utmQuerySuffix(sp)}`, typeof sp.c === "string" ? sp.c : null));
   }
 
   // `role` is never read from a URL/query param here — only the persisted

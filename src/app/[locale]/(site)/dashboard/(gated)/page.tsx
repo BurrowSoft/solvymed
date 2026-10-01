@@ -67,7 +67,8 @@ export default async function DashboardPage({
   if (!effectiveProfId) redirect(`${prefix}/auth/login`);
   const isSecretary = effectiveProfId !== user.id;
   // Amounts are in the practice's currency (its country), not the UI's.
-  const { currency, paymentQr } = countryProfile(await getPracticeCountry(supabase, user.id, effectiveProfId));
+  const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
+  const { currency, paymentQr } = countryProfile(practiceCountry);
   const formatAmount = (n: number) => formatMoney(n, currency);
 
   // The practice's day and hour, not the server's (UTC).
@@ -170,6 +171,7 @@ export default async function DashboardPage({
       {/* First-run: the doctor's setup checklist, or a secretary's one-time welcome */}
       {setupProgress && showChecklist(setupProgress) && (
         <SetupChecklist
+          country={practiceCountry}
           progress={setupProgress}
           locale={locale}
           inviteCode={(professional as { public_invite_code?: string | null } | null)?.public_invite_code ?? null}

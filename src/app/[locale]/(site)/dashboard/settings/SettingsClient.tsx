@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { markInviteShared } from "@/lib/setupActions";
 import { formatCnpj, isValidCnpj } from "@/lib/cnpj";
 import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient, generatePublicInviteCode } from "./actions";
+import { withCountryHint } from "@/lib/signupCountry";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
 function Label({ children }: { children: React.ReactNode }) {
@@ -109,7 +110,7 @@ export function ProfileForm({ fullName, specialty, registration, country }: { fu
 }
 
 /* ─── Invite code card ──────────────────────────────────────────── */
-export function InviteCodeCard({ code: initialCode }: { code?: string }) {
+export function InviteCodeCard({ code: initialCode, country = null }: { code?: string; country?: string | null }) {
   const t = useTranslations("settings");
   const [code, setCode] = useState(initialCode ?? null);
   const [pending, start] = useTransition();
@@ -141,8 +142,8 @@ export function InviteCodeCard({ code: initialCode }: { code?: string }) {
   function handleCopyLink() {
     if (!code) return;
     // Unprefixed: the patient's own browser language decides (UX rule for
-    // links shared with patients).
-    navigator.clipboard.writeText(`${window.location.origin}/join/${code}`).then(() => {
+    // links shared with patients); ?c= is the practice's country hint.
+    navigator.clipboard.writeText(withCountryHint(`${window.location.origin}/join/${code}`, country)).then(() => {
       // Setup checklist item 6 (best-effort).
       markInviteShared().catch(() => {});
       setLinkCopied(true);

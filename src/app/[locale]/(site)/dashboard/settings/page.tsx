@@ -203,9 +203,9 @@ export default async function SettingsPage({
           country={practiceCountry}
         />
 
-        {!locked && <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} />}
+        {!locked && <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} country={practiceCountry} />}
 
-        <TeamPanel rows={teamRows} loadFailed={!!teamResult.error} whatsapp={messagingChannel(practiceProfile) === "whatsapp"} />
+        <TeamPanel rows={teamRows} loadFailed={!!teamResult.error} country={practiceCountry} whatsapp={messagingChannel(practiceProfile) === "whatsapp"} />
 
         {/* The practice country (set at signup, support-only to change). */}
         <Card title={t("practiceCountry")}>
