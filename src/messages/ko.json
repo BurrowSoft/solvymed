@@ -98,7 +98,9 @@
     "noUpcoming": "예정된 예약 없음",
     "unpaidSessions": "{n}개 미결제 세션",
     "pendingCollection": "{amount} 미수금",
-    "managePayments": "결제 관리"
+    "managePayments": "결제 관리",
+    "requestsWaiting": "확인을 기다리는 예약 요청이 {n}건 있습니다",
+    "requestsWaitingOpen": "요청 보기"
   },
   "schedule": {
     "patientMessage": "환자 메시지",

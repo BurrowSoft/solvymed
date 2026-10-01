@@ -98,7 +98,9 @@
     "noUpcoming": "Keine bevorstehenden Termine",
     "unpaidSessions": "{n, plural, one {# unbezahlte Sitzung} other {# unbezahlte Sitzungen}}",
     "pendingCollection": "{amount} ausstehende Zahlung",
-    "managePayments": "Zahlungen verwalten"
+    "managePayments": "Zahlungen verwalten",
+    "requestsWaiting": "{n, plural, one {# Terminanfrage wartet auf Ihre Bestätigung} other {# Terminanfragen warten auf Ihre Bestätigung}}",
+    "requestsWaitingOpen": "Anfragen ansehen"
   },
   "schedule": {
     "patientMessage": "Nachricht des Patienten",

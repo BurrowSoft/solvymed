@@ -98,7 +98,9 @@
     "noUpcoming": "Pas de rendez-vous à venir",
     "unpaidSessions": "{n, plural, one {# séance non payée} other {# séances non payées}}",
     "pendingCollection": "{amount} en attente de paiement",
-    "managePayments": "Gérer les paiements"
+    "managePayments": "Gérer les paiements",
+    "requestsWaiting": "{n, plural, one {# demande de rendez-vous attend votre confirmation} other {# demandes de rendez-vous attendent votre confirmation}}",
+    "requestsWaitingOpen": "Voir les demandes"
   },
   "schedule": {
     "patientMessage": "Message du patient",

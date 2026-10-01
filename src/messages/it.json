@@ -98,7 +98,9 @@
     "noUpcoming": "Nessun appuntamento in programma",
     "unpaidSessions": "{n, plural, one {# sessione non pagata} other {# sessioni non pagate}}",
     "pendingCollection": "{amount} in attesa di pagamento",
-    "managePayments": "Gestisci pagamenti"
+    "managePayments": "Gestisci pagamenti",
+    "requestsWaiting": "{n, plural, one {# richiesta di appuntamento attende la tua conferma} other {# richieste di appuntamento attendono la tua conferma}}",
+    "requestsWaitingOpen": "Vedi richieste"
   },
   "schedule": {
     "patientMessage": "Messaggio del paziente",

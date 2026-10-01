@@ -98,7 +98,9 @@
     "noUpcoming": "Sem consultas próximas",
     "unpaidSessions": "{n, plural, =0 {# sessões não pagas} one {# sessão não paga} other {# sessões não pagas}}",
     "pendingCollection": "{amount} pendente de cobrança",
-    "managePayments": "Gerenciar Pagamentos"
+    "managePayments": "Gerenciar Pagamentos",
+    "requestsWaiting": "{n, plural, one {# pedido de consulta aguardando sua confirmação} other {# pedidos de consulta aguardando sua confirmação}}",
+    "requestsWaitingOpen": "Ver pedidos"
   },
   "schedule": {
     "patientMessage": "Mensagem do paciente",

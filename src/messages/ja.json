@@ -98,7 +98,9 @@
     "noUpcoming": "今後の予約はありません",
     "unpaidSessions": "{n}件の未払いセッション",
     "pendingCollection": "{amount} が未回収",
-    "managePayments": "支払い管理"
+    "managePayments": "支払い管理",
+    "requestsWaiting": "確認待ちの予約リクエストが {n} 件あります",
+    "requestsWaitingOpen": "リクエストを見る"
   },
   "schedule": {
     "patientMessage": "患者からのメッセージ",

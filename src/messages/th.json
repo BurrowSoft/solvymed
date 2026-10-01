@@ -98,7 +98,9 @@
     "noUpcoming": "ไม่มีนัดหมายที่กำลังจะมาถึง",
     "unpaidSessions": "{n} ครั้งที่ยังไม่ชำระ",
     "pendingCollection": "{amount} รอการเรียกเก็บ",
-    "managePayments": "จัดการการชำระเงิน"
+    "managePayments": "จัดการการชำระเงิน",
+    "requestsWaiting": "มีคำขอนัดหมาย {n} รายการรอการยืนยันจากคุณ",
+    "requestsWaitingOpen": "ดูคำขอ"
   },
   "schedule": {
     "patientMessage": "ข้อความจากผู้ป่วย",

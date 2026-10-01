@@ -98,7 +98,9 @@
     "noUpcoming": "Tidak ada janji mendatang",
     "unpaidSessions": "{n} sesi belum dibayar",
     "pendingCollection": "{amount} menunggu pembayaran",
-    "managePayments": "Kelola Pembayaran"
+    "managePayments": "Kelola Pembayaran",
+    "requestsWaiting": "{n} permintaan janji menunggu konfirmasi Anda",
+    "requestsWaitingOpen": "Lihat permintaan"
   },
   "schedule": {
     "patientMessage": "Pesan pasien",

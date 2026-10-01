@@ -96,6 +96,7 @@ export default async function DashboardPage({
     pendingPaymentsResult,
     patientCountResult,
     monthRevenueResult,
+    requestsResult,
   ] = await Promise.all([
     // The greeting is for the viewer, so this stays the caller's own row.
     supabase.from("professionals").select("full_name, specialty, photo_url, public_invite_code").eq("id", user.id).maybeSingle(),
@@ -108,6 +109,11 @@ export default async function DashboardPage({
     isSecretary
       ? Promise.resolve({ data: [] as { payment_amount: number }[] })
       : supabase.from("appointments").select("payment_amount").eq("professional_id", effectiveProfId).eq("payment_status", "paid").gte("date", monthStart).lte("date", today),
+    // Requests waiting for the clinic's answer (the Agenda's requests panel; the
+    // app's rule): a patient's booking request or their own proposal, not the
+    // clinic's proposals awaiting the patient; today or later (Vitor 14).
+    supabase.from("appointments").select("id", { count: "exact", head: true }).eq("professional_id", effectiveProfId)
+      .in("status", ["tentative", "proposal"]).or("scheduled_by.is.null,scheduled_by.neq.professional").gte("date", today),
   ]);
 
   const professional = professionalResult.data;
@@ -116,6 +122,7 @@ export default async function DashboardPage({
   const pendingPayments = (pendingPaymentsResult.data ?? []) as { patient_name: string; payment_amount: number; date: string }[];
   const patientCount = patientCountResult.count ?? 0;
   const monthRevenue = (monthRevenueResult.data ?? []) as { payment_amount: number }[];
+  const requestsWaiting = requestsResult.count ?? 0;
 
   // A secretary has no professionals row: use the name they signed up with.
   const ownName = isSecretary
@@ -158,6 +165,13 @@ export default async function DashboardPage({
       )}
       {onboardingFlags && !onboardingFlags.secretary_welcome_seen && onboardingFlags.clinic_professional_id && onboardingFlags.clinic_name && (
         <OnboardingCard kind="secretary_welcome" clinicName={onboardingFlags.clinic_name} />
+      )}
+
+      {requestsWaiting > 0 && (
+        <Link href={`${prefix}/dashboard/schedule#requests`} className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-amber-900 hover:border-amber-300">
+          <span className="text-sm font-semibold">{t("requestsWaiting", { n: requestsWaiting })}</span>
+          <span className="shrink-0 text-sm font-bold underline">{t("requestsWaitingOpen")}</span>
+        </Link>
       )}
 
       {/* Stat Cards */}

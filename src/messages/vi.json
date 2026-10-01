@@ -98,7 +98,9 @@
     "noUpcoming": "Không có lịch hẹn sắp tới",
     "unpaidSessions": "{n} buổi chưa thanh toán",
     "pendingCollection": "{amount} chưa thu",
-    "managePayments": "Quản lý thanh toán"
+    "managePayments": "Quản lý thanh toán",
+    "requestsWaiting": "{n} yêu cầu đặt lịch đang chờ bạn xác nhận",
+    "requestsWaitingOpen": "Xem yêu cầu"
   },
   "schedule": {
     "patientMessage": "Lời nhắn của bệnh nhân",

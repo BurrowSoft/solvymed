@@ -98,7 +98,9 @@
     "noUpcoming": "لا مواعيد قادمة",
     "unpaidSessions": "{n} جلسة غير مدفوعة",
     "pendingCollection": "{amount} في انتظار التحصيل",
-    "managePayments": "إدارة المدفوعات"
+    "managePayments": "إدارة المدفوعات",
+    "requestsWaiting": "{n, plural, one {طلب موعد واحد بانتظار تأكيدك} other {# طلبات مواعيد بانتظار تأكيدك}}",
+    "requestsWaitingOpen": "عرض الطلبات"
   },
   "schedule": {
     "patientMessage": "رسالة المريض",

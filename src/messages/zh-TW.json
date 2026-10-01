@@ -98,7 +98,9 @@
     "noUpcoming": "暫無即將到來的預約",
     "unpaidSessions": "{n}次未付款",
     "pendingCollection": "{amount} 待收款",
-    "managePayments": "管理付款"
+    "managePayments": "管理付款",
+    "requestsWaiting": "有 {n} 個預約請求等待您確認",
+    "requestsWaitingOpen": "查看請求"
   },
   "schedule": {
     "patientMessage": "患者留言",
