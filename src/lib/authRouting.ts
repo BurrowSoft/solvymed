@@ -39,9 +39,16 @@ export async function routeAfterAuth(
       .eq("user_id", user.id)
       .maybeSingle();
 
-    if (existingRole?.role === "patient" && existingRole.linked_patient_id) return `${localePrefix}/my-appointments`;
+    // Linked (since 145 a code links at signup): the one-time welcome on the
+    // confirming link, else the appointments.
+    if (existingRole?.role === "patient" && existingRole.linked_patient_id) {
+      return isFirstConfirmation(user, linkType) ? `${localePrefix}/auth/patient-welcome` : `${localePrefix}/my-appointments`;
+    }
     // Linked to a doctor's "orbit" but not yet confirmed by the doctor.
     if (existingRole?.role === "patient" && existingRole.invited_by_professional_id) return `${localePrefix}/auth/pending-confirmation`;
+    // A patient with neither (removed by the clinic, 147): the plain
+    // "connect to a doctor" form (e7).
+    if (existingRole?.role === "patient") return `${localePrefix}/auth/invite-required`;
     if (existingRole?.role) return `${localePrefix}/dashboard`;
     if (!inviteCode) {
       // No invite code, no doctor to link to: /auth/invite-required keeps
@@ -56,7 +63,14 @@ export async function routeAfterAuth(
     if (fullyLinked) return `${localePrefix}/auth/patient-welcome`;
     const { data: profId, error: profLinkError } = await supabase.rpc("link_by_professional_public_code", { p_public_code: inviteCode });
     if (profLinkError || !profId) return `${localePrefix}/auth/invite-required`;
-    return `${localePrefix}/auth/pending-confirmation`;
+    // Since 145 the public code links at once too: read the result, so both
+    // codes land on the welcome deterministically (3e saw both pages).
+    const { data: after } = await supabase
+      .from("user_roles")
+      .select("linked_patient_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    return after?.linked_patient_id ? `${localePrefix}/auth/patient-welcome` : `${localePrefix}/auth/pending-confirmation`;
   }
 
   // Professional (the default). handle_new_user creates the row at signup;
