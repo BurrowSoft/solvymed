@@ -231,7 +231,8 @@
     "undoCancelled": "Consulta cancelada",
     "undoAction": "Desfazer ({s} s)",
     "undoDone": "Desfeito.",
-    "undoFailed": "Não foi possível desfazer. Abra o item para ajustar."
+    "undoFailed": "Não foi possível desfazer. Abra o item para ajustar.",
+    "newPatientOption": "Agendar sem cadastro: {name}"
   },
   "payments": {
     "thisWeek": "Esta semana",

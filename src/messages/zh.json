@@ -231,7 +231,8 @@
     "undoCancelled": "预约已取消",
     "undoAction": "撤销（{s} 秒）",
     "undoDone": "已撤销。",
-    "undoFailed": "无法撤销。请打开该项目进行调整。"
+    "undoFailed": "无法撤销。请打开该项目进行调整。",
+    "newPatientOption": "不建档直接预约：{name}"
   },
   "payments": {
     "thisWeek": "本周",

@@ -231,7 +231,8 @@
     "undoCancelled": "Janji temu dibatalkan",
     "undoAction": "Batalkan ({s} dtk)",
     "undoDone": "Dibatalkan.",
-    "undoFailed": "Tidak dapat membatalkan. Buka item untuk menyesuaikannya."
+    "undoFailed": "Tidak dapat membatalkan. Buka item untuk menyesuaikannya.",
+    "newPatientOption": "Buat janji tanpa data pasien: {name}"
   },
   "payments": {
     "thisWeek": "Minggu ini",

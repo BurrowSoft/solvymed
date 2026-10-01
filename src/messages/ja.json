@@ -231,7 +231,8 @@
     "undoCancelled": "予約をキャンセルしました",
     "undoAction": "取り消す（{s} 秒）",
     "undoDone": "取り消しました。",
-    "undoFailed": "元に戻せませんでした。項目を開いて調整してください。"
+    "undoFailed": "元に戻せませんでした。項目を開いて調整してください。",
+    "newPatientOption": "記録を作らずに予約：{name}"
   },
   "payments": {
     "thisWeek": "今週",

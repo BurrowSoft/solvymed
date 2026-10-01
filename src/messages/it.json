@@ -231,7 +231,8 @@
     "undoCancelled": "Appuntamento annullato",
     "undoAction": "Annulla ({s} s)",
     "undoDone": "Annullato.",
-    "undoFailed": "Impossibile annullare. Apri l’elemento per modificarlo."
+    "undoFailed": "Impossibile annullare. Apri l’elemento per modificarlo.",
+    "newPatientOption": "Prenota senza scheda: {name}"
   },
   "payments": {
     "thisWeek": "Questa settimana",
