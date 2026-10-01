@@ -158,6 +158,10 @@ export async function proposeNewTime(
     .from("appointments")
     .update({
       status: "proposal",
+      // The clinic's proposal, so neither platform counts it as a patient
+      // request (the DB's and the app's rule: scheduled_by = 'patient' only for
+      // the patient's own proposals; e7/38/9a, 1 Oct).
+      scheduled_by: "professional",
       proposed_date: proposedDate,
       proposed_start_time: proposedStart,
       proposed_end_time: proposedEnd,
