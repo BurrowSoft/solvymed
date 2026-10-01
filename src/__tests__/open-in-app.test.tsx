@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
-import { OpenInApp } from "@/components/OpenInApp";
-import { appOpenUrl } from "@/lib/appStores";
+import { OpenInApp, openInAppNav, PLAY_FALLBACK_MS } from "@/components/OpenInApp";
+import { appOpenUrl, playStoreUrl } from "@/lib/appStores";
 
 // "Abrir no app SolvyMed" (Vitor: Gmail's browser ignores App Links): an
 // Android phone only; it opens solvymed://login (38) or the Play page.
@@ -51,6 +51,35 @@ describe("OpenInApp", () => {
     window.history.replaceState(null, "", "/dashboard?app=1");
     show(true);
     expect(screen.getByTestId("open-in-app")).toBeInTheDocument();
+  });
+
+  it("no app took over (the page still shows): it goes to the Play listing itself (09)", () => {
+    vi.useFakeTimers();
+    device(ANDROID, true);
+    const go = vi.spyOn(openInAppNav, "go").mockImplementation(() => {});
+    show();
+    const open = screen.getByRole("link", { name: "Abrir no app SolvyMed" });
+    open.addEventListener("click", (e) => e.preventDefault()); // jsdom can't follow intent://
+    fireEvent.click(open);
+    vi.advanceTimersByTime(PLAY_FALLBACK_MS - 1);
+    expect(go).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1);
+    expect(go).toHaveBeenCalledWith(playStoreUrl("invite"));
+    vi.useRealTimers();
+  });
+
+  it("the app opened (the page lost focus / hid): no Play fallback", () => {
+    vi.useFakeTimers();
+    device(ANDROID, true);
+    const go = vi.spyOn(openInAppNav, "go").mockImplementation(() => {});
+    show();
+    const open = screen.getByRole("link", { name: "Abrir no app SolvyMed" });
+    open.addEventListener("click", (e) => e.preventDefault());
+    fireEvent.click(open);
+    window.dispatchEvent(new Event("blur"));
+    vi.advanceTimersByTime(PLAY_FALLBACK_MS * 2);
+    expect(go).not.toHaveBeenCalled();
+    vi.useRealTimers();
   });
 
   it("the intent URL", () => {
