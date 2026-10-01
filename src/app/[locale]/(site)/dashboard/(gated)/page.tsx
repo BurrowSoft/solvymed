@@ -110,10 +110,11 @@ export default async function DashboardPage({
       ? Promise.resolve({ data: [] as { payment_amount: number }[] })
       : supabase.from("appointments").select("payment_amount").eq("professional_id", effectiveProfId).eq("payment_status", "paid").gte("date", monthStart).lte("date", today),
     // Requests waiting for the clinic's answer (the Agenda's requests panel; the
-    // app's rule): a patient's booking request or their own proposal, not the
-    // clinic's proposals awaiting the patient; today or later (Vitor 14).
+    // DB's rule, 076/082): a patient's booking request (tentative) or a
+    // proposal the PATIENT made; a clinic proposal (scheduled_by anything but
+    // 'patient', incl. null from the web) waits on the patient. Today or later.
     supabase.from("appointments").select("id", { count: "exact", head: true }).eq("professional_id", effectiveProfId)
-      .in("status", ["tentative", "proposal"]).or("scheduled_by.is.null,scheduled_by.neq.professional").gte("date", today),
+      .or("status.eq.tentative,and(status.eq.proposal,scheduled_by.eq.patient)").gte("date", today),
   ]);
 
   const professional = professionalResult.data;
