@@ -7,3 +7,11 @@ export const RECEIVABLE_STATUSES = ["scheduled", "confirmed", "completed", "late
 export function isReceivable(status: string, paymentStatus: string): boolean {
   return paymentStatus === "pending" && (RECEIVABLE_STATUSES as readonly string[]).includes(status);
 }
+
+// An amount counts only above zero (the app's #216, UX 1 Oct): an
+// appointment without one shows "Sem valor · Definir valor", stays out of
+// the to-receive and received lists and totals, and is never marked paid
+// until it has one.
+export function hasAmount(v: number | null | undefined): v is number {
+  return typeof v === "number" && Number.isFinite(v) && v > 0;
+}

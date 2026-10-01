@@ -99,6 +99,15 @@
     "unpaidSessions": "{n}次未付款",
     "pendingCollection": "{amount} 待收款",
     "managePayments": "管理付款",
+    "invitedTitle": "{n} 位通过您的邀请加入的新患者",
+    "invitedHint": "他们使用您的诊所代码加入。保留您的患者；“移除”会断开账户连接（档案会被归档）。",
+    "invitedKeep": "保留",
+    "invitedRemove": "移除",
+    "invitedError": "无法保存，请重试。",
+    "invitedSeeAll": "在患者中查看全部",
+    "invitedSameEmail": "与 {name} 邮箱相同：合并？",
+    "invitedRemoveConfirm": "移除 {name}？其账户将重新等待您的确认，档案会被归档。",
+    "invitedRemoveConfirmDisconnect": "移除 {name}？其账户将与您的诊所断开连接，待处理的请求将被取消（会通知患者），档案将被归档。如需重新接纳，请从已归档中恢复档案，并分享该患者的个人代码。",
     "requestsWaiting": "有 {n} 个预约请求等待您确认",
     "requestsWaitingOpen": "查看请求"
   },
@@ -233,7 +242,18 @@
     "undoCancelled": "预约已取消",
     "undoAction": "撤销（{s} 秒）",
     "undoDone": "已撤销。",
-    "undoFailed": "无法撤销。请打开该项目进行调整。"
+    "undoFailed": "无法撤销。请打开该项目进行调整。",
+    "newPatientOption": "不建档直接预约：{name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR."
   },
   "payments": {
     "thisWeek": "本周",
@@ -252,7 +272,10 @@
     "revertConfirm": "将此付款恢复为待付款状态？",
     "errorInvalidAmount": "请输入有效金额。",
     "errorGeneric": "出现问题，请重试。",
-    "amountPlaceholderPlain": "金额"
+    "amountPlaceholderPlain": "金额",
+    "noAmount": "无金额",
+    "setAmount": "设置金额",
+    "amountFirst": "请先输入已收金额。"
   },
   "paymentsPage": {
     "title": "付款",
@@ -321,7 +344,9 @@
     "nextPage": "下一页",
     "pagesLabel": "分页",
     "fullNamePlaceholder": "全名",
-    "professionPlaceholder": "例如：工程师、教师…"
+    "professionPlaceholder": "例如：工程师、教师…",
+    "invitedBadge": "新·通过邀请",
+    "invitedSameEmail": "与 {name} 邮箱相同：合并？"
   },
   "patientDetail": {
     "tabInfo": "信息",
@@ -672,7 +697,13 @@
     "orCustomTime": "或选择自定义时间",
     "professionalFallback": "专业人员",
     "errorArchived": "该诊所目前不接受您账户的新预约。请联系诊所。",
-    "practiceInactive": "该诊所目前不接受在线预约。"
+    "practiceInactive": "该诊所目前不接受在线预约。",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "密码至少需要{min}个字符。",
@@ -716,10 +747,8 @@
       "secretaryNeedsInvite": "你是秘书？请向你的医生索取邀请链接。",
       "secretaryEmailMismatch": "该邮箱与邀请不匹配，或邀请已失效。请检查邮箱，或向诊所索取新的链接。",
       "consentCheckbox": "我已阅读并同意<terms>使用条款</terms>和<privacy>隐私政策</privacy>",
-      "country": "您的诊所在哪里？",
-      "countryOther": "其他国家",
-      "countryHint": "用于设定货币、套餐价格、患者证件和付款二维码。之后如需更改，请联系客服。",
-      "fullNameHint": "如需要，可加上头衔（{titles}），会显示在问候语中。"
+      "fullNameHint": "如需要，可加上头衔（{titles}），会显示在问候语中。",
+      "backToCountry": "返回"
     },
     "forgotPassword": {
       "title": "忘记密码？",
@@ -748,7 +777,9 @@
     "backToHome": "返回首页",
     "patientWelcome": {
       "countdown": "{count}秒后将带您前往预约页面…",
-      "goToAppointments": "前往我的预约"
+      "goToAppointments": "前往我的预约",
+      "heading": "一切就绪！",
+      "confirmed": "您的账户已确认。"
     },
     "inviteRequired": {
       "heading": "需要邀请码",
@@ -764,7 +795,12 @@
       "backToSignup": "使用其他账户",
       "tooManyAttempts": "尝试次数过多，请稍后再试。",
       "alreadyInvitedByAnother": "您的账户已与另一位医生关联。",
-      "archived": "该诊所目前不接受您账户的新预约。请联系诊所。"
+      "archived": "该诊所目前不接受您账户的新预约。请联系诊所。",
+      "alreadyConnected": "您已与 {doctor} 连接。如需更换，请联系客服。",
+      "alreadyConnectedNoName": "您已与其他医生连接。如需更换，请联系客服。",
+      "alreadyConnectedSamePractice": "您已与 {doctor} 连接。请让诊所合并您的档案。",
+      "alreadyConnectedSamePracticeNoName": "您已与此诊所连接。请让诊所合并您的档案。",
+      "codeUnavailable": "无法使用此代码连接。请联系诊所。"
     },
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",
@@ -832,7 +868,15 @@
     "rescheduleRequestedLabel": "改期请求：{date} · {time}",
     "rescheduleButton": "请求改期",
     "closeDialog": "关闭",
-    "originallyLabel": "原定：{date} · {time}"
+    "originallyLabel": "原定：{date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "已拒绝",
+    "cancelContactClinic": "To cancel, contact the clinic."
   },
   "nav": {
     "overview": "总览",
@@ -1145,7 +1189,6 @@
   "pricing": {
     "navLabel": "价格",
     "countryLabel": "价格适用于：",
-    "countryOther": "其他国家",
     "title": "一个简单的方案，功能全包。",
     "subtitle": "无开通费，不按患者收费，没有额外费用。",
     "perMonth": "/月",
@@ -1793,7 +1836,8 @@
     "onlySolvyMed": "我只能帮助处理 SolvyMed 相关问题。",
     "noClinical": "我无法回答临床问题。",
     "minutes": "{n} 分钟",
-    "alreadyPaid": "此预约已付款。"
+    "alreadyPaid": "此预约已付款。",
+    "noAmount": "此预约没有金额。请先在日程中设置金额，再标记为已付。"
   },
   "countryExamples": {
     "phone": "电话号码"
@@ -1804,5 +1848,12 @@
     "tryNow": "立即试用",
     "later": "以后再说",
     "whatCanDo": "SolvyAI 能做什么？"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "刷新"
   }
 }

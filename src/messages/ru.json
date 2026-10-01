@@ -99,6 +99,15 @@
     "unpaidSessions": "{n, plural, one {# неоплаченный сеанс} few {# неоплаченных сеанса} other {# неоплаченных сеансов}}",
     "pendingCollection": "{amount} ожидает оплаты",
     "managePayments": "Управление платежами",
+    "invitedTitle": "{n, plural, one {# новый пациент по вашему приглашению} few {# новых пациента по вашему приглашению} many {# новых пациентов по вашему приглашению} other {# новых пациента по вашему приглашению}}",
+    "invitedHint": "Они присоединились по коду клиники. Оставьте своих пациентов; «Удалить» отключает аккаунт (карта архивируется).",
+    "invitedKeep": "Оставить",
+    "invitedRemove": "Удалить",
+    "invitedError": "Не удалось сохранить. Попробуйте ещё раз.",
+    "invitedSeeAll": "Все в разделе Пациенты",
+    "invitedSameEmail": "Та же почта, что у {name}: объединить?",
+    "invitedRemoveConfirm": "Удалить {name}? Аккаунт снова будет ждать вашего подтверждения, а карта будет архивирована.",
+    "invitedRemoveConfirmDisconnect": "Удалить {name}? Аккаунт будет отключён от вашей клиники, ожидающие запросы будут отменены (пациент получит уведомление), а карта архивирована. Чтобы вернуть пациента, восстановите карту из архива и поделитесь его личным кодом.",
     "requestsWaiting": "{n, plural, one {# запрос на запись ждёт вашего подтверждения} few {# запроса на запись ждут вашего подтверждения} many {# запросов на запись ждут вашего подтверждения} other {# запроса на запись ждут вашего подтверждения}}",
     "requestsWaitingOpen": "Посмотреть запросы"
   },
@@ -233,7 +242,18 @@
     "undoCancelled": "Запись отменена",
     "undoAction": "Отменить ({s} с)",
     "undoDone": "Отменено.",
-    "undoFailed": "Не удалось отменить. Откройте запись, чтобы исправить её."
+    "undoFailed": "Не удалось отменить. Откройте запись, чтобы исправить её.",
+    "newPatientOption": "Записать без карты: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR."
   },
   "payments": {
     "thisWeek": "На этой неделе",
@@ -252,7 +272,10 @@
     "revertConfirm": "Вернуть платёж в статус ожидания?",
     "errorInvalidAmount": "Пожалуйста, введите корректную сумму.",
     "errorGeneric": "Что-то пошло не так. Попробуйте снова.",
-    "amountPlaceholderPlain": "Сумма"
+    "amountPlaceholderPlain": "Сумма",
+    "noAmount": "Без суммы",
+    "setAmount": "Указать сумму",
+    "amountFirst": "Сначала укажите полученную сумму."
   },
   "paymentsPage": {
     "title": "Платежи",
@@ -321,7 +344,9 @@
     "nextPage": "Далее",
     "pagesLabel": "Страницы",
     "fullNamePlaceholder": "Полное имя",
-    "professionPlaceholder": "напр. инженер, учитель…"
+    "professionPlaceholder": "напр. инженер, учитель…",
+    "invitedBadge": "Новый, по приглашению",
+    "invitedSameEmail": "Та же почта, что у {name}: объединить?"
   },
   "patientDetail": {
     "tabInfo": "Инфо",
@@ -672,7 +697,13 @@
     "orCustomTime": "Или выбрать своё время",
     "professionalFallback": "Специалист",
     "errorArchived": "Эта клиника не принимает новые записи для вашей учётной записи. Свяжитесь с клиникой.",
-    "practiceInactive": "Эта клиника сейчас не принимает онлайн-записи."
+    "practiceInactive": "Эта клиника сейчас не принимает онлайн-записи.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "Пароль должен содержать не менее {min} символов.",
@@ -716,10 +747,8 @@
       "secretaryNeedsInvite": "Вы секретарь? Попросите у врача ссылку-приглашение.",
       "secretaryEmailMismatch": "Этот адрес не совпадает с приглашением, или приглашение больше не действует. Проверьте адрес или попросите у клиники новую ссылку.",
       "consentCheckbox": "Я прочитал(а) и принимаю <terms>Условия использования</terms> и <privacy>Политику конфиденциальности</privacy>",
-      "country": "Где находится ваша практика?",
-      "countryOther": "Другая страна",
-      "countryHint": "Определяет валюту, цену тарифа, документ пациента и QR для оплаты. Чтобы изменить позже, обратитесь в поддержку.",
-      "fullNameHint": "При желании добавьте звание ({titles}): оно появится в приветствиях."
+      "fullNameHint": "При желании добавьте звание ({titles}): оно появится в приветствиях.",
+      "backToCountry": "Назад"
     },
     "forgotPassword": {
       "title": "Забыли пароль?",
@@ -748,7 +777,9 @@
     "backToHome": "На главную",
     "patientWelcome": {
       "countdown": "Переносим вас к вашим записям через {count, plural, one {# секунду} few {# секунды} many {# секунд} other {# секунды}}…",
-      "goToAppointments": "Перейти к моим записям"
+      "goToAppointments": "Перейти к моим записям",
+      "heading": "Всё готово!",
+      "confirmed": "Ваш аккаунт подтверждён."
     },
     "inviteRequired": {
       "heading": "Требуется код приглашения",
@@ -764,7 +795,12 @@
       "backToSignup": "Использовать другой аккаунт",
       "tooManyAttempts": "Слишком много попыток. Пожалуйста, подождите и попробуйте снова.",
       "alreadyInvitedByAnother": "Ваш аккаунт уже привязан к другому врачу.",
-      "archived": "Эта клиника не принимает новые записи для вашей учётной записи. Свяжитесь с клиникой."
+      "archived": "Эта клиника не принимает новые записи для вашей учётной записи. Свяжитесь с клиникой.",
+      "alreadyConnected": "Вы уже подключены к {doctor}. Чтобы сменить, обратитесь в поддержку.",
+      "alreadyConnectedNoName": "Вы уже подключены к другому врачу. Чтобы сменить, обратитесь в поддержку.",
+      "alreadyConnectedSamePractice": "Вы уже подключены к {doctor}. Попросите клинику объединить ваши карты.",
+      "alreadyConnectedSamePracticeNoName": "Вы уже подключены к этой клинике. Попросите клинику объединить ваши карты.",
+      "codeUnavailable": "Не удалось подключиться с этим кодом. Обратитесь в клинику."
     },
     "pendingConfirmation": {
       "loading": "Проверка статуса…",
@@ -832,7 +868,15 @@
     "rescheduleRequestedLabel": "Перенос запрошен: {date} · {time}",
     "rescheduleButton": "Запросить перенос",
     "closeDialog": "Закрыть",
-    "originallyLabel": "Изначально: {date} · {time}"
+    "originallyLabel": "Изначально: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "Отклонено",
+    "cancelContactClinic": "To cancel, contact the clinic."
   },
   "nav": {
     "overview": "Обзор",
@@ -1145,7 +1189,6 @@
   "pricing": {
     "navLabel": "Цены",
     "countryLabel": "Цены для:",
-    "countryOther": "Другие страны",
     "title": "Один простой тариф. Всё включено.",
     "subtitle": "Без платы за подключение, без оплаты за каждого пациента, без сюрпризов.",
     "perMonth": "/мес.",
@@ -1793,7 +1836,8 @@
     "onlySolvyMed": "Я могу помочь только с SolvyMed.",
     "noClinical": "Я не могу помочь с клиническими вопросами.",
     "minutes": "{n} мин",
-    "alreadyPaid": "Эта запись уже оплачена."
+    "alreadyPaid": "Эта запись уже оплачена.",
+    "noAmount": "У этой записи нет суммы. Укажите её в Расписании, прежде чем отмечать оплату."
   },
   "countryExamples": {
     "phone": "Номер телефона"
@@ -1804,5 +1848,12 @@
     "tryNow": "Попробовать",
     "later": "Позже",
     "whatCanDo": "Что умеет SolvyAI?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "Обновить"
   }
 }

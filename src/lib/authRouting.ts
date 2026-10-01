@@ -27,7 +27,8 @@ export async function routeAfterAuth(
       const { error } = await supabase.rpc("accept_secretary_invite", { p_code: secretaryCode });
       if (error) console.error("Secretary invite accept failed at confirmation:", error.code ?? "error");
     }
-    return `${localePrefix}/dashboard`;
+    // ?app=1: the dashboard offers "Abrir no app SolvyMed" once (phones).
+    return `${localePrefix}/dashboard?app=1`;
   }
 
   if (role === "patient") {

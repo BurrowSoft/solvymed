@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
@@ -23,6 +23,8 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  // One submit at a time (a double-click lands before the disabled re-render).
+  const submitting = useRef(false);
   // Bot protection (dormant until a Turnstile site key is configured).
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaReset, setCaptchaReset] = useState(0);
@@ -37,6 +39,8 @@ export default function ForgotPasswordPage() {
       setError(t("captchaFailed"));
       return;
     }
+    if (submitting.current) return;
+    submitting.current = true;
     setLoading(true);
     // Implicit flow for the recovery email only. The app's default browser
     // client uses PKCE, whose link returns ?code= that can only be
@@ -54,6 +58,7 @@ export default function ForgotPasswordPage() {
       // fresh browser (no NEXT_LOCALE cookie) isn't geo-redirected elsewhere.
       { redirectTo: `https://www.solvymed.com/${locale}/auth/reset-password`, ...(captchaToken ? { captchaToken } : {}) }
     );
+    submitting.current = false;
     setLoading(false);
     if (turnstileEnabled) setCaptchaReset((n) => n + 1);
     if (authError) {

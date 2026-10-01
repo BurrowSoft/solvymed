@@ -5,10 +5,11 @@ import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { markInviteShared } from "@/lib/setupActions";
+import { withCountryHint } from "@/lib/signupCountry";
 
 // "Share invite link" (first-run): copies the doctor's public join link.
 // Without a code yet, it opens Settings, where the invite code is created.
-export function ShareInviteLinkButton({ code, className = "", size = "md" }: { code: string | null; className?: string; size?: "md" | "sm" }) {
+export function ShareInviteLinkButton({ code, country = null, className = "", size = "md" }: { code: string | null; country?: string | null; className?: string; size?: "md" | "sm" }) {
   const t = useTranslations("firstRun");
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
@@ -23,8 +24,8 @@ export function ShareInviteLinkButton({ code, className = "", size = "md" }: { c
 
   function handleCopy() {
     // Unprefixed: the patient's own browser language decides (UX rule for
-    // links shared with patients).
-    navigator.clipboard.writeText(`${window.location.origin}/join/${code}`).then(() => {
+    // links shared with patients); ?c= is the practice's country hint.
+    navigator.clipboard.writeText(withCountryHint(`${window.location.origin}/join/${code}`, country)).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
       // Setup checklist item 6 (best-effort).

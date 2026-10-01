@@ -99,6 +99,15 @@
     "unpaidSessions": "{n} sesi belum dibayar",
     "pendingCollection": "{amount} menunggu pembayaran",
     "managePayments": "Kelola Pembayaran",
+    "invitedTitle": "{n} pasien baru lewat undangan Anda",
+    "invitedHint": "Mereka bergabung dengan kode klinik Anda. Simpan pasien Anda; Hapus memutus akun (data diarsipkan).",
+    "invitedKeep": "Simpan",
+    "invitedRemove": "Hapus",
+    "invitedError": "Gagal menyimpan. Coba lagi.",
+    "invitedSeeAll": "Lihat semua di Pasien",
+    "invitedSameEmail": "Email sama dengan {name}: gabungkan?",
+    "invitedRemoveConfirm": "Hapus {name}? Akunnya kembali menunggu konfirmasi Anda, dan datanya diarsipkan.",
+    "invitedRemoveConfirmDisconnect": "Hapus {name}? Akun akan diputus dari klinik Anda, permintaan yang tertunda dibatalkan (pasien diberi tahu), dan datanya diarsipkan. Untuk menerimanya kembali, pulihkan data dari Diarsipkan dan bagikan kode pribadi pasien.",
     "requestsWaiting": "{n} permintaan janji menunggu konfirmasi Anda",
     "requestsWaitingOpen": "Lihat permintaan"
   },
@@ -233,7 +242,18 @@
     "undoCancelled": "Janji temu dibatalkan",
     "undoAction": "Batalkan ({s} dtk)",
     "undoDone": "Dibatalkan.",
-    "undoFailed": "Tidak dapat membatalkan. Buka item untuk menyesuaikannya."
+    "undoFailed": "Tidak dapat membatalkan. Buka item untuk menyesuaikannya.",
+    "newPatientOption": "Buat janji tanpa data pasien: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR."
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -252,7 +272,10 @@
     "revertConfirm": "Kembalikan pembayaran ini ke tertunda?",
     "errorInvalidAmount": "Silakan masukkan jumlah yang valid.",
     "errorGeneric": "Terjadi kesalahan. Silakan coba lagi.",
-    "amountPlaceholderPlain": "Jumlah"
+    "amountPlaceholderPlain": "Jumlah",
+    "noAmount": "Tanpa nominal",
+    "setAmount": "Atur nominal",
+    "amountFirst": "Masukkan dulu nominal yang diterima."
   },
   "paymentsPage": {
     "title": "Pembayaran",
@@ -321,7 +344,9 @@
     "nextPage": "Berikutnya",
     "pagesLabel": "Halaman",
     "fullNamePlaceholder": "Nama lengkap",
-    "professionPlaceholder": "mis. Insinyur, Guru…"
+    "professionPlaceholder": "mis. Insinyur, Guru…",
+    "invitedBadge": "Baru, lewat undangan",
+    "invitedSameEmail": "Email sama dengan {name}: gabungkan?"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -672,7 +697,13 @@
     "orCustomTime": "Atau pilih waktu khusus",
     "professionalFallback": "Tenaga profesional",
     "errorArchived": "Klinik ini tidak menerima pemesanan baru untuk akun Anda. Silakan hubungi klinik.",
-    "practiceInactive": "Klinik ini sedang tidak menerima pemesanan online."
+    "practiceInactive": "Klinik ini sedang tidak menerima pemesanan online.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "Kata sandi harus minimal {min} karakter.",
@@ -716,10 +747,8 @@
       "secretaryNeedsInvite": "Sekretaris? Minta tautan undangan dari dokter Anda.",
       "secretaryEmailMismatch": "Email ini tidak cocok dengan undangan, atau undangan sudah tidak berlaku. Periksa email Anda atau minta tautan baru ke klinik.",
       "consentCheckbox": "Saya telah membaca dan menyetujui <terms>Ketentuan Penggunaan</terms> dan <privacy>Kebijakan Privasi</privacy>",
-      "country": "Di mana praktik Anda?",
-      "countryOther": "Negara lain",
-      "countryHint": "Menentukan mata uang, harga paket, identitas pasien, dan QR pembayaran. Untuk mengubahnya nanti, hubungi dukungan.",
-      "fullNameHint": "Tambahkan gelar Anda jika mau ({titles}); gelar akan muncul di sapaan."
+      "fullNameHint": "Tambahkan gelar Anda jika mau ({titles}); gelar akan muncul di sapaan.",
+      "backToCountry": "Kembali"
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",
@@ -748,7 +777,9 @@
     "backToHome": "Kembali ke beranda",
     "patientWelcome": {
       "countdown": "Mengarahkan Anda ke janji temu dalam {count} detik…",
-      "goToAppointments": "Ke Janji Temu Saya"
+      "goToAppointments": "Ke Janji Temu Saya",
+      "heading": "Semua siap!",
+      "confirmed": "Akun Anda telah dikonfirmasi."
     },
     "inviteRequired": {
       "heading": "Kode undangan diperlukan",
@@ -764,7 +795,12 @@
       "backToSignup": "Gunakan akun lain",
       "tooManyAttempts": "Terlalu banyak percobaan. Harap tunggu sebentar sebelum mencoba lagi.",
       "alreadyInvitedByAnother": "Akun Anda sudah terhubung dengan dokter lain.",
-      "archived": "Klinik ini tidak menerima pemesanan baru untuk akun Anda. Silakan hubungi klinik."
+      "archived": "Klinik ini tidak menerima pemesanan baru untuk akun Anda. Silakan hubungi klinik.",
+      "alreadyConnected": "Anda sudah terhubung dengan {doctor}. Untuk mengganti, hubungi dukungan.",
+      "alreadyConnectedNoName": "Anda sudah terhubung dengan dokter lain. Untuk mengganti, hubungi dukungan.",
+      "alreadyConnectedSamePractice": "Anda sudah terhubung dengan {doctor}. Minta klinik untuk menggabungkan data Anda.",
+      "alreadyConnectedSamePracticeNoName": "Anda sudah terhubung dengan klinik ini. Minta klinik untuk menggabungkan data Anda.",
+      "codeUnavailable": "Tidak dapat terhubung dengan kode ini. Silakan hubungi klinik."
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",
@@ -832,7 +868,15 @@
     "rescheduleRequestedLabel": "Permintaan penjadwalan ulang: {date} · {time}",
     "rescheduleButton": "Minta penjadwalan ulang",
     "closeDialog": "Tutup",
-    "originallyLabel": "Semula: {date} · {time}"
+    "originallyLabel": "Semula: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "Ditolak",
+    "cancelContactClinic": "To cancel, contact the clinic."
   },
   "nav": {
     "overview": "Ringkasan",
@@ -1145,7 +1189,6 @@
   "pricing": {
     "navLabel": "Harga",
     "countryLabel": "Harga untuk:",
-    "countryOther": "Negara lainnya",
     "title": "Satu paket sederhana. Semua sudah termasuk.",
     "subtitle": "Tanpa biaya pendaftaran, tanpa biaya per pasien, tanpa kejutan.",
     "perMonth": "/bulan",
@@ -1793,7 +1836,8 @@
     "onlySolvyMed": "Saya hanya bisa membantu soal SolvyMed.",
     "noClinical": "Saya tidak bisa membantu soal klinis.",
     "minutes": "{n} menit",
-    "alreadyPaid": "Janji ini sudah dibayar."
+    "alreadyPaid": "Janji ini sudah dibayar.",
+    "noAmount": "Janji ini belum punya nominal. Atur di Jadwal sebelum menandainya dibayar."
   },
   "countryExamples": {
     "phone": "Nomor telepon"
@@ -1804,5 +1848,12 @@
     "tryNow": "Coba sekarang",
     "later": "Nanti",
     "whatCanDo": "Apa yang bisa dilakukan SolvyAI?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "Muat ulang"
   }
 }

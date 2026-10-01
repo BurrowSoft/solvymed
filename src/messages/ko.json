@@ -99,6 +99,15 @@
     "unpaidSessions": "{n}개 미결제 세션",
     "pendingCollection": "{amount} 미수금",
     "managePayments": "결제 관리",
+    "invitedTitle": "초대로 가입한 새 환자 {n}명",
+    "invitedHint": "클리닉 코드로 가입했습니다. 내 환자는 유지하고, 삭제하면 계정 연결이 해제됩니다(기록은 보관됨).",
+    "invitedKeep": "유지",
+    "invitedRemove": "삭제",
+    "invitedError": "저장하지 못했습니다. 다시 시도하세요.",
+    "invitedSeeAll": "환자에서 모두 보기",
+    "invitedSameEmail": "{name}과(와) 같은 이메일: 병합할까요?",
+    "invitedRemoveConfirm": "{name}을(를) 삭제할까요? 계정은 다시 확인 대기 상태가 되고 기록은 보관됩니다.",
+    "invitedRemoveConfirmDisconnect": "{name}을(를) 삭제할까요? 계정은 클리닉에서 연결 해제되고, 대기 중인 요청은 취소되며(환자에게 알림), 기록은 보관됩니다. 다시 받으려면 보관됨에서 기록을 복원하고 환자의 개인 코드를 공유하세요.",
     "requestsWaiting": "확인을 기다리는 예약 요청이 {n}건 있습니다",
     "requestsWaitingOpen": "요청 보기"
   },
@@ -233,7 +242,18 @@
     "undoCancelled": "예약 취소됨",
     "undoAction": "실행 취소 ({s}초)",
     "undoDone": "취소됨.",
-    "undoFailed": "실행 취소할 수 없습니다. 항목을 열어 조정하세요."
+    "undoFailed": "실행 취소할 수 없습니다. 항목을 열어 조정하세요.",
+    "newPatientOption": "기록 없이 예약: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR."
   },
   "payments": {
     "thisWeek": "이번 주",
@@ -252,7 +272,10 @@
     "revertConfirm": "이 결제를 미결제로 되돌리시겠습니까?",
     "errorInvalidAmount": "유효한 금액을 입력하세요.",
     "errorGeneric": "문제가 발생했습니다. 다시 시도해 주세요.",
-    "amountPlaceholderPlain": "금액"
+    "amountPlaceholderPlain": "금액",
+    "noAmount": "금액 없음",
+    "setAmount": "금액 설정",
+    "amountFirst": "받은 금액을 먼저 입력하세요."
   },
   "paymentsPage": {
     "title": "결제",
@@ -321,7 +344,9 @@
     "nextPage": "다음",
     "pagesLabel": "페이지",
     "fullNamePlaceholder": "성명",
-    "professionPlaceholder": "예: 엔지니어, 교사…"
+    "professionPlaceholder": "예: 엔지니어, 교사…",
+    "invitedBadge": "신규 · 초대로 가입",
+    "invitedSameEmail": "{name}과(와) 같은 이메일: 병합할까요?"
   },
   "patientDetail": {
     "tabInfo": "정보",
@@ -672,7 +697,13 @@
     "orCustomTime": "또는 시간 직접 선택",
     "professionalFallback": "담당 전문가",
     "errorArchived": "이 클리닉은 회원님 계정의 새 예약을 받지 않습니다. 클리닉에 문의해 주세요.",
-    "practiceInactive": "이 병원은 현재 온라인 예약을 받지 않습니다."
+    "practiceInactive": "이 병원은 현재 온라인 예약을 받지 않습니다.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "비밀번호는 최소 {min}자 이상이어야 합니다.",
@@ -716,10 +747,8 @@
       "secretaryNeedsInvite": "비서이신가요? 의사에게 초대 링크를 요청하세요.",
       "secretaryEmailMismatch": "이 이메일이 초대와 일치하지 않거나 초대가 더 이상 유효하지 않습니다. 이메일을 확인하거나 클리닉에 새 링크를 요청하세요.",
       "consentCheckbox": "<terms>이용약관</terms> 및 <privacy>개인정보 처리방침</privacy>을 읽었으며 이에 동의합니다",
-      "country": "진료소는 어디에 있나요?",
-      "countryOther": "기타 국가",
-      "countryHint": "통화, 요금제 가격, 환자 신분증, 결제 QR이 정해집니다. 나중에 변경하려면 지원팀에 문의하세요.",
-      "fullNameHint": "원하면 호칭({titles})을 붙이세요. 인사말에 표시됩니다."
+      "fullNameHint": "원하면 호칭({titles})을 붙이세요. 인사말에 표시됩니다.",
+      "backToCountry": "돌아가기"
     },
     "forgotPassword": {
       "title": "비밀번호를 잊으셨나요?",
@@ -748,7 +777,9 @@
     "backToHome": "홈으로 돌아가기",
     "patientWelcome": {
       "countdown": "{count}초 후 예약 목록으로 이동합니다…",
-      "goToAppointments": "내 예약으로 이동"
+      "goToAppointments": "내 예약으로 이동",
+      "heading": "준비가 끝났습니다!",
+      "confirmed": "계정이 확인되었습니다."
     },
     "inviteRequired": {
       "heading": "초대 코드가 필요합니다",
@@ -764,7 +795,12 @@
       "backToSignup": "다른 계정 사용",
       "tooManyAttempts": "시도 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
       "alreadyInvitedByAnother": "계정이 이미 다른 의사와 연결되어 있습니다.",
-      "archived": "이 클리닉은 회원님 계정의 새 예약을 받지 않습니다. 클리닉에 문의해 주세요."
+      "archived": "이 클리닉은 회원님 계정의 새 예약을 받지 않습니다. 클리닉에 문의해 주세요.",
+      "alreadyConnected": "이미 {doctor}에 연결되어 있습니다. 변경하려면 지원팀에 문의하세요.",
+      "alreadyConnectedNoName": "이미 다른 의사에게 연결되어 있습니다. 변경하려면 지원팀에 문의하세요.",
+      "alreadyConnectedSamePractice": "이미 {doctor}에 연결되어 있습니다. 클리닉에 기록 병합을 요청하세요.",
+      "alreadyConnectedSamePracticeNoName": "이미 이 클리닉에 연결되어 있습니다. 클리닉에 기록 병합을 요청하세요.",
+      "codeUnavailable": "이 코드로 연결할 수 없습니다. 클리닉에 문의하세요."
     },
     "pendingConfirmation": {
       "loading": "상태 확인 중…",
@@ -832,7 +868,15 @@
     "rescheduleRequestedLabel": "일정 변경 요청: {date} · {time}",
     "rescheduleButton": "일정 변경 요청",
     "closeDialog": "닫기",
-    "originallyLabel": "기존: {date} · {time}"
+    "originallyLabel": "기존: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "거절됨",
+    "cancelContactClinic": "To cancel, contact the clinic."
   },
   "nav": {
     "overview": "홈",
@@ -1145,7 +1189,6 @@
   "pricing": {
     "navLabel": "요금",
     "countryLabel": "요금 기준 국가:",
-    "countryOther": "기타 국가",
     "title": "간단한 요금제 하나. 모든 기능 포함.",
     "subtitle": "가입비 없음, 환자 수별 요금 없음, 숨은 비용 없음.",
     "perMonth": "/월",
@@ -1793,7 +1836,8 @@
     "onlySolvyMed": "SolvyMed 관련 도움만 드릴 수 있습니다.",
     "noClinical": "임상 관련 질문은 도와드릴 수 없습니다.",
     "minutes": "{n}분",
-    "alreadyPaid": "이 예약은 이미 결제되었습니다."
+    "alreadyPaid": "이 예약은 이미 결제되었습니다.",
+    "noAmount": "이 예약에는 금액이 없습니다. 결제 완료로 표시하기 전에 일정에서 금액을 설정하세요."
   },
   "countryExamples": {
     "phone": "전화번호"
@@ -1804,5 +1848,12 @@
     "tryNow": "지금 사용해 보기",
     "later": "나중에",
     "whatCanDo": "SolvyAI는 무엇을 할 수 있나요?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "새로고침"
   }
 }

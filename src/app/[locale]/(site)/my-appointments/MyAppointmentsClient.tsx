@@ -8,6 +8,12 @@ import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
 import { acceptProposal, declineProposal, requestReschedule, getAvailableSlotsForDate } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions";
 import type { PatientAppointment } from "./page";
 import { OnboardingCard } from "@/components/OnboardingCard";
+import { AutoRefresh } from "@/components/AutoRefresh";
+import { MonthCalendar } from "@/components/MonthCalendar";
+import { chosenTimeParts } from "@/lib/chosenTime";
+import { addDays, clinicDate, DEFAULT_CLINIC_TZ } from "@/lib/clinicTime";
+import { getDayHours, type WorkingHours } from "@/lib/slots";
+import { countryProfile } from "@/lib/country";
 
 const STATUS_COLOR: Record<string, string> = {
   tentative: "bg-amber-50 text-amber-600 border-amber-200",
@@ -16,6 +22,7 @@ const STATUS_COLOR: Record<string, string> = {
   confirmed: "bg-teal-50 text-teal-700 border-teal-300",
   completed: "bg-slate-50 text-slate-500 border-slate-200",
   cancelled: "bg-red-50 text-red-500 border-red-200",
+  rejected: "bg-red-50 text-red-500 border-red-200",
 };
 
 function formatDate(locale: string, dateStr: string) {
@@ -30,40 +37,49 @@ const STATUS_KEY: Record<string, string> = {
   late: "statusLate", absent: "statusAbsent", blocked: "statusBlocked",
 };
 
-const DAYS_AHEAD = 14;
+// The same range as the booking page (items 10/22).
+const DAYS_AHEAD = 30;
 
-function localDateStr(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
-
-function buildDays() {
-  const days: string[] = [];
-  const today = new Date();
-  for (let i = 1; i <= DAYS_AHEAD; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    days.push(localDateStr(d));
-  }
-  return days;
-}
-
-function dayLabel(locale: string, dateStr: string) {
-  return formatDateLabel(locale, dateStr);
+// The next DAYS_AHEAD days on the clinic's calendar, TODAY included (item
+// 22: today's remaining times; the server drops the ones already past).
+function buildDays(tz: string) {
+  const today = clinicDate(new Date(), tz);
+  return Array.from({ length: DAYS_AHEAD }, (_, i) => addDays(today, i));
 }
 
 function RescheduleDialog({
   appt,
   onClose,
   onSuccess,
+  clinicTz,
+  practiceCountry,
 }: {
   appt: PatientAppointment;
   onClose: () => void;
   onSuccess: () => void;
+  clinicTz: string;
+  practiceCountry: string | null;
 }) {
   const t = useTranslations("myAppointments");
+  const tBook = useTranslations("book");
   const locale = useLocale();
-  const days = buildDays();
+  const [days] = useState(() => buildDays(clinicTz));
   const [selectedDate, setSelectedDate] = useState(days[0]);
+  // The clinic's working hours: closed days are greyed in the calendar.
+  const [hours, setHours] = useState<WorkingHours | null>(null);
+  useEffect(() => {
+    let alive = true;
+    createClient().rpc("get_professional_working_hours", { p_professional_id: appt.professional_id })
+      .then(({ data }) => { if (alive) setHours((data ?? {}) as WorkingHours); }, () => { if (alive) setHours({}); });
+    return () => { alive = false; };
+  }, [appt.professional_id]);
+  const isOpen = useCallback((d: string) => hours === null || !!getDayHours(d, hours)?.enabled, [hours]);
+  useEffect(() => {
+    if (hours && !isOpen(selectedDate)) {
+      const first = days.find(isOpen);
+      if (first) setSelectedDate(first);
+    }
+  }, [hours, isOpen, selectedDate, days]);
   const [slots, setSlots] = useState<{ start: string; end: string }[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<{ start: string; end: string } | null>(null);
@@ -105,40 +121,33 @@ function RescheduleDialog({
         </div>
 
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">{t("rescheduleSelectDate")}</p>
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
-          {days.map(day => (
-            <button
-              key={day}
-              data-testid="reschedule-day-chip"
-              aria-pressed={selectedDate === day}
-              onClick={() => setSelectedDate(day)}
-              className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold border transition ${
-                selectedDate === day
-                  ? "bg-teal-600 border-teal-600 text-white"
-                  : "border-slate-200 text-slate-600 hover:border-slate-300"
-              }`}
-            >
-              {dayLabel(locale, day)}
-            </button>
-          ))}
+        <div className="mb-4">
+          <MonthCalendar
+            days={days}
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+            isOpen={isOpen}
+            locale={locale}
+            labels={{ prev: tBook("prevMonth"), next: tBook("nextMonth") }}
+          />
         </div>
 
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">{t("rescheduleSelectTime")}</p>
         {loadingSlots ? (
-          <div className="flex justify-center py-6">
-            <span className="h-5 w-5 animate-spin rounded-full border-2 border-slate-200 border-t-teal-600" />
+          <div data-testid="reschedule-skeleton" className="grid grid-cols-4 gap-2 sm:grid-cols-5 mb-4" aria-busy="true">
+            {Array.from({ length: 8 }, (_, i) => <div key={i} className="h-9 animate-pulse rounded-lg bg-slate-100" />)}
           </div>
         ) : slots.length === 0 ? (
           <p className="text-sm text-slate-400 text-center py-4">{t("rescheduleNoSlots")}</p>
         ) : (
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="grid grid-cols-4 gap-2 sm:grid-cols-5 mb-4">
             {slots.map(slot => (
               <button
                 key={slot.start}
                 data-testid="reschedule-slot-chip"
                 aria-pressed={selectedSlot?.start === slot.start}
                 onClick={() => setSelectedSlot(slot)}
-                className={`rounded-lg px-3 py-2 text-sm font-semibold border transition ${
+                className={`w-full rounded-lg px-2 py-2 text-sm font-semibold border transition ${
                   selectedSlot?.start === slot.start
                     ? "bg-teal-600 border-teal-600 text-white"
                     : "border-slate-200 text-slate-600 hover:border-slate-300"
@@ -150,6 +159,11 @@ function RescheduleDialog({
           </div>
         )}
 
+        {selectedSlot && (
+          <p data-testid="reschedule-chosen-time" className="mb-3 rounded-xl bg-teal-50 px-4 py-2.5 text-sm font-semibold text-teal-800">
+            {tBook("chosenTime", chosenTimeParts(selectedDate, selectedSlot.start, selectedSlot.end, countryProfile(practiceCountry)))}
+          </p>
+        )}
         <button
           disabled={!selectedSlot || pending}
           data-testid="reschedule-submit-button"
@@ -174,11 +188,21 @@ function RescheduleDialog({
   );
 }
 
-function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutate: () => void }) {
+function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practiceCountry = null }: { appt: PatientAppointment; onMutate: () => void; clinicTz?: string; practiceCountry?: string | null }) {
   const t = useTranslations("myAppointments");
   const tSchedule = useTranslations("schedule");
   const locale = useLocale();
   const [pending, startTransition] = useTransition();
+  // The button tapped shows a spinner; both stay disabled until the list
+  // has refreshed (Vitor, item 20), so a second tap can't land meanwhile.
+  const [acting, setActing] = useState<"accept" | "decline" | null>(null);
+  const act = (kind: "accept" | "decline") => {
+    setActing(kind);
+    startTransition(async () => {
+      await (kind === "accept" ? acceptProposal(appt.id) : declineProposal(appt.id));
+      onMutate();
+    });
+  };
   const [showReschedule, setShowReschedule] = useState(false);
   // "Now" is read after mount: the server (UTC) and the browser can disagree
   // on whether an appointment has ended, and that must not change the
@@ -187,7 +211,8 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
   useEffect(() => setNow(new Date()), []);
 
   const color = STATUS_COLOR[appt.status] ?? "bg-slate-50 text-slate-500 border-slate-200";
-  const label = STATUS_KEY[appt.status] ? tSchedule(STATUS_KEY[appt.status]) : appt.status;
+  // A declined request (listed since 150): the patient-facing "Recusado".
+  const label = appt.status === "rejected" ? t("statusDeclined") : STATUS_KEY[appt.status] ? tSchedule(STATUS_KEY[appt.status]) : appt.status;
   const isProfProposal = appt.status === "proposal" && appt.scheduled_by !== "patient" && (!!appt.proposed_date || appt.scheduled_by === "professional");
   const isPatientReschedule = appt.status === "proposal" && appt.scheduled_by === "patient";
   const apptEndDateTime = new Date(`${appt.date}T${appt.end_time}`);
@@ -216,7 +241,20 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
               {t("rescheduleRequestedLabel", { date: formatDate(locale, appt.proposed_date), time: formatTime(locale, appt.proposed_start_time!) })}
             </p>
           )}
-          <p className="text-xs text-slate-400 mt-0.5 capitalize">{appt.type.replace("-", " ")}</p>
+          <p className="text-xs text-slate-400 mt-0.5">{appt.type === "online" ? tSchedule("online") : tSchedule("inPerson")}</p>
+          {/* 150 (item 12): who declined/cancelled, the clinic's reason, and its message. */}
+          {(appt.status === "rejected" || appt.status === "cancelled") && appt.status_by && (
+            <p data-testid="status-by" className="mt-2 break-words text-sm font-medium text-slate-700">
+              {appt.status_by === "patient"
+                ? t("youCancelled")
+                : appt.status === "rejected"
+                  ? (appt.status_reason ? t("declinedByClinicReason", { reason: appt.status_reason }) : t("declinedByClinic"))
+                  : (appt.status_reason ? t("cancelledByClinicReason", { reason: appt.status_reason }) : t("cancelledByClinic"))}
+            </p>
+          )}
+          {appt.clinic_message && appt.status !== "rejected" && appt.status !== "cancelled" && (
+            <p data-testid="clinic-message" className="mt-2 break-words text-sm text-slate-600">{t("clinicMessage", { message: appt.clinic_message })}</p>
+          )}
           {appt.patient_note && (
             <p className="mt-2 text-sm text-slate-600 italic">&ldquo;{appt.patient_note}&rdquo;</p>
           )}
@@ -232,16 +270,20 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
         <div className="flex gap-2 mt-4">
           <button
             disabled={pending}
-            onClick={() => startTransition(async () => { await acceptProposal(appt.id); onMutate(); })}
+            aria-busy={pending && acting === "accept"}
+            onClick={() => act("accept")}
             className="flex-1 rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50 transition"
           >
+            {pending && acting === "accept" && <span className="spinner-current mr-2" aria-hidden="true" />}
             {t("accept")}
           </button>
           <button
             disabled={pending}
-            onClick={() => startTransition(async () => { await declineProposal(appt.id); onMutate(); })}
+            aria-busy={pending && acting === "decline"}
+            onClick={() => act("decline")}
             className="flex-1 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-300 hover:text-slate-800 disabled:opacity-50 transition"
           >
+            {pending && acting === "decline" && <span className="spinner-current mr-2" aria-hidden="true" />}
             {t("decline")}
           </button>
         </div>
@@ -256,6 +298,7 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
           >
             {t("rescheduleButton")}
           </button>
+          <p data-testid="cancel-hint" className="mt-1 text-xs text-slate-400">{t("cancelContactClinic")}</p>
         </div>
       )}
     </div>
@@ -264,6 +307,8 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
         appt={appt}
         onClose={() => setShowReschedule(false)}
         onSuccess={() => { setShowReschedule(false); onMutate(); }}
+        clinicTz={clinicTz}
+        practiceCountry={practiceCountry}
       />
     )}
     </>
@@ -276,6 +321,8 @@ export function MyAppointmentsClient({
   userEmail,
   myProfessionalId,
   myProfessionalMeta,
+  clinicTz = DEFAULT_CLINIC_TZ,
+  practiceCountry = null,
   connectedClinicName = null,
 }: {
   upcoming: PatientAppointment[];
@@ -283,6 +330,9 @@ export function MyAppointmentsClient({
   userEmail: string;
   myProfessionalId: string | null;
   myProfessionalMeta: { name: string; specialty: string; clinicName?: string } | null;
+  // The clinic's zone (its country's): the reschedule's "today".
+  clinicTz?: string;
+  practiceCountry?: string | null;
   // First-run: the one-time "You're connected to {clinic}" card (null = don't show).
   connectedClinicName?: string | null;
 }) {
@@ -343,10 +393,13 @@ export function MyAppointmentsClient({
         {connectedClinicName && (
           <OnboardingCard kind="patient_connected" clinicName={connectedClinicName} bookHref={bookPath ?? undefined} />
         )}
-        {/* Greeting */}
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
-          <p className="text-sm text-slate-400 mt-0.5">{userEmail}</p>
+        {/* Greeting; the list stays current (item 33). */}
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
+            <p className="text-sm text-slate-400 mt-0.5">{userEmail}</p>
+          </div>
+          <AutoRefresh />
         </div>
 
         {/* Upcoming */}
@@ -370,7 +423,7 @@ export function MyAppointmentsClient({
             </div>
           ) : (
             <div className="space-y-3">
-              {upcoming.map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} />)}
+              {upcoming.map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} clinicTz={clinicTz} practiceCountry={practiceCountry} />)}
             </div>
           )}
         </section>
@@ -380,7 +433,7 @@ export function MyAppointmentsClient({
           <section>
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">{t("recentHistory")}</h2>
             <div className="space-y-3">
-              {past.map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} />)}
+              {past.map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} clinicTz={clinicTz} practiceCountry={practiceCountry} />)}
             </div>
           </section>
         )}

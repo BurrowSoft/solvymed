@@ -99,6 +99,15 @@
     "unpaidSessions": "{n, plural, one {# séance non payée} other {# séances non payées}}",
     "pendingCollection": "{amount} en attente de paiement",
     "managePayments": "Gérer les paiements",
+    "invitedTitle": "{n, plural, one {# nouveau patient via votre invitation} other {# nouveaux patients via votre invitation}}",
+    "invitedHint": "Ils ont rejoint avec le code de votre cabinet. Gardez vos patients ; Retirer déconnecte le compte (la fiche est archivée).",
+    "invitedKeep": "Garder",
+    "invitedRemove": "Retirer",
+    "invitedError": "Échec de l'enregistrement. Réessayez.",
+    "invitedSeeAll": "Tout voir dans Patients",
+    "invitedSameEmail": "Même e-mail que {name} : fusionner ?",
+    "invitedRemoveConfirm": "Retirer {name} ? Son compte attendra à nouveau votre confirmation et la fiche sera archivée.",
+    "invitedRemoveConfirmDisconnect": "Retirer {name} ? Le compte sera déconnecté de votre cabinet, les demandes en attente seront annulées (le patient est prévenu) et la fiche archivée. Pour le réadmettre, restaurez la fiche depuis Archivés et partagez le code personnel du patient.",
     "requestsWaiting": "{n, plural, one {# demande de rendez-vous attend votre confirmation} other {# demandes de rendez-vous attendent votre confirmation}}",
     "requestsWaitingOpen": "Voir les demandes"
   },
@@ -233,7 +242,18 @@
     "undoCancelled": "Rendez-vous annulé",
     "undoAction": "Annuler ({s} s)",
     "undoDone": "Annulé.",
-    "undoFailed": "Impossible d’annuler. Ouvrez l’élément pour l’ajuster."
+    "undoFailed": "Impossible d’annuler. Ouvrez l’élément pour l’ajuster.",
+    "newPatientOption": "Prendre rendez-vous sans fiche : {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR."
   },
   "payments": {
     "thisWeek": "Cette semaine",
@@ -252,7 +272,10 @@
     "revertConfirm": "Remettre ce paiement en attente ?",
     "errorInvalidAmount": "Veuillez saisir un montant valide.",
     "errorGeneric": "Une erreur s'est produite. Réessayez.",
-    "amountPlaceholderPlain": "Montant"
+    "amountPlaceholderPlain": "Montant",
+    "noAmount": "Sans montant",
+    "setAmount": "Définir le montant",
+    "amountFirst": "Indiquez d'abord le montant reçu."
   },
   "paymentsPage": {
     "title": "Paiements",
@@ -321,7 +344,9 @@
     "nextPage": "Suivant",
     "pagesLabel": "Pages",
     "fullNamePlaceholder": "Nom complet",
-    "professionPlaceholder": "ex : Ingénieur, Enseignant…"
+    "professionPlaceholder": "ex : Ingénieur, Enseignant…",
+    "invitedBadge": "Nouveau, via invitation",
+    "invitedSameEmail": "Même e-mail que {name} : fusionner ?"
   },
   "patientDetail": {
     "tabInfo": "Infos",
@@ -672,7 +697,13 @@
     "orCustomTime": "Ou choisir une heure",
     "professionalFallback": "Professionnel(le)",
     "errorArchived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet.",
-    "practiceInactive": "Ce cabinet ne prend pas de rendez-vous en ligne pour le moment."
+    "practiceInactive": "Ce cabinet ne prend pas de rendez-vous en ligne pour le moment.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "Le mot de passe doit comporter au moins {min} caractères.",
@@ -716,10 +747,8 @@
       "secretaryNeedsInvite": "Secrétaire ? Demandez un lien d'invitation au cabinet où vous travaillez.",
       "secretaryEmailMismatch": "Cet e-mail ne correspond pas à l'invitation, ou l'invitation n'est plus valide. Vérifiez l'e-mail ou demandez un nouveau lien au cabinet.",
       "consentCheckbox": "J'ai lu et j'accepte les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>",
-      "country": "Où se trouve votre cabinet ?",
-      "countryOther": "Autre pays",
-      "countryHint": "Définit la devise, le prix de l'abonnement, la pièce d'identité du patient et le QR de paiement. Pour le changer ensuite, contactez le support.",
-      "fullNameHint": "Ajoutez votre titre si vous le souhaitez ({titles}) : il apparaît dans les salutations."
+      "fullNameHint": "Ajoutez votre titre si vous le souhaitez ({titles}) : il apparaît dans les salutations.",
+      "backToCountry": "Retour"
     },
     "forgotPassword": {
       "title": "Mot de passe oublié ?",
@@ -748,7 +777,9 @@
     "backToHome": "Retour à l'accueil",
     "patientWelcome": {
       "countdown": "Nous vous redirigeons vers vos rendez-vous dans {count, plural, one {# seconde} other {# secondes}}…",
-      "goToAppointments": "Aller à mes rendez-vous"
+      "goToAppointments": "Aller à mes rendez-vous",
+      "heading": "Tout est prêt !",
+      "confirmed": "Votre compte a été confirmé."
     },
     "inviteRequired": {
       "heading": "Un code d'invitation est nécessaire",
@@ -764,7 +795,12 @@
       "backToSignup": "Utiliser un autre compte",
       "tooManyAttempts": "Trop de tentatives. Veuillez patienter avant de réessayer.",
       "alreadyInvitedByAnother": "Votre compte est déjà rattaché à un autre cabinet.",
-      "archived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet."
+      "archived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet.",
+      "alreadyConnected": "Vous êtes déjà connecté à {doctor}. Pour changer, contactez le support.",
+      "alreadyConnectedNoName": "Vous êtes déjà connecté à un autre médecin. Pour changer, contactez le support.",
+      "alreadyConnectedSamePractice": "Vous êtes déjà connecté à {doctor}. Demandez au cabinet de fusionner vos dossiers.",
+      "alreadyConnectedSamePracticeNoName": "Vous êtes déjà connecté à ce cabinet. Demandez au cabinet de fusionner vos dossiers.",
+      "codeUnavailable": "Impossible de se connecter avec ce code. Contactez le cabinet."
     },
     "pendingConfirmation": {
       "loading": "Vérification de votre statut…",
@@ -832,7 +868,15 @@
     "rescheduleRequestedLabel": "Report demandé : {date} · {time}",
     "rescheduleButton": "Demander un report",
     "closeDialog": "Fermer",
-    "originallyLabel": "Initialement : {date} · {time}"
+    "originallyLabel": "Initialement : {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "Refusé",
+    "cancelContactClinic": "To cancel, contact the clinic."
   },
   "nav": {
     "overview": "Accueil",
@@ -1145,7 +1189,6 @@
   "pricing": {
     "navLabel": "Tarifs",
     "countryLabel": "Tarifs pour :",
-    "countryOther": "Autres pays",
     "title": "Une seule formule. Tout compris.",
     "subtitle": "Pas de frais d'installation, pas de frais par patient, pas de surprises.",
     "perMonth": "/mois",
@@ -1793,7 +1836,8 @@
     "onlySolvyMed": "Je ne peux aider qu'avec SolvyMed.",
     "noClinical": "Je ne peux pas aider sur les questions cliniques.",
     "minutes": "{n} min",
-    "alreadyPaid": "Ce rendez-vous est déjà payé."
+    "alreadyPaid": "Ce rendez-vous est déjà payé.",
+    "noAmount": "Ce rendez-vous n'a pas de montant. Définissez-le dans l'Agenda avant de le marquer comme payé."
   },
   "countryExamples": {
     "phone": "Numéro de téléphone"
@@ -1804,5 +1848,12 @@
     "tryNow": "Essayer maintenant",
     "later": "Plus tard",
     "whatCanDo": "Que peut faire SolvyAI ?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "Actualiser"
   }
 }

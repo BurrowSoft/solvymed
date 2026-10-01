@@ -11,7 +11,9 @@ import { formatMoney } from "@/lib/money";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { RECEIVABLE_STATUSES } from "@/lib/paymentRules";
-import { doctorDisplayName } from "@/lib/doctorName";
+import { conditionMet } from "@/lib/conditions";
+import { InvitedPatientsCard } from "./InvitedPatientsCard";
+import { greetingFirstName } from "@/lib/doctorName";
 import { dateLocale } from "@/lib/dateLabels";
 
 
@@ -65,7 +67,8 @@ export default async function DashboardPage({
   if (!effectiveProfId) redirect(`${prefix}/auth/login`);
   const isSecretary = effectiveProfId !== user.id;
   // Amounts are in the practice's currency (its country), not the UI's.
-  const { currency, paymentQr } = countryProfile(await getPracticeCountry(supabase, user.id, effectiveProfId));
+  const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
+  const { currency, paymentQr } = countryProfile(practiceCountry);
   const formatAmount = (n: number) => formatMoney(n, currency);
 
   // The practice's day and hour, not the server's (UTC).
@@ -103,12 +106,12 @@ export default async function DashboardPage({
     supabase.from("appointments").select("id, patient_name, start_time, end_time, status, consultation_type").eq("professional_id", effectiveProfId).eq("date", today).neq("status", "blocked").order("start_time"),
     supabase.from("appointments").select("patient_name, date, start_time, consultation_type, status").eq("professional_id", effectiveProfId).gt("date", today).lte("date", nextWeekStr).neq("status", "blocked").order("date").order("start_time").limit(8),
     // The pending card: the app's "to receive" rule (lib/paymentRules).
-    supabase.from("appointments").select("patient_name, payment_amount, date").eq("professional_id", effectiveProfId).eq("payment_status", "pending").in("status", [...RECEIVABLE_STATUSES]),
+    supabase.from("appointments").select("patient_name, payment_amount, date").eq("professional_id", effectiveProfId).eq("payment_status", "pending").in("status", [...RECEIVABLE_STATUSES]).gt("payment_amount", 0),
     supabase.from("patients").select("*", { count: "exact", head: true }).eq("professional_id", effectiveProfId).is("archived_at", null),
     // Revenue is doctor-only, so a secretary never fetches it.
     isSecretary
       ? Promise.resolve({ data: [] as { payment_amount: number }[] })
-      : supabase.from("appointments").select("payment_amount").eq("professional_id", effectiveProfId).eq("payment_status", "paid").gte("date", monthStart).lte("date", today),
+      : supabase.from("appointments").select("payment_amount").eq("professional_id", effectiveProfId).eq("payment_status", "paid").gt("payment_amount", 0).gte("date", monthStart).lte("date", today),
     // Requests waiting for the clinic's answer (the Agenda's requests panel; the
     // DB's rule, 076/082): a patient's booking request (tentative) or a
     // proposal the PATIENT made; a clinic proposal (scheduled_by anything but
@@ -125,6 +128,25 @@ export default async function DashboardPage({
   const monthRevenue = (monthRevenueResult.data ?? []) as { payment_amount: number }[];
   const requestsWaiting = requestsResult.count ?? 0;
 
+  // Patients who joined with the invite code, not yet kept or removed (145;
+  // only once invited-patients-live, before it the columns don't exist).
+  let invited: { id: string; full_name: string; sameEmailAs: { id: string; name: string } | null }[] = [];
+  let invitedTotal = 0;
+  if (conditionMet("invited-patients-live")) {
+    const { data: rows, count } = await supabase.from("patients").select("id, full_name, invite_same_email_as", { count: "exact" })
+      .eq("professional_id", effectiveProfId).not("invited_via_code_at", "is", null).is("invite_reviewed_at", null).is("archived_at", null)
+      .order("invited_via_code_at", { ascending: false }).limit(5);
+    const list = (rows ?? []) as { id: string; full_name: string; invite_same_email_as: string | null }[];
+    invitedTotal = count ?? list.length;
+    const sameIds = [...new Set(list.map((r) => r.invite_same_email_as).filter((x): x is string => !!x))];
+    const names = new Map<string, string>();
+    if (sameIds.length) {
+      const { data: others } = await supabase.from("patients").select("id, full_name").eq("professional_id", effectiveProfId).in("id", sameIds);
+      for (const o of (others ?? []) as { id: string; full_name: string }[]) names.set(o.id, o.full_name);
+    }
+    invited = list.map((r) => ({ id: r.id, full_name: r.full_name, sameEmailAs: r.invite_same_email_as && names.has(r.invite_same_email_as) ? { id: r.invite_same_email_as, name: names.get(r.invite_same_email_as)! } : null }));
+  }
+
   // A secretary has no professionals row: use the name they signed up with.
   const ownName = isSecretary
     ? (user.user_metadata?.full_name as string | undefined)?.trim()
@@ -132,7 +154,7 @@ export default async function DashboardPage({
   // The doctor's own title if they typed one ("Dra. Beatriz"), never one we
   // add (lib/doctorName, the app's rule).
   // No name saved yet: no name at all ("Boa tarde!"), never the email (UX).
-  const firstName = doctorDisplayName(ownName, { firstOnly: true });
+  const firstName = greetingFirstName(ownName, user.email);
   const totalPending = pendingPayments.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
   const totalRevenue = monthRevenue.reduce((s, r) => s + (r.payment_amount ?? 0), 0);
   const todayFormatted = now.toLocaleDateString(dateLocale(locale), { timeZone, weekday: "long", year: "numeric", month: "long", day: "numeric" });
@@ -157,6 +179,7 @@ export default async function DashboardPage({
       {/* First-run: the doctor's setup checklist, or a secretary's one-time welcome */}
       {setupProgress && showChecklist(setupProgress) && (
         <SetupChecklist
+          country={practiceCountry}
           progress={setupProgress}
           locale={locale}
           inviteCode={(professional as { public_invite_code?: string | null } | null)?.public_invite_code ?? null}
@@ -174,6 +197,7 @@ export default async function DashboardPage({
           <span className="shrink-0 text-sm font-bold underline">{t("requestsWaitingOpen")}</span>
         </Link>
       )}
+      {invitedTotal > 0 && <InvitedPatientsCard patients={invited} total={invitedTotal} prefix={prefix} />}
 
       {/* Stat Cards */}
       <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
