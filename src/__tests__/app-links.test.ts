@@ -22,6 +22,8 @@ describe("/.well-known/assetlinks.json", () => {
   it("carries the Play app-signing key (colon-separated uppercase SHA-256s only)", () => {
     const fps = links[0].target.sha256_cert_fingerprints;
     expect(fps).toContain("80:6E:69:E3:92:E1:48:79:83:27:C4:2B:59:CE:1E:E1:72:97:12:F1:B2:27:26:7F:49:A4:4A:74:B2:F3:98:DD");
+    // The EAS key of the preview/internal APKs too (38, build dfb75665).
+    expect(fps).toContain("FF:77:A2:E6:09:D2:E9:49:C8:CC:BD:9C:6B:E7:9C:51:6E:51:17:59:F8:8F:8D:88:84:2A:41:35:60:02:8D:DA");
     for (const fp of fps) expect(fp).toMatch(/^([0-9A-F]{2}:){31}[0-9A-F]{2}$/);
   });
 
@@ -29,5 +31,22 @@ describe("/.well-known/assetlinks.json", () => {
     const { config } = await import("@/middleware");
     const pattern = new RegExp(`^${config.matcher[0].replace(/^\//, "\\/").replace(/\(\?!/, "(?!")}$`);
     expect(pattern.test("/.well-known/assetlinks.json")).toBe(false);
+  });
+});
+
+describe("/.well-known/apple-app-site-association (iOS)", () => {
+  const aasa = JSON.parse(read("apple-app-site-association")) as { applinks: { details: { appIDs: string[]; components: { "/": string }[] }[] } };
+
+  it("is for the SolvyMed app, claiming only /invite/* and /join/* (not the auth callback)", () => {
+    expect(aasa.applinks.details).toHaveLength(1);
+    expect(aasa.applinks.details[0].appIDs).toEqual(["MWHGM7ZHML.com.burrowsoft.solvymed"]);
+    expect(aasa.applinks.details[0].components.map((c) => c["/"])).toEqual(["/invite/*", "/join/*"]);
+  });
+
+  it("is served as application/json", async () => {
+    const config = (await import("../../next.config")).default as { headers?: () => Promise<{ source: string; headers: { key: string; value: string }[] }[]> };
+    const rules = (await config.headers?.()) ?? [];
+    const rule = rules.find((r) => r.source === "/.well-known/apple-app-site-association");
+    expect(rule?.headers).toContainEqual({ key: "Content-Type", value: "application/json" });
   });
 });
