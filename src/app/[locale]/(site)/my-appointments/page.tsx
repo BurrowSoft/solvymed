@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { MyAppointmentsClient } from "./MyAppointmentsClient";
 import { clinicDate } from "@/lib/clinicTime";
 import { getOnboardingFlags } from "@/lib/setup";
+import { statusReasonLive } from "@/lib/statusReason";
 
 export type PatientAppointment = {
   id: string;
@@ -20,6 +21,9 @@ export type PatientAppointment = {
   scheduled_by: string | null;
   // The patient's own booking message (never the clinic's notes).
   patient_note: string | null;
+  status_reason?: string | null;
+  status_by?: "clinic" | "patient" | null;
+  clinic_message?: string | null;
 };
 
 export default async function MyAppointmentsPage({
@@ -92,7 +96,10 @@ export default async function MyAppointmentsPage({
   // Only through get_my_appointments (migration 106): explicit columns,
   // never the clinic's notes. It comes ordered by date and start.
   const mine = await myAppointments(supabase);
-  const upcoming = mine.filter((a) => a.date >= today && !["cancelled", "completed", "blocked", "rejected"].includes(a.status));
+  // 150: a declined or cancelled request/appointment still to come stays on
+  // the list with who did it and the reason (item 12); before it, hidden.
+  const hidden = statusReasonLive() ? ["completed", "blocked"] : ["cancelled", "completed", "blocked", "rejected"];
+  const upcoming = mine.filter((a) => a.date >= today && !hidden.includes(a.status));
   const past = mine
     .filter((a) => a.date < today && ["completed", "confirmed", "scheduled"].includes(a.status))
     .reverse()

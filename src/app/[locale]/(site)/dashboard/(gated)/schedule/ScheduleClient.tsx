@@ -16,6 +16,7 @@ import { DEFAULT_OCCURRENCES, MAX_OCCURRENCES, MIN_OCCURRENCES } from "@/lib/rec
 import { formatMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
 import Link from "next/link";
+import { REASON_MAX, statusReasonLive } from "@/lib/statusReason";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
@@ -230,6 +231,10 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
   const [status, setStatus] = useState(current);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
+  // 150 (item 12): a cancel first asks for an optional reason the patient sees.
+  const reasonsLive = statusReasonLive();
+  const [asking, setAsking] = useState<{ previous: string } | null>(null);
+  const [reason, setReason] = useState("");
   // The server's value after a refresh (a Desfazer puts the old one back).
   useEffect(() => { setStatus(current); }, [current]);
 
@@ -250,8 +255,18 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
     const previous = status;
     setStatus(newStatus);
     setError("");
+    if (reasonsLive && newStatus === "cancelled") {
+      setReason("");
+      setAsking({ previous });
+      return;
+    }
+    save(newStatus, previous);
+  }
+
+  function save(newStatus: string, previous: string, why?: string) {
+    setAsking(null);
     startTransition(async () => {
-      const result = await updateAppointmentStatus(id, newStatus);
+      const result = await updateAppointmentStatus(id, newStatus, why);
       if (result?.error) {
         setStatus(previous);
         setError(actionErrorMessage(t, result.code));
@@ -273,6 +288,27 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
           <option key={s} value={s}>{t(STATUS_KEY[s] ?? s)}</option>
         ))}
       </select>
+      {asking && (
+        <div className="mt-1 w-64 max-w-full rounded-lg border border-red-100 bg-white p-2 text-left shadow-sm">
+          <label htmlFor={`cancel-reason-${id}`} className="block text-xs font-semibold text-slate-700">{t("reasonLabel")}</label>
+          <textarea
+            id={`cancel-reason-${id}`}
+            rows={2}
+            maxLength={REASON_MAX}
+            placeholder={t("reasonPlaceholderCancel")}
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            className="mt-1 w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs text-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
+          />
+          <div className="mt-1 flex items-center justify-between gap-2">
+            <span className="text-[11px] text-slate-400">{reason.length}/{REASON_MAX}</span>
+            <div className="flex gap-1">
+              <button type="button" onClick={() => { setStatus(asking.previous); setAsking(null); }} className="rounded-lg px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100">{t("keepAppointment")}</button>
+              <button type="button" onClick={() => save("cancelled", asking.previous, reason)} className="rounded-lg bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700">{t("confirmCancel")}</button>
+            </div>
+          </div>
+        </div>
+      )}
       {error && <p className="text-xs text-red-600 text-right max-w-[160px]">{error}</p>}
     </div>
   );

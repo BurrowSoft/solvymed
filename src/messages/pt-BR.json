@@ -241,7 +241,14 @@
     "undoAction": "Desfazer ({s} s)",
     "undoDone": "Desfeito.",
     "undoFailed": "Não foi possível desfazer. Abra o item para ajustar.",
-    "newPatientOption": "Agendar sem cadastro: {name}"
+    "newPatientOption": "Agendar sem cadastro: {name}",
+    "reasonLabel": "Motivo (opcional)",
+    "reasonPlaceholderDecline": "Ex.: horário indisponível. O paciente verá esta mensagem.",
+    "reasonPlaceholderCancel": "Ex.: imprevisto na agenda. O paciente verá esta mensagem.",
+    "messageLabel": "Mensagem ao paciente (opcional)",
+    "confirmCancel": "Cancelar consulta",
+    "keepAppointment": "Voltar",
+    "reasonShort": "Motivo"
   },
   "payments": {
     "thisWeek": "Esta semana",
@@ -850,7 +857,13 @@
     "rescheduleRequestedLabel": "Reagendamento solicitado: {date} · {time}",
     "rescheduleButton": "Solicitar reagendamento",
     "closeDialog": "Fechar",
-    "originallyLabel": "Originalmente: {date} · {time}"
+    "originallyLabel": "Originalmente: {date} · {time}",
+    "declinedByClinic": "Recusado pela clínica",
+    "declinedByClinicReason": "Recusado pela clínica: {reason}",
+    "cancelledByClinic": "Cancelado pela clínica",
+    "cancelledByClinicReason": "Cancelado pela clínica: {reason}",
+    "youCancelled": "Você cancelou",
+    "clinicMessage": "Mensagem da clínica: {message}"
   },
   "nav": {
     "overview": "Visão geral",

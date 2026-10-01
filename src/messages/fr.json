@@ -241,7 +241,14 @@
     "undoAction": "Annuler ({s} s)",
     "undoDone": "Annulé.",
     "undoFailed": "Impossible d’annuler. Ouvrez l’élément pour l’ajuster.",
-    "newPatientOption": "Prendre rendez-vous sans fiche : {name}"
+    "newPatientOption": "Prendre rendez-vous sans fiche : {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available. The patient will see this.",
+    "reasonPlaceholderCancel": "E.g. a schedule change. The patient will see this.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason"
   },
   "payments": {
     "thisWeek": "Cette semaine",
@@ -850,7 +857,13 @@
     "rescheduleRequestedLabel": "Report demandé : {date} · {time}",
     "rescheduleButton": "Demander un report",
     "closeDialog": "Fermer",
-    "originallyLabel": "Initialement : {date} · {time}"
+    "originallyLabel": "Initialement : {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}"
   },
   "nav": {
     "overview": "Accueil",

@@ -241,7 +241,14 @@
     "undoAction": "تراجع ({s} ث)",
     "undoDone": "تم التراجع.",
     "undoFailed": "تعذّر التراجع. افتح العنصر لتعديله.",
-    "newPatientOption": "حجز بدون سجل: {name}"
+    "newPatientOption": "حجز بدون سجل: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available. The patient will see this.",
+    "reasonPlaceholderCancel": "E.g. a schedule change. The patient will see this.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason"
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",
@@ -850,7 +857,13 @@
     "rescheduleRequestedLabel": "طلب تغيير الموعد: {date} · {time}",
     "rescheduleButton": "طلب تغيير الموعد",
     "closeDialog": "إغلاق",
-    "originallyLabel": "الموعد الأصلي: {date} · {time}"
+    "originallyLabel": "الموعد الأصلي: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}"
   },
   "nav": {
     "overview": "نظرة عامة",

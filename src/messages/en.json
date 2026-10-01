@@ -241,7 +241,14 @@
     "undoAction": "Undo ({s} s)",
     "undoDone": "Undone.",
     "undoFailed": "Couldn't undo. Open the item to adjust it.",
-    "newPatientOption": "Book without a record: {name}"
+    "newPatientOption": "Book without a record: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available. The patient will see this.",
+    "reasonPlaceholderCancel": "E.g. a schedule change. The patient will see this.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason"
   },
   "payments": {
     "thisWeek": "This week",
@@ -850,7 +857,13 @@
     "rescheduleRequestedLabel": "Reschedule requested: {date} · {time}",
     "rescheduleButton": "Request reschedule",
     "closeDialog": "Close",
-    "originallyLabel": "Originally: {date} · {time}"
+    "originallyLabel": "Originally: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}"
   },
   "nav": {
     "overview": "Overview",

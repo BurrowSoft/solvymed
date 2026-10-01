@@ -241,7 +241,14 @@
     "undoAction": "ยกเลิก ({s} วิ)",
     "undoDone": "ยกเลิกแล้ว",
     "undoFailed": "เลิกทำไม่ได้ โปรดเปิดรายการเพื่อแก้ไข",
-    "newPatientOption": "นัดโดยไม่สร้างประวัติ: {name}"
+    "newPatientOption": "นัดโดยไม่สร้างประวัติ: {name}",
+    "reasonLabel": "เหตุผล (ไม่บังคับ)",
+    "reasonPlaceholderDecline": "เช่น เวลานี้ไม่ว่าง ผู้ป่วยจะเห็นข้อความนี้",
+    "reasonPlaceholderCancel": "เช่น มีการเปลี่ยนแปลงตารางงาน ผู้ป่วยจะเห็นข้อความนี้",
+    "messageLabel": "ข้อความถึงผู้ป่วย (ไม่บังคับ)",
+    "confirmCancel": "ยกเลิกนัดหมาย",
+    "keepAppointment": "ย้อนกลับ",
+    "reasonShort": "เหตุผล"
   },
   "payments": {
     "thisWeek": "สัปดาห์นี้",
@@ -850,7 +857,13 @@
     "rescheduleRequestedLabel": "คำขอเปลี่ยนนัด: {date} · {time}",
     "rescheduleButton": "ขอเปลี่ยนนัดหมาย",
     "closeDialog": "ปิด",
-    "originallyLabel": "เดิม: {date} · {time}"
+    "originallyLabel": "เดิม: {date} · {time}",
+    "declinedByClinic": "คลินิกปฏิเสธ",
+    "declinedByClinicReason": "คลินิกปฏิเสธ: {reason}",
+    "cancelledByClinic": "คลินิกยกเลิก",
+    "cancelledByClinicReason": "คลินิกยกเลิก: {reason}",
+    "youCancelled": "คุณยกเลิกแล้ว",
+    "clinicMessage": "ข้อความจากคลินิก: {message}"
   },
   "nav": {
     "overview": "ภาพรวม",

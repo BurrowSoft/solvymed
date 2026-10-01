@@ -227,6 +227,19 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
             </p>
           )}
           <p className="text-xs text-slate-400 mt-0.5 capitalize">{appt.type.replace("-", " ")}</p>
+          {/* 150 (item 12): who declined/cancelled, the clinic's reason, and its message. */}
+          {(appt.status === "rejected" || appt.status === "cancelled") && appt.status_by && (
+            <p data-testid="status-by" className="mt-2 text-sm font-medium text-slate-700">
+              {appt.status_by === "patient"
+                ? t("youCancelled")
+                : appt.status === "rejected"
+                  ? (appt.status_reason ? t("declinedByClinicReason", { reason: appt.status_reason }) : t("declinedByClinic"))
+                  : (appt.status_reason ? t("cancelledByClinicReason", { reason: appt.status_reason }) : t("cancelledByClinic"))}
+            </p>
+          )}
+          {appt.clinic_message && appt.status !== "rejected" && appt.status !== "cancelled" && (
+            <p data-testid="clinic-message" className="mt-2 text-sm text-slate-600">{t("clinicMessage", { message: appt.clinic_message })}</p>
+          )}
           {appt.patient_note && (
             <p className="mt-2 text-sm text-slate-600 italic">&ldquo;{appt.patient_note}&rdquo;</p>
           )}

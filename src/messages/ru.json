@@ -241,7 +241,14 @@
     "undoAction": "Отменить ({s} с)",
     "undoDone": "Отменено.",
     "undoFailed": "Не удалось отменить. Откройте запись, чтобы исправить её.",
-    "newPatientOption": "Записать без карты: {name}"
+    "newPatientOption": "Записать без карты: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available. The patient will see this.",
+    "reasonPlaceholderCancel": "E.g. a schedule change. The patient will see this.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason"
   },
   "payments": {
     "thisWeek": "На этой неделе",
@@ -850,7 +857,13 @@
     "rescheduleRequestedLabel": "Перенос запрошен: {date} · {time}",
     "rescheduleButton": "Запросить перенос",
     "closeDialog": "Закрыть",
-    "originallyLabel": "Изначально: {date} · {time}"
+    "originallyLabel": "Изначально: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}"
   },
   "nav": {
     "overview": "Обзор",

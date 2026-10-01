@@ -241,7 +241,14 @@
     "undoAction": "실행 취소 ({s}초)",
     "undoDone": "취소됨.",
     "undoFailed": "실행 취소할 수 없습니다. 항목을 열어 조정하세요.",
-    "newPatientOption": "기록 없이 예약: {name}"
+    "newPatientOption": "기록 없이 예약: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available. The patient will see this.",
+    "reasonPlaceholderCancel": "E.g. a schedule change. The patient will see this.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason"
   },
   "payments": {
     "thisWeek": "이번 주",
@@ -850,7 +857,13 @@
     "rescheduleRequestedLabel": "일정 변경 요청: {date} · {time}",
     "rescheduleButton": "일정 변경 요청",
     "closeDialog": "닫기",
-    "originallyLabel": "기존: {date} · {time}"
+    "originallyLabel": "기존: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}"
   },
   "nav": {
     "overview": "홈",

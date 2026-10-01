@@ -241,7 +241,14 @@
     "undoAction": "Rückgängig ({s} s)",
     "undoDone": "Rückgängig gemacht.",
     "undoFailed": "Rückgängig machen nicht möglich. Öffnen Sie den Eintrag, um ihn anzupassen.",
-    "newPatientOption": "Ohne Patientenakte buchen: {name}"
+    "newPatientOption": "Ohne Patientenakte buchen: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available. The patient will see this.",
+    "reasonPlaceholderCancel": "E.g. a schedule change. The patient will see this.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason"
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -850,7 +857,13 @@
     "rescheduleRequestedLabel": "Terminverschiebung angefragt: {date} · {time}",
     "rescheduleButton": "Verschiebung beantragen",
     "closeDialog": "Schließen",
-    "originallyLabel": "Ursprünglich: {date} · {time}"
+    "originallyLabel": "Ursprünglich: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}"
   },
   "nav": {
     "overview": "Übersicht",

@@ -14,6 +14,7 @@ import { clinicDate, getClinicTimeZone } from "@/lib/clinicTime";
 import { formatMoney } from "@/lib/money";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
+import { statusReasonLive } from "@/lib/statusReason";
 
 function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
 function addDaysTo(dateStr: string, n: number) {
@@ -98,10 +99,12 @@ export default async function SchedulePage({
     rangeEnd = isoDate(lastDay);
   }
 
+  // 150 (item 12): the reason a cancelled appointment shows staff.
+  const apptCols: string = `id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note${statusReasonLive() ? ", status_reason, status_by" : ""}`;
   const [apptsResult, procsResult, tentativeBookings, profResult, anyApptResult] = await Promise.all([
     supabase
       .from("appointments")
-      .select("id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note")
+      .select(apptCols)
       .eq("professional_id", effectiveProfId)
       .gte("date", rangeStart)
       .lte("date", rangeEnd)
@@ -142,7 +145,7 @@ export default async function SchedulePage({
   // No appointment ever: the first-run empty state instead of "nothing on this day".
   const noAppointmentsEver = !anyApptResult.error && (anyApptResult.count ?? 0) === 0;
 
-  const appointments = (apptsResult.data ?? []) as CalendarAppt[];
+  const appointments = (apptsResult.data ?? []) as unknown as CalendarAppt[];
   const procedures = (procsResult.data ?? []) as { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
 
   const todayCount = appointments.filter(a => a.date === today && a.status !== "blocked").length;
@@ -220,6 +223,9 @@ export default async function SchedulePage({
                         </p>
                         {appt.patient_note && <p className="text-xs text-slate-500 mt-1 truncate"><span className="font-semibold">{t("patientMessage")}:</span> {appt.patient_note}</p>}
                         {appt.notes && <p className="text-xs text-slate-400 mt-1 truncate">{appt.notes}</p>}
+                        {(appt as { status_reason?: string | null }).status_reason && (
+                          <p className="text-xs text-slate-500 mt-1 truncate"><span className="font-semibold">{t("reasonShort")}:</span> {(appt as { status_reason?: string | null }).status_reason}</p>
+                        )}
                       </div>
                       <div className="shrink-0 flex items-center gap-2">
                         {appt.status !== "blocked" && <AppointmentStatusSelect id={appt.id} current={appt.status} />}

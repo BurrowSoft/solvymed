@@ -241,7 +241,14 @@
     "undoAction": "Batalkan ({s} dtk)",
     "undoDone": "Dibatalkan.",
     "undoFailed": "Tidak dapat membatalkan. Buka item untuk menyesuaikannya.",
-    "newPatientOption": "Buat janji tanpa data pasien: {name}"
+    "newPatientOption": "Buat janji tanpa data pasien: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available. The patient will see this.",
+    "reasonPlaceholderCancel": "E.g. a schedule change. The patient will see this.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason"
   },
   "payments": {
     "thisWeek": "Minggu ini",
@@ -850,7 +857,13 @@
     "rescheduleRequestedLabel": "Permintaan penjadwalan ulang: {date} · {time}",
     "rescheduleButton": "Minta penjadwalan ulang",
     "closeDialog": "Tutup",
-    "originallyLabel": "Semula: {date} · {time}"
+    "originallyLabel": "Semula: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}"
   },
   "nav": {
     "overview": "Ringkasan",

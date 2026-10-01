@@ -11,6 +11,7 @@ import { clinicPushTargets, patientPushTargets } from "@/lib/pushRecipient";
 import { actionError } from "@/lib/dbErrors";
 import { getActiveProfId, isLockedOut } from "@/lib/activeAccess";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
+import { cleanReason, statusReasonLive } from "@/lib/statusReason";
 
 export async function getTentativeBookings() {
   const supabase = await createClient();
@@ -83,7 +84,14 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
     return { error: actionError(error.message) };
   }
 
-  await notifyPatient(supabase, appointmentId, "apptConfirmed", { note });
+  // 150: the message is kept on the appointment for the patient; the push
+  // only says there is one. Before 150, the note went in the push.
+  const live = statusReasonLive();
+  const message = live ? cleanReason(note) : null;
+  if (live) {
+    await supabase.from("appointments").update({ clinic_message: message }).eq("id", appointmentId);
+  }
+  await notifyPatient(supabase, appointmentId, "apptConfirmed", live ? { hasMessage: !!message } : { note });
 
   revalidatePath("/dashboard/schedule");
   revalidatePath("/dashboard/patients");
@@ -97,22 +105,26 @@ export async function confirmBooking(appointmentId: string, note?: string) {
 
   const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account" };
+  const live = statusReasonLive();
+  const message = live ? cleanReason(note) : null;
 
   const { error } = await supabase
     .from("appointments")
-    .update({ status: "confirmed" })
+    .update({ status: "confirmed", ...(live ? { clinic_message: message } : {}) })
     .eq("id", appointmentId)
     .eq("professional_id", effectiveProfId);
 
   if (error) return { error: actionError(error.message) };
 
-  // Notify patient via push
-  await notifyPatient(supabase, appointmentId, "apptConfirmed", { note });
+  // Notify patient via push (150: that there's a message, never its text)
+  await notifyPatient(supabase, appointmentId, "apptConfirmed", live ? { hasMessage: !!message } : { note });
 
   revalidatePath("/dashboard/schedule");
   return { error: null };
 }
 
+// note: the reason once 150 is live (status_reason, shown to the patient);
+// before it, the push's note.
 export async function rejectBooking(appointmentId: string, note?: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -120,10 +132,11 @@ export async function rejectBooking(appointmentId: string, note?: string) {
 
   const effectiveProfId = await getActiveProfId(supabase, user.id);
   if (!effectiveProfId) return { error: "Could not verify account" };
+  const live = statusReasonLive();
 
   const { error } = await supabase
     .from("appointments")
-    .update({ status: "rejected" })
+    .update({ status: "rejected", ...(live ? { status_reason: cleanReason(note) } : {}) })
     .eq("id", appointmentId)
     .eq("professional_id", effectiveProfId);
 
@@ -131,7 +144,8 @@ export async function rejectBooking(appointmentId: string, note?: string) {
 
   // A rejected request never becomes an appointment — don't create a patient
   // record for it. Linking only happens on accept/confirm, server-side.
-  await notifyPatient(supabase, appointmentId, "bookingNotAvailable", { note });
+  // 150: the reason is on the patient's card, never in the push.
+  await notifyPatient(supabase, appointmentId, "bookingNotAvailable", live ? {} : { note });
 
   revalidatePath("/dashboard/schedule");
   revalidatePath("/dashboard/patients");
@@ -153,6 +167,8 @@ export async function proposeNewTime(
   if (!effectiveProfId) return { error: "Could not verify account" };
   // A Buddhist-era year is never saved or converted (the field blocks it).
   if (looksBuddhistEra(proposedDate)) return { error: "date_buddhist_era" };
+  const live = statusReasonLive();
+  const message = live ? cleanReason(note) : null;
 
   const { error } = await supabase
     .from("appointments")
@@ -161,6 +177,7 @@ export async function proposeNewTime(
       proposed_date: proposedDate,
       proposed_start_time: proposedStart,
       proposed_end_time: proposedEnd,
+      ...(live ? { clinic_message: message } : {}),
     })
     .eq("id", appointmentId)
     .eq("professional_id", effectiveProfId);
@@ -170,7 +187,7 @@ export async function proposeNewTime(
   // A proposal isn't a confirmed appointment yet — don't create a patient
   // record until the patient accepts (accept_appointment_proposal links via
   // the same shared _link_patient_account() as confirm_and_link_patient).
-  await notifyPatient(supabase, appointmentId, "newTimeProposed", { note, date: proposedDate, time: proposedStart });
+  await notifyPatient(supabase, appointmentId, "newTimeProposed", live ? { hasMessage: !!message, date: proposedDate, time: proposedStart } : { note, date: proposedDate, time: proposedStart });
 
   revalidatePath("/dashboard/schedule");
   revalidatePath("/dashboard/patients");
@@ -390,7 +407,7 @@ async function notifyPatient(
   supabase: Awaited<ReturnType<typeof import("@/lib/supabase/server").createClient>>,
   appointmentId: string,
   kind: PushKind,
-  extra: { note?: string | null; date?: string | null; time?: string | null } = {},
+  extra: { note?: string | null; hasMessage?: boolean; date?: string | null; time?: string | null } = {},
 ) {
   const { data: appt } = await supabase
     .from("appointments")
@@ -403,7 +420,7 @@ async function notifyPatient(
 
   for (const { locale, tokens } of await patientPushTargets(supabase, patientAuthId, appt?.professional_id as string)) {
     const when = extra.date ? pushWhen(locale, extra.date, extra.time) : undefined;
-    const { title, body } = pushText(locale, kind, { when, note: extra.note });
+    const { title, body } = pushText(locale, kind, { when, note: extra.note, hasMessage: extra.hasMessage });
     await sendExpoPush(tokens, title, body);
   }
 }

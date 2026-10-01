@@ -241,7 +241,14 @@
     "undoAction": "撤销（{s} 秒）",
     "undoDone": "已撤销。",
     "undoFailed": "无法撤销。请打开该项目进行调整。",
-    "newPatientOption": "不建档直接预约：{name}"
+    "newPatientOption": "不建档直接预约：{name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available. The patient will see this.",
+    "reasonPlaceholderCancel": "E.g. a schedule change. The patient will see this.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason"
   },
   "payments": {
     "thisWeek": "本周",
@@ -850,7 +857,13 @@
     "rescheduleRequestedLabel": "改期请求：{date} · {time}",
     "rescheduleButton": "请求改期",
     "closeDialog": "关闭",
-    "originallyLabel": "原定：{date} · {time}"
+    "originallyLabel": "原定：{date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}"
   },
   "nav": {
     "overview": "总览",
