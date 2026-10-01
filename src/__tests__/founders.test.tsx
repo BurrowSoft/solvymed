@@ -77,6 +77,16 @@ describe("POST /api/founders/apply", () => {
     expect(h.rpc).toEqual([]);
   });
 
+  it("Brazil and Thailand only (e7; the form's line is enforced here)", async () => {
+    for (const country of ["OTHER", "US", ""]) {
+      const res = await post({ ...form, country });
+      expect(res.status).toBe(400);
+      expect(await res.json()).toEqual({ code: "invalid", field: "country" });
+    }
+    expect(h.rpc).toEqual([]);
+    expect((await post({ ...form, country: "th" })).status).toBe(200);
+  });
+
   it("applies with the IP, answers with the status only (never the id), and sends the emails", async () => {
     const res = await post(form);
     expect(res.status).toBe(200);
