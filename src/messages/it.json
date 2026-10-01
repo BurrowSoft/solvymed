@@ -729,10 +729,8 @@
       "secretaryNeedsInvite": "Lavori in segreteria? Chiedi un link di invito al tuo studio.",
       "secretaryEmailMismatch": "Questa email non corrisponde all'invito, oppure l'invito non è più valido. Controlla l'email o chiedi un nuovo link allo studio.",
       "consentCheckbox": "Ho letto e accetto i <terms>Termini di utilizzo</terms> e l'<privacy>Informativa sulla privacy</privacy>",
-      "country": "Dove si trova il tuo studio?",
-      "countryOther": "Altro paese",
-      "countryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza.",
-      "fullNameHint": "Se vuoi, aggiungi il tuo titolo ({titles}): compare nei saluti."
+      "fullNameHint": "Se vuoi, aggiungi il tuo titolo ({titles}): compare nei saluti.",
+      "backToCountry": "Indietro"
     },
     "forgotPassword": {
       "title": "Password dimenticata?",
@@ -1165,7 +1163,6 @@
   "pricing": {
     "navLabel": "Prezzi",
     "countryLabel": "Prezzi per:",
-    "countryOther": "Altri paesi",
     "title": "Un solo piano semplice. Tutto incluso.",
     "subtitle": "Nessun costo di attivazione, nessun costo per paziente, nessuna sorpresa.",
     "perMonth": "/mese",
