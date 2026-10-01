@@ -105,6 +105,6 @@
   },
   "invite-joined-push-live": {
     "met": true,
-    "what": "Migration 148 + its edge deploy are live: the clinic gets the push \"{name} entrou com seu código de convite\" when a patient joins with its code (app or website signup; server-side). Gates its Help C5 / App Map lines."
+    "what": "Migration 148 is live (server-side, pg_net): the doctor and the secretaries get the push \"{name} entrou com seu código de convite\" when a patient joins with its code (app or website signup; server-side). Gates its Help C5 / App Map lines."
   }
 }
