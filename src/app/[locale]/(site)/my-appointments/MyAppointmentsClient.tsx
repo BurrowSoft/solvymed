@@ -227,7 +227,7 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
               {t("rescheduleRequestedLabel", { date: formatDate(locale, appt.proposed_date), time: formatTime(locale, appt.proposed_start_time!) })}
             </p>
           )}
-          <p className="text-xs text-slate-400 mt-0.5 capitalize">{appt.type.replace("-", " ")}</p>
+          <p className="text-xs text-slate-400 mt-0.5">{appt.type === "online" ? tSchedule("online") : tSchedule("inPerson")}</p>
           {appt.patient_note && (
             <p className="mt-2 text-sm text-slate-600 italic">&ldquo;{appt.patient_note}&rdquo;</p>
           )}
