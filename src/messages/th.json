@@ -1488,7 +1488,6 @@
     "placesUnavailable": "ไม่สามารถโหลดจำนวนที่ได้ในขณะนี้",
     "countryBR": "บราซิล",
     "countryTH": "ไทย",
-    "countryOTHER": "ประเทศอื่น",
     "formTitle": "แบบฟอร์มสมัคร",
     "required": "จำเป็น",
     "qName": "ชื่อ-นามสกุล",
@@ -1571,7 +1570,8 @@
     "emailNoFiles": "กรุณายังไม่ต้องส่งไฟล์ใด ๆ หากคุณได้รับการคัดเลือก เราจะอธิบายวิธีสร้างไฟล์ส่งออกข้อมูลทดสอบ",
     "emailSign": "ทีมงาน SolvyMed",
     "emailTagline": "การจัดการคลินิกที่ง่ายขึ้น",
-    "emailHelloTitled": "เรียน {title}{name}"
+    "emailHelloTitled": "เรียน {title}{name}",
+    "countryOnly": "ขณะนี้โครงการ Founders เปิดรับเฉพาะคลินิกในบราซิลและไทยเท่านั้น"
   },
   "foundersCard": {
     "cardTitle": "โครงการผู้ร่วมก่อตั้ง",

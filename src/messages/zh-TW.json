@@ -1458,7 +1458,6 @@
     "placesUnavailable": "暫時無法載入名額資訊。",
     "countryBR": "巴西",
     "countryTH": "泰國",
-    "countryOTHER": "其他國家",
     "formTitle": "申請",
     "required": "必填",
     "qName": "姓名",
@@ -1541,7 +1540,8 @@
     "emailNoFiles": "請暫時不要寄送任何檔案;若您獲得錄取,我們會說明如何建立測試匯出檔。",
     "emailSign": "SolvyMed 團隊",
     "emailTagline": "診所管理，化繁為簡",
-    "emailHelloTitled": "{title} {name} 您好:"
+    "emailHelloTitled": "{title} {name} 您好:",
+    "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
   "foundersCard": {
     "cardTitle": "創始使用者計畫",
