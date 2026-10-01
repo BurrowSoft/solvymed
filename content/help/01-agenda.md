@@ -107,13 +107,15 @@ Scheduled, Confirmed, Completed, Cancelled, Late, Absent and Rejected. Tap the a
 2. Toque no pedido e escolha **Confirmar**, **Rejeitar** (com uma mensagem opcional) ou proponha **outro horário**.
 3. O paciente recebe uma notificação com a sua resposta.
 Um paciente novo que pediu pelo seu link fica ligado à sua clínica quando você confirma.
+{pending:app-1.4.0} No app do paciente: se o horário de um pedido ou de um novo horário proposto passa sem resposta, ele vê **Não confirmado**, sem ações.
 **en**
 1. Requests show on **Home**, under **Requests**.
 2. Tap the request and choose **Confirm**, **Reject** (with an optional note) or propose **another time**.
 3. The patient gets a notification with your answer.
 A new patient who requested through your link is connected to your clinic when you confirm.
-**No site:** Quando há pedidos aguardando sua resposta, a **Visão geral** mostra um aviso com quantos são (**Ver pedidos**). Os pedidos aparecem em **Agenda**, em **Solicitações de consulta**. Clique em **Confirmar**, **Rejeitar** ou **Propor novo horário** (dá para escrever uma mensagem ao paciente). Para um paciente novo, **Confirmar e Adicionar Paciente** já cria o cadastro.
-**On the website:** When requests are waiting for your answer, the **Overview** shows a notice with how many (**See requests**). Requests show in the **Schedule**, under **Booking Requests**. Click **Confirm**, **Reject** or **Propose new time** (you can add a note for the patient). For a new patient, **Confirm and Add New Patient** also creates their record.
+{pending:app-1.4.0} In the patient's app: if the time of a request or of a proposed new time passes without an answer, they see **Not confirmed**, with no actions.
+**No site:** Quando há pedidos aguardando sua resposta, a **Visão geral** mostra um aviso com quantos são (**Ver pedidos**). Os pedidos aparecem em **Agenda**, em **Solicitações de consulta**. Clique em **Confirmar**, **Rejeitar** ou **Propor novo horário** (dá para escrever uma mensagem ao paciente). Para um paciente novo, **Confirmar e Adicionar Paciente** já cria o cadastro. Se o horário de um pedido ou de um novo horário proposto passa sem resposta, o paciente vê **Não confirmado** em **Minhas Consultas**, sem ações.
+**On the website:** When requests are waiting for your answer, the **Overview** shows a notice with how many (**See requests**). Requests show in the **Schedule**, under **Booking Requests**. Click **Confirm**, **Reject** or **Propose new time** (you can add a note for the patient). For a new patient, **Confirm and Add New Patient** also creates their record. If the time of a request or of a proposed new time passes without an answer, the patient sees **Not confirmed** in **My Appointments**, with no actions.
 `open:home`
 
 ---

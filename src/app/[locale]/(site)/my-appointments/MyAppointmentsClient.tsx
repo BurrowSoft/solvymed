@@ -11,7 +11,7 @@ import { OnboardingCard } from "@/components/OnboardingCard";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { MonthCalendar } from "@/components/MonthCalendar";
 import { chosenTimeParts } from "@/lib/chosenTime";
-import { addDays, clinicDate, DEFAULT_CLINIC_TZ } from "@/lib/clinicTime";
+import { addDays, clinicDate, clinicTime, DEFAULT_CLINIC_TZ } from "@/lib/clinicTime";
 import { getDayHours, type WorkingHours } from "@/lib/slots";
 import { countryProfile } from "@/lib/country";
 
@@ -188,6 +188,12 @@ function RescheduleDialog({
   );
 }
 
+// Whether a request's asked time (date + HH:MM) has passed on the clinic's clock.
+export function requestLapsed(date: string, start: string, now: Date, tz?: string | null): boolean {
+  const today = clinicDate(now, tz);
+  return date < today || (date === today && start <= clinicTime(now, tz));
+}
+
 function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practiceCountry = null }: { appt: PatientAppointment; onMutate: () => void; clinicTz?: string; practiceCountry?: string | null }) {
   const t = useTranslations("myAppointments");
   const tSchedule = useTranslations("schedule");
@@ -196,10 +202,14 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
   // The button tapped shows a spinner; both stay disabled until the list
   // has refreshed (Vitor, item 20), so a second tap can't land meanwhile.
   const [acting, setActing] = useState<"accept" | "decline" | null>(null);
+  const [actError, setActError] = useState("");
   const act = (kind: "accept" | "decline") => {
     setActing(kind);
+    setActError("");
     startTransition(async () => {
-      await (kind === "accept" ? acceptProposal(appt.id) : declineProposal(appt.id));
+      const r = await (kind === "accept" ? acceptProposal(appt.id) : declineProposal(appt.id));
+      // The server refuses a proposal whose time has passed (38).
+      if (r?.error === "proposal_time_passed") setActError(t("proposalPassed"));
       onMutate();
     });
   };
@@ -221,10 +231,15 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
   const displayDate = (isProfProposal && appt.proposed_date) ? appt.proposed_date : appt.date;
   const displayStart = (isProfProposal && appt.proposed_start_time) ? appt.proposed_start_time : appt.start_time;
   const displayEnd = (isProfProposal && appt.proposed_end_time) ? appt.proposed_end_time : appt.end_time;
+  // A request or proposal whose time has passed (the clinic's clock): "Não
+  // confirmado", no actions (as the app; e7).
+  const askedDate = appt.status === "proposal" && appt.proposed_date ? appt.proposed_date : appt.date;
+  const askedStart = (appt.status === "proposal" && appt.proposed_date && appt.proposed_start_time ? appt.proposed_start_time : appt.start_time).slice(0, 5);
+  const lapsed = (appt.status === "tentative" || appt.status === "proposal") && now !== null && requestLapsed(askedDate, askedStart, now, clinicTz);
 
   return (
     <>
-    <div data-testid="appointment-card" data-status={appt.status} className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 p-5">
+    <div data-testid="appointment-card" data-status={lapsed ? "lapsed" : appt.status} className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <p className="font-bold text-slate-900">{appt.consultation_type}</p>
@@ -260,13 +275,13 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
           )}
         </div>
         <div className="flex flex-col items-end gap-2">
-          <span data-testid="appointment-status-badge" className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${color}`}>
-            {isPatientReschedule ? t("reschedulePending") : label}
+          <span data-testid="appointment-status-badge" className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${lapsed ? "bg-slate-50 text-slate-500 border-slate-200" : color}`}>
+            {lapsed ? t("statusNotConfirmed") : isPatientReschedule ? t("reschedulePending") : label}
           </span>
         </div>
       </div>
 
-      {isProfProposal && (
+      {isProfProposal && !lapsed && (
         <div className="flex gap-2 mt-4">
           <button
             disabled={pending}
@@ -288,6 +303,8 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
           </button>
         </div>
       )}
+
+      {actError && <p role="alert" className="mt-2 text-sm text-red-600">{actError}</p>}
 
       {canReschedule && (
         <div className="mt-3 pt-3 border-t border-slate-100">
