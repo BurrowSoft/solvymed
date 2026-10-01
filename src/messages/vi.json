@@ -107,7 +107,7 @@
     "invitedSeeAll": "Xem tất cả trong Bệnh nhân",
     "invitedSameEmail": "Cùng email với {name}: gộp hồ sơ?",
     "invitedRemoveConfirm": "Gỡ {name}? Tài khoản sẽ quay lại chờ bạn xác nhận và hồ sơ được lưu trữ.",
-    "invitedRemoveConfirmDisconnect": "Gỡ {name}? Tài khoản sẽ bị ngắt kết nối khỏi phòng khám của bạn, các yêu cầu đang chờ sẽ bị hủy (bệnh nhân được thông báo) và hồ sơ được lưu trữ. Để nhận lại, hãy chia sẻ mã cá nhân của bệnh nhân."
+    "invitedRemoveConfirmDisconnect": "Gỡ {name}? Tài khoản sẽ bị ngắt kết nối khỏi phòng khám của bạn, các yêu cầu đang chờ sẽ bị hủy (bệnh nhân được thông báo) và hồ sơ được lưu trữ. Để nhận lại, hãy khôi phục hồ sơ từ mục Đã lưu trữ và chia sẻ mã cá nhân của bệnh nhân."
   },
   "schedule": {
     "patientMessage": "Lời nhắn của bệnh nhân",

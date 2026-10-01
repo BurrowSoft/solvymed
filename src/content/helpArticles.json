@@ -1214,7 +1214,7 @@
             },
             {
               "type": "p",
-              "text": "Depois de **Remover**, a pessoa não consegue voltar com o código de convite da clínica. Para trazê-la de volta, envie o código pessoal do cadastro dela."
+              "text": "Depois de **Remover**, a pessoa não consegue voltar com o código de convite da clínica. Para trazê-la de volta, restaure o cadastro em **Arquivados** e envie o código pessoal dele."
             }
           ],
           "en": [
@@ -1224,7 +1224,7 @@
             },
             {
               "type": "p",
-              "text": "After **Remove**, that person can't rejoin with your clinic's invite code. To bring them back, share the personal code of their record."
+              "text": "After **Remove**, that person can't rejoin with your clinic's invite code. To bring them back, restore the record from **Archived** and share its personal code."
             }
           ]
         },

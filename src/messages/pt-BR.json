@@ -107,7 +107,7 @@
     "invitedSeeAll": "Ver todos em Pacientes",
     "invitedSameEmail": "Mesmo e-mail de {name}: mesclar?",
     "invitedRemoveConfirm": "Remover {name}? A conta volta a aguardar sua confirmação e o cadastro é arquivado.",
-    "invitedRemoveConfirmDisconnect": "Remover {name}? A conta será desconectada da sua clínica, os pedidos pendentes serão cancelados (o paciente é avisado) e o cadastro será arquivado. Para readmitir, compartilhe o código pessoal do paciente."
+    "invitedRemoveConfirmDisconnect": "Remover {name}? A conta será desconectada da sua clínica, os pedidos pendentes serão cancelados (o paciente é avisado) e o cadastro será arquivado. Para readmitir, restaure o cadastro em Arquivados e compartilhe o código pessoal do paciente."
   },
   "schedule": {
     "patientMessage": "Mensagem do paciente",

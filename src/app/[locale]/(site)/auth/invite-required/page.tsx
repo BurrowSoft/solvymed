@@ -118,8 +118,10 @@ export default function InviteRequiredPage() {
           ? await connectedTo(samePractice(connectError))
           : m.includes("too_many_attempts")
           ? t("inviteRequired.tooManyAttempts")
+          // An archived record's personal code (094 refuses the link): the
+          // same neutral text as a removed patient's (e7, as the app).
           : m.includes("patient_archived")
-          ? t("inviteRequired.archived")
+          ? t("inviteRequired.codeUnavailable")
           : m.includes("professional accounts cannot use")
           ? t("inviteRequired.notPendingPatient")
           : t("inviteRequired.linkFailed");
@@ -160,7 +162,7 @@ export default function InviteRequiredPage() {
         linkError.message?.includes("too_many_attempts")
           ? t("inviteRequired.tooManyAttempts")
           : linkError.message?.includes("patient_archived")
-          ? t("inviteRequired.archived")
+          ? t("inviteRequired.codeUnavailable")
           : t("inviteRequired.linkFailed"),
       );
       return;
@@ -184,7 +186,7 @@ export default function InviteRequiredPage() {
         profLinkError.message?.includes("too_many_attempts")
           ? t("inviteRequired.tooManyAttempts")
           : profLinkError.message?.includes("patient_archived")
-          ? t("inviteRequired.archived")
+          ? t("inviteRequired.codeUnavailable")
           : profLinkError.message?.includes("already_invited_by_another_professional")
           ? t("inviteRequired.alreadyInvitedByAnother")
           : t("inviteRequired.linkFailed"),
