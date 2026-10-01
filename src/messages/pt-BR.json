@@ -106,7 +106,8 @@
     "invitedError": "Não foi possível salvar. Tente novamente.",
     "invitedSeeAll": "Ver todos em Pacientes",
     "invitedSameEmail": "Mesmo e-mail de {name}: mesclar?",
-    "invitedRemoveConfirm": "Remover {name}? A conta volta a aguardar sua confirmação e o cadastro é arquivado."
+    "invitedRemoveConfirm": "Remover {name}? A conta volta a aguardar sua confirmação e o cadastro é arquivado.",
+    "invitedRemoveConfirmDisconnect": "Remover {name}? A conta é desconectada da sua clínica e o cadastro é arquivado."
   },
   "schedule": {
     "patientMessage": "Mensagem do paciente",
@@ -777,7 +778,8 @@
       "alreadyConnected": "Você já está conectado a {doctor}. Para trocar, fale com o suporte.",
       "alreadyConnectedNoName": "Você já está conectado a outro médico. Para trocar, fale com o suporte.",
       "alreadyConnectedSamePractice": "Você já está conectado a {doctor}. Peça à clínica para juntar seus cadastros.",
-      "alreadyConnectedSamePracticeNoName": "Você já está conectado a esta clínica. Peça à clínica para juntar seus cadastros."
+      "alreadyConnectedSamePracticeNoName": "Você já está conectado a esta clínica. Peça à clínica para juntar seus cadastros.",
+      "codeUnavailable": "Não foi possível conectar com este código. Fale com a clínica."
     },
     "pendingConfirmation": {
       "loading": "Verificando seu status…",

@@ -106,7 +106,8 @@
     "invitedError": "Không lưu được. Vui lòng thử lại.",
     "invitedSeeAll": "Xem tất cả trong Bệnh nhân",
     "invitedSameEmail": "Cùng email với {name}: gộp hồ sơ?",
-    "invitedRemoveConfirm": "Gỡ {name}? Tài khoản sẽ quay lại chờ bạn xác nhận và hồ sơ được lưu trữ."
+    "invitedRemoveConfirm": "Gỡ {name}? Tài khoản sẽ quay lại chờ bạn xác nhận và hồ sơ được lưu trữ.",
+    "invitedRemoveConfirmDisconnect": "Gỡ {name}? Tài khoản sẽ bị ngắt kết nối khỏi phòng khám của bạn và hồ sơ được lưu trữ."
   },
   "schedule": {
     "patientMessage": "Lời nhắn của bệnh nhân",
@@ -777,7 +778,8 @@
       "alreadyConnected": "Bạn đã kết nối với {doctor}. Để đổi, hãy liên hệ bộ phận hỗ trợ.",
       "alreadyConnectedNoName": "Bạn đã kết nối với một bác sĩ khác. Để đổi, hãy liên hệ bộ phận hỗ trợ.",
       "alreadyConnectedSamePractice": "Bạn đã kết nối với {doctor}. Hãy nhờ phòng khám gộp hồ sơ của bạn.",
-      "alreadyConnectedSamePracticeNoName": "Bạn đã kết nối với phòng khám này. Hãy nhờ phòng khám gộp hồ sơ của bạn."
+      "alreadyConnectedSamePracticeNoName": "Bạn đã kết nối với phòng khám này. Hãy nhờ phòng khám gộp hồ sơ của bạn.",
+      "codeUnavailable": "Không thể kết nối bằng mã này. Vui lòng liên hệ phòng khám."
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",

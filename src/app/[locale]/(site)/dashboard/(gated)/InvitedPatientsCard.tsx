@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { keepInvitedPatient, removeInvitedPatient } from "./patients/actions";
+import { conditionMet } from "@/lib/conditions";
 
 type Invited = { id: string; full_name: string; sameEmailAs: { id: string; name: string } | null };
 
@@ -20,7 +21,7 @@ export function InvitedPatientsCard({ patients, total, prefix }: { patients: Inv
 
   function act(id: string, kind: "keep" | "remove", name: string) {
     // Removing is final for this account: ask first (the app's confirm).
-    if (kind === "remove" && !window.confirm(t("invitedRemoveConfirm", { name }))) return;
+    if (kind === "remove" && !window.confirm(t(conditionMet("invite-connect-live") ? "invitedRemoveConfirmDisconnect" : "invitedRemoveConfirm", { name }))) return;
     setErrors((e) => ({ ...e, [id]: "" }));
     setPendingId(id);
     start(async () => {

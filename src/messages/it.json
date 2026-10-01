@@ -106,7 +106,8 @@
     "invitedError": "Impossibile salvare. Riprova.",
     "invitedSeeAll": "Vedi tutti in Pazienti",
     "invitedSameEmail": "Stessa e-mail di {name}: unire?",
-    "invitedRemoveConfirm": "Rimuovere {name}? L'account tornerà in attesa della tua conferma e la scheda verrà archiviata."
+    "invitedRemoveConfirm": "Rimuovere {name}? L'account tornerà in attesa della tua conferma e la scheda verrà archiviata.",
+    "invitedRemoveConfirmDisconnect": "Rimuovere {name}? L'account viene scollegato dal tuo studio e la scheda viene archiviata."
   },
   "schedule": {
     "patientMessage": "Messaggio del paziente",
@@ -777,7 +778,8 @@
       "alreadyConnected": "Sei già collegato a {doctor}. Per cambiare, contatta l'assistenza.",
       "alreadyConnectedNoName": "Sei già collegato a un altro medico. Per cambiare, contatta l'assistenza.",
       "alreadyConnectedSamePractice": "Sei già collegato a {doctor}. Chiedi allo studio di unire le tue schede.",
-      "alreadyConnectedSamePracticeNoName": "Sei già collegato a questo studio. Chiedi allo studio di unire le tue schede."
+      "alreadyConnectedSamePracticeNoName": "Sei già collegato a questo studio. Chiedi allo studio di unire le tue schede.",
+      "codeUnavailable": "Impossibile collegarsi con questo codice. Contatta lo studio."
     },
     "pendingConfirmation": {
       "loading": "Verifica dello stato…",

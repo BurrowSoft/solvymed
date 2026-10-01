@@ -106,7 +106,8 @@
     "invitedError": "No se pudo guardar. Inténtalo de nuevo.",
     "invitedSeeAll": "Ver todos en Pacientes",
     "invitedSameEmail": "Mismo correo que {name}: ¿fusionar?",
-    "invitedRemoveConfirm": "¿Quitar a {name}? Su cuenta volverá a esperar tu confirmación y la ficha se archivará."
+    "invitedRemoveConfirm": "¿Quitar a {name}? Su cuenta volverá a esperar tu confirmación y la ficha se archivará.",
+    "invitedRemoveConfirmDisconnect": "¿Quitar a {name}? La cuenta se desconecta de tu clínica y la ficha se archiva."
   },
   "schedule": {
     "patientMessage": "Mensaje del paciente",
@@ -777,7 +778,8 @@
       "alreadyConnected": "Ya estás conectado con {doctor}. Para cambiar, contacta con soporte.",
       "alreadyConnectedNoName": "Ya estás conectado con otro médico. Para cambiar, contacta con soporte.",
       "alreadyConnectedSamePractice": "Ya estás conectado con {doctor}. Pide a la clínica que una tus fichas.",
-      "alreadyConnectedSamePracticeNoName": "Ya estás conectado con esta clínica. Pide a la clínica que una tus fichas."
+      "alreadyConnectedSamePracticeNoName": "Ya estás conectado con esta clínica. Pide a la clínica que una tus fichas.",
+      "codeUnavailable": "No se pudo conectar con este código. Contacta con la clínica."
     },
     "pendingConfirmation": {
       "loading": "Verificando tu estado…",

@@ -106,7 +106,8 @@
     "invitedError": "无法保存，请重试。",
     "invitedSeeAll": "在患者中查看全部",
     "invitedSameEmail": "与 {name} 邮箱相同：合并？",
-    "invitedRemoveConfirm": "移除 {name}？其账户将重新等待您的确认，档案会被归档。"
+    "invitedRemoveConfirm": "移除 {name}？其账户将重新等待您的确认，档案会被归档。",
+    "invitedRemoveConfirmDisconnect": "移除 {name}？其账户将与您的诊所断开连接，档案会被归档。"
   },
   "schedule": {
     "patientMessage": "患者留言",
@@ -777,7 +778,8 @@
       "alreadyConnected": "您已与 {doctor} 连接。如需更换，请联系客服。",
       "alreadyConnectedNoName": "您已与其他医生连接。如需更换，请联系客服。",
       "alreadyConnectedSamePractice": "您已与 {doctor} 连接。请让诊所合并您的档案。",
-      "alreadyConnectedSamePracticeNoName": "您已与此诊所连接。请让诊所合并您的档案。"
+      "alreadyConnectedSamePracticeNoName": "您已与此诊所连接。请让诊所合并您的档案。",
+      "codeUnavailable": "无法使用此代码连接。请联系诊所。"
     },
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",

@@ -106,7 +106,8 @@
     "invitedError": "Échec de l'enregistrement. Réessayez.",
     "invitedSeeAll": "Tout voir dans Patients",
     "invitedSameEmail": "Même e-mail que {name} : fusionner ?",
-    "invitedRemoveConfirm": "Retirer {name} ? Son compte attendra à nouveau votre confirmation et la fiche sera archivée."
+    "invitedRemoveConfirm": "Retirer {name} ? Son compte attendra à nouveau votre confirmation et la fiche sera archivée.",
+    "invitedRemoveConfirmDisconnect": "Retirer {name} ? Le compte est déconnecté de votre cabinet et la fiche est archivée."
   },
   "schedule": {
     "patientMessage": "Message du patient",
@@ -777,7 +778,8 @@
       "alreadyConnected": "Vous êtes déjà connecté à {doctor}. Pour changer, contactez le support.",
       "alreadyConnectedNoName": "Vous êtes déjà connecté à un autre médecin. Pour changer, contactez le support.",
       "alreadyConnectedSamePractice": "Vous êtes déjà connecté à {doctor}. Demandez au cabinet de fusionner vos dossiers.",
-      "alreadyConnectedSamePracticeNoName": "Vous êtes déjà connecté à ce cabinet. Demandez au cabinet de fusionner vos dossiers."
+      "alreadyConnectedSamePracticeNoName": "Vous êtes déjà connecté à ce cabinet. Demandez au cabinet de fusionner vos dossiers.",
+      "codeUnavailable": "Impossible de se connecter avec ce code. Contactez le cabinet."
     },
     "pendingConfirmation": {
       "loading": "Vérification de votre statut…",

@@ -96,6 +96,10 @@ describe("invite code while already connected", () => {
     expect(await screen.findByText("Você já está conectado a Dra. Ana. Peça à clínica para juntar seus cadastros.")).toBeInTheDocument();
     expect(h.rpcs).not.toContain("link_patient_by_invite_code");
     unmount();
+    h.connect = { data: null, error: { message: "code_unavailable" } };
+    unmount = await submit();
+    expect(await screen.findByText("Não foi possível conectar com este código. Fale com a clínica.")).toBeInTheDocument();
+    unmount();
     h.connect = { data: null, error: null };
     unmount = await submit();
     expect(await screen.findByText(pt.auth.inviteRequired.codeInvalid)).toBeInTheDocument();

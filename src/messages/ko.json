@@ -106,7 +106,8 @@
     "invitedError": "저장하지 못했습니다. 다시 시도하세요.",
     "invitedSeeAll": "환자에서 모두 보기",
     "invitedSameEmail": "{name}과(와) 같은 이메일: 병합할까요?",
-    "invitedRemoveConfirm": "{name}을(를) 삭제할까요? 계정은 다시 확인 대기 상태가 되고 기록은 보관됩니다."
+    "invitedRemoveConfirm": "{name}을(를) 삭제할까요? 계정은 다시 확인 대기 상태가 되고 기록은 보관됩니다.",
+    "invitedRemoveConfirmDisconnect": "{name}을(를) 삭제할까요? 계정은 클리닉에서 연결 해제되고 기록은 보관됩니다."
   },
   "schedule": {
     "patientMessage": "환자 메시지",
@@ -777,7 +778,8 @@
       "alreadyConnected": "이미 {doctor}에 연결되어 있습니다. 변경하려면 지원팀에 문의하세요.",
       "alreadyConnectedNoName": "이미 다른 의사에게 연결되어 있습니다. 변경하려면 지원팀에 문의하세요.",
       "alreadyConnectedSamePractice": "이미 {doctor}에 연결되어 있습니다. 클리닉에 기록 병합을 요청하세요.",
-      "alreadyConnectedSamePracticeNoName": "이미 이 클리닉에 연결되어 있습니다. 클리닉에 기록 병합을 요청하세요."
+      "alreadyConnectedSamePracticeNoName": "이미 이 클리닉에 연결되어 있습니다. 클리닉에 기록 병합을 요청하세요.",
+      "codeUnavailable": "이 코드로 연결할 수 없습니다. 클리닉에 문의하세요."
     },
     "pendingConfirmation": {
       "loading": "상태 확인 중…",

@@ -106,7 +106,8 @@
     "invitedError": "تعذّر الحفظ. حاول مرة أخرى.",
     "invitedSeeAll": "عرض الكل في المرضى",
     "invitedSameEmail": "نفس البريد الإلكتروني لـ {name}: دمج؟",
-    "invitedRemoveConfirm": "إزالة {name}؟ سيعود حسابه لانتظار تأكيدك وسيُؤرشف السجل."
+    "invitedRemoveConfirm": "إزالة {name}؟ سيعود حسابه لانتظار تأكيدك وسيُؤرشف السجل.",
+    "invitedRemoveConfirmDisconnect": "إزالة {name}؟ يُفصل الحساب عن عيادتك ويُؤرشف السجل."
   },
   "schedule": {
     "patientMessage": "رسالة المريض",
@@ -777,7 +778,8 @@
       "alreadyConnected": "أنت متصل بالفعل بـ {doctor}. للتغيير، تواصل مع الدعم.",
       "alreadyConnectedNoName": "أنت متصل بالفعل بطبيب آخر. للتغيير، تواصل مع الدعم.",
       "alreadyConnectedSamePractice": "أنت متصل بالفعل بـ {doctor}. اطلب من العيادة دمج سجلاتك.",
-      "alreadyConnectedSamePracticeNoName": "أنت متصل بالفعل بهذه العيادة. اطلب من العيادة دمج سجلاتك."
+      "alreadyConnectedSamePracticeNoName": "أنت متصل بالفعل بهذه العيادة. اطلب من العيادة دمج سجلاتك.",
+      "codeUnavailable": "تعذّر الاتصال بهذا الرمز. يرجى التواصل مع العيادة."
     },
     "pendingConfirmation": {
       "loading": "جارٍ التحقق من حالتك…",

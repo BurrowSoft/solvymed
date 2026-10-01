@@ -106,7 +106,8 @@
     "invitedError": "無法儲存，請再試一次。",
     "invitedSeeAll": "在病患中查看全部",
     "invitedSameEmail": "與 {name} 電子郵件相同：合併？",
-    "invitedRemoveConfirm": "移除 {name}？其帳戶將重新等待您的確認，病歷會被封存。"
+    "invitedRemoveConfirm": "移除 {name}？其帳戶將重新等待您的確認，病歷會被封存。",
+    "invitedRemoveConfirmDisconnect": "移除 {name}？其帳戶將與您的診所中斷連結，病歷會被封存。"
   },
   "schedule": {
     "patientMessage": "患者留言",
@@ -777,7 +778,8 @@
       "alreadyConnected": "您已與 {doctor} 連結。如需更換，請聯絡客服。",
       "alreadyConnectedNoName": "您已與其他醫師連結。如需更換，請聯絡客服。",
       "alreadyConnectedSamePractice": "您已與 {doctor} 連結。請診所合併您的病歷。",
-      "alreadyConnectedSamePracticeNoName": "您已與此診所連結。請診所合併您的病歷。"
+      "alreadyConnectedSamePracticeNoName": "您已與此診所連結。請診所合併您的病歷。",
+      "codeUnavailable": "無法使用此代碼連結。請聯絡診所。"
     },
     "pendingConfirmation": {
       "loading": "正在檢查您的狀態…",
