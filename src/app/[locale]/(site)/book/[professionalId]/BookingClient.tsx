@@ -17,6 +17,7 @@ import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
 import { MonthCalendar } from "@/components/MonthCalendar";
 import { chosenTimeParts } from "@/lib/chosenTime";
+import { BrandMarkTile } from "@/components/BrandLogo";
 
 type Procedure = { id: string; name: string; durationMinutes: number; price?: number; paymentType: string };
 
@@ -495,11 +496,7 @@ export function BookingClient({
             </svg>
           </button>
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-teal-600">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-              </svg>
-            </div>
+            <BrandMarkTile size="sm" />
             <span className="font-bold text-slate-900">{t("title")}</span>
           </div>
         </div>
