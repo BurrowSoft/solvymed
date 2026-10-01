@@ -8,6 +8,7 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
+import { OpenInApp } from "@/components/OpenInApp";
 
 const COUNTDOWN = 5;
 
@@ -53,6 +54,7 @@ export default function PatientWelcomePage() {
     <AuthPageShell>
       <AuthCard centered>
         <BrandMark />
+        <OpenInApp />
 
         <IconBadge>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="icon-status">

@@ -1,4 +1,5 @@
-import { thaiEnabled } from "./publicLocales";
+import { isPublicLocale, thaiEnabled } from "./publicLocales";
+import { countryProfile } from "./country";
 
 // The practice country at doctor signup (Sprint TH; country first, Vitor
 // 2026-10-01): Brasil or ประเทศไทย, chosen on the signup's first step.
@@ -56,4 +57,44 @@ export function browserTimeZone(): string | null {
   } catch {
     return null;
   }
+}
+
+// The country hint on a link shared with someone else (invite / join /
+// secretary; the app's #233 does the same): ?c=BR or ?c=TH for the
+// practice's country, nothing for the default. The app and the signup skip
+// the country step with it. Only a hint: staff follow the practice anyway.
+export function withCountryHint(url: string, country: string | null | undefined): string {
+  const c = parseCountryChoice(country);
+  if (!c) return url;
+  return `${url}${url.includes("?") ? "&" : "?"}c=${c}`;
+}
+
+// The country a patient tapped on the signup's first step, until it's saved
+// with their language (149). A cookie, not browser storage, so the first
+// /my-appointments (server) already follows it: a Thai pick at a Brazilian
+// clinic isn't moved to Portuguese before it's saved (3e, #286).
+export const SIGNUP_COUNTRY_COOKIE = "solvymed_signup_country";
+
+export function signupCountryCookie(country: CountryChoice): string {
+  return `${SIGNUP_COUNTRY_COOKIE}=${country}; path=/; max-age=${60 * 60 * 24 * 14}; samesite=lax`;
+}
+
+// Where a patient's page in `locale` moves to for their country (BR/TH): the
+// country's language when the page's isn't in its pair, else null (stay).
+// Never to a language that isn't public (Thai switched off), never without a
+// country (9a: a failed lookup changes nothing).
+export function patientLanguageTarget(locale: string, country: string | null | undefined): string | null {
+  const c = parseCountryChoice(country);
+  if (!c) return null;
+  const pair = countryProfile(c).languages as readonly string[];
+  return pair.includes(locale) || !isPublicLocale(pair[0]) ? null : pair[0];
+}
+
+// The pick is for the account just created in this browser: honoured only
+// while the account is younger than the cookie (a shared computer's next
+// patient never inherits it; signing in from the login page clears it too).
+export const SIGNUP_PICK_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
+export function pickApplies(accountCreatedAt: string | null | undefined, now: number = Date.now()): boolean {
+  const t = accountCreatedAt ? new Date(accountCreatedAt).getTime() : NaN;
+  return Number.isFinite(t) && now - t <= SIGNUP_PICK_MAX_AGE_MS;
 }

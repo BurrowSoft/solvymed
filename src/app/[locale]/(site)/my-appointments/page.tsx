@@ -5,6 +5,9 @@ import { MyAppointmentsClient } from "./MyAppointmentsClient";
 import { clinicDate } from "@/lib/clinicTime";
 import { getOnboardingFlags } from "@/lib/setup";
 import { statusReasonLive } from "@/lib/statusReason";
+import { SaveMyLocale } from "@/components/SaveMyLocale";
+import { cookies } from "next/headers";
+import { parseCountryChoice, patientLanguageTarget, pickApplies, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 
 export type PatientAppointment = {
   id: string;
@@ -58,6 +61,18 @@ export default async function MyAppointmentsPage({
     redirect(`${prefix}/dashboard`);
   }
 
+  // Country first (149): the patient's country (their choice, else the
+  // clinic's, else their language) sets the two languages they get. A page
+  // in another one moves to the country's language. On any error nothing
+  // happens (9a: never act on a failed lookup), and a language that isn't
+  // public (Thai switched off) is never forced.
+  // A signup pick not saved yet (its cookie) wins: SaveMyLocale below saves
+  // it with this page's language, then clears it.
+  const pick = pickApplies(user.created_at) ? parseCountryChoice((await cookies()).get(SIGNUP_COUNTRY_COOKIE)?.value) : null;
+  const { data: savedCountry, error: countryError } = pick ? { data: pick, error: null } : await supabase.rpc("my_country");
+  const target = countryError ? null : patientLanguageTarget(locale, savedCountry as string | null);
+  if (target) redirect(`${target === "en" ? "" : `/${target}`}/my-appointments`);
+
   let myProfessionalId = (userRoleData?.invited_by_professional_id as string | null) ?? null;
   if (!myProfessionalId && userRoleData?.linked_patient_id) {
     // Patients can't read the patients table directly via RLS, even their own
@@ -110,6 +125,8 @@ export default async function MyAppointmentsPage({
   const connectedClinicName = flags && !flags.patient_connected_seen && flags.clinic_professional_id ? flags.clinic_name : null;
 
   return (
+    <>
+    <SaveMyLocale locale={locale} />
     <MyAppointmentsClient
       connectedClinicName={connectedClinicName}
       upcoming={upcoming ?? []}
@@ -118,5 +135,6 @@ export default async function MyAppointmentsPage({
       myProfessionalId={myProfessionalId}
       myProfessionalMeta={myProfessionalMeta}
     />
+    </>
   );
 }

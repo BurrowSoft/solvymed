@@ -1837,5 +1837,12 @@
     "tryNow": "Попробовать",
     "later": "Позже",
     "whatCanDo": "Что умеет SolvyAI?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "Обновить"
   }
 }

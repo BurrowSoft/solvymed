@@ -821,7 +821,7 @@
       "otherBody": "Toque em Continuar para concluir.",
       "continue": "Continuar",
       "expiredTitle": "Este link expirou",
-      "expiredBody": "Solicite um novo na página de login.",
+      "expiredBody": "Este link já foi usado ou expirou. Entre com seu e-mail e senha.",
       "goToSignIn": "Ir para o login"
     },
     "captchaFailed": "Conclua a verificação e tente novamente.",
@@ -1837,5 +1837,12 @@
     "tryNow": "Experimentar agora",
     "later": "Depois",
     "whatCanDo": "O que o SolvyAI pode fazer?"
+  },
+  "openInApp": {
+    "open": "Abrir no app SolvyMed",
+    "continue": "Continuar no site"
+  },
+  "autoRefresh": {
+    "refresh": "Atualizar"
   }
 }

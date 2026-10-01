@@ -88,10 +88,13 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
   // only says there is one. Before 150, the note went in the push.
   const live = statusReasonLive();
   const message = live ? cleanReason(note) : null;
+  // The push says there's a message only if it was really saved (9a).
+  let saved = false;
   if (live) {
-    await supabase.from("appointments").update({ clinic_message: message }).eq("id", appointmentId);
+    const { error: messageError } = await supabase.from("appointments").update({ clinic_message: message }).eq("id", appointmentId);
+    saved = !messageError && !!message;
   }
-  await notifyPatient(supabase, appointmentId, "apptConfirmed", live ? { hasMessage: !!message } : { note });
+  await notifyPatient(supabase, appointmentId, "apptConfirmed", live ? { hasMessage: saved } : { note });
 
   revalidatePath("/dashboard/schedule");
   revalidatePath("/dashboard/patients");

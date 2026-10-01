@@ -1837,5 +1837,12 @@
     "tryNow": "Thử ngay",
     "later": "Để sau",
     "whatCanDo": "SolvyAI làm được gì?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "Làm mới"
   }
 }

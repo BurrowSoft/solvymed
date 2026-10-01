@@ -8,6 +8,7 @@ import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
 import { acceptProposal, declineProposal, requestReschedule, getAvailableSlotsForDate } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions";
 import type { PatientAppointment } from "./page";
 import { OnboardingCard } from "@/components/OnboardingCard";
+import { AutoRefresh } from "@/components/AutoRefresh";
 
 const STATUS_COLOR: Record<string, string> = {
   tentative: "bg-amber-50 text-amber-600 border-amber-200",
@@ -370,10 +371,13 @@ export function MyAppointmentsClient({
         {connectedClinicName && (
           <OnboardingCard kind="patient_connected" clinicName={connectedClinicName} bookHref={bookPath ?? undefined} />
         )}
-        {/* Greeting */}
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
-          <p className="text-sm text-slate-400 mt-0.5">{userEmail}</p>
+        {/* Greeting; the list stays current (item 33). */}
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
+            <p className="text-sm text-slate-400 mt-0.5">{userEmail}</p>
+          </div>
+          <AutoRefresh />
         </div>
 
         {/* Upcoming */}
