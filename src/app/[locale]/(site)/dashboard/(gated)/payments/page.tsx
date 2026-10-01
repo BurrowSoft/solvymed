@@ -66,7 +66,10 @@ export default async function PaymentsPage({
       .from("appointments")
       .select("id, patient_name, date, start_time, consultation_type, payment_amount, payment_type")
       .eq("professional_id", effectiveProfId)
-      .eq("payment_status", status);
+      .eq("payment_status", status)
+      // Only appointments with an amount (the app's #216): a no-amount one
+      // shows "Sem valor · Definir valor" in the Agenda instead.
+      .gt("payment_amount", 0);
     if (TYPE_FILTER) q = q.or(TYPE_FILTER);
     return q;
   };
@@ -98,6 +101,7 @@ export default async function PaymentsPage({
       .select("id", { count: "exact", head: true })
       .eq("professional_id", effectiveProfId)
       .in("payment_status", ["pending", "paid"])
+      .gt("payment_amount", 0)
       .neq("status", "blocked");
     if (!countError && (count ?? 0) === 0) {
       const prefix = locale === "en" ? "" : `/${locale}`;

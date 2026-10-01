@@ -102,12 +102,12 @@ export default async function DashboardPage({
     supabase.from("appointments").select("id, patient_name, start_time, end_time, status, consultation_type").eq("professional_id", effectiveProfId).eq("date", today).neq("status", "blocked").order("start_time"),
     supabase.from("appointments").select("patient_name, date, start_time, consultation_type, status").eq("professional_id", effectiveProfId).gt("date", today).lte("date", nextWeekStr).neq("status", "blocked").order("date").order("start_time").limit(8),
     // The pending card: the app's "to receive" rule (lib/paymentRules).
-    supabase.from("appointments").select("patient_name, payment_amount, date").eq("professional_id", effectiveProfId).eq("payment_status", "pending").in("status", [...RECEIVABLE_STATUSES]),
+    supabase.from("appointments").select("patient_name, payment_amount, date").eq("professional_id", effectiveProfId).eq("payment_status", "pending").in("status", [...RECEIVABLE_STATUSES]).gt("payment_amount", 0),
     supabase.from("patients").select("*", { count: "exact", head: true }).eq("professional_id", effectiveProfId).is("archived_at", null),
     // Revenue is doctor-only, so a secretary never fetches it.
     isSecretary
       ? Promise.resolve({ data: [] as { payment_amount: number }[] })
-      : supabase.from("appointments").select("payment_amount").eq("professional_id", effectiveProfId).eq("payment_status", "paid").gte("date", monthStart).lte("date", today),
+      : supabase.from("appointments").select("payment_amount").eq("professional_id", effectiveProfId).eq("payment_status", "paid").gt("payment_amount", 0).gte("date", monthStart).lte("date", today),
   ]);
 
   const professional = professionalResult.data;

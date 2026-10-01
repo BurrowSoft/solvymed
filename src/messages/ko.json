@@ -250,7 +250,10 @@
     "revertConfirm": "이 결제를 미결제로 되돌리시겠습니까?",
     "errorInvalidAmount": "유효한 금액을 입력하세요.",
     "errorGeneric": "문제가 발생했습니다. 다시 시도해 주세요.",
-    "amountPlaceholderPlain": "금액"
+    "amountPlaceholderPlain": "금액",
+    "noAmount": "금액 없음",
+    "setAmount": "금액 설정",
+    "amountFirst": "받은 금액을 먼저 입력하세요."
   },
   "paymentsPage": {
     "title": "결제",
@@ -1791,7 +1794,8 @@
     "onlySolvyMed": "SolvyMed 관련 도움만 드릴 수 있습니다.",
     "noClinical": "임상 관련 질문은 도와드릴 수 없습니다.",
     "minutes": "{n}분",
-    "alreadyPaid": "이 예약은 이미 결제되었습니다."
+    "alreadyPaid": "이 예약은 이미 결제되었습니다.",
+    "noAmount": "이 예약에는 금액이 없습니다. 결제 완료로 표시하기 전에 일정에서 금액을 설정하세요."
   },
   "countryExamples": {
     "phone": "전화번호"

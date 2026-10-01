@@ -9,6 +9,7 @@ import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
 import { countryProfile } from "@/lib/country";
 import { formatMoney } from "@/lib/money";
+import { hasAmount } from "@/lib/paymentRules";
 import { webPath } from "@/lib/assistant/targets";
 import type { AnswerBlock, CardWarning, ConfirmationCard, ScreenTarget } from "@/lib/assistant/types";
 import type { ToolDef } from "./model";
@@ -787,7 +788,11 @@ async function proposeMarkPaid(ctx: ToolContext, input: Record<string, unknown>)
   const ambiguous = await ambiguousTarget(ctx, a, addDays(ctx.today, -90), addDays(ctx.today, 30), (r) => (r.payment_status === "paid") !== paid && !["tentative", "proposal"].includes(r.status));
   if (ambiguous) return ambiguous;
   const value = amount ?? a.payment_amount;
-  if (paid && !value) return err("This appointment has no value: ask the user for the amount, then propose again with it.");
+  // No amount (the app's #216, UX): never a card. UX's fixed line; with an
+  // amount the user gives, propose again with it (the card sets it).
+  if (paid && !hasAmount(value)) {
+    return { forModel: "No amount: the user was told to set it first. If they tell you the amount received, propose again with it; otherwise add nothing.", block: { type: "text", text: t.noAmount } };
+  }
   const c = card(ctx, {
     icon: "cash",
     title: paid ? t.paid : t.unpaid,
@@ -1034,6 +1039,8 @@ export async function confirmFailedBlock(ctx: ToolContext, action: unknown, code
   if (code === "appointment_not_cancellable") return { type: "text", text: ctx.t.notCancellable };
   // Paid between the card and Confirmar (the app's send_pix, #214).
   if (code === "already_paid") return { type: "text", text: ctx.t.alreadyPaid };
+  // Marked paid with no amount (the amount was cleared since the card; #216).
+  if (code === "no_amount") return { type: "text", text: ctx.t.noAmount };
   const args = (action as { args?: Record<string, unknown> } | null)?.args ?? {};
   const { date, start } = args;
   if (!isDate(date) || !isTime(start)) return null;

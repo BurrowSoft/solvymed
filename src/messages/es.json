@@ -250,7 +250,10 @@
     "revertConfirm": "¿Revertir este pago a pendiente?",
     "errorInvalidAmount": "Introduce un importe válido.",
     "errorGeneric": "Algo salió mal. Inténtalo de nuevo.",
-    "amountPlaceholderPlain": "Monto"
+    "amountPlaceholderPlain": "Monto",
+    "noAmount": "Sin importe",
+    "setAmount": "Definir importe",
+    "amountFirst": "Indica primero el importe recibido."
   },
   "paymentsPage": {
     "title": "Pagos",
@@ -1791,7 +1794,8 @@
     "onlySolvyMed": "Solo puedo ayudar con SolvyMed.",
     "noClinical": "No puedo ayudar con cuestiones clínicas.",
     "minutes": "{n} min",
-    "alreadyPaid": "Esta cita ya está pagada."
+    "alreadyPaid": "Esta cita ya está pagada.",
+    "noAmount": "Esta cita no tiene importe. Defínelo en la Agenda antes de marcarla como pagada."
   },
   "countryExamples": {
     "phone": "Número de teléfono"

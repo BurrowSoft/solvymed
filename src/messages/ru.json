@@ -250,7 +250,10 @@
     "revertConfirm": "Вернуть платёж в статус ожидания?",
     "errorInvalidAmount": "Пожалуйста, введите корректную сумму.",
     "errorGeneric": "Что-то пошло не так. Попробуйте снова.",
-    "amountPlaceholderPlain": "Сумма"
+    "amountPlaceholderPlain": "Сумма",
+    "noAmount": "Без суммы",
+    "setAmount": "Указать сумму",
+    "amountFirst": "Сначала укажите полученную сумму."
   },
   "paymentsPage": {
     "title": "Платежи",
@@ -1791,7 +1794,8 @@
     "onlySolvyMed": "Я могу помочь только с SolvyMed.",
     "noClinical": "Я не могу помочь с клиническими вопросами.",
     "minutes": "{n} мин",
-    "alreadyPaid": "Эта запись уже оплачена."
+    "alreadyPaid": "Эта запись уже оплачена.",
+    "noAmount": "У этой записи нет суммы. Укажите её в Расписании, прежде чем отмечать оплату."
   },
   "countryExamples": {
     "phone": "Номер телефона"

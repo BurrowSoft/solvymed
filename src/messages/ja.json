@@ -250,7 +250,10 @@
     "revertConfirm": "このお支払いを未払いに戻しますか？",
     "errorInvalidAmount": "有効な金額を入力してください。",
     "errorGeneric": "問題が発生しました。もう一度お試しください。",
-    "amountPlaceholderPlain": "金額"
+    "amountPlaceholderPlain": "金額",
+    "noAmount": "金額なし",
+    "setAmount": "金額を設定",
+    "amountFirst": "先に受け取った金額を入力してください。"
   },
   "paymentsPage": {
     "title": "支払い",
@@ -1791,7 +1794,8 @@
     "onlySolvyMed": "SolvyMedに関することのみお手伝いできます。",
     "noClinical": "臨床的な質問にはお答えできません。",
     "minutes": "{n}分",
-    "alreadyPaid": "この予約は支払い済みです。"
+    "alreadyPaid": "この予約は支払い済みです。",
+    "noAmount": "この予約には金額がありません。支払い済みにする前にスケジュールで金額を設定してください。"
   },
   "countryExamples": {
     "phone": "電話番号"

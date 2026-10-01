@@ -250,7 +250,10 @@
     "revertConfirm": "Hoàn nguyên khoản thanh toán này về chờ xử lý?",
     "errorInvalidAmount": "Vui lòng nhập số tiền hợp lệ.",
     "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại.",
-    "amountPlaceholderPlain": "Số tiền"
+    "amountPlaceholderPlain": "Số tiền",
+    "noAmount": "Chưa có số tiền",
+    "setAmount": "Đặt số tiền",
+    "amountFirst": "Hãy nhập số tiền đã nhận trước."
   },
   "paymentsPage": {
     "title": "Thanh toán",
@@ -1791,7 +1794,8 @@
     "onlySolvyMed": "Tôi chỉ có thể giúp về SolvyMed.",
     "noClinical": "Tôi không thể giúp về các vấn đề lâm sàng.",
     "minutes": "{n} phút",
-    "alreadyPaid": "Lịch hẹn này đã được thanh toán."
+    "alreadyPaid": "Lịch hẹn này đã được thanh toán.",
+    "noAmount": "Lịch hẹn này chưa có số tiền. Hãy đặt số tiền trong Lịch trước khi đánh dấu đã thanh toán."
   },
   "countryExamples": {
     "phone": "Số điện thoại"

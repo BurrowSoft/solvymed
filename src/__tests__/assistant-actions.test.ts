@@ -520,6 +520,13 @@ describe("SolvyAI actions mode: other proposals", () => {
     let t = setup(listThen("2026-10-01", { name: "propose_mark_paid", input: { appointmentId: "a-arch", paid: true } }));
     let r = await run(t, ask("A Ana pagou"));
     expect(cardOf(r.blocks)).toBeUndefined();
+    // UX's fixed line (the app's #216), never a card.
+    const said = r.chunks.flatMap((c) => (c.kind === "block" && c.block.type === "text" ? [c.block.text] : []));
+    expect(said).toContain("Esta consulta não tem valor. Defina o valor na Agenda antes de marcar como paga.");
+    // With an amount the user gives: a card that sets it.
+    t = setup(listThen("2026-10-01", { name: "propose_mark_paid", input: { appointmentId: "a-arch", paid: true, amount: 150 } }));
+    r = await run(t, ask("A Ana pagou 150"));
+    expect(cardOf(r.blocks)!.action.args).toMatchObject({ appointmentId: "a-arch", paid: true, amount: 150 });
     t = setup(listThen("2026-09-30", { name: "propose_mark_paid", input: { appointmentId: "a-joao", paid: true } }));
     r = await run(t, ask("O Mario pagou"));
     expect(cardOf(r.blocks)!.after).toEqual({ screen: "payments", highlight: { kind: "appointment", id: "a-joao" } });
@@ -564,6 +571,13 @@ describe("SolvyAI actions mode: Confirmar failed", () => {
     const r = await run(t, { event: { type: "confirm_failed", code: "appointment_not_cancellable", action: { kind: "cancel_appointment", args: { appointmentId: "a-done" } } }, screen: "schedule", locale: "pt-BR" });
     expect(t.model.calls).toEqual([]);
     expect(r.chunks.filter((c) => c.kind === "block")).toEqual([{ kind: "block", block: { type: "text", text: "Só é possível cancelar consultas agendadas, confirmadas ou atrasadas. Nada foi salvo." } }]);
+  });
+
+  it("no amount since the card (mark_paid 'no_amount'): the fixed line, no model", async () => {
+    const t = setup(() => "never");
+    const r = await run(t, { event: { type: "confirm_failed", code: "no_amount", action: { kind: "mark_paid", args: { appointmentId: "a-arch", paid: true } } }, screen: "payments", locale: "en" });
+    expect(t.model.calls).toEqual([]);
+    expect(r.chunks.filter((c) => c.kind === "block")).toEqual([{ kind: "block", block: { type: "text", text: "This appointment has no amount. Set it in the Agenda before marking it paid." } }]);
   });
 
   it("paid between the card and Confirmar (send_pix 'already_paid'): the fixed line, no model, not a 400", async () => {

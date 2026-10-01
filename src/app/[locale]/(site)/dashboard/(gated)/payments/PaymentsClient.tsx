@@ -3,13 +3,14 @@
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTransition, useCallback, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { markPaid, markUnpaid } from "./actions";
+import { markPaid, markUnpaid, setPaymentAmount } from "./actions";
 import { currencySymbol, formatMoney, parseMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
 
 
 const ERROR_CODE_KEY: Record<string, string> = {
   invalid_amount: "errorInvalidAmount",
+  no_amount: "amountFirst",
   generic: "errorGeneric",
 };
 
@@ -108,6 +109,12 @@ export function MarkPaidButton({ id, amount, currency = "BRL" }: { id: string; a
       setError(t("errorInvalidAmount"));
       return;
     }
+    // Never paid without an amount above zero (the app's #216).
+    if (inputVal.trim() && parsed !== null && parsed <= 0) {
+      setShowAmount(true);
+      setError(t("amountFirst"));
+      return;
+    }
     const finalAmount = inputVal.trim() ? parsed! : amount ?? 0;
     setError("");
     startTransition(async () => {
@@ -161,6 +168,64 @@ export function MarkPaidButton({ id, amount, currency = "BRL" }: { id: string; a
       </button>
       {error && <p className="text-xs text-red-600">{error}</p>}
     </div>
+  );
+}
+
+// "Sem valor · Definir valor" (the app's #216, UX): an appointment without an
+// amount isn't to-receive yet; this sets one (above zero), prefilled with the
+// price of the active procedure of the same name. Nothing else changes.
+export function SetAmountButton({ id, suggested, currency = "BRL" }: { id: string; suggested?: number | null; currency?: Currency }) {
+  const t = useTranslations("payments");
+  const [pending, startTransition] = useTransition();
+  const [open, setOpen] = useState(false);
+  const [inputVal, setInputVal] = useState(suggested && suggested > 0 ? String(suggested) : "");
+  const [error, setError] = useState("");
+  const parsed = parseMoney(inputVal);
+
+  function save() {
+    if (parsed === null) { setError(t(inputVal.trim() ? "errorInvalidAmount" : "amountFirst")); return; }
+    if (parsed <= 0) { setError(t("amountFirst")); return; }
+    setError("");
+    startTransition(async () => {
+      const r = await setPaymentAmount(id, parsed);
+      if (r?.error) setError(t((ERROR_CODE_KEY[r.code ?? ""] ?? "errorGeneric") as Parameters<typeof t>[0]));
+      else setOpen(false);
+    });
+  }
+
+  return (
+    <span className="inline-flex flex-col items-start gap-1">
+      <span className="text-xs font-semibold text-slate-500">
+        {t("noAmount")}
+        {!open && (
+          <>
+            {" · "}
+            <button type="button" onClick={() => setOpen(true)} className="font-bold text-teal-700 hover:underline">{t("setAmount")}</button>
+          </>
+        )}
+      </span>
+      {open && (
+        <span className="flex items-center gap-2">
+          <input
+            type="text"
+            inputMode="decimal"
+            autoComplete="off"
+            autoFocus
+            value={inputVal}
+            onChange={(e) => { setInputVal(e.target.value); setError(""); }}
+            placeholder={currencySymbol(currency) ? t("amountPlaceholder", { symbol: currencySymbol(currency) }) : t("amountPlaceholderPlain")}
+            aria-label={t("setAmount")}
+            className="w-28 rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
+          />
+          <button type="button" onClick={save} disabled={pending} className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-teal-700 disabled:opacity-60">
+            {pending ? "…" : t("confirm")}
+          </button>
+          <button type="button" onClick={() => { setOpen(false); setError(""); }} className="rounded-lg px-2 py-1.5 text-xs text-slate-400 hover:text-slate-600">{t("cancel")}</button>
+        </span>
+      )}
+      {open && parsed !== null && parsed > 0 && !error && <span className="text-xs text-slate-500">= {formatMoney(parsed, currency)}</span>}
+      {error && <span className="text-xs text-red-600">{error}</span>}
+    </span>
   );
 }
 

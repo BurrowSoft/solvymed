@@ -19,7 +19,7 @@ vi.mock("@/lib/supabase/server", () => ({
     auth: { getUser: async () => ({ data: { user: { id: "doc-1" } } }) },
     from: () => {
       const q: Record<string, unknown> = {};
-      for (const m of ["select", "eq", "in", "gte", "lte", "order", "neq"]) q[m] = () => q;
+      for (const m of ["select", "eq", "in", "gt", "gte", "lte", "order", "neq"]) q[m] = () => q;
       q.or = (f: string) => { h.ors.push(f); return q; };
       q.then = (res: (v: unknown) => unknown) => Promise.resolve({ data: [], error: null, count: 1 }).then(res);
       return q;
