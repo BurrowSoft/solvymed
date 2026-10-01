@@ -718,10 +718,8 @@
       "secretaryNeedsInvite": "Lavori in segreteria? Chiedi un link di invito al tuo studio.",
       "secretaryEmailMismatch": "Questa email non corrisponde all'invito, oppure l'invito non è più valido. Controlla l'email o chiedi un nuovo link allo studio.",
       "consentCheckbox": "Ho letto e accetto i <terms>Termini di utilizzo</terms> e l'<privacy>Informativa sulla privacy</privacy>",
-      "country": "Dove si trova il tuo studio?",
-      "countryHint": "Imposta la valuta, il prezzo del piano, il documento del paziente e il QR di pagamento. Per cambiarlo in seguito, contatta l'assistenza.",
       "fullNameHint": "Se vuoi, aggiungi il tuo titolo ({titles}): compare nei saluti.",
-      "countryRequired": "Scegli il paese del tuo studio."
+      "backToCountry": "Indietro"
     },
     "forgotPassword": {
       "title": "Password dimenticata?",

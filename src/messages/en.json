@@ -718,10 +718,8 @@
       "secretaryNeedsInvite": "Secretary? Ask your doctor for an invite link.",
       "secretaryEmailMismatch": "This email doesn't match the invitation, or the invitation is no longer valid. Check the email, or ask the clinic for a new link.",
       "consentCheckbox": "I have read and accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>",
-      "country": "Where is your practice?",
-      "countryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it later, contact support.",
       "fullNameHint": "Add your title if you like ({titles}); it appears in greetings.",
-      "countryRequired": "Choose your clinic's country."
+      "backToCountry": "Back"
     },
     "forgotPassword": {
       "title": "Forgot your password?",

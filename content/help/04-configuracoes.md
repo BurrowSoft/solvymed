@@ -5,13 +5,13 @@
 **pt-BR**
 1. **Configurações → Meu perfil**: nome e especialidade.
 2. **Configurações → Cadastros**: seu registro profissional (ex.: "CRM 12345/SP"). Ele aparece nas receitas e documentos em PDF.
-{pending:app-1.4.0} Ao criar a conta de médico no app, você escolhe o país da clínica (Brasil ou Tailândia), já sugerido pela região do celular quando é um deles. Ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar depois, fale com support@solvymed.com. Pacientes e secretárias não fazem essa escolha.
+{pending:app-1.4.0} No primeiro uso, o app pergunta **Onde você está?**: toque em **Brasil** ou **ประเทศไทย**. Para médicos, esse é o país da clínica. Ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar depois, fale com support@solvymed.com. Pacientes e secretárias não fazem essa escolha.
 **en**
 1. **Settings → My profile**: name and specialty.
 2. **Settings → Registrations**: your professional registration (e.g. "CRM 12345/SP"). It appears on prescriptions and PDF documents.
-{pending:app-1.4.0} When you create a doctor account in the app, you choose the clinic's country (Brazil or Thailand), preselected from the phone's region when it's one of them. It sets the currency, the plan price, the patient ID field and the payment QR. To change it later, contact support@solvymed.com. Patients and secretaries don't make this choice.
-**No site:** **Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: "CRM 12345/SP"), no mesmo cartão. Em **Configurações → Clínica**: o **CNPJ** (clínicas no Brasil) ou o **Nº de identificação fiscal (13 dígitos)** (clínicas na Tailândia). O país da clínica é escolhido ao criar a conta de médico (Brasil ou Tailândia) e aparece em **Configurações → País do consultório**; ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar, fale com support@solvymed.com.
-**On the website:** **Settings → Profile**: name, specialty and **Professional registration** (e.g. "CRM 12345/SP"), on the same card. In **Settings → Clinic**: the **CNPJ** (clinics in Brazil) or the **Tax ID (13 digits)** (clinics in Thailand). The clinic's country is chosen when the doctor account is created (Brazil or Thailand) and shows in **Settings → Practice country**; it sets the currency, the plan price, the patient ID field and the payment QR. To change it, contact support@solvymed.com.
+{pending:app-1.4.0} The first time you open the app, it asks **Where are you?**: tap **Brasil** or **ประเทศไทย**. For doctors, that's the clinic's country. It sets the currency, the plan price, the patient ID field and the payment QR. To change it later, contact support@solvymed.com. Patients and secretaries don't make this choice.
+**No site:** **Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: "CRM 12345/SP"), no mesmo cartão. Em **Configurações → Clínica**: o **CNPJ** (clínicas no Brasil) ou o **Nº de identificação fiscal (13 dígitos)** (clínicas na Tailândia). O país da clínica é o primeiro passo do cadastro (**Onde você está?** → **Brasil** ou **ประเทศไทย**; a seta ← volta a essa escolha) e aparece em **Configurações → País do consultório**; ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar, fale com support@solvymed.com.
+**On the website:** **Settings → Profile**: name, specialty and **Professional registration** (e.g. "CRM 12345/SP"), on the same card. In **Settings → Clinic**: the **CNPJ** (clinics in Brazil) or the **Tax ID (13 digits)** (clinics in Thailand). The clinic's country is the first step of signing up (**Where are you?** → **Brasil** or **ประเทศไทย**; the ← arrow goes back to that choice) and shows in **Settings → Practice country**; it sets the currency, the plan price, the patient ID field and the payment QR. To change it, contact support@solvymed.com.
 `open:settings-profile`
 
 ---
@@ -84,14 +84,14 @@ On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings
 ## C8. Idioma e tema / Language and theme
 **pt-BR**
 **Configurações → Idioma** e **Tema** (claro, escuro ou do sistema). Algumas partes mudam de idioma depois de reabrir o app.
-{pending:app-1.4.0} O app está em português, inglês, espanhol, francês, alemão, italiano e tailandês (ไทย): o tailandês aparece na escolha de idioma do início, no seletor de idioma e em **Configurações → Idioma**, e um celular em tailandês abre o app em tailandês.
+{pending:app-1.4.0} O idioma segue o país: no Brasil, português ou inglês; na Tailândia, tailandês ou inglês. Na pergunta **Onde você está?**, marque **Use the app in English** para usar em inglês; depois, troque em **Configurações → Idioma**.
 {pending:saved-locale-live} As notificações que você recebe chegam no idioma que você escolheu por último, no app ou no site (português, inglês, espanhol, francês, alemão, italiano ou tailandês; nos outros idiomas do site, vale o último destes que você escolheu).
 **en**
 **Settings → Language** and **Theme** (light, dark or system). Some parts switch language after you reopen the app.
-{pending:app-1.4.0} The app is in Portuguese, English, Spanish, French, German, Italian and Thai (ไทย): Thai is in the first-run language choice, the language picker and **Settings → Language**, and a phone set to Thai opens the app in Thai.
+{pending:app-1.4.0} The language follows the country: in Brazil, Portuguese or English; in Thailand, Thai or English. On the **Where are you?** question, tick **Use the app in English** to use it in English; later, switch in **Settings → Language**.
 {pending:saved-locale-live} The notifications you receive arrive in the language you last chose, in the app or on the website (Portuguese, English, Spanish, French, German, Italian or Thai; the website's other languages keep the last of these you chose).
-**No site:** O idioma muda no seletor de idioma do menu lateral. O tema fica em **Configurações → Aparência** (Automático, Claro ou Escuro) e vale para este navegador; impressões e e-mails ficam sempre claros.
-**On the website:** Change the language with the language selector in the side menu. The theme is in **Settings → Appearance** (Automatic, Light or Dark) and applies to this browser; prints and emails always stay light.
+**No site:** O idioma muda no seletor de idioma do menu lateral: português ou inglês (clínicas no Brasil), tailandês ou inglês (clínicas na Tailândia). No cadastro, marque **Use SolvyMed in English** para usar em inglês. O tema fica em **Configurações → Aparência** (Automático, Claro ou Escuro) e vale para este navegador; impressões e e-mails ficam sempre claros.
+**On the website:** Change the language with the language selector in the side menu: Portuguese or English (clinics in Brazil), Thai or English (clinics in Thailand). When signing up, tick **Use SolvyMed in English** to use it in English. The theme is in **Settings → Appearance** (Automatic, Light or Dark) and applies to this browser; prints and emails always stay light.
 `open:settings`
 
 ---

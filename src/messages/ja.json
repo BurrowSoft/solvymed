@@ -718,10 +718,8 @@
       "secretaryNeedsInvite": "受付スタッフの方は、医師に招待リンクを依頼してください。",
       "secretaryEmailMismatch": "このメールアドレスは招待と一致しないか、招待の有効期限が切れています。メールアドレスを確認するか、クリニックに新しいリンクを依頼してください。",
       "consentCheckbox": "<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>を読み、同意します",
-      "country": "クリニックの所在国は？",
-      "countryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。後で変更するにはサポートにご連絡ください。",
       "fullNameHint": "必要に応じて肩書き（{titles}）を付けてください。あいさつに表示されます。",
-      "countryRequired": "クリニックの国を選択してください。"
+      "backToCountry": "戻る"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",

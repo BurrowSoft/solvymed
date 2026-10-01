@@ -718,10 +718,8 @@
       "secretaryNeedsInvite": "¿Trabajas en secretaría? Pide un enlace de invitación a la clínica donde trabajas.",
       "secretaryEmailMismatch": "Este correo no coincide con la invitación, o la invitación ya no es válida. Revisa el correo o pide un nuevo enlace a la clínica.",
       "consentCheckbox": "He leído y acepto los <terms>Términos de uso</terms> y la <privacy>Política de privacidad</privacy>",
-      "country": "¿Dónde está tu consulta?",
-      "countryHint": "Define la moneda, el precio del plan, el documento del paciente y el QR de pago. Para cambiarlo después, contacta con soporte.",
       "fullNameHint": "Si quieres, añade tu título ({titles}): aparece en los saludos.",
-      "countryRequired": "Elige el país de tu clínica."
+      "backToCountry": "Volver"
     },
     "forgotPassword": {
       "title": "¿Olvidaste tu contraseña?",

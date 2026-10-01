@@ -1,21 +1,35 @@
 import { thaiEnabled } from "./publicLocales";
 
-// The practice-country picker at doctor signup (Sprint TH, TH-1): Brasil or
-// ประเทศไทย. "Other" is no longer offered (Vitor 1.4.0); practices already
-// stored with another country keep the registry's explicit default
-// (lib/country). It's stored once (professionals.country, migration 110)
-// and afterwards changes only through support.
+// The practice country at doctor signup (Sprint TH; country first, Vitor
+// 2026-10-01): Brasil or ประเทศไทย, chosen on the signup's first step.
+// "Other" is no longer offered; practices already stored with another
+// country keep the registry's explicit default (lib/country). It's stored
+// once (professionals.country, migration 110) and afterwards changes only
+// through support.
 
 export type CountryChoice = "BR" | "TH";
 
-// Pre-selection: the visitor's country when it's BR or TH, else the page
-// language (pt-BR → Brasil, th → Thailand), else none: the doctor picks.
-export function initialCountryChoice(detected: string | null | undefined, locale: string): CountryChoice | null {
-  const c = (detected ?? "").toUpperCase();
-  if (c === "BR" || c === "TH") return c;
-  if (locale === "th") return "TH";
-  if (locale === "pt-BR") return "BR";
-  return null;
+// The country step's choice, read back from ?country= (anything else = none).
+export function parseCountryChoice(raw: string | null | undefined): CountryChoice | null {
+  const c = (raw ?? "").toUpperCase();
+  return c === "BR" || c === "TH" ? c : null;
+}
+
+// The country step's buttons: the flag, the name in its own language, and
+// the language the signup continues in (unless "Use SolvyMed in English").
+export const COUNTRY_STEP: readonly { code: CountryChoice; flag: string; label: string; locale: string }[] = [
+  { code: "BR", flag: "🇧🇷", label: "Brasil", locale: "pt-BR" },
+  { code: "TH", flag: "🇹🇭", label: "ประเทศไทย", locale: "th" },
+];
+
+// The signup page in a language, keeping its query, with ?country= set (a
+// choice) or removed (back to the step).
+export function countryStepHref(country: CountryChoice | null, locale: string, params: { toString(): string }): string {
+  const q = new URLSearchParams(params.toString());
+  if (country) q.set("country", country);
+  else q.delete("country");
+  const qs = q.toString();
+  return `${locale === "en" ? "" : `/${locale}`}/auth/signup${qs ? `?${qs}` : ""}`;
 }
 
 // The signup metadata for the practice country. Before the Thai release

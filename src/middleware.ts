@@ -1,5 +1,5 @@
 import createMiddleware from "next-intl/middleware";
-import { isPublicLocale, publicLocales } from "@/lib/publicLocales";
+import { isPublicLocale, isRetiredLocale, publicLocales } from "@/lib/publicLocales";
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
@@ -75,7 +75,9 @@ export async function middleware(req: NextRequest) {
   if (hasLocalePrefix && !isPublicLocale(firstSegment)) {
     const url = req.nextUrl.clone();
     url.pathname = pathname.slice(firstSegment.length + 1) || "/";
-    const res = withAuthCookies(NextResponse.redirect(url, { status: 307 }));
+    // A retired language (country first) is gone for good: 308. Thai
+    // switched off may come back: 307.
+    const res = withAuthCookies(NextResponse.redirect(url, { status: isRetiredLocale(firstSegment) ? 308 : 307 }));
     if (hiddenCookie) res.cookies.delete("NEXT_LOCALE");
     return res;
   }

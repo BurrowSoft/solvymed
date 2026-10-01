@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useState, useRef, useEffect } from "react";
 import { nameInitial } from "@/lib/doctorName";
+import { OFFERED_LOCALES } from "@/lib/publicLocales";
 
 interface Props {
   locale: string;
@@ -13,6 +14,9 @@ interface Props {
   email: string;
   photoUrl?: string | null;
   isSecretary?: boolean;
+  // The practice country's languages (country first): the switcher offers
+  // only these, and a page in another language moves to the first.
+  languages?: readonly string[];
 }
 
 const LOCALES: { code: string; label: string; short: string }[] = [
@@ -78,12 +82,13 @@ const GlobeIcon = () => (
   </svg>
 );
 
-function LanguageSwitcher({ locale }: { locale: string }) {
+function LanguageSwitcher({ locale, languages }: { locale: string; languages: readonly string[] }) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const current = LOCALES.find(l => l.code === locale) ?? LOCALES[0];
+  const offered = LOCALES.filter(l => languages.includes(l.code));
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -93,7 +98,15 @@ function LanguageSwitcher({ locale }: { locale: string }) {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  function switchLocale(newLocale: string) {
+  // A language outside the practice country's pair (e.g. Thai in a
+  // Brazilian practice): the same page in the country's language. English
+  // is in every pair, so an English choice stays.
+  useEffect(() => {
+    if (languages.length && !languages.includes(locale)) switchLocale(languages[0], true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locale, languages]);
+
+  function switchLocale(newLocale: string, replace = false) {
     const pathWithoutLocale = pathname.replace(LOCALE_RE, "/");
     const newPath = newLocale === "en" ? pathWithoutLocale : `/${newLocale}${pathWithoutLocale}`;
     setOpen(false);
@@ -101,7 +114,8 @@ function LanguageSwitcher({ locale }: { locale: string }) {
     // prefix, so with the old cookie (e.g. pt-BR) the middleware sent the
     // unprefixed URL straight back to /pt-BR/… (d7).
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; samesite=lax`;
-    router.push(newPath);
+    if (replace) router.replace(newPath);
+    else router.push(newPath);
   }
 
   return (
@@ -118,7 +132,7 @@ function LanguageSwitcher({ locale }: { locale: string }) {
       {open && (
         <div className="absolute bottom-full left-3 right-3 mb-1 z-50 rounded-xl border border-slate-100 bg-white shadow-lg overflow-hidden">
           <div className="max-h-60 overflow-y-auto py-1">
-            {LOCALES.map(loc => (
+            {offered.map(loc => (
               <button
                 key={loc.code}
                 onClick={() => switchLocale(loc.code)}
@@ -144,7 +158,7 @@ function LanguageSwitcher({ locale }: { locale: string }) {
   );
 }
 
-export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecretary = false }: Props) {
+export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecretary = false, languages = OFFERED_LOCALES }: Props) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const router = useRouter();
@@ -275,7 +289,7 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
         </div>
 
         <NavLinks />
-        <LanguageSwitcher locale={locale} />
+        <LanguageSwitcher locale={locale} languages={languages} />
         <UserPanel />
       </aside>
     </>
