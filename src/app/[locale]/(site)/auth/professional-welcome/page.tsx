@@ -9,6 +9,7 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
+import { OpenInApp } from "@/components/OpenInApp";
 
 // Shown once, right after a professional confirms their email (first-run
 // spec §1). "Start setup" opens the dashboard with the setup checklist
@@ -30,6 +31,7 @@ export default function ProfessionalWelcomePage() {
     <AuthPageShell>
       <AuthCard centered>
         <BrandMark />
+        <OpenInApp />
 
         <IconBadge>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="icon-status">

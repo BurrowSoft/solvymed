@@ -15,8 +15,19 @@ export const thaiLanguagePublic = process.env.NEXT_PUBLIC_THAI_ENABLED?.trim() !
 // "0" is the off switch for both.
 export const thaiEnabled = thaiLanguagePublic;
 
+// Country first (Vitor, 2026-10-01): the site speaks the two countries'
+// languages and English. The other 12 message files stay in the repo (a
+// future expansion) but aren't offered: their URLs 308 to English, and
+// they're out of the switchers, detection and hreflang.
+export const OFFERED_LOCALES: readonly string[] = ["en", "pt-BR", "th"];
+
+// A routed language that's no longer offered (not Thai switched off).
+export function isRetiredLocale(locale: string): boolean {
+  return (routing.locales as readonly string[]).includes(locale) && !OFFERED_LOCALES.includes(locale);
+}
+
 export function isPublicLocale(locale: string, enabled = thaiLanguagePublic): boolean {
-  return locale !== "th" || enabled;
+  return OFFERED_LOCALES.includes(locale) && (locale !== "th" || enabled);
 }
 
 export function publicLocales(enabled = thaiLanguagePublic): string[] {

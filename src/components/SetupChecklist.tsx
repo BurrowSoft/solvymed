@@ -12,10 +12,11 @@ import { ShareInviteLinkButton } from "@/components/ShareInviteLinkButton";
 // the step. "Start setup" on the welcome page opens it expanded (?setup=1).
 // paymentQr: the practice country's payment QR (Pix in Brazil, PromptPay in
 // Thailand, none elsewhere): the "Also useful" payment chip follows it.
-export function SetupChecklist({ progress, locale, inviteCode, expanded: initiallyExpanded, paymentQr = null }: {
+export function SetupChecklist({ progress, locale, inviteCode, expanded: initiallyExpanded, paymentQr = null, country = null }: {
   progress: SetupProgress;
   locale: string;
   inviteCode: string | null;
+  country?: string | null;
   expanded: boolean;
   paymentQr?: "pix" | "promptpay" | null;
 }) {
@@ -54,7 +55,7 @@ export function SetupChecklist({ progress, locale, inviteCode, expanded: initial
     { key: "procedure", done: progress.procedure_done, cta: <CtaLink href={`${prefix}/dashboard/settings#procedures`}>{t("procedureCta")}</CtaLink> },
     { key: "patient", done: progress.patient_done, cta: <CtaLink href={`${prefix}/dashboard/patients?new=1`}>{t("patientCta")}</CtaLink> },
     { key: "appointment", done: progress.appointment_done, cta: <CtaLink href={`${prefix}/dashboard/schedule?new=1`}>{t("appointmentCta")}</CtaLink> },
-    { key: "invite", done: progress.invite_shared, cta: <ShareInviteLinkButton code={inviteCode} size="sm" /> },
+    { key: "invite", done: progress.invite_shared, cta: <ShareInviteLinkButton code={inviteCode} country={country} size="sm" /> },
   ];
 
   return (

@@ -98,7 +98,18 @@
     "noUpcoming": "Keine bevorstehenden Termine",
     "unpaidSessions": "{n, plural, one {# unbezahlte Sitzung} other {# unbezahlte Sitzungen}}",
     "pendingCollection": "{amount} ausstehende Zahlung",
-    "managePayments": "Zahlungen verwalten"
+    "managePayments": "Zahlungen verwalten",
+    "invitedTitle": "{n, plural, one {# neuer Patient über Ihre Einladung} other {# neue Patienten über Ihre Einladung}}",
+    "invitedHint": "Sie sind mit Ihrem Praxiscode beigetreten. Behalten Sie Ihre Patienten; Entfernen trennt das Konto (die Akte wird archiviert).",
+    "invitedKeep": "Behalten",
+    "invitedRemove": "Entfernen",
+    "invitedError": "Speichern fehlgeschlagen. Bitte erneut versuchen.",
+    "invitedSeeAll": "Alle in Patienten ansehen",
+    "invitedSameEmail": "Gleiche E-Mail wie {name}: zusammenführen?",
+    "invitedRemoveConfirm": "{name} entfernen? Das Konto wartet wieder auf Ihre Bestätigung, und der Eintrag wird archiviert.",
+    "invitedRemoveConfirmDisconnect": "{name} entfernen? Das Konto wird von Ihrer Praxis getrennt, offene Anfragen werden storniert (der Patient wird benachrichtigt) und der Eintrag archiviert. Um ihn wieder aufzunehmen, stellen Sie den Eintrag unter Archiviert wieder her und teilen Sie den persönlichen Code des Patienten.",
+    "requestsWaiting": "{n, plural, one {# Terminanfrage wartet auf Ihre Bestätigung} other {# Terminanfragen warten auf Ihre Bestätigung}}",
+    "requestsWaitingOpen": "Anfragen ansehen"
   },
   "schedule": {
     "patientMessage": "Nachricht des Patienten",
@@ -134,9 +145,6 @@
     "dur90": "1,5 Stunden",
     "dur120": "2 Stunden",
     "dur240": "4 Stunden",
-    "noProcedures": "Keine Prozeduren konfiguriert.",
-    "addProcSettings": "Prozeduren in Einstellungen hinzufügen",
-    "beforeScheduling": "vor der Planung.",
     "cancel": "Abbrechen",
     "saveAppt": "Termin speichern",
     "repeat": "Wiederholen",
@@ -232,7 +240,22 @@
     "undoAction": "Rückgängig ({s} s)",
     "undoDone": "Rückgängig gemacht.",
     "undoFailed": "Rückgängig machen nicht möglich. Öffnen Sie den Eintrag, um ihn anzupassen.",
-    "newPatientOption": "Ohne Patientenakte buchen: {name}"
+    "newPatientOption": "Ohne Patientenakte buchen: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "Diese Woche",
@@ -323,7 +346,9 @@
     "nextPage": "Weiter",
     "pagesLabel": "Seiten",
     "fullNamePlaceholder": "Vollständiger Name",
-    "professionPlaceholder": "z.B. Ingenieur, Lehrer…"
+    "professionPlaceholder": "z.B. Ingenieur, Lehrer…",
+    "invitedBadge": "Neu, per Einladung",
+    "invitedSameEmail": "Gleiche E-Mail wie {name}: zusammenführen?"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -674,7 +699,14 @@
     "orCustomTime": "Oder eigene Uhrzeit",
     "professionalFallback": "Gesundheitsfachkraft",
     "errorArchived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis.",
-    "practiceInactive": "Diese Praxis nimmt derzeit keine Online-Buchungen an."
+    "practiceInactive": "Diese Praxis nimmt derzeit keine Online-Buchungen an.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today."
   },
   "auth": {
     "passwordTooShort": "Das Passwort muss mindestens {min} Zeichen lang sein.",
@@ -718,10 +750,8 @@
       "secretaryNeedsInvite": "Im Praxisteam tätig? Bitten Sie Ihre Praxis um einen Einladungslink.",
       "secretaryEmailMismatch": "Diese E-Mail-Adresse passt nicht zur Einladung, oder die Einladung ist nicht mehr gültig. Prüfen Sie die Adresse oder bitten Sie die Praxis um einen neuen Link.",
       "consentCheckbox": "Ich habe die <terms>Nutzungsbedingungen</terms> und die <privacy>Datenschutzerklärung</privacy> gelesen und akzeptiere sie",
-      "country": "Wo ist Ihre Praxis?",
-      "countryOther": "Anderes Land",
-      "countryHint": "Legt Währung, Tarifpreis, Patientenausweis und Zahlungs-QR fest. Für eine spätere Änderung wenden Sie sich an den Support.",
-      "fullNameHint": "Fügen Sie auf Wunsch Ihren Titel hinzu ({titles}); er erscheint in der Begrüßung."
+      "fullNameHint": "Fügen Sie auf Wunsch Ihren Titel hinzu ({titles}); er erscheint in der Begrüßung.",
+      "backToCountry": "Zurück"
     },
     "forgotPassword": {
       "title": "Passwort vergessen?",
@@ -750,7 +780,9 @@
     "backToHome": "Zur Startseite",
     "patientWelcome": {
       "countdown": "Sie werden in {count, plural, one {# Sekunde} other {# Sekunden}} zu Ihren Terminen weitergeleitet…",
-      "goToAppointments": "Zu meinen Terminen"
+      "goToAppointments": "Zu meinen Terminen",
+      "heading": "Alles bereit!",
+      "confirmed": "Ihr Konto wurde bestätigt."
     },
     "inviteRequired": {
       "heading": "Ein Einladungscode wird benötigt",
@@ -766,7 +798,12 @@
       "backToSignup": "Anderes Konto verwenden",
       "tooManyAttempts": "Zu viele Versuche. Bitte warten Sie einen Moment, bevor Sie es erneut versuchen.",
       "alreadyInvitedByAnother": "Ihr Konto ist bereits mit einer anderen Praxis verbunden.",
-      "archived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis."
+      "archived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis.",
+      "alreadyConnected": "Sie sind bereits mit {doctor} verbunden. Zum Wechseln wenden Sie sich an den Support.",
+      "alreadyConnectedNoName": "Sie sind bereits mit einer anderen Praxis verbunden. Zum Wechseln wenden Sie sich an den Support.",
+      "alreadyConnectedSamePractice": "Sie sind bereits mit {doctor} verbunden. Bitten Sie die Praxis, Ihre Einträge zusammenzuführen.",
+      "alreadyConnectedSamePracticeNoName": "Sie sind bereits mit dieser Praxis verbunden. Bitten Sie die Praxis, Ihre Einträge zusammenzuführen.",
+      "codeUnavailable": "Mit diesem Code ist keine Verbindung möglich. Bitte wenden Sie sich an die Praxis."
     },
     "pendingConfirmation": {
       "loading": "Status wird geprüft…",
@@ -834,7 +871,22 @@
     "rescheduleRequestedLabel": "Terminverschiebung angefragt: {date} · {time}",
     "rescheduleButton": "Verschiebung beantragen",
     "closeDialog": "Schließen",
-    "originallyLabel": "Ursprünglich: {date} · {time}"
+    "originallyLabel": "Ursprünglich: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "Abgelehnt",
+    "cancelContactClinic": "To cancel, contact the clinic.",
+    "statusNotConfirmed": "Not confirmed",
+    "proposalPassed": "This time has already passed. Ask the clinic for a new time.",
+    "cancelRequest": "Cancel request",
+    "cancelRequestTitle": "Cancel this request?",
+    "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
+    "keepRequest": "Keep request",
+    "requestCancelledToast": "Request cancelled."
   },
   "nav": {
     "overview": "Übersicht",
@@ -1147,7 +1199,6 @@
   "pricing": {
     "navLabel": "Preise",
     "countryLabel": "Preise für:",
-    "countryOther": "Andere Länder",
     "title": "Ein einfacher Tarif. Alles inklusive.",
     "subtitle": "Keine Einrichtungsgebühr, keine Kosten pro Patient, keine Überraschungen.",
     "perMonth": "/Monat",
@@ -1809,5 +1860,12 @@
     "tryNow": "Jetzt ausprobieren",
     "later": "Später",
     "whatCanDo": "Was kann SolvyAI?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "Aktualisieren"
   }
 }

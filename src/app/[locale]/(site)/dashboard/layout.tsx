@@ -20,6 +20,7 @@ import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { cookies } from "next/headers";
 import { THEME_COOKIE, parseTheme } from "@/lib/theme";
+import { OpenInApp } from "@/components/OpenInApp";
 
 function isVersionBelow(current: string, minimum: string): boolean {
   const parse = (v: string) => v.split(".").map(n => parseInt(n, 10) || 0);
@@ -171,7 +172,10 @@ export default async function DashboardLayout({
   const panelOn = solvyAiPanelOn({ isSecretary, sub });
   const introPending = solvyAiIntroOn({ isSecretary, sub })
     && (await readTourState(supabase, user.id, SOLVYAI_INTRO_TOUR)).kind === "none";
-  const paymentQr = isSecretary ? null : countryProfile(await getPracticeCountry(supabase, user.id, user.id)).paymentQr;
+  // The practice country: the payment QR (doctors) and the two languages
+  // offered (country first: its language + English, Vitor 2026-10-01).
+  const practice = countryProfile(await getPracticeCountry(supabase, user.id, isSecretary ? roleRow.invited_by_professional_id! : user.id));
+  const paymentQr = isSecretary ? null : practice.paymentQr;
 
   let trialChipText = "";
   if (showTrialChip) {
@@ -204,8 +208,10 @@ export default async function DashboardLayout({
           email={user.email ?? ""}
           photoUrl={professional?.photo_url}
           isSecretary={isSecretary}
+          languages={practice.languages}
         />
         <div className="flex flex-1 flex-col overflow-hidden">
+          <div className="px-4 pt-3 empty:hidden lg:hidden"><OpenInApp onlyWithParam /></div>
           {showTrialChip && (
             // Below lg this row is as tall as the ☰ button's corner (top-4 + 40px),
             // so nothing under it starts beneath the button (Vitor, phone).

@@ -98,7 +98,18 @@
     "noUpcoming": "今後の予約はありません",
     "unpaidSessions": "{n}件の未払いセッション",
     "pendingCollection": "{amount} が未回収",
-    "managePayments": "支払い管理"
+    "managePayments": "支払い管理",
+    "invitedTitle": "招待経由の新しい患者 {n} 人",
+    "invitedHint": "クリニックのコードで参加しました。自院の患者は「保持」、「削除」はアカウントの接続を解除します（記録はアーカイブされます）。",
+    "invitedKeep": "保持",
+    "invitedRemove": "削除",
+    "invitedError": "保存できませんでした。もう一度お試しください。",
+    "invitedSeeAll": "患者一覧ですべて表示",
+    "invitedSameEmail": "{name} と同じメール：統合しますか？",
+    "invitedRemoveConfirm": "{name} を削除しますか？アカウントはあなたの確認待ちに戻り、記録はアーカイブされます。",
+    "invitedRemoveConfirmDisconnect": "{name} を削除しますか？アカウントはクリニックから切断され、保留中のリクエストはキャンセルされ（患者に通知されます）、記録はアーカイブされます。再び受け入れるには、アーカイブから記録を復元し、患者の個人コードを共有してください。",
+    "requestsWaiting": "確認待ちの予約リクエストが {n} 件あります",
+    "requestsWaitingOpen": "リクエストを見る"
   },
   "schedule": {
     "patientMessage": "患者からのメッセージ",
@@ -134,9 +145,6 @@
     "dur90": "1.5時間",
     "dur120": "2時間",
     "dur240": "4時間",
-    "noProcedures": "処置が設定されていません。",
-    "addProcSettings": "設定で処置を追加してください",
-    "beforeScheduling": "予約前に。",
     "cancel": "キャンセル",
     "saveAppt": "予約を保存",
     "repeat": "繰り返し",
@@ -232,7 +240,22 @@
     "undoAction": "取り消す（{s} 秒）",
     "undoDone": "取り消しました。",
     "undoFailed": "元に戻せませんでした。項目を開いて調整してください。",
-    "newPatientOption": "記録を作らずに予約：{name}"
+    "newPatientOption": "記録を作らずに予約：{name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "今週",
@@ -323,7 +346,9 @@
     "nextPage": "次へ",
     "pagesLabel": "ページ",
     "fullNamePlaceholder": "氏名",
-    "professionPlaceholder": "例：エンジニア、教師…"
+    "professionPlaceholder": "例：エンジニア、教師…",
+    "invitedBadge": "新規・招待経由",
+    "invitedSameEmail": "{name} と同じメール：統合しますか？"
   },
   "patientDetail": {
     "tabInfo": "情報",
@@ -674,7 +699,14 @@
     "orCustomTime": "または時間を指定する",
     "professionalFallback": "担当者",
     "errorArchived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。",
-    "practiceInactive": "このクリニックは現在オンライン予約を受け付けていません。"
+    "practiceInactive": "このクリニックは現在オンライン予約を受け付けていません。",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today."
   },
   "auth": {
     "passwordTooShort": "パスワードは{min}文字以上である必要があります。",
@@ -718,10 +750,8 @@
       "secretaryNeedsInvite": "受付スタッフの方は、医師に招待リンクを依頼してください。",
       "secretaryEmailMismatch": "このメールアドレスは招待と一致しないか、招待の有効期限が切れています。メールアドレスを確認するか、クリニックに新しいリンクを依頼してください。",
       "consentCheckbox": "<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>を読み、同意します",
-      "country": "クリニックの所在国は？",
-      "countryOther": "その他の国",
-      "countryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。後で変更するにはサポートにご連絡ください。",
-      "fullNameHint": "必要に応じて肩書き（{titles}）を付けてください。あいさつに表示されます。"
+      "fullNameHint": "必要に応じて肩書き（{titles}）を付けてください。あいさつに表示されます。",
+      "backToCountry": "戻る"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",
@@ -750,7 +780,9 @@
     "backToHome": "ホームに戻る",
     "patientWelcome": {
       "countdown": "{count}秒後に予約一覧に移動します…",
-      "goToAppointments": "予約一覧へ"
+      "goToAppointments": "予約一覧へ",
+      "heading": "準備完了です！",
+      "confirmed": "アカウントが確認されました。"
     },
     "inviteRequired": {
       "heading": "招待コードが必要です",
@@ -766,7 +798,12 @@
       "backToSignup": "別のアカウントを使う",
       "tooManyAttempts": "試行回数が多すぎます。しばらくしてからもう一度お試しください。",
       "alreadyInvitedByAnother": "あなたのアカウントはすでに別の医師と連携しています。",
-      "archived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。"
+      "archived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。",
+      "alreadyConnected": "すでに {doctor} とつながっています。変更するにはサポートにお問い合わせください。",
+      "alreadyConnectedNoName": "すでに別の医師とつながっています。変更するにはサポートにお問い合わせください。",
+      "alreadyConnectedSamePractice": "すでに {doctor} とつながっています。クリニックに記録の統合を依頼してください。",
+      "alreadyConnectedSamePracticeNoName": "すでにこのクリニックとつながっています。クリニックに記録の統合を依頼してください。",
+      "codeUnavailable": "このコードでは接続できませんでした。クリニックにお問い合わせください。"
     },
     "pendingConfirmation": {
       "loading": "状況を確認しています…",
@@ -834,7 +871,22 @@
     "rescheduleRequestedLabel": "再スケジュールリクエスト: {date} · {time}",
     "rescheduleButton": "再スケジュールをリクエスト",
     "closeDialog": "閉じる",
-    "originallyLabel": "変更前：{date} · {time}"
+    "originallyLabel": "変更前：{date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "拒否",
+    "cancelContactClinic": "To cancel, contact the clinic.",
+    "statusNotConfirmed": "Not confirmed",
+    "proposalPassed": "This time has already passed. Ask the clinic for a new time.",
+    "cancelRequest": "Cancel request",
+    "cancelRequestTitle": "Cancel this request?",
+    "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
+    "keepRequest": "Keep request",
+    "requestCancelledToast": "Request cancelled."
   },
   "nav": {
     "overview": "ホーム",
@@ -1147,7 +1199,6 @@
   "pricing": {
     "navLabel": "料金",
     "countryLabel": "料金の表示地域：",
-    "countryOther": "その他の国",
     "title": "シンプルな1プラン。すべて込み。",
     "subtitle": "初期費用なし、患者数による課金なし、追加料金なし。",
     "perMonth": "/月",
@@ -1809,5 +1860,12 @@
     "tryNow": "今すぐ試す",
     "later": "あとで",
     "whatCanDo": "SolvyAI で何ができる？"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "更新"
   }
 }

@@ -4,9 +4,10 @@ import { tourSteps } from "@/lib/tour";
 import { tourEntry } from "@/lib/tourState";
 
 const push = vi.fn();
+const prefetch = vi.fn();
 let pathname = "/dashboard";
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push }),
+  useRouter: () => ({ push, prefetch }),
   usePathname: () => pathname,
 }));
 vi.mock("next-intl", () => ({
@@ -179,6 +180,27 @@ describe("TourOverlay", () => {
     rerender(<TourOverlay steps={[steps[0], { ...steps[1], path: "/dashboard/settings" }]} prefix="" onClose={onClose} />);
     await act(async () => { vi.advanceTimersByTime(3500); });
     expect(onClose).toHaveBeenCalledWith("completed", 0);
+    vi.useRealTimers();
+  });
+
+  it("item 28: the next page is prefetched, and while a step waits for its page the card (and Skip) shows", async () => {
+    vi.useFakeTimers();
+    pathname = "/dashboard";
+    addTarget("a");
+    const onClose = vi.fn();
+    const two = [steps[0], { ...steps[1], path: "/dashboard/settings" }];
+    const { rerender } = render(<TourOverlay steps={two} prefix="" onClose={onClose} />);
+    await act(async () => { vi.advanceTimersByTime(400); });
+    expect(prefetch).toHaveBeenCalledWith("/dashboard/settings");
+    fireEvent.click(screen.getByText("next"));
+    pathname = "/dashboard/settings";
+    rerender(<TourOverlay steps={two} prefix="" onClose={onClose} />);
+    await act(async () => { vi.advanceTimersByTime(300); });
+    // Its element isn't there yet: the step's card is up, centred, with Skip.
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByText('progress:{"n":2,"total":2}', { selector: "p:not(.sr-only)" })).toBeInTheDocument();
+    fireEvent.click(screen.getByText("skipTour"));
+    expect(screen.getByText("skipConfirmTitle")).toBeInTheDocument();
     vi.useRealTimers();
   });
 
