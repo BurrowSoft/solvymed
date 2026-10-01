@@ -751,7 +751,8 @@
       "secretaryEmailMismatch": "Email ini tidak cocok dengan undangan, atau undangan sudah tidak berlaku. Periksa email Anda atau minta tautan baru ke klinik.",
       "consentCheckbox": "Saya telah membaca dan menyetujui <terms>Ketentuan Penggunaan</terms> dan <privacy>Kebijakan Privasi</privacy>",
       "fullNameHint": "Tambahkan gelar Anda jika mau ({titles}); gelar akan muncul di sapaan.",
-      "backToCountry": "Kembali"
+      "backToCountry": "Kembali",
+      "secretaryInviteFor": "This invite is for {email}."
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",
@@ -1023,7 +1024,13 @@
     "accountNotSecretary": "Akun ini tidak dapat menerima undangan sekretaris. Gunakan akun terpisah yang dibuat dari tautan undangan.",
     "teamResendConfirm": "Kirim undangan baru ke {email}? Kode yang Anda bagikan sebelumnya tidak akan berlaku lagi.",
     "inviteFrom": "Undangan dari {clinic}",
-    "inviteFor": "Undangan ini untuk {email}. Daftar dengan email tersebut."
+    "inviteFor": "Undangan ini untuk {email}. Daftar dengan email tersebut.",
+    "teamResendEmail": "Resend invite",
+    "teamResendAt": "You can resend at {time}",
+    "teamEmailSent": "Email sent to {email}",
+    "teamAlreadySent": "Invite sent. You can resend at {time}.",
+    "teamDailyLimit": "You've reached the limit of 10 invites a day. Try again at {time}.",
+    "teamSendFailed": "Couldn't send the email right now. Try again, or share the link."
   },
   "invitePage": {
     "metaTitle": "Undangan",
