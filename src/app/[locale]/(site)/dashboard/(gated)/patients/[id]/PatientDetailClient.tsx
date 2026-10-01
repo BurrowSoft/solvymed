@@ -1031,7 +1031,7 @@ function ArchiveDialog({ open, onClose, patient }: { open: boolean; onClose: () 
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
       <div className="flex gap-3 pt-5">
         <button type="button" onClick={onClose} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-        <button type="button" onClick={handleArchive} disabled={pending || loadingPreview} className="flex-1 rounded-xl bg-slate-800 py-2.5 text-sm font-bold text-white hover:bg-slate-900 transition disabled:opacity-60">
+        <button type="button" onClick={handleArchive} disabled={pending || loadingPreview} className="flex-1 rounded-xl bg-[#1e293b] py-2.5 text-sm font-bold text-[#ffffff] hover:bg-[#0f172a] transition disabled:opacity-60">
           {pending ? t("saving") : t("archiveConfirm")}
         </button>
       </div>

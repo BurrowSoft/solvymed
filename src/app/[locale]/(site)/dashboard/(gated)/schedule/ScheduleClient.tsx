@@ -709,7 +709,7 @@ export function BlockTimeButton({ defaultDate }: { defaultDate: string }) {
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-            <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-slate-700 py-2.5 text-sm font-bold text-white hover:bg-slate-800 transition disabled:opacity-60">
+            <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-[#334155] py-2.5 text-sm font-bold text-[#ffffff] hover:bg-[#1e293b] transition disabled:opacity-60">
               {pending ? t("saving") : t("blockTime")}
             </button>
           </div>
