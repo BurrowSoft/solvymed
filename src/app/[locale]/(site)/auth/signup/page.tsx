@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -19,6 +19,7 @@ import { browserTimeZone, COUNTRY_STEP, countryStepHref, parseCountryChoice, sig
 import { thaiEnabled } from "@/lib/publicLocales";
 import { consentMetadata } from "@/lib/legalVersions";
 import { titleExamples } from "@/lib/country";
+import { conditionMet } from "@/lib/conditions";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -50,6 +51,22 @@ export default function SignupPage() {
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  // The invite's own email, once secretary invites are emailed (151): shown
+  // and locked, so the account matches the invite. BROWSER ONLY, like the
+  // other invite RPCs; null (closed/unknown) or an error leaves it typed.
+  const [lockedEmail, setLockedEmail] = useState<string | null>(null);
+  useEffect(() => {
+    if (!isSecretaryFlow || !conditionMet("secretary-invite-email-live")) return;
+    let cancelled = false;
+    createClient()
+      .rpc("secretary_invite_email", { p_code: secretaryCode })
+      .then(({ data, error }) => {
+        if (cancelled || error || typeof data !== "string" || !data) return;
+        setLockedEmail(data);
+        setEmail(data);
+      });
+    return () => { cancelled = true; };
+  }, [isSecretaryFlow, secretaryCode]);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<Role>(isJoinFlow ? "patient" : isSecretaryFlow ? "secretary" : "professional");
@@ -389,9 +406,11 @@ export default function SignupPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              readOnly={!!lockedEmail}
               autoComplete="email"
-              className="text-input"
+              className={`text-input ${lockedEmail ? "bg-slate-50" : ""}`}
             />
+            {lockedEmail && <p data-testid="invite-email-locked" className="mt-1.5 text-xs text-slate-500">{t("signup.secretaryInviteFor", { email: lockedEmail })}</p>}
           </div>
           <div>
             <label className="field-label">{t("signup.password")}</label>

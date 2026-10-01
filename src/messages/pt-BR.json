@@ -751,7 +751,8 @@
       "secretaryEmailMismatch": "Este e-mail não corresponde ao convite, ou o convite não é mais válido. Confira o e-mail ou peça um novo link à clínica.",
       "consentCheckbox": "Li e aceito os <terms>Termos de Uso</terms> e a <privacy>Política de Privacidade</privacy>",
       "fullNameHint": "Se quiser, inclua seu título ({titles}): ele aparece nas saudações.",
-      "backToCountry": "Voltar"
+      "backToCountry": "Voltar",
+      "secretaryInviteFor": "Este convite é para {email}."
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",
@@ -886,7 +887,9 @@
     "cancelRequestTitle": "Cancelar este pedido?",
     "cancelRequestBody": "A clínica será avisada e o horário fica livre.",
     "keepRequest": "Manter pedido",
-    "requestCancelledToast": "Pedido cancelado."
+    "requestCancelledToast": "Pedido cancelado.",
+    "rescheduleLapsed": "Seu pedido de remarcação expirou.",
+    "rescheduleStarted": "Esta consulta já começou. Para mudanças, fale com a clínica."
   },
   "nav": {
     "overview": "Visão geral",
@@ -1028,7 +1031,13 @@
     "accountNotSecretary": "Esta conta não pode aceitar um convite para a equipe. Use uma conta separada criada pelo link de convite.",
     "teamResendConfirm": "Enviar um novo convite para {email}? O código compartilhado antes deixará de funcionar.",
     "inviteFrom": "Convite de {clinic}",
-    "inviteFor": "Este convite é para {email}. Cadastre-se com esse e-mail."
+    "inviteFor": "Este convite é para {email}. Cadastre-se com esse e-mail.",
+    "teamResendEmail": "Reenviar convite",
+    "teamResendAt": "Você poderá reenviar às {time}",
+    "teamEmailSent": "E-mail enviado para {email}",
+    "teamAlreadySent": "Convite enviado. Você poderá reenviar às {time}.",
+    "teamDailyLimit": "Você atingiu o limite de 10 convites por dia. Tente novamente às {time}.",
+    "teamSendFailed": "Não foi possível enviar o e-mail agora. Tente de novo ou compartilhe o link."
   },
   "invitePage": {
     "metaTitle": "Seu convite",
