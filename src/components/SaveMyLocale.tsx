@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { saveMyLocale } from "@/app/[locale]/(site)/dashboard/locale-actions";
 import { parseCountryChoice, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
+import { thaiLanguagePublic } from "@/lib/publicLocales";
 
 // Keeps the signed-in user's saved language (117) in step with the site's:
 // once per language per browser (it's rendered on every dashboard page, so
@@ -13,6 +14,9 @@ const TRIED_KEY = "solvymed_saved_locale_tried";
 
 export function SaveMyLocale({ locale }: { locale: string }) {
   useEffect(() => {
+    // With Thai switched off every page is English, so English isn't a
+    // choice then: never saved over a Thai user's language (9a).
+    if (!thaiLanguagePublic && locale === "en") return;
     // The signup's country pick (lib/signupCountry), saved with the language.
     const country = parseCountryChoice(document.cookie.split("; ").find((c) => c.startsWith(`${SIGNUP_COUNTRY_COOKIE}=`))?.split("=")[1]);
     try {

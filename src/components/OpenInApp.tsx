@@ -10,7 +10,8 @@ import { appOpenUrl } from "@/lib/appStores";
 // just hides it. iOS has no App Store build yet, so nothing is offered there.
 // onlyWithParam: shown only when the URL carries ?app=1 (the secretary's
 // first dashboard after confirming).
-export function OpenInApp({ onlyWithParam = false }: { onlyWithParam?: boolean }) {
+// onShown: told when the buttons are up (patient-welcome holds its countdown).
+export function OpenInApp({ onlyWithParam = false, onShown }: { onlyWithParam?: boolean; onShown?: (shown: boolean) => void }) {
   const t = useTranslations("openInApp");
   const [show, setShow] = useState(false);
 
@@ -21,6 +22,7 @@ export function OpenInApp({ onlyWithParam = false }: { onlyWithParam?: boolean }
     const phone = window.matchMedia?.("(max-width: 767px)").matches ?? false;
     setShow(android && phone);
   }, [onlyWithParam]);
+  useEffect(() => { onShown?.(show); }, [show, onShown]);
 
   if (!show) return null;
   return (
