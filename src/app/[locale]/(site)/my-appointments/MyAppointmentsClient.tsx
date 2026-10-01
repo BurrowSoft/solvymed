@@ -103,7 +103,9 @@ function RescheduleDialog({
       if (seq === seqRef.current) setSlots(result);
     } catch { if (seq === seqRef.current) setSlots([]); }
     finally { if (seq === seqRef.current) setLoadingSlots(false); }
-  }, [appt]);
+    // Primitives, not `appt`: the 60 s refresh (AutoRefresh) hands down a new
+    // object, which reloaded the slots and cleared the pick (3e).
+  }, [appt.professional_id, appt.start_time, appt.end_time]);
 
   useEffect(() => { loadSlots(selectedDate); }, [selectedDate, loadSlots]);
 
