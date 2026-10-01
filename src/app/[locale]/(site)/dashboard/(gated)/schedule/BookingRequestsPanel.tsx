@@ -50,6 +50,11 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const [isPending, startTransition] = useTransition();
+  // Which button is working (Vitor, item 20): it shows a spinner while the
+  // transition runs, and every button stays disabled until the action and
+  // the list refresh are done.
+  const [acting, setActing] = useState<string | null>(null);
+  const spin = (key: string) => (isPending && acting === key ? <span className="spinner-current mr-1.5" aria-hidden="true" /> : null);
   // "Now" is read after mount: the server (UTC) and a browser in another
   // zone disagree on which requests are past, which would reorder and
   // restyle the list between the server render and hydration (React #418).
@@ -105,6 +110,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
 
   function handleConfirmClick(b: Booking) {
     const note = notes[b.id] || undefined;
+    setActing(`confirm:${b.id}`);
     startTransition(async () => {
       const result = await confirmBookingAndAddPatient(b.id, note);
       // The patient's record at this clinic is archived (server-enforced).
@@ -114,6 +120,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
 
   function handleReject(id: string) {
     const note = notes[id] || undefined;
+    setActing(`reject:${id}`);
     startTransition(async () => { await rejectBooking(id, note); });
   }
 
@@ -210,11 +217,11 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                         {t("proposeNewTime")}
                       </button>
                       <button
-                        onClick={() => startTransition(async () => { await rejectBooking(b.id, undefined); })}
+                        onClick={() => { setActing(`dismiss:${b.id}`); startTransition(async () => { await rejectBooking(b.id, undefined); }); }}
                         disabled={isPending}
                         className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 disabled:opacity-50"
                       >
-                        {t("dismiss")}
+                        {spin(`dismiss:${b.id}`)}{t("dismiss")}
                       </button>
                     </div>
                   ) : (
@@ -226,7 +233,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                         disabled={isPending}
                         className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50"
                       >
-                        {t("confirm")}
+                        {spin(`confirm:${b.id}`)}{t("confirm")}
                       </button>
                       <button
                         onClick={() => setProposalId(proposalId === b.id ? null : b.id)}
@@ -240,7 +247,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                         disabled={isPending}
                         className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"
                       >
-                        {t("reject")}
+                        {spin(`reject:${b.id}`)}{t("reject")}
                       </button>
                     </div>
                   )}
@@ -257,7 +264,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                   {b.status === "proposal" && b.scheduled_by === "patient" && (
                     <div className="flex gap-2">
                       <button
-                        onClick={() => startTransition(async () => {
+                        onClick={() => { setActing(`accept:${b.id}`); startTransition(async () => {
                           const result = await acceptRescheduleRequest(b.id);
                           if (result.error === "slot_taken") {
                             alert(t("slotTakenAlert"));
@@ -266,20 +273,20 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                           } else if (result.error === "patient_archived") {
                             alert(t("patientArchivedError"));
                           }
-                        })}
+                        }); }}
                         disabled={isPending}
                         data-testid="reschedule-accept-button"
                         className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50"
                       >
-                        {t("accept")}
+                        {spin(`accept:${b.id}`)}{t("accept")}
                       </button>
                       <button
-                        onClick={() => startTransition(async () => { await declineRescheduleRequest(b.id); })}
+                        onClick={() => { setActing(`decline:${b.id}`); startTransition(async () => { await declineRescheduleRequest(b.id); }); }}
                         disabled={isPending}
                         data-testid="reschedule-decline-button"
                         className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"
                       >
-                        {t("decline")}
+                        {spin(`decline:${b.id}`)}{t("decline")}
                       </button>
                     </div>
                   )}
