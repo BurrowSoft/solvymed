@@ -323,20 +323,26 @@ export function BookingClient({
     })();
   }, [professionalId]);
 
-  // Load slots whenever date, duration, or working hours change
+  // Load slots whenever date, duration, or working hours change. Only the
+  // LATEST request may set them: a slow answer for a day the patient has
+  // already left would otherwise overwrite the new day's grid (3e).
+  const slotsSeq = useRef(0);
   const loadSlots = useCallback(
     async (date: string, dur: number) => {
+      const seq = ++slotsSeq.current;
       setLoadingSlots(true);
       setSelectedSlot(null);
       try {
         const s = await withTimeout(fetchSlots(professionalId, date, dur, workingHours, clinicTz));
+        if (seq !== slotsSeq.current) return;
         setSlots(s);
         setSlotsFor(date);
       } catch {
+        if (seq !== slotsSeq.current) return;
         setSlots([]);
         setLoadError(true);
       } finally {
-        setLoadingSlots(false);
+        if (seq === slotsSeq.current) setLoadingSlots(false);
       }
     },
     [professionalId, workingHours, clinicTz],
