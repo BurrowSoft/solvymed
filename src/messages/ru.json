@@ -750,7 +750,9 @@
     "backToHome": "На главную",
     "patientWelcome": {
       "countdown": "Переносим вас к вашим записям через {count, plural, one {# секунду} few {# секунды} many {# секунд} other {# секунды}}…",
-      "goToAppointments": "Перейти к моим записям"
+      "goToAppointments": "Перейти к моим записям",
+      "heading": "Всё готово!",
+      "confirmed": "Ваш аккаунт подтверждён."
     },
     "inviteRequired": {
       "heading": "Требуется код приглашения",

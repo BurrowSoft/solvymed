@@ -750,7 +750,9 @@
     "backToHome": "Kembali ke beranda",
     "patientWelcome": {
       "countdown": "Mengarahkan Anda ke janji temu dalam {count} detik…",
-      "goToAppointments": "Ke Janji Temu Saya"
+      "goToAppointments": "Ke Janji Temu Saya",
+      "heading": "Semua siap!",
+      "confirmed": "Akun Anda telah dikonfirmasi."
     },
     "inviteRequired": {
       "heading": "Kode undangan diperlukan",

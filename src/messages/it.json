@@ -750,7 +750,9 @@
     "backToHome": "Torna alla home",
     "patientWelcome": {
       "countdown": "Ti stiamo portando ai tuoi appuntamenti tra {count, plural, one {# secondo} other {# secondi}}…",
-      "goToAppointments": "Vai ai miei appuntamenti"
+      "goToAppointments": "Vai ai miei appuntamenti",
+      "heading": "Tutto pronto!",
+      "confirmed": "Il tuo account è stato confermato."
     },
     "inviteRequired": {
       "heading": "È richiesto un codice invito",

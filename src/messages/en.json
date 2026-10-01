@@ -750,7 +750,9 @@
     "backToHome": "Back to home",
     "patientWelcome": {
       "countdown": "Taking you to your appointments in {count, plural, one {# second} other {# seconds}}…",
-      "goToAppointments": "Go to My Appointments"
+      "goToAppointments": "Go to My Appointments",
+      "heading": "You're all set!",
+      "confirmed": "Your account has been confirmed."
     },
     "inviteRequired": {
       "heading": "An invite code is needed",

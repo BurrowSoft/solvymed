@@ -750,7 +750,9 @@
     "backToHome": "返回首頁",
     "patientWelcome": {
       "countdown": "{count}秒後將帶您前往預約頁面…",
-      "goToAppointments": "前往我的預約"
+      "goToAppointments": "前往我的預約",
+      "heading": "一切就緒！",
+      "confirmed": "您的帳戶已確認。"
     },
     "inviteRequired": {
       "heading": "需要邀請碼",
