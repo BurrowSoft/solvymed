@@ -117,14 +117,17 @@ export function ScheduleUndoToast() {
 
   if (!token) return null;
   const what = token.kind === "booked" ? t("undoBooked") : token.kind === "moved" ? t("undoMoved") : t("undoCancelled");
+  // Fixed colours (Vitor 31): the dark theme remaps slate-900 to near-white
+  // while white text stays white, which left a blank white box. One line,
+  // centred, wrapping only on narrow screens; the button never squeezes.
   return (
-    <div role="status" className="fixed bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-xl bg-slate-900 px-4 py-3 text-sm text-white shadow-lg">
+    <div role="status" className="fixed bottom-6 left-1/2 z-40 flex w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center justify-center gap-3 rounded-xl bg-[#0f172a] px-4 py-3 text-sm text-[#ffffff] shadow-lg">
       {phase === "done" ? <span>{t("undoDone")}</span>
         : phase === "failed" ? <span>{t("undoFailed")}</span>
           : (
             <>
-              <span>{what}</span>
-              <button type="button" onClick={undo} disabled={phase === "undoing"} className="font-bold text-teal-300 hover:text-teal-200 disabled:opacity-60">
+              <span className="min-w-0">{what}</span>
+              <button type="button" onClick={undo} disabled={phase === "undoing"} className="shrink-0 whitespace-nowrap font-bold text-[#5eead4] hover:text-[#99f6e4] disabled:opacity-60">
                 {phase === "undoing" ? "…" : t("undoAction", { s: left })}
               </button>
             </>
