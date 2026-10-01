@@ -250,7 +250,8 @@
     "keepAppointment": "Back",
     "reasonShort": "Reason",
     "messagePlaceholder": "E.g. please bring your test results.",
-    "patientWillSee": "The patient will see this."
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR."
   },
   "payments": {
     "thisWeek": "Cette semaine",
