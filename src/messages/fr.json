@@ -751,7 +751,8 @@
       "secretaryEmailMismatch": "Cet e-mail ne correspond pas à l'invitation, ou l'invitation n'est plus valide. Vérifiez l'e-mail ou demandez un nouveau lien au cabinet.",
       "consentCheckbox": "J'ai lu et j'accepte les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>",
       "fullNameHint": "Ajoutez votre titre si vous le souhaitez ({titles}) : il apparaît dans les salutations.",
-      "backToCountry": "Retour"
+      "backToCountry": "Retour",
+      "secretaryInviteFor": "This invite is for {email}."
     },
     "forgotPassword": {
       "title": "Mot de passe oublié ?",
@@ -886,7 +887,9 @@
     "cancelRequestTitle": "Cancel this request?",
     "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
     "keepRequest": "Keep request",
-    "requestCancelledToast": "Request cancelled."
+    "requestCancelledToast": "Request cancelled.",
+    "rescheduleLapsed": "Your reschedule request expired.",
+    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic."
   },
   "nav": {
     "overview": "Accueil",
@@ -1028,7 +1031,13 @@
     "accountNotSecretary": "Ce compte ne peut pas accepter une invitation de secrétaire. Utilisez un compte distinct créé depuis le lien d'invitation.",
     "teamResendConfirm": "Envoyer une nouvelle invitation à {email} ? Le code partagé précédemment ne fonctionnera plus.",
     "inviteFrom": "Invitation de {clinic}",
-    "inviteFor": "Cette invitation est destinée à {email}. Inscrivez-vous avec cette adresse e-mail."
+    "inviteFor": "Cette invitation est destinée à {email}. Inscrivez-vous avec cette adresse e-mail.",
+    "teamResendEmail": "Resend invite",
+    "teamResendAt": "You can resend at {time}",
+    "teamEmailSent": "Email sent to {email}",
+    "teamAlreadySent": "Invite sent. You can resend at {time}.",
+    "teamDailyLimit": "You've reached the limit of 10 invites a day. Try again at {time}.",
+    "teamSendFailed": "Couldn't send the email right now. Try again, or share the link."
   },
   "invitePage": {
     "metaTitle": "Votre invitation",

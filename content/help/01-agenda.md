@@ -133,9 +133,11 @@ In the **Schedule**, use **Day**, **Week** and **Month**. Use the arrows to move
 **pt-BR**
 Quando um paciente pede para remarcar uma consulta confirmada, o pedido aparece em **Início**. **Aceitar** muda a consulta para o novo horário; **Recusar** mantém o horário original.
 {pending:app-1.4.0} No app do paciente: ele só pode pedir remarcação antes do horário da consulta, e não cancela sozinho uma consulta marcada (o app diz "Para cancelar, fale com a clínica."). Ele pode cancelar um pedido que ainda está pendente, e aceitar ou recusar um novo horário que você propôs (o app mostra o horário proposto e, se for remarcação, o horário atual).
+Se ninguém responde até o horário pedido, o pedido expira sozinho: a consulta fica como estava e sai das solicitações, e o paciente vê "Seu pedido de remarcação expirou." (no site; no app a partir da versão 1.4.0).
 **en**
 When a patient asks to reschedule a confirmed appointment, the request shows on **Home**. **Accept** moves the appointment to the new time; **Decline** keeps the original time.
 {pending:app-1.4.0} In the patient's app: they can only ask to reschedule before the appointment starts, and they can't cancel a booked appointment themselves (the app says "To cancel, talk to the clinic."). They can cancel a request that's still pending, and accept or decline a new time you proposed (the app shows the proposed time and, for a reschedule, the current one).
-**No site:** O pedido aparece em **Agenda**, em **Solicitações de consulta**, marcado **Remarcação solicitada**, com **Aceitar** e **Recusar**.
-**On the website:** The request shows in the **Schedule**, under **Booking Requests**, marked **Reschedule Requested**, with **Accept** and **Decline**.
+If nobody answers before the requested time, the request expires by itself: the appointment stays as it was and leaves the requests, and the patient sees "Your reschedule request expired." (on the website; in the app from version 1.4.0).
+**No site:** O pedido aparece em **Agenda**, em **Solicitações de consulta**, marcado **Remarcação solicitada**, com **Aceitar** e **Recusar**. Em **Minhas Consultas**, o paciente só pode **Solicitar remarcação** até o horário de início da consulta (pelo relógio da clínica).
+**On the website:** The request shows in the **Schedule**, under **Booking Requests**, marked **Reschedule Requested**, with **Accept** and **Decline**. In **My Appointments**, the patient can **Request reschedule** only until the appointment's start time (by the clinic's clock).
 `open:home`

@@ -16,3 +16,11 @@ describe("legal versions (TH-3 consent)", () => {
     expect(legalDateLabel("pt-BR", "2026-09-28")).toBe("28 de setembro de 2026");
   });
 });
+
+describe("the secretary-invite flip (2026-10-02)", () => {
+  it("the flag and the privacy version go together (mobile 156 accepts 2026-10-02)", async () => {
+    const { conditionMet } = await import("@/lib/conditions");
+    expect(conditionMet("secretary-invite-email-live")).toBe(true);
+    expect(PRIVACY_VERSION).toBe("2026-10-02");
+  });
+});
