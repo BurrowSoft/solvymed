@@ -496,7 +496,7 @@ export function BookingClient({
             </svg>
           </button>
           <div className="flex items-center gap-2">
-            <BrandMarkTile size="sm" />
+            <BrandMarkTile size="sm" decorative />
             <span className="font-bold text-slate-900">{t("title")}</span>
           </div>
         </div>

@@ -279,8 +279,9 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-100 bg-white transition-transform duration-300 lg:static lg:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
         {/* Logo */}
-        <div className="flex items-center gap-2.5 border-b border-slate-100 px-5 py-5">
-          <BrandLogo className="h-9" />
+        {/* Phones: past the fixed ☰/✕ button, which sits over this corner. */}
+        <div className="flex items-center gap-2.5 border-b border-slate-100 py-4 pl-16 pr-5 lg:px-5">
+          <BrandLogo className="h-11" />
         </div>
 
         <NavLinks />
