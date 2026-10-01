@@ -107,7 +107,9 @@
     "invitedSeeAll": "在患者中查看全部",
     "invitedSameEmail": "与 {name} 邮箱相同：合并？",
     "invitedRemoveConfirm": "移除 {name}？其账户将重新等待您的确认，档案会被归档。",
-    "invitedRemoveConfirmDisconnect": "移除 {name}？其账户将与您的诊所断开连接，待处理的请求将被取消（会通知患者），档案将被归档。如需重新接纳，请从已归档中恢复档案，并分享该患者的个人代码。"
+    "invitedRemoveConfirmDisconnect": "移除 {name}？其账户将与您的诊所断开连接，待处理的请求将被取消（会通知患者），档案将被归档。如需重新接纳，请从已归档中恢复档案，并分享该患者的个人代码。",
+    "requestsWaiting": "有 {n} 个预约请求等待您确认",
+    "requestsWaitingOpen": "查看请求"
   },
   "schedule": {
     "patientMessage": "患者留言",

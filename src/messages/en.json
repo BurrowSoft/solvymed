@@ -107,7 +107,9 @@
     "invitedSeeAll": "See all in Patients",
     "invitedSameEmail": "Same email as {name}: merge?",
     "invitedRemoveConfirm": "Remove {name}? Their account goes back to waiting for your confirmation, and the record is archived.",
-    "invitedRemoveConfirmDisconnect": "Remove {name}? The account will be disconnected from your clinic, pending requests will be cancelled (the patient is notified) and the record archived. To let them back in, restore the record from Archived and share the patient's personal code."
+    "invitedRemoveConfirmDisconnect": "Remove {name}? The account will be disconnected from your clinic, pending requests will be cancelled (the patient is notified) and the record archived. To let them back in, restore the record from Archived and share the patient's personal code.",
+    "requestsWaiting": "{n, plural, one {# appointment request waiting for your confirmation} other {# appointment requests waiting for your confirmation}}",
+    "requestsWaitingOpen": "See requests"
   },
   "schedule": {
     "patientMessage": "Patient's message",

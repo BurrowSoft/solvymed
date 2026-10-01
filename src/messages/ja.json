@@ -107,7 +107,9 @@
     "invitedSeeAll": "患者一覧ですべて表示",
     "invitedSameEmail": "{name} と同じメール：統合しますか？",
     "invitedRemoveConfirm": "{name} を削除しますか？アカウントはあなたの確認待ちに戻り、記録はアーカイブされます。",
-    "invitedRemoveConfirmDisconnect": "{name} を削除しますか？アカウントはクリニックから切断され、保留中のリクエストはキャンセルされ（患者に通知されます）、記録はアーカイブされます。再び受け入れるには、アーカイブから記録を復元し、患者の個人コードを共有してください。"
+    "invitedRemoveConfirmDisconnect": "{name} を削除しますか？アカウントはクリニックから切断され、保留中のリクエストはキャンセルされ（患者に通知されます）、記録はアーカイブされます。再び受け入れるには、アーカイブから記録を復元し、患者の個人コードを共有してください。",
+    "requestsWaiting": "確認待ちの予約リクエストが {n} 件あります",
+    "requestsWaitingOpen": "リクエストを見る"
   },
   "schedule": {
     "patientMessage": "患者からのメッセージ",

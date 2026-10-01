@@ -143,7 +143,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
 
   return (
     <>
-      <div className="mb-6">
+      <div id="requests" className="mb-6 scroll-mt-6">
         <h2 className="mb-3 text-base font-bold text-slate-800">
           {t("bookingRequests")}
           <span className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-teal-600 text-xs font-bold text-white">

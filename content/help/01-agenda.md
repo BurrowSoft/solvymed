@@ -112,8 +112,8 @@ Um paciente novo que pediu pelo seu link fica ligado à sua clínica quando voc�
 2. Tap the request and choose **Confirm**, **Reject** (with an optional note) or propose **another time**.
 3. The patient gets a notification with your answer.
 A new patient who requested through your link is connected to your clinic when you confirm.
-**No site:** Os pedidos aparecem em **Agenda**, em **Solicitações de consulta**. Clique em **Confirmar**, **Rejeitar** ou **Propor novo horário** (dá para escrever uma mensagem ao paciente). Para um paciente novo, **Confirmar e Adicionar Paciente** já cria o cadastro.
-**On the website:** Requests show in the **Schedule**, under **Booking Requests**. Click **Confirm**, **Reject** or **Propose new time** (you can add a note for the patient). For a new patient, **Confirm and Add New Patient** also creates their record.
+**No site:** Quando há pedidos aguardando sua resposta, a **Visão geral** mostra um aviso com quantos são (**Ver pedidos**). Os pedidos aparecem em **Agenda**, em **Solicitações de consulta**. Clique em **Confirmar**, **Rejeitar** ou **Propor novo horário** (dá para escrever uma mensagem ao paciente). Para um paciente novo, **Confirmar e Adicionar Paciente** já cria o cadastro.
+**On the website:** When requests are waiting for your answer, the **Overview** shows a notice with how many (**See requests**). Requests show in the **Schedule**, under **Booking Requests**. Click **Confirm**, **Reject** or **Propose new time** (you can add a note for the patient). For a new patient, **Confirm and Add New Patient** also creates their record.
 `open:home`
 
 ---
