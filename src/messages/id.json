@@ -107,7 +107,7 @@
     "invitedSeeAll": "Lihat semua di Pasien",
     "invitedSameEmail": "Email sama dengan {name}: gabungkan?",
     "invitedRemoveConfirm": "Hapus {name}? Akunnya kembali menunggu konfirmasi Anda, dan datanya diarsipkan.",
-    "invitedRemoveConfirmDisconnect": "Hapus {name}? Akunnya diputus dari klinik Anda, dan datanya diarsipkan."
+    "invitedRemoveConfirmDisconnect": "Hapus {name}? Akun akan diputus dari klinik Anda, permintaan yang tertunda dibatalkan (pasien diberi tahu), dan datanya diarsipkan. Untuk menerimanya kembali, bagikan kode pribadi pasien."
   },
   "schedule": {
     "patientMessage": "Pesan pasien",

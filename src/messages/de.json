@@ -107,7 +107,7 @@
     "invitedSeeAll": "Alle in Patienten ansehen",
     "invitedSameEmail": "Gleiche E-Mail wie {name}: zusammenführen?",
     "invitedRemoveConfirm": "{name} entfernen? Das Konto wartet wieder auf Ihre Bestätigung, und der Eintrag wird archiviert.",
-    "invitedRemoveConfirmDisconnect": "{name} entfernen? Das Konto wird von Ihrer Praxis getrennt, und der Eintrag wird archiviert."
+    "invitedRemoveConfirmDisconnect": "{name} entfernen? Das Konto wird von Ihrer Praxis getrennt, offene Anfragen werden storniert (der Patient wird benachrichtigt) und der Eintrag archiviert. Um ihn wieder aufzunehmen, teilen Sie den persönlichen Code des Patienten."
   },
   "schedule": {
     "patientMessage": "Nachricht des Patienten",

@@ -107,7 +107,7 @@
     "invitedSeeAll": "Ver todos en Pacientes",
     "invitedSameEmail": "Mismo correo que {name}: ¿fusionar?",
     "invitedRemoveConfirm": "¿Quitar a {name}? Su cuenta volverá a esperar tu confirmación y la ficha se archivará.",
-    "invitedRemoveConfirmDisconnect": "¿Quitar a {name}? La cuenta se desconecta de tu clínica y la ficha se archiva."
+    "invitedRemoveConfirmDisconnect": "¿Quitar a {name}? La cuenta se desconectará de tu clínica, las solicitudes pendientes se cancelarán (se avisa al paciente) y la ficha se archivará. Para readmitirlo, comparte el código personal del paciente."
   },
   "schedule": {
     "patientMessage": "Mensaje del paciente",

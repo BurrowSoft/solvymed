@@ -118,9 +118,6 @@ export default function InviteRequiredPage() {
           ? await connectedTo(samePractice(connectError))
           : m.includes("too_many_attempts")
           ? t("inviteRequired.tooManyAttempts")
-          // Removed by this clinic: its public code no longer re-admits (e7).
-          : m.includes("code_unavailable")
-          ? t("inviteRequired.codeUnavailable")
           : m.includes("patient_archived")
           ? t("inviteRequired.archived")
           : m.includes("professional accounts cannot use")
@@ -136,6 +133,13 @@ export default function InviteRequiredPage() {
       }
       if (kind === "public") {
         router.push(`${prefix}/auth/pending-confirmation`);
+        return;
+      }
+      // Removed by this clinic: its public code no longer re-admits (e7). A
+      // result, not an error, so the attempt still counts (38).
+      if (kind === "unavailable") {
+        setLoading(false);
+        setError(t("inviteRequired.codeUnavailable"));
         return;
       }
       setLoading(false);
