@@ -14,7 +14,7 @@ export function HelpFrame({ app, lang, children }: { app: boolean; lang: HelpLan
       {app ? (
         <header className="border-b border-slate-100 bg-white">
           <div className="mx-auto flex max-w-3xl items-center gap-2 px-4 py-4">
-            <BrandMarkTile size="sm" />
+            <BrandMarkTile size="sm" decorative />
             <span className="font-bold text-slate-900">{ui.title}</span>
           </div>
         </header>
