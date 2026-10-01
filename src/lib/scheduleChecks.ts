@@ -30,6 +30,12 @@ export function hoursWarning(
 // absent ones stay where they were; blocked time is removed and re-added.
 export const MOVABLE_STATUSES = ["scheduled", "confirmed", "late"];
 
+// Whether an appointment offers the payment QR (Pix / PromptPay): never on
+// blocked time, and never once it's paid, so a patient can't pay twice (the
+// app regression's B7, app #214); the "Pago" label stays.
+export const offersPaymentQr = (a: { status: string; payment_status: string | null }) =>
+  a.status !== "blocked" && a.payment_status !== "paid";
+
 // The duration a move keeps (Remarcar and SolvyAI's move card use the same
 // rule, 7f): end − start as stored, at least 5 minutes.
 export function keptDuration(startTime: string, endTime: string): number {

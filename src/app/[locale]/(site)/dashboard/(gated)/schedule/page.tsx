@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, RescheduleButton, ViewToggle, PixQrButton, PromptPayQrButton, ScheduleUndoToast } from "./ScheduleClient";
-import { MOVABLE_STATUSES } from "@/lib/scheduleChecks";
+import { MOVABLE_STATUSES, offersPaymentQr } from "@/lib/scheduleChecks";
 import { normalizePromptPayId } from "@/lib/promptpay";
 import { BookingRequestsPanel } from "./BookingRequestsPanel";
 import { getTentativeBookings } from "./booking-actions";
@@ -224,7 +224,7 @@ export default async function SchedulePage({
                         {appt.status === "blocked" && (
                           <span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${statusBadge(appt.status)}`}>{t("blockedLabel")}</span>
                         )}
-                        {pixKey && appt.status !== "blocked" && (
+                        {pixKey && offersPaymentQr(appt) && (
                           <PixQrButton
                             pixKey={pixKey}
                             clinicName={clinicName}
@@ -232,7 +232,7 @@ export default async function SchedulePage({
                             amount={appt.payment_amount}
                           />
                         )}
-                        {promptPayId && appt.status !== "blocked" && (
+                        {promptPayId && offersPaymentQr(appt) && (
                           <PromptPayQrButton promptPayId={promptPayId} amount={appt.payment_amount} />
                         )}
                         {MOVABLE_STATUSES.includes(appt.status) && <RescheduleButton id={appt.id} date={appt.date} start={appt.start_time} />}
