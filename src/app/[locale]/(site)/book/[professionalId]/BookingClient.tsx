@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import { computeSlots, toMinutes, filterPastSlots, toLocalDateString } from "@/lib/slots";
+import { computeSlots, toMinutes, filterPastSlots, getDayHours } from "@/lib/slots";
+import { addDays, clinicDate, clinicTime } from "@/lib/clinicTime";
 import { formatMoney } from "@/lib/money";
 import { profileOfKind, profileOfPhonePrefix, type Currency } from "@/lib/country";
 import { isValidThaiId, type PatientIdKind } from "@/lib/patientIds";
@@ -14,6 +15,7 @@ import { birthDateOutOfRange, looksBuddhistEra } from "@/lib/buddhistEra";
 import { DateInput } from "@/components/DateInput";
 import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
+import { MonthCalendar } from "@/components/MonthCalendar";
 
 type Procedure = { id: string; name: string; durationMinutes: number; price?: number; paymentType: string };
 
@@ -74,7 +76,13 @@ function getDateFormat(locale: string): string {
     }).join("");
   } catch { return "YYYY-MM-DD"; }
 }
-const DAYS_AHEAD = 14;
+// Days a patient can book ahead (items 7/10: the same range as the app).
+const DAYS_AHEAD = 30;
+// A load that takes longer than this shows "couldn't load" + Retry.
+const LOAD_TIMEOUT_MS = 15_000;
+function withTimeout<T>(p: PromiseLike<T>, ms: number = LOAD_TIMEOUT_MS): Promise<T> {
+  return Promise.race([Promise.resolve(p), new Promise<T>((_, reject) => setTimeout(() => reject(new Error("timeout")), ms))]);
+}
 const CONSULT_TYPES = ["Consultation", "Follow-up", "Exam Review", "Procedure", "Emergency"] as const;
 
 function addMins(hhmm: string, mins: number): string {
@@ -83,15 +91,13 @@ function addMins(hhmm: string, mins: number): string {
   return `${String(Math.floor(total / 60) % 24).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
 }
 
-function buildDays() {
-  return Array.from({ length: DAYS_AHEAD }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() + i);
-    return toLocalDateString(d);
-  });
+// The next DAYS_AHEAD days on the CLINIC's calendar (its country's zone;
+// a patient can't read the practice row), today included (item 10).
+function buildDays(tz: string) {
+  const today = clinicDate(new Date(), tz);
+  return Array.from({ length: DAYS_AHEAD }, (_, i) => addDays(today, i));
 }
-function dayLabel(dateStr: string, locale: string, todayLabel: string) {
-  const today = toLocalDateString(new Date());
+function dayLabel(dateStr: string, locale: string, todayLabel: string, today: string) {
   if (dateStr === today) return todayLabel;
   return new Date(dateStr + "T12:00:00").toLocaleDateString(dateLocale(locale), {
     weekday: "short", month: "short", day: "numeric",
@@ -99,11 +105,26 @@ function dayLabel(dateStr: string, locale: string, todayLabel: string) {
 }
 const formatTime = formatTimeLabel;
 
+// "Horário escolhido: sex., 3 out · 14:00–14:30" (38's format; the month
+// without its trailing "." except in Thai).
+export function chosenTimeParts(date: string, start: string, end: string, locale: string) {
+  const d = new Date(date + "T12:00:00");
+  const month = d.toLocaleDateString(dateLocale(locale), { month: "short" });
+  return {
+    weekday: d.toLocaleDateString(dateLocale(locale), { weekday: "short" }),
+    day: String(d.getDate()),
+    month: locale === "th" ? month : month.replace(/\.$/, ""),
+    start: formatTime(locale, start),
+    end: formatTime(locale, end),
+  };
+}
+
 async function fetchSlots(
   professionalId: string,
   date: string,
   durationMinutes: number,
   workingHours: WorkingHours,
+  tz: string,
 ): Promise<TimeSlot[]> {
   const supabase = createClient();
   const { data: busy } = await supabase.rpc("get_busy_slots", {
@@ -117,8 +138,9 @@ async function fetchSlots(
     }),
   );
   const slots = computeSlots(date, durationMinutes, workingHours, busyRanges);
+  // Today's times already past on the clinic's clock are left out.
   const now = new Date();
-  return filterPastSlots(slots, date, now.getHours() * 60 + now.getMinutes());
+  return filterPastSlots(slots, date, toMinutes(clinicTime(now, tz)), clinicDate(now, tz));
 }
 
 export function BookingClient({
@@ -158,6 +180,8 @@ export function BookingClient({
   // ahead of Brazil from 21:00, which shifted the strip and failed
   // hydration (React #418).
   const [days, setDays] = useState<string[]>([]);
+  // The clinic's zone: its country's (the practice row isn't readable here).
+  const clinicTz = profileOfKind(idKind).defaultTimeZone;
 
   function applyConsultType(name: string) {
     if ((CONSULT_TYPES as readonly string[]).includes(name)) {
@@ -172,6 +196,10 @@ export function BookingClient({
   // Working hours — fetched via SECURITY DEFINER RPC (patients can't read professionals table)
   const [workingHours, setWorkingHours] = useState<WorkingHours>({});
   const [loadingHours, setLoadingHours] = useState(true);
+  // A slow or failed load: a message + Retry (bumps reloadKey) instead of
+  // an endless spinner or an empty list.
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   const [procedures, setProcedures] = useState<Procedure[]>([]);
   const [loadingProcs, setLoadingProcs] = useState(true);
@@ -180,7 +208,7 @@ export function BookingClient({
 
   const [selectedDate, setSelectedDate] = useState("");
   useEffect(() => {
-    const d = buildDays();
+    const d = buildDays(clinicTz);
     setDays(d);
     setSelectedDate(d[0]);
   }, []);
@@ -256,20 +284,22 @@ export function BookingClient({
 
   // Fetch working hours (SECURITY DEFINER bypasses patient RLS)
   useEffect(() => {
+    setLoadingHours(true);
     (async () => {
       try {
         const supabase = createClient();
-        const { data } = await supabase.rpc("get_professional_working_hours", {
+        const { data, error } = await withTimeout(supabase.rpc("get_professional_working_hours", {
           p_professional_id: professionalId,
-        });
-        if (data) setWorkingHours(data as WorkingHours);
+        }));
+        if (error) throw error;
+        setWorkingHours((data ?? {}) as WorkingHours);
       } catch {
-        // stay empty — slots will show as unavailable
+        setLoadError(true);
       } finally {
         setLoadingHours(false);
       }
     })();
-  }, [professionalId]);
+  }, [professionalId, reloadKey]);
 
   // Fetch procedures
   useEffect(() => {
@@ -306,20 +336,42 @@ export function BookingClient({
       setLoadingSlots(true);
       setSelectedSlot(null);
       try {
-        const s = await fetchSlots(professionalId, date, dur, workingHours);
+        const s = await withTimeout(fetchSlots(professionalId, date, dur, workingHours, clinicTz));
         setSlots(s);
       } catch {
         setSlots([]);
+        setLoadError(true);
       } finally {
         setLoadingSlots(false);
       }
     },
-    [professionalId, workingHours],
+    [professionalId, workingHours, clinicTz],
   );
 
   useEffect(() => {
-    if (!loadingHours && selectedDate) loadSlots(selectedDate, duration);
-  }, [selectedDate, duration, loadSlots, loadingHours]);
+    if (!loadingHours && !loadError && selectedDate) loadSlots(selectedDate, duration);
+  }, [selectedDate, duration, loadSlots, loadingHours, loadError, reloadKey]);
+
+  // Days the clinic opens (its working hours); a closed day is greyed in the
+  // calendar, and the first open day is picked.
+  const openDay = useCallback((d: string) => !!getDayHours(d, workingHours)?.enabled, [workingHours]);
+  const anyOpen = days.some(openDay);
+  useEffect(() => {
+    if (loadingHours || !selectedDate || openDay(selectedDate)) return;
+    const first = days.find(openDay);
+    if (first) setSelectedDate(first);
+  }, [loadingHours, selectedDate, days, openDay]);
+  const retry = () => { setLoadError(false); setReloadKey((k) => k + 1); };
+  // The range starts today only while today still has a time left (e7).
+  const skippedToday = useRef(false);
+  useEffect(() => {
+    if (skippedToday.current || loadingSlots || loadingHours || loadError || !days.length) return;
+    if (selectedDate === days[0] && slots.length === 0) {
+      skippedToday.current = true;
+      const next = days.slice(1).find(openDay);
+      if (next) setSelectedDate(next);
+    }
+  }, [loadingSlots, loadingHours, loadError, days, selectedDate, slots.length, openDay]);
 
   async function handleBook() {
     if (!selectedSlot) return;
@@ -415,7 +467,7 @@ export function BookingClient({
           </div>
           <h1 className="text-xl font-extrabold text-slate-900 mb-2">{t("successTitle")}</h1>
           <p className="text-slate-500 text-sm mb-1">
-            {t("successBody", { date: dayLabel(bookedDate, locale, t("today")), time: formatTime(locale, bookedSlot!.start), doctor: professionalName })}
+            {t("successBody", { date: dayLabel(bookedDate, locale, t("today"), days[0] ?? ""), time: formatTime(locale, bookedSlot!.start), doctor: professionalName })}
           </p>
           <p className="text-slate-400 text-xs mb-8">{t("successHint")}</p>
           <button
@@ -550,28 +602,43 @@ export function BookingClient({
               )}
             </div>
 
-            {/* Date strip */}
+            {/* Couldn't load (15 s or an error): say so, with Retry. */}
+            {loadError && (
+              <div data-testid="load-failed" className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-5 text-center">
+                <p className="text-sm font-medium text-amber-800">{t("loadFailed")}</p>
+                <button type="button" onClick={retry} className="mt-3 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700">{t("retry")}</button>
+              </div>
+            )}
+
+            {/* No working hours at all: the clinic hasn't opened online booking. */}
+            {!loadError && !loadingHours && days.length > 0 && !anyOpen && (
+              <div data-testid="no-hours" className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-6 text-center">
+                <p className="text-sm font-medium text-slate-600">{t("noHours")}</p>
+              </div>
+            )}
+
+            {!loadError && (loadingHours || anyOpen) && (<>
+            {/* Month calendar (item 7) */}
             <div>
               <h2 className="text-sm font-bold text-slate-700 mb-2">{t("pickDate")}</h2>
-              <div className="flex gap-2 overflow-x-auto pb-1">
-                {days.map((day) => (
-                  <button
-                    key={day}
-                    onClick={() => setSelectedDate(day)}
-                    className={`shrink-0 rounded-xl border-2 px-3 py-2 text-xs font-semibold whitespace-nowrap transition ${selectedDate === day ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
-                  >
-                    {dayLabel(day, locale, t("today"))}
-                  </button>
-                ))}
-              </div>
+              {days.length > 0 && (
+                <MonthCalendar
+                  days={days}
+                  selected={selectedDate || null}
+                  onSelect={setSelectedDate}
+                  isOpen={(d) => loadingHours || openDay(d)}
+                  locale={locale}
+                  labels={{ prev: t("prevMonth"), next: t("nextMonth") }}
+                />
+              )}
             </div>
 
-            {/* Time slots */}
+            {/* Time slots: a grid; a skeleton while loading (items 5/16/17). */}
             <div>
               <h2 className="text-sm font-bold text-slate-700 mb-2">{t("availableTimes")}</h2>
-              {loadingSlots || !selectedDate ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-teal-600 border-t-transparent" />
+              {loadingSlots || loadingHours || !selectedDate ? (
+                <div data-testid="slots-skeleton" className="grid grid-cols-4 gap-2 sm:grid-cols-5" aria-busy="true">
+                  {Array.from({ length: 8 }, (_, i) => <div key={i} className="h-10 animate-pulse rounded-xl bg-slate-100" />)}
                 </div>
               ) : slots.length === 0 ? (
                 <div className="rounded-xl bg-slate-50 border border-slate-200 py-8 text-center">
@@ -579,12 +646,13 @@ export function BookingClient({
                   <p className="text-xs text-slate-400 mt-1">{t("tryDifferentDate")}</p>
                 </div>
               ) : (
-                <div className="flex flex-wrap gap-2">
+                <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
                   {slots.map((slot) => (
                     <button
                       key={slot.start}
+                      aria-pressed={selectedSlot?.start === slot.start && !showCustomTime}
                       onClick={() => { setSelectedSlot(slot); setShowCustomTime(false); setCustomTimeValue(""); }}
-                      className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${selectedSlot?.start === slot.start && !showCustomTime ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
+                      className={`w-full rounded-xl border-2 px-2 py-2 text-sm font-semibold transition ${selectedSlot?.start === slot.start && !showCustomTime ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
                     >
                       {formatTime(locale, slot.start)}
                     </button>
@@ -592,6 +660,8 @@ export function BookingClient({
                 </div>
               )}
             </div>
+
+            </>)}
 
             {/* Custom time */}
             <div>
@@ -718,6 +788,13 @@ export function BookingClient({
                 </div>
               ))}
             </div>
+
+            {/* The chosen time, always visible above the button (item 10). */}
+            {selectedSlot && selectedDate && (
+              <p data-testid="chosen-time" className="rounded-xl bg-teal-50 px-4 py-3 text-sm font-semibold text-teal-800">
+                {t("chosenTime", chosenTimeParts(selectedDate, selectedSlot.start, selectedSlot.end, locale))}
+              </p>
+            )}
 
             {error && (
               <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">

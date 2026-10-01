@@ -685,7 +685,13 @@
     "orCustomTime": "Atau pilih waktu khusus",
     "professionalFallback": "Tenaga profesional",
     "errorArchived": "Klinik ini tidak menerima pemesanan baru untuk akun Anda. Silakan hubungi klinik.",
-    "practiceInactive": "Klinik ini sedang tidak menerima pemesanan online."
+    "practiceInactive": "Klinik ini sedang tidak menerima pemesanan online.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "Kata sandi harus minimal {min} karakter.",

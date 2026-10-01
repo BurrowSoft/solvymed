@@ -685,7 +685,13 @@
     "orCustomTime": "O elige una hora",
     "professionalFallback": "Profesional",
     "errorArchived": "Esta clínica no está aceptando nuevas reservas para tu cuenta. Ponte en contacto con la clínica.",
-    "practiceInactive": "Esta clínica no está aceptando reservas en línea en este momento."
+    "practiceInactive": "Esta clínica no está aceptando reservas en línea en este momento.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "auth": {
     "passwordTooShort": "La contraseña debe tener al menos {min} caracteres.",
