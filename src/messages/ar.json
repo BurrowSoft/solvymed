@@ -1822,5 +1822,9 @@
     "tryNow": "جرّبه الآن",
     "later": "لاحقًا",
     "whatCanDo": "ماذا يستطيع SolvyAI أن يفعل؟"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
   }
 }

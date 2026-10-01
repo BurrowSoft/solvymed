@@ -20,6 +20,7 @@ import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { cookies } from "next/headers";
 import { THEME_COOKIE, parseTheme } from "@/lib/theme";
+import { OpenInApp } from "@/components/OpenInApp";
 
 function isVersionBelow(current: string, minimum: string): boolean {
   const parse = (v: string) => v.split(".").map(n => parseInt(n, 10) || 0);
@@ -210,6 +211,7 @@ export default async function DashboardLayout({
           languages={practice.languages}
         />
         <div className="flex flex-1 flex-col overflow-hidden">
+          <div className="px-4 pt-3 empty:hidden lg:hidden"><OpenInApp onlyWithParam /></div>
           {showTrialChip && (
             // Below lg this row is as tall as the ☰ button's corner (top-4 + 40px),
             // so nothing under it starts beneath the button (Vitor, phone).
