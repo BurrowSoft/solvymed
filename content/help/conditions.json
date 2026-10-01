@@ -108,7 +108,7 @@
     "what": "Migration 148 + its edge deploy are live: the clinic gets the push \"{name} entrou com seu código de convite\" when a patient joins with its code (app or website signup; server-side). Gates its Help C5 / App Map lines."
   },
   "status-reason-live": {
-    "met": false,
+    "met": true,
     "what": "Migration 150 (mobile #238) is applied on production: appointments.status_reason (≤200, the clinic's reason on reject/cancel), status_by ('clinic' | 'patient', set by its trigger) and clinic_message (≤200, the clinic's message on Confirm/Propose), all returned by get_my_appointments. Gates the website's reason fields, the patient's \"Recusado/Cancelado pela clínica\" lines and \"Mensagem da clínica\", the push hint instead of the note text, and their Help / App Map lines."
   }
 }
