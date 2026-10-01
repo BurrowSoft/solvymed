@@ -145,9 +145,6 @@
     "dur90": "1,5 часа",
     "dur120": "2 часа",
     "dur240": "4 часа",
-    "noProcedures": "Процедуры не настроены.",
-    "addProcSettings": "Добавьте процедуры в Настройках",
-    "beforeScheduling": "перед записью.",
     "cancel": "Отмена",
     "saveAppt": "Сохранить приём",
     "repeat": "Повторять",
@@ -257,7 +254,8 @@
     "showOutside": "Show outside working hours",
     "showInside": "Working hours only",
     "otherTime": "Other time…",
-    "slotTaken": "Taken"
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "На этой неделе",

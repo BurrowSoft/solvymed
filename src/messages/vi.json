@@ -145,9 +145,6 @@
     "dur90": "1,5 giờ",
     "dur120": "2 giờ",
     "dur240": "4 giờ",
-    "noProcedures": "Chưa có thủ thuật nào được cấu hình.",
-    "addProcSettings": "Thêm thủ thuật trong Cài đặt",
-    "beforeScheduling": "trước khi đặt lịch.",
     "cancel": "Hủy",
     "saveAppt": "Lưu lịch hẹn",
     "repeat": "Lặp lại",
@@ -257,7 +254,8 @@
     "showOutside": "Show outside working hours",
     "showInside": "Working hours only",
     "otherTime": "Other time…",
-    "slotTaken": "Taken"
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "Tuần này",

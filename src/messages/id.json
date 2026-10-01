@@ -145,9 +145,6 @@
     "dur90": "1,5 jam",
     "dur120": "2 jam",
     "dur240": "4 jam",
-    "noProcedures": "Tidak ada prosedur yang dikonfigurasi.",
-    "addProcSettings": "Tambahkan prosedur di Pengaturan",
-    "beforeScheduling": "sebelum menjadwalkan.",
     "cancel": "Batal",
     "saveAppt": "Simpan Janji",
     "repeat": "Ulangi",
@@ -257,7 +254,8 @@
     "showOutside": "Show outside working hours",
     "showInside": "Working hours only",
     "otherTime": "Other time…",
-    "slotTaken": "Taken"
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "Minggu ini",

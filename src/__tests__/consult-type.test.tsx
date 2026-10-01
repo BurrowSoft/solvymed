@@ -55,4 +55,28 @@ describe("New appointment: a plain consultation (6.2)", () => {
     fireEvent.change(select, { target: { value: PLAIN_CONSULTATION } });
     expect((document.querySelector('input[name="duration_minutes"]') as HTMLInputElement).value).toBe("30");
   });
+
+  it("is selected by default even with procedures (e7: a procedure is a deliberate pick)", () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <NewAppointmentButton defaultDate="2030-01-14" procedures={[{ id: "p1", name: "Limpeza", duration_minutes: 60, price: 200, payment_type: "private" } as never]} />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.click(screen.getByText(pt.schedule.newAppt));
+    expect((document.querySelector('select[name="consultation_type"]') as HTMLSelectElement).value).toBe(PLAIN_CONSULTATION);
+    expect((document.querySelector('input[name="duration_minutes"]') as HTMLInputElement).value).toBe("30");
+  });
+
+  it("with no procedures the form still saves; Settings is a tip, not a block (d7)", () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <NewAppointmentButton defaultDate="2030-01-14" procedures={[]} />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.click(screen.getByText(pt.schedule.newAppt));
+    const submit = document.querySelector('form button[type="submit"]') as HTMLButtonElement;
+    expect(submit.disabled).toBe(false);
+    expect(screen.getByTestId("procedures-tip")).toHaveTextContent("Dica: cadastre seus procedimentos em Configurações para preencher duração e valor automaticamente.");
+    expect(screen.getByRole("link", { name: "Configurações" })).toBeInTheDocument();
+  });
 });

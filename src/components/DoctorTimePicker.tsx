@@ -49,11 +49,17 @@ export function DoctorTimePicker({
   const [showOutside, setShowOutside] = useState(false);
   const [custom, setCustom] = useState(false);
   const [day, setDay] = useState<Day>(null);
+  // The date `day` was loaded for: until then the grid waits (no BR
+  // fallback flash in a Thai practice; d7).
+  const [loadedFor, setLoadedFor] = useState<string | null>(null);
   const seq = useRef(0);
 
   useEffect(() => {
     const mine = ++seq.current;
-    getScheduleDay(date, excludeId).then((d) => { if (mine === seq.current) setDay(d); }, () => { if (mine === seq.current) setDay(null); });
+    getScheduleDay(date, excludeId).then(
+      (d) => { if (mine === seq.current) { setDay(d); setLoadedFor(date); } },
+      () => { if (mine === seq.current) { setDay(null); setLoadedFor(date); } },
+    );
   }, [date, excludeId]);
   useEffect(() => { onChange?.(date, start); }, [date, start, onChange]);
 
@@ -63,6 +69,7 @@ export function DoctorTimePicker({
   );
   const open = (d: string) => !day?.hoursSet || day.openWeekdays.includes(new Date(d + "T12:00:00").getDay());
   const inGrid = chips.some((c) => c.time === start);
+  const loading = loadedFor !== date;
 
   return (
     <div className="space-y-3">
@@ -86,8 +93,9 @@ export function DoctorTimePicker({
             </button>
           )}
         </div>
-        <div data-testid="doctor-time-grid" className="grid grid-cols-4 gap-2 sm:grid-cols-5">
-          {chips.map((c) => {
+        <div data-testid="doctor-time-grid" aria-busy={loading} className="grid grid-cols-4 gap-2 sm:grid-cols-5">
+          {loading && Array.from({ length: 12 }, (_, i) => <div key={i} className="h-9 animate-pulse rounded-lg bg-slate-100" />)}
+          {!loading && chips.map((c) => {
             const active = c.time === start && !custom;
             return (
               <button
@@ -120,7 +128,7 @@ export function DoctorTimePicker({
           />
         )}
       </div>
-      {start && (
+      {start && !loading && (
         <p data-testid="doctor-chosen-time" className="rounded-xl bg-teal-50 px-4 py-2.5 text-sm font-semibold text-teal-800">
           {tBook("chosenTime", chosenTimeParts(date, start, addMinutes(start, duration), countryProfile(day?.country)))}
         </p>

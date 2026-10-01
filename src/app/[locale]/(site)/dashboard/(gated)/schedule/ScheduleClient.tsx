@@ -454,7 +454,9 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
 
   function handleOpen() {
     const same = prefill?.procedureName ? procedures.find((p) => p.name === prefill.procedureName) ?? null : null;
-    const first = same ?? procedures[0] ?? null;
+    // The plain Consulta by default: picking a procedure (its price and
+    // length) is a deliberate act (e7); a prefill keeps its own.
+    const first = same;
     setSelectedProcName(first?.name ?? PLAIN_CONSULTATION);
     setDuration(String(prefill?.duration ?? first?.duration_minutes ?? 30));
     setPaymentType(first?.payment_type ?? "private");
@@ -581,13 +583,11 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
               ))}
             </Select>
             {procedures.length === 0 && (
-              <div className="mt-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3 text-xs text-amber-700">
-                {t("noProcedures")}{" "}
-                <Link href={settingsProceduresHref} className="font-semibold underline underline-offset-2">
-                  {t("addProcSettings")}
-                </Link>{" "}
-                {t("beforeScheduling")}
-              </div>
+              <p data-testid="procedures-tip" className="mt-2 rounded-xl bg-slate-50 px-3.5 py-3 text-xs text-slate-600">
+                {t.rich("proceduresTip", {
+                  link: (chunks) => <Link href={settingsProceduresHref} className="font-semibold text-teal-700 underline underline-offset-2">{chunks}</Link>,
+                })}
+              </p>
             )}
           </div>
 
@@ -653,7 +653,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-            <button type="submit" disabled={pending || procedures.length === 0} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
+            <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
               {pending ? t("saving") : recurrence ? t("saveTimes", { n: parseInt(occurrences, 10) || DEFAULT_OCCURRENCES }) : t("saveAppt")}
             </button>
           </div>

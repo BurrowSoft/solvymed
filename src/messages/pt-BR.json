@@ -145,9 +145,6 @@
     "dur90": "1h30",
     "dur120": "2 horas",
     "dur240": "4 horas",
-    "noProcedures": "Nenhum procedimento configurado.",
-    "addProcSettings": "Adicione procedimentos nas Configurações",
-    "beforeScheduling": "antes de agendar.",
     "cancel": "Cancelar",
     "saveAppt": "Salvar Consulta",
     "repeat": "Repetir",
@@ -257,7 +254,8 @@
     "showOutside": "Mostrar fora do horário",
     "showInside": "Só o horário de atendimento",
     "otherTime": "Outro horário…",
-    "slotTaken": "Ocupado"
+    "slotTaken": "Ocupado",
+    "proceduresTip": "Dica: cadastre seus procedimentos em <link>Configurações</link> para preencher duração e valor automaticamente."
   },
   "payments": {
     "thisWeek": "Esta semana",

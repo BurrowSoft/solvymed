@@ -59,4 +59,12 @@ describe("DoctorTimePicker", () => {
     );
     await waitFor(() => expect(calls.some((c) => c[0] === "2030-01-14" && c[1] === "appt-1")).toBe(true));
   });
+
+  it("waits for the day before showing times or the chosen line (no BR flash in a TH practice; d7)", async () => {
+    show();
+    expect(screen.getByTestId("doctor-time-grid")).toHaveAttribute("aria-busy", "true");
+    expect(screen.queryByTestId("doctor-chosen-time")).toBeNull();
+    await waitFor(() => expect(screen.getByTestId("doctor-time-grid")).toHaveAttribute("aria-busy", "false"));
+    expect(screen.getByTestId("doctor-chosen-time")).toBeInTheDocument();
+  });
 });

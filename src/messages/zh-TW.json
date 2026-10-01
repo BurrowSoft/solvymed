@@ -145,9 +145,6 @@
     "dur90": "1.5小時",
     "dur120": "2小時",
     "dur240": "4小時",
-    "noProcedures": "尚未設定處置項目。",
-    "addProcSettings": "在設定中新增處置項目",
-    "beforeScheduling": "在預約之前。",
     "cancel": "取消",
     "saveAppt": "儲存預約",
     "repeat": "重複",
@@ -257,7 +254,8 @@
     "showOutside": "Show outside working hours",
     "showInside": "Working hours only",
     "otherTime": "Other time…",
-    "slotTaken": "Taken"
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "本週",

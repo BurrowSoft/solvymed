@@ -145,9 +145,6 @@
     "dur90": "1.5時間",
     "dur120": "2時間",
     "dur240": "4時間",
-    "noProcedures": "処置が設定されていません。",
-    "addProcSettings": "設定で処置を追加してください",
-    "beforeScheduling": "予約前に。",
     "cancel": "キャンセル",
     "saveAppt": "予約を保存",
     "repeat": "繰り返し",
@@ -257,7 +254,8 @@
     "showOutside": "Show outside working hours",
     "showInside": "Working hours only",
     "otherTime": "Other time…",
-    "slotTaken": "Taken"
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "今週",

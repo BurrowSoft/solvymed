@@ -145,9 +145,6 @@
     "dur90": "ساعة ونصف",
     "dur120": "ساعتان",
     "dur240": "4 ساعات",
-    "noProcedures": "لم يتم تكوين أي إجراءات.",
-    "addProcSettings": "أضف إجراءات في الإعدادات",
-    "beforeScheduling": "قبل الجدولة.",
     "cancel": "إلغاء",
     "saveAppt": "حفظ الموعد",
     "repeat": "تكرار",
@@ -257,7 +254,8 @@
     "showOutside": "Show outside working hours",
     "showInside": "Working hours only",
     "otherTime": "Other time…",
-    "slotTaken": "Taken"
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",

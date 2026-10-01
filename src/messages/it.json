@@ -145,9 +145,6 @@
     "dur90": "1h30",
     "dur120": "2 ore",
     "dur240": "4 ore",
-    "noProcedures": "Nessuna procedura configurata.",
-    "addProcSettings": "Aggiungi procedure nelle Impostazioni",
-    "beforeScheduling": "prima di programmare.",
     "cancel": "Annulla",
     "saveAppt": "Salva appuntamento",
     "repeat": "Ripeti",
@@ -257,7 +254,8 @@
     "showOutside": "Show outside working hours",
     "showInside": "Working hours only",
     "otherTime": "Other time…",
-    "slotTaken": "Taken"
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "Questa settimana",
