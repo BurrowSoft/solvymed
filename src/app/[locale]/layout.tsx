@@ -89,8 +89,9 @@ export async function generateMetadata({
     // A hidden language (Thai before its release) is reachable but not indexed.
     robots: isPublicLocale(locale) ? { index: true, follow: true } : { index: false, follow: false },
     icons: {
-      icon: "/solvymed_logo.png",
-      apple: "/solvymed_logo.png",
+      // The brand kit's favicon/ (Vitor, 1.4.0).
+      icon: [{ url: "/favicon.ico" }, { url: "/favicon-32.png", type: "image/png", sizes: "32x32" }],
+      apple: "/apple-touch-icon.png",
     },
   };
 }

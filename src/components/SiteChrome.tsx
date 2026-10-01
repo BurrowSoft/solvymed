@@ -5,6 +5,7 @@ import { SignupCta } from "@/components/SignupCta";
 import { Link } from "@/i18n/navigation";
 import { publicLocales } from "@/lib/publicLocales";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { BrandLogo, BrandMarkTile } from "@/components/BrandLogo";
 
 // The public pages' header and footer (home, /pricing).
 
@@ -17,9 +18,9 @@ export async function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/solvymed_logo.png" alt="SolvyMed" className="h-8 w-8 rounded-lg" />
-          {/* Phones: the logo alone, so the header fits (no sideways scroll). */}
-          <span className="hidden text-xl font-bold tracking-tight text-slate-900 sm:inline">Solvymed</span>
+          {/* Phones: the mark alone, so the header fits (no sideways scroll). */}
+          <span className="sm:hidden"><BrandMarkTile size="sm" /></span>
+          <span className="hidden sm:inline-flex"><BrandLogo className="h-9" /></span>
         </Link>
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <Link href="/pricing" className="hidden text-sm font-semibold text-slate-600 transition-colors hover:text-teal-700 whitespace-nowrap md:inline-block">
@@ -54,12 +55,7 @@ export async function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex flex-col flex-wrap items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center gap-2 text-slate-600">
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-teal-600">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-              </svg>
-            </div>
-            <span className="text-sm font-semibold">Solvymed</span>
+            <BrandLogo className="h-7" />
           </div>
           <p className="text-sm text-slate-400">{t("footer.copyright")}</p>
           <Link href="/pricing" className="text-sm text-slate-400 transition hover:text-teal-600">
