@@ -865,7 +865,8 @@
     "cancelledByClinic": "คลินิกยกเลิก",
     "cancelledByClinicReason": "คลินิกยกเลิก: {reason}",
     "youCancelled": "คุณยกเลิกแล้ว",
-    "clinicMessage": "ข้อความจากคลินิก: {message}"
+    "clinicMessage": "ข้อความจากคลินิก: {message}",
+    "statusDeclined": "ถูกปฏิเสธ"
   },
   "nav": {
     "overview": "ภาพรวม",

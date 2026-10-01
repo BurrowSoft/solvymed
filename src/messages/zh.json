@@ -865,7 +865,8 @@
     "cancelledByClinic": "Cancelled by the clinic",
     "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
     "youCancelled": "You cancelled",
-    "clinicMessage": "Message from the clinic: {message}"
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "已拒绝"
   },
   "nav": {
     "overview": "总览",

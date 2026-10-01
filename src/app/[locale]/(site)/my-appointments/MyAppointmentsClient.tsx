@@ -17,6 +17,7 @@ const STATUS_COLOR: Record<string, string> = {
   confirmed: "bg-teal-50 text-teal-700 border-teal-300",
   completed: "bg-slate-50 text-slate-500 border-slate-200",
   cancelled: "bg-red-50 text-red-500 border-red-200",
+  rejected: "bg-red-50 text-red-500 border-red-200",
 };
 
 function formatDate(locale: string, dateStr: string) {
@@ -198,7 +199,8 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
   useEffect(() => setNow(new Date()), []);
 
   const color = STATUS_COLOR[appt.status] ?? "bg-slate-50 text-slate-500 border-slate-200";
-  const label = STATUS_KEY[appt.status] ? tSchedule(STATUS_KEY[appt.status]) : appt.status;
+  // A declined request (listed since 150): the patient-facing "Recusado".
+  const label = appt.status === "rejected" ? t("statusDeclined") : STATUS_KEY[appt.status] ? tSchedule(STATUS_KEY[appt.status]) : appt.status;
   const isProfProposal = appt.status === "proposal" && appt.scheduled_by !== "patient" && (!!appt.proposed_date || appt.scheduled_by === "professional");
   const isPatientReschedule = appt.status === "proposal" && appt.scheduled_by === "patient";
   const apptEndDateTime = new Date(`${appt.date}T${appt.end_time}`);
@@ -230,7 +232,7 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
           <p className="text-xs text-slate-400 mt-0.5 capitalize">{appt.type.replace("-", " ")}</p>
           {/* 150 (item 12): who declined/cancelled, the clinic's reason, and its message. */}
           {(appt.status === "rejected" || appt.status === "cancelled") && appt.status_by && (
-            <p data-testid="status-by" className="mt-2 text-sm font-medium text-slate-700">
+            <p data-testid="status-by" className="mt-2 break-words text-sm font-medium text-slate-700">
               {appt.status_by === "patient"
                 ? t("youCancelled")
                 : appt.status === "rejected"
@@ -239,7 +241,7 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
             </p>
           )}
           {appt.clinic_message && appt.status !== "rejected" && appt.status !== "cancelled" && (
-            <p data-testid="clinic-message" className="mt-2 text-sm text-slate-600">{t("clinicMessage", { message: appt.clinic_message })}</p>
+            <p data-testid="clinic-message" className="mt-2 break-words text-sm text-slate-600">{t("clinicMessage", { message: appt.clinic_message })}</p>
           )}
           {appt.patient_note && (
             <p className="mt-2 text-sm text-slate-600 italic">&ldquo;{appt.patient_note}&rdquo;</p>

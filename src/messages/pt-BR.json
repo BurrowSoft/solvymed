@@ -865,7 +865,8 @@
     "cancelledByClinic": "Cancelado pela clínica",
     "cancelledByClinicReason": "Cancelado pela clínica: {reason}",
     "youCancelled": "Você cancelou",
-    "clinicMessage": "Mensagem da clínica: {message}"
+    "clinicMessage": "Mensagem da clínica: {message}",
+    "statusDeclined": "Recusado"
   },
   "nav": {
     "overview": "Visão geral",

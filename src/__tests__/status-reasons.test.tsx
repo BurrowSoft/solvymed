@@ -117,3 +117,26 @@ describe("the patient's card (150 live)", () => {
     expect(screen.getByTestId("clinic-message")).toHaveTextContent("Mensagem da clínica: Traga os exames");
   });
 });
+
+describe("a declined request's badge on Minhas Consultas (3e's ❌)", () => {
+  it.each([
+    ["pt-BR", "Recusado"],
+    ["en", "Declined"],
+    ["th", "ถูกปฏิเสธ"],
+  ])("%s: the label, never the raw status", async (locale, label) => {
+    const messages = (await import(`@/messages/${locale}.json`)).default;
+    const appt = {
+      id: "a-1", date: "2030-01-15", start_time: "09:00:00", end_time: "09:30:00", consultation_type: "Consulta", type: "in-person",
+      professional_id: "doc-1", proposed_date: null, proposed_start_time: null, proposed_end_time: null, scheduled_by: "patient", patient_note: null,
+      status: "rejected", status_by: "clinic", status_reason: "x".repeat(200),
+    };
+    render(
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <MyAppointmentsClient upcoming={[appt as never]} past={[]} userEmail="p@x.co" myProfessionalId={null} myProfessionalMeta={null} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByTestId("appointment-status-badge")).toHaveTextContent(label);
+    expect(screen.queryByText("rejected")).toBeNull();
+    expect(screen.getByTestId("status-by").className).toContain("break-words");
+  });
+});
