@@ -1214,6 +1214,10 @@
             },
             {
               "type": "p",
+              "text": "Quando alguém entra com o seu código, você e suas secretárias recebem uma notificação, **Novo paciente**: **{nome} entrou com seu código de convite**."
+            },
+            {
+              "type": "p",
               "text": "Depois de **Remover**, a pessoa não consegue voltar com o código de convite da clínica. Para trazê-la de volta, envie o código pessoal do cadastro dela."
             }
           ],
@@ -1221,6 +1225,10 @@
             {
               "type": "p",
               "text": "On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings → Your patient invite code**, tap **Share** (no code yet? tap **Generate invite code**). Anyone who opens the link gets the app or the website and can request appointments with you. **New** creates a new code and the old one stops working."
+            },
+            {
+              "type": "p",
+              "text": "When someone joins with your code, you and your secretaries get a notification, **New patient**: **{name} joined with your invite code**."
             },
             {
               "type": "p",

@@ -62,6 +62,9 @@ export default function LoginPage() {
       } else if (roleRow?.role === "patient" && roleRow.invited_by_professional_id) {
         // Linked to a doctor's "orbit" but not yet confirmed.
         dest = localePath("/auth/pending-confirmation");
+      } else if (roleRow?.role === "patient") {
+        // Neither (removed by the clinic, 147): connect to a doctor (e7).
+        dest = localePath("/auth/invite-required");
       } else if (roleRow?.role) {
         dest = localePath("/dashboard");
       } else if (metaRole === "patient") {

@@ -62,7 +62,9 @@ export default async function DashboardLayout({
     redirect(`/${locale === "en" ? "" : locale + "/"}auth/pending-confirmation`);
   }
   if (roleRow?.role === "patient") {
-    redirect(`/${locale === "en" ? "" : locale + "/"}my-appointments`);
+    // Neither linked nor invited (removed by the clinic, 147): connect to a
+    // doctor (e7).
+    redirect(`/${locale === "en" ? "" : locale + "/"}auth/invite-required`);
   }
   if (!roleRow) {
     const metaRole = user!.user_metadata?.role as string | undefined;

@@ -49,6 +49,11 @@ export default async function MyAppointmentsPage({
     // patient_connections yet, so there's nothing to book or show here.
     redirect(`${prefix}/auth/pending-confirmation`);
   }
+  if (userRoleData?.role === "patient" && !userRoleData.invited_by_professional_id && !userRoleData.linked_patient_id) {
+    // Removed by the clinic (147): no clinic, nothing to show or book; the
+    // plain "connect to a doctor" form (e7, both platforms).
+    redirect(`${prefix}/auth/invite-required`);
+  }
   if (userRoleData?.role && userRoleData.role !== "patient") {
     // Professional/secretary landed here directly — this page is patient-only.
     redirect(`${prefix}/dashboard`);
