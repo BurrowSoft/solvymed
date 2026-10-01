@@ -1,4 +1,5 @@
-import { thaiEnabled } from "./publicLocales";
+import { isPublicLocale, thaiEnabled } from "./publicLocales";
+import { countryProfile } from "./country";
 
 // The practice country at doctor signup (Sprint TH; country first, Vitor
 // 2026-10-01): Brasil or ประเทศไทย, chosen on the signup's first step.
@@ -66,4 +67,25 @@ export function withCountryHint(url: string, country: string | null | undefined)
   const c = parseCountryChoice(country);
   if (!c) return url;
   return `${url}${url.includes("?") ? "&" : "?"}c=${c}`;
+}
+
+// The country a patient tapped on the signup's first step, until it's saved
+// with their language (149). A cookie, not browser storage, so the first
+// /my-appointments (server) already follows it: a Thai pick at a Brazilian
+// clinic isn't moved to Portuguese before it's saved (3e, #286).
+export const SIGNUP_COUNTRY_COOKIE = "solvymed_signup_country";
+
+export function signupCountryCookie(country: CountryChoice): string {
+  return `${SIGNUP_COUNTRY_COOKIE}=${country}; path=/; max-age=${60 * 60 * 24 * 14}; samesite=lax`;
+}
+
+// Where a patient's page in `locale` moves to for their country (BR/TH): the
+// country's language when the page's isn't in its pair, else null (stay).
+// Never to a language that isn't public (Thai switched off), never without a
+// country (9a: a failed lookup changes nothing).
+export function patientLanguageTarget(locale: string, country: string | null | undefined): string | null {
+  const c = parseCountryChoice(country);
+  if (!c) return null;
+  const pair = countryProfile(c).languages as readonly string[];
+  return pair.includes(locale) || !isPublicLocale(pair[0]) ? null : pair[0];
 }

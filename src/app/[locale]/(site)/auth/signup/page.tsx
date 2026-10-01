@@ -15,11 +15,10 @@ import { MIN_PASSWORD_LENGTH } from "@/lib/password";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
-import { browserTimeZone, COUNTRY_STEP, countryStepHref, parseCountryChoice, signupCountryMetadata } from "@/lib/signupCountry";
+import { browserTimeZone, COUNTRY_STEP, countryStepHref, parseCountryChoice, signupCountryCookie, signupCountryMetadata } from "@/lib/signupCountry";
 import { thaiEnabled } from "@/lib/publicLocales";
 import { consentMetadata } from "@/lib/legalVersions";
 import { titleExamples } from "@/lib/country";
-import { SIGNUP_COUNTRY_KEY } from "@/components/SaveMyLocale";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -241,7 +240,7 @@ export default function SignupPage() {
                 type="button"
                 onClick={() => {
                   // Saved with the language after the first sign-in (149).
-                  try { localStorage.setItem(SIGNUP_COUNTRY_KEY, c.code); } catch { /* none */ }
+                  document.cookie = signupCountryCookie(c.code);
                   const next = english ? "en" : c.locale;
                   goTo(countryStepHref(c.code, next, searchParams), next);
                 }}

@@ -5,8 +5,8 @@ import { MyAppointmentsClient } from "./MyAppointmentsClient";
 import { clinicDate } from "@/lib/clinicTime";
 import { getOnboardingFlags } from "@/lib/setup";
 import { SaveMyLocale } from "@/components/SaveMyLocale";
-import { countryProfile } from "@/lib/country";
-import { isPublicLocale } from "@/lib/publicLocales";
+import { cookies } from "next/headers";
+import { parseCountryChoice, patientLanguageTarget, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 
 export type PatientAppointment = {
   id: string;
@@ -62,14 +62,12 @@ export default async function MyAppointmentsPage({
   // in another one moves to the country's language. On any error nothing
   // happens (9a: never act on a failed lookup), and a language that isn't
   // public (Thai switched off) is never forced.
-  const { data: myCountry, error: countryError } = await supabase.rpc("my_country");
-  if (!countryError && (myCountry === "BR" || myCountry === "TH")) {
-    const pair = countryProfile(myCountry).languages as readonly string[];
-    const target = pair[0];
-    if (!pair.includes(locale) && isPublicLocale(target)) {
-      redirect(`${target === "en" ? "" : `/${target}`}/my-appointments`);
-    }
-  }
+  // A signup pick not saved yet (its cookie) wins: SaveMyLocale below saves
+  // it with this page's language, then clears it.
+  const pick = parseCountryChoice((await cookies()).get(SIGNUP_COUNTRY_COOKIE)?.value);
+  const { data: savedCountry, error: countryError } = pick ? { data: pick, error: null } : await supabase.rpc("my_country");
+  const target = countryError ? null : patientLanguageTarget(locale, savedCountry as string | null);
+  if (target) redirect(`${target === "en" ? "" : `/${target}`}/my-appointments`);
 
   let myProfessionalId = (userRoleData?.invited_by_professional_id as string | null) ?? null;
   if (!myProfessionalId && userRoleData?.linked_patient_id) {

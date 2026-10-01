@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { saveMyLocale } from "@/app/[locale]/(site)/dashboard/locale-actions";
+import { parseCountryChoice, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 
 // Keeps the signed-in user's saved language (117) in step with the site's:
 // once per language per browser (it's rendered on every dashboard page, so
@@ -10,14 +11,10 @@ import { saveMyLocale } from "@/app/[locale]/(site)/dashboard/locale-actions";
 const SAVED_KEY = "solvymed_saved_locale";
 const TRIED_KEY = "solvymed_saved_locale_tried";
 
-// The country a patient picked on the signup's first step (country first),
-// kept in this browser until it's saved with the language (149).
-export const SIGNUP_COUNTRY_KEY = "solvymed_signup_country";
-
 export function SaveMyLocale({ locale }: { locale: string }) {
   useEffect(() => {
-    let country: string | null = null;
-    try { country = localStorage.getItem(SIGNUP_COUNTRY_KEY); } catch { /* none */ }
+    // The signup's country pick (lib/signupCountry), saved with the language.
+    const country = parseCountryChoice(document.cookie.split("; ").find((c) => c.startsWith(`${SIGNUP_COUNTRY_COOKIE}=`))?.split("=")[1]);
     try {
       if (!country && (localStorage.getItem(SAVED_KEY) === locale || sessionStorage.getItem(TRIED_KEY) === locale)) return;
       sessionStorage.setItem(TRIED_KEY, locale);
@@ -28,7 +25,7 @@ export function SaveMyLocale({ locale }: { locale: string }) {
       if (!ok) return;
       try {
         localStorage.setItem(SAVED_KEY, locale);
-        if (country) localStorage.removeItem(SIGNUP_COUNTRY_KEY);
+        if (country) document.cookie = `${SIGNUP_COUNTRY_COOKIE}=; path=/; max-age=0; samesite=lax`;
       } catch { /* none */ }
     }).catch(() => {});
   }, [locale]);
