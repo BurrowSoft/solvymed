@@ -50,11 +50,11 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const [isPending, startTransition] = useTransition();
-  // Which button is working (Vitor, item 20): it shows a spinner, and every
-  // button stays disabled until the action and the list refresh are done.
+  // Which button is working (Vitor, item 20): it shows a spinner while the
+  // transition runs, and every button stays disabled until the action and
+  // the list refresh are done.
   const [acting, setActing] = useState<string | null>(null);
-  useEffect(() => { if (!isPending) setActing(null); }, [isPending]);
-  const spin = (key: string) => (acting === key ? <span className="spinner-current mr-1.5" aria-hidden="true" /> : null);
+  const spin = (key: string) => (isPending && acting === key ? <span className="spinner-current mr-1.5" aria-hidden="true" /> : null);
   // "Now" is read after mount: the server (UTC) and a browser in another
   // zone disagree on which requests are past, which would reorder and
   // restyle the list between the server render and hydration (React #418).

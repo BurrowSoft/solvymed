@@ -189,7 +189,6 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
       onMutate();
     });
   };
-  useEffect(() => { if (!pending) setActing(null); }, [pending]);
   const [showReschedule, setShowReschedule] = useState(false);
   // "Now" is read after mount: the server (UTC) and the browser can disagree
   // on whether an appointment has ended, and that must not change the
@@ -243,20 +242,20 @@ function AppointmentCard({ appt, onMutate }: { appt: PatientAppointment; onMutat
         <div className="flex gap-2 mt-4">
           <button
             disabled={pending}
-            aria-busy={acting === "accept"}
+            aria-busy={pending && acting === "accept"}
             onClick={() => act("accept")}
             className="flex-1 rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50 transition"
           >
-            {acting === "accept" && <span className="spinner-current mr-2" aria-hidden="true" />}
+            {pending && acting === "accept" && <span className="spinner-current mr-2" aria-hidden="true" />}
             {t("accept")}
           </button>
           <button
             disabled={pending}
-            aria-busy={acting === "decline"}
+            aria-busy={pending && acting === "decline"}
             onClick={() => act("decline")}
             className="flex-1 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-300 hover:text-slate-800 disabled:opacity-50 transition"
           >
-            {acting === "decline" && <span className="spinner-current mr-2" aria-hidden="true" />}
+            {pending && acting === "decline" && <span className="spinner-current mr-2" aria-hidden="true" />}
             {t("decline")}
           </button>
         </div>

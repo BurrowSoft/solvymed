@@ -256,7 +256,7 @@ describe('BookingRequestsPanel', () => {
 
   it("Confirm: a spinner on it, every button disabled until done (Vitor, item 20)", async () => {
     let resolve!: () => void;
-    vi.mocked(bookingActions.confirmBookingAndAddPatient).mockImplementationOnce(() => new Promise<undefined>((r) => { resolve = () => r(undefined); }));
+    vi.mocked(bookingActions.confirmBookingAndAddPatient).mockImplementationOnce(() => new Promise((r) => { resolve = () => r({ error: null }); }));
     render(<BookingRequestsPanel bookings={[TENTATIVE_BOOKING]} />);
     const confirm = screen.getByRole("button", { name: "Confirm" });
     fireEvent.click(confirm);
