@@ -346,8 +346,8 @@
           ]
         },
         "web": {
-          "pt": "O pedido aparece em **Agenda**, em **Solicitações de consulta**, marcado **Remarcação solicitada**, com **Aceitar** e **Recusar**.",
-          "en": "The request shows in the **Schedule**, under **Booking Requests**, marked **Reschedule Requested**, with **Accept** and **Decline**."
+          "pt": "O pedido aparece em **Agenda**, em **Solicitações de consulta**, marcado **Remarcação solicitada**, com **Aceitar** e **Recusar**. Em **Minhas Consultas**, o paciente só pode **Solicitar remarcação** até o horário de início da consulta (pelo relógio da clínica).",
+          "en": "The request shows in the **Schedule**, under **Booking Requests**, marked **Reschedule Requested**, with **Accept** and **Decline**. In **My Appointments**, the patient can **Request reschedule** only until the appointment's start time (by the clinic's clock)."
         },
         "webUnavailable": false,
         "open": "home",

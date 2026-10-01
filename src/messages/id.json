@@ -888,7 +888,8 @@
     "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
     "keepRequest": "Keep request",
     "requestCancelledToast": "Request cancelled.",
-    "rescheduleLapsed": "Your reschedule request expired."
+    "rescheduleLapsed": "Your reschedule request expired.",
+    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic."
   },
   "nav": {
     "overview": "Ringkasan",
