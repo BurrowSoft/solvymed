@@ -16,6 +16,7 @@ import { DateInput } from "@/components/DateInput";
 import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
 import { MonthCalendar } from "@/components/MonthCalendar";
+import { chosenTimeParts } from "@/lib/chosenTime";
 
 type Procedure = { id: string; name: string; durationMinutes: number; price?: number; paymentType: string };
 
@@ -105,19 +106,6 @@ function dayLabel(dateStr: string, locale: string, todayLabel: string, today: st
 }
 const formatTime = formatTimeLabel;
 
-// "Horário escolhido: sex., 3 out · 14:00–14:30" (38's format; the month
-// without its trailing "." except in Thai).
-export function chosenTimeParts(date: string, start: string, end: string, locale: string) {
-  const d = new Date(date + "T12:00:00");
-  const month = d.toLocaleDateString(dateLocale(locale), { month: "short" });
-  return {
-    weekday: d.toLocaleDateString(dateLocale(locale), { weekday: "short" }),
-    day: String(d.getDate()),
-    month: locale === "th" ? month : month.replace(/\.$/, ""),
-    start: formatTime(locale, start),
-    end: formatTime(locale, end),
-  };
-}
 
 async function fetchSlots(
   professionalId: string,
@@ -154,6 +142,7 @@ export function BookingClient({
   initialManualProfile,
   currency = "BRL",
   idKind = "BR",
+  clinicTz: clinicTzProp,
 }: {
   professionalId: string;
   professionalName: string;
@@ -167,6 +156,7 @@ export function BookingClient({
   currency?: Currency;
   // The practice country's patient identifier (lib/patientIds).
   idKind?: PatientIdKind;
+  clinicTz?: string | null;
 }) {
   const router = useRouter();
   const t = useTranslations("book");
@@ -180,8 +170,9 @@ export function BookingClient({
   // ahead of Brazil from 21:00, which shifted the strip and failed
   // hydration (React #418).
   const [days, setDays] = useState<string[]>([]);
-  // The clinic's zone: its country's (the practice row isn't readable here).
-  const clinicTz = profileOfKind(idKind).defaultTimeZone;
+  // The clinic's zone: its own (get_professional_public_info time_zone,
+  // from the page), else its country's.
+  const clinicTz = clinicTzProp || profileOfKind(idKind).defaultTimeZone;
 
   function applyConsultType(name: string) {
     if ((CONSULT_TYPES as readonly string[]).includes(name)) {
@@ -792,7 +783,7 @@ export function BookingClient({
             {/* The chosen time, always visible above the button (item 10). */}
             {selectedSlot && selectedDate && (
               <p data-testid="chosen-time" className="rounded-xl bg-teal-50 px-4 py-3 text-sm font-semibold text-teal-800">
-                {t("chosenTime", chosenTimeParts(selectedDate, selectedSlot.start, selectedSlot.end, locale))}
+                {t("chosenTime", chosenTimeParts(selectedDate, selectedSlot.start, selectedSlot.end, profileOfKind(idKind).fallbackLocale))}
               </p>
             )}
 
