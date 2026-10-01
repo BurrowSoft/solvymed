@@ -16,6 +16,7 @@ import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { statusReasonLive } from "@/lib/statusReason";
 import { AutoRefresh } from "@/components/AutoRefresh";
+import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
 function addDaysTo(dateStr: string, n: number) {
@@ -213,7 +214,7 @@ export default async function SchedulePage({
                   <div className="shrink-0 text-right min-w-[52px]">
                     <p className="text-sm font-bold text-slate-900">{appt.start_time?.slice(0, 5)}</p>
                     <p className="text-xs text-slate-400">{appt.end_time?.slice(0, 5)}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{appt.duration_minutes}m</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{t("durationMinutes", { n: appt.duration_minutes ?? 0 })}</p>
                   </div>
                   <div className={`mt-1 h-full w-0.5 self-stretch rounded-full min-h-10 ${appt.status === "blocked" ? "bg-slate-200" : "bg-teal-200"}`} />
                   <div className="flex-1 min-w-0">
@@ -221,7 +222,7 @@ export default async function SchedulePage({
                       <div className="min-w-0">
                         <p className="font-bold text-slate-900 truncate">{appt.patient_name}</p>
                         <p className="text-sm text-slate-500 mt-0.5">
-                          {appt.consultation_type}
+                          <ConsultTypeLabel value={appt.consultation_type} />
                           {appt.type === "online" && <span className="ml-2 rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600 font-semibold">{t("onlineBadge")}</span>}
                         </p>
                         {appt.patient_note && <p className="text-xs text-slate-500 mt-1 truncate"><span className="font-semibold">{t("patientMessage")}:</span> {appt.patient_note}</p>}
@@ -246,7 +247,7 @@ export default async function SchedulePage({
                         {promptPayId && offersPaymentQr(appt) && (
                           <PromptPayQrButton promptPayId={promptPayId} amount={appt.payment_amount} />
                         )}
-                        {MOVABLE_STATUSES.includes(appt.status) && <RescheduleButton id={appt.id} date={appt.date} start={appt.start_time} />}
+                        {MOVABLE_STATUSES.includes(appt.status) && <RescheduleButton id={appt.id} date={appt.date} start={appt.start_time} durationMin={appt.duration_minutes ?? undefined} />}
                         {/* A no-show is never moved (UX 36): book again instead. */}
                         {appt.status === "absent" && (
                           <NewAppointmentButton defaultDate={today} currency={currency} procedures={procedures}

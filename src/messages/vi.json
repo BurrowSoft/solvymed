@@ -145,9 +145,6 @@
     "dur90": "1,5 giờ",
     "dur120": "2 giờ",
     "dur240": "4 giờ",
-    "noProcedures": "Chưa có thủ thuật nào được cấu hình.",
-    "addProcSettings": "Thêm thủ thuật trong Cài đặt",
-    "beforeScheduling": "trước khi đặt lịch.",
     "cancel": "Hủy",
     "saveAppt": "Lưu lịch hẹn",
     "repeat": "Lặp lại",
@@ -253,7 +250,12 @@
     "reasonShort": "Reason",
     "messagePlaceholder": "E.g. please bring your test results.",
     "patientWillSee": "The patient will see this.",
-    "qrNeedsAmount": "Set the amount to create the payment QR."
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "Tuần này",
@@ -703,7 +705,8 @@
     "retry": "Try again",
     "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
     "prevMonth": "Previous month",
-    "nextMonth": "Next month"
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today."
   },
   "auth": {
     "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",

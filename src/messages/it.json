@@ -145,9 +145,6 @@
     "dur90": "1h30",
     "dur120": "2 ore",
     "dur240": "4 ore",
-    "noProcedures": "Nessuna procedura configurata.",
-    "addProcSettings": "Aggiungi procedure nelle Impostazioni",
-    "beforeScheduling": "prima di programmare.",
     "cancel": "Annulla",
     "saveAppt": "Salva appuntamento",
     "repeat": "Ripeti",
@@ -253,7 +250,12 @@
     "reasonShort": "Reason",
     "messagePlaceholder": "E.g. please bring your test results.",
     "patientWillSee": "The patient will see this.",
-    "qrNeedsAmount": "Set the amount to create the payment QR."
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "Questa settimana",
@@ -703,7 +705,8 @@
     "retry": "Try again",
     "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
     "prevMonth": "Previous month",
-    "nextMonth": "Next month"
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today."
   },
   "auth": {
     "passwordTooShort": "La password deve essere lunga almeno {min} caratteri.",

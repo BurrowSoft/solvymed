@@ -32,6 +32,7 @@ vi.mock("@/lib/supabase/server", () => ({
     const q: Record<string, unknown> = {};
     q.update = (row: Record<string, unknown>) => { h.updates.push(row); return q; };
     q.eq = () => q;
+    q.in = () => q;
     q.select = () => q;
     q.not = () => q;
     q.maybeSingle = async () => ({ data: { patient_auth_id: "pat-1", professional_id: "doc-1" }, error: null });

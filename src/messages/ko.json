@@ -145,9 +145,6 @@
     "dur90": "1시간 30분",
     "dur120": "2시간",
     "dur240": "4시간",
-    "noProcedures": "시술이 설정되지 않았습니다.",
-    "addProcSettings": "설정에서 시술 추가",
-    "beforeScheduling": "예약 전에.",
     "cancel": "취소",
     "saveAppt": "예약 저장",
     "repeat": "반복",
@@ -253,7 +250,12 @@
     "reasonShort": "Reason",
     "messagePlaceholder": "E.g. please bring your test results.",
     "patientWillSee": "The patient will see this.",
-    "qrNeedsAmount": "Set the amount to create the payment QR."
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "이번 주",
@@ -703,7 +705,8 @@
     "retry": "Try again",
     "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
     "prevMonth": "Previous month",
-    "nextMonth": "Next month"
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today."
   },
   "auth": {
     "passwordTooShort": "비밀번호는 최소 {min}자 이상이어야 합니다.",

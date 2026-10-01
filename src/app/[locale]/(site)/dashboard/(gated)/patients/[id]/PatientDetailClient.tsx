@@ -16,6 +16,7 @@ import { AddressFields } from "@/components/patient/AddressFields";
 import { addressLine, type AddressColumns } from "@/lib/patientAddress";
 import { profileOfKind } from "@/lib/country";
 import { hasAmount } from "@/lib/paymentRules";
+import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -965,7 +966,7 @@ function AppointmentsTab({ appointments, locale }: { appointments: Appt[]; local
                 <p className="text-base font-extrabold text-slate-900 leading-tight">{new Date(appt.date + "T12:00:00").getDate()}</p>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-slate-900 text-sm">{appt.consultation_type}</p>
+                <p className="font-semibold text-slate-900 text-sm"><ConsultTypeLabel value={appt.consultation_type} /></p>
                 <p className="text-xs text-slate-500">{appt.start_time?.slice(0, 5)}</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">

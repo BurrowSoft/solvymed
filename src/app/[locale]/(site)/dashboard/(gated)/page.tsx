@@ -15,6 +15,7 @@ import { conditionMet } from "@/lib/conditions";
 import { InvitedPatientsCard } from "./InvitedPatientsCard";
 import { greetingFirstName } from "@/lib/doctorName";
 import { dateLocale } from "@/lib/dateLabels";
+import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 
 function statusBadge(status: string) {
@@ -264,7 +265,7 @@ export default async function DashboardPage({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="truncate font-semibold text-slate-900 text-sm">{appt.patient_name}</p>
-                    <p className="text-xs text-slate-500 truncate">{appt.consultation_type}</p>
+                    <p className="text-xs text-slate-500 truncate"><ConsultTypeLabel value={appt.consultation_type} /></p>
                   </div>
                   <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusBadge(appt.status)}`}>{STATUS_LABELS[appt.status] ?? appt.status}</span>
                 </div>
@@ -296,7 +297,7 @@ export default async function DashboardPage({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="truncate font-semibold text-slate-900 text-sm">{appt.patient_name}</p>
-                    <p className="text-xs text-slate-500">{appt.start_time?.slice(0, 5)} · {appt.consultation_type}</p>
+                    <p className="text-xs text-slate-500">{appt.start_time?.slice(0, 5)} · <ConsultTypeLabel value={appt.consultation_type} /></p>
                   </div>
                   <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusBadge(appt.status)}`}>{STATUS_LABELS[appt.status] ?? appt.status}</span>
                 </div>
