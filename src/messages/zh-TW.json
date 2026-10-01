@@ -241,7 +241,16 @@
     "undoAction": "復原（{s} 秒）",
     "undoDone": "已復原。",
     "undoFailed": "無法復原。請開啟該項目進行調整。",
-    "newPatientOption": "不建檔直接預約：{name}"
+    "newPatientOption": "不建檔直接預約：{name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this."
   },
   "payments": {
     "thisWeek": "本週",
@@ -856,7 +865,14 @@
     "rescheduleRequestedLabel": "改期請求：{date} · {time}",
     "rescheduleButton": "請求改期",
     "closeDialog": "關閉",
-    "originallyLabel": "原定：{date} · {time}"
+    "originallyLabel": "原定：{date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "已拒絕"
   },
   "nav": {
     "overview": "總覽",

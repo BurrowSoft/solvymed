@@ -58,6 +58,9 @@ export type CountryProfile = {
   // the country's language, then English. The first is where a user whose
   // language isn't in the pair lands.
   languages: readonly ("pt-BR" | "th" | "en")[];
+  // Whether a short month name keeps its trailing "." on screen ("ต.ค."),
+  // or drops it ("out"): the chosen-time line, as the app's #242.
+  shortMonthKeepsDot: boolean;
   // Where a paid appointment's receipt is issued: the website's simple
   // recibo, or only the app (Thailand: numbered receipts).
   receipts: "web" | "app";
@@ -90,7 +93,7 @@ const BR: CountryProfile = {
   kind: "BR", currency: "BRL", patientId: "cpf",
   idFields: [{ name: "cpf", label: "cpf", placeholder: "000.000.000-00", store: "text", maxLength: 20, search: "digits" }],
   phonePrefix: "+55", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo",
-  clinicTaxId: "cnpj", fallbackLocale: "pt-BR", languages: ["pt-BR", "en"], messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
+  clinicTaxId: "cnpj", fallbackLocale: "pt-BR", languages: ["pt-BR", "en"], shortMonthKeepsDot: false, messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
   healthCard: "cns", addressFormat: "br",
   examples: {
     titles: { other: "Dr., Dra., Prof." },
@@ -106,7 +109,7 @@ const TH: CountryProfile = {
     { name: "passport_number", label: "passport", placeholder: "", store: "text", maxLength: 30, keep: 30, search: "text" },
   ],
   phonePrefix: "+66", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok",
-  clinicTaxId: "th_tax_id", fallbackLocale: "th", languages: ["th", "en"], messagingApp: "line", receipts: "app", calendar: "buddhist",
+  clinicTaxId: "th_tax_id", fallbackLocale: "th", languages: ["th", "en"], shortMonthKeepsDot: true, messagingApp: "line", receipts: "app", calendar: "buddhist",
   healthCard: null, addressFormat: "th",
   examples: {
     titles: { th: "นพ., พญ., ทพ., ทญ.", other: "Dr." },
@@ -120,7 +123,7 @@ const OTHER: CountryProfile = {
   kind: "OTHER", currency: "NONE", patientId: "passport",
   idFields: [{ name: "passport_number", label: "passportOrId", placeholder: "", store: "text", maxLength: 30, keep: 30, search: "text" }],
   phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
-  clinicTaxId: null, fallbackLocale: "en", languages: ["en"], messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
+  clinicTaxId: null, fallbackLocale: "en", languages: ["en"], shortMonthKeepsDot: false, messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
   healthCard: null, addressFormat: "intl",
   examples: {
     titles: null,

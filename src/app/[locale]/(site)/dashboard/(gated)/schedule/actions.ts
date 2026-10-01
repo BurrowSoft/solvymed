@@ -15,6 +15,7 @@ import { tellPatient, type Told } from "@/lib/clinicNotify";
 import { cancelPatientNotice, enqueuePatientNotice } from "@/lib/patientNotice";
 import type { UndoToken } from "@/lib/scheduleUndo";
 import { signUndo, verifyUndo } from "@/lib/scheduleUndoSign";
+import { cleanReason, statusReasonLive } from "@/lib/statusReason";
 
 // The new-appointment patient picker: up to PICKER_LIMIT active patients of
 // this practice whose name (or CPF/phone digits) match, searched in the
@@ -376,7 +377,9 @@ const VALID_APPOINTMENT_STATUSES = [
   "scheduled", "confirmed", "completed", "cancelled", "blocked", "late", "absent",
 ];
 
-export async function updateAppointmentStatus(id: string, status: string) {
+// reason: the clinic's optional reason on a cancel (150's status_reason,
+// shown to the patient); ignored for other statuses and before 150.
+export async function updateAppointmentStatus(id: string, status: string, reason?: string | null) {
   // Returns a stable code (not raw text) — the caller renders it through
   // next-intl.
   if (!VALID_APPOINTMENT_STATUSES.includes(status)) return { error: "Invalid status", code: "generic" };
@@ -405,9 +408,10 @@ export async function updateAppointmentStatus(id: string, status: string) {
   // a TOCTOU race against a concurrent booking-card action) — a 0-row
   // result means either no such appointment for this professional, or it
   // was in a workflow-only status.
+  const withReason = status === "cancelled" && statusReasonLive() ? { status_reason: cleanReason(reason) } : {};
   const { data, error } = await supabase
     .from("appointments")
-    .update({ status })
+    .update({ status, ...withReason })
     .eq("id", id)
     .eq("professional_id", effectiveProfId)
     .not("status", "in", '("tentative","proposal")')
