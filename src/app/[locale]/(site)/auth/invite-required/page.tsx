@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { IconBadge } from "@/components/IconBadge";
+import { conditionMet } from "@/lib/conditions";
 
 export default function InviteRequiredPage() {
   const t = useTranslations("auth");
@@ -106,6 +107,38 @@ export default function InviteRequiredPage() {
       }
     }
     const samePractice = (e: { hint?: string | null } | null) => e?.hint === "same_practice";
+
+    // 147: one Connect = one attempt (connect_with_code tries the personal
+    // code, then the public one, server-side). Its errors are the old RPCs'.
+    if (conditionMet("invite-connect-live")) {
+      const { data: kind, error: connectError } = await supabase.rpc("connect_with_code", { p_code: code });
+      if (connectError) {
+        const m = connectError.message ?? "";
+        const text = m.includes("already_connected") || m.includes("already_invited_by_another_professional")
+          ? await connectedTo(samePractice(connectError))
+          : m.includes("too_many_attempts")
+          ? t("inviteRequired.tooManyAttempts")
+          : m.includes("patient_archived")
+          ? t("inviteRequired.archived")
+          : m.includes("professional accounts cannot use")
+          ? t("inviteRequired.notPendingPatient")
+          : t("inviteRequired.linkFailed");
+        setLoading(false);
+        setError(text);
+        return;
+      }
+      if (kind === "personal") {
+        router.push(`${prefix}/auth/patient-welcome`);
+        return;
+      }
+      if (kind === "public") {
+        router.push(`${prefix}/auth/pending-confirmation`);
+        return;
+      }
+      setLoading(false);
+      setError(t("inviteRequired.codeInvalid"));
+      return;
+    }
 
     const { data: fullyLinked, error: linkError } = await supabase.rpc("link_patient_by_invite_code", { p_code: code });
     if (linkError?.message?.includes("already_connected")) {

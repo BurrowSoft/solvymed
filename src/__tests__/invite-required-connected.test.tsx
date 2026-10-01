@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
 
@@ -13,8 +13,12 @@ const h = vi.hoisted(() => ({
   role: "patient" as string | null,
   link: { data: null, error: null } as RpcResult,
   rpcs: [] as string[],
+  connectLive: false,
+  connect: { data: null, error: null } as RpcResult,
+  push: vi.fn(),
 }));
-vi.mock("next/navigation", async (orig) => ({ ...(await orig<typeof import("next/navigation")>()), useParams: () => ({ locale: "pt-BR" }), useRouter: () => ({ push: vi.fn() }) }));
+vi.mock("@/lib/conditions", () => ({ conditionMet: (id: string) => (id === "invite-connect-live" ? h.connectLive : false) }));
+vi.mock("next/navigation", async (orig) => ({ ...(await orig<typeof import("next/navigation")>()), useParams: () => ({ locale: "pt-BR" }), useRouter: () => ({ push: h.push }) }));
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => {
     const row = (data: unknown) => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data }) }) }) });
@@ -25,6 +29,7 @@ vi.mock("@/lib/supabase/client", () => ({
         h.rpcs.push(fn);
         const res: Promise<RpcResult> & { maybeSingle?: () => Promise<RpcResult> } = Promise.resolve(
           fn === "link_patient_by_invite_code" ? h.link
+            : fn === "connect_with_code" ? h.connect
             : fn === "get_linked_professional_id" ? { data: "doc-1", error: null }
             : { data: null, error: null },
         );
@@ -73,5 +78,28 @@ describe("invite code while already connected", () => {
     expect(await screen.findByText(pt.auth.inviteRequired.alreadyHasRole)).toBeInTheDocument();
     expect(h.rpcs).toEqual([]);
     unmount();
+  });
+
+  it("147 live: one connect_with_code call; its kind routes, its errors map the same", async () => {
+    h.role = "patient";
+    h.connectLive = true;
+    for (const [kind, path] of [["personal", "/pt-BR/auth/patient-welcome"], ["public", "/pt-BR/auth/pending-confirmation"]] as const) {
+      h.connect = { data: kind, error: null };
+      h.push.mockClear();
+      const unmount = await submit();
+      await waitFor(() => expect(h.push).toHaveBeenCalledWith(path));
+      expect(h.rpcs).toEqual(["connect_with_code"]);
+      unmount();
+    }
+    h.connect = { data: null, error: { message: "already_connected", hint: "same_practice" } };
+    let unmount = await submit();
+    expect(await screen.findByText("Você já está conectado a Dra. Ana. Peça à clínica para juntar seus cadastros.")).toBeInTheDocument();
+    expect(h.rpcs).not.toContain("link_patient_by_invite_code");
+    unmount();
+    h.connect = { data: null, error: null };
+    unmount = await submit();
+    expect(await screen.findByText(pt.auth.inviteRequired.codeInvalid)).toBeInTheDocument();
+    unmount();
+    h.connectLive = false;
   });
 });
