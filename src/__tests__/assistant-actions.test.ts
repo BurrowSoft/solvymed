@@ -881,3 +881,15 @@ describe("SolvyAI actions mode: send Pix (app only; Brazil only; Thai practices 
     expect(resultsIn(t.model.calls[2])[0]).toMatchObject({ is_error: true });
   });
 });
+
+// 9a: the App Map says only what's true today: the app's "no QR once paid"
+// waits for app 1.4.0 (the released app still shows it).
+describe("the App Map's paid-appointment rules", () => {
+  it("SolvyAI's refusal and the website's rule are live; the app's waits for app-1.4.0", async () => {
+    const { appMapText } = await import("@/lib/solvyai/app-map");
+    const text = appMapText();
+    expect(text).toContain("Never for a paid appointment, in any country");
+    expect(text).toContain("On the website, a paid appointment no longer shows the payment QR");
+    expect(text).not.toContain("In the app too, a paid appointment no longer shows the payment QR");
+  });
+});
