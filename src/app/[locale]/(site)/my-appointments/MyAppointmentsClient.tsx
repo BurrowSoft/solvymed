@@ -175,7 +175,7 @@ function RescheduleDialog({
             startTransition(async () => {
               const result = await requestReschedule(appt.id, selectedDate, selectedSlot.start, selectedSlot.end);
               if (!result.error) { onSuccess(); }
-              else { setSubmitError(result.error); }
+              else { setSubmitError(result.error === "appointment_already_started" ? t("rescheduleStarted") : result.error); }
             });
           }}
           className="w-full rounded-xl bg-teal-600 py-3 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50 transition"
@@ -244,8 +244,9 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
   const label = appt.status === "rejected" ? t("statusDeclined") : STATUS_KEY[appt.status] ? tSchedule(STATUS_KEY[appt.status]) : appt.status;
   const isProfProposal = appt.status === "proposal" && appt.scheduled_by !== "patient" && (!!appt.proposed_date || appt.scheduled_by === "professional");
   const isPatientReschedule = appt.status === "proposal" && appt.scheduled_by === "patient";
-  const apptEndDateTime = new Date(`${appt.date}T${appt.end_time}`);
-  const canReschedule = (appt.status === "confirmed" || appt.status === "scheduled") && !isPatientReschedule && now !== null && apptEndDateTime > now;
+  // Solicitar remarcação only until the visit STARTS, on the clinic's clock
+  // (e7; as the app). The 154 line follows it.
+  const canReschedule = (appt.status === "confirmed" || appt.status === "scheduled") && !isPatientReschedule && now !== null && !requestLapsed(appt.date, appt.start_time.slice(0, 5), now, clinicTz);
   // 154: the patient's reschedule request lapsed unanswered and the server
   // put the visit back; a muted line while the visit is still ahead.
   const rescheduleLapsed = !!appt.reschedule_lapsed_at && canReschedule;
