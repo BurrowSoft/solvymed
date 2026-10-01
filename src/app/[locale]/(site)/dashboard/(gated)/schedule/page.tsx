@@ -14,6 +14,7 @@ import { clinicDate, getClinicTimeZone } from "@/lib/clinicTime";
 import { formatMoney } from "@/lib/money";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
+import { AutoRefresh } from "@/components/AutoRefresh";
 
 function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
 function addDaysTo(dateStr: string, n: number) {
@@ -156,6 +157,8 @@ export default async function SchedulePage({
           <p className="text-sm text-slate-500 mt-0.5">{t("apptsToday", { count: todayCount })}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {/* The Agenda and its booking requests stay current (items 19/21). */}
+          <AutoRefresh />
           <ViewToggle currentView={view} currentDate={currentDate} />
           <BlockTimeButton defaultDate={currentDate} />
           <NewAppointmentButton defaultDate={currentDate} currency={currency} procedures={procedures} autoOpen={newParam === "1"} />

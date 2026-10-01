@@ -1856,5 +1856,8 @@
   "openInApp": {
     "open": "เปิดในแอป SolvyMed",
     "continue": "ดำเนินการต่อบนเว็บไซต์"
+  },
+  "autoRefresh": {
+    "refresh": "รีเฟรช"
   }
 }

@@ -1826,5 +1826,8 @@
   "openInApp": {
     "open": "Abrir no app SolvyMed",
     "continue": "Continuar no site"
+  },
+  "autoRefresh": {
+    "refresh": "Atualizar"
   }
 }

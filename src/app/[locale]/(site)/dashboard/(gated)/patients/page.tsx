@@ -8,6 +8,7 @@ import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
 import { conditionMet } from "@/lib/conditions";
 import { INVITE_COLUMNS, isNewInvited, type InviteFields } from "@/lib/invitedPatients";
+import { AutoRefresh } from "@/components/AutoRefresh";
 
 export default async function PatientsPage({
   params,
@@ -139,6 +140,7 @@ export default async function PatientsPage({
         </div>
         {!showArchived && (
           <div className="flex flex-wrap items-center gap-2">
+            <AutoRefresh />
             {importLive && isDoctor && (
               <Link href={`${prefix}/dashboard/patients/import`} className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
                 {t("importButton")}
