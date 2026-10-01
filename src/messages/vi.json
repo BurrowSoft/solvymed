@@ -775,7 +775,9 @@
       "alreadyInvitedByAnother": "Tài khoản của bạn đã được liên kết với một bác sĩ khác.",
       "archived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám.",
       "alreadyConnected": "Bạn đã kết nối với {doctor}. Để đổi, hãy liên hệ bộ phận hỗ trợ.",
-      "alreadyConnectedNoName": "Bạn đã kết nối với một bác sĩ khác. Để đổi, hãy liên hệ bộ phận hỗ trợ."
+      "alreadyConnectedNoName": "Bạn đã kết nối với một bác sĩ khác. Để đổi, hãy liên hệ bộ phận hỗ trợ.",
+      "alreadyConnectedSamePractice": "Bạn đã kết nối với {doctor}. Hãy nhờ phòng khám gộp hồ sơ của bạn.",
+      "alreadyConnectedSamePracticeNoName": "Bạn đã kết nối với phòng khám này. Hãy nhờ phòng khám gộp hồ sơ của bạn."
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",

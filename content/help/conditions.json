@@ -94,5 +94,9 @@
   "invited-patients-live": {
     "met": true,
     "what": "Migration 145 (invited patients) is applied on production: an invite-code signup creates the practice's patient record at once (patients.invited_via_code_at / invite_reviewed_at / invite_same_email_as, keep_invited_patient / remove_invited_patient). Gates the website's \"Novo, via convite\" badge, the dashboard's new-invited-patients card and its Help / App Map lines (the app's lines also wait on app-1.4.0). The website never reads the new columns before this."
+  },
+  "invite-same-practice-live": {
+    "met": false,
+    "what": "Migration 146 is applied on production: link_patient_by_invite_code raises already_connected with HINT same_practice when the personal code is another record of the patient's own practice, so the website and the app say \"Ask the clinic to combine your records\" instead of contact support. Gates its Help C5 / App Map lines (the website maps the hint already; it's absent before 146)."
   }
 }

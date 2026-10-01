@@ -775,7 +775,9 @@
       "backToSignup": "Use a different account",
       "archived": "This clinic isn't taking new bookings for your account. Please contact the clinic.",
       "alreadyConnected": "You're already connected to {doctor}. To switch, contact support.",
-      "alreadyConnectedNoName": "You are already connected to another doctor. To switch, contact support."
+      "alreadyConnectedNoName": "You are already connected to another doctor. To switch, contact support.",
+      "alreadyConnectedSamePractice": "You're already connected to {doctor}. Ask the clinic to combine your records.",
+      "alreadyConnectedSamePracticeNoName": "You're already connected to this clinic. Ask the clinic to combine your records."
     },
     "pendingConfirmation": {
       "loading": "Checking your status…",

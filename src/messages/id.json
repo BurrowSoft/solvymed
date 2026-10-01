@@ -775,7 +775,9 @@
       "alreadyInvitedByAnother": "Akun Anda sudah terhubung dengan dokter lain.",
       "archived": "Klinik ini tidak menerima pemesanan baru untuk akun Anda. Silakan hubungi klinik.",
       "alreadyConnected": "Anda sudah terhubung dengan {doctor}. Untuk mengganti, hubungi dukungan.",
-      "alreadyConnectedNoName": "Anda sudah terhubung dengan dokter lain. Untuk mengganti, hubungi dukungan."
+      "alreadyConnectedNoName": "Anda sudah terhubung dengan dokter lain. Untuk mengganti, hubungi dukungan.",
+      "alreadyConnectedSamePractice": "Anda sudah terhubung dengan {doctor}. Minta klinik untuk menggabungkan data Anda.",
+      "alreadyConnectedSamePracticeNoName": "Anda sudah terhubung dengan klinik ini. Minta klinik untuk menggabungkan data Anda."
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",

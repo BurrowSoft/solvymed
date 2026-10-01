@@ -775,7 +775,9 @@
       "alreadyInvitedByAnother": "Votre compte est déjà rattaché à un autre cabinet.",
       "archived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet.",
       "alreadyConnected": "Vous êtes déjà connecté à {doctor}. Pour changer, contactez le support.",
-      "alreadyConnectedNoName": "Vous êtes déjà connecté à un autre médecin. Pour changer, contactez le support."
+      "alreadyConnectedNoName": "Vous êtes déjà connecté à un autre médecin. Pour changer, contactez le support.",
+      "alreadyConnectedSamePractice": "Vous êtes déjà connecté à {doctor}. Demandez au cabinet de fusionner vos dossiers.",
+      "alreadyConnectedSamePracticeNoName": "Vous êtes déjà connecté à ce cabinet. Demandez au cabinet de fusionner vos dossiers."
     },
     "pendingConfirmation": {
       "loading": "Vérification de votre statut…",

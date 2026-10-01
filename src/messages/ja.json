@@ -775,7 +775,9 @@
       "alreadyInvitedByAnother": "あなたのアカウントはすでに別の医師と連携しています。",
       "archived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。",
       "alreadyConnected": "すでに {doctor} とつながっています。変更するにはサポートにお問い合わせください。",
-      "alreadyConnectedNoName": "すでに別の医師とつながっています。変更するにはサポートにお問い合わせください。"
+      "alreadyConnectedNoName": "すでに別の医師とつながっています。変更するにはサポートにお問い合わせください。",
+      "alreadyConnectedSamePractice": "すでに {doctor} とつながっています。クリニックに記録の統合を依頼してください。",
+      "alreadyConnectedSamePracticeNoName": "すでにこのクリニックとつながっています。クリニックに記録の統合を依頼してください。"
     },
     "pendingConfirmation": {
       "loading": "状況を確認しています…",

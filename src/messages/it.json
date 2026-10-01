@@ -775,7 +775,9 @@
       "alreadyInvitedByAnother": "Il tuo account è già collegato a un altro studio.",
       "archived": "Questo studio non accetta nuove prenotazioni per il tuo account. Contatta lo studio.",
       "alreadyConnected": "Sei già collegato a {doctor}. Per cambiare, contatta l'assistenza.",
-      "alreadyConnectedNoName": "Sei già collegato a un altro medico. Per cambiare, contatta l'assistenza."
+      "alreadyConnectedNoName": "Sei già collegato a un altro medico. Per cambiare, contatta l'assistenza.",
+      "alreadyConnectedSamePractice": "Sei già collegato a {doctor}. Chiedi allo studio di unire le tue schede.",
+      "alreadyConnectedSamePracticeNoName": "Sei già collegato a questo studio. Chiedi allo studio di unire le tue schede."
     },
     "pendingConfirmation": {
       "loading": "Verifica dello stato…",

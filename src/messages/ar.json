@@ -775,7 +775,9 @@
       "alreadyInvitedByAnother": "حسابك متصل بالفعل بعيادة أخرى.",
       "archived": "لا تقبل هذه العيادة حجوزات جديدة لحسابك. يُرجى التواصل مع العيادة.",
       "alreadyConnected": "أنت متصل بالفعل بـ {doctor}. للتغيير، تواصل مع الدعم.",
-      "alreadyConnectedNoName": "أنت متصل بالفعل بطبيب آخر. للتغيير، تواصل مع الدعم."
+      "alreadyConnectedNoName": "أنت متصل بالفعل بطبيب آخر. للتغيير، تواصل مع الدعم.",
+      "alreadyConnectedSamePractice": "أنت متصل بالفعل بـ {doctor}. اطلب من العيادة دمج سجلاتك.",
+      "alreadyConnectedSamePracticeNoName": "أنت متصل بالفعل بهذه العيادة. اطلب من العيادة دمج سجلاتك."
     },
     "pendingConfirmation": {
       "loading": "جارٍ التحقق من حالتك…",

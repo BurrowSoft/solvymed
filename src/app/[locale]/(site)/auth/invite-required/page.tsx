@@ -71,10 +71,12 @@ export default function InviteRequiredPage() {
       setError(t("inviteRequired.notPendingPatient"));
       return;
     }
-    // Refuse to attach a code if this account already has a persisted role
-    // at all (including an already-linked patient), rather than silently
-    // overwriting it.
-    if (existingRole?.role) {
+    // Refuse to attach a code if this account already has a persisted
+    // non-patient role. A patient (already linked) goes on to the RPCs,
+    // which refuse to re-link it themselves (145: already_connected, 146:
+    // same_practice) so the message can name the doctor; nothing is
+    // overwritten.
+    if (existingRole?.role && existingRole.role !== "patient") {
       setLoading(false);
       setError(t("inviteRequired.alreadyHasRole"));
       return;
@@ -88,21 +90,26 @@ export default function InviteRequiredPage() {
     // write themselves now — atomic, no client-side race to handle.
     // Already connected to a practice (145): name the doctor, like the app
     // (get_linked_professional_id → the public info), or say it without a name.
-    async function connectedTo(): Promise<string> {
+    // The same practice's code (146: HINT same_practice, absent before it's
+    // applied) asks the clinic to combine the records instead of support.
+    async function connectedTo(samePractice: boolean): Promise<string> {
+      const named = samePractice ? "inviteRequired.alreadyConnectedSamePractice" : "inviteRequired.alreadyConnected";
+      const noName = samePractice ? "inviteRequired.alreadyConnectedSamePracticeNoName" : "inviteRequired.alreadyConnectedNoName";
       try {
         const { data: pid } = await supabase.rpc("get_linked_professional_id");
-        if (typeof pid !== "string") return t("inviteRequired.alreadyConnectedNoName");
+        if (typeof pid !== "string") return t(noName);
         const { data: info } = await supabase.rpc("get_professional_public_info", { p_professional_id: pid }).maybeSingle();
         const name = (info as { full_name?: string | null } | null)?.full_name?.trim();
-        return name ? t("inviteRequired.alreadyConnected", { doctor: name }) : t("inviteRequired.alreadyConnectedNoName");
+        return name ? t(named, { doctor: name }) : t(noName);
       } catch {
-        return t("inviteRequired.alreadyConnectedNoName");
+        return t(noName);
       }
     }
+    const samePractice = (e: { hint?: string | null } | null) => e?.hint === "same_practice";
 
     const { data: fullyLinked, error: linkError } = await supabase.rpc("link_patient_by_invite_code", { p_code: code });
     if (linkError?.message?.includes("already_connected")) {
-      const text = await connectedTo();
+      const text = await connectedTo(samePractice(linkError));
       setLoading(false);
       setError(text);
       return;
@@ -126,7 +133,7 @@ export default function InviteRequiredPage() {
     const { data: profId, error: profLinkError } = await supabase.rpc("link_by_professional_public_code", { p_public_code: code });
     // Another practice's code while connected: the same message (38).
     if (profLinkError?.message?.includes("already_invited_by_another_professional") || profLinkError?.message?.includes("already_connected")) {
-      const text = await connectedTo();
+      const text = await connectedTo(samePractice(profLinkError));
       setLoading(false);
       setError(text);
       return;

@@ -775,7 +775,9 @@
       "alreadyInvitedByAnother": "Tu cuenta ya está conectada con otra clínica.",
       "archived": "Esta clínica no está aceptando nuevas reservas para tu cuenta. Ponte en contacto con la clínica.",
       "alreadyConnected": "Ya estás conectado con {doctor}. Para cambiar, contacta con soporte.",
-      "alreadyConnectedNoName": "Ya estás conectado con otro médico. Para cambiar, contacta con soporte."
+      "alreadyConnectedNoName": "Ya estás conectado con otro médico. Para cambiar, contacta con soporte.",
+      "alreadyConnectedSamePractice": "Ya estás conectado con {doctor}. Pide a la clínica que una tus fichas.",
+      "alreadyConnectedSamePracticeNoName": "Ya estás conectado con esta clínica. Pide a la clínica que una tus fichas."
     },
     "pendingConfirmation": {
       "loading": "Verificando tu estado…",

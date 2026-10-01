@@ -775,7 +775,9 @@
       "alreadyInvitedByAnother": "Ihr Konto ist bereits mit einer anderen Praxis verbunden.",
       "archived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis.",
       "alreadyConnected": "Sie sind bereits mit {doctor} verbunden. Zum Wechseln wenden Sie sich an den Support.",
-      "alreadyConnectedNoName": "Sie sind bereits mit einer anderen Praxis verbunden. Zum Wechseln wenden Sie sich an den Support."
+      "alreadyConnectedNoName": "Sie sind bereits mit einer anderen Praxis verbunden. Zum Wechseln wenden Sie sich an den Support.",
+      "alreadyConnectedSamePractice": "Sie sind bereits mit {doctor} verbunden. Bitten Sie die Praxis, Ihre Einträge zusammenzuführen.",
+      "alreadyConnectedSamePracticeNoName": "Sie sind bereits mit dieser Praxis verbunden. Bitten Sie die Praxis, Ihre Einträge zusammenzuführen."
     },
     "pendingConfirmation": {
       "loading": "Status wird geprüft…",

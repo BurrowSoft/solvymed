@@ -775,7 +775,9 @@
       "alreadyInvitedByAnother": "您的帳戶已與另一位醫生關聯。",
       "archived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。",
       "alreadyConnected": "您已與 {doctor} 連結。如需更換，請聯絡客服。",
-      "alreadyConnectedNoName": "您已與其他醫師連結。如需更換，請聯絡客服。"
+      "alreadyConnectedNoName": "您已與其他醫師連結。如需更換，請聯絡客服。",
+      "alreadyConnectedSamePractice": "您已與 {doctor} 連結。請診所合併您的病歷。",
+      "alreadyConnectedSamePracticeNoName": "您已與此診所連結。請診所合併您的病歷。"
     },
     "pendingConfirmation": {
       "loading": "正在檢查您的狀態…",
