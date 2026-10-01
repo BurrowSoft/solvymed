@@ -886,7 +886,8 @@
     "cancelRequestTitle": "Cancel this request?",
     "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
     "keepRequest": "Keep request",
-    "requestCancelledToast": "Request cancelled."
+    "requestCancelledToast": "Request cancelled.",
+    "rescheduleLapsed": "Your reschedule request expired."
   },
   "nav": {
     "overview": "Inicio",

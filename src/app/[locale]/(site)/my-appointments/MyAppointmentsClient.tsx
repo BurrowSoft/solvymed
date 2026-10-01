@@ -205,6 +205,9 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
   // has refreshed (Vitor, item 20), so a second tap can't land meanwhile.
   const [acting, setActing] = useState<"accept" | "decline" | null>(null);
   const [actError, setActError] = useState("");
+  // A new status from the refresh answers the error (e.g. the clinic had
+  // already confirmed: the card's own hint says it; 3e).
+  useEffect(() => setActError(""), [appt.status]);
   // "Cancelar pedido" (a pending request only): confirm first.
   const [askCancel, setAskCancel] = useState(false);
   const [cancelling, startCancel] = useTransition();
@@ -243,6 +246,9 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
   const isPatientReschedule = appt.status === "proposal" && appt.scheduled_by === "patient";
   const apptEndDateTime = new Date(`${appt.date}T${appt.end_time}`);
   const canReschedule = (appt.status === "confirmed" || appt.status === "scheduled") && !isPatientReschedule && now !== null && apptEndDateTime > now;
+  // 154: the patient's reschedule request lapsed unanswered and the server
+  // put the visit back; a muted line while the visit is still ahead.
+  const rescheduleLapsed = !!appt.reschedule_lapsed_at && canReschedule;
 
   const displayDate = (isProfProposal && appt.proposed_date) ? appt.proposed_date : appt.date;
   const displayStart = (isProfProposal && appt.proposed_start_time) ? appt.proposed_start_time : appt.start_time;
@@ -286,6 +292,9 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
           )}
           {appt.clinic_message && appt.status !== "rejected" && appt.status !== "cancelled" && (
             <p data-testid="clinic-message" className="mt-2 break-words text-sm text-slate-600">{t("clinicMessage", { message: appt.clinic_message })}</p>
+          )}
+          {rescheduleLapsed && (
+            <p data-testid="reschedule-lapsed" className="mt-2 text-sm text-slate-500">{t("rescheduleLapsed")}</p>
           )}
           {appt.patient_note && (
             <p className="mt-2 text-sm text-slate-600 italic">&ldquo;{appt.patient_note}&rdquo;</p>
