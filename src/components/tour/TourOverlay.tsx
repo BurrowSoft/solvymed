@@ -278,7 +278,7 @@ export function TourOverlay({
                 <button type="button" onClick={() => setConfirmSkip(false)} className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">
                   {t("continueTour")}
                 </button>
-                <button type="button" onClick={() => onClose("skipped", index)} className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-bold text-white hover:bg-slate-700">
+                <button type="button" onClick={() => onClose("skipped", index)} className="rounded-lg bg-[#0f172a] px-3 py-2 text-sm font-bold text-[#ffffff] hover:bg-[#334155]">
                   {t("skip")}
                 </button>
               </div>

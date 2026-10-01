@@ -231,7 +231,8 @@
     "undoCancelled": "Appuntamento annullato",
     "undoAction": "Annulla ({s} s)",
     "undoDone": "Annullato.",
-    "undoFailed": "Impossibile annullare. Apri l’elemento per modificarlo."
+    "undoFailed": "Impossibile annullare. Apri l’elemento per modificarlo.",
+    "newPatientOption": "Prenota senza scheda: {name}"
   },
   "payments": {
     "thisWeek": "Questa settimana",
@@ -250,7 +251,10 @@
     "revertConfirm": "Riportare questo pagamento a in sospeso?",
     "errorInvalidAmount": "Inserisci un importo valido.",
     "errorGeneric": "Qualcosa è andato storto. Riprova.",
-    "amountPlaceholderPlain": "Importo"
+    "amountPlaceholderPlain": "Importo",
+    "noAmount": "Nessun importo",
+    "setAmount": "Imposta importo",
+    "amountFirst": "Indica prima l'importo ricevuto."
   },
   "paymentsPage": {
     "title": "Pagamenti",
@@ -1793,7 +1797,8 @@
     "onlySolvyMed": "Posso aiutare solo con SolvyMed.",
     "noClinical": "Non posso aiutare con questioni cliniche.",
     "minutes": "{n} min",
-    "alreadyPaid": "Questo appuntamento è già pagato."
+    "alreadyPaid": "Questo appuntamento è già pagato.",
+    "noAmount": "Questo appuntamento non ha un importo. Impostalo nell'Agenda prima di segnarlo come pagato."
   },
   "countryExamples": {
     "phone": "Numero di telefono"

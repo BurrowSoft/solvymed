@@ -6,7 +6,7 @@ import { ReloadButton } from "@/components/ReloadButton";
 import { TrialChip, trialChipMessage } from "@/components/TrialChip";
 import { getTranslations } from "next-intl/server";
 import { isAccessAllowed, trialDaysRemaining, type EffectiveSub } from "@/lib/subscription";
-import { doctorDisplayName } from "@/lib/doctorName";
+import { greetingFirstName } from "@/lib/doctorName";
 import { TourProvider } from "@/components/tour/TourProvider";
 import { readTourState, tourEntry } from "@/lib/tourState";
 import { SOLVYAI_INTRO_TOUR, solvyAiIntroOn, solvyAiPanelOn } from "@/lib/solvyaiIntro";
@@ -155,7 +155,7 @@ export default async function DashboardLayout({
   // (lib/doctorName, the app's rule).
   // Empty when no name is saved yet: the sidebar then shows only the email
   // and a neutral avatar (UX).
-  const firstName = doctorDisplayName(ownName, { firstOnly: true });
+  const firstName = greetingFirstName(ownName, user.email);
 
   // The guided tour (specs/walkthrough.md): auto-start on the first sign-in,
   // a resume offer after leaving mid-tour, or nothing (before migration 113
@@ -207,7 +207,9 @@ export default async function DashboardLayout({
         />
         <div className="flex flex-1 flex-col overflow-hidden">
           {showTrialChip && (
-            <div className="flex justify-end px-4 pt-3 lg:px-8">
+            // Below lg this row is as tall as the ☰ button's corner (top-4 + 40px),
+            // so nothing under it starts beneath the button (Vitor, phone).
+            <div className="flex h-14 shrink-0 items-center justify-end pl-16 pr-4 lg:h-auto lg:items-start lg:px-8 lg:pt-3">
               <span data-tour="trial-chip" className="inline-flex">
                 <TrialChip daysLeft={daysLeft!} locale={locale} text={trialChipText} />
               </span>
@@ -215,7 +217,7 @@ export default async function DashboardLayout({
           )}
           {/* Below lg the fixed ☰ button sits top left: room for it, so it
               never covers the page title (3e). */}
-          <main className={`flex-1 overflow-auto lg:pl-0 lg:pt-0 ${showTrialChip ? "pt-4" : "pt-14"}`}>
+          <main className={`flex-1 overflow-auto lg:pl-0 lg:pt-0 ${showTrialChip ? "pt-2" : "pt-14"}`}>
             <div className="min-h-full">
               {children}
             </div>

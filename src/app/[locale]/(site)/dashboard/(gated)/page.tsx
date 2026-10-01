@@ -11,7 +11,7 @@ import { formatMoney } from "@/lib/money";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { RECEIVABLE_STATUSES } from "@/lib/paymentRules";
-import { doctorDisplayName } from "@/lib/doctorName";
+import { greetingFirstName } from "@/lib/doctorName";
 import { dateLocale } from "@/lib/dateLabels";
 
 
@@ -102,12 +102,12 @@ export default async function DashboardPage({
     supabase.from("appointments").select("id, patient_name, start_time, end_time, status, consultation_type").eq("professional_id", effectiveProfId).eq("date", today).neq("status", "blocked").order("start_time"),
     supabase.from("appointments").select("patient_name, date, start_time, consultation_type, status").eq("professional_id", effectiveProfId).gt("date", today).lte("date", nextWeekStr).neq("status", "blocked").order("date").order("start_time").limit(8),
     // The pending card: the app's "to receive" rule (lib/paymentRules).
-    supabase.from("appointments").select("patient_name, payment_amount, date").eq("professional_id", effectiveProfId).eq("payment_status", "pending").in("status", [...RECEIVABLE_STATUSES]),
+    supabase.from("appointments").select("patient_name, payment_amount, date").eq("professional_id", effectiveProfId).eq("payment_status", "pending").in("status", [...RECEIVABLE_STATUSES]).gt("payment_amount", 0),
     supabase.from("patients").select("*", { count: "exact", head: true }).eq("professional_id", effectiveProfId).is("archived_at", null),
     // Revenue is doctor-only, so a secretary never fetches it.
     isSecretary
       ? Promise.resolve({ data: [] as { payment_amount: number }[] })
-      : supabase.from("appointments").select("payment_amount").eq("professional_id", effectiveProfId).eq("payment_status", "paid").gte("date", monthStart).lte("date", today),
+      : supabase.from("appointments").select("payment_amount").eq("professional_id", effectiveProfId).eq("payment_status", "paid").gt("payment_amount", 0).gte("date", monthStart).lte("date", today),
   ]);
 
   const professional = professionalResult.data;
@@ -124,7 +124,7 @@ export default async function DashboardPage({
   // The doctor's own title if they typed one ("Dra. Beatriz"), never one we
   // add (lib/doctorName, the app's rule).
   // No name saved yet: no name at all ("Boa tarde!"), never the email (UX).
-  const firstName = doctorDisplayName(ownName, { firstOnly: true });
+  const firstName = greetingFirstName(ownName, user.email);
   const totalPending = pendingPayments.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
   const totalRevenue = monthRevenue.reduce((s, r) => s + (r.payment_amount ?? 0), 0);
   const todayFormatted = now.toLocaleDateString(dateLocale(locale), { timeZone, weekday: "long", year: "numeric", month: "long", day: "numeric" });
