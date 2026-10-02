@@ -34,7 +34,8 @@ export function doctorDisplayName(name: string | null | undefined, opts: { first
 // (lib/country THAI_TITLES, one list; 9a), plus ภก./ภญ./ดร. Kept exactly as
 // typed.
 const THAI_TITLE = new RegExp(
-  `^(${[...THAI_TITLES, "ภก.", "ภญ.", "ดร."].map((s) => s.replace(/\./g, "\\.")).join("|")})\\s*`,
+  // Longest first, so "ทพญ." isn't read as "ทพ." + "ญ." (app #309's list).
+  `^(${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร."].sort((a, b) => b.length - a.length).map((s) => s.replace(/\./g, "\\.")).join("|")})\\s*`,
 );
 
 // For a greeting (UX, "Olá, Dra. Ana!", "เรียน นพ.สมชาย"): the typed
@@ -46,6 +47,20 @@ export function greetingName(name: string | null | undefined): { title: string; 
   if (thai) return { title: thai[1], first: typed.slice(thai[0].length).split(" ")[0] ?? "" };
   const { titles, rest } = splitTitles(typed);
   return { title: titles.join(" "), first: rest.split(" ")[0] ?? "" };
+}
+
+// For a button ("Marcar consulta com Dra. Ana Lima"; e7): the typed
+// title(s), the first and the last name, so a long full name fits (the
+// button also wraps to 2 lines, then ellipsis). Thai titles as typed.
+export function shortDoctorName(name: string | null | undefined): string {
+  const typed = (name ?? "").trim().replace(/\s+/g, " ");
+  const thai = typed.match(THAI_TITLE);
+  const { titles, rest } = thai ? { titles: [thai[1]], rest: typed.slice(thai[0].length) } : splitTitles(typed);
+  const parts = rest.split(" ").filter(Boolean);
+  const names = parts.length > 2 ? [parts[0], parts[parts.length - 1]] : parts;
+  // A Thai title is written against the name ("นพ.สมชาย"), as typed.
+  if (thai) return `${titles[0]}${/\s$/.test(thai[0]) ? " " : ""}${names.join(" ")}`.trim();
+  return [...titles, ...names].join(" ");
 }
 
 // The avatar letter: the name's, never a title's ("Dra. Beatriz" → "B",

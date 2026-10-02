@@ -86,3 +86,34 @@ describe("Minhas Consultas says who", () => {
     expect(th.myAppointments.yourDoctor).toBe("แพทย์ของคุณ");
   });
 });
+
+// e7: a long doctor name on a button (the app overflowed): title + first +
+// last name, and the button wraps to 2 lines then ellipsizes, never clips.
+describe("long doctor names on the book buttons", () => {
+  it("shortDoctorName: title(s) + first + last", async () => {
+    const { shortDoctorName } = await import("@/lib/doctorName");
+    expect(shortDoctorName("Dra. Ana Maria de Souza Lima")).toBe("Dra. Ana Lima");
+    expect(shortDoctorName("Prof. Dr. Carlos Eduardo Pereira")).toBe("Prof. Dr. Carlos Pereira");
+    expect(shortDoctorName("Ana Souza")).toBe("Ana Souza");
+    expect(shortDoctorName("นพ.สมชาย ใจดี มากมาย")).toBe("นพ.สมชาย มากมาย");
+    expect(shortDoctorName("พญ. สุดา รักษ์ดี")).toBe("พญ. สุดา รักษ์ดี");
+    expect(shortDoctorName("ทพญ.มาลี สมใจ ดีมาก")).toBe("ทพญ.มาลี ดีมาก");
+    expect(shortDoctorName("Dra. Ana Maria Souza Lima")).toBe("Dra. Ana Lima");
+  });
+
+  it("every book button uses the short name and is clamped to 2 lines (no clipping)", () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <MyAppointmentsClient upcoming={[]} past={[]} userEmail="p@x.co" myProfessionalId="doc-1" connectedClinicName="Clínica Sol"
+          myProfessionalMeta={{ name: "Dra. Ana Maria de Souza Lima Albuquerque", specialty: "", clinicName: "" }} />
+      </NextIntlClientProvider>,
+    );
+    const buttons = screen.getAllByText("Marcar consulta com Dra. Ana Albuquerque");
+    expect(buttons.length).toBeGreaterThanOrEqual(3);
+    for (const b of buttons) {
+      expect(b.className).toContain("line-clamp-2");
+      expect(b.className).toContain("max-w-full");
+      expect(b.className).not.toMatch(/whitespace-nowrap|truncate/);
+    }
+  });
+});
