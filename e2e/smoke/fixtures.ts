@@ -173,14 +173,34 @@ export async function signIn(page: Page, prefix: string, email: string) {
     const b = document.querySelector('[data-testid="login-submit"]');
     return !!b && Object.keys(b).some((k) => k.startsWith("__reactProps"));
   }, null, { timeout: 120_000 });
-  for (let i = 0; i < 4; i++) {
-    await page.getByTestId("login-email").fill(email);
-    await page.getByTestId("login-password").fill(password());
-    await sleep(300);
-    if ((await page.getByTestId("login-email").inputValue()) === email) break;
+  const emailInput = page.getByTestId("login-email");
+  const passwordInput = page.getByTestId("login-password");
+  // A late re-render can still empty a field after it was filled (3e: on a
+  // 2nd/3rd sign-in in the same browser, the email was empty at submit).
+  // Fill, then require both values to hold for a moment; re-fill if not.
+  const filled = async () => {
+    await expect(async () => {
+      if ((await emailInput.inputValue()) !== email) await emailInput.fill(email);
+      if ((await passwordInput.inputValue()) !== password()) await passwordInput.fill(password());
+      await sleep(500);
+      await expect(emailInput).toHaveValue(email, { timeout: 100 });
+      // A plain compare: an assertion would print the password as "Expected".
+      if ((await passwordInput.inputValue()) !== password()) throw new Error("the password field lost its value");
+    }).toPass({ timeout: 30_000 });
+  };
+  // Submit, then wait for the redirect away from the form; if the form is
+  // still there (a field was emptied at the click), fill and submit again,
+  // up to 3 times. A real sign-in error fails at once.
+  for (let attempt = 1; ; attempt++) {
+    await filled();
+    await page.getByTestId("login-submit").click();
+    const left = await page.waitForURL((u) => !/auth\/login/.test(u.pathname), { timeout: 60_000 }).then(() => true, () => false);
+    if (left) return;
+    // The login page's error banner (wrong password, unconfirmed, …).
+    const banner = page.locator(".error-banner");
+    if (await banner.count()) throw new Error(`sign-in error for ${email}: ${await banner.first().innerText()}`);
+    if (attempt === 3) throw new Error(`sign-in for ${email} never left /auth/login`);
   }
-  await page.getByTestId("login-submit").click();
-  await page.waitForURL((u) => !/auth\/login/.test(u.pathname), { timeout: 120_000 });
 }
 
 // The dashboard tour: skip it when it's up.
