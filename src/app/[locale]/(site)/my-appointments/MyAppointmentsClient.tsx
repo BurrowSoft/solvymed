@@ -16,6 +16,7 @@ import { addDays, clinicDate, clinicTime, DEFAULT_CLINIC_TZ } from "@/lib/clinic
 import { getDayHours, type WorkingHours } from "@/lib/slots";
 import { countryProfile } from "@/lib/country";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
+import { whoLine } from "@/lib/whoLine";
 
 const STATUS_COLOR: Record<string, string> = {
   tentative: "bg-amber-50 text-amber-600 border-amber-200",
@@ -282,6 +283,9 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
               {t("rescheduleRequestedLabel", { date: formatDate(locale, appt.proposed_date), time: formatTime(locale, appt.proposed_start_time!) })}
             </p>
           )}
+          {whoLine(appt.professional_name, appt.clinic_name) && (
+            <p data-testid="appointment-who" className="text-sm text-slate-600 mt-0.5">{whoLine(appt.professional_name, appt.clinic_name)}</p>
+          )}
           <p className="text-xs text-slate-400 mt-0.5">{appt.type === "online" ? tSchedule("online") : tSchedule("inPerson")}</p>
           {/* 150 (item 12): who declined/cancelled, the clinic's reason, and its message. */}
           {(appt.status === "rejected" || appt.status === "cancelled") && appt.status_by && (
@@ -427,6 +431,10 @@ export function MyAppointmentsClient({
     router.push(`${prefix}/auth/login`);
   }
 
+  // "Always say who": with whom the patient books (Vitor, build 25).
+  const doctorName = myProfessionalMeta?.name?.trim() || "";
+  const bookLabel = doctorName ? t("bookWith", { doctor: doctorName }) : t("bookAppointment");
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
@@ -441,7 +449,7 @@ export function MyAppointmentsClient({
                 href={bookPath}
                 className="text-sm font-medium text-teal-600 hover:underline"
               >
-                {t("bookAppointment")}
+                {bookLabel}
               </a>
             )}
             <button
@@ -467,6 +475,19 @@ export function MyAppointmentsClient({
           <AutoRefresh />
         </div>
 
+        {/* Your doctor: name · specialty · clinic, and booking with them. */}
+        {doctorName && (
+          <section data-testid="your-doctor" className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{t("yourDoctor")}</p>
+            <p className="mt-1 font-bold text-slate-900">{doctorName}</p>
+            {(myProfessionalMeta?.specialty || myProfessionalMeta?.clinicName) && (
+              <p className="text-sm text-slate-500">
+                {[myProfessionalMeta?.specialty, whoLine(null, myProfessionalMeta?.clinicName) !== doctorName ? myProfessionalMeta?.clinicName : null].filter(Boolean).join(" · ")}
+              </p>
+            )}
+          </section>
+        )}
+
         {/* Upcoming */}
         <section>
           <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">{t("upcoming")}</h2>
@@ -482,7 +503,7 @@ export function MyAppointmentsClient({
                   href={bookPath}
                   className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition"
                 >
-                  {t("bookAppointment")}
+                  {bookLabel}
                 </a>
               )}
             </div>
@@ -512,7 +533,7 @@ export function MyAppointmentsClient({
               href={bookPath}
               className="inline-block rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-teal-700 hover:bg-teal-50 transition"
             >
-              {t("bookAppointment")}
+              {bookLabel}
             </a>
           </div>
         )}

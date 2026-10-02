@@ -707,7 +707,8 @@
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
     "noTimesToday": "No times left today.",
-    "otherHint": "E.g. first visit, follow-up"
+    "otherHint": "E.g. first visit, follow-up",
+    "titleWith": "Book with {doctor}"
   },
   "auth": {
     "passwordTooShort": "La password deve essere lunga almeno {min} caratteri.",
@@ -890,7 +891,9 @@
     "keepRequest": "Keep request",
     "requestCancelledToast": "Request cancelled.",
     "rescheduleLapsed": "Your reschedule request expired.",
-    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic."
+    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic.",
+    "bookWith": "Book with {doctor}",
+    "yourDoctor": "Your doctor"
   },
   "nav": {
     "overview": "Panoramica",
