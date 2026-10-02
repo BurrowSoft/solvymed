@@ -12,6 +12,7 @@ import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget"
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { OpenInApp } from "@/components/OpenInApp";
 import { SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
+import { conditionMet } from "@/lib/conditions";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
@@ -63,6 +64,22 @@ export default function LoginPage() {
       submitting.current = false;
       setLoading(false);
     }
+    // Vitor, build 25 item 11: a patient who signed up in the APP with an
+    // invite code and then signs in here was asked for the code again. The
+    // code saved at signup is tried once, only while the account has no role
+    // row yet (as the app's autoLinkPatient), with connect_with_code
+    // (personal, then public; the server's rules apply). Only misses count
+    // toward 147's limit. null = not linked: the usual invite form.
+    async function linkStoredCode(meta: Record<string, unknown> | undefined): Promise<string | null> {
+      const code = typeof meta?.invite_code === "string" ? meta.invite_code.trim().toUpperCase() : "";
+      if (!code || !conditionMet("invite-connect-live")) return null;
+      const { data: kind, error } = await supabase.rpc("connect_with_code", { p_code: code });
+      if (error) return null;
+      if (kind === "personal") return localePath("/my-appointments");
+      if (kind === "public") return localePath("/auth/pending-confirmation");
+      return null;
+    }
+
     if (authError) {
       setError(authErrorText(authError) ?? t("errors.generic"));
     } else if (signInData.user) {
@@ -80,13 +97,15 @@ export default function LoginPage() {
         dest = localePath("/auth/pending-confirmation");
       } else if (roleRow?.role === "patient") {
         // Neither (removed by the clinic, 147): connect to a doctor (e7).
+        // The stored code is never re-used once a role row exists (as the
+        // app's autoLinkPatient: a code isn't "re-burned").
         dest = localePath("/auth/invite-required");
       } else if (roleRow?.role) {
         dest = localePath("/dashboard");
       } else if (metaRole === "patient") {
-        // No persisted role but signed up intending to be a patient (invite
-        // code never resolved) — send back to the retry form, not /dashboard.
-        dest = localePath("/auth/invite-required");
+        // No persisted role but signed up intending to be a patient: try the
+        // code from the signup once; else the retry form, not /dashboard.
+        dest = (await linkStoredCode(signInData.user.user_metadata)) ?? localePath("/auth/invite-required");
       } else {
         dest = localePath("/dashboard");
       }
