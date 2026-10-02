@@ -18,7 +18,7 @@ import type { WorkingHours, TimeSlot } from "@/lib/slots";
 import { MonthCalendar } from "@/components/MonthCalendar";
 import { chosenTimeParts } from "@/lib/chosenTime";
 import { BrandMarkTile } from "@/components/BrandLogo";
-import { PLAIN_CONSULTATION } from "@/lib/consultType";
+import { PLAIN_CONSULTATION, fixedBookingItem } from "@/lib/consultType";
 
 type Procedure = { id: string; name: string; durationMinutes: number; price?: number; paymentType: string };
 
@@ -307,7 +307,15 @@ export function BookingClient({
         }));
         // The plain Consulta stays the default; a procedure is picked on
         // purpose (its length and price), as the doctor's form (6.2).
-        setProcedures(procs.filter((pr) => pr.name !== PLAIN_CONSULTATION && pr.name !== FOLLOW_UP));
+        setProcedures(procs);
+        // The clinic's own "Consulta" replaces the fixed one, so it's the
+        // default with its length (e7).
+        const ownConsult = procs.find((pr) => fixedBookingItem(pr.name) === "consultation");
+        if (ownConsult) {
+          setSelectedProcedure(ownConsult);
+          setDuration(ownConsult.durationMinutes);
+          setConsultType(ownConsult.name);
+        }
       } catch {
         // ignore
       } finally {
@@ -477,6 +485,14 @@ export function BookingClient({
 
   const setupLoading = loadingHours || loadingProcs;
 
+  // A procedure as a list item: its name, length and price.
+  const procOption = (proc: Procedure) => ({
+    key: proc.id, label: proc.name,
+    sub: `${t("durationMin", { n: proc.durationMinutes })}${proc.price ? ` · ${formatMoney(proc.price, currency)}` : ""}`,
+    active: !isOther && selectedProcedure?.id === proc.id,
+    pick: () => { setSelectedProcedure(proc); setDuration(proc.durationMinutes); setConsultType(proc.name); setIsOther(false); },
+  });
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
@@ -525,12 +541,18 @@ export function BookingClient({
               </h2>
               <div className="space-y-2" role="radiogroup" aria-label={t("appointmentFor")} data-testid="type-list">
                 {[
-                  ...[PLAIN_CONSULTATION, FOLLOW_UP].map((key) => ({
-                    key, label: tConsult(key === FOLLOW_UP ? "followUp" : "consultation"), sub: t("durationMin", { n: DEFAULT_MINUTES }),
-                    active: !isOther && !selectedProcedure && consultType === key,
-                    pick: () => { setSelectedProcedure(null); setDuration(DEFAULT_MINUTES); setConsultType(key); setIsOther(false); },
-                  })),
-                  ...procedures.map((proc) => ({
+                  ...([["consultation", PLAIN_CONSULTATION], ["followUp", FOLLOW_UP]] as const).map(([item, key]) => {
+                    // The clinic's own procedure with this name takes the slot (e7: replace).
+                    const own = procedures.find((pr) => fixedBookingItem(pr.name) === item);
+                    return own
+                      ? procOption(own)
+                      : {
+                          key, label: tConsult(item), sub: t("durationMin", { n: DEFAULT_MINUTES }),
+                          active: !isOther && !selectedProcedure && consultType === key,
+                          pick: () => { setSelectedProcedure(null); setDuration(DEFAULT_MINUTES); setConsultType(key); setIsOther(false); },
+                        };
+                  }),
+                  ...procedures.filter((pr) => !fixedBookingItem(pr.name)).map((proc) => ({
                     key: proc.id, label: proc.name,
                     sub: `${t("durationMin", { n: proc.durationMinutes })}${proc.price ? ` · ${formatMoney(proc.price, currency)}` : ""}`,
                     active: !isOther && selectedProcedure?.id === proc.id,
