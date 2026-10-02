@@ -153,7 +153,10 @@ export default async function PatientDetailPage({
           idKind={patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId))}
           canMerge={!isSecretary && (await mergeAvailable())}
           mergeWith={mergeWith}
-          canDelete={preview?.hasClinicalHistory === false && preview.hasAppointments === false}
+          // "Excluir cadastro" stays visible with appointments (as app #299):
+          // a click explains why it can't and offers Arquivar.
+          canDelete={preview?.hasClinicalHistory === false}
+          hasAppointments={preview?.hasAppointments === true}
           accessLog={accessLog}
           timeZone={timeZone}
           addressLive={conditionMet("patient-address-live")}
