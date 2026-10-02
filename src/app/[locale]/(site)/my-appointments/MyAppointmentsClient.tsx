@@ -17,6 +17,7 @@ import { getDayHours, type WorkingHours } from "@/lib/slots";
 import { countryProfile } from "@/lib/country";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 import { whoLine } from "@/lib/whoLine";
+import { shortDoctorName } from "@/lib/doctorName";
 
 const STATUS_COLOR: Record<string, string> = {
   tentative: "bg-amber-50 text-amber-600 border-amber-200",
@@ -433,7 +434,8 @@ export function MyAppointmentsClient({
 
   // "Always say who": with whom the patient books (Vitor, build 25).
   const doctorName = myProfessionalMeta?.name?.trim() || "";
-  const bookLabel = doctorName ? t("bookWith", { doctor: doctorName }) : t("bookAppointment");
+  // Title + first + last name on buttons (e7: a long name overflowed in the app).
+  const bookLabel = doctorName ? t("bookWith", { doctor: shortDoctorName(doctorName) }) : t("bookAppointment");
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -443,11 +445,11 @@ export function MyAppointmentsClient({
           <div className="flex items-center gap-2">
             <BrandLogo className="h-8" />
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3">
             {bookPath && (
               <a
                 href={bookPath}
-                className="text-sm font-medium text-teal-600 hover:underline"
+                className="max-w-full line-clamp-2 [overflow-wrap:anywhere] min-w-0 text-right text-sm font-medium text-teal-600 hover:underline"
               >
                 {bookLabel}
               </a>
@@ -501,7 +503,7 @@ export function MyAppointmentsClient({
               {bookPath && (
                 <a
                   href={bookPath}
-                  className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition"
+                  className="max-w-full line-clamp-2 [overflow-wrap:anywhere] rounded-xl bg-teal-600 px-5 py-2.5 text-center text-sm font-bold text-white hover:bg-teal-700 transition"
                 >
                   {bookLabel}
                 </a>
@@ -531,7 +533,7 @@ export function MyAppointmentsClient({
             <p className="text-teal-100 text-sm mb-4">{t("ctaSub")}</p>
             <a
               href={bookPath}
-              className="inline-block rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-teal-700 hover:bg-teal-50 transition"
+              className="max-w-full line-clamp-2 [overflow-wrap:anywhere] rounded-xl bg-white px-5 py-2.5 text-center text-sm font-bold text-teal-700 hover:bg-teal-50 transition"
             >
               {bookLabel}
             </a>

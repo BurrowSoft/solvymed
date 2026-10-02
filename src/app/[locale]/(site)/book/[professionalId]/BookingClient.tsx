@@ -19,6 +19,7 @@ import { MonthCalendar } from "@/components/MonthCalendar";
 import { chosenTimeParts } from "@/lib/chosenTime";
 import { BrandMarkTile } from "@/components/BrandLogo";
 import { PLAIN_CONSULTATION, fixedBookingItem } from "@/lib/consultType";
+import { shortDoctorName } from "@/lib/doctorName";
 
 type Procedure = { id: string; name: string; durationMinutes: number; price?: number; paymentType: string };
 
@@ -503,9 +504,10 @@ export function BookingClient({
               <path d="M19 12H5M12 5l-7 7 7 7"/>
             </svg>
           </button>
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2">
             <BrandMarkTile size="sm" decorative />
-            <span className="font-bold text-slate-900">{professionalName.trim() ? t("titleWith", { doctor: professionalName.trim() }) : t("title")}</span>
+            {/* A long name: title + first + last, 2 lines at most (e7). */}
+            <span className="min-w-0 line-clamp-2 [overflow-wrap:anywhere] font-bold text-slate-900">{professionalName.trim() ? t("titleWith", { doctor: shortDoctorName(professionalName) }) : t("title")}</span>
           </div>
         </div>
       </header>

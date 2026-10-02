@@ -36,13 +36,13 @@ export function OnboardingCard({ kind, clinicName, bookHref, bookLabel }: {
     // data-tour-block: the guided tour waits until this one-time card is gone.
     <section data-tour-block className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-teal-100 bg-teal-50 p-5" role="status">
       <p className="min-w-0 flex-1 text-sm font-medium text-teal-900">{text}</p>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex min-w-0 max-w-full items-center gap-2">
         {kind === "patient_connected" && bookHref && (
           <button
             type="button"
             disabled={pending}
             onClick={() => dismiss(() => { window.location.href = bookHref; })}
-            className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-teal-700"
+            className="max-w-full line-clamp-2 [overflow-wrap:anywhere] rounded-xl bg-teal-600 px-4 py-2 text-center text-sm font-bold text-white transition hover:bg-teal-700"
           >
             {bookLabel ?? t("bookAppointment")}
           </button>
