@@ -12,12 +12,12 @@ describe("push texts", () => {
     // The clinic's own pushes (08's texts, the app's #111 wording).
     expect(pushText("pt-BR", "apptCancelledByClinic", { clinic: "Clínica Sol", date: "29/09/2026", time: "14:00" }))
       .toEqual({ title: "Consulta cancelada", body: "Clínica Sol cancelou sua consulta de 29/09/2026 às 14:00. Para marcar outra, abra o app." });
-    expect(pushText("en", "apptBookedByClinic", { clinic: "Sun Clinic", date: "09/29/2026", time: "14:00" }))
-      .toEqual({ title: "New appointment", body: "Sun Clinic booked an appointment for you on 09/29/2026 at 14:00." });
+    expect(pushText("en", "apptBookedByClinic", { clinic: "Sun Clinic", date: "29/09/2026", time: "14:00" }))
+      .toEqual({ title: "New appointment", body: "Sun Clinic booked an appointment for you on 29/09/2026 at 14:00." });
     // A name is text, never a replacement pattern.
     expect(pushText("en", "apptBookedByClinic", { clinic: "A$&B", date: "d", time: "t" }).body).toBe("A$&B booked an appointment for you on d at t.");
     expect(pushText("en", "proposalAccepted", { name: "Maria Silva", when: pushWhen("en", "2026-09-29", "14:00") }).body)
-      .toBe("Maria Silva accepted the new time: 09/29/2026 14:00.");
+      .toBe("Maria Silva accepted the new time: 29/09/2026 14:00.");
     expect(pushWhen("th", "2026-09-29", "14:00")).toBe("29/09/2569 14:00");
   });
 

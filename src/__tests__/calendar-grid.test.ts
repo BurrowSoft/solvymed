@@ -15,8 +15,8 @@ describe("calendar labels follow the page's language", () => {
     expect(calendarHeaderLabel("pt-BR", "day", "2026-09-27", []).toLowerCase()).toContain("domingo");
     // A week across two months keeps both.
     const en = calendarHeaderLabel("en", "week", "2026-09-30", week);
-    expect(en).toContain("Sep 28");
-    expect(en).toContain("Oct 4");
+    expect(en).toContain("28 Sept"); // British English: day first
+    expect(en).toContain("4 Oct");
     expect(calendarHeaderLabel("pt-BR", "week", "2026-09-30", week).toLowerCase()).toContain("out");
   });
 });

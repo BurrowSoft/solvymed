@@ -124,7 +124,7 @@ export const ACTIONS: AppMapAction[] = [
     roles: ["doctor", "secretary"],
     inputs: { required: ["which appointment"], optional: [], defaults: [] },
     rules: [
-      "Booking requests (tentative / proposal) are never cancelled this way: they're rejected on the request card.",
+      "Appointment requests (tentative / proposal) are never cancelled this way: they're rejected on the request card.",
       "Only scheduled, confirmed or late appointments can be cancelled; completed, absent, cancelled or rejected ones can't (SolvyAI says so; nothing is saved).",
       "A cancelled appointment no longer counts as 'to receive' and frees the time.",
       "Deleting an appointment is a different action and never done by SolvyAI.",
@@ -174,8 +174,8 @@ export const ACTIONS: AppMapAction[] = [
   {
     kind: "booking_decision",
     tool: "propose_booking_decision",
-    what: "Confirm or reject a patient's booking request.",
-    screen: { app: { pt: "Início › Pedidos de consulta", en: "Home › Booking requests" }, web: { pt: "Agenda › Pedidos de consulta", en: "Schedule › Booking requests" } },
+    what: "Confirm or reject a patient's appointment request.",
+    screen: { app: { pt: "Início › Pedidos de consulta", en: "Home › Appointment requests" }, web: { pt: "Agenda › Pedidos de consulta", en: "Schedule › Appointment Requests" } },
     roles: ["doctor", "secretary"],
     inputs: { required: ["which request", "confirm or reject"], optional: ["a note to the patient"], defaults: [] },
     rules: [
@@ -290,6 +290,7 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   { rule: { text: "In the app too (1.4.0): patients have Settings → Country (País / ประเทศ) with Brasil / ประเทศไทย; changing it switches the language to that country's unless English is chosen. Doctors and secretaries have no Country setting: theirs is the practice's.", pending: ["app-1.4.0"] }, help: "C8" },
   { rule: { text: "In the app (1.4.0, Brazil and other countries; not for Thai practices): Payments' WhatsApp icon opens the clinic's own WhatsApp chat with the patient, with a payment reminder already written in the patient's language (date and, if set, the amount); the clinic sends it. Without a phone on the record it says so and offers \"Abrir perfil\". The website has no WhatsApp reminder.", pending: ["app-1.4.0"] }, help: "G2" },
   { rule: { text: "Secretary invites by email: the invite is emailed to the address entered; \"Reenviar convite\" / \"Resend invite\" emails a fresh one (once an hour, up to 10 a day; the old code stops working); the signup from the invite shows that email, locked.", pending: ["secretary-invite-email-live"] }, help: "C4" },
+  { rule: "Dates are always day first, never month first, in every language (English included): on the website a date is typed as DD/MM/YYYY (DD/MM/AAAA in Portuguese, วว/ดด/ปปปป in Thai) with the slashes added automatically, and shown the same way. The year is the Gregorian one; a Buddhist-era year (2400 or later) is refused with a message, never converted. In Thai the Buddhist year is shown under a birth date.", help: "A1" },
   { rule: "Messaging follows the practice country: WhatsApp in Brazil (and by default); in Thailand, LINE once it's live, none until then. A Thai practice sees no WhatsApp item: on the website, Settings → Team has no WhatsApp share button after creating an invite (Copy code / Copy link remain).", help: "C4" },
   { rule: { text: "In the app too (1.4.0), a Thai practice sees no WhatsApp item: no Send confirmation / Open WhatsApp / Send Pix via WhatsApp on the appointment, no WhatsApp reminders in the Agenda, no WhatsApp mark in Patients, no WhatsApp reminder in Payments, no Messaging (WhatsApp) in Settings → Integrations or WhatsApp in Settings → Modules.", pending: ["app-1.4.0"] }, help: "C4" },
   { rule: { text: "A patient who joins with the practice's invite code becomes a patient record at once, badged \"Novo, via convite\". On the website's Overview the clinic answers each: \"Manter\" keeps it, \"Remover\" disconnects the account (the record is archived). If the patient's email was already on another record, \"Mesmo e-mail de {nome}: mesclar?\" opens the merge of the two. SolvyAI doesn't keep or remove them.", pending: ["invited-patients-live"] }, help: "C5" },
@@ -303,7 +304,7 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   { rule: { text: "In the app too (1.4.0): the first screen asks \"Where are you?\" (Brasil / ประเทศไทย + \"Use the app in English\"); for a doctor it's the practice country.", pending: ["app-1.4.0"] }, help: "C1" },
   { rule: { text: "In the app too (1.4.0): the receipt PDF shows the doctor's council registration next to their name when on file, and in Brazil with no clinic CNPJ the Portuguese Receita Saúde note, same as the website's receipt.", pending: ["app-1.4.0"] }, help: "G5" },
   { rule: { text: "In the app (1.4.0), an inactive subscription shows a full screen: the doctor's says \"Your SolvyMed subscription is inactive.\" with \"Questions? Write to support@solvymed.com.\" (tap to email) and Sign Out; a secretary's says \"Subscription inactive\" (access resumes once the doctor's subscription is renewed), with the same support line. No price, plan or website on either (store rules).", pending: ["app-1.4.0"] }, help: "K1" },
-  { rule: { text: "While a practice's subscription is inactive, a patient trying to book with it online on the website sees \"A clínica não está recebendo agendamentos online no momento.\" / \"This clinic isn't taking online bookings right now.\" instead of the times.", pending: ["booking-check-live"] }, help: "K1" },
+  { rule: { text: "While a practice's subscription is inactive, a patient trying to book with it online on the website sees \"A clínica não está recebendo pedidos de consulta online no momento.\" / \"This clinic isn't taking online appointment requests right now.\" instead of the times.", pending: ["booking-check-live"] }, help: "K1" },
   { rule: { text: "In the patient's app (1.4.0), booking with a practice whose subscription is inactive shows the same message.", pending: ["booking-check-live", "app-1.4.0"] }, help: "K1" },
   {
     rule: {
@@ -420,7 +421,7 @@ export const GLOSSARY: { term: string; meaning: string }[] = [
   { term: "absent: \"Ausente\" / \"Absent\"", meaning: "The patient didn't come; it doesn't count as 'to receive'." },
   { term: "cancelled: \"Cancelado\" / \"Cancelled\"", meaning: "Cancelled; frees the time." },
   { term: "blocked: \"Bloqueado\" / \"Blocked\"", meaning: "A blocked period, not an appointment." },
-  { term: "tentative: \"Solicitado\" / \"Requested\"", meaning: "A patient's booking request waiting for the practice." },
+  { term: "tentative: \"Solicitado\" / \"Requested\"", meaning: "A patient's appointment request waiting for the practice." },
   { term: "proposal: \"Novo horário proposto\" / \"New time proposed\"", meaning: "A new time proposed on a request, waiting for the other side." },
   { term: "rejected: \"Rejeitado\" / \"Rejected\"", meaning: "A request the practice didn't accept." },
   { term: "request flow", meaning: "The patient asks → the practice confirms, rejects or proposes a new time → the patient accepts or declines a proposal." },

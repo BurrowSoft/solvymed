@@ -57,7 +57,7 @@ describe("tellPatient", () => {
   it("cancelled, in the patient's saved language; the appointment's own account first", async () => {
     const d = db({ locale: "en" });
     await tellPatient(d.client, { kind: "cancelled", patientAuthId: "auth-9", patientId: "p-1", status: "scheduled", ...future });
-    expect(sent[0].body).toBe("Clínica Sol cancelled your appointment on 09/30/2026 at 14:00. To book another, open the app.");
+    expect(sent[0].body).toBe("Clínica Sol cancelled your appointment on 30/09/2026 at 14:00. To book another, open the app.");
     expect(d.rpcCalls).not.toContain("get_patient_auth_id");
   });
 

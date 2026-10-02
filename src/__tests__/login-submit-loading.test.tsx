@@ -71,3 +71,23 @@ describe("login submit", () => {
     expect(screen.queryByText("/pt-BR/dashboard")).toBeNull();
   });
 });
+
+// Vitor, build 25 item 2: Tab from the email field must reach the password,
+// then "Entrar"; "Esqueceu a senha?" comes after.
+describe("login tab order", () => {
+  it("email → password → submit → forgot password (document order, no tabindex tricks)", () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <LoginPage />
+      </NextIntlClientProvider>,
+    );
+    const focusable = Array.from(document.querySelectorAll("form input, form button, form a"))
+      .map((el) => el.getAttribute("data-testid") ?? el.tagName);
+    const order = ["login-email", "login-password", "login-submit", "login-forgot"].map((id) => focusable.indexOf(id));
+    expect(order.every((i) => i >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    expect(document.querySelectorAll("form [tabindex]")).toHaveLength(0);
+    expect(screen.getByLabelText(pt.auth.login.email)).toHaveAttribute("type", "email");
+    expect(screen.getByLabelText(pt.auth.login.password)).toHaveAttribute("type", "password");
+  });
+});

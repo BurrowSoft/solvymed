@@ -27,7 +27,7 @@ vi.mock("next-intl", () => ({
       "book.notes": "Notes",
       "book.notesOptional": "(optional)",
       "book.notesPlaceholder": "Reason for visit, symptoms, questions for the doctor…",
-      "book.sendRequest": "Send Booking Request",
+      "book.sendRequest": "Send Appointment Request",
       "book.sending": "Sending…",
       "book.hint": "The doctor will confirm or suggest a different time.",
       "book.successTitle": "Request sent!",
@@ -89,14 +89,14 @@ const BASE_PROPS = {
 };
 
 const WORKING_HOURS = {
-  mon: { enabled: true, start: "09:00", end: "17:00" },
-  tue: { enabled: true, start: "09:00", end: "17:00" },
-  wed: { enabled: true, start: "09:00", end: "17:00" },
-  thu: { enabled: true, start: "09:00", end: "17:00" },
-  fri: { enabled: true, start: "09:00", end: "17:00" },
+  mon: { enabled: true, start: "9:00", end: "17:00" },
+  tue: { enabled: true, start: "9:00", end: "17:00" },
+  wed: { enabled: true, start: "9:00", end: "17:00" },
+  thu: { enabled: true, start: "9:00", end: "17:00" },
+  fri: { enabled: true, start: "9:00", end: "17:00" },
   // All 7 days enabled so tests pass regardless of what day "today" is
-  sat: { enabled: true, start: "09:00", end: "17:00" },
-  sun: { enabled: true, start: "09:00", end: "17:00" },
+  sat: { enabled: true, start: "9:00", end: "17:00" },
+  sun: { enabled: true, start: "9:00", end: "17:00" },
 };
 
 type ProcedureRow = { id: string; name: string; duration_minutes: number; price: number | null; payment_type: string };
@@ -194,8 +194,8 @@ describe("BookingClient", () => {
   it("disables Send button when no slot is selected", async () => {
     setupMocks();
     render(<BookingClient {...BASE_PROPS} />);
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeInTheDocument());
-    expect(screen.getByText("Send Booking Request")).toBeDisabled();
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).toBeInTheDocument());
+    expect(screen.getByText("Send Appointment Request")).toBeDisabled();
   });
 
   it("shows success screen after a successful booking", async () => {
@@ -211,8 +211,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getByText(/9:00/));
 
     // Enable the button and click
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
 
     await waitFor(() => expect(screen.getByText("Request sent!")).toBeInTheDocument());
   });
@@ -224,8 +224,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() =>
       expect(screen.getByText(/slot was just taken/i)).toBeInTheDocument(),
     );
@@ -238,8 +238,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() => expect(screen.getByText("This clinic isn't taking online bookings right now.")).toBeInTheDocument());
   });
 
@@ -250,8 +250,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() =>
       expect(screen.getByText(/maximum number of active appointments/i)).toBeInTheDocument(),
     );
@@ -272,8 +272,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() => expect(screen.getByText("View my appointments")).toBeInTheDocument());
     fireEvent.click(screen.getByText("View my appointments"));
     expect(mockPush).toHaveBeenCalledWith("/my-appointments");
@@ -319,11 +319,11 @@ describe("BookingClient", () => {
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
     // All three required fields empty → button stays disabled
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).toBeDisabled());
     // Fill name and phone but not DOB → still disabled
     fireEvent.change(screen.getByPlaceholderText("Your full name"), { target: { value: "Maria" } });
     fireEvent.change(screen.getByPlaceholderText("11 99999-9999"), { target: { value: "11999887766" } });
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).toBeDisabled());
   });
 
   // UX: the dial code starts at the PRACTICE country, never the UI
@@ -354,8 +354,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() => expect(screen.getByText("Request sent!")).toBeInTheDocument());
     expect(mockUpsert).toHaveBeenCalledWith(
       expect.objectContaining({ user_id: "patient-1", email: "patient@example.com" }),
@@ -371,11 +371,11 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.change(container.querySelector('input[type="date"]')!, { target: { value: "2539-05-14" } });
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.change(container.querySelector('input[inputmode="numeric"]')!, { target: { value: "14/05/2539" } });
     expect(screen.getByRole("alert")).toBeInTheDocument();
-    expect(screen.getByText("Send Booking Request")).toBeDisabled();
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    expect(screen.getByText("Send Appointment Request")).toBeDisabled();
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     expect(mockUpsert).not.toHaveBeenCalled();
   });
 
@@ -387,9 +387,9 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
     mockRpc.mockClear();
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() => expect(screen.getByText(/invalidBirthDate/)).toBeInTheDocument());
     expect(mockRpc).not.toHaveBeenCalledWith("create_public_booking", expect.anything());
   });
@@ -427,7 +427,7 @@ describe("BookingClient: items 7/10/16 + no hours / slow load", () => {
   });
 
   it("closed weekdays are greyed and disabled; 30 days are bookable", async () => {
-    setupMocks({ workingHours: { ...WORKING_HOURS, sun: { enabled: false, start: "09:00", end: "17:00" } } });
+    setupMocks({ workingHours: { ...WORKING_HOURS, sun: { enabled: false, start: "9:00", end: "17:00" } } });
     render(<BookingClient {...BASE_PROPS} />);
     await waitFor(() => expect(screen.getByTestId("month-calendar")).toBeInTheDocument());
     // Sunday 2030-01-20 (closed) vs Monday 2030-01-21 (open).
@@ -438,8 +438,8 @@ describe("BookingClient: items 7/10/16 + no hours / slow load", () => {
   it("picking a time shows the chosen-time line above the button", async () => {
     setupMocks();
     render(<BookingClient {...BASE_PROPS} />);
-    await waitFor(() => expect(screen.getByText("9:00 AM")).toBeInTheDocument());
-    fireEvent.click(screen.getByText("9:00 AM"));
+    await waitFor(() => expect(screen.getByText("9:00")).toBeInTheDocument());
+    fireEvent.click(screen.getByText("9:00"));
     expect(screen.getByTestId("chosen-time")).toHaveTextContent(/chosenTime/);
   });
 });
@@ -466,7 +466,7 @@ describe("BookingClient: today isn't skipped before its times load", () => {
     await new Promise((r) => setTimeout(r, 30));
     expect(screen.getByRole("button", { name: "14" })).toHaveAttribute("aria-pressed", "true");
     release();
-    await waitFor(() => expect(screen.getByText("9:00 AM")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("9:00")).toBeInTheDocument());
     expect(screen.getByRole("button", { name: "14" })).toHaveAttribute("aria-pressed", "true");
   });
 });
@@ -483,7 +483,7 @@ describe("BookingClient: a late answer for a day already left is dropped", () =>
   it("today (slow) → tomorrow (fast): the grid shows tomorrow's times", async () => {
     let releaseToday!: () => void;
     const todayGate = new Promise<void>((r) => { releaseToday = r; });
-    const hours = { ...WORKING_HOURS, tue: { enabled: true, start: "08:00", end: "17:00" } }; // tomorrow (Tue) opens at 8
+    const hours = { ...WORKING_HOURS, tue: { enabled: true, start: "8:00", end: "17:00" } }; // tomorrow (Tue) opens at 8
     mockRpc.mockImplementation(async (fn: string, args?: { p_date?: string }) => {
       if (fn === "get_professional_working_hours") return { data: hours, error: null };
       if (fn === "get_busy_slots") {
@@ -495,10 +495,10 @@ describe("BookingClient: a late answer for a day already left is dropped", () =>
     render(<BookingClient {...BASE_PROPS} />);
     await waitFor(() => expect(screen.getByTestId("month-calendar")).toBeInTheDocument());
     fireEvent.click(screen.getByRole("button", { name: "15" }));
-    await waitFor(() => expect(screen.getByText("8:00 AM")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("8:00")).toBeInTheDocument());
     releaseToday(); // today's answer arrives last
     await new Promise((r) => setTimeout(r, 30));
-    expect(screen.getByText("8:00 AM")).toBeInTheDocument();
+    expect(screen.getByText("8:00")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "15" })).toHaveAttribute("aria-pressed", "true");
   });
 });

@@ -14,7 +14,7 @@ describe("Thai dates: the Buddhist calendar is requested explicitly", () => {
   it("dateLocale('th') asks for the Buddhist calendar; other locales are unchanged", () => {
     expect(dateLocale("th")).toBe("th-TH-u-ca-buddhist");
     expect(dateLocale("pt-BR")).toBe("pt-BR");
-    expect(dateLocale("en")).toBe("en");
+    expect(dateLocale("en")).toBe("en-GB"); // English ≠ American (build 25)
   });
 
   it("gives 2569 even where Thai's default would be Gregorian (2026)", () => {
@@ -29,7 +29,7 @@ describe("Thai dates: the Buddhist calendar is requested explicitly", () => {
 
   it("formatShortDate: the locale's short date, like the app (birth dates, record dates)", () => {
     expect(formatShortDate("pt-BR", "1993-05-14")).toBe("14/05/1993");
-    expect(formatShortDate("en", "1993-05-14")).toBe("05/14/1993");
+    expect(formatShortDate("en", "1993-05-14")).toBe("14/05/1993");
     expect(formatShortDate("th", "1993-05-14")).toBe("14/05/2536");
   });
 

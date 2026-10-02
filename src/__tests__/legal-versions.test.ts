@@ -12,7 +12,7 @@ describe("legal versions (TH-3 consent)", () => {
   });
 
   it("the pages' date label matches the version", () => {
-    expect(legalDateLabel("en", "2026-09-28")).toBe("September 28, 2026");
+    expect(legalDateLabel("en", "2026-09-28")).toBe("28 September 2026");
     expect(legalDateLabel("pt-BR", "2026-09-28")).toBe("28 de setembro de 2026");
   });
 });
