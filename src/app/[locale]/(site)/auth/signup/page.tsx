@@ -18,6 +18,7 @@ import { track } from "@/lib/track";
 import { browserTimeZone, COUNTRY_STEP, countryStepHref, parseCountryChoice, signupCountryCookie, signupCountryMetadata } from "@/lib/signupCountry";
 import { thaiEnabled } from "@/lib/publicLocales";
 import { consentMetadata } from "@/lib/legalVersions";
+import { fieldValue } from "@/lib/formField";
 import { titleExamples } from "@/lib/country";
 import { conditionMet } from "@/lib/conditions";
 
@@ -105,13 +106,14 @@ export default function SignupPage() {
     // What's really in the fields (the invite-code field sits outside the
     // form, joined by form="signup-form"; hidden in the join flow, where
     // the link's code is used). A locked invite email is the invite's.
-    const form = new FormData(e.currentTarget);
-    const field = (name: string) => String(form.get(name) ?? "");
-    const fullName = field("full_name").trim();
-    const email = lockedEmail ?? field("email").trim();
-    const password = field("password");
-    const confirmPassword = field("confirm_password");
-    const inviteCode = isJoinFlow ? joinCode : field("invite_code");
+    // By id, never by name (lib/formField: a pre-hydration submit must not
+    // put any value, the password included, in a URL).
+    const field = (id: string) => fieldValue(e.currentTarget, id);
+    const fullName = field("signup-full-name").trim();
+    const email = lockedEmail ?? field("signup-email").trim();
+    const password = field("signup-password");
+    const confirmPassword = field("signup-confirm-password");
+    const inviteCode = isJoinFlow ? joinCode : field("signup-invite-code");
     setError("");
 
     if (password.length < MIN_PASSWORD_LENGTH) {
@@ -377,7 +379,6 @@ export default function SignupPage() {
               // translated signup.inviteCodeRequired that handleSubmit shows.
               aria-required="true"
               form="signup-form"
-              name="invite_code"
               // Normalised in place as it's typed (A–Z, 0–9, 6 at most).
               onInput={(e) => {
                 const el = e.currentTarget;
@@ -398,12 +399,12 @@ export default function SignupPage() {
           </div>
         )}
 
-        <form id="signup-form" onSubmit={handleSubmit} className="space-y-4">
+        <form id="signup-form" method="post" onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="field-label">{t("signup.fullName")}</label>
             <input
               type="text"
-              name="full_name"
+              id="signup-full-name"
               required
               autoComplete="name"
               className="text-input"
@@ -419,9 +420,9 @@ export default function SignupPage() {
                 typed one is the browser's. Separate keys: never one input
                 switching between the two. */}
             {lockedEmail ? (
-              <input key="locked" type="email" name="email" value={lockedEmail} readOnly autoComplete="email" className="text-input bg-slate-50" />
+              <input key="locked" id="signup-email" type="email" value={lockedEmail} readOnly autoComplete="email" className="text-input bg-slate-50" />
             ) : (
-              <input key="typed" type="email" name="email" required autoComplete="email" className="text-input" />
+              <input key="typed" id="signup-email" type="email" required autoComplete="email" className="text-input" />
             )}
             {lockedEmail && <p data-testid="invite-email-locked" className="mt-1.5 text-xs text-slate-500">{t("signup.secretaryInviteFor", { email: lockedEmail })}</p>}
           </div>
@@ -429,7 +430,7 @@ export default function SignupPage() {
             <label className="field-label">{t("signup.password")}</label>
             <input
               type="password"
-              name="password"
+              id="signup-password"
               required
               autoComplete="new-password"
               className="text-input"
@@ -439,7 +440,7 @@ export default function SignupPage() {
             <label className="field-label">{t("signup.confirmPassword")}</label>
             <input
               type="password"
-              name="confirm_password"
+              id="signup-confirm-password"
               required
               autoComplete="new-password"
               className="text-input"
@@ -451,7 +452,6 @@ export default function SignupPage() {
           <label className="flex items-start gap-2.5 text-sm text-slate-600">
             <input
               type="checkbox"
-              name="consent"
               required
               className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-teal-600 focus:ring-teal-500"
             />

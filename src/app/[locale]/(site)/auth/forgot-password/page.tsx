@@ -12,6 +12,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
+import { fieldValue } from "@/lib/formField";
 
 export default function ForgotPasswordPage() {
   const t = useTranslations("auth");
@@ -35,7 +36,7 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     // Uncontrolled and read from the form (as login, #332): a controlled
     // field's re-render could wipe an autofilled email (e7).
-    const email = String(new FormData(e.currentTarget).get("email") ?? "").trim();
+    const email = fieldValue(e.currentTarget, "forgot-email").trim();
     setError("");
     if (turnstileEnabled && !captchaToken) {
       setError(t("captchaFailed"));
@@ -130,7 +131,7 @@ export default function ForgotPasswordPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form method="post" onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="field-label">
               {t("forgotPassword.email")}
@@ -138,7 +139,7 @@ export default function ForgotPasswordPage() {
             <input
               type="email"
               required
-              name="email"
+              id="forgot-email"
               autoComplete="email"
               className="text-input"
             />

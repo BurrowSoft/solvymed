@@ -45,19 +45,19 @@ import ForgotPasswordPage from "@/app/[locale]/(site)/auth/forgot-password/page"
 import ResetPasswordPage from "@/app/[locale]/(site)/auth/reset-password/page";
 
 const wrap = (el: React.ReactNode) => render(<NextIntlClientProvider locale="pt-BR" messages={pt}>{el}</NextIntlClientProvider>);
-const byName = (name: string) => document.querySelector(`input[name="${name}"]`) as HTMLInputElement;
+const byId = (id: string) => document.getElementById(id) as HTMLInputElement;
 
 describe("auth forms keep values React never saw", () => {
   it("sign-up: an autofilled email survives typing the passwords; all values are sent", async () => {
     h.params = new URLSearchParams("c=BR");
     h.signUp.mockReset().mockResolvedValue({ data: { user: { id: "u-1", identities: [{}] } }, error: null });
     const { unmount } = wrap(<SignupPage />);
-    byName("full_name").value = "Dra. Ana Souza"; // autofill: no events
-    byName("email").value = "ana@auto.fill";
-    fireEvent.change(byName("password"), { target: { value: "longenough1" } });
-    fireEvent.change(byName("confirm_password"), { target: { value: "longenough1" } });
-    expect(byName("email").value).toBe("ana@auto.fill");
-    fireEvent.submit(byName("email").form!);
+    byId("signup-full-name").value = "Dra. Ana Souza"; // autofill: no events
+    byId("signup-email").value = "ana@auto.fill";
+    fireEvent.change(byId("signup-password"), { target: { value: "longenough1" } });
+    fireEvent.change(byId("signup-confirm-password"), { target: { value: "longenough1" } });
+    expect(byId("signup-email").value).toBe("ana@auto.fill");
+    fireEvent.submit(byId("signup-email").form!);
     await waitFor(() => expect(h.signUp).toHaveBeenCalledTimes(1));
     const arg = h.signUp.mock.calls[0][0];
     expect(arg).toMatchObject({ email: "ana@auto.fill", password: "longenough1" });
@@ -69,14 +69,14 @@ describe("auth forms keep values React never saw", () => {
     h.params = new URLSearchParams("c=BR");
     h.signUp.mockReset();
     const { unmount } = wrap(<SignupPage />);
-    byName("full_name").value = "Ana";
-    byName("email").value = "ana@auto.fill";
-    byName("password").value = "longenough1";
-    byName("confirm_password").value = "different22";
-    fireEvent.submit(byName("email").form!);
+    byId("signup-full-name").value = "Ana";
+    byId("signup-email").value = "ana@auto.fill";
+    byId("signup-password").value = "longenough1";
+    byId("signup-confirm-password").value = "different22";
+    fireEvent.submit(byId("signup-email").form!);
     await waitFor(() => expect(document.querySelector(".error-banner")).toHaveTextContent(pt.auth.signup.passwordMismatch));
     expect(h.signUp).not.toHaveBeenCalled();
-    expect(byName("email").value).toBe("ana@auto.fill");
+    expect(byId("signup-email").value).toBe("ana@auto.fill");
     unmount();
   });
 
@@ -85,19 +85,19 @@ describe("auth forms keep values React never saw", () => {
     h.signUp.mockReset().mockResolvedValue({ data: { user: { id: "u-2", identities: [{}] } }, error: null });
     const { unmount } = wrap(<SignupPage />);
     fireEvent.click(screen.getByRole("button", { name: new RegExp(pt.auth.signup.rolePatient) }));
-    const code = byName("invite_code");
-    expect(code.form).toBe(byName("email").form); // outside the <form>, joined by its form attribute
+    const code = byId("signup-invite-code");
+    expect(code.form).toBe(byId("signup-email").form); // outside the <form>, joined by its form attribute
     fireEvent.input(code, { target: { value: "ab-12c" } });
     expect(code.value).toBe("AB12C");
     // Switching to doctor and back keeps the typed code.
     fireEvent.click(screen.getByRole("button", { name: new RegExp(pt.auth.signup.roleDoctor) }));
     fireEvent.click(screen.getByRole("button", { name: new RegExp(pt.auth.signup.rolePatient) }));
-    expect(byName("invite_code").value).toBe("AB12C");
-    byName("full_name").value = "Paciente";
-    byName("email").value = "pac@auto.fill";
-    byName("password").value = "longenough1";
-    byName("confirm_password").value = "longenough1";
-    fireEvent.submit(byName("email").form!);
+    expect(byId("signup-invite-code").value).toBe("AB12C");
+    byId("signup-full-name").value = "Paciente";
+    byId("signup-email").value = "pac@auto.fill";
+    byId("signup-password").value = "longenough1";
+    byId("signup-confirm-password").value = "longenough1";
+    fireEvent.submit(byId("signup-email").form!);
     await waitFor(() => expect(h.signUp).toHaveBeenCalledTimes(1));
     expect(h.signUp.mock.calls[0][0].options.data).toMatchObject({ role: "patient", invite_code: "AB12C" });
     unmount();
@@ -106,8 +106,8 @@ describe("auth forms keep values React never saw", () => {
   it("forgot password: an autofilled email is the one the link is sent to", async () => {
     h.resetForEmail.mockReset().mockResolvedValue({ error: null });
     const { unmount } = wrap(<ForgotPasswordPage />);
-    byName("email").value = "ana@auto.fill";
-    fireEvent.submit(byName("email").form!);
+    byId("forgot-email").value = "ana@auto.fill";
+    fireEvent.submit(byId("forgot-email").form!);
     await waitFor(() => expect(h.resetForEmail).toHaveBeenCalledTimes(1));
     expect(h.resetForEmail.mock.calls[0][0]).toBe("ana@auto.fill");
     unmount();
@@ -117,14 +117,31 @@ describe("auth forms keep values React never saw", () => {
     window.location.hash = "#access_token=t&refresh_token=r&type=recovery";
     h.updateUser.mockReset().mockResolvedValue({ error: { message: "stop here" } });
     const { unmount } = wrap(<ResetPasswordPage />);
-    await waitFor(() => expect(byName("new_password")).not.toBeNull());
-    byName("new_password").value = "Generated-Pass-123"; // a password manager's suggestion
-    fireEvent.change(byName("confirm_password"), { target: { value: "Generated-Pass-123" } });
-    expect(byName("new_password").value).toBe("Generated-Pass-123");
-    fireEvent.submit(byName("new_password").form!);
+    await waitFor(() => expect(byId("reset-new-password")).not.toBeNull());
+    byId("reset-new-password").value = "Generated-Pass-123"; // a password manager's suggestion
+    fireEvent.change(byId("reset-confirm-password"), { target: { value: "Generated-Pass-123" } });
+    expect(byId("reset-new-password").value).toBe("Generated-Pass-123");
+    fireEvent.submit(byId("reset-new-password").form!);
     await waitFor(() => expect(h.updateUser).toHaveBeenCalledTimes(1));
     expect(h.updateUser.mock.calls[0][0]).toEqual({ password: "Generated-Pass-123" });
     window.location.hash = "";
     unmount();
+  });
+
+  it("no form can put a value in a URL: method post, no input has a name (3e, 9a)", async () => {
+    window.location.hash = "#access_token=t&refresh_token=r&type=recovery";
+    h.params = new URLSearchParams("c=BR");
+    for (const Page of [SignupPage, ForgotPasswordPage, ResetPasswordPage]) {
+      const { unmount } = wrap(<Page />);
+      await waitFor(() => expect(document.querySelector("form")).not.toBeNull());
+      const forms = Array.from(document.querySelectorAll("form"));
+      for (const form of forms) {
+        expect(form.method).toBe("post");
+        expect([...new FormData(form).keys()]).toEqual([]);
+      }
+      expect(document.querySelectorAll("input[name]")).toHaveLength(0);
+      unmount();
+    }
+    window.location.hash = "";
   });
 });

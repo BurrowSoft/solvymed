@@ -12,6 +12,7 @@ import { IconBadge } from "@/components/IconBadge";
 import { MIN_PASSWORD_LENGTH } from "@/lib/password";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { endOtherSessions } from "@/lib/endOtherSessions";
+import { fieldValue } from "@/lib/formField";
 
 type PageState = "loading" | "form" | "success" | "error";
 
@@ -63,9 +64,8 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     // Uncontrolled and read from the form (as login, #332): a controlled
     // field's re-render could wipe a password manager's generated value (e7).
-    const form = new FormData(e.currentTarget);
-    const newPassword = String(form.get("new_password") ?? "");
-    const confirmPassword = String(form.get("confirm_password") ?? "");
+    const newPassword = fieldValue(e.currentTarget, "reset-new-password");
+    const confirmPassword = fieldValue(e.currentTarget, "reset-confirm-password");
     setError("");
 
     if (newPassword.length < MIN_PASSWORD_LENGTH) {
@@ -170,7 +170,7 @@ export default function ResetPasswordPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form method="post" onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="field-label">
               {t("resetPassword.newPassword")}
@@ -178,7 +178,7 @@ export default function ResetPasswordPage() {
             <input
               type="password"
               required
-              name="new_password"
+              id="reset-new-password"
               autoComplete="new-password"
               className="text-input"
             />
@@ -190,7 +190,7 @@ export default function ResetPasswordPage() {
             <input
               type="password"
               required
-              name="confirm_password"
+              id="reset-confirm-password"
               autoComplete="new-password"
               className="text-input"
             />
