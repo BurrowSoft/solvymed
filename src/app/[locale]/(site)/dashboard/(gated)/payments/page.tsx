@@ -148,7 +148,8 @@ export default async function PaymentsPage({
       </div>
 
       {/* Summary cards */}
-      <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
+      {/* One column under 380px: large amounts were clipped side by side (3e, build 25). */}
+      <div className="mb-8 grid grid-cols-1 gap-4 min-[380px]:grid-cols-2 sm:grid-cols-3">
         <div className="rounded-2xl border border-orange-100 bg-orange-50 p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">{t("pendingLabel")}</p>
           <p className="mt-1 text-2xl font-extrabold text-orange-900">{formatAmount(totalPending)}</p>

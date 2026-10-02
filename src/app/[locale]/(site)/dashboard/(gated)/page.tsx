@@ -201,7 +201,8 @@ export default async function DashboardPage({
       {invitedTotal > 0 && <InvitedPatientsCard patients={invited} total={invitedTotal} prefix={prefix} />}
 
       {/* Stat Cards */}
-      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      {/* One column under 380px: large amounts ("R$ 115.582,19") were clipped side by side (3e, build 25). */}
+      <div className="mb-8 grid grid-cols-1 gap-4 min-[380px]:grid-cols-2 lg:grid-cols-4">
         <Link href={`${prefix}/dashboard/schedule`} className="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-teal-200 hover:shadow-md transition-all">
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-teal-600"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
