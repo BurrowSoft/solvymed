@@ -403,7 +403,7 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     help: "C11",
   },
   {
-    rule: { text: "Clinic types, chosen by the admin (changeable later; the confirm lists what will change): \"Equipe integrada\" / \"Integrated team\" (the default: patients connect to the clinic with the clinic's code or any of its doctors' codes and can book with any doctor; every doctor sees the clinic's patient list, name and contact; optional \"Qualquer profissional\" / \"Any professional\"; a doctor can move a patient to a colleague) or \"Espaço compartilhado\" / \"Shared space\" (each doctor has their own patients, connected with that doctor's code; each doctor sees only their own patients; \"Indicar colega\" / \"Refer a colleague\" sends the patient the colleague's link). The ⓘ on each type shows these details.", pending: ["clinics-live"] },
+    rule: { text: "Clinic types, chosen by the admin (changeable later; the confirm lists what will change): \"Equipe integrada\" / \"Integrated team\" (the default: patients connect to the clinic with the clinic's code or any of its doctors' codes and can book with any doctor; every doctor and secretary sees the clinic's patients (name, date of birth, phone, email, address; administrative notes stay with each doctor; a doctor's patients from before joining stay theirs); doctors see each other's appointments in the clinic schedule (time, patient, type, doctor), never clinical content; optional \"Qualquer profissional\" / \"Any professional\"; a doctor can move a patient to a colleague) or \"Espaço compartilhado\" / \"Shared space\" (each doctor has their own patients, connected with that doctor's code; each doctor sees only their own patients and appointments, the combined schedule is for secretaries only; \"Indicar colega\" / \"Refer a colleague\" sends the patient the colleague's link). The ⓘ on each type shows these details.", pending: ["clinics-live"] },
     help: "C11",
   },
   {
@@ -411,11 +411,11 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     help: "C11",
   },
   {
-    rule: { text: "\"Qualquer profissional\" / \"Any professional\" (integrated clinics, off by default, the admin turns it on): the patient books the first free time among the doctors who offer that consultation type; the request goes to the clinic queue labelled \"Qualquer profissional\", and whoever confirms must pick a doctor free at that time. Until then the patient sees \"Aguardando definição do profissional\" / \"Waiting for the clinic to assign a professional\".", pending: ["clinics-live"] },
+    rule: { text: "\"Qualquer profissional\" / \"Any professional\" (integrated clinics, off by default, the admin turns it on): the patient books the first free time among the doctors who offer that consultation type; the request goes to the clinic queue labelled \"Qualquer profissional\" (the clinic's doctors and secretaries see booking details only, never clinical content), and whoever confirms must pick a doctor free at that time. Until then the patient sees \"Aguardando definição do profissional\" / \"Waiting for the clinic to assign a professional\".", pending: ["clinics-live"] },
     help: "C11",
   },
   {
-    rule: { text: "Secretaries in a clinic: a secretary always joins the clinic and serves all its doctors (non-clinical data only, as before). At the top of the schedule a switcher picks \"Todos\" / \"All\" or one doctor (remembered per device); new appointments ask for the doctor first; every notification names the doctor.", pending: ["clinics-live"] },
+    rule: { text: "Secretaries in a clinic: a secretary always joins the clinic and serves all its doctors, in both types (non-clinical data only, as before; up to 3 secretaries per doctor of the clinic). At the top of the schedule a switcher picks \"Todos\" / \"All\" or one doctor (remembered per device); new appointments ask for the doctor first; every notification names the doctor.", pending: ["clinics-live"] },
     help: "C11",
   },
 ];
