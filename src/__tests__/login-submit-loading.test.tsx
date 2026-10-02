@@ -171,6 +171,25 @@ describe("login with autofilled fields", () => {
   });
 });
 
+// 3e on #332: a click before hydration is the browser's own GET; named
+// fields would put the password in the URL. The fields have no names.
+describe("login fields carry no name", () => {
+  it("a native (pre-hydration) submit would send neither the email nor the password", () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <LoginPage />
+      </NextIntlClientProvider>,
+    );
+    const form = (document.querySelector("input[type=email]") as HTMLInputElement).form!;
+    (document.querySelector("input[type=email]") as HTMLInputElement).value = "a@b.co";
+    (document.querySelector("input[type=password]") as HTMLInputElement).value = "secret123";
+    expect([...new FormData(form).keys()]).toEqual([]);
+    expect(form.querySelectorAll("input[name]")).toHaveLength(0);
+    // And never a GET: even an unnamed field can't reach the URL (9a).
+    expect(form.method).toBe("post");
+  });
+});
+
 // Vitor, build 25 item 2: Tab from the email field must reach the password,
 // then "Entrar"; "Esqueceu a senha?" comes after.
 describe("login tab order", () => {

@@ -13,6 +13,7 @@ import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { OpenInApp } from "@/components/OpenInApp";
 import { SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 import { conditionMet } from "@/lib/conditions";
+import { fieldValue } from "@/lib/formField";
 import { isAccessAllowed, type EffectiveSub } from "@/lib/subscription";
 
 export default function LoginPage() {
@@ -42,9 +43,10 @@ export default function LoginPage() {
     // field, setError, hydration on a slow load) wrote that copy back: an
     // email autofilled by a password manager, or typed before hydration,
     // was emptied and the sign-in failed (e7; 3e on #332).
-    const form = new FormData(e.currentTarget);
-    const email = String(form.get("email") ?? "").trim();
-    const password = String(form.get("password") ?? "");
+    // By id, never by name (lib/formField: a pre-hydration submit must not
+    // put the password in the URL).
+    const email = fieldValue(e.currentTarget, "login-email").trim();
+    const password = fieldValue(e.currentTarget, "login-password");
     setError("");
     if (turnstileEnabled && !captchaToken) {
       setError(t("captchaFailed"));
@@ -164,14 +166,13 @@ export default function LoginPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form method="post" onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="login-email" className="field-label">
               {t("login.email")}
             </label>
             <input
               id="login-email"
-              name="email"
               type="email"
               required
               autoComplete="email"
@@ -185,7 +186,6 @@ export default function LoginPage() {
             </label>
             <input
               id="login-password"
-              name="password"
               type="password"
               required
               autoComplete="current-password"
