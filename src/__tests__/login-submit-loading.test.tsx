@@ -10,6 +10,7 @@ import pt from "@/messages/pt-BR.json";
 const h = vi.hoisted(() => ({
   signIn: vi.fn(),
   push: vi.fn(),
+  sub: null as null | Record<string, unknown>,
 }));
 vi.mock("next/navigation", async (orig) => ({
   ...(await orig<typeof import("next/navigation")>()),
@@ -21,6 +22,7 @@ vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
     auth: { signInWithPassword: h.signIn },
     from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: { role: "professional" } }) }) }) }),
+    rpc: async () => ({ data: h.sub ? [h.sub] : [], error: null }),
   }),
 }));
 
@@ -47,6 +49,16 @@ describe("login submit", () => {
     await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/dashboard"));
     expect(h.signIn).toHaveBeenCalledTimes(1);
     expect(button).toBeDisabled();
+  });
+
+  it("a doctor whose trial ended goes straight to the paywall, never Home (build 25)", async () => {
+    h.signIn.mockReset().mockResolvedValue({ data: { user: { id: "u-1", user_metadata: {} } }, error: null });
+    h.push.mockReset();
+    h.sub = { subscription_status: "trial", trial_ends_at: "2020-01-01T00:00:00Z", current_period_end: null, subscription_provider: null, subscription_id: null };
+    const button = fill();
+    fireEvent.submit(button.form!);
+    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/subscribe"));
+    h.sub = null;
   });
 
   it("an error resets the button and allows another try", async () => {

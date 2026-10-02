@@ -21,6 +21,7 @@ import { getPracticeCountry } from "@/lib/practiceCountry";
 import { cookies } from "next/headers";
 import { THEME_COOKIE, parseTheme } from "@/lib/theme";
 import { OpenInApp } from "@/components/OpenInApp";
+import { BrandMarkTile } from "@/components/BrandLogo";
 
 function isVersionBelow(current: string, minimum: string): boolean {
   const parse = (v: string) => v.split(".").map(n => parseInt(n, 10) || 0);
@@ -112,7 +113,7 @@ export default async function DashboardLayout({
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
         <div className="w-full max-w-sm rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 p-10 text-center flex flex-col items-center gap-4">
-          <span className="text-6xl font-black text-teal-600 leading-none">S</span>
+          <BrandMarkTile size="lg" />
           <h1 className="text-xl font-extrabold text-slate-900">{t("title")}</h1>
           <p className="text-sm text-slate-500 leading-relaxed">{t("body")}</p>
           <ReloadButton label={t("reload")} />
@@ -197,7 +198,7 @@ export default async function DashboardLayout({
       role={isSecretary ? "secretary" : "professional"}
       paymentQr={paymentQr}
       prefix={locale === "en" ? "" : `/${locale}`}
-      entry={tourEntry(tourState)}
+      entry={!isSecretary && sub && !isAccessAllowed(sub) ? null : tourEntry(tourState)}
       resumeStep={tourState.kind === "row" ? tourState.step : 0}
       newsPending={newsPending}
       introPending={introPending}
