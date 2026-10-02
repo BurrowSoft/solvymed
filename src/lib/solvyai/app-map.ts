@@ -397,6 +397,27 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     rule: { text: "Founders Program (accepted founders, doctors only, website only): Settings → \"Programa Fundadores\" / \"Founders Program\" has the steps to create a TEST export (fake patients only), the call link and the upload (CSV, XLSX, XLS or ZIP, up to 20 MB, 20 files; the doctor confirms before each file that it has only test patients). SolvyAI can’t upload files; it explains where to do it.", pending: ["founders-upload-live"] },
     help: "C10",
   },
+  // Clinics (1.5.0; specs/multi-doctor-ux.md): held until clinics-live.
+  {
+    rule: { text: "Clinics: several doctors can work together in a clinic. Settings → \"Minha clínica\" / \"My clinic\" offers \"Criar clínica\" / \"Create a clinic\" (the creator becomes an admin) or \"Entrar em uma clínica\" / \"Join a clinic\" (with the doctor invite code a member gives; an admin approves the request). One clinic per doctor; each doctor keeps their own subscription. Only admins change the clinic type, approve join requests, remove members and change the clinic's settings; there is always at least one admin.", pending: ["clinics-live"] },
+    help: "C11",
+  },
+  {
+    rule: { text: "Clinic types, chosen by the admin (changeable later; the confirm lists what will change): \"Equipe integrada\" / \"Integrated team\" (the default: patients connect to the clinic with the clinic's code or any of its doctors' codes and can book with any doctor; every doctor sees the clinic's patient list, name and contact; optional \"Qualquer profissional\" / \"Any professional\"; a doctor can move a patient to a colleague) or \"Espaço compartilhado\" / \"Shared space\" (each doctor has their own patients, connected with that doctor's code; each doctor sees only their own patients; \"Indicar colega\" / \"Refer a colleague\" sends the patient the colleague's link). The ⓘ on each type shows these details.", pending: ["clinics-live"] },
+    help: "C11",
+  },
+  {
+    rule: { text: "Inside a clinic, medical records, prescriptions, exams and files stay private to each doctor. \"Compartilhar com a clínica\" / \"Share with the clinic\" on one item lets the clinic's other doctors view and download it (never edit or delete); every open is in the access log; turning it off hides it again. SolvyAI never shares or unshares items.", pending: ["clinics-live"] },
+    help: "C11",
+  },
+  {
+    rule: { text: "\"Qualquer profissional\" / \"Any professional\" (integrated clinics, off by default, the admin turns it on): the patient books the first free time among the doctors who offer that consultation type; the request goes to the clinic queue labelled \"Qualquer profissional\", and whoever confirms must pick a doctor free at that time. Until then the patient sees \"Aguardando definição do profissional\" / \"Waiting for the clinic to assign a professional\".", pending: ["clinics-live"] },
+    help: "C11",
+  },
+  {
+    rule: { text: "Secretaries in a clinic: a secretary always joins the clinic and serves all its doctors (non-clinical data only, as before). At the top of the schedule a switcher picks \"Todos\" / \"All\" or one doctor (remembered per device); new appointments ask for the doctor first; every notification names the doctor.", pending: ["clinics-live"] },
+    help: "C11",
+  },
 ];
 
 // Things SolvyAI never does, not even with confirmation (spec §3 "Never"):

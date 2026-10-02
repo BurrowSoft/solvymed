@@ -114,5 +114,9 @@
   "secretary-invite-email-live": {
     "met": true,
     "what": "Secretary invites are emailed (migration 151 + the send-secretary-invite function, live) AND the privacy policy's secretary-invite text is live with PRIVACY_VERSION bumped, after mobile's accepting migration. Until then the website never calls the function: invites are shared by link/code only."
+  },
+  "clinics-live": {
+    "met": false,
+    "what": "Clinics (1.5.0) are live on production: the clinic migrations applied, the app's clinic screens in a RELEASED store build, the website's clinic screens merged, and the privacy policy's clinic text live with PRIVACY_VERSION bumped (after mobile's accepting migration). Gates Help C11 (clinic types) and the App Map's clinic rules."
   }
 }
