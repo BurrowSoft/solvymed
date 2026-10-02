@@ -1467,7 +1467,6 @@
     "placesUnavailable": "暂时无法加载名额信息。",
     "countryBR": "巴西",
     "countryTH": "泰国",
-    "countryOTHER": "其他国家",
     "formTitle": "申请",
     "required": "必填",
     "qName": "姓名",
@@ -1548,7 +1547,10 @@
     "emailBody": "感谢您以 {system} 用户身份申请 SolvyMed 创始会员计划。我们将在 5 个工作日内回复。",
     "emailWaitlist": "{system} 的名额目前已满,您已进入候补名单。",
     "emailNoFiles": "请暂时不要发送任何文件;如果您被录取,我们会说明如何创建测试导出文件。",
-    "emailSign": "SolvyMed 团队"
+    "emailSign": "SolvyMed 团队",
+    "emailTagline": "诊所管理，化繁为简",
+    "emailHelloTitled": "{title} {name},您好:",
+    "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
   "foundersCard": {
     "cardTitle": "创始用户计划",

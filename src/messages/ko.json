@@ -1467,7 +1467,6 @@
     "placesUnavailable": "지금은 자리 현황을 불러올 수 없습니다.",
     "countryBR": "브라질",
     "countryTH": "태국",
-    "countryOTHER": "기타 국가",
     "formTitle": "신청",
     "required": "필수",
     "qName": "성명",
@@ -1548,7 +1547,10 @@
     "emailBody": "{system} 사용자로 SolvyMed 창립 멤버 프로그램에 신청해 주셔서 감사합니다. 영업일 기준 5일 이내에 답변드리겠습니다.",
     "emailWaitlist": "현재 {system} 자리가 마감되어 대기자 명단에 등록되었습니다.",
     "emailNoFiles": "아직 파일은 보내지 마세요. 선정되시면 테스트 내보내기 파일을 만드는 방법을 안내해 드리겠습니다.",
-    "emailSign": "SolvyMed 팀"
+    "emailSign": "SolvyMed 팀",
+    "emailTagline": "간편한 병원 관리",
+    "emailHelloTitled": "{title} {name}님, 안녕하세요.",
+    "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
   "foundersCard": {
     "cardTitle": "파운더 프로그램",

@@ -1467,7 +1467,6 @@
     "placesUnavailable": "No se pudieron cargar las plazas en este momento.",
     "countryBR": "Brasil",
     "countryTH": "Tailandia",
-    "countryOTHER": "Otro país",
     "formTitle": "Solicitar",
     "required": "obligatorio",
     "qName": "Nombre completo",
@@ -1545,10 +1544,13 @@
     "rule8": "<b>Datos:</b> los archivos de muestra se usan solo para construir y probar el importador, se guardan en un lugar privado y se eliminan cuando el importador se publica.",
     "emailSubject": "Recibimos tu solicitud al Programa Fundadores de SolvyMed",
     "emailHello": "Hola, {name}:",
-    "emailBody": "gracias por solicitar el Programa Fundadores de SolvyMed para {system}. Te responderemos en un plazo de 5 días hábiles.",
+    "emailBody": "Gracias por solicitar el Programa Fundadores de SolvyMed para {system}. Te responderemos en un plazo de 5 días hábiles.",
     "emailWaitlist": "Las plazas para {system} están completas por ahora, así que estás en la lista de espera.",
     "emailNoFiles": "Por favor, no envíes ningún archivo todavía; si te aceptamos, te explicaremos cómo crear una exportación de prueba.",
-    "emailSign": "El equipo de SolvyMed"
+    "emailSign": "El equipo de SolvyMed",
+    "emailTagline": "Gestión de clínica simplificada",
+    "emailHelloTitled": "Hola, {title} {name}:",
+    "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
   "foundersCard": {
     "cardTitle": "Programa Fundadores",

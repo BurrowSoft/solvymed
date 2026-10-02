@@ -1467,7 +1467,6 @@
     "placesUnavailable": "Hiện không thể tải số suất.",
     "countryBR": "Brazil",
     "countryTH": "Thái Lan",
-    "countryOTHER": "Quốc gia khác",
     "formTitle": "Đăng ký",
     "required": "bắt buộc",
     "qName": "Họ và tên",
@@ -1545,10 +1544,13 @@
     "rule8": "<b>Dữ liệu:</b> các tệp mẫu chỉ dùng để xây dựng và kiểm thử tính năng nhập, được lưu ở nơi riêng tư, và bị xóa khi tính năng nhập được phát hành.",
     "emailSubject": "Chúng tôi đã nhận được đăng ký Chương trình Nhà sáng lập SolvyMed của bạn",
     "emailHello": "Chào {name},",
-    "emailBody": "cảm ơn bạn đã đăng ký Chương trình Nhà sáng lập SolvyMed cho {system}. Chúng tôi sẽ trả lời trong vòng 5 ngày làm việc.",
+    "emailBody": "Cảm ơn bạn đã đăng ký Chương trình Nhà sáng lập SolvyMed cho {system}. Chúng tôi sẽ trả lời trong vòng 5 ngày làm việc.",
     "emailWaitlist": "Các suất cho {system} hiện đã đủ, nên bạn đang trong danh sách chờ.",
     "emailNoFiles": "Vui lòng chưa gửi tệp nào; nếu được chấp nhận, chúng tôi sẽ hướng dẫn cách tạo bản xuất thử.",
-    "emailSign": "Đội ngũ SolvyMed"
+    "emailSign": "Đội ngũ SolvyMed",
+    "emailTagline": "Quản lý phòng khám thật đơn giản",
+    "emailHelloTitled": "Chào {title} {name},",
+    "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
   "foundersCard": {
     "cardTitle": "Chương trình Nhà sáng lập",

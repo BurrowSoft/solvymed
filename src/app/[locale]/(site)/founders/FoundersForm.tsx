@@ -23,15 +23,15 @@ const GENERIC_KEYS = { other: "systemOther", spreadsheet: "systemSpreadsheet", p
 const input = "mt-1 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20";
 const label = "block text-sm font-semibold text-slate-700";
 
-export function FoundersForm({ locale, defaultCountry, showRulesLink }: { locale: string; defaultCountry: FoundersCountry; showRulesLink: boolean }) {
+export function FoundersForm({ locale, defaultCountry, showRulesLink }: { locale: string; defaultCountry: FoundersCountry | ""; showRulesLink: boolean }) {
   const t = useTranslations("founders");
-  const [country, setCountry] = useState<FoundersCountry>(defaultCountry);
+  const [country, setCountry] = useState<FoundersCountry | "">(defaultCountry);
   const [system, setSystem] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<{ field?: string; text: string } | null>(null);
   const started = useRef(false);
 
-  const systems = country === "OTHER" ? [] : SYSTEMS[country];
+  const systems = country ? SYSTEMS[country] : [];
 
   function onFirstInput() {
     if (started.current) return;
@@ -42,6 +42,7 @@ export function FoundersForm({ locale, defaultCountry, showRulesLink }: { locale
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+    if (!country) { setError({ field: "country", text: t("errorInvalid") }); return; }
     const f = new FormData(e.currentTarget);
     const body = {
       locale,
@@ -120,10 +121,11 @@ export function FoundersForm({ locale, defaultCountry, showRulesLink }: { locale
 
       <label className={label}>{t("qCountry")}{req}
         <select value={country} onChange={(e) => { setCountry(e.target.value as FoundersCountry); setSystem(""); }} className={input}>
+          {!country && <option value="">{t("choose")}</option>}
           <option value="BR">{t("countryBR")}</option>
           <option value="TH">{t("countryTH")}</option>
-          <option value="OTHER">{t("countryOTHER")}</option>
         </select>
+        <span className="mt-1 block text-xs font-normal text-slate-500">{t("countryOnly")}</span>
         {fieldError("country")}
       </label>
 

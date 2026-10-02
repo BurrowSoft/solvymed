@@ -1,6 +1,10 @@
 // Features the public pages may claim (UX rule: only claim what is live on
 // the day it ships). Each flips to true in its own small reviewed PR when
 // the feature is live for customers, not when the code is merged.
+// Vercel sets NEXT_PUBLIC_VERCEL_ENV itself (production / preview /
+// development); read the same on the server and in the browser.
+export const foundersPreview = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
+
 export const liveFeatures = {
   // PromptPay QR for Thai practices: after migration 110 + a real Thai
   // banking-app scan (TH-4). Live: Vitor's Thai bank app paid a SolvyMed
@@ -34,8 +38,11 @@ export const liveFeatures = {
   // only with Vitor's OK, migration 129 applied, the mailbox + Resend key
   // and the privacy-policy line. Its rules page (foundersRules) waits only
   // on Vitor's go too: lawyer reviews are post-launch (2026-10-01).
-  founders: false,
-  foundersRules: false,
+  // Until then both are on only in Vercel Preview builds (the
+  // release-founders test site, behind Vercel protection), never on
+  // Production or anywhere the variable isn't "preview" (UX, 1 Oct).
+  founders: foundersPreview,
+  foundersRules: foundersPreview,
 } as const;
 
 // The languages the app's PDFs are generated in today (UX, verified on the

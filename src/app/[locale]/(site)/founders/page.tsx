@@ -5,7 +5,7 @@ import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { Link } from "@/i18n/navigation";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { createClient } from "@/lib/supabase/server";
-import { defaultFoundersCountry } from "@/lib/founders";
+import { defaultFoundersCountry, foundersAlternates, foundersShareMeta, foundersUrl } from "@/lib/founders";
 import { readPlaces, type Place } from "@/lib/foundersPlaces";
 import { FoundersForm } from "./FoundersForm";
 import { FoundersPageView } from "./FoundersPageView";
@@ -16,13 +16,16 @@ import { FoundersPageView } from "./FoundersPageView";
 // liveFeatures.founders (Vitor's OK, migration 129, the mailbox, the
 // privacy line). The rules link waits for foundersRules (Vitor's go).
 
-const BASE = "https://www.solvymed.com";
-const pathFor = (locale: string) => (locale === "en" ? `${BASE}/founders` : `${BASE}/${locale}/founders`);
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "founders" });
-  return { title: t("metaTitle"), description: t("metaDescription"), alternates: { canonical: pathFor(locale) } };
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+    alternates: foundersAlternates(locale),
+    ...foundersShareMeta({ locale, url: foundersUrl(locale), title: t("metaTitle"), description: t("metaDescription") }),
+  };
 }
 
 // Refreshed at most once a minute (the counts are public, never personal).
