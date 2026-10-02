@@ -27,7 +27,7 @@ vi.mock("next-intl", () => ({
       "book.notes": "Notes",
       "book.notesOptional": "(optional)",
       "book.notesPlaceholder": "Reason for visit, symptoms, questions for the doctor…",
-      "book.sendRequest": "Send Booking Request",
+      "book.sendRequest": "Send Appointment Request",
       "book.sending": "Sending…",
       "book.hint": "The doctor will confirm or suggest a different time.",
       "book.successTitle": "Request sent!",
@@ -194,8 +194,8 @@ describe("BookingClient", () => {
   it("disables Send button when no slot is selected", async () => {
     setupMocks();
     render(<BookingClient {...BASE_PROPS} />);
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeInTheDocument());
-    expect(screen.getByText("Send Booking Request")).toBeDisabled();
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).toBeInTheDocument());
+    expect(screen.getByText("Send Appointment Request")).toBeDisabled();
   });
 
   it("shows success screen after a successful booking", async () => {
@@ -211,8 +211,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getByText(/9:00/));
 
     // Enable the button and click
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
 
     await waitFor(() => expect(screen.getByText("Request sent!")).toBeInTheDocument());
   });
@@ -224,8 +224,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() =>
       expect(screen.getByText(/slot was just taken/i)).toBeInTheDocument(),
     );
@@ -238,8 +238,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() => expect(screen.getByText("This clinic isn't taking online bookings right now.")).toBeInTheDocument());
   });
 
@@ -250,8 +250,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() =>
       expect(screen.getByText(/maximum number of active appointments/i)).toBeInTheDocument(),
     );
@@ -272,8 +272,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() => expect(screen.getByText("View my appointments")).toBeInTheDocument());
     fireEvent.click(screen.getByText("View my appointments"));
     expect(mockPush).toHaveBeenCalledWith("/my-appointments");
@@ -319,11 +319,11 @@ describe("BookingClient", () => {
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
     // All three required fields empty → button stays disabled
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).toBeDisabled());
     // Fill name and phone but not DOB → still disabled
     fireEvent.change(screen.getByPlaceholderText("Your full name"), { target: { value: "Maria" } });
     fireEvent.change(screen.getByPlaceholderText("11 99999-9999"), { target: { value: "11999887766" } });
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).toBeDisabled());
   });
 
   // UX: the dial code starts at the PRACTICE country, never the UI
@@ -354,8 +354,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() => expect(screen.getByText("Request sent!")).toBeInTheDocument());
     expect(mockUpsert).toHaveBeenCalledWith(
       expect.objectContaining({ user_id: "patient-1", email: "patient@example.com" }),
@@ -371,11 +371,11 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
     fireEvent.change(container.querySelector('input[inputmode="numeric"]')!, { target: { value: "14/05/2539" } });
     expect(screen.getByRole("alert")).toBeInTheDocument();
-    expect(screen.getByText("Send Booking Request")).toBeDisabled();
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    expect(screen.getByText("Send Appointment Request")).toBeDisabled();
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     expect(mockUpsert).not.toHaveBeenCalled();
   });
 
@@ -387,9 +387,9 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
     mockRpc.mockClear();
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() => expect(screen.getByText(/invalidBirthDate/)).toBeInTheDocument());
     expect(mockRpc).not.toHaveBeenCalledWith("create_public_booking", expect.anything());
   });

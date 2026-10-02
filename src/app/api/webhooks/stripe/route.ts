@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient as createServerClient } from "@supabase/supabase-js";
-import { stripe, retrieveSubscriptionOrNull } from "@/lib/stripeBilling";
+import { stripe, retrieveSubscriptionOrNull, stripePreferredLocales } from "@/lib/stripeBilling";
 import { statusWhenSubscriptionDies } from "@/lib/subscription";
 import { reportWebhookFailure } from "@/lib/stripeWebhookReport";
 
@@ -49,6 +49,14 @@ async function handleEvent(event: Stripe.Event): Promise<NextResponse> {
     // session as "unpaid" before any money moves. Record nothing until
     // it's actually paid.
     if (session.payment_status !== "paid" || !subId) return NextResponse.json({ ok: true });
+    // Stripe's receipts/invoices in the doctor's language (day-first dates;
+    // build 25). Best effort: never fails the webhook.
+    const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id;
+    const prefs = stripePreferredLocales(session.metadata?.locale ?? "");
+    if (customerId && prefs.length) {
+      await stripe.customers.update(customerId, { preferred_locales: prefs }).catch((err) =>
+        console.error("Stripe webhook: preferred_locales update failed", (err as { code?: string })?.code ?? "error"));
+    }
     // Same live-state sync as the subscription events, never a direct write
     // from this payload: a late or replayed checkout for an old subscription
     // must not put that old id back on the row (a later event for it would

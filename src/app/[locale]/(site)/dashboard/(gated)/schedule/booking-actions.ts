@@ -7,6 +7,7 @@ import { computeSlots, toMinutes, getDayHours, filterPastSlots } from "@/lib/slo
 import type { WorkingHours } from "@/lib/slots";
 import { sendExpoPush } from "@/lib/push";
 import { pushText, pushWhen, type PushKind } from "@/lib/pushText";
+import { formatShortDate } from "@/lib/dateLabels";
 import { clinicPushTargets, patientPushTargets } from "@/lib/pushRecipient";
 import { actionError } from "@/lib/dbErrors";
 import { getActiveProfId, isLockedOut } from "@/lib/activeAccess";
@@ -317,11 +318,16 @@ export async function requestReschedule(
     return { error: actionError(error.message) };
   }
 
-  await notifyProfessional(supabase, appt.professional_id as string, "rescheduleRequested", {
-    name: appt.patient_name as string,
-    date: newDate,
-    time: newStartTime,
-  });
+  for (const { locale, tokens } of await clinicPushTargets(supabase, appt.professional_id as string)) {
+    const { title, body } = pushText(locale, "rescheduleRequested", {
+      name: (appt.patient_name as string) ?? "",
+      oldDate: formatShortDate(locale, appt.date as string),
+      oldTime: (appt.start_time as string).slice(0, 5),
+      date: formatShortDate(locale, newDate),
+      time: newStartTime.slice(0, 5),
+    });
+    await sendExpoPush(tokens, title, body);
+  }
 
   revalidatePath("/my-appointments");
   return { error: null };

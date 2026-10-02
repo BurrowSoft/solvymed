@@ -16,7 +16,9 @@ describe("SubscribeHeader", () => {
     const { container } = render(<SubscribeHeader exitHref={null} backLabel="Voltar" />);
     expect(screen.queryByText(/Voltar/)).toBeNull();
     expect(container.querySelectorAll("a")).toHaveLength(0);
-    expect(screen.getByText("SolvyMed")).toBeInTheDocument();
+    // The kit's logo, never the old "S" letter (build 25).
+    expect(screen.getAllByAltText("SolvyMed").length).toBeGreaterThan(0);
+    expect(container.textContent).not.toMatch(/^S/);
   });
 
   it("sign out sits in the header (top right), in either state", () => {
