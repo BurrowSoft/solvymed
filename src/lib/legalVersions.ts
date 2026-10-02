@@ -23,7 +23,7 @@ export function consentMetadata() {
 // English or Brazilian Portuguese).
 export function legalDateLabel(lang: "en" | "pt-BR", version: string): string {
   const [y, m, d] = version.split("-").map(Number);
-  return new Intl.DateTimeFormat(lang === "pt-BR" ? "pt-BR" : "en-US", {
+  return new Intl.DateTimeFormat(lang === "pt-BR" ? "pt-BR" : "en-GB", {
     year: "numeric", month: "long", day: "numeric", timeZone: "UTC",
   }).format(new Date(Date.UTC(y, m - 1, d, 12)));
 }

@@ -1384,7 +1384,9 @@
   },
   "dateInput": {
     "buddhistYear": "Parece un año de la era budista. Usa el año gregoriano (p. ej., 1996).",
-    "invalidBirthDate": "Fecha de nacimiento no válida: usa una fecha entre 1900 y hoy."
+    "invalidBirthDate": "Fecha de nacimiento no válida: usa una fecha entre 1900 y hoy.",
+    "placeholder": "DD/MM/YYYY",
+    "invalid": "The date must be in the format {format}."
   },
   "solvyaiSettings": {
     "title": "SolvyAI",

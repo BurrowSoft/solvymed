@@ -17,8 +17,12 @@ export function plainSpaces(s: string): string {
 // (Sprint TH), which "th" only gives where the runtime's default calendar
 // for it is Buddhist (Node's is; some browsers/devices use Gregorian), so
 // it's requested explicitly. Stored dates stay Gregorian.
+// English is British-style (Vitor, build 25: "English ≠ American"): day
+// before month, never MM/DD, and a 24-hour clock like BR/TH.
 export function dateLocale(locale: string): string {
-  return locale === "th" ? "th-TH-u-ca-buddhist" : locale;
+  if (locale === "th") return "th-TH-u-ca-buddhist";
+  if (locale === "en" || locale.startsWith("en-")) return "en-GB";
+  return locale;
 }
 
 export function formatDateLabel(
@@ -31,8 +35,8 @@ export function formatDateLabel(
   return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale), { ...options, timeZone: "UTC" }).format(new Date(Date.UTC(y, m - 1, d, 12))));
 }
 
-// The locale's short numeric date, like the app: 14/05/1993 (pt-BR),
-// 05/14/1993 (en), 14/05/2536 (th, Buddhist year).
+// The locale's short numeric date, like the app: 14/05/1993 (pt-BR and en:
+// never MM/DD), 14/05/2536 (th, Buddhist year).
 export function formatShortDate(locale: string, date: string): string {
   return formatDateLabel(locale, date, { day: "2-digit", month: "2-digit", year: "numeric" });
 }

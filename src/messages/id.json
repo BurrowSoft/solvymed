@@ -1384,7 +1384,9 @@
   },
   "dateInput": {
     "buddhistYear": "Sepertinya ini tahun Buddhis. Gunakan tahun Masehi (misalnya 1996).",
-    "invalidBirthDate": "Tanggal lahir tidak valid: gunakan tanggal antara 1900 dan hari ini."
+    "invalidBirthDate": "Tanggal lahir tidak valid: gunakan tanggal antara 1900 dan hari ini.",
+    "placeholder": "DD/MM/YYYY",
+    "invalid": "The date must be in the format {format}."
   },
   "solvyaiSettings": {
     "title": "SolvyAI",
