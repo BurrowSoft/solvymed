@@ -15,6 +15,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "test:smoke": "playwright test --project=smoke",
     "i18n:th-sheet": "node scripts/th-review-sheet.mjs",
     "help:build": "node scripts/help-build.mjs"
   },
