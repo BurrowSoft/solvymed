@@ -62,7 +62,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
     const id = setInterval(() => setNow(Date.now()), 30_000);
     return () => clearInterval(id);
   }, [emailLive]);
-  const time = (iso: string) => new Date(iso).toLocaleTimeString(dateLocale(locale), { hour: "2-digit", minute: "2-digit" });
+  const time = (iso: string) => new Date(iso).toLocaleTimeString(dateLocale(locale), { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
   const nextAt = (r: TeamRow) => (r.sent_at ? new Date(new Date(r.sent_at).getTime() + RESEND_GAP_MS).toISOString() : null);
   // The function's refusals (151): too soon / already sent / the daily cap.
   const emailError = (r: Extract<InviteEmailResult, { ok: false }>) => {

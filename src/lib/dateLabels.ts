@@ -45,7 +45,7 @@ export function formatTimeLabel(locale: string, time: string): string {
   const [h, m] = time.split(":").map(Number);
   if (!Number.isInteger(h) || !Number.isInteger(m)) return time;
   return plainSpaces(
-    new Intl.DateTimeFormat(dateLocale(locale), { hour: "numeric", minute: "2-digit", timeZone: "UTC" }).format(
+    new Intl.DateTimeFormat(dateLocale(locale), { hour: "numeric", minute: "2-digit", hourCycle: "h23", timeZone: "UTC" }).format(
       new Date(Date.UTC(2000, 0, 1, h, m)),
     ),
   );

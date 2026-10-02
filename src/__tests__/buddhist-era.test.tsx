@@ -149,6 +149,7 @@ describe("maskedDate helpers", () => {
     const { formatMaskedDate, isoFromMasked, maskedFromIso } = await import("@/lib/maskedDate");
     expect(formatMaskedDate("5/10/2026")).toBe("05/10/2026");
     expect(formatMaskedDate("05-10-2026")).toBe("05/10/2026");
+    expect(formatMaskedDate("2026-10-05")).toBe("05/10/2026"); // ISO paste / autofill
     expect(formatMaskedDate("051020261234")).toBe("05/10/2026");
     expect(isoFromMasked("29/02/2024")).toBe("2024-02-29");
     expect(isoFromMasked("29/02/2025")).toBe("");

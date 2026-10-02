@@ -69,3 +69,16 @@ describe("no MM/DD in any locale", () => {
     expect(formatShortDate("en-US", "2026-10-05")).toBe("05/10/2026");
   });
 });
+
+// e7: 24-hour everywhere, no AM/PM in any language.
+describe("24-hour times in every locale", () => {
+  it("14:30 never shows as 2:30 / PM / 오후 / 下午 / م", async () => {
+    const fs = await import("fs");
+    for (const f of fs.readdirSync("src/messages")) {
+      const l = f.replace(".json", "");
+      const s = formatTimeLabel(l, "14:30");
+      expect(s, l).toMatch(/14/);
+      expect(s, l).not.toMatch(/PM|AM|오후|下午|午後|م|ب\.ظ/i);
+    }
+  });
+});

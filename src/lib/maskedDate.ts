@@ -5,6 +5,9 @@
 // Digits only, slashes inserted: "0510" → "05/10", "05102026" → "05/10/2026".
 // A pasted "5/10/2026" keeps its parts ("05/10/2026").
 export function formatMaskedDate(input: string): string {
+  // An ISO date (a pasted value, or a browser's birthday autofill; 9a).
+  const iso = /^\s*(\d{4})-(\d{2})-(\d{2})\s*$/.exec(input);
+  if (iso) return `${iso[3]}/${iso[2]}/${iso[1]}`;
   const parts = input.split(/[/.\-\s]+/);
   if (parts.length === 3 && parts.every((p) => /^\d+$/.test(p)) && parts[2].length === 4) {
     return `${parts[0].padStart(2, "0").slice(-2)}/${parts[1].padStart(2, "0").slice(-2)}/${parts[2]}`;
