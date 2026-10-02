@@ -505,7 +505,7 @@ export function BookingClient({
           </button>
           <div className="flex items-center gap-2">
             <BrandMarkTile size="sm" decorative />
-            <span className="font-bold text-slate-900">{t("title")}</span>
+            <span className="font-bold text-slate-900">{professionalName.trim() ? t("titleWith", { doctor: professionalName.trim() }) : t("title")}</span>
           </div>
         </div>
       </header>

@@ -97,11 +97,11 @@ On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings
 **pt-BR**
 **Configurações → Idioma** e **Tema** (claro, escuro ou do sistema). Algumas partes mudam de idioma depois de reabrir o app.
 {pending:app-1.4.0} O idioma segue o país: no Brasil, português ou inglês; na Tailândia, tailandês ou inglês. Na pergunta **Onde você está?**, marque **Use the app in English** para usar em inglês; depois, troque em **Configurações → Idioma**.
-{pending:saved-locale-live} As notificações que você recebe chegam no idioma que você escolheu por último, no app ou no site (português, inglês, espanhol, francês, alemão, italiano ou tailandês; nos outros idiomas do site, vale o último destes que você escolheu).
+{pending:saved-locale-live} As notificações que você recebe chegam no idioma que você escolheu por último, no app ou no site: o idioma do seu país ou inglês.
 **en**
 **Settings → Language** and **Theme** (light, dark or system). Some parts switch language after you reopen the app.
 {pending:app-1.4.0} The language follows the country: in Brazil, Portuguese or English; in Thailand, Thai or English. On the **Where are you?** question, tick **Use the app in English** to use it in English; later, switch in **Settings → Language**.
-{pending:saved-locale-live} The notifications you receive arrive in the language you last chose, in the app or on the website (Portuguese, English, Spanish, French, German, Italian or Thai; the website's other languages keep the last of these you chose).
+{pending:saved-locale-live} The notifications you receive arrive in the language you last chose, in the app or on the website: your country's language or English.
 **No site:** O idioma muda no seletor de idioma do menu lateral: português ou inglês (clínicas no Brasil), tailandês ou inglês (clínicas na Tailândia). No cadastro, marque **Use SolvyMed in English** para usar em inglês. O tema fica em **Configurações → Aparência** (Automático, Claro ou Escuro) e vale para este navegador; impressões e e-mails ficam sempre claros.
 **On the website:** Change the language with the language selector in the side menu: Portuguese or English (clinics in Brazil), Thai or English (clinics in Thailand). When signing up, tick **Use SolvyMed in English** to use it in English. The theme is in **Settings → Appearance** (Automatic, Light or Dark) and applies to this browser; prints and emails always stay light.
 `open:settings`
