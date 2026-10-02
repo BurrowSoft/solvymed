@@ -201,8 +201,10 @@ export default async function DashboardPage({
       {invitedTotal > 0 && <InvitedPatientsCard patients={invited} total={invitedTotal} prefix={prefix} />}
 
       {/* Stat Cards */}
-      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Link href={`${prefix}/dashboard/schedule`} className="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-teal-200 hover:shadow-md transition-all">
+      {/* Stacked on phones; two across, four only where the sidebar leaves
+          room for whole amounts ("R$ 115.582,19" was clipped; 3e, build 25). */}
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-4">
+        <Link href={`${prefix}/dashboard/schedule`} className="group min-w-0 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-teal-200 hover:shadow-md transition-all">
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-teal-600"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
           </div>
@@ -210,16 +212,16 @@ export default async function DashboardPage({
           <p className="mt-1 text-3xl font-extrabold text-slate-900">{todayAppts.length}</p>
         </Link>
 
-        <Link href={`${prefix}/dashboard/payments`} className="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-orange-200 hover:shadow-md transition-all">
+        <Link href={`${prefix}/dashboard/payments`} className="group min-w-0 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-orange-200 hover:shadow-md transition-all">
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-orange-500"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
           </div>
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("statPending")}</p>
-          <p className="mt-1 text-2xl font-extrabold text-slate-900">{formatAmount(totalPending)}</p>
+          <p className="mt-1 text-2xl font-extrabold tabular-nums text-slate-900">{formatAmount(totalPending)}</p>
           <p className="text-xs text-slate-400">{t("sessions", { n: pendingPayments.length })}</p>
         </Link>
 
-        <Link href={`${prefix}/dashboard/patients`} className="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-blue-200 hover:shadow-md transition-all">
+        <Link href={`${prefix}/dashboard/patients`} className="group min-w-0 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-blue-200 hover:shadow-md transition-all">
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-blue-500"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
@@ -228,12 +230,12 @@ export default async function DashboardPage({
         </Link>
 
         {!isSecretary && (
-          <Link href={`${prefix}/dashboard/payments`} className="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-green-200 hover:shadow-md transition-all">
+          <Link href={`${prefix}/dashboard/payments`} className="group min-w-0 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-green-200 hover:shadow-md transition-all">
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-green-50">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-green-600"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             </div>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("statRevenue")}</p>
-            <p className="mt-1 text-2xl font-extrabold text-slate-900">{formatAmount(totalRevenue)}</p>
+            <p className="mt-1 text-2xl font-extrabold tabular-nums text-slate-900">{formatAmount(totalRevenue)}</p>
             <p className="text-xs text-slate-400">{t("thisMonth")}</p>
           </Link>
         )}
