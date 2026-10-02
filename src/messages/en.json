@@ -226,7 +226,7 @@
     "checkTimeTitle": "Check the time",
     "overlapHardMsg": "This overlaps with {name} at {time} ({duration}). Choose another time.",
     "overlapGeneric": "This time overlaps with another appointment. Choose another time.",
-    "requestedLabel": "Requested: {date} · {time}",
+    "requestedLabel": "Requested new time: {date} · {time}",
     "proposedLabel": "Proposed: {date} · {time}",
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "Scan with any Thai banking app to pay.",
@@ -706,7 +706,8 @@
     "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
-    "noTimesToday": "No times left today."
+    "noTimesToday": "No times left today.",
+    "titleWith": "Book with {doctor}"
   },
   "auth": {
     "passwordTooShort": "Password must be at least {min} characters.",
@@ -889,7 +890,9 @@
     "keepRequest": "Keep request",
     "requestCancelledToast": "Request cancelled.",
     "rescheduleLapsed": "Your reschedule request expired.",
-    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic."
+    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic.",
+    "bookWith": "Book with {doctor}",
+    "yourDoctor": "Your doctor"
   },
   "nav": {
     "overview": "Overview",

@@ -226,7 +226,7 @@
     "checkTimeTitle": "Confira o horário",
     "overlapHardMsg": "Este horário conflita com {name} às {time} ({duration}). Escolha outro horário.",
     "overlapGeneric": "Este horário conflita com outra consulta. Escolha outro horário.",
-    "requestedLabel": "Solicitado: {date} · {time}",
+    "requestedLabel": "Novo horário pedido: {date} · {time}",
     "proposedLabel": "Proposto: {date} · {time}",
     "promptPayTitle": "QR PromptPay",
     "promptPayScan": "Escaneie com qualquer app de banco tailandês para pagar.",
@@ -706,7 +706,8 @@
     "chosenTime": "Horário escolhido: {weekday}, {day} {month} · {start}–{end}",
     "prevMonth": "Mês anterior",
     "nextMonth": "Próximo mês",
-    "noTimesToday": "Não há mais horários hoje."
+    "noTimesToday": "Não há mais horários hoje.",
+    "titleWith": "Marcar consulta com {doctor}"
   },
   "auth": {
     "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",
@@ -889,7 +890,9 @@
     "keepRequest": "Manter pedido",
     "requestCancelledToast": "Pedido cancelado.",
     "rescheduleLapsed": "Seu pedido de remarcação expirou.",
-    "rescheduleStarted": "Esta consulta já começou. Para mudanças, fale com a clínica."
+    "rescheduleStarted": "Esta consulta já começou. Para mudanças, fale com a clínica.",
+    "bookWith": "Marcar consulta com {doctor}",
+    "yourDoctor": "Seu médico"
   },
   "nav": {
     "overview": "Visão geral",

@@ -226,7 +226,7 @@
     "checkTimeTitle": "ตรวจสอบเวลา",
     "overlapHardMsg": "เวลานี้ซ้อนกับนัดของ {name} เวลา {time} ({duration}) กรุณาเลือกเวลาอื่น",
     "overlapGeneric": "เวลานี้ซ้อนกับนัดหมายอื่น กรุณาเลือกเวลาอื่น",
-    "requestedLabel": "ขอเลื่อนเป็น: {date} · {time}",
+    "requestedLabel": "เวลาใหม่ที่ขอ: {date} · {time}",
     "proposedLabel": "เสนอ: {date} · {time}",
     "promptPayTitle": "QR พร้อมเพย์",
     "promptPayScan": "สแกนด้วยแอปธนาคารใดก็ได้เพื่อชำระเงิน",
@@ -706,7 +706,8 @@
     "chosenTime": "เวลาที่เลือก: {weekday} {day} {month} · {start}–{end}",
     "prevMonth": "เดือนก่อนหน้า",
     "nextMonth": "เดือนถัดไป",
-    "noTimesToday": "วันนี้ไม่มีเวลาว่างแล้ว"
+    "noTimesToday": "วันนี้ไม่มีเวลาว่างแล้ว",
+    "titleWith": "นัดหมายกับ {doctor}"
   },
   "auth": {
     "passwordTooShort": "รหัสผ่านต้องมีอย่างน้อย {min} ตัวอักษร",
@@ -889,7 +890,9 @@
     "keepRequest": "เก็บคำขอไว้",
     "requestCancelledToast": "ยกเลิกคำขอแล้ว",
     "rescheduleLapsed": "คำขอเลื่อนนัดของคุณหมดอายุแล้ว",
-    "rescheduleStarted": "นัดหมายนี้เริ่มแล้ว หากต้องการเปลี่ยนแปลง กรุณาติดต่อคลินิก"
+    "rescheduleStarted": "นัดหมายนี้เริ่มแล้ว หากต้องการเปลี่ยนแปลง กรุณาติดต่อคลินิก",
+    "bookWith": "นัดหมายกับ {doctor}",
+    "yourDoctor": "แพทย์ของคุณ"
   },
   "nav": {
     "overview": "ภาพรวม",
