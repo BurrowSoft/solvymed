@@ -15,10 +15,20 @@ export const stripe: Stripe = new Proxy({} as Stripe, {
 });
 
 // Stripe's page in the doctor's language: every app locale Stripe has, the
-// rest (Arabic) on "auto" (the browser's language).
-const STRIPE_LOCALES = new Set(["pt-BR", "en", "es", "fr", "de", "it", "th", "id", "ja", "ko", "ru", "vi", "zh", "zh-TW"]);
+// rest (Arabic) on "auto" (the browser's language). English is British
+// English (Vitor, build 25: no MM/DD anywhere; Stripe's "en" is US).
+const STRIPE_LOCALES = new Set(["pt-BR", "en-GB", "es", "fr", "de", "it", "th", "id", "ja", "ko", "ru", "vi", "zh", "zh-TW"]);
+const stripeTag = (appLocale: string) => (appLocale === "en" || appLocale.startsWith("en-") ? "en-GB" : appLocale);
 export function stripeLocale(appLocale: string): Stripe.BillingPortal.SessionCreateParams.Locale {
-  return (STRIPE_LOCALES.has(appLocale) ? appLocale : "auto") as Stripe.BillingPortal.SessionCreateParams.Locale;
+  const tag = stripeTag(appLocale);
+  return (STRIPE_LOCALES.has(tag) ? tag : "auto") as Stripe.BillingPortal.SessionCreateParams.Locale;
+}
+
+// The customer's language for Stripe's own emails (receipts, invoices), so
+// their dates are day-first too; [] when Stripe has no such language.
+export function stripePreferredLocales(appLocale: string): string[] {
+  const tag = stripeTag(appLocale);
+  return STRIPE_LOCALES.has(tag) ? [tag] : [];
 }
 
 /**
