@@ -101,7 +101,7 @@ Scheduled, Confirmed, Completed, Cancelled, Late, Absent and Rejected. Tap the a
 `open:schedule`
 
 ---
-## A6. Pedidos de pacientes / Patient booking requests
+## A6. Pedidos de pacientes / Patient appointment requests
 **pt-BR**
 1. Os pedidos aparecem em **Início**, em **Solicitações**.
 2. Toque no pedido e escolha **Confirmar**, **Rejeitar** (com uma mensagem opcional) ou proponha **outro horário**.
@@ -115,7 +115,7 @@ Um paciente novo que pediu pelo seu link fica ligado à sua clínica quando voc�
 A new patient who requested through your link is connected to your clinic when you confirm.
 {pending:app-1.4.0} In the patient's app: if the time of a request or of a proposed new time passes without an answer, they see **Not confirmed**, with no actions.
 **No site:** Quando há pedidos aguardando sua resposta, a **Visão geral** mostra um aviso com quantos são (**Ver pedidos**). Os pedidos aparecem em **Agenda**, em **Solicitações de consulta**. Clique em **Confirmar**, **Rejeitar** ou **Propor novo horário** (dá para escrever uma mensagem ao paciente). Para um paciente novo, **Confirmar e Adicionar Paciente** já cria o cadastro. Se o horário de um pedido ou de um novo horário proposto passa sem resposta, o paciente vê **Não confirmado** em **Minhas Consultas**, sem ações. Enquanto o pedido está pendente, o paciente pode cancelá-lo em **Minhas Consultas** (**Cancelar pedido**); você recebe o aviso **Pedido cancelado**.
-**On the website:** When requests are waiting for your answer, the **Overview** shows a notice with how many (**See requests**). Requests show in the **Schedule**, under **Booking Requests**. Click **Confirm**, **Reject** or **Propose new time** (you can add a note for the patient). For a new patient, **Confirm and Add New Patient** also creates their record. If the time of a request or of a proposed new time passes without an answer, the patient sees **Not confirmed** in **My Appointments**, with no actions. While a request is pending, the patient can cancel it in **My Appointments** (**Cancel request**); you get a **Request cancelled** notification.
+**On the website:** When requests are waiting for your answer, the **Overview** shows a notice with how many (**See requests**). Requests show in the **Schedule**, under **Appointment Requests**. Click **Confirm**, **Reject** or **Propose new time** (you can add a note for the patient). For a new patient, **Confirm and Add New Patient** also creates their record. If the time of a request or of a proposed new time passes without an answer, the patient sees **Not confirmed** in **My Appointments**, with no actions. While a request is pending, the patient can cancel it in **My Appointments** (**Cancel request**); you get a **Request cancelled** notification.
 `open:home`
 
 ---
@@ -139,5 +139,5 @@ When a patient asks to reschedule a confirmed appointment, the request shows on 
 {pending:app-1.4.0} In the patient's app: they can only ask to reschedule before the appointment starts, and they can't cancel a booked appointment themselves (the app says "To cancel, talk to the clinic."). They can cancel a request that's still pending, and accept or decline a new time you proposed (the app shows the proposed time and, for a reschedule, the current one).
 If nobody answers before the requested time, the request expires by itself: the appointment stays as it was and leaves the requests, and the patient sees "Your reschedule request expired." (on the website; in the app from version 1.4.0).
 **No site:** O pedido aparece em **Agenda**, em **Solicitações de consulta**, marcado **Remarcação solicitada**, com **Aceitar** e **Recusar**. Em **Minhas Consultas**, o paciente só pode **Solicitar remarcação** até o horário de início da consulta (pelo relógio da clínica).
-**On the website:** The request shows in the **Schedule**, under **Booking Requests**, marked **Reschedule Requested**, with **Accept** and **Decline**. In **My Appointments**, the patient can **Request reschedule** only until the appointment's start time (by the clinic's clock).
+**On the website:** The request shows in the **Schedule**, under **Appointment Requests**, marked **Reschedule Requested**, with **Accept** and **Decline**. In **My Appointments**, the patient can **Request reschedule** only until the appointment's start time (by the clinic's clock).
 `open:home`
