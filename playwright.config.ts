@@ -18,7 +18,9 @@ export default defineConfig({
     { name: "chromium", testIgnore: /smoke\//, use: { ...devices["Desktop Chrome"] } },
     // The smoke suite (e2e/smoke, e7): run against a Preview or www with
     // E2E_BASE_URL=<url> npx playwright test --project=smoke
-    { name: "smoke", testMatch: /smoke\/.*\.spec\.ts/, use: { ...devices["Desktop Chrome"] } },
+    // No trace: it records every fill() value, the test password included
+    // (screenshots stay; a password field renders masked).
+    { name: "smoke", testMatch: /smoke\/.*\.spec\.ts/, use: { ...devices["Desktop Chrome"], trace: "off" } },
   ],
   webServer: process.env.E2E_BASE_URL
     ? undefined

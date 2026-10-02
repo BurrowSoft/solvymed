@@ -184,7 +184,8 @@ export async function signIn(page: Page, prefix: string, email: string) {
       if ((await passwordInput.inputValue()) !== password()) await passwordInput.fill(password());
       await sleep(500);
       await expect(emailInput).toHaveValue(email, { timeout: 100 });
-      await expect(passwordInput).toHaveValue(password(), { timeout: 100 });
+      // A plain compare: an assertion would print the password as "Expected".
+      if ((await passwordInput.inputValue()) !== password()) throw new Error("the password field lost its value");
     }).toPass({ timeout: 30_000 });
   };
   // Submit, then wait for the redirect away from the form; if the form is
