@@ -654,7 +654,7 @@
   },
   "consultType": {
     "consultation": "ตรวจทั่วไป",
-    "followUp": "ติดตามอาการ",
+    "followUp": "นัดติดตามผล",
     "examReview": "ตรวจสอบผลตรวจ",
     "procedure": "หัตถการ",
     "emergency": "ฉุกเฉิน"
