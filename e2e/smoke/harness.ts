@@ -36,6 +36,10 @@ export const test = base.extend<Fixtures>({
         route.continue({ headers: { ...route.request().headers(), "x-vercel-protection-bypass": secret, "x-vercel-set-bypass-cookie": "true" } }),
       );
     }
+    // Previews only: block Vercel's toolbar (vercel.live). Its script fires
+    // same-origin OPTIONS requests that get 400 (console errors that aren't
+    // ours; 3e on #330) and draws the ≡ pill over the page. www has none.
+    if (!isProductionHost(host)) await page.route(/vercel\.live/, (route) => route.abort());
     // Consent answered (necessary only), so the banner never covers a step
     // and no analytics run during the smoke.
     const cookieUrl = baseURL ?? "http://localhost:3000";
@@ -47,7 +51,10 @@ export const test = base.extend<Fixtures>({
   consoleErrors: async ({ page }, provide) => {
     const errors: string[] = [];
     page.on("console", (m) => {
-      if (m.type() === "error" && !IGNORED_CONSOLE.some((r) => r.test(m.text()))) errors.push(m.text());
+      // By text, or by where it came from (the blocked toolbar script logs
+      // its own net::ERR_FAILED).
+      const from = m.location().url ?? "";
+      if (m.type() === "error" && !IGNORED_CONSOLE.some((r) => r.test(m.text()) || r.test(from))) errors.push(m.text());
     });
     page.on("pageerror", (e) => errors.push(`pageerror: ${e.message}`));
     await provide(errors);
