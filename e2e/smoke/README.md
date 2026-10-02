@@ -33,6 +33,9 @@ Always set `E2E_BASE_URL`, or Playwright starts a local `next dev`.
 
 ## Fixtures and cleanup
 
+- **Previews and www share the production database.** `accounts.spec.ts` creates and deletes real rows there, which is why it needs the service-role key and the cleanup below.
+- **No email is sent.** Accounts are created through the admin API with `email_confirm: true` (no confirmation email), and the flows the suite clicks (sign-in, booking, confirm / propose / decline) notify by push only. The seeded patient record has no email, so no patient notice can go out by email either. The `@burrowsoft.com` addresses are our own domain. Any future test that triggers an email must use `@example.invalid`, or Resend's `delivered@resend.dev` for a real send.
+
 - Every account is `e2e-smoke-<RUN>-<tag>@burrowsoft.com`, where RUN is the 14-digit UTC time plus 4 random characters. `afterAll` deletes exactly what the run created: blocking rows first, then the users.
 - A killed run leaves its accounts behind. List them with `purgeRun("<RUN>")` (a dry run), then delete them with `purgeRun("<RUN>", false)`. It refuses anything but a full run tag.
 - Never touch other prefixes (`e2e-test-opus-*`, `e2e-test-t2-*`, `e2e-mt1-*`, `e2e-mt2-*`) or Vitor's accounts.

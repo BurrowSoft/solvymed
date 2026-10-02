@@ -29,6 +29,8 @@ const log = (...a: unknown[]) => console.log("[smoke]", ...a);
 // yyyymmddHHMMss + 4 random characters. Never touch other prefixes
 // (e2e-test-opus-*, e2e-test-t2-*, e2e-mt1-*, e2e-mt2-*) or Vitor's accounts.
 export const RUN = process.env.E2E_RUN ?? `${new Date().toISOString().replace(/\D/g, "").slice(0, 14)}${Math.random().toString(36).slice(2, 6).padEnd(4, "0")}`;
+// A reused tag must be a full one, as purgeRun requires (9a).
+if (!/^\d{14}[a-z0-9]{4}$/.test(RUN)) throw new Error("E2E_RUN must be a full run tag (yyyymmddHHMMss + 4 characters)");
 const PREFIX = `e2e-smoke-${RUN}-`;
 export const emailFor = (tag: string) => `${PREFIX}${tag}@burrowsoft.com`;
 
