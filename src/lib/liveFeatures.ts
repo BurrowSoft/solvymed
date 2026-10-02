@@ -34,15 +34,13 @@ export const liveFeatures = {
   // The app's PDFs (prescriptions, receipts, history) in Thai, with
   // Buddhist-year dates (the app's TH-2).
   thaiPdfs: false,
-  // The Founders Program page (/founders) and its application form: on
-  // only with Vitor's OK, migration 129 applied, the mailbox + Resend key
-  // and the privacy-policy line. Its rules page (foundersRules) waits only
-  // on Vitor's go too: lawyer reviews are post-launch (2026-10-01).
-  // Until then both are on only in Vercel Preview builds (the
-  // release-founders test site, behind Vercel protection), never on
-  // Production or anywhere the variable isn't "preview" (UX, 1 Oct).
-  founders: foundersPreview,
-  foundersRules: foundersPreview,
+  // The Founders Program page (/founders), its application form and its
+  // rules page: LIVE (Vitor, 2 Oct: "you can just turn that page on", the
+  // rules page with it; e7). Needs migration 129, the founders@ mailbox,
+  // RESEND_API_KEY on Production and privacy §6d (PRIVACY_VERSION
+  // 2026-10-03). Uploads stay behind founders-upload-live.
+  founders: true,
+  foundersRules: true,
 } as const;
 
 // The languages the app's PDFs are generated in today (UX, verified on the

@@ -1545,7 +1545,7 @@
     "errorRateLimit": "Too many attempts. Please try again in an hour.",
     "errorInvalid": "Please check this field.",
     "errorGeneric": "Something went wrong. Please try again.",
-    "privacyNotice": "We use these answers only to run the Founders Program and contact you about it. Applications that aren't accepted (declined, withdrawn or still on the waitlist) are deleted 12 months after their last update; accepted founders' applications are kept while their SolvyMed account exists. To have yours deleted sooner, write to support@solvymed.com. Details in our <privacy>Privacy Policy</privacy>.",
+    "privacyNotice": "We use these answers only to run the Founders Program and contact you about it. Applications that aren't accepted (declined, withdrawn or still on the waitlist) are deleted 12 months after their last status change; accepted founders' applications are kept while their SolvyMed account exists. To have yours deleted sooner, write to support@solvymed.com. Details in our <privacy>Privacy Policy</privacy>.",
     "faqTitle": "Questions",
     "faq1q": "Is it really free for life?",
     "faq1a": "Yes: the paid plan, free for as long as SolvyMed operates, for one account, starting when you're accepted. Secretary accounts linked to you are included as normal. See the rules.",

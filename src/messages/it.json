@@ -1515,7 +1515,7 @@
     "errorRateLimit": "Troppi tentativi. Riprova tra un'ora.",
     "errorInvalid": "Controlla questo campo.",
     "errorGeneric": "Qualcosa è andato storto. Riprova.",
-    "privacyNotice": "Usiamo queste risposte solo per il Programma Fondatori e per contattarti al riguardo. Le candidature non accettate (rifiutate, ritirate o ancora in lista d'attesa) vengono cancellate 12 mesi dopo l'ultimo aggiornamento; quelle dei fondatori accettati vengono conservate finché esiste il loro account SolvyMed. Per far cancellare la tua prima, scrivi a support@solvymed.com. Dettagli nella nostra <privacy>Informativa sulla privacy</privacy>.",
+    "privacyNotice": "Usiamo queste risposte solo per il Programma Fondatori e per contattarti al riguardo. Le candidature non accettate (rifiutate, ritirate o ancora in lista d'attesa) vengono cancellate 12 mesi dopo l'ultimo cambio di stato; quelle dei fondatori accettati vengono conservate finché esiste il loro account SolvyMed. Per far cancellare la tua prima, scrivi a support@solvymed.com. Dettagli nella nostra <privacy>Informativa sulla privacy</privacy>.",
     "faqTitle": "Domande",
     "faq1q": "È davvero gratis per sempre?",
     "faq1a": "Sì: il piano a pagamento, gratis finché SolvyMed è attivo, per un account, a partire dall'accettazione. Gli account delle segretarie collegati al tuo sono inclusi come di consueto. Vedi le regole.",

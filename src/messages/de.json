@@ -1515,7 +1515,7 @@
     "errorRateLimit": "Zu viele Versuche. Bitte versuchen Sie es in einer Stunde erneut.",
     "errorInvalid": "Bitte prüfen Sie dieses Feld.",
     "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
-    "privacyNotice": "Wir verwenden diese Antworten nur für das Gründerprogramm und um Sie dazu zu kontaktieren. Nicht angenommene Bewerbungen (abgelehnt, zurückgezogen oder noch auf der Warteliste) werden 12 Monate nach ihrer letzten Aktualisierung gelöscht; Bewerbungen angenommener Gründer werden aufbewahrt, solange ihr SolvyMed-Konto besteht. Wenn Ihre früher gelöscht werden soll, schreiben Sie an support@solvymed.com. Einzelheiten in unserer <privacy>Datenschutzerklärung</privacy>.",
+    "privacyNotice": "Wir verwenden diese Antworten nur für das Gründerprogramm und um Sie dazu zu kontaktieren. Nicht angenommene Bewerbungen (abgelehnt, zurückgezogen oder noch auf der Warteliste) werden 12 Monate nach ihrer letzten Statusänderung gelöscht; Bewerbungen angenommener Gründer werden aufbewahrt, solange ihr SolvyMed-Konto besteht. Wenn Ihre früher gelöscht werden soll, schreiben Sie an support@solvymed.com. Einzelheiten in unserer <privacy>Datenschutzerklärung</privacy>.",
     "faqTitle": "Fragen",
     "faq1q": "Ist es wirklich lebenslang kostenlos?",
     "faq1a": "Ja: der kostenpflichtige Tarif, kostenlos, solange SolvyMed betrieben wird, für ein Konto, ab Ihrer Annahme. Mit Ihnen verknüpfte Konten von Praxiskräften sind wie üblich enthalten. Siehe die Regeln.",
