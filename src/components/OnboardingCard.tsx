@@ -8,10 +8,12 @@ import { dismissOnboardingCard } from "@/lib/setupActions";
 // never comes back, on any device. The secretary card shows on their first
 // dashboard visit after linking; the patient card on My appointments after
 // connecting to a clinic (once per clinic).
-export function OnboardingCard({ kind, clinicName, bookHref }: {
+export function OnboardingCard({ kind, clinicName, bookHref, bookLabel }: {
   kind: "secretary_welcome" | "patient_connected";
   clinicName: string;
   bookHref?: string;
+  // "Marcar consulta com {doctor}" when the doctor is known (always say who).
+  bookLabel?: string;
 }) {
   const t = useTranslations("onboarding");
   const [gone, setGone] = useState(false);
@@ -42,7 +44,7 @@ export function OnboardingCard({ kind, clinicName, bookHref }: {
             onClick={() => dismiss(() => { window.location.href = bookHref; })}
             className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-teal-700"
           >
-            {t("bookAppointment")}
+            {bookLabel ?? t("bookAppointment")}
           </button>
         )}
         <button

@@ -22,6 +22,8 @@ vi.mock("@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions", () =
   getAvailableSlotsForDate: async () => [],
 }));
 
+vi.mock("@/lib/setupActions", () => ({ dismissOnboardingCard: async () => ({ ok: true }) }));
+
 import { MyAppointmentsClient } from "@/app/[locale]/(site)/my-appointments/MyAppointmentsClient";
 
 const visit = {
@@ -53,6 +55,17 @@ describe("Minhas Consultas says who", () => {
     expect(screen.getByTestId("your-doctor")).toHaveTextContent("Dermatologia · Clínica Sol");
     expect(screen.getAllByText("Marcar consulta com Dra. Ana Souza").length).toBeGreaterThan(0);
     expect(screen.queryByText("Agendar consulta")).toBeNull();
+  });
+
+  it("the 'connected to …' banner's button names the doctor too (e7)", () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <MyAppointmentsClient upcoming={[]} past={[]} userEmail="p@x.co" myProfessionalId="doc-1" connectedClinicName="Clínica Sol"
+          myProfessionalMeta={{ name: "Dra. Ana Souza", specialty: "", clinicName: "Clínica Sol" }} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getAllByText("Marcar consulta com Dra. Ana Souza").length).toBeGreaterThanOrEqual(3);
+    expect(screen.queryByText(pt.onboarding.bookAppointment)).toBeNull();
   });
 
   it("before 158 (no names): nothing extra, the plain book label", () => {

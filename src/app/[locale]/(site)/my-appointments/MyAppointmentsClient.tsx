@@ -464,7 +464,7 @@ export function MyAppointmentsClient({
 
       <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
         {connectedClinicName && (
-          <OnboardingCard kind="patient_connected" clinicName={connectedClinicName} bookHref={bookPath ?? undefined} />
+          <OnboardingCard kind="patient_connected" clinicName={connectedClinicName} bookHref={bookPath ?? undefined} bookLabel={bookLabel} />
         )}
         {/* Greeting; the list stays current (item 33). */}
         <div className="flex flex-wrap items-start justify-between gap-3">
