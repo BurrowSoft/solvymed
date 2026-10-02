@@ -1515,7 +1515,7 @@
     "errorRateLimit": "Quá nhiều lần thử. Vui lòng thử lại sau một giờ.",
     "errorInvalid": "Vui lòng kiểm tra trường này.",
     "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại.",
-    "privacyNotice": "Chúng tôi chỉ dùng các câu trả lời này để vận hành Chương trình Nhà sáng lập và liên hệ với bạn về chương trình. Các đơn không được chấp nhận (bị từ chối, đã rút hoặc vẫn trong danh sách chờ) sẽ bị xóa 12 tháng sau lần cập nhật cuối; đơn của nhà sáng lập được chấp nhận được lưu giữ khi tài khoản SolvyMed của họ còn tồn tại. Để xóa đơn của bạn sớm hơn, hãy viết tới support@solvymed.com. Chi tiết trong <privacy>Chính sách quyền riêng tư</privacy> của chúng tôi.",
+    "privacyNotice": "Chúng tôi chỉ dùng các câu trả lời này để vận hành Chương trình Nhà sáng lập và liên hệ với bạn về chương trình. Các đơn không được chấp nhận (bị từ chối, đã rút hoặc vẫn trong danh sách chờ) sẽ bị xóa 12 tháng sau lần thay đổi trạng thái cuối; đơn của nhà sáng lập được chấp nhận được lưu giữ khi tài khoản SolvyMed của họ còn tồn tại. Để xóa đơn của bạn sớm hơn, hãy viết tới support@solvymed.com. Chi tiết trong <privacy>Chính sách quyền riêng tư</privacy> của chúng tôi.",
     "faqTitle": "Câu hỏi",
     "faq1q": "Có thật sự miễn phí trọn đời không?",
     "faq1a": "Có: gói trả phí, miễn phí chừng nào SolvyMed còn hoạt động, cho một tài khoản, bắt đầu từ khi bạn được chấp nhận. Các tài khoản thư ký liên kết với bạn vẫn được bao gồm như bình thường. Xem quy định.",

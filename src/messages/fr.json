@@ -1515,7 +1515,7 @@
     "errorRateLimit": "Trop de tentatives. Réessayez dans une heure.",
     "errorInvalid": "Veuillez vérifier ce champ.",
     "errorGeneric": "Une erreur s'est produite. Veuillez réessayer.",
-    "privacyNotice": "Nous utilisons ces réponses uniquement pour le Programme Fondateurs et pour vous contacter à ce sujet. Les candidatures non retenues (refusées, retirées ou encore en liste d'attente) sont supprimées 12 mois après leur dernière mise à jour ; celles des fondateurs acceptés sont conservées tant que leur compte SolvyMed existe. Pour faire supprimer la vôtre plus tôt, écrivez à support@solvymed.com. Détails dans notre <privacy>Politique de confidentialité</privacy>.",
+    "privacyNotice": "Nous utilisons ces réponses uniquement pour le Programme Fondateurs et pour vous contacter à ce sujet. Les candidatures non retenues (refusées, retirées ou encore en liste d'attente) sont supprimées 12 mois après leur dernier changement de statut ; celles des fondateurs acceptés sont conservées tant que leur compte SolvyMed existe. Pour faire supprimer la vôtre plus tôt, écrivez à support@solvymed.com. Détails dans notre <privacy>Politique de confidentialité</privacy>.",
     "faqTitle": "Questions",
     "faq1q": "Est-ce vraiment gratuit à vie ?",
     "faq1a": "Oui : l'offre payante, gratuite tant que SolvyMed existe, pour un compte, à partir de votre acceptation. Les comptes de secrétaire liés au vôtre sont inclus comme d'habitude. Voir les règles.",
