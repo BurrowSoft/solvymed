@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { fireEvent, render, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
 
@@ -77,6 +77,29 @@ describe("auth forms keep values React never saw", () => {
     await waitFor(() => expect(document.querySelector(".error-banner")).toHaveTextContent(pt.auth.signup.passwordMismatch));
     expect(h.signUp).not.toHaveBeenCalled();
     expect(byName("email").value).toBe("ana@auto.fill");
+    unmount();
+  });
+
+  it("sign-up as a patient: the typed code is normalised and read through form=\"signup-form\"", async () => {
+    h.params = new URLSearchParams("c=BR");
+    h.signUp.mockReset().mockResolvedValue({ data: { user: { id: "u-2", identities: [{}] } }, error: null });
+    const { unmount } = wrap(<SignupPage />);
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(pt.auth.signup.rolePatient) }));
+    const code = byName("invite_code");
+    expect(code.form).toBe(byName("email").form); // outside the <form>, joined by its form attribute
+    fireEvent.input(code, { target: { value: "ab-12c" } });
+    expect(code.value).toBe("AB12C");
+    // Switching to doctor and back keeps the typed code.
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(pt.auth.signup.roleDoctor) }));
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(pt.auth.signup.rolePatient) }));
+    expect(byName("invite_code").value).toBe("AB12C");
+    byName("full_name").value = "Paciente";
+    byName("email").value = "pac@auto.fill";
+    byName("password").value = "longenough1";
+    byName("confirm_password").value = "longenough1";
+    fireEvent.submit(byName("email").form!);
+    await waitFor(() => expect(h.signUp).toHaveBeenCalledTimes(1));
+    expect(h.signUp.mock.calls[0][0].options.data).toMatchObject({ role: "patient", invite_code: "AB12C" });
     unmount();
   });
 

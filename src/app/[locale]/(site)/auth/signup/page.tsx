@@ -363,8 +363,10 @@ export default function SignupPage() {
         )}
 
         {/* Invite code — patients only, hidden when joining via link */}
-        {!isJoinFlow && role === "patient" && (
-          <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4">
+        {/* Hidden, not unmounted, for other roles: the field is
+            uncontrolled, so a typed code survives switching roles (9a). */}
+        {!isJoinFlow && (
+          <div hidden={role !== "patient"} className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4">
             <label htmlFor="signup-invite-code" className="block text-sm font-semibold text-slate-700 mb-1">
               {t("signup.inviteCode")} <span className="text-red-500">*</span>
             </label>
