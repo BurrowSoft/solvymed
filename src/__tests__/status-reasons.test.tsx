@@ -52,9 +52,9 @@ beforeEach(() => { h.live = true; h.updates = []; h.pushes = []; });
 
 describe("pushes never carry the clinic's text", () => {
   it("hasMessage: the hint only (pt/en/th)", () => {
-    expect(pushText("pt-BR", "apptConfirmed", { hasMessage: true }).body).toBe("Sua consulta foi confirmada com uma mensagem da clínica.");
-    expect(pushText("en", "apptConfirmed", { hasMessage: true }).body).toBe("Your appointment has been confirmed with a message from the clinic.");
-    expect(pushText("th", "apptConfirmed", { hasMessage: true }).body).toMatch(/พร้อมข้อความจากคลินิก$/);
+    expect(pushText("pt-BR", "apptConfirmed", { doctor: "Dra. Ana", date: "05/10/2026", time: "09:00", hasMessage: true }).body).toBe("Dra. Ana confirmou sua consulta de 05/10/2026 às 09:00 (com uma mensagem da clínica)");
+    expect(pushText("en", "apptConfirmed", { doctor: "Dra. Ana", date: "05/10/2026", time: "09:00", hasMessage: true }).body).toBe("Dra. Ana confirmed your appointment on 05/10/2026 at 09:00 (with a message from the clinic)");
+    expect(pushText("th", "apptConfirmed", { hasMessage: true }).body).toMatch(/\(พร้อมข้อความจากคลินิก\)$/);
   });
 
   it("cleanReason: trimmed, at most 200, null when blank", () => {

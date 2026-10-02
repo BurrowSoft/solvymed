@@ -8,6 +8,7 @@ import type { WorkingHours } from "@/lib/slots";
 import { sendExpoPush } from "@/lib/push";
 import { pushText, pushWhen, type PushKind } from "@/lib/pushText";
 import { formatShortDate } from "@/lib/dateLabels";
+import { doctorForPush } from "@/lib/pushDoctor";
 import { clinicPushTargets, patientPushTargets } from "@/lib/pushRecipient";
 import { actionError } from "@/lib/dbErrors";
 import { getActiveProfId, isLockedOut } from "@/lib/activeAccess";
@@ -469,16 +470,25 @@ async function notifyPatient(
 ) {
   const { data: appt } = await supabase
     .from("appointments")
-    .select("patient_auth_id, professional_id")
+    .select("patient_auth_id, professional_id, date, start_time")
     .eq("id", appointmentId)
     .maybeSingle();
 
   const patientAuthId = appt?.patient_auth_id as string | null;
   if (!patientAuthId) return;
 
+  // "Always say who" (app #290): the doctor and the visit's date/time. The
+  // caller's date/time when the push is about another one (a proposed or a
+  // newly accepted time); else the appointment's own (where it stays).
+  const doctor = await doctorForPush(supabase as never, appt?.professional_id as string);
+  const date = (extra.date ?? (appt?.date as string | null)) || null;
+  const time = ((extra.time ?? (appt?.start_time as string | null)) || "").slice(0, 5);
   for (const { locale, tokens } of await patientPushTargets(supabase, patientAuthId, appt?.professional_id as string)) {
     const when = extra.date ? pushWhen(locale, extra.date, extra.time) : undefined;
-    const { title, body } = pushText(locale, kind, { when, note: extra.note, hasMessage: extra.hasMessage });
+    const { title, body } = pushText(locale, kind, {
+      when, note: extra.note, hasMessage: extra.hasMessage,
+      doctor, date: date ? formatShortDate(locale, date) : "", time,
+    });
     await sendExpoPush(tokens, title, body);
   }
 }
