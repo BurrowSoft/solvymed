@@ -42,6 +42,7 @@ describe("the reschedule-request push to the clinic", () => {
 
   it("no push says Booking any more (en)", () => {
     expect(pushText("en", "newBookingRequest", { name: "Ana", when: "x" }).title).toBe("New Appointment Request");
-    expect(pushText("en", "bookingNotAvailable")).toEqual({ title: "Appointment Not Available", body: "The doctor could not accept your appointment request." });
+    expect(pushText("en", "bookingNotAvailable", { doctor: "Dra. Ana", date: "05/10/2026", time: "09:00" }))
+      .toEqual({ title: "Request not accepted", body: "Dra. Ana couldn't accept your appointment request for 05/10/2026 at 09:00." });
   });
 });

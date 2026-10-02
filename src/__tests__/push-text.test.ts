@@ -9,21 +9,23 @@ import { patientPushLocale, professionalPushLocale } from "@/lib/pushRecipient";
 // YYYY-MM-DD.
 describe("push texts", () => {
   it("in the recipient's language, with the locale's date (Thai: Buddhist year)", () => {
-    // The clinic's own pushes (08's texts, the app's #111 wording).
-    expect(pushText("pt-BR", "apptCancelledByClinic", { clinic: "Clínica Sol", date: "29/09/2026", time: "14:00" }))
-      .toEqual({ title: "Consulta cancelada", body: "Clínica Sol cancelou sua consulta de 29/09/2026 às 14:00. Para marcar outra, abra o app." });
-    expect(pushText("en", "apptBookedByClinic", { clinic: "Sun Clinic", date: "29/09/2026", time: "14:00" }))
-      .toEqual({ title: "New appointment", body: "Sun Clinic booked an appointment for you on 29/09/2026 at 14:00." });
+    // The clinic's own pushes name the doctor (app #290, verbatim).
+    expect(pushText("pt-BR", "apptCancelledByClinic", { doctor: "Dra. Ana", date: "29/09/2026", time: "14:00" }))
+      .toEqual({ title: "Consulta cancelada", body: "Sua consulta com Dra. Ana em 29/09/2026 às 14:00 foi cancelada pela clínica." });
+    expect(pushText("en", "apptBookedByClinic", { doctor: "Dr. Sun", date: "29/09/2026", time: "14:00" }))
+      .toEqual({ title: "Appointment booked", body: "Your appointment with Dr. Sun is booked for 29/09/2026 at 14:00." });
     // A name is text, never a replacement pattern.
-    expect(pushText("en", "apptBookedByClinic", { clinic: "A$&B", date: "d", time: "t" }).body).toBe("A$&B booked an appointment for you on d at t.");
+    expect(pushText("en", "apptBookedByClinic", { doctor: "A$&B", date: "d", time: "t" }).body).toBe("Your appointment with A$&B is booked for d at t.");
     expect(pushText("en", "proposalAccepted", { name: "Maria Silva", when: pushWhen("en", "2026-09-29", "14:00") }).body)
       .toBe("Maria Silva accepted the new time: 29/09/2026 14:00.");
     expect(pushWhen("th", "2026-09-29", "14:00")).toBe("29/09/2569 14:00");
   });
 
   it("a note is added in the same language", () => {
-    expect(pushText("pt-BR", "apptConfirmed", { note: "Traga os exames" }).body).toBe("Sua consulta foi confirmada. Observação: Traga os exames");
-    expect(pushText("en", "apptConfirmed", { note: null }).body).toBe("Your appointment has been confirmed.");
+    expect(pushText("pt-BR", "apptConfirmed", { doctor: "Dra. Ana", date: "05/10/2026", time: "09:00", note: "Traga os exames" }).body)
+      .toBe("Dra. Ana confirmou sua consulta de 05/10/2026 às 09:00. Observação: Traga os exames");
+    expect(pushText("en", "apptConfirmed", { doctor: "Dra. Ana", date: "05/10/2026", time: "09:00", note: null }).body)
+      .toBe("Dra. Ana confirmed your appointment on 05/10/2026 at 09:00.");
   });
 
   it("every language has every push, with no placeholder left over", () => {
@@ -70,13 +72,17 @@ describe("push texts", () => {
 
   it("Thai: one title for an appointment cancelled by the clinic (Schedule / archive and account close)", () => {
     const th = JSON.parse(readFileSync(join(__dirname, "..", "messages", "th.json"), "utf8").replace(/^﻿/, ""));
-    // The single wording (UX 36): the Schedule / archive one is exactly the
-    // account close sentence, then "to book another, open the app".
-    const cancelled = pushText("th", "apptCancelledByClinic", { clinic: "C", date: "D", time: "T" });
+    const cancelled = pushText("th", "apptCancelledByClinic", { doctor: "พญ. สุดา", date: "05/10/2569", time: "09:00" });
     expect(cancelled.title).toBe(th.accountClose.pushCancelledTitle);
-    const closeBody = th.accountClose.pushCancelledBody.replace("{date}", "D").replace("{time}", "T").replace("{clinic}", "C");
-    expect(closeBody).toBe("นัดหมายของคุณวันที่ D เวลา T ถูกยกเลิกโดย C");
-    expect(cancelled.body).toBe(`${closeBody} หากต้องการนัดใหม่ กรุณาเปิดแอป`);
+    // app #290's body: names the doctor, keeps the hour's "น."
+    expect(cancelled.body).toBe("นัดหมายกับ พญ. สุดา วันที่ 05/10/2569 เวลา 09:00 น. ถูกคลินิกยกเลิก");
+  });
+
+  it("a clinic message: the suffix in parentheses; the final '.' dropped except in Thai (app #290)", () => {
+    const p = { doctor: "Dra. Ana", date: "05/10/2026", time: "09:00", hasMessage: true };
+    expect(pushText("pt-BR", "apptConfirmed", p).body).toBe("Dra. Ana confirmou sua consulta de 05/10/2026 às 09:00 (com uma mensagem da clínica)");
+    expect(pushText("en", "apptConfirmed", p).body).toBe("Dra. Ana confirmed your appointment on 05/10/2026 at 09:00 (with a message from the clinic)");
+    expect(pushText("th", "apptConfirmed", p).body).toBe("Dra. Ana ยืนยันนัดหมายของคุณวันที่ 05/10/2026 เวลา 09:00 น. (พร้อมข้อความจากคลินิก)");
   });
 
   it("no push in src is sent with literal (English) text", () => {
