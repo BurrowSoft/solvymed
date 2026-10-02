@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 
 const push = vi.fn();
@@ -9,11 +9,66 @@ vi.mock("next-intl", () => ({
 }));
 vi.mock("@/lib/track", () => ({ track: vi.fn() }));
 
+// A test can end while an answer is still streaming (it waits only for what
+// it checks); the panel's play() then called setTurns after jsdom was torn
+// down ("window is not defined", CI flake on #320). Every backend call is
+// tracked here; afterEach stops the answers still streaming (each ends at
+// its next chunk) and lets play() finish inside act, before the next test.
+const h = vi.hoisted(() => ({ inFlight: new Set<Promise<unknown>>(), stop: false }));
+const inFlight = h.inFlight;
+vi.mock("@/lib/assistant/mockBackend", async (importOriginal) => {
+  const real = await importOriginal<typeof import("@/lib/assistant/mockBackend")>();
+  const track = <T,>(p: Promise<T>) => { h.inFlight.add(p); p.finally(() => h.inFlight.delete(p)).catch(() => {}); return p; };
+  return {
+    ...real,
+    createMockBackend: (...args: Parameters<typeof real.createMockBackend>) => {
+      const backend = real.createMockBackend(...args);
+      return new Proxy(backend, {
+        get(target, key) {
+          const value = Reflect.get(target, key);
+          if (typeof value !== "function") return value;
+          return (...a: unknown[]) => {
+            const out = value.apply(target, a);
+            if (out instanceof Promise) return track(out);
+            if (out && typeof out[Symbol.asyncIterator] === "function") {
+              // Pending from the first read until the end (or a failure);
+              // a stream nobody reads is never waited for.
+              return (async function* () {
+                let done!: () => void;
+                track(new Promise<void>((r) => { done = r; }));
+                try {
+                  for await (const chunk of out as AsyncIterable<unknown>) {
+                    if (h.stop) return;
+                    yield chunk;
+                  }
+                } finally { done(); }
+              })();
+            }
+            return out;
+          };
+        },
+      });
+    },
+  };
+});
+
+beforeEach(() => { h.stop = false; });
+afterEach(async () => {
+  h.stop = true;
+  // Until nothing is pending (play() asks usage() after its stream ends).
+  for (let i = 0; i < 50 && inFlight.size > 0; i++) {
+    await act(async () => {
+      await Promise.allSettled([...inFlight]);
+      await new Promise((r) => setTimeout(r, 0));
+    });
+  }
+});
+
 import { SolvyAi, cardIsSafe, screenOf } from "@/components/solvyai/SolvyAi";
 
 // The mock streams word by word with real delays; under a full parallel run
 // 5 s is too tight for the longer answers.
-vi.setConfig({ testTimeout: 15_000 });
+vi.setConfig({ testTimeout: 15_000, hookTimeout: 15_000 });
 import { mockAnswer } from "@/lib/assistant/mockBackend";
 import type { ConfirmationCard } from "@/lib/assistant/types";
 
