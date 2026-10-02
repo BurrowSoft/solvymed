@@ -18,10 +18,10 @@ import type { WorkingHours, TimeSlot } from "@/lib/slots";
 import { MonthCalendar } from "@/components/MonthCalendar";
 import { chosenTimeParts } from "@/lib/chosenTime";
 import { BrandMarkTile } from "@/components/BrandLogo";
+import { PLAIN_CONSULTATION } from "@/lib/consultType";
 
 type Procedure = { id: string; name: string; durationMinutes: number; price?: number; paymentType: string };
 
-const FALLBACK_DURATIONS = [30, 45, 60];
 
 const COUNTRIES = [
   { code: "TH", flag: "🇹🇭", dialCode: "+66" },
@@ -85,7 +85,11 @@ const LOAD_TIMEOUT_MS = 15_000;
 function withTimeout<T>(p: PromiseLike<T>, ms: number = LOAD_TIMEOUT_MS): Promise<T> {
   return Promise.race([Promise.resolve(p), new Promise<T>((_, reject) => setTimeout(() => reject(new Error("timeout")), ms))]);
 }
-const CONSULT_TYPES = ["Consultation", "Follow-up", "Exam Review", "Procedure", "Emergency"] as const;
+
+// The fixed choices are stored as the app's keys (6.2); the practice's
+// default length is 30 minutes until a per-practice setting exists.
+const FOLLOW_UP = "Follow-up";
+const DEFAULT_MINUTES = 30;
 
 function addMins(hhmm: string, mins: number): string {
   const [h, m] = hhmm.split(":").map(Number);
@@ -175,15 +179,6 @@ export function BookingClient({
   // from the page), else its country's.
   const clinicTz = clinicTzProp || profileOfKind(idKind).defaultTimeZone;
 
-  function applyConsultType(name: string) {
-    if ((CONSULT_TYPES as readonly string[]).includes(name)) {
-      setConsultType(name);
-      setIsOther(false);
-    } else {
-      setConsultType(name);
-      setIsOther(true);
-    }
-  }
 
   // Working hours — fetched via SECURITY DEFINER RPC (patients can't read professionals table)
   const [workingHours, setWorkingHours] = useState<WorkingHours>({});
@@ -212,7 +207,7 @@ export function BookingClient({
   const [showCustomTime, setShowCustomTime] = useState(false);
   const [customTimeValue, setCustomTimeValue] = useState("");
 
-  const [consultType, setConsultType] = useState("");
+  const [consultType, setConsultType] = useState<string>(PLAIN_CONSULTATION);
   const [isOther, setIsOther] = useState(false);
   const [notes, setNotes] = useState("");
   const [booking, setBooking] = useState(false);
@@ -310,12 +305,9 @@ export function BookingClient({
           price: r.price != null ? Number(r.price) : undefined,
           paymentType: r.payment_type as string,
         }));
-        setProcedures(procs);
-        if (procs.length > 0) {
-          setSelectedProcedure(procs[0]);
-          setDuration(procs[0].durationMinutes);
-          applyConsultType(procs[0].name);
-        }
+        // The plain Consulta stays the default; a procedure is picked on
+        // purpose (its length and price), as the doctor's form (6.2).
+        setProcedures(procs.filter((pr) => pr.name !== PLAIN_CONSULTATION && pr.name !== FOLLOW_UP));
       } catch {
         // ignore
       } finally {
@@ -521,79 +513,53 @@ export function BookingClient({
           </div>
         ) : (
           <>
-            {/* Procedure picker */}
-            {procedures.length > 0 ? (
-              <div>
-                <h2 className="text-sm font-bold text-slate-700 mb-2">{t("selectProcedure")}</h2>
-                <div className="space-y-2">
-                  {procedures.map((proc) => {
-                    const active = selectedProcedure?.id === proc.id;
-                    return (
-                      <button
-                        key={proc.id}
-                        onClick={() => { setSelectedProcedure(proc); setDuration(proc.durationMinutes); applyConsultType(proc.name); }}
-                        className={`w-full text-left rounded-xl border-2 px-4 py-3 transition ${active ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
-                      >
-                        <p className={`font-semibold text-sm ${active ? "text-teal-800" : "text-slate-800"}`}>{proc.name}</p>
-                        <p className={`text-xs mt-0.5 ${active ? "text-teal-600" : "text-slate-400"}`}>
-                          {proc.durationMinutes} min{proc.price ? ` · ${formatMoney(proc.price, currency)}` : ""}
-                        </p>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : (
-              <div>
-                <h2 className="text-sm font-bold text-slate-700 mb-2">{t("sessionDuration")}</h2>
-                <div className="flex gap-2">
-                  {FALLBACK_DURATIONS.map((d) => (
-                    <button
-                      key={d}
-                      onClick={() => { setSelectedProcedure(null); setDuration(d); }}
-                      className={`flex-1 rounded-xl border-2 py-2.5 text-sm font-semibold transition ${duration === d ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
-                    >
-                      {t("durationMin", { n: d })}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Consultation type */}
+            {/* What the visit is for (Vitor, build 25: patients shouldn't have
+                to type it; e7's final list, same as the app): Consulta and
+                Retorno always, then the clinic's procedures with their length
+                and price, then Outro + a short text only when the clinic has
+                procedures. Patients never pick a length: Consulta/Retorno/
+                Outro use the practice's default, a procedure its own. */}
             <div>
               <h2 className="text-sm font-bold text-slate-700 mb-2">
                 {t("appointmentFor")} <span className="font-normal text-red-400">*</span>
               </h2>
-              <div className="flex flex-wrap gap-2">
-                {CONSULT_TYPES.map((type) => {
-                  const active = !isOther && consultType === type;
-                  const labelKey = type === "Follow-up" ? "followUp" : type === "Exam Review" ? "examReview" : type.toLowerCase() as "consultation" | "procedure" | "emergency";
-                  return (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => { setConsultType(type); setIsOther(false); }}
-                      className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${active ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
-                    >
-                      {tConsult(labelKey)}
-                    </button>
-                  );
-                })}
-                <button
-                  type="button"
-                  onClick={() => { setIsOther(true); setConsultType(""); }}
-                  className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${isOther ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
-                >
-                  {t("other")}
-                </button>
+              <div className="space-y-2" role="radiogroup" aria-label={t("appointmentFor")} data-testid="type-list">
+                {[
+                  ...[PLAIN_CONSULTATION, FOLLOW_UP].map((key) => ({
+                    key, label: tConsult(key === FOLLOW_UP ? "followUp" : "consultation"), sub: t("durationMin", { n: DEFAULT_MINUTES }),
+                    active: !isOther && !selectedProcedure && consultType === key,
+                    pick: () => { setSelectedProcedure(null); setDuration(DEFAULT_MINUTES); setConsultType(key); setIsOther(false); },
+                  })),
+                  ...procedures.map((proc) => ({
+                    key: proc.id, label: proc.name,
+                    sub: `${t("durationMin", { n: proc.durationMinutes })}${proc.price ? ` · ${formatMoney(proc.price, currency)}` : ""}`,
+                    active: !isOther && selectedProcedure?.id === proc.id,
+                    pick: () => { setSelectedProcedure(proc); setDuration(proc.durationMinutes); setConsultType(proc.name); setIsOther(false); },
+                  })),
+                  ...(procedures.length > 0 ? [{ key: "other", label: t("other"), sub: "", active: isOther,
+                    pick: () => { setSelectedProcedure(null); setDuration(DEFAULT_MINUTES); setConsultType(""); setIsOther(true); } }] : []),
+                ].map((o) => (
+                  <button
+                    key={o.key}
+                    type="button"
+                    role="radio"
+                    aria-checked={o.active}
+                    onClick={o.pick}
+                    className={`w-full text-left rounded-xl border-2 px-4 py-3 transition ${o.active ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
+                  >
+                    <p className={`font-semibold text-sm ${o.active ? "text-teal-800" : "text-slate-800"}`}>{o.label}</p>
+                    {o.sub && <p className={`text-xs mt-0.5 ${o.active ? "text-teal-600" : "text-slate-400"}`}>{o.sub}</p>}
+                  </button>
+                ))}
               </div>
               {isOther && (
                 <input
                   type="text"
                   value={consultType}
                   onChange={(e) => setConsultType(e.target.value)}
-                  placeholder={t("otherPlaceholder")}
+                  placeholder={t("otherHint")}
+                  aria-label={t("other")}
+                  maxLength={80}
                   className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                   autoFocus
                 />

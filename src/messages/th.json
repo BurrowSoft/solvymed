@@ -706,7 +706,8 @@
     "chosenTime": "เวลาที่เลือก: {weekday} {day} {month} · {start}–{end}",
     "prevMonth": "เดือนก่อนหน้า",
     "nextMonth": "เดือนถัดไป",
-    "noTimesToday": "วันนี้ไม่มีเวลาว่างแล้ว"
+    "noTimesToday": "วันนี้ไม่มีเวลาว่างแล้ว",
+    "otherHint": "เช่น ตรวจครั้งแรก นัดติดตามผล"
   },
   "auth": {
     "passwordTooShort": "รหัสผ่านต้องมีอย่างน้อย {min} ตัวอักษร",

@@ -706,7 +706,8 @@
     "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
-    "noTimesToday": "No times left today."
+    "noTimesToday": "No times left today.",
+    "otherHint": "E.g. first visit, follow-up"
   },
   "auth": {
     "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
