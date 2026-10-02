@@ -707,6 +707,7 @@
     "prevMonth": "Mês anterior",
     "nextMonth": "Próximo mês",
     "noTimesToday": "Não há mais horários hoje.",
+    "otherHint": "Ex.: primeira consulta, retorno",
     "titleWith": "Marcar consulta com {doctor}"
   },
   "auth": {

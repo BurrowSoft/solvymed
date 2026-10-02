@@ -707,6 +707,7 @@
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
     "noTimesToday": "No times left today.",
+    "otherHint": "E.g. first visit, follow-up",
     "titleWith": "Book with {doctor}"
   },
   "auth": {
