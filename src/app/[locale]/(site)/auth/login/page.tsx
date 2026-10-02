@@ -37,8 +37,18 @@ export default function LoginPage() {
   const localePath = (path: string) =>
     locale === "en" ? path : `/${locale}${path}`;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // The values come from the form itself, not from state: a password
+    // manager's autofill can fill the fields without React seeing it, and
+    // the next re-render (setError below) then wrote the empty state back
+    // into the field, so the sign-in failed with an empty email (e7). State
+    // is synced from what's really there before anything re-renders.
+    const form = new FormData(e.currentTarget);
+    const email = String(form.get("email") ?? "").trim();
+    const password = String(form.get("password") ?? "");
+    setEmail(email);
+    setPassword(password);
     setError("");
     if (turnstileEnabled && !captchaToken) {
       setError(t("captchaFailed"));
@@ -165,6 +175,7 @@ export default function LoginPage() {
             </label>
             <input
               id="login-email"
+              name="email"
               type="email"
               required
               value={email}
@@ -180,6 +191,7 @@ export default function LoginPage() {
             </label>
             <input
               id="login-password"
+              name="password"
               type="password"
               required
               value={password}

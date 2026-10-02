@@ -124,6 +124,32 @@ describe("sign-in links a stored invite code", () => {
   });
 });
 
+// e7: a password manager's autofill can fill the fields without React seeing
+// it. The sign-in must use what's in the fields, and the email must not be
+// emptied by the re-render on submit.
+describe("login with autofilled fields", () => {
+  it("signs in with the fields' own values and keeps them shown", async () => {
+    h.role = { role: "professional" };
+    h.signIn.mockReset().mockResolvedValue({ data: { user: { id: "u-1", user_metadata: {} } }, error: null });
+    h.push.mockReset();
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <LoginPage />
+      </NextIntlClientProvider>,
+    );
+    const email = document.querySelector("input[type=email]") as HTMLInputElement;
+    const password = document.querySelector("input[type=password]") as HTMLInputElement;
+    // Set the DOM values directly, with no input event: React's state stays "".
+    email.value = "auto@fill.co";
+    password.value = "filled-by-manager";
+    fireEvent.submit(email.form!);
+    await waitFor(() => expect(h.signIn).toHaveBeenCalledTimes(1));
+    expect(h.signIn.mock.calls[0][0]).toMatchObject({ email: "auto@fill.co", password: "filled-by-manager" });
+    expect(email.value).toBe("auto@fill.co");
+    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/dashboard"));
+  });
+});
+
 // Vitor, build 25 item 2: Tab from the email field must reach the password,
 // then "Entrar"; "Esqueceu a senha?" comes after.
 describe("login tab order", () => {
