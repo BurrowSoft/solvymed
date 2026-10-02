@@ -12,6 +12,7 @@ import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget"
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { OpenInApp } from "@/components/OpenInApp";
 import { SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
+import { isAccessAllowed, type EffectiveSub } from "@/lib/subscription";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
@@ -81,6 +82,12 @@ export default function LoginPage() {
       } else if (roleRow?.role === "patient") {
         // Neither (removed by the clinic, 147): connect to a doctor (e7).
         dest = localePath("/auth/invite-required");
+      } else if (roleRow?.role === "professional") {
+        // An ended trial / failed renewal: the paywall first, never Home or
+        // the tour (Vitor, build 25). The dashboard re-checks it anyway.
+        const { data: subRows } = await supabase.rpc("get_effective_subscription", { p_user_id: signInData.user.id });
+        const sub = (Array.isArray(subRows) ? subRows[0] ?? null : null) as EffectiveSub | null;
+        dest = localePath(sub && !isAccessAllowed(sub) ? "/subscribe" : "/dashboard");
       } else if (roleRow?.role) {
         dest = localePath("/dashboard");
       } else if (metaRole === "patient") {

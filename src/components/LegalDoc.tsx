@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
+import { BrandMarkTile } from "@/components/BrandLogo";
 
 // Shared layout for the Privacy Policy and Terms of Service. The texts exist
 // in English and Portuguese (Brazil), the authoritative languages; other
@@ -30,7 +31,7 @@ export function LegalDoc({
         {lang !== locale && <EnglishOnlyNote />}
         <article lang={lang}>
           <div className="mb-10">
-            <span className="text-3xl font-black text-teal-600">S</span>
+            <BrandMarkTile size="md" />
             <h1 className="mt-4 text-3xl font-extrabold text-slate-900">{title}</h1>
             <p className="mt-2 text-sm text-slate-500">{updated}</p>
           </div>

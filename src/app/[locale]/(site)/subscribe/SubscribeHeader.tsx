@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { BrandLogo } from "@/components/BrandLogo";
 
 // /subscribe's header. exitHref = the dashboard when it lets the doctor in;
 // null when it wouldn't (an ended trial or a failed renewal): then no
@@ -7,12 +8,8 @@ import type { ReactNode } from "react";
 // conta" are the ways out then (d7, 9a). Sign out sits top right, in every
 // state, so it's visible without scrolling (UX, Vitor's screenshot).
 export function SubscribeHeader({ exitHref, backLabel, signOut }: { exitHref: string | null; backLabel: string; signOut?: ReactNode }) {
-  const logo = (
-    <>
-      <span className="text-5xl font-black text-teal-600">S</span>
-      <p className="mt-1 text-lg font-bold text-slate-800">SolvyMed</p>
-    </>
-  );
+  // The brand kit's logo (Vitor, build 25: the old "S" was still here).
+  const logo = <BrandLogo className="mx-auto h-12" />;
   return (
     <div className="mb-8 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
       <div className="justify-self-start">
