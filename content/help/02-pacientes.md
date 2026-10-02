@@ -42,8 +42,8 @@ Pacientes com prontuário, receita ou arquivo só podem ser arquivados, nunca ap
 3. To see archived patients: in **Patients**, open **Archived**. Open the patient and tap **Restore**.
 Patients with a record, prescription or file can only be archived, never deleted (records must be kept by law).
 {pending:app-1.4.0} A patient with appointments can't be deleted either: tapping **Delete patient** explains why and offers **Archive**.
-**No site:** Abra o paciente e, na aba **Informações**, clique em **Arquivar cadastro** e confirme. Para ver arquivados: em **Pacientes**, clique em **Arquivados**; abra o paciente e clique em **Restaurar**. **Excluir cadastro** só aparece para pacientes sem prontuário, receita, arquivo e sem nenhuma consulta; os demais só podem ser arquivados.
-**On the website:** Open the patient and, on the **Info** tab, click **Archive patient** and confirm. To see archived patients: in **Patients**, click **Archived**; open the patient and click **Restore**. **Delete patient** shows only for patients with no record, prescription, file or appointment; the others can only be archived.
+**No site:** Abra o paciente e, na aba **Informações**, clique em **Arquivar cadastro** e confirme. Para ver arquivados: em **Pacientes**, clique em **Arquivados**; abra o paciente e clique em **Restaurar**. **Excluir cadastro** só aparece para pacientes sem prontuário, receita ou arquivo. Se o paciente tiver consultas, ao clicar o site explica que ele não pode ser excluído e oferece **Arquivar**.
+**On the website:** Open the patient and, on the **Info** tab, click **Archive patient** and confirm. To see archived patients: in **Patients**, click **Archived**; open the patient and click **Restore**. **Delete patient** shows only for patients with no record, prescription or file. If the patient has appointments, clicking it explains they can't be deleted and offers **Archive**.
 `open:patients`
 
 ---

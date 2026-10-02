@@ -91,7 +91,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, hasAppointments = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -103,6 +103,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   isArchived?: boolean;
   // Only a patient without clinical history can be deleted.
   canDelete?: boolean;
+  hasAppointments?: boolean;
   // Mesclar com outro paciente (133): the doctor, once the database has it.
   canMerge?: boolean;
   // Open the merge with this record (the invited patient's same-email prompt).
@@ -155,7 +156,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         ))}
       </div>
 
-      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} canMerge={canMerge} mergeWith={mergeWith} idKind={idKind} addressLive={addressLive} />}
+      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} hasAppointments={hasAppointments} canMerge={canMerge} mergeWith={mergeWith} idKind={idKind} addressLive={addressLive} />}
       {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {(tab === "exams" || tab === "files") && !isSecretary && (
@@ -261,7 +262,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
   );
 }
 
-function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = false, mergeWith = null, idKind, addressLive = false }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; canMerge?: boolean; mergeWith?: string | null; idKind: PatientIdKind; addressLive?: boolean }) {
+function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointments = false, canMerge = false, mergeWith = null, idKind, addressLive = false }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; hasAppointments?: boolean; canMerge?: boolean; mergeWith?: string | null; idKind: PatientIdKind; addressLive?: boolean }) {
   const t = useTranslations("patientDetail");
   const tIds = useTranslations("patientIds");
   const tBirth = useTranslations("dateInput");
@@ -337,7 +338,11 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = fal
     });
   }
 
+  // With appointments it can't be deleted (as app #299): say why, offer
+  // Arquivar / Cancelar; nothing is sent.
+  const [blockedOpen, setBlockedOpen] = useState(false);
   function handleDelete() {
+    if (hasAppointments) { setError(""); setOfferArchive(false); setBlockedOpen(true); return; }
     if (!confirm(t("deleteNoHistoryConfirm", { name: patient.full_name }))) return;
     setError("");
     setOfferArchive(false);
@@ -470,6 +475,21 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = fal
             </button>
           )}
         </div>
+        {blockedOpen && (
+          <div role="alertdialog" aria-labelledby="delete-blocked-text" data-testid="delete-blocked" className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+            <p id="delete-blocked-text" className="text-sm text-amber-800">{t("deleteHasAppointments")}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {!isArchived && (
+                <button onClick={() => { setBlockedOpen(false); setArchiveOpen(true); }} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700 transition">
+                  {t("archivePatient")}
+                </button>
+              )}
+              <button onClick={() => setBlockedOpen(false)} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                {t("cancel")}
+              </button>
+            </div>
+          </div>
+        )}
         {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
         {offerArchive && (
           <button onClick={() => { setOfferArchive(false); setError(""); setArchiveOpen(true); }} className="mt-2 rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
