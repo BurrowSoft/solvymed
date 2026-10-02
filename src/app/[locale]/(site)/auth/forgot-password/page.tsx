@@ -19,7 +19,6 @@ export default function ForgotPasswordPage() {
   const params = useParams();
   const locale = (params.locale as string) ?? "en";
 
-  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,8 +31,11 @@ export default function ForgotPasswordPage() {
   const localePath = (path: string) =>
     locale === "en" ? path : `/${locale}${path}`;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // Uncontrolled and read from the form (as login, #332): a controlled
+    // field's re-render could wipe an autofilled email (e7).
+    const email = String(new FormData(e.currentTarget).get("email") ?? "").trim();
     setError("");
     if (turnstileEnabled && !captchaToken) {
       setError(t("captchaFailed"));
@@ -136,8 +138,7 @@ export default function ForgotPasswordPage() {
             <input
               type="email"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email"
               autoComplete="email"
               className="text-input"
             />

@@ -23,8 +23,6 @@ export default function ResetPasswordPage() {
   const router = useRouter();
 
   const [pageState, setPageState] = useState<PageState>("loading");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   // One submit at a time (a double-click lands before the disabled re-render).
@@ -61,8 +59,13 @@ export default function ResetPasswordPage() {
       });
   }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // Uncontrolled and read from the form (as login, #332): a controlled
+    // field's re-render could wipe a password manager's generated value (e7).
+    const form = new FormData(e.currentTarget);
+    const newPassword = String(form.get("new_password") ?? "");
+    const confirmPassword = String(form.get("confirm_password") ?? "");
     setError("");
 
     if (newPassword.length < MIN_PASSWORD_LENGTH) {
@@ -175,8 +178,7 @@ export default function ResetPasswordPage() {
             <input
               type="password"
               required
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              name="new_password"
               autoComplete="new-password"
               className="text-input"
             />
@@ -188,8 +190,7 @@ export default function ResetPasswordPage() {
             <input
               type="password"
               required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              name="confirm_password"
               autoComplete="new-password"
               className="text-input"
             />
