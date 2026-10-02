@@ -1,5 +1,6 @@
 import pt from "../../src/messages/pt-BR.json";
-import { LOCALES, dayFirst, expect, expectNo12h, expectNoRawKeys, test } from "./harness";
+import { formatDateLabel } from "../../src/lib/dateLabels";
+import { LOCALES, expect, expectNo12h, expectNoRawKeys, test } from "./harness";
 import { cleanup, mkDoctor, mkLinkedPatient, rest, signIn, skipTour, unambiguousDate } from "./fixtures";
 
 // Signed-in critical paths, with throwaway accounts created for this run and
@@ -120,7 +121,15 @@ test("the doctor confirms, proposes and declines; dates day-first, 24 h (pt-BR)"
   await context.clearCookies({ name: /sb-/ });
   const ptBR = LOCALES.find((l) => l.code === "pt-BR")!;
   await signIn(page, "/pt-BR", patient.email);
-  await expect(page.getByText(dayFirst(new Date(`${date}T12:00:00Z`), ptBR)).first()).toBeVisible({ timeout: 60_000 });
+  // The date exactly as Minhas Consultas renders it (its formatter and
+  // options, e.g. "ter., 13 de out. de 2026"), and day-first: the day (> 12,
+  // so it can't be the month) comes before the month name.
+  const shown = formatDateLabel(ptBR.code, date, { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+  const month = formatDateLabel(ptBR.code, date, { month: "short" });
+  const day = String(Number(date.slice(8)));
+  expect(shown.indexOf(day), `day-first in "${shown}"`).toBeGreaterThanOrEqual(0);
+  expect(shown.indexOf(day), `day-first in "${shown}"`).toBeLessThan(shown.indexOf(month));
+  await expect(page.getByText(shown).first()).toBeVisible({ timeout: 60_000 });
   await expect(page.getByText(/14:00/).first()).toBeVisible();
   await expectNo12h(page);
   await expectNoRawKeys(page);
