@@ -124,6 +124,72 @@ describe("sign-in links a stored invite code", () => {
   });
 });
 
+// e7: a password manager's autofill can fill the fields without React seeing
+// it. The sign-in must use what's in the fields, and the email must not be
+// emptied by the re-render on submit.
+describe("login with autofilled fields", () => {
+  it("signs in with the fields' own values and keeps them shown", async () => {
+    h.role = { role: "professional" };
+    h.signIn.mockReset().mockResolvedValue({ data: { user: { id: "u-1", user_metadata: {} } }, error: null });
+    h.push.mockReset();
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <LoginPage />
+      </NextIntlClientProvider>,
+    );
+    const email = document.querySelector("input[type=email]") as HTMLInputElement;
+    const password = document.querySelector("input[type=password]") as HTMLInputElement;
+    // Set the DOM values directly, with no input event: React's state stays "".
+    email.value = "auto@fill.co";
+    password.value = "filled-by-manager";
+    fireEvent.submit(email.form!);
+    await waitFor(() => expect(h.signIn).toHaveBeenCalledTimes(1));
+    expect(h.signIn.mock.calls[0][0]).toMatchObject({ email: "auto@fill.co", password: "filled-by-manager" });
+    expect(email.value).toBe("auto@fill.co");
+    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/dashboard"));
+  });
+
+  // 3e on #332: an email React never saw was emptied by ANY re-render before
+  // submit (typing the password, an error), not just by the submit.
+  it("an autofilled email survives typing the password and a failed try", async () => {
+    h.role = { role: "professional" };
+    h.signIn.mockReset().mockResolvedValue({ data: { user: null }, error: { message: "Invalid login credentials", status: 400 } });
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <LoginPage />
+      </NextIntlClientProvider>,
+    );
+    const email = document.querySelector("input[type=email]") as HTMLInputElement;
+    const password = document.querySelector("input[type=password]") as HTMLInputElement;
+    email.value = "auto@fill.co"; // autofill: no input event
+    fireEvent.change(password, { target: { value: "typed" } }); // the user types the password
+    expect(email.value).toBe("auto@fill.co");
+    fireEvent.submit(email.form!);
+    await waitFor(() => expect(document.querySelector(".error-banner")).not.toBeNull());
+    expect(h.signIn.mock.calls[0][0]).toMatchObject({ email: "auto@fill.co", password: "typed" });
+    expect(email.value).toBe("auto@fill.co"); // kept after the error re-render
+  });
+});
+
+// 3e on #332: a click before hydration is the browser's own GET; named
+// fields would put the password in the URL. The fields have no names.
+describe("login fields carry no name", () => {
+  it("a native (pre-hydration) submit would send neither the email nor the password", () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <LoginPage />
+      </NextIntlClientProvider>,
+    );
+    const form = (document.querySelector("input[type=email]") as HTMLInputElement).form!;
+    (document.querySelector("input[type=email]") as HTMLInputElement).value = "a@b.co";
+    (document.querySelector("input[type=password]") as HTMLInputElement).value = "secret123";
+    expect([...new FormData(form).keys()]).toEqual([]);
+    expect(form.querySelectorAll("input[name]")).toHaveLength(0);
+    // And never a GET: even an unnamed field can't reach the URL (9a).
+    expect(form.method).toBe("post");
+  });
+});
+
 // Vitor, build 25 item 2: Tab from the email field must reach the password,
 // then "Entrar"; "Esqueceu a senha?" comes after.
 describe("login tab order", () => {

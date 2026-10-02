@@ -13,6 +13,7 @@ import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { OpenInApp } from "@/components/OpenInApp";
 import { SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 import { conditionMet } from "@/lib/conditions";
+import { fieldValue } from "@/lib/formField";
 import { isAccessAllowed, type EffectiveSub } from "@/lib/subscription";
 
 export default function LoginPage() {
@@ -23,8 +24,6 @@ export default function LoginPage() {
   const locale = (params.locale as string) ?? "en";
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   // One submit at a time: a double-click lands before the disabled button
@@ -37,8 +36,17 @@ export default function LoginPage() {
   const localePath = (path: string) =>
     locale === "en" ? path : `/${locale}${path}`;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // The fields are uncontrolled and read from the form itself. Controlled
+    // ones held React's copy, and any re-render (a keystroke in the other
+    // field, setError, hydration on a slow load) wrote that copy back: an
+    // email autofilled by a password manager, or typed before hydration,
+    // was emptied and the sign-in failed (e7; 3e on #332).
+    // By id, never by name (lib/formField: a pre-hydration submit must not
+    // put the password in the URL).
+    const email = fieldValue(e.currentTarget, "login-email").trim();
+    const password = fieldValue(e.currentTarget, "login-password");
     setError("");
     if (turnstileEnabled && !captchaToken) {
       setError(t("captchaFailed"));
@@ -158,7 +166,7 @@ export default function LoginPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form method="post" onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="login-email" className="field-label">
               {t("login.email")}
@@ -167,8 +175,6 @@ export default function LoginPage() {
               id="login-email"
               type="email"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
               data-testid="login-email"
               className="text-input"
@@ -182,8 +188,6 @@ export default function LoginPage() {
               id="login-password"
               type="password"
               required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               data-testid="login-password"
               className="text-input"
