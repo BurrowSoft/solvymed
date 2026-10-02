@@ -23,8 +23,6 @@ export default function LoginPage() {
   const locale = (params.locale as string) ?? "en";
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   // One submit at a time: a double-click lands before the disabled button
@@ -39,16 +37,14 @@ export default function LoginPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // The values come from the form itself, not from state: a password
-    // manager's autofill can fill the fields without React seeing it, and
-    // the next re-render (setError below) then wrote the empty state back
-    // into the field, so the sign-in failed with an empty email (e7). State
-    // is synced from what's really there before anything re-renders.
+    // The fields are uncontrolled and read from the form itself. Controlled
+    // ones held React's copy, and any re-render (a keystroke in the other
+    // field, setError, hydration on a slow load) wrote that copy back: an
+    // email autofilled by a password manager, or typed before hydration,
+    // was emptied and the sign-in failed (e7; 3e on #332).
     const form = new FormData(e.currentTarget);
     const email = String(form.get("email") ?? "").trim();
     const password = String(form.get("password") ?? "");
-    setEmail(email);
-    setPassword(password);
     setError("");
     if (turnstileEnabled && !captchaToken) {
       setError(t("captchaFailed"));
@@ -178,8 +174,6 @@ export default function LoginPage() {
               name="email"
               type="email"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
               data-testid="login-email"
               className="text-input"
@@ -194,8 +188,6 @@ export default function LoginPage() {
               name="password"
               type="password"
               required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               data-testid="login-password"
               className="text-input"

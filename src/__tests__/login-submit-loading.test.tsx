@@ -148,6 +148,27 @@ describe("login with autofilled fields", () => {
     expect(email.value).toBe("auto@fill.co");
     await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/dashboard"));
   });
+
+  // 3e on #332: an email React never saw was emptied by ANY re-render before
+  // submit (typing the password, an error), not just by the submit.
+  it("an autofilled email survives typing the password and a failed try", async () => {
+    h.role = { role: "professional" };
+    h.signIn.mockReset().mockResolvedValue({ data: { user: null }, error: { message: "Invalid login credentials", status: 400 } });
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <LoginPage />
+      </NextIntlClientProvider>,
+    );
+    const email = document.querySelector("input[type=email]") as HTMLInputElement;
+    const password = document.querySelector("input[type=password]") as HTMLInputElement;
+    email.value = "auto@fill.co"; // autofill: no input event
+    fireEvent.change(password, { target: { value: "typed" } }); // the user types the password
+    expect(email.value).toBe("auto@fill.co");
+    fireEvent.submit(email.form!);
+    await waitFor(() => expect(document.querySelector(".error-banner")).not.toBeNull());
+    expect(h.signIn.mock.calls[0][0]).toMatchObject({ email: "auto@fill.co", password: "typed" });
+    expect(email.value).toBe("auto@fill.co"); // kept after the error re-render
+  });
 });
 
 // Vitor, build 25 item 2: Tab from the email field must reach the password,
