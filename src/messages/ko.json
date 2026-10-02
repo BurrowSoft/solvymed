@@ -1384,7 +1384,9 @@
   },
   "dateInput": {
     "buddhistYear": "불기 연도로 보입니다. 서기 연도를 사용해 주세요(예: 1996).",
-    "invalidBirthDate": "생년월일이 올바르지 않습니다. 1900년부터 오늘 사이의 날짜를 사용하세요."
+    "invalidBirthDate": "생년월일이 올바르지 않습니다. 1900년부터 오늘 사이의 날짜를 사용하세요.",
+    "placeholder": "DD/MM/YYYY",
+    "invalid": "The date must be in the format {format}."
   },
   "solvyaiSettings": {
     "title": "SolvyAI",

@@ -1384,7 +1384,9 @@
   },
   "dateInput": {
     "buddhistYear": "仏暦の年のようです。西暦で入力してください（例：1996）。",
-    "invalidBirthDate": "生年月日が正しくありません。1900年から今日までの日付を入力してください。"
+    "invalidBirthDate": "生年月日が正しくありません。1900年から今日までの日付を入力してください。",
+    "placeholder": "DD/MM/YYYY",
+    "invalid": "The date must be in the format {format}."
   },
   "solvyaiSettings": {
     "title": "SolvyAI",

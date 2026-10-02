@@ -1384,7 +1384,9 @@
   },
   "dateInput": {
     "buddhistYear": "这看起来是佛历年份。请使用公历年份（例如 1996）。",
-    "invalidBirthDate": "出生日期无效：请使用 1900 年至今天之间的日期。"
+    "invalidBirthDate": "出生日期无效：请使用 1900 年至今天之间的日期。",
+    "placeholder": "DD/MM/YYYY",
+    "invalid": "The date must be in the format {format}."
   },
   "solvyaiSettings": {
     "title": "SolvyAI",

@@ -85,7 +85,7 @@ export function ImportClient({ locale, country, canMerge = false, addressLive = 
   }, [db]);
   const when = (iso: string) => ({
     date: new Intl.DateTimeFormat(dateLocale(locale), { day: "2-digit", month: "2-digit", year: "numeric", timeZone }).format(new Date(iso)),
-    time: new Intl.DateTimeFormat(dateLocale(locale), { hour: "2-digit", minute: "2-digit", timeZone }).format(new Date(iso)),
+    time: new Intl.DateTimeFormat(dateLocale(locale), { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone }).format(new Date(iso)),
   });
   const systemName = (source: string) => (source === "generic" || !SOURCES.includes(source as ImportSource) ? t("sourceGeneric") : presetFor(source as ImportSource).label);
   const [busy, setBusy] = useState<string | null>(null);

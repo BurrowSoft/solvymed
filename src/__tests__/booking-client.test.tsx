@@ -89,14 +89,14 @@ const BASE_PROPS = {
 };
 
 const WORKING_HOURS = {
-  mon: { enabled: true, start: "09:00", end: "17:00" },
-  tue: { enabled: true, start: "09:00", end: "17:00" },
-  wed: { enabled: true, start: "09:00", end: "17:00" },
-  thu: { enabled: true, start: "09:00", end: "17:00" },
-  fri: { enabled: true, start: "09:00", end: "17:00" },
+  mon: { enabled: true, start: "9:00", end: "17:00" },
+  tue: { enabled: true, start: "9:00", end: "17:00" },
+  wed: { enabled: true, start: "9:00", end: "17:00" },
+  thu: { enabled: true, start: "9:00", end: "17:00" },
+  fri: { enabled: true, start: "9:00", end: "17:00" },
   // All 7 days enabled so tests pass regardless of what day "today" is
-  sat: { enabled: true, start: "09:00", end: "17:00" },
-  sun: { enabled: true, start: "09:00", end: "17:00" },
+  sat: { enabled: true, start: "9:00", end: "17:00" },
+  sun: { enabled: true, start: "9:00", end: "17:00" },
 };
 
 type ProcedureRow = { id: string; name: string; duration_minutes: number; price: number | null; payment_type: string };
@@ -372,7 +372,7 @@ describe("BookingClient", () => {
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
     await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.change(container.querySelector('input[type="date"]')!, { target: { value: "2539-05-14" } });
+    fireEvent.change(container.querySelector('input[inputmode="numeric"]')!, { target: { value: "14/05/2539" } });
     expect(screen.getByRole("alert")).toBeInTheDocument();
     expect(screen.getByText("Send Booking Request")).toBeDisabled();
     fireEvent.click(screen.getByText("Send Booking Request"));
@@ -427,7 +427,7 @@ describe("BookingClient: items 7/10/16 + no hours / slow load", () => {
   });
 
   it("closed weekdays are greyed and disabled; 30 days are bookable", async () => {
-    setupMocks({ workingHours: { ...WORKING_HOURS, sun: { enabled: false, start: "09:00", end: "17:00" } } });
+    setupMocks({ workingHours: { ...WORKING_HOURS, sun: { enabled: false, start: "9:00", end: "17:00" } } });
     render(<BookingClient {...BASE_PROPS} />);
     await waitFor(() => expect(screen.getByTestId("month-calendar")).toBeInTheDocument());
     // Sunday 2030-01-20 (closed) vs Monday 2030-01-21 (open).
@@ -438,8 +438,8 @@ describe("BookingClient: items 7/10/16 + no hours / slow load", () => {
   it("picking a time shows the chosen-time line above the button", async () => {
     setupMocks();
     render(<BookingClient {...BASE_PROPS} />);
-    await waitFor(() => expect(screen.getByText("9:00 AM")).toBeInTheDocument());
-    fireEvent.click(screen.getByText("9:00 AM"));
+    await waitFor(() => expect(screen.getByText("9:00")).toBeInTheDocument());
+    fireEvent.click(screen.getByText("9:00"));
     expect(screen.getByTestId("chosen-time")).toHaveTextContent(/chosenTime/);
   });
 });
@@ -466,7 +466,7 @@ describe("BookingClient: today isn't skipped before its times load", () => {
     await new Promise((r) => setTimeout(r, 30));
     expect(screen.getByRole("button", { name: "14" })).toHaveAttribute("aria-pressed", "true");
     release();
-    await waitFor(() => expect(screen.getByText("9:00 AM")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("9:00")).toBeInTheDocument());
     expect(screen.getByRole("button", { name: "14" })).toHaveAttribute("aria-pressed", "true");
   });
 });
@@ -483,7 +483,7 @@ describe("BookingClient: a late answer for a day already left is dropped", () =>
   it("today (slow) → tomorrow (fast): the grid shows tomorrow's times", async () => {
     let releaseToday!: () => void;
     const todayGate = new Promise<void>((r) => { releaseToday = r; });
-    const hours = { ...WORKING_HOURS, tue: { enabled: true, start: "08:00", end: "17:00" } }; // tomorrow (Tue) opens at 8
+    const hours = { ...WORKING_HOURS, tue: { enabled: true, start: "8:00", end: "17:00" } }; // tomorrow (Tue) opens at 8
     mockRpc.mockImplementation(async (fn: string, args?: { p_date?: string }) => {
       if (fn === "get_professional_working_hours") return { data: hours, error: null };
       if (fn === "get_busy_slots") {
@@ -495,10 +495,10 @@ describe("BookingClient: a late answer for a day already left is dropped", () =>
     render(<BookingClient {...BASE_PROPS} />);
     await waitFor(() => expect(screen.getByTestId("month-calendar")).toBeInTheDocument());
     fireEvent.click(screen.getByRole("button", { name: "15" }));
-    await waitFor(() => expect(screen.getByText("8:00 AM")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("8:00")).toBeInTheDocument());
     releaseToday(); // today's answer arrives last
     await new Promise((r) => setTimeout(r, 30));
-    expect(screen.getByText("8:00 AM")).toBeInTheDocument();
+    expect(screen.getByText("8:00")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "15" })).toHaveAttribute("aria-pressed", "true");
   });
 });
