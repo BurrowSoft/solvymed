@@ -1,18 +1,23 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-// UX (1 Oct): Founders is visible only on Vercel Preview builds (the
-// release-founders test site) until Vitor's go; never on Production.
+// Founders went live (Vitor, 2 Oct): the page, the form and the rules page
+// show on every build, Production included. Uploads stay behind their own
+// condition (founders-upload-live).
 describe("Founders visibility by build", () => {
   afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
 
-  for (const [env, on] of [["preview", true], ["production", false], ["development", false], [undefined, false]] as const) {
-    it(`NEXT_PUBLIC_VERCEL_ENV=${env ?? "(unset)"} → ${on ? "on" : "off"}`, async () => {
+  for (const env of ["preview", "production", "development", ""] as const) {
+    it(`NEXT_PUBLIC_VERCEL_ENV=${env || "(unset)"} → on`, async () => {
       vi.resetModules();
-      if (env) vi.stubEnv("NEXT_PUBLIC_VERCEL_ENV", env);
-      else vi.stubEnv("NEXT_PUBLIC_VERCEL_ENV", "");
+      vi.stubEnv("NEXT_PUBLIC_VERCEL_ENV", env);
       const { liveFeatures } = await import("@/lib/liveFeatures");
-      expect(liveFeatures.founders).toBe(on);
-      expect(liveFeatures.foundersRules).toBe(on);
+      expect(liveFeatures.founders).toBe(true);
+      expect(liveFeatures.foundersRules).toBe(true);
     });
   }
+
+  it("goes with the privacy version that adds §6d", async () => {
+    const { PRIVACY_VERSION } = await import("@/lib/legalVersions");
+    expect(PRIVACY_VERSION).toBe("2026-10-03");
+  });
 });

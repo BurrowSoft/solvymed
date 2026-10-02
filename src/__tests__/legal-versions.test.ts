@@ -21,6 +21,7 @@ describe("the secretary-invite flip (2026-10-02)", () => {
   it("the flag and the privacy version go together (mobile 156 accepts 2026-10-02)", async () => {
     const { conditionMet } = await import("@/lib/conditions");
     expect(conditionMet("secretary-invite-email-live")).toBe(true);
-    expect(PRIVACY_VERSION).toBe("2026-10-02");
+    // 2026-10-02 or later (a later policy bump keeps the invite text).
+    expect(PRIVACY_VERSION >= "2026-10-02").toBe(true);
   });
 });
