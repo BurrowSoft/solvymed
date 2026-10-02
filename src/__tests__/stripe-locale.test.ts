@@ -18,3 +18,16 @@ describe("stripeLocale", () => {
     expect(auto).toEqual(["ar"]);
   });
 });
+
+// Vitor, build 25 (e7): English is British English on Stripe's pages and in
+// its receipt/invoice emails, so dates are day-first there too.
+describe("British English on Stripe", () => {
+  it("en → en-GB for Checkout/Portal and the customer's preferred locale", async () => {
+    const { stripePreferredLocales } = await import("@/lib/stripeBilling");
+    expect(stripeLocale("en")).toBe("en-GB");
+    expect(stripePreferredLocales("en")).toEqual(["en-GB"]);
+    expect(stripePreferredLocales("pt-BR")).toEqual(["pt-BR"]);
+    expect(stripePreferredLocales("th")).toEqual(["th"]);
+    expect(stripePreferredLocales("ar")).toEqual([]);
+  });
+});
