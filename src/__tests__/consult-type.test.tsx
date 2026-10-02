@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
 import th from "@/messages/th.json";
-import { consultTypeKey, PLAIN_CONSULTATION } from "@/lib/consultType";
+import { consultTypeKey, fixedBookingItem, PLAIN_CONSULTATION } from "@/lib/consultType";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 // Item 6.2 + the types shown raw: appointment types are the app's English
@@ -78,5 +78,16 @@ describe("New appointment: a plain consultation (6.2)", () => {
     expect(submit.disabled).toBe(false);
     expect(screen.getByTestId("procedures-tip")).toHaveTextContent("Dica: cadastre seus procedimentos em Configurações para preencher duração e valor automaticamente.");
     expect(screen.getByRole("link", { name: "Configurações" })).toBeInTheDocument();
+  });
+});
+
+
+// The shared case for app #292 (e7: replace): which clinic procedure names
+// are the booking list's fixed Consulta / Retorno.
+describe("fixedBookingItem", () => {
+  it("consultation / follow-up names in pt, en and th, any case, accents or spaces", () => {
+    for (const n of ["Consulta", "consulta", " CONSULTA ", "Consultation", "ตรวจทั่วไป"]) expect(fixedBookingItem(n), n).toBe("consultation");
+    for (const n of ["Retorno", "retorno", "Follow-up", "followup", "Follow up", "นัดติดตามผล", "ติดตามอาการ"]) expect(fixedBookingItem(n), n).toBe("followUp");
+    for (const n of ["Consulta inicial", "Limpeza", "", null]) expect(fixedBookingItem(n as string), String(n)).toBeNull();
   });
 });

@@ -706,7 +706,8 @@
     "chosenTime": "Horário escolhido: {weekday}, {day} {month} · {start}–{end}",
     "prevMonth": "Mês anterior",
     "nextMonth": "Próximo mês",
-    "noTimesToday": "Não há mais horários hoje."
+    "noTimesToday": "Não há mais horários hoje.",
+    "otherHint": "Ex.: primeira consulta, retorno"
   },
   "auth": {
     "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",

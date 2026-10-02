@@ -165,12 +165,52 @@ describe("BookingClient", () => {
     expect(screen.queryByText("Pick a date")).not.toBeInTheDocument();
   });
 
-  it("shows duration fallback chips when no procedures are configured", async () => {
+  // Vitor, build 25 item 5 (e7's final list, same as the app): Consulta and
+  // Retorno always, the clinic's procedures, Outro only when there are some;
+  // patients never pick a length.
+  it("no procedures: just Consulta + Retorno, no Outro, no length buttons", async () => {
     setupMocks({ procedures: [] });
     render(<BookingClient {...BASE_PROPS} />);
-    await waitFor(() => expect(screen.getByText("30 min")).toBeInTheDocument());
-    expect(screen.getByText("45 min")).toBeInTheDocument();
-    expect(screen.getByText("60 min")).toBeInTheDocument();
+    const list = await screen.findByTestId("type-list");
+    const options = Array.from(list.querySelectorAll('[role="radio"]')).map((b) => b.querySelector("p")!.textContent);
+    expect(options).toEqual(["Consultation", "Follow-up"]);
+    expect(list.querySelector('[aria-checked="true"]')!.textContent).toContain("Consultation");
+    expect(screen.queryByText("45 min")).toBeNull();
+    expect(screen.queryByText("Exam Review")).toBeNull();
+    expect(screen.queryByText("Emergency")).toBeNull();
+  });
+
+  // e7: the clinic's own "Consulta"/"Retorno" (any shipped language, any
+  // case/accents) REPLACES the fixed item in its slot, with its length/price.
+  it("a clinic procedure named 'Consulta' / 'retorno' takes the fixed slot, never a second one", async () => {
+    setupMocks({ procedures: [
+      { id: "p1", name: "Limpeza", duration_minutes: 45, price: 200, payment_type: "private" },
+      { id: "p2", name: "Consulta", duration_minutes: 60, price: 300, payment_type: "private" },
+      { id: "p3", name: " RETORNO ", duration_minutes: 20, price: null, payment_type: "private" },
+    ] });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByText("Limpeza")).toBeInTheDocument());
+    const list = screen.getByTestId("type-list");
+    const options = Array.from(list.querySelectorAll('[role="radio"]')).map((b) => b.querySelector("p")!.textContent);
+    expect(options).toEqual(["Consulta", " RETORNO ", "Limpeza", "Other"]);
+    expect(screen.getByText(/60 min · /)).toBeInTheDocument();
+    // the clinic's Consulta is the default, with its own length
+    expect(list.querySelector('[aria-checked="true"]')!.textContent).toContain("Consulta");
+    expect(list.querySelector('[aria-checked="true"]')!.textContent).toContain("60 min");
+  });
+
+  it("with procedures: Consulta, Retorno, the procedures (length + price), then Outro with a hint", async () => {
+    setupMocks({ procedures: [{ id: "p1", name: "Limpeza", duration_minutes: 45, price: 200, payment_type: "private" }] });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByText("Limpeza")).toBeInTheDocument());
+    const list = screen.getByTestId("type-list");
+    const options = Array.from(list.querySelectorAll('[role="radio"]')).map((b) => b.querySelector("p")!.textContent);
+    expect(options).toEqual(["Consultation", "Follow-up", "Limpeza", "Other"]);
+    expect(screen.getByText(/45 min · /)).toBeInTheDocument();
+    // the plain Consulta stays the default, not the first procedure
+    expect(list.querySelector('[aria-checked="true"]')!.textContent).toContain("Consultation");
+    fireEvent.click(screen.getByText("Other"));
+    expect(screen.getByLabelText("Other")).toHaveAttribute("placeholder", "otherHint");
   });
 
   it("shows procedure buttons when procedures are available", async () => {
