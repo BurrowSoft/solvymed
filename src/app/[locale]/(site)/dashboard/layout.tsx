@@ -225,8 +225,10 @@ export default async function DashboardLayout({
             </div>
           )}
           {/* Below lg the fixed ☰ button sits top left: room for it, so it
-              never covers the page title (3e). */}
-          <main className={`flex-1 overflow-auto lg:pl-0 lg:pt-0 ${showTrialChip ? "pt-2" : "pt-14"}`}>
+              never covers the page title (3e). With SolvyAI, room at the
+              bottom too: its fixed button (bottom right) never covers a
+              page's last actions, even at 200% zoom (e7). */}
+          <main className={`flex-1 overflow-auto lg:pl-0 lg:pt-0 ${showTrialChip ? "pt-2" : "pt-14"}${panelOn ? " pb-24" : ""}`}>
             <div className="min-h-full">
               {children}
             </div>
