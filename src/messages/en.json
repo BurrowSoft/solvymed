@@ -1232,7 +1232,7 @@
       "devices": "Web and mobile app (Android and iPhone), always in sync",
       "devicesAndroid": "Web and Android app, always in sync",
       "security": "Private, encrypted data; after 24 hours, records and prescriptions can only be corrected, and the original is kept.",
-      "solvyai": "SolvyAI, your AI assistant: ask or say \"book Maria tomorrow at 2pm\""
+      "solvyai": "SolvyAI, your AI assistant: ask or say \"book Maria tomorrow at 14:00\""
     },
     "faqTitle": "Questions",
     "faq": {
@@ -1297,7 +1297,7 @@
     "homeTitle": "Your day at a glance",
     "homeText": "Today's appointments, the week ahead and your setup checklist.",
     "solvyaiTitle": "Meet SolvyAI",
-    "solvyaiText": "Your AI assistant. Ask how to do anything, or just say: \"book Maria tomorrow at 2pm\". It always confirms everything with you first.",
+    "solvyaiText": "Your AI assistant. Ask how to do anything, or just say: \"book Maria tomorrow at 14:00\". It always confirms everything with you first.",
     "newApptTitle": "Book in seconds",
     "newApptText": "Pick the patient and the time, and you're done. You can also block time.",
     "scheduleTitle": "Your schedule",
@@ -1898,7 +1898,7 @@
   },
   "solvyaiIntro": {
     "title": "Meet SolvyAI ✦",
-    "body": "Just ask in your own words: \"Book Maria for Friday at 11\". SolvyAI shows you every detail and only acts after you confirm.",
+    "body": "Just ask in your own words: \"Book Maria for Friday at 11:00\". SolvyAI shows you every detail and only acts after you confirm.",
     "tryNow": "Try it now",
     "later": "Later",
     "whatCanDo": "What can SolvyAI do?"

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isAccessAllowed, getPlanPrice, checkoutTrialEnd, type EffectiveSub } from "@/lib/subscription";
-import { stripe, retrieveStoredStripeSubscription, isLive, needsCardFix } from "@/lib/stripeBilling";
+import Stripe from "stripe";
+import { stripe, retrieveStoredStripeSubscription, isLive, needsCardFix, stripeLocale } from "@/lib/stripeBilling";
 import { routing } from "@/i18n/routing";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 
@@ -221,7 +222,9 @@ export async function POST(request: NextRequest) {
           metadata: { user_id: userId },
           ...(trialEnd ? { trial_end: Math.floor(trialEnd.getTime() / 1000) } : {}),
         },
-        metadata: { user_id: userId, checkout_key: key },
+        metadata: { user_id: userId, checkout_key: key, locale },
+        // Checkout in the doctor's language (English = British: day-first).
+        locale: stripeLocale(locale) as Stripe.Checkout.SessionCreateParams.Locale,
         success_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?success=1`,
         cancel_url: `${origin}/${locale === "en" ? "" : locale + "/"}subscribe?cancelled=1`,
         client_reference_id: userId,

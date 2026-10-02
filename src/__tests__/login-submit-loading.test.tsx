@@ -10,6 +10,9 @@ import pt from "@/messages/pt-BR.json";
 const h = vi.hoisted(() => ({
   signIn: vi.fn(),
   push: vi.fn(),
+  role: { role: "professional" } as Record<string, unknown>,
+  rpc: vi.fn(async (_name: string, _args?: unknown): Promise<{ data: unknown; error: null | { message: string } }> => ({ data: [], error: null })),
+  sub: null as null | Record<string, unknown>,
 }));
 vi.mock("next/navigation", async (orig) => ({
   ...(await orig<typeof import("next/navigation")>()),
@@ -20,7 +23,9 @@ vi.mock("next/navigation", async (orig) => ({
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
     auth: { signInWithPassword: h.signIn },
-    from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: { role: "professional" } }) }) }) }),
+    from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: h.role }) }) }) }),
+    rpc: (name: string, args?: unknown) =>
+      name === "get_effective_subscription" ? Promise.resolve({ data: h.sub ? [h.sub] : [], error: null }) : h.rpc(name, args),
   }),
 }));
 
@@ -49,6 +54,16 @@ describe("login submit", () => {
     expect(button).toBeDisabled();
   });
 
+  it("a doctor whose trial ended goes straight to the paywall, never Home (build 25)", async () => {
+    h.signIn.mockReset().mockResolvedValue({ data: { user: { id: "u-1", user_metadata: {} } }, error: null });
+    h.push.mockReset();
+    h.sub = { subscription_status: "trial", trial_ends_at: "2020-01-01T00:00:00Z", current_period_end: null, subscription_provider: null, subscription_id: null };
+    const button = fill();
+    fireEvent.submit(button.form!);
+    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/subscribe"));
+    h.sub = null;
+  });
+
   it("an error resets the button and allows another try", async () => {
     h.signIn.mockReset().mockResolvedValue({ data: { user: null }, error: { message: "Invalid login credentials", status: 400 } });
     const button = fill();
@@ -57,5 +72,74 @@ describe("login submit", () => {
     fireEvent.submit(button.form!);
     await waitFor(() => expect(h.signIn).toHaveBeenCalledTimes(2));
     expect(screen.queryByText("/pt-BR/dashboard")).toBeNull();
+  });
+});
+
+
+// Vitor, build 25 item 11: a patient who signed up in the APP with an invite
+// code, then signs in on the website, is linked with that code, not asked
+// for it again.
+describe("sign-in links a stored invite code", () => {
+  const patient = (code?: string) => {
+    h.role = null as unknown as Record<string, unknown>; // no role row yet (an app signup)
+    h.signIn.mockReset().mockResolvedValue({ data: { user: { id: "p-1", user_metadata: { role: "patient", ...(code ? { invite_code: code } : {}) } } }, error: null });
+    h.push.mockReset();
+  };
+
+  it("a personal code links and goes to Minhas Consultas", async () => {
+    patient("abc123");
+    h.rpc.mockReset().mockResolvedValue({ data: "personal", error: null });
+    const button = fill();
+    fireEvent.submit(button.form!);
+    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/my-appointments"));
+    expect(h.rpc).toHaveBeenCalledWith("connect_with_code", { p_code: "ABC123" });
+  });
+
+  it("a public code → waiting for the clinic", async () => {
+    patient("PUB1");
+    h.rpc.mockReset().mockResolvedValue({ data: "public", error: null });
+    fireEvent.submit(fill().form!);
+    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/auth/pending-confirmation"));
+  });
+
+  it("refused → the invite form as before", async () => {
+    patient("OLD1");
+    h.rpc.mockReset().mockResolvedValue({ data: null, error: { message: "patient_archived" } });
+    fireEvent.submit(fill().form!);
+    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/auth/invite-required"));
+  });
+
+  it("no code, or a role row already there (e.g. removed by a clinic): no attempt, the invite form", async () => {
+    patient();
+    h.rpc.mockReset();
+    const { unmount } = { unmount: () => document.body.replaceChildren() };
+    fireEvent.submit(fill().form!);
+    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/auth/invite-required"));
+    unmount();
+    patient("ABC123");
+    h.role = { role: "patient", invited_by_professional_id: null, linked_patient_id: null };
+    fireEvent.submit(fill().form!);
+    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/auth/invite-required"));
+    expect(h.rpc).not.toHaveBeenCalledWith("connect_with_code", expect.anything());
+  });
+});
+
+// Vitor, build 25 item 2: Tab from the email field must reach the password,
+// then "Entrar"; "Esqueceu a senha?" comes after.
+describe("login tab order", () => {
+  it("email → password → submit → forgot password (document order, no tabindex tricks)", () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <LoginPage />
+      </NextIntlClientProvider>,
+    );
+    const focusable = Array.from(document.querySelectorAll("form input, form button, form a"))
+      .map((el) => el.getAttribute("data-testid") ?? el.tagName);
+    const order = ["login-email", "login-password", "login-submit", "login-forgot"].map((id) => focusable.indexOf(id));
+    expect(order.every((i) => i >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    expect(document.querySelectorAll("form [tabindex]")).toHaveLength(0);
+    expect(screen.getByLabelText(pt.auth.login.email)).toHaveAttribute("type", "email");
+    expect(screen.getByLabelText(pt.auth.login.password)).toHaveAttribute("type", "password");
   });
 });

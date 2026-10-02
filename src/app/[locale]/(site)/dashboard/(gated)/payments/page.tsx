@@ -148,23 +148,25 @@ export default async function PaymentsPage({
       </div>
 
       {/* Summary cards */}
-      <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-orange-100 bg-orange-50 p-5">
+      {/* Stacked until there's room for three whole amounts ("R$ 115.582,19"
+          was clipped side by side on phones; 3e, build 25). */}
+      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="min-w-0 rounded-2xl border border-orange-100 bg-orange-50 p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">{t("pendingLabel")}</p>
-          <p className="mt-1 text-2xl font-extrabold text-orange-900">{formatAmount(totalPending)}</p>
+          <p className="mt-1 text-2xl font-extrabold tabular-nums text-orange-900">{formatAmount(totalPending)}</p>
           <p className="text-xs text-orange-600">{t("sessions", { n: pending.length })}</p>
         </div>
         {/* Received/total sums are the practice's revenue: doctor only. */}
         {!isSecretary && (
           <>
-            <div className="rounded-2xl border border-green-100 bg-green-50 p-5">
+            <div className="min-w-0 rounded-2xl border border-green-100 bg-green-50 p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-green-600">{t("receivedLabel")}</p>
-              <p className="mt-1 text-2xl font-extrabold text-green-900">{formatAmount(totalPaid)}</p>
+              <p className="mt-1 text-2xl font-extrabold tabular-nums text-green-900">{formatAmount(totalPaid)}</p>
               <p className="text-xs text-green-600">{t("sessions", { n: paid.length })}</p>
             </div>
-            <div className="rounded-2xl border border-teal-100 bg-teal-50 p-5 col-span-2 sm:col-span-1">
+            <div className="min-w-0 rounded-2xl border border-teal-100 bg-teal-50 p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-teal-600">{t("totalLabel")}</p>
-              <p className="mt-1 text-2xl font-extrabold text-teal-900">{formatAmount(totalPending + totalPaid)}</p>
+              <p className="mt-1 text-2xl font-extrabold tabular-nums text-teal-900">{formatAmount(totalPending + totalPaid)}</p>
               <p className="text-xs text-teal-600">{t("sessions", { n: pending.length + paid.length })}</p>
             </div>
           </>
