@@ -459,6 +459,10 @@
             {
               "type": "p",
               "text": "Pacientes com prontuário, receita ou arquivo só podem ser arquivados, nunca apagados (o prontuário deve ser guardado por lei)."
+            },
+            {
+              "type": "p",
+              "text": "Não é possível excluir um paciente que tem consultas (de qualquer status): o servidor recusa, em qualquer versão do app e no site. Arquive-o."
             }
           ],
           "en": [
@@ -473,6 +477,10 @@
             {
               "type": "p",
               "text": "Patients with a record, prescription or file can only be archived, never deleted (records must be kept by law)."
+            },
+            {
+              "type": "p",
+              "text": "You can't delete a patient who has appointments (any status): the server refuses it, in any app version and on the website. Archive them instead."
             }
           ]
         },
