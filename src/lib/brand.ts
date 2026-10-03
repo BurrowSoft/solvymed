@@ -146,6 +146,15 @@ export function docBrand(t: DocTemplate, b: Brand | null): DocBrand | null {
   };
 }
 
+// The doctor's own saved values (the raw professional_brand row; owner RLS).
+export type BrandFieldsRow = {
+  display_name: string | null;
+  title: string | null;
+  specialty: string | null;
+  registration_line: string | null;
+  accent_color: string | null;
+};
+
 export type BrandTextFields = { displayName: string; title: string; specialty: string; registrationLine: string; accentColor: string | null };
 
 // Saves the text fields and the accent ('' clears a field: the RPC stores

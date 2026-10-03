@@ -20,7 +20,7 @@ import { AppearanceCard } from "./AppearanceCard";
 import { SubscriptionPanel } from "./SubscriptionPanel";
 import { FoundersCard } from "./FoundersCard";
 import { BrandCard } from "./BrandCard";
-import { loadPracticeBrand } from "@/lib/brand";
+import { loadPracticeBrand, type BrandFieldsRow } from "@/lib/brand";
 import { isAccessAllowed, planSummary, type EffectiveSub } from "@/lib/subscription";
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
@@ -184,6 +184,12 @@ export default async function SettingsPage({
   // 1.5.0 "My brand" (flag; Previews only until the release). null while
   // migration 161 isn't there: the card opens empty with the defaults.
   const brand = liveFeatures.myBrand ? await loadPracticeBrand(supabase, user.id) : null;
+  // The fields' own values: the raw row (the owner may read it), never the
+  // RPC's profile fallbacks, or a first Save would copy the profile into the
+  // brand (d7, 9a; as the app). No row = empty fields.
+  const brandRow = liveFeatures.myBrand
+    ? (await supabase.from("professional_brand").select("display_name, title, specialty, registration_line, accent_color").eq("professional_id", user.id).maybeSingle()).data as BrandFieldsRow | null
+    : null;
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl">
@@ -212,6 +218,7 @@ export default async function SettingsPage({
           <BrandCard
             uid={user.id}
             brand={brand}
+            values={brandRow}
             country={practiceCountry}
             fallback={{
               fullName: prof.full_name ?? "",

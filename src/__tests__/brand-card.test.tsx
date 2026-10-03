@@ -73,6 +73,37 @@ describe("Minha marca", () => {
     expect((document.getElementById("brand-specialty") as HTMLInputElement).value).toBe("Pediatria");
   });
 
+  it("never saved: the fields are empty (the profile only as placeholders); Save doesn't copy the profile in (d7)", async () => {
+    // get_practice_brand's fallbacks (the profile's own) come in `brand`; no raw row.
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <BrandCard uid="u-1" values={null}
+          brand={{ displayName: "Ana Souza", title: "", specialty: "Dermatologia", registrationLine: "CRM 1/SP", accentColor: null, logoSquareUrl: null, logoWideUrl: null, photoUrl: null, own: { logo_square: false, logo_wide: false, photo: false }, saved: false }}
+          fallback={{ fullName: "Ana Souza", specialty: "Dermatologia", registration: "CRM 1/SP" }} />
+      </NextIntlClientProvider>,
+    );
+    const name = screen.getByLabelText(t.displayName) as HTMLInputElement;
+    expect(name.value).toBe("");
+    expect(name.placeholder).toBe("Ana Souza");
+    expect((screen.getByLabelText(t.specialty) as HTMLInputElement).value).toBe("");
+    fireEvent.click(screen.getByRole("button", { name: t.save }));
+    await waitFor(() => expect(h.rpc).toHaveBeenCalled());
+    expect(h.rpc.mock.calls[0][1]).toMatchObject({ p_display_name: "", p_specialty: "", p_registration_line: "" });
+  });
+
+  it("saved values (the raw row) fill the fields", () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <BrandCard uid="u-1" brand={null} values={{ display_name: "Ana S.", title: "Dra.", specialty: null, registration_line: "CRM 9", accent_color: "#7c3aed" }}
+          fallback={{ fullName: "Ana Souza", specialty: "Dermatologia", registration: "CRM 1/SP" }} />
+      </NextIntlClientProvider>,
+    );
+    expect((screen.getByLabelText(t.displayName) as HTMLInputElement).value).toBe("Ana S.");
+    expect((screen.getByLabelText(t.titleLabel) as HTMLInputElement).value).toBe("Dra.");
+    expect((screen.getByLabelText(t.specialty) as HTMLInputElement).value).toBe("");
+    expect(screen.getByRole("radio", { name: "#7c3aed" })).toHaveAttribute("aria-checked", "true");
+  });
+
   it("the default blue is saved as no colour (the app's default)", async () => {
     show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: "#dc2626", logoSquareUrl: null, logoWideUrl: null, photoUrl: null, own: { logo_square: false, logo_wide: false, photo: false }, saved: true });
     fireEvent.click(screen.getByRole("radio", { name: "#116e99" }));
