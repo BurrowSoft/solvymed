@@ -3,6 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { PRINT_CSS, docDate, docTime, docToday, toDocTemplate } from "@/lib/prescriptionDoc";
+import { liveFeatures } from "@/lib/liveFeatures";
+import { brandSigner, brandedDocTemplate, loadPracticeBrand } from "@/lib/brand";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { countryProfile } from "@/lib/country";
 import { getClinicTimeZone } from "@/lib/clinicTime";
@@ -87,6 +89,9 @@ export default async function HistoryPrintPage({
   const prof = profResult.data as { full_name: string | null; clinic_name: string | null; professional_registration: string | null } | null;
   const timeZone = await getClinicTimeZone(supabase, { professionalId: user.id, isSecretary: false });
   const today = docToday(country, timeZone);
+  // The doctor's brand (1.5.0, behind the flag): colour, logo, signer.
+  const brand = liveFeatures.myBrand ? await loadPracticeBrand(supabase, user.id) : null;
+  const signer = brandSigner(brand, { name: prof?.full_name ?? null, registration: prof?.professional_registration?.trim() ? prof.professional_registration : null });
 
   return (
     <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
@@ -94,7 +99,7 @@ export default async function HistoryPrintPage({
       <PrintToolbar backHref={`${prefix}/dashboard/patients/${id}`} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">
         <HistoryDocument
-          template={toDocTemplate(templateResult.data as Row | null)}
+          template={brandedDocTemplate(toDocTemplate(templateResult.data as Row | null), brand)}
           labels={{
             title: t("historyTitle"), medicalRecords: t("medicalRecords"), prescriptions: t("prescriptions"),
             noRecords: t("noRecords"), noPrescriptions: t("noPrescriptions"),
@@ -112,8 +117,8 @@ export default async function HistoryPrintPage({
             id: rx.id, date: docDate(country, rx.date), notes: rx.notes?.trim() ? rx.notes : null,
             corrected: correctedRx.has(rx.id), items: rx.prescription_items ?? [],
           }))}
-          signerName={prof?.full_name ?? ""}
-          signerRegistration={prof?.professional_registration?.trim() ? prof.professional_registration : null}
+          signerName={signer.name ?? ""}
+          signerRegistration={signer.registration}
         />
       </div>
     </div>

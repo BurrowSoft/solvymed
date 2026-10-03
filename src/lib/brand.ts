@@ -7,6 +7,8 @@
 // photo / document logo) is used only when the matching path is unset.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { BrandImageTooLarge, BrandNotAnImage, renderBrandImage, type BrandImageKind } from "./brandImage";
+import { isAccentHex, readableAccent } from "./readableAccent";
+import type { DocTemplate } from "./prescriptionDoc";
 
 export const BRAND_BUCKET = "brand-assets";
 export const BRAND_STAGING_BUCKET = "brand-staging";
@@ -92,6 +94,30 @@ export function publicFromPractice(b: Brand | null, fallback: { name: string; sp
     logoUrl: b.own.logo_square ? b.logoSquareUrl : null,
     photoUrl: b.own.photo ? b.photoUrl : null,
   };
+}
+
+// The brand on a printed document (prescription, history, receipt; 1.5.0,
+// behind the flag). Only what the doctor set overrides the document
+// template: a chosen accent (darkened until readable on white paper, e7's
+// Q4: it prints in black and white too) and their own logo (the wide one,
+// else the square one). An unset accent keeps the template's colours.
+export function brandedDocTemplate(t: DocTemplate, b: Brand | null): DocTemplate {
+  if (!b) return t;
+  const accent = isAccentHex(b.accentColor) ? readableAccent(b.accentColor, "#ffffff") : null;
+  const logo = b.own.logo_wide ? b.logoWideUrl : b.own.logo_square ? b.logoSquareUrl : null;
+  return {
+    ...t,
+    ...(accent ? { primaryColor: accent, accentColor: accent } : {}),
+    ...(logo ? { logoUrl: logo } : {}),
+  };
+}
+
+// Who signs: the brand's title + display name and registration line (the
+// RPC already falls back to the profile's own when unset).
+export function brandSigner(b: Brand | null, fallback: { name: string | null; registration: string | null }): { name: string | null; registration: string | null } {
+  if (!b) return fallback;
+  const name = [b.title, b.displayName].map((s) => s.trim()).filter(Boolean).join(" ");
+  return { name: name || fallback.name, registration: b.registrationLine.trim() || fallback.registration };
 }
 
 export type BrandTextFields = { displayName: string; title: string; specialty: string; registrationLine: string; accentColor: string | null };
