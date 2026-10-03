@@ -2,6 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
+import { liveFeatures } from "@/lib/liveFeatures";
+import { getEffectiveProfId } from "@/lib/effectiveProfId";
+import { ACTING_COOKIE } from "@/lib/actingPractice";
 
 // Secretary team management (migration 088 RPCs). The RPCs enforce every
 // rule (doctor-only, email-bound single-use invites, the 3-person limit);
@@ -95,7 +99,14 @@ export async function leaveClinic(): Promise<Result> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, code: "generic" };
-  const { error } = await supabase.rpc("leave_clinic");
+  // 1.5.0 (behind the flag): leave the doctor she's acting for, then drop
+  // that choice (it would name a doctor she no longer serves). Without the
+  // flag: the one doctor she serves, as before.
+  const acting = liveFeatures.multiPractice ? await getEffectiveProfId(supabase, user.id) : null;
+  const { error } = acting
+    ? await supabase.rpc("leave_clinic", { p_professional_id: acting })
+    : await supabase.rpc("leave_clinic");
   if (error) return { ok: false, code: code(error.message) };
+  if (liveFeatures.multiPractice) (await cookies()).delete(ACTING_COOKIE);
   return { ok: true };
 }

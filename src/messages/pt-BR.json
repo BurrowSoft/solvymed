@@ -1922,5 +1922,49 @@
     "removeBody": "Ela deixará de aparecer na sua página e nos seus documentos.",
     "removeConfirm": "Remover",
     "cancel": "Cancelar"
+  },
+  "patientDoctors": {
+    "homeSection": "Meus médicos",
+    "homeCard": "Seu médico",
+    "bookWho": "Com quem?",
+    "add": "+ Adicionar médico",
+    "addTitle": "Adicionar médico",
+    "addHint": "Digite o código que seu médico compartilhou.",
+    "code": "Código",
+    "connect": "Conectar",
+    "connected": "Pronto! Você agora está conectado a {doctor}.",
+    "alreadyConnected": "Você já está conectado a {doctor}.",
+    "viewDoctor": "Ver médico",
+    "settingsRow": "Meus médicos",
+    "disconnect": "Desconectar",
+    "disconnectTitle": "Desconectar de {doctor}?",
+    "disconnectBody": "Você deixará de ver consultas e documentos de {doctor}. Pedidos pendentes serão cancelados. A clínica mantém o seu cadastro.",
+    "disconnectBlocked": "Você tem consultas confirmadas com {doctor}. Para cancelar, fale com a clínica; depois você pode desconectar.",
+    "disconnected": "Desconectado de {doctor}.",
+    "filterAll": "Todos"
+  },
+  "secretaryPractices": {
+    "switcherLabel": "Agenda de",
+    "all": "Todos",
+    "allEmpty": "Nenhuma consulta hoje.",
+    "doctorField": "Médico",
+    "todayWith": "Hoje com {doctor}",
+    "notifyTitle": "Notificações por médico",
+    "notifyHint": "Escolha de quais médicos você quer receber avisos.",
+    "pushPrefix": "{doctor}: ",
+    "joinedTeam": "{doctor} adicionou você à equipe.",
+    "removeTitle": "Remover {name} da sua equipe?",
+    "removeBody": "Ela continua na equipe de outros médicos."
+  },
+  "colleagues": {
+    "title": "Meus colegas",
+    "hint": "Adicione colegas pelo código público deles. Só você vê esta lista.",
+    "add": "+ Adicionar colega",
+    "added": "{doctor} adicionado aos seus colegas.",
+    "remove": "Remover dos colegas",
+    "refer": "Indicar colega",
+    "referHint": "Envie ao paciente o link de um colega. Nenhum dado é compartilhado.",
+    "shareMessage": "Olá, {patient}! Indico {colleague} ({specialty}). Para marcar, acesse: {link}",
+    "empty": "Você ainda não adicionou colegas."
   }
 }

@@ -122,5 +122,9 @@
   "migration-134": {
     "met": true,
     "what": "Migration 134 is applied on production (9a, 3 Oct; mobile #320): the database refuses deleting a patient who has appointments (any status), from any app version or the website. Gates the Help P3 / App Map sentence saying the server refuses it."
+  },
+  "multi-practice-live": {
+    "met": false,
+    "what": "1.5.0 secretaries serving several doctors are live: migration 163 applied (it is) AND server_flags.multi_practice_secretary on (after the min_version raise + Vitor's OK) AND the app's switcher in a RELEASED store build AND liveFeatures.multiPractice true on the website AND the 1.5.0 privacy text live with its version bump. Gates Help C4's multi-doctor sentence and the App Map's switcher rule."
   }
 }

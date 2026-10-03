@@ -17,6 +17,7 @@ import { getPracticeCountry } from "@/lib/practiceCountry";
 import { statusReasonLive } from "@/lib/statusReason";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
+import { actingPracticeFor } from "@/lib/effectiveProfId";
 
 function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
 function addDaysTo(dateStr: string, n: number) {
@@ -69,8 +70,9 @@ export default async function SchedulePage({
     .maybeSingle();
 
   const isSecretary = userRoleData?.role === "secretary";
+  // A secretary: the doctor chosen in the switcher (1.5.0), else her primary.
   const effectiveProfId = isSecretary
-    ? (userRoleData?.invited_by_professional_id as string | null) ?? user.id
+    ? (await actingPracticeFor((userRoleData?.invited_by_professional_id as string | null) ?? null, user.id)) ?? user.id
     : user.id;
 
   // Amounts are in the practice's currency (its country), not the UI's.

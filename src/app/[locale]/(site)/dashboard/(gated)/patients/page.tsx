@@ -9,6 +9,7 @@ import { patientIdKind } from "@/lib/patientIds";
 import { conditionMet } from "@/lib/conditions";
 import { INVITE_COLUMNS, isNewInvited, type InviteFields } from "@/lib/invitedPatients";
 import { AutoRefresh } from "@/components/AutoRefresh";
+import { actingPracticeFor } from "@/lib/effectiveProfId";
 
 export default async function PatientsPage({
   params,
@@ -38,8 +39,9 @@ export default async function PatientsPage({
     .eq("user_id", user.id)
     .maybeSingle();
 
+  // A secretary: the doctor chosen in the switcher (1.5.0), else her primary.
   const effectiveProfId = userRoleData?.role === "secretary"
-    ? (userRoleData?.invited_by_professional_id as string | null) ?? user.id
+    ? (await actingPracticeFor((userRoleData?.invited_by_professional_id as string | null) ?? null, user.id)) ?? user.id
     : user.id;
 
   // Paged and searched in the database: a response is capped at 1000 rows,

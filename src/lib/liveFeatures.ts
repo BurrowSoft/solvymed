@@ -46,6 +46,11 @@ export const liveFeatures = {
   // testing against migration 161; flips to true when 1.5.0 is released,
   // with the privacy text and its version bump.
   myBrand: foundersPreview,
+  // 1.5.0 secretaries serving several doctors (migration 163): the doctor
+  // switcher and the x-acting-practice header. Previews only until the
+  // release; a second practice is also refused server-side until
+  // server_flags.multi_practice_secretary is on.
+  multiPractice: foundersPreview,
 } as const;
 
 // The languages the app's PDFs are generated in today (UX, verified on the
