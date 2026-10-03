@@ -1554,7 +1554,7 @@
     "emailWaitlist": "現在 {system} の枠は満員のため、キャンセル待ちに登録されています。",
     "emailNoFiles": "まだファイルは送らないでください。採用された場合、テスト用エクスポートの作成方法をご説明します。",
     "emailSign": "SolvyMed チーム",
-    "emailTagline": "クリニック管理をシンプルに",
+    "emailTagline": "Your practice, your brand.",
     "emailHelloTitled": "{title} {name} 様",
     "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },

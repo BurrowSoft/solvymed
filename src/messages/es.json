@@ -1554,7 +1554,7 @@
     "emailWaitlist": "Las plazas para {system} están completas por ahora, así que estás en la lista de espera.",
     "emailNoFiles": "Por favor, no envíes ningún archivo todavía; si te aceptamos, te explicaremos cómo crear una exportación de prueba.",
     "emailSign": "El equipo de SolvyMed",
-    "emailTagline": "Gestión de clínica simplificada",
+    "emailTagline": "Tu consultorio, tu marca.",
     "emailHelloTitled": "Hola, {title} {name}:",
     "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },

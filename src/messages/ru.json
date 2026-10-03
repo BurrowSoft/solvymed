@@ -1554,7 +1554,7 @@
     "emailWaitlist": "Места для {system} сейчас заняты, поэтому вы в листе ожидания.",
     "emailNoFiles": "Пожалуйста, пока не присылайте файлы; если вас примут, мы объясним, как создать тестовую выгрузку.",
     "emailSign": "Команда SolvyMed",
-    "emailTagline": "Управление клиникой — просто",
+    "emailTagline": "Your practice, your brand.",
     "emailHelloTitled": "Здравствуйте, {title} {name}!",
     "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },

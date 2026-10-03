@@ -1554,7 +1554,7 @@
     "emailWaitlist": "Các suất cho {system} hiện đã đủ, nên bạn đang trong danh sách chờ.",
     "emailNoFiles": "Vui lòng chưa gửi tệp nào; nếu được chấp nhận, chúng tôi sẽ hướng dẫn cách tạo bản xuất thử.",
     "emailSign": "Đội ngũ SolvyMed",
-    "emailTagline": "Quản lý phòng khám thật đơn giản",
+    "emailTagline": "Your practice, your brand.",
     "emailHelloTitled": "Chào {title} {name},",
     "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },

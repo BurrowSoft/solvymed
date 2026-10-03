@@ -1554,7 +1554,7 @@
     "emailWaitlist": "Die Plätze für {system} sind derzeit vergeben, daher stehen Sie auf der Warteliste.",
     "emailNoFiles": "Bitte senden Sie noch keine Dateien; wenn Sie angenommen werden, erklären wir Ihnen, wie Sie einen Testexport erstellen.",
     "emailSign": "Das SolvyMed-Team",
-    "emailTagline": "Praxisverwaltung, ganz einfach",
+    "emailTagline": "Ihre Praxis, Ihre Marke.",
     "emailHelloTitled": "Hallo {title} {name},",
     "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
