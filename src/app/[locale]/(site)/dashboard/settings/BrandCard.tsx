@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "./SettingsClient";
@@ -40,6 +40,18 @@ export function BrandCard({ uid, brand, fallback, country }: {
   const [title, setTitle] = useState(brand?.title ?? "");
   const [specialty, setSpecialty] = useState(brand?.specialty ?? "");
   const [registrationLine, setRegistrationLine] = useState(brand?.registrationLine ?? "");
+  // The text fields are uncontrolled (as the auth forms, #332): text typed
+  // before hydration on a slow load, or autofilled, is never wiped by a
+  // re-render (3e). Typing updates the preview; the mount syncs the
+  // preview from whatever is already in the fields; Save reads the fields.
+  const fields = useRef<HTMLDivElement>(null);
+  const read = (id: string) => (fields.current?.querySelector<HTMLInputElement>(`#${id}`)?.value ?? "");
+  useEffect(() => {
+    setTitle(read("brand-title"));
+    setDisplayName(read("brand-name"));
+    setSpecialty(read("brand-specialty"));
+    setRegistrationLine(read("brand-registration"));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [accent, setAccent] = useState<string | null>(brand?.accentColor ?? null);
   const [state, setState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [busy, setBusy] = useState<null | BrandImageKind>(null);
@@ -51,7 +63,10 @@ export function BrandCard({ uid, brand, fallback, country }: {
 
   async function save() {
     setState("saving");
-    const res = await saveMyBrand(createClient(), { displayName, title, specialty, registrationLine, accentColor: accent });
+    const res = await saveMyBrand(createClient(), {
+      displayName: read("brand-name"), title: read("brand-title"), specialty: read("brand-specialty"),
+      registrationLine: read("brand-registration"), accentColor: accent,
+    });
     setState(res.ok ? "saved" : "error");
     if (res.ok) router.refresh();
   }
@@ -88,8 +103,8 @@ export function BrandCard({ uid, brand, fallback, country }: {
   const field = (id: string, label: string, value: string, set: (v: string) => void, max: number, placeholder?: string, hint?: string) => (
     <div>
       <label htmlFor={id} className="field-label">{label}</label>
-      <input id={id} type="text" value={value} maxLength={max} placeholder={placeholder}
-        onChange={(e) => { set(e.target.value); setState("idle"); }} className="text-input" />
+      <input id={id} type="text" defaultValue={value} maxLength={max} placeholder={placeholder}
+        onInput={(e) => { set(e.currentTarget.value); setState("idle"); }} className="text-input" />
       {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
     </div>
   );
@@ -97,7 +112,7 @@ export function BrandCard({ uid, brand, fallback, country }: {
   return (
     <Card title={t("title")} description={t("hint")} id="brand">
       <div data-testid="brand-card" className="space-y-5">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div ref={fields} className="grid gap-4 sm:grid-cols-2">
           {field("brand-title", t("titleLabel"), title, setTitle, BRAND_LIMITS.title)}
           {field("brand-name", t("displayName"), displayName, setDisplayName, BRAND_LIMITS.displayName, fallback.fullName, t("displayNameHint"))}
           {field("brand-specialty", t("specialty"), specialty, setSpecialty, BRAND_LIMITS.specialty, fallback.specialty || undefined)}
