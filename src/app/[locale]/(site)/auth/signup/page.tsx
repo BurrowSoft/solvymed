@@ -18,6 +18,7 @@ import { track } from "@/lib/track";
 import { browserTimeZone, COUNTRY_STEP, countryStepHref, parseCountryChoice, signupCountryCookie, signupCountryMetadata } from "@/lib/signupCountry";
 import { thaiEnabled } from "@/lib/publicLocales";
 import { consentMetadata } from "@/lib/legalVersions";
+import { fieldValue } from "@/lib/formField";
 import { titleExamples } from "@/lib/country";
 import { conditionMet } from "@/lib/conditions";
 
@@ -49,8 +50,10 @@ export default function SignupPage() {
   const secretaryCode = isWellFormedSecretaryCode(rawSecretaryCode) ? rawSecretaryCode : "";
   const isSecretaryFlow = !!secretaryCode;
 
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  // The name, email, password and invite-code fields are uncontrolled and
+  // read from the form on submit (as login, #332): a controlled field held
+  // React's copy, and any re-render wrote it back over an autofilled value
+  // or one typed before hydration (e7).
   // The invite's own email, once secretary invites are emailed (151): shown
   // and locked, so the account matches the invite. BROWSER ONLY, like the
   // other invite RPCs; null (closed/unknown) or an error leaves it typed.
@@ -63,14 +66,10 @@ export default function SignupPage() {
       .then(({ data, error }) => {
         if (cancelled || error || typeof data !== "string" || !data) return;
         setLockedEmail(data);
-        setEmail(data);
       });
     return () => { cancelled = true; };
   }, [isSecretaryFlow, secretaryCode]);
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<Role>(isJoinFlow ? "patient" : isSecretaryFlow ? "secretary" : "professional");
-  const [inviteCode, setInviteCode] = useState(joinCode);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -102,8 +101,19 @@ export default function SignupPage() {
   const localePath = (path: string) =>
     locale === "en" ? path : `/${locale}${path}`;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // What's really in the fields (the invite-code field sits outside the
+    // form, joined by form="signup-form"; hidden in the join flow, where
+    // the link's code is used). A locked invite email is the invite's.
+    // By id, never by name (lib/formField: a pre-hydration submit must not
+    // put any value, the password included, in a URL).
+    const field = (id: string) => fieldValue(e.currentTarget, id);
+    const fullName = field("signup-full-name").trim();
+    const email = lockedEmail ?? field("signup-email").trim();
+    const password = field("signup-password");
+    const confirmPassword = field("signup-confirm-password");
+    const inviteCode = isJoinFlow ? joinCode : field("signup-invite-code");
     setError("");
 
     if (password.length < MIN_PASSWORD_LENGTH) {
@@ -355,8 +365,10 @@ export default function SignupPage() {
         )}
 
         {/* Invite code — patients only, hidden when joining via link */}
-        {!isJoinFlow && role === "patient" && (
-          <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4">
+        {/* Hidden, not unmounted, for other roles: the field is
+            uncontrolled, so a typed code survives switching roles (9a). */}
+        {!isJoinFlow && (
+          <div hidden={role !== "patient"} className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4">
             <label htmlFor="signup-invite-code" className="block text-sm font-semibold text-slate-700 mb-1">
               {t("signup.inviteCode")} <span className="text-red-500">*</span>
             </label>
@@ -367,8 +379,12 @@ export default function SignupPage() {
               // translated signup.inviteCodeRequired that handleSubmit shows.
               aria-required="true"
               form="signup-form"
-              value={inviteCode}
-              onChange={(e) => setInviteCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6))}
+              // Normalised in place as it's typed (A–Z, 0–9, 6 at most).
+              onInput={(e) => {
+                const el = e.currentTarget;
+                const clean = el.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
+                if (clean !== el.value) el.value = clean;
+              }}
               placeholder={t("signup.inviteCodePlaceholder")}
               maxLength={6}
               className="w-full rounded-xl border border-teal-200 bg-white px-4 py-3 text-base font-mono tracking-widest uppercase text-slate-900 placeholder:text-slate-400 placeholder:normal-case placeholder:tracking-normal focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
@@ -383,14 +399,13 @@ export default function SignupPage() {
           </div>
         )}
 
-        <form id="signup-form" onSubmit={handleSubmit} className="space-y-4">
+        <form id="signup-form" method="post" onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="field-label">{t("signup.fullName")}</label>
             <input
               type="text"
+              id="signup-full-name"
               required
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
               autoComplete="name"
               className="text-input"
             />
@@ -401,24 +416,22 @@ export default function SignupPage() {
           </div>
           <div>
             <label className="field-label">{t("signup.email")}</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              readOnly={!!lockedEmail}
-              autoComplete="email"
-              className={`text-input ${lockedEmail ? "bg-slate-50" : ""}`}
-            />
+            {/* A locked invite email is the server's value (read-only); a
+                typed one is the browser's. Separate keys: never one input
+                switching between the two. */}
+            {lockedEmail ? (
+              <input key="locked" id="signup-email" type="email" value={lockedEmail} readOnly autoComplete="email" className="text-input bg-slate-50" />
+            ) : (
+              <input key="typed" id="signup-email" type="email" required autoComplete="email" className="text-input" />
+            )}
             {lockedEmail && <p data-testid="invite-email-locked" className="mt-1.5 text-xs text-slate-500">{t("signup.secretaryInviteFor", { email: lockedEmail })}</p>}
           </div>
           <div>
             <label className="field-label">{t("signup.password")}</label>
             <input
               type="password"
+              id="signup-password"
               required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               autoComplete="new-password"
               className="text-input"
             />
@@ -427,9 +440,8 @@ export default function SignupPage() {
             <label className="field-label">{t("signup.confirmPassword")}</label>
             <input
               type="password"
+              id="signup-confirm-password"
               required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
               autoComplete="new-password"
               className="text-input"
             />
@@ -440,7 +452,6 @@ export default function SignupPage() {
           <label className="flex items-start gap-2.5 text-sm text-slate-600">
             <input
               type="checkbox"
-              name="consent"
               required
               className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-teal-600 focus:ring-teal-500"
             />

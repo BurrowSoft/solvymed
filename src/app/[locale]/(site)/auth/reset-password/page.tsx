@@ -12,6 +12,7 @@ import { IconBadge } from "@/components/IconBadge";
 import { MIN_PASSWORD_LENGTH } from "@/lib/password";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { endOtherSessions } from "@/lib/endOtherSessions";
+import { fieldValue } from "@/lib/formField";
 
 type PageState = "loading" | "form" | "success" | "error";
 
@@ -23,8 +24,6 @@ export default function ResetPasswordPage() {
   const router = useRouter();
 
   const [pageState, setPageState] = useState<PageState>("loading");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   // One submit at a time (a double-click lands before the disabled re-render).
@@ -61,8 +60,12 @@ export default function ResetPasswordPage() {
       });
   }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // Uncontrolled and read from the form (as login, #332): a controlled
+    // field's re-render could wipe a password manager's generated value (e7).
+    const newPassword = fieldValue(e.currentTarget, "reset-new-password");
+    const confirmPassword = fieldValue(e.currentTarget, "reset-confirm-password");
     setError("");
 
     if (newPassword.length < MIN_PASSWORD_LENGTH) {
@@ -167,7 +170,7 @@ export default function ResetPasswordPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form method="post" onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="field-label">
               {t("resetPassword.newPassword")}
@@ -175,8 +178,7 @@ export default function ResetPasswordPage() {
             <input
               type="password"
               required
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              id="reset-new-password"
               autoComplete="new-password"
               className="text-input"
             />
@@ -188,8 +190,7 @@ export default function ResetPasswordPage() {
             <input
               type="password"
               required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              id="reset-confirm-password"
               autoComplete="new-password"
               className="text-input"
             />
