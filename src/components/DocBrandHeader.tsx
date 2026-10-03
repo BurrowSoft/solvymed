@@ -18,7 +18,7 @@ export function DocBrandHeader({ brand }: { brand: DocBrand }) {
       <div className="min-w-0">
         <div className="text-[16px] font-extrabold text-[#1A2138]">{brand.name}</div>
         {brand.specialty && <div className="text-[12px] text-[#6B7A99]">{brand.specialty}</div>}
-        {brand.registration && <div className="text-[12px] font-semibold" style={{ color: brand.color }}>{brand.registration}</div>}
+        {brand.registration && <div className="text-[12px] text-[#6B7A99]">{brand.registration}</div>}
       </div>
     </div>
   );

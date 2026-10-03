@@ -62,6 +62,17 @@ describe("Minha marca", () => {
     });
   });
 
+  it("text typed before hydration (no events) is kept and saved; typing updates the preview", async () => {
+    show();
+    (document.getElementById("brand-specialty") as HTMLInputElement).value = "Pediatria"; // no event, as autofill
+    fireEvent.input(screen.getByLabelText(t.displayName), { target: { value: "Bia Lima" } });
+    expect(screen.getByTestId("brand-preview-light")).toHaveTextContent("Bia Lima");
+    fireEvent.click(screen.getByRole("button", { name: t.save }));
+    await waitFor(() => expect(h.rpc).toHaveBeenCalled());
+    expect(h.rpc.mock.calls[0][1]).toMatchObject({ p_display_name: "Bia Lima", p_specialty: "Pediatria" });
+    expect((document.getElementById("brand-specialty") as HTMLInputElement).value).toBe("Pediatria");
+  });
+
   it("the default blue is saved as no colour (the app's default)", async () => {
     show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: "#dc2626", logoSquareUrl: null, logoWideUrl: null, photoUrl: null, own: { logo_square: false, logo_wide: false, photo: false }, saved: true });
     fireEvent.click(screen.getByRole("radio", { name: "#116e99" }));
