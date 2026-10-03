@@ -397,6 +397,10 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     rule: { text: "Founders Program (accepted founders, doctors only, website only): Settings → \"Programa Fundadores\" / \"Founders Program\" has the steps to create a TEST export (fake patients only), the call link and the upload (CSV, XLSX, XLS or ZIP, up to 20 MB, 20 files; the doctor confirms before each file that it has only test patients). SolvyAI can’t upload files; it explains where to do it.", pending: ["founders-upload-live"] },
     help: "C10",
   },
+  {
+    rule: { text: "My brand (Settings → \"Minha marca\" / \"My brand\", doctors only): the name, title, specialty and registration line patients see, an accent colour (presets or any colour; shown adjusted when needed so text stays readable) and a logo (PNG/JPG; a square and a wide version are made, the whole logo kept) plus an optional photo. Empty fields use the profile's own; no logo shows the initials in the colour; no colour uses SolvyMed's blue. The brand shows on the doctor's booking page and public invite link (not on a patient's personal invite page), emails to patients and printed documents; the logo and photo are public. SolvyAI doesn't change the brand; it points to Settings → My brand.", pending: ["brand-live"] },
+    help: "C11",
+  },
 ];
 
 // Things SolvyAI never does, not even with confirmation (spec §3 "Never"):

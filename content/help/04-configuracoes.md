@@ -134,3 +134,21 @@ For accepted founders (doctors only), on the website: **Settings → Founders Pr
 Upload CSV, XLSX, XLS or ZIP, up to 20 MB per file and up to 20 files. Before each upload, tick the confirmation that the file contains only test patients. Files are kept in a private place only the SolvyMed team can see and are deleted after 180 days, or sooner: when your system’s importer ships, if you leave the program, or if you delete your account.
 `open:settings`
 `requires:founders-upload-live`
+
+---
+
+## C11. Minha marca / My brand
+**pt-BR**
+Em **Configurações → Minha marca**, escolha como os pacientes veem você: o nome, o título (Dr., Dra.), a especialidade, a linha do registro, uma cor, o seu logo e uma foto.
+Campos vazios usam o nome, a especialidade e o registro do seu perfil. Sem logo, aparecem as suas iniciais na sua cor; sem cor, o azul do SolvyMed.
+Envie o logo em PNG ou JPG: criamos uma versão quadrada e uma larga, sempre com o logo inteiro. A foto é opcional.
+Se a cor escolhida for clara ou escura demais para ler um texto, ela é ajustada só na exibição, e a prévia mostra como fica.
+A sua marca aparece na sua página de agendamento e no seu link de convite público, nos e-mails aos pacientes e nos documentos impressos (receitas, recibos, histórico). O logo e a foto são públicos, porque os pacientes os veem nessas páginas.
+**en**
+In **Settings → My brand**, choose how patients see you: the name, title (Dr., Dra.), specialty, registration line, a colour, your logo and a photo.
+Empty fields use your profile's name, specialty and registration. With no logo, your initials show in your colour; with no colour, SolvyMed's blue.
+Upload the logo as PNG or JPG: we make a square and a wide version, always with the whole logo. The photo is optional.
+If the colour you choose is too light or too dark for text, it's adjusted only where it's shown, and the preview shows how it looks.
+Your brand shows on your booking page and your public invite link, in emails to patients and on printed documents (prescriptions, receipts, history). The logo and photo are public, because patients see them on those pages.
+`open:settings`
+`requires:brand-live`

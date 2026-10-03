@@ -19,6 +19,8 @@ import { ExportPatientsCard } from "./ExportPatientsCard";
 import { AppearanceCard } from "./AppearanceCard";
 import { SubscriptionPanel } from "./SubscriptionPanel";
 import { FoundersCard } from "./FoundersCard";
+import { BrandCard } from "./BrandCard";
+import { loadPracticeBrand } from "@/lib/brand";
 import { isAccessAllowed, planSummary, type EffectiveSub } from "@/lib/subscription";
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
@@ -179,6 +181,9 @@ export default async function SettingsPage({
     ? await supabase.from("professionals").select("clinic_tax_id").eq("id", user.id).maybeSingle()
     : null;
   const showTaxId = !!taxIdResult && !taxIdResult.error;
+  // 1.5.0 "My brand" (flag; Previews only until the release). null while
+  // migration 161 isn't there: the card opens empty with the defaults.
+  const brand = liveFeatures.myBrand ? await loadPracticeBrand(supabase, user.id) : null;
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl">
@@ -202,6 +207,18 @@ export default async function SettingsPage({
           registration={(prof as { professional_registration?: string | null }).professional_registration ?? undefined}
           country={practiceCountry}
         />
+
+        {liveFeatures.myBrand && (
+          <BrandCard
+            uid={user.id}
+            brand={brand}
+            fallback={{
+              fullName: prof.full_name ?? "",
+              specialty: prof.specialty ?? "",
+              registration: (prof as { professional_registration?: string | null }).professional_registration ?? "",
+            }}
+          />
+        )}
 
         {!locked && <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} country={practiceCountry} />}
 
