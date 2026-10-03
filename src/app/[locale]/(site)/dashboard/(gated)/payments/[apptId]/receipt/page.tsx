@@ -11,7 +11,7 @@ import { PRINT_CSS, docDate, docTime, toDocTemplate } from "@/lib/prescriptionDo
 import { readPracticeHeader } from "@/lib/practiceHeader";
 import { PrintToolbar } from "@/components/PrintToolbar";
 import { liveFeatures } from "@/lib/liveFeatures";
-import { brandSigner, brandedDocTemplate, loadPracticeBrand } from "@/lib/brand";
+import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { RECEITA_SAUDE_NOTE, ReceiptDocument } from "./ReceiptDocument";
 
 // The recibo's print view (Help G5 on the website; UX 36): the app's simple
@@ -70,7 +70,7 @@ export default async function ReceiptPrintPage({
     // The doctor's brand (1.5.0, behind the flag); a secretary may read it.
     liveFeatures.myBrand ? loadPracticeBrand(supabase, profId) : Promise.resolve(null),
   ]);
-  const signer = brandSigner(brand, { name: header.fullName, registration: header.registration });
+  const baseTemplate = toDocTemplate(header.template);
   const patient = patientResult.data as { full_name: string; cpf: string | null; passport_number: string | null } | null;
   const idLines: string[] = [];
   if (profile.patientId === "cpf" && str(patient?.cpf)) idLines.push(`${tIds("cpf")}: ${patient!.cpf}`);
@@ -89,7 +89,8 @@ export default async function ReceiptPrintPage({
       <PrintToolbar backHref={back} backLabel={t("backToPayments")} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">
         <ReceiptDocument
-          template={brandedDocTemplate(toDocTemplate(header.template), brand)}
+          template={brandedDocTemplate(baseTemplate, brand)}
+          brand={docBrand(baseTemplate, brand)}
           labels={{
             title: t("receiptTitle"), patient: t("patient"), services: t("services"), description: t("description"), amount: t("amount"),
             total: t("total"), payment: t("payment"), online: t("online"), inPerson: t("inPerson"), privatePay: t("privatePay"),
@@ -99,7 +100,7 @@ export default async function ReceiptPrintPage({
           idLines={idLines}
           number={`${date.replace(/-/g, "")}-${apptId.slice(0, 6).toUpperCase()}`}
           date={docDate(country, date)}
-          provider={[[signer.name, signer.registration].filter(Boolean).join(" · "), brand?.specialty.trim() || header.specialty].filter(Boolean).join(" — ")}
+          provider={[[header.fullName, header.registration].filter(Boolean).join(" · "), header.specialty].filter(Boolean).join(" — ")}
           clinic={[header.clinicName, profile.clinicTaxId === "cnpj" && header.clinicCnpj ? `CNPJ ${formatCnpj(header.clinicCnpj)}` : null].filter(Boolean).join(" · ")}
           address={[header.address, header.city, header.state].filter(Boolean).join(", ")}
           service={String(a.consultation_type ?? "")}

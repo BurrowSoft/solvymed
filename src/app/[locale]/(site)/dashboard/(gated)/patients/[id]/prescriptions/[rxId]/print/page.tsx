@@ -5,7 +5,7 @@ import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { PRINT_CSS, docDate, toDocTemplate } from "@/lib/prescriptionDoc";
 import { liveFeatures } from "@/lib/liveFeatures";
-import { brandSigner, brandedDocTemplate, loadPracticeBrand } from "@/lib/brand";
+import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { PrescriptionDocument } from "./PrescriptionDocument";
 import { AccessLogFailed, logAccesses } from "@/components/printAccess";
 import { PrintToolbar } from "@/components/PrintToolbar";
@@ -58,9 +58,10 @@ export default async function PrescriptionPrintPage({
   }
 
   const prof = profResult.data as { full_name: string | null; professional_registration: string | null } | null;
-  // The doctor's brand (1.5.0, behind the flag): colour, logo, signer.
+  // The doctor's brand (1.5.0, behind the flag): the colour, logo and
+  // header block, as the app's PDF; the signature stays the legal identity.
   const brand = liveFeatures.myBrand ? await loadPracticeBrand(supabase, user.id) : null;
-  const signer = brandSigner(brand, { name: prof?.full_name ?? null, registration: prof?.professional_registration?.trim() ? prof.professional_registration : null });
+  const baseTemplate = toDocTemplate(templateResult.data as Record<string, unknown> | null);
 
   return (
     // A light scope: the print view stays light in the dashboard's dark
@@ -70,7 +71,8 @@ export default async function PrescriptionPrintPage({
       <PrintToolbar backHref={`${prefix}/dashboard/patients/${patient.id}`} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">
         <PrescriptionDocument
-          template={brandedDocTemplate(toDocTemplate(templateResult.data as Record<string, unknown> | null), brand)}
+          template={brandedDocTemplate(baseTemplate, brand)}
+          brand={docBrand(baseTemplate, brand)}
           labels={{
             title: t("title"), patient: t("patient"), date: t("date"), medications: t("medications"),
             medication: t("medication"), dosage: t("dosage"), frequency: t("frequency"), duration: t("duration"),
@@ -82,8 +84,8 @@ export default async function PrescriptionPrintPage({
           corrected={(correctionResult.data ?? []).length > 0}
           items={rx.prescription_items ?? []}
           notes={rx.notes?.trim() ? rx.notes : null}
-          signerName={signer.name ?? ""}
-          signerRegistration={signer.registration}
+          signerName={prof?.full_name ?? ""}
+          signerRegistration={prof?.professional_registration?.trim() ? prof.professional_registration : null}
         />
       </div>
     </div>

@@ -7,7 +7,7 @@
 // photo / document logo) is used only when the matching path is unset.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { BrandImageTooLarge, BrandNotAnImage, renderBrandImage, type BrandImageKind } from "./brandImage";
-import { isAccentHex, readableAccent } from "./readableAccent";
+import { brandInitials, isAccentHex, readableAccent } from "./readableAccent";
 import type { DocTemplate } from "./prescriptionDoc";
 
 export const BRAND_BUCKET = "brand-assets";
@@ -28,6 +28,9 @@ export type PracticeBrandRow = {
   photo_path: string | null;
   legacy_photo_url: string | null;
   legacy_logo_url: string | null;
+  // The doctor has saved My brand (migration 162, mobile #319; never null
+  // there). Missing (before 162) = not saved.
+  saved?: boolean | null;
 };
 
 export type Brand = {
@@ -42,6 +45,8 @@ export type Brand = {
   // Whether each asset is the doctor's own 1.5.0 upload (removable here)
   // rather than a legacy image.
   own: Record<BrandImageKind, boolean>;
+  // My brand was saved (text or an image): only then do documents change.
+  saved: boolean;
 };
 
 export function assetUrl(supabase: Pick<SupabaseClient, "storage">, path: string | null | undefined): string | null {
@@ -60,6 +65,7 @@ export function toBrand(supabase: Pick<SupabaseClient, "storage">, row: Practice
     logoWideUrl: assetUrl(supabase, row?.logo_wide_path) ?? row?.legacy_logo_url ?? null,
     photoUrl: assetUrl(supabase, row?.photo_path) ?? row?.legacy_photo_url ?? null,
     own: { logo_square: !!row?.logo_square_path, logo_wide: !!row?.logo_wide_path, photo: !!row?.photo_path },
+    saved: row?.saved === true,
   };
 }
 
@@ -97,27 +103,47 @@ export function publicFromPractice(b: Brand | null, fallback: { name: string; sp
 }
 
 // The brand on a printed document (prescription, history, receipt; 1.5.0,
-// behind the flag). Only what the doctor set overrides the document
-// template: a chosen accent (darkened until readable on white paper, e7's
-// Q4: it prints in black and white too) and their own logo (the wide one,
-// else the square one). An unset accent keeps the template's colours.
+// behind the flag), the same as the app's PDFs (#318, design §1):
+// - only once the doctor SAVED My brand (e7): otherwise exactly as today;
+// - the colour: the chosen accent made readable on white (it prints in
+//   black and white too; e7 Q4); no accent: the template's colour as is;
+// - the logo: the doctor's own wide logo, else the own square one, else the
+//   template's logo;
+// - a header block: that logo, else the initials in the colour, then the
+//   title + display name, the specialty and the registration line (the RPC
+//   falls back to the profile's own for empty fields).
+// The signature stays the legal identity (full_name + registration; e7).
+export type DocBrand = {
+  logoUrl: string | null;
+  initials: string;
+  color: string;
+  name: string;
+  specialty: string;
+  registration: string;
+};
+
 export function brandedDocTemplate(t: DocTemplate, b: Brand | null): DocTemplate {
-  if (!b) return t;
+  // e7: a doctor who has not saved My brand prints exactly as today.
+  if (!b?.saved) return t;
+  // A chosen accent, readable on white; no accent: the template's colour
+  // exactly as it is (the same as the app's #318).
   const accent = isAccentHex(b.accentColor) ? readableAccent(b.accentColor, "#ffffff") : null;
-  const logo = b.own.logo_wide ? b.logoWideUrl : b.own.logo_square ? b.logoSquareUrl : null;
-  return {
-    ...t,
-    ...(accent ? { primaryColor: accent, accentColor: accent } : {}),
-    ...(logo ? { logoUrl: logo } : {}),
-  };
+  const logo = b.own.logo_wide ? b.logoWideUrl : b.own.logo_square ? b.logoSquareUrl : t.logoUrl;
+  return { ...t, ...(accent ? { primaryColor: accent, accentColor: accent } : {}), logoUrl: logo };
 }
 
-// Who signs: the brand's title + display name and registration line (the
-// RPC already falls back to the profile's own when unset).
-export function brandSigner(b: Brand | null, fallback: { name: string | null; registration: string | null }): { name: string | null; registration: string | null } {
-  if (!b) return fallback;
+export function docBrand(t: DocTemplate, b: Brand | null): DocBrand | null {
+  if (!b?.saved) return null;
+  const branded = brandedDocTemplate(t, b);
   const name = [b.title, b.displayName].map((s) => s.trim()).filter(Boolean).join(" ");
-  return { name: name || fallback.name, registration: b.registrationLine.trim() || fallback.registration };
+  return {
+    logoUrl: branded.logoUrl,
+    initials: brandInitials(name),
+    color: branded.primaryColor,
+    name,
+    specialty: b.specialty.trim(),
+    registration: b.registrationLine.trim(),
+  };
 }
 
 export type BrandTextFields = { displayName: string; title: string; specialty: string; registrationLine: string; accentColor: string | null };

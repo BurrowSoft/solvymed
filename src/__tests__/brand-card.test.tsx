@@ -63,7 +63,7 @@ describe("Minha marca", () => {
   });
 
   it("the default blue is saved as no colour (the app's default)", async () => {
-    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: "#dc2626", logoSquareUrl: null, logoWideUrl: null, photoUrl: null, own: { logo_square: false, logo_wide: false, photo: false } });
+    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: "#dc2626", logoSquareUrl: null, logoWideUrl: null, photoUrl: null, own: { logo_square: false, logo_wide: false, photo: false }, saved: true });
     fireEvent.click(screen.getByRole("radio", { name: "#116e99" }));
     fireEvent.click(screen.getByRole("button", { name: t.save }));
     await waitFor(() => expect(h.rpc).toHaveBeenCalled());
@@ -111,7 +111,7 @@ describe("Minha marca", () => {
   });
 
   it("Remover asks first; Cancelar keeps the image, Remover removes it", async () => {
-    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: null, logoSquareUrl: null, logoWideUrl: null, photoUrl: "https://x/p.png", own: { logo_square: false, logo_wide: false, photo: true } });
+    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: null, logoSquareUrl: null, logoWideUrl: null, photoUrl: "https://x/p.png", own: { logo_square: false, logo_wide: false, photo: true }, saved: true });
     const photo = screen.getByTestId("brand-photo");
     fireEvent.click(within(photo).getByRole("button", { name: t.remove }));
     expect(screen.getByTestId("brand-photo-remove")).toHaveTextContent(t.removeTitle);
@@ -139,7 +139,7 @@ describe("Minha marca", () => {
   });
 
   it("Remover only for the doctor's own images (not a legacy one)", () => {
-    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: null, logoSquareUrl: "https://x/legacy.png", logoWideUrl: null, photoUrl: "https://x/p.png", own: { logo_square: false, logo_wide: false, photo: true } });
+    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: null, logoSquareUrl: "https://x/legacy.png", logoWideUrl: null, photoUrl: "https://x/p.png", own: { logo_square: false, logo_wide: false, photo: true }, saved: true });
     expect(screen.getByTestId("brand-logo-square")).not.toHaveTextContent(t.remove);
     expect(screen.getByTestId("brand-photo")).toHaveTextContent(t.remove);
   });
