@@ -9,6 +9,8 @@ import { SaveMyLocale } from "@/components/SaveMyLocale";
 import { cookies } from "next/headers";
 import { parseCountryChoice, patientLanguageTarget, pickApplies, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 import { countryProfile } from "@/lib/country";
+import { loadMyDoctors, serverFlag } from "@/lib/myDoctors";
+import { liveFeatures } from "@/lib/liveFeatures";
 
 export type PatientAppointment = {
   id: string;
@@ -139,6 +141,11 @@ export default async function MyAppointmentsPage({
 
   // The one-time "connected to {clinic}" card, once per clinic (migration 103).
   const flags = await getOnboardingFlags(supabase);
+  // 1.5.0 (behind the flag): the patient's doctors (get_my_doctors, the
+  // only doctor list a patient reads) and whether the server lets them add
+  // another one yet.
+  const doctors = liveFeatures.multiDoctor ? await loadMyDoctors(supabase) : null;
+  const canAddDoctor = liveFeatures.multiDoctor ? await serverFlag(supabase, "multi_doctor_patient") : false;
   const connectedClinicName = flags && !flags.patient_connected_seen && flags.clinic_professional_id ? flags.clinic_name : null;
 
   return (
@@ -153,6 +160,8 @@ export default async function MyAppointmentsPage({
       myProfessionalMeta={myProfessionalMeta}
       clinicTz={clinicTz}
       practiceCountry={practiceCountry}
+      doctors={doctors}
+      canAddDoctor={canAddDoctor}
     />
     </>
   );

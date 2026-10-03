@@ -51,6 +51,11 @@ export const liveFeatures = {
   // release; a second practice is also refused server-side until
   // server_flags.multi_practice_secretary is on.
   multiPractice: foundersPreview,
+  // 1.5.0 patients with several doctors (migration 164): "Meus médicos" on
+  // Minhas consultas, "+ Adicionar médico", Desconectar, the doctor filter.
+  // Previews only until the release; adding a second doctor is also refused
+  // server-side until server_flags.multi_doctor_patient is on.
+  multiDoctor: foundersPreview,
 } as const;
 
 // The languages the app's PDFs are generated in today (UX, verified on the
