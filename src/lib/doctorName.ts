@@ -38,6 +38,34 @@ const THAI_TITLE = new RegExp(
   `^(${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร."].sort((a, b) => b.length - a.length).map((s) => s.replace(/\./g, "\\.")).join("|")})\\s*`,
 );
 
+// A Thai title at the start of a name, with its dot or, without one,
+// followed by a space ("นพ.สมชาย", "นพ สมชาย"; never "ดร" inside "ดรุณี").
+const THAI_TITLE_LOOSE = new RegExp(
+  `^(?:${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร."].map((s) => s.replace(/\.$/, "")).sort((a, b) => b.length - a.length).join("|")})(?:\\.\\s*|\\s+)`,
+);
+
+// The brand's name with its chosen title (1.5.0 My brand; e7, both
+// platforms): when a Título is set, any title the name already starts with
+// (Dr, Dra., Drª, Prof., นพ., พญ.…, with or without the dot, any case) is
+// dropped, then the Título is put in front once: "Dra." + "Dra Ana Lima" →
+// "Dra. Ana Lima". No Título: the name as it is. A Thai title ending in a
+// dot is written against the name ("นพ.สมชาย"), the usual Thai style.
+export function withBrandTitle(title: string | null | undefined, name: string | null | undefined): string {
+  const t = (title ?? "").trim();
+  let rest = (name ?? "").trim().replace(/\s+/g, " ");
+  if (!t) return rest;
+  for (let i = 0; i < MAX_TITLES; i++) {
+    const thai = rest.match(THAI_TITLE_LOOSE);
+    const latin = thai ? null : rest.match(TITLE);
+    const m = thai ?? latin;
+    if (!m) break;
+    rest = rest.slice(m[0].length).trim();
+  }
+  if (!rest) return t;
+  const attached = /^[฀-๿].*\.$/.test(t);
+  return attached ? `${t}${rest}` : `${t} ${rest}`;
+}
+
 // For a greeting (UX, "Olá, Dra. Ana!", "เรียน นพ.สมชาย"): the typed
 // title(s), as doctorDisplayName shows them, and the first name. Never a
 // title we add.

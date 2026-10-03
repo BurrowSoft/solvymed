@@ -8,6 +8,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { BrandImageTooLarge, BrandNotAnImage, renderBrandImage, type BrandImageKind } from "./brandImage";
 import { brandInitials, isAccentHex, readableAccent } from "./readableAccent";
+import { withBrandTitle } from "./doctorName";
 import type { DocTemplate } from "./prescriptionDoc";
 
 export const BRAND_BUCKET = "brand-assets";
@@ -94,7 +95,7 @@ export type PublicBrand = {
 export function publicFromPractice(b: Brand | null, fallback: { name: string; specialty: string }): PublicBrand | null {
   if (!b) return null;
   return {
-    name: [b.title, b.displayName || fallback.name].map((s) => s.trim()).filter(Boolean).join(" "),
+    name: withBrandTitle(b.title, b.displayName || fallback.name),
     specialty: b.specialty.trim() || fallback.specialty,
     accentColor: b.accentColor,
     logoUrl: b.own.logo_square ? b.logoSquareUrl : null,
@@ -135,7 +136,7 @@ export function brandedDocTemplate(t: DocTemplate, b: Brand | null): DocTemplate
 export function docBrand(t: DocTemplate, b: Brand | null): DocBrand | null {
   if (!b?.saved) return null;
   const branded = brandedDocTemplate(t, b);
-  const name = [b.title, b.displayName].map((s) => s.trim()).filter(Boolean).join(" ");
+  const name = withBrandTitle(b.title, b.displayName);
   return {
     logoUrl: branded.logoUrl,
     initials: brandInitials(name),

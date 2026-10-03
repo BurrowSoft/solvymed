@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { BRAND_LIMITS, removeBrandImage, saveMyBrand, uploadBrandImage, type Brand, type BrandFieldsRow } from "@/lib/brand";
 import { BRAND_INPUT_MAX_BYTES, BRAND_INPUT_TYPES, BrandImageTooLarge, BrandNotAnImage, type BrandImageKind } from "@/lib/brandImage";
 import { countryProfile } from "@/lib/country";
+import { withBrandTitle } from "@/lib/doctorName";
 import { brandAccent, brandInitials, DEFAULT_ACCENT, isAccentHex, readableAccent } from "@/lib/readableAccent";
 
 // Configurações → Minha marca / My brand (1.5.0, behind liveFeatures.myBrand):
@@ -65,7 +66,7 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
 
   const shown = brandAccent(accent);
   const light = readableAccent(shown, LIGHT_BG);
-  const name = [title.trim(), (displayName.trim() || fallback.fullName).trim()].filter(Boolean).join(" ");
+  const name = withBrandTitle(title, displayName.trim() || fallback.fullName);
 
   async function save() {
     setState("saving");
