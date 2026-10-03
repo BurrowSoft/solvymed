@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { assetUrl, type PublicBrand } from "@/lib/brand";
 import { brandAccent, brandInitials, readableAccent } from "@/lib/readableAccent";
+import { withBrandTitle } from "@/lib/doctorName";
 
 // The doctor's brand on a public page (1.5.0; the booking page and the
 // public invite link, never a patient's personal invite page): the logo,
@@ -38,7 +39,7 @@ export function usePublicBrand(code: string | null, enabled: boolean): PublicBra
         const row = (Array.isArray(data) ? data[0] : data) as PublicBrandRow | undefined;
         if (!row) return;
         setBrand({
-          name: [row.title, row.display_name].map((s) => (s ?? "").trim()).filter(Boolean).join(" "),
+          name: withBrandTitle(row.title, row.display_name),
           specialty: (row.specialty ?? "").trim(),
           accentColor: row.accent_color,
           logoUrl: assetUrl(supabase, row.logo_square_path),

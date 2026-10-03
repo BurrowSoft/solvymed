@@ -1,0 +1,110 @@
+{
+  "rule": "withBrandTitle(title, name): trim + collapse spaces; no Título -> the name; else drop up to 3 leading titles (Latin dott.ssa|dott|dra|dr|profa|prof|pr + dot/ª/space/end; Thai นพ พญ ทพ ทญ ทพญ ภก ภญ ดร + dot or space) then prefix the Título once; a Thai Título ending in . is attached",
+  "cases": [
+    {
+      "title": "Dra.",
+      "name": "Dra Ana Lima",
+      "expected": "Dra. Ana Lima"
+    },
+    {
+      "title": "Dra.",
+      "name": "dra. Ana Lima",
+      "expected": "Dra. Ana Lima"
+    },
+    {
+      "title": "Dra.",
+      "name": "Drª Ana Lima",
+      "expected": "Dra. Ana Lima"
+    },
+    {
+      "title": "Dr.",
+      "name": "Dra. Ana Lima",
+      "expected": "Dr. Ana Lima"
+    },
+    {
+      "title": "Dr.",
+      "name": "Prof. Dr. Carlos Melo",
+      "expected": "Dr. Carlos Melo"
+    },
+    {
+      "title": "Prof. Dr.",
+      "name": "Carlos Melo",
+      "expected": "Prof. Dr. Carlos Melo"
+    },
+    {
+      "title": "Dra.",
+      "name": "Ana Lima",
+      "expected": "Dra. Ana Lima"
+    },
+    {
+      "title": "Dra.",
+      "name": "Drauzio Varella",
+      "expected": "Dra. Drauzio Varella"
+    },
+    {
+      "title": "นพ.",
+      "name": "นพ.สมชาย ใจดี",
+      "expected": "นพ.สมชาย ใจดี"
+    },
+    {
+      "title": "นพ.",
+      "name": "นพ สมชาย ใจดี",
+      "expected": "นพ.สมชาย ใจดี"
+    },
+    {
+      "title": "พญ.",
+      "name": "Dra. Ana",
+      "expected": "พญ.Ana"
+    },
+    {
+      "title": "ดร.",
+      "name": "ดรุณี ศรีสุข",
+      "expected": "ดร.ดรุณี ศรีสุข"
+    },
+    {
+      "title": "Dra.",
+      "name": "",
+      "expected": "Dra."
+    },
+    {
+      "title": "",
+      "name": "Dra Ana Lima",
+      "expected": "Dra Ana Lima"
+    },
+    {
+      "title": null,
+      "name": "  Ana   Lima ",
+      "expected": "Ana Lima"
+    },
+    {
+      "title": "Dra.",
+      "name": "  Ana   Lima ",
+      "expected": "Dra. Ana Lima"
+    },
+    {
+      "title": "Dra.",
+      "name": "Profª Ana Lima",
+      "expected": "Dra. Ana Lima"
+    },
+    {
+      "title": "Dr.",
+      "name": "Pr. Jean Dupont",
+      "expected": "Dr. Jean Dupont"
+    },
+    {
+      "title": "Dott.",
+      "name": "Dott.ssa Maria Rossi",
+      "expected": "Dott. Maria Rossi"
+    },
+    {
+      "title": "ทพญ.",
+      "name": "ทพญ. สุดา ดีใจ",
+      "expected": "ทพญ.สุดา ดีใจ"
+    },
+    {
+      "title": "Dr.",
+      "name": "Dr. Dr. Dr. Dr. Carlos",
+      "expected": "Dr. Dr. Carlos"
+    }
+  ]
+}
