@@ -20,6 +20,8 @@ import { thaiEnabled } from "@/lib/publicLocales";
 import { consentMetadata } from "@/lib/legalVersions";
 import { titleExamples } from "@/lib/country";
 import { conditionMet } from "@/lib/conditions";
+import { liveFeatures } from "@/lib/liveFeatures";
+import { BrandHeader, usePublicBrand } from "@/components/BrandHeader";
 
 type Role = "professional" | "secretary" | "patient";
 
@@ -36,6 +38,9 @@ export default function SignupPage() {
   // the role locked to patient instead of picked.
   const joinCode = (searchParams.get("join") ?? "").toUpperCase();
   const isJoinFlow = !!joinCode;
+  // The public invite link's doctor brand (1.5.0): looked up from the
+  // browser by the public code; no brand on any error.
+  const joinBrand = usePublicBrand(joinCode || null, isJoinFlow && liveFeatures.myBrand);
 
   // Secretaries can only sign up through a doctor's invite:
   // /join/secretary/<code> sends signed-out invitees here with the code, and
@@ -316,9 +321,14 @@ export default function SignupPage() {
 
         {/* Role picker — hidden when joining via invite link */}
         {isJoinFlow ? (
-          <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4 text-sm text-teal-700">
-            {t("signup.joiningAs", { role: t("signup.rolePatient") })}
-          </div>
+          <>
+            {/* The doctor's saved brand (1.5.0, behind the flag); nothing
+                while there's none, so the page is as before. */}
+            {joinBrand && <BrandHeader brand={joinBrand} className="mb-3" />}
+            <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4 text-sm text-teal-700">
+              {t("signup.joiningAs", { role: t("signup.rolePatient") })}
+            </div>
+          </>
         ) : isSecretaryFlow ? (
           <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/50 p-4 text-sm text-teal-700">
             {t("signup.joiningAsSecretary")}
