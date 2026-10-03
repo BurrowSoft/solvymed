@@ -6,6 +6,7 @@ import { sendExpoPush } from "@/lib/push";
 import { pushText, pushWhen } from "@/lib/pushText";
 import { clinicPushTargets } from "@/lib/pushRecipient";
 import { loadMyDoctors } from "@/lib/myDoctors";
+import { liveFeatures } from "@/lib/liveFeatures";
 
 // 1.5.0 patients with several doctors (migration 164; behind
 // liveFeatures.multiDoctor). "+ Adicionar médico" and "Desconectar".
@@ -18,6 +19,8 @@ export type ConnectResult =
 // 'unavailable' (that practice removed this account) | 'invalid'. The
 // doctor's name comes from get_my_doctors (the only list a patient reads).
 export async function connectDoctor(code: string): Promise<ConnectResult> {
+  // A server action is a public endpoint: nothing before the release (9a).
+  if (!liveFeatures.multiDoctor) return { outcome: "error" };
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { outcome: "error" };
@@ -50,9 +53,14 @@ export type DisconnectResult = { ok: true } | { ok: false; code: "has_future_vis
 // patient cancels a request (\"Pedido cancelado\", once per request; never
 // free text). The doctor keeps the record.
 export async function disconnectDoctor(professionalId: string): Promise<DisconnectResult> {
+  if (!liveFeatures.multiDoctor) return { ok: false, code: "error" };
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, code: "error" };
+  // The clinic's push targets BEFORE the disconnect (9a): afterwards the
+  // patient's connection and appointments with that doctor are gone, and
+  // get_clinic_push_targets returns nobody.
+  const targets = await clinicPushTargets(supabase, professionalId);
   const { data, error } = await supabase.rpc("disconnect_doctor", { p_professional_id: professionalId });
   if (error) {
     const msg = error.message ?? "";
@@ -63,7 +71,7 @@ export async function disconnectDoctor(professionalId: string): Promise<Disconne
   const cancelled = (data ?? []) as { appointment_id: string; date: string; start_time: string }[];
   const name = (user.user_metadata?.full_name as string | undefined)?.trim() || "";
   for (const r of cancelled) {
-    for (const { locale, tokens } of await clinicPushTargets(supabase, professionalId)) {
+    for (const { locale, tokens } of targets) {
       const { title, body } = pushText(locale, "requestCancelled", { name, when: pushWhen(locale, r.date, r.start_time) });
       await sendExpoPush(tokens, title, body);
     }
