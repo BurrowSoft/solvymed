@@ -13,6 +13,7 @@ import { PrintToolbar } from "@/components/PrintToolbar";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { RECEITA_SAUDE_NOTE, ReceiptDocument } from "./ReceiptDocument";
+import { consultTypeKey } from "@/lib/consultType";
 
 // The recibo's print view (Help G5 on the website; UX 36): the app's simple
 // recibo, for the doctor AND the secretary (payments are their job). A Thai
@@ -41,9 +42,10 @@ export default async function ReceiptPrintPage({
   const a = appt as Row | null;
   if (!a || a.status === "blocked") notFound();
 
-  const [t, tIds] = await Promise.all([
+  const [t, tIds, tConsult] = await Promise.all([
     getTranslations({ locale, namespace: "prescriptionDoc" }),
     getTranslations({ locale, namespace: "patientIds" }),
+    getTranslations({ locale, namespace: "consultType" }),
   ]);
   const back = `${prefix}/dashboard/payments`;
   // The practice country decides the recibo (currency, IDs, dates; Thai →
@@ -103,7 +105,9 @@ export default async function ReceiptPrintPage({
           provider={[[header.fullName, header.registration].filter(Boolean).join(" · "), header.specialty].filter(Boolean).join(" — ")}
           clinic={[header.clinicName, profile.clinicTaxId === "cnpj" && header.clinicCnpj ? `CNPJ ${formatCnpj(header.clinicCnpj)}` : null].filter(Boolean).join(" · ")}
           address={[header.address, header.city, header.state].filter(Boolean).join(", ")}
-          service={String(a.consultation_type ?? "")}
+          // A built-in type in the reader's language ("Consultation" →
+          // "Consulta"); a clinic's own procedure name as written (d7).
+          service={(() => { const raw = String(a.consultation_type ?? ""); const key = consultTypeKey(raw); return key ? tConsult(key) : raw; })()}
           serviceDetail={`${a.type === "online" ? t("online") : t("inPerson")} · ${docTime(a.start_time as string)}`}
           amount={base > 0 ? money(base) : "—"}
           extras={extras.map((x) => ({ name: String(x.name ?? ""), amount: typeof x.price === "number" ? money(x.price) : "—" }))}
