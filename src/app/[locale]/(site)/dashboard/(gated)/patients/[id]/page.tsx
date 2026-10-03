@@ -11,6 +11,7 @@ import { MergedNotice } from "./MergeNotice";
 import { logPatientOpen, readAccessLog } from "@/lib/accessLog";
 import { getClinicTimeZone } from "@/lib/clinicTime";
 import { AutoRefresh } from "@/components/AutoRefresh";
+import { actingPracticeFor } from "@/lib/effectiveProfId";
 
 export default async function PatientDetailPage({
   params,
@@ -36,8 +37,9 @@ export default async function PatientDetailPage({
     .maybeSingle();
 
   const isSecretary = userRoleData?.role === "secretary";
+  // A secretary: the doctor chosen in the switcher (1.5.0), else her primary.
   const effectiveProfId = isSecretary
-    ? (userRoleData?.invited_by_professional_id as string | null) ?? user.id
+    ? (await actingPracticeFor((userRoleData?.invited_by_professional_id as string | null) ?? null, user.id)) ?? user.id
     : user.id;
 
   // Records and prescriptions are doctor-only. RLS already denies them to

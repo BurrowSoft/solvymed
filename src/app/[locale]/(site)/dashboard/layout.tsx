@@ -22,6 +22,9 @@ import { cookies } from "next/headers";
 import { THEME_COOKIE, parseTheme } from "@/lib/theme";
 import { OpenInApp } from "@/components/OpenInApp";
 import { BrandMarkTile } from "@/components/BrandLogo";
+import { ActingPracticeReset, PracticeSwitcher } from "@/components/PracticeSwitcher";
+import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
+import { ACTING_COOKIE } from "@/lib/actingPractice";
 
 function isVersionBelow(current: string, minimum: string): boolean {
   const parse = (v: string) => v.split(".").map(n => parseInt(n, 10) || 0);
@@ -177,7 +180,17 @@ export default async function DashboardLayout({
     && (await readTourState(supabase, user.id, SOLVYAI_INTRO_TOUR)).kind === "none";
   // The practice country: the payment QR (doctors) and the two languages
   // offered (country first: its language + English, Vitor 2026-10-01).
-  const practice = countryProfile(await getPracticeCountry(supabase, user.id, isSecretary ? roleRow.invited_by_professional_id! : user.id));
+  // A secretary acts for the doctor chosen in the switcher (1.5.0, behind
+  // the flag), else her primary.
+  const actingId = isSecretary ? ((await actingPracticeFor(roleRow.invited_by_professional_id!, user.id)) ?? roleRow.invited_by_professional_id!) : user.id;
+  const practice = countryProfile(await getPracticeCountry(supabase, user.id, actingId));
+  // The switcher (2+ doctors), or the reset of a choice she no longer serves.
+  const practices = isSecretary && liveFeatures.multiPractice ? await myPractices(user.id) : null;
+  const chosenCookie = isSecretary && liveFeatures.multiPractice ? (await cookies()).get(ACTING_COOKIE)?.value : undefined;
+  // Stale: a doctor she no longer serves, or a list that couldn't be read
+  // (the pages would use her primary while the header named the cookie's
+  // doctor; 9a). Either way: clear the choice, back on her primary.
+  const staleChoice = !!chosenCookie && (!practices || !practices.some((p) => p.professional_id === chosenCookie));
   const paymentQr = isSecretary ? null : practice.paymentQr;
 
   let trialChipText = "";
@@ -230,6 +243,12 @@ export default async function DashboardLayout({
               page's last actions, even at 200% zoom (e7). */}
           <main className={`flex-1 overflow-auto lg:pl-0 lg:pt-0 ${showTrialChip ? "pt-2" : "pt-14"}${panelOn ? " pb-24" : ""}`}>
             <div className="min-h-full">
+              {staleChoice && <ActingPracticeReset />}
+              {!staleChoice && practices && practices.length > 1 && (
+                <div className="flex justify-end px-6 pt-4 lg:px-8">
+                  <PracticeSwitcher practices={practices} current={actingId} />
+                </div>
+              )}
               {children}
             </div>
           </main>

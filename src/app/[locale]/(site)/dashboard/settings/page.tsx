@@ -7,6 +7,7 @@ import { SecretarySettings } from "./SecretarySettings";
 import { ShowSetupRow } from "./ShowSetupRow";
 import { NewsSettingsCard, TourSettingsCard } from "@/components/tour/TourProvider";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { actingPracticeFor } from "@/lib/effectiveProfId";
 import { conditionMet } from "@/lib/conditions";
 import { SolvyAiSettingsCard } from "@/components/solvyai/SolvyAiSettings";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
@@ -69,7 +70,8 @@ export default async function SettingsPage({
         <div className="mb-8">
           <h1 className="text-2xl font-extrabold text-slate-900">{t("pageTitle")}</h1>
         </div>
-        <SecretarySettings supabase={supabase} doctorId={userRoleData.invited_by_professional_id as string} locale={locale} />
+        {/* The doctor she's acting for (the switcher, 1.5.0), else her primary. */}
+        <SecretarySettings supabase={supabase} doctorId={(await actingPracticeFor(userRoleData.invited_by_professional_id as string, user.id)) ?? (userRoleData.invited_by_professional_id as string)} locale={locale} />
         <div className="mt-6">
           <AppearanceCard />
         </div>

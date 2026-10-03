@@ -4,6 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { SignOutButton } from "@/components/SignOutButton";
+import { PracticeSwitcher } from "@/components/PracticeSwitcher";
+import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
+import { liveFeatures } from "@/lib/liveFeatures";
 
 type MyClinic = { professional_name: string | null; subscription_active: boolean | null };
 
@@ -31,6 +34,11 @@ export default async function ClinicInactivePage({ params }: { params: Promise<{
   if (clinic?.subscription_active) redirect(`${prefix}/dashboard`);
 
   const t = await getTranslations({ locale, namespace: "secretary" });
+  // 1.5.0 (behind the flag): the lapsed doctor may be the one she chose in
+  // the switcher; she can pick another doctor she serves from here, or she'd
+  // be stuck (every dashboard page sends her back; 9a).
+  const practices = liveFeatures.multiPractice ? await myPractices(user.id) : null;
+  const acting = practices && practices.length > 1 ? await actingPracticeFor(roleRow.invited_by_professional_id as string, user.id) : null;
   return (
     <AuthPageShell>
       <AuthCard centered>
@@ -40,6 +48,11 @@ export default async function ClinicInactivePage({ params }: { params: Promise<{
             ? t("clinicInactiveBody", { name: clinic.professional_name })
             : t("clinicInactiveBodyGeneric")}
         </p>
+        {practices && practices.length > 1 && acting && (
+          <div className="mb-6 flex justify-center">
+            <PracticeSwitcher practices={practices} current={acting} />
+          </div>
+        )}
         <SignOutButton label={t("signOut")} />
       </AuthCard>
     </AuthPageShell>
