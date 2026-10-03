@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "./SettingsClient";
 import { createClient } from "@/lib/supabase/client";
-import { BRAND_LIMITS, removeBrandImage, saveMyBrand, uploadBrandImage, type Brand } from "@/lib/brand";
+import { BRAND_LIMITS, removeBrandImage, saveMyBrand, uploadBrandImage, type Brand, type BrandFieldsRow } from "@/lib/brand";
 import { BRAND_INPUT_MAX_BYTES, BRAND_INPUT_TYPES, BrandImageTooLarge, BrandNotAnImage, type BrandImageKind } from "@/lib/brandImage";
 import { countryProfile } from "@/lib/country";
 import { brandAccent, brandInitials, DEFAULT_ACCENT, isAccentHex, readableAccent } from "@/lib/readableAccent";
@@ -24,9 +24,15 @@ export const ACCENT_PRESETS = ["#116e99", "#0d9488", "#7c3aed", "#db2777", "#dc2
 const LIGHT_BG = "#ffffff";
 const DARK_BG = "#0f172b";
 
-export function BrandCard({ uid, brand, fallback, country }: {
+export function BrandCard({ uid, brand, values = null, valuesFailed = false, fallback, country }: {
   uid: string;
+  // Images, URLs and the preview (get_practice_brand).
   brand: Brand | null;
+  // The fields' own values (the raw row; null = nothing saved yet). The
+  // profile's values are only placeholders, never field values (d7, 9a).
+  values?: BrandFieldsRow | null;
+  // The saved values couldn't be read: no Save (it would overwrite them).
+  valuesFailed?: boolean;
   // The profile's own, shown as placeholders: what an empty field becomes.
   fallback: { fullName: string; specialty: string; registration: string };
   // The PRACTICE country: the registration example follows it (registry).
@@ -36,10 +42,10 @@ export function BrandCard({ uid, brand, fallback, country }: {
   const tSettings = useTranslations("settings");
   const registrationExample = tSettings(countryProfile(country).examples.registration);
   const router = useRouter();
-  const [displayName, setDisplayName] = useState(brand?.displayName ?? "");
-  const [title, setTitle] = useState(brand?.title ?? "");
-  const [specialty, setSpecialty] = useState(brand?.specialty ?? "");
-  const [registrationLine, setRegistrationLine] = useState(brand?.registrationLine ?? "");
+  const [displayName, setDisplayName] = useState(values?.display_name ?? "");
+  const [title, setTitle] = useState(values?.title ?? "");
+  const [specialty, setSpecialty] = useState(values?.specialty ?? "");
+  const [registrationLine, setRegistrationLine] = useState(values?.registration_line ?? "");
   // The text fields are uncontrolled (as the auth forms, #332): text typed
   // before hydration on a slow load, or autofilled, is never wiped by a
   // re-render (3e). Typing updates the preview; the mount syncs the
@@ -51,8 +57,8 @@ export function BrandCard({ uid, brand, fallback, country }: {
     setDisplayName(read("brand-name"));
     setSpecialty(read("brand-specialty"));
     setRegistrationLine(read("brand-registration"));
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const [accent, setAccent] = useState<string | null>(brand?.accentColor ?? null);
+  }, []);
+  const [accent, setAccent] = useState<string | null>(values?.accent_color ?? null);
   const [state, setState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [busy, setBusy] = useState<null | BrandImageKind>(null);
   const [imageError, setImageError] = useState("");
@@ -180,10 +186,11 @@ export function BrandCard({ uid, brand, fallback, country }: {
         </div>
 
         <div className="flex items-center gap-3">
-          <button type="button" onClick={save} disabled={state === "saving"}
+          <button type="button" onClick={save} disabled={state === "saving" || valuesFailed}
             className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
             {state === "saving" ? t("saving") : t("save")}
           </button>
+          {valuesFailed && <span role="alert" data-testid="brand-load-error" className="text-sm text-red-600">{tSettings("loadError")}</span>}
           {state === "saved" && <span role="status" className="text-sm font-medium text-teal-700">{t("saved")}</span>}
           {state === "error" && <span role="alert" className="text-sm text-red-600">{t("saveError")}</span>}
         </div>
