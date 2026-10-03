@@ -73,7 +73,7 @@ describe("the public invite link's brand (signup ?join=)", () => {
 describe("a practice brand for patients", () => {
   const brand = (own: Brand["own"]): Brand => ({
     displayName: "", title: "Dr.", specialty: "", registrationLine: "", accentColor: null,
-    logoSquareUrl: "https://x/logo.png", logoWideUrl: null, photoUrl: "https://x/legacy-photo.png", own,
+    logoSquareUrl: "https://x/logo.png", logoWideUrl: null, photoUrl: "https://x/legacy-photo.png", own, saved: false,
   });
 
   it("own images only: a legacy photo or logo is never shown", () => {

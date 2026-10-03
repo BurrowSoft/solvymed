@@ -10,6 +10,8 @@ import { formatMoney } from "@/lib/money";
 import { PRINT_CSS, docDate, docTime, toDocTemplate } from "@/lib/prescriptionDoc";
 import { readPracticeHeader } from "@/lib/practiceHeader";
 import { PrintToolbar } from "@/components/PrintToolbar";
+import { liveFeatures } from "@/lib/liveFeatures";
+import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { RECEITA_SAUDE_NOTE, ReceiptDocument } from "./ReceiptDocument";
 
 // The recibo's print view (Help G5 on the website; UX 36): the app's simple
@@ -60,12 +62,15 @@ export default async function ReceiptPrintPage({
     );
   }
 
-  const [patientResult, header] = await Promise.all([
+  const [patientResult, header, brand] = await Promise.all([
     str(a.patient_id)
       ? supabase.from("patients").select("full_name, cpf, passport_number").eq("id", a.patient_id as string).eq("professional_id", profId).maybeSingle()
       : Promise.resolve({ data: null }),
     readPracticeHeader(profId, "invoice"),
+    // The doctor's brand (1.5.0, behind the flag); a secretary may read it.
+    liveFeatures.myBrand ? loadPracticeBrand(supabase, profId) : Promise.resolve(null),
   ]);
+  const baseTemplate = toDocTemplate(header.template);
   const patient = patientResult.data as { full_name: string; cpf: string | null; passport_number: string | null } | null;
   const idLines: string[] = [];
   if (profile.patientId === "cpf" && str(patient?.cpf)) idLines.push(`${tIds("cpf")}: ${patient!.cpf}`);
@@ -84,7 +89,8 @@ export default async function ReceiptPrintPage({
       <PrintToolbar backHref={back} backLabel={t("backToPayments")} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">
         <ReceiptDocument
-          template={toDocTemplate(header.template)}
+          template={brandedDocTemplate(baseTemplate, brand)}
+          brand={docBrand(baseTemplate, brand)}
           labels={{
             title: t("receiptTitle"), patient: t("patient"), services: t("services"), description: t("description"), amount: t("amount"),
             total: t("total"), payment: t("payment"), online: t("online"), inPerson: t("inPerson"), privatePay: t("privatePay"),

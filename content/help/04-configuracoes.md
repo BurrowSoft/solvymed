@@ -144,11 +144,13 @@ Campos vazios usam o nome, a especialidade e o registro do seu perfil. Sem logo,
 Envie cada imagem em PNG ou JPG, com até 5 MB e no máximo 4096 px de lado: o logo quadrado, o logo horizontal (usado nos documentos) e, se quiser, uma foto. O logo inteiro é sempre mantido. **Remover** pede confirmação.
 Se a cor escolhida for clara ou escura demais para ler um texto, ela é ajustada só na exibição, e a prévia mostra como fica.
 A sua marca aparece na sua página de agendamento e no seu link de convite público, nos e-mails aos pacientes e nos documentos impressos (receitas, recibos, histórico). O logo e a foto são públicos, porque os pacientes os veem nessas páginas.
+No app, **Modelos de documentos** avisa que a cor e o logo dos documentos vêm de **Minha marca**, com o atalho **Abrir Minha marca**.
 **en**
 In **Settings → My brand**, choose how patients see you: **Display name**, **Title**, **Specialty**, **Professional registration**, **Brand colour**, **Logo (square)**, **Wide logo (documents)** and **Photo**.
 Empty fields use your profile's name, specialty and registration. With no logo, your initials show in your colour; with no colour, SolvyMed's blue.
 Upload each image as PNG or JPG, up to 5 MB and at most 4096 px per side: the square logo, the wide logo (used on documents) and, if you like, a photo. The whole logo is always kept. **Remove** asks for confirmation.
 If the colour you choose is too light or too dark for text, it's adjusted only where it's shown, and the preview shows how it looks.
 Your brand shows on your booking page and your public invite link, in emails to patients and on printed documents (prescriptions, receipts, history). The logo and photo are public, because patients see them on those pages.
+In the app, **Document Templates** says the documents' colour and logo come from **My brand**, with a shortcut to **Open My brand**.
 `open:settings`
 `requires:brand-live`
