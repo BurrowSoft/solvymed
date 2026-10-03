@@ -60,6 +60,19 @@ beforeEach(() => {
 });
 
 describe("recibo print page", () => {
+  // d7: the stored type key ("Consultation") was printed raw. A built-in
+  // type goes through consultType (the mock returns the key), a clinic's
+  // own procedure stays as written.
+  it("the service: a built-in type translated, a procedure name as written", async () => {
+    h.appt = { ...h.appt, consultation_type: "Consultation" };
+    let text = render(await ReceiptPage({ params })).container.textContent ?? "";
+    expect(text).toContain("consultation");
+    expect(text).not.toContain("Consultation");
+    h.appt = { ...h.appt, consultation_type: "Limpeza de pele" };
+    text = render(await ReceiptPage({ params })).container.textContent ?? "";
+    expect(text).toContain("Limpeza de pele");
+  });
+
   it("a secretary's recibo carries the practice's header, the patient's CPF, the number and the total", async () => {
     const { container } = render(await ReceiptPage({ params }));
     const text = container.textContent ?? "";
