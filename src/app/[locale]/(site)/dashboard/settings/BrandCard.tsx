@@ -24,13 +24,15 @@ export const ACCENT_PRESETS = ["#116e99", "#0d9488", "#7c3aed", "#db2777", "#dc2
 const LIGHT_BG = "#ffffff";
 const DARK_BG = "#0f172b";
 
-export function BrandCard({ uid, brand, values = null, fallback, country }: {
+export function BrandCard({ uid, brand, values = null, valuesFailed = false, fallback, country }: {
   uid: string;
   // Images, URLs and the preview (get_practice_brand).
   brand: Brand | null;
   // The fields' own values (the raw row; null = nothing saved yet). The
   // profile's values are only placeholders, never field values (d7, 9a).
   values?: BrandFieldsRow | null;
+  // The saved values couldn't be read: no Save (it would overwrite them).
+  valuesFailed?: boolean;
   // The profile's own, shown as placeholders: what an empty field becomes.
   fallback: { fullName: string; specialty: string; registration: string };
   // The PRACTICE country: the registration example follows it (registry).
@@ -184,10 +186,11 @@ export function BrandCard({ uid, brand, values = null, fallback, country }: {
         </div>
 
         <div className="flex items-center gap-3">
-          <button type="button" onClick={save} disabled={state === "saving"}
+          <button type="button" onClick={save} disabled={state === "saving" || valuesFailed}
             className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
             {state === "saving" ? t("saving") : t("save")}
           </button>
+          {valuesFailed && <span role="alert" data-testid="brand-load-error" className="text-sm text-red-600">{tSettings("loadError")}</span>}
           {state === "saved" && <span role="status" className="text-sm font-medium text-teal-700">{t("saved")}</span>}
           {state === "error" && <span role="alert" className="text-sm text-red-600">{t("saveError")}</span>}
         </div>

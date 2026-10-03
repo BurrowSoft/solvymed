@@ -91,6 +91,17 @@ describe("Minha marca", () => {
     expect(h.rpc.mock.calls[0][1]).toMatchObject({ p_display_name: "", p_specialty: "", p_registration_line: "" });
   });
 
+  it("the saved values couldn't be read: an error and no Save (it would wipe them; 9a)", () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <BrandCard uid="u-1" brand={null} values={null} valuesFailed
+          fallback={{ fullName: "Ana Souza", specialty: "", registration: "" }} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByTestId("brand-load-error")).toHaveTextContent(pt.settings.loadError);
+    expect(screen.getByRole("button", { name: t.save })).toBeDisabled();
+  });
+
   it("saved values (the raw row) fill the fields", () => {
     render(
       <NextIntlClientProvider locale="pt-BR" messages={pt}>

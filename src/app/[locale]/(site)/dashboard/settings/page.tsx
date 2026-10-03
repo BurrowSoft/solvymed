@@ -187,9 +187,13 @@ export default async function SettingsPage({
   // The fields' own values: the raw row (the owner may read it), never the
   // RPC's profile fallbacks, or a first Save would copy the profile into the
   // brand (d7, 9a; as the app). No row = empty fields.
-  const brandRow = liveFeatures.myBrand
-    ? (await supabase.from("professional_brand").select("display_name, title, specialty, registration_line, accent_color").eq("professional_id", user.id).maybeSingle()).data as BrandFieldsRow | null
+  // A read error is kept apart from "no row": the card then can't save,
+  // or it would write empty fields over the saved ones (9a).
+  const brandRowResult = liveFeatures.myBrand
+    ? await supabase.from("professional_brand").select("display_name, title, specialty, registration_line, accent_color").eq("professional_id", user.id).maybeSingle()
     : null;
+  const brandRow = (brandRowResult?.data ?? null) as BrandFieldsRow | null;
+  const brandRowFailed = !!brandRowResult?.error;
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl">
@@ -219,6 +223,7 @@ export default async function SettingsPage({
             uid={user.id}
             brand={brand}
             values={brandRow}
+            valuesFailed={brandRowFailed}
             country={practiceCountry}
             fallback={{
               fullName: prof.full_name ?? "",
