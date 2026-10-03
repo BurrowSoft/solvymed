@@ -1,44 +1,49 @@
 import { describe, expect, it } from "vitest";
-import { countryToStore, initialCountryChoice, signupCountryMetadata } from "@/lib/signupCountry";
+import { COUNTRY_STEP, countryStepHref, parseCountryChoice, signupCountryMetadata } from "@/lib/signupCountry";
+import { countryProfile } from "@/lib/country";
+import { getPlanPrice } from "@/lib/subscription";
 
 describe("signupCountryMetadata", () => {
   it("sends nothing before the Thai release (the database default, BR, applies)", () => {
-    expect(signupCountryMetadata("OTHER", "PT", "Europe/Lisbon", false)).toEqual({});
-    expect(signupCountryMetadata("TH", "TH", "Asia/Bangkok", false)).toEqual({});
+    expect(signupCountryMetadata("BR", "America/Sao_Paulo", false)).toEqual({});
+    expect(signupCountryMetadata("TH", "Asia/Bangkok", false)).toEqual({});
   });
 
   it("sends the country and time zone from the Thai release on", () => {
-    expect(signupCountryMetadata("TH", "TH", "Asia/Bangkok", true)).toEqual({ country: "TH", time_zone: "Asia/Bangkok" });
-    expect(signupCountryMetadata("OTHER", "pt", "Europe/Lisbon", true)).toEqual({ country: "PT", time_zone: "Europe/Lisbon" });
-    expect(signupCountryMetadata("BR", null, null, true)).toEqual({ country: "BR", time_zone: null });
+    expect(signupCountryMetadata("TH", "Asia/Bangkok", true)).toEqual({ country: "TH", time_zone: "Asia/Bangkok" });
+    expect(signupCountryMetadata("BR", null, true)).toEqual({ country: "BR", time_zone: null });
   });
 });
 
-describe("initialCountryChoice", () => {
-  it("follows the detected country", () => {
-    expect(initialCountryChoice("BR", "en")).toBe("BR");
-    expect(initialCountryChoice("th", "pt-BR")).toBe("TH");
-    expect(initialCountryChoice("PT", "pt-BR")).toBe("OTHER");
+describe("country first (Vitor, 2026-10-01): the signup's first step", () => {
+  it("offers Brasil and Thailand only, each continuing in its language", () => {
+    expect(COUNTRY_STEP.map((c) => [c.code, c.locale])).toEqual([["BR", "pt-BR"], ["TH", "th"]]);
   });
 
-  it("falls back to the page language, then Brasil", () => {
-    expect(initialCountryChoice(null, "th")).toBe("TH");
-    expect(initialCountryChoice("", "pt-BR")).toBe("BR");
-    expect(initialCountryChoice(undefined, "de")).toBe("BR");
+  it("reads ?c= back; anything else is no choice (the step again)", () => {
+    expect(parseCountryChoice("br")).toBe("BR");
+    expect(parseCountryChoice("TH")).toBe("TH");
+    expect(parseCountryChoice("OTHER")).toBeNull();
+    expect(parseCountryChoice("US")).toBeNull();
+    expect(parseCountryChoice(null)).toBeNull();
+  });
+
+  it("the choice and the back arrow keep the rest of the query", () => {
+    expect(countryStepHref("BR", "pt-BR", new URLSearchParams("role=x"))).toBe("/pt-BR/auth/signup?role=x&c=BR");
+    expect(countryStepHref("TH", "en", new URLSearchParams())).toBe("/auth/signup?c=TH");
+    expect(countryStepHref(null, "th", new URLSearchParams("c=TH&a=1"))).toBe("/th/auth/signup?a=1");
   });
 });
 
-describe("countryToStore", () => {
-  it("stores BR and TH as picked", () => {
-    expect(countryToStore("BR", "PT")).toBe("BR");
-    expect(countryToStore("TH", null)).toBe("TH");
+describe("practices stored with another country keep the explicit default", () => {
+  it("the registry still has a neutral profile (English only) and the USD price for them", () => {
+    expect(countryProfile("PT").kind).toBe("OTHER");
+    expect(countryProfile("ZZ").languages).toEqual(["en"]);
+    expect(getPlanPrice("ZZ").amount).toBe("US$ 19");
   });
 
-  it("stores the detected country for Other, else ZZ", () => {
-    expect(countryToStore("OTHER", "pt")).toBe("PT");
-    expect(countryToStore("OTHER", null)).toBe("ZZ");
-    expect(countryToStore("OTHER", "BR")).toBe("ZZ");
-    expect(countryToStore("OTHER", "TH")).toBe("ZZ");
-    expect(countryToStore("OTHER", "Brazil")).toBe("ZZ");
+  it("each country offers its language and English", () => {
+    expect(countryProfile("BR").languages).toEqual(["pt-BR", "en"]);
+    expect(countryProfile("TH").languages).toEqual(["th", "en"]);
   });
 });

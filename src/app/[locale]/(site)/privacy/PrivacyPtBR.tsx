@@ -4,7 +4,7 @@ import { noticeChannels } from "@/lib/noticeChannels";
 
 // Política de Privacidade em português (Brasil). Autoritativa junto com a
 // versão em inglês; mantenha as duas alinhadas.
-export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
+export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false }: { turnstile: boolean; secretaryInvites?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Visão geral">
@@ -44,6 +44,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
           origem), que é salva com a sua conta quando você se cadastra.{" "}
           <strong>Dados de pacientes nunca são usados para análise ou marketing.</strong>
         </p>
+        {secretaryInvites && <p><strong>3.7 Convites de secretária:</strong> quando um profissional convida uma secretária, guardamos o e-mail informado e enviamos o convite para esse endereço (até um reenvio por hora). O convite expira em 7 dias e o e-mail é apagado 30 dias após o convite expirar ou ser cancelado.</p>}
       </Section>
 
       <Section title="4. Como usamos os dados">
@@ -66,7 +67,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             ["Supabase", "Banco de dados, autenticação, armazenamento de arquivos", "Brasil (região de São Paulo)"],
             ["Vercel", "Hospedagem do site; processamento no Brasil (São Paulo), conteúdo estático por rede global", "Brasil / global"],
             ["Stripe", "Pagamento de assinaturas", "EUA / global"],
-            ["Resend", "E-mails transacionais (confirmações, redefinição de senha)", "EUA"],
+            ["Resend", secretaryInvites ? "E-mails transacionais (confirmações, redefinição de senha) e convites enviados a pedido de um profissional" : "E-mails transacionais (confirmações, redefinição de senha)", "EUA"],
             ["Expo", "Envio de notificações push", "EUA"],
             ["Sentry", "Monitoramento de erros do aplicativo e do site (sem dados de pacientes)", "EUA"],
             ["PostHog", "Estatísticas de uso do site, somente com o seu consentimento", "UE"],
@@ -132,7 +133,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
 
       {founders && (
         <Section title="6d. Inscrições no Programa Fundadores">
-          <p>Programa Fundadores: se você se inscrever, tratamos seu nome, e-mail, telefone, profissão e registro profissional, o sistema de clínica que você usa, o porte do consultório e como nos conheceu, para avaliar a inscrição e falar com você. Inscrições não aceitas são apagadas 12 meses após a última atualização; as de fundadores aceitos ficam guardadas enquanto a conta existir (ou são apagadas 12 meses após a aceitação, se nenhuma conta for vinculada).</p>
+          <p>Programa Fundadores: se você se inscrever, tratamos seu nome, e-mail, telefone, profissão e registro profissional, o sistema de clínica que você usa, o porte do consultório e como nos conheceu, para avaliar a inscrição e falar com você. Inscrições não aceitas são apagadas 12 meses após a última mudança de status; as de fundadores aceitos ficam guardadas enquanto a conta existir (ou são apagadas 12 meses após a aceitação, se nenhuma conta for vinculada).</p>
           <p className="mt-2">Para evitar abuso, guardamos por 2 dias uma forma embaralhada (hash com sal) do seu endereço IP, nunca o endereço em si. Para apagar sua inscrição antes, escreva para support@solvymed.com.</p>
           {founderUploads && <p className="mt-2">Exportações de teste: fundadores aceitos podem enviar em Configurações arquivos de exportação de teste (CSV, Excel ou ZIP) do sistema que usam, para construirmos a importação. Antes de cada envio, o fundador confirma que o arquivo contém só pacientes de teste que ele criou; não verificamos o conteúdo antes de guardá-lo. Os arquivos ficam num local privado que só a equipe SolvyMed acessa, com registro de quem enviou e quando, e são apagados 180 dias após o envio, ou antes: quando a importação daquele sistema fica pronta, quando o fundador deixa de ser aceito ou quando a conta é excluída.</p>}
         </Section>

@@ -2,11 +2,44 @@
 // stage 1; migration 129 = founder_apply / founder_places). The database
 // validates everything and rate-limits per IP; this module only shapes the
 // request and maps its answers to the form's messages.
+import type { Metadata } from "next";
 import type { Attribution } from "./attribution";
+import { publicLocales } from "./publicLocales";
 
-// Brazil and Thailand have places per system; other countries may apply,
-// with no counter (UX).
-export const FOUNDERS_COUNTRIES = ["BR", "TH", "OTHER"] as const;
+// The share preview of the Founders pages (/founders and its rules): the
+// brand kit's blue banner (UX, 1 Oct). A page-level openGraph/twitter
+// replaces the layout's whole object, so the site-wide fields are repeated.
+export const FOUNDERS_OG_IMAGE = "/og/solvymed-og-share-blue.png";
+// The public URL of a Founders page (canonical and share links): English
+// has no locale prefix. sub: "" (the page) or "/rules".
+export function foundersUrl(locale: string, sub = ""): string {
+  return `https://www.solvymed.com${locale === "en" ? "" : `/${locale}`}/founders${sub}`;
+}
+// Its canonical and hreflang set (UX: the page is shared in three markets):
+// every offered language, plus x-default = English.
+export function foundersAlternates(locale: string, sub = ""): NonNullable<Metadata["alternates"]> {
+  const languages: Record<string, string> = Object.fromEntries(publicLocales().map((l) => [l, foundersUrl(l, sub)]));
+  languages["x-default"] = foundersUrl("en", sub);
+  return { canonical: foundersUrl(locale, sub), languages };
+}
+export function foundersShareMeta(a: { locale: string; url: string; title: string; description: string }): Pick<Metadata, "openGraph" | "twitter"> {
+  return {
+    openGraph: {
+      type: "website",
+      siteName: "Solvymed",
+      locale: a.locale.replace("-", "_"),
+      url: a.url,
+      title: a.title,
+      description: a.description,
+      images: [{ url: FOUNDERS_OG_IMAGE, width: 1200, height: 630, alt: a.title }],
+    },
+    twitter: { card: "summary_large_image", title: a.title, description: a.description, images: [FOUNDERS_OG_IMAGE] },
+  };
+}
+
+// Brazil and Thailand only, for now (e7, 10-01: country-first is BR/TH; no
+// "Other", no waitlist for other countries).
+export const FOUNDERS_COUNTRIES = ["BR", "TH"] as const;
 export type FoundersCountry = (typeof FOUNDERS_COUNTRIES)[number];
 
 // The clinic systems per country (UX's copy file; brand names aren't
@@ -53,8 +86,9 @@ export const OPTIONS = {
   team_size: ["alone", "one_secretary", "two_plus"],
 } as const;
 
-// The page's default country from its language.
-export const defaultFoundersCountry = (locale: string): FoundersCountry => (locale === "pt-BR" ? "BR" : locale === "th" ? "TH" : "OTHER");
+// The page's default country from its language; English picks nothing, so
+// the visitor chooses Brasil or ประเทศไทย (e7).
+export const defaultFoundersCountry = (locale: string): FoundersCountry | "" => (locale === "pt-BR" ? "BR" : locale === "th" ? "TH" : "");
 
 // What the form sends (the route adds the IP; the honeypot never reaches
 // the database).

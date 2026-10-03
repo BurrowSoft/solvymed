@@ -98,7 +98,18 @@
     "noUpcoming": "لا مواعيد قادمة",
     "unpaidSessions": "{n} جلسة غير مدفوعة",
     "pendingCollection": "{amount} في انتظار التحصيل",
-    "managePayments": "إدارة المدفوعات"
+    "managePayments": "إدارة المدفوعات",
+    "invitedTitle": "{n, plural, one {مريض جديد واحد عبر دعوتك} other {# مرضى جدد عبر دعوتك}}",
+    "invitedHint": "انضموا برمز عيادتك. احتفظ بمرضاك؛ «إزالة» تفصل الحساب (يُؤرشف السجل).",
+    "invitedKeep": "احتفاظ",
+    "invitedRemove": "إزالة",
+    "invitedError": "تعذّر الحفظ. حاول مرة أخرى.",
+    "invitedSeeAll": "عرض الكل في المرضى",
+    "invitedSameEmail": "نفس البريد الإلكتروني لـ {name}: دمج؟",
+    "invitedRemoveConfirm": "إزالة {name}؟ سيعود حسابه لانتظار تأكيدك وسيُؤرشف السجل.",
+    "invitedRemoveConfirmDisconnect": "إزالة {name}؟ سيُفصل الحساب عن عيادتك، وستُلغى الطلبات المعلّقة (يُبلَّغ المريض)، ويُؤرشف السجل. لإعادته، استعد السجل من المؤرشفة وشارك الرمز الشخصي للمريض.",
+    "requestsWaiting": "{n, plural, one {طلب موعد واحد بانتظار تأكيدك} other {# طلبات مواعيد بانتظار تأكيدك}}",
+    "requestsWaitingOpen": "عرض الطلبات"
   },
   "schedule": {
     "patientMessage": "رسالة المريض",
@@ -134,9 +145,6 @@
     "dur90": "ساعة ونصف",
     "dur120": "ساعتان",
     "dur240": "4 ساعات",
-    "noProcedures": "لم يتم تكوين أي إجراءات.",
-    "addProcSettings": "أضف إجراءات في الإعدادات",
-    "beforeScheduling": "قبل الجدولة.",
     "cancel": "إلغاء",
     "saveAppt": "حفظ الموعد",
     "repeat": "تكرار",
@@ -231,7 +239,23 @@
     "undoCancelled": "تم إلغاء الموعد",
     "undoAction": "تراجع ({s} ث)",
     "undoDone": "تم التراجع.",
-    "undoFailed": "تعذّر التراجع. افتح العنصر لتعديله."
+    "undoFailed": "تعذّر التراجع. افتح العنصر لتعديله.",
+    "newPatientOption": "حجز بدون سجل: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "هذا الأسبوع",
@@ -250,7 +274,10 @@
     "revertConfirm": "إعادة هذه الدفعة إلى معلقة؟",
     "errorInvalidAmount": "يرجى إدخال مبلغ صالح.",
     "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
-    "amountPlaceholderPlain": "المبلغ"
+    "amountPlaceholderPlain": "المبلغ",
+    "noAmount": "بدون مبلغ",
+    "setAmount": "تحديد المبلغ",
+    "amountFirst": "أدخل المبلغ المستلم أولاً."
   },
   "paymentsPage": {
     "title": "المدفوعات",
@@ -319,7 +346,9 @@
     "nextPage": "التالي",
     "pagesLabel": "الصفحات",
     "fullNamePlaceholder": "الاسم الكامل",
-    "professionPlaceholder": "مثال: مهندس، معلم…"
+    "professionPlaceholder": "مثال: مهندس، معلم…",
+    "invitedBadge": "جديد، عبر الدعوة",
+    "invitedSameEmail": "نفس البريد الإلكتروني لـ {name}: دمج؟"
   },
   "patientDetail": {
     "tabInfo": "معلومات",
@@ -670,7 +699,16 @@
     "orCustomTime": "أو اختر وقتاً مخصصاً",
     "professionalFallback": "المختص(ة)",
     "errorArchived": "لا تقبل هذه العيادة حجوزات جديدة لحسابك. يُرجى التواصل مع العيادة.",
-    "practiceInactive": "لا تقبل هذه العيادة الحجوزات عبر الإنترنت حاليًا."
+    "practiceInactive": "لا تقبل هذه العيادة الحجوزات عبر الإنترنت حاليًا.",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today.",
+    "otherHint": "E.g. first visit, follow-up",
+    "titleWith": "Book with {doctor}"
   },
   "auth": {
     "passwordTooShort": "يجب أن تتكون كلمة المرور من {min} أحرف على الأقل.",
@@ -714,10 +752,9 @@
       "secretaryNeedsInvite": "للسكرتارية: اطلب رابط دعوة من العيادة.",
       "secretaryEmailMismatch": "هذا البريد الإلكتروني لا يطابق الدعوة، أو أن الدعوة لم تعد صالحة. تحقّق من البريد أو اطلب رابطًا جديدًا من العيادة.",
       "consentCheckbox": "قرأتُ <terms>شروط الاستخدام</terms> و<privacy>سياسة الخصوصية</privacy> وأوافق عليهما",
-      "country": "أين تقع عيادتك؟",
-      "countryOther": "دولة أخرى",
-      "countryHint": "يحدد العملة وسعر الباقة وهوية المريض ورمز الدفع. لتغييره لاحقًا، تواصل مع الدعم.",
-      "fullNameHint": "أضف لقبك إن أردت ({titles})؛ يظهر في التحيات."
+      "fullNameHint": "أضف لقبك إن أردت ({titles})؛ يظهر في التحيات.",
+      "backToCountry": "رجوع",
+      "secretaryInviteFor": "This invite is for {email}."
     },
     "forgotPassword": {
       "title": "نسيت كلمة المرور؟",
@@ -746,7 +783,9 @@
     "backToHome": "العودة للرئيسية",
     "patientWelcome": {
       "countdown": "سنأخذك إلى مواعيدك خلال {count, plural, one {# ثانية} other {# ثوانٍ}}…",
-      "goToAppointments": "الذهاب إلى مواعيدي"
+      "goToAppointments": "الذهاب إلى مواعيدي",
+      "heading": "كل شيء جاهز!",
+      "confirmed": "تم تأكيد حسابك."
     },
     "inviteRequired": {
       "heading": "رمز الدعوة مطلوب",
@@ -762,7 +801,12 @@
       "backToSignup": "استخدام حساب آخر",
       "tooManyAttempts": "محاولات كثيرة جدًا. يرجى الانتظار قليلاً قبل المحاولة مرة أخرى.",
       "alreadyInvitedByAnother": "حسابك متصل بالفعل بعيادة أخرى.",
-      "archived": "لا تقبل هذه العيادة حجوزات جديدة لحسابك. يُرجى التواصل مع العيادة."
+      "archived": "لا تقبل هذه العيادة حجوزات جديدة لحسابك. يُرجى التواصل مع العيادة.",
+      "alreadyConnected": "أنت متصل بالفعل بـ {doctor}. للتغيير، تواصل مع الدعم.",
+      "alreadyConnectedNoName": "أنت متصل بالفعل بطبيب آخر. للتغيير، تواصل مع الدعم.",
+      "alreadyConnectedSamePractice": "أنت متصل بالفعل بـ {doctor}. اطلب من العيادة دمج سجلاتك.",
+      "alreadyConnectedSamePracticeNoName": "أنت متصل بالفعل بهذه العيادة. اطلب من العيادة دمج سجلاتك.",
+      "codeUnavailable": "تعذّر الاتصال بهذا الرمز. يرجى التواصل مع العيادة."
     },
     "pendingConfirmation": {
       "loading": "جارٍ التحقق من حالتك…",
@@ -830,7 +874,26 @@
     "rescheduleRequestedLabel": "طلب تغيير الموعد: {date} · {time}",
     "rescheduleButton": "طلب تغيير الموعد",
     "closeDialog": "إغلاق",
-    "originallyLabel": "الموعد الأصلي: {date} · {time}"
+    "originallyLabel": "الموعد الأصلي: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "مرفوض",
+    "cancelContactClinic": "To cancel, contact the clinic.",
+    "statusNotConfirmed": "Not confirmed",
+    "proposalPassed": "This time has already passed. Ask the clinic for a new time.",
+    "cancelRequest": "Cancel request",
+    "cancelRequestTitle": "Cancel this request?",
+    "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
+    "keepRequest": "Keep request",
+    "requestCancelledToast": "Request cancelled.",
+    "rescheduleLapsed": "Your reschedule request expired.",
+    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic.",
+    "bookWith": "Book with {doctor}",
+    "yourDoctor": "Your doctor"
   },
   "nav": {
     "overview": "نظرة عامة",
@@ -972,7 +1035,13 @@
     "accountNotSecretary": "لا يمكن لهذا الحساب قبول دعوة سكرتارية. استخدم حسابًا منفصلاً يتم إنشاؤه من رابط الدعوة.",
     "teamResendConfirm": "إرسال دعوة جديدة إلى {email}؟ سيتوقف الرمز الذي شاركته سابقًا عن العمل.",
     "inviteFrom": "دعوة من {clinic}",
-    "inviteFor": "هذه الدعوة موجّهة إلى {email}. سجّل باستخدام هذا البريد الإلكتروني."
+    "inviteFor": "هذه الدعوة موجّهة إلى {email}. سجّل باستخدام هذا البريد الإلكتروني.",
+    "teamResendEmail": "Resend invite",
+    "teamResendAt": "You can resend at {time}",
+    "teamEmailSent": "Email sent to {email}",
+    "teamAlreadySent": "Invite sent. You can resend at {time}.",
+    "teamDailyLimit": "You've reached the limit of 10 invites a day. Try again at {time}.",
+    "teamSendFailed": "Couldn't send the email right now. Try again, or share the link."
   },
   "invitePage": {
     "metaTitle": "دعوتك",
@@ -1143,7 +1212,6 @@
   "pricing": {
     "navLabel": "الأسعار",
     "countryLabel": "الأسعار لـ:",
-    "countryOther": "بلدان أخرى",
     "title": "خطة واحدة بسيطة. كل شيء مشمول.",
     "subtitle": "بلا رسوم إعداد، وبلا رسوم لكل مريض، وبلا مفاجآت.",
     "perMonth": "/شهريًا",
@@ -1320,7 +1388,9 @@
   },
   "dateInput": {
     "buddhistYear": "يبدو أن هذه سنة بالتقويم البوذي. يُرجى استخدام السنة الميلادية (مثل 1996).",
-    "invalidBirthDate": "تاريخ الميلاد غير صالح: استخدم تاريخًا بين عام 1900 واليوم."
+    "invalidBirthDate": "تاريخ الميلاد غير صالح: استخدم تاريخًا بين عام 1900 واليوم.",
+    "placeholder": "DD/MM/YYYY",
+    "invalid": "The date must be in the format {format}."
   },
   "solvyaiSettings": {
     "title": "SolvyAI",
@@ -1403,7 +1473,6 @@
     "placesUnavailable": "تعذّر تحميل المقاعد الآن.",
     "countryBR": "البرازيل",
     "countryTH": "تايلاند",
-    "countryOTHER": "بلد آخر",
     "formTitle": "قدّم طلبك",
     "required": "مطلوب",
     "qName": "الاسم الكامل",
@@ -1452,7 +1521,7 @@
     "errorRateLimit": "محاولات كثيرة جدًا. يُرجى المحاولة مجددًا بعد ساعة.",
     "errorInvalid": "يُرجى التحقق من هذا الحقل.",
     "errorGeneric": "حدث خطأ ما. يُرجى المحاولة مرة أخرى.",
-    "privacyNotice": "نستخدم هذه الإجابات فقط لإدارة برنامج المؤسسين والتواصل معك بشأنه. الطلبات غير المقبولة (المرفوضة أو المسحوبة أو التي لا تزال في قائمة الانتظار) تُحذف بعد 12 شهرًا من آخر تحديث لها؛ أما طلبات المؤسسين المقبولين فتُحفظ ما دام حسابهم في SolvyMed قائمًا. لحذف طلبك في وقت أبكر، راسلنا على support@solvymed.com. التفاصيل في <privacy>سياسة الخصوصية</privacy>.",
+    "privacyNotice": "نستخدم هذه الإجابات فقط لإدارة برنامج المؤسسين والتواصل معك بشأنه. الطلبات غير المقبولة (المرفوضة أو المسحوبة أو التي لا تزال في قائمة الانتظار) تُحذف بعد 12 شهرًا من آخر تغيير لحالتها؛ أما طلبات المؤسسين المقبولين فتُحفظ ما دام حسابهم في SolvyMed قائمًا. لحذف طلبك في وقت أبكر، راسلنا على support@solvymed.com. التفاصيل في <privacy>سياسة الخصوصية</privacy>.",
     "faqTitle": "أسئلة",
     "faq1q": "هل هو مجاني حقًا مدى الحياة؟",
     "faq1a": "نعم: الخطة المدفوعة مجانًا طوال فترة تشغيل SolvyMed، لحساب واحد، بدءًا من قبولك. حسابات السكرتارية المرتبطة بك مشمولة كالمعتاد. راجع القواعد.",
@@ -1484,7 +1553,10 @@
     "emailBody": "شكرًا لتقديمك طلبًا إلى برنامج المؤسسين من SolvyMed لنظام {system}. سنرد عليك خلال 5 أيام عمل.",
     "emailWaitlist": "مقاعد {system} مكتملة حاليًا، لذا أنت في قائمة الانتظار.",
     "emailNoFiles": "يُرجى عدم إرسال أي ملفات الآن؛ إذا قُبل طلبك، فسنشرح لك كيفية إنشاء ملف تصدير تجريبي.",
-    "emailSign": "فريق SolvyMed"
+    "emailSign": "فريق SolvyMed",
+    "emailTagline": "Your practice, your brand.",
+    "emailHelloTitled": "مرحبًا {title} {name}،",
+    "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
   "foundersCard": {
     "cardTitle": "برنامج المؤسسين",
@@ -1790,7 +1862,9 @@
     "couldntFinish": "لم أتمكن من إتمام ذلك. هل يمكنك قوله بطريقة أخرى مع اسم المريض والتاريخ والوقت؟",
     "onlySolvyMed": "يمكنني المساعدة في SolvyMed فقط.",
     "noClinical": "لا يمكنني المساعدة في المسائل السريرية.",
-    "minutes": "{n} دقيقة"
+    "minutes": "{n} دقيقة",
+    "alreadyPaid": "هذا الموعد مدفوع بالفعل.",
+    "noAmount": "هذا الموعد بلا مبلغ. حدّد المبلغ في جدول المواعيد قبل تعليمه كمدفوع."
   },
   "countryExamples": {
     "phone": "رقم الهاتف"
@@ -1801,5 +1875,96 @@
     "tryNow": "جرّبه الآن",
     "later": "لاحقًا",
     "whatCanDo": "ماذا يستطيع SolvyAI أن يفعل؟"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "تحديث"
+  },
+  "siteMeta": {
+    "title": "SolvyMed — Software for medical practices",
+    "description": "SolvyMed is the all-in-one app for healthcare professionals: smart scheduling, patient records, prescriptions and integrated payments, all in one place.",
+    "socialDescription": "Your practice, your brand. The all-in-one app for healthcare professionals: scheduling, patient records, prescriptions and payments."
+  },
+  "brand": {
+    "title": "My brand",
+    "hint": "Logo, colour and how your name appears to patients",
+    "displayName": "Display name",
+    "displayNameHint": "Leave empty to use your profile name",
+    "titleLabel": "Title (Dr., Dra.…)",
+    "specialty": "Specialty",
+    "registrationLine": "Professional registration",
+    "accent": "Brand colour",
+    "accentCustom": "Custom",
+    "accentAdjusted": "We adjust the shade when needed to keep text readable.",
+    "logoSquare": "Logo (square)",
+    "logoWide": "Wide logo (documents)",
+    "photo": "Photo",
+    "uploadsNote": "Shown on your public page and documents.",
+    "upload": "Choose image",
+    "replace": "Replace",
+    "remove": "Remove",
+    "uploading": "Uploading…",
+    "preview": "How patients see it",
+    "previewLight": "Light",
+    "previewDark": "Dark",
+    "previewButton": "Book an appointment",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "saveError": "Couldn't save. Try again.",
+    "badType": "Use a PNG or JPG image.",
+    "tooLarge": "This image is too large. Use one up to 5 MB and at most 4096 px per side.",
+    "uploadError": "Couldn't upload the image. Try again.",
+    "removeTitle": "Remove this image?",
+    "removeBody": "It will no longer appear on your page and documents.",
+    "removeConfirm": "Remove",
+    "cancel": "Cancel"
+  },
+  "patientDoctors": {
+    "homeSection": "My doctors",
+    "homeCard": "Your doctor",
+    "bookWho": "With whom?",
+    "add": "+ Add a doctor",
+    "addTitle": "Add a doctor",
+    "addHint": "Enter the code your doctor shared.",
+    "code": "Code",
+    "connect": "Connect",
+    "connected": "Done! You're now connected to {doctor}.",
+    "alreadyConnected": "You're already connected to {doctor}.",
+    "viewDoctor": "View doctor",
+    "settingsRow": "My doctors",
+    "disconnect": "Disconnect",
+    "disconnectTitle": "Disconnect from {doctor}?",
+    "disconnectBody": "You'll stop seeing {doctor}'s appointments and documents. Pending requests will be cancelled. The clinic keeps your record.",
+    "disconnectBlocked": "You have confirmed appointments with {doctor}. To cancel them, contact the clinic; then you can disconnect.",
+    "disconnected": "Disconnected from {doctor}.",
+    "filterAll": "All"
+  },
+  "secretaryPractices": {
+    "switcherLabel": "Schedule for",
+    "all": "All",
+    "allEmpty": "No appointments today.",
+    "doctorField": "Doctor",
+    "todayWith": "Today with {doctor}",
+    "notifyTitle": "Notifications per doctor",
+    "notifyHint": "Choose which doctors you get notifications for.",
+    "pushPrefix": "{doctor}: ",
+    "joinedTeam": "{doctor} added you to their team.",
+    "removeTitle": "Remove {name} from your team?",
+    "removeBody": "They stay on other doctors' teams."
+  },
+  "colleagues": {
+    "title": "My colleagues",
+    "hint": "Add colleagues by their public code. Only you see this list.",
+    "add": "+ Add a colleague",
+    "added": "{doctor} added to your colleagues.",
+    "remove": "Remove from colleagues",
+    "refer": "Refer a colleague",
+    "referHint": "Send the patient a colleague's link. No data is shared.",
+    "shareMessage": "Hi {patient}! I recommend {colleague} ({specialty}). To book, go to: {link}",
+    "empty": "You haven't added any colleagues yet."
   }
 }

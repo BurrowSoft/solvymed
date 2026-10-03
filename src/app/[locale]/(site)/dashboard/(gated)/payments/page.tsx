@@ -10,6 +10,7 @@ import { formatDateLabel } from "@/lib/dateLabels";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { RECEIVABLE_STATUSES } from "@/lib/paymentRules";
+import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 type Period = "week" | "month" | "last_month" | "all";
 
@@ -66,7 +67,10 @@ export default async function PaymentsPage({
       .from("appointments")
       .select("id, patient_name, date, start_time, consultation_type, payment_amount, payment_type")
       .eq("professional_id", effectiveProfId)
-      .eq("payment_status", status);
+      .eq("payment_status", status)
+      // Only appointments with an amount (the app's #216): a no-amount one
+      // shows "Sem valor · Definir valor" in the Agenda instead.
+      .gt("payment_amount", 0);
     if (TYPE_FILTER) q = q.or(TYPE_FILTER);
     return q;
   };
@@ -98,6 +102,7 @@ export default async function PaymentsPage({
       .select("id", { count: "exact", head: true })
       .eq("professional_id", effectiveProfId)
       .in("payment_status", ["pending", "paid"])
+      .gt("payment_amount", 0)
       .neq("status", "blocked");
     if (!countError && (count ?? 0) === 0) {
       const prefix = locale === "en" ? "" : `/${locale}`;
@@ -143,23 +148,25 @@ export default async function PaymentsPage({
       </div>
 
       {/* Summary cards */}
-      <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-orange-100 bg-orange-50 p-5">
+      {/* Stacked until there's room for three whole amounts ("R$ 115.582,19"
+          was clipped side by side on phones; 3e, build 25). */}
+      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="min-w-0 rounded-2xl border border-orange-100 bg-orange-50 p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">{t("pendingLabel")}</p>
-          <p className="mt-1 text-2xl font-extrabold text-orange-900">{formatAmount(totalPending)}</p>
+          <p className="mt-1 text-2xl font-extrabold tabular-nums text-orange-900">{formatAmount(totalPending)}</p>
           <p className="text-xs text-orange-600">{t("sessions", { n: pending.length })}</p>
         </div>
         {/* Received/total sums are the practice's revenue: doctor only. */}
         {!isSecretary && (
           <>
-            <div className="rounded-2xl border border-green-100 bg-green-50 p-5">
+            <div className="min-w-0 rounded-2xl border border-green-100 bg-green-50 p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-green-600">{t("receivedLabel")}</p>
-              <p className="mt-1 text-2xl font-extrabold text-green-900">{formatAmount(totalPaid)}</p>
+              <p className="mt-1 text-2xl font-extrabold tabular-nums text-green-900">{formatAmount(totalPaid)}</p>
               <p className="text-xs text-green-600">{t("sessions", { n: paid.length })}</p>
             </div>
-            <div className="rounded-2xl border border-teal-100 bg-teal-50 p-5 col-span-2 sm:col-span-1">
+            <div className="min-w-0 rounded-2xl border border-teal-100 bg-teal-50 p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-teal-600">{t("totalLabel")}</p>
-              <p className="mt-1 text-2xl font-extrabold text-teal-900">{formatAmount(totalPending + totalPaid)}</p>
+              <p className="mt-1 text-2xl font-extrabold tabular-nums text-teal-900">{formatAmount(totalPending + totalPaid)}</p>
               <p className="text-xs text-teal-600">{t("sessions", { n: pending.length + paid.length })}</p>
             </div>
           </>
@@ -184,7 +191,7 @@ export default async function PaymentsPage({
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-semibold text-slate-900 text-sm truncate">{p.patient_name}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{formatDateLabel(locale, p.date)} · {p.start_time?.slice(0, 5)} · {p.consultation_type}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{formatDateLabel(locale, p.date)} · {p.start_time?.slice(0, 5)} · <ConsultTypeLabel value={p.consultation_type} /></p>
                       {p.payment_amount ? (
                         <p className="text-sm font-bold text-orange-600 mt-1">{formatAmount(p.payment_amount)}</p>
                       ) : (
@@ -221,7 +228,7 @@ export default async function PaymentsPage({
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-semibold text-slate-900 text-sm truncate">{p.patient_name}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{formatDateLabel(locale, p.date)} · {p.start_time?.slice(0, 5)} · {p.consultation_type}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{formatDateLabel(locale, p.date)} · {p.start_time?.slice(0, 5)} · <ConsultTypeLabel value={p.consultation_type} /></p>
                       {p.payment_amount ? (
                         <p className="text-sm font-bold text-green-600 mt-1">{formatAmount(p.payment_amount)}</p>
                       ) : null}

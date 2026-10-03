@@ -12,7 +12,7 @@ vi.mock("@/lib/track", () => ({ track: vi.fn() }));
 
 import { FoundersForm } from "@/app/[locale]/(site)/founders/FoundersForm";
 
-const show = (locale: "en" | "pt-BR", defaultCountry: "BR" | "TH" | "OTHER" = "BR") =>
+const show = (locale: "en" | "pt-BR", defaultCountry: "BR" | "TH" | "" = "BR") =>
   render(
     <NextIntlClientProvider locale={locale} messages={locale === "en" ? en : pt}>
       <FoundersForm locale={locale} defaultCountry={defaultCountry} showRulesLink={false} />
@@ -32,15 +32,25 @@ describe("FoundersForm", () => {
     fireEvent.click(screen.getByRole("button", { name: en.founders.submit }));
   };
 
-  it("the system list follows the country (BR list, TH list, only the generic ones elsewhere)", () => {
+  it("the system list follows the country (BR list, TH list); no \"Other\" country (e7)", () => {
     show("en", "BR");
     const options = () => Array.from((screen.getByLabelText(/Which clinic system/) as HTMLSelectElement).options).map((o) => o.value);
     expect(options()).toContain("feegow");
     expect(options()).not.toContain("proclinic");
     fireEvent.change(screen.getByLabelText(/^Country/), { target: { value: "TH" } });
     expect(options()).toContain("proclinic");
-    fireEvent.change(screen.getByLabelText(/^Country/), { target: { value: "OTHER" } });
-    expect(options()).toEqual(["", "other", "spreadsheet", "paper"]);
+    const countries = Array.from((screen.getByLabelText(/^Country/) as HTMLSelectElement).options).map((o) => o.value);
+    expect(countries).toEqual(["BR", "TH"]);
+    expect(screen.getByText("For now, the Founders program is only for clinics in Brazil and Thailand.")).toBeInTheDocument();
+  });
+
+  it("English: no country preselected; sending without one asks for it", () => {
+    show("en", "");
+    const select = screen.getByLabelText(/^Country/) as HTMLSelectElement;
+    expect(select.value).toBe("");
+    fillAndSend("other");
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(screen.getByRole("alert")).toHaveTextContent(en.founders.errorInvalid);
   });
 
   it("sends the answers (with the honeypot empty) and says it's on the waitlist when the system is full", async () => {
@@ -110,7 +120,7 @@ describe("privacy policy", () => {
     expect(container.textContent).not.toContain("Founders Program");
     rerender(wrap(true));
     expect(container.textContent).toContain("6d. Founders Program applications");
-    expect(container.textContent).toContain("deleted 12 months after their last update");
+    expect(container.textContent).toContain("deleted 12 months after their last status change");
     expect(container.textContent).toContain("kept while their account exists");
   });
 });

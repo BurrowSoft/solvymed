@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import { computeSlots, toMinutes, filterPastSlots, toLocalDateString } from "@/lib/slots";
+import { computeSlots, toMinutes, filterPastSlots, getDayHours } from "@/lib/slots";
+import { addDays, clinicDate, clinicTime } from "@/lib/clinicTime";
 import { formatMoney } from "@/lib/money";
 import { profileOfKind, profileOfPhonePrefix, type Currency } from "@/lib/country";
 import { isValidThaiId, type PatientIdKind } from "@/lib/patientIds";
@@ -14,10 +15,16 @@ import { birthDateOutOfRange, looksBuddhistEra } from "@/lib/buddhistEra";
 import { DateInput } from "@/components/DateInput";
 import { notifyProfessionalOfBooking } from "./notify-action";
 import type { WorkingHours, TimeSlot } from "@/lib/slots";
+import { MonthCalendar } from "@/components/MonthCalendar";
+import { chosenTimeParts } from "@/lib/chosenTime";
+import { BrandMarkTile } from "@/components/BrandLogo";
+import { PLAIN_CONSULTATION, fixedBookingItem } from "@/lib/consultType";
+import { shortDoctorName } from "@/lib/doctorName";
+import { BrandHeader } from "@/components/BrandHeader";
+import type { PublicBrand } from "@/lib/brand";
 
 type Procedure = { id: string; name: string; durationMinutes: number; price?: number; paymentType: string };
 
-const FALLBACK_DURATIONS = [30, 45, 60];
 
 const COUNTRIES = [
   { code: "TH", flag: "🇹🇭", dialCode: "+66" },
@@ -74,8 +81,18 @@ function getDateFormat(locale: string): string {
     }).join("");
   } catch { return "YYYY-MM-DD"; }
 }
-const DAYS_AHEAD = 14;
-const CONSULT_TYPES = ["Consultation", "Follow-up", "Exam Review", "Procedure", "Emergency"] as const;
+// Days a patient can book ahead (items 7/10: the same range as the app).
+const DAYS_AHEAD = 30;
+// A load that takes longer than this shows "couldn't load" + Retry.
+const LOAD_TIMEOUT_MS = 15_000;
+function withTimeout<T>(p: PromiseLike<T>, ms: number = LOAD_TIMEOUT_MS): Promise<T> {
+  return Promise.race([Promise.resolve(p), new Promise<T>((_, reject) => setTimeout(() => reject(new Error("timeout")), ms))]);
+}
+
+// The fixed choices are stored as the app's keys (6.2); the practice's
+// default length is 30 minutes until a per-practice setting exists.
+const FOLLOW_UP = "Follow-up";
+const DEFAULT_MINUTES = 30;
 
 function addMins(hhmm: string, mins: number): string {
   const [h, m] = hhmm.split(":").map(Number);
@@ -83,15 +100,13 @@ function addMins(hhmm: string, mins: number): string {
   return `${String(Math.floor(total / 60) % 24).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
 }
 
-function buildDays() {
-  return Array.from({ length: DAYS_AHEAD }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() + i);
-    return toLocalDateString(d);
-  });
+// The next DAYS_AHEAD days on the CLINIC's calendar (its country's zone;
+// a patient can't read the practice row), today included (item 10).
+function buildDays(tz: string) {
+  const today = clinicDate(new Date(), tz);
+  return Array.from({ length: DAYS_AHEAD }, (_, i) => addDays(today, i));
 }
-function dayLabel(dateStr: string, locale: string, todayLabel: string) {
-  const today = toLocalDateString(new Date());
+function dayLabel(dateStr: string, locale: string, todayLabel: string, today: string) {
   if (dateStr === today) return todayLabel;
   return new Date(dateStr + "T12:00:00").toLocaleDateString(dateLocale(locale), {
     weekday: "short", month: "short", day: "numeric",
@@ -99,11 +114,13 @@ function dayLabel(dateStr: string, locale: string, todayLabel: string) {
 }
 const formatTime = formatTimeLabel;
 
+
 async function fetchSlots(
   professionalId: string,
   date: string,
   durationMinutes: number,
   workingHours: WorkingHours,
+  tz: string,
 ): Promise<TimeSlot[]> {
   const supabase = createClient();
   const { data: busy } = await supabase.rpc("get_busy_slots", {
@@ -117,8 +134,9 @@ async function fetchSlots(
     }),
   );
   const slots = computeSlots(date, durationMinutes, workingHours, busyRanges);
+  // Today's times already past on the clinic's clock are left out.
   const now = new Date();
-  return filterPastSlots(slots, date, now.getHours() * 60 + now.getMinutes());
+  return filterPastSlots(slots, date, toMinutes(clinicTime(now, tz)), clinicDate(now, tz));
 }
 
 export function BookingClient({
@@ -132,6 +150,8 @@ export function BookingClient({
   initialManualProfile,
   currency = "BRL",
   idKind = "BR",
+  clinicTz: clinicTzProp,
+  brand = null,
 }: {
   professionalId: string;
   professionalName: string;
@@ -145,6 +165,9 @@ export function BookingClient({
   currency?: Currency;
   // The practice country's patient identifier (lib/patientIds).
   idKind?: PatientIdKind;
+  clinicTz?: string | null;
+  // The doctor's brand (1.5.0, behind the flag); null = the card as before.
+  brand?: PublicBrand | null;
 }) {
   const router = useRouter();
   const t = useTranslations("book");
@@ -158,20 +181,18 @@ export function BookingClient({
   // ahead of Brazil from 21:00, which shifted the strip and failed
   // hydration (React #418).
   const [days, setDays] = useState<string[]>([]);
+  // The clinic's zone: its own (get_professional_public_info time_zone,
+  // from the page), else its country's.
+  const clinicTz = clinicTzProp || profileOfKind(idKind).defaultTimeZone;
 
-  function applyConsultType(name: string) {
-    if ((CONSULT_TYPES as readonly string[]).includes(name)) {
-      setConsultType(name);
-      setIsOther(false);
-    } else {
-      setConsultType(name);
-      setIsOther(true);
-    }
-  }
 
   // Working hours — fetched via SECURITY DEFINER RPC (patients can't read professionals table)
   const [workingHours, setWorkingHours] = useState<WorkingHours>({});
   const [loadingHours, setLoadingHours] = useState(true);
+  // A slow or failed load: a message + Retry (bumps reloadKey) instead of
+  // an endless spinner or an empty list.
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   const [procedures, setProcedures] = useState<Procedure[]>([]);
   const [loadingProcs, setLoadingProcs] = useState(true);
@@ -180,17 +201,19 @@ export function BookingClient({
 
   const [selectedDate, setSelectedDate] = useState("");
   useEffect(() => {
-    const d = buildDays();
+    const d = buildDays(clinicTz);
     setDays(d);
     setSelectedDate(d[0]);
   }, []);
   const [slots, setSlots] = useState<TimeSlot[]>([]);
+  // The date the shown slots were loaded for (null = none yet).
+  const [slotsFor, setSlotsFor] = useState<string | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [showCustomTime, setShowCustomTime] = useState(false);
   const [customTimeValue, setCustomTimeValue] = useState("");
 
-  const [consultType, setConsultType] = useState("");
+  const [consultType, setConsultType] = useState<string>(PLAIN_CONSULTATION);
   const [isOther, setIsOther] = useState(false);
   const [notes, setNotes] = useState("");
   const [booking, setBooking] = useState(false);
@@ -256,20 +279,22 @@ export function BookingClient({
 
   // Fetch working hours (SECURITY DEFINER bypasses patient RLS)
   useEffect(() => {
+    setLoadingHours(true);
     (async () => {
       try {
         const supabase = createClient();
-        const { data } = await supabase.rpc("get_professional_working_hours", {
+        const { data, error } = await withTimeout(supabase.rpc("get_professional_working_hours", {
           p_professional_id: professionalId,
-        });
-        if (data) setWorkingHours(data as WorkingHours);
+        }));
+        if (error) throw error;
+        setWorkingHours((data ?? {}) as WorkingHours);
       } catch {
-        // stay empty — slots will show as unavailable
+        setLoadError(true);
       } finally {
         setLoadingHours(false);
       }
     })();
-  }, [professionalId]);
+  }, [professionalId, reloadKey]);
 
   // Fetch procedures
   useEffect(() => {
@@ -286,11 +311,16 @@ export function BookingClient({
           price: r.price != null ? Number(r.price) : undefined,
           paymentType: r.payment_type as string,
         }));
+        // The plain Consulta stays the default; a procedure is picked on
+        // purpose (its length and price), as the doctor's form (6.2).
         setProcedures(procs);
-        if (procs.length > 0) {
-          setSelectedProcedure(procs[0]);
-          setDuration(procs[0].durationMinutes);
-          applyConsultType(procs[0].name);
+        // The clinic's own "Consulta" replaces the fixed one, so it's the
+        // default with its length (e7).
+        const ownConsult = procs.find((pr) => fixedBookingItem(pr.name) === "consultation");
+        if (ownConsult) {
+          setSelectedProcedure(ownConsult);
+          setDuration(ownConsult.durationMinutes);
+          setConsultType(ownConsult.name);
         }
       } catch {
         // ignore
@@ -300,26 +330,56 @@ export function BookingClient({
     })();
   }, [professionalId]);
 
-  // Load slots whenever date, duration, or working hours change
+  // Load slots whenever date, duration, or working hours change. Only the
+  // LATEST request may set them: a slow answer for a day the patient has
+  // already left would otherwise overwrite the new day's grid (3e).
+  const slotsSeq = useRef(0);
   const loadSlots = useCallback(
     async (date: string, dur: number) => {
+      const seq = ++slotsSeq.current;
       setLoadingSlots(true);
       setSelectedSlot(null);
       try {
-        const s = await fetchSlots(professionalId, date, dur, workingHours);
+        const s = await withTimeout(fetchSlots(professionalId, date, dur, workingHours, clinicTz));
+        if (seq !== slotsSeq.current) return;
         setSlots(s);
+        setSlotsFor(date);
       } catch {
+        if (seq !== slotsSeq.current) return;
         setSlots([]);
+        setLoadError(true);
       } finally {
-        setLoadingSlots(false);
+        if (seq === slotsSeq.current) setLoadingSlots(false);
       }
     },
-    [professionalId, workingHours],
+    [professionalId, workingHours, clinicTz],
   );
 
   useEffect(() => {
-    if (!loadingHours && selectedDate) loadSlots(selectedDate, duration);
-  }, [selectedDate, duration, loadSlots, loadingHours]);
+    if (!loadingHours && !loadError && selectedDate) loadSlots(selectedDate, duration);
+  }, [selectedDate, duration, loadSlots, loadingHours, loadError, reloadKey]);
+
+  // Days the clinic opens (its working hours); a closed day is greyed in the
+  // calendar, and the first open day is picked.
+  const openDay = useCallback((d: string) => !!getDayHours(d, workingHours)?.enabled, [workingHours]);
+  const anyOpen = days.some(openDay);
+  useEffect(() => {
+    if (loadingHours || !selectedDate || openDay(selectedDate)) return;
+    const first = days.find(openDay);
+    if (first) setSelectedDate(first);
+  }, [loadingHours, selectedDate, days, openDay]);
+  const retry = () => { setLoadError(false); setReloadKey((k) => k + 1); };
+  // The range starts today only while today still has a time left (e7).
+  const skippedToday = useRef(false);
+  useEffect(() => {
+    if (skippedToday.current || loadingSlots || loadingHours || loadError || !days.length) return;
+    // Only once today's own slots have loaded (not the empty initial list).
+    if (selectedDate === days[0] && slotsFor === days[0] && slots.length === 0) {
+      skippedToday.current = true;
+      const next = days.slice(1).find(openDay);
+      if (next) setSelectedDate(next);
+    }
+  }, [loadingSlots, loadingHours, loadError, days, selectedDate, slots.length, slotsFor, openDay]);
 
   async function handleBook() {
     if (!selectedSlot) return;
@@ -415,7 +475,7 @@ export function BookingClient({
           </div>
           <h1 className="text-xl font-extrabold text-slate-900 mb-2">{t("successTitle")}</h1>
           <p className="text-slate-500 text-sm mb-1">
-            {t("successBody", { date: dayLabel(bookedDate, locale, t("today")), time: formatTime(locale, bookedSlot!.start), doctor: professionalName })}
+            {t("successBody", { date: dayLabel(bookedDate, locale, t("today"), days[0] ?? ""), time: formatTime(locale, bookedSlot!.start), doctor: professionalName })}
           </p>
           <p className="text-slate-400 text-xs mb-8">{t("successHint")}</p>
           <button
@@ -431,6 +491,14 @@ export function BookingClient({
 
   const setupLoading = loadingHours || loadingProcs;
 
+  // A procedure as a list item: its name, length and price.
+  const procOption = (proc: Procedure) => ({
+    key: proc.id, label: proc.name,
+    sub: `${t("durationMin", { n: proc.durationMinutes })}${proc.price ? ` · ${formatMoney(proc.price, currency)}` : ""}`,
+    active: !isOther && selectedProcedure?.id === proc.id,
+    pick: () => { setSelectedProcedure(proc); setDuration(proc.durationMinutes); setConsultType(proc.name); setIsOther(false); },
+  });
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
@@ -441,19 +509,17 @@ export function BookingClient({
               <path d="M19 12H5M12 5l-7 7 7 7"/>
             </svg>
           </button>
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-teal-600">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-              </svg>
-            </div>
-            <span className="font-bold text-slate-900">{t("title")}</span>
+          <div className="flex min-w-0 items-center gap-2">
+            <BrandMarkTile size="sm" decorative />
+            {/* A long name: title + first + last, 2 lines at most (e7). */}
+            <span className="min-w-0 line-clamp-2 [overflow-wrap:anywhere] font-bold text-slate-900">{professionalName.trim() ? t("titleWith", { doctor: shortDoctorName(professionalName) }) : t("title")}</span>
           </div>
         </div>
       </header>
 
       <div className="mx-auto max-w-2xl px-4 py-6 space-y-6">
-        {/* Doctor card */}
+        {/* Doctor card: the doctor's brand when there is one (1.5.0). */}
+        {brand ? <BrandHeader brand={brand} extra={clinicName} /> : (
         <div className="rounded-2xl bg-teal-50 border border-teal-100 p-5 flex items-center gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-teal-600 text-white font-bold text-lg">
             {professionalName.charAt(0)}
@@ -464,6 +530,7 @@ export function BookingClient({
             {clinicName && <p className="text-xs text-slate-500 mt-0.5">{clinicName}</p>}
           </div>
         </div>
+        )}
 
         {setupLoading ? (
           <div className="flex items-center justify-center py-16">
@@ -471,120 +538,117 @@ export function BookingClient({
           </div>
         ) : (
           <>
-            {/* Procedure picker */}
-            {procedures.length > 0 ? (
-              <div>
-                <h2 className="text-sm font-bold text-slate-700 mb-2">{t("selectProcedure")}</h2>
-                <div className="space-y-2">
-                  {procedures.map((proc) => {
-                    const active = selectedProcedure?.id === proc.id;
-                    return (
-                      <button
-                        key={proc.id}
-                        onClick={() => { setSelectedProcedure(proc); setDuration(proc.durationMinutes); applyConsultType(proc.name); }}
-                        className={`w-full text-left rounded-xl border-2 px-4 py-3 transition ${active ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
-                      >
-                        <p className={`font-semibold text-sm ${active ? "text-teal-800" : "text-slate-800"}`}>{proc.name}</p>
-                        <p className={`text-xs mt-0.5 ${active ? "text-teal-600" : "text-slate-400"}`}>
-                          {proc.durationMinutes} min{proc.price ? ` · ${formatMoney(proc.price, currency)}` : ""}
-                        </p>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : (
-              <div>
-                <h2 className="text-sm font-bold text-slate-700 mb-2">{t("sessionDuration")}</h2>
-                <div className="flex gap-2">
-                  {FALLBACK_DURATIONS.map((d) => (
-                    <button
-                      key={d}
-                      onClick={() => { setSelectedProcedure(null); setDuration(d); }}
-                      className={`flex-1 rounded-xl border-2 py-2.5 text-sm font-semibold transition ${duration === d ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
-                    >
-                      {t("durationMin", { n: d })}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Consultation type */}
+            {/* What the visit is for (Vitor, build 25: patients shouldn't have
+                to type it; e7's final list, same as the app): Consulta and
+                Retorno always, then the clinic's procedures with their length
+                and price, then Outro + a short text only when the clinic has
+                procedures. Patients never pick a length: Consulta/Retorno/
+                Outro use the practice's default, a procedure its own. */}
             <div>
               <h2 className="text-sm font-bold text-slate-700 mb-2">
                 {t("appointmentFor")} <span className="font-normal text-red-400">*</span>
               </h2>
-              <div className="flex flex-wrap gap-2">
-                {CONSULT_TYPES.map((type) => {
-                  const active = !isOther && consultType === type;
-                  const labelKey = type === "Follow-up" ? "followUp" : type === "Exam Review" ? "examReview" : type.toLowerCase() as "consultation" | "procedure" | "emergency";
-                  return (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => { setConsultType(type); setIsOther(false); }}
-                      className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${active ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
-                    >
-                      {tConsult(labelKey)}
-                    </button>
-                  );
-                })}
-                <button
-                  type="button"
-                  onClick={() => { setIsOther(true); setConsultType(""); }}
-                  className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${isOther ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
-                >
-                  {t("other")}
-                </button>
+              <div className="space-y-2" role="radiogroup" aria-label={t("appointmentFor")} data-testid="type-list">
+                {[
+                  ...([["consultation", PLAIN_CONSULTATION], ["followUp", FOLLOW_UP]] as const).map(([item, key]) => {
+                    // The clinic's own procedure with this name takes the slot (e7: replace).
+                    const own = procedures.find((pr) => fixedBookingItem(pr.name) === item);
+                    return own
+                      ? procOption(own)
+                      : {
+                          key, label: tConsult(item), sub: t("durationMin", { n: DEFAULT_MINUTES }),
+                          active: !isOther && !selectedProcedure && consultType === key,
+                          pick: () => { setSelectedProcedure(null); setDuration(DEFAULT_MINUTES); setConsultType(key); setIsOther(false); },
+                        };
+                  }),
+                  ...procedures.filter((pr) => !fixedBookingItem(pr.name)).map((proc) => ({
+                    key: proc.id, label: proc.name,
+                    sub: `${t("durationMin", { n: proc.durationMinutes })}${proc.price ? ` · ${formatMoney(proc.price, currency)}` : ""}`,
+                    active: !isOther && selectedProcedure?.id === proc.id,
+                    pick: () => { setSelectedProcedure(proc); setDuration(proc.durationMinutes); setConsultType(proc.name); setIsOther(false); },
+                  })),
+                  ...(procedures.length > 0 ? [{ key: "other", label: t("other"), sub: "", active: isOther,
+                    pick: () => { setSelectedProcedure(null); setDuration(DEFAULT_MINUTES); setConsultType(""); setIsOther(true); } }] : []),
+                ].map((o) => (
+                  <button
+                    key={o.key}
+                    type="button"
+                    role="radio"
+                    aria-checked={o.active}
+                    onClick={o.pick}
+                    className={`w-full text-left rounded-xl border-2 px-4 py-3 transition ${o.active ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
+                  >
+                    <p className={`font-semibold text-sm ${o.active ? "text-teal-800" : "text-slate-800"}`}>{o.label}</p>
+                    {o.sub && <p className={`text-xs mt-0.5 ${o.active ? "text-teal-600" : "text-slate-400"}`}>{o.sub}</p>}
+                  </button>
+                ))}
               </div>
               {isOther && (
                 <input
                   type="text"
                   value={consultType}
                   onChange={(e) => setConsultType(e.target.value)}
-                  placeholder={t("otherPlaceholder")}
+                  placeholder={t("otherHint")}
+                  aria-label={t("other")}
+                  maxLength={80}
                   className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                   autoFocus
                 />
               )}
             </div>
 
-            {/* Date strip */}
+            {/* Couldn't load (15 s or an error): say so, with Retry. */}
+            {loadError && (
+              <div data-testid="load-failed" className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-5 text-center">
+                <p className="text-sm font-medium text-amber-800">{t("loadFailed")}</p>
+                <button type="button" onClick={retry} className="mt-3 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700">{t("retry")}</button>
+              </div>
+            )}
+
+            {/* No working hours at all: the clinic hasn't opened online booking. */}
+            {!loadError && !loadingHours && days.length > 0 && !anyOpen && (
+              <div data-testid="no-hours" className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-6 text-center">
+                <p className="text-sm font-medium text-slate-600">{t("noHours")}</p>
+              </div>
+            )}
+
+            {!loadError && (loadingHours || anyOpen) && (<>
+            {/* Month calendar (item 7) */}
             <div>
               <h2 className="text-sm font-bold text-slate-700 mb-2">{t("pickDate")}</h2>
-              <div className="flex gap-2 overflow-x-auto pb-1">
-                {days.map((day) => (
-                  <button
-                    key={day}
-                    onClick={() => setSelectedDate(day)}
-                    className={`shrink-0 rounded-xl border-2 px-3 py-2 text-xs font-semibold whitespace-nowrap transition ${selectedDate === day ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
-                  >
-                    {dayLabel(day, locale, t("today"))}
-                  </button>
-                ))}
-              </div>
+              {days.length > 0 && (
+                <MonthCalendar
+                  days={days}
+                  selected={selectedDate || null}
+                  onSelect={setSelectedDate}
+                  isOpen={(d) => loadingHours || openDay(d)}
+                  locale={locale}
+                  labels={{ prev: t("prevMonth"), next: t("nextMonth") }}
+                />
+              )}
             </div>
 
-            {/* Time slots */}
+            {/* Time slots: a grid; a skeleton while loading (items 5/16/17). */}
             <div>
               <h2 className="text-sm font-bold text-slate-700 mb-2">{t("availableTimes")}</h2>
-              {loadingSlots || !selectedDate ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-teal-600 border-t-transparent" />
+              {loadingSlots || loadingHours || !selectedDate ? (
+                <div data-testid="slots-skeleton" className="grid grid-cols-4 gap-2 sm:grid-cols-5" aria-busy="true">
+                  {Array.from({ length: 8 }, (_, i) => <div key={i} className="h-10 animate-pulse rounded-xl bg-slate-100" />)}
                 </div>
               ) : slots.length === 0 ? (
                 <div className="rounded-xl bg-slate-50 border border-slate-200 py-8 text-center">
-                  <p className="text-sm text-slate-500 font-medium">{t("noSlots")}</p>
+                  {/* Today with nothing left says so (e7), not the general text. */}
+                  <p className="text-sm text-slate-500 font-medium">{selectedDate === days[0] ? t("noTimesToday") : t("noSlots")}</p>
                   <p className="text-xs text-slate-400 mt-1">{t("tryDifferentDate")}</p>
                 </div>
               ) : (
-                <div className="flex flex-wrap gap-2">
+                <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
                   {slots.map((slot) => (
                     <button
                       key={slot.start}
+                      aria-pressed={selectedSlot?.start === slot.start && !showCustomTime}
                       onClick={() => { setSelectedSlot(slot); setShowCustomTime(false); setCustomTimeValue(""); }}
-                      className={`rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${selectedSlot?.start === slot.start && !showCustomTime ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
+                      className={`w-full rounded-xl border-2 px-2 py-2 text-sm font-semibold transition ${selectedSlot?.start === slot.start && !showCustomTime ? "border-teal-500 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}
                     >
                       {formatTime(locale, slot.start)}
                     </button>
@@ -592,6 +656,8 @@ export function BookingClient({
                 </div>
               )}
             </div>
+
+            </>)}
 
             {/* Custom time */}
             <div>
@@ -718,6 +784,13 @@ export function BookingClient({
                 </div>
               ))}
             </div>
+
+            {/* The chosen time, always visible above the button (item 10). */}
+            {selectedSlot && selectedDate && (
+              <p data-testid="chosen-time" className="rounded-xl bg-teal-50 px-4 py-3 text-sm font-semibold text-teal-800">
+                {t("chosenTime", chosenTimeParts(selectedDate, selectedSlot.start, selectedSlot.end, profileOfKind(idKind)))}
+              </p>
+            )}
 
             {error && (
               <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">

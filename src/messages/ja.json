@@ -98,7 +98,18 @@
     "noUpcoming": "今後の予約はありません",
     "unpaidSessions": "{n}件の未払いセッション",
     "pendingCollection": "{amount} が未回収",
-    "managePayments": "支払い管理"
+    "managePayments": "支払い管理",
+    "invitedTitle": "招待経由の新しい患者 {n} 人",
+    "invitedHint": "クリニックのコードで参加しました。自院の患者は「保持」、「削除」はアカウントの接続を解除します（記録はアーカイブされます）。",
+    "invitedKeep": "保持",
+    "invitedRemove": "削除",
+    "invitedError": "保存できませんでした。もう一度お試しください。",
+    "invitedSeeAll": "患者一覧ですべて表示",
+    "invitedSameEmail": "{name} と同じメール：統合しますか？",
+    "invitedRemoveConfirm": "{name} を削除しますか？アカウントはあなたの確認待ちに戻り、記録はアーカイブされます。",
+    "invitedRemoveConfirmDisconnect": "{name} を削除しますか？アカウントはクリニックから切断され、保留中のリクエストはキャンセルされ（患者に通知されます）、記録はアーカイブされます。再び受け入れるには、アーカイブから記録を復元し、患者の個人コードを共有してください。",
+    "requestsWaiting": "確認待ちの予約リクエストが {n} 件あります",
+    "requestsWaitingOpen": "リクエストを見る"
   },
   "schedule": {
     "patientMessage": "患者からのメッセージ",
@@ -134,9 +145,6 @@
     "dur90": "1.5時間",
     "dur120": "2時間",
     "dur240": "4時間",
-    "noProcedures": "処置が設定されていません。",
-    "addProcSettings": "設定で処置を追加してください",
-    "beforeScheduling": "予約前に。",
     "cancel": "キャンセル",
     "saveAppt": "予約を保存",
     "repeat": "繰り返し",
@@ -231,7 +239,23 @@
     "undoCancelled": "予約をキャンセルしました",
     "undoAction": "取り消す（{s} 秒）",
     "undoDone": "取り消しました。",
-    "undoFailed": "元に戻せませんでした。項目を開いて調整してください。"
+    "undoFailed": "元に戻せませんでした。項目を開いて調整してください。",
+    "newPatientOption": "記録を作らずに予約：{name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "今週",
@@ -250,7 +274,10 @@
     "revertConfirm": "このお支払いを未払いに戻しますか？",
     "errorInvalidAmount": "有効な金額を入力してください。",
     "errorGeneric": "問題が発生しました。もう一度お試しください。",
-    "amountPlaceholderPlain": "金額"
+    "amountPlaceholderPlain": "金額",
+    "noAmount": "金額なし",
+    "setAmount": "金額を設定",
+    "amountFirst": "先に受け取った金額を入力してください。"
   },
   "paymentsPage": {
     "title": "支払い",
@@ -319,7 +346,9 @@
     "nextPage": "次へ",
     "pagesLabel": "ページ",
     "fullNamePlaceholder": "氏名",
-    "professionPlaceholder": "例：エンジニア、教師…"
+    "professionPlaceholder": "例：エンジニア、教師…",
+    "invitedBadge": "新規・招待経由",
+    "invitedSameEmail": "{name} と同じメール：統合しますか？"
   },
   "patientDetail": {
     "tabInfo": "情報",
@@ -670,7 +699,16 @@
     "orCustomTime": "または時間を指定する",
     "professionalFallback": "担当者",
     "errorArchived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。",
-    "practiceInactive": "このクリニックは現在オンライン予約を受け付けていません。"
+    "practiceInactive": "このクリニックは現在オンライン予約を受け付けていません。",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today.",
+    "otherHint": "E.g. first visit, follow-up",
+    "titleWith": "Book with {doctor}"
   },
   "auth": {
     "passwordTooShort": "パスワードは{min}文字以上である必要があります。",
@@ -714,10 +752,9 @@
       "secretaryNeedsInvite": "受付スタッフの方は、医師に招待リンクを依頼してください。",
       "secretaryEmailMismatch": "このメールアドレスは招待と一致しないか、招待の有効期限が切れています。メールアドレスを確認するか、クリニックに新しいリンクを依頼してください。",
       "consentCheckbox": "<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>を読み、同意します",
-      "country": "クリニックの所在国は？",
-      "countryOther": "その他の国",
-      "countryHint": "通貨、プラン料金、患者の身分証、支払いQRが決まります。後で変更するにはサポートにご連絡ください。",
-      "fullNameHint": "必要に応じて肩書き（{titles}）を付けてください。あいさつに表示されます。"
+      "fullNameHint": "必要に応じて肩書き（{titles}）を付けてください。あいさつに表示されます。",
+      "backToCountry": "戻る",
+      "secretaryInviteFor": "This invite is for {email}."
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",
@@ -746,7 +783,9 @@
     "backToHome": "ホームに戻る",
     "patientWelcome": {
       "countdown": "{count}秒後に予約一覧に移動します…",
-      "goToAppointments": "予約一覧へ"
+      "goToAppointments": "予約一覧へ",
+      "heading": "準備完了です！",
+      "confirmed": "アカウントが確認されました。"
     },
     "inviteRequired": {
       "heading": "招待コードが必要です",
@@ -762,7 +801,12 @@
       "backToSignup": "別のアカウントを使う",
       "tooManyAttempts": "試行回数が多すぎます。しばらくしてからもう一度お試しください。",
       "alreadyInvitedByAnother": "あなたのアカウントはすでに別の医師と連携しています。",
-      "archived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。"
+      "archived": "このクリニックでは、お客様のアカウントでの新規予約を受け付けていません。クリニックにお問い合わせください。",
+      "alreadyConnected": "すでに {doctor} とつながっています。変更するにはサポートにお問い合わせください。",
+      "alreadyConnectedNoName": "すでに別の医師とつながっています。変更するにはサポートにお問い合わせください。",
+      "alreadyConnectedSamePractice": "すでに {doctor} とつながっています。クリニックに記録の統合を依頼してください。",
+      "alreadyConnectedSamePracticeNoName": "すでにこのクリニックとつながっています。クリニックに記録の統合を依頼してください。",
+      "codeUnavailable": "このコードでは接続できませんでした。クリニックにお問い合わせください。"
     },
     "pendingConfirmation": {
       "loading": "状況を確認しています…",
@@ -830,7 +874,26 @@
     "rescheduleRequestedLabel": "再スケジュールリクエスト: {date} · {time}",
     "rescheduleButton": "再スケジュールをリクエスト",
     "closeDialog": "閉じる",
-    "originallyLabel": "変更前：{date} · {time}"
+    "originallyLabel": "変更前：{date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "拒否",
+    "cancelContactClinic": "To cancel, contact the clinic.",
+    "statusNotConfirmed": "Not confirmed",
+    "proposalPassed": "This time has already passed. Ask the clinic for a new time.",
+    "cancelRequest": "Cancel request",
+    "cancelRequestTitle": "Cancel this request?",
+    "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
+    "keepRequest": "Keep request",
+    "requestCancelledToast": "Request cancelled.",
+    "rescheduleLapsed": "Your reschedule request expired.",
+    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic.",
+    "bookWith": "Book with {doctor}",
+    "yourDoctor": "Your doctor"
   },
   "nav": {
     "overview": "ホーム",
@@ -972,7 +1035,13 @@
     "accountNotSecretary": "このアカウントでは受付スタッフの招待を承諾できません。招待リンクから作成した別のアカウントをご利用ください。",
     "teamResendConfirm": "{email}に新しい招待を送りますか？以前に共有したコードは使えなくなります。",
     "inviteFrom": "{clinic} からの招待",
-    "inviteFor": "この招待は {email} 宛てです。このメールアドレスで登録してください。"
+    "inviteFor": "この招待は {email} 宛てです。このメールアドレスで登録してください。",
+    "teamResendEmail": "Resend invite",
+    "teamResendAt": "You can resend at {time}",
+    "teamEmailSent": "Email sent to {email}",
+    "teamAlreadySent": "Invite sent. You can resend at {time}.",
+    "teamDailyLimit": "You've reached the limit of 10 invites a day. Try again at {time}.",
+    "teamSendFailed": "Couldn't send the email right now. Try again, or share the link."
   },
   "invitePage": {
     "metaTitle": "招待",
@@ -1143,7 +1212,6 @@
   "pricing": {
     "navLabel": "料金",
     "countryLabel": "料金の表示地域：",
-    "countryOther": "その他の国",
     "title": "シンプルな1プラン。すべて込み。",
     "subtitle": "初期費用なし、患者数による課金なし、追加料金なし。",
     "perMonth": "/月",
@@ -1320,7 +1388,9 @@
   },
   "dateInput": {
     "buddhistYear": "仏暦の年のようです。西暦で入力してください（例：1996）。",
-    "invalidBirthDate": "生年月日が正しくありません。1900年から今日までの日付を入力してください。"
+    "invalidBirthDate": "生年月日が正しくありません。1900年から今日までの日付を入力してください。",
+    "placeholder": "DD/MM/YYYY",
+    "invalid": "The date must be in the format {format}."
   },
   "solvyaiSettings": {
     "title": "SolvyAI",
@@ -1403,7 +1473,6 @@
     "placesUnavailable": "現在、枠数を読み込めませんでした。",
     "countryBR": "ブラジル",
     "countryTH": "タイ",
-    "countryOTHER": "その他の国",
     "formTitle": "応募",
     "required": "必須",
     "qName": "氏名",
@@ -1452,7 +1521,7 @@
     "errorRateLimit": "試行回数が多すぎます。1時間後にもう一度お試しください。",
     "errorInvalid": "この項目を確認してください。",
     "errorGeneric": "問題が発生しました。もう一度お試しください。",
-    "privacyNotice": "これらの回答は、ファウンダープログラムの運営とそれに関するご連絡にのみ使用します。採用されなかった応募(不採用、取り下げ、キャンセル待ち中)は最終更新から12か月後に削除します。採用されたファウンダーの応募は SolvyMed アカウントが存在する間保管します。早めの削除をご希望の場合は support@solvymed.com までご連絡ください。詳細は<privacy>プライバシーポリシー</privacy>をご覧ください。",
+    "privacyNotice": "これらの回答は、ファウンダープログラムの運営とそれに関するご連絡にのみ使用します。採用されなかった応募(不採用、取り下げ、キャンセル待ち中)は最後のステータス変更から12か月後に削除します。採用されたファウンダーの応募は SolvyMed アカウントが存在する間保管します。早めの削除をご希望の場合は support@solvymed.com までご連絡ください。詳細は<privacy>プライバシーポリシー</privacy>をご覧ください。",
     "faqTitle": "よくある質問",
     "faq1q": "本当に生涯無料ですか?",
     "faq1a": "はい。有料プランが、SolvyMed が運営される限り、1アカウント分、採用時から無料です。あなたにリンクされた受付スタッフのアカウントも通常どおり含まれます。規約をご覧ください。",
@@ -1484,7 +1553,10 @@
     "emailBody": "{system} での SolvyMed ファウンダープログラムへのご応募ありがとうございます。5営業日以内にご返信します。",
     "emailWaitlist": "現在 {system} の枠は満員のため、キャンセル待ちに登録されています。",
     "emailNoFiles": "まだファイルは送らないでください。採用された場合、テスト用エクスポートの作成方法をご説明します。",
-    "emailSign": "SolvyMed チーム"
+    "emailSign": "SolvyMed チーム",
+    "emailTagline": "Your practice, your brand.",
+    "emailHelloTitled": "{title} {name} 様",
+    "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
   "foundersCard": {
     "cardTitle": "ファウンダープログラム",
@@ -1790,7 +1862,9 @@
     "couldntFinish": "完了できませんでした。患者名・日付・時刻を添えて、別の言い方で教えてください。",
     "onlySolvyMed": "SolvyMedに関することのみお手伝いできます。",
     "noClinical": "臨床的な質問にはお答えできません。",
-    "minutes": "{n}分"
+    "minutes": "{n}分",
+    "alreadyPaid": "この予約は支払い済みです。",
+    "noAmount": "この予約には金額がありません。支払い済みにする前にスケジュールで金額を設定してください。"
   },
   "countryExamples": {
     "phone": "電話番号"
@@ -1801,5 +1875,96 @@
     "tryNow": "今すぐ試す",
     "later": "あとで",
     "whatCanDo": "SolvyAI で何ができる？"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "更新"
+  },
+  "siteMeta": {
+    "title": "SolvyMed — Software for medical practices",
+    "description": "SolvyMed is the all-in-one app for healthcare professionals: smart scheduling, patient records, prescriptions and integrated payments, all in one place.",
+    "socialDescription": "Your practice, your brand. The all-in-one app for healthcare professionals: scheduling, patient records, prescriptions and payments."
+  },
+  "brand": {
+    "title": "My brand",
+    "hint": "Logo, colour and how your name appears to patients",
+    "displayName": "Display name",
+    "displayNameHint": "Leave empty to use your profile name",
+    "titleLabel": "Title (Dr., Dra.…)",
+    "specialty": "Specialty",
+    "registrationLine": "Professional registration",
+    "accent": "Brand colour",
+    "accentCustom": "Custom",
+    "accentAdjusted": "We adjust the shade when needed to keep text readable.",
+    "logoSquare": "Logo (square)",
+    "logoWide": "Wide logo (documents)",
+    "photo": "Photo",
+    "uploadsNote": "Shown on your public page and documents.",
+    "upload": "Choose image",
+    "replace": "Replace",
+    "remove": "Remove",
+    "uploading": "Uploading…",
+    "preview": "How patients see it",
+    "previewLight": "Light",
+    "previewDark": "Dark",
+    "previewButton": "Book an appointment",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "saveError": "Couldn't save. Try again.",
+    "badType": "Use a PNG or JPG image.",
+    "tooLarge": "This image is too large. Use one up to 5 MB and at most 4096 px per side.",
+    "uploadError": "Couldn't upload the image. Try again.",
+    "removeTitle": "Remove this image?",
+    "removeBody": "It will no longer appear on your page and documents.",
+    "removeConfirm": "Remove",
+    "cancel": "Cancel"
+  },
+  "patientDoctors": {
+    "homeSection": "My doctors",
+    "homeCard": "Your doctor",
+    "bookWho": "With whom?",
+    "add": "+ Add a doctor",
+    "addTitle": "Add a doctor",
+    "addHint": "Enter the code your doctor shared.",
+    "code": "Code",
+    "connect": "Connect",
+    "connected": "Done! You're now connected to {doctor}.",
+    "alreadyConnected": "You're already connected to {doctor}.",
+    "viewDoctor": "View doctor",
+    "settingsRow": "My doctors",
+    "disconnect": "Disconnect",
+    "disconnectTitle": "Disconnect from {doctor}?",
+    "disconnectBody": "You'll stop seeing {doctor}'s appointments and documents. Pending requests will be cancelled. The clinic keeps your record.",
+    "disconnectBlocked": "You have confirmed appointments with {doctor}. To cancel them, contact the clinic; then you can disconnect.",
+    "disconnected": "Disconnected from {doctor}.",
+    "filterAll": "All"
+  },
+  "secretaryPractices": {
+    "switcherLabel": "Schedule for",
+    "all": "All",
+    "allEmpty": "No appointments today.",
+    "doctorField": "Doctor",
+    "todayWith": "Today with {doctor}",
+    "notifyTitle": "Notifications per doctor",
+    "notifyHint": "Choose which doctors you get notifications for.",
+    "pushPrefix": "{doctor}: ",
+    "joinedTeam": "{doctor} added you to their team.",
+    "removeTitle": "Remove {name} from your team?",
+    "removeBody": "They stay on other doctors' teams."
+  },
+  "colleagues": {
+    "title": "My colleagues",
+    "hint": "Add colleagues by their public code. Only you see this list.",
+    "add": "+ Add a colleague",
+    "added": "{doctor} added to your colleagues.",
+    "remove": "Remove from colleagues",
+    "refer": "Refer a colleague",
+    "referHint": "Send the patient a colleague's link. No data is shared.",
+    "shareMessage": "Hi {patient}! I recommend {colleague} ({specialty}). To book, go to: {link}",
+    "empty": "You haven't added any colleagues yet."
   }
 }

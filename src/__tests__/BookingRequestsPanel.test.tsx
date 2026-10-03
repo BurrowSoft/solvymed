@@ -114,7 +114,7 @@ describe('BookingRequestsPanel', () => {
     render(<BookingRequestsPanel bookings={[TENTATIVE_BOOKING]} />);
     expect(screen.getByText('Maria Silva')).toBeInTheDocument();
     // The locale's date label, never the raw ISO date.
-    expect(screen.getAllByText(/Tue, Jan 15/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Tue 15 Jan/).length).toBeGreaterThan(0);
     expect(screen.queryByText(/2030-01-15/)).not.toBeInTheDocument();
     expect(screen.getByText('Initial Consultation')).toBeInTheDocument();
   });
@@ -164,17 +164,13 @@ describe('BookingRequestsPanel', () => {
     expect(screen.queryByText('Propose a new time')).not.toBeInTheDocument();
   });
 
-  it('a Buddhist-era year in the proposed date disables Send (never saved or converted)', () => {
+  it('the proposed date comes from the calendar (no typed year), start + end prefilled from the request (item 10)', () => {
     const { container } = render(<BookingRequestsPanel bookings={[TENTATIVE_BOOKING]} />);
     fireEvent.click(screen.getByRole('button', { name: 'Propose new time' }));
-    const [start, end] = Array.from(container.querySelectorAll('input[type="time"]'));
-    fireEvent.change(start, { target: { value: '09:00' } });
-    fireEvent.change(end, { target: { value: '09:30' } });
-    const date = container.querySelector('input[type="date"]')!;
-    fireEvent.change(date, { target: { value: '2569-10-01' } });
-    expect(screen.getByRole('alert')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
-    fireEvent.change(date, { target: { value: '2026-10-01' } });
+    expect(screen.getByTestId('month-calendar')).toBeInTheDocument();
+    expect(container.querySelector('input[type="date"]')).toBeNull();
+    // The request (09:00–10:00) prefills start and the same length.
+    expect((container.querySelector('input[name="propose_start"]') as HTMLInputElement).value).toBe('09:00');
     expect(screen.getByRole('button', { name: 'Send' })).not.toBeDisabled();
   });
 
@@ -211,7 +207,7 @@ describe('BookingRequestsPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Patient Information' }));
     await waitFor(() => expect(screen.getByText('maria@example.com')).toBeInTheDocument());
     expect(screen.getByText('11999887766')).toBeInTheDocument();
-    expect(screen.getByText('05/15/1990')).toBeInTheDocument();
+    expect(screen.getByText('15/05/1990')).toBeInTheDocument();
     expect(screen.getByText('123.456.789-00')).toBeInTheDocument();
   });
 
@@ -252,5 +248,22 @@ describe('BookingRequestsPanel', () => {
     const names = screen.getAllByText(/Maria Silva|Ana Costa/).map(el => el.textContent);
     expect(names[0]).toBe('Maria Silva');  // future card first
     expect(names[1]).toBe('Ana Costa');   // past card last
+  });
+
+  it("Confirm: a spinner on it, every button disabled until done (Vitor, item 20)", async () => {
+    let resolve!: () => void;
+    vi.mocked(bookingActions.confirmBookingAndAddPatient).mockImplementationOnce(() => new Promise((r) => { resolve = () => r({ error: null }); }));
+    render(<BookingRequestsPanel bookings={[TENTATIVE_BOOKING]} />);
+    const confirm = screen.getByRole("button", { name: "Confirm" });
+    fireEvent.click(confirm);
+    await waitFor(() => expect(confirm).toBeDisabled());
+    expect(confirm.querySelector(".spinner-current")).not.toBeNull();
+    expect(screen.getByRole("button", { name: "Reject" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Reject" }).querySelector(".spinner-current")).toBeNull();
+    fireEvent.click(confirm);
+    expect(bookingActions.confirmBookingAndAddPatient).toHaveBeenCalledTimes(1);
+    resolve();
+    await waitFor(() => expect(confirm).not.toBeDisabled());
+    expect(confirm.querySelector(".spinner-current")).toBeNull();
   });
 });

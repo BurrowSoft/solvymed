@@ -15,6 +15,8 @@ import { FilesTab } from "./FilesTab";
 import { AddressFields } from "@/components/patient/AddressFields";
 import { addressLine, type AddressColumns } from "@/lib/patientAddress";
 import { profileOfKind } from "@/lib/country";
+import { hasAmount } from "@/lib/paymentRules";
+import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -29,7 +31,7 @@ type ClinicalMeta = {
 export type MedRecord = ClinicalMeta & { id: string; date: string; time: string; content: string; record_type?: string };
 type RxItem = { name: string; dosage: string; frequency: string; duration: string };
 export type Rx = ClinicalMeta & { id: string; date: string; notes?: string; prescription_items: RxItem[] };
-type Appt = { id: string; date: string; start_time: string; consultation_type: string; status: string; payment_status: string };
+type Appt = { id: string; date: string; start_time: string; consultation_type: string; status: string; payment_status: string; payment_amount?: number | null };
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string; cpf?: string;
   // Migration 110 (Thai / other-country practices); absent before it.
@@ -89,7 +91,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, canMerge = false, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, hasAppointments = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -101,8 +103,11 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   isArchived?: boolean;
   // Only a patient without clinical history can be deleted.
   canDelete?: boolean;
+  hasAppointments?: boolean;
   // Mesclar com outro paciente (133): the doctor, once the database has it.
   canMerge?: boolean;
+  // Open the merge with this record (the invited patient's same-email prompt).
+  mergeWith?: string | null;
   // Records and prescriptions can be edited or deleted only by their author.
   currentUserId: string;
   // The practice country's patient ID (lib/patientIds).
@@ -151,7 +156,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         ))}
       </div>
 
-      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} canMerge={canMerge} idKind={idKind} addressLive={addressLive} />}
+      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} hasAppointments={hasAppointments} canMerge={canMerge} mergeWith={mergeWith} idKind={idKind} addressLive={addressLive} />}
       {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {(tab === "exams" || tab === "files") && !isSecretary && (
@@ -257,7 +262,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
   );
 }
 
-function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = false, idKind, addressLive = false }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; canMerge?: boolean; idKind: PatientIdKind; addressLive?: boolean }) {
+function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointments = false, canMerge = false, mergeWith = null, idKind, addressLive = false }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; hasAppointments?: boolean; canMerge?: boolean; mergeWith?: string | null; idKind: PatientIdKind; addressLive?: boolean }) {
   const t = useTranslations("patientDetail");
   const tIds = useTranslations("patientIds");
   const tBirth = useTranslations("dateInput");
@@ -333,7 +338,11 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = fal
     });
   }
 
+  // With appointments it can't be deleted (as app #299): say why, offer
+  // Arquivar / Cancelar; nothing is sent.
+  const [blockedOpen, setBlockedOpen] = useState(false);
   function handleDelete() {
+    if (hasAppointments) { setError(""); setOfferArchive(false); setBlockedOpen(true); return; }
     if (!confirm(t("deleteNoHistoryConfirm", { name: patient.full_name }))) return;
     setError("");
     setOfferArchive(false);
@@ -459,13 +468,28 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, canMerge = fal
               {t("archivePatient")}
             </button>
           )}
-          {canMerge && <MergePatientButton patientId={patient.id} patientName={patient.full_name} locale={locale} />}
+          {canMerge && <MergePatientButton patientId={patient.id} patientName={patient.full_name} locale={locale} pairWith={mergeWith} />}
           {canDelete && (
             <button onClick={handleDelete} disabled={pending} className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60">
               {t("deletePatient")}
             </button>
           )}
         </div>
+        {blockedOpen && (
+          <div role="alertdialog" aria-labelledby="delete-blocked-text" data-testid="delete-blocked" className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+            <p id="delete-blocked-text" className="text-sm text-amber-800">{t("deleteHasAppointments")}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {!isArchived && (
+                <button onClick={() => { setBlockedOpen(false); setArchiveOpen(true); }} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700 transition">
+                  {t("archivePatient")}
+                </button>
+              )}
+              <button onClick={() => setBlockedOpen(false)} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                {t("cancel")}
+              </button>
+            </div>
+          </div>
+        )}
         {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
         {offerArchive && (
           <button onClick={() => { setOfferArchive(false); setError(""); setArchiveOpen(true); }} className="mt-2 rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
@@ -935,6 +959,7 @@ function PrescriptionsTab({ patientId, prescriptions, isArchived, currentUserId,
 
 function AppointmentsTab({ appointments, locale }: { appointments: Appt[]; locale: string }) {
   const t = useTranslations("patientDetail");
+  const tPay = useTranslations("payments");
 
   function statusBadgeClass(status: string) {
     switch (status) {
@@ -961,14 +986,19 @@ function AppointmentsTab({ appointments, locale }: { appointments: Appt[]; local
                 <p className="text-base font-extrabold text-slate-900 leading-tight">{new Date(appt.date + "T12:00:00").getDate()}</p>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-slate-900 text-sm">{appt.consultation_type}</p>
+                <p className="font-semibold text-slate-900 text-sm"><ConsultTypeLabel value={appt.consultation_type} /></p>
                 <p className="text-xs text-slate-500">{appt.start_time?.slice(0, 5)}</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${statusBadgeClass(appt.status)}`}>{appt.status}</span>
-                <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
-                  {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}
-                </span>
+                {appt.payment_status !== "paid" && !hasAmount(appt.payment_amount) ? (
+                  // No amount (the app's #216): not "Pendente".
+                  <span className="text-xs font-semibold text-slate-500">{tPay("noAmount")}</span>
+                ) : (
+                  <span className={`text-xs font-semibold ${appt.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
+                    {appt.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")}
+                  </span>
+                )}
               </div>
             </div>
           ))}
@@ -1031,7 +1061,7 @@ function ArchiveDialog({ open, onClose, patient }: { open: boolean; onClose: () 
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
       <div className="flex gap-3 pt-5">
         <button type="button" onClick={onClose} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-        <button type="button" onClick={handleArchive} disabled={pending || loadingPreview} className="flex-1 rounded-xl bg-slate-800 py-2.5 text-sm font-bold text-white hover:bg-slate-900 transition disabled:opacity-60">
+        <button type="button" onClick={handleArchive} disabled={pending || loadingPreview} className="flex-1 rounded-xl bg-[#1e293b] py-2.5 text-sm font-bold text-[#ffffff] hover:bg-[#0f172a] transition disabled:opacity-60">
           {pending ? t("saving") : t("archiveConfirm")}
         </button>
       </div>

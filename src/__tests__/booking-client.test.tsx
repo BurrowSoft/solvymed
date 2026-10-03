@@ -27,7 +27,7 @@ vi.mock("next-intl", () => ({
       "book.notes": "Notes",
       "book.notesOptional": "(optional)",
       "book.notesPlaceholder": "Reason for visit, symptoms, questions for the doctor…",
-      "book.sendRequest": "Send Booking Request",
+      "book.sendRequest": "Send Appointment Request",
       "book.sending": "Sending…",
       "book.hint": "The doctor will confirm or suggest a different time.",
       "book.successTitle": "Request sent!",
@@ -89,14 +89,14 @@ const BASE_PROPS = {
 };
 
 const WORKING_HOURS = {
-  mon: { enabled: true, start: "09:00", end: "17:00" },
-  tue: { enabled: true, start: "09:00", end: "17:00" },
-  wed: { enabled: true, start: "09:00", end: "17:00" },
-  thu: { enabled: true, start: "09:00", end: "17:00" },
-  fri: { enabled: true, start: "09:00", end: "17:00" },
+  mon: { enabled: true, start: "9:00", end: "17:00" },
+  tue: { enabled: true, start: "9:00", end: "17:00" },
+  wed: { enabled: true, start: "9:00", end: "17:00" },
+  thu: { enabled: true, start: "9:00", end: "17:00" },
+  fri: { enabled: true, start: "9:00", end: "17:00" },
   // All 7 days enabled so tests pass regardless of what day "today" is
-  sat: { enabled: true, start: "09:00", end: "17:00" },
-  sun: { enabled: true, start: "09:00", end: "17:00" },
+  sat: { enabled: true, start: "9:00", end: "17:00" },
+  sun: { enabled: true, start: "9:00", end: "17:00" },
 };
 
 type ProcedureRow = { id: string; name: string; duration_minutes: number; price: number | null; payment_type: string };
@@ -165,12 +165,52 @@ describe("BookingClient", () => {
     expect(screen.queryByText("Pick a date")).not.toBeInTheDocument();
   });
 
-  it("shows duration fallback chips when no procedures are configured", async () => {
+  // Vitor, build 25 item 5 (e7's final list, same as the app): Consulta and
+  // Retorno always, the clinic's procedures, Outro only when there are some;
+  // patients never pick a length.
+  it("no procedures: just Consulta + Retorno, no Outro, no length buttons", async () => {
     setupMocks({ procedures: [] });
     render(<BookingClient {...BASE_PROPS} />);
-    await waitFor(() => expect(screen.getByText("30 min")).toBeInTheDocument());
-    expect(screen.getByText("45 min")).toBeInTheDocument();
-    expect(screen.getByText("60 min")).toBeInTheDocument();
+    const list = await screen.findByTestId("type-list");
+    const options = Array.from(list.querySelectorAll('[role="radio"]')).map((b) => b.querySelector("p")!.textContent);
+    expect(options).toEqual(["Consultation", "Follow-up"]);
+    expect(list.querySelector('[aria-checked="true"]')!.textContent).toContain("Consultation");
+    expect(screen.queryByText("45 min")).toBeNull();
+    expect(screen.queryByText("Exam Review")).toBeNull();
+    expect(screen.queryByText("Emergency")).toBeNull();
+  });
+
+  // e7: the clinic's own "Consulta"/"Retorno" (any shipped language, any
+  // case/accents) REPLACES the fixed item in its slot, with its length/price.
+  it("a clinic procedure named 'Consulta' / 'retorno' takes the fixed slot, never a second one", async () => {
+    setupMocks({ procedures: [
+      { id: "p1", name: "Limpeza", duration_minutes: 45, price: 200, payment_type: "private" },
+      { id: "p2", name: "Consulta", duration_minutes: 60, price: 300, payment_type: "private" },
+      { id: "p3", name: " RETORNO ", duration_minutes: 20, price: null, payment_type: "private" },
+    ] });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByText("Limpeza")).toBeInTheDocument());
+    const list = screen.getByTestId("type-list");
+    const options = Array.from(list.querySelectorAll('[role="radio"]')).map((b) => b.querySelector("p")!.textContent);
+    expect(options).toEqual(["Consulta", " RETORNO ", "Limpeza", "Other"]);
+    expect(screen.getByText(/60 min · /)).toBeInTheDocument();
+    // the clinic's Consulta is the default, with its own length
+    expect(list.querySelector('[aria-checked="true"]')!.textContent).toContain("Consulta");
+    expect(list.querySelector('[aria-checked="true"]')!.textContent).toContain("60 min");
+  });
+
+  it("with procedures: Consulta, Retorno, the procedures (length + price), then Outro with a hint", async () => {
+    setupMocks({ procedures: [{ id: "p1", name: "Limpeza", duration_minutes: 45, price: 200, payment_type: "private" }] });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByText("Limpeza")).toBeInTheDocument());
+    const list = screen.getByTestId("type-list");
+    const options = Array.from(list.querySelectorAll('[role="radio"]')).map((b) => b.querySelector("p")!.textContent);
+    expect(options).toEqual(["Consultation", "Follow-up", "Limpeza", "Other"]);
+    expect(screen.getByText(/45 min · /)).toBeInTheDocument();
+    // the plain Consulta stays the default, not the first procedure
+    expect(list.querySelector('[aria-checked="true"]')!.textContent).toContain("Consultation");
+    fireEvent.click(screen.getByText("Other"));
+    expect(screen.getByLabelText("Other")).toHaveAttribute("placeholder", "otherHint");
   });
 
   it("shows procedure buttons when procedures are available", async () => {
@@ -194,8 +234,8 @@ describe("BookingClient", () => {
   it("disables Send button when no slot is selected", async () => {
     setupMocks();
     render(<BookingClient {...BASE_PROPS} />);
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeInTheDocument());
-    expect(screen.getByText("Send Booking Request")).toBeDisabled();
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).toBeInTheDocument());
+    expect(screen.getByText("Send Appointment Request")).toBeDisabled();
   });
 
   it("shows success screen after a successful booking", async () => {
@@ -211,8 +251,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getByText(/9:00/));
 
     // Enable the button and click
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
 
     await waitFor(() => expect(screen.getByText("Request sent!")).toBeInTheDocument());
   });
@@ -224,8 +264,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() =>
       expect(screen.getByText(/slot was just taken/i)).toBeInTheDocument(),
     );
@@ -238,8 +278,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() => expect(screen.getByText("This clinic isn't taking online bookings right now.")).toBeInTheDocument());
   });
 
@@ -250,8 +290,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() =>
       expect(screen.getByText(/maximum number of active appointments/i)).toBeInTheDocument(),
     );
@@ -272,8 +312,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() => expect(screen.getByText("View my appointments")).toBeInTheDocument());
     fireEvent.click(screen.getByText("View my appointments"));
     expect(mockPush).toHaveBeenCalledWith("/my-appointments");
@@ -319,11 +359,11 @@ describe("BookingClient", () => {
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
     // All three required fields empty → button stays disabled
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).toBeDisabled());
     // Fill name and phone but not DOB → still disabled
     fireEvent.change(screen.getByPlaceholderText("Your full name"), { target: { value: "Maria" } });
     fireEvent.change(screen.getByPlaceholderText("11 99999-9999"), { target: { value: "11999887766" } });
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).toBeDisabled());
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).toBeDisabled());
   });
 
   // UX: the dial code starts at the PRACTICE country, never the UI
@@ -354,8 +394,8 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() => expect(screen.getByText("Request sent!")).toBeInTheDocument());
     expect(mockUpsert).toHaveBeenCalledWith(
       expect.objectContaining({ user_id: "patient-1", email: "patient@example.com" }),
@@ -371,11 +411,11 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
-    fireEvent.change(container.querySelector('input[type="date"]')!, { target: { value: "2539-05-14" } });
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
+    fireEvent.change(container.querySelector('input[inputmode="numeric"]')!, { target: { value: "14/05/2539" } });
     expect(screen.getByRole("alert")).toBeInTheDocument();
-    expect(screen.getByText("Send Booking Request")).toBeDisabled();
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    expect(screen.getByText("Send Appointment Request")).toBeDisabled();
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     expect(mockUpsert).not.toHaveBeenCalled();
   });
 
@@ -387,10 +427,118 @@ describe("BookingClient", () => {
     fireEvent.click(screen.getAllByText("Consultation")[0]);
     await waitFor(() => expect(screen.getByText(/9:00/)).toBeInTheDocument());
     fireEvent.click(screen.getByText(/9:00/));
-    await waitFor(() => expect(screen.getByText("Send Booking Request")).not.toBeDisabled());
+    await waitFor(() => expect(screen.getByText("Send Appointment Request")).not.toBeDisabled());
     mockRpc.mockClear();
-    fireEvent.click(screen.getByText("Send Booking Request"));
+    fireEvent.click(screen.getByText("Send Appointment Request"));
     await waitFor(() => expect(screen.getByText(/invalidBirthDate/)).toBeInTheDocument());
     expect(mockRpc).not.toHaveBeenCalledWith("create_public_booking", expect.anything());
+  });
+});
+
+describe("BookingClient: items 7/10/16 + no hours / slow load", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2030, 0, 14, 6, 0, 0)); // a Monday, 06:00
+    mockRpc.mockReset();
+    mockMaybeSingle.mockResolvedValue({ data: null, error: null });
+  });
+  afterEach(() => { vi.useRealTimers(); });
+
+  it("no working hours at all: the clinic hasn't opened online booking (no calendar)", async () => {
+    setupMocks({ workingHours: {} as typeof WORKING_HOURS });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByTestId("no-hours")).toBeInTheDocument());
+    expect(screen.getByText("noHours")).toBeInTheDocument();
+    expect(screen.queryByTestId("month-calendar")).toBeNull();
+  });
+
+  it("a failed load: the message and Retry, which loads again", async () => {
+    let fail = true;
+    mockRpc.mockImplementation((fn: string) => {
+      if (fn === "get_professional_working_hours") return Promise.resolve(fail ? { data: null, error: { message: "boom" } } : { data: WORKING_HOURS, error: null });
+      if (fn === "get_busy_slots") return Promise.resolve({ data: [], error: null });
+      return Promise.resolve({ data: [], error: null });
+    });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByTestId("load-failed")).toBeInTheDocument());
+    fail = false;
+    fireEvent.click(screen.getByText("retry"));
+    await waitFor(() => expect(screen.getByTestId("month-calendar")).toBeInTheDocument());
+  });
+
+  it("closed weekdays are greyed and disabled; 30 days are bookable", async () => {
+    setupMocks({ workingHours: { ...WORKING_HOURS, sun: { enabled: false, start: "9:00", end: "17:00" } } });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByTestId("month-calendar")).toBeInTheDocument());
+    // Sunday 2030-01-20 (closed) vs Monday 2030-01-21 (open).
+    expect(screen.getByRole("button", { name: "20" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "21" })).not.toBeDisabled();
+  });
+
+  it("picking a time shows the chosen-time line above the button", async () => {
+    setupMocks();
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByText("9:00")).toBeInTheDocument());
+    fireEvent.click(screen.getByText("9:00"));
+    expect(screen.getByTestId("chosen-time")).toHaveTextContent(/chosenTime/);
+  });
+});
+
+describe("BookingClient: today isn't skipped before its times load", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2030, 0, 14, 6, 0, 0));
+    mockRpc.mockReset();
+    mockMaybeSingle.mockResolvedValue({ data: null, error: null });
+  });
+  afterEach(() => { vi.useRealTimers(); });
+
+  it("a slow slot load keeps today selected (it has times)", async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((r) => { release = r; });
+    mockRpc.mockImplementation(async (fn: string) => {
+      if (fn === "get_professional_working_hours") return { data: WORKING_HOURS, error: null };
+      if (fn === "get_busy_slots") { await gate; return { data: [], error: null }; }
+      return { data: [], error: null };
+    });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByTestId("month-calendar")).toBeInTheDocument());
+    await new Promise((r) => setTimeout(r, 30));
+    expect(screen.getByRole("button", { name: "14" })).toHaveAttribute("aria-pressed", "true");
+    release();
+    await waitFor(() => expect(screen.getByText("9:00")).toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "14" })).toHaveAttribute("aria-pressed", "true");
+  });
+});
+
+describe("BookingClient: a late answer for a day already left is dropped", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2030, 0, 14, 6, 0, 0));
+    mockRpc.mockReset();
+    mockMaybeSingle.mockResolvedValue({ data: null, error: null });
+  });
+  afterEach(() => { vi.useRealTimers(); });
+
+  it("today (slow) → tomorrow (fast): the grid shows tomorrow's times", async () => {
+    let releaseToday!: () => void;
+    const todayGate = new Promise<void>((r) => { releaseToday = r; });
+    const hours = { ...WORKING_HOURS, tue: { enabled: true, start: "8:00", end: "17:00" } }; // tomorrow (Tue) opens at 8
+    mockRpc.mockImplementation(async (fn: string, args?: { p_date?: string }) => {
+      if (fn === "get_professional_working_hours") return { data: hours, error: null };
+      if (fn === "get_busy_slots") {
+        if (args?.p_date === "2030-01-14") await todayGate;
+        return { data: [], error: null };
+      }
+      return { data: [], error: null };
+    });
+    render(<BookingClient {...BASE_PROPS} />);
+    await waitFor(() => expect(screen.getByTestId("month-calendar")).toBeInTheDocument());
+    fireEvent.click(screen.getByRole("button", { name: "15" }));
+    await waitFor(() => expect(screen.getByText("8:00")).toBeInTheDocument());
+    releaseToday(); // today's answer arrives last
+    await new Promise((r) => setTimeout(r, 30));
+    expect(screen.getByText("8:00")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "15" })).toHaveAttribute("aria-pressed", "true");
   });
 });

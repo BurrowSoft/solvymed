@@ -49,15 +49,15 @@ function db(o: Opts = {}) {
 const future = { practiceId: "doc-1", date: "2026-09-30", startTime: "14:00:00" };
 
 describe("tellPatient", () => {
-  it("booked: 08's text, the clinic's profile name, the date in the reader's format", async () => {
+  it("booked: names the doctor (app #290), the date in the reader's format", async () => {
     await tellPatient(db().client, { kind: "booked", patientId: "p-1", ...future });
-    expect(sent).toEqual([{ tokens: ["tok"], title: "Nova consulta", body: "Clínica Sol marcou uma consulta para você em 30/09/2026 às 14:00." }]);
+    expect(sent).toEqual([{ tokens: ["tok"], title: "Consulta marcada", body: "Sua consulta com Dra. Ana foi marcada para 30/09/2026 às 14:00." }]);
   });
 
   it("cancelled, in the patient's saved language; the appointment's own account first", async () => {
     const d = db({ locale: "en" });
     await tellPatient(d.client, { kind: "cancelled", patientAuthId: "auth-9", patientId: "p-1", status: "scheduled", ...future });
-    expect(sent[0].body).toBe("Clínica Sol cancelled your appointment on 09/30/2026 at 14:00. To book another, open the app.");
+    expect(sent[0].body).toBe("Your appointment with Dra. Ana on 30/09/2026 at 14:00 was cancelled by the clinic.");
     expect(d.rpcCalls).not.toContain("get_patient_auth_id");
   });
 
@@ -78,25 +78,22 @@ describe("tellPatient", () => {
     expect(patientFacingClinicName("  ", "Unidade Centro", "Dra. Ana")).toBe("Unidade Centro");
     expect(patientFacingClinicName(null, null, "Dra. Ana")).toBe("Dra. Ana");
     expect(patientFacingClinicName(null, null, null)).toBe("SolvyMed");
+    // The push names the doctor (app #290): the name as set, else the clinic,
+    // else SolvyMed; a secretary reads the practice's public info.
+    const lead = (body: string) => body.replace("Sua consulta com ", "").split(" foi marcada")[0];
     await tellPatient(db({ profRow: { clinic_name: null, full_name: "Dra. Ana" }, clinics: [{ name: "Unidade Centro" }] }).client, { kind: "booked", patientId: "p-1", ...future });
     await tellPatient(db({ profRow: null, clinics: [] }).client, { kind: "booked", patientId: "p-1", isSecretary: true, ...future });
-    expect(sent.map((s) => s.body.split(" marcou")[0])).toEqual(["Unidade Centro", "Clínica Pública"]);
-    // A secretary, a practice with a profile name and two locations: the profile name (the RPC applies the rule).
-    await tellPatient(db({ profRow: null, clinics: [{ name: "A Unidade" }, { name: "B Unidade" }], publicName: "Clínica Sol" }).client, { kind: "booked", patientId: "p-1", isSecretary: true, ...future });
-    expect(sent[2].body.split(" marcou")[0]).toBe("Clínica Sol");
-    sent.splice(2, 1);
-    // The practice has no clinic name at all: the doctor, from the public info.
-    await tellPatient(db({ profRow: null, clinics: [], publicName: "" }).client, { kind: "booked", patientId: "p-1", isSecretary: true, ...future });
-    expect(sent[2].body.split(" marcou")[0]).toBe("Dr. Público");
+    await tellPatient(db({ profRow: { clinic_name: "Clínica Sol", full_name: "  " }, clinics: [] }).client, { kind: "booked", patientId: "p-1", ...future });
+    expect(sent.map((x) => lead(x.body))).toEqual(["Dra. Ana", "Dr. Público", "Clínica Sol"]);
   });
 
   it("a series: only its FUTURE dates are announced, one push naming the first (UX 36)", async () => {
     // Weekly from last week at 14:00: 22/09 is past; 29/09 14:00 and 06/10 are ahead (now: 29/09 10:00).
     await tellPatient(db().client, { kind: "booked", patientId: "p-1", practiceId: "doc-1", date: "2026-09-22", startTime: "14:00", dates: ["2026-09-22", "2026-09-29", "2026-10-06"] });
-    expect(sent[0].body).toBe("Clínica Sol marcou 2 consultas para você. A primeira é em 29/09/2026 às 14:00.");
+    expect(sent[0].body).toBe("Suas 2 consultas com Dra. Ana foram marcadas. A primeira é em 29/09/2026 às 14:00.");
     // At 09:30 today is past too: one future date → the single-booking text.
     await tellPatient(db().client, { kind: "booked", patientId: "p-1", practiceId: "doc-1", date: "2026-09-22", startTime: "09:30", dates: ["2026-09-22", "2026-09-29", "2026-10-06"] });
-    expect(sent[1].body).toBe("Clínica Sol marcou uma consulta para você em 06/10/2026 às 09:30.");
+    expect(sent[1].body).toBe("Sua consulta com Dra. Ana foi marcada para 06/10/2026 às 09:30.");
     // All past: no push.
     await tellPatient(db().client, { kind: "booked", patientId: "p-1", practiceId: "doc-1", date: "2026-09-08", startTime: "14:00", dates: ["2026-09-08", "2026-09-15", "2026-09-22"] });
     expect(sent).toHaveLength(2);

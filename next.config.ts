@@ -21,6 +21,13 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         ],
       },
+      // iOS Universal Links: Apple reads this extension-less file only as
+      // application/json (public/.well-known; no redirect, the middleware
+      // skips paths with a dot).
+      {
+        source: "/.well-known/apple-app-site-association",
+        headers: [{ key: "Content-Type", value: "application/json" }],
+      },
     ];
   },
 };

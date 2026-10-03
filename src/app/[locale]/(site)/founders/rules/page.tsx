@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { Link } from "@/i18n/navigation";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { foundersAlternates, foundersShareMeta, foundersUrl } from "@/lib/founders";
 
 // The Founders Program rules (the brief's "Program rules", verbatim per
 // language). Published only with Vitor's go (foundersRules; the lawyer
@@ -15,7 +16,9 @@ const REFERENCE_LOCALES = ["pt-BR", "en"];
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "founders" });
-  return { title: t("rulesTitle") };
+  // The same share banner as /founders (UX: people share this link too).
+  // Its own canonical: without it the layout's (the home page's) applies (3e).
+  return { title: t("rulesTitle"), alternates: foundersAlternates(locale, "/rules"), ...foundersShareMeta({ locale, url: foundersUrl(locale, "/rules"), title: t("rulesTitle"), description: t("metaDescription") }) };
 }
 
 export default async function FoundersRulesPage({ params }: { params: Promise<{ locale: string }> }) {

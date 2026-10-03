@@ -14,6 +14,7 @@ import { otpTypeFor } from "@/lib/otpType";
 import { endOtherSessions } from "@/lib/endOtherSessions";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import ConfirmClient from "../confirm/ConfirmClient";
+import { OpenInApp } from "@/components/OpenInApp";
 
 
 type State = "ready" | "working" | "expired" | "resetDone";
@@ -52,6 +53,7 @@ export function VerifyClient({ locale, tokenHash, type, appHandoff = false }: {
           <BrandMark />
           <h1 className="auth-heading">{t("verify.expiredTitle")}</h1>
           <p className="mb-8 text-slate-500">{t("verify.expiredBody")}</p>
+          <OpenInApp />
           <Link
             href={localePath("/auth/login")}
             className="inline-flex w-full items-center justify-center rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md transition hover:bg-teal-700 active:scale-95"

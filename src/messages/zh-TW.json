@@ -98,7 +98,18 @@
     "noUpcoming": "暫無即將到來的預約",
     "unpaidSessions": "{n}次未付款",
     "pendingCollection": "{amount} 待收款",
-    "managePayments": "管理付款"
+    "managePayments": "管理付款",
+    "invitedTitle": "{n} 位透過您的邀請加入的新病患",
+    "invitedHint": "他們使用您的診所代碼加入。保留您的病患；「移除」會中斷帳戶連結（病歷會被封存）。",
+    "invitedKeep": "保留",
+    "invitedRemove": "移除",
+    "invitedError": "無法儲存，請再試一次。",
+    "invitedSeeAll": "在病患中查看全部",
+    "invitedSameEmail": "與 {name} 電子郵件相同：合併？",
+    "invitedRemoveConfirm": "移除 {name}？其帳戶將重新等待您的確認，病歷會被封存。",
+    "invitedRemoveConfirmDisconnect": "移除 {name}？其帳戶將與您的診所中斷連結，待處理的請求將被取消（會通知病患），病歷將被封存。如需重新接納，請從已封存中還原病歷，並分享該病患的個人代碼。",
+    "requestsWaiting": "有 {n} 個預約請求等待您確認",
+    "requestsWaitingOpen": "查看請求"
   },
   "schedule": {
     "patientMessage": "患者留言",
@@ -134,9 +145,6 @@
     "dur90": "1.5小時",
     "dur120": "2小時",
     "dur240": "4小時",
-    "noProcedures": "尚未設定處置項目。",
-    "addProcSettings": "在設定中新增處置項目",
-    "beforeScheduling": "在預約之前。",
     "cancel": "取消",
     "saveAppt": "儲存預約",
     "repeat": "重複",
@@ -231,7 +239,23 @@
     "undoCancelled": "預約已取消",
     "undoAction": "復原（{s} 秒）",
     "undoDone": "已復原。",
-    "undoFailed": "無法復原。請開啟該項目進行調整。"
+    "undoFailed": "無法復原。請開啟該項目進行調整。",
+    "newPatientOption": "不建檔直接預約：{name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "本週",
@@ -250,7 +274,10 @@
     "revertConfirm": "將此付款恢復為待付款狀態？",
     "errorInvalidAmount": "請輸入有效金額。",
     "errorGeneric": "發生問題，請重試。",
-    "amountPlaceholderPlain": "金額"
+    "amountPlaceholderPlain": "金額",
+    "noAmount": "無金額",
+    "setAmount": "設定金額",
+    "amountFirst": "請先輸入已收金額。"
   },
   "paymentsPage": {
     "title": "付款",
@@ -319,7 +346,9 @@
     "nextPage": "下一頁",
     "pagesLabel": "分頁",
     "fullNamePlaceholder": "全名",
-    "professionPlaceholder": "例如：工程師、教師…"
+    "professionPlaceholder": "例如：工程師、教師…",
+    "invitedBadge": "新·透過邀請",
+    "invitedSameEmail": "與 {name} 電子郵件相同：合併？"
   },
   "patientDetail": {
     "tabInfo": "資訊",
@@ -670,7 +699,16 @@
     "orCustomTime": "或選擇自訂時間",
     "professionalFallback": "專業人員",
     "errorArchived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。",
-    "practiceInactive": "這家診所目前不接受線上預約。"
+    "practiceInactive": "這家診所目前不接受線上預約。",
+    "noHours": "This professional hasn't opened online booking times yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today.",
+    "otherHint": "E.g. first visit, follow-up",
+    "titleWith": "Book with {doctor}"
   },
   "auth": {
     "passwordTooShort": "密碼至少需要{min}個字元。",
@@ -714,10 +752,9 @@
       "secretaryNeedsInvite": "你是祕書？請向你的醫師索取邀請連結。",
       "secretaryEmailMismatch": "此電子郵件與邀請不符，或邀請已失效。請檢查電子郵件，或向診所索取新的連結。",
       "consentCheckbox": "我已閱讀並同意<terms>使用條款</terms>與<privacy>隱私權政策</privacy>",
-      "country": "您的診所在哪裡？",
-      "countryOther": "其他國家",
-      "countryHint": "用於設定貨幣、方案價格、病患證件與付款 QR 碼。之後如需變更，請聯絡客服。",
-      "fullNameHint": "如有需要，可加上頭銜（{titles}），會顯示在問候語中。"
+      "fullNameHint": "如有需要，可加上頭銜（{titles}），會顯示在問候語中。",
+      "backToCountry": "返回",
+      "secretaryInviteFor": "This invite is for {email}."
     },
     "forgotPassword": {
       "title": "忘記密碼？",
@@ -746,7 +783,9 @@
     "backToHome": "返回首頁",
     "patientWelcome": {
       "countdown": "{count}秒後將帶您前往預約頁面…",
-      "goToAppointments": "前往我的預約"
+      "goToAppointments": "前往我的預約",
+      "heading": "一切就緒！",
+      "confirmed": "您的帳戶已確認。"
     },
     "inviteRequired": {
       "heading": "需要邀請碼",
@@ -762,7 +801,12 @@
       "backToSignup": "使用其他帳戶",
       "tooManyAttempts": "嘗試次數過多，請稍後再試。",
       "alreadyInvitedByAnother": "您的帳戶已與另一位醫生關聯。",
-      "archived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。"
+      "archived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。",
+      "alreadyConnected": "您已與 {doctor} 連結。如需更換，請聯絡客服。",
+      "alreadyConnectedNoName": "您已與其他醫師連結。如需更換，請聯絡客服。",
+      "alreadyConnectedSamePractice": "您已與 {doctor} 連結。請診所合併您的病歷。",
+      "alreadyConnectedSamePracticeNoName": "您已與此診所連結。請診所合併您的病歷。",
+      "codeUnavailable": "無法使用此代碼連結。請聯絡診所。"
     },
     "pendingConfirmation": {
       "loading": "正在檢查您的狀態…",
@@ -830,7 +874,26 @@
     "rescheduleRequestedLabel": "改期請求：{date} · {time}",
     "rescheduleButton": "請求改期",
     "closeDialog": "關閉",
-    "originallyLabel": "原定：{date} · {time}"
+    "originallyLabel": "原定：{date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "已拒絕",
+    "cancelContactClinic": "To cancel, contact the clinic.",
+    "statusNotConfirmed": "Not confirmed",
+    "proposalPassed": "This time has already passed. Ask the clinic for a new time.",
+    "cancelRequest": "Cancel request",
+    "cancelRequestTitle": "Cancel this request?",
+    "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
+    "keepRequest": "Keep request",
+    "requestCancelledToast": "Request cancelled.",
+    "rescheduleLapsed": "Your reschedule request expired.",
+    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic.",
+    "bookWith": "Book with {doctor}",
+    "yourDoctor": "Your doctor"
   },
   "nav": {
     "overview": "總覽",
@@ -972,7 +1035,13 @@
     "accountNotSecretary": "此帳戶無法接受祕書邀請。請使用透過邀請連結建立的另一個帳戶。",
     "teamResendConfirm": "要向 {email} 傳送新邀請嗎？先前分享的邀請碼將失效。",
     "inviteFrom": "來自 {clinic} 的邀請",
-    "inviteFor": "此邀請的對象是 {email}。請使用該電子郵件註冊。"
+    "inviteFor": "此邀請的對象是 {email}。請使用該電子郵件註冊。",
+    "teamResendEmail": "Resend invite",
+    "teamResendAt": "You can resend at {time}",
+    "teamEmailSent": "Email sent to {email}",
+    "teamAlreadySent": "Invite sent. You can resend at {time}.",
+    "teamDailyLimit": "You've reached the limit of 10 invites a day. Try again at {time}.",
+    "teamSendFailed": "Couldn't send the email right now. Try again, or share the link."
   },
   "invitePage": {
     "metaTitle": "邀請",
@@ -1143,7 +1212,6 @@
   "pricing": {
     "navLabel": "價格",
     "countryLabel": "價格適用於：",
-    "countryOther": "其他國家",
     "title": "一個簡單的方案，功能全包。",
     "subtitle": "無開通費，不按病患收費，沒有額外費用。",
     "perMonth": "/月",
@@ -1320,7 +1388,9 @@
   },
   "dateInput": {
     "buddhistYear": "這看起來是佛曆年份。請使用西元年份（例如 1996）。",
-    "invalidBirthDate": "出生日期無效：請使用 1900 年至今天之間的日期。"
+    "invalidBirthDate": "出生日期無效：請使用 1900 年至今天之間的日期。",
+    "placeholder": "DD/MM/YYYY",
+    "invalid": "The date must be in the format {format}."
   },
   "solvyaiSettings": {
     "title": "SolvyAI",
@@ -1403,7 +1473,6 @@
     "placesUnavailable": "暫時無法載入名額資訊。",
     "countryBR": "巴西",
     "countryTH": "泰國",
-    "countryOTHER": "其他國家",
     "formTitle": "申請",
     "required": "必填",
     "qName": "姓名",
@@ -1452,7 +1521,7 @@
     "errorRateLimit": "嘗試次數過多,請一小時後再試。",
     "errorInvalid": "請檢查此欄位。",
     "errorGeneric": "發生錯誤,請再試一次。",
-    "privacyNotice": "這些回答僅用於經營創始會員計畫並就此與您聯繫。未獲錄取的申請(遭拒、已撤回或仍在候補名單中)將在最後一次更新 12 個月後刪除;已錄取創始會員的申請在其 SolvyMed 帳戶存在期間保留。如需提前刪除您的申請,請寄信至 support@solvymed.com。詳情請見我們的<privacy>隱私權政策</privacy>。",
+    "privacyNotice": "這些回答僅用於經營創始會員計畫並就此與您聯繫。未獲錄取的申請(遭拒、已撤回或仍在候補名單中)將在最後一次狀態變更 12 個月後刪除;已錄取創始會員的申請在其 SolvyMed 帳戶存在期間保留。如需提前刪除您的申請,請寄信至 support@solvymed.com。詳情請見我們的<privacy>隱私權政策</privacy>。",
     "faqTitle": "常見問題",
     "faq1q": "真的終身免費嗎?",
     "faq1a": "是的:付費方案在 SolvyMed 營運期間免費,限一個帳戶,自錄取之日起生效。與您連結的秘書帳戶照常包含在內。請參閱規則。",
@@ -1484,7 +1553,10 @@
     "emailBody": "感謝您以 {system} 使用者身分申請 SolvyMed 創始會員計畫。我們將在 5 個工作天內回覆。",
     "emailWaitlist": "{system} 的名額目前已滿,您已列入候補名單。",
     "emailNoFiles": "請暫時不要寄送任何檔案;若您獲得錄取,我們會說明如何建立測試匯出檔。",
-    "emailSign": "SolvyMed 團隊"
+    "emailSign": "SolvyMed 團隊",
+    "emailTagline": "Your practice, your brand.",
+    "emailHelloTitled": "{title} {name} 您好:",
+    "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
   "foundersCard": {
     "cardTitle": "創始使用者計畫",
@@ -1790,7 +1862,9 @@
     "couldntFinish": "沒能完成。能換個說法，並附上病患姓名、日期和時間嗎？",
     "onlySolvyMed": "我只能協助處理 SolvyMed 相關問題。",
     "noClinical": "我無法回答臨床問題。",
-    "minutes": "{n} 分鐘"
+    "minutes": "{n} 分鐘",
+    "alreadyPaid": "此預約已付款。",
+    "noAmount": "此預約沒有金額。請先在行程中設定金額，再標記為已付。"
   },
   "countryExamples": {
     "phone": "電話號碼"
@@ -1801,5 +1875,96 @@
     "tryNow": "立即試用",
     "later": "稍後再說",
     "whatCanDo": "SolvyAI 能做什麼？"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "重新整理"
+  },
+  "siteMeta": {
+    "title": "SolvyMed — Software for medical practices",
+    "description": "SolvyMed is the all-in-one app for healthcare professionals: smart scheduling, patient records, prescriptions and integrated payments, all in one place.",
+    "socialDescription": "Your practice, your brand. The all-in-one app for healthcare professionals: scheduling, patient records, prescriptions and payments."
+  },
+  "brand": {
+    "title": "My brand",
+    "hint": "Logo, colour and how your name appears to patients",
+    "displayName": "Display name",
+    "displayNameHint": "Leave empty to use your profile name",
+    "titleLabel": "Title (Dr., Dra.…)",
+    "specialty": "Specialty",
+    "registrationLine": "Professional registration",
+    "accent": "Brand colour",
+    "accentCustom": "Custom",
+    "accentAdjusted": "We adjust the shade when needed to keep text readable.",
+    "logoSquare": "Logo (square)",
+    "logoWide": "Wide logo (documents)",
+    "photo": "Photo",
+    "uploadsNote": "Shown on your public page and documents.",
+    "upload": "Choose image",
+    "replace": "Replace",
+    "remove": "Remove",
+    "uploading": "Uploading…",
+    "preview": "How patients see it",
+    "previewLight": "Light",
+    "previewDark": "Dark",
+    "previewButton": "Book an appointment",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "saveError": "Couldn't save. Try again.",
+    "badType": "Use a PNG or JPG image.",
+    "tooLarge": "This image is too large. Use one up to 5 MB and at most 4096 px per side.",
+    "uploadError": "Couldn't upload the image. Try again.",
+    "removeTitle": "Remove this image?",
+    "removeBody": "It will no longer appear on your page and documents.",
+    "removeConfirm": "Remove",
+    "cancel": "Cancel"
+  },
+  "patientDoctors": {
+    "homeSection": "My doctors",
+    "homeCard": "Your doctor",
+    "bookWho": "With whom?",
+    "add": "+ Add a doctor",
+    "addTitle": "Add a doctor",
+    "addHint": "Enter the code your doctor shared.",
+    "code": "Code",
+    "connect": "Connect",
+    "connected": "Done! You're now connected to {doctor}.",
+    "alreadyConnected": "You're already connected to {doctor}.",
+    "viewDoctor": "View doctor",
+    "settingsRow": "My doctors",
+    "disconnect": "Disconnect",
+    "disconnectTitle": "Disconnect from {doctor}?",
+    "disconnectBody": "You'll stop seeing {doctor}'s appointments and documents. Pending requests will be cancelled. The clinic keeps your record.",
+    "disconnectBlocked": "You have confirmed appointments with {doctor}. To cancel them, contact the clinic; then you can disconnect.",
+    "disconnected": "Disconnected from {doctor}.",
+    "filterAll": "All"
+  },
+  "secretaryPractices": {
+    "switcherLabel": "Schedule for",
+    "all": "All",
+    "allEmpty": "No appointments today.",
+    "doctorField": "Doctor",
+    "todayWith": "Today with {doctor}",
+    "notifyTitle": "Notifications per doctor",
+    "notifyHint": "Choose which doctors you get notifications for.",
+    "pushPrefix": "{doctor}: ",
+    "joinedTeam": "{doctor} added you to their team.",
+    "removeTitle": "Remove {name} from your team?",
+    "removeBody": "They stay on other doctors' teams."
+  },
+  "colleagues": {
+    "title": "My colleagues",
+    "hint": "Add colleagues by their public code. Only you see this list.",
+    "add": "+ Add a colleague",
+    "added": "{doctor} added to your colleagues.",
+    "remove": "Remove from colleagues",
+    "refer": "Refer a colleague",
+    "referHint": "Send the patient a colleague's link. No data is shared.",
+    "shareMessage": "Hi {patient}! I recommend {colleague} ({specialty}). To book, go to: {link}",
+    "empty": "You haven't added any colleagues yet."
   }
 }

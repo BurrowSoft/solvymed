@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AppDownloadButtons } from "@/components/AppDownloadButtons";
 import { LegalLinks } from "@/components/LegalLinks";
+import { BrandMarkTile } from "@/components/BrandLogo";
 
 // The patient invite link the app shares (solvymed.com/invite/<code>). The
 // steps name the app's own labels verbatim (mobile lib/i18n.ts).
@@ -52,7 +53,7 @@ export default async function InvitePage({
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4 py-12">
       <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-100 text-center">
-        <div className="mb-4 text-4xl font-black text-teal-600">S</div>
+        <div className="mb-4 flex justify-center"><BrandMarkTile size="lg" /></div>
         <h1 className="text-xl font-bold text-slate-800 mb-1">{t("heading")}</h1>
         <p className="text-sm text-slate-500 mb-6">{t("sub")}</p>
 

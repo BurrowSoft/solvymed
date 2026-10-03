@@ -517,9 +517,31 @@ describe("SolvyAI actions mode: other proposals", () => {
   });
 
   it("mark paid: needs a value; with one, a card to Payments", async () => {
-    let t = setup(listThen("2026-10-01", { name: "propose_mark_paid", input: { appointmentId: "a-arch", paid: true } }));
-    let r = await run(t, ask("A Ana pagou"));
+    const said = (r: Awaited<ReturnType<typeof run>>) => r.chunks.flatMap((c) => (c.kind === "block" && c.block.type === "text" ? [c.block.text] : []));
+    const noAmountLine = "Esta consulta não tem valor. Defina o valor na Agenda antes de marcar como paga.";
+    // No amount (UX option b): no card, no fixed line; the model is told to
+    // ask how much was received. A zero or negative amount is the same.
+    for (const amount of [undefined, 0, -10]) {
+      const t = setup(listThen("2026-10-01", { name: "propose_mark_paid", input: { appointmentId: "a-arch", paid: true, ...(amount === undefined ? {} : { amount }) } }));
+      const r = await run(t, ask("A Ana pagou"));
+      expect(cardOf(r.blocks)).toBeUndefined();
+      expect(said(r)).not.toContain(noAmountLine);
+      const res = resultsIn(t.model.calls[2])[0] as { is_error?: boolean; content: string };
+      expect(res.is_error).toBe(true);
+      expect(String(res.content)).toContain("ask the user how much was received");
+    }
+    // The user won't say: UX's fixed line (the app's #216), never a card.
+    let t = setup(listThen("2026-10-01", { name: "propose_mark_paid", input: { appointmentId: "a-arch", paid: true, amountUnknown: true } }));
+    let r = await run(t, ask("Não sei quanto"));
     expect(cardOf(r.blocks)).toBeUndefined();
+    expect(said(r)).toContain(noAmountLine);
+    // The amount the user gives: ONE card showing it in the practice's
+    // currency; Confirmar sets amount + paid together.
+    t = setup(listThen("2026-10-01", { name: "propose_mark_paid", input: { appointmentId: "a-arch", paid: true, amount: 150 } }));
+    r = await run(t, ask("A Ana pagou 150"));
+    expect(r.blocks.filter((b) => b.type === "card")).toHaveLength(1);
+    expect(cardOf(r.blocks)!.action.args).toMatchObject({ appointmentId: "a-arch", paid: true, amount: 150 });
+    expect(cardOf(r.blocks)!.fields.find((f) => f.label === "Valor")!.value).toMatch(/^R\$\s150,00$/);
     t = setup(listThen("2026-09-30", { name: "propose_mark_paid", input: { appointmentId: "a-joao", paid: true } }));
     r = await run(t, ask("O Mario pagou"));
     expect(cardOf(r.blocks)!.after).toEqual({ screen: "payments", highlight: { kind: "appointment", id: "a-joao" } });
@@ -564,6 +586,23 @@ describe("SolvyAI actions mode: Confirmar failed", () => {
     const r = await run(t, { event: { type: "confirm_failed", code: "appointment_not_cancellable", action: { kind: "cancel_appointment", args: { appointmentId: "a-done" } } }, screen: "schedule", locale: "pt-BR" });
     expect(t.model.calls).toEqual([]);
     expect(r.chunks.filter((c) => c.kind === "block")).toEqual([{ kind: "block", block: { type: "text", text: "Só é possível cancelar consultas agendadas, confirmadas ou atrasadas. Nada foi salvo." } }]);
+  });
+
+  it("no amount since the card (mark_paid 'no_amount'): the fixed line, no model", async () => {
+    const t = setup(() => "never");
+    const r = await run(t, { event: { type: "confirm_failed", code: "no_amount", action: { kind: "mark_paid", args: { appointmentId: "a-arch", paid: true } } }, screen: "payments", locale: "en" });
+    expect(t.model.calls).toEqual([]);
+    expect(r.chunks.filter((c) => c.kind === "block")).toEqual([{ kind: "block", block: { type: "text", text: "This appointment has no amount. Set it in the Agenda before marking it paid." } }]);
+  });
+
+  it("paid between the card and Confirmar (send_pix 'already_paid'): the fixed line, no model, not a 400", async () => {
+    for (const [locale, text] of [["pt-BR", "Esta consulta já está paga."], ["en", "This appointment is already paid."], ["th", "นัดหมายนี้ชำระแล้ว"]]) {
+      const t = setup(() => "never");
+      const r = await run(t, { event: { type: "confirm_failed", code: "already_paid", action: { kind: "send_pix", args: { appointmentId: "a-done" } } }, screen: "payments", locale });
+      expect(r.status, locale).toBe(200);
+      expect(t.model.calls).toEqual([]);
+      expect(r.chunks.filter((c) => c.kind === "block")).toEqual([{ kind: "block", block: { type: "text", text } }]);
+    }
   });
 
   it("refused: a bad action, help mode, and the anti-spam limit", async () => {
@@ -850,11 +889,36 @@ describe("SolvyAI actions mode: send Pix (app only; Brazil only; Thai practices 
     expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
   });
 
+  it("a paid appointment: UX's fixed line, never a card or a QR link, in any country (B7 / app #214)", async () => {
+    for (const country of ["BR", "TH"]) {
+      const t = inApp(setup(pix));
+      t.tables.professionals[0].country = country;
+      t.tables.appointments.find((a) => a.id === "a-joao")!.payment_status = "paid";
+      const r = await run(t, ask("Manda o Pix do Mario"));
+      expect(cardOf(r.blocks), country).toBeUndefined();
+      expect(r.blocks.find((b) => b.type === "open"), country).toBeUndefined();
+      const texts = r.chunks.flatMap((c) => (c.kind === "block" && c.block.type === "text" ? [c.block.text] : []));
+      expect(texts, country).toContain("Esta consulta já está paga.");
+    }
+  });
+
   it("an unknown practice country: no card at all (never a guessed Pix path)", async () => {
     const t = inApp(setup(pix));
     t.tables.professionals[0].id = "someone-else";
     const r = await run(t, ask("Manda o Pix do Mario"));
     expect(cardOf(r.blocks)).toBeUndefined();
     expect(resultsIn(t.model.calls[2])[0]).toMatchObject({ is_error: true });
+  });
+});
+
+// 9a: the App Map says only what's true today: the app's "no QR once paid"
+// waits for app 1.4.0 (the released app still shows it).
+describe("the App Map's paid-appointment rules", () => {
+  it("SolvyAI's refusal and the website's rule are live; the app's waits for app-1.4.0", async () => {
+    const { appMapText } = await import("@/lib/solvyai/app-map");
+    const text = appMapText();
+    expect(text).toContain("Never for a paid appointment, in any country");
+    expect(text).toContain("On the website, a paid appointment no longer shows the payment QR");
+    expect(text).not.toContain("In the app too, a paid appointment no longer shows the payment QR");
   });
 });

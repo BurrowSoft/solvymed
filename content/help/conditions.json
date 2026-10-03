@@ -90,5 +90,41 @@
   "booking-check-live": {
     "met": false,
     "what": "Migration 141 (get_practice_accepts_bookings, mobile #196) is applied on production: the website's booking page then tells a patient that a practice with an inactive subscription \"isn't taking online bookings right now\" instead of showing times (before 141 it books as before). Gates the Help K1 / App Map lines about it; the app's line also waits on app-1.4.0. 142 (create_public_booking refusing 'practice_inactive') is the server guard, gated separately by 38."
+  },
+  "invited-patients-live": {
+    "met": true,
+    "what": "Migration 145 (invited patients) is applied on production: an invite-code signup creates the practice's patient record at once (patients.invited_via_code_at / invite_reviewed_at / invite_same_email_as, keep_invited_patient / remove_invited_patient). Gates the website's \"Novo, via convite\" badge, the dashboard's new-invited-patients card and its Help / App Map lines (the app's lines also wait on app-1.4.0). The website never reads the new columns before this."
+  },
+  "invite-same-practice-live": {
+    "met": false,
+    "what": "Migration 146 is applied on production: link_patient_by_invite_code raises already_connected with HINT same_practice when the personal code is another record of the patient's own practice, so the website and the app say \"Ask the clinic to combine your records\" instead of contact support. Gates its Help C5 / App Map lines (the website maps the hint already; it's absent before 146)."
+  },
+  "invite-connect-live": {
+    "met": true,
+    "what": "Migration 147 is applied on production: connect_with_code(p_code) links with a personal or public code in one call (one counted attempt), and remove_invited_patient enqueues the patient's cancellation notices. The website's /auth/invite-required switches to it when met (before: link_patient_by_invite_code then link_by_professional_public_code)."
+  },
+  "invite-joined-push-live": {
+    "met": true,
+    "what": "Migration 148 is live (server-side, pg_net): the doctor and the secretaries get the push \"{name} entrou com seu código de convite\" when a patient joins with its code (app or website signup; server-side). Gates its Help C5 / App Map lines."
+  },
+  "status-reason-live": {
+    "met": true,
+    "what": "Migration 150 (mobile #238) is applied on production: appointments.status_reason (≤200, the clinic's reason on reject/cancel), status_by ('clinic' | 'patient', set by its trigger) and clinic_message (≤200, the clinic's message on Confirm/Propose), all returned by get_my_appointments. Gates the website's reason fields, the patient's \"Recusado/Cancelado pela clínica\" lines and \"Mensagem da clínica\", the push hint instead of the note text, and their Help / App Map lines."
+  },
+  "secretary-invite-email-live": {
+    "met": true,
+    "what": "Secretary invites are emailed (migration 151 + the send-secretary-invite function, live) AND the privacy policy's secretary-invite text is live with PRIVACY_VERSION bumped, after mobile's accepting migration. Until then the website never calls the function: invites are shared by link/code only."
+  },
+  "brand-live": {
+    "met": false,
+    "what": "1.5.0 \"My brand\" is released: migration 161 (professional_brand, brand-assets, get_practice_brand / get_public_brand_by_code / save_my_brand) and the brand-asset function live; the app's My brand in a RELEASED store build and liveFeatures.myBrand true on the website; the branded booking page + public invite link, the branded emails to patients and the branded printed documents (prescriptions, receipts, history) live on BOTH platforms; and the privacy text on brand assets live with PRIVACY_VERSION bumped. Gates Help C11 and the App Map's brand rule (both describe all of these surfaces)."
+  },
+  "migration-134": {
+    "met": true,
+    "what": "Migration 134 is applied on production (9a, 3 Oct; mobile #320): the database refuses deleting a patient who has appointments (any status), from any app version or the website. Gates the Help P3 / App Map sentence saying the server refuses it."
+  },
+  "multi-practice-live": {
+    "met": false,
+    "what": "1.5.0 secretaries serving several doctors are live: migration 163 applied (it is) AND server_flags.multi_practice_secretary on (after the min_version raise + Vitor's OK) AND the app's switcher in a RELEASED store build AND liveFeatures.multiPractice true on the website (with the switcher on clinic-inactive, so a lapsed chosen doctor can't trap her; app parity too) AND the 1.5.0 privacy text live with its version bump. Gates Help C4's multi-doctor sentence and the App Map's switcher rule."
   }
 }

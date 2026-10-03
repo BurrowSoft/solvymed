@@ -6,7 +6,11 @@
 // list (mobile dev), shipped together.
 // 2026-10-01: §6e names WhatsApp (whatsapp-outbox-live). Needs mobile's
 // migration adding ('privacy','2026-10-01') applied FIRST.
-export const PRIVACY_VERSION = "2026-10-01";
+// 2026-10-02: §3.7 secretary invitations + the Resend row name invites
+// (secretary-invite-email-live). Mobile 156 accepts it (applied first).
+// 2026-10-03: §6d Founders Program applications (liveFeatures.founders).
+// Mobile's migration adding ('privacy','2026-10-03') applied FIRST.
+export const PRIVACY_VERSION = "2026-10-03";
 export const TERMS_VERSION = "2026-10-01";
 
 // Sent with every web signup (the checkbox is required, so it's sent only
@@ -19,7 +23,7 @@ export function consentMetadata() {
 // English or Brazilian Portuguese).
 export function legalDateLabel(lang: "en" | "pt-BR", version: string): string {
   const [y, m, d] = version.split("-").map(Number);
-  return new Intl.DateTimeFormat(lang === "pt-BR" ? "pt-BR" : "en-US", {
+  return new Intl.DateTimeFormat(lang === "pt-BR" ? "pt-BR" : "en-GB", {
     year: "numeric", month: "long", day: "numeric", timeZone: "UTC",
   }).format(new Date(Date.UTC(y, m - 1, d, 12)));
 }

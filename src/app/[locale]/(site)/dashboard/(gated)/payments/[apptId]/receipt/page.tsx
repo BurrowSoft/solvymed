@@ -10,7 +10,10 @@ import { formatMoney } from "@/lib/money";
 import { PRINT_CSS, docDate, docTime, toDocTemplate } from "@/lib/prescriptionDoc";
 import { readPracticeHeader } from "@/lib/practiceHeader";
 import { PrintToolbar } from "@/components/PrintToolbar";
+import { liveFeatures } from "@/lib/liveFeatures";
+import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { RECEITA_SAUDE_NOTE, ReceiptDocument } from "./ReceiptDocument";
+import { consultTypeKey } from "@/lib/consultType";
 
 // The recibo's print view (Help G5 on the website; UX 36): the app's simple
 // recibo, for the doctor AND the secretary (payments are their job). A Thai
@@ -39,9 +42,10 @@ export default async function ReceiptPrintPage({
   const a = appt as Row | null;
   if (!a || a.status === "blocked") notFound();
 
-  const [t, tIds] = await Promise.all([
+  const [t, tIds, tConsult] = await Promise.all([
     getTranslations({ locale, namespace: "prescriptionDoc" }),
     getTranslations({ locale, namespace: "patientIds" }),
+    getTranslations({ locale, namespace: "consultType" }),
   ]);
   const back = `${prefix}/dashboard/payments`;
   // The practice country decides the recibo (currency, IDs, dates; Thai →
@@ -60,12 +64,15 @@ export default async function ReceiptPrintPage({
     );
   }
 
-  const [patientResult, header] = await Promise.all([
+  const [patientResult, header, brand] = await Promise.all([
     str(a.patient_id)
       ? supabase.from("patients").select("full_name, cpf, passport_number").eq("id", a.patient_id as string).eq("professional_id", profId).maybeSingle()
       : Promise.resolve({ data: null }),
     readPracticeHeader(profId, "invoice"),
+    // The doctor's brand (1.5.0, behind the flag); a secretary may read it.
+    liveFeatures.myBrand ? loadPracticeBrand(supabase, profId) : Promise.resolve(null),
   ]);
+  const baseTemplate = toDocTemplate(header.template);
   const patient = patientResult.data as { full_name: string; cpf: string | null; passport_number: string | null } | null;
   const idLines: string[] = [];
   if (profile.patientId === "cpf" && str(patient?.cpf)) idLines.push(`${tIds("cpf")}: ${patient!.cpf}`);
@@ -84,7 +91,8 @@ export default async function ReceiptPrintPage({
       <PrintToolbar backHref={back} backLabel={t("backToPayments")} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">
         <ReceiptDocument
-          template={toDocTemplate(header.template)}
+          template={brandedDocTemplate(baseTemplate, brand)}
+          brand={docBrand(baseTemplate, brand)}
           labels={{
             title: t("receiptTitle"), patient: t("patient"), services: t("services"), description: t("description"), amount: t("amount"),
             total: t("total"), payment: t("payment"), online: t("online"), inPerson: t("inPerson"), privatePay: t("privatePay"),
@@ -97,7 +105,9 @@ export default async function ReceiptPrintPage({
           provider={[[header.fullName, header.registration].filter(Boolean).join(" · "), header.specialty].filter(Boolean).join(" — ")}
           clinic={[header.clinicName, profile.clinicTaxId === "cnpj" && header.clinicCnpj ? `CNPJ ${formatCnpj(header.clinicCnpj)}` : null].filter(Boolean).join(" · ")}
           address={[header.address, header.city, header.state].filter(Boolean).join(", ")}
-          service={String(a.consultation_type ?? "")}
+          // A built-in type in the reader's language ("Consultation" →
+          // "Consulta"); a clinic's own procedure name as written (d7).
+          service={(() => { const raw = String(a.consultation_type ?? ""); const key = consultTypeKey(raw); return key ? tConsult(key) : raw; })()}
           serviceDetail={`${a.type === "online" ? t("online") : t("inPerson")} · ${docTime(a.start_time as string)}`}
           amount={base > 0 ? money(base) : "—"}
           extras={extras.map((x) => ({ name: String(x.name ?? ""), amount: typeof x.price === "number" ? money(x.price) : "—" }))}

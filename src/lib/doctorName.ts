@@ -8,6 +8,8 @@
 // The titles are the ones the name field's hint suggests: Dr/Dra/Prof/Profa
 // (+ ª forms), fr Pr, it Dott./Dott.ssa. The same regex as the app's;
 // change both together.
+import { THAI_TITLES } from "./country";
+
 const TITLE = /^(dott\.ssa|dott|dra|dr|profa|prof|pr)(?:(\.?ª\.?|\.)\s*|\s+|$)/i;
 const MAX_TITLES = 3;
 
@@ -27,9 +29,81 @@ export function doctorDisplayName(name: string | null | undefined, opts: { first
   return [...titles, shown].filter(Boolean).join(" ");
 }
 
+// Thai professional titles, typed before the name with or without a space
+// ("นพ.สมชาย", "พญ. สุดา"): the ones the practice-country examples suggest
+// (lib/country THAI_TITLES, one list; 9a), plus ภก./ภญ./ดร. Kept exactly as
+// typed.
+const THAI_TITLE = new RegExp(
+  // Longest first, so "ทพญ." isn't read as "ทพ." + "ญ." (app #309's list).
+  `^(${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร."].sort((a, b) => b.length - a.length).map((s) => s.replace(/\./g, "\\.")).join("|")})\\s*`,
+);
+
+// A Thai title at the start of a name, with its dot or, without one,
+// followed by a space ("นพ.สมชาย", "นพ สมชาย"; never "ดร" inside "ดรุณี").
+const THAI_TITLE_LOOSE = new RegExp(
+  `^(?:${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร."].map((s) => s.replace(/\.$/, "")).sort((a, b) => b.length - a.length).join("|")})(?:\\.\\s*|\\s+)`,
+);
+
+// The brand's name with its chosen title (1.5.0 My brand; e7, both
+// platforms): when a Título is set, any title the name already starts with
+// (Dr, Dra., Drª, Prof., นพ., พญ.…, with or without the dot, any case) is
+// dropped, then the Título is put in front once: "Dra." + "Dra Ana Lima" →
+// "Dra. Ana Lima". No Título: the name as it is. A Thai title ending in a
+// dot is written against the name ("นพ.สมชาย"), the usual Thai style.
+export function withBrandTitle(title: string | null | undefined, name: string | null | undefined): string {
+  const t = (title ?? "").trim();
+  let rest = (name ?? "").trim().replace(/\s+/g, " ");
+  if (!t) return rest;
+  for (let i = 0; i < MAX_TITLES; i++) {
+    const thai = rest.match(THAI_TITLE_LOOSE);
+    const latin = thai ? null : rest.match(TITLE);
+    const m = thai ?? latin;
+    if (!m) break;
+    rest = rest.slice(m[0].length).trim();
+  }
+  if (!rest) return t;
+  const attached = /^[฀-๿].*\.$/.test(t);
+  return attached ? `${t}${rest}` : `${t} ${rest}`;
+}
+
+// For a greeting (UX, "Olá, Dra. Ana!", "เรียน นพ.สมชาย"): the typed
+// title(s), as doctorDisplayName shows them, and the first name. Never a
+// title we add.
+export function greetingName(name: string | null | undefined): { title: string; first: string } {
+  const typed = (name ?? "").trim().replace(/\s+/g, " ");
+  const thai = typed.match(THAI_TITLE);
+  if (thai) return { title: thai[1], first: typed.slice(thai[0].length).split(" ")[0] ?? "" };
+  const { titles, rest } = splitTitles(typed);
+  return { title: titles.join(" "), first: rest.split(" ")[0] ?? "" };
+}
+
+// For a button ("Marcar consulta com Dra. Ana Lima"; e7): the typed
+// title(s), the first and the last name, so a long full name fits (the
+// button also wraps to 2 lines, then ellipsis). Thai titles as typed.
+export function shortDoctorName(name: string | null | undefined): string {
+  const typed = (name ?? "").trim().replace(/\s+/g, " ");
+  const thai = typed.match(THAI_TITLE);
+  const { titles, rest } = thai ? { titles: [thai[1]], rest: typed.slice(thai[0].length) } : splitTitles(typed);
+  const parts = rest.split(" ").filter(Boolean);
+  const names = parts.length > 2 ? [parts[0], parts[parts.length - 1]] : parts;
+  // A Thai title is written against the name ("นพ.สมชาย"), as typed.
+  if (thai) return `${titles[0]}${/\s$/.test(thai[0]) ? " " : ""}${names.join(" ")}`.trim();
+  return [...titles, ...names].join(" ");
+}
+
 // The avatar letter: the name's, never a title's ("Dra. Beatriz" → "B",
 // "Prof. Dr. carlos" → "C"); a bare title keeps its own letter.
 export function nameInitial(name: string | null | undefined): string {
   const { titles, rest } = splitTitles(name);
   return (rest || titles[0] || "").charAt(0).toUpperCase();
+}
+
+// The first name to greet the signed-in user with: their own, or none
+// ("Good evening!") when it's empty or just their email's local part
+// (Vitor's secretary test: "Good evening, Here66443"; UX).
+export function greetingFirstName(name: string | null | undefined, email: string | null | undefined): string {
+  const shown = doctorDisplayName(name, { firstOnly: true });
+  const local = (email ?? "").split("@")[0].trim().toLowerCase();
+  if (!shown || (local && (name ?? "").trim().toLowerCase() === local)) return "";
+  return shown;
 }

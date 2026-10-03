@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "./SettingsClient";
-import { createSecretaryInvite, revokeSecretaryInvite, removeSecretary } from "./team-actions";
+import { createSecretaryInvite, revokeSecretaryInvite, removeSecretary, sendSecretaryInviteEmail, type InviteEmailResult } from "./team-actions";
+import { conditionMet } from "@/lib/conditions";
 import { dateLocale } from "@/lib/dateLabels";
+import { withCountryHint } from "@/lib/signupCountry";
 
 export type TeamRow = {
   kind: "secretary" | "invite";
@@ -14,7 +16,11 @@ export type TeamRow = {
   name: string | null;
   created_at: string;
   expires_at: string | null;
+  // The last invite email (151's list_my_team): "Reenviar convite" waits 1 h.
+  sent_at?: string | null;
 };
+
+const RESEND_GAP_MS = 60 * 60 * 1000;
 
 export const TEAM_LIMIT = 3;
 
@@ -29,10 +35,14 @@ const ERROR_KEY: Record<string, string> = {
 type Created = { code: string; email: string };
 
 // Settings → Team (doctor only). Invites are bound to an email,
-// single-use, and expire in 7 days. Nothing is emailed: the doctor shares
-// the link or code (copy / WhatsApp). The code is only shown right after
-// creating it; "Resend" creates a fresh one for the same email.
-export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: boolean }) {
+// single-use, and expire in 7 days. The doctor shares the link or code
+// (copy / WhatsApp); the code is only shown right after creating it, and
+// "Resend" creates a fresh one for the same email. With
+// secretary-invite-email-live (151 + the privacy text) the invite is also
+// emailed on create, and "Reenviar convite" emails a fresh one (once an hour).
+// whatsapp: the share button only where the practice uses WhatsApp (not
+// in Thailand, item 12).
+export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }: { rows: TeamRow[]; loadFailed: boolean; whatsapp?: boolean; country?: string | null }) {
   const t = useTranslations("secretary");
   const router = useRouter();
   const { locale } = useParams<{ locale: string }>();
@@ -41,6 +51,25 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
   const [created, setCreated] = useState<Created | null>(null);
   const [copied, setCopied] = useState<"" | "link" | "code">("");
   const [pending, start] = useTransition();
+  const emailLive = conditionMet("secretary-invite-email-live");
+  const [notice, setNotice] = useState("");
+  // "Now" after mount (no hydration mismatch), ticking so a waiting
+  // "Reenviar convite" turns on by itself.
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    if (!emailLive) return;
+    setNow(Date.now());
+    const id = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(id);
+  }, [emailLive]);
+  const time = (iso: string) => new Date(iso).toLocaleTimeString(dateLocale(locale), { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+  const nextAt = (r: TeamRow) => (r.sent_at ? new Date(new Date(r.sent_at).getTime() + RESEND_GAP_MS).toISOString() : null);
+  // The function's refusals (151): too soon / already sent / the daily cap.
+  const emailError = (r: Extract<InviteEmailResult, { ok: false }>) => {
+    if ((r.code === "resend_too_soon" || r.code === "already_sent") && r.nextAt) return t("teamAlreadySent", { time: time(r.nextAt) });
+    if (r.code === "daily_limit" && r.nextAt) return t("teamDailyLimit", { time: time(r.nextAt) });
+    return t("teamSendFailed");
+  };
 
   const full = rows.length >= TEAM_LIMIT;
   const members = rows.filter((r) => r.kind === "secretary");
@@ -51,10 +80,11 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
   // email on accept. Unprefixed, like every link shared with someone else:
   // the recipient's own browser language decides.
   const shareLink = (c: Created) =>
-    `${window.location.origin}/join/secretary/${encodeURIComponent(c.code)}`;
+    withCountryHint(`${window.location.origin}/join/secretary/${encodeURIComponent(c.code)}`, country);
 
   function invite(targetEmail: string) {
     setError("");
+    setNotice("");
     setCreated(null);
     start(async () => {
       const result = await createSecretaryInvite(targetEmail);
@@ -62,8 +92,40 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
         setError(t(ERROR_KEY[result.code] ?? "genericError"));
         return;
       }
-      setCreated({ code: result.code, email: targetEmail.trim().toLowerCase() });
+      const to = targetEmail.trim().toLowerCase();
+      setCreated({ code: result.code, email: to });
       setEmail("");
+      // The first email goes out by itself; the share buttons stay.
+      if (emailLive) {
+        const sent = await sendSecretaryInviteEmail({ code: result.code });
+        if (sent.ok) setNotice(t("teamEmailSent", { email: to }));
+        else setError(emailError(sent));
+      }
+      router.refresh();
+    });
+  }
+
+  // "Reenviar convite": a fresh invite emailed to the same address (the old
+  // code stops working); its new code shows once, as on create.
+  function resendEmail(row: TeamRow) {
+    if (!window.confirm(t("teamResendConfirm", { email: row.email }))) return;
+    setError("");
+    setNotice("");
+    setCreated(null);
+    start(async () => {
+      const sent = await sendSecretaryInviteEmail({ resend_email: row.email });
+      if (!sent.ok) {
+        setError(emailError(sent));
+        // The email failed (not a wait): a fresh code to share right here,
+        // as the message says ("…ou compartilhe o link"; e7).
+        if (!sent.nextAt) {
+          const fresh = await createSecretaryInvite(row.email);
+          if (fresh.ok) setCreated({ code: fresh.code, email: row.email });
+        }
+      } else {
+        if (sent.code) setCreated({ code: sent.code, email: row.email });
+        setNotice(t("teamEmailSent", { email: row.email }));
+      }
       router.refresh();
     });
   }
@@ -124,7 +186,10 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
         <div className="mb-4">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{t("teamPending")}</p>
           <ul className="divide-y divide-slate-100 rounded-xl border border-slate-100">
-            {invites.map((inv) => (
+            {invites.map((inv) => {
+              const waitUntil = emailLive ? nextAt(inv) : null;
+              const tooSoon = !!waitUntil && (now === null || now < new Date(waitUntil).getTime());
+              return (
               <li key={inv.id} className="flex items-center justify-between gap-3 px-4 py-3">
                 <div className="min-w-0">
                   <p className="truncate text-sm text-slate-900">{inv.email}</p>
@@ -133,15 +198,16 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
                       {t("teamExpires", { date: new Date(inv.expires_at).toLocaleDateString(dateLocale(locale)) })}
                     </p>
                   )}
+                  {tooSoon && waitUntil && <p data-testid="resend-wait" className="text-xs text-slate-500">{t("teamResendAt", { time: time(waitUntil) })}</p>}
                 </div>
                 <div className="flex shrink-0 gap-3">
                   <button
                     type="button"
-                    onClick={() => { if (window.confirm(t("teamResendConfirm", { email: inv.email }))) invite(inv.email); }}
-                    disabled={pending}
+                    onClick={() => { if (emailLive) resendEmail(inv); else if (window.confirm(t("teamResendConfirm", { email: inv.email }))) invite(inv.email); }}
+                    disabled={pending || tooSoon}
                     className="text-sm font-semibold text-teal-600 hover:text-teal-700 disabled:opacity-60"
                   >
-                    {t("teamResend")}
+                    {emailLive ? t("teamResendEmail") : t("teamResend")}
                   </button>
                   <button
                     type="button"
@@ -153,10 +219,13 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
                   </button>
                 </div>
               </li>
-            ))}
+              );
+            })}
           </ul>
         </div>
       )}
+
+      {notice && <p role="status" className="mb-4 rounded-xl bg-teal-50 px-4 py-2.5 text-sm font-semibold text-teal-800">{notice}</p>}
 
       {created && (
         <div className="mb-4 rounded-xl border border-teal-100 bg-teal-50/60 p-4">
@@ -172,14 +241,16 @@ export function TeamPanel({ rows, loadFailed }: { rows: TeamRow[]; loadFailed: b
             <button type="button" onClick={() => copy(shareLink(created), "link")} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">
               {copied === "link" ? t("copied") : t("copyLink")}
             </button>
-            <a
-              href={`https://wa.me/?text=${encodeURIComponent(t("teamWhatsAppText", { link: shareLink(created) }))}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-50"
-            >
-              WhatsApp
-            </a>
+            {whatsapp && (
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(t("teamWhatsAppText", { link: shareLink(created) }))}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+              >
+                WhatsApp
+              </a>
+            )}
           </div>
         </div>
       )}

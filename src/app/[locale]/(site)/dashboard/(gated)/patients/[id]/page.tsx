@@ -10,13 +10,20 @@ import { getArchivePreview, mergeAvailable } from "../actions";
 import { MergedNotice } from "./MergeNotice";
 import { logPatientOpen, readAccessLog } from "@/lib/accessLog";
 import { getClinicTimeZone } from "@/lib/clinicTime";
+import { AutoRefresh } from "@/components/AutoRefresh";
+import { actingPracticeFor } from "@/lib/effectiveProfId";
 
 export default async function PatientDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; id: string }>;
+  searchParams?: Promise<{ mergeWith?: string }>;
 }) {
   const { locale, id } = await params;
+  // "Mesmo e-mail de {nome}: mesclar?" opens the merge with that pair (145).
+  const mergeWithRaw = (await searchParams)?.mergeWith;
+  const mergeWith = typeof mergeWithRaw === "string" && /^[0-9a-f-]{36}$/i.test(mergeWithRaw) ? mergeWithRaw : null;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
@@ -30,8 +37,9 @@ export default async function PatientDetailPage({
     .maybeSingle();
 
   const isSecretary = userRoleData?.role === "secretary";
+  // A secretary: the doctor chosen in the switcher (1.5.0), else her primary.
   const effectiveProfId = isSecretary
-    ? (userRoleData?.invited_by_professional_id as string | null) ?? user.id
+    ? (await actingPracticeFor((userRoleData?.invited_by_professional_id as string | null) ?? null, user.id)) ?? user.id
     : user.id;
 
   // Records and prescriptions are doctor-only. RLS already denies them to
@@ -46,7 +54,7 @@ export default async function PatientDetailPage({
     isSecretary
       ? noRows
       : supabase.from("prescriptions").select("id, date, notes, created_at, created_by, created_by_name, corrects_id, correction_reason, prescription_items(name, dosage, frequency, duration)").eq("patient_id", id).order("date", { ascending: false }),
-    supabase.from("appointments").select("id, date, start_time, consultation_type, status, payment_status").eq("patient_id", id).neq("status", "blocked").order("date", { ascending: false }).limit(50),
+    supabase.from("appointments").select("id, date, start_time, consultation_type, status, payment_status, payment_amount").eq("patient_id", id).neq("status", "blocked").order("date", { ascending: false }).limit(50),
     // Whether Delete is offered at all (only without clinical history).
     // Null on error: Delete stays hidden and Archive is always available.
     getArchivePreview(id),
@@ -75,7 +83,7 @@ export default async function PatientDetailPage({
   const isArchived = !!patient.archived_at;
   const records = (recordsResult.data ?? []) as MedRecord[];
   const prescriptions = (prescriptionsResult.data ?? []) as Rx[];
-  const appointments = (apptsResult.data ?? []) as { id: string; date: string; start_time: string; consultation_type: string; status: string; payment_status: string }[];
+  const appointments = (apptsResult.data ?? []) as { id: string; date: string; start_time: string; consultation_type: string; status: string; payment_status: string; payment_amount: number | null }[];
 
   const initials = patient.full_name.split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase();
   const age = patient.birth_date
@@ -98,6 +106,8 @@ export default async function PatientDetailPage({
         <div>
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl font-extrabold text-slate-900">{patient.full_name}</h1>
+            {/* The patient's appointments stay current (item 25). */}
+            <AutoRefresh />
             {patient.booking_blocked && (
               <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-700">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3 w-3"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -144,7 +154,11 @@ export default async function PatientDetailPage({
           currentUserId={user.id}
           idKind={patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId))}
           canMerge={!isSecretary && (await mergeAvailable())}
-          canDelete={preview?.hasClinicalHistory === false && preview.hasAppointments === false}
+          mergeWith={mergeWith}
+          // "Excluir cadastro" stays visible with appointments (as app #299):
+          // a click explains why it can't and offers Arquivar.
+          canDelete={preview?.hasClinicalHistory === false}
+          hasAppointments={preview?.hasAppointments === true}
           accessLog={accessLog}
           timeZone={timeZone}
           addressLive={conditionMet("patient-address-live")}

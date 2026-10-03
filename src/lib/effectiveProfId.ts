@@ -1,4 +1,8 @@
-import type { createClient } from "@/lib/supabase/server";
+import { cache } from "react";
+import { cookies } from "next/headers";
+import { createClient as createServerClient, type createClient } from "@/lib/supabase/server";
+import { ACTING_COOKIE, type MyPractice } from "@/lib/actingPractice";
+import { liveFeatures } from "@/lib/liveFeatures";
 
 /**
  * Resolves which professional_id a caller's writes/reads should be scoped
@@ -24,9 +28,30 @@ export async function getEffectiveProfId(
   if (data?.role === "secretary") {
     // An unlinked secretary (never accepted, removed, or left) has no
     // practice to act for, never their own id.
-    return (data.invited_by_professional_id as string | null) ?? null;
+    return actingPracticeFor((data.invited_by_professional_id as string | null) ?? null, userId);
   }
   return userId;
+}
+
+// The secretary's practices (get_my_practices, migration 163), once per
+// request, read WITHOUT the acting header. null on an error.
+export const myPractices = cache(async (userId: string): Promise<MyPractice[] | null> => {
+  void userId; // the cache key: one list per signed-in user per request
+  const supabase = await createServerClient({ acting: false });
+  const { data, error } = await supabase.rpc("get_my_practices");
+  return error ? null : ((data ?? []) as MyPractice[]);
+});
+
+// Which practice a secretary acts for (1.5.0, behind the flag): the doctor
+// chosen in the switcher when she still serves them, else her primary.
+// The same choice the x-acting-practice header carries, so the ids the
+// pages filter by match what the server acts for.
+export async function actingPracticeFor(primary: string | null, userId: string): Promise<string | null> {
+  if (!liveFeatures.multiPractice || !primary) return primary;
+  const chosen = (await cookies()).get(ACTING_COOKIE)?.value;
+  if (!chosen || chosen === primary) return primary;
+  const list = await myPractices(userId);
+  return list?.some((p) => p.professional_id === chosen) ? chosen : primary;
 }
 
 /**

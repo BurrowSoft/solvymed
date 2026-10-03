@@ -1,4 +1,6 @@
 import { tint, type DocTemplate } from "@/lib/prescriptionDoc";
+import type { DocBrand } from "@/lib/brand";
+import { DocBrandHeader } from "@/components/DocBrandHeader";
 
 // The printed patient history (Help P8), laid out like the app's PDF
 // (lib/pdf-utils buildMedicalHistoryHtml): the patient's details, every
@@ -14,7 +16,7 @@ export type HistoryLabels = {
 export type HistoryRecord = { id: string; date: string; time: string; content: string; corrected: boolean };
 export type HistoryRx = { id: string; date: string; notes: string | null; corrected: boolean; items: { name: string; dosage: string; frequency: string; duration: string }[] };
 
-export function HistoryDocument({ template, labels, patientName, detailLines, records, prescriptions, signerName, signerRegistration }: {
+export function HistoryDocument({ template, labels, patientName, detailLines, records, prescriptions, signerName, signerRegistration, brand = null }: {
   template: DocTemplate;
   labels: HistoryLabels;
   patientName: string;
@@ -24,18 +26,22 @@ export function HistoryDocument({ template, labels, patientName, detailLines, re
   prescriptions: HistoryRx[];
   signerName: string;
   signerRegistration: string | null;
+  // The doctor's brand block (1.5.0, behind the flag); null = as before.
+  brand?: DocBrand | null;
 }) {
   const { primaryColor, accentColor } = template;
   const sectionTitle = "mb-3 border-b-2 pb-1.5 text-sm font-extrabold";
   const empty = "text-[13px] italic text-[#A0ABBE]";
   return (
     <article id="print-doc" className="mx-auto max-w-[680px] bg-white p-10 text-[#1A2138]" style={{ fontFamily: "-apple-system, Helvetica, Arial, sans-serif" }}>
+      {brand && <DocBrandHeader brand={brand} />}
       <header className="mb-7 flex items-center justify-between pb-[18px]" style={{ borderBottom: `3px solid ${primaryColor}` }}>
         <div>
           <h1 className="mb-1 text-[22px] font-extrabold" style={{ color: primaryColor }}>{labels.title}</h1>
           <p className="text-[13px] text-[#6B7A99]">{template.headerText ?? patientName}</p>
         </div>
-        {template.logoUrl && (
+        {/* With the doctor's brand the logo is in the brand block above. */}
+        {!brand && template.logoUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={template.logoUrl} alt="" className="h-12 max-w-[160px] object-contain" />
         )}

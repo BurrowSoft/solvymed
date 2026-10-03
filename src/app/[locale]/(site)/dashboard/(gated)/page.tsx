@@ -11,8 +11,11 @@ import { formatMoney } from "@/lib/money";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { RECEIVABLE_STATUSES } from "@/lib/paymentRules";
-import { doctorDisplayName } from "@/lib/doctorName";
+import { conditionMet } from "@/lib/conditions";
+import { InvitedPatientsCard } from "./InvitedPatientsCard";
+import { greetingFirstName } from "@/lib/doctorName";
 import { dateLocale } from "@/lib/dateLabels";
+import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 
 function statusBadge(status: string) {
@@ -65,7 +68,8 @@ export default async function DashboardPage({
   if (!effectiveProfId) redirect(`${prefix}/auth/login`);
   const isSecretary = effectiveProfId !== user.id;
   // Amounts are in the practice's currency (its country), not the UI's.
-  const { currency, paymentQr } = countryProfile(await getPracticeCountry(supabase, user.id, effectiveProfId));
+  const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
+  const { currency, paymentQr } = countryProfile(practiceCountry);
   const formatAmount = (n: number) => formatMoney(n, currency);
 
   // The practice's day and hour, not the server's (UTC).
@@ -96,18 +100,25 @@ export default async function DashboardPage({
     pendingPaymentsResult,
     patientCountResult,
     monthRevenueResult,
+    requestsResult,
   ] = await Promise.all([
     // The greeting is for the viewer, so this stays the caller's own row.
     supabase.from("professionals").select("full_name, specialty, photo_url, public_invite_code").eq("id", user.id).maybeSingle(),
     supabase.from("appointments").select("id, patient_name, start_time, end_time, status, consultation_type").eq("professional_id", effectiveProfId).eq("date", today).neq("status", "blocked").order("start_time"),
     supabase.from("appointments").select("patient_name, date, start_time, consultation_type, status").eq("professional_id", effectiveProfId).gt("date", today).lte("date", nextWeekStr).neq("status", "blocked").order("date").order("start_time").limit(8),
     // The pending card: the app's "to receive" rule (lib/paymentRules).
-    supabase.from("appointments").select("patient_name, payment_amount, date").eq("professional_id", effectiveProfId).eq("payment_status", "pending").in("status", [...RECEIVABLE_STATUSES]),
+    supabase.from("appointments").select("patient_name, payment_amount, date").eq("professional_id", effectiveProfId).eq("payment_status", "pending").in("status", [...RECEIVABLE_STATUSES]).gt("payment_amount", 0),
     supabase.from("patients").select("*", { count: "exact", head: true }).eq("professional_id", effectiveProfId).is("archived_at", null),
     // Revenue is doctor-only, so a secretary never fetches it.
     isSecretary
       ? Promise.resolve({ data: [] as { payment_amount: number }[] })
-      : supabase.from("appointments").select("payment_amount").eq("professional_id", effectiveProfId).eq("payment_status", "paid").gte("date", monthStart).lte("date", today),
+      : supabase.from("appointments").select("payment_amount").eq("professional_id", effectiveProfId).eq("payment_status", "paid").gt("payment_amount", 0).gte("date", monthStart).lte("date", today),
+    // Requests waiting for the clinic's answer (the Agenda's requests panel; the
+    // DB's rule, 076/082): a patient's booking request (tentative) or a
+    // proposal the PATIENT made; a clinic proposal (scheduled_by anything but
+    // 'patient', incl. null from the web) waits on the patient. Today or later.
+    supabase.from("appointments").select("id", { count: "exact", head: true }).eq("professional_id", effectiveProfId)
+      .or("status.eq.tentative,and(status.eq.proposal,scheduled_by.eq.patient)").gte("date", today),
   ]);
 
   const professional = professionalResult.data;
@@ -116,6 +127,26 @@ export default async function DashboardPage({
   const pendingPayments = (pendingPaymentsResult.data ?? []) as { patient_name: string; payment_amount: number; date: string }[];
   const patientCount = patientCountResult.count ?? 0;
   const monthRevenue = (monthRevenueResult.data ?? []) as { payment_amount: number }[];
+  const requestsWaiting = requestsResult.count ?? 0;
+
+  // Patients who joined with the invite code, not yet kept or removed (145;
+  // only once invited-patients-live, before it the columns don't exist).
+  let invited: { id: string; full_name: string; sameEmailAs: { id: string; name: string } | null }[] = [];
+  let invitedTotal = 0;
+  if (conditionMet("invited-patients-live")) {
+    const { data: rows, count } = await supabase.from("patients").select("id, full_name, invite_same_email_as", { count: "exact" })
+      .eq("professional_id", effectiveProfId).not("invited_via_code_at", "is", null).is("invite_reviewed_at", null).is("archived_at", null)
+      .order("invited_via_code_at", { ascending: false }).limit(5);
+    const list = (rows ?? []) as { id: string; full_name: string; invite_same_email_as: string | null }[];
+    invitedTotal = count ?? list.length;
+    const sameIds = [...new Set(list.map((r) => r.invite_same_email_as).filter((x): x is string => !!x))];
+    const names = new Map<string, string>();
+    if (sameIds.length) {
+      const { data: others } = await supabase.from("patients").select("id, full_name").eq("professional_id", effectiveProfId).in("id", sameIds);
+      for (const o of (others ?? []) as { id: string; full_name: string }[]) names.set(o.id, o.full_name);
+    }
+    invited = list.map((r) => ({ id: r.id, full_name: r.full_name, sameEmailAs: r.invite_same_email_as && names.has(r.invite_same_email_as) ? { id: r.invite_same_email_as, name: names.get(r.invite_same_email_as)! } : null }));
+  }
 
   // A secretary has no professionals row: use the name they signed up with.
   const ownName = isSecretary
@@ -124,7 +155,7 @@ export default async function DashboardPage({
   // The doctor's own title if they typed one ("Dra. Beatriz"), never one we
   // add (lib/doctorName, the app's rule).
   // No name saved yet: no name at all ("Boa tarde!"), never the email (UX).
-  const firstName = doctorDisplayName(ownName, { firstOnly: true });
+  const firstName = greetingFirstName(ownName, user.email);
   const totalPending = pendingPayments.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
   const totalRevenue = monthRevenue.reduce((s, r) => s + (r.payment_amount ?? 0), 0);
   const todayFormatted = now.toLocaleDateString(dateLocale(locale), { timeZone, weekday: "long", year: "numeric", month: "long", day: "numeric" });
@@ -149,6 +180,7 @@ export default async function DashboardPage({
       {/* First-run: the doctor's setup checklist, or a secretary's one-time welcome */}
       {setupProgress && showChecklist(setupProgress) && (
         <SetupChecklist
+          country={practiceCountry}
           progress={setupProgress}
           locale={locale}
           inviteCode={(professional as { public_invite_code?: string | null } | null)?.public_invite_code ?? null}
@@ -160,9 +192,19 @@ export default async function DashboardPage({
         <OnboardingCard kind="secretary_welcome" clinicName={onboardingFlags.clinic_name} />
       )}
 
+      {requestsWaiting > 0 && (
+        <Link href={`${prefix}/dashboard/schedule#requests`} className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-amber-900 hover:border-amber-300">
+          <span className="text-sm font-semibold">{t("requestsWaiting", { n: requestsWaiting })}</span>
+          <span className="shrink-0 text-sm font-bold underline">{t("requestsWaitingOpen")}</span>
+        </Link>
+      )}
+      {invitedTotal > 0 && <InvitedPatientsCard patients={invited} total={invitedTotal} prefix={prefix} />}
+
       {/* Stat Cards */}
-      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Link href={`${prefix}/dashboard/schedule`} className="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-teal-200 hover:shadow-md transition-all">
+      {/* Stacked on phones; two across, four only where the sidebar leaves
+          room for whole amounts ("R$ 115.582,19" was clipped; 3e, build 25). */}
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-4">
+        <Link href={`${prefix}/dashboard/schedule`} className="group min-w-0 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-teal-200 hover:shadow-md transition-all">
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-teal-600"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
           </div>
@@ -170,16 +212,16 @@ export default async function DashboardPage({
           <p className="mt-1 text-3xl font-extrabold text-slate-900">{todayAppts.length}</p>
         </Link>
 
-        <Link href={`${prefix}/dashboard/payments`} className="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-orange-200 hover:shadow-md transition-all">
+        <Link href={`${prefix}/dashboard/payments`} className="group min-w-0 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-orange-200 hover:shadow-md transition-all">
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-orange-500"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
           </div>
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("statPending")}</p>
-          <p className="mt-1 text-2xl font-extrabold text-slate-900">{formatAmount(totalPending)}</p>
+          <p className="mt-1 text-2xl font-extrabold tabular-nums text-slate-900">{formatAmount(totalPending)}</p>
           <p className="text-xs text-slate-400">{t("sessions", { n: pendingPayments.length })}</p>
         </Link>
 
-        <Link href={`${prefix}/dashboard/patients`} className="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-blue-200 hover:shadow-md transition-all">
+        <Link href={`${prefix}/dashboard/patients`} className="group min-w-0 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-blue-200 hover:shadow-md transition-all">
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-blue-500"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
@@ -188,12 +230,12 @@ export default async function DashboardPage({
         </Link>
 
         {!isSecretary && (
-          <Link href={`${prefix}/dashboard/payments`} className="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-green-200 hover:shadow-md transition-all">
+          <Link href={`${prefix}/dashboard/payments`} className="group min-w-0 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm hover:border-green-200 hover:shadow-md transition-all">
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-green-50">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-green-600"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             </div>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t("statRevenue")}</p>
-            <p className="mt-1 text-2xl font-extrabold text-slate-900">{formatAmount(totalRevenue)}</p>
+            <p className="mt-1 text-2xl font-extrabold tabular-nums text-slate-900">{formatAmount(totalRevenue)}</p>
             <p className="text-xs text-slate-400">{t("thisMonth")}</p>
           </Link>
         )}
@@ -225,7 +267,7 @@ export default async function DashboardPage({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="truncate font-semibold text-slate-900 text-sm">{appt.patient_name}</p>
-                    <p className="text-xs text-slate-500 truncate">{appt.consultation_type}</p>
+                    <p className="text-xs text-slate-500 truncate"><ConsultTypeLabel value={appt.consultation_type} /></p>
                   </div>
                   <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusBadge(appt.status)}`}>{STATUS_LABELS[appt.status] ?? appt.status}</span>
                 </div>
@@ -257,7 +299,7 @@ export default async function DashboardPage({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="truncate font-semibold text-slate-900 text-sm">{appt.patient_name}</p>
-                    <p className="text-xs text-slate-500">{appt.start_time?.slice(0, 5)} · {appt.consultation_type}</p>
+                    <p className="text-xs text-slate-500">{appt.start_time?.slice(0, 5)} · <ConsultTypeLabel value={appt.consultation_type} /></p>
                   </div>
                   <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusBadge(appt.status)}`}>{STATUS_LABELS[appt.status] ?? appt.status}</span>
                 </div>

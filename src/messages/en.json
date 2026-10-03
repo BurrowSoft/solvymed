@@ -98,7 +98,18 @@
     "noUpcoming": "No upcoming appointments",
     "unpaidSessions": "{n, plural, one {# unpaid session} other {# unpaid sessions}}",
     "pendingCollection": "{amount} pending collection",
-    "managePayments": "Manage Payments"
+    "managePayments": "Manage Payments",
+    "invitedTitle": "{n, plural, one {# new patient via your invite} other {# new patients via your invite}}",
+    "invitedHint": "They joined with your clinic code. Keep your patients; Remove disconnects the account (the record is archived).",
+    "invitedKeep": "Keep",
+    "invitedRemove": "Remove",
+    "invitedError": "Couldn't save. Please try again.",
+    "invitedSeeAll": "See all in Patients",
+    "invitedSameEmail": "Same email as {name}: merge?",
+    "invitedRemoveConfirm": "Remove {name}? Their account goes back to waiting for your confirmation, and the record is archived.",
+    "invitedRemoveConfirmDisconnect": "Remove {name}? The account will be disconnected from your clinic, pending requests will be cancelled (the patient is notified) and the record archived. To let them back in, restore the record from Archived and share the patient's personal code.",
+    "requestsWaiting": "{n, plural, one {# appointment request waiting for your confirmation} other {# appointment requests waiting for your confirmation}}",
+    "requestsWaitingOpen": "See requests"
   },
   "schedule": {
     "patientMessage": "Patient's message",
@@ -134,9 +145,6 @@
     "dur90": "1.5 hours",
     "dur120": "2 hours",
     "dur240": "4 hours",
-    "noProcedures": "No procedures configured.",
-    "addProcSettings": "Add procedures in Settings",
-    "beforeScheduling": "before scheduling.",
     "cancel": "Cancel",
     "saveAppt": "Save Appointment",
     "repeat": "Repeat",
@@ -150,7 +158,7 @@
     "occurrencesRange": "Choose {min} to {max} appointments.",
     "saving": "Saving…",
     "deleteConfirm": "Delete this appointment?",
-    "useBookingCard": "Use the booking request card to confirm, reject, or propose a time for this request",
+    "useBookingCard": "Use the appointment request card to confirm, reject, or propose a time for this request",
     "genericError": "Something went wrong. Please try again.",
     "missingFieldsError": "Please fill in all required fields.",
     "pastMidnightError": "This time and duration would run past midnight.",
@@ -158,7 +166,7 @@
     "paidLabel": "✓ Paid",
     "pendingLabel": "⏳ Pending",
     "blockedLabel": "Blocked",
-    "bookingRequests": "Booking Requests",
+    "bookingRequests": "Appointment Requests",
     "newPatient": "New patient",
     "waitingForResponse": "Waiting for patient response",
     "patientInfo": "Patient Information",
@@ -218,7 +226,7 @@
     "checkTimeTitle": "Check the time",
     "overlapHardMsg": "This overlaps with {name} at {time} ({duration}). Choose another time.",
     "overlapGeneric": "This time overlaps with another appointment. Choose another time.",
-    "requestedLabel": "Requested: {date} · {time}",
+    "requestedLabel": "Requested new time: {date} · {time}",
     "proposedLabel": "Proposed: {date} · {time}",
     "promptPayTitle": "PromptPay QR",
     "promptPayScan": "Scan with any Thai banking app to pay.",
@@ -231,7 +239,23 @@
     "undoCancelled": "Appointment cancelled",
     "undoAction": "Undo ({s} s)",
     "undoDone": "Undone.",
-    "undoFailed": "Couldn't undo. Open the item to adjust it."
+    "undoFailed": "Couldn't undo. Open the item to adjust it.",
+    "newPatientOption": "Book without a record: {name}",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholderDecline": "E.g. this time isn't available.",
+    "reasonPlaceholderCancel": "E.g. a schedule change.",
+    "messageLabel": "Message to the patient (optional)",
+    "confirmCancel": "Cancel appointment",
+    "keepAppointment": "Back",
+    "reasonShort": "Reason",
+    "messagePlaceholder": "E.g. please bring your test results.",
+    "patientWillSee": "The patient will see this.",
+    "qrNeedsAmount": "Set the amount to create the payment QR.",
+    "showOutside": "Show outside working hours",
+    "showInside": "Working hours only",
+    "otherTime": "Other time…",
+    "slotTaken": "Taken",
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
   },
   "payments": {
     "thisWeek": "This week",
@@ -250,7 +274,10 @@
     "revertConfirm": "Revert this payment to pending?",
     "errorInvalidAmount": "Please enter a valid amount.",
     "errorGeneric": "Something went wrong. Please try again.",
-    "amountPlaceholderPlain": "Amount"
+    "amountPlaceholderPlain": "Amount",
+    "noAmount": "No amount",
+    "setAmount": "Set amount",
+    "amountFirst": "Enter the amount received first."
   },
   "paymentsPage": {
     "title": "Payments",
@@ -319,7 +346,9 @@
     "nextPage": "Next",
     "pagesLabel": "Pages",
     "fullNamePlaceholder": "Full name",
-    "professionPlaceholder": "e.g. Engineer, Teacher…"
+    "professionPlaceholder": "e.g. Engineer, Teacher…",
+    "invitedBadge": "New, via invite",
+    "invitedSameEmail": "Same email as {name}: merge?"
   },
   "patientDetail": {
     "tabInfo": "Info",
@@ -342,11 +371,11 @@
     "patientSince": "Patient since",
     "age": "{n, plural, one {# year} other {# years}}",
     "editPatient": "Edit Patient",
-    "unblockBookings": "Unblock bookings",
-    "blockBookings": "Block bookings",
+    "unblockBookings": "Unblock appointment requests",
+    "blockBookings": "Block appointment requests",
     "deletePatient": "Delete patient",
     "deletePatientConfirm": "Delete {name}? All records and prescriptions will be permanently deleted.",
-    "blockedTitle": "Blocked from booking",
+    "blockedTitle": "Blocked from requesting appointments",
     "blockedSub": "This patient cannot request new appointments. Unblock after resolving the pending issue.",
     "cancel": "Cancel",
     "saveChanges": "Save Changes",
@@ -508,10 +537,10 @@
     "sun": "Sunday",
     "rulesTitle": "Scheduling rules",
     "rulesSub": "Controls on how patients can book appointments",
-    "maxLabel": "Max simultaneous active bookings per patient",
+    "maxLabel": "Max simultaneous active appointments per patient",
     "unlimited": "Unlimited",
     "maxHint1": "Leave empty for unlimited. Recommended: 1–2.",
-    "maxHint2": "Blocks new booking requests from a patient who already has this many active (tentative, confirmed, or scheduled) future appointments.",
+    "maxHint2": "Blocks new appointment requests from a patient who already has this many active (tentative, confirmed, or scheduled) future appointments.",
     "proceduresTitle": "Procedures",
     "proceduresSub": "Pre-configured consultation types with duration and pricing",
     "noProcedures": "No procedures yet. Add your first one below.",
@@ -533,7 +562,7 @@
     "saving": "Saving…",
     "saved": "Saved!",
     "blockedPatientsTitle": "Blocked Patients",
-    "blockedPatientsSub": "Patients blocked from booking new appointments",
+    "blockedPatientsSub": "Patients blocked from requesting new appointments",
     "noBlockedPatients": "No patients are currently blocked",
     "unblock": "Unblock",
     "pageTitle": "Settings",
@@ -645,7 +674,7 @@
     "notes": "Notes",
     "notesOptional": "(optional)",
     "notesPlaceholder": "Reason for visit, symptoms, questions for the doctor…",
-    "sendRequest": "Send Booking Request",
+    "sendRequest": "Send Appointment Request",
     "sending": "Sending…",
     "hint": "The doctor will confirm or suggest a different time. You'll be notified either way.",
     "successTitle": "Request sent!",
@@ -653,9 +682,9 @@
     "successHint": "The doctor will confirm or suggest a different time.",
     "viewAppointments": "View my appointments",
     "errorSlotTaken": "This slot was just taken. Please choose another time.",
-    "errorBlocked": "Your bookings with this professional are currently restricted. Please contact the clinic.",
+    "errorBlocked": "Your appointment requests with this professional are currently restricted. Please contact the clinic.",
     "errorMaxBookings": "You already have the maximum number of active appointments with this professional.",
-    "errorGeneric": "Could not send booking request. Please try again.",
+    "errorGeneric": "Could not send the appointment request. Please try again.",
     "patientDetails": "Your details",
     "patientDetailsHint": "This information helps the doctor prepare for your appointment.",
     "fullNameLabel": "Full name",
@@ -669,8 +698,17 @@
     "customTime": "Custom time",
     "orCustomTime": "Or pick a custom time",
     "professionalFallback": "Professional",
-    "errorArchived": "This clinic isn't taking new bookings for your account. Please contact the clinic.",
-    "practiceInactive": "This clinic isn't taking online bookings right now."
+    "errorArchived": "This clinic isn't taking new appointment requests for your account. Please contact the clinic.",
+    "practiceInactive": "This clinic isn't taking online appointment requests right now.",
+    "noHours": "This professional hasn't opened times for online appointments yet. Try again later or contact the clinic.",
+    "loadFailed": "Couldn't load the times. Check your internet connection.",
+    "retry": "Try again",
+    "chosenTime": "Chosen time: {weekday}, {day} {month} · {start}–{end}",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "noTimesToday": "No times left today.",
+    "otherHint": "E.g. first visit, follow-up",
+    "titleWith": "Book with {doctor}"
   },
   "auth": {
     "passwordTooShort": "Password must be at least {min} characters.",
@@ -714,10 +752,9 @@
       "secretaryNeedsInvite": "Secretary? Ask your doctor for an invite link.",
       "secretaryEmailMismatch": "This email doesn't match the invitation, or the invitation is no longer valid. Check the email, or ask the clinic for a new link.",
       "consentCheckbox": "I have read and accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>",
-      "country": "Where is your practice?",
-      "countryOther": "Other country",
-      "countryHint": "It sets your currency, plan price, patient ID field and payment QR. To change it later, contact support.",
-      "fullNameHint": "Add your title if you like ({titles}); it appears in greetings."
+      "fullNameHint": "Add your title if you like ({titles}); it appears in greetings.",
+      "backToCountry": "Back",
+      "secretaryInviteFor": "This invite is for {email}."
     },
     "forgotPassword": {
       "title": "Forgot your password?",
@@ -746,7 +783,9 @@
     "backToHome": "Back to home",
     "patientWelcome": {
       "countdown": "Taking you to your appointments in {count, plural, one {# second} other {# seconds}}…",
-      "goToAppointments": "Go to My Appointments"
+      "goToAppointments": "Go to My Appointments",
+      "heading": "You're all set!",
+      "confirmed": "Your account has been confirmed."
     },
     "inviteRequired": {
       "heading": "An invite code is needed",
@@ -762,7 +801,12 @@
       "tooManyAttempts": "Too many attempts. Please wait a while before trying again.",
       "alreadyInvitedByAnother": "Your account is already connected to a different doctor.",
       "backToSignup": "Use a different account",
-      "archived": "This clinic isn't taking new bookings for your account. Please contact the clinic."
+      "archived": "This clinic isn't taking new appointment requests for your account. Please contact the clinic.",
+      "alreadyConnected": "You're already connected to {doctor}. To switch, contact support.",
+      "alreadyConnectedNoName": "You are already connected to another doctor. To switch, contact support.",
+      "alreadyConnectedSamePractice": "You're already connected to {doctor}. Ask the clinic to combine your records.",
+      "alreadyConnectedSamePracticeNoName": "You're already connected to this clinic. Ask the clinic to combine your records.",
+      "codeUnavailable": "Couldn't connect with this code. Please contact the clinic."
     },
     "pendingConfirmation": {
       "loading": "Checking your status…",
@@ -792,7 +836,7 @@
       "otherBody": "Tap Continue to finish.",
       "continue": "Continue",
       "expiredTitle": "This link has expired",
-      "expiredBody": "Request a new one from the sign-in page.",
+      "expiredBody": "This link was already used or has expired. Sign in with your email and password.",
       "goToSignIn": "Go to sign in"
     },
     "captchaFailed": "Please complete the verification and try again.",
@@ -820,7 +864,7 @@
     "ctaSub": "Browse clinics on the map and book online",
     "accept": "Accept",
     "decline": "Decline",
-    "rescheduleTitle": "Request Reschedule",
+    "rescheduleTitle": "Request reschedule",
     "rescheduleSelectDate": "Select a new date",
     "rescheduleSelectTime": "Select a time",
     "rescheduleNoSlots": "No available slots for this day.",
@@ -830,7 +874,26 @@
     "rescheduleRequestedLabel": "Reschedule requested: {date} · {time}",
     "rescheduleButton": "Request reschedule",
     "closeDialog": "Close",
-    "originallyLabel": "Originally: {date} · {time}"
+    "originallyLabel": "Originally: {date} · {time}",
+    "declinedByClinic": "Declined by the clinic",
+    "declinedByClinicReason": "Declined by the clinic: {reason}",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByClinicReason": "Cancelled by the clinic: {reason}",
+    "youCancelled": "You cancelled",
+    "clinicMessage": "Message from the clinic: {message}",
+    "statusDeclined": "Declined",
+    "cancelContactClinic": "To cancel, contact the clinic.",
+    "statusNotConfirmed": "Not confirmed",
+    "proposalPassed": "This time has already passed. Ask the clinic for a new time.",
+    "cancelRequest": "Cancel request",
+    "cancelRequestTitle": "Cancel this request?",
+    "cancelRequestBody": "The clinic will be notified and the time will be freed up.",
+    "keepRequest": "Keep request",
+    "requestCancelledToast": "Request cancelled.",
+    "rescheduleLapsed": "Your reschedule request expired.",
+    "rescheduleStarted": "This appointment has already started. For changes, contact the clinic.",
+    "bookWith": "Book with {doctor}",
+    "yourDoctor": "Your doctor"
   },
   "nav": {
     "overview": "Overview",
@@ -972,7 +1035,13 @@
     "accountNotSecretary": "This account can't accept a secretary invite. Use a separate account created from the invite link.",
     "teamResendConfirm": "Send a new invite to {email}? The code you shared before will stop working.",
     "inviteFrom": "Invitation from {clinic}",
-    "inviteFor": "This invitation is for {email}. Sign up with that email address."
+    "inviteFor": "This invitation is for {email}. Sign up with that email address.",
+    "teamResendEmail": "Resend invite",
+    "teamResendAt": "You can resend at {time}",
+    "teamEmailSent": "Email sent to {email}",
+    "teamAlreadySent": "Invite sent. You can resend at {time}.",
+    "teamDailyLimit": "You've reached the limit of 10 invites a day. Try again at {time}.",
+    "teamSendFailed": "Couldn't send the email right now. Try again, or share the link."
   },
   "invitePage": {
     "metaTitle": "Your invitation",
@@ -1143,7 +1212,6 @@
   "pricing": {
     "navLabel": "Pricing",
     "countryLabel": "Prices for:",
-    "countryOther": "Other countries",
     "title": "One simple plan. Everything included.",
     "subtitle": "No setup fees, no per-patient charges, no surprises.",
     "perMonth": "/month",
@@ -1167,7 +1235,7 @@
       "devices": "Web and mobile app (Android and iPhone), always in sync",
       "devicesAndroid": "Web and Android app, always in sync",
       "security": "Private, encrypted data; after 24 hours, records and prescriptions can only be corrected, and the original is kept.",
-      "solvyai": "SolvyAI, your AI assistant: ask or say \"book Maria tomorrow at 2pm\""
+      "solvyai": "SolvyAI, your AI assistant: ask or say \"book Maria tomorrow at 14:00\""
     },
     "faqTitle": "Questions",
     "faq": {
@@ -1232,7 +1300,7 @@
     "homeTitle": "Your day at a glance",
     "homeText": "Today's appointments, the week ahead and your setup checklist.",
     "solvyaiTitle": "Meet SolvyAI",
-    "solvyaiText": "Your AI assistant. Ask how to do anything, or just say: \"book Maria tomorrow at 2pm\". It always confirms everything with you first.",
+    "solvyaiText": "Your AI assistant. Ask how to do anything, or just say: \"book Maria tomorrow at 14:00\". It always confirms everything with you first.",
     "newApptTitle": "Book in seconds",
     "newApptText": "Pick the patient and the time, and you're done. You can also block time.",
     "scheduleTitle": "Your schedule",
@@ -1350,7 +1418,9 @@
   },
   "dateInput": {
     "buddhistYear": "That looks like a Buddhist-era year. Please use the Gregorian year (e.g. 1996).",
-    "invalidBirthDate": "Invalid date of birth: use a date between 1900 and today."
+    "invalidBirthDate": "Invalid date of birth: use a date between 1900 and today.",
+    "placeholder": "DD/MM/YYYY",
+    "invalid": "The date must be in the format {format}."
   },
   "solvyaiSettings": {
     "title": "SolvyAI",
@@ -1433,7 +1503,6 @@
     "placesUnavailable": "The places couldn't be loaded right now.",
     "countryBR": "Brazil",
     "countryTH": "Thailand",
-    "countryOTHER": "Other country",
     "formTitle": "Apply",
     "required": "required",
     "qName": "Full name",
@@ -1482,7 +1551,7 @@
     "errorRateLimit": "Too many attempts. Please try again in an hour.",
     "errorInvalid": "Please check this field.",
     "errorGeneric": "Something went wrong. Please try again.",
-    "privacyNotice": "We use these answers only to run the Founders Program and contact you about it. Applications that aren't accepted (declined, withdrawn or still on the waitlist) are deleted 12 months after their last update; accepted founders' applications are kept while their SolvyMed account exists. To have yours deleted sooner, write to support@solvymed.com. Details in our <privacy>Privacy Policy</privacy>.",
+    "privacyNotice": "We use these answers only to run the Founders Program and contact you about it. Applications that aren't accepted (declined, withdrawn or still on the waitlist) are deleted 12 months after their last status change; accepted founders' applications are kept while their SolvyMed account exists. To have yours deleted sooner, write to support@solvymed.com. Details in our <privacy>Privacy Policy</privacy>.",
     "faqTitle": "Questions",
     "faq1q": "Is it really free for life?",
     "faq1a": "Yes: the paid plan, free for as long as SolvyMed operates, for one account, starting when you're accepted. Secretary accounts linked to you are included as normal. See the rules.",
@@ -1511,10 +1580,13 @@
     "rule8": "<b>Data:</b> sample files are used only to build and test the importer, kept in a private location, and deleted once the importer ships.",
     "emailSubject": "We received your SolvyMed Founders application",
     "emailHello": "Hi {name},",
-    "emailBody": "thank you for applying to the SolvyMed Founders Program for {system}. We'll reply within 5 business days.",
+    "emailBody": "Thank you for applying to the SolvyMed Founders Program for {system}. We'll reply within 5 business days.",
     "emailWaitlist": "The places for {system} are currently full, so you're on the waitlist.",
     "emailNoFiles": "Please don't send any files yet; if you're accepted, we'll explain how to create a test export.",
-    "emailSign": "The SolvyMed team"
+    "emailSign": "The SolvyMed team",
+    "emailTagline": "Your practice, your brand.",
+    "emailHelloTitled": "Hi {title} {name},",
+    "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
   "foundersCard": {
     "cardTitle": "Founders Program",
@@ -1678,7 +1750,7 @@
     "usesApp": "uses the app",
     "noDiff": "Both records have the same details.",
     "moves": "Appointments {a1} + {b1} · Records {a2} + {b2} · Prescriptions {a3} + {b3} · Files {a4} + {b4}",
-    "bookingBlocked": "Online booking: blocked (one of the records was blocked)",
+    "bookingBlocked": "Online appointment requests: blocked (one of the records was blocked)",
     "merge": "Merge",
     "confirmTitle": "Merge?",
     "confirmBody": "Everything in «{merged}» moves to «{kept}», and «{merged}» stops existing. This can't be undone.",
@@ -1783,7 +1855,7 @@
     "notMovable": "This appointment can't be rescheduled.",
     "pastStop": "That time has already passed. Choose another time.",
     "archivedStop": "This patient is archived. Restore the record before booking.",
-    "requestStop": "Booking requests are accepted or declined on the request itself.",
+    "requestStop": "Appointment requests are accepted or declined on the request itself.",
     "conflict": "{when} at {s} already has {what} ({s}–{e}). Which of these times?",
     "conflictNone": "{when} at {s} already has {what} ({s}–{e}). Which other time?",
     "slotTaken": "That time was just taken. Nothing was saved. Which of these times?",
@@ -1820,16 +1892,109 @@
     "couldntFinish": "I couldn't finish that. Could you say it another way, with the patient's name, the date and the time?",
     "onlySolvyMed": "I can only help with SolvyMed.",
     "noClinical": "I can't help with clinical questions.",
-    "minutes": "{n} min"
+    "minutes": "{n} min",
+    "alreadyPaid": "This appointment is already paid.",
+    "noAmount": "This appointment has no amount. Set it in the Agenda before marking it paid."
   },
   "countryExamples": {
     "phone": "Phone number"
   },
   "solvyaiIntro": {
     "title": "Meet SolvyAI ✦",
-    "body": "Just ask in your own words: \"Book Maria for Friday at 11\". SolvyAI shows you every detail and only acts after you confirm.",
+    "body": "Just ask in your own words: \"Book Maria for Friday at 11:00\". SolvyAI shows you every detail and only acts after you confirm.",
     "tryNow": "Try it now",
     "later": "Later",
     "whatCanDo": "What can SolvyAI do?"
+  },
+  "openInApp": {
+    "open": "Open in the SolvyMed app",
+    "continue": "Continue on the website"
+  },
+  "autoRefresh": {
+    "refresh": "Refresh"
+  },
+  "siteMeta": {
+    "title": "SolvyMed — Software for medical practices",
+    "description": "SolvyMed is the all-in-one app for healthcare professionals: smart scheduling, patient records, prescriptions and integrated payments, all in one place.",
+    "socialDescription": "Your practice, your brand. The all-in-one app for healthcare professionals: scheduling, patient records, prescriptions and payments."
+  },
+  "brand": {
+    "title": "My brand",
+    "hint": "Logo, colour and how your name appears to patients",
+    "displayName": "Display name",
+    "displayNameHint": "Leave empty to use your profile name",
+    "titleLabel": "Title (Dr., Dra.…)",
+    "specialty": "Specialty",
+    "registrationLine": "Professional registration",
+    "accent": "Brand colour",
+    "accentCustom": "Custom",
+    "accentAdjusted": "We adjust the shade when needed to keep text readable.",
+    "logoSquare": "Logo (square)",
+    "logoWide": "Wide logo (documents)",
+    "photo": "Photo",
+    "uploadsNote": "Shown on your public page and documents.",
+    "upload": "Choose image",
+    "replace": "Replace",
+    "remove": "Remove",
+    "uploading": "Uploading…",
+    "preview": "How patients see it",
+    "previewLight": "Light",
+    "previewDark": "Dark",
+    "previewButton": "Book an appointment",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "saveError": "Couldn't save. Try again.",
+    "badType": "Use a PNG or JPG image.",
+    "tooLarge": "This image is too large. Use one up to 5 MB and at most 4096 px per side.",
+    "uploadError": "Couldn't upload the image. Try again.",
+    "removeTitle": "Remove this image?",
+    "removeBody": "It will no longer appear on your page and documents.",
+    "removeConfirm": "Remove",
+    "cancel": "Cancel"
+  },
+  "patientDoctors": {
+    "homeSection": "My doctors",
+    "homeCard": "Your doctor",
+    "bookWho": "With whom?",
+    "add": "+ Add a doctor",
+    "addTitle": "Add a doctor",
+    "addHint": "Enter the code your doctor shared.",
+    "code": "Code",
+    "connect": "Connect",
+    "connected": "Done! You're now connected to {doctor}.",
+    "alreadyConnected": "You're already connected to {doctor}.",
+    "viewDoctor": "View doctor",
+    "settingsRow": "My doctors",
+    "disconnect": "Disconnect",
+    "disconnectTitle": "Disconnect from {doctor}?",
+    "disconnectBody": "You'll stop seeing {doctor}'s appointments and documents. Pending requests will be cancelled. The clinic keeps your record.",
+    "disconnectBlocked": "You have confirmed appointments with {doctor}. To cancel them, contact the clinic; then you can disconnect.",
+    "disconnected": "Disconnected from {doctor}.",
+    "filterAll": "All"
+  },
+  "secretaryPractices": {
+    "switcherLabel": "Schedule for",
+    "all": "All",
+    "allEmpty": "No appointments today.",
+    "doctorField": "Doctor",
+    "todayWith": "Today with {doctor}",
+    "notifyTitle": "Notifications per doctor",
+    "notifyHint": "Choose which doctors you get notifications for.",
+    "pushPrefix": "{doctor}: ",
+    "joinedTeam": "{doctor} added you to their team.",
+    "removeTitle": "Remove {name} from your team?",
+    "removeBody": "They stay on other doctors' teams."
+  },
+  "colleagues": {
+    "title": "My colleagues",
+    "hint": "Add colleagues by their public code. Only you see this list.",
+    "add": "+ Add a colleague",
+    "added": "{doctor} added to your colleagues.",
+    "remove": "Remove from colleagues",
+    "refer": "Refer a colleague",
+    "referHint": "Send the patient a colleague's link. No data is shared.",
+    "shareMessage": "Hi {patient}! I recommend {colleague} ({specialty}). To book, go to: {link}",
+    "empty": "You haven't added any colleagues yet."
   }
 }

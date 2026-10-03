@@ -10124,7 +10124,6 @@ Merged at `c373d7b` (evidence: PR comment 5905026304).
 
 Merged into `release` at `e9762bd` (evidence: PR comment 5905213577).
 
-
 ## Batch 7: web PRs #211–#254 + the master → Production switch (web tester 1 + web tester 2, 2026-09-30)
 
 Evidence: each PR's tester comment (SHA + what was checked). Merged commits from GitHub. WT1 = web tester 1, WT2 = web tester 2.
@@ -10193,3 +10192,24 @@ No tester row (docs, merge-backs or flips covered by the rows above): #206, #208
 | Live Stripe, Vitor's own account (WT2, read-only DB) | 🟢 US$ 19 → active → cancel → expired; R$ 89 → active → cancel + refund → expired; the webhook works both ways |
 
 Throwaway e2e-test-opus-* / e2e-test-t2-* accounts only, deleted after each run.
+
+## Founders batch 1: release-founders #223, #256–#262 (web tester 1, 2026-09-30 / 10-01)
+
+Evidence: each PR's tester comment (SHA + what was checked). In every row the merged head equals the tested SHA. Tested on each PR's own Vercel Preview (Founders is on only in Preview builds, `NEXT_PUBLIC_VERCEL_ENV=preview`), never on www.
+
+| PR | Change | Tester result (SHA, evidence) | Merged |
+|---|---|---|---|
+| #256 | Founders: visible on Preview builds only | WT1 🟢 `9c03899` (comment 5917382870): /founders + rules + footer link in pt/en/th; one "[TEST]" application → 200 `status new`, the row deleted right after; **www 404** on every /founders path and on `POST /api/founders/apply` | `645c035` into release-founders |
+| #223 | Applicant confirmation email in the branded layout | WT1 🟢 `53df294` (comment 5917544848): rendered from the branch's `brandedEmail.ts` + messages (pt/en/th, waitlist, escaping); one "[TEST]" application, no send error (no Resend key on Preview), purged. Greeting finding → fixed in #258 | `d61f6bd` into release-founders |
+| #257 | Share preview with the blue banner | WT1 🟢 `190f37f` (comment 5917545956): `og:image` …/og/solvymed-og-share-blue.png 1200×630, `twitter:card summary_large_image`, title/alt per language; the PNG loads on the Preview | `d144103` into release-founders |
+| #258 | Email greeting: typed title + first name; capitalised paragraph | WT1 🟢 `611934f` (comment 5917819024): "Olá, Dra Ana!" / "Hi Dr. John," / "เรียน นพ.สมชาย"; untitled "Olá, Ana!" / "Hi John," / "เรียน คุณสมชาย"; "Dra" alone → "Olá, Dra!"; en "Thank you…". pt-BR application OK + purged; en/th hit the per-IP 429 `too_many_attempts` (the anti-abuse limit), covered by the render | `61d8900` into release-founders |
+| #259 | Rules page: the same share banner | WT1 🟢 `b6cc06a` (comment 5917822049): rules og/twitter title = the rules h1 in en/pt/th, the same banner + card; /founders unchanged | `b3560d6` into release-founders |
+| #260 | One URL builder for both pages | WT1 🟢 `4af6355` (comment 5917946274): /founders canonical + og:url = www…/founders (pt/th too); /th/founders/rules og:url = www…/th/founders/rules | `7bf3ee2` into release-founders |
+| #261 | Rules page: its own canonical | WT1 🟢 `d4b0c90` (comment 5918036571): canonical = the page itself (was the locale home) in en/pt-BR/th; one canonical per page | `b86f5c9` into release-founders |
+| #262 | Founders pages: their own hreflang | WT1 🟢 `b1e1145` (comment 5918194123): 15 languages + x-default, each on that language's founders/rules page; canonical = the page; all 30 alternate URLs resolve | `9da6f63` into release-founders |
+
+Go-live notes:
+- `og:image` points to www, where `/og/solvymed-og-share-blue.png` is 404 until Production has it, so it has to ship with or before the Founders go-live.
+- The www-wide canonical fix (privacy/terms/help) is tracked separately for master.
+
+Fixtures: "[TEST]" applications with `e2e-test-opus-founders-…@burrowsoft.com`, each `founder_applications` row deleted right after.

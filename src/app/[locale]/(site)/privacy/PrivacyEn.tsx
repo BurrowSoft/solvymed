@@ -4,7 +4,7 @@ import { noticeChannels } from "@/lib/noticeChannels";
 
 // English Privacy Policy (authoritative with pt-BR; keep both in step).
 // Every statement here must match what the Service enforces today.
-export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false }: { turnstile: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
+export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false }: { turnstile: boolean; secretaryInvites?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Overview">
@@ -44,6 +44,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
           referring website), which is saved with your account when you sign up.{" "}
           <strong>Patient data is never used for analytics or marketing.</strong>
         </p>
+        {secretaryInvites && <p><strong>3.7 Secretary invitations:</strong> when a professional invites a secretary, we store the email address they enter and send the invitation to it (at most one resend an hour). The invitation expires after 7 days, and the address is deleted 30 days after the invitation expires or is cancelled.</p>}
       </Section>
 
       <Section title="4. How we use information">
@@ -66,7 +67,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             ["Supabase", "Database, authentication, file storage", "Brazil (São Paulo region)"],
             ["Vercel", "Website hosting; server processing in Brazil (São Paulo), static content via a global edge network", "Brazil / global"],
             ["Stripe", "Subscription payments", "USA / global"],
-            ["Resend", "Transactional email (confirmations, password resets)", "USA"],
+            ["Resend", secretaryInvites ? "Transactional email (confirmations, password resets) and invitations sent at a professional's request" : "Transactional email (confirmations, password resets)", "USA"],
             ["Expo", "Push notification delivery", "USA"],
             ["Sentry", "Error monitoring for the app and website (no patient data)", "USA"],
             ["PostHog", "Website usage statistics, only with your consent", "EU"],
@@ -132,7 +133,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
 
       {founders && (
         <Section title="6d. Founders Program applications">
-          <p>Founders Program: if you apply, we process your name, email, phone, profession and registration number, the clinic system you use, your practice size and how you found us, to assess your application and contact you. Applications that aren&rsquo;t accepted are deleted 12 months after their last update; accepted founders&rsquo; applications are kept while their account exists (or deleted 12 months after acceptance if no account was ever linked).</p>
+          <p>Founders Program: if you apply, we process your name, email, phone, profession and registration number, the clinic system you use, your practice size and how you found us, to assess your application and contact you. Applications that aren&rsquo;t accepted are deleted 12 months after their last status change; accepted founders&rsquo; applications are kept while their account exists (or deleted 12 months after acceptance if no account was ever linked).</p>
           <p className="mt-2">To stop abuse, we keep a scrambled (salted hash) form of your IP address for 2 days, never the address itself. To have your application deleted sooner, write to support@solvymed.com.</p>
           {founderUploads && <p className="mt-2">Test exports: accepted founders can upload test export files (CSV, Excel or ZIP) from the system they use, in Settings, so we can build the importer. Before each upload the founder confirms the file contains only test patients they created; we don&rsquo;t check the contents before storing it. Files are kept in a private place only the SolvyMed team can access, with a record of who uploaded them and when, and are deleted 180 days after upload, or sooner: when that system&rsquo;s importer ships, when the founder is no longer accepted, or when the account is deleted.</p>}
         </Section>

@@ -5,6 +5,7 @@ import { formatShortDate } from "./dateLabels";
 import { pushText } from "./pushText";
 import { clinicDate, clinicTime, getClinicTimeZone } from "./clinicTime";
 import { enqueuePatientNotice } from "./patientNotice";
+import { doctorForPush } from "./pushDoctor";
 
 // Telling a patient what the clinic did to their appointment from the
 // website (UX 2026-09-29, 08's texts; the app does the same, mobile #111):
@@ -103,13 +104,14 @@ async function tellPatientDirectly(db: SupabaseClient, change: ClinicChange): Pr
     const targets = await patientPushTargets(db, account, change.practiceId);
     if (!targets.length) return false;
     const clinic = await clinicName(db, change.practiceId);
+    const doctor = await doctorForPush(db, change.practiceId);
     sending = true;
     // Each device in its reader's language, the date in its format.
     for (const { locale, tokens } of targets) {
       const kind = change.kind === "booked" ? (count > 1 ? "apptBookedSeriesByClinic" : "apptBookedByClinic")
         : change.kind === "moved" ? "apptMovedByClinic" : "apptCancelledByClinic";
       const { title, body } = pushText(locale, kind, {
-        clinic, date: formatShortDate(locale, date), time: start, n: count,
+        clinic, doctor, date: formatShortDate(locale, date), time: start, n: count,
         ...(change.from ? { oldDate: formatShortDate(locale, change.from.date), oldTime: change.from.startTime.slice(0, 5) } : {}),
       });
       await sendExpoPush(tokens, title, body);

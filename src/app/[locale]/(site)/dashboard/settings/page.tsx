@@ -7,10 +7,11 @@ import { SecretarySettings } from "./SecretarySettings";
 import { ShowSetupRow } from "./ShowSetupRow";
 import { NewsSettingsCard, TourSettingsCard } from "@/components/tour/TourProvider";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { actingPracticeFor } from "@/lib/effectiveProfId";
 import { conditionMet } from "@/lib/conditions";
 import { SolvyAiSettingsCard } from "@/components/solvyai/SolvyAiSettings";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
-import { countryProfile } from "@/lib/country";
+import { countryProfile, messagingChannel } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { getSetupProgress } from "@/lib/setup";
 import { CloseAccountPanel, type ClosurePreview } from "./CloseAccountPanel";
@@ -19,6 +20,8 @@ import { ExportPatientsCard } from "./ExportPatientsCard";
 import { AppearanceCard } from "./AppearanceCard";
 import { SubscriptionPanel } from "./SubscriptionPanel";
 import { FoundersCard } from "./FoundersCard";
+import { BrandCard } from "./BrandCard";
+import { loadPracticeBrand, type BrandFieldsRow } from "@/lib/brand";
 import { isAccessAllowed, planSummary, type EffectiveSub } from "@/lib/subscription";
 
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
@@ -67,7 +70,8 @@ export default async function SettingsPage({
         <div className="mb-8">
           <h1 className="text-2xl font-extrabold text-slate-900">{t("pageTitle")}</h1>
         </div>
-        <SecretarySettings supabase={supabase} doctorId={userRoleData.invited_by_professional_id as string} locale={locale} />
+        {/* The doctor she's acting for (the switcher, 1.5.0), else her primary. */}
+        <SecretarySettings supabase={supabase} doctorId={(await actingPracticeFor(userRoleData.invited_by_professional_id as string, user.id)) ?? (userRoleData.invited_by_professional_id as string)} locale={locale} />
         <div className="mt-6">
           <AppearanceCard />
         </div>
@@ -179,6 +183,19 @@ export default async function SettingsPage({
     ? await supabase.from("professionals").select("clinic_tax_id").eq("id", user.id).maybeSingle()
     : null;
   const showTaxId = !!taxIdResult && !taxIdResult.error;
+  // 1.5.0 "My brand" (flag; Previews only until the release). null while
+  // migration 161 isn't there: the card opens empty with the defaults.
+  const brand = liveFeatures.myBrand ? await loadPracticeBrand(supabase, user.id) : null;
+  // The fields' own values: the raw row (the owner may read it), never the
+  // RPC's profile fallbacks, or a first Save would copy the profile into the
+  // brand (d7, 9a; as the app). No row = empty fields.
+  // A read error is kept apart from "no row": the card then can't save,
+  // or it would write empty fields over the saved ones (9a).
+  const brandRowResult = liveFeatures.myBrand
+    ? await supabase.from("professional_brand").select("display_name, title, specialty, registration_line, accent_color").eq("professional_id", user.id).maybeSingle()
+    : null;
+  const brandRow = (brandRowResult?.data ?? null) as BrandFieldsRow | null;
+  const brandRowFailed = !!brandRowResult?.error;
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl">
@@ -203,9 +220,24 @@ export default async function SettingsPage({
           country={practiceCountry}
         />
 
-        {!locked && <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} />}
+        {liveFeatures.myBrand && (
+          <BrandCard
+            uid={user.id}
+            brand={brand}
+            values={brandRow}
+            valuesFailed={brandRowFailed}
+            country={practiceCountry}
+            fallback={{
+              fullName: prof.full_name ?? "",
+              specialty: prof.specialty ?? "",
+              registration: (prof as { professional_registration?: string | null }).professional_registration ?? "",
+            }}
+          />
+        )}
 
-        <TeamPanel rows={teamRows} loadFailed={!!teamResult.error} />
+        {!locked && <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} country={practiceCountry} />}
+
+        <TeamPanel rows={teamRows} loadFailed={!!teamResult.error} country={practiceCountry} whatsapp={messagingChannel(practiceProfile) === "whatsapp"} />
 
         {/* The practice country (set at signup, support-only to change). */}
         <Card title={t("practiceCountry")}>

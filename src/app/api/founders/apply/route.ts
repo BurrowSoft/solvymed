@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { ATTRIBUTION_COOKIE, parseAttribution } from "@/lib/attribution";
-import { clientIp, founderPayload, mapApplyError } from "@/lib/founders";
+import { clientIp, founderPayload, FOUNDERS_COUNTRIES, mapApplyError } from "@/lib/founders";
 import { sendFounderEmails } from "@/lib/foundersEmail";
 import { routing } from "@/i18n/routing";
 
@@ -27,6 +27,10 @@ export async function POST(request: NextRequest) {
     auth: { persistSession: false, autoRefreshToken: false },
   });
   const payload = founderPayload(body, attribution);
+  // Brazil and Thailand only, as the form says (e7); 129 itself accepts more.
+  if (!(FOUNDERS_COUNTRIES as readonly string[]).includes(String(payload.country))) {
+    return NextResponse.json({ code: "invalid", field: "country" }, { status: 400 });
+  }
   const { data, error } = await db.rpc("founder_apply", { p_payload: payload, p_client_ip: ip });
   // A thrown error is a real failure; a refusal comes back as
   // { ok: false, error } (129's contract).

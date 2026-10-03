@@ -1,39 +1,43 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import {
-  Inter,
-  Sarabun,
-  Noto_Sans_JP,
-  Noto_Sans_SC,
-  Noto_Sans_TC,
-  Noto_Sans_KR,
-  Noto_Sans_Arabic,
-} from "next/font/google";
+import localFont from "next/font/local";
 import { ConsentBanner } from "@/components/ConsentBanner";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { isPublicLocale, publicLocales } from "@/lib/publicLocales";
 import { pickMessages } from "@/lib/pickMessages";
 import "../globals.css";
 
-const inter   = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
-const sarabun = Sarabun({ subsets: ["thai", "latin"], weight: ["400", "600", "700"], display: "swap", variable: "--font-sarabun" });
-const notoJP  = Noto_Sans_JP({ subsets: ["latin"], weight: ["400", "700"], display: "swap", variable: "--font-noto-jp" });
-const notoSC  = Noto_Sans_SC({ subsets: ["latin"], weight: ["400", "700"], display: "swap", variable: "--font-noto-sc" });
-const notoTC  = Noto_Sans_TC({ subsets: ["latin"], weight: ["400", "700"], display: "swap", variable: "--font-noto-tc" });
-const notoKR  = Noto_Sans_KR({ subsets: ["latin"], weight: ["400", "700"], display: "swap", variable: "--font-noto-kr" });
-const notoAR  = Noto_Sans_Arabic({ subsets: ["arabic"], weight: ["400", "700"], display: "swap", variable: "--font-noto-ar" });
+// Self-hosted (src/app/fonts: the official Google Fonts files, OFL licences
+// beside them): the build no longer fetches fonts.google.com, which failed
+// twice on 2 Oct and would block a deploy (e7, 9a). Same families, weights,
+// CSS variables and display: swap as the next/font/google setup before.
+// Inter: the Latin variable font (100–900).
+const inter = localFont({
+  src: "../fonts/inter-latin-var.woff2",
+  weight: "100 900",
+  display: "swap",
+  variable: "--font-inter",
+});
+// Sarabun: the Thai glyphs (400/600/700). Latin is Inter's, first in the
+// stack, so Sarabun's own Latin files were never used.
+const sarabun = localFont({
+  src: [
+    { path: "../fonts/sarabun-thai-400.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/sarabun-thai-600.woff2", weight: "600", style: "normal" },
+    { path: "../fonts/sarabun-thai-700.woff2", weight: "700", style: "normal" },
+  ],
+  display: "swap",
+  variable: "--font-sarabun",
+});
 
 // Inter has Latin glyphs only; the locale's font follows it in the stack,
-// so its script (Thai, CJK, Arabic) renders in that font, per glyph.
+// so its script (Thai) renders in that font, per glyph. Since country-first
+// (1 Oct) the CJK and Arabic languages are retired: every path under them
+// redirects (308) before rendering, so their fonts are no longer loaded.
 const LOCALE_FONT: Record<string, typeof inter> = {
-  th:      sarabun,
-  ja:      notoJP,
-  zh:      notoSC,
-  "zh-TW": notoTC,
-  ko:      notoKR,
-  ar:      notoAR,
+  th: sarabun,
 };
 
 const BASE = "https://www.solvymed.com";
@@ -55,14 +59,16 @@ export async function generateMetadata({
   );
   languages["x-default"] = `${BASE}/`;
 
+  // In the page's language (e7, 3 Oct): a descriptive title for search, and
+  // the slogan ("Your practice, your brand.") first in the share previews.
+  const t = await getTranslations({ locale, namespace: "siteMeta" });
   return {
     metadataBase: new URL(BASE),
     title: {
-      default: "Solvymed — Medical Practice Management",
-      template: "%s | Solvymed",
+      default: t("title"),
+      template: "%s | SolvyMed",
     },
-    description:
-      "Solvymed is the all-in-one practice management app for healthcare professionals. Smart scheduling, patient records, prescriptions, and integrated payments — all in one place.",
+    description: t("description"),
     keywords: [
       "medical practice management",
       "appointment scheduling",
@@ -77,20 +83,21 @@ export async function generateMetadata({
       type: "website",
       locale: locale.replace("-", "_"),
       url: canonical,
-      siteName: "Solvymed",
-      title: "Solvymed — Medical Practice Management",
-      description: "The all-in-one practice management app for healthcare professionals.",
+      siteName: "SolvyMed",
+      title: t("title"),
+      description: t("socialDescription"),
     },
     twitter: {
       card: "summary_large_image",
-      title: "Solvymed — Medical Practice Management",
-      description: "The all-in-one practice management app for healthcare professionals.",
+      title: t("title"),
+      description: t("socialDescription"),
     },
     // A hidden language (Thai before its release) is reachable but not indexed.
     robots: isPublicLocale(locale) ? { index: true, follow: true } : { index: false, follow: false },
     icons: {
-      icon: "/solvymed_logo.png",
-      apple: "/solvymed_logo.png",
+      // The brand kit's favicon/ (Vitor, 1.4.0).
+      icon: [{ url: "/favicon.ico" }, { url: "/favicon-32.png", type: "image/png", sizes: "32x32" }],
+      apple: "/apple-touch-icon.png",
     },
   };
 }
@@ -113,10 +120,9 @@ export default async function LocaleLayout({
   const localeFont = LOCALE_FONT[locale];
   const fontClass = `${inter.variable} ${localeFont?.variable ?? ""}`.trim();
   // Each next/font family is "'Name', 'Name Fallback'". The fallbacks are
-  // size-adjusted local fonts covering all of Unicode ("Inter Fallback" is
-  // Arial, which has Arabic), so the locale font must come before them:
-  // Inter, <locale font>, Inter Fallback, <locale fallback>, generics.
-  // Otherwise Arabic rendered in Arial instead of Noto Sans Arabic.
+  // size-adjusted local fonts covering much of Unicode (Arial), so the
+  // locale font must come before them: Inter, <locale font>, Inter
+  // Fallback, <locale fallback>, generics (else Thai rendered in Arial).
   const [interFont, interFallback] = inter.style.fontFamily.split(",").map((s) => s.trim());
   const [localeName, localeFallback] = localeFont ? localeFont.style.fontFamily.split(",").map((s) => s.trim()) : [];
   const fontFamily = [interFont, localeName, interFallback, localeFallback, "ui-sans-serif", "system-ui", "sans-serif"]
