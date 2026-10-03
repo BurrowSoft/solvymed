@@ -39,7 +39,7 @@ export type Brand = {
   photoUrl: string | null;
   // Whether each asset is the doctor's own 1.5.0 upload (removable here)
   // rather than a legacy image.
-  own: { logo: boolean; photo: boolean };
+  own: Record<BrandImageKind, boolean>;
 };
 
 export function assetUrl(supabase: Pick<SupabaseClient, "storage">, path: string | null | undefined): string | null {
@@ -57,7 +57,7 @@ export function toBrand(supabase: Pick<SupabaseClient, "storage">, row: Practice
     logoSquareUrl: assetUrl(supabase, row?.logo_square_path) ?? row?.legacy_logo_url ?? null,
     logoWideUrl: assetUrl(supabase, row?.logo_wide_path) ?? row?.legacy_logo_url ?? null,
     photoUrl: assetUrl(supabase, row?.photo_path) ?? row?.legacy_photo_url ?? null,
-    own: { logo: !!(row?.logo_square_path || row?.logo_wide_path), photo: !!row?.photo_path },
+    own: { logo_square: !!row?.logo_square_path, logo_wide: !!row?.logo_wide_path, photo: !!row?.photo_path },
   };
 }
 
@@ -124,19 +124,14 @@ async function functionErrorCode(error: unknown): Promise<string | null> {
   }
 }
 
-// The logo: one upload, two versions (square + wide). The photo: one.
-export async function uploadBrandImage(supabase: SupabaseClient, uid: string, file: File, what: "logo" | "photo"): Promise<void> {
-  const kinds: BrandImageKind[] = what === "logo" ? ["logo_square", "logo_wide"] : ["photo"];
-  for (const kind of kinds) {
-    const blob = await renderBrandImage(file, kind);
-    await publishOne(supabase, uid, blob, kind);
-  }
+// Each image is its own upload (e7: "Logo (quadrado)", "Logo horizontal
+// (documentos)", "Foto"), shaped to its size first.
+export async function uploadBrandImage(supabase: SupabaseClient, uid: string, file: File, kind: BrandImageKind): Promise<void> {
+  const blob = await renderBrandImage(file, kind);
+  await publishOne(supabase, uid, blob, kind);
 }
 
-export async function removeBrandImage(supabase: SupabaseClient, what: "logo" | "photo"): Promise<void> {
-  const kinds: BrandImageKind[] = what === "logo" ? ["logo_square", "logo_wide"] : ["photo"];
-  for (const kind of kinds) {
-    const { error } = await supabase.functions.invoke("brand-asset", { body: { action: "remove", kind } });
-    if (error) throw new Error("remove");
-  }
+export async function removeBrandImage(supabase: SupabaseClient, kind: BrandImageKind): Promise<void> {
+  const { error } = await supabase.functions.invoke("brand-asset", { body: { action: "remove", kind } });
+  if (error) throw new Error("remove");
 }

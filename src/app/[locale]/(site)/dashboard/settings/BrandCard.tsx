@@ -6,28 +6,35 @@ import { useTranslations } from "next-intl";
 import { Card } from "./SettingsClient";
 import { createClient } from "@/lib/supabase/client";
 import { BRAND_LIMITS, removeBrandImage, saveMyBrand, uploadBrandImage, type Brand } from "@/lib/brand";
-import { BRAND_INPUT_MAX_BYTES, BRAND_INPUT_TYPES, BrandImageTooLarge, BrandNotAnImage } from "@/lib/brandImage";
+import { BRAND_INPUT_MAX_BYTES, BRAND_INPUT_TYPES, BrandImageTooLarge, BrandNotAnImage, type BrandImageKind } from "@/lib/brandImage";
+import { countryProfile } from "@/lib/country";
 import { brandAccent, brandInitials, DEFAULT_ACCENT, isAccentHex, readableAccent } from "@/lib/readableAccent";
 
 // Configurações → Minha marca / My brand (1.5.0, behind liveFeatures.myBrand):
-// the name, title, specialty and registration line patients see, an accent
-// colour, a logo (one upload, a square + a wide version) and a photo.
-// Empty text fields fall back to the profile's own (the RPC does it).
+// the name, title, specialty and registration line patients see, a brand
+// colour, the square logo, the wide logo (documents) and a photo, each its
+// own upload (e7's screen, the same as the app's). Empty text fields fall
+// back to the profile's own (the RPC does it).
 
-// Presets (any colour is allowed; the rendering keeps text readable).
-export const ACCENT_PRESETS = ["#116e99", "#0d9488", "#2563eb", "#7c3aed", "#db2777", "#dc2626", "#ea580c", "#16a34a", "#334155"];
+// e7's 8 presets, the same in the app (any colour is allowed; the
+// rendering keeps text readable).
+export const ACCENT_PRESETS = ["#116e99", "#0d9488", "#7c3aed", "#db2777", "#dc2626", "#ea580c", "#16a34a", "#334155"];
 
 // The backgrounds the website renders the accent on (light card, dark card).
 const LIGHT_BG = "#ffffff";
 const DARK_BG = "#0f172b";
 
-export function BrandCard({ uid, brand, fallback }: {
+export function BrandCard({ uid, brand, fallback, country }: {
   uid: string;
   brand: Brand | null;
   // The profile's own, shown as placeholders: what an empty field becomes.
   fallback: { fullName: string; specialty: string; registration: string };
+  // The PRACTICE country: the registration example follows it (registry).
+  country?: string | null;
 }) {
   const t = useTranslations("brand");
+  const tSettings = useTranslations("settings");
+  const registrationExample = tSettings(countryProfile(country).examples.registration);
   const router = useRouter();
   const [displayName, setDisplayName] = useState(brand?.displayName ?? "");
   const [title, setTitle] = useState(brand?.title ?? "");
@@ -35,7 +42,7 @@ export function BrandCard({ uid, brand, fallback }: {
   const [registrationLine, setRegistrationLine] = useState(brand?.registrationLine ?? "");
   const [accent, setAccent] = useState<string | null>(brand?.accentColor ?? null);
   const [state, setState] = useState<"idle" | "saving" | "saved" | "error">("idle");
-  const [busy, setBusy] = useState<null | "logo" | "photo">(null);
+  const [busy, setBusy] = useState<null | BrandImageKind>(null);
   const [imageError, setImageError] = useState("");
 
   const shown = brandAccent(accent);
@@ -49,7 +56,7 @@ export function BrandCard({ uid, brand, fallback }: {
     if (res.ok) router.refresh();
   }
 
-  async function onFile(what: "logo" | "photo", file: File | undefined) {
+  async function onFile(what: BrandImageKind, file: File | undefined) {
     setImageError("");
     if (!file) return;
     if (!BRAND_INPUT_TYPES.includes(file.type)) return setImageError(t("badType"));
@@ -65,7 +72,7 @@ export function BrandCard({ uid, brand, fallback }: {
     }
   }
 
-  async function onRemove(what: "logo" | "photo") {
+  async function onRemove(what: BrandImageKind) {
     setImageError("");
     setBusy(what);
     try {
@@ -78,11 +85,12 @@ export function BrandCard({ uid, brand, fallback }: {
     }
   }
 
-  const field = (id: string, label: string, value: string, set: (v: string) => void, max: number, placeholder?: string) => (
+  const field = (id: string, label: string, value: string, set: (v: string) => void, max: number, placeholder?: string, hint?: string) => (
     <div>
       <label htmlFor={id} className="field-label">{label}</label>
       <input id={id} type="text" value={value} maxLength={max} placeholder={placeholder}
         onChange={(e) => { set(e.target.value); setState("idle"); }} className="text-input" />
+      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
     </div>
   );
 
@@ -90,12 +98,11 @@ export function BrandCard({ uid, brand, fallback }: {
     <Card title={t("title")} description={t("hint")} id="brand">
       <div data-testid="brand-card" className="space-y-5">
         <div className="grid gap-4 sm:grid-cols-2">
-          {field("brand-title", t("titleLabel"), title, setTitle, BRAND_LIMITS.title, t("titlePlaceholder"))}
-          {field("brand-name", t("displayName"), displayName, setDisplayName, BRAND_LIMITS.displayName, fallback.fullName)}
+          {field("brand-title", t("titleLabel"), title, setTitle, BRAND_LIMITS.title)}
+          {field("brand-name", t("displayName"), displayName, setDisplayName, BRAND_LIMITS.displayName, fallback.fullName, t("displayNameHint"))}
           {field("brand-specialty", t("specialty"), specialty, setSpecialty, BRAND_LIMITS.specialty, fallback.specialty || undefined)}
-          {field("brand-registration", t("registrationLine"), registrationLine, setRegistrationLine, BRAND_LIMITS.registrationLine, fallback.registration || t("registrationPlaceholder"))}
+          {field("brand-registration", t("registrationLine"), registrationLine, setRegistrationLine, BRAND_LIMITS.registrationLine, fallback.registration || registrationExample)}
         </div>
-        <p className="text-xs text-slate-500">{t("fallbackHint")}</p>
 
         {/* The accent: presets + any colour. */}
         <div>
@@ -114,18 +121,20 @@ export function BrandCard({ uid, brand, fallback }: {
               {t("accentCustom")}
             </label>
           </div>
-          {light !== shown && <p data-testid="accent-adjusted" className="mt-1.5 text-xs text-slate-500">{t("accentAdjusted", { color: light })}</p>}
+          {light !== shown && <p data-testid="accent-adjusted" className="mt-1.5 text-xs text-slate-500">{t("accentAdjusted")}</p>}
         </div>
 
-        {/* Logo and photo. */}
-        <div className="grid gap-4 sm:grid-cols-2">
-          <ImageField label={t("logo")} hint={t("logoHint")} url={brand?.logoSquareUrl ?? null} own={!!brand?.own.logo}
-            busy={busy === "logo"} disabled={!!busy} onFile={(f) => onFile("logo", f)} onRemove={() => onRemove("logo")} testid="brand-logo" />
-          <ImageField label={t("photo")} hint={t("photoHint")} url={brand?.photoUrl ?? null} own={!!brand?.own.photo} round
+        {/* The square logo, the wide logo (documents) and the photo. */}
+        <div className="grid gap-4 sm:grid-cols-3">
+          <ImageField label={t("logoSquare")} url={brand?.logoSquareUrl ?? null} own={!!brand?.own.logo_square}
+            busy={busy === "logo_square"} disabled={!!busy} onFile={(f) => onFile("logo_square", f)} onRemove={() => onRemove("logo_square")} testid="brand-logo-square" />
+          <ImageField label={t("logoWide")} url={brand?.logoWideUrl ?? null} own={!!brand?.own.logo_wide} wide
+            busy={busy === "logo_wide"} disabled={!!busy} onFile={(f) => onFile("logo_wide", f)} onRemove={() => onRemove("logo_wide")} testid="brand-logo-wide" />
+          <ImageField label={t("photo")} url={brand?.photoUrl ?? null} own={!!brand?.own.photo} round
             busy={busy === "photo"} disabled={!!busy} onFile={(f) => onFile("photo", f)} onRemove={() => onRemove("photo")} testid="brand-photo" />
         </div>
         {imageError && <p role="alert" className="text-sm text-red-600">{imageError}</p>}
-        <p className="text-xs text-slate-500">{t("publicNote")}</p>
+        <p className="text-xs text-slate-500">{t("uploadsNote")}</p>
 
         {/* Preview on both backgrounds, with the readable accent. */}
         <div>
@@ -168,8 +177,8 @@ export function BrandCard({ uid, brand, fallback }: {
   );
 }
 
-function ImageField({ label, hint, url, own, round, busy, disabled, onFile, onRemove, testid }: {
-  label: string; hint: string; url: string | null; own: boolean; round?: boolean; busy: boolean; disabled: boolean;
+function ImageField({ label, url, own, round, wide, busy, disabled, onFile, onRemove, testid }: {
+  label: string; url: string | null; own: boolean; round?: boolean; wide?: boolean; busy: boolean; disabled: boolean;
   onFile: (f: File | undefined) => void; onRemove: () => void; testid: string;
 }) {
   const t = useTranslations("brand");
@@ -180,7 +189,7 @@ function ImageField({ label, hint, url, own, round, busy, disabled, onFile, onRe
     <div data-testid={testid}>
       <p className="field-label">{label}</p>
       <div className="flex items-center gap-3">
-        <div className={`flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden border border-slate-200 bg-slate-50 ${round ? "rounded-full" : "rounded-xl"}`}>
+        <div className={`flex h-16 ${wide ? "w-28" : "w-16"} shrink-0 items-center justify-center overflow-hidden border border-slate-200 bg-slate-50 ${round ? "rounded-full" : "rounded-xl"}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {url && <img src={url} alt="" className={`h-full w-full ${round ? "object-cover" : "object-contain"}`} />}
         </div>
@@ -199,7 +208,6 @@ function ImageField({ label, hint, url, own, round, busy, disabled, onFile, onRe
         <input ref={input} type="file" accept={BRAND_INPUT_TYPES.join(",")} className="hidden"
           onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = ""; }} />
       </div>
-      <p className="mt-1 text-xs text-slate-500">{hint}</p>
       {confirming && (
         <div role="alertdialog" aria-labelledby={`${testid}-remove-title`} data-testid={`${testid}-remove`} className="mt-2 rounded-xl border border-red-100 bg-red-50 p-3">
           <p id={`${testid}-remove-title`} className="text-sm font-semibold text-slate-900">{t("removeTitle")}</p>
