@@ -187,7 +187,10 @@ export default async function DashboardLayout({
   // The switcher (2+ doctors), or the reset of a choice she no longer serves.
   const practices = isSecretary && liveFeatures.multiPractice ? await myPractices(user.id) : null;
   const chosenCookie = isSecretary && liveFeatures.multiPractice ? (await cookies()).get(ACTING_COOKIE)?.value : undefined;
-  const staleChoice = !!chosenCookie && !!practices && !practices.some((p) => p.professional_id === chosenCookie);
+  // Stale: a doctor she no longer serves, or a list that couldn't be read
+  // (the pages would use her primary while the header named the cookie's
+  // doctor; 9a). Either way: clear the choice, back on her primary.
+  const staleChoice = !!chosenCookie && (!practices || !practices.some((p) => p.professional_id === chosenCookie));
   const paymentQr = isSecretary ? null : practice.paymentQr;
 
   let trialChipText = "";

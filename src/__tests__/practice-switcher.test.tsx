@@ -18,7 +18,7 @@ vi.mock("@/lib/supabase/server", () => ({ createClient: async () => ({ rpc: h.rp
 
 import { actingHeaders } from "@/lib/actingPractice";
 import { actingPracticeFor } from "@/lib/effectiveProfId";
-import { PracticeSwitcher } from "@/components/PracticeSwitcher";
+import { ActingPracticeReset, PracticeSwitcher } from "@/components/PracticeSwitcher";
 
 const A = "11111111-1111-4111-8111-111111111111";
 const B = "22222222-2222-4222-8222-222222222222";
@@ -67,6 +67,19 @@ describe("the switcher", () => {
     const select = sw.querySelector("select") as HTMLSelectElement;
     expect(select.value).toBe(B);
     expect(Array.from(select.options).map((o) => o.value)).toEqual([A, B]);
+  });
+
+  it("the stale-choice reset clears the cookie and reloads once per tab, never in a loop (9a)", () => {
+    const reload = vi.fn();
+    Object.defineProperty(window, "location", { value: { ...window.location, reload }, writable: true });
+    sessionStorage.clear();
+    document.cookie = `sm_practice=${C}; path=/`;
+    const first = render(<ActingPracticeReset />);
+    expect(document.cookie).not.toContain(`sm_practice=${C}`);
+    expect(reload).toHaveBeenCalledTimes(1);
+    first.unmount();
+    render(<ActingPracticeReset />); // the same tab again: no second reload
+    expect(reload).toHaveBeenCalledTimes(1);
   });
 
   it("a choice sets the cookie and reloads", () => {

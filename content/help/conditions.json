@@ -125,6 +125,6 @@
   },
   "multi-practice-live": {
     "met": false,
-    "what": "1.5.0 secretaries serving several doctors are live: migration 163 applied (it is) AND server_flags.multi_practice_secretary on (after the min_version raise + Vitor's OK) AND the app's switcher in a RELEASED store build AND liveFeatures.multiPractice true on the website AND the 1.5.0 privacy text live with its version bump. Gates Help C4's multi-doctor sentence and the App Map's switcher rule."
+    "what": "1.5.0 secretaries serving several doctors are live: migration 163 applied (it is) AND server_flags.multi_practice_secretary on (after the min_version raise + Vitor's OK) AND the app's switcher in a RELEASED store build AND liveFeatures.multiPractice true on the website (with the switcher on clinic-inactive, so a lapsed chosen doctor can't trap her; app parity too) AND the 1.5.0 privacy text live with its version bump. Gates Help C4's multi-doctor sentence and the App Map's switcher rule."
   }
 }

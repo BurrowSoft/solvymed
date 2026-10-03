@@ -23,6 +23,7 @@ export function PracticeSwitcher({ practices, current }: { practices: MyPractice
         value={chosen?.professional_id}
         onChange={(e) => {
           setBrowserActingCookie(e.target.value);
+          try { sessionStorage.removeItem(RESET_KEY); } catch { /* none */ }
           window.location.reload();
         }}
         className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm font-semibold text-slate-800"
@@ -37,10 +38,18 @@ export function PracticeSwitcher({ practices, current }: { practices: MyPractice
 
 // A stale choice (she no longer serves that doctor): the server would act
 // for no practice, so clear it and reload on her primary.
+// One reload per tab at most (9a): if the cookie can't be cleared (or the
+// list keeps failing), the page stays as it is instead of looping.
+const RESET_KEY = "sm_practice_reset";
 export function ActingPracticeReset() {
   useEffect(() => {
     setBrowserActingCookie(null);
-    window.location.reload();
+    let again = true;
+    try {
+      again = sessionStorage.getItem(RESET_KEY) !== "1";
+      sessionStorage.setItem(RESET_KEY, "1");
+    } catch { /* no storage: reload once anyway */ }
+    if (again) window.location.reload();
   }, []);
   return null;
 }
