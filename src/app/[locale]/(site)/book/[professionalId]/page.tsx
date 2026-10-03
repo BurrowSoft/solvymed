@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { BookingClient } from "./BookingClient";
 import { countryProfile } from "@/lib/country";
+import { liveFeatures } from "@/lib/liveFeatures";
+import { loadPracticeBrand, publicFromPractice } from "@/lib/brand";
 
 export default async function BookPage({
   params,
@@ -74,10 +76,18 @@ export default async function BookPage({
     );
   }
 
+  // The doctor's brand (1.5.0, behind the flag): get_practice_brand answers
+  // a patient connected to this doctor; anything else is no brand and the
+  // page is as before. Own images only (no legacy photo).
+  const brand = liveFeatures.myBrand
+    ? publicFromPractice(await loadPracticeBrand(supabase, professionalId), { name: displayName, specialty: displaySpecialty })
+    : null;
+
   // Working hours are fetched client-side via get_professional_working_hours()
   // SECURITY DEFINER RPC — cannot read professionals table directly as a patient (RLS).
   return (
     <BookingClient
+      brand={brand}
       professionalId={professionalId}
       professionalName={displayName}
       specialty={displaySpecialty}

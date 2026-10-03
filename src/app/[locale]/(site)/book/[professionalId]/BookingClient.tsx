@@ -20,6 +20,8 @@ import { chosenTimeParts } from "@/lib/chosenTime";
 import { BrandMarkTile } from "@/components/BrandLogo";
 import { PLAIN_CONSULTATION, fixedBookingItem } from "@/lib/consultType";
 import { shortDoctorName } from "@/lib/doctorName";
+import { BrandHeader } from "@/components/BrandHeader";
+import type { PublicBrand } from "@/lib/brand";
 
 type Procedure = { id: string; name: string; durationMinutes: number; price?: number; paymentType: string };
 
@@ -149,6 +151,7 @@ export function BookingClient({
   currency = "BRL",
   idKind = "BR",
   clinicTz: clinicTzProp,
+  brand = null,
 }: {
   professionalId: string;
   professionalName: string;
@@ -163,6 +166,8 @@ export function BookingClient({
   // The practice country's patient identifier (lib/patientIds).
   idKind?: PatientIdKind;
   clinicTz?: string | null;
+  // The doctor's brand (1.5.0, behind the flag); null = the card as before.
+  brand?: PublicBrand | null;
 }) {
   const router = useRouter();
   const t = useTranslations("book");
@@ -513,7 +518,8 @@ export function BookingClient({
       </header>
 
       <div className="mx-auto max-w-2xl px-4 py-6 space-y-6">
-        {/* Doctor card */}
+        {/* Doctor card: the doctor's brand when there is one (1.5.0). */}
+        {brand ? <BrandHeader brand={brand} extra={clinicName} /> : (
         <div className="rounded-2xl bg-teal-50 border border-teal-100 p-5 flex items-center gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-teal-600 text-white font-bold text-lg">
             {professionalName.charAt(0)}
@@ -524,6 +530,7 @@ export function BookingClient({
             {clinicName && <p className="text-xs text-slate-500 mt-0.5">{clinicName}</p>}
           </div>
         </div>
+        )}
 
         {setupLoading ? (
           <div className="flex items-center justify-center py-16">
