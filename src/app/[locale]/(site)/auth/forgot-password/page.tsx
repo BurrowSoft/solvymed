@@ -12,6 +12,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
+import { fieldValue } from "@/lib/formField";
 
 export default function ForgotPasswordPage() {
   const t = useTranslations("auth");
@@ -19,7 +20,6 @@ export default function ForgotPasswordPage() {
   const params = useParams();
   const locale = (params.locale as string) ?? "en";
 
-  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,8 +32,11 @@ export default function ForgotPasswordPage() {
   const localePath = (path: string) =>
     locale === "en" ? path : `/${locale}${path}`;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // Uncontrolled and read from the form (as login, #332): a controlled
+    // field's re-render could wipe an autofilled email (e7).
+    const email = fieldValue(e.currentTarget, "forgot-email").trim();
     setError("");
     if (turnstileEnabled && !captchaToken) {
       setError(t("captchaFailed"));
@@ -128,7 +131,7 @@ export default function ForgotPasswordPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form method="post" onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="field-label">
               {t("forgotPassword.email")}
@@ -136,8 +139,7 @@ export default function ForgotPasswordPage() {
             <input
               type="email"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="forgot-email"
               autoComplete="email"
               className="text-input"
             />

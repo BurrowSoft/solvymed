@@ -29,6 +29,7 @@ describe("consult type labels", () => {
     expect(consultTypeKey("Consultation")).toBe("consultation");
     expect(consultTypeKey("Consulta")).toBe("consultation");
     expect(consultTypeKey("Follow-up")).toBe("followUp");
+    expect(consultTypeKey("Retorno")).toBe("followUp"); // a procedure named "Retorno" (e7, 38)
     expect(consultTypeKey("Limpeza")).toBeNull();
   });
 

@@ -5,6 +5,9 @@ export const CONSULT_TYPE_KEYS = {
   Consultation: "consultation",
   Consulta: "consultation",
   "Follow-up": "followUp",
+  // A clinic procedure named "Retorno" (the booking list's follow-up slot)
+  // is stored as written: shown translated like "Consulta" (38's app fix).
+  Retorno: "followUp",
   "Exam Review": "examReview",
   Procedure: "procedure",
   Emergency: "emergency",
