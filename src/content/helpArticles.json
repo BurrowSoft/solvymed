@@ -462,7 +462,7 @@
             },
             {
               "type": "p",
-              "text": "Um paciente com consultas (de qualquer status) nunca é excluído: o servidor recusa a exclusão, em qualquer versão do app e no site. Arquive-o."
+              "text": "Não é possível excluir um paciente que tem consultas (de qualquer status): o servidor recusa, em qualquer versão do app e no site. Arquive-o."
             }
           ],
           "en": [
@@ -480,7 +480,7 @@
             },
             {
               "type": "p",
-              "text": "A patient with appointments (any status) is never deleted: the server refuses it, in any app version and on the website. Archive them instead."
+              "text": "You can't delete a patient who has appointments (any status): the server refuses it, in any app version and on the website. Archive them instead."
             }
           ]
         },
