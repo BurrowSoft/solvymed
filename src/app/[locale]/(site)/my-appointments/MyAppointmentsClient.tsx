@@ -18,6 +18,8 @@ import { countryProfile } from "@/lib/country";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 import { whoLine } from "@/lib/whoLine";
 import { shortDoctorName } from "@/lib/doctorName";
+import { MyDoctors } from "./MyDoctors";
+import type { MyDoctor } from "@/lib/myDoctors";
 
 const STATUS_COLOR: Record<string, string> = {
   tentative: "bg-amber-50 text-amber-600 border-amber-200",
@@ -399,6 +401,8 @@ export function MyAppointmentsClient({
   clinicTz = DEFAULT_CLINIC_TZ,
   practiceCountry = null,
   connectedClinicName = null,
+  doctors = null,
+  canAddDoctor = false,
 }: {
   upcoming: PatientAppointment[];
   past: PatientAppointment[];
@@ -410,6 +414,9 @@ export function MyAppointmentsClient({
   practiceCountry?: string | null;
   // First-run: the one-time "You're connected to {clinic}" card (null = don't show).
   connectedClinicName?: string | null;
+  // 1.5.0 (behind the flag): the patient's doctors; null = as before.
+  doctors?: MyDoctor[] | null;
+  canAddDoctor?: boolean;
 }) {
   const t = useTranslations("myAppointments");
   const { locale } = useParams<{ locale: string }>();
@@ -435,7 +442,15 @@ export function MyAppointmentsClient({
   // "Always say who": with whom the patient books (Vitor, build 25).
   const doctorName = myProfessionalMeta?.name?.trim() || "";
   // Title + first + last name on buttons (e7: a long name overflowed in the app).
-  const bookLabel = doctorName ? t("bookWith", { doctor: shortDoctorName(doctorName) }) : t("bookAppointment");
+  const bookLabel0 = doctorName ? t("bookWith", { doctor: shortDoctorName(doctorName) }) : t("bookAppointment");
+  // 1.5.0: with 2+ doctors the book buttons ask "Com quem?" and lead to the
+  // doctor cards (each books with its own doctor); a filter per doctor.
+  const tDoctors = useTranslations("patientDoctors");
+  const many = !!doctors && doctors.length > 1;
+  const bookLabel = many ? tDoctors("bookWho") : bookLabel0;
+  const bookHref = many ? "#my-doctors" : bookPath;
+  const [only, setOnly] = useState<string | null>(null);
+  const shown = (list: PatientAppointment[]) => (many && only ? list.filter((a) => a.professional_id === only) : list);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -446,9 +461,9 @@ export function MyAppointmentsClient({
             <BrandLogo className="h-8" />
           </div>
           <div className="flex min-w-0 items-center gap-3">
-            {bookPath && (
+            {bookHref && (
               <a
-                href={bookPath}
+                href={bookHref}
                 className="max-w-full line-clamp-2 [overflow-wrap:anywhere] min-w-0 text-right text-sm font-medium text-teal-600 hover:underline"
               >
                 {bookLabel}
@@ -466,7 +481,7 @@ export function MyAppointmentsClient({
 
       <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
         {connectedClinicName && (
-          <OnboardingCard kind="patient_connected" clinicName={connectedClinicName} bookHref={bookPath ?? undefined} bookLabel={bookLabel} />
+          <OnboardingCard kind="patient_connected" clinicName={connectedClinicName} bookHref={bookHref ?? undefined} bookLabel={bookLabel} />
         )}
         {/* Greeting; the list stays current (item 33). */}
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -478,7 +493,9 @@ export function MyAppointmentsClient({
         </div>
 
         {/* Your doctor: name · specialty · clinic, and booking with them. */}
-        {doctorName && (
+        {doctors && doctors.length > 0 ? (
+          <MyDoctors doctors={doctors} canAdd={canAddDoctor} />
+        ) : doctorName && (
           <section data-testid="your-doctor" className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
             <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{t("yourDoctor")}</p>
             <p className="mt-1 font-bold text-slate-900">{doctorName}</p>
@@ -490,19 +507,30 @@ export function MyAppointmentsClient({
           </section>
         )}
 
+        {many && (
+          <div role="radiogroup" aria-label={tDoctors("homeSection")} data-testid="doctor-filter" className="flex flex-wrap gap-2">
+            {[{ id: null as string | null, name: tDoctors("filterAll") }, ...doctors!.map((d) => ({ id: d.id as string | null, name: shortDoctorName(d.name) }))].map((c) => (
+              <button key={c.id ?? "all"} type="button" role="radio" aria-checked={only === c.id} onClick={() => setOnly(c.id)}
+                className={`rounded-full border px-3 py-1 text-sm font-semibold ${only === c.id ? "border-teal-600 bg-teal-50 text-teal-800" : "border-slate-200 bg-white text-slate-600"}`}>
+                {c.name}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Upcoming */}
         <section>
           <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">{t("upcoming")}</h2>
-          {upcoming.length === 0 ? (
+          {shown(upcoming).length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-white py-12 text-center">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-10 w-10 text-slate-300 mb-3">
                 <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
               </svg>
               <p className="font-semibold text-slate-600">{t("noUpcoming")}</p>
               <p className="text-sm text-slate-400 mt-1 mb-5">{t("noUpcomingSub")}</p>
-              {bookPath && (
+              {bookHref && (
                 <a
-                  href={bookPath}
+                  href={bookHref}
                   className="max-w-full line-clamp-2 [overflow-wrap:anywhere] rounded-xl bg-teal-600 px-5 py-2.5 text-center text-sm font-bold text-white hover:bg-teal-700 transition"
                 >
                   {bookLabel}
@@ -511,28 +539,28 @@ export function MyAppointmentsClient({
             </div>
           ) : (
             <div className="space-y-3">
-              {upcoming.map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} clinicTz={clinicTz} practiceCountry={practiceCountry} />)}
+              {shown(upcoming).map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} clinicTz={clinicTz} practiceCountry={practiceCountry} />)}
             </div>
           )}
         </section>
 
         {/* Past */}
-        {past.length > 0 && (
+        {shown(past).length > 0 && (
           <section>
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">{t("recentHistory")}</h2>
             <div className="space-y-3">
-              {past.map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} clinicTz={clinicTz} practiceCountry={practiceCountry} />)}
+              {shown(past).map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} clinicTz={clinicTz} practiceCountry={practiceCountry} />)}
             </div>
           </section>
         )}
 
         {/* CTA if no upcoming */}
-        {upcoming.length === 0 && bookPath && (
+        {upcoming.length === 0 && bookHref && (
           <div className="rounded-2xl bg-teal-600 p-6 text-white text-center">
             <p className="font-bold text-lg mb-1">{t("ctaTitle")}</p>
             <p className="text-teal-100 text-sm mb-4">{t("ctaSub")}</p>
             <a
-              href={bookPath}
+              href={bookHref}
               className="max-w-full line-clamp-2 [overflow-wrap:anywhere] rounded-xl bg-white px-5 py-2.5 text-center text-sm font-bold text-teal-700 hover:bg-teal-50 transition"
             >
               {bookLabel}
