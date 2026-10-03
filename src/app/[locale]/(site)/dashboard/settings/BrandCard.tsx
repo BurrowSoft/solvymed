@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Card } from "./SettingsClient";
 import { createClient } from "@/lib/supabase/client";
 import { BRAND_LIMITS, removeBrandImage, saveMyBrand, uploadBrandImage, type Brand } from "@/lib/brand";
-import { BRAND_INPUT_MAX_BYTES, BRAND_INPUT_TYPES } from "@/lib/brandImage";
+import { BRAND_INPUT_MAX_BYTES, BRAND_INPUT_TYPES, BrandImageTooLarge, BrandNotAnImage } from "@/lib/brandImage";
 import { brandAccent, brandInitials, DEFAULT_ACCENT, isAccentHex, readableAccent } from "@/lib/readableAccent";
 
 // Configurações → Minha marca / My brand (1.5.0, behind liveFeatures.myBrand):
@@ -58,8 +58,8 @@ export function BrandCard({ uid, brand, fallback }: {
     try {
       await uploadBrandImage(createClient(), uid, file, what);
       router.refresh();
-    } catch {
-      setImageError(t("uploadError"));
+    } catch (err) {
+      setImageError(err instanceof BrandImageTooLarge ? t("tooLarge") : err instanceof BrandNotAnImage ? t("badType") : t("uploadError"));
     } finally {
       setBusy(null);
     }
@@ -174,6 +174,8 @@ function ImageField({ label, hint, url, own, round, busy, disabled, onFile, onRe
 }) {
   const t = useTranslations("brand");
   const input = useRef<HTMLInputElement>(null);
+  // Remove asks first (e7's copy): the image leaves the page and documents.
+  const [confirming, setConfirming] = useState(false);
   return (
     <div data-testid={testid}>
       <p className="field-label">{label}</p>
@@ -187,8 +189,8 @@ function ImageField({ label, hint, url, own, round, busy, disabled, onFile, onRe
             className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60">
             {busy ? t("uploading") : url ? t("replace") : t("upload")}
           </button>
-          {own && (
-            <button type="button" disabled={disabled} onClick={onRemove}
+          {own && !confirming && (
+            <button type="button" disabled={disabled} onClick={() => setConfirming(true)}
               className="rounded-lg px-3 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-60">
               {t("remove")}
             </button>
@@ -198,6 +200,22 @@ function ImageField({ label, hint, url, own, round, busy, disabled, onFile, onRe
           onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = ""; }} />
       </div>
       <p className="mt-1 text-xs text-slate-500">{hint}</p>
+      {confirming && (
+        <div role="alertdialog" aria-labelledby={`${testid}-remove-title`} data-testid={`${testid}-remove`} className="mt-2 rounded-xl border border-red-100 bg-red-50 p-3">
+          <p id={`${testid}-remove-title`} className="text-sm font-semibold text-slate-900">{t("removeTitle")}</p>
+          <p className="mt-0.5 text-xs text-slate-600">{t("removeBody")}</p>
+          <div className="mt-2 flex gap-2">
+            <button type="button" disabled={disabled} onClick={() => { setConfirming(false); onRemove(); }}
+              className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60">
+              {t("removeConfirm")}
+            </button>
+            <button type="button" onClick={() => setConfirming(false)}
+              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+              {t("cancel")}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

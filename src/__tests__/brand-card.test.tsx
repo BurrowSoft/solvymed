@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
 
@@ -102,6 +102,34 @@ describe("Minha marca", () => {
     fireEvent.change(input, { target: { files: [new File(["x"], "a.gif", { type: "image/gif" })] } });
     expect(await screen.findByRole("alert")).toHaveTextContent(t.badType);
     expect(h.upload).not.toHaveBeenCalled();
+  });
+
+  it("Remover asks first; Cancelar keeps the image, Remover removes it", async () => {
+    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: null, logoSquareUrl: null, logoWideUrl: null, photoUrl: "https://x/p.png", own: { logo: false, photo: true } });
+    const photo = screen.getByTestId("brand-photo");
+    fireEvent.click(within(photo).getByRole("button", { name: t.remove }));
+    expect(screen.getByTestId("brand-photo-remove")).toHaveTextContent(t.removeTitle);
+    fireEvent.click(within(photo).getByRole("button", { name: t.cancel }));
+    expect(screen.queryByTestId("brand-photo-remove")).toBeNull();
+    expect(h.invoke).not.toHaveBeenCalled();
+    fireEvent.click(within(photo).getByRole("button", { name: t.remove }));
+    fireEvent.click(within(screen.getByTestId("brand-photo-remove")).getByRole("button", { name: t.removeConfirm }));
+    await waitFor(() => expect(h.invoke).toHaveBeenCalledWith("brand-asset", { body: { action: "remove", kind: "photo" } }));
+  });
+
+  it("over 5 MB is refused before any upload", async () => {
+    show();
+    const big = new File([new Uint8Array(5 * 1024 * 1024 + 1)], "big.png", { type: "image/png" });
+    fireEvent.change(screen.getByTestId("brand-logo").querySelector("input[type=file]")!, { target: { files: [big] } });
+    expect(await screen.findByRole("alert")).toHaveTextContent(t.tooLarge);
+    expect(h.upload).not.toHaveBeenCalled();
+  });
+
+  it("the function's too_large refusal shows the size message", async () => {
+    h.invoke.mockResolvedValue({ data: null, error: { context: new Response(JSON.stringify({ error: "too_large" }), { status: 400 }) } });
+    show();
+    fireEvent.change(screen.getByTestId("brand-photo").querySelector("input[type=file]")!, { target: { files: [new File(["x"], "p.jpg", { type: "image/jpeg" })] } });
+    expect(await screen.findByRole("alert")).toHaveTextContent(t.tooLarge);
   });
 
   it("Remover only for the doctor's own images (not a legacy one)", () => {

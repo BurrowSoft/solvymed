@@ -14,7 +14,13 @@ export const BRAND_SIZES: Record<BrandImageKind, { w: number; h: number; fit: "c
 };
 
 export const BRAND_INPUT_TYPES = ["image/png", "image/jpeg"];
-export const BRAND_INPUT_MAX_BYTES = 10 * 1024 * 1024; // what we accept to read; the staged result is ≤ 5 MB
+// The limits e7's copy states (the server refuses more): 5 MB (the
+// brand-staging bucket) and 4096 px per side.
+export const BRAND_INPUT_MAX_BYTES = 5 * 1024 * 1024;
+export const BRAND_INPUT_MAX_SIDE = 4096;
+
+export class BrandImageTooLarge extends Error {}
+export class BrandNotAnImage extends Error {}
 
 export type Placement = { sx: number; sy: number; sw: number; sh: number; dx: number; dy: number; dw: number; dh: number };
 
@@ -38,6 +44,7 @@ export async function renderBrandImage(file: Blob, kind: BrandImageKind): Promis
   const { w, h, fit } = BRAND_SIZES[kind];
   const bitmap = await createImageBitmap(file);
   try {
+    if (bitmap.width > BRAND_INPUT_MAX_SIDE || bitmap.height > BRAND_INPUT_MAX_SIDE) throw new BrandImageTooLarge(kind);
     const canvas = document.createElement("canvas");
     canvas.width = w;
     canvas.height = h;

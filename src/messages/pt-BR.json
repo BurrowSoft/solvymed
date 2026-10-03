@@ -1917,9 +1917,13 @@
     "saving": "Salvando…",
     "saved": "Salvo",
     "saveError": "Não foi possível salvar. Tente de novo.",
-    "uploadError": "Não foi possível enviar a imagem. Tente de novo.",
+    "uploadError": "Não foi possível enviar a imagem. Tente novamente.",
     "badType": "Use uma imagem PNG ou JPG.",
-    "tooLarge": "A imagem é grande demais (no máximo 10 MB).",
-    "publicNote": "Seu logo e sua foto são públicos: os pacientes os veem na sua página de agendamento e no seu link de convite público."
+    "tooLarge": "Imagem muito grande. Use uma de até 5 MB e no máximo 4096 px de lado.",
+    "publicNote": "Seu logo e sua foto são públicos: os pacientes os veem na sua página de agendamento e no seu link de convite público.",
+    "removeTitle": "Remover esta imagem?",
+    "removeBody": "Ela deixará de aparecer na sua página e nos seus documentos.",
+    "removeConfirm": "Remover",
+    "cancel": "Cancelar"
   }
 }

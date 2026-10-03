@@ -6,7 +6,7 @@
 // brand-assets; the URL is built here. A legacy_* URL (the old profile
 // photo / document logo) is used only when the matching path is unset.
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { renderBrandImage, type BrandImageKind } from "./brandImage";
+import { BrandImageTooLarge, BrandNotAnImage, renderBrandImage, type BrandImageKind } from "./brandImage";
 
 export const BRAND_BUCKET = "brand-assets";
 export const BRAND_STAGING_BUCKET = "brand-staging";
@@ -89,13 +89,39 @@ export async function saveMyBrand(supabase: SupabaseClient, f: BrandTextFields):
 // One image → staged in the private bucket → published by the function
 // (validated, re-encoded, swapped in, the old object deleted). Returns the
 // new public path.
+// brand-staging's own limit (161); the rendered PNG is checked before upload.
+export const BRAND_STAGED_MAX_BYTES = 5 * 1024 * 1024;
+
 async function publishOne(supabase: SupabaseClient, uid: string, blob: Blob, kind: BrandImageKind): Promise<string> {
+  if (blob.size > BRAND_STAGED_MAX_BYTES) throw new BrandImageTooLarge(kind);
   const stagingPath = `${uid}/${crypto.randomUUID()}.png`;
   const { error: upErr } = await supabase.storage.from(BRAND_STAGING_BUCKET).upload(stagingPath, blob, { contentType: "image/png", upsert: false });
   if (upErr) throw new Error("upload");
   const { data, error } = await supabase.functions.invoke("brand-asset", { body: { action: "publish", kind, staging_path: stagingPath } });
-  if (error || !data?.path) throw new Error("publish");
+  if (error) {
+    // The function's refusals (400 not_an_image / too_large) get their own
+    // messages; anything else is the generic upload error.
+    const code = await functionErrorCode(error);
+    if (code === "too_large") throw new BrandImageTooLarge(kind);
+    if (code === "not_an_image") throw new BrandNotAnImage(kind);
+    throw new Error("publish");
+  }
+  if (!data?.path) throw new Error("publish");
   return data.path as string;
+}
+
+// The JSON error code of a non-2xx function reply ({ error: "too_large" }),
+// when there is one.
+async function functionErrorCode(error: unknown): Promise<string | null> {
+  const res = (error as { context?: unknown })?.context;
+  if (!(res instanceof Response)) return null;
+  try {
+    const body = (await res.clone().json()) as { error?: unknown; code?: unknown };
+    const code = body?.error ?? body?.code;
+    return typeof code === "string" ? code : null;
+  } catch {
+    return null;
+  }
 }
 
 // The logo: one upload, two versions (square + wide). The photo: one.

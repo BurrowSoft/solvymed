@@ -1949,7 +1949,11 @@
     "saveError": "Couldn't save. Try again.",
     "uploadError": "Couldn't upload the image. Try again.",
     "badType": "Use a PNG or JPG image.",
-    "tooLarge": "The image is too large (10 MB at most).",
-    "publicNote": "Your logo and photo are public: patients see them on your booking page and your public invite link."
+    "tooLarge": "This image is too large. Use one up to 5 MB and at most 4096 px per side.",
+    "publicNote": "Your logo and photo are public: patients see them on your booking page and your public invite link.",
+    "removeTitle": "Remove this image?",
+    "removeBody": "It will no longer appear on your page and documents.",
+    "removeConfirm": "Remove",
+    "cancel": "Cancel"
   }
 }
