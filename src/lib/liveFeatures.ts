@@ -41,6 +41,11 @@ export const liveFeatures = {
   // 2026-10-03). Uploads stay behind founders-upload-live.
   founders: true,
   foundersRules: true,
+  // 1.5.0 "My brand" (Settings → Minha marca; later the branded public
+  // pages, emails and prints). On in Previews only (all SSO-protected) for
+  // testing against migration 161; flips to true when 1.5.0 is released,
+  // with the privacy text and its version bump.
+  myBrand: foundersPreview,
 } as const;
 
 // The languages the app's PDFs are generated in today (UX, verified on the

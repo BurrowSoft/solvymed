@@ -1,0 +1,239 @@
+{
+  "algorithm": "WCAG 2.x contrast >= 4.5; unchanged if passing; else HSL lightness from round(l*100) in 1-point steps (darker if lum(bg) >= 0.18, else lighter), channels Math.round(x*255); first passing step as lowercase #rrggbb; bound #000000 / #ffffff",
+  "vectors": [
+    {
+      "hex": "#116e99",
+      "bg": "#ffffff",
+      "bgName": "webLight",
+      "expected": "#116e99"
+    },
+    {
+      "hex": "#116e99",
+      "bg": "#020618",
+      "bgName": "webDarkPage",
+      "expected": "#1481b3"
+    },
+    {
+      "hex": "#116e99",
+      "bg": "#0f172b",
+      "bgName": "webDarkCard",
+      "expected": "#158bc1"
+    },
+    {
+      "hex": "#0d9488",
+      "bg": "#ffffff",
+      "bgName": "webLight",
+      "expected": "#0c8379"
+    },
+    {
+      "hex": "#0d9488",
+      "bg": "#020618",
+      "bgName": "webDarkPage",
+      "expected": "#0d9488"
+    },
+    {
+      "hex": "#0d9488",
+      "bg": "#0f172b",
+      "bgName": "webDarkCard",
+      "expected": "#0d9488"
+    },
+    {
+      "hex": "#ffff00",
+      "bg": "#ffffff",
+      "bgName": "webLight",
+      "expected": "#7a7a00"
+    },
+    {
+      "hex": "#ffff00",
+      "bg": "#020618",
+      "bgName": "webDarkPage",
+      "expected": "#ffff00"
+    },
+    {
+      "hex": "#ffff00",
+      "bg": "#0f172b",
+      "bgName": "webDarkCard",
+      "expected": "#ffff00"
+    },
+    {
+      "hex": "#f5f5f5",
+      "bg": "#ffffff",
+      "bgName": "webLight",
+      "expected": "#757575"
+    },
+    {
+      "hex": "#f5f5f5",
+      "bg": "#020618",
+      "bgName": "webDarkPage",
+      "expected": "#f5f5f5"
+    },
+    {
+      "hex": "#f5f5f5",
+      "bg": "#0f172b",
+      "bgName": "webDarkCard",
+      "expected": "#f5f5f5"
+    },
+    {
+      "hex": "#111111",
+      "bg": "#ffffff",
+      "bgName": "webLight",
+      "expected": "#111111"
+    },
+    {
+      "hex": "#111111",
+      "bg": "#020618",
+      "bgName": "webDarkPage",
+      "expected": "#787878"
+    },
+    {
+      "hex": "#111111",
+      "bg": "#0f172b",
+      "bgName": "webDarkCard",
+      "expected": "#808080"
+    },
+    {
+      "hex": "#e11d48",
+      "bg": "#ffffff",
+      "bgName": "webLight",
+      "expected": "#e11d48"
+    },
+    {
+      "hex": "#e11d48",
+      "bg": "#020618",
+      "bgName": "webDarkPage",
+      "expected": "#e42b53"
+    },
+    {
+      "hex": "#e11d48",
+      "bg": "#0f172b",
+      "bgName": "webDarkCard",
+      "expected": "#e74166"
+    },
+    {
+      "hex": "#7c3aed",
+      "bg": "#ffffff",
+      "bgName": "webLight",
+      "expected": "#7c3aed"
+    },
+    {
+      "hex": "#7c3aed",
+      "bg": "#020618",
+      "bgName": "webDarkPage",
+      "expected": "#8f57f0"
+    },
+    {
+      "hex": "#7c3aed",
+      "bg": "#0f172b",
+      "bgName": "webDarkCard",
+      "expected": "#9865f1"
+    },
+    {
+      "hex": "#22c55e",
+      "bg": "#ffffff",
+      "bgName": "webLight",
+      "expected": "#178740"
+    },
+    {
+      "hex": "#22c55e",
+      "bg": "#020618",
+      "bgName": "webDarkPage",
+      "expected": "#22c55e"
+    },
+    {
+      "hex": "#22c55e",
+      "bg": "#0f172b",
+      "bgName": "webDarkCard",
+      "expected": "#22c55e"
+    },
+    {
+      "hex": "#f97316",
+      "bg": "#ffffff",
+      "bgName": "webLight",
+      "expected": "#c25205"
+    },
+    {
+      "hex": "#f97316",
+      "bg": "#020618",
+      "bgName": "webDarkPage",
+      "expected": "#f97316"
+    },
+    {
+      "hex": "#f97316",
+      "bg": "#0f172b",
+      "bgName": "webDarkCard",
+      "expected": "#f97316"
+    },
+    {
+      "hex": "#808080",
+      "bg": "#ffffff",
+      "bgName": "webLight",
+      "expected": "#757575"
+    },
+    {
+      "hex": "#808080",
+      "bg": "#020618",
+      "bgName": "webDarkPage",
+      "expected": "#808080"
+    },
+    {
+      "hex": "#808080",
+      "bg": "#0f172b",
+      "bgName": "webDarkCard",
+      "expected": "#808080"
+    },
+    {
+      "hex": "#000000",
+      "bg": "#ffffff",
+      "bgName": "webLight",
+      "expected": "#000000"
+    },
+    {
+      "hex": "#000000",
+      "bg": "#020618",
+      "bgName": "webDarkPage",
+      "expected": "#787878"
+    },
+    {
+      "hex": "#000000",
+      "bg": "#0f172b",
+      "bgName": "webDarkCard",
+      "expected": "#808080"
+    },
+    {
+      "hex": "#ffffff",
+      "bg": "#ffffff",
+      "bgName": "webLight",
+      "expected": "#757575"
+    },
+    {
+      "hex": "#ffffff",
+      "bg": "#020618",
+      "bgName": "webDarkPage",
+      "expected": "#ffffff"
+    },
+    {
+      "hex": "#ffffff",
+      "bg": "#0f172b",
+      "bgName": "webDarkCard",
+      "expected": "#ffffff"
+    },
+    {
+      "hex": "#FF00AA",
+      "bg": "#ffffff",
+      "bgName": "webLight",
+      "expected": "#e00096"
+    },
+    {
+      "hex": "#FF00AA",
+      "bg": "#020618",
+      "bgName": "webDarkPage",
+      "expected": "#ff00aa"
+    },
+    {
+      "hex": "#FF00AA",
+      "bg": "#0f172b",
+      "bgName": "webDarkCard",
+      "expected": "#ff00aa"
+    }
+  ]
+}

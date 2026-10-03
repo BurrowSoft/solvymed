@@ -1,0 +1,112 @@
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
+import pt from "@/messages/pt-BR.json";
+
+// Configurações → Minha marca (1.5.0, behind liveFeatures.myBrand): the
+// fields go to save_my_brand; a logo upload makes two versions, each staged
+// then published by the brand-asset function; Remover only for own images.
+
+const h = vi.hoisted(() => ({
+  rpc: vi.fn(),
+  upload: vi.fn(),
+  invoke: vi.fn(),
+  refresh: vi.fn(),
+}));
+vi.mock("next/navigation", async (orig) => ({
+  ...(await orig<typeof import("next/navigation")>()),
+  useRouter: () => ({ push: vi.fn(), refresh: h.refresh }),
+}));
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: () => ({
+    rpc: h.rpc,
+    storage: { from: () => ({ upload: h.upload }) },
+    functions: { invoke: h.invoke },
+  }),
+}));
+// Canvas isn't in jsdom: the shaping is tested in brand-image.test.
+vi.mock("@/lib/brandImage", async (orig) => ({
+  ...(await orig<typeof import("@/lib/brandImage")>()),
+  renderBrandImage: vi.fn(async () => new Blob(["png"], { type: "image/png" })),
+}));
+
+import { BrandCard } from "@/app/[locale]/(site)/dashboard/settings/BrandCard";
+import type { Brand } from "@/lib/brand";
+
+const t = pt.brand;
+const show = (brand: Brand | null = null) =>
+  render(
+    <NextIntlClientProvider locale="pt-BR" messages={pt}>
+      <BrandCard uid="u-1" brand={brand} fallback={{ fullName: "Ana Souza", specialty: "Dermatologia", registration: "CRM 1/SP" }} />
+    </NextIntlClientProvider>,
+  );
+
+beforeEach(() => {
+  h.rpc.mockReset().mockResolvedValue({ data: null, error: null });
+  h.upload.mockReset().mockResolvedValue({ data: {}, error: null });
+  h.invoke.mockReset().mockResolvedValue({ data: { path: "u-1/x.png" }, error: null });
+  h.refresh.mockReset();
+});
+
+describe("Minha marca", () => {
+  it("saves the fields and the chosen preset through save_my_brand", async () => {
+    show();
+    fireEvent.change(screen.getByLabelText(t.titleLabel), { target: { value: "Dra." } });
+    fireEvent.change(screen.getByLabelText(t.displayName), { target: { value: "Ana Souza " } });
+    fireEvent.click(screen.getByRole("radio", { name: "#7c3aed" }));
+    fireEvent.click(screen.getByRole("button", { name: t.save }));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent(t.saved));
+    expect(h.rpc).toHaveBeenCalledWith("save_my_brand", {
+      p_display_name: "Ana Souza", p_title: "Dra.", p_specialty: "", p_registration_line: "", p_accent_color: "#7c3aed",
+    });
+  });
+
+  it("the default blue is saved as no colour (the app's default)", async () => {
+    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: "#dc2626", logoSquareUrl: null, logoWideUrl: null, photoUrl: null, own: { logo: false, photo: false } });
+    fireEvent.click(screen.getByRole("radio", { name: "#116e99" }));
+    fireEvent.click(screen.getByRole("button", { name: t.save }));
+    await waitFor(() => expect(h.rpc).toHaveBeenCalled());
+    expect(h.rpc.mock.calls[0][1].p_accent_color).toBe("");
+  });
+
+  it("a colour too light for text says how it's shown", () => {
+    show();
+    expect(screen.queryByTestId("accent-adjusted")).toBeNull();
+    fireEvent.change(screen.getByLabelText(t.accentCustom), { target: { value: "#ffff00" } });
+    expect(screen.getByTestId("accent-adjusted")).toHaveTextContent("#7a7a00");
+  });
+
+  it("the preview shows the profile's name and specialty when fields are empty", () => {
+    show();
+    expect(screen.getByTestId("brand-preview-light")).toHaveTextContent("Ana Souza");
+    expect(screen.getByTestId("brand-preview-light")).toHaveTextContent("Dermatologia");
+    expect(screen.getByTestId("brand-preview-light")).toHaveTextContent("AS");
+  });
+
+  it("a logo upload publishes a square and a wide version via staging", async () => {
+    show();
+    const input = screen.getByTestId("brand-logo").querySelector("input[type=file]") as HTMLInputElement;
+    fireEvent.change(input, { target: { files: [new File(["x"], "logo.png", { type: "image/png" })] } });
+    await waitFor(() => expect(h.refresh).toHaveBeenCalled());
+    expect(h.upload).toHaveBeenCalledTimes(2);
+    expect(h.upload.mock.calls[0][0]).toMatch(/^u-1\/[0-9a-f-]+\.png$/);
+    const kinds = h.invoke.mock.calls.map((c) => c[1].body.kind);
+    expect(kinds).toEqual(["logo_square", "logo_wide"]);
+    expect(h.invoke.mock.calls[0][0]).toBe("brand-asset");
+    expect(h.invoke.mock.calls[0][1].body).toMatchObject({ action: "publish", staging_path: h.upload.mock.calls[0][0] });
+  });
+
+  it("a non-image is refused before any upload", async () => {
+    show();
+    const input = screen.getByTestId("brand-photo").querySelector("input[type=file]") as HTMLInputElement;
+    fireEvent.change(input, { target: { files: [new File(["x"], "a.gif", { type: "image/gif" })] } });
+    expect(await screen.findByRole("alert")).toHaveTextContent(t.badType);
+    expect(h.upload).not.toHaveBeenCalled();
+  });
+
+  it("Remover only for the doctor's own images (not a legacy one)", () => {
+    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: null, logoSquareUrl: "https://x/legacy.png", logoWideUrl: null, photoUrl: "https://x/p.png", own: { logo: false, photo: true } });
+    expect(screen.getByTestId("brand-logo")).not.toHaveTextContent(t.remove);
+    expect(screen.getByTestId("brand-photo")).toHaveTextContent(t.remove);
+  });
+});

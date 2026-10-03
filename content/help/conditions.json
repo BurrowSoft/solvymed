@@ -114,5 +114,9 @@
   "secretary-invite-email-live": {
     "met": true,
     "what": "Secretary invites are emailed (migration 151 + the send-secretary-invite function, live) AND the privacy policy's secretary-invite text is live with PRIVACY_VERSION bumped, after mobile's accepting migration. Until then the website never calls the function: invites are shared by link/code only."
+  },
+  "brand-live": {
+    "met": false,
+    "what": "1.5.0 \"My brand\" is released: migration 161 (professional_brand, brand-assets, get_practice_brand / get_public_brand_by_code / save_my_brand) and the brand-asset function live, the app's My brand in a RELEASED store build, liveFeatures.myBrand true on the website, and the privacy text on brand assets live with PRIVACY_VERSION bumped. Gates Help C11 and the App Map's brand rule."
   }
 }
