@@ -1890,7 +1890,7 @@
   },
   "brand": {
     "title": "My brand",
-    "hint": "Your logo, colour and name on your booking pages, your emails to patients and your printed documents.",
+    "hint": "Your logo, colour and name on your booking page and your public invite link, your emails to patients and your printed documents.",
     "displayName": "Name shown to patients",
     "titleLabel": "Title",
     "titlePlaceholder": "Dr., Dra.",
@@ -1920,6 +1920,6 @@
     "uploadError": "Couldn't upload the image. Try again.",
     "badType": "Use a PNG or JPG image.",
     "tooLarge": "The image is too large (10 MB at most).",
-    "publicNote": "Your logo and photo are public: patients see them on your booking and invite pages."
+    "publicNote": "Your logo and photo are public: patients see them on your booking page and your public invite link."
   }
 }

@@ -1890,7 +1890,7 @@
   },
   "brand": {
     "title": "Minha marca",
-    "hint": "Seu logo, sua cor e seu nome nas suas páginas de agendamento, nos e-mails aos pacientes e nos documentos impressos.",
+    "hint": "Seu logo, sua cor e seu nome na sua página de agendamento e no seu link de convite público, nos e-mails aos pacientes e nos documentos impressos.",
     "displayName": "Nome exibido aos pacientes",
     "titleLabel": "Título",
     "titlePlaceholder": "Dr., Dra.",
@@ -1920,6 +1920,6 @@
     "uploadError": "Não foi possível enviar a imagem. Tente de novo.",
     "badType": "Use uma imagem PNG ou JPG.",
     "tooLarge": "A imagem é grande demais (no máximo 10 MB).",
-    "publicNote": "Seu logo e sua foto são públicos: os pacientes os veem nas suas páginas de agendamento e de convite."
+    "publicNote": "Seu logo e sua foto são públicos: os pacientes os veem na sua página de agendamento e no seu link de convite público."
   }
 }
