@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { assetUrl } from "@/lib/brand";
+import { assetUrl, type PublicBrand } from "@/lib/brand";
 import { brandAccent, brandInitials, readableAccent } from "@/lib/readableAccent";
 
 // The doctor's brand on a public page (1.5.0; the booking page and the
@@ -10,13 +10,7 @@ import { brandAccent, brandInitials, readableAccent } from "@/lib/readableAccent
 // else the photo, else the initials in the accent; the name and specialty.
 // No legacy images here: the old profile photos were never public (e7).
 
-export type PublicBrand = {
-  name: string; // title + display name, as shown
-  specialty: string;
-  accentColor: string | null;
-  logoUrl: string | null;
-  photoUrl: string | null;
-};
+export type { PublicBrand };
 
 type PublicBrandRow = {
   display_name: string | null;
@@ -57,7 +51,7 @@ export function usePublicBrand(code: string | null, enabled: boolean): PublicBra
   return brand;
 }
 
-export function BrandHeader({ brand, className = "" }: { brand: PublicBrand; className?: string }) {
+export function BrandHeader({ brand, extra, className = "" }: { brand: PublicBrand; extra?: string; className?: string }) {
   // On the white card: the accent made readable against white.
   const accent = readableAccent(brandAccent(brand.accentColor), "#ffffff");
   const image = brand.logoUrl ?? brand.photoUrl;
@@ -74,6 +68,7 @@ export function BrandHeader({ brand, className = "" }: { brand: PublicBrand; cla
       <div className="min-w-0">
         <p className="line-clamp-2 font-bold text-slate-900 [overflow-wrap:anywhere]">{brand.name}</p>
         {brand.specialty && <p className="truncate text-sm text-slate-500">{brand.specialty}</p>}
+        {extra && <p className="mt-0.5 truncate text-xs text-slate-400">{extra}</p>}
       </div>
     </div>
   );

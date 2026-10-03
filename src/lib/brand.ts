@@ -71,6 +71,29 @@ export async function loadPracticeBrand(supabase: SupabaseClient, professionalId
   return row ? toBrand(supabase, row) : null;
 }
 
+// What a public page shows (components/BrandHeader).
+export type PublicBrand = {
+  name: string; // title + display name, as shown
+  specialty: string;
+  accentColor: string | null;
+  logoUrl: string | null;
+  photoUrl: string | null;
+};
+
+// A practice brand (get_practice_brand) for a page patients see: only the
+// doctor's own 1.5.0 images, never a legacy one (the old profile photos
+// were never public; e7). null without a brand: the page stays as before.
+export function publicFromPractice(b: Brand | null, fallback: { name: string; specialty: string }): PublicBrand | null {
+  if (!b) return null;
+  return {
+    name: [b.title, b.displayName || fallback.name].map((s) => s.trim()).filter(Boolean).join(" "),
+    specialty: b.specialty.trim() || fallback.specialty,
+    accentColor: b.accentColor,
+    logoUrl: b.own.logo_square ? b.logoSquareUrl : null,
+    photoUrl: b.own.photo ? b.photoUrl : null,
+  };
+}
+
 export type BrandTextFields = { displayName: string; title: string; specialty: string; registrationLine: string; accentColor: string | null };
 
 // Saves the text fields and the accent ('' clears a field: the RPC stores
