@@ -1,4 +1,6 @@
 import { tint, type DocTemplate } from "@/lib/prescriptionDoc";
+import type { DocBrand } from "@/lib/brand";
+import { DocBrandHeader } from "@/components/DocBrandHeader";
 
 // The printed prescription (the app's PDF layout). React escapes every
 // typed text; colours and the logo come through lib/prescriptionDoc's
@@ -8,7 +10,7 @@ export type RxDocLabels = {
   dosage: string; frequency: string; duration: string; notes: string; footer: string; corrected: string;
 };
 
-export function PrescriptionDocument({ template, labels, patientName, patientAddress = "", date, corrected, items, notes, signerName, signerRegistration }: {
+export function PrescriptionDocument({ template, labels, patientName, patientAddress = "", date, corrected, items, notes, signerName, signerRegistration, brand = null }: {
   template: DocTemplate;
   labels: RxDocLabels;
   patientName: string;
@@ -20,17 +22,21 @@ export function PrescriptionDocument({ template, labels, patientName, patientAdd
   notes: string | null;
   signerName: string;
   signerRegistration: string | null;
+  // The doctor's brand block (1.5.0, behind the flag); null = as before.
+  brand?: DocBrand | null;
 }) {
   const { primaryColor, accentColor } = template;
   const label = "mb-1.5 text-[11px] uppercase tracking-[0.5px] text-[#A0ABBE]";
   return (
     <article id="print-doc" className="mx-auto max-w-[680px] bg-white p-10 text-[#1A2138]" style={{ fontFamily: "-apple-system, Helvetica, Arial, sans-serif" }}>
+      {brand && <DocBrandHeader brand={brand} />}
       <header className="mb-7 flex items-center justify-between pb-[18px]" style={{ borderBottom: `3px solid ${primaryColor}` }}>
         <div>
           <h1 className="mb-1 text-[22px] font-extrabold" style={{ color: primaryColor }}>{labels.title}</h1>
           <p className="text-[13px] text-[#6B7A99]">{template.headerText ?? patientName}</p>
         </div>
-        {template.logoUrl && (
+        {/* With the doctor's brand the logo is in the brand block above. */}
+        {!brand && template.logoUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={template.logoUrl} alt="" className="h-12 max-w-[160px] object-contain" />
         )}

@@ -1,4 +1,6 @@
 import { tint, type DocTemplate } from "@/lib/prescriptionDoc";
+import type { DocBrand } from "@/lib/brand";
+import { DocBrandHeader } from "@/components/DocBrandHeader";
 
 // The printed recibo (Help G5), laid out like the app's (lib/pdf-utils
 // buildInvoiceHtml): the patient and their ID, the recibo number and date,
@@ -15,7 +17,7 @@ export type ReceiptLabels = {
 // Portuguese whatever the UI language.
 export const RECEITA_SAUDE_NOTE = "Este recibo é um comprovante de pagamento. Para dedução no Imposto de Renda, o profissional pessoa física emite o recibo oficial pelo app Receita Saúde.";
 
-export function ReceiptDocument({ template, labels, patientName, idLines, number, date, provider, clinic, address, service, serviceDetail, amount, extras, total, privatePay, paid, note }: {
+export function ReceiptDocument({ template, labels, patientName, idLines, number, date, provider, clinic, address, service, serviceDetail, amount, extras, total, privatePay, paid, note, brand = null }: {
   template: DocTemplate;
   labels: ReceiptLabels;
   patientName: string;
@@ -33,17 +35,21 @@ export function ReceiptDocument({ template, labels, patientName, idLines, number
   privatePay: boolean;
   paid: boolean;
   note?: string | null;
+  // The doctor's brand block (1.5.0, behind the flag); null = as before.
+  brand?: DocBrand | null;
 }) {
   const { primaryColor, accentColor } = template;
   const label = "mb-1.5 text-[11px] uppercase tracking-[0.5px] text-[#A0ABBE]";
   return (
     <article id="print-doc" className="mx-auto max-w-[680px] bg-white p-10 text-[#1A2138]" style={{ fontFamily: "-apple-system, Helvetica, Arial, sans-serif" }}>
+      {brand && <DocBrandHeader brand={brand} />}
       <header className="mb-7 flex items-center justify-between pb-[18px]" style={{ borderBottom: `3px solid ${primaryColor}` }}>
         <div>
           <h1 className="mb-1 text-[22px] font-extrabold" style={{ color: primaryColor }}>{labels.title}</h1>
           <p className="text-[13px] text-[#6B7A99]">{template.headerText ?? provider}</p>
         </div>
-        {template.logoUrl && (
+        {/* With the doctor's brand the logo is in the brand block above. */}
+        {!brand && template.logoUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={template.logoUrl} alt="" className="h-12 max-w-[160px] object-contain" />
         )}

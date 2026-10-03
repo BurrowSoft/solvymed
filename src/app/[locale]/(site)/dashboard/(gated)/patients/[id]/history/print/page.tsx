@@ -3,6 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { PRINT_CSS, docDate, docTime, docToday, toDocTemplate } from "@/lib/prescriptionDoc";
+import { liveFeatures } from "@/lib/liveFeatures";
+import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { countryProfile } from "@/lib/country";
 import { getClinicTimeZone } from "@/lib/clinicTime";
@@ -87,6 +89,10 @@ export default async function HistoryPrintPage({
   const prof = profResult.data as { full_name: string | null; clinic_name: string | null; professional_registration: string | null } | null;
   const timeZone = await getClinicTimeZone(supabase, { professionalId: user.id, isSecretary: false });
   const today = docToday(country, timeZone);
+  // The doctor's brand (1.5.0, behind the flag): the colour, logo and
+  // header block, as the app's PDF; the signature stays the legal identity.
+  const brand = liveFeatures.myBrand ? await loadPracticeBrand(supabase, user.id) : null;
+  const baseTemplate = toDocTemplate(templateResult.data as Row | null);
 
   return (
     <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
@@ -94,7 +100,8 @@ export default async function HistoryPrintPage({
       <PrintToolbar backHref={`${prefix}/dashboard/patients/${id}`} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">
         <HistoryDocument
-          template={toDocTemplate(templateResult.data as Row | null)}
+          template={brandedDocTemplate(baseTemplate, brand)}
+          brand={docBrand(baseTemplate, brand)}
           labels={{
             title: t("historyTitle"), medicalRecords: t("medicalRecords"), prescriptions: t("prescriptions"),
             noRecords: t("noRecords"), noPrescriptions: t("noPrescriptions"),
