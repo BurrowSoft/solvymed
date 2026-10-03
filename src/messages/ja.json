@@ -1554,7 +1554,7 @@
     "emailWaitlist": "現在 {system} の枠は満員のため、キャンセル待ちに登録されています。",
     "emailNoFiles": "まだファイルは送らないでください。採用された場合、テスト用エクスポートの作成方法をご説明します。",
     "emailSign": "SolvyMed チーム",
-    "emailTagline": "クリニック管理をシンプルに",
+    "emailTagline": "Your practice, your brand.",
     "emailHelloTitled": "{title} {name} 様",
     "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
@@ -1882,5 +1882,10 @@
   },
   "autoRefresh": {
     "refresh": "更新"
+  },
+  "siteMeta": {
+    "title": "SolvyMed — Software for medical practices",
+    "description": "SolvyMed is the all-in-one app for healthcare professionals: smart scheduling, patient records, prescriptions and integrated payments, all in one place.",
+    "socialDescription": "Your practice, your brand. The all-in-one app for healthcare professionals: scheduling, patient records, prescriptions and payments."
   }
 }

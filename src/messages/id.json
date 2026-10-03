@@ -1554,7 +1554,7 @@
     "emailWaitlist": "Tempat untuk {system} saat ini sudah penuh, jadi Anda masuk daftar tunggu.",
     "emailNoFiles": "Mohon jangan kirim file apa pun dulu; jika Anda diterima, kami akan menjelaskan cara membuat ekspor uji.",
     "emailSign": "Tim SolvyMed",
-    "emailTagline": "Manajemen klinik jadi mudah",
+    "emailTagline": "Your practice, your brand.",
     "emailHelloTitled": "Halo {title} {name},",
     "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
@@ -1882,5 +1882,10 @@
   },
   "autoRefresh": {
     "refresh": "Muat ulang"
+  },
+  "siteMeta": {
+    "title": "SolvyMed — Software for medical practices",
+    "description": "SolvyMed is the all-in-one app for healthcare professionals: smart scheduling, patient records, prescriptions and integrated payments, all in one place.",
+    "socialDescription": "Your practice, your brand. The all-in-one app for healthcare professionals: scheduling, patient records, prescriptions and payments."
   }
 }

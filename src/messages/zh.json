@@ -1554,7 +1554,7 @@
     "emailWaitlist": "{system} 的名额目前已满,您已进入候补名单。",
     "emailNoFiles": "请暂时不要发送任何文件;如果您被录取,我们会说明如何创建测试导出文件。",
     "emailSign": "SolvyMed 团队",
-    "emailTagline": "诊所管理，化繁为简",
+    "emailTagline": "Your practice, your brand.",
     "emailHelloTitled": "{title} {name},您好:",
     "countryOnly": "For now, the Founders program is only for clinics in Brazil and Thailand."
   },
@@ -1882,5 +1882,10 @@
   },
   "autoRefresh": {
     "refresh": "刷新"
+  },
+  "siteMeta": {
+    "title": "SolvyMed — Software for medical practices",
+    "description": "SolvyMed is the all-in-one app for healthcare professionals: smart scheduling, patient records, prescriptions and integrated payments, all in one place.",
+    "socialDescription": "Your practice, your brand. The all-in-one app for healthcare professionals: scheduling, patient records, prescriptions and payments."
   }
 }

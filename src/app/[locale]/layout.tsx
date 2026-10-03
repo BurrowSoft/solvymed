@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import localFont from "next/font/local";
 import { ConsentBanner } from "@/components/ConsentBanner";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { isPublicLocale, publicLocales } from "@/lib/publicLocales";
 import { pickMessages } from "@/lib/pickMessages";
@@ -59,14 +59,16 @@ export async function generateMetadata({
   );
   languages["x-default"] = `${BASE}/`;
 
+  // In the page's language (e7, 3 Oct): a descriptive title for search, and
+  // the slogan ("Your practice, your brand.") first in the share previews.
+  const t = await getTranslations({ locale, namespace: "siteMeta" });
   return {
     metadataBase: new URL(BASE),
     title: {
-      default: "Solvymed — Medical Practice Management",
-      template: "%s | Solvymed",
+      default: t("title"),
+      template: "%s | SolvyMed",
     },
-    description:
-      "Solvymed is the all-in-one practice management app for healthcare professionals. Smart scheduling, patient records, prescriptions, and integrated payments — all in one place.",
+    description: t("description"),
     keywords: [
       "medical practice management",
       "appointment scheduling",
@@ -81,14 +83,14 @@ export async function generateMetadata({
       type: "website",
       locale: locale.replace("-", "_"),
       url: canonical,
-      siteName: "Solvymed",
-      title: "Solvymed — Medical Practice Management",
-      description: "The all-in-one practice management app for healthcare professionals.",
+      siteName: "SolvyMed",
+      title: t("title"),
+      description: t("socialDescription"),
     },
     twitter: {
       card: "summary_large_image",
-      title: "Solvymed — Medical Practice Management",
-      description: "The all-in-one practice management app for healthcare professionals.",
+      title: t("title"),
+      description: t("socialDescription"),
     },
     // A hidden language (Thai before its release) is reachable but not indexed.
     robots: isPublicLocale(locale) ? { index: true, follow: true } : { index: false, follow: false },

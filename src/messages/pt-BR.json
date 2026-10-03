@@ -1554,7 +1554,7 @@
     "emailWaitlist": "As vagas para {system} estão preenchidas no momento, então você está na lista de espera.",
     "emailNoFiles": "Por favor, não envie arquivos ainda: se você for aceito, explicamos como criar uma exportação de teste.",
     "emailSign": "Equipe SolvyMed",
-    "emailTagline": "Gestão de clínica simplificada",
+    "emailTagline": "Seu consultório, sua marca.",
     "emailHelloTitled": "Olá, {title} {name}!",
     "countryOnly": "Por enquanto, o programa Founders é só para clínicas no Brasil e na Tailândia."
   },
@@ -1882,5 +1882,10 @@
   },
   "autoRefresh": {
     "refresh": "Atualizar"
+  },
+  "siteMeta": {
+    "title": "SolvyMed — Software para consultórios",
+    "description": "O SolvyMed é o app completo para profissionais de saúde: agenda inteligente, prontuários, receitas e pagamentos integrados, tudo em um só lugar.",
+    "socialDescription": "Seu consultório, sua marca. O app completo para profissionais de saúde: agenda, prontuários, receitas e pagamentos."
   }
 }
