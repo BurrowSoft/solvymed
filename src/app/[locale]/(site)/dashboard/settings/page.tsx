@@ -212,6 +212,7 @@ export default async function SettingsPage({
           <BrandCard
             uid={user.id}
             brand={brand}
+            country={practiceCountry}
             fallback={{
               fullName: prof.full_name ?? "",
               specialty: prof.specialty ?? "",

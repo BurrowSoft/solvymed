@@ -3,9 +3,10 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
 
-// Configurações → Minha marca (1.5.0, behind liveFeatures.myBrand): the
-// fields go to save_my_brand; a logo upload makes two versions, each staged
-// then published by the brand-asset function; Remover only for own images.
+// Configurações → Minha marca (1.5.0, behind liveFeatures.myBrand; e7's
+// screen): the fields go to save_my_brand; the square logo, the wide logo
+// and the photo are separate uploads, each staged then published by the
+// brand-asset function; Remover (after a confirmation) only for own images.
 
 const h = vi.hoisted(() => ({
   rpc: vi.fn(),
@@ -62,7 +63,7 @@ describe("Minha marca", () => {
   });
 
   it("the default blue is saved as no colour (the app's default)", async () => {
-    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: "#dc2626", logoSquareUrl: null, logoWideUrl: null, photoUrl: null, own: { logo: false, photo: false } });
+    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: "#dc2626", logoSquareUrl: null, logoWideUrl: null, photoUrl: null, own: { logo_square: false, logo_wide: false, photo: false } });
     fireEvent.click(screen.getByRole("radio", { name: "#116e99" }));
     fireEvent.click(screen.getByRole("button", { name: t.save }));
     await waitFor(() => expect(h.rpc).toHaveBeenCalled());
@@ -73,7 +74,7 @@ describe("Minha marca", () => {
     show();
     expect(screen.queryByTestId("accent-adjusted")).toBeNull();
     fireEvent.change(screen.getByLabelText(t.accentCustom), { target: { value: "#ffff00" } });
-    expect(screen.getByTestId("accent-adjusted")).toHaveTextContent("#7a7a00");
+    expect(screen.getByTestId("accent-adjusted")).toHaveTextContent(t.accentAdjusted);
   });
 
   it("the preview shows the profile's name and specialty when fields are empty", () => {
@@ -83,17 +84,22 @@ describe("Minha marca", () => {
     expect(screen.getByTestId("brand-preview-light")).toHaveTextContent("AS");
   });
 
-  it("a logo upload publishes a square and a wide version via staging", async () => {
+  it.each([["brand-logo-square", "logo_square"], ["brand-logo-wide", "logo_wide"], ["brand-photo", "photo"]])(
+    "%s: one upload, staged then published as %s",
+    async (testid, kind) => {
+      show();
+      const input = screen.getByTestId(testid).querySelector("input[type=file]") as HTMLInputElement;
+      fireEvent.change(input, { target: { files: [new File(["x"], "img.png", { type: "image/png" })] } });
+      await waitFor(() => expect(h.refresh).toHaveBeenCalled());
+      expect(h.upload).toHaveBeenCalledTimes(1);
+      expect(h.upload.mock.calls[0][0]).toMatch(/^u-1\/[0-9a-f-]+\.png$/);
+      expect(h.invoke).toHaveBeenCalledWith("brand-asset", { body: { action: "publish", kind, staging_path: h.upload.mock.calls[0][0] } });
+    },
+  );
+
+  it("the 8 presets (e7, the same as the app)", () => {
     show();
-    const input = screen.getByTestId("brand-logo").querySelector("input[type=file]") as HTMLInputElement;
-    fireEvent.change(input, { target: { files: [new File(["x"], "logo.png", { type: "image/png" })] } });
-    await waitFor(() => expect(h.refresh).toHaveBeenCalled());
-    expect(h.upload).toHaveBeenCalledTimes(2);
-    expect(h.upload.mock.calls[0][0]).toMatch(/^u-1\/[0-9a-f-]+\.png$/);
-    const kinds = h.invoke.mock.calls.map((c) => c[1].body.kind);
-    expect(kinds).toEqual(["logo_square", "logo_wide"]);
-    expect(h.invoke.mock.calls[0][0]).toBe("brand-asset");
-    expect(h.invoke.mock.calls[0][1].body).toMatchObject({ action: "publish", staging_path: h.upload.mock.calls[0][0] });
+    expect(screen.getAllByRole("radio").map((r) => r.getAttribute("aria-label"))).toEqual(["#116e99", "#0d9488", "#7c3aed", "#db2777", "#dc2626", "#ea580c", "#16a34a", "#334155"]);
   });
 
   it("a non-image is refused before any upload", async () => {
@@ -105,7 +111,7 @@ describe("Minha marca", () => {
   });
 
   it("Remover asks first; Cancelar keeps the image, Remover removes it", async () => {
-    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: null, logoSquareUrl: null, logoWideUrl: null, photoUrl: "https://x/p.png", own: { logo: false, photo: true } });
+    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: null, logoSquareUrl: null, logoWideUrl: null, photoUrl: "https://x/p.png", own: { logo_square: false, logo_wide: false, photo: true } });
     const photo = screen.getByTestId("brand-photo");
     fireEvent.click(within(photo).getByRole("button", { name: t.remove }));
     expect(screen.getByTestId("brand-photo-remove")).toHaveTextContent(t.removeTitle);
@@ -120,7 +126,7 @@ describe("Minha marca", () => {
   it("over 5 MB is refused before any upload", async () => {
     show();
     const big = new File([new Uint8Array(5 * 1024 * 1024 + 1)], "big.png", { type: "image/png" });
-    fireEvent.change(screen.getByTestId("brand-logo").querySelector("input[type=file]")!, { target: { files: [big] } });
+    fireEvent.change(screen.getByTestId("brand-logo-square").querySelector("input[type=file]")!, { target: { files: [big] } });
     expect(await screen.findByRole("alert")).toHaveTextContent(t.tooLarge);
     expect(h.upload).not.toHaveBeenCalled();
   });
@@ -133,8 +139,8 @@ describe("Minha marca", () => {
   });
 
   it("Remover only for the doctor's own images (not a legacy one)", () => {
-    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: null, logoSquareUrl: "https://x/legacy.png", logoWideUrl: null, photoUrl: "https://x/p.png", own: { logo: false, photo: true } });
-    expect(screen.getByTestId("brand-logo")).not.toHaveTextContent(t.remove);
+    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: null, logoSquareUrl: "https://x/legacy.png", logoWideUrl: null, photoUrl: "https://x/p.png", own: { logo_square: false, logo_wide: false, photo: true } });
+    expect(screen.getByTestId("brand-logo-square")).not.toHaveTextContent(t.remove);
     expect(screen.getByTestId("brand-photo")).toHaveTextContent(t.remove);
   });
 });

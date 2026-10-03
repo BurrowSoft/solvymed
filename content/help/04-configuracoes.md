@@ -139,15 +139,15 @@ Upload CSV, XLSX, XLS or ZIP, up to 20 MB per file and up to 20 files. Before ea
 
 ## C11. Minha marca / My brand
 **pt-BR**
-Em **Configurações → Minha marca**, escolha como os pacientes veem você: o nome, o título (Dr., Dra.), a especialidade, a linha do registro, uma cor, o seu logo e uma foto.
+Em **Configurações → Minha marca**, escolha como os pacientes veem você: **Nome de exibição**, **Título**, **Especialidade**, **Registro profissional**, **Cor da marca**, **Logo (quadrado)**, **Logo horizontal (documentos)** e **Foto**.
 Campos vazios usam o nome, a especialidade e o registro do seu perfil. Sem logo, aparecem as suas iniciais na sua cor; sem cor, o azul do SolvyMed.
-Envie o logo em PNG ou JPG: criamos uma versão quadrada e uma larga, sempre com o logo inteiro. A foto é opcional.
+Envie cada imagem em PNG ou JPG, com até 5 MB e no máximo 4096 px de lado: o logo quadrado, o logo horizontal (usado nos documentos) e, se quiser, uma foto. O logo inteiro é sempre mantido. **Remover** pede confirmação.
 Se a cor escolhida for clara ou escura demais para ler um texto, ela é ajustada só na exibição, e a prévia mostra como fica.
 A sua marca aparece na sua página de agendamento e no seu link de convite público, nos e-mails aos pacientes e nos documentos impressos (receitas, recibos, histórico). O logo e a foto são públicos, porque os pacientes os veem nessas páginas.
 **en**
-In **Settings → My brand**, choose how patients see you: the name, title (Dr., Dra.), specialty, registration line, a colour, your logo and a photo.
+In **Settings → My brand**, choose how patients see you: **Display name**, **Title**, **Specialty**, **Professional registration**, **Brand colour**, **Logo (square)**, **Wide logo (documents)** and **Photo**.
 Empty fields use your profile's name, specialty and registration. With no logo, your initials show in your colour; with no colour, SolvyMed's blue.
-Upload the logo as PNG or JPG: we make a square and a wide version, always with the whole logo. The photo is optional.
+Upload each image as PNG or JPG, up to 5 MB and at most 4096 px per side: the square logo, the wide logo (used on documents) and, if you like, a photo. The whole logo is always kept. **Remove** asks for confirmation.
 If the colour you choose is too light or too dark for text, it's adjusted only where it's shown, and the preview shows how it looks.
 Your brand shows on your booking page and your public invite link, in emails to patients and on printed documents (prescriptions, receipts, history). The logo and photo are public, because patients see them on those pages.
 `open:settings`

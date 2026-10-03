@@ -1,6 +1,7 @@
 // Brand images are prepared in the browser before upload (1.5.0 design §1,
-// sizes agreed with the app): from ONE logo upload, a square 512×512 and a
-// wide 1200×400 version; the photo 800×800. A logo is fitted whole on a
+// sizes agreed with the app): the square logo 512×512, the wide logo (for
+// documents) 1200×400, the photo 800×800, each its own upload (e7's
+// screen). A logo is fitted whole on a
 // transparent background (never cropped: it's the doctor's mark); a photo
 // is centre-cropped to fill. The server (the brand-asset function)
 // re-encodes and stores; this only shapes and resizes.
