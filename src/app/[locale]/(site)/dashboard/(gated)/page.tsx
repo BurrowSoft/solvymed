@@ -16,6 +16,8 @@ import { InvitedPatientsCard } from "./InvitedPatientsCard";
 import { greetingFirstName } from "@/lib/doctorName";
 import { dateLocale, formatDateLabel } from "@/lib/dateLabels";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
+import { liveFeatures } from "@/lib/liveFeatures";
+import { MassMessageButton } from "./MassMessageButton";
 
 
 function statusBadge(status: string) {
@@ -173,9 +175,13 @@ export default async function DashboardPage({
             {todayFormatted}{professional?.specialty ? ` · ${professional.specialty}` : ""}
           </p>
         </div>
-        <Link href={`${prefix}/dashboard/schedule`} data-tour="new-appointment" className="shrink-0 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition hidden sm:block">
-          {t("newAppt")}
-        </Link>
+        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+          {/* The doctor's broadcast (1.6.0, behind the flag); never a secretary. */}
+          {!isSecretary && liveFeatures.broadcast && <MassMessageButton />}
+          <Link href={`${prefix}/dashboard/schedule`} data-tour="new-appointment" className="shrink-0 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition hidden sm:block">
+            {t("newAppt")}
+          </Link>
+        </div>
       </div>
 
       {/* First-run: the doctor's setup checklist, or a secretary's one-time welcome */}
