@@ -78,6 +78,7 @@ export function DoctorTimePicker({
       <input type="hidden" name={dateName} value={date} />
       <input type="hidden" name={startName} value={start} />
       <MonthCalendar
+        calendar={countryProfile(day?.country).calendar}
         days={[date]}
         selected={date}
         onSelect={(d) => { setDate(d); }}

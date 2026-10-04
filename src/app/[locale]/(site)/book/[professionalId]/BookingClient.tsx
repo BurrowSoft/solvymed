@@ -623,6 +623,7 @@ export function BookingClient({
                   onSelect={setSelectedDate}
                   isOpen={(d) => loadingHours || openDay(d)}
                   locale={locale}
+                  calendar={profileOfKind(idKind).calendar}
                   labels={{ prev: t("prevMonth"), next: t("nextMonth") }}
                 />
               )}
@@ -788,7 +789,7 @@ export function BookingClient({
             {/* The chosen time, always visible above the button (item 10). */}
             {selectedSlot && selectedDate && (
               <p data-testid="chosen-time" className="rounded-xl bg-teal-50 px-4 py-3 text-sm font-semibold text-teal-800">
-                {t("chosenTime", chosenTimeParts(selectedDate, selectedSlot.start, selectedSlot.end, profileOfKind(idKind)))}
+                {t("chosenTime", chosenTimeParts(selectedDate, selectedSlot.start, selectedSlot.end, profileOfKind(idKind), locale))}
               </p>
             )}
 
