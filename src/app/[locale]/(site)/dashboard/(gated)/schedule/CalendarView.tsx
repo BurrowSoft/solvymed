@@ -10,8 +10,9 @@ import { toLocalDateString } from "@/lib/slots";
 import { formatMoney } from "@/lib/money";
 import { hasAmount, showsPayment } from "@/lib/paymentRules";
 import type { Currency } from "@/lib/country";
-import { dateLocale, plainSpaces } from "@/lib/dateLabels";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
+import { dateLocale, formatDateLabel, formatDateRangeLabel, plainSpaces, type DateCalendar } from "@/lib/dateLabels";
+import { usePracticeCalendar } from "@/components/PracticeCalendar";
 
 export type CalendarAppt = {
   id: string;
@@ -48,16 +49,11 @@ export function weekdayLabels(locale: string): string[] {
 // The calendar header: a day, a Monday–Sunday range, or a month, localized.
 // Spaces are normalized: server (Node) and browser ICU differ there, e.g.
 // thin spaces around the range's en dash (React #418 on the week view).
-export function calendarHeaderLabel(locale: string, view: "day" | "week" | "month", currentDate: string, weekDays: string[]): string {
-  const at = (d: string) => new Date(d + "T12:00:00Z");
-  if (view === "day") {
-    return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale), { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(at(currentDate)));
-  }
-  if (view === "week") {
-    return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale), { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
-      .formatRange(at(weekDays[0]), at(weekDays[6])));
-  }
-  return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale), { month: "long", year: "numeric", timeZone: "UTC" }).format(at(currentDate)));
+// calendar: the practice's (UX 5 Oct), never with an era.
+export function calendarHeaderLabel(locale: string, view: "day" | "week" | "month", currentDate: string, weekDays: string[], calendar?: DateCalendar): string {
+  if (view === "day") return formatDateLabel(locale, currentDate, { weekday: "long", month: "long", day: "numeric", year: "numeric" }, calendar);
+  if (view === "week") return formatDateRangeLabel(locale, weekDays[0], weekDays[6], { month: "short", day: "numeric", year: "numeric" }, calendar);
+  return formatDateLabel(locale, currentDate, { month: "long", year: "numeric" }, calendar);
 }
 
 // Every Date here is a local calendar day, so it's formatted with local
@@ -354,7 +350,7 @@ export function CalendarView({
     else { const d = new Date(currentDate + "T12:00:00"); d.setMonth(d.getMonth() + 1); go(isoDate(d)); }
   }
 
-  const headerLabel = calendarHeaderLabel(locale, view, currentDate, getWeekDays(currentDate));
+  const headerLabel = calendarHeaderLabel(locale, view, currentDate, getWeekDays(currentDate), usePracticeCalendar());
 
   return (
     <div>

@@ -17,6 +17,7 @@ import { addressLine, type AddressColumns } from "@/lib/patientAddress";
 import { profileOfKind } from "@/lib/country";
 import { hasAmount } from "@/lib/paymentRules";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
+import { usePracticeCalendar } from "@/components/PracticeCalendar";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -181,6 +182,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
   locale: string;
 }) {
   const t = useTranslations("patientDetail");
+  const practiceCalendar = usePracticeCalendar();
   const [rows, setRows] = useState<AccessLogRow[]>(initial === "failed" ? [] : initial.rows);
   const [hasMore, setHasMore] = useState(initial !== "failed" && initial.hasMore);
   const [failed, setFailed] = useState(initial === "failed");
@@ -207,11 +209,11 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
       const label = r.kind === "exam" ? t("accessKindExam") : t("accessKindRecord");
       if (!rec) return label;
       const type = rec.record_type && rec.record_type !== "free_text" ? ` · ${rec.record_type.replace("_", " ")}` : "";
-      return `${label}${type} · ${formatDateLabel(locale, rec.date, { year: "numeric", month: "short", day: "numeric" })}`;
+      return `${label}${type} · ${formatDateLabel(locale, rec.date, { year: "numeric", month: "short", day: "numeric" }, practiceCalendar)}`;
     }
     if (r.kind === "prescription") {
       const rx = prescriptions.find((x) => x.id === r.objectRef);
-      return rx ? `${t("accessKindPrescription")} · ${formatDateLabel(locale, rx.date, { year: "numeric", month: "short", day: "numeric" })}` : t("accessKindPrescription");
+      return rx ? `${t("accessKindPrescription")} · ${formatDateLabel(locale, rx.date, { year: "numeric", month: "short", day: "numeric" }, practiceCalendar)}` : t("accessKindPrescription");
     }
     if (r.kind === "file") {
       const name = fileNameFromRef(r.objectRef);
@@ -666,6 +668,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale }: {
   patientId: string; records: MedRecord[]; isArchived: boolean; currentUserId: string; locale: string;
 }) {
   const t = useTranslations("patientDetail");
+  const practiceCalendar = usePracticeCalendar();
   const errorText = useClinicalErrorText();
   const [dialog, setDialog] = useState<RecordDialog | null>(null);
   const [pending, startTransition] = useTransition();
@@ -708,7 +711,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale }: {
         <div className="mb-2 flex items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
-            <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, r.date)} {r.time?.slice(0, 5)}</span>
+            <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, r.date, practiceCalendar)} {r.time?.slice(0, 5)}</span>
             {r.record_type && r.record_type !== "free_text" && (
               <span className="rounded-full bg-teal-50 px-2 py-0.5 text-xs font-semibold text-teal-700 capitalize">{r.record_type.replace("_", " ")}</span>
             )}
@@ -803,6 +806,7 @@ function PrescriptionsTab({ patientId, prescriptions, isArchived, currentUserId,
   patientId: string; prescriptions: Rx[]; isArchived: boolean; currentUserId: string; locale: string;
 }) {
   const t = useTranslations("patientDetail");
+  const practiceCalendar = usePracticeCalendar();
   const errorText = useClinicalErrorText();
   const [dialog, setDialog] = useState<RxDialog | null>(null);
   const [pending, startTransition] = useTransition();
@@ -851,7 +855,7 @@ function PrescriptionsTab({ patientId, prescriptions, isArchived, currentUserId,
         <div className="mb-3 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
-            <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, rx.date)}</span>
+            <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, rx.date, practiceCalendar)}</span>
           </div>
           <div className="flex items-center gap-1">
             {/* The print view (Help P6): "Imprimir / Salvar PDF" there. */}
