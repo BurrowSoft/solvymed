@@ -1861,6 +1861,7 @@
     "unavailableArticles": "SolvyAI sedang tidak tersedia. Artikel ini mungkin membantu:",
     "unavailableLater": "SolvyAI sedang tidak tersedia. Coba lagi nanti.",
     "couldntFinish": "Saya tidak bisa menyelesaikannya. Bisa katakan dengan cara lain, dengan nama pasien, tanggal, dan jam?",
+    "couldntAnswer": "I couldn't finish that answer. Try asking another way.",
     "onlySolvyMed": "Saya hanya bisa membantu soal SolvyMed.",
     "noClinical": "Saya tidak bisa membantu soal klinis.",
     "minutes": "{n} menit",

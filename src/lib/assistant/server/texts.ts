@@ -90,7 +90,7 @@ function textsFrom(locale: string, messages: typeof en) {
       labelMap: labelMap(locale, messages),
       buttons: [as("confirm"), as("undo", { s: 5 }), as("openItem")].map((b) => b.replace(/\s*✓\s*$/, "").replace(/\s*[(（].*$/, "")),
     } satisfies ReplyTexts,
-    unavailableArticles: s("unavailableArticles"), unavailableLater: s("unavailableLater"), couldntFinish: s("couldntFinish"),
+    unavailableArticles: s("unavailableArticles"), unavailableLater: s("unavailableLater"), couldntFinish: s("couldntFinish"), couldntAnswer: s("couldntAnswer"),
     // A time chip exactly as the client sends it when tapped (SolvyAi.tsx
     // SlotChoiceView: assistant.chipAt with the long date).
     chipAt: (date: string, time: string) =>
