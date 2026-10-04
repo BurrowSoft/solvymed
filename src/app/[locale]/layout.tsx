@@ -7,6 +7,7 @@ import { getMessages, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { isPublicLocale, publicLocales } from "@/lib/publicLocales";
 import { pickMessages } from "@/lib/pickMessages";
+import { ogImages } from "@/lib/ogImage";
 import "../globals.css";
 
 // Self-hosted (src/app/fonts: the official Google Fonts files, OFL licences
@@ -86,11 +87,14 @@ export async function generateMetadata({
       siteName: "SolvyMed",
       title: t("title"),
       description: t("socialDescription"),
+      // The brand kit's blue banner with the slogan in the page's language.
+      images: ogImages(locale, t("title")).openGraph,
     },
     twitter: {
       card: "summary_large_image",
       title: t("title"),
       description: t("socialDescription"),
+      images: ogImages(locale, t("title")).twitter,
     },
     // A hidden language (Thai before its release) is reachable but not indexed.
     robots: isPublicLocale(locale) ? { index: true, follow: true } : { index: false, follow: false },

@@ -5,11 +5,12 @@
 import type { Metadata } from "next";
 import type { Attribution } from "./attribution";
 import { publicLocales } from "./publicLocales";
+import { ogImages } from "./ogImage";
 
 // The share preview of the Founders pages (/founders and its rules): the
-// brand kit's blue banner (UX, 1 Oct). A page-level openGraph/twitter
-// replaces the layout's whole object, so the site-wide fields are repeated.
-export const FOUNDERS_OG_IMAGE = "/og/solvymed-og-share-blue.png";
+// brand kit's blue banner in the page's language (lib/ogImage). A
+// page-level openGraph/twitter replaces the layout's whole object, so the
+// site-wide fields are repeated.
 // The public URL of a Founders page (canonical and share links): English
 // has no locale prefix. sub: "" (the page) or "/rules".
 export function foundersUrl(locale: string, sub = ""): string {
@@ -23,6 +24,7 @@ export function foundersAlternates(locale: string, sub = ""): NonNullable<Metada
   return { canonical: foundersUrl(locale, sub), languages };
 }
 export function foundersShareMeta(a: { locale: string; url: string; title: string; description: string }): Pick<Metadata, "openGraph" | "twitter"> {
+  const images = ogImages(a.locale, a.title);
   return {
     openGraph: {
       type: "website",
@@ -31,9 +33,9 @@ export function foundersShareMeta(a: { locale: string; url: string; title: strin
       url: a.url,
       title: a.title,
       description: a.description,
-      images: [{ url: FOUNDERS_OG_IMAGE, width: 1200, height: 630, alt: a.title }],
+      images: images.openGraph,
     },
-    twitter: { card: "summary_large_image", title: a.title, description: a.description, images: [FOUNDERS_OG_IMAGE] },
+    twitter: { card: "summary_large_image", title: a.title, description: a.description, images: images.twitter },
   };
 }
 
