@@ -73,7 +73,7 @@ describe("Minhas Consultas says who", () => {
     render(
       <NextIntlClientProvider locale="pt-BR" messages={pt}>
         <MyAppointmentsClient upcoming={[]} past={[]} userEmail="p@x.co" myProfessionalId="doc-1"
-          myProfessionalMeta={{ name: "Ana Um", specialty: "", clinicName: null }}
+          myProfessionalMeta={{ name: "Ana Um", specialty: "", clinicName: "" }}
           doctors={[{ id: "doc-1", name: "Dra. Ana Um", specialty: "", accentColor: null, logoUrl: null, photoUrl: null, isPrimary: true, acceptsBookings: true }]} />
       </NextIntlClientProvider>,
     );
