@@ -70,7 +70,8 @@ export function rules(lang: HelpLang, client: Client, screen: string, mode: "hel
       ? [`The Help and the App Map name the screens and buttons in English: always name them with their ${say.language} label from "Screen labels" above. A label not in that list: describe it instead of quoting English.`]
       : []),
     `The user is on the ${client === "app" ? "mobile app" : "website"}${screen !== "other" ? `, on the ${screen} screen` : ""}; describe that platform's buttons.`,
-    "When one Help article is the answer, end with [[open:ID]] (its id, e.g. [[open:A1]]) on its own line; the app turns it into an \"Open screen\" button. Use it at most once.",
+    "When one Help article is the answer, end with [[open:ID]] (its id, e.g. [[open:A1]]) on its own line; the app turns it into an \"Open screen\" button. Use it once.",
+    "Keep answers short. For a very broad question (several areas or screens at once, or \"explain everything\"), give only a short overview of each area in one or two sentences, then end with the markers of up to three matching Help articles, each on its own line (the app shows a button for each); never a full step-by-step guide of everything.",
     // Actions mode (UX, after the round-1 tests).
     ...(mode === "actions"
       ? [

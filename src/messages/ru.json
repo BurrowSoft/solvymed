@@ -1862,6 +1862,7 @@
     "unavailableLater": "SolvyAI временно недоступен. Попробуйте позже.",
     "couldntFinish": "Не получилось. Скажите иначе, с именем пациента, датой и временем?",
     "couldntAnswer": "I couldn't finish that answer. Try asking another way.",
+    "seeFullArticle": "See the full article in Help.",
     "onlySolvyMed": "Я могу помочь только с SolvyMed.",
     "noClinical": "Я не могу помочь с клиническими вопросами.",
     "minutes": "{n} мин",

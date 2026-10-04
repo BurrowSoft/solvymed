@@ -1862,6 +1862,7 @@
     "unavailableLater": "SolvyAIは一時的に利用できません。後でもう一度お試しください。",
     "couldntFinish": "完了できませんでした。患者名・日付・時刻を添えて、別の言い方で教えてください。",
     "couldntAnswer": "I couldn't finish that answer. Try asking another way.",
+    "seeFullArticle": "See the full article in Help.",
     "onlySolvyMed": "SolvyMedに関することのみお手伝いできます。",
     "noClinical": "臨床的な質問にはお答えできません。",
     "minutes": "{n}分",

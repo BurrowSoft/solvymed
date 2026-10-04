@@ -1862,6 +1862,7 @@
     "unavailableLater": "SolvyAI 暂时不可用。请稍后再试。",
     "couldntFinish": "没能完成。能换个说法，并附上患者姓名、日期和时间吗？",
     "couldntAnswer": "I couldn't finish that answer. Try asking another way.",
+    "seeFullArticle": "See the full article in Help.",
     "onlySolvyMed": "我只能帮助处理 SolvyMed 相关问题。",
     "noClinical": "我无法回答临床问题。",
     "minutes": "{n} 分钟",

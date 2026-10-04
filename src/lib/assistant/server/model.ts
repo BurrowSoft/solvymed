@@ -14,7 +14,10 @@ export type ContentBlock =
   | { type: "text"; text: string }
   | { type: "tool_use"; id: string; name: string; input: Record<string, unknown> }
   | { type: "tool_result"; tool_use_id: string; content: string; is_error?: boolean };
-export type ModelMessage = { role: "user" | "assistant"; content: string | ContentBlock[] };
+// RawBlock: an assistant turn sent back exactly as the model returned it
+// (thinking blocks included).
+export type RawBlock = { type: string; [key: string]: unknown };
+export type ModelMessage = { role: "user" | "assistant"; content: string | (ContentBlock | RawBlock)[] };
 export type ModelRequest = {
   // The long, stable part (cached) and the short per-request part.
   cachedSystem: string;
@@ -29,7 +32,10 @@ export type ModelEvent =
   | { type: "tool_use"; id: string; name: string; input: Record<string, unknown> }
   | { type: "usage"; usage: ModelUsage }
   // blocks: the response's content block types, in order (Preview probes).
-  | { type: "stop"; reason: string; blocks?: string[] };
+  | { type: "stop"; reason: string; blocks?: string[] }
+  // The response's content blocks, as returned (thinking + text + tool_use),
+  // to send back as the assistant turn before the tool results.
+  | { type: "raw"; content: RawBlock[] };
 
 export interface ModelClient {
   stream(req: ModelRequest): AsyncIterable<ModelEvent>;
@@ -42,10 +48,14 @@ export function anthropicModelClient(apiKey: string): ModelClient {
       const stream = client.messages.stream({
         model: MODEL,
         max_tokens: req.maxTokens,
-        // No thinking (53's Preview probe): a long question spent the whole
-        // budget thinking ("thinking" blocks, 800 tokens, 0–388 chars of
-        // answer). SolvyAI's answers are short; the budget is for the answer.
-        thinking: { type: "disabled" },
+        // Adaptive thinking (the model's default) at LOW effort (c6, 53's
+        // probes): with 800 tokens, thinking used the whole budget (no answer);
+        // with thinking off, book/cancel sometimes skipped the tool call or
+        // wrote a fake card as text. max_tokens (the caller's) now covers
+        // thinking + the answer; the answer's length comes from the prompt.
+        // (Sonnet 5.5 rejects thinking {type:"disabled"} with a 400; never
+        // switch to it.)
+        output_config: { effort: "low" },
         system: [
           { type: "text", text: req.cachedSystem, cache_control: { type: "ephemeral" } },
           { type: "text", text: req.system },
@@ -69,6 +79,7 @@ export function anthropicModelClient(apiKey: string): ModelClient {
           cacheWrite: final.usage.cache_creation_input_tokens ?? 0,
         },
       };
+      yield { type: "raw", content: final.content as unknown as RawBlock[] };
       yield { type: "stop", reason: final.stop_reason ?? "end_turn", blocks: final.content.map((b) => (b.type === "tool_use" ? `tool_use:${b.name}` : b.type)) };
     },
   };
@@ -102,7 +113,8 @@ function helpEchoModel(): ModelClient {
 
 // For tests: each call answers with `reply(request, round)`: text (streamed
 // in pieces) and/or tool calls; then usage and the stop reason.
-export type FakeTurn = string | { text?: string; tools?: { name: string; input: Record<string, unknown> }[] };
+// stop: force a stop reason ("max_tokens"); raw: the content to hand back.
+export type FakeTurn = string | { text?: string; tools?: { name: string; input: Record<string, unknown> }[]; stop?: string; raw?: RawBlock[] };
 export function fakeModelClient(
   reply: (req: ModelRequest, round: number) => FakeTurn,
   usage: ModelUsage = { input: 1000, output: 50, cacheRead: 9000, cacheWrite: 0 },
@@ -119,7 +131,8 @@ export function fakeModelClient(
       const tools = typeof turn === "string" ? [] : turn.tools ?? [];
       for (const [i, t] of tools.entries()) yield { type: "tool_use", id: `tu_${round}_${i}`, name: t.name, input: t.input };
       yield { type: "usage", usage };
-      yield { type: "stop", reason: tools.length ? "tool_use" : "end_turn" };
+      if (typeof turn !== "string" && turn.raw) yield { type: "raw", content: turn.raw };
+      yield { type: "stop", reason: (typeof turn !== "string" && turn.stop) || (tools.length ? "tool_use" : "end_turn") };
     },
   };
 }

@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import { handleAssistant, type Deps } from "@/lib/assistant/server/handle";
+import { cutToSentence, handleAssistant, sentenceEnd, type Deps } from "@/lib/assistant/server/handle";
 import { loadTexts } from "@/lib/assistant/server/texts";
 import { fakeModelClient, type FakeTurn, type ModelRequest } from "@/lib/assistant/server/model";
 import type { AnswerBlock, AnswerChunk, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
@@ -223,6 +223,43 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     } finally {
       vi.unstubAllEnvs();
     }
+  });
+
+  // cf (5 Oct): an answer cut by the token cap never ends mid-sentence: its
+  // last full sentence, then "Veja o artigo completo na Ajuda.".
+  it("cut by the cap: the last full sentence + the pointer to Help (actions and help mode)", async () => {
+    const cut = { text: "Agenda: marque consultas em Nova Consulta. Pagamentos: veja o que rece", stop: "max_tokens" };
+    const expected = "Agenda: marque consultas em Nova Consulta.\n\nVeja o artigo completo na Ajuda.";
+    expect(textOf((await run(setup(() => cut), ask("Explique tudo"))).chunks)).toBe(expected);
+    const help = setup(() => cut);
+    help.db.rpcs.assistant_consume_message = () => ({ allowed: true, used: 1, limit: 20, resets_at: "x", actions: false });
+    const r = await run(help, ask("Explique tudo"));
+    expect(r.chunks[0]).toEqual({ kind: "meta", mode: "help" });
+    expect(textOf(r.chunks)).toBe(expected);
+    // Not cut: the whole text, even its last unfinished-looking piece.
+    expect(textOf((await run(setup(() => "Tudo certo. Até logo"), ask("Oi"))).chunks)).toBe("Tudo certo. Até logo");
+  });
+
+  it("sentence ends: never inside a number; Thai ends a phrase at a space", () => {
+    expect(sentenceEnd("Custa R$ 1.500 hoje", "pt-BR")).toBe(0);
+    expect(sentenceEnd("Feito! Agora o pró", "pt-BR")).toBe("Feito!".length);
+    expect(sentenceEnd("ขั้นแรก ขั้นที่สอง ยังไม่จ", "th")).toBe("ขั้นแรก ขั้นที่สอง ".length);
+    expect(cutToSentence("sem fim nenhum", "pt-BR", "P")).toBe("");
+  });
+
+  it("a broad question: up to three article buttons, each once", async () => {
+    const t = setup(() => "Agenda: marque consultas.\n[[open:A1]]\nPagamentos: o que recebeu.\n[[open:G1]]\n[[open:A1]]\nPacientes.\n[[open:P1]]\n[[open:C1]]");
+    t.db.rpcs.assistant_consume_message = () => ({ allowed: true, used: 1, limit: 20, resets_at: "x", actions: false });
+    const r = await run(t, ask("Explique o app inteiro"));
+    expect(r.blocks.filter((b) => b.type === "open")).toHaveLength(3);
+  });
+
+  it("with thinking, the response's own content (thinking blocks) goes back before the tool results", async () => {
+    const raw = [{ type: "thinking", thinking: "…", signature: "sig" }, { type: "tool_use", id: "tu_0_0", name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }];
+    const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }], raw } : "Amanhã: 1 consulta."));
+    await run(t, ask("O que tenho amanhã?"));
+    const back = t.model.calls[1].messages.at(-2)!;
+    expect(back).toEqual({ role: "assistant", content: raw });
   });
 
   it("a broken marker never swallows the rest of the answer", async () => {

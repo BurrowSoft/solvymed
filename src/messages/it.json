@@ -1862,6 +1862,7 @@
     "unavailableLater": "SolvyAI non è disponibile al momento. Riprova più tardi.",
     "couldntFinish": "Non sono riuscito a completarlo. Puoi dirlo in un altro modo, con nome del paziente, data e ora?",
     "couldntAnswer": "I couldn't finish that answer. Try asking another way.",
+    "seeFullArticle": "See the full article in Help.",
     "onlySolvyMed": "Posso aiutare solo con SolvyMed.",
     "noClinical": "Non posso aiutare con questioni cliniche.",
     "minutes": "{n} min",

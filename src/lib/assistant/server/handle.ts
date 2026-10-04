@@ -7,7 +7,7 @@ import type { AnswerChunk, AssistantScreen, TargetScreen } from "@/lib/assistant
 import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
 import { formatDateLabel } from "@/lib/dateLabels";
 import { cachedSystem, rules, type Client } from "./knowledge";
-import type { ContentBlock, ModelClient, ModelMessage, ModelUsage } from "./model";
+import type { ContentBlock, ModelClient, ModelMessage, ModelUsage, RawBlock } from "./model";
 import { confirmFailedBlock, runTool, toolDefsFor, type ToolContext } from "./tools";
 import { loadTexts } from "./texts";
 
@@ -34,7 +34,9 @@ export type Outcome =
 
 const SCREENS: AssistantScreen[] =["home", "schedule", "patients", "payments", "settings", "other"];
 const KEEP_MESSAGES = 6;
-const MAX_TOKENS = 800;
+// Thinking (low effort) + the answer (c6, 53's probes); answers stay short
+// by the prompt (UX: an overview + the Help articles for broad questions).
+const MAX_TOKENS = 4000;
 // Model calls per answer in actions mode (reads, then a proposal or text).
 const MAX_ROUNDS = 4;
 // The nudge after an empty last reply (53): the answer, from the results.
@@ -130,6 +132,22 @@ function openBlock(id: string, locale: string, client: Client, label: string): A
 
 // Streams the model's text while holding back anything from "[[" until its
 // "]]", so markers never reach the user; returns the marker ids seen.
+// Where the last full sentence ends (after ". ", "! ", "? ", "… " or a line
+// break; Thai has no full stop, so a space ends a phrase there), or 0.
+// Never a "." inside a number ("R$ 1.500").
+export function sentenceEnd(text: string, locale: string): number {
+  let end = 0;
+  for (const m of text.matchAll(/[.!?…](?=\s)|\n/g)) end = m.index! + m[0].length;
+  if (locale === "th") end = Math.max(end, text.lastIndexOf(" ") + 1);
+  return end;
+}
+// A whole text cut by the cap: up to its last full sentence + the pointer.
+export function cutToSentence(text: string, locale: string, pointer: string): string {
+  const end = sentenceEnd(text, locale);
+  const kept = (end > 0 ? text.slice(0, end) : "").trimEnd();
+  return kept ? `${kept}\n\n${pointer}` : "";
+}
+
 // The longest real marker: "[[open:A12]]".
 const MARKER_MAX = 12;
 // The start of a broken marker to drop: "[[open:A1]" / "[[open:" / "[[".
@@ -303,6 +321,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
           let said = "";
           let stop = "";
           let blocks: string[] = [];
+          let raw: RawBlock[] | null = null;
           let roundOut = 0;
           const calls: { id: string; name: string; input: Record<string, unknown> }[] = [];
           async function* texts(): AsyncIterable<string> {
@@ -316,6 +335,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
               if (ev.type === "text") { said += ev.text; yield ev.text; }
               else if (ev.type === "tool_use") calls.push(ev);
               else if (ev.type === "stop") { stop = ev.reason; blocks = ev.blocks ?? []; }
+              else if (ev.type === "raw") raw = ev.content;
               else if (ev.type === "usage") {
                 roundOut += ev.usage.output;
                 usage.input += ev.usage.input; usage.output += ev.usage.output;
@@ -325,10 +345,19 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
             diag.push({ round, stop, chars: said.length, calls: calls.map((c) => c.name), output: roundOut, blocks });
           }
           if (!ctx) {
-            // Help mode: one round, streamed as it comes.
+            // Help mode: one round, streamed a sentence at a time. Cut by the
+            // token cap: no half sentence, the pointer to Help instead (cf).
+            let tail = "";
             for await (const t of filterMarkers(texts(), seen)) {
+              tail += t;
+              const end = sentenceEnd(tail, req.locale);
+              if (end > 0) { answered = true; yield { kind: "delta", text: tail.slice(0, end) }; tail = tail.slice(end); }
+            }
+            if (stop === "max_tokens") {
+              if (answered) yield { kind: "delta", text: `\n\n${tx.seeFullArticle}` };
+            } else if (tail.trim()) {
               answered = true;
-              yield { kind: "delta", text: t };
+              yield { kind: "delta", text: tail };
             }
             break;
           }
@@ -362,7 +391,8 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
               history[history.length - 1] = { role: "user", content: [...last.content, { type: "text", text: ANSWER_NOW }] };
               continue;
             }
-            const text = shown === "card" ? tx.pointerCard : shown ? "" : roundText.trim() || tx.couldntAnswer;
+            const full = stop === "max_tokens" ? cutToSentence(roundText, req.locale, tx.seeFullArticle) : roundText;
+            const text = shown === "card" ? tx.pointerCard : shown ? "" : full.trim() || tx.couldntAnswer;
             if (text) { answered = true; yield { kind: "delta", text }; }
             break;
           }
@@ -389,7 +419,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
             }
             results.push({ type: "tool_result", tool_use_id: call.id, content: forModel, ...(out.isError ? { is_error: true } : {}) });
           }
-          history.push({ role: "assistant", content: [...(said ? [{ type: "text" as const, text: said }] : []), ...calls.map((t) => ({ type: "tool_use" as const, ...t }))] });
+          history.push({ role: "assistant", content: raw ?? [...(said ? [{ type: "text" as const, text: said }] : []), ...calls.map((t) => ({ type: "tool_use" as const, ...t }))] });
           history.push({ role: "user", content: results });
           // Out of rounds with nothing shown: a plain line, not an error
           // (the model did answer; its usage is recorded).
@@ -420,8 +450,10 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
         p_professional_id: userId,
         p_input: u.input, p_output: u.output, p_cache_read: u.cacheRead, p_cache_write: u.cacheWrite,
       });
-      const open = seen.length ? openBlock(seen[0], req.locale, deps.client, tx.openScreen) : null;
-      if (open) yield open;
+      for (const id of [...new Set(seen)].slice(0, 3)) {
+        const open = openBlock(id, req.locale, deps.client, tx.openScreen);
+        if (open) yield open;
+      }
       yield { kind: "block", block: { type: "feedback" } };
       yield { kind: "usage", used: c.used ?? 0, limit: c.limit ?? 0, extra: 0, resetsAt: c.resets_at ?? "" };
       yield* debug();
