@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { practiceFallbackLocale, pushLocale, pushText, pushWhen, type PushKind, type PushLocale } from "@/lib/pushText";
-import { patientPushLocale, professionalPushLocale } from "@/lib/pushRecipient";
 
 // Pushes from the website's server actions speak the recipient's language,
 // with dates in its format (UX 2026-09-29): never English-only, never a raw
@@ -54,20 +53,6 @@ describe("push texts", () => {
     expect(practiceFallbackLocale("US")).toBe("en");
     // Before migration 110 there's no country: every practice is Brazilian.
     expect(practiceFallbackLocale(null)).toBe("pt-BR");
-  });
-
-  it("the clinic's pushes follow the practice's country (not the unwritten professionals.locale default)", async () => {
-    const db = (country: string | null, locale = "pt-BR") => ({
-      rpc: async () => ({ data: [{ country }], error: null }),
-      from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: { locale }, error: null }) }) }) }),
-    }) as unknown as Parameters<typeof professionalPushLocale>[0];
-    expect(await professionalPushLocale(db("TH"), "d")).toBe("th");
-    expect(await professionalPushLocale(db("BR"), "d")).toBe("pt-BR");
-    expect(await professionalPushLocale(db("US"), "d")).toBe("en");
-    // A patient's saved language wins; without one, the practice's.
-    expect(await patientPushLocale(db("BR", "en"), "p", "d")).toBe("en");
-    const noSaved = { ...db("TH"), from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }) }) } as unknown as Parameters<typeof patientPushLocale>[0];
-    expect(await patientPushLocale(noSaved, "p", "d")).toBe("th");
   });
 
   it("Thai: one title for an appointment cancelled by the clinic (Schedule / archive and account close)", () => {

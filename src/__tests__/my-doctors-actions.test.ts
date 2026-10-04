@@ -1,16 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
 // The "My doctors" server actions (1.5.0, 164): public endpoints, so they
-// refuse while the flag is off; Desconectar reads the clinic's push targets
-// BEFORE disconnect_doctor (afterwards there are none) and pushes
-// "Pedido cancelado" once per returned request (9a).
+// refuse while the flag is off; Desconectar only calls disconnect_doctor:
+// the SERVER tells the clinic "Pedido cancelado" once per cancelled request
+// (171), the website reads no push tokens and sends nothing.
 
 const h = vi.hoisted(() => ({
   flag: true,
   calls: [] as string[],
   rpc: vi.fn(),
-  targets: vi.fn(),
-  send: vi.fn(),
 }));
 vi.mock("@/lib/liveFeatures", async (orig) => {
   const real = await orig<typeof import("@/lib/liveFeatures")>();
@@ -23,10 +21,6 @@ vi.mock("@/lib/supabase/server", () => ({
     rpc: (fn: string, args: unknown) => { h.calls.push(`rpc:${fn}`); return h.rpc(fn, args); },
   }),
 }));
-vi.mock("@/lib/pushRecipient", () => ({
-  clinicPushTargets: async (...a: unknown[]) => { h.calls.push("targets"); return h.targets(...a); },
-}));
-vi.mock("@/lib/push", () => ({ sendExpoPush: (...a: unknown[]) => h.send(...a) }));
 
 import { connectDoctor, disconnectDoctor } from "@/app/[locale]/(site)/my-appointments/doctor-actions";
 
@@ -34,28 +28,21 @@ beforeEach(() => {
   h.flag = true;
   h.calls = [];
   h.rpc.mockReset();
-  h.targets.mockReset().mockResolvedValue([{ locale: "pt-BR", tokens: ["tok-1"] }]);
-  h.send.mockReset();
 });
 
 describe("disconnectDoctor", () => {
-  it("reads the clinic's targets BEFORE disconnect_doctor, then pushes once per cancelled request", async () => {
+  it("only disconnect_doctor: the server tells the clinic (no token read, nothing sent from here)", async () => {
     h.rpc.mockResolvedValue({ data: [
       { appointment_id: "a1", date: "2026-10-20", start_time: "09:00:00" },
       { appointment_id: "a2", date: "2026-10-21", start_time: "10:00:00" },
     ], error: null });
     expect(await disconnectDoctor("doc-2")).toEqual({ ok: true });
-    expect(h.calls.slice(0, 2)).toEqual(["targets", "rpc:disconnect_doctor"]);
-    expect(h.targets).toHaveBeenCalledTimes(1);
-    expect(h.send).toHaveBeenCalledTimes(2);
-    expect(h.send.mock.calls[0][0]).toEqual(["tok-1"]);
-    expect(String(h.send.mock.calls[0][2])).toContain("Maria Silva");
+    expect(h.calls).toEqual(["rpc:disconnect_doctor"]);
   });
 
-  it("has_future_visits → refused, nothing pushed", async () => {
+  it("has_future_visits → refused", async () => {
     h.rpc.mockResolvedValue({ data: null, error: { message: "has_future_visits" } });
     expect(await disconnectDoctor("doc-2")).toEqual({ ok: false, code: "has_future_visits" });
-    expect(h.send).not.toHaveBeenCalled();
   });
 
   it("flag off: refused without touching the database", async () => {

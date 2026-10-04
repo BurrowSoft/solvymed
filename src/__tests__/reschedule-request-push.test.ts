@@ -1,46 +1,36 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { pushText } from "@/lib/pushText";
 
-// Build 25 item 6 (e7, app #287 verbatim): the clinic's push when a patient
-// ASKS to move a visit says it's a request and names the old and new time
-// (dd/mm/yyyy in the reader's language, HH:MM); "Booking" is gone.
+// Build 25 item 6 (e7, app #287): when a patient ASKS to move a visit, the
+// clinic is told it's a request, from the old time to the new one. Since the
+// push service (171) the SERVER writes and sends it (its catalogue: cf's
+// FINAL wording, the practice's calendar); the website only queues
+// "reschedule_requested" for that appointment, with no text and no tokens.
 
-const h = vi.hoisted(() => ({ pushes: [] as { title: string; body: string }[], locale: "pt-BR" as string }));
+const h = vi.hoisted(() => ({ notices: [] as unknown[] }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/activeAccess", () => ({ getActiveProfId: async () => null, isLockedOut: async () => false }));
 vi.mock("@/lib/myAppointments", () => ({
   myAppointment: async () => ({ id: "a-1", professional_id: "doc-1", patient_name: "Ana", date: "2026-10-05", start_time: "09:00:00", end_time: "09:30:00" }),
 }));
-vi.mock("@/lib/pushRecipient", () => ({ patientPushTargets: async () => [], clinicPushTargets: async () => [{ locale: h.locale, tokens: ["x"] }] }));
-vi.mock("@/lib/push", () => ({ sendExpoPush: async (_t: string[], title: string, body: string) => { h.pushes.push({ title, body }); } }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
     auth: { getUser: async () => ({ data: { user: { id: "pat-1" } } }) },
-    rpc: async () => ({ data: null, error: null }),
+    rpc: async (fn: string, args: unknown) => { if (fn.startsWith("enqueue_")) h.notices.push({ fn, args }); return { data: null, error: null }; },
   }),
 }));
 
 import { requestReschedule } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions";
 
-beforeEach(() => { h.pushes = []; });
+beforeEach(() => { h.notices = []; });
 
-describe("the reschedule-request push to the clinic", () => {
-  it("pt: Pedido de remarcação, from the old time to the new one", async () => {
-    h.locale = "pt-BR";
+describe("the reschedule-request notice to the clinic", () => {
+  it("queued for the server: the kind and the appointment only", async () => {
     expect(await requestReschedule("a-1", "2026-10-07", "14:00", "14:30")).toEqual({ error: null });
-    expect(h.pushes).toEqual([{ title: "Pedido de remarcação", body: "Ana pediu para remarcar a consulta de 05/10/2026 09:00 para 07/10/2026 14:00." }]);
+    expect(h.notices).toEqual([{ fn: "enqueue_clinic_notice", args: { p_kind: "reschedule_requested", p_appointment_id: "a-1" } }]);
   });
 
-  it("en (day first) and th (Buddhist year)", async () => {
-    h.locale = "en";
-    await requestReschedule("a-1", "2026-10-07", "14:00", "14:30");
-    h.locale = "th";
-    await requestReschedule("a-1", "2026-10-07", "14:00", "14:30");
-    expect(h.pushes[0]).toEqual({ title: "Reschedule request", body: "Ana asked to move their appointment on 05/10/2026 09:00 to 07/10/2026 14:00." });
-    expect(h.pushes[1]).toEqual({ title: "คำขอเลื่อนนัด", body: "Ana ขอเลื่อนนัดจาก 05/10/2569 09:00 เป็น 07/10/2569 14:00" });
-  });
-
-  it("no push says Booking any more (en)", () => {
+  it("no push says Booking any more (en; the texts kept for account close)", () => {
     expect(pushText("en", "newBookingRequest", { name: "Ana", when: "x" }).title).toBe("New Appointment Request");
     expect(pushText("en", "bookingNotAvailable", { doctor: "Dra. Ana", date: "05/10/2026", time: "09:00" }))
       .toEqual({ title: "Request not accepted", body: "Dra. Ana couldn't accept your appointment request for 05/10/2026 at 09:00." });
