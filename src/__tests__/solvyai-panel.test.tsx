@@ -164,7 +164,8 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
     expect(screen.queryByLabelText("assistant.placeholder")).not.toBeInTheDocument();
     expect(screen.getByText("SolvyAI ✦")).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("assistant.saved (assistant.simulated)");
-    fireEvent.click(screen.getByText(/assistant\.undo/));
+    // Desfazer shows "…" until the move to the screen settles (#370): wait for it.
+    fireEvent.click(await screen.findByText(/assistant\.undo/));
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("assistant.undone"));
   });
 
