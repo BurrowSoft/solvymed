@@ -144,7 +144,11 @@ const isTime = (v: unknown): v is string => typeof v === "string" && TIME.test(v
 const hhmm = (t: string | null | undefined) => (t ?? "").slice(0, 5);
 const weekdayName = (ctx: ToolContext, date: string) => cap(formatDateLabel(ctx.locale, date, { weekday: "long" }));
 // "terça-feira, 29/09/2026"
-const whenLabel = (ctx: ToolContext, date: string) => `${weekdayName(ctx, date)}, ${formatShortDate(ctx.locale, date)}`;
+// A visit date: the practice's calendar (a TH clinic's year in BE), the
+// reader's words, no era (UX 5 Oct). Birth dates keep the reader's calendar.
+const visitCal = (ctx: Pick<ToolContext, "country">) => (ctx.country ? countryProfile(ctx.country).calendar : undefined);
+const visitDate = (ctx: ToolContext, date: string) => formatDateLabel(ctx.locale, date, { day: "2-digit", month: "2-digit", year: "numeric" }, visitCal(ctx));
+const whenLabel = (ctx: ToolContext, date: string) => `${weekdayName(ctx, date)}, ${visitDate(ctx, date)}`;
 const personLabel = (ctx: ToolContext, name: string, birth: string | null) => (birth ? `${name} (${formatShortDate(ctx.locale, birth)})` : name);
 const daysBetween = (a: string, b: string) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / 86_400_000);
 
@@ -305,8 +309,8 @@ async function ambiguousTarget(ctx: ToolContext, a: ApptRow, from: string, to: s
 // The user's message is exactly a time chip for this date and time, as the
 // client sends it when tapped (texts.chipAt: "quarta-feira, 07/10/2026 às
 // 10:00"); anything typed around it is not a chip.
-export const isChipTap = (ctx: Pick<ToolContext, "t" | "userText">, date: string, time: string) =>
-  !!ctx.userText && ctx.userText.trim() === ctx.t.chipAt(date, time);
+export const isChipTap = (ctx: Pick<ToolContext, "t" | "userText" | "country">, date: string, time: string) =>
+  !!ctx.userText && ctx.userText.trim() === ctx.t.chipAt(date, time, visitCal(ctx));
 
 // For a move, the part that says WHERE TO ("… para quinta às 15") doesn't
 // identify the appointment being moved: only what's before it counts.
@@ -520,7 +524,7 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
       dates = seriesDates.filter((d) => !skip.includes(d));
       if (!dates.length) return err("Every date of the series is taken; ask the user for another time.");
       const alternatives = await nearestFree(ctx, skip[0], start, dur, 4);
-      extra.push({ type: "slot_choice", reason: "conflict", text: t.seriesOther(formatShortDate(ctx.locale, skip[0]).slice(0, 5)) + ":", conflicts: [], alternatives, other: false });
+      extra.push({ type: "slot_choice", reason: "conflict", text: t.seriesOther(visitDate(ctx, skip[0]).slice(0, 5)) + ":", conflicts: [], alternatives, other: false });
     }
   }
   // Everything below is about the dates that will be saved: after a skip,
@@ -550,7 +554,7 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
   const warnings: CardWarning[] = [];
   const asks: string[] = [];
   // In a series, the first date with a block / outside the hours, named.
-  const onDate = (d: string) => (repeat ? `${formatShortDate(ctx.locale, d)}: ` : "");
+  const onDate = (d: string) => (repeat ? `${visitDate(ctx, d)}: ` : "");
   const block = saved.filter((r) => r.status === "blocked" && overlaps(r)).sort((a, b) => a.date.localeCompare(b.date))[0];
   if (block) {
     warnings.push({ code: "blocked", text: onDate(block.date) + t.blockedWarn(hhmm(block.start_time), hhmm(block.end_time)) });
@@ -594,11 +598,11 @@ async function proposeBook(ctx: ToolContext, input: Record<string, unknown>): Pr
       { label: t.duration, value: t.minutes(dur), ...(durGiven ? {} : { isDefault: true }) },
       ...(repeat ? [{
         label: t.repeatLabel,
-        value: t.repeatValue(repeat.every, dates.length, formatShortDate(ctx.locale, dates[dates.length - 1])),
+        value: t.repeatValue(repeat.every, dates.length, visitDate(ctx, dates[dates.length - 1])),
       }] : []),
       // The skipped dates in their own row, not buried in Repetir (UX):
       // Confirmar books the others and leaves these out.
-      ...(skip.length ? [{ label: t.skippedLabel, value: t.skippedValue(skip.map((d) => formatShortDate(ctx.locale, d).slice(0, 5)).join(", ")) }] : []),
+      ...(skip.length ? [{ label: t.skippedLabel, value: t.skippedValue(skip.map((d) => visitDate(ctx, d).slice(0, 5)).join(", ")) }] : []),
     ],
     warnings,
     ...(asks.length ? { secondConfirm: { question: `${asks.join(" ")} ${t.bookAnyway}`, confirmLabel: t.bookLabel } } : {}),

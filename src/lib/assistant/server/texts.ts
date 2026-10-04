@@ -1,5 +1,5 @@
 import { createTranslator } from "next-intl";
-import { formatDateLabel } from "@/lib/dateLabels";
+import { formatDateLabel, type DateCalendar } from "@/lib/dateLabels";
 import { routing } from "@/i18n/routing";
 import type en from "@/messages/en.json";
 import { labelGlossary, labelMap } from "./uiLabels";
@@ -93,8 +93,8 @@ function textsFrom(locale: string, messages: typeof en) {
     unavailableArticles: s("unavailableArticles"), unavailableLater: s("unavailableLater"), couldntFinish: s("couldntFinish"), couldntAnswer: s("couldntAnswer"), seeFullArticle: s("seeFullArticle"),
     // A time chip exactly as the client sends it when tapped (SolvyAi.tsx
     // SlotChoiceView: assistant.chipAt with the long date).
-    chipAt: (date: string, time: string) =>
-      as("chipAt", { date: formatDateLabel(locale, date, { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" }), time }),
+    chipAt: (date: string, time: string, calendar?: DateCalendar) =>
+      as("chipAt", { date: formatDateLabel(locale, date, { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" }, calendar), time }),
   };
 }
 
