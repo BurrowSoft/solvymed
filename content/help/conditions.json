@@ -129,6 +129,6 @@
   },
   "multi-doctor-live": {
     "met": false,
-    "what": "1.5.0 patients with several doctors are live: migrations 164 (+165, the per-connection checks) applied AND server_flags.multi_doctor_patient on (after the min_version raise + Vitor's OK) AND the app's My doctors (mobile #333: Home cards + Settings → My doctors; app 1.6.0) in a RELEASED store build AND liveFeatures.multiDoctor true on the website AND the 1.5.0 privacy text (several doctors, each sees only their own data) live with its version bump. Gates the App Map's My doctors rule and Help C5's several-doctors line."
+    "what": "Patients with several doctors (web 1.5.0 behind the flag, app 1.6.0) are live: migrations 164 (+165, the per-connection checks) applied AND server_flags.multi_doctor_patient on (after the min_version raise + Vitor's OK) AND the app's My doctors (mobile #333: Home cards + Settings → My doctors; app 1.6.0) in a RELEASED store build AND liveFeatures.multiDoctor true on the website AND the 1.5.0 privacy text (several doctors, each sees only their own data) live with its version bump. Gates the App Map's My doctors rule and Help C5's several-doctors line."
   }
 }
