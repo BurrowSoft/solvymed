@@ -357,6 +357,8 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     expect(system).toContain("Fri 2026-10-02");
     expect(system).not.toContain("2026-09-31");
     expect(system).toContain("ACTIONS RULE A");
+    // 53: the answer comes after the tools' results, never next to a call.
+    expect(system).toContain("ACTIONS RULE I: a reply that calls a tool contains only the tool call");
     expect(system).toContain("\"Confirmar\", \"Desfazer\", \"Abrir\"");
     expect(system).toContain("Reply in Brazilian Portuguese");
   });

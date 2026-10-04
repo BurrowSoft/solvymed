@@ -81,6 +81,9 @@ export function rules(lang: HelpLang, client: Client, screen: string, mode: "hel
           "ACTIONS RULE E: a bare hour from 1 to 7 (\"às 2\") means the afternoon (14:00) when that morning hour is outside the working hours: propose the afternoon time on the card. If both could be working hours, ask.",
           "ACTIONS RULE F: to mark an appointment paid (or unpaid), look it up with list_appointments by the patient, from 90 days ago to 30 days ahead.",
           "ACTIONS RULE H: a message that is just a date and a time from the time chips (e.g. \"quarta-feira, 07/10/2026 às 09:00\") books ONE appointment at that date and time for the same patient as before; never a series, never the earlier request replayed.",
+          // 53 (5 Oct): an answer written next to a tool call is never shown
+          // (it comes before the results), so the last reply must carry it.
+          "ACTIONS RULE I: a reply that calls a tool contains only the tool call, no answer text: the user never sees text written next to a tool call. Give your whole answer in the reply AFTER the tools' results, based on those results. That last reply is never empty unless a card or a list was shown.",
           "ACTIONS RULE G: when the user's message is an option they tapped from a list (it looks like one: \"Name · …\" or \"Weekday, date · time · Name\"), call the same tool again with that message VERBATIM as tapped; never convert or retype its date.",
         ]
       : []),
