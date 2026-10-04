@@ -13,10 +13,10 @@ describe("the Founders share preview", () => {
     const { generateMetadata } = await import("@/app/[locale]/(site)/founders/page");
     const m = await generateMetadata({ params: Promise.resolve({ locale: "pt-BR" }) });
     const og = m.openGraph as { images: { url: string; width: number; height: number }[]; title: string; locale: string };
-    expect(og.images[0]).toMatchObject({ url: "/og/solvymed-og-share-blue.png", width: 1200, height: 630 });
+    expect(og.images[0]).toMatchObject({ url: "/og/solvymed-og-share-blue-pt-BR.png", width: 1200, height: 630 });
     expect(og.title).toBe("founders.metaTitle");
     expect(og.locale).toBe("pt_BR");
-    expect(m.twitter).toMatchObject({ card: "summary_large_image", images: ["/og/solvymed-og-share-blue.png"] });
+    expect(m.twitter).toMatchObject({ card: "summary_large_image", images: ["/og/solvymed-og-share-blue-pt-BR.png"] });
     expect(m.alternates).toMatchObject({
       canonical: "https://www.solvymed.com/pt-BR/founders",
       languages: { en: "https://www.solvymed.com/founders", th: "https://www.solvymed.com/th/founders", "x-default": "https://www.solvymed.com/founders" },
