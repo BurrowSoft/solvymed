@@ -83,6 +83,11 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
   const [usage, setUsage] = useState<AssistantUsage | null>(null);
   const [tooFast, setTooFast] = useState(false);
   const lastSent = useRef(0);
+  // The answer being streamed: a new one, "Nova conversa" or leaving the
+  // page stops it, so an old answer never lands in a new conversation.
+  const stream = useRef<AbortController | null>(null);
+  const startStream = () => { stream.current?.abort(); stream.current = new AbortController(); return stream.current.signal; };
+  useEffect(() => () => stream.current?.abort(), []);
   const listRef = useRef<HTMLDivElement>(null);
   const screen = screenOf(pathname, prefix);
 
@@ -128,18 +133,21 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
       .map((x) =>
         x.role === "user" ? { role: "user" as const, text: x.text } : { role: "assistant" as const, text: answerText(x.blocks) },
       );
-    await play(history, backend.ask({ messages, screen, locale, turns: userTurns }));
+    const signal = startStream();
+    await play(history, backend.ask({ messages, screen, locale, turns: userTurns }, signal), signal);
   }, [busy, atLimit, outOfTurns, turns, userTurns, backend, screen, locale]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Streams an answer into a new assistant turn after `history`: text in
   // pieces, whole blocks, the updated usage; an error ends it with a line.
-  async function play(history: Turn[], chunks: AsyncIterable<AnswerChunk>) {
+  // Stopped (signal): nothing more is written; whoever stopped it owns the state.
+  async function play(history: Turn[], chunks: AsyncIterable<AnswerChunk>, signal: AbortSignal) {
     let blocks: AnswerBlock[] = [];
     let current = "";
     let gotUsage = false;
     let failed = false;
     try {
       for await (const chunk of chunks) {
+        if (signal.aborted) return;
         if (chunk.kind === "delta") {
           current += chunk.text;
           const live = [...blocks, { type: "text" as const, text: current }];
@@ -174,12 +182,17 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
         }
       }
     } catch {
+      if (signal.aborted) return;
       failed = true;
       blocks = [...blocks, { type: "text", text: t("unavailable") }];
     }
+    if (signal.aborted) return;
     setTurns([...history, { role: "assistant", blocks, streaming: false, failed }]);
     setBusy(false);
-    if (!gotUsage) setUsage(await backend.usage());
+    if (!gotUsage) {
+      const u = await backend.usage();
+      if (!signal.aborted) setUsage(u);
+    }
   }
 
   // After a confirmed save (§2.3 "After saving"): minimise to the pill, go
@@ -209,7 +222,8 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
     const noAmount = code === "no_amount" && card.action.kind === "mark_paid";
     if (!notCancellable && !noAmount && (code !== "slot_taken" || (card.action.kind !== "book_appointment" && card.action.kind !== "move_appointment") || card.action.args.repeat)) return;
     setBusy(true);
-    void play(turns, backend.reportConfirmFailed(code, card.action, locale));
+    const signal = startStream();
+    void play(turns, backend.reportConfirmFailed(code, card.action, locale, signal), signal);
   };
 
   // phase: saved → undoing (Desfazer tapped: pending, never twice) →
@@ -259,7 +273,12 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
     return () => window.removeEventListener(OPEN_EVENT, on);
   }, []);
 
-  const newConversation = () => { setTurns([]); setInput(""); setTooFast(false); };
+  const newConversation = () => {
+    stream.current?.abort();
+    stream.current = null;
+    setTurns([]); setInput(""); setTooFast(false); setBusy(false);
+    void backend.usage().then(setUsage);
+  };
 
   const openScreen = (href: string) => { if (!isInternalHref(href)) return; setMinimized(true); router.push(href); };
 
