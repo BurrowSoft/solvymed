@@ -55,6 +55,10 @@ export const liveFeatures = {
   // Previews only until the release; adding a second doctor is also refused
   // server-side until server_flags.multi_doctor_patient is on.
   multiDoctor: foundersPreview,
+  // 1.6.0 "Enviar para Pacientes" (the doctor's broadcast, enqueue_mass_message,
+  // 171; the app's for parity). Previews only until the 1.6.0 privacy text
+  // (broadcast notices + the outbox's 30-day retention) is live.
+  broadcast: foundersPreview,
 } as const;
 
 // The languages the app's PDFs are generated in today (UX, verified on the
