@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { NewAppointmentButton, AppointmentStatusSelect, DeleteAppointmentButton, RescheduleButton, PixQrButton, PromptPayQrButton } from "./ScheduleClient";
 import { MOVABLE_STATUSES, offersPaymentQr } from "@/lib/scheduleChecks";
-import { hasAmount } from "@/lib/paymentRules";
+import { hasAmount, showsPayment } from "@/lib/paymentRules";
 import { SetAmountButton } from "../payments/PaymentsClient";
 import type { CalendarAppt } from "./CalendarView";
 import { formatMoney } from "@/lib/money";
@@ -81,7 +81,7 @@ export async function ScheduleRow({ appt, ctx, today, doctor }: { appt: Calendar
             <DeleteAppointmentButton id={appt.id} />
           </div>
         </div>
-        {appt.status !== "blocked" && (
+        {showsPayment(appt.status, appt.payment_status) && (
           <div className="mt-2 flex items-center gap-3">
             {appt.payment_status !== "paid" && !hasAmount(appt.payment_amount) ? (
               // No amount yet (the app's #216): not to-receive; set one here,

@@ -4,6 +4,14 @@
 // time never count.
 export const RECEIVABLE_STATUSES = ["scheduled", "confirmed", "completed", "late"] as const;
 
+// Whether the Agenda shows an appointment's payment line (amount, "Sem
+// valor · Definir valor", paid): once it's paid, or while it can be charged.
+// Never for a request not yet accepted, a declined or cancelled one, a
+// no-show or blocked time (f0: a rejected request offered "Definir valor").
+export function showsPayment(status: string, paymentStatus: string | null | undefined): boolean {
+  return paymentStatus === "paid" || (RECEIVABLE_STATUSES as readonly string[]).includes(status);
+}
+
 export function isReceivable(status: string, paymentStatus: string): boolean {
   return paymentStatus === "pending" && (RECEIVABLE_STATUSES as readonly string[]).includes(status);
 }
