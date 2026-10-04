@@ -1953,6 +1953,8 @@
     "todayWith": "Hoje com {doctor}",
     "notifyTitle": "Notificações por médico",
     "notifyHint": "Escolha de quais médicos você quer receber avisos.",
+    "allMuted": "Você não receberá notificações de nenhum médico.",
+    "notifyAppHint": "Vale para as notificações no app SolvyMed.",
     "pushPrefix": "{doctor}: ",
     "joinedTeam": "{doctor} adicionou você à equipe.",
     "removeTitle": "Remover {name} da sua equipe?",

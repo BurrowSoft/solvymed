@@ -31,4 +31,5 @@ export function setBrowserActingCookie(id: string | null) {
     : `${ACTING_COOKIE}=; path=/; max-age=0; samesite=lax`;
 }
 
-export type MyPractice = { professional_id: string; display_name: string | null; accent_color: string | null; is_primary: boolean };
+// title: migration 166 (absent before it).
+export type MyPractice = { professional_id: string; display_name: string | null; title?: string | null; accent_color: string | null; is_primary: boolean };

@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { Card, ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, SchedulingRulesForm, BlockedPatientsPanel, InviteCodeCard } from "./SettingsClient";
 import { TeamPanel, type TeamRow } from "./TeamPanel";
 import { SecretarySettings } from "./SecretarySettings";
+import { NotifyPrefsCard, type NotifyPref } from "./NotifyPrefsCard";
 import { ShowSetupRow } from "./ShowSetupRow";
 import { NewsSettingsCard, TourSettingsCard } from "@/components/tour/TourProvider";
 import { liveFeatures } from "@/lib/liveFeatures";
@@ -65,6 +66,14 @@ export default async function SettingsPage({
   // RPCs, never the editable forms below (which would write under the
   // secretary's own id, and whose actions refuse them anyway).
   if (userRoleData?.role === "secretary" && userRoleData.invited_by_professional_id) {
+    // 166 (behind the flag): her notifications per doctor, read without the
+    // acting header (they span every doctor she serves). null on an error.
+    let notifyPrefs: NotifyPref[] | null = null;
+    if (liveFeatures.multiPractice) {
+      const plain = await createClient({ acting: false });
+      const { data, error } = await plain.rpc("get_secretary_notify_prefs");
+      notifyPrefs = error ? null : ((data ?? []) as NotifyPref[]);
+    }
     return (
       <div className="p-6 lg:p-8 max-w-3xl">
         <div className="mb-8">
@@ -72,6 +81,13 @@ export default async function SettingsPage({
         </div>
         {/* The doctor she's acting for (the switcher, 1.5.0), else her primary. */}
         <SecretarySettings supabase={supabase} doctorId={(await actingPracticeFor(userRoleData.invited_by_professional_id as string, user.id)) ?? (userRoleData.invited_by_professional_id as string)} locale={locale} />
+        {/* 166: notifications per doctor, once she serves 2+ (a single
+            doctor has nothing to choose between). */}
+        {notifyPrefs && notifyPrefs.length > 1 && (
+          <div className="mt-6">
+            <NotifyPrefsCard prefs={notifyPrefs} />
+          </div>
+        )}
         <div className="mt-6">
           <AppearanceCard />
         </div>
