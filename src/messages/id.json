@@ -1940,7 +1940,7 @@
     "disconnect": "Disconnect",
     "disconnectTitle": "Disconnect from {doctor}?",
     "disconnectBody": "You'll stop seeing {doctor}'s appointments and documents. Pending requests will be cancelled. The clinic keeps your record.",
-    "disconnectBlocked": "You have confirmed appointments with {doctor}. To cancel them, contact the clinic; then you can disconnect.",
+    "disconnectBlocked": "You have upcoming appointments with {doctor}. To cancel them, contact the clinic; then you can disconnect.",
     "disconnected": "Disconnected from {doctor}.",
     "filterAll": "All"
   },

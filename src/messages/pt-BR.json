@@ -1940,7 +1940,7 @@
     "disconnect": "Desconectar",
     "disconnectTitle": "Desconectar de {doctor}?",
     "disconnectBody": "Você deixará de ver consultas e documentos de {doctor}. Pedidos pendentes serão cancelados. A clínica mantém o seu cadastro.",
-    "disconnectBlocked": "Você tem consultas confirmadas com {doctor}. Para cancelar, fale com a clínica; depois você pode desconectar.",
+    "disconnectBlocked": "Você tem consultas futuras com {doctor}. Para cancelar, fale com a clínica; depois você pode desconectar.",
     "disconnected": "Desconectado de {doctor}.",
     "filterAll": "Todos"
   },
