@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { setBrowserActingCookie, type MyPractice } from "@/lib/actingPractice";
 import { brandAccent, readableAccent } from "@/lib/readableAccent";
+import { withBrandTitle } from "@/lib/doctorName";
 
 // "Agenda de ▾" for a secretary serving several doctors (1.5.0, migration
 // 163; behind liveFeatures.multiPractice). Only doctors from
@@ -29,7 +30,7 @@ export function PracticeSwitcher({ practices, current }: { practices: MyPractice
         className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm font-semibold text-slate-800"
       >
         {practices.map((p) => (
-          <option key={p.professional_id} value={p.professional_id}>{p.display_name ?? "—"}</option>
+          <option key={p.professional_id} value={p.professional_id}>{withBrandTitle(p.title, p.display_name) || "—"}</option>
         ))}
       </select>
     </label>

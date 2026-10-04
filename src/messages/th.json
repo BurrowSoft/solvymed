@@ -1983,6 +1983,8 @@
     "todayWith": "วันนี้กับ {doctor}",
     "notifyTitle": "การแจ้งเตือนแยกตามแพทย์",
     "notifyHint": "เลือกแพทย์ที่ต้องการรับการแจ้งเตือน",
+    "allMuted": "คุณจะไม่ได้รับการแจ้งเตือนจากแพทย์ท่านใดเลย",
+    "notifyAppHint": "ใช้กับการแจ้งเตือนในแอป SolvyMed",
     "pushPrefix": "{doctor}: ",
     "joinedTeam": "{doctor} เพิ่มคุณเข้าทีมแล้ว",
     "removeTitle": "นำ {name} ออกจากทีมของคุณหรือไม่",
