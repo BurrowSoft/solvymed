@@ -40,6 +40,10 @@ describe("dates in the practice country's calendar", () => {
     expect(dateLocale("pt-BR")).toBe("pt-BR");
     const y = { year: "numeric" } as const;
     expect(formatDateLabel("pt-BR", "2099-01-10", y, "buddhist")).toContain("2642");
+    // No era suffix in any language (UX): "2642", never "2642 BE".
+    expect(formatDateLabel("pt-BR", "2099-01-10", y, "buddhist")).toBe("2642");
+    expect(formatDateLabel("en", "2099-01-10", { day: "numeric", month: "short", year: "numeric" }, "buddhist")).toBe("10 Jan 2642");
+    expect(formatDateLabel("th", "2099-01-10", { day: "numeric", month: "short", year: "numeric" })).toBe("10 ม.ค. 2642");
     expect(formatDateLabel("th", "2099-01-10", y, "gregorian")).toContain("2099");
   });
 
