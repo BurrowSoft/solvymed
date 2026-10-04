@@ -23,6 +23,7 @@ vi.mock("@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions", () =
 }));
 
 vi.mock("@/lib/setupActions", () => ({ dismissOnboardingCard: async () => ({ ok: true }) }));
+vi.mock("@/app/[locale]/(site)/my-appointments/doctor-actions", () => ({ connectDoctor: vi.fn(), disconnectDoctor: vi.fn() }));
 
 import { MyAppointmentsClient } from "@/app/[locale]/(site)/my-appointments/MyAppointmentsClient";
 
@@ -66,6 +67,18 @@ describe("Minhas Consultas says who", () => {
     );
     expect(screen.getAllByText("Marcar consulta com Dra. Ana Souza").length).toBeGreaterThanOrEqual(3);
     expect(screen.queryByText(pt.onboarding.bookAppointment)).toBeNull();
+  });
+
+  it("with the doctor cards (1.5.0): the page's book button names the doctor as the card does (f0)", () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <MyAppointmentsClient upcoming={[]} past={[]} userEmail="p@x.co" myProfessionalId="doc-1"
+          myProfessionalMeta={{ name: "Ana Um", specialty: "", clinicName: null }}
+          doctors={[{ id: "doc-1", name: "Dra. Ana Um", specialty: "", accentColor: null, logoUrl: null, photoUrl: null, isPrimary: true, acceptsBookings: true }]} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getAllByText("Marcar consulta com Dra. Ana Um").length).toBeGreaterThanOrEqual(2);
+    expect(screen.queryByText("Marcar consulta com Ana Um")).toBeNull();
   });
 
   it("before 158 (no names): nothing extra, the plain book label", () => {

@@ -442,7 +442,10 @@ export function MyAppointmentsClient({
   // "Always say who": with whom the patient books (Vitor, build 25).
   const doctorName = myProfessionalMeta?.name?.trim() || "";
   // Title + first + last name on buttons (e7: a long name overflowed in the app).
-  const bookLabel0 = doctorName ? t("bookWith", { doctor: shortDoctorName(doctorName) }) : t("bookAppointment");
+  // With the doctor cards (1.5.0), the same name as the card (the brand's,
+  // with its title), not the profile's (f0).
+  const labelName = doctors?.[0]?.name?.trim() || doctorName;
+  const bookLabel0 = labelName ? t("bookWith", { doctor: shortDoctorName(labelName) }) : t("bookAppointment");
   // 1.5.0: with 2+ doctors the book buttons ask "Com quem?" and lead to the
   // doctor cards (each books with its own doctor); a filter per doctor.
   const tDoctors = useTranslations("patientDoctors");
