@@ -251,11 +251,12 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
   const claimed = useRef(new Set<string>());
   const claim = (id: string) => { if (claimed.current.has(id)) return false; claimed.current.add(id); return true; };
   useEffect(() => {
-    // Paused while undoing: the toast stays until the result is known.
-    if (!toast || toast.left <= 0 || toast.phase === "undoing") return;
+    // Paused while undoing (the toast stays until the result is known) and
+    // while the screen is still loading (Desfazer is disabled then; c6, #364).
+    if (!toast || toast.left <= 0 || toast.phase === "undoing" || navigating) return;
     const id = setTimeout(() => setToast((x) => (x ? { ...x, left: x.left - 1 } : x)), 1000);
     return () => clearTimeout(id);
-  }, [toast]);
+  }, [toast, navigating]);
 
   // Closing tells the tour (paused by "Experimentar agora") it can resume.
   const closePanel = () => { setOpen(false); window.dispatchEvent(new Event(CLOSED_EVENT)); };
