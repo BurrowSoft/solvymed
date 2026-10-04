@@ -15,7 +15,7 @@ describe("the booking sheet's month header", () => {
   it("a TH clinic for a pt reader: Portuguese words, 2569, no era", () => {
     sheet("pt-BR", "buddhist");
     const title = screen.getByTestId("month-calendar").textContent ?? "";
-    expect(title).toMatch(/outubro de 2569/);
+    expect(title).toMatch(/outubro de 2569/i);
     expect(title).not.toMatch(/BE|E\.B\./);
   });
 
@@ -40,5 +40,12 @@ describe("the chosen-time line", () => {
     expect(chosenTimeParts("2026-10-09", "14:00", "14:30", countryProfile("BR"), "pt-BR").month).toBe("out");
     // Staff screens (no reader): the practice's language, as before.
     expect(chosenTimeParts("2026-10-09", "14:00", "14:30", th).month).toBe("ต.ค.");
+  });
+});
+
+describe("the month header's case", () => {
+  it("only the first letter is capitalised (never 'Outubro De 2569')", () => {
+    sheet("pt-BR", "buddhist");
+    expect(screen.getByText("Outubro de 2569")).toBeInTheDocument();
   });
 });

@@ -2001,5 +2001,22 @@
     "referHint": "Send the patient a colleague's link. No data is shared.",
     "shareMessage": "Hi {patient}! I recommend {colleague} ({specialty}). To book, go to: {link}",
     "empty": "You haven't added any colleagues yet."
+  },
+  "massMessage": {
+    "title": "Send to Patients",
+    "notifTitle": "Notification Title",
+    "notifTitlePlaceholder": "e.g. New appointment available",
+    "notifBody": "Message",
+    "notifBodyPlaceholder": "Type your message here…",
+    "send": "Send Notification",
+    "selectAll": "All patients",
+    "sent": "{n, plural, one {Sent to your 1 connected patient. Only those with SolvyMed notifications on will receive it.} other {Sent to your # connected patients. Only those with SolvyMed notifications on will receive it.}}",
+    "noTokens": "No patients have the app installed yet.",
+    "titleRequired": "Please enter a notification title.",
+    "noPatientDetails": "Don't include patient details.",
+    "limitReached": "You've reached the limit of 10 messages in 24 hours. Try again later.",
+    "bodyRequired": "Please write a message.",
+    "failed": "Something went wrong. Please try again.",
+    "close": "Close"
   }
 }

@@ -1971,5 +1971,22 @@
     "referHint": "Envie ao paciente o link de um colega. Nenhum dado é compartilhado.",
     "shareMessage": "Olá, {patient}! Indico {colleague} ({specialty}). Para marcar, acesse: {link}",
     "empty": "Você ainda não adicionou colegas."
+  },
+  "massMessage": {
+    "title": "Enviar para Pacientes",
+    "notifTitle": "Título da Notificação",
+    "notifTitlePlaceholder": "Ex: Nova consulta disponível",
+    "notifBody": "Mensagem",
+    "notifBodyPlaceholder": "Digite sua mensagem aqui…",
+    "send": "Enviar Notificação",
+    "selectAll": "Todos os pacientes",
+    "sent": "{n, plural, one {Enviado ao seu 1 paciente conectado. Só recebe quem tem as notificações do SolvyMed ativadas.} other {Enviado aos seus # pacientes conectados. Só recebe quem tem as notificações do SolvyMed ativadas.}}",
+    "noTokens": "Nenhum paciente tem o app instalado ainda.",
+    "titleRequired": "Por favor, insira um título para a notificação.",
+    "noPatientDetails": "Não inclua dados de pacientes.",
+    "limitReached": "Você atingiu o limite de 10 mensagens em 24 horas. Tente novamente mais tarde.",
+    "bodyRequired": "Escreva uma mensagem.",
+    "failed": "Algo deu errado. Tente novamente.",
+    "close": "Fechar"
   }
 }
