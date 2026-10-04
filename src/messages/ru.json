@@ -1443,7 +1443,8 @@
     "paid": "Оплачено",
     "pending": "Ожидает оплаты",
     "receiptLink": "Квитанция",
-    "receiptThaiHint": "Нумерованные квитанции выдаются в приложении."
+    "receiptThaiHint": "Нумерованные квитанции выдаются в приложении.",
+    "receiptNeedsAmount": "Set the appointment amount before issuing a receipt."
   },
   "founders": {
     "metaTitle": "Программа основателей SolvyMed",

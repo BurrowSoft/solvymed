@@ -1443,7 +1443,8 @@
     "paid": "Pagado",
     "pending": "Pendiente",
     "receiptLink": "Recibo",
-    "receiptThaiHint": "Los recibos numerados se emiten en la app."
+    "receiptThaiHint": "Los recibos numerados se emiten en la app.",
+    "receiptNeedsAmount": "Set the appointment amount before issuing a receipt."
   },
   "founders": {
     "metaTitle": "Programa Fundadores de SolvyMed",

@@ -1443,7 +1443,8 @@
     "paid": "مدفوع",
     "pending": "قيد الانتظار",
     "receiptLink": "إيصال",
-    "receiptThaiHint": "تُصدَر الإيصالات المرقّمة في التطبيق."
+    "receiptThaiHint": "تُصدَر الإيصالات المرقّمة في التطبيق.",
+    "receiptNeedsAmount": "Set the appointment amount before issuing a receipt."
   },
   "founders": {
     "metaTitle": "برنامج المؤسسين من SolvyMed",

@@ -1473,7 +1473,8 @@
     "paid": "ชำระแล้ว",
     "pending": "รอชำระ",
     "receiptLink": "ใบเสร็จ",
-    "receiptThaiHint": "ใบเสร็จแบบมีเลขที่ออกได้ในแอป"
+    "receiptThaiHint": "ใบเสร็จแบบมีเลขที่ออกได้ในแอป",
+    "receiptNeedsAmount": "กรุณากำหนดจำนวนเงินก่อนออกใบเสร็จ"
   },
   "founders": {
     "metaTitle": "โครงการผู้ร่วมก่อตั้ง SolvyMed",

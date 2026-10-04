@@ -1443,7 +1443,8 @@
     "paid": "Bezahlt",
     "pending": "Ausstehend",
     "receiptLink": "Quittung",
-    "receiptThaiHint": "Nummerierte Quittungen werden in der App ausgestellt."
+    "receiptThaiHint": "Nummerierte Quittungen werden in der App ausgestellt.",
+    "receiptNeedsAmount": "Set the appointment amount before issuing a receipt."
   },
   "founders": {
     "metaTitle": "SolvyMed-Gründerprogramm",

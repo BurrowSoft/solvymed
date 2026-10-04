@@ -14,6 +14,8 @@ import { liveFeatures } from "@/lib/liveFeatures";
 import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { RECEITA_SAUDE_NOTE, ReceiptDocument } from "./ReceiptDocument";
 import { consultTypeKey } from "@/lib/consultType";
+import { hasAmount } from "@/lib/paymentRules";
+import { ReceiptNeedsAmount } from "./ReceiptNeedsAmount";
 
 // The recibo's print view (Help G5 on the website; UX 36): the app's simple
 // recibo, for the doctor AND the secretary (payments are their job). A Thai
@@ -64,6 +66,17 @@ export default async function ReceiptPrintPage({
     );
   }
 
+  // No recibo without an amount (UX, 1.6.0; the app does the same): never
+  // "R$ 0,00 · Pendente". Set it here, then the recibo shows.
+  if (!hasAmount(a.payment_amount as number | null | undefined)) {
+    return (
+      <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
+        <PrintToolbar backHref={back} backLabel={t("backToPayments")} printable={false} />
+        <ReceiptNeedsAmount id={apptId} currency={profile.currency} text={t("receiptNeedsAmount")} />
+      </div>
+    );
+  }
+
   const [patientResult, header, brand] = await Promise.all([
     str(a.patient_id)
       ? supabase.from("patients").select("full_name, cpf, passport_number").eq("id", a.patient_id as string).eq("professional_id", profId).maybeSingle()
@@ -109,7 +122,7 @@ export default async function ReceiptPrintPage({
           // "Consulta"); a clinic's own procedure name as written (d7).
           service={(() => { const raw = String(a.consultation_type ?? ""); const key = consultTypeKey(raw); return key ? tConsult(key) : raw; })()}
           serviceDetail={`${a.type === "online" ? t("online") : t("inPerson")} · ${docTime(a.start_time as string)}`}
-          amount={base > 0 ? money(base) : "—"}
+          amount={money(base)}
           extras={extras.map((x) => ({ name: String(x.name ?? ""), amount: typeof x.price === "number" ? money(x.price) : "—" }))}
           total={money(base + extrasTotal)}
           privatePay={a.payment_type === "private"}
