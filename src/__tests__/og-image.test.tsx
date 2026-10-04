@@ -10,11 +10,11 @@ vi.mock("next-intl/server", () => ({
 }));
 
 // UX (5 Oct): the site's share preview is the brand kit's blue banner with
-// the slogan in the page's language: pt-BR its own, every other the English.
+// the slogan in the page's language: pt-BR and th their own, every other the English.
 describe("the site's share image", () => {
   it.each([
     ["en", "/og/solvymed-og-share-blue.png?v=2026-10-05"],
-    ["th", "/og/solvymed-og-share-blue.png?v=2026-10-05"],
+    ["th", "/og/solvymed-og-share-blue-th.png?v=2026-10-05"],
     ["pt-BR", "/og/solvymed-og-share-blue-pt-BR.png?v=2026-10-05"],
   ])("%s → %s, 1200×630, alt = the title, on openGraph and twitter", async (locale, url) => {
     const { generateMetadata } = await import("@/app/[locale]/layout");
@@ -24,7 +24,7 @@ describe("the site's share image", () => {
     expect(m.twitter).toMatchObject({ card: "summary_large_image", images: [{ url, alt: `${locale}.title` }] });
   });
 
-  it.each(["solvymed-og-share-blue.png", "solvymed-og-share-blue-pt-BR.png"])("public/og/%s is a 1200×630 PNG", (f) => {
+  it.each(["solvymed-og-share-blue.png", "solvymed-og-share-blue-pt-BR.png", "solvymed-og-share-blue-th.png"])("public/og/%s is a 1200×630 PNG", (f) => {
     const p = join(process.cwd(), "public", "og", f);
     expect(existsSync(p)).toBe(true);
     const b = readFileSync(p);

@@ -3,6 +3,7 @@
 // has its own; every other language gets the English one.
 const BANNERS: Record<string, string> = {
   "pt-BR": "/og/solvymed-og-share-blue-pt-BR.png",
+  th: "/og/solvymed-og-share-blue-th.png",
 };
 const DEFAULT_BANNER = "/og/solvymed-og-share-blue.png";
 // Share previews are cached by URL (WhatsApp, Facebook, X): bump this

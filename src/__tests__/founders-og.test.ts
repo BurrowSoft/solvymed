@@ -27,7 +27,7 @@ describe("the Founders share preview", () => {
     const { generateMetadata } = await import("@/app/[locale]/(site)/founders/rules/page");
     const m = await generateMetadata({ params: Promise.resolve({ locale: "th" }) });
     const og = m.openGraph as { images: { url: string }[]; title: string; url: string };
-    expect(og.images[0].url).toBe("/og/solvymed-og-share-blue.png?v=2026-10-05");
+    expect(og.images[0].url).toBe("/og/solvymed-og-share-blue-th.png?v=2026-10-05");
     expect(og.title).toBe("founders.rulesTitle");
     expect(og.url).toBe("https://www.solvymed.com/th/founders/rules");
     // Its own canonical, never the home page's (3e), and its own hreflang
