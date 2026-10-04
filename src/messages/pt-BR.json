@@ -1980,7 +1980,7 @@
     "notifBodyPlaceholder": "Digite sua mensagem aqui…",
     "send": "Enviar Notificação",
     "selectAll": "Todos os pacientes",
-    "sent": "{n, plural, one {Enviado para # paciente} other {Enviado para # pacientes}}",
+    "sent": "{n, plural, one {Enviado ao seu 1 paciente conectado. Só recebe quem tem as notificações do SolvyMed ativadas.} other {Enviado aos seus # pacientes conectados. Só recebe quem tem as notificações do SolvyMed ativadas.}}",
     "noTokens": "Nenhum paciente tem o app instalado ainda.",
     "titleRequired": "Por favor, insira um título para a notificação.",
     "noPatientDetails": "Não inclua dados de pacientes.",

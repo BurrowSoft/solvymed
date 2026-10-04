@@ -189,9 +189,9 @@ Imported patients show up in the app as usual.
 ---
 ## P14. Aviso para todos os pacientes / Send to Patients
 **pt-BR**
-Em **Início**, toque em **Enviar para Pacientes** (só o médico): escreva um **Título da Notificação** (até 100 caracteres) e uma **Mensagem** (até 500) e toque em **Enviar Notificação**. Todos os pacientes conectados a você que usam o app recebem a notificação; a mensagem não pode ficar em branco. Não inclua dados de pacientes. São no máximo 10 avisos a cada 24 horas.
+Em **Início**, toque em **Enviar para Pacientes** (só o médico): escreva um **Título da Notificação** (até 100 caracteres) e uma **Mensagem** (até 500) e toque em **Enviar Notificação**. Ela é enviada aos pacientes conectados a você, e só recebe quem tem as notificações do SolvyMed ativadas; a mensagem não pode ficar em branco. Não inclua dados de pacientes. São no máximo 10 avisos a cada 24 horas.
 **en**
-On **Home**, tap **Send to Patients** (doctor only): write a **Notification Title** (up to 100 characters) and a **Message** (up to 500) and tap **Send Notification**. Every patient connected to you who uses the app gets the notification; the message can't be blank. Don't include patient details. You can send at most 10 notices every 24 hours.
+On **Home**, tap **Send to Patients** (doctor only): write a **Notification Title** (up to 100 characters) and a **Message** (up to 500) and tap **Send Notification**. It goes to the patients connected to you, and only those with SolvyMed notifications on receive it; the message can't be blank. Don't include patient details. You can send at most 10 notices every 24 hours.
 **No site:** Em **Visão geral**, clique em **Enviar para Pacientes** (só o médico): o mesmo título, mensagem e limites; **Enviar Notificação** só fica disponível com título e mensagem preenchidos.
 **On the website:** On **Overview**, click **Send to Patients** (doctor only): the same title, message and limits; **Send Notification** is only available once both the title and the message are filled in.
 `open:home`

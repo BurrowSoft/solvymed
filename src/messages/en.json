@@ -2010,7 +2010,7 @@
     "notifBodyPlaceholder": "Type your message here…",
     "send": "Send Notification",
     "selectAll": "All patients",
-    "sent": "{n, plural, one {Sent to # patient} other {Sent to # patients}}",
+    "sent": "{n, plural, one {Sent to your 1 connected patient. Only those with SolvyMed notifications on will receive it.} other {Sent to your # connected patients. Only those with SolvyMed notifications on will receive it.}}",
     "noTokens": "No patients have the app installed yet.",
     "titleRequired": "Please enter a notification title.",
     "noPatientDetails": "Don't include patient details.",

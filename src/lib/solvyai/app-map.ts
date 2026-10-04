@@ -373,7 +373,7 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
-      text: "Broadcast to patients (doctor only, never a secretary): Início / Home (app) or Visão geral / Overview (website) → \"Enviar para Pacientes\" / \"Send to Patients\": a \"Título da Notificação\" / \"Notification Title\" (up to 100 characters) and a \"Mensagem\" / \"Message\" (up to 500, never blank) → \"Enviar Notificação\" / \"Send Notification\". Every patient connected to the doctor who uses the app gets it; at most 10 per practice every 24 hours; don't include patient details. SolvyAI doesn't send broadcasts; it points to that button.",
+      text: "Broadcast to patients (doctor only, never a secretary): Início / Home (app) or Visão geral / Overview (website) → \"Enviar para Pacientes\" / \"Send to Patients\": a \"Título da Notificação\" / \"Notification Title\" (up to 100 characters) and a \"Mensagem\" / \"Message\" (up to 500, never blank) → \"Enviar Notificação\" / \"Send Notification\". It goes to the patients connected to the doctor; only those with SolvyMed notifications on receive it; at most 10 per practice every 24 hours; don't include patient details. SolvyAI doesn't send broadcasts; it points to that button.",
       pending: ["broadcast-live"],
     },
     help: "P14",

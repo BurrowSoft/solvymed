@@ -69,7 +69,7 @@ describe("the modal", () => {
     fireEvent.change(screen.getByPlaceholderText(m.notifTitlePlaceholder), { target: { value: "Aviso" } });
     fireEvent.change(screen.getByPlaceholderText(m.notifBodyPlaceholder), { target: { value: "Feriado" } });
     fireEvent.click(screen.getByRole("button", { name: m.send }));
-    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Enviado para 3 pacientes"));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Enviado aos seus 3 pacientes conectados. Só recebe quem tem as notificações do SolvyMed ativadas."));
     h.rpc.mockResolvedValue({ data: 0, error: null });
     fireEvent.change(screen.getByPlaceholderText(m.notifTitlePlaceholder), { target: { value: "Aviso" } });
     fireEvent.change(screen.getByPlaceholderText(m.notifBodyPlaceholder), { target: { value: "Feriado" } });
