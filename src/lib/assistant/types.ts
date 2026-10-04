@@ -92,7 +92,7 @@ export type AnswerChunk =
   | { kind: "error"; code: string }
   // Previews only (testers' probes): how each model round ended, no
   // content. Clients ignore it.
-  | { kind: "debug"; rounds: { round: number; stop: string; chars: number; calls: string[]; output: number }[] };
+  | { kind: "debug"; rounds: { round: number; stop: string; chars: number; calls: string[]; output: number; blocks: string[] }[] };
 
 // Today's usage (§4, cost controls): resets at the next local midnight in
 // the clinic's time zone.

@@ -214,8 +214,8 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
       const r = await run(setup(reply), ask("O que tenho amanhã?"));
       const dbg = r.chunks.find((c) => c.kind === "debug");
       expect(dbg).toEqual({ kind: "debug", rounds: [
-        { round: 0, stop: "tool_use", chars: 10, calls: ["list_appointments"], output: 50 },
-        { round: 1, stop: "end_turn", chars: 19, calls: [], output: 50 },
+        { round: 0, stop: "tool_use", chars: 10, calls: ["list_appointments"], output: 50, blocks: [] },
+        { round: 1, stop: "end_turn", chars: 19, calls: [], output: 50, blocks: [] },
       ] });
       expect(r.chunks.at(-1)).toEqual({ kind: "done" });
       vi.stubEnv("VERCEL_ENV", "production");

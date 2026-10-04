@@ -290,7 +290,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       let nudged = false;
       // Previews only: each round's stop reason, raw text length, tools and
       // output tokens, for the testers' probes (no content).
-      const diag: { round: number; stop: string; chars: number; calls: string[]; output: number }[] = [];
+      const diag: { round: number; stop: string; chars: number; calls: string[]; output: number; blocks: string[] }[] = [];
       const debug = (): AnswerChunk[] => (process.env.VERCEL_ENV === "preview" ? [{ kind: "debug", rounds: diag }] : []);
       // What this answer has put on screen for the user to act on.
       let shown: "card" | "choice" | "slot" | null = null;
@@ -302,6 +302,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
         for (let round = 0; round < (ctx ? MAX_ROUNDS : 1); round++) {
           let said = "";
           let stop = "";
+          let blocks: string[] = [];
           let roundOut = 0;
           const calls: { id: string; name: string; input: Record<string, unknown> }[] = [];
           async function* texts(): AsyncIterable<string> {
@@ -314,14 +315,14 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
             })) {
               if (ev.type === "text") { said += ev.text; yield ev.text; }
               else if (ev.type === "tool_use") calls.push(ev);
-              else if (ev.type === "stop") stop = ev.reason;
+              else if (ev.type === "stop") { stop = ev.reason; blocks = ev.blocks ?? []; }
               else if (ev.type === "usage") {
                 roundOut += ev.usage.output;
                 usage.input += ev.usage.input; usage.output += ev.usage.output;
                 usage.cacheRead += ev.usage.cacheRead; usage.cacheWrite += ev.usage.cacheWrite;
               }
             }
-            diag.push({ round, stop, chars: said.length, calls: calls.map((c) => c.name), output: roundOut });
+            diag.push({ round, stop, chars: said.length, calls: calls.map((c) => c.name), output: roundOut, blocks });
           }
           if (!ctx) {
             // Help mode: one round, streamed as it comes.

@@ -28,7 +28,8 @@ export type ModelEvent =
   | { type: "text"; text: string }
   | { type: "tool_use"; id: string; name: string; input: Record<string, unknown> }
   | { type: "usage"; usage: ModelUsage }
-  | { type: "stop"; reason: string };
+  // blocks: the response's content block types, in order (Preview probes).
+  | { type: "stop"; reason: string; blocks?: string[] };
 
 export interface ModelClient {
   stream(req: ModelRequest): AsyncIterable<ModelEvent>;
@@ -64,7 +65,7 @@ export function anthropicModelClient(apiKey: string): ModelClient {
           cacheWrite: final.usage.cache_creation_input_tokens ?? 0,
         },
       };
-      yield { type: "stop", reason: final.stop_reason ?? "end_turn" };
+      yield { type: "stop", reason: final.stop_reason ?? "end_turn", blocks: final.content.map((b) => (b.type === "tool_use" ? `tool_use:${b.name}` : b.type)) };
     },
   };
 }
