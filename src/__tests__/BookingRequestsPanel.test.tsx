@@ -267,3 +267,6 @@ describe('BookingRequestsPanel', () => {
     expect(confirm.querySelector(".spinner-current")).toBeNull();
   });
 });
+
+// The "All" schedule's dispatcher (166) imports every action; these tests mock them.
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/schedule/row-actions", () => ({ actForRow: vi.fn() }));

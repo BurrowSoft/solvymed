@@ -7,6 +7,10 @@
 import { liveFeatures } from "./liveFeatures";
 
 export const ACTING_COOKIE = "sm_practice";
+// The switcher's "Todos" (166): the Agenda shows every doctor she serves.
+// Not an id, so it never becomes a header; every other page acts for her
+// primary doctor.
+export const ALL_PRACTICES = "all";
 export const ACTING_HEADER = "x-acting-practice";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

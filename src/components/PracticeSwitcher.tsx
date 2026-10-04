@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { setBrowserActingCookie, type MyPractice } from "@/lib/actingPractice";
+import { ALL_PRACTICES, setBrowserActingCookie, type MyPractice } from "@/lib/actingPractice";
 import { brandAccent, readableAccent } from "@/lib/readableAccent";
 import { withBrandTitle } from "@/lib/doctorName";
 
@@ -11,17 +12,21 @@ import { withBrandTitle } from "@/lib/doctorName";
 // get_my_practices() are offered, so the x-acting-practice header never
 // names one she doesn't serve. A choice reloads the page: the browser
 // Supabase client is created once per page, with the header baked in.
-// ("Todos", the combined schedule, comes with migration 166.)
-export function PracticeSwitcher({ practices, current }: { practices: MyPractice[]; current: string }) {
+// "Todos" (166): on the Agenda only, every doctor's appointments in one
+// view; remembered like a doctor choice. Elsewhere the pages are her
+// primary doctor's, so the switcher shows that doctor there.
+export function PracticeSwitcher({ practices, current, allChosen = false }: { practices: MyPractice[]; current: string; allChosen?: boolean }) {
   const t = useTranslations("secretaryPractices");
+  const onAgenda = /\/dashboard\/schedule\/?$/.test(usePathname() ?? "");
+  const showAll = onAgenda && allChosen;
   const chosen = practices.find((p) => p.professional_id === current) ?? practices[0];
-  const dot = readableAccent(brandAccent(chosen?.accent_color), "#ffffff");
+  const dot = showAll ? null : readableAccent(brandAccent(chosen?.accent_color), "#ffffff");
   return (
     <label data-testid="practice-switcher" className="flex items-center gap-2 text-sm text-slate-600">
       <span className="font-semibold">{t("switcherLabel")}</span>
-      <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: dot }} />
+      {dot && <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: dot }} />}
       <select
-        value={chosen?.professional_id}
+        value={showAll ? ALL_PRACTICES : chosen?.professional_id}
         onChange={(e) => {
           setBrowserActingCookie(e.target.value);
           try { sessionStorage.removeItem(RESET_KEY); } catch { /* none */ }
@@ -29,6 +34,7 @@ export function PracticeSwitcher({ practices, current }: { practices: MyPractice
         }}
         className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm font-semibold text-slate-800"
       >
+        {onAgenda && <option value={ALL_PRACTICES}>{t("all")}</option>}
         {practices.map((p) => (
           <option key={p.professional_id} value={p.professional_id}>{withBrandTitle(p.title, p.display_name) || "—"}</option>
         ))}
