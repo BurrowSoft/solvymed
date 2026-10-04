@@ -18,6 +18,7 @@ import type { Currency } from "@/lib/country";
 import Link from "next/link";
 import { REASON_MAX, statusReasonLive } from "@/lib/statusReason";
 import { DoctorTimePicker } from "@/components/DoctorTimePicker";
+import { useRowAction } from "@/components/RowPractice";
 import { PLAIN_CONSULTATION } from "@/lib/consultType";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
@@ -230,6 +231,7 @@ function actionErrorMessage(t: (key: string) => string, code: string | undefined
 
 export function AppointmentStatusSelect({ id, current }: { id: string; current: string }) {
   const t = useTranslations("schedule");
+  const updateStatus = useRowAction("updateAppointmentStatus", updateAppointmentStatus);
   const [status, setStatus] = useState(current);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -268,7 +270,7 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
   function save(newStatus: string, previous: string, why?: string) {
     setAsking(null);
     startTransition(async () => {
-      const result = await updateAppointmentStatus(id, newStatus, why);
+      const result = await updateStatus(id, newStatus, why);
       if (result?.error) {
         setStatus(previous);
         setError(actionErrorMessage(t, result.code));
@@ -322,6 +324,7 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
 // saying with whom; blocked time / outside the working hours asked once.
 export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: string; date: string; start: string; durationMin?: number }) {
   const t = useTranslations("schedule");
+  const move = useRowAction("moveAppointment", moveAppointment);
   const tDate = useTranslations("dateInput");
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
@@ -332,7 +335,7 @@ export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: st
   function submit(formData: FormData) {
     setError("");
     startTransition(async () => {
-      const result = await moveAppointment(formData);
+      const result = await move(formData);
       if (result?.code === "needs_confirm" && "hours" in result) {
         const parts: string[] = [];
         if (result.blocked) parts.push(t("warnBlocked", result.blocked));
@@ -402,11 +405,12 @@ export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: st
 
 export function DeleteAppointmentButton({ id }: { id: string }) {
   const t = useTranslations("schedule");
+  const remove = useRowAction("deleteAppointment", deleteAppointment);
   const [pending, startTransition] = useTransition();
 
   function handleDelete() {
     if (!confirm(t("deleteConfirm"))) return;
-    startTransition(async () => { await deleteAppointment(id); });
+    startTransition(async () => { await remove(id); });
   }
 
   return (

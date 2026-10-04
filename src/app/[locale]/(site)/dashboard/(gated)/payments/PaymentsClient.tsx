@@ -4,6 +4,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTransition, useCallback, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { markPaid, markUnpaid, setPaymentAmount } from "./actions";
+import { useRowAction } from "@/components/RowPractice";
 import { currencySymbol, formatMoney, parseMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
 
@@ -90,6 +91,7 @@ export function PeriodFilter({ current }: { current: string }) {
 
 // currency: the practice's (its country), for the "= …" echo.
 export function MarkPaidButton({ id, amount, currency = "BRL" }: { id: string; amount?: number; currency?: Currency }) {
+  const paid = useRowAction("markPaid", markPaid);
   const t = useTranslations("payments");
   const [pending, startTransition] = useTransition();
   const [showAmount, setShowAmount] = useState(false);
@@ -118,7 +120,7 @@ export function MarkPaidButton({ id, amount, currency = "BRL" }: { id: string; a
     const finalAmount = inputVal.trim() ? parsed! : amount ?? 0;
     setError("");
     startTransition(async () => {
-      const result = await markPaid(id, finalAmount);
+      const result = await paid(id, finalAmount);
       if (result?.error) setError(t((ERROR_CODE_KEY[result.code ?? ""] ?? "errorGeneric") as Parameters<typeof t>[0]));
     });
   }
@@ -176,6 +178,7 @@ export function MarkPaidButton({ id, amount, currency = "BRL" }: { id: string; a
 // price of the active procedure of the same name. Nothing else changes.
 // onSaved: the recibo page re-renders with the amount (UX, 1.6.0).
 export function SetAmountButton({ id, suggested, currency = "BRL", onSaved }: { id: string; suggested?: number | null; currency?: Currency; onSaved?: () => void }) {
+  const saveAmount = useRowAction("setPaymentAmount", setPaymentAmount);
   const t = useTranslations("payments");
   const [pending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
@@ -188,7 +191,7 @@ export function SetAmountButton({ id, suggested, currency = "BRL", onSaved }: { 
     if (parsed <= 0) { setError(t("amountFirst")); return; }
     setError("");
     startTransition(async () => {
-      const r = await setPaymentAmount(id, parsed);
+      const r = await saveAmount(id, parsed);
       if (r?.error) setError(t((ERROR_CODE_KEY[r.code ?? ""] ?? "errorGeneric") as Parameters<typeof t>[0]));
       else { setOpen(false); onSaved?.(); }
     });
@@ -231,6 +234,7 @@ export function SetAmountButton({ id, suggested, currency = "BRL", onSaved }: { 
 }
 
 export function MarkUnpaidButton({ id }: { id: string }) {
+  const unpaid = useRowAction("markUnpaid", markUnpaid);
   const t = useTranslations("payments");
   const [pending, startTransition] = useTransition();
 
@@ -238,7 +242,7 @@ export function MarkUnpaidButton({ id }: { id: string }) {
     <button
       onClick={() => {
         if (!confirm(t("revertConfirm"))) return;
-        startTransition(async () => { await markUnpaid(id); });
+        startTransition(async () => { await unpaid(id); });
       }}
       disabled={pending}
       className="rounded-lg bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-100 transition disabled:opacity-60"

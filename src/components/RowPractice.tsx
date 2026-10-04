@@ -17,8 +17,11 @@ export function useRowPractice(): string | null {
   return useContext(RowPracticeContext);
 }
 
-export function useRowAction<K extends RowActionName>(name: K, fn: RowActions[K]): RowActions[K] {
-  const practiceId = useContext(RowPracticeContext);
+export function forRow<K extends RowActionName>(practiceId: string | null | undefined, name: K, fn: RowActions[K]): RowActions[K] {
   if (!practiceId) return fn;
   return ((...args: unknown[]) => actForRow(practiceId, name, args)) as unknown as RowActions[K];
+}
+
+export function useRowAction<K extends RowActionName>(name: K, fn: RowActions[K]): RowActions[K] {
+  return forRow(useContext(RowPracticeContext), name, fn);
 }
