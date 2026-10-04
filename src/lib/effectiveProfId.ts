@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { createClient as createServerClient, type createClient } from "@/lib/supabase/server";
 import { ACTING_COOKIE, type MyPractice } from "@/lib/actingPractice";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { rowPracticeOverride } from "@/lib/rowPractice";
 
 /**
  * Resolves which professional_id a caller's writes/reads should be scoped
@@ -48,6 +49,14 @@ export const myPractices = cache(async (userId: string): Promise<MyPractice[] | 
 // pages filter by match what the server acts for.
 export async function actingPracticeFor(primary: string | null, userId: string): Promise<string | null> {
   if (!liveFeatures.multiPractice || !primary) return primary;
+  // A row of the "All" schedule (166): that row's doctor, for this action
+  // only; one she doesn't serve acts for no practice (fail closed).
+  const row = rowPracticeOverride();
+  if (row) {
+    if (row === primary) return primary;
+    const list = await myPractices(userId);
+    return list?.some((p) => p.professional_id === row) ? row : null;
+  }
   const chosen = (await cookies()).get(ACTING_COOKIE)?.value;
   if (!chosen || chosen === primary) return primary;
   const list = await myPractices(userId);
