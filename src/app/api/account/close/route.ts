@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse, after } from "next/server";
 import Stripe from "stripe";
 import { createClient as createSupabaseClient, type SupabaseClient } from "@supabase/supabase-js";
-import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { clearAuthCookies } from "@/lib/authCookies";
 import { stripe, retrieveSubscriptionOrNull } from "@/lib/stripeBilling";
 import { knownDbError } from "@/lib/dbErrors";
 import { closeFailureCode, planClosureNotices, stripeCloseStep, type ClosureRow } from "@/lib/accountClose";
-import { sendExpoPush } from "@/lib/push";
-import { pushLocale } from "@/lib/pushText";
-import { formatShortDate } from "@/lib/dateLabels";
-import { routing } from "@/i18n/routing";
-import { patientFacingClinicName } from "@/lib/clinicNotify";
 
 // Closes or deletes the caller's own account (migration 102), for the web
 // settings page and the mobile app alike:
@@ -22,9 +16,10 @@ import { patientFacingClinicName } from "@/lib/clinicNotify";
 //   2. close_my_account() runs as the caller (a professional with clinical
 //      history is closed, everyone else is deleted);
 //   3. the professional's photo and logo files are deleted;
-//   4. linked patients get the "clinic closed" push here and the email from
-//      the notify-clinic-closed edge function; other patients with a
-//      cancelled appointment get the usual cancellation push.
+//   4. linked patients get the "clinic closed" email from the
+//      notify-clinic-closed edge function. The pushes ("practice closed" /
+//      "appointment cancelled") are queued by close_my_account itself and
+//      sent by the server (migration 173); the website sends none.
 // Responses carry a stable `code` the client translates. Logs carry error
 // codes only, never names, emails or ids.
 
@@ -98,11 +93,6 @@ export async function POST(request: NextRequest) {
   const { supabase, userId } = await caller(request);
   if (!userId) return fail("unauthorized", 401);
 
-  const requestedLocale = (await request.json().catch(() => ({})))?.locale;
-  const locale = (routing.locales as readonly string[]).includes(requestedLocale)
-    ? (requestedLocale as string)
-    : routing.defaultLocale;
-
   // 0. Dry run: the whole close, rolled back inside the database, before
   // anything irreversible happens (Stripe can't be un-cancelled). It skips
   // the subscription guard, since the subscription is cancelled next.
@@ -113,17 +103,10 @@ export async function POST(request: NextRequest) {
   // secretaries and patients there's no row and nothing to cancel.
   const { data: prof, error: profError } = await supabase
     .from("professionals")
-    .select("subscription_status, subscription_provider, subscription_id, clinic_name, full_name")
+    .select("subscription_status, subscription_provider, subscription_id")
     .eq("id", userId)
     .maybeSingle();
   if (profError) return fail("check_failed", 503);
-  // The name patients know the clinic by, for the cancellation notices
-  // (read now: the close removes it).
-  let clinicName = "";
-  if (prof) {
-    const { data: locs } = await supabase.from("clinics").select("name").eq("professional_id", userId).order("name").limit(1);
-    clinicName = patientFacingClinicName(prof.clinic_name, ((locs ?? []) as { name: string | null }[])[0]?.name, prof.full_name);
-  }
 
   let live: Stripe.Subscription | null = null;
   if (prof?.subscription_provider === "stripe" && prof.subscription_id && prof.subscription_status !== "lifetime") {
@@ -174,60 +157,23 @@ export async function POST(request: NextRequest) {
   // purge. Secretaries and patients have none of these.
   if (prof) await removeProfessionalImages(userId);
 
-  // 4. Notices, after the response is sent: they can never delay or fail
-  // the close, which is already done. Best-effort, code-only logs.
+  // 4. The "clinic closed" email to linked patients, after the response is
+  // sent: it can never delay or fail the close, which is already done.
+  // Best-effort, code-only logs. (Pushes: queued by close_my_account, 173.)
   const plan = planClosureNotices(rows);
-  if (plan.linkedPatients.length || plan.cancelledAppointments.length) after(async () => {
+  if (plan.linkedPatients.length) after(async () => {
     try {
-      const admin = adminClient();
-      const ids = [...new Set([...plan.linkedPatients, ...plan.cancelledAppointments.map((a) => a.patientAuthId)])];
-      const [{ data: tokenRows }, { data: profileRows }] = await Promise.all([
-        admin.from("push_tokens").select("user_id, token").in("user_id", ids),
-        admin.from("patient_profiles").select("user_id, locale").in("user_id", ids),
-      ]);
-      const tokenOf = new Map((tokenRows ?? []).map((r: { user_id: string; token: string }) => [r.user_id, r.token]));
-      // Each patient in their own saved language (else the closing
-      // practice's), the date in that language's format.
-      const savedLocale = new Map((profileRows ?? []).map((r: { user_id: string; locale: string | null }) => [r.user_id, pushLocale(r.locale)]));
-      const translators = new Map<string, Awaited<ReturnType<typeof getTranslations<"accountClose">>>>();
-      const tFor = async (loc: string) => {
-        if (!translators.has(loc)) translators.set(loc, await getTranslations({ locale: loc, namespace: "accountClose" }));
-        return translators.get(loc)!;
-      };
-      const localeOf = (id: string) => savedLocale.get(id) ?? locale;
-      const pushes: Promise<void>[] = [];
-      for (const id of plan.linkedPatients) {
-        const token = tokenOf.get(id);
-        if (!token) continue;
-        const t = await tFor(localeOf(id));
-        pushes.push(sendExpoPush([token], t("pushClosedTitle"), t("pushClosedBody")));
-      }
-      for (const a of plan.cancelledAppointments) {
-        const token = tokenOf.get(a.patientAuthId);
-        if (!token) continue;
-        const loc = localeOf(a.patientAuthId);
-        const t = await tFor(loc);
-        pushes.push(sendExpoPush([token], t("pushCancelledTitle"), t("pushCancelledBody", { date: formatShortDate(loc, a.date), time: a.startTime.slice(0, 5), clinic: clinicName })));
-      }
-      if (plan.linkedPatients.length) {
-        pushes.push(
-          fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/notify-clinic-closed`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ patient_auth_ids: plan.linkedPatients }),
-          })
-            .then((res) => {
-              if (!res.ok) console.error("Account close: notify-clinic-closed failed", res.status);
-            })
-            .catch((err) => console.error("Account close: notify-clinic-closed threw", errorCode(err))),
-        );
-      }
-      await Promise.all(pushes);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/notify-clinic-closed`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ patient_auth_ids: plan.linkedPatients }),
+      });
+      if (!res.ok) console.error("Account close: notify-clinic-closed failed", res.status);
     } catch (err) {
-      console.error("Account close: notices failed", errorCode(err));
+      console.error("Account close: notify-clinic-closed threw", errorCode(err));
     }
   });
 
