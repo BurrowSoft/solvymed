@@ -130,5 +130,13 @@
   "multi-doctor-live": {
     "met": false,
     "what": "Patients with several doctors (web 1.5.0 behind the flag, app 1.6.0) are live: migrations 164 (+165, the per-connection checks) applied AND server_flags.multi_doctor_patient on (after the min_version raise + Vitor's OK) AND the app's My doctors (mobile #333: Home cards + Settings → My doctors; app 1.6.0) in a RELEASED store build AND liveFeatures.multiDoctor true on the website AND the 1.5.0 privacy text (several doctors, each sees only their own data) live with its version bump. Gates the App Map's My doctors rule and Help C5's several-doctors line."
+  },
+  "closure-notices-live": {
+    "met": false,
+    "what": "Migration 173 is applied on production: close_my_account queues the 'practice closed' / 'appointment cancelled' notices server-side (patient_notice_outbox kinds practice_closed / closure_cancelled, clinic_name snapshot; professional_id NULL on those rows, CHECK-enforced) and patient-notify sends them. Reveals privacy §6g's closure line (with a PRIVACY_VERSION bump + mobile's accepting migration first); the web then drops api/account/close's own push sending."
+  },
+  "broadcast-live": {
+    "met": false,
+    "what": "The doctor's broadcast (\"Enviar para Pacientes\" / \"Send to Patients\") is live on both platforms: enqueue_mass_message (171) + the blank-body check (172) applied, the app's broadcast through the server in a RELEASED build (1.6.0), liveFeatures.broadcast true on the website, and the 1.6.0 privacy text (§6g, the professional's general notices) live with its version bump. Gates Help P14 and the App Map's broadcast rule."
   }
 }

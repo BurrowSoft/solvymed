@@ -53,7 +53,8 @@ export function MonthCalendar({
     <div data-testid="month-calendar" className="rounded-xl border border-slate-200 bg-white p-3">
       <div className="mb-2 flex items-center justify-between">
         <button type="button" onClick={() => (free ? setFreeYm(shiftMonth(freeYm, -1)) : setMonthIdx((i) => i - 1))} disabled={!free && monthIdx <= 0} aria-label={labels.prev} className="rounded-lg px-2 py-1 text-slate-600 hover:bg-slate-100 disabled:opacity-30">‹</button>
-        <p className="text-sm font-bold capitalize text-slate-800">{title}</p>
+        {/* Only the first letter (CSS capitalize gave "Outubro De 2569"; 53). */}
+        <p className="text-sm font-bold text-slate-800">{title.charAt(0).toLocaleUpperCase() + title.slice(1)}</p>
         <button type="button" onClick={() => (free ? setFreeYm(shiftMonth(freeYm, 1)) : setMonthIdx((i) => i + 1))} disabled={!free && monthIdx >= months.length - 1} aria-label={labels.next} className="rounded-lg px-2 py-1 text-slate-600 hover:bg-slate-100 disabled:opacity-30">›</button>
       </div>
       <div className="grid grid-cols-7 gap-1 text-center">

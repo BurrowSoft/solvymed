@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createMockBackend } from "@/lib/assistant/mockBackend";
@@ -9,7 +9,7 @@ import { answerText } from "@/lib/assistant/answerText";
 import { maskPersonalData, MAX_MESSAGE_CHARS, MAX_TURNS, MIN_SECONDS_BETWEEN } from "@/lib/assistant/mask";
 import type { AnswerBlock, AnswerChunk, AssistantBackend, AssistantScreen, AssistantUsage, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
 import { isInternalHref, webPath } from "@/lib/assistant/targets";
-import { formatDateLabel } from "@/lib/dateLabels";
+import { formatDateLabel, type DateCalendar } from "@/lib/dateLabels";
 import { BUTTON_EVENT, CLOSED_EVENT, OPEN_EVENT, readButtonHidden } from "./SolvyAiSettings";
 import { helpLang, inlineSegments } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
@@ -55,7 +55,15 @@ export function hoursUntil(resetsAt: string, now = Date.now()): number {
 
 // remote: the real route is on (SOLVYAI_API_ENABLED, read on the server);
 // otherwise the mock, labelled "Prévia".
-export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr = null }: { locale: string; prefix: string; dailyLimit: number; remote?: boolean; paymentQr?: "pix" | "promptpay" | null }) {
+// calendar: the practice's (UX 5 Oct): the time chips' dates in it, exactly
+// as the server writes them (a tapped chip is recognised by its text).
+const ChipCalendar = createContext<DateCalendar | undefined>(undefined);
+
+export function SolvyAi(props: { locale: string; prefix: string; dailyLimit: number; remote?: boolean; paymentQr?: "pix" | "promptpay" | null; calendar?: DateCalendar }) {
+  return <ChipCalendar.Provider value={props.calendar}><SolvyAiPanel {...props} /></ChipCalendar.Provider>;
+}
+
+function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = null }: { locale: string; prefix: string; dailyLimit: number; remote?: boolean; paymentQr?: "pix" | "promptpay" | null }) {
   const t = useTranslations("assistant");
   const router = useRouter();
   const pathname = usePathname();
@@ -198,12 +206,15 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
   // After a confirmed save (§2.3 "After saving"): minimise to the pill, go
   // to the action's screen with the item highlighted, and show "✓ … +
   // Desfazer" for 10 s.
+  const [navigating, startNav] = useTransition();
   const afterSave = (card: ConfirmationCard, id: string | undefined, demo: boolean, noUndo = false) => {
     const a = card.after;
     const hl = a.highlight?.id ?? id;
     const path = webPath(prefix, { screen: a.screen === "whatsapp" ? a.then?.screen ?? "payments" : a.screen, date: a.date, id: a.screen === "patient" ? hl : undefined }, hl);
     setMinimized(true);
-    if (path && isInternalHref(path)) router.push(path);
+    // In a transition (#364): Desfazer waits until the move to the screen has
+    // settled, so a click is never lost to the pending navigation.
+    if (path && isInternalHref(path)) startNav(() => router.push(path));
     setCardDone((d) => ({ ...d, [card.id]: "saved" }));
     setToast({ card, id, demo, left: 10, phase: "saved", noUndo, path: path && isInternalHref(path) ? path : undefined });
     track("solvyai_confirmed", { kind: card.action.kind });
@@ -248,11 +259,12 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
   const claimed = useRef(new Set<string>());
   const claim = (id: string) => { if (claimed.current.has(id)) return false; claimed.current.add(id); return true; };
   useEffect(() => {
-    // Paused while undoing: the toast stays until the result is known.
-    if (!toast || toast.left <= 0 || toast.phase === "undoing") return;
+    // Paused while undoing (the toast stays until the result is known) and
+    // while the screen is still loading (Desfazer is disabled then; c6, #364).
+    if (!toast || toast.left <= 0 || toast.phase === "undoing" || navigating) return;
     const id = setTimeout(() => setToast((x) => (x ? { ...x, left: x.left - 1 } : x)), 1000);
     return () => clearTimeout(id);
-  }, [toast]);
+  }, [toast, navigating]);
 
   // Closing tells the tour (paused by "Experimentar agora") it can resume.
   const closePanel = () => { setOpen(false); window.dispatchEvent(new Event(CLOSED_EVENT)); };
@@ -393,12 +405,12 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
               {(toast.phase === "saved" || toast.phase === "undoing") && !toast.noUndo && (
                 <button
                   type="button"
-                  disabled={toast.phase === "undoing"}
-                  aria-busy={toast.phase === "undoing"}
+                  disabled={toast.phase === "undoing" || navigating}
+                  aria-busy={toast.phase === "undoing" || navigating}
                   onClick={() => void runUndo()}
                   className="shrink-0 whitespace-nowrap rounded-lg px-2 py-0.5 font-semibold text-[#5eead4] hover:bg-white/10 disabled:opacity-60"
                 >
-                  {toast.phase === "undoing" ? "…" : t("undo", { s: toast.left })}
+                  {toast.phase === "undoing" || navigating ? "…" : t("undo", { s: toast.left })}
                 </button>
               )}
               {(toast.noUndo || toast.phase === "failed") && toast.path && (
@@ -589,9 +601,10 @@ function CardView({ card, backend, onSaved, onFailed, done, claim }: {
 // sends it as the doctor's next message ("terça, 29/09/2026 às 10:30"); the
 // assistant never picks (§2.3).
 function SlotChoiceView({ block, locale, onPick }: { block: SlotChoice; locale: string; onPick: (v: string) => void }) {
+  const calendar = useContext(ChipCalendar);
   const t = useTranslations("assistant");
   const label = (date: string, time: string) =>
-    t("chipAt", { date: formatDateLabel(locale, date, { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" }), time });
+    t("chipAt", { date: formatDateLabel(locale, date, { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" }, calendar), time });
   return (
     <div>
       <p className="mb-1.5 leading-relaxed">{block.text}</p>
