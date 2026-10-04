@@ -184,6 +184,22 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     expect(r.chunks.at(-1)).toEqual({ kind: "done" });
   });
 
+  // 53's #359 probe: 2/9 still ended empty on Agenda. Once, the model is
+  // asked to answer from the results it has; its answer is shown.
+  it("an empty last reply: one more round asks for the answer from the results, and that answer is shown", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { text: "Vou olhar.", tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }] }
+      : round === 1 ? ""
+      : "Amanhã você tem 1 consulta às 9h.");
+    const r = await run(t, ask("O que tenho amanhã, e o que sugere?"));
+    expect(textOf(r.chunks)).toBe("Amanhã você tem 1 consulta às 9h.");
+    expect(t.model.calls).toHaveLength(3);
+    const last = t.model.calls[2].messages.at(-1)!;
+    expect(last.role).toBe("user");
+    expect(Array.isArray(last.content) && last.content.map((b) => b.type)).toEqual(["tool_result", "text"]);
+    expect(t.model.calls[1].messages.at(-1)!.content).not.toContainEqual(expect.objectContaining({ type: "text" }));
+  });
+
   it("nothing said in any round: a fixed line, never an empty answer or 'indisponível' (UX)", async () => {
     const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }] } : ""));
     const r = await run(t, ask("O que tenho amanhã?"));

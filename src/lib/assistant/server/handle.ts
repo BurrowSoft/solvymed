@@ -37,6 +37,8 @@ const KEEP_MESSAGES = 6;
 const MAX_TOKENS = 800;
 // Model calls per answer in actions mode (reads, then a proposal or text).
 const MAX_ROUNDS = 4;
+// The nudge after an empty last reply (53): the answer, from the results.
+const ANSWER_NOW = "Now write your answer to my question, based on the results above.";
 
 type Body = {
   messages?: { role?: unknown; text?: unknown }[];
@@ -271,6 +273,8 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       const seen: string[] = [];
       const usage: ModelUsage = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
       let answered = false;
+      // One extra round when the answer would be empty (53): see below.
+      let nudged = false;
       // What this answer has put on screen for the user to act on.
       let shown: "card" | "choice" | "slot" | null = null;
       try {
@@ -326,6 +330,15 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
             // wrote its answer while calling a tool, then nothing): a fixed
             // line, never an outage message (UX, 5 Oct). A tool round's text
             // is never shown: it was written before the tools' results (c6).
+            // Before that line, once: the model is asked to answer now, from
+            // the results it has (a text block after the tool results), so
+            // what's shown is still written after the results.
+            const last = history[history.length - 1];
+            if (!shown && !roundText.trim() && !nudged && round < MAX_ROUNDS - 1 && last?.role === "user" && Array.isArray(last.content)) {
+              nudged = true;
+              history[history.length - 1] = { role: "user", content: [...last.content, { type: "text", text: ANSWER_NOW }] };
+              continue;
+            }
             const text = shown === "card" ? tx.pointerCard : shown ? "" : roundText.trim() || tx.couldntAnswer;
             if (text) { answered = true; yield { kind: "delta", text }; }
             break;
