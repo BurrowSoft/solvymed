@@ -80,9 +80,9 @@ export function createRemoteBackend({ limit }: { limit: number }): AssistantBack
   // payment's old state), kept here by the saved row's id.
   const prevs = new Map<string, string>();
   return {
-    ask(req: AssistantRequest) {
+    ask(req: AssistantRequest, signal?: AbortSignal) {
       const messages = toWireMessages(req.messages);
-      return post({ messages, screen: req.screen, locale: req.locale, conversationTurns: req.turns ?? messages.filter((m) => m.role === "user").length - 1 });
+      return post({ messages, screen: req.screen, locale: req.locale, conversationTurns: req.turns ?? messages.filter((m) => m.role === "user").length - 1 }, signal);
     },
     async usage() {
       const res = await fetch(`${ENDPOINT}/usage`, { cache: "no-store" }).catch(() => null);
@@ -101,8 +101,8 @@ export function createRemoteBackend({ limit }: { limit: number }): AssistantBack
       if (r.id && r.prev) prevs.set(r.id, r.prev);
       return { ok: true, id: r.id, ...(r.noUndo ? { noUndo: true } : {}) };
     },
-    reportConfirmFailed(code: string, action: CardAction, locale: string) {
-      return post({ event: { type: "confirm_failed", code, action }, locale });
+    reportConfirmFailed(code: string, action: CardAction, locale: string, signal?: AbortSignal) {
+      return post({ event: { type: "confirm_failed", code, action }, locale }, signal);
     },
     async undo(action: CardAction, id?: string) {
       if (!id) return false;

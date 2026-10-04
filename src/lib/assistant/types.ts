@@ -98,8 +98,9 @@ export type AssistantUsage = { used: number; limit: number; extra: number; reset
 // noUndo: the save already told someone else (a booking decision): no Desfazer.
 export type ExecuteResult = { ok: true; id?: string; demo?: boolean; noUndo?: boolean } | { ok: false; code: string };
 
+// signal: "Nova conversa" or closing stops the answer (its request too).
 export interface AssistantBackend {
-  ask(req: AssistantRequest): AsyncIterable<AnswerChunk>;
+  ask(req: AssistantRequest, signal?: AbortSignal): AsyncIterable<AnswerChunk>;
   usage(): Promise<AssistantUsage>;
   // Confirmar: the client runs the card's action through the normal save
   // path, which re-checks everything (§2.3a rule 10).
@@ -107,7 +108,7 @@ export interface AssistantBackend {
   execute(action: CardAction, opts?: { warningsAsked?: boolean }): Promise<ExecuteResult>;
   // The save refused (the slot was taken, …): the server explains and
   // offers fresh times, without a model call and without counting.
-  reportConfirmFailed(code: string, action: CardAction, locale: string): AsyncIterable<AnswerChunk>;
+  reportConfirmFailed(code: string, action: CardAction, locale: string, signal?: AbortSignal): AsyncIterable<AnswerChunk>;
   // Desfazer (10 s after saving).
   // Desfazer: true when it was undone.
   undo(action: CardAction, id?: string): Promise<boolean>;
