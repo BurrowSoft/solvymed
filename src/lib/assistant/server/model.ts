@@ -42,6 +42,10 @@ export function anthropicModelClient(apiKey: string): ModelClient {
       const stream = client.messages.stream({
         model: MODEL,
         max_tokens: req.maxTokens,
+        // No thinking (53's Preview probe): a long question spent the whole
+        // budget thinking ("thinking" blocks, 800 tokens, 0–388 chars of
+        // answer). SolvyAI's answers are short; the budget is for the answer.
+        thinking: { type: "disabled" },
         system: [
           { type: "text", text: req.cachedSystem, cache_control: { type: "ephemeral" } },
           { type: "text", text: req.system },
