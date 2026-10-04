@@ -200,6 +200,18 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     expect(t.model.calls[1].messages.at(-1)!.content).not.toContainEqual(expect.objectContaining({ type: "text" }));
   });
 
+  // 53's #359 probe: a detailed answer came out as a cut-off half sentence
+  // ("…no **site** (já") or just "Claro!": a "[[" that never closed held
+  // back, then dropped, everything after it. Markers are short; a broken one
+  // is dropped, never the answer.
+  it("a broken marker never swallows the rest of the answer", async () => {
+    const t = setup(() => "Claro! Vou explicar (já [[open:A1] veja a Agenda). Pagamentos: toque em Pago.\n[[open:G1]]");
+    const r = await run(t, ask("Explique em detalhes a Agenda e os Pagamentos"));
+    expect(textOf(r.chunks)).toBe("Claro! Vou explicar (já  veja a Agenda). Pagamentos: toque em Pago.");
+    const t2 = setup(() => "Claro! [[ isso não é marcador, e o texto segue até o fim.");
+    expect(textOf((await run(t2, ask("Explique"))).chunks)).toBe("Claro!  isso não é marcador, e o texto segue até o fim.");
+  });
+
   it("nothing said in any round: a fixed line, never an empty answer or 'indisponível' (UX)", async () => {
     const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }] } : ""));
     const r = await run(t, ask("O que tenho amanhã?"));

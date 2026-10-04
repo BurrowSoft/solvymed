@@ -130,6 +130,11 @@ function openBlock(id: string, locale: string, client: Client, label: string): A
 
 // Streams the model's text while holding back anything from "[[" until its
 // "]]", so markers never reach the user; returns the marker ids seen.
+// The longest real marker: "[[open:A12]]".
+const MARKER_MAX = 12;
+// The start of a broken marker to drop: "[[open:A1]" / "[[open:" / "[[".
+const brokenMarker = (s: string) => /^\[\[(?:open:[A-Z]?\d{0,2}\]?)?/.exec(s)![0];
+
 async function* filterMarkers(texts: AsyncIterable<string>, seen: string[]): AsyncIterable<string> {
   let held = "";
   for await (const t of texts) {
@@ -145,14 +150,22 @@ async function* filterMarkers(texts: AsyncIterable<string>, seen: string[]): Asy
       }
       if (start > 0) { yield held.slice(0, start); held = held.slice(start); continue; }
       const end = held.indexOf("]]");
-      if (end < 0) break; // wait for the rest of the marker
+      if (end < 0 || end > MARKER_MAX) {
+        // A real marker closes within a few characters. Longer, it's a
+        // broken one ("[[open:A1]") or plain text: drop only the broken
+        // start, never the rest of the answer (53: "…(já" then nothing).
+        if (end < 0 && held.length <= MARKER_MAX) break; // wait for the rest of the marker
+        held = held.slice(brokenMarker(held).length);
+        continue;
+      }
       const m = held.slice(0, end + 2).match(/^\[\[open:([A-Z]\d{1,2})\]\]$/);
       if (m) seen.push(m[1]);
       held = held.slice(end + 2);
     }
   }
   // An unfinished marker at the end is dropped; plain text is kept.
-  if (held && !held.startsWith("[[")) yield held;
+  if (held.startsWith("[[")) held = held.slice(brokenMarker(held).length);
+  if (held) yield held;
 }
 
 // The client's Confirmar failed (the slot was just taken): a fixed text and
