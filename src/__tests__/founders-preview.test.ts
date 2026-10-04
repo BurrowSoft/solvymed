@@ -18,6 +18,7 @@ describe("Founders visibility by build", () => {
 
   it("goes with the privacy version that adds §6d", async () => {
     const { PRIVACY_VERSION } = await import("@/lib/legalVersions");
-    expect(PRIVACY_VERSION).toBe("2026-10-03");
+    // §6d arrived in 2026-10-03; later versions keep it.
+    expect(PRIVACY_VERSION >= "2026-10-03").toBe(true);
   });
 });

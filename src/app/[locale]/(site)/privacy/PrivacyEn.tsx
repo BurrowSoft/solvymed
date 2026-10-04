@@ -145,6 +145,16 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
         </Section>
       )}
 
+      <Section title="6f. My brand (professionals)">
+        <ul className="list-disc space-y-1 pl-5">
+          <li>In My brand, a professional can add a display name, title, specialty, registration line and brand colour, a square logo, a wide logo (for documents) and a photo. We store what they save, together with the images.</li>
+          <li><strong>The logo and the photo are public once saved:</strong> anyone who has an image&rsquo;s link can open it. The logo (or, without one, the photo), name, title, specialty and colour are shown on the professional&rsquo;s public invite link page to anyone, and on their booking page to the patients connected to them; the documents they issue show the logo, colour, name, specialty and registration line. Don&rsquo;t upload anything you don&rsquo;t want to be public.</li>
+          <li>The professional can change or remove any image at any time in My brand. A removed or replaced image stops being reachable within about a minute.</li>
+          <li>A profile photo added before My brand stays private: it isn&rsquo;t shown on these pages.</li>
+          <li>The brand and its images are deleted when the professional closes or deletes their account.</li>
+        </ul>
+      </Section>
+
       <Section title="7. Who can see data inside a clinic">
         <ul>
           <li><strong>The professional</strong> sees all data of their own patients, including medical records.</li>
