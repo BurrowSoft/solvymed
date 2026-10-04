@@ -21,6 +21,7 @@ import { DoctorTimePicker } from "@/components/DoctorTimePicker";
 import { forRow, useRowAction } from "@/components/RowPractice";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { PLAIN_CONSULTATION } from "@/lib/consultType";
+import { usePracticeCalendar } from "@/components/PracticeCalendar";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
@@ -173,6 +174,7 @@ export function ViewToggle({ currentView, currentDate }: { currentView: string; 
 // a different day than the server's near midnight).
 export function ScheduleNav({ currentDate, currentView = "list", today }: { currentDate: string; currentView?: string; today: string }) {
   const t = useTranslations("schedule");
+  const practiceCalendar = usePracticeCalendar();
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -192,7 +194,7 @@ export function ScheduleNav({ currentDate, currentView = "list", today }: { curr
 
   const formatted = formatDateLabel(locale, currentDate, {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
-  });
+  }, practiceCalendar);
   const isToday = currentDate === today;
 
   return (
@@ -456,6 +458,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   const [recurrence, setRecurrence] = useState("");
   const [occurrences, setOccurrences] = useState(String(DEFAULT_OCCURRENCES));
   const uiLocale = useLocale();
+  const practiceCalendar = usePracticeCalendar();
   const formRef = useRef<HTMLFormElement>(null);
 
   // Patient suggestions come from a server search as the name is typed (a
@@ -508,7 +511,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
     startTransition(async () => {
       const result = await createAppointment(formData);
       // In a series, which date (the app names it too).
-      const on = (d: string | null | undefined) => (d ? `${t("seriesOnDate", { date: formatDateLabel(uiLocale, d, { day: "2-digit", month: "2-digit", year: "numeric" }) })} ` : "");
+      const on = (d: string | null | undefined) => (d ? `${t("seriesOnDate", { date: formatDateLabel(uiLocale, d, { day: "2-digit", month: "2-digit", year: "numeric" }, practiceCalendar) })} ` : "");
       if (result?.code === "needs_confirm" && "hours" in result) {
         const parts: string[] = [];
         if (result.blocked) parts.push(on(result.blocked.date) + t("warnBlocked", { start: result.blocked.start, end: result.blocked.end }));

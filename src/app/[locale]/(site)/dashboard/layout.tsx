@@ -25,6 +25,7 @@ import { BrandMarkTile } from "@/components/BrandLogo";
 import { ActingPracticeReset, PracticeSwitcher } from "@/components/PracticeSwitcher";
 import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
 import { ACTING_COOKIE, ALL_PRACTICES } from "@/lib/actingPractice";
+import { PracticeCalendarProvider } from "@/components/PracticeCalendar";
 
 function isVersionBelow(current: string, minimum: string): boolean {
   const parse = (v: string) => v.split(".").map(n => parseInt(n, 10) || 0);
@@ -249,7 +250,7 @@ export default async function DashboardLayout({
                   <PracticeSwitcher practices={practices} current={actingId} allChosen={chosenCookie === ALL_PRACTICES} />
                 </div>
               )}
-              {children}
+              <PracticeCalendarProvider calendar={practice.calendar}>{children}</PracticeCalendarProvider>
             </div>
           </main>
         </div>

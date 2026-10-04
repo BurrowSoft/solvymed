@@ -14,7 +14,7 @@ import { RECEIVABLE_STATUSES } from "@/lib/paymentRules";
 import { conditionMet } from "@/lib/conditions";
 import { InvitedPatientsCard } from "./InvitedPatientsCard";
 import { greetingFirstName } from "@/lib/doctorName";
-import { dateLocale } from "@/lib/dateLabels";
+import { dateLocale, formatDateLabel } from "@/lib/dateLabels";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 
@@ -158,7 +158,8 @@ export default async function DashboardPage({
   const firstName = greetingFirstName(ownName, user.email);
   const totalPending = pendingPayments.reduce((s, p) => s + (p.payment_amount ?? 0), 0);
   const totalRevenue = monthRevenue.reduce((s, r) => s + (r.payment_amount ?? 0), 0);
-  const todayFormatted = now.toLocaleDateString(dateLocale(locale), { timeZone, weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  // The practice's calendar, the reader's words (UX 5 Oct: a TH clinic's year in BE).
+  const todayFormatted = formatDateLabel(locale, today, { weekday: "long", year: "numeric", month: "long", day: "numeric" }, countryProfile(practiceCountry).calendar);
 
   return (
     <div className="p-6 lg:p-8 max-w-7xl">
