@@ -19,7 +19,8 @@ export type RowActions = typeof ROW_ACTIONS;
 export type RowActionName = keyof RowActions;
 
 export async function actForRow(practiceId: string, name: RowActionName, args: unknown[]): Promise<unknown> {
-  const fn = ROW_ACTIONS[name] as ((...a: unknown[]) => Promise<unknown>) | undefined;
-  if (!liveFeatures.multiPractice || !fn) throw new Error("not_available");
+  // Own keys only ("constructor", "__proto__" … are never actions; c6).
+  const fn = Object.hasOwn(ROW_ACTIONS, name) ? (ROW_ACTIONS[name] as (...a: unknown[]) => Promise<unknown>) : undefined;
+  if (!liveFeatures.multiPractice || !fn || !Array.isArray(args)) throw new Error("not_available");
   return inRowPractice(practiceId, () => fn(...args));
 }

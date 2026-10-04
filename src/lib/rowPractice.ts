@@ -16,7 +16,9 @@ export function rowPracticeOverride(): string | undefined {
   return store.getStore();
 }
 
-export function inRowPractice<T>(practiceId: string | null | undefined, fn: () => Promise<T>): Promise<T> {
-  if (!practiceId || !UUID.test(practiceId)) return fn();
+// A missing or malformed id is refused, never run without the override (c6:
+// it would fall back to the switcher's cookie, i.e. another doctor).
+export function inRowPractice<T>(practiceId: string, fn: () => Promise<T>): Promise<T> {
+  if (typeof practiceId !== "string" || !UUID.test(practiceId)) return Promise.reject(new Error("bad_practice"));
   return store.run(practiceId, fn);
 }

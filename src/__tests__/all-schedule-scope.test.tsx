@@ -51,9 +51,15 @@ describe("a row's practice, for one call", () => {
     expect(h.headers.at(-1)).toEqual({ "x-acting-practice": A });
   });
 
-  it("a doctor she doesn't serve acts for no practice (fail closed); a malformed id is ignored", async () => {
+  it("a doctor she doesn't serve acts for no practice (fail closed); a missing or malformed id is refused, nothing runs", async () => {
     await inRowPractice(C, async () => { expect(await actingPracticeFor(A, "sec-1")).toBeNull(); });
-    await inRowPractice("nope", async () => { expect(await actingPracticeFor(A, "sec-1")).toBe(A); });
+    const ran = vi.fn(async () => "ran");
+    h.headers = [];
+    for (const bad of ["nope", "", "all", null, undefined, `${A} `]) {
+      await expect(inRowPractice(bad as string, ran)).rejects.toThrow("bad_practice");
+    }
+    expect(ran).not.toHaveBeenCalled();
+    expect(h.headers).toEqual([]);
   });
 
   it('"all" is never a header; elsewhere she acts for her primary', async () => {
