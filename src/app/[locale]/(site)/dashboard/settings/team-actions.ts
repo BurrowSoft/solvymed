@@ -95,7 +95,7 @@ export async function removeSecretary(secretaryUserId: string): Promise<Result> 
   return { ok: true };
 }
 
-export async function leaveClinic(): Promise<Result> {
+export async function leaveClinic(): Promise<Result<{ stillLinked: boolean }>> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, code: "generic" };
@@ -108,5 +108,9 @@ export async function leaveClinic(): Promise<Result> {
     : await supabase.rpc("leave_clinic");
   if (error) return { ok: false, code: code(error.message) };
   if (liveFeatures.multiPractice) (await cookies()).delete(ACTING_COOKIE);
-  return { ok: true };
+  // Still serving another doctor? 163 re-points her primary to her oldest
+  // remaining practice, so she stays in the dashboard (53/cf: she was sent
+  // to "not connected" and signed out though she still served A).
+  const { data: role } = await supabase.from("user_roles").select("invited_by_professional_id").eq("user_id", user.id).maybeSingle();
+  return { ok: true, stillLinked: !!role?.invited_by_professional_id };
 }

@@ -22,6 +22,12 @@ export function LeaveClinicButton({ doctorName, locale }: { doctorName: string |
         setError(t("genericError"));
         return;
       }
+      // Still serving another doctor (1.5.0): her schedule with that doctor.
+      // A full load, so the browser client drops the old acting header.
+      if (result.stillLinked) {
+        window.location.assign(`${prefix}/dashboard/schedule`);
+        return;
+      }
       // Unlinked now: the dashboard would route here anyway.
       router.push(`${prefix}/auth/not-connected`);
       router.refresh();
