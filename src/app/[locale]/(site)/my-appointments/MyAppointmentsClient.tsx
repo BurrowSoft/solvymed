@@ -31,8 +31,11 @@ const STATUS_COLOR: Record<string, string> = {
   rejected: "bg-red-50 text-red-500 border-red-200",
 };
 
-function formatDate(locale: string, dateStr: string) {
-  return formatDateLabel(locale, dateStr, { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+// In the reader's language, in the calendar of the appointment's practice
+// country (Q4, 2 Oct: a TH clinic's dates are Buddhist, a BR clinic's
+// Gregorian, whatever the language).
+function formatDate(locale: string, dateStr: string, country?: string | null) {
+  return formatDateLabel(locale, dateStr, { weekday: "short", month: "short", day: "numeric", year: "numeric" }, countryProfile(country ?? null).calendar);
 }
 
 const formatTime = formatTimeLabel;
@@ -274,16 +277,16 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
         <div className="flex-1 min-w-0">
           <p className="font-bold text-slate-900"><ConsultTypeLabel value={appt.consultation_type} /></p>
           <p className="text-sm text-slate-500 mt-0.5">
-            {formatDate(locale, displayDate)} · {formatTime(locale, displayStart)} – {formatTime(locale, displayEnd)}
+            {formatDate(locale, displayDate, practiceCountry)} · {formatTime(locale, displayStart)} – {formatTime(locale, displayEnd)}
           </p>
           {isProfProposal && appt.proposed_date && (
             <p className="text-xs text-slate-400 mt-0.5">
-              {t("originallyLabel", { date: formatDate(locale, appt.date), time: formatTime(locale, appt.start_time) })}
+              {t("originallyLabel", { date: formatDate(locale, appt.date, practiceCountry), time: formatTime(locale, appt.start_time) })}
             </p>
           )}
           {isPatientReschedule && appt.proposed_date && (
             <p className="text-xs text-blue-500 mt-0.5 font-medium">
-              {t("rescheduleRequestedLabel", { date: formatDate(locale, appt.proposed_date), time: formatTime(locale, appt.proposed_start_time!) })}
+              {t("rescheduleRequestedLabel", { date: formatDate(locale, appt.proposed_date, practiceCountry), time: formatTime(locale, appt.proposed_start_time!) })}
             </p>
           )}
           {whoLine(appt.professional_name, appt.clinic_name) && (
@@ -400,6 +403,7 @@ export function MyAppointmentsClient({
   myProfessionalMeta,
   clinicTz = DEFAULT_CLINIC_TZ,
   practiceCountry = null,
+  practices = {},
   connectedClinicName = null,
   doctors = null,
   canAddDoctor = false,
@@ -412,6 +416,10 @@ export function MyAppointmentsClient({
   // The clinic's zone (its country's): the reschedule's "today".
   clinicTz?: string;
   practiceCountry?: string | null;
+  // Each appointment's practice (several doctors, maybe in different
+  // countries): its country and zone, by professional id. Missing → the
+  // primary's (clinicTz / practiceCountry).
+  practices?: Record<string, { country: string | null; tz: string }>;
   // First-run: the one-time "You're connected to {clinic}" card (null = don't show).
   connectedClinicName?: string | null;
   // 1.5.0 (behind the flag): the patient's doctors; null = as before.
@@ -542,7 +550,7 @@ export function MyAppointmentsClient({
             </div>
           ) : (
             <div className="space-y-3">
-              {shown(upcoming).map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} clinicTz={clinicTz} practiceCountry={practiceCountry} />)}
+              {shown(upcoming).map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} clinicTz={practices[a.professional_id]?.tz ?? clinicTz} practiceCountry={practices[a.professional_id] ? practices[a.professional_id].country : practiceCountry} />)}
             </div>
           )}
         </section>
@@ -552,7 +560,7 @@ export function MyAppointmentsClient({
           <section>
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">{t("recentHistory")}</h2>
             <div className="space-y-3">
-              {shown(past).map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} clinicTz={clinicTz} practiceCountry={practiceCountry} />)}
+              {shown(past).map((a) => <AppointmentCard key={a.id} appt={a} onMutate={refresh} clinicTz={practices[a.professional_id]?.tz ?? clinicTz} practiceCountry={practices[a.professional_id] ? practices[a.professional_id].country : practiceCountry} />)}
             </div>
           </section>
         )}

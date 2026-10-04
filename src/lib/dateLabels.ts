@@ -19,20 +19,25 @@ export function plainSpaces(s: string): string {
 // it's requested explicitly. Stored dates stay Gregorian.
 // English is British-style (Vitor, build 25: "English ≠ American"): day
 // before month, never MM/DD, and a 24-hour clock like BR/TH.
-export function dateLocale(locale: string): string {
-  if (locale === "th") return "th-TH-u-ca-buddhist";
-  if (locale === "en" || locale.startsWith("en-")) return "en-GB";
-  return locale;
+// calendar: a practice country's (patient screens, Q4 2 Oct: a BR clinic's
+// dates are Gregorian and a TH clinic's Buddhist, whatever the language);
+// omitted, the language's own (Thai → Buddhist).
+export type DateCalendar = "gregorian" | "buddhist";
+export function dateLocale(locale: string, calendar?: DateCalendar): string {
+  const base = locale === "th" ? "th-TH" : locale === "en" || locale.startsWith("en-") ? "en-GB" : locale;
+  const ca = calendar ?? (locale === "th" ? "buddhist" : undefined);
+  return ca ? `${base}-u-ca-${ca === "buddhist" ? "buddhist" : "gregory"}` : base;
 }
 
 export function formatDateLabel(
   locale: string,
   date: string,
   options: Intl.DateTimeFormatOptions = { weekday: "short", month: "short", day: "numeric" },
+  calendar?: DateCalendar,
 ): string {
   const [y, m, d] = date.split("-").map(Number);
   if (!y || !m || !d) return date;
-  return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale), { ...options, timeZone: "UTC" }).format(new Date(Date.UTC(y, m - 1, d, 12))));
+  return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale, calendar), { ...options, timeZone: "UTC" }).format(new Date(Date.UTC(y, m - 1, d, 12))));
 }
 
 // The locale's short numeric date, like the app: 14/05/1993 (pt-BR and en:
