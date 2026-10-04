@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { dateLocale } from "@/lib/dateLabels";
+import { dateLocale, formatDateLabel, type DateCalendar } from "@/lib/dateLabels";
 import { monthGrid, monthsOf } from "@/lib/monthGrid";
 
 // Vitor's item 7: a month calendar instead of the horizontal day strip.
@@ -23,6 +23,7 @@ export function MonthCalendar({
   locale,
   labels,
   free = false,
+  calendar,
 }: {
   days: readonly string[];
   selected: string | null;
@@ -31,6 +32,9 @@ export function MonthCalendar({
   locale: string;
   labels: { prev: string; next: string };
   free?: boolean;
+  // The practice country's calendar (Q4: a TH clinic's year in BE, a BR
+  // clinic's Gregorian, in the reader's words); omitted, the language's.
+  calendar?: DateCalendar;
 }) {
   const months = useMemo(() => monthsOf(days), [days]);
   const [monthIdx, setMonthIdx] = useState(() => Math.max(0, months.indexOf((selected ?? days[0] ?? "").slice(0, 7))));
@@ -41,7 +45,7 @@ export function MonthCalendar({
   const bookable = useMemo(() => new Set(days), [days]);
   if (!ym) return null;
 
-  const title = new Date(year, month - 1, 15).toLocaleDateString(dateLocale(locale), { month: "long", year: "numeric" });
+  const title = formatDateLabel(locale, `${year}-${String(month).padStart(2, "0")}-15`, { month: "long", year: "numeric" }, calendar);
   // Weekday initials, Sunday first (a known Sunday: 2023-01-01).
   const weekdays = Array.from({ length: 7 }, (_, i) => new Date(2023, 0, 1 + i).toLocaleDateString(dateLocale(locale), { weekday: "narrow" }));
 

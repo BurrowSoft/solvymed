@@ -2,7 +2,7 @@
 
 import { liveFeatures } from "@/lib/liveFeatures";
 import { inRowPractice } from "@/lib/rowPractice";
-import { updateAppointmentStatus, moveAppointment, deleteAppointment, getScheduleDay, undoScheduleChange } from "./actions";
+import { updateAppointmentStatus, moveAppointment, deleteAppointment, getScheduleDay, undoScheduleChange, createAppointment, blockTime, searchPatientsForPicker } from "./actions";
 import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest } from "./booking-actions";
 import { markPaid, markUnpaid, setPaymentAmount } from "../payments/actions";
 
@@ -12,6 +12,7 @@ import { markPaid, markUnpaid, setPaymentAmount } from "../payments/actions";
 // (actingPracticeFor) and again by the database.
 const ROW_ACTIONS = {
   updateAppointmentStatus, moveAppointment, deleteAppointment, getScheduleDay, undoScheduleChange,
+  createAppointment, blockTime, searchPatientsForPicker,
   confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest,
   markPaid, markUnpaid, setPaymentAmount,
 };

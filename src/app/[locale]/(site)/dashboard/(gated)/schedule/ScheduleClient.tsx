@@ -21,6 +21,7 @@ import { DoctorTimePicker } from "@/components/DoctorTimePicker";
 import { forRow, useRowAction } from "@/components/RowPractice";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { PLAIN_CONSULTATION } from "@/lib/consultType";
+import { usePracticeCalendar } from "@/components/PracticeCalendar";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
@@ -173,6 +174,7 @@ export function ViewToggle({ currentView, currentDate }: { currentView: string; 
 // a different day than the server's near midnight).
 export function ScheduleNav({ currentDate, currentView = "list", today }: { currentDate: string; currentView?: string; today: string }) {
   const t = useTranslations("schedule");
+  const practiceCalendar = usePracticeCalendar();
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -192,7 +194,7 @@ export function ScheduleNav({ currentDate, currentView = "list", today }: { curr
 
   const formatted = formatDateLabel(locale, currentDate, {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
-  });
+  }, practiceCalendar);
   const isToday = currentDate === today;
 
   return (
@@ -442,6 +444,9 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   // shown as a small icon next to the appointment.
   prefill?: { patientId: string | null; patientName: string; procedureName?: string; duration?: number };
 }) {
+  // In "Todos" (166), for the doctor chosen first; else as before.
+  const create = useRowAction("createAppointment", createAppointment);
+  const search = useRowAction("searchPatientsForPicker", searchPatientsForPicker);
   const t = useTranslations("schedule");
   const tDate = useTranslations("dateInput");
   const tConsult = useTranslations("consultType");
@@ -456,6 +461,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   const [recurrence, setRecurrence] = useState("");
   const [occurrences, setOccurrences] = useState(String(DEFAULT_OCCURRENCES));
   const uiLocale = useLocale();
+  const practiceCalendar = usePracticeCalendar();
   const formRef = useRef<HTMLFormElement>(null);
 
   // Patient suggestions come from a server search as the name is typed (a
@@ -506,9 +512,9 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   function submit(formData: FormData) {
     setError("");
     startTransition(async () => {
-      const result = await createAppointment(formData);
+      const result = await create(formData);
       // In a series, which date (the app names it too).
-      const on = (d: string | null | undefined) => (d ? `${t("seriesOnDate", { date: formatDateLabel(uiLocale, d, { day: "2-digit", month: "2-digit", year: "numeric" }) })} ` : "");
+      const on = (d: string | null | undefined) => (d ? `${t("seriesOnDate", { date: formatDateLabel(uiLocale, d, { day: "2-digit", month: "2-digit", year: "numeric" }, practiceCalendar) })} ` : "");
       if (result?.code === "needs_confirm" && "hours" in result) {
         const parts: string[] = [];
         if (result.blocked) parts.push(on(result.blocked.date) + t("warnBlocked", { start: result.blocked.start, end: result.blocked.end }));
@@ -572,7 +578,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
               <Input name="patient_name" required readOnly value={prefill.patientName} className="bg-slate-50" />
             ) : (
               <PatientPicker
-                search={searchPatientsForPicker}
+                search={search}
                 placeholder={t("patientNamePlaceholder")}
                 defaultValue={prefill?.patientName}
                 inputClassName="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
@@ -683,6 +689,8 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
 
 export function BlockTimeButton({ defaultDate }: { defaultDate: string }) {
   const t = useTranslations("schedule");
+  // In "Todos" (166), for the doctor chosen first; else as before.
+  const block = useRowAction("blockTime", blockTime);
   const tDate = useTranslations("dateInput");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -694,7 +702,7 @@ export function BlockTimeButton({ defaultDate }: { defaultDate: string }) {
     const formData = new FormData(formRef.current!);
     setError("");
     startTransition(async () => {
-      const result = await blockTime(formData);
+      const result = await block(formData);
       if (result?.error) { setError(actionErrorMessage(t, result.code, tDate)); return; }
       setOpen(false);
       formRef.current?.reset();
