@@ -15,7 +15,7 @@ vi.mock("next/navigation", async (orig) => ({
   useRouter: () => ({ push: h.push, replace: vi.fn(), refresh: vi.fn() }),
   useSearchParams: () => h.params,
 }));
-vi.mock("@/lib/supabase/client", () => ({ createClient: () => ({}) }));
+vi.mock("@/lib/supabase/client", () => ({ createClient: () => ({ rpc: async () => ({ data: null, error: null }) }) }));
 
 import SignupPage from "@/app/[locale]/(site)/auth/signup/page";
 

@@ -41,11 +41,10 @@ export const liveFeatures = {
   // 2026-10-03). Uploads stay behind founders-upload-live.
   founders: true,
   foundersRules: true,
-  // 1.5.0 "My brand" (Settings → Minha marca; later the branded public
-  // pages, emails and prints). On in Previews only (all SSO-protected) for
-  // testing against migration 161; flips to true when 1.5.0 is released,
-  // with the privacy text and its version bump.
-  myBrand: foundersPreview,
+  // 1.5.0 "My brand" (Settings → Minha marca, the branded public pages and
+  // prints). Live since 2026-10-05 with privacy §6f (PRIVACY_VERSION
+  // 2026-10-05); branded emails are separate 1.6.0 work.
+  myBrand: true,
   // 1.5.0 secretaries serving several doctors (migration 163): the doctor
   // switcher and the x-acting-practice header. Previews only until the
   // release; a second practice is also refused server-side until
