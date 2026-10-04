@@ -79,7 +79,7 @@ const h = vi.hoisted(() => ({
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
     auth: { getUser: async () => ({ data: { user: { id: "doc-1" } } }) },
-    rpc: async (fn: string, args: unknown) => { h.rpcs.push({ fn, args }); return { data: null, error: h.logFails ? { message: "not_allowed" } : null }; },
+    rpc: async (fn: string, args: unknown) => { if (fn !== "get_practice_brand") h.rpcs.push({ fn, args }); return { data: null, error: h.logFails ? { message: "not_allowed" } : null }; },
     from: (table: string) => {
       const q: Record<string, unknown> = {};
       q.select = () => q;

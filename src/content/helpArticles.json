@@ -36,6 +36,14 @@
             {
               "type": "p",
               "text": "No site, ao **Rejeitar** um pedido ou mudar uma consulta para **Cancelado**, você pode escrever um **Motivo (opcional)** de até 200 caracteres. No site (e no app a partir da versão 1.4.0), o paciente vê \"Recusado pela clínica: …\" ou \"Cancelado pela clínica: …\" na consulta dele (se foi ele quem cancelou, \"Você cancelou\"). Ao confirmar ou propor um horário, a **Mensagem ao paciente (opcional)** aparece para ele como \"Mensagem da clínica: …\". A notificação nunca traz o texto: só avisa que há uma mensagem da clínica."
+            },
+            {
+              "type": "p",
+              "text": "No app também: no pedido em **Início**, **Recusar** abre **Motivo (opcional)**, e **Confirmar** / **Propor** têm **Mensagem ao paciente (opcional)**; na **Agenda**, mudar para **Cancelada** ou **Recusada** abre o motivo. O paciente vê o mesmo que no site."
+            },
+            {
+              "type": "p",
+              "text": "No app também: logo depois de marcar, remarcar ou cancelar, **Desfazer** aparece por 10 segundos, enquanto o aviso ao paciente ainda não saiu. Desfazer uma série remove a série inteira. Se o aviso já saiu ou a consulta mudou nesse meio-tempo, aparece \"Não foi possível desfazer. Abra o item para ajustar.\""
             }
           ],
           "en": [
@@ -60,6 +68,14 @@
             {
               "type": "p",
               "text": "On the website, when you **Reject** a request or change an appointment to **Cancelled**, you can write a **Reason (optional)** of up to 200 characters. On the website (and in the app from version 1.4.0), the patient sees \"Declined by the clinic: …\" or \"Cancelled by the clinic: …\" on their appointment (\"You cancelled\" if they did). When you confirm or propose a time, the **Message to the patient (optional)** shows to them as \"Message from the clinic: …\". The notification never carries the text: it only says there's a message from the clinic."
+            },
+            {
+              "type": "p",
+              "text": "In the app too: on a request in **Home**, **Decline** opens **Reason (optional)**, and **Confirm** / **Propose** have **Message to the patient (optional)**; in the **Schedule**, changing to **Cancelled** or **Declined** opens the reason. The patient sees the same as on the website."
+            },
+            {
+              "type": "p",
+              "text": "In the app too: right after you book, move or cancel, **Undo** shows for 10 seconds, while the notice to the patient hasn't gone out yet. Undoing a series removes the whole series. If the notice has already gone out or the appointment changed meanwhile, you see \"Couldn't undo. Open the item to adjust it.\""
             }
           ]
         },
@@ -184,6 +200,10 @@
             {
               "type": "p",
               "text": "No site também: se o paciente tiver conta no SolvyMed, ele recebe uma notificação quando você remarca ou cancela (ou arquiva o paciente). Consultas no passado não notificam."
+            },
+            {
+              "type": "p",
+              "text": "No app também: logo depois de marcar, remarcar ou cancelar, **Desfazer** aparece por 10 segundos, enquanto o aviso ao paciente ainda não saiu. Desfazer uma série remove a série inteira. Se o aviso já saiu ou a consulta mudou nesse meio-tempo, aparece \"Não foi possível desfazer. Abra o item para ajustar.\""
             }
           ],
           "en": [
@@ -198,6 +218,10 @@
             {
               "type": "p",
               "text": "On the website too: if the patient has a SolvyMed account, they get a notification when you move or cancel (or archive the patient). Past appointments don't notify."
+            },
+            {
+              "type": "p",
+              "text": "In the app too: right after you book, move or cancel, **Undo** shows for 10 seconds, while the notice to the patient hasn't gone out yet. Undoing a series removes the whole series. If the notice has already gone out or the appointment changed meanwhile, you see \"Couldn't undo. Open the item to adjust it.\""
             }
           ]
         },
@@ -260,6 +284,10 @@
             {
               "type": "p",
               "text": "Um paciente novo que pediu pelo seu link fica ligado à sua clínica quando você confirma."
+            },
+            {
+              "type": "p",
+              "text": "No app do paciente: se o horário de um pedido ou de um novo horário proposto passa sem resposta, ele vê **Não confirmado**, sem ações."
             }
           ],
           "en": [
@@ -274,6 +302,10 @@
             {
               "type": "p",
               "text": "A new patient who requested through your link is connected to your clinic when you confirm."
+            },
+            {
+              "type": "p",
+              "text": "In the patient's app: if the time of a request or of a proposed new time passes without an answer, they see **Not confirmed**, with no actions."
             }
           ]
         },
@@ -331,6 +363,10 @@
             },
             {
               "type": "p",
+              "text": "No app do paciente: ele só pode pedir remarcação antes do horário da consulta, e não cancela sozinho uma consulta marcada (o app diz \"Para cancelar, fale com a clínica.\"). Ele pode cancelar um pedido que ainda está pendente, e aceitar ou recusar um novo horário que você propôs (o app mostra o horário proposto e, se for remarcação, o horário atual)."
+            },
+            {
+              "type": "p",
               "text": "Se ninguém responde até o horário pedido, o pedido expira sozinho: a consulta fica como estava e sai das solicitações, e o paciente vê \"Seu pedido de remarcação expirou.\" (no site; no app a partir da versão 1.4.0)."
             }
           ],
@@ -338,6 +374,10 @@
             {
               "type": "p",
               "text": "When a patient asks to reschedule a confirmed appointment, the request shows on **Home**. **Accept** moves the appointment to the new time; **Decline** keeps the original time."
+            },
+            {
+              "type": "p",
+              "text": "In the patient's app: they can only ask to reschedule before the appointment starts, and they can't cancel a booked appointment themselves (the app says \"To cancel, talk to the clinic.\"). They can cancel a request that's still pending, and accept or decline a new time you proposed (the app shows the proposed time and, for a reschedule, the current one)."
             },
             {
               "type": "p",
@@ -462,6 +502,10 @@
             },
             {
               "type": "p",
+              "text": "Um paciente com consultas também não pode ser excluído: ao tocar em **Excluir cadastro**, o app explica e oferece **Arquivar**."
+            },
+            {
+              "type": "p",
               "text": "Não é possível excluir um paciente que tem consultas (de qualquer status): o servidor recusa, em qualquer versão do app e no site. Arquive-o."
             }
           ],
@@ -477,6 +521,10 @@
             {
               "type": "p",
               "text": "Patients with a record, prescription or file can only be archived, never deleted (records must be kept by law)."
+            },
+            {
+              "type": "p",
+              "text": "A patient with appointments can't be deleted either: tapping **Delete patient** explains why and offers **Archive**."
             },
             {
               "type": "p",
@@ -904,12 +952,20 @@
             {
               "type": "p",
               "text": "**A receber** soma as consultas não pagas do período que estão agendadas, confirmadas, concluídas ou atrasadas (pedidos ainda não aceitos, canceladas, rejeitadas e ausências não entram). **Recebido** soma tudo o que foi marcado como pago. Escolha o período: esta semana, este mês, mês passado ou todo o período."
+            },
+            {
+              "type": "p",
+              "text": "Consultas sem valor não entram: aparecem como **Sem valor · Definir valor**, e **Marcar como pago** pede o valor primeiro."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "**To receive** adds up the period's unpaid appointments that are scheduled, confirmed, completed or late (requests not yet accepted, cancelled, rejected and no-shows don't count). **Received** adds up everything marked as paid. Choose the period: this week, this month, last month or all time."
+            },
+            {
+              "type": "p",
+              "text": "Appointments without an amount don't count: they show **No amount · Set amount**, and **Mark as paid** asks for the amount first."
             }
           ]
         },
@@ -985,6 +1041,10 @@
             },
             {
               "type": "p",
+              "text": "Depois de paga, a consulta mostra **Pago** e o QR deixa de aparecer, para o paciente não pagar duas vezes."
+            },
+            {
+              "type": "p",
               "text": "O SolvyMed não recebe o dinheiro: o Pix vai direto para a sua conta."
             }
           ],
@@ -996,6 +1056,10 @@
                 "Or tap **Send Pix via WhatsApp**: the patient gets the code to paste in their banking app.",
                 "When the payment arrives, mark the appointment as paid."
               ]
+            },
+            {
+              "type": "p",
+              "text": "Once paid, the appointment shows **Paid** and the QR is no longer offered, so the patient can't pay twice."
             },
             {
               "type": "p",
@@ -1024,12 +1088,20 @@
             {
               "type": "p",
               "text": "Abra uma consulta paga e toque em **Gerar recibo em PDF**. Compartilhe pelo WhatsApp, e-mail ou outro app."
+            },
+            {
+              "type": "p",
+              "text": "O recibo traz o seu registro no conselho (ex.: CRM) ao lado do nome, quando cadastrado no perfil. No Brasil, sem CNPJ da clínica, ele inclui a nota: \"Este recibo é um comprovante de pagamento. Para dedução no Imposto de Renda, o profissional pessoa física emite o recibo oficial pelo app Receita Saúde.\""
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "Open a paid appointment and tap **Create receipt PDF**. Share it by WhatsApp, email or another app."
+            },
+            {
+              "type": "p",
+              "text": "The receipt shows your council registration (e.g. CRM) next to your name, when it's in your profile. In Brazil, with no clinic CNPJ, it adds a note (in Portuguese) that it's proof of payment, and that for the income-tax deduction a self-employed doctor issues the official receipt in the Receita Saúde app."
             }
           ]
         },
@@ -1096,6 +1168,10 @@
                 "**Configurações → Meu perfil**: nome e especialidade.",
                 "**Configurações → Cadastros**: seu registro profissional (ex.: \"CRM 12345/SP\"). Ele aparece nas receitas e documentos em PDF."
               ]
+            },
+            {
+              "type": "p",
+              "text": "No primeiro uso, o app pergunta **Onde você está?**: toque em **Brasil** ou **ประเทศไทย**. Para médicos, esse é o país da clínica. Ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar depois, fale com support@solvymed.com. Pacientes e secretárias não fazem essa escolha."
             }
           ],
           "en": [
@@ -1105,6 +1181,10 @@
                 "**Settings → My profile**: name and specialty.",
                 "**Settings → Registrations**: your professional registration (e.g. \"CRM 12345/SP\"). It appears on prescriptions and PDF documents."
               ]
+            },
+            {
+              "type": "p",
+              "text": "The first time you open the app, it asks **Where are you?**: tap **Brasil** or **ประเทศไทย**. For doctors, that's the clinic's country. It sets the currency, the plan price, the patient ID field and the payment QR. To change it later, contact support@solvymed.com. Patients and secretaries don't make this choice."
             }
           ]
         },
@@ -1246,6 +1326,10 @@
             },
             {
               "type": "p",
+              "text": "Quem entra com o código aparece logo em **Pacientes** com o selo **Novo, via convite**. Em **Início**, toque em **Manter** para ficar com o paciente, ou em **Remover** para desconectar a conta (o cadastro é arquivado). Se o e-mail já estava em outro cadastro, aparece **Mesmo e-mail de {nome}: mesclar?**."
+            },
+            {
+              "type": "p",
               "text": "Quando alguém entra com o seu código, você e suas secretárias recebem uma notificação, **Novo paciente**: **{nome} entrou com seu código de convite**."
             },
             {
@@ -1257,6 +1341,10 @@
             {
               "type": "p",
               "text": "On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings → Your patient invite code**, tap **Share** (no code yet? tap **Generate invite code**). Anyone who opens the link gets the app or the website and can request appointments with you. **New** creates a new code and the old one stops working."
+            },
+            {
+              "type": "p",
+              "text": "Anyone who joins with the code shows up right away in **Patients** with the **New, via invite** badge. On **Home**, tap **Keep** to keep the patient, or **Remove** to disconnect the account (the record is archived). If the email was already on another record, you see **Same email as {name}: merge?**."
             },
             {
               "type": "p",
@@ -1349,12 +1437,20 @@
             {
               "type": "p",
               "text": "**Configurações → Idioma** e **Tema** (claro, escuro ou do sistema). Algumas partes mudam de idioma depois de reabrir o app."
+            },
+            {
+              "type": "p",
+              "text": "O idioma segue o país: no Brasil, português ou inglês; na Tailândia, tailandês ou inglês. Na pergunta **Onde você está?**, marque **Use the app in English** para usar em inglês; depois, troque em **Configurações → Idioma**."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "**Settings → Language** and **Theme** (light, dark or system). Some parts switch language after you reopen the app."
+            },
+            {
+              "type": "p",
+              "text": "The language follows the country: in Brazil, Portuguese or English; in Thailand, Thai or English. On the **Where are you?** question, tick **Use the app in English** to use it in English; later, switch in **Settings → Language**."
             }
           ]
         },
@@ -1362,6 +1458,73 @@
           "pt": "O idioma muda no seletor de idioma do menu lateral: português ou inglês (clínicas no Brasil), tailandês ou inglês (clínicas na Tailândia). No cadastro, marque **Use SolvyMed in English** para usar em inglês. O tema fica em **Configurações → Aparência** (Automático, Claro ou Escuro) e vale para este navegador; impressões e e-mails ficam sempre claros.",
           "en": "Change the language with the language selector in the side menu: Portuguese or English (clinics in Brazil), Thai or English (clinics in Thailand). When signing up, tick **Use SolvyMed in English** to use it in English. The theme is in **Settings → Appearance** (Automatic, Light or Dark) and applies to this browser; prints and emails always stay light."
         },
+        "webUnavailable": false,
+        "open": "settings",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "C11",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Minha marca",
+          "en": "My brand"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Em **Configurações → Minha marca**, escolha como os pacientes veem você: **Nome de exibição**, **Título**, **Especialidade**, **Registro profissional**, **Cor da marca**, **Logo (quadrado)**, **Logo horizontal (documentos)** e **Foto**."
+            },
+            {
+              "type": "p",
+              "text": "Campos vazios usam o nome, a especialidade e o registro do seu perfil. Sem logo, aparecem as suas iniciais na sua cor; sem cor, o azul do SolvyMed."
+            },
+            {
+              "type": "p",
+              "text": "Envie cada imagem em PNG ou JPG, com até 5 MB e no máximo 4096 px de lado: o logo quadrado, o logo horizontal (usado nos documentos) e, se quiser, uma foto. O logo inteiro é sempre mantido. **Remover** pede confirmação."
+            },
+            {
+              "type": "p",
+              "text": "Se a cor escolhida for clara ou escura demais para ler um texto, ela é ajustada só na exibição, e a prévia mostra como fica."
+            },
+            {
+              "type": "p",
+              "text": "A sua marca aparece no seu link de convite público, na sua página de agendamento (para os pacientes conectados a você) e nos documentos impressos (receitas, recibos, histórico). Depois de salvos, o logo e a foto são públicos: quem tiver o link de uma imagem consegue abri-la."
+            },
+            {
+              "type": "p",
+              "text": "No app, **Modelos de documentos** avisa que a cor e o logo dos documentos vêm de **Minha marca**, com o atalho **Abrir Minha marca**."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "In **Settings → My brand**, choose how patients see you: **Display name**, **Title**, **Specialty**, **Professional registration**, **Brand colour**, **Logo (square)**, **Wide logo (documents)** and **Photo**."
+            },
+            {
+              "type": "p",
+              "text": "Empty fields use your profile's name, specialty and registration. With no logo, your initials show in your colour; with no colour, SolvyMed's blue."
+            },
+            {
+              "type": "p",
+              "text": "Upload each image as PNG or JPG, up to 5 MB and at most 4096 px per side: the square logo, the wide logo (used on documents) and, if you like, a photo. The whole logo is always kept. **Remove** asks for confirmation."
+            },
+            {
+              "type": "p",
+              "text": "If the colour you choose is too light or too dark for text, it's adjusted only where it's shown, and the preview shows how it looks."
+            },
+            {
+              "type": "p",
+              "text": "Your brand shows on your public invite link, on your booking page (to the patients connected to you) and on printed documents (prescriptions, receipts, history). Once saved, the logo and photo are public: anyone who has an image's link can open it."
+            },
+            {
+              "type": "p",
+              "text": "In the app, **Document Templates** says the documents' colour and logo come from **My brand**, with a shortcut to **Open My brand**."
+            }
+          ]
+        },
+        "web": null,
         "webUnavailable": false,
         "open": "settings",
         "appOnly": null,
@@ -1388,12 +1551,20 @@
             {
               "type": "p",
               "text": "Você tem 15 dias grátis, sem cartão. Para continuar depois, assine pelo site solvymed.com, entrando com sua conta. O plano inclui tudo, com até 3 secretárias(os)."
+            },
+            {
+              "type": "p",
+              "text": "Com a assinatura inativa, o app mostra \"Sua assinatura do SolvyMed está inativa.\" e a linha \"Dúvidas? Escreva para support@solvymed.com.\" (toque para abrir o e-mail), com o botão **Sair**. A secretária(o) vê \"Assinatura inativa\": o acesso volta assim que a assinatura do médico for renovada, com a mesma linha de suporte."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "You get 15 days free, with no card. To continue afterwards, subscribe on solvymed.com, signed in with your account. The plan includes everything, with up to 3 secretaries."
+            },
+            {
+              "type": "p",
+              "text": "With the subscription inactive, the app shows \"Your SolvyMed subscription is inactive.\" and the line \"Questions? Write to support@solvymed.com.\" (tap it to open your email), with a **Sign Out** button. A secretary sees \"Subscription inactive\": access resumes once the doctor's subscription is renewed, with the same support line."
             }
           ]
         },

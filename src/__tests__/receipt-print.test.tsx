@@ -19,6 +19,7 @@ const h = vi.hoisted(() => ({
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
     auth: { getUser: async () => ({ data: { user: { id: "sec-1" } } }) },
+    rpc: async () => ({ data: null, error: null }), // get_practice_brand: no brand saved
     from: (table: string) => {
       const q: Record<string, unknown> = {};
       q.select = () => q;
