@@ -80,7 +80,7 @@ describe("Meus médicos", () => {
     fireEvent.click(within(card).getByRole("button", { name: t.disconnect }));
     expect(within(card).getByTestId("disconnect-confirm")).toHaveTextContent("Desconectar de Dr. Paulo Lima?");
     fireEvent.click(within(within(card).getByTestId("disconnect-confirm")).getByRole("button", { name: t.disconnect }));
-    await waitFor(() => expect(within(card).getByTestId("disconnect-blocked")).toHaveTextContent("Você tem consultas confirmadas com Dr. Paulo Lima."));
+    await waitFor(() => expect(within(card).getByTestId("disconnect-blocked")).toHaveTextContent("Você tem consultas futuras com Dr. Paulo Lima."));
     expect(h.disconnect).toHaveBeenCalledWith("d-2");
     fireEvent.click(within(card).getByRole("button", { name: t.disconnect }));
     fireEvent.click(within(within(card).getByTestId("disconnect-confirm")).getByRole("button", { name: t.disconnect }));
