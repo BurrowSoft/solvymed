@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createMockBackend } from "@/lib/assistant/mockBackend";
@@ -198,12 +198,15 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
   // After a confirmed save (§2.3 "After saving"): minimise to the pill, go
   // to the action's screen with the item highlighted, and show "✓ … +
   // Desfazer" for 10 s.
+  const [navigating, startNav] = useTransition();
   const afterSave = (card: ConfirmationCard, id: string | undefined, demo: boolean, noUndo = false) => {
     const a = card.after;
     const hl = a.highlight?.id ?? id;
     const path = webPath(prefix, { screen: a.screen === "whatsapp" ? a.then?.screen ?? "payments" : a.screen, date: a.date, id: a.screen === "patient" ? hl : undefined }, hl);
     setMinimized(true);
-    if (path && isInternalHref(path)) router.push(path);
+    // In a transition (#364): Desfazer waits until the move to the screen has
+    // settled, so a click is never lost to the pending navigation.
+    if (path && isInternalHref(path)) startNav(() => router.push(path));
     setCardDone((d) => ({ ...d, [card.id]: "saved" }));
     setToast({ card, id, demo, left: 10, phase: "saved", noUndo, path: path && isInternalHref(path) ? path : undefined });
     track("solvyai_confirmed", { kind: card.action.kind });
@@ -393,12 +396,12 @@ export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr 
               {(toast.phase === "saved" || toast.phase === "undoing") && !toast.noUndo && (
                 <button
                   type="button"
-                  disabled={toast.phase === "undoing"}
-                  aria-busy={toast.phase === "undoing"}
+                  disabled={toast.phase === "undoing" || navigating}
+                  aria-busy={toast.phase === "undoing" || navigating}
                   onClick={() => void runUndo()}
                   className="shrink-0 whitespace-nowrap rounded-lg px-2 py-0.5 font-semibold text-[#5eead4] hover:bg-white/10 disabled:opacity-60"
                 >
-                  {toast.phase === "undoing" ? "…" : t("undo", { s: toast.left })}
+                  {toast.phase === "undoing" || navigating ? "…" : t("undo", { s: toast.left })}
                 </button>
               )}
               {(toast.noUndo || toast.phase === "failed") && toast.path && (
