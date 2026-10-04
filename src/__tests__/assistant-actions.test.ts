@@ -251,7 +251,10 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     const t = setup(() => "Agenda: marque consultas.\n[[open:A1]]\nPagamentos: o que recebeu.\n[[open:G1]]\n[[open:A1]]\nPacientes.\n[[open:P1]]\n[[open:C1]]");
     t.db.rpcs.assistant_consume_message = () => ({ allowed: true, used: 1, limit: 20, resets_at: "x", actions: false });
     const r = await run(t, ask("Explique o app inteiro"));
-    expect(r.blocks.filter((b) => b.type === "open")).toHaveLength(3);
+    const opens = r.blocks.filter((b) => b.type === "open") as { label: string }[];
+    expect(opens).toHaveLength(3);
+    // Several buttons: each named after its article, never three "Abrir tela" (53).
+    expect(new Set(opens.map((o) => o.label)).size).toBe(3);
   });
 
   it("with thinking, the response's own content (thinking blocks) goes back before the tool results", async () => {

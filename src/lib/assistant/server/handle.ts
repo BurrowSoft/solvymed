@@ -450,8 +450,12 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
         p_professional_id: userId,
         p_input: u.input, p_output: u.output, p_cache_read: u.cacheRead, p_cache_write: u.cacheWrite,
       });
-      for (const id of [...new Set(seen)].slice(0, 3)) {
-        const open = openBlock(id, req.locale, deps.client, tx.openScreen);
+      // One button: "Abrir tela". Several (a broad question): each named
+      // after its article, so they can be told apart (53).
+      const ids = [...new Set(seen)].slice(0, 3);
+      for (const id of ids) {
+        const article = ids.length > 1 ? HELP.flatMap((c) => c.articles).find((x) => x.id === id) : null;
+        const open = openBlock(id, req.locale, deps.client, article ? articleTitle(article, lang, deps.client === "app") : tx.openScreen);
         if (open) yield open;
       }
       yield { kind: "block", block: { type: "feedback" } };
