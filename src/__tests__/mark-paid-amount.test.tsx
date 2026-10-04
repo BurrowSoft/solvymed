@@ -53,3 +53,6 @@ describe("Mark paid: the typed amount (money hotfix)", () => {
     expect(input).toHaveAttribute("inputmode", "decimal");
   });
 });
+
+// The "All" schedule's dispatcher (166) imports every action; these tests mock them.
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/schedule/row-actions", () => ({ actForRow: vi.fn() }));

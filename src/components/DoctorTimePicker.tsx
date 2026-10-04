@@ -7,6 +7,7 @@ import { doctorTimeChips } from "@/lib/doctorTimes";
 import { chosenTimeParts } from "@/lib/chosenTime";
 import { countryProfile } from "@/lib/country";
 import { getScheduleDay } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/actions";
+import { useRowAction } from "@/components/RowPractice";
 
 type Day = Awaited<ReturnType<typeof getScheduleDay>>;
 
@@ -41,6 +42,7 @@ export function DoctorTimePicker({
   excludeId?: string;
   onChange?: (date: string, start: string) => void;
 }) {
+  const scheduleDay = useRowAction("getScheduleDay", getScheduleDay);
   const t = useTranslations("schedule");
   const tBook = useTranslations("book");
   const locale = useLocale();
@@ -56,11 +58,11 @@ export function DoctorTimePicker({
 
   useEffect(() => {
     const mine = ++seq.current;
-    getScheduleDay(date, excludeId).then(
+    scheduleDay(date, excludeId).then(
       (d) => { if (mine === seq.current) { setDay(d); setLoadedFor(date); } },
       () => { if (mine === seq.current) { setDay(null); setLoadedFor(date); } },
     );
-  }, [date, excludeId]);
+  }, [date, excludeId]); // eslint-disable-line react-hooks/exhaustive-deps -- scheduleDay is the same action (per row in "All")
   useEffect(() => { onChange?.(date, start); }, [date, start, onChange]);
 
   const chips = useMemo(

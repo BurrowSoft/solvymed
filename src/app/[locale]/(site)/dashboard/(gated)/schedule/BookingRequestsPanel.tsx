@@ -13,6 +13,8 @@ import { toLocalDateString } from "@/lib/slots";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { REASON_MAX, statusReasonLive } from "@/lib/statusReason";
 import { DoctorTimePicker } from "@/components/DoctorTimePicker";
+import { RowPractice, forRow } from "@/components/RowPractice";
+import { DoctorTag, type DoctorTagInfo } from "@/components/DoctorTag";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
 type Booking = {
@@ -32,6 +34,8 @@ type Booking = {
   proposed_date?: string | null;
   proposed_start_time?: string | null;
   proposed_end_time?: string | null;
+  // The "All" schedule (166): the request's doctor; its actions act for them.
+  practice?: DoctorTagInfo | null;
 };
 
 type PatientProfile = {
@@ -127,11 +131,14 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
     return a.start_time < b.start_time ? -1 : 1;
   });
 
+  // A request's doctor in "All" (166), else none (the switcher's).
+  const pid = (id: string) => bookings.find((x) => x.id === id)?.practice?.id ?? null;
+
   function handleConfirmClick(b: Booking) {
     const note = notes[b.id] || undefined;
     setActing(`confirm:${b.id}`);
     startTransition(async () => {
-      const result = await confirmBookingAndAddPatient(b.id, note);
+      const result = await forRow(pid(b.id), "confirmBookingAndAddPatient", confirmBookingAndAddPatient)(b.id, note);
       // The patient's record at this clinic is archived (server-enforced).
       if (result?.error === "patient_archived") alert(t("patientArchivedError"));
     });
@@ -141,14 +148,14 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
     const note = (reasonsLive ? reasons[id] : notes[id]) || undefined;
     setRejectingId(null);
     setActing(`reject:${id}`);
-    startTransition(async () => { await rejectBooking(id, note); });
+    startTransition(async () => { await forRow(pid(id), "rejectBooking", rejectBooking)(id, note); });
   }
 
   function handleProposeSubmit(id: string) {
     if (!propDate || !propStart || !propEnd || looksBuddhistEra(propDate)) return;
     const note = notes[id] || undefined;
     startTransition(async () => {
-      const result = await proposeNewTime(id, propDate, propStart, propEnd, note);
+      const result = await forRow(pid(id), "proposeNewTime", proposeNewTime)(id, propDate, propStart, propEnd, note);
       if (result?.error === "patient_archived") alert(t("patientArchivedError"));
       setProposalId(null);
     });
@@ -173,6 +180,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-semibold text-slate-900">{b.patient_name}</p>
+                    {b.practice && <DoctorTag info={b.practice} />}
                     {b.is_new_patient && (
                       <span className="rounded-full bg-violet-100 px-2 py-0.5 text-xs font-semibold text-violet-700">
                         {t("newPatient")}
@@ -316,7 +324,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                     <div className="flex gap-2">
                       <button
                         onClick={() => { setActing(`accept:${b.id}`); startTransition(async () => {
-                          const result = await acceptRescheduleRequest(b.id);
+                          const result = await forRow(pid(b.id), "acceptRescheduleRequest", acceptRescheduleRequest)(b.id);
                           if (result.error === "slot_taken") {
                             alert(t("slotTakenAlert"));
                           } else if (result.error === "proposed_time_expired") {
@@ -332,7 +340,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                         {spin(`accept:${b.id}`)}{t("accept")}
                       </button>
                       <button
-                        onClick={() => { setActing(`decline:${b.id}`); startTransition(async () => { await declineRescheduleRequest(b.id); }); }}
+                        onClick={() => { setActing(`decline:${b.id}`); startTransition(async () => { await forRow(pid(b.id), "declineRescheduleRequest", declineRescheduleRequest)(b.id); }); }}
                         disabled={isPending}
                         data-testid="reschedule-decline-button"
                         className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"
@@ -401,6 +409,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                   <p className="mb-2 text-xs font-semibold text-amber-800">{t("proposeFormTitle")}</p>
                   {/* Item 10: the calendar + time grid; the end follows the request's length. */}
                   <div className="mb-2 rounded-lg bg-white p-2">
+                    <RowPractice id={b.practice?.id ?? null}>
                     <DoctorTimePicker
                       defaultDate={b.date}
                       defaultStart={b.start_time}
@@ -410,6 +419,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                       excludeId={b.id}
                       onChange={(d, s) => { setPropDate(d); setPropStart(s); if (s) setPropEnd(addToTime(s, requestMinutes(b))); }}
                     />
+                    </RowPractice>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <div>

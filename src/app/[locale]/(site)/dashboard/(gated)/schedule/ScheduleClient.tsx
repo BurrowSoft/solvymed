@@ -18,7 +18,10 @@ import type { Currency } from "@/lib/country";
 import Link from "next/link";
 import { REASON_MAX, statusReasonLive } from "@/lib/statusReason";
 import { DoctorTimePicker } from "@/components/DoctorTimePicker";
+import { forRow, useRowAction } from "@/components/RowPractice";
+import { liveFeatures } from "@/lib/liveFeatures";
 import { PLAIN_CONSULTATION } from "@/lib/consultType";
+import { usePracticeCalendar } from "@/components/PracticeCalendar";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
@@ -112,7 +115,9 @@ export function ScheduleUndoToast() {
     claimed.current = x;
     setPhase("undoing");
     let ok = false;
-    try { ok = (await undoScheduleChange(x)).ok; } catch { ok = false; }
+    // As the doctor it was issued for (the "All" schedule's rows, 166).
+    const undo = liveFeatures.multiPractice ? forRow(x.practice, "undoScheduleChange", undoScheduleChange) : undoScheduleChange;
+    try { ok = (await undo(x)).ok; } catch { ok = false; }
     setPhase(ok ? "done" : "failed");
     setLeft(ok ? 4 : 8);
     router.refresh();
@@ -169,23 +174,27 @@ export function ViewToggle({ currentView, currentDate }: { currentView: string; 
 // a different day than the server's near midnight).
 export function ScheduleNav({ currentDate, currentView = "list", today }: { currentDate: string; currentView?: string; today: string }) {
   const t = useTranslations("schedule");
+  const practiceCalendar = usePracticeCalendar();
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  // The "All" schedule's doctor filter (166) survives moving between days.
+  const doctor = useSearchParams()?.get("doctor");
+  const keep = doctor ? `&doctor=${encodeURIComponent(doctor)}` : "";
 
   function navigate(offset: number) {
     const d = new Date(currentDate + "T12:00:00");
     d.setDate(d.getDate() + offset);
-    router.push(`${pathname}?date=${toLocalDateString(d)}&view=${currentView}`);
+    router.push(`${pathname}?date=${toLocalDateString(d)}&view=${currentView}${keep}`);
   }
 
   function goToday() {
-    router.push(`${pathname}?date=${today}&view=${currentView}`);
+    router.push(`${pathname}?date=${today}&view=${currentView}${keep}`);
   }
 
   const formatted = formatDateLabel(locale, currentDate, {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
-  });
+  }, practiceCalendar);
   const isToday = currentDate === today;
 
   return (
@@ -230,6 +239,7 @@ function actionErrorMessage(t: (key: string) => string, code: string | undefined
 
 export function AppointmentStatusSelect({ id, current }: { id: string; current: string }) {
   const t = useTranslations("schedule");
+  const updateStatus = useRowAction("updateAppointmentStatus", updateAppointmentStatus);
   const [status, setStatus] = useState(current);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -268,7 +278,7 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
   function save(newStatus: string, previous: string, why?: string) {
     setAsking(null);
     startTransition(async () => {
-      const result = await updateAppointmentStatus(id, newStatus, why);
+      const result = await updateStatus(id, newStatus, why);
       if (result?.error) {
         setStatus(previous);
         setError(actionErrorMessage(t, result.code));
@@ -322,6 +332,7 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
 // saying with whom; blocked time / outside the working hours asked once.
 export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: string; date: string; start: string; durationMin?: number }) {
   const t = useTranslations("schedule");
+  const move = useRowAction("moveAppointment", moveAppointment);
   const tDate = useTranslations("dateInput");
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
@@ -332,7 +343,7 @@ export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: st
   function submit(formData: FormData) {
     setError("");
     startTransition(async () => {
-      const result = await moveAppointment(formData);
+      const result = await move(formData);
       if (result?.code === "needs_confirm" && "hours" in result) {
         const parts: string[] = [];
         if (result.blocked) parts.push(t("warnBlocked", result.blocked));
@@ -402,11 +413,12 @@ export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: st
 
 export function DeleteAppointmentButton({ id }: { id: string }) {
   const t = useTranslations("schedule");
+  const remove = useRowAction("deleteAppointment", deleteAppointment);
   const [pending, startTransition] = useTransition();
 
   function handleDelete() {
     if (!confirm(t("deleteConfirm"))) return;
-    startTransition(async () => { await deleteAppointment(id); });
+    startTransition(async () => { await remove(id); });
   }
 
   return (
@@ -446,6 +458,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   const [recurrence, setRecurrence] = useState("");
   const [occurrences, setOccurrences] = useState(String(DEFAULT_OCCURRENCES));
   const uiLocale = useLocale();
+  const practiceCalendar = usePracticeCalendar();
   const formRef = useRef<HTMLFormElement>(null);
 
   // Patient suggestions come from a server search as the name is typed (a
@@ -498,7 +511,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
     startTransition(async () => {
       const result = await createAppointment(formData);
       // In a series, which date (the app names it too).
-      const on = (d: string | null | undefined) => (d ? `${t("seriesOnDate", { date: formatDateLabel(uiLocale, d, { day: "2-digit", month: "2-digit", year: "numeric" }) })} ` : "");
+      const on = (d: string | null | undefined) => (d ? `${t("seriesOnDate", { date: formatDateLabel(uiLocale, d, { day: "2-digit", month: "2-digit", year: "numeric" }, practiceCalendar) })} ` : "");
       if (result?.code === "needs_confirm" && "hours" in result) {
         const parts: string[] = [];
         if (result.blocked) parts.push(on(result.blocked.date) + t("warnBlocked", { start: result.blocked.start, end: result.blocked.end }));

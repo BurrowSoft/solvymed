@@ -68,3 +68,6 @@ describe("DoctorTimePicker", () => {
     expect(screen.getByTestId("doctor-chosen-time")).toBeInTheDocument();
   });
 });
+
+// The "All" schedule's dispatcher (166) imports every action; these tests mock them.
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/schedule/row-actions", () => ({ actForRow: vi.fn() }));

@@ -139,6 +139,18 @@ export default async function MyAppointmentsPage({
     .reverse()
     .slice(0, 5);
 
+  // Each listed appointment's practice (several doctors, maybe in different
+  // countries; Q4 2 Oct): its country decides the dates' calendar, its zone
+  // the reschedule's "today". The primary's is known already.
+  const practices: Record<string, { country: string | null; tz: string }> = {};
+  if (myProfessionalId) practices[myProfessionalId] = { country: practiceCountry, tz: clinicTz };
+  const others = [...new Set([...upcoming, ...past].map((a) => a.professional_id))].filter((id) => id && !practices[id]);
+  await Promise.all(others.map(async (id) => {
+    const { data } = await supabase.rpc("get_professional_public_info", { p_professional_id: id }).maybeSingle();
+    const row = data as { country?: string | null; time_zone?: string | null } | null;
+    if (row) practices[id] = { country: row.country ?? null, tz: row.time_zone || countryProfile(row.country ?? null).defaultTimeZone };
+  }));
+
   // The one-time "connected to {clinic}" card, once per clinic (migration 103).
   const flags = await getOnboardingFlags(supabase);
   // 1.5.0 (behind the flag): the patient's doctors (get_my_doctors, the
@@ -160,6 +172,7 @@ export default async function MyAppointmentsPage({
       myProfessionalMeta={myProfessionalMeta}
       clinicTz={clinicTz}
       practiceCountry={practiceCountry}
+      practices={practices}
       doctors={doctors}
       canAddDoctor={canAddDoctor}
     />

@@ -24,7 +24,8 @@ import { OpenInApp } from "@/components/OpenInApp";
 import { BrandMarkTile } from "@/components/BrandLogo";
 import { ActingPracticeReset, PracticeSwitcher } from "@/components/PracticeSwitcher";
 import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
-import { ACTING_COOKIE } from "@/lib/actingPractice";
+import { ACTING_COOKIE, ALL_PRACTICES } from "@/lib/actingPractice";
+import { PracticeCalendarProvider } from "@/components/PracticeCalendar";
 
 function isVersionBelow(current: string, minimum: string): boolean {
   const parse = (v: string) => v.split(".").map(n => parseInt(n, 10) || 0);
@@ -190,7 +191,7 @@ export default async function DashboardLayout({
   // Stale: a doctor she no longer serves, or a list that couldn't be read
   // (the pages would use her primary while the header named the cookie's
   // doctor; 9a). Either way: clear the choice, back on her primary.
-  const staleChoice = !!chosenCookie && (!practices || !practices.some((p) => p.professional_id === chosenCookie));
+  const staleChoice = !!chosenCookie && chosenCookie !== ALL_PRACTICES && (!practices || !practices.some((p) => p.professional_id === chosenCookie));
   const paymentQr = isSecretary ? null : practice.paymentQr;
 
   let trialChipText = "";
@@ -246,10 +247,10 @@ export default async function DashboardLayout({
               {staleChoice && <ActingPracticeReset />}
               {!staleChoice && practices && practices.length > 1 && (
                 <div className="flex justify-end px-6 pt-4 lg:px-8">
-                  <PracticeSwitcher practices={practices} current={actingId} />
+                  <PracticeSwitcher practices={practices} current={actingId} allChosen={chosenCookie === ALL_PRACTICES} />
                 </div>
               )}
-              {children}
+              <PracticeCalendarProvider calendar={practice.calendar}>{children}</PracticeCalendarProvider>
             </div>
           </main>
         </div>
