@@ -133,6 +133,6 @@
   },
   "closure-notices-live": {
     "met": false,
-    "what": "Migration 173 is applied on production: close_my_account queues the 'practice closed' / 'appointment cancelled' notices server-side (patient_notice_outbox kinds practice_closed / closure_cancelled, clinic_name snapshot, professional_id SET NULL) and patient-notify sends them. Reveals privacy §6g's closure line (with a PRIVACY_VERSION bump + mobile's accepting migration first); the web then drops api/account/close's own push sending."
+    "what": "Migration 173 is applied on production: close_my_account queues the 'practice closed' / 'appointment cancelled' notices server-side (patient_notice_outbox kinds practice_closed / closure_cancelled, clinic_name snapshot; professional_id NULL on those rows, CHECK-enforced) and patient-notify sends them. Reveals privacy §6g's closure line (with a PRIVACY_VERSION bump + mobile's accepting migration first); the web then drops api/account/close's own push sending."
   }
 }

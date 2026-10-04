@@ -158,7 +158,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
       <Section title="6g. Notificações">
         <ul>
           <li>Enviamos notificações (push) sobre consultas: pedidos e suas respostas, confirmações, alterações e cancelamentos. O profissional também pode enviar um aviso geral aos pacientes conectados a ele (um título e uma mensagem). As notificações chegam ao seu aparelho pela Expo (veja a seção 5).</li>
-          <li>Quando nossos servidores enviam uma notificação, nós a guardamos numa fila só para entregá-la: para quem é, de qual consulta e tipo de aviso se trata e a data e o horário da consulta (nos avisos para a equipe da clínica, também o nome do paciente e, para uma secretária que trabalha para vários médicos, o nome do médico; no aviso geral, o título e a mensagem), e se foi entregue. Cada uma é apagada no máximo 30 dias depois de criada.</li>
+          <li>Quando nossos servidores enviam uma notificação, nós a guardamos numa fila só para entregá-la: para quem é e quem a gerou, de qual consulta e tipo de aviso se trata, a data e o horário da consulta, os nomes que aparecem nela e o status de entrega (no aviso geral, o título e a mensagem). Cada uma é apagada no máximo 30 dias depois de criada.</li>
           {closureNotices && (
             <li>Quando um profissional encerra a conta, nosso servidor envia aos pacientes dele um aviso de que o consultório foi encerrado ou de que uma consulta foi cancelada. Para isso, guardamos apenas o nome da clínica (que pode ser o próprio nome do profissional) e o país dela, a data e o horário da consulta (no caso de consultas canceladas) e o status de entrega, e apagamos o aviso assim que ele é enviado (no máximo 30 dias).</li>
           )}
