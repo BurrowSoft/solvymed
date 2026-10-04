@@ -273,9 +273,6 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       let answered = false;
       // What this answer has put on screen for the user to act on.
       let shown: "card" | "choice" | "slot" | null = null;
-      // The text of the latest round that called tools (never shown while
-      // the model works): the answer when the last round says nothing (53).
-      let toolRoundText = "";
       try {
         const ctx = mode === "actions" ? await toolContext(deps.db, userId, req.locale, deps.client, messages[messages.length - 1].content) : null;
         let system = rules(lang, deps.client, req.screen, mode, tx.reply);
@@ -325,14 +322,14 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
             // paciente?"): no text after it (3e: never a second "Escolha uma
             // opção" line). A card gets the one pointer line, naming the card's
             // real button in the user's language.
-            // The last round empty with nothing on screen: the model already
-            // answered while calling a tool; show that, else a fixed line,
-            // never an outage message (UX, 5 Oct).
-            const text = shown === "card" ? tx.pointerCard : shown ? "" : roundText.trim() || toolRoundText.trim() || tx.couldntAnswer;
+            // The last round empty with nothing on screen (53: the model
+            // wrote its answer while calling a tool, then nothing): a fixed
+            // line, never an outage message (UX, 5 Oct). A tool round's text
+            // is never shown: it was written before the tools' results (c6).
+            const text = shown === "card" ? tx.pointerCard : shown ? "" : roundText.trim() || tx.couldntAnswer;
             if (text) { answered = true; yield { kind: "delta", text }; }
             break;
           }
-          if (roundText.trim()) toolRoundText = roundText;
           // The tools, as the user; their blocks (a card, a list to choose
           // from, time chips) go straight to the user, the text to the model.
           // One question at a time (UX): once a list or time choice is on
