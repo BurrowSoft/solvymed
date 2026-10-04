@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isReceivable, RECEIVABLE_STATUSES } from "@/lib/paymentRules";
+import { isReceivable, RECEIVABLE_STATUSES, showsPayment } from "@/lib/paymentRules";
 
 // The shared table with the app: does an appointment count in "Pendente"?
 export const PENDING_RULE_TABLE: [status: string, paymentStatus: string, counts: boolean][] = [
@@ -24,5 +24,17 @@ describe("Pendente (to receive): the app's rule", () => {
 
   it("the query filter lists exactly the counted statuses", () => {
     expect([...RECEIVABLE_STATUSES].sort()).toEqual(["completed", "confirmed", "late", "scheduled"]);
+  });
+});
+
+// f0: a rejected request offered "Definir valor" in the Agenda. The payment
+// line shows once paid, or while the appointment can be charged.
+describe("showsPayment", () => {
+  it.each([
+    ["scheduled", "pending", true], ["confirmed", "pending", true], ["completed", "pending", true], ["late", "pending", true],
+    ["rejected", "pending", false], ["cancelled", "pending", false], ["tentative", "pending", false], ["proposal", "pending", false],
+    ["absent", "pending", false], ["blocked", "pending", false], ["cancelled", "paid", true],
+  ])("%s / %s → %s", (status, paymentStatus, shows) => {
+    expect(showsPayment(status as string, paymentStatus as string)).toBe(shows);
   });
 });
