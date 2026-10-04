@@ -7,6 +7,10 @@
 import { liveFeatures } from "./liveFeatures";
 
 export const ACTING_COOKIE = "sm_practice";
+// The switcher's "Todos" (166): the Agenda shows every doctor she serves.
+// Not an id, so it never becomes a header; every other page acts for her
+// primary doctor.
+export const ALL_PRACTICES = "all";
 export const ACTING_HEADER = "x-acting-practice";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -31,4 +35,5 @@ export function setBrowserActingCookie(id: string | null) {
     : `${ACTING_COOKIE}=; path=/; max-age=0; samesite=lax`;
 }
 
-export type MyPractice = { professional_id: string; display_name: string | null; accent_color: string | null; is_primary: boolean };
+// title: migration 166 (absent before it).
+export type MyPractice = { professional_id: string; display_name: string | null; title?: string | null; accent_color: string | null; is_primary: boolean };

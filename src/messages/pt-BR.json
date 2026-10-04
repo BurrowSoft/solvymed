@@ -1942,7 +1942,7 @@
     "disconnect": "Desconectar",
     "disconnectTitle": "Desconectar de {doctor}?",
     "disconnectBody": "Você deixará de ver consultas e documentos de {doctor}. Pedidos pendentes serão cancelados. A clínica mantém o seu cadastro.",
-    "disconnectBlocked": "Você tem consultas confirmadas com {doctor}. Para cancelar, fale com a clínica; depois você pode desconectar.",
+    "disconnectBlocked": "Você tem consultas futuras com {doctor}. Para cancelar, fale com a clínica; depois você pode desconectar.",
     "disconnected": "Desconectado de {doctor}.",
     "filterAll": "Todos"
   },
@@ -1954,6 +1954,8 @@
     "todayWith": "Hoje com {doctor}",
     "notifyTitle": "Notificações por médico",
     "notifyHint": "Escolha de quais médicos você quer receber avisos.",
+    "allMuted": "Você não receberá notificações de nenhum médico.",
+    "notifyAppHint": "Vale para as notificações no app SolvyMed.",
     "pushPrefix": "{doctor}: ",
     "joinedTeam": "{doctor} adicionou você à equipe.",
     "removeTitle": "Remover {name} da sua equipe?",
