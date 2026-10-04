@@ -14,7 +14,12 @@
 // logo and photo public once saved, removal within about a minute, legacy
 // photos private. Mobile's migration 169 adding ('privacy','2026-10-05')
 // applied FIRST.
-export const PRIVACY_VERSION = "2026-10-05";
+// 2026-10-06: §6g Notifications (1.6.0): appointment notices and the
+// professional's general notices, delivery through Expo, the server queue's
+// 30-day deletion, turning them off. Mobile's migration adding
+// ('privacy','2026-10-06') applied FIRST. (The closure-notice line waits
+// for 173 behind closure-notices-live, with its own bump.)
+export const PRIVACY_VERSION = "2026-10-06";
 export const TERMS_VERSION = "2026-10-01";
 
 // Sent with every web signup (the checkbox is required, so it's sent only
