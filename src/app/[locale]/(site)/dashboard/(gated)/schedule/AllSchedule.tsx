@@ -16,6 +16,7 @@ import { ScheduleNav, ScheduleUndoToast } from "./ScheduleClient";
 import { BookingRequestsPanel } from "./BookingRequestsPanel";
 import { getTentativeBookings } from "./booking-actions";
 import { ScheduleRow, type RowPracticeCtx } from "./ScheduleRow";
+import { AllAddButtons } from "./AllAddButtons";
 import type { CalendarAppt } from "./CalendarView";
 
 type Bookings = Parameters<typeof BookingRequestsPanel>[0]["bookings"];
@@ -54,8 +55,7 @@ async function practicePart(p: MyPractice, userId: string): Promise<{ ctx: RowPr
 // every doctor she serves in one list by time, each appointment with its
 // doctor (a dot in their colour + the name) and filter chips per doctor.
 // Every action on a row acts for that row's doctor (RowPractice). A new
-// appointment or a block asks for the doctor first (comes next); until
-// then, they're made from one doctor's Agenda.
+// appointment or a block asks for the doctor first (AllAddButtons).
 export async function AllSchedule({ practices, userId, today, currentDate, doctor, locale }: {
   practices: MyPractice[]; userId: string; today: string; currentDate: string; doctor: string | null; locale: string;
 }) {
@@ -86,7 +86,10 @@ export async function AllSchedule({ practices, userId, today, currentDate, docto
           <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
           {todayCount !== null && <p className="text-sm text-slate-500 mt-0.5">{t("apptsToday", { count: todayCount })}</p>}
         </div>
-        <AutoRefresh />
+        <div className="flex flex-wrap items-center gap-2">
+          <AutoRefresh />
+          <AllAddButtons doctors={parts.map((x) => ({ tag: x.tag, ctx: x.ctx }))} defaultDate={currentDate} preselected={doctor} />
+        </div>
       </div>
 
       <nav data-testid="doctor-chips" className="mb-4 flex flex-wrap gap-2">

@@ -72,9 +72,9 @@ export async function ScheduleRow({ appt, ctx, today, doctor }: { appt: Calendar
               <PromptPayQrButton promptPayId={promptPayId} amount={appt.payment_amount} />
             )}
             {MOVABLE_STATUSES.includes(appt.status) && <RescheduleButton id={appt.id} date={appt.date} start={appt.start_time} durationMin={appt.duration_minutes ?? undefined} />}
-            {/* A no-show is never moved (UX 36): book again instead. Not from
-                "All" until the new appointment asks for the doctor (166 C). */}
-            {appt.status === "absent" && !doctor && (
+            {/* A no-show is never moved (UX 36): book again instead (in
+                "Todos", for this row's doctor). */}
+            {appt.status === "absent" && (
               <NewAppointmentButton defaultDate={today} currency={currency} procedures={procedures}
                 prefill={{ patientId: appt.patient_id ?? null, patientName: appt.patient_name, procedureName: appt.consultation_type, duration: appt.duration_minutes }} />
             )}
