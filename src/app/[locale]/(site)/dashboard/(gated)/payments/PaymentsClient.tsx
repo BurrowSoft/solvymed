@@ -174,7 +174,8 @@ export function MarkPaidButton({ id, amount, currency = "BRL" }: { id: string; a
 // "Sem valor · Definir valor" (the app's #216, UX): an appointment without an
 // amount isn't to-receive yet; this sets one (above zero), prefilled with the
 // price of the active procedure of the same name. Nothing else changes.
-export function SetAmountButton({ id, suggested, currency = "BRL" }: { id: string; suggested?: number | null; currency?: Currency }) {
+// onSaved: the recibo page re-renders with the amount (UX, 1.6.0).
+export function SetAmountButton({ id, suggested, currency = "BRL", onSaved }: { id: string; suggested?: number | null; currency?: Currency; onSaved?: () => void }) {
   const t = useTranslations("payments");
   const [pending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
@@ -189,7 +190,7 @@ export function SetAmountButton({ id, suggested, currency = "BRL" }: { id: strin
     startTransition(async () => {
       const r = await setPaymentAmount(id, parsed);
       if (r?.error) setError(t((ERROR_CODE_KEY[r.code ?? ""] ?? "errorGeneric") as Parameters<typeof t>[0]));
-      else setOpen(false);
+      else { setOpen(false); onSaved?.(); }
     });
   }
 

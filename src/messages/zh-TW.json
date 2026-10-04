@@ -1443,7 +1443,8 @@
     "paid": "已付款",
     "pending": "待付款",
     "receiptLink": "收據",
-    "receiptThaiHint": "有編號的收據須在 App 中開立。"
+    "receiptThaiHint": "有編號的收據須在 App 中開立。",
+    "receiptNeedsAmount": "Set the appointment amount before issuing a receipt."
   },
   "founders": {
     "metaTitle": "SolvyMed 創始會員計畫",

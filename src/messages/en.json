@@ -1473,7 +1473,8 @@
     "paid": "Paid",
     "pending": "Pending",
     "receiptLink": "Receipt",
-    "receiptThaiHint": "Numbered receipts are issued in the app."
+    "receiptThaiHint": "Numbered receipts are issued in the app.",
+    "receiptNeedsAmount": "Set the appointment amount before issuing a receipt."
   },
   "founders": {
     "metaTitle": "SolvyMed Founders Program",

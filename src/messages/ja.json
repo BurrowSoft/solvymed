@@ -1443,7 +1443,8 @@
     "paid": "支払い済み",
     "pending": "未払い",
     "receiptLink": "領収書",
-    "receiptThaiHint": "番号付きの領収書はアプリで発行されます。"
+    "receiptThaiHint": "番号付きの領収書はアプリで発行されます。",
+    "receiptNeedsAmount": "Set the appointment amount before issuing a receipt."
   },
   "founders": {
     "metaTitle": "SolvyMed ファウンダープログラム",

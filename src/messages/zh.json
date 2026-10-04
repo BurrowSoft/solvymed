@@ -1443,7 +1443,8 @@
     "paid": "已付款",
     "pending": "待付款",
     "receiptLink": "收据",
-    "receiptThaiHint": "带编号的收据在应用中开具。"
+    "receiptThaiHint": "带编号的收据在应用中开具。",
+    "receiptNeedsAmount": "Set the appointment amount before issuing a receipt."
   },
   "founders": {
     "metaTitle": "SolvyMed 创始会员计划",

@@ -1443,7 +1443,8 @@
     "paid": "Pagato",
     "pending": "In sospeso",
     "receiptLink": "Ricevuta",
-    "receiptThaiHint": "Le ricevute numerate si emettono nell’app."
+    "receiptThaiHint": "Le ricevute numerate si emettono nell’app.",
+    "receiptNeedsAmount": "Set the appointment amount before issuing a receipt."
   },
   "founders": {
     "metaTitle": "Programma Fondatori SolvyMed",

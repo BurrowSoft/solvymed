@@ -43,6 +43,9 @@ vi.mock("next/navigation", () => ({
   redirect: () => { throw new Error("REDIRECT"); },
 }));
 vi.mock("@/components/PrintToolbar", () => ({ PrintToolbar: (p: { printable?: boolean }) => { h.toolbar.push(p); return null; } }));
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/payments/[apptId]/receipt/ReceiptNeedsAmount", () => ({
+  ReceiptNeedsAmount: (p: { id: string; currency: string; text: string }) => <p data-testid="needs-amount">{`${p.text}|${p.id}|${p.currency}`}</p>,
+}));
 
 import ReceiptPage from "@/app/[locale]/(site)/dashboard/(gated)/payments/[apptId]/receipt/page";
 import { RECEITA_SAUDE_NOTE } from "@/app/[locale]/(site)/dashboard/(gated)/payments/[apptId]/receipt/ReceiptDocument";
@@ -61,6 +64,20 @@ beforeEach(() => {
 });
 
 describe("recibo print page", () => {
+  // UX (1.6.0, as the app): no recibo without an amount, never
+  // "R$ 0,00 · Pendente"; the message and "Definir valor" instead.
+  it("no amount: no recibo, the message and Definir valor", async () => {
+    for (const payment_amount of [null, 0]) {
+      h.toolbar = [];
+      h.appt = { ...h.appt, payment_amount, payment_status: "pending" };
+      const { container, unmount } = render(await ReceiptPage({ params }));
+      expect(container.querySelector('[data-testid="needs-amount"]')?.textContent).toBe(`receiptNeedsAmount|${APPT}|BRL`);
+      expect(container.textContent).not.toContain("0,00");
+      expect(h.toolbar.at(-1)?.printable).toBe(false);
+      unmount();
+    }
+  });
+
   // d7: the stored type key ("Consultation") was printed raw. A built-in
   // type goes through consultType (the mock returns the key), a clinic's
   // own procedure stays as written.

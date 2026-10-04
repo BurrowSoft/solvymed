@@ -1443,7 +1443,8 @@
     "paid": "Lunas",
     "pending": "Tertunda",
     "receiptLink": "Kuitansi",
-    "receiptThaiHint": "Kuitansi bernomor diterbitkan di aplikasi."
+    "receiptThaiHint": "Kuitansi bernomor diterbitkan di aplikasi.",
+    "receiptNeedsAmount": "Set the appointment amount before issuing a receipt."
   },
   "founders": {
     "metaTitle": "Program Pendiri SolvyMed",

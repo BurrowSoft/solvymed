@@ -1443,7 +1443,8 @@
     "paid": "Đã thanh toán",
     "pending": "Chờ thanh toán",
     "receiptLink": "Biên nhận",
-    "receiptThaiHint": "Biên nhận có đánh số được xuất trong ứng dụng."
+    "receiptThaiHint": "Biên nhận có đánh số được xuất trong ứng dụng.",
+    "receiptNeedsAmount": "Set the appointment amount before issuing a receipt."
   },
   "founders": {
     "metaTitle": "Chương trình Nhà sáng lập SolvyMed",
