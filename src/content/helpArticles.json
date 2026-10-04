@@ -377,7 +377,7 @@
             },
             {
               "type": "p",
-              "text": "In the patient's app: they can only ask to reschedule before the appointment starts, and they can't cancel a booked appointment themselves (the app says \"To cancel, talk to the clinic.\"). They can cancel a request that's still pending, and accept or decline a new time you proposed (the app shows the proposed time and, for a reschedule, the current one)."
+              "text": "In the patient's app: they can only ask to reschedule before the appointment starts, and they can't cancel a booked appointment themselves (the app says \"To cancel, please contact the clinic.\"). They can cancel a request that's still pending, and accept or decline a new time you proposed (the app shows the proposed time and, for a reschedule, the current one)."
             },
             {
               "type": "p",
