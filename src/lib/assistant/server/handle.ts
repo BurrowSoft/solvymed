@@ -288,6 +288,10 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       let answered = false;
       // One extra round when the answer would be empty (53): see below.
       let nudged = false;
+      // Previews only: each round's stop reason, raw text length, tools and
+      // output tokens, for the testers' probes (no content).
+      const diag: { round: number; stop: string; chars: number; calls: string[]; output: number }[] = [];
+      const debug = (): AnswerChunk[] => (process.env.VERCEL_ENV === "preview" ? [{ kind: "debug", rounds: diag }] : []);
       // What this answer has put on screen for the user to act on.
       let shown: "card" | "choice" | "slot" | null = null;
       try {
@@ -297,6 +301,8 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
         const history: ModelMessage[] = [...messages];
         for (let round = 0; round < (ctx ? MAX_ROUNDS : 1); round++) {
           let said = "";
+          let stop = "";
+          let roundOut = 0;
           const calls: { id: string; name: string; input: Record<string, unknown> }[] = [];
           async function* texts(): AsyncIterable<string> {
             for await (const ev of model.stream({
@@ -308,11 +314,14 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
             })) {
               if (ev.type === "text") { said += ev.text; yield ev.text; }
               else if (ev.type === "tool_use") calls.push(ev);
+              else if (ev.type === "stop") stop = ev.reason;
               else if (ev.type === "usage") {
+                roundOut += ev.usage.output;
                 usage.input += ev.usage.input; usage.output += ev.usage.output;
                 usage.cacheRead += ev.usage.cacheRead; usage.cacheWrite += ev.usage.cacheWrite;
               }
             }
+            diag.push({ round, stop, chars: said.length, calls: calls.map((c) => c.name), output: roundOut });
           }
           if (!ctx) {
             // Help mode: one round, streamed as it comes.
@@ -392,11 +401,13 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       } catch {
         // The model failed: the message isn't spent (fair to the doctor).
         await refund();
+        yield* debug();
         yield { kind: "error", code: "model_failed" };
         return;
       }
       if (!answered) {
         await refund();
+        yield* debug();
         yield { kind: "error", code: "model_failed" };
         return;
       }
@@ -412,6 +423,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       if (open) yield open;
       yield { kind: "block", block: { type: "feedback" } };
       yield { kind: "usage", used: c.used ?? 0, limit: c.limit ?? 0, extra: 0, resetsAt: c.resets_at ?? "" };
+      yield* debug();
       yield { kind: "done" };
     } finally {
       await refund();

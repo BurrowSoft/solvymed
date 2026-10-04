@@ -89,7 +89,10 @@ export type AnswerChunk =
   | { kind: "block"; block: AnswerBlock }
   | { kind: "usage"; used: number; limit: number; extra: number; resetsAt: string }
   | { kind: "done" }
-  | { kind: "error"; code: string };
+  | { kind: "error"; code: string }
+  // Previews only (testers' probes): how each model round ended, no
+  // content. Clients ignore it.
+  | { kind: "debug"; rounds: { round: number; stop: string; chars: number; calls: string[]; output: number }[] };
 
 // Today's usage (§4, cost controls): resets at the next local midnight in
 // the clinic's time zone.

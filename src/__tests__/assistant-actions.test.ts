@@ -204,6 +204,27 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
   // ("…no **site** (já") or just "Claro!": a "[[" that never closed held
   // back, then dropped, everything after it. Markers are short; a broken one
   // is dropped, never the answer.
+  // 53's probes: on Previews only, how each round ended (no content), so a
+  // cut-off answer can be traced; never on production.
+  it("Previews add a debug chunk (per round: stop, raw length, tools, tokens); production never", async () => {
+    const reply = (_r: ModelRequest, round: number): FakeTurn =>
+      round === 0 ? { text: "Vou olhar.", tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }] } : "Amanhã: 1 consulta.";
+    vi.stubEnv("VERCEL_ENV", "preview");
+    try {
+      const r = await run(setup(reply), ask("O que tenho amanhã?"));
+      const dbg = r.chunks.find((c) => c.kind === "debug");
+      expect(dbg).toEqual({ kind: "debug", rounds: [
+        { round: 0, stop: "tool_use", chars: 10, calls: ["list_appointments"], output: 50 },
+        { round: 1, stop: "end_turn", chars: 19, calls: [], output: 50 },
+      ] });
+      expect(r.chunks.at(-1)).toEqual({ kind: "done" });
+      vi.stubEnv("VERCEL_ENV", "production");
+      expect((await run(setup(reply), ask("O que tenho amanhã?"))).chunks.find((c) => c.kind === "debug")).toBeUndefined();
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it("a broken marker never swallows the rest of the answer", async () => {
     const t = setup(() => "Claro! Vou explicar (já [[open:A1] veja a Agenda). Pagamentos: toque em Pago.\n[[open:G1]]");
     const r = await run(t, ask("Explique em detalhes a Agenda e os Pagamentos"));
