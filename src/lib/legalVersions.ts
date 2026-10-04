@@ -19,7 +19,10 @@
 // 30-day deletion, turning them off. Mobile's migration adding
 // ('privacy','2026-10-06') applied FIRST. (The closure-notice line waits
 // for 173 behind closure-notices-live, with its own bump.)
-export const PRIVACY_VERSION = "2026-10-06";
+// 2026-10-07: §6g's closure-notice line revealed (closure-notices-live):
+// 173 live and the website's own closure pushes removed (#378 deployed).
+// Mobile's migration 175 adding ('privacy','2026-10-07') applied FIRST.
+export const PRIVACY_VERSION = "2026-10-07";
 export const TERMS_VERSION = "2026-10-01";
 
 // Sent with every web signup (the checkbox is required, so it's sent only
