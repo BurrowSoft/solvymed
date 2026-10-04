@@ -13,15 +13,15 @@ vi.mock("next-intl/server", () => ({
 // the slogan in the page's language: pt-BR its own, every other the English.
 describe("the site's share image", () => {
   it.each([
-    ["en", "/og/solvymed-og-share-blue.png"],
-    ["th", "/og/solvymed-og-share-blue.png"],
-    ["pt-BR", "/og/solvymed-og-share-blue-pt-BR.png"],
+    ["en", "/og/solvymed-og-share-blue.png?v=2026-10-05"],
+    ["th", "/og/solvymed-og-share-blue.png?v=2026-10-05"],
+    ["pt-BR", "/og/solvymed-og-share-blue-pt-BR.png?v=2026-10-05"],
   ])("%s → %s, 1200×630, alt = the title, on openGraph and twitter", async (locale, url) => {
     const { generateMetadata } = await import("@/app/[locale]/layout");
     const m = await generateMetadata({ params: Promise.resolve({ locale }) });
     const og = m.openGraph as { images: { url: string; width: number; height: number; alt: string }[] };
     expect(og.images).toEqual([{ url, width: 1200, height: 630, alt: `${locale}.title` }]);
-    expect(m.twitter).toMatchObject({ card: "summary_large_image", images: [url] });
+    expect(m.twitter).toMatchObject({ card: "summary_large_image", images: [{ url, alt: `${locale}.title` }] });
   });
 
   it.each(["solvymed-og-share-blue.png", "solvymed-og-share-blue-pt-BR.png"])("public/og/%s is a 1200×630 PNG", (f) => {
