@@ -4,7 +4,7 @@ import { noticeChannels } from "@/lib/noticeChannels";
 
 // Política de Privacidade em português (Brasil). Autoritativa junto com a
 // versão em inglês; mantenha as duas alinhadas.
-export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false }: { turnstile: boolean; secretaryInvites?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
+export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false }: { turnstile: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Visão geral">
@@ -152,6 +152,17 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
           <li>O profissional pode trocar ou remover qualquer imagem a qualquer momento em Minha marca. Uma imagem removida ou trocada deixa de estar acessível em cerca de um minuto.</li>
           <li>Uma foto de perfil adicionada antes de Minha marca continua privada: ela não aparece nessas páginas.</li>
           <li>A marca e suas imagens são apagadas quando o profissional encerra ou exclui a conta.</li>
+        </ul>
+      </Section>
+
+      <Section title="6g. Notificações">
+        <ul>
+          <li>Enviamos notificações (push) sobre consultas: pedidos e suas respostas, confirmações, alterações e cancelamentos. O profissional também pode enviar um aviso geral aos pacientes conectados a ele (um título e uma mensagem). As notificações chegam ao seu aparelho pela Expo (veja a seção 5).</li>
+          <li>Quando nossos servidores enviam uma notificação, nós a guardamos numa fila só para entregá-la: para quem é e de qual consulta e tipo de aviso se trata (no aviso geral, o título e a mensagem). Cada uma é apagada no máximo 30 dias depois de criada.</li>
+          {closureNotices && (
+            <li>Quando um profissional encerra a conta, nosso servidor envia aos pacientes dele um aviso de que o consultório foi encerrado ou de que uma consulta foi cancelada. Para isso, guardamos apenas o nome da clínica, a data e o horário da consulta e o status de entrega, e apagamos o aviso assim que ele é enviado (no máximo 30 dias).</li>
+          )}
+          <li>Você pode desativar as notificações a qualquer momento nas configurações do seu aparelho.</li>
         </ul>
       </Section>
 

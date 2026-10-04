@@ -44,7 +44,7 @@ describe("privacy policy: SolvyAI / LINE blocks follow their conditions", () => 
     expect(r.container.textContent).toContain("A Anthropic apaga o que é enviado ao SolvyAI em até 30 dias, exceto conteúdo sinalizado por violar suas políticas de uso (guardado por até 2 anos) ou quando a lei exigir guardar por mais tempo. Esses dados não são usados para treinar modelos de IA.");
     r.unmount();
     r = render(<PrivacyEn turnstile={false} line />);
-    expect(r.container.textContent).not.toContain("30 days");
+    expect(r.container.textContent).not.toContain("Anthropic deletes what is sent to SolvyAI"); // (§6g has its own 30 days)
     r.unmount();
   });
 
