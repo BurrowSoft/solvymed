@@ -133,7 +133,7 @@ export function DoctorTimePicker({
       </div>
       {start && !loading && (
         <p data-testid="doctor-chosen-time" className="rounded-xl bg-teal-50 px-4 py-2.5 text-sm font-semibold text-teal-800">
-          {tBook("chosenTime", chosenTimeParts(date, start, addMinutes(start, duration), countryProfile(day?.country)))}
+          {tBook("chosenTime", chosenTimeParts(date, start, addMinutes(start, duration), countryProfile(day?.country), locale))}
         </p>
       )}
     </div>

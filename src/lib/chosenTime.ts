@@ -6,7 +6,7 @@ import type { CountryProfile } from "@/lib/country";
 // fallbackLocale), the label around them in the page's; the month keeps
 // its trailing "." only where the country says so (shortMonthKeepsDot).
 // No year.
-// reader (patient screens, Q4 2 Oct): the words in the reader's language
+// reader (every screen now: patients Q4 2 Oct, staff UX 5 Oct): the words in the reader's language
 // instead (the line has no year, so the calendar never shows); a Thai short
 // month keeps its "." ("ต.ค."), others drop it.
 export function chosenTimeParts(date: string, start: string, end: string, practice: Pick<CountryProfile, "fallbackLocale" | "shortMonthKeepsDot">, reader?: string) {
