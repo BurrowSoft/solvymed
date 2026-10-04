@@ -7,14 +7,13 @@ import th from "@/messages/th.json";
 // practice's clock with appointment_already_started; the patient reads e7's
 // "Esta consulta já começou…" (no push to the clinic).
 
-const h = vi.hoisted(() => ({ pushes: 0 }));
+const h = vi.hoisted(() => ({ notices: 0 }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/activeAccess", () => ({ getActiveProfId: async () => null, isLockedOut: async () => false }));
 vi.mock("@/lib/myAppointments", () => ({
   myAppointment: async () => ({ id: "a-1", professional_id: "doc-1", patient_name: "Ana", date: "2030-01-10", start_time: "09:00:00" }),
 }));
-vi.mock("@/lib/pushRecipient", () => ({ patientPushTargets: async () => [], clinicPushTargets: async () => [{ locale: "pt-BR", tokens: ["x"] }] }));
-vi.mock("@/lib/push", () => ({ sendExpoPush: async () => { h.pushes++; } }));
+vi.mock("@/lib/serverNotice", () => ({ queueRequestNotice: async () => { h.notices++; }, queueClinicNotice: async () => { h.notices++; } }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
     auth: { getUser: async () => ({ data: { user: { id: "pat-1" } } }) },
@@ -27,7 +26,7 @@ import { requestReschedule } from "@/app/[locale]/(site)/dashboard/(gated)/sched
 describe("requestReschedule after the visit started", () => {
   it("returns the code, sends no notice", async () => {
     expect(await requestReschedule("a-1", "2030-01-12", "10:00", "10:30")).toEqual({ error: "appointment_already_started" });
-    expect(h.pushes).toBe(0);
+    expect(h.notices).toBe(0);
   });
   it("e7's copy", () => {
     expect(pt.myAppointments.rescheduleStarted).toBe("Esta consulta já começou. Para mudanças, fale com a clínica.");
