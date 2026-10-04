@@ -148,7 +148,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
       <Section title="6f. Minha marca (profissionais)">
         <ul className="list-disc space-y-1 pl-5">
           <li>Em Minha marca, o profissional pode adicionar nome de exibição, título, especialidade, linha do registro e cor da marca, um logo quadrado, um logo horizontal (para documentos) e uma foto. Guardamos o que ele salva, junto com as imagens.</li>
-          <li><strong>O logo e a foto ficam públicos depois de salvos:</strong> qualquer pessoa que abra a página de agendamento ou o link de convite público do profissional, ou que receba um documento dele, pode vê-los, assim como quem tiver o link da imagem. O nome, o título, a especialidade, a linha do registro e a cor também aparecem ali. Não envie nada que você não queira que seja público.</li>
+          <li><strong>O logo e a foto ficam públicos depois de salvos:</strong> qualquer pessoa com o link de uma imagem pode abri-la. O logo (ou, sem ele, a foto), o nome, o título, a especialidade e a cor aparecem para qualquer pessoa na página do link de convite público do profissional, e na página de agendamento para os pacientes conectados a ele; os documentos que ele emite mostram o logo, a cor, o nome, a especialidade e a linha do registro. Não envie nada que você não queira que seja público.</li>
           <li>O profissional pode trocar ou remover qualquer imagem a qualquer momento em Minha marca. Uma imagem removida ou trocada deixa de estar acessível em cerca de um minuto.</li>
           <li>Uma foto de perfil adicionada antes de Minha marca continua privada: ela não aparece nessas páginas.</li>
           <li>A marca e suas imagens são apagadas quando o profissional encerra ou exclui a conta.</li>
