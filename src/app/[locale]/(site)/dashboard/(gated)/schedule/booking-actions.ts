@@ -5,11 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { computeSlots, toMinutes, getDayHours, filterPastSlots } from "@/lib/slots";
 import type { WorkingHours } from "@/lib/slots";
-import { sendExpoPush } from "@/lib/push";
-import { pushText, pushWhen, type PushKind } from "@/lib/pushText";
-import { formatShortDate } from "@/lib/dateLabels";
-import { doctorForPush } from "@/lib/pushDoctor";
-import { clinicPushTargets, patientPushTargets } from "@/lib/pushRecipient";
+import { queueClinicNotice, queueRequestNotice, type RequestNoticeKind } from "@/lib/serverNotice";
 import { actionError } from "@/lib/dbErrors";
 import { getActiveProfId, isLockedOut } from "@/lib/activeAccess";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
@@ -92,13 +88,10 @@ export async function confirmBookingAndAddPatient(appointmentId: string, note?: 
   // only says there is one. Before 150, the note went in the push.
   const live = statusReasonLive();
   const message = live ? cleanReason(note) : null;
-  // The push says there's a message only if it was really saved (9a).
-  let saved = false;
-  if (live) {
-    const { error: messageError } = await supabase.from("appointments").update({ clinic_message: message }).eq("id", appointmentId);
-    saved = !messageError && !!message;
-  }
-  await notifyPatient(supabase, appointmentId, "apptConfirmed", live ? { hasMessage: saved } : { note });
+  // The push says there's a message only if it was really saved (9a): the
+  // server reads clinic_message from the row itself (171).
+  if (live) await supabase.from("appointments").update({ clinic_message: message }).eq("id", appointmentId);
+  await notifyPatient(supabase, appointmentId, "confirmed");
 
   revalidatePath("/dashboard/schedule");
   revalidatePath("/dashboard/patients");
@@ -124,7 +117,7 @@ export async function confirmBooking(appointmentId: string, note?: string) {
   if (error) return { error: actionError(error.message) };
 
   // Notify patient via push (150: that there's a message, never its text)
-  await notifyPatient(supabase, appointmentId, "apptConfirmed", live ? { hasMessage: !!message } : { note });
+  await notifyPatient(supabase, appointmentId, "confirmed");
 
   revalidatePath("/dashboard/schedule");
   return { error: null };
@@ -152,7 +145,7 @@ export async function rejectBooking(appointmentId: string, note?: string) {
   // A rejected request never becomes an appointment — don't create a patient
   // record for it. Linking only happens on accept/confirm, server-side.
   // 150: the reason is on the patient's card, never in the push.
-  await notifyPatient(supabase, appointmentId, "bookingNotAvailable", live ? {} : { note });
+  await notifyPatient(supabase, appointmentId, "rejected");
 
   revalidatePath("/dashboard/schedule");
   revalidatePath("/dashboard/patients");
@@ -204,7 +197,7 @@ export async function proposeNewTime(
   // A proposal isn't a confirmed appointment yet — don't create a patient
   // record until the patient accepts (accept_appointment_proposal links via
   // the same shared _link_patient_account() as confirm_and_link_patient).
-  await notifyPatient(supabase, appointmentId, "newTimeProposed", live ? { hasMessage: !!message, date: proposedDate, time: proposedStart } : { note, date: proposedDate, time: proposedStart });
+  await notifyPatient(supabase, appointmentId, "proposed");
 
   revalidatePath("/dashboard/schedule");
   revalidatePath("/dashboard/patients");
@@ -229,7 +222,7 @@ export async function acceptProposal(appointmentId: string) {
   if (error?.message?.includes("proposed_time_expired")) return { error: "proposed_time_expired" };
   if (error) return { error: actionError(error.message) };
 
-  await notifyProfessional(supabase, appt.professional_id as string, "proposalAccepted", { name: appt.patient_name as string, date: appt.proposed_date as string, time: appt.proposed_start_time as string });
+  await queueClinicNotice(supabase, "proposal_accepted", appointmentId);
 
   revalidatePath("/my-appointments");
   return { error: null };
@@ -248,9 +241,7 @@ export async function declineProposal(appointmentId: string) {
 
   if (error) return { error: actionError(error.message) };
 
-  if (appt) {
-    await notifyProfessional(supabase, appt.professional_id as string, "proposalDeclined", { name: appt.patient_name as string });
-  }
+  if (appt) await queueClinicNotice(supabase, "proposal_declined", appointmentId);
 
   revalidatePath("/my-appointments");
   return { error: null };
@@ -271,11 +262,7 @@ export async function cancelMyRequest(appointmentId: string) {
   const row = ((data ?? []) as { professional_id: string; patient_name: string | null }[])[0];
   if (error || !row) return { error: "not_cancellable" };
 
-  await notifyProfessional(supabase, row.professional_id, "requestCancelled", {
-    name: row.patient_name ?? (appt.patient_name as string),
-    date: appt.date as string,
-    time: appt.start_time as string,
-  });
+  await queueClinicNotice(supabase, "request_cancelled", appointmentId);
 
   revalidatePath("/my-appointments");
   return { error: null };
@@ -319,16 +306,7 @@ export async function requestReschedule(
     return { error: actionError(error.message) };
   }
 
-  for (const { locale, tokens } of await clinicPushTargets(supabase, appt.professional_id as string)) {
-    const { title, body } = pushText(locale, "rescheduleRequested", {
-      name: (appt.patient_name as string) ?? "",
-      oldDate: formatShortDate(locale, appt.date as string),
-      oldTime: (appt.start_time as string).slice(0, 5),
-      date: formatShortDate(locale, newDate),
-      time: newStartTime.slice(0, 5),
-    });
-    await sendExpoPush(tokens, title, body);
-  }
+  await queueClinicNotice(supabase, "reschedule_requested", appointmentId);
 
   revalidatePath("/my-appointments");
   return { error: null };
@@ -347,7 +325,7 @@ export async function acceptRescheduleRequest(appointmentId: string) {
   // (pre-fetch is a spoofing surface: data can change between read and accept).
   // Pass p_acting_as_professional when the caller is a secretary so the RPC can
   // verify delegation and check the appointment against the correct professional.
-  const { data: rpcData, error } = await supabase.rpc("accept_patient_reschedule", {
+  const { error } = await supabase.rpc("accept_patient_reschedule", {
     p_appointment_id: appointmentId,
     ...(effectiveProfId !== user.id ? { p_acting_as_professional: effectiveProfId } : {}),
   });
@@ -359,15 +337,7 @@ export async function acceptRescheduleRequest(appointmentId: string) {
     return { error: actionError(error.message) };
   }
 
-  const row = Array.isArray(rpcData) && rpcData.length > 0 ? rpcData[0] as Record<string, unknown> : null;
-  const newDate = row?.out_new_date as string | undefined;
-  const newStart = row?.out_new_start_time as string | undefined;
-  await notifyPatient(
-    supabase,
-    appointmentId,
-    newDate && newStart ? "rescheduleConfirmed" : "rescheduleConfirmedNoTime",
-    { date: newDate ?? null, time: newStart ?? null },
-  );
+  await notifyPatient(supabase, appointmentId, "reschedule_accepted");
 
   revalidatePath("/dashboard/schedule");
   return { error: null };
@@ -409,7 +379,7 @@ export async function declineRescheduleRequest(appointmentId: string) {
 
   // Only notify when a row was actually updated (guard against concurrent declines)
   if (updateData && updateData.length > 0) {
-    await notifyPatient(supabase, appointmentId, "rescheduleDeclined");
+    await notifyPatient(supabase, appointmentId, "reschedule_declined");
   }
 
   revalidatePath("/dashboard/schedule");
@@ -460,48 +430,12 @@ export async function getAvailableSlotsForDate(
 
 // ─── Push helper ─────────────────────────────────────────────────────────────
 
-// Every push is written in the recipient's language, dates in its format
-// (lib/pushText, lib/pushRecipient).
+// The patient's push, by the server (171): the doctor, the date in the
+// practice's calendar, the clinic-message suffix, the reader's language.
 async function notifyPatient(
   supabase: Awaited<ReturnType<typeof import("@/lib/supabase/server").createClient>>,
   appointmentId: string,
-  kind: PushKind,
-  extra: { note?: string | null; hasMessage?: boolean; date?: string | null; time?: string | null } = {},
+  kind: RequestNoticeKind,
 ) {
-  const { data: appt } = await supabase
-    .from("appointments")
-    .select("patient_auth_id, professional_id, date, start_time")
-    .eq("id", appointmentId)
-    .maybeSingle();
-
-  const patientAuthId = appt?.patient_auth_id as string | null;
-  if (!patientAuthId) return;
-
-  // "Always say who" (app #290): the doctor and the visit's date/time. The
-  // caller's date/time when the push is about another one (a proposed or a
-  // newly accepted time); else the appointment's own (where it stays).
-  const doctor = await doctorForPush(supabase as never, appt?.professional_id as string);
-  const date = (extra.date ?? (appt?.date as string | null)) || null;
-  const time = ((extra.time ?? (appt?.start_time as string | null)) || "").slice(0, 5);
-  for (const { locale, tokens } of await patientPushTargets(supabase, patientAuthId, appt?.professional_id as string)) {
-    const when = extra.date ? pushWhen(locale, extra.date, extra.time) : undefined;
-    const { title, body } = pushText(locale, kind, {
-      when, note: extra.note, hasMessage: extra.hasMessage,
-      doctor, date: date ? formatShortDate(locale, date) : "", time,
-    });
-    await sendExpoPush(tokens, title, body);
-  }
-}
-
-async function notifyProfessional(
-  supabase: Awaited<ReturnType<typeof import("@/lib/supabase/server").createClient>>,
-  professionalId: string,
-  kind: PushKind,
-  extra: { name?: string | null; date?: string | null; time?: string | null } = {},
-) {
-  for (const { locale, tokens } of await clinicPushTargets(supabase, professionalId)) {
-    const when = extra.date ? pushWhen(locale, extra.date, extra.time) : undefined;
-    const { title, body } = pushText(locale, kind, { name: extra.name ?? "", when });
-    await sendExpoPush(tokens, title, body);
-  }
+  await queueRequestNotice(supabase, kind, appointmentId);
 }

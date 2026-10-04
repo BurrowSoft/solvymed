@@ -2,9 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { sendExpoPush } from "@/lib/push";
-import { pushText, pushWhen } from "@/lib/pushText";
-import { clinicPushTargets } from "@/lib/pushRecipient";
 import { loadMyDoctors } from "@/lib/myDoctors";
 import { liveFeatures } from "@/lib/liveFeatures";
 
@@ -49,32 +46,19 @@ export type DisconnectResult = { ok: true } | { ok: false; code: "has_future_vis
 
 // disconnect_doctor (38): refused while a scheduled/confirmed visit with
 // that doctor is ahead; otherwise the pending requests to that doctor are
-// cancelled and RETURNED, and the clinic gets the same heads-up as when the
-// patient cancels a request (\"Pedido cancelado\", once per request; never
-// free text). The doctor keeps the record.
+// cancelled, and the SERVER tells the clinic, once per request ("Pedido
+// cancelado"; 171, the push service). The doctor keeps the record.
 export async function disconnectDoctor(professionalId: string): Promise<DisconnectResult> {
   if (!liveFeatures.multiDoctor) return { ok: false, code: "error" };
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, code: "error" };
-  // The clinic's push targets BEFORE the disconnect (9a): afterwards the
-  // patient's connection and appointments with that doctor are gone, and
-  // get_clinic_push_targets returns nobody.
-  const targets = await clinicPushTargets(supabase, professionalId);
-  const { data, error } = await supabase.rpc("disconnect_doctor", { p_professional_id: professionalId });
+  const { error } = await supabase.rpc("disconnect_doctor", { p_professional_id: professionalId });
   if (error) {
     const msg = error.message ?? "";
     if (msg.includes("has_future_visits")) return { ok: false, code: "has_future_visits" };
     if (msg.includes("not_connected")) return { ok: false, code: "not_connected" };
     return { ok: false, code: "error" };
-  }
-  const cancelled = (data ?? []) as { appointment_id: string; date: string; start_time: string }[];
-  const name = (user.user_metadata?.full_name as string | undefined)?.trim() || "";
-  for (const r of cancelled) {
-    for (const { locale, tokens } of targets) {
-      const { title, body } = pushText(locale, "requestCancelled", { name, when: pushWhen(locale, r.date, r.start_time) });
-      await sendExpoPush(tokens, title, body);
-    }
   }
   revalidatePath("/my-appointments");
   return { ok: true };

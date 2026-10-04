@@ -13,7 +13,7 @@ import { cleanReason } from "@/lib/statusReason";
 const h = vi.hoisted(() => ({
   live: true,
   updates: [] as Record<string, unknown>[],
-  pushes: [] as { title: string; body: string }[],
+  notices: [] as { fn: string; args: Record<string, unknown> }[],
 }));
 vi.mock("@/lib/conditions", async (orig) => {
   const real = await orig<typeof import("@/lib/conditions")>();
@@ -22,11 +22,6 @@ vi.mock("@/lib/conditions", async (orig) => {
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("next/navigation", async (orig) => ({ ...(await orig<typeof import("next/navigation")>()), useParams: () => ({ locale: "pt-BR" }), useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }) }));
 vi.mock("@/lib/activeAccess", () => ({ getActiveProfId: async () => "doc-1", isLockedOut: async () => false }));
-vi.mock("@/lib/pushRecipient", () => ({
-  patientPushTargets: async () => [{ locale: "pt-BR", tokens: ["ExponentPushToken[x]"] }],
-  clinicPushTargets: async () => [],
-}));
-vi.mock("@/lib/push", () => ({ sendExpoPush: async (_t: string[], title: string, body: string) => { h.pushes.push({ title, body }); } }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => {
     const q: Record<string, unknown> = {};
@@ -40,7 +35,7 @@ vi.mock("@/lib/supabase/server", () => ({
     return {
       auth: { getUser: async () => ({ data: { user: { id: "doc-1" } } }) },
       from: () => q,
-      rpc: async () => ({ data: null, error: null }),
+      rpc: async (fn: string, args: Record<string, unknown>) => { if (fn.startsWith("enqueue_")) h.notices.push({ fn, args }); return { data: null, error: null }; },
     };
   },
 }));
@@ -48,7 +43,7 @@ vi.mock("@/lib/supabase/server", () => ({
 import { confirmBooking, proposeNewTime, rejectBooking } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions";
 import { MyAppointmentsClient } from "@/app/[locale]/(site)/my-appointments/MyAppointmentsClient";
 
-beforeEach(() => { h.live = true; h.updates = []; h.pushes = []; });
+beforeEach(() => { h.live = true; h.updates = []; h.notices = []; });
 
 describe("pushes never carry the clinic's text", () => {
   it("hasMessage: the hint only (pt/en/th)", () => {
@@ -65,10 +60,12 @@ describe("pushes never carry the clinic's text", () => {
 });
 
 describe("the actions (150 live)", () => {
-  it("Reject: the reason goes on the appointment, the push says nothing of it", async () => {
+  // The push is the server's (171): the website only queues the kind and
+  // the appointment, so no clinic text can ever reach it.
+  it("Reject: the reason goes on the appointment; the notice is the kind + id only", async () => {
     await rejectBooking("a-1", "  Horário indisponível  ");
     expect(h.updates).toContainEqual({ status: "rejected", status_reason: "Horário indisponível" });
-    expect(h.pushes.map((p) => p.body).join(" ")).not.toContain("Horário indisponível");
+    expect(h.notices).toEqual([{ fn: "enqueue_request_notice", args: { p_kind: "rejected", p_appointment_id: "a-1" } }]);
   });
 
   it("Confirm / Propose: the message is stored, the push only hints at it", async () => {
@@ -76,17 +73,18 @@ describe("the actions (150 live)", () => {
     expect(h.updates).toContainEqual({ status: "confirmed", clinic_message: "Traga os exames" });
     await proposeNewTime("a-1", "2030-01-02", "10:00", "10:30", "Pode ser às 10?");
     expect(h.updates.at(-1)).toMatchObject({ status: "proposal", clinic_message: "Pode ser às 10?" });
-    const bodies = h.pushes.map((p) => p.body).join(" ");
-    expect(bodies).not.toContain("Traga os exames");
-    expect(bodies).not.toContain("Pode ser às 10?");
-    expect(bodies).toContain("com uma mensagem da clínica");
+    // The server adds "(com uma mensagem da clínica)" from clinic_message itself.
+    expect(h.notices).toEqual([
+      { fn: "enqueue_request_notice", args: { p_kind: "confirmed", p_appointment_id: "a-1" } },
+      { fn: "enqueue_request_notice", args: { p_kind: "proposed", p_appointment_id: "a-1" } },
+    ]);
   });
 
-  it("before 150: the old behaviour (the note in the push, no new columns)", async () => {
+  it("before 150: no new columns; the notice is still the kind + id only", async () => {
     h.live = false;
     await rejectBooking("a-1", "Sem horário");
     expect(h.updates).toContainEqual({ status: "rejected" });
-    expect(h.pushes[0].body).toContain("Sem horário");
+    expect(h.notices).toEqual([{ fn: "enqueue_request_notice", args: { p_kind: "rejected", p_appointment_id: "a-1" } }]);
   });
 });
 

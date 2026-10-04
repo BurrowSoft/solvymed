@@ -2,9 +2,7 @@
 
 import { myAppointments } from "@/lib/myAppointments";
 import { createClient } from "@/lib/supabase/server";
-import { sendExpoPush } from "@/lib/push";
-import { pushText, pushWhen } from "@/lib/pushText";
-import { clinicPushTargets } from "@/lib/pushRecipient";
+import { queueClinicNotice } from "@/lib/serverNotice";
 
 export async function notifyProfessionalOfBooking(
   professionalId: string,
@@ -25,9 +23,6 @@ export async function notifyProfessionalOfBooking(
     a.professional_id === professionalId && a.date === date && a.start_time.slice(0, 5) === time.slice(0, 5) && a.status === "tentative") ?? null;
   if (!appt) return;
 
-  // Each of the clinic's devices in its reader's language, the date in its format.
-  for (const { locale, tokens } of await clinicPushTargets(supabase, professionalId)) {
-    const { title, body } = pushText(locale, "newBookingRequest", { name: appt.patient_name as string, when: pushWhen(locale, date, time) });
-    await sendExpoPush(tokens, title, body);
-  }
+  // The server tells the clinic (171): who, when, in each reader's language.
+  await queueClinicNotice(supabase, "booking_requested", appt.id);
 }
