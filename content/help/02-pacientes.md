@@ -186,3 +186,13 @@ Imported patients show up in the app as usual.
 **On the website:** {pending:patient-address-live} In **Patients**, click **Import patients** and choose the file (or download the **spreadsheet template**). Check where each column goes: the ones with no SolvyMed field are kept as **imported data**, visible only to you; first and last name in separate columns become the full name. Choose what to do with **patients who already exist** (**Skip** or **Fill in empty fields**) and click **Check the spreadsheet**: you see how many are new, already exist or have errors, and you can download the error list. Nothing is saved until you click **Import**. For 24 hours, **Undo the import** removes the new patients that haven't been edited or used yet; after you leave the page, it's in **Import patients**, under **Last import** (the most recent import). Patients inactive or deceased in the previous system come in archived. A CPF that lost its leading zero in Excel (left with 9 or 10 digits) is completed when its check digits match; if they don't, format the CPF column as Text in Excel and export again. The address (postal code, street, number, complement, neighbourhood, city, state) and the CNS are imported too; a CEP that lost its leading zero in Excel is completed. The previous system's notes are kept as imported data.
 `open:patients`
 `requires:patient-import-live`
+---
+## P14. Aviso para todos os pacientes / Send to Patients
+**pt-BR**
+Em **Início**, toque em **Enviar para Pacientes** (só o médico): escreva um **Título da Notificação** (até 100 caracteres) e uma **Mensagem** (até 500) e toque em **Enviar Notificação**. Todos os pacientes conectados a você que usam o app recebem a notificação; a mensagem não pode ficar em branco. Não inclua dados de pacientes. São no máximo 10 avisos a cada 24 horas.
+**en**
+On **Home**, tap **Send to Patients** (doctor only): write a **Notification Title** (up to 100 characters) and a **Message** (up to 500) and tap **Send Notification**. Every patient connected to you who uses the app gets the notification; the message can't be blank. Don't include patient details. You can send at most 10 notices every 24 hours.
+**No site:** Em **Visão geral**, clique em **Enviar para Pacientes** (só o médico): o mesmo título, mensagem e limites; **Enviar Notificação** só fica disponível com título e mensagem preenchidos.
+**On the website:** On **Overview**, click **Send to Patients** (doctor only): the same title, message and limits; **Send Notification** is only available once both the title and the message are filled in.
+`open:home`
+`requires:broadcast-live`
