@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import { handleAssistant, type Deps } from "@/lib/assistant/server/handle";
+import { cutToSentence, handleAssistant, sentenceEnd, type Deps } from "@/lib/assistant/server/handle";
 import { loadTexts } from "@/lib/assistant/server/texts";
 import { fakeModelClient, type FakeTurn, type ModelRequest } from "@/lib/assistant/server/model";
 import type { AnswerBlock, AnswerChunk, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
@@ -184,6 +184,95 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     expect(r.chunks.at(-1)).toEqual({ kind: "done" });
   });
 
+  // 53's #359 probe: 2/9 still ended empty on Agenda. Once, the model is
+  // asked to answer from the results it has; its answer is shown.
+  it("an empty last reply: one more round asks for the answer from the results, and that answer is shown", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { text: "Vou olhar.", tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }] }
+      : round === 1 ? ""
+      : "Amanhã você tem 1 consulta às 9h.");
+    const r = await run(t, ask("O que tenho amanhã, e o que sugere?"));
+    expect(textOf(r.chunks)).toBe("Amanhã você tem 1 consulta às 9h.");
+    expect(t.model.calls).toHaveLength(3);
+    const last = t.model.calls[2].messages.at(-1)!;
+    expect(last.role).toBe("user");
+    expect(Array.isArray(last.content) && last.content.map((b) => b.type)).toEqual(["tool_result", "text"]);
+    expect(t.model.calls[1].messages.at(-1)!.content).not.toContainEqual(expect.objectContaining({ type: "text" }));
+  });
+
+  // 53's #359 probe: a detailed answer came out as a cut-off half sentence
+  // ("…no **site** (já") or just "Claro!": a "[[" that never closed held
+  // back, then dropped, everything after it. Markers are short; a broken one
+  // is dropped, never the answer.
+  // 53's probes: on Previews only, how each round ended (no content), so a
+  // cut-off answer can be traced; never on production.
+  it("Previews add a debug chunk (per round: stop, raw length, tools, tokens); production never", async () => {
+    const reply = (_r: ModelRequest, round: number): FakeTurn =>
+      round === 0 ? { text: "Vou olhar.", tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }] } : "Amanhã: 1 consulta.";
+    vi.stubEnv("VERCEL_ENV", "preview");
+    try {
+      const r = await run(setup(reply), ask("O que tenho amanhã?"));
+      const dbg = r.chunks.find((c) => c.kind === "debug");
+      expect(dbg).toEqual({ kind: "debug", rounds: [
+        { round: 0, stop: "tool_use", chars: 10, calls: ["list_appointments"], output: 50, blocks: [] },
+        { round: 1, stop: "end_turn", chars: 19, calls: [], output: 50, blocks: [] },
+      ] });
+      expect(r.chunks.at(-1)).toEqual({ kind: "done" });
+      vi.stubEnv("VERCEL_ENV", "production");
+      expect((await run(setup(reply), ask("O que tenho amanhã?"))).chunks.find((c) => c.kind === "debug")).toBeUndefined();
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  // cf (5 Oct): an answer cut by the token cap never ends mid-sentence: its
+  // last full sentence, then "Veja o artigo completo na Ajuda.".
+  it("cut by the cap: the last full sentence + the pointer to Help (actions and help mode)", async () => {
+    const cut = { text: "Agenda: marque consultas em Nova Consulta. Pagamentos: veja o que rece", stop: "max_tokens" };
+    const expected = "Agenda: marque consultas em Nova Consulta.\n\nVeja o artigo completo na Ajuda.";
+    expect(textOf((await run(setup(() => cut), ask("Explique tudo"))).chunks)).toBe(expected);
+    const help = setup(() => cut);
+    help.db.rpcs.assistant_consume_message = () => ({ allowed: true, used: 1, limit: 20, resets_at: "x", actions: false });
+    const r = await run(help, ask("Explique tudo"));
+    expect(r.chunks[0]).toEqual({ kind: "meta", mode: "help" });
+    expect(textOf(r.chunks)).toBe(expected);
+    // Not cut: the whole text, even its last unfinished-looking piece.
+    expect(textOf((await run(setup(() => "Tudo certo. Até logo"), ask("Oi"))).chunks)).toBe("Tudo certo. Até logo");
+  });
+
+  it("sentence ends: never inside a number; Thai ends a phrase at a space", () => {
+    expect(sentenceEnd("Custa R$ 1.500 hoje", "pt-BR")).toBe(0);
+    expect(sentenceEnd("Feito! Agora o pró", "pt-BR")).toBe("Feito!".length);
+    expect(sentenceEnd("ขั้นแรก ขั้นที่สอง ยังไม่จ", "th")).toBe("ขั้นแรก ขั้นที่สอง ".length);
+    expect(cutToSentence("sem fim nenhum", "pt-BR", "P")).toBe("");
+  });
+
+  it("a broad question: up to three article buttons, each once", async () => {
+    const t = setup(() => "Agenda: marque consultas.\n[[open:A1]]\nPagamentos: o que recebeu.\n[[open:G1]]\n[[open:A1]]\nPacientes.\n[[open:P1]]\n[[open:C1]]");
+    t.db.rpcs.assistant_consume_message = () => ({ allowed: true, used: 1, limit: 20, resets_at: "x", actions: false });
+    const r = await run(t, ask("Explique o app inteiro"));
+    const opens = r.blocks.filter((b) => b.type === "open") as { label: string }[];
+    expect(opens).toHaveLength(3);
+    // Several buttons: each named after its article, never three "Abrir tela" (53).
+    expect(new Set(opens.map((o) => o.label)).size).toBe(3);
+  });
+
+  it("with thinking, the response's own content (thinking blocks) goes back before the tool results", async () => {
+    const raw = [{ type: "thinking", thinking: "…", signature: "sig" }, { type: "tool_use", id: "tu_0_0", name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }];
+    const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }], raw } : "Amanhã: 1 consulta."));
+    await run(t, ask("O que tenho amanhã?"));
+    const back = t.model.calls[1].messages.at(-2)!;
+    expect(back).toEqual({ role: "assistant", content: raw });
+  });
+
+  it("a broken marker never swallows the rest of the answer", async () => {
+    const t = setup(() => "Claro! Vou explicar (já [[open:A1] veja a Agenda). Pagamentos: toque em Pago.\n[[open:G1]]");
+    const r = await run(t, ask("Explique em detalhes a Agenda e os Pagamentos"));
+    expect(textOf(r.chunks)).toBe("Claro! Vou explicar (já  veja a Agenda). Pagamentos: toque em Pago.");
+    const t2 = setup(() => "Claro! [[ isso não é marcador, e o texto segue até o fim.");
+    expect(textOf((await run(t2, ask("Explique"))).chunks)).toBe("Claro!  isso não é marcador, e o texto segue até o fim.");
+  });
+
   it("nothing said in any round: a fixed line, never an empty answer or 'indisponível' (UX)", async () => {
     const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }] } : ""));
     const r = await run(t, ask("O que tenho amanhã?"));
@@ -357,6 +446,8 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     expect(system).toContain("Fri 2026-10-02");
     expect(system).not.toContain("2026-09-31");
     expect(system).toContain("ACTIONS RULE A");
+    // 53: the answer comes after the tools' results, never next to a call.
+    expect(system).toContain("ACTIONS RULE I: a reply that calls a tool contains only the tool call");
     expect(system).toContain("\"Confirmar\", \"Desfazer\", \"Abrir\"");
     expect(system).toContain("Reply in Brazilian Portuguese");
   });

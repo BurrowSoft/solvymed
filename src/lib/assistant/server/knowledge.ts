@@ -70,7 +70,8 @@ export function rules(lang: HelpLang, client: Client, screen: string, mode: "hel
       ? [`The Help and the App Map name the screens and buttons in English: always name them with their ${say.language} label from "Screen labels" above. A label not in that list: describe it instead of quoting English.`]
       : []),
     `The user is on the ${client === "app" ? "mobile app" : "website"}${screen !== "other" ? `, on the ${screen} screen` : ""}; describe that platform's buttons.`,
-    "When one Help article is the answer, end with [[open:ID]] (its id, e.g. [[open:A1]]) on its own line; the app turns it into an \"Open screen\" button. Use it at most once.",
+    "When one Help article is the answer, end with [[open:ID]] (its id, e.g. [[open:A1]]) on its own line; the app turns it into an \"Open screen\" button. Use it once.",
+    "Keep answers short. For a very broad question (several areas or screens at once, or \"explain everything\"), give only a short overview of each area in one or two sentences, then end with the markers of up to three matching Help articles, each on its own line (the app shows a button for each); never a full step-by-step guide of everything.",
     // Actions mode (UX, after the round-1 tests).
     ...(mode === "actions"
       ? [
@@ -81,6 +82,9 @@ export function rules(lang: HelpLang, client: Client, screen: string, mode: "hel
           "ACTIONS RULE E: a bare hour from 1 to 7 (\"às 2\") means the afternoon (14:00) when that morning hour is outside the working hours: propose the afternoon time on the card. If both could be working hours, ask.",
           "ACTIONS RULE F: to mark an appointment paid (or unpaid), look it up with list_appointments by the patient, from 90 days ago to 30 days ahead.",
           "ACTIONS RULE H: a message that is just a date and a time from the time chips (e.g. \"quarta-feira, 07/10/2026 às 09:00\") books ONE appointment at that date and time for the same patient as before; never a series, never the earlier request replayed.",
+          // 53 (5 Oct): an answer written next to a tool call is never shown
+          // (it comes before the results), so the last reply must carry it.
+          "ACTIONS RULE I: a reply that calls a tool contains only the tool call, no answer text: the user never sees text written next to a tool call. Give your whole answer in the reply AFTER the tools' results, based on those results. That last reply is never empty unless a card, a list or time options were shown.",
           "ACTIONS RULE G: when the user's message is an option they tapped from a list (it looks like one: \"Name · …\" or \"Weekday, date · time · Name\"), call the same tool again with that message VERBATIM as tapped; never convert or retype its date.",
         ]
       : []),

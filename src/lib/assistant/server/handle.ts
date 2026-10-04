@@ -7,7 +7,7 @@ import type { AnswerChunk, AssistantScreen, TargetScreen } from "@/lib/assistant
 import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
 import { formatDateLabel } from "@/lib/dateLabels";
 import { cachedSystem, rules, type Client } from "./knowledge";
-import type { ContentBlock, ModelClient, ModelMessage, ModelUsage } from "./model";
+import type { ContentBlock, ModelClient, ModelMessage, ModelUsage, RawBlock } from "./model";
 import { confirmFailedBlock, runTool, toolDefsFor, type ToolContext } from "./tools";
 import { loadTexts } from "./texts";
 
@@ -34,9 +34,13 @@ export type Outcome =
 
 const SCREENS: AssistantScreen[] =["home", "schedule", "patients", "payments", "settings", "other"];
 const KEEP_MESSAGES = 6;
-const MAX_TOKENS = 800;
+// Thinking (low effort) + the answer (c6, 53's probes); answers stay short
+// by the prompt (UX: an overview + the Help articles for broad questions).
+const MAX_TOKENS = 4000;
 // Model calls per answer in actions mode (reads, then a proposal or text).
 const MAX_ROUNDS = 4;
+// The nudge after an empty last reply (53): the answer, from the results.
+const ANSWER_NOW = "Now write your answer to my question, based on the results above.";
 
 type Body = {
   messages?: { role?: unknown; text?: unknown }[];
@@ -128,6 +132,27 @@ function openBlock(id: string, locale: string, client: Client, label: string): A
 
 // Streams the model's text while holding back anything from "[[" until its
 // "]]", so markers never reach the user; returns the marker ids seen.
+// Where the last full sentence ends (after ". ", "! ", "? ", "… " or a line
+// break; Thai has no full stop, so a space ends a phrase there), or 0.
+// Never a "." inside a number ("R$ 1.500").
+export function sentenceEnd(text: string, locale: string): number {
+  let end = 0;
+  for (const m of text.matchAll(/[.!?…](?=\s)|\n/g)) end = m.index! + m[0].length;
+  if (locale === "th") end = Math.max(end, text.lastIndexOf(" ") + 1);
+  return end;
+}
+// A whole text cut by the cap: up to its last full sentence + the pointer.
+export function cutToSentence(text: string, locale: string, pointer: string): string {
+  const end = sentenceEnd(text, locale);
+  const kept = (end > 0 ? text.slice(0, end) : "").trimEnd();
+  return kept ? `${kept}\n\n${pointer}` : "";
+}
+
+// The longest real marker: "[[open:A12]]".
+const MARKER_MAX = 12;
+// The start of a broken marker to drop: "[[open:A1]" / "[[open:" / "[[".
+const brokenMarker = (s: string) => /^\[\[(?:open:[A-Z]?\d{0,2}\]?)?/.exec(s)![0];
+
 async function* filterMarkers(texts: AsyncIterable<string>, seen: string[]): AsyncIterable<string> {
   let held = "";
   for await (const t of texts) {
@@ -143,14 +168,22 @@ async function* filterMarkers(texts: AsyncIterable<string>, seen: string[]): Asy
       }
       if (start > 0) { yield held.slice(0, start); held = held.slice(start); continue; }
       const end = held.indexOf("]]");
-      if (end < 0) break; // wait for the rest of the marker
+      if (end < 0 || end > MARKER_MAX) {
+        // A real marker closes within a few characters. Longer, it's a
+        // broken one ("[[open:A1]") or plain text: drop only the broken
+        // start, never the rest of the answer (53: "…(já" then nothing).
+        if (end < 0 && held.length <= MARKER_MAX) break; // wait for the rest of the marker
+        held = held.slice(brokenMarker(held).length);
+        continue;
+      }
       const m = held.slice(0, end + 2).match(/^\[\[open:([A-Z]\d{1,2})\]\]$/);
       if (m) seen.push(m[1]);
       held = held.slice(end + 2);
     }
   }
   // An unfinished marker at the end is dropped; plain text is kept.
-  if (held && !held.startsWith("[[")) yield held;
+  if (held.startsWith("[[")) held = held.slice(brokenMarker(held).length);
+  if (held) yield held;
 }
 
 // The client's Confirmar failed (the slot was just taken): a fixed text and
@@ -271,6 +304,12 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       const seen: string[] = [];
       const usage: ModelUsage = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
       let answered = false;
+      // One extra round when the answer would be empty (53): see below.
+      let nudged = false;
+      // Previews only: each round's stop reason, raw text length, tools and
+      // output tokens, for the testers' probes (no content).
+      const diag: { round: number; stop: string; chars: number; calls: string[]; output: number; blocks: string[] }[] = [];
+      const debug = (): AnswerChunk[] => (process.env.VERCEL_ENV === "preview" ? [{ kind: "debug", rounds: diag }] : []);
       // What this answer has put on screen for the user to act on.
       let shown: "card" | "choice" | "slot" | null = null;
       try {
@@ -280,6 +319,10 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
         const history: ModelMessage[] = [...messages];
         for (let round = 0; round < (ctx ? MAX_ROUNDS : 1); round++) {
           let said = "";
+          let stop = "";
+          let blocks: string[] = [];
+          let raw: RawBlock[] | null = null;
+          let roundOut = 0;
           const calls: { id: string; name: string; input: Record<string, unknown> }[] = [];
           async function* texts(): AsyncIterable<string> {
             for await (const ev of model.stream({
@@ -291,17 +334,30 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
             })) {
               if (ev.type === "text") { said += ev.text; yield ev.text; }
               else if (ev.type === "tool_use") calls.push(ev);
+              else if (ev.type === "stop") { stop = ev.reason; blocks = ev.blocks ?? []; }
+              else if (ev.type === "raw") raw = ev.content;
               else if (ev.type === "usage") {
+                roundOut += ev.usage.output;
                 usage.input += ev.usage.input; usage.output += ev.usage.output;
                 usage.cacheRead += ev.usage.cacheRead; usage.cacheWrite += ev.usage.cacheWrite;
               }
             }
+            diag.push({ round, stop, chars: said.length, calls: calls.map((c) => c.name), output: roundOut, blocks });
           }
           if (!ctx) {
-            // Help mode: one round, streamed as it comes.
+            // Help mode: one round, streamed a sentence at a time. Cut by the
+            // token cap: no half sentence, the pointer to Help instead (cf).
+            let tail = "";
             for await (const t of filterMarkers(texts(), seen)) {
+              tail += t;
+              const end = sentenceEnd(tail, req.locale);
+              if (end > 0) { answered = true; yield { kind: "delta", text: tail.slice(0, end) }; tail = tail.slice(end); }
+            }
+            if (stop === "max_tokens") {
+              if (answered) yield { kind: "delta", text: `\n\n${tx.seeFullArticle}` };
+            } else if (tail.trim()) {
               answered = true;
-              yield { kind: "delta", text: t };
+              yield { kind: "delta", text: tail };
             }
             break;
           }
@@ -326,7 +382,17 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
             // wrote its answer while calling a tool, then nothing): a fixed
             // line, never an outage message (UX, 5 Oct). A tool round's text
             // is never shown: it was written before the tools' results (c6).
-            const text = shown === "card" ? tx.pointerCard : shown ? "" : roundText.trim() || tx.couldntAnswer;
+            // Before that line, once: the model is asked to answer now, from
+            // the results it has (a text block after the tool results), so
+            // what's shown is still written after the results.
+            const last = history[history.length - 1];
+            if (!shown && !roundText.trim() && !nudged && round < MAX_ROUNDS - 1 && last?.role === "user" && Array.isArray(last.content)) {
+              nudged = true;
+              history[history.length - 1] = { role: "user", content: [...last.content, { type: "text", text: ANSWER_NOW }] };
+              continue;
+            }
+            const full = stop === "max_tokens" ? cutToSentence(roundText, req.locale, tx.seeFullArticle) : roundText;
+            const text = shown === "card" ? tx.pointerCard : shown ? "" : full.trim() || tx.couldntAnswer;
             if (text) { answered = true; yield { kind: "delta", text }; }
             break;
           }
@@ -353,7 +419,7 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
             }
             results.push({ type: "tool_result", tool_use_id: call.id, content: forModel, ...(out.isError ? { is_error: true } : {}) });
           }
-          history.push({ role: "assistant", content: [...(said ? [{ type: "text" as const, text: said }] : []), ...calls.map((t) => ({ type: "tool_use" as const, ...t }))] });
+          history.push({ role: "assistant", content: raw ?? [...(said ? [{ type: "text" as const, text: said }] : []), ...calls.map((t) => ({ type: "tool_use" as const, ...t }))] });
           history.push({ role: "user", content: results });
           // Out of rounds with nothing shown: a plain line, not an error
           // (the model did answer; its usage is recorded).
@@ -366,11 +432,13 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       } catch {
         // The model failed: the message isn't spent (fair to the doctor).
         await refund();
+        yield* debug();
         yield { kind: "error", code: "model_failed" };
         return;
       }
       if (!answered) {
         await refund();
+        yield* debug();
         yield { kind: "error", code: "model_failed" };
         return;
       }
@@ -382,10 +450,17 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
         p_professional_id: userId,
         p_input: u.input, p_output: u.output, p_cache_read: u.cacheRead, p_cache_write: u.cacheWrite,
       });
-      const open = seen.length ? openBlock(seen[0], req.locale, deps.client, tx.openScreen) : null;
-      if (open) yield open;
+      // One button: "Abrir tela". Several (a broad question): each named
+      // after its article, so they can be told apart (53).
+      const ids = [...new Set(seen)].slice(0, 3);
+      for (const id of ids) {
+        const article = ids.length > 1 ? HELP.flatMap((c) => c.articles).find((x) => x.id === id) : null;
+        const open = openBlock(id, req.locale, deps.client, article ? articleTitle(article, lang, deps.client === "app") : tx.openScreen);
+        if (open) yield open;
+      }
       yield { kind: "block", block: { type: "feedback" } };
       yield { kind: "usage", used: c.used ?? 0, limit: c.limit ?? 0, extra: 0, resetsAt: c.resets_at ?? "" };
+      yield* debug();
       yield { kind: "done" };
     } finally {
       await refund();
