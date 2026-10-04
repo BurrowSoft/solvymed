@@ -10,7 +10,11 @@
 // (secretary-invite-email-live). Mobile 156 accepts it (applied first).
 // 2026-10-03: §6d Founders Program applications (liveFeatures.founders).
 // Mobile's migration adding ('privacy','2026-10-03') applied FIRST.
-export const PRIVACY_VERSION = "2026-10-03";
+// 2026-10-05: §6f My brand (1.5.0, live in the app): what's stored, the
+// logo and photo public once saved, removal within about a minute, legacy
+// photos private. Mobile's migration 169 adding ('privacy','2026-10-05')
+// applied FIRST.
+export const PRIVACY_VERSION = "2026-10-05";
 export const TERMS_VERSION = "2026-10-01";
 
 // Sent with every web signup (the checkbox is required, so it's sent only
