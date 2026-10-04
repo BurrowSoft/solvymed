@@ -265,6 +265,17 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     expect(back).toEqual({ role: "assistant", content: raw });
   });
 
+  // UX (5 Oct): the model writes years in the practice's calendar, to match the cards.
+  it("a TH practice: the prompt says to write Buddhist years (no era); a BR one says nothing", async () => {
+    const th = setup(() => "ok");
+    th.tables.professionals[0].country = "TH";
+    await run(th, ask("O que tenho amanhã?"));
+    expect(th.model.calls[0].system).toContain("Thai Buddhist calendar");
+    const br = setup(() => "ok");
+    await run(br, ask("O que tenho amanhã?"));
+    expect(br.model.calls[0].system).not.toContain("Buddhist");
+  });
+
   it("a broken marker never swallows the rest of the answer", async () => {
     const t = setup(() => "Claro! Vou explicar (já [[open:A1] veja a Agenda). Pagamentos: toque em Pago.\n[[open:G1]]");
     const r = await run(t, ask("Explique em detalhes a Agenda e os Pagamentos"));

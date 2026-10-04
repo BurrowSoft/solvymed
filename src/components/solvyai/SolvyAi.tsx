@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createMockBackend } from "@/lib/assistant/mockBackend";
@@ -9,7 +9,7 @@ import { answerText } from "@/lib/assistant/answerText";
 import { maskPersonalData, MAX_MESSAGE_CHARS, MAX_TURNS, MIN_SECONDS_BETWEEN } from "@/lib/assistant/mask";
 import type { AnswerBlock, AnswerChunk, AssistantBackend, AssistantScreen, AssistantUsage, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
 import { isInternalHref, webPath } from "@/lib/assistant/targets";
-import { formatDateLabel } from "@/lib/dateLabels";
+import { formatDateLabel, type DateCalendar } from "@/lib/dateLabels";
 import { BUTTON_EVENT, CLOSED_EVENT, OPEN_EVENT, readButtonHidden } from "./SolvyAiSettings";
 import { helpLang, inlineSegments } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
@@ -55,7 +55,15 @@ export function hoursUntil(resetsAt: string, now = Date.now()): number {
 
 // remote: the real route is on (SOLVYAI_API_ENABLED, read on the server);
 // otherwise the mock, labelled "Prévia".
-export function SolvyAi({ locale, prefix, dailyLimit, remote = false, paymentQr = null }: { locale: string; prefix: string; dailyLimit: number; remote?: boolean; paymentQr?: "pix" | "promptpay" | null }) {
+// calendar: the practice's (UX 5 Oct): the time chips' dates in it, exactly
+// as the server writes them (a tapped chip is recognised by its text).
+const ChipCalendar = createContext<DateCalendar | undefined>(undefined);
+
+export function SolvyAi(props: { locale: string; prefix: string; dailyLimit: number; remote?: boolean; paymentQr?: "pix" | "promptpay" | null; calendar?: DateCalendar }) {
+  return <ChipCalendar.Provider value={props.calendar}><SolvyAiPanel {...props} /></ChipCalendar.Provider>;
+}
+
+function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = null }: { locale: string; prefix: string; dailyLimit: number; remote?: boolean; paymentQr?: "pix" | "promptpay" | null }) {
   const t = useTranslations("assistant");
   const router = useRouter();
   const pathname = usePathname();
@@ -589,9 +597,10 @@ function CardView({ card, backend, onSaved, onFailed, done, claim }: {
 // sends it as the doctor's next message ("terça, 29/09/2026 às 10:30"); the
 // assistant never picks (§2.3).
 function SlotChoiceView({ block, locale, onPick }: { block: SlotChoice; locale: string; onPick: (v: string) => void }) {
+  const calendar = useContext(ChipCalendar);
   const t = useTranslations("assistant");
   const label = (date: string, time: string) =>
-    t("chipAt", { date: formatDateLabel(locale, date, { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" }), time });
+    t("chipAt", { date: formatDateLabel(locale, date, { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" }, calendar), time });
   return (
     <div>
       <p className="mb-1.5 leading-relaxed">{block.text}</p>

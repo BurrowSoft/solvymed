@@ -6,6 +6,8 @@ import { isInternalHref, webPath } from "@/lib/assistant/targets";
 import type { AnswerChunk, AssistantScreen, TargetScreen } from "@/lib/assistant/types";
 import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
 import { formatDateLabel } from "@/lib/dateLabels";
+import { countryProfile } from "@/lib/country";
+import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { cachedSystem, rules, type Client } from "./knowledge";
 import type { ContentBlock, ModelClient, ModelMessage, ModelUsage, RawBlock } from "./model";
 import { confirmFailedBlock, runTool, toolDefsFor, type ToolContext } from "./tools";
@@ -57,7 +59,11 @@ const prefixOf = (locale: string) => (locale === routing.defaultLocale ? "" : `/
 async function toolContext(db: unknown, profId: string, locale: string, client: Client, userText = ""): Promise<ToolContext & { tz: string }> {
   const tz = await getClinicTimeZone(db, { professionalId: profId, isSecretary: false });
   const now = new Date();
+  // The practice country (its calendar, IDs, currency); unknown stays unset
+  // and the tools that need it fail closed (practiceCountry in ./tools).
+  const pc = await lookupPracticeCountry(db as ToolContext["db"], profId, profId).catch(() => null);
   return {
+    ...(pc?.ok ? { country: pc.country } : {}),
     db: db as ToolContext["db"],
     profId,
     t: await loadTexts(locale),
@@ -316,6 +322,9 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
         const ctx = mode === "actions" ? await toolContext(deps.db, userId, req.locale, deps.client, messages[messages.length - 1].content) : null;
         let system = rules(lang, deps.client, req.screen, mode, tx.reply);
         if (ctx) system += `\nToday at the clinic: ${formatDateLabel("en-US", ctx.today, { weekday: "long" })} ${ctx.today}, ${ctx.nowTime} (${ctx.tz}). Dates for the tools are YYYY-MM-DD in this calendar.\n${calendarLine(ctx.today)}`;
+        // The practice's calendar for dates written in the answer (UX 5 Oct),
+        // so they match the cards; the tools always take Gregorian.
+        if (ctx?.country && countryProfile(ctx.country).calendar === "buddhist") system += `\nThis practice uses the Thai Buddhist calendar: when your answer writes a date with a year, write the Buddhist year (the Gregorian year + 543, e.g. 2026 → 2569), never "BE"/"พ.ศ." after it. The tools still take YYYY-MM-DD (Gregorian).`;
         const history: ModelMessage[] = [...messages];
         for (let round = 0; round < (ctx ? MAX_ROUNDS : 1); round++) {
           let said = "";
