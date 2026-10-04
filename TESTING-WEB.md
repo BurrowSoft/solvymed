@@ -10145,7 +10145,7 @@ Go-live notes:
 
 Fixtures: "[TEST]" applications with `e2e-test-opus-founders-…@burrowsoft.com`, each `founder_applications` row deleted right after.
 
-## Batch 8: web PRs #263–#345, incl. 1.5.0 "My brand" + the secretary switcher (web tester 1 + web tester 2, 2026-10-01 → 10-05)
+## Batch 8: web PRs #263–#346, incl. 1.5.0 "My brand" + the secretary switcher (web tester 1 + web tester 2, 2026-10-01 → 10-05)
 
 Evidence: each PR's tester comment (SHA + what was checked). Merged commits from GitHub. WT1 = web tester 1, WT2 = web tester 2; device rows by mobile tester 1. The 1.5.0 rows (#336–#345) were tested on Vercel Previews with the flag on (`liveFeatures.myBrand` / `multiPractice`, Previews only), so www was unchanged at their merge.
 
@@ -10175,5 +10175,6 @@ Evidence: each PR's tester comment (SHA + what was checked). Merged commits from
 | #343 | My brand fields from the doctor's own row, never the profile | WT1 🟢 `222d130` (comment 5966977251; same at `d56a928`): empty fields + profile placeholders; Save without typing stores NULLs; a profile rename flows to the preview + prints | `415e6c0` into master |
 | #344 | My brand: the Título once | WT2 🟢 `8977e33` (comments 5967200908 + 5967210775) | `0173917` into master |
 | #345 | 1.5.0 the secretary's doctor switcher (migration 163, flag) | WT1 🟢 **retroactive** at `7ff8835` (comments 5982418977 + 5982466583; the PR merged on 10-03 before this was posted): one-doctor = www; switching on 5 pages; acting as B (book / patient / pay) lands on B; a lapsed B → clinic-inactive with the switcher; leave B keeps A; B removes her → falls back to A. Open question for the web dev: after leaving B she was signed out | `1f52893` into master |
+| #346 | 1.5.0 "Meus médicos" for patients with several doctors (migration 164, flag) | ⏳ **no tester row yet**: merged at head `6fa483c` without one (flag off on Production). A retroactive row by web tester 2 is queued; it must be tested before multi-doctor goes live | `a3961b2` into master |
 
 Fixtures: throwaway accounts with `e2e-test-opus-…` / `e2e-smoke-…` tags, deleted after each run or purged by the mobile dev by exact id (incl. the #345 set). No prescriptions or records were created for print checks (the recibo and the history print were used instead).
