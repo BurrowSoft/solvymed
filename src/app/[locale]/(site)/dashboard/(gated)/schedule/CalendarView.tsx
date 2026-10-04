@@ -8,10 +8,11 @@ import { AppointmentStatusSelect, DeleteAppointmentButton, NewAppointmentButton,
 import { MOVABLE_STATUSES } from "@/lib/scheduleChecks";
 import { toLocalDateString } from "@/lib/slots";
 import { formatMoney } from "@/lib/money";
-import { hasAmount } from "@/lib/paymentRules";
+import { hasAmount, showsPayment } from "@/lib/paymentRules";
 import type { Currency } from "@/lib/country";
-import { dateLocale, plainSpaces } from "@/lib/dateLabels";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
+import { dateLocale, formatDateLabel, formatDateRangeLabel, plainSpaces, type DateCalendar } from "@/lib/dateLabels";
+import { usePracticeCalendar } from "@/components/PracticeCalendar";
 
 export type CalendarAppt = {
   id: string;
@@ -48,16 +49,11 @@ export function weekdayLabels(locale: string): string[] {
 // The calendar header: a day, a Monday–Sunday range, or a month, localized.
 // Spaces are normalized: server (Node) and browser ICU differ there, e.g.
 // thin spaces around the range's en dash (React #418 on the week view).
-export function calendarHeaderLabel(locale: string, view: "day" | "week" | "month", currentDate: string, weekDays: string[]): string {
-  const at = (d: string) => new Date(d + "T12:00:00Z");
-  if (view === "day") {
-    return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale), { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(at(currentDate)));
-  }
-  if (view === "week") {
-    return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale), { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
-      .formatRange(at(weekDays[0]), at(weekDays[6])));
-  }
-  return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale), { month: "long", year: "numeric", timeZone: "UTC" }).format(at(currentDate)));
+// calendar: the practice's (UX 5 Oct), never with an era.
+export function calendarHeaderLabel(locale: string, view: "day" | "week" | "month", currentDate: string, weekDays: string[], calendar?: DateCalendar): string {
+  if (view === "day") return formatDateLabel(locale, currentDate, { weekday: "long", month: "long", day: "numeric", year: "numeric" }, calendar);
+  if (view === "week") return formatDateRangeLabel(locale, weekDays[0], weekDays[6], { month: "short", day: "numeric", year: "numeric" }, calendar);
+  return formatDateLabel(locale, currentDate, { month: "long", year: "numeric" }, calendar);
 }
 
 // Every Date here is a local calendar day, so it's formatted with local
@@ -354,7 +350,7 @@ export function CalendarView({
     else { const d = new Date(currentDate + "T12:00:00"); d.setMonth(d.getMonth() + 1); go(isoDate(d)); }
   }
 
-  const headerLabel = calendarHeaderLabel(locale, view, currentDate, getWeekDays(currentDate));
+  const headerLabel = calendarHeaderLabel(locale, view, currentDate, getWeekDays(currentDate), usePracticeCalendar());
 
   return (
     <div>
@@ -420,10 +416,10 @@ export function CalendarView({
                 {selected.start_time?.slice(0, 5)} – {selected.end_time?.slice(0, 5)} ({selected.duration_minutes} min)
               </div>
               {/* No amount (the app's #216): "Sem valor", never "Pendente · R$ 0,00". */}
-              {selected.status !== "blocked" && selected.payment_status !== "paid" && !hasAmount(selected.payment_amount) && (
+              {showsPayment(selected.status, selected.payment_status) && selected.payment_status !== "paid" && !hasAmount(selected.payment_amount) && (
                 <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">{tPay("noAmount")}</div>
               )}
-              {hasAmount(selected.payment_amount) && (
+              {showsPayment(selected.status, selected.payment_status) && hasAmount(selected.payment_amount) && (
                 <div className={`flex items-center gap-2 text-xs font-semibold ${selected.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 shrink-0"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                   {selected.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")} · {formatMoney(selected.payment_amount, currency)}

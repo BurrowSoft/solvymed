@@ -37,17 +37,27 @@ export function formatDateLabel(
 ): string {
   const [y, m, d] = date.split("-").map(Number);
   if (!y || !m || !d) return date;
-  const parts = new Intl.DateTimeFormat(dateLocale(locale, calendar), { ...options, timeZone: "UTC" }).formatToParts(new Date(Date.UTC(y, m - 1, d, 12)));
-  // No era: a Thai clinic's year reads "2569" in every language, as in the
-  // app and the printed documents (UX, 5 Oct: never "2569 BE" in pt/en).
+  return withoutEra(new Intl.DateTimeFormat(dateLocale(locale, calendar), { ...options, timeZone: "UTC" }).formatToParts(new Date(Date.UTC(y, m - 1, d, 12))));
+}
+
+// No era: a Thai clinic's year reads "2569" in every language, as in the
+// app and the printed documents (UX, 5 Oct: never "2569 BE" in pt/en).
+function withoutEra(parts: { type: string; value: string }[]): string {
   const kept = parts.filter((p, i) => p.type !== "era" && !(p.type === "literal" && parts[i + 1]?.type === "era"));
   return plainSpaces(kept.map((p) => p.value).join(""));
 }
 
+// A range of two stored dates ("1–7 out. de 2569"), as formatDateLabel.
+export function formatDateRangeLabel(locale: string, from: string, to: string, options: Intl.DateTimeFormatOptions, calendar?: DateCalendar): string {
+  const at = (s: string) => { const [y, m, d] = s.split("-").map(Number); return new Date(Date.UTC(y, m - 1, d, 12)); };
+  return withoutEra(new Intl.DateTimeFormat(dateLocale(locale, calendar), { ...options, timeZone: "UTC" }).formatRangeToParts(at(from), at(to)));
+}
+
 // The locale's short numeric date, like the app: 14/05/1993 (pt-BR and en:
 // never MM/DD), 14/05/2536 (th, Buddhist year).
-export function formatShortDate(locale: string, date: string): string {
-  return formatDateLabel(locale, date, { day: "2-digit", month: "2-digit", year: "numeric" });
+// calendar: a practice's (staff visit and money dates, UX 5 Oct).
+export function formatShortDate(locale: string, date: string, calendar?: DateCalendar): string {
+  return formatDateLabel(locale, date, { day: "2-digit", month: "2-digit", year: "numeric" }, calendar);
 }
 
 export function formatTimeLabel(locale: string, time: string): string {
