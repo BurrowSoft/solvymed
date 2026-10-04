@@ -1861,6 +1861,7 @@
     "unavailableArticles": "SolvyAI 暫時無法使用。這些文章或許有幫助：",
     "unavailableLater": "SolvyAI 暫時無法使用。請稍後再試。",
     "couldntFinish": "沒能完成。能換個說法，並附上病患姓名、日期和時間嗎？",
+    "couldntAnswer": "I couldn't finish that answer. Try asking another way.",
     "onlySolvyMed": "我只能協助處理 SolvyMed 相關問題。",
     "noClinical": "我無法回答臨床問題。",
     "minutes": "{n} 分鐘",

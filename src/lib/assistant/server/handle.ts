@@ -322,7 +322,11 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
             // paciente?"): no text after it (3e: never a second "Escolha uma
             // opção" line). A card gets the one pointer line, naming the card's
             // real button in the user's language.
-            const text = shown === "card" ? tx.pointerCard : shown ? "" : roundText.trim();
+            // The last round empty with nothing on screen (53: the model
+            // wrote its answer while calling a tool, then nothing): a fixed
+            // line, never an outage message (UX, 5 Oct). A tool round's text
+            // is never shown: it was written before the tools' results (c6).
+            const text = shown === "card" ? tx.pointerCard : shown ? "" : roundText.trim() || tx.couldntAnswer;
             if (text) { answered = true; yield { kind: "delta", text }; }
             break;
           }

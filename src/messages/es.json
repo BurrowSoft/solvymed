@@ -1861,6 +1861,7 @@
     "unavailableArticles": "SolvyAI no está disponible por ahora. Estos artículos pueden ayudar:",
     "unavailableLater": "SolvyAI no está disponible por ahora. Inténtalo más tarde.",
     "couldntFinish": "No pude completarlo. ¿Puedes decirlo de otra forma, con el nombre del paciente, la fecha y la hora?",
+    "couldntAnswer": "I couldn't finish that answer. Try asking another way.",
     "onlySolvyMed": "Solo puedo ayudar con SolvyMed.",
     "noClinical": "No puedo ayudar con cuestiones clínicas.",
     "minutes": "{n} min",

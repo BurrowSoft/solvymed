@@ -1861,6 +1861,7 @@
     "unavailableArticles": "SolvyAI tạm thời không khả dụng. Các bài viết này có thể giúp:",
     "unavailableLater": "SolvyAI tạm thời không khả dụng. Vui lòng thử lại sau.",
     "couldntFinish": "Tôi chưa làm được. Bạn có thể nói cách khác, kèm tên bệnh nhân, ngày và giờ không?",
+    "couldntAnswer": "I couldn't finish that answer. Try asking another way.",
     "onlySolvyMed": "Tôi chỉ có thể giúp về SolvyMed.",
     "noClinical": "Tôi không thể giúp về các vấn đề lâm sàng.",
     "minutes": "{n} phút",

@@ -170,6 +170,28 @@ describe("SolvyAI actions mode: round-1 fixes (UX, 3e's tests)", () => {
     expect(textOf((await run(t, ask("O que tenho amanhã?"))).chunks)).toBe("Amanhã você tem 1 consulta e 1 horário bloqueado.");
   });
 
+  // 53 (5 Oct): a long question got an empty answer, then "indisponível".
+  // The model wrote its answer in the round that also called a tool, then
+  // ended with nothing: a fixed line, never the tool round's text (written
+  // before the results; c6) and never an outage message.
+  it("the last round says nothing: the fixed line, not the tool round's text, not an error", async () => {
+    const t = setup((_r, round) =>
+      round === 0 ? { text: "Amanhã você tem 1 consulta às 9h e um bloqueio à tarde.", tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }] }
+      : "");
+    const r = await run(t, ask("O que tenho amanhã, e o que sugere?"));
+    expect(textOf(r.chunks)).toBe("Não consegui concluir essa resposta. Tente perguntar de outro jeito.");
+    expect(r.chunks.find((c) => c.kind === "error")).toBeUndefined();
+    expect(r.chunks.at(-1)).toEqual({ kind: "done" });
+  });
+
+  it("nothing said in any round: a fixed line, never an empty answer or 'indisponível' (UX)", async () => {
+    const t = setup((_r, round) => (round === 0 ? { tools: [{ name: "list_appointments", input: { from: "2026-09-30", to: "2026-09-30" } }] } : ""));
+    const r = await run(t, ask("O que tenho amanhã?"));
+    expect(textOf(r.chunks)).toBe("Não consegui concluir essa resposta. Tente perguntar de outro jeito.");
+    expect(r.chunks.find((c) => c.kind === "error")).toBeUndefined();
+    expect(t.service.calls.map((c) => c.fn)).toEqual(["assistant_record_usage"]);
+  });
+
   it("several patients match: a list to tap, and the model gets no ids to guess with", async () => {
     const t = setup((_r, round) =>
       round === 0 ? { tools: [{ name: "find_patients", input: { query: "Mari" } }] }

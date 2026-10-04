@@ -1891,6 +1891,7 @@
     "unavailableArticles": "SolvyAI is temporarily unavailable. These articles may help:",
     "unavailableLater": "SolvyAI is temporarily unavailable. Please try again later.",
     "couldntFinish": "I couldn't finish that. Could you say it another way, with the patient's name, the date and the time?",
+    "couldntAnswer": "I couldn't finish that answer. Try asking another way.",
     "onlySolvyMed": "I can only help with SolvyMed.",
     "noClinical": "I can't help with clinical questions.",
     "minutes": "{n} min",
