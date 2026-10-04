@@ -17,8 +17,8 @@
 // 2026-10-06: §6g Notifications (1.6.0): appointment notices and the
 // professional's general notices, delivery through Expo, the server queue's
 // 30-day deletion, turning them off. Mobile's migration adding
-// ('privacy','2026-10-06') applied FIRST. (The closure-notice line waits
-// for 173 behind closure-notices-live, with its own bump.)
+// ('privacy','2026-10-06') applied FIRST (174). The closure-notice line
+// was hidden behind closure-notices-live then, with its own bump below.
 // 2026-10-07: §6g's closure-notice line revealed (closure-notices-live):
 // 173 live and the website's own closure pushes removed (#378 deployed).
 // Mobile's migration 175 adding ('privacy','2026-10-07') applied FIRST.
