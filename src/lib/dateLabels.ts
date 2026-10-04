@@ -37,7 +37,11 @@ export function formatDateLabel(
 ): string {
   const [y, m, d] = date.split("-").map(Number);
   if (!y || !m || !d) return date;
-  return plainSpaces(new Intl.DateTimeFormat(dateLocale(locale, calendar), { ...options, timeZone: "UTC" }).format(new Date(Date.UTC(y, m - 1, d, 12))));
+  const parts = new Intl.DateTimeFormat(dateLocale(locale, calendar), { ...options, timeZone: "UTC" }).formatToParts(new Date(Date.UTC(y, m - 1, d, 12)));
+  // No era: a Thai clinic's year reads "2569" in every language, as in the
+  // app and the printed documents (UX, 5 Oct: never "2569 BE" in pt/en).
+  const kept = parts.filter((p, i) => p.type !== "era" && !(p.type === "literal" && parts[i + 1]?.type === "era"));
+  return plainSpaces(kept.map((p) => p.value).join(""));
 }
 
 // The locale's short numeric date, like the app: 14/05/1993 (pt-BR and en:
