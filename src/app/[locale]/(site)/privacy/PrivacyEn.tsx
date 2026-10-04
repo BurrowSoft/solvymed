@@ -160,7 +160,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
           <li>We send push notifications about appointments: requests and their answers, confirmations, changes and cancellations. A professional can also send a general notice to the patients connected to them (a title and a message). Notifications reach your device through Expo (see section 5).</li>
           <li>When our servers send a notification, we keep it in a queue only to deliver it: who it is for and which appointment and kind of notice it is (for a general notice, its title and message). Each one is deleted at most 30 days after it was created.</li>
           {closureNotices && (
-            <li>When a professional closes their account, our server sends their patients a notice that the practice closed or that an appointment was cancelled. To do this we keep only the clinic&rsquo;s name, the appointment date and time, and the delivery status, and we delete the notice as soon as it&rsquo;s sent (at most 30 days).</li>
+            <li>When a professional closes their account, our server sends their patients a notice that the practice closed or that an appointment was cancelled. To do this we keep only the clinic&rsquo;s name and country, the appointment date and time (for cancelled appointments), and the delivery status, and we delete the notice as soon as it&rsquo;s sent (at most 30 days).</li>
           )}
           <li>You can turn notifications off at any time in your device&rsquo;s settings.</li>
         </ul>
