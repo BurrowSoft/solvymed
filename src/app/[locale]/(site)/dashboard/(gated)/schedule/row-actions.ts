@@ -2,7 +2,7 @@
 
 import { liveFeatures } from "@/lib/liveFeatures";
 import { inRowPractice } from "@/lib/rowPractice";
-import { updateAppointmentStatus, moveAppointment, deleteAppointment, getScheduleDay } from "./actions";
+import { updateAppointmentStatus, moveAppointment, deleteAppointment, getScheduleDay, undoScheduleChange } from "./actions";
 import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest } from "./booking-actions";
 import { markPaid, markUnpaid, setPaymentAmount } from "../payments/actions";
 
@@ -11,7 +11,7 @@ import { markPaid, markUnpaid, setPaymentAmount } from "../payments/actions";
 // normal one with its own checks; the practice is re-checked against hers
 // (actingPracticeFor) and again by the database.
 const ROW_ACTIONS = {
-  updateAppointmentStatus, moveAppointment, deleteAppointment, getScheduleDay,
+  updateAppointmentStatus, moveAppointment, deleteAppointment, getScheduleDay, undoScheduleChange,
   confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest,
   markPaid, markUnpaid, setPaymentAmount,
 };

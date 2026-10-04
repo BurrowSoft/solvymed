@@ -20,6 +20,10 @@ export type UndoToken = {
   prevStart?: string;
   prevEnd?: string;
   prevStatus?: string;
+  // The practice it was issued for: a hint, so the "All" schedule (166) undoes
+  // as that doctor. Not trusted: the signature binds the practice itself, so
+  // any other value fails verification.
+  practice?: string;
   // Issued at (ms) and the server's signature over all of it + the practice
   // (lib/scheduleUndoSign): the token is only ever honoured as issued.
   iat: number;

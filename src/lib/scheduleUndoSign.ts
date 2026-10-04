@@ -17,7 +17,7 @@ function key(): Buffer | null {
   return secret ? createHmac("sha256", secret).update("solvymed:schedule-undo:v1").digest() : null;
 }
 
-type Unsigned = Omit<UndoToken, "iat" | "sig">;
+type Unsigned = Omit<UndoToken, "iat" | "sig" | "practice">;
 
 // A fixed field order, so the same token always signs the same way.
 function payload(t: Unsigned, iat: number, practiceId: string): string {
@@ -32,7 +32,7 @@ export function signUndo(t: Unsigned, practiceId: string, now = Date.now()): Und
   const k = key();
   if (!k) return null;
   const sig = createHmac("sha256", k).update(payload(t, now, practiceId)).digest("base64url");
-  return { ...t, iat: now, sig };
+  return { ...t, iat: now, sig, practice: practiceId };
 }
 
 export function verifyUndo(t: UndoToken, practiceId: string, now = Date.now()): boolean {

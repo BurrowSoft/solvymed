@@ -1,23 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ScheduleNav, NewAppointmentButton, BlockTimeButton, AppointmentStatusSelect, DeleteAppointmentButton, RescheduleButton, ViewToggle, PixQrButton, PromptPayQrButton, ScheduleUndoToast } from "./ScheduleClient";
-import { MOVABLE_STATUSES, offersPaymentQr } from "@/lib/scheduleChecks";
-import { hasAmount } from "@/lib/paymentRules";
-import { SetAmountButton } from "../payments/PaymentsClient";
+import { cookies } from "next/headers";
+import { ScheduleNav, NewAppointmentButton, BlockTimeButton, ViewToggle, ScheduleUndoToast } from "./ScheduleClient";
 import { normalizePromptPayId } from "@/lib/promptpay";
+import { ScheduleRow, type RowPracticeCtx } from "./ScheduleRow";
+import { AllSchedule } from "./AllSchedule";
+import { ACTING_COOKIE, ALL_PRACTICES } from "@/lib/actingPractice";
+import { liveFeatures } from "@/lib/liveFeatures";
 import { BookingRequestsPanel } from "./BookingRequestsPanel";
 import { getTentativeBookings } from "./booking-actions";
 import { CalendarView, type CalendarAppt } from "./CalendarView";
 import { ShareInviteLinkButton } from "@/components/ShareInviteLinkButton";
 import { clinicDate, getClinicTimeZone } from "@/lib/clinicTime";
-import { formatMoney } from "@/lib/money";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { statusReasonLive } from "@/lib/statusReason";
 import { AutoRefresh } from "@/components/AutoRefresh";
-import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
-import { actingPracticeFor } from "@/lib/effectiveProfId";
+import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
 
 function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
 function addDaysTo(dateStr: string, n: number) {
@@ -32,28 +32,15 @@ function getWeekStart(dateStr: string) {
   return isoDate(d);
 }
 
-function statusBadge(status: string) {
-  switch (status) {
-    case "confirmed": return "bg-teal-100 text-teal-700";
-    case "scheduled": return "bg-amber-100 text-amber-700";
-    case "completed": return "bg-green-100 text-green-700";
-    case "cancelled": return "bg-red-100 text-red-700";
-    case "blocked": return "bg-slate-100 text-slate-500";
-    case "late": return "bg-orange-100 text-orange-700";
-    case "absent": return "bg-red-100 text-red-600";
-    default: return "bg-slate-100 text-slate-600";
-  }
-}
-
 export default async function SchedulePage({
   params,
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ date?: string; view?: string; new?: string }>;
+  searchParams: Promise<{ date?: string; view?: string; new?: string; doctor?: string }>;
 }) {
   const { locale } = await params;
-  const { date: dateParam, view: viewParam, new: newParam } = await searchParams;
+  const { date: dateParam, view: viewParam, new: newParam, doctor: doctorParam } = await searchParams;
 
   const [supabase, t, tFirstRun] = await Promise.all([
     createClient(),
@@ -74,6 +61,14 @@ export default async function SchedulePage({
   const effectiveProfId = isSecretary
     ? (await actingPracticeFor((userRoleData?.invited_by_professional_id as string | null) ?? null, user.id)) ?? user.id
     : user.id;
+
+  // "Todos" (166, behind the flag): every doctor she serves, in one list.
+  const practices = isSecretary && liveFeatures.multiPractice ? await myPractices(user.id) : null;
+  if (practices && practices.length > 1 && (await cookies()).get(ACTING_COOKIE)?.value === ALL_PRACTICES) {
+    const tz = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
+    const today0 = clinicDate(new Date(), tz);
+    return <AllSchedule practices={practices} userId={user.id} today={today0} currentDate={dateParam ?? today0} doctor={doctorParam ?? null} locale={locale} />;
+  }
 
   // Amounts are in the practice's currency (its country), not the UI's.
   const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
@@ -151,6 +146,7 @@ export default async function SchedulePage({
 
   const appointments = (apptsResult.data ?? []) as unknown as CalendarAppt[];
   const procedures = (procsResult.data ?? []) as { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
+  const rowCtx: RowPracticeCtx = { currency, pixKey, promptPayId, clinicName, clinicCity, procedures };
 
   const todayCount = appointments.filter(a => a.date === today && a.status !== "blocked").length;
 

@@ -18,7 +18,8 @@ import type { Currency } from "@/lib/country";
 import Link from "next/link";
 import { REASON_MAX, statusReasonLive } from "@/lib/statusReason";
 import { DoctorTimePicker } from "@/components/DoctorTimePicker";
-import { useRowAction } from "@/components/RowPractice";
+import { forRow, useRowAction } from "@/components/RowPractice";
+import { liveFeatures } from "@/lib/liveFeatures";
 import { PLAIN_CONSULTATION } from "@/lib/consultType";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
@@ -113,7 +114,9 @@ export function ScheduleUndoToast() {
     claimed.current = x;
     setPhase("undoing");
     let ok = false;
-    try { ok = (await undoScheduleChange(x)).ok; } catch { ok = false; }
+    // As the doctor it was issued for (the "All" schedule's rows, 166).
+    const undo = liveFeatures.multiPractice ? forRow(x.practice, "undoScheduleChange", undoScheduleChange) : undoScheduleChange;
+    try { ok = (await undo(x)).ok; } catch { ok = false; }
     setPhase(ok ? "done" : "failed");
     setLeft(ok ? 4 : 8);
     router.refresh();
@@ -173,15 +176,18 @@ export function ScheduleNav({ currentDate, currentView = "list", today }: { curr
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  // The "All" schedule's doctor filter (166) survives moving between days.
+  const doctor = useSearchParams()?.get("doctor");
+  const keep = doctor ? `&doctor=${encodeURIComponent(doctor)}` : "";
 
   function navigate(offset: number) {
     const d = new Date(currentDate + "T12:00:00");
     d.setDate(d.getDate() + offset);
-    router.push(`${pathname}?date=${toLocalDateString(d)}&view=${currentView}`);
+    router.push(`${pathname}?date=${toLocalDateString(d)}&view=${currentView}${keep}`);
   }
 
   function goToday() {
-    router.push(`${pathname}?date=${today}&view=${currentView}`);
+    router.push(`${pathname}?date=${today}&view=${currentView}${keep}`);
   }
 
   const formatted = formatDateLabel(locale, currentDate, {
