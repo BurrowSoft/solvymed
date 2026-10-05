@@ -353,7 +353,7 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
-      text: "Imported data (\"Dados importados\" / \"Imported data\"): a patient brought from another system may have extra spreadsheet columns kept as imported data. Only the doctor sees them (in the app: open the patient → Dados importados, with \"Importado de … em …\"); opening it is logged in the patient's Access tab (\"Abriu os dados importados\" / \"Opened the imported data\"; repeated openings within a minute count once). SolvyAI never reads them; send the doctor there.",
+      text: "Imported data (\"Dados importados\" / \"Imported data\"): a patient brought from another system may have extra spreadsheet columns kept as imported data. Only the doctor sees them (in the app: open the patient → Dados importados; on the website: the patient's page → \"Dados importados\" / \"Imported data\" below the tabs; both with \"Importado de … em …\" / \"Imported from … on …\"); opening it is logged in the patient's access log (app: \"Acessos\" tab; website: \"Registro de acessos\" / \"Access log\" tab; \"Abriu os dados importados\" / \"Opened the imported data\"; repeated openings within a minute count once). SolvyAI never reads them; send the doctor there.",
       pending: ["import-extras-live"],
     },
     help: "P11",
