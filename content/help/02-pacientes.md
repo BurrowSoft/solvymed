@@ -142,8 +142,8 @@ Só você (médico) vê os dados importados; secretárias(os) e o paciente não.
 **en**
 Patients brought from another system may have **Imported data**: the spreadsheet columns that didn't become a SolvyMed field. In the app, open the patient and tap **Imported data** to see the fields and where they came from ("Imported from … on …").
 Only you (the doctor) can see imported data; secretaries and the patient can't. When you open it, it's recorded in the patient's **Access** tab ("Opened the imported data"); repeated openings within a minute count once.
-**No site:** Em **Pacientes**, abra o paciente: abaixo das abas, clique em **Dados importados** para ver os campos e de onde vieram ("Importado de … em …"). Só o médico vê essa seção, e a abertura fica registrada na aba **Acessos**, como no app.
-**On the website:** In **Patients**, open the patient: below the tabs, click **Imported data** to see the fields and where they came from ("Imported from … on …"). Only the doctor sees this section, and opening it is recorded in the **Access** tab, as in the app.
+**No site:** Em **Pacientes**, abra o paciente: abaixo das abas, clique em **Dados importados** para ver os campos e de onde vieram ("Importado de … em …"). Só o médico vê essa seção, e a abertura fica registrada na aba **Registro de acessos** do paciente, como no app.
+**On the website:** In **Patients**, open the patient: below the tabs, click **Imported data** to see the fields and where they came from ("Imported from … on …"). Only the doctor sees this section, and opening it is recorded in the patient's **Access log** tab, as in the app.
 `open:patients`
 `requires:import-extras-live`
 

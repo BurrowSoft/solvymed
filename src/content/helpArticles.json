@@ -825,8 +825,8 @@
           ]
         },
         "web": {
-          "pt": "Em **Pacientes**, abra o paciente: abaixo das abas, clique em **Dados importados** para ver os campos e de onde vieram (\"Importado de … em …\"). Só o médico vê essa seção, e a abertura fica registrada na aba **Acessos**, como no app.",
-          "en": "In **Patients**, open the patient: below the tabs, click **Imported data** to see the fields and where they came from (\"Imported from … on …\"). Only the doctor sees this section, and opening it is recorded in the **Access** tab, as in the app."
+          "pt": "Em **Pacientes**, abra o paciente: abaixo das abas, clique em **Dados importados** para ver os campos e de onde vieram (\"Importado de … em …\"). Só o médico vê essa seção, e a abertura fica registrada na aba **Registro de acessos** do paciente, como no app.",
+          "en": "In **Patients**, open the patient: below the tabs, click **Imported data** to see the fields and where they came from (\"Imported from … on …\"). Only the doctor sees this section, and opening it is recorded in the patient's **Access log** tab, as in the app."
         },
         "webUnavailable": false,
         "open": "patients",
