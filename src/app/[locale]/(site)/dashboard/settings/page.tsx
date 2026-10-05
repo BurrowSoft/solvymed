@@ -302,7 +302,7 @@ export default async function SettingsPage({
           }}
         />
 
-        <WorkingHoursForm workingHours={prof.working_hours as WorkingHours | null} />
+        <WorkingHoursForm workingHours={prof.working_hours as WorkingHours | null} country={practiceCountry} />
 
         <SchedulingRulesForm maxConcurrent={(prof.max_concurrent_bookings as number | null) ?? null} />
 
