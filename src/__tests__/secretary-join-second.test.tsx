@@ -97,6 +97,14 @@ describe("the invite link, for a secretary already on a team", () => {
     expect(h.calls).not.toContain("get_secretary_invite");
   });
 
+  it("no readable name: cf's neutral line, still with the hint (c6 nit)", async () => {
+    h.multi = false; // the action can't read her list → doctor ""
+    render(wrap(<InviteDecision code="S-ABCD1234" locale="pt-BR" secondPractice />));
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Aceitar" })); });
+    expect((await screen.findByTestId("invite-joined")).textContent).toBe('Você entrou na equipe. Escolha o médico em "Agenda de".');
+    expect([en, th].map((m) => m.secretaryPractices.joinedTeamNoName)).toEqual(["You joined the team.", "คุณเข้าร่วมทีมแล้ว"]);
+  });
+
   it("the action returns the doctor she joined, by her practice list", async () => {
     expect(await acceptSecretaryInvite("S-ABCD1234")).toEqual({ ok: true, doctor: "Dr. Bruno Reis" });
     h.multi = false;

@@ -34,7 +34,7 @@ export function JoinPracticeCard() {
         return;
       }
       setCode("");
-      setJoined(`${t("joinedTeam", { doctor: r.doctor }).trim()} ${t("joinPickHint", { label: t("switcherLabel") })}`);
+      setJoined(`${r.doctor.trim() ? t("joinedTeam", { doctor: r.doctor.trim() }) : t("joinedTeamNoName")} ${t("joinPickHint", { label: t("switcherLabel") })}`);
       // The new doctor now shows in "Agenda de".
       router.refresh();
     });
