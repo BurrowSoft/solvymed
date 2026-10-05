@@ -381,6 +381,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
+      text: "Refer a colleague (doctors only, never a secretary): Settings → \"Meus colegas\" / \"My colleagues\" keeps a private list (only the doctor sees it; the colleague isn't notified), added ONLY by a colleague's exact public code with \"+ Adicionar colega\" / \"+ Add a colleague\" (no search, no doctor directory), up to 50; only a colleague who has published My brand can be added (else \"Código não encontrado. Se o código estiver certo, peça ao seu colega para publicar a marca em Minha marca.\"). On a patient's page, \"Indicar colega\" / \"Refer a colleague\" prepares a message with the colleague's public link to copy or send (website: \"Copiar mensagem\" / \"Copy message\", \"Enviar por WhatsApp\" / \"Send on WhatsApp\" when the patient has a phone and the clinic uses WhatsApp). No patient data is shared; nothing about a referral is stored. SolvyAI doesn't add colleagues or refer; it points to these screens.",
+      pending: ["referrals-live"],
+    },
+    help: "C12",
+  },
+  {
+    rule: {
       text: "On the website's Schedule, right after a manual book, move or cancel, \"Desfazer\" / \"Undo\" shows for 10 s, while the notice to the patient hasn't gone out yet. It first checks the appointment wasn't changed again; if it was, or the notice is already on its way, it says \"Não foi possível desfazer. Abra o item para ajustar.\". A booked series is undone whole.",
       pending: ["notice-queue-on"],
     },

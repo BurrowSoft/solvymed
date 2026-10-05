@@ -59,6 +59,12 @@ export const liveFeatures = {
   // 171; the app's for parity). Previews only until the 1.6.0 privacy text
   // (broadcast notices + the outbox's 30-day retention) is live.
   broadcast: foundersPreview,
+  // 1.5.0 "Refer a colleague" (167; migration 180): Settings → "Meus colegas"
+  // and the patient page's "Indicar colega", doctors only. Previews only until
+  // referrals-live (the privacy line + its bump, with or after
+  // multi_doctor_patient); adding is also refused server-side until
+  // server_flags.colleague_referrals is on.
+  colleagues: foundersPreview,
 } as const;
 
 // The languages the app's PDFs are generated in today (UX, verified on the

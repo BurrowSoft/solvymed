@@ -9,6 +9,9 @@ import { PatientTabs, ArchivedBanner, type MedRecord, type Rx } from "./PatientD
 import { getArchivePreview, mergeAvailable } from "../actions";
 import { MergedNotice } from "./MergeNotice";
 import { ImportedData } from "./ImportedData";
+import { ReferColleague } from "./ReferColleague";
+import { liveFeatures } from "@/lib/liveFeatures";
+import { countryProfile, messagingChannel } from "@/lib/country";
 import { logPatientOpen, readAccessLog } from "@/lib/accessLog";
 import { getClinicTimeZone } from "@/lib/clinicTime";
 import { AutoRefresh } from "@/components/AutoRefresh";
@@ -84,6 +87,7 @@ export default async function PatientDetailPage({
     archived_at?: string | null; archived_by_name?: string | null; archived_reason?: string | null;
   };
   const isArchived = !!patient.archived_at;
+  const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
   const records = (recordsResult.data ?? []) as MedRecord[];
   const prescriptions = (prescriptionsResult.data ?? []) as Rx[];
   const appointments = (apptsResult.data ?? []) as { id: string; date: string; start_time: string; consultation_type: string; status: string; payment_status: string; payment_amount: number | null }[];
@@ -122,14 +126,25 @@ export default async function PatientDetailPage({
             {[patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null, age ? t("age", { n: age }) : null, patient.email].filter(Boolean).join(" · ")}
           </p>
         </div>
-        {/* The history print view (Help P8): clinical, so doctor only. */}
+        {/* The history print view (Help P8): clinical, so doctor only. "Indicar
+            colega" (167): doctors only, an archived patient never. */}
         {!isSecretary && (
-          <a
-            href={`${prefix}/dashboard/patients/${patient.id}/history/print`}
-            className="ml-auto shrink-0 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-          >
-            {t("historyPdf")}
-          </a>
+          <div className="ml-auto flex shrink-0 flex-wrap items-center gap-2">
+            {liveFeatures.colleagues && !isArchived && (
+              <ReferColleague
+                patientName={patient.full_name}
+                patientPhone={patient.phone ?? null}
+                practiceCountry={practiceCountry}
+                whatsapp={messagingChannel(countryProfile(practiceCountry)) === "whatsapp"}
+              />
+            )}
+            <a
+              href={`${prefix}/dashboard/patients/${patient.id}/history/print`}
+              className="shrink-0 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              {t("historyPdf")}
+            </a>
+          </div>
         )}
       </div>
 
@@ -155,7 +170,7 @@ export default async function PatientDetailPage({
           isSecretary={isSecretary}
           isArchived={isArchived}
           currentUserId={user.id}
-          idKind={patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId))}
+          idKind={patientIdKind(practiceCountry)}
           canMerge={!isSecretary && (await mergeAvailable())}
           mergeWith={mergeWith}
           // "Excluir cadastro" stays visible with appointments (as app #299):

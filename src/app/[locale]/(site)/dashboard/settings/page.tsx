@@ -23,6 +23,8 @@ import { AppearanceCard } from "./AppearanceCard";
 import { SubscriptionPanel } from "./SubscriptionPanel";
 import { FoundersCard } from "./FoundersCard";
 import { BrandCard } from "./BrandCard";
+import { ColleaguesCard } from "./ColleaguesCard";
+import { listColleagues } from "../colleague-actions";
 import { loadPracticeBrand, type BrandFieldsRow } from "@/lib/brand";
 import { isAccessAllowed, planSummary, type EffectiveSub } from "@/lib/subscription";
 
@@ -206,6 +208,8 @@ export default async function SettingsPage({
   // 1.5.0 "My brand" (flag; Previews only until the release). null while
   // migration 161 isn't there: the card opens empty with the defaults.
   const brand = liveFeatures.myBrand ? await loadPracticeBrand(supabase, user.id) : null;
+  // "Meus colegas" (167): the doctor's own list.
+  const colleagues = liveFeatures.colleagues && !locked ? await listColleagues() : null;
   // The fields' own values: the raw row (the owner may read it), never the
   // RPC's profile fallbacks, or a first Save would copy the profile into the
   // brand (d7, 9a; as the app). No row = empty fields.
@@ -253,6 +257,11 @@ export default async function SettingsPage({
               registration: (prof as { professional_registration?: string | null }).professional_registration ?? "",
             }}
           />
+        )}
+
+        {/* "Meus colegas" (167, doctors only; this part of the page is the doctor's). */}
+        {liveFeatures.colleagues && !locked && colleagues && (
+          <ColleaguesCard initial={colleagues.ok ? colleagues.rows : []} loadFailed={!colleagues.ok} />
         )}
 
         {!locked && <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} country={practiceCountry} />}
