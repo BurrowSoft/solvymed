@@ -130,7 +130,10 @@ export function founderPayload(body: Record<string, unknown>, attribution: Attri
         (["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"] as const)
           .filter((k) => attribution[k])
           .map((k) => [k, attribution[k]])
-          .concat(attribution.referrer_host ? [["referrer", attribution.referrer_host]] : []),
+          .concat(attribution.referrer_host ? [["referrer", attribution.referrer_host]] : [])
+          // G3 (migration 185 keeps them; 129 dropped unknown keys): as signups keep them.
+          .concat(attribution.landing_path ? [["landing_path", attribution.landing_path]] : [])
+          .concat([["first_seen_at", attribution.first_seen_at]]),
       )
     : {};
   return {

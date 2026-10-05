@@ -41,8 +41,12 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
         <p><strong>3.5 Dados técnicos e do dispositivo:</strong> tipo de dispositivo, versão do sistema operacional, versão do aplicativo, tokens de notificação push e relatórios técnicos de erro.</p>
         <p>
           <strong>3.6 Uso do site e atribuição de marketing:</strong> somente com o seu consentimento, estatísticas
-          anônimas de uso do nosso site e a campanha que trouxe você até ele (por exemplo, parâmetros UTM e o site de
-          origem), que é salva com a sua conta quando você se cadastra.{" "}
+          anônimas de uso do nosso site e a origem da sua visita: guardamos a campanha que trouxe você (tags UTM), o
+          site de origem, a primeira página que você visitou e quando, com a sua conta quando você se cadastra
+          {founders
+            ? ", ou, se você se inscrever no Programa Fundadores, com a sua inscrição (guardada até 12 meses após a última mudança de status, ou enquanto a sua conta existir, se você for aceito)."
+            : "."}{" "}
+          Até você confirmar o e-mail, guardamos esses dados com o seu cadastro pendente (apagados na confirmação ou em no máximo 30 dias).{" "}
           <strong>Dados de pacientes nunca são usados para análise ou marketing.</strong>
         </p>
         {secretaryInvites && <p><strong>3.7 Convites de secretária:</strong> quando um profissional convida uma secretária, guardamos o e-mail informado e enviamos o convite para esse endereço (até um reenvio por hora). O convite expira em 7 dias e o e-mail é apagado 30 dias após o convite expirar ou ser cancelado.</p>}

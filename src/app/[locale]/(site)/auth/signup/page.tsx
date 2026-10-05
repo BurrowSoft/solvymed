@@ -18,6 +18,7 @@ import { track } from "@/lib/track";
 import { browserTimeZone, COUNTRY_STEP, countryStepHref, parseCountryChoice, signupCountryCookie, signupCountryMetadata } from "@/lib/signupCountry";
 import { thaiEnabled } from "@/lib/publicLocales";
 import { consentMetadata } from "@/lib/legalVersions";
+import { signupAttributionMetadata } from "@/lib/signupAttribution";
 import { fieldValue } from "@/lib/formField";
 import { titleExamples } from "@/lib/country";
 import { conditionMet } from "@/lib/conditions";
@@ -181,6 +182,9 @@ export default function SignupPage() {
           // checkbox (recorded by handle_new_user, migration 111; ignored
           // before it).
           ...consentMetadata(),
+          // The first-touch campaign, with marketing consent only (G7):
+          // moved out of the metadata by the database at once (187).
+          ...signupAttributionMetadata(),
           // The practice country and the browser's time zone (doctors):
           // handle_new_user stores them (migration 110; ignored before it).
           // Nothing before the Thai release (the database default, BR).

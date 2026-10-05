@@ -41,8 +41,12 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
         <p><strong>3.5 Device and technical data:</strong> device type, operating system version, app version, push notification tokens, and technical error reports.</p>
         <p>
           <strong>3.6 Website usage and marketing attribution:</strong> only with your consent, anonymous usage
-          statistics about our website, and the campaign that brought you to it (for example UTM tags and the
-          referring website), which is saved with your account when you sign up.{" "}
+          statistics about our website and where your visit came from: we save the campaign that brought you (UTM
+          tags), the referring website, the first page you visited and when, with your account when you sign up
+          {founders
+            ? ", or, if you apply to the Founders Program, with your application (kept up to 12 months after its last status change, or while your account exists if you're accepted)."
+            : "."}{" "}
+          Until you confirm your email, we keep these details with your pending signup (deleted when you confirm, or after 30 days at most).{" "}
           <strong>Patient data is never used for analytics or marketing.</strong>
         </p>
         {secretaryInvites && <p><strong>3.7 Secretary invitations:</strong> when a professional invites a secretary, we store the email address they enter and send the invitation to it (at most one resend an hour). The invitation expires after 7 days, and the address is deleted 30 days after the invitation expires or is cancelled.</p>}

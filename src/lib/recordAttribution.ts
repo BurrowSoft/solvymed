@@ -25,3 +25,15 @@ export async function recordSignupAttribution(
   }
   return true;
 }
+
+// G7 (migration 187): moves the attribution kept with the pending signup
+// into signup_attribution (first touch wins, so a cookie row already written
+// stays) and deletes the pending row. Never throws: a failure here never
+// blocks the redirect.
+export async function claimSignupAttribution(supabase: Pick<SupabaseClient, "rpc">): Promise<void> {
+  try {
+    await supabase.rpc("claim_signup_attribution");
+  } catch {
+    // Attribution is best-effort.
+  }
+}
