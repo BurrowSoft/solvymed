@@ -1087,7 +1087,7 @@
           "pt": [
             {
               "type": "p",
-              "text": "Abra uma consulta paga e toque em **Gerar recibo em PDF**. Compartilhe pelo WhatsApp, e-mail ou outro app."
+              "text": "Abra uma consulta paga e toque em **Gerar recibo em PDF** (clínicas no Brasil). Compartilhe pelo WhatsApp, e-mail ou outro app."
             },
             {
               "type": "p",
@@ -1097,7 +1097,7 @@
           "en": [
             {
               "type": "p",
-              "text": "Open a paid appointment and tap **Create receipt PDF**. Share it by WhatsApp, email or another app."
+              "text": "Open a paid appointment and tap **Generate invoice PDF** (clinics in Brazil). Share it by WhatsApp, email or another app."
             },
             {
               "type": "p",
