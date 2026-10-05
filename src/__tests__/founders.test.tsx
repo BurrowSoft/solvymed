@@ -43,8 +43,9 @@ describe("founders helpers", () => {
     const p = founderPayload({ ...form, evil: "x", wants: ["a", 3, "", "b"] }, null);
     expect(p).toMatchObject({ full_name: "Ana Souza", email: "ana@example.com", country: "BR", wants: ["a", "b"], consent: true, utm: {} });
     expect(p).not.toHaveProperty("evil");
-    const withUtm = founderPayload(form, { first_seen_at: "x", utm_source: "ig", referrer_host: "instagram.com" });
-    expect(withUtm.utm).toEqual({ utm_source: "ig", referrer: "instagram.com" });
+    const withUtm = founderPayload(form, { first_seen_at: "2026-09-01T00:00:00.000Z", utm_source: "ig", referrer_host: "instagram.com", landing_path: "/pt-BR/founders" });
+    // G3: the landing page and first visit too (183 keeps them, as signups do).
+    expect(withUtm.utm).toEqual({ utm_source: "ig", referrer: "instagram.com", landing_path: "/pt-BR/founders", first_seen_at: "2026-09-01T00:00:00.000Z" });
   });
 
   it("the visitor's IP: the first forwarded address, else x-real-ip, else none", () => {
@@ -108,7 +109,7 @@ describe("POST /api/founders/apply", () => {
     const attr = encodeURIComponent(JSON.stringify({ first_seen_at: "2026-09-01T00:00:00Z", utm_campaign: "founders" }));
     const consent = (marketing: 0 | 1) => `sm_consent=1.0${marketing}.${Math.floor(Date.now() / 1000)}`;
     await post(form, undefined, `sm_attr=${attr}; ${consent(1)}`);
-    expect((h.rpc[0].args.p_payload as { utm: unknown }).utm).toEqual({ utm_campaign: "founders" });
+    expect((h.rpc[0].args.p_payload as { utm: unknown }).utm).toEqual({ utm_campaign: "founders", first_seen_at: "2026-09-01T00:00:00Z" });
     h.rpc = [];
     await post({ ...form, utm: { utm_source: "forged" } });
     expect((h.rpc[0].args.p_payload as { utm: unknown }).utm).toEqual({});
