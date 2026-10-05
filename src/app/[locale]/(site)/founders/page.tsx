@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { headers } from "next/headers";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { Link } from "@/i18n/navigation";
 import { liveFeatures } from "@/lib/liveFeatures";
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createAnonClient } from "@supabase/supabase-js";
 import { defaultFoundersCountry, foundersAlternates, foundersShareMeta, foundersUrl } from "@/lib/founders";
 import { readPlaces, type Place } from "@/lib/foundersPlaces";
 import { FoundersForm } from "./FoundersForm";
@@ -58,8 +57,13 @@ function PlacesList({ title, places, t }: { title: string; places: Place[] | nul
 export default async function FoundersPage({ params }: { params: Promise<{ locale: string }> }) {
   if (!liveFeatures.founders) notFound();
   const { locale } = await params;
+  // Static per locale, refreshed at most once a minute (ISR; cf): no cookies
+  // or headers here. The counts are public (founder_places is granted to anon).
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "founders" });
-  const db = await createClient();
+  const db = createAnonClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
   const [br, th] = await Promise.all([readPlaces(db, "BR"), readPlaces(db, "TH")]);
 
   const get = [t("get1"), t("get2"), t("get3")];
@@ -120,7 +124,7 @@ export default async function FoundersPage({ params }: { params: Promise<{ local
         <section id="apply" className="mx-auto max-w-2xl scroll-mt-20 px-4 pb-14">
           <h2 className="mb-5 text-xl font-bold text-slate-900">{t("formTitle")}</h2>
           <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
-            <FoundersForm locale={locale} defaultCountry={defaultFoundersCountry(locale, (await headers()).get("x-vercel-ip-country"))} showRulesLink={liveFeatures.foundersRules} />
+            <FoundersForm locale={locale} defaultCountry={defaultFoundersCountry(locale)} showRulesLink={liveFeatures.foundersRules} />
             <p className="mt-5 text-xs leading-relaxed text-slate-500">
               {t.rich("privacyNotice", { privacy: (c) => <Link href="/privacy" className="underline">{c}</Link> })}
             </p>
