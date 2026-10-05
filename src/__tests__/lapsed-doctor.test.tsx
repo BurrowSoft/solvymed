@@ -49,7 +49,9 @@ vi.mock("@/lib/supabase/server", () => ({
 
 import ClinicInactivePage from "@/app/[locale]/(site)/auth/clinic-inactive/page";
 import { OpenActivePractice, PracticeSwitcher, SwitchDoctorList, practiceLabel } from "@/components/PracticeSwitcher";
-import { PICKED_KEY, todosPractices, type MyPractice } from "@/lib/actingPractice";
+import { PICKED_KEY, allFallbackCookieScript, allFallbackId, browserActingCookie, todosPractices, type MyPractice } from "@/lib/actingPractice";
+import { actingPracticeFor } from "@/lib/effectiveProfId";
+import { AllSchedule } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/AllSchedule";
 
 const doc = (id: string, name: string, active: boolean | null | undefined, primary = false): MyPractice =>
   ({ professional_id: id, display_name: name, title: "Dra.", accent_color: null, is_primary: primary, subscription_active: active });
@@ -149,7 +151,6 @@ describe("the switcher and Todos", () => {
   });
 
   it("every doctor lapsed: Todos shows the note and an empty list, no zones hint, no grid, no New appointment (c6)", async () => {
-    const { AllSchedule } = await import("@/app/[locale]/(site)/dashboard/(gated)/schedule/AllSchedule");
     const el = await AllSchedule({
       practices: [doc(A, "Ana", false, true), doc(B, "Bia", false)], userId: "sec-1", today: "2026-10-05",
       date: null, doctor: null, view: "week", locale: "pt-BR",
@@ -159,6 +160,26 @@ describe("the switcher and Todos", () => {
     expect(screen.queryByTestId("zones-hint")).toBeNull();
     expect(screen.getByText(pt.secretaryPractices.allEmpty)).toBeTruthy();
     expect(screen.queryByTestId("all-add")).toBeNull();
+  });
+
+  it("Todos with a lapsed primary (53's ❌): outside the Agenda she acts for her first active doctor, server and browser alike", async () => {
+    const list = [doc(A, "Ana", false, true), doc(B, "Bia", false), doc(C, "Caio", true)];
+    expect(allFallbackId(list)).toBe(C);
+    expect(allFallbackId([doc(A, "Ana", true, true), doc(B, "Bia", true)])).toBeNull(); // primary active: primary
+    expect(allFallbackId([doc(A, "Ana", false, true), doc(B, "Bia", false)])).toBeNull(); // nobody active
+    expect(allFallbackId([doc(A, "Ana", undefined, true), doc(B, "Bia", true)])).toBeNull(); // before 182
+    // The server's acting doctor (the same choice as its header).
+    h.cookie = "all";
+    h.practices = list;
+    expect(await actingPracticeFor(A, "sec-all")).toBe(C);
+    // The browser client's: the cookie the dashboard writes before any script.
+    new Function(allFallbackCookieScript(C))();
+    document.cookie = "sm_practice=all; path=/";
+    expect(browserActingCookie()).toBe(C);
+    new Function(allFallbackCookieScript(null))();
+    expect(browserActingCookie()).toBeNull();
+    expect(allFallbackCookieScript('x";alert(1)//')).not.toContain("alert");
+    document.cookie = "sm_practice=; path=/; max-age=0";
   });
 
   it("cf's words in en / pt-BR / th", () => {
