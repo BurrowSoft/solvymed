@@ -119,6 +119,21 @@ describe("privacy 2026-10-08: Resend's support alerts (visible), LINE names the 
   });
 });
 
+describe("privacy 2026-10-09: §3.6 marketing attribution, signups and Founders applications (visible)", () => {
+  it("what is saved and where, in both languages; the Founders clause with the Founders page", () => {
+    let r = render(<PrivacyEn turnstile={false} founders />);
+    expect(r.container.textContent).toContain("only with your consent, anonymous usage statistics about our website and where your visit came from: we save the campaign that brought you (UTM tags), the referring website, the first page you visited and when, with your account when you sign up, or, if you apply to the Founders Program, with your application (kept up to 12 months after its last status change, or while your account exists if you're accepted).");
+    r.unmount();
+    r = render(<PrivacyEn turnstile={false} />);
+    expect(r.container.textContent).toContain("the first page you visited and when, with your account when you sign up. ");
+    expect(r.container.textContent).not.toContain("Founders Program, with your application");
+    r.unmount();
+    r = render(<PrivacyPtBR turnstile={false} founders />);
+    expect(r.container.textContent).toContain("somente com o seu consentimento, estatísticas anônimas de uso do nosso site e a origem da sua visita: guardamos a campanha que trouxe você (tags UTM), o site de origem, a primeira página que você visitou e quando, com a sua conta quando você se cadastra, ou, se você se inscrever no Programa Fundadores, com a sua inscrição (guardada até 12 meses após a última mudança de status, ou enquanto a sua conta existir, se você for aceito).");
+    r.unmount();
+  });
+});
+
 describe("privacy policy: automatic WhatsApp processors (whatsapp-auto-live)", () => {
   it("hidden today; with it, the Z-API and WhatsApp (Meta) rows + §6e's line, in both languages", () => {
     expect(conditionMet("whatsapp-auto-live")).toBe(false);
