@@ -1005,6 +1005,7 @@
     "decline": "거절",
     "inviteDeclined": "이 초대를 거절했습니다.",
     "teamLimitReachedInvitee": "이 의사의 팀이 가득 찼습니다. 먼저 자리를 비워 달라고 요청하세요.",
+    "differentCountry": "You can only join doctors in the same country as your practice.",
     "genericError": "문제가 발생했습니다. 다시 시도해 주세요.",
     "teamTitle": "팀",
     "teamSub": "예약, 환자, 결제를 돕는 비서입니다. 대기 중인 초대를 포함해 최대 3명.",

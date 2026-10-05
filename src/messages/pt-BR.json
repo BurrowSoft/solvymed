@@ -1005,6 +1005,7 @@
     "decline": "Recusar",
     "inviteDeclined": "Você recusou este convite.",
     "teamLimitReachedInvitee": "A equipe desta clínica está completa. Peça que liberem uma vaga primeiro.",
+    "differentCountry": "Você só pode entrar na equipe de médicos do mesmo país do seu consultório.",
     "genericError": "Algo deu errado. Tente novamente.",
     "teamTitle": "Equipe",
     "teamSub": "A equipe que ajuda com a agenda, os pacientes e os pagamentos. Até 3 pessoas, contando convites pendentes.",

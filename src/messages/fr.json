@@ -1005,6 +1005,7 @@
     "decline": "Refuser",
     "inviteDeclined": "Vous avez refusé cette invitation.",
     "teamLimitReachedInvitee": "L'équipe de ce cabinet est complète. Demandez d'abord qu'une place soit libérée.",
+    "differentCountry": "You can only join doctors in the same country as your practice.",
     "genericError": "Une erreur s'est produite. Réessayez.",
     "teamTitle": "Équipe",
     "teamSub": "Les secrétaires qui vous aident pour l'agenda, les patients et les paiements. Jusqu'à 3, invitations en attente comprises.",

@@ -158,5 +158,9 @@
   "app-361-batch": {
     "met": false,
     "what": "The app build with mobile #361 (the 1.6.x batch: Settings → Integrations → Import → \"Import patients\" pointing to the website + the Patients empty-state hint; the WhatsApp API row hidden while server_flags.whatsapp_auto is off; the Agenda arrow labels; Thai เลขานุการ) is RELEASED on Google Play. Gates Help P13's app line and the App Map's app import-pointer and WhatsApp-row rules."
+  },
+  "app-365-secretary-join": {
+    "met": false,
+    "what": "The app build with mobile #365 (0a slice 1b: a secretary's Settings → \"Entrar na equipe de outro médico\" / \"Join another doctor's team\" → \"Código de convite\" → \"Entrar\", behind server_flags.multi_practice_secretary) is RELEASED on Google Play. Gates (together with multi-practice-live) Help C4's app line and the App Map's app join rule."
   }
 }

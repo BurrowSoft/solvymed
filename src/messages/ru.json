@@ -1005,6 +1005,7 @@
     "decline": "Отклонить",
     "inviteDeclined": "Вы отклонили это приглашение.",
     "teamLimitReachedInvitee": "Команда этого врача заполнена. Попросите сначала освободить место.",
+    "differentCountry": "You can only join doctors in the same country as your practice.",
     "genericError": "Что-то пошло не так. Попробуйте снова.",
     "teamTitle": "Команда",
     "teamSub": "Секретари, которые помогают с расписанием, пациентами и оплатами. До 3 человек, включая неподтверждённые приглашения.",

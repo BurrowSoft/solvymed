@@ -1005,6 +1005,7 @@
     "decline": "辞退する",
     "inviteDeclined": "この招待を辞退しました。",
     "teamLimitReachedInvitee": "この医師のチームは満員です。先に枠を空けてもらってください。",
+    "differentCountry": "You can only join doctors in the same country as your practice.",
     "genericError": "問題が発生しました。もう一度お試しください。",
     "teamTitle": "チーム",
     "teamSub": "予約・患者・支払いを手伝う受付スタッフです。保留中の招待を含めて最大3人。",

@@ -12,6 +12,8 @@ const ERROR_KEY: Record<string, string> = {
   account_not_secretary: "accountNotSecretary",
   already_in_a_clinic: "alreadyInClinic",
   team_limit_reached: "teamLimitReachedInvitee",
+  // Migration 181: a secretary serves doctors of one country only (cf).
+  different_country: "differentCountry",
 };
 
 export function InviteDecision({ code, locale }: { code: string; locale: string }) {

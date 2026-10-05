@@ -1005,6 +1005,7 @@
     "decline": "Ablehnen",
     "inviteDeclined": "Sie haben diese Einladung abgelehnt.",
     "teamLimitReachedInvitee": "Das Team dieser Praxis ist voll. Bitten Sie zuerst um einen freien Platz.",
+    "differentCountry": "You can only join doctors in the same country as your practice.",
     "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "teamTitle": "Team",
     "teamSub": "Sekretariatskräfte, die bei Terminen, Patienten und Zahlungen helfen. Bis zu 3, offene Einladungen mitgezählt.",
