@@ -1,3 +1,4 @@
+import { zoneCityName } from "@/lib/country";
 // "Today" and "now" in the practice's time zone, for server code. Vercel
 // runs in UTC, so new Date().toISOString() is a day ahead in Brazil from
 // 21:00. Every server-side date that a person reads or that gets stored on
@@ -120,7 +121,9 @@ export function zonedInstant(date: string, time: string, tz?: string | null): nu
   return guess;
 }
 
-// The zone's city, as people say it: "America/Sao_Paulo" → "Sao Paulo".
+// The zone's city, as people say it: a country's own spelling when the
+// registry has one ("America/Sao_Paulo" → "São Paulo"), else the IANA last
+// segment with spaces ("America/Porto_Velho" → "Porto Velho").
 export function zoneCity(tz: string): string {
-  return (tz.split("/").pop() ?? tz).replace(/_/g, " ");
+  return zoneCityName(tz) ?? (tz.split("/").pop() ?? tz).replace(/_/g, " ");
 }

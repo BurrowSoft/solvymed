@@ -31,10 +31,17 @@ describe("zonedInstant", () => {
 });
 
 describe("zoneCity", () => {
-  it("the last segment, underscores as spaces", () => {
-    expect(zoneCity("America/Sao_Paulo")).toBe("Sao Paulo");
-    expect(zoneCity("America/Manaus")).toBe("Manaus");
-    expect(zoneCity("America/Argentina/Buenos_Aires")).toBe("Buenos Aires");
-    expect(zoneCity("UTC")).toBe("UTC");
+  it("the registry's accented spellings (the app's #379 list), else the IANA last segment", () => {
+    expect(Object.fromEntries(["America/Sao_Paulo", "America/Belem", "America/Araguaina", "America/Maceio", "America/Cuiaba", "America/Santarem", "America/Eirunepe"].map((z) => [z, zoneCity(z)]))).toEqual({
+      "America/Sao_Paulo": "São Paulo", "America/Belem": "Belém", "America/Araguaina": "Araguaína", "America/Maceio": "Maceió",
+      "America/Cuiaba": "Cuiabá", "America/Santarem": "Santarém", "America/Eirunepe": "Eirunepé",
+    });
+    expect(["America/Manaus", "America/Porto_Velho", "America/Rio_Branco", "America/Noronha", "Asia/Bangkok", "America/Argentina/Buenos_Aires", "UTC"].map(zoneCity))
+      .toEqual(["Manaus", "Porto Velho", "Rio Branco", "Noronha", "Bangkok", "Buenos Aires", "UTC"]);
+  });
+
+  it("TH and the default have no spellings of their own", async () => {
+    const { countryProfile } = await import("@/lib/country");
+    expect([countryProfile("TH").zoneCities, countryProfile("ZZ").zoneCities]).toEqual([{}, {}]);
   });
 });
