@@ -172,3 +172,16 @@ describe("the day Todos opens on (f0/c6)", () => {
     expect(todosDay(null, null, spToday, todayIn)).toEqual({ today: "2026-10-06", currentDate: "2026-10-06" });
   });
 });
+
+describe("arrow labels (53's a11y nit; cf's copy)", () => {
+  it("say what moves, per view, in all three languages", () => {
+    for (const [view, prev, next] of [["day", "Dia anterior", "Próximo dia"], ["week", "Semana anterior", "Próxima semana"], ["month", "Mês anterior", "Próximo mês"]] as const) {
+      const { unmount } = show(view);
+      expect(screen.getByRole("button", { name: prev })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: next })).toBeInTheDocument();
+      unmount();
+    }
+    expect([en.schedule.prevWeek, en.schedule.nextMonth]).toEqual(["Previous week", "Next month"]);
+    expect([th.schedule.prevDay, th.schedule.nextWeek, th.schedule.prevMonth]).toEqual(["วันก่อนหน้า", "สัปดาห์ถัดไป", "เดือนก่อนหน้า"]);
+  });
+});
