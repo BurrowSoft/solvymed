@@ -67,7 +67,7 @@ export const TOOL_DEFS: ToolDef[] = [
   },
   {
     name: "list_appointments",
-    description: "The clinic's appointments and blocked times between two dates (YYYY-MM-DD, the clinic's time zone, at most 14 days; up to 121 days when filtered by patient). To act on ONE appointment, always pass what the user said (patient and/or start HH:MM): if several match, the USER gets a list to choose from; never pick one yourself. When the user's message is an option they tapped from such a list, pass that message verbatim as tapped (with the same from/to/patient/start as before). Returns ids, patient, date, times, status and payment.",
+    description: "The clinic's appointments and blocked times between two dates (YYYY-MM-DD, the clinic's time zone, at most 14 days; up to 121 days when filtered by patient). To act on ONE appointment, always pass what the user said (patient and/or start HH:MM): if several match, the USER gets a list to choose from; never pick one yourself. When the user's message is an option they tapped from such a list, pass that message verbatim as tapped (with the same from/to/patient/start as before). Returns ids, patient, date, times, status (statusLabel: the status in the user's language, say that one) and payment.",
     input_schema: obj({ from: { type: "string" }, to: { type: "string" }, patient: { type: "string" }, start: { type: "string" }, tapped: { type: "string" } }, ["from", "to"]),
   },
   {
@@ -428,6 +428,8 @@ async function listAppointments(ctx: ToolContext, input: Record<string, unknown>
       start: hhmm(r.start_time),
       end: hhmm(r.end_time),
       status: r.status,
+      // Say this one to the user (the reader's words; 53).
+      statusLabel: ctx.t.statusLabel(r.status),
       ...(r.status === "blocked"
         ? {}
         : {

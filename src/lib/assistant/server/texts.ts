@@ -95,8 +95,21 @@ function textsFrom(locale: string, messages: typeof en) {
     // SlotChoiceView: assistant.chipAt with the long date).
     chipAt: (date: string, time: string, calendar?: DateCalendar) =>
       as("chipAt", { date: formatDateLabel(locale, date, { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" }, calendar), time }),
+    // An appointment status in the reader's words, the Agenda's own labels
+    // (53: en/th answers said "(scheduled)"); unknown keys as they are.
+    statusLabel: (status: string) => {
+      const key = STATUS_KEY[status];
+      return (key && (messages.schedule as Record<string, string>)[key]) || status;
+    },
   };
 }
+
+// The Agenda's status labels (schedule.*), as ScheduleClient's STATUS_KEY.
+const STATUS_KEY: Record<string, string> = {
+  tentative: "statusTentative", proposal: "statusProposal", scheduled: "statusScheduled",
+  confirmed: "statusConfirmed", completed: "statusCompleted", cancelled: "statusCancelled",
+  late: "statusLate", absent: "statusAbsent", blocked: "statusBlocked",
+};
 
 export type ServerTexts = ReturnType<typeof textsFrom>;
 
