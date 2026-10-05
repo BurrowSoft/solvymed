@@ -5,26 +5,30 @@ import { inRowPractice } from "@/lib/rowPractice";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { countryProfile } from "@/lib/country";
 import { normalizePromptPayId } from "@/lib/promptpay";
-import { withBrandTitle } from "@/lib/doctorName";
+import { shortDoctorName, withBrandTitle } from "@/lib/doctorName";
 import { statusReasonLive } from "@/lib/statusReason";
+import { clinicDate, validZone } from "@/lib/clinicTime";
+import { doctorColors } from "@/lib/doctorPalette";
+import { sharedZone, viewRange, type AgendaView } from "@/lib/calendarRange";
 import type { MyPractice } from "@/lib/actingPractice";
 import { RowPractice } from "@/components/RowPractice";
+import { ItemCalendar } from "@/components/PracticeCalendar";
 import { AutoRefresh } from "@/components/AutoRefresh";
-import type { DoctorTagInfo } from "@/components/DoctorTag";
-import { brandAccent, readableAccent } from "@/lib/readableAccent";
-import { ScheduleNav, ScheduleUndoToast } from "./ScheduleClient";
+import { DoctorDot, type DoctorTagInfo } from "@/components/DoctorTag";
+import { ScheduleNav, ScheduleUndoToast, ViewToggle } from "./ScheduleClient";
 import { BookingRequestsPanel } from "./BookingRequestsPanel";
 import { getTentativeBookings } from "./booking-actions";
 import { ScheduleRow, type RowPracticeCtx } from "./ScheduleRow";
 import { AllAddButtons } from "./AllAddButtons";
-import type { CalendarAppt } from "./CalendarView";
+import { CalendarView, type CalendarAppt, type CalendarDoctors } from "./CalendarView";
 
 type Bookings = Parameters<typeof BookingRequestsPanel>[0]["bookings"];
 
 // One doctor's part of the "All" schedule (166): read AS that doctor (the
 // acting practice for these queries only), so the money, the payment QR,
-// the procedures and the requests are that practice's.
-async function practicePart(p: MyPractice, userId: string): Promise<{ ctx: RowPracticeCtx; tag: DoctorTagInfo; bookings: Bookings }> {
+// the procedures, the requests, the time zone and the calendar are that
+// practice's. color: by her list's order (lib/doctorPalette).
+async function practicePart(p: MyPractice, userId: string, color: string): Promise<{ ctx: RowPracticeCtx; tag: DoctorTagInfo; bookings: Bookings; zone: string }> {
   return inRowPractice(p.professional_id, async () => {
     const supabase = await createClient();
     const country = await getPracticeCountry(supabase, userId, p.professional_id);
@@ -34,10 +38,18 @@ async function practicePart(p: MyPractice, userId: string): Promise<{ ctx: RowPr
       supabase.from("procedures").select("id, name, duration_minutes, price, payment_type").eq("professional_id", p.professional_id).eq("active", true).order("name"),
       getTentativeBookings(),
     ]);
-    const clinic = (Array.isArray(clinicResult.data) ? clinicResult.data[0] : null) as { pix_key?: string | null; promptpay_id?: string | null; clinic_name?: string | null; clinic_city?: string | null } | null;
-    const tag: DoctorTagInfo = { id: p.professional_id, name: withBrandTitle(p.title, p.display_name) || "—", accent: p.accent_color };
+    const clinic = (Array.isArray(clinicResult.data) ? clinicResult.data[0] : null) as { pix_key?: string | null; promptpay_id?: string | null; clinic_name?: string | null; clinic_city?: string | null; time_zone?: string | null } | null;
+    const name = withBrandTitle(p.title, p.display_name);
+    const tag: DoctorTagInfo = {
+      id: p.professional_id,
+      name: name || "—",
+      short: shortDoctorName(name) || "—",
+      color,
+      calendar: profile.calendar,
+    };
     return {
       tag,
+      zone: validZone(clinic?.time_zone),
       ctx: {
         currency: profile.currency,
         pixKey: profile.paymentQr === "pix" ? clinic?.pix_key ?? null : null,
@@ -51,18 +63,28 @@ async function practicePart(p: MyPractice, userId: string): Promise<{ ctx: RowPr
   });
 }
 
-// The Agenda's "Todos" (166; behind liveFeatures.multiPractice): the day of
-// every doctor she serves in one list by time, each appointment with its
-// doctor (a dot in their colour + the name) and filter chips per doctor.
-// Every action on a row acts for that row's doctor (RowPractice). A new
-// appointment or a block asks for the doctor first (AllAddButtons).
-export async function AllSchedule({ practices, userId, today, currentDate, doctor, locale }: {
-  practices: MyPractice[]; userId: string; today: string; currentDate: string; doctor: string | null; locale: string;
+// The Agenda's "Todos" (166; behind liveFeatures.multiPractice): every
+// doctor she serves, each appointment with its doctor (a dot in their
+// colour + the name), filter chips per doctor, and the views List / Day
+// (a column per doctor) / Week / Month. Every action on an appointment
+// acts for that appointment's doctor (RowPractice), with that practice's
+// calendar for its dates. A new appointment or a block asks for the doctor
+// first (AllAddButtons).
+export async function AllSchedule({ practices, userId, today, currentDate, doctor, view, locale }: {
+  practices: MyPractice[]; userId: string; today: string; currentDate: string; doctor: string | null; view: AgendaView; locale: string;
 }) {
   const [t, tp] = await Promise.all([getTranslations("schedule"), getTranslations("secretaryPractices")]);
-  const parts = await Promise.all(practices.map((p) => practicePart(p, userId)));
+  const colors = doctorColors(practices.map((p) => p.professional_id));
+  const parts = await Promise.all(practices.map((p) => practicePart(p, userId, colors.get(p.professional_id)!)));
   const byId = new Map(parts.map((x) => [x.tag.id, x]));
   const shownIds = doctor && byId.has(doctor) ? [doctor] : [...byId.keys()];
+  const shown = shownIds.map((id) => byId.get(id)!);
+
+  const zone = sharedZone(shown.map((x) => x.zone));
+  const grid = view !== "list" && zone ? view : null;
+  // Their shared today; across zones, her primary's (as before).
+  const shownToday = zone ? clinicDate(new Date(), zone) : today;
+  const { start, end } = viewRange(grid ?? "list", currentDate);
 
   const supabase = await createClient();
   const cols = `id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note, professional_id${statusReasonLive() ? ", status_reason, status_by" : ""}`;
@@ -70,16 +92,19 @@ export async function AllSchedule({ practices, userId, today, currentDate, docto
     .from("appointments")
     .select(cols)
     .in("professional_id", shownIds)
-    .eq("date", currentDate)
+    .gte("date", start)
+    .lte("date", end)
     .order("start_time");
   const appointments = ((data ?? []) as unknown as (CalendarAppt & { professional_id: string })[])
     .filter((a) => byId.has(a.professional_id));
-  const bookings = parts.filter((x) => shownIds.includes(x.tag.id)).flatMap((x) => x.bookings);
-  const todayCount = currentDate === today ? appointments.filter((a) => a.status !== "blocked").length : null;
+  const bookings = shown.flatMap((x) => x.bookings);
+  const todayCount = currentDate === shownToday ? appointments.filter((a) => a.date === shownToday && a.status !== "blocked").length : null;
   const prefix = locale === "en" ? "" : `/${locale}`;
-  const chip = (id: string | null) => `${prefix}/dashboard/schedule?date=${currentDate}${id ? `&doctor=${id}` : ""}`;
+  const chip = (id: string | null) => `${prefix}/dashboard/schedule?date=${currentDate}&view=${view}${id ? `&doctor=${id}` : ""}`;
+  const doctors: CalendarDoctors = Object.fromEntries(shown.map((x) => [x.tag.id, { tag: x.tag, ctx: x.ctx }]));
 
   return (
+    <ItemCalendar calendar={zone ? shown[0].tag.calendar : undefined}>
     <div className="p-6 lg:p-8 max-w-6xl">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
@@ -88,45 +113,68 @@ export async function AllSchedule({ practices, userId, today, currentDate, docto
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <AutoRefresh />
+          <ViewToggle currentView={grid ?? "list"} currentDate={currentDate} disabled={zone ? [] : ["day", "week", "month"]} />
           <AllAddButtons doctors={parts.map((x) => ({ tag: x.tag, ctx: x.ctx }))} defaultDate={currentDate} preselected={doctor} />
         </div>
       </div>
 
       <nav data-testid="doctor-chips" className="mb-4 flex flex-wrap gap-2">
-        {[{ id: null as string | null, name: tp("all"), accent: null as string | null }, ...parts.map((x) => x.tag)].map((c) => {
+        {[{ id: null as string | null, name: tp("all"), color: null as string | null }, ...parts.map((x) => x.tag)].map((c) => {
           const on = (c.id ?? null) === (doctor && byId.has(doctor) ? doctor : null);
           return (
             <Link key={c.id ?? "all"} href={chip(c.id)} aria-current={on ? "true" : undefined}
               className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${on ? "border-teal-600 bg-teal-600 text-white" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"}`}>
-              {c.id && <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ backgroundColor: readableAccent(brandAccent(c.accent), "#ffffff") }} />}
+              {c.color && <DoctorDot color={c.color} />}
               {c.name}
             </Link>
           );
         })}
       </nav>
 
+      {!zone && (
+        <p data-testid="zones-hint" role="note" className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">{tp("zonesDiffer")}</p>
+      )}
+
       <BookingRequestsPanel bookings={bookings} />
 
-      <div className="mb-6 flex items-center gap-3">
-        <ScheduleNav currentDate={currentDate} currentView="list" today={today} />
-      </div>
-      {appointments.length === 0 ? (
-        <div className="rounded-2xl border border-slate-100 bg-white p-12 text-center">
-          <p className="font-semibold text-slate-500">{currentDate === today ? tp("allEmpty") : t("noAppts")}</p>
-        </div>
+      {grid ? (
+        <CalendarView
+          appointments={appointments}
+          currentDate={currentDate}
+          today={shownToday}
+          view={grid}
+          currency={shown[0].ctx.currency}
+          procedures={shown[0].ctx.procedures}
+          doctors={doctors}
+          doctorOrder={shownIds}
+        />
       ) : (
-        <div className="space-y-3">
-          {appointments.map((appt) => {
-            const part = byId.get(appt.professional_id)!;
-            return (
-              <RowPractice key={appt.id} id={appt.professional_id}>
-                <ScheduleRow appt={appt} ctx={part.ctx} today={today} doctor={part.tag} />
-              </RowPractice>
-            );
-          })}
-        </div>
+        <>
+          <div className="mb-6 flex items-center gap-3">
+            <ScheduleNav currentDate={currentDate} currentView="list" today={shownToday} />
+          </div>
+          {appointments.length === 0 ? (
+            <div className="rounded-2xl border border-slate-100 bg-white p-12 text-center">
+              <p className="font-semibold text-slate-500">{currentDate === shownToday ? tp("allEmpty") : t("noAppts")}</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {appointments.map((appt) => {
+                const part = byId.get(appt.professional_id)!;
+                return (
+                  <RowPractice key={appt.id} id={appt.professional_id}>
+                    <ItemCalendar calendar={part.tag.calendar}>
+                      <ScheduleRow appt={appt} ctx={part.ctx} today={shownToday} doctor={part.tag} />
+                    </ItemCalendar>
+                  </RowPractice>
+                );
+              })}
+            </div>
+          )}
+        </>
       )}
       <ScheduleUndoToast />
     </div>
+    </ItemCalendar>
   );
 }

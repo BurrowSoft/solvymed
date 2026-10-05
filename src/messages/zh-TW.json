@@ -1950,6 +1950,7 @@
     "switcherLabel": "Schedule for",
     "all": "All",
     "allEmpty": "No appointments today.",
+    "zonesDiffer": "These doctors are in different time zones. Use the list, or pick one doctor to see the calendar.",
     "doctorField": "Doctor",
     "todayWith": "Today with {doctor}",
     "notifyTitle": "Notifications per doctor",

@@ -1950,6 +1950,7 @@
     "switcherLabel": "Agenda de",
     "all": "Todos",
     "allEmpty": "Nenhuma consulta hoje.",
+    "zonesDiffer": "Esses médicos estão em fusos horários diferentes. Use a lista ou escolha um médico para ver o calendário.",
     "doctorField": "Médico",
     "todayWith": "Hoje com {doctor}",
     "notifyTitle": "Notificações por médico",
