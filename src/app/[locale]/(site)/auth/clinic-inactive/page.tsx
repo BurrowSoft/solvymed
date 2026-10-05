@@ -4,8 +4,10 @@ import { createClient } from "@/lib/supabase/server";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { SignOutButton } from "@/components/SignOutButton";
-import { PracticeSwitcher } from "@/components/PracticeSwitcher";
+import { OpenActivePractice, SwitchDoctorList } from "@/components/PracticeSwitcher";
 import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
+import { isLapsed } from "@/lib/actingPractice";
+import { withBrandTitle } from "@/lib/doctorName";
 import { liveFeatures } from "@/lib/liveFeatures";
 
 type MyClinic = { professional_name: string | null; subscription_active: boolean | null };
@@ -39,6 +41,28 @@ export default async function ClinicInactivePage({ params }: { params: Promise<{
   // be stuck (every dashboard page sends her back; 9a).
   const practices = liveFeatures.multiPractice ? await myPractices(user.id) : null;
   const acting = practices && practices.length > 1 ? await actingPracticeFor(roleRow.invited_by_professional_id as string, user.id) : null;
+  if (practices && practices.length > 1 && acting) {
+    // 2+ doctors (d1/cf, the app's slice 2): name the lapsed doctor, list
+    // her others; and on load, open an active one if there is one.
+    const tp = await getTranslations({ locale, namespace: "secretaryPractices" });
+    const lapsed = practices.find((p) => p.professional_id === acting);
+    const doctor = (lapsed ? withBrandTitle(lapsed.title, lapsed.display_name) : "") || clinic?.professional_name || "";
+    const active = practices.find((p) => p.professional_id !== acting && !isLapsed(p));
+    const home = `${prefix}/dashboard`;
+    return (
+      <AuthPageShell>
+        <AuthCard centered>
+          {active && <OpenActivePractice lapsed={acting} target={active.professional_id} href={home} />}
+          <h1 className="auth-heading">{t("clinicInactiveTitle")}</h1>
+          <p className="mb-8 text-slate-500">
+            {doctor ? tp("inactiveBody", { doctor }) : t("clinicInactiveBodyGeneric")}
+          </p>
+          <SwitchDoctorList practices={practices} current={acting} href={home} />
+          <SignOutButton label={t("signOut")} />
+        </AuthCard>
+      </AuthPageShell>
+    );
+  }
   return (
     <AuthPageShell>
       <AuthCard centered>
@@ -48,11 +72,6 @@ export default async function ClinicInactivePage({ params }: { params: Promise<{
             ? t("clinicInactiveBody", { name: clinic.professional_name })
             : t("clinicInactiveBodyGeneric")}
         </p>
-        {practices && practices.length > 1 && acting && (
-          <div className="mb-6 flex justify-center">
-            <PracticeSwitcher practices={practices} current={acting} />
-          </div>
-        )}
         <SignOutButton label={t("signOut")} />
       </AuthCard>
     </AuthPageShell>
