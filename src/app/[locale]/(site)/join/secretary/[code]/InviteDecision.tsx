@@ -37,7 +37,7 @@ export function InviteDecision({ code, locale, secondPractice = false }: { code:
     start(async () => {
       const result = await acceptSecretaryInvite(code);
       if (result.ok && secondPractice) {
-        setJoined(`${tp("joinedTeam", { doctor: result.doctor }).trim()} ${tp("joinPickHint", { label: tp("switcherLabel") })}`);
+        setJoined(`${result.doctor.trim() ? tp("joinedTeam", { doctor: result.doctor.trim() }) : tp("joinedTeamNoName")} ${tp("joinPickHint", { label: tp("switcherLabel") })}`);
         return;
       }
       if (result.ok) {

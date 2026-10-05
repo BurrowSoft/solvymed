@@ -70,8 +70,25 @@ describe("Settings → Meus colegas", () => {
     expect(screen.getByText("Colega indisponível")).toBeInTheDocument();
     expect(screen.getByText("Adicionado em 07/10/2026")).toBeInTheDocument();
     expect(screen.queryByText("—")).toBeNull();
+    // A confirm first (cf), without the name.
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     fireEvent.click(screen.getByRole("button", { name: pt.colleagues.remove }));
+    expect(confirm).toHaveBeenCalledWith("Remover este colega?\n\nPara adicionar de novo, você vai precisar do código público dele(a).");
     await waitFor(() => expect(screen.getByText(pt.colleagues.empty)).toBeInTheDocument());
+    confirm.mockRestore();
+  });
+  it.each([
+    ["pt-BR", pt, "Remover Dra. Ana Lima dos seus colegas?\n\nPara adicionar de novo, você vai precisar do código público dele(a)."],
+    ["en", en, "Remove Dra. Ana Lima from your colleagues?\n\nTo add them again, you'll need their public code."],
+    ["th", th, "นำ Dra. Ana Lima ออกจากรายชื่อเพื่อนแพทย์หรือไม่\n\nหากต้องการเพิ่มอีกครั้ง คุณจะต้องใช้รหัสสาธารณะของเพื่อนแพทย์"],
+  ])("%s: the confirm names the colleague; Cancel keeps them", (locale, messages, text) => {
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+    intl(<ColleaguesCard initial={[card()]} loadFailed={false} />, locale, messages);
+    fireEvent.click(screen.getByRole("button", { name: (messages as typeof pt).colleagues.remove }));
+    expect(confirm).toHaveBeenCalledWith(text);
+    expect(h.remove).not.toHaveBeenCalled();
+    expect(screen.getByText("Dra. Ana Lima")).toBeInTheDocument();
+    confirm.mockRestore();
   });
 });
 

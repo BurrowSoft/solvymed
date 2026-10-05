@@ -36,7 +36,11 @@ export function ColleaguesCard({ initial, loadFailed }: { initial: ColleagueRow[
     });
   }
 
-  function remove(id: string) {
+  function remove(c: ColleagueRow) {
+    // A confirm first (cf): adding them back needs their public code again.
+    const title = c.available ? t("removeTitle", { colleague: colleagueName(c) }) : t("removeTitleNoName");
+    if (!window.confirm(`${title}\n\n${t("removeBody")}`)) return;
+    const id = c.colleague_id;
     setMsg(null);
     start(async () => {
       const r = await removeColleague(id);
@@ -87,7 +91,7 @@ export function ColleaguesCard({ initial, loadFailed }: { initial: ColleagueRow[
                     <p className="truncate text-xs text-slate-500">{c.available ? c.specialty ?? "" : t("addedOn", { date: formatShortDate(locale, toLocalDateString(new Date(c.added_at))) })}</p>
                   </div>
                 </div>
-                <button type="button" disabled={busy} onClick={() => remove(c.colleague_id)} className="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50">
+                <button type="button" disabled={busy} onClick={() => remove(c)} className="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50">
                   {t("remove")}
                 </button>
               </li>
