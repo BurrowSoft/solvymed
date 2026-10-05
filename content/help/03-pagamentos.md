@@ -54,8 +54,8 @@ O SolvyMed não recebe o dinheiro: o Pix vai direto para a sua conta.
 3. When the payment arrives, mark the appointment as paid.
 {pending:app-1.4.0} Once paid, the appointment shows **Paid** and the QR is no longer offered, so the patient can't pay twice.
 SolvyMed doesn't receive the money: Pix goes straight to your account.
-**No site:** Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Pix Copia e Cola** (botão **Copiar**). O envio por WhatsApp está só no app. Quando o pagamento cair, marque como pago em **Pagamentos**: a consulta fica **Pago** e o QR deixa de aparecer, para o paciente não pagar duas vezes.
-**On the website:** In the **Schedule**, click the QR icon next to the appointment: the **Pix QR code** and the **Pix Copia e Cola** code (with **Copy**) appear. Sending by WhatsApp is app-only. When the payment arrives, mark it as paid in **Payments**: the appointment shows **Paid** and the QR is no longer offered, so the patient can't pay twice.
+**No site:** Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Pix Copia e Cola** (botão **Copiar**). Com o telefone do paciente cadastrado, **Enviar Pix por WhatsApp** (na mesma janela) abre o seu WhatsApp com a mensagem do Pix para o paciente, a mesma do app; ela só sai quando você clicar em enviar no WhatsApp. Quando o pagamento cair, marque como pago em **Pagamentos**: a consulta fica **Pago** e o QR deixa de aparecer, para o paciente não pagar duas vezes.
+**On the website:** In the **Schedule**, click the QR icon next to the appointment: the **Pix QR code** and the **Pix Copia e Cola** code (with **Copy**) appear. With the patient's phone on file, **Send Pix via WhatsApp** (in the same window) opens your WhatsApp with the Pix message for the patient, the same as the app's; it's only sent when you click send in WhatsApp. When the payment arrives, mark it as paid in **Payments**: the appointment shows **Paid** and the QR is no longer offered, so the patient can't pay twice.
 `open:payments`
 
 ---

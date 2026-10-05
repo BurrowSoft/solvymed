@@ -10,6 +10,8 @@ import { statusReasonLive } from "@/lib/statusReason";
 import { clinicDate, validZone } from "@/lib/clinicTime";
 import { doctorColors } from "@/lib/doctorPalette";
 import { sharedZone, todosDay, viewRange, type AgendaView } from "@/lib/calendarRange";
+import { patientPhones } from "@/lib/patientPhones";
+import { offersPaymentQr } from "@/lib/scheduleChecks";
 import type { MyPractice } from "@/lib/actingPractice";
 import { RowPractice } from "@/components/RowPractice";
 import { ItemCalendar } from "@/components/PracticeCalendar";
@@ -57,6 +59,7 @@ async function practicePart(p: MyPractice, userId: string, color: string): Promi
         clinicName: clinic?.clinic_name ?? "",
         clinicCity: clinic?.clinic_city ?? "",
         procedures: (procsResult.data ?? []) as RowPracticeCtx["procedures"],
+        country,
       },
       bookings: ((bookings ?? []) as Bookings).map((b) => ({ ...b, practice: tag })),
     };
@@ -103,6 +106,10 @@ export async function AllSchedule({ practices, userId, today, date, doctor, view
   const todayCount = currentDate === shownToday ? appointments.filter((a) => a.date === shownToday && a.status !== "blocked").length : null;
   const prefix = locale === "en" ? "" : `/${locale}`;
   const chip = (id: string | null) => `${prefix}/dashboard/schedule?view=${view}${date ? `&date=${date}` : ""}${id ? `&doctor=${id}` : ""}`;
+  // G4: the list's phones, only for rows whose practice shares its Pix code.
+  const phones = grid ? {} : await patientPhones(supabase, appointments
+    .filter((a) => { const c = byId.get(a.professional_id)!.ctx; return !!c.pixKey && !!countryProfile(c.country).paymentShare && offersPaymentQr(a); })
+    .map((a) => a.patient_id));
   const doctors: CalendarDoctors = Object.fromEntries(shown.map((x) => [x.tag.id, { tag: x.tag, ctx: x.ctx }]));
 
   return (
@@ -166,7 +173,7 @@ export async function AllSchedule({ practices, userId, today, date, doctor, view
                 return (
                   <RowPractice key={appt.id} id={appt.professional_id}>
                     <ItemCalendar calendar={part.tag.calendar}>
-                      <ScheduleRow appt={appt} ctx={part.ctx} today={shownToday} doctor={part.tag} />
+                      <ScheduleRow appt={appt} ctx={{ ...part.ctx, phones }} today={shownToday} doctor={part.tag} />
                     </ItemCalendar>
                   </RowPractice>
                 );

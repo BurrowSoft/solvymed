@@ -10,6 +10,7 @@ import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTim
 import { UNDO_EVENT, offerUndo, type UndoToken } from "@/lib/scheduleUndo";
 import { generatePixString, pixQrDataUrl } from "@/lib/pix";
 import { generatePromptPayString } from "@/lib/promptpay";
+import { pixPatientMessage, whatsappLink } from "@/lib/whatsappLink";
 import { toLocalDateString } from "@/lib/slots";
 import { dropQueryParam } from "@/lib/dropQueryParam";
 import { DEFAULT_OCCURRENCES, MAX_OCCURRENCES, MIN_OCCURRENCES } from "@/lib/recurrence";
@@ -765,17 +766,25 @@ export function PixQrButton({
   clinicName,
   clinicCity,
   amount,
+  share = null,
 }: {
   pixKey: string;
   clinicName: string;
   clinicCity: string;
   amount?: number;
+  // G4 (the app's "Enviar Pix por WhatsApp"): the patient's phone and the
+  // visit, when the practice country shares payments on WhatsApp and the
+  // patient has a phone (ScheduleRow decides); null = no button.
+  share?: { phone: string; country: string; date: string; time: string } | null;
 }) {
   const t = useTranslations("schedule");
   // "QR Code Pix" in Portuguese, "Pix QR code" elsewhere (UX).
   const title = t("pixQrTitle");
   const [open, setOpen] = useState(false);
   const pixStr = generatePixString(pixKey, clinicName, clinicCity, amount);
+  // The clinic's own WhatsApp opens with the app's pt-BR message; nothing
+  // is sent until they press send there.
+  const waUrl = share ? whatsappLink(share.phone, share.country, pixPatientMessage(share.date, share.time, pixStr)) : null;
   // Built in the page, only while the dialog is open (one per appointment row).
   const qrUrl = open ? pixQrDataUrl(pixStr) : "";
 
@@ -816,6 +825,17 @@ export function PixQrButton({
               </button>
             </div>
           </div>
+          {waUrl && (
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid="send-pix-whatsapp"
+              className="w-full rounded-xl bg-teal-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-teal-700 transition"
+            >
+              {t("sendPixWhatsApp")}
+            </a>
+          )}
         </div>
       </Dialog>
     </>
