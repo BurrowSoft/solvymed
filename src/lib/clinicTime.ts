@@ -1,3 +1,4 @@
+import { zoneCityName } from "@/lib/country";
 // "Today" and "now" in the practice's time zone, for server code. Vercel
 // runs in UTC, so new Date().toISOString() is a day ahead in Brazil from
 // 21:00. Every server-side date that a person reads or that gets stored on
@@ -102,4 +103,27 @@ export function weekRange(date: string): { from: string; to: string } {
 export function previousMonthRange(date: string): { from: string; to: string } {
   const to = addDays(`${date.slice(0, 7)}-01`, -1);
   return { from: `${to.slice(0, 7)}-01`, to };
+}
+
+// The instant (ms) of a wall-clock date + "HH:MM[:SS]" in a zone: the order
+// of appointments across zones ("Todos", cf: 17:30 Manaus is after 18:00
+// São Paulo's 17:00 local). Two passes settle a DST edge.
+export function zonedInstant(date: string, time: string, tz?: string | null): number {
+  const [y, mo, d] = date.split("-").map(Number);
+  const [h, mi, s] = (time || "00:00").split(":").map(Number);
+  const wall = Date.UTC(y, mo - 1, d, h || 0, mi || 0, s || 0);
+  let guess = wall;
+  for (let i = 0; i < 2; i++) {
+    const p = parts(new Date(guess), tz);
+    const shown = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute);
+    guess += wall - shown;
+  }
+  return guess;
+}
+
+// The zone's city, as people say it: a country's own spelling when the
+// registry has one ("America/Sao_Paulo" → "São Paulo"), else the IANA last
+// segment with spaces ("America/Porto_Velho" → "Porto Velho").
+export function zoneCity(tz: string): string {
+  return zoneCityName(tz) ?? (tz.split("/").pop() ?? tz).replace(/_/g, " ");
 }

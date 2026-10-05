@@ -7,7 +7,7 @@ import { countryProfile } from "@/lib/country";
 import { normalizePromptPayId } from "@/lib/promptpay";
 import { shortDoctorName, withBrandTitle } from "@/lib/doctorName";
 import { statusReasonLive } from "@/lib/statusReason";
-import { clinicDate, validZone } from "@/lib/clinicTime";
+import { clinicDate, validZone, zoneCity, zonedInstant } from "@/lib/clinicTime";
 import { doctorColors } from "@/lib/doctorPalette";
 import { sharedZone, todosDay, viewRange, type AgendaView } from "@/lib/calendarRange";
 import { patientPhones } from "@/lib/patientPhones";
@@ -106,6 +106,13 @@ export async function AllSchedule({ practices, userId, today, date, doctor, view
     .order("start_time");
   const appointments = ((data ?? []) as unknown as (CalendarAppt & { professional_id: string })[])
     .filter((a) => byId.has(a.professional_id));
+  // Across zones (cf, via d1): the real order (each time in its doctor's
+  // clock, sorted by the instant), and the city after every time. One zone:
+  // the database's order, no city (unchanged).
+  if (!zone) {
+    const at = (a: CalendarAppt & { professional_id: string }) => zonedInstant(a.date, a.start_time ?? "00:00", byId.get(a.professional_id)!.zone);
+    appointments.sort((x, y) => at(x) - at(y));
+  }
   const bookings = shown.flatMap((x) => x.bookings);
   const todayCount = currentDate === shownToday ? appointments.filter((a) => a.date === shownToday && a.status !== "blocked").length : null;
   const prefix = locale === "en" ? "" : `/${locale}`;
@@ -181,7 +188,7 @@ export async function AllSchedule({ practices, userId, today, date, doctor, view
                 return (
                   <RowPractice key={appt.id} id={appt.professional_id}>
                     <ItemCalendar calendar={part.tag.calendar}>
-                      <ScheduleRow appt={appt} ctx={{ ...part.ctx, phones }} today={shownToday} doctor={part.tag} />
+                      <ScheduleRow appt={appt} ctx={{ ...part.ctx, phones }} today={shownToday} doctor={part.tag} city={zone ? undefined : zoneCity(part.zone)} />
                     </ItemCalendar>
                   </RowPractice>
                 );
