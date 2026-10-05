@@ -314,15 +314,19 @@ type WorkingHours = Record<DayKey, { enabled: boolean; start: string; end: strin
 
 const DAY_KEYS: DayKey[] = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
-function defaultHours(): WorkingHours {
+// The practice country's default week (lib/country). A new account's
+// working_hours is '{}' (the column default), not null: no day saved yet
+// counts as nothing saved, so the form shows the default instead of every
+// day off (f0, TH).
+export function initialHours(saved: Partial<WorkingHours> | null | undefined, country: string | null | undefined): WorkingHours {
+  if (saved && DAY_KEYS.some((k) => saved[k])) return saved as WorkingHours;
+  const d = countryProfile(country).defaultHours;
   const days = {} as WorkingHours;
-  for (const key of DAY_KEYS) {
-    days[key] = { enabled: key !== "sat" && key !== "sun", start: "08:00", end: "18:00" };
-  }
+  for (const key of DAY_KEYS) days[key] = { enabled: d.days.includes(key), start: d.start, end: d.end };
   return days;
 }
 
-export function WorkingHoursForm({ workingHours }: { workingHours: WorkingHours | null }) {
+export function WorkingHoursForm({ workingHours, country }: { workingHours: WorkingHours | null; country?: string | null }) {
   const t = useTranslations("settings");
   const DAYS: { key: DayKey; label: string }[] = [
     { key: "mon", label: t("mon") },
@@ -334,7 +338,7 @@ export function WorkingHoursForm({ workingHours }: { workingHours: WorkingHours 
     { key: "sun", label: t("sun") },
   ];
 
-  const hours: WorkingHours = workingHours ?? defaultHours();
+  const hours: WorkingHours = initialHours(workingHours, country);
   const [enabled, setEnabled] = useState<Record<DayKey, boolean>>(
     Object.fromEntries(DAY_KEYS.map(k => [k, hours[k]?.enabled ?? false])) as Record<DayKey, boolean>
   );
@@ -358,7 +362,9 @@ export function WorkingHoursForm({ workingHours }: { workingHours: WorkingHours 
           {DAYS.map(d => {
             const h = hours[d.key] ?? { enabled: false, start: "08:00", end: "18:00" };
             return (
-              <div key={d.key} className="flex items-center gap-4 py-3 first:pt-0 last:pb-0">
+              // Wraps on a phone (f0: at 375 px the end time ran off the card):
+              // the times go under the day, and each input can shrink.
+              <div key={d.key} className="flex flex-wrap items-center gap-x-4 gap-y-2 py-3 first:pt-0 last:pb-0">
                 <label className="flex items-center gap-2.5 w-32 shrink-0 cursor-pointer">
                   <input
                     type="checkbox"
@@ -369,19 +375,19 @@ export function WorkingHoursForm({ workingHours }: { workingHours: WorkingHours 
                   />
                   <span className={`text-sm font-semibold ${enabled[d.key] ? "text-slate-900" : "text-slate-400"}`}>{d.label}</span>
                 </label>
-                <div className={`flex items-center gap-2 transition ${enabled[d.key] ? "opacity-100" : "opacity-30 pointer-events-none"}`}>
+                <div className={`flex min-w-0 max-w-full flex-1 basis-56 items-center gap-2 transition ${enabled[d.key] ? "opacity-100" : "opacity-30 pointer-events-none"}`}>
                   <input
                     type="time"
                     name={`${d.key}_start`}
                     defaultValue={h.start}
-                    className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
+                    className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none sm:max-w-[9rem]"
                   />
-                  <span className="text-sm text-slate-400">{t("to")}</span>
+                  <span className="shrink-0 text-sm text-slate-400">{t("to")}</span>
                   <input
                     type="time"
                     name={`${d.key}_end`}
                     defaultValue={h.end}
-                    className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
+                    className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none sm:max-w-[9rem]"
                   />
                 </div>
               </div>

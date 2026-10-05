@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { createClient as createServerClient, type createClient } from "@/lib/supabase/server";
-import { ACTING_COOKIE, type MyPractice } from "@/lib/actingPractice";
+import { ACTING_COOKIE, ALL_PRACTICES, allFallbackId, type MyPractice } from "@/lib/actingPractice";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { rowPracticeOverride } from "@/lib/rowPractice";
 
@@ -60,6 +60,9 @@ export async function actingPracticeFor(primary: string | null, userId: string):
   const chosen = (await cookies()).get(ACTING_COOKIE)?.value;
   if (!chosen || chosen === primary) return primary;
   const list = await myPractices(userId);
+  // "Todos": her primary, or her first active doctor when the primary lapsed
+  // (the same choice lib/supabase/server's header makes).
+  if (chosen === ALL_PRACTICES) return (list && allFallbackId(list)) ?? primary;
   return list?.some((p) => p.professional_id === chosen) ? chosen : primary;
 }
 

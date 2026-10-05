@@ -24,7 +24,7 @@ import { OpenInApp } from "@/components/OpenInApp";
 import { BrandMarkTile } from "@/components/BrandLogo";
 import { ActingPracticeReset, PracticeSwitcher } from "@/components/PracticeSwitcher";
 import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
-import { ACTING_COOKIE, ALL_PRACTICES } from "@/lib/actingPractice";
+import { ACTING_COOKIE, ALL_PRACTICES, allFallbackCookieScript, allFallbackId } from "@/lib/actingPractice";
 import { PracticeCalendarProvider } from "@/components/PracticeCalendar";
 
 function isVersionBelow(current: string, minimum: string): boolean {
@@ -244,6 +244,12 @@ export default async function DashboardLayout({
               page's last actions, even at 200% zoom (e7). */}
           <main className={`flex-1 overflow-auto lg:pl-0 lg:pt-0 ${showTrialChip ? "pt-2" : "pt-14"}${panelOn ? " pb-24" : ""}`}>
             <div className="min-h-full">
+              {/* "Todos": the browser client's doctor outside the Agenda (her
+                  first active one when her primary lapsed), written before
+                  any script creates a client. Only a UUID from her own list. */}
+              {chosenCookie === ALL_PRACTICES && practices && (
+                <script dangerouslySetInnerHTML={{ __html: allFallbackCookieScript(allFallbackId(practices)) }} />
+              )}
               {staleChoice && <ActingPracticeReset />}
               {!staleChoice && practices && practices.length > 1 && (
                 <div className="flex justify-end px-6 pt-4 lg:px-8">

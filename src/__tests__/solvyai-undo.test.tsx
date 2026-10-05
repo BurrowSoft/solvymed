@@ -60,7 +60,8 @@ describe("Desfazer toast", () => {
     let finish: (v: boolean) => void = () => {};
     h.undo.mockImplementation(() => new Promise<boolean>((r) => { finish = r; }));
     await saveOne();
-    const btn = screen.getByText(/assistant\.undo/);
+    // Desfazer shows "…" until the move to the screen settles (#370): wait for it (as #373).
+    const btn = await screen.findByText(/assistant\.undo/);
     fireEvent.click(btn);
     fireEvent.click(btn);
     await waitFor(() => expect(screen.getByRole("status").querySelector("button[aria-busy='true']")).not.toBeNull());
@@ -75,7 +76,7 @@ describe("Desfazer toast", () => {
     h.undo.mockResolvedValue(false);
     await saveOne();
     push.mockClear();
-    fireEvent.click(screen.getByText(/assistant\.undo/));
+    fireEvent.click(await screen.findByText(/assistant\.undo/));
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("assistant.undoFailed"));
     fireEvent.click(screen.getByText("assistant.openItem"));
     expect(push).toHaveBeenCalledWith("/pt-BR/dashboard/schedule?date=2026-09-29&highlight=demo-1");
