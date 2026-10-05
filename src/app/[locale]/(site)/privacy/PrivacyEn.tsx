@@ -67,7 +67,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             ["Supabase", "Database, authentication, file storage", "Brazil (São Paulo region)"],
             ["Vercel", "Website hosting; server processing in Brazil (São Paulo), static content via a global edge network", "Brazil / global"],
             ["Stripe", "Subscription payments", "USA / global"],
-            ["Resend", secretaryInvites ? "Transactional email (confirmations, password resets) and invitations sent at a professional's request" : "Transactional email (confirmations, password resets)", "USA"],
+            ["Resend", `Transactional email (confirmations, password resets)${secretaryInvites ? ", invitations sent at a professional's request" : ""} and alerts to our support team about an account (for example, a deletion request or a clinic setting that needs our action)`, "USA"],
             ["Expo", "Push notification delivery", "USA"],
             ["Sentry", "Error monitoring for the app and website (no patient data)", "USA"],
             ["PostHog", "Website usage statistics, only with your consent", "EU"],
@@ -80,7 +80,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
               ? [["Anthropic (SolvyAI, professionals only, when used)", "Processes the professional's typed questions and requests to answer them; for actions the professional has switched on, the patient's name, date of birth and the appointment details needed for the request", "USA"]]
               : []),
             ...(line
-              ? [["LY Corporation (LINE), Thai clinics only, for patients who connect LINE", "Sends appointment notices (the clinic's name, the date and time, and what happened: confirmed, moved, reminder, cancelled); we store the patient's LINE user ID to deliver them", "Japan / Thailand"]]
+              ? [["LY Corporation (LINE), Thai clinics only, for patients who connect LINE", "Sends appointment notices (the doctor's and the clinic's names, the date and time, and what happened: confirmed, moved, reminder, cancelled); we store the patient's LINE user ID to deliver them", "Japan / Thailand"]]
               : []),
           ]}
         />
@@ -124,7 +124,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
         <Section title="6c. LINE notices (Thailand)">
           <ul className="list-disc space-y-1 pl-5">
             <li>Patients of Thai clinics can connect LINE to receive appointment notices. They choose to connect and can stop at any time.</li>
-            <li>LINE receives only the clinic&rsquo;s name, the appointment&rsquo;s date and time, and what happened to it (confirmed, moved, reminder, cancelled): never clinical information.</li>
+            <li>LINE receives only the doctor&rsquo;s and the clinic&rsquo;s names, the appointment&rsquo;s date and time, and what happened to it (confirmed, moved, reminder, cancelled): never clinical information.</li>
             <li>If you block SolvyMed on LINE, we stop sending messages but keep the link so they resume if you unblock. To remove it, tap Disconnect (Settings → LINE) in the app or delete your account.</li>
             <li>The delivery history of LINE notices is deleted after 90 days.</li>
           </ul>

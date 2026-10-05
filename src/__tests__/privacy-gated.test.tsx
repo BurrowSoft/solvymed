@@ -94,3 +94,27 @@ describe("privacy policy: SolvyAI / LINE blocks follow their conditions", () => 
     r.unmount();
   });
 });
+
+describe("privacy 2026-10-08: Resend's support alerts (visible), LINE names the doctor (hidden)", () => {
+  it("Resend lists the support-team alerts, with or without invitations, in both languages", () => {
+    let r = render(<PrivacyEn turnstile={false} />);
+    expect(r.container.textContent).toContain("Transactional email (confirmations, password resets) and alerts to our support team about an account (for example, a deletion request or a clinic setting that needs our action)");
+    r.unmount();
+    r = render(<PrivacyEn turnstile={false} secretaryInvites />);
+    expect(r.container.textContent).toContain("Transactional email (confirmations, password resets), invitations sent at a professional's request and alerts to our support team about an account");
+    r.unmount();
+    r = render(<PrivacyPtBR turnstile={false} />);
+    expect(r.container.textContent).toContain("E-mails transacionais (confirmações, redefinição de senha) e alertas à nossa equipe de suporte sobre uma conta (por exemplo, um pedido de exclusão ou uma configuração da clínica que precisa de ação nossa)");
+    r.unmount();
+  });
+
+  it("LINE (once live) names the doctor and the clinic", () => {
+    let r = render(<PrivacyEn turnstile={false} line />);
+    expect(r.container.textContent).toContain("LINE receives only the doctor\u2019s and the clinic\u2019s names");
+    expect(r.container.textContent).toContain("the doctor's and the clinic's names, the date and time");
+    r.unmount();
+    r = render(<PrivacyPtBR turnstile={false} line />);
+    expect(r.container.textContent).toContain("O LINE recebe só os nomes do médico e da clínica");
+    r.unmount();
+  });
+});
