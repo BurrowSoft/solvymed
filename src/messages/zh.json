@@ -1005,6 +1005,7 @@
     "decline": "拒绝",
     "inviteDeclined": "你已拒绝此邀请。",
     "teamLimitReachedInvitee": "该医生的团队已满。请先让对方腾出名额。",
+    "differentCountry": "You can only join doctors in the same country as your practice.",
     "genericError": "出现问题，请重试。",
     "teamTitle": "团队",
     "teamSub": "协助你管理预约、患者和付款的秘书。最多 3 人，包括待接受的邀请。",
