@@ -46,6 +46,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
           {founders
             ? ", or, if you apply to the Founders Program, with your application (kept up to 12 months after its last status change, or while your account exists if you're accepted)."
             : "."}{" "}
+          Until you confirm your email, we keep these details with your pending signup (deleted when you confirm, or after 30 days at most).{" "}
           <strong>Patient data is never used for analytics or marketing.</strong>
         </p>
         {secretaryInvites && <p><strong>3.7 Secretary invitations:</strong> when a professional invites a secretary, we store the email address they enter and send the invitation to it (at most one resend an hour). The invitation expires after 7 days, and the address is deleted 30 days after the invitation expires or is cancelled.</p>}

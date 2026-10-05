@@ -132,6 +132,15 @@ describe("privacy 2026-10-09: §3.6 marketing attribution, signups and Founders 
     expect(r.container.textContent).toContain("somente com o seu consentimento, estatísticas anônimas de uso do nosso site e a origem da sua visita: guardamos a campanha que trouxe você (tags UTM), o site de origem, a primeira página que você visitou e quando, com a sua conta quando você se cadastra, ou, se você se inscrever no Programa Fundadores, com a sua inscrição (guardada até 12 meses após a última mudança de status, ou enquanto a sua conta existir, se você for aceito).");
     r.unmount();
   });
+
+  it("G7 (187): kept with the pending signup until the email is confirmed (cf's words)", () => {
+    let r = render(<PrivacyEn turnstile={false} />);
+    expect(r.container.textContent).toContain("Until you confirm your email, we keep these details with your pending signup (deleted when you confirm, or after 30 days at most).");
+    r.unmount();
+    r = render(<PrivacyPtBR turnstile={false} founders />);
+    expect(r.container.textContent).toContain("Até você confirmar o e-mail, guardamos esses dados com o seu cadastro pendente (apagados na confirmação ou em no máximo 30 dias).");
+    r.unmount();
+  });
 });
 
 describe("privacy policy: automatic WhatsApp processors (whatsapp-auto-live)", () => {

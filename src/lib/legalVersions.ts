@@ -30,7 +30,9 @@
 // referring site, the first page and when) and where: with the account at
 // signup and, while the Founders page is live, with a Founders application
 // (its retention, as 129's purge). True today (signups since 100/104,
-// applications' utm since 129; cf/c6). Mobile's accepting migration for
+// applications' utm since 129; cf/c6); and, with 187, that it waits with the
+// pending signup until the email is confirmed (30 days at most). Mobile's
+// accepting migration (184) for
 // ('privacy','2026-10-09') applied FIRST.
 export const PRIVACY_VERSION = "2026-10-09";
 export const TERMS_VERSION = "2026-10-01";

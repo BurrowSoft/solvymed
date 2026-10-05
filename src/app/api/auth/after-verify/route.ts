@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { routing } from "@/i18n/routing";
 import { routeAfterAuth } from "@/lib/authRouting";
-import { recordSignupAttribution } from "@/lib/recordAttribution";
+import { claimSignupAttribution, recordSignupAttribution } from "@/lib/recordAttribution";
 import { ATTRIBUTION_COOKIE, ATTRIBUTION_MAX_AGE_S, ATTRIBUTION_SENT } from "@/lib/attribution";
 
 // Called by /auth/verify after the user clicked Continue and the browser
@@ -23,9 +23,14 @@ export async function POST(request: NextRequest) {
   if (!user) return NextResponse.json({ redirect: `${localePrefix}/auth/login` }, { status: 401 });
 
   // Signup confirmations only ("email" is the newer name for the same OTP).
-  const sentAttribution = linkType === "signup" || linkType === "email"
+  const isSignup = linkType === "signup" || linkType === "email";
+  const sentAttribution = isSignup
     ? await recordSignupAttribution(supabase as unknown as SupabaseClient, request.cookies)
     : false;
+  // G7 (187): the campaign kept with the pending signup, for a confirmation
+  // opened in another browser; after the cookie's row, which wins. Always
+  // called, so the pending row is deleted either way.
+  if (isSignup) await claimSignupAttribution(supabase as unknown as SupabaseClient);
 
   const redirect = await routeAfterAuth(supabase as unknown as SupabaseClient, user, localePrefix, linkType);
   const response = NextResponse.json({ redirect });
