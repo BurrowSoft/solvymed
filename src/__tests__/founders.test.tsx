@@ -102,11 +102,18 @@ describe("POST /api/founders/apply", () => {
 
   it("the utm comes only from the consent-gated attribution cookie", async () => {
     const attr = encodeURIComponent(JSON.stringify({ first_seen_at: "2026-09-01T00:00:00Z", utm_campaign: "founders" }));
-    await post(form, undefined, `sm_attr=${attr}`);
+    const consent = (marketing: 0 | 1) => `sm_consent=1.0${marketing}.${Math.floor(Date.now() / 1000)}`;
+    await post(form, undefined, `sm_attr=${attr}; ${consent(1)}`);
     expect((h.rpc[0].args.p_payload as { utm: unknown }).utm).toEqual({ utm_campaign: "founders" });
     h.rpc = [];
     await post({ ...form, utm: { utm_source: "forged" } });
     expect((h.rpc[0].args.p_payload as { utm: unknown }).utm).toEqual({});
+    // As at signup: no marketing consent (withdrawn, never given, or expired) → no campaign.
+    for (const cookie of [`sm_attr=${attr}; ${consent(0)}`, `sm_attr=${attr}`, `sm_attr=${attr}; sm_consent=1.01.1`]) {
+      h.rpc = [];
+      await post(form, undefined, cookie);
+      expect((h.rpc[0].args.p_payload as { utm: unknown }).utm).toEqual({});
+    }
   });
 
   it("maps the database's refusals to status codes, and sends no email", async () => {
