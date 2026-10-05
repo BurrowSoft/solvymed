@@ -8,7 +8,8 @@ import { NotifyPrefsCard, type NotifyPref } from "./NotifyPrefsCard";
 import { ShowSetupRow } from "./ShowSetupRow";
 import { NewsSettingsCard, TourSettingsCard } from "@/components/tour/TourProvider";
 import { liveFeatures } from "@/lib/liveFeatures";
-import { actingPracticeFor } from "@/lib/effectiveProfId";
+import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
+import { doctorColors } from "@/lib/doctorPalette";
 import { conditionMet } from "@/lib/conditions";
 import { SolvyAiSettingsCard } from "@/components/solvyai/SolvyAiSettings";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
@@ -69,10 +70,13 @@ export default async function SettingsPage({
     // 166 (behind the flag): her notifications per doctor, read without the
     // acting header (they span every doctor she serves). null on an error.
     let notifyPrefs: NotifyPref[] | null = null;
+    // Each doctor's colour, as on the Agenda's "Todos" (by her list's order).
+    let notifyColors: Record<string, string> = {};
     if (liveFeatures.multiPractice) {
       const plain = await createClient({ acting: false });
-      const { data, error } = await plain.rpc("get_secretary_notify_prefs");
+      const [{ data, error }, practices] = await Promise.all([plain.rpc("get_secretary_notify_prefs"), myPractices(user.id)]);
       notifyPrefs = error ? null : ((data ?? []) as NotifyPref[]);
+      notifyColors = Object.fromEntries(doctorColors((practices ?? []).map((p) => p.professional_id)));
     }
     return (
       <div className="p-6 lg:p-8 max-w-3xl">
@@ -85,7 +89,7 @@ export default async function SettingsPage({
             doctor has nothing to choose between). */}
         {notifyPrefs && notifyPrefs.length > 1 && (
           <div className="mt-6">
-            <NotifyPrefsCard prefs={notifyPrefs} />
+            <NotifyPrefsCard prefs={notifyPrefs} colors={notifyColors} />
           </div>
         )}
         <div className="mt-6">

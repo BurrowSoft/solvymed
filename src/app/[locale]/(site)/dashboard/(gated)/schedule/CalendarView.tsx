@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type React from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { AppointmentStatusSelect, DeleteAppointmentButton, NewAppointmentButton, RescheduleButton } from "./ScheduleClient";
 import { MOVABLE_STATUSES } from "@/lib/scheduleChecks";
@@ -12,9 +12,18 @@ import { hasAmount, showsPayment } from "@/lib/paymentRules";
 import type { Currency } from "@/lib/country";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 import { dateLocale, formatDateLabel, formatDateRangeLabel, plainSpaces, type DateCalendar } from "@/lib/dateLabels";
-import { usePracticeCalendar } from "@/components/PracticeCalendar";
+import { ItemCalendar, usePracticeCalendar } from "@/components/PracticeCalendar";
+import { DoctorDot, DoctorTag, type DoctorTagInfo } from "@/components/DoctorTag";
+import { RowPractice } from "@/components/RowPractice";
+import type { RowPracticeCtx } from "./ScheduleRow";
+
+// The "All" schedule's doctors (166), by id: whose each appointment is, and
+// that doctor's money, procedures and calendar for its detail and actions.
+export type CalendarDoctors = Record<string, { tag: DoctorTagInfo; ctx: RowPracticeCtx }>;
 
 export type CalendarAppt = {
+  // The "All" schedule (166): the appointment's doctor.
+  professional_id?: string;
   id: string;
   date: string;
   patient_id?: string | null;
@@ -132,6 +141,10 @@ function chipStyle(status: string) {
 }
 
 // ─── Time grid (day + week) ────────────────────────────────────────────────
+// doctorCols ("Todos" Day view, 166): one column per doctor for the one
+// day, headed by the doctor (dot + name); the time column and the headers
+// stay in place while the columns scroll sideways (UX: 4+ doctors on a
+// narrow screen). tagFor (the week view): each block shows its doctor.
 function TimeGrid({
   days,
   appointments,
@@ -139,6 +152,8 @@ function TimeGrid({
   onSelect,
   onDayClick,
   showHeaders,
+  doctorCols,
+  tagFor,
 }: {
   days: string[];
   appointments: CalendarAppt[];
@@ -146,10 +161,14 @@ function TimeGrid({
   onSelect: (a: CalendarAppt) => void;
   onDayClick?: (day: string) => void;
   showHeaders: boolean;
+  doctorCols?: DoctorTagInfo[];
+  tagFor?: (a: CalendarAppt) => DoctorTagInfo | undefined;
 }) {
   const weekdays = weekdayLabels(useLocale());
-  const byDay = new Map<string, CalendarAppt[]>();
-  for (const day of days) byDay.set(day, appointments.filter(a => a.date === day));
+  const cols = doctorCols
+    ? doctorCols.map((doc) => ({ key: doc.id, day: days[0], doc, appts: appointments.filter(a => a.date === days[0] && a.professional_id === doc.id) }))
+    : days.map((day) => ({ key: day, day, doc: undefined as DoctorTagInfo | undefined, appts: appointments.filter(a => a.date === day) }));
+  const headers = showHeaders || !!doctorCols;
 
   // The "now" line is placed after mount (and every minute): read during
   // render, the server's clock (UTC) and a browser in another zone disagree
@@ -170,8 +189,8 @@ function TimeGrid({
   return (
     <div className="flex">
       {/* Time gutter */}
-      <div className="shrink-0 w-14 border-r border-slate-100 bg-white">
-        {showHeaders && <div className="h-12 border-b border-slate-100" />}
+      <div className={`shrink-0 w-14 border-r border-slate-100 bg-white ${doctorCols ? "sticky left-0 z-20" : ""}`}>
+        {headers && <div className={`h-12 border-b border-slate-100 bg-white ${doctorCols ? "sticky top-0 z-30" : ""}`} />}
         {HOURS.map(h => (
           <div key={h} className="relative border-b border-slate-100 h-16">
             <span className="absolute -top-2.5 right-2 text-[10px] font-medium text-slate-400 select-none">
@@ -181,14 +200,18 @@ function TimeGrid({
         ))}
       </div>
 
-      {/* Day columns */}
-      {days.map((day, ci) => {
-        const appts = byDay.get(day) ?? [];
+      {/* Day (or doctor) columns */}
+      {cols.map(({ key, day, doc, appts }, ci) => {
         const isToday = day === today;
         const d = new Date(day + "T12:00:00");
         return (
-          <div key={day} className="relative flex-1 min-w-[110px] border-r border-slate-100 last:border-r-0">
-            {showHeaders && (
+          <div key={key} className={`relative flex-1 border-r border-slate-100 last:border-r-0 ${doc ? "min-w-[160px]" : "min-w-[110px]"}`}>
+            {doc && (
+              <div data-testid="doctor-column" className="sticky top-0 z-10 h-12 flex items-center justify-center border-b border-slate-100 bg-white px-2">
+                <DoctorTag info={doc} />
+              </div>
+            )}
+            {!doc && showHeaders && (
               <div className={`h-12 flex flex-col items-center justify-center border-b ${isToday ? "bg-teal-50 border-teal-100" : "bg-white border-slate-100"}`}>
                 <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{weekdays[ci]}</span>
                 <button
@@ -226,6 +249,11 @@ function TimeGrid({
                     style={{ '--appt-top': `${Math.max(top, 0)}px`, '--appt-height': `${height}px` } as React.CSSProperties}
                     onClick={() => onSelect(appt)}
                   >
+                    {!doc && tagFor?.(appt) && (
+                      <p className="flex items-center gap-1 text-[10px] font-semibold leading-tight truncate">
+                        <DoctorDot color={tagFor(appt)!.color} className="h-1.5 w-1.5" />{tagFor(appt)!.short}
+                      </p>
+                    )}
                     <p className="text-[11px] font-bold leading-tight truncate">{appt.patient_name}</p>
                     {height >= 34 && (
                       <p className="text-[10px] leading-tight truncate opacity-75">
@@ -250,12 +278,14 @@ function MonthGrid({
   today,
   onSelect,
   onDayClick,
+  tagFor,
 }: {
   currentDate: string;
   appointments: CalendarAppt[];
   today: string;
   onSelect: (a: CalendarAppt) => void;
   onDayClick: (day: string) => void;
+  tagFor?: (a: CalendarAppt) => DoctorTagInfo | undefined;
 }) {
   const weekdays = weekdayLabels(useLocale());
   const t = useTranslations("schedule");
@@ -287,15 +317,19 @@ function MonthGrid({
                   </span>
                 </div>
                 <div className="space-y-0.5">
-                  {dayAppts.slice(0, 3).map(appt => (
-                    <button
-                      key={appt.id} data-highlight-id={appt.id}
-                      className={`w-full text-left rounded px-1 py-0.5 text-[10px] font-semibold truncate ${chipStyle(appt.status)}`}
-                      onClick={e => { e.stopPropagation(); onSelect(appt); }}
-                    >
-                      {appt.start_time?.slice(0, 5)} {appt.patient_name}
-                    </button>
-                  ))}
+                  {dayAppts.slice(0, 3).map(appt => {
+                    const doc = tagFor?.(appt);
+                    return (
+                      <button
+                        key={appt.id} data-highlight-id={appt.id}
+                        className={`flex w-full items-center gap-1 text-left rounded px-1 py-0.5 text-[10px] font-semibold ${chipStyle(appt.status)}`}
+                        onClick={e => { e.stopPropagation(); onSelect(appt); }}
+                      >
+                        {doc && <DoctorDot color={doc.color} className="h-1.5 w-1.5" />}
+                        <span className="truncate">{appt.start_time?.slice(0, 5)} {doc ? `${doc.short} · ` : ""}{appt.patient_name}</span>
+                      </button>
+                    );
+                  })}
                   {dayAppts.length > 3 && (
                     <p className="text-[10px] text-slate-400 pl-1">{t("moreCount", { n: dayAppts.length - 3 })}</p>
                   )}
@@ -317,8 +351,16 @@ export function CalendarView({
   view,
   currency = "BRL",
   procedures = [],
+  doctors,
+  doctorOrder,
 }: {
   appointments: CalendarAppt[];
+  // "Todos" (166): every shown doctor (by their list's order). Day = a
+  // column per doctor; week and month show each appointment's doctor; the
+  // detail acts for that appointment's doctor, with their money,
+  // procedures and calendar.
+  doctors?: CalendarDoctors;
+  doctorOrder?: string[];
   // For booking again after a no-show (the same patient, procedure, duration).
   procedures?: { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
   currentDate: string;
@@ -334,9 +376,15 @@ export function CalendarView({
   const t = useTranslations("schedule");
   const tPay = useTranslations("payments");
   const [selected, setSelected] = useState<CalendarAppt | null>(null);
+  // The "All" schedule's doctor filter (166) survives moving around.
+  const doctorParam = useSearchParams()?.get("doctor");
+  const keep = doctorParam ? `&doctor=${encodeURIComponent(doctorParam)}` : "";
+  const tagFor = doctors ? (a: CalendarAppt) => (a.professional_id ? doctors[a.professional_id]?.tag : undefined) : undefined;
+  const doctorCols = doctors && doctorOrder ? doctorOrder.map((id) => doctors[id]?.tag).filter((x): x is DoctorTagInfo => !!x) : undefined;
+  const sel = selected?.professional_id && doctors ? doctors[selected.professional_id] : undefined;
 
   function go(date: string, v = view) {
-    router.push(`${pathname}?date=${date}&view=${v}`);
+    router.push(`${pathname}?date=${date}&view=${v}${keep}`);
   }
 
   function navPrev() {
@@ -356,11 +404,11 @@ export function CalendarView({
     <div>
       {/* Calendar nav */}
       <div className="mb-3 flex items-center gap-2">
-        <button onClick={navPrev} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
+        <button onClick={navPrev} aria-label={t(`prev${view === "day" ? "Day" : view === "week" ? "Week" : "Month"}`)} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-600"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
         <span className="min-w-[200px] text-center text-sm font-bold text-slate-900">{headerLabel}</span>
-        <button onClick={navNext} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
+        <button onClick={navNext} aria-label={t(`next${view === "day" ? "Day" : view === "week" ? "Week" : "Month"}`)} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-600"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
         {currentDate !== today && (
@@ -371,7 +419,7 @@ export function CalendarView({
       {/* Calendar body */}
       <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
         {(view === "day" || view === "week") && (
-          <div className="overflow-y-auto max-h-[calc(100vh-330px)]">
+          <div className={`max-h-[calc(100vh-330px)] ${view === "day" && doctorCols ? "overflow-auto" : "overflow-y-auto"}`}>
             <TimeGrid
               days={view === "day" ? [currentDate] : getWeekDays(currentDate)}
               appointments={appointments}
@@ -379,6 +427,8 @@ export function CalendarView({
               onSelect={setSelected}
               onDayClick={day => go(day, "day")}
               showHeaders={view === "week"}
+              doctorCols={view === "day" ? doctorCols : undefined}
+              tagFor={tagFor}
             />
           </div>
         )}
@@ -389,18 +439,22 @@ export function CalendarView({
             today={today}
             onSelect={setSelected}
             onDayClick={day => go(day, "day")}
+            tagFor={tagFor}
           />
         )}
       </div>
 
-      {/* Detail modal */}
+      {/* Detail modal ("Todos": for the appointment's doctor) */}
       {selected && (
+        <RowPractice id={sel ? selected.professional_id ?? null : null}>
+        <ItemCalendar calendar={sel?.tag.calendar}>
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setSelected(null)}>
           <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-start justify-between mb-3">
               <div className="min-w-0 flex-1">
                 <p className="font-bold text-slate-900 truncate">{selected.patient_name}</p>
                 <p className="text-sm text-slate-500"><ConsultTypeLabel value={selected.consultation_type} /></p>
+                {sel && <DoctorTag info={sel.tag} />}
               </div>
               <button onClick={() => setSelected(null)} className="ml-2 rounded-lg p-1 text-slate-400 hover:bg-slate-100 transition">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -422,11 +476,15 @@ export function CalendarView({
               {showsPayment(selected.status, selected.payment_status) && hasAmount(selected.payment_amount) && (
                 <div className={`flex items-center gap-2 text-xs font-semibold ${selected.payment_status === "paid" ? "text-green-600" : "text-orange-500"}`}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 shrink-0"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                  {selected.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")} · {formatMoney(selected.payment_amount, currency)}
+                  {selected.payment_status === "paid" ? t("paidLabel") : t("pendingLabel")} · {formatMoney(selected.payment_amount, sel?.ctx.currency ?? currency)}
                 </div>
               )}
               {selected.notes && <p className="text-[11px] text-slate-400 italic pl-5">{selected.notes}</p>}
             </div>
+            {/* "Todos": no actions for an appointment whose doctor isn't in
+                the map, so nothing can fall back to the cookie's practice
+                (fail closed, as #363). */}
+            {(!doctors || sel) && (
             <div className="flex items-center justify-between pt-3 border-t border-slate-100">
               {selected.status === "blocked"
                 ? <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">{t("blockedLabel")}</span>
@@ -436,14 +494,17 @@ export function CalendarView({
                 {MOVABLE_STATUSES.includes(selected.status) && <RescheduleButton id={selected.id} date={selected.date} start={selected.start_time} durationMin={selected.duration_minutes ?? undefined} />}
                 {/* A no-show is never moved (UX 36): book again instead. */}
                 {selected.status === "absent" && (
-                  <NewAppointmentButton defaultDate={today} currency={currency} procedures={procedures}
+                  <NewAppointmentButton defaultDate={today} currency={sel?.ctx.currency ?? currency} procedures={sel?.ctx.procedures ?? procedures}
                     prefill={{ patientId: selected.patient_id ?? null, patientName: selected.patient_name, procedureName: selected.consultation_type, duration: selected.duration_minutes }} />
                 )}
                 <DeleteAppointmentButton id={selected.id} />
               </div>
             </div>
+            )}
           </div>
         </div>
+        </ItemCalendar>
+        </RowPractice>
       )}
     </div>
   );

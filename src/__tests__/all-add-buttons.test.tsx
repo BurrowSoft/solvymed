@@ -24,8 +24,8 @@ const A = "11111111-1111-4111-8111-111111111111";
 const B = "22222222-2222-4222-8222-222222222222";
 const ctx = (currency: string, proc: string) => ({ currency, pixKey: null, promptPayId: null, clinicName: "", clinicCity: "", procedures: [{ id: proc, name: proc, duration_minutes: 30, payment_type: "private" }] }) as never;
 const doctors = [
-  { tag: { id: A, name: "Dra. Ana", accent: null }, ctx: ctx("BRL", "Consulta") },
-  { tag: { id: B, name: "Dr. Somchai", accent: "#7c3aed" }, ctx: ctx("THB", "Check-up") },
+  { tag: { id: A, name: "Dra. Ana", short: "Dra. Ana", color: "#1D4ED8", calendar: "gregorian" as const }, ctx: ctx("BRL", "Consulta") },
+  { tag: { id: B, name: "Dr. Somchai", short: "Dr. Somchai", color: "#C2410C", calendar: "buddhist" as const }, ctx: ctx("THB", "Check-up") },
 ];
 const show = (preselected: string | null) =>
   render(<NextIntlClientProvider locale="pt-BR" messages={pt}><AllAddButtons doctors={doctors} defaultDate="2026-10-09" preselected={preselected} /></NextIntlClientProvider>);

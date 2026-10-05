@@ -18,19 +18,9 @@ import { getPracticeCountry } from "@/lib/practiceCountry";
 import { statusReasonLive } from "@/lib/statusReason";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
-
-function isoDate(d: Date) { return d.toISOString().split("T")[0]; }
-function addDaysTo(dateStr: string, n: number) {
-  const d = new Date(dateStr + "T12:00:00");
-  d.setDate(d.getDate() + n);
-  return isoDate(d);
-}
-function getWeekStart(dateStr: string) {
-  const d = new Date(dateStr + "T12:00:00");
-  const dow = d.getDay();
-  d.setDate(d.getDate() - (dow === 0 ? 6 : dow - 1));
-  return isoDate(d);
-}
+import { parseView, viewRange } from "@/lib/calendarRange";
+import { patientPhones } from "@/lib/patientPhones";
+import { offersPaymentQr } from "@/lib/scheduleChecks";
 
 export default async function SchedulePage({
   params,
@@ -67,7 +57,7 @@ export default async function SchedulePage({
   if (practices && practices.length > 1 && (await cookies()).get(ACTING_COOKIE)?.value === ALL_PRACTICES) {
     const tz = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
     const today0 = clinicDate(new Date(), tz);
-    return <AllSchedule practices={practices} userId={user.id} today={today0} currentDate={dateParam ?? today0} doctor={doctorParam ?? null} locale={locale} />;
+    return <AllSchedule practices={practices} userId={user.id} today={today0} date={dateParam ?? null} doctor={doctorParam ?? null} view={parseView(viewParam)} locale={locale} />;
   }
 
   // Amounts are in the practice's currency (its country), not the UI's.
@@ -78,25 +68,8 @@ export default async function SchedulePage({
   const timeZone = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
   const today = clinicDate(new Date(), timeZone);
   const currentDate = dateParam ?? today;
-  const view = (["list", "day", "week", "month"].includes(viewParam ?? "")) ? (viewParam as "list" | "day" | "week" | "month") : "list";
-
-  // Compute date range to fetch
-  let rangeStart = currentDate;
-  let rangeEnd = currentDate;
-  if (view === "week") {
-    rangeStart = getWeekStart(currentDate);
-    rangeEnd = addDaysTo(rangeStart, 6);
-  } else if (view === "month") {
-    const d = new Date(currentDate + "T12:00:00");
-    const firstDay = new Date(d.getFullYear(), d.getMonth(), 1);
-    const fdow = firstDay.getDay();
-    firstDay.setDate(firstDay.getDate() - (fdow === 0 ? 6 : fdow - 1));
-    rangeStart = isoDate(firstDay);
-    const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0);
-    const ldow = lastDay.getDay();
-    lastDay.setDate(lastDay.getDate() + (ldow === 0 ? 0 : 7 - ldow));
-    rangeEnd = isoDate(lastDay);
-  }
+  const view = parseView(viewParam);
+  const { start: rangeStart, end: rangeEnd } = viewRange(view, currentDate);
 
   // 150 (item 12): the reason a cancelled appointment shows staff.
   const apptCols: string = `id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note${statusReasonLive() ? ", status_reason, status_by" : ""}`;
@@ -146,7 +119,11 @@ export default async function SchedulePage({
 
   const appointments = (apptsResult.data ?? []) as unknown as CalendarAppt[];
   const procedures = (procsResult.data ?? []) as { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
-  const rowCtx: RowPracticeCtx = { currency, pixKey, promptPayId, clinicName, clinicCity, procedures };
+  // G4: the list's phones, only where the Pix code can go to WhatsApp.
+  const phones = view === "list" && pixKey && countryProfile(practiceCountry).paymentShare
+    ? await patientPhones(supabase, appointments.filter(offersPaymentQr).map((a) => a.patient_id))
+    : {};
+  const rowCtx: RowPracticeCtx = { currency, pixKey, promptPayId, clinicName, clinicCity, procedures, country: practiceCountry, phones };
 
   const todayCount = appointments.filter(a => a.date === today && a.status !== "blocked").length;
 

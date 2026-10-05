@@ -118,3 +118,32 @@ describe("privacy 2026-10-08: Resend's support alerts (visible), LINE names the 
     r.unmount();
   });
 });
+
+describe("privacy policy: automatic WhatsApp processors (whatsapp-auto-live)", () => {
+  it("hidden today; with it, the Z-API and WhatsApp (Meta) rows + §6e's line, in both languages", () => {
+    expect(conditionMet("whatsapp-auto-live")).toBe(false);
+    let r = render(<PrivacyEn turnstile={false} notices whatsapp />);
+    expect(r.container.textContent).not.toMatch(/Z-API|Meta/);
+    r.unmount();
+    r = render(<PrivacyEn turnstile={false} notices whatsapp whatsappAuto />);
+    expect(r.container.textContent).toContain("Z-API, Brazilian clinics that turn on automatic WhatsApp messages");
+    expect(r.container.textContent).toContain("WhatsApp (Meta)");
+    expect(r.container.textContent).toContain("Automatic WhatsApp messages are sent from our servers through Z-API, using the clinic\u2019s own Z-API account and WhatsApp number, and delivered by WhatsApp (Meta).");
+    r.unmount();
+    r = render(<PrivacyPtBR turnstile={false} notices whatsapp whatsappAuto />);
+    expect(r.container.textContent).toContain("Z-API, clínicas no Brasil que ativam mensagens automáticas de WhatsApp");
+    expect(r.container.textContent).toContain("As mensagens automáticas de WhatsApp saem dos nossos servidores pela Z-API, com a conta Z-API e o número de WhatsApp da própria clínica, e são entregues pelo WhatsApp (Meta).");
+    r.unmount();
+  });
+});
+
+describe("Z-API row lists every send-whatsapp message (c6 B1)", () => {
+  it("reminders, payment reminders and reschedule requests to the clinic, in both languages", () => {
+    let r = render(<PrivacyEn turnstile={false} notices whatsapp whatsappAuto />);
+    expect(r.container.textContent).toContain("appointment confirmations, changes, cancellations, reminders, payment reminders and a welcome message when they connect, to the patient (their phone number and the message), and reschedule requests to the clinic (the patient's name and the proposed time)");
+    r.unmount();
+    r = render(<PrivacyPtBR turnstile={false} notices whatsapp whatsappAuto />);
+    expect(r.container.textContent).toContain("confirmações, alterações, cancelamentos, lembretes, lembretes de pagamento e uma mensagem de boas-vindas quando ele se conecta, ao paciente (o telefone dele e a mensagem), e pedidos de remarcação à clínica (o nome do paciente e o horário proposto)");
+    r.unmount();
+  });
+});

@@ -10,6 +10,7 @@ import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTim
 import { UNDO_EVENT, offerUndo, type UndoToken } from "@/lib/scheduleUndo";
 import { generatePixString, pixQrDataUrl } from "@/lib/pix";
 import { generatePromptPayString } from "@/lib/promptpay";
+import { pixPatientMessage, whatsappLink } from "@/lib/whatsappLink";
 import { toLocalDateString } from "@/lib/slots";
 import { dropQueryParam } from "@/lib/dropQueryParam";
 import { DEFAULT_OCCURRENCES, MAX_OCCURRENCES, MIN_OCCURRENCES } from "@/lib/recurrence";
@@ -144,10 +145,14 @@ export function ScheduleUndoToast() {
   );
 }
 
-export function ViewToggle({ currentView, currentDate }: { currentView: string; currentDate: string }) {
+// disabled: views not offered ("Todos" across time zones, 166: the list only).
+export function ViewToggle({ currentView, currentDate, disabled = [] }: { currentView: string; currentDate: string; disabled?: string[] }) {
   const t = useTranslations("schedule");
   const router = useRouter();
   const pathname = usePathname();
+  // The "All" schedule's doctor filter (166) survives a view change.
+  const doctor = useSearchParams()?.get("doctor");
+  const keep = doctor ? `&doctor=${encodeURIComponent(doctor)}` : "";
   const views = [
     { id: "list", label: t("list") },
     { id: "day",  label: t("day") },
@@ -159,8 +164,9 @@ export function ViewToggle({ currentView, currentDate }: { currentView: string; 
       {views.map((v, i) => (
         <button
           key={v.id}
-          onClick={() => router.push(`${pathname}?date=${currentDate}&view=${v.id}`)}
-          className={`px-3.5 py-2 transition ${i > 0 ? "border-l border-slate-200" : ""} ${currentView === v.id ? "bg-teal-600 text-white" : "text-slate-600 hover:bg-slate-50"}`}
+          disabled={disabled.includes(v.id)}
+          onClick={() => router.push(`${pathname}?date=${currentDate}&view=${v.id}${keep}`)}
+          className={`px-3.5 py-2 transition ${i > 0 ? "border-l border-slate-200" : ""} ${currentView === v.id ? "bg-teal-600 text-white" : disabled.includes(v.id) ? "cursor-not-allowed text-slate-300" : "text-slate-600 hover:bg-slate-50"}`}
         >
           {v.label}
         </button>
@@ -199,13 +205,13 @@ export function ScheduleNav({ currentDate, currentView = "list", today }: { curr
 
   return (
     <div className="flex items-center gap-2">
-      <button onClick={() => navigate(-1)} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
+      <button onClick={() => navigate(-1)} aria-label={t("prevDay")} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-600"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <div className="text-center min-w-[220px]">
         <p className="font-bold text-slate-900 text-sm">{formatted}</p>
       </div>
-      <button onClick={() => navigate(1)} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
+      <button onClick={() => navigate(1)} aria-label={t("nextDay")} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-600"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
       {!isToday && (
@@ -760,17 +766,25 @@ export function PixQrButton({
   clinicName,
   clinicCity,
   amount,
+  share = null,
 }: {
   pixKey: string;
   clinicName: string;
   clinicCity: string;
   amount?: number;
+  // G4 (the app's "Enviar Pix por WhatsApp"): the patient's phone and the
+  // visit, when the practice country shares payments on WhatsApp and the
+  // patient has a phone (ScheduleRow decides); null = no button.
+  share?: { phone: string; country: string; date: string; time: string } | null;
 }) {
   const t = useTranslations("schedule");
   // "QR Code Pix" in Portuguese, "Pix QR code" elsewhere (UX).
   const title = t("pixQrTitle");
   const [open, setOpen] = useState(false);
   const pixStr = generatePixString(pixKey, clinicName, clinicCity, amount);
+  // The clinic's own WhatsApp opens with the app's pt-BR message; nothing
+  // is sent until they press send there.
+  const waUrl = share ? whatsappLink(share.phone, share.country, pixPatientMessage(share.date, share.time, pixStr)) : null;
   // Built in the page, only while the dialog is open (one per appointment row).
   const qrUrl = open ? pixQrDataUrl(pixStr) : "";
 
@@ -811,6 +825,17 @@ export function PixQrButton({
               </button>
             </div>
           </div>
+          {waUrl && (
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid="send-pix-whatsapp"
+              className="w-full rounded-xl bg-teal-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-teal-700 transition"
+            >
+              {t("sendPixWhatsApp")}
+            </a>
+          )}
         </div>
       </Dialog>
     </>

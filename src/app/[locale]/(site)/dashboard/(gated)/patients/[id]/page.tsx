@@ -8,6 +8,7 @@ import { getTranslations } from "next-intl/server";
 import { PatientTabs, ArchivedBanner, type MedRecord, type Rx } from "./PatientDetailClient";
 import { getArchivePreview, mergeAvailable } from "../actions";
 import { MergedNotice } from "./MergeNotice";
+import { ImportedData } from "./ImportedData";
 import { logPatientOpen, readAccessLog } from "@/lib/accessLog";
 import { getClinicTimeZone } from "@/lib/clinicTime";
 import { AutoRefresh } from "@/components/AutoRefresh";
@@ -78,6 +79,8 @@ export default async function PatientDetailPage({
     sex?: string; birth_date?: string; profession?: string; emergency_phone?: string;
     convenio_type?: string; invite_code?: string; created_at: string;
     booking_blocked?: boolean;
+    // Brought by an import (migration 131): "Dados importados", doctor only.
+    import_id?: string | null;
     archived_at?: string | null; archived_by_name?: string | null; archived_reason?: string | null;
   };
   const isArchived = !!patient.archived_at;
@@ -164,6 +167,9 @@ export default async function PatientDetailPage({
           addressLive={conditionMet("patient-address-live")}
         />
       </div>
+      {/* The app's "Dados importados": doctor only (the RPC refuses a
+          secretary too), read and logged when opened. */}
+      {!isSecretary && patient.import_id && <ImportedData key={patient.id} patientId={patient.id} />}
     </div>
   );
 }

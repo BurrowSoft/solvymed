@@ -56,7 +56,7 @@
     "what": "App 1.4.0 is released on Google Play (iOS is TestFlight-only for now, so Play alone flips it). Includes mobile #137, the patient's appointment view: their pending request can be cancelled ('Cancelar pedido'), a clinic's proposed time can be accepted or declined, an upcoming scheduled/confirmed appointment offers 'Pedir remarcação' only before it starts, and cancelling means talking to the clinic."
   },
   "import-extras-live": {
-    "met": false,
+    "met": true,
     "what": "Imported data is live: migration 131 (patient_import_extras, get_patient_import_extra, access kind 'imported') is applied on production AND the app build with \"Dados importados\" on the patient (mobile feat/import-extra-app) is released on Google Play."
   },
   "merge-patients-live": {
@@ -142,5 +142,9 @@
   "receipt-amount-app-live": {
     "met": false,
     "what": "App 1.6.0 with mobile #348 (no receipt without an amount: the Agenda's receipt action asks to set the amount first, \"Definir valor\" / \"Set amount\"; web #352 parity) is RELEASED on Google Play. Gates Help G5's app line and the App Map's app receipt-amount rule."
+  },
+  "whatsapp-auto-live": {
+    "met": false,
+    "what": "Automatic WhatsApp messages are allowed for real practices: the server guard (server flag whatsapp_auto, default off) turned on with Vitor's OK. They go from our send-whatsapp function through Z-API (the clinic's own Z-API account and number) and are delivered by WhatsApp (Meta). Reveals privacy §5's Z-API + WhatsApp (Meta) rows and §6e's line, WITH a PRIVACY_VERSION bump and mobile's accepting migration applied first. No practice gets automatic WhatsApp before this is met (launch queue)."
   }
 }

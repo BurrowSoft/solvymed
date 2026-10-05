@@ -5,7 +5,7 @@ import { hasAmount, showsPayment } from "@/lib/paymentRules";
 import { SetAmountButton } from "../payments/PaymentsClient";
 import type { CalendarAppt } from "./CalendarView";
 import { formatMoney } from "@/lib/money";
-import type { Currency } from "@/lib/country";
+import { countryProfile, type Currency } from "@/lib/country";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 import { DoctorTag, type DoctorTagInfo } from "@/components/DoctorTag";
 
@@ -18,6 +18,11 @@ export type RowPracticeCtx = {
   clinicName: string;
   clinicCity: string;
   procedures: { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
+  // The practice country (the registry's paymentShare, the wa.me number).
+  country?: string;
+  // The shown patients' phones, by patient id (G4's "Enviar Pix por
+  // WhatsApp"); read only when the practice can share its payment code.
+  phones?: Record<string, string>;
 };
 
 function statusBadge(status: string) {
@@ -32,6 +37,12 @@ function statusBadge(status: string) {
 export async function ScheduleRow({ appt, ctx, today, doctor }: { appt: CalendarAppt; ctx: RowPracticeCtx; today: string; doctor?: DoctorTagInfo }) {
   const t = await getTranslations("schedule");
   const { currency, pixKey, promptPayId, clinicName, clinicCity, procedures } = ctx;
+  // G4: the Pix code to the patient's WhatsApp, when the practice country
+  // shares payments there (registry) and the patient has a phone.
+  const phone = appt.patient_id ? ctx.phones?.[appt.patient_id] : undefined;
+  const pixShare = countryProfile(ctx.country).paymentShare === "whatsapp" && phone?.trim()
+    ? { phone, country: ctx.country!, date: appt.date, time: appt.start_time }
+    : null;
   return (
     <div
       data-highlight-id={appt.id}
@@ -66,7 +77,7 @@ export async function ScheduleRow({ appt, ctx, today, doctor }: { appt: Calendar
               <span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${statusBadge(appt.status)}`}>{t("blockedLabel")}</span>
             )}
             {pixKey && offersPaymentQr(appt) && (
-              <PixQrButton pixKey={pixKey} clinicName={clinicName} clinicCity={clinicCity} amount={appt.payment_amount} />
+              <PixQrButton pixKey={pixKey} clinicName={clinicName} clinicCity={clinicCity} amount={appt.payment_amount} share={pixShare} />
             )}
             {promptPayId && offersPaymentQr(appt) && (
               <PromptPayQrButton promptPayId={promptPayId} amount={appt.payment_amount} />

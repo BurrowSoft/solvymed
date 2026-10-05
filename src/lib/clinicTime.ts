@@ -37,7 +37,7 @@ export async function getClinicTimeZone(
   }
 }
 
-function validZone(tz: string | null | undefined): string {
+export function validZone(tz: string | null | undefined): string {
   if (!tz) return DEFAULT_CLINIC_TZ;
   try {
     new Intl.DateTimeFormat("en-US", { timeZone: tz });
