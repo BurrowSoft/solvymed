@@ -112,3 +112,14 @@ describe("privacy policy: automatic WhatsApp processors (whatsapp-auto-live)", (
     r.unmount();
   });
 });
+
+describe("Z-API row lists every send-whatsapp message (c6 B1)", () => {
+  it("reminders, payment reminders and reschedule requests to the clinic, in both languages", () => {
+    let r = render(<PrivacyEn turnstile={false} notices whatsapp whatsappAuto />);
+    expect(r.container.textContent).toContain("appointment confirmations, changes, cancellations, reminders and payment reminders to the patient (their phone number and the message), and reschedule requests to the clinic (the patient's name and the proposed time)");
+    r.unmount();
+    r = render(<PrivacyPtBR turnstile={false} notices whatsapp whatsappAuto />);
+    expect(r.container.textContent).toContain("confirmações, alterações, cancelamentos, lembretes e lembretes de pagamento ao paciente (o telefone dele e a mensagem), e pedidos de remarcação à clínica (o nome do paciente e o horário proposto)");
+    r.unmount();
+  });
+});

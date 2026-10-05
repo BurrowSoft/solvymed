@@ -84,7 +84,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
               : []),
             ...(whatsappAuto
               ? [
-                  ["Z-API, Brazilian clinics that turn on automatic WhatsApp messages", "Sends the clinic's automatic WhatsApp messages (appointment confirmations, changes and cancellations) from the clinic's own Z-API account and WhatsApp number: the patient's phone number and the message", "Brazil"],
+                  ["Z-API, Brazilian clinics that turn on automatic WhatsApp messages", "Sends the clinic's automatic WhatsApp messages from the clinic's own Z-API account and WhatsApp number: appointment confirmations, changes, cancellations, reminders and payment reminders to the patient (their phone number and the message), and reschedule requests to the clinic (the patient's name and the proposed time)", "Brazil"],
                   ["WhatsApp (Meta)", "Delivers those WhatsApp messages", "USA / global"],
                 ]
               : []),

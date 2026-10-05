@@ -84,7 +84,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
               : []),
             ...(whatsappAuto
               ? [
-                  ["Z-API, clínicas no Brasil que ativam mensagens automáticas de WhatsApp", "Envia as mensagens automáticas de WhatsApp da clínica (confirmações, alterações e cancelamentos de consulta) pela conta Z-API e pelo número de WhatsApp da própria clínica: o telefone do paciente e a mensagem", "Brasil"],
+                  ["Z-API, clínicas no Brasil que ativam mensagens automáticas de WhatsApp", "Envia as mensagens automáticas de WhatsApp da clínica pela conta Z-API e pelo número de WhatsApp da própria clínica: confirmações, alterações, cancelamentos, lembretes e lembretes de pagamento ao paciente (o telefone dele e a mensagem), e pedidos de remarcação à clínica (o nome do paciente e o horário proposto)", "Brasil"],
                   ["WhatsApp (Meta)", "Entrega essas mensagens de WhatsApp", "EUA / global"],
                 ]
               : []),
