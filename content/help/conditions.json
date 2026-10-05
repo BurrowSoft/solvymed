@@ -150,5 +150,9 @@
   "help-th-live": {
     "met": false,
     "what": "The Thai Help articles (the **th** blocks in content/help, labels from the th i18n strings) are live: Vitor has first-passed them (native polish later, not a gate). Until then the Thai text never reaches the JSON, and Thai users read the English articles."
+  },
+  "referrals-live": {
+    "met": false,
+    "what": "\"Refer a colleague\" (167) is live on both platforms: migration 180 applied, server_flags.colleague_referrals on, AND multi_doctor_patient on (else an already-linked patient can't join a second doctor via /join), the app's My colleagues + Refer a colleague in a RELEASED build, liveFeatures.colleagues true on the website, and the privacy §3.1 colleague-list line live with its PRIVACY_VERSION bump (mobile's accepting migration first). Gates Help C12, the App Map rule and the privacy line."
   }
 }
