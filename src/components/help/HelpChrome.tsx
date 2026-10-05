@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
-import { HELP_UI, inlineSegments, type HelpBlock, type HelpLang } from "@/lib/help";
+import { HELP_UI, inlineSegments, type HelpBlock, type HelpView } from "@/lib/help";
 import { BrandMarkTile } from "@/components/BrandLogo";
 
 // The Help Center's frame. Opened from the apps (?app=1) it's bare: no
 // Pricing link, no sign-up button, no prices anywhere (store rules,
 // specs/assistant.md §4). Otherwise the public site's header and footer.
-export function HelpFrame({ app, lang, children }: { app: boolean; lang: HelpLang; children: ReactNode }) {
+export function HelpFrame({ app, lang, children }: { app: boolean; lang: HelpView; children: ReactNode }) {
   const ui = HELP_UI[lang];
   return (
     <>

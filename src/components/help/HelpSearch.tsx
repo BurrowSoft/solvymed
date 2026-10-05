@@ -1,14 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { articleSlug, articleTitle, HELP_UI, searchHelp, type HelpLang } from "@/lib/help";
+import { articleSlug, articleTitle, helpData, HELP_UI, searchHelp, type HelpView } from "@/lib/help";
 import { HelpLink } from "./HelpChrome";
 
 // Instant search over the articles (plain text, no AI), per specs/assistant.md.
-export function HelpSearch({ lang, app }: { lang: HelpLang; app: boolean }) {
-  const ui = HELP_UI[lang];
+// view: the reading language (Thai searches the Thai text, help-th-live).
+export function HelpSearch({ view, app }: { view: HelpView; app: boolean }) {
+  const ui = HELP_UI[view];
+  const { cats, lang } = helpData(view);
   const [q, setQ] = useState("");
-  const results = useMemo(() => searchHelp(q, lang, app), [q, lang, app]);
+  const results = useMemo(() => searchHelp(q, lang, app, cats), [q, lang, app, cats]);
   return (
     <div className="mb-10">
       <label htmlFor="help-search" className="sr-only">{ui.search}</label>

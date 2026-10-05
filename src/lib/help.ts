@@ -22,18 +22,50 @@ export type HelpArticle = {
   appOnly: Record<HelpLang, string> | null;
   // And its neutral title there (e.g. "Your account", not "subscription").
   appTitle: Record<HelpLang, string> | null;
+  // Thai (help-th-live): only in the JSON once live; read by the Help
+  // Center's Thai view, never by SolvyAI (its knowledge stays pt/en).
+  th?: { title: string; body: HelpBlock[]; web: string | null };
 };
 
 // The title a reader sees: the app variant's neutral one when there is one.
 export function articleTitle(a: HelpArticle, lang: HelpLang, app: boolean): string {
   return app && a.appTitle ? a.appTitle[lang] : a.title[lang];
 }
-export type HelpCategory = { slug: string; title: Record<HelpLang, string>; articles: HelpArticle[] };
+export type HelpCategory = { slug: string; title: Record<HelpLang, string>; titleTh?: string; articles: HelpArticle[] };
 
 export const HELP: HelpCategory[] = data as HelpCategory[];
 
+// The Help Center's reading languages: the articles' two, plus Thai once
+// help-th-live puts Thai text in the JSON (an article without it reads in
+// English there).
+export type HelpView = HelpLang | "th";
+
+// The Thai view's data: the same shape, with the Thai title, text and web
+// note in the English slots (so every page and the search read it as
+// "en"); untranslated articles keep their English.
+export function thaiOverlay(cats: HelpCategory[]): HelpCategory[] {
+  return cats.map((c) => ({
+    ...c,
+    title: { ...c.title, en: c.titleTh ?? c.title.en },
+    articles: c.articles.map((a) => (a.th
+      ? { ...a, title: { ...a.title, en: a.th.title }, body: { ...a.body, en: a.th.body }, web: a.web ? { ...a.web, en: a.th.web ?? a.web.en } : null }
+      : a)),
+  }));
+}
+const HELP_TH = thaiOverlay(HELP);
+const HAS_TH = HELP.some((c) => c.articles.some((a) => a.th));
+
+export function helpView(locale: string): HelpView {
+  if (locale === "pt-BR") return "pt";
+  return locale === "th" && HAS_TH ? "th" : "en";
+}
+// What a view reads: the data and the article language within it.
+export function helpData(view: HelpView): { cats: HelpCategory[]; lang: HelpLang } {
+  return view === "th" ? { cats: HELP_TH, lang: "en" } : { cats: HELP, lang: view };
+}
+
 // The Help Center's own words, in the articles' two languages.
-export const HELP_UI: Record<HelpLang, Record<string, string>> = {
+export const HELP_UI: Record<HelpView, Record<string, string>> = {
   pt: {
     title: "Central de Ajuda",
     subtitle: "Passo a passo para usar o SolvyMed.",
@@ -56,6 +88,18 @@ export const HELP_UI: Record<HelpLang, Record<string, string>> = {
     back: "← Help Center",
     support: "Still need help? Email",
   },
+  // Thai (help-th-live; first-passed by Vitor with the articles).
+  th: {
+    title: "ศูนย์ช่วยเหลือ",
+    subtitle: "คู่มือการใช้งาน SolvyMed ทีละขั้นตอน",
+    search: "ค้นหาความช่วยเหลือ",
+    searchPlaceholder: "เช่น บล็อกเวลา, พร้อมเพย์, เลขานุการ",
+    noResults: "ไม่พบบทความ ลองใช้คำอื่น หรือเขียนถึงฝ่ายสนับสนุน",
+    onTheWebsite: "ในเว็บไซต์",
+    openOnWebsite: "เปิดในเว็บไซต์",
+    back: "← ศูนย์ช่วยเหลือ",
+    support: "ยังต้องการความช่วยเหลือ? เขียนถึง",
+  },
 };
 
 // Brazilian Portuguese for pt-BR; English for every other language (the
@@ -68,8 +112,8 @@ export function articleSlug(a: Pick<HelpArticle, "id">): string {
   return a.id.toLowerCase();
 }
 
-export function findArticle(slug: string): { article: HelpArticle; category: HelpCategory } | null {
-  for (const category of HELP) {
+export function findArticle(slug: string, cats: HelpCategory[] = HELP): { article: HelpArticle; category: HelpCategory } | null {
+  for (const category of cats) {
     const article = category.articles.find((a) => articleSlug(a) === slug.toLowerCase());
     if (article) return { article, category };
   }
@@ -116,10 +160,10 @@ export function rankHelp(question: string, lang: HelpLang, app: boolean, n = 3):
   return scored.filter((x) => x.score >= 2).sort((x, y) => y.score - x.score).slice(0, n).map((x) => x.a);
 }
 
-export function searchHelp(query: string, lang: HelpLang, app: boolean): HelpArticle[] {
+export function searchHelp(query: string, lang: HelpLang, app: boolean, cats: HelpCategory[] = HELP): HelpArticle[] {
   const words = plain(query).split(/\s+/).filter(Boolean);
   if (!words.length) return [];
-  return HELP.flatMap((c) => c.articles).filter((a) => {
+  return cats.flatMap((c) => c.articles).filter((a) => {
     const text = plain([
       articleTitle(a, lang, app),
       ...(app && a.appOnly ? [a.appOnly[lang]] : a.body[lang].flatMap((b) => (b.type === "ol" ? b.items : [b.text]))),

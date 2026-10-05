@@ -146,5 +146,9 @@
   "whatsapp-auto-live": {
     "met": false,
     "what": "Automatic WhatsApp messages are allowed for real practices: the server guard (server flag whatsapp_auto, default off) turned on with Vitor's OK. They go from our send-whatsapp function through Z-API (the clinic's own Z-API account and number) and are delivered by WhatsApp (Meta). Reveals privacy §5's Z-API + WhatsApp (Meta) rows and §6e's line, WITH a PRIVACY_VERSION bump and mobile's accepting migration applied first. No practice gets automatic WhatsApp before this is met (launch queue)."
+  },
+  "help-th-live": {
+    "met": false,
+    "what": "The Thai Help articles (the **th** blocks in content/help, labels from the th i18n strings) are live: Vitor has first-passed them (native polish later, not a gate). Until then the Thai text never reaches the JSON, and Thai users read the English articles."
   }
 }
