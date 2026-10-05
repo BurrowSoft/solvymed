@@ -138,5 +138,13 @@
   "broadcast-live": {
     "met": false,
     "what": "The doctor's broadcast (\"Enviar para Pacientes\" / \"Send to Patients\") is live on both platforms: enqueue_mass_message (171) + the blank-body check (172) applied, the app's broadcast through the server in a RELEASED build (1.6.0), liveFeatures.broadcast true on the website, and the 1.6.0 privacy text (§6g, the professional's general notices) live with its version bump. Gates Help P14 and the App Map's broadcast rule."
+  },
+  "receipt-amount-app-live": {
+    "met": false,
+    "what": "App 1.6.0 with mobile #348 (no receipt without an amount: the Agenda's receipt action asks to set the amount first, \"Definir valor\" / \"Set amount\"; web #352 parity) is RELEASED on Google Play. Gates Help G5's app line and the App Map's app receipt-amount rule."
+  },
+  "whatsapp-auto-live": {
+    "met": false,
+    "what": "Automatic WhatsApp messages are allowed for real practices: the server guard (server flag whatsapp_auto, default off) turned on with Vitor's OK. They go from our send-whatsapp function through Z-API (the clinic's own Z-API account and number) and are delivered by WhatsApp (Meta). Reveals privacy §5's Z-API + WhatsApp (Meta) rows and §6e's line, WITH a PRIVACY_VERSION bump and mobile's accepting migration applied first. No practice gets automatic WhatsApp before this is met (launch queue)."
   }
 }
