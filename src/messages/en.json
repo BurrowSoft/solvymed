@@ -2011,7 +2011,7 @@
     "send": "Send Notification",
     "selectAll": "All patients",
     "sent": "{n, plural, one {Sent to your 1 connected patient. Only those with SolvyMed notifications on will receive it.} other {Sent to your # connected patients. Only those with SolvyMed notifications on will receive it.}}",
-    "noTokens": "No patients have the app installed yet.",
+    "noTokens": "None of your patients is connected to you in the SolvyMed app yet.",
     "titleRequired": "Please enter a notification title.",
     "noPatientDetails": "Don't include patient details.",
     "limitReached": "You've reached the limit of 10 messages in 24 hours. Try again later.",

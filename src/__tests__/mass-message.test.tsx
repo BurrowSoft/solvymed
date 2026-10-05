@@ -64,7 +64,7 @@ describe("the modal", () => {
     expect(send).toBeEnabled();
   });
 
-  it("sent: how many; nobody has the app: the app's line", async () => {
+  it("sent: how many; no patient account connected: UX's line (nothing sent)", async () => {
     open();
     fireEvent.change(screen.getByPlaceholderText(m.notifTitlePlaceholder), { target: { value: "Aviso" } });
     fireEvent.change(screen.getByPlaceholderText(m.notifBodyPlaceholder), { target: { value: "Feriado" } });
@@ -74,6 +74,6 @@ describe("the modal", () => {
     fireEvent.change(screen.getByPlaceholderText(m.notifTitlePlaceholder), { target: { value: "Aviso" } });
     fireEvent.change(screen.getByPlaceholderText(m.notifBodyPlaceholder), { target: { value: "Feriado" } });
     fireEvent.click(screen.getByRole("button", { name: m.send }));
-    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent(m.noTokens));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Nenhum paciente está conectado a você no app SolvyMed ainda."));
   });
 });
