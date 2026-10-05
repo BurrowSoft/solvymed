@@ -150,5 +150,9 @@
   "help-th-live": {
     "met": false,
     "what": "The Thai Help articles (the **th** blocks in content/help, labels from the th i18n strings) are live: Vitor has first-passed them (native polish later, not a gate). Until then the Thai text never reaches the JSON, and Thai users read the English articles."
+  },
+  "app-361-batch": {
+    "met": false,
+    "what": "The app build with mobile #361 (the 1.6.x batch: Settings → Integrations → Import → \"Import patients\" pointing to the website + the Patients empty-state hint; the WhatsApp API row hidden while server_flags.whatsapp_auto is off; the Agenda arrow labels; Thai เลขานุการ) is RELEASED on Google Play. Gates Help P13's app line and the App Map's app import-pointer and WhatsApp-row rules."
   }
 }
