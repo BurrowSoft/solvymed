@@ -42,6 +42,11 @@ export type IdField = {
   checksum?: "thai";
 };
 
+export type WeekdayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+const MON_FRI = ["mon", "tue", "wed", "thu", "fri"] as const;
+// Every country's default today; a country can set its own week or hours.
+const DEFAULT_HOURS = { days: MON_FRI, start: "08:00", end: "18:00" };
+
 export type CountryProfile = {
   kind: "BR" | "TH" | "OTHER";
   currency: Currency;
@@ -76,6 +81,9 @@ export type CountryProfile = {
   calendar: "gregorian" | "buddhist";
   // The public health card the patient form takes (Brazil's CNS), if any.
   healthCard: "cns" | null;
+  // A new practice's working hours until the doctor saves their own (cf):
+  // these days, start to end. The app's WorkingHoursModal uses the same.
+  defaultHours: { days: readonly WeekdayKey[]; start: string; end: string };
   // The order of a printed/one-line address (lib/patientAddress addressLine).
   addressFormat: "br" | "th" | "intl";
   // Examples and labels in the practice's forms (UX: they follow the
@@ -102,7 +110,7 @@ const BR: CountryProfile = {
   idFields: [{ name: "cpf", label: "cpf", placeholder: "000.000.000-00", store: "text", maxLength: 20, search: "digits" }],
   phonePrefix: "+55", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo",
   clinicTaxId: "cnpj", fallbackLocale: "pt-BR", languages: ["pt-BR", "en"], shortMonthKeepsDot: false, messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
-  healthCard: "cns", addressFormat: "br", paymentShare: "whatsapp",
+  healthCard: "cns", addressFormat: "br", paymentShare: "whatsapp", defaultHours: DEFAULT_HOURS,
   examples: {
     titles: { other: "Dr., Dra., Prof." },
     registration: "registrationPlaceholder", clinicName: "clinicNamePlaceholder", address: "addressPlaceholder",
@@ -118,7 +126,7 @@ const TH: CountryProfile = {
   ],
   phonePrefix: "+66", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok",
   clinicTaxId: "th_tax_id", fallbackLocale: "th", languages: ["th", "en"], shortMonthKeepsDot: true, messagingApp: "line", receipts: "app", calendar: "buddhist",
-  healthCard: null, addressFormat: "th", paymentShare: null,
+  healthCard: null, addressFormat: "th", paymentShare: null, defaultHours: DEFAULT_HOURS,
   examples: {
     titles: { th: THAI_TITLES.join(", "), other: "Dr." },
     registration: "registrationPlaceholderTH", clinicName: "clinicNamePlaceholderTH", address: "addressPlaceholderTH",
@@ -132,7 +140,7 @@ const OTHER: CountryProfile = {
   idFields: [{ name: "passport_number", label: "passportOrId", placeholder: "", store: "text", maxLength: 30, keep: 30, search: "text" }],
   phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
   clinicTaxId: null, fallbackLocale: "en", languages: ["en"], shortMonthKeepsDot: false, messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
-  healthCard: null, addressFormat: "intl", paymentShare: null,
+  healthCard: null, addressFormat: "intl", paymentShare: null, defaultHours: DEFAULT_HOURS,
   examples: {
     titles: null,
     registration: "registrationPlaceholderOther", clinicName: "clinicNamePlaceholderOther", address: "addressPlaceholderOther",
