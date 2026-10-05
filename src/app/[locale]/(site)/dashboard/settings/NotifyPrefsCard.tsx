@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { brandAccent, readableAccent } from "@/lib/readableAccent";
+import { DoctorDot } from "@/components/DoctorTag";
 import { withBrandTitle } from "@/lib/doctorName";
 import { setNotifyPref } from "./notify-actions";
 
@@ -10,7 +10,8 @@ export type NotifyPref = { professional_id: string; display_name: string | null;
 
 // "Notificações por médico" (166, cf): one switch per doctor she serves. Only
 // the app gets pushes, so the card says so; all muted is allowed, with a hint.
-export function NotifyPrefsCard({ prefs: initial }: { prefs: NotifyPref[] }) {
+// colors: each doctor's colour by id (lib/doctorPalette, as on "Todos").
+export function NotifyPrefsCard({ prefs: initial, colors = {} }: { prefs: NotifyPref[]; colors?: Record<string, string> }) {
   const t = useTranslations("secretaryPractices");
   const tCommon = useTranslations("secretary");
   const [prefs, setPrefs] = useState(initial);
@@ -43,7 +44,7 @@ export function NotifyPrefsCard({ prefs: initial }: { prefs: NotifyPref[] }) {
           return (
             <li key={p.professional_id} className="flex items-center justify-between gap-3 py-3">
               <span className="flex min-w-0 items-center gap-2 text-sm font-semibold text-slate-800">
-                <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: readableAccent(brandAccent(p.accent_color), "#ffffff") }} />
+                {colors[p.professional_id] && <DoctorDot color={colors[p.professional_id]} className="h-2.5 w-2.5" />}
                 <span className="truncate">{name}</span>
               </span>
               <button

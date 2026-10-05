@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { RowPractice } from "@/components/RowPractice";
-import type { DoctorTagInfo } from "@/components/DoctorTag";
-import { brandAccent, readableAccent } from "@/lib/readableAccent";
+import { ItemCalendar } from "@/components/PracticeCalendar";
+import { DoctorDot, type DoctorTagInfo } from "@/components/DoctorTag";
 import { BlockTimeButton, NewAppointmentButton } from "./ScheduleClient";
 import type { RowPracticeCtx } from "./ScheduleRow";
 
@@ -24,15 +24,17 @@ export function AllAddButtons({ doctors, defaultDate, preselected }: {
     <div data-testid="all-add" className="flex flex-wrap items-center gap-2">
       <label className="flex items-center gap-2 text-sm text-slate-600">
         <span className="font-semibold">{t("doctorField")}</span>
-        <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: readableAccent(brandAccent(chosen.tag.accent), "#ffffff") }} />
+        <DoctorDot color={chosen.tag.color} className="h-2.5 w-2.5" />
         <select value={id} onChange={(e) => setId(e.target.value)} className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm font-semibold text-slate-800">
           {doctors.map((d) => <option key={d.tag.id} value={d.tag.id}>{d.tag.name}</option>)}
         </select>
       </label>
       {/* Keyed by the doctor: a new choice is a fresh form for that doctor. */}
       <RowPractice key={id} id={id}>
-        <BlockTimeButton defaultDate={defaultDate} />
-        <NewAppointmentButton defaultDate={defaultDate} currency={chosen.ctx.currency} procedures={chosen.ctx.procedures} />
+        <ItemCalendar calendar={chosen.tag.calendar}>
+          <BlockTimeButton defaultDate={defaultDate} />
+          <NewAppointmentButton defaultDate={defaultDate} currency={chosen.ctx.currency} procedures={chosen.ctx.procedures} />
+        </ItemCalendar>
       </RowPractice>
     </div>
   );

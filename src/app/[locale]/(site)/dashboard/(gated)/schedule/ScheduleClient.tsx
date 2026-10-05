@@ -144,10 +144,14 @@ export function ScheduleUndoToast() {
   );
 }
 
-export function ViewToggle({ currentView, currentDate }: { currentView: string; currentDate: string }) {
+// disabled: views not offered ("Todos" across time zones, 166: the list only).
+export function ViewToggle({ currentView, currentDate, disabled = [] }: { currentView: string; currentDate: string; disabled?: string[] }) {
   const t = useTranslations("schedule");
   const router = useRouter();
   const pathname = usePathname();
+  // The "All" schedule's doctor filter (166) survives a view change.
+  const doctor = useSearchParams()?.get("doctor");
+  const keep = doctor ? `&doctor=${encodeURIComponent(doctor)}` : "";
   const views = [
     { id: "list", label: t("list") },
     { id: "day",  label: t("day") },
@@ -159,8 +163,9 @@ export function ViewToggle({ currentView, currentDate }: { currentView: string; 
       {views.map((v, i) => (
         <button
           key={v.id}
-          onClick={() => router.push(`${pathname}?date=${currentDate}&view=${v.id}`)}
-          className={`px-3.5 py-2 transition ${i > 0 ? "border-l border-slate-200" : ""} ${currentView === v.id ? "bg-teal-600 text-white" : "text-slate-600 hover:bg-slate-50"}`}
+          disabled={disabled.includes(v.id)}
+          onClick={() => router.push(`${pathname}?date=${currentDate}&view=${v.id}${keep}`)}
+          className={`px-3.5 py-2 transition ${i > 0 ? "border-l border-slate-200" : ""} ${currentView === v.id ? "bg-teal-600 text-white" : disabled.includes(v.id) ? "cursor-not-allowed text-slate-300" : "text-slate-600 hover:bg-slate-50"}`}
         >
           {v.label}
         </button>

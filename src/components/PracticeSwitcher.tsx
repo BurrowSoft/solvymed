@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ALL_PRACTICES, setBrowserActingCookie, type MyPractice } from "@/lib/actingPractice";
-import { brandAccent, readableAccent } from "@/lib/readableAccent";
+import { doctorColor } from "@/lib/doctorPalette";
 import { withBrandTitle } from "@/lib/doctorName";
 
 // "Agenda de ▾" for a secretary serving several doctors (1.5.0, migration
@@ -20,7 +20,9 @@ export function PracticeSwitcher({ practices, current, allChosen = false }: { pr
   const onAgenda = /\/dashboard\/schedule\/?$/.test(usePathname() ?? "");
   const showAll = onAgenda && allChosen;
   const chosen = practices.find((p) => p.professional_id === current) ?? practices[0];
-  const dot = showAll ? null : readableAccent(brandAccent(chosen?.accent_color), "#ffffff");
+  // The doctor's colour, as on "Todos" (lib/doctorPalette: by her list's order).
+  const at = practices.findIndex((p) => p.professional_id === chosen?.professional_id);
+  const dot = showAll || at < 0 ? null : doctorColor(at);
   return (
     <label data-testid="practice-switcher" className="flex items-center gap-2 text-sm text-slate-600">
       <span className="font-semibold">{t("switcherLabel")}</span>
