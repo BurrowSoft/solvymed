@@ -94,3 +94,21 @@ describe("privacy policy: SolvyAI / LINE blocks follow their conditions", () => 
     r.unmount();
   });
 });
+
+describe("privacy policy: automatic WhatsApp processors (whatsapp-auto-live)", () => {
+  it("hidden today; with it, the Z-API and WhatsApp (Meta) rows + §6e's line, in both languages", () => {
+    expect(conditionMet("whatsapp-auto-live")).toBe(false);
+    let r = render(<PrivacyEn turnstile={false} notices whatsapp />);
+    expect(r.container.textContent).not.toMatch(/Z-API|Meta/);
+    r.unmount();
+    r = render(<PrivacyEn turnstile={false} notices whatsapp whatsappAuto />);
+    expect(r.container.textContent).toContain("Z-API, Brazilian clinics that turn on automatic WhatsApp messages");
+    expect(r.container.textContent).toContain("WhatsApp (Meta)");
+    expect(r.container.textContent).toContain("Automatic WhatsApp messages are sent from our servers through Z-API, using the clinic\u2019s own Z-API account and WhatsApp number, and delivered by WhatsApp (Meta).");
+    r.unmount();
+    r = render(<PrivacyPtBR turnstile={false} notices whatsapp whatsappAuto />);
+    expect(r.container.textContent).toContain("Z-API, clínicas no Brasil que ativam mensagens automáticas de WhatsApp");
+    expect(r.container.textContent).toContain("As mensagens automáticas de WhatsApp saem dos nossos servidores pela Z-API, com a conta Z-API e o número de WhatsApp da própria clínica, e são entregues pelo WhatsApp (Meta).");
+    r.unmount();
+  });
+});
