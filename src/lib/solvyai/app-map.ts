@@ -408,6 +408,20 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     help: "P13",
   },
   {
+    rule: {
+      text: "In the app (doctors only), patient import is a pointer, never an import: Configurações → Integrações → \"Importação\" / Settings → Integrations → \"Import\" → \"Importar pacientes\" / \"Import patients\" opens \"A importação de pacientes é feita pelo site, em um computador: solvymed.com → Pacientes → Importar pacientes.\"; an empty Patients list shows \"Vindo de outro sistema? Importe seus pacientes pelo site.\" / \"Coming from another system? Import your patients on the website.\" with the same pointer.",
+      pending: ["app-361-batch"],
+    },
+    help: "P13",
+  },
+  {
+    rule: {
+      text: "In the app, Configurações → Integrações → \"Mensagens\" / Settings → Integrations → \"Messaging\" → \"WhatsApp API\" (the clinic's automatic WhatsApp setup) is hidden while automatic WhatsApp isn't live (a server switch, off for every practice today). SolvyAI never sends anyone there and never says automatic WhatsApp messages are available; the clinic's own WhatsApp links (Enviar confirmação, Enviar Pix por WhatsApp) are unaffected.",
+      pending: ["app-361-batch"],
+    },
+    help: "C7",
+  },
+  {
     rule: { text: "\"Mostrar botão do assistente\" / \"Show the assistant button\" (Settings → SolvyAI; per phone in the app, per browser on the website) hides or shows the ✦ button.", pending: ["mobile#99", "solvyai-live"] },
     help: "C9",
   },
