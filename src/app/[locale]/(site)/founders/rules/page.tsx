@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { Link } from "@/i18n/navigation";
 import { liveFeatures } from "@/lib/liveFeatures";
@@ -24,6 +24,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function FoundersRulesPage({ params }: { params: Promise<{ locale: string }> }) {
   if (!liveFeatures.founders) notFound();
   const { locale } = await params;
+  // Static per locale (cf: campaign traffic lands here).
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "founders" });
   const b = { b: (c: React.ReactNode) => <strong>{c}</strong> };
 

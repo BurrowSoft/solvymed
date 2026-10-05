@@ -4,6 +4,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 import { canonicalLocalePath, pickLocale } from "./lib/localeDetect";
+import { isLandingPath, landingDestination } from "./lib/landingRoute";
 
 // Automatic language guesses (browser language, country, an /en/ link) are
 // remembered for 30 days, so a wrong first guess doesn't stick for a year.
@@ -102,6 +103,29 @@ export async function middleware(req: NextRequest) {
     }
     return res;
   };
+  // A signed-in visitor of the landing page goes to their own place (it used
+  // to be the page's job; the landing is now static, cf). Same rules
+  // (lib/landingRoute), in the language they'd have landed in.
+  if (user && isLandingPath(pathname, routing.locales)) {
+    const locale = hasLocalePrefix
+      ? firstSegment
+      : cookieLocale && !hiddenCookie && (routing.locales as readonly string[]).includes(cookieLocale)
+        ? cookieLocale
+        : pickLocale({
+            acceptLanguage: req.headers.get("accept-language"),
+            country: req.headers.get("x-vercel-ip-country") ?? req.headers.get("cf-ipcountry"),
+            supported: publicLocales(),
+            defaultLocale: routing.defaultLocale,
+          });
+    const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
+    const { data: roleRow } = await supabase
+      .from("user_roles")
+      .select("role, invited_by_professional_id, linked_patient_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    return finalize(NextResponse.redirect(new URL(landingDestination(roleRow, user.user_metadata?.role, prefix), req.url)));
+  }
+
   const ua = req.headers.get("user-agent") ?? "";
   const isBot = /googlebot|bingbot|yandexbot|baiduspider|applebot|facebookexternalhit|twitterbot/i.test(ua);
 

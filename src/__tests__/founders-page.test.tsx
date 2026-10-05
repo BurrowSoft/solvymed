@@ -45,11 +45,13 @@ describe("FoundersForm", () => {
   });
 
   it("English: no country preselected; sending without one asks for it", () => {
+    // The geo lookup (static page) finds no Founders country.
+    fetchMock.mockResolvedValue({ ok: true, json: async () => ({ country: null }) });
     show("en", "");
     const select = screen.getByLabelText(/^Country/) as HTMLSelectElement;
     expect(select.value).toBe("");
     fillAndSend("other");
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(fetchMock.mock.calls.filter(([url]) => url !== "/api/geo")).toEqual([]);
     expect(screen.getByRole("alert")).toHaveTextContent(en.founders.errorInvalid);
   });
 

@@ -1,12 +1,11 @@
-import { getTranslations } from "next-intl/server";
-import { redirect } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { thaiEnabled } from "@/lib/publicLocales";
 import { AppDownloadButtons } from "@/components/AppDownloadButtons";
 import { SignupCta } from "@/components/SignupCta";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { ThaiLandingSection } from "@/components/ThaiLandingSection";
 import { Link } from "@/i18n/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { AccountClosedNotice } from "@/components/AccountClosedNotice";
 
 type FeatureKey = "scheduling" | "patients" | "records" | "prescriptions" | "payments" | "analytics";
 
@@ -57,44 +56,13 @@ const FEATURE_ICONS: Record<FeatureKey, React.ReactNode> = {
 
 const FEATURE_KEYS: FeatureKey[] = ["scheduling", "patients", "records", "prescriptions", "payments", "analytics"];
 
-export default async function HomePage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ locale: string }>;
-  searchParams?: Promise<{ closed?: string; deleted?: string }>;
-}) {
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  // Right after closing or deleting the account (Settings): a short note
-  // saying which happened (UX).
-  const sp = await searchParams;
-  const accountNotice = sp?.deleted === "1" ? "accountClose.deletedNotice" : sp?.closed === "1" ? "accountClose.closedNotice" : null;
-  const prefix = locale === "en" ? "" : `/${locale}`;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) {
-    // Persisted role is authoritative — user_metadata is client-writable, so
-    // it only decides routing for the one case with no persisted role yet
-    // (a pending patient whose invite never resolved).
-    const { data: roleRow } = await supabase
-      .from("user_roles")
-      .select("role, invited_by_professional_id, linked_patient_id")
-      .eq("user_id", user.id)
-      .maybeSingle();
-    if (roleRow?.role === "patient" && roleRow.linked_patient_id) {
-      redirect(`${prefix}/my-appointments`);
-    }
-    if (roleRow?.role === "patient" && roleRow.invited_by_professional_id) {
-      redirect(`${prefix}/auth/pending-confirmation`);
-    }
-    if (roleRow?.role === "patient") {
-      redirect(`${prefix}/my-appointments`);
-    }
-    if (!roleRow?.role && user.user_metadata?.role === "patient") {
-      redirect(`${prefix}/auth/invite-required`);
-    }
-    redirect(`${prefix}/dashboard`);
-  }
+  // Static per locale (cf; f0's cold 4.9 s): no cookies, headers or query
+  // here. A signed-in visitor is sent on by the middleware (lib/landingRoute);
+  // the "account closed/deleted" note reads ?closed=1 / ?deleted=1 in the
+  // browser (AccountClosedNotice).
+  setRequestLocale(locale);
 
   const t = await getTranslations();
 
@@ -118,11 +86,7 @@ export default async function HomePage({
     <>
       <SiteHeader />
 
-      {accountNotice && (
-        <div role="status" className="bg-slate-100 px-4 py-3 text-center text-sm font-medium text-slate-800">
-          {t(accountNotice)}
-        </div>
-      )}
+      <AccountClosedNotice closed={t("accountClose.closedNotice")} deleted={t("accountClose.deletedNotice")} />
 
       <main>
         {/* Hero */}

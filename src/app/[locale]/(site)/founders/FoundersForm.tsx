@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { GENERIC_SYSTEMS, OPTIONS, SYSTEMS, systemName, type FoundersCountry } from "@/lib/founders";
+import { GENERIC_SYSTEMS, OPTIONS, SYSTEMS, defaultFoundersCountry, systemName, type FoundersCountry } from "@/lib/founders";
 import { track } from "@/lib/track";
 
 // The Founders application form (the brief's 13 questions). It posts to
@@ -26,6 +26,21 @@ const label = "block text-sm font-semibold text-slate-700";
 export function FoundersForm({ locale, defaultCountry, showRulesLink }: { locale: string; defaultCountry: FoundersCountry | ""; showRulesLink: boolean }) {
   const t = useTranslations("founders");
   const [country, setCountry] = useState<FoundersCountry | "">(defaultCountry);
+  // No country from the language (English): the visitor's, when it's a
+  // Founders country (Vercel geo via /api/geo), unless they already chose.
+  useEffect(() => {
+    if (defaultCountry) return;
+    let gone = false;
+    Promise.resolve()
+      .then(() => fetch("/api/geo"))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((g: { country?: string | null } | null) => {
+        const c = defaultFoundersCountry(locale, g?.country);
+        if (!gone && c) setCountry((cur) => cur || c);
+      })
+      .catch(() => {});
+    return () => { gone = true; };
+  }, [defaultCountry, locale]);
   const [system, setSystem] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<{ field?: string; text: string } | null>(null);
