@@ -123,9 +123,11 @@ describe("privacy: the colleague-list line (referrals-live)", () => {
     r.unmount();
     r = render(<PrivacyEn turnstile={false} referrals />);
     expect(r.container.textContent).toContain("Colleague list: a professional can keep a private list of colleagues");
+    expect(r.container.textContent).toContain("Wrong codes entered are kept for 1 day, to prevent guessing.");
     r.unmount();
     r = render(<PrivacyPtBR turnstile={false} referrals />);
     expect(r.container.textContent).toContain("Lista de colegas: um profissional pode manter uma lista privada de colegas");
+    expect(r.container.textContent).toContain("Códigos errados digitados ficam guardados por 1 dia, para evitar tentativas de adivinhação.");
     r.unmount();
   });
 });

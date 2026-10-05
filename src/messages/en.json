@@ -2010,7 +2010,7 @@
     "notFound": "Code not found. If the code is right, ask your colleague to publish their brand in My brand.",
     "self": "That's your own code.",
     "limit": "You've reached the limit of 50 colleagues.",
-    "tooMany": "Too many attempts. Try again tomorrow.",
+    "tooMany": "Too many attempts. Please try again later.",
     "failed": "Something went wrong. Please try again.",
     "referNone": "Add colleagues in Settings → My colleagues first.",
     "copy": "Copy message",
