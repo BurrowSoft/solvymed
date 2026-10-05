@@ -10283,7 +10283,7 @@ Evidence: each PR's tester comment (SHA + what was checked). Merged commits from
 
 Fixtures: throwaway accounts with `e2e-test-opus-…` tags, deleted after each run or purged by the mobile dev by exact id (the #361 set: verified 0 left). No prescriptions or records were created.
 
-## Batch 10: web PRs #358–#378, incl. 1.6.0 server pushes, the web broadcast and account close (web tester 1 + web tester 2, 2026-10-05)
+## Batch 10: web PRs #358–#379, incl. 1.6.0 server pushes, the web broadcast and account close (web tester 1 + web tester 2, 2026-10-05)
 
 Evidence: each PR's tester comment (SHA + what was checked). Merged commits from GitHub. WT1 = web tester 1, WT2 = web tester 2; device rows by mobile tester 1; server logs read by the mobile dev. The broadcast (#375) was tested on Vercel Previews with the flag on (`liveFeatures.broadcast`, Previews only).
 
@@ -10295,5 +10295,6 @@ Evidence: each PR's tester comment (SHA + what was checked). Merged commits from
 | #375 | Web broadcast "Enviar para Pacientes" on the doctor's Home (flag) | WT1 🟢 `c21e9e2` (comment 5985175620; the device + limit checks at `651a534`, the later commit is copy only): limits 100 / 500 + counter; Send disabled on blanks; no button for a secretary or on www. Device (mobile tester 1): 9 of 9 received, a tap opens Home; patients without the app are skipped. The 11th send in 24 h → the limit line, 0 outbox rows. Result line after cf's copy change: "Enviado aos seus N pacientes conectados. Só recebe quem tem as notificações do SolvyMed ativadas." (singular for 1; 0 → "Nenhum paciente…"; en OK) | `6a52543` into master |
 | #376 | SolvyAI: an appointment's status in the reader's words | WT1 🟢 `e3fd25c` (comment 5987077061): BR pt-BR Confirmado / Agendado / Solicitado; TH th ยืนยันแล้ว / นัดหมายแล้ว / ส่งคำขอแล้ว; TH en Confirmed / Scheduled / Requested; no raw English status words | `f0330e9` into master |
 | #378 | Account close: the website sends no pushes (173 sends them); the e-mail stays | WT1 🟢 `31d22ba` (comment 5985287661): close → 200; outbox exactly 1 `practice_closed` per linked patient (no `closure_cancelled` for them) + 1 `closure_cancelled` for an unlinked patient with a visit. Server logs (mobile dev): `notify-clinic-closed` sent 1 (skipped the `.invalid` address by design), `patient-notify` sent 1 push, nothing direct from the route. Device (mobile tester 1): exactly one "Clínica encerrada" | `5bfdc80` into master |
+| #379 | Privacy: the closure-notice line + PRIVACY_VERSION 2026-10-07 | WT2 🟢 **retroactive**, live on www at merged `ed61fc4` (comment 5987088491): §6g on /privacy (en) and /pt-BR/privacy shows the closure-notice line (practice closed / appointment cancelled; what's kept; deleted once sent, at most 30 days), "Last updated 7 October 2026"; a www BR professional signup records privacy 2026-10-07 + terms 2026-10-01. The route side of closures is #378's row | `ed61fc4` into master |
 
 Fixtures: throwaway accounts (`e2e-test-opus-…`, mobile tester 1's `@example.invalid` device patients, one Resend test address for the e-mail check), purged by the mobile dev by exact id and verified 0 left.
