@@ -12,6 +12,12 @@ Para desfazer, toque em **Desmarcar** e confirme.
 To undo, tap **Mark unpaid** and confirm.
 **No site:** Em **Pagamentos**, clique em **Marcar como Pago** na consulta: salva na hora. Se ela não tiver valor, digite o valor e clique em **Confirmar**. Para desfazer, clique em **Reverter** e confirme.
 **On the website:** In **Payments**, click **Mark Paid** on the appointment: it's saved right away. If it has no amount, type it in and click **Confirm**. To undo, click **Revert** and confirm.
+Thai title: "บันทึกว่าชำระแล้ว"
+**th**
+1. เปิด **การชำระเงิน** (หรือเปิดนัดหมายใน **ตารางงาน**)
+2. แตะที่นัดหมาย แล้วแตะ **บันทึกว่าชำระแล้ว**
+หากต้องการเปลี่ยนกลับ ใน **การชำระเงิน** แตะ **ยกเลิก** แล้วยืนยัน
+**ในเว็บไซต์:** ใน **การชำระเงิน** คลิก **ทำเครื่องหมายว่าชำระแล้ว** ที่นัดหมาย ระบบจะบันทึกทันที หากยังไม่มีจำนวนเงิน ให้พิมพ์จำนวนเงินแล้วคลิก **ยืนยัน** หากต้องการเปลี่ยนกลับ คลิก **ยกเลิก** แล้วยืนยัน
 `open:payments`
 
 ---
@@ -56,6 +62,13 @@ O SolvyMed não recebe o dinheiro: o Pix vai direto para a sua conta.
 SolvyMed doesn't receive the money: Pix goes straight to your account.
 **No site:** Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Pix Copia e Cola** (botão **Copiar**). Com o telefone do paciente cadastrado, **Enviar Pix por WhatsApp** (na mesma janela) abre o seu WhatsApp com a mensagem do Pix para o paciente, a mesma do app; ela só sai quando você clicar em enviar no WhatsApp. Quando o pagamento cair, marque como pago em **Pagamentos**: a consulta fica **Pago** e o QR deixa de aparecer, para o paciente não pagar duas vezes.
 **On the website:** In the **Schedule**, click the QR icon next to the appointment: the **Pix QR code** and the **Pix Copia e Cola** code (with **Copy**) appear. With the patient's phone on file, **Send Pix via WhatsApp** (in the same window) opens your WhatsApp with the Pix message for the patient, the same as the app's; it's only sent when you click send in WhatsApp. When the payment arrives, mark it as paid in **Payments**: the appointment shows **Paid** and the QR is no longer offered, so the patient can't pay twice.
+Thai title: "รับชำระด้วยพร้อมเพย์"
+**th**
+สำหรับคลินิกในประเทศไทย ให้ใส่พร้อมเพย์ของคุณใน **การตั้งค่า** ก่อน (เบอร์มือถือ หรือเลขประจำตัวประชาชน / เลขประจำตัวผู้เสียภาษี)
+1. เปิดนัดหมายที่มีจำนวนเงิน: จะมี **QR พร้อมเพย์** ให้ผู้ป่วยสแกนด้วยแอปธนาคาร
+2. เมื่อเงินเข้าบัญชีแล้ว ให้บันทึกว่านัดหมายชำระแล้ว
+เมื่อชำระแล้ว QR จะไม่แสดงอีก ผู้ป่วยจึงไม่จ่ายซ้ำ SolvyMed ไม่ได้รับเงินนี้ เงินจะเข้าบัญชีของคุณโดยตรง
+**ในเว็บไซต์:** ใน **ตารางงาน** คลิกไอคอน QR ข้างนัดหมาย เพื่อแสดง **QR พร้อมเพย์** เมื่อเงินเข้าแล้ว ให้ทำเครื่องหมายว่าชำระแล้วใน **การชำระเงิน**
 `open:payments`
 
 ---
@@ -70,6 +83,11 @@ Open a paid appointment and tap **Generate invoice PDF** (clinics in Brazil). Sh
 {pending:receipt-amount-app-live} There's no receipt without an amount: on an appointment with no amount, tapping **Generate invoice PDF** (clinics in Brazil) or **Issue receipt (ใบเสร็จรับเงิน)** (clinics in Thailand) makes the app ask "Set the appointment amount before issuing a receipt." with **Set amount**, which opens the appointment's amount. Viewing a receipt already issued is never blocked.
 **No site:** Em **Pagamentos**, na consulta recebida, clique em **Recibo** e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Médico e secretária(o) podem emitir. Sem valor definido não há recibo: a página pede "Defina o valor da consulta antes de emitir o recibo." com **Definir valor**. O recibo traz o registro no conselho (ex.: CRM) ao lado do nome do médico, quando cadastrado; no Brasil, sem CNPJ da clínica, inclui a nota sobre o recibo oficial pelo app Receita Saúde. Clínicas na Tailândia: os recibos numerados são emitidos no app.
 **On the website:** In **Payments**, on the received appointment, click **Receipt** and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. The doctor and the secretary can create it. There's no receipt without an amount: the page asks "Set the appointment amount before issuing a receipt." with **Set amount**. The receipt shows the doctor's council registration (e.g. CRM) next to their name, when it's on file; in Brazil, with no clinic CNPJ, it adds the note (in Portuguese) about the official receipt in the Receita Saúde app. Clinics in Thailand: numbered receipts are issued in the app.
+Thai title: "ใบเสร็จรับเงิน"
+**th**
+สำหรับคลินิกในประเทศไทย ใบเสร็จรับเงินแบบมีเลขที่ออกได้ในแอป: เปิดนัดหมายที่ชำระแล้ว แล้วแตะ **ออกใบเสร็จรับเงิน** เมื่อออกแล้ว ปุ่มจะเปลี่ยนเป็น **ดูใบเสร็จรับเงิน**
+{pending:receipt-amount-app-live} หากนัดหมายยังไม่มีจำนวนเงิน แอปจะขอว่า "กรุณากำหนดจำนวนเงินก่อนออกใบเสร็จ" พร้อมปุ่ม **ระบุจำนวนเงิน** การดูใบเสร็จที่ออกแล้วทำได้เสมอ
+**ในเว็บไซต์:** คลินิกในประเทศไทยออกใบเสร็จรับเงินแบบมีเลขที่ได้ในแอปเท่านั้น
 `open:payments`
 
 ---

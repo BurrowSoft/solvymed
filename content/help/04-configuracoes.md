@@ -52,6 +52,13 @@ You can have up to 3 secretaries. They manage the schedule, patients and payment
 {pending:multi-practice-live} A secretary can work for several doctors: each doctor invites her from their own **Team**. At the top of the dashboard, **Schedule for** picks the doctor; the schedule, patients, payments and settings are then that doctor's. Each doctor removes only their own link with her. In the **Schedule**, **Schedule for → All** shows every doctor's appointments, each with its doctor's name and colour (a fixed colour per doctor, the same everywhere), with a filter per doctor. **All** has **List**, **Day** (a column per doctor), **Week** and **Month**; the calendar shows only when the doctors shown are in the same time zone (otherwise, use the list or pick one doctor); what she does on an appointment (status, move, amount, requests) applies to that appointment's doctor. In **All**, **New appointment** and **Block time** ask for the **Doctor** first; that doctor's procedures, prices and hours then apply. In **Settings → Notifications per doctor**, she chooses which doctors she gets app notifications for (she can turn them all off); the doctor's own notifications don't change.
 **No site:** **Configurações → Equipe**: digite o e-mail da pessoa e clique em **Convidar**. Compartilhe na hora o link ou o código que aparece (só aparece uma vez, vale 7 dias e só para esse e-mail). Para tirar alguém: **Remover**; para cancelar um convite pendente: **Revogar**.
 **On the website:** **Settings → Team**: type the person's email and click **Invite**. Share the link or code that appears right away (it's shown only once and works for 7 days, for that email only). To remove someone: **Remove**; to cancel a pending invite: **Revoke**.
+Thai title: "เชิญเลขานุการ"
+**th**
+1. **การตั้งค่า → ทีม → เชิญ**
+2. ส่ง **รหัสเชิญ** ให้อีกฝ่าย (ใช้ได้ 7 วัน ครั้งเดียว)
+3. อีกฝ่ายสร้างบัญชีโดยเลือก **เลขานุการ / พนักงานต้อนรับ** แล้วใส่รหัสนั้น
+คุณมีเลขานุการได้สูงสุด 3 คน เลขานุการดูแลตารางงาน ผู้ป่วย และการชำระเงิน แต่จะไม่เห็นเวชระเบียน ใบสั่งยา ผลตรวจ หรือไฟล์ หากต้องการนำออก: **ทีม → นำออก**
+**ในเว็บไซต์:** **การตั้งค่า → ทีม**: พิมพ์อีเมลของอีกฝ่าย แล้วคลิก **เชิญ** ส่งลิงก์หรือรหัสที่แสดงทันที (แสดงเพียงครั้งเดียว ใช้ได้ 7 วัน และเฉพาะอีเมลนั้น) หากต้องการนำออก: **นำออก** หากต้องการยกเลิกคำเชิญที่รออยู่: **ยกเลิก**
 `open:settings-team`
 
 ---

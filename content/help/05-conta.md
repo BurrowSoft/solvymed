@@ -26,6 +26,10 @@ App title: "Sua conta" / "Your account"
 **Settings → Change password**. For security, your sessions on other devices are ended.
 **No site:** **Configurações → Alterar senha**: digite a senha atual e a nova (duas vezes). As sessões nos outros aparelhos são encerradas; este navegador continua conectado.
 **On the website:** **Settings → Change password**: enter your current password and the new one (twice). Your sessions on other devices are ended; this browser stays signed in.
+Thai title: "เปลี่ยนรหัสผ่าน"
+**th**
+**การตั้งค่า → เปลี่ยนรหัสผ่าน** เพื่อความปลอดภัย การเข้าสู่ระบบบนอุปกรณ์อื่นจะถูกออกจากระบบ
+**ในเว็บไซต์:** **การตั้งค่า → เปลี่ยนรหัสผ่าน**: ใส่ **รหัสผ่านปัจจุบัน** และรหัสผ่านใหม่ (สองครั้ง) การเข้าสู่ระบบบนอุปกรณ์อื่นจะถูกออกจากระบบ ส่วนเบราว์เซอร์นี้ยังเข้าสู่ระบบอยู่
 `open:settings`
 
 ---
@@ -46,6 +50,10 @@ On the sign-in screen, tap **Forgot your password?**, enter your email and open 
 **Settings → Delete account**. If there are no records yet, the account is deleted. If there are, it's closed: your login and subscription are cancelled, and the records are kept locked for the legally required period (nobody can open them in the app) and then erased.
 **No site:** **Configurações → Encerrar conta** (ou **Excluir conta**, se ainda não houver prontuários), no fim da página: funciona igual ao app. Depois, você sai da conta e volta à página inicial, com o aviso "Sua conta foi excluída." ou "Sua conta foi encerrada.", conforme o caso. Mesmo com o teste ou a assinatura encerrados, as **Configurações** continuam abertas (o link fica na página de assinatura): exporte seus pacientes, gerencie a assinatura, troque a senha ou encerre a conta.
 **On the website:** **Settings → Close account** (or **Delete account** if there are no records yet), at the bottom of the page: it works the same as in the app. Afterwards you're signed out and back on the home page, with the note "Your account has been deleted." or "Your account has been closed.", whichever happened. Even after the trial or subscription ends, **Settings** stays open (linked from the subscription page): export your patients, manage the subscription, change the password or close the account.
+Thai title: "ปิดบัญชี"
+**th**
+**การตั้งค่า → ลบบัญชี** หากยังไม่มีเวชระเบียน บัญชีจะถูกลบ หากมีแล้ว บัญชีจะถูกปิด: ข้อมูลการเข้าสู่ระบบและการสมัครสมาชิกจะถูกยกเลิก ส่วนเวชระเบียนจะถูกเก็บและล็อกไว้ตามระยะเวลาที่กฎหมายกำหนด (ไม่มีใครเปิดดูผ่านแอปได้) แล้วจึงถูกลบ
+**ในเว็บไซต์:** **การตั้งค่า → ปิดบัญชี** (หรือ **ลบบัญชี** หากยังไม่มีเวชระเบียน) ที่ด้านล่างของหน้า ทำงานแบบเดียวกับในแอป
 `open:settings`
 
 ---
@@ -54,6 +62,9 @@ On the sign-in screen, tap **Forgot your password?**, enter your email and open 
 Seus dados ficam privados e criptografados; cada clínica só vê os próprios dados; secretárias(os) não veem dados clínicos. As observações da clínica são privadas e não aparecem para o paciente. Veja a Política de Privacidade em solvymed.com/privacy.
 **en**
 Your data is private and encrypted; each clinic only sees its own data; secretaries don't see clinical data. The clinic's notes are private and never shown to the patient. See the Privacy Policy at solvymed.com/privacy.
+Thai title: "ความเป็นส่วนตัว"
+**th**
+ข้อมูลของคุณเป็นส่วนตัวและเข้ารหัส แต่ละคลินิกเห็นเฉพาะข้อมูลของตนเอง เลขานุการไม่เห็นข้อมูลทางการแพทย์ หมายเหตุของคลินิกเป็นข้อมูลส่วนตัวและไม่แสดงต่อผู้ป่วย อ่านนโยบายความเป็นส่วนตัวได้ที่ solvymed.com/privacy
 `open:none`
 
 ---

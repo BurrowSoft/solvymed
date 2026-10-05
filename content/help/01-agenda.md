@@ -32,6 +32,16 @@ If the time is blocked, the app shows the block and asks whether to book anyway.
 **No site:** {pending:notice-queue-on} Em **Agenda**, clique em **Nova Consulta** (também há o botão na **Visão geral**). Escolha o paciente, a data, o início, a duração, o tipo, o procedimento e a forma de pagamento (particular ou convênio), e clique em **Salvar Consulta**. O valor vem do procedimento escolhido; **Consulta** (já selecionada) é sem procedimento: sem valor, 30 minutos. Sem procedimentos cadastrados, dá para marcar assim mesmo. Logo depois de marcar, remarcar ou cancelar, **Desfazer** aparece por 10 segundos, enquanto o aviso ao paciente ainda não saiu. Desfazer uma série remove a série inteira. Se o aviso já saiu ou a consulta mudou nesse meio-tempo, aparece "Não foi possível desfazer. Abra o item para ajustar."
 **On the website:** {unless:notice-queue-on} In the **Schedule**, click **New Appointment** (there's also a button on the **Overview**). Choose the patient, date, start, duration, type, procedure and payment (private or insurance), and click **Save Appointment**. The amount comes from the chosen procedure; **Consultation** (selected by default) has no procedure: no amount, 30 minutes. You can book even before adding procedures.
 **On the website:** {pending:notice-queue-on} In the **Schedule**, click **New Appointment** (there's also a button on the **Overview**). Choose the patient, date, start, duration, type, procedure and payment (private or insurance), and click **Save Appointment**. The amount comes from the chosen procedure; **Consultation** (selected by default) has no procedure: no amount, 30 minutes. You can book even before adding procedures. Right after you book, move or cancel, **Undo** shows for 10 seconds, while the notice to the patient hasn't gone out yet. Undoing a series removes the whole series. If the notice has already gone out or the appointment changed meanwhile, you see "Couldn't undo. Open the item to adjust it."
+Thai title: "นัดหมายผู้ป่วย"
+**th**
+1. แตะปุ่ม **+** (หรือ **นัดหมายใหม่**)
+2. เลือกผู้ป่วย (พิมพ์ชื่อเพื่อค้นหา) หรือเพิ่มผู้ป่วยใหม่
+3. เลือก **วันที่** **เวลาเริ่มต้น** และ **ระยะเวลา (นาที)**
+4. เลือกประเภท (**ที่คลินิก** หรือ **ออนไลน์**) หัตถการ และจำนวนเงิน หากต้องการ
+5. แตะ **บันทึก**
+หากช่วงเวลานั้นถูกบล็อกไว้ แอปจะแสดงการบล็อกและถามว่าจะนัดต่อหรือไม่ หากมีนัดหมายอื่นในเวลาเดียวกันอยู่แล้ว จะบันทึกไม่ได้ แอปจะบอกว่าเป็นนัดของใคร แล้วให้คุณเลือกเวลาอื่น
+{pending:linked-bookings} หากผู้ป่วยมีบัญชี SolvyMed ผู้ป่วยจะได้รับการแจ้งเตือนเมื่อคุณนัดหมายบนเว็บไซต์
+**ในเว็บไซต์:** ใน **ตารางงาน** คลิก **นัดหมายใหม่** (มีปุ่มใน **ภาพรวม** ด้วย) เลือกผู้ป่วย วันที่ เวลาเริ่มต้น ระยะเวลา ประเภท หัตถการ และการชำระเงิน แล้วคลิก **บันทึกนัดหมาย** จำนวนเงินมาจากหัตถการที่เลือก
 `open:new-appointment`
 
 ---
@@ -64,6 +74,13 @@ Pacientes não conseguem pedir consultas em horários bloqueados. Você ainda po
 Patients can't request appointments in blocked time. You can still book over it if you need to (the app asks you to confirm).
 **No site:** Em **Agenda**, clique em **Bloquear Horário**, escolha a data, o início e o fim, e salve.
 **On the website:** In the **Schedule**, click **Block Time**, choose the date, start and end, and save.
+Thai title: "บล็อกเวลา"
+**th**
+1. ใน **ตารางงาน** แตะ **+** แล้วเลือก **ปิดช่วงเวลา**
+2. เลือกวันที่และช่วงเวลา (เริ่มต้นและสิ้นสุด)
+3. แตะ **บันทึก**
+ผู้ป่วยจะขอนัดในช่วงเวลาที่บล็อกไว้ไม่ได้ แต่คุณยังนัดทับได้หากจำเป็น (แอปจะขอให้ยืนยัน)
+**ในเว็บไซต์:** ใน **ตารางงาน** คลิก **บล็อกเวลา** เลือกวันที่ เวลาเริ่มต้นและสิ้นสุด แล้วบันทึก
 `open:schedule`
 
 ---
@@ -88,6 +105,13 @@ Patients can't request appointments in blocked time. You can still book over it 
 **No site:** {pending:notice-queue-on} Para remarcar: em **Agenda**, clique no ícone **Remarcar** ao lado da consulta, escolha a nova data e o horário e clique em **Remarcar** (a duração e os outros dados continuam os mesmos). Uma consulta marcada como **Ausente** não é remarcada (a falta fica registrada): use o ícone **Nova consulta (mesmo paciente)** ao lado dela. Para cancelar: em **Agenda**, mude o status da consulta para **Cancelado**. Logo depois de marcar, remarcar ou cancelar, **Desfazer** aparece por 10 segundos, enquanto o aviso ao paciente ainda não saiu. Desfazer uma série remove a série inteira. Se o aviso já saiu ou a consulta mudou nesse meio-tempo, aparece "Não foi possível desfazer. Abra o item para ajustar."
 **On the website:** {unless:notice-queue-on} To move it: in the **Schedule**, click the **Reschedule** icon next to the appointment, choose the new date and time and click **Reschedule** (the duration and other details stay the same). An appointment marked **Absent** isn't moved (the no-show stays on record): use the **New appointment (same patient)** icon next to it. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**.
 **On the website:** {pending:notice-queue-on} To move it: in the **Schedule**, click the **Reschedule** icon next to the appointment, choose the new date and time and click **Reschedule** (the duration and other details stay the same). An appointment marked **Absent** isn't moved (the no-show stays on record): use the **New appointment (same patient)** icon next to it. To cancel: in the **Schedule**, change the appointment's status to **Cancelled**. Right after you book, move or cancel, **Undo** shows for 10 seconds, while the notice to the patient hasn't gone out yet. Undoing a series removes the whole series. If the notice has already gone out or the appointment changed meanwhile, you see "Couldn't undo. Open the item to adjust it."
+Thai title: "เลื่อนหรือยกเลิกนัดหมาย"
+**th**
+1. ใน **ตารางงาน** แตะที่นัดหมาย
+2. หากต้องการเลื่อน: แก้ไขวันที่หรือเวลา แล้วแตะ **บันทึก**
+3. หากต้องการยกเลิก: เปลี่ยน **สถานะ** เป็น **ยกเลิกแล้ว**
+{pending:linked-bookings} หากผู้ป่วยมีบัญชี SolvyMed ผู้ป่วยจะได้รับการแจ้งเตือนเมื่อคุณเลื่อนหรือยกเลิกบนเว็บไซต์ นัดหมายในอดีตจะไม่มีการแจ้งเตือน
+**ในเว็บไซต์:** เลื่อนนัด: ใน **ตารางงาน** คลิกไอคอน **เลื่อนนัด** ข้างนัดหมาย เลือกวันที่และเวลาใหม่ แล้วคลิก **เลื่อนนัด** (ระยะเวลาและรายละเอียดอื่นยังคงเดิม) นัดหมายที่ **ขาดนัด** จะเลื่อนไม่ได้ ยกเลิก: เปลี่ยนสถานะของนัดหมายเป็น **ยกเลิกแล้ว**
 `open:schedule`
 
 ---
@@ -98,6 +122,10 @@ Agendado, Confirmado, Concluído, Cancelado, Atrasado, Ausente e Rejeitado. Toqu
 Scheduled, Confirmed, Completed, Cancelled, Late, Absent and Rejected. Tap the appointment and choose the status. Appointments requested by patients show as requests until you confirm or reject them.
 **No site:** Em **Agenda**, cada consulta da lista tem um seletor de status; escolha o novo status nele.
 **On the website:** In the **Schedule**, each appointment in the list has a status selector; pick the new status there.
+Thai title: "สถานะของนัดหมาย"
+**th**
+**นัดหมายแล้ว** **ยืนยันแล้ว** **เสร็จสิ้น** **ยกเลิกแล้ว** **มาสาย** **ขาดนัด** และ **ถูกปฏิเสธ** แตะที่นัดหมายแล้วเลือกสถานะ นัดหมายที่ผู้ป่วยขอมาจะแสดงเป็นคำขอ จนกว่าคุณจะยืนยันหรือปฏิเสธ
+**ในเว็บไซต์:** ใน **ตารางงาน** นัดหมายแต่ละรายการในรายการมีตัวเลือกสถานะ เลือกสถานะใหม่ได้ที่นั่น
 `open:schedule`
 
 ---
@@ -116,6 +144,13 @@ A new patient who requested through your link is connected to your clinic when y
 {pending:app-1.4.0} In the patient's app: if the time of a request or of a proposed new time passes without an answer, they see **Not confirmed**, with no actions.
 **No site:** Quando há pedidos aguardando sua resposta, a **Visão geral** mostra um aviso com quantos são (**Ver pedidos**). Os pedidos aparecem em **Agenda**, em **Solicitações de consulta**. Clique em **Confirmar**, **Rejeitar** ou **Propor novo horário** (dá para escrever uma mensagem ao paciente). Para um paciente novo, **Confirmar e Adicionar Paciente** já cria o cadastro. Se o horário de um pedido ou de um novo horário proposto passa sem resposta, o paciente vê **Não confirmado** em **Minhas Consultas**, sem ações. Enquanto o pedido está pendente, o paciente pode cancelá-lo em **Minhas Consultas** (**Cancelar pedido**); você recebe o aviso **Pedido cancelado**.
 **On the website:** When requests are waiting for your answer, the **Overview** shows a notice with how many (**See requests**). Requests show in the **Schedule**, under **Appointment Requests**. Click **Confirm**, **Reject** or **Propose new time** (you can add a note for the patient). For a new patient, **Confirm and Add New Patient** also creates their record. If the time of a request or of a proposed new time passes without an answer, the patient sees **Not confirmed** in **My Appointments**, with no actions. While a request is pending, the patient can cancel it in **My Appointments** (**Cancel request**); you get a **Request cancelled** notification.
+Thai title: "คำขอนัดหมายจากผู้ป่วย"
+**th**
+1. คำขอจะแสดงใน **หน้าแรก** ในส่วน **คำขอนัดหมาย**
+2. แตะที่คำขอ แล้วเลือก **ยืนยัน** **ปฏิเสธ** (ใส่ข้อความได้) หรือ **เสนอเวลา** ใหม่
+3. ผู้ป่วยจะได้รับการแจ้งเตือนพร้อมคำตอบของคุณ
+ผู้ป่วยใหม่ที่ขอนัดผ่านลิงก์ของคุณ จะเชื่อมต่อกับคลินิกของคุณเมื่อคุณยืนยัน
+**ในเว็บไซต์:** เมื่อมีคำขอรอคำตอบ **ภาพรวม** จะแสดงจำนวนคำขอ (**ดูคำขอ**) คำขอจะแสดงใน **ตารางงาน** ในส่วน **คำขอนัดหมาย** คลิก **ยืนยัน** **ปฏิเสธ** หรือ **เสนอเวลาใหม่** (ใส่ข้อความถึงผู้ป่วยได้) สำหรับผู้ป่วยใหม่ **ยืนยันและเพิ่มผู้ป่วยใหม่** จะสร้างข้อมูลผู้ป่วยให้ด้วย
 `open:home`
 
 ---
@@ -140,4 +175,9 @@ When a patient asks to reschedule a confirmed appointment, the request shows on 
 If nobody answers before the requested time, the request expires by itself: the appointment stays as it was and leaves the requests, and the patient sees "Your reschedule request expired." (on the website; in the app from version 1.4.0).
 **No site:** O pedido aparece em **Agenda**, em **Solicitações de consulta**, marcado **Remarcação solicitada**, com **Aceitar** e **Recusar**. Em **Minhas Consultas**, o paciente só pode **Solicitar remarcação** até o horário de início da consulta (pelo relógio da clínica).
 **On the website:** The request shows in the **Schedule**, under **Appointment Requests**, marked **Reschedule Requested**, with **Accept** and **Decline**. In **My Appointments**, the patient can **Request reschedule** only until the appointment's start time (by the clinic's clock).
+Thai title: "คำขอเลื่อนนัดจากผู้ป่วย"
+**th**
+เมื่อผู้ป่วยขอเลื่อนนัดหมายที่ยืนยันแล้ว คำขอจะแสดงใน **หน้าแรก** **ยอมรับ** จะย้ายนัดหมายไปยังเวลาใหม่ **ปฏิเสธ** จะคงเวลาเดิมไว้
+หากไม่มีใครตอบจนถึงเวลาที่ขอ คำขอจะหมดอายุเอง นัดหมายยังคงเดิมและหายไปจากคำขอ และผู้ป่วยจะเห็นข้อความ "คำขอเลื่อนนัดของคุณหมดอายุแล้ว"
+**ในเว็บไซต์:** คำขอจะแสดงใน **ตารางงาน** ในส่วน **คำขอนัดหมาย** พร้อมป้าย **ขอนัดใหม่แล้ว** และปุ่ม **ยอมรับ** กับ **ปฏิเสธ**
 `open:home`

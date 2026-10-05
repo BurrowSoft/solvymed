@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { HelpBlocks, HelpFrame, HelpLink, Inline } from "@/components/help/HelpChrome";
-import { articleTitle, findArticle, HELP_UI, helpLang, webScreen } from "@/lib/help";
+import { articleTitle, findArticle, helpData, HELP_UI, helpView, webScreen } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
 
 export async function generateMetadata({
@@ -13,11 +13,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params;
   const app = (await searchParams).app === "1";
-  const found = findArticle(slug);
-  const lang = helpLang(locale);
+  const view = helpView(locale);
+  const { cats, lang } = helpData(view);
+  const found = findArticle(slug, cats);
   return {
     // The app variant's neutral title (no "subscription" in the apps).
-    title: found ? articleTitle(found.article, lang, app) : HELP_UI[lang].title,
+    title: found ? articleTitle(found.article, lang, app) : HELP_UI[view].title,
     // Not indexed until UX confirms the label check (liveFeatures.helpCenter).
     robots: liveFeatures.helpCenter ? undefined : { index: false, follow: false },
   };
@@ -32,17 +33,18 @@ export default async function HelpArticlePage({
 }) {
   const { locale, slug } = await params;
   const app = (await searchParams).app === "1";
-  const found = findArticle(slug);
+  const view = helpView(locale);
+  const { cats, lang } = helpData(view);
+  const found = findArticle(slug, cats);
   if (!found) notFound();
   const { article, category } = found;
-  const lang = helpLang(locale);
-  const ui = HELP_UI[lang];
+  const ui = HELP_UI[view];
   // No "Open on the website" in the app variant, nor when the website
   // doesn't have the feature.
   const screen = app || article.webUnavailable ? null : webScreen(article.open);
 
   return (
-    <HelpFrame app={app} lang={lang}>
+    <HelpFrame app={app} lang={view}>
       <HelpLink href="/help" app={app} className="text-sm font-semibold text-slate-500 hover:text-slate-700">{ui.back}</HelpLink>
       <p className="mt-6 text-xs font-semibold uppercase tracking-wide text-teal-600">{category.title[lang]}</p>
       <h1 className="mt-1 mb-6 text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl">{articleTitle(article, lang, app)}</h1>

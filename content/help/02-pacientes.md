@@ -16,6 +16,13 @@ If the CPF is already registered, the app warns you and doesn't create a duplica
 **On the website:** In **Patients**, click **New Patient**, fill in the details and click **Save Patient**. The same duplicate-CPF and similar-patient warnings appear on the website.
 **No site:** {pending:patient-address-live} Em **Pacientes**, clique em **Novo Paciente**, preencha os dados e clique em **Salvar Paciente**. Os mesmos avisos de CPF repetido e de paciente parecido aparecem no site. Em **Endereço** (fechado enquanto vazio) ficam CEP, rua, número, complemento, bairro, cidade e UF (numa clínica fora do Brasil, os campos do país: na Tailândia, บ้านเลขที่, ซอย, ตำบล, อำเภอ, จังหวัด). Clínicas no Brasil têm também o **CNS** (15 dígitos, no cartão do SUS). **Observações** é para informações administrativas: não escreva dados clínicos ali, use o prontuário. A secretária vê e edita esses campos. O endereço aparece numa linha na página do paciente (com **Editar**) e na receita impressa, abaixo do nome.
 **On the website:** {pending:patient-address-live} In **Patients**, click **New Patient**, fill in the details and click **Save Patient**. The same duplicate-CPF and similar-patient warnings appear on the website. **Address** (collapsed while empty) has the postal code, street, number, complement, neighbourhood, city and state (in a clinic outside Brazil, that country's fields: in Thailand, house number, soi, subdistrict, district, province). Clinics in Brazil also have the **CNS** (15 digits, on the SUS card). **Notes** is for administrative information: don't write clinical details there, use the medical record. The secretary sees and edits these fields. The address shows on one line on the patient's page (with **Edit**) and on the printed prescription, under the name.
+Thai title: "เพิ่มผู้ป่วย"
+**th**
+1. เปิด **ผู้ป่วย** แล้วแตะ **+** (**ผู้ป่วยใหม่**)
+2. กรอก **ชื่อ-นามสกุล** **วันเกิด** **โทรศัพท์** และหากต้องการ **เลขประจำตัวประชาชน** (หรือ **เลขหนังสือเดินทาง / เลขประจำตัว**) และ **อีเมล**
+3. แตะ **บันทึก**
+เลขประจำตัวประชาชนต้องมี 13 หลักที่ถูกต้อง หากเลขนี้มีอยู่แล้ว แอปจะแจ้งเตือนและไม่สร้างผู้ป่วยซ้ำ หากเบอร์โทรศัพท์ หรือชื่อกับวันเกิด ดูเหมือนผู้ป่วยที่มีอยู่แล้ว แอปจะแสดงผู้ป่วยที่คล้ายกัน ให้คุณเปิดรายการเดิมหรือสร้างใหม่ต่อไป
+**ในเว็บไซต์:** ใน **ผู้ป่วย** คลิก **ผู้ป่วยใหม่** กรอกข้อมูล แล้วคลิก **บันทึกผู้ป่วย** การแจ้งเตือนเลขซ้ำและผู้ป่วยที่คล้ายกันแสดงบนเว็บไซต์เช่นกัน
 `open:new-patient`
 
 ---
@@ -26,6 +33,10 @@ Em **Pacientes**, use a busca (lupa) e digite o nome, o CPF ou o telefone.
 In **Patients**, use search (the magnifier) and type the name, CPF or phone.
 **No site:** Em **Pacientes**, use a caixa **Buscar pacientes…** (nome, telefone ou CPF).
 **On the website:** In **Patients**, use the **Search patients…** box (name, phone or CPF).
+Thai title: "ค้นหาผู้ป่วย"
+**th**
+ใน **ผู้ป่วย** ใช้ช่อง **ค้นหาผู้ป่วย** แล้วพิมพ์ชื่อ เลขบัตรประชาชน หรือเบอร์โทรศัพท์
+**ในเว็บไซต์:** ใน **ผู้ป่วย** ใช้ช่อง **ค้นหาผู้ป่วย…** (ชื่อ เบอร์โทรศัพท์ หรือเลขบัตรประชาชน)
 `open:patients`
 
 ---
