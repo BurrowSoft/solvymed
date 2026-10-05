@@ -46,3 +46,11 @@ export function viewRange(view: AgendaView, currentDate: string): { start: strin
 export function sharedZone(zones: string[]): string | null {
   return zones.length > 0 && zones.every((z) => z === zones[0]) ? zones[0] : null;
 }
+
+// "Todos" (166): the day shown. A ?date wins; without one, the shown
+// doctors' own today when they share a zone, else her primary's (f0/c6:
+// a Manaus chip near midnight must not open on São Paulo's date).
+export function todosDay(dateParam: string | null, zone: string | null, primaryToday: string, todayIn: (zone: string) => string): { today: string; currentDate: string } {
+  const today = zone ? todayIn(zone) : primaryToday;
+  return { today, currentDate: dateParam ?? today };
+}

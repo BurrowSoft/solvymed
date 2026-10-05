@@ -157,3 +157,18 @@ describe("fail closed (c6)", () => {
     expect(screen.queryByRole("combobox")).toBeNull();
   });
 });
+
+describe("the day Todos opens on (f0/c6)", () => {
+  it("a Manaus chip at 23:30 Manaus / 00:30 São Paulo opens on Manaus's date; a ?date wins", async () => {
+    const { clinicDate } = await import("@/lib/clinicTime");
+    const { todosDay } = await import("@/lib/calendarRange");
+    const at = new Date("2026-10-06T03:30:00Z");
+    const spToday = clinicDate(at, "America/Sao_Paulo");
+    expect(spToday).toBe("2026-10-06");
+    const todayIn = (z: string) => clinicDate(at, z);
+    expect(todosDay(null, "America/Manaus", spToday, todayIn)).toEqual({ today: "2026-10-05", currentDate: "2026-10-05" });
+    expect(todosDay("2026-10-09", "America/Manaus", spToday, todayIn)).toEqual({ today: "2026-10-05", currentDate: "2026-10-09" });
+    // Across zones (list only): her primary's today.
+    expect(todosDay(null, null, spToday, todayIn)).toEqual({ today: "2026-10-06", currentDate: "2026-10-06" });
+  });
+});

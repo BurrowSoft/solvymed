@@ -55,7 +55,7 @@ export default async function SchedulePage({
   if (practices && practices.length > 1 && (await cookies()).get(ACTING_COOKIE)?.value === ALL_PRACTICES) {
     const tz = await getClinicTimeZone(supabase, { professionalId: effectiveProfId, isSecretary });
     const today0 = clinicDate(new Date(), tz);
-    return <AllSchedule practices={practices} userId={user.id} today={today0} currentDate={dateParam ?? today0} doctor={doctorParam ?? null} view={parseView(viewParam)} locale={locale} />;
+    return <AllSchedule practices={practices} userId={user.id} today={today0} date={dateParam ?? null} doctor={doctorParam ?? null} view={parseView(viewParam)} locale={locale} />;
   }
 
   // Amounts are in the practice's currency (its country), not the UI's.

@@ -9,7 +9,7 @@ import { shortDoctorName, withBrandTitle } from "@/lib/doctorName";
 import { statusReasonLive } from "@/lib/statusReason";
 import { clinicDate, validZone } from "@/lib/clinicTime";
 import { doctorColors } from "@/lib/doctorPalette";
-import { sharedZone, viewRange, type AgendaView } from "@/lib/calendarRange";
+import { sharedZone, todosDay, viewRange, type AgendaView } from "@/lib/calendarRange";
 import type { MyPractice } from "@/lib/actingPractice";
 import { RowPractice } from "@/components/RowPractice";
 import { ItemCalendar } from "@/components/PracticeCalendar";
@@ -70,8 +70,10 @@ async function practicePart(p: MyPractice, userId: string, color: string): Promi
 // acts for that appointment's doctor (RowPractice), with that practice's
 // calendar for its dates. A new appointment or a block asks for the doctor
 // first (AllAddButtons).
-export async function AllSchedule({ practices, userId, today, currentDate, doctor, view, locale }: {
-  practices: MyPractice[]; userId: string; today: string; currentDate: string; doctor: string | null; view: AgendaView; locale: string;
+// date: the page's ?date, if any; without one, the shown doctors' own today
+// (f0: chip Manaus opened on São Paulo's date near midnight).
+export async function AllSchedule({ practices, userId, today, date, doctor, view, locale }: {
+  practices: MyPractice[]; userId: string; today: string; date: string | null; doctor: string | null; view: AgendaView; locale: string;
 }) {
   const [t, tp] = await Promise.all([getTranslations("schedule"), getTranslations("secretaryPractices")]);
   const colors = doctorColors(practices.map((p) => p.professional_id));
@@ -83,7 +85,7 @@ export async function AllSchedule({ practices, userId, today, currentDate, docto
   const zone = sharedZone(shown.map((x) => x.zone));
   const grid = view !== "list" && zone ? view : null;
   // Their shared today; across zones, her primary's (as before).
-  const shownToday = zone ? clinicDate(new Date(), zone) : today;
+  const { today: shownToday, currentDate } = todosDay(date, zone, today, (z) => clinicDate(new Date(), z));
   const { start, end } = viewRange(grid ?? "list", currentDate);
 
   const supabase = await createClient();
@@ -100,7 +102,7 @@ export async function AllSchedule({ practices, userId, today, currentDate, docto
   const bookings = shown.flatMap((x) => x.bookings);
   const todayCount = currentDate === shownToday ? appointments.filter((a) => a.date === shownToday && a.status !== "blocked").length : null;
   const prefix = locale === "en" ? "" : `/${locale}`;
-  const chip = (id: string | null) => `${prefix}/dashboard/schedule?date=${currentDate}&view=${view}${id ? `&doctor=${id}` : ""}`;
+  const chip = (id: string | null) => `${prefix}/dashboard/schedule?view=${view}${date ? `&date=${date}` : ""}${id ? `&doctor=${id}` : ""}`;
   const doctors: CalendarDoctors = Object.fromEntries(shown.map((x) => [x.tag.id, { tag: x.tag, ctx: x.ctx }]));
 
   return (
