@@ -2001,6 +2001,11 @@
     "notifyAppHint": "ใช้กับการแจ้งเตือนในแอป SolvyMed",
     "pushPrefix": "{doctor}: ",
     "joinedTeam": "{doctor} เพิ่มคุณเข้าทีมแล้ว",
+    "joinRow": "เข้าร่วมทีมของแพทย์ท่านอื่น",
+    "joinHint": "กรอกรหัสเชิญที่แพทย์ส่งให้คุณ",
+    "joinCode": "รหัสเชิญ",
+    "joinButton": "เข้าร่วม",
+    "joinPickHint": "เลือกแพทย์ได้ที่ \"{label}\"",
     "removeTitle": "นำ {name} ออกจากทีมของคุณหรือไม่",
     "removeBody": "เลขานุการยังคงอยู่ในทีมของแพทย์ท่านอื่น"
   },

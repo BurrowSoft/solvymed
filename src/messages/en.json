@@ -2001,6 +2001,11 @@
     "notifyAppHint": "Applies to notifications in the SolvyMed app.",
     "pushPrefix": "{doctor}: ",
     "joinedTeam": "{doctor} added you to their team.",
+    "joinRow": "Join another doctor's team",
+    "joinHint": "Enter the invite code the doctor sent you.",
+    "joinCode": "Invite code",
+    "joinButton": "Join",
+    "joinPickHint": "Pick the doctor in \"{label}\".",
     "removeTitle": "Remove {name} from your team?",
     "removeBody": "They stay on other doctors' teams."
   },

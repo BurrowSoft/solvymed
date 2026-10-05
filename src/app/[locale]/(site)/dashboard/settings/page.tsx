@@ -4,6 +4,8 @@ import { getTranslations } from "next-intl/server";
 import { Card, ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, SchedulingRulesForm, BlockedPatientsPanel, InviteCodeCard } from "./SettingsClient";
 import { TeamPanel, type TeamRow } from "./TeamPanel";
 import { SecretarySettings } from "./SecretarySettings";
+import { JoinPracticeCard } from "./JoinPracticeCard";
+import { canJoinAnotherPractice } from "@/lib/secretaryJoin";
 import { NotifyPrefsCard, type NotifyPref } from "./NotifyPrefsCard";
 import { ShowSetupRow } from "./ShowSetupRow";
 import { NewsSettingsCard, TourSettingsCard } from "@/components/tour/TourProvider";
@@ -80,6 +82,8 @@ export default async function SettingsPage({
       notifyPrefs = error ? null : ((data ?? []) as NotifyPref[]);
       notifyColors = Object.fromEntries(doctorColors((practices ?? []).map((p) => p.professional_id)));
     }
+    // 0a slice 1b: "Entrar na equipe de outro médico", with the server switch.
+    const canJoin = await canJoinAnotherPractice(supabase);
     return (
       <div className="p-6 lg:p-8 max-w-3xl">
         <div className="mb-8">
@@ -89,6 +93,11 @@ export default async function SettingsPage({
         <SecretarySettings supabase={supabase} doctorId={(await actingPracticeFor(userRoleData.invited_by_professional_id as string, user.id)) ?? (userRoleData.invited_by_professional_id as string)} locale={locale} />
         {/* 166: notifications per doctor, once she serves 2+ (a single
             doctor has nothing to choose between). */}
+        {canJoin && (
+          <div className="mt-6">
+            <JoinPracticeCard />
+          </div>
+        )}
         {notifyPrefs && notifyPrefs.length > 1 && (
           <div className="mt-6">
             <NotifyPrefsCard prefs={notifyPrefs} colors={notifyColors} />
