@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { clientIp, founderPayload, mapApplyError, systemName } from "@/lib/founders";
+import { clientIp, defaultFoundersCountry, founderPayload, mapApplyError, systemName } from "@/lib/founders";
 
 // The Founders Program page (founders-page-spec.md, stage 1; migration 129).
 
@@ -35,6 +35,10 @@ beforeEach(() => {
 });
 
 describe("founders helpers", () => {
+  it("the form's default country: the language first; in English, the visitor's geo when BR/TH (cf)", () => {
+    expect(["pt-BR", "th"].map((l) => defaultFoundersCountry(l, "US"))).toEqual(["BR", "TH"]);
+    expect([" br", "TH", "US", null, undefined].map((g) => defaultFoundersCountry("en", g))).toEqual(["BR", "TH", "", "", ""]);
+  });
   it("shapes the payload: trimmed, known keys, email lower-cased, country upper-cased, utm only from attribution", () => {
     const p = founderPayload({ ...form, evil: "x", wants: ["a", 3, "", "b"] }, null);
     expect(p).toMatchObject({ full_name: "Ana Souza", email: "ana@example.com", country: "BR", wants: ["a", "b"], consent: true, utm: {} });

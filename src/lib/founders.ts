@@ -88,9 +88,15 @@ export const OPTIONS = {
   team_size: ["alone", "one_secretary", "two_plus"],
 } as const;
 
-// The page's default country from its language; English picks nothing, so
-// the visitor chooses Brasil or ประเทศไทย (e7).
-export const defaultFoundersCountry = (locale: string): FoundersCountry | "" => (locale === "pt-BR" ? "BR" : locale === "th" ? "TH" : "");
+// The page's default country from its language; in English, the visitor's
+// country (Vercel geo) when it's a Founders country, as at signup (cf), else
+// nothing, so the visitor chooses Brasil or ประเทศไทย (e7).
+export function defaultFoundersCountry(locale: string, geo?: string | null): FoundersCountry | "" {
+  if (locale === "pt-BR") return "BR";
+  if (locale === "th") return "TH";
+  const g = (geo ?? "").trim().toUpperCase();
+  return (FOUNDERS_COUNTRIES as readonly string[]).includes(g) ? (g as FoundersCountry) : "";
+}
 
 // What the form sends (the route adds the IP; the honeypot never reaches
 // the database).

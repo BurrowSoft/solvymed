@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { Link } from "@/i18n/navigation";
@@ -119,7 +120,7 @@ export default async function FoundersPage({ params }: { params: Promise<{ local
         <section id="apply" className="mx-auto max-w-2xl scroll-mt-20 px-4 pb-14">
           <h2 className="mb-5 text-xl font-bold text-slate-900">{t("formTitle")}</h2>
           <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
-            <FoundersForm locale={locale} defaultCountry={defaultFoundersCountry(locale)} showRulesLink={liveFeatures.foundersRules} />
+            <FoundersForm locale={locale} defaultCountry={defaultFoundersCountry(locale, (await headers()).get("x-vercel-ip-country"))} showRulesLink={liveFeatures.foundersRules} />
             <p className="mt-5 text-xs leading-relaxed text-slate-500">
               {t.rich("privacyNotice", { privacy: (c) => <Link href="/privacy" className="underline">{c}</Link> })}
             </p>
