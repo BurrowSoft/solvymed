@@ -30,12 +30,14 @@ vi.mock("next/navigation", async (orig) => ({
   ...(await orig<typeof import("next/navigation")>()),
   redirect: (to: string) => { throw new Error(`redirect:${to}`); },
   usePathname: () => "/pt-BR/dashboard",
+  useParams: () => ({ locale: "pt-BR" }),
+  useSearchParams: () => new URLSearchParams(),
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn(), replace: vi.fn() }),
 }));
 vi.mock("next-intl/server", async () => {
   const { createTranslator } = await import("next-intl");
   const msgs = (await import("@/messages/pt-BR.json")).default;
-  return { getTranslations: async ({ namespace }: { namespace: string }) => createTranslator({ locale: "pt-BR", messages: msgs, namespace: namespace as never }) };
+  return { getTranslations: async (o: string | { namespace: string }) => createTranslator({ locale: "pt-BR", messages: msgs, namespace: (typeof o === "string" ? o : o.namespace) as never }) };
 });
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
@@ -144,6 +146,19 @@ describe("the switcher and Todos", () => {
     const r = todosPractices([doc(A, "Ana", true), doc(B, "Bia", false), doc(C, "Caio", null)]);
     expect([r.shown.map((p) => p.professional_id), r.lapsedCount]).toEqual([[A, C], 1]);
     expect(todosPractices([doc(A, "Ana", undefined), doc(B, "Bia", undefined)]).lapsedCount).toBe(0);
+  });
+
+  it("every doctor lapsed: Todos shows the note and an empty list, no zones hint, no grid, no New appointment (c6)", async () => {
+    const { AllSchedule } = await import("@/app/[locale]/(site)/dashboard/(gated)/schedule/AllSchedule");
+    const el = await AllSchedule({
+      practices: [doc(A, "Ana", false, true), doc(B, "Bia", false)], userId: "sec-1", today: "2026-10-05",
+      date: null, doctor: null, view: "week", locale: "pt-BR",
+    });
+    render(intl(el));
+    expect(screen.getByTestId("lapsed-hint").textContent).toBe("2 médico(s) com assinatura inativa não aparecem.");
+    expect(screen.queryByTestId("zones-hint")).toBeNull();
+    expect(screen.getByText(pt.secretaryPractices.allEmpty)).toBeTruthy();
+    expect(screen.queryByTestId("all-add")).toBeNull();
   });
 
   it("cf's words in en / pt-BR / th", () => {

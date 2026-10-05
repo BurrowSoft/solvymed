@@ -96,7 +96,8 @@ export async function AllSchedule({ practices, userId, today, date, doctor, view
 
   const supabase = await createClient();
   const cols = `id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note, professional_id${statusReasonLive() ? ", status_reason, status_by" : ""}`;
-  const { data } = await supabase
+  // No active doctor (all lapsed): nothing to read.
+  const { data } = shownIds.length === 0 ? { data: [] } : await supabase
     .from("appointments")
     .select(cols)
     .in("professional_id", shownIds)
@@ -146,7 +147,8 @@ export async function AllSchedule({ practices, userId, today, date, doctor, view
       {lapsedCount > 0 && (
         <p data-testid="lapsed-hint" role="note" className="mb-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-600">{tp("allLapsedNote", { n: lapsedCount })}</p>
       )}
-      {!zone && (
+      {/* Every doctor lapsed: no zones to compare, just the note and an empty list (c6). */}
+      {!zone && parts.length > 0 && (
         <p data-testid="zones-hint" role="note" className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">{tp("zonesDiffer")}</p>
       )}
 
