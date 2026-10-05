@@ -16,11 +16,14 @@ vi.mock("next/navigation", async (orig) => ({
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
 }));
 
+// Imported up front, not inside the test: under the full suite's load the
+// dynamic import alone could pass the 15 s test timeout (the recurring flake).
+import { MyAppointmentsClient } from "@/app/[locale]/(site)/my-appointments/MyAppointmentsClient";
+
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.unstubAllEnvs(); save.mockClear(); try { localStorage.clear(); sessionStorage.clear(); } catch { /* none */ } });
 
 describe("the appointment type in the patient's language", () => {
   it("Presencial / Online, never the raw value", async () => {
-    const { MyAppointmentsClient } = await import("@/app/[locale]/(site)/my-appointments/MyAppointmentsClient");
     const appt = (id: string, type: string) => ({
       id, date: "2030-01-15", start_time: "09:00:00", end_time: "09:30:00", consultation_type: "Consulta", type, status: "confirmed",
       professional_id: "doc-1", proposed_date: null, proposed_start_time: null, proposed_end_time: null, scheduled_by: "professional", patient_note: null,
