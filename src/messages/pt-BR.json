@@ -1971,6 +1971,11 @@
     "notifyAppHint": "Vale para as notificações no app SolvyMed.",
     "pushPrefix": "{doctor}: ",
     "joinedTeam": "{doctor} adicionou você à equipe.",
+    "joinRow": "Entrar na equipe de outro médico",
+    "joinHint": "Digite o código de convite que o médico enviou.",
+    "joinCode": "Código de convite",
+    "joinButton": "Entrar",
+    "joinPickHint": "Escolha o médico em \"{label}\".",
     "removeTitle": "Remover {name} da sua equipe?",
     "removeBody": "Ela continua na equipe de outros médicos."
   },

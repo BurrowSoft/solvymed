@@ -2,6 +2,9 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { normalizeSecretaryCode } from "@/lib/secretary";
+import { liveFeatures } from "@/lib/liveFeatures";
+import { myPractices } from "@/lib/effectiveProfId";
+import { withBrandTitle } from "@/lib/doctorName";
 
 // Stable codes the page maps through next-intl. The RPCs return these as
 // their error message text (migration 088).
@@ -11,7 +14,9 @@ function errorCode(message: string | undefined): string {
   return KNOWN_ERRORS.find((c) => message?.includes(c)) ?? "generic";
 }
 
-export async function acceptSecretaryInvite(rawCode: string): Promise<{ ok: true } | { ok: false; code: string }> {
+// ok.doctor: the doctor she just joined, from her practice list (multi-practice
+// only; "" when it can't be read), for "{doctor} adicionou você à equipe.".
+export async function acceptSecretaryInvite(rawCode: string): Promise<{ ok: true; doctor: string } | { ok: false; code: string }> {
   const code = normalizeSecretaryCode(rawCode);
   if (!code) return { ok: false, code: "invite_invalid" };
   const supabase = await createClient();
@@ -19,9 +24,14 @@ export async function acceptSecretaryInvite(rawCode: string): Promise<{ ok: true
   if (!user) return { ok: false, code: "generic" };
   // Runs with the invitee's own session: the RPC keys on auth.uid() and the
   // account's email, and sets user_roles itself.
-  const { error } = await supabase.rpc("accept_secretary_invite", { p_code: code });
+  const { data, error } = await supabase.rpc("accept_secretary_invite", { p_code: code });
   if (error) return { ok: false, code: errorCode(error.message) };
-  return { ok: true };
+  let doctor = "";
+  if (liveFeatures.multiPractice && typeof data === "string") {
+    const p = (await myPractices(user.id))?.find((x) => x.professional_id === data);
+    doctor = p ? withBrandTitle(p.title, p.display_name) : "";
+  }
+  return { ok: true, doctor };
 }
 
 export async function declineSecretaryInvite(rawCode: string): Promise<{ ok: true } | { ok: false; code: string }> {

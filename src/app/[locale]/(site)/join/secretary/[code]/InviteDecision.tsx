@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { acceptSecretaryInvite, declineSecretaryInvite } from "./actions";
 
-const ERROR_KEY: Record<string, string> = {
+// The "secretary" key for each accept/decline error code (shared with the
+// Settings "Entrar na equipe de outro médico" card).
+export const ERROR_KEY: Record<string, string> = {
   invite_invalid: "inviteInvalid",
   account_is_patient: "accountIsPatient",
   account_is_professional: "accountIsProfessional",
@@ -16,18 +19,27 @@ const ERROR_KEY: Record<string, string> = {
   different_country: "differentCountry",
 };
 
-export function InviteDecision({ code, locale }: { code: string; locale: string }) {
+// secondPractice: she is already on another doctor's team (multi-practice on):
+// after accepting, say who added her and where to pick them, as the app does,
+// instead of dropping her on the dashboard of the doctor she had chosen.
+export function InviteDecision({ code, locale, secondPractice = false }: { code: string; locale: string; secondPractice?: boolean }) {
   const t = useTranslations("secretary");
+  const tp = useTranslations("secretaryPractices");
   const router = useRouter();
   const prefix = locale === "en" ? "" : `/${locale}`;
   const [pending, start] = useTransition();
   const [error, setError] = useState("");
   const [declined, setDeclined] = useState(false);
+  const [joined, setJoined] = useState<string | null>(null);
 
   function accept() {
     setError("");
     start(async () => {
       const result = await acceptSecretaryInvite(code);
+      if (result.ok && secondPractice) {
+        setJoined(`${tp("joinedTeam", { doctor: result.doctor }).trim()} ${tp("joinPickHint", { label: tp("switcherLabel") })}`);
+        return;
+      }
       if (result.ok) {
         router.push(`${prefix}/dashboard`);
         router.refresh();
@@ -47,6 +59,20 @@ export function InviteDecision({ code, locale }: { code: string; locale: string 
       }
       setError(t(ERROR_KEY[result.code] ?? "genericError"));
     });
+  }
+
+  if (joined !== null) {
+    return (
+      <div className="space-y-4">
+        <p data-testid="invite-joined" className="text-center text-sm text-slate-600">{joined}</p>
+        <Link
+          href={`${prefix}/dashboard`}
+          className="block w-full rounded-xl bg-teal-600 px-6 py-3.5 text-center text-base font-bold text-white shadow-md transition hover:bg-teal-700"
+        >
+          {t("continue")}
+        </Link>
+      </div>
+    );
   }
 
   if (declined) {

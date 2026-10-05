@@ -7,6 +7,7 @@ import { isWellFormedSecretaryCode, normalizeSecretaryCode } from "@/lib/secreta
 import { InviteDecision } from "./InviteDecision";
 import { InviteHint } from "./InviteHint";
 import { withCountryHint } from "@/lib/signupCountry";
+import { canJoinAnotherPractice } from "@/lib/secretaryJoin";
 
 type InvitePreview = { professional_name: string | null; clinic_name: string | null };
 
@@ -79,7 +80,11 @@ export default async function SecretaryInvitePage({
   // Clear messages up front for accounts the RPC would refuse anyway.
   if (roleRow?.role === "patient") return message(t("cannotAcceptTitle"), t("accountIsPatient"));
   if (roleRow?.role === "professional") return message(t("cannotAcceptTitle"), t("accountIsProfessional"));
-  if (roleRow?.role === "secretary" && roleRow.invited_by_professional_id) {
+  // Multi-practice on (0a slice 1b): a secretary already on a team may join
+  // another doctor's; accept_secretary_invite decides (181's one country,
+  // the team limit), so no pre-check here.
+  const secondPractice = roleRow?.role === "secretary" && !!roleRow.invited_by_professional_id;
+  if (secondPractice && !(await canJoinAnotherPractice(supabase))) {
     const { data: clinicRows } = await supabase.rpc("get_my_clinic");
     const name = (Array.isArray(clinicRows) ? clinicRows[0]?.professional_name : null) as string | null;
     return message(
@@ -102,7 +107,7 @@ export default async function SecretaryInvitePage({
             ? t("inviteBody", { name: invite.professional_name ?? "", clinic: invite.clinic_name })
             : t("inviteBodyNoClinic", { name: invite.professional_name ?? "" })}
         </p>
-        <InviteDecision code={code} locale={locale} />
+        <InviteDecision code={code} locale={locale} secondPractice={secondPractice} />
       </AuthCard>
     </AuthPageShell>
   );
