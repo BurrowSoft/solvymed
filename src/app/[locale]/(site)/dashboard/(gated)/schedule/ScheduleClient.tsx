@@ -204,13 +204,13 @@ export function ScheduleNav({ currentDate, currentView = "list", today }: { curr
 
   return (
     <div className="flex items-center gap-2">
-      <button onClick={() => navigate(-1)} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
+      <button onClick={() => navigate(-1)} aria-label={t("prevDay")} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-600"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <div className="text-center min-w-[220px]">
         <p className="font-bold text-slate-900 text-sm">{formatted}</p>
       </div>
-      <button onClick={() => navigate(1)} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
+      <button onClick={() => navigate(1)} aria-label={t("nextDay")} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-600"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
       {!isToday && (

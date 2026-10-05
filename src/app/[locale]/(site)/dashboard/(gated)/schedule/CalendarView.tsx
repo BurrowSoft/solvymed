@@ -404,11 +404,11 @@ export function CalendarView({
     <div>
       {/* Calendar nav */}
       <div className="mb-3 flex items-center gap-2">
-        <button onClick={navPrev} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
+        <button onClick={navPrev} aria-label={t(`prev${view === "day" ? "Day" : view === "week" ? "Week" : "Month"}`)} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-600"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
         <span className="min-w-[200px] text-center text-sm font-bold text-slate-900">{headerLabel}</span>
-        <button onClick={navNext} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
+        <button onClick={navNext} aria-label={t(`next${view === "day" ? "Day" : view === "week" ? "Week" : "Month"}`)} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-600"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
         {currentDate !== today && (
