@@ -19,6 +19,8 @@ import { statusReasonLive } from "@/lib/statusReason";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
 import { parseView, viewRange } from "@/lib/calendarRange";
+import { patientPhones } from "@/lib/patientPhones";
+import { offersPaymentQr } from "@/lib/scheduleChecks";
 
 export default async function SchedulePage({
   params,
@@ -117,7 +119,11 @@ export default async function SchedulePage({
 
   const appointments = (apptsResult.data ?? []) as unknown as CalendarAppt[];
   const procedures = (procsResult.data ?? []) as { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
-  const rowCtx: RowPracticeCtx = { currency, pixKey, promptPayId, clinicName, clinicCity, procedures };
+  // G4: the list's phones, only where the Pix code can go to WhatsApp.
+  const phones = view === "list" && pixKey && countryProfile(practiceCountry).paymentShare
+    ? await patientPhones(supabase, appointments.filter(offersPaymentQr).map((a) => a.patient_id))
+    : {};
+  const rowCtx: RowPracticeCtx = { currency, pixKey, promptPayId, clinicName, clinicCity, procedures, country: practiceCountry, phones };
 
   const todayCount = appointments.filter(a => a.date === today && a.status !== "blocked").length;
 

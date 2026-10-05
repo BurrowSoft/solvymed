@@ -68,6 +68,10 @@ export type CountryProfile = {
   // Where a paid appointment's receipt is issued: the website's simple
   // recibo, or only the app (Thailand: numbered receipts).
   receipts: "web" | "app";
+  // Where the payment QR's code can be sent to the patient from the Agenda
+  // (G4, the app's "Enviar Pix por WhatsApp"): WhatsApp in Brazil (Pix);
+  // none elsewhere (no Thai PromptPay sharing; the default has no QR).
+  paymentShare: "whatsapp" | null;
   // The year printed on documents: Gregorian, or the Buddhist era (+543).
   calendar: "gregorian" | "buddhist";
   // The public health card the patient form takes (Brazil's CNS), if any.
@@ -98,7 +102,7 @@ const BR: CountryProfile = {
   idFields: [{ name: "cpf", label: "cpf", placeholder: "000.000.000-00", store: "text", maxLength: 20, search: "digits" }],
   phonePrefix: "+55", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo",
   clinicTaxId: "cnpj", fallbackLocale: "pt-BR", languages: ["pt-BR", "en"], shortMonthKeepsDot: false, messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
-  healthCard: "cns", addressFormat: "br",
+  healthCard: "cns", addressFormat: "br", paymentShare: "whatsapp",
   examples: {
     titles: { other: "Dr., Dra., Prof." },
     registration: "registrationPlaceholder", clinicName: "clinicNamePlaceholder", address: "addressPlaceholder",
@@ -114,7 +118,7 @@ const TH: CountryProfile = {
   ],
   phonePrefix: "+66", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok",
   clinicTaxId: "th_tax_id", fallbackLocale: "th", languages: ["th", "en"], shortMonthKeepsDot: true, messagingApp: "line", receipts: "app", calendar: "buddhist",
-  healthCard: null, addressFormat: "th",
+  healthCard: null, addressFormat: "th", paymentShare: null,
   examples: {
     titles: { th: THAI_TITLES.join(", "), other: "Dr." },
     registration: "registrationPlaceholderTH", clinicName: "clinicNamePlaceholderTH", address: "addressPlaceholderTH",
@@ -128,7 +132,7 @@ const OTHER: CountryProfile = {
   idFields: [{ name: "passport_number", label: "passportOrId", placeholder: "", store: "text", maxLength: 30, keep: 30, search: "text" }],
   phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
   clinicTaxId: null, fallbackLocale: "en", languages: ["en"], shortMonthKeepsDot: false, messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
-  healthCard: null, addressFormat: "intl",
+  healthCard: null, addressFormat: "intl", paymentShare: null,
   examples: {
     titles: null,
     registration: "registrationPlaceholderOther", clinicName: "clinicNamePlaceholderOther", address: "addressPlaceholderOther",
