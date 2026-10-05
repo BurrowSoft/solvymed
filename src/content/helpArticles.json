@@ -796,6 +796,44 @@
         "appTitle": null
       },
       {
+        "id": "P11",
+        "category": "pacientes",
+        "title": {
+          "pt": "Dados importados",
+          "en": "Imported data"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Pacientes trazidos de outro sistema podem ter **Dados importados**: as colunas da planilha que não viraram um campo do SolvyMed. No app, abra o paciente e toque em **Dados importados** para ver os campos e de onde vieram (\"Importado de … em …\")."
+            },
+            {
+              "type": "p",
+              "text": "Só você (médico) vê os dados importados; secretárias(os) e o paciente não. Quando você os abre, isso fica registrado na aba **Acessos** do paciente (\"Abriu os dados importados\"); aberturas repetidas em menos de um minuto contam uma vez só."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "Patients brought from another system may have **Imported data**: the spreadsheet columns that didn't become a SolvyMed field. In the app, open the patient and tap **Imported data** to see the fields and where they came from (\"Imported from … on …\")."
+            },
+            {
+              "type": "p",
+              "text": "Only you (the doctor) can see imported data; secretaries and the patient can't. When you open it, it's recorded in the patient's **Access** tab (\"Opened the imported data\"); repeated openings within a minute count once."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Em **Pacientes**, abra o paciente: abaixo das abas, clique em **Dados importados** para ver os campos e de onde vieram (\"Importado de … em …\"). Só o médico vê essa seção, e a abertura fica registrada na aba **Acessos**, como no app.",
+          "en": "In **Patients**, open the patient: below the tabs, click **Imported data** to see the fields and where they came from (\"Imported from … on …\"). Only the doctor sees this section, and opening it is recorded in the **Access** tab, as in the app."
+        },
+        "webUnavailable": false,
+        "open": "patients",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
         "id": "P12",
         "category": "pacientes",
         "title": {
