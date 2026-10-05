@@ -481,6 +481,10 @@ export function CalendarView({
               )}
               {selected.notes && <p className="text-[11px] text-slate-400 italic pl-5">{selected.notes}</p>}
             </div>
+            {/* "Todos": no actions for an appointment whose doctor isn't in
+                the map, so nothing can fall back to the cookie's practice
+                (fail closed, as #363). */}
+            {(!doctors || sel) && (
             <div className="flex items-center justify-between pt-3 border-t border-slate-100">
               {selected.status === "blocked"
                 ? <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">{t("blockedLabel")}</span>
@@ -496,6 +500,7 @@ export function CalendarView({
                 <DeleteAppointmentButton id={selected.id} />
               </div>
             </div>
+            )}
           </div>
         </div>
         </ItemCalendar>

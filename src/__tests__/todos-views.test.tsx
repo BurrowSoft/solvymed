@@ -143,3 +143,17 @@ describe("the range a view reads", () => {
     expect(parseView("nope")).toBe("list");
   });
 });
+
+describe("fail closed (c6)", () => {
+  it("an appointment whose doctor isn't in the map shows no actions", () => {
+    const stray = { ...appt("x1", "33333333-3333-4333-8333-333333333333", "2026-10-06", "12:00:00", "Ninguém") };
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <CalendarView appointments={[stray]} currentDate="2026-10-06" today="2026-10-06" view="week" doctors={doctors} doctorOrder={[A, B]} />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.click(screen.getByText("Ninguém"));
+    expect(screen.getAllByText("Ninguém")).toHaveLength(2); // the block + the open detail
+    expect(screen.queryByRole("combobox")).toBeNull();
+  });
+});
