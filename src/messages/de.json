@@ -1960,6 +1960,10 @@
   },
   "secretaryPractices": {
     "switcherLabel": "Schedule for",
+    "inactiveBody": "{doctor}'s subscription is inactive. To keep working for them, {doctor} needs to renew.",
+    "switchDoctor": "Switch doctor",
+    "inactiveSuffix": " · subscription inactive",
+    "allLapsedNote": "{n} doctor(s) with an inactive subscription aren't shown.",
     "all": "All",
     "allEmpty": "No appointments today.",
     "zonesDiffer": "These doctors are in different time zones. Use the list, or pick one doctor to see the calendar.",

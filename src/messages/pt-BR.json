@@ -1960,6 +1960,10 @@
   },
   "secretaryPractices": {
     "switcherLabel": "Agenda de",
+    "inactiveBody": "A assinatura de {doctor} está inativa. Para voltar a atender, {doctor} precisa renovar.",
+    "switchDoctor": "Trocar de médico",
+    "inactiveSuffix": " · assinatura inativa",
+    "allLapsedNote": "{n} médico(s) com assinatura inativa não aparecem.",
     "all": "Todos",
     "allEmpty": "Nenhuma consulta hoje.",
     "zonesDiffer": "Esses médicos estão em fusos horários diferentes. Use a lista ou escolha um médico para ver o calendário.",

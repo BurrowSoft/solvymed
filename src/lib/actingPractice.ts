@@ -35,5 +35,21 @@ export function setBrowserActingCookie(id: string | null) {
     : `${ACTING_COOKIE}=; path=/; max-age=0; samesite=lax`;
 }
 
-// title: migration 166 (absent before it).
-export type MyPractice = { professional_id: string; display_name: string | null; title?: string | null; accent_color: string | null; is_primary: boolean };
+// title: migration 166 (absent before it). subscription_active: migration 182
+// (absent before it, which counts as active: nothing is hidden on a guess).
+export type MyPractice = { professional_id: string; display_name: string | null; title?: string | null; accent_color: string | null; is_primary: boolean; subscription_active?: boolean | null };
+
+// A doctor whose subscription has lapsed: she can't work for them until they renew.
+export function isLapsed(p: Pick<MyPractice, "subscription_active">): boolean {
+  return p.subscription_active === false;
+}
+
+// "Todos": the doctors shown (lapsed ones left out) and how many were left out.
+export function todosPractices<T extends Pick<MyPractice, "subscription_active">>(practices: T[]): { shown: T[]; lapsedCount: number } {
+  const shown = practices.filter((p) => !isLapsed(p));
+  return { shown, lapsedCount: practices.length - shown.length };
+}
+
+// Set when she picks a doctor herself (the switcher, "Trocar de médico"), so
+// the inactive screen doesn't move her off a lapsed doctor she chose on purpose.
+export const PICKED_KEY = "sm_practice_picked";

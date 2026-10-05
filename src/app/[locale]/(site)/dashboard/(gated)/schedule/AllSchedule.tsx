@@ -12,7 +12,7 @@ import { doctorColors } from "@/lib/doctorPalette";
 import { sharedZone, todosDay, viewRange, type AgendaView } from "@/lib/calendarRange";
 import { patientPhones } from "@/lib/patientPhones";
 import { offersPaymentQr } from "@/lib/scheduleChecks";
-import type { MyPractice } from "@/lib/actingPractice";
+import { todosPractices, type MyPractice } from "@/lib/actingPractice";
 import { RowPractice } from "@/components/RowPractice";
 import { ItemCalendar } from "@/components/PracticeCalendar";
 import { AutoRefresh } from "@/components/AutoRefresh";
@@ -79,8 +79,11 @@ export async function AllSchedule({ practices, userId, today, date, doctor, view
   practices: MyPractice[]; userId: string; today: string; date: string | null; doctor: string | null; view: AgendaView; locale: string;
 }) {
   const [t, tp] = await Promise.all([getTranslations("schedule"), getTranslations("secretaryPractices")]);
+  // Colours by her whole list (fixed per doctor); doctors whose subscription
+  // lapsed are left out of "Todos", with a note (d1/cf, the app's slice 2).
   const colors = doctorColors(practices.map((p) => p.professional_id));
-  const parts = await Promise.all(practices.map((p) => practicePart(p, userId, colors.get(p.professional_id)!)));
+  const { shown: active, lapsedCount } = todosPractices(practices);
+  const parts = await Promise.all(active.map((p) => practicePart(p, userId, colors.get(p.professional_id)!)));
   const byId = new Map(parts.map((x) => [x.tag.id, x]));
   const shownIds = doctor && byId.has(doctor) ? [doctor] : [...byId.keys()];
   const shown = shownIds.map((id) => byId.get(id)!);
@@ -140,6 +143,9 @@ export async function AllSchedule({ practices, userId, today, date, doctor, view
         })}
       </nav>
 
+      {lapsedCount > 0 && (
+        <p data-testid="lapsed-hint" role="note" className="mb-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-600">{tp("allLapsedNote", { n: lapsedCount })}</p>
+      )}
       {!zone && (
         <p data-testid="zones-hint" role="note" className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">{tp("zonesDiffer")}</p>
       )}
