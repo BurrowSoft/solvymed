@@ -10301,3 +10301,42 @@ Evidence: each PR's tester comment (SHA + what was checked). Merged commits from
 | #380 | Remove the dead `lib/push.ts` (after #371) | n/a: removes dead code, review-only (c6 CLEAN at `9febe7e`) | `6051134` into master |
 
 Fixtures: throwaway accounts (`e2e-test-opus-…`, mobile tester 1's `@example.invalid` device patients, one Resend test address for the e-mail check), purged by the mobile dev by exact id and verified 0 left.
+
+## Batch 11: web PRs #382–#407, incl. the Todos views, multi-doctor secretaries and Founders campaign readiness (web tester 1 + web tester 2, 2026-10-05 → 10-06)
+
+Evidence: each PR's tester comment (SHA + what was checked). Merged commits from GitHub. WT1 = web tester 1, WT2 = web tester 2; device rows by mobile tester 1; DB checks by the mobile dev. The multi-doctor rows (#384, #396, #399, #407) were tested on Vercel Previews with the flag on, and with the throwaway secretary listed on `multi_practice_secretary` by the mobile dev (cf's OK by exact id).
+
+**Founders readiness check (cf, 10-05):** a read-only check of live www as a prospect. WT1 did BR (pt-BR + en) and WT2 did TH (th + en); reports went to cf + b4.
+- Pages, copy vs `founders-page-copy.md`, the places counter, one `[TEST]` application per country (deleted by the mobile dev), signup → trial → tour → the first-run checklist → the first appointment, UTM capture, 375 px, links, timing.
+- The one broken item, Settings → Working hours cut off at 375 px, is fixed by #403. The cold landing TTFB is addressed by #404, and the copy nits by #400 / #401.
+
+| PR | Change | Tester result (SHA, evidence) | Merged |
+|---|---|---|---|
+| #382 | Broadcast: the zero-count line names the real case (copy) | n/a: copy behind the `broadcast` flag, review-only (c6 CLEAN at `c71f364`, 5987148816) | `eef30e8` into master |
+| #383 | Help G5 + App Map: app 1.6.0 asks for the amount before a receipt | n/a: know-how behind a condition, review-only (c6 CLEAN at `600cf03`) | `c0509ba` into master |
+| #384 | Todos: Day/Week/Month views, doctor palette, time-zone guard (166, flag) | WT1 🟢 `de12f19` (5987520485) + re-run 🟢 `8125bfc` (5987678843): same-zone A+B, Day = a column per doctor with the same slot apart, sticky at 375 px, dots + names, chips survive views / prev / next / Hoje, B's detail + status land on B, colours match. WT2 ❌ `de12f19` (5987555507: chip C without a date landed on São Paulo's today) → 🟢 `8125bfc` (5987614872): mixed zones = list only + the amber hint, chip C in Manaus time + Manaus's today. Same-patch CLEAN at `167e5b7` (c6) | `5bc2154` into master |
+| #385 | Privacy: Z-API + WhatsApp (Meta) processors | n/a: hidden behind `whatsapp-auto-live`, review-only (c6 CLEAN at `2eef9b9`) | `e203e54` into master |
+| #386 | Privacy 2026-10-08: Resend's support alerts | WT1 🟢 **live** on www at `92cc267` (5988092647): the §5 Resend row with the support-alerts wording (en + pt-BR), "Last updated" 8 Oct 2026, LINE / §6c still hidden; a www signup records privacy 2026-10-08 + terms 2026-10-01 | `92cc267` into master |
+| #387 | Agenda arrows: accessible names per view (a11y) | WT1 🟢 retroactive, **live** on www (6000086291): "Dia anterior / Próximo dia", "Semana anterior / Próxima semana", "Mês anterior / Próximo mês" (en: "Previous day / Next day" …). Same-patch CLEAN at `25764d0` (c6) | `7611650` into master |
+| #388 | Privacy (hidden): the Z-API row lists the welcome message | n/a: hidden, review-only (c6 CLEAN at `22d093d`) | `01418ef` into master |
+| #389 | Patient page: "Dados importados" on the website | WT1 🟢 `1a3e1a5` (5987875134): an import with an extra column → the doctor-only card in pt-BR / en / th (th in the BE calendar); two openings < 1 min = 1 access row; no card for a manual patient or the secretary (RPC `not_allowed`). 🟢 `a37cd4d` (5987910665): the Help P11 label fixed to "Registro de acessos" / "Access log" | `b1363e3` into master |
+| #390 | Agenda: "Enviar Pix por WhatsApp" (G4 parity) | WT2 🟢 `df09ce1` (5987913409): the link in the QR dialog (wa.me + the app's message), none without a phone / when paid / for TH, the secretary sees it. Same-patch CLEAN at `0fa379c` (c6) | `92c7764` into master |
+| #391 | Help: Thai drafts of 15 articles | n/a: hidden behind `help-th-live`, review-only (c6 CLEAN at `cb699f7`) | `ca82412` into master |
+| #392 | th: secretary = เลขานุการ everywhere | n/a: th copy only, review-only (c6 CLEAN at `3335b66`) | `f267d2e` into master |
+| #393 | Refer a colleague on the website (167, flag) | WT2 🟢 `4e88029` (5992749661; migration 180 live): Meus colegas add / remove / unavailable, the Indicar colega message + copy + wa.me, secretary none, en/th clean. Same-patch CLEAN at `4dc1c25` (c6) | `7be3e35` into master |
+| #394 | Know-how for mobile #361 (hidden until released) | n/a: hidden, review-only (c6 CLEAN at `0a45fd7`) | `67f0632` into master |
+| #395 | Secretary join: the `different_country` message (181) | n/a: review-only (c6 CLEAN at `905e7f2`). The message itself was seen live in WT1's #396 row | `a6715f5` into master |
+| #396 | A secretary on one team can join another doctor's (0a slice 1b) | WT1 🟢 `5a55092` (5993844190): before the listing, the link refuses and there's no card; listed, B's (BR) link → Aceitar → "… adicionou você à equipe" + Continuar; C's (TH) code → the same-country line, nothing linked (DB-verified); wrong code → the invalid line; en OK | `fca1ea4` into master |
+| #397 | Confirm before removing a colleague; neutral joined-team line | n/a: behind flags, review-only (c6 CLEAN at `cae18d8`) | `4f5dce2` into master |
+| #398 | Founders applications keep the campaign only with marketing consent (G2) | n/a: review-only (c6 CLEAN at `2d315f4`). The readiness check saw `founder_applications.utm` filled after consent | `1daa978` into master |
+| #399 | A secretary's lapsed doctor among several | WT1 ❌ `c19da52` (5998254160: Todos landed on the lapsed primary's inactive screen) → 🟢 `33d0314` (5998915327): "· assinatura inativa" in the switcher; Todos without A + "1 médico(s) com assinatura inativa não aparecem."; Pacientes in Todos = B's list; picking A → the inactive screen + Trocar de médico + Sair; a fresh tab with A remembered opens B; all three lapsed → the inactive screen. Same-patch CLEAN at `3460270` (c6) | `c8da87b` into master |
+| #400 | pt-BR invite-invalid asks the doctor; "Programa Fundadores" | n/a: pt-BR copy only, review-only (c6 CLEAN at `416542c`) | `b784aa0` into master |
+| #401 | The Founders form preselects the visitor's country in English | WT2 🟢 retroactive, **live** at `ec2233c` (5998804569): from a TH IP, /en/founders preselects TH with the TH systems | `ec2233c` into master |
+| #403 | Working hours fit a phone; a new practice gets its country's default week | WT2 🟢 `3ee4a52` (5998793509): th + pt-BR at 375 / 320 px, no cut-off and no horizontal scroll; a new TH/BR doctor gets Mon–Fri 08:00–18:00 (checklist 1 of 6). `6034b33` = test-only on top (c6 CLEAN) | `878ddb3` into master |
+| #404 | The landing and /founders static per locale (ISR /founders) | WT1 🟢 `330c330` (5999851182): signed-in routing from / and /pt-BR per role; the ?closed / ?deleted notes; /founders counter; /en/founders preselect via /api/geo; signup ?join= / ?secretary= and login ?next= the same as www; TTFB www 0.55–0.99 s (MISS) vs Preview 0.48–0.53 s (HIT / STALE) after the first hit | `4dc7822` into master |
+| #405 | Test: the recurring patient-polish timeout | n/a: test-only, review-only (c6 CLEAN at `9082903`) | `48d0153` into master |
+| #407 | Todos across time zones: the real order + each time's city | WT1 🟢 `98d9fdd` (6000032029): São Paulo 18:00 (21:00 UTC) before Manaus 17:30 (21:30 UTC); "18:00 (São Paulo)" / "17:30 (Manaus)"; one doctor alone shows no city | `70ee632` into master |
+
+Still open, so not in this batch: #402 (privacy 2026-10-09), #406 (the Stripe check).
+
+Fixtures: throwaway accounts (`e2e-test-opus-…`, mobile tester 1's `@example.invalid` device patients), deleted after each run or purged by the mobile dev by exact id and verified 0 left, including the `multi_practice_secretary` listings. The `[TEST]` Founders applications were deleted by the mobile dev.
