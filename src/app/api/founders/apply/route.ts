@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { ATTRIBUTION_COOKIE, parseAttribution } from "@/lib/attribution";
+import { CONSENT_COOKIE, parseConsent } from "@/lib/consent";
 import { clientIp, founderPayload, FOUNDERS_COUNTRIES, mapApplyError } from "@/lib/founders";
 import { sendFounderEmails } from "@/lib/foundersEmail";
 import { routing } from "@/i18n/routing";
@@ -22,7 +23,10 @@ export async function POST(request: NextRequest) {
   const ip = clientIp(request.headers);
   if (!ip) return NextResponse.json({ code: "generic" }, { status: 400 });
 
-  const attribution = parseAttribution(request.cookies.get(ATTRIBUTION_COOKIE)?.value);
+  // As at signup (recordSignupAttribution): the campaign only while the
+  // visitor still consents to marketing; both cookies are client-writable.
+  const marketing = parseConsent(request.cookies.get(CONSENT_COOKIE)?.value)?.marketing === true;
+  const attribution = marketing ? parseAttribution(request.cookies.get(ATTRIBUTION_COOKIE)?.value) : null;
   const db = createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
