@@ -34,7 +34,8 @@ function statusBadge(status: string) {
 
 // One appointment of the Agenda's list. doctor: the "All" schedule's (166)
 // doctor tag; the row's actions then act for that doctor (RowPractice).
-export async function ScheduleRow({ appt, ctx, today, doctor }: { appt: CalendarAppt; ctx: RowPracticeCtx; today: string; doctor?: DoctorTagInfo }) {
+// city: "Todos" across time zones, the doctor's city after the time (cf).
+export async function ScheduleRow({ appt, ctx, today, doctor, city }: { appt: CalendarAppt; ctx: RowPracticeCtx; today: string; doctor?: DoctorTagInfo; city?: string }) {
   const t = await getTranslations("schedule");
   const { currency, pixKey, promptPayId, clinicName, clinicCity, procedures } = ctx;
   // G4: the Pix code to the patient's WhatsApp, when the practice country
@@ -51,7 +52,10 @@ export async function ScheduleRow({ appt, ctx, today, doctor }: { appt: Calendar
       }`}
     >
       <div className="shrink-0 text-right min-w-[52px]">
-        <p className="text-sm font-bold text-slate-900">{appt.start_time?.slice(0, 5)}</p>
+        <p className="text-sm font-bold text-slate-900 whitespace-nowrap">
+          {appt.start_time?.slice(0, 5)}
+          {city && <span data-testid="row-city" className="ml-1 text-xs font-medium text-slate-500">({city})</span>}
+        </p>
         <p className="text-xs text-slate-400">{appt.end_time?.slice(0, 5)}</p>
         <p className="text-xs text-slate-400 mt-0.5">{t("durationMinutes", { n: appt.duration_minutes ?? 0 })}</p>
       </div>
