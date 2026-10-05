@@ -1,16 +1,19 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatShortDate } from "@/lib/dateLabels";
+import { toLocalDateString } from "@/lib/slots";
 import { addColleague, removeColleague } from "../colleague-actions";
 import { colleagueLogoUrl, colleagueName, type ColleagueError, type ColleagueRow } from "@/lib/colleagues";
 
 // Settings → "Meus colegas" (167; doctors only, behind liveFeatures.colleagues):
 // add by a colleague's exact public code, remove; only the doctor sees the
-// list. An unavailable colleague (closed, or no longer published) shows the
-// name, "Não está mais disponível" and Remove only.
+// list. An unavailable colleague (closed, or no longer published) shows no
+// name (cf): "Colega indisponível", "Adicionado em {date}" and Remove only.
 export function ColleaguesCard({ initial, loadFailed }: { initial: ColleagueRow[]; loadFailed: boolean }) {
   const t = useTranslations("colleagues");
+  const locale = useLocale();
   const [rows, setRows] = useState(initial);
   const [code, setCode] = useState("");
   const [msg, setMsg] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
@@ -79,8 +82,9 @@ export function ColleaguesCard({ initial, loadFailed }: { initial: ColleagueRow[
                     ? <img src={logo} alt="" className="h-9 w-9 shrink-0 rounded-lg object-contain ring-1 ring-slate-100" />
                     : <span aria-hidden="true" className="h-9 w-9 shrink-0 rounded-lg bg-slate-100" />}
                   <div className="min-w-0">
-                    <p className={`truncate text-sm font-semibold ${c.available ? "text-slate-800" : "text-slate-400"}`}>{colleagueName(c)}</p>
-                    <p className="truncate text-xs text-slate-500">{c.available ? c.specialty ?? "" : t("unavailable")}</p>
+                    <p className={`truncate text-sm font-semibold ${c.available ? "text-slate-800" : "text-slate-400"}`}>{c.available ? colleagueName(c) : t("unavailableName")}</p>
+                    {/* Unavailable (cf, option c): no name at all, only when you added them (a system date: the reader's calendar). */}
+                    <p className="truncate text-xs text-slate-500">{c.available ? c.specialty ?? "" : t("addedOn", { date: formatShortDate(locale, toLocalDateString(new Date(c.added_at))) })}</p>
                   </div>
                 </div>
                 <button type="button" disabled={busy} onClick={() => remove(c.colleague_id)} className="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50">

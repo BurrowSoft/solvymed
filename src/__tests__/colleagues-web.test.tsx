@@ -64,10 +64,12 @@ describe("Settings → Meus colegas", () => {
     fireEvent.click(screen.getByRole("button", { name: pt.colleagues.addButton }));
     await screen.findByText("Código não encontrado. Se o código estiver certo, peça ao seu colega para publicar a marca em Minha marca.");
   });
-  it("an unavailable colleague: the name, 'no longer available', Remove only; remove works", async () => {
+  it("an unavailable colleague: no name (cf), 'Colega indisponível' + the date added, Remove only; remove works", async () => {
     h.remove.mockResolvedValue({ ok: true });
-    intl(<ColleaguesCard initial={[card({ available: false, title: null, specialty: null, public_code: null, country: null })]} loadFailed={false} />);
-    expect(screen.getByText(pt.colleagues.unavailable)).toBeInTheDocument();
+    intl(<ColleaguesCard initial={[card({ available: false, display_name: null, title: null, specialty: null, public_code: null, country: null, added_at: "2026-10-07T12:00:00Z" })]} loadFailed={false} />);
+    expect(screen.getByText("Colega indisponível")).toBeInTheDocument();
+    expect(screen.getByText("Adicionado em 07/10/2026")).toBeInTheDocument();
+    expect(screen.queryByText("—")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: pt.colleagues.remove }));
     await waitFor(() => expect(screen.getByText(pt.colleagues.empty)).toBeInTheDocument());
   });

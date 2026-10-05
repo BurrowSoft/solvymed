@@ -1976,7 +1976,8 @@
   "colleagues": {
     "codeLabel": "Colleague's public code",
     "addButton": "Add",
-    "unavailable": "No longer available",
+    "unavailableName": "Colleague unavailable",
+    "addedOn": "Added on {date}",
     "notFound": "Code not found. If the code is right, ask your colleague to publish their brand in My brand.",
     "self": "That's your own code.",
     "limit": "You've reached the limit of 50 colleagues.",
