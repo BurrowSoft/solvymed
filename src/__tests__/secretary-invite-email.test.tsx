@@ -144,10 +144,10 @@ describe("privacy: the invite text only with the flag", () => {
     r.unmount();
     r = render(<PrivacyPtBR turnstile={false} secretaryInvites />);
     expect(r.container.textContent).toContain("3.7 Convites de secretária:");
-    expect(r.container.textContent).toContain("e convites enviados a pedido de um profissional");
+    expect(r.container.textContent).toContain(", convites enviados a pedido de um profissional e alertas");
     r.unmount();
     r = render(<PrivacyEn turnstile={false} secretaryInvites />);
     expect(r.container.textContent).toContain("the address is deleted 30 days after the invitation expires or is cancelled.");
-    expect(r.container.textContent).toContain("and invitations sent at a professional's request");
+    expect(r.container.textContent).toContain(", invitations sent at a professional's request and alerts");
   });
 });

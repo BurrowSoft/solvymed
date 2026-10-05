@@ -67,7 +67,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             ["Supabase", "Banco de dados, autenticação, armazenamento de arquivos", "Brasil (região de São Paulo)"],
             ["Vercel", "Hospedagem do site; processamento no Brasil (São Paulo), conteúdo estático por rede global", "Brasil / global"],
             ["Stripe", "Pagamento de assinaturas", "EUA / global"],
-            ["Resend", secretaryInvites ? "E-mails transacionais (confirmações, redefinição de senha) e convites enviados a pedido de um profissional" : "E-mails transacionais (confirmações, redefinição de senha)", "EUA"],
+            ["Resend", `E-mails transacionais (confirmações, redefinição de senha)${secretaryInvites ? ", convites enviados a pedido de um profissional" : ""} e alertas à nossa equipe de suporte sobre uma conta (por exemplo, um pedido de exclusão ou uma configuração da clínica que precisa de ação nossa)`, "EUA"],
             ["Expo", "Envio de notificações push", "EUA"],
             ["Sentry", "Monitoramento de erros do aplicativo e do site (sem dados de pacientes)", "EUA"],
             ["PostHog", "Estatísticas de uso do site, somente com o seu consentimento", "UE"],
@@ -80,7 +80,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
               ? [["Anthropic (SolvyAI, só profissionais, quando usado)", "Processa as perguntas e pedidos digitados pelo profissional para respondê-los; nas ações que o profissional ativou, o nome e a data de nascimento do paciente e os dados da consulta necessários ao pedido", "EUA"]]
               : []),
             ...(line
-              ? [["LY Corporation (LINE), só clínicas na Tailândia, para pacientes que conectam o LINE", "Envia avisos de consulta (o nome da clínica, a data e o horário, e o que aconteceu: confirmada, remarcada, lembrete, cancelada); guardamos o identificador LINE do paciente para entregá-los", "Japão / Tailândia"]]
+              ? [["LY Corporation (LINE), só clínicas na Tailândia, para pacientes que conectam o LINE", "Envia avisos de consulta (os nomes do médico e da clínica, a data e o horário, e o que aconteceu: confirmada, remarcada, lembrete, cancelada); guardamos o identificador LINE do paciente para entregá-los", "Japão / Tailândia"]]
               : []),
             ...(whatsappAuto
               ? [
@@ -130,7 +130,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
         <Section title="6c. Avisos pelo LINE (Tailândia)">
           <ul className="list-disc space-y-1 pl-5">
             <li>Pacientes de clínicas na Tailândia podem conectar o LINE para receber avisos de consulta. Eles escolhem conectar e podem parar a qualquer momento.</li>
-            <li>O LINE recebe só o nome da clínica, a data e o horário da consulta e o que aconteceu com ela (confirmada, remarcada, lembrete, cancelada): nunca informações clínicas.</li>
+            <li>O LINE recebe só os nomes do médico e da clínica, a data e o horário da consulta e o que aconteceu com ela (confirmada, remarcada, lembrete, cancelada): nunca informações clínicas.</li>
             <li>Se você bloquear a conta SolvyMed no LINE, paramos de enviar mensagens, mas guardamos a ligação para retomar se você desbloquear. Para removê-la, toque em Desconectar (Configurações → LINE) no app ou exclua sua conta.</li>
             <li>O histórico de envios dos avisos LINE é apagado após 90 dias.</li>
           </ul>

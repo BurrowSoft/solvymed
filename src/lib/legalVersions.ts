@@ -22,7 +22,11 @@
 // 2026-10-07: §6g's closure-notice line revealed (closure-notices-live):
 // 173 live and the website's own closure pushes removed (#378 deployed).
 // Mobile's migration 175 adding ('privacy','2026-10-07') applied FIRST.
-export const PRIVACY_VERSION = "2026-10-07";
+// 2026-10-08: §5 Resend also sends alerts to our support team about an
+// account (the deletion-request alert; 177's WhatsApp-setting alert). Mobile's
+// accepting migration for ('privacy','2026-10-08') applied FIRST. (The LINE
+// lines now name the doctor too, for 168; still hidden behind line-live.)
+export const PRIVACY_VERSION = "2026-10-08";
 export const TERMS_VERSION = "2026-10-01";
 
 // Sent with every web signup (the checkbox is required, so it's sent only
