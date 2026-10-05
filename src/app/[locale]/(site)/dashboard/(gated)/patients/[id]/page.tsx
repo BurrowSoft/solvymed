@@ -169,7 +169,7 @@ export default async function PatientDetailPage({
       </div>
       {/* The app's "Dados importados": doctor only (the RPC refuses a
           secretary too), read and logged when opened. */}
-      {!isSecretary && patient.import_id && <ImportedData patientId={patient.id} />}
+      {!isSecretary && patient.import_id && <ImportedData key={patient.id} patientId={patient.id} />}
     </div>
   );
 }
