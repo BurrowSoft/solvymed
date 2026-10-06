@@ -75,7 +75,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   const highlights = [
     t("highlights.h1"),
-    t("highlights.h2"),
     t("highlights.h3"),
     t("highlights.h4"),
     t("highlights.h5"),

@@ -19,10 +19,9 @@
   },
   "highlights": {
     "h1": "Intelligente Terminplanung",
-    "h2": "1.000+ Patienten",
     "h3": "Klinische Akten",
     "h4": "Digitale Rezepte",
-    "h5": "Integrierte Zahlungen",
+    "h5": "Pix- und PromptPay-QR",
     "h6": "Praxisberichte"
   },
   "features": {
@@ -31,15 +30,15 @@
     "scheduling_title": "Intelligente Terminplanung",
     "scheduling_desc": "Vollständige Kalenderansicht in Tages-, Wochen- und Monatsmodi. Verwalten Sie Präsenz- und Online-Termine, blockieren Sie Zeiten und erhalten Sie automatische Erinnerungen an Ihre Termine auf dem Handy.",
     "patients_title": "Patientenverwaltung",
-    "patients_desc": "Vollständige Patientenprofile mit persönlichen Daten, Kontaktinfo, Terminhistorie und benutzerdefinierten Tags. Suchen und filtern Sie in Ihrer gesamten Patientenbasis.",
+    "patients_desc": "Vollständige Patientenprofile mit persönlichen Daten, Kontaktdaten und Terminverlauf, dazu Tags in der App. Durchsuchen Sie Ihren gesamten Patientenstamm.",
     "records_title": "Klinische Akten",
     "records_desc": "Zeitlinienbasierte medizinische Notizen mit Richtext. Dokumentieren Sie jede Sitzung, verfolgen Sie die Entwicklung des Patienten und fügen Sie Untersuchungen und Dateien an – alles sicher gespeichert.",
     "prescriptions_title": "Digitale Rezepte",
-    "prescriptions_desc": "Stellen Sie digitale Rezepte in Sekunden aus. Pflegen Sie eine persönliche Medikamentenbibliothek, passen Sie Vorlagen an und senden Sie diese direkt an Patienten.",
-    "payments_title": "Integrierte Zahlungen",
-    "payments_desc": "Kassieren Sie Zahlungen direkt über die App. Versenden Sie Zahlungslinks an Patienten, verwalten Sie Raten und verfolgen Sie bezahlte und ausstehende Sitzungen.",
-    "analytics_title": "Berichte & Analysen",
-    "analytics_desc": "Verstehen Sie Ihre Praxis auf einen Blick. Umsatzberichte, Terminstatistiken, Patientenwachstum – klare Einblicke für eine bessere Praxis."
+    "prescriptions_desc": "Erstellen Sie Rezepte in Sekunden und drucken oder teilen Sie sie als PDF.",
+    "payments_title": "Zahlungen per Pix und PromptPay",
+    "payments_desc": "Empfangen Sie Zahlungen per Pix oder PromptPay direkt auf Ihr Konto, ohne Gebühren. Ein Zahlungs-QR für jeden Termin, eine Übersicht über bezahlte und offene Sitzungen und, in der App in Brasilien, eine Zahlungserinnerung per WhatsApp.",
+    "analytics_title": "Berichte",
+    "analytics_desc": "In der App sehen Sie Patienten, Termine nach Status und Umsatz nach Zeitraum (diese Woche, dieser Monat, letzter Monat oder gesamt)."
   },
   "cta": {
     "heading": "Bereit, Ihre Praxis zu vereinfachen?",
