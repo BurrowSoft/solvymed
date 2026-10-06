@@ -19,8 +19,8 @@ describe("privacy policy: SolvyAI / LINE blocks follow their conditions", () => 
     }
   });
 
-  it("today: neither SolvyAI nor LINE is live", () => {
-    expect(conditionMet("solvyai-live")).toBe(false);
+  it("today: SolvyAI is live, LINE isn't", () => {
+    expect(conditionMet("solvyai-live")).toBe(true);
     expect(conditionMet("line-live")).toBe(false);
   });
 
