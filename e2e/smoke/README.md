@@ -6,6 +6,11 @@ Critical web paths, run against a Vercel Preview or www. Humans still test each 
 |---|---|---|
 | `public.spec.ts` | the public pages in pt-BR / en / th: load, `lang`, no raw message keys, no 12-hour times, no console errors; the sign-in form; retired languages 308 → en; the app-link files | no |
 | `accounts.spec.ts` | sign-in routing in each language (doctor → dashboard, patient → my appointments, expired trial → subscribe); a linked patient books (calendar → time → type → send); the doctor confirms / proposes / declines; the patient sees the visit day-first, 24 h | yes |
+| `signup.spec.ts` | doctor signup per country (BR in pt-BR + en, TH in th + en): the country step → the form → "Create account" enabled, **never submitted** (every `/auth/v1/signup` request is aborted and fails the test); `?c=TH` skips the country step | no |
+| `undo.spec.ts` | the Agenda's "Desfazer" toast for each kind: a booking made through Nova Consulta, a cancel (status → Cancelado → "Cancelar consulta"), a move (Remarcar → another slot); each is undone and the database must be back as before | yes |
+| `public-legal.spec.ts` | `/privacy` and `/terms` show the versions in `src/lib/legalVersions.ts` (pt-BR, en; th reads the English text); `/founders` in each language: hero, places counters, required fields, consent + rules link, privacy notice, **never submitted** (`/api/founders/apply` is aborted); `/founders/rules` loads | no |
+| `payments.spec.ts` | the Agenda's payment QR per practice country: a BR doctor with a Pix key gets "QR Code Pix" (the QR + the Pix Copia e Cola code: EMV, `br.gov.bcb.pix`, the key, BRL 150.00, a CRC) on an unpaid appointment with an amount, and none when paid or without an amount; a TH doctor gets "QR พร้อมเพย์" and no Pix. Nothing is paid | yes |
+| `receipt.spec.ts` | the website recibo (`/dashboard/payments/<id>/receipt`): without an amount it shows "Defina o valor da consulta antes de emitir o recibo." and **Definir valor**; saving 150 there shows the recibo with the patient and R$ 150,00 (the database checked); a TH practice gets the "numbered receipts are issued in the app" hint instead | yes |
 
 ## Run
 
@@ -19,6 +24,18 @@ node scripts/preview-url.mjs <sha>
 ```
 
 Always set `E2E_BASE_URL`, or Playwright starts a local `next dev`.
+
+### Gating a web PR
+
+Run the whole suite against the PR's Preview before the tester row:
+
+```sh
+E2E_BASE_URL=$(node scripts/preview-url.mjs <head sha>) npm run test:smoke
+```
+
+- The specs without fixtures need no secrets except `VERCEL_AUTOMATION_BYPASS_SECRET` for the Preview: `public`, `signup` and `public-legal`.
+- The fixture specs need the Supabase keys and `E2E_PASSWORD` too (below).
+- **Stripe:** no spec opens Checkout or the billing portal. On a Preview built before 2026-10-06 the Stripe key is live, so never add a Stripe step without checking for `cs_test_` first.
 
 ## Environment (never commit or print these)
 
