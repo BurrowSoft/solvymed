@@ -2126,5 +2126,13 @@
     "titleLabel": "Titel",
     "move": "In Ordner verschieben",
     "corrected": "Korrigiert"
+  },
+  "privacyNotice": {
+    "title": "Wir haben unsere Datenschutzerklärung aktualisiert",
+    "body": "Sehen Sie, was sich am {date} geändert hat.",
+    "read": "Erklärung lesen",
+    "ok": "OK",
+    "close": "Schließen",
+    "failed": "Speichern fehlgeschlagen. Bitte versuchen Sie es erneut."
   }
 }

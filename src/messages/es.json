@@ -2126,5 +2126,13 @@
     "titleLabel": "Título",
     "move": "Mover a la carpeta",
     "corrected": "Corregido"
+  },
+  "privacyNotice": {
+    "title": "Hemos actualizado nuestra Política de Privacidad",
+    "body": "Mira qué cambió el {date}.",
+    "read": "Leer la política",
+    "ok": "OK",
+    "close": "Cerrar",
+    "failed": "No se pudo guardar. Inténtalo de nuevo."
   }
 }

@@ -2126,5 +2126,13 @@
     "titleLabel": "Titolo",
     "move": "Sposta nella cartella",
     "corrected": "Corretto"
+  },
+  "privacyNotice": {
+    "title": "Abbiamo aggiornato la nostra Informativa sulla privacy",
+    "body": "Scopri cosa è cambiato il {date}.",
+    "read": "Leggi l'informativa",
+    "ok": "OK",
+    "close": "Chiudi",
+    "failed": "Impossibile salvare. Riprova."
   }
 }
