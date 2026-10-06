@@ -66,6 +66,38 @@ export function currentRecordSections(raw: unknown, content: string): RecordSect
 
 const lf = (s: string) => s.replace(/\r\n?/g, "\n");
 
+// Switching the template of a record being written never loses typed text
+// (cf, 2026-10-07; the app does the same):
+// - free text → a template: the text goes into its first section;
+// - a template → another: sections with the same title keep their text, any
+//   other text goes into the new first section;
+// - a template → free text: the sections composed, as they'd be saved.
+// movedTo: the section that received text (the doctor is told), or null.
+export type DraftRow = { title: string; hint?: string; text: string };
+export type Draft = { kind: "free"; text: string } | { kind: "sections"; rows: DraftRow[] };
+
+export function switchTemplate(current: Draft, next: TemplateSection[] | null): { draft: Draft; movedTo: string | null } {
+  if (!next || next.length === 0) {
+    return { draft: { kind: "free", text: current.kind === "free" ? current.text : composeRecordContent(current.rows) }, movedTo: null };
+  }
+  const rows: DraftRow[] = next.map((s) => ({ title: s.title, ...(s.hint ? { hint: s.hint } : {}), text: "" }));
+  let leftover = "";
+  if (current.kind === "free") {
+    leftover = current.text.trim();
+  } else {
+    const norm = (s: string) => s.trim().toLowerCase();
+    const used = new Set<number>();
+    rows.forEach((r) => {
+      const i = current.rows.findIndex((o, j) => !used.has(j) && norm(o.title) === norm(r.title));
+      if (i >= 0) { used.add(i); r.text = current.rows[i].text; }
+    });
+    leftover = composeRecordContent(current.rows.filter((_, j) => !used.has(j)));
+  }
+  if (!leftover) return { draft: { kind: "sections", rows }, movedTo: null };
+  rows[0].text = rows[0].text.trim() ? `${rows[0].text.trimEnd()}\n\n${leftover}` : leftover;
+  return { draft: { kind: "sections", rows }, movedTo: rows[0].title };
+}
+
 // A record's content and sections from the record form. With sections the
 // server composes content itself (the browser's multipart form turns \n into
 // \r\n, so the client's copy never matched, 53); free text is kept as typed,

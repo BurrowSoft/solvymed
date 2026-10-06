@@ -2039,6 +2039,7 @@
     "description": "Secciones para completar al escribir un registro. Los registros ya escritos conservan sus secciones.",
     "template": "Plantilla",
     "noTemplate": "Sin plantilla",
+    "textMoved": "Tu texto se movió a «{section}».",
     "newTemplate": "Nueva plantilla",
     "fromPreset": "Empezar desde una especialidad",
     "createScratch": "Crear desde cero",

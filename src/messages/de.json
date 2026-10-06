@@ -2039,6 +2039,7 @@
     "description": "Abschnitte, die Sie beim Schreiben eines Eintrags ausfüllen. Bereits geschriebene Einträge behalten ihre Abschnitte.",
     "template": "Vorlage",
     "noTemplate": "Ohne Vorlage",
+    "textMoved": "Ihr Text wurde nach „{section}“ verschoben.",
     "newTemplate": "Neue Vorlage",
     "fromPreset": "Mit einem Fachgebiet beginnen",
     "createScratch": "Neu erstellen",

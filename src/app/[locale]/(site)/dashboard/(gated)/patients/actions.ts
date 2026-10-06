@@ -7,6 +7,7 @@ import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { tellPatient } from "@/lib/clinicNotify";
 import { actionError } from "@/lib/dbErrors";
 import { recordInput, TEMPLATE_NAME_MAX } from "@/lib/recordTemplates";
+import { recordTypeKey } from "@/lib/recordTypes";
 import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
 import { readAccessLog, type AccessLogPage } from "@/lib/accessLog";
 import { routing } from "@/i18n/routing";
@@ -330,7 +331,7 @@ export async function createRecord(patientId: string, formData: FormData) {
     date: clinicDate(now),
     time: clinicTime(now),
     content,
-    record_type: (formData.get("record_type") as string) || "free_text",
+    record_type: recordTypeKey(formData.get("record_type") as string | null),
     ...(sections ? { sections, template_name: templateName || null } : {}),
   });
 
@@ -355,7 +356,7 @@ export async function updateRecord(id: string, patientId: string, formData: Form
 
   const { error } = await supabase
     .from("medical_records")
-    .update({ content, record_type: (formData.get("record_type") as string) || "free_text", ...(sections ? { sections } : {}) })
+    .update({ content, record_type: recordTypeKey(formData.get("record_type") as string | null), ...(sections ? { sections } : {}) })
     .eq("id", id)
     .eq("professional_id", user.id);
   if (error) return { error: actionError(error.message) };

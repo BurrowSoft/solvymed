@@ -2039,6 +2039,7 @@
     "description": "Các mục cần điền khi bạn viết bệnh án. Bệnh án đã viết vẫn giữ các mục của nó.",
     "template": "Mẫu",
     "noTemplate": "Không dùng mẫu",
+    "textMoved": "Văn bản của bạn đã được chuyển sang “{section}”.",
     "newTemplate": "Mẫu mới",
     "fromPreset": "Bắt đầu từ một chuyên khoa",
     "createScratch": "Tạo từ đầu",
