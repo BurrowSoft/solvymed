@@ -21,6 +21,9 @@ import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
 import { parseView, viewRange } from "@/lib/calendarRange";
 import { patientPhones } from "@/lib/patientPhones";
 import { offersPaymentQr } from "@/lib/scheduleChecks";
+import { serverFlag } from "@/lib/myDoctors";
+import { locationNameFor, shownLocations, sortLocations, type PracticeLocation } from "@/lib/locations";
+import { PracticeLocationsProvider } from "@/components/PracticeLocations";
 
 export default async function SchedulePage({
   params,
@@ -72,7 +75,17 @@ export default async function SchedulePage({
   const { start: rangeStart, end: rangeEnd } = viewRange(view, currentDate);
 
   // 150 (item 12): the reason a cancelled appointment shows staff.
-  const apptCols: string = `id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note${statusReasonLive() ? ", status_reason, status_by" : ""}`;
+  // 1.8.0 F (flag 'practice_locations'): the practice's locations (2+) and
+  // hours, each visit's location (migration 200's column).
+  const locationsOn = await serverFlag(supabase, "practice_locations");
+  const [clinicsRes, hoursRes] = locationsOn
+    ? await Promise.all([
+        supabase.from("clinics").select("id, name, address, city, state, phone, is_primary, position, created_at").eq("professional_id", effectiveProfId),
+        supabase.rpc("get_professional_working_hours", { p_professional_id: effectiveProfId }),
+      ])
+    : [null, null];
+  const locations: PracticeLocation[] = shownLocations(sortLocations((clinicsRes?.data ?? []) as (PracticeLocation & { position?: number; created_at?: string })[]), locationsOn);
+  const apptCols: string = `id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note${statusReasonLive() ? ", status_reason, status_by" : ""}${locations.length ? ", location_id" : ""}`;
   const [apptsResult, procsResult, tentativeBookings, profResult, anyApptResult] = await Promise.all([
     supabase
       .from("appointments")
@@ -117,7 +130,8 @@ export default async function SchedulePage({
   // No appointment ever: the first-run empty state instead of "nothing on this day".
   const noAppointmentsEver = !anyApptResult.error && (anyApptResult.count ?? 0) === 0;
 
-  const appointments = (apptsResult.data ?? []) as unknown as CalendarAppt[];
+  const appointments = ((apptsResult.data ?? []) as unknown as (CalendarAppt & { location_id?: string | null })[])
+    .map((a) => (locations.length ? { ...a, location_name: locationNameFor(a.location_id, locations) } : a));
   const procedures = (procsResult.data ?? []) as { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
   // G4: the list's phones, only where the Pix code can go to WhatsApp.
   const phones = view === "list" && pixKey && countryProfile(practiceCountry).paymentShare
@@ -128,6 +142,7 @@ export default async function SchedulePage({
   const todayCount = appointments.filter(a => a.date === today && a.status !== "blocked").length;
 
   return (
+    <PracticeLocationsProvider value={{ list: locations, hours: (hoursRes?.data ?? null) as Record<string, { location_id?: string | null } | null> | null }}>
     <div className="p-6 lg:p-8 max-w-6xl">
       {/* Header */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -198,5 +213,6 @@ export default async function SchedulePage({
       )}
       <ScheduleUndoToast />
     </div>
+    </PracticeLocationsProvider>
   );
 }
