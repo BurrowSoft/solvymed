@@ -166,5 +166,9 @@
   "stripe-reconcile-email": {
     "met": true,
     "what": "The daily Stripe check (/api/cron/stripe-reconcile, Vercel Cron 09:17 UTC = 06:17 BRT) emails support@solvymed.com on a mismatch. Met only after CRON_SECRET is set on Production (Vitor, VITOR.md 1c) AND its dry runs looked right (cf). Until then every run is a dry run: the report is only in the response and a one-line log."
+  },
+  "app-1.7.0": {
+    "met": false,
+    "what": "App 1.7.0 is RELEASED on Google Play (d1 sends the cut SHA), with mobile #376 (a practice that never saved its hours uses the default week, Monday to Friday 08:00–18:00, in booking, reschedule, the Agenda and the Working hours form) and #377 (every app PDF on A4 via the country registry's paperSize). Gates the app halves of Help C2's default-week line and the A4 lines in P6, P8 and G5, and the App Map's app rules for both. The website's halves are live already (#403, 186, the shared @page A4)."
   }
 }

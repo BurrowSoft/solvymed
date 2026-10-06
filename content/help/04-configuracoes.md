@@ -18,10 +18,12 @@
 ## C2. Horário de atendimento / Working hours
 **pt-BR**
 **Configurações → Horário de atendimento**. Escolha os dias e horários. Pacientes só conseguem pedir consultas dentro desses horários.
+{pending:app-1.7.0} Uma clínica nova começa com segunda a sexta, das 08:00 às 18:00, até você salvar o seu horário.
 **en**
 **Settings → Working hours**. Choose the days and times. Patients can only request appointments within these hours.
-**No site:** **Configurações → Horário de atendimento**: igual ao app.
-**On the website:** **Settings → Working hours**: the same as in the app.
+{pending:app-1.7.0} A new practice starts with Monday to Friday, 08:00–18:00, until you save your own hours.
+**No site:** **Configurações → Horário de atendimento**: igual ao app. Uma clínica nova já começa com segunda a sexta, das 08:00 às 18:00, até você salvar o seu horário; os pacientes podem pedir consultas nesses horários.
+**On the website:** **Settings → Working hours**: the same as in the app. A new practice already starts with Monday to Friday, 08:00–18:00, until you save your own hours; patients can request appointments in those hours.
 `open:settings-hours`
 
 ---
