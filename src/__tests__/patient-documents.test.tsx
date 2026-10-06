@@ -10,7 +10,7 @@ import { canDeleteOwn, docErrorKey, docMime, docPath, defaultTitle, type DocFold
 // Documents tab (folders, shared / only you, Internal, upload = storage then
 // register) and the access-log labels for the new kinds.
 
-const h = vi.hoisted(() => ({ calls: [] as { fn: string; args: unknown[] }[], uploads: [] as { path: string; type?: string }[] }));
+const h = vi.hoisted(() => ({ calls: [] as { fn: string; args: unknown[] }[], uploads: [] as { path: string; type?: string; blobType?: string }[] }));
 vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/documents-actions", () => {
   const rec = (fn: string, ret: unknown = { ok: true, data: null }) => vi.fn(async (...args: unknown[]) => { h.calls.push({ fn, args }); return ret; });
   return {
@@ -30,7 +30,7 @@ vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/documents-actions", ()
   };
 });
 vi.mock("@/lib/supabase/client", () => ({
-  createClient: () => ({ storage: { from: () => ({ upload: vi.fn(async (path: string, _f: File, o: { contentType?: string }) => { h.uploads.push({ path, type: o.contentType }); return { error: null }; }) }) } }),
+  createClient: () => ({ storage: { from: () => ({ upload: vi.fn(async (path: string, f: Blob, o: { contentType?: string }) => { h.uploads.push({ path, type: o.contentType, blobType: f.type }); return { error: null }; }) }) } }),
 }));
 
 const F = (id: string, defaultKey: DocFolder["defaultKey"], shared: boolean, position: number): DocFolder =>
@@ -150,5 +150,21 @@ describe("Settings → Pastas de documentos", () => {
     await waitFor(() => expect(confirm).toHaveBeenCalledWith("1 documento deixará de aparecer para os pacientes."));
     expect(h.calls.some((c) => c.fn === "saveFolder")).toBe(false);
     confirm.mockRestore();
+  });
+});
+
+describe("HEIC from a browser that gives no type (53)", () => {
+  it("the uploaded body carries image/heic, so 190 accepts it", async () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <DocumentsTab patientId="pat" doctorId="doc" isArchived={false} locale="pt-BR" />
+      </NextIntlClientProvider>,
+    );
+    await screen.findByRole("region", { name: T.folder.exams });
+    fireEvent.change(screen.getByLabelText(pt.patientDetail.filesUpload, { selector: "input" }), { target: { files: [new File(["x"], "IMG_0001.HEIC", { type: "" })] } });
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: pt.patientDetail.filesUpload }));
+    await waitFor(() => expect(h.uploads).toHaveLength(1));
+    expect(h.uploads[0].path).toMatch(/^doc\/pat\/[0-9a-f-]{36}\.heic$/);
+    expect(h.uploads[0].blobType).toBe("image/heic");
   });
 });

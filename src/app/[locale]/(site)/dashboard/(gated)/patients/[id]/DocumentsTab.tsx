@@ -78,7 +78,10 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
       const id = crypto.randomUUID();
       const path = docPath(doctorId, patientId, id, mime);
       const supabase = createClient();
-      const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, upload.file, { upsert: false, contentType: mime });
+      // A re-typed Blob: storage-js sends a File as multipart and the stored
+      // type is the part's own, which is "" for a .heic in most browsers (53);
+      // 190 checks it against the extension.
+      const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, upload.file.slice(0, upload.file.size, mime), { upsert: false, contentType: mime });
       if (upErr) { setError(/storage_full/.test(upErr.message ?? "") ? t("err.ownStorageFull") : tp("filesError")); return; }
       const r = await registerDocument(patientId, { path, folderId: upload.folderId, title: upload.title, shared: upload.shared && !isInternal(upload.folderId) });
       if (!r.ok) { setError(errText(r.code)); return; }
