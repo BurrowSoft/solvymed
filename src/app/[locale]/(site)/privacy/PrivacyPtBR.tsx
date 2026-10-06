@@ -4,7 +4,7 @@ import { noticeChannels } from "@/lib/noticeChannels";
 
 // Política de Privacidade em português (Brasil). Autoritativa junto com a
 // versão em inglês; mantenha as duas alinhadas.
-export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false }: { turnstile: boolean; whatsappAuto?: boolean; referrals?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
+export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false }: { clinicalDocs?: boolean; patientDocs?: boolean; turnstile: boolean; whatsappAuto?: boolean; referrals?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Visão geral">
@@ -24,8 +24,9 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             assinatura), a BurrowSoft é a <strong>controladora</strong>.
           </li>
           <li>
-            Para os <strong>prontuários</strong> que o profissional registra (anotações clínicas, receitas, exames,
-            arquivos, consultas), o <strong>profissional ou a clínica é o controlador</strong> e a BurrowSoft é a{" "}
+            Para os <strong>prontuários</strong> que o profissional registra (anotações clínicas, receitas,{" "}
+            {clinicalDocs && "atestados, declarações médicas, solicitações de exames, "}exames,
+            arquivos, consultas{patientDocs && ", e documentos compartilhados com o paciente ou enviados por ele"}), o <strong>profissional ou a clínica é o controlador</strong> e a BurrowSoft é a{" "}
             <strong>operadora</strong>, agindo apenas conforme as instruções dele. Solicitações sobre esses registros
             devem ser feitas primeiro à clínica. Nós ajudaremos a clínica a respondê-las.
           </li>
@@ -50,6 +51,22 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
           <strong>Dados de pacientes nunca são usados para análise ou marketing.</strong>
         </p>
         {secretaryInvites && <p><strong>3.7 Convites de secretária:</strong> quando um profissional convida uma secretária, guardamos o e-mail informado e enviamos o convite para esse endereço (até um reenvio por hora). O convite expira em 7 dias e o e-mail é apagado 30 dias após o convite expirar ou ser cancelado.</p>}
+        {patientDocs && (
+          <div>
+            <p><strong>3.8 Documentos compartilhados com pacientes:</strong></p>
+            <ul>
+              <li>Um profissional pode compartilhar documentos com um paciente (por exemplo receitas, atestados, solicitações de exames e termos de consentimento), e um paciente pode enviar documentos ao seu profissional (por exemplo resultados de exames ou fotos). Eles podem conter dados de saúde.</li>
+              <li>Para cada documento guardamos o arquivo, o título, o tipo, o tamanho, quando foi enviado e quem o enviou. Os arquivos são verificados pelo formato real: apenas PDF, JPG, PNG ou HEIC, até 20 MB cada.</li>
+              <li>Somente o profissional do paciente vê os documentos do paciente, inclusive os que o paciente envia. Secretárias(os) e outros profissionais da mesma clínica não veem.</li>
+              <li>O paciente vê apenas os documentos que seu profissional compartilha com ele e os documentos que ele enviou, e somente enquanto estiver conectado a esse profissional. Ativar o recurso não compartilha nenhum arquivo já existente: o profissional compartilha cada documento.</li>
+              <li>Os documentos ficam no mesmo armazenamento privado, na mesma região, dos demais arquivos de pacientes, e são abertos por links que expiram em 5 minutos.</li>
+              <li>Os documentos compartilhados e enviados fazem parte do prontuário e são mantidos pelo mesmo prazo (ver seção 9). O profissional pode ocultar um documento do paciente, ou ocultá-lo por completo informando o motivo, mas não pode excluí-lo, exceto um arquivo que ele mesmo enviou, em até 24 horas após o envio.</li>
+              <li>O paciente pode remover um documento que enviou até o profissional abri-lo pela primeira vez, no máximo 24 horas após o envio. Ele é então excluído, e a remoção fica registrada no registro de acessos. Depois disso, ele é mantido como qualquer outro documento do prontuário.</li>
+              <li>Quando o paciente se desconecta ou encerra a conta, o acesso termina na hora, mas os documentos continuam no prontuário do profissional.</li>
+              <li>Registramos cada vez que um paciente abre ou baixa um documento compartilhado e cada vez que o profissional abre um documento enviado pelo paciente. O profissional pode ver esse registro; o paciente pode solicitá-lo.</li>
+            </ul>
+          </div>
+        )}
       </Section>
 
       <Section title="4. Como usamos os dados">
@@ -174,6 +191,9 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
           {closureNotices && (
             <li>Quando um profissional encerra a conta, nosso servidor envia aos pacientes dele um aviso de que o consultório foi encerrado ou de que uma consulta foi cancelada. Para isso, guardamos apenas o nome da clínica (que pode ser o próprio nome do profissional) e o país dela, a data e o horário da consulta (no caso de consultas canceladas) e o status de entrega, e apagamos o aviso assim que ele é enviado (no máximo 30 dias).</li>
           )}
+          {patientDocs && (
+            <li>Quando um profissional compartilha um documento, o paciente recebe uma notificação apenas com o nome do profissional. Quando um paciente envia um documento, o profissional recebe uma apenas com o nome do paciente. A notificação nunca inclui o título nem o conteúdo do documento.</li>
+          )}
           <li>Você pode desativar as notificações a qualquer momento nas configurações do seu aparelho.</li>
         </ul>
       </Section>
@@ -185,16 +205,21 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             <strong>As secretárias</strong> convidadas pelo profissional (até 3) podem ver e gerenciar os dados de
             identificação e contato dos pacientes (incluindo a foto de perfil do paciente), a agenda e os pagamentos
             das consultas, e podem cadastrar, arquivar e restaurar pacientes. Elas <strong>não</strong> podem ver
-            prontuários, receitas, exames nem arquivos clínicos.
+            prontuários, receitas, {clinicalDocs && "atestados, declarações, solicitações de exames, "}exames nem arquivos clínicos
+            {patientDocs && ", nem documentos compartilhados com os pacientes ou enviados por eles"}.
           </li>
-          <li><strong>Os pacientes</strong> veem as próprias consultas e as informações de agendamento e pagamento da clínica.</li>
+          <li>
+            <strong>Os pacientes</strong> veem as próprias consultas e as informações de agendamento e pagamento da clínica
+            {patientDocs && ", além dos documentos que o profissional compartilha com eles e dos documentos que eles enviam (ver 3.8)"}.
+          </li>
           <li>
             Ninguém de fora da clínica, incluindo outros usuários do SolvyMed, pode ver os dados de uma clínica. A
             equipe do SolvyMed só acessa dados quando necessário para suporte ou obrigações legais.
           </li>
         </ul>
         <p>
-          Um registro de acessos guarda quem abriu cada prontuário, receita, exame ou arquivo de paciente, e quando. O
+          Um registro de acessos guarda quem abriu cada prontuário, receita,{" "}
+          {clinicalDocs && "atestado, declaração, solicitação de exames, "}exame ou arquivo de paciente, e quando. O
           profissional responsável pelo paciente pode consultá-lo. Os registros são mantidos pelo mesmo prazo do
           prontuário e guardam o nome de quem acessou, mesmo que essa conta seja excluída depois.
         </p>
@@ -213,13 +238,16 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
       <Section title="9. Guarda dos dados">
         <ul>
           <li>
-            <strong>Prontuários</strong> (anotações clínicas, receitas, exames, arquivos, histórico de consultas) são
+            <strong>Prontuários</strong> (anotações clínicas, receitas,{" "}
+            {clinicalDocs && "atestados, declarações, solicitações de exames, "}exames, arquivos,{" "}
+            {patientDocs && "documentos compartilhados com o paciente ou enviados por ele, "}histórico de consultas) são
             guardados por no mínimo <strong>20 anos</strong>, o prazo que a lei brasileira estabelece para prontuários
             (Lei n.º 13.787/2018), mesmo que a clínica arquive o paciente ou encerre a conta no SolvyMed. Um paciente com
             prontuário pode ser arquivado, mas não excluído.
           </li>
           <li>
-            Depois de 24 horas, uma anotação clínica ou receita não pode mais ser editada nem excluída. Ela pode ser
+            Depois de 24 horas, uma anotação clínica{clinicalDocs ? ", receita, atestado, declaração ou solicitação de exames" : " ou receita"} não
+            pode mais ser editada nem excluída. Ela pode ser
             corrigida, e cada correção fica registrada com data, autor e motivo. Arquivos removidos do prontuário depois
             de 24 horas ficam ocultos, não são excluídos, e são guardados pelo prazo legal.
           </li>

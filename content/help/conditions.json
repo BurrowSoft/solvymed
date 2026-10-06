@@ -171,6 +171,14 @@
     "met": false,
     "what": "App 1.7.0 is RELEASED on Google Play (d1 sends the cut SHA), with mobile #376 (a practice that never saved its hours uses the default week, Monday to Friday 08:00–18:00, in booking, reschedule, the Agenda and the Working hours form) and #377 (every app PDF on A4 via the country registry's paperSize). Gates the app halves of Help C2's default-week line and the A4 lines in P6, P8 and G5, and the App Map's app rules for both. The website's halves are live already (#403, 186, the shared @page A4)."
   },
+  "clinical-documents-live": {
+    "met": false,
+    "what": "1.8.0 B is live: migration 189 applied, server_flags.clinical_documents on, the app build with the document templates RELEASED and the website's document screens live, and the privacy text that names medical certificates, declarations and exam requests among clinical records live with its PRIVACY_VERSION bump (2026-10-15; mobile 191 accepts it first). Gates those privacy words and the B Help / App Map lines."
+  },
+  "patient-documents-live": {
+    "met": false,
+    "what": "1.8.0 A is live: migration 190 applied (documents shared with / sent by patients, folders, the patient-document edge function), its server flag on, the app build RELEASED and the website's screens live, and privacy §3.8 + the §6g / §7 lines live with the PRIVACY_VERSION bump (2026-10-15; mobile 191 first). Gates that privacy text and A's Help / App Map lines."
+  },
   "record-templates-live": {
     "met": false,
     "what": "Record templates are live on the website (1.8.0 D): migration 189 applied on production and the server flag 'record_templates' on. Gates Help C13 and the App Map's record-template rule. The app's half (1.8.0) is gated separately by its released build."
