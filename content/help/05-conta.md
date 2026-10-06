@@ -3,12 +3,12 @@
 ---
 ## K1. Teste grátis e assinatura / Free trial and subscription
 **pt-BR**
-Você tem 15 dias grátis, sem cartão. Para continuar depois, assine pelo site solvymed.com, entrando com sua conta. O plano inclui tudo, com até 3 secretárias(os).
+Você tem 15 dias grátis, sem cartão. Para continuar depois, assine pelo site solvymed.com, entrando com sua conta. O plano inclui tudo, com uma equipe de até 3 pessoas.
 {pending:app-1.4.0} Com a assinatura inativa, o app mostra "Sua assinatura do SolvyMed está inativa." e a linha "Dúvidas? Escreva para support@solvymed.com." (toque para abrir o e-mail), com o botão **Sair**. A secretária(o) vê "Assinatura inativa": o acesso volta assim que a assinatura do médico for renovada, com a mesma linha de suporte.
 {pending:booking-check-live} Com a assinatura inativa, quem tentar agendar online com você pelo site vê "A clínica não está recebendo pedidos de consulta online no momento." em vez dos horários.
 {pending:booking-check-live,app-1.4.0} No app do paciente, o agendamento mostra a mesma mensagem.
 **en**
-You get 15 days free, with no card. To continue afterwards, subscribe on solvymed.com, signed in with your account. The plan includes everything, with up to 3 secretaries.
+You get 15 days free, with no card. To continue afterwards, subscribe on solvymed.com, signed in with your account. The plan includes everything, with a team of up to 3 people.
 {pending:app-1.4.0} With the subscription inactive, the app shows "Your SolvyMed subscription is inactive." and the line "Questions? Write to support@solvymed.com." (tap it to open your email), with a **Sign Out** button. A secretary sees "Subscription inactive": access resumes once the doctor's subscription is renewed, with the same support line.
 {pending:booking-check-live} While the subscription is inactive, anyone trying to book with you online on the website sees "This clinic isn't taking online appointment requests right now." instead of the times.
 {pending:booking-check-live,app-1.4.0} In the patient's app, booking shows the same message.

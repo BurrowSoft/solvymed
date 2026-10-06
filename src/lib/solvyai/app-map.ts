@@ -423,6 +423,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
+      text: "In the app (1.8.0), a new prescription has \"Compartilhar com o paciente\" / \"Share with the patient\" (on by default): saving it puts a PDF copy in the patient's \"Prescrições\" / \"Prescriptions\" folder; a copy without the doctor's drawn signature is marked \"Cópia sem assinatura, para consulta do paciente.\" / \"Unsigned copy, for the patient's reference.\"; a correction replaces the shared copy; with the doctor's document storage full it is saved but not shared (\"Salvo, mas não compartilhado: seu espaço de documentos está cheio.\" / \"Saved, but not shared: your document storage is full.\"). SolvyAI doesn't share prescriptions; it explains the switch.",
+      pending: ["patient-documents-live", "app-1.8.0"],
+    },
+    help: "P15",
+  },
+  {
+    rule: {
       text: "Clinical documents (doctors only): the patient's \"Receitas e documentos\" / \"Prescriptions & documents\" tab has \"+ Receita\" / \"+ Prescription\" and \"+ Documento\" / \"+ Document\". The types follow the practice country: Brazil \"Atestado médico\" / \"Medical certificate\", \"Declaração médica\" / \"Medical declaration\", \"Solicitação de exames\" / \"Exam request\" and \"Receita de controle especial (impressa)\" / \"Special control prescription (print)\"; Thailand the Thai medical certificate, the declaration and the exam request. \"Idioma do documento\" / \"Document language\" changes the labels, date and calendar (the doctor writes the text); the ICD code only with \"Incluir CID\" / \"Include ICD code\" (with the patient's consent). One list, newest first; \"Baixar PDF\" / \"Download PDF\". Editable or deletable by its author for 24 hours, then \"Adicionar correção\" / \"Add correction\" (the original kept). The special control prescription is print-only (sign by hand, two copies) and needs the patient's CPF or passport. Secretaries never see documents; every PDF created is in the access log. SolvyAI doesn't write, open or print documents; it points to this tab.",
       pending: ["clinical-documents-live"],
     },
