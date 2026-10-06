@@ -19,6 +19,13 @@ repos).
    tester records it here as "review: clean at `<SHA>`".
 2. **Web tester's 🟢** in this file, scoped to that SHA (a docs-only
    addendum on top is fine after the code reviewer's delta check).
+   **Since 2026-10-06 (cf), every web row also runs the regression suite**
+   against the PR's Preview and pastes the pass count in the row's PR
+   comment ("smoke: N passed at `<SHA>`"):
+   `E2E_BASE_URL=$(node scripts/preview-url.mjs <sha>) npm run test:smoke`
+   (secrets and fixtures: `e2e/smoke/README.md`). **A failing smoke test
+   blocks the merge like any ❌.** A proven flake may be re-run once, and the
+   comment says so.
 3. **CI:** the required "Typecheck and unit tests" check is green (branch
    protection enforces it).
 
