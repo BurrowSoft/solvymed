@@ -10347,3 +10347,40 @@ Evidence: each PR's tester comment (SHA + what was checked). Merged commits from
 Still open, so not in this batch: #402 (privacy 2026-10-09), #406 (the Stripe check).
 
 Fixtures: throwaway accounts (`e2e-test-opus-…`, mobile tester 1's `@example.invalid` device patients), deleted after each run or purged by the mobile dev by exact id and verified 0 left, including the `multi_practice_secretary` listings. The `[TEST]` Founders applications were deleted by the mobile dev.
+
+## Batch 12: web PRs #402–#422, incl. the regression suite, 1.8.0 record templates (D) and patient documents (A) (web tester 1 + web tester 2, 2026-10-05 → 10-06)
+
+Evidence: each PR's tester comment (SHA + what was checked). Merged commits from GitHub. WT1 = web tester 1, WT2 = web tester 2; DB checks, listings, seeds and purges by the mobile dev; the web ↔ app cross-check by mobile tester 1.
+
+**The regression suite (#412) is the merge gate's second item from now on:** every web row also runs `npm run test:smoke` on the PR's Preview and quotes "smoke: N passed at `<SHA>`". All rows below from #413 on have it (57 tests in 7 files each time).
+
+**1.8.0 flags:**
+- The D rows (#414, #420) were tested on Previews with the doctors listed on `record_templates`.
+- The A rows (#417, #418, #421, #422) were tested with the doctors and the patient account listed on `patient_documents`.
+- Listings were made by the mobile dev, with cf's OK by exact id. The global flags stayed off.
+
+| PR | Change | Tester result (SHA, evidence) | Merged |
+|---|---|---|---|
+| #402 | Privacy 2026-10-09: §3.6 attribution covers signups and Founders applications (G7, migration 187) | WT2 🟢 **live** on www at `341142a` (6005981482): UTM + Aceitar tudo + signup in browser A, the confirmation link opened in a fresh browser B → `signup_attribution` g7test/g7, /pt-BR, web; no pending row, no `signup_attr` left in the metadata (mobile dev's SELECT) | `341142a` into master |
+| #406 | Daily Stripe ↔ database check (read-only, dry run first) | WT2 🟢 `5a236bd` (6005938121), local `next dev` with the TEST Stripe key: no / wrong Bearer → 401; right → 200 dry run (counts + mismatches, emailed false); a test sub on an expired throwaway isn't listed within the 1 h grace, then exactly 1 `paying_without_access` | `1e1ace5` into master |
+| #408 | TESTING-WEB batch 11 | n/a: docs (c6 CLEAN) | `8219e39` into master |
+| #409 | The Stripe check e-mails support on a mismatch | n/a: review-only (c6 CLEAN at `033014a`, 6006085320) | `e2c84cf` into master |
+| #410 | Web 1.6.0 flips: receipt amount (G5), broadcast (P14) | WT2 🟢 **live** at `427f8b7` (6008217444; also the Preview `e46fd11`): G5 shows the "Definir valor / Set amount" line, P14 visible in pt + en, P13 / C4 still hidden; the doctor's Visão geral has Enviar para Pacientes (the secretary's doesn't); SolvyAI answers the broadcast how-to | `427f8b7` into master |
+| #411 | Help: the default week and A4 | n/a: Help + App Map only, review-only (c6 CLEAN at `4c9535b`, 6008216985) | `afd459e` into master |
+| #412 | The web regression suite (e2e/smoke) + the merge-gate rule | n/a: tests + docs, review-only (c6 CLEAN at `571e2e7` / `e4df589`); the suite has run green on every row since | `930cb70` into master |
+| #413 | Privacy: 1.8.0 clinical + patient documents (hidden) | WT1 🟢 `f138ffe` (6009320783): on the Preview, en / pt-BR / th show no new text and the version stays 2026-10-09. Locally with the conditions met (A+B, B only, A only), each reveals exactly its text vs `specs/sprint-1.8.0-privacy-draft.md`. The §3.8 differences went to cf (the own-upload 24 h delete: approved, matches 190) | `e9a10d5` into master |
+| #414 | Record templates + 8 specialty presets (1.8.0 D, hidden) | WT1 ❌ `3831168` (the multipart form sent CRLF, so a templated record never showed its sections) → 🟢 `f72aa1f` (6010050587). Flag off = www in pt-BR / en / th, /help/c13 404. Flag on: empty state + the 2 buttons, 8 presets in the UI language, a preset copy saves 8 sections, the template row only with ≥ 1 template and "Sem modelo" first, hints as placeholders, a saved record keeps LF + renders its sections. Web ↔ app with mobile tester 1: an app-saved record renders its sections on the web, and the web's in the app | `60ee78c` into master |
+| #415 | Smoke project patterns anchored on e2e/smoke | n/a: Playwright config only, review-only (c6 CLEAN at `a9b3cbd`, 6009390810) | `1c79556` into master |
+| #416 | Home page says only what SolvyMed does (agency-brief fact-check) | WT2: smoke 57 at `8eec9f7` (6011185896) + a look at / in pt-BR / en / th; copy-only (c6 CLEAN at `8eec9f7`) | `bbecadb` into master |
+| #417 | 1.8.0 A doctor side: Documents tab + Document folders (hidden) | WT1 ❌ `02b561b` (a .heic with an empty `File.type` was stored as octet-stream and refused) → 🟢 `bd1b5fe` (6010428072): Documentos replaces Exames + Arquivos (6 folders); .gif and 21 MB refused client-side; the upload dialog (Internal → no share switch + the note); share / hide, rename, move into Internal unshares; Abrir = 300 s signed URL + access log; Remover < 24 h deletes, > 24 h asks for a reason and hides; en + th. WT2 🟢 Settings → Pastas de documentos at `4b9ecfa` (6010216708) | `f64e9ef` into master |
+| #418 | 1.8.0 A patient side: Minhas consultas → Documentos (hidden) | WT1 🟢 `b5c0b5e` (6010660662; flow at `dd9486c`, the same files): flag off = no section. Flag on: only shared docs, Abrir 300 s, client refusals, PDF + type-less HEIC upload, a .pdf-named text refused by the server's byte check, remove before the doctor opens, the daily limit at the 11th (pending counted), the doctor sees "Enviado pelo paciente" and opening blocks removal; pushes = clinic `document_uploaded` (name only) + one patient `document_shared` (no title) | `512c13c` into master |
+| #419 | Privacy §3.8: the real-format check names shared / sent files (hidden) | WT2 🟢 `1e8d490` (6010356647): no §3.8 on /privacy en + pt-BR, version 2026-10-09 | `07dfa21` into master |
+| #420 | D follow-ups: typed text never lost on a template switch; record types read in both forms | WT1 🟢 `6bc6bb0` (6010779890; merged at `2a93611` = a master merge, c6 same-patch): app-vocabulary records (seeded) show Nota SOAP / Retorno (en: SOAP note / Follow-up); an edit within 24 h keeps the type; free text → the first section + "O texto foi movido para…", same titles keep their text, missing sections append to the first, Sem modelo joins | `94ea104` into master |
+| #421 | 1.8.0 A follow-ups: viewer-local days, Acessos titles, snappier list, "Enviado por você" | WT1 🟢 `a3f58b6` (6010965794; merged at `c3e85b8` = a master merge, c6 same-patch): Honolulu 05/10 vs São Paulo 06/10 on both sides; Acessos names the document or "(removido)"; share / rename one round trip; the > 24 h hide dialog closes in ~1.9 s | `e199303` into master |
+| #422 | 196: doctor uploads register through the function; share checks never-checked files | WT1 🟢 `e7a73f2` with 196 live (6011317800): PDF / JPG / HEIC register checked; a .pdf-named text refused with nothing left in storage; adopted loose files → the good one is checked and shared, the bad one "Este arquivo não pode ser compartilhado…"; `register` on a path that isn't a fresh own upload → 404, objects untouched | `5efd645` into master |
+
+**Still open, so not in this batch:** #423 (Acessos in the viewer's zone), #424 (privacy 2026-10-10, held).
+
+**Fixtures:**
+- Throwaway accounts (`e2e-test-opus-…`, `e2e-smoke-…`).
+- The 1.8.0 records were seeded or saved with cf's OK. The mobile dev purged them by exact id, records first, together with documents, storage objects, folders, templates and flag listings. WT1 verified 0 left after each purge.
