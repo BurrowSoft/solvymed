@@ -6,6 +6,7 @@ import { getActiveProfId, isActiveProfessional, isLockedOut } from "@/lib/active
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { tellPatient } from "@/lib/clinicNotify";
 import { actionError } from "@/lib/dbErrors";
+import { recordInput, TEMPLATE_NAME_MAX } from "@/lib/recordTemplates";
 import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
 import { readAccessLog, type AccessLogPage } from "@/lib/accessLog";
 import { routing } from "@/i18n/routing";
@@ -313,8 +314,13 @@ export async function createRecord(patientId: string, formData: FormData) {
   // not a boundary, since these actions are directly callable.
   if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "not_doctor" };
 
-  const content = (formData.get("content") as string)?.trim();
+  // Written with a template (1.8.0 D): the record keeps its own sections,
+  // and content is composed from them here.
+  const input = recordInput(formData.get("content"), formData.get("sections"));
+  if (!input.ok) return { error: "check_failed" };
+  const { content, sections } = input;
   if (!content) return { error: "content_required" };
+  const templateName = ((formData.get("template_name") as string | null) ?? "").trim().slice(0, TEMPLATE_NAME_MAX);
 
   // The practice's date and time, not the server's (UTC).
   const now = new Date();
@@ -325,6 +331,7 @@ export async function createRecord(patientId: string, formData: FormData) {
     time: clinicTime(now),
     content,
     record_type: (formData.get("record_type") as string) || "free_text",
+    ...(sections ? { sections, template_name: templateName || null } : {}),
   });
 
   if (error) return { error: actionError(error.message) };
@@ -340,12 +347,15 @@ export async function updateRecord(id: string, patientId: string, formData: Form
   if (!user) return { error: "unauthorized" };
   if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "not_doctor" };
 
-  const content = (formData.get("content") as string)?.trim();
+  // A record written with sections keeps them (its template name too).
+  const input = recordInput(formData.get("content"), formData.get("sections"));
+  if (!input.ok) return { error: "check_failed" };
+  const { content, sections } = input;
   if (!content) return { error: "content_required" };
 
   const { error } = await supabase
     .from("medical_records")
-    .update({ content, record_type: (formData.get("record_type") as string) || "free_text" })
+    .update({ content, record_type: (formData.get("record_type") as string) || "free_text", ...(sections ? { sections } : {}) })
     .eq("id", id)
     .eq("professional_id", user.id);
   if (error) return { error: actionError(error.message) };
@@ -361,16 +371,22 @@ export async function addRecordCorrection(recordId: string, patientId: string, f
   if (!user) return { error: "unauthorized" };
   if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "not_doctor" };
 
-  const content = (formData.get("content") as string)?.trim();
+  const input = recordInput(formData.get("content"), formData.get("sections"));
+  if (!input.ok) return { error: "check_failed" };
+  const { content, sections } = input;
   const reason = (formData.get("reason") as string)?.trim();
   if (!content) return { error: "content_required" };
   if (!reason) return { error: "reason_required" };
 
-  const { error } = await supabase.rpc("add_record_correction", {
-    p_record_id: recordId,
-    p_content: content,
-    p_reason: reason,
-  });
+  // With sections: 189's 4-argument overload (the correction keeps the
+  // original's template name); without, the original 3-argument one.
+  const { error } = sections
+    ? await supabase.rpc("add_record_correction", { p_record_id: recordId, p_content: content, p_sections: sections, p_reason: reason })
+    : await supabase.rpc("add_record_correction", {
+        p_record_id: recordId,
+        p_content: content,
+        p_reason: reason,
+      });
   if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };

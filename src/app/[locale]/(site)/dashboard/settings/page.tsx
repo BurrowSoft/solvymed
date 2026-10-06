@@ -26,6 +26,8 @@ import { SubscriptionPanel } from "./SubscriptionPanel";
 import { FoundersCard } from "./FoundersCard";
 import { BrandCard } from "./BrandCard";
 import { ColleaguesCard } from "./ColleaguesCard";
+import { RecordTemplatesCard } from "./RecordTemplatesCard";
+import { listRecordTemplates } from "./record-template-actions";
 import { DocumentFoldersCard } from "./DocumentFoldersCard";
 import { documentsEnabled, loadFolders } from "../(gated)/patients/documents-actions";
 import { listColleagues } from "../colleague-actions";
@@ -231,6 +233,9 @@ export default async function SettingsPage({
     : null;
   const brandRow = (brandRowResult?.data ?? null) as BrandFieldsRow | null;
   const brandRowFailed = !!brandRowResult?.error;
+  // 1.8.0 D record templates (server flag 'record_templates'): no card while it's off.
+  const templates = await listRecordTemplates();
+  const showTemplates = templates.ok || templates.code === "failed";
   // 1.8.0 A document folders (server flag 'patient_documents'): no card while it's off.
   const folders = (await documentsEnabled()) ? await loadFolders() : null;
 
@@ -277,6 +282,7 @@ export default async function SettingsPage({
           <ColleaguesCard initial={colleagues.ok ? colleagues.rows : []} loadFailed={!colleagues.ok} />
         )}
 
+        {showTemplates && <RecordTemplatesCard initial={templates.ok ? templates.rows : []} loadFailed={!templates.ok} />}
         {folders && (
           <DocumentFoldersCard
             initial={folders.ok ? folders.data.folders : []}

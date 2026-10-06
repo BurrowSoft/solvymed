@@ -186,6 +186,19 @@ On a patient's page, **Refer a colleague** shows your colleagues: pick one and t
 **On the website:** In **Settings → My colleagues**, type the **Colleague's public code** and click **Add**. On the patient's page, **Refer a colleague** shows the message with **Copy message** and, when the patient has a phone and the clinic uses WhatsApp, **Send on WhatsApp** (opens your WhatsApp; nothing goes out until you send it).
 `open:settings`
 `requires:referrals-live`
+
+---
+## C13. Modelos de prontuário / Record templates
+**pt-BR**
+Em **Configurações → Modelos de prontuário**, crie modelos com as seções que você preenche ao escrever um registro (por exemplo Queixa principal, HDA, Conduta). Use **Criar do zero**, ou **Começar por uma especialidade** para copiar um modelo pronto (Psiquiatria, Clínica geral, Cardiologia, Psicologia, Odontologia, Nutrição, Fisioterapia ou Pediatria) e ajustá-lo. Cada seção tem um título e uma **Dica (opcional)**, que aparece como exemplo no campo. Você pode ter até 50 modelos, com até 30 seções cada.
+Ao escrever um registro, escolha o **Modelo** (ou **Sem modelo**, para escrever em texto livre como antes; a opção aparece quando você já tem um modelo) e preencha as seções; as vazias não aparecem no registro. Os registros já feitos mantêm suas seções: mudar ou excluir um modelo não altera nada do que já foi escrito. Só você vê seus modelos e prontuários.
+**en**
+In **Settings → Record templates**, create templates with the sections you fill in when you write a record (for example Chief complaint, History of present illness, Plan). Use **Create from scratch**, or **Start from a specialty** to copy a ready-made one (Psychiatry, General practice, Cardiology, Psychology, Dentistry, Nutrition, Physiotherapy or Paediatrics) and adjust it. Each section has a title and a **Hint (optional)**, shown as an example in the field. You can have up to 50 templates, with up to 30 sections each.
+When you write a record, pick the **Template** (or **No template** to write free text as before; it shows once you have a template) and fill in the sections; empty ones are left out of the record. Records already written keep their sections: changing or deleting a template doesn't change anything already written. Only you see your templates and records.
+**No site:** Em **Configurações → Modelos de prontuário**, clique em **Começar por uma especialidade** (e escolha a especialidade) ou em **Criar do zero**, ajuste o **Nome do modelo** e as seções (↑ ↓ para reordenar, ✕ para remover, **Adicionar seção**) e clique em **Salvar modelo**. No paciente, aba **Registros** → **Novo Registro**, escolha o **Modelo** e clique em **Salvar Registro**.
+**On the website:** In **Settings → Record templates**, click **Start from a specialty** (and pick one) or **Create from scratch**, adjust the **Template name** and the sections (↑ ↓ to reorder, ✕ to remove, **Add section**) and click **Save template**. On the patient, **Records** tab → **New Record**, pick the **Template** and click **Save Record**.
+`open:settings`
+`requires:record-templates-live`
 ---
 ## C14. Pastas de documentos / Document folders
 **pt-BR**
