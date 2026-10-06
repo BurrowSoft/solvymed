@@ -60,6 +60,14 @@ export function locationIdForDate(
   return list.find((l) => l.is_primary)?.id ?? list[0].id;
 }
 
+// The working-hours picker's value for a day: "" (stored as null = "the
+// primary", which then follows a new primary, as in the app) unless the day
+// points at another of the doctor's locations.
+export function dayLocationValue(stored: string | null | undefined, list: PracticeLocation[]): string {
+  const l = stored ? list.find((x) => x.id === stored) : undefined;
+  return l && !l.is_primary ? l.id : "";
+}
+
 // UX Q4: the public location serving a date, or null with fewer than 2.
 export function publicLocationForDate(list: PublicLocation[] | null | undefined, date: string): PublicLocation | null {
   if (!list || list.length < 2) return null;

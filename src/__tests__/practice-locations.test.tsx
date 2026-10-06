@@ -19,7 +19,7 @@ vi.mock("@/app/[locale]/(site)/dashboard/(gated)/clinics/actions", () => ({
   updateClinicLocation: vi.fn(),
 }));
 
-import { dayKeyOf, locationIdForDate, locationNameFor, publicLocationForDate, shownLocations, sortLocations } from "@/lib/locations";
+import { dayKeyOf, dayLocationValue, locationIdForDate, locationNameFor, publicLocationForDate, shownLocations, sortLocations } from "@/lib/locations";
 import { ClinicsClient } from "@/app/[locale]/(site)/dashboard/(gated)/clinics/ClinicsClient";
 
 const A = { id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", name: "Unidade Centro", is_primary: true };
@@ -56,6 +56,17 @@ describe("the location rules (the app's lib/locations)", () => {
     expect(locationIdForDate(hours, "2026-10-08", [A, B])).toBe(A.id);
     expect(locationIdForDate(hours, "2026-10-09", [A, B])).toBe(A.id);
     expect(locationIdForDate(hours, "2026-10-07", [A])).toBeNull();
+  });
+
+  it("the hours picker keeps 'the primary' as null, so a day follows a new primary (c6)", () => {
+    expect(dayLocationValue(null, [A, B])).toBe("");
+    expect(dayLocationValue(A.id, [A, B])).toBe("");
+    expect(dayLocationValue(B.id, [A, B])).toBe(B.id);
+    expect(dayLocationValue("gone", [A, B])).toBe("");
+    // After "Make primary" on B, a day saved as "" now follows B; one saved as A stays at A.
+    const swapped = [{ ...A, is_primary: false }, { ...B, is_primary: true }];
+    expect(dayLocationValue(null, swapped)).toBe("");
+    expect(dayLocationValue(A.id, swapped)).toBe(A.id);
   });
 
   it("the public list (UX Q4): the location serving that day", () => {
@@ -97,5 +108,18 @@ describe("My Clinics with locations on", () => {
     expect(alert).toHaveBeenCalledWith(pt.locations.deletePrimary);
     expect(h.del).not.toHaveBeenCalled();
     alert.mockRestore();
+  });
+});
+
+describe("the working-hours picker", () => {
+  it("the primary's option is '' and is the default for a day on the primary", async () => {
+    const { WorkingHoursForm } = await import("@/app/[locale]/(site)/dashboard/settings/SettingsClient");
+    const hours = { mon: { enabled: true, start: "08:00", end: "18:00", location_id: null }, tue: { enabled: true, start: "08:00", end: "18:00", location_id: B.id } } as never;
+    render(<NextIntlClientProvider locale="pt-BR" messages={pt}><WorkingHoursForm workingHours={hours} country="BR" locations={[A, B]} /></NextIntlClientProvider>);
+    const mon = screen.getByLabelText(`${pt.locations.dayLocation} · ${pt.settings.mon}`) as HTMLSelectElement;
+    const tue = screen.getByLabelText(`${pt.locations.dayLocation} · ${pt.settings.tue}`) as HTMLSelectElement;
+    expect(Array.from(mon.options).map((o) => o.value)).toEqual(["", B.id]);
+    expect(mon.value).toBe("");
+    expect(tue.value).toBe(B.id);
   });
 });

@@ -8,6 +8,7 @@ import { markInviteShared } from "@/lib/setupActions";
 import { formatCnpj, isValidCnpj } from "@/lib/cnpj";
 import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient, generatePublicInviteCode } from "./actions";
 import { withCountryHint } from "@/lib/signupCountry";
+import { dayLocationValue } from "@/lib/locations";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
 function Label({ children }: { children: React.ReactNode }) {
@@ -333,7 +334,6 @@ export function initialHours(saved: Partial<WorkingHours> | null | undefined, co
 export function WorkingHoursForm({ workingHours, country, locations = [] }: { workingHours: WorkingHours | null; country?: string | null; locations?: { id: string; name: string; is_primary?: boolean | null }[] }) {
   const t = useTranslations("settings");
   const tl = useTranslations("locations");
-  const primaryId = locations.find((l) => l.is_primary)?.id ?? locations[0]?.id ?? "";
   const DAYS: { key: DayKey; label: string }[] = [
     { key: "mon", label: t("mon") },
     { key: "tue", label: t("tue") },
@@ -402,10 +402,12 @@ export function WorkingHoursForm({ workingHours, country, locations = [] }: { wo
                     <select
                       name={`${d.key}_location`}
                       aria-label={`${tl("dayLocation")} · ${d.label}`}
-                      defaultValue={h.location_id && locations.some((l) => l.id === h.location_id) ? h.location_id : primaryId}
+                      defaultValue={dayLocationValue(h.location_id, locations)}
                       className="min-w-0 max-w-[14rem] rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
                     >
-                      {locations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+                      {/* The primary is "" (saved as null): the day follows whichever
+                          location is primary, as the app stores it (c6). */}
+                      {locations.map((l) => <option key={l.id} value={l.is_primary ? "" : l.id}>{l.name}</option>)}
                     </select>
                   </label>
                 )}
