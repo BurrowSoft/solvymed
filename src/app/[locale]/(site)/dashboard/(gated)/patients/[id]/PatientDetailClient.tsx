@@ -719,6 +719,10 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
   const [freeText, setFreeText] = useState("");
   // The section that received the doctor's text when switching (cf: never lost).
   const [movedTo, setMovedTo] = useState<string | null>(null);
+  // The last switch only (cf): going straight back to the template (or "No
+  // template") it came from, with no edit in between, restores exactly what
+  // was there. Any edit forgets it.
+  const [lastSwitch, setLastSwitch] = useState<{ fromId: string; sections: SectionsState; freeText: string } | null>(null);
   const practiceCalendar = usePracticeCalendar();
   const errorText = useClinicalErrorText();
   const [dialog, setDialog] = useState<RecordDialog | null>(null);
@@ -735,10 +739,19 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
     setSections(own ? { templateName: d.mode !== "new" ? d.record.template_name ?? null : null, rows: own.map((x) => ({ title: x.title, text: x.text })) } : null);
     setFreeText(d.mode !== "new" && !own ? d.record.content : "");
     setMovedTo(null);
+    setLastSwitch(null);
     setDialog(d);
   }
 
   function pickTemplate(id: string) {
+    if (lastSwitch && id === lastSwitch.fromId) {
+      setSections(lastSwitch.sections);
+      setFreeText(lastSwitch.freeText);
+      setLastSwitch(null);
+      setMovedTo(null);
+      return;
+    }
+    setLastSwitch({ fromId: sections?.templateId ?? "", sections, freeText });
     const tpl = templates.find((x) => x.id === id) ?? null;
     const r = switchTemplate(sections ? { kind: "sections", rows: sections.rows } : { kind: "free", text: freeText }, tpl?.sections ?? null);
     if (r.draft.kind === "free" || !tpl) {
@@ -890,6 +903,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
                     onChange={(e) => {
                       const text = e.target.value;
                       setSections((s) => s && { ...s, rows: s.rows.map((r, j) => (j === i ? { ...r, text } : r)) });
+                      setLastSwitch(null);
                     }}
                     className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-y"
                   />
@@ -899,7 +913,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
           ) : (
             <div>
               <FieldLabel>{t("content")} *</FieldLabel>
-              <textarea name="content" required rows={6} value={freeText} onChange={(e) => setFreeText(e.target.value)} placeholder={t("contentPlaceholder")} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
+              <textarea name="content" required rows={6} value={freeText} onChange={(e) => { setFreeText(e.target.value); setLastSwitch(null); }} placeholder={t("contentPlaceholder")} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
             </div>
           )}
           {dialog?.mode === "correct" && <ReasonField />}
