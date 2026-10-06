@@ -39,6 +39,8 @@ export type CalendarAppt = {
   notes?: string;
   // The patient's own booking message (migration 106).
   patient_note?: string | null;
+  // 1.8.0 F: the visit's location name (2+ locations), resolved by the page.
+  location_name?: string | null;
 };
 
 // HOUR_H/FIRST_H/LAST_H drive the grid's Tailwind classes below (h-16 = HOUR_H,
@@ -257,7 +259,7 @@ function TimeGrid({
                     <p className="text-[11px] font-bold leading-tight truncate">{appt.patient_name}</p>
                     {height >= 34 && (
                       <p className="text-[10px] leading-tight truncate opacity-75">
-                        {appt.start_time?.slice(0, 5)} · <ConsultTypeLabel value={appt.consultation_type} />
+                        {appt.start_time?.slice(0, 5)} · <ConsultTypeLabel value={appt.consultation_type} />{appt.location_name ? ` · ${appt.location_name}` : ""}
                       </p>
                     )}
                   </button>
@@ -453,7 +455,7 @@ export function CalendarView({
             <div className="flex items-start justify-between mb-3">
               <div className="min-w-0 flex-1">
                 <p className="font-bold text-slate-900 truncate">{selected.patient_name}</p>
-                <p className="text-sm text-slate-500"><ConsultTypeLabel value={selected.consultation_type} /></p>
+                <p className="text-sm text-slate-500"><ConsultTypeLabel value={selected.consultation_type} />{selected.location_name ? ` · ${selected.location_name}` : ""}</p>
                 {sel && <DoctorTag info={sel.tag} />}
               </div>
               <button onClick={() => setSelected(null)} className="ml-2 rounded-lg p-1 text-slate-400 hover:bg-slate-100 transition">
