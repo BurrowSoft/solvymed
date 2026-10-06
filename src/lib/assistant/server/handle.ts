@@ -12,6 +12,7 @@ import { cachedSystem, rules, type Client } from "./knowledge";
 import type { ContentBlock, ModelClient, ModelMessage, ModelUsage, RawBlock } from "./model";
 import { confirmFailedBlock, runTool, toolDefsFor, type ToolContext } from "./tools";
 import { loadTexts } from "./texts";
+import { plainForApp } from "./plainText";
 
 // POST /api/assistant, without the HTTP (docs/assistant-api.md §3): the
 // checks in the contract's order, then the streamed answer. Everything it
@@ -142,6 +143,18 @@ function parse(body: Body): { messages: { role: "user" | "assistant"; text: stri
   return { messages, screen, locale, turns };
 }
 
+// The app's Settings sheets and the new-appointment form (d1: lib/solvyai-nav
+// openAppTarget in 1.6.0/1.7.0): an article's open id → the target's params.
+// Without one, the app opens plain Settings (Vitor: Team opened Settings).
+const APP_PARAMS: Record<string, Record<string, string>> = {
+  "settings-profile": { section: "profile" },
+  "settings-hours": { section: "hours" },
+  "settings-procedures": { section: "procedures" },
+  "settings-team": { section: "team" },
+  "settings-financial": { section: "financial" },
+  "new-appointment": { new: "1" },
+};
+
 // A Help article's screen, for the app (web paths mean nothing there).
 function targetOf(path: string): TargetScreen {
   const m = path.match(/^\/dashboard\/(schedule|patients|payments|settings)/);
@@ -158,7 +171,8 @@ function openBlock(id: string, locale: string, client: Client, label: string): A
   if (!path) return null;
   const href = `${locale === routing.defaultLocale ? "" : `/${locale}`}${path}`;
   if (!isInternalHref(href)) return null;
-  return { kind: "block", block: { type: "open", label, href, target: { screen: targetOf(path) } } };
+  const params = article.open ? APP_PARAMS[article.open] : undefined;
+  return { kind: "block", block: { type: "open", label, href, target: { screen: targetOf(path), ...(params ? { params } : {}) } } };
 }
 
 // Streams the model's text while holding back anything from "[[" until its
@@ -505,5 +519,5 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       await refund();
     }
   }
-  return { status: 200, stream: stream(), settle: refund };
+  return { status: 200, stream: deps.client === "app" ? plainForApp(stream()) : stream(), settle: refund };
 }

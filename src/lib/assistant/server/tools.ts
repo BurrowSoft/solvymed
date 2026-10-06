@@ -918,7 +918,7 @@ async function proposeAddPatient(ctx: ToolContext, input: Record<string, unknown
 // scans the appointment's PromptPay QR; "Open QR" opens that appointment.
 
 async function proposeSendPix(ctx: ToolContext, input: Record<string, unknown>): Promise<ToolOutcome> {
-  if (ctx.client !== "app") return err("On the website Pix isn't sent by WhatsApp: say it's only in the app and point to Help G4.");
+  if (ctx.client !== "app") return err("On the website SolvyAI can't send it: the doctor sends it from Agenda → the appointment's QR icon → \"Enviar Pix por WhatsApp\". Say that and point to Help G4.");
   const t = ctx.t;
   const a = await readAppointment(ctx, input.appointmentId);
   if (!a || a.status === "blocked") return unseen("appointment");

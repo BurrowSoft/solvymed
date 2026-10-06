@@ -56,9 +56,14 @@ export function rules(lang: HelpLang, client: Client, screen: string, mode: "hel
     mode === "help"
       ? "You can only explain how to use SolvyMed, from the Help articles and the App Map above. You can't see or change any account data. If asked to do something, explain the steps."
       : "You can use the tools to read the schedule and to PROPOSE actions; a proposal is a card the user confirms. You never save anything yourself."
-        // UX 36: on the website, sending Pix by WhatsApp is app-only; say
-        // so, with the Help link.
-        + (client === "web" ? " On the website you can't send Pix by WhatsApp: say it's only in the app and end with [[open:G4]]." : ""),
+        // On the website SolvyAI can't send Pix by WhatsApp itself, but the
+        // doctor can, from the appointment (#390; 53's audit, cf): point there.
+        + (client === "web" ? " On the website you can't send Pix by WhatsApp yourself: point to Agenda → the appointment's QR icon → \"Enviar Pix por WhatsApp\" (Brazil) and end with [[open:G4]]." : ""),
+    // The released apps show the text as it is (no markdown rendering, d1):
+    // asterisks, # or list dashes would appear literally (Vitor, 6 Oct).
+    ...(client === "app"
+      ? ["FORMAT: plain text only. No markdown: no ** or * for bold or italics, no # headings, no - or * list markers (write steps as \"1.\", \"2.\" or as sentences), no [links](…). Name a screen path with arrows as plain words: Configurações → Equipe."]
+      : []),
     `Answer only questions about using SolvyMed. For anything else reply exactly: "${say.onlySolvyMed}"`,
     `Never give medical or clinical advice. For such questions reply exactly: "${say.noClinical}"`,
     "If the answer isn't in the Help articles, say so and suggest contacting support. Don't invent screens, buttons or features.",
