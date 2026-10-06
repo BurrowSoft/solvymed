@@ -36,7 +36,7 @@
     "prescriptions_title": "PDF の処方箋",
     "prescriptions_desc": "処方箋を数秒で作成し、印刷または PDF で共有できます。",
     "payments_title": "Pix・PromptPay 決済",
-    "payments_desc": "Pix または PromptPay で、手数料なしでご自身の口座に直接入金。予約ごとの支払い用 QR、支払い済み・未払いの管理に加え、ブラジルではアプリから WhatsApp で支払いリマインダーを送れます。",
+    "payments_desc": "Pix または PromptPay で、SolvyMed の手数料なしでご自身の口座に直接入金。予約ごとの支払い用 QR、支払い済み・未払いの管理に加え、ブラジルではアプリから WhatsApp で支払いリマインダーを送れます。",
     "analytics_title": "レポート",
     "analytics_desc": "アプリで、患者数、ステータス別の予約、期間別の売上(今週・今月・先月・全期間)を確認できます。"
   },

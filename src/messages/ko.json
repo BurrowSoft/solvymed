@@ -36,7 +36,7 @@
     "prescriptions_title": "PDF 처방전",
     "prescriptions_desc": "처방전을 몇 초 만에 작성하고 인쇄하거나 PDF로 공유하세요.",
     "payments_title": "Pix·PromptPay 결제",
-    "payments_desc": "Pix 또는 PromptPay로 수수료 없이 내 계좌로 바로 받으세요. 예약별 결제 QR, 결제 완료·미결제 관리, 그리고 브라질에서는 앱에서 WhatsApp 결제 알림을 보낼 수 있습니다.",
+    "payments_desc": "Pix 또는 PromptPay로 SolvyMed 수수료 없이 내 계좌로 바로 받으세요. 예약별 결제 QR, 결제 완료·미결제 관리, 그리고 브라질에서는 앱에서 WhatsApp 결제 알림을 보낼 수 있습니다.",
     "analytics_title": "리포트",
     "analytics_desc": "앱에서 환자, 상태별 예약, 기간별 매출(이번 주, 이번 달, 지난달, 전체)을 확인하세요."
   },

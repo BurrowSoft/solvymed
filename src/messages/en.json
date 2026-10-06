@@ -36,7 +36,7 @@
     "prescriptions_title": "Prescriptions in PDF",
     "prescriptions_desc": "Write prescriptions in seconds, then print them or share them as a PDF.",
     "payments_title": "Pix & PromptPay Payments",
-    "payments_desc": "Receive by Pix or PromptPay, straight to your account, with no fees. A payment QR for each appointment, paid and pending tracking, and, in the app in Brazil, a WhatsApp payment reminder.",
+    "payments_desc": "Receive by Pix or PromptPay, straight to your account, with no SolvyMed fees. A payment QR for each appointment, paid and pending tracking, and, in the app in Brazil, a WhatsApp payment reminder.",
     "analytics_title": "Reports",
     "analytics_desc": "In the app, see your patients, appointments by status and revenue by period (this week, this month, last month or all time), with a filter by insurance type."
   },

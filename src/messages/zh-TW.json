@@ -36,7 +36,7 @@
     "prescriptions_title": "PDF 處方",
     "prescriptions_desc": "幾秒鐘即可開立處方,然後列印或以 PDF 分享。",
     "payments_title": "Pix 與 PromptPay 收款",
-    "payments_desc": "透過 Pix 或 PromptPay 收款,直接入帳,無手續費。每次預約都有付款 QR 碼,可追蹤已付與待付的療程;在巴西,還可在 App 中透過 WhatsApp 傳送付款提醒。",
+    "payments_desc": "透過 Pix 或 PromptPay 收款,直接入帳,無 SolvyMed 手續費。每次預約都有付款 QR 碼,可追蹤已付與待付的療程;在巴西,還可在 App 中透過 WhatsApp 傳送付款提醒。",
     "analytics_title": "報表",
     "analytics_desc": "在 App 中查看病患、依狀態分類的預約,以及依期間(本週、本月、上月或全部)的收入。"
   },

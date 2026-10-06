@@ -36,7 +36,7 @@
     "prescriptions_title": "Recetas en PDF",
     "prescriptions_desc": "Emite recetas en segundos y luego imprímelas o compártelas en PDF.",
     "payments_title": "Pagos por Pix y PromptPay",
-    "payments_desc": "Recibe por Pix o PromptPay, directo a tu cuenta, sin comisiones. Un QR de pago para cada cita, control de sesiones pagadas y pendientes y, en la app en Brasil, un recordatorio de pago por WhatsApp.",
+    "payments_desc": "Recibe por Pix o PromptPay, directo a tu cuenta, sin comisiones de SolvyMed. Un QR de pago para cada cita, control de sesiones pagadas y pendientes y, en la app en Brasil, un recordatorio de pago por WhatsApp.",
     "analytics_title": "Informes",
     "analytics_desc": "En la app, consulta pacientes, citas por estado e ingresos por período (esta semana, este mes, el mes pasado o todo el tiempo)."
   },
