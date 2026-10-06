@@ -2039,6 +2039,7 @@
     "description": "기록을 작성할 때 채울 항목입니다. 이미 작성된 기록은 기존 항목을 유지합니다.",
     "template": "템플릿",
     "noTemplate": "템플릿 없음",
+    "textMoved": "텍스트를 “{section}”(으)로 옮겼습니다.",
     "newTemplate": "새 템플릿",
     "fromPreset": "진료과에서 시작",
     "createScratch": "처음부터 만들기",

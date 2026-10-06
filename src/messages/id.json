@@ -2039,6 +2039,7 @@
     "description": "Bagian yang diisi saat Anda menulis catatan. Catatan yang sudah ditulis tetap memakai bagiannya.",
     "template": "Templat",
     "noTemplate": "Tanpa templat",
+    "textMoved": "Teks Anda dipindahkan ke “{section}”.",
     "newTemplate": "Templat baru",
     "fromPreset": "Mulai dari spesialisasi",
     "createScratch": "Buat dari awal",

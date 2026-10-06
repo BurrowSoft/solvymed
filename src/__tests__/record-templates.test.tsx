@@ -4,7 +4,8 @@ import { NextIntlClientProvider } from "next-intl";
 import fs from "node:fs";
 import path from "node:path";
 import pt from "@/messages/pt-BR.json";
-import { cleanTemplate, currentRecordSections, recordInput, recordSectionsFromForm } from "@/lib/recordTemplates";
+import { cleanTemplate, currentRecordSections, recordInput, recordSectionsFromForm, switchTemplate } from "@/lib/recordTemplates";
+import { recordTypeKey } from "@/lib/recordTypes";
 
 // 1.8.0 D record templates (migration 189, flag 'record_templates'): the
 // limits match the database's; a record written with a template sends its
@@ -181,5 +182,63 @@ describe("strings", () => {
       const m = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8").replace(/^﻿/, ""));
       expect(Object.keys(m.recordTemplates ?? {}).sort(), f).toEqual(en);
     }
+  });
+});
+
+describe("switching templates never loses typed text (cf)", () => {
+  const A = [{ title: "Queixa" }, { title: "Conduta" }];
+  const B = [{ title: "Exame físico" }, { title: "Conduta" }];
+
+  it("free text → a template: the text goes into the first section", () => {
+    expect(switchTemplate({ kind: "free", text: " dor de cabeça " }, A)).toEqual({
+      draft: { kind: "sections", rows: [{ title: "Queixa", text: "dor de cabeça" }, { title: "Conduta", text: "" }] }, movedTo: "Queixa",
+    });
+    expect(switchTemplate({ kind: "free", text: "  " }, A).movedTo).toBeNull();
+  });
+
+  it("a template → another: same titles keep their text; the rest goes to the new first section", () => {
+    const r = switchTemplate({ kind: "sections", rows: [{ title: "Queixa", text: "dor" }, { title: "Conduta", text: "repouso" }] }, B);
+    expect(r).toEqual({
+      draft: { kind: "sections", rows: [{ title: "Exame físico", text: "Queixa:\ndor" }, { title: "Conduta", text: "repouso" }] }, movedTo: "Exame físico",
+    });
+    // Nothing left over: no message.
+    expect(switchTemplate({ kind: "sections", rows: [{ title: "Conduta", text: "x" }] }, B).movedTo).toBeNull();
+  });
+
+  it("a template → free text: the sections composed, as saved", () => {
+    expect(switchTemplate({ kind: "sections", rows: [{ title: "Queixa", text: "dor" }, { title: "Conduta", text: "" }] }, null)).toEqual({
+      draft: { kind: "free", text: "Queixa:\ndor" }, movedTo: null,
+    });
+  });
+
+  it("in the dialog: typed text follows the switches, with the message", async () => {
+    page([], [tpl]);
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(pt.patientDetail.newRecord) }));
+    fireEvent.change(screen.getByPlaceholderText(pt.patientDetail.contentPlaceholder), { target: { value: "Paciente refere insônia" } });
+    fireEvent.change(screen.getByRole("combobox", { name: T.template }), { target: { value: "t1" } });
+    expect(screen.getByRole("textbox", { name: "Queixa" })).toHaveValue("Paciente refere insônia");
+    expect(screen.getByRole("status")).toHaveTextContent("O texto foi movido para “Queixa”.");
+    fireEvent.change(screen.getByRole("combobox", { name: T.template }), { target: { value: "" } });
+    expect(screen.getByPlaceholderText(pt.patientDetail.contentPlaceholder)).toHaveValue("Queixa:\nPaciente refere insônia");
+  });
+});
+
+describe("record types: the web's keys and the app's old labels (cf)", () => {
+  it("every value seen on production maps to a key", () => {
+    expect(["Free text", "consultation", "free_text", "Follow-up", "SOAP note"].map(recordTypeKey)).toEqual(["free_text", "free_text", "free_text", "follow_up", "soap"]);
+    expect(recordTypeKey("Surgical report")).toBe("surgical");
+    expect(recordTypeKey("Referral")).toBe("referral");
+    expect(recordTypeKey(null)).toBe("free_text");
+  });
+
+  it("an app record shows the translated label, and editing keeps its type as a key", async () => {
+    const rec: MedRecord = { id: "r7", date: "2026-10-07", time: "09:00", content: "Plano", record_type: "SOAP note", created_at: new Date().toISOString(), created_by: "d1" };
+    page([rec], null);
+    expect(screen.getByText(pt.patientDetail.soapNote)).toBeInTheDocument();
+    expect(screen.queryByText("SOAP note")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: pt.patientDetail.editEntry }));
+    fireEvent.click(screen.getByRole("button", { name: pt.patientDetail.saveRecord }));
+    await waitFor(() => expect(sent("updateRecord")).toHaveLength(1));
+    expect(sent("updateRecord")[0].get("record_type")).toBe("soap");
   });
 });

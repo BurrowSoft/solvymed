@@ -2039,6 +2039,7 @@
     "description": "写病历时要填写的栏目。已写好的病历保留原有栏目。",
     "template": "模板",
     "noTemplate": "不使用模板",
+    "textMoved": "您的文字已移到“{section}”。",
     "newTemplate": "新建模板",
     "fromPreset": "从专科开始",
     "createScratch": "从头创建",

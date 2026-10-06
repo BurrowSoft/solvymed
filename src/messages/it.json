@@ -2039,6 +2039,7 @@
     "description": "Le sezioni da compilare quando scrivi una nota. Le note già scritte mantengono le loro sezioni.",
     "template": "Modello",
     "noTemplate": "Nessun modello",
+    "textMoved": "Il tuo testo è stato spostato in «{section}».",
     "newTemplate": "Nuovo modello",
     "fromPreset": "Parti da una specialità",
     "createScratch": "Crea da zero",
