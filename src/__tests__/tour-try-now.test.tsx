@@ -85,6 +85,8 @@ describe("TourProvider: pause and resume", () => {
     // SolvyAI closes → "Continuar o tour? (passo n de N)" on the next step.
     act(() => { window.dispatchEvent(new Event(CLOSED_EVENT)); });
     expect(screen.getByText(`resumeTitle:${JSON.stringify({ n: at + 2, total: all.length })}`)).toBeInTheDocument();
+    // Above the ✦ button's corner (bottom-5), never on top of it (53, cf).
+    expect(screen.getByTestId("tour-resume").className).toContain("bottom-24");
     window.removeEventListener(OPEN_EVENT, onOpen);
     vi.useRealTimers();
   });
