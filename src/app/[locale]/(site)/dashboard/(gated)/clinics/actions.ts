@@ -107,17 +107,25 @@ export async function updateClinic(clinicId: string, formData: FormData) {
 
   const { data: current } = await supabase
     .from("clinics")
-    .select("address, city, country")
+    .select("name, address, city, state, phone, country")
     .eq("id", clinicId)
     .eq("professional_id", user.id)
     .maybeSingle();
   if (!current) return { error: "Clinic not found", code: "generic" };
   const moved = (current.address ?? null) !== address || (current.city ?? null) !== city;
   const coords = moved && (address || city) ? await geocode(address ?? "", city ?? "", current.country ?? "") : null;
+  // Only what changed: a name or phone edit never rewrites the address (and
+  // its pin), as the app does.
+  const changes: Record<string, unknown> = {};
+  if ((current.name ?? "") !== name) changes.name = name;
+  if ((current.state ?? null) !== state) changes.state = state;
+  if ((current.phone ?? null) !== phone) changes.phone = phone;
+  if (moved) Object.assign(changes, { address, city, lat: coords?.lat ?? null, lng: coords?.lng ?? null });
+  if (Object.keys(changes).length === 0) return { success: true };
 
   const { data, error } = await supabase
     .from("clinics")
-    .update({ name, address, city, state, phone, ...(moved ? { lat: coords?.lat ?? null, lng: coords?.lng ?? null } : {}) })
+    .update(changes)
     .eq("id", clinicId)
     .eq("professional_id", user.id)
     .select("id");

@@ -318,7 +318,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
                 </div>
                 {editingId === clinic.id && (
                   <form action={(fd) => handleEdit(clinic.id, fd)} aria-label={tl("editTitle")} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    {editError && <div className="sm:col-span-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600">{editError}</div>}
+                    {editError && <div role="alert" data-testid="location-edit-error" className="sm:col-span-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600">{editError}</div>}
                     <div className="sm:col-span-2">
                       <label className="mb-1 block text-sm font-semibold text-slate-700">{t("nameLabel")} <span className="text-red-400">*</span></label>
                       <input name="name" required defaultValue={clinic.name} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />

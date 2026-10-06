@@ -101,6 +101,15 @@ describe("My Clinics with locations on", () => {
     expect(badge.closest("h3")?.textContent).toContain("Unidade Sul");
   });
 
+  it("a failed edit says so and keeps the form (53: the form just stayed open)", async () => {
+    h.update.mockResolvedValue({ error: "permission denied", code: "generic" });
+    view([A, B]);
+    fireEvent.click(screen.getAllByText(pt.locations.edit)[0]);
+    await act(async () => { fireEvent.submit(screen.getByRole("form", { name: pt.locations.editTitle })); });
+    expect(screen.getByTestId("location-edit-error").textContent).toBe(pt.clinics.genericError);
+    expect(screen.getByRole("form", { name: pt.locations.editTitle })).toBeInTheDocument();
+  });
+
   it("the primary can't be deleted while others remain", () => {
     const alert = vi.spyOn(window, "alert").mockImplementation(() => {});
     view([A, B]);
