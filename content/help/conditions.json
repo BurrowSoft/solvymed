@@ -60,7 +60,7 @@
     "what": "Imported data is live: migration 131 (patient_import_extras, get_patient_import_extra, access kind 'imported') is applied on production AND the app build with \"Dados importados\" on the patient (mobile feat/import-extra-app) is released on Google Play."
   },
   "merge-patients-live": {
-    "met": false,
+    "met": true,
     "what": "Merging duplicate patients is live: migration 133 (merge_patients / merge_patients_preview, access kind 'merged') is applied on production AND the app build with \"Mesclar com outro paciente…\" (mobile feat/merge-patients-app) is released on Google Play."
   },
   "patient-import-live": {
