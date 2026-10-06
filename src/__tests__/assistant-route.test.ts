@@ -53,14 +53,15 @@ describe("/api/assistant: the checks, in the contract's order", () => {
     expect(model.calls).toEqual([]);
   });
 
-  it("the switch is server-only: only SOLVYAI_API_ENABLED=1 turns it on", async () => {
+  it("the switch is server-only: a NEXT_PUBLIC value never turns it on", async () => {
     const { assistantApiEnabled } = await import("@/lib/assistant/server/caller");
     const before = process.env.SOLVYAI_API_ENABLED;
     process.env.SOLVYAI_API_ENABLED = "";
     process.env.NEXT_PUBLIC_SOLVYAI_ENABLED = "1";
     expect(assistantApiEnabled()).toBe(false);
     process.env.SOLVYAI_API_ENABLED = "1";
-    expect(assistantApiEnabled()).toBe(true);
+    // Not until solvyai-live too (cf, 8 Oct; false today): see solvyai-gate.test.ts.
+    expect(assistantApiEnabled()).toBe(false);
     process.env.SOLVYAI_API_ENABLED = before;
     delete process.env.NEXT_PUBLIC_SOLVYAI_ENABLED;
   });

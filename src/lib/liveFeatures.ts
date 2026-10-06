@@ -1,3 +1,5 @@
+import { conditionMet } from "./conditions";
+
 // Features the public pages may claim (UX rule: only claim what is live on
 // the day it ships). Each flips to true in its own small reviewed PR when
 // the feature is live for customers, not when the code is merged.
@@ -17,7 +19,8 @@ export const liveFeatures = {
   // NEXT_PUBLIC_SOLVYAI_ENABLED=1 turns it all on for testing (a local build
   // or a Preview; the backend is a mock until the edge function exists);
   // nobody sets it on Production until the release.
-  solvyAi: process.env.NEXT_PUBLIC_SOLVYAI_ENABLED === "1",
+  // Also needs solvyai-live (cf, 8 Oct): the vars may be set before the go.
+  solvyAi: process.env.NEXT_PUBLIC_SOLVYAI_ENABLED === "1" && conditionMet("solvyai-live"),
   // "Built for PDPA": consent at signup + the record access log live
   // (TH-3) and Vitor's go (lawyer reviews are post-launch, 2026-10-01).
   pdpa: false,
