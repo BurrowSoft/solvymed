@@ -48,7 +48,7 @@ export default async function PaymentsPage({
   // A secretary works their doctor's payments (view, mark paid), not their
   // own (empty) id.
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
-  if (!effectiveProfId) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
+  if (!effectiveProfId) redirect(`/${locale === "en" ? "" : locale + "/"}auth/not-connected`);
   // Amounts are in the practice's currency (its country), not the UI's.
   const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
   const { currency, receipts } = countryProfile(practiceCountry);

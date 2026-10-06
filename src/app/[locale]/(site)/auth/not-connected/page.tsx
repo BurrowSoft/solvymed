@@ -17,12 +17,14 @@ export default async function NotConnectedPage({ params }: { params: Promise<{ l
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`${prefix}/auth/login`);
 
-  const { data: roleRow } = await supabase
+  const { data: roleRow, error } = await supabase
     .from("user_roles")
     .select("role, invited_by_professional_id")
     .eq("user_id", user.id)
     .maybeSingle();
-  if (roleRow?.role !== "secretary" || roleRow.invited_by_professional_id) redirect(`${prefix}/dashboard`);
+  // A failed read stays here (it has Sign out): back to the dashboard, which
+  // can't resolve a practice either, would bounce between the two.
+  if (!error && (roleRow?.role !== "secretary" || roleRow.invited_by_professional_id)) redirect(`${prefix}/dashboard`);
 
   const t = await getTranslations({ locale, namespace: "secretary" });
   return (

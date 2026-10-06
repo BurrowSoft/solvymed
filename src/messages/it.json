@@ -981,8 +981,9 @@
     "needHelp": "Serve aiuto?"
   },
   "secretary": {
-    "notConnectedTitle": "Non ancora collegato/a a uno studio",
+    "notConnectedTitle": "Al momento non fai parte di nessun team.",
     "notConnectedBody": "Chiedi un link di invito allo studio in cui lavori, oppure inserisci il codice che hai ricevuto.",
+    "joinWithCode": "Unisciti con un codice di invito",
     "codeLabel": "Codice di invito",
     "codeRequired": "Inserisci il codice di invito.",
     "continue": "Continua",

@@ -981,8 +981,9 @@
     "needHelp": "Need help?"
   },
   "secretary": {
-    "notConnectedTitle": "Not connected to a clinic yet",
+    "notConnectedTitle": "You're not part of any team right now.",
     "notConnectedBody": "Ask the doctor you work with for a secretary invite link, or enter the code they gave you.",
+    "joinWithCode": "Join with an invite code",
     "codeLabel": "Invite code",
     "codeRequired": "Enter the invite code.",
     "continue": "Continue",

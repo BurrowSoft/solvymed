@@ -981,8 +981,9 @@
     "needHelp": "お困りですか?"
   },
   "secretary": {
-    "notConnectedTitle": "まだクリニックに接続されていません",
+    "notConnectedTitle": "現在、どのチームにも所属していません。",
     "notConnectedBody": "一緒に働く医師に受付スタッフ用の招待リンクを依頼するか、受け取ったコードを入力してください。",
+    "joinWithCode": "招待コードで参加",
     "codeLabel": "招待コード",
     "codeRequired": "招待コードを入力してください。",
     "continue": "続ける",

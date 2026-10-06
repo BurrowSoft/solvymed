@@ -11,7 +11,15 @@ export function landingDestination(roleRow: LandingRole, metadataRole: unknown, 
   if (roleRow?.role === "patient" && roleRow.invited_by_professional_id) return `${prefix}/auth/pending-confirmation`;
   if (roleRow?.role === "patient") return `${prefix}/my-appointments`;
   if (!roleRow?.role && metadataRole === "patient") return `${prefix}/auth/invite-required`;
+  if (secretaryWithoutTeam(roleRow)) return `${prefix}/auth/not-connected`;
   return `${prefix}/dashboard`;
+}
+
+// A secretary with no practice left (never accepted, removed, or left: the
+// DB clears her primary link and promotes another practice when she has
+// one, 163). She never gets the dashboard: "not part of any team" (cf).
+export function secretaryWithoutTeam(roleRow: LandingRole): boolean {
+  return roleRow?.role === "secretary" && !roleRow.invited_by_professional_id;
 }
 
 // The landing page's paths: "/" and "/<locale>" (with or without a slash).

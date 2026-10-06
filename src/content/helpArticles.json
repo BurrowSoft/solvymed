@@ -1356,6 +1356,10 @@
             },
             {
               "type": "p",
+              "text": "No site, quem foi removido da última equipe vê, ao voltar ao painel, \"Você não faz parte de nenhuma equipe no momento.\", com **Entrar com um código de convite** e **Sair**."
+            },
+            {
+              "type": "p",
               "text": "O convite também chega por e-mail ao endereço informado. **Reenviar convite** envia um convite novo (no máximo um por hora, até 10 por dia; o código anterior deixa de funcionar). Quem cria a conta pelo convite já encontra o e-mail preenchido."
             }
           ],
@@ -1371,6 +1375,10 @@
             {
               "type": "p",
               "text": "You can have up to 3 secretaries. They manage the schedule, patients and payments, but can't see records, prescriptions, exams or files. To remove someone: **Team → Remove**."
+            },
+            {
+              "type": "p",
+              "text": "On the website, someone removed from their last team sees \"You're not part of any team right now.\" when they return to the dashboard, with **Join with an invite code** and **Sign out**."
             },
             {
               "type": "p",

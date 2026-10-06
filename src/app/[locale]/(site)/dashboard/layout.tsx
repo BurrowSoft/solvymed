@@ -26,6 +26,8 @@ import { ActingPracticeReset, PracticeSwitcher } from "@/components/PracticeSwit
 import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
 import { ACTING_COOKIE, ALL_PRACTICES, allFallbackCookieScript, allFallbackId } from "@/lib/actingPractice";
 import { PracticeCalendarProvider } from "@/components/PracticeCalendar";
+import { TeamAccessWatch } from "@/components/TeamAccessWatch";
+import { teamAccessKey } from "@/lib/teamAccess";
 
 function isVersionBelow(current: string, minimum: string): boolean {
   const parse = (v: string) => v.split(".").map(n => parseInt(n, 10) || 0);
@@ -251,6 +253,9 @@ export default async function DashboardLayout({
                 <script dangerouslySetInnerHTML={{ __html: allFallbackCookieScript(allFallbackId(practices)) }} />
               )}
               {staleChoice && <ActingPracticeReset />}
+              {isSecretary && (
+                <TeamAccessWatch initial={liveFeatures.multiPractice && !practices ? null : teamAccessKey(roleRow.invited_by_professional_id, practices ? practices.map((p) => p.professional_id) : null)} />
+              )}
               {!staleChoice && practices && practices.length > 1 && (
                 <div className="flex justify-end px-6 pt-4 lg:px-8">
                   <PracticeSwitcher practices={practices} current={actingId} allChosen={chosenCookie === ALL_PRACTICES} />
