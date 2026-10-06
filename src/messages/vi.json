@@ -20,7 +20,7 @@
   "highlights": {
     "h1": "Lịch hẹn thông minh",
     "h3": "Hồ sơ lâm sàng",
-    "h4": "Đơn thuốc điện tử",
+    "h4": "Đơn thuốc PDF",
     "h5": "QR Pix & PromptPay",
     "h6": "Báo cáo phòng khám"
   },
@@ -33,7 +33,7 @@
     "patients_desc": "Hồ sơ bệnh nhân đầy đủ với thông tin cá nhân, liên hệ và lịch sử hẹn, cùng thẻ phân loại trong ứng dụng. Tìm kiếm trong toàn bộ danh sách bệnh nhân.",
     "records_title": "Hồ Sơ Lâm Sàng",
     "records_desc": "Ghi chú y tế theo dòng thời gian với văn bản định dạng. Ghi lại từng buổi khám, theo dõi diễn tiến của bệnh nhân và đính kèm xét nghiệm và tệp — tất cả được lưu trữ an toàn.",
-    "prescriptions_title": "Đơn Thuốc Điện Tử",
+    "prescriptions_title": "Đơn thuốc PDF",
     "prescriptions_desc": "Kê đơn trong vài giây, rồi in hoặc chia sẻ dưới dạng PDF.",
     "payments_title": "Thanh toán Pix & PromptPay",
     "payments_desc": "Nhận tiền qua Pix hoặc PromptPay, vào thẳng tài khoản của bạn, không mất phí. Mã QR thanh toán cho từng lịch hẹn, theo dõi buổi đã thanh toán và chưa thanh toán, và tại Brazil, nhắc thanh toán qua WhatsApp trong ứng dụng.",
@@ -936,7 +936,7 @@
     "planSubtitle": "Hủy bất cứ lúc nào. Dùng thử miễn phí 15 ngày cho tài khoản mới.",
     "feature1": "Lịch hẹn và lịch trình không giới hạn",
     "feature2": "Hồ sơ bệnh nhân, đơn thuốc và xét nghiệm",
-    "feature3": "Báo cáo doanh thu và theo dõi thanh toán",
+    "feature3": "Doanh thu theo kỳ & theo dõi thanh toán (trong ứng dụng)",
     "feature4": "Nhắc lịch hẹn trên điện thoại của bạn",
     "feature5": "Quyền truy cập cho thư ký được tính gộp",
     "payCard": "Đăng ký bằng thẻ",

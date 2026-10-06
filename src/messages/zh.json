@@ -20,7 +20,7 @@
   "highlights": {
     "h1": "智能排程",
     "h3": "临床记录",
-    "h4": "电子处方",
+    "h4": "PDF 处方",
     "h5": "Pix 与 PromptPay 二维码",
     "h6": "诊所报告"
   },
@@ -33,7 +33,7 @@
     "patients_desc": "完整的患者档案,包含个人资料、联系方式和预约记录,应用中还可使用标签。可搜索全部患者。",
     "records_title": "临床记录",
     "records_desc": "基于时间轴的富文本医疗笔记。记录每次就诊，追踪患者变化，并附加检查报告和文件 — 所有内容安全存储。",
-    "prescriptions_title": "电子处方",
+    "prescriptions_title": "PDF 处方",
     "prescriptions_desc": "几秒钟即可开具处方,然后打印或以 PDF 分享。",
     "payments_title": "Pix 与 PromptPay 收款",
     "payments_desc": "通过 Pix 或 PromptPay 收款,直接到账,无手续费。每次预约都有付款二维码,可跟踪已付和待付的疗程;在巴西,还可在应用中通过 WhatsApp 发送付款提醒。",
@@ -936,7 +936,7 @@
     "planSubtitle": "随时取消。新账户享受15天免费试用。",
     "feature1": "无限预约和日程管理",
     "feature2": "患者病历、处方和检查",
-    "feature3": "收入报告和付款跟踪",
+    "feature3": "按时段的收入与付款跟踪(应用内)",
     "feature4": "手机上的预约提醒",
     "feature5": "包含秘书访问权限",
     "payCard": "使用卡片订阅",

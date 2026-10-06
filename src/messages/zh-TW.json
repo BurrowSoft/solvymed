@@ -20,7 +20,7 @@
   "highlights": {
     "h1": "智慧排程",
     "h3": "臨床記錄",
-    "h4": "電子處方",
+    "h4": "PDF 處方",
     "h5": "Pix 與 PromptPay QR 碼",
     "h6": "診所報表"
   },
@@ -33,7 +33,7 @@
     "patients_desc": "完整的病患檔案,包含個人資料、聯絡方式與預約紀錄,App 中還可使用標籤。可搜尋所有病患。",
     "records_title": "臨床記錄",
     "records_desc": "基於時間軸的富文本醫療筆記。記錄每次就診，追蹤患者變化，並附加檢查報告和檔案 — 所有內容安全儲存。",
-    "prescriptions_title": "電子處方",
+    "prescriptions_title": "PDF 處方",
     "prescriptions_desc": "幾秒鐘即可開立處方,然後列印或以 PDF 分享。",
     "payments_title": "Pix 與 PromptPay 收款",
     "payments_desc": "透過 Pix 或 PromptPay 收款,直接入帳,無手續費。每次預約都有付款 QR 碼,可追蹤已付與待付的療程;在巴西,還可在 App 中透過 WhatsApp 傳送付款提醒。",
@@ -936,7 +936,7 @@
     "planSubtitle": "隨時取消。新帳戶享受15天免費試用。",
     "feature1": "無限預約和日程管理",
     "feature2": "患者病歷、處方和檢查",
-    "feature3": "收入報告和付款追蹤",
+    "feature3": "依期間的收入與付款追蹤(App 內)",
     "feature4": "手機上的預約提醒",
     "feature5": "包含秘書存取權限",
     "payCard": "使用卡片訂閱",

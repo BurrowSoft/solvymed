@@ -20,7 +20,7 @@
   "highlights": {
     "h1": "Penjadwalan cerdas",
     "h3": "Rekam medis",
-    "h4": "Resep digital",
+    "h4": "Resep dalam PDF",
     "h5": "QR Pix & PromptPay",
     "h6": "Laporan praktik"
   },
@@ -33,7 +33,7 @@
     "patients_desc": "Profil pasien lengkap dengan data pribadi, kontak, dan riwayat janji temu, plus tag di aplikasi. Cari di seluruh data pasien Anda.",
     "records_title": "Rekam Medis",
     "records_desc": "Catatan medis berbasis garis waktu dengan teks kaya. Dokumentasikan setiap sesi, pantau perkembangan pasien, dan lampirkan pemeriksaan dan file — semuanya tersimpan dengan aman.",
-    "prescriptions_title": "Resep Digital",
+    "prescriptions_title": "Resep dalam PDF",
     "prescriptions_desc": "Buat resep dalam hitungan detik, lalu cetak atau bagikan sebagai PDF.",
     "payments_title": "Pembayaran Pix & PromptPay",
     "payments_desc": "Terima pembayaran lewat Pix atau PromptPay, langsung ke rekening Anda, tanpa biaya. QR pembayaran untuk setiap janji temu, pelacakan sesi lunas dan tertunda, serta pengingat pembayaran via WhatsApp di aplikasi (Brasil).",
@@ -936,7 +936,7 @@
     "planSubtitle": "Batalkan kapan saja. 15 hari uji coba gratis untuk akun baru.",
     "feature1": "Janji temu dan penjadwalan tak terbatas",
     "feature2": "Rekam medis, resep, dan pemeriksaan",
-    "feature3": "Laporan pendapatan dan pelacakan pembayaran",
+    "feature3": "Pendapatan per periode & pelacakan pembayaran (di aplikasi)",
     "feature4": "Pengingat janji temu di ponsel Anda",
     "feature5": "Akses untuk sekretaris termasuk",
     "payCard": "Berlangganan dengan Kartu",

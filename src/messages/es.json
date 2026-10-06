@@ -20,7 +20,7 @@
   "highlights": {
     "h1": "Agenda inteligente",
     "h3": "Historial clínico",
-    "h4": "Recetas digitales",
+    "h4": "Recetas en PDF",
     "h5": "QR de Pix y PromptPay",
     "h6": "Informes de consulta"
   },
@@ -33,7 +33,7 @@
     "patients_desc": "Fichas completas con datos personales, contacto e historial de citas, además de etiquetas en la app. Busca en toda tu base de pacientes.",
     "records_title": "Historial Clínico",
     "records_desc": "Notas médicas en línea de tiempo con texto enriquecido. Documenta cada sesión, sigue la evolución del paciente y adjunta exámenes y archivos — todo almacenado de forma segura.",
-    "prescriptions_title": "Recetas Digitales",
+    "prescriptions_title": "Recetas en PDF",
     "prescriptions_desc": "Emite recetas en segundos y luego imprímelas o compártelas en PDF.",
     "payments_title": "Pagos por Pix y PromptPay",
     "payments_desc": "Recibe por Pix o PromptPay, directo a tu cuenta, sin comisiones. Un QR de pago para cada cita, control de sesiones pagadas y pendientes y, en la app en Brasil, un recordatorio de pago por WhatsApp.",
@@ -936,7 +936,7 @@
     "planSubtitle": "Cancela cuando quieras. 15 días de prueba gratis.",
     "feature1": "Citas y agenda ilimitadas",
     "feature2": "Historiales, recetas y exámenes",
-    "feature3": "Informes de ingresos y seguimiento de pagos",
+    "feature3": "Ingresos por período y control de pagos (en la app)",
     "feature4": "Recordatorios de tus citas en el móvil",
     "feature5": "Acceso incluido para tus secretarias",
     "payCard": "Suscribirse con tarjeta",

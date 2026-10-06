@@ -20,7 +20,7 @@
   "highlights": {
     "h1": "Intelligente Terminplanung",
     "h3": "Klinische Akten",
-    "h4": "Digitale Rezepte",
+    "h4": "Rezepte als PDF",
     "h5": "Pix- und PromptPay-QR",
     "h6": "Praxisberichte"
   },
@@ -33,7 +33,7 @@
     "patients_desc": "Vollständige Patientenprofile mit persönlichen Daten, Kontaktdaten und Terminverlauf, dazu Tags in der App. Durchsuchen Sie Ihren gesamten Patientenstamm.",
     "records_title": "Klinische Akten",
     "records_desc": "Zeitlinienbasierte medizinische Notizen mit Richtext. Dokumentieren Sie jede Sitzung, verfolgen Sie die Entwicklung des Patienten und fügen Sie Untersuchungen und Dateien an – alles sicher gespeichert.",
-    "prescriptions_title": "Digitale Rezepte",
+    "prescriptions_title": "Rezepte als PDF",
     "prescriptions_desc": "Erstellen Sie Rezepte in Sekunden und drucken oder teilen Sie sie als PDF.",
     "payments_title": "Zahlungen per Pix und PromptPay",
     "payments_desc": "Empfangen Sie Zahlungen per Pix oder PromptPay direkt auf Ihr Konto, ohne Gebühren. Ein Zahlungs-QR für jeden Termin, eine Übersicht über bezahlte und offene Sitzungen und, in der App in Brasilien, eine Zahlungserinnerung per WhatsApp.",
@@ -936,7 +936,7 @@
     "planSubtitle": "Jederzeit kündbar. 15 Tage kostenlos für neue Konten.",
     "feature1": "Unbegrenzte Termine und Planung",
     "feature2": "Patientenakten, Rezepte und Befunde",
-    "feature3": "Umsatzberichte und Zahlungsverfolgung",
+    "feature3": "Umsatz nach Zeitraum und Zahlungsübersicht (in der App)",
     "feature4": "Terminerinnerungen auf Ihrem Handy",
     "feature5": "Zugang für Ihre Sekretärinnen inklusive",
     "payCard": "Mit Karte abonnieren",

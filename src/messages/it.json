@@ -20,7 +20,7 @@
   "highlights": {
     "h1": "Agenda intelligente",
     "h3": "Cartelle cliniche",
-    "h4": "Ricette digitali",
+    "h4": "Prescrizioni in PDF",
     "h5": "QR Pix e PromptPay",
     "h6": "Report dello studio"
   },
@@ -33,7 +33,7 @@
     "patients_desc": "Schede paziente complete con dati personali, contatti e storico degli appuntamenti, più tag nell’app. Cerca in tutta la tua base di pazienti.",
     "records_title": "Cartelle Cliniche",
     "records_desc": "Note mediche su linea temporale con testo formattato. Documenta ogni sessione, segui l'evoluzione del paziente e allega esami e file — tutto archiviato in sicurezza.",
-    "prescriptions_title": "Ricette Digitali",
+    "prescriptions_title": "Prescrizioni in PDF",
     "prescriptions_desc": "Scrivi le prescrizioni in pochi secondi, poi stampale o condividile in PDF.",
     "payments_title": "Pagamenti Pix e PromptPay",
     "payments_desc": "Ricevi con Pix o PromptPay, direttamente sul tuo conto, senza commissioni. Un QR di pagamento per ogni appuntamento, il monitoraggio delle sedute pagate e in sospeso e, nell’app in Brasile, un promemoria di pagamento via WhatsApp.",
@@ -936,7 +936,7 @@
     "planSubtitle": "Annulla quando vuoi. 15 giorni di prova gratuita.",
     "feature1": "Appuntamenti e pianificazione illimitati",
     "feature2": "Cartelle cliniche, ricette ed esami",
-    "feature3": "Report sui ricavi e monitoraggio pagamenti",
+    "feature3": "Incassi per periodo e monitoraggio dei pagamenti (nell’app)",
     "feature4": "Promemoria dei tuoi appuntamenti sul telefono",
     "feature5": "Accesso incluso per le tue segretarie",
     "payCard": "Abbonati con carta",

@@ -20,7 +20,7 @@
   "highlights": {
     "h1": "Agendamento inteligente",
     "h3": "Prontuários clínicos",
-    "h4": "Prescrições digitais",
+    "h4": "Receitas em PDF",
     "h5": "Pix por QR Code",
     "h6": "Relatórios da clínica"
   },
@@ -33,7 +33,7 @@
     "patients_desc": "Fichas completas com dados pessoais, contato e histórico de consultas, além de tags no app. Pesquise toda a sua base de pacientes.",
     "records_title": "Prontuário Clínico",
     "records_desc": "Anotações médicas em linha do tempo com texto rico. Documente cada sessão, acompanhe a evolução do paciente e anexe exames e arquivos — tudo armazenado com segurança.",
-    "prescriptions_title": "Prescrições Digitais",
+    "prescriptions_title": "Receitas em PDF",
     "prescriptions_desc": "Emita prescrições em segundos e imprima ou compartilhe em PDF.",
     "payments_title": "Pagamentos por Pix",
     "payments_desc": "Receba por Pix, direto na sua conta, sem taxas. QR Code de pagamento para cada consulta, controle de sessões pagas e pendentes e, no app, lembrete de pagamento por WhatsApp.",
@@ -936,7 +936,7 @@
     "planSubtitle": "Cancele quando quiser. 15 dias de teste grátis para novas contas.",
     "feature1": "Consultas e agendamentos ilimitados",
     "feature2": "Prontuários, receitas e exames",
-    "feature3": "Relatórios de receita e controle de pagamentos",
+    "feature3": "Receita por período e controle de pagamentos (no app)",
     "feature4": "Lembretes das suas consultas no celular",
     "feature5": "Acesso incluso para suas secretárias",
     "payCard": "Assinar com Cartão",

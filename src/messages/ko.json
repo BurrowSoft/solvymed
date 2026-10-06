@@ -20,7 +20,7 @@
   "highlights": {
     "h1": "스마트 일정 관리",
     "h3": "임상 기록",
-    "h4": "디지털 처방전",
+    "h4": "PDF 처방전",
     "h5": "Pix·PromptPay QR",
     "h6": "진료 보고서"
   },
@@ -33,7 +33,7 @@
     "patients_desc": "개인 정보, 연락처, 예약 기록이 담긴 환자 프로필과 앱의 태그. 전체 환자를 검색하세요.",
     "records_title": "임상 기록",
     "records_desc": "서식 있는 텍스트로 작성하는 타임라인 기반의 의료 노트. 각 세션을 기록하고 환자 경과를 추적하며 검사 및 파일을 첨부 — 모두 안전하게 저장됩니다.",
-    "prescriptions_title": "디지털 처방전",
+    "prescriptions_title": "PDF 처방전",
     "prescriptions_desc": "처방전을 몇 초 만에 작성하고 인쇄하거나 PDF로 공유하세요.",
     "payments_title": "Pix·PromptPay 결제",
     "payments_desc": "Pix 또는 PromptPay로 수수료 없이 내 계좌로 바로 받으세요. 예약별 결제 QR, 결제 완료·미결제 관리, 그리고 브라질에서는 앱에서 WhatsApp 결제 알림을 보낼 수 있습니다.",
@@ -936,7 +936,7 @@
     "planSubtitle": "언제든지 취소 가능. 신규 계정은 15일 무료 체험.",
     "feature1": "무제한 예약 및 일정 관리",
     "feature2": "환자 기록, 처방전, 검사",
-    "feature3": "수익 보고서 및 결제 추적",
+    "feature3": "기간별 매출 및 결제 관리(앱)",
     "feature4": "휴대폰으로 받는 예약 알림",
     "feature5": "비서 접근 포함",
     "payCard": "카드로 구독",
