@@ -421,6 +421,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
+      text: "In the app (1.8.0), a new prescription has \"Compartilhar com o paciente\" / \"Share with the patient\" (on by default): saving it puts a PDF copy in the patient's \"Prescrições\" / \"Prescriptions\" folder; a copy without the doctor's drawn signature is marked \"Cópia sem assinatura, para consulta do paciente.\" / \"Unsigned copy, for the patient's reference.\"; a correction replaces the shared copy; with the doctor's document storage full it is saved but not shared (\"Salvo, mas não compartilhado: seu espaço de documentos está cheio.\" / \"Saved, but not shared: your document storage is full.\"). SolvyAI doesn't share prescriptions; it explains the switch.",
+      pending: ["patient-documents-live", "app-1.8.0"],
+    },
+    help: "P15",
+  },
+  {
+    rule: {
       text: "On the website's Schedule, right after a manual book, move or cancel, \"Desfazer\" / \"Undo\" shows for 10 s, while the notice to the patient hasn't gone out yet. It first checks the appointment wasn't changed again; if it was, or the notice is already on its way, it says \"Não foi possível desfazer. Abra o item para ajustar.\". A booked series is undone whole.",
       pending: ["notice-queue-on"],
     },
