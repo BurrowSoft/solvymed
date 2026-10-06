@@ -847,6 +847,15 @@
               "text": "Quando a mesma pessoa tem dois cadastros, você pode mesclá-los: tudo passa para o cadastro que fica."
             },
             {
+              "type": "ol",
+              "items": [
+                "Em **Pacientes**, toque no menu (⋯) do paciente e em **Mesclar com outro paciente…** (só o médico).",
+                "Busque o outro cadastro (os arquivados também aparecem).",
+                "Aparecem só os campos diferentes: toque no valor que quer manter. Em **Manter este cadastro**, escolha qual cadastro fica (vem marcado o que usa o app). Cada cadastro mostra a data de nascimento, o final do telefone e quando foi cadastrado ou importado; ao trocar qual fica, os valores escolhidos continuam escolhidos.",
+                "Confirme (dois cadastros com o mesmo nome aparecem com o que os diferencia, por exemplo «Maria Silva (nasc. 12/03/1980)»). Se um dos cadastros usa o app, confirme de novo em **São a mesma pessoa**."
+              ]
+            },
+            {
               "type": "p",
               "text": "Consultas, prontuários, receitas e arquivos passam para o cadastro que fica (os arquivos podem levar alguns segundos). A mesclagem não pode ser desfeita. A aba **Acessos** registra \"Mesclou com «nome»\"."
             },
@@ -863,6 +872,15 @@
             {
               "type": "p",
               "text": "When the same person has two records, you can merge them: everything moves to the record that stays."
+            },
+            {
+              "type": "ol",
+              "items": [
+                "In **Patients**, tap the patient's menu (⋯) and **Merge with another patient…** (doctor only).",
+                "Search for the other record (archived ones are listed too).",
+                "Only the fields that differ are shown: tap the value to keep. Under **Keep this record**, choose which record stays (the one that uses the app is preselected). Each record shows its birth date, the end of its phone number and when it was added or imported; switching which one stays keeps the values you chose.",
+                "Confirm (two records with the same name are named by what tells them apart, for example «Maria Silva (born 12/03/1980)»). If either record uses the app, confirm again with **Same person**."
+              ]
             },
             {
               "type": "p",

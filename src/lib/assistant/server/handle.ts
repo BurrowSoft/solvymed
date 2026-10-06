@@ -6,7 +6,7 @@ import { isInternalHref, webPath } from "@/lib/assistant/targets";
 import type { AnswerChunk, AssistantScreen, TargetScreen } from "@/lib/assistant/types";
 import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
 import { formatDateLabel } from "@/lib/dateLabels";
-import { countryProfile } from "@/lib/country";
+import { countryProfile, messagingChannel } from "@/lib/country";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { cachedSystem, rules, type Client } from "./knowledge";
 import type { ContentBlock, ModelClient, ModelMessage, ModelUsage, RawBlock } from "./model";
@@ -54,6 +54,31 @@ type Body = {
 
 const localeOf = (v: unknown) => (typeof v === "string" && (routing.locales as readonly string[]).includes(v) ? v : routing.defaultLocale);
 const prefixOf = (locale: string) => (locale === routing.defaultLocale ? "" : `/${locale}`);
+
+// The practice country's facts for every answer, Help ones too (53's go-live
+// audit: Pix and a WhatsApp link named to a Thai doctor). From the country
+// config, never a per-country branch.
+const QR_NAMES = { pix: "Pix (a QR and Pix Copia e Cola)", promptpay: "the PromptPay QR" } as const;
+export function practiceLine(country: string | undefined): string {
+  if (!country) return "";
+  const p = countryProfile(country);
+  const parts = [`This practice's country is ${country}.`];
+  if (p.paymentQr) parts.push(`Patients pay by ${QR_NAMES[p.paymentQr]}; never mention another country's payment method.`);
+  if (!messagingChannel(p)) parts.push("This practice has no messaging-app items (no WhatsApp; LINE isn't live yet): never suggest sending anything by WhatsApp or LINE.");
+  else if (!p.paymentShare) parts.push("There's no payment message to send by a messaging app.");
+  return "\n" + parts.join(" ");
+}
+
+// What a model failure may log: the HTTP status and the API's error type
+// (e.g. 400 invalid_request_error, 401 authentication_error, 404
+// not_found_error), else the error's class name. Never its message.
+export function modelErrorSummary(err: unknown): { status: number | null; type: string } {
+  const e = err as { status?: unknown; error?: { error?: { type?: unknown } }; name?: unknown } | null;
+  const status = typeof e?.status === "number" ? e.status : null;
+  const apiType = e?.error?.error?.type;
+  const type = typeof apiType === "string" ? apiType : typeof e?.name === "string" ? e.name : "unknown";
+  return { status, type };
+}
 
 // The clinic's "now" and the tool context for one request.
 async function toolContext(db: unknown, profId: string, locale: string, client: Client, userText = ""): Promise<ToolContext & { tz: string }> {
@@ -321,6 +346,8 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
       try {
         const ctx = mode === "actions" ? await toolContext(deps.db, userId, req.locale, deps.client, messages[messages.length - 1].content) : null;
         let system = rules(lang, deps.client, req.screen, mode, tx.reply);
+        const country = ctx ? ctx.country : await lookupPracticeCountry(deps.db as unknown as ToolContext["db"], userId, userId).then((r) => (r.ok ? r.country : undefined), () => undefined);
+        system += practiceLine(country);
         if (ctx) system += `\nToday at the clinic: ${formatDateLabel("en-US", ctx.today, { weekday: "long" })} ${ctx.today}, ${ctx.nowTime} (${ctx.tz}). Dates for the tools are YYYY-MM-DD in this calendar.\n${calendarLine(ctx.today)}`;
         // The practice's calendar for dates written in the answer (UX 5 Oct),
         // so they match the cards; the tools always take Gregorian.
@@ -438,8 +465,11 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
           }
         }
         yield { kind: "block", block: { type: "text", text: "" } };
-      } catch {
+      } catch (err) {
         // The model failed: the message isn't spent (fair to the doctor).
+        // Logged: only the API's status and error type, never the
+        // conversation or the key (Production's first go-live failed silently).
+        console.error("SolvyAI: model call failed", modelErrorSummary(err));
         await refund();
         yield* debug();
         yield { kind: "error", code: "model_failed" };
