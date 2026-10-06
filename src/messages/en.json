@@ -2066,6 +2066,7 @@
     "freeText": "Free text",
     "newTemplate": "New template",
     "fromPreset": "Start from a specialty",
+    "createScratch": "Create from scratch",
     "templateName": "Template name",
     "sectionTitle": "Section title",
     "sectionHint": "Hint (optional)",

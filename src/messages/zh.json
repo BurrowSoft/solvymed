@@ -2036,6 +2036,7 @@
     "freeText": "自由文本",
     "newTemplate": "新建模板",
     "fromPreset": "从专科开始",
+    "createScratch": "从头创建",
     "templateName": "模板名称",
     "sectionTitle": "栏目标题",
     "sectionHint": "提示(可选)",

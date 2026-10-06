@@ -2036,6 +2036,7 @@
     "freeText": "자유 입력",
     "newTemplate": "새 템플릿",
     "fromPreset": "진료과에서 시작",
+    "createScratch": "처음부터 만들기",
     "templateName": "템플릿 이름",
     "sectionTitle": "항목 제목",
     "sectionHint": "안내 문구(선택)",

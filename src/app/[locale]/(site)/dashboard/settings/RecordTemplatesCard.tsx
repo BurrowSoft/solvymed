@@ -23,6 +23,8 @@ export function RecordTemplatesCard({ initial, loadFailed }: { initial: RecordTe
   const locale = useLocale();
   const [rows, setRows] = useState(initial);
   const [draft, setDraft] = useState<Draft | null>(null);
+  // "Começar por uma especialidade" opens the list of presets (cf).
+  const [choosing, setChoosing] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
   const [busy, start] = useTransition();
 
@@ -30,12 +32,13 @@ export function RecordTemplatesCard({ initial, loadFailed }: { initial: RecordTe
     t(c === "name" ? "errName" : c === "sections" ? "errSections" : c === "title" ? "errTitle" : c === "hint" ? "errHint" : c === "limit" ? "errLimit" : "errFailed");
   const atLimit = rows.length >= TEMPLATES_PER_DOCTOR;
 
-  function openNew() { setMsg(null); setDraft({ id: null, name: "", rows: [row()] }); }
+  function openNew() { setMsg(null); setChoosing(false); setDraft({ id: null, name: "", rows: [row()] }); }
   function openPreset(id: string) {
     const p = RECORD_PRESETS.find((x) => x.id === id);
     if (!p) return;
     const tpl = presetToTemplate(p, locale);
     setMsg(null);
+    setChoosing(false);
     setDraft({ id: null, name: tpl.name, rows: tpl.sections.map((s) => row(s.title, s.hint ?? "")) });
   }
   function openEdit(r: RecordTemplate) { setMsg(null); setDraft({ id: r.id, name: r.name, rows: r.sections.map((s) => row(s.title, s.hint ?? "")) }); }
@@ -87,6 +90,7 @@ export function RecordTemplatesCard({ initial, loadFailed }: { initial: RecordTe
         <p className="mt-4 text-sm text-red-600">{t("errLoad")}</p>
       ) : draft ? (
         <form onSubmit={save} className="mt-4 space-y-4">
+          {draft.id === null && <h3 className="text-sm font-bold text-slate-900">{t("newTemplate")}</h3>}
           <label className="block">
             <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">{t("templateName")}</span>
             <input value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} maxLength={TEMPLATE_NAME_MAX} required className={inputClass} />
@@ -142,18 +146,24 @@ export function RecordTemplatesCard({ initial, loadFailed }: { initial: RecordTe
           {atLimit ? (
             <p className="mt-4 text-sm text-slate-500">{t("errLimit")}</p>
           ) : (
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button type="button" onClick={openNew} className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700">{t("newTemplate")}</button>
-              <select
-                aria-label={t("fromPreset")}
-                value=""
-                onChange={(e) => openPreset(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 focus:border-teal-500 focus:outline-none"
-              >
-                <option value="" disabled>{t("fromPreset")}</option>
-                {RECORD_PRESETS.map((p) => <option key={p.id} value={p.id}>{presetToTemplate(p, locale).name}</option>)}
-              </select>
-            </div>
+            choosing ? (
+              <div className="mt-4">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{t("fromPreset")}</p>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {RECORD_PRESETS.map((p) => (
+                    <button key={p.id} type="button" onClick={() => openPreset(p.id)} className="rounded-xl border border-slate-200 px-3.5 py-2.5 text-left text-sm font-semibold text-slate-700 hover:border-teal-500 hover:bg-teal-50">
+                      {presetToTemplate(p, locale).name}
+                    </button>
+                  ))}
+                </div>
+                <button type="button" onClick={() => setChoosing(false)} className="mt-3 text-sm font-semibold text-slate-500 hover:text-slate-700">{t("cancel")}</button>
+              </div>
+            ) : (
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <button type="button" onClick={() => { setMsg(null); setChoosing(true); }} className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700">{t("fromPreset")}</button>
+                <button type="button" onClick={openNew} className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">{t("createScratch")}</button>
+              </div>
+            )
           )}
         </>
       )}

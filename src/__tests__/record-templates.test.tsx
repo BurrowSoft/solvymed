@@ -128,7 +128,9 @@ describe("Settings → Modelos de prontuário", () => {
       </NextIntlClientProvider>,
     );
     expect(screen.getByText(T.empty)).toBeInTheDocument();
-    fireEvent.change(screen.getByRole("combobox", { name: T.fromPreset }), { target: { value: "psychology" } });
+    expect(screen.getByRole("button", { name: T.createScratch })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: T.fromPreset }));
+    fireEvent.click(screen.getByRole("button", { name: "Psicologia" }));
     expect(screen.getByDisplayValue("Psicologia")).toBeInTheDocument();
     expect(screen.getAllByRole("textbox", { name: T.sectionTitle })).toHaveLength(5);
     fireEvent.click(screen.getByRole("button", { name: T.save }));

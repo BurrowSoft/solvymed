@@ -2036,6 +2036,7 @@
     "freeText": "Texto libre",
     "newTemplate": "Nueva plantilla",
     "fromPreset": "Empezar desde una especialidad",
+    "createScratch": "Crear desde cero",
     "templateName": "Nombre de la plantilla",
     "sectionTitle": "Título de la sección",
     "sectionHint": "Sugerencia (opcional)",

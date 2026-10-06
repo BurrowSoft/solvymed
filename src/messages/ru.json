@@ -2036,6 +2036,7 @@
     "freeText": "Свободный текст",
     "newTemplate": "Новый шаблон",
     "fromPreset": "Начать со специальности",
+    "createScratch": "Создать с нуля",
     "templateName": "Название шаблона",
     "sectionTitle": "Название раздела",
     "sectionHint": "Подсказка (необязательно)",

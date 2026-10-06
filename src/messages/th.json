@@ -2066,6 +2066,7 @@
     "freeText": "ข้อความอิสระ",
     "newTemplate": "สร้างแบบฟอร์ม",
     "fromPreset": "เริ่มจากสาขาเฉพาะทาง",
+    "createScratch": "สร้างจากแบบฟอร์มเปล่า",
     "templateName": "ชื่อแบบฟอร์ม",
     "sectionTitle": "หัวข้อ",
     "sectionHint": "คำแนะนำ (ไม่บังคับ)",

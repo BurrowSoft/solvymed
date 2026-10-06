@@ -2036,6 +2036,7 @@
     "freeText": "自由記述",
     "newTemplate": "新しいテンプレート",
     "fromPreset": "診療科から作成",
+    "createScratch": "一から作成",
     "templateName": "テンプレート名",
     "sectionTitle": "項目名",
     "sectionHint": "ヒント(任意)",
