@@ -1841,12 +1841,20 @@
             {
               "type": "p",
               "text": "Seus dados ficam privados e criptografados; cada clínica só vê os próprios dados; secretárias(os) não veem dados clínicos. As observações da clínica são privadas e não aparecem para o paciente. Veja a Política de Privacidade em solvymed.com/privacy."
+            },
+            {
+              "type": "p",
+              "text": "Quando atualizamos a Política de Privacidade, um aviso aparece uma vez no topo do **Início** no site (e de **Minhas consultas** para pacientes): **Ler a política** abre o texto, **OK** fecha o aviso de vez e o **×** só nesta aba."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "Your data is private and encrypted; each clinic only sees its own data; secretaries don't see clinical data. The clinic's notes are private and never shown to the patient. See the Privacy Policy at solvymed.com/privacy."
+            },
+            {
+              "type": "p",
+              "text": "When we update the Privacy Policy, a notice shows once at the top of **Home** on the website (and of **My appointments** for patients): **Read the policy** opens it, **OK** closes the notice for good, and the **×** only in this tab."
             }
           ]
         },

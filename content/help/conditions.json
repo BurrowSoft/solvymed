@@ -176,7 +176,7 @@
     "what": "App 1.8.0 is RELEASED on Google Play (d1 sends the cut SHA), with mobile #401 (a secretary removed from her last team sees \"You're not part of any team right now.\" with \"Join with an invite code\" and \"Sign out\" within about 2 minutes or on returning to the app; one still on another team moves to it). Gates the app half of Help C4's no-team line and its App Map rule. The website's half is live (#430)."
   },
   "privacy-notice-live": {
-    "met": false,
+    "met": true,
     "what": "The privacy-policy notice is live on the website: migration 204 (my_privacy_status + record_privacy_consent refusing older versions, mobile #409) applied on production, so the dashboard Home / My appointments card can show. Gates Help K5's notice line and its App Map rule. The app's card ships with its own build (app-1.8.0)."
   },
   "clinical-documents-live": {
