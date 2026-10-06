@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import fs from "node:fs";
 import path from "node:path";
 import pt from "@/messages/pt-BR.json";
-import { cleanTemplate, currentRecordSections, recordSectionsFromForm } from "@/lib/recordTemplates";
+import { cleanTemplate, currentRecordSections, recordInput, recordSectionsFromForm } from "@/lib/recordTemplates";
 
 // 1.8.0 D record templates (migration 189, flag 'record_templates'): the
 // limits match the database's; a record written with a template sends its
@@ -64,6 +64,18 @@ describe("record template limits (189)", () => {
     expect(currentRecordSections(s, "Q:\na")).toEqual(s);
     expect(currentRecordSections(s, "Q:\na, edited elsewhere")).toBeNull();
     expect(currentRecordSections(null, "x")).toBeNull();
+    // A record saved before the fix: the browser's form sent content with \r\n (53).
+    expect(currentRecordSections(s, "Q:\r\na")).toEqual(s);
+  });
+
+  it("the server composes content from the sections; free text keeps LF line ends (53)", () => {
+    const sections = JSON.stringify([{ title: "Queixa principal", text: "cefaleia\r\nhá 2 dias" }, { title: "Conduta", text: "" }]);
+    expect(recordInput("Queixa principal:\r\nignored", sections)).toEqual({
+      ok: true, content: "Queixa principal:\ncefaleia\nhá 2 dias",
+      sections: [{ title: "Queixa principal", text: "cefaleia\nhá 2 dias" }, { title: "Conduta", text: "" }],
+    });
+    expect(recordInput(" a\r\nb ", null)).toEqual({ ok: true, content: "a\nb", sections: null });
+    expect(recordInput("x", "not json")).toEqual({ ok: false });
   });
 
   it("a record's sections from the form: null when absent, refused when malformed or too big", () => {

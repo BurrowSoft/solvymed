@@ -59,7 +59,23 @@ export function parseRecordSections(raw: unknown): RecordSection[] | null {
 // content is what was written.
 export function currentRecordSections(raw: unknown, content: string): RecordSection[] | null {
   const sections = parseRecordSections(raw);
-  return sections && composeRecordContent(sections) === (content ?? "").trim() ? sections : null;
+  // CRLF: records saved before the server composed content (a browser
+  // sends form text with \r\n, 53).
+  return sections && composeRecordContent(sections) === lf(content ?? "").trim() ? sections : null;
+}
+
+const lf = (s: string) => s.replace(/\r\n?/g, "\n");
+
+// A record's content and sections from the record form. With sections the
+// server composes content itself (the browser's multipart form turns \n into
+// \r\n, so the client's copy never matched, 53); free text is kept as typed,
+// with LF line ends like the app's.
+export function recordInput(rawContent: FormDataEntryValue | null, rawSections: FormDataEntryValue | null):
+  { ok: true; content: string; sections: RecordSection[] | null } | { ok: false } {
+  const s = recordSectionsFromForm(rawSections);
+  if (!s.ok) return { ok: false };
+  const sections = s.sections?.map((x) => ({ title: x.title, text: lf(x.text) })) ?? null;
+  return { ok: true, content: sections ? composeRecordContent(sections) : lf(typeof rawContent === "string" ? rawContent : "").trim(), sections };
 }
 
 // The record's sections from the form (JSON in a hidden field), checked:
