@@ -56,7 +56,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             <p><strong>3.8 Documents shared with patients:</strong></p>
             <ul>
               <li>A professional can share documents with a patient (for example prescriptions, certificates, exam requests and consent terms), and a patient can send documents to their professional (for example exam results or photos). These may include health data.</li>
-              <li>For each document we store the file, its title, type, size, when it was uploaded and who uploaded it. Files are checked by their real format: only PDF, JPG, PNG or HEIC, up to 20 MB each.</li>
+              <li>For each document we store the file, its title, type, size, when it was uploaded and who uploaded it. Every file shared with a patient or sent by a patient is checked by its real format: only PDF, JPG, PNG or HEIC, up to 20 MB each.</li>
               <li>Only the patient&rsquo;s own professional sees the patient&rsquo;s documents, including the ones the patient sends. Secretaries and other professionals in the same practice do not.</li>
               <li>The patient sees only the documents their professional shares with them and the documents they sent, and only while they are connected to that professional. Turning the feature on does not share any existing file: a professional shares each document themselves.</li>
               <li>Documents are stored in the same private storage, in the same region, as other patient files, and are opened through links that expire after 5 minutes.</li>
