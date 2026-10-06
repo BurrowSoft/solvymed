@@ -244,7 +244,8 @@ describe("Minha marca", () => {
     expect(URL.revokeObjectURL).not.toHaveBeenCalledWith("blob:pick-1");
     fireEvent.click(screen.getByTestId("brand-logo-square-adjust"));
     const dialog = await screen.findByTestId("brand-crop");
-    expect(dialog.querySelector("img")).toHaveAttribute("src", "blob:pick-1");
+    // The image shows once it has loaded (the stand-in Image loads on a timer).
+    await waitFor(() => expect(dialog.querySelector("img")).toHaveAttribute("src", "blob:pick-1"));
     vi.mocked(URL.createObjectURL).mockImplementation(() => "blob:picked");
   });
 });
