@@ -42,7 +42,11 @@
 // 2026-10-12: SolvyAI live (solvyai-live): §5 Anthropic (USA) row, §6b and
 // Anthropic's retention in §6 (Vitor's "go SolvyAI", via cf). Mobile's
 // accepting migration (198) for ('privacy','2026-10-12') applied FIRST.
-export const PRIVACY_VERSION = "2026-10-12";
+// 2026-10-13: §3.2 lists every patient field stored or collected (RG,
+// profession, emergency contact phone, insurance type, photo; c6/cf, text =
+// enforcement). Mobile's accepting migration for ('privacy','2026-10-13')
+// applied FIRST.
+export const PRIVACY_VERSION = "2026-10-13";
 export const TERMS_VERSION = "2026-10-01";
 
 // Sent with every web signup (the checkbox is required, so it's sent only

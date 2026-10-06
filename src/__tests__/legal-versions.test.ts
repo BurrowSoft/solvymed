@@ -32,3 +32,14 @@ describe("the SolvyAI go-live (2026-10-12)", () => {
     if (conditionMet("solvyai-live")) expect(PRIVACY_VERSION >= "2026-10-12").toBe(true);
   });
 });
+
+describe("privacy 2026-10-13: §3.2 lists the patient data actually held", () => {
+  it("names RG, profession, the emergency phone, the insurance type and the photo, in both languages", async () => {
+    expect(PRIVACY_VERSION >= "2026-10-13").toBe(true);
+    const fs = await import("node:fs");
+    const en = fs.readFileSync("src/app/[locale]/(site)/privacy/PrivacyEn.tsx", "utf8");
+    const pt = fs.readFileSync("src/app/[locale]/(site)/privacy/PrivacyPtBR.tsx", "utf8");
+    for (const w of ["CPF and RG, Brazilian clinics only", "profession", "an emergency contact phone number", "health insurance type", "photo"]) expect(en).toContain(w);
+    for (const w of ["CPF e RG, só clínicas no Brasil", "profissão", "telefone de um contato de emergência", "tipo de convênio", "foto"]) expect(pt).toContain(w);
+  });
+});
