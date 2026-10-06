@@ -2199,7 +2199,8 @@
     "edit": "Editar",
     "editTitle": "Editar local",
     "dayLocation": "Local",
-    "bookingLine": "Local: {name} · {address}"
+    "bookingLine": "Local: {name} · {address}",
+    "primaryConfirm": "Os dias de atendimento sem local escolhido passam a usar {name}. Consultas marcadas com um local continuam nele; as sem local passam a mostrar {name}."
   },
   "brandCrop": {
     "title": "Ajustar imagem",

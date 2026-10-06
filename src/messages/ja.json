@@ -2199,7 +2199,8 @@
     "edit": "編集",
     "editTitle": "場所を編集",
     "dayLocation": "場所",
-    "bookingLine": "場所: {name} · {address}"
+    "bookingLine": "場所: {name} · {address}",
+    "primaryConfirm": "場所を選んでいない診療日は {name} を使います。場所付きで予約済みの予約はそのままです。場所のない予約は {name} と表示されます。"
   },
   "brandCrop": {
     "title": "画像を調整",

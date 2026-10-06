@@ -2199,7 +2199,8 @@
     "edit": "Modifier",
     "editTitle": "Modifier le lieu",
     "dayLocation": "Lieu",
-    "bookingLine": "Lieu : {name} · {address}"
+    "bookingLine": "Lieu : {name} · {address}",
+    "primaryConfirm": "Les jours de consultation sans lieu choisi utiliseront {name}. Les rendez-vous pris dans un lieu y restent ; ceux sans lieu afficheront {name}."
   },
   "brandCrop": {
     "title": "Ajuster l'image",

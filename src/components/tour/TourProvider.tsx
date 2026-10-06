@@ -31,8 +31,10 @@ import { track } from "@/lib/track";
 // or is skipped. [See what's new] runs a short spotlight tour of just the
 // new items; [Not now] closes it for good (Settings → What's new keeps it).
 
-type TourCtx = { start: () => void; startNews: (release: string, replay?: boolean) => void; role: TourRole };
-const Ctx = createContext<TourCtx>({ start: () => {}, startNews: () => {}, role: "professional" });
+// running: a tour or a popup is on screen (one overlay at a time, cf 6 Oct):
+// inline cards like the privacy notice wait for it.
+type TourCtx = { start: () => void; startNews: (release: string, replay?: boolean) => void; role: TourRole; running: boolean };
+const Ctx = createContext<TourCtx>({ start: () => {}, startNews: () => {}, role: "professional", running: false });
 export const useTour = () => useContext(Ctx);
 
 export function TourProvider({
@@ -227,7 +229,8 @@ export function TourProvider({
     return () => window.removeEventListener(CLOSED_EVENT, on);
   }, []);
 
-  const ctx = useMemo<TourCtx>(() => ({ start: () => begin(0, true), startNews, role }), [begin, startNews, role]);
+  const running = !!active || !!newsTour || newsPopup || introPopup;
+  const ctx = useMemo<TourCtx>(() => ({ start: () => begin(0, true), startNews, role, running }), [begin, startNews, role, running]);
 
   return (
     <Ctx.Provider value={ctx}>

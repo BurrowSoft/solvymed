@@ -17,6 +17,9 @@ import { PRIVACY_VERSION } from "@/lib/legalVersions";
 import { formatDateLabel } from "@/lib/dateLabels";
 
 export type PatientAppointment = {
+  // 1.8.0 F (migration 200): the visit's location, only with 2+ shown.
+  location_name?: string | null;
+  location_address?: string | null;
   id: string;
   date: string;
   start_time: string;

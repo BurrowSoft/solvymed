@@ -2229,7 +2229,8 @@
     "edit": "แก้ไข",
     "editTitle": "แก้ไขสถานที่",
     "dayLocation": "สถานที่",
-    "bookingLine": "สถานที่: {name} · {address}"
+    "bookingLine": "สถานที่: {name} · {address}",
+    "primaryConfirm": "วันทำงานที่ไม่ได้เลือกสถานที่จะใช้ {name} แทน นัดหมายที่ระบุสถานที่ไว้แล้วจะไม่เปลี่ยน ส่วนนัดที่ไม่มีสถานที่จะแสดงเป็น {name}"
   },
   "brandCrop": {
     "title": "ปรับรูปภาพ",

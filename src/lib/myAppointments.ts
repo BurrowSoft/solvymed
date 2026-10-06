@@ -32,6 +32,9 @@ export type MyAppointment = {
   // 158 ("always say who"): the visit's own doctor and clinic.
   professional_name?: string | null;
   clinic_name?: string | null;
+  // 1.8.0 F (migration 200): the visit's location, only with 2+ shown.
+  location_name?: string | null;
+  location_address?: string | null;
 };
 
 export async function myAppointments(db: SupabaseClient, appointmentId?: string): Promise<MyAppointment[]> {

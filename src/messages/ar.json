@@ -2199,7 +2199,8 @@
     "edit": "تعديل",
     "editTitle": "تعديل المكان",
     "dayLocation": "المكان",
-    "bookingLine": "المكان: {name} · {address}"
+    "bookingLine": "المكان: {name} · {address}",
+    "primaryConfirm": "ستستخدم أيام العمل التي لم يُختر لها مكان {name}. تبقى المواعيد المحجوزة في مكان محدد فيه؛ أما التي بلا مكان فستظهر {name}."
   },
   "brandCrop": {
     "title": "ضبط الصورة",

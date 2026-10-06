@@ -2199,7 +2199,8 @@
     "edit": "Bearbeiten",
     "editTitle": "Standort bearbeiten",
     "dayLocation": "Standort",
-    "bookingLine": "Standort: {name} · {address}"
+    "bookingLine": "Standort: {name} · {address}",
+    "primaryConfirm": "Arbeitstage ohne gewählten Standort verwenden {name}. Termine mit Standort bleiben dort; Termine ohne Standort zeigen {name}."
   },
   "brandCrop": {
     "title": "Bild anpassen",
