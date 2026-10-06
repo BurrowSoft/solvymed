@@ -924,6 +924,36 @@
         "open": "patients",
         "appOnly": null,
         "appTitle": null
+      },
+      {
+        "id": "P14",
+        "category": "pacientes",
+        "title": {
+          "pt": "Aviso para todos os pacientes",
+          "en": "Send to Patients"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Em **Início**, toque em **Enviar para Pacientes** (só o médico): escreva um **Título da Notificação** (até 100 caracteres) e uma **Mensagem** (até 500) e toque em **Enviar Notificação**. Ela é enviada aos pacientes conectados a você, e só recebe quem tem as notificações do SolvyMed ativadas; a mensagem não pode ficar em branco. Não inclua dados de pacientes. São no máximo 10 avisos a cada 24 horas."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "On **Home**, tap **Send to Patients** (doctor only): write a **Notification Title** (up to 100 characters) and a **Message** (up to 500) and tap **Send Notification**. It goes to the patients connected to you, and only those with SolvyMed notifications on receive it; the message can't be blank. Don't include patient details. You can send at most 10 notices every 24 hours."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Em **Visão geral**, clique em **Enviar para Pacientes** (só o médico): o mesmo título, mensagem e limites; **Enviar Notificação** só fica disponível com título e mensagem preenchidos.",
+          "en": "On **Overview**, click **Send to Patients** (doctor only): the same title, message and limits; **Send Notification** is only available once both the title and the message are filled in."
+        },
+        "webUnavailable": false,
+        "open": "home",
+        "appOnly": null,
+        "appTitle": null
       }
     ]
   },
@@ -1130,6 +1160,10 @@
             {
               "type": "p",
               "text": "O recibo traz o seu registro no conselho (ex.: CRM) ao lado do nome, quando cadastrado no perfil. No Brasil, sem CNPJ da clínica, ele inclui a nota: \"Este recibo é um comprovante de pagamento. Para dedução no Imposto de Renda, o profissional pessoa física emite o recibo oficial pelo app Receita Saúde.\""
+            },
+            {
+              "type": "p",
+              "text": "Sem valor definido não há recibo: numa consulta sem valor, ao tocar em **Gerar recibo em PDF** (clínicas no Brasil) ou **Emitir recibo (ใบเสร็จรับเงิน)** (clínicas na Tailândia), o app pede \"Defina o valor da consulta antes de emitir o recibo.\" com **Definir valor**, que abre o valor da consulta. Ver um recibo já emitido nunca é bloqueado."
             }
           ],
           "en": [
@@ -1140,6 +1174,10 @@
             {
               "type": "p",
               "text": "The receipt shows your council registration (e.g. CRM) next to your name, when it's in your profile. In Brazil, with no clinic CNPJ, it adds a note (in Portuguese) that it's proof of payment, and that for the income-tax deduction a self-employed doctor issues the official receipt in the Receita Saúde app."
+            },
+            {
+              "type": "p",
+              "text": "There's no receipt without an amount: on an appointment with no amount, tapping **Generate invoice PDF** (clinics in Brazil) or **Issue receipt (ใบเสร็จรับเงิน)** (clinics in Thailand) makes the app ask \"Set the appointment amount before issuing a receipt.\" with **Set amount**, which opens the appointment's amount. Viewing a receipt already issued is never blocked."
             }
           ]
         },
