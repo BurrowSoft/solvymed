@@ -2126,5 +2126,13 @@
     "titleLabel": "Judul",
     "move": "Pindahkan ke folder",
     "corrected": "Dikoreksi"
+  },
+  "privacyNotice": {
+    "title": "Kami telah memperbarui Kebijakan Privasi kami",
+    "body": "Lihat apa yang berubah pada {date}.",
+    "read": "Baca kebijakan",
+    "ok": "OK",
+    "close": "Tutup",
+    "failed": "Gagal menyimpan. Silakan coba lagi."
   }
 }

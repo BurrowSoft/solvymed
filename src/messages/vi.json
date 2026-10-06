@@ -2126,5 +2126,13 @@
     "titleLabel": "Tiêu đề",
     "move": "Chuyển vào thư mục",
     "corrected": "Đã sửa"
+  },
+  "privacyNotice": {
+    "title": "Chúng tôi đã cập nhật Chính sách quyền riêng tư",
+    "body": "Xem những gì đã thay đổi vào {date}.",
+    "read": "Đọc chính sách",
+    "ok": "OK",
+    "close": "Đóng",
+    "failed": "Không lưu được. Vui lòng thử lại."
   }
 }

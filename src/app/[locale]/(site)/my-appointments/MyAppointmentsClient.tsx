@@ -8,6 +8,7 @@ import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
 import { acceptProposal, cancelMyRequest, declineProposal, requestReschedule, getAvailableSlotsForDate } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions";
 import type { PatientAppointment } from "./page";
 import { OnboardingCard } from "@/components/OnboardingCard";
+import { PrivacyNoticeCard } from "@/components/PrivacyNoticeCard";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { BrandLogo } from "@/components/BrandLogo";
 import { MonthCalendar } from "@/components/MonthCalendar";
@@ -408,6 +409,7 @@ export function MyAppointmentsClient({
   practiceCountry = null,
   practices = {},
   connectedClinicName = null,
+  privacyNoticeDate = null,
   doctors = null,
   canAddDoctor = false,
   docDoctors = null,
@@ -426,6 +428,8 @@ export function MyAppointmentsClient({
   practices?: Record<string, { country: string | null; tz: string }>;
   // First-run: the one-time "You're connected to {clinic}" card (null = don't show).
   connectedClinicName?: string | null;
+  // "We've updated our Privacy Policy" with its date (null = don't show).
+  privacyNoticeDate?: string | null;
   // 1.5.0 (behind the flag): the patient's doctors; null = as before.
   doctors?: MyDoctor[] | null;
   canAddDoctor?: boolean;
@@ -498,6 +502,7 @@ export function MyAppointmentsClient({
       </header>
 
       <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
+        {privacyNoticeDate && <PrivacyNoticeCard locale={locale} date={privacyNoticeDate} />}
         {connectedClinicName && (
           <OnboardingCard kind="patient_connected" clinicName={connectedClinicName} bookHref={bookHref ?? undefined} bookLabel={bookLabel} />
         )}

@@ -2126,5 +2126,13 @@
     "titleLabel": "Título",
     "move": "Mover para pasta",
     "corrected": "Corrigido"
+  },
+  "privacyNotice": {
+    "title": "Atualizamos nossa Política de Privacidade",
+    "body": "Veja o que mudou em {date}.",
+    "read": "Ler a política",
+    "ok": "OK",
+    "close": "Fechar",
+    "failed": "Não foi possível salvar. Tente novamente."
   }
 }

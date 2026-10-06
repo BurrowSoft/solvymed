@@ -2126,5 +2126,13 @@
     "titleLabel": "标题",
     "move": "移到文件夹",
     "corrected": "已更正"
+  },
+  "privacyNotice": {
+    "title": "我们更新了隐私政策",
+    "body": "查看 {date} 的变更内容。",
+    "read": "阅读政策",
+    "ok": "确定",
+    "close": "关闭",
+    "failed": "无法保存，请重试。"
   }
 }
