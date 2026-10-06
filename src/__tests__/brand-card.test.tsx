@@ -230,4 +230,21 @@ describe("Minha marca", () => {
     expect(screen.queryByTestId("brand-crop")).toBeNull();
     expect(h.upload).not.toHaveBeenCalled();
   });
+
+  it("1.8.0 G: picking a second kind keeps the first's original; Ajustar opens that one (c6)", async () => {
+    let n = 0;
+    vi.mocked(URL.createObjectURL).mockImplementation(() => `blob:pick-${++n}`);
+    vi.mocked(URL.revokeObjectURL).mockClear();
+    // Ajustar shows next to a saved image (the page's refresh brings the new URL).
+    show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: null, logoSquareUrl: "https://x/sq.png", logoWideUrl: "https://x/w.png", photoUrl: null, own: { logo_square: true, logo_wide: true, photo: false }, saved: true });
+    await pickAndUse("brand-logo-square", new File(["x"], "sq.png", { type: "image/png" }));
+    await waitFor(() => expect(h.refresh).toHaveBeenCalledTimes(1));
+    await pickAndUse("brand-logo-wide", new File(["x"], "w.png", { type: "image/png" }));
+    await waitFor(() => expect(h.refresh).toHaveBeenCalledTimes(2));
+    expect(URL.revokeObjectURL).not.toHaveBeenCalledWith("blob:pick-1");
+    fireEvent.click(screen.getByTestId("brand-logo-square-adjust"));
+    const dialog = await screen.findByTestId("brand-crop");
+    expect(dialog.querySelector("img")).toHaveAttribute("src", "blob:pick-1");
+    vi.mocked(URL.createObjectURL).mockImplementation(() => "blob:picked");
+  });
 });

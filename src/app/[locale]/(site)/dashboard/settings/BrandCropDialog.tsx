@@ -28,6 +28,23 @@ export function BrandCropDialog({ kind, src, fileName, onUse, onCancel }: {
   const [failed, setFailed] = useState(false);
   const [touch, setTouch] = useState(false);
   const drag = useRef<{ px: number; py: number; x: number; y: number } | null>(null);
+  // The wheel zooms without scrolling the page: a non-passive listener (React's
+  // onWheel is passive, so it can't stop the scroll; c6).
+  const frame = useRef<HTMLDivElement>(null);
+  const viewRef = useRef<CropView | null>(null);
+  viewRef.current = view;
+  useEffect(() => {
+    const el = frame.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      const v = viewRef.current;
+      if (!v) return;
+      e.preventDefault();
+      setView(zoomTo(v, v.zoom * (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
 
   useEffect(() => {
     setTouch(typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches);
@@ -54,13 +71,14 @@ export function BrandCropDialog({ kind, src, fileName, onUse, onCancel }: {
         <p className="mt-1 text-xs text-slate-500">{touch ? t("hintTouch") : t("hint")}</p>
         <div className="mt-3 flex justify-center">
           <div
+            ref={frame}
             data-testid="brand-crop-frame"
             className={`relative touch-none select-none overflow-hidden bg-slate-100 ${shape.round ? "rounded-full" : "rounded-lg"}`}
             style={{ width: frameW, height: frameH, cursor: view ? "grab" : "default" }}
             onPointerDown={(e) => { if (!view) return; (e.target as Element).setPointerCapture?.(e.pointerId); drag.current = { px: e.clientX, py: e.clientY, x: view.x, y: view.y }; }}
             onPointerMove={(e) => { const d = drag.current; if (!d || !view) return; setView(clampView({ ...view, x: d.x + e.clientX - d.px, y: d.y + e.clientY - d.py })); }}
             onPointerUp={() => { drag.current = null; }}
-            onWheel={(e) => { if (view) setView(zoomTo(view, view.zoom * (e.deltaY < 0 ? 1.1 : 1 / 1.1))); }}
+            onPointerCancel={() => { drag.current = null; }}
           >
             {view && (
               // eslint-disable-next-line @next/next/no-img-element
@@ -72,7 +90,7 @@ export function BrandCropDialog({ kind, src, fileName, onUse, onCancel }: {
         {view && (
           <div className="mt-3 flex items-center gap-2">
             <button type="button" aria-label={t("zoomOut")} onClick={() => setView(zoomTo(view, view.zoom - 0.25))} className="rounded-lg border border-slate-200 px-2.5 py-1 text-sm font-bold">−</button>
-            <input type="range" aria-label={t("zoomIn")} min={ZOOM_MIN} max={ZOOM_MAX} step={0.01} value={view.zoom}
+            <input type="range" aria-label={`${t("zoomOut")} / ${t("zoomIn")}`} min={ZOOM_MIN} max={ZOOM_MAX} step={0.01} value={view.zoom}
               onChange={(e) => setView(zoomTo(view, Number(e.target.value)))} className="flex-1" />
             <button type="button" aria-label={t("zoomIn")} onClick={() => setView(zoomTo(view, view.zoom + 0.25))} className="rounded-lg border border-slate-200 px-2.5 py-1 text-sm font-bold">+</button>
           </div>

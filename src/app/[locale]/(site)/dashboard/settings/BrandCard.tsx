@@ -84,7 +84,11 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
   // page is left.
   const [crop, setCrop] = useState<{ what: BrandImageKind; src: string; name: string } | null>(null);
   const [originals, setOriginals] = useState<Partial<Record<BrandImageKind, { src: string; name: string }>>>({});
-  useEffect(() => () => { for (const o of Object.values(originals)) if (o) URL.revokeObjectURL(o.src); }, [originals]);
+  // Revoked when replaced (onPick) and on leaving the page; a ref, so a new
+  // pick never revokes another image's original (c6).
+  const originalsRef = useRef(originals);
+  originalsRef.current = originals;
+  useEffect(() => () => { for (const o of Object.values(originalsRef.current)) if (o) URL.revokeObjectURL(o.src); }, []);
 
   function onPick(what: BrandImageKind, file: File | undefined) {
     setImageError("");
