@@ -6,6 +6,8 @@ Critical web paths, run against a Vercel Preview or www. Humans still test each 
 |---|---|---|
 | `public.spec.ts` | the public pages in pt-BR / en / th: load, `lang`, no raw message keys, no 12-hour times, no console errors; the sign-in form; retired languages 308 → en; the app-link files | no |
 | `accounts.spec.ts` | sign-in routing in each language (doctor → dashboard, patient → my appointments, expired trial → subscribe); a linked patient books (calendar → time → type → send); the doctor confirms / proposes / declines; the patient sees the visit day-first, 24 h | yes |
+| `signup.spec.ts` | doctor signup per country (BR in pt-BR + en, TH in th + en): the country step → the form → "Create account" enabled, **never submitted** (every `/auth/v1/signup` request is aborted and fails the test); `?c=TH` skips the country step | no |
+| `public-legal.spec.ts` | `/privacy` and `/terms` show the versions in `src/lib/legalVersions.ts` (pt-BR, en; th reads the English text); `/founders` in each language: hero, places counters, required fields, consent + rules link, privacy notice, **never submitted** (`/api/founders/apply` is aborted); `/founders/rules` loads | no |
 
 ## Run
 
