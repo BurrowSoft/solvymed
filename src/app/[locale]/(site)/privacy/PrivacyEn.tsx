@@ -286,6 +286,54 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
         </p>
       </Section>
 
+      <Section title="10b. Thailand (PDPA)">
+        <p>
+          For clinics in Thailand and the people whose data they enter, the Thai Personal Data Protection Act
+          B.E. 2562 (PDPA) also applies. Everything in this policy applies as written; this section adds what the
+          PDPA asks us to say.
+        </p>
+        <ul>
+          <li>
+            <strong>Roles:</strong> as in section 2. We are the controller of account data. The clinic is the
+            controller of the patient records it enters, and we process them only on its behalf.
+          </li>
+          <li>
+            <strong>Legal bases:</strong> account data, to provide the Service under our contract with you; security
+            and error reports, our legitimate interest in keeping the Service secure and working; website usage
+            statistics and marketing attribution, only with your consent (section 11), which you can withdraw at any
+            time; records that must be kept (section 9), to meet record-keeping obligations.
+          </li>
+          <li>
+            <strong>Health data</strong> in patient records is sensitive data. The clinic processes it for medical
+            care by a professional bound by confidentiality, or with the patient&rsquo;s explicit consent. A patient who
+            creates a SolvyMed account agrees to this policy, and we record which version they accepted and when.
+          </li>
+          <li>
+            <strong>Transfers abroad:</strong> clinical records are stored in Brazil, and some of the providers in
+            section 5 process data in other countries, under the safeguards described in section 6.
+          </li>
+          <li>
+            <strong>Your rights under the PDPA:</strong> access and a copy of your data; correction; deletion,
+            destruction or anonymization; portability; objection; restriction of processing; and withdrawal of
+            consent, which does not affect processing done before it. Records that must be kept (section 9) cannot be
+            deleted before the end of that period. Patients should first ask their clinic, which controls their
+            records; we help the clinic answer. Requests to us: <Mail />. You can also complain to the Office of the
+            Personal Data Protection Committee (PDPC).
+          </li>
+          <li>
+            <strong>Breaches:</strong> if a personal data breach is likely to put people&rsquo;s rights at risk, we
+            notify the PDPC, and the people affected when the risk is high, as the PDPA requires.
+          </li>
+          <li>
+            <strong>Minors:</strong> in Thailand a person under 20 is a minor. Where consent is the basis for a minor
+            patient&rsquo;s data, the clinic is responsible for obtaining the consent of a parent or guardian.
+          </li>
+          <li>
+            <strong>Contact:</strong> as in section 14.
+          </li>
+        </ul>
+      </Section>
+
       <Section title="11. Cookies and consent">
         <p>
           The website uses strictly necessary cookies without asking: your login session, your language

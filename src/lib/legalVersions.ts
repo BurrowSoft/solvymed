@@ -34,7 +34,12 @@
 // pending signup until the email is confirmed (30 days at most). Mobile's
 // accepting migration (184) for
 // ('privacy','2026-10-09') applied FIRST.
-export const PRIVACY_VERSION = "2026-10-09";
+// 2026-10-10: §10b Thailand (PDPA): the PDPA's roles, legal bases, sensitive
+// data, transfers, rights, breaches, minors (Vitor's "OK PDPA text", via cf;
+// trimmed to what is true today: no DPO appointment, deadline or Thai
+// retention period promised). Mobile's accepting migration (197) for
+// ('privacy','2026-10-10') applied FIRST.
+export const PRIVACY_VERSION = "2026-10-10";
 export const TERMS_VERSION = "2026-10-01";
 
 // Sent with every web signup (the checkbox is required, so it's sent only

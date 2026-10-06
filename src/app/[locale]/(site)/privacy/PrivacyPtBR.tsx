@@ -288,6 +288,57 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
         </p>
       </Section>
 
+      <Section title="10b. Tailândia (PDPA)">
+        <p>
+          Para clínicas na Tailândia e as pessoas cujos dados elas cadastram, também se aplica a lei tailandesa de
+          proteção de dados pessoais (Personal Data Protection Act B.E. 2562, PDPA). Tudo nesta política vale como
+          está escrito; esta seção acrescenta o que a PDPA pede que informemos.
+        </p>
+        <ul>
+          <li>
+            <strong>Papéis:</strong> como na seção 2. Somos o controlador dos dados de conta. A clínica é a
+            controladora dos prontuários que cadastra, e nós os tratamos apenas em nome dela.
+          </li>
+          <li>
+            <strong>Bases legais:</strong> dados de conta, para prestar o Serviço conforme o nosso contrato com você;
+            segurança e relatórios de erro, o nosso interesse legítimo em manter o Serviço seguro e funcionando;
+            estatísticas de uso do site e atribuição de marketing, só com o seu consentimento (seção 11), que você pode
+            revogar a qualquer momento; registros que precisam ser guardados (seção 9), para cumprir obrigações de
+            guarda.
+          </li>
+          <li>
+            <strong>Dados de saúde</strong> nos prontuários são dados sensíveis. A clínica os trata para o
+            atendimento médico por um profissional sujeito ao sigilo, ou com o consentimento explícito do paciente.
+            O paciente que cria uma conta no SolvyMed concorda com esta política, e registramos qual versão ele aceitou
+            e quando.
+          </li>
+          <li>
+            <strong>Transferências para o exterior:</strong> os prontuários ficam armazenados no Brasil, e alguns dos
+            prestadores da seção 5 tratam dados em outros países, com as salvaguardas descritas na seção 6.
+          </li>
+          <li>
+            <strong>Seus direitos pela PDPA:</strong> acesso e cópia dos seus dados; correção; exclusão, destruição ou
+            anonimização; portabilidade; oposição; restrição do tratamento; e revogação do consentimento, que não
+            afeta o tratamento feito antes dela. Registros que precisam ser guardados (seção 9) não podem ser excluídos
+            antes do fim desse prazo. O paciente deve pedir primeiro à clínica, que controla o prontuário; nós ajudamos
+            a clínica a responder. Pedidos para nós: <Mail />. Você também pode reclamar ao Escritório do Comitê de
+            Proteção de Dados Pessoais da Tailândia (PDPC).
+          </li>
+          <li>
+            <strong>Incidentes:</strong> se um incidente com dados pessoais puder colocar em risco os direitos das
+            pessoas, notificamos o PDPC e, quando o risco for alto, as pessoas afetadas, como a PDPA exige.
+          </li>
+          <li>
+            <strong>Menores:</strong> na Tailândia, quem tem menos de 20 anos é menor de idade. Quando o consentimento
+            for a base para os dados de um paciente menor, a clínica é responsável por obter o consentimento dos pais
+            ou responsável.
+          </li>
+          <li>
+            <strong>Contato:</strong> como na seção 14.
+          </li>
+        </ul>
+      </Section>
+
       <Section title="11. Cookies e consentimento">
         <p>
           O site usa, sem pedir consentimento, apenas cookies estritamente necessários: a sua sessão de login, o seu

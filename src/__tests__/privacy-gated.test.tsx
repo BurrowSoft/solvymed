@@ -217,3 +217,21 @@ describe("privacy 1.8.0: clinical documents (189) and documents shared with pati
     expect(pt).toContain("Todo arquivo compartilhado com o paciente ou enviado por ele é verificado pelo formato real: apenas PDF, JPG, PNG ou HEIC, até 20 MB cada.");
   });
 });
+
+describe("privacy 2026-10-10: §10b Thailand (PDPA), visible (Vitor's OK via cf)", () => {
+  const text = (el: React.ReactElement) => { const r = render(el); const t = r.container.textContent ?? ""; r.unmount(); return t.replace(/\s+/g, " "); };
+  it("both languages carry §10b, with nothing promised that isn't true today", () => {
+    const en = text(<PrivacyEn turnstile={false} />);
+    expect(en).toContain("10b. Thailand (PDPA)");
+    expect(en).toContain("Personal Data Protection Act B.E. 2562 (PDPA)");
+    expect(en).toContain("You can also complain to the Office of the Personal Data Protection Committee (PDPC).");
+    expect(en).toContain("in Thailand a person under 20 is a minor.");
+    // Cut until true (cf / c6): no deadline, no new DPO, no hours.
+    const sec = (t: string, from: string, to: string) => t.slice(t.indexOf(from), t.indexOf(to));
+    expect(sec(en, "10b. Thailand", "11. Cookies")).not.toMatch(/(30|thirty) days|72 hours|Data Protection Officer/i);
+    const pt = text(<PrivacyPtBR turnstile={false} />);
+    expect(pt).toContain("10b. Tailândia (PDPA)");
+    expect(pt).toContain("Proteção de Dados Pessoais da Tailândia (PDPC)");
+    expect(sec(pt, "10b. Tailândia", "11. Cookies")).not.toMatch(/72 horas|30 dias|Encarregado/);
+  });
+});
