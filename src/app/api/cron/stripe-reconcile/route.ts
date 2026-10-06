@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: FROM, to: [SUPPORT], subject: `Stripe check: ${mismatches.length} mismatch(es)`, text: report }),
+      body: JSON.stringify({ from: FROM, to: [SUPPORT], subject: `[SolvyMed] Stripe check: ${mismatches.length} mismatch(es)`, text: report }),
     }).catch(() => null);
     emailed = !!res?.ok;
   }

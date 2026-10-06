@@ -122,6 +122,8 @@ describe("GET /api/cron/stripe-reconcile", () => {
     const [url, init] = fetchMock.mock.calls[0] as unknown as [string, { body: string }];
     expect(url).toBe("https://api.resend.com/emails");
     expect(JSON.parse(init.body).to).toEqual(["support@solvymed.com"]);
+    expect(JSON.parse(init.body).subject).toBe("[SolvyMed] Stripe check: 1 mismatch(es)");
+    expect(JSON.parse(init.body).text).not.toMatch(/@/);
     fetchMock.mockClear();
     await call("Bearer s3cret-value", "?dry=1");
     expect(fetchMock).not.toHaveBeenCalled();

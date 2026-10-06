@@ -164,7 +164,7 @@
     "what": "The app build with mobile #365 (0a slice 1b: a secretary's Settings → \"Entrar na equipe de outro médico\" / \"Join another doctor's team\" → \"Código de convite\" → \"Entrar\", behind server_flags.multi_practice_secretary) is RELEASED on Google Play. Gates (together with multi-practice-live) Help C4's app line and the App Map's app join rule."
   },
   "stripe-reconcile-email": {
-    "met": false,
+    "met": true,
     "what": "The daily Stripe check (/api/cron/stripe-reconcile, Vercel Cron 09:17 UTC = 06:17 BRT) emails support@solvymed.com on a mismatch. Met only after CRON_SECRET is set on Production (Vitor, VITOR.md 1c) AND its dry runs looked right (cf). Until then every run is a dry run: the report is only in the response and a one-line log."
   }
 }
