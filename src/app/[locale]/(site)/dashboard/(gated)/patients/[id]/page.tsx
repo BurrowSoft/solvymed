@@ -6,6 +6,7 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { PatientTabs, ArchivedBanner, type MedRecord, type Rx } from "./PatientDetailClient";
+import type { MedDoc } from "./MedicalDocuments";
 import { getArchivePreview, mergeAvailable } from "../actions";
 import { MergedNotice } from "./MergeNotice";
 import { ImportedData } from "./ImportedData";
@@ -97,6 +98,14 @@ export default async function PatientDetailPage({
   };
   const isArchived = !!patient.archived_at;
   const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
+  // 1.8.0 B (flag 'clinical_documents'): the doctor's documents for this
+  // patient, in "Receitas e documentos". Never read for a secretary.
+  const docsOn = !isSecretary && (await serverFlag(supabase, "clinical_documents"));
+  const docsResult = docsOn
+    ? await supabase.from("medical_documents")
+        .select("id, doc_type, language, fields, body, created_at, created_by, created_by_name, corrects_id, correction_reason")
+        .eq("patient_id", id).order("created_at", { ascending: false })
+    : null;
   const records = ((recordsResult.data ?? []) as unknown as (MedRecord & { sections?: unknown })[])
     .map((r) => ({ ...r, sections: currentRecordSections(r.sections, r.content) }));
   const recordTemplates: RecordTemplate[] | null = templatesOn
@@ -194,6 +203,11 @@ export default async function PatientDetailPage({
           accessLog={accessLog}
           timeZone={timeZone}
           recordTemplates={recordTemplates}
+          medicalDocs={docsResult && !docsResult.error ? {
+            list: (docsResult.data ?? []) as MedDoc[],
+            country: practiceCountry,
+            hasPatientId: !!(patient.cpf || (patient as { passport_number?: string | null }).passport_number),
+          } : null}
           documentsOn={!isSecretary && (await serverFlag(supabase, "patient_documents"))}
           addressLive={conditionMet("patient-address-live")}
         />

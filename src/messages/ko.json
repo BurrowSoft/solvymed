@@ -2126,5 +2126,61 @@
     "titleLabel": "제목",
     "move": "폴더로 이동",
     "corrected": "수정됨"
+  },
+  "documents": {
+    "tabTitle": "처방전 및 문서 ({n})",
+    "addPrescription": "+ 처방전",
+    "addDocument": "+ 문서",
+    "newDocument": "새 문서",
+    "typeLabel": "종류",
+    "type": {
+      "certificate": "진단서",
+      "declaration": "진료 확인서",
+      "exam_request": "검사 의뢰서",
+      "controlled_prescription": "특별 관리 처방전(인쇄)",
+      "th_certificate": "진단서"
+    },
+    "language": "문서 언어",
+    "languageHint": "라벨, 날짜, 달력이 바뀝니다. 본문은 직접 작성합니다.",
+    "certVariant": {
+      "absence": "휴식(일)",
+      "attendance": "진료 사실만"
+    },
+    "visitDate": "진료일",
+    "examDate": "검진일",
+    "days": "일수",
+    "startDate": "시작일",
+    "endDate": "종료일",
+    "timeFrom": "시작 시간",
+    "timeTo": "종료 시간",
+    "includeCid": "ICD 코드 포함(환자 동의 시에만)",
+    "cid": "ICD 코드",
+    "companion": "보호자(선택)",
+    "exams": "의뢰할 검사(한 줄에 하나)",
+    "clinicalIndication": "임상 적응증(선택)",
+    "body": "본문",
+    "findings": "소견 / 의견",
+    "rest": "휴식 필요",
+    "refill": "본문 다시 채우기",
+    "items": "약품",
+    "itemName": "약품",
+    "dose": "용량",
+    "quantity": "수량",
+    "posology": "용법",
+    "addItem": "약품 추가",
+    "controlledNeedsId": "특별 관리 처방전에는 환자의 CPF 또는 여권이 필요합니다.",
+    "controlledPrintOnly": "인쇄 후 직접 서명하고 두 부 모두 환자에게 주세요.",
+    "download": "PDF 다운로드",
+    "save": "문서 저장",
+    "pdfFailed": "PDF를 만들지 못했습니다. 다시 시도하세요.",
+    "err": {
+      "date": "날짜를 확인하세요.",
+      "days": "일수와 날짜를 확인하세요.",
+      "time": "시간을 확인하세요(종료가 시작보다 늦어야 합니다).",
+      "cid": "ICD 코드를 입력하거나 옵션을 끄세요.",
+      "exams": "검사를 하나 이상 추가하세요.",
+      "items": "약품을 하나 이상 추가하세요.",
+      "body": "본문을 입력하세요."
+    }
   }
 }

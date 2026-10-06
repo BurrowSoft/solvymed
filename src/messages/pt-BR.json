@@ -2126,5 +2126,61 @@
     "titleLabel": "Título",
     "move": "Mover para pasta",
     "corrected": "Corrigido"
+  },
+  "documents": {
+    "tabTitle": "Receitas e documentos ({n})",
+    "addPrescription": "+ Receita",
+    "addDocument": "+ Documento",
+    "newDocument": "Novo documento",
+    "typeLabel": "Tipo",
+    "type": {
+      "certificate": "Atestado médico",
+      "declaration": "Declaração médica",
+      "exam_request": "Solicitação de exames",
+      "controlled_prescription": "Receita de controle especial (impressa)",
+      "th_certificate": "Atestado médico"
+    },
+    "language": "Idioma do documento",
+    "languageHint": "Muda os rótulos, a data e o calendário. O texto é você quem escreve.",
+    "certVariant": {
+      "absence": "Afastamento (dias)",
+      "attendance": "Apenas comparecimento"
+    },
+    "visitDate": "Data do atendimento",
+    "examDate": "Data do exame",
+    "days": "Dias",
+    "startDate": "A partir de",
+    "endDate": "Até",
+    "timeFrom": "Das",
+    "timeTo": "Às",
+    "includeCid": "Incluir CID (somente com autorização do paciente)",
+    "cid": "CID",
+    "companion": "Acompanhante (opcional)",
+    "exams": "Exames solicitados (um por linha)",
+    "clinicalIndication": "Indicação clínica (opcional)",
+    "body": "Texto",
+    "findings": "Resultado / parecer",
+    "rest": "Afastamento",
+    "refill": "Preencher o texto de novo",
+    "items": "Medicamentos",
+    "itemName": "Medicamento",
+    "dose": "Dose",
+    "quantity": "Quantidade",
+    "posology": "Posologia",
+    "addItem": "Adicionar medicamento",
+    "controlledNeedsId": "A receita de controle especial exige o CPF ou o passaporte do paciente.",
+    "controlledPrintOnly": "Imprima, assine à mão e entregue as duas vias ao paciente.",
+    "download": "Baixar PDF",
+    "save": "Salvar documento",
+    "pdfFailed": "Não foi possível gerar o PDF. Tente novamente.",
+    "err": {
+      "date": "Confira a data.",
+      "days": "Confira os dias e as datas.",
+      "time": "Confira os horários (o fim deve ser depois do início).",
+      "cid": "Digite o CID ou desligue a opção.",
+      "exams": "Inclua pelo menos um exame.",
+      "items": "Inclua pelo menos um medicamento.",
+      "body": "Escreva o texto."
+    }
   }
 }

@@ -2126,5 +2126,61 @@
     "titleLabel": "Tiêu đề",
     "move": "Chuyển vào thư mục",
     "corrected": "Đã sửa"
+  },
+  "documents": {
+    "tabTitle": "Đơn thuốc và tài liệu ({n})",
+    "addPrescription": "+ Đơn thuốc",
+    "addDocument": "+ Tài liệu",
+    "newDocument": "Tài liệu mới",
+    "typeLabel": "Loại",
+    "type": {
+      "certificate": "Giấy chứng nhận y tế",
+      "declaration": "Giấy xác nhận khám bệnh",
+      "exam_request": "Phiếu chỉ định xét nghiệm",
+      "controlled_prescription": "Đơn thuốc kiểm soát đặc biệt (in)",
+      "th_certificate": "Giấy chứng nhận y tế"
+    },
+    "language": "Ngôn ngữ tài liệu",
+    "languageHint": "Thay đổi nhãn, ngày và lịch. Nội dung do bạn viết.",
+    "certVariant": {
+      "absence": "Nghỉ (ngày)",
+      "attendance": "Chỉ xác nhận có mặt"
+    },
+    "visitDate": "Ngày khám",
+    "examDate": "Ngày khám",
+    "days": "Số ngày",
+    "startDate": "Từ ngày",
+    "endDate": "Đến ngày",
+    "timeFrom": "Từ",
+    "timeTo": "Đến",
+    "includeCid": "Ghi mã ICD (chỉ khi bệnh nhân đồng ý)",
+    "cid": "Mã ICD",
+    "companion": "Người đi cùng (không bắt buộc)",
+    "exams": "Các xét nghiệm chỉ định (mỗi dòng một mục)",
+    "clinicalIndication": "Chỉ định lâm sàng (không bắt buộc)",
+    "body": "Nội dung",
+    "findings": "Kết quả / ý kiến",
+    "rest": "Cần nghỉ ngơi",
+    "refill": "Điền lại nội dung",
+    "items": "Thuốc",
+    "itemName": "Thuốc",
+    "dose": "Liều",
+    "quantity": "Số lượng",
+    "posology": "Cách dùng",
+    "addItem": "Thêm thuốc",
+    "controlledNeedsId": "Đơn thuốc kiểm soát đặc biệt cần CPF hoặc hộ chiếu của bệnh nhân.",
+    "controlledPrintOnly": "In ra, ký tay và giao cả hai bản cho bệnh nhân.",
+    "download": "Tải PDF",
+    "save": "Lưu tài liệu",
+    "pdfFailed": "Không tạo được PDF. Vui lòng thử lại.",
+    "err": {
+      "date": "Kiểm tra lại ngày.",
+      "days": "Kiểm tra số ngày và các ngày.",
+      "time": "Kiểm tra giờ (giờ kết thúc phải sau giờ bắt đầu).",
+      "cid": "Nhập mã ICD hoặc tắt tùy chọn.",
+      "exams": "Thêm ít nhất một xét nghiệm.",
+      "items": "Thêm ít nhất một loại thuốc.",
+      "body": "Hãy viết nội dung."
+    }
   }
 }

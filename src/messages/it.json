@@ -2126,5 +2126,61 @@
     "titleLabel": "Titolo",
     "move": "Sposta nella cartella",
     "corrected": "Corretto"
+  },
+  "documents": {
+    "tabTitle": "Ricette e documenti ({n})",
+    "addPrescription": "+ Ricetta",
+    "addDocument": "+ Documento",
+    "newDocument": "Nuovo documento",
+    "typeLabel": "Tipo",
+    "type": {
+      "certificate": "Certificato medico",
+      "declaration": "Dichiarazione medica",
+      "exam_request": "Richiesta di esami",
+      "controlled_prescription": "Ricetta a controllo speciale (stampata)",
+      "th_certificate": "Certificato medico"
+    },
+    "language": "Lingua del documento",
+    "languageHint": "Cambia le etichette, la data e il calendario. Il testo lo scrivi tu.",
+    "certVariant": {
+      "absence": "Assenza (giorni)",
+      "attendance": "Solo presenza"
+    },
+    "visitDate": "Data della visita",
+    "examDate": "Data dell'esame",
+    "days": "Giorni",
+    "startDate": "A partire dal",
+    "endDate": "Fino al",
+    "timeFrom": "Dalle",
+    "timeTo": "Alle",
+    "includeCid": "Includi il codice ICD (solo con il consenso del paziente)",
+    "cid": "Codice ICD",
+    "companion": "Accompagnatore (facoltativo)",
+    "exams": "Esami richiesti (uno per riga)",
+    "clinicalIndication": "Indicazione clinica (facoltativo)",
+    "body": "Testo",
+    "findings": "Esito / parere",
+    "rest": "Deve riposare",
+    "refill": "Compila di nuovo il testo",
+    "items": "Farmaci",
+    "itemName": "Farmaco",
+    "dose": "Dose",
+    "quantity": "Quantità",
+    "posology": "Posologia",
+    "addItem": "Aggiungi farmaco",
+    "controlledNeedsId": "La ricetta a controllo speciale richiede il CPF o il passaporto del paziente.",
+    "controlledPrintOnly": "Stampala, firmala a mano e consegna entrambe le copie al paziente.",
+    "download": "Scarica PDF",
+    "save": "Salva documento",
+    "pdfFailed": "Impossibile creare il PDF. Riprova.",
+    "err": {
+      "date": "Controlla la data.",
+      "days": "Controlla i giorni e le date.",
+      "time": "Controlla gli orari (la fine deve essere dopo l'inizio).",
+      "cid": "Inserisci il codice ICD o disattiva l'opzione.",
+      "exams": "Aggiungi almeno un esame.",
+      "items": "Aggiungi almeno un farmaco.",
+      "body": "Scrivi il testo."
+    }
   }
 }

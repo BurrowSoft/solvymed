@@ -2126,5 +2126,61 @@
     "titleLabel": "Titel",
     "move": "In Ordner verschieben",
     "corrected": "Korrigiert"
+  },
+  "documents": {
+    "tabTitle": "Rezepte und Dokumente ({n})",
+    "addPrescription": "+ Rezept",
+    "addDocument": "+ Dokument",
+    "newDocument": "Neues Dokument",
+    "typeLabel": "Art",
+    "type": {
+      "certificate": "Ärztliches Attest",
+      "declaration": "Ärztliche Bescheinigung",
+      "exam_request": "Untersuchungsanforderung",
+      "controlled_prescription": "Sonderrezept für kontrollierte Arzneimittel (Druck)",
+      "th_certificate": "Ärztliches Attest"
+    },
+    "language": "Sprache des Dokuments",
+    "languageHint": "Ändert die Beschriftungen, das Datum und den Kalender. Den Text schreiben Sie.",
+    "certVariant": {
+      "absence": "Freistellung (Tage)",
+      "attendance": "Nur Anwesenheit"
+    },
+    "visitDate": "Datum der Behandlung",
+    "examDate": "Datum der Untersuchung",
+    "days": "Tage",
+    "startDate": "Ab",
+    "endDate": "Bis",
+    "timeFrom": "Von",
+    "timeTo": "Bis",
+    "includeCid": "ICD-Code angeben (nur mit Zustimmung des Patienten)",
+    "cid": "ICD-Code",
+    "companion": "Begleitperson (optional)",
+    "exams": "Angeforderte Untersuchungen (eine pro Zeile)",
+    "clinicalIndication": "Klinische Indikation (optional)",
+    "body": "Text",
+    "findings": "Befund / Einschätzung",
+    "rest": "Ruhe erforderlich",
+    "refill": "Text neu ausfüllen",
+    "items": "Arzneimittel",
+    "itemName": "Arzneimittel",
+    "dose": "Dosis",
+    "quantity": "Menge",
+    "posology": "Einnahme",
+    "addItem": "Arzneimittel hinzufügen",
+    "controlledNeedsId": "Das Sonderrezept erfordert die CPF oder den Reisepass des Patienten.",
+    "controlledPrintOnly": "Drucken, von Hand unterschreiben und beide Exemplare dem Patienten geben.",
+    "download": "PDF herunterladen",
+    "save": "Dokument speichern",
+    "pdfFailed": "Das PDF konnte nicht erstellt werden. Bitte erneut versuchen.",
+    "err": {
+      "date": "Prüfen Sie das Datum.",
+      "days": "Prüfen Sie die Tage und Daten.",
+      "time": "Prüfen Sie die Uhrzeiten (das Ende muss nach dem Beginn liegen).",
+      "cid": "Geben Sie den ICD-Code ein oder schalten Sie die Option aus.",
+      "exams": "Fügen Sie mindestens eine Untersuchung hinzu.",
+      "items": "Fügen Sie mindestens ein Arzneimittel hinzu.",
+      "body": "Schreiben Sie den Text."
+    }
   }
 }

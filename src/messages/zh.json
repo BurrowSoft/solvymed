@@ -2126,5 +2126,61 @@
     "titleLabel": "标题",
     "move": "移到文件夹",
     "corrected": "已更正"
+  },
+  "documents": {
+    "tabTitle": "处方和文件 ({n})",
+    "addPrescription": "+ 处方",
+    "addDocument": "+ 文件",
+    "newDocument": "新建文件",
+    "typeLabel": "类型",
+    "type": {
+      "certificate": "医疗证明",
+      "declaration": "就诊证明",
+      "exam_request": "检查申请",
+      "controlled_prescription": "特殊管制处方(打印)",
+      "th_certificate": "医疗证明"
+    },
+    "language": "文件语言",
+    "languageHint": "会改变标签、日期和日历。正文由您撰写。",
+    "certVariant": {
+      "absence": "休息(天)",
+      "attendance": "仅就诊"
+    },
+    "visitDate": "就诊日期",
+    "examDate": "检查日期",
+    "days": "天数",
+    "startDate": "起始日期",
+    "endDate": "截止日期",
+    "timeFrom": "开始时间",
+    "timeTo": "结束时间",
+    "includeCid": "包含 ICD 编码(仅限患者同意时)",
+    "cid": "ICD 编码",
+    "companion": "陪同人(可选)",
+    "exams": "申请的检查(每行一项)",
+    "clinicalIndication": "临床指征(可选)",
+    "body": "正文",
+    "findings": "检查结果 / 意见",
+    "rest": "需要休息",
+    "refill": "重新填写正文",
+    "items": "药品",
+    "itemName": "药品",
+    "dose": "剂量",
+    "quantity": "数量",
+    "posology": "用法",
+    "addItem": "添加药品",
+    "controlledNeedsId": "特殊管制处方需要患者的 CPF 或护照。",
+    "controlledPrintOnly": "打印后亲笔签名,并将两份都交给患者。",
+    "download": "下载 PDF",
+    "save": "保存文件",
+    "pdfFailed": "无法生成 PDF,请重试。",
+    "err": {
+      "date": "请检查日期。",
+      "days": "请检查天数和日期。",
+      "time": "请检查时间(结束须晚于开始)。",
+      "cid": "请填写 ICD 编码或关闭此选项。",
+      "exams": "请至少添加一项检查。",
+      "items": "请至少添加一种药品。",
+      "body": "请填写正文。"
+    }
   }
 }

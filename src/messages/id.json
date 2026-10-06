@@ -2126,5 +2126,61 @@
     "titleLabel": "Judul",
     "move": "Pindahkan ke folder",
     "corrected": "Dikoreksi"
+  },
+  "documents": {
+    "tabTitle": "Resep dan dokumen ({n})",
+    "addPrescription": "+ Resep",
+    "addDocument": "+ Dokumen",
+    "newDocument": "Dokumen baru",
+    "typeLabel": "Jenis",
+    "type": {
+      "certificate": "Surat keterangan dokter",
+      "declaration": "Surat pernyataan dokter",
+      "exam_request": "Permintaan pemeriksaan",
+      "controlled_prescription": "Resep obat kontrol khusus (cetak)",
+      "th_certificate": "Surat keterangan dokter"
+    },
+    "language": "Bahasa dokumen",
+    "languageHint": "Mengubah label, tanggal, dan kalender. Teksnya Anda tulis sendiri.",
+    "certVariant": {
+      "absence": "Istirahat (hari)",
+      "attendance": "Hanya kehadiran"
+    },
+    "visitDate": "Tanggal kunjungan",
+    "examDate": "Tanggal pemeriksaan",
+    "days": "Hari",
+    "startDate": "Mulai",
+    "endDate": "Sampai",
+    "timeFrom": "Dari",
+    "timeTo": "Sampai",
+    "includeCid": "Sertakan kode ICD (hanya dengan persetujuan pasien)",
+    "cid": "Kode ICD",
+    "companion": "Pendamping (opsional)",
+    "exams": "Pemeriksaan yang diminta (satu per baris)",
+    "clinicalIndication": "Indikasi klinis (opsional)",
+    "body": "Teks",
+    "findings": "Temuan / pendapat",
+    "rest": "Perlu istirahat",
+    "refill": "Isi ulang teks",
+    "items": "Obat",
+    "itemName": "Obat",
+    "dose": "Dosis",
+    "quantity": "Jumlah",
+    "posology": "Aturan pakai",
+    "addItem": "Tambah obat",
+    "controlledNeedsId": "Resep obat kontrol khusus memerlukan CPF atau paspor pasien.",
+    "controlledPrintOnly": "Cetak, tanda tangani dengan tangan, dan berikan kedua salinan kepada pasien.",
+    "download": "Unduh PDF",
+    "save": "Simpan dokumen",
+    "pdfFailed": "Gagal membuat PDF. Silakan coba lagi.",
+    "err": {
+      "date": "Periksa tanggalnya.",
+      "days": "Periksa jumlah hari dan tanggalnya.",
+      "time": "Periksa jamnya (selesai harus setelah mulai).",
+      "cid": "Isi kode ICD atau matikan opsinya.",
+      "exams": "Tambahkan minimal satu pemeriksaan.",
+      "items": "Tambahkan minimal satu obat.",
+      "body": "Tulis teksnya."
+    }
   }
 }
