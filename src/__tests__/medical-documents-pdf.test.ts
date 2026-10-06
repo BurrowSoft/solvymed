@@ -93,3 +93,27 @@ describe("the PDFs", () => {
     expect((await PDFDocument.load(bytes)).getPageCount()).toBe(2);
   });
 });
+
+describe("B follow-ups (53's row, cf 6 Oct)", () => {
+  it("the language picker: the practice's language and English first, all 7 kept", async () => {
+    const { docLangsFor } = await import("@/lib/medicalDocuments");
+    expect(docLangsFor("BR")).toEqual(["pt-BR", "en", "th", "es", "de", "fr", "it"]);
+    expect(docLangsFor("TH")).toEqual(["th", "en", "pt-BR", "es", "de", "fr", "it"]);
+    expect(docLangsFor("US").slice(0, 1)).toEqual(["en"]);
+    expect(docLangsFor(null)).toHaveLength(7);
+  });
+
+  it("the footer is in the document's language, for every language", async () => {
+    const { PRINT, DOC_LANGS } = await import("@/lib/medicalDocuments");
+    for (const l of DOC_LANGS) expect(PRINT[l].footer).toMatch(/^SolvyMed — /);
+    expect(PRINT.th.footer).toBe("SolvyMed — ระบบบริหารคลินิก");
+    expect(PRINT["pt-BR"].footer).toBe("SolvyMed — Gestão de clínicas");
+  });
+
+  it("a CPF prints formatted", async () => {
+    const { formatCpfDigits } = await import("@/lib/medicalDocuments");
+    expect(formatCpfDigits("12345678909")).toBe("123.456.789-09");
+    expect(formatCpfDigits("123.456.789-09")).toBe("123.456.789-09");
+    expect(formatCpfDigits("abc")).toBe("abc");
+  });
+});

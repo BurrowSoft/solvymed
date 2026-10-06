@@ -135,6 +135,23 @@ export class Writer {
   }
 
   // One line, centred or right-aligned (wrapped to the width when longer).
+  // A left text and a right-aligned one on the same line when both fit (the
+  // Thai certificate's place and date, as on the paper form); else two lines.
+  pair(left: string, right: string, o: { size: number }) {
+    const font = this.fonts.regular;
+    if (textWidth(font, left, o.size) + textWidth(font, right, o.size) + 12 > this.width) {
+      this.text(left, o);
+      this.aligned(right, "right", o);
+      return;
+    }
+    const lh = o.size * 1.35;
+    this.need(lh);
+    this.y -= lh;
+    const y = this.y + o.size * 0.25;
+    drawShaped(this.page, left, { x: MARGIN, y, font, size: o.size, color: INK });
+    drawShaped(this.page, right, { x: MARGIN + this.width - textWidth(font, right, o.size), y, font, size: o.size, color: INK });
+  }
+
   aligned(s: string, align: "center" | "right", o: { size: number; bold?: boolean; color?: RGB }) {
     const font = o.bold ? this.fonts.bold : this.fonts.regular;
     const lh = o.size * 1.35;

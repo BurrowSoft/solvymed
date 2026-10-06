@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  DOC_LANGS, documentTypesFor, fixedLanguage, idLabel, prefilledBody, validateFields,
+  DOC_LANGS, PRINT, docLangsFor, documentTypesFor, fixedLanguage, formatCpfDigits, idLabel, prefilledBody, validateFields,
   type CertificateFields, type ControlledFields, type DeclarationFields, type DocFields, type DocLang,
   type ExamRequestFields, type MedicalDocType, type ThCertificateFields,
 } from "@/lib/medicalDocuments";
@@ -147,7 +147,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
             <label className="block">
               <span className={label}>{t("language")}</span>
               <select value={lang} onChange={(e) => changeLang(e.target.value as DocLang)} className={`${input} bg-white`}>
-                {DOC_LANGS.map((l) => <option key={l} value={l}>{LANG_NAMES[l]}</option>)}
+                {docLangsFor(country).map((l) => <option key={l} value={l}>{LANG_NAMES[l]}</option>)}
               </select>
               <span className="mt-1 block text-xs text-slate-500">{t("languageHint")}</span>
             </label>
@@ -320,7 +320,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
   const d = r.data;
   const [fonts, logoBytes, brandLogo] = await Promise.all([loadFontBytes(), fetchBytes(d.template.logoUrl), fetchBytes(d.brand?.logoUrl ?? null)]);
   const brand = d.brand ? { logoBytes: brandLogo, initials: d.brand.initials, color: d.brand.color, name: d.brand.name, specialty: d.brand.specialty, registration: d.brand.registration } : null;
-  const idValue = d.idKind === "cpf" ? d.patient.cpf : d.idKind === "thai_id" ? d.patient.thId ?? d.patient.passport : d.patient.passport;
+  const idValue = d.idKind === "cpf" ? (d.patient.cpf ? formatCpfDigits(d.patient.cpf) : null) : d.idKind === "thai_id" ? d.patient.thId ?? d.patient.passport : d.patient.passport;
   const idKind = d.idKind === "thai_id" && !d.patient.thId && d.patient.passport ? "passport" : d.idKind;
   const created = new Date(doc.created_at);
   const issuedIso = `${created.getFullYear()}-${String(created.getMonth() + 1).padStart(2, "0")}-${String(created.getDate()).padStart(2, "0")}`;
@@ -334,7 +334,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
       },
       patientName: d.patient.name,
       // The CPF, else the passport, else "não possui" (B.4).
-      patientIdValue: d.patient.cpf || (d.patient.passport ? `${d.patient.passport}` : "não possui"),
+      patientIdValue: d.patient.cpf ? formatCpfDigits(d.patient.cpf) : (d.patient.passport ? `${d.patient.passport}` : "não possui"),
       items: f.items ?? [],
       date: `${dd}/${m}/${y}`,
       template: { primaryColor: d.template.primaryColor, logoBytes },
@@ -350,7 +350,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
     patientId: idValue ? { label: idLabel(doc.language, idKind), value: idValue } : null,
     template: { primaryColor: d.template.primaryColor, footerText: d.template.footerText, logoBytes },
     brand, signerName: d.doctor.name, signerRegistration: d.doctor.registration,
-    footer: words.footer, unsignedLine: words.unsignedCopy,
+    footer: PRINT[doc.language].footer, unsignedLine: words.unsignedCopy,
   }, fonts);
   return { ok: true, bytes };
 }
