@@ -4,7 +4,9 @@ import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 import { canonicalLocalePath, pickLocale } from "./lib/localeDetect";
-import { isLandingPath, landingDestination } from "./lib/landingRoute";
+import { isLandingPath, landingDestination, secretaryWithoutTeam } from "./lib/landingRoute";
+import { ACTING_COOKIE, ALL_PRACTICES, type MyPractice } from "./lib/actingPractice";
+import { liveFeatures } from "./lib/liveFeatures";
 
 // Automatic language guesses (browser language, country, an /en/ link) are
 // remembered for 30 days, so a wrong first guess doesn't stick for a year.
@@ -54,6 +56,37 @@ export async function middleware(req: NextRequest) {
     const segments = pathname.split("/");
     const locale = (routing.locales as readonly string[]).includes(segments[1]) ? segments[1] : "en";
     return withAuthCookies(NextResponse.redirect(new URL(`/${locale}/auth/login`, req.url)));
+  }
+  // A secretary removed from her last practice (Vitor, 6 Oct). The dashboard
+  // layout already sends her away on a full load, but a client navigation
+  // keeps the rendered layout and only runs the page, so the old shell (and
+  // tour) stayed up, or a page bounced her to the login with a live session.
+  // This runs on those navigations too. A choice of a doctor she no longer
+  // serves is dropped here as well, before any page acts for it. GET only:
+  // a server action from a stale page already fails closed in the database.
+  if (pathname.includes("/dashboard") && user && req.method === "GET") {
+    const segments = pathname.split("/");
+    const prefix = (routing.locales as readonly string[]).includes(segments[1]) ? `/${segments[1]}` : "";
+    const { data: roleRow } = await supabase
+      .from("user_roles")
+      .select("role, invited_by_professional_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (secretaryWithoutTeam(roleRow)) {
+      const res = NextResponse.redirect(new URL(`${prefix}/auth/not-connected`, req.url));
+      res.cookies.set(ACTING_COOKIE, "", { path: "/", maxAge: 0 });
+      return withAuthCookies(res);
+    }
+    const chosen = req.cookies.get(ACTING_COOKIE)?.value;
+    if (liveFeatures.multiPractice && roleRow?.role === "secretary" && chosen && chosen !== ALL_PRACTICES) {
+      const { data: practices, error } = await supabase.rpc("get_my_practices");
+      if (!error && !((practices ?? []) as MyPractice[]).some((p) => p.professional_id === chosen)) {
+        // Back to her primary: the same URL again, without the stale choice.
+        const res = NextResponse.redirect(req.nextUrl.clone());
+        res.cookies.set(ACTING_COOKIE, "", { path: "/", maxAge: 0 });
+        return withAuthCookies(res);
+      }
+    }
   }
 
   // First-visit geo-redirect. Only for paths with no locale segment at all:

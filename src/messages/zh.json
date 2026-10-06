@@ -981,8 +981,9 @@
     "needHelp": "需要帮助?"
   },
   "secretary": {
-    "notConnectedTitle": "尚未连接到诊所",
+    "notConnectedTitle": "你目前不属于任何团队。",
     "notConnectedBody": "请向与你合作的医生索取秘书邀请链接，或输入对方给你的邀请码。",
+    "joinWithCode": "使用邀请码加入",
     "codeLabel": "邀请码",
     "codeRequired": "请输入邀请码。",
     "continue": "继续",

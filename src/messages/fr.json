@@ -981,8 +981,9 @@
     "needHelp": "Besoin d'aide ?"
   },
   "secretary": {
-    "notConnectedTitle": "Pas encore connecté(e) à un cabinet",
+    "notConnectedTitle": "Vous ne faites partie d'aucune équipe pour le moment.",
     "notConnectedBody": "Demandez un lien d'invitation au cabinet où vous travaillez, ou saisissez le code que vous avez reçu.",
+    "joinWithCode": "Rejoindre avec un code d'invitation",
     "codeLabel": "Code d'invitation",
     "codeRequired": "Saisissez le code d'invitation.",
     "continue": "Continuer",

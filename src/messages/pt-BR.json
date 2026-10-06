@@ -981,8 +981,9 @@
     "lockedSettingsLink": "Configurações"
   },
   "secretary": {
-    "notConnectedTitle": "Sua conta ainda não está conectada a uma clínica",
+    "notConnectedTitle": "Você não faz parte de nenhuma equipe no momento.",
     "notConnectedBody": "Peça um link de convite para a equipe à clínica onde você trabalha, ou digite o código que você recebeu.",
+    "joinWithCode": "Entrar com um código de convite",
     "codeLabel": "Código de convite",
     "codeRequired": "Digite o código de convite.",
     "continue": "Continuar",

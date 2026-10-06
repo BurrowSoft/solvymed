@@ -981,8 +981,9 @@
     "needHelp": "Cần trợ giúp?"
   },
   "secretary": {
-    "notConnectedTitle": "Chưa được kết nối với phòng khám",
+    "notConnectedTitle": "Hiện bạn không thuộc nhóm nào.",
     "notConnectedBody": "Hãy xin bác sĩ mà bạn làm việc cùng một liên kết mời thư ký, hoặc nhập mã họ đã gửi.",
+    "joinWithCode": "Tham gia bằng mã mời",
     "codeLabel": "Mã mời",
     "codeRequired": "Vui lòng nhập mã mời.",
     "continue": "Tiếp tục",
