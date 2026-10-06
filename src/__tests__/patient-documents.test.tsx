@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
+import en from "@/messages/en.json";
 import { accessKindLabelKey } from "@/lib/accessLog";
 import { canDeleteOwn, docErrorKey, docMime, docPath, defaultTitle, localDay, type DocFolder, type PatientDocument } from "@/lib/patientDocuments";
 import { PatientTabs } from "@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/PatientDetailClient";
@@ -199,5 +200,21 @@ describe("A follow-ups (cf, 53)", () => {
     expect(screen.getByText(`${pt.patientDetail.accessKindFile} · Hemograma`)).toBeInTheDocument();
     expect(screen.getByText(`${pt.patientDetail.accessKindSharedDocument} · ${T.removedMark}`)).toBeInTheDocument();
     expect(screen.getByText(`${pt.patientDetail.accessKindFile} · ${T.removedMark}`)).toBeInTheDocument();
+  });
+});
+
+describe("Acessos in the viewer's zone (cf)", () => {
+  it("formats each row's time from its timestamp in the browser, not the server's practice-zone text", () => {
+    const at = new Date(2026, 9, 7, 23, 30).toISOString();
+    render(
+      <NextIntlClientProvider locale="en" messages={en}>
+        <PatientTabs patient={{ id: "pat", full_name: "Ana", created_at: "2026-10-01T12:00:00Z" }} records={[]} prescriptions={[]} appointments={[]} locale="en" currentUserId="doc" timeZone="Asia/Bangkok"
+          accessLog={{ rows: [{ when: "SERVER-TEXT", at, actorName: "Dra. Ana", actorRole: "professional", kind: "patient", objectRef: null }], hasMore: false }} />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: en.patientDetail.tabAccessLog }));
+    expect(screen.queryByText("SERVER-TEXT")).toBeNull();
+    expect(screen.getByText(/2026/)).toHaveTextContent(/7/);
+    expect(screen.getByText(/2026/)).toHaveTextContent(/(23:30|11:30)/);
   });
 });

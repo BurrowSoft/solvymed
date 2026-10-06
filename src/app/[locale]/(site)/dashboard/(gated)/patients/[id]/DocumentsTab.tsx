@@ -139,7 +139,9 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
     if (!hiding) return;
     if (!reason.trim()) { setError(tp("reasonRequired")); return; }
     const h = hiding;
-    if (await act(hideDocument(h.storagePath, patientId, reason), patchDoc(h.id, { hidden: { at: new Date().toISOString(), byName: null, reason: reason.trim() } }))) setHiding(null);
+    // Out of the list at once; the reload brings it back under "removed" with
+    // who hid it (an optimistic entry had no name: "por —", 53).
+    if (await act(hideDocument(h.storagePath, patientId, reason), (ds) => ds.filter((x) => x.id !== h.id))) setHiding(null);
   }
 
   async function saveRename() {
