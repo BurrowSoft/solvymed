@@ -62,7 +62,10 @@ export async function registerDocument(patientId: string, input: { path: string;
   });
   if (error) {
     // Not registered: the uploaded object would be an orphan, so it goes.
-    await me.supabase.storage.from(BUCKET).remove([input.path]);
+    // Except a path that's already registered (a repeated call, c6): that
+    // file is a document now, and stays.
+    const duplicate = error.code === "23505" || /duplicate key/i.test(error.message ?? "");
+    if (!duplicate) await me.supabase.storage.from(BUCKET).remove([input.path]);
     return { ok: false, code: docErrorKey(error.message, true) };
   }
   return { ok: true, data: data as string };
