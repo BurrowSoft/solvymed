@@ -2200,5 +2200,19 @@
     "editTitle": "Sửa địa điểm",
     "dayLocation": "Địa điểm",
     "bookingLine": "Địa điểm: {name} · {address}"
+  },
+  "patientFields": {
+    "title": "Hồ sơ bệnh nhân",
+    "hint": "Chọn thông tin cần hỏi khi thêm bệnh nhân. Họ tên và số điện thoại luôn bắt buộc. Ẩn một trường vẫn giữ dữ liệu đã lưu.",
+    "required": "Bắt buộc",
+    "optional": "Tùy chọn",
+    "hidden": "Ẩn",
+    "missing": "Vui lòng điền: {fields}",
+    "missingNote": "Thiếu thông tin bắt buộc: {fields}",
+    "hiddenBadge": "Đã ẩn trong biểu mẫu",
+    "rg": "RG",
+    "orPassport": "{id} hoặc hộ chiếu",
+    "address": "Địa chỉ",
+    "saved": "Đã lưu"
   }
 }

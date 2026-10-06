@@ -29,6 +29,8 @@ import { ColleaguesCard } from "./ColleaguesCard";
 import { RecordTemplatesCard } from "./RecordTemplatesCard";
 import { listRecordTemplates } from "./record-template-actions";
 import { serverFlag } from "@/lib/myDoctors";
+import { readPatientFieldRules } from "@/lib/patientFields";
+import { PatientFieldsCard } from "./PatientFieldsCard";
 import { shownLocations, sortLocations } from "@/lib/locations";
 import { DocumentFoldersCard } from "./DocumentFoldersCard";
 import { documentsEnabled, loadFolders } from "../(gated)/patients/documents-actions";
@@ -157,6 +159,8 @@ export default async function SettingsPage({
     supabase.rpc("get_effective_subscription", { p_user_id: user.id }),
   ]);
   // 1.8.0 F (flag 'practice_locations'): a location per working day with 2+.
+  // 1.8.0 C1: the registration rules (null before 207: no card).
+  const patientFieldRules = await readPatientFieldRules(supabase, user.id);
   const practiceLocations = (await serverFlag(supabase, "practice_locations"))
     ? shownLocations(sortLocations((await supabase.from("clinics").select("id, name, is_primary, position, created_at").eq("professional_id", user.id)).data ?? []), true)
     : [];
@@ -289,6 +293,7 @@ export default async function SettingsPage({
         )}
 
         {showTemplates && <RecordTemplatesCard initial={templates.ok ? templates.rows : []} loadFailed={!templates.ok} />}
+        {patientFieldRules && <PatientFieldsCard rules={patientFieldRules} country={practiceCountry ?? "BR"} />}
         {folders && (
           <DocumentFoldersCard
             initial={folders.ok ? folders.data.folders : []}

@@ -2200,5 +2200,19 @@
     "editTitle": "Modifier le lieu",
     "dayLocation": "Lieu",
     "bookingLine": "Lieu : {name} · {address}"
+  },
+  "patientFields": {
+    "title": "Fiche patient",
+    "hint": "Choisissez les informations demandées à l'ajout d'un patient. Le nom et le téléphone sont toujours obligatoires. Masquer un champ conserve ce qui est déjà enregistré.",
+    "required": "Obligatoire",
+    "optional": "Facultatif",
+    "hidden": "Masqué",
+    "missing": "À remplir : {fields}",
+    "missingNote": "Informations obligatoires manquantes : {fields}",
+    "hiddenBadge": "Champ masqué dans la fiche",
+    "rg": "RG",
+    "orPassport": "{id} ou passeport",
+    "address": "Adresse",
+    "saved": "Enregistré"
   }
 }

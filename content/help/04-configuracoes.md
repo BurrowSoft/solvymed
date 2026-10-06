@@ -234,3 +234,20 @@ In **Working hours**, each day has a **Location**: that day's appointments are a
 **On the website:** in **My Clinics**, each location has **Edit** (name, address, city, state and phone) and **Make primary**. In **Settings → Working hours**, choose each day's **Location**.
 `open:none`
 `requires:practice-locations-live`
+
+---
+## C16. Cadastro do paciente / Patient registration
+**pt-BR**
+Em **Configurações → Cadastro do paciente**, escolha para cada dado se ele é **Obrigatório**, **Opcional** ou **Oculto** quando você ou sua equipe cadastram um paciente. Nome e telefone são sempre obrigatórios.
+Um dado obrigatório precisa ser preenchido para salvar um paciente novo ("Preencha: …"). Ao editar, um dado obrigatório que já estava vazio não impede salvar: aparece "Faltam dados obrigatórios: …"; só não dá para apagar um dado obrigatório que estava preenchido.
+Ocultar um dado mantém o que já está salvo: na ficha do paciente ele continua visível, com "Campo oculto no cadastro".
+No Brasil, o **RG** começa oculto e o **CNS** só existe para clínicas no Brasil. Na Tailândia, o passaporte vale como documento de identidade obrigatório.
+{pending:app-1.8.0} No app também: **Configurações → Cadastro do paciente**.
+**en**
+In **Settings → Patient registration**, choose for each detail whether it's **Required**, **Optional** or **Hidden** when you or your team add a patient. Name and phone are always required.
+A required detail must be filled in to save a new patient ("Fill in: …"). When editing, a required detail that was already empty doesn't stop the save: "Missing required details: …" shows; you just can't clear a required detail that had a value.
+Hiding a detail keeps what's already saved: on the patient's page it stays visible, marked "Hidden from the form".
+In Brazil, **RG** starts hidden and **CNS** exists only for Brazilian clinics. In Thailand, a passport counts as the required ID.
+{pending:app-1.8.0} In the app too: **Settings → Patient registration**.
+`open:settings`
+`requires:patient-fields-live`

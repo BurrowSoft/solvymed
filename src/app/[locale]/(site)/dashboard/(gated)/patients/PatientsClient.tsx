@@ -11,6 +11,8 @@ import type { PatientIdKind } from "@/lib/patientIds";
 import { profileOfKind } from "@/lib/country";
 import { DateInput } from "@/components/DateInput";
 import { AddressFields } from "@/components/patient/AddressFields";
+import { usePatientFieldLabels } from "@/components/patient/usePatientFieldLabels";
+import { failOpenRules, missingRequired, ruleOf, type FieldKey, type PatientFieldRules } from "@/lib/patientFields";
 import { dateLocale, formatShortDate } from "@/lib/dateLabels";
 
 type Patient = {
@@ -70,8 +72,18 @@ function Select({ children, ...props }: React.SelectHTMLAttributes<HTMLSelectEle
   );
 }
 
-function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false }: { onSubmit: (fd: FormData) => void; pending: boolean; error: string; id?: string; idKind: PatientIdKind; addressLive?: boolean }) {
+// rules: 1.8.0 C1, the practice's registration rules (null = today's form).
+function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false, rules = null }: { onSubmit: (fd: FormData) => void; pending: boolean; error: string; id?: string; idKind: PatientIdKind; addressLive?: boolean; rules?: PatientFieldRules | null }) {
   const t = useTranslations("patients");
+  const tf = useTranslations("patientFields");
+  const labels = usePatientFieldLabels(idKind);
+  const r = rules ?? failOpenRules(idKind);
+  const show = (k: FieldKey) => ruleOf(r, k, idKind) !== "hidden";
+  const star = (k: FieldKey) => (ruleOf(r, k, idKind) === "required" ? " *" : "");
+  // Which key an identifier input belongs to: the national ID, or (Thai
+  // practices) the passport as rg_passport.
+  const idKey = (name: string): FieldKey => (idKind === "TH" && name === "passport_number" ? "rg_passport" : "national_id");
+  const [missing, setMissing] = useState("");
   const tEx = useTranslations("countryExamples");
   // CPF, Thai ID/passport or passport/ID, by the practice's country.
   const idFields = usePatientIdFields(idKind);
@@ -81,7 +93,14 @@ function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false
   const formRef = useRef<HTMLFormElement>(null);
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    onSubmit(new FormData(formRef.current!));
+    const fd = new FormData(formRef.current!);
+    // Required details first (the action checks again).
+    const values: Record<string, string> = {};
+    fd.forEach((v, k) => { if (typeof v === "string") values[k] = v; });
+    const { blocking } = missingRequired(r, values, idKind);
+    if (blocking.length) { setMissing(tf("missing", { fields: blocking.map(labels.missing).join(", ") })); return; }
+    setMissing("");
+    onSubmit(fd);
   }
   return (
     <form ref={formRef} id={id} onSubmit={handleSubmit} className="space-y-4">
@@ -92,51 +111,62 @@ function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false
           <FieldLabel>{t("fullName")} *</FieldLabel>
           <Input name="full_name" required placeholder={t("fullNamePlaceholder")} />
         </div>
-        <div>
-          <FieldLabel>{t("email")}</FieldLabel>
+        {show("email") && <div>
+          <FieldLabel>{t("email")}{star("email")}</FieldLabel>
           <Input name="email" type="email" placeholder="email@example.com" />
-        </div>
+        </div>}
         <div>
           <FieldLabel>{t("phone")}</FieldLabel>
           <Input name="phone" placeholder={phoneExample} />
         </div>
-        {idFields.map((f) => (
+        {idFields.filter((f) => show(idKey(f.name))).map((f) => (
           <div key={f.name}>
-            <FieldLabel>{f.label}</FieldLabel>
+            <FieldLabel>{f.label}{star(idKey(f.name))}</FieldLabel>
             <Input name={f.name} placeholder={f.placeholder} inputMode={f.inputMode} maxLength={f.maxLength} />
           </div>
         ))}
-        <div>
-          <FieldLabel>{t("dateOfBirth")}</FieldLabel>
+        {idKind === "BR" && show("rg_passport") && (
+          <div>
+            <FieldLabel>{tf("rg")}{star("rg_passport")}</FieldLabel>
+            <Input name="rg" maxLength={30} />
+          </div>
+        )}
+        {show("birth_date") && <div>
+          <FieldLabel>{t("dateOfBirth")}{star("birth_date")}</FieldLabel>
           <DateInput birthDate name="birth_date" className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
-        </div>
-        <div>
-          <FieldLabel>{t("sex")}</FieldLabel>
+        </div>}
+        {show("sex") && <div>
+          <FieldLabel>{t("sex")}{star("sex")}</FieldLabel>
           <Select name="sex">
             <option value="">{t("notSpecified")}</option>
             <option value="male">{t("male")}</option>
             <option value="female">{t("female")}</option>
             <option value="other">{t("other")}</option>
           </Select>
-        </div>
-        <div>
-          <FieldLabel>{t("insuranceType")}</FieldLabel>
+        </div>}
+        {show("insurance") && <div>
+          <FieldLabel>{t("insuranceType")}{star("insurance")}</FieldLabel>
           <Select name="convenio_type">
             <option value="">{t("notSpecified")}</option>
             <option value="particular">{t("private")}</option>
             <option value="health_plan">{t("healthPlan")}</option>
           </Select>
-        </div>
-        <div className="col-span-2">
-          <FieldLabel>{t("profession")}</FieldLabel>
+        </div>}
+        {show("profession") && <div className="col-span-2">
+          <FieldLabel>{t("profession")}{star("profession")}</FieldLabel>
           <Input name="profession" placeholder={t("professionPlaceholder")} />
-        </div>
-        <div className="col-span-2">
-          <FieldLabel>{t("emergencyPhone")}</FieldLabel>
+        </div>}
+        {show("emergency_contact") && <div className="col-span-2">
+          <FieldLabel>{t("emergencyPhone")}{star("emergency_contact")}</FieldLabel>
           <Input name="emergency_phone" placeholder={phoneExample} />
-        </div>
+        </div>}
       </div>
-      {addressLive && <AddressFields kind={idKind} />}
+      {addressLive && (show("address") || show("cns") || show("notes")) && (
+        <AddressFields kind={idKind}
+          show={{ address: show("address"), cns: show("cns"), notes: show("notes") }}
+          required={{ address: !!star("address"), cns: !!star("cns"), notes: !!star("notes") }} />
+      )}
+      {missing && <p role="alert" data-testid="missing-fields" className="text-sm text-red-600">{missing}</p>}
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3 pt-2">
         <button type="submit" disabled={pending} className="w-full rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
@@ -191,8 +221,10 @@ const NEW_PATIENT_FORM_ID = "new-patient-form";
 // autoOpen: the setup checklist links here with ?new=1 (first patient).
 // idKind: the practice country's patient identifier (lib/patientIds).
 // addressLive: address, CNS and Observações (138) are in the form.
-export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addressLive = false }: { locale: string; autoOpen?: boolean; idKind?: PatientIdKind; addressLive?: boolean }) {
+export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addressLive = false, fieldRules = null }: { locale: string; autoOpen?: boolean; idKind?: PatientIdKind; addressLive?: boolean; fieldRules?: PatientFieldRules | null }) {
   const t = useTranslations("patients");
+  const tf = useTranslations("patientFields");
+  const fieldLabels = usePatientFieldLabels(idKind);
   const tAddr = useTranslations("patientAddress");
   const tIds = useTranslations("patientIds");
   const tBirth = useTranslations("dateInput");
@@ -224,6 +256,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addr
         return;
       }
       if (result.code === "possible_match") { setMatches(result.matches); return; }
+      if (result.code === "missing_fields") { setError(tf("missing", { fields: result.fields.map(fieldLabels.missing).join(", ") })); return; }
       if (result.code === "already_registered") {
         setExisting(result.existing);
         setError(result.existing ? t("alreadyRegistered", { name: result.existing.full_name }) : t("alreadyRegisteredGeneric"));
@@ -315,7 +348,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addr
             {t("openPatient")}
           </Link>
         )}
-        <PatientForm id={NEW_PATIENT_FORM_ID} onSubmit={submit} pending={pending} error={error} idKind={idKind} addressLive={addressLive} />
+        <PatientForm id={NEW_PATIENT_FORM_ID} onSubmit={submit} pending={pending} error={error} idKind={idKind} addressLive={addressLive} rules={fieldRules} />
       </Dialog>
     </>
   );

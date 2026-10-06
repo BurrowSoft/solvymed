@@ -2200,5 +2200,19 @@
     "editTitle": "장소 편집",
     "dayLocation": "장소",
     "bookingLine": "장소: {name} · {address}"
+  },
+  "patientFields": {
+    "title": "환자 등록",
+    "hint": "환자를 추가할 때 받을 정보를 선택하세요. 이름과 전화번호는 항상 필수입니다. 항목을 숨겨도 이미 저장된 내용은 유지됩니다.",
+    "required": "필수",
+    "optional": "선택",
+    "hidden": "숨김",
+    "missing": "입력하세요: {fields}",
+    "missingNote": "필수 정보 누락: {fields}",
+    "hiddenBadge": "양식에서 숨김",
+    "rg": "RG",
+    "orPassport": "{id} 또는 여권",
+    "address": "주소",
+    "saved": "저장됨"
   }
 }

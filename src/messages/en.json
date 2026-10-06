@@ -2230,5 +2230,19 @@
     "editTitle": "Edit location",
     "dayLocation": "Location",
     "bookingLine": "Location: {name} · {address}"
+  },
+  "patientFields": {
+    "title": "Patient registration",
+    "hint": "Choose which details you ask for when adding a patient. Name and phone are always required. Hiding a field keeps what's already saved.",
+    "required": "Required",
+    "optional": "Optional",
+    "hidden": "Hidden",
+    "missing": "Fill in: {fields}",
+    "missingNote": "Missing required details: {fields}",
+    "hiddenBadge": "Hidden from the form",
+    "rg": "RG",
+    "orPassport": "{id} or passport",
+    "address": "Address",
+    "saved": "Saved"
   }
 }

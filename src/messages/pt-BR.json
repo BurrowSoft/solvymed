@@ -2200,5 +2200,19 @@
     "editTitle": "Editar local",
     "dayLocation": "Local",
     "bookingLine": "Local: {name} · {address}"
+  },
+  "patientFields": {
+    "title": "Cadastro do paciente",
+    "hint": "Escolha quais dados você pede ao cadastrar um paciente. Nome e telefone são sempre obrigatórios. Ocultar um campo mantém o que já está salvo.",
+    "required": "Obrigatório",
+    "optional": "Opcional",
+    "hidden": "Oculto",
+    "missing": "Preencha: {fields}",
+    "missingNote": "Faltam dados obrigatórios: {fields}",
+    "hiddenBadge": "Campo oculto no cadastro",
+    "rg": "RG",
+    "orPassport": "{id} ou passaporte",
+    "address": "Endereço",
+    "saved": "Salvo"
   }
 }

@@ -2200,5 +2200,19 @@
     "editTitle": "Editar lugar",
     "dayLocation": "Lugar",
     "bookingLine": "Lugar: {name} · {address}"
+  },
+  "patientFields": {
+    "title": "Registro del paciente",
+    "hint": "Elige qué datos pides al registrar un paciente. El nombre y el teléfono son siempre obligatorios. Ocultar un campo conserva lo ya guardado.",
+    "required": "Obligatorio",
+    "optional": "Opcional",
+    "hidden": "Oculto",
+    "missing": "Completa: {fields}",
+    "missingNote": "Faltan datos obligatorios: {fields}",
+    "hiddenBadge": "Campo oculto en el registro",
+    "rg": "RG",
+    "orPassport": "{id} o pasaporte",
+    "address": "Dirección",
+    "saved": "Guardado"
   }
 }

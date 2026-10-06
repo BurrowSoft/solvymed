@@ -26,7 +26,8 @@ describe("readAddress", () => {
     const cols = readAddress(fd({ [ADDRESS_MARKER]: "1", address_street: "  Rua A ", address_city: "", notes_admin: "x".repeat(2100), cns: "700 0000 0000 0005" }), "BR")!;
     expect(cols.address_street).toBe("Rua A");
     expect(cols.address_city).toBeNull();
-    expect(cols.address_postal_code).toBeNull();
+    // 1.8.0 C1: a field the form didn't post (hidden) isn't written at all.
+    expect(cols).not.toHaveProperty("address_postal_code");
     expect(cols.notes_admin).toHaveLength(2000);
     expect(cols.cns).toBe(VALID);
     expect(addressError(cols)).toBeNull();

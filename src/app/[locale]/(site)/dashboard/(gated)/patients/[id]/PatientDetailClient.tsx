@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useContext, useState, useTransition, useRef, useEffect } from "react";
+import { failOpenRules, missingRequired, ruleOf, type FieldKey, type PatientFieldRules } from "@/lib/patientFields";
+import { usePatientFieldLabels } from "@/components/patient/usePatientFieldLabels";
 import { MergePatientButton } from "./MergePatient";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
@@ -46,6 +48,8 @@ type Patient = {
   // Migration 110 (Thai / other-country practices); absent before it.
   th_national_id?: string | null; passport_number?: string | null;
   sex?: string; birth_date?: string; profession?: string; emergency_phone?: string;
+  // 1.8.0 C1: Brazil's RG.
+  rg?: string | null;
   convenio_type?: string; invite_code?: string; created_at: string;
   booking_blocked?: boolean;
   // Set by a server trigger on insert (migration 088); can't be forged.
@@ -100,7 +104,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, hasAppointments = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone, recordTemplates = null, documentsOn = false, medicalDocs = null }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, hasAppointments = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone, recordTemplates = null, documentsOn = false, medicalDocs = null, fieldRules = null }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -135,6 +139,8 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   // 1.8.0 B (flag 'clinical_documents', the doctor): the patient's documents
   // in "Receitas e documentos" (cf); null = the flag is off.
   medicalDocs?: { list: MedDoc[]; country: string; hasPatientId: boolean } | null;
+  // 1.8.0 C1: the practice's registration rules (null = today's form).
+  fieldRules?: PatientFieldRules | null;
 }) {
   const t = useTranslations("patientDetail");
   const td = useTranslations("docs");
@@ -175,7 +181,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         ))}
       </div>
 
-      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} hasAppointments={hasAppointments} canMerge={canMerge} mergeWith={mergeWith} idKind={idKind} addressLive={addressLive} />}
+      {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} hasAppointments={hasAppointments} canMerge={canMerge} mergeWith={mergeWith} idKind={idKind} addressLive={addressLive} fieldRules={fieldRules} />}
       {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} templates={recordTemplates ?? []} />}
       {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} patientName={patient.full_name} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} medicalDocs={medicalDocs} />}
       {(tab === "exams" || tab === "files") && !isSecretary && (
@@ -319,8 +325,19 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
   );
 }
 
-function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointments = false, canMerge = false, mergeWith = null, idKind, addressLive = false }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; hasAppointments?: boolean; canMerge?: boolean; mergeWith?: string | null; idKind: PatientIdKind; addressLive?: boolean }) {
+function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointments = false, canMerge = false, mergeWith = null, idKind, addressLive = false, fieldRules = null }: { patient: Patient; locale: string; isArchived: boolean; canDelete: boolean; hasAppointments?: boolean; canMerge?: boolean; mergeWith?: string | null; idKind: PatientIdKind; addressLive?: boolean; fieldRules?: PatientFieldRules | null }) {
   const t = useTranslations("patientDetail");
+  // 1.8.0 C1: the practice's registration rules (null = today's form).
+  const tf = useTranslations("patientFields");
+  const fieldLabels = usePatientFieldLabels(idKind);
+  const rules = fieldRules ?? failOpenRules(idKind);
+  const shownKey = (k: FieldKey) => ruleOf(rules, k, idKind) !== "hidden";
+  const star = (k: FieldKey) => (ruleOf(rules, k, idKind) === "required" ? " *" : "");
+  const idKey = (name: string): FieldKey => (idKind === "TH" && name === "passport_number" ? "rg_passport" : "national_id");
+  const stored = patient as unknown as Record<string, string | null>;
+  // Required details already empty: a note, never a block (cf).
+  const missingNow = missingRequired(rules, stored, idKind, stored).note;
+  const hl = (k: FieldKey) => (missingNow.includes(k) ? "border-amber-400 bg-amber-50" : "");
   const tIds = useTranslations("patientIds");
   const tBirth = useTranslations("dateInput");
   const tAddr = useTranslations("patientAddress");
@@ -383,8 +400,16 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
     e.preventDefault();
     const formData = new FormData(formRef.current!);
     setError("");
+    const typed: Record<string, string> = {};
+    formData.forEach((v, k) => { if (typeof v === "string") typed[k] = v; });
+    const { blocking } = missingRequired(rules, { ...stored, ...typed }, idKind, stored);
+    if (blocking.length) { setError(tf("missing", { fields: blocking.map(fieldLabels.missing).join(", ") })); return; }
     startTransition(async () => {
       const result = await updatePatient(patient.id, formData);
+      if (result?.error === "missing_fields" && "fields" in result && Array.isArray(result.fields)) {
+        setError(tf("missing", { fields: (result.fields as FieldKey[]).map(fieldLabels.missing).join(", ") }));
+        return;
+      }
       if (result?.error) {
         // The fields shown were for another country: reload them.
         if (result.error === "id_kind_mismatch") router.refresh();
@@ -421,19 +446,22 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
     ? Math.floor((Date.now() - new Date(patient.birth_date).getTime()) / (365.25 * 24 * 3600 * 1000))
     : null;
 
-  const fields = [
-    { label: t("email"), value: patient.email },
+  // key: which registration rule a value follows (a hidden one with a value
+  // shows here read-only, marked "Hidden from the form").
+  const fields: { label: string; value: string | null | undefined; key?: FieldKey }[] = [
+    { label: t("email"), value: patient.email, key: "email" },
     { label: t("phone"), value: patient.phone },
-    ...idFields.map((f) => ({ label: f.label, value: f.value || null })),
-    { label: t("dateOfBirth"), value: patient.birth_date ? `${formatShortDate(locale, patient.birth_date)}${age ? ` (${t("age", { n: age })})` : ""}` : null },
-    { label: t("sex"), value: patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null },
-    { label: t("profession"), value: patient.profession },
-    { label: t("emergencyPhone"), value: patient.emergency_phone },
+    ...idFields.map((f) => ({ label: f.label, value: f.value || null, key: idKey(f.name) })),
+    ...(idKind === "BR" ? [{ label: tf("rg"), value: patient.rg ?? null, key: "rg_passport" as FieldKey }] : []),
+    { label: t("dateOfBirth"), value: patient.birth_date ? `${formatShortDate(locale, patient.birth_date)}${age ? ` (${t("age", { n: age })})` : ""}` : null, key: "birth_date" },
+    { label: t("sex"), value: patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null, key: "sex" },
+    { label: t("profession"), value: patient.profession, key: "profession" },
+    { label: t("emergencyPhone"), value: patient.emergency_phone, key: "emergency_contact" },
     ...(addressLive ? [
-      { label: tAddr("cns"), value: profileOfKind(idKind).healthCard === "cns" ? patient.cns ?? null : null },
-      { label: tAddr("notes"), value: patient.notes_admin ?? null },
+      { label: tAddr("cns"), value: profileOfKind(idKind).healthCard === "cns" ? patient.cns ?? null : null, key: "cns" as FieldKey },
+      { label: tAddr("notes"), value: patient.notes_admin ?? null, key: "notes" as FieldKey },
     ] : []),
-    { label: t("insurance"), value: patient.convenio_type === "health_plan" ? t("healthPlan") : patient.convenio_type === "particular" ? t("privateInsurance") : null },
+    { label: t("insurance"), value: patient.convenio_type === "health_plan" ? t("healthPlan") : patient.convenio_type === "particular" ? t("privateInsurance") : null, key: "insurance" },
     { label: t("patientSince"), value: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "long", day: "numeric", timeZone }) },
     // Only when someone other than the doctor (i.e. a secretary) added
     // the patient.
@@ -498,10 +526,11 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
           </div>
         )}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {fields.map(({ label, value }) => value ? (
+          {fields.map(({ label, value, key }) => value ? (
             <div key={label} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
               <p className="mt-1 text-sm font-medium text-slate-900">{value}</p>
+              {key && !shownKey(key) && <p data-testid="hidden-field-badge" className="mt-1 text-xs text-slate-500">{tf("hiddenBadge")}</p>}
             </div>
           ) : null)}
         </div>
@@ -567,51 +596,64 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
           <FieldLabel>{t("fullName")} *</FieldLabel>
           <Input name="full_name" required defaultValue={patient.full_name} />
         </div>
-        <div>
-          <FieldLabel>{t("email")}</FieldLabel>
-          <Input name="email" type="email" defaultValue={patient.email ?? ""} />
-        </div>
+        {shownKey("email") && <div>
+          <FieldLabel>{t("email")}{star("email")}</FieldLabel>
+          <Input name="email" type="email" defaultValue={patient.email ?? ""} className={hl("email")} />
+        </div>}
         <div>
           <FieldLabel>{t("phone")}</FieldLabel>
           <Input name="phone" defaultValue={patient.phone ?? ""} />
         </div>
-        {idFields.map((f) => (
+        {idFields.filter((f) => shownKey(idKey(f.name))).map((f) => (
           <div key={f.name}>
-            <FieldLabel>{f.label}</FieldLabel>
-            <Input name={f.name} defaultValue={f.value} placeholder={f.placeholder} inputMode={f.inputMode} maxLength={f.maxLength} />
+            <FieldLabel>{f.label}{star(idKey(f.name))}</FieldLabel>
+            <Input name={f.name} defaultValue={f.value} placeholder={f.placeholder} inputMode={f.inputMode} maxLength={f.maxLength} className={hl(idKey(f.name))} />
           </div>
         ))}
-        <div>
-          <FieldLabel>{t("dateOfBirth")}</FieldLabel>
-          <DateInput birthDate name="birth_date" defaultValue={patient.birth_date ?? ""} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
-        </div>
-        <div>
-          <FieldLabel>{t("sex")}</FieldLabel>
+        {idKind === "BR" && shownKey("rg_passport") && (
+          <div>
+            <FieldLabel>{tf("rg")}{star("rg_passport")}</FieldLabel>
+            <Input name="rg" defaultValue={patient.rg ?? ""} maxLength={30} className={hl("rg_passport")} />
+          </div>
+        )}
+        {shownKey("birth_date") && <div>
+          <FieldLabel>{t("dateOfBirth")}{star("birth_date")}</FieldLabel>
+          <DateInput birthDate name="birth_date" defaultValue={patient.birth_date ?? ""} className={`w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 ${hl("birth_date")}`} />
+        </div>}
+        {shownKey("sex") && <div>
+          <FieldLabel>{t("sex")}{star("sex")}</FieldLabel>
           <Select name="sex" defaultValue={patient.sex ?? ""}>
             <option value="">{t("notSpecified")}</option>
             <option value="male">{t("male")}</option>
             <option value="female">{t("female")}</option>
             <option value="other">{t("other")}</option>
           </Select>
-        </div>
-        <div>
-          <FieldLabel>{t("insurance")}</FieldLabel>
+        </div>}
+        {shownKey("insurance") && <div>
+          <FieldLabel>{t("insurance")}{star("insurance")}</FieldLabel>
           <Select name="convenio_type" defaultValue={patient.convenio_type ?? ""}>
             <option value="">{t("notSpecified")}</option>
             <option value="particular">{t("privateInsurance")}</option>
             <option value="health_plan">{t("healthPlan")}</option>
           </Select>
-        </div>
-        <div className="col-span-2">
-          <FieldLabel>{t("profession")}</FieldLabel>
-          <Input name="profession" defaultValue={patient.profession ?? ""} />
-        </div>
-        <div className="col-span-2">
-          <FieldLabel>{t("emergencyPhone")}</FieldLabel>
-          <Input name="emergency_phone" defaultValue={patient.emergency_phone ?? ""} />
-        </div>
+        </div>}
+        {shownKey("profession") && <div className="col-span-2">
+          <FieldLabel>{t("profession")}{star("profession")}</FieldLabel>
+          <Input name="profession" defaultValue={patient.profession ?? ""} className={hl("profession")} />
+        </div>}
+        {shownKey("emergency_contact") && <div className="col-span-2">
+          <FieldLabel>{t("emergencyPhone")}{star("emergency_contact")}</FieldLabel>
+          <Input name="emergency_phone" defaultValue={patient.emergency_phone ?? ""} className={hl("emergency_contact")} />
+        </div>}
       </div>
-      {addressLive && <AddressFields kind={idKind} values={patient} />}
+      {addressLive && (shownKey("address") || shownKey("cns") || shownKey("notes")) && (
+        <AddressFields kind={idKind} values={patient}
+          show={{ address: shownKey("address"), cns: shownKey("cns"), notes: shownKey("notes") }}
+          required={{ address: !!star("address"), cns: !!star("cns"), notes: !!star("notes") }} />
+      )}
+      {missingNow.length > 0 && (
+        <p data-testid="missing-note" className="rounded-xl bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800">{tf("missingNote", { fields: missingNow.map(fieldLabels.missing).join(", ") })}</p>
+      )}
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-3 pt-2">
         <button type="button" onClick={() => setEditing(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>

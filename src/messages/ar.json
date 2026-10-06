@@ -2200,5 +2200,19 @@
     "editTitle": "تعديل المكان",
     "dayLocation": "المكان",
     "bookingLine": "المكان: {name} · {address}"
+  },
+  "patientFields": {
+    "title": "تسجيل المريض",
+    "hint": "اختر البيانات التي تطلبها عند إضافة مريض. الاسم والهاتف مطلوبان دائمًا. إخفاء حقل يحتفظ بما حُفظ مسبقًا.",
+    "required": "مطلوب",
+    "optional": "اختياري",
+    "hidden": "مخفي",
+    "missing": "يُرجى تعبئة: {fields}",
+    "missingNote": "بيانات مطلوبة ناقصة: {fields}",
+    "hiddenBadge": "مخفي في النموذج",
+    "rg": "RG",
+    "orPassport": "{id} أو جواز السفر",
+    "address": "العنوان",
+    "saved": "تم الحفظ"
   }
 }

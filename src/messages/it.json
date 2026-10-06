@@ -2200,5 +2200,19 @@
     "editTitle": "Modifica sede",
     "dayLocation": "Sede",
     "bookingLine": "Sede: {name} · {address}"
+  },
+  "patientFields": {
+    "title": "Scheda paziente",
+    "hint": "Scegli quali dati chiedere quando aggiungi un paziente. Nome e telefono sono sempre obbligatori. Nascondere un campo mantiene ciò che è già salvato.",
+    "required": "Obbligatorio",
+    "optional": "Facoltativo",
+    "hidden": "Nascosto",
+    "missing": "Compila: {fields}",
+    "missingNote": "Dati obbligatori mancanti: {fields}",
+    "hiddenBadge": "Campo nascosto nella scheda",
+    "rg": "RG",
+    "orPassport": "{id} o passaporto",
+    "address": "Indirizzo",
+    "saved": "Salvato"
   }
 }

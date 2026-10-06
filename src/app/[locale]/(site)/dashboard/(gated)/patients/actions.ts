@@ -19,6 +19,7 @@ import { mergeSupported } from "@/lib/mergeProbe";
 import { conditionMet } from "@/lib/conditions";
 import { inviteErrorCode, type InviteActionCode } from "@/lib/invitedPatients";
 import { addressError, readAddress } from "@/lib/patientAddress";
+import { inputsOf, fieldsFor, missingRequired, readPatientFieldRules, type FieldKey } from "@/lib/patientFields";
 import { MERGE_ADDRESS_KEYS, MERGE_ERRORS, MERGE_FIELD_KEYS, mergeColumns, type MergeErrorCode, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
 
 const UUIDISH_MERGE = /^[0-9a-f-]{8,64}$/i;
@@ -34,7 +35,9 @@ export type CreatePatientResult =
   // existing" or "Create anyway" (resubmits with force=1).
   | { error: string; code: "possible_match"; matches: PatientMatch[] }
   // A real duplicate (unique CPF or email). Nothing was saved.
-  | { error: string; code: "already_registered"; existing: { id: string; full_name: string } | null };
+  | { error: string; code: "already_registered"; existing: { id: string; full_name: string } | null }
+  // 1.8.0 C1: required details left empty (the practice's rules, 207).
+  | { error: string; code: "missing_fields"; fields: FieldKey[] };
 
 export async function createPatient(formData: FormData): Promise<CreatePatientResult> {
   const supabase = await createClient();
@@ -66,6 +69,13 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
   const address = conditionMet("patient-address-live") ? readAddress(formData, idKind) : null;
   if (addressError(address)) return { error: "Invalid CNS", code: "invalid_cns" };
   const force = formData.get("force") === "1";
+
+  // 1.8.0 C1: the practice's required details (no rules = today's form).
+  const fieldRules = await readPatientFieldRules(supabase, effectiveProfId);
+  if (fieldRules) {
+    const { blocking } = missingRequired(fieldRules, formValues(formData), country.country);
+    if (blocking.length) return { error: "Missing required details", code: "missing_fields", fields: blocking };
+  }
 
   // Email must be unique per doctor.
   if (email) {
@@ -108,6 +118,8 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
     profession: (formData.get("profession") as string)?.trim() || null,
     emergency_phone: (formData.get("emergency_phone") as string)?.trim() || null,
     convenio_type: (formData.get("convenio_type") as string) || null,
+    // 1.8.0 C1: Brazil's RG, when the practice asks for it.
+    ...(formData.has("rg") ? { rg: (formData.get("rg") as string)?.trim().slice(0, 30) || null } : {}),
     ...(address ?? {}),
   }).select("id").single();
 
@@ -179,16 +191,32 @@ export async function updatePatient(id: string, formData: FormData) {
   const addrError = addressError(address);
   if (addrError) return { error: addrError };
 
+  // 1.8.0 C1: a required detail that had a value can't be cleared; one
+  // already empty doesn't block (the form shows a note instead, cf).
+  const fieldRules = await readPatientFieldRules(supabase, effectiveProfId);
+  if (fieldRules) {
+    const cols = [...new Set(fieldsFor(country.country).flatMap((k) => inputsOf(k, country.country)).concat("passport_number"))];
+    const { data: before } = await supabase.from("patients").select(cols.join(", ")).eq("id", id).eq("professional_id", effectiveProfId).maybeSingle();
+    if (before) {
+      const { blocking } = missingRequired(fieldRules, { ...(before as unknown as Record<string, string | null>), ...formValues(formData) }, country.country, before as unknown as Record<string, string | null>);
+      if (blocking.length) return { error: "missing_fields", fields: blocking };
+    }
+  }
+
+  // Only what the form showed: a hidden field keeps what's saved (C1).
+  const shown = (name: string) => formData.has(name);
+  const idCols = Object.fromEntries(Object.entries(ids).filter(([k]) => shown(k)));
   const { error } = await supabase.from("patients").update({
     full_name: fullName,
-    email: (formData.get("email") as string)?.trim().toLowerCase() || null,
+    ...(shown("email") ? { email: (formData.get("email") as string)?.trim().toLowerCase() || null } : {}),
     phone: (formData.get("phone") as string)?.trim() || null,
-    ...ids,
-    sex: (formData.get("sex") as string) || null,
-    birth_date: (formData.get("birth_date") as string) || null,
-    profession: (formData.get("profession") as string)?.trim() || null,
-    emergency_phone: (formData.get("emergency_phone") as string)?.trim() || null,
-    convenio_type: (formData.get("convenio_type") as string) || null,
+    ...idCols,
+    ...(shown("sex") ? { sex: (formData.get("sex") as string) || null } : {}),
+    ...(shown("birth_date") ? { birth_date: (formData.get("birth_date") as string) || null } : {}),
+    ...(shown("profession") ? { profession: (formData.get("profession") as string)?.trim() || null } : {}),
+    ...(shown("emergency_phone") ? { emergency_phone: (formData.get("emergency_phone") as string)?.trim() || null } : {}),
+    ...(shown("convenio_type") ? { convenio_type: (formData.get("convenio_type") as string) || null } : {}),
+    ...(shown("rg") ? { rg: (formData.get("rg") as string)?.trim().slice(0, 30) || null } : {}),
     ...(address ?? {}),
   }).eq("id", id).eq("professional_id", effectiveProfId);
 
@@ -659,4 +687,11 @@ async function invitedPatientRpc(fn: "keep_invited_patient" | "remove_invited_pa
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/patients");
   return { ok: true };
+}
+
+// The form's values by input name (only the inputs it showed).
+function formValues(formData: FormData): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [k, v] of formData.entries()) if (typeof v === "string") out[k] = v;
+  return out;
 }

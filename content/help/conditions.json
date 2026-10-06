@@ -183,6 +183,10 @@
     "met": false,
     "what": "1.8.0 F is live: migration 200 applied, server_flags.practice_locations on, the app build with mobile #400 RELEASED and the website's location screens (My Clinics edit / Make primary, a location per working day, the agenda, new appointment, booking page and documents) live. Gates Help C15 and the App Map's location rules."
   },
+  "patient-fields-live": {
+    "met": false,
+    "what": "1.8.0 C1 is live on the website: migration 207 (professionals.patient_fields, get_patient_fields / set_patient_fields) applied on production with the web's Settings card and forms merged. Gates Help C16 and the App Map's registration-rules rule; the app's half also needs app-1.8.0."
+  },
   "clinical-documents-live": {
     "met": false,
     "what": "1.8.0 B is live: migration 189 applied, server_flags.clinical_documents on, the app build with the document templates RELEASED and the website's document screens live, and the privacy text that names medical certificates, declarations and exam requests among clinical records live with its PRIVACY_VERSION bump (2026-10-15; mobile 191 accepts it first). Gates those privacy words and the B Help / App Map lines."

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { readPatientFieldRules } from "@/lib/patientFields";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
@@ -50,6 +51,8 @@ export default async function PatientsPage({
   const [from, to] = pageRange(page);
   // The practice country's patient ID (CPF / Thai ID + passport / passport).
   const idKind = patientIdKind(await getPracticeCountry(supabase, user.id, effectiveProfId));
+  // 1.8.0 C1: the practice's registration rules (null before 207: today's form).
+  const fieldRules = effectiveProfId ? await readPatientFieldRules(supabase, effectiveProfId) : null;
   const filter = patientSearchFilter(q, idKind);
 
   // The import (130/131): its button for the doctor, and the archived
@@ -148,7 +151,7 @@ export default async function PatientsPage({
                 {t("importButton")}
               </Link>
             )}
-            <NewPatientButton locale={locale} autoOpen={sp.new === "1"} idKind={idKind} addressLive={conditionMet("patient-address-live")} />
+            <NewPatientButton locale={locale} autoOpen={sp.new === "1"} idKind={idKind} addressLive={conditionMet("patient-address-live")} fieldRules={fieldRules} />
           </div>
         )}
       </div>

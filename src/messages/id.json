@@ -2200,5 +2200,19 @@
     "editTitle": "Ubah lokasi",
     "dayLocation": "Lokasi",
     "bookingLine": "Lokasi: {name} · {address}"
+  },
+  "patientFields": {
+    "title": "Data pasien",
+    "hint": "Pilih data yang diminta saat menambah pasien. Nama dan telepon selalu wajib. Menyembunyikan kolom tetap menyimpan data yang sudah ada.",
+    "required": "Wajib",
+    "optional": "Opsional",
+    "hidden": "Tersembunyi",
+    "missing": "Isi: {fields}",
+    "missingNote": "Data wajib belum lengkap: {fields}",
+    "hiddenBadge": "Tersembunyi di formulir",
+    "rg": "RG",
+    "orPassport": "{id} atau paspor",
+    "address": "Alamat",
+    "saved": "Tersimpan"
   }
 }
