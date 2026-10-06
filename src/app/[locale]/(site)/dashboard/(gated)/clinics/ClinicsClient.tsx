@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import { addClinic, deleteClinic, locateClinicCity, updateClinicLocation } from "./actions";
+import { addClinic, deleteClinic, locateClinicCity, makePrimaryClinic, updateClinic, updateClinicLocation } from "./actions";
 
 // Leaflet needs the browser, and the tiles should load only when a doctor
 // opens the pin dialog: loaded on demand, never on the server.
@@ -23,6 +23,8 @@ type Clinic = {
   phone?: string | null;
   lat?: number | null;
   lng?: number | null;
+  // 1.8.0 F (migration 200): the default location.
+  is_primary?: boolean | null;
 };
 
 const ERROR_CODE_KEY: Record<string, string> = {
@@ -35,8 +37,11 @@ function errorMessage(t: (key: string) => string, code: string | undefined): str
 }
 
 // phoneExample: the practice country's (lib/country); null = the neutral text.
-export function ClinicsClient({ clinics: initial, phoneExample = null }: { clinics: Clinic[]; phoneExample?: string | null }) {
+// locationsOn: 1.8.0 F (flag 'practice_locations'): edit, the primary badge,
+// "Make primary", and the primary can't be deleted while others remain.
+export function ClinicsClient({ clinics: initial, phoneExample = null, locationsOn = false }: { clinics: Clinic[]; phoneExample?: string | null; locationsOn?: boolean }) {
   const t = useTranslations("clinics");
+  const tl = useTranslations("locations");
   const tEx = useTranslations("countryExamples");
   const router = useRouter();
   const [clinics, setClinics] = useState(initial);
@@ -117,7 +122,40 @@ export function ClinicsClient({ clinics: initial, phoneExample = null }: { clini
     });
   }
 
+  // 1.8.0 F: editing a location's details, and the default location.
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editError, setEditError] = useState("");
+  const several = locationsOn && clinics.length >= 2;
+
+  function handleEdit(id: string, formData: FormData) {
+    setEditError("");
+    startTransition(async () => {
+      const result = await updateClinic(id, formData);
+      if (result.error) {
+        setEditError(errorMessage(t, result.code));
+        return;
+      }
+      setEditingId(null);
+      router.refresh();
+    });
+  }
+
+  function handleMakePrimary(id: string) {
+    startTransition(async () => {
+      const result = await makePrimaryClinic(id);
+      if (!result.error) {
+        setClinics((prev) => prev.map((c) => ({ ...c, is_primary: c.id === id })).sort((a, b) => Number(!!b.is_primary) - Number(!!a.is_primary)));
+        router.refresh();
+      }
+    });
+  }
+
   function handleDelete(id: string, name: string) {
+    // The primary goes last: the doctor makes another one primary first.
+    if (several && clinics.find((c) => c.id === id)?.is_primary) {
+      window.alert(tl("deletePrimary"));
+      return;
+    }
     if (!window.confirm(t("deleteConfirm", { name }))) return;
     setDeletingId(id);
     startTransition(async () => {
@@ -229,8 +267,13 @@ export function ClinicsClient({ clinics: initial, phoneExample = null }: { clini
         {clinics.map((clinic) => (
           <div key={clinic.id} className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 p-5">
             <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <h3 className="font-bold text-slate-900">{clinic.name}</h3>
+              <div className="min-w-0 flex-1">
+                <h3 className="flex flex-wrap items-center gap-2 font-bold text-slate-900">
+                  {clinic.name}
+                  {several && clinic.is_primary && (
+                    <span data-testid="location-primary" className="rounded-full bg-teal-50 px-2 py-0.5 text-xs font-semibold text-teal-700">{tl("primary")}</span>
+                  )}
+                </h3>
                 <p className="text-sm text-slate-500 mt-0.5">
                   {[clinic.address, clinic.city, clinic.state, clinic.country].filter(Boolean).join(", ") || t("noAddress")}
                 </p>
@@ -262,7 +305,48 @@ export function ClinicsClient({ clinics: initial, phoneExample = null }: { clini
                   >
                     {t("adjustPin")}
                   </button>
+                  {locationsOn && (
+                    <button type="button" onClick={() => { setEditingId(clinic.id); setEditError(""); }} className="text-xs font-semibold text-teal-700 underline underline-offset-2 hover:text-teal-800">
+                      {tl("edit")}
+                    </button>
+                  )}
+                  {several && !clinic.is_primary && (
+                    <button type="button" disabled={isPending} onClick={() => handleMakePrimary(clinic.id)} className="text-xs font-semibold text-teal-700 underline underline-offset-2 hover:text-teal-800 disabled:opacity-50">
+                      {tl("makePrimary")}
+                    </button>
+                  )}
                 </div>
+                {editingId === clinic.id && (
+                  <form action={(fd) => handleEdit(clinic.id, fd)} aria-label={tl("editTitle")} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {editError && <div className="sm:col-span-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600">{editError}</div>}
+                    <div className="sm:col-span-2">
+                      <label className="mb-1 block text-sm font-semibold text-slate-700">{t("nameLabel")} <span className="text-red-400">*</span></label>
+                      <input name="name" required defaultValue={clinic.name} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="mb-1 block text-sm font-semibold text-slate-700">{t("addressLabel")}</label>
+                      <input name="address" defaultValue={clinic.address ?? ""} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-sm font-semibold text-slate-700">{t("cityLabel")}</label>
+                      <input name="city" defaultValue={clinic.city ?? ""} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-sm font-semibold text-slate-700">{t("stateLabel")}</label>
+                      <input name="state" defaultValue={clinic.state ?? ""} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-sm font-semibold text-slate-700">{t("phoneLabel")}</label>
+                      <input name="phone" type="tel" defaultValue={clinic.phone ?? ""} placeholder={phoneExample ?? tEx("phone")} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
+                    </div>
+                    <div className="sm:col-span-2 flex items-center gap-3">
+                      <button type="submit" disabled={isPending} className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
+                        {isPending ? t("saving") : t("save")}
+                      </button>
+                      <button type="button" onClick={() => setEditingId(null)} className="text-sm text-slate-500 hover:text-slate-700 transition">{t("cancel")}</button>
+                    </div>
+                  </form>
+                )}
               </div>
               <button
                 onClick={() => handleDelete(clinic.id, clinic.name)}

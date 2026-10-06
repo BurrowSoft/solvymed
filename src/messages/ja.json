@@ -2190,5 +2190,15 @@
     "ok": "OK",
     "close": "閉じる",
     "failed": "保存できませんでした。もう一度お試しください。"
+  },
+  "locations": {
+    "title": "診療場所",
+    "primary": "メイン",
+    "makePrimary": "メインにする",
+    "deletePrimary": "先に別の場所をメインにしてください。",
+    "edit": "編集",
+    "editTitle": "場所を編集",
+    "dayLocation": "場所",
+    "bookingLine": "場所: {name} · {address}"
   }
 }

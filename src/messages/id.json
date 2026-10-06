@@ -2190,5 +2190,15 @@
     "ok": "OK",
     "close": "Tutup",
     "failed": "Gagal menyimpan. Silakan coba lagi."
+  },
+  "locations": {
+    "title": "Lokasi praktik",
+    "primary": "Utama",
+    "makePrimary": "Jadikan utama",
+    "deletePrimary": "Jadikan lokasi lain sebagai utama terlebih dahulu.",
+    "edit": "Ubah",
+    "editTitle": "Ubah lokasi",
+    "dayLocation": "Lokasi",
+    "bookingLine": "Lokasi: {name} · {address}"
   }
 }

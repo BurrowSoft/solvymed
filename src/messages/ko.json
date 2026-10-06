@@ -2190,5 +2190,15 @@
     "ok": "확인",
     "close": "닫기",
     "failed": "저장하지 못했습니다. 다시 시도하세요."
+  },
+  "locations": {
+    "title": "진료 장소",
+    "primary": "기본",
+    "makePrimary": "기본으로 설정",
+    "deletePrimary": "먼저 다른 장소를 기본으로 설정하세요.",
+    "edit": "편집",
+    "editTitle": "장소 편집",
+    "dayLocation": "장소",
+    "bookingLine": "장소: {name} · {address}"
   }
 }

@@ -2190,5 +2190,15 @@
     "ok": "OK",
     "close": "Fermer",
     "failed": "Enregistrement impossible. Veuillez réessayer."
+  },
+  "locations": {
+    "title": "Lieux de consultation",
+    "primary": "Principal",
+    "makePrimary": "Définir comme principal",
+    "deletePrimary": "Définissez d'abord un autre lieu comme principal.",
+    "edit": "Modifier",
+    "editTitle": "Modifier le lieu",
+    "dayLocation": "Lieu",
+    "bookingLine": "Lieu : {name} · {address}"
   }
 }

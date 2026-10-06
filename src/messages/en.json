@@ -2220,5 +2220,15 @@
     "ok": "OK",
     "close": "Close",
     "failed": "Couldn't save. Please try again."
+  },
+  "locations": {
+    "title": "Practice locations",
+    "primary": "Primary",
+    "makePrimary": "Make primary",
+    "deletePrimary": "Make another location primary first.",
+    "edit": "Edit",
+    "editTitle": "Edit location",
+    "dayLocation": "Location",
+    "bookingLine": "Location: {name} · {address}"
   }
 }

@@ -310,7 +310,8 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
 
 /* ─── Working hours form ────────────────────────────────────────── */
 type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
-type WorkingHours = Record<DayKey, { enabled: boolean; start: string; end: string }>;
+// location_id: 1.8.0 F (migration 200), the day's practice location (unset = the primary).
+type WorkingHours = Record<DayKey, { enabled: boolean; start: string; end: string; location_id?: string | null }>;
 
 const DAY_KEYS: DayKey[] = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
@@ -326,8 +327,13 @@ export function initialHours(saved: Partial<WorkingHours> | null | undefined, co
   return days;
 }
 
-export function WorkingHoursForm({ workingHours, country }: { workingHours: WorkingHours | null; country?: string | null }) {
+// locations: 1.8.0 F (flag 'practice_locations', 2+ locations): a location per
+// day, defaulting to the primary. Empty = the form posts no location at all,
+// and the database keeps each day's (migration 200).
+export function WorkingHoursForm({ workingHours, country, locations = [] }: { workingHours: WorkingHours | null; country?: string | null; locations?: { id: string; name: string; is_primary?: boolean | null }[] }) {
   const t = useTranslations("settings");
+  const tl = useTranslations("locations");
+  const primaryId = locations.find((l) => l.is_primary)?.id ?? locations[0]?.id ?? "";
   const DAYS: { key: DayKey; label: string }[] = [
     { key: "mon", label: t("mon") },
     { key: "tue", label: t("tue") },
@@ -390,6 +396,19 @@ export function WorkingHoursForm({ workingHours, country }: { workingHours: Work
                     className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none sm:max-w-[9rem]"
                   />
                 </div>
+                {locations.length >= 2 && (
+                  <label className={`flex min-w-0 max-w-full basis-full items-center gap-2 sm:basis-auto ${enabled[d.key] ? "" : "opacity-30 pointer-events-none"}`}>
+                    <span className="shrink-0 text-xs font-semibold text-slate-500">{tl("dayLocation")}</span>
+                    <select
+                      name={`${d.key}_location`}
+                      aria-label={`${tl("dayLocation")} · ${d.label}`}
+                      defaultValue={h.location_id && locations.some((l) => l.id === h.location_id) ? h.location_id : primaryId}
+                      className="min-w-0 max-w-[14rem] rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
+                    >
+                      {locations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+                    </select>
+                  </label>
+                )}
               </div>
             );
           })}

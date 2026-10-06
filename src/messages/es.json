@@ -2190,5 +2190,15 @@
     "ok": "OK",
     "close": "Cerrar",
     "failed": "No se pudo guardar. Inténtalo de nuevo."
+  },
+  "locations": {
+    "title": "Lugares de atención",
+    "primary": "Principal",
+    "makePrimary": "Hacer principal",
+    "deletePrimary": "Primero define otro lugar como principal.",
+    "edit": "Editar",
+    "editTitle": "Editar lugar",
+    "dayLocation": "Lugar",
+    "bookingLine": "Lugar: {name} · {address}"
   }
 }

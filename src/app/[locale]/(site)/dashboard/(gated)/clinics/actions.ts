@@ -89,6 +89,63 @@ export async function addClinic(formData: FormData) {
   return { success: true };
 }
 
+// 1.8.0 F (migration 200): edit a location's details. Doctor-only, own
+// clinics. A changed address keeps a supplied pin or clears it (120); here
+// the pin is looked up again, as when adding.
+export async function updateClinic(clinicId: string, formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized", code: "generic" };
+  if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinics", code: "generic" };
+
+  const name = (formData.get("name") as string)?.trim();
+  if (!name) return { error: "Clinic name is required", code: "name_required" };
+  const address = (formData.get("address") as string)?.trim() || null;
+  const city    = (formData.get("city")    as string)?.trim() || null;
+  const state   = (formData.get("state")   as string)?.trim() || null;
+  const phone   = (formData.get("phone")   as string)?.trim() || null;
+
+  const { data: current } = await supabase
+    .from("clinics")
+    .select("address, city, country")
+    .eq("id", clinicId)
+    .eq("professional_id", user.id)
+    .maybeSingle();
+  if (!current) return { error: "Clinic not found", code: "generic" };
+  const moved = (current.address ?? null) !== address || (current.city ?? null) !== city;
+  const coords = moved && (address || city) ? await geocode(address ?? "", city ?? "", current.country ?? "") : null;
+
+  const { data, error } = await supabase
+    .from("clinics")
+    .update({ name, address, city, state, phone, ...(moved ? { lat: coords?.lat ?? null, lng: coords?.lng ?? null } : {}) })
+    .eq("id", clinicId)
+    .eq("professional_id", user.id)
+    .select("id");
+  if (error) return { error: error.message, code: "generic" };
+  if (!data?.length) return { error: "Clinic not found", code: "generic" };
+  revalidatePath("/dashboard/clinics");
+  return { success: true };
+}
+
+// 1.8.0 F: the default location. The database demotes the old one (200's
+// trg_clinics_primary). Doctor-only, own clinics.
+export async function makePrimaryClinic(clinicId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized", code: "generic" };
+  if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "Only the doctor can manage clinics", code: "generic" };
+  const { data, error } = await supabase
+    .from("clinics")
+    .update({ is_primary: true })
+    .eq("id", clinicId)
+    .eq("professional_id", user.id)
+    .select("id");
+  if (error) return { error: error.message, code: "generic" };
+  if (!data?.length) return { error: "Clinic not found", code: "generic" };
+  revalidatePath("/dashboard/clinics");
+  return { success: true };
+}
+
 export async function deleteClinic(clinicId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

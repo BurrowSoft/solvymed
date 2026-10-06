@@ -100,13 +100,18 @@ export async function updateWorkingHours(formData: FormData) {
   // Doctor-only: a secretary may view but never edit these.
   if ((await isProfessionalRole(supabase, user.id)) !== true) return { error: "Only the doctor can change these settings" };
 
-  const workingHours: Record<string, { enabled: boolean; start: string; end: string }> = {};
+  const workingHours: Record<string, { enabled: boolean; start: string; end: string; location_id?: string | null }> = {};
   for (const day of DAY_KEYS) {
     workingHours[day] = {
       enabled: formData.get(`${day}_enabled`) === "on",
       start: (formData.get(`${day}_start`) as string) || "08:00",
       end: (formData.get(`${day}_end`) as string) || "18:00",
     };
+    // 1.8.0 F: a day's location only when the form shows the picker; without
+    // the field the key stays out and the database keeps the day's (200).
+    // An id that isn't one of the doctor's counts as the primary there.
+    const loc = formData.get(`${day}_location`);
+    if (typeof loc === "string") workingHours[day].location_id = /^[0-9a-f-]{36}$/i.test(loc) ? loc : null;
   }
 
   const { error } = await supabase.from("professionals").update({ working_hours: workingHours }).eq("id", user.id);
