@@ -56,7 +56,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             <p><strong>3.8 Documentos compartilhados com pacientes:</strong></p>
             <ul>
               <li>Um profissional pode compartilhar documentos com um paciente (por exemplo receitas, atestados, solicitações de exames e termos de consentimento), e um paciente pode enviar documentos ao seu profissional (por exemplo resultados de exames ou fotos). Eles podem conter dados de saúde.</li>
-              <li>Para cada documento guardamos o arquivo, o título, o tipo, o tamanho, quando foi enviado e quem o enviou. Os arquivos são verificados pelo formato real: apenas PDF, JPG, PNG ou HEIC, até 20 MB cada.</li>
+              <li>Para cada documento guardamos o arquivo, o título, o tipo, o tamanho, quando foi enviado e quem o enviou. Todo arquivo compartilhado com o paciente ou enviado por ele é verificado pelo formato real: apenas PDF, JPG, PNG ou HEIC, até 20 MB cada.</li>
               <li>Somente o profissional do paciente vê os documentos do paciente, inclusive os que o paciente envia. Secretárias(os) e outros profissionais da mesma clínica não veem.</li>
               <li>O paciente vê apenas os documentos que seu profissional compartilha com ele e os documentos que ele enviou, e somente enquanto estiver conectado a esse profissional. Ativar o recurso não compartilha nenhum arquivo já existente: o profissional compartilha cada documento.</li>
               <li>Os documentos ficam no mesmo armazenamento privado, na mesma região, dos demais arquivos de pacientes, e são abertos por links que expiram em 5 minutos.</li>

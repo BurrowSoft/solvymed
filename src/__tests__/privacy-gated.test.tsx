@@ -212,5 +212,8 @@ describe("privacy 1.8.0: clinical documents (189) and documents shared with pati
     expect(pt).toContain("Somente o profissional do paciente vê os documentos do paciente, inclusive os que o paciente envia.");
     expect(pt).toContain("mas não pode excluí-lo, exceto um arquivo que ele mesmo enviou, em até 24 horas após o envio.");
     expect(pt).toContain("A notificação nunca inclui o título nem o conteúdo do documento.");
+    // cf: true after d1's 196 too (old adopted files are checked only when shared).
+    expect(en).toContain("Every file shared with a patient or sent by a patient is checked by its real format: only PDF, JPG, PNG or HEIC, up to 20 MB each.");
+    expect(pt).toContain("Todo arquivo compartilhado com o paciente ou enviado por ele é verificado pelo formato real: apenas PDF, JPG, PNG ou HEIC, até 20 MB cada.");
   });
 });
