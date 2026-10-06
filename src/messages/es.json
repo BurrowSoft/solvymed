@@ -981,8 +981,9 @@
     "needHelp": "¿Necesitas ayuda?"
   },
   "secretary": {
-    "notConnectedTitle": "Tu cuenta aún no está conectada a una clínica",
+    "notConnectedTitle": "Ahora mismo no formas parte de ningún equipo.",
     "notConnectedBody": "Pide un enlace de invitación al equipo a la clínica donde trabajas, o introduce el código que recibiste.",
+    "joinWithCode": "Unirme con un código de invitación",
     "codeLabel": "Código de invitación",
     "codeRequired": "Introduce el código de invitación.",
     "continue": "Continuar",

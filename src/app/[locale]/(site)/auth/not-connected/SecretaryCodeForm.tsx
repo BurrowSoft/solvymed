@@ -44,7 +44,7 @@ export function SecretaryCodeForm({ locale }: { locale: string }) {
         type="submit"
         className="w-full rounded-xl bg-teal-600 px-6 py-3.5 text-base font-bold text-white shadow-md transition hover:bg-teal-700"
       >
-        {t("continue")}
+        {t("joinWithCode")}
       </button>
     </form>
   );

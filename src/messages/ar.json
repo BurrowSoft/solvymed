@@ -981,8 +981,9 @@
     "needHelp": "هل تحتاج إلى مساعدة؟"
   },
   "secretary": {
-    "notConnectedTitle": "لم يتم ربطك بعيادة بعد",
+    "notConnectedTitle": "أنت لست عضوًا في أي فريق حاليًا.",
     "notConnectedBody": "اطلب رابط دعوة للسكرتارية من العيادة، أو أدخل الرمز الذي تلقيته.",
+    "joinWithCode": "الانضمام برمز دعوة",
     "codeLabel": "رمز الدعوة",
     "codeRequired": "أدخل رمز الدعوة.",
     "continue": "متابعة",

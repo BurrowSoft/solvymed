@@ -67,7 +67,9 @@ export default async function DashboardPage({
 
   // A secretary sees their doctor's practice, not their own (empty) id.
   const effectiveProfId = await getEffectiveProfId(supabase, user.id);
-  if (!effectiveProfId) redirect(`${prefix}/auth/login`);
+  // No practice (a secretary removed from her last one): never the login
+  // page with a live session (the middleware usually catches this first).
+  if (!effectiveProfId) redirect(`${prefix}/auth/not-connected`);
   const isSecretary = effectiveProfId !== user.id;
   // Amounts are in the practice's currency (its country), not the UI's.
   const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);

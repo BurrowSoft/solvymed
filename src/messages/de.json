@@ -981,8 +981,9 @@
     "needHelp": "Brauchen Sie Hilfe?"
   },
   "secretary": {
-    "notConnectedTitle": "Noch mit keiner Praxis verbunden",
+    "notConnectedTitle": "Sie gehören derzeit keinem Team an.",
     "notConnectedBody": "Bitten Sie die Praxis, in der Sie arbeiten, um einen Einladungslink für das Praxisteam, oder geben Sie den erhaltenen Code ein.",
+    "joinWithCode": "Mit Einladungscode beitreten",
     "codeLabel": "Einladungscode",
     "codeRequired": "Geben Sie den Einladungscode ein.",
     "continue": "Weiter",

@@ -981,8 +981,9 @@
     "needHelp": "Butuh bantuan?"
   },
   "secretary": {
-    "notConnectedTitle": "Belum terhubung ke klinik",
+    "notConnectedTitle": "Saat ini Anda tidak tergabung dalam tim mana pun.",
     "notConnectedBody": "Minta tautan undangan sekretaris dari dokter tempat Anda bekerja, atau masukkan kode yang diberikan.",
+    "joinWithCode": "Bergabung dengan kode undangan",
     "codeLabel": "Kode undangan",
     "codeRequired": "Masukkan kode undangan.",
     "continue": "Lanjutkan",
