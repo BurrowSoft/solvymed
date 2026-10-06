@@ -2082,6 +2082,8 @@
     "internalNote": "Dokumente in diesem Ordner werden nie geteilt.",
     "hideFromPatient": "Vor dem Patienten verbergen",
     "uploadedByPatient": "Vom Patienten gesendet",
+    "sentByYou": "Von Ihnen gesendet",
+    "removedMark": "(entfernt)",
     "empty": "Noch keine Dokumente.",
     "patientEmpty": "Ihr Arzt hat noch keine Dokumente geteilt.",
     "upload": "Dokument senden",

@@ -3,7 +3,8 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
 import { accessKindLabelKey } from "@/lib/accessLog";
-import { canDeleteOwn, docErrorKey, docMime, docPath, defaultTitle, type DocFolder, type PatientDocument } from "@/lib/patientDocuments";
+import { canDeleteOwn, docErrorKey, docMime, docPath, defaultTitle, localDay, type DocFolder, type PatientDocument } from "@/lib/patientDocuments";
+import { PatientTabs } from "@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/PatientDetailClient";
 
 // 1.8.0 A, the doctor's side on the website (190; flag 'patient_documents'):
 // the path 190 accepts, the real-format list, the error mapping, the
@@ -29,6 +30,9 @@ vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/documents-actions", ()
     deleteFolder: rec("deleteFolder"),
   };
 });
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }) }));
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/actions", () => Object.fromEntries(["createRecord", "deleteRecord", "updateRecord", "addRecordCorrection", "createPrescription", "deletePrescription", "updatePrescription", "addPrescriptionCorrection", "updatePatient", "deletePatient", "toggleBookingBlock", "generatePatientInviteCode", "getArchivePreview", "archivePatient", "restorePatient", "loadAccessLog", "mergeAvailable"].map((n) => [n, vi.fn(async () => ({}))])));
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/files-actions", () => ({ listPatientFiles: vi.fn(async () => ({ ok: true, data: [] })), openPatientFile: vi.fn(), deletePatientFile: vi.fn(), hidePatientFile: vi.fn() }));
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({ storage: { from: () => ({ upload: vi.fn(async (path: string, f: Blob, o: { contentType?: string }) => { h.uploads.push({ path, type: o.contentType, blobType: f.type }); return { error: null }; }) }) } }),
 }));
@@ -39,12 +43,12 @@ const FOLDERS: DocFolder[] = [F("f-exams", "exams", true, 1), F("f-int", "intern
 const doc = (o: Partial<PatientDocument>): PatientDocument => ({
   id: "d1", folderId: "f-exams", title: "Hemograma", mime: "application/pdf", sizeBytes: 2048, source: "doctor_upload",
   replacesId: null, replaced: false, shared: true, uploadedByRole: "professional", doctorOpenedAt: null,
-  createdAt: "2026-10-01T12:00:00Z", storagePath: "doc/pat/d1.pdf", hidden: null, ...o,
+  createdAt: "2026-10-01T12:00:00Z", storagePath: "doc/pat/00000000-0000-4000-8000-0000000000d1.pdf", hidden: null, ...o,
 });
 const DOCS: PatientDocument[] = [
   doc({}),
-  doc({ id: "d2", title: "Foto da lesão", uploadedByRole: "patient", source: "patient_upload", shared: true }),
-  doc({ id: "d3", folderId: "f-int", title: "Nota interna", shared: false }),
+  doc({ id: "d2", title: "Foto da lesão", uploadedByRole: "patient", source: "patient_upload", shared: true, storagePath: "doc/pat/00000000-0000-4000-8000-0000000000d2.jpg" }),
+  doc({ id: "d3", folderId: "f-int", title: "Nota interna", shared: false, storagePath: "doc/pat/00000000-0000-4000-8000-0000000000d3.pdf" }),
 ];
 
 import { DocumentFoldersCard } from "@/app/[locale]/(site)/dashboard/settings/DocumentFoldersCard";
@@ -166,5 +170,34 @@ describe("HEIC from a browser that gives no type (53)", () => {
     await waitFor(() => expect(h.uploads).toHaveLength(1));
     expect(h.uploads[0].path).toMatch(/^doc\/pat\/[0-9a-f-]{36}\.heic$/);
     expect(h.uploads[0].blobType).toBe("image/heic");
+  });
+});
+
+describe("A follow-ups (cf, 53)", () => {
+  it("an upload's day is the viewer's own (a system date)", () => {
+    const late = new Date(2026, 9, 7, 23, 30);
+    expect(localDay(late.toISOString())).toBe("2026-10-07");
+    const early = new Date(2026, 9, 8, 0, 30);
+    expect(localDay(early.toISOString())).toBe("2026-10-08");
+  });
+
+  it("Acessos names documents by title, \"(removido)\" when gone", async () => {
+    const rows = [
+      { when: "07/10 10:00", at: "2026-10-07T13:00:00Z", actorName: "", actorRole: "patient", kind: "shared_document", objectRef: "d1" },
+      { when: "07/10 10:01", at: "2026-10-07T13:01:00Z", actorName: "Dra. Ana", actorRole: "professional", kind: "file", objectRef: "doc/pat/00000000-0000-4000-8000-0000000000d1.pdf" },
+      { when: "07/10 10:02", at: "2026-10-07T13:02:00Z", actorName: "", actorRole: "patient", kind: "shared_document", objectRef: "00000000-0000-4000-8000-0000000000ff" },
+      { when: "07/10 10:03", at: "2026-10-07T13:03:00Z", actorName: "Dra. Ana", actorRole: "professional", kind: "file", objectRef: "doc/pat/00000000-0000-4000-8000-0000000000ee.pdf" },
+    ];
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <PatientTabs patient={{ id: "pat", full_name: "Ana", created_at: "2026-10-01T12:00:00Z" }} records={[]} prescriptions={[]} appointments={[]} locale="pt-BR" currentUserId="doc" timeZone="America/Sao_Paulo"
+          accessLog={{ rows, hasMore: false }} documentsOn />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: pt.patientDetail.tabAccessLog }));
+    expect(await screen.findByText(`${pt.patientDetail.accessKindSharedDocument} · Hemograma`)).toBeInTheDocument();
+    expect(screen.getByText(`${pt.patientDetail.accessKindFile} · Hemograma`)).toBeInTheDocument();
+    expect(screen.getByText(`${pt.patientDetail.accessKindSharedDocument} · ${T.removedMark}`)).toBeInTheDocument();
+    expect(screen.getByText(`${pt.patientDetail.accessKindFile} · ${T.removedMark}`)).toBeInTheDocument();
   });
 });

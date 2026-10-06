@@ -2082,6 +2082,8 @@
     "internalNote": "このフォルダーの書類は共有されません。",
     "hideFromPatient": "患者に非表示",
     "uploadedByPatient": "患者から送信",
+    "sentByYou": "あなたが送信",
+    "removedMark": "(削除済み)",
     "empty": "書類はまだありません。",
     "patientEmpty": "担当医はまだ書類を共有していません。",
     "upload": "書類を送る",

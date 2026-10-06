@@ -2082,6 +2082,8 @@
     "internalNote": "이 폴더의 문서는 공유되지 않습니다.",
     "hideFromPatient": "환자에게 숨기기",
     "uploadedByPatient": "환자가 보냄",
+    "sentByYou": "내가 보냄",
+    "removedMark": "(삭제됨)",
     "empty": "아직 문서가 없습니다.",
     "patientEmpty": "담당 의사가 아직 문서를 공유하지 않았습니다.",
     "upload": "문서 보내기",

@@ -2082,6 +2082,8 @@
     "internalNote": "此文件夹中的文件永不共享。",
     "hideFromPatient": "对患者隐藏",
     "uploadedByPatient": "患者发送",
+    "sentByYou": "由您发送",
+    "removedMark": "(已删除)",
     "empty": "暂无文件。",
     "patientEmpty": "您的医生尚未共享任何文件。",
     "upload": "发送文件",

@@ -122,6 +122,14 @@ export function canDeleteOwn(d: PatientDocument, now = Date.now()): boolean {
   return d.uploadedByRole === "professional" && d.source === "doctor_upload" && now - new Date(d.createdAt).getTime() < 24 * 3600 * 1000 - 5 * 60 * 1000;
 }
 
+// A stored timestamp as the VIEWER's own day (cf: upload dates are system
+// dates: the viewer's time zone, the reader's calendar), for formatShortDate.
+export function localDay(ts: string): string {
+  const d = new Date(ts);
+  if (Number.isNaN(d.getTime())) return ts.slice(0, 10);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 export function formatBytes(n: number): string {
   if (n >= 1024 * 1024 * 1024) return `${(n / (1024 * 1024 * 1024)).toFixed(1)} GB`;
   if (n >= 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(1)} MB`;

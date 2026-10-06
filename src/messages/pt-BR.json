@@ -2082,6 +2082,8 @@
     "internalNote": "Documentos nesta pasta nunca são compartilhados.",
     "hideFromPatient": "Ocultar do paciente",
     "uploadedByPatient": "Enviado pelo paciente",
+    "sentByYou": "Enviado por você",
+    "removedMark": "(removido)",
     "empty": "Nenhum documento ainda.",
     "patientEmpty": "Seu médico ainda não compartilhou documentos.",
     "upload": "Enviar documento",

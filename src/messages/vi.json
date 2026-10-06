@@ -2082,6 +2082,8 @@
     "internalNote": "Tài liệu trong thư mục này không bao giờ được chia sẻ.",
     "hideFromPatient": "Ẩn với bệnh nhân",
     "uploadedByPatient": "Bệnh nhân gửi",
+    "sentByYou": "Do bạn gửi",
+    "removedMark": "(đã xóa)",
     "empty": "Chưa có tài liệu.",
     "patientEmpty": "Bác sĩ của bạn chưa chia sẻ tài liệu nào.",
     "upload": "Gửi tài liệu",

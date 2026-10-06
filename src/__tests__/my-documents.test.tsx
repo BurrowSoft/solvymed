@@ -52,6 +52,8 @@ describe("Minhas consultas → Documentos", () => {
     expect(within(start).queryByRole("button", { name: T.removeUpload })).toBeNull();
     const exams = screen.getByRole("group", { name: T.folder.exams });
     expect(within(exams).getByText(T.removeUploadHint)).toBeInTheDocument();
+    // Their own upload, in their own words (53).
+    expect(within(exams).getByText(/Enviado por você/)).toBeInTheDocument();
     vi.spyOn(window, "confirm").mockReturnValue(true);
     fireEvent.click(within(exams).getByRole("button", { name: T.removeUpload }));
     await waitFor(() => expect(h.calls.find((c) => c.fn === "removeMyUpload")?.args).toEqual(["d2"]));

@@ -2112,6 +2112,8 @@
     "internalNote": "Documents in this folder are never shared.",
     "hideFromPatient": "Hide from the patient",
     "uploadedByPatient": "Sent by the patient",
+    "sentByYou": "Sent by you",
+    "removedMark": "(removed)",
     "empty": "No documents yet.",
     "patientEmpty": "Your doctor hasn't shared any documents yet.",
     "upload": "Send a document",

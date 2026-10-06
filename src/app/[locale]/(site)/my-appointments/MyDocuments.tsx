@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { formatShortDate } from "@/lib/dateLabels";
 import { BUCKET } from "@/lib/patientFiles";
-import { DOC_ACCEPT, DOC_MAX_BYTES, DOC_TITLE_MAX, defaultTitle, docMime, formatBytes, type DocErrorKey } from "@/lib/patientDocuments";
+import { DOC_ACCEPT, DOC_MAX_BYTES, DOC_TITLE_MAX, defaultTitle, docMime, formatBytes, localDay, type DocErrorKey } from "@/lib/patientDocuments";
 import { finishUpload, loadMyDocuments, openMyDocument, removeMyUpload, startUpload, type DocDoctor, type MyDocFolder } from "./document-actions";
 
 // Minhas consultas → Documents (1.8.0 A; flag 'patient_documents'; the app's
@@ -126,9 +126,9 @@ export function MyDocuments({ doctors }: { doctors: DocDoctor[] }) {
                                 <div className="min-w-0">
                                   <p className="truncate text-sm font-semibold text-slate-800">{doc.title}</p>
                                   <p className="text-xs text-slate-400">
-                                    {doc.corrected ? t("correctedOn", { date: formatShortDate(locale, doc.createdAt.slice(0, 10)) }) : formatShortDate(locale, doc.createdAt.slice(0, 10))}
+                                    {doc.corrected ? t("correctedOn", { date: formatShortDate(locale, localDay(doc.createdAt)) }) : formatShortDate(locale, localDay(doc.createdAt))}
                                     {" · "}{formatBytes(doc.sizeBytes)}
-                                    {doc.sentByMe && <> · {t("uploadedByPatient")}</>}
+                                    {doc.sentByMe && <> · {t("sentByYou")}</>}
                                   </p>
                                   {doc.canRemove && <p className="text-xs text-slate-500">{t("removeUploadHint")}</p>}
                                 </div>

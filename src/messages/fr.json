@@ -2082,6 +2082,8 @@
     "internalNote": "Les documents de ce dossier ne sont jamais partagés.",
     "hideFromPatient": "Masquer au patient",
     "uploadedByPatient": "Envoyé par le patient",
+    "sentByYou": "Envoyé par vous",
+    "removedMark": "(supprimé)",
     "empty": "Aucun document pour l’instant.",
     "patientEmpty": "Votre médecin n’a encore partagé aucun document.",
     "upload": "Envoyer un document",

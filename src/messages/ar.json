@@ -2082,6 +2082,8 @@
     "internalNote": "لا تتم مشاركة المستندات في هذا المجلد أبدًا.",
     "hideFromPatient": "إخفاء عن المريض",
     "uploadedByPatient": "أرسله المريض",
+    "sentByYou": "أرسلته أنت",
+    "removedMark": "(محذوف)",
     "empty": "لا توجد مستندات بعد.",
     "patientEmpty": "لم يشارك طبيبك أي مستندات بعد.",
     "upload": "إرسال مستند",

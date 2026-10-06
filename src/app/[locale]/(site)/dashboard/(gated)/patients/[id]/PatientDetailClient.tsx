@@ -13,6 +13,7 @@ import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
 import { FilesTab } from "./FilesTab";
 import { DocumentsTab } from "./DocumentsTab";
+import { loadPatientDocuments } from "../documents-actions";
 import { AddressFields } from "@/components/patient/AddressFields";
 import { addressLine, type AddressColumns } from "@/lib/patientAddress";
 import { profileOfKind } from "@/lib/country";
@@ -179,7 +180,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
       )}
       {tab === "appointments" && <AppointmentsTab appointments={appointments} locale={locale} />}
       {tab === "access" && accessLog != null && (
-        <AccessLogTab patientId={patient.id} initial={accessLog} records={records} prescriptions={prescriptions} locale={locale} />
+        <AccessLogTab patientId={patient.id} initial={accessLog} records={records} prescriptions={prescriptions} locale={locale} documentsOn={documentsOn && !isSecretary} />
       )}
     </div>
     </TimeZoneContext.Provider>
@@ -188,12 +189,14 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
 
 // Who opened this patient's record, and when (migration 111). The doctor
 // only; newest first, 50 at a time.
-function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
+function AccessLogTab({ patientId, initial, records, prescriptions, locale, documentsOn = false }: {
   patientId: string;
   initial: AccessLogPage | "failed";
   records: MedRecord[];
   prescriptions: Rx[];
   locale: string;
+  // 1.8.0 A: documents are named by their title (cf), "(removed)" when gone.
+  documentsOn?: boolean;
 }) {
   const t = useTranslations("patientDetail");
   const practiceCalendar = usePracticeCalendar();
@@ -201,6 +204,21 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
   const [hasMore, setHasMore] = useState(initial !== "failed" && initial.hasMore);
   const [failed, setFailed] = useState(initial === "failed");
   const [pending, startTransition] = useTransition();
+  const td = useTranslations("docs");
+  // The patient's documents by id and by storage path (the access log's
+  // refs); null until loaded or without documents.
+  const [docTitles, setDocTitles] = useState<{ byId: Map<string, string>; byPath: Map<string, string> } | null>(null);
+  useEffect(() => {
+    if (!documentsOn) return;
+    let alive = true;
+    void loadPatientDocuments(patientId).then((r) => {
+      if (!alive || !r.ok) return;
+      setDocTitles({ byId: new Map(r.data.documents.map((d) => [d.id, d.title])), byPath: new Map(r.data.documents.map((d) => [d.storagePath, d.title])) });
+    });
+    return () => { alive = false; };
+  }, [documentsOn, patientId]);
+  // A document's path: <doctor>/<patient>/<uuid>.<ext> (190).
+  const isDocPath = (ref: string) => /\/[0-9a-f-]{36}\.(pdf|jpg|png|heic)$/i.test(ref);
 
   function loadMore() {
     const last = rows[rows.length - 1];
@@ -229,6 +247,13 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale }: {
     if (r.kind === "prescription") {
       const rx = prescriptions.find((x) => x.id === r.objectRef);
       return rx ? `${t("accessKindPrescription")} · ${formatDateLabel(locale, rx.date, { year: "numeric", month: "short", day: "numeric" }, practiceCalendar)}` : t("accessKindPrescription");
+    }
+    if (docTitles && (r.kind === "shared_document" || r.kind === "patient_upload" || r.kind === "patient_upload_removed")) {
+      return `${t(accessKindLabelKey(r.kind))} · ${docTitles.byId.get(r.objectRef ?? "") ?? td("removedMark")}`;
+    }
+    if (docTitles && (r.kind === "file" || r.kind === "file_deleted") && isDocPath(r.objectRef ?? "")) {
+      const label = r.kind === "file" ? t("accessKindFile") : t(accessKindLabelKey(r.kind));
+      return `${label} · ${docTitles.byPath.get(r.objectRef ?? "") ?? td("removedMark")}`;
     }
     if (r.kind === "file") {
       const name = fileNameFromRef(r.objectRef);

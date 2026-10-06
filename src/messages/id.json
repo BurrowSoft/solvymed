@@ -2082,6 +2082,8 @@
     "internalNote": "Dokumen di folder ini tidak pernah dibagikan.",
     "hideFromPatient": "Sembunyikan dari pasien",
     "uploadedByPatient": "Dikirim oleh pasien",
+    "sentByYou": "Dikirim oleh Anda",
+    "removedMark": "(dihapus)",
     "empty": "Belum ada dokumen.",
     "patientEmpty": "Dokter Anda belum membagikan dokumen.",
     "upload": "Kirim dokumen",
