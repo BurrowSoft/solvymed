@@ -23,7 +23,9 @@ export const liveFeatures = {
   solvyAi: process.env.NEXT_PUBLIC_SOLVYAI_ENABLED === "1" && conditionMet("solvyai-live"),
   // "Built for PDPA": consent at signup + the record access log live
   // (TH-3) and Vitor's go (lawyer reviews are post-launch, 2026-10-01).
-  pdpa: false,
+  // On since privacy §10b "Thailand (PDPA)" went live (#424, 2026-10-10;
+  // Vitor's "OK PDPA text", cf's go 6 Oct).
+  pdpa: true,
   // The "Novidades" popup + new-feature tour (walkthrough §4a): on with the
   // release that announces something (and migration 113 for its state).
   // NEXT_PUBLIC_NEWS_ENABLED=1 turns it on for testing (a local build or a
