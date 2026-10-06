@@ -11,6 +11,7 @@ import { parseCountryChoice, patientLanguageTarget, pickApplies, SIGNUP_COUNTRY_
 import { countryProfile } from "@/lib/country";
 import { loadMyDoctors, serverFlag } from "@/lib/myDoctors";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { loadMyDocumentDoctors } from "./document-actions";
 
 export type PatientAppointment = {
   id: string;
@@ -158,6 +159,8 @@ export default async function MyAppointmentsPage({
   // another one yet.
   const doctors = liveFeatures.multiDoctor ? await loadMyDoctors(supabase) : null;
   const canAddDoctor = liveFeatures.multiDoctor ? await serverFlag(supabase, "multi_doctor_patient") : false;
+  // 1.8.0 A: empty unless the server's switch is on for this patient (190).
+  const docDoctors = await loadMyDocumentDoctors();
   const connectedClinicName = flags && !flags.patient_connected_seen && flags.clinic_professional_id ? flags.clinic_name : null;
 
   return (
@@ -175,6 +178,7 @@ export default async function MyAppointmentsPage({
       practices={practices}
       doctors={doctors}
       canAddDoctor={canAddDoctor}
+      docDoctors={docDoctors}
     />
     </>
   );
