@@ -2109,9 +2109,11 @@
       "appliesAll": "Se aplica a todos tus pacientes.",
       "deleteEmptyOnly": "Solo se pueden eliminar carpetas vacías.",
       "max": "Puedes tener hasta 30 carpetas.",
-      "offConfirm": "{count} documentos dejarán de mostrarse a los pacientes.",
+      "offConfirm": "{count, plural, one {# documento dejará de mostrarse a los pacientes.} other {# documentos dejarán de mostrarse a los pacientes.}}",
       "delete": "Eliminar carpeta",
-      "namePlaceholder": "Nombre de la carpeta"
+      "namePlaceholder": "Nombre de la carpeta",
+      "moveUp": "Subir",
+      "moveDown": "Bajar"
     },
     "correctedOn": "Corregido el {date}",
     "removeUpload": "Quitar",

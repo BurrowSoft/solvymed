@@ -2109,9 +2109,11 @@
       "appliesAll": "Vale para todos os seus pacientes.",
       "deleteEmptyOnly": "Só pastas vazias podem ser excluídas.",
       "max": "Você pode ter até 30 pastas.",
-      "offConfirm": "{count} documentos deixarão de aparecer para os pacientes.",
+      "offConfirm": "{count, plural, one {# documento deixará de aparecer para os pacientes.} other {# documentos deixarão de aparecer para os pacientes.}}",
       "delete": "Excluir pasta",
-      "namePlaceholder": "Nome da pasta"
+      "namePlaceholder": "Nome da pasta",
+      "moveUp": "Mover para cima",
+      "moveDown": "Mover para baixo"
     },
     "correctedOn": "Corrigido em {date}",
     "removeUpload": "Remover",

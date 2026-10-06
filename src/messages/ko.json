@@ -2111,7 +2111,9 @@
       "max": "폴더는 최대 30개까지 만들 수 있습니다.",
       "offConfirm": "문서 {count}개가 더 이상 환자에게 표시되지 않습니다.",
       "delete": "폴더 삭제",
-      "namePlaceholder": "폴더 이름"
+      "namePlaceholder": "폴더 이름",
+      "moveUp": "위로 이동",
+      "moveDown": "아래로 이동"
     },
     "correctedOn": "{date}에 수정됨",
     "removeUpload": "삭제",

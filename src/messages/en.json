@@ -2139,9 +2139,11 @@
       "appliesAll": "Applies to all your patients.",
       "deleteEmptyOnly": "Only empty folders can be deleted.",
       "max": "You can have up to 30 folders.",
-      "offConfirm": "{count} documents will stop showing to patients.",
+      "offConfirm": "{count, plural, one {# document will stop showing to patients.} other {# documents will stop showing to patients.}}",
       "delete": "Delete folder",
-      "namePlaceholder": "Folder name"
+      "namePlaceholder": "Folder name",
+      "moveUp": "Move up",
+      "moveDown": "Move down"
     },
     "correctedOn": "Corrected on {date}",
     "removeUpload": "Remove",

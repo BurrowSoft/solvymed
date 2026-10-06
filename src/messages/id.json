@@ -2111,7 +2111,9 @@
       "max": "Anda dapat memiliki hingga 30 folder.",
       "offConfirm": "{count} dokumen tidak akan lagi ditampilkan ke pasien.",
       "delete": "Hapus folder",
-      "namePlaceholder": "Nama folder"
+      "namePlaceholder": "Nama folder",
+      "moveUp": "Pindah ke atas",
+      "moveDown": "Pindah ke bawah"
     },
     "correctedOn": "Dikoreksi pada {date}",
     "removeUpload": "Hapus",

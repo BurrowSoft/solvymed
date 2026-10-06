@@ -2141,7 +2141,9 @@
       "max": "มีโฟลเดอร์ได้สูงสุด 30 โฟลเดอร์",
       "offConfirm": "เอกสาร {count} รายการจะไม่แสดงให้ผู้ป่วยเห็นอีก",
       "delete": "ลบโฟลเดอร์",
-      "namePlaceholder": "ชื่อโฟลเดอร์"
+      "namePlaceholder": "ชื่อโฟลเดอร์",
+      "moveUp": "เลื่อนขึ้น",
+      "moveDown": "เลื่อนลง"
     },
     "correctedOn": "แก้ไขเมื่อ {date}",
     "removeUpload": "ลบ",

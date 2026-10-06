@@ -16,7 +16,6 @@ export function DocumentFoldersCard({ initial, usedBytes, limitBytes, loadFailed
   initial: DocFolder[]; usedBytes: number; limitBytes: number; loadFailed: boolean;
 }) {
   const t = useTranslations("docs");
-  const tr = useTranslations("recordTemplates");
   const tp = useTranslations("patientDetail");
   const [folders, setFolders] = useState(initial);
   const [editing, setEditing] = useState<{ id: string | null; name: string } | null>(null);
@@ -104,8 +103,8 @@ export function DocumentFoldersCard({ initial, usedBytes, limitBytes, loadFailed
                     <p className="min-w-0 truncate text-sm font-semibold text-slate-900">{nameOf(f)} <span className="font-normal text-slate-400">· {f.documentCount}</span></p>
                   )}
                   <div className="flex shrink-0 items-center gap-1">
-                    <button type="button" onClick={() => move(i, -1)} disabled={busy || i === 0} aria-label={tr("moveUp")} title={tr("moveUp")} className="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100 disabled:opacity-30">↑</button>
-                    <button type="button" onClick={() => move(i, 1)} disabled={busy || i === folders.length - 1} aria-label={tr("moveDown")} title={tr("moveDown")} className="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100 disabled:opacity-30">↓</button>
+                    <button type="button" onClick={() => move(i, -1)} disabled={busy || i === 0} aria-label={t("settings.moveUp")} title={t("settings.moveUp")} className="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100 disabled:opacity-30">↑</button>
+                    <button type="button" onClick={() => move(i, 1)} disabled={busy || i === folders.length - 1} aria-label={t("settings.moveDown")} title={t("settings.moveDown")} className="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100 disabled:opacity-30">↓</button>
                   </div>
                 </div>
                 {internal ? (

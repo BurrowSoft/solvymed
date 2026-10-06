@@ -2111,7 +2111,9 @@
       "max": "最多可以有 30 个文件夹。",
       "offConfirm": "{count} 份文件将不再向患者显示。",
       "delete": "删除文件夹",
-      "namePlaceholder": "文件夹名称"
+      "namePlaceholder": "文件夹名称",
+      "moveUp": "上移",
+      "moveDown": "下移"
     },
     "correctedOn": "已于 {date} 更正",
     "removeUpload": "移除",

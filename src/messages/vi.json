@@ -2111,7 +2111,9 @@
       "max": "Bạn có thể có tối đa 30 thư mục.",
       "offConfirm": "{count} tài liệu sẽ không còn hiển thị với bệnh nhân.",
       "delete": "Xóa thư mục",
-      "namePlaceholder": "Tên thư mục"
+      "namePlaceholder": "Tên thư mục",
+      "moveUp": "Lên trên",
+      "moveDown": "Xuống dưới"
     },
     "correctedOn": "Đã sửa ngày {date}",
     "removeUpload": "Gỡ",

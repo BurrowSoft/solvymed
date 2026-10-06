@@ -2109,9 +2109,11 @@
       "appliesAll": "S’applique à tous vos patients.",
       "deleteEmptyOnly": "Seuls les dossiers vides peuvent être supprimés.",
       "max": "Vous pouvez avoir jusqu’à 30 dossiers.",
-      "offConfirm": "{count} documents ne seront plus visibles par les patients.",
+      "offConfirm": "{count, plural, one {# document ne sera plus visible par les patients.} other {# documents ne seront plus visibles par les patients.}}",
       "delete": "Supprimer le dossier",
-      "namePlaceholder": "Nom du dossier"
+      "namePlaceholder": "Nom du dossier",
+      "moveUp": "Monter",
+      "moveDown": "Descendre"
     },
     "correctedOn": "Corrigé le {date}",
     "removeUpload": "Retirer",

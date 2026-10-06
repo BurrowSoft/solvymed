@@ -2109,9 +2109,11 @@
       "appliesAll": "Vale per tutti i tuoi pazienti.",
       "deleteEmptyOnly": "Si possono eliminare solo cartelle vuote.",
       "max": "Puoi avere fino a 30 cartelle.",
-      "offConfirm": "{count} documenti non saranno più visibili ai pazienti.",
+      "offConfirm": "{count, plural, one {# documento non sarà più visibile ai pazienti.} other {# documenti non saranno più visibili ai pazienti.}}",
       "delete": "Elimina cartella",
-      "namePlaceholder": "Nome della cartella"
+      "namePlaceholder": "Nome della cartella",
+      "moveUp": "Sposta su",
+      "moveDown": "Sposta giù"
     },
     "correctedOn": "Corretto il {date}",
     "removeUpload": "Rimuovi",

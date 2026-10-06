@@ -22,6 +22,11 @@ vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/documents-actions", ()
     openDocument: rec("openDocument", { ok: true, data: "https://signed" }),
     deleteOwnDocument: rec("deleteOwnDocument"),
     hideDocument: rec("hideDocument"),
+    loadFolders: vi.fn(async () => ({ ok: true, data: { folders: FOLDERS, usedBytes: 0, limitBytes: 1 } })),
+    countFolderShared: vi.fn(async () => 1),
+    saveFolder: rec("saveFolder", { ok: true, data: "f" }),
+    reorderFolders: rec("reorderFolders"),
+    deleteFolder: rec("deleteFolder"),
   };
 });
 vi.mock("@/lib/supabase/client", () => ({
@@ -42,6 +47,7 @@ const DOCS: PatientDocument[] = [
   doc({ id: "d3", folderId: "f-int", title: "Nota interna", shared: false }),
 ];
 
+import { DocumentFoldersCard } from "@/app/[locale]/(site)/dashboard/settings/DocumentFoldersCard";
 import { DocumentsTab } from "@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/DocumentsTab";
 
 const T = pt.docs;
@@ -128,5 +134,21 @@ describe("Documents tab", () => {
     fireEvent.change(screen.getByLabelText(pt.patientDetail.filesUpload, { selector: "input" }), { target: { files: [new File(["x"], "a.docx", { type: "application/msword" })] } });
     expect(screen.getByRole("alert")).toHaveTextContent(T.err.type);
     expect(h.uploads).toHaveLength(0);
+  });
+});
+
+describe("Settings → Pastas de documentos", () => {
+  it("the arrows have real labels (f0); the off-confirm is a plural; turning a folder off asks first", async () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <DocumentFoldersCard initial={FOLDERS} usedBytes={0} limitBytes={1} loadFailed={false} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getAllByRole("button", { name: "Mover para cima" })).toHaveLength(2);
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+    fireEvent.click(screen.getByRole("checkbox", { name: T.settings.shared }));
+    await waitFor(() => expect(confirm).toHaveBeenCalledWith("1 documento deixará de aparecer para os pacientes."));
+    expect(h.calls.some((c) => c.fn === "saveFolder")).toBe(false);
+    confirm.mockRestore();
   });
 });

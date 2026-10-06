@@ -2109,9 +2109,11 @@
       "appliesAll": "Gilt für alle Ihre Patienten.",
       "deleteEmptyOnly": "Nur leere Ordner können gelöscht werden.",
       "max": "Sie können bis zu 30 Ordner haben.",
-      "offConfirm": "{count} Dokumente werden Patienten nicht mehr angezeigt.",
+      "offConfirm": "{count, plural, one {# Dokument wird Patienten nicht mehr angezeigt.} other {# Dokumente werden Patienten nicht mehr angezeigt.}}",
       "delete": "Ordner löschen",
-      "namePlaceholder": "Ordnername"
+      "namePlaceholder": "Ordnername",
+      "moveUp": "Nach oben",
+      "moveDown": "Nach unten"
     },
     "correctedOn": "Korrigiert am {date}",
     "removeUpload": "Entfernen",
